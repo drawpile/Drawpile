@@ -45,9 +45,10 @@ int LoginSessionModel::columnCount(const QModelIndex &parent) const
 	// Columns:
 	// 0 - closed/incompatible/password needed status icon
 	// 1 - title
-	// 2 - user count
+	// 2 - session founder name
+	// 3 - user count
 
-	return 3;
+	return 4;
 }
 
 QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
@@ -57,16 +58,17 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
-		case 1: return ls.title;
-		case 2: return ls.userCount;
+		case 1: return ls.title.isEmpty() ? tr("(untitled)") : ls.title;
+		case 2: return ls.founder;
+		case 3: return ls.userCount;
 		}
 	} else if(role == Qt::DecorationRole) {
 		switch(index.column()) {
 		case 0:
 			if(ls.incompatible)
-				return QPixmap(":icons/emblem-unreadable.png");
+				return icon::fromTheme("emblem-unreadable").pixmap(16, 16);
 			else if(ls.closed)
-				return QPixmap(":icons/stopsign.png");
+				return icon::fromTheme("stopsign").pixmap(16, 16);
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 			break;
@@ -83,7 +85,8 @@ QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation,
 
 	switch(section) {
 	case 1: return tr("Title");
-	case 2: return tr("Users");
+	case 2: return tr("Started by");
+	case 3: return tr("Users");
 	}
 
 	return QVariant();

@@ -70,6 +70,7 @@ bool Hibernation::init()
 		desc.id = m.captured(1);
 		desc.protoMinor = reader.hibernationHeader().minorVersion;
 		desc.title = reader.hibernationHeader().title;
+		desc.founder = reader.hibernationHeader().founder;
 		desc.password = reader.hibernationHeader().password;
 		desc.persistent = reader.hibernationHeader().flags & recording::HibernationHeader::PERSISTENT;
 		desc.hibernating = true;
@@ -116,7 +117,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 		return nullptr;
 	}
 
-	SessionState *session = new SessionState(id, reader.hibernationHeader().minorVersion);
+	SessionState *session = new SessionState(id, reader.hibernationHeader().minorVersion, reader.hibernationHeader().founder);
 
 	// enable session persistence for now to get the flag right
 	session->setPersistenceAllowed(true);
@@ -180,6 +181,7 @@ bool Hibernation::storeSession(const SessionState *session)
 	recording::HibernationHeader header;
 	header.minorVersion = session->minorProtocolVersion();
 	header.title = session->title();
+	header.founder = session->founder();
 	header.password = session->password();
 
 	if(session->isPersistent())

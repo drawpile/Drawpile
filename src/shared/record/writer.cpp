@@ -128,6 +128,13 @@ bool Writer::writeHibernationHeader(const HibernationHeader &header)
 	_file->write((const char*)titlelen, 2);
 	_file->write(title);
 
+	// Session founder name
+	QByteArray founder = header.founder.toUtf8();
+	Q_ASSERT(founder.length() < 256); // usernames should be limited to something way shorter than this
+	uchar founderlen = qMin(founder.length(), 255);
+	_file->putChar(founderlen);
+	_file->write(founder);
+
 	// Session flags
 	char flags = header.flags;
 	_file->write(&flags, 1);

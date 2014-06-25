@@ -43,6 +43,9 @@ struct HibernationHeader {
 	//! Session title
 	QString title;
 
+	//! Session founder name
+	QString founder;
+
 	//! Session flags
 	Flags flags;
 

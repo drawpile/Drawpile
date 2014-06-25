@@ -74,9 +74,9 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-SessionState *SessionServer::createSession(int minorVersion)
+SessionState *SessionServer::createSession(int minorVersion, const QString &founder)
 {
-	SessionState *session = new SessionState(QString::number(_nextId++), minorVersion, this);
+	SessionState *session = new SessionState(QString::number(_nextId++), minorVersion, founder, this);
 
 	initSession(session);
 

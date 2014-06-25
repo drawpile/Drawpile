@@ -122,10 +122,10 @@ public:
 	/**
 	 * @brief Create a new session
 	 * @param minorVersion client minor version
-	 * @param password password for the new session
+	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	SessionState *createSession(int minorVersion);
+	SessionState *createSession(int minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions

@@ -72,12 +72,18 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	SessionState(const QString &id, int minorVersion, QObject *parent=0);
+	SessionState(const QString &id, int minorVersion, const QString &founder, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
 	 */
 	QString id() const { return _id; }
+
+	/**
+	 * @brief Get the name of the user who started this session
+	 * @return founder username
+	 */
+	QString founder() const { return _founder; }
 
 	/**
 	 * @brief Get the minor protocol version of this session
@@ -450,6 +456,7 @@ private:
 
 	QString _password;
 	QString _title;
+	QString _founder;
 
 	bool _locked;
 	bool _layerctrllocked;

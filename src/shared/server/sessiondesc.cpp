@@ -52,6 +52,7 @@ SessionDescription::SessionDescription(const SessionState &session, bool getExte
 	  maxUsers(session.maxUsers()),
 	  title(session.title()),
 	  password(session.password()),
+	  founder(session.founder()),
 	  closed(session.isClosed()),
 	  persistent(session.isPersistent()),
 	  hibernating(false),

@@ -110,11 +110,12 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	if(session.hibernating)
 		flags << "ASLEEP";
 
-	send(QString("SESSION %1 %2 %3 %4 ;%5")
+	send(QString("SESSION %1 %2 %3 %4 \"%5\" ;%6")
 			.arg(session.id)
 			.arg(session.protoMinor)
 			.arg(flags.isEmpty() ? "-" : flags.join(","))
 			.arg(session.userCount)
+			.arg(session.founder)
 			.arg(session.title)
 	);
 }
@@ -196,7 +197,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 	_complete = true;
 
 	// Create a new session
-	SessionState *session = _server->createSession(minorVersion);
+	SessionState *session = _server->createSession(minorVersion, _client->username());
 
 	session->joinUser(_client, true);
 

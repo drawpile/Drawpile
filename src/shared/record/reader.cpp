@@ -105,6 +105,17 @@ Compatibility Reader::open()
 
 		_hibheader.title = QString::fromUtf8(title);
 
+		// Read session founder name
+		if(_file->read(buf, 1) != 1)
+				return NOT_DPREC;
+		quint8 founderLen = *buf;
+
+		QByteArray founder = _file->read(founderLen);
+		if(founder.length() != founderLen)
+			return NOT_DPREC;
+
+		_hibheader.founder = QString::fromUtf8(founder);
+
 		// Read session flags
 		char flags;
 		if(!_file->getChar(&flags))

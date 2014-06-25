@@ -315,8 +315,8 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	LoginSession session;
 
 	// Expect session description in format:
-	// SESSION <id> <minorVersion> <FLAGS> <user-count> "title"
-	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) ;(.*)\\z");
+	// SESSION <id> <minorVersion> <FLAGS> <user-count> "founder" ;title
+	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]+)\"\\s*;(.*)\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
@@ -352,7 +352,8 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	}
 
 	session.userCount = m.captured(4).toInt();
-	session.title = m.captured(5);
+	session.founder = m.captured(5);
+	session.title = m.captured(6);
 
 	if(_multisession) {
 		// Multisesion mode: add session to list which is presented to the user

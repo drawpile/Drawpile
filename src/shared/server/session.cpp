@@ -30,12 +30,13 @@ namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(const QString &id, int minorVersion, QObject *parent)
+SessionState::SessionState(const QString &id, int minorVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
+	_founder(founder),
 	_locked(false), _layerctrllocked(true), _closed(false),
 	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false)
 { }

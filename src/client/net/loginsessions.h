@@ -31,6 +31,7 @@ struct LoginSession {
 	QString id;
 	int userCount;
 	QString title;
+	QString founder;
 
 	bool needPassword;
 	bool persistent;
