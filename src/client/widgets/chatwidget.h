@@ -37,6 +37,9 @@ Q_OBJECT
 public:
 	explicit ChatBox(QWidget *parent=0);
 
+	//! Focus the text input widget
+	void focusInput();
+
 public slots:
 	//! Display a received message
 	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool isme=false);

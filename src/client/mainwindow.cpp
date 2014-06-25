@@ -1809,6 +1809,7 @@ void MainWindow::setupActions()
 				sizes << height() - oh;
 				sizes << oh;
 			}
+			_chatbox->focusInput();
 		} else {
 			_chatbox->setProperty("oldheight", _chatbox->height());
 			sizes << 1;

@@ -76,6 +76,11 @@ ChatBox::ChatBox(QWidget *parent)
 	);
 }
 
+void ChatBox::focusInput()
+{
+	_myline->setFocus();
+}
+
 void ChatBox::clear()
 {
 	_view->clear();
