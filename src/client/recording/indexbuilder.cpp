@@ -39,7 +39,7 @@
 namespace recording {
 
 IndexBuilder::IndexBuilder(const QString &inputfile, const QString &targetfile, QObject *parent)
-	: QThread(parent), _inputfile(inputfile), _targetfile(targetfile)
+	: QObject(parent), QRunnable(), _inputfile(inputfile), _targetfile(targetfile)
 {
 }
 

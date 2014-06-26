@@ -25,6 +25,7 @@
 #include <QCloseEvent>
 #include <QFileInfo>
 #include <QSettings>
+#include <QThreadPool>
 
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
@@ -720,9 +721,8 @@ void PlaybackDialog::makeIndex()
 	_ui->buildProgress->setMaximum(_reader->filesize());
 	connect(_indexbuilder, SIGNAL(progress(int)), _ui->buildProgress, SLOT(setValue(int)));
 	connect(_indexbuilder, SIGNAL(done(bool, QString)), this, SLOT(indexMade(bool, QString)));
-	connect(_indexbuilder, SIGNAL(finished()), _indexbuilder, SLOT(deleteLater()));
 
-	_indexbuilder->start();
+	QThreadPool::globalInstance()->start(_indexbuilder);
 }
 
 void PlaybackDialog::indexMade(bool ok, const QString &msg)

@@ -19,7 +19,8 @@
 #ifndef INDEXBUILDER_H
 #define INDEXBUILDER_H
 
-#include <QThread>
+#include <QObject>
+#include <QRunnable>
 #include <QString>
 #include <QHash>
 #include <QAtomicInt>
@@ -33,20 +34,18 @@ namespace recording {
 
 class Reader;
 
-class IndexBuilder : public QThread
+class IndexBuilder : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
 	IndexBuilder(const QString &inputfile, const QString &targetfile, QObject *parent=0);
 
 	void abort();
+	void run();
 
 signals:
 	void progress(int pos);
 	void done(bool ok, const QString &msg);
-
-protected:
-	void run();
 
 private:
 	void addToIndex(const protocol::MessagePtr msg);
@@ -64,3 +63,4 @@ private:
 }
 
 #endif // INDEXBUILDER_H
+
