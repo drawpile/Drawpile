@@ -20,6 +20,7 @@
 #include "hibernation.h"
 #include "../shared/server/session.h"
 #include "../shared/util/logger.h"
+#include "../shared/util/passwordhash.h"
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
 #include "../shared/net/snapshot.h"
@@ -71,7 +72,7 @@ bool Hibernation::init()
 		desc.protoMinor = reader.hibernationHeader().minorVersion;
 		desc.title = reader.hibernationHeader().title;
 		desc.founder = reader.hibernationHeader().founder;
-		desc.password = reader.hibernationHeader().password;
+		desc.passwordHash = reader.hibernationHeader().password;
 		desc.persistent = reader.hibernationHeader().flags & recording::HibernationHeader::PERSISTENT;
 		desc.hibernating = true;
 
@@ -123,7 +124,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 	session->setPersistenceAllowed(true);
 
 	// Restore settings not stored in the message stream
-	session->setPassword(sd.password);
+	session->setPasswordHash(sd.passwordHash);
 
 	// Create initial snapshot point
 	session->addSnapshotPoint();
@@ -182,7 +183,7 @@ bool Hibernation::storeSession(const SessionState *session)
 	header.minorVersion = session->minorProtocolVersion();
 	header.title = session->title();
 	header.founder = session->founder();
-	header.password = session->password();
+	header.password = session->passwordHash();
 
 	if(session->isPersistent())
 		header.flags |= recording::HibernationHeader::PERSISTENT;

@@ -691,7 +691,7 @@ void Client::sendOpServerStatus()
 	msgs << QString("Session #%1, up %2").arg(_session->id()).arg(_session->uptime());
 	msgs << QString("Logged in users: %1 (max: %2)").arg(_session->userCount()).arg(_session->maxUsers());
 	msgs << QString("Persistent session: %1").arg(_session->isPersistenceAllowed() ? (_session->isPersistent() ? "yes" : "no") : "not allowed");
-	msgs << QString("Password protected: %1").arg(!_session->password().isEmpty() ? "yes" : "no");
+	msgs << QString("Password protected: %1").arg(!_session->passwordHash().isEmpty() ? "yes" : "no");
 	msgs << QString("History size: %1 Mb (limit: %2 Mb)")
 			.arg(_session->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
 			.arg(_session->historyLimit() / qreal(1024*1024), 0, 'f', 2);

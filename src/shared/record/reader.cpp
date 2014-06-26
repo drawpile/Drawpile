@@ -127,11 +127,9 @@ Compatibility Reader::open()
 			return NOT_DPREC;
 
 		quint16 passwdLen = qFromBigEndian<quint16>((const uchar*)buf);
-		QByteArray password = _file->read(passwdLen);
-		if(password.length() != passwdLen)
+		_hibheader.password = _file->read(passwdLen);
+		if(_hibheader.password.length() != passwdLen)
 			return NOT_DPREC;
-
-		_hibheader.password = QString::fromUtf8(password);
 	}
 
 	_beginning = _file->pos();

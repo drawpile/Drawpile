@@ -49,8 +49,8 @@ struct HibernationHeader {
 	//! Session flags
 	Flags flags;
 
-	//! Session password
-	QString password;
+	//! Session password hash
+	QByteArray password;
 
 	HibernationHeader() : minorVersion(0), flags(NOFLAGS) { }
 };

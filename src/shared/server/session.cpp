@@ -25,6 +25,7 @@
 #include "../net/pen.h"
 #include "../net/snapshot.h"
 #include "../record/writer.h"
+#include "../util/passwordhash.h"
 
 namespace server {
 
@@ -201,10 +202,18 @@ void SessionState::setPersistent(bool persistent)
 
 void SessionState::setPassword(const QString &password)
 {
-	if(_password != password) {
-		_password = password;
-		emit sessionAttributeChanged(this);
-	}
+	if(password.isEmpty())
+		_passwordhash = QByteArray();
+	else
+		_passwordhash = passwordhash::hash(password);
+
+	emit sessionAttributeChanged(this);
+}
+
+void SessionState::setPasswordHash(const QByteArray &passwordhash)
+{
+	_passwordhash = passwordhash;
+	emit sessionAttributeChanged(this);
 }
 
 void SessionState::setTitle(const QString &title)

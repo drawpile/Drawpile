@@ -126,12 +126,18 @@ public:
 	void stopRecording();
 
 	/**
-	 * @brief Get the session password
+	 * @brief Get the session password hash
 	 *
 	 * This is an empty string if no password is required
 	 * @return password
 	 */
-	const QString &password() const { return _password; }
+	const QByteArray &passwordHash() const { return _passwordhash; }
+	void setPasswordHash(const QByteArray &passwordhash);
+
+	/**
+	 * @brief Set the session password
+	 * @param password
+	 */
 	void setPassword(const QString &password);
 
 	/**
@@ -454,7 +460,7 @@ private:
 	int _maxusers;
 	uint _historylimit;
 
-	QString _password;
+	QByteArray _passwordhash;
 	QString _title;
 	QString _founder;
 

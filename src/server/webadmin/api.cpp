@@ -126,7 +126,7 @@ QJsonObject _sessionBaseDescription(const SessionDescription &sd)
 		flags.append(QLatin1Literal("persistent"));
 	if(sd.hibernating)
 		flags.append(QLatin1Literal("asleep"));
-	if(!sd.password.isEmpty())
+	if(!sd.passwordHash.isEmpty())
 		flags.append(QLatin1Literal("pass"));
 	o["flags"] = flags;
 	o["startTime"] = sd.startTime.toString(Qt::ISODate);

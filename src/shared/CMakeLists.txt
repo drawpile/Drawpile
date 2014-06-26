@@ -20,6 +20,7 @@ set (
 	record/reader.cpp
 	util/idlist.cpp
 	util/logger.cpp
+	util/passwordhash.cpp
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp

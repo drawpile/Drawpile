@@ -220,7 +220,7 @@ void sessionStatus(Client *client, const QString &, const QStringList &)
 	msg.append(QString("Session #%1, up %2\n").arg(s->id()).arg(s->uptime()));
 	msg.append(QString("Logged in users: %1 (max: %2)\n").arg(s->userCount()).arg(s->maxUsers()));
 	msg.append(QString("Persistent session: %1\n").arg(s->isPersistenceAllowed() ? (s->isPersistent() ? "yes" : "no") : "not allowed"));
-	msg.append(QString("Password protected: %1\n").arg(s->password().isEmpty() ? "no" : "yes"));
+	msg.append(QString("Password protected: %1\n").arg(s->passwordHash().isEmpty() ? "no" : "yes"));
 	msg.append(QString("History size: %1 Mb (limit: %2 Mb)\n")
 			.arg(s->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
 			.arg(s->historyLimit() / qreal(1024*1024), 0, 'f', 2));

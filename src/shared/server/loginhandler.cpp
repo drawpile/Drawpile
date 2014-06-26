@@ -26,6 +26,7 @@
 
 #include "../net/login.h"
 #include "../util/logger.h"
+#include "../util/passwordhash.h"
 
 #include "config.h"
 
@@ -104,7 +105,7 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	Q_ASSERT(!session.id.isEmpty());
 
 	QStringList flags;
-	if(!session.password.isEmpty())
+	if(!session.passwordHash.isEmpty())
 		flags << "PASS";
 
 	if(session.closed)
@@ -329,7 +330,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 
 	QString password = m.captured(2);
 
-	if(password != sessiondesc.password && !isModerator) {
+	if(!passwordhash::check(password, sessiondesc.passwordHash) && !isModerator) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;

@@ -140,7 +140,7 @@ bool Writer::writeHibernationHeader(const HibernationHeader &header)
 	_file->write(&flags, 1);
 
 	// Session password
-	QByteArray password = header.password.toUtf8();
+	QByteArray password = header.password;
 	uchar passwdlen[2];
 	qToBigEndian<quint16>(password.length(), passwdlen);
 	_file->write((const char*)passwdlen, 2);

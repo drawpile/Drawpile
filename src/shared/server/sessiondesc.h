@@ -56,7 +56,7 @@ struct SessionDescription {
 	int userCount;
 	int maxUsers;
 	QString title;
-	QString password;
+	QByteArray passwordHash;
 	QString founder;
 	bool closed;
 	bool persistent;
