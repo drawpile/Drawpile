@@ -38,6 +38,8 @@
 #include <QPushButton>
 #include <QHostAddress>
 
+//#define DEBUG_LOGIN
+
 namespace {
 
 enum CertLocation { KNOWN_HOSTS, TRUSTED_HOSTS };
@@ -94,6 +96,10 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 	QString msg = message.cast<protocol::Login>().message();
 
+#ifdef DEBUG_LOGIN
+	qDebug() << "login <--" << msg;
+#endif
+
 	// Overall, the login process is:
 	// 1. wait for server greeting
 	// 2. get hosting password from user if needed
@@ -102,14 +108,19 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	// 5. send host/join command
 	// 6. wait for OK
 
+	if(msg.startsWith("ERROR")) {
+		// The server disconnects us right after sending the error message
+		handleError(msg);
+		return;
+	}
+
 	switch(_state) {
 	case EXPECT_HELLO: expectHello(msg); break;
-	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
+	case EXPECT_IDENTIFIED: expectIdentified(msg); break;
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
+	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
 	case WAIT_FOR_JOIN_PASSWORD:
 	case WAIT_FOR_HOST_PASSWORD:
-	case WAIT_FOR_ENCRYPTED:
-	case WAIT_FOR_ACCEPT_CERT: expectNoErrors(msg); break;
 	case EXPECT_LOGIN_OK: expectLoginOk(msg); break;
 	case ABORT_LOGIN: /* ignore messages in this state */ break;
 	}
@@ -136,29 +147,30 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Parse server capability flags
 	QStringList flags = m.captured(2).split(",");
-	bool hostPassword=false;
 	bool mustSecure = false;
+	_needHostPassword = false;
+	_canAuth = false;
+	_mustAuth = false;
 	for(const QString &flag : flags) {
 		if(flag == "-") {
 			// no flags
 		} else if(flag == "MULTI") {
 			_multisession = true;
 		} else if(flag == "HOSTP") {
-			hostPassword = true;
+			_needHostPassword = true;
 		} else if(flag == "TLS") {
 			_tls = true;
 		} else if(flag == "SECURE") {
 			mustSecure = true;
 		} else if(flag == "PERSIST") {
 			// TODO indicate persistent session support
+		} else if(flag == "IDENT") {
+			_canAuth = true;
+		} else if(flag == "NOGUEST") {
+			_mustAuth = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
-	}
-
-	// Query host password if needed
-	if(_mode == HOST && hostPassword) {
-		showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
 	}
 
 	// Show session selector if in multisession mode
@@ -190,10 +202,13 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 
 		_tls = false;
+		sendIdentity();
 	}
 
 	// Next, we expect the session description
-	_state = (_mode == HOST) ? EXPECT_SESSIONLIST_TO_HOST : EXPECT_SESSIONLIST_TO_JOIN;
+
+	//_state = (_mode == HOST) ? EXPECT_SESSIONLIST_TO_HOST : EXPECT_SESSIONLIST_TO_JOIN;
+	_state = EXPECT_IDENTIFIED;
 }
 
 void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
@@ -216,11 +231,6 @@ void LoginHandler::passwordSet()
 {
 	Q_ASSERT(!_passwordDialog.isNull());
 
-	if(_tls) {
-		_state = WAIT_FOR_ENCRYPTED;
-		return;
-	}
-
 	switch(_state) {
 	case WAIT_FOR_HOST_PASSWORD:
 		_hostPassword = _passwordDialog->textValue();
@@ -237,24 +247,53 @@ void LoginHandler::passwordSet()
 	}
 }
 
+void LoginHandler::sendIdentity()
+{
+	send(QString("IDENT \"%1\"").arg(_address.userName()));
+}
+
+void LoginHandler::expectIdentified(const QString &msg)
+{
+	if(_tls && msg == "STARTTLS") {
+		startTls();
+		return;
+	}
+	const QRegularExpression re("\\AIDENTIFIED (USER|GUEST) (-|[\\w,]+)\\z");
+	auto m = re.match(msg);
+
+	if(!m.hasMatch()) {
+		qWarning() << "Login error. Expected IDENTIFIED, got:" << msg;
+		failLogin(tr("Incompatible server"));
+		return;
+	}
+
+	//bool isGuest = m.captured(1) == "GUEST";
+	QStringList flags = m.captured(2).split(",", QString::SkipEmptyParts);
+
+	if(_mode == HOST) {
+		_state = EXPECT_SESSIONLIST_TO_HOST;
+
+		// Query host password if needed
+		if(_mode == HOST && _needHostPassword && !flags.contains("HOST")) {
+			showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
+		}
+
+	} else {
+		_state = EXPECT_SESSIONLIST_TO_JOIN;
+	}
+}
+
 void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 {
 	Q_ASSERT(_mode == HOST);
 
-	if(_tls && msg == "STARTTLS") {
-		startTls();
-
-	} else if(msg.startsWith("NOSESSION") || msg.startsWith("SESSION")) {
+	if(msg.startsWith("NOSESSION") || msg.startsWith("SESSION")) {
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
-
 		if(!_passwordDialog.isNull() && _hostPassword.isEmpty())
 			_state = WAIT_FOR_HOST_PASSWORD; // password needed
-		else if(_tls)
-			_state = WAIT_FOR_ENCRYPTED; // wait for STARTTLS before hosting
 		else
 			sendHostCommand();
-
 
 	} else if(msg.startsWith("TITLE")) {
 		// title is not shown in this mode
@@ -268,10 +307,9 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QString hostmsg = QString("HOST %1 %2 \"%3\"")
+	QString hostmsg = QString("HOST %1 %2")
 			.arg(DRAWPILE_PROTO_MINOR_VERSION)
-			.arg(_userid)
-			.arg(_address.userName());
+			.arg(_userid);
 
 	if(!_hostPassword.isEmpty())
 		hostmsg += ";" + _hostPassword;
@@ -284,11 +322,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 {
 	Q_ASSERT(_mode == JOIN);
 
-	if(_tls && msg == "STARTTLS") {
-		startTls();
-		return;
-
-	} else if(msg.startsWith("NOSESSION")) {
+	if(msg.startsWith("NOSESSION")) {
 		// No sessions
 		if(!_multisession) {
 			failLogin(tr("Session does not exist yet!"));
@@ -376,17 +410,7 @@ void LoginHandler::expectNoErrors(const QString &msg)
 	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE"))
 		return;
 
-	if(_tls && msg == "STARTTLS") {
-		startTls();
-
-	} else if(msg.startsWith("ERROR")) {
-		const QString ecode = msg.mid(msg.indexOf(' ') + 1);
-		qWarning() << "Server error while waiting for password:" << ecode;
-
-		failLogin(tr("An error occurred"));
-	} else {
-		qWarning() << "Unexpected login message:" << msg;
-	}
+	qWarning() << "Unexpected login message:" << msg;
 }
 
 void LoginHandler::expectLoginOk(const QString &msg)
@@ -394,26 +418,6 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE")) {
 		// We can still get session list updates here. They are safe to ignore.
 		return;
-	}
-
-	if(msg.startsWith("ERROR ")) {
-		const QString ecode = msg.mid(msg.indexOf(' ') + 1);
-		qWarning() << "Login error:" << ecode;
-		QString error;
-		if(ecode == "BADPASS")
-			error = tr("Incorrect password");
-		else if(ecode == "BADNAME")
-			error = tr("Invalid username");
-		else if(ecode == "NAMEINUSE")
-			error = tr("Username already taken!");
-		else if(ecode == "CLOSED")
-			error = tr("Session is closed");
-		else
-			error = tr("Unknown error (%1)").arg(ecode);
-
-		failLogin(error);
-		return;
-
 	}
 
 	if(msg.startsWith("OK ")) {
@@ -468,9 +472,6 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 		showPasswordDialog(tr("Session is password protected"), tr("Enter session password"));
 		_state = WAIT_FOR_JOIN_PASSWORD;
 
-	} else if(_tls) {
-		_state = WAIT_FOR_ENCRYPTED;
-
 	} else {
 		sendJoinCommand();
 	}
@@ -478,9 +479,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 
 void LoginHandler::sendJoinCommand()
 {
-	QString joinmsg = QString("JOIN %1 \"%2\"")
-			.arg(_selectedId)
-			.arg(_address.userName());
+	QString joinmsg = QString("JOIN %1").arg(_selectedId);
 
 	if(!_joinPassword.isEmpty()) {
 		joinmsg.append(';');
@@ -536,7 +535,6 @@ namespace {
 void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 {
 	QString filename = file.absoluteFilePath();
-	qDebug() << "Saving new certificate" << filename;
 
 	QFile certOut(filename);
 
@@ -613,9 +611,6 @@ void LoginHandler::tlsStarted()
 			_certDialog->show();
 			_server->_securityLevel = TcpServer::NEW_HOST;
 
-			if(_state == WAIT_FOR_ENCRYPTED)
-				_state = WAIT_FOR_ACCEPT_CERT;
-
 			return;
 
 		} else {
@@ -634,6 +629,10 @@ void LoginHandler::tlsStarted()
 
 void LoginHandler::tlsAccepted()
 {
+	// STARTTLS is the very first command that must be sent, if sent at all
+	// Next up is user authentication.
+	sendIdentity();
+#if 0
 	if(_selectorDialog)
 		_selectorDialog->show();
 
@@ -643,12 +642,34 @@ void LoginHandler::tlsAccepted()
 		else
 			sendJoinCommand();
 	}
+#endif
 }
 
 void LoginHandler::cancelLogin()
 {
 	_state = ABORT_LOGIN;
 	_server->loginFailure(tr("Cancelled"), true);
+}
+
+void LoginHandler::handleError(const QString &msg)
+{
+	const QString ecode = msg.mid(msg.indexOf(' ') + 1);
+	qWarning() << "Login error:" << ecode;
+	QString error;
+	if(ecode == "BADPASS")
+		error = tr("Incorrect password");
+	else if(ecode == "BADNAME")
+		error = tr("Invalid username");
+	else if(ecode == "NAMEINUSE")
+		error = tr("Username already taken!");
+	else if(ecode == "CLOSED")
+		error = tr("Session is closed");
+	else if(ecode == "BANNED")
+		error = tr("This username has been banned");
+	else
+		error = tr("Unknown error (%1)").arg(ecode);
+
+	failLogin(error);
 }
 
 void LoginHandler::failLogin(const QString &message)
@@ -659,6 +680,9 @@ void LoginHandler::failLogin(const QString &message)
 
 void LoginHandler::send(const QString &message)
 {
+#ifdef DEBUG_LOGIN
+	qDebug() << "login -->" << message;
+#endif
 	_server->sendMessage(protocol::MessagePtr(new protocol::Login(message)));
 }
 

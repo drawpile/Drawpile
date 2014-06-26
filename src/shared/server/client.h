@@ -90,7 +90,15 @@ public:
 	 * @brief Does this user have session operator privileges?
 	 * @return
 	 */
-	bool isOperator() const { return _isOperator; }
+	bool isOperator() const { return _isOperator || _isModerator; }
+
+	/**
+	 * @brief Is this user a moderator?
+	 * Moderators can access any session, always have OP status and cannot be kicked by other users.
+	 * @return
+	 */
+	bool isModerator() const { return _isModerator; }
+	void setModerator(bool mod) { _isModerator = mod; }
 
 	/**
 	 * @brief Is this user locked individually?
@@ -306,6 +314,9 @@ private:
 
 	//! Does this user have operator privileges?
 	bool _isOperator;
+
+	//! Does this user have moderator privileges?
+	bool _isModerator;
 
 	//! Is this user locked? (by an operator)
 	bool _userLock;

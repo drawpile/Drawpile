@@ -26,13 +26,14 @@ set (
 	server/sessiondesc.cpp
 	server/sessionstore.cpp
 	server/loginhandler.cpp
-        server/opcommands.cpp
+	server/opcommands.cpp
+	server/identitymanager.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})
 
-target_link_libraries(${DPSHAREDLIB} Qt5::Network)
+target_link_libraries(${DPSHAREDLIB} Qt5::Network Qt5::Concurrent)
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:  
-qt5_use_modules(${DPSHAREDLIB} Network)
+qt5_use_modules(${DPSHAREDLIB} Network Concurrent)
 

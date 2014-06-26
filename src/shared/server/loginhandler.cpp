@@ -22,6 +22,7 @@
 #include "session.h"
 #include "sessionserver.h"
 #include "sessiondesc.h"
+#include "identitymanager.h"
 
 #include "../net/login.h"
 #include "../util/logger.h"
@@ -30,6 +31,7 @@
 
 #include <QStringList>
 #include <QRegularExpression>
+#include <QFutureWatcher>
 
 namespace server {
 
@@ -47,7 +49,7 @@ void LoginHandler::startLoginProcess()
 {
 	QStringList flags;
 
-	_state = WAIT_FOR_LOGIN;
+	_state = WAIT_FOR_IDENT;
 
 	if(_server->sessionLimit()>1)
 		flags << "MULTI";
@@ -61,6 +63,11 @@ void LoginHandler::startLoginProcess()
 		flags << "SECURE";
 		_state = WAIT_FOR_SECURE;
 	}
+	if(_server->identityManager()) {
+		flags << "IDENT";
+		if(_server->identityManager()->isAuthorizedOnly())
+			flags << "NOGUEST";
+	}
 
 	// Start by telling who we are
 	send(QString("DRAWPILE %1 %2")
@@ -69,10 +76,6 @@ void LoginHandler::startLoginProcess()
 	);
 
 	// Client should disconnect upon receiving the above if the version number does not match
-
-	// In secure mode, the initial announcement is made after the connection has been secured.
-	if(_state == WAIT_FOR_LOGIN)
-		announceServerInfo();
 }
 
 void LoginHandler::announceServerInfo()
@@ -95,6 +98,9 @@ void LoginHandler::announceServerInfo()
 
 void LoginHandler::announceSession(const SessionDescription &session)
 {
+	if(_state != WAIT_FOR_LOGIN)
+		return;
+
 	Q_ASSERT(!session.id.isEmpty());
 
 	QStringList flags;
@@ -122,6 +128,9 @@ void LoginHandler::announceSession(const SessionDescription &session)
 
 void LoginHandler::announceSessionEnd(const QString &id)
 {
+	if(_state != WAIT_FOR_LOGIN)
+		return;
+
 	send(QString("NOSESSION %1").arg(id));
 }
 
@@ -135,6 +144,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	QString message = msg.cast<protocol::Login>().message();
 
 	if(_state == WAIT_FOR_SECURE) {
+		// Secure mode: wait for STARTTLS before doing anything
 		if(message == "STARTTLS") {
 			handleStarttls();
 		} else {
@@ -142,13 +152,28 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 			logger::warning() << "Client from" << _client->peerAddress() << "didn't secure connection!";
 			_client->disconnectError("must secure connection first");
 		}
+
+	} else if(_state == WAIT_FOR_IDENT) {
+		// Wait for user identification before moving on to session listing
+		if(message == "STARTTLS") {
+			handleStarttls();
+		} else if(message.startsWith("IDENT ")) {
+			handleIdentMessage(message);
+		} else {
+			logger::warning() << "Got invalid login message from" << _client->peerAddress();
+			_client->disconnectError("invalid message");
+		}
+
+	} else if(_state == WAIT_FOR_IDENTITYMANAGER_REPLY) {
+		// Client shouldn't shouldn't send anything in this state
+		logger::warning() << "Got login message from" << _client->peerAddress() << "while waiting for identity manager reply";
+		_client->disconnectError("unexpected message");
+
 	} else {
 		if(message.startsWith("HOST ")) {
 			handleHostMessage(message);
 		} else if(message.startsWith("JOIN ")) {
 			handleJoinMessage(message);
-		} else if(message == "STARTTLS") {
-			handleStarttls();
 		} else {
 			logger::warning() << "Got invalid login message from" << _client->peerAddress();
 			_client->disconnectError("invalid message");
@@ -156,15 +181,91 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	}
 }
 
+void LoginHandler::handleIdentMessage(const QString &message)
+{
+	const QRegularExpression re("\\IDENT \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	auto m = re.match(message);
+	if(!m.hasMatch()) {
+		send("ERROR SYNTAX");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	QString username = m.captured(1);
+	QString password;
+	if(m.lastCapturedIndex() == 2)
+		password = m.captured(2);
+
+	if(!validateUsername(username)) {
+		send("ERROR BADNAME");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	if(_server->identityManager()) {
+		auto *wc = new QFutureWatcher<IdentityResult>(this);
+		connect(wc, &QFutureWatcher<IdentityResult>::finished, [this, username, password, wc]() {
+			IdentityResult result = wc->future();
+			QString error;
+			switch(result.status) {
+			case IdentityResult::NOTFOUND: guestLogin(result.canonicalName); break;
+			case IdentityResult::BADPASS: error = "BADPASS"; break;
+			case IdentityResult::BANNED: error = "BANNED"; break;
+			case IdentityResult::OK: {
+				// Yay, username and password were valid!
+				QString okstr = "IDENTIFIED USER ";
+				if(result.flags.isEmpty())
+					okstr += "-";
+				else
+					okstr += result.flags.join(",");
+
+				_state = WAIT_FOR_LOGIN;
+				_username = result.canonicalName;
+				_userflags = result.flags;
+				send(okstr);
+				announceServerInfo();
+				} break;
+			}
+
+			if(!error.isEmpty()) {
+				send("ERROR " + error);
+				_client->disconnectError("login error");
+			}
+		});
+
+		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
+		wc->setFuture(_server->identityManager()->checkLogin(username, password));
+
+	} else {
+		if(!password.isNull()) {
+			// if we have no identity manager, we can't accept passwords
+			send("ERROR NOIDENT");
+			_client->disconnectError("login error");
+			return;
+		}
+		guestLogin(username);
+	}
+}
+
+void LoginHandler::guestLogin(const QString &username)
+{
+	_username = username;
+	_state = WAIT_FOR_LOGIN;
+	send("IDENTIFIED GUEST -");
+	announceServerInfo();
+}
+
 void LoginHandler::handleHostMessage(const QString &message)
 {
+	Q_ASSERT(!_username.isEmpty());
+
 	if(_server->sessionCount() >= _server->sessionLimit()) {
 		send("ERROR CLOSED");
 		_client->disconnectError("login error");
 		return;
 	}
 
-	const QRegularExpression re("\\AHOST (\\d+) (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	const QRegularExpression re("\\AHOST (\\d+) (\\d+)\\s*(?:;(.+))?\\z");
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
@@ -175,22 +276,16 @@ void LoginHandler::handleHostMessage(const QString &message)
 	int minorVersion = m.captured(1).toInt();
 	int userId = m.captured(2).toInt();
 
-	QString username = m.captured(3);
-	if(!validateUsername(username)) {
-		send("ERROR BADNAME");
-		_client->disconnectError("login error");
-		return;
-	}
-
-	QString password = m.captured(4);
-	if(password != _server->hostPassword()) {
+	QString password = m.captured(3);
+	if(password != _server->hostPassword() && !_userflags.contains("HOST")) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;
 	}
 
 	_client->setId(userId);
-	_client->setUsername(username);
+	_client->setUsername(_username);
+	_client->setModerator(_userflags.contains("MOD"));
 
 	// Mark login phase as complete. No more login messages will be sent to this user
 	send(QString("OK %1").arg(userId));
@@ -206,7 +301,11 @@ void LoginHandler::handleHostMessage(const QString &message)
 
 void LoginHandler::handleJoinMessage(const QString &message)
 {
-	const QRegularExpression re("\\AJOIN ([a-zA-Z0-9:-]{1,64}) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	Q_ASSERT(!_username.isEmpty());
+
+	bool isModerator = _userflags.contains("MOD");
+
+	const QRegularExpression re("\\AJOIN ([a-zA-Z0-9:-]{1,64})\\s*(?:;(.+))?\\z");
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
@@ -222,23 +321,16 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	if(sessiondesc.closed) {
+	if(sessiondesc.closed && !isModerator) {
 		send("ERROR CLOSED");
 		_client->disconnectError("login error");
 		return;
 	}
 
-	QString username = m.captured(2);
-	QString password = m.captured(3);
+	QString password = m.captured(2);
 
-	if(password != sessiondesc.password) {
+	if(password != sessiondesc.password && !isModerator) {
 		send("ERROR BADPASS");
-		_client->disconnectError("login error");
-		return;
-	}
-
-	if(!validateUsername(username)) {
-		send("ERROR BADNAME");
 		_client->disconnectError("login error");
 		return;
 	}
@@ -254,7 +346,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	if(session->getClientByUsername(username)) {
+	if(session->getClientByUsername(_username)) {
 #ifdef NDEBUG
 		send("ERROR NAMEINUSE");
 		_client->disconnectError("login error");
@@ -263,12 +355,13 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << username << "for" << *session << "ignored because this is a debug build.";
+		logger::warning() << "Username clash" << _username << "for" << *session << "ignored because this is a debug build.";
 #endif
 	}
 
 	// Ok, join the session
-	_client->setUsername(username);
+	_client->setUsername(_username);
+	_client->setModerator(isModerator);
 	session->assignId(_client);
 
 	send(QString("OK %1").arg(_client->id()));
@@ -296,8 +389,7 @@ void LoginHandler::handleStarttls()
 
 	send("STARTTLS");
 	_client->startTls();
-	_state = WAIT_FOR_LOGIN;
-	announceServerInfo();
+	_state = WAIT_FOR_IDENT;
 }
 
 void LoginHandler::send(const QString &msg)

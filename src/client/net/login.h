@@ -159,17 +159,18 @@ private slots:
 private:
 	enum State {
 		EXPECT_HELLO,
+		EXPECT_IDENTIFIED,
 		EXPECT_SESSIONLIST_TO_JOIN,
 		EXPECT_SESSIONLIST_TO_HOST,
 		WAIT_FOR_JOIN_PASSWORD,
 		WAIT_FOR_HOST_PASSWORD,
-		WAIT_FOR_ENCRYPTED,
-		WAIT_FOR_ACCEPT_CERT,
 		EXPECT_LOGIN_OK,
 		ABORT_LOGIN
 	};
 
 	void expectHello(const QString &msg);
+	void sendIdentity();
+	void expectIdentified(const QString &msg);
 	void showPasswordDialog(const QString &title, const QString &text);
 	void expectSessionDescriptionHost(const QString &msg);
 	void sendHostCommand();
@@ -179,6 +180,7 @@ private:
 	void expectLoginOk(const QString &msg);
 	void startTls();
 	void send(const QString &message);
+	void handleError(const QString &msg);
 
 	Mode _mode;
 	QUrl _address;
@@ -209,6 +211,9 @@ private:
 	// Server flags
 	bool _multisession;
 	bool _tls;
+	bool _canAuth;
+	bool _mustAuth;
+	bool _needHostPassword;
 };
 
 }

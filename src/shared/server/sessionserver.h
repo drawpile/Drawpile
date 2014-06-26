@@ -26,6 +26,7 @@ namespace server {
 class SessionState;
 class Client;
 class SessionStore;
+class IdentityManager;
 
 /**
  * @brief Session manager
@@ -108,6 +109,16 @@ public:
 	 * @param store
 	 */
 	void setSessionStore(SessionStore *store);
+
+	/**
+	 * @brief Set the user identity manager to use (if any)
+	 *
+	 * Setting this enables authenticated user logins.
+	 *
+	 * @param identman
+	 */
+	void setIdentityManager(IdentityManager *identman);
+	IdentityManager *identityManager() const { return _identman; }
 
 	/**
 	 * @brief Add a new client
@@ -244,6 +255,7 @@ private:
 	QList<SessionState*> _sessions;
 	QList<Client*> _lobby;
 	SessionStore *_store;
+	IdentityManager *_identman;
 	int _nextId;
 
 	QString _title;

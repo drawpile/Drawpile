@@ -33,6 +33,7 @@ namespace server {
 SessionServer::SessionServer(QObject *parent)
 	: QObject(parent),
 	_store(nullptr),
+	_identman(nullptr),
 	_nextId(1),
 	_sessionLimit(1),
 	_historyLimit(0),

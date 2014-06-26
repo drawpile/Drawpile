@@ -19,9 +19,10 @@
 #ifndef DP_SERVER_LOGINHANDLER_H
 #define DP_SERVER_LOGINHANDLER_H
 
-#include <QObject>
-
 #include "../net/message.h"
+
+#include <QObject>
+#include <QStringList>
 
 namespace server {
 
@@ -29,6 +30,7 @@ class Client;
 class SessionState;
 class SessionServer;
 class SessionDescription;
+struct IdentityResult;
 
 /**
  * @brief Perform the client login handshake
@@ -41,23 +43,28 @@ class SessionDescription;
  * - client should disconnect at this point if proto-major does not match -
  *
  * C: STARTTLS (if "TLS" is in FEATURES)
- * S: STARTTLS (and starts SSL handshake)
+ * S: STARTTLS (starts SSL handshake)
  *
- * S: TITLE <title> (if set)
+ * C: IDENT "<username>" [;<password⁵>]
+ * S: IDENTIFIED <GUEST|USER> <flags⁶>
+ *  - or -
+ * S: ERROR <BADNAME|BADPASS|BANNED>
+ *
+ * S: TITLE <server title> (if set)
  *
  * S: SESSION <id²> <proto-minor> <FLAGS³> <user-count> "<founder>" ;<title>
  *  - or -
  * S: NOSESSION [id⁴]
  *
- * - Note. Server may send updates to session list and title until the client has made a choice.
+ * - Note. Server may send updates to session list and title until the client has made a choice -
  *
- * C: HOST <proto-minor> <userid> "<username>" [;server password⁵]
+ * C: HOST <proto-minor> <userid> [;<server password⁷>]
  *  - or -
- * C: JOIN <id> "<username>" [;password]
+ * C: JOIN <id> [;<password>]
  *
  * S: OK <userid>
  *  - or -
- * S: ERROR <NOSESSION|BADPASS|BADNAME|NAMEINUSE|SYNTAX|CLOSED>
+ * S: ERROR <NOSESSION|NAMEINUSE|SYNTAX|CLOSED>
  *
  * Notes:
  * ------
@@ -69,6 +76,8 @@ class SessionDescription;
  *    TLS     - the server supports SSL/TLS encryption
  *    SECURE  - user must initiate encryption before login can proceed
  *    PERSIST - persistent sessions are supported
+ *    IDENT   - non-guest access is supported
+ *    NOGUEST - guest access is disabled (users must identify with password)
  *
  * 2) ID is a string in the format [a-zA-Z0-9:-]{1,64} (future proofing: the server currently produces only numeric IDs.)
  *
@@ -81,7 +90,14 @@ class SessionDescription;
  * 4) If the ID is specified, this command indicates the session has just terminated.
  *    Otherwise, it means there are no available session at all.
  *
- * 5) The server password must be provided if HOSTP was listed in server features.
+ * 5) If password is omitted the user logs in as a guest
+ *
+ * 6) Possible user flags (comma separated list) are:
+ *    -     - no flags
+ *    MOD   - user is a moderator
+ *    HOST  - user may host sessions without providing the hosting password
+ *
+ * 7) The server password must be provided if HOSTP was listed in server features.
  */
 class LoginHandler : public QObject
 {
@@ -100,13 +116,17 @@ private slots:
 private:
 	enum State {
 		WAIT_FOR_SECURE,
+		WAIT_FOR_IDENT,
+		WAIT_FOR_IDENTITYMANAGER_REPLY,
 		WAIT_FOR_LOGIN
 	};
 
 	void announceServerInfo();
+	void handleIdentMessage(const QString &message);
 	void handleHostMessage(const QString &message);
 	void handleJoinMessage(const QString &message);
 	void handleStarttls();
+	void guestLogin(const QString &username);
 	void send(const QString &msg);
 
 	bool validateUsername(const QString &name);
@@ -115,6 +135,8 @@ private:
 	SessionServer *_server;
 
 	State _state;
+	QString _username;
+	QStringList _userflags;
 	bool _complete;
 };
 

@@ -163,6 +163,9 @@ void kickUser(Client *client, const QString &, const QStringList &tokens)
 	if(target == client)
 		throw OpError("cannot kick self");
 
+	if(target->isModerator())
+		throw OpError("cannot kick moderators");
+
 	target->disconnectKick(client->username());
 }
 
