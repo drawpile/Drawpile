@@ -47,6 +47,8 @@ class SessionDescription;
  * C: IDENT "<username>" [;<password⁵>]
  * S: IDENTIFIED <GUEST|USER> <flags⁶>
  *  - or -
+ * S: NEEDPASS (cannot login as guest. Client may retry IDENT with a password attached)
+ *  - or -
  * S: ERROR <BADNAME|BADPASS|BANNED>
  *
  * S: TITLE <server title> (if set)

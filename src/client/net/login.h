@@ -219,7 +219,7 @@ private:
 	bool _tls;
 	bool _canAuth;
 	bool _mustAuth;
-	bool _wantToAuth;
+	bool _needUserPassword;
 	bool _needHostPassword;
 };
 

@@ -169,6 +169,7 @@ void LoginHandler::expectHello(const QString &msg)
 	_needHostPassword = false;
 	_canAuth = false;
 	_mustAuth = false;
+	_needUserPassword = false;
 	for(const QString &flag : flags) {
 		if(flag == "-") {
 			// no flags
@@ -189,22 +190,6 @@ void LoginHandler::expectHello(const QString &msg)
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
-	}
-
-	// Warn user if they wanted to authenticate, but server only supports guests
-	_wantToAuth = _address.fragment().split(",", QString::SkipEmptyParts).contains("ident");
-
-	if(!_canAuth && _wantToAuth) {
-		// Server is waiting for our response at this point, so we can safely wait for
-		// the user to click OK.
-		QMessageBox msg(QMessageBox::Information, tr("Cannot authenticate"), tr("This server only supports guest logins"), QMessageBox::Ok|QMessageBox::Cancel, _widgetParent);
-		msg.button(QMessageBox::Ok)->setText(tr("Continue"));
-		if(msg.exec()!=QMessageBox::Ok) {
-			cancelLogin();
-			return;
-		}
-
-		_wantToAuth = false;
 	}
 
 	// Show session selector if in multisession mode
@@ -291,7 +276,7 @@ void LoginHandler::passwordSet(const QString &password)
 
 void LoginHandler::prepareToSendIdentity()
 {
-	if(_wantToAuth || _mustAuth) {
+	if(_mustAuth || _needUserPassword) {
 		dialogs::LoginDialog *logindlg = new dialogs::LoginDialog(_widgetParent);
 		logindlg->setWindowModality(Qt::WindowModal);
 		logindlg->setAttribute(Qt::WA_DeleteOnClose);
@@ -299,10 +284,10 @@ void LoginHandler::prepareToSendIdentity()
 		logindlg->setWindowTitle(_address.host());
 		logindlg->setUsername(_address.userName(), true);
 
-		if(_mustAuth && !_wantToAuth)
+		if(_mustAuth)
 			logindlg->setIntroText(tr("This server does not allow guest logins"));
 		else
-			logindlg->setIntroText(QString());
+			logindlg->setIntroText(tr("Password needed to log in as \"%1\"").arg(_address.userName()));
 
 
 		connect(logindlg, SIGNAL(rejected()), this, SLOT(cancelLogin()));
@@ -337,6 +322,13 @@ void LoginHandler::sendIdentity()
 
 void LoginHandler::expectIdentified(const QString &msg)
 {
+	if(msg == "NEEDPASS") {
+		// Looks like guest logins are not possible
+		_needUserPassword = true;
+		prepareToSendIdentity();
+		return;
+	}
+
 	const QRegularExpression re("\\AIDENTIFIED (USER|GUEST) (-|[\\w,]+)\\z");
 	auto m = re.match(msg);
 

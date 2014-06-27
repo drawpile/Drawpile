@@ -206,7 +206,7 @@ void LoginHandler::handleIdentMessage(const QString &message)
 	if(_server->identityManager()) {
 		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
 		IdentityResult *result = _server->identityManager()->checkLogin(username, password);
-		connect(result, &IdentityResult::resultAvailable, [this, username](IdentityResult *result) {
+		connect(result, &IdentityResult::resultAvailable, [this, username, password](IdentityResult *result) {
 			QString error;
 			Q_ASSERT(result->status() != IdentityResult::INPROGRESS);
 			switch(result->status()) {
@@ -217,7 +217,15 @@ void LoginHandler::handleIdentMessage(const QString &message)
 					break;
 				}
 				// fall through to badpass if guest logins are disabled
-			case IdentityResult::BADPASS: error = "BADPASS"; break;
+			case IdentityResult::BADPASS:
+				if(password.isEmpty()) {
+					// No password: tell client that guest login is not possible (for this username)
+					_state = WAIT_FOR_IDENT;
+					send("NEEDPASS");
+					return;
+				}
+				error = "BADPASS";
+				break;
 			case IdentityResult::BANNED: error = "BANNED"; break;
 			case IdentityResult::OK: {
 				// Yay, username and password were valid!

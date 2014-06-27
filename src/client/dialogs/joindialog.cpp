@@ -42,7 +42,6 @@ JoinDialog::JoinDialog(QWidget *parent)
 	cfg.beginGroup("history");
 	_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
 	_ui->username->setText(cfg.value("username").toString());
-	_ui->guestlogin->setChecked(cfg.value("guestlogin", true).toBool());
 
 	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
 }
@@ -52,7 +51,6 @@ void JoinDialog::rememberSettings() const
 	QSettings cfg;
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
-	cfg.setValue("guestlogin", getGuestLogin());
 	QStringList hosts;
 	// Move current item to the top of the list
 	const QString current = _ui->address->currentText();
@@ -76,11 +74,6 @@ QString JoinDialog::getAddress() const {
 
 QString JoinDialog::getUserName() const {
 	return _ui->username->text();
-}
-
-bool JoinDialog::getGuestLogin() const
-{
-	return _ui->guestlogin->isChecked();
 }
 
 }

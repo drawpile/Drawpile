@@ -38,9 +38,6 @@ public:
 	//! Get the username
 	QString getUserName() const;
 
-	//! Should we try to log in as a guest?
-	bool getGuestLogin() const;
-
 	//! Store settings in configuration file
 	void rememberSettings() const;
 

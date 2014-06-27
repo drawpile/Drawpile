@@ -954,11 +954,6 @@ void MainWindow::host()
 				address = QUrl(scheme + dlg->getRemoteAddress(),
 						QUrl::TolerantMode);
 
-				if(!dlg->getGuestLogin())
-					address.setFragment("ident", QUrl::DecodedMode);
-				else
-					address.setFragment(QString());
-
 			} else {
 				address.setHost(WhatIsMyIp::localAddress());
 			}
@@ -1031,11 +1026,6 @@ void MainWindow::join()
 				return;
 			}
 			address.setUserName(dlg->getUserName());
-
-			if(!dlg->getGuestLogin())
-				address.setFragment("ident", QUrl::DecodedMode);
-			else
-				address.setFragment(QString());
 
 			// Remember some settings
 			dlg->rememberSettings();
