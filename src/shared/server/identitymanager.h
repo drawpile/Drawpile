@@ -72,7 +72,9 @@ public:
 	explicit IdentityManager(QObject *parent = 0);
 
 	/**
-	 * @brief Check the given username and passowrd
+	 * @brief Check the given username and password
+	 *
+	 * The username query is case insensitive
 	 */
 	IdentityResult *checkLogin(const QString &username, const QString &password);
 
