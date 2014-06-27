@@ -220,4 +220,10 @@ bool HostDialog::getPersistentMode() const
 	return ui_->persistentSession->isChecked();
 }
 
+bool HostDialog::getGuestLogin() const
+{
+	// The local server supports only guest logins
+	return !useRemoteAddress() || ui_->guestlogin->isChecked();
+}
+
 }

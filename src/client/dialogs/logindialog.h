@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,39 +16,31 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef JOINDIALOG_H
-#define JOINDIALOG_H
+#ifndef LOGINDIALOG_H
+#define LOGINDIALOG_H
 
 #include <QDialog>
 
-class Ui_JoinDialog;
+class Ui_LoginDialog;
 
 namespace dialogs {
 
-class JoinDialog : public QDialog
+class LoginDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	JoinDialog(QWidget *parent=0);
-	~JoinDialog();
+	explicit LoginDialog(QWidget *parent = 0);
 
-	//! Get the host address
-	QString getAddress() const;
+	void setIntroText(const QString &text);
+	void setUsername(const QString &username, bool enabled);
 
-	//! Get the username
-	QString getUserName() const;
-
-	//! Should we try to log in as a guest?
-	bool getGuestLogin() const;
-
-	//! Store settings in configuration file
-	void rememberSettings() const;
+signals:
+	void login(const QString &password, const QString &username);
 
 private:
-	Ui_JoinDialog *_ui;
+	Ui_LoginDialog *_ui;
 };
 
 }
 
-#endif
-
+#endif // LOGINDIALOG_H

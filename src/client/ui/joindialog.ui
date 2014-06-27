@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>118</height>
+    <width>330</width>
+    <height>120</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,3">
        <item>
         <widget class="QLineEdit" name="username">
          <property name="mandatoryfield" stdset="0">
@@ -79,6 +79,16 @@
        </item>
       </layout>
      </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="guestlogin">
+       <property name="text">
+        <string>Log in as a guest</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -96,6 +106,7 @@
  <tabstops>
   <tabstop>address</tabstop>
   <tabstop>username</tabstop>
+  <tabstop>guestlogin</tabstop>
   <tabstop>buttons</tabstop>
  </tabstops>
  <resources/>

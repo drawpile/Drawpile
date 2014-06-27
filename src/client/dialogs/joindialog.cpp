@@ -31,19 +31,20 @@ namespace dialogs {
 JoinDialog::JoinDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	ui_ = new Ui_JoinDialog;
-	ui_->setupUi(this);
-	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
-	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setValidator(new UsernameValidator(this));
+	_ui = new Ui_JoinDialog;
+	_ui->setupUi(this);
+	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
+	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	_ui->username->setValidator(new UsernameValidator(this));
 
 	// Set defaults
 	QSettings cfg;
 	cfg.beginGroup("history");
-	ui_->address->insertItems(0, cfg.value("recenthosts").toStringList());
-	ui_->username->setText(cfg.value("username").toString());
+	_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
+	_ui->username->setText(cfg.value("username").toString());
+	_ui->guestlogin->setChecked(cfg.value("guestlogin", true).toBool());
 
-	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
+	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
 }
 
 void JoinDialog::rememberSettings() const
@@ -51,29 +52,35 @@ void JoinDialog::rememberSettings() const
 	QSettings cfg;
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
+	cfg.setValue("guestlogin", getGuestLogin());
 	QStringList hosts;
 	// Move current item to the top of the list
-	const QString current = ui_->address->currentText();
-	int curindex = ui_->address->findText(current);
+	const QString current = _ui->address->currentText();
+	int curindex = _ui->address->findText(current);
 	if(curindex>=0)
-		ui_->address->removeItem(curindex);
+		_ui->address->removeItem(curindex);
 	hosts << current;
-	for(int i=0;i<ui_->address->count();++i)
-		hosts << ui_->address->itemText(i);
+	for(int i=0;i<_ui->address->count();++i)
+		hosts << _ui->address->itemText(i);
 	cfg.setValue("recenthosts", hosts);
 }
 
 JoinDialog::~JoinDialog()
 {
-	delete ui_;
+	delete _ui;
 }
 
 QString JoinDialog::getAddress() const {
-	return ui_->address->currentText();
+	return _ui->address->currentText();
 }
 
 QString JoinDialog::getUserName() const {
-	return ui_->username->text();
+	return _ui->username->text();
+}
+
+bool JoinDialog::getGuestLogin() const
+{
+	return _ui->guestlogin->isChecked();
 }
 
 }

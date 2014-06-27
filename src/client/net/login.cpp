@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include "dialogs/selectsessiondialog.h"
+#include "dialogs/logindialog.h"
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
@@ -37,6 +38,7 @@
 #include <QFile>
 #include <QPushButton>
 #include <QHostAddress>
+#include <QMessageBox>
 
 //#define DEBUG_LOGIN
 
@@ -88,6 +90,12 @@ void LoginHandler::serverDisconnected()
 
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
+	if(message->type() == protocol::MSG_DISCONNECT) {
+		// server reports login errors with MSG_LOGIN, so there is nothing
+		// of more interest here.
+		return;
+	}
+
 	if(message->type() != protocol::MSG_LOGIN) {
 		qWarning() << "Login error: got message type" << message->type() << "when expected type 0";
 		failLogin(tr("Invalid state"));
@@ -102,11 +110,13 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 	// Overall, the login process is:
 	// 1. wait for server greeting
-	// 2. get hosting password from user if needed
-	// 3. wait for session list
-	// 4. wait for user to finish typing host/join password if needed
-	// 5. send host/join command
-	// 6. wait for OK
+	// 2. Upgrade to secure connection (if available)
+	// 3. Authenticate user (or do guest login)
+	// 4. get hosting password from user if needed
+	// 5. wait for session list
+	// 6. wait for user to finish typing host/join password if needed
+	// 7. send host/join command
+	// 8. wait for OK
 
 	if(msg.startsWith("ERROR")) {
 		// The server disconnects us right after sending the error message
@@ -116,6 +126,8 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 	switch(_state) {
 	case EXPECT_HELLO: expectHello(msg); break;
+	case EXPECT_STARTTLS: expectStartTls(msg); break;
+	case WAIT_FOR_LOGIN_PASSWORD: expectNothing(msg); break;
 	case EXPECT_IDENTIFIED: expectIdentified(msg); break;
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
 	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
@@ -124,6 +136,12 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	case EXPECT_LOGIN_OK: expectLoginOk(msg); break;
 	case ABORT_LOGIN: /* ignore messages in this state */ break;
 	}
+}
+
+void LoginHandler::expectNothing(const QString &msg)
+{
+	qWarning() << "Got login message" << msg << "while not expecting anything!";
+	failLogin(tr("Incompatible server"));
 }
 
 void LoginHandler::expectHello(const QString &msg)
@@ -173,6 +191,22 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 	}
 
+	// Warn user if they wanted to authenticate, but server only supports guests
+	_wantToAuth = _address.fragment().split(",", QString::SkipEmptyParts).contains("ident");
+
+	if(!_canAuth && _wantToAuth) {
+		// Server is waiting for our response at this point, so we can safely wait for
+		// the user to click OK.
+		QMessageBox msg(QMessageBox::Information, tr("Cannot authenticate"), tr("This server only supports guest logins"), QMessageBox::Ok|QMessageBox::Cancel, _widgetParent);
+		msg.button(QMessageBox::Ok)->setText(tr("Continue"));
+		if(msg.exec()!=QMessageBox::Ok) {
+			cancelLogin();
+			return;
+		}
+
+		_wantToAuth = false;
+	}
+
 	// Show session selector if in multisession mode
 	if(_mode == JOIN && _multisession) {
 		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
@@ -187,6 +221,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Start secure mode if possible
 	if(QSslSocket::supportsSsl() && _tls) {
+		_state = EXPECT_STARTTLS;
 		send("STARTTLS");
 
 	} else {
@@ -202,13 +237,20 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 
 		_tls = false;
-		sendIdentity();
+		prepareToSendIdentity();
 	}
+}
 
-	// Next, we expect the session description
+void LoginHandler::expectStartTls(const QString &msg)
+{
+	Q_ASSERT(_tls);
+	if(msg == "STARTTLS") {
+		startTls();
 
-	//_state = (_mode == HOST) ? EXPECT_SESSIONLIST_TO_HOST : EXPECT_SESSIONLIST_TO_JOIN;
-	_state = EXPECT_IDENTIFIED;
+	} else {
+		qWarning() << "Login error. Expected STARTTLS, got:" << msg;
+		failLogin(tr("Incompatible server"));
+	}
 }
 
 void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
@@ -247,17 +289,54 @@ void LoginHandler::passwordSet()
 	}
 }
 
+void LoginHandler::prepareToSendIdentity()
+{
+	if(_wantToAuth || _mustAuth) {
+		dialogs::LoginDialog *logindlg = new dialogs::LoginDialog(_widgetParent);
+		logindlg->setWindowModality(Qt::WindowModal);
+		logindlg->setAttribute(Qt::WA_DeleteOnClose);
+
+		logindlg->setWindowTitle(_address.host());
+		logindlg->setUsername(_address.userName(), true);
+
+		if(_mustAuth && !_wantToAuth)
+			logindlg->setIntroText(tr("This server does not allow guest logins"));
+		else
+			logindlg->setIntroText(QString());
+
+
+		connect(logindlg, SIGNAL(rejected()), this, SLOT(cancelLogin()));
+		connect(logindlg, SIGNAL(login(QString,QString)), this, SLOT(selectIdentity(QString,QString)));
+
+		_state = WAIT_FOR_LOGIN_PASSWORD;
+		logindlg->show();
+
+	} else {
+		sendIdentity();
+	}
+}
+
+void LoginHandler::selectIdentity(const QString &password, const QString &username)
+{
+	_address.setUserName(username);
+	_address.setPassword(password);
+	sendIdentity();
+}
+
 void LoginHandler::sendIdentity()
 {
-	send(QString("IDENT \"%1\"").arg(_address.userName()));
+	QString password = _address.password();
+	QString ident = QString("IDENT \"%1\"").arg(_address.userName());
+
+	if(!password.isEmpty())
+		ident = ident + ";" + password;
+
+	_state = EXPECT_IDENTIFIED;
+	send(ident);
 }
 
 void LoginHandler::expectIdentified(const QString &msg)
 {
-	if(_tls && msg == "STARTTLS") {
-		startTls();
-		return;
-	}
 	const QRegularExpression re("\\AIDENTIFIED (USER|GUEST) (-|[\\w,]+)\\z");
 	auto m = re.match(msg);
 
@@ -631,7 +710,7 @@ void LoginHandler::tlsAccepted()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
 	// Next up is user authentication.
-	sendIdentity();
+	prepareToSendIdentity();
 #if 0
 	if(_selectorDialog)
 		_selectorDialog->show();

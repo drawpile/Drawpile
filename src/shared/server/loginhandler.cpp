@@ -206,12 +206,17 @@ void LoginHandler::handleIdentMessage(const QString &message)
 	if(_server->identityManager()) {
 		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
 		IdentityResult *result = _server->identityManager()->checkLogin(username, password);
-		connect(result, &IdentityResult::resultAvailable, [this](IdentityResult *result) {
+		connect(result, &IdentityResult::resultAvailable, [this, username](IdentityResult *result) {
 			QString error;
 			Q_ASSERT(result->status() != IdentityResult::INPROGRESS);
 			switch(result->status()) {
 			case IdentityResult::INPROGRESS: /* can't happen */ break;
-			case IdentityResult::NOTFOUND: guestLogin(result->canonicalName()); break;
+			case IdentityResult::NOTFOUND:
+				if(!_server->identityManager()->isAuthorizedOnly()) {
+					guestLogin(username);
+					break;
+				}
+				// fall through to badpass if guest logins are disabled
 			case IdentityResult::BADPASS: error = "BADPASS"; break;
 			case IdentityResult::BANNED: error = "BANNED"; break;
 			case IdentityResult::OK: {
@@ -222,9 +227,16 @@ void LoginHandler::handleIdentMessage(const QString &message)
 				else
 					okstr += result->flags().join(",");
 
-				_state = WAIT_FOR_LOGIN;
-				_username = result->canonicalName();
+				if(validateUsername(result->canonicalName())) {
+					_username = result->canonicalName();
+
+				} else {
+					logger::warning() << "Identity manager gave us an invalid username:" << result->canonicalName();
+					_username = username;
+				}
+
 				_userflags = result->flags();
+				_state = WAIT_FOR_LOGIN;
 				send(okstr);
 				announceServerInfo();
 				} break;
@@ -249,6 +261,12 @@ void LoginHandler::handleIdentMessage(const QString &message)
 
 void LoginHandler::guestLogin(const QString &username)
 {
+	if(_server->identityManager() && _server->identityManager()->isAuthorizedOnly()) {
+		send("ERROR NOGUEST");
+		_client->disconnectError("login error");
+		return;
+	}
+
 	_username = username;
 	_state = WAIT_FOR_LOGIN;
 	send("IDENTIFIED GUEST -");

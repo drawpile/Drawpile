@@ -478,6 +478,19 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="guestlogin">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Log in as guest</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -833,12 +846,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>117</x>
-     <y>71</y>
+     <x>138</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
-     <x>89</x>
-     <y>63</y>
+     <x>296</x>
+     <y>116</y>
     </hint>
    </hints>
   </connection>
@@ -849,12 +862,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>71</y>
+     <x>130</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
-     <x>89</x>
-     <y>76</y>
+     <x>110</x>
+     <y>205</y>
     </hint>
    </hints>
   </connection>
@@ -887,6 +900,22 @@
     <hint type="destinationlabel">
      <x>51</x>
      <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>guestlogin</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>131</y>
     </hint>
    </hints>
   </connection>

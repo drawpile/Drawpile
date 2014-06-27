@@ -59,7 +59,10 @@ void UserFile::doCheckLogin(const QString &username, const QString &password, Id
 	QString idname = username.toLower();
 
 	if(!_users.contains(idname)) {
-		result->setResults(IdentityResult::NOTFOUND, QString(), QStringList());
+		if(password.isEmpty())
+			result->setResults(IdentityResult::NOTFOUND, QString(), QStringList());
+		else
+			result->setResults(IdentityResult::BADPASS, QString(), QStringList());
 
 	} else {
 		User u = _users[idname];

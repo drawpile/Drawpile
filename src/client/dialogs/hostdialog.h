@@ -64,6 +64,9 @@ class HostDialog : public QDialog
 		//! Should the session be persistent
 		bool getPersistentMode() const;
 
+		//! Should the user log in as a guest?
+		bool getGuestLogin() const;
+
 		/**
 		 * @brief Get session loader for initializing a new session
 		 * @return session loader instance

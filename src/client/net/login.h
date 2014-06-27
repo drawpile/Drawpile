@@ -149,6 +149,7 @@ public slots:
 
 private slots:
 	void joinSelectedSession(const QString &id, bool needPassword);
+	void selectIdentity(const QString &password, const QString &username);
 	void cancelLogin();
 	void failLogin(const QString &message);
 	void passwordSet();
@@ -159,6 +160,8 @@ private slots:
 private:
 	enum State {
 		EXPECT_HELLO,
+		EXPECT_STARTTLS,
+		WAIT_FOR_LOGIN_PASSWORD,
 		EXPECT_IDENTIFIED,
 		EXPECT_SESSIONLIST_TO_JOIN,
 		EXPECT_SESSIONLIST_TO_HOST,
@@ -168,7 +171,10 @@ private:
 		ABORT_LOGIN
 	};
 
+	void expectNothing(const QString &msg);
 	void expectHello(const QString &msg);
+	void expectStartTls(const QString &msg);
+	void prepareToSendIdentity();
 	void sendIdentity();
 	void expectIdentified(const QString &msg);
 	void showPasswordDialog(const QString &title, const QString &text);
@@ -213,6 +219,7 @@ private:
 	bool _tls;
 	bool _canAuth;
 	bool _mustAuth;
+	bool _wantToAuth;
 	bool _needHostPassword;
 };
 

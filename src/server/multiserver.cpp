@@ -150,9 +150,11 @@ bool MultiServer::setUserFile(const QString &path)
 
 void MultiServer::setAllowGuests(bool allow)
 {
-	// Note: userfile must have been set before calling this
-	if(!_sessions->identityManager())
+	if(!_sessions->identityManager()) {
+		if(!allow)
+			logger::warning() << "Cannot disable guest access: no user file selected!";
 		return;
+	}
 	_sessions->identityManager()->setAuthorizedOnly(!allow);
 }
 

@@ -72,6 +72,7 @@ set (
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
+	dialogs/logindialog.cpp
 	dialogs/settingsdialog.cpp
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
@@ -131,6 +132,7 @@ set (
 	ui/recfilter.ui
 	ui/tinyplayer.ui
 	ui/selectsession.ui
+	ui/logindialog.ui
 )
 
 # Use bundled KArchive if library not found
