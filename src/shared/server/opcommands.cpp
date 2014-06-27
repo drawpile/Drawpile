@@ -45,7 +45,7 @@ typedef void (*OpCommandFn)(Client *, const QString &, const QStringList &);
 class OpCommand {
 public:
 	OpCommand(const QString &name, OpCommandFn fn, const QString &paramsDesc, const QString &description, int minargs, int maxargs)
-		: _fn(fn), _name(name), _paramsDescription(paramsDesc), _description(description), _minargs(minargs), _maxargs(maxargs)
+		: _fn(fn), _name(name), _paramsDescription(paramsDesc), _description(description), _minargs(minargs), _maxargs(maxargs), _modOnly(false)
 	{}
 	OpCommand(const QString &name, OpCommandFn fn, const QString &paramsDesc, const QString &description, int args=0)
 		: OpCommand(name, fn, paramsDesc, description, args, args)
@@ -55,6 +55,9 @@ public:
 	const QString &name() const { return _name; }
 	const QString &paramsDescription() const { return _paramsDescription; }
 	const QString &description() const { return _description; }
+	bool isModOnly() const { return _modOnly; }
+
+	OpCommand &modOnly() { _modOnly = true; return *this; }
 
 	bool checkParamCount(int count) const {
 		return count >= _minargs && (_maxargs<0 || count <= _maxargs);
@@ -67,6 +70,7 @@ private:
 	QString _description;
 	int _minargs;
 	int _maxargs;
+	bool _modOnly;
 };
 
 struct OpCommandSet {
@@ -240,6 +244,12 @@ void sessionStatus(Client *client, const QString &, const QStringList &)
 	client->sendSystemChat(msg);
 }
 
+void killSession(Client *client, const QString &, const QStringList &)
+{
+	client->session()->wall(QString("Session shut down by moderator (%1)").arg(client->username()));
+	client->session()->killSession();
+}
+
 void showHelp(Client *client, const QString &, const QStringList &)
 {
 	QString message("Supported commands:\n");
@@ -247,6 +257,9 @@ void showHelp(Client *client, const QString &, const QStringList &)
 	// calculate padding for paramsDescription
 	int pdLen=0;
 	for(const OpCommand &c : COMMANDS.commands) {
+		if(c.isModOnly() && !client->isModerator())
+			continue;
+
 		int len = c.name().length();
 		if(!c.paramsDescription().isEmpty())
 			len += c.paramsDescription().length() + 1;
@@ -255,6 +268,9 @@ void showHelp(Client *client, const QString &, const QStringList &)
 
 	// Generate help text
 	for(const OpCommand &c : COMMANDS.commands) {
+		if(c.isModOnly() && !client->isModerator())
+			continue;
+
 		message.append("/");
 
 		int padding = c.name().length();
@@ -301,6 +317,7 @@ OpCommandSet::OpCommandSet()
 		<< OpCommand("force_snapshot", [](Client *c, const QString&, const QStringList&) { c->session()->startSnapshotSync(); }, QString(), "force snapshot sync")
 #endif
 
+		<< OpCommand("killsession", killSession, QString(), "shut down this session").modOnly()
 		<< OpCommand("who", listUsers, QString(), "list logged in users")
 		<< OpCommand("status", sessionStatus, QString(), "show session status")
 		<< OpCommand("help", showHelp, QString(), "show this help text")

@@ -395,6 +395,14 @@ public:
 	void kickAllUsers();
 
 	/**
+	 * @brief Initiate the shutdown of this session
+	 *
+	 * The session will not persist after the users have been disconnected,
+	 * nor will it be hibernated.
+	 */
+	void killSession();
+
+	/**
 	 * @brief Send a message to every user of this session
 	 * @param message
 	 */

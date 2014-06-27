@@ -188,10 +188,7 @@ bool SessionServer::killSession(const QString &id)
 
 	for(SessionState *s : _sessions) {
 		if(s->id() == id) {
-			s->setHibernatable(false);
-			s->setPersistent(false);
-			s->stopRecording();
-			s->kickAllUsers();
+			s->killSession();
 			if(s->userCount()==0)
 				destroySession(s);
 			return true;

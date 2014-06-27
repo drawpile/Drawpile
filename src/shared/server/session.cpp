@@ -542,6 +542,16 @@ void SessionState::kickAllUsers()
 		c->disconnectShutdown();
 }
 
+void SessionState::killSession()
+{
+	setClosed(true);
+	setHibernatable(false);
+	setPersistent(false);
+	stopRecording();
+	for(Client *c : _clients)
+		c->disconnectKick(QString());
+}
+
 void SessionState::wall(const QString &message)
 {
 	for(Client *c : _clients) {
