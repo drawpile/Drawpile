@@ -25,12 +25,12 @@
 #include <QUrl>
 #include <QObject>
 #include <QPointer>
-#include <QInputDialog>
 #include <QMessageBox>
 #include <QSslError>
 
 namespace dialogs {
 	class SelectSessionDialog;
+	class LoginDialog;
 }
 
 namespace net {
@@ -152,7 +152,7 @@ private slots:
 	void selectIdentity(const QString &password, const QString &username);
 	void cancelLogin();
 	void failLogin(const QString &message);
-	void passwordSet();
+	void passwordSet(const QString &password);
 	void tlsStarted();
 	void tlsError(const QList<QSslError> &errors);
 	void tlsAccepted();
@@ -211,7 +211,7 @@ private:
 	QString _selectedId;
 
 	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
-	QPointer<QInputDialog> _passwordDialog;
+	QPointer<dialogs::LoginDialog> _passwordDialog;
 	QPointer<QMessageBox> _certDialog;
 
 	// Server flags

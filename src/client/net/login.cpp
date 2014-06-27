@@ -257,29 +257,29 @@ void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
 {
 	Q_ASSERT(_passwordDialog.isNull());
 
-	_passwordDialog = new QInputDialog(_widgetParent);
-	_passwordDialog->setWindowTitle(title);
-	_passwordDialog->setLabelText(text);
-	_passwordDialog->setTextEchoMode(QLineEdit::Password);
+	_passwordDialog = new dialogs::LoginDialog(_widgetParent);
 	_passwordDialog->setWindowModality(Qt::WindowModal);
+	_passwordDialog->setWindowTitle(title);
+	_passwordDialog->setIntroText(text);
+	_passwordDialog->setUsername(_address.userName(), false);
 
-	connect(_passwordDialog, SIGNAL(accepted()), this, SLOT(passwordSet()));
+	connect(_passwordDialog, SIGNAL(login(QString,QString)), this, SLOT(passwordSet(QString)));
 	connect(_passwordDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
 
 	_passwordDialog->show();
 }
 
-void LoginHandler::passwordSet()
+void LoginHandler::passwordSet(const QString &password)
 {
 	Q_ASSERT(!_passwordDialog.isNull());
 
 	switch(_state) {
 	case WAIT_FOR_HOST_PASSWORD:
-		_hostPassword = _passwordDialog->textValue();
+		_hostPassword = password;
 		sendHostCommand();
 		break;
 	case WAIT_FOR_JOIN_PASSWORD:
-		_joinPassword = _passwordDialog->textValue();
+		_joinPassword = password;
 		sendJoinCommand();
 		break;
 	default:
