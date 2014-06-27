@@ -25,16 +25,44 @@
 
 namespace server {
 
-struct IdentityResult {
-	enum {
-		NOTFOUND, // username not found, guest login possible
-		BADPASS,  // wrong password, cannot login
-		BANNED,   // user has been banned, cannot login
-		OK        // username and password correct, can login as identified user
-	} status;
+class IdentityResult : public QObject {
+	Q_OBJECT
+public:
+	enum Status {
+		INPROGRESS, // query is still in progress
+		NOTFOUND,   // username not found, guest login possible
+		BADPASS,    // wrong password, cannot login
+		BANNED,     // user has been banned, cannot login
+		OK          // username and password correct, can login as identified user
+	};
+public:
+	explicit IdentityResult(QObject *parent=0);
 
-	QString canonicalName;
-	QStringList flags;
+	//! Get result status
+	Status status() const { return _status; }
+
+	//! Get the official form of the name
+	const QString &canonicalName() const { return _canonicalName; }
+
+	//! Sanitized user flag list
+	const QStringList &flags() const { return _flags; }
+
+	void setResults(Status status, const QString &name, const QStringList &flags);
+
+signals:
+	/**
+	 * @brief Query results have become available
+	 * @param self this result object
+	 */
+	void resultAvailable(IdentityResult *);
+
+protected:
+	void connectNotify(const QMetaMethod &);
+
+private:
+	Status _status;
+	QString _canonicalName;
+	QStringList _flags;
 };
 
 class IdentityManager : public QObject
@@ -43,7 +71,10 @@ class IdentityManager : public QObject
 public:
 	explicit IdentityManager(QObject *parent = 0);
 
-	QFuture<IdentityResult> checkLogin(const QString &username, const QString &password);
+	/**
+	 * @brief Check the given username and passowrd
+	 */
+	IdentityResult *checkLogin(const QString &username, const QString &password);
 
 	/**
 	 * @brief Set whether only authorized users are allowed to log in
@@ -62,7 +93,7 @@ protected:
 	 * @param password
 	 * @return
 	 */
-	virtual IdentityResult doCheckLogin(const QString &username, const QString &password) = 0;
+	virtual void doCheckLogin(const QString &username, const QString &password, IdentityResult *result) = 0;
 
 private:
 	bool _needauth;

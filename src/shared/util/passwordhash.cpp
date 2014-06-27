@@ -55,7 +55,11 @@ bool check(const QString &password, const QByteArray &hash)
 
 	QList<QByteArray> parts = hash.split(';');
 
-	if(parts.at(0) == "s+sha1") {
+	if(parts.at(0) == "*") {
+		// disabled password
+		return false;
+
+	} else if(parts.at(0) == "s+sha1") {
 		if(parts.size() != 3)
 			return false;
 

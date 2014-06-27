@@ -18,19 +18,53 @@
 */
 
 #include "identitymanager.h"
+#include "../util/logger.h"
 
-#include <QtConcurrent>
+#include <QMetaMethod>
 
 namespace server {
+
+IdentityResult::IdentityResult(QObject *parent)
+	: QObject(parent), _status(INPROGRESS)
+{}
+
+void IdentityResult::setResults(Status status, const QString &canonicalName, const QStringList &flags)
+{
+	Q_ASSERT(status != INPROGRESS);
+	Q_ASSERT(_status == INPROGRESS);
+
+	_status = status;
+	_canonicalName = canonicalName;
+
+	for(const QString &flag : flags) {
+		if(flag.compare("mod", Qt::CaseInsensitive)==0)
+			_flags << "MOD";
+		else if(flag.compare("host", Qt::CaseInsensitive)==0)
+			_flags << "HOST";
+		else
+			logger::warning() << "Unknown user flag:" << flag;
+	}
+
+	emit resultAvailable(this);
+}
+
+void IdentityResult::connectNotify(const QMetaMethod &signal)
+{
+	if(signal == QMetaMethod::fromSignal(&IdentityResult::resultAvailable) && _status != INPROGRESS) {
+		emit resultAvailable(this);
+	}
+}
 
 IdentityManager::IdentityManager(QObject *parent) :
 	QObject(parent), _needauth(false)
 {
 }
 
-QFuture<IdentityResult> IdentityManager::checkLogin(const QString &username, const QString &password)
+IdentityResult *IdentityManager::checkLogin(const QString &username, const QString &password)
 {
-	return QtConcurrent::run([this, username, password]() { return doCheckLogin(username, password); });
+	IdentityResult *result = new IdentityResult(this);
+	doCheckLogin(username, password, result);
+	return result;
 }
 
 }

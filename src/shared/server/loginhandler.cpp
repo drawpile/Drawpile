@@ -204,25 +204,27 @@ void LoginHandler::handleIdentMessage(const QString &message)
 	}
 
 	if(_server->identityManager()) {
-		auto *wc = new QFutureWatcher<IdentityResult>(this);
-		connect(wc, &QFutureWatcher<IdentityResult>::finished, [this, username, password, wc]() {
-			IdentityResult result = wc->future();
+		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
+		IdentityResult *result = _server->identityManager()->checkLogin(username, password);
+		connect(result, &IdentityResult::resultAvailable, [this](IdentityResult *result) {
 			QString error;
-			switch(result.status) {
-			case IdentityResult::NOTFOUND: guestLogin(result.canonicalName); break;
+			Q_ASSERT(result->status() != IdentityResult::INPROGRESS);
+			switch(result->status()) {
+			case IdentityResult::INPROGRESS: /* can't happen */ break;
+			case IdentityResult::NOTFOUND: guestLogin(result->canonicalName()); break;
 			case IdentityResult::BADPASS: error = "BADPASS"; break;
 			case IdentityResult::BANNED: error = "BANNED"; break;
 			case IdentityResult::OK: {
 				// Yay, username and password were valid!
 				QString okstr = "IDENTIFIED USER ";
-				if(result.flags.isEmpty())
+				if(result->flags().isEmpty())
 					okstr += "-";
 				else
-					okstr += result.flags.join(",");
+					okstr += result->flags().join(",");
 
 				_state = WAIT_FOR_LOGIN;
-				_username = result.canonicalName;
-				_userflags = result.flags;
+				_username = result->canonicalName();
+				_userflags = result->flags();
 				send(okstr);
 				announceServerInfo();
 				} break;
@@ -233,9 +235,6 @@ void LoginHandler::handleIdentMessage(const QString &message)
 				_client->disconnectError("login error");
 			}
 		});
-
-		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
-		wc->setFuture(_server->identityManager()->checkLogin(username, password));
 
 	} else {
 		if(!password.isNull()) {

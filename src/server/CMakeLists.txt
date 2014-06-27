@@ -10,6 +10,7 @@ set (
 	configfile.cpp
 	sslserver.cpp
 	hibernation.cpp
+	userfile.cpp
 	)
 
 # Unix specific features

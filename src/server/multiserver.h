@@ -53,6 +53,8 @@ public:
 	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
 	bool setHibernation(const QString &directory, bool all, bool autoHibernate);
+	bool setUserFile(const QString &path);
+	void setAllowGuests(bool allow);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);

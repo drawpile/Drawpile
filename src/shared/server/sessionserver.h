@@ -117,7 +117,7 @@ public:
 	 *
 	 * @param identman
 	 */
-	void setIdentityManager(IdentityManager *identman);
+	void setIdentityManager(IdentityManager *identman) { _identman = identman; }
 	IdentityManager *identityManager() const { return _identman; }
 
 	/**

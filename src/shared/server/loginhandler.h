@@ -30,7 +30,6 @@ class Client;
 class SessionState;
 class SessionServer;
 class SessionDescription;
-struct IdentityResult;
 
 /**
  * @brief Perform the client login handshake

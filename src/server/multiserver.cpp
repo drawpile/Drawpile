@@ -21,6 +21,7 @@
 #include "initsys.h"
 #include "sslserver.h"
 #include "hibernation.h"
+#include "userfile.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -135,6 +136,24 @@ bool MultiServer::setHibernation(const QString &directory, bool all, bool autoHi
 	_sessions->setSessionStore(hib);
 
 	return true;
+}
+
+bool MultiServer::setUserFile(const QString &path)
+{
+	UserFile *userfile = new UserFile(_sessions);
+	if(!userfile->setFile(path))
+		return false;
+
+	_sessions->setIdentityManager(userfile);
+	return true;
+}
+
+void MultiServer::setAllowGuests(bool allow)
+{
+	// Note: userfile must have been set before calling this
+	if(!_sessions->identityManager())
+		return;
+	_sessions->identityManager()->setAuthorizedOnly(!allow);
 }
 
 bool MultiServer::createServer()

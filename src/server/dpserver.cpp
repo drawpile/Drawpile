@@ -154,6 +154,14 @@ int main(int argc, char *argv[]) {
 
 #endif
 
+	// --userfile <path>
+	QCommandLineOption userfileOption("userfile", "Use user/password file", "path");
+	parser.addOption(userfileOption);
+
+	// --no-guests
+	QCommandLineOption noGuestsOption("no-guests", "Users must authenticate to log in");
+	parser.addOption(noGuestsOption);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -305,6 +313,14 @@ int main(int argc, char *argv[]) {
 		}
 	}
 #endif
+
+	{
+		QString userfile = cfgfile.override(parser, userfileOption).toString();
+		if(!userfile.isEmpty())
+			server->setUserFile(userfile);
+
+		server->setAllowGuests(!cfgfile.override(parser, noGuestsOption).toBool());
+	}
 
 	// Catch signals
 #ifdef Q_OS_UNIX
