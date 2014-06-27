@@ -570,7 +570,7 @@ void Client::handleUserAttr(const protocol::UserAttr &msg)
 		emit opPrivilegeChange(msg.isOp());
 		emit lockBitsChanged();
 	}
-	_userlist->updateUser(msg.contextId(), msg.attrs());
+	_userlist->updateUser(msg);
 }
 
 void Client::handleUserLeave(const protocol::UserLeave &msg)

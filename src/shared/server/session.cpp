@@ -81,6 +81,8 @@ void SessionState::joinUser(Client *user, bool host)
 		user->grantOp();
 	else if(_lockdefault)
 		user->lockUser();
+	else
+		user->sendUpdatedAttrs(); // make sure up to date attrs are always sent
 
 	_lastEventTime = QDateTime::currentDateTime();
 
@@ -275,7 +277,7 @@ void SessionState::addSnapshotPoint()
 	foreach(const Client *c, _clients) {
 		if(c->id()>0) {
 			addToSnapshotStream(protocol::MessagePtr(new protocol::UserJoin(c->id(), c->username())));
-			addToSnapshotStream(protocol::MessagePtr(new protocol::UserAttr(c->id(), c->isUserLocked(), c->isOperator())));
+			addToSnapshotStream(protocol::MessagePtr(new protocol::UserAttr(c->id(), c->isUserLocked(), c->isOperator(), c->isModerator(), c->isAuthenticated())));
 		}
 	}
 

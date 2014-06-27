@@ -159,19 +159,26 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	// Background
 	drawBackground(painter, opt, index);
 
-	// [OP] + Name
+	// (auth) + [OP] + Name
 	QRect textrect = opt.rect;
 	const QSize locksize = _lockicon.size();
-
 	{
-		opt.font.setBold(true);
 		QFontMetrics fm(opt.font);
-		QString opmsg("[OP]");
+		QString authmsg = QStringLiteral("☆");
+		if(user.isAuth)
+			drawDisplay(painter, opt, textrect, authmsg);
 
-		if(user.isOperator)
-			drawDisplay(painter, opt, textrect, "[OP]");
+		textrect.moveLeft(textrect.left() + fm.width(authmsg) + 2);
 
-		textrect.moveLeft(fm.width(opmsg) + 5);
+		QString modmsg = QStringLiteral("[MOD]");
+
+		opt.font.setBold(true);
+		if(user.isMod)
+			drawDisplay(painter, opt, textrect, modmsg);
+		else if(user.isOperator)
+			drawDisplay(painter, opt, textrect, QStringLiteral("[OP]"));
+
+		textrect.moveLeft(textrect.left() + fm.width(modmsg) + 7);
 		opt.font.setBold(false);
 	}
 

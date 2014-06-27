@@ -53,6 +53,8 @@ Client::Client(QTcpSocket *socket, QObject *parent)
 	  _substreampointer(-1),
 	  _id(0),
 	  _isOperator(false),
+	  _isModerator(false),
+	  _isAuth(false),
 	  _userLock(false),
 	  _barrierlock(BARRIER_NOTLOCKED)
 {
@@ -297,13 +299,13 @@ void Client::handleSessionMessage(MessagePtr msg)
 	default: break;
 	}
 
-	if(msg->isOpCommand() && !_isOperator) {
+	if(msg->isOpCommand() && !isOperator()) {
 		logger::warning() << *this << "tried to use operator command" << msg->type();
 		return;
 	}
 
 	// Layer control locking
-	if(_session->isLayerControlLocked() && !_isOperator) {
+	if(_session->isLayerControlLocked() && !isOperator()) {
 		switch(msg->type()) {
 		using namespace protocol;
 		case MSG_LAYER_CREATE:
@@ -335,15 +337,15 @@ void Client::handleSessionMessage(MessagePtr msg)
 				return;
 			break;
 		case MSG_LAYER_ATTR:
-			if(!_isOperator && isLayerLocked(msg.cast<LayerAttributes>().id()))
+			if(!isOperator() && isLayerLocked(msg.cast<LayerAttributes>().id()))
 				return;
 			break;
 		case MSG_LAYER_RETITLE:
-			if(!_isOperator && isLayerLocked(msg.cast<LayerRetitle>().id()))
+			if(!isOperator() && isLayerLocked(msg.cast<LayerRetitle>().id()))
 				return;
 			break;
 		case MSG_LAYER_DELETE:
-			if(!_isOperator && isLayerLocked(msg.cast<LayerDelete>().id()))
+			if(!isOperator() && isLayerLocked(msg.cast<LayerDelete>().id()))
 				return;
 			break;
 		case MSG_PUTIMAGE:
@@ -526,7 +528,13 @@ void Client::sendUpdatedAttrs()
 	// Note. These changes are applied immediately on the server, but may take some
 	// time to reach the clients. This doesn't matter much though, since locks and operator
 	// privileges are enforced by the server only.
-	_session->addToCommandStream(MessagePtr(new protocol::UserAttr(_id, _userLock, _isOperator)));
+	_session->addToCommandStream(MessagePtr(new protocol::UserAttr(
+		id(),
+		isUserLocked(),
+		isOperator(),
+		isModerator(),
+		isAuthenticated()
+	)));
 }
 
 void Client::enqueueHeldCommands()

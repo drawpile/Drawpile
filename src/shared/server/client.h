@@ -95,10 +95,15 @@ public:
 	/**
 	 * @brief Is this user a moderator?
 	 * Moderators can access any session, always have OP status and cannot be kicked by other users.
-	 * @return
 	 */
 	bool isModerator() const { return _isModerator; }
 	void setModerator(bool mod) { _isModerator = mod; }
+
+	/**
+	 * @brief Has this user been authenticated?
+	 */
+	bool isAuthenticated() const { return _isAuth; }
+	void setAuthenticated(bool auth) { _isAuth = auth; }
 
 	/**
 	 * @brief Is this user locked individually?
@@ -251,6 +256,14 @@ public:
 	 */
 	void startTls();
 
+	/**
+	 * @brief Send client attribute status update
+	 *
+	 * This is sent automatically by all functions that affect client
+	 * status, but is also sent explicitly when the client first joins a session
+	 */
+	void sendUpdatedAttrs();
+
 signals:
 	void loginMessage(protocol::MessagePtr message);
 	void disconnected(Client *client);
@@ -291,7 +304,6 @@ private:
 	void updateState(protocol::MessagePtr msg);
 
 	void enqueueHeldCommands();
-	void sendUpdatedAttrs();
 
 	bool isLayerLocked(int layerid);
 
@@ -317,6 +329,9 @@ private:
 
 	//! Does this user have moderator privileges?
 	bool _isModerator;
+
+	//! Is this user authenticated (as opposed to a guest)
+	bool _isAuth;
 
 	//! Is this user locked? (by an operator)
 	bool _userLock;

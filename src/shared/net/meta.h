@@ -75,11 +75,15 @@ protected:
  */
 class UserAttr: public Message {
 public:
-	static const uint8_t ATTR_LOCKED = 0x01;
-	static const uint8_t ATTR_OP = 0x02;
+	static const uint16_t ATTR_LOCKED = 0x01; // user is locked
+	static const uint16_t ATTR_OP = 0x02;     // user is a session operator
+	static const uint16_t ATTR_MOD = 0x04;    // user is a moderator
+	static const uint16_t ATTR_AUTH = 0x08;   // authenticated user (not a guest)
 
-	UserAttr(uint8_t ctx, uint8_t attrs) : Message(MSG_USER_ATTR, ctx), _attrs(attrs) {}
-	UserAttr(uint8_t ctx, bool locked, bool op) : UserAttr(ctx, (locked?ATTR_LOCKED:0) | (op?ATTR_OP:0)) {}
+	UserAttr(uint8_t ctx, uint16_t attrs) : Message(MSG_USER_ATTR, ctx), _attrs(attrs) {}
+	UserAttr(uint8_t ctx, bool locked, bool op, bool mod, bool auth)
+		: UserAttr(ctx, (locked?ATTR_LOCKED:0) | (op?ATTR_OP:0) | (mod?ATTR_MOD:0) | (auth?ATTR_AUTH:0))
+		{}
 
 	static UserAttr *deserialize(const uchar *data, uint len);
 
@@ -87,13 +91,15 @@ public:
 
 	bool isLocked() const { return _attrs & ATTR_LOCKED; }
 	bool isOp() const { return _attrs & ATTR_OP; }
+	bool isMod() const { return _attrs & ATTR_MOD; }
+	bool isAuth() const { return _attrs & ATTR_AUTH; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _attrs;
+	uint16_t _attrs;
 };
 
 /**

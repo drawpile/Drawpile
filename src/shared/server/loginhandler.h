@@ -134,8 +134,7 @@ private:
 	SessionServer *_server;
 
 	State _state;
-	QString _username;
-	QStringList _userflags;
+	bool _hostPrivilege;
 	bool _complete;
 };
 

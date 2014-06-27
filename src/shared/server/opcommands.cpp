@@ -181,6 +181,10 @@ void deopUser(Client *client, const QString &, const QStringList &tokens)
 	Client *target = _getClient(client, tokens.at(1));
 	if(target==client)
 		throw OpError("cannot deop self");
+
+	if(target->isModerator())
+		throw OpError("cannot deop moderators");
+
 	target->deOp();
 }
 
@@ -202,12 +206,18 @@ void listUsers(Client *client, const QString &, const QStringList &)
 
 	for(const Client *c : client->session()->clients()) {
 		QString flags;
-		if(c->isOperator())
+		if(c->isModerator())
+			flags = "M";
+		else if(c->isOperator())
 			flags = "@";
+
 		if(c->isUserLocked())
 			flags += "L";
 		if(c->isHoldLocked())
 			flags += "l";
+		if(c->isAuthenticated())
+			flags += "A";
+
 		msg.append(QString("#%1: %2 [%3]\n").arg(c->id()).arg(c->username(), flags));
 	}
 	client->sendSystemChat(msg);

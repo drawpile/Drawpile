@@ -37,7 +37,7 @@
 namespace server {
 
 LoginHandler::LoginHandler(Client *client, SessionServer *server) :
-	QObject(client), _client(client), _server(server), _complete(false)
+	QObject(client), _client(client), _server(server), _hostPrivilege(false), _complete(false)
 {
 	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this,
 			SLOT(handleLoginMessage(protocol::MessagePtr)));
@@ -228,14 +228,16 @@ void LoginHandler::handleIdentMessage(const QString &message)
 					okstr += result->flags().join(",");
 
 				if(validateUsername(result->canonicalName())) {
-					_username = result->canonicalName();
+					_client->setUsername(result->canonicalName());
 
 				} else {
 					logger::warning() << "Identity manager gave us an invalid username:" << result->canonicalName();
-					_username = username;
+					_client->setUsername(username);
 				}
 
-				_userflags = result->flags();
+				_client->setAuthenticated(true);
+				_client->setModerator(result->flags().contains("MOD"));
+				_hostPrivilege = result->flags().contains("HOST");
 				_state = WAIT_FOR_LOGIN;
 				send(okstr);
 				announceServerInfo();
@@ -267,7 +269,7 @@ void LoginHandler::guestLogin(const QString &username)
 		return;
 	}
 
-	_username = username;
+	_client->setUsername(username);
 	_state = WAIT_FOR_LOGIN;
 	send("IDENTIFIED GUEST -");
 	announceServerInfo();
@@ -275,7 +277,7 @@ void LoginHandler::guestLogin(const QString &username)
 
 void LoginHandler::handleHostMessage(const QString &message)
 {
-	Q_ASSERT(!_username.isEmpty());
+	Q_ASSERT(!_client->username().isEmpty());
 
 	if(_server->sessionCount() >= _server->sessionLimit()) {
 		send("ERROR CLOSED");
@@ -295,15 +297,13 @@ void LoginHandler::handleHostMessage(const QString &message)
 	int userId = m.captured(2).toInt();
 
 	QString password = m.captured(3);
-	if(password != _server->hostPassword() && !_userflags.contains("HOST")) {
+	if(password != _server->hostPassword() && !_hostPrivilege) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;
 	}
 
 	_client->setId(userId);
-	_client->setUsername(_username);
-	_client->setModerator(_userflags.contains("MOD"));
 
 	// Mark login phase as complete. No more login messages will be sent to this user
 	send(QString("OK %1").arg(userId));
@@ -319,9 +319,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 
 void LoginHandler::handleJoinMessage(const QString &message)
 {
-	Q_ASSERT(!_username.isEmpty());
-
-	bool isModerator = _userflags.contains("MOD");
+	Q_ASSERT(!_client->username().isEmpty());
 
 	const QRegularExpression re("\\AJOIN ([a-zA-Z0-9:-]{1,64})\\s*(?:;(.+))?\\z");
 	auto m = re.match(message);
@@ -339,7 +337,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	if(sessiondesc.closed && !isModerator) {
+	if(sessiondesc.closed && !_client->isModerator()) {
 		send("ERROR CLOSED");
 		_client->disconnectError("login error");
 		return;
@@ -347,7 +345,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 
 	QString password = m.captured(2);
 
-	if(!passwordhash::check(password, sessiondesc.passwordHash) && !isModerator) {
+	if(!passwordhash::check(password, sessiondesc.passwordHash) && !_client->isModerator()) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;
@@ -364,7 +362,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	if(session->getClientByUsername(_username)) {
+	if(session->getClientByUsername(_client->username())) {
 #ifdef NDEBUG
 		send("ERROR NAMEINUSE");
 		_client->disconnectError("login error");
@@ -373,13 +371,11 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << _username << "for" << *session << "ignored because this is a debug build.";
+		logger::warning() << "Username clash" << _client->username() << "for" << *session << "ignored because this is a debug build.";
 #endif
 	}
 
 	// Ok, join the session
-	_client->setUsername(_username);
-	_client->setModerator(isModerator);
 	session->assignId(_client);
 
 	send(QString("OK %1").arg(_client->id()));

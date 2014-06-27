@@ -64,22 +64,25 @@ int UserLeave::payloadLength() const
 
 UserAttr *UserAttr::deserialize(const uchar *data, uint len)
 {
-	if(len!=2)
+	if(len!=3)
 		return 0;
-	return new UserAttr(data[0], data[1]);
+
+	return new UserAttr(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1));
 }
 
 int UserAttr::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _attrs;
-	return ptr - data;
+	qToBigEndian(_attrs, ptr); ptr += 2;
+	return ptr-data;
 }
 
 int UserAttr::payloadLength() const
 {
-	return 1 + 1;
+	return 1 + 2;
 }
 
 SessionTitle *SessionTitle::deserialize(const uchar *data, uint len)

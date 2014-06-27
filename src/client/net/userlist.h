@@ -22,19 +22,25 @@
 #include <QAbstractListModel>
 #include <QList>
 
+namespace protocol {
+	class UserAttr;
+}
+
 namespace net {
 
 /**
  * @brief Information about a user
  */
 struct User {
-	User() : id(0), name(QString()), isLocal(false), isOperator(false), isLocked(false) {}
-	User(int id_, const QString &name_, bool local) : id(id_), name(name_), isLocal(local), isOperator(false), isLocked(false) {}
+	User() : User(0, QString(), false) {}
+	User(int id_, const QString &name_, bool local) : id(id_), name(name_), isLocal(local), isOperator(false), isMod(false), isAuth(false), isLocked(false) {}
 
 	int id;
 	QString name;
 	bool isLocal;
 	bool isOperator;
+	bool isMod;
+	bool isAuth;
 	bool isLocked;
 };
 
@@ -50,7 +56,7 @@ class UserListModel : public QAbstractListModel {
 		int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
 		void addUser(const User &user);
-		void updateUser(int id, uchar attrs);
+		void updateUser(const protocol::UserAttr &ua);
 		void removeUser(int id);
 		void clearUsers();
 

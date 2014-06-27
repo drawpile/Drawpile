@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,14 +68,16 @@ void UserListModel::addUser(const User &user)
 	endInsertRows();
 }
 
-void UserListModel::updateUser(int id, uchar attrs)
+void UserListModel::updateUser(const protocol::UserAttr &ua)
 {
 	for(int i=0;i<_users.count();++i) {
-		if(_users.at(i).id == id) {
+		if(_users.at(i).id == ua.contextId()) {
 
 			User &u = _users[i];
-			u.isOperator = protocol::UserAttr::ATTR_OP & attrs;
-			u.isLocked = protocol::UserAttr::ATTR_LOCKED & attrs;
+			u.isOperator = ua.isOp();
+			u.isLocked = ua.isLocked();
+			u.isMod = ua.isMod();
+			u.isAuth = ua.isAuth();
 
 			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx);

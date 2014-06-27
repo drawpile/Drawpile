@@ -79,6 +79,8 @@ Protocol 11.2 (0.9.2)
  * Session ID format change: Clients must support session IDs of format [a-zA-Z0-9:-]{1,64}. This change is for forward compatibility; the server currently produces numeric IDs only.
  * Add flags field to Chat message
  * Changed some operator commands
+ * Increased UserAttr::attrs length to 16 bits to make room for more future attributes
+ * Added MOD and AUTH UserAttr attributes
  * Minor recording incompatibility: chat messages will be missing the first letter
  * First version to support session hibernation
 
