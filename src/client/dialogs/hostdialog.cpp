@@ -76,6 +76,10 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->picturewidth->setValue(lastsize.width());
 	ui_->pictureheight->setValue(lastsize.height());
 
+	QColor lastcolor = cfg.value("newcolor").value<QColor>();
+	if(lastcolor.isValid())
+		ui_->colorButton->setColor(lastcolor);
+
 	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
 }
 
@@ -103,9 +107,10 @@ void HostDialog::rememberSettings() const
 			hosts << ui_->remotehost->itemText(i);
 	cfg.setValue("recentremotehosts", hosts);
 
-	// Remember "newsize" if we created a new picture
+	// Remember size and background color if we created a new picture
 	if(ui_->solidcolor->isChecked()) {
 		cfg.setValue("newsize", QSize(ui_->picturewidth->value(), ui_->pictureheight->value()));
+		cfg.setValue("newcolor", ui_->colorButton->color());
 	}
 }
 

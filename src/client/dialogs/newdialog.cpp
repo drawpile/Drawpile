@@ -37,9 +37,14 @@ NewDialog::NewDialog(QWidget *parent)
 	connect(this, SIGNAL(accepted()), this, SLOT(onAccept()));
 
 	QSettings cfg;
+
 	QSize lastSize = cfg.value("history/newsize", QSize(800, 600)).toSize();
 	if(lastSize.isValid())
 		setSize(lastSize);
+
+	QColor lastColor = cfg.value("history/newcolor").value<QColor>();
+	if(lastColor.isValid())
+		setBackground(lastColor);
 }
 
 NewDialog::~NewDialog()
@@ -64,6 +69,7 @@ void NewDialog::onAccept()
 	QSize size(_ui->width->value(), _ui->height->value());
 	QSettings cfg;
 	cfg.setValue("history/newsize", size);
+	cfg.setValue("history/newcolor", _ui->background->color());
 	emit accepted(size, _ui->background->color());
 }
 

@@ -640,7 +640,6 @@ void MainWindow::showNew()
 		loadDocument(bcl);
 	});
 
-	dlg->setBackground(_dock_toolsettings->backgroundColor());
 	dlg->show();
 }
 
