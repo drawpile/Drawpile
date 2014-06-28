@@ -79,7 +79,7 @@ class HostDialog : public QDialog
 		void newSelected();
 
 	private:
-		Ui_HostDialog *ui_;
+		Ui_HostDialog *_ui;
 };
 
 }

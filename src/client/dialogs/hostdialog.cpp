@@ -43,49 +43,57 @@ namespace dialogs {
 HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	: QDialog(parent)
 {
-	ui_ = new Ui_HostDialog;
-	ui_->setupUi(this);
-	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
-	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setValidator(new UsernameValidator(this));
+	_ui = new Ui_HostDialog;
+	_ui->setupUi(this);
+	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
+	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	_ui->username->setValidator(new UsernameValidator(this));
 
 	if(original.isNull()) {
-		ui_->imageSelector->setWidth(800);
-		ui_->imageSelector->setHeight(600);
-		ui_->existingpicture->setEnabled(false);
-		ui_->imageSelector->chooseColor();
-		ui_->solidcolor->setChecked(true);
+		_ui->imageSelector->setWidth(800);
+		_ui->imageSelector->setHeight(600);
+		_ui->existingpicture->setEnabled(false);
+		_ui->imageSelector->chooseColor();
+		_ui->solidcolor->setChecked(true);
 	} else {
-		ui_->imageSelector->setOriginal(original);
+		_ui->imageSelector->setOriginal(original);
 	}
 
-	connect(ui_->colorButton, SIGNAL(colorChanged(QColor)), ui_->imageSelector, SLOT(setColor(QColor)));
-	connect(ui_->colorButton, SIGNAL(colorChanged(QColor)), ui_->solidcolor, SLOT(click()));
+	connect(_ui->colorButton, SIGNAL(colorChanged(QColor)), _ui->imageSelector, SLOT(setColor(QColor)));
+	connect(_ui->colorButton, SIGNAL(colorChanged(QColor)), _ui->solidcolor, SLOT(click()));
 
-	connect(ui_->selectPicture, SIGNAL(clicked()), this, SLOT(selectPicture()));
-	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
+	connect(_ui->selectPicture, SIGNAL(clicked()), this, SLOT(selectPicture()));
+	connect(_ui->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
-	// Set defaults
+	// Session tab defaults
 	QSettings cfg;
 	cfg.beginGroup("history");
-	ui_->username->setText(cfg.value("username").toString());
-	ui_->sessiontitle->setText(cfg.value("sessiontitle").toString());
-	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
+	_ui->username->setText(cfg.value("username").toString());
+	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
+	_ui->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 
 	QSize lastsize = cfg.value("newsize", QSize(800, 600)).toSize();
-	ui_->picturewidth->setValue(lastsize.width());
-	ui_->pictureheight->setValue(lastsize.height());
+	_ui->picturewidth->setValue(lastsize.width());
+	_ui->pictureheight->setValue(lastsize.height());
 
 	QColor lastcolor = cfg.value("newcolor").value<QColor>();
 	if(lastcolor.isValid())
-		ui_->colorButton->setColor(lastcolor);
+		_ui->colorButton->setColor(lastcolor);
 
-	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
+	// Server tab defaults
+	_ui->persistentSession->setChecked(cfg.value("persistentsession", false).toBool());
+	_ui->userlimit->setValue(cfg.value("userlimit", 20).toInt());
+	_ui->allowdrawing->setChecked(cfg.value("allowdrawing", true).toBool());
+	_ui->layerctrllock->setChecked(cfg.value("layerctrllock", true).toBool());
+	if(cfg.value("hostremote", false).toBool())
+		_ui->useremote->setChecked(true);
+
+	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
 }
 
 HostDialog::~HostDialog()
 {
-	delete ui_;
+	delete _ui;
 }
 
 void HostDialog::rememberSettings() const
@@ -98,20 +106,28 @@ void HostDialog::rememberSettings() const
 
 	// Move current address to the top of the list
 	QStringList hosts;
-	const QString current = ui_->remotehost->currentText();
-	int curind = ui_->remotehost->findText(current);
+	const QString current = _ui->remotehost->currentText();
+	int curind = _ui->remotehost->findText(current);
 	if(curind!=-1)
-		ui_->remotehost->removeItem(curind);
+		_ui->remotehost->removeItem(curind);
 	hosts << current;
-	for(int i=0;i<ui_->remotehost->count();++i)
-			hosts << ui_->remotehost->itemText(i);
+	for(int i=0;i<_ui->remotehost->count();++i)
+			hosts << _ui->remotehost->itemText(i);
 	cfg.setValue("recentremotehosts", hosts);
 
 	// Remember size and background color if we created a new picture
-	if(ui_->solidcolor->isChecked()) {
-		cfg.setValue("newsize", QSize(ui_->picturewidth->value(), ui_->pictureheight->value()));
-		cfg.setValue("newcolor", ui_->colorButton->color());
+	if(_ui->solidcolor->isChecked()) {
+		cfg.setValue("newsize", QSize(_ui->picturewidth->value(), _ui->pictureheight->value()));
+		cfg.setValue("newcolor", _ui->colorButton->color());
 	}
+
+	// Remember server tab settings
+	cfg.setValue("hostremote", _ui->useremote->isChecked());
+	cfg.setValue("persistentsession", _ui->persistentSession->isChecked());
+	cfg.setValue("userlimit", _ui->userlimit->value());
+	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
+	cfg.setValue("layerctrllock", _ui->layerctrllock->isChecked());
+
 }
 
 bool HostDialog::selectPicture()
@@ -134,9 +150,9 @@ bool HostDialog::selectPicture()
 
 	bool selected = false;
 	if(!file.isEmpty()) {
-		ui_->imageSelector->setImage(file);
-		if(ui_->imageSelector->imageFile() == file) {
-			ui_->otherpicture->click();
+		_ui->imageSelector->setImage(file);
+		if(_ui->imageSelector->imageFile() == file) {
+			_ui->otherpicture->click();
 			selected = true;
 		}
 
@@ -147,82 +163,82 @@ bool HostDialog::selectPicture()
 
 QString HostDialog::getRemoteAddress() const
 {
-	return ui_->remotehost->currentText();
+	return _ui->remotehost->currentText();
 }
 
 bool HostDialog::useRemoteAddress() const
 {
-	return ui_->useremote->isChecked();
+	return _ui->useremote->isChecked();
 }
 
 QString HostDialog::getUserName() const
 {
-	return ui_->username->text();
+	return _ui->username->text();
 }
 
 QString HostDialog::getTitle() const
 {
-	return ui_->sessiontitle->text();
+	return _ui->sessiontitle->text();
 }
 
 int HostDialog::getUserLimit() const
 {
-	return ui_->userlimit->value();
+	return _ui->userlimit->value();
 }
 
 QString HostDialog::getPassword() const
 {
-	return ui_->sessionpassword->text();
+	return _ui->sessionpassword->text();
 }
 
 SessionLoader *HostDialog::getSessionLoader() const
 {
-	if(ui_->imageSelector->isColor()) {
+	if(_ui->imageSelector->isColor()) {
 		return new BlankCanvasLoader(
 			QSize(
-				ui_->picturewidth->value(),
-				ui_->pictureheight->value()
+				_ui->picturewidth->value(),
+				_ui->pictureheight->value()
 			),
-			ui_->imageSelector->color()
+			_ui->imageSelector->color()
 		);
 
-	} else if(ui_->imageSelector->isImageFile()) {
-		return new ImageCanvasLoader(ui_->imageSelector->imageFile());
+	} else if(_ui->imageSelector->isImageFile()) {
+		return new ImageCanvasLoader(_ui->imageSelector->imageFile());
 
 	} else {
-		return new QImageCanvasLoader(ui_->imageSelector->image());
+		return new QImageCanvasLoader(_ui->imageSelector->image());
 	}
 }
 
 bool HostDialog::useOriginalImage() const
 {
-	return ui_->imageSelector->isOriginal();
+	return _ui->imageSelector->isOriginal();
 }
 
 void HostDialog::newSelected()
 {
 	if(!selectPicture()) {
 		// Select something else if no image was selected
-		if(ui_->existingpicture->isEnabled())
-			ui_->existingpicture->click();
+		if(_ui->existingpicture->isEnabled())
+			_ui->existingpicture->click();
 		else
-			ui_->solidcolor->click();
+			_ui->solidcolor->click();
 	}
 }
 
 bool HostDialog::getAllowDrawing() const
 {
-	return ui_->allowdrawing->isChecked();
+	return _ui->allowdrawing->isChecked();
 }
 
 bool HostDialog::getLayerControlLock() const
 {
-	return ui_->layerctrllock->isChecked();
+	return _ui->layerctrllock->isChecked();
 }
 
 bool HostDialog::getPersistentMode() const
 {
-	return ui_->persistentSession->isChecked();
+	return _ui->persistentSession->isChecked();
 }
 
 }
