@@ -80,7 +80,7 @@ public:
 	static const int HEADER_LEN = 3;
 
 	Message(MessageType type, uint8_t ctx): _type(type), _undone(DONE), _refcount(0), _contextid(ctx) {}
-	virtual ~Message() = default;
+	virtual ~Message() {};
 	
 	/**
 	 * @brief Get the type of this message.

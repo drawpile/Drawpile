@@ -60,7 +60,7 @@ public:
 	Tool(ToolCollection &owner, Type type)
 		: _owner(owner), _type(type)
 		{}
-	virtual ~Tool() = default;
+	virtual ~Tool() {};
 
 	//! Get the type of this tool
 	Type type() const { return _type; }

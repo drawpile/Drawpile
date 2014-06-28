@@ -36,7 +36,7 @@ class StrokePreviewer
 {
 public:
 	StrokePreviewer(CanvasScene *scene) : _scene(scene) { }
-	virtual ~StrokePreviewer() = default;
+	virtual ~StrokePreviewer() {};
 
 	virtual void startStroke(const paintcore::Brush &brush, const paintcore::Point &point, int layer) = 0;
 	virtual void continueStroke(const paintcore::Point &point) = 0;

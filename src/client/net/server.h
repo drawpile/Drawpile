@@ -37,8 +37,8 @@ public:
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
-    Server(bool local) : _local(local) {}
-	virtual ~Server() = default;
+	Server(bool local) : _local(local) {}
+	virtual ~Server() {}
 	
 	/**
 	 * \brief Send a message to the server

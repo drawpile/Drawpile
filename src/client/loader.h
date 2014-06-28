@@ -41,7 +41,7 @@ namespace drawingboard {
  */
 class SessionLoader {
 public:
-	virtual ~SessionLoader() = default;
+	virtual ~SessionLoader() {};
 	
 	/**
 	 * @brief Get the commands needed to initialize the session.

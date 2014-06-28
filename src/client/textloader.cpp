@@ -17,8 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdexcept>
-
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
@@ -42,9 +40,9 @@ using protocol::MessagePtr;
 
 namespace {
 
-class SyntaxError : public std::runtime_error {
+class SyntaxError {
 public:
-	SyntaxError(const QString &e) : runtime_error("syntax error"), error(e) { }
+	SyntaxError(const QString &e) : error(e) { }
 
 	QString error;
 };
