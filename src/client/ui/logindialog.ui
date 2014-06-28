@@ -11,6 +11,16 @@
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="intro">
+     <property name="text">
+      <string notr="true">(Server does not allow guest logins)</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <spacer name="introspacer">
      <property name="orientation">
@@ -68,15 +78,13 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="intro">
-     <property name="text">
-      <string notr="true">(Server does not allow guest logins)</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>password</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>username</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
