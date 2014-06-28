@@ -31,6 +31,7 @@ namespace paintcore {
 class Annotation
 {
 public:
+	static const int MIN_SIZE = 30;
 	Annotation(int id);
 	Annotation(const Annotation &a);
 	~Annotation();
@@ -61,7 +62,7 @@ public:
 	 */
 	const QRect &rect() const { return _rect; }
 
-	void setRect(const QRect &rect) { _rect = rect; }
+	void setRect(const QRect &rect);
 
 	/**
 	 * @brief Get the background color of the text box

@@ -47,6 +47,15 @@ void Annotation::setText(const QString &text)
 		_doc->setHtml(text);
 }
 
+void Annotation::setRect(const QRect &rect)
+{
+	_rect = rect;
+	if(_rect.width() < MIN_SIZE)
+		_rect.setWidth(MIN_SIZE);
+	if(_rect.height() < MIN_SIZE)
+		_rect.setHeight(MIN_SIZE);
+}
+
 bool Annotation::isEmpty() const
 {
 	if(!_doc) {

@@ -22,6 +22,7 @@
 #include "scene/canvasscene.h"
 #include "docks/toolsettingsdock.h"
 #include "net/client.h"
+#include "core/annotation.h"
 
 #include "tools/toolsettings.h"
 #include "tools/annotation.h"
@@ -107,10 +108,11 @@ void Annotation::end()
 
 		QRect rect = QRect(_p1.toPoint(), _p2.toPoint()).normalized();
 
-		if(rect.width()<15)
-			rect.setWidth(15);
-		if(rect.height()<15)
-			rect.setHeight(15);
+		if(rect.width() < 10 && rect.height() < 10) {
+			// User created a tiny annotation, probably by clicking rather than dragging.
+			// Create a nice and big annotation box rather than a minimum size one.
+			rect.setSize(QSize(160, 60));
+		}
 
 		client().sendAnnotationCreate(0, rect);
 	}
