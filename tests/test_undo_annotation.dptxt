@@ -1,6 +1,4 @@
 # Test annotation interaction with undo
-# Annotations are currently not undoable, but they are still
-# part of the command stream
 
 resize 1 0 800 600 0
 newlayer 1 1 #ffffffff Undo test
@@ -8,7 +6,7 @@ newlayer 1 1 #ffffffff Undo test
 ctx 1 layer=1 colorh=#ff0000 sizeh=1
 
 addannotation 1 1 10 10 100 100
-annotate 1 1 #0
+annotate 1 1 #110000ff
 Test
 endannotate
 
@@ -17,10 +15,10 @@ move 1 1 1
 move 1 100 100
 penup 1
 
-reshapeannotation 1 1 100 10 100 100
+reshapeannotation 1 1 200 200 100 100
 
 undo 1 1
-# expected result: diagonal line is undone, annotation has moved to 100x10
+# expected result: diagonal line is undone, annotation has remained at 10x10
 # and no new annotation has been created
 
 # Annotation deletion in undoable
@@ -29,4 +27,10 @@ deleteannotation 1 1
 
 undo 1 1
 # expected result: annotation was not deleted
+
+# Moving annotations is also undoable
+undopoint 1
+reshapeannotation 1 1 300 300 100 100
+undo 1 1
+# expected result: annotation remains at 10x10
 

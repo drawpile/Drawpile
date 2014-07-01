@@ -57,6 +57,8 @@ public:
 	uint16_t w() const { return _w; }
 	uint16_t h() const { return _h; }
 
+	bool isUndoable() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
@@ -85,6 +87,8 @@ public:
 	int32_t y() const { return _y; }
 	uint16_t w() const { return _w; }
 	uint16_t h() const { return _h; }
+
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
@@ -117,6 +121,8 @@ public:
 	uint8_t id() const { return _id; }
 	uint32_t bg() const { return _bg; }
 	QString text() const { return QString::fromUtf8(_text); }
+
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;

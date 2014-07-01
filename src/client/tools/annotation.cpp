@@ -103,10 +103,12 @@ void Annotation::end()
 			// if geometry was not changed, user merely clicked on the annotation
 			// rather than dragging it. In that case, focus the text box to prepare
 			// for content editing.
-			if(_selected->isChanged())
+			if(_selected->isChanged()) {
+				client().sendUndopoint();
 				client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
-			else
+			} else {
 				settings().getAnnotationSettings()->setFocus();
+			}
 
 			_selected = 0;
 		}
@@ -121,6 +123,7 @@ void Annotation::end()
 			rect.setSize(QSize(160, 60));
 		}
 
+		client().sendUndopoint();
 		client().sendAnnotationCreate(0, rect);
 	}
 }
