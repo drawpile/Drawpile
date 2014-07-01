@@ -61,6 +61,9 @@ class AnnotationItem : public QGraphicsObject {
 		//! Refresh item from underlaying annotation model
 		void refresh();
 
+		//! Does the item geometry differ from the model geometry?
+		bool isChanged() const;
+
 		//! Highlight this item
 		void setHighlight(bool h);
 

@@ -304,6 +304,9 @@ public slots:
 	//! Set the currently selected annotation item
 	void setSelection(drawingboard::AnnotationItem *item);
 
+	//! Focus the content editing box
+	void setFocus();
+
 	//! Unselect this item if currently selected
 	void unselect(int id);
 

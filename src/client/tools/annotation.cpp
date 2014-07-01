@@ -100,7 +100,14 @@ void Annotation::end()
 {
 	if(_wasselected) {
 		if(_selected) {
-			client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
+			// if geometry was not changed, user merely clicked on the annotation
+			// rather than dragging it. In that case, focus the text box to prepare
+			// for content editing.
+			if(_selected->isChanged())
+				client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
+			else
+				settings().getAnnotationSettings()->setFocus();
+
 			_selected = 0;
 		}
 	} else {

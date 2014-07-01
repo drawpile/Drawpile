@@ -128,6 +128,15 @@ void AnnotationItem::refresh()
 	update();
 }
 
+bool AnnotationItem::isChanged() const
+{
+	paintcore::Annotation *a = _image->getAnnotation(_id);
+	Q_ASSERT(a);
+	if(!a)
+		return false;
+	return _rect != a->rect();
+}
+
 QRectF AnnotationItem::boundingRect() const
 {
 	return _rect | _oldrect;

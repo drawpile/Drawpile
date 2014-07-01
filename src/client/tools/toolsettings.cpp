@@ -767,9 +767,13 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text());
 		_ui->btnBackground->setColor(a->backgroundColor());
-		_ui->content->setFocus();
 	}
 	_noupdate = false;
+}
+
+void AnnotationSettings::setFocus()
+{
+	_ui->content->setFocus();
 }
 
 void AnnotationSettings::applyChanges()
