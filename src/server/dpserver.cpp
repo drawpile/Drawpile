@@ -20,6 +20,7 @@
 #include <QStringList>
 #include <QScopedPointer>
 #include <QRegularExpression>
+#include <QSslSocket>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
 #include "qcommandlineparser.h"
@@ -39,18 +40,26 @@
 #include "webadmin/webadmin.h"
 #endif
 
+#include <cstdio>
+
 #ifdef Q_OS_UNIX
-#include <iostream>
 #include <unistd.h>
 #include "unixsignals.h"
 #endif
 
+void printVersion()
+{
+	printf("drawpile-srv " DRAWPILE_VERSION "\n");
+	printf("Protocol version: %d.%d\n", DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
+	printf("SSL library version: %s (%lu)\n", QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(), QSslSocket::sslLibraryVersionNumber());
+}
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_UNIX
 	// Security check
 	if(geteuid() == 0) {
-		std::cerr << "This program should not be run as root!\n";
+		fprintf(stderr, "This program should not be run as root!\n");
 		return 1;
 	}
 #endif
@@ -69,7 +78,10 @@ int main(int argc, char *argv[]) {
 
 	parser.setApplicationDescription("Standalone server for Drawpile");
 	parser.addHelpOption();
-	parser.addVersionOption();
+
+	// --version, -v
+	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
+	parser.addOption(versionOption);
 
 	// --verbose, -V
 	QCommandLineOption verboseOption(QStringList() << "verbose" << "V", "Verbose mode");
@@ -168,6 +180,11 @@ int main(int argc, char *argv[]) {
 
 	// Parse
 	parser.process(app);
+
+	if(parser.isSet(versionOption)) {
+		printVersion();
+		return 0;
+	}
 
 	// Load configuration file (if set)
 	ConfigFile cfgfile(parser.value(configFileOption));

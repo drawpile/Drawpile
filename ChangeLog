@@ -17,6 +17,7 @@
  * Fixed crash when dragging&dropping a layer
  * Fixed canvas stealing focus from text boxes
  * Authenticated login support
+ * More version info shown in `drawpile-srv --version`
 
 2014-06-03 Version 0.9.1
  * SSL support
