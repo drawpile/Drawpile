@@ -24,7 +24,7 @@ option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )
-option ( BUILTIN_ICONS "Include icon resources in the executable" OFF )
+option ( BUILTIN_ICONS "Include icon resources in the executable" ON )
 
 if (NOT CMAKE_BUILD_TYPE)
 	message(STATUS "No build type selected, default to Release")

@@ -48,7 +48,7 @@ The configuration step supports some options:
 * SERVER=off: don't build the stand-alone server.
 * CMAKE\_BUILD\_TYPE=debug: enable debugging features
 * INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
-* BUILTIN\_ICONS=on: include icons in the executable
+* BUILTIN\_ICONS=off: don't include icons in the executable
 
 Example: `$ cmake .. -DDEBUG=on`
 

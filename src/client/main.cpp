@@ -17,6 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "config.h"
+
 #include "main.h"
 #include "mainwindow.h"
 
@@ -39,10 +41,13 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 	// Set resource search paths
 	QStringList iconPaths;
+#ifdef BUILTIN_ICONS
+	iconPaths << ":/icons";
+#else
 	iconPaths << qApp->applicationDirPath() + "/icons";
 	for(const QString path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
 		iconPaths << path + "/icons";
-	iconPaths << ":/icons";
+#endif
 	QDir::setSearchPaths("icons", iconPaths);
 
 	// Make sure a user name is set
