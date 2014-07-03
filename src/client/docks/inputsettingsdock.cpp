@@ -26,6 +26,10 @@
 
 namespace docks {
 
+namespace {
+	int center(const QSlider *slider) { return (slider->maximum() - slider->minimum()) / 2 + slider->minimum(); }
+}
+
 InputSettings::InputSettings(QWidget *parent) :
 	QDockWidget(tr("Input"), parent)
 {
@@ -37,7 +41,7 @@ InputSettings::InputSettings(QWidget *parent) :
 	// Restore settings
 	QSettings cfg;
 	cfg.beginGroup("input");
-	_ui->smoothing->setValue(cfg.value("smoothing", 0).toInt());
+	_ui->smoothing->setValue(cfg.value("smoothing", center(_ui->smoothing)).toInt());
 	_ui->pressuresrc->setCurrentIndex(cfg.value("pressuremode", 0).toInt());
 	_ui->stackedWidget->setCurrentIndex(_ui->pressuresrc->currentIndex());
 
@@ -63,8 +67,8 @@ InputSettings::InputSettings(QWidget *parent) :
 		_ui->velocityCurve->setCurve(curve);
 	}
 
-	_ui->distance->setValue(cfg.value("distance", _ui->distance->minimum()).toInt());
-	_ui->velocity->setValue(cfg.value("velocity", _ui->velocity->minimum()).toInt());
+	_ui->distance->setValue(cfg.value("distance", center(_ui->distance)).toInt());
+	_ui->velocity->setValue(cfg.value("velocity", center(_ui->velocity)).toInt());
 }
 
 InputSettings::~InputSettings()
