@@ -20,6 +20,7 @@
 #include <QPainter>
 #include <QTextDocument>
 #include <QDataStream>
+#include <QAbstractTextDocumentLayout>
 
 #include "annotation.h"
 
@@ -63,6 +64,17 @@ bool Annotation::isEmpty() const
 		_doc->setHtml(_text);
 	}
 	return _doc->isEmpty();
+}
+
+int Annotation::cursorAt(const QPoint &p) const
+{
+	const QRectF rect0(QPointF(), _rect.size());
+	if(!_doc) {
+		_doc = new QTextDocument;
+		_doc->setHtml(_text);
+	}
+	_doc->setTextWidth(rect0.width());
+	return _doc->documentLayout()->hitTest(p - _rect.topLeft(), Qt::FuzzyHit);
 }
 
 void Annotation::paint(QPainter *painter) const

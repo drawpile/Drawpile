@@ -771,9 +771,19 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	_noupdate = false;
 }
 
-void AnnotationSettings::setFocus()
+void AnnotationSettings::setFocusAt(int cursorPos)
 {
 	_ui->content->setFocus();
+	if(cursorPos>=0) {
+		QTextCursor c = _ui->content->textCursor();
+		c.setPosition(cursorPos);
+		_ui->content->setTextCursor(c);
+	}
+}
+
+void AnnotationSettings::setFocus()
+{
+	setFocusAt(-1);
 }
 
 void AnnotationSettings::applyChanges()

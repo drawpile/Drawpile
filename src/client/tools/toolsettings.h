@@ -300,6 +300,12 @@ public:
 	 */
 	int selected() const;
 
+	/**
+	 * @brief Focus content editing box and set cursor position
+	 * @param cursorPos cursor position
+	 */
+	void setFocusAt(int cursorPos);
+
 public slots:
 	//! Set the currently selected annotation item
 	void setSelection(drawingboard::AnnotationItem *item);

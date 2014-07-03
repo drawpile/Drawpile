@@ -107,7 +107,7 @@ void Annotation::end()
 				client().sendUndopoint();
 				client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
 			} else {
-				settings().getAnnotationSettings()->setFocus();
+				settings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
 			}
 
 			_selected = 0;

@@ -65,6 +65,12 @@ public:
 	void setRect(const QRect &rect);
 
 	/**
+	 * @brief Get cursor position at the given coordinates
+	 * @return cursor position or -1
+	 */
+	int cursorAt(const QPoint &p) const;
+
+	/**
 	 * @brief Get the background color of the text box
 	 * @return
 	 */
