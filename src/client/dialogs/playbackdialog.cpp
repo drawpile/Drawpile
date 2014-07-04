@@ -145,6 +145,7 @@ PlaybackDialog::~PlaybackDialog()
 	cfg.setValue("stoponmarkers", _ui->stopOnMarkers->isChecked());
 	cfg.setValue("maxinterval", _ui->maxinterval->value());
 
+	delete _tinyPlayer;
 	delete _ui;
 }
 
@@ -181,7 +182,6 @@ bool PlaybackDialog::exitCleanup()
 	} else {
 		if(_closing)
 			QApplication::restoreOverrideCursor();
-		delete _tinyPlayer;
 		return true;
 	}
 }
