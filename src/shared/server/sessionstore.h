@@ -24,7 +24,7 @@
 
 namespace server {
 
-class SessionDescription;
+struct SessionDescription;
 class SessionState;
 
 /**

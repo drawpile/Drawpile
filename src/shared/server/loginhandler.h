@@ -29,7 +29,7 @@ namespace server {
 class Client;
 class SessionState;
 class SessionServer;
-class SessionDescription;
+struct SessionDescription;
 
 /**
  * @brief Perform the client login handshake

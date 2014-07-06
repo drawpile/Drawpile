@@ -47,12 +47,13 @@ struct MessageRecord {
 	MessageRecord() : status(END_OF_RECORDING), message(0) {}
 
 	enum { OK, INVALID, END_OF_RECORDING } status;
+	struct MessageRecordError {
+		int len;
+		protocol::MessageType type;
+	};
 	union {
 		protocol::Message *message;
-		struct {
-			int len;
-			protocol::MessageType type;
-		} error;
+		MessageRecordError error;
 	};
 };
 

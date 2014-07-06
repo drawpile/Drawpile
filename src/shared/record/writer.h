@@ -27,7 +27,7 @@ class QFileDevice;
 
 namespace recording {
 
-class HibernationHeader;
+struct HibernationHeader;
 
 class Writer : public QObject
 {
