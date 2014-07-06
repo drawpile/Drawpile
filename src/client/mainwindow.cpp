@@ -124,6 +124,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	createDocks();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+	setUnifiedTitleAndToolBarOnMac(true);
+#endif
+
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
