@@ -159,6 +159,9 @@ class MainWindow : public QMainWindow {
 		//! Set the window title according to open file name
 		void updateTitle();
 
+		//! Enable or disable drawing tools
+		void setDrawingToolsEnabled(bool enable);
+
 		//! Save settings and exit
 		void exit();
 

@@ -289,6 +289,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Create actions and menus
 	setupActions();
+	setDrawingToolsEnabled(false);
 
 	// Restore settings
 	readSettings(restoreWindowPosition);
@@ -367,6 +368,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	win->updateTitle();
 	win->_currentdoctools->setEnabled(true);
 	win->_docadmintools->setEnabled(true);
+	setDrawingToolsEnabled(true);
 	return win;
 }
 
@@ -392,6 +394,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	win->updateTitle();
 	win->_currentdoctools->setEnabled(true);
 	win->_docadmintools->setEnabled(true);
+	setDrawingToolsEnabled(true);
 
 	QFileInfo fileinfo(reader->filename());
 
@@ -467,6 +470,11 @@ void MainWindow::updateTitle()
 		setWindowTitle(tr("%1[*] - Drawpile").arg(name));
 	else
 		setWindowTitle(tr("%1[*] - %2 - Drawpile").arg(name).arg(_canvas->title()));
+}
+
+void MainWindow::setDrawingToolsEnabled(bool enable)
+{
+	_drawingtools->setEnabled(enable && _canvas->hasImage());
 }
 
 /**
@@ -1115,7 +1123,7 @@ void MainWindow::connecting()
 
 	// Disable UI until login completes
 	_view->setEnabled(false);
-	_drawingtools->setEnabled(false);
+	setDrawingToolsEnabled(false);
 }
 
 /**
@@ -1130,7 +1138,7 @@ void MainWindow::disconnected(const QString &message, bool localDisconnect)
 
 	// Re-enable UI
 	_view->setEnabled(true);
-	_drawingtools->setEnabled(true);
+	setDrawingToolsEnabled(true);
 
 	setSessionTitle(QString());
 
@@ -1157,7 +1165,7 @@ void MainWindow::loggedin(bool join)
 
 	// Re-enable UI
 	_view->setEnabled(true);
-	_drawingtools->setEnabled(true);
+	setDrawingToolsEnabled(true);
 
 	// Initialize the canvas (in host mode the canvas was prepared already)
 	if(join) {
