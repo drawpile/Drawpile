@@ -648,12 +648,14 @@ void MainWindow::showNew()
 {
 	auto dlg = new dialogs::NewDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, &dialogs::NewDialog::accepted, [this](const QSize &size, const QColor &background) {
-		BlankCanvasLoader bcl(size, background);
-		loadDocument(bcl);
-	});
-
+	connect(dlg, &dialogs::NewDialog::accepted, this, &MainWindow::newDocument);
 	dlg->show();
+}
+
+void MainWindow::newDocument(const QSize &size, const QColor &background)
+{
+   BlankCanvasLoader bcl(size, background);
+   loadDocument(bcl);
 }
 
 /**

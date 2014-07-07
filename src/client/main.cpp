@@ -31,6 +31,7 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDir>
+#include <QDesktopWidget>
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -146,6 +147,25 @@ int main(int argc, char *argv[]) {
 
 			win->open(url);
 		}
+	} else {
+		// No arguments, start with an empty document
+		QSettings cfg;
+
+		QSize maxSize = app.desktop()->screenGeometry().size();
+		QSize size = cfg.value("history/newsize").toSize();
+		if(size.width()<100 || size.height()<100) {
+			// No previous size, or really small size
+			size = QSize(800, 600);
+		} else {
+			// Make sure previous size is not ridiculously huge
+			size = size.boundedTo(maxSize);
+		}
+
+		QColor color = cfg.value("history/newcolor").value<QColor>();
+		if(!color.isValid())
+			color = Qt::white;
+
+		win->newDocument(size, color);
 	}
 
 	return app.exec();
