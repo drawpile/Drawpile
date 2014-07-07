@@ -19,7 +19,7 @@
 
 #include "initsys.h"
 
-#include <QDebug>
+#include <cstdio>
 
 namespace initsys {
 
@@ -36,7 +36,9 @@ void notifyReady()
 void notifyStatus(const QString &status)
 {
 #ifndef NDEBUG
-	qDebug() << status;
+	fprintf(stderr, "STATUS: %s\n", status.toLocal8Bit().constData());
+#else
+	Q_UNUSED(status);
 #endif
 }
 

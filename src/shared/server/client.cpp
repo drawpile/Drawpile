@@ -73,6 +73,13 @@ Client::~Client()
 {
 }
 
+QString Client::toLogString() const {
+	if(_session) 
+		return QStringLiteral("#%1 [%2] %3@%4:").arg(QString::number(id()), peerAddress().toString(), username(), _session->id());
+	else
+		return QStringLiteral("[%1] %2@(lobby):").arg(peerAddress().toString(), username());
+}
+
 void Client::setSession(SessionState *session)
 {
 	_session = session;
@@ -153,7 +160,7 @@ void Client::receiveMessages()
 			if(msg->type() == protocol::MSG_LOGIN)
 				emit loginMessage(msg);
 			else
-				logger::warning() << "Got non-login message (type=" << msg->type() << ") in login state from" << *this;
+				logger::notice() << this << "Got non-login message (type=" << msg->type() << ") in login state";
 		} else {
 			handleSessionMessage(msg);
 		}
@@ -163,14 +170,14 @@ void Client::receiveMessages()
 void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
 {
 	if(!_awaiting_snapshot) {
-		logger::warning() << "Got unexpected snapshot message from" << *this;
+		logger::notice() << this << "Got unexpected snapshot message from";
 		return;
 	}
 
 	_awaiting_snapshot = false;
 
 	if(msg.mode() != protocol::SnapshotMode::ACK) {
-		logger::warning() << "Got unexpected snapshot message from" << *this <<". Expected ACK, got mode" << msg.mode();
+		logger::notice() << this << "Got unexpected snapshot message. Expected ACK, got mode" << msg.mode();
 		_session->abandonSnapshotPoint();
 		return;
 	} else {
@@ -182,7 +189,7 @@ void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
 void Client::receiveSnapshot()
 {
 	if(!_uploading_snapshot) {
-		logger::warning() << "Received snapshot data from" << *this << "when not expecting it!";
+		logger::notice() << this << "Received snapshot data when not expecting it!";
 		disconnectError("Didn't expect snapshot data");
 		return;
 	}
@@ -203,13 +210,13 @@ void Client::receiveSnapshot()
 
 		// Add message
 		if(_session->addToSnapshotStream(msg)) {
-			logger::debug() << "Finished getting snapshot from" << *this;
+			logger::debug() << this << "Finished getting snapshot.";
 			_uploading_snapshot = false;
 
 			// If this was the hosting user, graduate to full session status
 			// The server now needs to be brought up to date with the initial uploaded state
 			if(_state == WAIT_FOR_SYNC) {
-				logger::debug() << *this << "session sync complete";
+				logger::debug() << this << "Session sync complete.";
 				_state = IN_SESSION;
 				_streampointer = _session->mainstream().snapshotPointIndex();
 				_session->syncInitialState(_session->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
@@ -218,7 +225,7 @@ void Client::receiveSnapshot()
 			}
 
 			if(_msgqueue->isPendingSnapshot()) {
-				logger::warning() << *this << "sent too much snapshot data!";
+				logger::notice() << this << "Received too much snapshot data!";
 				disconnectError("too much snapshot data");
 			}
 			break;
@@ -228,14 +235,14 @@ void Client::receiveSnapshot()
 
 void Client::gotBadData(int len, int type)
 {
-	logger::warning() << "Received unknown message type #" << type << "of length" << len << "from" << *this << peerAddress();
+	logger::notice() << this << "Received unknown message type #" << type << "of length" << len;
 	_socket->abort();
 }
 
 void Client::socketError(QAbstractSocket::SocketError error)
 {
 	if(error != QAbstractSocket::RemoteHostClosedError) {
-		logger::error() << "Socket error" << _socket->errorString() << "from" << *this << peerAddress();
+		logger::error() << this << "Socket error" << _socket->errorString();
 		_socket->abort();
 	}
 }
@@ -269,7 +276,7 @@ void Client::requestSnapshot(bool forcenew)
 	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 	_session->addSnapshotPoint();
-	logger::info() << "Created a new snapshot point and requested data from" << *this;
+	logger::debug() << this << "Created a new snapshot point and requested data from";
 }
 
 /**
@@ -291,7 +298,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_USER_LEAVE:
 	case MSG_SESSION_CONFIG:
 	case MSG_STREAMPOS:
-		logger::warning() << *this << "sent server-to-user only command" << msg->type();
+		logger::notice() << this << "Got server-to-user only command" << msg->type();
 		return;
 	case MSG_DISCONNECT:
 		// we don't do anything with disconnect notifications from the client
@@ -300,7 +307,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	}
 
 	if(msg->isOpCommand() && !isOperator()) {
-		logger::warning() << *this << "tried to use operator command" << msg->type();
+		logger::notice() << this << "Tried to use operator command" << msg->type();
 		return;
 	}
 
@@ -313,7 +320,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		case MSG_LAYER_ORDER:
 		case MSG_LAYER_RETITLE:
 		case MSG_LAYER_DELETE:
-			logger::warning() << "Blocked layer control command from non-operator" << *this;
+			logger::debug() << this << "Non-operator use of layer control command";
 			return;
 		default: break;
 		}
@@ -459,28 +466,24 @@ bool Client::isLayerLocked(int layerid)
 
 void Client::grantOp()
 {
-	logger::info() << "Granted operator privileges to" << *this;
 	_isOperator = true;
 	sendUpdatedAttrs();
 }
 
 void Client::deOp()
 {
-	logger::info() << "Revoked operator privileges from" << *this;
 	_isOperator = false;
 	sendUpdatedAttrs();
 }
 
 void Client::lockUser()
 {
-	logger::info() << "Locked" << *this;
 	_userLock = true;
 	sendUpdatedAttrs();
 }
 
 void Client::unlockUser()
 {
-	logger::info() << "Unlocked" << *this;
 	_userLock = false;
 	sendUpdatedAttrs();
 }
@@ -488,7 +491,7 @@ void Client::unlockUser()
 void Client::barrierLock()
 {
 	if(_barrierlock != BARRIER_NOTLOCKED) {
-		logger::error() << "Tried to double-barrier lock" << *this;
+		logger::error() << this << "Tried to double-barrier lock";
 		return;
 	}
 
@@ -508,13 +511,13 @@ void Client::barrierUnlock()
 
 void Client::disconnectKick(const QString &kickedBy)
 {
-	logger::info() << *this << "kicked by" << kickedBy;
+	logger::info() << this << "Kicked by" << kickedBy;
 	_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 
 void Client::disconnectError(const QString &message)
 {
-	logger::info() << "Disconnecting" << *this << "disconnecting due to error:" << message;
+	logger::info() << this << "Disconnecting due to error:" << message;
 	_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
 }
 

@@ -42,6 +42,9 @@ SessionState::SessionState(const QString &id, int minorVersion, const QString &f
 	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false)
 { }
 
+QString SessionState::toLogString() const {
+	return QStringLiteral("Session %1:").arg(id());
+}
 
 void SessionState::assignId(Client *user)
 {
@@ -86,7 +89,7 @@ void SessionState::joinUser(Client *user, bool host)
 
 	_lastEventTime = QDateTime::currentDateTime();
 
-	logger::info() << *user << "joined" << *this;
+	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
 }
 
@@ -251,7 +254,7 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 				uint oldsize = _mainstream.lengthInBytes();
 				_mainstream.hardCleanup(0, streampos);
 				uint difference = oldsize - _mainstream.lengthInBytes();
-				logger::debug() << *this << QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2);
+				logger::debug() << this << QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2);
 
 				// TODO perhaps this can be deferred? Doing it now will cut off undo history,
 				// but deferring new snapshot generation risks leaving the session in unjoinable state.
@@ -287,12 +290,12 @@ void SessionState::addSnapshotPoint()
 bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 {
 	if(!_mainstream.hasSnapshot()) {
-		logger::error() << *this << "Tried to add a snapshot command, but there is no snapshot point!";
+		logger::error() << this << "Tried to add a snapshot command, but there is no snapshot point!";
 		return true;
 	}
 	protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
 	if(sp.isComplete()) {
-		logger::error() << *this << "Tried to add a snapshot command, but the snapshot point is already complete!";
+		logger::error() << this << "Tried to add a snapshot command, but the snapshot point is already complete!";
 		return true;
 	}
 
@@ -315,15 +318,15 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 void SessionState::abandonSnapshotPoint()
 {
-	logger::warning() << *this << "Abandoning snapshot point" << _mainstream.snapshotPointIndex();
+	logger::info() << this << "Abandoning snapshot point" << _mainstream.snapshotPointIndex();
 
 	if(!_mainstream.hasSnapshot()) {
-		logger::error() << *this << "Tried to abandon a snapshot point that doesn't exist!";
+		logger::error() << this << "Tried to abandon a snapshot point that doesn't exist!";
 		return;
 	}
 	const protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
 	if(sp.isComplete()) {
-		logger::error() << *this << "Tried to abandon a complete snapshot point!";
+		logger::error() << this << "Tried to abandon a complete snapshot point!";
 		return;
 	}
 
@@ -339,18 +342,18 @@ void SessionState::abandonSnapshotPoint()
 	foreach(Client *c, _clients)
 		c->barrierUnlock();
 
-	logger::debug() << *this << "Snapshot point rolled back to" << _mainstream.snapshotPointIndex();
+	logger::debug() << this << "Snapshot point rolled back to" << _mainstream.snapshotPointIndex();
 }
 
 void SessionState::cleanupCommandStream()
 {
 	int removed = _mainstream.cleanup();
-	logger::debug() << *this << "Cleaned up" << removed << "messages from the command stream.";
+	logger::debug() << this << "Cleaned up" << removed << "messages from the command stream.";
 }
 
 void SessionState::startSnapshotSync()
 {
-	logger::debug() << *this << "Starting snapshot sync!";
+	logger::debug() << this << "Starting snapshot sync!";
 
 	// Barrier lock all clients
 	foreach(Client *c, _clients)
@@ -359,7 +362,7 @@ void SessionState::startSnapshotSync()
 
 void SessionState::snapshotSyncStarted()
 {
-	logger::debug() << *this << "Snapshot sync started!";
+	logger::debug() << this << "Snapshot sync started!";
 
 	// Lift barrier lock
 	foreach(Client *c, _clients)
@@ -587,11 +590,11 @@ void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
 	QString filename = _recordingFile;
 
 	// Start recording
-	logger::info() << *this << "Starting session recording" << filename;
+	logger::info() << this << "Starting session recording" << filename;
 
 	_recorder = new recording::Writer(filename, this);
 	if(!_recorder->open()) {
-		logger::error() << *this << "Couldn't write session recording to" << filename << _recorder->errorString();
+		logger::error() << this << "Couldn't write session recording to" << filename << _recorder->errorString();
 		delete _recorder;
 		_recorder = 0;
 		return;

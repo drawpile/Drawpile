@@ -81,7 +81,7 @@ SessionState *SessionServer::createSession(int minorVersion, const QString &foun
 
 	initSession(session);
 
-	logger::info() << *session << "created";
+	logger::debug() << session << "Session created by" << founder;
 
 	return session;
 }
@@ -112,13 +112,13 @@ void SessionServer::destroySession(SessionState *session)
 {
 	Q_ASSERT(_sessions.contains(session));
 
-	logger::debug() << "Deleting" << *session << "with" << session->userCount() << "users";
+	logger::debug() << session << "Deleting session. User count is" << session->userCount();
 	_sessions.removeOne(session);
 
 	QString id = session->id();
 
 	if(session->isHibernatable() && _store) {
-		logger::info() << "Hibernating" << *session;
+		logger::info() << session << "Hibernating.";
 		_store->storeSession(session);
 	}
 
@@ -151,7 +151,7 @@ SessionState *SessionServer::getSessionById(const QString &id)
 		if(session) {
 			session->setParent(this);
 			initSession(session);
-			logger::info() << *session << "restored from hibernation";
+			logger::info() << session << "Restored from hibernation";
 			return session;
 		}
 	}
@@ -247,7 +247,7 @@ void SessionServer::addClient(Client *client)
  */
 void SessionServer::moveFromLobby(SessionState *session, Client *client)
 {
-	logger::debug() << *client << "moved from lobby to" << *session;
+	logger::debug() << client << "moved from lobby to" << session;
 	Q_ASSERT(_lobby.contains(client));
 	_lobby.removeOne(client);
 
@@ -283,7 +283,7 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 {
 	bool delSession = false;
 	if(session->userCount()==0) {
-		logger::debug() << "Last user of" << *session << "left";
+		logger::debug() << session << "Last user left";
 
 		bool hasSnapshot = session->mainstream().hasSnapshot();
 
@@ -291,9 +291,9 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
 		if(!hasSnapshot || !session->isPersistent()) {
 			if(hasSnapshot)
-				logger::info() << "Closing non-persistent" << *session;
+				logger::info() << session << "Closing non-persistent session";
 			else
-				logger::info() << "Closing" << *session << "due to lack of snapshot point!";
+				logger::info() << session << "Closing persistent session due to lack of snapshot point!";
 
 			delSession = true;
 		}
@@ -327,7 +327,7 @@ void SessionServer::cleanupSessions()
 		}
 
 		for(SessionState *s : expirelist) {
-			logger::info() << "Vacant" << *s << "expired. Uptime was" << s->uptime();
+			logger::info() << s << "Vacant session expired. Uptime was" << s->uptime();
 
 			if(_store && _store->autoStore() && s->isPersistent())
 				s->setHibernatable(true);

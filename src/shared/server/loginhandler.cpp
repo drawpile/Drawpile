@@ -150,7 +150,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 			handleStarttls();
 		} else {
 			send("ERROR MUSTSECURE");
-			logger::warning() << "Client from" << _client->peerAddress() << "didn't secure connection!";
+			logger::notice() << _client << "Didn't secure connection!";
 			_client->disconnectError("must secure connection first");
 		}
 
@@ -161,13 +161,13 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		} else if(message.startsWith("IDENT ")) {
 			handleIdentMessage(message);
 		} else {
-			logger::warning() << "Got invalid login message from" << _client->peerAddress();
+			logger::notice() << _client << "Invalid login message";
 			_client->disconnectError("invalid message");
 		}
 
 	} else if(_state == WAIT_FOR_IDENTITYMANAGER_REPLY) {
 		// Client shouldn't shouldn't send anything in this state
-		logger::warning() << "Got login message from" << _client->peerAddress() << "while waiting for identity manager reply";
+		logger::notice() << _client << "Got login message while waiting for identity manager reply";
 		_client->disconnectError("unexpected message");
 
 	} else {
@@ -176,7 +176,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		} else if(message.startsWith("JOIN ")) {
 			handleJoinMessage(message);
 		} else {
-			logger::warning() << "Got invalid login message from" << _client->peerAddress();
+			logger::notice() << _client << "Got invalid login message";
 			_client->disconnectError("invalid message");
 		}
 	}
@@ -379,7 +379,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << _client->username() << "for" << *session << "ignored because this is a debug build.";
+		logger::warning() << "Username clash" << _client->username() << "for" << session << "ignored because this is a debug build.";
 #endif
 	}
 

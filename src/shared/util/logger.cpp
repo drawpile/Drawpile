@@ -19,8 +19,9 @@
 
 #include "logger.h"
 
-#include <iostream>
 #include <QHostAddress>
+#include <QDateTime>
+#include <cstdio>
 
 namespace logger {
 
@@ -31,12 +32,16 @@ namespace {
 		"",
 		"ERROR",
 		"WARNING",
+		"NOTICE",
 		"INFO",
 		"DEBUG"
 	};
 
 	void defaultPrintLog(LogLevel level, const QString &msg) {
-		std::cerr << LOG_PREFIX[level] << ": " << msg.toLocal8Bit().constData() << std::endl;
+		fprintf(stderr, "[%s %s] %s\n",
+			QDateTime::currentDateTime().toString(Qt::ISODate).toLocal8Bit().constData(),
+			LOG_PREFIX[level],
+			msg.toLocal8Bit().constData());
 	}
 
 	LogFunction printLog = defaultPrintLog;
@@ -47,7 +52,7 @@ void setLogPrinter(LogFunction fn) { printLog = fn; }
 
 Logger::Logger(LogLevel level)
 {
-	Q_ASSERT(level >= LOG_ERROR && level <= LOG_DEBUG);
+	Q_ASSERT(level > LOG_NONE && level <= LOG_DEBUG);
 	if(level <= loglevel)
 		stream = new Stream(level);
 	else
@@ -71,9 +76,9 @@ Logger &Logger::operator=(const Logger &other)
 				delete stream;
 			}
 		}
+		stream = other.stream;
+		++stream->ref;
 	}
-	stream = other.stream;
-	++stream->ref;
 	return *this;
 }
 
@@ -94,25 +99,5 @@ Logger &Logger::operator<<(const QHostAddress &a) {
 	}
 	return maybeSpace();
 }
-
-Logger &Logger::operator <<(const LogId &id)
-{
-	if(stream) {
-		stream->ts << id.typestr;
-		if(id.idstr.isNull())
-			stream->ts << " #" << id.id;
-		else
-			stream->ts << " " << id.idstr;
-
-		if(!id.name.isEmpty()) {
-			if(id.name.length() > 10)
-				stream->ts << " (" << id.name.left(7) << "...)";
-			else
-				stream->ts << " (" << id.name << ")";
-		}
-	}
-	return maybeSpace();
-}
-
 
 }

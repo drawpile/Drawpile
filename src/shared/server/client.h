@@ -234,7 +234,7 @@ public:
 	 */
 	int streampointer() const { return _streampointer; }
 
-	operator logger::LogId() { return logger::LogId("User", id(), username()); }
+	QString toLogString() const;
 
 	/**
 	 * @brief Does this client socket support SSL connections?

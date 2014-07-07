@@ -26,25 +26,11 @@ class QHostAddress;
 
 namespace logger {
 
-enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG};
+enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG};
 void setLogLevel(LogLevel level);
 
 typedef std::function<void(LogLevel,const QString&)> LogFunction;
 void setLogPrinter(LogFunction fn);
-
-/**
- * @brief A helper struct for logging the IDs of things like sessions and clients in consistent format
- */
-struct LogId {
-	const char *typestr; // type of the object (e.g. Session)
-	QString idstr; // ID string
-	int id; // the ID number (used when idstr is not set)
-	QString name; // the name or title of the object
-
-	LogId() : typestr("?"), id(0), name(QString()) { }
-	LogId(const char *typestr_, int id_, const QString &name_=QString()) : typestr(typestr_), id(id_), name(name_) { }
-	LogId(const char *typestr_, const QString &id_, const QString &name_=QString()) : typestr(typestr_), idstr(id_), id(0), name(name_) { }
-};
 
 /**
  * \brief Stream oriented log printing class
@@ -78,11 +64,19 @@ public:
 	Logger &operator<<(const char* t) { if(stream) { stream->ts << QString::fromLocal8Bit(t); } return maybeSpace(); }
     Logger &operator<<(const QString & t) { if(stream) { stream->ts << '\"' << t  << '\"'; } return maybeSpace(); }
 	Logger &operator<<(const QHostAddress &a);
-	Logger &operator<<(const LogId &id);
+	template <class Loggable> Logger &operator<<(const Loggable *obj) {
+		Q_ASSERT(obj);
+		if(stream) {
+			QString s = obj->toLogString();
+			if(!s.isEmpty()) { stream->ts << s; return maybeSpace(); }
+		}
+		return *this;
+	}
 };
 
 inline Logger error() { return Logger(LOG_ERROR); }
 inline Logger warning() { return Logger(LOG_WARNING); }
+inline Logger notice() { return Logger(LOG_NOTICE); }
 inline Logger info() { return Logger(LOG_INFO); }
 inline Logger debug() { return Logger(LOG_DEBUG); }
 

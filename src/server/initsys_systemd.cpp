@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
 #include <systemd/sd-daemon.h>
 #include <sys/socket.h>
+#include <cstdio>
 
 #include "initsys.h"
 
@@ -32,11 +32,12 @@ void printSystemdLog(logger::LogLevel level, const QString &msg)
 	switch(level) {
 	case logger::LOG_ERROR: prefix = SD_ERR; break;
 	case logger::LOG_WARNING: prefix = SD_WARNING; break;
+	case logger::LOG_NOTICE: prefix = SD_NOTICE; break;
 	case logger::LOG_DEBUG: prefix = SD_DEBUG; break;
 	default: prefix = SD_INFO; break;
 	}
 
-	std::cerr << prefix << msg.toLocal8Bit().constData() << std::endl;
+	fprintf(stderr, "%s%s\n", prefix, msg.toLocal8Bit().constData());
 }
 }
 

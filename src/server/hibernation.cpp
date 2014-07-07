@@ -163,7 +163,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 bool Hibernation::storeSession(const SessionState *session)
 {
 	if(!session->mainstream().hasSnapshot()) {
-		logger::error() << "Unable to hibernate" << *session << "due to lack of snapshot point!";
+		logger::warning() << session << "Unable to hibernate due to lack of snapshot point!";
 		return false;
 	}
 

@@ -408,7 +408,7 @@ public:
 	 */
 	void wall(const QString &message);
 
-	operator logger::LogId() const { return logger::LogId("Session", id(), title()); }
+	QString toLogString() const;
 
 signals:
 	//! A user just connected to the session
