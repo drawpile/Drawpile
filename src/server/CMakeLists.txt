@@ -51,9 +51,6 @@ target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network ${INITSYS_LIB} ${
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this: 
 qt5_use_modules( ${SRVNAME} Network )
 
-if ( WIN32 )
-	install ( TARGETS ${SRVNAME} DESTINATION . )
-else ( WIN32 )
+if ( UNIX AND NOT APPLE )
 	install ( TARGETS ${SRVNAME} DESTINATION bin )
-endif ( WIN32 )
-
+endif ()
