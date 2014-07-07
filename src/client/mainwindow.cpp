@@ -1366,7 +1366,10 @@ void MainWindow::selectAll()
 
 void MainWindow::selectNone()
 {
-	_canvas->setSelectionItem(0);
+	if(_canvas->selectionItem()) {
+		_canvas->selectionItem()->pasteToCanvas(_client, _dock_layers->currentLayer());
+		_canvas->setSelectionItem(0);
+	}
 }
 
 void MainWindow::cutLayer()

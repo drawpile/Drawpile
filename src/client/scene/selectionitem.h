@@ -21,8 +21,11 @@
 
 #include <QGraphicsItem>
 
-namespace drawingboard {
+namespace net {
+	class Client;
+}
 
+namespace drawingboard {
 
 class SelectionItem : public QGraphicsItem
 {
@@ -56,6 +59,8 @@ public:
 	int type() const { return Type; }
 
 	void marchingAnts();
+
+	void pasteToCanvas(net::Client *client, int layer) const;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);

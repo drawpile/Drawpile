@@ -17,9 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QPainter>
-
 #include "selectionitem.h"
+#include "net/client.h"
+
+#include <QPainter>
+#include <QGraphicsScene>
 
 namespace drawingboard {
 
@@ -115,6 +117,37 @@ void SelectionItem::marchingAnts()
 {
 	_marchingants += 1;
 	update();
+}
+
+void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
+{
+	if(_pasteimg.isNull())
+		return;
+
+	QImage image = _pasteimg;
+	if(image.size() != _rect.size())
+		image = image.scaled(_rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+	// Clip image to scene
+	const QRect scenerect(0, 0, scene()->width(), scene()->height());
+	QRect intersection = _rect & scenerect;
+	if(!intersection.isEmpty()) {
+		int xoff=0, yoff=0;
+		if(intersection != _rect) {
+			if(_rect.x() < 0)
+				xoff = -_rect.x();
+			if(_rect.y() < 0)
+				yoff = -_rect.y();
+
+			intersection.moveLeft(xoff);
+			intersection.moveTop(yoff);
+			image = image.copy(intersection);
+		}
+
+		// Merge image
+		client->sendUndopoint();
+		client->sendImage(layer, _rect.x() + xoff, _rect.y() + yoff, image, true);
+	}
 }
 
 }

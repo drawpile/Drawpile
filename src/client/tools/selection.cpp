@@ -42,34 +42,8 @@ void Selection::begin(const paintcore::Point &point, bool right)
 	_p1 = _start;
 
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		bool hasPaste = scene().selectionItem() && !scene().selectionItem()->pasteImage().isNull();
-		if(hasPaste) {
-			// Left click outside and paste buffer exists: merge image
-			QImage image = scene().selectionItem()->pasteImage();
-			const QRect rect = scene().selectionItem()->rect();
-			if(image.size() != rect.size())
-				image = image.scaled(rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-			// Clip image to scene
-			const QRect scenerect(0, 0, scene().width(), scene().height());
-			QRect intersection = rect & scenerect;
-			if(!intersection.isEmpty()) {
-				int xoff=0, yoff=0;
-				if(intersection != rect) {
-					if(rect.x() < 0)
-						xoff = -rect.x();
-					if(rect.y() < 0)
-						yoff = -rect.y();
-
-					intersection.moveLeft(xoff);
-					intersection.moveTop(yoff);
-					image = image.copy(intersection);
-				}
-
-				// Merge image
-				client().sendUndopoint();
-				client().sendImage(layer(), rect.x() + xoff, rect.y() + yoff, image, true);
-			}
+		if(scene().selectionItem()) {
+			scene().selectionItem()->pasteToCanvas(&client(), layer());
 			scene().setSelectionItem(0);
 
 		} else {
