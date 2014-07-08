@@ -129,7 +129,7 @@ class MainWindow : public QMainWindow {
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
 
-		void clearArea();
+		void clearOrDelete();
 		void fillFgArea();
 		void fillBgArea();
 

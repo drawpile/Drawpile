@@ -1385,7 +1385,7 @@ void MainWindow::selectNone()
 void MainWindow::cutLayer()
 {
 	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	clearArea();
+	fillArea(Qt::transparent);
 	QApplication::clipboard()->setImage(img);
 }
 
@@ -1469,8 +1469,23 @@ void MainWindow::removeEmptyAnnotations()
 	}
 }
 
-void MainWindow::clearArea()
+void MainWindow::clearOrDelete()
 {
+	// This slot is triggered in response to the 'Clear' action, which
+	// which in turn can be triggered via the 'Delete' shortcut. In annotation
+	// editing mode, the current selection may be an annotation, so we should delete
+	// that instead of clearing out the canvas.
+	QAction *annotationtool = getAction("tooltext");
+	if(annotationtool->isChecked()) {
+		int a = _dock_toolsettings->getAnnotationSettings()->selected();
+		if(a>0) {
+			_client->sendUndopoint();
+			_client->sendAnnotationDelete(a);
+			return;
+		}
+	}
+
+	// No annotation selected: clear seleted area as usual
 	fillArea(Qt::transparent);
 }
 
@@ -1699,7 +1714,7 @@ void MainWindow::setupActions()
 	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+H"));
 	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+L"));
 
-	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Clear selected area of the current layer"), QKeySequence("Delete"));
+	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
 	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG color"), tr("Fill selected area with foreground color"), QKeySequence("Ctrl+,"));
 	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G color"), tr("Fill selected area with background color"), QKeySequence("Ctrl+."));
 
@@ -1731,7 +1746,7 @@ void MainWindow::setupActions()
 	connect(selectall, SIGNAL(triggered()), this, SLOT(selectAll()));
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
-	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearArea()));
+	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
 	connect(fillfgarea, SIGNAL(triggered()), this, SLOT(fillFgArea()));
 	connect(fillbgarea, SIGNAL(triggered()), this, SLOT(fillBgArea()));
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
