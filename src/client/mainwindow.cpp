@@ -1685,7 +1685,7 @@ void MainWindow::setupActions()
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"));
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
-	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
+	QAction *preferences = makeAction(0, 0, tr("Prefere&nces...")); preferences->setMenuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", 0, tr("Select &all"), QString(), QKeySequence::SelectAll);
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -1978,10 +1978,10 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), "http://drawpile.sourceforge.net/");
+	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), WEBSITE);
 	QAction *wikipage = makeAction("dphomepage", 0, tr("&Wiki"), "https://github.com/callaa/Drawpile/wiki");
-	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile"));
-	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"));
+	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
+	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); about->setMenuRole(QAction::AboutQtRole);
 
 	connect(homepage, &QAction::triggered, [homepage]() { QDesktopServices::openUrl(QUrl(homepage->statusTip())); });
 	connect(wikipage, &QAction::triggered, [wikipage]() { QDesktopServices::openUrl(QUrl(wikipage->statusTip())); });

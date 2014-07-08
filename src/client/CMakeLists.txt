@@ -199,9 +199,9 @@ if ( WIN32 )
 	
 	generate_win32_resource (
 		Win32Resource
-		"DrawPile client" # full name
+		"Drawpile client" # full name
 		${CLIENTNAME} # internal name
-		"DrawPile client" 
+		"Drawpile client"
 		${WEBSITE}
 		"2006-2014 Calle Laakkonen"
 		${DRAWPILE_VERSION}
@@ -210,24 +210,24 @@ if ( WIN32 )
 endif ( WIN32 )
 
 IF ( APPLE )
-        SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
-        # set how it shows up in the Info.plist file
-        SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
-        # set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
-        SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.numediart.${CLIENTNAME}")
-        SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
-        SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
-        SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${CLIENTNAME}")
-        SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
-        SET(MACOSX_BUNDLE_COPYRIGHT "Copyright DrawPile team")
-        # set where in the bundle to put the icns file
-		SET_SOURCE_FILES_PROPERTIES("${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        # include the icns file in the target
-		SET(${SOURCES} ${SOURCES} "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns")
+	SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
+	# set how it shows up in the Info.plist file
+	SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
+	# set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
+	SET(MACOSX_BUNDLE_GUI_IDENTIFIER "net.drawpile.DrawpileClient")
+	#SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
+	#SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
+	SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DRAWPILE_VERSION}")
+	SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
+	SET(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
+	# set where in the bundle to put the icns file
+	SET_SOURCE_FILES_PROPERTIES("${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	# include the icns file in the target
+	SET(${SOURCES} ${SOURCES} "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns")
 ENDIF()
 
 add_executable (
-	drawpile
+	${CLIENTNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${MACOSX_BUNDLE_INFO_PLIST}
@@ -238,71 +238,75 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(drawpile ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
-qt5_use_modules(drawpile Widgets Network Xml Concurrent)
+qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent)
 
 if(KF5Archive_FOUND)
-	target_link_libraries(drawpile KF5::Archive)
+	target_link_libraries(${CLIENTNAME} KF5::Archive)
 else()
-	target_link_libraries(drawpile ${ZLIB_LIBRARIES})
+	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})
 endif()
 
 if(QTCOLORPICKER_FOUND)
-	target_link_libraries(drawpile ${LIBQTCOLORPICKER_LIBRARIES})
+	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORPICKER_LIBRARIES})
 endif()
 
 if ( WIN32 )
-        target_link_libraries (drawpile ws2_32 )
+		target_link_libraries (${CLIENTNAME} ws2_32 )
 endif ()
 
 set_target_properties (
-	drawpile
+	${CLIENTNAME}
 	PROPERTIES
         VERSION ${DRAWPILE_VERSION}
 	PROJECT_LABEL drawpile-client
 )
 
-if ( WIN32 )
+if ( WIN32 OR APPLE )
 	install ( TARGETS ${CLIENTNAME} DESTINATION . )
-else ( WIN32 )
+else ( )
 	install ( TARGETS ${CLIENTNAME} DESTINATION bin )
-endif ( WIN32 )
+endif ( )
 
 if( NOT BUILTIN_ICONS )
 	install( DIRECTORY ui/icons DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
 endif()
 
 if( QM_TRANSLATIONS )
-	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
+	if ( APPLE )
+		install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources/i18n" )
+	else ()
+		install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
+	endif ()
 endif( QM_TRANSLATIONS)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	if (APPLE)
 		#strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
 		# Install the icon
-		INSTALL(FILES "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
+		INSTALL(FILES "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
 
 		# Install plugins
 		BundleQtPlugin( Qt5::QCocoaIntegrationPlugin "platforms" )
 		BundleQtPlugin( Qt5::QGifPlugin "imageformats" )
 		BundleQtPlugin( Qt5::QJpegPlugin "imageformats" )
 
-		file(GLOB_RECURSE QTPLUGINS "${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/PlugIns/*.dylib")
+		file(GLOB_RECURSE QTPLUGINS "${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/PlugIns/*.dylib")
 message("plugins: ${QTPLUGINS}")
 		# install a qt.conf file
 		INSTALL(CODE "
- 	   		file(WRITE \"\${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources/qt.conf\" \"[Paths]\nPlugins = plugins\")
+			file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources/qt.conf\" \"[Paths]\nPlugins = plugins\")
  	   		" COMPONENT ${CLIENTNAME})
 		#FIND_FILE(QT_MENU_NIB qt_menu.nib PATHS /opt/local PATH_SUFFIXES Library/Frameworks/QtGui.framework/Resources lib/Resources)
 		#IF(${QT_MENU_NIB} EQUAL QT_MENU_NIB-NOTFOUND)
 		#	MESSAGE(FATAL_ERROR "Couldn't find qt_menu.nib")
 		#ENDIF()
-		#INSTALL(DIRECTORY "${QT_MENU_NIB}" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
+		#INSTALL(DIRECTORY "${QT_MENU_NIB}" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
 		INSTALL(CODE "
     			include(BundleUtilities)
-#				fixup_bundle(\"${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app\" \"\${QTPLUGINS}\" \"\")
+#				fixup_bundle(\"${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app\" \"\${QTPLUGINS}\" \"\")
     			" COMPONENT ${CLIENTNAME}
 		)
 	else ()

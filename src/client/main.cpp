@@ -101,8 +101,13 @@ void initTranslations(const QLocale &locale)
 	// Our translations
 	QTranslator *myTranslator = new QTranslator;
 	QStringList datapaths;
+#ifndef Q_OS_MAC
 	datapaths << qApp->applicationDirPath();
 	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+#else
+	datapaths << qApp->applicationDirPath() + "/../Resources";
+#endif
+
 	for(const QString &datapath : datapaths) {
 		if(myTranslator->load(locale, "drawpile", "_", datapath + "/i18n"))
 			break;

@@ -1,4 +1,8 @@
-set ( CLIENTNAME ${PROJECT_NAME} )
+if ( APPLE )
+	set ( CLIENTNAME Drawpile )
+else ()
+	set ( CLIENTNAME drawpile )
+endif ()
 
 set ( DPSHAREDLIB "drawpilenet" )
 

@@ -109,5 +109,5 @@ endmacro ( )
 
 macro ( BundleQtPlugin PLUGIN PLUGINPATH )
 	get_target_property(_loc "${PLUGIN}" LOCATION)
-	install( FILES "${_loc}" DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/PlugIns/${PLUGINPATH}" )
+	install( FILES "${_loc}" DESTINATION "${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/PlugIns/${PLUGINPATH}" )
 endmacro()
