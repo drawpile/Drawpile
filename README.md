@@ -56,7 +56,11 @@ When compiling on Windows, cmake may complain about missing zlib. Setting the zl
 
     -DZLIB_LIBRARY:FILEPATH="C:\Qt\Tools\mingw48_32\lib\libz.a" -DZLIB_INCLUDE_DIR:PATH="C:\Qt\Tools\mingw48_32\include"
 
+On MacOS, you may need to set `CMAKE_PREFIX_PATH` to point to your Qt installation. For example:
 
+	$ cmake .. -DCMAKE_PREFIX_PATH=~/Qt/5.3/clang_64
+
+Running `make` will generate an app bundle in the `bin` subdirectory of your build directory. Run `macdeployqt` on it to package all dependencies inside for distribution.
 
 [KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive
 [QtColorPicker]: https://github.com/mbasaglia/Qt-Color-Picker 

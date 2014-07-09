@@ -93,6 +93,10 @@ void DrawPileApp::notifySettingsChanged()
 
 void initTranslations(const QLocale &locale)
 {
+	// Special case: if english is preferred language, no translations are needed.
+	if(locale.uiLanguages().size()==0 || locale.uiLanguages().first() == "en")
+		return;
+
 	// Qt's own translations
 	QTranslator *qtTranslator = new QTranslator;
 	qtTranslator->load(locale, "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));

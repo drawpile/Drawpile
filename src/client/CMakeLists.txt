@@ -187,7 +187,11 @@ if( Qt5LinguistTools_FOUND)
 	)
 
 	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})
+
+	INSTALL(FILES "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
+
 endif()
+
 
 # non-qt stuff
 
@@ -221,10 +225,13 @@ IF ( APPLE )
 	SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DRAWPILE_VERSION}")
 	SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
 	SET(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
-	# set where in the bundle to put the icns file
-	SET_SOURCE_FILES_PROPERTIES("${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-	# include the icns file in the target
-	SET(${SOURCES} ${SOURCES} "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns")
+
+	SET(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
+	add_custom_target( appbundle ALL
+		COMMAND mkdir -p "${ResourcesDir}/i18n"
+		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
+		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/*.qm" "${ResourcesDir}/i18n"
+	)
 ENDIF()
 
 add_executable (
@@ -265,51 +272,19 @@ set_target_properties (
 	PROJECT_LABEL drawpile-client
 )
 
-if ( WIN32 OR APPLE )
-	install ( TARGETS ${CLIENTNAME} DESTINATION . )
-else ( )
-	install ( TARGETS ${CLIENTNAME} DESTINATION bin )
-endif ( )
+install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 
 if( NOT BUILTIN_ICONS )
 	install( DIRECTORY ui/icons DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
 endif()
 
 if( QM_TRANSLATIONS )
-	if ( APPLE )
-		install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources/i18n" )
-	else ()
-		install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
-	endif ()
+	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
 endif( QM_TRANSLATIONS)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	if (APPLE)
-		#strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
-		# Install the icon
-		INSTALL(FILES "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
-
-		# Install plugins
-		BundleQtPlugin( Qt5::QCocoaIntegrationPlugin "platforms" )
-		BundleQtPlugin( Qt5::QGifPlugin "imageformats" )
-		BundleQtPlugin( Qt5::QJpegPlugin "imageformats" )
-
-		file(GLOB_RECURSE QTPLUGINS "${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/PlugIns/*.dylib")
-message("plugins: ${QTPLUGINS}")
-		# install a qt.conf file
-		INSTALL(CODE "
-			file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources/qt.conf\" \"[Paths]\nPlugins = plugins\")
- 	   		" COMPONENT ${CLIENTNAME})
-		#FIND_FILE(QT_MENU_NIB qt_menu.nib PATHS /opt/local PATH_SUFFIXES Library/Frameworks/QtGui.framework/Resources lib/Resources)
-		#IF(${QT_MENU_NIB} EQUAL QT_MENU_NIB-NOTFOUND)
-		#	MESSAGE(FATAL_ERROR "Couldn't find qt_menu.nib")
-		#ENDIF()
-		#INSTALL(DIRECTORY "${QT_MENU_NIB}" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
-		INSTALL(CODE "
-    			include(BundleUtilities)
-#				fixup_bundle(\"${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app\" \"\${QTPLUGINS}\" \"\")
-    			" COMPONENT ${CLIENTNAME}
-		)
+		strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
 	else ()
 		strip_exe ( ${CLIENTNAME} )
 	endif()
