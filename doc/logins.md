@@ -22,8 +22,13 @@ The identity manager is allowed to always return "bad password" instead of "user
 
 A successful login response from the identity manager contains two extra fields:
 
-* Canonical username: the preferred form of the username. This is typically the username as stored in the database, but the manager may change the name in any way as long as it remains unique.
+* Canonical username: the preferred form of the username. This is typically the username as stored in the database, but the manager may change the name in any way as long as it remains unique. (E.g. the server could enforce some naming scheme, such as prepending "guest-" to the name of all unauthenticated users.)
 * User flags: extra privileges assigned to the user.
+
+Supported user flags are:
+
+ * mod: this user is a moderator. A moderator may log in to any (even closed and password protected) session and has a permanent OP status.
+ * host: this user may host sessions without providing a hosting password.
 
 ## User file
 

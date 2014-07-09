@@ -3,6 +3,8 @@ Drawpile server REST API
 
 The standalone server provides a JSON API for administration.
 
+Note! This API is still experimental and subject to change!
+
 ## Get server status
 
 `GET /api/status/`

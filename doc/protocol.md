@@ -29,7 +29,9 @@ The server starts by sending a hello message, which includes the protocol versio
 
 If the SECURE feature flag is set, the server will not let the login process continue until the client has upgraded to a secure connection.
 
-The server continues by sending a list of available sessions. The client can either join one of the sessions or host a new one. The server may send updated session information until the client has made a decision.
+Next, the client must authenticate. The client will first attempt a guest login, but if that is not possible, it will prompt the user for a password and retry. An authenticated user may be granted extra privileges by the server.
+
+After authentication, the server continues will send a list of available sessions. The client can either join one of the sessions or host a new one. The server may send updated session information until the client has made a decision.
 
 The built-in server only supports a single session per server instance. This is indicated by (the lack of) a feature flag. In this case, the client may join the only session automatically without prompting the user.
 
@@ -43,7 +45,7 @@ See `src/shared/server/loginhandler.h` for implementation details.
 
 The server supports SSL/TLS encrypted connections. The client upgrades to a secure connection by sending the command "STARTTLS". The server will reply with a STARTTLS of its own and begins the SSL handshake.
 
-Since most Drawpile users will likely run drawpile-srv on their home computers or small hosting services, Drawpile does not utilize PKI. The client accepts self-signed certificates as well as certificates that do not match the hostname of the server. Instead, the client will remember the certificate associated with each hostname and warn if it changes.
+Since most Drawpile users will likely run drawpile-srv on their home computers or small hosting services, Drawpile does not utilize PKI. The client accepts self-signed certificates and, when connecting to an IP address, certificates that do not match the hostname of the server. Instead, the client will remember the certificate associated with each hostname and warns if it changes.
 
 ## Session recording format
 
@@ -57,7 +59,7 @@ There are two meta message types that are relevant only to recordings:
 The recording header can be described as follows:
 
     struct Header {
-        char magic[7];        // "DPREC\0"
+        char magic[7];        // "DPRECR\0"
         uint32_t version;     // Protocol version number (major and minor)
         char clientversion[]; // Client version string (variable length, \0 terminated)
     };
@@ -65,6 +67,27 @@ The recording header can be described as follows:
 The recording can be accompanied by an *index file*. The index file must have the same name as the recording file, except for the file extension, which must be "dpidx".
 
 The format of the index file is not documented and it can change from version to version. However, the index can always be regenerated from the main recording. The index contains a map of message offsets and snapshots of drawingboard state to enable quick jumping in the recording.
+
+A session hibernation file is a special type of recording with an extended header. Also, all messages types are recorded in the hibernation file.
+
+    struct HibernationHeader {
+        char magic[7];         // "DPRECH\0"
+        uint32_t version;      // Protocol version number (server major and session minor)
+        char serverversion[];  // Server version string (variable length, \0 terminated)
+        uint8_t hibformat;     // Hibernation format version
+    
+        uint16_t titlelen;     // Session title length
+        char title[titlelen];  // Session title
+    
+        uint16_t fnamelen;     // Session founder name length
+        char fname[fnamelen];  // Session founder name
+    
+        uint8_t flags;         // Session flags bit field
+    
+        uint16_t passwdlen;    // Session password length
+        char fname[passwdlen]; // Session password (algorith;hash)
+    };
+
 
 ## Protocol revision history
 
@@ -74,10 +97,11 @@ Clients can connect to any server sharing the same major protocol version number
 
 Protocol 11.2 (0.9.2)
 
+ * Various changes to the login process to fix bugs and to support authenticated logins
  * Added maxUsers field and PERSISTENT flag to SessionConf message
  * Increased SessionConf::attrs length to 16 bits to make room for more future attributes
- * Session ID format change: Clients must support session IDs of format [a-zA-Z0-9:-]{1,64}. This change is for forward compatibility; the server currently produces numeric IDs only.
- * Add flags field to Chat message
+ * Session ID format change: replaced numeric IDs with strings of format [a-zA-Z0-9:-]{1,64}
+ * Added "flags" field to Chat message
  * Changed some operator commands
  * Increased UserAttr::attrs length to 16 bits to make room for more future attributes
  * Added MOD and AUTH UserAttr attributes

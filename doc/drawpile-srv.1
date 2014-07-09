@@ -108,6 +108,12 @@ enable basic auth for the API using the given username and password
 set access controls for the web admin interface. A subnet mask (e.g. 192.168.1.1/24) or the special value "all" can be used.
 By default, access is only permitted from localhost.
 .TP
+.BR --userfile\  path
+set the user credential file to use. If set, users listed in the file must authenticate to log in.
+.TP
+.BR --no-guests
+all users must authenticate to log in. A userfile must have been set.
+.TP
 .BR --config , \ -c\  filename
 load configuration file. All parameters can also be set in the configuration file.
 Parameters set on the command line override those in the file.
