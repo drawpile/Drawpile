@@ -753,6 +753,8 @@ void LoginHandler::handleError(const QString &msg)
 		error = tr("Session is closed");
 	else if(ecode == "BANNED")
 		error = tr("This username has been banned");
+	else if(ecode == "SESSIONIDINUSE")
+		error = tr("Session ID already in use");
 	else
 		error = tr("Unknown error (%1)").arg(ecode);
 
