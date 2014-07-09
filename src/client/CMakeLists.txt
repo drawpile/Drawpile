@@ -51,6 +51,7 @@ set (
 	utils/strokesmoother.cpp
 	utils/html.cpp
 	utils/usernamevalidator.cpp
+	utils/sessionidvalidator.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp

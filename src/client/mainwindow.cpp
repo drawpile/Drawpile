@@ -1008,6 +1008,7 @@ void MainWindow::host()
 
 			// Connect to server
 			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, w);
+			login->setSessionId(dlg->getSessionId());
 			login->setPassword(dlg->getPassword());
 			login->setTitle(dlg->getTitle());
 			login->setMaxUsers(dlg->getUserLimit());

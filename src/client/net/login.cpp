@@ -40,7 +40,7 @@
 #include <QHostAddress>
 #include <QMessageBox>
 
-//#define DEBUG_LOGIN
+#define DEBUG_LOGIN
 
 namespace {
 
@@ -387,7 +387,14 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QString hostmsg = QString("HOST * %1 %2")
+	QString sessionId;
+	if(!_hostSessionId.isEmpty())
+		sessionId = _hostSessionId;
+	else
+		sessionId = "*";
+
+	QString hostmsg = QString("HOST %1 %2 %3")
+			.arg(sessionId)
 			.arg(DRAWPILE_PROTO_MINOR_VERSION)
 			.arg(_userid);
 

@@ -64,6 +64,9 @@ class HostDialog : public QDialog
 		//! Should the session be persistent
 		bool getPersistentMode() const;
 
+		//! Get the desired session ID (or * if not specified)
+		QString getSessionId() const;
+
 		/**
 		 * @brief Get session loader for initializing a new session
 		 * @return session loader instance

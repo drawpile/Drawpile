@@ -30,6 +30,7 @@
 #include "widgets/colorbutton.h"
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
+#include "utils/sessionidvalidator.h"
 
 using widgets::ImageSelector;
 using widgets::ColorButton;
@@ -48,6 +49,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
 	_ui->username->setValidator(new UsernameValidator(this));
+	_ui->vanityId->setValidator(new SessionIdValidator(this));
 
 	if(original.isNull()) {
 		_ui->imageSelector->setWidth(800);
@@ -87,6 +89,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	_ui->layerctrllock->setChecked(cfg.value("layerctrllock", true).toBool());
 	if(cfg.value("hostremote", false).toBool())
 		_ui->useremote->setChecked(true);
+	_ui->vanityId->setText(cfg.value("vanityid").toString());
 
 	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
 }
@@ -127,6 +130,7 @@ void HostDialog::rememberSettings() const
 	cfg.setValue("userlimit", _ui->userlimit->value());
 	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
 	cfg.setValue("layerctrllock", _ui->layerctrllock->isChecked());
+	cfg.setValue("vanityid", _ui->vanityId->text());
 
 }
 
@@ -239,6 +243,11 @@ bool HostDialog::getLayerControlLock() const
 bool HostDialog::getPersistentMode() const
 {
 	return _ui->persistentSession->isChecked();
+}
+
+QString HostDialog::getSessionId() const
+{
+	return _ui->vanityId->text();
 }
 
 }

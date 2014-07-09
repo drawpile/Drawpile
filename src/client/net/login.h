@@ -60,6 +60,14 @@ public:
 	void setUserId(int userid) { Q_ASSERT(_mode==HOST); _userid=userid; }
 
 	/**
+	 * @brief Set desired session ID
+	 *
+	 * Only in host mode. Use URL path when joining.
+	 * @param id
+	 */
+	void setSessionId(const QString &id) { Q_ASSERT(_mode==HOST); _hostSessionId=id; }
+
+	/**
 	 * @brief Set the session password
 	 *
 	 * Only for host mode.
@@ -214,6 +222,7 @@ private:
 
 	QString _hostPassword;
 	QString _joinPassword;
+	QString _hostSessionId;
 	QString _selectedId;
 	QString _loggedInSessionId;
 
