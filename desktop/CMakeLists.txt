@@ -1,10 +1,32 @@
-set(ICONDIR "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor")
+find_program(XDGICON xdg-icon-resource)
+find_program(XDGMENU xdg-desktop-menu)
+find_program(XDGMIME xdg-mime)
 
-if( UNIX AND NOT APPLE)
-	install( FILES drawpile-16x16.png DESTINATION "${ICONDIR}/16x16/apps" RENAME drawpile.png )
-	install( FILES drawpile-32x32.png DESTINATION "${ICONDIR}/32x32/apps" RENAME drawpile.png )
-	install( FILES drawpile-64x64.png DESTINATION "${ICONDIR}/64x64/apps" RENAME drawpile.png )
-	install( FILES drawpile-128x128.png DESTINATION "${ICONDIR}/128x128/apps" RENAME drawpile.png )
-	install( FILES drawpile-256x256.png DESTINATION "${ICONDIR}/256x256/apps" RENAME drawpile.png )
-	install( FILES drawpile.desktop DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications" )
+if( XDGICON )
+	install(CODE "
+		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-16x16.png --size 16 drawpile)
+		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-32x32.png --size 32 drawpile)
+		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-64x64.png --size 64 drawpile)
+		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-128x128.png --size 128 drawpile)
+		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-256x256.png --size 256 drawpile)
+
+		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-16x16.png --size 16 application-x-drawpile-recording)
+		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-32x32.png --size 32 application-x-drawpile-recording)
+		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-64x64.png --size 64 application-x-drawpile-recording)
+		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-128x128.png --size 128 application-x-drawpile-recording)
+		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-256x256.png --size 256 application-x-drawpile-recording)
+	")
 endif()
+
+if( XDGMENU )
+	install(CODE "
+		execute_process(COMMAND ${XDGMENU} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile.desktop)
+	")
+endif()
+
+if( XDGMIME )
+	install(CODE "
+		execute_process(COMMAND ${XDGMIME} install ${CMAKE_CURRENT_SOURCE_DIR}/x-drawpile.xml)
+	")
+endif()
+
