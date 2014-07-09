@@ -132,11 +132,12 @@ public:
 
 	/**
 	 * @brief Create a new session
+	 * @param id session ID
 	 * @param minorVersion client minor version
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	SessionState *createSession(int minorVersion, const QString &founder);
+	SessionState *createSession(const QString &id, int minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions
@@ -256,7 +257,6 @@ private:
 	QList<Client*> _lobby;
 	SessionStore *_store;
 	IdentityManager *_identman;
-	int _nextId;
 
 	QString _title;
 	int _sessionLimit;

@@ -79,8 +79,12 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
 
 	// Automatically join a session if the ID is included in the URL
 	QString path = _address.path();
-	if(path.length()>1)
-		_autoJoinId = path.mid(1);
+	if(path.length()>1) {
+		QRegularExpression idre("\\A/([a-zA-Z0-9:-]{1,64})/?\\z");
+		auto m = idre.match(path);
+		if(m.hasMatch())
+			_autoJoinId = m.captured(1);
+	}
 }
 
 void LoginHandler::serverDisconnected()
@@ -383,7 +387,7 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QString hostmsg = QString("HOST %1 %2")
+	QString hostmsg = QString("HOST * %1 %2")
 			.arg(DRAWPILE_PROTO_MINOR_VERSION)
 			.arg(_userid);
 
@@ -501,16 +505,17 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	}
 
 	if(msg.startsWith("OK ")) {
-		const QRegularExpression re("\\AOK (\\d+)\\z");
+		const QRegularExpression re("\\AOK ([a-zA-Z0-9:-]{1,64}) (\\d+)\\z");
 		auto m = re.match(msg);
 
 		if(!m.hasMatch()) {
-			qWarning() << "Login error. Expected OK <id>, got:" << msg;
+			qWarning() << "Login error. Expected OK <session> <id>, got:" << msg;
 			failLogin(tr("Incompatible server"));
 			return;
 		}
 
-		_userid = m.captured(1).toInt();
+		_loggedInSessionId = m.captured(1);
+		_userid = m.captured(2).toInt();
 		_server->loginSuccess();
 
 		// If in host mode, send initial session settings
@@ -541,12 +546,12 @@ void LoginHandler::expectLoginOk(const QString &msg)
 		delete _selectorDialog;
 		delete _passwordDialog;
 		delete _certDialog;
-		return;
-	}
 
-	// Unexpected command
-	qWarning() << "Login error. Unexpected response while waiting for OK:" << msg;
-	failLogin(tr("Incompatible server"));
+	} else {
+		// Unexpected response
+		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg;
+		failLogin(tr("Incompatible server"));
+	}
 }
 
 void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)

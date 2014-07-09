@@ -59,11 +59,11 @@ struct SessionDescription;
  *
  * - Note. Server may send updates to session list and title until the client has made a choice -
  *
- * C: HOST <proto-minor> <userid> [;<server password⁷>]
+ * C: HOST <*|session id⁷> <proto-minor> <userid> [;<server password⁸>]
  *  - or -
  * C: JOIN <id> [;<password>]
  *
- * S: OK <userid>
+ * S: OK <session id> <userid>
  *  - or -
  * S: ERROR <NOSESSION|NAMEINUSE|SYNTAX|CLOSED>
  *
@@ -98,7 +98,9 @@ struct SessionDescription;
  *    MOD   - user is a moderator
  *    HOST  - user may host sessions without providing the hosting password
  *
- * 7) The server password must be provided if HOSTP was listed in server features.
+ * 7) The hosting user may request a specific vanity ID for the session, or use '*'
+ *    and let the server decide.
+ * 8) The server password must be provided if HOSTP was listed in server features.
  */
 class LoginHandler : public QObject
 {

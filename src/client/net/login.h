@@ -144,6 +144,12 @@ public:
 	 */
 	int userId() const { return _userid; }
 
+	/**
+	 * @brief get the ID of the session we logged in to
+	 * @return session ID
+	 */
+	const QString &sessionId() const { return _loggedInSessionId; }
+
 public slots:
 	void serverDisconnected();
 
@@ -209,6 +215,7 @@ private:
 	QString _hostPassword;
 	QString _joinPassword;
 	QString _selectedId;
+	QString _loggedInSessionId;
 
 	QString _autoJoinId;
 

@@ -34,7 +34,6 @@ SessionServer::SessionServer(QObject *parent)
 	: QObject(parent),
 	_store(nullptr),
 	_identman(nullptr),
-	_nextId(1),
 	_sessionLimit(1),
 	_historyLimit(0),
 	_expirationTime(0),
@@ -53,12 +52,6 @@ void SessionServer::setSessionStore(SessionStore *store)
 	_store = store;
 	store->setParent(this);
 
-	for(const SessionDescription &s : _store->sessions()) {
-		int sid = s.id.toInt(); // TODO remember to change this when we stop producing only numeric IDs
-		if(sid >= _nextId)
-			_nextId = sid + 1;
-	}
-
 	connect(store, SIGNAL(sessionAvailable(SessionDescription)), this, SIGNAL(sessionChanged(SessionDescription)));
 }
 
@@ -75,9 +68,12 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-SessionState *SessionServer::createSession(int minorVersion, const QString &founder)
+SessionState *SessionServer::createSession(const QString &id, int minorVersion, const QString &founder)
 {
-	SessionState *session = new SessionState(QString::number(_nextId++), minorVersion, founder, this);
+	Q_ASSERT(!id.isEmpty());
+	Q_ASSERT(getSessionDescriptionById(id).id.isEmpty());
+
+	SessionState *session = new SessionState(id, minorVersion, founder, this);
 
 	initSession(session);
 

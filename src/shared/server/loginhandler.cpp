@@ -32,7 +32,7 @@
 
 #include <QStringList>
 #include <QRegularExpression>
-#include <QFutureWatcher>
+#include <QUuid>
 
 namespace server {
 
@@ -293,7 +293,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 		return;
 	}
 
-	const QRegularExpression re("\\AHOST (\\d+) (\\d+)\\s*(?:;(.+))?\\z");
+	const QRegularExpression re("\\AHOST (\\*|[a-zA-Z0-9:-]{1,64}) (\\d+) (\\d+)\\s*(?:;(.+))?\\z");
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
@@ -301,10 +301,24 @@ void LoginHandler::handleHostMessage(const QString &message)
 		return;
 	}
 
-	int minorVersion = m.captured(1).toInt();
-	int userId = m.captured(2).toInt();
+	QString sessionId = m.captured(1);
+	int minorVersion = m.captured(2).toInt();
+	int userId = m.captured(3).toInt();
 
-	QString password = m.captured(3);
+	// Check if session ID is available
+	if(sessionId == "*") {
+		// Generated session ID
+		sessionId = QUuid::createUuid().toString();
+		sessionId = sessionId.mid(1, sessionId.length()-2); // strip the { and } chars
+	}
+
+	if(!_server->getSessionDescriptionById(sessionId).id.isEmpty()) {
+		send("ERROR SESSIONIDINUSE");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	QString password = m.captured(4);
 	if(password != _server->hostPassword() && !_hostPrivilege) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
@@ -314,11 +328,11 @@ void LoginHandler::handleHostMessage(const QString &message)
 	_client->setId(userId);
 
 	// Mark login phase as complete. No more login messages will be sent to this user
-	send(QString("OK %1").arg(userId));
+	send(QString("OK %1 %2").arg(sessionId).arg(userId));
 	_complete = true;
 
 	// Create a new session
-	SessionState *session = _server->createSession(minorVersion, _client->username());
+	SessionState *session = _server->createSession(sessionId, minorVersion, _client->username());
 
 	session->joinUser(_client, true);
 
@@ -386,7 +400,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	// Ok, join the session
 	session->assignId(_client);
 
-	send(QString("OK %1").arg(_client->id()));
+	send(QString("OK %1 %2").arg(session->id()).arg(_client->id()));
 	_complete = true;
 
 	session->joinUser(_client, false);
