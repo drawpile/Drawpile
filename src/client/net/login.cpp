@@ -76,6 +76,11 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
 	  _tls(false)
 {
 	_sessions = new LoginSessionModel(this);
+
+	// Automatically join a session if the ID is included in the URL
+	QString path = _address.path();
+	if(path.length()>1)
+		_autoJoinId = path.mid(1);
 }
 
 void LoginHandler::serverDisconnected()
@@ -460,7 +465,11 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	session.founder = m.captured(5);
 	session.title = m.captured(6);
 
-	if(_multisession) {
+	if(session.id == _autoJoinId) {
+		// A session ID was given as part of the URL
+		joinSelectedSession(session.id, session.needPassword);
+
+	} else if(_multisession) {
 		// Multisesion mode: add session to list which is presented to the user
 		_sessions->updateSession(session);
 
@@ -528,6 +537,10 @@ void LoginHandler::expectLoginOk(const QString &msg)
 			for(const QString msg : init)
 				_server->sendMessage(protocol::Chat::opCommand(0, msg));
 		}
+
+		delete _selectorDialog;
+		delete _passwordDialog;
+		delete _certDialog;
 		return;
 	}
 
@@ -703,17 +716,6 @@ void LoginHandler::tlsAccepted()
 	// STARTTLS is the very first command that must be sent, if sent at all
 	// Next up is user authentication.
 	prepareToSendIdentity();
-#if 0
-	if(_selectorDialog)
-		_selectorDialog->show();
-
-	if(_state == WAIT_FOR_ENCRYPTED || _state == WAIT_FOR_ACCEPT_CERT) {
-		if(_mode == HOST)
-			sendHostCommand();
-		else
-			sendJoinCommand();
-	}
-#endif
 }
 
 void LoginHandler::cancelLogin()
@@ -727,7 +729,9 @@ void LoginHandler::handleError(const QString &msg)
 	const QString ecode = msg.mid(msg.indexOf(' ') + 1);
 	qWarning() << "Login error:" << ecode;
 	QString error;
-	if(ecode == "BADPASS")
+	if(ecode == "NOSESSION")
+		error = tr("Session not found!");
+	else if(ecode == "BADPASS")
 		error = tr("Incorrect password");
 	else if(ecode == "BADNAME")
 		error = tr("Invalid username");

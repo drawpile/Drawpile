@@ -210,6 +210,8 @@ private:
 	QString _joinPassword;
 	QString _selectedId;
 
+	QString _autoJoinId;
+
 	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
 	QPointer<dialogs::LoginDialog> _passwordDialog;
 	QPointer<QMessageBox> _certDialog;
