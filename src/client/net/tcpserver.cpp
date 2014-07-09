@@ -52,6 +52,7 @@ TcpServer::TcpServer(QObject *parent) :
 
 void TcpServer::login(LoginHandler *login)
 {
+	_url = login->url();
 	_loginstate = login;
 	_loginstate->setParent(this);
 	_loginstate->setServer(this);
@@ -134,8 +135,8 @@ void TcpServer::loginFailure(const QString &message, bool cancelled)
 
 void TcpServer::loginSuccess()
 {
-	qDebug() << "logged in! Got user id" << _loginstate->userId();
-	emit loggedIn(_loginstate->userId(), _loginstate->mode() == LoginHandler::JOIN);
+	qDebug() << "logged in to session" << _loginstate->sessionId() << ". Got user id" << _loginstate->userId();
+	emit loggedIn(_loginstate->sessionId(), _loginstate->userId(), _loginstate->mode() == LoginHandler::JOIN);
 
 	_loginstate->deleteLater();
 	_loginstate = 0;

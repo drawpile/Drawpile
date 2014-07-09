@@ -1162,7 +1162,7 @@ void MainWindow::disconnected(const QString &message, bool localDisconnect)
 void MainWindow::loggedin(bool join)
 {
 	// Update netstatus widget
-	_netstatus->loggedIn();
+	_netstatus->loggedIn(_client->sessionUrl());
 	_netstatus->setSecurityLevel(_client->securityLevel(), _client->hostCertificate());
 
 	// Re-enable UI

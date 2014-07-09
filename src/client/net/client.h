@@ -83,6 +83,13 @@ public:
 	int myId() const { return _my_id; }
 
 	/**
+	 * @brief Return the URL of the current session
+	 *
+	 * Returns an invalid URL not connected
+	 */
+	QUrl sessionUrl() const;
+
+	/**
 	 * @brief Get the local user's username
 	 * @return user name
 	 */
@@ -243,7 +250,7 @@ signals:
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
-	void handleConnect(int userid, bool join);
+	void handleConnect(QString sessionId, int userid, bool join);
 	void handleDisconnect(const QString &message, bool localDisconnect);
 
 private:
@@ -260,7 +267,8 @@ private:
 
 	Server *_server;
 	LoopbackServer *_loopback;
-	
+
+	QString _sessionId;
 	int _my_id;
 	bool _isloopback;
 	bool _isOp;

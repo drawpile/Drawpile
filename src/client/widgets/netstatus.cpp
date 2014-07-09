@@ -99,6 +99,12 @@ NetStatus::NetStatus(QWidget *parent)
 	_label->addAction(_copyaction);
 	connect(_copyaction,SIGNAL(triggered()),this,SLOT(copyAddress()));
 
+	// Action to copy the full session URL to clipboard
+	_urlaction = new QAction(tr("Copy session URL to clipboard"), this);
+	_urlaction->setEnabled(false);
+	_label->addAction(_urlaction);
+	connect(_urlaction, SIGNAL(triggered()), this, SLOT(copyUrl()));
+
 	// Discover local IP address
 	_discoverIp = new QAction(tr("Get externally visible IP address"), this);
 	_discoverIp->setVisible(false);
@@ -164,8 +170,10 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	updateIcon();
 }
 
-void NetStatus::loggedIn()
+void NetStatus::loggedIn(const QUrl &sessionUrl)
 {
+	_sessionUrl = sessionUrl;
+	_urlaction->setEnabled(true);
 	_label->setText(tr("Host: %1").arg(fullAddress()));
 	message(tr("Logged in!"));
 }
@@ -218,6 +226,7 @@ void NetStatus::hostDisconnected()
 	_address = QString();
 	_label->setText(tr("not connected"));
 
+	_urlaction->setEnabled(false);
 	_copyaction->setEnabled(false);
 	_discoverIp->setVisible(false);
 
@@ -306,6 +315,13 @@ void NetStatus::copyAddress()
 	QApplication::clipboard()->setText(addr, QClipboard::Selection);
 }
 
+void NetStatus::copyUrl()
+{
+	QString url = _sessionUrl.toString();
+	QApplication::clipboard()->setText(url);
+	QApplication::clipboard()->setText(url, QClipboard::Selection);
+}
+
 void NetStatus::discoverAddress()
 {
 	WhatIsMyIp::instance()->discoverMyIp();
@@ -325,6 +341,7 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 			port = _address.mid(portsep);
 
 		_address = ip;
+		_sessionUrl.setHost(ip);
 		_label->setText(tr("Host: %1").arg(fullAddress()));
 	}
 }

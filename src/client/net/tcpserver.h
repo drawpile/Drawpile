@@ -22,6 +22,7 @@
 #include "server.h"
 
 #include <QObject>
+#include <QUrl>
 
 class QSslSocket;
 
@@ -57,8 +58,10 @@ public:
 	virtual Security securityLevel() const { return _securityLevel; }
 	virtual QSslCertificate hostCertificate() const;
 
+	QUrl url() const { return _url; }
+
 signals:
-	void loggedIn(int userid, bool join);
+	void loggedIn(QString sessionId, int userid, bool join);
 	void loggingOut();
 	void serverDisconnected(const QString &message, bool localDisconnect);
 
@@ -78,6 +81,7 @@ private slots:
 	void handleSocketError();
 
 private:
+	QUrl _url;
 	QSslSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
 	LoginHandler *_loginstate;

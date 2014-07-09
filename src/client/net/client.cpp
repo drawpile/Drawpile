@@ -88,7 +88,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
 	connect(server, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(handleDisconnect(QString, bool)));
 	connect(server, SIGNAL(serverDisconnected(QString,bool)), loginhandler, SLOT(serverDisconnected()));
-	connect(server, SIGNAL(loggedIn(int, bool)), this, SLOT(handleConnect(int, bool)));
+	connect(server, SIGNAL(loggedIn(QString, int, bool)), this, SLOT(handleConnect(QString, int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
 	connect(server, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
@@ -114,8 +114,21 @@ bool Client::isLoggedIn() const
 	return _server->isLoggedIn();
 }
 
-void Client::handleConnect(int userid, bool join)
+QUrl Client::sessionUrl() const
 {
+	if(!isConnected())
+		return QUrl();
+
+	QUrl url = static_cast<const TcpServer*>(_server)->url();
+	url.setScheme("drawpile");
+	url.setUserInfo(QString());
+	url.setPath("/" + _sessionId);
+	return url;
+}
+
+void Client::handleConnect(QString sessionId, int userid, bool join)
+{
+	_sessionId = sessionId;
 	_my_id = userid;
 	emit serverLoggedin(join);
 }

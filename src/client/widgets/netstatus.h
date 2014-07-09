@@ -22,6 +22,7 @@
 #include "net/server.h"
 
 #include <QWidget>
+#include <QUrl>
 
 class QLabel;
 class QTimer;
@@ -46,7 +47,7 @@ public:
 
 public slots:
 	void connectingToHost(const QString& address, int port);
-	void loggedIn();
+	void loggedIn(const QUrl &sessionUrl);
 	void hostDisconnecting();
 	void hostDisconnected();
 
@@ -62,6 +63,7 @@ public slots:
 	void kicked(const QString& user);
 
 	void copyAddress();
+	void copyUrl();
 
 signals:
 	//! A status message
@@ -85,7 +87,10 @@ private:
 	PopupMessage *_popup;
 	QString _address;
 	int _port;
+	QUrl _sessionUrl;
+
 	QAction *_copyaction;
+	QAction *_urlaction;
 	QAction *_discoverIp;
 
 	quint64 _sentbytes, _recvbytes;
