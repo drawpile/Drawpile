@@ -346,9 +346,9 @@ void ToolSettings::eraserNear(bool near)
 {
 	if(near) {
 		_eraserOverride = currentTool();
-		selectTool(tools::ERASER);
+		setTool(tools::ERASER);
 	} else {
-		selectTool(tools::Type(_eraserOverride));
+		setTool(tools::Type(_eraserOverride));
 	}
 }
 
