@@ -41,7 +41,7 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>65536</number>
+           <number>32767</number>
           </property>
          </widget>
         </item>
@@ -61,7 +61,7 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>65536</number>
+           <number>32767</number>
           </property>
          </widget>
         </item>
@@ -94,10 +94,10 @@
         <item row="0" column="1">
          <widget class="QSpinBox" name="xoffset">
           <property name="minimum">
-           <number>-65536</number>
+           <number>-32767</number>
           </property>
           <property name="maximum">
-           <number>65536</number>
+           <number>32767</number>
           </property>
          </widget>
         </item>
@@ -114,10 +114,10 @@
         <item row="1" column="1">
          <widget class="QSpinBox" name="yoffset">
           <property name="minimum">
-           <number>-65536</number>
+           <number>-32767</number>
           </property>
           <property name="maximum">
-           <number>65536</number>
+           <number>32767</number>
           </property>
          </widget>
         </item>

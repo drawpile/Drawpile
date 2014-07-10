@@ -105,7 +105,8 @@ Protocol 11.2 (0.9.2)
  * Changed some operator commands
  * Increased UserAttr::attrs length to 16 bits to make room for more future attributes
  * Added MOD and AUTH UserAttr attributes
- * Minor recording incompatibility: chat messages will be missing the first letter
+ * Use int32 coordinates in PutImage, CanvasResize and FillRect
+ * Breaks compatiblity with previous version
  * First version to support session hibernation
 
 Protocol 10.2 (0.9.0)

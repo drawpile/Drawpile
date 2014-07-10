@@ -77,6 +77,9 @@ class HostDialog : public QDialog
 		//! Use the original image?
 		bool useOriginalImage() const;
 
+	public slots:
+		void done(int r);
+
 	private slots:
 		bool selectPicture();
 		void newSelected();

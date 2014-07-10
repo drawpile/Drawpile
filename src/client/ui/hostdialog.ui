@@ -245,10 +245,10 @@
                  </sizepolicy>
                 </property>
                 <property name="minimum">
-                 <number>100</number>
+                 <number>1</number>
                 </property>
                 <property name="maximum">
-                 <number>65535</number>
+                 <number>32767</number>
                 </property>
                 <property name="value">
                  <number>800</number>
@@ -277,10 +277,10 @@
                  </sizepolicy>
                 </property>
                 <property name="minimum">
-                 <number>100</number>
+                 <number>1</number>
                 </property>
                 <property name="maximum">
-                 <number>65535</number>
+                 <number>32767</number>
                 </property>
                 <property name="value">
                  <number>600</number>

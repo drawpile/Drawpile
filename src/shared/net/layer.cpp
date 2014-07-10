@@ -24,30 +24,30 @@ namespace protocol {
 
 CanvasResize *CanvasResize::deserialize(const uchar *data, uint len)
 {
-	if(len!=9)
+	if(len!=17)
 		return 0;
 	return new CanvasResize(
 		*data,
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<quint16>(data+3),
-		qFromBigEndian<quint16>(data+5),
-		qFromBigEndian<quint16>(data+7)
+		qFromBigEndian<qint32>(data+1),
+		qFromBigEndian<qint32>(data+5),
+		qFromBigEndian<qint32>(data+9),
+		qFromBigEndian<qint32>(data+13)
 	);
 }
 
 int CanvasResize::payloadLength() const
 {
-	return 9;
+	return 1 + 4*4;
 }
 
 int CanvasResize::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	qToBigEndian(_top, ptr); ptr += 2;
-	qToBigEndian(_right, ptr); ptr += 2;
-	qToBigEndian(_bottom, ptr); ptr += 2;
-	qToBigEndian(_left, ptr); ptr += 2;
+	qToBigEndian(_top, ptr); ptr += 4;
+	qToBigEndian(_right, ptr); ptr += 4;
+	qToBigEndian(_bottom, ptr); ptr += 4;
+	qToBigEndian(_left, ptr); ptr += 4;
 	return ptr - data;
 }
 

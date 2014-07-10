@@ -18,10 +18,12 @@
 */
 
 #include "resizedialog.h"
+#include "utils/imagesize.h"
 #include "ui_resizedialog.h"
 
-namespace dialogs {
+#include <QMessageBox>
 
+namespace dialogs {
 
 ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 	QDialog(parent), _oldsize(oldsize), _aspectratio(0), _lastchanged(0)
@@ -44,6 +46,18 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 ResizeDialog::~ResizeDialog()
 {
 	delete _ui;
+}
+
+void ResizeDialog::done(int r)
+{
+	if(r == QDialog::Accepted) {
+		if(!utils::checkImageSize(newSize())) {
+			QMessageBox::information(this, tr("Error"), tr("Size is too large"));
+			return;
+		}
+	}
+
+	QDialog::done(r);
 }
 
 void ResizeDialog::widthChanged(int newWidth)

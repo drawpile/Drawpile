@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,43 +16,21 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef NEWDIALOG_H
-#define NEWDIALOG_H
 
-#include <QDialog>
+#ifndef IMAGESIZECHECK_H
+#define IMAGESIZECHECK_H
 
-class Ui_NewDialog;
+class QSize;
 
-namespace dialogs {
+#include "../shared/net/message.h"
 
-/**
- * @brief Dialog to set new drawing settings
- * The "new drawing" dialog allows the user to set the width, height
- * and background color of a new image.
- */
-class NewDialog : public QDialog
-{
-Q_OBJECT
-public:
-	NewDialog(QWidget *parent=0);
-	~NewDialog();
+#include <QList>
 
-	//! Set the width/height fields
-	void setSize(const QSize &size);
+namespace utils {
 
-	//! Set the background color field
-	void setBackground(const QColor &color);
-
-public slots:
-	void done(int r);
-
-signals:
-	void accepted(const QSize &size, const QColor &background);
-
-private:
-	Ui_NewDialog *_ui;
-};
+//! Check if image dimensions are not too big. Returns true if size is OK
+bool checkImageSize(const QSize &size);
 
 }
 
-#endif
+#endif // IMAGESIZECHECK_H

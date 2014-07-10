@@ -43,6 +43,7 @@ using protocol::MessagePtr;
 QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
+
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, _color.rgba(), QApplication::tr("Background"))));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, QApplication::tr("Foreground"))));

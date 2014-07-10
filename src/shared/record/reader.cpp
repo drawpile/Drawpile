@@ -158,16 +158,18 @@ Compatibility Reader::open()
 			return UNKNOWN_COMPATIBILITY;
 
 		// Recording made with an older version.
-		// This version is (partially) compatible protocol-wise with version 7.
+		// This version is incompatible with version 10 and older.
+		if(majorVersion(protover) < 11)
+			return INCOMPATIBLE;
+#if 0
 		// Chat message format was changed in version 11.
 		if(majorVersion(protover) >= 7) {
-#if 0
 			if(minorVersion(protover) == DRAWPILE_PROTO_MINOR_VERSION)
 				return COMPATIBLE;
 			else
-#endif
 			return MINOR_INCOMPATIBILITY;
 		}
+#endif
 
 		// Older versions are incompatible
 		return INCOMPATIBLE;

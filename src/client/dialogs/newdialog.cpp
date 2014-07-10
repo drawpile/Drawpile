@@ -19,9 +19,11 @@
 
 #include <QPushButton>
 #include <QSettings>
+#include <QMessageBox>
 
 #include "newdialog.h"
 #include "widgets/colorbutton.h"
+#include "utils/imagesize.h"
 using widgets::ColorButton;
 
 #include "ui_newdialog.h"
@@ -34,7 +36,6 @@ NewDialog::NewDialog(QWidget *parent)
 	_ui = new Ui_NewDialog;
 	_ui->setupUi(this);
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create"));
-	connect(this, SIGNAL(accepted()), this, SLOT(onAccept()));
 
 	QSettings cfg;
 
@@ -64,13 +65,27 @@ void NewDialog::setBackground(const QColor &color)
 	_ui->background->setColor(color);
 }
 
-void NewDialog::onAccept()
+void NewDialog::done(int r)
 {
-	QSize size(_ui->width->value(), _ui->height->value());
-	QSettings cfg;
-	cfg.setValue("history/newsize", size);
-	cfg.setValue("history/newcolor", _ui->background->color());
-	emit accepted(size, _ui->background->color());
+	if(r == QDialog::Accepted) {
+		QSize size(_ui->width->value(), _ui->height->value());
+
+		if(!utils::checkImageSize(size)) {
+			QMessageBox::information(this, tr("Error"), tr("Size is too large"));
+			return;
+
+		} else {
+
+			QSettings cfg;
+			cfg.setValue("history/newsize", size);
+			cfg.setValue("history/newcolor", _ui->background->color());
+			emit accepted(size, _ui->background->color());
+
+		}
+
+	}
+
+	QDialog::done(r);
 }
 
 }

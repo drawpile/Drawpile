@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,24 +24,24 @@ namespace protocol {
 
 PutImage *PutImage::deserialize(const uchar *data, uint len)
 {
-	if(len < 11)
+	if(len < 19)
 		return 0;
 
 	return new PutImage(
 		*(data+0),
 		*(data+1),
 		*(data+2),
-		qFromBigEndian<quint16>(data+3),
-		qFromBigEndian<quint16>(data+5),
-		qFromBigEndian<quint16>(data+7),
-		qFromBigEndian<quint16>(data+9),
-		QByteArray((const char*)data+11, len-11)
+		qFromBigEndian<quint32>(data+3),
+		qFromBigEndian<quint32>(data+7),
+		qFromBigEndian<quint32>(data+11),
+		qFromBigEndian<quint32>(data+15),
+		QByteArray((const char*)data+19, len-19)
 	);
 }
 
 int PutImage::payloadLength() const
 {
-	return 1 + 2 + 4*2 + _image.size();
+	return 1 + 2 + 4*4 + _image.size();
 }
 
 int PutImage::serializePayload(uchar *data) const
@@ -50,10 +50,10 @@ int PutImage::serializePayload(uchar *data) const
 	*(ptr++) = contextId();
 	*(ptr++) = _layer;
 	*(ptr++) = _flags;
-	qToBigEndian(_x, ptr); ptr += 2;
-	qToBigEndian(_y, ptr); ptr += 2;
-	qToBigEndian(_w, ptr); ptr += 2;
-	qToBigEndian(_h, ptr); ptr += 2;
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
+	qToBigEndian(_w, ptr); ptr += 4;
+	qToBigEndian(_h, ptr); ptr += 4;
 	memcpy(ptr, _image.constData(), _image.length());
 	ptr += _image.length();
 	return ptr-data;
@@ -61,7 +61,7 @@ int PutImage::serializePayload(uchar *data) const
 
 FillRect *FillRect::deserialize(const uchar *data, uint len)
 {
-	if(len != 15)
+	if(len != 23)
 		return 0;
 
 	return new FillRect(
@@ -69,16 +69,16 @@ FillRect *FillRect::deserialize(const uchar *data, uint len)
 		*(data+1),
 		*(data+2),
 		qFromBigEndian<quint16>(data+3),
-		qFromBigEndian<quint16>(data+5),
 		qFromBigEndian<quint16>(data+7),
-		qFromBigEndian<quint16>(data+9),
-		qFromBigEndian<quint32>(data+11)
+		qFromBigEndian<quint16>(data+11),
+		qFromBigEndian<quint16>(data+15),
+		qFromBigEndian<quint32>(data+19)
 	);
 }
 
 int FillRect::payloadLength() const
 {
-	return 1 + 2 + 2*4 + 4;
+	return 1 + 2 + 4*4 + 4;
 }
 
 int FillRect::serializePayload(uchar *data) const
@@ -87,10 +87,10 @@ int FillRect::serializePayload(uchar *data) const
 	*(ptr++) = contextId();
 	*(ptr++) = _layer;
 	*(ptr++) = _blend;
-	qToBigEndian(_x, ptr); ptr += 2;
-	qToBigEndian(_y, ptr); ptr += 2;
-	qToBigEndian(_w, ptr); ptr += 2;
-	qToBigEndian(_h, ptr); ptr += 2;
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
+	qToBigEndian(_w, ptr); ptr += 4;
+	qToBigEndian(_h, ptr); ptr += 4;
 	qToBigEndian(_color, ptr); ptr += 4;
 
 	return ptr-data;

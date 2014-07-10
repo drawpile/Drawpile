@@ -40,16 +40,16 @@ namespace protocol {
  */
 class CanvasResize : public Message {
 public:
-	CanvasResize(uint8_t ctx, int16_t top, int16_t right, int16_t bottom, int16_t left)
+	CanvasResize(uint8_t ctx, int32_t top, int32_t right, int32_t bottom, int32_t left)
 		: Message(MSG_CANVAS_RESIZE, ctx), _top(top), _right(right), _bottom(bottom), _left(left)
 		{}
 
 	static CanvasResize *deserialize(const uchar *data, uint len);
 
-	int16_t top() const { return _top; }
-	int16_t right() const { return _right; }
-	int16_t bottom() const { return _bottom; }
-	int16_t left() const { return _left; }
+	int32_t top() const { return _top; }
+	int32_t right() const { return _right; }
+	int32_t bottom() const { return _bottom; }
+	int32_t left() const { return _left; }
 
 	bool isOpCommand() const { return true; }
 	bool isUndoable() const { return true; }
@@ -59,10 +59,10 @@ protected:
 	int serializePayload(uchar *data) const;	
 
 private:
-	int16_t _top;
-	int16_t _right;
-	int16_t _bottom;
-	int16_t _left;
+	int32_t _top;
+	int32_t _right;
+	int32_t _bottom;
+	int32_t _left;
 };
 
 /**

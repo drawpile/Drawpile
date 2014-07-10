@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QImageReader>
 #include <QSettings>
+#include <QMessageBox>
 
 #include "loader.h"
 
@@ -31,6 +32,7 @@
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
 #include "utils/sessionidvalidator.h"
+#include "utils/imagesize.h"
 
 using widgets::ImageSelector;
 using widgets::ColorButton;
@@ -97,6 +99,21 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 HostDialog::~HostDialog()
 {
 	delete _ui;
+}
+
+void HostDialog::done(int r)
+{
+	if(r == QDialog::Accepted) {
+		if(_ui->solidcolor->isChecked()) {
+			QSize size(_ui->picturewidth->value(), _ui->pictureheight->value());
+			if(!utils::checkImageSize(size)) {
+				QMessageBox::information(this, tr("Error"), tr("Size is too large"));
+				return;
+			}
+		}
+	}
+
+	QDialog::done(r);
 }
 
 void HostDialog::rememberSettings() const

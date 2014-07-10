@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ public:
 	//! Maximum length of image data array
 	static const int MAX_LEN = (1<<16) - 11;
 
-	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint16_t x, uint16_t y, uint16_t w, uint16_t h, const QByteArray &image)
+	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
 	{
 		Q_ASSERT(image.length() <= MAX_LEN);
@@ -62,10 +62,10 @@ public:
 	
 	uint8_t layer() const { return _layer; }
 	uint8_t flags() const { return _flags; }
-	uint16_t x() const { return _x; }
-	uint16_t y() const { return _y; }
-	uint16_t width() const { return _w; }
-	uint16_t height() const { return _h; }
+	uint32_t x() const { return _x; }
+	uint32_t y() const { return _y; }
+	uint32_t width() const { return _w; }
+	uint32_t height() const { return _h; }
 	const QByteArray &image() const { return _image; }
 
 	bool isUndoable() const { return true; }
@@ -77,10 +77,10 @@ protected:
 private:
 	uint8_t _layer;
 	uint8_t _flags;
-	uint16_t _x;
-	uint16_t _y;
-	uint16_t _w;
-	uint16_t _h;
+	uint32_t _x;
+	uint32_t _y;
+	uint32_t _w;
+	uint32_t _h;
 	QByteArray _image;
 };
 
@@ -93,7 +93,7 @@ private:
  */
 class FillRect : public Message {
 public:
-	FillRect(uint8_t ctx, uint8_t layer, uint8_t blend, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint32_t color)
+	FillRect(uint8_t ctx, uint8_t layer, uint8_t blend, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 		: Message(MSG_FILLRECT, ctx), _layer(layer), _blend(blend), _x(x), _y(y), _w(w), _h(h), _color(color)
 	{
 	}
@@ -102,10 +102,10 @@ public:
 
 	uint8_t layer() const { return _layer; }
 	uint8_t blend() const { return _blend; }
-	uint16_t x() const { return _x; }
-	uint16_t y() const { return _y; }
-	uint16_t width() const { return _w; }
-	uint16_t height() const { return _h; }
+	uint32_t x() const { return _x; }
+	uint32_t y() const { return _y; }
+	uint32_t width() const { return _w; }
+	uint32_t height() const { return _h; }
 	uint32_t color() const { return _color; }
 
 	bool isUndoable() const { return true; }
@@ -117,10 +117,10 @@ protected:
 private:
 	uint8_t _layer;
 	uint8_t _blend;
-	uint16_t _x;
-	uint16_t _y;
-	uint16_t _w;
-	uint16_t _h;
+	uint32_t _x;
+	uint32_t _y;
+	uint32_t _w;
+	uint32_t _h;
 	uint32_t _color;
 };
 

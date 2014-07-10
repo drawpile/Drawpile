@@ -47,6 +47,7 @@ public:
 signals:
 
 public slots:
+	void done(int r);
 
 private slots:
 	void widthChanged(int);
