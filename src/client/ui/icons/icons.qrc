@@ -61,5 +61,9 @@
         <file>eye_closed.png</file>
         <file>eye_open.png</file>
         <file>draw-ellipse.png</file>
+        <file>pressure-size.png</file>
+        <file>pressure-opacity.png</file>
+        <file>pressure-hardness.png</file>
+        <file>pressure-color.png</file>
     </qresource>
 </RCC>

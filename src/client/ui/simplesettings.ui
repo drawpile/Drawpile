@@ -78,9 +78,6 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
@@ -99,9 +96,6 @@
          <normaloff>icons:hardedge.png</normaloff>icons:hardedge.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>

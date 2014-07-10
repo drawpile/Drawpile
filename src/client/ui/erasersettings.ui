@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>300</height>
+    <height>238</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -75,9 +75,6 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
@@ -98,9 +95,6 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
     </layout>
@@ -113,80 +107,10 @@
      <property name="verticalSpacing">
       <number>0</number>
      </property>
-     <item row="1" column="1">
-      <widget class="QSlider" name="brushopacity">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="brushsize">
-       <property name="maximum">
-        <number>64</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Opacity:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Hardness:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Size:</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Spacing:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSlider" name="brushhardness">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="brushspacing">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -213,6 +137,19 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="1">
+      <widget class="QSlider" name="brushspacing">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>50</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="2">
       <widget class="QSpinBox" name="spinBox_3">
        <property name="suffix">
@@ -223,6 +160,43 @@
        </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSlider" name="brushhardness">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Hardness:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="brushsize">
+       <property name="maximum">
+        <number>64</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -239,68 +213,94 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Pressure sensitivity:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <property name="spacing">
-      <number>3</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="pressuresize">
-       <property name="text">
-        <string>Size</string>
+     <item row="1" column="1">
+      <widget class="QSlider" name="brushopacity">
+       <property name="minimum">
+        <number>1</number>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QCheckBox" name="pressureopacity">
-       <property name="text">
-        <string>Opacity</string>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QCheckBox" name="pressurehardness">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Hardness</string>
+        <string>Opacity:</string>
        </property>
       </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Pressure:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QToolButton" name="pressuresize">
+         <property name="toolTip">
+          <string>Size</string>
+         </property>
+         <property name="icon">
+          <iconset theme="pressure-size">
+           <normaloff>icons:pressure-size.png</normaloff>icons:pressure-size.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="pressureopacity">
+         <property name="toolTip">
+          <string>Opacity</string>
+         </property>
+         <property name="icon">
+          <iconset theme="pressure-opacity">
+           <normaloff>icons:pressure-opacity.png</normaloff>icons:pressure-opacity.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="pressurehardness">
+         <property name="toolTip">
+          <string>Hardness</string>
+         </property>
+         <property name="icon">
+          <iconset theme="pressure-hardness">
+           <normaloff>icons:pressure-hardness.png</normaloff>icons:pressure-hardness.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -334,62 +334,11 @@
   <tabstop>brushopacity</tabstop>
   <tabstop>brushhardness</tabstop>
   <tabstop>brushspacing</tabstop>
-  <tabstop>pressuresize</tabstop>
-  <tabstop>pressureopacity</tabstop>
-  <tabstop>pressurehardness</tabstop>
  </tabstops>
  <resources>
   <include location="icons/icons.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>pressuresize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setSizePressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>76</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>60</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressureopacity</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setOpacityPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>195</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressurehardness</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setHardnessPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>71</x>
-     <y>272</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>43</x>
-     <y>26</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>hardedge</sender>
    <signal>toggled(bool)</signal>
@@ -446,7 +395,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
-     <y>143</y>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>73</x>
@@ -462,7 +411,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
-     <y>169</y>
+     <y>163</y>
     </hint>
     <hint type="destinationlabel">
      <x>101</x>
@@ -478,7 +427,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
-     <y>195</y>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
      <x>90</x>
@@ -525,8 +474,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>141</y>
+     <x>125</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>156</x>
@@ -557,8 +506,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>166</y>
+     <x>125</x>
+     <y>163</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
@@ -577,8 +526,8 @@
      <y>161</y>
     </hint>
     <hint type="destinationlabel">
-     <x>110</x>
-     <y>164</y>
+     <x>125</x>
+     <y>163</y>
     </hint>
    </hints>
   </connection>
@@ -589,8 +538,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>120</x>
-     <y>188</y>
+     <x>125</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
      <x>145</x>
@@ -609,8 +558,56 @@
      <y>183</y>
     </hint>
     <hint type="destinationlabel">
+     <x>125</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressuresize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setSizePressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressureopacity</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setOpacityPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>203</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>101</x>
-     <y>187</y>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressurehardness</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardnessPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>40</y>
     </hint>
    </hints>
   </connection>
