@@ -40,7 +40,7 @@
 #include <QHostAddress>
 #include <QMessageBox>
 
-#define DEBUG_LOGIN
+//#define DEBUG_LOGIN
 
 namespace {
 
