@@ -1827,7 +1827,7 @@ void MainWindow::setupActions()
 	showusermarkers->setChecked(true);
 	showlasers->setChecked(true);
 
-	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
+	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence::FullScreen, true);
 
 	connect(_chatbox, SIGNAL(expanded(bool)), toggleChat, SLOT(setChecked(bool)));
 	connect(toggleChat, &QAction::triggered, [this](bool show) {
