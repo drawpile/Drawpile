@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include <QDebug>
 #include <QItemSelection>
 #include <QMessageBox>
-#include <QInputDialog>
 #include <QPushButton>
 
 #include "net/client.h"
@@ -188,19 +187,30 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
  */
 void LayerList::addLayer()
 {
-	bool ok;
-	QString name = QInputDialog::getText(0,
-		tr("Add a new layer"),
-		tr("Layer name:"),
-		QLineEdit::Normal,
-		"",
-		&ok
-	);
-	if(ok) {
-		if(name.isEmpty())
-			name = tr("Unnamed layer");
-		_client->sendNewLayer(0, Qt::transparent, name);
+	QString name;
+	bool nameOk;
+	net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+
+	for(int tries=0;tries<255;++tries) {
+		name = tr("New layer");
+		if(tries>0)
+			name = name + " " + QString::number(tries);
+
+		nameOk = true;
+		for(int l=0;l<layers->rowCount();++l) {
+			net::LayerListItem layer = layers->index(l).data().value<net::LayerListItem>();
+			if(layer.title.compare(name, Qt::CaseInsensitive)==0) {
+				nameOk=false;
+				break;
+			}
+		}
+		if(nameOk)
+			break;
 	}
+	if(!nameOk)
+		return;
+
+	_client->sendNewLayer(0, Qt::transparent, name);
 }
 
 /**
