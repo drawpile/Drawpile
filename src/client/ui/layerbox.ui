@@ -12,7 +12,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>2</number>
+    <number>3</number>
    </property>
    <property name="leftMargin">
     <number>3</number>
@@ -29,7 +29,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>0</number>
+      <number>3</number>
      </property>
      <item>
       <widget class="QToolButton" name="hideButton">
@@ -136,8 +136,6 @@
   <tabstop>deleteButton</tabstop>
   <tabstop>layerlist</tabstop>
  </tabstops>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
