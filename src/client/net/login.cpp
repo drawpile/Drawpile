@@ -201,18 +201,6 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 	}
 
-	// Show session selector if in multisession mode
-	if(_mode == JOIN && _multisession) {
-		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
-		_selectorDialog->setWindowModality(Qt::WindowModal);
-		_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
-
-		connect(_selectorDialog, SIGNAL(selected(QString,bool)), this, SLOT(joinSelectedSession(QString,bool)));
-		connect(_selectorDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
-
-		_selectorDialog->show();
-	}
-
 	// Start secure mode if possible
 	if(QSslSocket::supportsSsl() && _tls) {
 		_state = EXPECT_STARTTLS;
@@ -252,6 +240,7 @@ void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
 	Q_ASSERT(_passwordDialog.isNull());
 
 	_passwordDialog = new dialogs::LoginDialog(_widgetParent);
+
 	_passwordDialog->setWindowModality(Qt::WindowModal);
 	_passwordDialog->setWindowTitle(title);
 	_passwordDialog->setIntroText(text);
@@ -359,6 +348,18 @@ void LoginHandler::expectIdentified(const QString &msg)
 		}
 
 	} else {
+		// Show session selector if in multisession mode
+		if(_multisession) {
+			_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
+			_selectorDialog->setWindowModality(Qt::WindowModal);
+			_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+			connect(_selectorDialog, SIGNAL(selected(QString,bool)), this, SLOT(joinSelectedSession(QString,bool)));
+			connect(_selectorDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
+
+			_selectorDialog->show();
+		}
+
 		_state = EXPECT_SESSIONLIST_TO_JOIN;
 	}
 }

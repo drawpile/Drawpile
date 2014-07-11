@@ -42,6 +42,11 @@ LoginDialog::LoginDialog(QWidget *parent) :
 	});
 }
 
+LoginDialog::~LoginDialog()
+{
+	delete _ui;
+}
+
 void LoginDialog::setIntroText(const QString &text)
 {
 	if(text.isEmpty()) {

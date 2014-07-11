@@ -30,6 +30,7 @@ class LoginDialog : public QDialog
 	Q_OBJECT
 public:
 	explicit LoginDialog(QWidget *parent = 0);
+	~LoginDialog();
 
 	void setIntroText(const QString &text);
 	void setUsername(const QString &username, bool enabled);
