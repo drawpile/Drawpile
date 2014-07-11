@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2013-2014 Calle Laakkonen
 
@@ -24,7 +24,7 @@
 namespace protocol {
 
 /**
- * DrawPile network protocol message types
+ * Drawpile network protocol message types
  */
 enum MessageType {
 	// Login stream

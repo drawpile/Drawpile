@@ -1,7 +1,7 @@
 #ifndef DP_NET_UTILS_H
 #define DP_NET_UTILS_H
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2013 Calle Laakkonen
 

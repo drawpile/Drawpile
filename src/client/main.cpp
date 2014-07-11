@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2006-2014 Calle Laakkonen
 
@@ -33,7 +33,7 @@
 #include <QDir>
 #include <QDesktopWidget>
 
-DrawPileApp::DrawPileApp(int &argc, char **argv)
+DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
 	setOrganizationName("drawpile");
@@ -74,7 +74,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
  * When the tip leaves the surface, switch back to whatever tool
  * we were using before.
  */
-bool DrawPileApp::event(QEvent *e) {
+bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
 		if(te->pointerType()==QTabletEvent::Eraser)
@@ -85,7 +85,7 @@ bool DrawPileApp::event(QEvent *e) {
 	return QApplication::event(e);
 }
 
-void DrawPileApp::notifySettingsChanged()
+void DrawpileApp::notifySettingsChanged()
 {
 	emit settingsChanged();
 }
@@ -125,7 +125,7 @@ void initTranslations(const QLocale &locale)
 
 int main(int argc, char *argv[]) {
 	// Initialize application
-	DrawPileApp app(argc,argv);
+	DrawpileApp app(argc,argv);
 
 	initTranslations(QLocale::system());
 

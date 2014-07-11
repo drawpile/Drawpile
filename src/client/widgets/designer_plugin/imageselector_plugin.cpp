@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2014 Calle Laakkonen
 
@@ -53,7 +53,7 @@ QString ImageSelectorPlugin::name() const
 
 QString ImageSelectorPlugin::group() const
 {
-    return "DrawPile Widgets";
+    return "Drawpile Widgets";
 }
 
 QIcon ImageSelectorPlugin::icon() const

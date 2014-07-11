@@ -1,6 +1,6 @@
 
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2008-2013 Calle Laakkonen
 

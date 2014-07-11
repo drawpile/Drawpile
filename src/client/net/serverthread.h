@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2007-2013 Calle Laakkonen
 
@@ -50,7 +50,7 @@ public:
 
 	/**
 	 * @brief Is the server listening on the default port
-	 * @return true if port is DrawPile's default
+	 * @return true if port is Drawpile's default
 	 * @pre startServer() returned nonzero
 	 */
 	bool isOnDefaultPort() const;

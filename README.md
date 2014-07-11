@@ -1,7 +1,7 @@
 Drawpile - a collaborative drawing program
 ------------------------------------------
 
-DrawPile is a drawing program with a twist: you can share your drawing
+Drawpile is a drawing program with a twist: you can share your drawing
 live with other people.
 
 Some feature highlights:

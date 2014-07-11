@@ -1,12 +1,12 @@
-Notes on OpenRaster support in DrawPile
+Notes on OpenRaster support in Drawpile
 
-As of version 0.7, DrawPile defaults to OpenRaster format for images containing
+As of version 0.7, Drawpile defaults to OpenRaster format for images containing
 annotations or more than one layer. (The default for simple images being PNG)
 
 The standard is still at a draft stage and subject to change, and so is
-DrawPile's implementation of it.
+Drawpile's implementation of it.
 
-Presently, a DrawPile specific extension is used for saving the annotations.
+Presently, a Drawpile specific extension is used for saving the annotations.
 They are saved under the <drawpile:annotations> element.
 Once the <text> element of OpenRaster is standardised, it will probably be used instead.
 

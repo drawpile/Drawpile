@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = DrawPile
+PROJECT_NAME           = Drawpile
 OUTPUT_DIRECTORY       = ./doc/doxygen
 CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English

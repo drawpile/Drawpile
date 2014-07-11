@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2007-2014 Calle Laakkonen
 
@@ -239,7 +239,7 @@ void SettingsDialog::rememberSettings()
 			cfg.setValue(_customactions[i]->objectName(), ks);
 	}
 
-	static_cast<DrawPileApp*>(qApp)->notifySettingsChanged();
+	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
 
 void SettingsDialog::saveCertTrustChanges()

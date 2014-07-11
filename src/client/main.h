@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2006-2013 Calle Laakkonen
 
@@ -21,10 +21,10 @@
 
 #include <QApplication>
 
-class DrawPileApp : public QApplication {
+class DrawpileApp : public QApplication {
 Q_OBJECT
 public:
-	DrawPileApp(int & argc, char ** argv );
+	DrawpileApp(int & argc, char ** argv );
 
 	void notifySettingsChanged();
 

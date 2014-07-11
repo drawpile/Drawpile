@@ -1,5 +1,5 @@
 /*
-   DrawPile - a collaborative drawing program.
+   Drawpile - a collaborative drawing program.
 
    Copyright (C) 2009-2014 Calle Laakkonen
 
@@ -39,7 +39,7 @@ class Reader {
 	Q_DECLARE_TR_FUNCTIONS(openraster::Reader)
 	public:
 		enum Warning {
-			//! No warnings (i.e. DrawPile supports all features of the file)
+			//! No warnings (i.e. Drawpile supports all features of the file)
 			NO_WARNINGS = 0,
 			//! The OpenRaster file uses unsupported app. specific extensions
 			ORA_EXTENDED = 0x01,
