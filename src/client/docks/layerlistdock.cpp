@@ -121,8 +121,7 @@ void LayerList::updateLockedControls()
 
 void LayerList::selectLayer(int id)
 {
-	_ui->layerlist->selectionModel()->clear();
-	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent);
+	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
 void LayerList::init()
@@ -266,16 +265,20 @@ void LayerList::onLayerCreate(bool wasfirst)
 
 /**
  * @brief Respond to layer deletion
- * @param id
- * @param idx
+ * @param id layer id
+ * @param idx layer index in stack
  */
 void LayerList::onLayerDelete(int id, int idx)
 {
-	// Automatically select the neighbouring layer on delete
-	if(_selected == id) {
-		if(_ui->layerlist->model()->rowCount() <= idx)
+	Q_UNUSED(id);
+	if(!currentSelection().isValid()) {
+		if(idx >= _ui->layerlist->model()->rowCount())
+			idx = _ui->layerlist->model()->rowCount()-1;
+		else if(idx>0)
 			--idx;
-		if(idx>0)
+
+		// Automatically select neighbouring layer on delete
+		if(idx>=0)
 			_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(idx,0), QItemSelectionModel::SelectCurrent);
 		else
 			_selected = 0;
