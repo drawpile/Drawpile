@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/icons/">
+    <qresource prefix="/icons">
         <file>drawpile.png</file>
         <file>application-exit.png</file>
         <file>chat.png</file>
@@ -65,5 +65,6 @@
         <file>pressure-opacity.png</file>
         <file>pressure-hardness.png</file>
         <file>pressure-color.png</file>
+        <file>user-moderator.png</file>
     </qresource>
 </RCC>

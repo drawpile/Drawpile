@@ -77,6 +77,7 @@ public:
 
 private:
 	QPixmap _lockicon;
+	QPixmap _opicon;
 };
 
 

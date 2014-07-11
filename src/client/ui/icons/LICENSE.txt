@@ -66,4 +66,5 @@ Finally, the following are original to Drawpile:
  * pressure-opacity
  * pressure-hardness
  * pressure-color
+ * user-moderator
 

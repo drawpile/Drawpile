@@ -83,8 +83,9 @@
        <property name="toolTip">
         <string>Session operator</string>
        </property>
-       <property name="text">
-        <string notr="true">OP</string>
+       <property name="icon">
+        <iconset theme="user-moderator">
+         <normaloff>icons:user-moderator.png</normaloff>icons:user-moderator.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -101,8 +102,7 @@
        </property>
        <property name="icon">
         <iconset theme="object-locked">
-         <normaloff/>
-        </iconset>
+          <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -133,8 +133,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -145,7 +145,8 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 
 UserListDelegate::UserListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16))
+	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
+	  _opicon(icon::fromTheme("user-moderator").pixmap(16, 16))
 {
 }
 
@@ -159,7 +160,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	// Background
 	drawBackground(painter, opt, index);
 
-	// (auth) + [OP] + Name
+	// (auth) + [OP/MOD] + Name
 	QRect textrect = opt.rect;
 	const QSize locksize = _lockicon.size();
 	{
@@ -176,7 +177,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		if(user.isMod)
 			drawDisplay(painter, opt, textrect, modmsg);
 		else if(user.isOperator)
-			drawDisplay(painter, opt, textrect, QStringLiteral("[OP]"));
+			painter->drawPixmap(QRect(textrect.topLeft(), _opicon.size()), _opicon);
 
 		textrect.moveLeft(textrect.left() + fm.width(modmsg) + 7);
 		opt.font.setBold(false);
