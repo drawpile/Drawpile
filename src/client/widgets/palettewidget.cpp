@@ -67,7 +67,11 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 void PaletteWidget::setPalette(Palette *palette)
 {
 	_palette = palette;
-	_columns = palette->columns();
+	if(palette) {
+		_columns = palette->columns();
+	} else {
+		_columns = 1;
+	}
 	Q_ASSERT(_columns>0);
 	_selection = -1;
 	_dialogsel = -2;
