@@ -23,7 +23,6 @@ using widgets::PaletteWidget;
 #include "ui_palettebox.h"
 
 #include <QStandardPaths>
-#include <QInputDialog>
 #include <QMessageBox>
 #include <QDebug>
 #include <QSettings>
@@ -173,20 +172,24 @@ void PaletteBox::addPalette()
 {
 
 	QString name;
-	do {
-		name = QInputDialog::getText(this, tr("Add new palette"),
-				QString("Name of the palette"));
-		if(name.isEmpty())
-			return;
-		if(isUniquePaletteName(name,0)==false) {
-			QMessageBox::information(this,tr("Name already in use"),
-					tr("The palette name must be unique"));
-		} else {
+	bool nameOk = false;
+
+	// Autogenerate name
+	for(int tries=0;tries<99;++tries) {
+		name = tr("New palette");
+		if(tries>0)
+			name = name + " " + QString::number(tries);
+
+		if(isUniquePaletteName(name, -1)) {
+			// name found
+			nameOk = true;
 			break;
 		}
-	} while(1);
+	}
 
-	// TODO check that name is unique
+	if(!nameOk)
+		return;
+
 	_palettes.append(Palette(name));
 	_ui->palettelist->addItem(name);
 	_ui->palettelist->setCurrentIndex(_ui->palettelist->count()-1);
