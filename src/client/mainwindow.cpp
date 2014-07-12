@@ -929,7 +929,7 @@ void MainWindow::toggleRecording()
 
 			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
-			recordAction->setText("Stop recording");
+			recordAction->setText(tr("Stop recording"));
 			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
 
 			QApplication::restoreOverrideCursor();
