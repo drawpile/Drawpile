@@ -1,4 +1,4 @@
-2014-0?-?? Version 0.9.2
+2014-07-12 Version 0.9.2
  * Improved message popup widget
  * Server: session hibernation
  * Protocol change: more information is included in SessionConf message
@@ -13,11 +13,13 @@
  * Protocol change: session IDs are now treated as strings rather than numbers
  * Protocol change: SessionConf::attrs is now two bytes long
  * Protocol change: added "flags" field to Chat message
+ * Protocol change: use 32 bit coordinates everywhere
  * Chat messages are no longer included in the session history by default
  * Fixed crash when dragging&dropping a layer
  * Fixed canvas stealing focus from text boxes
  * Authenticated login support
  * More version info shown in `drawpile-srv --version`
+ * Various bug fixes and usability improvements
 
 2014-06-03 Version 0.9.1
  * SSL support
