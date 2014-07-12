@@ -124,13 +124,15 @@ void IndexBuilder::run()
 
 void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 {
-	static const int SNAPSHOT_INTERVAL = 200;
+	static const int SNAPSHOT_INTERVAL = 500;
+	static const int SNAPSHOT_MIN_INTERVAL = 100;
 
 	paintcore::LayerStack image;
 	net::LayerListModel layermodel;
 	drawingboard::StateTracker statetracker(&image, &layermodel, 1);
 
 	MessageRecord msg;
+	int snapshotCounter = 0;
 	while(true) {
 		if(_abortflag.load())
 			return;
@@ -145,8 +147,11 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 		if(m->isCommand())
 			statetracker.receiveCommand(m);
 
-		// TODO: should snapshot interval be adjustable or dynamic?
-		if(reader.currentIndex() % SNAPSHOT_INTERVAL == 0) {
+		++snapshotCounter;
+
+		// Save a snapshot every SNAPSHOT_INTERVAL or at every marker. (But no more often than SNAPSHOT_MIN_INTERVAL)
+		if(snapshotCounter == SNAPSHOT_INTERVAL || (m->type() == protocol::MSG_MARKER && snapshotCounter>=SNAPSHOT_MIN_INTERVAL)) {
+			snapshotCounter = 0;
 			qint64 streampos = reader.filePosition();
 			emit progress(streampos);;
 			drawingboard::StateSavepoint sp = statetracker.createSavepoint();
