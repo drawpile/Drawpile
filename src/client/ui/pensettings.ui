@@ -95,9 +95,6 @@
        <property name="text">
         <string>Spacing:</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
       </widget>
      </item>
      <item row="0" column="0">
@@ -287,9 +284,7 @@
   <tabstop>brushopacity</tabstop>
   <tabstop>brushspacing</tabstop>
  </tabstops>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>blendmode</sender>
