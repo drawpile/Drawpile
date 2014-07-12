@@ -130,7 +130,11 @@ void Client::handleConnect(QString sessionId, int userid, bool join)
 {
 	_sessionId = sessionId;
 	_my_id = userid;
-	_layerlist->clear();
+
+	// Joining: we'll get the correct layer list from the server
+	if(join)
+		_layerlist->clear();
+
 	emit serverLoggedin(join);
 }
 
