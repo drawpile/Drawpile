@@ -307,6 +307,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 MainWindow::~MainWindow()
 {
+	// Close playback dialog explicitly since it adds the miniplayer as a direct child
+	// of the main window, but deletes it itself.
+	delete _dialog_playback;
+
 	// Make sure all child dialogs are closed
 	foreach(QObject *obj, children()) {
 		QDialog *child = qobject_cast<QDialog*>(obj);
