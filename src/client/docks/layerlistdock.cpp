@@ -49,7 +49,7 @@ LayerList::LayerList(QWidget *parent)
 	// Populate blend mode combobox
 	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening
 	for(int b=1;b<paintcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
+		_ui->blendmode->addItem(QApplication::translate("paintcore", paintcore::BLEND_MODE[b]));
 	}
 
 	// Layer ACL menu
