@@ -16,7 +16,7 @@
     <message>
         <location filename="../ui/brushsettings.ui" line="106"/>
         <source>Opacity:</source>
-        <translation>Läpinäkyvyys:</translation>
+        <translation>Peittävyys:</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="136"/>
@@ -46,7 +46,7 @@
     <message>
         <location filename="../ui/brushsettings.ui" line="248"/>
         <source>Opacity</source>
-        <translation>Läpinäkyvyys</translation>
+        <translation>Peittävyys</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="262"/>
@@ -203,7 +203,7 @@
     <message>
         <location filename="../ui/erasersettings.ui" line="232"/>
         <source>Opacity:</source>
-        <translation>Läpinäkyvyys:</translation>
+        <translation>Peittävyys:</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="239"/>
@@ -238,7 +238,7 @@
     <message>
         <location filename="../ui/erasersettings.ui" line="265"/>
         <source>Opacity</source>
-        <translation>Läpinäkyvyys</translation>
+        <translation>Peittävyys</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="279"/>
@@ -1367,7 +1367,7 @@
     <message>
         <location filename="../ui/pensettings.ui" line="113"/>
         <source>Opacity:</source>
-        <translation>Läpinäkyvyys:</translation>
+        <translation>Peittävyys:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="156"/>
@@ -1387,7 +1387,7 @@
     <message>
         <location filename="../ui/pensettings.ui" line="218"/>
         <source>Opacity</source>
-        <translation>Läpinäkyvyys</translation>
+        <translation>Peittävyys</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="232"/>
@@ -1785,7 +1785,7 @@
     <message>
         <location filename="../ui/simplesettings.ui" line="160"/>
         <source>Opacity:</source>
-        <translation>Läpinäkyvyys:</translation>
+        <translation>Peittävyys:</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="193"/>
