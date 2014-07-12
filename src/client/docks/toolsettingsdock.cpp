@@ -46,6 +46,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 	setWidget(w);
 
 	auto *layout = new QVBoxLayout(w);
+	layout->setMargin(3);
 
 	// Create a widget stack
 	_widgets = new QStackedWidget(this);

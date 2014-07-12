@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>282</width>
+    <width>286</width>
     <height>308</height>
    </rect>
   </property>
@@ -28,6 +28,9 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>3</number>
+     </property>
      <item>
       <widget class="QFontComboBox" name="font"/>
      </item>
@@ -184,7 +187,7 @@
        <property name="autoRaise">
         <bool>true</bool>
        </property>
-       <property name="color">
+       <property name="color" stdset="0">
         <color>
          <red>0</red>
          <green>0</green>
@@ -335,9 +338,7 @@
    </slots>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>italic</sender>
