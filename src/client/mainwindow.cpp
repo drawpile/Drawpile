@@ -1997,7 +1997,7 @@ void MainWindow::setupActions()
 	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), WEBSITE);
 	QAction *wikipage = makeAction("dphomepage", 0, tr("&Wiki"), "https://github.com/callaa/Drawpile/wiki");
 	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
-	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); about->setMenuRole(QAction::AboutQtRole);
+	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); aboutqt->setMenuRole(QAction::AboutQtRole);
 
 	connect(homepage, &QAction::triggered, [homepage]() { QDesktopServices::openUrl(QUrl(homepage->statusTip())); });
 	connect(wikipage, &QAction::triggered, [wikipage]() { QDesktopServices::openUrl(QUrl(wikipage->statusTip())); });
