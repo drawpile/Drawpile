@@ -60,7 +60,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	textrect.setWidth(textrect.width() - locksize.width());
 	drawDisplay(painter, opt, textrect, layer.title);
 
-	// Draw lock button
+	// Draw lock icon
 	if(layer.isLockedFor(_client->myId()))
 		painter->drawPixmap(
 			opt.rect.topRight()-QPoint(locksize.width(), -opt.rect.height()/2+locksize.height()/2),
@@ -68,6 +68,23 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		);
 
 	painter->restore();
+}
+
+bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+	if(event->type() == QEvent::MouseButtonRelease) {
+		const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
+
+		if(me->button() == Qt::LeftButton) {
+			if(me->x() < 24) {
+				// Clicked on opacity glyph: toggle visibility
+				emit toggleVisibility(layer.id, layer.hidden);
+			}
+		}
+	}
+
+	return QItemDelegate::editorEvent(event, model, option, index);
 }
 
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const

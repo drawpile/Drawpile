@@ -43,8 +43,12 @@ public:
 
 	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
+	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
 	void setClient(net::Client *client) { _client = client; }
+
+signals:
+	void toggleVisibility(int layerId, bool visible);
 
 private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;

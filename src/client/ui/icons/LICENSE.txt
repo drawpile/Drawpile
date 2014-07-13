@@ -54,6 +54,7 @@ The following icons are from the Gnome icon theme, licensed under the LGPL and C
  * security-low
  * security-medium
  * security-high
+ * edit-delete
 
 Finally, the following are original to Drawpile:
  * draw-line

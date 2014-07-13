@@ -58,7 +58,6 @@ LayerList::LayerList(QWidget *parent)
 
 	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
 	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelected()));
-	connect(_ui->hideButton, SIGNAL(clicked()), this, SLOT(hiddenToggled()));
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
@@ -85,6 +84,8 @@ void LayerList::setClient(net::Client *client)
 	connect(_client->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
 	connect(client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+
+	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
 }
 
 void LayerList::setOperatorMode(bool op)
@@ -160,13 +161,10 @@ void LayerList::blendModeChanged()
 	}
 }
 
-void LayerList::hiddenToggled()
+void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		_client->sendLayerVisibility(layer.id, _ui->hideButton->isChecked());
-	}
+	Q_ASSERT(_client);
+	_client->sendLayerVisibility(layerId, !visible);
 }
 
 void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
@@ -212,9 +210,6 @@ void LayerList::addLayer()
 	_client->sendNewLayer(0, Qt::transparent, name);
 }
 
-/**
- * @brief Layer delete button pressed
- */
 void LayerList::deleteSelected()
 {
 	Q_ASSERT(_client);
@@ -339,7 +334,6 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
 		_noupdate = true;
-		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->blendmode->setCurrentIndex(layer.blend - 1); // skip eraser mode (0)
 

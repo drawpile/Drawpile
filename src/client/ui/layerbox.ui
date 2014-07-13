@@ -32,20 +32,9 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QToolButton" name="hideButton">
+      <widget class="QComboBox" name="blendmode">
        <property name="toolTip">
-        <string>Hide this layer locally</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>icons:eye_open.png</normaloff>
-         <normalon>icons:eye_closed.png</normalon>icons:eye_open.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+        <string>Layer blending mode</string>
        </property>
       </widget>
      </item>
@@ -62,13 +51,6 @@
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="blendmode">
-       <property name="toolTip">
-        <string>Layer blending mode</string>
        </property>
       </widget>
      </item>
@@ -128,8 +110,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>hideButton</tabstop>
-  <tabstop>opacity</tabstop>
   <tabstop>blendmode</tabstop>
   <tabstop>lockButton</tabstop>
   <tabstop>addButton</tabstop>

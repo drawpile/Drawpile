@@ -69,7 +69,7 @@ private slots:
 	void deleteSelected();
 	void opacityAdjusted();
 	void blendModeChanged();
-	void hiddenToggled();
+	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
