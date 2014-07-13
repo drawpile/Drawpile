@@ -44,7 +44,6 @@ LayerList::LayerList(QWidget *parent)
 	_ui->layerlist->viewport()->setAcceptDrops(true);
 	_ui->layerlist->setEnabled(false);
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
-	setControlsLocked(true);
 
 	// Populate blend mode combobox
 	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening
@@ -52,12 +51,22 @@ LayerList::LayerList(QWidget *parent)
 		_ui->blendmode->addItem(QApplication::translate("paintcore", paintcore::BLEND_MODE[b]));
 	}
 
+	// Layer menu
+	_layermenu = new QMenu(this);
+	_menuHideAction = _layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
+	_menuHideAction->setCheckable(true);
+	_menuRenameAction = _layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
+	_menuMergeAction = _layermenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
+	_menuDeleteAction = _layermenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
+
 	// Layer ACL menu
 	_aclmenu = new LayerAclMenu(this);
 	_ui->lockButton->setMenu(_aclmenu);
 
+	connect(_ui->layerlist, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(layerContextMenu(QPoint)));
+
 	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
-	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelected()));
+	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteOrMergeSelected()));
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
@@ -118,6 +127,21 @@ void LayerList::updateLockedControls()
 	_ui->deleteButton->setEnabled(enabled);
 	_ui->opacity->setEnabled(enabled);
 	_ui->blendmode->setEnabled(enabled);
+
+	_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
+	_menuDeleteAction->setEnabled(enabled);
+	_menuMergeAction->setEnabled(enabled && canMergeCurrent());
+	_menuRenameAction->setEnabled(enabled);
+}
+
+void LayerList::layerContextMenu(const QPoint &pos)
+{
+	QModelIndex index = _ui->layerlist->indexAt(pos);
+	if(index.isValid()) {
+		const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+		qDebug() << "layer" << layer.id;
+		_layermenu->popup(_ui->layerlist->mapToGlobal(pos));
+	}
 }
 
 void LayerList::selectLayer(int id)
@@ -158,6 +182,15 @@ void LayerList::blendModeChanged()
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 		layer.blend = _ui->blendmode->currentIndex() + 1; // skip eraser mode (0)
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
+	}
+}
+
+void LayerList::hideSelected()
+{
+	Q_ASSERT(_client);
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		_client->sendLayerVisibility(index.data().value<net::LayerListItem>().id, _menuHideAction->isChecked());
 	}
 }
 
@@ -210,7 +243,14 @@ void LayerList::addLayer()
 	_client->sendNewLayer(0, Qt::transparent, name);
 }
 
-void LayerList::deleteSelected()
+bool LayerList::canMergeCurrent() const
+{
+	const QModelIndex index = currentSelection();
+
+	return index.isValid() && index.sibling(index.row()+1, 0).isValid();
+}
+
+void LayerList::deleteOrMergeSelected()
 {
 	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
@@ -230,7 +270,7 @@ void LayerList::deleteSelected()
 	// Offer the choice to merge down only if there is a layer
 	// below this one.
 	QPushButton *merge = 0;
-	if(index.sibling(index.row()+1, 0).isValid()) {
+	if(canMergeCurrent()) {
 		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
 		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
 	}
@@ -242,9 +282,40 @@ void LayerList::deleteSelected()
 
 	QAbstractButton *choice = box.clickedButton();
 	if(choice != cancel) {
-		_client->sendUndopoint();
-		_client->sendDeleteLayer(layer.id, choice==merge);
+		if(choice==merge)
+			mergeSelected();
+		else
+			deleteSelected();
 	}
+}
+
+void LayerList::deleteSelected()
+{
+	QModelIndex index = currentSelection();
+	if(!index.isValid())
+		return;
+
+	_client->sendUndopoint();
+	_client->sendDeleteLayer(index.data().value<net::LayerListItem>().id, false);
+}
+
+void LayerList::mergeSelected()
+{
+	QModelIndex index = currentSelection();
+	if(!index.isValid())
+		return;
+
+	_client->sendUndopoint();
+	_client->sendDeleteLayer(index.data().value<net::LayerListItem>().id, true);
+}
+
+void LayerList::renameSelected()
+{
+	QModelIndex index = currentSelection();
+	if(!index.isValid())
+		return;
+
+	_ui->layerlist->edit(index);
 }
 
 /**
@@ -286,7 +357,7 @@ void LayerList::onLayerReorder()
 		selectLayer(_selected);
 }
 
-QModelIndex LayerList::currentSelection()
+QModelIndex LayerList::currentSelection() const
 {
 	QModelIndexList sel = _ui->layerlist->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
@@ -334,6 +405,7 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
 		_noupdate = true;
+		_menuHideAction->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->blendmode->setCurrentIndex(layer.blend - 1); // skip eraser mode (0)
 

@@ -23,6 +23,8 @@
 
 class QModelIndex;
 class QItemSelection;
+class QMenu;
+
 class Ui_LayerBox;
 
 namespace net {
@@ -66,25 +68,38 @@ private slots:
 	void onLayerReorder();
 
 	void addLayer();
+	void deleteOrMergeSelected();
 	void deleteSelected();
+	void mergeSelected();
+	void renameSelected();
 	void opacityAdjusted();
 	void blendModeChanged();
+	void hideSelected();
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
+	void layerContextMenu(const QPoint &pos);
 
 private:
 	void updateLockedControls();
+	bool canMergeCurrent() const;
 
-	QModelIndex currentSelection();
+	QModelIndex currentSelection() const;
 
 	net::Client *_client;
 	int _selected;
 	Ui_LayerBox *_ui;
 	bool _noupdate;
 	LayerAclMenu *_aclmenu;
+	QMenu *_layermenu;
+
+	QAction *_menuHideAction;
+	QAction *_menuDeleteAction;
+	QAction *_menuMergeAction;
+	QAction *_menuRenameAction;
+
 	bool _op;
 	bool _lockctrl;
 };
