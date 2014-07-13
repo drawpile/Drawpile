@@ -73,8 +73,8 @@
         <string>Delete the palette</string>
        </property>
        <property name="icon">
-        <iconset theme="list-remove">
-         <normaloff>icons:list-remove.png</normaloff>icons:list-remove.png</iconset>
+        <iconset theme="edit-delete">
+         <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

@@ -99,7 +99,7 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	// Load item icons
 	ctx.strokeIcon = getIcon("draw-brush");
 	ctx.createLayerIcon = getIcon("list-add");
-	ctx.deleteLayerIcon = getIcon("list-remove");
+	ctx.deleteLayerIcon = getIcon("edit-delete");
 	ctx.putimageIcon = getIcon("edit-paste");
 	ctx.textIcon = getIcon("draw-text");
 	ctx.markerIcon = getIcon("flag-red");
