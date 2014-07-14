@@ -268,6 +268,21 @@ void NetStatus::bytesReceived(int count)
 	_timer->start(500);
 }
 
+void NetStatus::bytesReceived(qint64 received, qint64 total)
+{
+	if(_download->isVisible()) {
+		if(received >= total) {
+			_download->hide();
+			return;
+		}
+
+	} else if(received < total) {
+		_download->setMaximum(total);
+		_download->show();
+	}
+	_download->setValue(received);
+}
+
 void NetStatus::bytesSent(int count)
 {
 	// TODO show statistics

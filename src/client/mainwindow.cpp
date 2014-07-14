@@ -56,6 +56,7 @@
 #include "utils/recentfiles.h"
 #include "utils/whatismyip.h"
 #include "utils/icon.h"
+#include "utils/networkaccess.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -669,23 +670,31 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
  */
 void MainWindow::open(const QUrl& url)
 {
-	if(!url.isLocalFile()) {
-		showErrorMessage(tr("Opening remote files is not yet supported."));
-		return;
-	}
-	QString file = url.toLocalFile();
-	if(file.endsWith(".dprec", Qt::CaseInsensitive)) {
-		auto reader = dialogs::PlaybackDialog::openRecording(file, this);
-		if(reader) {
-			if(loadRecording(reader))
+	if(url.isLocalFile()) {
+		QString file = url.toLocalFile();
+		if(file.endsWith(".dprec", Qt::CaseInsensitive)) {
+			auto reader = dialogs::PlaybackDialog::openRecording(file, this);
+			if(reader) {
+				if(loadRecording(reader))
+					addRecentFile(file);
+				else
+					delete reader;
+			}
+		} else {
+			ImageCanvasLoader icl(file);
+			if(loadDocument(icl))
 				addRecentFile(file);
-			else
-				delete reader;
 		}
 	} else {
-		ImageCanvasLoader icl(file);
-		if(loadDocument(icl))
-			addRecentFile(file);
+		networkaccess::getImage(url, _netstatus, [this](const QImage &image, const QString &error) {
+			if(image.isNull()) {
+				showErrorMessage(error);
+			} else {
+				// TODO support OpenRaster files
+				QImageCanvasLoader icl(image);
+				loadDocument(icl);
+			}
+		});
 	}
 }
 
@@ -709,15 +718,13 @@ void MainWindow::open()
 			QApplication::tr("All files (*)");
 
 	// Get the file name to open
-	const QString file = QFileDialog::getOpenFileName(this,
+	const QUrl file = QFileDialog::getOpenFileUrl(this,
 			tr("Open image"), getLastPath(), filter);
 
 	// Open the file if it was selected
-	if(file.isEmpty()==false) {
-		const QFileInfo info(file);
-		setLastPath(info.absolutePath());
-
-		open(QUrl::fromLocalFile(file));
+	if(file.isValid()) {
+		setLastPath(file.toString());
+		open(file);
 	}
 }
 
@@ -1439,17 +1446,22 @@ void MainWindow::pasteFile()
 
 void MainWindow::pasteFile(const QUrl &url)
 {
-	// TODO load remote URLs
-	if(!url.isLocalFile())
-		return;
+	if(url.isLocalFile()) {
+		QImage img(url.toLocalFile());
+		if(img.isNull()) {
+			showErrorMessage(tr("The image could not be loaded"));
+			return;
+		}
 
-	QImage img(url.toLocalFile());
-	if(img.isNull()) {
-		showErrorMessage(tr("The image could not be loaded"));
-		return;
+		pasteImage(img);
+	} else {
+		networkaccess::getImage(url, _netstatus, [this](const QImage &image, const QString &error) {
+			if(image.isNull())
+				showErrorMessage(error);
+			else
+				pasteImage(image);
+		});
 	}
-
-	pasteImage(img);
 }
 
 void MainWindow::pasteImage(const QImage &image)

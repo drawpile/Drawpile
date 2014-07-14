@@ -56,6 +56,9 @@ public slots:
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
+	// this is used with QNetworkReplies
+	void bytesReceived(qint64 received, qint64 total);
+
 	void join(int id, const QString& user);
 	void leave(const QString& user);
 

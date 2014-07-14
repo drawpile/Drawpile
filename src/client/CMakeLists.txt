@@ -53,6 +53,7 @@ set (
 	utils/usernamevalidator.cpp
 	utils/sessionidvalidator.cpp
 	utils/imagesize.cpp
+	utils/networkaccess.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
