@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,9 +21,6 @@
 #define WHATISMYIP_H
 
 #include <QObject>
-
-class QNetworkAccessManager;
-class QNetworkReply;
 
 /**
  * @brief A class for finding out the externally visible IP address.
@@ -65,11 +62,7 @@ signals:
 public slots:
 	void discoverMyIp();
 
-private slots:
-	void gotReply(QNetworkReply *reply);
-
 private:
-	QNetworkAccessManager *_net;
 	bool _querying;
 	QString _ip;
 };

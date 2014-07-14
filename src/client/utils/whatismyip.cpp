@@ -18,10 +18,10 @@
 */
 
 #include "whatismyip.h"
+#include "networkaccess.h"
 
 #include <QDebug>
 #include <QNetworkInterface>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QMessageBox>
 
@@ -82,34 +82,27 @@ void WhatIsMyIp::discoverMyIp()
 		return;
 	_querying = true;
 
-	qDebug() << "Querying IP address via ipecho.net...";
+	QNetworkReply *reply = networkaccess::get(QUrl("http://ipecho.net/plain"), QString(), nullptr);
 
-	_net = new QNetworkAccessManager(this);
-	connect(_net, SIGNAL(finished(QNetworkReply*)), this, SLOT(gotReply(QNetworkReply*)));
-	_net->get(QNetworkRequest(QUrl("http://ipecho.net/plain")));
-}
+	connect(reply, &QNetworkReply::finished, [this, reply]() {
+		if(reply->error() != QNetworkReply::NoError) {
+			qWarning() << "ipecho.net error:" << reply->errorString();
+			QMessageBox::warning(0, tr("IP lookup error"), reply->errorString());
 
-void WhatIsMyIp::gotReply(QNetworkReply *reply)
-{
-	if(reply->error() != QNetworkReply::NoError) {
-		qWarning() << "ipecho.net error:" << reply->errorString();
-		QMessageBox::warning(0, tr("IP lookup error"), reply->errorString());
-	} else {
-		qDebug() << "ipecho.net reply length =" << reply->readBufferSize();
-		QByteArray buf = reply->read(64);
-		qDebug() << "ipecho.net reply:" << buf;
-		QHostAddress addr;
-		if(!addr.setAddress(QString::fromUtf8(buf))) {
-			qWarning() << "ipecho.net received invalid data:" << buf;
-			QMessageBox::warning(0, tr("IP lookup error"), tr("Received invalid data"));
 		} else {
-			emit myAddressIs(addr.toString());
-			_querying = false;
+			QByteArray buf = reply->read(64);
+			QHostAddress addr;
+			if(!addr.setAddress(QString::fromUtf8(buf))) {
+				qWarning() << "ipecho.net received invalid data:" << buf;
+				QMessageBox::warning(0, tr("IP lookup error"), tr("Received invalid data"));
+			} else {
+				emit myAddressIs(addr.toString());
+				_querying = false;
+			}
 		}
-	}
 
-	_net->deleteLater();
-	_net = 0;
+		reply->deleteLater();
+	});
 }
 
 bool WhatIsMyIp::isMyPrivateAddress(const QString &address)
