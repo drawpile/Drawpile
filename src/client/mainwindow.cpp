@@ -1702,7 +1702,6 @@ void MainWindow::setupActions()
 	addToolBar(Qt::TopToolBarArea, filetools);
 
 	connect(_recent, &QMenu::triggered, [this](QAction *action) {
-		action->setProperty("deletelater",true);
 		this->open(QUrl::fromLocalFile(action->property("filepath").toString()));
 	});
 

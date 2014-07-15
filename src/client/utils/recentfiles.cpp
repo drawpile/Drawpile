@@ -77,22 +77,16 @@ void RecentFiles::initMenu(QMenu *menu)
 	QSettings cfg;
 	const QStringList files = cfg.value("history/recentfiles").toStringList();
 
-	// Delete old actions, postponing the deletion of those marked with "deletelater".
-	// This is to prevent problems when initMenu is called from a slot
-	// signalled by the action from this menu.
 	const QList<QAction*> actions = menu->actions();
-	foreach(QAction *act, actions) {
+	for(QAction *act : actions) {
 		menu->removeAction(act);
-		if(act->property("deletelater").isValid())
-			act->deleteLater();
-		else
-			delete act;
+		act->deleteLater();
 	}
 
 	// Generate menu contents
 	menu->setEnabled(!files.isEmpty());
 	int index = 1;
-	foreach(QString filename, files) {
+	for(const QString &filename : files) {
 		const QFileInfo file(filename);
 		QAction *a = menu->addAction(QString(index<10?"&%1. %2":"%1. %2").arg(index).arg(file.fileName()));
 		a->setStatusTip(file.absoluteFilePath());
