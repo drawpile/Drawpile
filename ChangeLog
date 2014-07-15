@@ -2,6 +2,10 @@
  * Layer opacity glyph now acts as show/hide button
  * Added layer context menu
  * Support for loading remote files (e.g. drag&drop URLs to canvas)
+ * Bugfix: paint tools on new windows would not get enabled
+ * Set mainwindow title correctly
+ * Zero canvas size when creating layers is now tolerated
+ * New chat command added: /me
 
 2014-07-12 Version 0.9.2
  * Improved message popup widget
