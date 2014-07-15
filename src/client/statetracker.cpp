@@ -306,10 +306,11 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos
 
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
-	_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()));
-	_layerlist->createLayer(cmd.id(), cmd.title());
-	if(cmd.contextId() == _myid)
-		emit myLayerCreated(cmd.id());
+	if(_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()))) {
+		_layerlist->createLayer(cmd.id(), cmd.title());
+		if(cmd.contextId() == _myid)
+			emit myLayerCreated(cmd.id());
+	}
 }
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)

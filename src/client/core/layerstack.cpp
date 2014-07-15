@@ -83,7 +83,10 @@ void LayerStack::resize(int top, int right, int bottom, int left)
  */
 Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 {
-	Q_ASSERT(_width>0 && _height>0);
+	if(_width<=0 || _height<=0) {
+		qWarning("Cannot create layer: canvas size not set!");
+		return nullptr;
+	}
 
 	Layer *nl = new Layer(this, id, name, color, QSize(_width, _height));
 	_layers.append(nl);
