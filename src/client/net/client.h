@@ -199,7 +199,7 @@ public slots:
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
 
 	// Misc.
-	void sendChat(const QString &message, bool announce);
+	void sendChat(const QString &message, bool announce, bool action);
 	void sendOpCommand(const QString &command);
 	void sendLaserPointer(const QPointF &point, int trail=0);
 	void sendMarker(const QString &text);
@@ -221,7 +221,7 @@ public slots:
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
-	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool me);
+	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
 	void markerMessageReceived(const QString &user, const QString &message);
 	void needSnapshot(bool forcenew);
 	void userPointerMoved(int ctx, const QPointF &point, int trail);

@@ -72,6 +72,7 @@ ChatBox::ChatBox(QWidget *parent)
 		".announcement { color: white }"
 		".nick { font-weight: bold }"
 		".nick.me { color: #fff }"
+		".action { color: #fff }"
 		"a:link { color: #5454FF }"
 	);
 }
@@ -109,15 +110,24 @@ void ChatBox::kicked(const QString &kickedBy)
  * @param announcement is this a public announcement?
  * @param isme if true, the message was sent by this user
  */
-void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool isme)
+void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool action, bool isme)
 {
-	_view->append(
-		"<p class=\"chat\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
-		nick.toHtmlEscaped() +
-		"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
-		htmlutils::linkify(message.toHtmlEscaped()) +
-		"</span></p>"
-	);
+	if(action) {
+		_view->append(
+			"<p class=\"chat action\"> * " + nick.toHtmlEscaped() +
+			" " +
+			htmlutils::linkify(message.toHtmlEscaped()) +
+			"</p>"
+		);
+	} else {
+		_view->append(
+			"<p class=\"chat\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
+			nick.toHtmlEscaped() +
+			"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
+			htmlutils::linkify(message.toHtmlEscaped()) +
+			"</span></p>"
+		);
+	}
 }
 
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
@@ -158,8 +168,11 @@ void ChatBox::sendMessage(const QString &msg)
 
 		} else if(cmd.at(0)=='!') {
 			// public announcement
-			emit message(msg.mid(2), true);
+			emit message(msg.mid(2), true, false);
 
+		} else if(cmd == "me") {
+			if(params.size()>1)
+				emit message(msg.mid(msg.indexOf(' ')+1), false, true);
 		} else {
 			// operator commands
 			emit opCommand(cmd + params);
@@ -167,7 +180,7 @@ void ChatBox::sendMessage(const QString &msg)
 
 	} else {
 		// A normal chat message
-		emit message(msg, false);
+		emit message(msg, false, false);
 	}
 }
 

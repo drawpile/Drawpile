@@ -95,6 +95,11 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 11.2 (0.9.3)
+
+ * Added ACTION flag to Chat message.
+ * Fully backwards compatible: No server changes needed and older clients will simply ignore the flag.
+
 Protocol 11.2 (0.9.2)
 
  * Various changes to the login process to fix bugs and to support authenticated logins

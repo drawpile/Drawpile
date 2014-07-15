@@ -354,9 +354,9 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 	emit sendingBytes(_server->uploadQueueBytes());
 }
 
-void Client::sendChat(const QString &message, bool announce)
+void Client::sendChat(const QString &message, bool announce, bool action)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce, action)));
 }
 
 void Client::sendOpCommand(const QString &command)
@@ -538,6 +538,7 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 		username,
 		msg.message(),
 		msg.isAnnouncement(),
+		msg.isAction(),
 		msg.contextId() == _my_id
 	);
 }
@@ -571,7 +572,7 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 	if(!message.isEmpty())
 		chat += QString(" (%1)").arg(message);
 
-	emit chatMessageReceived(tr("Server"), chat, false, false);
+	emit chatMessageReceived(tr("Server"), chat, false, false, false);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

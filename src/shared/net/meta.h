@@ -189,13 +189,15 @@ private:
 class Chat : public Message {
 public:
 	static const uint8_t FLAG_ANNOUNCE = 0x01; // public announcement are included in the session history
-	static const uint8_t FLAG_OPCMD = 0x02; // this message is an operator command
+	static const uint8_t FLAG_OPCMD = 0x02;    // this message is an operator command
+	static const uint8_t FLAG_ACTION = 0x04;   // this is an "action message" (like /me in IRC)
 
 	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), _flags(flags), _msg(msg) {}
-	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement)
+	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement, bool action)
 		: Chat(
 			ctx,
-			(publicAnnouncement ? FLAG_ANNOUNCE : 0),
+			(publicAnnouncement ? FLAG_ANNOUNCE : 0) |
+			(action ? FLAG_ACTION : 0),
 			msg.toUtf8()
 			) {}
 
@@ -215,6 +217,11 @@ public:
 	 * and will thus be visible to users who join later.
 	 */
 	bool isAnnouncement() const { return _flags & FLAG_ANNOUNCE; }
+
+	/**
+	 * @brief Is this an action message?
+	 */
+	bool isAction() const { return _flags & FLAG_ACTION; }
 
 	/**
 	 * @brief Is this chat message an operator command?

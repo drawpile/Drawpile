@@ -148,7 +148,7 @@ void Client::sendDirectMessage(protocol::MessagePtr msg)
 
 void Client::sendSystemChat(const QString &message)
 {
-	_msgqueue->send(MessagePtr(new protocol::Chat(0, message, false)));
+	_msgqueue->send(MessagePtr(new protocol::Chat(0, message, false, false)));
 }
 
 void Client::receiveMessages()
