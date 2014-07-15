@@ -473,9 +473,9 @@ void MainWindow::updateTitle()
 	}
 
 	if(!_canvas || _canvas->title().isEmpty())
-		setWindowTitle(tr("%1[*] - Drawpile").arg(name));
+		setWindowTitle(QStringLiteral("%1[*]").arg(name));
 	else
-		setWindowTitle(tr("%1[*] - %2 - Drawpile").arg(name).arg(_canvas->title()));
+		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, _canvas->title()));
 }
 
 void MainWindow::setDrawingToolsEnabled(bool enable)

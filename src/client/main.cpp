@@ -39,6 +39,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.sourceforge.net");
 	setApplicationName("drawpile");
+	setApplicationDisplayName("Drawpile");
 
 	// Set resource search paths
 	QStringList iconPaths;
