@@ -84,8 +84,9 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 {
 	if(_width<=0 || _height<=0) {
-		qWarning("Cannot create layer: canvas size not set!");
-		return nullptr;
+		// We tolerate this, but in normal operation the canvas size should be
+		// set before creating any layers.
+		qWarning("Layer created before canvas size was set!");
 	}
 
 	Layer *nl = new Layer(this, id, name, color, QSize(_width, _height));
@@ -397,7 +398,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 
 void LayerStack::markDirty(const QRect &area)
 {
-	if(_layers.isEmpty())
+	if(_layers.isEmpty() || _width<=0 || _height<=0)
 		return;
 	int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
 	int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1);
@@ -414,7 +415,7 @@ void LayerStack::markDirty(const QRect &area)
 
 void LayerStack::markDirty()
 {
-	if(_layers.isEmpty())
+	if(_layers.isEmpty() || _width<=0 || _height<=0)
 		return;
 	_dirtytiles.fill(true);
 
