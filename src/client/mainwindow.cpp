@@ -332,29 +332,30 @@ MainWindow::~MainWindow()
  */
 MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 {
+	if(!canReplace()) {
+		writeSettings();
+		MainWindow *win = new MainWindow(false);
+		Q_ASSERT(win->canReplace());
+		if(!win->loadDocument(loader)) {
+			delete win;
+			win = nullptr;
+		}
+		return win;
+	}
+
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	MainWindow *win;
-	if(canReplace()) {
-		win = this;
-	} else {
-		writeSettings();
-		win = new MainWindow(false);
-	}
-	
 	QList<protocol::MessagePtr> init = loader.loadInitCommands();
 
 	if(init.isEmpty()) {
 		QApplication::restoreOverrideCursor();
-		if(win != this)
-			delete win;
 		showErrorMessage(loader.errorMessage());
-		return 0;
+		return nullptr;
 	}
 
-	win->_canvas->initCanvas(win->_client);
-	win->_dock_layers->init();
-	win->_client->init();
+	_canvas->initCanvas(_client);
+	_dock_layers->init();
+	_client->init();
 	
 	// Set local history size limit. This must be at least as big as the initializer,
 	// otherwise a new snapshot will always have to be generated when hosting a session.
@@ -363,68 +364,68 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		minsizelimit += msg->length();
 	minsizelimit *= 2;
 
-	win->_canvas->statetracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
-	win->_client->sendLocalInit(init);
+	_canvas->statetracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
+	_client->sendLocalInit(init);
 
 	QApplication::restoreOverrideCursor();
 
-	win->_current_filename = loader.filename();
-	win->setWindowModified(false);
-	win->updateTitle();
-	win->_currentdoctools->setEnabled(true);
-	win->_docadmintools->setEnabled(true);
+	_current_filename = loader.filename();
+	setWindowModified(false);
+	updateTitle();
+	_currentdoctools->setEnabled(true);
+	_docadmintools->setEnabled(true);
 	setDrawingToolsEnabled(true);
-	return win;
+
+	return this;
 }
 
 MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 {
-	MainWindow *win;
-	if(canReplace()) {
-		win = this;
-	} else {
+	if(!canReplace()) {
 		writeSettings();
-		win = new MainWindow(false);
+		MainWindow *win = new MainWindow(false);
+		Q_ASSERT(win->canReplace());
+		return win->loadRecording(reader);
 	}
 
-	win->_canvas->initCanvas(win->_client);
-	win->_dock_layers->init();
-	win->_client->init();
+	_canvas->initCanvas(_client);
+	_dock_layers->init();
+	_client->init();
 
-	win->_canvas->statetracker()->setMaxHistorySize(1024*1024*10u);
-	win->_canvas->statetracker()->setShowAllUserMarkers(true);
+	_canvas->statetracker()->setMaxHistorySize(1024*1024*10u);
+	_canvas->statetracker()->setShowAllUserMarkers(true);
 
-	win->_current_filename = QString();
-	win->setWindowModified(false);
-	win->updateTitle();
-	win->_currentdoctools->setEnabled(true);
-	win->_docadmintools->setEnabled(true);
+	_current_filename = QString();
+	setWindowModified(false);
+	updateTitle();
+	_currentdoctools->setEnabled(true);
+	_docadmintools->setEnabled(true);
 	setDrawingToolsEnabled(true);
 
 	QFileInfo fileinfo(reader->filename());
 
-	win->_dialog_playback = new dialogs::PlaybackDialog(win->_canvas, reader, win);
-	win->_dialog_playback->setWindowTitle(fileinfo.baseName() + " - " + win->_dialog_playback->windowTitle());
-	win->_dialog_playback->setAttribute(Qt::WA_DeleteOnClose);
+	_dialog_playback = new dialogs::PlaybackDialog(_canvas, reader, this);
+	_dialog_playback->setWindowTitle(fileinfo.baseName() + " - " + _dialog_playback->windowTitle());
+	_dialog_playback->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(win->_dialog_playback, &dialogs::PlaybackDialog::commandRead, win->_client, &net::Client::playbackCommand);
-	connect(win->_dialog_playback, SIGNAL(playbackToggled(bool)), win, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
-	connect(win->_dialog_playback, &dialogs::PlaybackDialog::destroyed, [win]() {
-		win->_dialog_playback = 0;
-		win->getAction("recordsession")->setEnabled(true);
-		win->setRecorderStatus(false);
-		win->_canvas->statetracker()->setShowAllUserMarkers(false);
-		win->_client->endPlayback();
-		win->_canvas->statetracker()->endPlayback();
+	connect(_dialog_playback, &dialogs::PlaybackDialog::commandRead, _client, &net::Client::playbackCommand);
+	connect(_dialog_playback, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
+	connect(_dialog_playback, &dialogs::PlaybackDialog::destroyed, [this]() {
+		_dialog_playback = 0;
+		getAction("recordsession")->setEnabled(true);
+		setRecorderStatus(false);
+		_canvas->statetracker()->setShowAllUserMarkers(false);
+		_client->endPlayback();
+		_canvas->statetracker()->endPlayback();
 	});
 
-	win->_dialog_playback->show();
-	win->_dialog_playback->centerOnParent();
+	_dialog_playback->show();
+	_dialog_playback->centerOnParent();
 
-	win->getAction("recordsession")->setEnabled(false);
-	win->setRecorderStatus(false);
+	getAction("recordsession")->setEnabled(false);
+	setRecorderStatus(false);
 
-	return win;
+	return this;
 }
 
 /**
@@ -1179,7 +1180,6 @@ void MainWindow::loggedin(bool join)
 
 	// Re-enable UI
 	_view->setEnabled(true);
-	setDrawingToolsEnabled(true);
 
 	// Initialize the canvas (in host mode the canvas was prepared already)
 	if(join) {
@@ -1188,6 +1188,7 @@ void MainWindow::loggedin(bool join)
 		_currentdoctools->setEnabled(true);
 	}
 
+	setDrawingToolsEnabled(true);
 	updateStrokePreviewMode();
 }
 
