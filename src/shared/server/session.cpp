@@ -443,6 +443,16 @@ const LayerState *SessionState::getLayerById(int id)
 	return 0;
 }
 
+const LayerState *SessionState::getLayerBelowId(int id)
+{
+	for(int i=1;i<_layers.size();++i) {
+		if(_layers.at(i).id == id) {
+			return &_layers.at(i-1);
+		}
+	}
+	return 0;
+}
+
 void SessionState::createLayer(protocol::LayerCreate &cmd, bool assign)
 {
 	if(assign)

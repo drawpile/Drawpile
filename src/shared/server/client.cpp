@@ -351,10 +351,19 @@ void Client::handleSessionMessage(MessagePtr msg)
 			if(!isOperator() && isLayerLocked(msg.cast<LayerRetitle>().id()))
 				return;
 			break;
-		case MSG_LAYER_DELETE:
-			if(!isOperator() && isLayerLocked(msg.cast<LayerDelete>().id()))
+		case MSG_LAYER_DELETE: {
+			const LayerDelete &ld = msg.cast<LayerDelete>();
+			if(!isOperator() && isLayerLocked(ld.id()))
 				return;
-			break;
+
+			// When merging, the layer below must be unlocked (and exist!)
+			if(ld.merge()) {
+				const LayerState *layer = _session->getLayerBelowId(ld.id());
+				if(!layer || isLayerLocked(layer->id))
+					return;
+			}
+
+			} break;
 		case MSG_PUTIMAGE:
 			if(isLayerLocked(msg.cast<PutImage>().layer()))
 				return;

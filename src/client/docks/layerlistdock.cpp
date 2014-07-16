@@ -246,8 +246,10 @@ void LayerList::addLayer()
 bool LayerList::canMergeCurrent() const
 {
 	const QModelIndex index = currentSelection();
+	const QModelIndex below = index.sibling(index.row()+1, 0);
 
-	return index.isValid() && index.sibling(index.row()+1, 0).isValid();
+	return index.isValid() && below.isValid() &&
+		   !below.data().value<net::LayerListItem>().isLockedFor(_client->myId());
 }
 
 void LayerList::deleteOrMergeSelected()

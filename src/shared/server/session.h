@@ -324,6 +324,13 @@ public:
 	const LayerState *getLayerById(int id);
 
 	/**
+	 * @brief Get the layer below the one with the given ID
+	 * @param id
+	 * @return layer or 0 if there is no such layer
+	 */
+	const LayerState *getLayerBelowId(int id);
+
+	/**
 	 * @brief Set up the initial state based on the hosting users snapshot
 	 *
 	 * This is called only once
