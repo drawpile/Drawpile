@@ -137,6 +137,11 @@ public:
 	bool isLocked() const { return _isSessionLocked || _isUserLocked; }
 
 	/**
+	 * @brief Has this user been individually locked?
+	 */
+	bool isUserLocked() const { return _isUserLocked; }
+
+	/**
 	 * @brief Is the currently logged in user a session operator?
 	 *
 	 * This is always true in local mode.
