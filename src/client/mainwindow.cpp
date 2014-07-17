@@ -1276,7 +1276,7 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 	);
 	msgbox->setAttribute(Qt::WA_DeleteOnClose);
 	msgbox->setWindowModality(Qt::WindowModal);
-	msgbox->setDetailedText(details);
+	msgbox->setInformativeText(details);
 	msgbox->show();
 }
 
