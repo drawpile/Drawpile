@@ -26,6 +26,7 @@
 
 #include <QDebug>
 #include <QSslSocket>
+#include <QSslConfiguration>
 
 namespace net {
 
@@ -34,6 +35,11 @@ TcpServer::TcpServer(QObject *parent) :
 	_localDisconnect(false), _paused(false)
 {
 	_socket = new QSslSocket(this);
+
+	QSslConfiguration sslconf = _socket->sslConfiguration();
+	sslconf.setSslOption(QSsl::SslOptionDisableCompression, false);
+	_socket->setSslConfiguration(sslconf);
+
 	_msgqueue = new protocol::MessageQueue(_socket, this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));

@@ -22,6 +22,7 @@
 
 #include <QSslSocket>
 #include <QSslCipher>
+#include <QSslConfiguration>
 #include <QFile>
 
 namespace server {
@@ -87,6 +88,10 @@ void SslServer::incomingConnection(qintptr handle)
 	socket->setSocketDescriptor(handle);
 	socket->setLocalCertificate(_cert);
 	socket->setPrivateKey(_key);
+
+	QSslConfiguration sslconf = socket->sslConfiguration();
+	sslconf.setSslOption(QSsl::SslOptionDisableCompression, false);
+	socket->setSslConfiguration(sslconf);
 
 	addPendingConnection(socket);
 }
