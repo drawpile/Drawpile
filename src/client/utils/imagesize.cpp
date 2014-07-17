@@ -20,7 +20,6 @@
 #include "imagesize.h"
 
 #include <QSize>
-#include <QDebug>
 
 namespace utils {
 
@@ -36,7 +35,6 @@ bool checkImageSize(const QSize &size)
 	static const quint64 MAX_MEM = 1024 * 1024 * 1024;
 	static const quint64 MAX_PIXELS = MAX_MEM / 4;
 
-	qDebug() <<  quint64(size.width())*quint64(size.height()) << MAX_PIXELS;
 	return
 		size.width() <= MAX_SIZE &&
 		size.height() <= MAX_SIZE &&

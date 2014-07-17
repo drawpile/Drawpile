@@ -160,7 +160,6 @@ void ChatBox::sendMessage(const QString &msg)
 
 		QString cmd = msg.mid(1, split-1).toLower();
 		QString params = msg.mid(split);
-		qDebug() << "command:" << cmd << "params" << params;
 
 		if(cmd == "clear") {
 			// client side command: clear chat window

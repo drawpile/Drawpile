@@ -250,7 +250,6 @@ void PlaybackDialog::nextCommand()
 				// Export pause
 				if(_exporter && _ui->autoSaveFrame->isChecked()) {
 					int pauseframes = qRound(qMin(double(interval), _ui->maxinterval->value() * 1000) / 1000.0 *  _exporter->fps());
-					qDebug() << "pausing for" << pauseframes << "frames";
 					if(pauseframes>0)
 						writeFrames = pauseframes;
 				}
