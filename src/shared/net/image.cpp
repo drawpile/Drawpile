@@ -68,10 +68,10 @@ FillRect *FillRect::deserialize(const uchar *data, uint len)
 		*(data+0),
 		*(data+1),
 		*(data+2),
-		qFromBigEndian<quint16>(data+3),
-		qFromBigEndian<quint16>(data+7),
-		qFromBigEndian<quint16>(data+11),
-		qFromBigEndian<quint16>(data+15),
+		qFromBigEndian<quint32>(data+3),
+		qFromBigEndian<quint32>(data+7),
+		qFromBigEndian<quint32>(data+11),
+		qFromBigEndian<quint32>(data+15),
 		qFromBigEndian<quint32>(data+19)
 	);
 }
