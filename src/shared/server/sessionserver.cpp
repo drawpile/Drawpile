@@ -113,6 +113,8 @@ void SessionServer::destroySession(SessionState *session)
 
 	QString id = session->id();
 
+	session->stopRecording();
+
 	if(session->isHibernatable() && _store) {
 		logger::info() << session << "Hibernating.";
 		_store->storeSession(session);
