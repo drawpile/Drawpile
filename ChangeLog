@@ -8,6 +8,7 @@
  * New chat command added: /me
  * Bugfix: locked layers could be changed my merging
  * Regression fix: rectangle fill was broken in previous version
+ * Register .dprec filetype on OSX
 
 2014-07-12 Version 0.9.2
  * Improved message popup widget

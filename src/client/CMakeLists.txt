@@ -240,7 +240,6 @@ add_executable (
 	${CLIENTNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
-	${MACOSX_BUNDLE_INFO_PLIST}
 	${SOURCES}
 	${QtResource}
 	${QM_TRANSLATIONS}

@@ -75,6 +75,9 @@ class MainWindow : public QMainWindow {
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
 
+		//! Check if the current board can be replaced
+		bool canReplace() const;
+
 	public slots:
 		// Triggerable actions
 		void showNew();
@@ -152,9 +155,6 @@ class MainWindow : public QMainWindow {
 
 		//! Load customized shortcuts
 		void loadShortcuts();
-
-		//! Check if the current board can be replaced
-		bool canReplace() const;
 
 		//! Add a new entry to recent files list
 		void addRecentFile(const QString& file);

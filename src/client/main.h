@@ -28,6 +28,8 @@ public:
 
 	void notifySettingsChanged();
 
+	void openUrl(QUrl url);
+
 signals:
 	void settingsChanged();
 	void eraserNear(bool near);

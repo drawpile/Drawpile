@@ -74,6 +74,8 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
  * the tablet surface, switch to eraser tool on all windows.
  * When the tip leaves the surface, switch back to whatever tool
  * we were using before.
+ *
+ * Also, on MacOS we must also handle the Open File event.
  */
 bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
@@ -82,7 +84,14 @@ bool DrawpileApp::event(QEvent *e) {
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
 
 		return true;
+
+	} else if(e->type() == QEvent::FileOpen) {
+		QFileOpenEvent *fe = static_cast<QFileOpenEvent*>(e);
+		openUrl(fe->url());
+
+		return true;
 	}
+
 	return QApplication::event(e);
 }
 
@@ -91,6 +100,37 @@ void DrawpileApp::notifySettingsChanged()
 	emit settingsChanged();
 }
 
+void DrawpileApp::openUrl(QUrl url)
+{
+	// See if there is an existing replacable window
+	MainWindow *win = nullptr;
+	for(QWidget *widget : topLevelWidgets()) {
+		MainWindow *mw = qobject_cast<MainWindow*>(widget);
+		if(mw && mw->canReplace()) {
+			win = mw;
+			break;
+		}
+	}
+
+	// No? Create a new one
+	if(!win)
+		win = new MainWindow;
+
+	if(url.scheme() == "drawpile") {
+		// Our own protocol: connect to a session
+
+		if(url.userName().isEmpty()) {
+			// Set username if not specified
+			QSettings cfg;
+			url.setUserName(cfg.value("history/username").toString());
+		}
+		win->joinSession(url);
+
+	} else {
+		// Other protocols: load image
+		win->open(url);
+	}
+}
 
 void initTranslations(const QLocale &locale)
 {
@@ -130,33 +170,15 @@ int main(int argc, char *argv[]) {
 
 	initTranslations(QLocale::system());
 
-	// Create the main window
-	MainWindow *win = new MainWindow;
-	
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
-		QUrl url = args.at(1);
-
-		if(url.scheme() == "drawpile") {
-			// Our own protocol: connect to a session
-
-			if(url.userName().isEmpty()) {
-				// Set username if not specified
-				QSettings cfg;
-				url.setUserName(cfg.value("history/username").toString());
-			}
-			win->joinSession(url);
-
-		} else {
-			// Other protocols: load image
-			if(url.scheme().length() <= 1) {
-				// unset or 1 letter long (drive letter) scheme means this is probably
-				// a local filesystem path.
-				url = QUrl::fromLocalFile(args.at(1));
-			}
-
-			win->open(url);
+		QUrl url(args.at(1));
+		if(url.scheme().length() <= 1) {
+			// no scheme (or a drive letter?) means this is probably a local file
+			url = QUrl::fromLocalFile(args.at(1));
 		}
+
+		app.openUrl(url);
 	} else {
 		// No arguments, start with an empty document
 		QSettings cfg;
@@ -175,6 +197,7 @@ int main(int argc, char *argv[]) {
 		if(!color.isValid())
 			color = Qt::white;
 
+		MainWindow *win = new MainWindow;
 		win->newDocument(size, color);
 	}
 
