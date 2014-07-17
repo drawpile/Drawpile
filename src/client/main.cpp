@@ -87,6 +87,9 @@ bool DrawpileApp::event(QEvent *e) {
 
 	} else if(e->type() == QEvent::FileOpen) {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent*>(e);
+
+		// Note. This is currently broken in Qt 5.3.1:
+		// https://bugreports.qt-project.org/browse/QTBUG-39972
 		openUrl(fe->url());
 
 		return true;
