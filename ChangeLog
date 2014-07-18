@@ -1,4 +1,4 @@
-2014-0?-?? Version 0.9.3
+2014-07-18 Version 0.9.3
  * Layer opacity glyph now acts as show/hide button
  * Added layer context menu
  * Support for loading remote files (e.g. drag&drop URLs to canvas)
