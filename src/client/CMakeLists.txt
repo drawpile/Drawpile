@@ -45,6 +45,7 @@ set (
 	net/builtinserver.cpp
 	utils/archive.cpp
 	utils/palette.cpp
+	utils/palettelistmodel.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/whatismyip.cpp

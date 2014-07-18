@@ -25,16 +25,16 @@
 #include <QColor>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <QStandardPaths>
 
-Palette::Palette() : _columns(16), _modified(false) { }
+Palette::Palette() : _columns(16), _modified(false), _readonly(false) { }
 
-Palette::Palette(const QString& name, const QString& filename)
-	: _name(name), _filename(filename), _columns(16), _modified(false)
+Palette::Palette(const QString& name, const QString& filename, bool readonly)
+	: _name(name), _oldname(name), _filename(filename), _columns(16), _modified(false), _readonly(readonly)
 {
-	if(_filename.isEmpty())
-		_filename = QString("%1.gpl").arg(name);
 }
 
 /**
@@ -60,7 +60,7 @@ Palette Palette::fromFile(const QFileInfo& file)
 	if(in.readLine() != "GIMP Palette")
 		return Palette();
 
-	Palette pal(file.baseName(), file.fileName());
+	Palette pal(file.baseName(), file.absoluteFilePath(), !file.isWritable());
 
 	const QRegularExpression colorRe("^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s*(.+)?$");
 
@@ -81,13 +81,14 @@ Palette Palette::fromFile(const QFileInfo& file)
 		} else {
 			QRegularExpressionMatch m = colorRe.match(line);
 			if(m.hasMatch()) {
-				pal.appendColor(
+				pal._colors.append(PaletteColor(
 					QColor(
 						m.captured(1).toInt(),
 						m.captured(2).toInt(),
 						m.captured(3).toInt()
 					),
 					m.captured(4)
+					)
 				);
 
 			} else {
@@ -99,11 +100,28 @@ Palette Palette::fromFile(const QFileInfo& file)
 	return pal;
 }
 
+Palette Palette::copy(const Palette &pal, const QString &newname)
+{
+	Palette p(newname);
+	p._columns = pal._columns;
+	p._colors = pal._colors;
+	p._modified = true;
+	return p;
+}
+
 /**
  * @param filename palette file name
  */
 bool Palette::save(const QString& filename)
 {
+	QDir dir = QFileInfo(filename).absoluteDir();
+	if(!dir.exists()) {
+		if(!dir.mkpath(".")) {
+			qWarning() << "Couldn't create missing directory:" << dir;
+			return false;
+		}
+	}
+
 	QFile data(filename);
 	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
 		QTextStream out(&data);
@@ -114,27 +132,48 @@ bool Palette::save(const QString& filename)
 		for(const PaletteColor c : _colors) {
 			out << c.color.red() << ' ' << c.color.green() << ' ' << c.color.blue() << '\t' << c.name << '\n';
 		}
-		_modified = false;
 		return true;
+
+	} else {
+		qWarning() << filename << data.errorString();
+		return false;
 	}
-	return false;
 }
 
-
-/**
- * Generates a palette with some predefined colors.
- * @return a new palette
- */
-Palette Palette::makeDefaultPalette()
+bool Palette::save()
 {
-	Palette pal(QApplication::tr("Default"));
+	if(_readonly)
+		return false;
 
-	for(int hue=0;hue<352;hue+=16) {
-		for(int value=255;value>=15;value-=16) {
-			pal.appendColor(QColor::fromHsv(hue,255,value));
-		}
+	QString oldpath;
+	if(_name != _oldname) {
+		// Name has changed: we need to delete the old palette
+		oldpath = _filename;
+		_filename = QString();
 	}
-	return pal;
+
+	if(_filename.isEmpty()) {
+		// No filename set? Create it from the palette name
+		_filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/palettes/" + _name + ".gpl";
+	}
+
+	bool ok = save(_filename);
+	if(ok) {
+		_oldname = _name;
+		_modified = false;
+
+		if(!oldpath.isEmpty() && oldpath != _filename)
+			QFile(oldpath).remove();
+	}
+
+	return ok;
+}
+
+bool Palette::deleteFile()
+{
+	if(_filename.isEmpty() || _readonly)
+		return false;
+	return QFile(_filename).remove();
 }
 
 /**
@@ -144,8 +183,10 @@ Palette Palette::makeDefaultPalette()
  */
 void Palette::setName(const QString& name)
 {
-	_name = name;
-	_filename = QString("%1.gpl").arg(name);
+	if(_name != name) {
+		_name = name;
+		_modified = true;
+	}
 }
 
 void Palette::setColumns(int columns)
@@ -166,18 +207,27 @@ void Palette::setColumns(int columns)
 */
 void Palette::setColor(int index, const PaletteColor& color)
 {
+	if(_readonly)
+		return;
+
 	_colors[index] = color;
 	_modified = true;
 }
 
 void Palette::insertColor(int index, const QColor& color, const QString &name)
 {
+	if(_readonly)
+		return;
+
 	_colors.insert(index, PaletteColor(color, name));
 	_modified = true;
 }
 
 void Palette::appendColor(const QColor &color, const QString &name)
 {
+	if(_readonly)
+		return;
+
 	_colors.append(PaletteColor(color, name));
 	_modified = true;
 }
@@ -189,6 +239,9 @@ void Palette::appendColor(const QColor &color, const QString &name)
 */
 void Palette::removeColor(int index)
 {
+	if(_readonly)
+		return;
+
 	_colors.removeAt(index);
 	_modified = true;
 }

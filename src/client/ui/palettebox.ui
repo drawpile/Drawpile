@@ -68,6 +68,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="copyPalette">
+       <property name="toolTip">
+        <string>Duplicate palette</string>
+       </property>
+       <property name="icon">
+        <iconset theme="edit-copy">
+         <normaloff>icons:edit-copy.png</normaloff>icons:edit-copy.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="delpalette">
        <property name="toolTip">
         <string>Delete the palette</string>

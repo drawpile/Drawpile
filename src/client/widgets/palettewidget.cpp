@@ -284,7 +284,7 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 
 void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	if(_palette)
+	if(_palette && !_palette->isReadonly())
 		_contextmenu->popup(mapToGlobal(event->pos()));
 }
 
@@ -315,10 +315,12 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
-	if(_selection > -1)
-		editCurrentColor();
-	else
-		addColor();
+	if(_palette && !_palette->isReadonly()) {
+		if(_selection > -1)
+			editCurrentColor();
+		else
+			addColor();
+	}
 }
 
 void PaletteWidget::keyReleaseEvent(QKeyEvent *event)

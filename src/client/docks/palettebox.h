@@ -31,7 +31,7 @@ namespace docks {
 class PaletteBox : public QDockWidget {
 	Q_OBJECT
 public:
-	PaletteBox(const QString& title, QWidget *parent);
+	explicit PaletteBox(const QString& title, QWidget *parent);
 	~PaletteBox();
 
 signals:
@@ -41,13 +41,11 @@ private slots:
 	void paletteChanged(int index);
 	void nameChanged(const QString& name);
 	void addPalette();
+	void copyPalette();
 	void deletePalette();
 
 private:
-	bool isUniquePaletteName(const QString& name, int excludeIdx) const;
-
 	Ui_PaletteBox *_ui;
-	QList<Palette> _palettes;
 };
 
 }

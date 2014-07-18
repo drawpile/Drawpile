@@ -35,13 +35,12 @@ class Palette {
 public:
 	//! Construct a blank palette
 	Palette();
-	explicit Palette(const QString& name, const QString& filename=QString());
+	explicit Palette(const QString& name, const QString& filename=QString(), bool readonly=false);
 
 	//! Load a palette from a file
 	static Palette fromFile(const QFileInfo& file);
 
-	//! Generate a default palette
-	static Palette makeDefaultPalette();
+	static Palette copy(const Palette &pal, const QString &newname);
 
 	//! Set the name of the palette
 	void setName(const QString& name);
@@ -61,8 +60,14 @@ public:
 	//! Has the palette been modified since it was last saved/loaded?
 	bool isModified() const { return _modified; }
 
-	//! Save palette to file
-	bool save(const QString& filename);
+	//! Is this a read-only palette?
+	bool isReadonly() const { return _readonly; }
+
+	//! Save palette to its original file (filename must be set)
+	bool save();
+
+	//! Delete the palette file (if it exists)
+	bool deleteFile();
 
 	//! Get the number of colors
 	int count() const { return _colors.size(); }
@@ -84,11 +89,16 @@ public:
 	void removeColor(int index);
 
 private:
+	bool save(const QString& filename);
+
 	QList<PaletteColor> _colors;
 	QString _name;
+	QString _oldname;
 	QString _filename;
+
 	int _columns;
 	bool _modified;
+	bool _readonly;
 };
 
 #endif
