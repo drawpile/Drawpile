@@ -112,10 +112,12 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 
 	int contentWidth = width();
 
+	const int count = _palette->count() + (_palette->isReadonly() ? 0 : 1);
+
 	if(_palette) {
 		// First calculate required space without scrollbar
 		_swatchsize = calcSwatchSize(contentWidth);
-		rowsHeight = (_palette->count() / _columns + 1) * (_swatchsize.height()+_spacing);
+		rowsHeight = (count / _columns + 1) * (_swatchsize.height()+_spacing);
 	}
 
 	if(rowsHeight <= height()) {
@@ -126,7 +128,7 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 		// Recalculate width taking scrollbar in account
 		contentWidth -= _scrollbar->sizeHint().width();
 		_swatchsize = calcSwatchSize(contentWidth);
-		rowsHeight = divRoundUp(_palette->count(), _columns) * (_swatchsize.height()+_spacing);
+		rowsHeight = divRoundUp(count, _columns) * (_swatchsize.height()+_spacing);
 
 		_scrollbar->setGeometry(QRect(
 				contentWidth,
@@ -232,7 +234,7 @@ bool PaletteWidget::event(QEvent *event)
 	if(event->type() == QEvent::ToolTip) {
 		const QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
 		const int index = indexAt(pos);
-		if(index != -1) {
+		if(index>=0 && index < _palette->count()) {
 			const PaletteColor c = _palette->color(index);
 			QToolTip::showText(
 					mapToGlobal(pos),
@@ -258,14 +260,16 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	//painter.fillRect(event->rect(), QColor("#646464"));
 
-	if(!_palette || _palette->count()==0)
+	if(!_palette || (_palette->count()==0 && _palette->isReadonly()))
 		return;
+
+	int totalCount = _palette->count() + (_palette->isReadonly() ? 0 : 1);
 
 	painter.fillRect(
 		QRectF(
 			_leftMargin, 0,
-			qMin(_columns, _palette->count()) * (_swatchsize.width() + _spacing) + _spacing,
-			divRoundUp(_palette->count(), _columns) * (_swatchsize.height() + _spacing) + _spacing
+			qMin(_columns, totalCount) * (_swatchsize.width() + _spacing) + _spacing,
+			divRoundUp(totalCount, _columns) * (_swatchsize.height() + _spacing) + _spacing
 		),
 		QColor("#646464")
 	);
@@ -274,15 +278,37 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 		QRect swatch = swatchRect(i);
 		painter.fillRect(swatch, _palette->color(i).color);
 	}
+
+	if(!_palette->isReadonly()) {
+		QRect swatch = swatchRect(_palette->count());
+		swatch.adjust(0, 0, -1, -1);
+		QPen p(QColor(220, 220, 220));
+		p.setCosmetic(true);
+		painter.setPen(p);
+		painter.drawRect(swatch);
+
+		int cx = swatch.left() + swatch.width() / 2;
+		int cy = swatch.top() + swatch.height() / 2;
+		int d = qMin(swatch.width(), swatch.height())/2 - 3;
+		painter.drawLine(cx - d, cy, cx + d, cy);
+		painter.drawLine(cx, cy - d, cx, cy + d);
+	}
 }
 
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
 	_dragstart = event->pos();
 	_selection = indexAt(event->pos());
-	if(_selection!=-1) {
+	if(_palette && _selection==_palette->count()) {
+		// Clicked on the [+] placeholder
+		_selection = -1;
+		addColor();
+
+	} else if(_selection!=-1) {
+		// Clicked on a valid color
 		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 		_outline->show();
+
 	} else {
 		_outline->hide();
 	}
@@ -378,8 +404,15 @@ void PaletteWidget::focusOutEvent(QFocusEvent*)
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
+	if(!_palette)
+		return;
+
 	int index = indexAt(event->pos(), true);
-	if(index != -1) {
+	if(index == _palette->count()) {
+		// Append color
+		_palette->appendColor(qvariant_cast<QColor>(event->mimeData()->colorData()));
+
+	} else if(index != -1) {
 		if(event->source() == this) {
 			// Switch colors
 			_palette->setColor(_selection, _palette->color(index));
@@ -436,9 +469,12 @@ int PaletteWidget::indexAt(const QPoint& point, bool extraPadding) const
 	if(point.y()+_scroll < y * yw + _spacing)
 		return -1;
 
+	// Allow the extra index if this is an editable palette
 	const int index = (y * _columns) + ix;
-	if(index >= _palette->count())
-		return -1;
+	if(index >= _palette->count()) {
+		if(index > _palette->count() || _palette->isReadonly())
+			return -1;
+	}
 
 	return index;
 }
