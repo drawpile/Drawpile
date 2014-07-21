@@ -66,9 +66,15 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 
 void PaletteWidget::setPalette(Palette *palette)
 {
+	if(_palette) {
+		// Disconnect previous palette
+		disconnect(_palette, SIGNAL(colorsChanged()), this, SLOT(update()));
+	}
+
 	_palette = palette;
 	if(palette) {
 		_columns = palette->columns();
+		connect(_palette, SIGNAL(colorsChanged()), this, SLOT(update()));
 	} else {
 		_columns = 1;
 	}

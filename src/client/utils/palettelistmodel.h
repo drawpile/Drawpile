@@ -23,13 +23,15 @@
 #include <QAbstractListModel>
 #include <QIcon>
 
-#include "palette.h"
+class Palette;
 
 class PaletteListModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
 	explicit PaletteListModel(QObject *parent = 0);
+
+	static PaletteListModel *getSharedInstance();
 
 	/**
 	 * @brief Load palettes from standard paths
@@ -58,7 +60,7 @@ public:
 private:
 	bool isUniqueName(const QString &name, int exclude=-1) const;
 
-	QList<Palette> _palettes;
+	QList<Palette*> _palettes;
 	QIcon _readonlyEmblem;
 };
 

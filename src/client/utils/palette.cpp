@@ -30,10 +30,11 @@
 #include <QRegularExpression>
 #include <QStandardPaths>
 
-Palette::Palette() : _columns(16), _modified(false), _readonly(false) { }
+Palette::Palette(QObject *parent) : Palette(QString(), QString(), false, parent) { }
+Palette::Palette(const QString &name, QObject *parent) : Palette(name, QString(), false, parent) { }
 
-Palette::Palette(const QString& name, const QString& filename, bool readonly)
-	: _name(name), _oldname(name), _filename(filename), _columns(16), _modified(false), _readonly(readonly)
+Palette::Palette(const QString& name, const QString& filename, bool readonly, QObject *parent)
+	: QObject(parent), _name(name), _oldname(name), _filename(filename), _columns(16), _modified(false), _readonly(readonly)
 {
 }
 
@@ -50,17 +51,17 @@ Palette::Palette(const QString& name, const QString& filename, bool readonly)
  *
  * @param filename palette file name
  */
-Palette Palette::fromFile(const QFileInfo& file)
+Palette *Palette::fromFile(const QFileInfo& file, QObject *parent)
 {
 	QFile palfile(file.absoluteFilePath());
 	if (!palfile.open(QIODevice::ReadOnly | QIODevice::Text))
-		return Palette();
+		return nullptr;
 
 	QTextStream in(&palfile);
 	if(in.readLine() != "GIMP Palette")
-		return Palette();
+		return nullptr;
 
-	Palette pal(file.baseName(), file.absoluteFilePath(), !file.isWritable());
+	Palette *pal = new Palette(file.baseName(), file.absoluteFilePath(), !file.isWritable(), parent);
 
 	const QRegularExpression colorRe("^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s*(.+)?$");
 
@@ -70,18 +71,18 @@ Palette Palette::fromFile(const QFileInfo& file)
 			// ignore comments and empty lines
 
 		} else if(line.startsWith("Name:")) {
-			pal._name = line.mid(5).trimmed();
+			pal->_name = line.mid(5).trimmed();
 
 		} else if(line.startsWith("Columns:")) {
 			bool ok;
 			int cols = line.mid(9).trimmed().toInt(&ok);
 			if(ok && cols>0)
-				pal._columns = cols;
+				pal->_columns = cols;
 
 		} else {
 			QRegularExpressionMatch m = colorRe.match(line);
 			if(m.hasMatch()) {
-				pal._colors.append(PaletteColor(
+				pal->_colors.append(PaletteColor(
 					QColor(
 						m.captured(1).toInt(),
 						m.captured(2).toInt(),
@@ -100,12 +101,13 @@ Palette Palette::fromFile(const QFileInfo& file)
 	return pal;
 }
 
-Palette Palette::copy(const Palette &pal, const QString &newname)
+Palette *Palette::copy(const Palette *pal, const QString &newname, QObject *parent)
 {
-	Palette p(newname);
-	p._columns = pal._columns;
-	p._colors = pal._colors;
-	p._modified = true;
+	Q_ASSERT(pal);
+	Palette *p = new Palette(newname, parent);
+	p->_columns = pal->_columns;
+	p->_colors = pal->_colors;
+	p->_modified = true;
 	return p;
 }
 
@@ -186,6 +188,7 @@ void Palette::setName(const QString& name)
 	if(_name != name) {
 		_name = name;
 		_modified = true;
+		emit nameChanged();
 	}
 }
 
@@ -194,6 +197,7 @@ void Palette::setColumns(int columns)
 	if(_columns != columns) {
 		_columns = columns;
 		_modified = true;
+		emit columnsChanged();
 	}
 }
 
@@ -212,6 +216,7 @@ void Palette::setColor(int index, const PaletteColor& color)
 
 	_colors[index] = color;
 	_modified = true;
+	emit colorsChanged();
 }
 
 void Palette::insertColor(int index, const QColor& color, const QString &name)
@@ -221,6 +226,7 @@ void Palette::insertColor(int index, const QColor& color, const QString &name)
 
 	_colors.insert(index, PaletteColor(color, name));
 	_modified = true;
+	emit colorsChanged();
 }
 
 void Palette::appendColor(const QColor &color, const QString &name)
@@ -230,6 +236,7 @@ void Palette::appendColor(const QColor &color, const QString &name)
 
 	_colors.append(PaletteColor(color, name));
 	_modified = true;
+	emit colorsChanged();
 }
 
 /**
@@ -244,5 +251,6 @@ void Palette::removeColor(int index)
 
 	_colors.removeAt(index);
 	_modified = true;
+	emit colorsChanged();
 }
 

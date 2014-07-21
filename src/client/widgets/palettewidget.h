@@ -20,6 +20,7 @@
 #define PALETTEWIDGET_H
 
 #include <QWidget>
+#include <QPointer>
 
 class Palette;
 class QScrollBar;
@@ -77,7 +78,7 @@ private:
 	QRect betweenRect(int index) const;
 	QSize calcSwatchSize(int availableWidth) const;
 
-	Palette *_palette;
+	QPointer<Palette> _palette;
 	QScrollBar *_scrollbar;
 	Color_Dialog *_colordlg;
 	QMenu *_contextmenu;

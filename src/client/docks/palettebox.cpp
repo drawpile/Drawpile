@@ -45,9 +45,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	_ui->setupUi(w);
 	_ui->palettelist->setCompleter(nullptr);
 
-	PaletteListModel *model = new PaletteListModel(this);
-	model->loadPalettes();
-	_ui->palettelist->setModel(model);
+	_ui->palettelist->setModel(PaletteListModel::getSharedInstance());
 
 	// Connect buttons and combobox
 	connect(_ui->palette, SIGNAL(colorSelected(QColor)),
@@ -71,7 +69,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	// Restore last used palette
 	QSettings cfg;
 	int last = cfg.value("history/lastpalette", 0).toInt();
-	last = qBound(0, last, model->rowCount());
+	last = qBound(0, last, _ui->palettelist->model()->rowCount());
 
 	if(last>0)
 		_ui->palettelist->setCurrentIndex(last);

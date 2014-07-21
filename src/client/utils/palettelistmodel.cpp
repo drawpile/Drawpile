@@ -18,6 +18,7 @@
 */
 
 #include "palettelistmodel.h"
+#include "palette.h"
 #include "icon.h"
 
 #include <QDebug>
@@ -31,9 +32,19 @@ PaletteListModel::PaletteListModel(QObject *parent) :
 {
 }
 
+PaletteListModel *PaletteListModel::getSharedInstance()
+{
+	static PaletteListModel *instance;
+	if(!instance) {
+		instance = new PaletteListModel;
+		instance->loadPalettes();
+	}
+	return instance;
+}
+
 void PaletteListModel::loadPalettes()
 {
-	QList<Palette> palettes;
+	QList<Palette*> palettes;
 
 	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
 	QSet<QString> palettefiles;
@@ -48,8 +59,8 @@ void PaletteListModel::loadPalettes()
 			if(!palettefiles.contains(pfile.fileName())) {
 				palettefiles.insert(pfile.fileName());
 
-				Palette pal = Palette::fromFile(pfile);
-				if(pal.name().isNull())
+				Palette *pal = Palette::fromFile(pfile, this);
+				if(!pal)
 					qWarning() << "Invalid palette:" << pfile.absoluteFilePath();
 				else
 					palettes.append(pal);
@@ -64,9 +75,9 @@ void PaletteListModel::loadPalettes()
 
 void PaletteListModel::saveChanged()
 {
-	for(Palette &pal : _palettes) {
-		if(pal.isModified())
-			pal.save();
+	for(Palette *pal : _palettes) {
+		if(pal->isModified())
+			pal->save();
 	}
 }
 
@@ -84,9 +95,9 @@ QVariant PaletteListModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case Qt::DisplayRole:
 		case Qt::EditRole:
-			return _palettes.at(index.row()).name();
+			return _palettes.at(index.row())->name();
 		case Qt::DecorationRole:
-			if(_palettes.at(index.row()).isReadonly())
+			if(_palettes.at(index.row())->isReadonly())
 				return _readonlyEmblem;
 			break;
 		}
@@ -100,14 +111,14 @@ bool PaletteListModel::setData(const QModelIndex &index, const QVariant &value, 
 	if(role==Qt::EditRole && index.isValid() && index.row() >= 0 && index.row() < _palettes.size()) {
 		QString newname = value.toString().trimmed();
 
-		if(_palettes[index.row()].isReadonly())
+		if(_palettes[index.row()]->isReadonly())
 			return false;
 
 		// Name must be non-empty and unique
 		if(newname.isEmpty() || !isUniqueName(newname, index.row()))
 			return false;
 
-		_palettes[index.row()].setName(value.toString());
+		_palettes[index.row()]->setName(value.toString());
 		emit dataChanged(index, index);
 		return true;
 	}
@@ -120,7 +131,7 @@ Qt::ItemFlags PaletteListModel::flags(const QModelIndex &index) const
 	if(index.isValid() && index.row() >= 0 && index.row() < _palettes.size()) {
 		f = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 
-		if(!_palettes.at(index.row()).isReadonly())
+		if(!_palettes.at(index.row())->isReadonly())
 			f |= Qt::ItemIsEditable;
 	}
 
@@ -131,7 +142,7 @@ Palette *PaletteListModel::getPalette(int index)
 {
 	Q_ASSERT(index>=0 && index<_palettes.size());
 	if(index>=0 && index<_palettes.size())
-		return &_palettes[index];
+		return _palettes[index];
 
 	return nullptr;
 }
@@ -159,7 +170,7 @@ void PaletteListModel::addNewPalette()
 
 	int pos = _palettes.size();
 	beginInsertRows(QModelIndex(), pos, pos);
-	_palettes.append(Palette(name));
+	_palettes.append(new Palette(name, this));
 	endInsertRows();
 }
 
@@ -168,9 +179,9 @@ bool PaletteListModel::copyPalette(int index)
 	if(index<0 || index >= _palettes.size())
 		return false;
 
-	const Palette &pal = _palettes.at(index);
+	const Palette *pal = _palettes.at(index);
 
-	QString basename = pal.name();
+	QString basename = pal->name();
 	while(basename.size()>0 && (basename.at(basename.size()-1).isDigit() || basename.at(basename.size()-1).isSpace()))
 		basename.chop(1);
 	basename.append(' ');
@@ -188,7 +199,7 @@ bool PaletteListModel::copyPalette(int index)
 	if(name.isNull())
 		return false;
 
-	Palette copy = Palette::copy(pal, name);
+	Palette *copy = Palette::copy(pal, name, this);
 	beginInsertRows(QModelIndex(), index, index);
 	_palettes.insert(index, copy);
 	endInsertRows();
@@ -199,7 +210,7 @@ bool PaletteListModel::copyPalette(int index)
 bool PaletteListModel::isUniqueName(const QString &name, int exclude) const
 {
 	for(int i=0;i<_palettes.size();++i)
-		if(i != exclude && _palettes.at(i).name().compare(name, Qt::CaseInsensitive) == 0)
+		if(i != exclude && _palettes.at(i)->name().compare(name, Qt::CaseInsensitive) == 0)
 			return false;
 	return true;
 }
@@ -212,8 +223,9 @@ bool PaletteListModel::removeRows(int row, int count, const QModelIndex &parent)
 	beginRemoveRows(parent, row, row+count-1);
 
 	while(count-->0) {
-		Palette pal = _palettes.takeAt(row);
-		pal.deleteFile();
+		Palette *pal = _palettes.takeAt(row);
+		pal->deleteFile();
+		delete pal;
 	}
 
 	endRemoveRows();

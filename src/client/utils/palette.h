@@ -21,6 +21,7 @@
 
 #include <QList>
 #include <QColor>
+#include <QObject>
 
 class QFileInfo;
 
@@ -31,16 +32,18 @@ struct PaletteColor {
 	PaletteColor(const QColor &c=QColor(), const QString &n=QString()) : color(c), name(n) { }
 };
 
-class Palette {
+class Palette : public QObject {
+	Q_OBJECT
 public:
 	//! Construct a blank palette
-	Palette();
-	explicit Palette(const QString& name, const QString& filename=QString(), bool readonly=false);
+	explicit Palette(QObject *parent=0);
+	explicit Palette(const QString &name, QObject *parent=0);
+	Palette(const QString& name, const QString& filename, bool readonly, QObject *parent=0);
 
 	//! Load a palette from a file
-	static Palette fromFile(const QFileInfo& file);
+	static Palette *fromFile(const QFileInfo& file, QObject *parent=0);
 
-	static Palette copy(const Palette &pal, const QString &newname);
+	static Palette *copy(const Palette *pal, const QString &newname, QObject *parent=0);
 
 	//! Set the name of the palette
 	void setName(const QString& name);
@@ -87,6 +90,11 @@ public:
 
 	//! Remove a color
 	void removeColor(int index);
+
+signals:
+	void nameChanged();
+	void columnsChanged();
+	void colorsChanged();
 
 private:
 	bool save(const QString& filename);
