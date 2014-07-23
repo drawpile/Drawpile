@@ -650,11 +650,21 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	_ui = new Ui_TextSettings;
 	_ui->setupUi(widget);
-	widget->setEnabled(false);
 
 	_updatetimer = new QTimer(this);
 	_updatetimer->setInterval(500);
 	_updatetimer->setSingleShot(true);
+
+	// Select a nice default font
+	QStringList defaultFonts;
+	defaultFonts << "Arial" << "Helvetica" << "Sans Serif";
+	for(const QString &df : defaultFonts) {
+		int i = _ui->font->findText(df, Qt::MatchFixedString);
+		if(i>=0) {
+			_ui->font->setCurrentIndex(i);
+			break;
+		}
+	}
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	// Set editor placeholder
@@ -679,6 +689,8 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
 
 	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
+
+	widget->setEnabled(false);
 
 	return widget;
 }
