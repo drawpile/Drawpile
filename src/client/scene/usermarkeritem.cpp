@@ -63,10 +63,26 @@ const QColor &UserMarkerItem::color() const
 
 void UserMarkerItem::setText(const QString &text)
 {
-	_text = text;
+	if(_text1 != text) {
+		_text1 = text;
+		updateFullText();
+	}
+}
+
+void UserMarkerItem::setSubtext(const QString &text)
+{
+	if(_text2 != text) {
+		_text2 = text;
+		updateFullText();
+	}
+}
+
+void UserMarkerItem::updateFullText()
+{
+	_fulltext = _text1 + "\n[" + _text2 + ']';
 
 	// Make a new bubble for the text
-	QRect textrect = qApp->fontMetrics().boundingRect(text);
+	QRect textrect = qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, _fulltext);
 
 	const float round = 3;
 	const float padding = 5;
@@ -76,7 +92,7 @@ void UserMarkerItem::setText(const QString &text)
 
 	_bounds = QRectF(-rad, -height, width, height);
 
-	_textpos = QPointF(-rad + padding, -ARROW - padding);
+	_textrect = _bounds.adjusted(padding, padding, -padding, -padding);
 
 	_bubble = QPainterPath(QPointF(0, 0));
 
@@ -112,7 +128,7 @@ void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
 
 	painter->setFont(qApp->font());
 	painter->setPen(_textpen);
-	painter->drawText(_textpos, _text);
+	painter->drawText(_textrect, Qt::AlignHCenter|Qt::AlignTop, _fulltext);
 }
 
 void UserMarkerItem::fadein()

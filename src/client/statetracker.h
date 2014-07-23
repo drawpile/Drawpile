@@ -209,7 +209,7 @@ signals:
 	void myLayerCreated(int);
 	void myStrokesCommitted(int count);
 
-	void userMarkerColor(int id, const QColor &color);
+	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
 	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);
 

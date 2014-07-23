@@ -81,7 +81,7 @@ void CanvasScene::initCanvas(net::Client *client)
 		emit myAnnotationCreated(getAnnotationItem(id));
 	});
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
-	connect(_statetracker, SIGNAL(userMarkerColor(int,QColor)), this, SLOT(setUserMarkerColor(int,QColor)));
+	connect(_statetracker, SIGNAL(userMarkerAttribs(int,QColor,QString)), this, SLOT(setUserMarkerAttribs(int,QColor,QString)));
 	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
 	connect(_statetracker, &StateTracker::myStrokesCommitted, [this](int count) {
@@ -472,10 +472,11 @@ void CanvasScene::setUserMarkerName(int id, const QString &name)
 	item->setText(name);
 }
 
-void CanvasScene::setUserMarkerColor(int id, const QColor &color)
+void CanvasScene::setUserMarkerAttribs(int id, const QColor &color, const QString &layer)
 {
 	auto *item = getOrCreateUserMarker(id);
 	item->setColor(color);
+	item->setSubtext(layer);
 }
 
 void CanvasScene::moveUserMarker(int id, const QPointF &point, int trail)

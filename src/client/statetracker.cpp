@@ -357,7 +357,14 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 	DrawingContext &ctx = _contexts[cmd.contextId()];
 	ctx.tool.updateFromToolchange(cmd);
 
-	emit userMarkerColor(cmd.contextId(), ctx.tool.brush.color1());
+	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+	QString layername;
+	if(layer)
+		layername = layer->title();
+	else
+		layername = QStringLiteral("???");
+
+	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color1(), layername);
 }
 
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)

@@ -183,7 +183,7 @@ public slots:
 
 	void moveUserMarker(int id, const QPointF &point, int trail);
 	void setUserMarkerName(int id, const QString &name);
-	void setUserMarkerColor(int id, const QColor &color);
+	void setUserMarkerAttribs(int id, const QColor &color, const QString &layer);
 	void hideUserMarker(int id=-1);
 
 signals:

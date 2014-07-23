@@ -35,6 +35,7 @@ public:
 	const QColor &color() const;
 
 	void setText(const QString &text);
+	void setSubtext(const QString &text);
 
 	void fadein();
 	void fadeout();
@@ -45,13 +46,16 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
+	void updateFullText();
 	QRectF _bounds;
 	QBrush _bgbrush;
 	QPen _textpen;
 	QPainterPath _bubble;
-	QString _text;
-	QPointF _textpos;
+	QRectF _textrect;
 	float _fadeout;
+
+	QString _text1, _text2;
+	QString _fulltext;
 };
 
 }
