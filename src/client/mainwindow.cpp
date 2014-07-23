@@ -1837,10 +1837,12 @@ void MainWindow::setupActions()
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), QString(), QKeySequence(), true);
+	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show user layers"), QString(), QKeySequence(), true);
 	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), QString(), QKeySequence(), true);
 	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
+	showuserlayers->setChecked(true);
 	showlasers->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence::FullScreen, true);
@@ -1880,6 +1882,7 @@ void MainWindow::setupActions()
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
+	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
@@ -1903,6 +1906,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showoutline);
 	viewmenu->addAction(showannotations);
 	viewmenu->addAction(showusermarkers);
+	viewmenu->addAction(showuserlayers);
 	viewmenu->addAction(showlasers);
 
 	viewmenu->addSeparator();

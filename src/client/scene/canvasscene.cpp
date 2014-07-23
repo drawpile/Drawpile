@@ -42,7 +42,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0),
 	  _strokepreview(NopStrokePreviewer::getInstance()), _toolpreview(0),
 	  _selection(0),
-	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
+	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -476,7 +476,7 @@ void CanvasScene::setUserMarkerAttribs(int id, const QColor &color, const QStrin
 {
 	auto *item = getOrCreateUserMarker(id);
 	item->setColor(color);
-	item->setSubtext(layer);
+	item->setSubtext(_showUserLayers ? layer : QString());
 }
 
 void CanvasScene::moveUserMarker(int id, const QPointF &point, int trail)
@@ -515,6 +515,24 @@ void CanvasScene::showUserMarkers(bool show)
 	if(!show) {
 		foreach(UserMarkerItem *item, _usermarkers)
 			item->hide();
+	}
+}
+
+void CanvasScene::showUserLayers(bool show)
+{
+	_showUserLayers = show;
+	QHashIterator<int,UserMarkerItem*> i(_usermarkers);
+	while(i.hasNext()) {
+		i.next();
+
+		QString layer;
+		if(show && _statetracker->drawingContexts().contains(i.key())) {
+			int id = _statetracker->drawingContexts()[i.key()].tool.layer_id;
+			paintcore::Layer *l = _statetracker->image()->getLayer(id);
+			if(l)
+				layer = l->title();
+		}
+		i.value()->setSubtext(layer);
 	}
 }
 

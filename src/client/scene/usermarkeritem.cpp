@@ -79,7 +79,12 @@ void UserMarkerItem::setSubtext(const QString &text)
 
 void UserMarkerItem::updateFullText()
 {
-	_fulltext = _text1 + "\n[" + _text2 + ']';
+	prepareGeometryChange();
+
+	if(_text2.isEmpty())
+		_fulltext = _text1;
+	else
+		_fulltext = _text1 + "\n[" + _text2 + ']';
 
 	// Make a new bubble for the text
 	QRect textrect = qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, _fulltext);

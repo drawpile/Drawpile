@@ -173,6 +173,9 @@ public slots:
 	//! Show/hide remote cursor markers
 	void showUserMarkers(bool show);
 
+	//! Show layer selection in cursor marker
+	void showUserLayers(bool show);
+
 	//! Show hide laser pointer trails
 	void showLaserTrails(bool show);
 
@@ -242,6 +245,7 @@ private:
 	bool _showAnnotations;
 	bool _showAnnotationBorders;
 	bool _showUserMarkers;
+	bool _showUserLayers;
 	bool _showLaserTrails;
 };
 
