@@ -687,6 +687,10 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
+	connect(_ui->font, &QFontComboBox::currentFontChanged, [this](QFont font) {
+		font.setPointSizeF(_ui->size->value());
+		_ui->content->setFont(font);
+	});
 
 	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
 

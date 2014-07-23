@@ -187,7 +187,7 @@
        <property name="autoRaise">
         <bool>true</bool>
        </property>
-       <property name="color" stdset="0">
+       <property name="color">
         <color>
          <red>0</red>
          <green>0</green>
@@ -385,22 +385,6 @@
     <hint type="destinationlabel">
      <x>113</x>
      <y>94</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>font</sender>
-   <signal>currentFontChanged(QFont)</signal>
-   <receiver>content</receiver>
-   <slot>setCurrentFont(QFont)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>126</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>125</x>
-     <y>167</y>
     </hint>
    </hints>
   </connection>
