@@ -147,14 +147,14 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 
 	_leftMargin = (contentWidth - _spacing - (_swatchsize.width()+_spacing) * _columns) / 2;
 
-	if(_outline->isVisible())
+	if(_outline->isVisible() && _selection>=0)
 		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 }
 
 void PaletteWidget::scroll(int pos)
 {
 	_scroll = pos;
-	if(_outline->isVisible())
+	if(_outline->isVisible() && _selection>=0)
 		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 
 	update();
