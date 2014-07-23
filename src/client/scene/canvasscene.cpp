@@ -80,7 +80,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	connect(_statetracker, &StateTracker::myAnnotationCreated, [this](int id) {
 		emit myAnnotationCreated(getAnnotationItem(id));
 	});
-	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
+	connect(_statetracker, SIGNAL(layerAutoselectRequest(int)), this, SIGNAL(layerAutoselectRequest(int)));
 	connect(_statetracker, SIGNAL(userMarkerAttribs(int,QColor,QString)), this, SLOT(setUserMarkerAttribs(int,QColor,QString)));
 	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));

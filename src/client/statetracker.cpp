@@ -124,7 +124,8 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 		_myid(myId),
 		_msgstream_sizelimit(1024 * 1024 * 10),
 		_hassnapshot(true),
-		_showallmarkers(false)
+		_showallmarkers(false),
+		_hasParticipated(false)
 {
 }
 
@@ -308,8 +309,9 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	if(_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()))) {
 		_layerlist->createLayer(cmd.id(), cmd.title());
-		if(cmd.contextId() == _myid)
-			emit myLayerCreated(cmd.id());
+
+		if(cmd.contextId() == _myid || !_hasParticipated)
+			emit layerAutoselectRequest(cmd.id());
 	}
 }
 
@@ -485,6 +487,12 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 
 	// Make a new savepoint (if possible)
 	makeSavepoint(pos);
+
+	// To be correct, we should set the "participated" flag on any command
+	// sent by us. In practice, however, an UndoPoint is always sent
+	// when making changes so it is enough to set the flag here.
+	if(cmd.contextId() == _myid)
+		_hasParticipated = true;
 }
 
 void StateTracker::handleUndo(protocol::Undo &cmd)

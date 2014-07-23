@@ -206,7 +206,7 @@ public:
 
 signals:
 	void myAnnotationCreated(int id);
-	void myLayerCreated(int);
+	void layerAutoselectRequest(int);
 	void myStrokesCommitted(int count);
 
 	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
@@ -256,6 +256,7 @@ private:
 	uint _msgstream_sizelimit;
 	bool _hassnapshot;
 	bool _showallmarkers;
+	bool _hasParticipated;
 };
 
 }
