@@ -1953,7 +1953,6 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
 	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
 	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
 	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
@@ -1963,11 +1962,11 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
+	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
 
-	_drawingtools->addAction(selectiontool);
 	_drawingtools->addAction(pentool);
 	_drawingtools->addAction(brushtool);
 	_drawingtools->addAction(erasertool);
@@ -1977,6 +1976,7 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(ellipsetool);
 	_drawingtools->addAction(annotationtool);
 	_drawingtools->addAction(lasertool);
+	_drawingtools->addAction(selectiontool);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());

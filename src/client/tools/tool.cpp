@@ -40,8 +40,8 @@ ToolCollection::ToolCollection()
 	_tools[RECTANGLE] = new Rectangle(*this);
 	_tools[ELLIPSE] = new Ellipse(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
-	_tools[SELECTION] = new Selection(*this);
 	_tools[LASERPOINTER] = new LaserPointer(*this);
+	_tools[SELECTION] = new Selection(*this);
 }
 
 /**
