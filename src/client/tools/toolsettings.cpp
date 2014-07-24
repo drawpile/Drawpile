@@ -43,6 +43,7 @@ using widgets::ColorButton;
 #include "core/rasterop.h" // for blend modes
 
 #include <QTimer>
+#include <QTextBlock>
 
 namespace tools {
 
@@ -655,17 +656,6 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	_updatetimer->setInterval(500);
 	_updatetimer->setSingleShot(true);
 
-	// Select a nice default font
-	QStringList defaultFonts;
-	defaultFonts << "Arial" << "Helvetica" << "Sans Serif";
-	for(const QString &df : defaultFonts) {
-		int i = _ui->font->findText(df, Qt::MatchFixedString);
-		if(i>=0) {
-			_ui->font->setCurrentIndex(i);
-			break;
-		}
-	}
-
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	// Set editor placeholder
 	_ui->content->setPlaceholderText(tr("Annotation content"));
@@ -680,6 +670,10 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
 	connect(_ui->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 
+	connect(_ui->font, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFontIfUniform()));
+	connect(_ui->size, SIGNAL(valueChanged(double)), this, SLOT(updateFontIfUniform()));
+	connect(_ui->btnTextColor, SIGNAL(colorChanged(QColor)), this, SLOT(updateFontIfUniform()));
+
 	// Intra-editor connections that couldn't be made in the UI designer
 	connect(_ui->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->center, SIGNAL(clicked()), this, SLOT(changeAlignment()));
@@ -687,12 +681,19 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
-	connect(_ui->font, &QFontComboBox::currentFontChanged, [this](QFont font) {
-		font.setPointSizeF(_ui->size->value());
-		_ui->content->setFont(font);
-	});
 
 	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
+
+	// Select a nice default font
+	QStringList defaultFonts;
+	defaultFonts << "Arial" << "Helvetica" << "Sans Serif";
+	for(const QString &df : defaultFonts) {
+		int i = _ui->font->findText(df, Qt::MatchFixedString);
+		if(i>=0) {
+			_ui->font->setCurrentIndex(i);
+			break;
+		}
+	}
 
 	widget->setEnabled(false);
 
@@ -756,6 +757,60 @@ void AnnotationSettings::changeAlignment()
 	_ui->content->setAlignment(a);
 }
 
+void AnnotationSettings::updateFontIfUniform()
+{
+	bool uniformFontFamily = true;
+	bool uniformSize = true;
+	bool uniformColor = true;
+
+	QTextDocument *doc = _ui->content->document();
+
+	QTextBlock b = doc->firstBlock();
+	QTextCharFormat fmt1;
+	bool first=true;
+
+	// Check all character formats in all blocks. If they are the same,
+	// we can reset the font for the wole document.
+	while(b.isValid()) {
+		for(const QTextLayout::FormatRange &fr : b.textFormats()) {
+
+			if(first) {
+				fmt1 = fr.format;
+				first = false;
+
+			} else {
+				uniformFontFamily &= fr.format.fontFamily() == fmt1.fontFamily();
+				uniformSize &= fr.format.fontPointSize() == fmt1.fontPointSize();
+				uniformColor &= fr.format.foreground() == fmt1.foreground();
+			}
+		}
+		b = b.next();
+	}
+
+	resetContentFont(uniformFontFamily, uniformSize, uniformColor);
+}
+
+void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool resetColor)
+{
+	if(!(resetFamily|resetSize|resetColor))
+		return;
+
+	QTextCursor cursor(_ui->content->document());
+	cursor.select(QTextCursor::Document);
+	QTextCharFormat fmt;
+
+	if(resetFamily)
+		fmt.setFontFamily(_ui->font->currentText());
+
+	if(resetSize)
+		fmt.setFontPointSize(_ui->size->value());
+
+	if(resetColor)
+		fmt.setForeground(_ui->btnTextColor->color());
+
+	cursor.mergeCharFormat(fmt);
+}
+
 int AnnotationSettings::selected() const
 {
 	if(_selection.isNull())
@@ -784,6 +839,9 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text());
 		_ui->btnBackground->setColor(a->backgroundColor());
+		if(a->text().isEmpty())
+			resetContentFont(true, true, true);
+
 	}
 	_noupdate = false;
 }

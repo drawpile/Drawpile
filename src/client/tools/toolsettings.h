@@ -327,10 +327,13 @@ private slots:
 	void removeAnnotation();
 	void bake();
 
+	void updateFontIfUniform();
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
+	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
 
 	Ui_TextSettings *_ui;
 	QWidget *_uiwidget;
