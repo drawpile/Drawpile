@@ -334,6 +334,7 @@ protected:
 
 private:
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
+	void setUiEnabled(bool enabled);
 
 	Ui_TextSettings *_ui;
 	QWidget *_uiwidget;

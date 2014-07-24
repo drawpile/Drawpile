@@ -695,9 +695,16 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 		}
 	}
 
-	widget->setEnabled(false);
+	setUiEnabled(false);
 
 	return widget;
+}
+
+void AnnotationSettings::setUiEnabled(bool enabled)
+{
+	_ui->content->setEnabled(enabled);
+	_ui->btnBake->setEnabled(enabled);
+	_ui->btnRemove->setEnabled(enabled);
 }
 
 void AnnotationSettings::updateStyleButtons()
@@ -827,7 +834,7 @@ void AnnotationSettings::unselect(int id)
 void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 {
 	_noupdate = true;
-	getUi()->setEnabled(item!=0);
+	setUiEnabled(item!=0);
 
 	if(_selection)
 		_selection->setHighlight(false);
@@ -863,14 +870,16 @@ void AnnotationSettings::setFocus()
 
 void AnnotationSettings::applyChanges()
 {
-	if(_noupdate)
+	if(_noupdate || !selected())
 		return;
-	Q_ASSERT(selected());
 	_updatetimer->start();
 }
 
 void AnnotationSettings::saveChanges()
 {
+	if(!selected())
+		return;
+
 	Q_ASSERT(_client);
 
 	if(selected())
