@@ -17,27 +17,50 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtEndian>
-#include <QVarLengthArray>
-#include <QFile>
-
-#include <cstring>
-
 #include "reader.h"
 #include "util.h"
 #include "../net/recording.h"
 
 #include "config.h"
 
+#include <QtEndian>
+#include <QVarLengthArray>
+#include <QFile>
+#include <KCompressionDevice>
+#include <QRegularExpression>
+
+#include <cstring>
+
 namespace recording {
 
-Reader::Reader(const QString &filename, QObject *parent)
-	: Reader(new QFile(filename), true, parent)
+bool Reader::isRecordingExtension(const QString &filename)
 {
+	QRegularExpression re("\\.dprec(?:z|\\.(?:gz|bz2|xz))?$");
+	return re.match(filename).hasMatch();
 }
 
-Reader::Reader(QFileDevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), _file(file), _current(-1), _autoclose(autoclose), _eof(false), _isHibernation(false)
+Reader::Reader(const QString &filename, QObject *parent)
+	: QObject(parent), _filename(filename), _current(-1), _autoclose(true), _eof(false), _isHibernation(false)
+{
+	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
+	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))
+		ct = KCompressionDevice::GZip;
+	else if(filename.endsWith(".bz2", Qt::CaseInsensitive))
+		ct = KCompressionDevice::BZip2;
+	else if(filename.endsWith("xz", Qt::CaseInsensitive))
+		ct = KCompressionDevice::Xz;
+
+	if(ct == KCompressionDevice::None) {
+		_file = new QFile(filename);
+		_isCompressed = false;
+	} else {
+		_file = new KCompressionDevice(filename, ct);
+		_isCompressed = true;
+	}
+}
+
+Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, QObject *parent)
+	: QObject(parent), _filename(filename), _file(file), _current(-1), _autoclose(autoclose), _eof(false), _isHibernation(false), _isCompressed(false)
 {
 	Q_ASSERT(file);
 }
@@ -51,8 +74,9 @@ Reader::~Reader()
 Compatibility Reader::open()
 {
 	if(!_file->isOpen()) {
-		if(!_file->open(QFile::ReadOnly))
+		if(!_file->open(QFile::ReadOnly)) {
 			return CANNOT_READ;
+		}
 	}
 
 	// Read magic bytes "DPRECR\0" or "DPRECH\0"
@@ -179,11 +203,6 @@ Compatibility Reader::open()
 QString Reader::errorString() const
 {
 	return _file->errorString();
-}
-
-QString Reader::filename() const
-{
-	return _file->fileName();
 }
 
 qint64 Reader::filesize() const

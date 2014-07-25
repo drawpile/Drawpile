@@ -70,8 +70,14 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	_timer->setSingleShot(true);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(nextCommand()));
 
-	_ui->progressBar->setMaximum(_reader->filesize());
-	_tinyPlayer->setMaxProgress(_reader->filesize());
+	if(reader->isCompressed()) {
+		_ui->progressBar->setEnabled(false);
+		_ui->progressBar->setFormat(tr("Compressed recording"));
+		_ui->progressBar->setTextVisible(true);
+	} else {
+		_ui->progressBar->setMaximum(_reader->filesize());
+		_tinyPlayer->setMaxProgress(_reader->filesize());
+	}
 
 	// Playback control
 	connect(_ui->play, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
@@ -326,13 +332,15 @@ void PlaybackDialog::nextSequence()
 
 void PlaybackDialog::updateIndexPosition()
 {
-	if(_indexpositem) {
-		_indexpositem->setIndex(_reader->currentIndex());
-		_indexpositem->setVisible(true);
-		_ui->indexView->centerOn(_indexpositem);
+	if(!_reader->isCompressed()) {
+		if(_indexpositem) {
+			_indexpositem->setIndex(_reader->currentIndex());
+			_indexpositem->setVisible(true);
+			_ui->indexView->centerOn(_indexpositem);
+		}
+		_ui->progressBar->setValue(_reader->currentPosition());
+		_tinyPlayer->setProgress(_reader->currentPosition());
 	}
-	_ui->progressBar->setValue(_reader->currentPosition());
-	_tinyPlayer->setProgress(_reader->currentPosition());
 }
 
 void PlaybackDialog::jumpTo(int pos)
@@ -655,6 +663,12 @@ QString PlaybackDialog::indexFileName() const
 
 void PlaybackDialog::loadIndex()
 {
+	if(_reader->isCompressed()) {
+		_ui->noindexReason->setText(tr("Cannot index compressed recordings."));
+		_ui->indexButton->setEnabled(false);
+		return;
+	}
+
 	QFileInfo indexfile(indexFileName());
 	if(!indexfile.exists()) {
 		_ui->noindexReason->setText(tr("Index not yet generated"));
@@ -763,7 +777,7 @@ void PlaybackDialog::filterRecording()
 
 		if(!filename.isEmpty()) {
 			MainWindow *win = new MainWindow(false);
-			win->open(filename);
+			win->open(QUrl::fromLocalFile(filename));
 		}
 	}
 }

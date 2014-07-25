@@ -1,4 +1,5 @@
 find_package(Qt5Network REQUIRED)
+find_package(KF5Archive NO_MODULE)
 
 set (
 	SOURCES
@@ -31,9 +32,40 @@ set (
 	server/identitymanager.cpp
 	)
 
+# Use bundled KArchive if library not found
+if(NOT KF5Archive_FOUND)
+	message(WARNING "KArchive not found: using bundled copy!")
+	find_package (ZLIB REQUIRED)
+
+	set(
+		SOURCES ${SOURCES}
+		bundled/karchive/karchive.cpp
+		bundled/karchive/klimitediodevice.cpp
+		bundled/karchive/kzip.cpp
+		bundled/karchive/kcompressiondevice.cpp
+		bundled/karchive/kfilterbase.cpp
+		bundled/karchive/kfilterdev.cpp
+		bundled/karchive/klimitediodevice.cpp
+		bundled/karchive/kgzipfilter.cpp
+		bundled/karchive/knonefilter.cpp
+	)
+
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/karchive")
+	#target_link_libraries(${DPSHAREDLIB} ${ZLIB_LIBRARIES})
+else()
+	#target_link_libraries(${DPSHAREDLIB} KF5::Archive)
+endif()
+
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})
 
 target_link_libraries(${DPSHAREDLIB} Qt5::Network)
+
+if(NOT KF5Archive_FOUND)
+	target_link_libraries(${DPSHAREDLIB} ${ZLIB_LIBRARIES})
+else()
+	target_link_libraries(${DPSHAREDLIB} KF5::Archive)
+endif()
+
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:  
 qt5_use_modules(${DPSHAREDLIB} Network)

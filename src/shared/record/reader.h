@@ -24,7 +24,7 @@
 #include "hibernate.h"
 #include "../net/message.h"
 
-class QFileDevice;
+class QIODevice;
 
 namespace recording {
 
@@ -62,27 +62,37 @@ class Reader : public QObject
 	Q_OBJECT
 public:
 	/**
+	 * @brief Read from a file
+	 *
+	 * Compression is handled transparently.
+	 *
 	 * @brief Reader
 	 * @param filename
 	 * @param parent
 	 */
-	Reader(const QString &filename, QObject *parent=0);
+	explicit Reader(const QString &filename, QObject *parent=0);
 
 	/**
-	 * @brief Reader
+	 * @brief Read from an IO device
 	 *
+	 * @param filename the original file name
 	 * @param file input file device
 	 * @param autoclose if true, the Reader instance will take ownership of the file device
 	 * @param parent
 	 */
-	Reader(QFileDevice *file, bool autoclose=false, QObject *parent=0);
+	Reader(const QString &filename, QIODevice *file, bool autoclose=false, QObject *parent=0);
 
-	Reader(const Reader &) = delete;
-	Reader &operator=(const Reader &) = delete;
 	~Reader();
 
+	/**
+	 * @brief Check if the given filename has a .dprec(+compression type) extension
+	 * @param filename
+	 * @return true if file is probably a recording
+	 */
+	static bool isRecordingExtension(const QString &filename);
+
 	//! Name of the currently open file
-	QString filename() const;
+	QString filename() const { return _filename; }
 
 	//! Size of the currently open file
 	qint64 filesize() const;
@@ -98,6 +108,9 @@ public:
 
 	//! Did the last read hit the end of the file?
 	bool isEof() const { return _eof; }
+
+	//! Is this recording compressed?
+	bool isCompressed() const { return _isCompressed; }
 
 	QString errorString() const;
 
@@ -157,7 +170,8 @@ public:
 	void seekTo(int pos, qint64 offset);
 
 private:
-	QFileDevice *_file;
+	QString _filename;
+	QIODevice *_file;
 	QByteArray _msgbuf;
 	QString _writerversion;
 	HibernationHeader _hibheader;
@@ -167,6 +181,7 @@ private:
 	bool _autoclose;
 	bool _eof;
 	bool _isHibernation;
+	bool _isCompressed;
 };
 
 }

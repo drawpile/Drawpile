@@ -145,20 +145,7 @@ if(NOT KF5Archive_FOUND)
 
 	find_package (ZLIB REQUIRED)
 
-	set(
-		SOURCES ${SOURCES}
-		bundled/karchive/karchive.cpp
-		bundled/karchive/klimitediodevice.cpp
-		bundled/karchive/kzip.cpp
-		bundled/karchive/kcompressiondevice.cpp
-		bundled/karchive/kfilterbase.cpp
-		bundled/karchive/kfilterdev.cpp
-		bundled/karchive/klimitediodevice.cpp
-		bundled/karchive/kgzipfilter.cpp
-		bundled/karchive/knonefilter.cpp
-	)
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/karchive")
-
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../shared/bundled/karchive")
 endif()
 
 # Use bundled QtColorPicker widgets if library not found
@@ -253,9 +240,7 @@ target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
 qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent)
 
-if(KF5Archive_FOUND)
-	target_link_libraries(${CLIENTNAME} KF5::Archive)
-else()
+if(NOT KF5Archive_FOUND)
 	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})
 endif()
 

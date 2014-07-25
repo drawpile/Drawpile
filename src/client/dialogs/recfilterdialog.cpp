@@ -22,14 +22,6 @@
 #include <QPushButton>
 #include <QSettings>
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-#include <QSaveFile>
-#else
-#include <QFile>
-#define QSaveFile QFile
-#define NO_QSAVEFILE
-#endif
-
 #include "dialogs/recfilterdialog.h"
 #include "recording/filter.h"
 
@@ -71,7 +63,8 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	// First, get output file name
 	QString outfile = QFileDialog::getSaveFileName(this, tr("Save filtered recording"),
 		cfg.value("window/lastpath").toString(),
-		tr("Recordings (%1)").arg("*.dprec")
+		tr("Recordings (%1)").arg("*.dprec") + ";;" +
+		tr("Compressed recordings (%1)").arg("*.dprecz")
 	);
 
 	if(outfile.isEmpty())
@@ -100,28 +93,10 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 		filter.setNewMarkers(_newmarkers);
 
 	// Perform filtering
-	QFile inputfile(recordingFile);
-	if(!inputfile.open(QFile::ReadOnly)) {
-		QMessageBox::warning(this, tr("Error"), inputfile.errorString());
-		return QString();
-	}
-
-	QSaveFile outputfile(outfile);
-	if(!outputfile.open(QSaveFile::WriteOnly)) {
-		QMessageBox::warning(this, tr("Error"), outputfile.errorString());
-		return QString();
-	}
-
-	if(!filter.filterRecording(&inputfile, &outputfile)) {
+	if(!filter.filterRecording(recordingFile, outfile)) {
 		QMessageBox::warning(this, tr("Error"), filter.errorString());
 		return QString();
 	}
-
-#ifndef NO_QSAVEFILE // Qt 5.0 compatibility
-	outputfile.commit();
-#else
-	outputfile.close();
-#endif
 
 	return outfile;
 }

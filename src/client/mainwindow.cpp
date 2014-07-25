@@ -673,7 +673,7 @@ void MainWindow::open(const QUrl& url)
 {
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
-		if(file.endsWith(".dprec", Qt::CaseInsensitive)) {
+		if(recording::Reader::isRecordingExtension(file)) {
 			auto reader = dialogs::PlaybackDialog::openRecording(file, this);
 			if(reader) {
 				if(loadRecording(reader))
@@ -707,7 +707,7 @@ void MainWindow::open()
 {
 	// Get a list of supported formats
 	QString dpimages = "*.ora ";
-	QString dprecs = "*.dptxt *.dprec ";
+	QString dprecs = "*.dptxt *.dprec *.dprecz *.dprec.gz ";
 	QString formats;
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
@@ -904,7 +904,10 @@ void MainWindow::toggleRecording()
 		return;
 	}
 
-	QString filter = tr("Recordings (%1)").arg("*.dprec") + ";;" + QApplication::tr("All files (*)");
+	QString filter =
+			tr("Recordings (%1)").arg("*.dprec") + ";;" +
+			tr("Compressed recordings (%1)").arg("*.dprecz") + ";;" +
+			QApplication::tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Record session"), getLastPath(), filter);
 

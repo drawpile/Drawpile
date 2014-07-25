@@ -23,7 +23,8 @@
 
 #include "../net/message.h"
 
-class QFileDevice;
+class QIODevice;
+class QSaveFile;
 
 namespace recording {
 
@@ -46,7 +47,7 @@ public:
 	 * @param autoclose if true, this object will take ownership of the file device
 	 * @param parent
 	 */
-	Writer(QFileDevice *file, bool autoclose=false, QObject *parent=0);
+	Writer(QIODevice *file, bool autoclose=false, QObject *parent=0);
 	Writer(const Writer&) = delete;
 	Writer &operator=(const Writer&) = delete;
 	~Writer();
@@ -110,7 +111,10 @@ public slots:
 	void recordMessage(const protocol::MessagePtr msg);
 
 private:
-	QFileDevice *_file;
+	QIODevice *_file;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+	QSaveFile *_savefile;
+#endif
 	bool _autoclose;
 	qint64 _minInterval;
 	qint64 _interval;

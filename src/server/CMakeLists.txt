@@ -2,6 +2,7 @@
 
 find_package( Qt5Network REQUIRED)
 find_package( Libmicrohttpd )
+find_package( KF5Archive NO_MODULE )
 
 set (
 	SOURCES
@@ -45,11 +46,21 @@ if ( ${Qt5Network_VERSION_STRING} VERSION_LESS "5.2.0" )
 	set ( SOURCES ${SOURCES} qcommandlineoption.cpp qcommandlineparser.cpp )
 endif()
 
+# Fall back to bundled KArchive if not found
+if(NOT KF5Archive_FOUND)
+        find_package (ZLIB REQUIRED)
+        include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../shared/bundled/karchive")
+endif()
+
 add_executable( ${SRVNAME} ${SOURCES} )
 target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network ${INITSYS_LIB} ${MHD_LIBRARIES} )
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this: 
 qt5_use_modules( ${SRVNAME} Network )
+
+if(NOT KF5Archive_FOUND)
+	target_link_libraries(${SRVNAME} ${ZLIB_LIBRARIES})
+endif()
 
 if ( UNIX AND NOT APPLE )
 	install ( TARGETS ${SRVNAME} DESTINATION bin )

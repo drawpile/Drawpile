@@ -373,18 +373,18 @@ Filter::Filter()
 {
 }
 
-bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
+bool Filter::filterRecording(const QString &input, const QString &outputfile)
 {
 	// Step 1. Open input and output files
-	Reader reader(input);
-	Compatibility readOk = reader.open();
+	Reader reader1(input);
+	Compatibility readOk = reader1.open();
 	if(readOk != COMPATIBLE && readOk != MINOR_INCOMPATIBILITY) {
 		qWarning() << "Cannot open recording for filtering. Error code" << readOk;
-		_errormsg = reader.errorString();
+		_errormsg = reader1.errorString();
 		return false;
 	}
 
-	Writer writer(output);
+	Writer writer(outputfile);
 	if(!writer.open()) {
 		qWarning() << "Cannot open record filter output file";
 		_errormsg = writer.errorString();
@@ -393,10 +393,17 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 
 	// Step 2. Mark messages for removal
 	State state;
-	doFilterRecording(*this, state, reader);
+	doFilterRecording(*this, state, reader1);
 
 	// Step 4. Write messages back to output file
+#if 0
 	reader.rewind();
+#else
+	// KCompressionDevice::seek appears to be buggy
+	reader1.close();
+	Reader reader2(input);
+	reader2.open();
+#endif
 
 	writer.writeHeader();
 
@@ -404,8 +411,9 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 	const unsigned int MARKERS = _newmarkers.size();
 
 	QByteArray buffer;
-	while(reader.readNextToBuffer(buffer)) {
-		const unsigned int pos = reader.currentIndex();
+	while(reader2.readNextToBuffer(buffer)) {
+		const unsigned int pos = reader2.currentIndex();
+		qDebug() << "filtering" << pos;
 
 		// Inject new marker
 		if(newmarkerpos < MARKERS) {
@@ -428,6 +436,8 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 				writer.writeFromBuffer(buffer);
 		}
 	}
+
+	writer.close();
 
 	return true;
 }

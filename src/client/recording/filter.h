@@ -83,7 +83,7 @@ public:
 	 *
 	 * @return true on success
 	 */
-	bool filterRecording(QFileDevice *inputfile, QFileDevice *outputfile);
+	bool filterRecording(const QString &inputfile, const QString &outputfile);
 
 
 private:
