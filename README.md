@@ -26,6 +26,7 @@ Client dependencies:
 Server dependencies:
 
 * Qt 5.0 or newer (QtCore and QtNetwork only)
+* [KF5 KArchive]
 * libsystemd (optional)
 * libmicrohttpd (optional)
 
