@@ -73,6 +73,9 @@ struct SessionDescription {
 	// User information
 	QList<UserDescription> users;
 
+	// Private stuff
+	QString hibernationFile;
+
 	SessionDescription();
 	SessionDescription(const SessionState &session, bool getExtended=false, bool getUsers=false);
 };

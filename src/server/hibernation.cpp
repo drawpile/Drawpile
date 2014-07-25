@@ -47,9 +47,9 @@ bool Hibernation::init()
 	}
 
 	// Scan for sessions
-	const QRegularExpression re("^session-([a-zA-Z0-9:-]{1,64})\\.dphib$");
+	const QRegularExpression re("^session-([a-zA-Z0-9:-]{1,64})\\.dphib(?:\\.(?:gz|bz2|xz))?$");
 
-	for(const QString &filename : dir.entryList(QStringList() << "session-*.dphib", QDir::Files | QDir::Readable)) {
+	for(const QString &filename : dir.entryList(QStringList() << "session-*.dphib*", QDir::Files | QDir::Readable)) {
 		QRegularExpressionMatch m = re.match(filename);
 		if(!m.hasMatch())
 			continue;
@@ -75,6 +75,7 @@ bool Hibernation::init()
 		desc.passwordHash = reader.hibernationHeader().password;
 		desc.persistent = reader.hibernationHeader().flags & recording::HibernationHeader::PERSISTENT;
 		desc.hibernating = true;
+		desc.hibernationFile = reader.filename();
 
 		_sessions.append(desc);
 		logger::debug() << "Found hibernated session:" << filename;
@@ -111,7 +112,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 		return nullptr;
 
 	// Load the session
-	QString filename = QDir(_path).filePath(QString("session-%1.dphib").arg(id));
+	QString filename = sd.hibernationFile;
 	recording::Reader reader(filename);
 	if(reader.open() != recording::COMPATIBLE) {
 		logger::error() << "Unable to open" << filename << "error:" << reader.errorString();
@@ -167,7 +168,7 @@ bool Hibernation::storeSession(const SessionState *session)
 		return false;
 	}
 
-	QString filename = QDir(_path).filePath(QString("session-%1.dphib").arg(session->id()));
+	QString filename = QDir(_path).filePath(QString("session-%1.dphib.gz").arg(session->id()));
 
 	recording::Writer writer(filename);
 	writer.setFilterMeta(false);
@@ -205,6 +206,7 @@ bool Hibernation::storeSession(const SessionState *session)
 	writer.close();
 
 	SessionDescription desc(*session);
+	desc.hibernationFile = filename;
 	_sessions.append(desc);
 	emit sessionAvailable(desc);
 
@@ -229,9 +231,8 @@ bool Hibernation::deleteSession(const QString &id)
 	if(sd.id==0)
 		return false;
 
-	// Remove hibernation file
-	QString filename = QDir(_path).filePath(QString("session-%1.dphib").arg(id));
-	return QFile(filename).remove();
+	// Remove from filesystem
+	return QFile(sd.hibernationFile).remove();
 }
 
 }
