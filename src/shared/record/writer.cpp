@@ -47,7 +47,7 @@ Writer::Writer(const QString &filename, QObject *parent)
 		ct = KCompressionDevice::GZip;
 	else if(filename.endsWith(".bz2", Qt::CaseInsensitive))
 		ct = KCompressionDevice::BZip2;
-	else if(filename.endsWith("xz", Qt::CaseInsensitive))
+	else if(filename.endsWith(".xz", Qt::CaseInsensitive))
 		ct = KCompressionDevice::Xz;
 
 #ifdef NO_QSAVEFILE
