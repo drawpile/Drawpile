@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QFuture>
+#include <QStringList>
 
 namespace server {
 

@@ -766,6 +766,7 @@ void AnnotationSettings::changeAlignment()
 
 void AnnotationSettings::updateFontIfUniform()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	bool uniformFontFamily = true;
 	bool uniformSize = true;
 	bool uniformColor = true;
@@ -795,6 +796,7 @@ void AnnotationSettings::updateFontIfUniform()
 	}
 
 	resetContentFont(uniformFontFamily, uniformSize, uniformColor);
+#endif
 }
 
 void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool resetColor)

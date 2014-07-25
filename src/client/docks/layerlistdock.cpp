@@ -138,7 +138,6 @@ void LayerList::layerContextMenu(const QPoint &pos)
 {
 	QModelIndex index = _ui->layerlist->indexAt(pos);
 	if(index.isValid()) {
-		const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
 		_layermenu->popup(_ui->layerlist->mapToGlobal(pos));
 	}
 }

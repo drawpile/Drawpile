@@ -719,8 +719,13 @@ void MainWindow::open()
 			QApplication::tr("All files (*)");
 
 	// Get the file name to open
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	const QUrl file = QFileDialog::getOpenFileUrl(this,
 			tr("Open image"), getLastPath(), filter);
+#else
+	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
+			tr("Open image"), getLastPath(), filter));
+#endif
 
 	// Open the file if it was selected
 	if(file.isValid()) {
