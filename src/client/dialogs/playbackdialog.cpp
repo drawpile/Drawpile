@@ -93,7 +93,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 		if(speed<=100)
 			_speedfactor = speed / 100.0f;
 		else
-			_speedfactor = 1.0f + ((speed-100) / 100.f) * 5;
+			_speedfactor = 1.0f + ((speed-100) / 100.f) * 8;
 
 		_ui->speedBox->setValue(_speedfactor * 100);
 		//_ui->speedbox->setText(tr("Speed: %1%").arg(_speedfactor * 100, 0, 'f', 0));
@@ -233,6 +233,17 @@ void PlaybackDialog::togglePlay(bool play)
 
 void PlaybackDialog::nextCommand()
 {
+	int c = 1;
+	if(_play)
+		c = qMax(1, _ui->speedBox->value() / 100);
+	nextCommand(c);
+}
+
+void PlaybackDialog::nextCommand(int stepcount)
+{
+	if(stepcount<=0)
+		return;
+
 	if(waitForExporter()) {
 		_waitedForExporter = true;
 		return;
@@ -248,7 +259,7 @@ void PlaybackDialog::nextCommand()
 
 		if(msg->type() == protocol::MSG_INTERVAL) {
 			if(_play) {
-				// autoplay mode: set timer
+				// Autoplay mode: pause for the given interval
 				int interval = msg.cast<protocol::Interval>().milliseconds();
 				float maxinterval = _ui->maxinterval->value() * 1000;
 				_timer->start(qMin(maxinterval, interval * _speedfactor));
@@ -261,8 +272,8 @@ void PlaybackDialog::nextCommand()
 				}
 
 			} else {
-				// manual mode: skip interval
-				nextCommand();
+				// Manual mode: skip interval
+				nextCommand(1);
 				return;
 			}
 		} else {
@@ -270,7 +281,8 @@ void PlaybackDialog::nextCommand()
 				if(msg->type() == protocol::MSG_MARKER && _ui->stopOnMarkers->isChecked()) {
 					_ui->play->setChecked(false);
 				} else {
-					_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
+					if(stepcount==1)
+						_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
 				}
 			}
 
@@ -288,10 +300,15 @@ void PlaybackDialog::nextCommand()
 		break;
 	}
 
-	if(_ui->autoSaveFrame->isChecked())
-		exportFrame(writeFrames);
+	if(stepcount>1) {
+		nextCommand(stepcount-1);
 
-	updateIndexPosition();
+	} else {
+		if(_ui->autoSaveFrame->isChecked())
+			exportFrame(writeFrames);
+
+		updateIndexPosition();
+	}
 }
 
 void PlaybackDialog::nextSequence()

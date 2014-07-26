@@ -99,6 +99,7 @@ private slots:
 	void stopExportClicked();
 
 private:
+	void nextCommand(int stepCount);
 	void createIndexView();
 	void endOfFileReached();
 	bool waitForExporter();
