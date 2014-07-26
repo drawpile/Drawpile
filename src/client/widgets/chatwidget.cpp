@@ -20,6 +20,7 @@
 #include "chatlineedit.h"
 #include "chatwidget.h"
 #include "utils/html.h"
+#include "utils/funstuff.h"
 
 #include <QDebug>
 #include <QResizeEvent>
@@ -159,7 +160,7 @@ void ChatBox::sendMessage(const QString &msg)
 			split = msg.length();
 
 		QString cmd = msg.mid(1, split-1).toLower();
-		QString params = msg.mid(split);
+		QString params = msg.mid(split).trimmed();
 
 		if(cmd == "clear") {
 			// client side command: clear chat window
@@ -170,8 +171,30 @@ void ChatBox::sendMessage(const QString &msg)
 			emit message(msg.mid(2), true, false);
 
 		} else if(cmd == "me") {
-			if(params.size()>1)
+			if(!params.isEmpty())
 				emit message(msg.mid(msg.indexOf(' ')+1), false, true);
+
+		} else if(cmd == "roll") {
+			if(params.isEmpty())
+				params = "1d6";
+
+			utils::DiceRoll result = utils::diceRoll(params);
+			if(result.number>0)
+				emit message("rolls " + result.toString(), false, true);
+			else
+				systemMessage(tr("Invalid dice roll description: %1").arg(params));
+
+#ifndef NDEBUG
+		} else if(cmd == "rolltest") {
+			if(params.isEmpty())
+				params = "1d6";
+
+			QList<float> d = utils::diceRollDistribution(params);
+			QString msg(params + "\n");
+			for(int i=0;i<d.size();++i)
+				msg += QStringLiteral("%1: %2\n").arg(i+1).arg(d.at(i) * 100);
+			systemMessage(msg);
+#endif
 		} else {
 			// operator commands
 			emit opCommand(cmd + params);

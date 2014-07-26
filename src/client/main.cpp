@@ -32,6 +32,7 @@
 #include <QTranslator>
 #include <QDir>
 #include <QDesktopWidget>
+#include <QDateTime>
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -170,6 +171,8 @@ void initTranslations(const QLocale &locale)
 int main(int argc, char *argv[]) {
 	// Initialize application
 	DrawpileApp app(argc,argv);
+
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 
 	initTranslations(QLocale::system());
 

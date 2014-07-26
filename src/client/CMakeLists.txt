@@ -55,6 +55,7 @@ set (
 	utils/sessionidvalidator.cpp
 	utils/imagesize.cpp
 	utils/networkaccess.cpp
+	utils/funstuff.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
