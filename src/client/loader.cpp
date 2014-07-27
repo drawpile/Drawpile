@@ -127,6 +127,8 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
 		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), false));
+		if(_session->isLayerLocked(layer->id()))
+			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
 	}
 
 	// Create annotations

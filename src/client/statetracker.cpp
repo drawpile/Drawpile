@@ -275,9 +275,11 @@ void StateTracker::endPlayback()
 
 QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 {
+	QList<protocol::MessagePtr> snapshot;
+
 	if(!_hassnapshot || forcenew) {
 		// Generate snapshot
-		QList<protocol::MessagePtr> snapshot = SnapshotLoader(this).loadInitCommands();
+		snapshot = SnapshotLoader(this).loadInitCommands();
 
 		// Replace old message stream with snapshot since it didn't contain one
 		_msgstream.resetTo(0);
@@ -290,11 +292,20 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 
 		_hassnapshot = true;
 
-		return snapshot;
 	} else {
-		// Message stream contains (starts with) a snapshot: return it
-		return _msgstream.toList();
+		// Message stream contains (starts with) a snapshot: use it
+		snapshot = _msgstream.toList();
+
+		// Add layer ACL status
+		// This is for the initial session snapshot. For new snapshots the
+		// server will add the correct layer ACLs.
+		for(const net::LayerListItem &layer : _layerlist->getLayers()) {
+			if(layer.isLockedFor(_myid))
+				snapshot << protocol::MessagePtr(new protocol::LayerACL(_myid, layer.id, true, QList<uint8_t>()));
+		}
 	}
+
+	return snapshot;
 }
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos)
@@ -833,6 +844,17 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
 
 	return sp;
+}
+
+bool StateTracker::isLayerLocked(int id) const
+{
+	for(const net::LayerListItem &l : _layerlist->getLayers()) {
+		if(l.id == id)
+			return l.isLockedFor(_myid);
+	}
+
+	qWarning("isLayerLocked(%d): no such layer!", id);
+	return false;
 }
 
 }

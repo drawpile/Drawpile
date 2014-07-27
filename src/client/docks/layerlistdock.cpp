@@ -123,7 +123,7 @@ void LayerList::updateLockedControls()
 	else
 		enabled = false;
 
-	_ui->lockButton->setEnabled(_op && enabled);
+	_ui->lockButton->setEnabled((_op && enabled) || (_client && !_client->isConnected()));
 	_ui->deleteButton->setEnabled(enabled);
 	_ui->opacity->setEnabled(enabled);
 	_ui->blendmode->setEnabled(enabled);

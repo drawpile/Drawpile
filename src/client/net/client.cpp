@@ -441,10 +441,13 @@ void Client::sendCloseSession(bool close)
 
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 {
-	if(_isloopback)
-		qWarning() << "tried to send layer ACL in loopback mode!";
-	else
+	if(_isloopback) {
+		// Allow layer locking in loopback mode. Exclusive access doesn't make any sense in this mode.
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, QList<uint8_t>())));
+
+	} else {
 		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, exclusive)));
+	}
 }
 
 void Client::playbackCommand(protocol::MessagePtr msg)

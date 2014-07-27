@@ -184,6 +184,18 @@ public:
 	 */
 	paintcore::LayerStack *image() { return _image; }
 
+	/**
+	 * @brief Check if the given layer is locked.
+	 *
+	 * Note. This information should only be used for the UI and not
+	 * for filtering events! Any command sent by the server should be
+	 * executed, even if we think the target layer is locked!
+	 *
+	 * @param id layer ID
+	 * @return true if the layer is locked
+	 */
+	bool isLayerLocked(int id) const;
+
 	StateTracker &operator=(const StateTracker&) = delete;
 
 	/**
