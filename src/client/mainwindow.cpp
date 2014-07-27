@@ -256,7 +256,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
-	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool)), this, SLOT(sessionConfChanged(bool,bool,bool)));
+	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool)));
 	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 	connect(_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
@@ -1219,12 +1219,13 @@ void MainWindow::updateStrokePreviewMode()
 	_canvas->setStrokePreview(preview);
 }
 
-void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed)
+void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat)
 {
 	getAction("locksession")->setChecked(locked);
 	getAction("locklayerctrl")->setChecked(layerctrllocked);
 	getAction("denyjoins")->setChecked(closed);
 	_dock_layers->setControlsLocked(layerctrllocked);
+	_chatbox->setPreserveMode(preservechat);
 }
 
 void MainWindow::updateLockWidget()

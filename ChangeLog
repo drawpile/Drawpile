@@ -5,6 +5,7 @@
  * Regression fix: fixed missing initial snapshot generation in recording index
  * Added /roll chat command for generating dice rolls
  * Layers can now be locked in offline mode
+ * Added /preservechat setting
 
 2014-07-18 Version 0.9.3
  * Layer opacity glyph now acts as show/hide button

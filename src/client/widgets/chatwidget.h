@@ -40,6 +40,15 @@ public:
 	//! Focus the text input widget
 	void focusInput();
 
+	/**
+	 * @brief Set default message preservation mode
+	 *
+	 * This sets a visual cue that informs the user whether chat messages are preserved
+	 * in the session history or not.
+	 *
+	 */
+	void setPreserveMode(bool preservechat);
+
 public slots:
 	//! Display a received message
 	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool action, bool isme);

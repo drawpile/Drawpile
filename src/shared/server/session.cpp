@@ -229,6 +229,15 @@ void SessionState::setTitle(const QString &title)
 	}
 }
 
+void SessionState::setPreserveChat(bool preserve)
+{
+	if(_preservechat != preserve) {
+		_preservechat = preserve;
+		addToCommandStream(sessionConf());
+		emit sessionAttributeChanged(this);
+	}
+}
+
 void SessionState::addToCommandStream(protocol::MessagePtr msg)
 {
 	if(_historylimit>0 && _mainstream.lengthInBytes() > _historylimit) {
@@ -590,7 +599,8 @@ protocol::MessagePtr SessionState::sessionConf() const
 		_closed,
 		_layerctrllocked,
 		_lockdefault,
-		_persistent
+		_persistent,
+		_preservechat
 	));
 }
 

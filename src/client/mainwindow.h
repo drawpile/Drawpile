@@ -113,7 +113,7 @@ class MainWindow : public QMainWindow {
 		void connecting();
 		void loggedin(bool join);
 		void disconnected(const QString &message, bool localDisconnect);
-		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed);
+		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat);
 
 		void updateLockWidget();
 		void setRecorderStatus(bool on);

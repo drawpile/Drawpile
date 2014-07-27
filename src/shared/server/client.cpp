@@ -435,8 +435,9 @@ void Client::handleSessionMessage(MessagePtr msg)
 			return;
 		}
 
-		// Normal chat messages are not included in the session history
-		if(!msg.cast<Chat>().isAnnouncement()) {
+		// Normal chat messages are not included in the session history,
+		// except when preservechat setting is set
+		if(!msg.cast<Chat>().isAnnouncement() && !_session->isChatPreserved()) {
 			for(Client *c : _session->clients())
 				c->sendDirectMessage(msg);
 			return;

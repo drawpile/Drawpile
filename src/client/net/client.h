@@ -243,7 +243,7 @@ signals:
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
-	void sessionConfChange(bool locked, bool layerctrllocked, bool closed);
+	void sessionConfChange(bool locked, bool layerctrllocked, bool closed, bool preservechat);
 	void lockBitsChanged();
 
 	void layerVisibilityChange(int id, bool hidden);

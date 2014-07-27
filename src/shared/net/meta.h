@@ -138,16 +138,18 @@ public:
 	static const uint16_t ATTR_LAYERCTRLLOCKED = 0x04;
 	static const uint16_t ATTR_LOCKDEFAULT = 0x08;
 	static const uint16_t ATTR_PERSISTENT = 0x10;
+	static const uint16_t ATTR_PRESERVECHAT = 0x20;
 
 	SessionConf(uint8_t maxusers, uint16_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
-	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent)
+	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent, bool preservechat)
 		: SessionConf(
 			  maxusers,
 			  (locked?ATTR_LOCKED:0) |
 			  (closed?ATTR_CLOSED:0) |
 			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0) |
 			  (lockdefault?ATTR_LOCKDEFAULT:0) |
-			  (persistent?ATTR_PERSISTENT:0)
+			  (persistent?ATTR_PERSISTENT:0) |
+			  (preservechat?ATTR_PRESERVECHAT:0)
 		) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
@@ -171,6 +173,9 @@ public:
 
 	//! Is this a persistent session?
 	bool isPersistent() const { return _attrs & ATTR_PERSISTENT; }
+
+	//! Are normal chat messages preserved in the session history?
+	bool isChatPreserved() const { return _attrs & ATTR_PRESERVECHAT; }
 
 protected:
 	int payloadLength() const;

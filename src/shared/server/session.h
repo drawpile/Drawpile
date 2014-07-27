@@ -207,6 +207,15 @@ public:
 	void setHibernatable(bool h) { _hibernatable = h; }
 
 	/**
+	 * @brief Are chat messages preserved in the session history?
+	 *
+	 * Normally, only messages tagged as "announcements" are stored.
+	 *
+	 */
+	bool isChatPreserved() const { return _preservechat; }
+	void setPreserveChat(bool preserve);
+
+	/**
 	 * @brief Add a new client to the session
 	 * @param user
 	 */
@@ -486,6 +495,7 @@ private:
 	bool _allowPersistent;
 	bool _persistent;
 	bool _hibernatable;
+	bool _preservechat;
 };
 
 }

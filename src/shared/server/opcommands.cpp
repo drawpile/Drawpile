@@ -140,6 +140,10 @@ void persistSession(Client *client, const QString &, const QStringList &tokens)
 	client->session()->setPersistent(tokens.size()==1 || _getOnOff(tokens.at(1)));
 }
 
+void preserveChat(Client *client, const QString &, const QStringList &tokens) {
+	client->session()->setPreserveChat(tokens.size()==1 || _getOnOff(tokens.at(1)));
+}
+
 Client *_getClient(Client *me, const QString &name)
 {
 	Client *c = nullptr;
@@ -302,6 +306,7 @@ OpCommandSet::OpCommandSet()
 		<< OpCommand("logins", loginsOpen, EONOFF, "enable/disable logins", 1)
 		<< OpCommand("lockdefault", lockDefault, ONOFF, "automatically lock new users", 0, 1)
 		<< OpCommand("persistence", persistSession, ONOFF, "make session persistent", 0, 1)
+		<< OpCommand("preservechat", preserveChat, ONOFF, "preserve chat messages", 0, 1)
 
 		<< OpCommand("maxusers", setMaxUsers, "<count>", "set user limit", 1)
 		<< OpCommand("title", setSessionTitle, "[title]", "set session title", 0, -1)

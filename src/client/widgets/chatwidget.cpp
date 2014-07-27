@@ -46,25 +46,11 @@ ChatBox::ChatBox(QWidget *parent)
 	layout->addWidget(_view, 1);
 
 	_myline = new ChatLineEdit(this);
-	_myline->setPlaceholderText(tr("Chat..."));
 	layout->addWidget(_myline);
 
 	setLayout(layout);
 
 	connect(_myline, SIGNAL(returnPressed(QString)), this, SLOT(sendMessage(QString)));
-
-	// Chat window styling
-	setStyleSheet(
-		"QTextEdit, QLineEdit {"
-			"border: none;"
-			"background-color: #111;"
-			"color: #adadad;"
-			"font-family: Monospace"
-		"}"
-		"QLineEdit {"
-			"border-top: 2px solid #3333da"
-		"}"
-	);
 
 	_view->document()->setDefaultStyleSheet(
 		"p { margin: 5px 0; white-space: pre }"
@@ -75,6 +61,36 @@ ChatBox::ChatBox(QWidget *parent)
 		".nick.me { color: #fff }"
 		".action { color: #fff }"
 		"a:link { color: #5454FF }"
+	);
+
+	setPreserveMode(false);
+}
+
+void ChatBox::setPreserveMode(bool preservechat)
+{
+	QString placeholder, color;
+
+	if(preservechat) {
+		placeholder = tr("Chat (recorded)...");
+		color = "#da3333";
+	} else {
+		placeholder = tr("Chat...");
+		color = "#3333da";
+	}
+
+	// Set placeholder text and window style based on the mode
+	_myline->setPlaceholderText(placeholder);
+	setStyleSheet(QStringLiteral(
+		"QTextEdit, QLineEdit {"
+			"border: none;"
+			"background-color: #111;"
+			"color: #adadad;"
+			"font-family: Monospace"
+		"}"
+		"QLineEdit {"
+			"border-top: 2px solid %1"
+		"}"
+		).arg(color)
 	);
 }
 
@@ -197,6 +213,8 @@ void ChatBox::sendMessage(const QString &msg)
 #endif
 		} else {
 			// operator commands
+			if(!params.isEmpty())
+				params.prepend(' ');
 			emit opCommand(cmd + params);
 		}
 

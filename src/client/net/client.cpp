@@ -150,7 +150,7 @@ void Client::handleDisconnect(const QString &message, bool localDisconnect)
 	_isSessionLocked = false;
 	_isUserLocked = false;
 	emit opPrivilegeChange(false);
-	emit sessionConfChange(false, false, false);
+	emit sessionConfChange(false, false, false, false);
 	emit lockBitsChanged();
 }
 
@@ -605,7 +605,7 @@ void Client::handleUserLeave(const protocol::UserLeave &msg)
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
 	_isSessionLocked = msg.isLocked();
-	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed());
+	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed(), msg.isChatPreserved());
 	emit lockBitsChanged();
 }
 
