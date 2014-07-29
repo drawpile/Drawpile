@@ -168,10 +168,13 @@ void doAlphaMaskBlend(quint32 *base, quint32 color, const uchar *mask,
 					*dest = *mask; ++dest;
 				} else {
 					// Normal case: blend colors and alpha
-					*dest = UINT8_BLEND(src[0], *dest, *mask); ++dest;
-					*dest = UINT8_BLEND(src[1], *dest, *mask); ++dest;
-					*dest = UINT8_BLEND(src[2], *dest, *mask); ++dest;
-					*dest = *mask + UINT8_MULT(255-*mask, *dest); ++dest;
+					const uchar a = *mask;
+					const uchar a2 = UINT8_MULT(dest[3], 255-a);
+					const uchar a_out = a+a2;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = a_out; ++dest;
 				}
 			}
 		}
