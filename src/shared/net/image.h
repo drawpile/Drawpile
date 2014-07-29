@@ -50,7 +50,7 @@ public:
 	static const int MODE_BLEND = (1<<0);
 
 	//! Maximum length of image data array
-	static const int MAX_LEN = (1<<16) - 11;
+	static const int MAX_LEN = (1<<16) - 19;
 
 	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
