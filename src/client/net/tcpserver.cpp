@@ -124,7 +124,12 @@ void TcpServer::handleDisconnect()
 void TcpServer::handleSocketError()
 {
 	qWarning() << "Socket error:" << _socket->errorString();
-	_error = _socket->errorString();
+
+	if(_socket->error() == QTcpSocket::RemoteHostClosedError)
+		return;
+
+	if(_error.isEmpty())
+		_error = _socket->errorString();
 	if(_socket->state() != QTcpSocket::UnconnectedState)
 		_socket->disconnectFromHost();
 	else
