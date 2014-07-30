@@ -123,6 +123,11 @@ public:
 	void setPersistentSessions(bool persistent) { Q_ASSERT(_mode==HOST); _requestPersistent = persistent; }
 
 	/**
+	 * @brief Set whether chat history should be preserved in the session
+	 */
+	void setPreserveChat(bool preserve) { Q_ASSERT(_mode==HOST); _preserveChat = preserve; }
+
+	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
@@ -214,6 +219,7 @@ private:
 	bool _allowdrawing;
 	bool _layerctrllock;
 	bool _requestPersistent;
+	bool _preserveChat;
 
 	// Process state
 	TcpServer *_server;

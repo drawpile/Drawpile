@@ -1035,6 +1035,7 @@ void MainWindow::host()
 			login->setAllowDrawing(dlg->getAllowDrawing());
 			login->setLayerControlLock(dlg->getLayerControlLock());
 			login->setPersistentSessions(dlg->getPersistentMode());
+			login->setPreserveChat(dlg->getPreserveChat());
 			w->_client->connectToServer(login);
 
 		}

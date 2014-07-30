@@ -64,6 +64,9 @@ class HostDialog : public QDialog
 		//! Should the session be persistent
 		bool getPersistentMode() const;
 
+		//! Should chat history be preserved in the session
+		bool getPreserveChat() const;
+
 		//! Get the desired session ID (or * if not specified)
 		QString getSessionId() const;
 

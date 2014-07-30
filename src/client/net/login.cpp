@@ -547,6 +547,9 @@ void LoginHandler::expectLoginOk(const QString &msg)
 			if(_requestPersistent)
 				init << "persistence on";
 
+			if(_preserveChat)
+				init << "preservechat on";
+
 			for(const QString msg : init)
 				_server->sendMessage(protocol::Chat::opCommand(0, msg));
 		}
