@@ -63,7 +63,7 @@ public:
 signals:
 	void loggedIn(QString sessionId, int userid, bool join);
 	void loggingOut();
-	void serverDisconnected(const QString &message, bool localDisconnect);
+	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
 	void expectingBytes(int);
 	void bytesReceived(int);
@@ -71,8 +71,8 @@ signals:
 	void messageReceived(protocol::MessagePtr message);
 
 protected:
-	void loginFailure(const QString &message, bool cancelled=false) override;
-	void loginSuccess() override;
+	void loginFailure(const QString &message, const QString &errorcode);
+	void loginSuccess();
 
 private slots:
 	void handleMessage();
@@ -85,7 +85,7 @@ private:
 	QSslSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
 	LoginHandler *_loginstate;
-	QString _error;
+	QString _error, _errorcode;
 	Security _securityLevel;
 	bool _localDisconnect;
 	bool _paused;

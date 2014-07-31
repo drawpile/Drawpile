@@ -117,7 +117,7 @@ void TcpServer::handleBadData(int len, int type)
 
 void TcpServer::handleDisconnect()
 {
-	emit serverDisconnected(_error, _localDisconnect);
+	emit serverDisconnected(_error, _errorcode, _localDisconnect);
 	deleteLater();
 }
 
@@ -136,11 +136,12 @@ void TcpServer::handleSocketError()
 		handleDisconnect();
 }
 
-void TcpServer::loginFailure(const QString &message, bool cancelled)
+void TcpServer::loginFailure(const QString &message, const QString &errorcode)
 {
 	qWarning() << "Login failed:" << message;
 	_error = message;
-	_localDisconnect = cancelled;
+	_errorcode = errorcode;
+	_localDisconnect = errorcode == "CANCELLED";
 	_socket->disconnectFromHost();
 }
 

@@ -79,17 +79,6 @@ public:
 
 	virtual QSslCertificate hostCertificate() const { return QSslCertificate(); }
 
-protected:
-	/**
-	 * @brief Signal a failed login
-	 *
-	 *
-	 * @param message error message
-	 * @param cancelled if true, the error was due to user cancellation
-	 */
-	virtual void loginFailure(const QString &, bool) {}
-    virtual void loginSuccess() {}
-
 private:
     bool _local;
 };

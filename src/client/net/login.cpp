@@ -737,7 +737,7 @@ void LoginHandler::tlsAccepted()
 void LoginHandler::cancelLogin()
 {
 	_state = ABORT_LOGIN;
-	_server->loginFailure(tr("Cancelled"), true);
+	_server->loginFailure(tr("Cancelled"), "CANCELLED");
 }
 
 void LoginHandler::handleError(const QString &msg)
@@ -748,27 +748,27 @@ void LoginHandler::handleError(const QString &msg)
 	if(ecode == "NOSESSION")
 		error = tr("Session not found!");
 	else if(ecode == "BADPASS")
-		error = tr("Incorrect password");
+		error = tr("Incorrect password!");
 	else if(ecode == "BADNAME")
-		error = tr("Invalid username");
+		error = tr("Invalid username!");
 	else if(ecode == "NAMEINUSE")
 		error = tr("Username already taken!");
 	else if(ecode == "CLOSED")
-		error = tr("Session is closed");
+		error = tr("Session is closed!");
 	else if(ecode == "BANNED")
-		error = tr("This username has been banned");
+		error = tr("This username has been banned!");
 	else if(ecode == "SESSIONIDINUSE")
-		error = tr("Session ID already in use");
+		error = tr("Session ID already in use!");
 	else
 		error = tr("Unknown error (%1)").arg(ecode);
 
-	failLogin(error);
+	failLogin(error, ecode);
 }
 
-void LoginHandler::failLogin(const QString &message)
+void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 {
 	_state = ABORT_LOGIN;
-	_server->loginFailure(message);
+	_server->loginFailure(message, errorcode);
 }
 
 void LoginHandler::send(const QString &message)
@@ -777,6 +777,15 @@ void LoginHandler::send(const QString &message)
 	qDebug() << "login -->" << message;
 #endif
 	_server->sendMessage(protocol::MessagePtr(new protocol::Login(message)));
+}
+
+QString LoginHandler::sessionId() const {
+	if(!_loggedInSessionId.isEmpty())
+		return _loggedInSessionId;
+	if(_mode == HOST)
+		return _hostSessionId;
+	else
+		return _autoJoinId;
 }
 
 }

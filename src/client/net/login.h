@@ -158,10 +158,12 @@ public:
 	int userId() const { return _userid; }
 
 	/**
-	 * @brief get the ID of the session we logged in to
+	 * @brief get the ID of the session.
+	 *
+	 * This is set to the actual session ID after login succeeds.
 	 * @return session ID
 	 */
-	const QString &sessionId() const { return _loggedInSessionId; }
+	QString sessionId() const;
 
 public slots:
 	void serverDisconnected();
@@ -170,7 +172,7 @@ private slots:
 	void joinSelectedSession(const QString &id, bool needPassword);
 	void selectIdentity(const QString &password, const QString &username);
 	void cancelLogin();
-	void failLogin(const QString &message);
+	void failLogin(const QString &message, const QString &errorcode=QString());
 	void passwordSet(const QString &password);
 	void tlsStarted();
 	void tlsError(const QList<QSslError> &errors);

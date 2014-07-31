@@ -263,11 +263,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
-	connect(_client, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(disconnected(QString, bool)));
+	connect(_client, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(serverDisconnected(QString, QString, bool)));
 
 	connect(_client, SIGNAL(serverConnected(QString, int)), _netstatus, SLOT(connectingToHost(QString, int)));
 	connect(_client, SIGNAL(serverDisconnecting()), _netstatus, SLOT(hostDisconnecting()));
-	connect(_client, SIGNAL(serverDisconnected(QString, bool)), _netstatus, SLOT(hostDisconnected()));
+	connect(_client, SIGNAL(serverDisconnected(QString, QString, bool)), _netstatus, SLOT(hostDisconnected()));
 	connect(_client, SIGNAL(expectingBytes(int)), _netstatus, SLOT(expectBytes(int)));
 	connect(_client, SIGNAL(sendingBytes(int)), _netstatus, SLOT(sendingBytes(int)));
 	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
@@ -1153,7 +1153,7 @@ void MainWindow::connecting()
 /**
  * Connection lost, so disable and enable some UI elements
  */
-void MainWindow::disconnected(const QString &message, bool localDisconnect)
+void MainWindow::serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
 {
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
@@ -1166,16 +1166,47 @@ void MainWindow::disconnected(const QString &message, bool localDisconnect)
 
 	setSessionTitle(QString());
 
-	// Display login error if not yet logged in
-	if(!_client->isLoggedIn() && !localDisconnect) {
-		showErrorMessage(tr("Couldn't connect to server"), message);
-	}
-
 	// Make sure all drawing is complete
 	if(_canvas->hasImage())
 		_canvas->statetracker()->endRemoteContexts();
 
 	updateStrokePreviewMode();
+
+	// Display login error if not yet logged in
+	if(!_client->isLoggedIn() && !localDisconnect) {
+		QMessageBox *msgbox = new QMessageBox(
+			QMessageBox::Warning,
+			QString(),
+			tr("Couldn't connect to server"),
+			QMessageBox::Ok,
+			this,
+			Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
+		);
+
+		msgbox->setAttribute(Qt::WA_DeleteOnClose);
+		msgbox->setWindowModality(Qt::WindowModal);
+		msgbox->setInformativeText(message);
+
+		if(errorcode == "SESSIONIDINUSE") {
+			// We tried to host a session using with a vanity ID, but that
+			// ID was taken. Show a button for quickly joining that session instead
+			msgbox->setInformativeText(msgbox->informativeText() + "\n" + tr("Would you like to join the session instead?"));
+
+			QAbstractButton *joinbutton = msgbox->addButton(tr("Join"), QMessageBox::YesRole);
+
+			msgbox->removeButton(msgbox->button(QMessageBox::Ok));
+			msgbox->addButton(QMessageBox::Cancel);
+
+			QUrl url = _client->sessionUrl(true);
+
+			connect(joinbutton, &QAbstractButton::clicked, [this, url]() {
+				joinSession(url);
+			});
+
+		}
+
+		msgbox->show();
+	}
 }
 
 /**
@@ -1279,7 +1310,7 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 {
 	QMessageBox *msgbox = new QMessageBox(
 		QMessageBox::Warning,
-		QString("Drawpile"),
+		QString(),
 		message, QMessageBox::Ok,
 		this,
 		Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint

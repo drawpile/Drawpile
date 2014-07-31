@@ -87,7 +87,7 @@ public:
 	 *
 	 * Returns an invalid URL not connected
 	 */
-	QUrl sessionUrl() const;
+	QUrl sessionUrl(bool includeUser=false) const;
 
 	/**
 	 * @brief Get the local user's username
@@ -234,7 +234,7 @@ signals:
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
 	void serverDisconnecting();
-	void serverDisconnected(const QString &message, bool localDisconnect);
+	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
 	void userJoined(int id, const QString &name);
 	void userLeft(const QString &name);
@@ -256,7 +256,7 @@ signals:
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
 	void handleConnect(QString sessionId, int userid, bool join);
-	void handleDisconnect(const QString &message, bool localDisconnect);
+	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
 	void handleSnapshotRequest(const protocol::SnapshotMode &msg);

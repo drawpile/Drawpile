@@ -84,10 +84,11 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	TcpServer *server = new TcpServer(this);
 	_server = server;
 	_isloopback = false;
+	_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
 
 	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
-	connect(server, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(handleDisconnect(QString, bool)));
-	connect(server, SIGNAL(serverDisconnected(QString,bool)), loginhandler, SLOT(serverDisconnected()));
+	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(handleDisconnect(QString, QString, bool)));
+	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), loginhandler, SLOT(serverDisconnected()));
 	connect(server, SIGNAL(loggedIn(QString, int, bool)), this, SLOT(handleConnect(QString, int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
@@ -114,14 +115,15 @@ bool Client::isLoggedIn() const
 	return _server->isLoggedIn();
 }
 
-QUrl Client::sessionUrl() const
+QUrl Client::sessionUrl(bool includeUser) const
 {
 	if(!isConnected())
 		return QUrl();
 
 	QUrl url = static_cast<const TcpServer*>(_server)->url();
 	url.setScheme("drawpile");
-	url.setUserInfo(QString());
+	if(!includeUser)
+		url.setUserInfo(QString());
 	url.setPath("/" + _sessionId);
 	return url;
 }
@@ -138,9 +140,9 @@ void Client::handleConnect(QString sessionId, int userid, bool join)
 	emit serverLoggedin(join);
 }
 
-void Client::handleDisconnect(const QString &message, bool localDisconnect)
+void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
 {
-	emit serverDisconnected(message, localDisconnect);
+	emit serverDisconnected(message, errorcode, localDisconnect);
 	_userlist->clearUsers();
 	_layerlist->unlockAll();
 	_server = _loopback;
