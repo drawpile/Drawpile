@@ -179,8 +179,6 @@ if( Qt5LinguistTools_FOUND)
 
 	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})
 
-	INSTALL(FILES "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
-
 endif()
 
 

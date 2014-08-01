@@ -30,3 +30,8 @@ if( XDGMIME )
 	")
 endif()
 
+set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile")
+
+file(GLOB PALETTES "${CMAKE_CURRENT_SOURCE_DIR}/palettes/*.gpl")
+install(FILES ${PALETTES} DESTINATION "${DATADIR}/palettes/")
+
