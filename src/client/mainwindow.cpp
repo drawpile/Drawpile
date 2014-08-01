@@ -36,6 +36,7 @@
 #include <QImageWriter>
 #include <QSplitter>
 #include <QClipboard>
+#include <QFile>
 
 #ifndef NDEBUG
 #include <QTimer>
@@ -687,13 +688,11 @@ void MainWindow::open(const QUrl& url)
 				addRecentFile(file);
 		}
 	} else {
-		networkaccess::getImage(url, _netstatus, [this](const QImage &image, const QString &error) {
-			if(image.isNull()) {
-				showErrorMessage(error);
+		networkaccess::getFile(url, QString(), _netstatus, [this](const QFile &file, const QString &error) {
+			if(error.isEmpty()) {
+				open(QUrl::fromLocalFile(file.fileName()));
 			} else {
-				// TODO support OpenRaster files
-				QImageCanvasLoader icl(image);
-				loadDocument(icl);
+				showErrorMessage(error);
 			}
 		});
 	}

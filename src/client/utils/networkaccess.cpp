@@ -24,6 +24,9 @@
 #include <QDebug>
 #include <QApplication>
 #include <QMimeDatabase>
+#include <QTemporaryFile>
+#include <QDir>
+#include <QImageReader>
 
 namespace networkaccess {
 
@@ -56,38 +59,63 @@ QNetworkReply *get(const QUrl &url, const QString &expectType, widgets::NetStatu
 	return reply;
 }
 
-void getImage(const QUrl &url, widgets::NetStatus *netstatus, std::function<void (const QImage &, const QString &)> callback)
+void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void (QFile &, const QString &)> callback)
 {
-	QNetworkReply *reply = get(url, "image/", netstatus);
+	QString fileExt = ".tmp";
+	QString filename = url.fileName();
+	int fileExtIndex = filename.lastIndexOf('.');
+	if(fileExtIndex>0)
+		fileExt = filename.mid(fileExtIndex);
 
-	reply->connect(reply, &QNetworkReply::finished, [reply, callback]() {
-		QImage img;
+	QTemporaryFile *tempfile = new QTemporaryFile(QDir::tempPath() + QStringLiteral("/drawpile_XXXXXX-download") + fileExt);
+	if(!tempfile->open()) {
+		callback(*tempfile, tempfile->errorString());
+		delete tempfile;
+		return;
+	}
+
+	QNetworkReply *reply = get(url, expectType, netstatus);
+
+	reply->connect(reply, &QNetworkReply::readyRead, [reply, tempfile]() {
+		tempfile->write(reply->readAll());
+	});
+
+	reply->connect(reply, &QNetworkReply::finished, [reply, expectType, callback, tempfile]() {
 		QString errormsg;
 
 		if(reply->error()) {
 			if(reply->error() == QNetworkReply::OperationCanceledError &&
 				!reply->header(QNetworkRequest::ContentTypeHeader).toString().startsWith("image/")) {
-				qWarning() << reply->url() << "expected image, got" << reply->header(QNetworkRequest::ContentTypeHeader);
+				qWarning() << reply->url() << "expected" << expectType << ", got" << reply->header(QNetworkRequest::ContentTypeHeader);
 				errormsg = QApplication::tr("Unexpected file format");
 			} else {
 				errormsg = reply->errorString();
 			}
 
-		} else {
-			QMimeDatabase db;
-			QByteArray imgdata = reply->readAll();
-			QMimeType mimetype = db.mimeTypeForData(imgdata);
-
-			if(!mimetype.name().startsWith("image/"))
-				mimetype = db.mimeTypeForUrl(reply->url());
-
-			img = QImage::fromData(imgdata, mimetype.preferredSuffix().toLocal8Bit().constData());
-			if(img.isNull())
-				errormsg = QApplication::tr("The image could not be loaded");
 		}
 
-		callback(img, errormsg);
+		tempfile->seek(0);
+		callback(*tempfile, errormsg);
+		delete tempfile;
 		reply->deleteLater();
+	});
+
+}
+
+void getImage(const QUrl &url, widgets::NetStatus *netstatus, std::function<void (const QImage &, const QString &)> callback)
+{
+	getFile(url, "image/", netstatus, [callback](QFile &file, const QString &error) {
+		if(!error.isEmpty()) {
+			callback(QImage(), error);
+		} else {
+			QImageReader reader(file.fileName());
+			QImage image = reader.read();
+
+			if(image.isNull())
+				callback(image, reader.errorString());
+			else
+				callback(image, QString());
+		}
 	});
 }
 

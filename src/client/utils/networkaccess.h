@@ -27,6 +27,7 @@ class QNetworkReply;
 class QString;
 class QUrl;
 class QImage;
+class QFile;
 
 namespace widgets {
 	class NetStatus;
@@ -49,6 +50,17 @@ QNetworkAccessManager *getInstance();
  * @return network reply
  */
 QNetworkReply *get(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus);
+
+/**
+ * @brief Load a potentially large file from the network
+ *
+ * The file is first downloaded into a temporary file.
+ *
+ * @param url
+ * @param expectType
+ * @param callback
+ */
+void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void(QFile &file, const QString &errorMsg)> callback);
 
 /**
  * @brief A convenience wrapepr aaround get() that expects an image in response
