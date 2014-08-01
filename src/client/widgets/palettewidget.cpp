@@ -97,7 +97,7 @@ QSize PaletteWidget::calcSwatchSize(int availableWidth) const
 {
 	QSize s;
 	s.setWidth(qMax(1+_spacing*2, (availableWidth-_spacing)/_columns - _spacing));
-	s.setHeight(s.width() * 0.75 + 0.5);
+	s.setHeight(qMin(int(s.width() * 0.75 + 0.5), availableWidth/16));
 	return s;
 }
 
