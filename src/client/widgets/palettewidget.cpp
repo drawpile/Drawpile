@@ -112,10 +112,11 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 
 	int contentWidth = width();
 
-	const int count = _palette->count() + (_palette->isReadonly() ? 0 : 1);
+	int count = 0;
 
 	if(_palette) {
 		// First calculate required space without scrollbar
+		count = _palette->count() + (_palette->isReadonly() ? 0 : 1);
 		_swatchsize = calcSwatchSize(contentWidth);
 		rowsHeight = (count / _columns + 1) * (_swatchsize.height()+_spacing);
 	}
