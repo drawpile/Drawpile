@@ -65,7 +65,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
  */
 int Brush::radius(qreal pressure) const
 {
-	return qMax(1, qRound(interpolate(radius1(), radius2(), pressure)));
+	return qRound(interpolate(radius1(), radius2(), pressure));
 }
 
 /**

@@ -471,8 +471,8 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 
 	Point p = point;
 	if(!effective_brush.subpixel()) {
-		p.setX(qRound(p.x()));
-		p.setY(qRound(p.y()));
+		p.setX(qFloor(p.x()));
+		p.setY(qFloor(p.y()));
 	}
 
 	l->directDab(effective_brush, BrushMaskGenerator::cached(effective_brush), p);
@@ -562,11 +562,11 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
 void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
-	int x0 = qRound(from.x());
-	int y0 = qRound(from.y());
+	int x0 = qFloor(from.x());
+	int y0 = qFloor(from.y());
 	qreal p = from.pressure();
-	int x1 = qRound(to.x());
-	int y1 = qRound(to.y());
+	int x1 = qFloor(to.x());
+	int y1 = qFloor(to.y());
 	int dy = y1 - y0;
 	int dx = x1 - x0;
 	int stepx, stepy;
