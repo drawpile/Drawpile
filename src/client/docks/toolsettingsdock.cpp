@@ -48,6 +48,50 @@ ToolSettings::ToolSettings(QWidget *parent)
 	auto *layout = new QVBoxLayout(w);
 	layout->setMargin(3);
 
+	auto *hlayout = new QHBoxLayout;
+	hlayout->setContentsMargins(3, 3, 3, 0);
+	layout->addLayout(hlayout);
+
+	// Create quick toolchange slot buttons
+	QButtonGroup *quickbuttons = new QButtonGroup(this);
+	quickbuttons->setExclusive(true);
+	for(int i=0;i<QUICK_SLOTS;++i) {
+		auto *b = new widgets::ToolSlotButton(w);
+
+		b->setCheckable(true);
+		b->setText(QString::number(i+1));
+		b->setMinimumSize(32, 32);
+		b->setToolTip(tr("Tool slot #%1").arg(i+1));
+		//b->setIconSize(QSize(22, 22));
+		b->setAutoRaise(true);
+
+		hlayout->addWidget(b);
+		quickbuttons->addButton(b, i);
+		_quickslot[i] = b;
+	}
+
+	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
+
+	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
+
+	// Create foreground/background color changing widget
+	_fgbgcolor = new widgets::DualColorButton(w);
+	_fgbgcolor->setMinimumSize(32,32);
+	hlayout->addWidget(_fgbgcolor);
+
+	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
+		_currenttool->setForeground(c);
+		_toolprops[_currentQuickslot].setForegroundColor(c);
+		updateToolSlot(_currentQuickslot);
+		emit foregroundColorChanged(c);
+	});
+	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
+		_currenttool->setBackground(c);
+		_toolprops[_currentQuickslot].setBackgroundColor(c);
+		updateToolSlot(_currentQuickslot);
+		emit backgroundColorChanged(c);
+	});
+
 	// Create a widget stack
 	_widgets = new QStackedWidget(this);
 	layout->addWidget(_widgets, 1);
@@ -83,34 +127,6 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
 	_widgets->addWidget(_lasersettings->createUi(this));
 
-	// Create foreground/background color changing widget
-	QFrame *separator = new QFrame(w);
-	separator->setFrameShape(QFrame::HLine);
-	separator->setFrameShadow(QFrame::Sunken);
-	layout->addWidget(separator);
-
-	auto *hlayout = new QHBoxLayout;
-	hlayout->setMargin(3);
-	layout->addLayout(hlayout);
-
-	_fgbgcolor = new widgets::DualColorButton(w);
-	_fgbgcolor->setMinimumSize(48,48);
-	hlayout->addWidget(_fgbgcolor);
-	hlayout->addSpacerItem(new QSpacerItem(10, 5, QSizePolicy::Expanding));
-
-	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
-		_currenttool->setForeground(c);
-		_toolprops[_currentQuickslot].setForegroundColor(c);
-		updateToolSlot(_currentQuickslot);
-		emit foregroundColorChanged(c);
-	});
-	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
-		_currenttool->setBackground(c);
-		_toolprops[_currentQuickslot].setBackgroundColor(c);
-		updateToolSlot(_currentQuickslot);
-		emit backgroundColorChanged(c);
-	});
-
 	connect(_pickersettings, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	// Create color changer dialogs
@@ -125,26 +141,6 @@ ToolSettings::ToolSettings(QWidget *parent)
 	dlg_bgcolor->setAlphaEnabled(false);
 	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
 	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
-
-	// Create quick toolchange slot buttons
-	QButtonGroup *quickbuttons = new QButtonGroup(this);
-	quickbuttons->setExclusive(true);
-	for(int i=0;i<QUICK_SLOTS;++i) {
-		auto *b = new widgets::ToolSlotButton(w);
-
-		b->setCheckable(true);
-		b->setText(QString::number(i+1));
-		b->setMinimumSize(22, 48);
-		b->setToolTip(tr("Tool slot #%1").arg(i+1));
-		//b->setIconSize(QSize(22, 22));
-		b->setAutoRaise(true);
-
-		hlayout->addWidget(b);
-		quickbuttons->addButton(b, i);
-		_quickslot[i] = b;
-	}
-
-	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
 }
 
 ToolSettings::~ToolSettings()

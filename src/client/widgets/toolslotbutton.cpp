@@ -27,6 +27,7 @@ namespace widgets {
 ToolSlotButton::ToolSlotButton(QWidget *parent) :
 	QToolButton(parent)
 {
+	setCursor(Qt::PointingHandCursor);
 }
 
 void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
@@ -38,40 +39,46 @@ void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
 
 void ToolSlotButton::paintEvent(QPaintEvent *)
 {
-	QStylePainter p(this);
-	QStyleOptionToolButton opt;
-	initStyleOption(&opt);
+	const int UNDERLINE = 3;
+	const int RADIUS = qMin(width(), height()-UNDERLINE) - 2;
+	QRectF rect(
+		(width() - RADIUS) / 2 + 0.5,
+		(height() - RADIUS) / 2 + 0.5 - UNDERLINE + 1,
+		RADIUS,
+		RADIUS
+	);
+	QPainter p(this);
 
-	// Remove icon: we draw that ourself
-	opt.icon = QIcon();
-	opt.text = QString();
+	// Draw foreground and background colors
+	p.setPen(Qt::NoPen);
+	p.setBrush(_fg);
+	p.drawChord(rect, 45*16, 180*16);
 
-	p.drawComplexControl(QStyle::CC_ToolButton, opt);
+	p.setBrush(_bg);
+	p.drawChord(rect, 225*16, 180*16);
 
-	// Draw colors and icon
-	static const int PADDING = 3;
-
+	// Draw icon
+	int iconSize = qMin(rect.width(), rect.height()) * 0.5 * 1.414;
+	QPixmap pixmap = icon().pixmap(iconSize, iconSize);
 	p.drawPixmap(QRect(
-		width() / 2 - opt.iconSize.width()/2,
-		PADDING,
-		opt.iconSize.width(),
-		opt.iconSize.height()
-	), icon().pixmap(opt.iconSize));
+		rect.left() + (rect.width() - pixmap.width())/2,
+		rect.top() + (rect.height() - pixmap.height())/2,
+		pixmap.width(),
+		pixmap.height()
+	), pixmap);
 
-	const int w = width() - PADDING*2;
-	const int h = height() - PADDING*3 - opt.iconSize.height();
-	const int x = PADDING;
-	const int y = PADDING*2 + opt.iconSize.height();
-	if(h>0) {
-		p.fillRect(x, y, w, h, _bg);
-		QPoint tri[] = {
-			{x+1, y+1}, {x+w-1, y+1}, {x+1, y+h-1}
-		};
+	// Draw outline
+	p.setRenderHint(QPainter::Antialiasing);
+	p.setBrush(Qt::NoBrush);
+	p.setPen(QColor(0, 0, 0, 128));
+	p.drawEllipse(rect);
 
-		p.setRenderHint(QPainter::Antialiasing);
+	// Draw selection indicator
+	if(isChecked()) {
+		p.setRenderHint(QPainter::Antialiasing, false);
 		p.setPen(Qt::NoPen);
-		p.setBrush(_fg);
-		p.drawConvexPolygon(tri, sizeof(tri)/sizeof(QPoint));
+		p.setBrush(palette().brush(QPalette::Highlight));
+		p.drawRect(0, height() - UNDERLINE, width(), UNDERLINE);
 	}
 }
 
