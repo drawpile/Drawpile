@@ -506,10 +506,8 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	_ui->preview->setSubpixel(_subpixel);
 
 	if(!_subpixel) {
-		// If subpixel accuracy wasn't enabled, don't offer a chance to
-		// enable it.
+		// Hard edge mode is always enabled for tools that do not support antialiasing
 		_ui->hardedge->hide();
-		_ui->brushopts->addSpacing(_ui->hardedge->width());
 	}
 
 	return widget;

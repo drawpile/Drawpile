@@ -63,9 +63,5 @@ Finally, the following are original to Drawpile:
  * flag-red
  * flag-blue
  * chat
- * pressure-size
- * pressure-opacity
- * pressure-hardness
- * pressure-color
  * user-moderator
 

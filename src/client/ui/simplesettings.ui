@@ -82,12 +82,6 @@
      </item>
      <item>
       <widget class="QToolButton" name="hardedge">
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Hard edge</string>
        </property>

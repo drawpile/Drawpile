@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>238</height>
+    <height>300</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -184,71 +184,49 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Pressure:</string>
        </property>
       </widget>
      </item>
      <item row="5" column="1" colspan="2">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>5</number>
+      <layout class="QGridLayout">
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-       <item>
-        <widget class="QToolButton" name="pressuresize">
-         <property name="toolTip">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="pressuresize">
+         <property name="text">
           <string>Size</string>
          </property>
-         <property name="icon">
-          <iconset theme="pressure-size">
-           <normaloff>icons:pressure-size.png</normaloff>icons:pressure-size.png</iconset>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
-       <item>
-        <widget class="QToolButton" name="pressureopacity">
-         <property name="toolTip">
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="pressureopacity">
+         <property name="text">
           <string>Opacity</string>
          </property>
-         <property name="icon">
-          <iconset theme="pressure-opacity">
-           <normaloff>icons:pressure-opacity.png</normaloff>icons:pressure-opacity.png</iconset>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
-       <item>
-        <widget class="QToolButton" name="pressurecolor">
-         <property name="toolTip">
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="pressurecolor">
+         <property name="text">
           <string>Color</string>
          </property>
-         <property name="icon">
-          <iconset theme="pressure-color">
-           <normaloff>icons:pressure-color.png</normaloff>icons:pressure-color.png</iconset>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </item>
@@ -283,9 +261,60 @@
   <tabstop>brushsize</tabstop>
   <tabstop>brushopacity</tabstop>
   <tabstop>brushspacing</tabstop>
+  <tabstop>pressuresize</tabstop>
+  <tabstop>pressureopacity</tabstop>
+  <tabstop>pressurecolor</tabstop>
  </tabstops>
  <resources/>
  <connections>
+  <connection>
+   <sender>pressuresize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setSizePressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>60</x>
+     <y>27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressureopacity</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setOpacityPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressurecolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setColorPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>blendmode</sender>
    <signal>currentIndexChanged(int)</signal>
@@ -459,54 +488,6 @@
     <hint type="destinationlabel">
      <x>100</x>
      <y>160</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressuresize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setSizePressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>89</x>
-     <y>178</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>73</x>
-     <y>48</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressureopacity</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setOpacityPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>110</x>
-     <y>177</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>79</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressurecolor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setColorPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>139</x>
-     <y>185</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>156</x>
-     <y>33</y>
     </hint>
    </hints>
   </connection>
