@@ -2095,12 +2095,6 @@ void MainWindow::createDocks()
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
-	// Create input settings
-	_dock_input = new docks::InputSettings(this);
-	_dock_input->setObjectName("InputSettings");
-	_dock_input->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
-
 	// Create color boxes
 	_dock_rgb = new docks::ColorBox("RGB", docks::ColorBox::RGB, this);
 	_dock_rgb->setObjectName("rgbdock");
@@ -2134,9 +2128,15 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _dock_navigator);
 	_dock_navigator->hide(); // hidden by default
 
+	// Create input settings
+	_dock_input = new docks::InputSettings(this);
+	_dock_input->setObjectName("InputSettings");
+	_dock_input->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
+
 	// Tabify docks
-	tabifyDockWidget(_dock_input, _dock_toolsettings);
 	tabifyDockWidget(_dock_hsv, _dock_rgb);
 	tabifyDockWidget(_dock_hsv, _dock_palette);
 	tabifyDockWidget(_dock_users, _dock_layers);
+	tabifyDockWidget(_dock_layers, _dock_toolsettings);
 }
