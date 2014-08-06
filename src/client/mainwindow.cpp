@@ -64,7 +64,6 @@
 #include "widgets/chatwidget.h"
 
 #include "docks/toolsettingsdock.h"
-#include "docks/palettebox.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/userlistdock.h"
@@ -210,12 +209,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	});
 
 	// Color docks
-	connect(_dock_palette, SIGNAL(colorSelected(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 
-	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_rgb, SLOT(setColor(QColor)));
-	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_hsv, SLOT(setColor(QColor)));
-	connect(_dock_rgb, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
-	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
+	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_colors, SLOT(setColor(QColor)));
+	connect(_dock_colors, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 
 	// Navigator <-> View
 	connect(_dock_navigator, SIGNAL(focusMoved(const QPoint&)),
@@ -2095,20 +2091,11 @@ void MainWindow::createDocks()
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
-	// Create color boxes
-	_dock_rgb = new docks::ColorBox("RGB", docks::ColorBox::RGB, this);
-	_dock_rgb->setObjectName("rgbdock");
+	// Create color box
+	_dock_colors = new docks::ColorBox(tr("Color"), this);
+	_dock_colors->setObjectName("colordock");
 
-	_dock_hsv = new docks::ColorBox("HSV", docks::ColorBox::HSV, this);
-	_dock_hsv->setObjectName("hsvdock");
-
-	addDockWidget(Qt::RightDockWidgetArea, _dock_rgb);
-	addDockWidget(Qt::RightDockWidgetArea, _dock_hsv);
-
-	// Create palette box
-	_dock_palette = new docks::PaletteBox(tr("Palette"), this);
-	_dock_palette->setObjectName("palettedock");
-	addDockWidget(Qt::RightDockWidgetArea, _dock_palette);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_colors);
 
 	// Create user list
 	_dock_users = new docks::UserList(this);
@@ -2135,8 +2122,6 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
 
 	// Tabify docks
-	tabifyDockWidget(_dock_hsv, _dock_rgb);
-	tabifyDockWidget(_dock_hsv, _dock_palette);
 	tabifyDockWidget(_dock_users, _dock_layers);
 	tabifyDockWidget(_dock_layers, _dock_toolsettings);
 }

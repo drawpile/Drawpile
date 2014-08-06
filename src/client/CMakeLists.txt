@@ -97,7 +97,6 @@ set (
 	widgets/brushpreview.cpp
 	widgets/toolslotbutton.cpp
 	docks/toolsettingsdock.cpp 
-	docks/palettebox.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/userlistdock.cpp 
@@ -119,7 +118,6 @@ set (
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
-	ui/palettebox.ui
 	ui/settings.ui
 	ui/navibox.ui
 	ui/textsettings.ui
@@ -138,6 +136,7 @@ set (
 	ui/tinyplayer.ui
 	ui/selectsession.ui
 	ui/logindialog.ui
+	ui/colorbox.ui
 )
 
 # Use bundled KArchive if library not found

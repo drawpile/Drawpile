@@ -21,34 +21,38 @@
 
 #include <QDockWidget>
 
-class Gradient_Slider;
-class QSpinBox;
+class Ui_ColorBox;
 
 namespace docks {
 
 class ColorBox : public QDockWidget {
-	Q_OBJECT
-	public:
-		enum Mode {RGB, HSV};
+Q_OBJECT
+public:
+	ColorBox(const QString& title, QWidget *parent);
+	~ColorBox();
 
-		ColorBox(const QString& title, Mode mode, QWidget *parent);
+public slots:
+	void setColor(const QColor& color);
 
-	public slots:
-		void setColor(const QColor& color);
+signals:
+	void colorChanged(const QColor& color);
 
-	signals:
-		void colorChanged(const QColor& color);
+private slots:
+	void paletteChanged(int index);
+	void paletteNameChanged(const QString& name);
+	void addPalette();
+	void copyPalette();
+	void deletePalette();
 
-	private slots:
-		void updateFromSliders();
-		void updateFromSpinbox();
+	void updateFromRgbSliders();
+	void updateFromRgbSpinbox();
+	void updateFromHsvSliders();
+	void updateFromHsvSpinbox();
 
-	private:
-		bool _updating;
-		Mode _mode;
+private:
+	Ui_ColorBox *_ui;
 
-		Gradient_Slider *_s1, *_s2, *_s3;
-		QSpinBox *_b1, *_b2, *_b3;
+	bool _updating;
 };
 
 }

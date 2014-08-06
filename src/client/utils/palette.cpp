@@ -34,7 +34,7 @@ Palette::Palette(QObject *parent) : Palette(QString(), QString(), false, parent)
 Palette::Palette(const QString &name, QObject *parent) : Palette(name, QString(), false, parent) { }
 
 Palette::Palette(const QString& name, const QString& filename, bool readonly, QObject *parent)
-	: QObject(parent), _name(name), _oldname(name), _filename(filename), _columns(16), _modified(false), _readonly(readonly)
+	: QObject(parent), _name(name), _oldname(name), _filename(filename), _columns(8), _modified(false), _readonly(readonly)
 {
 }
 

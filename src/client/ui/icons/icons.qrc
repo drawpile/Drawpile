@@ -3,6 +3,9 @@
         <file>drawpile.png</file>
         <file>application-exit.png</file>
         <file>chat.png</file>
+        <file>colorbox-hsv.png</file>
+        <file>colorbox-pal.png</file>
+        <file>colorbox-wheel.png</file>
         <file>color-picker.png</file>
         <file>document-new.png</file>
         <file>document-open.png</file>

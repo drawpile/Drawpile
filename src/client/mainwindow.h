@@ -185,8 +185,7 @@ class MainWindow : public QMainWindow {
 		docks::InputSettings *_dock_input;
 		docks::UserList *_dock_users;
 		docks::LayerList *_dock_layers;
-		docks::PaletteBox *_dock_palette;
-		docks::ColorBox *_dock_rgb, *_dock_hsv;
+		docks::ColorBox *_dock_colors;
 		docks::Navigator *_dock_navigator;
 		widgets::ChatBox *_chatbox;
 

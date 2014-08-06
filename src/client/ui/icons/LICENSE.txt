@@ -64,4 +64,7 @@ Finally, the following are original to Drawpile:
  * flag-blue
  * chat
  * user-moderator
+ * colorbox-hsv
+ * colorbox-pal
+ * colorbox-wheel
 
