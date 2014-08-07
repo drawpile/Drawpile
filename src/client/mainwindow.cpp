@@ -47,6 +47,7 @@
 #include "mainwindow.h"
 #include "loader.h"
 
+#include "core/layerstack.h"
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
@@ -73,6 +74,7 @@
 #include "net/client.h"
 #include "net/login.h"
 #include "net/serverthread.h"
+#include "net/layerlist.h"
 
 #include "../shared/record/writer.h"
 #include "../shared/record/reader.h"
@@ -232,6 +234,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_dock_toolsettings->getAnnotationSettings()->setClient(_client);
 	_dock_toolsettings->getAnnotationSettings()->setLayerSelector(_dock_layers);
 	_dock_users->setClient(_client);
+
+	_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
+		if(_canvas->layers())
+			return _canvas->layers()->getLayer(id);
+		return nullptr;
+	});
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));

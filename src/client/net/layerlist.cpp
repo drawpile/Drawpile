@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "layerlist.h"
+#include "core/layer.h"
+
 #include <QDebug>
 #include <QStringList>
-#include "layerlist.h"
+#include <QBuffer>
+#include <QImage>
 
 namespace net {
 
@@ -62,12 +66,12 @@ Qt::DropActions LayerListModel::supportedDropActions() const
 }
 
 QStringList LayerListModel::mimeTypes() const {
-        return QStringList() << "image/png";
+		return QStringList() << "application/x-qt-image";
 }
 
 QMimeData *LayerListModel::mimeData(const QModelIndexList& indexes) const
 {
-	return new LayerMimeData(indexes[0].data().value<LayerListItem>().id);
+	return new LayerMimeData(indexes[0].data().value<LayerListItem>().id, _getlayerfn);
 }
 
 bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
@@ -221,16 +225,28 @@ void LayerListModel::reorderLayers(QList<uint8_t> neworder)
 	emit layersReordered();
 }
 
-QStringList LayerMimeData::formats() const
-{
-	return QStringList() << "image/png";
-}
-
 void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 {
 	beginResetModel();
 	_items = items;
 	endResetModel();
+}
+
+QStringList LayerMimeData::formats() const
+{
+	return QStringList() << "application/x-qt-image";
+}
+
+QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
+{
+	Q_UNUSED(mimeType);
+	if(_layergetter && type==QVariant::Image) {
+		const paintcore::Layer *layer = _layergetter(_id);
+		if(layer)
+			return layer->toImage();
+	}
+
+	return QVariant();
 }
 
 }

@@ -23,6 +23,12 @@
 #include <QMimeData>
 #include <QVector>
 
+#include <functional>
+
+namespace paintcore {
+	class Layer;
+}
+
 namespace net {
 
 struct LayerListItem {
@@ -55,6 +61,8 @@ struct LayerListItem {
 	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
 };
 
+typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
+
 class LayerListModel : public QAbstractListModel {
 	Q_OBJECT
 public:
@@ -83,6 +91,8 @@ public:
 	QVector<LayerListItem> getLayers() const { return _items; }
 	void setLayers(const QVector<LayerListItem> &items);
 
+	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
+
 signals:
 	void layerCreated(bool wasfirst);
 	void layerDeleted(int id, int idx);
@@ -97,6 +107,7 @@ private:
 	int indexOf(int id) const;
 	
 	QVector<LayerListItem> _items;
+	GetLayerFunction _getlayerfn;
 };
 
 /**
@@ -105,16 +116,20 @@ private:
  */
 class LayerMimeData : public QMimeData
 {
-	Q_OBJECT
-	public:
-		LayerMimeData(int id) : QMimeData(), _id(id) {}
+Q_OBJECT
+public:
+	LayerMimeData(int id, GetLayerFunction getter) : QMimeData(), _id(id), _layergetter(getter) {}
 
-		int layerId() const { return _id; }
+	int layerId() const { return _id; }
 
-		QStringList formats() const;
+	QStringList formats() const;
 
-	private:
-		int _id;
+protected:
+	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
+
+private:
+	int _id;
+	GetLayerFunction _layergetter;
 };
 
 }
