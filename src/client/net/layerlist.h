@@ -92,6 +92,7 @@ public:
 	void setLayers(const QVector<LayerListItem> &items);
 
 	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
+	const paintcore::Layer *getLayerData(int id) const;
 
 signals:
 	void layerCreated(bool wasfirst);
@@ -118,7 +119,9 @@ class LayerMimeData : public QMimeData
 {
 Q_OBJECT
 public:
-	LayerMimeData(int id, GetLayerFunction getter) : QMimeData(), _id(id), _layergetter(getter) {}
+	LayerMimeData(const LayerListModel *source, int id) : QMimeData(), _source(source), _id(id) {}
+
+	const LayerListModel *source() const { return _source; }
 
 	int layerId() const { return _id; }
 
@@ -128,8 +131,8 @@ protected:
 	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
 
 private:
+	const LayerListModel *_source;
 	int _id;
-	GetLayerFunction _layergetter;
 };
 
 }

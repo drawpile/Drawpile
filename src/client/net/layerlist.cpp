@@ -71,7 +71,7 @@ QStringList LayerListModel::mimeTypes() const {
 
 QMimeData *LayerListModel::mimeData(const QModelIndexList& indexes) const
 {
-	return new LayerMimeData(indexes[0].data().value<LayerListItem>().id, _getlayerfn);
+	return new LayerMimeData(this, indexes[0].data().value<LayerListItem>().id);
 }
 
 bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
@@ -81,11 +81,12 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 	Q_UNUSED(parent);
 
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
-	if(ldata) {
+	if(ldata && ldata->source() == this) {
 		// note: if row is -1, the item was dropped on the parent element, which in the
 		// case of the list view means the empty area below the items.
 		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? _items.count() : row);
 	} else {
+		// TODO support new layer drops
 		qWarning() << "External layer drag&drop not supported";
 	}
 	return false;
@@ -232,6 +233,13 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 	endResetModel();
 }
 
+const paintcore::Layer *LayerListModel::getLayerData(int id) const
+{
+	if(_getlayerfn)
+		return _getlayerfn(id);
+	return nullptr;
+}
+
 QStringList LayerMimeData::formats() const
 {
 	return QStringList() << "application/x-qt-image";
@@ -240,8 +248,8 @@ QStringList LayerMimeData::formats() const
 QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
 {
 	Q_UNUSED(mimeType);
-	if(_layergetter && type==QVariant::Image) {
-		const paintcore::Layer *layer = _layergetter(_id);
+	if(type==QVariant::Image) {
+		const paintcore::Layer *layer = _source->getLayerData(_id);
 		if(layer)
 			return layer->toCroppedImage(0, 0);
 	}
