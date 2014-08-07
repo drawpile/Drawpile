@@ -243,7 +243,7 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 	if(_layergetter && type==QVariant::Image) {
 		const paintcore::Layer *layer = _layergetter(_id);
 		if(layer)
-			return layer->toImage();
+			return layer->toCroppedImage(0, 0);
 	}
 
 	return QVariant();

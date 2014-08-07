@@ -258,6 +258,50 @@ QImage Layer::toImage() const {
 	return image;
 }
 
+QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
+{
+	int top=_ytiles, bottom=0;
+	int left=_xtiles, right=0;
+
+	// Find bounding rectangle of non-blank tiles
+	for(int y=0;y<_ytiles;++y) {
+		for(int x=0;x<_xtiles;++x) {
+			const Tile &t = _tiles.at(y*_xtiles + x);
+			if(!t.isBlank()) {
+				if(x<left)
+					left=x;
+				if(x>right)
+					right=x;
+				if(y<top)
+					top=y;
+				if(y>bottom)
+					bottom=y;
+			}
+		}
+	}
+
+	if(top==_ytiles) {
+		// Entire layer appears to be blank
+		return QImage();
+	}
+
+	// Copy tiles to image
+	QImage image((right-left+1)*Tile::SIZE, (bottom-top+1)*Tile::SIZE, QImage::Format_ARGB32);
+	for(int y=top;y<=bottom;++y) {
+		for(int x=left;x<=right;++x) {
+			_tiles.at(y*_xtiles+x).copyToImage(image, (x-left)*Tile::SIZE, (y-top)*Tile::SIZE);
+		}
+	}
+
+	if(xOffset)
+		*xOffset = left * Tile::SIZE;
+	if(yOffset)
+		*yOffset = top * Tile::SIZE;
+
+	// TODO pixel perfect cropping
+	return image;
+}
+
 /**
  * @param x
  * @param y

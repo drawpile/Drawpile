@@ -69,6 +69,9 @@ class Layer {
 		//! Get the layer as an image
 		QImage toImage() const;
 
+		//! Get the layer as an image with excess transparency cropped away
+		QImage toCroppedImage(int *xOffset, int *yOffset) const;
+
 		//! Adjust layer size
 		void resize(int top, int right, int bottom, int left);
 
