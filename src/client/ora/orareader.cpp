@@ -22,6 +22,7 @@
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/meta.h"
 #include "net/utils.h"
 #include "utils/archive.h"
 
@@ -172,7 +173,7 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 		if(e.tagName()=="layer") {
 			// Check for unknown attributes
 			const char *layerattrs[] = {
-					"x", "y", "name", "src", "opacity", "visibility", "composite-op", 0
+					"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", 0
 			};
 			if(!isKnown(e.attributes(), layerattrs))
 				_warnings |= ORA_EXTENDED;
@@ -217,8 +218,13 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				blendmode
 			)));
 
+			if(e.attribute("edit-locked", "false") == "true") {
+				_commands.append(MessagePtr(new protocol::LayerACL(1, _layerid, true, QList<uint8_t>())));
+			}
+
 			// TODO visibility flag
 			//layer->setHidden(e.attribute("visibility", "visible") != "visible");
+
 		} else if(e.tagName()=="stack") {
 			// Nested stacks are not fully supported
 			_warnings |= ORA_NESTED;

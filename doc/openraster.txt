@@ -11,9 +11,10 @@ They are saved under the <drawpile:annotations> element.
 Once the <text> element of OpenRaster is standardised, it will probably be used instead.
 
 Compatability has been tested with the following programs:
- * myPaint
+ * MyPaint
  * GIMP
+ * Krita
 
 Further reading
- * http://create.freedesktop.org/wiki/OpenRaster/
+ * http://www.freedesktop.org/wiki/Specifications/OpenRaster/
 

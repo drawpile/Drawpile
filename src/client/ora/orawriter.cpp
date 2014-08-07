@@ -45,9 +45,11 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
 	doc.appendChild(root);
+
 	// Width and height are required attributes
 	root.setAttribute("w", image->width());
 	root.setAttribute("h", image->height());
+	root.setAttribute("version", "0.0.3");
 
 	QDomElement stack = doc.createElement("stack");
 	root.appendChild(stack);
@@ -87,12 +89,12 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 		if(l->blendmode() != 1)
 			layer.setAttribute("composite-op", "svg:" + paintcore::svgBlendMode(l->blendmode()));
 
+		// TODO lock and selection
 		stack.appendChild(layer);
 	}
 
 	zip.setCompression(KZip::DeflateCompression);
 	return zip.writeFile("stack.xml", doc.toByteArray());
-	return true;
 }
 
 bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
@@ -103,9 +105,15 @@ bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage());
 }
 
-bool writeThumbnail(KZip &zf, const paintcore::LayerStack *layers)
+bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 {
 	QImage img = layers->toFlatImage(false);
+
+	// Flattened full size version for image viewers
+	if(!putPngInZip(zf, "mergedimage.png", img))
+		return false;
+
+	// Thumbnail for browsers and such
 	if(img.width() > 256 || img.height() > 256)
 		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
@@ -136,8 +144,8 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 	for(int i=image->layers()-1;i>=0;--i)
 		writeLayer(zf, image, i);
 
-	// A ready to use thumbnail for file managers etc.
-	writeThumbnail(zf, image);
+	// Ready to use images for viewers
+	writePreviewImages(zf, image);
 
 	return zf.close();
 }
