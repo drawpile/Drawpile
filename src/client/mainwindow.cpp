@@ -175,7 +175,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_dock_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
 	connect(_view, SIGNAL(colorDropped(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
-	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
+	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(dropUrl(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
 
 	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
@@ -1510,6 +1510,29 @@ void MainWindow::pasteImage(const QImage &image)
 		// Canvas not yet initialized? Initialize with clipboard content
 		QImageCanvasLoader loader(image);
 		loadDocument(loader);
+	}
+}
+
+void MainWindow::dropUrl(const QUrl &url)
+{
+	if(url.isLocalFile()) {
+		// Is this an image file?
+		QImage img(url.toLocalFile());
+		if(img.isNull()) {
+			// Not a simple image, try opening it as a document
+			open(url);
+
+		} else {
+			pasteImage(img);
+		}
+
+	} else {
+		networkaccess::getFile(url, "", _netstatus, [this](const QFile &file, const QString &error) {
+			if(error.isEmpty())
+				dropUrl(QUrl::fromLocalFile(file.fileName()));
+			else
+				showErrorMessage(error);
+		});
 	}
 }
 

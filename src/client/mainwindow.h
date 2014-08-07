@@ -131,6 +131,7 @@ class MainWindow : public QMainWindow {
 		void pasteFile();
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
+		void dropUrl(const QUrl &url);
 
 		void clearOrDelete();
 		void fillFgArea();
