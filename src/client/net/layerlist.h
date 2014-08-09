@@ -91,6 +91,8 @@ public:
 	QVector<LayerListItem> getLayers() const { return _items; }
 	void setLayers(const QVector<LayerListItem> &items);
 
+	void previewOpacityChange(int id, float opacity);
+
 	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
 	const paintcore::Layer *getLayerData(int id) const;
 
@@ -101,6 +103,9 @@ signals:
 
 	//! Emitted when layers are manually reordered
 	void layerOrderChanged(const QList<uint8_t> neworder);
+
+	//! Request local change of layer opacity for preview purpose
+	void layerOpacityPreview(int id, float opacity);
 
 private:
 	void handleMoveLayer(int idx, int afterIdx);

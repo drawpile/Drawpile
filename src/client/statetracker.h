@@ -225,6 +225,9 @@ signals:
 	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);
 
+public slots:
+	void previewLayerOpacity(int id, float opacity);
+
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
 

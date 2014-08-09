@@ -127,6 +127,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 		_showallmarkers(false),
 		_hasParticipated(false)
 {
+	connect(_layerlist, SIGNAL(layerOpacityPreview(int,float)), this, SLOT(previewLayerOpacity(int,float)));
 }
 
 StateTracker::~StateTracker()
@@ -337,6 +338,15 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(cmd.blend());
 	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, cmd.blend());
+}
+
+void StateTracker::previewLayerOpacity(int id, float opacity)
+{
+	paintcore::Layer *layer = _image->getLayer(id);
+	Q_ASSERT(layer);
+	if(!layer)
+		return;
+	layer->setOpacity(opacity*255);
 }
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)

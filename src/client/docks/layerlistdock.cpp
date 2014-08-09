@@ -16,10 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QDebug>
-#include <QItemSelection>
-#include <QMessageBox>
-#include <QPushButton>
 
 #include "net/client.h"
 #include "net/layerlist.h"
@@ -29,6 +25,12 @@
 #include "core/rasterop.h" // for blending modes
 
 #include "ui_layerbox.h"
+
+#include <QDebug>
+#include <QItemSelection>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTimer>
 
 namespace docks {
 
@@ -72,6 +74,13 @@ LayerList::LayerList(QWidget *parent)
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
 
 	selectionChanged(QItemSelection());
+
+	// The opacity update timer is used to limit the rate of layer
+	// update messages sent over the network when the user drags or scrolls
+	// on the opacity slider.
+	_opacityUpdateTimer = new QTimer(this);
+	_opacityUpdateTimer->setSingleShot(true);
+	connect(_opacityUpdateTimer, SIGNAL(timeout()), this, SLOT(sendOpacityUpdate()));
 }
 
 void LayerList::setClient(net::Client *client)
@@ -159,6 +168,17 @@ void LayerList::opacityAdjusted()
 	if(_noupdate)
 		return;
 
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		net::LayerListItem layer = index.data().value<net::LayerListItem>();
+		float opacity = _ui->opacity->value() / 255.0;
+		_client->layerlist()->previewOpacityChange(layer.id, opacity);
+		_opacityUpdateTimer->start(100);
+	}
+}
+
+void LayerList::sendOpacityUpdate()
+{
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		Q_ASSERT(_client);

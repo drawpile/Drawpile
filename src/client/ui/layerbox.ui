@@ -46,9 +46,6 @@
        <property name="maximum">
         <number>255</number>
        </property>
-       <property name="tracking">
-        <bool>false</bool>
-       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

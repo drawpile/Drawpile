@@ -24,6 +24,7 @@
 class QModelIndex;
 class QItemSelection;
 class QMenu;
+class QTimer;
 
 class Ui_LayerBox;
 
@@ -82,6 +83,8 @@ private slots:
 	void selectionChanged(const QItemSelection &selected);
 	void layerContextMenu(const QPoint &pos);
 
+	void sendOpacityUpdate();
+
 private:
 	void updateLockedControls();
 	bool canMergeCurrent() const;
@@ -102,6 +105,7 @@ private:
 
 	bool _op;
 	bool _lockctrl;
+	QTimer *_opacityUpdateTimer;
 };
 
 }

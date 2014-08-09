@@ -240,6 +240,11 @@ const paintcore::Layer *LayerListModel::getLayerData(int id) const
 	return nullptr;
 }
 
+void LayerListModel::previewOpacityChange(int id, float opacity)
+{
+	emit layerOpacityPreview(id, opacity);
+}
+
 QStringList LayerMimeData::formats() const
 {
 	return QStringList() << "application/x-qt-image";
