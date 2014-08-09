@@ -7,6 +7,13 @@
  * Layers can now be locked in offline mode
  * Added /preservechat setting
  * Fixed brush blending glitch on semitransparent layers
+ * More consistent non-antialiased dab positioning
+ * Improved tool box layout
+ * Combined color dock
+ * Updated OpenRaster support to spec version 0.0.3
+ * All supported file types can now be opened by drag&drop
+ * Individual layers can now be exported by dragging&dropping
+ * Live preview for layer opacity change
 
 2014-07-18 Version 0.9.3
  * Layer opacity glyph now acts as show/hide button
