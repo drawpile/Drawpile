@@ -25,6 +25,7 @@ set (
 	tools/laser.cpp
 	tools/selection.cpp
 	tools/shapetools.cpp
+	tools/floodfill.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp
@@ -64,6 +65,7 @@ set (
 	core/brushmask.cpp
 	core/rasterop.cpp
 	core/shapes.cpp
+	core/floodfill.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp
@@ -124,6 +126,7 @@ set (
 	ui/pensettings.ui
 	ui/erasersettings.ui
 	ui/selectsettings.ui
+	ui/fillsettings.ui
 	ui/lasersettings.ui
 	ui/layerbox.ui
 	ui/userbox.ui

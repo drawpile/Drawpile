@@ -2027,6 +2027,7 @@ void MainWindow::setupActions()
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
+	QAction *filltool = makeAction("toolfill", "color-fill", tr("&Flood fill"), tr("Fill areas"), QKeySequence("F"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
@@ -2041,6 +2042,7 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(linetool);
 	_drawingtools->addAction(recttool);
 	_drawingtools->addAction(ellipsetool);
+	_drawingtools->addAction(filltool);
 	_drawingtools->addAction(annotationtool);
 	_drawingtools->addAction(lasertool);
 	_drawingtools->addAction(selectiontool);

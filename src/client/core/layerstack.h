@@ -33,6 +33,7 @@ namespace paintcore {
 
 class Annotation;
 class Layer;
+class Tile;
 class Savepoint;
 
 /**
@@ -65,11 +66,15 @@ class LayerStack : public QObject {
 		//! Get a layer by its index
 		Layer *getLayerByIndex(int index);
 
+
 		//! Get a read only layer by its index
 		const Layer *getLayerByIndex(int index) const;
 
 		//! Get a layer by its ID
 		Layer *getLayer(int id);
+
+		//! Get a layer by its ID
+		const Layer *getLayer(int id) const;
 
 		//! Check if there are any annotations
 		bool hasAnnotations() const { return !_annotations.isEmpty(); }
@@ -112,6 +117,9 @@ class LayerStack : public QObject {
 
 		//! Return a flattened image of the layer stack
 		QImage toFlatImage(bool includeAnnotations) const;
+
+		//! Get a merged tile
+		Tile getFlatTile(int x, int y) const;
 
 		//! Mark the tiles under the area dirty
 		void markDirty(const QRect &area);

@@ -85,6 +85,14 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const 
 {
 	QList<protocol::MessagePtr> list;
 	splitImage(ctxid, layer, x, y, image.convertToFormat(QImage::Format_ARGB32), blend, list);
+
+#ifndef NDEBUG
+	double truesize = image.width() * image.height() * 4;
+	double wiresize = 0;
+	for(protocol::MessagePtr msg : list)
+		wiresize += msg->length();
+	qDebug("Sending a %.2f kb image. Compressed size is %.2f kb. Compression ratio is %.1f%%", truesize/1024, wiresize/1024, truesize/wiresize*100);
+#endif
 	return list;
 }
 

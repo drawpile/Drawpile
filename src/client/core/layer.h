@@ -145,6 +145,13 @@ class Layer {
 			return _tiles[y*_xtiles+x];
 		}
 
+		//! Get an editable reference to a tile
+		Tile &rtile(int x, int y) {
+			Q_ASSERT(x>=0 && x<_xtiles);
+			Q_ASSERT(y>=0 && y<_ytiles);
+			return _tiles[y*_xtiles+x];
+		}
+
 		//! Get a tile
 		const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<_xtiles*_ytiles); return _tiles[index]; }
 

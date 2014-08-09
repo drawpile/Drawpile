@@ -23,6 +23,7 @@
 #include "tools/laser.h"
 #include "tools/selection.h"
 #include "tools/shapetools.h"
+#include "tools/floodfill.h"
 
 namespace tools {
 
@@ -39,6 +40,7 @@ ToolCollection::ToolCollection()
 	_tools[LINE] = new Line(*this);
 	_tools[RECTANGLE] = new Rectangle(*this);
 	_tools[ELLIPSE] = new Ellipse(*this);
+	_tools[FLOODFILL] = new FloodFill(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
 	_tools[LASERPOINTER] = new LaserPointer(*this);
 	_tools[SELECTION] = new Selection(*this);

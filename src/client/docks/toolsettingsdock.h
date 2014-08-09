@@ -31,6 +31,7 @@ namespace tools {
 	class AnnotationSettings;
 	class ColorPickerSettings;
 	class LaserPointerSettings;
+	class FillSettings;
 }
 
 namespace paintcore {
@@ -72,6 +73,9 @@ public:
 
 	//! Get the laser pointer settings page
 	tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
+
+	//! Get flood fill settings page
+	tools::FillSettings *getFillSettings() { return _fillsettings; }
 
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(float adjustment);
@@ -157,6 +161,7 @@ private:
 	tools::ToolSettings *_linesettings;
 	tools::ToolSettings *_rectsettings;
 	tools::ToolSettings *_ellipsesettings;
+	tools::FillSettings *_fillsettings;
 	tools::AnnotationSettings *_textsettings;
 	tools::ToolSettings *_selectionsettings;
 	tools::LaserPointerSettings  *_lasersettings;

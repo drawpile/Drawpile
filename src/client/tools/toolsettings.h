@@ -33,6 +33,7 @@ class Ui_SimpleSettings;
 class Ui_TextSettings;
 class Ui_SelectionSettings;
 class Ui_LaserSettings;
+class Ui_FillSettings;
 class QTimer;
 class QCheckBox;
 
@@ -413,6 +414,26 @@ protected:
 
 private:
 	Ui_LaserSettings * _ui;
+};
+
+class FillSettings : public BrushlessSettings {
+public:
+	FillSettings(const QString &name, const QString &title);
+	~FillSettings();
+
+	int fillTolerance() const;
+	bool sampleMerged() const;
+
+	void quickAdjust1(float adjustment) override;
+
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+
+private:
+	Ui_FillSettings * _ui;
 };
 
 }

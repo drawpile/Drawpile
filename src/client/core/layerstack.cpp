@@ -176,6 +176,14 @@ Layer *LayerStack::getLayer(int id)
 	return 0;
 }
 
+const Layer *LayerStack::getLayer(int id) const
+{
+	for(const Layer *l : _layers)
+		if(l->id() == id)
+			return l;
+	return nullptr;
+}
+
 Annotation *LayerStack::getAnnotation(int id)
 {
 	foreach(Annotation *a, _annotations)
@@ -302,6 +310,7 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 	if(!updates.isEmpty()) {
 		// Flatten tiles
 		QtConcurrent::blockingMap(updates, [this](UpdateTile *t) {
+			Tile::fillChecker(t->data, QColor(128,128,128), Qt::white);
 			flattenTile(t->data, t->x, t->y);
 		});
 
@@ -326,6 +335,13 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 	painter->drawPixmap(rect, _cache, rect);
 }
 
+Tile LayerStack::getFlatTile(int x, int y) const
+{
+	Tile t(Qt::transparent);
+	flattenTile(t.data(), x, y);
+	return t;
+}
+
 QColor LayerStack::colorAt(int x, int y) const
 {
 	if(_layers.isEmpty())
@@ -335,9 +351,8 @@ QColor LayerStack::colorAt(int x, int y) const
 		return QColor();
 
 	// TODO some more efficient way of doing this
-	quint32 tile[Tile::SIZE*Tile::SIZE];
-	flattenTile(tile, x/Tile::SIZE, y/Tile::SIZE);
-	quint32 c = tile[(y-Tile::roundDown(y)) * Tile::SIZE + (x-Tile::roundDown(x))];
+	Tile tile = getFlatTile(x/Tile::SIZE, y/Tile::SIZE);
+	quint32 c = tile.data()[(y-Tile::roundDown(y)) * Tile::SIZE + (x-Tile::roundDown(x))];
 	return QColor(c);
 }
 
@@ -362,9 +377,6 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 // Flatten a single tile
 void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 {
-	// Start out with a checkerboard pattern to denote transparency
-	Tile::fillChecker(data, QColor(128,128,128), Qt::white);
-
 	// Composite visible layers
 	foreach(const Layer *l, _layers) {
 		if(l->visible()) {

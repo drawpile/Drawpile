@@ -32,6 +32,7 @@ using widgets::ColorButton;
 #include "ui_textsettings.h"
 #include "ui_selectsettings.h"
 #include "ui_lasersettings.h"
+#include "ui_fillsettings.h"
 
 #include "scene/annotationitem.h"
 #include "net/client.h"
@@ -935,5 +936,56 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 	return uiwidget;
 }
+
+FillSettings::FillSettings(const QString &name, const QString &title)
+	: BrushlessSettings(name, title, icon::fromTheme("color-fill")), _ui(0)
+{
+}
+
+FillSettings::~FillSettings()
+{
+	delete _ui;
+}
+
+QWidget *FillSettings::createUiWidget(QWidget *parent)
+{
+	QWidget *uiwidget = new QWidget(parent);
+	_ui = new Ui_FillSettings;
+	_ui->setupUi(uiwidget);
+
+	return uiwidget;
+}
+
+int FillSettings::fillTolerance() const
+{
+	return _ui->tolerance->value();
+}
+
+bool FillSettings::sampleMerged() const
+{
+	return _ui->samplemerged->isChecked();
+}
+
+ToolProperties FillSettings::saveToolSettings()
+{
+	ToolProperties cfg;
+	cfg.setValue("tolerance", fillTolerance());
+	cfg.setValue("samplemerged", sampleMerged());
+	return cfg;
+}
+
+void FillSettings::restoreToolSettings(const ToolProperties &cfg)
+{
+	_ui->tolerance->setValue(cfg.value("tolerance", 0).toInt());
+	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
+}
+
+void FillSettings::quickAdjust1(float adjustment)
+{
+	int adj = qRound(adjustment);
+	if(adj!=0)
+		_ui->tolerance->setValue(_ui->tolerance->value() + adj);
+}
+
 
 }

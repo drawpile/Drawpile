@@ -14,6 +14,7 @@
  * All supported file types can now be opened by drag&drop
  * Individual layers can now be exported by dragging&dropping
  * Live preview for layer opacity change
+ * Added flood fill tool
 
 2014-07-18 Version 0.9.3
  * Layer opacity glyph now acts as show/hide button

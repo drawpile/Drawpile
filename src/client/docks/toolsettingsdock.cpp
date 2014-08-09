@@ -118,6 +118,9 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), icon::fromTheme("draw-ellipse"), tools::SimpleSettings::Ellipse, true);
 	_widgets->addWidget(_ellipsesettings->createUi(this));
 
+	_fillsettings = new tools::FillSettings("fill", tr("Flood fill"));
+	_widgets->addWidget(_fillsettings->createUi(this));
+
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
 	_widgets->addWidget(_textsettings->createUi(this));
 
@@ -152,6 +155,7 @@ ToolSettings::~ToolSettings()
 	delete _linesettings,
 	delete _rectsettings;
 	delete _ellipsesettings;
+	delete _fillsettings;
 	delete _textsettings;
 	delete _selectionsettings;
 	delete _lasersettings;
@@ -202,6 +206,7 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
 		case tools::LINE: return _linesettings; break;
 		case tools::RECTANGLE: return _rectsettings; break;
 		case tools::ELLIPSE: return _ellipsesettings; break;
+		case tools::FLOODFILL: return _fillsettings; break;
 		case tools::ANNOTATION: return _textsettings; break;
 		case tools::SELECTION: return _selectionsettings; break;
 		case tools::LASERPOINTER: return _lasersettings; break;

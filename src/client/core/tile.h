@@ -121,6 +121,9 @@ class Tile {
 		//! Get read access to the raw pixel data
 		const quint32 *data() const { Q_ASSERT( _data); return _data->data; }
 
+		//! Get read/write access to the raw pixel data
+		quint32 *data() { Q_ASSERT(_data); return _data->data; }
+
 		//! Copy the contents of this tile
 		void copyTo(quint32 *data) const;
 

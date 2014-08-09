@@ -37,6 +37,7 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * zoom-out
 
 The following icons are from the Tango ArtLibre set under the GPL:
+ * color-fill
  * color-picker
  * draw-brush
  * draw-eraser
