@@ -93,7 +93,7 @@ class MainWindow : public QMainWindow {
 		void join();
 		void leave();
 
-		void fullscreen(bool enable);
+		void toggleFullscreen();
 		void setShowAnnotations(bool show);
 		void setShowLaserTrails(bool show);
 

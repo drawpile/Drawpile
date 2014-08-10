@@ -37,6 +37,7 @@
 #include <QSplitter>
 #include <QClipboard>
 #include <QFile>
+#include <QWindow>
 
 #ifndef NDEBUG
 #include <QTimer>
@@ -1300,7 +1301,7 @@ void MainWindow::setOperatorMode(bool op)
 void MainWindow::exit()
 {
 	if(windowState().testFlag(Qt::WindowFullScreen))
-		fullscreen(false);
+		toggleFullscreen();
 	writeSettings();
 	deleteLater();
 }
@@ -1356,11 +1357,10 @@ void MainWindow::setShowLaserTrails(bool show)
  *
  * @param enable
  */
-void MainWindow::fullscreen(bool enable)
+void MainWindow::toggleFullscreen()
 {
-	if(enable) {
-		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==false);
-		// Save state
+	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
+		// Save windowed mode state
 		_fullscreen_oldstate = saveState();
 		_fullscreen_oldgeometry = geometry();
 
@@ -1377,8 +1377,8 @@ void MainWindow::fullscreen(bool enable)
 		}
 
 		showFullScreen();
+
 	} else {
-		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==true);
 		// Restore old state
 		showNormal();
 		menuBar()->show();
@@ -1914,6 +1914,15 @@ void MainWindow::setupActions()
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence::FullScreen, true);
 
+	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
+		connect(windowHandle(), &QWindow::windowStateChanged, [fullscreen](Qt::WindowState state) {
+			// Update the mode tickmark on fulscreen state change.
+			// On Qt 5.3.0, this signal doesn't seem to get emitted on OSX when clicking
+			// on the toggle button in the titlebar. The state can be queried correctly though.
+			fullscreen->setChecked(state & Qt::WindowFullScreen);
+		});
+	}
+
 	connect(_chatbox, SIGNAL(expanded(bool)), toggleChat, SLOT(setChecked(bool)));
 	connect(toggleChat, &QAction::triggered, [this](bool show) {
 		QList<int> sizes;
@@ -1944,7 +1953,7 @@ void MainWindow::setupActions()
 	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
 	connect(rotate180, &QAction::triggered, [this]() { _view->setRotation(180); });
 	connect(rotate270, &QAction::triggered, [this]() { _view->setRotation(270); });
-	connect(fullscreen, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
+	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
 
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
