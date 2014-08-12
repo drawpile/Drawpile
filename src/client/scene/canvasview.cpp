@@ -176,17 +176,22 @@ void CanvasView::setOutlineRadius(int radius)
 		if(_outlinesize>updatesize)
 			updatesize = _outlinesize;
 		QList<QRectF> rect;
-		rect.append(QRectF(_prevpoint.x() - updatesize,
-					_prevpoint.y() - updatesize,
+		rect.append(QRectF(_prevoutlinepoint.x() - updatesize,
+					_prevoutlinepoint.y() - updatesize,
 					updatesize*2, updatesize*2));
 		updateScene(rect);
 	}
 }
 
+void CanvasView::setOutlineSubpixelMode(bool subpixel)
+{
+	_subpixeloutline = subpixel;
+}
+
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(_enableoutline && _showoutline && _outlinesize>1 && !_locked) {
-		const QRectF outline(_prevpoint-QPointF(_outlinesize,_outlinesize),
+		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize,_outlinesize),
 					QSizeF(_dia, _dia));
 		if(rect.intersects(outline)) {
 			painter->save();
@@ -225,11 +230,7 @@ void CanvasView::leaveEvent(QEvent *event)
 	QGraphicsView::leaveEvent(event);
 	if(_enableoutline) {
 		_showoutline = false;
-		QList<QRectF> rect;
-		rect.append(QRectF(_prevpoint.x() - _outlinesize,
-					_prevpoint.y() - _outlinesize,
-					_dia, _dia));
-		updateScene(rect);
+		updateOutline();
 	}
 }
 
@@ -407,6 +408,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		moveDrag(event->x(), event->y());
 	} else {
 		paintcore::Point point = mapToScene(event->pos(), 1);
+		updateOutline(point);
 		if(!_prevpoint.intSame(point)) {
 			if(_pendown) {
 				_pointervelocity = point.distance(_prevpoint);
@@ -416,7 +418,6 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 			} else if(_pointertracking && _scene->hasImage()) {
 				emit pointerMoved(point);
 			}
-			updateOutline(point);
 			_prevpoint = point;
 		}
 	}
@@ -492,6 +493,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		tabev->accept();
 
 		paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
+		updateOutline(point);
 
 		if(!_prevpoint.intSame(point)) {
 			if(_isdragging)
@@ -503,7 +505,6 @@ bool CanvasView::viewportEvent(QEvent *event)
 					point.setPressure(mapPressure(point.pressure(), true));
 					onPenMove(point, false, tabev->modifiers() & Qt::ShiftModifier, tabev->modifiers() & Qt::AltModifier);
 				}
-				updateOutline(point);
 			}
 			_prevpoint = point;
 		}
@@ -561,15 +562,30 @@ float CanvasView::mapPressure(float pressure, bool stylus)
 	return 0;
 }
 
-void CanvasView::updateOutline(const paintcore::Point& point) {
-	if(_enableoutline && _showoutline && !_locked) {
+void CanvasView::updateOutline(paintcore::Point point) {
+	if(!_subpixeloutline) {
+		point.setX(qFloor(point.x()));
+		point.setY(qFloor(point.y()));
+	}
+	if(_enableoutline && _showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
 		QList<QRectF> rect;
-		rect.append(QRectF(_prevpoint.x() - _outlinesize,
-					_prevpoint.y() - _outlinesize, _dia, _dia));
+		rect.append(QRectF(_prevoutlinepoint.x() - _outlinesize,
+					_prevoutlinepoint.y() - _outlinesize, _dia, _dia));
 		rect.append(QRectF(point.x() - _outlinesize,
 					point.y() - _outlinesize, _dia, _dia));
 		updateScene(rect);
+		_prevoutlinepoint = point;
 	}
+}
+
+void CanvasView::updateOutline()
+{
+	QList<QRectF> rect;
+	rect.append(QRectF(_prevoutlinepoint.x() - _outlinesize,
+				_prevoutlinepoint.y() - _outlinesize,
+				_dia, _dia));
+	updateScene(rect);
+
 }
 
 void CanvasView::doQuickAdjust1(float delta)
@@ -608,11 +624,7 @@ void CanvasView::startDrag(int x,int y, ViewTransform mode)
 	_isdragging = mode;
 	if(_enableoutline) {
 		_showoutline = false;
-		QList<QRectF> rect;
-		rect.append(QRectF(_prevpoint.x() - _outlinesize,
-					_prevpoint.y() - _outlinesize,
-					_dia, _dia));
-		updateScene(rect);
+		updateOutline();
 	}
 }
 

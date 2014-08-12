@@ -108,6 +108,11 @@ public:
 	virtual int getSize() const = 0;
 
 	/**
+	 * @brief Is this tool in subpixel precision mode
+	 */
+	virtual bool getSubpixelMode() const = 0;
+
+	/**
 	 * @brief Get the internal name of this tool
 	 * The internal name is used when settings are stored to a
 	 * configuration file
@@ -163,6 +168,7 @@ public:
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
+	bool getSubpixelMode() const { return false; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -192,6 +198,7 @@ public:
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
+	bool getSubpixelMode() const;
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -219,6 +226,7 @@ public:
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
+	bool getSubpixelMode() const { return true; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -246,6 +254,7 @@ public:
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
+	bool getSubpixelMode() const;
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -272,6 +281,7 @@ public:
 	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
 
 	int getSize() const { return 0; }
+	bool getSubpixelMode() const { return false; }
 
 protected:
 	paintcore::Brush _dummybrush;

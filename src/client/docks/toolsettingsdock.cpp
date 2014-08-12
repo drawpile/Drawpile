@@ -252,6 +252,12 @@ void ToolSettings::selectTool(tools::Type tool)
 	updateToolSlot(currentToolSlot());
 	emit toolChanged(tool);
 	emit sizeChanged(_currenttool->getSize());
+	updateSubpixelMode();
+}
+
+void ToolSettings::updateSubpixelMode()
+{
+	emit subpixelModeChanged(_currenttool->getSubpixelMode());
 }
 
 tools::Type ToolSettings::currentTool() const

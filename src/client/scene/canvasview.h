@@ -115,6 +115,9 @@ class CanvasView : public QGraphicsView
 		//! Set the radius of the brush preview outline
 		void setOutlineRadius(int radius);
 
+		//! Enable subpixel precision for brush preview outline
+		void setOutlineSubpixelMode(bool subpixel);
+
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);
 
@@ -182,7 +185,8 @@ class CanvasView : public QGraphicsView
 		void moveDrag(int x, int y);
 
 		//! Redraw the scene around the outline cursor if necesasry
-		void updateOutline(const paintcore::Point& point);
+		void updateOutline(paintcore::Point point);
+		void updateOutline();
 
 		void onPenDown(const paintcore::Point &p, bool right);
 		void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
@@ -209,12 +213,13 @@ class CanvasView : public QGraphicsView
 
 		//! Previous pointer location
 		paintcore::Point _prevpoint;
+		paintcore::Point _prevoutlinepoint;
 		float _pointerdistance;
 		float _pointervelocity;
 		StrokeSmoother _smoother;
 
 		int _outlinesize, _dia;
-		bool _enableoutline, _showoutline;
+		bool _enableoutline, _showoutline, _subpixeloutline;
 		QCursor _cursor;
 
 		//! View zoom in percents

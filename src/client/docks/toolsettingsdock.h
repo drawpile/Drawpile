@@ -133,9 +133,15 @@ public slots:
 	 */
 	void disableEraserOverride(tools::Type tool);
 
+	//! Query current tool's subpixel mode and emit subpixelModeChanged
+	void updateSubpixelMode();
+
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);
+
+	//! This signal is emitted when tool subpixel drawing mode is changed
+	void subpixelModeChanged(bool subpixel);
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);

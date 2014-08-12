@@ -187,6 +187,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	_ui->preview->setBlendingMode(-1); // eraser is normally not visible
 
 	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
+	parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 
 	return widget;
@@ -262,6 +263,11 @@ const paintcore::Brush& EraserSettings::getBrush(bool swapcolors) const
 int EraserSettings::getSize() const
 {
 	return _ui->brushsize->value();
+}
+
+bool EraserSettings::getSubpixelMode() const
+{
+	return !_ui->hardedge->isChecked();
 }
 
 BrushSettings::BrushSettings(QString name, QString title)
@@ -509,6 +515,8 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	if(!_subpixel) {
 		// Hard edge mode is always enabled for tools that do not support antialiasing
 		_ui->hardedge->hide();
+	} else {
+		parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	}
 
 	return widget;
@@ -574,6 +582,11 @@ const paintcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
 int SimpleSettings::getSize() const
 {
 	return _ui->brushsize->value();
+}
+
+bool SimpleSettings::getSubpixelMode() const
+{
+	return !_ui->hardedge->isChecked();
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)

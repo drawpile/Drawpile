@@ -15,6 +15,7 @@
  * Individual layers can now be exported by dragging&dropping
  * Live preview for layer opacity change
  * Added flood fill tool
+ * Fixed brush preview outline alignment
 
 2014-07-18 Version 0.9.3
  * Layer opacity glyph now acts as show/hide button
