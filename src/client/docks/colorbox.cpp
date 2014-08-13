@@ -107,7 +107,7 @@ ColorBox::~ColorBox()
 
 void ColorBox::paletteChanged(int index)
 {
-	if(index==-1) {
+	if(index<0 || index >= _ui->palettelist->model()->rowCount()) {
 		_ui->palette->setPalette(nullptr);
 	} else {
 		Palette *pal = static_cast<PaletteListModel*>(_ui->palettelist->model())->getPalette(index);
