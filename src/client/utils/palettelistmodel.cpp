@@ -22,6 +22,7 @@
 #include "icon.h"
 
 #include <QDebug>
+#include <QApplication>
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDir>
@@ -49,6 +50,10 @@ void PaletteListModel::loadPalettes()
 	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
 	QString writablepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 	QSet<QString> palettefiles;
+
+#ifdef Q_OS_MAC
+	datapaths << qApp->applicationDirPath() + "/../Resources";
+#endif
 
 	for(const QString datapath : datapaths) {
 		QFileInfoList pfiles = QDir(datapath + "/palettes").entryInfoList(
