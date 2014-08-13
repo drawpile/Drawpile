@@ -38,6 +38,7 @@ Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "i18n\*.qm"; DestDir: "{app}\i18n"; Flags: ignoreversion
 Source: "imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "palettes\*.gpl"; DestDir: "{app}\palettes"; Flags: ignoreversion
 Source: "README.md"; DestDir: "{app}"; DestName: "README.txt"; Flags: ignoreversion
 Source: "AUTHORS"; DestDir: "{app}"; DestName: "authors.txt"; Flags: ignoreversion
 Source: "ChangeLog"; DestDir: "{app}"; DestName: "ChangeLog.txt"; Flags: ignoreversion
@@ -62,6 +63,7 @@ Root: HKCR; Subkey: "drawpile\shell\open\command"; ValueType: "string"; ValueDat
 
 ; .dprec file association
 Root: HKCR; Subkey: ".dprec"; ValueType: string; ValueName: ""; ValueData: "DrawpileRecording"; Flags: uninsdeletevalue 
+Root: HKCR; Subkey: ".dprecz"; ValueType: string; ValueName: ""; ValueData: "DrawpileRecording"; Flags: uninsdeletevalue 
 Root: HKCR; Subkey: "DrawpileRecording"; ValueType: string; ValueName: ""; ValueData: "Drawpile recording"; Flags: uninsdeletekey 
 Root: HKCR; Subkey: "DrawpileRecording\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\drawpile.exe,0" 
 Root: HKCR; Subkey: "DrawpileRecording\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\drawpile.exe"" ""%1""" 
