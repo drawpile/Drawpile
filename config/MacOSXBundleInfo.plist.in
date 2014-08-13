@@ -38,6 +38,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>dprec</string>
+				<string>dprecz</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>${MACOSX_BUNDLE_ICON_FILE}</string>
