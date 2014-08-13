@@ -66,6 +66,9 @@ public:
 	//! Is this a read-only palette?
 	bool isReadonly() const { return _readonly; }
 
+	//! Set read-only mode
+	void setReadonly(bool ro) { _readonly = ro; }
+
 	//! Save palette to its original file (filename must be set)
 	bool save();
 

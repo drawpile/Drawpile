@@ -47,6 +47,7 @@ void PaletteListModel::loadPalettes()
 	QList<Palette*> palettes;
 
 	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+	QString writablepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 	QSet<QString> palettefiles;
 
 	for(const QString datapath : datapaths) {
@@ -60,10 +61,18 @@ void PaletteListModel::loadPalettes()
 				palettefiles.insert(pfile.fileName());
 
 				Palette *pal = Palette::fromFile(pfile, this);
-				if(!pal)
+				if(!pal) {
 					qWarning() << "Invalid palette:" << pfile.absoluteFilePath();
-				else
+
+				} else {
+					// QFile::isWritable doesn't seem to work reliably on Windows.
+					// As a workaround, mark all palettes outside our own writable directory
+					// as read-only
+					if(datapath != writablepath)
+						pal->setReadonly(true);
+
 					palettes.append(pal);
+				}
 			}
 		}
 	}
