@@ -177,6 +177,7 @@ endif( BUILTIN_ICONS )
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
 		i18n/drawpile_fi.ts
+		i18n/drawpile_cs.ts
 	)
 
 	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})

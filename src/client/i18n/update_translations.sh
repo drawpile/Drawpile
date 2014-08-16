@@ -1,1 +1,5 @@
-lupdate .. -recursive -no-obsolete -ts drawpile_fi.ts
+for ts in *.ts
+do
+lupdate .. -recursive -no-obsolete -ts "$ts"
+done
+
