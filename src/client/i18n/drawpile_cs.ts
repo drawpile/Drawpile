@@ -9,17 +9,17 @@
         <translation>Přírustkové kreslení</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="106"/>
+        <location filename="../ui/brushsettings.ui" line="160"/>
         <source>Opacity:</source>
         <translation>Neprůhlednost:</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="126"/>
+        <location filename="../ui/brushsettings.ui" line="220"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="136"/>
+        <location filename="../ui/brushsettings.ui" line="180"/>
         <source>Hardness:</source>
         <translation>Tvrdost:</translation>
     </message>
@@ -29,32 +29,32 @@
         <translation>Velikost:</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="176"/>
+        <location filename="../ui/brushsettings.ui" line="187"/>
         <source>Spacing:</source>
-        <translation>Mezera:</translation>
+        <translation>Rozteč:</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="222"/>
+        <location filename="../ui/brushsettings.ui" line="269"/>
         <source>Pressure:</source>
         <translation>Tlak:</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="234"/>
+        <location filename="../ui/brushsettings.ui" line="120"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="248"/>
+        <location filename="../ui/brushsettings.ui" line="113"/>
         <source>Opacity</source>
         <translation>Neprůhlednost</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="262"/>
+        <location filename="../ui/brushsettings.ui" line="134"/>
         <source>Hardness</source>
         <translation>Tvrdost</translation>
     </message>
     <message>
-        <location filename="../ui/brushsettings.ui" line="276"/>
+        <location filename="../ui/brushsettings.ui" line="127"/>
         <source>Color</source>
         <translation>Barva</translation>
     </message>
@@ -136,6 +136,54 @@
     </message>
 </context>
 <context>
+    <name>ColorBox</name>
+    <message>
+        <location filename="../ui/colorbox.ui" line="88"/>
+        <source>Add a new palette</source>
+        <translation>Přidat novou paletu</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="102"/>
+        <source>Duplicate palette</source>
+        <translation>Zdvojit paletu</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="116"/>
+        <source>Delete the palette</source>
+        <translation>Smazat paletu</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="168"/>
+        <source>R</source>
+        <translation>R</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="182"/>
+        <source>G</source>
+        <translation>G</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="196"/>
+        <source>H</source>
+        <translation>H</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="210"/>
+        <source>B</source>
+        <translation>B</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="217"/>
+        <source>S</source>
+        <translation>S</translation>
+    </message>
+    <message>
+        <location filename="../ui/colorbox.ui" line="224"/>
+        <source>V</source>
+        <translation>V</translation>
+    </message>
+</context>
+<context>
     <name>Color_Dialog</name>
     <message>
         <location filename="../bundled/QtColorPicker/color_dialog.cpp" line="58"/>
@@ -196,52 +244,52 @@
         <translation>Přírustkové kreslení</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="89"/>
+        <location filename="../ui/erasersettings.ui" line="83"/>
         <source>Hard edge</source>
         <translation>Ostrý okraj</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="113"/>
+        <location filename="../ui/erasersettings.ui" line="151"/>
         <source>Spacing:</source>
-        <translation>Mezera:</translation>
+        <translation>Rozteč:</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="120"/>
+        <location filename="../ui/erasersettings.ui" line="184"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="182"/>
+        <location filename="../ui/erasersettings.ui" line="137"/>
         <source>Hardness:</source>
         <translation>Tvrdost:</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="189"/>
+        <location filename="../ui/erasersettings.ui" line="144"/>
         <source>Size:</source>
         <translation>Velikost:</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="232"/>
+        <location filename="../ui/erasersettings.ui" line="130"/>
         <source>Opacity:</source>
         <translation>Neprůhlednost:</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="239"/>
+        <location filename="../ui/erasersettings.ui" line="233"/>
         <source>Pressure:</source>
         <translation>Tlak:</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="251"/>
+        <location filename="../ui/erasersettings.ui" line="257"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="265"/>
+        <location filename="../ui/erasersettings.ui" line="264"/>
         <source>Opacity</source>
         <translation>Neprůhlednost</translation>
     </message>
     <message>
-        <location filename="../ui/erasersettings.ui" line="279"/>
+        <location filename="../ui/erasersettings.ui" line="271"/>
         <source>Hardness</source>
         <translation>Tvrdost</translation>
     </message>
@@ -262,6 +310,19 @@
         <location filename="../export/ffmpegexporter.cpp" line="135"/>
         <source>Ffmpeg process error</source>
         <translation>Chyba při zpracování FFmpeg </translation>
+    </message>
+</context>
+<context>
+    <name>FillSettings</name>
+    <message>
+        <location filename="../ui/fillsettings.ui" line="32"/>
+        <source>Tolerance:</source>
+        <translation>Povolená odchylka:</translation>
+    </message>
+    <message>
+        <location filename="../ui/fillsettings.ui" line="69"/>
+        <source>Sample merged</source>
+        <translation>Vzorek sloučen</translation>
     </message>
 </context>
 <context>
@@ -421,42 +482,47 @@
         <translation>Volby pro sezení</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="499"/>
+        <location filename="../ui/hostdialog.ui" line="513"/>
+        <source>Preserve chat</source>
+        <translation>Zachovat rozhovor</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="523"/>
         <source>A persistent session can be joined even after all users have left</source>
         <translation>K trvalému sezení se lze připojit i poté, co všichni uživatelé odešli</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="502"/>
+        <location filename="../ui/hostdialog.ui" line="526"/>
         <source>Persistent session</source>
         <translation>Trvalé sezení</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="509"/>
+        <location filename="../ui/hostdialog.ui" line="499"/>
         <source>Vanity ID:</source>
         <translation>Zbytečné ID:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="516"/>
+        <location filename="../ui/hostdialog.ui" line="506"/>
         <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
         <translation>Identifikátor k užití v adrese sezení (URL). Ponechejte prázdné, aby server vytvořil nějaký identifikátor</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="526"/>
+        <location filename="../ui/hostdialog.ui" line="536"/>
         <source>Users</source>
         <translation>Uživatelský</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="544"/>
+        <location filename="../ui/hostdialog.ui" line="554"/>
         <source>Maximum number of &amp;users:</source>
         <translation>Největší počet &amp;uživatelů:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="590"/>
+        <location filename="../ui/hostdialog.ui" line="600"/>
         <source>Allow drawing by default</source>
         <translation>Povolit kreslení ve výchozím nastavení</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="600"/>
+        <location filename="../ui/hostdialog.ui" line="610"/>
         <source>Lock layer controls</source>
         <translation>Uzamknout ovládání vrstev</translation>
     </message>
@@ -489,12 +555,12 @@
         <translation>Rychlost</translation>
     </message>
     <message>
-        <location filename="../ui/inputcfg.ui" line="166"/>
+        <location filename="../ui/inputcfg.ui" line="145"/>
         <source>Curve distance</source>
         <translation>Vzdálenost křivky</translation>
     </message>
     <message>
-        <location filename="../ui/inputcfg.ui" line="262"/>
+        <location filename="../ui/inputcfg.ui" line="202"/>
         <source>Velocity range</source>
         <translation>Rozsah rychlosti</translation>
     </message>
@@ -553,17 +619,17 @@
         <translation>Neprůhlednost vrstvy</translation>
     </message>
     <message>
-        <location filename="../ui/layerbox.ui" line="60"/>
+        <location filename="../ui/layerbox.ui" line="57"/>
         <source>Layer access control</source>
         <translation>Ovládání přístupu k vrstvě</translation>
     </message>
     <message>
-        <location filename="../ui/layerbox.ui" line="80"/>
+        <location filename="../ui/layerbox.ui" line="77"/>
         <source>Add a new layer</source>
         <translation>Přidat novou vrstvu</translation>
     </message>
     <message>
-        <location filename="../ui/layerbox.ui" line="94"/>
+        <location filename="../ui/layerbox.ui" line="91"/>
         <source>Delete selected layer</source>
         <translation>Smazat vybranou vrstvu</translation>
     </message>
@@ -584,707 +650,733 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="469"/>
+        <location filename="../mainwindow.cpp" line="476"/>
         <source>Untitled</source>
         <translation>Bez názvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="604"/>
-        <location filename="../mainwindow.cpp" line="624"/>
+        <location filename="../mainwindow.cpp" line="611"/>
+        <location filename="../mainwindow.cpp" line="631"/>
         <source>Exit Drawpile</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="605"/>
+        <location filename="../mainwindow.cpp" line="612"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Stále ještě jste připojen ke kresličskému sezení.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="608"/>
+        <location filename="../mainwindow.cpp" line="615"/>
         <source>Exit anyway</source>
         <translation>Přesto ukončit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="610"/>
-        <location filename="../mainwindow.cpp" line="631"/>
+        <location filename="../mainwindow.cpp" line="617"/>
+        <location filename="../mainwindow.cpp" line="638"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="625"/>
+        <location filename="../mainwindow.cpp" line="632"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Jsou tu neuložené změny. Uložit je před ukončením?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="627"/>
+        <location filename="../mainwindow.cpp" line="634"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="629"/>
+        <location filename="../mainwindow.cpp" line="636"/>
         <source>Discard</source>
         <translation>Zahodit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="716"/>
+        <location filename="../mainwindow.cpp" line="721"/>
         <source>All supported files (%1)</source>
         <translation>Všechny podporované soubory (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="717"/>
-        <location filename="../mainwindow.cpp" line="1433"/>
+        <location filename="../mainwindow.cpp" line="722"/>
+        <location filename="../mainwindow.cpp" line="1478"/>
         <source>Images (%1)</source>
         <translation>Obrázky (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="718"/>
-        <location filename="../mainwindow.cpp" line="907"/>
+        <location filename="../mainwindow.cpp" line="723"/>
+        <location filename="../mainwindow.cpp" line="918"/>
         <source>Recordings (%1)</source>
         <translation>Záznamy (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="723"/>
+        <location filename="../mainwindow.cpp" line="729"/>
+        <location filename="../mainwindow.cpp" line="732"/>
         <source>Open image</source>
         <translation>Otevřít obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="746"/>
-        <location filename="../mainwindow.cpp" line="823"/>
+        <location filename="../mainwindow.cpp" line="756"/>
+        <location filename="../mainwindow.cpp" line="833"/>
         <source>Save image</source>
         <translation>Uložit obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="747"/>
+        <location filename="../mainwindow.cpp" line="757"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>Vybraný formát nepodporuje vrstvy a poznámky.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="749"/>
+        <location filename="../mainwindow.cpp" line="759"/>
         <source>Flatten</source>
         <translation>Vyrovnat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="750"/>
+        <location filename="../mainwindow.cpp" line="760"/>
         <source>Save as OpenRaster</source>
         <translation>Uložit jako OpenRaster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="796"/>
-        <location filename="../mainwindow.cpp" line="855"/>
+        <location filename="../mainwindow.cpp" line="806"/>
+        <location filename="../mainwindow.cpp" line="865"/>
         <source>Couldn&apos;t save image</source>
         <translation>Nepodařilo se uložit obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="909"/>
+        <location filename="../mainwindow.cpp" line="919"/>
+        <source>Compressed recordings (%1)</source>
+        <translation>Komprimované záznamy (%1)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="922"/>
         <source>Record session</source>
         <translation>Nahrávat sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="940"/>
+        <location filename="../mainwindow.cpp" line="953"/>
         <source>Stop recording</source>
         <translation>Zastavit nahrávání</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="989"/>
-        <location filename="../mainwindow.cpp" line="1052"/>
+        <location filename="../mainwindow.cpp" line="1002"/>
+        <location filename="../mainwindow.cpp" line="1066"/>
         <source>Invalid address</source>
         <translation>Neplatná adresa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1004"/>
+        <location filename="../mainwindow.cpp" line="1017"/>
         <source>Unable to start server</source>
         <translation>Nelze spustit server</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1075"/>
+        <location filename="../mainwindow.cpp" line="1089"/>
         <source>Untitled session</source>
         <translation>Nepojmenované sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1076"/>
+        <location filename="../mainwindow.cpp" line="1090"/>
         <source>Really leave the session?</source>
         <translation>Skutečně opustit sezení?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1082"/>
+        <location filename="../mainwindow.cpp" line="1096"/>
         <source>Leave</source>
         <translation>Zanechat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1084"/>
+        <location filename="../mainwindow.cpp" line="1098"/>
         <source>Stay</source>
         <translation>Zůstat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1093"/>
+        <location filename="../mainwindow.cpp" line="1107"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Jsou tu ještě neodeslaná data! Počkejte, prosím, dokud nebude přenos dokončen!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1104"/>
+        <location filename="../mainwindow.cpp" line="1118"/>
         <source>Session title</source>
         <translation>Název sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1105"/>
+        <location filename="../mainwindow.cpp" line="1119"/>
         <source>Change session title</source>
         <translation>Změnit název sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1162"/>
+        <location filename="../mainwindow.cpp" line="1185"/>
         <source>Couldn&apos;t connect to server</source>
         <translation>Nepodařilo se spojit se se serverem</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1227"/>
+        <location filename="../mainwindow.cpp" line="1198"/>
+        <source>Would you like to join the session instead?</source>
+        <translation>Chcete se namísto toho připojit k sezení?</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1200"/>
+        <source>Join</source>
+        <translation>Připojit se</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1273"/>
         <source>Board is locked</source>
         <translation>Deska je uzamknuta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1437"/>
+        <location filename="../mainwindow.cpp" line="1482"/>
         <source>Paste image</source>
         <translation>Vložit obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1453"/>
+        <location filename="../mainwindow.cpp" line="1498"/>
         <source>The image could not be loaded</source>
         <translation>Nepodařilo se nahrát obrázek</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1554"/>
+        <location filename="../mainwindow.cpp" line="1622"/>
         <source>Mark position</source>
         <translation>Označit polohu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1554"/>
+        <location filename="../mainwindow.cpp" line="1622"/>
         <source>Marker text</source>
         <translation>Text značky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1561"/>
+        <location filename="../mainwindow.cpp" line="1629"/>
         <source>About Drawpile</source>
         <translation>O programu Drawpile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1562"/>
+        <location filename="../mainwindow.cpp" line="1630"/>
         <source>&lt;p&gt;&lt;b&gt;Drawpile %1&lt;/b&gt;&lt;br&gt;A collaborative drawing program.&lt;/p&gt;&lt;p&gt;Copyright Â© 2006-2014 Calle Laakkonen&lt;/p&gt;&lt;p&gt;This program is free software; you may redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3, or (at your opinion) any later version.&lt;/p&gt;&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;&lt;p&gt;You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;a href=&quot;http://www.gnu.org/licences/&quot;&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Drawpile %1&lt;/b&gt;&lt;br&gt;Program pro společné kreslení.&lt;/p&gt;&lt;p&gt;Autorské právo © 2006-2014 Calle Laakkonen&lt;/p&gt;&lt;p&gt;Tento program je svobodným softwarem; můžete jej rozdávat a/nebo upravovat za podmínek GNU General Public License (GPL), jak jsou zveřejněny Free Software Foundation; buď ve verzi 3 licence, nebo (podle své volby) v kterékoli pozdější verzi.&lt;/p&gt;&lt;p&gt;Tento program je šířen v naději, že bude užitečný, ale BEZ JAKÉKOLI ZÁRUKY; také bez předpokládané záruky PRODEJNOSTI nebo POUŽITELNOSTI PRO NĚJAKÝ URČITÝ ÚČEL: Více podrobností naleznete v GNU Library General Public License.&lt;/p&gt;&lt;p&gt;Kopii GNU Library General Public License byste měl obdržet společně s tímto programem; a pokud ne, podívejte se na &lt;a href=&quot;http://www.gnu.org/licences/&quot;&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1665"/>
+        <location filename="../mainwindow.cpp" line="1733"/>
         <source>&amp;New</source>
         <translation>&amp;Nový</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1666"/>
+        <location filename="../mainwindow.cpp" line="1734"/>
         <source>&amp;Open...</source>
         <translation>&amp;Otevřít...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1667"/>
+        <location filename="../mainwindow.cpp" line="1735"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1668"/>
+        <location filename="../mainwindow.cpp" line="1736"/>
         <source>Save &amp;As...</source>
-        <translation>Uložit &amp;jako...</translation>
+        <translation>Uložit j&amp;ako...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1669"/>
+        <location filename="../mainwindow.cpp" line="1737"/>
         <source>Record...</source>
         <translation>Nahrávat...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1670"/>
+        <location filename="../mainwindow.cpp" line="1738"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Ukončit</translation>
+        <translation>U&amp;končit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1684"/>
+        <location filename="../mainwindow.cpp" line="1752"/>
         <source>&amp;File</source>
         <translation>&amp;Soubor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1687"/>
+        <location filename="../mainwindow.cpp" line="1755"/>
         <source>Open &amp;recent</source>
         <translation>Otevřít &amp;nedávný</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1695"/>
+        <location filename="../mainwindow.cpp" line="1763"/>
         <source>File tools</source>
         <translation>Nástroje pro soubor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1711"/>
+        <location filename="../mainwindow.cpp" line="1779"/>
         <source>&amp;Undo</source>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1712"/>
+        <location filename="../mainwindow.cpp" line="1780"/>
         <source>&amp;Redo</source>
-        <translation>&amp;Znovu</translation>
+        <translation>Z&amp;novu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1713"/>
+        <location filename="../mainwindow.cpp" line="1781"/>
         <source>&amp;Copy visible</source>
-        <translation>&amp;Kopírovat viditelné</translation>
+        <translation>Kopírovat &amp;viditelné</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1713"/>
+        <location filename="../mainwindow.cpp" line="1781"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Kopírovat vybranou oblast do schránky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1714"/>
+        <location filename="../mainwindow.cpp" line="1782"/>
         <source>Copy &amp;layer</source>
-        <translation>Kopírovat &amp;vrstvu</translation>
+        <translation>Kopírovat v&amp;rstvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1714"/>
+        <location filename="../mainwindow.cpp" line="1782"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Kopírovat vybranou oblast nynější vrstvy do schránky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1715"/>
+        <location filename="../mainwindow.cpp" line="1783"/>
         <source>Cu&amp;t layer</source>
         <translation>V&amp;yjmout vrstvu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1715"/>
+        <location filename="../mainwindow.cpp" line="1783"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Vyjmout vybranou oblast nynější vrstvy do schránky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1716"/>
+        <location filename="../mainwindow.cpp" line="1784"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Vložit</translation>
+        <translation>Vl&amp;ožit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1717"/>
+        <location filename="../mainwindow.cpp" line="1785"/>
         <source>Paste &amp;from file...</source>
-        <translation>Vložit &amp;ze souboru...</translation>
+        <translation>Vložit ze &amp;souboru...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1718"/>
+        <location filename="../mainwindow.cpp" line="1786"/>
         <source>Delete empty annotations</source>
         <translation>Smazat prázdné poznámky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1719"/>
+        <location filename="../mainwindow.cpp" line="1787"/>
         <source>Resi&amp;ze canvas...</source>
-        <translation>&amp;Změnit velikost plátna...</translation>
+        <translation>Z&amp;měnit velikost plátna...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1720"/>
+        <location filename="../mainwindow.cpp" line="1788"/>
         <source>Prefere&amp;nces...</source>
-        <translation>&amp;Nastavení...</translation>
+        <translation>Nas&amp;tavení...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1722"/>
+        <location filename="../mainwindow.cpp" line="1790"/>
         <source>Select &amp;all</source>
-        <translation>Vybrat &amp;vše</translation>
+        <translation>Vybrat vš&amp;e</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1724"/>
-        <location filename="../mainwindow.cpp" line="1726"/>
+        <location filename="../mainwindow.cpp" line="1792"/>
+        <location filename="../mainwindow.cpp" line="1794"/>
         <source>&amp;Deselect</source>
-        <translation>Z&amp;rušit výběr</translation>
+        <translation>Zr&amp;ušit výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1729"/>
+        <location filename="../mainwindow.cpp" line="1797"/>
         <source>Expand up</source>
         <translation>Rozšířit nahoru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1730"/>
+        <location filename="../mainwindow.cpp" line="1798"/>
         <source>Expand down</source>
         <translation>Rozšířit dolů</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1731"/>
+        <location filename="../mainwindow.cpp" line="1799"/>
         <source>Expand left</source>
         <translation>Rozšířit vlevo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1732"/>
+        <location filename="../mainwindow.cpp" line="1800"/>
         <source>Expand right</source>
         <translation>Rozšířit vpravo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1734"/>
+        <location filename="../mainwindow.cpp" line="1802"/>
         <source>Clear</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1734"/>
+        <location filename="../mainwindow.cpp" line="1802"/>
         <source>Delete selection</source>
         <translation>Smazat výběr</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1735"/>
+        <location filename="../mainwindow.cpp" line="1803"/>
         <source>Fill with &amp;FG color</source>
         <translation>Vyplnit barvou &amp;popředí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1735"/>
+        <location filename="../mainwindow.cpp" line="1803"/>
         <source>Fill selected area with foreground color</source>
         <translation>Vyplnit vybranou oblast barvou popředí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1736"/>
+        <location filename="../mainwindow.cpp" line="1804"/>
         <source>Fill with B&amp;G color</source>
-        <translation>Vyplnit barvou po&amp;zadí</translation>
+        <translation>Vyplnit barvou poz&amp;adí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1736"/>
+        <location filename="../mainwindow.cpp" line="1804"/>
         <source>Fill selected area with background color</source>
         <translation>Vyplnit vybranou oblast barvou pozadí</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1778"/>
+        <location filename="../mainwindow.cpp" line="1846"/>
         <source>&amp;Edit</source>
         <translation>Úp&amp;ravy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1794"/>
+        <location filename="../mainwindow.cpp" line="1862"/>
         <source>Expand canvas</source>
         <translation>Rozšířit plátno</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1808"/>
+        <location filename="../mainwindow.cpp" line="1876"/>
         <source>Edit tools</source>
         <translation>Upravit nástroje</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1821"/>
+        <location filename="../mainwindow.cpp" line="1889"/>
         <source>&amp;Toolbars</source>
-        <translation>Nástrojové &amp;pruhy</translation>
+        <translation>&amp;Nástrojové pruhy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1824"/>
+        <location filename="../mainwindow.cpp" line="1892"/>
         <source>&amp;Docks</source>
-        <translation>&amp;Panely</translation>
+        <translation>P&amp;anely</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1827"/>
+        <location filename="../mainwindow.cpp" line="1895"/>
         <source>Chat</source>
         <translation>Rozhovor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1829"/>
+        <location filename="../mainwindow.cpp" line="1897"/>
         <source>Zoom &amp;in</source>
         <translation>&amp;Přiblížit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1830"/>
+        <location filename="../mainwindow.cpp" line="1898"/>
         <source>Zoom &amp;out</source>
         <translation>&amp;Oddálit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1831"/>
+        <location filename="../mainwindow.cpp" line="1899"/>
         <source>&amp;Normal size</source>
         <translation>&amp;Normální velikost</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1832"/>
+        <location filename="../mainwindow.cpp" line="1900"/>
         <source>&amp;Reset rotation</source>
-        <translation>Nastavit &amp;otočení znovu</translation>
+        <translation>&amp;Vynulovat otočení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1832"/>
+        <location filename="../mainwindow.cpp" line="1900"/>
         <source>Drag the view while holding ctrl-space to rotate</source>
         <translation>Táhnout pohled při držení Ctrl+mezerník pro otáčení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1833"/>
+        <location filename="../mainwindow.cpp" line="1901"/>
         <source>Rotate to 90Â°</source>
         <translation>Otočit o 90°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1834"/>
+        <location filename="../mainwindow.cpp" line="1902"/>
         <source>Rotate to 180Â°</source>
         <translation>Otočit o 180°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1835"/>
+        <location filename="../mainwindow.cpp" line="1903"/>
         <source>Rotate to 270Â°</source>
         <translation>Otočit o 270°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1837"/>
+        <location filename="../mainwindow.cpp" line="1905"/>
         <source>Show brush &amp;outline</source>
         <translation>Ukázat &amp;obrys štětce</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1838"/>
+        <location filename="../mainwindow.cpp" line="1906"/>
         <source>Show &amp;annotations</source>
-        <translation>Ukázat &amp;poznámky</translation>
+        <translation>Ukázat pozná&amp;mky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1839"/>
+        <location filename="../mainwindow.cpp" line="1907"/>
         <source>Show user pointers</source>
         <translation>Ukázat uživatelská ukazovátka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1840"/>
+        <location filename="../mainwindow.cpp" line="1908"/>
+        <source>Show user layers</source>
+        <translation>Ukázat uživatelské vrstvy</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1909"/>
         <source>Show laser trails</source>
         <translation>Ukázat laserové stopy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1846"/>
+        <location filename="../mainwindow.cpp" line="1916"/>
         <source>&amp;Full screen</source>
-        <translation>Na celou &amp;obrazovku</translation>
+        <translation>Na celou o&amp;brazovku</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1885"/>
+        <location filename="../mainwindow.cpp" line="1965"/>
         <source>&amp;View</source>
         <translation>&amp;Pohled</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1891"/>
+        <location filename="../mainwindow.cpp" line="1971"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Zvětšení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1896"/>
+        <location filename="../mainwindow.cpp" line="1976"/>
         <source>Rotation</source>
         <translation>Otočení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1914"/>
+        <location filename="../mainwindow.cpp" line="1995"/>
         <source>&amp;Host...</source>
         <translation>&amp;Hostitel...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1914"/>
+        <location filename="../mainwindow.cpp" line="1995"/>
         <source>Share your drawingboard with others</source>
         <translation>Sdílet vaše kreslící prkno s ostatními</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1915"/>
+        <location filename="../mainwindow.cpp" line="1996"/>
         <source>&amp;Join...</source>
         <translation>&amp;Připojit se...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1915"/>
+        <location filename="../mainwindow.cpp" line="1996"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Připojit se ke kresličskému sezení jiného uživatele</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1916"/>
+        <location filename="../mainwindow.cpp" line="1997"/>
         <source>&amp;Leave</source>
         <translation>Za&amp;nechat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1916"/>
+        <location filename="../mainwindow.cpp" line="1997"/>
         <source>Leave this drawing session</source>
         <translation>Opustit toto kresličské sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1919"/>
+        <location filename="../mainwindow.cpp" line="2000"/>
         <source>Lo&amp;ck the board</source>
         <translation>&amp;Uzamknout desku</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1919"/>
+        <location filename="../mainwindow.cpp" line="2000"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Zabránit změnám kreslícího prkna</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1920"/>
+        <location filename="../mainwindow.cpp" line="2001"/>
         <source>Lock layer controls</source>
         <translation>Uzamknout ovládání vrstev</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1920"/>
+        <location filename="../mainwindow.cpp" line="2001"/>
         <source>Allow only session operators to add and change layers</source>
         <translation>Povolit přidávání a měnění vrstev pouze obsluze sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1921"/>
+        <location filename="../mainwindow.cpp" line="2002"/>
         <source>&amp;Deny joins</source>
         <translation>Z&amp;amítnout připojení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1921"/>
+        <location filename="../mainwindow.cpp" line="2002"/>
         <source>Prevent new users from joining the session</source>
         <translation>Zabránit novým uživatelům v připojení k sezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1923"/>
+        <location filename="../mainwindow.cpp" line="2004"/>
         <source>Change &amp;title...</source>
-        <translation>Změ&amp;nit název...</translation>
+        <translation>Z&amp;měnit název...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1939"/>
+        <location filename="../mainwindow.cpp" line="2020"/>
         <source>&amp;Session</source>
-        <translation>&amp;Sezení</translation>
+        <translation>S&amp;ezení</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1952"/>
+        <location filename="../mainwindow.cpp" line="2040"/>
+        <source>&amp;Flood fill</source>
+        <translation>Povo&amp;deň</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2040"/>
+        <source>Fill areas</source>
+        <translation>Vyplnit oblasti</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2043"/>
         <source>&amp;Select</source>
         <translation>&amp;Vybrat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1952"/>
+        <location filename="../mainwindow.cpp" line="2043"/>
         <source>Select area for copying</source>
         <translation>Vybrat oblast ke kopírování</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1953"/>
+        <location filename="../mainwindow.cpp" line="2138"/>
+        <source>Color</source>
+        <translation>Barva</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2033"/>
         <source>&amp;Pen</source>
         <translation>&amp;Pero</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1953"/>
+        <location filename="../mainwindow.cpp" line="2033"/>
         <source>Draw with hard edged strokes</source>
         <translation>Kreslit tahy s ostrými okraji</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1954"/>
+        <location filename="../mainwindow.cpp" line="2034"/>
         <source>&amp;Brush</source>
         <translation>Š&amp;tětec</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1954"/>
+        <location filename="../mainwindow.cpp" line="2034"/>
         <source>Draw with smooth strokes</source>
         <translation>Kreslit hladkými tahy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1955"/>
+        <location filename="../mainwindow.cpp" line="2035"/>
         <source>&amp;Eraser</source>
         <translation>&amp;Guma</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1955"/>
+        <location filename="../mainwindow.cpp" line="2035"/>
         <source>Erase layer content</source>
         <translation>Vymazat obsah vrstvy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1956"/>
+        <location filename="../mainwindow.cpp" line="2036"/>
         <source>&amp;Color picker</source>
         <translation>&amp;Kapátko</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1956"/>
+        <location filename="../mainwindow.cpp" line="2036"/>
         <source>Pick colors from the image</source>
         <translation>Vzít barvy z obrázku</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1957"/>
+        <location filename="../mainwindow.cpp" line="2037"/>
         <source>&amp;Line</source>
         <translation>Čá&amp;ra</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1957"/>
+        <location filename="../mainwindow.cpp" line="2037"/>
         <source>Draw straight lines</source>
         <translation>Kreslit rovné čáry</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1958"/>
+        <location filename="../mainwindow.cpp" line="2038"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Obdélník</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1958"/>
+        <location filename="../mainwindow.cpp" line="2038"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Kreslit nevyplněné čtverce a obdélníky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1959"/>
+        <location filename="../mainwindow.cpp" line="2039"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Elipsa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1959"/>
+        <location filename="../mainwindow.cpp" line="2039"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Kreslit nevyplněné kruhy a elipsy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1960"/>
+        <location filename="../mainwindow.cpp" line="2041"/>
         <source>&amp;Annotation</source>
-        <translation>&amp;Poznámka</translation>
+        <translation>Po&amp;známka</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1960"/>
+        <location filename="../mainwindow.cpp" line="2041"/>
         <source>Add text to the picture</source>
         <translation>Přidat text do obrázku</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1961"/>
+        <location filename="../mainwindow.cpp" line="2042"/>
         <source>&amp;Laser pointer</source>
         <translation>&amp;Laserové ukazovátko</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1961"/>
+        <location filename="../mainwindow.cpp" line="2042"/>
         <source>Point out things on the canvas</source>
         <translation>Upozornit na věci na plátně</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1962"/>
+        <location filename="../mainwindow.cpp" line="2044"/>
         <source>&amp;Mark</source>
         <translation>Oz&amp;načit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1962"/>
+        <location filename="../mainwindow.cpp" line="2044"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>Zanechat značku kvůli nalezení tohoto místa v záznamu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1977"/>
+        <location filename="../mainwindow.cpp" line="2060"/>
         <source>&amp;Tools</source>
         <translation>&amp;Nástroje</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1982"/>
+        <location filename="../mainwindow.cpp" line="2065"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1984"/>
+        <location filename="../mainwindow.cpp" line="2067"/>
         <source>&amp;Swap colors</source>
         <translation>&amp;Vyměnit barvy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1985"/>
+        <location filename="../mainwindow.cpp" line="2068"/>
         <source>&amp;Decrease brush size</source>
         <translation>Zm&amp;enšit velikost štětce</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1986"/>
+        <location filename="../mainwindow.cpp" line="2069"/>
         <source>&amp;Increase brush size</source>
         <translation>Z&amp;většit velikost štětce</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2013"/>
+        <location filename="../mainwindow.cpp" line="2096"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Stránky</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2014"/>
-        <source>&amp;Wiki</source>
-        <translation>&amp;Wikipedie</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2015"/>
+        <location filename="../mainwindow.cpp" line="2097"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;O programu Drawpile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2016"/>
+        <location filename="../mainwindow.cpp" line="2098"/>
         <source>About &amp;Qt</source>
         <translation>O &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2023"/>
+        <location filename="../mainwindow.cpp" line="2104"/>
         <source>&amp;Help</source>
         <translation>Nápo&amp;věda</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2074"/>
-        <source>Palette</source>
-        <translation>Barevná paleta</translation>
     </message>
 </context>
 <context>
@@ -1319,16 +1411,11 @@
     </message>
 </context>
 <context>
-    <name>PaletteBox</name>
+    <name>PaletteListModel</name>
     <message>
-        <location filename="../ui/palettebox.ui" line="59"/>
-        <source>Add a new palette</source>
-        <translation>Přidat novou paletu</translation>
-    </message>
-    <message>
-        <location filename="../ui/palettebox.ui" line="73"/>
-        <source>Delete the palette</source>
-        <translation>Smazat paletu</translation>
+        <location filename="../utils/palettelistmodel.cpp" line="171"/>
+        <source>New palette</source>
+        <translation>Nová paleta</translation>
     </message>
 </context>
 <context>
@@ -1341,7 +1428,7 @@
     <message>
         <location filename="../ui/pensettings.ui" line="96"/>
         <source>Spacing:</source>
-        <translation>Mezera:</translation>
+        <translation>Rozteč:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="103"/>
@@ -1364,17 +1451,17 @@
         <translation>Tlak:</translation>
     </message>
     <message>
-        <location filename="../ui/pensettings.ui" line="201"/>
+        <location filename="../ui/pensettings.ui" line="213"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../ui/pensettings.ui" line="215"/>
+        <location filename="../ui/pensettings.ui" line="220"/>
         <source>Opacity</source>
         <translation>Neprůhlednost</translation>
     </message>
     <message>
-        <location filename="../ui/pensettings.ui" line="229"/>
+        <location filename="../ui/pensettings.ui" line="227"/>
         <source>Color</source>
         <translation>Barva</translation>
     </message>
@@ -1502,14 +1589,14 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="161"/>
+        <location filename="../dialogs/hostdialog.cpp" line="163"/>
         <location filename="../dialogs/settingsdialog.cpp" line="112"/>
         <location filename="../dialogs/settingsdialog.cpp" line="383"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="61"/>
-        <location filename="../mainwindow.cpp" line="719"/>
-        <location filename="../mainwindow.cpp" line="819"/>
-        <location filename="../mainwindow.cpp" line="907"/>
-        <location filename="../mainwindow.cpp" line="1433"/>
+        <location filename="../mainwindow.cpp" line="724"/>
+        <location filename="../mainwindow.cpp" line="829"/>
+        <location filename="../mainwindow.cpp" line="920"/>
+        <location filename="../mainwindow.cpp" line="1478"/>
         <source>All files (*)</source>
         <translation>Všechny soubory (*)</translation>
     </message>
@@ -1545,19 +1632,9 @@
         <translation>Částečně podporován OpenRaster</translation>
     </message>
     <message>
-        <location filename="../utils/networkaccess.cpp" line="71"/>
+        <location filename="../utils/networkaccess.cpp" line="90"/>
         <source>Unexpected file format</source>
         <translation>Neočekávaný formát souboru</translation>
-    </message>
-    <message>
-        <location filename="../utils/networkaccess.cpp" line="86"/>
-        <source>The image could not be loaded</source>
-        <translation>Nepodařilo se nahrát obrázek</translation>
-    </message>
-    <message>
-        <location filename="../utils/palette.cpp" line="130"/>
-        <source>Default</source>
-        <translation>Výchozí</translation>
     </message>
 </context>
 <context>
@@ -1757,32 +1834,32 @@
         <translation>Přírustkové kreslení</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="92"/>
+        <location filename="../ui/simplesettings.ui" line="86"/>
         <source>Hard edge</source>
         <translation>Ostrý okraj</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="116"/>
+        <location filename="../ui/simplesettings.ui" line="110"/>
         <source>Spacing:</source>
-        <translation>Mezera:</translation>
+        <translation>Rozteč:</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="123"/>
+        <location filename="../ui/simplesettings.ui" line="117"/>
         <source>Size:</source>
         <translation>Velikost:</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="140"/>
+        <location filename="../ui/simplesettings.ui" line="134"/>
         <source>Hardness:</source>
         <translation>Tvrdost:</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="160"/>
+        <location filename="../ui/simplesettings.ui" line="154"/>
         <source>Opacity:</source>
         <translation>Neprůhlednost:</translation>
     </message>
     <message>
-        <location filename="../ui/simplesettings.ui" line="193"/>
+        <location filename="../ui/simplesettings.ui" line="187"/>
         <source>px</source>
         <translation>px</translation>
     </message>
@@ -2069,24 +2146,27 @@
 <context>
     <name>dialogs::FilterRecordingDialog</name>
     <message>
-        <location filename="../dialogs/recfilterdialog.cpp" line="45"/>
+        <location filename="../dialogs/recfilterdialog.cpp" line="37"/>
         <source>Filter</source>
         <translation>Filtr</translation>
     </message>
     <message>
-        <location filename="../dialogs/recfilterdialog.cpp" line="72"/>
+        <location filename="../dialogs/recfilterdialog.cpp" line="64"/>
         <source>Save filtered recording</source>
         <translation>Uložit filtrovaný záznam</translation>
     </message>
     <message>
-        <location filename="../dialogs/recfilterdialog.cpp" line="74"/>
+        <location filename="../dialogs/recfilterdialog.cpp" line="66"/>
         <source>Recordings (%1)</source>
         <translation>Záznamy (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/recfilterdialog.cpp" line="105"/>
-        <location filename="../dialogs/recfilterdialog.cpp" line="111"/>
-        <location filename="../dialogs/recfilterdialog.cpp" line="116"/>
+        <location filename="../dialogs/recfilterdialog.cpp" line="67"/>
+        <source>Compressed recordings (%1)</source>
+        <translation>Komprimované záznamy (%1)</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/recfilterdialog.cpp" line="97"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
@@ -2099,22 +2179,22 @@
         <translation>Server</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="110"/>
+        <location filename="../dialogs/hostdialog.cpp" line="111"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="110"/>
+        <location filename="../dialogs/hostdialog.cpp" line="111"/>
         <source>Size is too large</source>
         <translation>Velikost je příliš velká</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="161"/>
+        <location filename="../dialogs/hostdialog.cpp" line="163"/>
         <source>Images (%1)</source>
         <translation>Obrázky (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="167"/>
+        <location filename="../dialogs/hostdialog.cpp" line="169"/>
         <source>Open image</source>
         <translation>Otevřít obrázek</translation>
     </message>
@@ -2156,83 +2236,93 @@
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="464"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="75"/>
+        <source>Compressed recording</source>
+        <translation>Komprimovaný záznam</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/playbackdialog.cpp" line="489"/>
         <source>Mark position</source>
         <translation>Označit polohu</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="464"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="489"/>
         <source>Marker text</source>
         <translation>Text značky</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="484"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="509"/>
         <source>Recording ended</source>
         <translation>Záznam skončen</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="559"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="584"/>
         <source>%1 m. %2 s.</source>
         <translation>%1 m. %2 s.</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="561"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="586"/>
         <source>%1 s.</source>
         <translation>%1 s.</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="583"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="608"/>
         <source>Video error</source>
         <translation>Chyba obrazového záznamu</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="615"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="640"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
         <translation>Tento záznam byl pořízen s jinou verzí Drawpile (%1) a múže vypadat jinak</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="618"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="643"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
         <translation>Tento záznam byl pořízen s novější verzí Drawpile (%1), která nemusí být slučitelná</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="621"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="646"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
         <translation>Záznam je neslučitelný. Tento záznam byl pořízen s Drawpile ve verzi %1.</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="625"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="650"/>
         <source>Selected file is not a Drawpile recording</source>
         <translation>Vybraný soubor není záznam Drawpile</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="629"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="654"/>
         <source>Cannot read file: %1</source>
         <translation>Nelze přečíst soubor: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="636"/>
-        <location filename="../dialogs/playbackdialog.cpp" line="639"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="661"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="664"/>
         <source>Open recording</source>
         <translation>Otevřít záznam</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="660"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="684"/>
+        <source>Cannot index compressed recordings.</source>
+        <translation>Nelze zrejstříkovat komprimované záznamy.</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/playbackdialog.cpp" line="691"/>
         <source>Index not yet generated</source>
         <translation>Rejstřík ještě není vytvořen</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="668"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="699"/>
         <source>Error loading index!</source>
         <translation>Chyba při nahrávání rejstříku</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="678"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="709"/>
         <source>Jump to</source>
         <translation>Skočit na</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="735"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="766"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
@@ -2355,6 +2445,19 @@
     </message>
 </context>
 <context>
+    <name>docks::ColorBox</name>
+    <message>
+        <location filename="../docks/colorbox.cpp" line="148"/>
+        <source>Delete</source>
+        <translation>Smazat</translation>
+    </message>
+    <message>
+        <location filename="../docks/colorbox.cpp" line="149"/>
+        <source>Delete palette &quot;%1&quot;?</source>
+        <translation>Smazat paletu &quot;%1&quot;?</translation>
+    </message>
+</context>
+<context>
     <name>docks::InputSettings</name>
     <message>
         <location filename="../docks/inputsettingsdock.cpp" line="34"/>
@@ -2383,54 +2486,54 @@
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="36"/>
+        <location filename="../docks/layerlistdock.cpp" line="38"/>
         <source>Layers</source>
         <translation>Vrstvy</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="56"/>
+        <location filename="../docks/layerlistdock.cpp" line="58"/>
         <source>Hide from self</source>
         <translation>Schovat před sebou</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="58"/>
+        <location filename="../docks/layerlistdock.cpp" line="60"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="59"/>
-        <location filename="../docks/layerlistdock.cpp" line="275"/>
+        <location filename="../docks/layerlistdock.cpp" line="61"/>
+        <location filename="../docks/layerlistdock.cpp" line="294"/>
         <source>Merge down</source>
         <translation>Sloučit dolů</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="60"/>
-        <location filename="../docks/layerlistdock.cpp" line="269"/>
+        <location filename="../docks/layerlistdock.cpp" line="62"/>
+        <location filename="../docks/layerlistdock.cpp" line="288"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="224"/>
+        <location filename="../docks/layerlistdock.cpp" line="243"/>
         <source>New layer</source>
         <translation>Nová vrstva</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="264"/>
+        <location filename="../docks/layerlistdock.cpp" line="283"/>
         <source>Delete layer</source>
         <translation>Smazat vrstvu</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="265"/>
+        <location filename="../docks/layerlistdock.cpp" line="284"/>
         <source>Really delete &quot;%1&quot;?</source>
         <translation>Opravdu smazat &quot;%1&quot;?</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="276"/>
+        <location filename="../docks/layerlistdock.cpp" line="295"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
         <translation>Stiskněte Sloučit dolů pro sločení vrstvy s první viditelnou vrstvou níže, namísto jejího smazání.</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="279"/>
+        <location filename="../docks/layerlistdock.cpp" line="298"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -2444,87 +2547,74 @@
     </message>
 </context>
 <context>
-    <name>docks::PaletteBox</name>
-    <message>
-        <location filename="../docks/palettebox.cpp" line="179"/>
-        <source>New palette</source>
-        <translation>Nová paleta</translation>
-    </message>
-    <message>
-        <location filename="../docks/palettebox.cpp" line="205"/>
-        <source>Delete</source>
-        <translation>Smazat</translation>
-    </message>
-    <message>
-        <location filename="../docks/palettebox.cpp" line="206"/>
-        <source>Delete palette &quot;%1&quot;?</source>
-        <translation>Smazat paletu &quot;%1&quot;?</translation>
-    </message>
-</context>
-<context>
     <name>docks::ToolSettings</name>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="55"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="99"/>
         <source>Pen</source>
         <translation>Pero</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="58"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="102"/>
         <source>Brush</source>
         <translation>Štětec</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="62"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="106"/>
         <source>Eraser</source>
         <translation>Guma</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="65"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="109"/>
         <source>Color picker</source>
         <translation>Kapátko</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="68"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="112"/>
         <source>Line</source>
         <translation>Čára</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="71"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="115"/>
         <source>Rectangle</source>
         <translation>Obdélník</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="74"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="118"/>
         <source>Ellipse</source>
         <translation>Elipsa</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="77"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="121"/>
+        <source>Flood fill</source>
+        <translation>Přívalová výplň</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="124"/>
         <source>Annotation</source>
         <translation>Poznámka</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="80"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="127"/>
         <source>Selection</source>
         <translation>Výběr</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="83"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="130"/>
         <source>Laser pointer</source>
         <translation>Laserové ukazovátko</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="119"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="138"/>
         <source>Foreground color</source>
         <translation>Barva popředí</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="124"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="143"/>
         <source>Background color</source>
         <translation>Barva pozadí</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="138"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="64"/>
         <source>Tool slot #%1</source>
         <translation>Místo s nástroji #%1</translation>
     </message>
@@ -2540,18 +2630,18 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="533"/>
-        <location filename="../net/client.cpp" line="575"/>
+        <location filename="../net/client.cpp" line="538"/>
+        <location filename="../net/client.cpp" line="580"/>
         <source>Server</source>
         <translation>Server</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="566"/>
+        <location filename="../net/client.cpp" line="571"/>
         <source>A server error occurred!</source>
         <translation>Nastala chyba serveru!</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="568"/>
+        <location filename="../net/client.cpp" line="573"/>
         <source>The server is shutting down!</source>
         <translation>Server se vypíná!</translation>
     </message>
@@ -2571,7 +2661,7 @@
         <location filename="../net/login.cpp" line="384"/>
         <location filename="../net/login.cpp" line="446"/>
         <location filename="../net/login.cpp" line="521"/>
-        <location filename="../net/login.cpp" line="561"/>
+        <location filename="../net/login.cpp" line="564"/>
         <source>Incompatible server</source>
         <translation>Neslučitelný server</translation>
     </message>
@@ -2621,78 +2711,78 @@
         <translation>Probíhá sezení k jiné verzi Drawpile!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="569"/>
+        <location filename="../net/login.cpp" line="572"/>
         <source>Session is password protected</source>
         <translation>Sezení je chráněno heslem</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="569"/>
+        <location filename="../net/login.cpp" line="572"/>
         <source>Enter session password</source>
         <translation>Zadejte heslo pro sezení</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="656"/>
-        <location filename="../net/login.cpp" line="676"/>
+        <location filename="../net/login.cpp" line="659"/>
+        <location filename="../net/login.cpp" line="679"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Neplatné osvědčení SSL pro server %1</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="659"/>
+        <location filename="../net/login.cpp" line="662"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>Osvědčení důvěryhodného serveru se změnilo!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="690"/>
+        <location filename="../net/login.cpp" line="693"/>
         <source>The certificate of this server has changed!</source>
         <translation>Osvědčení tohoto serveru se změnilo!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="692"/>
+        <location filename="../net/login.cpp" line="695"/>
         <source>Continue</source>
         <translation>Pokračovat</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="737"/>
+        <location filename="../net/login.cpp" line="740"/>
         <source>Cancelled</source>
         <translation>Zřušeno</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="746"/>
+        <location filename="../net/login.cpp" line="749"/>
         <source>Session not found!</source>
         <translation>Sezení nenalezeno!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="748"/>
-        <source>Incorrect password</source>
-        <translation>Nesprávné heslo</translation>
+        <location filename="../net/login.cpp" line="751"/>
+        <source>Incorrect password!</source>
+        <translation>Nesprávné heslo!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="750"/>
-        <source>Invalid username</source>
-        <translation>Nesprávné uživatelské jméno</translation>
+        <location filename="../net/login.cpp" line="753"/>
+        <source>Invalid username!</source>
+        <translation>Neplatné uživatelské jméno!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="752"/>
+        <location filename="../net/login.cpp" line="757"/>
+        <source>Session is closed!</source>
+        <translation>Sezení je zavřeno!</translation>
+    </message>
+    <message>
+        <location filename="../net/login.cpp" line="759"/>
+        <source>This username has been banned!</source>
+        <translation>Toto uživatelské jméno bylo zakázáno!</translation>
+    </message>
+    <message>
+        <location filename="../net/login.cpp" line="761"/>
+        <source>Session ID already in use!</source>
+        <translation>Identifikátor sezení se již používá!</translation>
+    </message>
+    <message>
+        <location filename="../net/login.cpp" line="755"/>
         <source>Username already taken!</source>
         <translation>Uživatelské jméno již obsazeno!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="754"/>
-        <source>Session is closed</source>
-        <translation>Sezení je zavřeno</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="756"/>
-        <source>This username has been banned</source>
-        <translation>Toto uživatelské jméno bylo zakázáno</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="758"/>
-        <source>Session ID already in use</source>
-        <translation>ID sezení již používáno</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="760"/>
+        <location filename="../net/login.cpp" line="763"/>
         <source>Unknown error (%1)</source>
         <translation>Neznámá chyba (%1)</translation>
     </message>
@@ -2739,27 +2829,27 @@
 <context>
     <name>openraster::Reader</name>
     <message>
-        <location filename="../ora/orareader.cpp" line="55"/>
+        <location filename="../ora/orareader.cpp" line="56"/>
         <source>No error</source>
         <translation>Žádná chyba</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="97"/>
+        <location filename="../ora/orareader.cpp" line="98"/>
         <source>File is not an OpenRaster file</source>
         <translation>Soubor není souborem OpenRaster</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="116"/>
+        <location filename="../ora/orareader.cpp" line="117"/>
         <source>Image has zero size!</source>
         <translation>Obrázek má nulovou velikost!</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="186"/>
+        <location filename="../ora/orareader.cpp" line="187"/>
         <source>Couldn&apos;t load layer %1</source>
         <translation>Nepodařilo se nahrát vrstvu %1</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="192"/>
+        <location filename="../ora/orareader.cpp" line="193"/>
         <source>Unnamed layer</source>
         <translation>Nepojmenovaná vrstva</translation>
     </message>
@@ -2833,7 +2923,7 @@
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../tools/toolsettings.cpp" line="661"/>
+        <location filename="../tools/toolsettings.cpp" line="673"/>
         <source>Annotation content</source>
         <translation>Obsah poznámky</translation>
     </message>
@@ -2841,7 +2931,7 @@
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../tools/toolsettings.cpp" line="596"/>
+        <location filename="../tools/toolsettings.cpp" line="609"/>
         <source>Pick from current layer only</source>
         <translation>Brát pouze z nynější vrstvy</translation>
     </message>
@@ -2849,24 +2939,34 @@
 <context>
     <name>widgets::ChatBox</name>
     <message>
-        <location filename="../widgets/chatwidget.cpp" line="48"/>
+        <location filename="../widgets/chatwidget.cpp" line="74"/>
+        <source>Chat (recorded)...</source>
+        <translation>Rozhovor (zaznamenáno)...</translation>
+    </message>
+    <message>
+        <location filename="../widgets/chatwidget.cpp" line="77"/>
         <source>Chat...</source>
         <translation>Rozhovor...</translation>
     </message>
     <message>
-        <location filename="../widgets/chatwidget.cpp" line="93"/>
+        <location filename="../widgets/chatwidget.cpp" line="110"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined the session</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; se připojil k sezení</translation>
     </message>
     <message>
-        <location filename="../widgets/chatwidget.cpp" line="98"/>
+        <location filename="../widgets/chatwidget.cpp" line="115"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left the session</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; opustil sezení</translation>
     </message>
     <message>
-        <location filename="../widgets/chatwidget.cpp" line="103"/>
+        <location filename="../widgets/chatwidget.cpp" line="120"/>
         <source>You have been kicked by %1</source>
         <translation>Byl jste vykopnut %1</translation>
+    </message>
+    <message>
+        <location filename="../widgets/chatwidget.cpp" line="201"/>
+        <source>Invalid dice roll description: %1</source>
+        <translation>Neplatný popis kutálení kostky: %1</translation>
     </message>
 </context>
 <context>
@@ -2986,7 +3086,7 @@
         <translation>Nastavit barvu palety</translation>
     </message>
     <message>
-        <location filename="../widgets/palettewidget.cpp" line="233"/>
+        <location filename="../widgets/palettewidget.cpp" line="242"/>
         <source>%1
 Red: %2
 Green: %3
