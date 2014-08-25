@@ -76,5 +76,9 @@ QString JoinDialog::getUserName() const {
 	return _ui->username->text();
 }
 
+bool JoinDialog::recordSession() const {
+	return _ui->recordSession->isChecked();
+}
+
 }
 

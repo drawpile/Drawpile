@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>330</width>
-    <height>107</height>
+    <height>144</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,6 +81,13 @@
         </spacer>
        </item>
       </layout>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="recordSession">
+       <property name="text">
+        <string>Record session</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

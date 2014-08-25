@@ -90,6 +90,12 @@ public:
 	QUrl sessionUrl(bool includeUser=false) const;
 
 	/**
+	 * @brief Get the ID of the current session.
+	 * @return
+	 */
+	QString sessionId() const;
+
+	/**
 	 * @brief Get the local user's username
 	 * @return user name
 	 */

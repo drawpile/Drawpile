@@ -122,7 +122,7 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0)
+	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false)
 {
 	updateTitle();
 
@@ -922,40 +922,49 @@ void MainWindow::toggleRecording()
 			tr("Record session"), getLastPath(), filter);
 
 	if(!file.isEmpty()) {
-		// Set file suffix if missing
-		const QFileInfo info(file);
-		if(info.suffix().isEmpty())
-			file += ".dprec";
+		startRecorder(file);
+	}
+}
 
-		// Start the recorder
-		_recorder = new recording::Writer(file, this);
+void MainWindow::startRecorder(const QString &filename)
+{
+	Q_ASSERT(!_recorder);
+	QAction *recordAction = getAction("recordsession");
 
-		if(!_recorder->open()) {
-			showErrorMessage(_recorder->errorString());
-			delete _recorder;
-			_recorder = 0;
-		} else {
-			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			_recorder->writeHeader();
+	// Set file suffix if missing
+	QString file = filename;
+	const QFileInfo info(file);
+	if(info.suffix().isEmpty())
+		file += ".dprec";
 
-			QList<protocol::MessagePtr> snapshot = _canvas->statetracker()->generateSnapshot(false);
-			foreach(const protocol::MessagePtr ptr, snapshot) {
-				_recorder->recordMessage(ptr);
-			}
+	// Start the recorder
+	_recorder = new recording::Writer(file, this);
 
-			QSettings cfg;
-			cfg.beginGroup("settings/recording");
-			if(cfg.value("recordpause", true).toBool())
-				_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+	if(!_recorder->open()) {
+		showErrorMessage(_recorder->errorString());
+		delete _recorder;
+		_recorder = 0;
+	} else {
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		_recorder->writeHeader();
 
-			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
-
-			recordAction->setText(tr("Stop recording"));
-			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
-
-			QApplication::restoreOverrideCursor();
-			setRecorderStatus(true);
+		QList<protocol::MessagePtr> snapshot = _canvas->statetracker()->generateSnapshot(false);
+		foreach(const protocol::MessagePtr ptr, snapshot) {
+			_recorder->recordMessage(ptr);
 		}
+
+		QSettings cfg;
+		cfg.beginGroup("settings/recording");
+		if(cfg.value("recordpause", true).toBool())
+			_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+
+		connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
+
+		recordAction->setText(tr("Stop recording"));
+		recordAction->setIcon(icon::fromTheme("media-playback-stop"));
+
+		QApplication::restoreOverrideCursor();
+		setRecorderStatus(true);
 	}
 }
 
@@ -1072,7 +1081,7 @@ void MainWindow::join()
 			dlg->rememberSettings();
 
 			// Connect
-			joinSession(address);
+			joinSession(address, dlg->recordSession());
 		}
 		dlg->deleteLater();
 	});
@@ -1129,16 +1138,18 @@ void MainWindow::changeSessionTitle()
 /**
  * @param url URL
  */
-void MainWindow::joinSession(const QUrl& url)
+void MainWindow::joinSession(const QUrl& url, bool autoRecord)
 {
-	MainWindow *win;
-	if(canReplace())
-		win = this;
-	else
-		win = new MainWindow(false);
+	if(!canReplace()) {
+		MainWindow *win = new MainWindow(false);
+		Q_ASSERT(win->canReplace());
+		win->joinSession(url, autoRecord);
+		return;
+	}
 
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, win);
-	win->_client->connectToServer(login);
+	_autoRecordOnConnect = autoRecord;
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
+	_client->connectToServer(login);
 }
 
 /**
@@ -1231,6 +1242,27 @@ void MainWindow::loggedin(bool join)
 		_canvas->initCanvas(_client);
 		_dock_layers->init();
 		_currentdoctools->setEnabled(true);
+	}
+
+	// Automatically start recording
+	if(_autoRecordOnConnect) {
+		QDir path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+		QString id = _client->sessionId();
+
+		int i=0;
+		QFileInfo rf;
+		do {
+			QString fn;
+			if(i==0)
+				fn = QStringLiteral("session-%1.dprec").arg(id);
+			else
+				fn = QStringLiteral("session-%1 (%2).dprec").arg(id).arg(i);
+
+			rf.setFile(path, fn);
+			++i;
+		} while(rf.exists());
+
+		startRecorder(rf.absoluteFilePath());
 	}
 
 	setDrawingToolsEnabled(true);

@@ -73,7 +73,7 @@ class MainWindow : public QMainWindow {
 		MainWindow *loadRecording(recording::Reader *reader);
 
 		//! Connect to a host and join a session if full URL is provided.
-		void joinSession(const QUrl& url);
+		void joinSession(const QUrl& url, bool autoRecord=false);
 
 		//! Check if the current board can be replaced
 		bool canReplace() const;
@@ -172,6 +172,8 @@ class MainWindow : public QMainWindow {
 		//! Display an error message
 		void showErrorMessage(const QString& message, const QString& details=QString());
 
+		void startRecorder(const QString &filename);
+
 		void readSettings(bool windowpos=true);
 		void writeSettings();
 
@@ -205,6 +207,7 @@ class MainWindow : public QMainWindow {
 		QMenu *_recent;
 
 		recording::Writer *_recorder;
+		bool _autoRecordOnConnect;
 
 		QActionGroup *_currentdoctools; // actions relating to the currently open document
 		QActionGroup *_admintools; // session operator actions

@@ -115,6 +115,11 @@ bool Client::isLoggedIn() const
 	return _server->isLoggedIn();
 }
 
+QString Client::sessionId() const
+{
+	return _sessionId;
+}
+
 QUrl Client::sessionUrl(bool includeUser) const
 {
 	if(!isConnected())
@@ -124,7 +129,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 	url.setScheme("drawpile");
 	if(!includeUser)
 		url.setUserInfo(QString());
-	url.setPath("/" + _sessionId);
+	url.setPath("/" + sessionId());
 	return url;
 }
 

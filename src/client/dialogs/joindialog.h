@@ -38,6 +38,9 @@ public:
 	//! Get the username
 	QString getUserName() const;
 
+	//! Should the session be recorded from the beginning
+	bool recordSession() const;
+
 	//! Store settings in configuration file
 	void rememberSettings() const;
 
