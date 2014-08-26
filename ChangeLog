@@ -1,6 +1,8 @@
 2014-??-?? Version 0.9.5
  * Added Czech translation
  * Added "Record session" checkbox to join dialog
+ * Added zoom and angle sliders to status bar
+ * Added support for zooming/rotating with a pinch gesture
 
 2014-08-15 Version 0.9.4
  * Improved palette box
