@@ -79,6 +79,7 @@
 
 #include "../shared/record/writer.h"
 #include "../shared/record/reader.h"
+#include "../shared/util/filename.h"
 
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -1248,25 +1249,8 @@ void MainWindow::loggedin(bool join)
 	}
 
 	// Automatically start recording
-	if(_autoRecordOnConnect) {
-		QDir path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-		QString id = _client->sessionId();
-
-		int i=0;
-		QFileInfo rf;
-		do {
-			QString fn;
-			if(i==0)
-				fn = QStringLiteral("session-%1.dprec").arg(id);
-			else
-				fn = QStringLiteral("session-%1 (%2).dprec").arg(id).arg(i);
-
-			rf.setFile(path, fn);
-			++i;
-		} while(rf.exists());
-
-		startRecorder(rf.absoluteFilePath());
-	}
+	if(_autoRecordOnConnect)
+		startRecorder(utils::uniqueFilename(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation), "session-" + _client->sessionId(), "dprec"));
 
 	setDrawingToolsEnabled(true);
 	updateStrokePreviewMode();

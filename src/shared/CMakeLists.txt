@@ -22,6 +22,7 @@ set (
 	util/idlist.cpp
 	util/logger.cpp
 	util/passwordhash.cpp
+	util/filename.cpp
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp
