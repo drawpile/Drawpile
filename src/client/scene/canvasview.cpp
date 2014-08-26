@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QMimeData>
 #include <QApplication>
+#include <QGestureEvent>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -54,6 +55,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_locked(false), _pointertracking(false)
 {
 	viewport()->setAcceptDrops(true);
+	viewport()->grabGesture(Qt::PinchGesture);
 	setAcceptDrops(true);
 
 	// Draw the crosshair cursor
@@ -480,6 +482,24 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 		QGraphicsView::keyReleaseEvent(event);
 	}
 }
+
+void CanvasView::gestureEvent(QGestureEvent *event)
+{
+	QPinchGesture *pinch = static_cast<QPinchGesture*>(event->gesture(Qt::PinchGesture));
+	if(pinch) {
+		if(pinch->state() == Qt::GestureStarted) {
+			_gestureStartZoom = _zoom;
+			_gestureStartAngle = _rotate;
+		}
+
+		if((pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
+			setZoom(_gestureStartZoom * pinch->scaleFactor());
+
+		if((pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
+			setRotation(_gestureStartAngle + pinch->rotationAngle());
+	}
+}
+
 //! Handle viewport events
 /**
  * Tablet events are handled here
@@ -487,7 +507,10 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
  */
 bool CanvasView::viewportEvent(QEvent *event)
 {
-	if(event->type() == QEvent::TabletMove) {
+	if(event->type() == QEvent::Gesture) {
+		gestureEvent(static_cast<QGestureEvent*>(event));
+
+	} else if(event->type() == QEvent::TabletMove) {
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();

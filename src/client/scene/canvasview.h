@@ -21,6 +21,8 @@
 
 #include <QGraphicsView>
 
+class QGestureEvent;
+
 #include "core/point.h"
 #include "utils/strokesmoother.h"
 #include "bundled/kis_cubic_curve.h"
@@ -192,6 +194,8 @@ class CanvasView : public QGraphicsView
 		void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
 		void onPenUp(bool right);
 		
+		void gestureEvent(QGestureEvent *event);
+
 		void resetCursor();
 
 		/**
@@ -217,6 +221,9 @@ class CanvasView : public QGraphicsView
 		float _pointerdistance;
 		float _pointervelocity;
 		StrokeSmoother _smoother;
+
+		qreal _gestureStartZoom;
+		qreal _gestureStartAngle;
 
 		int _outlinesize, _dia;
 		bool _enableoutline, _showoutline, _subpixeloutline;
