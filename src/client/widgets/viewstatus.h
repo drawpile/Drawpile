@@ -22,6 +22,7 @@
 #include <QWidget>
 
 class QLabel;
+class QSlider;
 
 namespace widgets {
 
@@ -34,7 +35,12 @@ public:
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
 
+signals:
+	void zoomChanged(qreal newZoom);
+	void angleChanged(qreal newAngle);
+
 private:
+	QSlider *_zoomSlider, *_angleSlider;
 	QLabel *_zoom, *_angle;
 };
 

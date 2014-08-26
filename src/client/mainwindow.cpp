@@ -182,6 +182,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(dropUrl(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
 
+	connect(viewstatus, SIGNAL(zoomChanged(qreal)), _view, SLOT(setZoom(qreal)));
+	connect(viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
+
 	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
 	
 	// Create the chatbox

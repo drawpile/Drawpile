@@ -17,10 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QLabel>
-#include <QHBoxLayout>
-
 #include "viewstatus.h"
+
+#include <QLabel>
+#include <QSlider>
+#include <QHBoxLayout>
 
 namespace widgets {
 
@@ -35,20 +36,45 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Zoom level
 	QLabel *zlbl = new QLabel(tr("Zoom:"), this);
-	layout->addWidget(zlbl);
+
+	_zoomSlider = new QSlider(Qt::Horizontal, this);
+	_zoomSlider->setMaximumWidth(120);
+	_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+	_zoomSlider->setMinimum(50);
+	_zoomSlider->setMaximum(1600);
+	_zoomSlider->setPageStep(50);
+	_zoomSlider->setValue(100);
+	connect(_zoomSlider, &QSlider::valueChanged, [this](int val) { emit zoomChanged(val); });
+
 	_zoom = new QLabel("100%", this);
+	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
+
+	layout->addWidget(zlbl);
+	layout->addWidget(_zoomSlider);
 	layout->addWidget(_zoom);
 
 	// Rotation angle
 	layout->addSpacing(10);
 	QLabel *rlbl = new QLabel(tr("Angle:"), this);
-	layout->addWidget(rlbl);
 	_angle = new QLabel(QString::fromUtf8("0°"));
+	_angle->setFixedWidth(_angle->fontMetrics().width("9999.9"));
+
+	_angleSlider = new QSlider(Qt::Horizontal, this);
+	_angleSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+	_angleSlider->setMinimum(-360);
+	_angleSlider->setMaximum(360);
+	_angleSlider->setPageStep(45);
+	connect(_angleSlider, &QSlider::valueChanged, [this](int val) { emit angleChanged(val); });
+
+	layout->addWidget(rlbl);
+	layout->addWidget(_angleSlider);
 	layout->addWidget(_angle);
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
+	_zoomSlider->setValue(zoom);
+	_angleSlider->setValue(angle);
 	_zoom->setText(QString::number(zoom, 'f', 0) + "%");
 	_angle->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
 }

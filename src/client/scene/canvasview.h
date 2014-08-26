@@ -67,9 +67,6 @@ class CanvasView : public QGraphicsView
 		//! Get the current zoom factor
 		qreal zoom() const { return _zoom; }
 
-		//! Set the zoom factor
-		void setZoom(qreal zoom);
-
 		//! Get the current rotation angle in degrees
 		qreal rotation() const { return _rotate; }
 		
@@ -124,6 +121,9 @@ class CanvasView : public QGraphicsView
 		//! Scroll view to location
 		void scrollTo(const QPoint& point);
 		
+		//! Set the zoom factor
+		void setZoom(qreal zoom);
+
 		//! Set the rotation angle in degrees
 		void setRotation(qreal angle);
 
