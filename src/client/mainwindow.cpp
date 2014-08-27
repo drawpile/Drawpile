@@ -296,8 +296,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateStrokePreviewMode()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
 
 	updateStrokePreviewMode();
+	updateTabletSupportMode();
 
 	// Create actions and menus
 	setupActions();
@@ -527,6 +529,13 @@ void MainWindow::updateShortcuts()
 			win->loadShortcuts();
 		}
 	}
+}
+
+void MainWindow::updateTabletSupportMode()
+{
+	bool enable = QSettings().value("settings/input/tabletevents", true).toBool();
+
+	_view->enableTabletEvents(enable);
 }
 
 /**

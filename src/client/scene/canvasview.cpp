@@ -52,7 +52,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
-	_locked(false), _pointertracking(false)
+	_locked(false), _pointertracking(false), _enableTabletEvents(true)
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->grabGesture(Qt::PinchGesture);
@@ -70,6 +70,11 @@ CanvasView::CanvasView(QWidget *parent)
 	bmp.drawPoint(16,16);
 	_cursor = QCursor(bm, mask);
 	viewport()->setCursor(_cursor);
+}
+
+void CanvasView::enableTabletEvents(bool enable)
+{
+	_enableTabletEvents = enable;
 }
 
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
@@ -510,7 +515,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
 
-	} else if(event->type() == QEvent::TabletMove) {
+	} else if(event->type() == QEvent::TabletMove && _enableTabletEvents) {
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
@@ -531,7 +536,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			}
 			_prevpoint = point;
 		}
-	} else if(event->type() == QEvent::TabletPress) {
+	} else if(event->type() == QEvent::TabletPress && _enableTabletEvents) {
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
@@ -553,7 +558,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 			}
 		}
-	} else if(event->type() == QEvent::TabletRelease) {
+	} else if(event->type() == QEvent::TabletRelease && _enableTabletEvents) {
 		// Stylus lifted
 		// Ignore this event: a mouseRelease event is also generated, so we let
 		// the mouseRleaseEvent function handle this.

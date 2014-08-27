@@ -121,6 +121,7 @@ class MainWindow : public QMainWindow {
 
 		void updateShortcuts();
 		void updateStrokePreviewMode();
+		void updateTabletSupportMode();
 
 		void selectAll();
 		void selectNone();

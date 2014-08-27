@@ -118,6 +118,10 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	// Set defaults
 	QSettings cfg;
 
+	cfg.beginGroup("settings/input");
+	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/recording");
 	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
 	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
@@ -203,6 +207,10 @@ void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
 	// Remember general settings
+	cfg.beginGroup("settings/input");
+	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/recording");
 	cfg.setValue("recordpause", _ui->recordpause->isChecked());
 	cfg.setValue("minimumpause", _ui->minimumpause->value());

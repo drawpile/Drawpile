@@ -85,6 +85,9 @@ class CanvasView : public QGraphicsView
 		//! Quick adjust current tool attribute 1 if possible
 		void doQuickAdjust1(float delta);
 
+		//! Enable/disable tablet event handling
+		void enableTabletEvents(bool enable);
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);
@@ -249,6 +252,7 @@ class CanvasView : public QGraphicsView
 
 		bool _locked;
 		bool _pointertracking;
+		bool _enableTabletEvents;
 };
 
 }
