@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,28 +36,32 @@ void SelectionItem::setRect(const QRect &rect)
 	_rect = rect;
 }
 
-SelectionItem::Handle SelectionItem::handleAt(const QPoint &point) const
+SelectionItem::Handle SelectionItem::handleAt(const QPoint &point, float zoom) const
 {
-	if(!_rect.contains(point))
+	const qreal H = HANDLE / (zoom/100.0f);
+
+	const QRectF R = _rect.adjusted(-H/2, -H/2, H/2, H/2);
+
+	if(!R.contains(point))
 		return OUTSIDE;
 
-	QPoint p = point - _rect.topLeft();
+	QPointF p = point - R.topLeft();
 
-	if(p.x() < HANDLE) {
-		if(p.y() < HANDLE)
+	if(p.x() < H) {
+		if(p.y() < H)
 			return RS_TOPLEFT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > R.height()-H)
 			return RS_BOTTOMLEFT;
 		return RS_LEFT;
-	} else if(p.x() > _rect.width() - HANDLE) {
-		if(p.y() < HANDLE)
+	} else if(p.x() > R.width() - H) {
+		if(p.y() < H)
 			return RS_TOPRIGHT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > R.height()-H)
 			return RS_BOTTOMRIGHT;
 		return RS_RIGHT;
-	} else if(p.y() < HANDLE)
+	} else if(p.y() < H)
 		return RS_TOP;
-	else if(p.y() > _rect.height()-HANDLE)
+	else if(p.y() > R.height()-H)
 		return RS_BOTTOM;
 
 	return TRANSLATE;
@@ -92,15 +96,16 @@ void SelectionItem::setPasteImage(const QImage &image)
 
 QRectF SelectionItem::boundingRect() const
 {
-	return _rect;
+	return _rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2);
 }
 
 void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-
 	if(!_pasteimg.isNull()) {
 		painter->drawImage(_rect, _pasteimg);
 	}
+
+	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	QPen pen;
 	pen.setColor(Qt::white);
@@ -111,6 +116,21 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, Q
 	painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 	//painter->setBrush(d->brush);
 	painter->drawRect(_rect);
+
+	// Draw resizing handles
+	pen.setWidth(HANDLE);
+	pen.setStyle(Qt::SolidLine);
+	painter->setPen(pen);
+	painter->drawPoint(_rect.topLeft());
+	painter->drawPoint(_rect.topLeft() + QPointF(_rect.width()/2, 0));
+	painter->drawPoint(_rect.topRight());
+
+	painter->drawPoint(_rect.topLeft() + QPointF(0, _rect.height()/2));
+	painter->drawPoint(_rect.topRight() + QPointF(0, _rect.height()/2));
+
+	painter->drawPoint(_rect.bottomLeft());
+	painter->drawPoint(_rect.bottomLeft() + QPointF(_rect.width()/2, 0));
+	painter->drawPoint(_rect.bottomRight());
 }
 
 void SelectionItem::marchingAnts()

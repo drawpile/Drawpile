@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public:
 	QRect rect() const { return _rect; }
 
 	//! Get the translation handle at the point
-	Handle handleAt(const QPoint &point) const;
+	Handle handleAt(const QPoint &point, float zoom) const;
 
 	//! Adjust selection position or size
 	void adjustGeometry(Handle handle, const QPoint &delta);

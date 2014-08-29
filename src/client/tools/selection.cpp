@@ -39,7 +39,7 @@ void Selection::begin(const paintcore::Point &point, bool right, float zoom)
 	}
 
 	if(scene().selectionItem())
-		_handle = scene().selectionItem()->handleAt(point.toPoint());
+		_handle = scene().selectionItem()->handleAt(point.toPoint(), zoom);
 	else
 		_handle = drawingboard::SelectionItem::OUTSIDE;
 
