@@ -33,7 +33,7 @@ namespace tools {
  */
 class Annotation : public Tool {
 public:
-	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
+	Annotation(ToolCollection &owner);
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain, bool center);

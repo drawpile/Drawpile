@@ -25,6 +25,11 @@
 
 namespace tools {
 
+ColorPicker::ColorPicker(ToolCollection &owner)
+	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29))
+{
+}
+
 void ColorPicker::begin(const paintcore::Point& point, bool right)
 {
 	_bg = right;

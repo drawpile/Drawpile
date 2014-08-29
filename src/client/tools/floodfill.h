@@ -26,7 +26,7 @@ namespace tools {
 class FloodFill : public Tool
 {
 public:
-	FloodFill(ToolCollection &owner) : Tool(owner, FLOODFILL) {}
+	FloodFill(ToolCollection &owner);
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain, bool center);

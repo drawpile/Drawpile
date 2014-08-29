@@ -31,7 +31,7 @@ namespace tools {
  */
 class Selection : public Tool {
 public:
-	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
+	Selection(ToolCollection &owner);
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain, bool center);

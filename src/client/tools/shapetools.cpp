@@ -113,6 +113,11 @@ void RectangularTool::end()
 	client().sendPenup();
 }
 
+Rectangle::Rectangle(ToolCollection &owner)
+	: RectangularTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
+{
+}
+
 QAbstractGraphicsShapeItem *Rectangle::createPreview(const paintcore::Point &p)
 {
 	return new QGraphicsRectItem(p.x(), p.y(), 1, 1, 0);
@@ -128,6 +133,11 @@ void Rectangle::updateToolPreview()
 paintcore::PointVector Rectangle::pointVector()
 {
 	return paintcore::shapes::rectangle(rect());
+}
+
+Ellipse::Ellipse(ToolCollection &owner)
+	: RectangularTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 2, 2))
+{
 }
 
 QAbstractGraphicsShapeItem *Ellipse::createPreview(const paintcore::Point &p)

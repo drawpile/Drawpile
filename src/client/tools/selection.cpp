@@ -25,6 +25,11 @@
 #include "tools/utils.h"
 
 namespace tools {
+Selection::Selection(ToolCollection &owner)
+	: Tool(owner, SELECTION, QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
+{
+}
+
 void Selection::begin(const paintcore::Point &point, bool right)
 {
 	// Right click to dismiss selection (and paste buffer)

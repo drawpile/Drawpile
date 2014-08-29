@@ -30,6 +30,12 @@
 
 namespace tools {
 
+Annotation::Annotation(ToolCollection &owner)
+	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2)),
+	  _selected(0)
+{
+}
+
 /**
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.

@@ -169,6 +169,8 @@ endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
 
+qt5_add_resources( QtResource ui/cursors/cursors.qrc )
+
 if( BUILTIN_ICONS )
 	message(STATUS "Including icons in the executable" )
 	qt5_add_resources( QtResource ui/icons/icons.qrc )

@@ -30,7 +30,7 @@ namespace tools {
  */
 class ColorPicker : public Tool {
 public:
-	ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
+	ColorPicker(ToolCollection &owner);
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain, bool center);

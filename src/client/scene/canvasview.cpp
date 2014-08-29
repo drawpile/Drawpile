@@ -146,15 +146,23 @@ void CanvasView::setLocked(bool lock)
 
 void CanvasView::resetCursor()
 {
-	if(_locked)
+	if(_locked) {
 		viewport()->setCursor(Qt::ForbiddenCursor);
-	else
-		viewport()->setCursor(_cursor);
+
+	} else {
+		const QCursor &c = _current_tool->cursor();
+		// We use our own custom cross cursor instead of the standard one
+		if(c.shape() == Qt::CrossCursor)
+			viewport()->setCursor(_cursor);
+		else
+			viewport()->setCursor(c);
+	}
 }
 
 void CanvasView::selectTool(tools::Type tool)
 {
 	_current_tool = _toolbox.get(tool);
+	resetCursor();
 }
 
 void CanvasView::selectLayer(int layer_id)

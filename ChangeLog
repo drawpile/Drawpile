@@ -4,6 +4,7 @@
  * Added zoom and angle sliders to status bar
  * Added support for zooming/rotating with a pinch gesture
  * Added option to disable tablet events
+ * Added custom cursors for tools
 
 2014-08-15 Version 0.9.4
  * Improved palette box

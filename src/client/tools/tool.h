@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QPointer>
 #include <QAbstractGraphicsShapeItem>
+#include <QCursor>
 
 #include "core/point.h"
 
@@ -57,13 +58,16 @@ class ToolCollection;
 class Tool
 {
 public:
-	Tool(ToolCollection &owner, Type type)
-		: _owner(owner), _type(type)
+	Tool(ToolCollection &owner, Type type, QCursor cursor=Qt::CrossCursor)
+		: _owner(owner), _type(type), _cursor(cursor)
 		{}
-	virtual ~Tool() {};
+	virtual ~Tool() {}
 
 	//! Get the type of this tool
 	Type type() const { return _type; }
+
+	//! Get the cursor to use for this tool
+	const QCursor &cursor() const { return _cursor; }
 
 	/**
 	 * @brief Start a new stroke
@@ -95,6 +99,7 @@ protected:
 private:
 	ToolCollection &_owner;
 	const Type _type;
+	QCursor _cursor;
 };
 
 /**

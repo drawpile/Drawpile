@@ -28,6 +28,11 @@
 
 namespace tools {
 
+FloodFill::FloodFill(ToolCollection &owner)
+	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29))
+{
+}
+
 void FloodFill::begin(const paintcore::Point &point, bool right)
 {
 	FillSettings *ts = settings().getFillSettings();

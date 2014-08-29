@@ -46,7 +46,7 @@ private:
  */
 class RectangularTool : public Tool {
 public:
-	RectangularTool(ToolCollection &owner, Type type) : Tool(owner, type) {}
+	RectangularTool(ToolCollection &owner, Type type, QCursor cursor) : Tool(owner, type, cursor) {}
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
@@ -70,7 +70,7 @@ private:
  */
 class Rectangle : public RectangularTool {
 public:
-	Rectangle(ToolCollection &owner) : RectangularTool(owner, RECTANGLE) {}
+	Rectangle(ToolCollection &owner);
 
 protected:
 	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
@@ -85,7 +85,7 @@ protected:
  */
 class Ellipse : public RectangularTool {
 public:
-	Ellipse(ToolCollection &owner) : RectangularTool(owner, ELLIPSE) {}
+	Ellipse(ToolCollection &owner);
 
 protected:
 	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
