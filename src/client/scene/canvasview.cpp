@@ -336,7 +336,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 			if(_smoothing>0 && _current_tool->allowSmoothing())
 				_smoother.addPoint(p);
 			else
-				_current_tool->begin(p, right);
+				_current_tool->begin(p, right, _zoom);
 		}
 	}
 }
@@ -352,7 +352,7 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 				_smoother.addPoint(p);
 				if(_smoother.hasSmoothPoint()) {
 					if(_smoother.isFirstSmoothPoint())
-						_current_tool->begin(_smoother.smoothPoint(), right);
+						_current_tool->begin(_smoother.smoothPoint(), right, _zoom);
 					else
 						_current_tool->motion(_smoother.smoothPoint(), shift, alt);
 				}
@@ -369,7 +369,7 @@ void CanvasView::onPenUp(bool right)
 		if(!_specialpenmode) {
 			// Add the missing single dab when smoothing is used
 			if(_smoothing>0 && _current_tool->allowSmoothing() && !_smoother.hasSmoothPoint()) {
-				_current_tool->begin(_smoother.latestPoint(), right);
+				_current_tool->begin(_smoother.latestPoint(), right, _zoom);
 			}
 			_current_tool->end();
 		}

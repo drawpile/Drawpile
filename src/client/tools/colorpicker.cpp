@@ -30,8 +30,9 @@ ColorPicker::ColorPicker(ToolCollection &owner)
 {
 }
 
-void ColorPicker::begin(const paintcore::Point& point, bool right)
+void ColorPicker::begin(const paintcore::Point& point, bool right, float zoom)
 {
+	Q_UNUSED(zoom);
 	_bg = right;
 	motion(point, false, false);
 }

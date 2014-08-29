@@ -33,7 +33,7 @@ class Selection : public Tool {
 public:
 	Selection(ToolCollection &owner);
 
-	void begin(const paintcore::Point& point, bool right);
+	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 

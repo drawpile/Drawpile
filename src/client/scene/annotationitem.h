@@ -50,7 +50,7 @@ class AnnotationItem : public QGraphicsObject {
 		const paintcore::Annotation *getAnnotation() const;
 
 		//! Get the translation handle at the point
-		Handle handleAt(const QPoint &point) const;
+		Handle handleAt(const QPoint &point, float zoom) const;
 
 		//! Adjust annotation position or size
 		void adjustGeometry(Handle handle, const QPoint &delta);

@@ -32,8 +32,9 @@
 
 namespace tools {
 
-void Line::begin(const paintcore::Point& point, bool right)
+void Line::begin(const paintcore::Point& point, bool right, float zoom)
 {
+	Q_UNUSED(zoom);
 	QGraphicsLineItem *item = new QGraphicsLineItem();
 	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
 	item->setLine(QLineF(point, point));
@@ -72,8 +73,9 @@ void Line::end()
 	client().sendPenup();
 }
 
-void RectangularTool::begin(const paintcore::Point& point, bool right)
+void RectangularTool::begin(const paintcore::Point& point, bool right, float zoom)
 {
+	Q_UNUSED(zoom);
 	auto *item = createPreview(point);
 	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
 	scene().setToolPreview(item);

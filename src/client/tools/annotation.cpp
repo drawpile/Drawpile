@@ -40,14 +40,14 @@ Annotation::Annotation(ToolCollection &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const paintcore::Point& point, bool right)
+void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
 	drawingboard::AnnotationItem *item = scene().annotationAt(point.toPoint());
 	if(item) {
 		_selected = item;
-		_handle = _selected->handleAt(point.toPoint());
+		_handle = _selected->handleAt(point.toPoint(), zoom);
 		settings().getAnnotationSettings()->setSelection(item);
 		_wasselected = true;
 	} else {

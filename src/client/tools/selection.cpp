@@ -30,7 +30,7 @@ Selection::Selection(ToolCollection &owner)
 {
 }
 
-void Selection::begin(const paintcore::Point &point, bool right)
+void Selection::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	// Right click to dismiss selection (and paste buffer)
 	if(right) {

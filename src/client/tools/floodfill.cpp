@@ -33,8 +33,9 @@ FloodFill::FloodFill(ToolCollection &owner)
 {
 }
 
-void FloodFill::begin(const paintcore::Point &point, bool right)
+void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 {
+	Q_UNUSED(zoom);
 	FillSettings *ts = settings().getFillSettings();
 
 	paintcore::FillResult fill = paintcore::floodfill(

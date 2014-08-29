@@ -28,7 +28,7 @@ class FloodFill : public Tool
 public:
 	FloodFill(ToolCollection &owner);
 
-	void begin(const paintcore::Point& point, bool right);
+	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 };

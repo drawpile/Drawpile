@@ -35,28 +35,32 @@ AnnotationItem::AnnotationItem(int id, paintcore::LayerStack *image, QGraphicsIt
 /**
  * Note. Assumes point is inside the text box.
  */
-AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point) const
+AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point, float zoom) const
 {
-	if(!_rect.contains(point))
+	const qreal H = HANDLE / (zoom/100.0f);
+
+	const QRectF R = _rect.adjusted(-H/2, -H/2, H/2, H/2);
+
+	if(!R.contains(point))
 		return OUTSIDE;
 
-	QPoint p = point - _rect.topLeft().toPoint();
+	QPointF p = point - R.topLeft();
 
-	if(p.x() < HANDLE) {
-		if(p.y() < HANDLE)
+	if(p.x() < H) {
+		if(p.y() < H)
 			return RS_TOPLEFT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > R.height()-H)
 			return RS_BOTTOMLEFT;
 		return RS_LEFT;
-	} else if(p.x() > _rect.width() - HANDLE) {
-		if(p.y() < HANDLE)
+	} else if(p.x() > R.width() - H) {
+		if(p.y() < H)
 			return RS_TOPRIGHT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > R.height()-H)
 			return RS_BOTTOMRIGHT;
 		return RS_RIGHT;
-	} else if(p.y() < HANDLE)
+	} else if(p.y() < H)
 		return RS_TOP;
-	else if(p.y() > _rect.height()-HANDLE)
+	else if(p.y() > R.height()-H)
 		return RS_BOTTOM;
 
 	return TRANSLATE;
@@ -139,32 +143,7 @@ bool AnnotationItem::isChanged() const
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return _rect | _oldrect;
-}
-
-namespace {
-void drawTriangle(QPainter *painter, AnnotationItem::Handle dir, const QPointF offset) {
-	QPointF tri[3];
-	tri[0] = offset;
-	switch(dir) {
-	case AnnotationItem::OUTSIDE:
-	case AnnotationItem::TRANSLATE: return;
-	case AnnotationItem::RS_TOPLEFT: tri[1] = {1, 0}; tri[2] = {0, 1}; break;
-	case AnnotationItem::RS_TOPRIGHT: tri[1] = {0, 1}; tri[2] = {-1, 0}; break;
-	case AnnotationItem::RS_BOTTOMRIGHT: tri[1] = {-1, 0}; tri[2] = {0, -1}; break;
-	case AnnotationItem::RS_BOTTOMLEFT: tri[1] = {0, -1}; tri[2] = {1, 0}; break;
-
-	case AnnotationItem::RS_TOP: tri[1] = {0.5, 0.5}; tri[2] = {-0.5, 0.5}; break;
-	case AnnotationItem::RS_RIGHT: tri[1] = {-0.5, 0.5}; tri[2] = {-0.5, -0.5}; break;
-	case AnnotationItem::RS_BOTTOM: tri[1] = {-0.5, -0.5}; tri[2] = {0.5, -0.5}; break;
-	case AnnotationItem::RS_LEFT: tri[1] = {0.5, -0.5}; tri[2] = {0.5, 0.5}; break;
-	}
-
-	tri[1] = tri[1] * 8 + offset;
-	tri[2] = tri[2] * 8 + offset;
-
-	painter->drawConvexPolygon(tri, 3);
-}
+	return _rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2) | _oldrect;
 }
 
 void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
@@ -196,18 +175,18 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		if(_highlight) {
 			QPen pen(border);
 			pen.setCosmetic(true);
+			pen.setWidth(HANDLE);
 			painter->setPen(pen);
+			painter->drawPoint(_rect.topLeft());
+			painter->drawPoint(_rect.topLeft() + QPointF(_rect.width()/2, 0));
+			painter->drawPoint(_rect.topRight());
 
-			drawTriangle(painter, RS_TOPLEFT, _rect.topLeft() + QPointF(2, 2));
-			drawTriangle(painter, RS_TOP, _rect.topLeft() + QPointF(_rect.width()/ 2 + 2, 2));
-			drawTriangle(painter, RS_TOPRIGHT, _rect.topRight() + QPointF(-2, 2));
+			painter->drawPoint(_rect.topLeft() + QPointF(0, _rect.height()/2));
+			painter->drawPoint(_rect.topRight() + QPointF(0, _rect.height()/2));
 
-			drawTriangle(painter, RS_LEFT, _rect.center() - QPointF(_rect.width()/2 - 2, 0));
-			drawTriangle(painter, RS_RIGHT, _rect.center() + QPointF(_rect.width()/2 - 2, 0));
-
-			drawTriangle(painter, RS_BOTTOMLEFT, _rect.bottomLeft() + QPointF(2, -2));
-			drawTriangle(painter, RS_BOTTOM, _rect.bottomLeft() + QPointF(_rect.width()/ 2 + 2, -2));
-			drawTriangle(painter, RS_BOTTOMRIGHT, _rect.bottomRight() + QPointF(-2, -2));
+			painter->drawPoint(_rect.bottomLeft());
+			painter->drawPoint(_rect.bottomLeft() + QPointF(_rect.width()/2, 0));
+			painter->drawPoint(_rect.bottomRight());
 		}
 	}
 	if(!_oldrect.isNull()) {

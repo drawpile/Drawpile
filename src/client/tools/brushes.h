@@ -29,7 +29,7 @@ class BrushBase : public Tool
 	public:
 		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type) {}
 
-		void begin(const paintcore::Point& point, bool right);
+		void begin(const paintcore::Point& point, bool right, float zoom);
 		void motion(const paintcore::Point& point, bool constrain, bool center);
 		void end();
 

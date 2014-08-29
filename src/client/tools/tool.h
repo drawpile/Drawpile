@@ -73,8 +73,9 @@ public:
 	 * @brief Start a new stroke
 	 * @param point starting point
 	 * @param right is the right mouse/pen button pressed instead of the left one
+	 * @param zoom the current view zoom factor
 	 */
-	virtual void begin(const paintcore::Point& point, bool right) = 0;
+	virtual void begin(const paintcore::Point& point, bool right, float zoom) = 0;
 
 	/**
 	 * @brief Continue a stroke

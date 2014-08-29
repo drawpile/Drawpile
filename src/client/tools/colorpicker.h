@@ -32,7 +32,7 @@ class ColorPicker : public Tool {
 public:
 	ColorPicker(ToolCollection &owner);
 
-	void begin(const paintcore::Point& point, bool right);
+	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 

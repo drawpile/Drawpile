@@ -32,7 +32,7 @@ class Line : public Tool {
 public:
 	Line(ToolCollection &owner) : Tool(owner, LINE) {}
 
-	void begin(const paintcore::Point& point, bool right);
+	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
@@ -48,7 +48,7 @@ class RectangularTool : public Tool {
 public:
 	RectangularTool(ToolCollection &owner, Type type, QCursor cursor) : Tool(owner, type, cursor) {}
 
-	void begin(const paintcore::Point& point, bool right);
+	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 

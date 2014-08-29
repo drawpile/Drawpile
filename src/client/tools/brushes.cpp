@@ -28,8 +28,9 @@
 
 namespace tools {
 
-void BrushBase::begin(const paintcore::Point& point, bool right)
+void BrushBase::begin(const paintcore::Point& point, bool right, float zoom)
 {
+	Q_UNUSED(zoom);
 	const paintcore::Brush &brush = settings().getBrush(right);
 	drawingboard::ToolContext tctx = {
 		layer(),

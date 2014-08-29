@@ -29,9 +29,10 @@
 
 namespace tools {
 
-void LaserPointer::begin(const paintcore::Point &point, bool right)
+void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(right);
+	Q_UNUSED(zoom);
 	// Send initial point to serve as the start of the line,
 	// and also a toolchange to set the laser color
 
