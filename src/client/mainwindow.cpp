@@ -44,6 +44,12 @@
 #include "core/tile.h"
 #endif
 
+#ifdef Q_OS_OSX
+#define CTRL_KEY "Meta"
+#else
+#define CTRL_KEY "Ctrl"
+#endif
+
 #include "config.h"
 #include "mainwindow.h"
 #include "loader.h"
@@ -1828,8 +1834,8 @@ void MainWindow::setupActions()
 	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+L"));
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG color"), tr("Fill selected area with foreground color"), QKeySequence("Ctrl+,"));
-	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G color"), tr("Fill selected area with background color"), QKeySequence("Ctrl+."));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
+	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G color"), tr("Fill selected area with background color"), QKeySequence(CTRL_KEY "+."));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
