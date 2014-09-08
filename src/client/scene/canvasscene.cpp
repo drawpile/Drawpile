@@ -152,7 +152,14 @@ QList<int> CanvasScene::listEmptyAnnotations() const
 
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
 {
-	setSceneRect(_image->boundingRect());
+	QRectF bounds = _image->boundingRect();
+
+	// Include some empty space around the canvas to make working
+	// near the borders easier.
+	float w2 = bounds.width()/3;
+	float h2 = bounds.height()/3;
+
+	setSceneRect(bounds.adjusted(-w2, -h2, w2, h2));
 	if(xoffset || yoffset) {
 		QPoint offset(xoffset, yoffset);
 
