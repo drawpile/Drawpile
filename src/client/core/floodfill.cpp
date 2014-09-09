@@ -291,7 +291,7 @@ FillResult expandFill(const FillResult &input, int expansion, const QColor &colo
 	quint32 *colorOut = reinterpret_cast<quint32*>(out.image.bits());
 
 	// Optimization: skip extra padding
-	QRect expBounds = BOUNDS.adjusted(-R, -R, R, R);
+	QRect expBounds = BOUNDS.adjusted(-R, -R, R+1, R+1);
 	Q_ASSERT(QRect(0, 0, inputImg.width(), inputImg.height()).contains(expBounds));
 
 	for(int y=expBounds.top();y<expBounds.bottom();++y) {
