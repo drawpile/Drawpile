@@ -155,7 +155,7 @@ signals:
 private:
 	tools::ToolSettings *getToolSettingsPage(tools::Type tool);
 
-	void updateToolSlot(int i);
+	void updateToolSlot(int i, bool typeChanged);
 	void selectTool(tools::Type tool);
 	void selectToolSlot(int i);
 	void saveCurrentTool();

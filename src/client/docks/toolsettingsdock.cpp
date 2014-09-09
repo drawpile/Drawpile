@@ -61,8 +61,6 @@ ToolSettings::ToolSettings(QWidget *parent)
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
 		b->setMinimumSize(32, 32);
-		b->setToolTip(tr("Tool slot #%1").arg(i+1));
-		//b->setIconSize(QSize(22, 22));
 		b->setAutoRaise(true);
 
 		hlayout->addWidget(b);
@@ -82,13 +80,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
 		_currenttool->setForeground(c);
 		_toolprops[_currentQuickslot].setForegroundColor(c);
-		updateToolSlot(_currentQuickslot);
+		updateToolSlot(_currentQuickslot, false);
 		emit foregroundColorChanged(c);
 	});
 	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
 		_currenttool->setBackground(c);
 		_toolprops[_currentQuickslot].setBackgroundColor(c);
-		updateToolSlot(_currentQuickslot);
+		updateToolSlot(_currentQuickslot, false);
 		emit backgroundColorChanged(c);
 	});
 
@@ -174,7 +172,7 @@ void ToolSettings::readSettings()
 		cfg.beginGroup(QString("slot-%1").arg(i));
 		_toolprops << tools::ToolsetProperties::load(cfg);
 		cfg.endGroup();
-		updateToolSlot(i);
+		updateToolSlot(i, true);
 	}
 
 	selectToolSlot(quickslot);
@@ -249,7 +247,7 @@ void ToolSettings::selectTool(tools::Type tool)
 	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
 	_toolprops[_currentQuickslot].setCurrentTool(tool);
 
-	updateToolSlot(currentToolSlot());
+	updateToolSlot(currentToolSlot(), true);
 	emit toolChanged(tool);
 	emit sizeChanged(_currenttool->getSize());
 	updateSubpixelMode();
@@ -332,15 +330,20 @@ const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
  * @brief Update the tool slot button to match the stored tool settings
  * @param i
  */
-void ToolSettings::updateToolSlot(int i)
+void ToolSettings::updateToolSlot(int i, bool typeChanged)
 {
 	int tool = _toolprops[i].currentTool();
 	tools::ToolSettings *ts = getToolSettingsPage(tools::Type(tool));
 	if(!ts)
 		ts = getToolSettingsPage(tools::PEN);
 
-	_quickslot[i]->setIcon(ts->getIcon());
+
 	_quickslot[i]->setColors(_toolprops[i].foregroundColor(), _toolprops[i].backgroundColor());
+
+	if(typeChanged) {
+		_quickslot[i]->setIcon(ts->getIcon());
+		_quickslot[i]->setToolTip(QStringLiteral("#%1: %2").arg(i+1).arg(ts->getTitle()));
+	}
 }
 
 void ToolSettings::saveCurrentTool()
