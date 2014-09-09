@@ -432,6 +432,7 @@ public:
 	~FillSettings();
 
 	int fillTolerance() const;
+	int fillExpansion() const;
 	bool sampleMerged() const;
 
 	void quickAdjust1(float adjustment) override;

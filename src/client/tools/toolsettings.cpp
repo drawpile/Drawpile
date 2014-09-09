@@ -974,6 +974,11 @@ int FillSettings::fillTolerance() const
 	return _ui->tolerance->value();
 }
 
+int FillSettings::fillExpansion() const
+{
+	return _ui->expand->value();
+}
+
 bool FillSettings::sampleMerged() const
 {
 	return _ui->samplemerged->isChecked();
@@ -983,6 +988,7 @@ ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("tolerance", fillTolerance());
+	cfg.setValue("expand", fillExpansion());
 	cfg.setValue("samplemerged", sampleMerged());
 	return cfg;
 }
@@ -990,6 +996,7 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->tolerance->setValue(cfg.value("tolerance", 0).toInt());
+	_ui->expand->setValue(cfg.value("expand", 0).toInt());
 	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
 }
 

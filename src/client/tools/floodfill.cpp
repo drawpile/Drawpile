@@ -37,14 +37,17 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	FillSettings *ts = settings().getFillSettings();
+	QColor color = right ? settings().backgroundColor() : settings().foregroundColor();
 
 	paintcore::FillResult fill = paintcore::floodfill(
 		scene().layers(),
 		QPoint(point.x(), point.y()),
-		right ? settings().backgroundColor() : settings().foregroundColor(),
+		color,
 		ts->fillTolerance(),
 		ts->sampleMerged() ? 0 : layer()
 	);
+
+	fill = paintcore::expandFill(fill, ts->fillExpansion(), color);
 
 	if(fill.image.isNull())
 		return;

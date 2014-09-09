@@ -49,6 +49,18 @@ struct FillResult {
  */
 FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer);
 
+/**
+ * @brief Take a previous flood fill result and expand the filled area
+ *
+ * This is useful when coloring lineart with soft edges.
+ *
+ * @param input fill area to expand
+ * @param expansion expansion kernel radius
+ * @param color expansion color
+ * @return expanded fill result
+ */
+FillResult expandFill(const FillResult &input, int expansion, const QColor &color);
+
 }
 
 #endif // FLOODFILL_H

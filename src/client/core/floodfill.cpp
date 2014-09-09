@@ -22,6 +22,8 @@
 #include "layer.h"
 
 #include <QStack>
+#include <QPainter>
+#include <QVarLengthArray>
 
 namespace paintcore {
 
@@ -179,6 +181,41 @@ private:
 	int tolerance;
 };
 
+/**
+ * @brief find the bounding rectangle of non-transparent content
+ *
+ * An empty rectangle is returned if the whole image is transparent
+ * @param image
+ */
+QRect findOpaqueBoundingRect(const QImage &image)
+{
+	Q_ASSERT(image.depth()==32);
+	Q_ASSERT(!image.isNull());
+
+	int top=image.height(), bottom=0;
+	int left=image.width(), right=0;
+
+	const uchar *alpha = image.bits()+3;
+	for(int y=0;y<image.height();++y) {
+		for(int x=0;x<image.width();++x, alpha+=4) {
+			if(*alpha) {
+				if(x<left)
+					left=x;
+				if(x>right)
+					right=x;
+				if(y<top)
+					top=y;
+				if(y>bottom)
+					bottom=y;
+			}
+		}
+	}
+
+	if(top>bottom || left>right)
+		return QRect();
+	return QRect(QPoint(left, top), QPoint(right, bottom));
+}
+
 }
 
 FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer)
@@ -192,6 +229,111 @@ FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor 
 		fill.start(point);
 
 	return fill.result();
+}
+
+FillResult expandFill(const FillResult &input, int expansion, const QColor &color)
+{
+	if(input.image.isNull() || expansion<1)
+		return input;
+
+	Q_ASSERT(input.image.format() == QImage::Format_ARGB32);
+
+	FillResult out;
+
+	const int R = expansion;
+	const int D = R*2 + 1;
+
+	// Step 1. Pad image to make sure there is room for expansion
+	QRect BOUNDS = findOpaqueBoundingRect(input.image);
+	if(BOUNDS.isEmpty())
+		return input;
+
+	QImage inputImg;
+	if(QRect(0, 0, input.image.width(), input.image.height()).contains(BOUNDS.adjusted(-D,-D,D,D))) {
+		// Original image has enough padding around the content
+		inputImg = input.image;
+		out.x = input.x;
+		out.y = input.y;
+
+	} else {
+		// Not enough padding: add some
+		inputImg = QImage(input.image.width() + 2*D, input.image.height() + 2*D, input.image.format());
+		inputImg.fill(0);
+
+		QPainter p(&inputImg);
+		p.drawImage(D, D, input.image);
+
+		out.x = input.x - D;
+		out.y = input.y - D;
+		BOUNDS.translate(D, D);
+	}
+
+	// Step 2. Generate convolution matrix for expanding the alpha channel
+	QVarLengthArray<int> kernel(D*D);
+	int i=0;
+	const int RR = R*R;
+	for(int y=0;y<D;++y) {
+		const int y0 = y-R;
+		for(int x=0;x<D;++x) {
+			const int x0 = x-R;
+			// TODO use a gaussian kernel?
+			kernel[i++] = x0*x0 + y0*y0 <= RR;
+		}
+	}
+	Q_ASSERT(i==kernel.length());
+
+	// Step 3. Generate expanded image
+	out.image = QImage(inputImg.width(), inputImg.height(), inputImg.format());
+	out.image.fill(0);
+
+	const uchar *alphaIn = inputImg.bits()+3;
+	const QRgb fillColor = color.rgba();
+	quint32 *colorOut = reinterpret_cast<quint32*>(out.image.bits());
+
+	// Optimization: skip extra padding
+	QRect expBounds = BOUNDS.adjusted(-R, -R, R, R);
+	Q_ASSERT(QRect(0, 0, inputImg.width(), inputImg.height()).contains(expBounds));
+
+	for(int y=expBounds.top();y<expBounds.bottom();++y) {
+		for(int x=expBounds.left();x<expBounds.right();++x) {
+			int i=0, a=0;
+			for(int ky=y-R;ky<=y+R;++ky) {
+				for(int kx=x-R;kx<=x+R;++kx) {
+					a += alphaIn[ky*inputImg.bytesPerLine() + 4*kx] * kernel[i++];
+				}
+			}
+			Q_ASSERT(i==kernel.length());
+
+			// TODO adjustable threshold
+			if(a>0) {
+				int j = y*inputImg.width() + x;
+				Q_ASSERT(j <= out.image.width() * out.image.height());
+				colorOut[j] = fillColor;
+			}
+		}
+	}
+
+	// Step 4. Crop image in case of negative offset
+	// (since the protocol doesn't support signed PutImage coordinates)
+	if(out.x<0 || out.y<0) {
+		const int cropx = out.x<0 ? -out.x : 0;
+		const int cropy = out.y<0 ? -out.y : 0;
+
+		Q_ASSERT(cropx < out.image.width());
+		Q_ASSERT(cropy < out.image.height());
+
+		QImage cropped = QImage(out.image.width() - cropx, out.image.height() - cropy, out.image.format());
+		for(int y=0;y<cropped.height();++y) {
+			memcpy(cropped.scanLine(y), out.image.scanLine(y+cropy) + cropx*4, cropped.width() * 4);
+		}
+
+		out.image = cropped;
+		out.x += cropx;
+		out.y += cropy;
+	}
+
+	// All done!
+	return out;
 }
 
 }
