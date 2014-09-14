@@ -66,11 +66,16 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # Clang++
-    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 else ()
     # Other C++ compilers
     set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 endif ()
+
+### Set deployment target (OSX specific)
+if ( APPLE )
+	set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.7 ${CMAKE_CXX_FLAGS}")
+endif (APPLE)
 
 ### Output config.h ###
 configure_file ( config/config.h.cmake "${CMAKE_BINARY_DIR}/config.h" )
