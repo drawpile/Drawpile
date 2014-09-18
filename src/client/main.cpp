@@ -138,13 +138,22 @@ void DrawpileApp::openUrl(QUrl url)
 
 void initTranslations(const QLocale &locale)
 {
+	QStringList preferredLangs = locale.uiLanguages();
+	if(preferredLangs.size()==0)
+		return;
+
+	// uiLanguages sometimes returns more languages than
+	// than the user has actually selected, so we just pick
+	// the first one.
+	QString preferredLang = preferredLangs.at(0);
+
 	// Special case: if english is preferred language, no translations are needed.
-	if(locale.uiLanguages().size()==0 || locale.uiLanguages().first() == "en")
+	if(preferredLang == "en")
 		return;
 
 	// Qt's own translations
 	QTranslator *qtTranslator = new QTranslator;
-	qtTranslator->load(locale, "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	qtTranslator->load("qt_" + preferredLang, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 	qApp->installTranslator(qtTranslator);
 
 	// Our translations
@@ -158,7 +167,7 @@ void initTranslations(const QLocale &locale)
 #endif
 
 	for(const QString &datapath : datapaths) {
-		if(myTranslator->load(locale, "drawpile", "_", datapath + "/i18n"))
+		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
 			break;
 	}
 
