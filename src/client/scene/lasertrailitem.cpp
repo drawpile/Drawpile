@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QPen>
-#include <QPainter>
-
 #include "lasertrailitem.h"
+
+#include <QApplication>
+#include <QPainter>
 
 namespace drawingboard {
 
@@ -28,7 +28,7 @@ LaserTrailItem::LaserTrailItem(const QLineF &line, const QColor &color, int fade
 	: QGraphicsLineItem(line, parent), _blink(false)
 {
 	_pen1.setCosmetic(true);
-	_pen1.setWidth(1);
+	_pen1.setWidth(qApp->devicePixelRatio());
 	_pen1.setColor(color.lighter(110));
 
 	_pen2 = _pen1;

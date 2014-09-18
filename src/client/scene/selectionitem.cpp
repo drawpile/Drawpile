@@ -20,6 +20,7 @@
 #include "selectionitem.h"
 #include "net/client.h"
 
+#include <QApplication>
 #include <QPainter>
 #include <QGraphicsScene>
 
@@ -108,6 +109,7 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, Q
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	QPen pen;
+	pen.setWidth(qApp->devicePixelRatio());
 	pen.setColor(Qt::white);
 	pen.setStyle(Qt::DashLine);
 	pen.setDashOffset(_marchingants);

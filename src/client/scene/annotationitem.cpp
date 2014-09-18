@@ -151,6 +151,8 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	Q_UNUSED(options);
 	Q_UNUSED(widget);
 
+	const qreal devicePixelRatio = qApp->devicePixelRatio();
+
 	const paintcore::Annotation *state = _image->getAnnotation(_id);
 	Q_ASSERT(state);
 	if(!state)
@@ -166,6 +168,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		border.setAlpha(255);
 
 		QPen bpen(_highlight && _showborder ? Qt::DashLine : Qt::DotLine);
+		bpen.setWidth(devicePixelRatio);
 		bpen.setCosmetic(true);
 		bpen.setColor(border);
 		painter->setPen(bpen);
@@ -192,6 +195,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	if(!_oldrect.isNull()) {
 		// Annotation has been reshaped, but the shape changed command hasn't made the roundtrip yet
 		QPen bpen(Qt::DotLine);
+		bpen.setWidth(devicePixelRatio);
 		bpen.setCosmetic(true);
 		bpen.setColor(Qt::red);
 		painter->setPen(bpen);

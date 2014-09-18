@@ -20,6 +20,7 @@
 #define LASERTRAILITEM_H
 
 #include <QGraphicsLineItem>
+#include <QPen>
 
 namespace drawingboard {
 

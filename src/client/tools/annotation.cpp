@@ -53,7 +53,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 	} else {
 		QGraphicsRectItem *item = new QGraphicsRectItem();
 		QPen pen;
-		pen.setWidth(1);
+		pen.setWidth(qApp->devicePixelRatio());
 		pen.setCosmetic(true);
 		pen.setColor(QApplication::palette().color(QPalette::Highlight));
 		pen.setStyle(Qt::DotLine);
