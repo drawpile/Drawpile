@@ -6,7 +6,10 @@
  * Added option to disable tablet events
  * Added custom cursors for tools
  * Better text/selection box resizing handles
+ * Flood fill expansion
  * Fixed UI language fallback
+ * Support for older OSX versions (10.7 and up)
+ * Support Retina displays on OSX
 
 2014-08-15 Version 0.9.4
  * Improved palette box
