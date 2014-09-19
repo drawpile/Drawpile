@@ -83,7 +83,18 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 	_toolbox.setScene(scene);
 	setScene(scene);
 
-	connect(_scene, &drawingboard::CanvasScene::canvasInitialized, [this]() { viewRectChanged(); });
+	connect(_scene, &drawingboard::CanvasScene::canvasInitialized, [this]() {
+		viewRectChanged();
+	});
+
+	connect(_scene, &drawingboard::CanvasScene::canvasResized, [this](int xoff, int yoff, const QSize &oldsize) {
+		if(oldsize.isEmpty()) {
+			centerOn(_scene->sceneRect().center());
+		} else {
+			scrollContentsBy(-xoff, -yoff);
+		}
+	});
+
 }
 
 void CanvasView::setClient(net::Client *client)

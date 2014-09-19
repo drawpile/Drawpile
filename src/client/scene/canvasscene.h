@@ -192,6 +192,9 @@ public slots:
 signals:
 	void canvasInitialized();
 
+	//! Canvas size has just changed
+	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
+
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color, bool background);
 
@@ -211,7 +214,7 @@ signals:
 	void newSnapshot(QList<protocol::MessagePtr>);
 
 private slots:
-	void handleCanvasResize(int xoffset, int yoffset);
+	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 	void handleAnnotationChange(int id);
 	void advanceUsermarkerAnimation();
 

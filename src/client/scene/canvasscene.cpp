@@ -88,7 +88,7 @@ void CanvasScene::initCanvas(net::Client *client)
 		strokepreview()->takeStrokes(count);
 	});
 
-	connect(_image->image(), SIGNAL(resized(int,int)), this, SLOT(handleCanvasResize(int,int)));
+	connect(_image->image(), SIGNAL(resized(int,int,QSize)), this, SLOT(handleCanvasResize(int,int,QSize)));
 	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image->image(), SLOT(setLayerHidden(int,bool)));
 
@@ -150,7 +150,7 @@ QList<int> CanvasScene::listEmptyAnnotations() const
 	return ids;
 }
 
-void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
+void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
 	QRectF bounds = _image->boundingRect();
 
@@ -168,6 +168,7 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
 			_selection->setRect(_selection->rect().translated(offset));
 		}
 	}
+	emit canvasResized(xoffset, yoffset, oldsize);
 }
 
 AnnotationItem *CanvasScene::getAnnotationItem(int id)

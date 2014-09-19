@@ -151,7 +151,7 @@ class LayerStack : public QObject {
 		void areaChanged(const QRect &area);
 
 		//! Layer width/height changed
-		void resized(int xoffset, int yoffset);
+		void resized(int xoffset, int yoffset, const QSize &oldsize);
 
 		//! Annotation with the given ID was just changed. (This includes addition and deletion)
 		void annotationChanged(int id);

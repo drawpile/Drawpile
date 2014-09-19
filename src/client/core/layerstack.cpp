@@ -45,6 +45,8 @@ LayerStack::~LayerStack()
 
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
+	const QSize oldsize(_width, _height);
+
 	int newtop = -top;
 	int newleft = -left;
 	int newright = _width + right;
@@ -73,7 +75,7 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 		}
 	}
 
-	emit resized(left, top);
+	emit resized(left, top, oldsize);
 }
 
 /**
@@ -492,6 +494,7 @@ Savepoint *LayerStack::makeSavepoint()
 
 void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 {
+	const QSize oldsize(_width, _height);
 	if(_width != savepoint->width || _height != savepoint->height) {
 		// Restore canvas size if it was different in the savepoint
 		_width = savepoint->width;
@@ -500,7 +503,7 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		_ytiles = Tile::roundTiles(_height);
 		_cache = QPixmap(_width, _height);
 		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
-		emit resized(0, 0);
+		emit resized(0, 0, oldsize);
 	} else {
 		// Mark changed tiles as changed. Usually savepoints are quite close together
 		// so most tiles will remain unchanged
