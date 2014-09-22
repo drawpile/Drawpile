@@ -23,9 +23,21 @@
 
 namespace paintcore {
 
-static const int BLEND_MODES=10;
-// Names of each blending mode
-extern const char *BLEND_MODE[BLEND_MODES];
+struct BlendMode {
+	const char *name;      // translatable name
+	const QString svgname; // SVG style name of this blending mode
+	int id;                // ID as used in the protocol
+
+	bool layermode;        // can this be used as a layer mode?
+	bool visible;          // can this mode be shown in mode selection lists?
+
+	BlendMode() : name(nullptr), id(-1) { }
+	BlendMode(const char *_name, const QString &_svgname, int _id, bool _layermode=true, bool _visible=true) : name(_name), svgname(_svgname), id(_id), layermode(_layermode), visible(_visible) { }
+};
+
+// Note. Protocol ordering and display ordering of the modes differ.
+static const int BLEND_MODES=11;
+extern const BlendMode BLEND_MODE[BLEND_MODES];
 
 /**
  * Composite a color using a mask onto an image.

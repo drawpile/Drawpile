@@ -263,22 +263,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>blendmode</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setBlendingMode(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>14</x>
-     <y>99</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>14</x>
-     <y>53</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>hardedge</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>

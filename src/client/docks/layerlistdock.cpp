@@ -48,9 +48,12 @@ LayerList::LayerList(QWidget *parent)
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
-	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening
-	for(int b=1;b<paintcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::translate("paintcore", paintcore::BLEND_MODE[b]));
+	for(int b=0;b<paintcore::BLEND_MODES;++b) {
+		if(paintcore::BLEND_MODE[b].layermode)
+			_ui->blendmode->addItem(
+				QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
+				paintcore::BLEND_MODE[b].id
+			);
 	}
 
 	// Layer menu
@@ -198,7 +201,7 @@ void LayerList::blendModeChanged()
 	if(index.isValid()) {
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		layer.blend = _ui->blendmode->currentIndex() + 1; // skip eraser mode (0)
+		layer.blend = _ui->blendmode->currentData().toInt();
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
 }
@@ -427,7 +430,15 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		_noupdate = true;
 		_menuHideAction->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
-		_ui->blendmode->setCurrentIndex(layer.blend - 1); // skip eraser mode (0)
+
+		if(_ui->blendmode->currentData().toInt() != layer.blend) {
+			for(int i=0;i<_ui->blendmode->count();++i) {
+				if(_ui->blendmode->itemData(i).toInt() == layer.blend) {
+				_ui->blendmode->setCurrentIndex(i);
+				break;
+				}
+			}
+		}
 
 		_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
 		_aclmenu->setAcl(layer.locked, layer.exclusive);

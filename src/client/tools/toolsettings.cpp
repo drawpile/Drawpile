@@ -49,11 +49,19 @@ using widgets::ColorButton;
 namespace tools {
 
 namespace {
-	void populateBlendmodeBox(QComboBox *box) {
-		// note. blend mode 0 is reserved for the eraser
-		for(int b=1;b<paintcore::BLEND_MODES;++b) {
-			box->addItem(QApplication::translate("paintcore", paintcore::BLEND_MODE[b]));
+	void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview) {
+		for(int b=0;b<paintcore::BLEND_MODES;++b) {
+			if(paintcore::BLEND_MODE[b].visible)
+				box->addItem(
+					QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
+					paintcore::BLEND_MODE[b].id
+				);
 		}
+
+		preview->setBlendingMode(1);
+		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
+			preview->setBlendingMode(box->currentData().toInt());
+		});
 	}
 }
 
@@ -90,7 +98,7 @@ QWidget *PenSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_PenSettings;
 	_ui->setupUi(widget);
 
-	populateBlendmodeBox(_ui->blendmode);
+	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -184,7 +192,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_EraserSettings();
 	_ui->setupUi(widget);
 
-	_ui->preview->setBlendingMode(-1); // eraser is normally not visible
+	_ui->preview->setBlendingMode(0);
 
 	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
 	parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
@@ -285,7 +293,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	_ui = new Ui_BrushSettings;
 	_ui->setupUi(widget);
-	populateBlendmodeBox(_ui->blendmode);
+	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -496,7 +504,7 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_SimpleSettings;
 	_ui->setupUi(widget);
 
-	populateBlendmodeBox(_ui->blendmode);
+	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
