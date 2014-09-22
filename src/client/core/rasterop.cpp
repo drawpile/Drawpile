@@ -36,8 +36,8 @@ const BlendMode BLEND_MODE[BLEND_MODES] = {
 		1,
 	},
 	{
-		QT_TRANSLATE_NOOP("paintcore", "Preserve alpha"),
-		QString("-dp-preserve-alpha"), /* not part of SVG or OpenRaster spec */
+		QT_TRANSLATE_NOOP("paintcore", "Recolor"),
+		QString("-dp-recolor"), /* not part of SVG or OpenRaster spec */
 		10,
 		false
 	},
