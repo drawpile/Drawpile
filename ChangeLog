@@ -10,6 +10,7 @@
  * Fixed UI language fallback
  * Support for older OSX versions (10.7 and up)
  * Support Retina displays on OSX
+ * Added "preserve alpha" blending mode
 
 2014-08-15 Version 0.9.4
  * Improved palette box

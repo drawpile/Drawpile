@@ -169,31 +169,23 @@ Compatibility Reader::open()
 		// Compatability check for normal recordings
 		quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
 
-		// Best case
+		// Best case: exact version match
 		if(myversion == protover)
 			return COMPATIBLE;
 
 		// If major version is same, expect only minor incompatabilities
-		if(majorVersion(myversion) == majorVersion(protover))
+		if(majorVersion(myversion) == majorVersion(protover)) {
+
+			// Ver 11.3 is fully backwards compatible
+			if(minorVersion(protover) < 3)
+				return COMPATIBLE;
+
 			return MINOR_INCOMPATIBILITY;
+		}
 
 		// Recording made with a newer version. It may contain unsupported commands.
 		if(myversion < protover)
 			return UNKNOWN_COMPATIBILITY;
-
-		// Recording made with an older version.
-		// This version is incompatible with version 10 and older.
-		if(majorVersion(protover) < 11)
-			return INCOMPATIBLE;
-#if 0
-		// Chat message format was changed in version 11.
-		if(majorVersion(protover) >= 7) {
-			if(minorVersion(protover) == DRAWPILE_PROTO_MINOR_VERSION)
-				return COMPATIBLE;
-			else
-			return MINOR_INCOMPATIBILITY;
-		}
-#endif
 
 		// Older versions are incompatible
 		return INCOMPATIBLE;
