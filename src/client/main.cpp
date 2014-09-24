@@ -147,6 +147,10 @@ void initTranslations(const QLocale &locale)
 	// the first one.
 	QString preferredLang = preferredLangs.at(0);
 
+	// On Windows, the locale name is sometimes in the form "fi-FI"
+	// rather than "fi_FI" that Qt expects.
+	preferredLang.replace('-', '_');
+
 	// Special case: if english is preferred language, no translations are needed.
 	if(preferredLang == "en")
 		return;
