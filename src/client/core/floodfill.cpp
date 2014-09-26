@@ -108,7 +108,7 @@ public:
 	void start(const QPoint &startPoint)
 	{
 		oldColor = colorAt(startPoint.x(), startPoint.y());
-		if(oldColor == fillColor)
+		if(isSameColor(oldColor, fillColor))
 			return;
 
 		QStack<QPoint> stack;
