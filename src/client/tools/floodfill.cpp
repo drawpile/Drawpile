@@ -24,7 +24,7 @@
 #include "scene/canvasscene.h"
 #include "net/client.h"
 
-#include <QDebug>
+#include <QApplication>
 
 namespace tools {
 
@@ -38,6 +38,8 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	Q_UNUSED(zoom);
 	FillSettings *ts = settings().getFillSettings();
 	QColor color = right ? settings().backgroundColor() : settings().foregroundColor();
+
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 	paintcore::FillResult fill = paintcore::floodfill(
 		scene().layers(),
@@ -63,6 +65,8 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	// consist of large solid areas, meaning they should compress ridiculously well.
 	client().sendUndopoint();
 	client().sendImage(layer(), fill.x, fill.y, fill.image, true);
+
+	QApplication::restoreOverrideCursor();
 }
 
 void FloodFill::motion(const paintcore::Point &point, bool constrain, bool center)
