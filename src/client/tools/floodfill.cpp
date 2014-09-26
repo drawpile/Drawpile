@@ -51,8 +51,10 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 
 	fill = paintcore::expandFill(fill, ts->fillExpansion(), color);
 
-	if(fill.image.isNull())
+	if(fill.image.isNull()) {
+		QApplication::restoreOverrideCursor();
 		return;
+	}
 
 	// Flood fill is implemented using PutImage rather than a native command.
 	// This has the following advantages:
