@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,12 +16,15 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QTcpSocket>
-#include <cstring>
 
 #include "messagequeue.h"
 #include "snapshot.h"
 #include "flow.h"
+
+#include <QTcpSocket>
+#include <QDateTime>
+#include <QTimer>
+#include <cstring>
 
 namespace protocol {
 
@@ -29,7 +32,7 @@ namespace protocol {
 static const int MAX_BUF_LEN = 1024*64 + 4 + 5;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
-	: QObject(parent), _socket(socket), _closeWhenReady(false), _expectingSnapshot(false),
+	: QObject(parent), _socket(socket), _idleTimeout(0), _closeWhenReady(false), _expectingSnapshot(false),
 	  _ignoreIncoming(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
@@ -44,12 +47,35 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	_recvcount = 0;
 	_sentcount = 0;
 	_sendbuflen = 0;
+
+	_idleTimer = new QTimer(this);
+	connect(_idleTimer, SIGNAL(timeout()), this, SLOT(checkIdleTimeout()));
+	_idleTimer->setInterval(1000);
+	_idleTimer->setSingleShot(false);
 }
 
 void MessageQueue::sslEncrypted()
 {
 	disconnect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
 	connect(_socket, SIGNAL(encryptedBytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
+}
+
+void MessageQueue::checkIdleTimeout()
+{
+	if(_idleTimeout>0 && _socket->state() == QTcpSocket::ConnectedState && idleTime() > _idleTimeout) {
+		qWarning("MessageQueue timeout");
+		_socket->abort();
+	}
+}
+
+void MessageQueue::setIdleTimeout(qint64 timeout)
+{
+	_idleTimeout = timeout;
+	_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+	if(timeout>0)
+		_idleTimer->start(1000);
+	else
+		_idleTimer->stop();
 }
 
 MessageQueue::~MessageQueue()
@@ -115,6 +141,11 @@ int MessageQueue::uploadQueueBytes() const
 	return total;
 }
 
+qint64 MessageQueue::idleTime() const
+{
+	return QDateTime::currentMSecsSinceEpoch() - _lastRecvTime;
+}
+
 void MessageQueue::readData() {
 	bool gotmessage = false, gotsnapshot = false;
 	int read, totalread=0;
@@ -173,8 +204,11 @@ void MessageQueue::readData() {
 		totalread += read;
 	} while(read>0);
 
-	if(totalread)
+	if(totalread) {
+		_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
 		emit bytesReceived(totalread);
+	}
+
 	if(gotmessage)
 		emit messageAvailable();
 	if(gotsnapshot)

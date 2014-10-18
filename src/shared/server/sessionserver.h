@@ -121,6 +121,13 @@ public:
 	IdentityManager *identityManager() const { return _identman; }
 
 	/**
+	 * @brief Set client connection idle timeout
+	 * @param timeout timeout in milliseconds
+	 */
+	void setConnectionTimeout(int timeout) { _connectionTimeout = timeout; }
+	int connectionTimeout() const { return _connectionTimeout; }
+
+	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will
@@ -260,6 +267,7 @@ private:
 
 	QString _title;
 	int _sessionLimit;
+	int _connectionTimeout;
 	uint _historyLimit;
 	qint64 _expirationTime;
 	QString _hostPassword;

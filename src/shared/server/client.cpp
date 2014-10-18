@@ -95,6 +95,11 @@ void Client::setSession(SessionState *session)
 	}
 }
 
+void Client::setConnectionTimeout(int timeout)
+{
+	_msgqueue->setIdleTimeout(timeout);
+}
+
 QHostAddress Client::peerAddress() const
 {
 	return _socket->peerAddress();

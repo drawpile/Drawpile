@@ -26,6 +26,7 @@
 #include "message.h"
 
 class QTcpSocket;
+class QTimer;
 
 namespace protocol {
 
@@ -108,6 +109,21 @@ public:
 	 */
 	int uploadQueueBytes() const;
 
+	/**
+	 * @brief Get the number of milliseconds since the last message sent by the remote end
+	 */
+	qint64 idleTime() const;
+
+	/**
+	 * @brief Set the maximum time the remote end can be quiet before timing out
+	 *
+	 * This can be used together with a keepalive message to detect disconnects more
+	 * reliably than relying on TCP, which may have a very long timeout.
+	 *
+	 * @param timeout timeout in milliseconds
+	 */
+	void setIdleTimeout(qint64 timeout);
+
 signals:
 	/**
 	 * @brief information about the amount of data to be received
@@ -155,6 +171,7 @@ private slots:
 	void readData();
 	void dataWritten(qint64);
 	void sslEncrypted();
+	void checkIdleTimeout();
 
 private:
 	void writeData();
@@ -171,6 +188,10 @@ private:
 
 	QQueue<MessagePtr> _snapshot_recv;
 	QList<MessagePtr> _snapshot_send;
+
+	QTimer *_idleTimer;
+	qint64 _lastRecvTime;
+	qint64 _idleTimeout;
 
 	bool _closeWhenReady;
 	bool _expectingSnapshot;

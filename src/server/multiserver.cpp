@@ -110,6 +110,11 @@ void MultiServer::setExpirationTime(uint seconds)
 	_sessions->setExpirationTime(seconds);
 }
 
+void MultiServer::setConnectionTimeout(int timeout)
+{
+	_sessions->setConnectionTimeout(timeout);
+}
+
 /**
  * @brief Automatically stop server when last session is closed
  *

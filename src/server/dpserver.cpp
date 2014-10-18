@@ -174,6 +174,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption noGuestsOption("no-guests", "Users must authenticate to log in");
 	parser.addOption(noGuestsOption);
 
+	// --timeout
+	QCommandLineOption timeoutOption("timeout", "Connection timeout", "seconds");
+	parser.addOption(timeoutOption);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -337,6 +341,16 @@ int main(int argc, char *argv[]) {
 			server->setUserFile(userfile);
 
 		server->setAllowGuests(!cfgfile.override(parser, noGuestsOption).toBool());
+	}
+
+	{
+		bool ok;
+		float timeout = cfgfile.override(parser, timeoutOption).toFloat(&ok);
+		if(!ok) {
+			logger::error() << "invalid timeout";
+			return 1;
+		}
+		server->setConnectionTimeout(timeout * 1000);
 	}
 
 	// Catch signals

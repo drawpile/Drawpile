@@ -35,6 +35,7 @@ SessionServer::SessionServer(QObject *parent)
 	_store(nullptr),
 	_identman(nullptr),
 	_sessionLimit(1),
+	_connectionTimeout(0),
 	_historyLimit(0),
 	_expirationTime(0),
 	_allowPersistentSessions(false),
@@ -230,6 +231,7 @@ void SessionServer::wall(const QString &message, const QString &sessionId)
 void SessionServer::addClient(Client *client)
 {
 	client->setParent(this);
+	client->setConnectionTimeout(_connectionTimeout);
 
 	_lobby.append(client);
 

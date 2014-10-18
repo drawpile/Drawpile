@@ -106,6 +106,12 @@ public:
 	void setAuthenticated(bool auth) { _isAuth = auth; }
 
 	/**
+	 * @brief Set connection idle timeout
+	 * @param timeout timeout in milliseconds
+	 */
+	void setConnectionTimeout(int timeout);
+
+	/**
 	 * @brief Is this user locked individually?
 	 * @return true if user lock is set
 	 */

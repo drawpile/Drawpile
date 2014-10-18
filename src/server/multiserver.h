@@ -55,6 +55,7 @@ public:
 	bool setHibernation(const QString &directory, bool all, bool autoHibernate);
 	bool setUserFile(const QString &path);
 	void setAllowGuests(bool allow);
+	void setConnectionTimeout(int timeout);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);
