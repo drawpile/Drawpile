@@ -301,6 +301,12 @@ void NetStatus::bytesSent(int count)
 	_timer->start(500);
 }
 
+void NetStatus::lagMeasured(qint64 lag)
+{
+	// TODO show this on the screen
+	qDebug("Lag: %d", int(lag));
+}
+
 void NetStatus::updateStats()
 {
 	_activity = 0;

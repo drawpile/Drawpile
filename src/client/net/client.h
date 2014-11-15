@@ -258,6 +258,7 @@ signals:
 	void sendingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
+	void lagMeasured(qint64);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);

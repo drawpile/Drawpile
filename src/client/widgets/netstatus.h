@@ -56,6 +56,8 @@ public slots:
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
+	void lagMeasured(qint64 lag);
+
 	// this is used with QNetworkReplies
 	void bytesReceived(qint64 received, qint64 total);
 

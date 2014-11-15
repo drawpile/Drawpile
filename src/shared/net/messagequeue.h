@@ -124,6 +124,28 @@ public:
 	 */
 	void setIdleTimeout(qint64 timeout);
 
+	/**
+	 * @brief Set Ping interval in milliseconds
+	 *
+	 * When ping interval is greater than zero, a Ping messages will automatically
+	 * be sent.
+	 *
+	 * Note. This should be used by the client only.
+	 *
+	 * @param msecs
+	 */
+	void setPingInterval(int msecs);
+
+public slots:
+	/**
+	 * @brief Send a Ping message
+	 *
+	 * Note. Use this function instead of creating the Ping message yourself
+	 * to make sure the roundtrip timer is set correctly!
+	 * This function will not send another ping message until a reply has been received.
+	 */
+	void sendPing();
+
 signals:
 	/**
 	 * @brief information about the amount of data to be received
@@ -167,6 +189,12 @@ signals:
 
 	void socketError(const QString &errorstring);
 
+	/**
+	 * @brief A reply to our Ping was just received
+	 * @param roundtripTime time now - ping sent time
+	 */
+	void pingPong(qint64 roundtripTime);
+
 private slots:
 	void readData();
 	void dataWritten(qint64);
@@ -190,8 +218,10 @@ private:
 	QList<MessagePtr> _snapshot_send;
 
 	QTimer *_idleTimer;
+	QTimer *_pingTimer;
 	qint64 _lastRecvTime;
 	qint64 _idleTimeout;
+	qint64 _pingSent;
 
 	bool _closeWhenReady;
 	bool _expectingSnapshot;

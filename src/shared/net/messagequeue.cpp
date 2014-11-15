@@ -32,7 +32,10 @@ namespace protocol {
 static const int MAX_BUF_LEN = 1024*64 + 4 + 5;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
-	: QObject(parent), _socket(socket), _idleTimeout(0), _closeWhenReady(false), _expectingSnapshot(false),
+	: QObject(parent), _socket(socket),
+	  _pingTimer(nullptr),
+	  _lastRecvTime(0),
+	  _idleTimeout(0), _pingSent(0), _closeWhenReady(false), _expectingSnapshot(false),
 	  _ignoreIncoming(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
@@ -76,6 +79,17 @@ void MessageQueue::setIdleTimeout(qint64 timeout)
 		_idleTimer->start(1000);
 	else
 		_idleTimer->stop();
+}
+
+void MessageQueue::setPingInterval(int msecs)
+{
+	if(!_pingTimer) {
+		_pingTimer = new QTimer(this);
+		_pingTimer->setSingleShot(false);
+		connect(_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
+	}
+	_pingTimer->setInterval(msecs);
+	_pingTimer->start(msecs);
 }
 
 MessageQueue::~MessageQueue()
@@ -131,6 +145,17 @@ void MessageQueue::sendDisconnect(int reason, const QString &message)
 	_recvcount = 0;
 }
 
+void MessageQueue::sendPing()
+{
+	if(_pingSent==0) {
+		qDebug("pinging...");
+		_pingSent = QDateTime::currentMSecsSinceEpoch();
+		send(MessagePtr(new Ping(false)));
+	} else {
+		qWarning("sendPing(): reply to previous ping not yet received!");
+	}
+}
+
 int MessageQueue::uploadQueueBytes() const
 {
 	int total = _socket->bytesToWrite() + _sendbuflen - _sentcount;
@@ -173,25 +198,46 @@ void MessageQueue::readData() {
 		int len;
 		while(_recvcount >= Message::HEADER_LEN && _recvcount >= (len=Message::sniffLength(_recvbuffer))) {
 			// Whole message received!
-			Message *msg = Message::deserialize((const uchar*)_recvbuffer, _recvcount);
-			if(!msg) {
+			Message *message = Message::deserialize((const uchar*)_recvbuffer, _recvcount);
+			if(!message) {
 				emit badData(len, _recvbuffer[2]);
+
 			} else {
+				MessagePtr msg(message);
+
 				if(msg->type() == MSG_STREAMPOS) {
 					// Special handling for Stream Position message
-					emit expectingBytes(static_cast<StreamPos*>(msg)->bytes() + totalread);
-					delete msg;
+					emit expectingBytes(msg.cast<StreamPos>().bytes() + totalread);
+
+				} else if(msg->type() == MSG_PING) {
+					// Special handling for Ping messages
+					bool isPong = msg.cast<Ping>().isPong();
+
+					if(isPong) {
+						if(_pingSent==0) {
+							qWarning("Received Pong, but no Ping was sent!");
+
+						} else {
+							qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - _pingSent;
+							_pingSent = 0;
+							emit pingPong(roundtrip);
+						}
+					} else {
+						send(MessagePtr(new Ping(true)));
+					}
+
 				} else if(_expectingSnapshot) {
 					// A message preceded by SnapshotMode::SNAPSHOT goes into the snapshot queue
-					_snapshot_recv.enqueue(MessagePtr(msg));
+					_snapshot_recv.enqueue(msg);
 					_expectingSnapshot = false;
 					gotsnapshot = true;
+
 				} else {
-					if(msg->type() == MSG_SNAPSHOT && static_cast<SnapshotMode*>(msg)->mode() == SnapshotMode::SNAPSHOT) {
-						delete msg;
+					if(msg->type() == MSG_SNAPSHOT && msg.cast<SnapshotMode>().mode() == SnapshotMode::SNAPSHOT) {
 						_expectingSnapshot = true;
+
 					} else {
-						_recvqueue.enqueue(MessagePtr(msg));
+						_recvqueue.enqueue(msg);
 						gotmessage = true;
 					}
 				}

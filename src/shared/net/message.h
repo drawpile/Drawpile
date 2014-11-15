@@ -45,6 +45,7 @@ enum MessageType {
 	MSG_MOVEPOINTER,
 	MSG_MARKER,
 	MSG_DISCONNECT,
+	MSG_PING,
 
 	// Command stream
 	MSG_CANVAS_RESIZE=128,

@@ -63,5 +63,23 @@ int StreamPos::payloadLength() const
 	return 4;
 }
 
+Ping *Ping::deserialize(const uchar *data, int len)
+{
+	if(len!=1)
+		return nullptr;
+	return new Ping(*data);
+}
+
+int Ping::payloadLength() const
+{
+	return 1;
+}
+
+int Ping::serializePayload(uchar *data) const
+{
+	*data = _isPong;
+	return 1;
+}
+
 }
 

@@ -70,6 +70,8 @@ signals:
 	void bytesSent(int);
 	void messageReceived(protocol::MessagePtr message);
 
+	void lagMeasured(qint64 lag);
+
 protected:
 	void loginFailure(const QString &message, const QString &errorcode);
 	void loginSuccess();

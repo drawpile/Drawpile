@@ -289,6 +289,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(sendingBytes(int)), _netstatus, SLOT(sendingBytes(int)));
 	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
+	connect(_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
 
 	connect(_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));

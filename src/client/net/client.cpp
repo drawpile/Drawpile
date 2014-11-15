@@ -95,6 +95,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
 	connect(server, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(server, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
+	connect(server, SIGNAL(lagMeasured(qint64)), this, SIGNAL(lagMeasured(qint64)));
 
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);

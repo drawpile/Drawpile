@@ -95,6 +95,10 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 12.3 (0.9.6)
+
+ * Added Ping message type
+
 Protocol 11.3 (0.9.5)
 
  * Added preserve alpha blending mode

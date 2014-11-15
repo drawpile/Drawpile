@@ -44,6 +44,7 @@ TcpServer::TcpServer(QObject *parent) :
 	_msgqueue = new protocol::MessageQueue(_socket, this);
 
 	_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
+	_msgqueue->setPingInterval(15 * 1000);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
@@ -57,6 +58,7 @@ TcpServer::TcpServer(QObject *parent) :
 	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
 	connect(_msgqueue, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
+	connect(_msgqueue, SIGNAL(pingPong(qint64)), this, SIGNAL(lagMeasured(qint64)));
 }
 
 void TcpServer::login(LoginHandler *login)

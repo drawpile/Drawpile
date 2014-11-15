@@ -1,5 +1,6 @@
 2014-1?-?? Version 0.9.6
  * Added connection timeout check
+ * Added keepalive messages
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

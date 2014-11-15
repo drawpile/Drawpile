@@ -93,6 +93,30 @@ private:
 	uint32_t _bytes;
 };
 
+/**
+ * @brief Ping message
+ *
+ * This is used for latency measurement as well as a keepalive. Normally, the client
+ * should be the one to send the ping messages.
+ *
+ * The server should return with a Ping with the pong message setenv()
+ */
+class Ping : public Message {
+public:
+	Ping(bool pong) : Message(MSG_PING, 0), _isPong(pong) { }
+
+	static Ping *deserialize(const uchar *data, int len);
+
+	bool isPong() const { return _isPong; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	bool _isPong;
+};
+
 }
 
 #endif
