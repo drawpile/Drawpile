@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QSslSocket>
 #include <QSslConfiguration>
+#include <QSettings>
 
 namespace net {
 
@@ -41,6 +42,8 @@ TcpServer::TcpServer(QObject *parent) :
 	_socket->setSslConfiguration(sslconf);
 
 	_msgqueue = new protocol::MessageQueue(_socket, this);
+
+	_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));

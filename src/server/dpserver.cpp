@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(noGuestsOption);
 
 	// --timeout
-	QCommandLineOption timeoutOption("timeout", "Connection timeout", "seconds");
+	QCommandLineOption timeoutOption("timeout", "Connection timeout", "seconds", "60");
 	parser.addOption(timeoutOption);
 
 	// --config, -c <filename>

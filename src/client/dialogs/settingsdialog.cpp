@@ -131,6 +131,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
+	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/lag");
@@ -225,6 +226,7 @@ void SettingsDialog::rememberSettings()
 		cfg.setValue("port", _ui->serverport->value());
 
 	cfg.setValue("historylimit", _ui->historylimit->value());
+	cfg.setValue("timeout", _ui->connTimeout->value());
 
 	cfg.endGroup();
 
