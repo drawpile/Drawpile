@@ -58,7 +58,6 @@
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
-#include "scene/strokepreviewer.h"
 #include "statetracker.h"
 #include "tools/toolsettings.h" // for setting annotation editor widgets Client pointer
 
@@ -290,6 +289,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
 	connect(_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
+	connect(_client, SIGNAL(lagMeasured(qint64)), this, SLOT(updateStrokePreviewMode(qint64)));
 
 	connect(_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
@@ -1272,23 +1272,25 @@ void MainWindow::loggedin(bool join)
 	updateStrokePreviewMode();
 }
 
-void MainWindow::updateStrokePreviewMode()
+void MainWindow::updateStrokePreviewMode(qint64 lag)
 {
-	drawingboard::StrokePreviewer *preview;
-	if(_client->isLocalServer()) {
-		preview = drawingboard::NopStrokePreviewer::getInstance();
-	} else {
-		QSettings cfg;
-		int mode = cfg.value("settings/lag/previewstyle", 3).toInt();
+	int mode = 0;
 
-		switch(mode) {
-		case 0: preview = drawingboard::NopStrokePreviewer::getInstance(); break;
-		case 1: preview = new drawingboard::OverlayStrokePreviewer(_canvas); break;
-		case 3: preview = new drawingboard::TempLayerStrokePreviewer(_canvas); break;
-		default: preview = new drawingboard::ApproximateOverlayStrokePreviewer(_canvas); break;
-		}
+	if(!_client->isLocalServer()) {
+		// Don't interrupt drawing if this is just a lag update
+		if(lag>=0 && _view->isPenDown())
+			return;
+
+		QSettings cfg;
+		cfg.beginGroup("settings/lag");
+
+		if(lag >= 0 && lag < 20) // TODO adjustable lag limit?
+			mode = cfg.value("previewstyle-fast", 1).toInt();
+		else
+			mode = cfg.value("previewstyle", 3).toInt();
 	}
-	_canvas->setStrokePreview(preview);
+
+	_canvas->setStrokePreviewMode(mode);
 }
 
 void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat)

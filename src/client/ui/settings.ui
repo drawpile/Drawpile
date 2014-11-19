@@ -291,12 +291,49 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Stroke preview:</string>
+             <string>Slow preview:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="strokepreview">
+            <property name="toolTip">
+             <string>Preview mode for slow connections</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Quick</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Simple overlay</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Realistic</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Fast preview:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="strokepreview2">
+            <property name="toolTip">
+             <string>Preview mode for fast connections</string>
+            </property>
             <item>
              <property name="text">
               <string>None</string>

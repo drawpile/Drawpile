@@ -160,7 +160,7 @@ public:
 	 */
 	QString title() const;
 
-	void setStrokePreview(StrokePreviewer *strokepreview);
+	void setStrokePreviewMode(int mode);
 
 	StrokePreviewer *strokepreview() { return _strokepreview; }
 
@@ -229,6 +229,7 @@ private:
 	StateTracker *_statetracker;
 
 	StrokePreviewer *_strokepreview;
+	int _strokepreviewmode;
 
 	//! Laser pointer trails
 	QList<LaserTrailItem*> _lasertrails;

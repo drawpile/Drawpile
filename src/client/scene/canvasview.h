@@ -88,6 +88,9 @@ class CanvasView : public QGraphicsView
 		//! Enable/disable tablet event handling
 		void enableTabletEvents(bool enable);
 
+		//! Is drawing in progress at the moment?
+		bool isPenDown() const { return _pendown != NOTDOWN; }
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);

@@ -40,7 +40,8 @@ namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0),
-	  _strokepreview(NopStrokePreviewer::getInstance()), _toolpreview(0),
+	  _strokepreview(NopStrokePreviewer::getInstance()), _strokepreviewmode(0),
+	  _toolpreview(0),
 	  _selection(0),
 	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
 {
@@ -61,7 +62,7 @@ CanvasScene::CanvasScene(QObject *parent)
 
 CanvasScene::~CanvasScene()
 {
-	setStrokePreview(NopStrokePreviewer::getInstance());
+	setStrokePreviewMode(0);
 	delete _image;
 	delete _statetracker;
 }
@@ -390,12 +391,26 @@ void CanvasScene::setSelectionItem(SelectionItem *selection)
 		addItem(selection);
 }
 
-void CanvasScene::setStrokePreview(StrokePreviewer *preview)
+void CanvasScene::setStrokePreviewMode(int mode)
 {
-	Q_ASSERT(preview);
+	if(mode<0 || mode>3) {
+		qWarning("Unknown stroke preview mode: %d", mode);
+		mode = 3;
+	}
+
+	if(mode == _strokepreviewmode)
+		return;
+
 	if(_strokepreview != NopStrokePreviewer::getInstance())
 		delete _strokepreview;
-	_strokepreview = preview;
+
+	switch(mode) {
+	case 0: _strokepreview = drawingboard::NopStrokePreviewer::getInstance(); break;
+	case 1: _strokepreview = new drawingboard::OverlayStrokePreviewer(this); break;
+	case 2: _strokepreview = new drawingboard::ApproximateOverlayStrokePreviewer(this); break;
+	case 3: _strokepreview = new drawingboard::TempLayerStrokePreviewer(this); break;
+	}
+	_strokepreviewmode = mode;
 }
 
 void CanvasScene::resetPreviewClearTimer()
