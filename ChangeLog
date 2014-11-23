@@ -4,6 +4,7 @@
  * Automatically switch stroke preview mode based on latency
  * OSX: Quit menu action now works as expected
  * OSX: Add "Close" item to File menu.
+ * Added zoom and angle shortcut context menus to status bar
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

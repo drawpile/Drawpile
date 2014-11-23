@@ -40,6 +40,9 @@ signals:
 	void angleChanged(qreal newAngle);
 
 private:
+	void addZoomShortcut(int zoomLevel);
+	void addAngleShortcut(int angle);
+
 	QSlider *_zoomSlider, *_angleSlider;
 	QLabel *_zoom, *_angle;
 };

@@ -22,6 +22,7 @@
 #include <QLabel>
 #include <QSlider>
 #include <QHBoxLayout>
+#include <QAction>
 
 namespace widgets {
 
@@ -44,31 +45,70 @@ ViewStatus::ViewStatus(QWidget *parent)
 	_zoomSlider->setMaximum(1600);
 	_zoomSlider->setPageStep(50);
 	_zoomSlider->setValue(100);
+	_zoomSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
 	connect(_zoomSlider, &QSlider::valueChanged, [this](int val) { emit zoomChanged(val); });
 
 	_zoom = new QLabel("100%", this);
 	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
+	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
 
 	layout->addWidget(zlbl);
 	layout->addWidget(_zoomSlider);
 	layout->addWidget(_zoom);
+
+	addZoomShortcut(50);
+	addZoomShortcut(100);
+	addZoomShortcut(200);
+	addZoomShortcut(400);
 
 	// Rotation angle
 	layout->addSpacing(10);
 	QLabel *rlbl = new QLabel(tr("Angle:"), this);
 	_angle = new QLabel(QString::fromUtf8("0°"));
 	_angle->setFixedWidth(_angle->fontMetrics().width("9999.9"));
+	_angle->setContextMenuPolicy(Qt::ActionsContextMenu);
 
 	_angleSlider = new QSlider(Qt::Horizontal, this);
 	_angleSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 	_angleSlider->setMinimum(-360);
 	_angleSlider->setMaximum(360);
 	_angleSlider->setPageStep(45);
+	_angleSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
 	connect(_angleSlider, &QSlider::valueChanged, [this](int val) { emit angleChanged(val); });
 
 	layout->addWidget(rlbl);
 	layout->addWidget(_angleSlider);
 	layout->addWidget(_angle);
+
+	addAngleShortcut(-180);
+	addAngleShortcut(-135);
+	addAngleShortcut(-90);
+	addAngleShortcut(-45);
+	addAngleShortcut(0);
+	addAngleShortcut(45);
+	addAngleShortcut(90);
+	addAngleShortcut(135);
+	addAngleShortcut(180);
+}
+
+void ViewStatus::addZoomShortcut(int zoomLevel)
+{
+	QAction *a = new QAction(QString("%1%").arg(zoomLevel), this);
+	_zoom->addAction(a);
+	_zoomSlider->addAction(a);
+	connect(a, &QAction::triggered, [this, zoomLevel]() {
+		emit zoomChanged(zoomLevel);
+	});
+}
+
+void ViewStatus::addAngleShortcut(int angle)
+{
+	QAction *a = new QAction(QString("%1°").arg(angle), this);
+	_angle->addAction(a);
+	_angleSlider->addAction(a);
+	connect(a, &QAction::triggered, [this, angle]() {
+		emit angleChanged(angle);
+	});
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
