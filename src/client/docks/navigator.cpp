@@ -20,6 +20,7 @@ using docks::NavigatorView; // to satisfy ui_navibox
 #include "ui_navibox.h"
 
 #include <QMouseEvent>
+#include <QWindow>
 
 namespace docks {
 
@@ -95,11 +96,22 @@ void NavigatorView::rescale()
 {
 	resetTransform();
 	
+	qreal dpr = 1;
+	QWidget *w = this;
+	do {
+		QWindow *wh = w->windowHandle();
+		if(wh) {
+			dpr = wh->devicePixelRatio();
+			break;
+		}
+		w = w->parentWidget();
+	} while(w!=nullptr);
+
 	QRectF ss = scene()->sceneRect();
 
 	qreal x = qreal(width()) / ss.width();
 	qreal y = qreal(height()-5) / ss.height();
-	qreal min = qMin(x, y);
+	qreal min = qMin(x, y) * dpr;
 
 	scale(min, min);
 	viewport()->update();
