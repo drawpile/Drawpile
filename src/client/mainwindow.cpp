@@ -1818,12 +1818,18 @@ void MainWindow::setupActions()
 	//
 	QAction *newdocument = makeAction("newdocument", "document-new", tr("&New"), QString(), QKeySequence::New);
 	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), QString(), QKeySequence::Open);
+#ifdef Q_OS_MAC
+	QAction *closefile = makeAction("closedocument", 0, tr("Close"), QString(), QKeySequence::Close);
+#endif
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."));
 	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
 
+#ifdef Q_OS_MAC
+	_currentdoctools->addAction(closefile);
+#endif
 	_currentdoctools->addAction(save);
 	_currentdoctools->addAction(saveas);
 	_currentdoctools->addAction(record);
@@ -1834,6 +1840,7 @@ void MainWindow::setupActions()
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
 #ifdef Q_OS_MAC
+	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), this, SLOT(quitAll()));
 #else
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
@@ -1843,11 +1850,18 @@ void MainWindow::setupActions()
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
 	_recent = filemenu->addMenu(tr("Open &recent"));
+	filemenu->addSeparator();
+
+#ifdef Q_OS_MAC
+	filemenu->addAction(closefile);
+#endif
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
 	filemenu->addSeparator();
+
 	filemenu->addAction(record);
 	filemenu->addSeparator();
+
 	filemenu->addAction(quit);
 
 	QToolBar *filetools = new QToolBar(tr("File tools"));

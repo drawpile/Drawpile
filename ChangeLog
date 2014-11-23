@@ -3,6 +3,7 @@
  * Added keepalive messages
  * Automatically switch stroke preview mode based on latency
  * OSX: Quit menu action now works as expected
+ * OSX: Add "Close" item to File menu.
 
 2014-10-17 Version 0.9.5
  * Added Czech translation
