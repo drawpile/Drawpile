@@ -2,6 +2,7 @@
  * Added connection timeout check
  * Added keepalive messages
  * Automatically switch stroke preview mode based on latency
+ * OSX: Quit menu action now works as expected
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

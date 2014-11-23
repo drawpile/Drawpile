@@ -104,6 +104,8 @@ class MainWindow : public QMainWindow {
 		//! Create a blank new document
 		void newDocument(const QSize &size, const QColor &background);
 
+		void quitAll();
+
 	private slots:
 		void toggleRecording();
 

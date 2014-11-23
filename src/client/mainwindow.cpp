@@ -631,6 +631,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				tr("Exit Drawpile"),
 				tr("You are still connected to a drawing session."),
 				QMessageBox::NoButton, this);
+			box.setWindowModality(Qt::WindowModal);
 
 			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
@@ -651,6 +652,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox box(QMessageBox::Question, tr("Exit Drawpile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
+			box.setWindowModality(Qt::WindowModal);
 			const QPushButton *savebtn = box.addButton(tr("Save"),
 					QMessageBox::AcceptRole);
 			box.addButton(tr("Discard"),
@@ -689,6 +691,53 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
    BlankCanvasLoader bcl(size, background);
    loadDocument(bcl);
+}
+
+/**
+ * @brief Quit program, closing all main windows
+ *
+ * This is currently used only on OSX because of the global menu bar.
+ * On other platforms, there may be windows belonging to different processes open,
+ * so shutting down the whole process when Quit was chosen from one window may
+ * result in inconsistent operation.
+ */
+void MainWindow::quitAll()
+{
+	int dirty = 0;
+	bool forceDiscard = false;
+
+	for(const QWidget *widget : qApp->topLevelWidgets()) {
+		const MainWindow *mw = qobject_cast<const MainWindow*>(widget);
+		if(mw && !mw->canReplace())
+			++dirty;
+	}
+
+	if(dirty>1) {
+		QMessageBox box;
+		box.setText(tr("You have %n images with unsaved changes. Do you want to review these changes before quitting?", "", dirty));
+		box.setInformativeText(tr("If you don't review your documents, all changes will be lost"));
+		box.addButton(tr("Review changes..."), QMessageBox::AcceptRole);
+		box.addButton(QMessageBox::Cancel);
+		box.addButton(tr("Discard changes"), QMessageBox::DestructiveRole);
+
+		int r = box.exec();
+
+		if(r == QMessageBox::Cancel)
+			return;
+		else if(r == 1)
+			forceDiscard = true;
+	}
+
+	if(forceDiscard) {
+		for(QWidget *widget : qApp->topLevelWidgets()) {
+			MainWindow *mw = qobject_cast<MainWindow*>(widget);
+			if(mw)
+				mw->exit();
+		}
+
+	} else {
+		qApp->closeAllWindows();
+	}
 }
 
 /**
@@ -1784,7 +1833,11 @@ void MainWindow::setupActions()
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
+#ifdef Q_OS_MAC
+	connect(quit, SIGNAL(triggered()), this, SLOT(quitAll()));
+#else
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
+#endif
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);
