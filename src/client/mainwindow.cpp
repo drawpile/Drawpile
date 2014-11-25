@@ -46,6 +46,7 @@
 
 #ifdef Q_OS_OSX
 #define CTRL_KEY "Meta"
+#include "widgets/macmenu.h"
 #else
 #define CTRL_KEY "Ctrl"
 #endif
@@ -477,6 +478,9 @@ void MainWindow::addRecentFile(const QString& file)
 		if(win)
 			RecentFiles::initMenu(win->_recent);
 	}
+#ifdef Q_OS_MAC
+	MacMenu::instance()->updateRecentMenu();
+#endif
 }
 
 /**
@@ -527,12 +531,6 @@ void MainWindow::updateShortcuts()
 	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
 		MainWindow *win = qobject_cast<MainWindow*>(widget);
 		if(win) {
-			// First reset to defaults
-			foreach(QAction *a, win->_customizable_actions)
-				a->setShortcut(
-						a->property("defaultshortcut").value<QKeySequence>()
-						);
-			// Then reload customized
 			win->loadShortcuts();
 		}
 	}
@@ -691,53 +689,6 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
    BlankCanvasLoader bcl(size, background);
    loadDocument(bcl);
-}
-
-/**
- * @brief Quit program, closing all main windows
- *
- * This is currently used only on OSX because of the global menu bar.
- * On other platforms, there may be windows belonging to different processes open,
- * so shutting down the whole process when Quit was chosen from one window may
- * result in inconsistent operation.
- */
-void MainWindow::quitAll()
-{
-	int dirty = 0;
-	bool forceDiscard = false;
-
-	for(const QWidget *widget : qApp->topLevelWidgets()) {
-		const MainWindow *mw = qobject_cast<const MainWindow*>(widget);
-		if(mw && !mw->canReplace())
-			++dirty;
-	}
-
-	if(dirty>1) {
-		QMessageBox box;
-		box.setText(tr("You have %n images with unsaved changes. Do you want to review these changes before quitting?", "", dirty));
-		box.setInformativeText(tr("If you don't review your documents, all changes will be lost"));
-		box.addButton(tr("Review changes..."), QMessageBox::AcceptRole);
-		box.addButton(QMessageBox::Cancel);
-		box.addButton(tr("Discard changes"), QMessageBox::DestructiveRole);
-
-		int r = box.exec();
-
-		if(r == QMessageBox::Cancel)
-			return;
-		else if(r == 1)
-			forceDiscard = true;
-	}
-
-	if(forceDiscard) {
-		for(QWidget *widget : qApp->topLevelWidgets()) {
-			MainWindow *mw = qobject_cast<MainWindow*>(widget);
-			if(mw)
-				mw->exit();
-		}
-
-	} else {
-		qApp->closeAllWindows();
-	}
 }
 
 /**
@@ -1050,81 +1001,85 @@ void MainWindow::statusbarChat(const QString &nick, const QString &msg)
  */
 void MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(_customizable_actions, this);
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog;
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setWindowModality(Qt::WindowModal);
+	dlg->setWindowModality(Qt::ApplicationModal);
 	dlg->show();
 }
 
 void MainWindow::host()
 {
 	auto dlg = new dialogs::HostDialog(_canvas->image(), this);
+
 	connect(dlg, &dialogs::HostDialog::finished, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
-			const bool useremote = dlg->useRemoteAddress();
-			QUrl address;
-
-			if(useremote) {
-				QString scheme;
-				if(dlg->getRemoteAddress().startsWith("drawpile://")==false)
-					scheme = "drawpile://";
-				address = QUrl(scheme + dlg->getRemoteAddress(),
-						QUrl::TolerantMode);
-
-			} else {
-				address.setHost(WhatIsMyIp::localAddress());
-			}
-
-			if(address.isValid() == false || address.host().isEmpty()) {
-				dlg->show();
-				showErrorMessage(tr("Invalid address"));
-				return;
-			}
-			address.setUserName(dlg->getUserName());
-
-			// Remember some settings
 			dlg->rememberSettings();
-
-			// Start server if hosting locally
-			if(useremote==false) {
-				net::ServerThread *server = new net::ServerThread;
-				server->setDeleteOnExit();
-
-				int port = server->startServer();
-				if(!port) {
-					QMessageBox::warning(this, tr("Unable to start server"), server->errorString());
-					dlg->show();
-					delete server;
-					return;
-				}
-
-				if(!server->isOnDefaultPort())
-					address.setPort(port);
-			}
-
-			// Initialize session (unless original was used)
-			MainWindow *w = this;
-			if(dlg->useOriginalImage() == false) {
-				QScopedPointer<SessionLoader> loader(dlg->getSessionLoader());
-				w = loadDocument(*loader);
-			}
-
-			// Connect to server
-			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, w);
-			login->setSessionId(dlg->getSessionId());
-			login->setPassword(dlg->getPassword());
-			login->setTitle(dlg->getTitle());
-			login->setMaxUsers(dlg->getUserLimit());
-			login->setAllowDrawing(dlg->getAllowDrawing());
-			login->setLayerControlLock(dlg->getLayerControlLock());
-			login->setPersistentSessions(dlg->getPersistentMode());
-			login->setPreserveChat(dlg->getPreserveChat());
-			w->_client->connectToServer(login);
-
+			hostSession(dlg);
 		}
 		dlg->deleteLater();
 	});
 	dlg->show();
+}
+
+void MainWindow::hostSession(dialogs::HostDialog *dlg)
+{
+	const bool useremote = dlg->useRemoteAddress();
+	QUrl address;
+
+	if(useremote) {
+		QString scheme;
+		if(dlg->getRemoteAddress().startsWith("drawpile://")==false)
+			scheme = "drawpile://";
+		address = QUrl(scheme + dlg->getRemoteAddress(),
+				QUrl::TolerantMode);
+
+	} else {
+		address.setHost(WhatIsMyIp::localAddress());
+	}
+
+	if(address.isValid() == false || address.host().isEmpty()) {
+		dlg->show();
+		showErrorMessage(tr("Invalid address"));
+		return;
+	}
+	address.setUserName(dlg->getUserName());
+
+
+	// Start server if hosting locally
+	if(useremote==false) {
+		net::ServerThread *server = new net::ServerThread;
+		server->setDeleteOnExit();
+
+		int port = server->startServer();
+		if(!port) {
+			QMessageBox::warning(this, tr("Unable to start server"), server->errorString());
+			dlg->show();
+			delete server;
+			return;
+		}
+
+		if(!server->isOnDefaultPort())
+			address.setPort(port);
+	}
+
+	// Initialize session (unless original was used)
+	MainWindow *w = this;
+	if(dlg->useOriginalImage() == false) {
+		QScopedPointer<SessionLoader> loader(dlg->getSessionLoader());
+		w = loadDocument(*loader);
+	}
+
+	// Connect to server
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, w);
+	login->setSessionId(dlg->getSessionId());
+	login->setPassword(dlg->getPassword());
+	login->setTitle(dlg->getTitle());
+	login->setMaxUsers(dlg->getUserLimit());
+	login->setAllowDrawing(dlg->getAllowDrawing());
+	login->setLayerControlLock(dlg->getLayerControlLock());
+	login->setPersistentSessions(dlg->getPersistentMode());
+	login->setPreserveChat(dlg->getPreserveChat());
+	w->_client->connectToServer(login);
 }
 
 /**
@@ -1135,22 +1090,17 @@ void MainWindow::join()
 	auto dlg = new dialogs::JoinDialog(this);
 	connect(dlg, &dialogs::JoinDialog::finished, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
-			QString scheme;
-			if(dlg->getAddress().startsWith("drawpile://")==false)
-				scheme = "drawpile://";
-			QUrl address = QUrl(scheme + dlg->getAddress(),QUrl::TolerantMode);
-			if(address.isValid()==false || address.host().isEmpty()) {
-				dlg->show();
-				showErrorMessage(tr("Invalid address"));
+			QUrl url = dlg->getUrl();
+
+			if(!url.isValid()) {
+				// TODO add validator to prevent this from happening
+				showErrorMessage("Invalid address");
 				return;
 			}
-			address.setUserName(dlg->getUserName());
 
-			// Remember some settings
 			dlg->rememberSettings();
 
-			// Connect
-			joinSession(address, dlg->recordSession());
+			joinSession(url, dlg->recordSession());
 		}
 		dlg->deleteLater();
 	});
@@ -1712,7 +1662,7 @@ void MainWindow::markSpotForRecording()
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, tr("About Drawpile"),
+	QMessageBox::about(0, tr("About Drawpile"),
 			tr("<p><b>Drawpile %1</b><br>"
 			"A collaborative drawing program.</p>"
 
@@ -1732,6 +1682,11 @@ void MainWindow::about()
 			"along with this program.  If not, see <a href=\"http://www.gnu.org/licences/\">http://www.gnu.org/licenses/</a>.</p>"
 			).arg(DRAWPILE_VERSION)
 	);
+}
+
+void MainWindow::homepage()
+{
+	QDesktopServices::openUrl(QUrl(WEBSITE));
 }
 
 /**
@@ -1756,10 +1711,8 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 	act = new QAction(qicon, text, this);
 	if(name)
 		act->setObjectName(name);
-	if(shortcut.isEmpty()==false) {
+	if(shortcut.isEmpty()==false)
 		act->setShortcut(shortcut);
-		act->setProperty("defaultshortcut", shortcut);
-	}
 
 	act->setCheckable(checkable);
 
@@ -1767,7 +1720,7 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 		act->setStatusTip(tip);
 
 	if(name!=0 && name[0]!='\0')
-		_customizable_actions.append(act);
+		dialogs::SettingsDialog::registerCustomizableAction(act->objectName(), act->text().remove('&'), shortcut);
 
 	// Add this action to the mainwindow so its shortcut can be used
 	// even when the menu/toolbar is not visible
@@ -1841,7 +1794,7 @@ void MainWindow::setupActions()
 	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
-	connect(quit, SIGNAL(triggered()), this, SLOT(quitAll()));
+	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
 #else
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
 #endif
@@ -2201,9 +2154,9 @@ void MainWindow::setupActions()
 	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); aboutqt->setMenuRole(QAction::AboutQtRole);
 
-	connect(homepage, &QAction::triggered, [homepage]() { QDesktopServices::openUrl(QUrl(homepage->statusTip())); });
-	connect(about, SIGNAL(triggered()), this, SLOT(about()));
-	connect(aboutqt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	connect(homepage, &QAction::triggered, &MainWindow::homepage);
+	connect(about, &QAction::triggered, &MainWindow::about);
+	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
@@ -2219,9 +2172,8 @@ void MainWindow::setupActions()
 		QAction *q = new QAction(QString("Tool slot #%1").arg(i+1), this);
 		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
-		q->setProperty("defaultshortcut", q->shortcut());
 		q->setProperty("toolslotidx", i);
-		_customizable_actions.append(q);
+		dialogs::SettingsDialog::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
 		toolslotactions->addAction(q);
 		addAction(q);
 	}

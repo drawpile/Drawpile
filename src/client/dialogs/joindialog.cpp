@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,14 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QPushButton>
-#include <QSettings>
-
 #include "joindialog.h"
 #include "../utils/mandatoryfields.h"
 #include "../utils/usernamevalidator.h"
 
 #include "ui_joindialog.h"
+
+#include <QPushButton>
+#include <QSettings>
+#include <QUrl>
 
 namespace dialogs {
 
@@ -69,15 +70,33 @@ JoinDialog::~JoinDialog()
 }
 
 QString JoinDialog::getAddress() const {
-	return _ui->address->currentText();
+	return _ui->address->currentText().trimmed();
 }
 
 QString JoinDialog::getUserName() const {
-	return _ui->username->text();
+	return _ui->username->text().trimmed();
 }
 
 bool JoinDialog::recordSession() const {
 	return _ui->recordSession->isChecked();
+}
+
+QUrl JoinDialog::getUrl() const
+{
+	QString address = getAddress();
+	QString username = getUserName();
+
+	QString scheme;
+	if(address.startsWith("drawpile://")==false)
+		scheme = "drawpile://";
+
+	QUrl url = QUrl(scheme + address, QUrl::TolerantMode);
+	if(!url.isValid() || url.host().isEmpty() || username.isEmpty())
+		return QUrl();
+
+	url.setUserName(username);
+
+	return url;
 }
 
 }

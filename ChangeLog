@@ -5,6 +5,7 @@
  * OSX: Quit menu action now works as expected
  * OSX: Add "Close" item to File menu.
  * Added zoom and angle shortcut context menus to status bar
+ * OSX: Don't quit when all windows are closed
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

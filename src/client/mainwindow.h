@@ -46,6 +46,7 @@ namespace docks {
 }
 namespace dialogs {
 	class PlaybackDialog;
+	class HostDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -72,11 +73,17 @@ class MainWindow : public QMainWindow {
 		MainWindow *loadDocument(SessionLoader &loader);
 		MainWindow *loadRecording(recording::Reader *reader);
 
+		//! Host a session using the settings from the given dialog
+		void hostSession(dialogs::HostDialog *dlg);
+
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url, bool autoRecord=false);
 
 		//! Check if the current board can be replaced
 		bool canReplace() const;
+
+		//! Save settings and exit
+		void exit();
 
 	public slots:
 		// Triggerable actions
@@ -86,7 +93,7 @@ class MainWindow : public QMainWindow {
 		bool save();
 		bool saveas();
 
-		void showSettings();
+		static void showSettings();
 		void changeSessionTitle();
 
 		void host();
@@ -99,12 +106,11 @@ class MainWindow : public QMainWindow {
 
 		void selectTool(QAction *tool);
 
-		void about();
+		static void about();
+		static void homepage();
 
 		//! Create a blank new document
 		void newDocument(const QSize &size, const QColor &background);
-
-		void quitAll();
 
 	private slots:
 		void toggleRecording();
@@ -169,9 +175,6 @@ class MainWindow : public QMainWindow {
 		//! Enable or disable drawing tools
 		void setDrawingToolsEnabled(bool enable);
 
-		//! Save settings and exit
-		void exit();
-
 		//! Display an error message
 		void showErrorMessage(const QString& message, const QString& details=QString());
 
@@ -216,7 +219,6 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_admintools; // session operator actions
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
-		QList<QAction*> _customizable_actions;
 
 		// Remember window state to return from fullscreen mode
 		QByteArray _fullscreen_oldstate;

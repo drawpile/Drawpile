@@ -24,6 +24,10 @@
 
 #include "utils/icon.h"
 
+#ifdef Q_OS_MAC
+#include "widgets/macmenu.h"
+#endif
+
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
@@ -188,6 +192,10 @@ int main(int argc, char *argv[]) {
 #ifdef Q_OS_MAC
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
+	app.setQuitOnLastWindowClosed(false);
+
+	// Global menu bar that is shown when no windows are open
+	MacMenu::instance();
 #endif
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());

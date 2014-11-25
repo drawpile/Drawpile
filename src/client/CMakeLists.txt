@@ -113,6 +113,10 @@ set (
 	bundled/kis_cubic_curve.cpp
 )
 
+IF ( APPLE )
+	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
+ENDIF ( APPLE )
+
 set (
 	UIs
 	ui/brushsettings.ui

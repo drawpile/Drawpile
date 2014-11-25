@@ -17,6 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "config.h"
+#include "main.h"
+#include "dialogs/settingsdialog.h"
+#include "dialogs/certificateview.h"
+#include "export/ffmpegexporter.h" // for setting ffmpeg path
+#include "utils/icon.h"
+
+#include "ui_settings.h"
+
 #include <QSettings>
 #include <QMessageBox>
 #include <QHeaderView>
@@ -30,26 +39,21 @@
 
 #include <QDebug>
 
+#include <algorithm>
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QKeySequenceEdit>
 #endif
-
-#include "config.h"
-#include "main.h"
-#include "dialogs/settingsdialog.h"
-#include "dialogs/certificateview.h"
-#include "export/ffmpegexporter.h" // for setting ffmpeg path
-#include "utils/icon.h"
-
-#include "ui_settings.h"
 
 class KeySequenceTableItem : public QTableWidgetItem
 {
 public:
 	static const int TYPE = QTableWidgetItem::UserType + 1;
-	KeySequenceTableItem(const QKeySequence &keysequence)
-		: QTableWidgetItem(TYPE), _keysequence(keysequence)
+	KeySequenceTableItem(const QString &name, const QKeySequence &keysequence)
+		: QTableWidgetItem(TYPE), _name(name), _keysequence(keysequence)
 	{}
+
+	const QString &actionName() const { return _name; }
 
 	QVariant data(int role) const
 	{
@@ -67,6 +71,7 @@ public:
 	}
 
 private:
+	QString _name;
 	QKeySequence _keysequence;
 };
 
@@ -88,6 +93,8 @@ public:
 
 namespace dialogs {
 
+QMap<QString, SettingsDialog::CustomAction> SettingsDialog::_customizableActions;
+
 /**
  * Construct a settings dialog. The actions in the list should have
  * a "defaultshortcut" property for reset to default to work.
@@ -95,8 +102,8 @@ namespace dialogs {
  * @param actions list of customizeable actions (for shortcut editing)
  * @param parent parent widget
  */
-SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
-	: QDialog(parent), _customactions(actions)
+SettingsDialog::SettingsDialog(QWidget *parent)
+	: QDialog(parent)
 {
 	_ui = new Ui_SettingsDialog;
 	_ui->setupUi(this);
@@ -141,7 +148,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 
 	// Generate an editable list of shortcuts
 	_ui->shortcuts->verticalHeader()->setVisible(false);
-	_ui->shortcuts->setRowCount(_customactions.size());
+	_ui->shortcuts->setRowCount(_customizableActions.size());
 
 	// QKeySequence editor delegate
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
@@ -152,17 +159,17 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
 #endif
 
-	for(int i=0;i<_customactions.size();++i) {
-		QTableWidgetItem *label = new QTableWidgetItem(_customactions[i]->text().remove('&'));
+	QList<CustomAction> actions = getCustomizableActions();
+	for(int i=0;i<actions.size();++i) {
+		QTableWidgetItem *label = new QTableWidgetItem(actions[i].title);
 		label->setFlags(Qt::ItemIsSelectable);
-		const QKeySequence& defks = _customactions[i]->property("defaultshortcut").value<QKeySequence>();
-		if(_customactions[i]->shortcut() != defks) {
+		if(actions[i].currentShortcut != actions[i].defaultShortcut) {
 			QFont font = label->font();
 			font.setBold(true);
 			label->setFont(font);
 		}
-		QTableWidgetItem *accel = new KeySequenceTableItem(_customactions[i]->shortcut());
-		QTableWidgetItem *def = new QTableWidgetItem(defks.toString());
+		QTableWidgetItem *accel = new KeySequenceTableItem(actions[i].name, actions[i].currentShortcut);
+		QTableWidgetItem *def = new QTableWidgetItem(actions[i].defaultShortcut.toString());
 		def->setFlags(Qt::ItemIsSelectable);
 		_ui->shortcuts->setItem(i, 0, label);
 		_ui->shortcuts->setItem(i, 1, accel);
@@ -171,8 +178,9 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
 	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
 	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
-	connect(_ui->shortcuts, SIGNAL(cellChanged(int, int)),
-			this, SLOT(validateShortcut(int, int)));
+
+	// TODO this signal doesn't seem to get emitted.
+	connect(_ui->shortcuts, &QTableWidget::cellChanged, this, &SettingsDialog::validateShortcut);
 
 	// Known hosts list
 	connect(_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
@@ -203,6 +211,39 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 SettingsDialog::~SettingsDialog()
 {
 	delete _ui;
+}
+
+void SettingsDialog::registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut)
+{
+	if(_customizableActions.contains(name))
+		return;
+
+	_customizableActions[name] = CustomAction(name, title, defaultShortcut);
+}
+
+QList<SettingsDialog::CustomAction> SettingsDialog::getCustomizableActions()
+{
+	QList<CustomAction> actions;
+	actions.reserve(_customizableActions.size());
+
+	QSettings cfg;
+	cfg.beginGroup("settings/shortcuts");
+
+	for(CustomAction a : _customizableActions) {
+		Q_ASSERT(!a.name.isEmpty());
+		if(cfg.contains(a.name))
+			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
+		if(a.currentShortcut.isEmpty())
+			a.currentShortcut = a.defaultShortcut;
+
+		actions.append(a);
+	}
+
+	std::sort(actions.begin(), actions.end(),
+		[](const CustomAction &a1, const CustomAction &a2) { return a1.title.compare(a2.title) < 0; }
+	);
+
+	return actions;
 }
 
 void SettingsDialog::rememberSettings()
@@ -238,17 +279,18 @@ void SettingsDialog::rememberSettings()
 
 	cfg.endGroup();
 
-	// Remember shortcuts. Only shortcuts that have been changed
-	// from their default values are stored.
+	// Remember shortcuts.
 	cfg.beginGroup("settings/shortcuts");
 	cfg.remove("");
-	bool changed = false;
-	for(int i=0;i<_customactions.size();++i) {
-		QKeySequence ks(_ui->shortcuts->item(i, 1)->text());
-		if(changed==false && ks != _customactions[i]->shortcut())
-			changed = true;
-		if(ks != _customactions[i]->property("defaultshortcut").value<QKeySequence>())
-			cfg.setValue(_customactions[i]->objectName(), ks);
+
+	for(int i=0;i<_ui->shortcuts->rowCount();++i) {
+		KeySequenceTableItem *item = static_cast<KeySequenceTableItem*>(_ui->shortcuts->item(i, 1));
+		Q_ASSERT(_customizableActions.contains(item->actionName()));
+
+		const CustomAction &ca = _customizableActions.value(item->actionName());
+		QKeySequence ks = item->data(Qt::EditRole).value<QKeySequence>();
+
+		cfg.setValue(ca.name, ks);
 	}
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
@@ -289,34 +331,9 @@ void SettingsDialog::saveCertTrustChanges()
  */
 void SettingsDialog::validateShortcut(int row, int col)
 {
-	// Check changes to shortcut column only
-	if(col!=1)
-		return;
-
-	QString newShortcut = _ui->shortcuts->item(row, col)->text();
-	QKeySequence ks(newShortcut);
-	if(ks.isEmpty() && !newShortcut.isEmpty()) {
-		// If new shortcut was invalid, restore the original
-		_ui->shortcuts->setItem(row, col,
-				new QTableWidgetItem(_customactions[row]->shortcut().toString()));
-	} else {
-		// Check for conflicts.
-		if(!ks.isEmpty()) {
-			for(int c=0;c<_customactions.size();++c) {
-				if(c!=row && ks == QKeySequence(_ui->shortcuts->item(c, 1)->text())) {
-					_ui->shortcuts->setItem(row, col,
-						new QTableWidgetItem(_customactions[row]->shortcut().toString()));
-					QMessageBox::information(this, tr("Conflict"), tr("This shortcut is already used for \"%1\"").arg(_customactions[c]->text().remove('&')));
-					return;
-				}
-			}
-		}
-		// If the new shortcut is not the same as the default, make the
-		// action label bold.
-		QFont font = _ui->shortcuts->item(row, 0)->font();
-		font.setBold(ks != _customactions[row]->property("defaultshortcut").value<QKeySequence>());
-		_ui->shortcuts->item(row, 0)->setFont(font);
-	}
+	// TODO for some reason this function is never called
+	// TODO check for conflicting shortcuts here.
+	qDebug() << "validateShortcut" << row << col;
 }
 
 void SettingsDialog::viewCertificate(QListWidgetItem *item)

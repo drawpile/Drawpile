@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,42 +16,36 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef JOINDIALOG_H
-#define JOINDIALOG_H
+#ifndef MACMENU_H
+#define MACMENU_H
 
-#include <QDialog>
+#include <QMenuBar>
 
-class Ui_JoinDialog;
-
-namespace dialogs {
-
-class JoinDialog : public QDialog
+class MacMenu : public QMenuBar
 {
 	Q_OBJECT
 public:
-	JoinDialog(QWidget *parent=0);
-	~JoinDialog();
+	static MacMenu *instance();
 
-	//! Get the host address
-	QString getAddress() const;
+	void updateRecentMenu();
 
-	//! Get the username
-	QString getUserName() const;
+signals:
 
-	//! Should the session be recorded from the beginning
-	bool recordSession() const;
+public slots:
+	void newDocument();
+	void openDocument();
+	void hostSession();
+	void joinSession();
+	void quitAll();
 
-	//! Get the join parameters encoded as an URL
-	QUrl getUrl() const;
-
-	//! Store settings in configuration file
-	void rememberSettings() const;
+private slots:
+	void openRecent(QAction *action);
 
 private:
-	Ui_JoinDialog *_ui;
+	MacMenu();
+	QAction *makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut);
+
+	QMenu *_recent;
 };
 
-}
-
-#endif
-
+#endif // MACMENU_H
