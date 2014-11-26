@@ -75,14 +75,12 @@ signals:
 	void statusMessage(const QString& message);
 
 private slots:
-	void updateStats();
 	void discoverAddress();
 	void externalIpDiscovered(const QString &ip);
 	void showCertificate();
 
 private:
 	void message(const QString& msg);
-	void updateIcon();
 	QString fullAddress() const;
 
 	QProgressBar *_download;
@@ -99,8 +97,6 @@ private:
 	QAction *_discoverIp;
 
 	quint64 _sentbytes, _recvbytes;
-	uchar _activity;
-	QTimer *_timer;
 
 	QSslCertificate _certificate;
 };

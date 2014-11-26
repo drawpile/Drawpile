@@ -34,14 +34,8 @@
 
 namespace widgets {
 
-namespace {
-	QPixmap netstatusIcon(const char *name) {
-		return icon::fromTheme(QLatin1Literal("network-") + name).pixmap(16, 16);
-	}
-}
-
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), _sentbytes(0), _recvbytes(0), _activity(0)
+	: QWidget(parent), _sentbytes(0), _recvbytes(0)
 {
 	setMinimumHeight(16+2);
 
@@ -115,6 +109,7 @@ NetStatus::NetStatus(QWidget *parent)
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
 	_icon->setFixedSize(QSize(16, 16));
+	_icon->setPixmap(icon::fromTheme("network-idle").pixmap(16, 16));
 	_icon->hide();
 	layout->addWidget(_icon);
 
@@ -138,11 +133,6 @@ NetStatus::NetStatus(QWidget *parent)
 	popupPalette.setColor(QPalette::ToolTipBase, Qt::black);
 	popupPalette.setColor(QPalette::ToolTipText, Qt::white);
 	_popup->setPalette(popupPalette);
-
-	// Timer for activity update
-	_timer = new QTimer(this);
-	_timer->setSingleShot(true);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(updateStats()));
 }
 
 /**
@@ -167,7 +157,6 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	_recvbytes = 0;
 	_sentbytes = 0;
 	_icon->show();
-	updateIcon();
 }
 
 void NetStatus::loggedIn(const QUrl &sessionUrl)
@@ -254,10 +243,7 @@ void NetStatus::bytesReceived(int count)
 {
 	// TODO show statistics
 	_recvbytes += count;
-	if(!(_activity & 2)) {
-		_activity |= 2;
-		updateIcon();
-	}
+
 	if(_download->isVisible()) {
 		int val = _download->value() + count;
 		if(val>=_download->maximum())
@@ -265,7 +251,6 @@ void NetStatus::bytesReceived(int count)
 		else
 			_download->setValue(val);
 	}
-	_timer->start(500);
 }
 
 void NetStatus::bytesReceived(qint64 received, qint64 total)
@@ -287,10 +272,7 @@ void NetStatus::bytesSent(int count)
 {
 	// TODO show statistics
 	_sentbytes += count;
-	if(!(_activity & 1)) {
-		_activity |= 1;
-		updateIcon();
-	}
+
 	if(_upload->isVisible()) {
 		int val = _upload->value() + count;
 		if(val>=_upload->maximum())
@@ -298,29 +280,12 @@ void NetStatus::bytesSent(int count)
 		else
 			_upload->setValue(val);
 	}
-	_timer->start(500);
 }
 
 void NetStatus::lagMeasured(qint64 lag)
 {
 	// TODO show this on the screen
 	qDebug("Lag: %d", int(lag));
-}
-
-void NetStatus::updateStats()
-{
-	_activity = 0;
-	updateIcon();
-}
-
-void NetStatus::updateIcon()
-{
-	switch(_activity) {
-	case 0: _icon->setPixmap(netstatusIcon("idle")); break;
-	case 1: _icon->setPixmap(netstatusIcon("transmit")); break;
-	case 2: _icon->setPixmap(netstatusIcon("receive")); break;
-	case 3: _icon->setPixmap(netstatusIcon("transmit-receive")); break;
-	}
 }
 
 /**

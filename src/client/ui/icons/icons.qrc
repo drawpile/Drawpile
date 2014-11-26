@@ -44,9 +44,6 @@
         <file>media-skip-backward.png</file>
         <file>media-skip-forward.png</file>
         <file>network-idle.png</file>
-        <file>network-receive.png</file>
-        <file>network-transmit.png</file>
-        <file>network-transmit-receive.png</file>
         <file>object-locked.png</file>
         <file>security-low.png</file>
         <file>security-medium.png</file>

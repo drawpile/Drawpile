@@ -23,9 +23,7 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * media-skip-forward
  * media-seek-backward
  * media-skip-backward
- * network-receive
- * network-transmit
- * network-transmit-receive
+ * network-idle
  * stopsign (original name: dialog-close)
  * view-refresh
  * zoom-in
