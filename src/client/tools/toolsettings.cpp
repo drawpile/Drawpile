@@ -959,7 +959,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)
-	: BrushlessSettings(name, title, icon::fromTheme("color-fill")), _ui(0)
+	: BrushlessSettings(name, title, icon::fromTheme("fill-color")), _ui(0)
 {
 }
 
