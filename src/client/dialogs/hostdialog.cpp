@@ -76,9 +76,11 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
 	_ui->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 
-	QSize lastsize = cfg.value("newsize", QSize(800, 600)).toSize();
-	_ui->picturewidth->setValue(lastsize.width());
-	_ui->pictureheight->setValue(lastsize.height());
+	if(_ui->solidcolor->isChecked()) {
+		QSize lastsize = cfg.value("newsize", QSize(800, 600)).toSize();
+		_ui->picturewidth->setValue(lastsize.width());
+		_ui->pictureheight->setValue(lastsize.height());
+	}
 
 	QColor lastcolor = cfg.value("newcolor").value<QColor>();
 	if(lastcolor.isValid())
