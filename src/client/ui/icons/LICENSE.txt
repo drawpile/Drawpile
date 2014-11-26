@@ -27,7 +27,6 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * network-transmit
  * network-transmit-receive
  * stopsign (original name: dialog-close)
- * video-display
  * view-refresh
  * zoom-in
  * zoom-original

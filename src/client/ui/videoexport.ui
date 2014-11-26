@@ -48,6 +48,9 @@
       <bool>true</bool>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
@@ -95,10 +98,10 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
+         <widget class="QComboBox" name="sizeChoice"/>
+        </item>
+        <item>
          <widget class="QSpinBox" name="framewidth">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="minimum">
            <number>10</number>
           </property>
@@ -111,7 +114,13 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_10">
+         <widget class="QLabel" name="sizeXlabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string notr="true">×</string>
           </property>
@@ -119,9 +128,6 @@
         </item>
         <item>
          <widget class="QSpinBox" name="frameheight">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="minimum">
            <number>10</number>
           </property>
@@ -134,46 +140,19 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="sizePreset">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="icon">
-           <iconset theme="video-display">
-            <normaloff>icons:video-display.png</normaloff>icons:video-display.png</iconset>
-          </property>
-          <property name="popupMode">
-           <enum>QToolButton::InstantPopup</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_4">
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>10</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
        </layout>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="keepOriginalSize">
-        <property name="text">
-         <string>Keep original frame size</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -513,54 +492,6 @@ color: red;</string>
     <hint type="destinationlabel">
      <x>35</x>
      <y>251</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>keepOriginalSize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>framewidth</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>126</x>
-     <y>135</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>121</x>
-     <y>116</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>keepOriginalSize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frameheight</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>226</x>
-     <y>142</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>223</x>
-     <y>109</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>keepOriginalSize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>sizePreset</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>249</x>
-     <y>137</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>274</x>
-     <y>114</y>
     </hint>
    </hints>
   </connection>
