@@ -29,7 +29,7 @@
 
 PaletteListModel::PaletteListModel(QObject *parent) :
 	QAbstractListModel(parent),
-	_readonlyEmblem(icon::fromTheme("emblem-readonly"))
+	_readonlyEmblem(icon::fromTheme("object-locked"))
 {
 }
 

@@ -1775,7 +1775,7 @@ void MainWindow::setupActions()
 	QAction *closefile = makeAction("closedocument", 0, tr("Close"), QString(), QKeySequence::Close);
 #endif
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."));
+	QAction *saveas = makeAction("savedocumentas", 0, tr("Save &As..."));
 	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
@@ -1823,7 +1823,6 @@ void MainWindow::setupActions()
 	filetools->addAction(newdocument);
 	filetools->addAction(open);
 	filetools->addAction(save);
-	filetools->addAction(saveas);
 	addToolBar(Qt::TopToolBarArea, filetools);
 
 	connect(_recent, &QMenu::triggered, [this](QAction *action) {

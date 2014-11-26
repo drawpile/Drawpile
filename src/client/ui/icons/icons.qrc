@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/icons">
         <file>drawpile.png</file>
-        <file>application-exit.png</file>
         <file>chat.png</file>
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
@@ -10,7 +9,6 @@
         <file>color-picker.png</file>
         <file>document-new.png</file>
         <file>document-open.png</file>
-        <file>document-save-as.png</file>
         <file>document-save.png</file>
         <file>draw-brush.png</file>
         <file>draw-eraser.png</file>
@@ -25,7 +23,6 @@
         <file>edit-paste.png</file>
         <file>edit-redo.png</file>
         <file>edit-undo.png</file>
-        <file>emblem-readonly.png</file>
         <file>emblem-unreadable.png</file>
         <file>flag-red.png</file>
         <file>flag-blue.png</file>
