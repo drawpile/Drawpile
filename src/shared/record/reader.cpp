@@ -174,7 +174,8 @@ Compatibility Reader::open()
 			return COMPATIBLE;
 
 		// If major version is same, expect only minor incompatabilities
-		if(majorVersion(myversion) == majorVersion(protover)) {
+		// Version 11 is also fully supported
+		if(majorVersion(myversion) == majorVersion(protover) || majorVersion(protover)==11) {
 
 			// Ver 11.3 is fully backwards compatible
 			if(minorVersion(protover) < 3)
