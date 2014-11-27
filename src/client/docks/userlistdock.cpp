@@ -150,7 +150,7 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 UserListDelegate::UserListDelegate(QObject *parent)
 	: QItemDelegate(parent),
 	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
-	  _opicon(icon::fromTheme("user-moderator").pixmap(16, 16))
+	  _opicon(icon::fromTheme("irc-operator").pixmap(16, 16))
 {
 }
 

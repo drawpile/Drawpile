@@ -1,0 +1,10 @@
+The icons are divided into two categories: theme and builtin.
+Icons from the theme category are normally got from the system theme (Linux only)
+with the bundled icons as fallbacks. Some of the theme icons are not actually part
+of any theme at the moment, but they could be:
+
+ * draw-line: standard name, but not found in many (any?) themes
+ * tool-laserpointer: unstandard name
+
+The builtin icons are for things specific to this app.
+

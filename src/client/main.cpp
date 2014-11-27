@@ -49,11 +49,11 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	// Set resource search paths
 	QStringList iconPaths;
 #ifdef BUILTIN_ICONS
-	iconPaths << ":/icons";
+	iconPaths << ":/icons/theme";
 #else
-	iconPaths << qApp->applicationDirPath() + "/icons";
+	iconPaths << qApp->applicationDirPath() + "/icons/theme";
 	for(const QString path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
-		iconPaths << path + "/icons";
+		iconPaths << path + "/theme";
 #endif
 	QDir::setSearchPaths("icons", iconPaths);
 
@@ -71,7 +71,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 
 		cfg.setValue("username", defaultname);
 	}
-	setWindowIcon(icon::fromTheme("drawpile"));
+	setWindowIcon(icon::fromBuiltin("drawpile"));
 }
 
 /**

@@ -71,6 +71,11 @@ namespace {
 	{
 		return icon::fromTheme(name).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
 	}
+
+	QPixmap getBuiltinIcon(const QString &name)
+	{
+		return icon::fromBuiltin(name).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
+	}
 }
 
 struct IndexGraphicsContext {
@@ -104,7 +109,7 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	ctx.textIcon = getIcon("draw-text");
 	ctx.markerIcon = getIcon("flag-red");
 	ctx.newMarkerIcon = getIcon("flag-blue");
-	ctx.chatIcon = getIcon("chat");
+	ctx.chatIcon = getBuiltinIcon("chat");
 	ctx.pauseIcon = getIcon("media-playback-pause");
 	ctx.laserIcon = getIcon("tool-laserpointer");
 	ctx.undoIcon = getIcon("edit-undo");

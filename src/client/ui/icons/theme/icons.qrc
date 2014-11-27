@@ -1,10 +1,5 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file>drawpile.png</file>
-        <file>chat.png</file>
-        <file>colorbox-hsv.png</file>
-        <file>colorbox-pal.png</file>
-        <file>colorbox-wheel.png</file>
+    <qresource prefix="/icons/theme">
         <file>fill-color.png</file>
         <file>color-picker.png</file>
         <file>document-new.png</file>
@@ -49,16 +44,13 @@
         <file>security-medium.png</file>
         <file>security-high.png</file>
         <file>select-rectangular.png</file>
-        <file>stopsign.png</file>
         <file>view-refresh.png</file>
         <file>zoom-in.png</file>
         <file>zoom-original.png</file>
         <file>zoom-out.png</file>
-        <file>hardedge.png</file>
-        <file>incremental.png</file>
-        <file>eye_closed.png</file>
-        <file>eye_open.png</file>
+        <file>layer-visible-off.png</file>
+        <file>layer-visible-on.png</file>
         <file>draw-ellipse.png</file>
-        <file>user-moderator.png</file>
+        <file>irc-operator.png</file>
     </qresource>
 </RCC>

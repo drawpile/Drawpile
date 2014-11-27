@@ -1,6 +1,14 @@
 <RCC>
     <qresource prefix="/icons/builtin">
+        <file>chat.png</file>
+        <file>colorbox-hsv.png</file>
+        <file>colorbox-pal.png</file>
+        <file>colorbox-wheel.png</file>
         <file>dock-close.png</file>
         <file>dock-detach.png</file>
+        <file>drawpile.png</file>
+        <file>hardedge.png</file>
+        <file>incremental.png</file>
+        <file>stop.png</file>
     </qresource>
 </RCC>

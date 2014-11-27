@@ -73,7 +73,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>icons:incremental.png</normaloff>icons:incremental.png</iconset>
+         <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

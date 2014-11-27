@@ -84,8 +84,8 @@
         <string>Session operator</string>
        </property>
        <property name="icon">
-        <iconset theme="user-moderator">
-         <normaloff>icons:user-moderator.png</normaloff>icons:user-moderator.png</iconset>
+        <iconset theme="irc-operator">
+         <normaloff>icons:irc-operator.png</normaloff>icons:irc-operator.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

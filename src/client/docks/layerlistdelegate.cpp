@@ -33,8 +33,8 @@ namespace docks {
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
 	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
-	  _visibleicon(icon::fromTheme("eye_open").pixmap(16, 16)),
-	  _hiddenicon(icon::fromTheme("eye_closed").pixmap(16, 16))
+	  _visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
+	  _hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16))
 {
 }
 

@@ -46,7 +46,7 @@
      <widget class="QWidget" name="tab">
       <attribute name="icon">
        <iconset>
-        <normaloff>icons:colorbox-pal.png</normaloff>icons:colorbox-pal.png</iconset>
+        <normaloff>:/icons/builtin/colorbox-pal.png</normaloff>:/icons/builtin/colorbox-pal.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -134,7 +134,7 @@
      <widget class="QWidget" name="tab_2">
       <attribute name="icon">
        <iconset>
-        <normaloff>icons:colorbox-hsv.png</normaloff>icons:colorbox-hsv.png</iconset>
+        <normaloff>:/icons/builtin/colorbox-hsv.png</normaloff>:/icons/builtin/colorbox-hsv.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -299,7 +299,7 @@
      <widget class="QWidget" name="tab_3">
       <attribute name="icon">
        <iconset>
-        <normaloff>icons:colorbox-wheel.png</normaloff>icons:colorbox-wheel.png</iconset>
+        <normaloff>:/icons/builtin/colorbox-wheel.png</normaloff>:/icons/builtin/colorbox-wheel.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>

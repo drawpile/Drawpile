@@ -178,7 +178,7 @@ qt5_add_resources( QtResource ui/icons/builtin/builtin.qrc )
 
 if( BUILTIN_ICONS )
 	message(STATUS "Including icons in the executable" )
-	qt5_add_resources( QtResource ui/icons/icons.qrc )
+	qt5_add_resources( QtResource ui/icons/theme/icons.qrc )
 endif( BUILTIN_ICONS )
 
 if( Qt5LinguistTools_FOUND)
@@ -273,7 +273,7 @@ set_target_properties (
 install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 
 if( NOT BUILTIN_ICONS )
-	install( DIRECTORY ui/icons DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
+	install( DIRECTORY ui/icons/theme DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
 endif()
 
 if( QM_TRANSLATIONS )

@@ -24,7 +24,6 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * media-seek-backward
  * media-skip-backward
  * network-idle
- * stopsign (original name: dialog-close)
  * view-refresh
  * zoom-in
  * zoom-original
@@ -41,8 +40,8 @@ The following icons are from the Tango ArtLibre set under the GPL:
  * select-rectangular
 
 The following are originally from tango_icons.svg from inkscape (via myPaint) and are GPL licensed:
- * eye_open
- * eye_closed
+ * layer-visible-on
+ * layer-visible-off
  * object-locked
 
 The following icons are from the Gnome icon theme, licensed under the LGPL and CCBYSA3:
@@ -53,13 +52,8 @@ The following icons are from the Gnome icon theme, licensed under the LGPL and C
 
 Finally, the following are original to Drawpile:
  * draw-line
- * hardedge
- * incremental
  * flag-red
  * flag-blue
  * chat
- * user-moderator
- * colorbox-hsv
- * colorbox-pal
- * colorbox-wheel
+ * irc-operator
 

@@ -70,7 +70,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>icons:incremental.png</normaloff>icons:incremental.png</iconset>
+         <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -84,7 +84,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>icons:hardedge.png</normaloff>icons:hardedge.png</iconset>
+         <normaloff>:/icons/builtin/hardedge.png</normaloff>:/icons/builtin/hardedge.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

@@ -68,7 +68,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			if(ls.incompatible)
 				return icon::fromTheme("emblem-unreadable").pixmap(16, 16);
 			else if(ls.closed)
-				return icon::fromTheme("stopsign").pixmap(16, 16);
+				return icon::fromBuiltin("stop").pixmap(16, 16);
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 			break;
