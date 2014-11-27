@@ -107,10 +107,16 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set/unset incremental drawing mode
 		void setIncremental(bool incremental);
 
+	signals:
+		void requestFgColorChange();
+		void requestBgColorChange();
+
 	protected:
 		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);
 		void changeEvent(QEvent *);
+		void mouseDoubleClickEvent(QMouseEvent*);
+		void contextMenuEvent(QContextMenuEvent *);
 
 	private:
 		void updatePreview();
@@ -128,6 +134,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape shape_;
 		qreal oldhardness1_, oldhardness2_;
 		bool _needupdate;
+
+		QMenu *_ctxmenu;
 };
 
 #ifndef DESIGNER_PLUGIN

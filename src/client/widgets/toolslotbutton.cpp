@@ -25,9 +25,9 @@
 namespace widgets {
 
 ToolSlotButton::ToolSlotButton(QWidget *parent) :
-	QToolButton(parent)
+	QToolButton(parent), _isHovering(false)
 {
-	setCursor(Qt::PointingHandCursor);
+	//setCursor(Qt::PointingHandCursor);
 }
 
 void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
@@ -37,25 +37,46 @@ void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
 	update();
 }
 
+void ToolSlotButton::setHighlightColor(const QColor &c)
+{
+	_highlight = c;
+	update();
+}
+
+void ToolSlotButton::setHoverColor(const QColor &c)
+{
+	_hover = c;
+	update();
+}
+
 void ToolSlotButton::paintEvent(QPaintEvent *)
 {
-	const int UNDERLINE = 3;
-	const int RADIUS = qMin(width(), height()-UNDERLINE) - 2;
+	//const int UNDERLINE = 3;
+	const int RADIUS = qMin(width(), height())/2 - 4;
 	QRectF rect(
-		(width() - RADIUS) / 2 + 0.5,
-		(height() - RADIUS) / 2 + 0.5 - UNDERLINE + 1,
-		RADIUS,
-		RADIUS
+		(width()/2 - RADIUS) + 0.5,
+		(height()/2 - RADIUS) + 0.5,// - UNDERLINE + 1,
+		RADIUS*2,
+		RADIUS*2
 	);
 	QPainter p(this);
 
+	// Draw background tab (if selected)
+	if(isChecked() || _isHovering) {
+		const int R = 3;
+		p.setPen(Qt::NoPen);
+		p.setBrush(isChecked() ? _highlight : _hover);
+		p.drawRoundedRect(QRectF(0, 0, width(), height()+R), R, R);
+	}
+
 	// Draw foreground and background colors
+	p.setRenderHint(QPainter::Antialiasing);
 	p.setPen(Qt::NoPen);
-	p.setBrush(_fg);
-	p.drawChord(rect, 45*16, 180*16);
 
 	p.setBrush(_bg);
-	p.drawChord(rect, 225*16, 180*16);
+	p.drawEllipse(rect.translated(2, 2));
+	p.setBrush(_fg);
+	p.drawEllipse(rect.translated(-1, -1));
 
 	// Draw icon
 	int iconSize = qMin(rect.width(), rect.height()) * 0.5 * 1.414;
@@ -67,19 +88,25 @@ void ToolSlotButton::paintEvent(QPaintEvent *)
 		pixmap.height()
 	), pixmap);
 
+#if 0
 	// Draw outline
 	p.setRenderHint(QPainter::Antialiasing);
 	p.setBrush(Qt::NoBrush);
 	p.setPen(QColor(0, 0, 0, 128));
 	p.drawEllipse(rect);
+#endif
+}
 
-	// Draw selection indicator
-	if(isChecked()) {
-		p.setRenderHint(QPainter::Antialiasing, false);
-		p.setPen(Qt::NoPen);
-		p.setBrush(palette().brush(QPalette::Highlight));
-		p.drawRect(0, height() - UNDERLINE, width(), UNDERLINE);
-	}
+void ToolSlotButton::enterEvent(QEvent *e)
+{
+	_isHovering = true;
+	QToolButton::enterEvent(e);
+}
+
+void ToolSlotButton::leaveEvent(QEvent *e)
+{
+	_isHovering = false;
+	QToolButton::leaveEvent(e);
 }
 
 }

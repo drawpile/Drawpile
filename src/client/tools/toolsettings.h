@@ -436,6 +436,7 @@ public:
 	bool sampleMerged() const;
 
 	void quickAdjust1(float adjustment) override;
+	void setForeground(const QColor &color) override;
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

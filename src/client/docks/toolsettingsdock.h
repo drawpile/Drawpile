@@ -25,6 +25,7 @@
 #include <QDockWidget>
 
 class QStackedWidget;
+class Color_Dialog;
 
 namespace tools {
 	class ToolSettings;
@@ -39,7 +40,6 @@ namespace paintcore {
 }
 
 namespace widgets {
-	class DualColorButton;
 	class ToolSlotButton;
 }
 
@@ -108,6 +108,12 @@ public slots:
 	//! Set foreground color
 	void setForegroundColor(const QColor& color);
 
+	//! Pop up a dialog for changing the foreground color
+	void changeForegroundColor();
+
+	//! Pop up a dialog for changing the foreground color
+	void changeBackgroundColor();
+
 	//! Set background color
 	void setBackgroundColor(const QColor& color);
 
@@ -174,12 +180,15 @@ private:
 
 	tools::ToolSettings *_currenttool;
 	QStackedWidget *_widgets;
-	widgets::DualColorButton *_fgbgcolor;
 
 	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;
 	int _eraserOverride;
 	QList<tools::ToolsetProperties> _toolprops;
+
+	QColor _foreground;
+	QColor _background;
+	Color_Dialog *_fgdialog, *_bgdialog;
 };
 
 }

@@ -17,34 +17,28 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUALCOLORBUTTONPLUGIN_H
-#define DUALCOLORBUTTONPLUGIN_H
+#include "utils.h"
 
-#include <QDesignerCustomWidgetInterface>
+#include <QString>
 
-class DualColorButtonPlugin : public QObject, public QDesignerCustomWidgetInterface
-{
-	Q_OBJECT
-	Q_INTERFACES(QDesignerCustomWidgetInterface)
+namespace docks {
 
-	public:
-		DualColorButtonPlugin(QObject *parent = 0);
+	QLatin1String defaultDockStylesheet()
+	{
+		static QLatin1String css = QLatin1String(
+			"QDockWidget {"
+				"color: white;"
+				"titlebar-close-icon: url(:/icons/builtin/dock-close.png);"
+				"titlebar-normal-icon: url(:/icons/builtin/dock-detach.png);"
 
-		bool isContainer() const;
-		bool isInitialized() const;
-		QIcon icon() const;
-		QString domXml() const;
-		QString group() const;
-		QString includeFile() const;
-		QString name() const;
-		QString toolTip() const;
-		QString whatsThis() const;
-		QWidget *createWidget(QWidget *parent);
-		void initialize(QDesignerFormEditorInterface *core);
-
-	private:
-		bool initialized;
-};
-
-#endif
-
+			"}"
+			"QDockWidget::title {"
+				"background-color: #4d4d4d;"
+				"padding: 4px;"
+			"}"
+			"QDockWidget::close-button, QDockWidget::float-button {"
+				//"background-color: white;"
+			"}");
+		return css;
+	}
+}

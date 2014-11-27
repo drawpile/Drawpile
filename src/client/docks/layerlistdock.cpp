@@ -22,6 +22,7 @@
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
+#include "docks/utils.h"
 #include "core/rasterop.h" // for blending modes
 
 #include "ui_layerbox.h"
@@ -41,6 +42,8 @@ LayerList::LayerList(QWidget *parent)
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	_ui->setupUi(w);
+
+	setStyleSheet(defaultDockStylesheet());
 
 	_ui->layerlist->setDragEnabled(true);
 	_ui->layerlist->viewport()->setAcceptDrops(true);

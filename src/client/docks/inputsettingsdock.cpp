@@ -21,6 +21,7 @@
 
 #include "scene/canvasview.h"
 #include "docks/inputsettingsdock.h"
+#include "docks/utils.h"
 #include "bundled/kis_cubic_curve.h"
 #include "ui_inputcfg.h"
 
@@ -37,6 +38,8 @@ InputSettings::InputSettings(QWidget *parent) :
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	_ui->setupUi(w);
+
+	setStyleSheet(defaultDockStylesheet());
 
 	// Restore settings
 	QSettings cfg;

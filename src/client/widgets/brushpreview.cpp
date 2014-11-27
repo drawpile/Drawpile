@@ -29,6 +29,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
+#include <QMenu>
 
 #include "core/point.h"
 #include "core/layerstack.h"
@@ -48,6 +49,11 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
+
+	_ctxmenu = new QMenu(this);
+
+	_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestFgColorChange()));
+	_ctxmenu->addAction(tr("Change Background Color"), this, SIGNAL(requestBgColorChange()));
 }
 
 BrushPreview::~BrushPreview() {
@@ -306,6 +312,16 @@ void BrushPreview::setIncremental(bool incremental)
 	brush_.setIncremental(incremental);
 	updatePreview();
 	update();
+}
+
+void BrushPreview::contextMenuEvent(QContextMenuEvent *e)
+{
+	_ctxmenu->popup(e->globalPos());
+}
+
+void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)
+{
+	emit requestFgColorChange();
 }
 
 #ifndef DESIGNER_PLUGIN

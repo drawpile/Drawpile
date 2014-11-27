@@ -100,8 +100,9 @@ QWidget *PenSettings::createUiWidget(QWidget *parent)
 
 	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
-	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 	return widget;
 }
 
@@ -197,6 +198,8 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
 	parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
 	return widget;
 }
@@ -295,8 +298,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(widget);
 	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
-	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
 	return widget;
 }
@@ -526,6 +530,9 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	} else {
 		parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	}
+
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
 	return widget;
 }
@@ -974,6 +981,8 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_FillSettings;
 	_ui->setupUi(uiwidget);
 
+	parent->connect(_ui->fillColor, SIGNAL(colorChanged(QColor)), parent, SLOT(setForegroundColor(QColor)));
+
 	return uiwidget;
 }
 
@@ -999,6 +1008,12 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue("expand", fillExpansion());
 	cfg.setValue("samplemerged", sampleMerged());
 	return cfg;
+}
+
+void FillSettings::setForeground(const QColor &color)
+{
+	_ui->fillColor->setColor(color);
+	BrushlessSettings::setForeground(color);
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)

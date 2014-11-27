@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons/builtin">
+        <file>dock-close.png</file>
+        <file>dock-detach.png</file>
+    </qresource>
+</RCC>

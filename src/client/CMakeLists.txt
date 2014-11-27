@@ -91,13 +91,13 @@ set (
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
-	widgets/dualcolorbutton.cpp
 	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
 	widgets/colorbutton.cpp 
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
 	widgets/toolslotbutton.cpp
+	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
@@ -174,6 +174,7 @@ endif()
 qt5_wrap_ui( UI_Headers ${UIs} )
 
 qt5_add_resources( QtResource ui/cursors/cursors.qrc )
+qt5_add_resources( QtResource ui/icons/builtin/builtin.qrc )
 
 if( BUILTIN_ICONS )
 	message(STATUS "Including icons in the executable" )

@@ -16,6 +16,7 @@
 */
 
 #include "navigator.h"
+#include "docks/utils.h"
 using docks::NavigatorView; // to satisfy ui_navibox
 #include "ui_navibox.h"
 
@@ -138,6 +139,8 @@ Navigator::Navigator(QWidget *parent)
 	QWidget *w = new QWidget(this);
 	_ui = new Ui_NaviBox();
 	_ui->setupUi(w);
+
+	setStyleSheet(defaultDockStylesheet());
 
 	connect(_ui->view, SIGNAL(focusMoved(const QPoint&)),
 			this, SIGNAL(focusMoved(const QPoint&)));

@@ -16,35 +16,16 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef DOCK_UTILS_H
+#define DOCK_UTILS_H
 
-#ifndef TOOLSLOTBUTTON_H
-#define TOOLSLOTBUTTON_H
+class QLatin1String;
 
-#include <QToolButton>
+namespace docks {
 
-namespace widgets {
-
-class ToolSlotButton : public QToolButton
-{
-	Q_OBJECT
-public:
-	explicit ToolSlotButton(QWidget *parent = 0);
-
-	void setColors(const QColor &fg, const QColor &bg);
-
-	void setHighlightColor(const QColor &c);
-	void setHoverColor(const QColor &c);
-
-protected:
-	void paintEvent(QPaintEvent *);
-	void enterEvent(QEvent *);
-	void leaveEvent(QEvent *);
-
-private:
-	QColor _fg, _bg, _highlight, _hover;
-	bool _isHovering;
-};
-
+	//! Get the default stylesheet for docks
+	QLatin1String defaultDockStylesheet();
 }
 
-#endif // TOOLSLOTBUTTON_H
+#endif
+

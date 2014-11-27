@@ -22,6 +22,7 @@
 #include <QMouseEvent>
 
 #include "docks/userlistdock.h"
+#include "docks/utils.h"
 #include "net/userlist.h"
 #include "net/client.h"
 #include "utils/icon.h"
@@ -37,6 +38,9 @@ UserList::UserList(QWidget *parent)
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	_ui->setupUi(w);
+
+	setStyleSheet(defaultDockStylesheet());
+
 	setOperatorMode(false);
 
 	_ui->userlist->setSelectionMode(QListView::SingleSelection);

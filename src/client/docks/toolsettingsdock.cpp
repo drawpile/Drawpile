@@ -18,8 +18,8 @@
 */
 
 #include "docks/toolsettingsdock.h"
+#include "docks/utils.h"
 #include "tools/toolsettings.h"
-#include "widgets/dualcolorbutton.h"
 #include "widgets/toolslotbutton.h"
 #include "utils/icon.h"
 
@@ -41,27 +41,45 @@ ToolSettings::ToolSettings(QWidget *parent)
 	for(int i=0;i<QUICK_SLOTS;++i)
 		_toolprops.append(tools::ToolsetProperties());
 
+	setStyleSheet(defaultDockStylesheet() +
+		"#tooldockheader {"
+			"background-color: #7f8c8d;"
+		"}"
+	);
+
 	// Initialize UI
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 
 	auto *layout = new QVBoxLayout(w);
-	layout->setMargin(3);
+	layout->setMargin(0);
+
+	// Create quick toolchange slot buttons
+	QFrame *headerframe = new QFrame(this);
+	headerframe->setObjectName("tooldockheader");
+	layout->addWidget(headerframe);
 
 	auto *hlayout = new QHBoxLayout;
 	hlayout->setContentsMargins(3, 3, 3, 0);
-	layout->addLayout(hlayout);
+	headerframe->setLayout(hlayout);
 
-	// Create quick toolchange slot buttons
+	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
+
 	QButtonGroup *quickbuttons = new QButtonGroup(this);
 	quickbuttons->setExclusive(true);
+
+	QColor windowcolor = palette().color(QPalette::Window);
+	QColor hovercolor = QColor("#95a5a6");
+
 	for(int i=0;i<QUICK_SLOTS;++i) {
 		auto *b = new widgets::ToolSlotButton(w);
 
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
-		b->setMinimumSize(32, 32);
+		b->setMinimumSize(40, 32);
 		b->setAutoRaise(true);
+		b->setHighlightColor(windowcolor);
+		b->setHoverColor(hovercolor);
 
 		hlayout->addWidget(b);
 		quickbuttons->addButton(b, i);
@@ -71,24 +89,6 @@ ToolSettings::ToolSettings(QWidget *parent)
 	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
 
 	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
-
-	// Create foreground/background color changing widget
-	_fgbgcolor = new widgets::DualColorButton(w);
-	_fgbgcolor->setMinimumSize(32,32);
-	hlayout->addWidget(_fgbgcolor);
-
-	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
-		_currenttool->setForeground(c);
-		_toolprops[_currentQuickslot].setForegroundColor(c);
-		updateToolSlot(_currentQuickslot, false);
-		emit foregroundColorChanged(c);
-	});
-	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
-		_currenttool->setBackground(c);
-		_toolprops[_currentQuickslot].setBackgroundColor(c);
-		updateToolSlot(_currentQuickslot, false);
-		emit backgroundColorChanged(c);
-	});
 
 	// Create a widget stack
 	_widgets = new QStackedWidget(this);
@@ -128,20 +128,18 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
 	_widgets->addWidget(_lasersettings->createUi(this));
 
-	connect(_pickersettings, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_pickersettings, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
 
 	// Create color changer dialogs
-	auto dlg_fgcolor = new Color_Dialog(this);
-	dlg_fgcolor->setAlphaEnabled(false);
-	dlg_fgcolor->setWindowTitle(tr("Foreground color"));
-	connect(dlg_fgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(showColor(QColor)));
+	_fgdialog = new Color_Dialog(this);
+	_fgdialog->setAlphaEnabled(false);
+	_fgdialog->setWindowTitle(tr("Foreground Color"));
+	connect(_fgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
 
-	auto dlg_bgcolor = new Color_Dialog(this);
-	dlg_bgcolor->setWindowTitle(tr("Background color"));
-	dlg_bgcolor->setAlphaEnabled(false);
-	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
-	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
+	_bgdialog = new Color_Dialog(this);
+	_bgdialog->setAlphaEnabled(false);
+	_bgdialog->setWindowTitle(tr("Background Color"));
+	connect(_bgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
 }
 
 ToolSettings::~ToolSettings()
@@ -289,27 +287,57 @@ int ToolSettings::currentToolSlot() const
 
 QColor ToolSettings::foregroundColor() const
 {
-	return _fgbgcolor->foreground();
+	return _foreground;
 }
 
 void ToolSettings::setForegroundColor(const QColor& color)
 {
-	_fgbgcolor->setForeground(color);
+	_foreground = color;
+
+	_currenttool->setForeground(color);
+	_toolprops[_currentQuickslot].setForegroundColor(color);
+	updateToolSlot(_currentQuickslot, false);
 }
 
 QColor ToolSettings::backgroundColor() const
 {
-	return _fgbgcolor->background();
+	return _background;
 }
 
 void ToolSettings::setBackgroundColor(const QColor& color)
 {
-	_fgbgcolor->setBackground(color);
+	_background = color;
+
+	_currenttool->setBackground(color);
+	_toolprops[_currentQuickslot].setBackgroundColor(color);
+	updateToolSlot(_currentQuickslot, false);
+}
+
+void ToolSettings::changeForegroundColor()
+{
+	_fgdialog->showColor(_foreground);
+}
+
+
+void ToolSettings::changeBackgroundColor()
+{
+	_bgdialog->showColor(_background);
 }
 
 void ToolSettings::swapForegroundBackground()
 {
-	_fgbgcolor->swapColors();
+	QColor oldForeground = _foreground;
+	_foreground = _background;
+	_background = oldForeground;
+
+	_currenttool->setForeground(_foreground);
+	_currenttool->setBackground(_background);
+	_toolprops[_currentQuickslot].setForegroundColor(_foreground);
+	_toolprops[_currentQuickslot].setBackgroundColor(_background);
+	updateToolSlot(_currentQuickslot, false);
+
+	emit foregroundColorChanged(_foreground);
+	emit backgroundColorChanged(_background);
 }
 
 void ToolSettings::quickAdjustCurrent1(float adjustment)
