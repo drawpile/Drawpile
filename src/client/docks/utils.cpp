@@ -35,6 +35,7 @@ namespace docks {
 			"QDockWidget::title {"
 				"background-color: #4d4d4d;"
 				"padding: 4px;"
+				"text-align: center;"
 			"}"
 			"QDockWidget::close-button, QDockWidget::float-button {"
 				//"background-color: white;"
