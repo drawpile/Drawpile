@@ -54,9 +54,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *);
 	void keyReleaseEvent(QKeyEvent *);
 	void contextMenuEvent(QContextMenuEvent *);
-
-private slots:
-	void restoreBigPlayer();
+	void closeEvent(QCloseEvent *);
 
 private:
 	Ui_TinyPlayer *_ui;

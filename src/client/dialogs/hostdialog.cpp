@@ -53,6 +53,13 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	_ui->username->setValidator(new UsernameValidator(this));
 	_ui->vanityId->setValidator(new SessionIdValidator(this));
 
+#ifdef Q_OS_MAC
+	// Flat style doesn't look good on Mac
+	for(QGroupBox *box : findChildren<QGroupBox*>()) {
+		box->setFlat(false);
+	}
+#endif
+
 	if(original.isNull()) {
 		_ui->imageSelector->setWidth(800);
 		_ui->imageSelector->setHeight(600);

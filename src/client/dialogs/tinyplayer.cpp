@@ -48,7 +48,7 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 	// Context menu
 	_idxactions = new QActionGroup(this);
 	_ctxmenu = new QMenu(this);
-	_ctxmenu->addAction(tr("Normal player"), this, SLOT(restoreBigPlayer()));
+	_ctxmenu->addAction(tr("Normal player"), this, SLOT(close()));
 	_ctxmenu->addSeparator();
 	_idxactions->addAction(_ctxmenu->addAction(tr("Previous snapshot"), this, SIGNAL(prevSnapshot())));
 	_idxactions->addAction(_ctxmenu->addAction(tr("Next snapshot"), this, SIGNAL(nextSnapshot())));
@@ -107,7 +107,7 @@ void TinyPlayer::keyReleaseEvent(QKeyEvent *event)
 {
 	QWidget::keyReleaseEvent(event);
 	if(event->key() == Qt::Key_Escape)
-		restoreBigPlayer();
+		close();
 }
 
 void TinyPlayer::contextMenuEvent(QContextMenuEvent *event)
@@ -115,10 +115,10 @@ void TinyPlayer::contextMenuEvent(QContextMenuEvent *event)
 	_ctxmenu->popup(event->globalPos());
 }
 
-void TinyPlayer::restoreBigPlayer()
+void TinyPlayer::closeEvent(QCloseEvent *e)
 {
-	hide();
 	emit hidden();
+	QWidget::closeEvent(e);
 }
 
 }

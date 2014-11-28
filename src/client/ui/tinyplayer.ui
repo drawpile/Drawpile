@@ -6,25 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>210</width>
+    <width>220</width>
     <height>60</height>
    </rect>
   </property>
   <property name="styleSheet">
    <string notr="true">#TinyPlayer {
-background: qradialgradient(spread:pad, cx:0.5, cy:0, radius:0.5, fx:0.5, fy:0, stop:0 rgba(160, 170, 174, 255), stop:1 rgba(85, 90, 94 255));
+background: #4d4d4d;
+}
+
+QToolButton {
+border: none;
 }
 
 QToolButton:hover {
-border: none;
 border-radius: 5px;
 background: rgba(255,255,255,0.3);
 }
 
 QToolButton:pressed {
-/*border: 1px solid #f31;
-border-radius: 5px;
-*/
 background: rgba(255,255,255,0.7);
 }
 
@@ -60,16 +60,16 @@ border-radius: 5px;
      </property>
      <property name="styleSheet">
       <string notr="true">QProgressBar {
-	border: 1px solid #222;
-	background: #dde2dd;
+	border: 1px solid #31363b;
+	background: #95a5a6;
 	text-align: center;
 	color: #ccc;
 }
 
 QProgressBar::chunk {
-	background: #333;
-	border-right: 2px solid #f33;
-}</string>
+	background: #eff0f1;
+	border-right: 2px solid #fff;
+}rr</string>
      </property>
      <property name="textVisible">
       <bool>false</bool>
@@ -188,8 +188,6 @@ QProgressBar::chunk {
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

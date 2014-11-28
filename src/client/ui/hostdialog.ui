@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>424</height>
+    <width>409</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -198,7 +198,7 @@
                 <property name="autoRaise">
                  <bool>true</bool>
                 </property>
-                <property name="color">
+                <property name="color" stdset="0">
                  <color>
                   <red>255</red>
                   <green>255</green>
@@ -219,12 +219,6 @@
               </property>
               <item row="1" column="0">
                <widget class="QLabel" name="label_4">
-                <property name="minimumSize">
-                 <size>
-                  <width>68</width>
-                  <height>0</height>
-                 </size>
-                </property>
                 <property name="text">
                  <string>&amp;Width:</string>
                 </property>
