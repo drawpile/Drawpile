@@ -6,6 +6,7 @@
  * OSX: Add "Close" item to File menu.
  * Added zoom and angle shortcut context menus to status bar
  * OSX: Don't quit when all windows are closed
+ * Added network statistics dialog
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

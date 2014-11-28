@@ -23,10 +23,15 @@
 
 #include <QWidget>
 #include <QUrl>
+#include <QPointer>
 
 class QLabel;
 class QTimer;
 class QProgressBar;
+
+namespace dialogs {
+	class NetStats;
+}
 
 namespace widgets {
 
@@ -78,11 +83,13 @@ private slots:
 	void discoverAddress();
 	void externalIpDiscovered(const QString &ip);
 	void showCertificate();
+	void showNetStats();
 
 private:
 	void message(const QString& msg);
 	QString fullAddress() const;
 
+	QPointer<dialogs::NetStats> _netstats;
 	QProgressBar *_download;
 	QProgressBar *_upload;
 
@@ -96,7 +103,7 @@ private:
 	QAction *_urlaction;
 	QAction *_discoverIp;
 
-	quint64 _sentbytes, _recvbytes;
+	quint64 _sentbytes, _recvbytes, _lag;
 
 	QSslCertificate _certificate;
 };

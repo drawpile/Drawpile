@@ -20,6 +20,7 @@
 #include "widgets/netstatus.h"
 #include "widgets/popupmessage.h"
 #include "dialogs/certificateview.h"
+#include "dialogs/netstats.h"
 #include "utils/whatismyip.h"
 #include "utils/icon.h"
 
@@ -35,7 +36,7 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), _sentbytes(0), _recvbytes(0)
+	: QWidget(parent), _sentbytes(0), _recvbytes(0), _lag(0)
 {
 	setMinimumHeight(16+2);
 
@@ -106,6 +107,15 @@ NetStatus::NetStatus(QWidget *parent)
 	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
 	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
 
+	// Show network statistics
+	QAction *sep = new QAction(this);
+	sep->setSeparator(true);
+	_label->addAction(sep);
+
+	QAction *showNetStats = new QAction(tr("Statistics"), this);
+	_label->addAction(showNetStats);
+	connect(showNetStats, SIGNAL(triggered()), this, SLOT(showNetStats()));
+
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
 	_icon->setFixedSize(QSize(16, 16));
@@ -165,6 +175,8 @@ void NetStatus::loggedIn(const QUrl &sessionUrl)
 	_urlaction->setEnabled(true);
 	_label->setText(tr("Host: %1").arg(fullAddress()));
 	message(tr("Logged in!"));
+	if(_netstats)
+		_netstats->setCurrentLag(_lag);
 }
 
 void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate)
@@ -222,6 +234,9 @@ void NetStatus::hostDisconnected()
 	message(tr("Disconnected"));
 	_icon->hide();
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
+
+	if(_netstats)
+		_netstats->setDisconnected();
 }
 
 void NetStatus::expectBytes(int count)
@@ -241,8 +256,9 @@ void NetStatus::sendingBytes(int count)
 
 void NetStatus::bytesReceived(int count)
 {
-	// TODO show statistics
 	_recvbytes += count;
+	if(_netstats)
+		_netstats->setRecvBytes(_recvbytes);
 
 	if(_download->isVisible()) {
 		int val = _download->value() + count;
@@ -270,8 +286,10 @@ void NetStatus::bytesReceived(qint64 received, qint64 total)
 
 void NetStatus::bytesSent(int count)
 {
-	// TODO show statistics
 	_sentbytes += count;
+
+	if(_netstats)
+		_netstats->setSentBytes(_recvbytes);
 
 	if(_upload->isVisible()) {
 		int val = _upload->value() + count;
@@ -284,8 +302,9 @@ void NetStatus::bytesSent(int count)
 
 void NetStatus::lagMeasured(qint64 lag)
 {
-	// TODO show this on the screen
-	qDebug("Lag: %d", int(lag));
+	_lag = lag;
+	if(_netstats)
+		_netstats->setCurrentLag(lag);
 }
 
 /**
@@ -374,5 +393,19 @@ void NetStatus::showCertificate()
 	certdlg->show();
 }
 
+void NetStatus::showNetStats()
+{
+	if(!_netstats) {
+		_netstats = new dialogs::NetStats(this);
+		_netstats->setWindowFlags(Qt::Tool);
+		_netstats->setAttribute(Qt::WA_DeleteOnClose);
+
+		_netstats->setRecvBytes(_recvbytes);
+		_netstats->setSentBytes(_sentbytes);
+		if(!_address.isEmpty())
+			_netstats->setCurrentLag(_lag);
+	}
+	_netstats->show();
+}
 }
 

@@ -17,25 +17,31 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "utils.h"
+#ifndef NETSTATS_H
+#define NETSTATS_H
 
-#include <QString>
+#include <QDialog>
 
-namespace docks {
+class Ui_NetStats;
 
-	QString defaultDockStylesheet()
-	{
-#ifdef Q_OS_MAC // the default look is fine on Mac
-		return QString();
-#else
-		static QString css = QStringLiteral(
-			"QDockWidget {"
-				"titlebar-close-icon: url(:/icons/builtin/dock-close.png);"
-				"titlebar-normal-icon: url(:/icons/builtin/dock-detach.png);"
+namespace dialogs {
 
-			"}"
-		);
-		return css;
-#endif
-	}
+class NetStats : public QDialog
+{
+	Q_OBJECT
+public:
+	explicit NetStats(QWidget *parent = 0);
+
+public slots:
+	void setSentBytes(int bytes);
+	void setRecvBytes(int bytes);
+	void setCurrentLag(int lag);
+	void setDisconnected();
+
+private:
+	Ui_NetStats *_ui;
+};
+
 }
+
+#endif // NETSTATS_H

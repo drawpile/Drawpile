@@ -87,6 +87,7 @@ set (
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
 	dialogs/selectsessiondialog.cpp
+	dialogs/netstats.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -144,6 +145,7 @@ set (
 	ui/selectsession.ui
 	ui/logindialog.ui
 	ui/colorbox.ui
+	ui/netstats.ui
 )
 
 # Use bundled KArchive if library not found
