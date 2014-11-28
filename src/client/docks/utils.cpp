@@ -23,23 +23,17 @@
 
 namespace docks {
 
-	QLatin1String defaultDockStylesheet()
+	QString defaultDockStylesheet()
 	{
-		static QLatin1String css = QLatin1String(
+		static QString css = QStringLiteral(
+#ifndef Q_OS_MAC // the standard icons work better on Macs
 			"QDockWidget {"
-				"color: white;"
 				"titlebar-close-icon: url(:/icons/builtin/dock-close.png);"
 				"titlebar-normal-icon: url(:/icons/builtin/dock-detach.png);"
 
 			"}"
-			"QDockWidget::title {"
-				"background-color: #4d4d4d;"
-				"padding: 4px;"
-				"text-align: center;"
-			"}"
-			"QDockWidget::close-button, QDockWidget::float-button {"
-				//"background-color: white;"
-			"}");
+#endif
+		);
 		return css;
 	}
 }

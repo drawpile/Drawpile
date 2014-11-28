@@ -38,28 +38,34 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	w->resize(167, 95);
 	setWidget(w);
 
-	QColor windowcolor = palette().color(QPalette::Window);
+	QColor highlight = palette().color(QPalette::Highlight);
+	QColor hover = highlight; hover.setAlphaF(0.5);
 
 	setStyleSheet(defaultDockStylesheet() + QStringLiteral(
 		"QTabBar {"
-			"background-color: #7f8c8d;"
 			"alignment: middle;"
 		"}"
-		"QTabWidget::pane { border: none }"
-		"QTabBar::tab {"
+		"QTabWidget::pane {"
 			"border: none;"
-			"padding: 15px 5px 0 5px;"
+		"}"
+		"QTabBar::tab {"
+			"padding: 15px 5px 0 2px;"
 			"margin: 0 2px 0 0;"
+			"border: none;"
+			"border-left: 3px solid transparent;"
+			"background: %3;"
 		"}"
 		"QTabBar::tab:hover {"
-			"background-color: #95a5a6;"
+			"border-left: 3px solid %2;"
 		"}"
 		"QTabBar::tab:selected {"
-			"background: %1;"
-			"border-top-right-radius: 3px;"
-			"border-bottom-right-radius: 3px;"
+			"border-left: 3px solid %1;"
 		"}"
-	).arg(windowcolor.name()));
+	).arg(
+		highlight.name(),
+		QString("rgba(%1, %2, %3, %4)").arg(hover.red()).arg(hover.green()).arg(hover.blue()).arg(hover.alphaF()),
+		palette().color(QPalette::Window).name() // this is needed OSX. TODO how to set the whole tabbar background?
+	));
 
 	_ui->setupUi(w);
 

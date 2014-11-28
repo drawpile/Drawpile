@@ -27,7 +27,9 @@ namespace widgets {
 ToolSlotButton::ToolSlotButton(QWidget *parent) :
 	QToolButton(parent), _isHovering(false)
 {
-	//setCursor(Qt::PointingHandCursor);
+	_highlight = palette().color(QPalette::Highlight);
+	_hover = _highlight;
+	_hover.setAlphaF(0.5);
 }
 
 void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
@@ -51,27 +53,23 @@ void ToolSlotButton::setHoverColor(const QColor &c)
 
 void ToolSlotButton::paintEvent(QPaintEvent *)
 {
-	//const int UNDERLINE = 3;
-	const int RADIUS = qMin(width(), height())/2 - 4;
+	const int UNDERLINE = 3;
+	const int RADIUS = qMin(width(), height())/2 - UNDERLINE - 2;
 	QRectF rect(
 		(width()/2 - RADIUS) + 0.5,
-		(height()/2 - RADIUS) + 0.5,// - UNDERLINE + 1,
+		(height()/2 - RADIUS) + 0.5 - UNDERLINE,
 		RADIUS*2,
 		RADIUS*2
 	);
 	QPainter p(this);
 
-	// Draw background tab (if selected)
-	if(isChecked() || _isHovering) {
-		const int R = 3;
-		p.setPen(Qt::NoPen);
-		p.setBrush(isChecked() ? _highlight : _hover);
-		p.drawRoundedRect(QRectF(0, 0, width(), height()+R), R, R);
-	}
-
 	// Draw foreground and background colors
 	p.setRenderHint(QPainter::Antialiasing);
-	p.setPen(Qt::NoPen);
+
+	if(isChecked())
+		p.setPen(_highlight);
+	else
+		p.setPen(Qt::NoPen);
 
 	p.setBrush(_bg);
 	p.drawEllipse(rect.translated(2, 2));
@@ -88,13 +86,11 @@ void ToolSlotButton::paintEvent(QPaintEvent *)
 		pixmap.height()
 	), pixmap);
 
-#if 0
-	// Draw outline
-	p.setRenderHint(QPainter::Antialiasing);
-	p.setBrush(Qt::NoBrush);
-	p.setPen(QColor(0, 0, 0, 128));
-	p.drawEllipse(rect);
-#endif
+	// Draw selection highlight
+	if(isChecked() || _isHovering) {
+		p.fillRect(0, height() - UNDERLINE, width(), UNDERLINE, isChecked() ? _highlight : _hover);
+	}
+
 }
 
 void ToolSlotButton::enterEvent(QEvent *e)

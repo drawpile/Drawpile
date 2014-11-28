@@ -41,11 +41,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 	for(int i=0;i<QUICK_SLOTS;++i)
 		_toolprops.append(tools::ToolsetProperties());
 
-	setStyleSheet(defaultDockStylesheet() +
-		"#tooldockheader {"
-			"background-color: #7f8c8d;"
-		"}"
-	);
+	setStyleSheet(defaultDockStylesheet());
 
 	// Initialize UI
 	QWidget *w = new QWidget(this);
@@ -55,31 +51,22 @@ ToolSettings::ToolSettings(QWidget *parent)
 	layout->setMargin(0);
 
 	// Create quick toolchange slot buttons
-	QFrame *headerframe = new QFrame(this);
-	headerframe->setObjectName("tooldockheader");
-	layout->addWidget(headerframe);
-
 	auto *hlayout = new QHBoxLayout;
 	hlayout->setContentsMargins(3, 3, 3, 0);
-	headerframe->setLayout(hlayout);
+	layout->addLayout(hlayout);
 
 	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
 
 	QButtonGroup *quickbuttons = new QButtonGroup(this);
 	quickbuttons->setExclusive(true);
 
-	QColor windowcolor = palette().color(QPalette::Window);
-	QColor hovercolor = QColor("#95a5a6");
-
 	for(int i=0;i<QUICK_SLOTS;++i) {
 		auto *b = new widgets::ToolSlotButton(w);
 
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
-		b->setMinimumSize(40, 32);
+		b->setMinimumSize(40, 40);
 		b->setAutoRaise(true);
-		b->setHighlightColor(windowcolor);
-		b->setHoverColor(hovercolor);
 
 		hlayout->addWidget(b);
 		quickbuttons->addButton(b, i);

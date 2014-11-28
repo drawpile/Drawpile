@@ -19,12 +19,12 @@
 #ifndef DOCK_UTILS_H
 #define DOCK_UTILS_H
 
-class QLatin1String;
+class QString;
 
 namespace docks {
 
 	//! Get the default stylesheet for docks
-	QLatin1String defaultDockStylesheet();
+	QString defaultDockStylesheet();
 }
 
 #endif
