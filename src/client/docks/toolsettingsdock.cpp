@@ -279,11 +279,14 @@ QColor ToolSettings::foregroundColor() const
 
 void ToolSettings::setForegroundColor(const QColor& color)
 {
-	_foreground = color;
+	if(color != _foreground) {
+		_foreground = color;
 
-	_currenttool->setForeground(color);
-	_toolprops[_currentQuickslot].setForegroundColor(color);
-	updateToolSlot(_currentQuickslot, false);
+		_currenttool->setForeground(color);
+		_toolprops[_currentQuickslot].setForegroundColor(color);
+		updateToolSlot(_currentQuickslot, false);
+		emit foregroundColorChanged(color);
+	}
 }
 
 QColor ToolSettings::backgroundColor() const
@@ -293,11 +296,14 @@ QColor ToolSettings::backgroundColor() const
 
 void ToolSettings::setBackgroundColor(const QColor& color)
 {
-	_background = color;
+	if(color != _background) {
+		_background = color;
 
-	_currenttool->setBackground(color);
-	_toolprops[_currentQuickslot].setBackgroundColor(color);
-	updateToolSlot(_currentQuickslot, false);
+		_currenttool->setBackground(color);
+		_toolprops[_currentQuickslot].setBackgroundColor(color);
+		updateToolSlot(_currentQuickslot, false);
+		emit backgroundColorChanged(color);
+	}
 }
 
 void ToolSettings::changeForegroundColor()
