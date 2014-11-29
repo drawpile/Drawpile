@@ -54,13 +54,13 @@ ChatBox::ChatBox(QWidget *parent)
 
 	_view->document()->setDefaultStyleSheet(
 		"p { margin: 5px 0; white-space: pre }"
-		".marker { color: red }"
-		".sysmsg { color: yellow }"
-		".announcement { color: white }"
+		".marker { color: #da4453 }"
+		".sysmsg { color: #fdbc4b }"
+		".announcement { color: #fcfcfc }"
 		".nick { font-weight: bold }"
-		".nick.me { color: #fff }"
-		".action { color: #fff }"
-		"a:link { color: #5454FF }"
+		".nick.me { color: #fcfcfc }"
+		".action { color: #fcfcfc }"
+		"a:link { color: #1d99f3 }"
 	);
 
 	setPreserveMode(false);
@@ -72,10 +72,10 @@ void ChatBox::setPreserveMode(bool preservechat)
 
 	if(preservechat) {
 		placeholder = tr("Chat (recorded)...");
-		color = "#da3333";
+		color = "#da4453";
 	} else {
 		placeholder = tr("Chat...");
-		color = "#3333da";
+		color = "#1d99f3";
 	}
 
 	// Set placeholder text and window style based on the mode
@@ -83,8 +83,8 @@ void ChatBox::setPreserveMode(bool preservechat)
 	setStyleSheet(QStringLiteral(
 		"QTextEdit, QLineEdit {"
 			"border: none;"
-			"background-color: #111;"
-			"color: #adadad;"
+			"background-color: #232629;"
+			"color: #bdc3c7;"
 			"font-family: Monospace"
 		"}"
 		"QLineEdit {"
