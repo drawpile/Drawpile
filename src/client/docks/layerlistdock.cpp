@@ -204,7 +204,11 @@ void LayerList::blendModeChanged()
 	if(index.isValid()) {
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 		layer.blend = _ui->blendmode->currentData().toInt();
+#else
+		layer.blend = _ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt();
+#endif
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
 }
@@ -434,7 +438,12 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		_menuHideAction->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 
-		if(_ui->blendmode->currentData().toInt() != layer.blend) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+		int blendmode = _ui->blendmode->currentData().toInt();
+#else
+		int blendmode = _ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt();
+#endif
+		if(blendmode != layer.blend) {
 			for(int i=0;i<_ui->blendmode->count();++i) {
 				if(_ui->blendmode->itemData(i).toInt() == layer.blend) {
 				_ui->blendmode->setCurrentIndex(i);

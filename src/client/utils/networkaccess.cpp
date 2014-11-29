@@ -62,7 +62,7 @@ QNetworkReply *get(const QUrl &url, const QString &expectType, widgets::NetStatu
 void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void (QFile &, const QString &)> callback)
 {
 	QString fileExt = ".tmp";
-	QString filename = url.fileName();
+	QString filename = url.path();
 	int fileExtIndex = filename.lastIndexOf('.');
 	if(fileExtIndex>0)
 		fileExt = filename.mid(fileExtIndex);

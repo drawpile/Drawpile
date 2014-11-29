@@ -60,7 +60,11 @@ namespace {
 
 		preview->setBlendingMode(1);
 		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 			preview->setBlendingMode(box->currentData().toInt());
+#else
+			preview->setBlendingMode(box->itemData(box->currentIndex(), Qt::UserRole).toInt());
+#endif
 		});
 	}
 }

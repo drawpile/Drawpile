@@ -33,6 +33,7 @@
 inline float qRadiansToDegrees(float radians) {
 	return radians * float(180/M_PI);
 }
+#define qFloor floor
 #else
 #include <QtMath>
 #endif

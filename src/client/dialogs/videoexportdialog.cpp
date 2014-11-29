@@ -67,7 +67,11 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	_ui->sizeChoice->setCurrentIndex(1);
 
 	connect(_ui->sizeChoice, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this]() {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 		QVariant isCustom = _ui->sizeChoice->currentData(Qt::UserRole);
+#else
+		QVariant isCustom = _ui->sizeChoice->itemData(_ui->sizeChoice->currentIndex(), Qt::UserRole);
+#endif
 		bool e = isCustom.type() == QVariant::Bool && isCustom.toBool();
 
 		_ui->framewidth->setVisible(e);
@@ -161,7 +165,11 @@ VideoExporter *VideoExportDialog::getExporter()
 	// Set common settings
 	ve->setFps(_ui->fps->value());
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	QVariant sizechoice = _ui->sizeChoice->currentData(Qt::UserRole);
+#else
+	QVariant sizechoice = _ui->sizeChoice->itemData(_ui->sizeChoice->currentIndex(), Qt::UserRole);
+#endif
 	if(sizechoice.type() == QVariant::Bool) {
 		if(sizechoice.toBool()) {
 			// custom (fixed) size
