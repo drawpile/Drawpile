@@ -91,7 +91,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"));
 	_widgets->addWidget(_erasersettings->createUi(this));
 
-	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color picker"));
+	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color Picker"));
 	_widgets->addWidget(_pickersettings->createUi(this));
 
 	_linesettings = new tools::SimpleSettings("line", tr("Line"), icon::fromTheme("draw-line"), tools::SimpleSettings::Line, true);
@@ -103,7 +103,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), icon::fromTheme("draw-ellipse"), tools::SimpleSettings::Ellipse, true);
 	_widgets->addWidget(_ellipsesettings->createUi(this));
 
-	_fillsettings = new tools::FillSettings("fill", tr("Flood fill"));
+	_fillsettings = new tools::FillSettings("fill", tr("Flood Fill"));
 	_widgets->addWidget(_fillsettings->createUi(this));
 
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));

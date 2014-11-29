@@ -43,23 +43,23 @@ MacMenu::MacMenu() :
 	//
 	// File menu
 	//
-	QMenu *filemenu = addMenu(tr("&File"));
+	QMenu *filemenu = addMenu(MainWindow::tr("&File"));
 
-	QAction *newdocument = makeAction(filemenu, "newdocument", tr("&New"), QKeySequence::New);
-	QAction *open = makeAction(filemenu, "opendocument", tr("&Open..."), QKeySequence::Open);
+	QAction *newdocument = makeAction(filemenu, "newdocument", MainWindow::tr("&New"), QKeySequence::New);
+	QAction *open = makeAction(filemenu, "opendocument", MainWindow::tr("&Open..."), QKeySequence::Open);
 
 	connect(newdocument, &QAction::triggered, this, &MacMenu::newDocument);
 	connect(open, &QAction::triggered, this, &MacMenu::openDocument);
 
-	_recent = filemenu->addMenu(tr("Open &recent"));
+	_recent = filemenu->addMenu(MainWindow::tr("Open &Recent"));
 	connect(_recent, &QMenu::triggered, this, &MacMenu::openRecent);
 
 	// Relocated menu items
-	QAction *quit = makeAction(filemenu, "exitprogram", tr("&Quit"), QKeySequence("Ctrl+Q"));
+	QAction *quit = makeAction(filemenu, "exitprogram", MainWindow::tr("&Quit"), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
 	connect(quit, &QAction::triggered, this, &MacMenu::quitAll);
 
-	QAction *preferences = makeAction(filemenu, 0, tr("Prefere&nces..."), QKeySequence());
+	QAction *preferences = makeAction(filemenu, 0, MainWindow::tr("Prefere&nces"), QKeySequence());
 	preferences->setMenuRole(QAction::PreferencesRole);
 	connect(preferences, &QAction::triggered, &MainWindow::showSettings);
 
@@ -67,9 +67,9 @@ MacMenu::MacMenu() :
 	// Session menu
 	//
 
-	QMenu *sessionmenu = addMenu(tr("&Session"));
-	QAction *host = makeAction(sessionmenu, "hostsession", tr("&Host..."), QKeySequence());
-	QAction *join = makeAction(sessionmenu, "joinsession", tr("&Join..."), QKeySequence());
+	QMenu *sessionmenu = addMenu(MainWindow::tr("&Session"));
+	QAction *host = makeAction(sessionmenu, "hostsession", MainWindow::tr("&Host..."), QKeySequence());
+	QAction *join = makeAction(sessionmenu, "joinsession", MainWindow::tr("&Join..."), QKeySequence());
 
 	connect(host, &QAction::triggered, this, &MacMenu::hostSession);
 	connect(join, &QAction::triggered, this, &MacMenu::joinSession);
@@ -80,12 +80,12 @@ MacMenu::MacMenu() :
 	//
 	// Help menu
 	//
-	QMenu *helpmenu = addMenu(tr("&Help"));
+	QMenu *helpmenu = addMenu(MainWindow::tr("&Help"));
 
-	QAction *homepage = makeAction(helpmenu, "dphomepage", tr("&Homepage"), QKeySequence());
-	QAction *about = makeAction(helpmenu, "dpabout", tr("&About Drawpile"), QKeySequence());
+	QAction *homepage = makeAction(helpmenu, "dphomepage", MainWindow::tr("&Homepage"), QKeySequence());
+	QAction *about = makeAction(helpmenu, "dpabout", MainWindow::tr("&About Drawpile"), QKeySequence());
 	about->setMenuRole(QAction::AboutRole);
-	QAction *aboutqt = makeAction(helpmenu, "aboutqt", tr("About &Qt"), QKeySequence());
+	QAction *aboutqt = makeAction(helpmenu, "aboutqt", MainWindow::tr("About &Qt"), QKeySequence());
 	aboutqt->setMenuRole(QAction::AboutQtRole);
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);

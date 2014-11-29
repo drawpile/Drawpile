@@ -320,12 +320,17 @@
         <translation>Toleranssi:</translation>
     </message>
     <message>
-        <location filename="../ui/fillsettings.ui" line="69"/>
+        <location filename="../ui/fillsettings.ui" line="93"/>
+        <source>Color:</source>
+        <translation>Väri:</translation>
+    </message>
+    <message>
+        <location filename="../ui/fillsettings.ui" line="110"/>
         <source>Sample merged</source>
         <translation>Yhdistetty valinta</translation>
     </message>
     <message>
-        <location filename="../ui/fillsettings.ui" line="76"/>
+        <location filename="../ui/fillsettings.ui" line="86"/>
         <source>Expand:</source>
         <translation>Laajennus:</translation>
     </message>
@@ -396,11 +401,6 @@
 <context>
     <name>HostDialog</name>
     <message>
-        <location filename="../ui/hostdialog.ui" line="17"/>
-        <source>Host a session</source>
-        <translation>Isännöi istunto</translation>
-    </message>
-    <message>
         <location filename="../ui/hostdialog.ui" line="30"/>
         <source>Session</source>
         <translation>Istunto</translation>
@@ -431,6 +431,11 @@
         <translation>Otsikko näytetään sovelluksen otsikkopalkissa sekä istunnonvalintaikkunassa</translation>
     </message>
     <message>
+        <location filename="../ui/hostdialog.ui" line="17"/>
+        <source>Host a Session</source>
+        <translation>Isännöi</translation>
+    </message>
+    <message>
         <location filename="../ui/hostdialog.ui" line="120"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
         <translation>Valinnainen. Jos tämä jätetään tyhjäksi, istuntoon voi liittyä ilman salasanaa.</translation>
@@ -456,79 +461,79 @@
         <translation>Väri</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="229"/>
+        <location filename="../ui/hostdialog.ui" line="223"/>
         <source>&amp;Width:</source>
         <translation>&amp;Leveys:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="261"/>
+        <location filename="../ui/hostdialog.ui" line="255"/>
         <source>&amp;Height:</source>
         <translation>&amp;Korkeus:</translation>
     </message>
     <message>
+        <location filename="../ui/hostdialog.ui" line="421"/>
         <location filename="../ui/hostdialog.ui" line="427"/>
-        <location filename="../ui/hostdialog.ui" line="433"/>
         <source>Server</source>
         <translatorcomment>Käytä sisäänrakennettua palvelinta</translatorcomment>
         <translation>Palvelin</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="451"/>
+        <location filename="../ui/hostdialog.ui" line="445"/>
         <source>Use built-in server</source>
         <translation>Käytä sisäistä palvelinta</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="461"/>
+        <location filename="../ui/hostdialog.ui" line="455"/>
         <source>Host on a remote server:</source>
         <translation>Käytä ulkoista palvelinta:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="487"/>
-        <source>Session options</source>
-        <translation>Istunnon asetukset</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="513"/>
+        <location filename="../ui/hostdialog.ui" line="507"/>
         <source>Preserve chat</source>
         <translation>Säilytä chat</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="523"/>
+        <location filename="../ui/hostdialog.ui" line="517"/>
         <source>A persistent session can be joined even after all users have left</source>
         <translation>Jatkuvaan istuntoon voi liittyä senkin jälkeen kun kaikki käyttäjät ovat lähteneet</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="526"/>
+        <location filename="../ui/hostdialog.ui" line="520"/>
         <source>Persistent session</source>
         <translation>Jatkuva istunto</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="499"/>
+        <location filename="../ui/hostdialog.ui" line="493"/>
         <source>Vanity ID:</source>
         <translation>Oma ID:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="506"/>
+        <location filename="../ui/hostdialog.ui" line="481"/>
+        <source>Session Options</source>
+        <translation>Asetukset</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="500"/>
         <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
         <translation>Istunnon tunnus osoitteessa. Jätä tämä tyhjäksi antaaksesi palvelimen päättää tunnuksen</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="536"/>
+        <location filename="../ui/hostdialog.ui" line="530"/>
         <source>Users</source>
         <translation>Käyttäjät</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="554"/>
+        <location filename="../ui/hostdialog.ui" line="548"/>
         <source>Maximum number of &amp;users:</source>
         <translation>&amp;Käyttäjien enimmäismäärä:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="610"/>
+        <location filename="../ui/hostdialog.ui" line="604"/>
         <source>Lock layer controls</source>
         <translation>Lukitse tasojen hallinta</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="600"/>
+        <location filename="../ui/hostdialog.ui" line="594"/>
         <source>Allow drawing by default</source>
         <translation>Salli piirtäminen oletuksena</translation>
     </message>
@@ -575,8 +580,8 @@
     <name>JoinDialog</name>
     <message>
         <location filename="../ui/joindialog.ui" line="17"/>
-        <source>Join a session</source>
-        <translation>Liity istuntoon</translation>
+        <source>Join a Session</source>
+        <translation>Yhdistä</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="28"/>
@@ -659,20 +664,47 @@
     </message>
 </context>
 <context>
+    <name>MacMenu</name>
+    <message numerus="yes">
+        <location filename="../widgets/macmenu.cpp" line="217"/>
+        <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
+        <translation>
+            <numerusform>Sinulla on %n kuvaa jotka sisältävät tallentamattomia muutoksia. Haluatko tarkistaa muutokset ennen lopettamista?</numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../widgets/macmenu.cpp" line="218"/>
+        <source>If you don&apos;t review your documents, all changes will be lost</source>
+        <translation>Jos et tarkista kuvia, kaikki muutokset poistetaan</translation>
+    </message>
+    <message>
+        <location filename="../widgets/macmenu.cpp" line="219"/>
+        <source>Review changes...</source>
+        <translation>Tarkista muutokset...</translation>
+    </message>
+    <message>
+        <location filename="../widgets/macmenu.cpp" line="221"/>
+        <source>Discard changes</source>
+        <translation>Poista muutokset</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="488"/>
+        <location filename="../mainwindow.cpp" line="493"/>
+        <location filename="../mainwindow.cpp" line="1117"/>
         <source>Untitled</source>
         <translation>Nimetön</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="630"/>
+        <location filename="../mainwindow.cpp" line="629"/>
         <location filename="../mainwindow.cpp" line="650"/>
         <source>Exit Drawpile</source>
         <translation>Sulje Drawpile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="631"/>
+        <location filename="../mainwindow.cpp" line="630"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Yhteys istuntoon on vielä auki.</translation>
     </message>
@@ -683,7 +715,7 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="636"/>
-        <location filename="../mainwindow.cpp" line="657"/>
+        <location filename="../mainwindow.cpp" line="658"/>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
@@ -693,95 +725,52 @@
         <translation>Kuvassa on tallentamattomia muutoksia. Tallennetaanko ne ennen lopetusta?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="653"/>
+        <location filename="../mainwindow.cpp" line="654"/>
         <source>Save</source>
         <translation>Tallenna</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="655"/>
+        <location filename="../mainwindow.cpp" line="656"/>
         <source>Discard</source>
         <translation>Hylkää</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="740"/>
-        <source>All supported files (%1)</source>
-        <translation>Kaikki tuetut tiedostot (%1)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="741"/>
-        <location filename="../mainwindow.cpp" line="1512"/>
+        <location filename="../mainwindow.cpp" line="742"/>
+        <location filename="../mainwindow.cpp" line="1513"/>
         <source>Images (%1)</source>
         <translation>Kuvat (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="742"/>
-        <location filename="../mainwindow.cpp" line="937"/>
+        <location filename="../mainwindow.cpp" line="743"/>
+        <location filename="../mainwindow.cpp" line="938"/>
         <source>Recordings (%1)</source>
         <translation>Nauhoitukset (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="748"/>
-        <location filename="../mainwindow.cpp" line="751"/>
-        <source>Open image</source>
-        <translation>Avaa kuva</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="775"/>
-        <location filename="../mainwindow.cpp" line="852"/>
-        <source>Save image</source>
-        <translation>Tallenna kuva</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="776"/>
+        <location filename="../mainwindow.cpp" line="777"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>Valittu formaatti ei tue tasoja tai tekstiä.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="778"/>
+        <location filename="../mainwindow.cpp" line="779"/>
         <source>Flatten</source>
         <translation>Litistä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="779"/>
+        <location filename="../mainwindow.cpp" line="780"/>
         <source>Save as OpenRaster</source>
         <translation>Tallenna OpenRaster muodossa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="825"/>
-        <location filename="../mainwindow.cpp" line="884"/>
+        <location filename="../mainwindow.cpp" line="826"/>
+        <location filename="../mainwindow.cpp" line="885"/>
         <source>Couldn&apos;t save image</source>
         <translation>Kuvaa ei voitu tallentaa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="938"/>
-        <source>Compressed recordings (%1)</source>
-        <translation>Pakatut nauhoitukset (%1)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="941"/>
-        <source>Record session</source>
-        <translation>Nauhoita istunto</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="982"/>
-        <source>Stop recording</source>
-        <translation>Pysäytä nauhoitus</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1030"/>
-        <location filename="../mainwindow.cpp" line="1094"/>
+        <location filename="../mainwindow.cpp" line="1042"/>
         <source>Invalid address</source>
         <translation>Epäkelpo osoite</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1045"/>
-        <source>Unable to start server</source>
-        <translation>Palvelinta ei voitu käynnistää</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1117"/>
-        <source>Untitled session</source>
-        <translation>Nimetön istunto</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1118"/>
@@ -804,588 +793,638 @@
         <translation>Kaikkea dataa ei ole vielä lähetetty! Odota kunnes lähetys on valmis!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1146"/>
-        <source>Session title</source>
-        <translation>Istunnon otsikko</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="1147"/>
         <source>Change session title</source>
         <translation>Vaihda istunnon otsikko</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1215"/>
-        <source>Couldn&apos;t connect to server</source>
-        <translation>Palvelimeen ei saatu yhteyttä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1228"/>
+        <location filename="../mainwindow.cpp" line="1227"/>
         <source>Would you like to join the session instead?</source>
         <translation>Haluatko liittyä tähän istuntoon?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1230"/>
+        <location filename="../mainwindow.cpp" line="1229"/>
         <source>Join</source>
         <translation>Liity</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1307"/>
+        <location filename="../mainwindow.cpp" line="1308"/>
         <source>Board is locked</source>
         <translation>Piirtopöytä on lukittu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1516"/>
-        <source>Paste image</source>
-        <translation>Liitä kuva</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1532"/>
+        <location filename="../mainwindow.cpp" line="1533"/>
         <source>The image could not be loaded</source>
         <translation>Kuvaa ei voitu ladata</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1656"/>
-        <source>Mark position</source>
-        <translation>Lisää kirjanmerkki</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1656"/>
+        <location filename="../mainwindow.cpp" line="1657"/>
         <source>Marker text</source>
         <translation>Kirjanmerkin nimi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1663"/>
+        <location filename="../mainwindow.cpp" line="1664"/>
         <source>About Drawpile</source>
         <translation>Tietoja Drawpilestä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1664"/>
+        <location filename="../mainwindow.cpp" line="1665"/>
         <source>&lt;p&gt;&lt;b&gt;Drawpile %1&lt;/b&gt;&lt;br&gt;A collaborative drawing program.&lt;/p&gt;&lt;p&gt;Copyright © 2006-2014 Calle Laakkonen&lt;/p&gt;&lt;p&gt;This program is free software; you may redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3, or (at your opinion) any later version.&lt;/p&gt;&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;&lt;p&gt;You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;a href=&quot;http://www.gnu.org/licences/&quot;&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Drawpile %1&lt;/b&gt;&lt;br&gt;Monen käyttäjän piirto-ohjelma.&lt;/p&gt;&lt;p&gt;Copyright © 2006-2014 Calle Laakkonen&lt;/p&gt;&lt;p&gt;This program is free software; you may redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3, or (at your opinion) any later version.&lt;/p&gt;&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.&lt;/p&gt;&lt;p&gt;You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;a href=&quot;http://www.gnu.org/licences/&quot;&gt;http://www.gnu.org/licenses/&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1767"/>
+        <location filename="../mainwindow.cpp" line="1771"/>
+        <location filename="../widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>&amp;Uusi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1768"/>
+        <location filename="../mainwindow.cpp" line="1772"/>
+        <location filename="../widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;Avaa...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1769"/>
+        <location filename="../mainwindow.cpp" line="1776"/>
         <source>&amp;Save</source>
         <translation>&amp;Tallenna</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1770"/>
+        <location filename="../mainwindow.cpp" line="1777"/>
         <source>Save &amp;As...</source>
         <translation>Tallenna &amp;nimellä...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1771"/>
+        <location filename="../mainwindow.cpp" line="1778"/>
         <source>Record...</source>
         <translation>Nauhoita...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1772"/>
+        <location filename="../mainwindow.cpp" line="1779"/>
+        <location filename="../widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>&amp;Lopeta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1786"/>
+        <location filename="../mainwindow.cpp" line="1801"/>
+        <location filename="../widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;Tiedosto</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1789"/>
-        <source>Open &amp;recent</source>
-        <translation>&amp;Avaa uusin</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1797"/>
-        <source>File tools</source>
-        <translation>Tiedosto työkalut</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1813"/>
+        <location filename="../mainwindow.cpp" line="1834"/>
         <source>&amp;Undo</source>
         <translation>&amp;Peru</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1814"/>
+        <location filename="../mainwindow.cpp" line="1835"/>
         <source>&amp;Redo</source>
         <translation>&amp;Uudelleen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1815"/>
-        <source>&amp;Copy visible</source>
-        <translation>&amp;Kopioi näkyvä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1815"/>
+        <location filename="../mainwindow.cpp" line="1836"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Kopioi valittu alue leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1816"/>
-        <source>Copy &amp;layer</source>
-        <translation>Kopioi &amp;taso</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1816"/>
+        <location filename="../mainwindow.cpp" line="1837"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Kopioi valittu alue nykyiseltä tasolta leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1817"/>
-        <source>Cu&amp;t layer</source>
-        <translation>&amp;Leikkaa taso</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1817"/>
+        <location filename="../mainwindow.cpp" line="1838"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Leikkaa valittu alue nykyiseltä tasolta leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1818"/>
+        <location filename="../mainwindow.cpp" line="1839"/>
         <source>&amp;Paste</source>
         <translation>L&amp;iitä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1819"/>
-        <source>Paste &amp;from file...</source>
-        <translation>Liitä tiedostost&amp;a...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1820"/>
-        <source>Delete empty annotations</source>
-        <translation>Poista tyhjät tekstikentät</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1821"/>
-        <source>Resi&amp;ze canvas...</source>
-        <translation>&amp;Muuta paperin kokoa...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1822"/>
-        <source>Prefere&amp;nces...</source>
-        <translation>&amp;Asetukset...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1824"/>
-        <source>Select &amp;all</source>
-        <translation>Valitse k&amp;aikki</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1826"/>
-        <location filename="../mainwindow.cpp" line="1828"/>
+        <location filename="../mainwindow.cpp" line="1847"/>
+        <location filename="../mainwindow.cpp" line="1849"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Poista valinta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1831"/>
-        <source>Expand up</source>
-        <translation>Laajenna ylös</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1832"/>
-        <source>Expand down</source>
-        <translation>Laajenna alas</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1833"/>
-        <source>Expand left</source>
-        <translation>Laajenna vasemmalle</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1834"/>
-        <source>Expand right</source>
-        <translation>Laajenna oikealle</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1836"/>
+        <location filename="../mainwindow.cpp" line="1857"/>
         <source>Clear</source>
         <translation>Tyhjennä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1836"/>
+        <location filename="../mainwindow.cpp" line="1857"/>
         <source>Delete selection</source>
         <translation>Poista valinta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1837"/>
-        <source>Fill with &amp;FG color</source>
-        <translation>Täytä &amp;edustavärillä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1837"/>
+        <location filename="../mainwindow.cpp" line="1858"/>
         <source>Fill selected area with foreground color</source>
         <translation>Täytä valittu alue edustavärillä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1838"/>
-        <source>Fill with B&amp;G color</source>
-        <translation>Täytä &amp;taustavärillä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1838"/>
+        <location filename="../mainwindow.cpp" line="1859"/>
         <source>Fill selected area with background color</source>
         <translation>Täytä valittu alue taustavärillä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1880"/>
+        <location filename="../mainwindow.cpp" line="1901"/>
         <source>&amp;Edit</source>
         <translation>&amp;Muokkaa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1896"/>
-        <source>Expand canvas</source>
-        <translation>Laajenna paperia</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1910"/>
-        <source>Edit tools</source>
-        <translation>Muokkaus työkalut</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1923"/>
+        <location filename="../mainwindow.cpp" line="1944"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;Työkalupalkit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1926"/>
+        <location filename="../mainwindow.cpp" line="1947"/>
         <source>&amp;Docks</source>
         <translation>&amp;Telakoitavat ikkunat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1929"/>
+        <location filename="../mainwindow.cpp" line="1950"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1931"/>
-        <source>Zoom &amp;in</source>
-        <translation>Suurenna</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1932"/>
-        <source>Zoom &amp;out</source>
-        <translation>Pienennä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1933"/>
-        <source>&amp;Normal size</source>
-        <translation>Normaali koko</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1934"/>
-        <source>&amp;Reset rotation</source>
-        <translation>Nollaa kierto</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1934"/>
-        <source>Drag the view while holding ctrl-space to rotate</source>
-        <translation>Raahaa samalla kun pidät ctrl+välilyöntinäppäimiä pohjassa kiertääksesi näkymää</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1935"/>
+        <location filename="../mainwindow.cpp" line="1956"/>
         <source>Rotate to 90°</source>
         <translation>Kierrä 90°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1936"/>
+        <location filename="../mainwindow.cpp" line="1957"/>
         <source>Rotate to 180°</source>
         <translation>Kierrä 180°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1937"/>
+        <location filename="../mainwindow.cpp" line="1958"/>
         <source>Rotate to 270°</source>
         <translation>Kierrä 270°</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1939"/>
-        <source>Show brush &amp;outline</source>
-        <translation>Näytä sudin ääriviiva</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1940"/>
-        <source>Show &amp;annotations</source>
-        <translation>Näytä tekstikentät</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1941"/>
-        <source>Show user pointers</source>
-        <translation>Näytä käyttäjien osoittimet</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1942"/>
-        <source>Show user layers</source>
-        <translation>Näytä käyttäjien tasot</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1943"/>
-        <source>Show laser trails</source>
-        <translation>Näytä laser osoittimen vanat</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1950"/>
-        <source>&amp;Full screen</source>
-        <translation>Kokoruutu</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1999"/>
+        <location filename="../mainwindow.cpp" line="2020"/>
         <source>&amp;View</source>
         <translation>&amp;Näytä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2005"/>
+        <location filename="../mainwindow.cpp" line="2026"/>
         <source>&amp;Zoom</source>
         <translation>Suurennus</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2010"/>
+        <location filename="../mainwindow.cpp" line="2031"/>
         <source>Rotation</source>
         <translation>Kierto</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2029"/>
+        <location filename="../mainwindow.cpp" line="2050"/>
+        <location filename="../widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>&amp;Isännöi...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2029"/>
+        <location filename="../mainwindow.cpp" line="2050"/>
         <source>Share your drawingboard with others</source>
         <translation>Jaa piirtopöytäsi muitten käyttäjien kanssa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2030"/>
+        <location filename="../mainwindow.cpp" line="2051"/>
+        <location filename="../widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>&amp;Liity...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2030"/>
+        <location filename="../mainwindow.cpp" line="2051"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Liity toisen käyttäjän piirtoistuntoon</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2031"/>
+        <location filename="../mainwindow.cpp" line="2052"/>
         <source>&amp;Leave</source>
         <translation>&amp;Poistu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2031"/>
+        <location filename="../mainwindow.cpp" line="2052"/>
         <source>Leave this drawing session</source>
         <translation>Poistu piirtoistunnosta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2034"/>
-        <source>Lo&amp;ck the board</source>
-        <translation>Lukitse piirtopöytä</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2034"/>
+        <location filename="../mainwindow.cpp" line="2055"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Estä muutokset piirtopöytään</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2035"/>
-        <source>Lock layer controls</source>
-        <translation>Lukitse tasojen hallinta</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2035"/>
+        <location filename="../mainwindow.cpp" line="2056"/>
         <source>Allow only session operators to add and change layers</source>
         <translation>Salli ainoastaan istunnon operaattoreiden lisätä tai muokata tasoja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2036"/>
-        <source>&amp;Deny joins</source>
-        <translation>Evää pääsy</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2036"/>
+        <location filename="../mainwindow.cpp" line="2057"/>
         <source>Prevent new users from joining the session</source>
         <translation>Evää pääsy uusilta käyttäjiltä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2038"/>
-        <source>Change &amp;title...</source>
-        <translation>Vaihda otsikko</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2054"/>
+        <location filename="../mainwindow.cpp" line="2075"/>
+        <location filename="../widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;Istunto</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2074"/>
-        <source>&amp;Flood fill</source>
-        <translation>&amp;Täyttö</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2074"/>
+        <location filename="../mainwindow.cpp" line="2095"/>
         <source>Fill areas</source>
         <translation>Täytä alueita</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2077"/>
+        <location filename="../mainwindow.cpp" line="2098"/>
         <source>&amp;Select</source>
         <translation>Valitse</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2077"/>
+        <location filename="../mainwindow.cpp" line="2098"/>
         <source>Select area for copying</source>
         <translation>Valitse kopioitava alue</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2172"/>
+        <location filename="../mainwindow.cpp" line="2122"/>
+        <source>&amp;Swap Colors</source>
+        <translation>Vaihda Värit</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2123"/>
+        <source>&amp;Decrease Brush Size</source>
+        <translation>Pienennä sutia</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2124"/>
+        <source>&amp;Increase Brush Size</source>
+        <translation>Suurenna sutia</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2192"/>
         <source>Color</source>
         <translation>Väri</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2067"/>
+        <location filename="../mainwindow.cpp" line="2088"/>
         <source>&amp;Pen</source>
         <translation>Kynä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2067"/>
+        <location filename="../mainwindow.cpp" line="741"/>
+        <source>All Supported Files (%1)</source>
+        <translation>Kaikki tuetut tiedostot (%1)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="749"/>
+        <location filename="../mainwindow.cpp" line="752"/>
+        <source>Open Image</source>
+        <translation>Avaa kuva</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="776"/>
+        <location filename="../mainwindow.cpp" line="853"/>
+        <source>Save Image</source>
+        <translation>Tallenna kuva</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="939"/>
+        <source>Compressed Recordings (%1)</source>
+        <translation>Pakattu nauhoite (%1)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="942"/>
+        <source>Record Session</source>
+        <translation>Nauhoita istunto</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="983"/>
+        <source>Stop Recording</source>
+        <translation>Lopeta nauhoitus</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1055"/>
+        <source>Host Session</source>
+        <translation>Isännöi</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1146"/>
+        <source>Session Title</source>
+        <translation>Istunnon otsikko</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1215"/>
+        <source>Could not connect to server</source>
+        <translation>Yhteyttä palvelimeen ei voitu muodostaa</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1517"/>
+        <source>Paste Image</source>
+        <translation>Liitä kuva</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1657"/>
+        <source>Mark</source>
+        <translation>Merkitse</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1774"/>
+        <source>Close</source>
+        <translation>Sulje</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1804"/>
+        <location filename="../widgets/macmenu.cpp" line="54"/>
+        <source>Open &amp;Recent</source>
+        <translation>Avaa &amp;uusin</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1819"/>
+        <source>File Tools</source>
+        <translation>Tiedosto työkalut</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1836"/>
+        <source>&amp;Copy Visible</source>
+        <translation>Kopioi näkyvä</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1837"/>
+        <source>Copy &amp;Layer</source>
+        <translation>Kopioi taso</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1838"/>
+        <source>Cu&amp;t Layer</source>
+        <translation>Leikkaa taso</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1840"/>
+        <source>Paste &amp;From File...</source>
+        <translation>Liitä tiedostosta</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1841"/>
+        <source>Delete Empty Annotations</source>
+        <translation>Poista tyhjät tekstit</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1842"/>
+        <source>Resi&amp;ze Canvas...</source>
+        <translation>Muuta paperin kokoa...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1843"/>
+        <location filename="../widgets/macmenu.cpp" line="62"/>
+        <source>Prefere&amp;nces</source>
+        <translation>Asetukset</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1845"/>
+        <source>Select &amp;All</source>
+        <translation>Valitse kaikki</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1852"/>
+        <source>Expand Up</source>
+        <translation>Laajenna ylös</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1853"/>
+        <source>Expand Down</source>
+        <translation>Laajenna alas</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1854"/>
+        <source>Expand Left</source>
+        <translation>Laajenna vasemalle</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1855"/>
+        <source>Expand Right</source>
+        <translation>Laajenna oikealle</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1858"/>
+        <source>Fill with &amp;FG Color</source>
+        <translation>Täytä &amp;edustavärillä</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1859"/>
+        <source>Fill with B&amp;G Color</source>
+        <translation>Täytä &amp;taustavärillä</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1917"/>
+        <source>Expand Canvas</source>
+        <translation>Laajenna paperia</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1931"/>
+        <source>Edit Tools</source>
+        <translation>Muokkaustyökalut</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1952"/>
+        <source>Zoom &amp;In</source>
+        <translation>&amp;Suurenna</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1953"/>
+        <source>Zoom &amp;Out</source>
+        <translation>&amp;Pienennä</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1954"/>
+        <source>&amp;Normal Size</source>
+        <translation>&amp;Normaali koko</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1955"/>
+        <source>&amp;Reset Rotation</source>
+        <translation>&amp;Nollaa kieto</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1960"/>
+        <source>Show Brush &amp;Outline</source>
+        <translation>Näytä sudin ääriviiva</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1961"/>
+        <source>Show &amp;Annotations</source>
+        <translation>Näytä tekstit</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1962"/>
+        <source>Show User Pointers</source>
+        <translation>Näytä käyttäjien osoittimet</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1963"/>
+        <source>Show User Layers</source>
+        <translation>Näytä käyttäjien tasot</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1964"/>
+        <source>Show Laser Trails</source>
+        <translation>Näytä laser osoittimet</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1971"/>
+        <source>&amp;Full Screen</source>
+        <translation>&amp;Koko ruutu</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2055"/>
+        <source>Lo&amp;ck the Board</source>
+        <translation>Lukitse &amp;piirtopöytä</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2056"/>
+        <source>Lock Layer Controls</source>
+        <translation>Lukitse &amp;tasojen hallina</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2057"/>
+        <source>&amp;Deny Joins</source>
+        <translation>&amp;Evää pääsy</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2059"/>
+        <source>Change &amp;Title...</source>
+        <translation>&amp;Vaihda otsikko</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2088"/>
         <source>Draw with hard edged strokes</source>
         <translation>Piirrä kovareunaisia viivoja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2068"/>
+        <location filename="../mainwindow.cpp" line="2089"/>
         <source>&amp;Brush</source>
         <translation>Suti</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2068"/>
+        <location filename="../mainwindow.cpp" line="2089"/>
         <source>Draw with smooth strokes</source>
         <translation>Piirrä pehmeäreunaisia viivoja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2069"/>
+        <location filename="../mainwindow.cpp" line="2090"/>
         <source>&amp;Eraser</source>
         <translation>Pyyhekumi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2069"/>
+        <location filename="../mainwindow.cpp" line="2090"/>
         <source>Erase layer content</source>
         <translation>Pyyhi tason sisältöä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2070"/>
-        <source>&amp;Color picker</source>
-        <translation>Värinpoimija</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2070"/>
+        <location filename="../mainwindow.cpp" line="2091"/>
         <source>Pick colors from the image</source>
         <translation>Poimi värejä kuvasta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2071"/>
+        <location filename="../mainwindow.cpp" line="2091"/>
+        <source>&amp;Color Picker</source>
+        <translation>V&amp;ärinpoimija</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2092"/>
         <source>&amp;Line</source>
         <translation>Viiva</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2071"/>
+        <location filename="../mainwindow.cpp" line="2092"/>
         <source>Draw straight lines</source>
         <translation>Piirrä suoria viivoja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2072"/>
+        <location filename="../mainwindow.cpp" line="2093"/>
         <source>&amp;Rectangle</source>
         <translation>Suorakulmio</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2072"/>
+        <location filename="../mainwindow.cpp" line="2093"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Piirrä suorakulmioita ja neliöitä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2073"/>
+        <location filename="../mainwindow.cpp" line="2094"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Ellipsi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2073"/>
+        <location filename="../mainwindow.cpp" line="2094"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Piirrä ellipsejä ja ympyröitä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2075"/>
+        <location filename="../mainwindow.cpp" line="2095"/>
+        <source>&amp;Flood Fill</source>
+        <translation>&amp;Täyttö</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2096"/>
         <source>&amp;Annotation</source>
         <translation>&amp;Tekstikenttä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2075"/>
+        <location filename="../mainwindow.cpp" line="2096"/>
         <source>Add text to the picture</source>
         <translation>Lisää kuvaan tekstiä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2076"/>
-        <source>&amp;Laser pointer</source>
-        <translation>&amp;Laser osoitin</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2076"/>
+        <location filename="../mainwindow.cpp" line="2097"/>
         <source>Point out things on the canvas</source>
         <translation>Osoita asioita piirtoalustalla</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2078"/>
+        <location filename="../mainwindow.cpp" line="2097"/>
+        <source>&amp;Laser Pointer</source>
+        <translation>&amp;Laser osoitin</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2099"/>
         <source>&amp;Mark</source>
         <translation>Kirjan&amp;merkki</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2078"/>
+        <location filename="../mainwindow.cpp" line="2099"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>Jätä merkki jolla voit löytää tämän kohdan nauhoituksesta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2094"/>
+        <location filename="../mainwindow.cpp" line="2115"/>
         <source>&amp;Tools</source>
         <translation>T&amp;yökalut</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2099"/>
+        <location filename="../mainwindow.cpp" line="2120"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Oikotiet</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2101"/>
-        <source>&amp;Swap colors</source>
-        <translation>&amp;Vaihda värit</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2102"/>
-        <source>&amp;Decrease brush size</source>
-        <translation>&amp;Pienennä sutia</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2103"/>
-        <source>&amp;Increase brush size</source>
-        <translation>&amp;Kasvata sutia</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2130"/>
+        <location filename="../mainwindow.cpp" line="2151"/>
+        <location filename="../widgets/macmenu.cpp" line="85"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Kotisivu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2131"/>
+        <location filename="../mainwindow.cpp" line="2152"/>
+        <location filename="../widgets/macmenu.cpp" line="86"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;Tietoja Drawpilestä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2132"/>
+        <location filename="../mainwindow.cpp" line="2153"/>
+        <location filename="../widgets/macmenu.cpp" line="88"/>
         <source>About &amp;Qt</source>
         <translation>Tietoja &amp;Qt:stä</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2138"/>
+        <location filename="../mainwindow.cpp" line="2159"/>
+        <location filename="../widgets/macmenu.cpp" line="83"/>
         <source>&amp;Help</source>
         <translation>O&amp;hje</translation>
     </message>
@@ -1399,11 +1438,34 @@
     </message>
 </context>
 <context>
+    <name>NetStats</name>
+    <message>
+        <location filename="../ui/netstats.ui" line="14"/>
+        <source>Statistics</source>
+        <translation>Tilastot</translation>
+    </message>
+    <message>
+        <location filename="../ui/netstats.ui" line="52"/>
+        <source>Latency:</source>
+        <translation>Latenssi:</translation>
+    </message>
+    <message>
+        <location filename="../ui/netstats.ui" line="69"/>
+        <source>Sent:</source>
+        <translation>Lähetetty:</translation>
+    </message>
+    <message>
+        <location filename="../ui/netstats.ui" line="76"/>
+        <source>Received:</source>
+        <translation>Vastaanotettu:</translation>
+    </message>
+</context>
+<context>
     <name>NewDialog</name>
     <message>
         <location filename="../ui/newdialog.ui" line="17"/>
-        <source>New drawing</source>
-        <translation>Uusi piirros</translation>
+        <source>New Drawing</source>
+        <translation>Uusi kuva</translation>
     </message>
     <message>
         <location filename="../ui/newdialog.ui" line="25"/>
@@ -1480,11 +1542,6 @@
 <context>
     <name>PlaybackDialog</name>
     <message>
-        <location filename="../ui/playback.ui" line="14"/>
-        <source>Recording playback</source>
-        <translation>Toista nauhoitus</translation>
-    </message>
-    <message>
         <location filename="../ui/playback.ui" line="78"/>
         <source>Play</source>
         <translation>Toista</translation>
@@ -1526,8 +1583,13 @@
         <translation>Pieni soitin</translation>
     </message>
     <message>
+        <location filename="../ui/playback.ui" line="14"/>
+        <source>Playback</source>
+        <translation>Toisto</translation>
+    </message>
+    <message>
         <location filename="../ui/playback.ui" line="308"/>
-        <source>Build index</source>
+        <source>Build Index</source>
         <translation>Rakenna hakemisto</translation>
     </message>
     <message>
@@ -1593,21 +1655,17 @@
     </message>
     <message>
         <location filename="../ui/playback.ui" line="656"/>
-        <source>Export video...</source>
-        <translation>Vie video...</translation>
+        <source>Export Video...</source>
+        <translation>Vie video</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="163"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="112"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="391"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="61"/>
-        <location filename="../mainwindow.cpp" line="743"/>
-        <location filename="../mainwindow.cpp" line="848"/>
-        <location filename="../mainwindow.cpp" line="939"/>
-        <location filename="../mainwindow.cpp" line="1512"/>
+        <location filename="../dialogs/hostdialog.cpp" line="172"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="119"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="412"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="88"/>
         <source>All files (*)</source>
         <translation>Kaikki tiedostot (*)</translation>
     </message>
@@ -1647,13 +1705,21 @@
         <source>Unexpected file format</source>
         <translation>Odottamaton tiedostomuoto</translation>
     </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="744"/>
+        <location filename="../mainwindow.cpp" line="849"/>
+        <location filename="../mainwindow.cpp" line="940"/>
+        <location filename="../mainwindow.cpp" line="1513"/>
+        <source>All Files (*)</source>
+        <translation>Kaikki tiedostot (*)</translation>
+    </message>
 </context>
 <context>
     <name>ResizeDialog</name>
     <message>
         <location filename="../ui/resizedialog.ui" line="14"/>
-        <source>Resize canvas</source>
-        <translation>Muuta paperin kokoa</translation>
+        <source>Resize Canvas</source>
+        <translation>Muuta kokoa</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="22"/>
@@ -1700,7 +1766,7 @@
     <name>SelectSession</name>
     <message>
         <location filename="../ui/selectsession.ui" line="14"/>
-        <source>Select session</source>
+        <source>Select Session</source>
         <translation>Valitse istunto</translation>
     </message>
 </context>
@@ -1772,72 +1838,101 @@
         <translation>Istunnon historia:</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="245"/>
+        <location filename="../ui/settings.ui" line="242"/>
+        <source>Timeout:</source>
+        <translation>Aikakatkaisu:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="251"/>
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="285"/>
         <source>Lag hiding</source>
         <translation>Verkkoviiveen piilotus</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="254"/>
-        <source>Stroke preview:</source>
-        <translation>Piirron esikatselu:</translation>
+        <location filename="../ui/settings.ui" line="294"/>
+        <source>Slow preview:</source>
+        <translation>Hidas esikatselu:</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="262"/>
+        <location filename="../ui/settings.ui" line="301"/>
+        <source>Preview mode for slow connections</source>
+        <translation>Esikatselutapa hitaille yhteyksille</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="305"/>
+        <location filename="../ui/settings.ui" line="339"/>
         <source>None</source>
         <translation>Ei mitään</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="267"/>
+        <location filename="../ui/settings.ui" line="310"/>
+        <location filename="../ui/settings.ui" line="344"/>
         <source>Quick</source>
         <translation>Nopea</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="272"/>
+        <location filename="../ui/settings.ui" line="315"/>
+        <location filename="../ui/settings.ui" line="349"/>
         <source>Simple overlay</source>
         <translation>Yksinkertainen kerrostus</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="277"/>
+        <location filename="../ui/settings.ui" line="320"/>
+        <location filename="../ui/settings.ui" line="354"/>
         <source>Realistic</source>
         <translation>Realistinen</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="289"/>
+        <location filename="../ui/settings.ui" line="328"/>
+        <source>Fast preview:</source>
+        <translation>Nopea esikatselu:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="335"/>
+        <source>Preview mode for fast connections</source>
+        <translation>Esikatselutapa nopeille yhteyksille</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="366"/>
         <source>Shortcuts</source>
         <translation>Pikanäppäimet</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="302"/>
+        <location filename="../ui/settings.ui" line="379"/>
         <source>Action</source>
         <translation>Toiminto</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="307"/>
+        <location filename="../ui/settings.ui" line="384"/>
         <source>Shortcut</source>
         <translation>Pikanäppäin</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="312"/>
+        <location filename="../ui/settings.ui" line="389"/>
         <source>Default</source>
         <translation>Oletus</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="321"/>
+        <location filename="../ui/settings.ui" line="398"/>
         <source>Known hosts</source>
         <translation>Tunnetut palvelimet</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="339"/>
+        <location filename="../ui/settings.ui" line="416"/>
         <source>Import trusted...</source>
         <translation>Tuo luotettu...</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="362"/>
+        <location filename="../ui/settings.ui" line="439"/>
         <source>Mark as trusted</source>
         <translation>Merkitse luotetuksi</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="376"/>
+        <location filename="../ui/settings.ui" line="453"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
@@ -2032,107 +2127,102 @@
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="45"/>
-        <source>Video options</source>
-        <translation>Videon asetukset</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="54"/>
+        <location filename="../ui/videoexport.ui" line="57"/>
         <source>Framerate:</source>
         <translation>Ruututaajuus:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="63"/>
+        <location filename="../ui/videoexport.ui" line="66"/>
         <source> FPS</source>
         <translation> FPS</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="91"/>
+        <location filename="../ui/videoexport.ui" line="94"/>
         <source>Size:</source>
         <translation>Koko:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="171"/>
-        <source>Keep original frame size</source>
-        <translation>Säilytä alkuperäinen kuvakoko</translation>
+        <location filename="../ui/videoexport.ui" line="45"/>
+        <source>Video Options</source>
+        <translation>Videon asetukset</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="184"/>
-        <source>Export options</source>
-        <translation>Vientiasetukset</translation>
+        <location filename="../ui/videoexport.ui" line="163"/>
+        <source>Export Options</source>
+        <translation>Viennin asetukset</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="215"/>
+        <location filename="../ui/videoexport.ui" line="194"/>
         <source>Image format:</source>
         <translation>Kuva formaatti:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="242"/>
+        <location filename="../ui/videoexport.ui" line="221"/>
         <source>File name pattern:</source>
         <translation>Tiedostonimimalli:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="262"/>
+        <location filename="../ui/videoexport.ui" line="241"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tuetut paikkamerkit:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - ruudun numero&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - tiedostopääte&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="307"/>
+        <location filename="../ui/videoexport.ui" line="286"/>
         <source>Format:</source>
         <translation>Muoto:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="316"/>
+        <location filename="../ui/videoexport.ui" line="295"/>
         <source>Container format</source>
         <translation>Säiliömuoto</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="345"/>
+        <location filename="../ui/videoexport.ui" line="324"/>
         <source>Video codec</source>
         <translation>Video kodekki</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="367"/>
+        <location filename="../ui/videoexport.ui" line="346"/>
         <source>Audio codec</source>
         <translation>Ääni kodekki</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="371"/>
+        <location filename="../ui/videoexport.ui" line="350"/>
         <source>Original</source>
         <translation>Alkuperäinen</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="396"/>
+        <location filename="../ui/videoexport.ui" line="375"/>
         <source>Quality:</source>
         <translation>Laatu:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="407"/>
+        <location filename="../ui/videoexport.ui" line="386"/>
         <source>Low</source>
         <translation>Matala</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="412"/>
+        <location filename="../ui/videoexport.ui" line="391"/>
         <source>Normal</source>
         <translation>Normaali</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="417"/>
+        <location filename="../ui/videoexport.ui" line="396"/>
         <source>Good</source>
         <translation>Hyvä</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="422"/>
+        <location filename="../ui/videoexport.ui" line="401"/>
         <source>Very good</source>
         <translation>Erittäin hyvä</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="430"/>
+        <location filename="../ui/videoexport.ui" line="409"/>
         <source>Soundtrack:</source>
         <translation>Ääniraita:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="441"/>
+        <location filename="../ui/videoexport.ui" line="420"/>
         <source>Error: Ffmpeg executable not found!</source>
         <translation>Virhe: Ffmpeg sovellusta ei löytynyt!</translation>
     </message>
@@ -2155,8 +2245,8 @@
     <name>dialogs::CertificateView</name>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="42"/>
-        <source>SSL certificate for %1</source>
-        <translation>%1 SSL sertifikaatti</translation>
+        <source>SSL Certificate for %1</source>
+        <translation>SSL Sertifikaatti: %1</translation>
     </message>
 </context>
 <context>
@@ -2195,22 +2285,22 @@
         <translation>Isännöi</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="111"/>
+        <location filename="../dialogs/hostdialog.cpp" line="120"/>
         <source>Error</source>
         <translation>Virhe</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="111"/>
+        <location filename="../dialogs/hostdialog.cpp" line="120"/>
         <source>Size is too large</source>
         <translation>Koko on liian suuri</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="163"/>
+        <location filename="../dialogs/hostdialog.cpp" line="172"/>
         <source>Images (%1)</source>
         <translation>Kuvat (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="169"/>
+        <location filename="../dialogs/hostdialog.cpp" line="178"/>
         <source>Open image</source>
         <translation>Avaa kuva</translation>
     </message>
@@ -2218,7 +2308,7 @@
 <context>
     <name>dialogs::JoinDialog</name>
     <message>
-        <location filename="../dialogs/joindialog.cpp" line="36"/>
+        <location filename="../dialogs/joindialog.cpp" line="37"/>
         <source>Join</source>
         <translation>Liity</translation>
     </message>
@@ -2229,6 +2319,14 @@
         <location filename="../dialogs/logindialog.cpp" line="36"/>
         <source>Continue</source>
         <translation>Jatka</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::NetStats</name>
+    <message>
+        <location filename="../dialogs/netstats.cpp" line="59"/>
+        <source>not connected</source>
+        <translation>ei yhteyttä</translation>
     </message>
 </context>
 <context>
@@ -2258,13 +2356,13 @@
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="489"/>
-        <source>Mark position</source>
-        <translation>Lisää kirjanmerkki</translation>
+        <source>Marker text</source>
+        <translation>Kirjanmerkin nimi</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="489"/>
-        <source>Marker text</source>
-        <translation>Kirjanmerkin nimi</translation>
+        <source>Mark Position</source>
+        <translation>Merkitse kohta</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="509"/>
@@ -2314,8 +2412,13 @@
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="661"/>
         <location filename="../dialogs/playbackdialog.cpp" line="664"/>
-        <source>Open recording</source>
-        <translation>Avaa nauhoitus</translation>
+        <source>Open Recording</source>
+        <translation>Avaa nauhoite</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/playbackdialog.cpp" line="709"/>
+        <source>Jump To</source>
+        <translation>Hyppää</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="684"/>
@@ -2331,11 +2434,6 @@
         <location filename="../dialogs/playbackdialog.cpp" line="699"/>
         <source>Error loading index!</source>
         <translation>Virhe tapahtui hakemistoa ladatessa!</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="709"/>
-        <source>Jump to</source>
-        <translation>Hyppää</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="766"/>
@@ -2372,44 +2470,34 @@
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="108"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="115"/>
         <source>Set ffmepg path</source>
         <translation>Aseta ffmpeg polku</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="110"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="117"/>
         <source>Executables (%1)</source>
         <translation>Ohjelmat (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="305"/>
-        <source>Conflict</source>
-        <translation>Ristiriita</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="305"/>
-        <source>This shortcut is already used for &quot;%1&quot;</source>
-        <translation>Tämä pikanäppäin on jo käytössä: %1</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="389"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="399"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="404"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="410"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="420"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="425"/>
         <source>Import trusted certificate</source>
         <translation>Tuo luotettava sertifikaatti</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="390"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="411"/>
         <source>Certificates (%1)</source>
         <translation>Sertifikaatit (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="399"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="420"/>
         <source>Invalid certificate!</source>
         <translation>Sertifikaatti ei ole kelvollinen!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="404"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="425"/>
         <source>Certificate common name not set!</source>
         <translation>Sertifikaatin yleistä nimeä (CN) ei ole asetettu!</translation>
     </message>
@@ -2418,44 +2506,54 @@
     <name>dialogs::TinyPlayer</name>
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="51"/>
-        <source>Normal player</source>
-        <translation>Normaali soitin</translation>
+        <source>Normal Player</source>
+        <translation>Normaali toistin</translation>
     </message>
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="53"/>
-        <source>Previous snapshot</source>
+        <source>Previous Snapshot</source>
         <translation>Edellinen pikakuva</translation>
     </message>
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="54"/>
-        <source>Next snapshot</source>
+        <source>Next Snapshot</source>
         <translation>Seuraava pikakuva</translation>
     </message>
 </context>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
+        <location filename="../dialogs/videoexportdialog.cpp" line="58"/>
+        <source>Original</source>
+        <translation>Alkuperäinen</translation>
+    </message>
+    <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="59"/>
+        <source>Custom:</source>
+        <translation>Omavalintainen:</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/videoexportdialog.cpp" line="86"/>
         <source>Select soundtrack</source>
         <translation>Valitse ääniraita</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="60"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="87"/>
         <source>Sound files (%1)</source>
         <translation>Äänitiedostot (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="151"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="192"/>
         <source>Select output directory</source>
         <translation>Valitse ulostulo hakemisto</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="183"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="224"/>
         <source>Export video</source>
         <translation>Vie video</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="183"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="224"/>
         <source>%1 files (*%2)</source>
         <translation>%1 tiedostot (%2)</translation>
     </message>
@@ -2463,12 +2561,12 @@
 <context>
     <name>docks::ColorBox</name>
     <message>
-        <location filename="../docks/colorbox.cpp" line="148"/>
+        <location filename="../docks/colorbox.cpp" line="179"/>
         <source>Delete</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../docks/colorbox.cpp" line="149"/>
+        <location filename="../docks/colorbox.cpp" line="180"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation>Poistetaanko paletti &quot;%1&quot;?</translation>
     </message>
@@ -2476,7 +2574,7 @@
 <context>
     <name>docks::InputSettings</name>
     <message>
-        <location filename="../docks/inputsettingsdock.cpp" line="34"/>
+        <location filename="../docks/inputsettingsdock.cpp" line="35"/>
         <source>Input</source>
         <translation>Syöte</translation>
     </message>
@@ -2502,54 +2600,54 @@
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="38"/>
+        <location filename="../docks/layerlistdock.cpp" line="39"/>
         <source>Layers</source>
         <translation>Tasot</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="61"/>
+        <location filename="../docks/layerlistdock.cpp" line="64"/>
         <source>Hide from self</source>
         <translation>Piilota itseltäsi</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="63"/>
+        <location filename="../docks/layerlistdock.cpp" line="66"/>
         <source>Rename</source>
         <translation>Nimeä uudelleen</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="246"/>
+        <location filename="../docks/layerlistdock.cpp" line="253"/>
         <source>New layer</source>
         <translation>Uusi taso</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="286"/>
+        <location filename="../docks/layerlistdock.cpp" line="293"/>
         <source>Delete layer</source>
         <translation>Poista taso</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="287"/>
+        <location filename="../docks/layerlistdock.cpp" line="294"/>
         <source>Really delete &quot;%1&quot;?</source>
         <translation>Poistetaanko &quot;%1&quot;?</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="65"/>
-        <location filename="../docks/layerlistdock.cpp" line="291"/>
+        <location filename="../docks/layerlistdock.cpp" line="68"/>
+        <location filename="../docks/layerlistdock.cpp" line="298"/>
         <source>Delete</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="64"/>
-        <location filename="../docks/layerlistdock.cpp" line="297"/>
+        <location filename="../docks/layerlistdock.cpp" line="67"/>
+        <location filename="../docks/layerlistdock.cpp" line="304"/>
         <source>Merge down</source>
         <translation>Yhdistä alempaan</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="298"/>
+        <location filename="../docks/layerlistdock.cpp" line="305"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
         <translation>Paina yhdistä alempaan yhdistääksesi tason ensimmäiseen alempaan näkyvään tasoon poistamisen sijaan.</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="301"/>
+        <location filename="../docks/layerlistdock.cpp" line="308"/>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
@@ -2557,7 +2655,7 @@
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="122"/>
+        <location filename="../docks/navigator.cpp" line="135"/>
         <source>Navigator</source>
         <translation>Navigointi</translation>
     </message>
@@ -2565,75 +2663,75 @@
 <context>
     <name>docks::ToolSettings</name>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="97"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="84"/>
         <source>Pen</source>
         <translation>Kynä</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="100"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="87"/>
         <source>Brush</source>
         <translation>Suti</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="104"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="91"/>
         <source>Eraser</source>
         <translation>Pyyhekumi</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="107"/>
-        <source>Color picker</source>
+        <location filename="../docks/toolsettingsdock.cpp" line="94"/>
+        <source>Color Picker</source>
         <translation>Värinpoimija</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="110"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="106"/>
+        <source>Flood Fill</source>
+        <translation>Täyttö</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="123"/>
+        <source>Foreground Color</source>
+        <translation>Etualan väri</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="128"/>
+        <source>Background Color</source>
+        <translation>Taustaväri</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="97"/>
         <source>Line</source>
         <translation>Viiva</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="113"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="100"/>
         <source>Rectangle</source>
         <translation>Suorakulmio</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="116"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="103"/>
         <source>Ellipse</source>
         <translation>Ellipsi</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="119"/>
-        <source>Flood fill</source>
-        <translation>Täyttö</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="122"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="109"/>
         <source>Annotation</source>
         <translation>Tekstikehys</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="125"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="112"/>
         <source>Selection</source>
         <translation>Valinta</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="128"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="115"/>
         <source>Laser pointer</source>
         <translation>Laser osoitin</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="136"/>
-        <source>Foreground color</source>
-        <translation>Edustaväri</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="141"/>
-        <source>Background color</source>
-        <translation>Taustaväri</translation>
     </message>
 </context>
 <context>
     <name>docks::UserList</name>
     <message>
-        <location filename="../docks/userlistdock.cpp" line="34"/>
+        <location filename="../docks/userlistdock.cpp" line="35"/>
         <source>Users</source>
         <translation>Käyttäjät</translation>
     </message>
@@ -2641,18 +2739,18 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="543"/>
-        <location filename="../net/client.cpp" line="585"/>
+        <location filename="../net/client.cpp" line="544"/>
+        <location filename="../net/client.cpp" line="586"/>
         <source>Server</source>
         <translation>Palvelin</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="576"/>
+        <location filename="../net/client.cpp" line="577"/>
         <source>A server error occurred!</source>
         <translation>Palvelimella tapahtui virhe!</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="578"/>
+        <location filename="../net/client.cpp" line="579"/>
         <source>The server is shutting down!</source>
         <translation>Palvelin suljetaan!</translation>
     </message>
@@ -2824,7 +2922,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="114"/>
+        <location filename="../net/tcpserver.cpp" line="119"/>
         <source>Received invalid data</source>
         <translation>Vastaanotettiin virheellistä dataa</translation>
     </message>
@@ -2939,7 +3037,7 @@
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../tools/toolsettings.cpp" line="681"/>
+        <location filename="../tools/toolsettings.cpp" line="692"/>
         <source>Annotation content</source>
         <translation>Tekstikehyksen sisältö</translation>
     </message>
@@ -2947,9 +3045,22 @@
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../tools/toolsettings.cpp" line="617"/>
+        <location filename="../tools/toolsettings.cpp" line="628"/>
         <source>Pick from current layer only</source>
         <translation>Poimi vain nykyiseltä tasolta</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::BrushPreview</name>
+    <message>
+        <location filename="../widgets/brushpreview.cpp" line="55"/>
+        <source>Change Foreground Color</source>
+        <translation>Vaihda etualan väriä</translation>
+    </message>
+    <message>
+        <location filename="../widgets/brushpreview.cpp" line="56"/>
+        <source>Change Background Color</source>
+        <translation>Vaihda taustaväriä</translation>
     </message>
 </context>
 <context>
@@ -2996,28 +3107,33 @@
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="88"/>
-        <location filename="../widgets/netstatus.cpp" line="227"/>
+        <location filename="../widgets/netstatus.cpp" line="83"/>
+        <location filename="../widgets/netstatus.cpp" line="228"/>
         <source>not connected</source>
         <translation>ei yhteyttä</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="97"/>
+        <location filename="../widgets/netstatus.cpp" line="92"/>
         <source>Copy address to clipboard</source>
         <translation>Kopioi osoite leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="103"/>
+        <location filename="../widgets/netstatus.cpp" line="98"/>
         <source>Copy session URL to clipboard</source>
         <translation>Kopioi istunnon URL leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="109"/>
+        <location filename="../widgets/netstatus.cpp" line="104"/>
         <source>Get externally visible IP address</source>
         <translation>Hae ulkomaailmaan näkyvä IP osoite</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="129"/>
+        <location filename="../widgets/netstatus.cpp" line="115"/>
+        <source>Statistics</source>
+        <translation>Tilastot</translation>
+    </message>
+    <message>
+        <location filename="../widgets/netstatus.cpp" line="134"/>
         <source>Show certificate</source>
         <translation>Näytä sertifikaatti</translation>
     </message>
@@ -3027,54 +3143,54 @@
         <translation>Yhdistetään osoitteeseen %1...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="177"/>
-        <location filename="../widgets/netstatus.cpp" line="360"/>
+        <location filename="../widgets/netstatus.cpp" line="176"/>
+        <location filename="../widgets/netstatus.cpp" line="350"/>
         <source>Host: %1</source>
         <translation>Isäntä: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="178"/>
+        <location filename="../widgets/netstatus.cpp" line="177"/>
         <source>Logged in!</source>
         <translation>Kirjauduttiin sisään!</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="189"/>
+        <location filename="../widgets/netstatus.cpp" line="190"/>
         <source>A previously unvisited host</source>
         <translation>Ei aiemmin tavattu isäntä</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="194"/>
+        <location filename="../widgets/netstatus.cpp" line="195"/>
         <source>Host certificate has not changed since the last visit</source>
         <translation>Sertifikaatti ei ole muuttunut viimekäynnin jälkeen</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="199"/>
+        <location filename="../widgets/netstatus.cpp" line="200"/>
         <source>This is a trusted host</source>
         <translation>Tämä on luotettu isäntä</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="216"/>
         <location filename="../widgets/netstatus.cpp" line="217"/>
+        <location filename="../widgets/netstatus.cpp" line="218"/>
         <source>Logging out...</source>
         <translation>Kirjaudutaan ulos...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="233"/>
+        <location filename="../widgets/netstatus.cpp" line="234"/>
         <source>Disconnected</source>
         <translation>Yhteys katkaistu</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="378"/>
+        <location filename="../widgets/netstatus.cpp" line="368"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; liittyi</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="383"/>
+        <location filename="../widgets/netstatus.cpp" line="373"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; poistui</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="388"/>
+        <location filename="../widgets/netstatus.cpp" line="378"/>
         <source>You have been kicked by %1</source>
         <translation>Sinut on potkittu ulos käyttäjän %1 toimesta</translation>
     </message>
@@ -3118,14 +3234,19 @@ Heksa: %5</translation>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="38"/>
+        <location filename="../widgets/viewstatus.cpp" line="39"/>
         <source>Zoom:</source>
         <translation>Suurennus:</translation>
     </message>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="58"/>
+        <location filename="../widgets/viewstatus.cpp" line="66"/>
         <source>Angle:</source>
         <translation>Kulma:</translation>
+    </message>
+    <message>
+        <location filename="../widgets/viewstatus.cpp" line="79"/>
+        <source>Drag the view while holding ctrl-space to rotate</source>
+        <translation>Raahaa samalla kun pidät ctrl+välilyöntinäppäimiä pohjassa kiertääksesi näkymää</translation>
     </message>
 </context>
 </TS>

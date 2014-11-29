@@ -76,6 +76,8 @@ ViewStatus::ViewStatus(QWidget *parent)
 	_angleSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
 	connect(_angleSlider, &QSlider::valueChanged, [this](int val) { emit angleChanged(val); });
 
+	_angleSlider->setToolTip(tr("Drag the view while holding ctrl-space to rotate"));
+
 	layout->addWidget(rlbl);
 	layout->addWidget(_angleSlider);
 	layout->addWidget(_angle);

@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Host a session</string>
+   <string>Host a Session</string>
   </property>
   <layout class="QVBoxLayout">
    <property name="rightMargin">
@@ -478,7 +478,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>Session options</string>
+          <string>Session Options</string>
          </property>
          <property name="flat">
           <bool>true</bool>

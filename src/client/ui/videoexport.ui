@@ -42,7 +42,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Video options</string>
+      <string>Video Options</string>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -160,7 +160,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Export options</string>
+      <string>Export Options</string>
      </property>
      <property name="flat">
       <bool>true</bool>

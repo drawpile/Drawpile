@@ -39,7 +39,7 @@ CertificateView::CertificateView(const QString &hostname, const QSslCertificate 
 {
 	_ui = new Ui_CertificateView;
 	_ui->setupUi(this);
-	setWindowTitle(tr("SSL certificate for %1").arg(hostname));
+	setWindowTitle(tr("SSL Certificate for %1").arg(hostname));
 
 	_ui->cn_label->setText(first(certificate.subjectInfo(QSslCertificate::CommonName)));
 	_ui->org_label->setText(first(certificate.subjectInfo(QSslCertificate::Organization)));

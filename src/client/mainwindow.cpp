@@ -738,18 +738,18 @@ void MainWindow::open()
 		formats += "*." + format + " ";
 	}
 	const QString filter =
-			tr("All supported files (%1)").arg(dpimages + dprecs + formats) + ";;" +
+			tr("All Supported Files (%1)").arg(dpimages + dprecs + formats) + ";;" +
 			tr("Images (%1)").arg(dpimages + formats) + ";;" +
 			tr("Recordings (%1)").arg(dprecs) + ";;" +
-			QApplication::tr("All files (*)");
+			QApplication::tr("All Files (*)");
 
 	// Get the file name to open
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	const QUrl file = QFileDialog::getOpenFileUrl(this,
-			tr("Open image"), getLastPath(), filter);
+			tr("Open Image"), getLastPath(), filter);
 #else
 	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
-			tr("Open image"), getLastPath(), filter));
+			tr("Open Image"), getLastPath(), filter));
 #endif
 
 	// Open the file if it was selected
@@ -773,7 +773,7 @@ void MainWindow::open()
  */
 bool MainWindow::confirmFlatten(QString& file) const
 {
-	QMessageBox box(QMessageBox::Information, tr("Save image"),
+	QMessageBox box(QMessageBox::Information, tr("Save Image"),
 			tr("The selected format does not support layers or annotations."),
 			QMessageBox::Cancel);
 	box.addButton(tr("Flatten"), QMessageBox::AcceptRole);
@@ -846,11 +846,11 @@ bool MainWindow::saveas()
 	for(const QPair<QString,QByteArray> &format : writableImageFormats()) {
 		filter << format.first + " (*." + format.second + ")";
 	}
-	filter << QApplication::tr("All files (*)");
+	filter << QApplication::tr("All Files (*)");
 
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save image"), getLastPath(), filter.join(";;"), &selfilter);
+			tr("Save Image"), getLastPath(), filter.join(";;"), &selfilter);
 
 	if(file.isEmpty()==false) {
 
@@ -936,10 +936,10 @@ void MainWindow::toggleRecording()
 
 	QString filter =
 			tr("Recordings (%1)").arg("*.dprec") + ";;" +
-			tr("Compressed recordings (%1)").arg("*.dprecz") + ";;" +
-			QApplication::tr("All files (*)");
+			tr("Compressed Recordings (%1)").arg("*.dprecz") + ";;" +
+			QApplication::tr("All Files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Record session"), getLastPath(), filter);
+			tr("Record Session"), getLastPath(), filter);
 
 	if(!file.isEmpty()) {
 		startRecorder(file);
@@ -980,7 +980,7 @@ void MainWindow::startRecorder(const QString &filename)
 
 		connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
-		recordAction->setText(tr("Stop recording"));
+		recordAction->setText(tr("Stop Recording"));
 		recordAction->setIcon(icon::fromTheme("media-playback-stop"));
 
 		QApplication::restoreOverrideCursor();
@@ -1052,7 +1052,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 
 		int port = server->startServer();
 		if(!port) {
-			QMessageBox::warning(this, tr("Unable to start server"), server->errorString());
+			QMessageBox::warning(this, tr("Host Session"), server->errorString());
 			dlg->show();
 			delete server;
 			return;
@@ -1114,7 +1114,7 @@ void MainWindow::leave()
 {
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
-		_canvas->title().isEmpty()?tr("Untitled session"):_canvas->title(),
+		_canvas->title().isEmpty()?tr("Untitled"):_canvas->title(),
 		tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
@@ -1143,7 +1143,7 @@ void MainWindow::changeSessionTitle()
 	bool ok;
 	QString newtitle = QInputDialog::getText(
 				this,
-				tr("Session title"),
+				tr("Session Title"),
 				tr("Change session title"),
 				QLineEdit::Normal,
 				_canvas->title(),
@@ -1212,10 +1212,9 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 		QMessageBox *msgbox = new QMessageBox(
 			QMessageBox::Warning,
 			QString(),
-			tr("Couldn't connect to server"),
+			tr("Could not connect to server"),
 			QMessageBox::Ok,
-			this,
-			Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
+			this
 		);
 
 		msgbox->setAttribute(Qt::WA_DeleteOnClose);
@@ -1511,11 +1510,11 @@ void MainWindow::pasteFile()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
-	const QString filter = tr("Images (%1)").arg(formats) + ";;" + QApplication::tr("All files (*)");
+	const QString filter = tr("Images (%1)").arg(formats) + ";;" + QApplication::tr("All Files (*)");
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Paste image"), getLastPath(), filter);
+			tr("Paste Image"), getLastPath(), filter);
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
@@ -1655,7 +1654,7 @@ void MainWindow::resizeCanvas()
 void MainWindow::markSpotForRecording()
 {
 	bool ok;
-	QString text = QInputDialog::getText(this, tr("Mark position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
+	QString text = QInputDialog::getText(this, tr("Mark"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
 	if(ok)
 		_client->sendMarker(text);
 }
@@ -1802,7 +1801,7 @@ void MainWindow::setupActions()
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
-	_recent = filemenu->addMenu(tr("Open &recent"));
+	_recent = filemenu->addMenu(tr("Open &Recent"));
 	filemenu->addSeparator();
 
 #ifdef Q_OS_MAC
@@ -1817,7 +1816,7 @@ void MainWindow::setupActions()
 
 	filemenu->addAction(quit);
 
-	QToolBar *filetools = new QToolBar(tr("File tools"));
+	QToolBar *filetools = new QToolBar(tr("File Tools"));
 	filetools->setObjectName("filetoolsbar");
 	toggletoolbarmenu->addAction(filetools->toggleViewAction());
 	filetools->addAction(newdocument);
@@ -1834,30 +1833,30 @@ void MainWindow::setupActions()
 	//
 	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), QString(), QKeySequence::Undo);
 	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
-	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence("Shift+Ctrl+C"));
-	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
-	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
+	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy Visible"), tr("Copy selected area to the clipboard"), QKeySequence("Shift+Ctrl+C"));
+	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
+	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
-	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."));
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"));
-	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
-	QAction *preferences = makeAction(0, 0, tr("Prefere&nces...")); preferences->setMenuRole(QAction::PreferencesRole);
+	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &From File..."));
+	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete Empty Annotations"));
+	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze Canvas..."));
+	QAction *preferences = makeAction(0, 0, tr("Prefere&nces")); preferences->setMenuRole(QAction::PreferencesRole);
 
-	QAction *selectall = makeAction("selectall", 0, tr("Select &all"), QString(), QKeySequence::SelectAll);
+	QAction *selectall = makeAction("selectall", 0, tr("Select &All"), QString(), QKeySequence::SelectAll);
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"));
 #else
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
 #endif
 
-	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+J"));
-	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+K"));
-	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+H"));
-	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+L"));
+	QAction *expandup = makeAction("expandup", 0, tr("Expand Up"), "", QKeySequence("Ctrl+J"));
+	QAction *expanddown = makeAction("expandup", 0, tr("Expand Down"), "", QKeySequence("Ctrl+K"));
+	QAction *expandleft = makeAction("expandup", 0, tr("Expand Left"), "", QKeySequence("Ctrl+H"));
+	QAction *expandright = makeAction("expandup", 0, tr("Expand Right"), "", QKeySequence("Ctrl+L"));
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
-	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G color"), tr("Fill selected area with background color"), QKeySequence(CTRL_KEY "+."));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG Color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
+	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G Color"), tr("Fill selected area with background color"), QKeySequence(CTRL_KEY "+."));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
@@ -1915,7 +1914,7 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 
 	editmenu->addAction(resize);
-	QMenu *expandmenu = editmenu->addMenu(tr("Expand canvas"));
+	QMenu *expandmenu = editmenu->addMenu(tr("Expand Canvas"));
 	expandmenu->addAction(expandup);
 	expandmenu->addAction(expanddown);
 	expandmenu->addAction(expandleft);
@@ -1929,7 +1928,7 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 
-	QToolBar *edittools = new QToolBar(tr("Edit tools"));
+	QToolBar *edittools = new QToolBar(tr("Edit Tools"));
 	edittools->setObjectName("edittoolsbar");
 	toggletoolbarmenu->addAction(edittools->toggleViewAction());
 	edittools->addAction(undo);
@@ -1950,26 +1949,26 @@ void MainWindow::setupActions()
 
 	QAction *toggleChat = makeAction("togglechat", 0, tr("Chat"), QString(), QKeySequence("Alt+C"), true);
 
-	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
-	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
-	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", "view-refresh",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &In"), QString(), QKeySequence::ZoomIn);
+	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
+	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
+	QAction *rotateorig = makeAction("rotatezero", "view-refresh",tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
 	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
-	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), QString(), QKeySequence(), true);
-	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
-	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), QString(), QKeySequence(), true);
-	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show user layers"), QString(), QKeySequence(), true);
-	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), QString(), QKeySequence(), true);
+	QAction *showoutline = makeAction("brushoutline", 0, tr("Show Brush &Outline"), QString(), QKeySequence(), true);
+	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
+	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User Pointers"), QString(), QKeySequence(), true);
+	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User Layers"), QString(), QKeySequence(), true);
+	QAction *showlasers = makeAction("showlasers", 0, tr("Show Laser Trails"), QString(), QKeySequence(), true);
 	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showuserlayers->setChecked(true);
 	showlasers->setChecked(true);
 
-	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence::FullScreen, true);
+	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
 
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, [fullscreen](Qt::WindowState state) {
@@ -2053,11 +2052,11 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
-	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock layer controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
-	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
+	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
+	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock Layer Controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
+	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
-	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."));
+	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 
 	_admintools->addAction(locksession);
 	_admintools->addAction(locklayerctrl);
@@ -2089,13 +2088,13 @@ void MainWindow::setupActions()
 	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
 	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
 	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
-	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
+	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
-	QAction *filltool = makeAction("toolfill", "fill-color", tr("&Flood fill"), tr("Fill areas"), QKeySequence("F"), true);
+	QAction *filltool = makeAction("toolfill", "fill-color", tr("&Flood Fill"), tr("Fill areas"), QKeySequence("F"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
-	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
+	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
@@ -2120,9 +2119,9 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap colors"), QString(), QKeySequence(Qt::Key_X));
-	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease brush size"), QString(), Qt::Key_BracketLeft);
-	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase brush size"), QString(), Qt::Key_BracketRight);
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap Colors"), QString(), QKeySequence(Qt::Key_X));
+	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
+	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
 	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
 	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});

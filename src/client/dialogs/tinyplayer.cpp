@@ -48,10 +48,10 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 	// Context menu
 	_idxactions = new QActionGroup(this);
 	_ctxmenu = new QMenu(this);
-	_ctxmenu->addAction(tr("Normal player"), this, SLOT(close()));
+	_ctxmenu->addAction(tr("Normal Player"), this, SLOT(close()));
 	_ctxmenu->addSeparator();
-	_idxactions->addAction(_ctxmenu->addAction(tr("Previous snapshot"), this, SIGNAL(prevSnapshot())));
-	_idxactions->addAction(_ctxmenu->addAction(tr("Next snapshot"), this, SIGNAL(nextSnapshot())));
+	_idxactions->addAction(_ctxmenu->addAction(tr("Previous Snapshot"), this, SIGNAL(prevSnapshot())));
+	_idxactions->addAction(_ctxmenu->addAction(tr("Next Snapshot"), this, SIGNAL(nextSnapshot())));
 
 	_idxactions->setEnabled(false);
 }

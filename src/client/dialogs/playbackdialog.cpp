@@ -486,7 +486,7 @@ void PlaybackDialog::addMarkerHere()
 	Q_ASSERT(_index);
 
 	bool ok;
-	QString title = QInputDialog::getText(this, tr("Mark position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
+	QString title = QInputDialog::getText(this, tr("Mark Position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
 	if(ok) {
 		recording::IndexEntry e = _index->index().addMarker(_reader->currentPosition(), _reader->currentIndex(), title);
 		IndexGraphicsItem::addToScene(e, _indexscene);
@@ -658,10 +658,10 @@ recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidge
 
 	if(!warning.isNull()) {
 		if(fatal) {
-			QMessageBox::warning(msgboxparent, tr("Open recording"), warning);
+			QMessageBox::warning(msgboxparent, tr("Open Recording"), warning);
 			return 0;
 		} else {
-			int res = QMessageBox::warning(msgboxparent, tr("Open recording"), warning, QMessageBox::Ok, QMessageBox::Cancel);
+			int res = QMessageBox::warning(msgboxparent, tr("Open Recording"), warning, QMessageBox::Ok, QMessageBox::Cancel);
 			if(res != QMessageBox::Ok)
 				return 0;
 		}
@@ -706,7 +706,7 @@ void PlaybackDialog::loadIndex()
 	_tinyPlayer->enableIndex();
 
 	// Construct jump-to-marker list
-	_markermenu = new QMenu(tr("Jump to"), this);
+	_markermenu = new QMenu(tr("Jump To"), this);
 	updateMarkerMenu();
 	_tinyPlayer->setMarkerMenu(_markermenu);
 

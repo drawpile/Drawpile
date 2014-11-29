@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Join a session</string>
+   <string>Join a Session</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

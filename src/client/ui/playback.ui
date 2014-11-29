@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Recording playback</string>
+   <string>Playback</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -305,7 +305,7 @@ QProgressBar::chunk {
          <item>
           <widget class="QPushButton" name="indexButton">
            <property name="text">
-            <string>Build index</string>
+            <string>Build Index</string>
            </property>
            <property name="autoDefault">
             <bool>false</bool>
@@ -653,7 +653,7 @@ QProgressBar::chunk {
        <item>
         <widget class="QPushButton" name="configureExportButton">
          <property name="text">
-          <string>Export video...</string>
+          <string>Export Video...</string>
          </property>
          <property name="autoDefault">
           <bool>false</bool>
