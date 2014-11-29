@@ -71,6 +71,9 @@ CanvasView::CanvasView(QWidget *parent)
 	bmp.drawPoint(16,16);
 	_cursor = QCursor(bm, mask);
 	viewport()->setCursor(_cursor);
+
+	// Get the color picker cursor
+	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 }
 
 void CanvasView::enableTabletEvents(bool enable)
@@ -492,8 +495,13 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 			_dragbtndown = DRAG_TRANSLATE;
 		}
 		viewport()->setCursor(Qt::OpenHandCursor);
+
 	} else {
 		QGraphicsView::keyPressEvent(event);
+
+		if(event->key() == Qt::Key_Control && !_dragbtndown)
+			viewport()->setCursor(_colorpickcursor);
+
 	}
 }
 
@@ -503,8 +511,16 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 		_dragbtndown = DRAG_NOTRANSFORM;
 		if(_isdragging==DRAG_NOTRANSFORM)
 			resetCursor();
+
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
+
+		if(event->key() == Qt::Key_Control) {
+			if(_dragbtndown)
+				viewport()->setCursor(Qt::OpenHandCursor);
+			else
+				resetCursor();
+		}
 	}
 }
 

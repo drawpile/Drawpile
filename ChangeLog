@@ -7,6 +7,7 @@
  * Added zoom and angle shortcut context menus to status bar
  * OSX: Don't quit when all windows are closed
  * Added network statistics dialog
+ * Color picker cursor is now set when quick colorpicking
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

@@ -233,7 +233,7 @@ class CanvasView : public QGraphicsView
 
 		int _outlinesize, _dia;
 		bool _enableoutline, _showoutline, _subpixeloutline;
-		QCursor _cursor;
+		QCursor _cursor, _colorpickcursor;
 
 		//! View zoom in percents
 		qreal _zoom;
