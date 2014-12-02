@@ -3,9 +3,10 @@
  * Added keepalive messages
  * Automatically switch stroke preview mode based on latency
  * OSX: Quit menu action now works as expected
- * OSX: Add "Close" item to File menu.
- * Added zoom and angle shortcut context menus to status bar
+ * OSX: Added "Close" item to File menu.
  * OSX: Don't quit when all windows are closed
+ * OSX: Added Window menu
+ * Added zoom and angle shortcut context menus to status bar
  * Added network statistics dialog
  * Color picker cursor is now set when quick colorpicking
 

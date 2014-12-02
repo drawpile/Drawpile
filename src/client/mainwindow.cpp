@@ -71,6 +71,10 @@
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
 
+#ifdef Q_OS_MAC
+#include "widgets/macmenu.h"
+#endif
+
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
@@ -323,12 +327,20 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Handle eraser event
 	connect(qApp, SIGNAL(eraserNear(bool)), _dock_toolsettings, SLOT(eraserNear(bool)));
 
+#ifdef Q_OS_MAC
+	MacMenu::instance()->addWindow(this);
+#endif
+
 	// Show self
 	show();
 }
 
 MainWindow::~MainWindow()
 {
+#ifdef Q_OS_MAC
+	MacMenu::instance()->removeWindow(this);
+#endif
+
 	// Close playback dialog explicitly since it adds the miniplayer as a direct child
 	// of the main window, but deletes it itself.
 	delete _dialog_playback;
@@ -500,6 +512,10 @@ void MainWindow::updateTitle()
 		setWindowTitle(QStringLiteral("%1[*]").arg(name));
 	else
 		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, _canvas->title()));
+
+#ifdef Q_OS_MAC
+	MacMenu::instance()->updateWindow(this);
+#endif
 }
 
 void MainWindow::setDrawingToolsEnabled(bool enable)
@@ -2144,6 +2160,13 @@ void MainWindow::setupActions()
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
 	connect(swapcolors, SIGNAL(triggered()), _dock_toolsettings, SLOT(swapForegroundBackground()));
+
+	//
+	// Window menu (Mac only)
+	//
+#ifdef Q_OS_MAC
+	menuBar()->addMenu(MacMenu::instance()->windowMenu());
+#endif
 
 	//
 	// Help menu

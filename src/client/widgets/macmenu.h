@@ -21,6 +21,8 @@
 
 #include <QMenuBar>
 
+class MainWindow;
+
 class MacMenu : public QMenuBar
 {
 	Q_OBJECT
@@ -28,6 +30,12 @@ public:
 	static MacMenu *instance();
 
 	void updateRecentMenu();
+
+	void addWindow(MainWindow *win);
+	void removeWindow(MainWindow *win);
+	void updateWindow(MainWindow *win);
+
+	QMenu *windowMenu() { return _windows; }
 
 signals:
 
@@ -41,11 +49,16 @@ public slots:
 private slots:
 	void openRecent(QAction *action);
 
+	void winMinimize();
+	void winSelect(QAction *a);
+	void updateWinMenu();
+
 private:
 	MacMenu();
 	QAction *makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut);
 
 	QMenu *_recent;
+	QMenu *_windows;
 };
 
 #endif // MACMENU_H
