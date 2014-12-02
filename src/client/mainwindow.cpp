@@ -71,10 +71,6 @@
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
 
-#ifdef Q_OS_MAC
-#include "widgets/macmenu.h"
-#endif
-
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
@@ -1865,10 +1861,10 @@ void MainWindow::setupActions()
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
 #endif
 
-	QAction *expandup = makeAction("expandup", 0, tr("Expand Up"), "", QKeySequence("Ctrl+J"));
-	QAction *expanddown = makeAction("expandup", 0, tr("Expand Down"), "", QKeySequence("Ctrl+K"));
-	QAction *expandleft = makeAction("expandup", 0, tr("Expand Left"), "", QKeySequence("Ctrl+H"));
-	QAction *expandright = makeAction("expandup", 0, tr("Expand Right"), "", QKeySequence("Ctrl+L"));
+	QAction *expandup = makeAction("expandup", 0, tr("Expand Up"), "", QKeySequence(CTRL_KEY "+J"));
+	QAction *expanddown = makeAction("expanddown", 0, tr("Expand Down"), "", QKeySequence(CTRL_KEY "+K"));
+	QAction *expandleft = makeAction("expandleft", 0, tr("Expand Left"), "", QKeySequence(CTRL_KEY "+H"));
+	QAction *expandright = makeAction("expandright", 0, tr("Expand Right"), "", QKeySequence(CTRL_KEY "+L"));
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
 	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG Color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
