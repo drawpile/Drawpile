@@ -126,7 +126,6 @@ set (
 	ui/hostdialog.ui
 	ui/joindialog.ui
 	ui/settings.ui
-	ui/navibox.ui
 	ui/textsettings.ui
 	ui/pensettings.ui
 	ui/erasersettings.ui

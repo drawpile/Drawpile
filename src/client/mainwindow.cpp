@@ -230,14 +230,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Navigator <-> View
 	connect(_dock_navigator, SIGNAL(focusMoved(const QPoint&)),
 			_view, SLOT(scrollTo(const QPoint&)));
-	connect(_dock_navigator, SIGNAL(angleChanged(qreal)),
-			_view, SLOT(setRotation(qreal)));
 	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
 			_dock_navigator, SLOT(setViewFocus(const QPolygonF&)));
-	connect(_view, SIGNAL(viewTransformed(qreal,qreal)),
-			_dock_navigator, SLOT(setViewTransform(qreal,qreal)));
-	connect(_dock_navigator, SIGNAL(zoomIn()), _view, SLOT(zoomin()));
-	connect(_dock_navigator, SIGNAL(zoomOut()), _view, SLOT(zoomout()));
 
 	// Create the network client
 	_client = new net::Client(this);

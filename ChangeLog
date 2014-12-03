@@ -9,6 +9,7 @@
  * Added zoom and angle shortcut context menus to status bar
  * Added network statistics dialog
  * Color picker cursor is now set when quick colorpicking
+ * Simplified navigator dock
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

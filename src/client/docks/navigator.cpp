@@ -17,8 +17,6 @@
 
 #include "navigator.h"
 #include "docks/utils.h"
-using docks::NavigatorView; // to satisfy ui_navibox
-#include "ui_navibox.h"
 
 #include <QMouseEvent>
 #include <QWindow>
@@ -135,46 +133,27 @@ Navigator::Navigator(QWidget *parent)
 	: QDockWidget(tr("Navigator"), parent)
 {
 	setObjectName("navigatordock");
-	
-	QWidget *w = new QWidget(this);
-	_ui = new Ui_NaviBox();
-	_ui->setupUi(w);
 
 	setStyleSheet(defaultDockStylesheet());
 
-	connect(_ui->view, SIGNAL(focusMoved(const QPoint&)),
+	_view = new NavigatorView(this);
+	setWidget(_view);
+
+	connect(_view, SIGNAL(focusMoved(const QPoint&)),
 			this, SIGNAL(focusMoved(const QPoint&)));
-	
-	connect(_ui->zoomin, SIGNAL(pressed()), this, SIGNAL(zoomIn()));
-	connect(_ui->zoomout, SIGNAL(pressed()), this, SIGNAL(zoomOut()));
-	connect(_ui->angle, SIGNAL(valueChanged(double)), this, SIGNAL(angleChanged(qreal)));
-
-	setWidget(w);
-}
-
-Navigator::~Navigator()
-{
-	delete _ui;
 }
 
 void Navigator::setScene(QGraphicsScene *scene)
 {
-	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _ui->view, SLOT(rescale()));
-	_ui->view->setScene(scene);
-	_ui->view->rescale();
+	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _view, SLOT(rescale()));
+	_view->setScene(scene);
+	_view->rescale();
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)
 {
-	_ui->view->setViewFocus(rect);
+	_view->setViewFocus(rect);
 }
 
-void Navigator::setViewTransform(qreal zoom, qreal angle)
-{
-	Q_UNUSED(zoom);
-	_ui->angle->blockSignals(true);
-	_ui->angle->setValue(angle);
-	_ui->angle->blockSignals(false);
-}
 }
 

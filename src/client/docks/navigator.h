@@ -21,8 +21,6 @@
 #include <QDockWidget>
 #include <QGraphicsView>
 
-class Ui_NaviBox;
-
 namespace docks {
 
 //! Navigator graphics view
@@ -60,7 +58,6 @@ class Navigator
 	Q_OBJECT
 public:
 	Navigator(QWidget *parent);
-	~Navigator();
 	
 	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
@@ -69,17 +66,11 @@ public slots:
 	//! Move the view focus rectangle
 	void setViewFocus(const QPolygonF& rect);
 
-	//! Set the transform controls
-	void setViewTransform(qreal zoom, qreal angle);
-
 signals:
-	void zoomIn();
-	void zoomOut();
 	void focusMoved(const QPoint& to);
-	void angleChanged(qreal angle);
 	
 private:
-	Ui_NaviBox *_ui;
+	NavigatorView *_view;
 };
 
 }
