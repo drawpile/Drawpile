@@ -1855,10 +1855,10 @@ void MainWindow::setupActions()
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
 #endif
 
-	QAction *expandup = makeAction("expandup", 0, tr("Expand Up"), "", QKeySequence(CTRL_KEY "+J"));
-	QAction *expanddown = makeAction("expanddown", 0, tr("Expand Down"), "", QKeySequence(CTRL_KEY "+K"));
-	QAction *expandleft = makeAction("expandleft", 0, tr("Expand Left"), "", QKeySequence(CTRL_KEY "+H"));
-	QAction *expandright = makeAction("expandright", 0, tr("Expand Right"), "", QKeySequence(CTRL_KEY "+L"));
+	QAction *expandup = makeAction("expandup", 0, tr("Expand &Up"), "", QKeySequence(CTRL_KEY "+J"));
+	QAction *expanddown = makeAction("expanddown", 0, tr("Expand &Down"), "", QKeySequence(CTRL_KEY "+K"));
+	QAction *expandleft = makeAction("expandleft", 0, tr("Expand &Left"), "", QKeySequence(CTRL_KEY "+H"));
+	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
 	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG Color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
@@ -1920,7 +1920,7 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 
 	editmenu->addAction(resize);
-	QMenu *expandmenu = editmenu->addMenu(tr("Expand Canvas"));
+	QMenu *expandmenu = editmenu->addMenu(tr("&Expand Canvas"));
 	expandmenu->addAction(expandup);
 	expandmenu->addAction(expanddown);
 	expandmenu->addAction(expandleft);
