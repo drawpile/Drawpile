@@ -72,6 +72,12 @@ void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 	_dragging = false;
 }
 
+void NavigatorView::wheelEvent(QWheelEvent *)
+{
+	// disable scrolling
+	// the view is scaled so the whole scene is always visible.
+}
+
 /**
  * The focus rectangle represents the visible area in the
  * main viewport.
@@ -106,13 +112,15 @@ void NavigatorView::rescale()
 		w = w->parentWidget();
 	} while(w!=nullptr);
 
-	QRectF ss = scene()->sceneRect();
+	const qreal padding = 300; // ignore scene padding
+	QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
 
 	qreal x = qreal(width()) / ss.width();
 	qreal y = qreal(height()-5) / ss.height();
 	qreal min = qMin(x, y) * dpr;
 
 	scale(min, min);
+	centerOn(scene()->sceneRect().center());
 	viewport()->update();
 }
 
