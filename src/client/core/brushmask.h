@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,6 +54,15 @@ private:
 	QVector<uchar> _data;
 };
 
+struct BrushStamp {
+	int left;
+	int top;
+	BrushMask mask;
+
+	BrushStamp() : left(0), top(0) { }
+	BrushStamp(int x, int y, const BrushMask &m) : left(x), top(y), mask(m) { }
+};
+
 class BrushMaskGenerator
 {
 public:
@@ -62,17 +71,19 @@ public:
 
 	static const BrushMaskGenerator &cached(const Brush &brush);
 
-	BrushMask make(float pressure) const;
-	BrushMask make(float xfrac, float yfrac, float pressure) const;
+	BrushStamp make(float x, float y, float pressure, bool subpixel) const;
 
 private:
 	void buildLUT(const Brush &brush);
+	BrushStamp makeMask(float pressure) const;
+	BrushStamp makeHighresMask(float pressure) const;
+	BrushMask offsetMask(const BrushMask &mask, float xfrac, float yfrac) const;
 
 	QVector<uchar> _lut;
 	QVector<uint> _index;
 	QVector<float> _radius;
 	bool _usepressure;
-	mutable QCache<int, BrushMask> _cache;
+	mutable QCache<int, BrushStamp> _cache;
 };
 
 }

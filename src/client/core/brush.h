@@ -32,16 +32,16 @@ class Brush
 {
 public:
 	//! Construct a brush
-	Brush(int radius=0, qreal hardness=1.0, qreal opacity=1.0,
+	Brush(int size=1, qreal hardness=1.0, qreal opacity=1.0,
 			const QColor& color=Qt::black, int spacing=25);
 
-	//! Set radius heavy brush
-	void setRadius(int radius) { Q_ASSERT(radius>=0); _radius1  = radius; }
-	//! Set radius for light brush
-	void setRadius2(int radius) { Q_ASSERT(radius>=0); _radius2  = radius; }
+	//! Set size for heavy brush
+	void setSize(int size) { Q_ASSERT(size>0); _size1 = size; }
+	//! Set size for light brush
+	void setSize2(int size) { Q_ASSERT(size>0); _size2 = size; }
 
-	int radius1() const { return _radius1; }
-	int radius2() const { return _radius2; }
+	int size1() const { return _size1; }
+	int size2() const { return _size2; }
 
 	//! Set hardness for heavy brush
 	void setHardness(qreal hardness) { Q_ASSERT(hardness>=0 && hardness<=1); _hardness1 = hardness; }
@@ -79,11 +79,8 @@ public:
 	void setBlendingMode(int mode) { _blend = mode; }
 	int blendingMode() const { return _blend; }
 
-	//! Get interpolated radius
-	int radius(qreal pressure) const;
-	qreal fradius(qreal pressure) const;
-	//! Get the diameter of the rendered brush
-	int diameter(qreal pressure) const;
+	//! Get interpolated size
+	qreal fsize(qreal pressure) const;
 	//! Get interpolated hardness
 	qreal hardness(qreal pressure) const;
 	//! Get interpolated opacity
@@ -103,7 +100,7 @@ public:
 	bool operator!=(const Brush& brush) const;
 
 private:
-	int _radius1, _radius2;
+	int _size1, _size2;
 	qreal _hardness1, _hardness2;
 	qreal _opacity1, _opacity2;
 	QColor _color1, _color2;

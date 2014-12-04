@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ static QCache<BrushCacheKey, BrushMaskGenerator> BMG_CACHE(10);
 
 BrushCacheKey brushCacheKey(const Brush &brush) {
 	// the cache key includes only the parameters that affect mask generation
-	return (brush.radius1() << 8) | (brush.radius2() << 16) |
+	return (brush.size1() << 8) | (brush.size2() << 16) |
 			(quint64(brush.hardness1()*255) << 24) | (quint64(brush.hardness2()*255) << 32) |
 			(quint64(brush.opacity1()*255) << 40) | (quint64(brush.opacity2()*255) << 48);
 }
@@ -73,6 +73,52 @@ BrushMaskGenerator::BrushMaskGenerator(const Brush &brush)
 	buildLUT(brush);
 }
 
+BrushStamp BrushMaskGenerator::make(float x, float y, float pressure, bool subpixel) const
+{
+	BrushStamp s;
+
+	if(subpixel) {
+
+		// optimization: don't bother with a high resolution mask for large brushes
+		float radius = _radius.at(_usepressure ? pressure2int(pressure) : 0);
+
+		if(radius < 4)
+			s = makeHighresMask(pressure);
+		else
+			s = makeMask(pressure);
+
+
+		const float fx = floor(x);
+		const float fy = floor(y);
+		s.left += fx;
+		s.top += fy;
+
+		float xfrac = x-fx;
+		float yfrac = y-fy;
+
+		if(xfrac<0.5) {
+			xfrac += 0.5;
+			s.left--;
+		} else
+			xfrac -= 0.5;
+
+		if(yfrac<0.5) {
+			yfrac += 0.5;
+			s.top--;
+		} else
+			yfrac -= 0.5;
+
+		s.mask = offsetMask(s.mask, xfrac, yfrac);
+
+	} else {
+		s = makeMask(pressure);
+		s.left += x;
+		s.top += y;
+	}
+
+	return s;
+}
+
 void _buildLUT(float radius, float opacity, float hardness, int len, uchar *lut)
 {
 	// GIMP style brush shape
@@ -91,7 +137,7 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 {
 	// First, determine if the brush shape depends on pressure
 	_usepressure =
-		brush.radius1() != brush.radius2() ||
+		brush.size1() != brush.size2() ||
 		qAbs(brush.hardness1() - brush.hardness2()) >= (1/256.0) ||
 		qAbs(brush.opacity1() - brush.opacity2()) >= (1/256.0)
 		;
@@ -105,7 +151,7 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 
 		for(int i=0;i<PRESSURE_LEVELS;++i) {
 			float p = int2pressure(i);
-			float radius = brush.fradius(p);
+			float radius = brush.fsize(p)/2.0;
 			_radius.append(radius);
 			len += ceil(radius*radius);
 			_index.append(len);
@@ -118,8 +164,8 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 			_buildLUT(_radius.at(i), brush.opacity(p), brush.hardness(p), _index.at(i+1)-_index.at(i), _lut.data() + _index.at(i));
 		}
 	} else {
-		// Shape not affected by pressure: only lookup table needed
-		float radius = brush.fradius(1.0);
+		// Shape not affected by pressure: only one lookup table needed
+		float radius = brush.size1()/2.0;
 		int len = ceil(radius*radius);
 		_lut.resize(len);
 		_index.append(len);
@@ -128,7 +174,7 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 	}
 }
 
-BrushMask BrushMaskGenerator::make(float pressure) const
+BrushStamp BrushMaskGenerator::makeMask(float pressure) const
 {
 	float r;
 	int lut_len;
@@ -147,36 +193,136 @@ BrushMask BrushMaskGenerator::make(float pressure) const
 	}
 
 	// check cache first
-	BrushMask *cached = _cache[p];
-	if(cached)
-		return *cached;
+	if(_cache.contains(p))
+		return *_cache[p];
 
-	const int diameter = int(r*2) + 1;
-
+	// generate mask
 	QVector<uchar> data;
-	data.resize(square(diameter));
-	uchar *ptr = data.data();
+	int diameter;
+	int stampOffset;
 
-	for(int y=0;y<diameter;++y) {
-		const qreal yy = square(y-r+0.5);
-		for(int x=0;x<diameter;++x) {
-			const int dist = int(square(x-r+0.5) + yy);
-			*(ptr++) = dist<lut_len ? lut[dist] : 0;
+	if(r<1) {
+		// special case for single pixel brush
+		diameter=3;
+		stampOffset = -1;
+		data.resize(3*3);
+		data.fill(0);
+		data[4] = lut[0];
+
+	} else {
+		float offset;
+		float fudge=1;
+		diameter = ceil(r*2) + 2;
+
+		if(diameter%2==0) {
+			++diameter;
+			offset = -1.0;
+		} else {
+			offset = -0.5;
+		}
+		stampOffset = -diameter/2;
+
+		// empirically determined fudge factors to make small brushes look nice
+		if(r<1.5)
+			fudge=0.9;
+		else if(r<2)
+			fudge=0.9;
+		else if(r<2.5)
+			fudge=0.6;
+		else if(r<3)
+			fudge=0.8;
+
+		data.resize(square(diameter));
+		uchar *ptr = data.data();
+
+		for(int y=0;y<diameter;++y) {
+			const qreal yy = square(y-r+offset);
+			for(int x=0;x<diameter;++x) {
+				const int dist = int((square(x-r+offset) + yy) * fudge);
+				*(ptr++) = dist<lut_len ? lut[qMin(lut_len-1,dist)] : 0;
+			}
 		}
 	}
 
-	BrushMask *bm = new BrushMask(diameter, data);
-	_cache.insert(p, bm);
+	BrushStamp *bs = new BrushStamp(stampOffset, stampOffset, BrushMask(diameter, data));
+	_cache.insert(p, bs);
 
-	return *bm;
+	return *bs;
 }
 
-BrushMask BrushMaskGenerator::make(float xfrac, float yfrac, float pressure) const
+BrushStamp BrushMaskGenerator::makeHighresMask(float pressure) const
+{
+	float r;
+	int lut_len;
+	const uchar *lut;
+	if(_usepressure) {
+		int p = pressure2int(pressure);
+		lut = _lut.data() + _index.at(p);
+		lut_len = _index.at(p+1) - _index.at(p);
+		r = _radius.at(p);
+	} else {
+		lut = _lut.data();
+		lut_len = _index.at(0);
+		r = _radius.at(0);
+	}
+
+	// we calculate a double sized brush and downsample
+	r *= 2;
+
+	// generate mask
+	int diameter;
+	int stampOffset;
+
+	float offset;
+	float fudge=1;
+	diameter = ceil(r) + 2; // abstract brush is double size, but target diameter is normal
+
+	if(diameter%2==0) {
+		++diameter;
+		offset = -2.5;
+	} else {
+		offset = -1.5;
+	}
+	stampOffset = -diameter/2;
+
+	// empirically determined fudge factors to make small brushes look nice
+	if(r<1.3)
+		fudge=2;
+
+	QVector<uchar> data(square(diameter));
+	uchar *ptr = data.data();
+
+	for(int y=0;y<diameter;++y) {
+		const qreal yy0 = square(y*2-r+offset);
+		const qreal yy1 = square(y*2+1-r+offset);
+
+		for(int x=0;x<diameter;++x) {
+			const qreal xx0 = square(x*2-r+offset);
+			const qreal xx1 = square(x*2+1-r+offset);
+
+			const int dist00 = int((xx0 + yy0) * fudge / 4.0);
+			const int dist01 = int((xx0 + yy1) * fudge / 4.0);
+			const int dist10 = int((xx1 + yy0) * fudge / 4.0);
+			const int dist11 = int((xx1 + yy1) * fudge / 4.0);
+
+			*(ptr++) =
+					((dist00<lut_len ? lut[dist00] : 0) +
+					(dist01<lut_len ? lut[dist01] : 0) +
+					(dist10<lut_len ? lut[dist10] : 0) +
+					(dist11<lut_len ? lut[dist11] : 0)) / 4
+					;
+
+		}
+	}
+
+	return BrushStamp(stampOffset, stampOffset, BrushMask(diameter, data));
+}
+
+BrushMask BrushMaskGenerator::offsetMask(const BrushMask &mask, float xfrac, float yfrac) const
 {
 	Q_ASSERT(xfrac>=0 && xfrac<=1);
 	Q_ASSERT(yfrac>=0 && yfrac<=1);
 
-	const BrushMask mask = make(pressure);
 	const int diameter = mask.diameter();
 
 	const qreal kernel[] = {

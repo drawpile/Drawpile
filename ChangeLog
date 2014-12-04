@@ -10,6 +10,8 @@
  * Added network statistics dialog
  * Color picker cursor is now set when quick colorpicking
  * Simplified navigator dock
+ * Brush size adjustment now sets brush diameter instead of radius
+ * Slightly smoother antialised (thin) brush stroke rendering
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

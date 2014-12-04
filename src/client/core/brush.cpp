@@ -24,7 +24,7 @@ namespace paintcore {
 
 /**
  * \brief Linear interpolation
- * This is used to figure out correct radius, opacity, hardness and
+ * This is used to figure out correct size, opacity, hardness and
  * color values.
  */
 inline qreal interpolate(qreal a, qreal b, qreal alpha)
@@ -37,58 +37,36 @@ inline qreal interpolate(qreal a, qreal b, qreal alpha)
 /**
  * A brush with the specified settings is constructed. The brush is
  * pressure insensitive by default.
- * @param radius brush radius. Zero means a single pixel brush
+ * @param size brush size. Zero means a single pixel brush
  * @param hardness brush hardness
  * @param opacity brush opacity
  * @param color brush color
- * @param spacing brush spacing hint, as percentage of brush radius
+ * @param spacing brush spacing hint, as percentage of brush size
  */
-Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int spacing)
-	: _radius1(radius), _radius2(radius),
+Brush::Brush(int size, qreal hardness, qreal opacity, const QColor& color, int spacing)
+	: _size1(size), _size2(size),
 	_hardness1(hardness), _hardness2(hardness),
 	_opacity1(opacity), _opacity2(opacity),
 	_color1(color), _color2(color), _spacing(spacing), _blend(1),
 	_subpixel(false), _incremental(true)
 {
-	Q_ASSERT(radius>=0);
+	Q_ASSERT(size>0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
 	Q_ASSERT(opacity>=0 && opacity <=1);
 	Q_ASSERT(spacing>=0 && spacing <=100);
 }
 
 /**
- * Get the brush radius for certain pressure.
- * @param pressure pen pressure
- * @return radius
- * @pre 0 <= pressure <= 1
- * @post 0 <= RESULT
- */
-int Brush::radius(qreal pressure) const
-{
-	return qRound(interpolate(radius1(), radius2(), pressure));
-}
-
-/**
- * @brief Get the real radius for the given pressure
+ * @brief Get the real size for the given pressure
  * @param pressure
- * @return radius
+ * @return size
  * @pre 0 <= pressure <= 1
  * @post 0.5 <= RESULT
  */
-qreal Brush::fradius(qreal pressure) const
+qreal Brush::fsize(qreal pressure) const
 {
-	return qMax(0.5, interpolate(radius1(), radius2(), pressure));
-}
-
-/**
- * Get the diameter of the brush for certain pressure.
- * @param pressure pen pressure
- * @return diameter
- * @post 0 < RESULT
- */
-int Brush::diameter(qreal pressure) const
-{
-	return qMax(0.5, interpolate(radius1(), radius2(), pressure))*2;
+	//return qMax(0.5, interpolate(size1(), size2(), pressure));
+	return interpolate(size1(), size2(), pressure);
 }
 
 /**
@@ -132,7 +110,7 @@ QColor Brush::color(qreal pressure) const
 
 qreal Brush::spacingDist(qreal pressure) const
 {
-	return spacing() * radius(pressure)/100.0;
+	return spacing() / 100.0 * fsize(pressure);
 }
 
 bool Brush::isOpacityVariable() const
@@ -149,7 +127,7 @@ bool Brush::isIdempotent() const
 
 bool Brush::operator==(const Brush& brush) const
 {
-	return radius1() == brush.radius1() && radius2() == brush.radius2() &&
+	return size1() == brush.size1() && size2() == brush.size2() &&
 			qAbs(hardness1() - brush.hardness1()) <= 1.0/256.0 &&
 			qAbs(hardness2() - brush.hardness2()) <= 1.0/256.0 &&
 			qAbs(opacity1() - brush.opacity1()) <= 1.0/256.0 &&

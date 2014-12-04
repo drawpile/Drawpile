@@ -72,7 +72,7 @@
         <string>Incremental drawing</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="icons/builtin/builtin.qrc">
          <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
        </property>
        <property name="checkable">
@@ -86,7 +86,7 @@
         <string>Hard edge</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="icons/builtin/builtin.qrc">
          <normaloff>:/icons/builtin/hardedge.png</normaloff>:/icons/builtin/hardedge.png</iconset>
        </property>
        <property name="checkable">
@@ -120,8 +120,11 @@
      </item>
      <item row="0" column="1">
       <widget class="QSlider" name="brushsize">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>64</number>
+        <number>128</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -187,10 +190,10 @@
         <string>px</string>
        </property>
        <property name="minimum">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="maximum">
-        <number>64</number>
+        <number>128</number>
        </property>
       </widget>
      </item>
@@ -259,7 +262,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons/icons.qrc"/>
+  <include location="icons/builtin/builtin.qrc"/>
  </resources>
  <connections>
   <connection>

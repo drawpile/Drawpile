@@ -50,7 +50,7 @@ namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
-	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
+	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(0),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_locked(false), _pointertracking(false), _enableTabletEvents(true)
@@ -197,18 +197,17 @@ void CanvasView::setOutline(bool enable)
 /**
  * @param radius circle radius
  */
-void CanvasView::setOutlineRadius(int radius)
+void CanvasView::setOutlineSize(int size)
 {
-	int updatesize = _outlinesize;
-	_outlinesize = radius;
-	_dia = radius*2;
+	float updatesize = _outlinesize;
+	_outlinesize = size;
 	if(_enableoutline && _showoutline) {
 		if(_outlinesize>updatesize)
 			updatesize = _outlinesize;
 		QList<QRectF> rect;
-		rect.append(QRectF(_prevoutlinepoint.x() - updatesize,
-					_prevoutlinepoint.y() - updatesize,
-					updatesize*2, updatesize*2));
+		rect.append(QRectF(_prevoutlinepoint.x() - updatesize/2,
+					_prevoutlinepoint.y() - updatesize/2,
+					updatesize, updatesize));
 		updateScene(rect);
 	}
 }
@@ -221,8 +220,8 @@ void CanvasView::setOutlineSubpixelMode(bool subpixel)
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(_enableoutline && _showoutline && _outlinesize>1 && !_locked) {
-		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize,_outlinesize),
-					QSizeF(_dia, _dia));
+		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2,_outlinesize/2),
+					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
 			painter->save();
 			QPen pen(Qt::white);
@@ -633,10 +632,19 @@ void CanvasView::updateOutline(paintcore::Point point) {
 	}
 	if(_enableoutline && _showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
 		QList<QRectF> rect;
-		rect.append(QRectF(_prevoutlinepoint.x() - _outlinesize,
-					_prevoutlinepoint.y() - _outlinesize, _dia, _dia));
-		rect.append(QRectF(point.x() - _outlinesize,
-					point.y() - _outlinesize, _dia, _dia));
+		const float oR = _outlinesize / 2;
+		rect.append(QRectF(
+					_prevoutlinepoint.x() - oR,
+					_prevoutlinepoint.y() - oR,
+					_outlinesize,
+					_outlinesize
+				));
+		rect.append(QRectF(
+						point.x() - oR,
+						point.y() - oR,
+						_outlinesize,
+						_outlinesize
+					));
 		updateScene(rect);
 		_prevoutlinepoint = point;
 	}
@@ -645,9 +653,9 @@ void CanvasView::updateOutline(paintcore::Point point) {
 void CanvasView::updateOutline()
 {
 	QList<QRectF> rect;
-	rect.append(QRectF(_prevoutlinepoint.x() - _outlinesize,
-				_prevoutlinepoint.y() - _outlinesize,
-				_dia, _dia));
+	rect.append(QRectF(_prevoutlinepoint.x() - _outlinesize/2,
+				_prevoutlinepoint.y() - _outlinesize/2,
+				_outlinesize, _outlinesize));
 	updateScene(rect);
 
 }

@@ -186,9 +186,9 @@ void BrushPreview::setBrush(const paintcore::Brush& brush)
  */
 void BrushPreview::setSize(int size)
 {
-	brush_.setRadius(size);
+	brush_.setSize(size);
 	if(sizepressure_==false)
-		brush_.setRadius2(size);
+		brush_.setSize2(size);
 	updatePreview();
 	update();
 }
@@ -236,9 +236,9 @@ void BrushPreview::setSizePressure(bool enable)
 {
 	sizepressure_ = enable;
 	if(enable)
-		brush_.setRadius2(0);
+		brush_.setSize2(1);
 	else
-		brush_.setRadius2(brush_.radius1());
+		brush_.setSize2(brush_.size1());
 	updatePreview();
 	update();
 }

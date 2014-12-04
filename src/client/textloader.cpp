@@ -261,13 +261,13 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 		else if(i.key() == "hardl")
 			ctx.brush.setHardness2(str2real(i.value()));
 		else if(i.key() == "size") {
-			int val = str2int(i.value());
-			ctx.brush.setRadius(val);
-			ctx.brush.setRadius2(val);
+			int val = qMax(1, str2int(i.value())) * 2;
+			ctx.brush.setSize(val);
+			ctx.brush.setSize2(val);
 		} else if(i.key() == "sizeh")
-			ctx.brush.setRadius(str2int(i.value()));
+			ctx.brush.setSize(qMax(1, str2int(i.value())) * 2);
 		else if(i.key() == "sizel")
-			ctx.brush.setRadius2(str2int(i.value()));
+			ctx.brush.setSize2(qMax(1, str2int(i.value())) * 2);
 		else if(i.key() == "opacity") {
 			qreal r = str2real(i.value());
 			ctx.brush.setOpacity(r);

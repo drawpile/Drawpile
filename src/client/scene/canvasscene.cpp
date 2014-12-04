@@ -443,14 +443,14 @@ void CanvasScene::sendSnapshot(bool forcenew)
 
 QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
 {
-	const int rad = brush.radius(1.0);
+	const int size = brush.size2();
 	QColor color = brush.color(1.0);
 	QPen pen;
-	if(rad==0) {
+	if(size<=1) {
 		pen.setWidth(1);
 		color.setAlphaF(brush.opacity(1.0));
 	} else {
-		pen.setWidth(rad*2);
+		pen.setWidth(size);
 		pen.setCapStyle(Qt::RoundCap);
 		pen.setJoinStyle(Qt::RoundJoin);
 		// Approximate brush transparency

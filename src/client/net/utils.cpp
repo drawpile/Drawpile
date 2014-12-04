@@ -111,8 +111,8 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::B
 		brush.color2().rgba(),
 		brush.hardness1() * 255,
 		brush.hardness2() * 255,
-		brush.radius1(),
-		brush.radius2(),
+		brush.size1(),
+		brush.size2(),
 		brush.opacity1() * 255,
 		brush.opacity2() * 255
 	));

@@ -117,8 +117,8 @@ class CanvasView : public QGraphicsView
 		//! Select the currently active layer
 		void selectLayer(int layer_id);
 		
-		//! Set the radius of the brush preview outline
-		void setOutlineRadius(int radius);
+		//! Set the size of the brush preview outline
+		void setOutlineSize(int size);
 
 		//! Enable subpixel precision for brush preview outline
 		void setOutlineSubpixelMode(bool subpixel);
@@ -231,7 +231,7 @@ class CanvasView : public QGraphicsView
 		qreal _gestureStartZoom;
 		qreal _gestureStartAngle;
 
-		int _outlinesize, _dia;
+		float _outlinesize;
 		bool _enableoutline, _showoutline, _subpixeloutline;
 		QCursor _cursor, _colorpickcursor;
 

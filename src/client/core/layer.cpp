@@ -674,35 +674,17 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point)
 {
 	// Render the brush
-	BrushMask bm;
-	int top, left;
-
-	if(brush.subpixel()) {
-		const float fradius = brush.fradius(point.pressure());
-		const float fx = point.x() - fradius;
-		const float fy = point.y() - fradius;
-
-		top = floor(fy);
-		left = floor(fx);
-
-		bm = mask.make(fx - left, fy - top, point.pressure());
-
-	} else {
-		const int radius = brush.radius(point.pressure());
-		top = point.y() - radius;
-		left = point.x() - radius;
-
-		bm = mask.make(point.pressure());
-	}
-
-	const int dia = bm.diameter();
+	const BrushStamp bs = mask.make(point.x(), point.y(), point.pressure(), brush.subpixel());
+	const int top=bs.top, left=bs.left;
+	const int dia = bs.mask.diameter();
 	const int bottom = qMin(top + dia, _height);
 	const int right = qMin(left + dia, _width);
+
 	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
 		return;
 
 	// Composite the brush mask onto the layer
-	const uchar *values = bm.data();
+	const uchar *values = bs.mask.data();
 	QColor color = brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.
