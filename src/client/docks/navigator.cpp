@@ -100,24 +100,13 @@ void NavigatorView::setViewFocus(const QPolygonF& rect)
 void NavigatorView::rescale()
 {
 	resetTransform();
-	
-	qreal dpr = 1;
-	QWidget *w = this;
-	do {
-		QWindow *wh = w->windowHandle();
-		if(wh) {
-			dpr = wh->devicePixelRatio();
-			break;
-		}
-		w = w->parentWidget();
-	} while(w!=nullptr);
 
 	const qreal padding = 300; // ignore scene padding
 	QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
 
 	qreal x = qreal(width()) / ss.width();
 	qreal y = qreal(height()-5) / ss.height();
-	qreal min = qMin(x, y) * dpr;
+	qreal min = qMin(x, y);
 
 	scale(min, min);
 	centerOn(scene()->sceneRect().center());
