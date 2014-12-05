@@ -32,7 +32,6 @@ namespace docks {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
 	  _visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
 	  _hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16))
 {
@@ -43,13 +42,14 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	QStyleOptionViewItem opt = setOptions(index, option);
 	painter->save();
 
+	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+
+	if(layer.isLockedFor(_client->myId()))
+		opt.state &= ~QStyle::State_Enabled;
+
 	drawBackground(painter, option, index);
 
 	QRect textrect = opt.rect;
-
-	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
-
-	const QSize locksize = _lockicon.size();
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
@@ -57,15 +57,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
-	textrect.setWidth(textrect.width() - locksize.width());
 	drawDisplay(painter, opt, textrect, layer.title);
-
-	// Draw lock icon
-	if(layer.isLockedFor(_client->myId()))
-		painter->drawPixmap(
-			opt.rect.topRight()-QPoint(locksize.width(), -opt.rect.height()/2+locksize.height()/2),
-			_lockicon
-		);
 
 	painter->restore();
 }
@@ -90,7 +82,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = _lockicon.size();
+	const QSize iconsize = _visibleicon.size();
 	QFontMetrics fm(option.font);
 	int minheight = qMax(fm.height() * 3 / 2, iconsize.height()) + 2;
 	if(size.height() < minheight)

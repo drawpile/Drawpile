@@ -54,7 +54,6 @@ private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;
 
 	net::Client *_client;
-	QPixmap _lockicon;
 	QPixmap _visibleicon;
 	QPixmap _hiddenicon;
 };
