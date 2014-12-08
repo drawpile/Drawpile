@@ -1780,7 +1780,7 @@ void MainWindow::setupActions()
 	QAction *closefile = makeAction("closedocument", 0, tr("Close"), QString(), QKeySequence::Close);
 #endif
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", 0, tr("Save &As..."));
+	QAction *saveas = makeAction("savedocumentas", 0, tr("Save &As..."), QString(), QKeySequence::SaveAs);
 	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
@@ -1850,7 +1850,7 @@ void MainWindow::setupActions()
 
 	QAction *selectall = makeAction("selectall", 0, tr("Select &All"), QString(), QKeySequence::SelectAll);
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"));
+	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence(Shift+Ctrl+A));
 #else
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
 #endif
