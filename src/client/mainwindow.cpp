@@ -1849,7 +1849,7 @@ void MainWindow::setupActions()
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces")); preferences->setMenuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", 0, tr("Select &All"), QString(), QKeySequence::SelectAll);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0) || defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence(Shift+Ctrl+A));
 #else
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
