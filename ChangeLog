@@ -12,6 +12,7 @@
  * Simplified navigator dock
  * Brush size adjustment now sets brush diameter instead of radius
  * Slightly smoother antialised (thin) brush stroke rendering
+ * Fixed tablet event handling when running on Qt 5.4
 
 2014-10-17 Version 0.9.5
  * Added Czech translation
