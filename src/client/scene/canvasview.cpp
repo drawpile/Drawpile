@@ -559,6 +559,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
 		updateOutline(point);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 		if(!_isdragging && tabev->buttons() & Qt::MidButton) {
 			ViewTransform mode;
 
@@ -573,26 +574,34 @@ bool CanvasView::viewportEvent(QEvent *event)
 			startDrag(tabev->x(), tabev->y(), mode);
 
 		} else {
+#endif
 			if(!_prevpoint.intSame(point)) {
 				if(_isdragging)
 					moveDrag(tabev->x(), tabev->y());
 				else {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+					const bool rightbutton = tabev->buttons() & Qt::RightButton;
+#else
+					const bool rightbutton = false;
+#endif
 					if(_pendown) {
 						if(_prevpoint.x() == -999) {
 							// start of a new stroke
 							_prevpoint = point;
-							onPenDown(point, tabev->buttons() & Qt::RightButton);
+							onPenDown(point, rightbutton);
 						} else {
 							_pointervelocity = point.distance(_prevpoint);
 							_pointerdistance += _pointervelocity;
 							point.setPressure(mapPressure(point.pressure(), true));
-							onPenMove(point, tabev->buttons() & Qt::RightButton, tabev->modifiers() & Qt::ShiftModifier, tabev->modifiers() & Qt::AltModifier);
+							onPenMove(point, rightbutton, tabev->modifiers() & Qt::ShiftModifier, tabev->modifiers() & Qt::AltModifier);
 						}
 					}
 				}
 				_prevpoint = point;
 			}
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 		}
+#endif
 
 	} else if(event->type() == QEvent::TabletPress && _enableTabletEvents) {
 		// Stylus touches the tablet surface
