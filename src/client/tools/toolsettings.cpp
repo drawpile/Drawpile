@@ -985,7 +985,8 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_FillSettings;
 	_ui->setupUi(uiwidget);
 
-	parent->connect(_ui->fillColor, SIGNAL(colorChanged(QColor)), parent, SLOT(setForegroundColor(QColor)));
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
 	return uiwidget;
 }
@@ -1016,8 +1017,16 @@ ToolProperties FillSettings::saveToolSettings()
 
 void FillSettings::setForeground(const QColor &color)
 {
-	_ui->fillColor->setColor(color);
+	// note: colors are swapped, because brushpreview widget uses
+	// the background color as the fill color
+	_ui->preview->setColor2(color);
 	BrushlessSettings::setForeground(color);
+}
+
+void FillSettings::setBackground(const QColor &color)
+{
+	_ui->preview->setColor1(color);
+	BrushlessSettings::setBackground(color);
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)

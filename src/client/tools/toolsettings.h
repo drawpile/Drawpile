@@ -437,6 +437,7 @@ public:
 
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;
+	void setBackground(const QColor &color) override;
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

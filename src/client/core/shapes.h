@@ -29,6 +29,10 @@ namespace shapes {
 PointVector rectangle(const QRectF &rect);
 PointVector ellipse(const QRectF &rect);
 
+// These are used for brush previews
+PointVector sampleStroke(const QRectF &rect);
+PointVector sampleBlob(const QRectF &rect);
+
 }
 }
 

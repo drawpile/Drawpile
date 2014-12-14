@@ -18,14 +18,6 @@
 */
 #include <QDebug>
 
-// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-#include <cmath>
-#define qSin sin
-#else
-#include <QtMath>
-#endif
-
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
@@ -35,6 +27,7 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/shapes.h"
+#include "core/floodfill.h"
 #include "brushpreview.h"
 
 #ifndef DESIGNER_PLUGIN
@@ -45,7 +38,7 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), preview_(0), sizepressure_(false),
 	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
 	color1_(Qt::black), color2_(Qt::white),
-	shape_(Stroke)
+	shape_(Stroke), _fillTolerance(0), _fillExpansion(0), _tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
@@ -67,6 +60,13 @@ void BrushPreview::setPreviewShape(PreviewShape shape)
 	update();
 }
 
+void BrushPreview::setTransparentBackground(bool transparent)
+{
+	_tranparentbg = transparent;
+	_needupdate = true;
+	update();
+}
+
 void BrushPreview::setColor1(const QColor& color)
 {
 	color1_ = color;
@@ -82,6 +82,20 @@ void BrushPreview::setColor2(const QColor& color)
 	color2_ = color;
 	if(colorpressure_)
 		brush_.setColor2(color);
+	_needupdate = true;
+	update();
+}
+
+void BrushPreview::setFloodFillTolerance(int tolerance)
+{
+	_fillTolerance = tolerance;
+	_needupdate = true;
+	update();
+}
+
+void BrushPreview::setFloodFillExpansion(int expansion)
+{
+	_fillExpansion = expansion;
 	_needupdate = true;
 	update();
 }
@@ -132,41 +146,41 @@ void BrushPreview::updatePreview()
 		preview_->resize(0, contentsRect().width() - preview_->width(), contentsRect().height() - preview_->height(), 0);
 	}
 
-	const int strokew = preview_->width() - preview_->width()/4;
-	const qreal strokeh = preview_->height() / 4.0;
-	const int offx = preview_->width()/8;
-	const qreal offy = preview_->height()/2.0;
-
+	QRectF previewRect(
+		preview_->width()/8,
+		preview_->height()/4,
+		preview_->width()-preview_->width()/4,
+		preview_->height()-preview_->height()/2
+	);
 	paintcore::PointVector pointvector;
 
-	if(shape_ == Stroke) {
-		const qreal dphase = (2*M_PI)/qreal(strokew);
-		qreal phase = 0;
-
-		pointvector << paintcore::Point(offx, offy, 0.0);
-		for(int x=0;x<strokew;++x, phase += dphase) {
-
-			const qreal fx = x/qreal(strokew);
-			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
-			const qreal y = qSin(phase) * strokeh;
-			pointvector << paintcore::Point(offx+x, offy+y, pressure);
-		}
-	} else if(shape_ == Line) {
-		pointvector << paintcore::Point(offx, offy + strokeh, 1.0) << paintcore::Point(offx+strokew, offy - strokeh, 1.0);
-	} else if(shape_ == Rectangle) {
-		pointvector = paintcore::shapes::rectangle(QRectF(offx, offy-strokeh, strokew, strokeh*2));
-	} else {
-		pointvector = paintcore::shapes::ellipse(QRectF(offx, offy-strokeh, strokew, strokeh*2));
+	switch(shape_) {
+	case Stroke: pointvector = paintcore::shapes::sampleStroke(previewRect); break;
+	case Line:
+		pointvector
+			<< paintcore::Point(previewRect.left(), previewRect.top(), 1.0)
+			<< paintcore::Point(previewRect.right(), previewRect.bottom(), 1.0);
+		break;
+	case Rectangle: pointvector = paintcore::shapes::rectangle(previewRect); break;
+	case Ellipse: pointvector = paintcore::shapes::ellipse(previewRect); break;
+	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
 	paintcore::Layer *layer = preview_->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), color2_);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : color2_);
 
 	qreal distance = 0;
 	for(int i=1;i<pointvector.size();++i)
 		layer->drawLine(0, brush_, pointvector[i-1], pointvector[i], distance);
 
 	layer->mergeSublayer(0);
+
+	if(shape_ == FloodFill) {
+		paintcore::FillResult fr = paintcore::floodfill(preview_, previewRect.center().toPoint(), color2_, _fillTolerance, 0);
+		if(_fillExpansion>0)
+			fr = paintcore::expandFill(fr, _fillExpansion, color2_);
+		layer->putImage(fr.x, fr.y, fr.image, true);
+	}
 
 	_needupdate=false;
 }

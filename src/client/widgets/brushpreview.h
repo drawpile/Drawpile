@@ -23,6 +23,8 @@
 
 #include "core/brush.h"
 
+class QMenu;
+
 namespace paintcore {
 	class LayerStack;
 }
@@ -42,9 +44,10 @@ namespace widgets {
 class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
 	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
+	Q_PROPERTY(bool transparentBackground READ isTransparentBackground WRITE setTransparentBackground)
 	Q_ENUMS(PreviewShape)
 	public:
-		enum PreviewShape {Stroke, Line, Rectangle, Ellipse};
+		enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill};
 
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 		~BrushPreview();
@@ -57,6 +60,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 		//! Get the displayed brush
 		const paintcore::Brush& brush(bool swapcolors) const;
+
+		bool isTransparentBackground() const { return _tranparentbg; }
 
 	public slots:
 		//! Set the brush to preview
@@ -107,6 +112,15 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set/unset incremental drawing mode
 		void setIncremental(bool incremental);
 
+		//! Set/unset transparent layer background (affects preview only)
+		void setTransparentBackground(bool tranparent);
+
+		//! This is used for flood fill preview only
+		void setFloodFillTolerance(int tolerance);
+
+		//! This is used for flood fill preview only
+		void setFloodFillExpansion(int expansion);
+
 	signals:
 		void requestFgColorChange();
 		void requestBgColorChange();
@@ -133,7 +147,10 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		QColor color1_, color2_;
 		PreviewShape shape_;
 		qreal oldhardness1_, oldhardness2_;
+		int _fillTolerance;
+		int _fillExpansion;
 		bool _needupdate;
+		bool _tranparentbg;
 
 		QMenu *_ctxmenu;
 };
