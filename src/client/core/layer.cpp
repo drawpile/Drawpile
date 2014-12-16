@@ -519,7 +519,7 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 		p.setY(qFloor(p.y()));
 	}
 
-	l->directDab(effective_brush, BrushMaskGenerator::cached(effective_brush), p);
+	l->directDab(effective_brush, p);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
@@ -549,12 +549,10 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 		effective_brush.setBlendingMode(1);
 	}
 
-	const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(effective_brush);
-
 	if(effective_brush.subpixel())
-		l->drawSoftLine(effective_brush, bmg, from, to, distance);
+		l->drawSoftLine(effective_brush, from, to, distance);
 	else
-		l->drawHardLine(effective_brush, bmg, from, to, distance);
+		l->drawHardLine(effective_brush, from, to, distance);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
@@ -567,7 +565,7 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
  * @param to ending point
  * @param distance distance from previous dab.
  */
-void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, const Point& from, const Point& to, qreal &distance)
+void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
 {
 	qreal dx = to.x() - from.x();
 	qreal dy = to.y() - from.y();
@@ -589,7 +587,7 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
 
 	while(i<=dist) {
 		const qreal spacing = qMax(1.0, brush.spacingDist(p.pressure()));
-		directDab(brush, mask, p);
+		directDab(brush, p);
 		p.rx() += dx * spacing;
 		p.ry() += dy * spacing;
 		p.setPressure(qBound(0.0, p.pressure() + dp * spacing, 1.0));
@@ -603,7 +601,7 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
  * precision.
  * The last point is not drawn, so successive lines can be drawn blotches.
  */
-void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance) {
+void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to, qreal &distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	int x0 = qFloor(from.x());
@@ -642,7 +640,7 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 			x0 += stepx;
 			fraction += dy;
 			if(++distance >= spacing) {
-				directDab(brush, mask, Point(x0, y0, p));
+				directDab(brush, Point(x0, y0, p));
 				distance = 0;
 			}
 			p += dp;
@@ -658,7 +656,7 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 			y0 += stepy;
 			fraction += dx;
 			if(++distance >= spacing) {
-				directDab(brush, mask, Point(x0, y0, p));
+				directDab(brush, Point(x0, y0, p));
 				distance = 0;
 			}
 			p += dp;
@@ -671,10 +669,10 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
  * @param brush brush to use
  * @parma point where to dab. May be outside the image.
  */
-void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point)
+void Layer::directDab(const Brush &brush, const Point& point)
 {
 	// Render the brush
-	const BrushStamp bs = mask.make(point.x(), point.y(), point.pressure(), brush.subpixel());
+	const BrushStamp bs = makeGimpStyleBrushStamp(brush, point);
 	const int top=bs.top, left=bs.left;
 	const int dia = bs.mask.diameter();
 	const int bottom = qMin(top + dia, _height);

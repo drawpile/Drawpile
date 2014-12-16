@@ -19,10 +19,10 @@
 #ifndef PAINTCORE_BRUSHMASK_H
 #define PAINTCORE_BRUSHMASK_H
 
-#include <QVector>
-#include <QCache>
-
 #include "brush.h"
+#include "point.h"
+
+#include <QVector>
 
 namespace paintcore {
 
@@ -63,28 +63,7 @@ struct BrushStamp {
 	BrushStamp(int x, int y, const BrushMask &m) : left(x), top(y), mask(m) { }
 };
 
-class BrushMaskGenerator
-{
-public:
-	BrushMaskGenerator();
-	BrushMaskGenerator(const Brush &brush);
-
-	static const BrushMaskGenerator &cached(const Brush &brush);
-
-	BrushStamp make(float x, float y, float pressure, bool subpixel) const;
-
-private:
-	void buildLUT(const Brush &brush);
-	BrushStamp makeMask(float pressure) const;
-	BrushStamp makeHighresMask(float pressure) const;
-	BrushMask offsetMask(const BrushMask &mask, float xfrac, float yfrac) const;
-
-	QVector<uchar> _lut;
-	QVector<uint> _index;
-	QVector<float> _radius;
-	bool _usepressure;
-	mutable QCache<int, BrushStamp> _cache;
-};
+BrushStamp makeGimpStyleBrushStamp(const Brush &brush, const Point &point);
 
 }
 

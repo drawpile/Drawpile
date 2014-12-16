@@ -17,10 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
-
-#include "brush.h"
 #include "brushmask.h"
+
+#include <QCache>
+
+#include <cmath>
 
 namespace paintcore {
 
@@ -28,173 +29,42 @@ namespace {
 
 template<typename T> T square(T x) { return x*x; }
 
-typedef quint64 BrushCacheKey;
-static QCache<BrushCacheKey, BrushMaskGenerator> BMG_CACHE(10);
+typedef QVector<float> LUT;
+static const int LUT_RADIUS = 128;
+static QCache<int, LUT> LUT_CACHE;
 
-BrushCacheKey brushCacheKey(const Brush &brush) {
-	// the cache key includes only the parameters that affect mask generation
-	return (brush.size1() << 8) | (brush.size2() << 16) |
-			(quint64(brush.hardness1()*255) << 24) | (quint64(brush.hardness2()*255) << 32) |
-			(quint64(brush.opacity1()*255) << 40) | (quint64(brush.opacity2()*255) << 48);
-}
-
-}
-
-static const int PRESSURE_LEVELS = 256;
-
-inline float int2pressure(int pressure) {
-	return pressure / float(PRESSURE_LEVELS-1);
-}
-
-inline int pressure2int(float pressure) {
-	Q_ASSERT(pressure>=0.0);
-	Q_ASSERT(pressure<=1.0);
-	return qBound(0, int(pressure * (PRESSURE_LEVELS-1)), PRESSURE_LEVELS-1);
-}
-
-const BrushMaskGenerator &BrushMaskGenerator::cached(const Brush &brush)
+// Generate a lookup table for Gimp style exponential brush shape
+// The value at r² (where r is distance from brush center, scaled to LUT_RADIUS) is
+// the opaqueness of the pixel.
+LUT makeGimpStyleBrushLUT(float hardness)
 {
-	BrushCacheKey key = brushCacheKey(brush);
-	BrushMaskGenerator *bmg = BMG_CACHE[key];
-	if(!bmg) {
-		bmg = new BrushMaskGenerator(brush);
-		BMG_CACHE.insert(key, bmg);
-	}
-	return *bmg;
-}
-
-BrushMaskGenerator::BrushMaskGenerator()
-{
-}
-
-BrushMaskGenerator::BrushMaskGenerator(const Brush &brush)
-	: _cache(10)
-{
-	buildLUT(brush);
-}
-
-BrushStamp BrushMaskGenerator::make(float x, float y, float pressure, bool subpixel) const
-{
-	BrushStamp s;
-
-	if(subpixel) {
-
-		// optimization: don't bother with a high resolution mask for large brushes
-		float radius = _radius.at(_usepressure ? pressure2int(pressure) : 0);
-
-		if(radius < 4)
-			s = makeHighresMask(pressure);
-		else
-			s = makeMask(pressure);
-
-
-		const float fx = floor(x);
-		const float fy = floor(y);
-		s.left += fx;
-		s.top += fy;
-
-		float xfrac = x-fx;
-		float yfrac = y-fy;
-
-		if(xfrac<0.5) {
-			xfrac += 0.5;
-			s.left--;
-		} else
-			xfrac -= 0.5;
-
-		if(yfrac<0.5) {
-			yfrac += 0.5;
-			s.top--;
-		} else
-			yfrac -= 0.5;
-
-		s.mask = offsetMask(s.mask, xfrac, yfrac);
-
-	} else {
-		s = makeMask(pressure);
-		s.left += x;
-		s.top += y;
-	}
-
-	return s;
-}
-
-void _buildLUT(float radius, float opacity, float hardness, int len, uchar *lut)
-{
-	// GIMP style brush shape
 	qreal exponent;
 	if ((1.0 - hardness) < 0.0000004)
 		exponent = 1000000.0;
 	else
 		exponent = 0.4 / (1.0 - hardness);
 
-	for(int i=0;i<len;++i,++lut)
-		*lut = (1-pow(pow(sqrt(i)/radius, exponent), 2)) * opacity * 255;
+	LUT lut(square(LUT_RADIUS));
+	for(int i=0;i<lut.size();++i)
+		lut[i] = 1-pow(pow(sqrt(i)/LUT_RADIUS, exponent), 2);
+
+	return lut;
 }
 
-
-void BrushMaskGenerator::buildLUT(const Brush &brush)
+LUT cachedGimpStyleBrushLUT(float hardness)
 {
-	// First, determine if the brush shape depends on pressure
-	_usepressure =
-		brush.size1() != brush.size2() ||
-		qAbs(brush.hardness1() - brush.hardness2()) >= (1/256.0) ||
-		qAbs(brush.opacity1() - brush.opacity2()) >= (1/256.0)
-		;
+	const int h = hardness * 100;
+	Q_ASSERT(h>=0 && h<=100);
+	if(!LUT_CACHE.contains(h))
+		LUT_CACHE.insert(h, new LUT(makeGimpStyleBrushLUT(h)));
 
-	if(_usepressure) {
-		// Build a lookup table for all pressure levels
-		uint len = 0;
-		_index.reserve(PRESSURE_LEVELS + 1);
-		_radius.reserve(PRESSURE_LEVELS);
-		_index.append(0);
-
-		for(int i=0;i<PRESSURE_LEVELS;++i) {
-			float p = int2pressure(i);
-			float radius = brush.fsize(p)/2.0;
-			_radius.append(radius);
-			len += ceil(radius*radius);
-			_index.append(len);
-
-		}
-		_lut.resize(len);
-
-		for(int i=0;i<PRESSURE_LEVELS;++i) {
-			float p = int2pressure(i);
-			_buildLUT(_radius.at(i), brush.opacity(p), brush.hardness(p), _index.at(i+1)-_index.at(i), _lut.data() + _index.at(i));
-		}
-	} else {
-		// Shape not affected by pressure: only one lookup table needed
-		float radius = brush.size1()/2.0;
-		int len = ceil(radius*radius);
-		_lut.resize(len);
-		_index.append(len);
-		_radius.append(radius);
-		_buildLUT(radius, brush.opacity1(), brush.hardness1(), len, _lut.data());
-	}
+	return *LUT_CACHE[h];
 }
 
-BrushStamp BrushMaskGenerator::makeMask(float pressure) const
+BrushStamp makeMask(const Brush &brush, float pressure)
 {
-	float r;
-	int lut_len;
-	const uchar *lut;
-	int p;
-	if(_usepressure) {
-		p = pressure2int(pressure);
-		lut = _lut.data() + _index.at(p);
-		lut_len = _index.at(p+1) - _index.at(p);
-		r = _radius.at(p);
-	} else {
-		p = 255;
-		lut = _lut.data();
-		lut_len = _index.at(0);
-		r = _radius.at(0);
-	}
-
-	// check cache first
-	if(_cache.contains(p))
-		return *_cache[p];
+	const float r = brush.fsize(pressure) / 2.0f;
+	const float opacity = brush.opacity(pressure) * 255;
 
 	// generate mask
 	QVector<uchar> data;
@@ -207,9 +77,12 @@ BrushStamp BrushMaskGenerator::makeMask(float pressure) const
 		stampOffset = -1;
 		data.resize(3*3);
 		data.fill(0);
-		data[4] = lut[0];
+		data[4] = opacity;
 
 	} else {
+		const LUT lut = cachedGimpStyleBrushLUT(brush.hardness(pressure));
+		const float lut_scale = square((LUT_RADIUS-1) / r);
+
 		float offset;
 		float fudge=1;
 		diameter = ceil(r*2) + 2;
@@ -217,19 +90,19 @@ BrushStamp BrushMaskGenerator::makeMask(float pressure) const
 		if(diameter%2==0) {
 			++diameter;
 			offset = -1.0;
+
+			if(r<8)
+				fudge = 0.9;
 		} else {
 			offset = -0.5;
 		}
 		stampOffset = -diameter/2;
 
 		// empirically determined fudge factors to make small brushes look nice
-		if(r<1.5)
-			fudge=0.9;
-		else if(r<2)
-			fudge=0.9;
-		else if(r<2.5)
-			fudge=0.6;
-		else if(r<3)
+		if(r<2.5)
+			fudge=0.8;
+
+		else if(r<4)
 			fudge=0.8;
 
 		data.resize(square(diameter));
@@ -238,44 +111,23 @@ BrushStamp BrushMaskGenerator::makeMask(float pressure) const
 		for(int y=0;y<diameter;++y) {
 			const qreal yy = square(y-r+offset);
 			for(int x=0;x<diameter;++x) {
-				const int dist = int((square(x-r+offset) + yy) * fudge);
-				*(ptr++) = dist<lut_len ? lut[qMin(lut_len-1,dist)] : 0;
+				const int dist = int((square(x-r+offset) + yy) * fudge * lut_scale);
+				*(ptr++) = dist<lut.size() ? lut.at(dist) * opacity : 0;
 			}
 		}
 	}
 
-	BrushStamp *bs = new BrushStamp(stampOffset, stampOffset, BrushMask(diameter, data));
-	_cache.insert(p, bs);
-
-	return *bs;
+	return BrushStamp(stampOffset, stampOffset, BrushMask(diameter, data));
 }
 
-BrushStamp BrushMaskGenerator::makeHighresMask(float pressure) const
+BrushStamp makeHighresMask(const Brush &brush, float pressure)
 {
-	float r;
-	int lut_len;
-	const uchar *lut;
-	if(_usepressure) {
-		int p = pressure2int(pressure);
-		lut = _lut.data() + _index.at(p);
-		lut_len = _index.at(p+1) - _index.at(p);
-		r = _radius.at(p);
-	} else {
-		lut = _lut.data();
-		lut_len = _index.at(0);
-		r = _radius.at(0);
-	}
-
 	// we calculate a double sized brush and downsample
-	r *= 2;
+	const float r = brush.fsize(pressure);
+	const float opacity = brush.opacity(pressure) * (255 / 4); // opacity of each subsample
 
-	// generate mask
-	int diameter;
-	int stampOffset;
-
+	int diameter = ceil(r) + 2; // abstract brush is double size, but target diameter is normal
 	float offset;
-	float fudge=1;
-	diameter = ceil(r) + 2; // abstract brush is double size, but target diameter is normal
 
 	if(diameter%2==0) {
 		++diameter;
@@ -283,11 +135,10 @@ BrushStamp BrushMaskGenerator::makeHighresMask(float pressure) const
 	} else {
 		offset = -1.5;
 	}
-	stampOffset = -diameter/2;
+	const int stampOffset = -diameter/2;
 
-	// empirically determined fudge factors to make small brushes look nice
-	if(r<1.3)
-		fudge=2;
+	const LUT lut = cachedGimpStyleBrushLUT(brush.hardness(pressure));
+	const float lut_scale = square((LUT_RADIUS-1) / r);
 
 	QVector<uchar> data(square(diameter));
 	uchar *ptr = data.data();
@@ -300,16 +151,16 @@ BrushStamp BrushMaskGenerator::makeHighresMask(float pressure) const
 			const qreal xx0 = square(x*2-r+offset);
 			const qreal xx1 = square(x*2+1-r+offset);
 
-			const int dist00 = int((xx0 + yy0) * fudge / 4.0);
-			const int dist01 = int((xx0 + yy1) * fudge / 4.0);
-			const int dist10 = int((xx1 + yy0) * fudge / 4.0);
-			const int dist11 = int((xx1 + yy1) * fudge / 4.0);
+			const int dist00 = int((xx0 + yy0) * lut_scale);
+			const int dist01 = int((xx0 + yy1) * lut_scale);
+			const int dist10 = int((xx1 + yy0) * lut_scale);
+			const int dist11 = int((xx1 + yy1) * lut_scale);
 
 			*(ptr++) =
-					((dist00<lut_len ? lut[dist00] : 0) +
-					(dist01<lut_len ? lut[dist01] : 0) +
-					(dist10<lut_len ? lut[dist10] : 0) +
-					(dist11<lut_len ? lut[dist11] : 0)) / 4
+					((dist00<lut.size() ? lut.at(dist00) : 0) +
+					(dist01<lut.size() ? lut.at(dist01) : 0) +
+					(dist10<lut.size() ? lut.at(dist10) : 0) +
+					(dist11<lut.size() ? lut.at(dist11) : 0)) * opacity
 					;
 
 		}
@@ -318,7 +169,7 @@ BrushStamp BrushMaskGenerator::makeHighresMask(float pressure) const
 	return BrushStamp(stampOffset, stampOffset, BrushMask(diameter, data));
 }
 
-BrushMask BrushMaskGenerator::offsetMask(const BrushMask &mask, float xfrac, float yfrac) const
+BrushMask offsetMask(const BrushMask &mask, float xfrac, float yfrac)
 {
 	Q_ASSERT(xfrac>=0 && xfrac<=1);
 	Q_ASSERT(yfrac>=0 && yfrac<=1);
@@ -364,5 +215,50 @@ BrushMask BrushMaskGenerator::offsetMask(const BrushMask &mask, float xfrac, flo
 	return BrushMask(diameter, data);
 }
 
+}
+
+BrushStamp makeGimpStyleBrushStamp(const Brush &brush, const Point &point)
+{
+	BrushStamp s;
+
+	if(brush.subpixel()) {
+		// optimization: don't bother with a high resolution mask for large brushes
+		float radius = brush.fsize(point.pressure());
+
+		if(radius < 8)
+			s = makeHighresMask(brush, point.pressure());
+		else
+			s = makeMask(brush, point.pressure());
+
+		const float fx = floor(point.x());
+		const float fy = floor(point.y());
+		s.left += fx;
+		s.top += fy;
+
+		float xfrac = point.x()-fx;
+		float yfrac = point.y()-fy;
+
+		if(xfrac<0.5) {
+			xfrac += 0.5;
+			s.left--;
+		} else
+			xfrac -= 0.5;
+
+		if(yfrac<0.5) {
+			yfrac += 0.5;
+			s.top--;
+		} else
+			yfrac -= 0.5;
+
+		s.mask = offsetMask(s.mask, xfrac, yfrac);
+
+	} else {
+		s = makeMask(brush, point.pressure());
+		s.left += point.x();
+		s.top += point.y();
+	}
+
+	return s;
+}
 
 }
