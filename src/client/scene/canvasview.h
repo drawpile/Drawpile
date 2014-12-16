@@ -253,6 +253,8 @@ class CanvasView : public QGraphicsView
 		KisCubicCurve _pressuredistance;
 		KisCubicCurve _pressurevelocity;
 
+		int _zoomWheelDelta;
+
 		bool _locked;
 		bool _pointertracking;
 		bool _enableTabletEvents;

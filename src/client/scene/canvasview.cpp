@@ -53,6 +53,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(0),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
+	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _enableTabletEvents(true)
 {
 	viewport()->setAcceptDrops(true);
@@ -473,14 +474,20 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
 	if((event->modifiers() & Qt::ControlModifier)) {
-		float delta = event->angleDelta().y() / (30 * 8.0);
-		if(delta>0) {
-			setZoom(_zoom * (1+delta));
-		} else if(delta<0) {
-			setZoom(_zoom / (1-delta));
+		_zoomWheelDelta += event->angleDelta().y();
+		int steps=_zoomWheelDelta / 120;
+		_zoomWheelDelta -= steps * 120;
+
+		if(steps != 0) {
+			if(_zoom<100 || (_zoom==100 && steps<0))
+				setZoom(qRound((_zoom + steps * 10) / 10) * 10);
+			else
+				setZoom(qRound((_zoom + steps * 50) / 50) * 50);
 		}
+
 	} else if((event->modifiers() & Qt::ShiftModifier)) {
 		doQuickAdjust1(event->angleDelta().y() / (30 * 4.0));
+
 	} else {
 		QGraphicsView::wheelEvent(event);
 	}
