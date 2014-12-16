@@ -56,7 +56,7 @@ LUT cachedGimpStyleBrushLUT(float hardness)
 	const int h = hardness * 100;
 	Q_ASSERT(h>=0 && h<=100);
 	if(!LUT_CACHE.contains(h))
-		LUT_CACHE.insert(h, new LUT(makeGimpStyleBrushLUT(h)));
+		LUT_CACHE.insert(h, new LUT(makeGimpStyleBrushLUT(hardness)));
 
 	return *LUT_CACHE[h];
 }
