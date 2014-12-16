@@ -655,8 +655,8 @@ float CanvasView::mapPressure(float pressure, bool stylus)
 
 void CanvasView::updateOutline(paintcore::Point point) {
 	if(!_subpixeloutline) {
-		point.setX(qFloor(point.x()));
-		point.setY(qFloor(point.y()));
+		point.setX(qFloor(point.x()) + 0.5);
+		point.setY(qFloor(point.y()) + 0.5);
 	}
 	if(_enableoutline && _showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
 		QList<QRectF> rect;
