@@ -437,8 +437,8 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	LoginSession session;
 
 	// Expect session description in format:
-	// SESSION <id> <minorVersion> <FLAGS> <user-count> "founder" ;title
-	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]+)\"\\s*;(.*)\\z");
+	// SESSION [!]<id> <minorVersion> <FLAGS> <user-count> "founder" ;title
+	const QRegularExpression re("\\ASESSION (!?[a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]+)\"\\s*;(.*)\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
@@ -448,6 +448,10 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	}
 
 	session.id = m.captured(1);
+	if(session.id.at(0) == '!') {
+		session.id = session.id.mid(1);
+		session.customId = true;
+	}
 
 	const int minorVersion = m.captured(2).toInt();
 	if(minorVersion != DRAWPILE_PROTO_MINOR_VERSION) {

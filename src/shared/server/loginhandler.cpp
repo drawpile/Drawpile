@@ -32,7 +32,6 @@
 
 #include <QStringList>
 #include <QRegularExpression>
-#include <QUuid>
 
 namespace server {
 
@@ -117,7 +116,8 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	if(session.hibernating)
 		flags << "ASLEEP";
 
-	send(QString("SESSION %1 %2 %3 %4 \"%5\" ;%6")
+	send(QString("SESSION %1%2 %3 %4 %5 \"%6\" ;%7")
+			.arg(session.id.isCustom() ? QStringLiteral("!") : QString())
 			.arg(session.id)
 			.arg(session.protoMinor)
 			.arg(flags.isEmpty() ? "-" : flags.join(","))
@@ -301,16 +301,16 @@ void LoginHandler::handleHostMessage(const QString &message)
 		return;
 	}
 
-	QString sessionId = m.captured(1);
+	QString sessionIdString = m.captured(1);
+	SessionId sessionId;
 	int minorVersion = m.captured(2).toInt();
 	int userId = m.captured(3).toInt();
 
 	// Check if session ID is available
-	if(sessionId == "*") {
-		// Generated session ID
-		sessionId = QUuid::createUuid().toString();
-		sessionId = sessionId.mid(1, sessionId.length()-2); // strip the { and } chars
-	}
+	if(sessionIdString == "*")
+		sessionId = SessionId::randomId();
+	else
+		sessionId = SessionId::customId(sessionIdString);
 
 	if(!_server->getSessionDescriptionById(sessionId).id.isEmpty()) {
 		send("ERROR SESSIONIDINUSE");

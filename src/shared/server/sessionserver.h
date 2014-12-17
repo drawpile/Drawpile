@@ -144,7 +144,7 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	SessionState *createSession(const QString &id, int minorVersion, const QString &founder);
+	SessionState *createSession(const SessionId &id, int minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions

@@ -21,6 +21,9 @@
 #include "session.h"
 #include "client.h"
 
+#include <QUuid>
+
+
 namespace server {
 
 UserDescription::UserDescription()
@@ -36,6 +39,21 @@ UserDescription::UserDescription(const Client &client)
 	  isLocked(client.isUserLocked()),
 	  isSecure(client.isSecure())
 {
+}
+
+SessionId SessionId::randomId()
+{
+	QString uuid = QUuid::createUuid().toString();
+
+	return SessionId(
+		uuid.mid(1, uuid.length()-2), // strip the { and } chars
+		false
+	);
+}
+
+SessionId SessionId::customId(const QString &id)
+{
+	return SessionId(id, true);
 }
 
 SessionDescription::SessionDescription()

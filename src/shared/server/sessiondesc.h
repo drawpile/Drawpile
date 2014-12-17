@@ -48,10 +48,38 @@ struct UserDescription {
 };
 
 /**
+ * @brief Session identifier
+ */
+class SessionId {
+public:
+	SessionId() : _custom(false) { }
+	SessionId(const QString &id, bool custom) : _id(id), _custom(custom) { }
+
+	//! Get the ID string
+	const QString &id() const { return _id; }
+
+	//! Is this a user specified ID?
+	bool isCustom() const { return _custom; }
+
+	//! Generate a random session ID
+	static SessionId randomId();
+
+	//! Get a SessionId with a user specified ID
+	static SessionId customId(const QString &id);
+
+	operator QString() const { return _id; }
+	bool isEmpty() const { return _id.isEmpty(); }
+
+private:
+	QString _id;
+	bool _custom;
+};
+
+/**
  * @brief Information about an available session
  */
 struct SessionDescription {
-	QString id;
+	SessionId id;
 	int protoMinor;
 	int userCount;
 	int maxUsers;

@@ -99,6 +99,7 @@ Protocol 12.4 (0.9.6)
 
  * Added Ping message type
  * Brush size now means brush diameter instead of radius
+ * Login protocol change: session ID prefixed with '!' means ID was user specified
 
 Protocol 11.3 (0.9.5)
 

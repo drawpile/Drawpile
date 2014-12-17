@@ -80,7 +80,8 @@ struct SessionDescription;
  *    IDENT   - non-guest access is supported
  *    NOGUEST - guest access is disabled (users must identify with password)
  *
- * 2) ID is a string in the format [a-zA-Z0-9:-]{1,64} (future proofing: the server currently produces only numeric IDs.)
+ * 2) ID is a string in the format [a-zA-Z0-9:-]{1,64}
+ *    If the ID was specified by the user (vanity ID), it is prefixed with '!'
  *
  * 3) Set of comma delimited session flags:
  *    -       - no flags

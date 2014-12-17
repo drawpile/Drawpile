@@ -113,7 +113,7 @@ QJsonObject _sessionBaseDescription(const SessionDescription &sd)
 {
 	QJsonObject o;
 
-	o["id"] = sd.id;
+	o["id"] = sd.id.id();
 	o["title"] = sd.title;
 	o["userCount"] = sd.userCount;
 	o["maxUsers"] = sd.maxUsers;

@@ -58,7 +58,12 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
-		case 1: return ls.title.isEmpty() ? tr("(untitled)") : ls.title;
+		case 1: {
+			QString title = ls.title.isEmpty() ? tr("(untitled)") : ls.title;
+			if(ls.customId)
+				title = title + QStringLiteral(" [") + ls.id + QStringLiteral("]");
+			return title;
+		}
 		case 2: return ls.founder;
 		case 3: return ls.userCount;
 		}

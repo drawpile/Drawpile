@@ -69,10 +69,10 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-SessionState *SessionServer::createSession(const QString &id, int minorVersion, const QString &founder)
+SessionState *SessionServer::createSession(const SessionId &id, int minorVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isEmpty());
-	Q_ASSERT(getSessionDescriptionById(id).id.isEmpty());
+	Q_ASSERT(getSessionDescriptionById(id.id()).id.isEmpty());
 
 	SessionState *session = new SessionState(id, minorVersion, founder, this);
 

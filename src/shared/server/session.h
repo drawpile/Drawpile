@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QDateTime>
 
+#include "sessiondesc.h"
 #include "../util/idlist.h"
 #include "../util/logger.h"
 #include "../net/message.h"
@@ -72,12 +73,12 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	SessionState(const QString &id, int minorVersion, const QString &founder, QObject *parent=0);
+	SessionState(const SessionId &id, int minorVersion, const QString &founder, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
 	 */
-	QString id() const { return _id; }
+	SessionId id() const { return _id; }
 
 	/**
 	 * @brief Get the name of the user who started this session
@@ -479,7 +480,7 @@ private:
 	const QDateTime _startTime;
 	QDateTime _lastEventTime;
 
-	const QString _id;
+	const SessionId _id;
 	int _minorVersion;
 	int _maxusers;
 	uint _historylimit;

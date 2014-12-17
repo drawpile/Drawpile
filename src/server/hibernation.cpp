@@ -47,9 +47,9 @@ bool Hibernation::init()
 	}
 
 	// Scan for sessions
-	const QRegularExpression re("^session-([a-zA-Z0-9:-]{1,64})\\.dphib(?:\\.(?:gz|bz2|xz))?$");
+	const QRegularExpression re("^session([.-])([a-zA-Z0-9:-]{1,64})\\.dphib(?:\\.(?:gz|bz2|xz))?$");
 
-	for(const QString &filename : dir.entryList(QStringList() << "session-*.dphib*", QDir::Files | QDir::Readable)) {
+	for(const QString &filename : dir.entryList(QStringList() << "session*.dphib*", QDir::Files | QDir::Readable)) {
 		QRegularExpressionMatch m = re.match(filename);
 		if(!m.hasMatch())
 			continue;
@@ -67,8 +67,10 @@ bool Hibernation::init()
 			continue;
 		}
 
+		bool isCustomId = m.captured(1) == ".";
+
 		SessionDescription desc;
-		desc.id = m.captured(1);
+		desc.id = SessionId(m.captured(2), isCustomId);
 		desc.protoMinor = reader.hibernationHeader().minorVersion;
 		desc.title = reader.hibernationHeader().title;
 		desc.founder = reader.hibernationHeader().founder;
@@ -101,14 +103,14 @@ SessionState *Hibernation::takeSession(const QString &id)
 	SessionDescription sd;
 	while(it.hasNext()) {
 		SessionDescription s = it.next();
-		if(s.id == id) {
+		if(s.id.id() == id) {
 			sd = s;
 			it.remove();
 			break;
 		}
 	}
 
-	if(sd.id==0)
+	if(sd.id.isEmpty())
 		return nullptr;
 
 	// Load the session
@@ -119,7 +121,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 		return nullptr;
 	}
 
-	SessionState *session = new SessionState(id, reader.hibernationHeader().minorVersion, reader.hibernationHeader().founder);
+	SessionState *session = new SessionState(sd.id, reader.hibernationHeader().minorVersion, reader.hibernationHeader().founder);
 
 	// enable session persistence for now to get the flag right
 	session->setPersistenceAllowed(true);
@@ -168,7 +170,7 @@ bool Hibernation::storeSession(const SessionState *session)
 		return false;
 	}
 
-	QString filename = QDir(_path).filePath(QString("session-%1.dphib.gz").arg(session->id()));
+	QString filename = QDir(_path).filePath(QString("session%1%2.dphib.gz").arg(session->id().isCustom() ? "." : "-", session->id()));
 
 	recording::Writer writer(filename);
 	writer.setFilterMeta(false);

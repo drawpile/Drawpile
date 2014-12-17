@@ -29,6 +29,7 @@ namespace net {
  */
 struct LoginSession {
 	QString id;
+	bool customId;
 	int userCount;
 	QString title;
 	QString founder;
@@ -39,7 +40,7 @@ struct LoginSession {
 	bool asleep;
 	bool incompatible;
 
-	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
+	LoginSession() : customId(false), userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
 };
 
 /**
