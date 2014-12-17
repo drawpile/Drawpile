@@ -37,8 +37,8 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 		qFromBigEndian<quint32>(data+9),
 		*(data+13),
 		*(data+14),
-		qMax(uchar(1), *(data+15)),
-		qMax(uchar(1), *(data+16)),
+		*(data+15),
+		*(data+16),
 		*(data+17),
 		*(data+18)
 	);

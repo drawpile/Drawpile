@@ -99,8 +99,8 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
 	brush.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
 	brush.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
 	brush.setSpacing(cmd.spacing());
-	brush.setSize(cmd.size_h());
-	brush.setSize2(cmd.size_l());
+	brush.setSize(qMax(1, (int)cmd.size_h()));
+	brush.setSize2(qMax(1, (int)cmd.size_l()));
 	brush.setHardness(cmd.hard_h() / 255.0);
 	brush.setHardness2(cmd.hard_l() / 255.0);
 	brush.setOpacity(cmd.opacity_h() / 255.0);

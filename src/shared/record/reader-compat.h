@@ -16,23 +16,24 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef RECORDING_UTILS_H
-#define RECORDING_UTILS_H
+#ifndef REC_READER_COMPAT_H
+#define REC_READER_COMPAT_H
+
+#include <Qt>
+
+namespace protocol {
+	class Message;
+}
 
 namespace recording {
+namespace compat {
 
-inline constexpr quint32 version32(quint16 major, quint16 minor) {
-	return major << 16 | minor;
-}
+// Protocol version 11.x messages
+protocol::Message *deserializeV11(const uchar *data, int length);
 
-inline constexpr quint16 majorVersion(quint32 version) {
-	return version >> 16;
-}
-
-inline constexpr quint16 minorVersion(quint32 version) {
-	return version & 0xffff;
 }
 
 }
 
 #endif
+

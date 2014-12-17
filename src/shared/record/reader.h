@@ -174,6 +174,7 @@ private:
 	QIODevice *_file;
 	QByteArray _msgbuf;
 	QString _writerversion;
+	quint32 _formatversion;
 	HibernationHeader _hibheader;
 	int _current;
 	qint64 _currentPos;

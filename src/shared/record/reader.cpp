@@ -18,6 +18,7 @@
 */
 
 #include "reader.h"
+#include "reader-compat.h"
 #include "util.h"
 #include "../net/recording.h"
 
@@ -93,7 +94,7 @@ Compatibility Reader::open()
 	// Read protocol version
 	if(_file->read(buf, 4) != 4)
 		return NOT_DPREC;
-	quint32 protover = qFromBigEndian<quint32>((const uchar*)buf);
+	_formatversion = qFromBigEndian<quint32>((const uchar*)buf);
 
 	// Read program version
 	QByteArray progver;
@@ -107,7 +108,7 @@ Compatibility Reader::open()
 	// If this is a hibernation file, read the rest of the header
 	if(_isHibernation) {
 		// We already read the protocol minor version
-		_hibheader.minorVersion = minorVersion(protover);
+		_hibheader.minorVersion = minorVersion(_formatversion);
 
 		// Check hibernation file format version
 		char fmtver;
@@ -160,35 +161,35 @@ Compatibility Reader::open()
 
 	if(_isHibernation) {
 		// Compatibility check is simple for hibernation files: we only need to look at the major version
-		if(DRAWPILE_PROTO_MAJOR_VERSION == majorVersion(protover))
+		if(DRAWPILE_PROTO_MAJOR_VERSION == majorVersion(_formatversion))
 			return COMPATIBLE;
 		else
 			return INCOMPATIBLE;
 
 	} else {
 		// Compatability check for normal recordings
-		quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+		const quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
 
 		// Best case: exact version match
-		if(myversion == protover)
+		if(myversion == _formatversion)
 			return COMPATIBLE;
 
-		// If major version is same, expect only minor incompatabilities
-		// Version 11 is also fully supported
-		if(majorVersion(myversion) == majorVersion(protover) || majorVersion(protover)==11) {
-
-			// Ver 11.3 is fully backwards compatible
-			if(minorVersion(protover) < 3)
-				return COMPATIBLE;
-
-			return MINOR_INCOMPATIBILITY;
-		}
-
-		// Recording made with a newer version. It may contain unsupported commands.
-		if(myversion < protover)
+		// A recording made with a newer (major) version may contain unsupported commands.
+		if(majorVersion(myversion) < majorVersion(_formatversion))
 			return UNKNOWN_COMPATIBILITY;
 
-		// Older versions are incompatible
+		// Newer minor version: expect rendering differences
+		if(myversion < _formatversion)
+			return MINOR_INCOMPATIBILITY;
+
+		// Old versions known to be compatible
+		switch(_formatversion) {
+			case version32(11, 3): // we have compatibility code for these versions
+			case version32(11, 2):
+				return COMPATIBLE;
+		}
+
+		// Other versions are not supported
 		return INCOMPATIBLE;
 	}
 }
@@ -267,7 +268,17 @@ MessageRecord Reader::readNext()
 	if(!readNextToBuffer(_msgbuf))
 		return msg;
 
-	auto *message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
+	protocol::Message *message;
+	switch(_formatversion) {
+		// see protocol changelog in doc/protocol.md
+		case version32(11, 3):
+		case version32(11, 2):
+			message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+		default:
+			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+	}
 
 	if(message) {
 		msg.status = MessageRecord::OK;
