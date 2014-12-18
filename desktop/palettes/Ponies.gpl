@@ -66,7 +66,7 @@ Columns: 13
 100 100 100	
 100 100 100	
 100 100 100	
-100 100 100	
+255 255 255	
 246 183 210	Pinkie Pie (body)
 233 128 179	Pinkie Pie (outline)
 128 209 245	Pinkie Pie (eye)
@@ -74,4 +74,9 @@ Columns: 13
 190 28 121	Pinkie Pie (mane outline)
 253 246 174	Pinkie Pie (cutie mark)
 128 209 245	Pinkie Pie (cutie mark)
-
+100 100 100	
+100 100 100	
+100 100 100	
+100 100 100	
+100 100 100	
+0 0 0	
