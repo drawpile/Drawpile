@@ -105,4 +105,9 @@ void ToolSlotButton::leaveEvent(QEvent *e)
 	QToolButton::leaveEvent(e);
 }
 
+void ToolSlotButton::mouseDoubleClickEvent(QMouseEvent *)
+{
+	emit doubleClicked();
+}
+
 }

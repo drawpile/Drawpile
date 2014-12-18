@@ -63,6 +63,8 @@ ToolSettings::ToolSettings(QWidget *parent)
 	for(int i=0;i<QUICK_SLOTS;++i) {
 		auto *b = new widgets::ToolSlotButton(w);
 
+		connect(b, SIGNAL(doubleClicked()), this, SLOT(changeForegroundColor()));
+
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
 		b->setMinimumSize(40, 40);
