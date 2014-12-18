@@ -287,6 +287,10 @@ void ToolSettings::setForegroundColor(const QColor& color)
 		_currenttool->setForeground(color);
 		_toolprops[_currentQuickslot].setForegroundColor(color);
 		updateToolSlot(_currentQuickslot, false);
+
+		if(_fgdialog->isVisible())
+			_fgdialog->setColor(color);
+
 		emit foregroundColorChanged(color);
 	}
 }
@@ -304,6 +308,10 @@ void ToolSettings::setBackgroundColor(const QColor& color)
 		_currenttool->setBackground(color);
 		_toolprops[_currentQuickslot].setBackgroundColor(color);
 		updateToolSlot(_currentQuickslot, false);
+
+		if(_bgdialog->isVisible())
+			_bgdialog->setColor(color);
+
 		emit backgroundColorChanged(color);
 	}
 }
