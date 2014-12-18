@@ -199,7 +199,11 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 
 	_ui->preview->setBlendingMode(0);
 
-	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
+	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) {
+		_ui->brushhardness->setEnabled(!hard);
+		_ui->spinHardness->setEnabled(!hard);
+		_ui->pressurehardness->setEnabled(!hard);
+	});
 	parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
@@ -516,7 +520,10 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
+	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) {
+		_ui->brushhardness->setEnabled(!hard);
+		_ui->spinHardness->setEnabled(!hard);
+	});
 
 	// Set proper preview shape
 	if(_type==Line)

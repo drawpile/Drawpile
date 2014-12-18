@@ -211,7 +211,7 @@
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QSpinBox" name="spinBox_3">
+      <widget class="QSpinBox" name="spinHardness">
        <property name="suffix">
         <string notr="true">%</string>
        </property>
@@ -428,7 +428,7 @@
   <connection>
    <sender>brushhardness</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_3</receiver>
+   <receiver>spinHardness</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -442,7 +442,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_3</sender>
+   <sender>spinHardness</sender>
    <signal>valueChanged(int)</signal>
    <receiver>brushhardness</receiver>
    <slot>setValue(int)</slot>
