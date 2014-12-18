@@ -98,6 +98,7 @@ Clients can connect to any server sharing the same major protocol version number
 Protocol 12.4 (0.9.6)
 
  * Added Ping message type
+ * Added smudge fields to ToolChange message (reserved for future use)
  * Brush size now means brush diameter instead of radius
  * Login protocol change: session ID prefixed with '!' means ID was user specified
 

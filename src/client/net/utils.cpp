@@ -114,7 +114,9 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::B
 		brush.size1(),
 		brush.size2(),
 		brush.opacity1() * 255,
-		brush.opacity2() * 255
+		brush.opacity2() * 255,
+		0, // smudging not yet implemented
+		0
 	));
 }
 

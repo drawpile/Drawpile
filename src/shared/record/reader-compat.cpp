@@ -22,41 +22,56 @@
 #include "../net/message.h"
 #include "../net/pen.h"
 
+#include <QtEndian>
+
 namespace recording {
 namespace compat {
 
 using namespace protocol;
 
+ToolChange *ToolChangeV11(const uchar *data, uint len)
+{
+	if(len != 19)
+		return 0;
+
+	return new ToolChange(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		*(data+3),
+		*(data+4),
+		qFromBigEndian<quint32>(data+5),
+		qFromBigEndian<quint32>(data+9),
+		*(data+13),
+		*(data+14),
+		qMax(1, *(data+15)*2), // brush size used to mean radius instead of diameter
+		qMax(1, *(data+16)*2),
+		*(data+17),
+		*(data+18),
+		0, // smudge parameters were added in V12
+		0
+	);
+}
+
+
 Message *deserializeV11(const uchar *data, int length)
 {
-	// The only relevant difference between V11.x and V14.4 is that
-	// brush size is now treated as the diameter rather than the radius,
-	// so we need to double the size.
+	if(length<Message::HEADER_LEN)
+		return nullptr;
 
-	Message *m = Message::deserialize(data, length);
+	const quint16 len = qFromBigEndian<quint16>(data);
 
-	if(m && m->type() == MSG_TOOLCHANGE) {
-		const ToolChange &t = static_cast<ToolChange&>(*m);
+	if(length < len+Message::HEADER_LEN)
+		return nullptr;
 
-		Message *m2 = new ToolChange(
-			t.contextId(),
-			t.layer(),
-			t.blend(),
-			t.mode(),
-			t.spacing(),
-			t.color_h(),
-			t.color_l(),
-			t.hard_h(),
-			t.hard_l(),
-			qMax(1, t.size_h()*2), // radius 0 meant diameter 1 brush
-			qMax(1, t.size_l()*2),
-			t.opacity_h(),
-			t.opacity_l());
-		delete m;
-		m = m2;
+	const MessageType type = MessageType(data[2]);
+
+	// ToolChange is the only (recordable) message type changed between V11 and V12
+	if(type == MSG_TOOLCHANGE) {
+		return ToolChangeV11(data + Message::HEADER_LEN, len);
+	} else {
+		return Message::deserialize(data, length);
 	}
-
-	return m;
 }
 
 }
