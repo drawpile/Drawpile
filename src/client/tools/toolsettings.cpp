@@ -704,7 +704,10 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
 
 	connect(_ui->btnBackground, SIGNAL(colorChanged(const QColor&)),
+			this, SLOT(setEditorBackgroundColor(const QColor &)));
+	connect(_ui->btnBackground, SIGNAL(colorChanged(const QColor&)),
 			this, SLOT(applyChanges()));
+
 	connect(_ui->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
 	connect(_ui->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 
@@ -743,6 +746,19 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 	_ui->content->setEnabled(enabled);
 	_ui->btnBake->setEnabled(enabled);
 	_ui->btnRemove->setEnabled(enabled);
+}
+
+void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
+{
+	// Blend transparent colors with white
+	const QColor c = QColor::fromRgbF(
+		color.redF() * color.alphaF() + (1-color.alphaF()),
+		color.greenF() * color.alphaF() + (1-color.alphaF()),
+		color.blueF() * color.alphaF() + (1-color.alphaF())
+	);
+
+	// We need to use the stylesheet because native styles ignore the palette.
+	_ui->content->setStyleSheet("background-color: " + c.name());
 }
 
 void AnnotationSettings::updateStyleButtons()
@@ -886,6 +902,7 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text());
 		_ui->btnBackground->setColor(a->backgroundColor());
+		setEditorBackgroundColor(a->backgroundColor());
 		if(a->text().isEmpty())
 			resetContentFont(true, true, true);
 

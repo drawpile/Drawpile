@@ -332,6 +332,7 @@ private slots:
 	void toggleBold(bool bold);
 	void toggleStrikethrough(bool strike);
 	void updateStyleButtons();
+	void setEditorBackgroundColor(const QColor &color);
 
 	void applyChanges();
 	void saveChanges();

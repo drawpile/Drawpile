@@ -14,6 +14,7 @@
  * Slightly smoother antialised (thin) brush stroke rendering
  * Fixed tablet event handling when running on Qt 5.4
  * Added preview widget for flood fill
+ * Set annotation editor background color
 
 2014-10-17 Version 0.9.5
  * Added Czech translation
