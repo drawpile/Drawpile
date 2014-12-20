@@ -156,6 +156,8 @@ class MainWindow : public QMainWindow {
 		//! Handle closing of the main window
 		void closeEvent(QCloseEvent *event);
 
+		bool event(QEvent *event);
+
 	private:
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
@@ -200,6 +202,7 @@ class MainWindow : public QMainWindow {
 
 		widgets::CanvasView *_view;
 
+		QStatusBar *_viewStatusBar;
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 		widgets::NetStatus *_netstatus;

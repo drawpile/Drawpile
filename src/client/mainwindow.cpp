@@ -38,6 +38,7 @@
 #include <QClipboard>
 #include <QFile>
 #include <QWindow>
+#include <QVBoxLayout>
 
 #ifndef NDEBUG
 #include <QTimer>
@@ -131,6 +132,15 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false)
 {
+	// The central widget consists of a custom status bar and a splitter
+	// which includes the chat box and the main view.
+	// We don't use the normal QMainWindow statusbar to save some vertical space for the docks.
+	QWidget *centralwidget = new QWidget;
+	QVBoxLayout *mainwinlayout = new QVBoxLayout(centralwidget);
+	mainwinlayout->setContentsMargins(0, 0, 0 ,0);
+	mainwinlayout->setSpacing(0);
+	setCentralWidget(centralwidget);
+
 	updateTitle();
 
 	createDocks();
@@ -139,37 +149,43 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setUnifiedTitleAndToolBarOnMac(true);
 #endif
 
-	QStatusBar *statusbar = new QStatusBar(this);
-	setStatusBar(statusbar);
+	// Work area is split between the canvas view and the chatbox
+	_splitter = new QSplitter(Qt::Vertical, centralwidget);
 
-#ifndef NDEBUG
-	// Debugging tool: show amount of memory consumed by tiles
-	QLabel *tilemem = new QLabel(this);
-	QTimer *tilememtimer = new QTimer(this);
-	connect(tilememtimer, &QTimer::timeout, [tilemem]() {
-		tilemem->setText(QString("Tiles: %1 Mb").arg(paintcore::TileData::megabytesUsed(), 0, 'f', 2));
-	});
-	tilememtimer->setInterval(1000);
-	tilememtimer->start(1000);
-	statusbar->addPermanentWidget(tilemem);
-#endif
+	mainwinlayout->addWidget(_splitter);
+
+	// Create custom status bar
+	_viewStatusBar = new QStatusBar;
+	_viewStatusBar->setSizeGripEnabled(false);
+	mainwinlayout->addWidget(_viewStatusBar);
 
 	// Create status indicator widgets
 	auto *viewstatus = new widgets::ViewStatus(this);
+
 	_netstatus = new widgets::NetStatus(this);
 	_recorderstatus = new QLabel(this);
 	_recorderstatus->hide();
 	_lockstatus = new QLabel(this);
 	_lockstatus->setFixedSize(QSize(16, 16));
 
-	statusbar->addPermanentWidget(viewstatus);
-	statusbar->addPermanentWidget(_netstatus);
-	statusbar->addPermanentWidget(_recorderstatus);
-	statusbar->addPermanentWidget(_lockstatus);
+#ifndef NDEBUG
+	// Debugging tool: show amount of memory consumed by tiles
+	{
+		QLabel *tilemem = new QLabel(this);
+		QTimer *tilememtimer = new QTimer(this);
+		connect(tilememtimer, &QTimer::timeout, [tilemem]() {
+			tilemem->setText(QStringLiteral("Tiles: %1 Mb").arg(paintcore::TileData::megabytesUsed(), 0, 'f', 2));
+		});
+		tilememtimer->setInterval(1000);
+		tilememtimer->start(1000);
+		_viewStatusBar->addPermanentWidget(tilemem);
+	}
+#endif
 
-	// Work area is split between the canvas view and the chatbox
-	_splitter = new QSplitter(Qt::Vertical, this);
-	setCentralWidget(_splitter);
+	_viewStatusBar->addPermanentWidget(viewstatus);
+	_viewStatusBar->addPermanentWidget(_netstatus);
+	_viewStatusBar->addPermanentWidget(_recorderstatus);
+	_viewStatusBar->addPermanentWidget(_lockstatus);
 
 	// Create canvas view
 	_view = new widgets::CanvasView(this);
@@ -680,6 +696,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	exit();
 }
 
+bool MainWindow::event(QEvent *event)
+{
+	if(event->type() == QEvent::StatusTip) {
+		_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
+		return true;
+	} else {
+		return QMainWindow::event(event);
+	}
+}
+
 /**
  * Show the "new document" dialog
  */
@@ -998,7 +1024,7 @@ void MainWindow::statusbarChat(const QString &nick, const QString &msg)
 {
 	// Show message only if chat box is hidden
 	if(_splitter->sizes().at(1) == 0)
-		statusBar()->showMessage(nick + ": " + msg, 3000);
+		_viewStatusBar->showMessage(nick + ": " + msg, 3000);
 }
 
 /**
@@ -1408,7 +1434,7 @@ void MainWindow::toggleFullscreen()
 
 		// Hide everything except floating docks
 		menuBar()->hide();
-		statusBar()->hide();
+		_viewStatusBar->hide();
 		foreach(QObject *child, children()) {
 			if(child->inherits("QDockWidget")) {
 				QDockWidget *dw = qobject_cast<QDockWidget*>(child);
@@ -1424,7 +1450,7 @@ void MainWindow::toggleFullscreen()
 		// Restore old state
 		showNormal();
 		menuBar()->show();
-		statusBar()->show();
+		_viewStatusBar->show();
 		setGeometry(_fullscreen_oldgeometry);
 		restoreState(_fullscreen_oldstate);
 	}
