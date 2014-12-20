@@ -128,7 +128,7 @@ private:
 
 	paintcore::Brush _brush;
 	paintcore::Point _lastpoint;
-	qreal _distance;
+	paintcore::StrokeState _strokestate;
 	QQueue<Stroke> _strokes;
 	int _current_id;
 };

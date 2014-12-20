@@ -47,7 +47,8 @@ Brush::Brush(int size, qreal hardness, qreal opacity, const QColor& color, int s
 	: _size1(size), _size2(size),
 	_hardness1(hardness), _hardness2(hardness),
 	_opacity1(opacity), _opacity2(opacity),
-	_color1(color), _color2(color), _spacing(spacing), _blend(1),
+	_smudge1(0), _smudge2(0),
+	_color1(color), _color2(color), _spacing(spacing), _resmudge(0), _blend(1),
 	_subpixel(false), _incremental(true)
 {
 	Q_ASSERT(size>0);
@@ -94,6 +95,18 @@ qreal Brush::opacity(qreal pressure) const
 }
 
 /**
+ * Get color smudging pressure for the given stylus pressure
+ * @param pressure pen pressure
+ * @return opacity
+ * @pre 0 <= pressure <= 1
+ * @post 0 <= RESULT <= 1
+ */
+qreal Brush::smudge(qreal pressure) const
+{
+	return interpolate(smudge1(), smudge2(), pressure);
+}
+
+/**
  * Get the brush color for certain pressure.
  * @param pressure pen pressure. Range is [0..1]
  * @return color
@@ -132,6 +145,8 @@ bool Brush::operator==(const Brush& brush) const
 			qAbs(hardness2() - brush.hardness2()) <= 1.0/256.0 &&
 			qAbs(opacity1() - brush.opacity1()) <= 1.0/256.0 &&
 			qAbs(opacity2() - brush.opacity2()) <= 1.0/256.0 &&
+			qAbs(smudge1() - brush.smudge1()) <= 1.0/256.0 &&
+			qAbs(smudge2() - brush.smudge2()) <= 1.0/256.0 &&
 			color1() == brush.color1() &&
 			color2() == brush.color2() &&
 			spacing() == brush.spacing() &&

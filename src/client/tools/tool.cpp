@@ -35,6 +35,7 @@ ToolCollection::ToolCollection()
 {
 	_tools[PEN] = new Pen(*this);
 	_tools[BRUSH] = new Brush(*this);
+	_tools[SMUDGE] = new Smudge(*this);
 	_tools[ERASER] = new Eraser(*this);
 	_tools[PICKER] = new ColorPicker(*this);
 	_tools[LINE] = new Line(*this);

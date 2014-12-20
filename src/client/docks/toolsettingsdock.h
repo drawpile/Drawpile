@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ public:
 	~ToolSettings();
 
 	//! Get a brush with the current settings
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	//! Get the annotation settings page
 	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
@@ -168,6 +168,7 @@ private:
 
 	tools::ToolSettings *_pensettings;
 	tools::ToolSettings *_brushsettings;
+	tools::ToolSettings *_smudgesettings;
 	tools::ToolSettings *_erasersettings;
 	tools::ColorPickerSettings *_pickersettings;
 	tools::ToolSettings *_linesettings;

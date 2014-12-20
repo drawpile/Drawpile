@@ -56,10 +56,10 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void setPreviewShape(PreviewShape shape);
 
 		//! Get preview shape
-		PreviewShape previewShape() const { return shape_; }
+		PreviewShape previewShape() const { return _shape; }
 
 		//! Get the displayed brush
-		const paintcore::Brush& brush(bool swapcolors) const;
+		paintcore::Brush brush(bool swapcolors) const;
 
 		bool isTransparentBackground() const { return _tranparentbg; }
 
@@ -79,6 +79,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set preview brush hardness
 		void setHardness(int hardness);
 
+		//! Set preview brush color smudging pressure
+		void setSmudge(int smudge);
+
 		//! Enable/disable default size pressure sensitivity
 		void setSizePressure(bool enable);
 
@@ -91,6 +94,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set dab spacing
 		void setSpacing(int spacing);
 
+		//! Set smudge color sampling frequency
+		void setSmudgeFrequency(int f);
+
 		//! Enable/disable default opacity pressure sensitivity
 		void setOpacityPressure(bool enable);
 
@@ -99,6 +105,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 		//! Enable/disable color pressure sensitivity
 		void setColorPressure(bool enable);
+
+		//! Enable/disable smudging pressure sensitivity
+		void setSmudgePressure(bool enable);
 
 		//! Enable/disable subpixel precision
 		void setSubpixel(bool enable);
@@ -136,17 +145,17 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updatePreview();
 		void updateBackground();
 
-		paintcore::Brush brush_;
-		mutable paintcore::Brush swapbrush_;
+		paintcore::Brush _brush;
 
-		paintcore::LayerStack *preview_;
-		bool sizepressure_;
-		bool opacitypressure_;
-		bool hardnesspressure_;
-		bool colorpressure_;
-		QColor color1_, color2_;
-		PreviewShape shape_;
-		qreal oldhardness1_, oldhardness2_;
+		paintcore::LayerStack *_preview;
+		bool _sizepressure;
+		bool _opacitypressure;
+		bool _hardnesspressure;
+		bool _colorpressure;
+		bool _smudgepressure;
+		QColor _color1, _color2;
+		PreviewShape _shape;
+		qreal _oldhardness1, _oldhardness2;
 		int _fillTolerance;
 		int _fillExpansion;
 		bool _needupdate;

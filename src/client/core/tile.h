@@ -25,6 +25,8 @@
 #include <QAtomicInt>
 #endif
 
+#include <array>
+
 class QColor;
 class QImage;
 
@@ -110,7 +112,10 @@ class Tile {
 		}
 
 		//! Composite values multiplied by color onto this tile
-		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
+		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip);
+
+		//! Get a weighted average of the tile pixels
+		std::array<quint32, 5> weightedAverage(const uchar *weights, int x, int y, int w, int h, int skip) const;
 
 		//! Composite another tile with this tile
 		void merge(const Tile &tile, uchar opacity, int blend);

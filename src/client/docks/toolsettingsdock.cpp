@@ -90,6 +90,9 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_widgets->addWidget(_brushsettings->createUi(this));
 	_currenttool = _brushsettings;
 
+	_smudgesettings = new tools::SmudgeSettings("smudge", tr("Watercolor"));
+	_widgets->addWidget(_smudgesettings->createUi(this));
+
 	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"));
 	_widgets->addWidget(_erasersettings->createUi(this));
 
@@ -133,11 +136,12 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 ToolSettings::~ToolSettings()
 {
-	delete _pensettings,
-	delete _brushsettings,
-	delete _erasersettings,
-	delete _pickersettings,
-	delete _linesettings,
+	delete _pensettings;
+	delete _brushsettings;
+	delete _smudgesettings;
+	delete _erasersettings;
+	delete _pickersettings;
+	delete _linesettings;
 	delete _rectsettings;
 	delete _ellipsesettings;
 	delete _fillsettings;
@@ -186,6 +190,7 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
 	switch(tool) {
 		case tools::PEN: return _pensettings; break;
 		case tools::BRUSH: return _brushsettings; break;
+		case tools::SMUDGE: return _smudgesettings; break;
 		case tools::ERASER: return _erasersettings; break;
 		case tools::PICKER: return _pickersettings; break;
 		case tools::LINE: return _linesettings; break;
@@ -197,6 +202,7 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
 		case tools::LASERPOINTER: return _lasersettings; break;
 	}
 
+	qFatal("Unhandled tools::Type %d", tool);
 	return nullptr;
 }
 
@@ -352,7 +358,7 @@ void ToolSettings::quickAdjustCurrent1(float adjustment)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
+paintcore::Brush ToolSettings::getBrush(bool swapcolors) const
 {
 	return _currenttool->getBrush(swapcolors);
 }

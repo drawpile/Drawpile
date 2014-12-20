@@ -30,8 +30,10 @@ class QDataStream;
 namespace paintcore {
 
 class Brush;
+struct BrushStamp;
 class Point;
 class LayerStack;
+struct StrokeState;
 
 /**
  * @brief A drawing layer/tile manage
@@ -120,10 +122,10 @@ class Layer {
 		void fillRect(const QRect &rect, const QColor &color, int blendmode=255);
 
 		//! Dab the layer with a brush
-		void dab(int contextId, const Brush& brush, const Point& point);
+		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
 
 		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, qreal &distance);
+		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state);
 
 		//! Merge a sublayer with this layer
 		void mergeSublayer(int id);
@@ -183,9 +185,11 @@ class Layer {
 		//! Get a sublayer
 		Layer *getSubLayer(int id, int blendmode, uchar opacity);
 
-		void directDab(const Brush &brush, const Point& point);
-		void drawHardLine(const Brush &brush, const Point& from, const Point& to, qreal &distance);
-		void drawSoftLine(const Brush &brush, const Point& from, const Point& to, qreal &distance);
+		void directDab(const Brush &brush, const Point& point, StrokeState &state);
+		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
+		void drawSoftLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
+
+		QColor getDabColor(const BrushStamp &stamp) const;
 
 		LayerStack *_owner;
 		int id_;

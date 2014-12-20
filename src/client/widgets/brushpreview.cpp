@@ -35,10 +35,10 @@ namespace widgets {
 #endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), preview_(0), sizepressure_(false),
-	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
-	color1_(Qt::black), color2_(Qt::white),
-	shape_(Stroke), _fillTolerance(0), _fillExpansion(0), _tranparentbg(false)
+	: QFrame(parent,f), _preview(0), _sizepressure(false),
+	_opacitypressure(false), _hardnesspressure(false), _colorpressure(false), _smudgepressure(false),
+	_color1(Qt::black), _color2(Qt::white),
+	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
@@ -50,12 +50,12 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 }
 
 BrushPreview::~BrushPreview() {
-	delete preview_;
+	delete _preview;
 }
 
 void BrushPreview::setPreviewShape(PreviewShape shape)
 {
-	shape_ = shape;
+	_shape = shape;
 	_needupdate = true;
 	update();
 }
@@ -69,19 +69,19 @@ void BrushPreview::setTransparentBackground(bool transparent)
 
 void BrushPreview::setColor1(const QColor& color)
 {
-	color1_ = color;
-	brush_.setColor(color);
-	if(colorpressure_==false)
-		brush_.setColor2(color);
+	_color1 = color;
+	_brush.setColor(color);
+	if(_colorpressure==false)
+		_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
 
 void BrushPreview::setColor2(const QColor& color)
 {
-	color2_ = color;
-	if(colorpressure_)
-		brush_.setColor2(color);
+	_color2 = color;
+	if(_colorpressure)
+		_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
@@ -100,18 +100,18 @@ void BrushPreview::setFloodFillExpansion(int expansion)
 	update();
 }
 
-const paintcore::Brush &BrushPreview::brush(bool swapcolors) const
+paintcore::Brush BrushPreview::brush(bool swapcolors) const
 {
 	if(swapcolors) {
-		swapbrush_ = brush_;
-		swapbrush_.setColor(color2_);
-		if(colorpressure_)
-			swapbrush_.setColor2(color1_);
+		paintcore::Brush swapbrush = _brush;
+		swapbrush.setColor(_color2);
+		if(_colorpressure)
+			swapbrush.setColor2(_color1);
 		else
-			swapbrush_.setColor2(color2_);
-		return swapbrush_;
+			swapbrush.setColor2(_color2);
+		return swapbrush;
 	} else {
-		return brush_;
+		return _brush;
 	}
 }
 
@@ -132,29 +132,29 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	if(_needupdate)
 		updatePreview();
-	preview_->paint(event->rect(), &painter);
+	_preview->paint(event->rect(), &painter);
 }
 
 void BrushPreview::updatePreview()
 {
-	if(preview_==0) {
-		preview_ = new paintcore::LayerStack;
+	if(_preview==0) {
+		_preview = new paintcore::LayerStack;
 		QSize size = contentsRect().size();
-		preview_->resize(0, size.width(), size.height(), 0);
-		preview_->addLayer(0, "", QColor(0,0,0));
-	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
-		preview_->resize(0, contentsRect().width() - preview_->width(), contentsRect().height() - preview_->height(), 0);
+		_preview->resize(0, size.width(), size.height(), 0);
+		_preview->addLayer(0, "", QColor(0,0,0));
+	} else if(_preview->width() != contentsRect().width() || _preview->height() != contentsRect().height()) {
+		_preview->resize(0, contentsRect().width() - _preview->width(), contentsRect().height() - _preview->height(), 0);
 	}
 
 	QRectF previewRect(
-		preview_->width()/8,
-		preview_->height()/4,
-		preview_->width()-preview_->width()/4,
-		preview_->height()-preview_->height()/2
+		_preview->width()/8,
+		_preview->height()/4,
+		_preview->width()-_preview->width()/4,
+		_preview->height()-_preview->height()/2
 	);
 	paintcore::PointVector pointvector;
 
-	switch(shape_) {
+	switch(_shape) {
 	case Stroke: pointvector = paintcore::shapes::sampleStroke(previewRect); break;
 	case Line:
 		pointvector
@@ -166,19 +166,19 @@ void BrushPreview::updatePreview()
 	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
-	paintcore::Layer *layer = preview_->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : color2_);
+	paintcore::Layer *layer = _preview->getLayerByIndex(0);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : _color2);
 
-	qreal distance = 0;
+	paintcore::StrokeState ss(_brush);
 	for(int i=1;i<pointvector.size();++i)
-		layer->drawLine(0, brush_, pointvector[i-1], pointvector[i], distance);
+		layer->drawLine(0, _brush, pointvector[i-1], pointvector[i], ss);
 
 	layer->mergeSublayer(0);
 
-	if(shape_ == FloodFill) {
-		paintcore::FillResult fr = paintcore::floodfill(preview_, previewRect.center().toPoint(), color2_, _fillTolerance, 0);
+	if(_shape == FloodFill) {
+		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), _color2, _fillTolerance, 0);
 		if(_fillExpansion>0)
-			fr = paintcore::expandFill(fr, _fillExpansion, color2_);
+			fr = paintcore::expandFill(fr, _fillExpansion, _color2);
 		layer->putImage(fr.x, fr.y, fr.image, true);
 	}
 
@@ -190,7 +190,7 @@ void BrushPreview::updatePreview()
  */
 void BrushPreview::setBrush(const paintcore::Brush& brush)
 {
-	brush_ = brush;
+	_brush = brush;
 	updatePreview();
 	update();
 }
@@ -200,9 +200,9 @@ void BrushPreview::setBrush(const paintcore::Brush& brush)
  */
 void BrushPreview::setSize(int size)
 {
-	brush_.setSize(size);
-	if(sizepressure_==false)
-		brush_.setSize2(size);
+	_brush.setSize(size);
+	if(_sizepressure==false)
+		_brush.setSize2(size);
 	updatePreview();
 	update();
 }
@@ -214,9 +214,9 @@ void BrushPreview::setSize(int size)
 void BrushPreview::setOpacity(int opacity)
 {
 	const qreal o = opacity/100.0;
-	brush_.setOpacity(o);
-	if(opacitypressure_==false)
-		brush_.setOpacity2(o);
+	_brush.setOpacity(o);
+	if(_opacitypressure==false)
+		_brush.setOpacity2(o);
 	updatePreview();
 	update();
 }
@@ -228,9 +228,23 @@ void BrushPreview::setOpacity(int opacity)
 void BrushPreview::setHardness(int hardness)
 {
 	const qreal h = hardness/100.0;
-	brush_.setHardness(h);
-	if(hardnesspressure_==false)
-		brush_.setHardness2(h);
+	_brush.setHardness(h);
+	if(_hardnesspressure==false)
+		_brush.setHardness2(h);
+	updatePreview();
+	update();
+}
+
+/**
+ * @param smudge color smudge pressure
+ * @pre 0 <= smudge <= 100
+ */
+void BrushPreview::setSmudge(int smudge)
+{
+	const qreal s = smudge / 100.0;
+	_brush.setSmudge(s);
+	if(_smudgepressure==false)
+		_brush.setSmudge2(s);
 	updatePreview();
 	update();
 }
@@ -241,65 +255,83 @@ void BrushPreview::setHardness(int hardness)
  */
 void BrushPreview::setSpacing(int spacing)
 {
-	brush_.setSpacing(spacing);
+	_brush.setSpacing(spacing);
+	updatePreview();
+	update();
+}
+
+void BrushPreview::setSmudgeFrequency(int f)
+{
+	_brush.setResmudge(f);
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setSizePressure(bool enable)
 {
-	sizepressure_ = enable;
+	_sizepressure = enable;
 	if(enable)
-		brush_.setSize2(1);
+		_brush.setSize2(1);
 	else
-		brush_.setSize2(brush_.size1());
+		_brush.setSize2(_brush.size1());
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setOpacityPressure(bool enable)
 {
-	opacitypressure_ = enable;
+	_opacitypressure = enable;
 	if(enable)
-		brush_.setOpacity2(0);
+		_brush.setOpacity2(0);
 	else
-		brush_.setOpacity2(brush_.opacity1());
+		_brush.setOpacity2(_brush.opacity1());
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setHardnessPressure(bool enable)
 {
-	hardnesspressure_ = enable;
+	_hardnesspressure = enable;
 	if(enable)
-		brush_.setHardness2(0);
+		_brush.setHardness2(0);
 	else
-		brush_.setHardness2(brush_.hardness1());
+		_brush.setHardness2(_brush.hardness1());
+	updatePreview();
+	update();
+}
+
+void BrushPreview::setSmudgePressure(bool enable)
+{
+	_smudgepressure = enable;
+	if(enable)
+		_brush.setSmudge2(0);
+	else
+		_brush.setSmudge2(_brush.smudge1());
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setColorPressure(bool enable)
 {
-	colorpressure_ = enable;
+	_colorpressure = enable;
 	if(enable)
-		brush_.setColor2(color2_);
+		_brush.setColor2(_color2);
 	else
-		brush_.setColor2(color1_);
+		_brush.setColor2(_color1);
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setSubpixel(bool enable)
 {
-	brush_.setSubpixel(enable);
+	_brush.setSubpixel(enable);
 	updatePreview();
 	update();
 }
 
 void BrushPreview::setBlendingMode(int mode)
 {
-	brush_.setBlendingMode(mode);
+	_brush.setBlendingMode(mode);
 	updatePreview();
 	update();
 }
@@ -307,15 +339,15 @@ void BrushPreview::setBlendingMode(int mode)
 void BrushPreview::setHardEdge(bool hard)
 {
 	if(hard) {
-		oldhardness1_ = brush_.hardness(0);
-		oldhardness2_ = brush_.hardness(1);
-		brush_.setHardness(1);
-		brush_.setHardness2(1);
-		brush_.setSubpixel(false);
+		_oldhardness1 = _brush.hardness(0);
+		_oldhardness2 = _brush.hardness(1);
+		_brush.setHardness(1);
+		_brush.setHardness2(1);
+		_brush.setSubpixel(false);
 	} else {
-		brush_.setHardness(oldhardness1_);
-		brush_.setHardness2(oldhardness2_);
-		brush_.setSubpixel(true);
+		_brush.setHardness(_oldhardness1);
+		_brush.setHardness2(_oldhardness2);
+		_brush.setSubpixel(true);
 	}
 	updatePreview();
 	update();
@@ -323,7 +355,7 @@ void BrushPreview::setHardEdge(bool hard)
 
 void BrushPreview::setIncremental(bool incremental)
 {
-	brush_.setIncremental(incremental);
+	_brush.setIncremental(incremental);
 	updatePreview();
 	update();
 }

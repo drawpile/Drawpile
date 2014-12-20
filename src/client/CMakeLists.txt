@@ -122,6 +122,7 @@ set (
 	UIs
 	ui/brushsettings.ui
 	ui/simplesettings.ui
+	ui/smudgesettings.ui
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui

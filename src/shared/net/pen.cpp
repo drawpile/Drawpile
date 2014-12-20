@@ -24,7 +24,7 @@ namespace protocol {
 
 ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 {
-	if(len != 21)
+	if(len != 22)
 		return 0;
 
 	return new ToolChange(
@@ -42,13 +42,14 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 		*(data+17),
 		*(data+18),
 		*(data+19),
-		*(data+20)
+		*(data+20),
+		*(data+21)
 	);
 }
 
 int ToolChange::payloadLength() const
 {
-	return 1 + 20;
+	return 1 + 21;
 }
 
 int ToolChange::serializePayload(uchar *data) const
@@ -67,7 +68,8 @@ int ToolChange::serializePayload(uchar *data) const
 	*(ptr++) = _size_l;
 	*(ptr++) = _opacity_h;
 	*(ptr++) = _opacity_l;
-	*(ptr++) = _smudge;
+	*(ptr++) = _smudge_h;
+	*(ptr++) = _smudge_l;
 	*(ptr++) = _resmudge;
 	return ptr-data;
 }

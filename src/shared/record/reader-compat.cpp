@@ -49,6 +49,7 @@ ToolChange *ToolChangeV11(const uchar *data, uint len)
 		*(data+17),
 		*(data+18),
 		0, // smudge parameters were added in V12
+		0,
 		0
 	);
 }

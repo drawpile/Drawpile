@@ -64,11 +64,23 @@ public:
 	//! Set color for light brush
 	void setColor2(const QColor& color) { _color2 = color; }
 
+	//! Set smudging pressure for heavy brush
+	void setSmudge(qreal smudge) { Q_ASSERT(smudge>=0 && smudge<=1); _smudge1 = smudge; }
+	//! Set smudging pressure for light brush
+	void setSmudge2(qreal smudge) { Q_ASSERT(smudge>=0 && smudge<=1); _smudge2 = smudge; }
+
+	qreal smudge1() const { return _smudge1; }
+	qreal smudge2() const { return _smudge2; }
+
 	const QColor &color1() const { return _color1; }
 	const QColor &color2() const { return _color2; }
 
 	void setSpacing(int spacing) { Q_ASSERT(spacing >= 0 && spacing <= 100); _spacing = spacing; }
 	int spacing() const { return _spacing; }
+
+	//! Set smudge colir resampling frequency (0 resamples on every dab)
+	void setResmudge(int resmudge) { Q_ASSERT(resmudge >= 0); _resmudge = resmudge; }
+	int resmudge() const { return _resmudge; }
 
 	void setSubpixel(bool sp) { _subpixel = sp; }
 	bool subpixel() const { return _subpixel; }
@@ -87,6 +99,8 @@ public:
 	qreal opacity(qreal pressure) const;
 	//! Get interpolated color
 	QColor color(qreal pressure) const;
+	//! Get interpolated smudging pressure
+	qreal smudge(qreal pressure) const;
 	//! Get the dab spacing distance
 	qreal spacingDist(qreal pressure) const;
 
@@ -103,11 +117,29 @@ private:
 	int _size1, _size2;
 	qreal _hardness1, _hardness2;
 	qreal _opacity1, _opacity2;
+	qreal _smudge1, _smudge2;
 	QColor _color1, _color2;
 	int _spacing;
+	int _resmudge;
 	int _blend;
 	bool _subpixel;
 	bool _incremental;
+};
+
+struct StrokeState {
+	// stroked distance
+	qreal distance;
+
+	// number of dabs since last smudge color sampling
+	int smudgeDistance;
+
+	// the smudged color. This is used instead of the normal
+	// brush color when smudging is enabled, so initialize it to the brush
+	// color at the start of the stroke.
+	QColor smudgeColor;
+
+	StrokeState() : distance(0), smudgeDistance(0) { }
+	explicit StrokeState(const Brush &b) : distance(0), smudgeDistance(0), smudgeColor(b.color1()) { }
 };
 
 }

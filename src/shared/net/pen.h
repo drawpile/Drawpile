@@ -46,14 +46,15 @@ public:
 		uint8_t hard_h, uint8_t hard_l,
 		uint8_t size_h, uint8_t size_l,
 		uint8_t opacity_h, uint8_t opacity_l,
-		uint8_t smudge, uint8_t resmudge
+		uint8_t smudge_h, uint8_t smudge_l,
+		uint8_t resmudge
 		)
 		: Message(MSG_TOOLCHANGE, ctx),
 		_layer(layer), _blend(blend), _mode(mode),
 		_spacing(spacing), _color_h(color_h), _color_l(color_l),
 		_hard_h(hard_h), _hard_l(hard_l), _size_h(size_h), _size_l(size_l),
 		_opacity_h(opacity_h), _opacity_l(opacity_l),
-		_smudge(smudge), _resmudge(resmudge)
+		_smudge_h(smudge_h), _smudge_l(smudge_l), _resmudge(resmudge)
 		{}
 
 		static ToolChange *deserialize(const uchar *data, uint len);
@@ -70,7 +71,8 @@ public:
 		uint8_t size_l() const { return _size_l; }
 		uint8_t opacity_h() const { return _opacity_h; }
 		uint8_t opacity_l() const { return _opacity_l; }
-		uint8_t smudge() const { return _smudge; }
+		uint8_t smudge_h() const { return _smudge_h; }
+		uint8_t smudge_l() const { return _smudge_l; }
 		uint8_t resmudge() const { return _resmudge; }
 
 protected:
@@ -90,7 +92,8 @@ private:
 	uint8_t _size_l;
 	uint8_t _opacity_h;
 	uint8_t _opacity_l;
-	uint8_t _smudge;
+	uint8_t _smudge_h;
+	uint8_t _smudge_l;
 	uint8_t _resmudge;
 };
 

@@ -494,7 +494,7 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 	}
 }
 
-void Layer::dab(int contextId, const Brush &brush, const Point &point)
+void Layer::dab(int contextId, const Brush &brush, const Point &point, StrokeState &state)
 {
 	Brush effective_brush = brush;
 	Layer *l = this;
@@ -519,7 +519,7 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 		p.setY(qFloor(p.y()));
 	}
 
-	l->directDab(effective_brush, p);
+	l->directDab(effective_brush, p, state);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
@@ -530,7 +530,7 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
  * the subpixel hint of the brush.
  * @param context drawing context id (needed for indirect drawing)
  */
-void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, qreal &distance)
+void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state)
 {
 	Brush effective_brush = brush;
 	Layer *l = this;
@@ -550,9 +550,9 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 	}
 
 	if(effective_brush.subpixel())
-		l->drawSoftLine(effective_brush, from, to, distance);
+		l->drawSoftLine(effective_brush, from, to, state);
 	else
-		l->drawHardLine(effective_brush, from, to, distance);
+		l->drawHardLine(effective_brush, from, to, state);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
@@ -565,7 +565,7 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
  * @param to ending point
  * @param distance distance from previous dab.
  */
-void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
+void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, StrokeState &state)
 {
 	qreal dx = to.x() - from.x();
 	qreal dy = to.y() - from.y();
@@ -576,24 +576,24 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 
 	const qreal spacing0 = qMax(1.0, brush.spacingDist(from.pressure()));
 	qreal i;
-	if(distance>=spacing0)
+	if(state.distance>=spacing0)
 		i = 0;
-	else if(distance==0)
+	else if(state.distance==0)
 		i = spacing0;
 	else
-		i = distance;
+		i = state.distance;
 
 	Point p(from.x() + dx*i, from.y() + dy*i, qBound(0.0, from.pressure() + dp*i, 1.0));
 
 	while(i<=dist) {
 		const qreal spacing = qMax(1.0, brush.spacingDist(p.pressure()));
-		directDab(brush, p);
+		directDab(brush, p, state);
 		p.rx() += dx * spacing;
 		p.ry() += dy * spacing;
 		p.setPressure(qBound(0.0, p.pressure() + dp * spacing, 1.0));
 		i += spacing;
 	}
-	distance = i-dist;
+	state.distance = i-dist;
 }
 
 /**
@@ -601,7 +601,7 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
  * precision.
  * The last point is not drawn, so successive lines can be drawn blotches.
  */
-void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to, qreal &distance) {
+void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	int x0 = qFloor(from.x());
@@ -629,6 +629,8 @@ void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to,
 	dy *= 2;
 	dx *= 2;
 
+	qreal distance = state.distance;
+
 	if (dx > dy) {
 		int fraction = dy - (dx >> 1);
 		while (x0 != x1) {
@@ -640,7 +642,7 @@ void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to,
 			x0 += stepx;
 			fraction += dy;
 			if(++distance >= spacing) {
-				directDab(brush, Point(x0, y0, p));
+				directDab(brush, Point(x0, y0, p), state);
 				distance = 0;
 			}
 			p += dp;
@@ -656,20 +658,24 @@ void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to,
 			y0 += stepy;
 			fraction += dx;
 			if(++distance >= spacing) {
-				directDab(brush, Point(x0, y0, p));
+				directDab(brush, Point(x0, y0, p), state);
 				distance = 0;
 			}
 			p += dp;
 		}
 	}
+
+	state.distance = distance;
 }
 
 /**
  * Apply a single dab of the brush to the layer
  * @param brush brush to use
- * @parma point where to dab. May be outside the image.
+ * @param point where to dab. May be outside the image.
+ * @param sampleSmudgeColor if true (and smudging is enabled for the brush), sample the layer color before applying dab
+ * @param state stroke state (used for the smudge color)
  */
-void Layer::directDab(const Brush &brush, const Point& point)
+void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state)
 {
 	// Render the brush
 	const BrushStamp bs = makeGimpStyleBrushStamp(brush, point);
@@ -681,9 +687,24 @@ void Layer::directDab(const Brush &brush, const Point& point)
 	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
 		return;
 
+	const qreal smudge = brush.smudge(point.pressure());
+
+	if(++state.smudgeDistance > brush.resmudge() && smudge>0) {
+		const QColor sampled = getDabColor(bs);
+
+		const qreal a = sampled.alphaF() * smudge;
+
+		state.smudgeColor = QColor::fromRgbF(
+			state.smudgeColor.redF() * (1-a) + sampled.redF() * a,
+			state.smudgeColor.greenF() * (1-a) + sampled.greenF() * a,
+			state.smudgeColor.blueF() * (1-a) + sampled.blueF() * a
+		);
+		state.smudgeDistance = 0;
+	}
+
 	// Composite the brush mask onto the layer
 	const uchar *values = bs.mask.data();
-	QColor color = brush.color(point.pressure());
+	QColor color = smudge > 0 ? state.smudgeColor : brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.
 	int y = top<0?0:top;
@@ -720,6 +741,75 @@ void Layer::directDab(const Brush &brush, const Point& point)
 	if(_owner && visible())
 		_owner->markDirty(QRect(left, top, right-left, bottom-top));
 
+}
+
+/**
+ * @brief Get a weighted average of the layer's color, using the given brush mask as the weight
+ * @param stamp
+ * @return color average
+ */
+QColor Layer::getDabColor(const BrushStamp &stamp) const
+{
+	// This is very much like directDab, instead we only read pixel values
+	const uchar *weights = stamp.mask.data();
+
+	// The mask can overlap multiple tiles
+	const int dia = stamp.mask.diameter();
+	const int bottom = qMin(stamp.top + dia, _height);
+	const int right = qMin(stamp.left + dia, _width);
+
+	int y = qMax(0, stamp.top);
+	int yb = stamp.top<0?-stamp.top:0; // y in relation to brush origin
+	const int x0 = qMax(0, stamp.left);
+	const int xb0 = stamp.left<0?-stamp.left:0;
+
+	qreal weight=0, red=0, green=0, blue=0, alpha=0;
+
+	// collect weighted color sums
+	while(y<bottom) {
+		const int yindex = y / Tile::SIZE;
+		const int yt = y - yindex * Tile::SIZE;
+		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
+		int x = x0;
+		int xb = xb0; // x in relation to brush origin
+		while(x<right) {
+			const int xindex = x / Tile::SIZE;
+			const int xt = x - xindex * Tile::SIZE;
+			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
+			const int i = _xtiles * yindex + xindex;
+
+			std::array<quint32, 5> avg = _tiles.at(i).weightedAverage(weights + yb * dia + xb, xt, yt, wb, hb, dia-wb);
+			weight += avg[0];
+			red += avg[1];
+			green += avg[2];
+			blue += avg[3];
+			alpha += avg[4];
+
+			x = (xindex+1) * Tile::SIZE;
+			xb = xb + wb;
+		}
+		y = (yindex+1) * Tile::SIZE;
+		yb = yb + hb;
+	}
+
+	// Calculate final average
+	red /= weight;
+	green /= weight;
+	blue /= weight;
+	alpha /= weight;
+
+	// Unpremultiply
+	if(alpha>0) {
+		red = qMin(1.0, red/alpha);
+		green = qMin(1.0, green/alpha);
+		blue = qMin(1.0, blue/alpha);
+	}
+
+	Q_ASSERT(red >= 0 && red <= 1);
+	Q_ASSERT(green >= 0 && green <= 1);
+	Q_ASSERT(blue >= 0 && blue <= 1);
+	Q_ASSERT(alpha >= 0 && alpha <= 1);
+	return QColor::fromRgbF(red, green, blue, alpha);
 }
 
 /**

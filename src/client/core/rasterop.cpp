@@ -301,6 +301,31 @@ void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
 	}
 }
 
+std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int w, int h, int maskskip, int pixelskip)
+{
+	std::array<quint32, 5> result{ {0, 0, 0, 0, 0} };
+	pixelskip *= 4;
+	const uchar *pix = reinterpret_cast<const uchar*>(pixels);
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x,++mask) {
+			const uchar m = *mask;
+			const uchar a = pix[3];
+			result[0] += m;
+
+			// premultiply colors to avoid darkening transparent areas
+			result[1] += UINT8_MULT(UINT8_MULT(pix[2], a), m); // red
+			result[2] += UINT8_MULT(UINT8_MULT(pix[1], a), m); // green
+			result[3] += UINT8_MULT(UINT8_MULT(pix[0], a), m); // blue
+			result[4] += UINT8_MULT(a, m); // alpha
+			pix += 4;
+		}
+		pix += pixelskip;
+		mask += maskskip;
+	}
+
+	return result;
+}
+
 void doPixelAlphaBlend(quint32 *destination, const quint32 *source, uchar opacity, int len)
 {
 	uchar *dest = reinterpret_cast<uchar*>(destination);

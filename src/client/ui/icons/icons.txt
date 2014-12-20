@@ -4,6 +4,7 @@ with the bundled icons as fallbacks. Some of the theme icons are not actually pa
 of any theme at the moment, but they could be:
 
  * draw-line: standard name, but not found in many (any?) themes
+ * draw-watercolor: unstandard name, looking for a better icon
  * tool-laserpointer: unstandard name
 
 The builtin icons are for things specific to this app.

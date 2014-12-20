@@ -57,6 +57,16 @@ class Brush : public BrushBase {
 };
 
 /**
+ * \brief Smudge brush tool
+ *
+ * Smudge brush works like a normal brush, but it also picks up color from the layer
+ */
+class Smudge : public BrushBase {
+public:
+	Smudge(ToolCollection &owner) : BrushBase(owner, SMUDGE) { }
+};
+
+/**
  * \brief Eraser tool
  *
  * The eraser too draws only using the eraser blending mode.

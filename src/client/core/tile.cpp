@@ -127,6 +127,37 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
 }
 
 /**
+ * @param weights array of weights
+ * @param x x offset in tile
+ * @param y y offset in tile
+ * @param w width of composition rectangle
+ * @param h height of composition rectangle
+ * @param offset number of bytes to skip in weights to get to the next line
+ * @return [sum of weights, red, green, blue, alpha]
+ */
+std::array<quint32, 5> Tile::weightedAverage(const uchar *weights, int x, int y, int w, int h, int skip) const
+{
+	Q_ASSERT(x>=0 && x<SIZE && y>=0 && y<SIZE);
+	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
+
+	if(isNull()) {
+		quint32 weightsum=0;
+		for(int y=0;y<h;++y) {
+			for(int x=0;x<w;++x,++weights) {
+				weightsum += *weights;
+			}
+			weights += skip;
+		}
+
+		return {{weightsum, 0, 0, 0, 0}};
+
+	} else {
+		return sampleMask(_data->data + y * SIZE + x, weights,
+			w, h, skip, SIZE-w);
+	}
+}
+
+/**
  * @param tile the tile which will be composited over this tile
  * @param opacity opacity modifier of tile
  * @param blend blending mode

@@ -2119,6 +2119,7 @@ void MainWindow::setupActions()
 	//
 	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
 	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
+	QAction *smudgetool = makeAction("toolsmudge", "draw-watercolor", tr("&Watercolor"), tr("A brush that picks up color from the layer"), QKeySequence("W"), true);
 	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
 	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
@@ -2134,6 +2135,7 @@ void MainWindow::setupActions()
 
 	_drawingtools->addAction(pentool);
 	_drawingtools->addAction(brushtool);
+	_drawingtools->addAction(smudgetool);
 	_drawingtools->addAction(erasertool);
 	_drawingtools->addAction(pickertool);
 	_drawingtools->addAction(linetool);

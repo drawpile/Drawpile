@@ -81,7 +81,7 @@ struct ToolContext {
  * The drawing context captures the state needed by a single user for drawing.
  */
 struct DrawingContext {
-	DrawingContext() : pendown(false), distance_accumulator(0) {}
+	DrawingContext() : pendown(false) {}
 	
 	//! Currently selected tool
 	ToolContext tool;
@@ -92,8 +92,8 @@ struct DrawingContext {
 	//! Is the stroke currently in progress?
 	bool pendown;
 	
-	//! Stroke length (used for dab spacing)
-	qreal distance_accumulator;
+	//! State of the current stroke
+	paintcore::StrokeState stroke;
 };
 
 class StateTracker;

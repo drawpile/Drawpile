@@ -28,7 +28,7 @@ class QIODevice;
 namespace recording {
 
 //! Index format version
-static const quint16 INDEX_VERSION = 0x0001;
+static const quint16 INDEX_VERSION = 0x0002;
 
 enum IndexType {
 	IDX_NULL,        // null/invalid entry

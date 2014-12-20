@@ -107,6 +107,9 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
 	brush.setOpacity2(cmd.opacity_l() / 255.0);
 	brush.setColor(cmd.color_h());
 	brush.setColor2(cmd.color_l());
+	brush.setSmudge(cmd.smudge_h() / 255.0);
+	brush.setSmudge2(cmd.smudge_l() / 255.0);
+	brush.setResmudge(cmd.resmudge());
 }
 
 /**
@@ -403,11 +406,11 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		paintcore::Point p(pp.x / 4.0, pp.y / 4.0, pp.p/qreal(0xffff));
 
 		if(ctx.pendown) {
-			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
+			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.stroke);
 		} else {
 			ctx.pendown = true;
-			ctx.distance_accumulator = 0;
-			layer->dab(cmd.contextId(), ctx.tool.brush, p);
+			ctx.stroke = paintcore::StrokeState(ctx.tool.brush);
+			layer->dab(cmd.contextId(), ctx.tool.brush, p, ctx.stroke);
 		}
 		ctx.lastpoint = p;
 	}
@@ -735,8 +738,8 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		// write pendown bit
 		out << ctx.pendown;
 
-		// write stroke length accumulator
-		out << ctx.distance_accumulator;
+		// write stroke state
+		out << ctx.stroke.distance << ctx.stroke.smudgeDistance << ctx.stroke.smudgeColor;
 	}
 
 	// Write layer model
@@ -804,8 +807,8 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		// Read pendown bit
 		in >> ctx.pendown;
 
-		// Read stroke length accumulator
-		in >> ctx.distance_accumulator;
+		// Read stroke state
+		in >> ctx.stroke.distance >> ctx.stroke.smudgeDistance >> ctx.stroke.smudgeColor;
 
 		d->ctxstate[ctxid] = ctx;
 	}

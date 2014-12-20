@@ -28,6 +28,7 @@
 
 class Ui_PenSettings;
 class Ui_BrushSettings;
+class Ui_SmudgeSettings;
 class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
@@ -99,7 +100,7 @@ public:
 	 * @param swapcolors if true, foreground and background colors are swapped
 	 * @return brush with values from the UI widget
 	 */
-	virtual const paintcore::Brush& getBrush(bool swapcolors) const = 0;
+	virtual paintcore::Brush getBrush(bool swapcolors) const = 0;
 
 	/**
 	 * @brief Get the current brush size
@@ -165,7 +166,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	int getSize() const;
 	bool getSubpixelMode() const { return false; }
@@ -195,7 +196,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	int getSize() const;
 	bool getSubpixelMode() const;
@@ -223,7 +224,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	int getSize() const;
 	bool getSubpixelMode() const { return true; }
@@ -239,6 +240,34 @@ private:
 };
 
 /**
+ * @brief Smudge brush settings
+ *
+ * This is a settings class for the color smudging brush tool.
+ */
+class SmudgeSettings : public ToolSettings {
+public:
+	SmudgeSettings(QString name, QString title);
+	~SmudgeSettings();
+
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment);
+	paintcore::Brush getBrush(bool swapcolors) const;
+
+	int getSize() const;
+	bool getSubpixelMode() const { return true; }
+
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+
+private:
+	Ui_SmudgeSettings *_ui;
+};
+
+/**
  * @brief Settings for tools without pressure sensitivity
  */
 class SimpleSettings : public ToolSettings {
@@ -251,7 +280,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	int getSize() const;
 	bool getSubpixelMode() const;
@@ -275,7 +304,7 @@ class BrushlessSettings : public ToolSettings {
 public:
 	BrushlessSettings(const QString &name, const QString &title, const QIcon &icon) : ToolSettings(name, title, icon) {}
 
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
@@ -412,7 +441,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush(bool swapcolors) const;
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;

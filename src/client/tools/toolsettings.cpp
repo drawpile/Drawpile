@@ -27,6 +27,7 @@ using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO 
 using widgets::ColorButton;
 #include "ui_pensettings.h"
 #include "ui_brushsettings.h"
+#include "ui_smudgesettings.h"
 #include "ui_erasersettings.h"
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
@@ -171,7 +172,7 @@ void PenSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-const paintcore::Brush& PenSettings::getBrush(bool swapcolors) const
+paintcore::Brush PenSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -274,7 +275,7 @@ void EraserSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-const paintcore::Brush& EraserSettings::getBrush(bool swapcolors) const
+paintcore::Brush EraserSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -380,7 +381,7 @@ void BrushSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-const paintcore::Brush& BrushSettings::getBrush(bool swapcolors) const
+paintcore::Brush BrushSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -389,6 +390,107 @@ int BrushSettings::getSize() const
 {
 	return _ui->brushsize->value();
 }
+
+SmudgeSettings::SmudgeSettings(QString name, QString title)
+	: ToolSettings(name, title, icon::fromTheme("draw-watercolor")), _ui(0)
+{
+}
+
+SmudgeSettings::~SmudgeSettings()
+{
+	delete _ui;
+}
+
+QWidget *SmudgeSettings::createUiWidget(QWidget *parent)
+{
+	QWidget *widget = new QWidget(parent);
+	_ui = new Ui_SmudgeSettings;
+	_ui->setupUi(widget);
+
+	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+
+	// Hardcoded value for now
+	_ui->preview->setSmudgeFrequency(2);
+
+	return widget;
+}
+
+ToolProperties SmudgeSettings::saveToolSettings()
+{
+	ToolProperties cfg;
+	cfg.setValue("size", _ui->brushsize->value());
+	cfg.setValue("opacity", _ui->brushopacity->value());
+	cfg.setValue("hardness", _ui->brushhardness->value());
+	cfg.setValue("spacing", _ui->brushspacing->value());
+	cfg.setValue("smudge", _ui->brushsmudge->value());
+	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
+	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
+	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
+	cfg.setValue("pressuresmudge", _ui->pressuresmudge->isChecked());
+	return cfg;
+}
+
+void SmudgeSettings::restoreToolSettings(const ToolProperties &cfg)
+{
+	_ui->brushsize->setValue(cfg.intValue("size", 0));
+	_ui->preview->setSize(_ui->brushsize->value());
+
+	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
+	_ui->preview->setOpacity(_ui->brushopacity->value());
+
+	_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
+	_ui->preview->setHardness(_ui->brushhardness->value());
+
+	_ui->brushsmudge->setValue(cfg.intValue("smudge", 50));
+	_ui->preview->setSmudge(_ui->brushsmudge->value());
+
+	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
+	_ui->preview->setSpacing(_ui->brushspacing->value());
+
+	_ui->pressuresize->setChecked(cfg.boolValue("pressuresize",false));
+	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
+
+	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
+	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
+
+	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
+	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
+
+	_ui->pressuresmudge->setChecked(cfg.boolValue("pressuresmudge",false));
+	_ui->preview->setSmudgePressure(_ui->pressuresmudge->isChecked());
+
+	_ui->preview->setSubpixel(true);
+}
+
+void SmudgeSettings::setForeground(const QColor& color)
+{
+	_ui->preview->setColor1(color);
+}
+
+void SmudgeSettings::setBackground(const QColor& color)
+{
+	_ui->preview->setColor2(color);
+}
+
+void SmudgeSettings::quickAdjust1(float adjustment)
+{
+	int adj = qRound(adjustment);
+	if(adj!=0)
+		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
+}
+
+paintcore::Brush SmudgeSettings::getBrush(bool swapcolors) const
+{
+	return _ui->preview->brush(swapcolors);
+}
+
+int SmudgeSettings::getSize() const
+{
+	return _ui->brushsize->value();
+}
+
 
 void BrushlessSettings::setForeground(const QColor& color)
 {
@@ -400,7 +502,7 @@ void BrushlessSettings::setBackground(const QColor& color)
 	_dummybrush.setColor2(color);
 }
 
-const paintcore::Brush& BrushlessSettings::getBrush(bool swapcolors) const
+paintcore::Brush BrushlessSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
 	return _dummybrush;
@@ -481,7 +583,7 @@ void LaserPointerSettings::quickAdjust1(float adjustment)
 		_ui->persistence->setValue(_ui->persistence->value() + adj);
 }
 
-const paintcore::Brush& LaserPointerSettings::getBrush(bool swapcolors) const
+paintcore::Brush LaserPointerSettings::getBrush(bool swapcolors) const
 {
 	QColor c;
 	if(swapcolors)
@@ -600,7 +702,7 @@ void SimpleSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-const paintcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
+paintcore::Brush SimpleSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }

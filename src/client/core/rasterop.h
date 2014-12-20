@@ -20,6 +20,7 @@
 #define RASTEROP_H
 
 #include <QString>
+#include <array>
 
 namespace paintcore {
 
@@ -61,6 +62,19 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, in
  * @param opacity blend opacity (0..255)
  */
 void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity);
+
+/**
+ * Get a weighted average of the pixel data using the mask as the weights
+ *
+ * @param pixels ARGB pixel data
+ * @param mask weight mask
+ * @param w width of the sampling rectangle
+ * @param h height of the sampling rectangle
+ * @param maskskip nubmer of bytes to skip to get to the next line in the mask
+ * @param pixelskip number of bytes to skip to get to the enxt line in the pixel data
+ * @return [weight sum, red, green, blue, alpha]
+ */
+std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int w, int h, int maskskip, int pixelskip);
 
 /**
  * @brief Get the blending mode for the given SVG composite operation name
