@@ -126,6 +126,9 @@ class CanvasView : public QGraphicsView
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);
 
+		//! Enable or disable pixel grid (shown only at high zoom levels)
+		void setPixelGrid(bool enable);
+
 		//! Scroll view to location
 		void scrollTo(const QPoint& point);
 		
@@ -258,6 +261,7 @@ class CanvasView : public QGraphicsView
 		bool _locked;
 		bool _pointertracking;
 		bool _enableTabletEvents;
+		bool _pixelgrid;
 };
 
 }

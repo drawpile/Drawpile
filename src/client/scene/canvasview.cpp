@@ -54,7 +54,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_zoomWheelDelta(0),
-	_locked(false), _pointertracking(false), _enableTabletEvents(true)
+	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true)
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->grabGesture(Qt::PinchGesture);
@@ -195,6 +195,12 @@ void CanvasView::setOutline(bool enable)
 	viewport()->setMouseTracking(enable);
 }
 
+void CanvasView::setPixelGrid(bool enable)
+{
+	_pixelgrid = enable;
+	viewport()->update();
+}
+
 /**
  * @param radius circle radius
  */
@@ -220,6 +226,18 @@ void CanvasView::setOutlineSubpixelMode(bool subpixel)
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
+	if(_pixelgrid && _zoom >= 800) {
+		QPen pen(QColor(160, 160, 160));
+		pen.setCosmetic(true);
+		painter->setPen(pen);
+		for(int x=rect.left();x<=rect.right();++x) {
+			painter->drawLine(x, rect.top(), x, rect.bottom()+1);
+		}
+
+		for(int y=rect.top();y<=rect.bottom();++y) {
+			painter->drawLine(rect.left(), y, rect.right()+1, y);
+		}
+	}
 	if(_enableoutline && _showoutline && _outlinesize>1 && !_locked) {
 		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2,_outlinesize/2),
 					QSizeF(_outlinesize, _outlinesize));

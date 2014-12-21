@@ -594,6 +594,11 @@ void MainWindow::readSettings(bool windowpos)
 		_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
+	// Restore view settings
+	bool pixelgrid = cfg.value("showgrid", true).toBool();
+	getAction("showgrid")->setChecked(pixelgrid);
+	_view->setPixelGrid(pixelgrid);
+
 	cfg.endGroup();
 
 	// Restore tool settings
@@ -629,6 +634,7 @@ void MainWindow::writeSettings()
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", _splitter->saveState());
 
+	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
 	cfg.endGroup();
 	_dock_toolsettings->saveSettings();
 	cfg.beginGroup("tools");
@@ -1991,14 +1997,16 @@ void MainWindow::setupActions()
 
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show Brush &Outline"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
-	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User Pointers"), QString(), QKeySequence(), true);
-	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User Layers"), QString(), QKeySequence(), true);
-	QAction *showlasers = makeAction("showlasers", 0, tr("Show Laser Trails"), QString(), QKeySequence(), true);
+	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
+	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
+	QAction *showlasers = makeAction("showlasers", 0, tr("Show La&ser Trails"), QString(), QKeySequence(), true);
+	QAction *showgrid = makeAction("showgrid", 0, tr("Show Pixel &Grid"), QString(), QKeySequence(), true);
 	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showuserlayers->setChecked(true);
 	showlasers->setChecked(true);
+	showgrid->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
 
@@ -2048,6 +2056,7 @@ void MainWindow::setupActions()
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
+	connect(showgrid, SIGNAL(triggered(bool)), _view, SLOT(setPixelGrid(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
@@ -2072,6 +2081,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showusermarkers);
 	viewmenu->addAction(showuserlayers);
 	viewmenu->addAction(showlasers);
+	viewmenu->addAction(showgrid);
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);
