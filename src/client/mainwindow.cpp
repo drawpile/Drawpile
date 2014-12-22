@@ -2271,5 +2271,5 @@ void MainWindow::createDocks()
 
 	// Tabify docks
 	tabifyDockWidget(_dock_users, _dock_layers);
-	tabifyDockWidget(_dock_layers, _dock_toolsettings);
+	tabifyDockWidget(_dock_layers, _dock_input);
 }
