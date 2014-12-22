@@ -127,13 +127,13 @@ BrushStamp makeHighresMask(const Brush &brush, float pressure)
 	const float opacity = brush.opacity(pressure) * (255 / 4); // opacity of each subsample
 
 	int diameter = ceil(r) + 2; // abstract brush is double size, but target diameter is normal
-	float offset;
+	float offset = (ceil(r) - r) / -2;
 
 	if(diameter%2==0) {
 		++diameter;
-		offset = -2.5;
+		offset += -2.5;
 	} else {
-		offset = -1.5;
+		offset += -1.5;
 	}
 	const int stampOffset = -diameter/2;
 
