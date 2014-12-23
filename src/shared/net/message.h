@@ -265,4 +265,6 @@ private:
 
 }
 
+Q_DECLARE_TYPEINFO(protocol::MessagePtr, Q_MOVABLE_TYPE);
+
 #endif
