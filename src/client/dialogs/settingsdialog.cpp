@@ -285,12 +285,16 @@ void SettingsDialog::rememberSettings()
 
 	for(int i=0;i<_ui->shortcuts->rowCount();++i) {
 		KeySequenceTableItem *item = static_cast<KeySequenceTableItem*>(_ui->shortcuts->item(i, 1));
+		QTableWidgetItem *itemDefault = static_cast<QTableWidgetItem*>(_ui->shortcuts->item(i, 2));
 		Q_ASSERT(_customizableActions.contains(item->actionName()));
 
 		const CustomAction &ca = _customizableActions.value(item->actionName());
 		QKeySequence ks = item->data(Qt::EditRole).value<QKeySequence>();
 
-		cfg.setValue(ca.name, ks);
+		if(ks.isEmpty() || ks.toString() == itemDefault->data(Qt::DisplayRole))
+			cfg.remove(ca.name);
+		else
+			cfg.setValue(ca.name, ks);
 	}
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
