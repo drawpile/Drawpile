@@ -166,5 +166,8 @@ class Tile {
 
 }
 
+Q_DECLARE_TYPEINFO(paintcore::Tile, Q_MOVABLE_TYPE);
+
+
 #endif
 

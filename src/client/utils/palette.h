@@ -32,6 +32,8 @@ struct PaletteColor {
 	PaletteColor(const QColor &c=QColor(), const QString &n=QString()) : color(c), name(n) { }
 };
 
+Q_DECLARE_TYPEINFO(PaletteColor, Q_MOVABLE_TYPE);
+
 class Palette : public QObject {
 	Q_OBJECT
 public:

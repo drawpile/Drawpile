@@ -144,6 +144,8 @@ struct StrokeState {
 
 }
 
+Q_DECLARE_TYPEINFO(paintcore::Brush, Q_MOVABLE_TYPE);
+
 #endif
 
 

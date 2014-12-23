@@ -32,7 +32,7 @@ namespace paintcore {
 namespace net {
 
 struct LayerListItem {
-	LayerListItem() : id(0), title(""), opacity(1.0), blend(1), hidden(false), locked(false) {}
+	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(1), hidden(false), locked(false) {}
 	LayerListItem(int id_, const QString &title_, float opacity_=1.0, int blend_=1, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
 		: id(id_), title(title_), opacity(opacity_), blend(blend_), hidden(hidden_), locked(locked_), exclusive(exclusive_)
 		{}
@@ -60,6 +60,12 @@ struct LayerListItem {
 
 	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
 };
+
+}
+
+Q_DECLARE_TYPEINFO(net::LayerListItem, Q_MOVABLE_TYPE);
+
+namespace net {
 
 typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
 

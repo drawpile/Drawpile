@@ -99,5 +99,8 @@ typedef QVector<Point> PointVector;
 
 }
 
+Q_DECLARE_TYPEINFO(paintcore::Point, Q_MOVABLE_TYPE);
+
+
 #endif
 

@@ -25,6 +25,17 @@
 #include "message.h"
 
 namespace protocol {
+	struct PenPoint {
+		PenPoint() = default;
+		PenPoint(int32_t x_, int32_t y_, uint16_t p_) : x(x_), y(y_), p(p_) {}
+		int32_t x, y;
+		uint16_t p;
+	};
+}
+
+Q_DECLARE_TYPEINFO(protocol::PenPoint, Q_PRIMITIVE_TYPE);
+
+namespace protocol {
 
 static const uint8_t TOOL_MODE_SUBPIXEL = (1<<0);
 static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
@@ -95,13 +106,6 @@ private:
 	uint8_t _smudge_h;
 	uint8_t _smudge_l;
 	uint8_t _resmudge;
-};
-
-struct PenPoint {
-	PenPoint() {}
-	PenPoint(int32_t x_, int32_t y_, uint16_t p_) : x(x_), y(y_), p(p_) {}
-	int32_t x, y;
-	uint16_t p;
 };
 
 typedef QVector<PenPoint> PenPointVector;

@@ -842,7 +842,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		QList<uint8_t> acls;
 		in >> acls;
 
-		sp->layermodel.append(net::LayerListItem(
+		sp->layermodel.append(net::LayerListItem {
 			layerid,
 			title,
 			opacity,
@@ -850,7 +850,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 			hidden,
 			locked,
 			acls
-		));
+		});
 	}
 
 	// Read layerstack snapshot
