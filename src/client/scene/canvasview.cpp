@@ -411,32 +411,68 @@ void CanvasView::onPenUp(bool right)
 	}
 }
 
-//! Handle mouse press events
-void CanvasView::mousePressEvent(QMouseEvent *event)
+void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
-	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(_pendown != NOTDOWN)
-		return;
-	if(event->button() == Qt::MidButton || _dragbtndown) {
+	if(button == Qt::MidButton || _dragbtndown) {
 		ViewTransform mode;
 		if(_dragbtndown == DRAG_NOTRANSFORM) {
-			if((event->modifiers() & Qt::ControlModifier))
+			if(modifiers.testFlag(Qt::ControlModifier))
 				mode = DRAG_ZOOM;
-			else if((event->modifiers() & Qt::ShiftModifier))
+			else if(modifiers.testFlag(Qt::ShiftModifier))
 				mode = DRAG_QUICKADJUST1;
 			else
 				mode = DRAG_TRANSLATE;
 		} else
 			mode = _dragbtndown;
 
-		startDrag(event->x(), event->y(), mode);
-	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
-		_pendown = MOUSEDOWN;
+		startDrag(pos.x(), pos.y(), mode);
+
+	} else if((button == Qt::LeftButton || button == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
+		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		_pointerdistance = 0;
 		_pointervelocity = 0;
 
-		_specialpenmode = event->modifiers() & Qt::ControlModifier;
-		onPenDown(mapToScene(event->pos(), mapPressure(1.0, false)), event->button() == Qt::RightButton);
+		_specialpenmode = modifiers.testFlag(Qt::ControlModifier);
+		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus)), button == Qt::RightButton);
+	}
+}
+
+//! Handle mouse press events
+void CanvasView::mousePressEvent(QMouseEvent *event)
+{
+	/** @todo why do we sometimes get mouse events for tablet strokes? */
+	if(_pendown != NOTDOWN)
+		return;
+
+	penPressEvent(
+		event->pos(),
+		1,
+		event->button(),
+		event->modifiers(),
+		false
+	);
+}
+
+void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
+{
+	if(_isdragging) {
+		moveDrag(pos.x(), pos.y());
+
+	} else {
+		paintcore::Point point = mapToScene(pos, pressure);
+		updateOutline(point);
+		if(!_prevpoint.intSame(point)) {
+			if(_pendown) {
+				_pointervelocity = point.distance(_prevpoint);
+				_pointerdistance += _pointervelocity;
+				point.setPressure(mapPressure(pressure, isStylus));
+				onPenMove(point, buttons.testFlag(Qt::RightButton), modifiers.testFlag(Qt::ShiftModifier), modifiers.testFlag(Qt::AltModifier));
+
+			} else if(_pointertracking && _scene->hasImage()) {
+				emit pointerMoved(point);
+			}
+			_prevpoint = point;
+		}
 	}
 }
 
@@ -452,36 +488,31 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		return;
 	}
 
+	penMoveEvent(
+		event->pos(),
+		1,
+		event->buttons(),
+		event->modifiers(),
+		false
+	);
+}
 
+void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
+{
+	_prevpoint = mapToScene(pos, 0.0);
 	if(_isdragging) {
-		moveDrag(event->x(), event->y());
-	} else {
-		paintcore::Point point = mapToScene(event->pos(), 1);
-		updateOutline(point);
-		if(!_prevpoint.intSame(point)) {
-			if(_pendown) {
-				_pointervelocity = point.distance(_prevpoint);
-				_pointerdistance += _pointervelocity;
-				point.setPressure(mapPressure(1.0, false));
-				onPenMove(point, event->buttons() & Qt::RightButton, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::AltModifier);
-			} else if(_pointertracking && _scene->hasImage()) {
-				emit pointerMoved(point);
-			}
-			_prevpoint = point;
-		}
+		stopDrag();
+
+	} else if(_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && _pendown == MOUSEDOWN)) {
+		_pendown = NOTDOWN;
+		onPenUp(button == Qt::RightButton);
 	}
 }
 
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-	_prevpoint = mapToScene(event->pos(), 0.0);
-	if(_isdragging) {
-		stopDrag();
-	} else if(_pendown == TABLETDOWN || ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN)) {
-		_pendown = NOTDOWN;
-		onPenUp(event->button() == Qt::RightButton);
-	}
+	penReleaseEvent(event->pos(), event->button());
 }
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
@@ -576,84 +607,56 @@ bool CanvasView::viewportEvent(QEvent *event)
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
 
-	} else if(event->type() == QEvent::TabletMove && _enableTabletEvents) {
-		// Stylus moved
+	}
+	else if(event->type() == QEvent::TabletPress && _enableTabletEvents) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 
-		paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
-		updateOutline(point);
-
+		penPressEvent(
+			tabev->posF(),
+			tabev->pressure(),
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-		if(!_isdragging && tabev->buttons() & Qt::MidButton) {
-			ViewTransform mode;
-
-			// tablet event modifiers still don't seem to work in Qt 5.4.0
-			if((tabev->modifiers() & Qt::ControlModifier))
-				mode = DRAG_ZOOM;
-			else if((tabev->modifiers() & Qt::ShiftModifier))
-				mode = DRAG_QUICKADJUST1;
-			else
-				mode = DRAG_TRANSLATE;
-
-			startDrag(tabev->x(), tabev->y(), mode);
-
-		} else {
-#endif
-			if(!_prevpoint.intSame(point)) {
-				if(_isdragging)
-					moveDrag(tabev->x(), tabev->y());
-				else {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-					const bool rightbutton = tabev->buttons() & Qt::RightButton;
+			tabev->button(),
 #else
-					const bool rightbutton = false;
+			Qt::NoButton,
 #endif
-					if(_pendown) {
-						if(_prevpoint.x() == -999) {
-							// start of a new stroke
-							_prevpoint = point;
-							onPenDown(point, rightbutton);
-						} else {
-							_pointervelocity = point.distance(_prevpoint);
-							_pointerdistance += _pointervelocity;
-							point.setPressure(mapPressure(point.pressure(), true));
-							onPenMove(point, rightbutton, tabev->modifiers() & Qt::ShiftModifier, tabev->modifiers() & Qt::AltModifier);
-						}
-					}
-				}
-				_prevpoint = point;
-			}
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-		}
-#endif
-
-	} else if(event->type() == QEvent::TabletPress && _enableTabletEvents) {
-		// Stylus touches the tablet surface
+			tabev->modifiers(),
+			true
+		);
+	}
+	else if(event->type() == QEvent::TabletMove && _enableTabletEvents) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(_dragbtndown) {
-			startDrag(tabev->x(), tabev->y(), _dragbtndown);
-		} else {
-			if(_pendown == NOTDOWN) {
-				_pointerdistance = 0;
-				_pointervelocity = 0;
 
-				_specialpenmode = tabev->modifiers() & Qt::ControlModifier; /* note: modifiers doesn't seem to work, at least on Qt 5.2.0 */
-				_pendown = TABLETDOWN;
+		penMoveEvent(
+			tabev->posF(),
+			tabev->pressure(),
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+			tabev->buttons(),
+#else
+			Qt::NoButton,
+#endif
+			tabev->modifiers(),
+			true
+		);
+	}
+	else if(event->type() == QEvent::TabletRelease && _enableTabletEvents) {
+		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		tabev->accept();
 
-				// don't call onPenDown here, because sometimes the position seems to be wildly off here.
-				_prevpoint = paintcore::Point(-999, -999, 0);
-			}
-		}
-	} else if(event->type() == QEvent::TabletRelease && _enableTabletEvents) {
-		// Stylus lifted
-		// Ignore this event: a mouseRelease event is also generated, so we let
-		// the mouseRleaseEvent function handle this.
-	} else {
+		penReleaseEvent(
+			tabev->posF(),
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+			tabev->button()
+#else
+			Qt::NoButton
+#endif
+		);
+	}
+	else {
 		return QGraphicsView::viewportEvent(event);
 	}
-	
+
 	return true;
 }
 

@@ -180,6 +180,12 @@ class CanvasView : public QGraphicsView
 		void dropEvent(QDropEvent *event);
 
 	private:
+		// unified mouse/stylus event handlers
+		void penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
+		void penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+		void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
+
+	private:
 		void viewRectChanged();
 		float mapPressure(float pressure, bool stylus);
 
