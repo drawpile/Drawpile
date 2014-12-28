@@ -1,4 +1,4 @@
-2014-1?-?? Version 0.9.6
+2015-01-?? Version 0.9.6
  * Added connection timeout check
  * Added keepalive messages
  * Automatically switch stroke preview mode based on latency
@@ -15,8 +15,12 @@
  * Fixed tablet event handling when running on Qt 5.4
  * Added preview widget for flood fill
  * Set annotation editor background color
- * Add Watercolor brush
- * Add pixel grid for high zoom levels
+ * Added Watercolor brush
+ * Added pixel grid for high zoom levels
+ * Statusbar is no longer shown under the tool docks to conserve vertical space
+ * Custom session IDs are now shown in session selection window
+ * Ctrl+wheel zoom now uses 50% steps
+ * Various minor improvements and bug fixes
 
 2014-10-17 Version 0.9.5
  * Added Czech translation
