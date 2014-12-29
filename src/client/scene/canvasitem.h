@@ -55,6 +55,7 @@ protected:
 
 private:
 	paintcore::LayerStack *_image;
+	QPixmap _cache;
 };
 
 }

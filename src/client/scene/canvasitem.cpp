@@ -51,9 +51,16 @@ QRectF CanvasItem::boundingRect() const
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
-	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
-	exposed &= QRectF(0,0,_image->width(),_image->height());
-	_image->paint(exposed, painter);
+	if((_cache.isNull() || _cache.size() != _image->size()) && _image->size().isValid()) {
+		_cache = QPixmap(_image->size());
+	}
+
+	QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
+	exposed &= _cache.rect();
+
+	_image->paintChangedTiles(exposed, &_cache);
+
+	painter->drawPixmap(exposed, _cache, exposed);
 }
 
 void CanvasItem::canvasResize()

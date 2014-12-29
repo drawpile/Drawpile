@@ -148,6 +148,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		paintcore::Brush _brush;
 
 		paintcore::LayerStack *_preview;
+		QPixmap _previewCache;
+
 		bool _sizepressure;
 		bool _opacitypressure;
 		bool _hardnesspressure;

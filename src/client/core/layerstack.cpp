@@ -18,7 +18,6 @@
 */
 
 #include <QDebug>
-#include <QPixmap>
 #include <QPainter>
 #include <QMimeData>
 #include <QtConcurrent>
@@ -60,7 +59,6 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 
 	_xtiles = Tile::roundTiles(_width);
 	_ytiles = Tile::roundTiles(_height);
-	_cache = QPixmap(_width, _height);
 	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
 
 	foreach(Layer *l, _layers)
@@ -279,21 +277,21 @@ struct UpdateTile {
 }
 
 /**
- * Paint a view of the layer stack. The layers are composited
- * together according to their options.
- * @param rect area of image to paint
- * @param painter painter to use
+ * The dirty flag for each painted tile will be cleared.
+ *
+ * @param rect area of the image to limit repainting to (rounded upwards to tile boundaries)
+ * @param target device to paint onto
  */
-void LayerStack::paint(const QRectF& rect, QPainter *painter)
+void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target)
 {
 	if(_width<=0 || _height<=0)
 		return;
 
 	// Affected tile range
-	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
-	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);
-	const int ty0 = qBound(0, int(rect.top()) / Tile::SIZE, _ytiles-1);
-	const int ty1 = qBound(ty0, int(rect.bottom()) / Tile::SIZE, _ytiles-1);
+	const int tx0 = qBound(0, rect.left() / Tile::SIZE, _xtiles-1);
+	const int tx1 = qBound(tx0, rect.right() / Tile::SIZE, _xtiles-1);
+	const int ty0 = qBound(0, rect.top() / Tile::SIZE, _ytiles-1);
+	const int ty1 = qBound(ty0, rect.bottom() / Tile::SIZE, _ytiles-1);
 
 	// Gather list of tiles in need of updating
 	QList<UpdateTile*> updates;
@@ -316,12 +314,12 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 			flattenTile(t->data, t->x, t->y);
 		});
 
-		// Repaint cache
-		QPainter cache(&_cache);
-		cache.setCompositionMode(QPainter::CompositionMode_Source);
+		// Paint flattened tiles
+		QPainter painter(target);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
 		while(!updates.isEmpty()) {
 			UpdateTile *ut = updates.takeLast();
-			cache.drawImage(
+			painter.drawImage(
 				ut->x*Tile::SIZE,
 				ut->y*Tile::SIZE,
 				QImage(reinterpret_cast<const uchar*>(ut->data),
@@ -332,9 +330,6 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 			delete ut;
 		}
 	}
-
-	// Paint the cached pixmap
-	painter->drawPixmap(rect, _cache, rect);
 }
 
 Tile LayerStack::getFlatTile(int x, int y) const
@@ -501,7 +496,6 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		_height = savepoint->height;
 		_xtiles = Tile::roundTiles(_width);
 		_ytiles = Tile::roundTiles(_height);
-		_cache = QPixmap(_width, _height);
 		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
 		emit resized(0, 0, oldsize);
 	} else {

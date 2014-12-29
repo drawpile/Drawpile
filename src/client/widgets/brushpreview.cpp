@@ -129,10 +129,16 @@ void BrushPreview::changeEvent(QEvent *event)
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
-	QPainter painter(this);
 	if(_needupdate)
 		updatePreview();
-	_preview->paint(event->rect(), &painter);
+
+	if((_previewCache.isNull() || _previewCache.size() != _preview->size()) && _preview->size().isValid())
+		_previewCache = QPixmap(_preview->size());
+
+	_preview->paintChangedTiles(event->rect(), &_previewCache);
+
+	QPainter painter(this);
+	painter.drawPixmap(event->rect(), _previewCache, event->rect());
 }
 
 void BrushPreview::updatePreview()

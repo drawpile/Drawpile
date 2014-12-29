@@ -24,7 +24,6 @@
 #include <QObject>
 #include <QList>
 #include <QImage>
-#include <QPixmap>
 #include <QBitArray>
 
 class QDataStream;
@@ -109,8 +108,8 @@ class LayerStack : public QObject {
 		//! Get the width and height of the layer stack
 		QSize size() const { return QSize(_width, _height); }
 
-		//! Paint an area of this layer stack
-		void paint(const QRectF& rect, QPainter *painter);
+		//! Paint all changed tiles in the given area
+		void paintChangedTiles(const QRect& rect, QPaintDevice *target);
 
 		//! Get the merged color value at the point
 		QColor colorAt(int x, int y) const;
@@ -164,7 +163,6 @@ class LayerStack : public QObject {
 		QList<Layer*> _layers;
 		QList<Annotation*> _annotations;
 
-		QPixmap _cache;
 		QBitArray _dirtytiles;
 		QRect _dirtyrect;
 };
