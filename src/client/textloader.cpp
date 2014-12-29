@@ -116,7 +116,7 @@ void TextCommandLoader::handleResize(const QString &args)
 {
 	QStringList wh = args.split(' ');
 	if(wh.count() != 5)
-		throw SyntaxError("Expected context id, width and height");
+		throw SyntaxError("Expected context id, top, right, bottom and left");
 
 	_messages.append(MessagePtr(new protocol::CanvasResize(
 		str2ctxid(wh[0]),
@@ -329,9 +329,21 @@ void TextCommandLoader::handlePenUp(const QString &args)
 	_messages.append(MessagePtr(new protocol::PenUp(id)));
 }
 
+void TextCommandLoader::handleInlineImage(const QString &args)
+{
+	QRegularExpression re("(\\d+) (\\d+)");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected width and height");
+
+	_inlineImageWidth = str2int(m.captured(1));
+	_inlineImageHeight = str2int(m.captured(2));
+	_inlineImageData.clear();
+}
+
 void TextCommandLoader::handlePutImage(const QString &args)
 {
-	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+)(?: (blend))? ([\\w.]+)");
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+)(?: (blend))? (.+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
 		throw SyntaxError("Expected context id, layer id, x, y and filename");
@@ -341,11 +353,31 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	int x = str2int(m.captured(3));
 	int y = str2int(m.captured(4));
 	bool blend = !m.captured(5).isEmpty();
-	QFileInfo filename(QFileInfo(_filename).dir(), m.captured(6));
 
-	QImage image(filename.absoluteFilePath());
+	if(m.captured(6) == "-") {
+		// inline image
+		QByteArray data = QByteArray::fromBase64(_inlineImageData);
 
-	_messages.append(net::putQImage(ctxid, layer, x, y, image, blend));
+		_messages.append(MessagePtr(new protocol::PutImage(
+			ctxid,
+			layer,
+			blend ? protocol::PutImage::MODE_BLEND : 0,
+			x,
+			y,
+			_inlineImageWidth,
+			_inlineImageHeight,
+			data
+		)));
+
+	} else {
+		// external file reference
+		QFileInfo filename(QFileInfo(_filename).dir(), m.captured(6));
+
+		QImage image(filename.absoluteFilePath());
+		_messages.append(net::putQImage(ctxid, layer, x, y, image, blend));
+	}
+
+
 }
 
 void TextCommandLoader::handleFillRect(const QString &args)
@@ -469,7 +501,7 @@ bool TextCommandLoader::load()
 	QTextStream text(&file);
 
 	QString line;
-	enum {NORMAL, ANNOTATION} mode = NORMAL;
+	enum {NORMAL, ANNOTATION, INLINE_IMAGE} mode = NORMAL;
 	int linenumber=0;
 	while(!(line=text.readLine()).isNull()) {
 		++linenumber;
@@ -480,6 +512,13 @@ bool TextCommandLoader::load()
 			} else {
 				_edit_a_text += line;
 				_edit_a_text += "\n";
+			}
+			continue;
+		} else if(mode == INLINE_IMAGE) {
+			if(line == "==end==") {
+				mode = NORMAL;
+			} else {
+				_inlineImageData += line.toLatin1();
 			}
 			continue;
 		}
@@ -516,7 +555,10 @@ bool TextCommandLoader::load()
 				handlePenMove(args);
 			else if(cmd=="penup")
 				handlePenUp(args);
-			else if(cmd=="putimage")
+			else if(cmd=="inlineimage") {
+				handleInlineImage(args);
+				mode = INLINE_IMAGE;
+			} else if(cmd=="putimage")
 				handlePutImage(args);
 			else if(cmd=="fillrect")
 				handleFillRect(args);

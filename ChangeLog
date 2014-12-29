@@ -21,6 +21,7 @@
  * Custom session IDs are now shown in session selection window
  * Ctrl+wheel zoom now uses 50% steps
  * Various minor improvements and bug fixes
+ * Added dprec2txt tool
 
 2014-10-17 Version 0.9.5
  * Added Czech translation

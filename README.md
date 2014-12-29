@@ -47,6 +47,7 @@ The configuration step supports some options:
 
 * CLIENT=off: don't build the client (useful when building the stand-alone server only)
 * SERVER=off: don't build the stand-alone server.
+* TOOLS=on: build dprec2txt command line tool
 * CMAKE\_BUILD\_TYPE=debug: enable debugging features
 * INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 * BUILTIN\_ICONS=off: don't include icons in the executable

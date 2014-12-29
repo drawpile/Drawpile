@@ -22,6 +22,7 @@ include ( "config/Names.cmake" )
 ### options ###
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
+option ( TOOLS "Compile extra tools" OFF )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )
 option ( BUILTIN_ICONS "Include icon resources in the executable" ON )

@@ -123,6 +123,12 @@ public:
 	const QString writerVersion() const { return _writerversion; }
 
 	/**
+	 * @brief Get the recording's protocol version
+	 * @return
+	 */
+	quint32 formatVersion() const { return _formatversion; }
+
+	/**
 	 * @brief Open the file
 	 * @return compatibility level of the opened file
 	 */

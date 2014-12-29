@@ -50,6 +50,7 @@ private:
 	void handleDrawingContext(const QString &args);
 	void handlePenMove(const QString &args);
 	void handlePenUp(const QString &args);
+	void handleInlineImage(const QString &args);
 	void handlePutImage(const QString &args);
 	void handleFillRect(const QString &args);
 
@@ -73,6 +74,10 @@ private:
 	int _edit_a_id;
 	quint32 _edit_a_color;
 	QString _edit_a_text;
+
+	// Inline image buffer
+	int _inlineImageWidth, _inlineImageHeight;
+	QByteArray _inlineImageData;
 };
 
 #endif

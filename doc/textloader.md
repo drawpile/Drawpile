@@ -52,10 +52,12 @@ This command generates a penup event for the given drawing context.
 
 ### resize
 
-Usage: `resize ctxId w h`
+Usage: `resize ctxId top right bottom left`
 
-This command generates a canvas resize message. Currently it can only
-be used once in the very beginning of the file.
+This command generates a canvas resize message. The top, right, bottom and left
+parameters expand the canvas in their respective directions. Typically, a session
+will start with a `resize 1 0 w h 0` command, where *w* and *h* are the initial
+width and height of the canvas.
 
 ### newlayer
 
@@ -122,6 +124,17 @@ Usage: `deleteannotation ctxId aId`
 
 Delete an annotation
 
+### inlineimage
+
+Usage:
+
+    inlineimage width height
+    ... base64 encoded image data
+    ==end==
+
+Define a image content to use with `putimage`. The image data should
+be in the same format as used in the protocol.
+
 ### putimage
 
 Usage: `putimage ctxId layerId x y [blend] filename`
@@ -130,6 +143,13 @@ Load an image and draw it onto the given canvas at the specified location.
 If the "blend" parameter is set, the image is alpha blended. Otherwise the
 image will simply replace the existing pixels.
 The file name is relative to the path of the command file.
+The special filename "-" means the latest inline image should be used.
+
+### fillrect
+
+Usage: `fillrect ctxId layerId x y w h color [blendmode]`
+
+Fill a rectangle with solid color, using the given blending mode.
 
 ### undopoint
 

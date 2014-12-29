@@ -10,3 +10,7 @@ if ( SERVER )
         add_subdirectory ( server )
 endif ()
 
+if ( TOOLS )
+        add_subdirectory ( tools )
+endif ()
+
