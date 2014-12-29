@@ -431,8 +431,7 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		_pointerdistance = 0;
 		_pointervelocity = 0;
-		_prevpoint = paintcore::Point(pos, pressure);
-
+		_prevpoint = mapToScene(pos, pressure);
 		_specialpenmode = modifiers.testFlag(Qt::ControlModifier);
 		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus)), button == Qt::RightButton);
 	}
