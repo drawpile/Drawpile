@@ -409,15 +409,13 @@ void LayerStack::markDirty(const QRect &area)
 {
 	if(_layers.isEmpty() || _width<=0 || _height<=0)
 		return;
-	int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
-	int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1);
+	const int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
+	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1) + 1;
 	int ty0 = qBound(0, area.top() / Tile::SIZE, _ytiles-1);
-	int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, _ytiles-1);
+	const int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, _ytiles-1);
 	
 	for(;ty0<=ty1;++ty0) {
-		for(int tx=tx0;tx<=tx1;++tx) {
-			_dirtytiles.setBit(ty0*_xtiles + tx);
-		}
+		_dirtytiles.fill(true, ty0*_xtiles + tx0, ty0*_xtiles + tx1);
 	}
 	_dirtyrect |= area;
 }
