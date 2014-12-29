@@ -427,11 +427,15 @@ void KisCubicCurve::fromString(const QString& string)
     foreach(const QString & pair, data) {
         if (pair.indexOf(',') > -1) {
             QPointF p;
-            p.rx() = pair.section(',', 0, 0).toDouble();
-            p.ry() = pair.section(',', 1, 1).toDouble();
+            p.rx() = qBound(0.0, pair.section(',', 0, 0).toDouble(), 1.0);
+            p.ry() = qBound(0.0, pair.section(',', 1, 1).toDouble(), 1.0);
             points.append(p);
         }
     }
+
+	if(points.size() < 2)
+		points = { {0.0, 0.0}, {1.0, 1.0} };
+
     setPoints(points);
 }
 
