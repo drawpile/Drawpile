@@ -20,8 +20,8 @@
 #include <QStringList>
 #include <QScopedPointer>
 #include <QRegularExpression>
-#include <QSslSocket>
 #include <QCommandLineParser>
+#include <QTextStream>
 
 #include "config.h"
 
