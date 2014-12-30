@@ -276,6 +276,16 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 			ctx.brush.setOpacity(str2real(i.value()));
 		else if(i.key() == "opacityl")
 			ctx.brush.setOpacity2(str2real(i.value()));
+		else if(i.key() == "smudge") {
+			qreal s = str2real(i.value());
+			ctx.brush.setSmudge(s);
+			ctx.brush.setSmudge2(s);
+		} else if(i.key() == "smudgeh")
+			ctx.brush.setSmudge(str2real(i.value()));
+		else if(i.key() == "smudgel")
+			ctx.brush.setSmudge2(str2real(i.value()));
+		else if(i.key() == "resmudge")
+			ctx.brush.setResmudge(str2int(i.value()));
 		else if(i.key() == "blend") {
 			int mode = paintcore::blendModeSvg(i.value());
 			if(mode<0)

@@ -224,7 +224,6 @@ void fillRectTxt(const FillRect *msg, QTextStream &out)
 
 void toolChangeTxt(const ToolChange *msg, QTextStream &out)
 {
-	// TODO we could remember the tool state and only output the changed parameters
 	out << "ctx "
 		<< msg->contextId()
 		<< " layer=" << msg->layer()
@@ -233,7 +232,8 @@ void toolChangeTxt(const ToolChange *msg, QTextStream &out)
 		<< " incremental=" << (msg->mode() & TOOL_MODE_INCREMENTAL ? "true" : "false")
 		<< " spacing=" << msg->spacing()
 		<< " sizeh=" << msg->size_h()
-		<< " sizel=" << msg->size_l();
+		<< " sizel=" << msg->size_l()
+		<< " resmudge=" << msg->resmudge();
 
 	if(msg->color_h() == msg->color_l())
 		out << " color=" << COLOR(msg->color_h());
@@ -249,6 +249,11 @@ void toolChangeTxt(const ToolChange *msg, QTextStream &out)
 		out << " opacity=" << (msg->opacity_h() / 255.0);
 	else
 		out << " opacityh=" << (msg->opacity_h() / 255.0) << " opacityl=" << (msg->opacity_l() / 255.0);
+
+	if(msg->smudge_h() == msg->smudge_l())
+		out << " smudge=" << (msg->smudge_h() / 255.0);
+	else
+		out << " smudgeh=" << (msg->smudge_h() / 255.0) << " smudgel=" << (msg->smudge_l() / 255.0);
 
 	out << "\n";
 }
