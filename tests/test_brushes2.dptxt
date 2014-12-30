@@ -4,7 +4,7 @@ newlayer 1 1 #ffaaffff Brush test
 ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1
 
 # Hard edge brush size change
-ctx 1 sizel=0 sizeh=10 hardedge=true
+ctx 1 sizel=1 sizeh=20 hardedge=true
 
 move 1 10 30 0; 200 30 1
 penup 1

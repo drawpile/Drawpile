@@ -3,7 +3,7 @@
 resize 1 0 800 600 0
 newlayer 1 1 #ffffffff Undo test
 
-ctx 1 layer=1 colorh=#ff0000 sizeh=1
+ctx 1 layer=1 colorh=#ff0000 sizeh=2
 
 addannotation 1 1 10 10 100 100
 annotate 1 1 #110000ff

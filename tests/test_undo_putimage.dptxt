@@ -5,7 +5,7 @@
 resize 1 0 300 300 0
 newlayer 1 1 #ffffffff Undo test
 
-ctx 1 layer=1 colorh=#ff0000 sizeh=1
+ctx 1 layer=1 colorh=#ff0000 sizeh=2
 
 undopoint 1
 putimage 1 1 64 64 blend test.png

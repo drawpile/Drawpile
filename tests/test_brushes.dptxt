@@ -8,36 +8,36 @@ ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=
 #
 
 # Test small brush sizes (hard edge)
-ctx 1 size=0
+ctx 1 size=1
 move 1 10 12; 266 10
 penup 1
 
-ctx 1 size=1
+ctx 1 size=2
 move 1 10 22; 266 20
 penup 1
 
-ctx 1 size=2
+ctx 1 size=4
 move 1 10 32; 266 30
 penup 1
 
-ctx 1 size=3
+ctx 1 size=6
 move 1 10 42; 266 40
 penup 1
 
 # Test small brush sizes (soft edge)
-ctx 1 hardedge=false size=0
+ctx 1 hardedge=false size=1
 move 1 300 12; 556 10
 penup 1
 
-ctx 1 size=1
+ctx 1 size=2
 move 1 300 22; 556 20
 penup 1
 
-ctx 1 size=2
+ctx 1 size=4
 move 1 300 32; 556 30
 penup 1
 
-ctx 1 size=3
+ctx 1 size=6
 move 1 300 42; 556 40
 penup 1
 
@@ -46,7 +46,7 @@ penup 1
 #
 
 # Size
-ctx 1 hardedge=true sizeh=20 sizel=0
+ctx 1 hardedge=true sizeh=40 sizel=1
 move 1 30 80 1; 230 80 0
 penup 1
 
@@ -54,7 +54,7 @@ move 1 260 80 0; 460 80 1
 penup 1
 
 # Opacity
-ctx 1 size=20 opacityh=1 opacityl=0
+ctx 1 size=40 opacityh=1 opacityl=0
 move 1 30 140 1; 230 140 0
 penup 1
 
@@ -82,7 +82,7 @@ penup 1
 #
 
 # Size
-ctx 1 hardedge=false color=#0 sizeh=20 sizel=0 hard=0.5
+ctx 1 hardedge=false color=#0 sizeh=40 sizel=1 hard=0.5
 move 1 30 320 1; 230 320 0
 penup 1
 
@@ -90,7 +90,7 @@ move 1 260 320 0; 460 320 1
 penup 1
 
 # Opacity
-ctx 1 size=20 opacityh=1 opacityl=0
+ctx 1 size=40 opacityh=1 opacityl=0
 move 1 30 380 1; 230 380 0
 penup 1
 

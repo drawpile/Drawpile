@@ -265,9 +265,9 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 			ctx.brush.setSize(val);
 			ctx.brush.setSize2(val);
 		} else if(i.key() == "sizeh")
-			ctx.brush.setSize(qMax(1, str2int(i.value())) * 2);
+			ctx.brush.setSize(qMax(1, str2int(i.value())));
 		else if(i.key() == "sizel")
-			ctx.brush.setSize2(qMax(1, str2int(i.value())) * 2);
+			ctx.brush.setSize2(qMax(1, str2int(i.value())));
 		else if(i.key() == "opacity") {
 			qreal r = str2real(i.value());
 			ctx.brush.setOpacity(r);

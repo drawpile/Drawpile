@@ -1,7 +1,7 @@
 resize 1 0 300 300 0
 newlayer 1 1 #ffffffff Background
 
-ctx 1 layer=1 color=#ff0000 opacity=1 size=0
+ctx 1 layer=1 color=#ff0000 opacity=1 size=1
 
 move 1 0 0; 299 299
 penup 1
