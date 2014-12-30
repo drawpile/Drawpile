@@ -41,7 +41,7 @@ bool Reader::isRecordingExtension(const QString &filename)
 }
 
 Reader::Reader(const QString &filename, QObject *parent)
-	: QObject(parent), _filename(filename), _current(-1), _autoclose(true), _eof(false), _isHibernation(false)
+	: QObject(parent), _filename(filename), _current(-1), _autoclose(true), _eof(false), _isHibernation(false), _compat(true)
 {
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
 	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))
@@ -61,7 +61,7 @@ Reader::Reader(const QString &filename, QObject *parent)
 }
 
 Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), _filename(filename), _file(file), _current(-1), _autoclose(autoclose), _eof(false), _isHibernation(false), _isCompressed(false)
+	: QObject(parent), _filename(filename), _file(file), _current(-1), _autoclose(autoclose), _eof(false), _isHibernation(false), _isCompressed(false), _compat(true)
 {
 	Q_ASSERT(file);
 }
@@ -159,20 +159,14 @@ Compatibility Reader::open()
 
 	_beginning = _file->pos();
 
-	if(_isHibernation) {
-		// Compatibility check is simple for hibernation files: we only need to look at the major version
-		if(DRAWPILE_PROTO_MAJOR_VERSION == majorVersion(_formatversion))
-			return COMPATIBLE;
-		else
-			return INCOMPATIBLE;
+	const quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
 
-	} else {
-		// Compatability check for normal recordings
-		const quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+	// Check version number. Best case is exact match.
+	if(myversion == _formatversion)
+		return COMPATIBLE;
 
-		// Best case: exact version match
-		if(myversion == _formatversion)
-			return COMPATIBLE;
+	if(_compat) {
+		// Compatability mode: support other versions
 
 		// A recording made with a newer (major) version may contain unsupported commands.
 		if(majorVersion(myversion) < majorVersion(_formatversion))
@@ -182,6 +176,10 @@ Compatibility Reader::open()
 		if(myversion < _formatversion)
 			return MINOR_INCOMPATIBILITY;
 
+#if DRAWPILE_PROTO_MAJOR_VERSION != 12 || DRAWPILE_PROTO_MINOR_VERSION != 4
+#error Update recording compatability check!
+#endif
+
 		// Old versions known to be compatible
 		switch(_formatversion) {
 			case version32(11, 3): // we have compatibility code for these versions
@@ -190,6 +188,15 @@ Compatibility Reader::open()
 		}
 
 		// Other versions are not supported
+		return INCOMPATIBLE;
+
+	} else {
+		// Strict version mode: major version number must match
+
+		// (we already checked the exact match above)
+		if(majorVersion(myversion) == majorVersion(_formatversion))
+			return MINOR_INCOMPATIBILITY;
+
 		return INCOMPATIBLE;
 	}
 }
@@ -269,16 +276,21 @@ MessageRecord Reader::readNext()
 		return msg;
 
 	protocol::Message *message;
-	switch(_formatversion) {
-		// see protocol changelog in doc/protocol.md
-		case version32(11, 3):
-		case version32(11, 2):
-			message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-		default:
-			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
+	if(_compat) {
+		switch(_formatversion) {
+			// see protocol changelog in doc/protocol.md
+			case version32(11, 3):
+			case version32(11, 2):
+				message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
+				break;
+			default:
+				message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
+				break;
+		}
+	} else {
+		message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
 	}
+
 
 	if(message) {
 		msg.status = MessageRecord::OK;

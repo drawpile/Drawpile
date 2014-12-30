@@ -55,15 +55,20 @@ bool Hibernation::init()
 			continue;
 
 		recording::Reader reader(dir.filePath(filename));
+
+		// Note. We use strict version mode, because if compatability mode is enabled, it will change
+		// the recordings minor version number too.
+		reader.setCompatabilityMode(false);
+
 		recording::Compatibility comp = reader.open();
 
-		if(comp != recording::COMPATIBLE) {
-			logger::warning() << "Incompatible hibernated session:" << filename;
+		if(!reader.isHibernation()) {
+			logger::warning() << "Not a hibernated session:" << filename;
 			continue;
 		}
 
-		if(!reader.isHibernation()) {
-			logger::warning() << "Valid recording, but not a hibernated session:" << filename;
+		if(comp != recording::COMPATIBLE || comp != recording::MINOR_INCOMPATIBILITY) {
+			logger::warning() << "Incompatible hibernated session:" << filename;
 			continue;
 		}
 

@@ -129,6 +129,13 @@ public:
 	quint32 formatVersion() const { return _formatversion; }
 
 	/**
+	 * @brief Enable/disable compatability mode
+	 *
+	 * Support for older format versions is enabled by default.
+	 */
+	void setCompatabilityMode(bool enable) { _compat = enable; }
+
+	/**
 	 * @brief Open the file
 	 * @return compatibility level of the opened file
 	 */
@@ -189,6 +196,7 @@ private:
 	bool _eof;
 	bool _isHibernation;
 	bool _isCompressed;
+	bool _compat;
 };
 
 }
