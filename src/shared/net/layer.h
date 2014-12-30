@@ -52,7 +52,6 @@ public:
 	int32_t left() const { return _left; }
 
 	bool isOpCommand() const { return true; }
-	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;

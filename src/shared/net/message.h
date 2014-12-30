@@ -127,9 +127,12 @@ public:
 
 	/**
 	 * @brief Is this message type undoable?
+	 *
+	 * By default, all Command messages are undoable.
+	 *
 	 * @return true if this action can be undone
 	 */
-	virtual bool isUndoable() const { return false; }
+	virtual bool isUndoable() const { return isCommand(); }
 
 	/**
 	 * @brief Has this command been marked as undone?

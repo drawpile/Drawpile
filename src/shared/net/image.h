@@ -68,8 +68,6 @@ public:
 	uint32_t height() const { return _h; }
 	const QByteArray &image() const { return _image; }
 
-	bool isUndoable() const { return true; }
-
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
@@ -107,8 +105,6 @@ public:
 	uint32_t width() const { return _w; }
 	uint32_t height() const { return _h; }
 	uint32_t color() const { return _color; }
-
-	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;

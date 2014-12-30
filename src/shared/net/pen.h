@@ -86,6 +86,12 @@ public:
 		uint8_t smudge_l() const { return _smudge_l; }
 		uint8_t resmudge() const { return _resmudge; }
 
+	// The client resends ToolChange only if it has changed since
+	// the last time it was sent. If the ToolChange is undoable,
+	// the effective tool may be different than what the client thinks.
+	// To keep things simple, we just don't undo ToolChanges.
+	bool isUndoable() const { return false; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
@@ -131,8 +137,6 @@ public:
 
 	const PenPointVector &points() const { return _points; }
 	PenPointVector &points() { return _points; }
-
-	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;

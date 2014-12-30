@@ -46,7 +46,6 @@ public:
 	UndoPoint(uint8_t ctx) : Message(MSG_UNDOPOINT, ctx) {}
 
 	static UndoPoint *deserialize(const uchar *data, uint len);
-	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
@@ -92,7 +91,6 @@ public:
 	 * @return true if override field is set
 	 */
 	bool isOpCommand() const { return _override!=0; }
-	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
