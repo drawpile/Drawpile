@@ -182,9 +182,13 @@ Compatibility Reader::open()
 
 		// Old versions known to be compatible
 		switch(_formatversion) {
-			case version32(11, 3): // we have compatibility code for these versions
-			case version32(11, 2):
-				return COMPATIBLE;
+		case version32(11, 3): // we have compatibility code for these versions
+		case version32(11, 2):
+		case version32(10, 2):
+		case version32(9, 2):
+		case version32(8, 1):
+		case version32(7, 1):
+			return MINOR_INCOMPATIBILITY; // brush rendering has changed, so old recordings won't appear exactly the same
 		}
 
 		// Other versions are not supported
@@ -276,16 +280,25 @@ MessageRecord Reader::readNext()
 		return msg;
 
 	protocol::Message *message;
-	if(_compat) {
+	if(_compat && _formatversion != version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION)) {
+
+		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
-			// see protocol changelog in doc/protocol.md
-			case version32(11, 3):
-			case version32(11, 2):
-				message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
-				break;
-			default:
-				message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
-				break;
+		case version32(11, 3):
+		case version32(11, 2):
+			message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+
+		case version32(10, 2):
+		case version32(9, 2):
+		case version32(8, 1):
+		case version32(7, 1):
+			message = compat::deserializeV10((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+
+		default:
+			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
 		}
 	} else {
 		message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());

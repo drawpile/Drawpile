@@ -21,6 +21,9 @@
 
 #include "../net/message.h"
 #include "../net/pen.h"
+#include "../net/image.h"
+#include "../net/layer.h"
+#include "../net/meta.h"
 
 #include <QtEndian>
 
@@ -54,6 +57,78 @@ ToolChange *ToolChangeV11(const uchar *data, uint len)
 	);
 }
 
+SessionConf *SessionConfV10(const uchar *data, uint len)
+{
+	if(len!=1)
+			return 0;
+	return new SessionConf(
+		255, // no maxusers field in this version, but it doesn't really matter for playback
+		data[0] | protocol::SessionConf::ATTR_PRESERVECHAT // this version had less flags and preserve chat was always on
+	);
+}
+
+UserAttr *UserAttrV10(const uchar *data, uint len)
+{
+	if(len!=2)
+			return 0;
+	return new UserAttr(data[0], data[1]);
+}
+
+Chat *ChatV10(const uchar *data, uint len)
+{
+	if(len<2)
+		return 0;
+	// chat messages didn't have flags in this version
+	return new Chat(*data, 0, QByteArray((const char*)data+1, len-1));
+}
+
+PutImage *PutImageV10(const uchar *data, uint len)
+{
+	if(len < 11)
+		return 0;
+
+	return new PutImage(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		qFromBigEndian<quint16>(data+9),
+		QByteArray((const char*)data+11, len-11)
+	);
+}
+
+CanvasResize *CanvasResizeV10(const uchar *data, uint len)
+{
+	if(len!=9)
+		return 0;
+
+	return new CanvasResize(
+		*data,
+		qFromBigEndian<quint16>(data+1),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7)
+	);
+}
+
+FillRect *FillRectV10(const uchar *data, uint len)
+{
+	if(len != 15)
+		return 0;
+
+	return new FillRect(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		qFromBigEndian<quint16>(data+9),
+		qFromBigEndian<quint32>(data+11)
+	);
+}
 
 Message *deserializeV11(const uchar *data, int length)
 {
@@ -72,6 +147,29 @@ Message *deserializeV11(const uchar *data, int length)
 		return ToolChangeV11(data + Message::HEADER_LEN, len);
 	} else {
 		return Message::deserialize(data, length);
+	}
+}
+
+Message *deserializeV10(const uchar *data, int length)
+{
+	if(length<Message::HEADER_LEN)
+		return nullptr;
+
+	const quint16 len = qFromBigEndian<quint16>(data);
+
+	if(length < len+Message::HEADER_LEN)
+		return nullptr;
+
+	const MessageType type = MessageType(data[2]);
+
+	switch(type) {
+	case MSG_SESSION_CONFIG: return SessionConfV10(data + Message::HEADER_LEN, len);
+	case MSG_USER_ATTR: return UserAttrV10(data + Message::HEADER_LEN, len);
+	case MSG_CHAT: return ChatV10(data + Message::HEADER_LEN, len);
+	case MSG_PUTIMAGE: return PutImageV10(data + Message::HEADER_LEN, len);
+	case MSG_CANVAS_RESIZE: return CanvasResizeV10(data + Message::HEADER_LEN, len);
+	case MSG_FILLRECT: return FillRectV10(data + Message::HEADER_LEN, len);
+	default: return deserializeV11(data, length);
 	}
 }
 

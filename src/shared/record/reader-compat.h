@@ -31,6 +31,9 @@ namespace compat {
 // Protocol version 11.x messages
 protocol::Message *deserializeV11(const uchar *data, int length);
 
+// Protocol version 10.2 -- 7.1 messages
+protocol::Message *deserializeV10(const uchar *data, int length);
+
 }
 
 }
