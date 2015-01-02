@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Drawpile"
-#define MyAppVersion "0.9.5"
+#define MyAppVersion "0.9.6"
 #define MyAppURL "http://drawpile.net/"
 #define MyAppExeName "drawpile.exe"
 
@@ -19,7 +19,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-SourceDir=C:\Drawpile\release
+SourceDir=C:\Drawpile\pkg
 OutputDir=C:\Drawpile\setup
 OutputBaseFilename=drawpile-{#MyAppVersion}-setup
 Compression=lzma
@@ -35,14 +35,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "i18n\*.qm"; DestDir: "{app}\i18n"; Flags: ignoreversion
 Source: "imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversion
+Source: "iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion
 Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "palettes\*.gpl"; DestDir: "{app}\palettes"; Flags: ignoreversion
-Source: "README.md"; DestDir: "{app}"; DestName: "README.txt"; Flags: ignoreversion
-Source: "AUTHORS"; DestDir: "{app}"; DestName: "authors.txt"; Flags: ignoreversion
-Source: "ChangeLog"; DestDir: "{app}"; DestName: "ChangeLog.txt"; Flags: ignoreversion
-Source: "COPYING"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
