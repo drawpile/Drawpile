@@ -10,8 +10,15 @@ mkdir -p mac-deploy
 cd mac-deploy
 
 # Build the app
-cmake .. "-DCMAKE_PREFIX_PATH=$QTDIR"
+cmake .. "-DCMAKE_PREFIX_PATH=$QTDIR" -DSERVER=off -DCMAKE_BUILD_TYPE=Release
 make
+
+# Remove version string from the binary
+cd bin/Drawpile.app/Contents/MacOS
+BINFILE="$(readlink -n Drawpile)"
+rm Drawpile
+mv "$BINFILE" Drawpile
+cd -
 
 "$QTDIR/bin/macdeployqt" bin/Drawpile.app
 
@@ -21,8 +28,11 @@ make
 mkdir dmg
 cp -r bin/Drawpile.app dmg
 
+# TODO for some reason this generates much larger packages compared to ones
+# created manually with disk utility.
+
 hdiutil create -srcfolder dmg -volname "$TITLE" -fs HFS+ \
-      -fsargs "-c c=64,a=16,e=16" -format UDRW -size 128m pack.temp.dmg
+	-fsargs "-c c=64,a=16,e=16" -format UDRW -size 128m pack.temp.dmg
 
 # todo: add styling here
 
