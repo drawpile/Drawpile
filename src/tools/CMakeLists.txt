@@ -1,6 +1,7 @@
 # src/server/CMakeLists.txt
 
 find_package( KF5Archive NO_MODULE )
+find_package( Qt5Core )
 
 set (
 	DPREC2TXT_SOURCES
@@ -16,7 +17,7 @@ if(NOT KF5Archive_FOUND)
 endif()
 
 add_executable( dprec2txt ${DPREC2TXT_SOURCES} )
-target_link_libraries( dprec2txt ${DPSHAREDLIB} )
+target_link_libraries( dprec2txt ${DPSHAREDLIB} Qt5::Core)
 
 if(NOT KF5Archive_FOUND)
 	target_link_libraries(dprec2txt ${ZLIB_LIBRARIES})
