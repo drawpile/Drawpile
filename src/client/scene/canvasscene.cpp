@@ -421,6 +421,16 @@ void CanvasScene::resetPreviewClearTimer()
 	_previewClearTimer->start(4000);
 }
 
+void CanvasScene::handleLocalCommand(protocol::MessagePtr cmd)
+{
+	if(_statetracker) {
+		_statetracker->localCommand(cmd);
+		emit canvasModified();
+	} else {
+		qWarning() << "Received a local drawing command but canvas does not exist!";
+	}
+}
+
 void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 {
 	if(_statetracker) {

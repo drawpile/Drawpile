@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QHash>
 
+#include "retcon.h"
 #include "core/brush.h"
 #include "core/point.h"
 #include "../shared/net/message.h"
@@ -55,6 +56,8 @@ namespace paintcore {
 namespace net {
 	class LayerListModel;
 }
+
+class QTimer;
 
 namespace drawingboard {
 
@@ -126,6 +129,12 @@ private:
 	Data *_data;
 };
 
+}
+
+Q_DECLARE_TYPEINFO(drawingboard::StateSavepoint, Q_MOVABLE_TYPE);
+
+namespace drawingboard {
+
 /**
  * \brief Drawing context state tracker
  * 
@@ -139,6 +148,7 @@ public:
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
+	void localCommand(protocol::MessagePtr msg);
 	void receiveCommand(protocol::MessagePtr msg);
 
 	void endRemoteContexts();
@@ -205,7 +215,7 @@ public:
 	 * saving snapshots for an indexed recording.
 	 * @return
 	 */
-	StateSavepoint createSavepoint(int pos=-1);
+	StateSavepoint createSavepoint(int pos);
 
 	/**
 	 * @brief Reset state to the given save point
@@ -227,9 +237,12 @@ signals:
 
 public slots:
 	void previewLayerOpacity(int id, float opacity);
+	void resetLocalFork();
 
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
+
+	AffectedArea affectedArea(const protocol::MessagePtr msg) const;
 
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd, int pos);
@@ -250,7 +263,7 @@ private:
 	void handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos);
 	void handleUndo(protocol::Undo &cmd);
 	void makeSavepoint(int pos);
-	void revertSavepoint(const StateSavepoint savepoint);
+	void revertSavepointAndReplay(const StateSavepoint savepoint);
 
 	// Annotation related commands
 	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
@@ -268,6 +281,10 @@ private:
 
 	protocol::MessageStream _msgstream;
 	QList<StateSavepoint> _savepoints;
+
+	LocalFork _localfork;
+	QTimer *_localforkCleanupTimer;
+
 	uint _msgstream_sizelimit;
 	bool _hassnapshot;
 	bool _showallmarkers;

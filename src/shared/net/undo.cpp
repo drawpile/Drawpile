@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,10 @@ int UndoPoint::serializePayload(uchar *data) const
 	return 1;
 }
 
+bool UndoPoint::payloadEquals(const Message &m) const
+{
+	return contextId() == m.contextId();
+}
 
 Undo *Undo::deserialize(const uchar *data, uint len)
 {
@@ -62,6 +66,15 @@ int Undo::serializePayload(uchar *data) const
 	*(ptr++) = _override;
 	*(ptr++) = _points;
 	return ptr-data;
+}
+
+bool Undo::payloadEquals(const Message &m) const
+{
+	const Undo &u = static_cast<const Undo&>(m);
+	return
+		contextId() == u.contextId() &&
+		overrideId() == u.overrideId() &&
+		points() == u.points();
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QDebug>
-#include <QDateTime>
 
 #include "statetracker.h"
 #include "loader.h"
@@ -33,6 +31,10 @@
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
+
+#include <QDebug>
+#include <QDateTime>
+#include <QTimer>
 
 namespace drawingboard {
 
@@ -131,10 +133,46 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 		_hasParticipated(false)
 {
 	connect(_layerlist, SIGNAL(layerOpacityPreview(int,float)), this, SLOT(previewLayerOpacity(int,float)));
+
+	// Timer for periodically resetting the local fork to keep cruft from accumulating.
+	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
+	// draw anything in a while.
+	_localforkCleanupTimer = new QTimer(this);
+	_localforkCleanupTimer->setSingleShot(true);
+	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
 }
 
 StateTracker::~StateTracker()
 {
+}
+
+void StateTracker::localCommand(protocol::MessagePtr msg)
+{
+	// the server assigns new layer and annotation IDs, so these messages must make
+	// the round trip to work correctly.
+	// TODO: make layer IDs 16bit and prefixed with the user ID to allow client's to pick the IDs themselves?
+	if(msg->type() == protocol::MSG_LAYER_CREATE || msg->type() == protocol::MSG_ANNOTATION_CREATE)
+		return;
+
+	// A fork is created at the end of the mainline history
+	if(_localfork.isEmpty()) {
+		_localfork.setOffset(_msgstream.end()-1);
+
+		// Since the presence of a local fork blocks savepoint creation,
+		// now is a good time to try to create one.
+		if(msg->type() == protocol::MSG_UNDOPOINT)
+			makeSavepoint(_msgstream.end()-1);
+	}
+
+	_localfork.addLocalMessage(msg, affectedArea(msg));
+
+	// for the future: handle undo messages in the local fork too
+	if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT) {
+		int pos = _msgstream.end() - 1;
+		handleCommand(msg, false, pos);
+	}
+
+	_localforkCleanupTimer->start(60 * 1000);
 }
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
@@ -143,7 +181,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
 		uint oldlen = _msgstream.lengthInBytes();
 		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
-		_msgstream.hardCleanup(0, _msgstream.end());
+		_msgstream.hardCleanup(0, _localfork.isEmpty() ? _msgstream.end() : _localfork.offset());
 		qDebug() << "Released" << (oldlen-_msgstream.lengthInBytes()) / float(1024*1024) << "Mb.";
 		_hassnapshot = false;
 
@@ -160,6 +198,11 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			qWarning() << "no undo point found after cleaning history!";
 		} else {
 			// Find the newest savepoint older or same age as the undo point
+
+			// If a local fork exists, we need a savepoint that precedes it in case we need to roll back.
+			if(!_localfork.isEmpty())
+				undopoint = qMin(undopoint, _localfork.offset());
+
 			int savepoint=0;
 			while(savepoint < _savepoints.count()) {
 				if(_savepoints[savepoint]->streampointer > undopoint) {
@@ -176,15 +219,46 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			} else {
 				qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
 				while(savepoint--)
-					_savepoints.takeFirst();
+					_savepoints.removeFirst();
 			}
 		}
 	}
 
 	// Add command to history and execute it
 	_msgstream.append(msg);
-	int pos = _msgstream.end() - 1;
-	handleCommand(msg, false, pos);
+
+	LocalFork::MessageAction lfa = _localfork.handleReceivedMessage(msg, affectedArea(msg));
+
+	// Undo messages are not handled locally (at the moment)
+	if(lfa == LocalFork::ALREADYDONE && (msg->type()==protocol::MSG_UNDO || msg->type()==protocol::MSG_UNDOPOINT))
+		lfa = LocalFork::CONCURRENT;
+
+	if(lfa==LocalFork::ROLLBACK) {
+		// Uh oh! An inconsistency was detected: roll back the history and replay
+
+		// first, find the newest savepoint that precedes the fork
+		int savepoint = _savepoints.size()-1;
+		while(savepoint>0) {
+			if(_savepoints.at(savepoint)->streampointer <= _localfork.offset())
+				break;
+			--savepoint;
+		}
+
+		if(savepoint<0) {
+			// should never happen
+			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
+		} else {
+			const StateSavepoint &sp = _savepoints.at(savepoint);
+			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", _msgstream.end(), _localfork.offset(), sp->streampointer);
+
+			revertSavepointAndReplay(sp);
+		}
+
+	} else if(lfa==LocalFork::CONCURRENT) {
+		// Concurrent operation: safe to execute
+		int pos = _msgstream.end() - 1;
+		handleCommand(msg, false, pos);
+	} // else ALREADYDONE
 }
 
 void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
@@ -253,6 +327,14 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
  */
 void StateTracker::endRemoteContexts()
 {
+	// Add local fork to the mainline history
+	QList<protocol::MessagePtr> localfork = _localfork.messages();
+	_localfork.clear();
+
+	for(protocol::MessagePtr m : localfork)
+		_msgstream.append(m);
+
+	// End drawing contexts
 	QHashIterator<int, DrawingContext> iter(_contexts);
 	while(iter.hasNext()) {
 		iter.next();
@@ -612,17 +694,8 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 		}
 	}
 
-	// Step 4. Revert to savepoint
-	revertSavepoint(savepoint);
-
-	// Step 5. Replay commands, excluding undone actions
-	pos = savepoint->streampointer + 1;
-	while(pos < _msgstream.end()) {
-		if(_msgstream.at(pos)->undoState() == protocol::DONE) {
-			handleCommand(_msgstream.at(pos), true, pos);
-		}
-		++pos;
-	}
+	// Step 4. Revert to savepoint and replay with undone commands removed
+	revertSavepointAndReplay(savepoint);
 }
 
 StateSavepoint StateTracker::createSavepoint(int pos)
@@ -643,6 +716,12 @@ void StateTracker::makeSavepoint(int pos)
 	if(_msgstream.end() <= _msgstream.offset())
 		return;
 
+	// Don't make savepoints while a local fork exists, since
+	// there will be stuff on the canvas that is not yet in
+	// the mainline session history
+	if(!_localfork.isEmpty())
+		return;
+
 	// Check if sufficient time and actions has elapsed from previous savepoint
 	if(!_savepoints.isEmpty()) {
 		const StateSavepoint sp = _savepoints.last();
@@ -650,6 +729,8 @@ void StateTracker::makeSavepoint(int pos)
 		if(now - sp->timestamp < 1000 && _msgstream.end() - sp->streampointer < 100)
 			return;
 	}
+
+	qDebug() << "savepoint" << pos;
 
 	// Looks like a good spot for a savepoint
 	_savepoints.append(createSavepoint(pos));
@@ -670,7 +751,7 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	_savepoints.append(savepoint);
 }
 
-void StateTracker::revertSavepoint(const StateSavepoint savepoint)
+void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 {
 	// This function is called when reverting to an earlier state to undo
 	// an action.
@@ -684,6 +765,26 @@ void StateTracker::revertSavepoint(const StateSavepoint savepoint)
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
 		_savepoints.takeLast();
+
+	// Replay all not-undo actions (and local fork)
+	int pos = savepoint->streampointer + 1;
+	while(pos < _msgstream.end()) {
+		if(_msgstream.at(pos)->undoState() == protocol::DONE) {
+			handleCommand(_msgstream.at(pos), true, pos);
+		}
+		++pos;
+	}
+
+	if(!_localfork.isEmpty()) {
+		Q_ASSERT(_localfork.offset() >= savepoint->streampointer);
+		_localfork.setOffset(pos-1);
+		const QList<protocol::MessagePtr> local = _localfork.messages();
+		for(const protocol::MessagePtr &msg : local) {
+			if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT)
+				handleCommand(msg, true, pos);
+		}
+
+	}
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
@@ -868,6 +969,86 @@ bool StateTracker::isLayerLocked(int id) const
 
 	qWarning("isLayerLocked(%d): no such layer!", id);
 	return false;
+}
+
+void StateTracker::resetLocalFork()
+{
+	if(!_localfork.isEmpty()) {
+		int savepoint = _savepoints.size()-1;
+		while(savepoint>0) {
+			if(_savepoints.at(savepoint)->streampointer <= _localfork.offset())
+				break;
+			--savepoint;
+		}
+
+		if(savepoint<0) {
+			// should never happen
+			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
+		} else {
+			const StateSavepoint &sp = _savepoints.at(savepoint);
+			qDebug("Resetting local fork and rolling back %d commands", _msgstream.end() - sp->streampointer);
+
+			_localfork.clear();
+			revertSavepointAndReplay(sp);
+		}
+	}
+}
+
+/**
+ * @brief Get the affected area of the given message
+ *
+ * Note. This uses the current state!
+ *
+ * @param msg
+ * @return
+ */
+AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
+{
+	Q_ASSERT(msg->isCommand());
+
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_LAYER_CREATE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerCreate>().id());
+	case MSG_LAYER_ATTR: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerAttributes>().id());
+	case MSG_LAYER_RETITLE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerRetitle>().id());
+
+	case MSG_PUTIMAGE: {
+		const PutImage &m = msg.cast<PutImage>();
+		return AffectedArea(AffectedArea::PIXELS, m.layer(), QRect(m.x(), m.y(), m.width(), m.height()));
+	}
+	case MSG_TOOLCHANGE: return AffectedArea(AffectedArea::USERATTRS, 0);
+	case MSG_PEN_MOVE: {
+		const PenMove &m = msg.cast<PenMove>();
+		const DrawingContext &ctx = _contexts.value(m.contextId());
+
+		QRect bounds;
+
+		if(ctx.pendown)
+			bounds  = QRect(ctx.lastpoint.toPoint(), QSize(1,1));
+		else
+			bounds = QRect(m.points().first().x/4, m.points().first().y/4, 1, 1);
+
+		for(const PenPoint &pp : m.points()) {
+			bounds = bounds.united(QRect(pp.x/4, pp.y/4, 1, 1));
+		}
+
+		const int r = qMax(ctx.tool.brush.size1(), ctx.tool.brush.size2()) / 2 + 1;
+		bounds.adjust(-r, -r, r, r);
+		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, bounds);
+	}
+	case MSG_PEN_UP: return AffectedArea(AffectedArea::USERATTRS, 0);
+	case MSG_FILLRECT: {
+		const FillRect &fr = msg.cast<FillRect>();
+		return AffectedArea(AffectedArea::PIXELS, fr.layer(), QRect(fr.x(), fr.y(), fr.width(), fr.height()));
+	}
+
+	case MSG_ANNOTATION_CREATE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationCreate>().id());
+	case MSG_ANNOTATION_RESHAPE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationReshape>().id());
+	case MSG_ANNOTATION_EDIT: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationEdit>().id());
+	case MSG_ANNOTATION_DELETE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationDelete>().id());
+
+	default: return AffectedArea(AffectedArea::EVERYTHING, 0);
+	}
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -104,12 +104,29 @@ int PenMove::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	foreach(const PenPoint &p, _points) {
+	for(const PenPoint &p : _points) {
 		qToBigEndian(p.x, ptr); ptr += 4;
 		qToBigEndian(p.y, ptr); ptr += 4;
 		qToBigEndian(p.p, ptr); ptr += 2;
 	}
 	return ptr - data;
+}
+
+bool PenMove::payloadEquals(const Message &m) const
+{
+	const PenMove &pm = static_cast<const PenMove&>(m);
+	if(contextId() != pm.contextId())
+		return false;
+
+	if(points().size() != pm.points().size())
+		return false;
+
+	for(int i=0;i<points().size();++i) {
+		if(points().at(i) != pm.points().at(i))
+			return false;
+	}
+
+	return true;
 }
 
 PenUp *PenUp::deserialize(const uchar *data, uint len)
@@ -129,6 +146,11 @@ int PenUp::serializePayload(uchar *data) const
 {
 	*data = contextId();
 	return 1;
+}
+
+bool PenUp::payloadEquals(const Message &m) const
+{
+	return contextId() == m.contextId();
 }
 
 }

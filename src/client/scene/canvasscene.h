@@ -179,6 +179,7 @@ public slots:
 	//! Show hide laser pointer trails
 	void showLaserTrails(bool show);
 
+	void handleLocalCommand(protocol::MessagePtr cmd);
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 	//! Generate a snapshot point and send it to the server

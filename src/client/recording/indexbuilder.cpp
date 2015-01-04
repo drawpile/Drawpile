@@ -154,8 +154,8 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 		if(_index.snapshots().isEmpty() || snapshotCounter == SNAPSHOT_INTERVAL || (m->type() == protocol::MSG_MARKER && snapshotCounter>=SNAPSHOT_MIN_INTERVAL)) {
 			snapshotCounter = 0;
 			qint64 streampos = reader.filePosition();
-			emit progress(streampos);;
-			drawingboard::StateSavepoint sp = statetracker.createSavepoint();
+			emit progress(streampos);
+			drawingboard::StateSavepoint sp = statetracker.createSavepoint(-1);
 
 			QBuffer buf;
 			buf.open(QBuffer::ReadWrite);

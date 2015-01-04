@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ public:
 	static const int HEADER_LEN = 3;
 
 	Message(MessageType type, uint8_t ctx): _type(type), _undone(DONE), _refcount(0), _contextid(ctx) {}
-	virtual ~Message() {};
+	virtual ~Message() {}
 	
 	/**
 	 * @brief Get the type of this message.
@@ -190,6 +190,13 @@ public:
 	 */
 	static Message *deserialize(const uchar *data, int buflen);
 
+	/**
+	 * @brief Check if this message has the same content as the other one
+	 * @param m
+	 * @return
+	 */
+	bool equals(const Message &m) const;
+
 protected:
 	/**
 	 * @brief Get the length of the message payload
@@ -203,6 +210,17 @@ protected:
 	 * @return number of bytes written (should always be the same as payloadLenth())
 	 */
 	virtual int serializePayload(uchar *data) const = 0;
+
+	/**
+	 * @brief Check if the other message has identical payload
+	 *
+	 * The default implementation calls serializePayload and does a bytewise comparison
+	 * on that. Subclasses should override this with a more efficient check.
+	 *
+	 * @param m
+	 * @return true if payloads are equal
+	 */
+	virtual bool payloadEquals(const Message &m) const;
 
 private:
 	const MessageType _type;
@@ -261,6 +279,8 @@ public:
 	Message *operator ->() const { return _ptr; }
 
 	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*_ptr); }
+
+	bool equals(const MessagePtr &m) const { return _ptr->equals(*m); }
 
 private:
 	Message *_ptr;

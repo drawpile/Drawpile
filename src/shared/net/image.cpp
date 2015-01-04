@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,6 +57,19 @@ int PutImage::serializePayload(uchar *data) const
 	memcpy(ptr, _image.constData(), _image.length());
 	ptr += _image.length();
 	return ptr-data;
+}
+
+bool PutImage::payloadEquals(const Message &m) const
+{
+	const PutImage &p = static_cast<const PutImage&>(m);
+	return
+		layer() == p.layer() &&
+		flags() == p.flags() &&
+		x() == p.x() &&
+		y() == p.y() &&
+		width() == p.width() &&
+		height() == p.height() &&
+		image() == p.image();
 }
 
 FillRect *FillRect::deserialize(const uchar *data, uint len)

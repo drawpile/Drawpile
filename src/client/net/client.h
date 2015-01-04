@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -231,6 +231,7 @@ public slots:
 
 signals:
 	void messageReceived(protocol::MessagePtr msg);
+	void drawingCommandLocal(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
 	void markerMessageReceived(const QString &user, const QString &message);
@@ -276,6 +277,8 @@ private:
 	void handleLayerAcl(const protocol::LayerACL &msg);
 	void handleMovePointer(const protocol::MovePointer &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
+
+	void sendCommand(protocol::MessagePtr msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;

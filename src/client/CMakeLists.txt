@@ -13,6 +13,7 @@ set (
 	main.cpp
 	mainwindow.cpp
 	statetracker.cpp
+	retcon.cpp
 	loader.cpp
 	textloader.cpp
 	tools/toolsettings.cpp

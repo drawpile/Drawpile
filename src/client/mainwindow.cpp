@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -265,6 +265,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
+	connect(_client, SIGNAL(drawingCommandLocal(protocol::MessagePtr)), _canvas, SLOT(handleLocalCommand(protocol::MessagePtr)));
 	connect(_client, SIGNAL(userPointerMoved(int,QPointF,int)), _canvas, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
@@ -1081,6 +1082,8 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		return;
 	}
 	address.setUserName(dlg->getUserName());
+
+	qDebug() << "host" << address << dlg->getRemoteAddress();
 
 
 	// Start server if hosting locally

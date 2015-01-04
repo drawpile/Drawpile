@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,6 +55,31 @@ int Message::serialize(char *data) const
 	Q_ASSERT(written <= 0xffff);
 
 	return HEADER_LEN + written;
+}
+
+bool Message::equals(const Message &m) const
+{
+	if(type() != m.type())
+		return false;
+	return payloadEquals(m);
+}
+
+bool Message::payloadEquals(const Message &m) const
+{
+#if 0
+	qDebug("default inefficient Message::payloadEquals called (type=%d).", type());
+#endif
+
+	if(payloadLength() != m.payloadLength())
+		return false;
+
+	QByteArray b1(payloadLength(), 0);
+	QByteArray b2(payloadLength(), 0);
+
+	serializePayload((uchar*)b1.data());
+	m.serializePayload((uchar*)b2.data());
+
+	return b1 == b2;
 }
 
 Message *Message::deserialize(const uchar *data, int buflen)

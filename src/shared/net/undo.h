@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,8 @@ public:
 
 protected:
 	int payloadLength() const;
-	int serializePayload(uchar *data) const;	
+	int serializePayload(uchar *data) const;
+	bool payloadEquals(const Message &m) const;
 };
 
 /**
@@ -94,7 +95,8 @@ public:
 
 protected:
 	int payloadLength() const;
-	int serializePayload(uchar *data) const;	
+	int serializePayload(uchar *data) const;
+	bool payloadEquals(const Message &m) const;
 
 private:
 	uint8_t _override;

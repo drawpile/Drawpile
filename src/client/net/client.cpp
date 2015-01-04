@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -188,9 +188,16 @@ int Client::uploadQueueBytes() const
 	return _server->uploadQueueBytes();
 }
 
+void Client::sendCommand(protocol::MessagePtr msg)
+{
+	Q_ASSERT(msg->isCommand());
+	emit drawingCommandLocal(msg);
+	_server->sendMessage(msg);
+}
+
 void Client::sendCanvasResize(int top, int right, int bottom, int left)
 {
-	_server->sendMessage(MessagePtr(new protocol::CanvasResize(
+	sendCommand(MessagePtr(new protocol::CanvasResize(
 		_my_id,
 		top, right, bottom, left
 	)));
@@ -199,19 +206,19 @@ void Client::sendCanvasResize(int top, int right, int bottom, int left)
 void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
+	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, int blend)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, blend)));
+	sendCommand(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, blend)));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerRetitle(_my_id, id, title)));
+	sendCommand(MessagePtr(new protocol::LayerRetitle(_my_id, id, title)));
 }
 
 void Client::sendLayerVisibility(int id, bool hide)
@@ -224,19 +231,19 @@ void Client::sendLayerVisibility(int id, bool hide)
 void Client::sendDeleteLayer(int id, bool merge)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerDelete(_my_id, id, merge)));
+	sendCommand(MessagePtr(new protocol::LayerDelete(_my_id, id, merge)));
 }
 
 void Client::sendLayerReorder(const QList<uint8_t> &ids)
 {
 	Q_ASSERT(ids.size()>0);
-	_server->sendMessage(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
+	sendCommand(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
 }
 
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
 	if(ctx != _lastToolCtx) {
-		_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
+		sendCommand(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 		_lastToolCtx = ctx;
 	}
 }
@@ -245,17 +252,17 @@ void Client::sendStroke(const paintcore::Point &point)
 {
 	protocol::PenPointVector v(1);
 	v[0] = pointToProtocol(point);
-	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
+	sendCommand(MessagePtr(new protocol::PenMove(_my_id, v)));
 }
 
 void Client::sendStroke(const paintcore::PointVector &points)
 {
-	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, pointsToProtocol(points))));
+	sendCommand(MessagePtr(new protocol::PenMove(_my_id, pointsToProtocol(points))));
 }
 
 void Client::sendPenup()
 {
-	_server->sendMessage(MessagePtr(new protocol::PenUp(_my_id)));
+	sendCommand(MessagePtr(new protocol::PenUp(_my_id)));
 }
 
 /**
@@ -269,8 +276,9 @@ void Client::sendPenup()
  */
 void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 {
-	foreach(MessagePtr msg, putQImage(_my_id, layer, x, y, image, blend))
-		_server->sendMessage(msg);
+	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, blend);
+	for(MessagePtr msg : msgs)
+		sendCommand(msg);
 
 	if(isConnected())
 		emit sendingBytes(_server->uploadQueueBytes());
@@ -278,7 +286,7 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 
 void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, int blend)
 {
-	_server->sendMessage(MessagePtr(new protocol::FillRect(
+	sendCommand(MessagePtr(new protocol::FillRect(
 		_my_id, layer,
 		blend,
 		rect.x(), rect.y(),
@@ -289,14 +297,14 @@ void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, int
 
 void Client::sendUndopoint()
 {
-	_server->sendMessage(MessagePtr(new protocol::UndoPoint(_my_id)));
+	sendCommand(MessagePtr(new protocol::UndoPoint(_my_id)));
 }
 
 void Client::sendUndo(int actions, int override)
 {
 	Q_ASSERT(actions != 0);
 	Q_ASSERT(actions >= -128 && actions <= 127);
-	_server->sendMessage(MessagePtr(new protocol::Undo(_my_id, override, actions)));
+	sendCommand(MessagePtr(new protocol::Undo(_my_id, override, actions)));
 }
 
 void Client::sendRedo(int actions, int override)
@@ -307,7 +315,7 @@ void Client::sendRedo(int actions, int override)
 void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
 	Q_ASSERT(id>=0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationCreate(
+	sendCommand(MessagePtr(new protocol::AnnotationCreate(
 		_my_id,
 		id,
 		rect.x(),
@@ -320,7 +328,7 @@ void Client::sendAnnotationCreate(int id, const QRect &rect)
 void Client::sendAnnotationReshape(int id, const QRect &rect)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationReshape(
+	sendCommand(MessagePtr(new protocol::AnnotationReshape(
 		_my_id,
 		id,
 		rect.x(),
@@ -333,7 +341,7 @@ void Client::sendAnnotationReshape(int id, const QRect &rect)
 void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationEdit(
+	sendCommand(MessagePtr(new protocol::AnnotationEdit(
 		_my_id,
 		id,
 		bg.rgba(),
@@ -344,7 +352,7 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 void Client::sendAnnotationDelete(int id)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(_my_id, id)));
+	sendCommand(MessagePtr(new protocol::AnnotationDelete(_my_id, id)));
 }
 
 /**

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ namespace protocol {
 		PenPoint(int32_t x_, int32_t y_, uint16_t p_) : x(x_), y(y_), p(p_) {}
 		int32_t x, y;
 		uint16_t p;
+
+		bool operator!=(const PenPoint &o) const { return x != o.x || y != o.y || p != o.p; }
 	};
 }
 
@@ -141,6 +143,7 @@ public:
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	bool payloadEquals(const Message &m) const;
 
 private:
 	PenPointVector _points;
@@ -163,6 +166,7 @@ public:
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	bool payloadEquals(const Message &m) const;
 };
 
 }
