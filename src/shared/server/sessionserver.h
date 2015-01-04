@@ -99,6 +99,10 @@ public:
 	void setMustSecure(bool mustSecure) { _mustSecure = mustSecure; }
 	bool mustSecure() const { return _mustSecure; }
 
+#ifndef NDEBUG
+	void setRandomLag(uint lag) { _randomlag = lag; }
+#endif
+
 	/**
 	 * @brief Set the session storage to use (if any)
 	 *
@@ -274,6 +278,9 @@ private:
 	bool _allowPersistentSessions;
 	bool _mustSecure;
 
+#ifndef NDEBUG
+	uint _randomlag;
+#endif
 };
 
 }

@@ -136,6 +136,10 @@ public:
 	 */
 	void setPingInterval(int msecs);
 
+#ifndef NDEBUG
+	void setRandomLag(uint lag) { _randomlag = lag; }
+#endif
+
 public slots:
 	/**
 	 * @brief Send a Ping message
@@ -226,6 +230,10 @@ private:
 	bool _closeWhenReady;
 	bool _expectingSnapshot;
 	bool _ignoreIncoming;
+
+#ifndef NDEBUG
+	uint _randomlag;
+#endif
 };
 
 }

@@ -111,6 +111,10 @@ public:
 	 */
 	void setConnectionTimeout(int timeout);
 
+#ifndef NDEBUG
+	void setRandomLag(uint lag);
+#endif
+
 	/**
 	 * @brief Is this user locked individually?
 	 * @return true if user lock is set

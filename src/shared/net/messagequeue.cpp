@@ -26,6 +26,10 @@
 #include <QTimer>
 #include <cstring>
 
+#ifndef NDEBUG
+#include <QThread>
+#endif
+
 namespace protocol {
 
 // Reserve enough buffer space for one complete message + snapshot mode marker
@@ -55,6 +59,10 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	connect(_idleTimer, SIGNAL(timeout()), this, SLOT(checkIdleTimeout()));
 	_idleTimer->setInterval(1000);
 	_idleTimer->setSingleShot(false);
+
+#ifndef NDEBUG
+	_randomlag = 0;
+#endif
 }
 
 void MessageQueue::sslEncrypted()
@@ -297,6 +305,13 @@ void MessageQueue::writeData() {
 	}
 
 	if(_sentcount < _sendbuflen) {
+#ifndef NDEBUG
+		// Debugging tool: simulate bad network connections by sleeping at odd times
+		if(_randomlag>0) {
+			QThread::msleep(qrand() % _randomlag);
+		}
+#endif
+
 		int sent = _socket->write(_sendbuffer+_sentcount, _sendbuflen-_sentcount);
 		if(sent<0) {
 			// Error

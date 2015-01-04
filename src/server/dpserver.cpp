@@ -166,6 +166,11 @@ int main(int argc, char *argv[]) {
 
 #endif
 
+#ifndef NDEBUG
+	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
+	parser.addOption(lagOption);
+#endif
+
 	// --userfile <path>
 	QCommandLineOption userfileOption("userfile", "Use user/password file", "path");
 	parser.addOption(userfileOption);
@@ -332,6 +337,13 @@ int main(int argc, char *argv[]) {
 				return 1;
 			}
 		}
+	}
+#endif
+
+#ifndef NDEBUG
+	{
+		uint lag = cfgfile.override(parser, lagOption).toUInt();
+		server->setRandomLag(lag);
 	}
 #endif
 

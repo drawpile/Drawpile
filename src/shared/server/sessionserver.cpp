@@ -45,6 +45,10 @@ SessionServer::SessionServer(QObject *parent)
 	connect(cleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSessions()));
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
+
+#ifndef NDEBUG
+	_randomlag = 0;
+#endif
 }
 
 void SessionServer::setSessionStore(SessionStore *store)
@@ -232,6 +236,10 @@ void SessionServer::addClient(Client *client)
 {
 	client->setParent(this);
 	client->setConnectionTimeout(_connectionTimeout);
+
+#ifndef NDEBUG
+	client->setRandomLag(_randomlag);
+#endif
 
 	_lobby.append(client);
 

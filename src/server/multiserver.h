@@ -56,6 +56,9 @@ public:
 	bool setUserFile(const QString &path);
 	void setAllowGuests(bool allow);
 	void setConnectionTimeout(int timeout);
+#ifndef NDEBUG
+	void setRandomLag(uint lag);
+#endif
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);

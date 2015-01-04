@@ -115,6 +115,14 @@ void MultiServer::setConnectionTimeout(int timeout)
 	_sessions->setConnectionTimeout(timeout);
 }
 
+#ifndef NDEBUG
+void MultiServer::setRandomLag(uint lag)
+{
+	_sessions->setRandomLag(lag);
+}
+
+#endif
+
 /**
  * @brief Automatically stop server when last session is closed
  *

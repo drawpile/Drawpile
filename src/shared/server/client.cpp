@@ -100,6 +100,13 @@ void Client::setConnectionTimeout(int timeout)
 	_msgqueue->setIdleTimeout(timeout);
 }
 
+#ifndef NDEBUG
+void Client::setRandomLag(uint lag)
+{
+	_msgqueue->setRandomLag(lag);
+}
+#endif
+
 QHostAddress Client::peerAddress() const
 {
 	return _socket->peerAddress();
