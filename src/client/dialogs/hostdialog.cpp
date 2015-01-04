@@ -143,6 +143,8 @@ void HostDialog::rememberSettings() const
 	hosts << current;
 	for(int i=0;i<_ui->remotehost->count();++i)
 			hosts << _ui->remotehost->itemText(i);
+	_ui->remotehost->setCurrentText(current);
+
 	cfg.setValue("recentremotehosts", hosts);
 
 	// Remember size and background color if we created a new picture
