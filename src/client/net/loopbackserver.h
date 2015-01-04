@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,14 +24,6 @@
 #include "server.h"
 
 #include "../shared/util/idlist.h"
-
-/*
- * Uncomment this to enable network lag simulator.
- * The number is the maximum amount of lag in milliseconds to inject between messages.
- */
-//#define LAG_SIMULATOR 50
-
-class QTimer;
 
 namespace net {
 
@@ -61,20 +53,9 @@ public:
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	
-private slots:
-#ifdef LAG_SIMULATOR
-	void sendDelayedMessage();
-#endif
-
 private:
 	UsedIdList _layer_ids;
 	UsedIdList _annotation_ids;
-#ifdef LAG_SIMULATOR
-	QTimer *_lagtimer;
-	QList<protocol::MessagePtr> _msgqueue;
-	bool _paused;
-	int _pausepos;
-#endif
 };
 
 

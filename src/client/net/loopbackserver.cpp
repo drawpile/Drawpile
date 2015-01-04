@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,10 +21,6 @@
 
 #include "loopbackserver.h"
 
-#ifdef LAG_SIMULATOR
-#include <QTimer>
-#endif
-
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
 
@@ -32,20 +28,9 @@ namespace net {
 
 LoopbackServer::LoopbackServer(QObject *parent)
 	: QObject(parent),
-#ifdef LAG_SIMULATOR
-	  Server(false),
-#else
 	  Server(true),
-#endif
 	  _layer_ids(255), _annotation_ids(255)
 {
-#ifdef LAG_SIMULATOR
-	_lagtimer = new QTimer(this);
-	_lagtimer->setSingleShot(true);
-	connect(_lagtimer, SIGNAL(timeout()), this, SLOT(sendDelayedMessage()));
-	_paused = false;
-	_pausepos = 0;
-#endif
 }
 	
 void LoopbackServer::reset()
@@ -61,15 +46,7 @@ void LoopbackServer::logout()
 
 void LoopbackServer::pauseInput(bool pause)
 {
-#ifdef LAG_SIMULATOR
-	_paused = pause;
-	if(pause)
-		_pausepos = 0;
-	else
-		_lagtimer->start(qrand() % LAG_SIMULATOR);
-#else
 	Q_UNUSED(pause);
-#endif
 }
 
 void LoopbackServer::sendMessage(protocol::MessagePtr msg)
@@ -95,39 +72,12 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 		}
 		default: /* no special handling needed */ break;
 	}
-#ifdef LAG_SIMULATOR
-	_msgqueue.append(msg);
-	if(!_lagtimer->isActive()) {
-		_lagtimer->start(qrand() % LAG_SIMULATOR);
-	}
-#else
 	emit messageReceived(msg);
-#endif
 }
 
 void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr>)
 {
 	// There are no snapshots in loopback mode
 }
-
-#ifdef LAG_SIMULATOR
-void LoopbackServer::sendDelayedMessage()
-{
-	if(_paused) {
-		++_pausepos;
-
-	} else {
-		while(!_msgqueue.isEmpty() && _pausepos>=0) {
-			emit messageReceived(_msgqueue.takeFirst());
-			--_pausepos;
-		}
-		if(_pausepos<0)
-			_pausepos = 0;
-	}
-
-	if(!_msgqueue.isEmpty())
-		_lagtimer->start(qrand() % LAG_SIMULATOR);
-}
-#endif
 
 }
