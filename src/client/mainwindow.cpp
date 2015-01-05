@@ -1680,7 +1680,7 @@ void MainWindow::about()
 			tr("<p><b>Drawpile %1</b><br>"
 			"A collaborative drawing program.</p>"
 
-			"<p>Copyright © 2006-2014 Calle Laakkonen</p>"
+			"<p>Copyright © 2006-2015 Calle Laakkonen</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as " 

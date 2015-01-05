@@ -1,3 +1,8 @@
+2015-01-?? Version 0.9.7
+ * Fixed "host on remote server" dropdown box
+ * Added new Retcon synchronization method
+ * Removed preview strokes
+
 2015-01-02 Version 0.9.6
  * Added connection timeout check
  * Added keepalive messages

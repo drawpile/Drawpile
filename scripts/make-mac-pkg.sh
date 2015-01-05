@@ -3,7 +3,7 @@
 set -e
 
 QTDIR="$HOME/Qt/5.4/clang_64"
-TITLE="Drawpile 0.9.6"
+TITLE="Drawpile 0.9.7"
 
 # Create build directory
 mkdir -p mac-deploy
