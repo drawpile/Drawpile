@@ -33,7 +33,7 @@ using protocol::MessagePtr;
 SessionState::SessionState(const SessionId &id, int minorVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
-	_userids(255),
+	_lastUserId(0),
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_founder(founder),
@@ -47,16 +47,34 @@ QString SessionState::toLogString() const {
 
 void SessionState::assignId(Client *user)
 {
-	user->setId(_userids.takeNext());
+	int loops=0;
+	while(++loops<256) {
+		++_lastUserId;
+		if(_lastUserId>255)
+			_lastUserId=1;
+
+		bool isFree = true;
+		for(const Client *c : _clients) {
+			if(c->id() == _lastUserId) {
+				isFree = false;
+				break;
+			}
+		}
+
+		if(isFree) {
+			user->setId(_lastUserId);
+			break;
+		}
+
+	}
+	// shouldn't happen: we don't let users in if the session is full
+	Q_ASSERT(user->id() != 0);
 }
 
 void SessionState::joinUser(Client *user, bool host)
 {
 	user->setSession(this);
 	_clients.append(user);
-
-	// Make sure the ID is reserved (hosting user gets to choose their own)
-	_userids.reserve(user->id());
 
 	connect(user, SIGNAL(barrierLocked()), this, SLOT(userBarrierLocked()));
 	connect(user, SIGNAL(disconnected(Client*)), this, SLOT(removeUser(Client*)));
@@ -101,7 +119,6 @@ void SessionState::removeUser(Client *user)
 	}
 
 	_clients.removeOne(user);
-	_userids.release(user->id());
 
 	if(!_drawingctx[user->id()].penup)
 		addToCommandStream(MessagePtr(new protocol::PenUp(user->id())));
@@ -402,7 +419,6 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 	foreach(MessagePtr msg, messages) {
 		switch(msg->type()) {
 		case MSG_TOOLCHANGE:
-			_userids.markUsed(msg.cast<ToolChange>().contextId());
 			drawingContextToolChange(msg.cast<ToolChange>());
 			break;
 		case MSG_PEN_MOVE:

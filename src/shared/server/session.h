@@ -27,7 +27,6 @@
 #include <QDateTime>
 
 #include "sessiondesc.h"
-#include "../util/idlist.h"
 #include "../util/logger.h"
 #include "../net/message.h"
 #include "../net/messagestream.h"
@@ -456,7 +455,7 @@ private:
 
 	protocol::MessageStream _mainstream;
 
-	UsedIdList _userids;
+	int _lastUserId;
 	QVector<LayerState> _layers;
 	QHash<int, DrawingContext> _drawingctx;
 

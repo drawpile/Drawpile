@@ -20,7 +20,6 @@ set (
 	record/writer.cpp
 	record/reader.cpp
 	record/reader-compat.cpp
-	util/idlist.cpp
 	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp

@@ -306,6 +306,12 @@ void LoginHandler::handleHostMessage(const QString &message)
 	int minorVersion = m.captured(2).toInt();
 	int userId = m.captured(3).toInt();
 
+	if(userId < 1 || userId>255) {
+		send("ERROR BADID");
+		_client->disconnectError("login error");
+		return;
+	}
+
 	// Check if session ID is available
 	if(sessionIdString == "*")
 		sessionId = SessionId::randomId();
