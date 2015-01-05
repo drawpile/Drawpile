@@ -128,7 +128,6 @@ class MainWindow : public QMainWindow {
 		void statusbarChat(const QString &nick, const QString &msg);
 
 		void updateShortcuts();
-		void updateStrokePreviewMode(qint64 lag=-1);
 		void updateTabletSupportMode();
 
 		void selectAll();

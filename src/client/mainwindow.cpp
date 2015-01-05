@@ -301,7 +301,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
 	connect(_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
-	connect(_client, SIGNAL(lagMeasured(qint64)), this, SLOT(updateStrokePreviewMode(qint64)));
 
 	connect(_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
@@ -313,11 +312,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
 
-	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateStrokePreviewMode()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
 
-	updateStrokePreviewMode();
 	updateTabletSupportMode();
 
 	// Create actions and menus
@@ -1246,8 +1243,6 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 	if(_canvas->hasImage())
 		_canvas->statetracker()->endRemoteContexts();
 
-	updateStrokePreviewMode();
-
 	// Display login error if not yet logged in
 	if(!_client->isLoggedIn() && !localDisconnect) {
 		QMessageBox *msgbox = new QMessageBox(
@@ -1308,29 +1303,8 @@ void MainWindow::loggedin(bool join)
 		startRecorder(utils::uniqueFilename(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation), "session-" + _client->sessionId(), "dprec"));
 
 	setDrawingToolsEnabled(true);
-	updateStrokePreviewMode();
 }
 
-void MainWindow::updateStrokePreviewMode(qint64 lag)
-{
-	int mode = 0;
-
-	if(!_client->isLocalServer()) {
-		// Don't interrupt drawing if this is just a lag update
-		if(lag>=0 && _view->isPenDown())
-			return;
-
-		QSettings cfg;
-		cfg.beginGroup("settings/lag");
-
-		if(lag >= 0 && lag < 20) // TODO adjustable lag limit?
-			mode = cfg.value("previewstyle-fast", 1).toInt();
-		else
-			mode = cfg.value("previewstyle", 3).toInt();
-	}
-
-	_canvas->setStrokePreviewMode(mode);
-}
 
 void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat)
 {

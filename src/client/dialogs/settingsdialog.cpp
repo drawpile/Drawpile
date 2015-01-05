@@ -141,11 +141,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/lag");
-	_ui->strokepreview->setCurrentIndex(cfg.value("previewstyle", 3).toInt());
-	_ui->strokepreview2->setCurrentIndex(cfg.value("previewstyle-fast", 1).toInt());
-	cfg.endGroup();
-
 	// Generate an editable list of shortcuts
 	_ui->shortcuts->verticalHeader()->setVisible(false);
 	_ui->shortcuts->setRowCount(_customizableActions.size());
@@ -269,13 +264,6 @@ void SettingsDialog::rememberSettings()
 
 	cfg.setValue("historylimit", _ui->historylimit->value());
 	cfg.setValue("timeout", _ui->connTimeout->value());
-
-	cfg.endGroup();
-
-	// Remember lag settings
-	cfg.beginGroup("settings/lag");
-	cfg.setValue("previewstyle", _ui->strokepreview->currentIndex());
-	cfg.setValue("previewstyle-fast", _ui->strokepreview2->currentIndex());
 
 	cfg.endGroup();
 

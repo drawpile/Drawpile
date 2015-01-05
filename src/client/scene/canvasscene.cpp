@@ -27,7 +27,6 @@
 #include "scene/annotationitem.h"
 #include "scene/usermarkeritem.h"
 #include "scene/lasertrailitem.h"
-#include "scene/strokepreviewer.h"
 #include "statetracker.h"
 
 #include "net/client.h"
@@ -40,18 +39,11 @@ namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0),
-	  _strokepreview(NopStrokePreviewer::getInstance()), _strokepreviewmode(0),
 	  _toolpreview(0),
 	  _selection(0),
 	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
-
-	// The preview clear timer is used to clear out old preview strokes.
-	// Preview strokes may go unaccounted for when the server filters out pen move commands.
-	_previewClearTimer = new QTimer(this);
-	_previewClearTimer->setSingleShot(true);
-	connect(_previewClearTimer, &QTimer::timeout, [this]() { _strokepreview->clear(); });
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
 	_animTickTimer = new QTimer(this);
@@ -62,7 +54,6 @@ CanvasScene::CanvasScene(QObject *parent)
 
 CanvasScene::~CanvasScene()
 {
-	setStrokePreviewMode(0);
 	delete _image;
 	delete _statetracker;
 }
@@ -85,9 +76,6 @@ void CanvasScene::initCanvas(net::Client *client)
 	connect(_statetracker, SIGNAL(userMarkerAttribs(int,QColor,QString)), this, SLOT(setUserMarkerAttribs(int,QColor,QString)));
 	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
-	connect(_statetracker, &StateTracker::myStrokesCommitted, [this](int count) {
-		strokepreview()->takeStrokes(count);
-	});
 
 	connect(_image->image(), SIGNAL(resized(int,int,QSize)), this, SLOT(handleCanvasResize(int,int,QSize)));
 	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
@@ -103,7 +91,6 @@ void CanvasScene::initCanvas(net::Client *client)
 		}
 	}
 
-	_strokepreview->clear();
 	foreach(UserMarkerItem *i, _usermarkers)
 		delete i;
 	_usermarkers.clear();
@@ -389,36 +376,6 @@ void CanvasScene::setSelectionItem(SelectionItem *selection)
 	_selection = selection;
 	if(selection)
 		addItem(selection);
-}
-
-void CanvasScene::setStrokePreviewMode(int mode)
-{
-	if(mode<0 || mode>3) {
-		qWarning("Unknown stroke preview mode: %d", mode);
-		mode = 3;
-	}
-
-	if(mode == _strokepreviewmode)
-		return;
-
-	if(_strokepreview != NopStrokePreviewer::getInstance())
-		delete _strokepreview;
-
-	switch(mode) {
-	case 0: _strokepreview = drawingboard::NopStrokePreviewer::getInstance(); break;
-	case 1: _strokepreview = new drawingboard::OverlayStrokePreviewer(this); break;
-	case 2: _strokepreview = new drawingboard::ApproximateOverlayStrokePreviewer(this); break;
-	case 3: _strokepreview = new drawingboard::TempLayerStrokePreviewer(this); break;
-	}
-	_strokepreviewmode = mode;
-}
-
-void CanvasScene::resetPreviewClearTimer()
-{
-	// Clear out previews automatically.
-	// If the user is locked, some strokes may have been dropped by
-	// the server, causing an annoying tail of preview strokes.
-	_previewClearTimer->start(4000);
 }
 
 void CanvasScene::handleLocalCommand(protocol::MessagePtr cmd)

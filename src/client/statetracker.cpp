@@ -497,9 +497,6 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		ctx.lastpoint = p;
 	}
 
-	if(cmd.contextId() == _myid)
-		emit myStrokesCommitted(cmd.points().size());
-
 	if(_showallmarkers || cmd.contextId() != _myid)
 		emit userMarkerMove(cmd.contextId(), ctx.lastpoint, 0);
 }

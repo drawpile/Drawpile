@@ -44,7 +44,6 @@ class AnnotationItem;
 class SelectionItem;
 class UserMarkerItem;
 class LaserTrailItem;
-class StrokePreviewer;
 
 /**
  * @brief The drawing board
@@ -160,12 +159,6 @@ public:
 	 */
 	QString title() const;
 
-	void setStrokePreviewMode(int mode);
-
-	StrokePreviewer *strokepreview() { return _strokepreview; }
-
-	void resetPreviewClearTimer();
-
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);
@@ -229,9 +222,6 @@ private:
 	//! Drawing context state tracker
 	StateTracker *_statetracker;
 
-	StrokePreviewer *_strokepreview;
-	int _strokepreviewmode;
-
 	//! Laser pointer trails
 	QList<LaserTrailItem*> _lasertrails;
 
@@ -244,7 +234,6 @@ private:
 	//! User markers display remote user cursor positions
 	QHash<int, UserMarkerItem*> _usermarkers;
 
-	QTimer *_previewClearTimer;
 	QTimer *_animTickTimer;
 
 	bool _showAnnotations;

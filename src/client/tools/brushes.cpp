@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 */
 
 #include "scene/canvasscene.h"
-#include "scene/strokepreviewer.h"
 #include "docks/toolsettingsdock.h"
 #include "core/brush.h"
 #include "net/client.h"
@@ -37,9 +36,6 @@ void BrushBase::begin(const paintcore::Point& point, bool right, float zoom)
 		brush
 	};
 
-	client().pauseInput(scene().strokepreview()->pauseInput());
-	scene().strokepreview()->startStroke(brush, point, layer());
-
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
 	client().sendStroke(point);
@@ -50,13 +46,11 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	scene().strokepreview()->continueStroke(point);
 	client().sendStroke(point);
 }
 
 void BrushBase::end()
 {
-	scene().strokepreview()->endStroke();
 	client().sendPenup();
 	client().pauseInput(false);
 }
