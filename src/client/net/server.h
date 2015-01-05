@@ -59,12 +59,6 @@ public:
      */
     virtual void logout() = 0;
 
-	/**
-	 * @brief Hold input messages until unpaused
-	 * @param pause
-	 */
-	virtual void pauseInput(bool pause) = 0;
-
     /**
      * @brief Is this a local server?
      * @return true if local

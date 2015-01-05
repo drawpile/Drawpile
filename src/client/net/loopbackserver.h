@@ -48,8 +48,6 @@ public:
 
 	void logout();
 
-	void pauseInput(bool pause);
-
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	

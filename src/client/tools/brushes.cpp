@@ -52,7 +52,6 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 void BrushBase::end()
 {
 	client().sendPenup();
-	client().pauseInput(false);
 }
 
 }

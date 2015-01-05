@@ -44,11 +44,6 @@ void LoopbackServer::logout()
 	qWarning() << "tried to log out from the loopback server!";
 }
 
-void LoopbackServer::pauseInput(bool pause)
-{
-	Q_UNUSED(pause);
-}
-
 void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 {
 	// Keep track of layer and annotation IDs.

@@ -51,8 +51,6 @@ public:
 
 	int uploadQueueBytes() const;
 
-	void pauseInput(bool pause);
-
 	void startTls();
 
 	virtual Security securityLevel() const { return _securityLevel; }
@@ -90,7 +88,6 @@ private:
 	QString _error, _errorcode;
 	Security _securityLevel;
 	bool _localDisconnect;
-	bool _paused;
 };
 
 }

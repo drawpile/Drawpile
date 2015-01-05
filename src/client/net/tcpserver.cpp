@@ -33,7 +33,7 @@ namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
 	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
-	_localDisconnect(false), _paused(false)
+	_localDisconnect(false)
 {
 	_socket = new QSslSocket(this);
 
@@ -94,9 +94,6 @@ void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 
 void TcpServer::handleMessage()
 {
-	if(_paused)
-		return;
-
 	while(_msgqueue->isPending()) {
 		protocol::MessagePtr msg = _msgqueue->getPending();
 		if(_loginstate)
@@ -104,13 +101,6 @@ void TcpServer::handleMessage()
 		else
 			emit messageReceived(msg);
 	}
-}
-
-void TcpServer::pauseInput(bool pause)
-{
-	_paused = pause;
-	if(!pause)
-		handleMessage();
 }
 
 void TcpServer::handleBadData(int len, int type)
