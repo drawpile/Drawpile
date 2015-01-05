@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 #include "session.h"
 #include "client.h"
-#include "../net/annotation.h"
 #include "../net/layer.h"
 #include "../net/meta.h"
 #include "../net/pen.h"
@@ -34,7 +33,7 @@ using protocol::MessagePtr;
 SessionState::SessionState(const SessionId &id, int minorVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
-	_userids(255), _layerids(255), _annotationids(255),
+	_userids(255),
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_founder(founder),
@@ -413,6 +412,7 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 			drawingContextPenUp(msg.cast<PenUp>());
 			break;
 		case MSG_LAYER_CREATE:
+			// accept all layer IDs here
 			createLayer(msg.cast<LayerCreate>(), false);
 			break;
 		case MSG_LAYER_ORDER:
@@ -423,12 +423,6 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 			break;
 		case MSG_LAYER_ACL:
 			updateLayerAcl(msg.cast<LayerACL>());
-			break;
-		case MSG_ANNOTATION_CREATE:
-			createAnnotation(msg.cast<AnnotationCreate>(), false);
-			break;
-		case MSG_ANNOTATION_DELETE:
-			deleteAnnotation(msg.cast<AnnotationDelete>().id());
 			break;
 		case MSG_SESSION_CONFIG:
 			setSessionConfig(msg.cast<SessionConf>());
@@ -462,13 +456,21 @@ const LayerState *SessionState::getLayerBelowId(int id)
 	return 0;
 }
 
-void SessionState::createLayer(protocol::LayerCreate &cmd, bool assign)
+bool SessionState::createLayer(protocol::LayerCreate &cmd, bool validate)
 {
-	if(assign)
-		cmd.setId(_layerids.takeNext());
-	else
-		_layerids.reserve(cmd.id());
-	_layers.append(LayerState(cmd.id()));
+	bool ok = cmd.isValidId();
+
+	if(validate) {
+		// check that layer doesn't exist already
+		for(const LayerState &ls : _layers)
+			if(ls.id == cmd.id())
+				return false;
+	}
+
+	if(ok || !validate)
+		_layers.append(LayerState(cmd.id()));
+
+	return ok;
 }
 
 void SessionState::reorderLayers(protocol::LayerOrder &cmd)
@@ -494,7 +496,7 @@ void SessionState::reorderLayers(protocol::LayerOrder &cmd)
 	_layers = newlayers;
 
 	// Update commands ID list
-	QList<uint8_t> validorder;
+	QList<uint16_t> validorder;
 	validorder.reserve(_layers.size());
 	for(int i=0;i<_layers.size();++i)
 		validorder.append(_layers[i].id);
@@ -507,7 +509,6 @@ bool SessionState::deleteLayer(int id)
 	for(int i=0;i<_layers.size();++i) {
 		if(_layers[i].id == id) {
 			_layers.remove(i);
-			_layerids.release(id);
 			return true;
 		}
 	}
@@ -524,20 +525,6 @@ bool SessionState::updateLayerAcl(const protocol::LayerACL &cmd)
 		}
 	}
 	return false;
-}
-
-void SessionState::createAnnotation(protocol::AnnotationCreate &cmd, bool assign)
-{
-	if(assign)
-		cmd.setId(_annotationids.takeNext());
-	else
-		_annotationids.reserve(cmd.id());
-}
-
-bool SessionState::deleteAnnotation(int id)
-{
-	_annotationids.release(id);
-	return true;
 }
 
 void SessionState::drawingContextToolChange(const protocol::ToolChange &cmd)

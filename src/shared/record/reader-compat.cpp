@@ -24,6 +24,7 @@
 #include "../net/image.h"
 #include "../net/layer.h"
 #include "../net/meta.h"
+#include "../net/annotation.h"
 
 #include <QtEndian>
 
@@ -31,6 +32,63 @@ namespace recording {
 namespace compat {
 
 using namespace protocol;
+
+LayerCreate *LayerCreateV12(const uchar *data, uint len)
+{
+	if(len<6)
+		return 0;
+
+	return new LayerCreate(
+		*(data+0),
+		*(data+1),
+		qFromBigEndian<quint32>(data+2),
+		QByteArray((const char*)data+6, len-6)
+	);
+}
+
+LayerAttributes *LayerAttributesV12(const uchar *data, uint len)
+{
+	if(len!=4)
+		return 0;
+	return new LayerAttributes(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		*(data+3)
+	);
+}
+
+LayerRetitle *LayerRetitleV12(const uchar *data, uint len)
+{
+	if(len<2)
+		return 0;
+	return new LayerRetitle(
+		*(data+0),
+		*(data+1),
+		QByteArray((const char*)data+2,len-2)
+	);
+}
+
+LayerOrder *LayerOrderV12(const uchar *data, uint len)
+{
+	if(len<2 || len>256)
+		return 0;
+
+	QList<uint16_t> order;
+	order.reserve(len);
+	for(uint i=1;i<len;++i)
+		order.append(data[i]);
+
+	return new LayerOrder(data[0], order);
+}
+
+LayerDelete *LayerDeleteV12(const uchar *data, uint len)
+{
+	if(len != 3)
+		return 0;
+	return new LayerDelete(data[0], data[1], data[2]);
+}
+
 
 ToolChange *ToolChangeV11(const uchar *data, uint len)
 {
@@ -130,6 +188,142 @@ FillRect *FillRectV10(const uchar *data, uint len)
 	);
 }
 
+ToolChange *ToolChangeV12(const uchar *data, uint len)
+{
+	if(len != 22)
+		return 0;
+
+	return new ToolChange(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		*(data+3),
+		*(data+4),
+		qFromBigEndian<quint32>(data+5),
+		qFromBigEndian<quint32>(data+9),
+		*(data+13),
+		*(data+14),
+		*(data+15),
+		*(data+16),
+		*(data+17),
+		*(data+18),
+		*(data+19),
+		*(data+20),
+		*(data+21)
+	);
+}
+
+PutImage *PutImageV12(const uchar *data, uint len)
+{
+	if(len < 19)
+		return 0;
+
+	return new PutImage(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		qFromBigEndian<quint32>(data+3),
+		qFromBigEndian<quint32>(data+7),
+		qFromBigEndian<quint32>(data+11),
+		qFromBigEndian<quint32>(data+15),
+		QByteArray((const char*)data+19, len-19)
+	);
+}
+
+FillRect *FillRectV12(const uchar *data, uint len)
+{
+	if(len != 23)
+		return 0;
+
+	return new FillRect(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		qFromBigEndian<quint32>(data+3),
+		qFromBigEndian<quint32>(data+7),
+		qFromBigEndian<quint32>(data+11),
+		qFromBigEndian<quint32>(data+15),
+		qFromBigEndian<quint32>(data+19)
+	);
+}
+
+AnnotationCreate *AnnotationCreateV12(const uchar *data, uint len)
+{
+	if(len!=14)
+		return 0;
+	return new AnnotationCreate(
+		*(data+0),
+		*(data+1),
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
+	);
+}
+
+AnnotationReshape *AnnotationReshapeV12(const uchar *data, uint len)
+{
+	if(len!=14)
+		return 0;
+	return new AnnotationReshape(
+		*(data+0),
+		*(data+1),
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
+	);
+}
+
+AnnotationEdit *AnnotationEditV12(const uchar *data, uint len)
+{
+	if(len < 6)
+		return 0;
+
+	return new AnnotationEdit(
+		*data,
+		*(data+1),
+		qFromBigEndian<quint32>(data+2),
+		QByteArray((const char*)data+6, len-6)
+	);
+}
+
+AnnotationDelete *AnnotationDeleteV12(const uchar *data, uint len)
+{
+	if(len != 2)
+		return 0;
+	return new AnnotationDelete(data[0], data[1]);
+}
+
+Message *deserializeV12(const uchar *data, int length)
+{
+	if(length<Message::HEADER_LEN)
+		return nullptr;
+
+	const quint16 len = qFromBigEndian<quint16>(data);
+
+	if(length < len+Message::HEADER_LEN)
+		return nullptr;
+
+	const MessageType type = MessageType(data[2]);
+
+	data += Message::HEADER_LEN;
+	switch(type) {
+	case MSG_PUTIMAGE: return PutImageV12(data, len);
+	case MSG_FILLRECT: return FillRectV12(data, len);
+	case MSG_TOOLCHANGE: return ToolChangeV12(data, len);
+	case MSG_LAYER_CREATE: return LayerCreateV12(data, len);
+	case MSG_LAYER_ATTR: return LayerAttributesV12(data, len);
+	case MSG_LAYER_RETITLE: return LayerRetitleV12(data, len);
+	case MSG_LAYER_ORDER: return LayerOrderV12(data, len);
+	case MSG_ANNOTATION_CREATE: return AnnotationCreateV12(data, len);
+	case MSG_ANNOTATION_RESHAPE: return AnnotationReshapeV12(data, len);
+	case MSG_ANNOTATION_EDIT: return AnnotationEditV12(data, len);
+	case MSG_ANNOTATION_DELETE: return AnnotationDeleteV12(data, len);
+	default: return Message::deserialize(data-Message::HEADER_LEN, length);
+	}
+}
+
 Message *deserializeV11(const uchar *data, int length)
 {
 	if(length<Message::HEADER_LEN)
@@ -146,7 +340,7 @@ Message *deserializeV11(const uchar *data, int length)
 	if(type == MSG_TOOLCHANGE) {
 		return ToolChangeV11(data + Message::HEADER_LEN, len);
 	} else {
-		return Message::deserialize(data, length);
+		return deserializeV12(data, len);
 	}
 }
 

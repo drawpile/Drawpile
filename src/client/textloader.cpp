@@ -216,7 +216,7 @@ void TextCommandLoader::handleReorderLayers(const QString &args)
 	if(tokens.length()<3)
 		throw SyntaxError("At least two layers needed!");
 
-	QList<uint8_t> ids;
+	QList<uint16_t> ids;
 
 	foreach(const QString &token, tokens) {
 		ids << str2int(token);

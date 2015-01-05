@@ -36,7 +36,7 @@ namespace protocol {
  */
 class AnnotationCreate : public Message {
 public:
-	AnnotationCreate(uint8_t ctx, uint8_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
+	AnnotationCreate(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_CREATE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
@@ -48,21 +48,26 @@ public:
 	 * The same rules apply as in layer creation.
 	 * @return annotation ID number
 	 */
-	uint8_t id() const { return _id; }
-
-	void setId(uint8_t id) { _id = id; }
+	uint16_t id() const { return _id; }
 
 	int32_t x() const { return _x; }
 	int32_t y() const { return _y; }
 	uint16_t w() const { return _w; }
 	uint16_t h() const { return _h; }
 
+	/**
+	 * @brief Check if the ID's namespace portition matches the context ID
+	 * Note. The initial session snapshot may include IDs that do not conform to
+	 * the contextId|annotationId format.
+	 */
+	bool isValidId() const { return (id()>>8) == contextId(); }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	int32_t _x;
 	int32_t _y;
 	uint16_t _w;
@@ -74,13 +79,13 @@ private:
  */
 class AnnotationReshape : public Message {
 public:
-	AnnotationReshape(uint8_t ctx, uint8_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
+	AnnotationReshape(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_RESHAPE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
 	static AnnotationReshape *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	int32_t x() const { return _x; }
 	int32_t y() const { return _y; }
 	uint16_t w() const { return _w; }
@@ -105,16 +110,16 @@ private:
  */
 class AnnotationEdit : public Message {
 public:
-	AnnotationEdit(uint8_t ctx, uint8_t id, uint32_t bg, const QByteArray &text)
+	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, const QByteArray &text)
 		: Message(MSG_ANNOTATION_EDIT, ctx), _id(id), _bg(bg), _text(text)
 	{}
-	AnnotationEdit(uint8_t ctx, uint8_t id, uint32_t bg, const QString &text)
+	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, const QString &text)
 		: AnnotationEdit(ctx, id, bg, text.toUtf8())
 	{}
 
 	static AnnotationEdit *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	uint32_t bg() const { return _bg; }
 	QString text() const { return QString::fromUtf8(_text); }
 
@@ -123,7 +128,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	uint32_t _bg;
 	QByteArray _text;
 };
@@ -139,20 +144,20 @@ private:
  */
 class AnnotationDelete : public Message {
 public:
-	AnnotationDelete(uint8_t ctx, uint8_t id)
+	AnnotationDelete(uint8_t ctx, uint16_t id)
 		: Message(MSG_ANNOTATION_DELETE, ctx), _id(id)
 	{}
 
 	static AnnotationDelete *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 };
 
 }

@@ -99,7 +99,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	if(count < 2)
 		return;
 
-	QList<uint8_t> layers;
+	QList<uint16_t> layers;
 	layers.reserve(count);
 	foreach(const LayerListItem &li, _items)
 		layers.append(li.id);
@@ -209,11 +209,11 @@ void LayerListModel::unlockAll()
 	emit dataChanged(index(0), index(_items.count()));
 }
 
-void LayerListModel::reorderLayers(QList<uint8_t> neworder)
+void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 {
 	QVector<LayerListItem> newitems;
 	for(int j=neworder.size()-1;j>=0;--j) {
-		const uint8_t id=neworder[j];
+		const uint16_t id=neworder[j];
 		for(int i=0;i<_items.size();++i) {
 			if(_items[i].id == id) {
 				newitems << _items[i];
@@ -260,6 +260,24 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 	}
 
 	return QVariant();
+}
+
+int LayerListModel::getAvailableLayerId() const
+{
+	const int prefix = _myId << 8;
+	QList<int> takenIds;
+	for(const LayerListItem &item : _items) {
+		if((item.id & 0xff00) == prefix)
+			takenIds.append(item.id);
+	}
+
+	for(int i=0;i<256;++i) {
+		int id = prefix | i;
+		if(!takenIds.contains(id))
+			return id;
+	}
+
+	return 0;
 }
 
 }

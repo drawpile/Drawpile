@@ -57,7 +57,7 @@ class LayerStack : public QObject {
 		void mergeLayerDown(int id);
 
 		//! Re-order the layer stack
-		void reorderLayers(const QList<uint8_t> &neworder);
+		void reorderLayers(const QList<uint16_t> &neworder);
 
 		//! Get the number of layers in the stack
 		int layers() const { return _layers.count(); }

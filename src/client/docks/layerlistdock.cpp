@@ -268,7 +268,11 @@ void LayerList::addLayer()
 	if(!nameOk)
 		return;
 
-	_client->sendNewLayer(0, Qt::transparent, name);
+	int id = layers->getAvailableLayerId();
+	if(id==0)
+		return;
+
+	_client->sendNewLayer(id, Qt::transparent, name);
 }
 
 bool LayerList::canMergeCurrent() const

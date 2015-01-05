@@ -176,19 +176,22 @@ Compatibility Reader::open()
 		if(myversion < _formatversion)
 			return MINOR_INCOMPATIBILITY;
 
-#if DRAWPILE_PROTO_MAJOR_VERSION != 12 || DRAWPILE_PROTO_MINOR_VERSION != 4
+#if DRAWPILE_PROTO_MAJOR_VERSION != 13 || DRAWPILE_PROTO_MINOR_VERSION != 4
 #error Update recording compatability check!
 #endif
 
 		// Old versions known to be compatible
 		switch(_formatversion) {
-		case version32(11, 3): // we have compatibility code for these versions
+		case version32(12, 4): // fully compatible (with support code)
+			return COMPATIBLE;
+
+		case version32(11, 3): // supported, but expect minor rendering differences
 		case version32(11, 2):
 		case version32(10, 2):
 		case version32(9, 2):
 		case version32(8, 1):
 		case version32(7, 1):
-			return MINOR_INCOMPATIBILITY; // brush rendering has changed, so old recordings won't appear exactly the same
+			return MINOR_INCOMPATIBILITY;
 		}
 
 		// Other versions are not supported
@@ -284,6 +287,10 @@ MessageRecord Reader::readNext()
 
 		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
+		case version32(12, 4):
+			message = compat::deserializeV12((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+
 		case version32(11, 3):
 		case version32(11, 2):
 			message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());

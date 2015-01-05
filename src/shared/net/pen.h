@@ -53,7 +53,7 @@ static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
 class ToolChange : public Message {
 public:
 	ToolChange(
-		uint8_t ctx, uint8_t layer,
+		uint8_t ctx, uint16_t layer,
 		uint8_t blend, uint8_t mode, uint8_t spacing,
 		uint32_t color_h, uint32_t color_l,
 		uint8_t hard_h, uint8_t hard_l,
@@ -72,7 +72,7 @@ public:
 
 		static ToolChange *deserialize(const uchar *data, uint len);
 		
-		uint8_t layer() const { return _layer; }
+		uint16_t layer() const { return _layer; }
 		uint8_t blend() const { return _blend; }
 		uint8_t mode() const { return _mode; }
 		uint8_t spacing() const { return _spacing; }
@@ -99,7 +99,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _layer;
+	uint16_t _layer;
 	uint8_t _blend;
 	uint8_t _mode;
 	uint8_t _spacing;

@@ -90,7 +90,7 @@ public:
 	void changeLayer(int id, float opacity, int blend);
 	void retitleLayer(int id, const QString &title);
 	void setLayerHidden(int id, bool hidden);
-	void reorderLayers(QList<uint8_t> neworder);
+	void reorderLayers(QList<uint16_t> neworder);
 	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 	void unlockAll();
 	
@@ -102,13 +102,21 @@ public:
 	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
 	const paintcore::Layer *getLayerData(int id) const;
 
+	void setMyId(int id) { _myId = id; }
+
+	/**
+	 * @brief Find a free layer ID
+	 * @return layer ID or 0 if all are taken
+	 */
+	int getAvailableLayerId() const;
+
 signals:
 	void layerCreated(bool wasfirst);
 	void layerDeleted(int id, int idx);
 	void layersReordered();
 
 	//! Emitted when layers are manually reordered
-	void layerOrderChanged(const QList<uint8_t> neworder);
+	void layerOrderChanged(const QList<uint16_t> neworder);
 
 	//! Request local change of layer opacity for preview purpose
 	void layerOpacityPreview(int id, float opacity);
@@ -120,6 +128,7 @@ private:
 	
 	QVector<LayerListItem> _items;
 	GetLayerFunction _getlayerfn;
+	int _myId;
 };
 
 /**

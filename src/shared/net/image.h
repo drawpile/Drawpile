@@ -52,7 +52,7 @@ public:
 	//! Maximum length of image data array
 	static const int MAX_LEN = (1<<16) - 19;
 
-	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
+	PutImage(uint8_t ctx, uint16_t layer, uint8_t flags, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
 	{
 		Q_ASSERT(image.length() <= MAX_LEN);
@@ -60,7 +60,7 @@ public:
 
 	static PutImage *deserialize(const uchar *data, uint len);
 	
-	uint8_t layer() const { return _layer; }
+	uint16_t layer() const { return _layer; }
 	uint8_t flags() const { return _flags; }
 	uint32_t x() const { return _x; }
 	uint32_t y() const { return _y; }
@@ -74,7 +74,7 @@ protected:
 	bool payloadEquals(const Message &m) const;
 
 private:
-	uint8_t _layer;
+	uint16_t _layer;
 	uint8_t _flags;
 	uint32_t _x;
 	uint32_t _y;
@@ -92,14 +92,14 @@ private:
  */
 class FillRect : public Message {
 public:
-	FillRect(uint8_t ctx, uint8_t layer, uint8_t blend, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+	FillRect(uint8_t ctx, uint16_t layer, uint8_t blend, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 		: Message(MSG_FILLRECT, ctx), _layer(layer), _blend(blend), _x(x), _y(y), _w(w), _h(h), _color(color)
 	{
 	}
 
 	static FillRect *deserialize(const uchar *data, uint len);
 
-	uint8_t layer() const { return _layer; }
+	uint16_t layer() const { return _layer; }
 	uint8_t blend() const { return _blend; }
 	uint32_t x() const { return _x; }
 	uint32_t y() const { return _y; }
@@ -112,7 +112,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _layer;
+	uint16_t _layer;
 	uint8_t _blend;
 	uint32_t _x;
 	uint32_t _y;

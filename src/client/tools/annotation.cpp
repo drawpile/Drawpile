@@ -129,8 +129,14 @@ void Annotation::end()
 			rect.setSize(QSize(160, 60));
 		}
 
-		client().sendUndopoint();
-		client().sendAnnotationCreate(0, rect);
+		int id = scene().getAvailableAnnotationId();
+		if(id==0) {
+			qWarning("We ran out of annotation IDs!");
+
+		} else {
+			client().sendUndopoint();
+			client().sendAnnotationCreate(id, rect);
+		}
 	}
 }
 

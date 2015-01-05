@@ -24,31 +24,31 @@ namespace protocol {
 
 PutImage *PutImage::deserialize(const uchar *data, uint len)
 {
-	if(len < 19)
+	if(len < 20)
 		return 0;
 
 	return new PutImage(
 		*(data+0),
-		*(data+1),
-		*(data+2),
-		qFromBigEndian<quint32>(data+3),
-		qFromBigEndian<quint32>(data+7),
-		qFromBigEndian<quint32>(data+11),
-		qFromBigEndian<quint32>(data+15),
-		QByteArray((const char*)data+19, len-19)
+		qFromBigEndian<quint32>(data+1),
+		*(data+3),
+		qFromBigEndian<quint32>(data+4),
+		qFromBigEndian<quint32>(data+8),
+		qFromBigEndian<quint32>(data+12),
+		qFromBigEndian<quint32>(data+16),
+		QByteArray((const char*)data+20, len-20)
 	);
 }
 
 int PutImage::payloadLength() const
 {
-	return 1 + 2 + 4*4 + _image.size();
+	return 1 + 3 + 4*4 + _image.size();
 }
 
 int PutImage::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _layer;
+	qToBigEndian(_layer, ptr); ptr += 2;
 	*(ptr++) = _flags;
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;
@@ -74,31 +74,31 @@ bool PutImage::payloadEquals(const Message &m) const
 
 FillRect *FillRect::deserialize(const uchar *data, uint len)
 {
-	if(len != 23)
+	if(len != 24)
 		return 0;
 
 	return new FillRect(
 		*(data+0),
-		*(data+1),
-		*(data+2),
-		qFromBigEndian<quint32>(data+3),
-		qFromBigEndian<quint32>(data+7),
-		qFromBigEndian<quint32>(data+11),
-		qFromBigEndian<quint32>(data+15),
-		qFromBigEndian<quint32>(data+19)
+		qFromBigEndian<quint32>(data+1),
+		*(data+3),
+		qFromBigEndian<quint32>(data+4),
+		qFromBigEndian<quint32>(data+8),
+		qFromBigEndian<quint32>(data+12),
+		qFromBigEndian<quint32>(data+16),
+		qFromBigEndian<quint32>(data+20)
 	);
 }
 
 int FillRect::payloadLength() const
 {
-	return 1 + 2 + 4*4 + 4;
+	return 1 + 3 + 4*4 + 4;
 }
 
 int FillRect::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _layer;
+	qToBigEndian(_layer, ptr); ptr += 2;
 	*(ptr++) = _blend;
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;

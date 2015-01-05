@@ -148,12 +148,6 @@ StateTracker::~StateTracker()
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
 {
-	// the server assigns new layer and annotation IDs, so these messages must make
-	// the round trip to work correctly.
-	// TODO: make layer IDs 16bit and prefixed with the user ID to allow client's to pick the IDs themselves?
-	if(msg->type() == protocol::MSG_LAYER_CREATE || msg->type() == protocol::MSG_ANNOTATION_CREATE)
-		return;
-
 	// A fork is created at the end of the mainline history
 	if(_localfork.isEmpty()) {
 		_localfork.setOffset(_msgstream.end()-1);

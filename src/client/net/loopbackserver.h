@@ -23,8 +23,6 @@
 
 #include "server.h"
 
-#include "../shared/util/idlist.h"
-
 namespace net {
 
 /**
@@ -35,9 +33,6 @@ class LoopbackServer : public QObject, public Server
 	Q_OBJECT
 public:
 	explicit LoopbackServer(QObject *parent=0);
-	
-	//! Reset tracked state
-	void reset();
 	
 	/**
 	 * \brief Send a message to the server
@@ -50,10 +45,6 @@ public:
 
 signals:
 	void messageReceived(protocol::MessagePtr message);
-	
-private:
-	UsedIdList _layer_ids;
-	UsedIdList _annotation_ids;
 };
 
 

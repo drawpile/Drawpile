@@ -89,6 +89,13 @@ Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 		qWarning("Layer created before canvas size was set!");
 	}
 
+	for(const Layer *l : _layers) {
+		if(l->id() == id) {
+			qWarning("Layer %d already exists!", id);
+			return nullptr;
+		}
+	}
+
 	Layer *nl = new Layer(this, id, name, color, QSize(_width, _height));
 	_layers.append(nl);
 	if(color.alpha() > 0)
@@ -115,7 +122,7 @@ bool LayerStack::deleteLayer(int id)
 /**
  * @param neworder list of layer IDs in the new order
  */
-void LayerStack::reorderLayers(const QList<uint8_t> &neworder)
+void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
 {
 	Q_ASSERT(neworder.size() == _layers.size());
 	QList<Layer*> newstack;

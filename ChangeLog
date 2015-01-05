@@ -2,6 +2,7 @@
  * Fixed "host on remote server" dropdown box
  * Added new Retcon synchronization method
  * Removed preview strokes
+ * Protocol change: 16 bit layer and annotation IDs
 
 2015-01-02 Version 0.9.6
  * Added connection timeout check

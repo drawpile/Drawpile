@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ namespace protocol {
 	class LayerCreate;
 	class LayerOrder;
 	class LayerACL;
-	class AnnotationCreate;
 	class SessionConf;
 }
 
@@ -351,9 +350,10 @@ public:
 	/**
 	 * @brief Add an new layer to the list
 	 * @param cmd layer creation command (will be updated with the new ID)
-	 * @param assign if true, assign an ID for the layer
+	 * @param validate only create the layer if ID is valid
+	 * @return true if layer ID namespace matched context ID
 	 */
-	void createLayer(protocol::LayerCreate &cmd, bool assign);
+	bool createLayer(protocol::LayerCreate &cmd, bool validate);
 
 	/**
 	 * @brief Reorder layers
@@ -377,21 +377,6 @@ public:
 	 * @return true if layer existed
 	 */
 	bool updateLayerAcl(const protocol::LayerACL &cmd);
-
-	/**
-	 * @brief Add a new annotation
-	 *
-	 * This just reserves the ID for the annotation
-	 * @param assign if true, assign a new ID for the annotation, otherwise reserve the given one.
-	 */
-	void createAnnotation(protocol::AnnotationCreate &cmd, bool assign);
-
-	/**
-	 * @brief Delete an annotation
-	 * @param id
-	 * @return true if annotation was deleted
-	 */
-	bool deleteAnnotation(int id);
 
 	/**
 	 * @brief Set the configurable options of the session
@@ -472,8 +457,6 @@ private:
 	protocol::MessageStream _mainstream;
 
 	UsedIdList _userids;
-	UsedIdList _layerids;
-	UsedIdList _annotationids;
 	QVector<LayerState> _layers;
 	QHash<int, DrawingContext> _drawingctx;
 

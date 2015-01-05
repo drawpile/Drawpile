@@ -171,6 +171,27 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 	return 0;
 }
 
+int CanvasScene::getAvailableAnnotationId() const
+{
+	const int prefix = statetracker()->localId() << 8;
+	QList<int> takenIds;
+	foreach(QGraphicsItem *i, items()) {
+		if(i->type() == AnnotationItem::Type) {
+			AnnotationItem *item = static_cast<AnnotationItem*>(i);
+			if((item->id() & 0xff00) == prefix)
+				takenIds.append(item->id());
+		}
+	}
+
+	for(int i=0;i<256;++i) {
+		int id = prefix | i;
+		if(!takenIds.contains(id))
+			return id;
+	}
+
+	return 0;
+}
+
 void CanvasScene::handleAnnotationChange(int id)
 {
 	const paintcore::Annotation *a = _image->image()->getAnnotation(id);

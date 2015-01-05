@@ -58,19 +58,10 @@ Client::Client(QObject *parent)
 	_userlist = new UserListModel(this);
 	_layerlist = new LayerListModel(this);
 
-	connect(
-		_loopback,
-		SIGNAL(messageReceived(protocol::MessagePtr)),
-		this,
-		SLOT(handleMessage(protocol::MessagePtr))
-	);
+	_layerlist->setMyId(_my_id);
 
-	connect(
-		_layerlist,
-		SIGNAL(layerOrderChanged(QList<uint8_t>)),
-		this,
-		SLOT(sendLayerReorder(QList<uint8_t>))
-	);
+	connect(_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
+	connect(_layerlist, &LayerListModel::layerOrderChanged, this, &Client::sendLayerReorder);
 }
 
 Client::~Client()
@@ -138,6 +129,7 @@ void Client::handleConnect(QString sessionId, int userid, bool join)
 {
 	_sessionId = sessionId;
 	_my_id = userid;
+	_layerlist->setMyId(userid);
 
 	// Joining: we'll get the correct layer list from the server
 	if(join)
@@ -163,7 +155,6 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 
 void Client::init()
 {
-	_loopback->reset();
 	_layerlist->clear();
 }
 
@@ -199,19 +190,19 @@ void Client::sendCanvasResize(int top, int right, int bottom, int left)
 
 void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 {
-	Q_ASSERT(id>=0 && id<256);
+	Q_ASSERT(id>0 && id<=0xffff);
 	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, int blend)
 {
-	Q_ASSERT(id>=0 && id<256);
+	Q_ASSERT(id>=0 && id<=0xffff);
 	sendCommand(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, blend)));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)
 {
-	Q_ASSERT(id>=0 && id<256);
+	Q_ASSERT(id>=0 && id<=0xffff);
 	sendCommand(MessagePtr(new protocol::LayerRetitle(_my_id, id, title)));
 }
 
@@ -224,11 +215,11 @@ void Client::sendLayerVisibility(int id, bool hide)
 
 void Client::sendDeleteLayer(int id, bool merge)
 {
-	Q_ASSERT(id>=0 && id<256);
+	Q_ASSERT(id>=0 && id<=0xffff);
 	sendCommand(MessagePtr(new protocol::LayerDelete(_my_id, id, merge)));
 }
 
-void Client::sendLayerReorder(const QList<uint8_t> &ids)
+void Client::sendLayerReorder(const QList<uint16_t> &ids)
 {
 	Q_ASSERT(ids.size()>0);
 	sendCommand(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
@@ -308,7 +299,7 @@ void Client::sendRedo(int actions, int override)
 
 void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
-	Q_ASSERT(id>=0 && id < 256);
+	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationCreate(
 		_my_id,
 		id,
@@ -321,7 +312,7 @@ void Client::sendAnnotationCreate(int id, const QRect &rect)
 
 void Client::sendAnnotationReshape(int id, const QRect &rect)
 {
-	Q_ASSERT(id>0 && id < 256);
+	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationReshape(
 		_my_id,
 		id,
@@ -334,7 +325,7 @@ void Client::sendAnnotationReshape(int id, const QRect &rect)
 
 void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 {
-	Q_ASSERT(id>0 && id < 256);
+	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationEdit(
 		_my_id,
 		id,
@@ -345,7 +336,7 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 
 void Client::sendAnnotationDelete(int id)
 {
-	Q_ASSERT(id>0 && id < 256);
+	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationDelete(_my_id, id)));
 }
 

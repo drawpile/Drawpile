@@ -408,7 +408,9 @@ void Client::handleSessionMessage(MessagePtr msg)
 		}
 		break;
 	case MSG_LAYER_CREATE:
-		_session->createLayer(msg.cast<LayerCreate>(), true);
+		// drop message if it didn't pass validation
+		if(!_session->createLayer(msg.cast<LayerCreate>(), true))
+			return;
 		break;
 	case MSG_LAYER_ORDER:
 		_session->reorderLayers(msg.cast<LayerOrder>());
@@ -424,11 +426,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 			return;
 		break;
 	case MSG_ANNOTATION_CREATE:
-		_session->createAnnotation(msg.cast<AnnotationCreate>(), true);
-		break;
-	case MSG_ANNOTATION_DELETE:
-		// drop message if annotation didn't exist
-		if(!_session->deleteAnnotation(msg.cast<AnnotationDelete>().id()))
+		// drop message if it didn't pass validation
+		if(!msg.cast<AnnotationCreate>().isValidId())
 			return;
 		break;
 	case MSG_UNDOPOINT:

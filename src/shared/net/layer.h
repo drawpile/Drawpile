@@ -70,35 +70,37 @@ private:
  * A session starts with zero layers, so a layer creation command is typically
  * the second command to be sent, right after setting the canvas size.
  *
- * When this command is sent by the client, the ID should be set to zero
- * to indicate the server should assign a free ID. An exception to this
- * is when generating a snapshot: in that case the client is free to use any
- * available ID number. (Typically when creating the snapshot, the layers have
- * already been assigned IDs by the server, or the session has just started meaning
- * all IDs are free.)
+ * The layer ID must be prefixed with the context ID of the user creating it.
+ * This allows users to choose the layer ID themselves without worrying about
+ * clashes. The server enforces that id() >> 8 == contextId(), except in snapshots.
  *
  * If layer controls are locked, this command requires session operator privileges.
  */
 class LayerCreate : public Message {
 public:
-	LayerCreate(uint8_t ctxid, uint8_t id, uint32_t fill, const QString &title)
+	LayerCreate(uint8_t ctxid, uint16_t id, uint32_t fill, const QString &title)
 		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
 
 	static LayerCreate *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	uint32_t fill() const { return _fill; }
 	QString title() const { return QString::fromUtf8(_title); }
 
-	void setId(uint8_t id) { _id = id; }
+	/**
+	 * @brief Check if the ID's namespace portition matches the context ID
+	 * Note. The initial session snapshot may include IDs that do not conform to
+	 * the contextId|layerId format.
+	 */
+	bool isValidId() const { return (id()>>8) == contextId(); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	uint32_t _fill;
 	QByteArray _title;
 };
@@ -111,14 +113,14 @@ private:
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t ctx, uint8_t id, uint8_t opacity, uint8_t blend)
+	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR, ctx), _id(id),
 		_opacity(opacity), _blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	uint8_t opacity() const { return _opacity; }
 	uint8_t blend() const { return _blend; }
 
@@ -127,7 +129,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	uint8_t _opacity;
 	uint8_t _blend;
 };
@@ -140,16 +142,16 @@ private:
  */
 class LayerRetitle : public Message {
 public:
-	LayerRetitle(uint8_t ctx, uint8_t id, const QByteArray &title)
+	LayerRetitle(uint8_t ctx, uint16_t id, const QByteArray &title)
 		: Message(MSG_LAYER_RETITLE, ctx), _id(id), _title(title)
 		{}
-	LayerRetitle(uint8_t ctx, uint8_t id, const QString &title)
+	LayerRetitle(uint8_t ctx, uint16_t id, const QString &title)
 		: LayerRetitle(ctx, id, title.toUtf8())
 		{}
 
 	static LayerRetitle *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	QString title() const { return QString::fromUtf8(_title); }
 
 protected:
@@ -157,7 +159,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	QByteArray _title;
 };
 
@@ -178,22 +180,22 @@ private:
  */
 class LayerOrder : public Message {
 public:
-	LayerOrder(uint8_t ctx, const QList<uint8_t> &order)
+	LayerOrder(uint8_t ctx, const QList<uint16_t> &order)
 		: Message(MSG_LAYER_ORDER, ctx),
 		_order(order)
 		{}
 	
 	static LayerOrder *deserialize(const uchar *data, uint len);
 
-	const QList<uint8_t> &order() const { return _order; }
-	void setOrder(const QList<uint8_t> order) { _order = order; }
+	const QList<uint16_t> &order() const { return _order; }
+	void setOrder(const QList<uint16_t> order) { _order = order; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	QList<uint8_t> _order;
+	QList<uint16_t> _order;
 };
 
 /**
@@ -207,7 +209,7 @@ private:
  */
 class LayerDelete : public Message {
 public:
-	LayerDelete(uint8_t ctx, uint8_t id, uint8_t merge)
+	LayerDelete(uint8_t ctx, uint16_t id, uint8_t merge)
 		: Message(MSG_LAYER_DELETE, ctx),
 		_id(id),
 		_merge(merge)
@@ -215,7 +217,7 @@ public:
 
 	static LayerDelete *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }
 
 	bool isUndoable() const { return true; }
@@ -225,7 +227,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	uint8_t _merge;
 };
 
@@ -237,7 +239,7 @@ private:
  */
 class LayerACL : public Message {
 public:
-	LayerACL(uint8_t ctx, uint8_t id, uint8_t locked, const QList<uint8_t> &exclusive)
+	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
 		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
 	{}
 
@@ -245,7 +247,7 @@ public:
 
 	bool isOpCommand() const { return true; }
 
-	uint8_t id() const { return _id; }
+	uint16_t id() const { return _id; }
 	uint8_t locked() const { return _locked; }
 	const QList<uint8_t> exclusive() const { return _exclusive; }
 
@@ -254,7 +256,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	uint8_t _locked;
 	QList<uint8_t> _exclusive;
 };

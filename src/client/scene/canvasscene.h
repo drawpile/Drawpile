@@ -98,6 +98,12 @@ public:
 	//! Return the annotation at the given coordinates (if any)
 	AnnotationItem *annotationAt(const QPoint &point);
 
+	/**
+	 * @brief Find an unused annotation ID
+	 * @return available ID or 0 if all are taken
+	 */
+	int getAvailableAnnotationId() const;
+
 	//! Get a list of annotations with no content
 	QList<int> listEmptyAnnotations() const;
 
@@ -136,7 +142,7 @@ public:
 	 * Note! The state tracker is deleted when this board is reinitialized!
 	 * @return state tracker instance
 	 */
-	StateTracker *statetracker() { return _statetracker; }
+	StateTracker *statetracker() const { return _statetracker; }
 
 	/**
 	 * @brief Get a QPen that resembles the given brush

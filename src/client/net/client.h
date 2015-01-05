@@ -177,7 +177,7 @@ public slots:
 	void sendLayerAttribs(int id, float opacity, int blend);
 	void sendLayerTitle(int id, const QString &title);
 	void sendLayerVisibility(int id, bool hide);
-	void sendLayerReorder(const QList<uint8_t> &ids);
+	void sendLayerReorder(const QList<uint16_t> &ids);
 	void sendDeleteLayer(int id, bool merge);
 
 	// Drawing

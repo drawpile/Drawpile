@@ -24,18 +24,17 @@ namespace protocol {
 
 ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 {
-	if(len != 22)
+	if(len != 23)
 		return 0;
 
 	return new ToolChange(
 		*(data+0),
-		*(data+1),
-		*(data+2),
+		qFromBigEndian<quint16>(data+1),
 		*(data+3),
 		*(data+4),
-		qFromBigEndian<quint32>(data+5),
-		qFromBigEndian<quint32>(data+9),
-		*(data+13),
+		*(data+5),
+		qFromBigEndian<quint32>(data+6),
+		qFromBigEndian<quint32>(data+10),
 		*(data+14),
 		*(data+15),
 		*(data+16),
@@ -43,20 +42,21 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 		*(data+18),
 		*(data+19),
 		*(data+20),
-		*(data+21)
+		*(data+21),
+		*(data+22)
 	);
 }
 
 int ToolChange::payloadLength() const
 {
-	return 1 + 21;
+	return 1 + 22;
 }
 
 int ToolChange::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _layer;
+	qToBigEndian(_layer, ptr); ptr += 2;
 	*(ptr++) = _blend;
 	*(ptr++) = _mode;
 	*(ptr++) = _spacing;

@@ -53,27 +53,27 @@ int CanvasResize::serializePayload(uchar *data) const
 
 LayerCreate *LayerCreate::deserialize(const uchar *data, uint len)
 {
-	if(len<6)
+	if(len<7)
 		return 0;
 
 	return new LayerCreate(
 		*(data+0),
-		*(data+1),
-		qFromBigEndian<quint32>(data+2),
-		QByteArray((const char*)data+6, len-6)
+		qFromBigEndian<quint16>(data+1),
+		qFromBigEndian<quint32>(data+3),
+		QByteArray((const char*)data+7, len-7)
 	);
 }
 
 int LayerCreate::payloadLength() const
 {
-	return 1 + 5 + _title.length();
+	return 1 + 6 + _title.length();
 }
 
 int LayerCreate::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _id;
+	qToBigEndian(_id, ptr); ptr += 2;
 	qToBigEndian(_fill, ptr); ptr += 4;
 	memcpy(ptr, _title.constData(), _title.length());
 	ptr += _title.length();
@@ -82,19 +82,19 @@ int LayerCreate::serializePayload(uchar *data) const
 
 LayerAttributes *LayerAttributes::deserialize(const uchar *data, uint len)
 {
-	if(len!=4)
+	if(len!=5)
 		return 0;
 	return new LayerAttributes(
 		*(data+0),
-		*(data+1),
-		*(data+2),
-		*(data+3)
+		qFromBigEndian<quint16>(data+1),
+		*(data+3),
+		*(data+4)
 	);
 }
 
 int LayerAttributes::payloadLength() const
 {
-	return 4;
+	return 5;
 }
 
 
@@ -102,25 +102,25 @@ int LayerAttributes::serializePayload(uchar *data) const
 {
 	uchar *ptr=data;
 	*(ptr++) = contextId();
-	*(ptr++) = _id;
+	qToBigEndian(_id, ptr); ptr += 2;
 	*(ptr++) = _opacity;
 	*(ptr++) = _blend;
 	return ptr-data;
 }
 LayerRetitle *LayerRetitle::deserialize(const uchar *data, uint len)
 {
-	if(len<2)
+	if(len<3)
 		return 0;
 	return new LayerRetitle(
 		*(data+0),
-		*(data+1),
-		QByteArray((const char*)data+2,len-2)
+		qFromBigEndian<quint16>(data+1),
+		QByteArray((const char*)data+3,len-3)
 	);
 }
 
 int LayerRetitle::payloadLength() const
 {
-	return 1 + 1 + _title.length();
+	return 1 + 2 + _title.length();
 }
 
 
@@ -128,7 +128,7 @@ int LayerRetitle::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _id;
+	qToBigEndian(_id, ptr); ptr += 2;
 	memcpy(ptr, _title.constData(), _title.length());
 	ptr += _title.length();
 	return ptr - data;
@@ -136,62 +136,69 @@ int LayerRetitle::serializePayload(uchar *data) const
 
 LayerOrder *LayerOrder::deserialize(const uchar *data, uint len)
 {
-	if(len<2 || len>256)
+	if(len<1)
 		return 0;
 
-	QList<uint8_t> order;
-	order.reserve(len);
-	for(uint i=1;i<len;++i)
-		order.append(data[i]);
+	if((len%2) == 0)
+		return 0;
+
+	QList<uint16_t> order;
+	order.reserve((len-1) / 2);
+	for(uint i=1;i<len;i+=2)
+		order.append(qFromBigEndian<quint16>(data+i));
 
 	return new LayerOrder(data[0], order);
 }
 
 int LayerOrder::payloadLength() const
 {
-	return 1 + _order.size();
+	return 1 + _order.size() * 2;
 }
 
 int LayerOrder::serializePayload(uchar *data) const
 {
-	Q_ASSERT(_order.length()<256);
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	foreach(uint8_t l, _order)
-		*(ptr++) = l;
+	foreach(uint16_t l, _order) {
+		qToBigEndian(l, ptr); ptr += 2;
+	}
 	return ptr - data;
 }
 
 LayerDelete *LayerDelete::deserialize(const uchar *data, uint len)
 {
-	if(len != 3)
+	if(len != 4)
 		return 0;
-	return new LayerDelete(data[0], data[1], data[2]);
+	return new LayerDelete(
+		data[0],
+		qFromBigEndian<quint16>(data+1),
+		data[3]
+	);
 }
 
 int LayerDelete::payloadLength() const
 {
-	return 1 + 2;
+	return 1 + 2 + 1;
 }
 
 int LayerDelete::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _id;
+	qToBigEndian(_id, ptr); ptr += 2;
 	*(ptr++) = _merge;
 	return ptr - data;
 }
 
 LayerACL *LayerACL::deserialize(const uchar *data, uint len)
 {
-	if(len < 3 || len > 3+255)
+	if(len < 4 || len > 4+255)
 		return 0;
 	uint8_t ctx = data[0];
-	uint8_t id = data[1];
-	uint8_t lock = data[2];
+	uint16_t id = qFromBigEndian<quint16>(data+1);
+	uint8_t lock = data[3];
 	QList<uint8_t> exclusive;
-	for(uint i=3;i<len;++i)
+	for(uint i=4;i<len;++i)
 		exclusive.append(data[i]);
 
 	return new LayerACL(ctx, id, lock, exclusive);
@@ -199,14 +206,14 @@ LayerACL *LayerACL::deserialize(const uchar *data, uint len)
 
 int LayerACL::payloadLength() const
 {
-	return 1 + 2 + _exclusive.count();
+	return 1 + 3 + _exclusive.count();
 }
 
 int LayerACL::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
-	*(ptr++) = _id;
+	qToBigEndian(_id, ptr); ptr += 2;
 	*(ptr++) = _locked;
 	foreach(uint8_t e, _exclusive)
 		*(ptr++) = e;
