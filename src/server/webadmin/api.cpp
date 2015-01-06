@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,24 @@ namespace server {
 
 namespace {
 
+class ApiCallError {
+public:
+	enum ErrorType {
+		NOTFOUND = 404,
+		BADREQUEST = 400,
+		UNSUPPORTED_MEDIA_TYPE = 415,
+		INTERNAL_ERROR = 500
+	};
+
+	ApiCallError(ErrorType etype, const QString &msg) : type(etype), error(msg) { }
+
+	static ApiCallError NotFound() { return ApiCallError(NOTFOUND, QStringLiteral("Resource not found")); }
+	static ApiCallError BadRequest(const QString &message) { return ApiCallError(BADREQUEST, message); }
+
+	ErrorType type;
+	QString error;
+};
+
 /**
  * @brief A wrapper for HTTP API calls
  */
@@ -41,24 +59,31 @@ public:
 
 	HttpResponse operator()(const HttpRequest &req)
 	{
-		switch(req.method()) {
-		case HttpRequest::HEAD:
-		case HttpRequest::GET:
-			if(_get)
-				return handle(_get, req);
-			break;
-		case HttpRequest::POST:
-			if(_post)
-				return handle(_post, req);
-			break;
-		case HttpRequest::PUT:
-			if(_put)
-				return handle(_put, req);
-			break;
-		case HttpRequest::DELETE:
-			if(_delete)
-				return handle(_delete, req);
-			break;
+		try {
+			switch(req.method()) {
+			case HttpRequest::HEAD:
+			case HttpRequest::GET:
+				if(_get)
+					return HttpResponse::JsonResponse(_get(_server, req));
+				break;
+			case HttpRequest::POST:
+				if(_post)
+					return HttpResponse::JsonResponse(_post(_server, req));
+				break;
+			case HttpRequest::PUT:
+				if(_put)
+					return HttpResponse::JsonResponse(_put(_server, req));
+				break;
+			case HttpRequest::DELETE:
+				if(_delete)
+					return HttpResponse::JsonResponse(_delete(_server, req));
+				break;
+			}
+		} catch(const ApiCallError &error) {
+			QJsonObject o;
+			o["success"] = false;
+			o["error"] = error.error;
+			return HttpResponse::JsonResponse(QJsonDocument(o), error.type);
 		}
 
 		QStringList methods;
@@ -74,21 +99,13 @@ public:
 		return HttpResponse::MethodNotAllowed(methods);
 	}
 
-	void setGet(ApiCallFn func) { _get = func; }
-	void setPost(ApiCallFn func) { _post = func; }
-	void setPut(ApiCallFn func) { _put = func; }
-	void setDelete(ApiCallFn func) { _delete = func; }
+	ApiCall &setGet(ApiCallFn func) { _get = func; return *this; }
+	ApiCall &setPost(ApiCallFn func) { _post = func; return *this; }
+	ApiCall &setPut(ApiCallFn func) { _put = func; return *this; }
+	ApiCall &setDelete(ApiCallFn func) { _delete = func; return *this; }
+	ApiCall addTo(MicroHttpd *server, const char *urlMatcher) { server->addRequestHandler(urlMatcher, *this); return *this; }
 
 private:
-	HttpResponse handle(ApiCallFn handler, const HttpRequest &req)
-	{
-		QJsonDocument doc = handler(_server, req);
-		if(doc.isNull())
-			return HttpResponse::NotFound();
-		else
-			return HttpResponse::JsonResponse(doc);
-	}
-
 	SessionServer *_server;
 	ApiCallFn _get;
 	ApiCallFn _post;
@@ -96,17 +113,26 @@ private:
 	ApiCallFn _delete;
 };
 
-//! Helper function: return {sucess: true} or {success:false, errors: [error list]}
-QJsonDocument jsonSuccess(const QStringList &errors) {
+//! Helper function: return {success: true}
+QJsonDocument jsonSuccess() {
 	QJsonObject o;
-	o["success"] = errors.isEmpty();
-	if(!errors.isEmpty()) {
-		QJsonArray a;
-		for(const QString &s : errors)
-			a.append(s);
-		o["errors"] = a;
-	}
+	o["success"] = true;
 	return QJsonDocument(o);
+}
+
+//! Helper function: Get request's JSON body. If content-type is wrong, throws an exception
+QJsonDocument getJsonBody(const HttpRequest &req)
+{
+	if(req.headers()["Content-Type"] != "application/json")
+		throw ApiCallError(ApiCallError::UNSUPPORTED_MEDIA_TYPE, QStringLiteral("Body content type must be application/json"));
+
+	QJsonParseError error;
+	QJsonDocument doc = QJsonDocument::fromJson(req.body(), &error);
+
+	if(error.error != QJsonParseError::NoError)
+		throw ApiCallError(ApiCallError::BADREQUEST, error.errorString());
+
+	return doc;
 }
 
 QJsonObject _sessionBaseDescription(const SessionDescription &sd)
@@ -158,12 +184,13 @@ QJsonDocument sessionInfo(SessionServer *server, const HttpRequest &req)
 	QMetaObject::invokeMethod(
 		server, "getSessionDescriptionById", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(SessionDescription, desc),
-		Q_ARG(int, req.pathMatch().captured(1).toInt()),
+		Q_ARG(QString, req.pathMatch().captured(1)),
 		Q_ARG(bool, true),
 		Q_ARG(bool, true)
 	);
-	if(desc.id==0)
-		return QJsonDocument();
+
+	if(desc.id.isEmpty())
+		throw ApiCallError::NotFound();
 
 	QJsonObject o = _sessionBaseDescription(desc);
 
@@ -182,11 +209,13 @@ QJsonDocument sessionInfo(SessionServer *server, const HttpRequest &req)
 
 		QJsonArray flags;
 		if(user.isOp)
-			flags.append(QLatin1Literal("op"));
+			flags.append(QStringLiteral("op"));
+		if(user.isMod)
+			flags.append(QStringLiteral("mod"));
 		if(user.isLocked)
-			flags.append(QLatin1Literal("locked"));
+			flags.append(QStringLiteral("locked"));
 		if(user.isSecure)
-			flags.append(QLatin1Literal("secure"));
+			flags.append(QStringLiteral("secure"));
 		u["flags"] = flags;
 
 		users.append(u);
@@ -200,20 +229,20 @@ QJsonDocument sessionInfo(SessionServer *server, const HttpRequest &req)
 //! Delete the selected session
 QJsonDocument killSession(SessionServer *server, const HttpRequest &req)
 {
-	int sessionId = req.pathMatch().captured(1).toInt();
+	QString sessionId = req.pathMatch().captured(1);
 
 	bool ok=false;
 	QMetaObject::invokeMethod(
 		server, "killSession", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(bool, ok),
-		Q_ARG(int, sessionId)
+		Q_ARG(QString, sessionId)
 	);
 
-	QStringList errors;
+	// this only fails if session was not found
 	if(!ok)
-		errors << QString("couldn't delete ") + sessionId;
+		throw ApiCallError::NotFound();
 
-	return jsonSuccess(errors);
+	return jsonSuccess();
 }
 
 //! Get general server status information
@@ -258,22 +287,21 @@ QJsonDocument serverStatus(SessionServer *server, const HttpRequest &req)
  */
 QJsonDocument updateServerSettings(SessionServer *server, const HttpRequest &req)
 {
-	QStringList errors;
-	if(req.postData().contains("title")) {
-		QString newtitle = req.postData()["title"];
+	QJsonObject body = getJsonBody(req).object();
 
-		if(newtitle.length() > 400) {
-			errors.append("title too long");
+	if(body.contains("title")) {
+		QString newtitle = body.value("title").toString();
 
-		} else {
-			QMetaObject::invokeMethod(
-				server, "setTitle", Qt::BlockingQueuedConnection,
-				Q_ARG(QString, newtitle)
-				);
-		}
+		if(newtitle.length() > 400)
+			throw ApiCallError::BadRequest(QStringLiteral("Title too long"));
+
+		QMetaObject::invokeMethod(
+			server, "setTitle", Qt::BlockingQueuedConnection,
+			Q_ARG(QString, newtitle)
+			);
 	}
 
-	return jsonSuccess(errors);
+	return serverStatus(server, req);
 }
 
 /**
@@ -290,10 +318,12 @@ QJsonDocument updateServerSettings(SessionServer *server, const HttpRequest &req
 QJsonDocument sendToAll(SessionServer *server, const HttpRequest &req)
 {
 	QString sessionid = req.pathMatch().captured(1);
-	QString message = req.postData()["message"].trimmed();
+	QJsonDocument body = getJsonBody(req);
+
+	QString message = body.object().value("message").toString().trimmed();
 
 	if(message.isEmpty())
-		return jsonSuccess(QStringList() << "empty message");
+		throw ApiCallError::BadRequest("Empty message");
 
 	if(sessionid.isNull()) {
 		QMetaObject::invokeMethod(
@@ -304,42 +334,35 @@ QJsonDocument sendToAll(SessionServer *server, const HttpRequest &req)
 		QMetaObject::invokeMethod(
 			server, "wall", Qt::QueuedConnection,
 			Q_ARG(QString, message),
-			Q_ARG(int, sessionid.toInt())
+			Q_ARG(QString, sessionid)
 			);
 	}
-	return jsonSuccess(QStringList());
+
+	return jsonSuccess();
 }
 
 } // end anymous namespace
 
 void initWebAdminApi(MicroHttpd *httpServer, SessionServer *s)
 {
-	{
-		ApiCall ac(s);
-		ac.setGet(serverStatus);
-		ac.setPost(updateServerSettings);
-		httpServer->addRequestHandler("^/api/status/?$", ac);
-	}
+	ApiCall(s)
+		.setGet(serverStatus)
+		.setPut(updateServerSettings)
+		.addTo(httpServer, "^/api/status/?$");
 
-	{
-		ApiCall ac(s);
-		ac.setGet(sessionList);
-		httpServer->addRequestHandler("^/api/sessions/?$", ac);
-	}
+	ApiCall(s)
+		.setGet(sessionList)
+		.addTo(httpServer, "^/api/sessions/?$");
 
-	{
-		ApiCall ac(s);
-		ac.setGet(sessionInfo);
-		ac.setDelete(killSession);
-		httpServer->addRequestHandler("^/api/sessions/([a-zA-Z0-9:-]{1,40})/?$", ac);
-	}
+	ApiCall(s)
+		.setGet(sessionInfo)
+		.setDelete(killSession)
+		.addTo(httpServer, "^/api/sessions/([a-zA-Z0-9:-]{1,40})/?$");
 
-	{
-		ApiCall ac(s);
-		ac.setPost(sendToAll);
-		httpServer->addRequestHandler("^/api/sessions/([a-zA-Z0-9:-]{1,40})/wall/?$", ac);
-		httpServer->addRequestHandler("^/api/wall/?$", ac);
-	}
+	ApiCall(s)
+		.setPost(sendToAll)
+		.addTo(httpServer, "^/api/sessions/([a-zA-Z0-9:-]{1,40})/wall/?$")
+		.addTo(httpServer, "^/api/wall/?$");
 }
 
 }

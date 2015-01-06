@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -186,10 +186,13 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 
 		// Prepare POST argument processor
 		if(method == HttpRequest::POST) {
-			ctx->postprocessor = MHD_create_post_processor(connection, 32*1024, iterate_post, ctx);
-			if(!ctx->postprocessor) {
-				delete ctx;
-				return MHD_NO;
+			QString contenttype = ctx->request.headers()["Content-Type"];
+			if(contenttype.startsWith("application/x-www-form-urlencoded")) {
+				ctx->postprocessor = MHD_create_post_processor(connection, 32*1024, iterate_post, ctx);
+				if(!ctx->postprocessor) {
+					delete ctx;
+					return MHD_NO;
+				}
 			}
 		}
 
@@ -199,15 +202,21 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 	RequestContext *reqctx = reinterpret_cast<RequestContext*>(*con_cls);
 
 	// Process POST data
-	if(reqctx->request.method() == HttpRequest::POST && *upload_data_size != 0) {
-		MHD_post_process(reqctx->postprocessor, upload_data, *upload_data_size);
-		*upload_data_size = 0;
+	if((reqctx->request.method() == HttpRequest::POST || reqctx->request.method() == HttpRequest::PUT) && *upload_data_size != 0) {
+		if(reqctx->postprocessor) {
+			MHD_post_process(reqctx->postprocessor, upload_data, *upload_data_size);
+			*upload_data_size = 0;
 
-		QHash<QString,QString> postdata;
-		for(auto i=reqctx->postdata.constBegin();i!=reqctx->postdata.constEnd();++i)
-			postdata[i.key()] = QString::fromUtf8(i.value());
+			QHash<QString,QString> postdata;
+			for(auto i=reqctx->postdata.constBegin();i!=reqctx->postdata.constEnd();++i)
+				postdata[i.key()] = QString::fromUtf8(i.value());
 
-		reqctx->request.setPostData(postdata);
+			reqctx->request.setPostData(postdata);
+		} else {
+			// TODO limit upload size
+			reqctx->request.addBodyData(upload_data, *upload_data_size);
+			*upload_data_size = 0;
+		}
 
 		return MHD_YES;
 	}
@@ -309,9 +318,9 @@ HttpResponse HttpResponse::HtmlResponse(const QString &html)
 	return r;
 }
 
-HttpResponse HttpResponse::JsonResponse(const QJsonDocument &doc)
+HttpResponse HttpResponse::JsonResponse(const QJsonDocument &doc, int statuscode)
 {
-	HttpResponse r(200, doc.toJson());
+	HttpResponse r(statuscode, doc.toJson());
 	r.setHeader("Content-Type", "application/json");
 	return r;
 }

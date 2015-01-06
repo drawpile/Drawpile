@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -105,10 +105,14 @@ public:
 	//! GET arguments
 	const QHash<QString, QString> &getData() const { return _getdata; }
 
+	//! Request body
+	const QByteArray body() const { return _body; }
+
 	void setUrlMatch(const QRegularExpressionMatch &match) { _match = match; }
 	void setHeaders(const QHash<QString,QString> &data) { _headers = data; }
 	void setPostData(const QHash<QString,QString> &data) { _postdata = data; }
 	void setGetData(const QHash<QString,QString> &data) { _getdata = data; }
+	void addBodyData(const char *data, int len) { _body.append(data, len); }
 
 private:
 	Method _method;
@@ -117,6 +121,7 @@ private:
 	QHash<QString, QString> _headers;
 	QHash<QString, QString> _postdata;
 	QHash<QString, QString> _getdata;
+	QByteArray _body;
 };
 
 class HttpResponse {
@@ -127,7 +132,7 @@ public:
 	static HttpResponse HtmlResponse(const QString &html);
 
 	//! Return a JSON document
-	static HttpResponse JsonResponse(const QJsonDocument &doc);
+	static HttpResponse JsonResponse(const QJsonDocument &doc, int statuscode=200);
 
 	//! Return a Method Not Allowed error
 	static HttpResponse MethodNotAllowed(const QStringList &allow);

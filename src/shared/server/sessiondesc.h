@@ -40,6 +40,7 @@ struct UserDescription {
 	QHostAddress address;
 
 	bool isOp;
+	bool isMod;
 	bool isLocked;
 	bool isSecure;
 

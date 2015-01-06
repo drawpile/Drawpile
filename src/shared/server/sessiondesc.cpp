@@ -36,6 +36,7 @@ UserDescription::UserDescription(const Client &client)
 	  name(client.username()),
 	  address(client.peerAddress()),
 	  isOp(client.isOperator()),
+	  isMod(client.isModerator()),
 	  isLocked(client.isUserLocked()),
 	  isSecure(client.isSecure())
 {
