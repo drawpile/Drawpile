@@ -272,6 +272,7 @@ void LayerList::addLayer()
 	if(id==0)
 		return;
 
+	_client->sendUndopoint();
 	_client->sendNewLayer(id, Qt::transparent, name);
 }
 
