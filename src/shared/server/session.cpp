@@ -491,33 +491,30 @@ bool SessionState::createLayer(protocol::LayerCreate &cmd, bool validate)
 
 void SessionState::reorderLayers(protocol::LayerOrder &cmd)
 {
+	// Sanitize the new order
+	QList<uint16_t> currentOrder;
+	currentOrder.reserve(_layers.size());
+	for(const LayerState &ls : _layers)
+		currentOrder.append(ls.id);
+
+	QList<uint16_t> newOrder = cmd.sanitizedOrder(currentOrder);
+
+	// Set new order
 	QVector<LayerState> newlayers;
 	QVector<LayerState> oldlayers = _layers;
 	newlayers.reserve(_layers.size());
 
-	// Set new order
-	foreach(int id, cmd.order()) {
+	for(uint16_t id : newOrder) {
 		for(int i=0;i<oldlayers.size();++i) {
 			if(oldlayers[i].id == id) {
 				newlayers.append(oldlayers[i]);
 				oldlayers.remove(i);
+				break;
 			}
 		}
 	}
-	// If there were any layers that were missed, add them to
-	// the top of the stack in their original relative order
-	for(int i=0;i<oldlayers.size();++i)
-		newlayers.append(oldlayers[i]);
 
 	_layers = newlayers;
-
-	// Update commands ID list
-	QList<uint16_t> validorder;
-	validorder.reserve(_layers.size());
-	for(int i=0;i<_layers.size();++i)
-		validorder.append(_layers[i].id);
-
-	cmd.setOrder(validorder);
 }
 
 bool SessionState::deleteLayer(int id)

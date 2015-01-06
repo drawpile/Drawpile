@@ -168,13 +168,14 @@ private:
  *
  * New layers are always added to the top of the stack.
  * This command includes a list of layer IDs that define the new stacking order.
- * A order change command sent by the server must list all layers.
- * A command sent by the client may be missing (newly created) layers,
- * in which case the missing layers will be included at the top of the stack in
- * their existing relative order.
  *
- * For example: if the current stack is [1,2,3,4,5] and the client sends
- * a reordering command [3,2,1], the server must add the missing layers: [3,2,1,4,5].
+ * An order change should list all layers in the stack, but due to synchronization issues, that
+ * is not always possible.
+ * The layer order should therefore be sanitized by removing all layers not in the current layer stack
+ * and adding all missing layers to the end in their current relative order.
+ *
+ * For example: if the current stack is [1,2,3,4,5] and the client receives
+ * a reordering command [3,4,1], the missing layers are appended: [3,4,1,2,5].
  *
  * If layer controls are locked, this command requires session operator privileges.
  */
@@ -188,7 +189,22 @@ public:
 	static LayerOrder *deserialize(const uchar *data, uint len);
 
 	const QList<uint16_t> &order() const { return _order; }
-	void setOrder(const QList<uint16_t> order) { _order = order; }
+
+	/**
+	 * @brief Get sanitized layer order
+	 *
+	 * This function checks that the new ordering is valid in respect to the current order
+	 * and returns a sanitized ordering.
+	 *
+	 * The following corrections are made:
+	 * - duplicate IDs are removed
+	 * - IDs not in the current order are removed
+	 * - missing IDs are appended to the new order
+	 *
+	 * @param currentOrder the current ordering
+	 * @return cleaned up ordering
+	 */
+	QList<uint16_t> sanitizedOrder(const QList<uint16_t> &currentOrder) const;
 
 protected:
 	int payloadLength() const;

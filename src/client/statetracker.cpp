@@ -442,8 +442,21 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 {
-	_image->reorderLayers(cmd.order());
-	_layerlist->reorderLayers(cmd.order());
+	QList<uint16_t> currentOrder;
+	for(int i=0;i<_image->layers();++i)
+		currentOrder.append(_image->getLayerByIndex(i)->id());
+
+	QList<uint16_t> newOrder = cmd.sanitizedOrder(currentOrder);
+
+	if(newOrder != cmd.order()) {
+		qWarning() << "invalid layer reorder!";
+		qWarning() << "current order is:" << currentOrder;
+		qWarning() << "  the new one was:" << cmd.order();
+		qWarning() << "  fixed order is:" << newOrder;
+	}
+
+	_image->reorderLayers(newOrder);
+	_layerlist->reorderLayers(newOrder);
 }
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)

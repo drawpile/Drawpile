@@ -165,6 +165,34 @@ int LayerOrder::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
+QList<uint16_t> LayerOrder::sanitizedOrder(const QList<uint16_t> &currentOrder) const
+{
+	QList<uint16_t> S;
+	S.reserve(currentOrder.size());
+
+	// remove duplicates and IDs not found in the current order
+	for(uint16_t l : _order) {
+		if(!S.contains(l) && currentOrder.contains(l))
+			S.append(l);
+	}
+
+	// at this point, S contains no duplicate items and no items not in currentOrder
+	// therefore |S| <= |currentOrder|
+
+	// add leftover IDs from currentOrder
+	int i=0;
+	while(S.size() < currentOrder.size()) {
+		if(!S.contains(currentOrder.at(i)))
+			S.append(currentOrder.at(i));
+		++i;
+	}
+
+	// the above loop ends when |S| == |currentOrder|. Since S may not contain duplicates
+	// or items not in currentOrder, S must be a permutation of currentOrder.
+
+	return S;
+}
+
 LayerDelete *LayerDelete::deserialize(const uchar *data, uint len)
 {
 	if(len != 4)

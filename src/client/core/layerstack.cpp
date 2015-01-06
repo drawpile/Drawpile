@@ -121,6 +121,7 @@ bool LayerStack::deleteLayer(int id)
 
 /**
  * @param neworder list of layer IDs in the new order
+ * @pre neworder must be a permutation of the current layer order
  */
 void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
 {
