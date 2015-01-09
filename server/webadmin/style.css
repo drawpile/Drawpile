@@ -64,15 +64,6 @@ tr.empty {
 	text-align: center;
 }
 
-.spinner {
-	margin: 0 4px;
-	background: url("spinner.gif");
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	vertical-align: middle;
-}
-
 .bubble {
 	background: #428bca;
 	color: #fff;
@@ -103,37 +94,47 @@ a.button:hover { background: #AACEEB; }
 a.button.red { background: #ca428b; }
 a.button.red:hover { background: #EE7FBC; }
 
-#overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-
-	background: rgba(0, 0, 0, 0.5);
-}
-
-#overlay-dialog {
-	margin: 20px auto;
+td a.button {
+	padding: 3px;
+	border: 1px solid #428bca;
 	background: #fff;
-	//border: 1px solid #ccc;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-	border-radius: 5px;
-	padding: 20px;
-	max-width: 600px;
+	color: #428bca!important;
 }
 
-#overlay-dialog>p { text-align: right }
+th a.button {
+	padding: 3px;
+	border: 1px solid #fff;
+}
 
-#overlay-title {
-	background: #428bca;
-	color: #fff;
-	font-size: 24px;
-	margin: -20px -20px 10px -20px;
-	border-radius: 5px 5px 0 0;
-	padding: 20px;
+
+th a.button:hover {
+	background: #fff;
+	color: #428bca;
+}
+
+td a.button.red, th a.button.red {
+	background: #fff;
+	color: #ca428b!important;
+	border-color: #ca428b;
+}
+
+p.buttons {
+	border-top: 1px solid #eee;
+	text-align: right;
+	padding-top: 20px;
 }
 
 textarea {
 	width: 100%;
+	resize: vertical;
 }
+
+input[type=number] {
+	width: 4em;
+	border: 1px solid #ccc;
+}
+
+input.ng-invalid {
+	background: #ca428b;
+}
+

@@ -1,0 +1,72 @@
+<table class="table">
+	<thead><tr class="header">
+		<th>Server title</th>
+		<th style="width: 20px"><a class="button" ng-click="showTitleChangeDialog()" href="#">CHANGE</a></th>
+	</tr>
+	<tr></thead>
+
+	<tbody>
+	<tr ng-class="{empty: !status.title}">
+		<td>{{ status.title ? status.title : '(not set)' }}</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="table">
+<thead>
+	<tr class="header">
+		<th colspan="2">Server status</th>
+		<th style="width: 20px"><a class="button" ng-click="showConfigDialog()" href="#">CHANGE</a></th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<th>Active sessions</th>
+		<td colspan="2">{{ status.activeSessions }}/{{ status.maxActiveSessions }}</td>
+	</tr>
+	<tr>
+		<th>Hibernating sessions</th>
+		<td colspan="2">{{ status.totalSessions - status.activeSessions }}</td>
+	</tr>
+	<tr>
+		<th>Total users</th>
+		<td colspan="2">{{ status.totalUsers }}</td>
+	</tr>
+	<tr>
+		<th>Features</th>
+		<td colspan="2"><span ng-repeat="flag in status.flags" class="bubble">{{ flag }}</span></td>
+	</tr>
+</tbody>
+</table>
+
+<table class="table">
+	<thead>
+	<tr class="header">
+		<th colspan="3">Sessions</th>
+	</tr>
+	<tr>
+		<th style="width: 60px">ID</th>
+		<th>Title</th>
+		<th style="width: 160px">Status</th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="session in sessions">
+			<td><a href="#/session/{{session.id}}" title="{{ session.id }}">{{ session.id|limitTo:8 }}</a></td>
+			<td>{{ session.title }}</td>
+			<td>
+				<span ng-class="{bubble: true, gray: session.userCount==0}">{{ session.userCount }}</span>
+				<span ng-repeat="flag in session.flags" class="bubble">{{ flag }}</span>
+			</td>
+		</tr>
+		<tr ng-show="!sessions.length" class="empty">
+			<td colspan="3">No sessions</td>
+		</tr>
+	</tbody>
+
+</table>
+
+<p style="margin-top: 30px">
+	<a href="#" class="button" ng-click="messageAll()">MESSAGE ALL</a>
+</p>
+

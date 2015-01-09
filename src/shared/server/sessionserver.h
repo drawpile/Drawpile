@@ -53,7 +53,7 @@ public:
 	 *
 	 * @param limit
 	 */
-	Q_INVOKABLE void setSessionLimit(int limit) { Q_ASSERT(limit>=0); _sessionLimit = limit; }
+	Q_INVOKABLE void setSessionLimit(int limit) { _sessionLimit = qMax(0, limit); }
 	int sessionLimit() const { return _sessionLimit; }
 
 	/**
@@ -204,6 +204,15 @@ public:
 	Q_INVOKABLE bool killSession(const QString &id);
 
 	/**
+	 * @brief kick a user user from a session
+	 *
+	 * @param sessionId
+	 * @param userId
+	 * @return true on success
+	 */
+	Q_INVOKABLE bool kickUser(const QString &sessionId, int userId);
+
+	/**
 	 * @brief Stop all running sessions
 	 */
 	void stopAll();
@@ -216,8 +225,9 @@ public:
 	 *
 	 * @param message the message
 	 * @param sessionId if set, limit message to this session only
+	 * @return false if session was not found
 	 */
-	Q_INVOKABLE void wall(const QString &message, const QString &sessionId=QString());
+	Q_INVOKABLE bool wall(const QString &message, const QString &sessionId=QString());
 
 signals:
 	/**

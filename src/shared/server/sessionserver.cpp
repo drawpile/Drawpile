@@ -173,9 +173,10 @@ int SessionServer::totalUsers() const
 ServerStatus SessionServer::getServerStatus() const
 {
 	ServerStatus s;
-	s.sessionCount = sessionCount();
+	s.activeSessions = sessionCount();
+	s.totalSessions = sessionCount() + (_store ? _store->sessions().size() : 0);
 	s.totalUsers = totalUsers();
-	s.maxSessions = sessionLimit();
+	s.maxActiveSessions = sessionLimit();
 	s.needHostPassword = !_hostPassword.isEmpty();
 	s.allowPersistentSessions = _allowPersistentSessions;
 	s.secureMode = _mustSecure;
@@ -207,6 +208,22 @@ bool SessionServer::killSession(const QString &id)
 	return false;
 }
 
+bool SessionServer::kickUser(const QString &sessionId, int userId)
+{
+	logger::info() << "Kicking user" << userId << "from" << sessionId;
+
+	SessionState *session = getSessionById(sessionId);
+	if(!session)
+		return false;
+	
+	Client *c = session->getClientById(userId);
+	if(!c)
+		return false;
+	
+	c->disconnectKick(QString());
+	return true;
+}
+
 void SessionServer::stopAll()
 {
 	for(Client *c : _lobby)
@@ -224,12 +241,16 @@ void SessionServer::stopAll()
 	}
 }
 
-void SessionServer::wall(const QString &message, const QString &sessionId)
+bool SessionServer::wall(const QString &message, const QString &sessionId)
 {
+	bool found = false;
 	for(SessionState *s : _sessions) {
-		if(sessionId.isNull() || s->id() == sessionId)
+		if(sessionId.isNull() || s->id() == sessionId) {
 			s->wall(message);
+			found = true;
+		}
 	}
+	return found;
 }
 
 void SessionServer::addClient(Client *client)

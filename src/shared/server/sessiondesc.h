@@ -113,9 +113,10 @@ struct SessionDescription {
  * @brief Information about the current server status
  */
 struct ServerStatus {
-	int sessionCount;
+	int activeSessions;
+	int totalSessions;
 	int totalUsers;
-	int maxSessions;
+	int maxActiveSessions;
 
 	bool needHostPassword;
 	bool allowPersistentSessions;

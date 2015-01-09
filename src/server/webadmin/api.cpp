@@ -245,6 +245,27 @@ QJsonDocument killSession(SessionServer *server, const HttpRequest &req)
 	return jsonSuccess();
 }
 
+//! Kick the user from the given session
+QJsonDocument kickUser(SessionServer *server, const HttpRequest &req)
+{
+	QString sessionId = req.pathMatch().captured(1);
+	int userId = req.pathMatch().captured(2).toInt();
+
+	bool ok=false;
+	QMetaObject::invokeMethod(
+		server, "kickUser", Qt::BlockingQueuedConnection,
+		Q_RETURN_ARG(bool, ok),
+		Q_ARG(QString, sessionId),
+		Q_ARG(int, userId)
+	);
+
+	// this only fails if session or user was not found
+	if(!ok)
+		throw ApiCallError::NotFound();
+
+	return jsonSuccess();
+}
+
 //! Get general server status information
 QJsonDocument serverStatus(SessionServer *server, const HttpRequest &req)
 {
@@ -257,9 +278,10 @@ QJsonDocument serverStatus(SessionServer *server, const HttpRequest &req)
 
 	QJsonObject o;
 	o["title"] = s.title;
-	o["sessionCount"] = s.sessionCount;
+	o["activeSessions"] = s.activeSessions;
+	o["totalSessions"] = s.totalSessions;
 	o["totalUsers"] = s.totalUsers;
-	o["maxSessions"] = s.maxSessions;
+	o["maxActiveSessions"] = s.maxActiveSessions;
 
 	QJsonArray flags;
 	if(s.needHostPassword)
@@ -296,8 +318,17 @@ QJsonDocument updateServerSettings(SessionServer *server, const HttpRequest &req
 			throw ApiCallError::BadRequest(QStringLiteral("Title too long"));
 
 		QMetaObject::invokeMethod(
-			server, "setTitle", Qt::BlockingQueuedConnection,
+			server, "setTitle", Qt::QueuedConnection,
 			Q_ARG(QString, newtitle)
+			);
+	}
+
+	if(body.contains("maxActiveSessions")) {
+		int maxsessions = body.value("maxActiveSessions").toInt();
+
+		QMetaObject::invokeMethod(
+			server, "setSessionLimit", Qt::QueuedConnection,
+			Q_ARG(int, maxsessions)
 			);
 	}
 
@@ -325,18 +356,25 @@ QJsonDocument sendToAll(SessionServer *server, const HttpRequest &req)
 	if(message.isEmpty())
 		throw ApiCallError::BadRequest("Empty message");
 
+	bool ok=false;
+
 	if(sessionid.isNull()) {
 		QMetaObject::invokeMethod(
-			server, "wall", Qt::QueuedConnection,
+			server, "wall", Qt::BlockingQueuedConnection,
+			Q_RETURN_ARG(bool, ok),
 			Q_ARG(QString, message)
 			);
 	} else {
 		QMetaObject::invokeMethod(
-			server, "wall", Qt::QueuedConnection,
+			server, "wall", Qt::BlockingQueuedConnection,
+			Q_RETURN_ARG(bool, ok),
 			Q_ARG(QString, message),
 			Q_ARG(QString, sessionid)
 			);
 	}
+
+	if(!ok)
+		throw ApiCallError::NotFound();
 
 	return jsonSuccess();
 }
@@ -363,6 +401,10 @@ void initWebAdminApi(MicroHttpd *httpServer, SessionServer *s)
 		.setPost(sendToAll)
 		.addTo(httpServer, "^/api/sessions/([a-zA-Z0-9:-]{1,40})/wall/?$")
 		.addTo(httpServer, "^/api/wall/?$");
+
+	ApiCall(s)
+		.setDelete(kickUser)
+		.addTo(httpServer, "^/api/sessions/([a-zA-Z0-9:-]{1,40})/user/(\\d+)/?$");
 }
 
 }

@@ -1,0 +1,76 @@
+<table class="table">
+<thead>
+	<tr class="header">
+		<th colspan="2">Session status</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<th>ID</th>
+		<td>{{ status.id }}</td>
+	</tr>
+	<tr>
+		<th>Title</th>
+		<td>{{ status.title }}</td>
+	</tr>
+	<tr>
+		<th>Users</th>
+		<td>{{ status.userCount }} / {{ status.maxUsers }}</td>
+	</tr>
+	<tr>
+		<th>Protocol version</th>
+		<td>{{ status.protoVersion }}</td>
+	</tr>
+	<tr>
+		<th>Start time</th>
+		<td>{{ status.startTime }}</td>
+	</tr>
+	<tr>
+		<th>History size</th>
+		<td>{{ status.historySize }} Mb</td>
+	</tr>
+	<tr>
+		<th>Features</th>
+		<td><span ng-repeat="flag in status.flags" class="bubble">{{ flag }}</span></td>
+	</tr>
+</tbody>
+</table>
+
+<table class="table">
+	<thead>
+	<tr class="header">
+		<th colspan="5">Users</th>
+	</tr>
+	<tr>
+		<th style="width: 60px">ID</th>
+		<th>IP</th>
+		<th>Name</th>
+		<th style="width: 160px">Status</th>
+		<th style="width: 30px"></th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="user in status.users">
+			<td>{{ user.id }}</td>
+			<td>{{ user.ip }}</td>
+			<td>{{ user.name }}</td>
+			<td>
+				<span ng-repeat="flag in user.flags" class="bubble">{{ flag }}</span>
+			</td>
+			<td>
+				<a href="#" ng-click="kickUser(user.id)" class="red button">KICK</a>
+			</td>
+		</tr>
+		<tr ng-show="!status.users.length" class="empty">
+			<td colspan="5">No users</td>
+		</tr>
+	</tbody>
+
+</table>
+
+<p style="margin-top: 30px">
+	<a href="#" class="button" ng-click="messageSession()">MESSAGE</a>
+	<a href="#" class="red button" ng-click="killSession()">DELETE</a>
+	<a href="#/" class="button">BACK</a>
+</p>
+
