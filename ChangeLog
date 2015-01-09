@@ -3,6 +3,8 @@
  * Added new Retcon synchronization method
  * Removed preview strokes
  * Protocol change: 16 bit layer and annotation IDs
+ * Updated server admin API
+ * New server admin web app
 
 2015-01-02 Version 0.9.6
  * Added connection timeout check
