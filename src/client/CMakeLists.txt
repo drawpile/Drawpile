@@ -57,6 +57,7 @@ set (
 	utils/imagesize.cpp
 	utils/networkaccess.cpp
 	utils/funstuff.cpp
+	utils/kis_cubic_curve.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
@@ -98,6 +99,7 @@ set (
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
 	widgets/toolslotbutton.cpp
+	widgets/kis_curve_widget.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 
@@ -110,8 +112,6 @@ set (
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp
-	bundled/kis_curve_widget.cpp
-	bundled/kis_cubic_curve.cpp
 )
 
 IF ( APPLE )

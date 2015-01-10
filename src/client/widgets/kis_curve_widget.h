@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 2005 C. Boemann <cbo@boemann.dk>
  *  Copyright (c) 2009 Dmitry Kazakov <dimula73@gmail.com>
+ *  Copyright (c) 2015 Calle Laakkonen (modifications for Drawpile)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 #include <QPointF>
 #include <QPixmap>
 #include <QMouseEvent>
+#include <QContextMenuEvent>
 #include <QKeyEvent>
 #include <QEvent>
 #include <QPaintEvent>
@@ -69,17 +71,16 @@ public:
     virtual ~KisCurveWidget();
 
     /**
-     * Reset the curve to the default shape
-     */
-    void reset(void);
-
-    /**
      * Enable the guide and set the guide color to the specified color.
      *
      * XXX: it seems that the guide feature isn't actually implemented yet?
      */
     void setCurveGuide(const QColor & color);
 
+	/**
+	 * Set the default shape
+	 */
+	void setDefaultCurve(KisCubicCurve curve);
 
     /**
      * Set a background pixmap. The background pixmap will be drawn under
@@ -93,6 +94,12 @@ public:
     
     void setBasePixmap(const QPixmap & pix);
     QPixmap getBasePixmap();
+
+public slots:
+	/**
+	 * Reset the curve to the default shape
+	 */
+	void reset();
 
 signals:
 
@@ -108,7 +115,7 @@ signals:
 
 protected slots:
     void inOutChanged(int);
-
+	void removeCurrentPoint();
 
 protected:
 
@@ -117,6 +124,7 @@ protected:
     void mousePressEvent(QMouseEvent * e);
     void mouseReleaseEvent(QMouseEvent * e);
     void mouseMoveEvent(QMouseEvent * e);
+	void contextMenuEvent(QContextMenuEvent * e);
     void leaveEvent(QEvent *);
     void resizeEvent(QResizeEvent *e);
 

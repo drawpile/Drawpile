@@ -25,7 +25,7 @@ class QGestureEvent;
 
 #include "core/point.h"
 #include "utils/strokesmoother.h"
-#include "bundled/kis_cubic_curve.h"
+#include "utils/kis_cubic_curve.h"
 #include "tools/tool.h"
 
 namespace drawingboard {

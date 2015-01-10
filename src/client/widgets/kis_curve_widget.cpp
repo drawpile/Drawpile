@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 2005 C. Boemann <cbo@boemann.dk>
  *  Copyright (c) 2009 Dmitry Kazakov <dimula73@gmail.com>
+ *  Copyright (c) 2015 Calle Laakkonen (modifications for Drawpile)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@
 #include <QKeyEvent>
 #include <QPaintEvent>
 #include <QList>
+#include <QMenu>
 
 #include <QSpinBox>
 
@@ -44,8 +46,6 @@
 
 #include "kis_curve_widget.h"
 
-
-#define bounds(x,a,b) (x<a ? a : (x>b ? b :x))
 #define MOUSE_AWAY_THRES 15
 #define POINT_AREA       1E-4
 #define CURVE_AREA       1E-4
@@ -69,6 +69,13 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
 
     d->m_intIn = NULL;
     d->m_intOut = NULL;
+
+	d->m_ctxmenu = new QMenu(this);
+	d->m_removeCurrentPointAction = d->m_ctxmenu->addAction(tr("Remove point"));
+	QAction *resetAction = d->m_ctxmenu->addAction(tr("Reset"));
+
+	connect(d->m_removeCurrentPointAction, &QAction::triggered, this, &KisCurveWidget::removeCurrentPoint);
+	connect(resetAction, &QAction::triggered, this, &KisCurveWidget::reset);
 
     setMouseTracking(true);
     setAutoFillBackground(false);
@@ -149,12 +156,36 @@ void KisCurveWidget::inOutChanged(int)
 }
 
 
-void KisCurveWidget::reset(void)
+void KisCurveWidget::reset()
 {
     d->m_grab_point_index = -1;
     d->m_guideVisible = false;
 
-    d->setCurveModified();
+	setCurve(d->m_defaultcurve);
+}
+
+void KisCurveWidget::removeCurrentPoint()
+{
+	if (d->m_grab_point_index > 0 && d->m_grab_point_index < d->m_curve.points().count() - 1) {
+		//x() find closest point to get focus afterwards
+		double grab_point_x = d->m_curve.points()[d->m_grab_point_index].x();
+
+		int left_of_grab_point_index = d->m_grab_point_index - 1;
+		int right_of_grab_point_index = d->m_grab_point_index + 1;
+		int new_grab_point_index;
+
+		if (fabs(d->m_curve.points()[left_of_grab_point_index].x() - grab_point_x) <
+				fabs(d->m_curve.points()[right_of_grab_point_index].x() - grab_point_x)) {
+			new_grab_point_index = left_of_grab_point_index;
+		} else {
+			new_grab_point_index = d->m_grab_point_index;
+		}
+		d->m_curve.removePoint(d->m_grab_point_index);
+		d->m_grab_point_index = new_grab_point_index;
+		setCursor(Qt::ArrowCursor);
+		d->setState(ST_NORMAL);
+	}
+	d->setCurveModified();
 	emit curveChanged(curve());
 }
 
@@ -190,27 +221,7 @@ QPixmap KisCurveWidget::getBasePixmap()
 void KisCurveWidget::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) {
-        if (d->m_grab_point_index > 0 && d->m_grab_point_index < d->m_curve.points().count() - 1) {
-            //x() find closest point to get focus afterwards
-            double grab_point_x = d->m_curve.points()[d->m_grab_point_index].x();
-
-            int left_of_grab_point_index = d->m_grab_point_index - 1;
-            int right_of_grab_point_index = d->m_grab_point_index + 1;
-            int new_grab_point_index;
-
-            if (fabs(d->m_curve.points()[left_of_grab_point_index].x() - grab_point_x) <
-                    fabs(d->m_curve.points()[right_of_grab_point_index].x() - grab_point_x)) {
-                new_grab_point_index = left_of_grab_point_index;
-            } else {
-                new_grab_point_index = d->m_grab_point_index;
-            }
-            d->m_curve.removePoint(d->m_grab_point_index);
-            d->m_grab_point_index = new_grab_point_index;
-            setCursor(Qt::ArrowCursor);
-            d->setState(ST_NORMAL);
-        }
-        d->setCurveModified();
-		emit curveChanged(curve());
+		removeCurrentPoint();
     } else if (e->key() == Qt::Key_Escape && d->state() != ST_NORMAL) {
         d->m_curve.setPoint(d->m_grab_point_index, QPointF(d->m_grabOriginalX, d->m_grabOriginalY) );
         setCursor(Qt::ArrowCursor);
@@ -273,7 +284,8 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
     } else
         p.fillRect(rect(), palette().background());
 
-    d->drawGrid(p, wWidth, wHeight);
+	p.setPen(QPen(palette().color(QPalette::Mid), 1, Qt::SolidLine));
+	d->drawGrid(p, wWidth, wHeight);
 	p.drawRect(QRect(0, 0, wWidth, wHeight));
 
 	p.setRenderHint(QPainter::Antialiasing);
@@ -285,7 +297,7 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
 
     QPolygonF poly;
 
-    p.setPen(QPen(Qt::black, 1, Qt::SolidLine));
+	p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
     for (x = 0 ; x < wWidth ; x++) {
         normalizedX = double(x) / wWidth;
         curY = wHeight - d->m_curve.value(normalizedX) * wHeight;
@@ -309,13 +321,17 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
             curveY = d->m_curve.points().at(i).y();
 
             if (i == d->m_grab_point_index) {
-                p.setPen(QPen(Qt::red, 3, Qt::SolidLine));
-                p.drawEllipse(QRectF(curveX * wWidth - 2,
-                                     wHeight - 2 - curveY * wHeight, 4, 4));
+				p.setPen(Qt::NoPen);
+				p.setBrush(palette().color(QPalette::Highlight));
+				p.drawEllipse(QRectF(curveX * wWidth - 6,
+									 wHeight - 6 - curveY * wHeight, 12, 12));
             } else {
-                p.setPen(QPen(Qt::red, 1, Qt::SolidLine));
-                p.drawEllipse(QRectF(curveX * wWidth - 3,
-                                     wHeight - 3 - curveY * wHeight, 6, 6));
+				//p.setPen(QPen(Qt::red, 1, Qt::SolidLine));
+				p.setPen(QPen(palette().color(QPalette::Highlight), 3, Qt::SolidLine));
+				p.setBrush(Qt::NoBrush);
+
+				p.drawEllipse(QRectF(curveX * wWidth - 5,
+									 wHeight - 5 - curveY * wHeight, 10, 10));
             }
         }
     }
@@ -369,6 +385,21 @@ void KisCurveWidget::mouseReleaseEvent(QMouseEvent *e)
 
     d->setCurveModified();
 	emit curveChanged(curve());
+}
+
+void KisCurveWidget::contextMenuEvent(QContextMenuEvent *e)
+{
+	double x = e->pos().x() / (double)(width() - 1);
+	double y = 1.0 - e->pos().y() / (double)(height() - 1);
+
+	int closest_point_index = d->nearestPointInRange(QPointF(x, y), width(), height());
+	if (closest_point_index >= 0) {
+		d->m_grab_point_index = closest_point_index;
+	} else
+		d->m_grab_point_index = -1;
+
+	d->m_removeCurrentPointAction->setEnabled(d->m_grab_point_index > 0 && d->m_grab_point_index < d->m_curve.points().count() - 1);
+	d->m_ctxmenu->popup(e->globalPos());
 }
 
 
@@ -430,8 +461,8 @@ void KisCurveWidget::mouseMoveEvent(QMouseEvent * e)
             rightX = d->m_curve.points()[d->m_grab_point_index + 1].x() - POINT_AREA;
         }
 
-        x = bounds(x, leftX, rightX);
-        y = bounds(y, 0., 1.);
+		x = qBound(leftX, x, rightX);
+		y = qBound(0.0, y, 1.0);
 
         d->m_curve.setPoint(d->m_grab_point_index, QPointF(x, y));
 
@@ -439,7 +470,7 @@ void KisCurveWidget::mouseMoveEvent(QMouseEvent * e)
             d->m_draggedAwayPoint = d->m_curve.points()[d->m_grab_point_index];
             d->m_draggedAwayPointIndex = d->m_grab_point_index;
             d->m_curve.removePoint(d->m_grab_point_index);
-            d->m_grab_point_index = bounds(d->m_grab_point_index, 0, d->m_curve.points().count() - 1);
+			d->m_grab_point_index = qBound(0, d->m_grab_point_index, d->m_curve.points().count() - 1);
         }
 
         d->setCurveModified();
@@ -449,6 +480,11 @@ void KisCurveWidget::mouseMoveEvent(QMouseEvent * e)
 KisCubicCurve KisCurveWidget::curve()
 {
     return d->m_curve;
+}
+
+void KisCurveWidget::setDefaultCurve(KisCubicCurve curve)
+{
+	d->m_defaultcurve = curve;
 }
 
 void KisCurveWidget::setCurve(KisCubicCurve inlist)

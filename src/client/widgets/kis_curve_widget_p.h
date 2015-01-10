@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 2005 C. Boemann <cbo@boemann.dk>
  *  Copyright (c) 2009 Dmitry Kazakov <dimula73@gmail.com>
+ *  Copyright (c) 2015 Calle Laakkonen (modifications for Drawpile)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 #ifndef _KIS_CURVE_WIDGET_P_H_
 #define _KIS_CURVE_WIDGET_P_H_
 
-#include "kis_cubic_curve.h"
+#include "utils/kis_cubic_curve.h"
 
 enum enumState {
     ST_NORMAL,
@@ -56,6 +57,7 @@ public:
     /* The curve itself */
     bool    m_splineDirty;
     KisCubicCurve m_curve;
+	KisCubicCurve m_defaultcurve;
 
     QPixmap m_pix;
     QPixmap m_pixmapBase;
@@ -69,6 +71,10 @@ public:
     /* Working range of them */
     int m_inOutMin;
     int m_inOutMax;
+
+	/* Context menu */
+	QMenu *m_ctxmenu;
+	QAction *m_removeCurrentPointAction;
 
     /**
      * State functions.
@@ -126,7 +132,7 @@ public:
      * Nothing to be said! =)
      */
     inline
-    void drawGrid(QPainter &p, int wWidth, int wHeight);
+	void drawGrid(QPainter &p, int wWidth, int wHeight);
 
 };
 
@@ -185,8 +191,8 @@ int KisCurveWidget::Private::nearestPointInRange(QPointF pt, int wWidth, int wHe
     }
 
     if (nearestIndex >= 0) {
-        if (fabs(pt.x() - m_curve.points()[nearestIndex].x()) *(wWidth - 1) < 5 &&
-                fabs(pt.y() - m_curve.points()[nearestIndex].y()) *(wHeight - 1) < 5) {
+		if (fabs(pt.x() - m_curve.points()[nearestIndex].x()) *(wWidth - 1) < 10 &&
+				fabs(pt.y() - m_curve.points()[nearestIndex].y()) *(wHeight - 1) < 10) {
             return nearestIndex;
         }
     }
@@ -209,7 +215,6 @@ void KisCurveWidget::Private::drawGrid(QPainter &p, int wWidth, int wHeight)
      * That is not mandatory but desirable
      */
 
-    p.setPen(QPen(Qt::gray, 1, Qt::SolidLine));
     p.drawLine(div4_round(wWidth), 0, div4_round(wWidth), wHeight);
     p.drawLine(div2_round(wWidth), 0, div2_round(wWidth), wHeight);
     p.drawLine(div4_round(3*wWidth), 0, div4_round(3*wWidth), wHeight);

@@ -22,7 +22,7 @@
 #include "scene/canvasview.h"
 #include "docks/inputsettingsdock.h"
 #include "docks/utils.h"
-#include "bundled/kis_cubic_curve.h"
+#include "utils/kis_cubic_curve.h"
 #include "ui_inputcfg.h"
 
 namespace docks {
@@ -60,14 +60,16 @@ InputSettings::InputSettings(QWidget *parent) :
 		_ui->distanceCurve->setCurve(curve);
 	}
 
+	KisCubicCurve defaultVelocityCurve;
+	defaultVelocityCurve.fromString("0,1;1,0");
+	_ui->velocityCurve->setDefaultCurve(defaultVelocityCurve);
+
 	if(cfg.contains("velocitycurve")) {
 		KisCubicCurve curve;
 		curve.fromString(cfg.value("velocitycurve").toString());
 		_ui->velocityCurve->setCurve(curve);
 	} else {
-		KisCubicCurve curve;
-		curve.fromString("0,1;1,0");
-		_ui->velocityCurve->setCurve(curve);
+		_ui->velocityCurve->setCurve(defaultVelocityCurve);
 	}
 
 	_ui->distance->setValue(cfg.value("distance", center(_ui->distance)).toInt());

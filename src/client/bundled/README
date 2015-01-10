@@ -19,5 +19,6 @@ QtColorPicker homepage: https://github.com/mbasaglia/Qt-Color-Picker
 kis_cubic_curve
 ---------------
 
-This is taken from Krita's source code. It is currently not available in library form.
+This is a modified version of the curve object+widget taken from Krita's source code.
+It is currently not available in library form.
 
