@@ -29,7 +29,7 @@ PutImage *PutImage::deserialize(const uchar *data, uint len)
 
 	return new PutImage(
 		*(data+0),
-		qFromBigEndian<quint32>(data+1),
+		qFromBigEndian<quint16>(data+1),
 		*(data+3),
 		qFromBigEndian<quint32>(data+4),
 		qFromBigEndian<quint32>(data+8),
@@ -79,7 +79,7 @@ FillRect *FillRect::deserialize(const uchar *data, uint len)
 
 	return new FillRect(
 		*(data+0),
-		qFromBigEndian<quint32>(data+1),
+		qFromBigEndian<quint16>(data+1),
 		*(data+3),
 		qFromBigEndian<quint32>(data+4),
 		qFromBigEndian<quint32>(data+8),
