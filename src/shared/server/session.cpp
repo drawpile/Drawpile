@@ -38,7 +38,8 @@ SessionState::SessionState(const SessionId &id, int minorVersion, const QString 
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_founder(founder),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false)
+	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false),
+	_preservechat(false)
 { }
 
 QString SessionState::toLogString() const {
