@@ -100,6 +100,7 @@ set (
 	widgets/brushpreview.cpp
 	widgets/toolslotbutton.cpp
 	widgets/kis_curve_widget.cpp
+	widgets/keysequenceedit.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 

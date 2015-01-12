@@ -7,6 +7,7 @@
  * Updated server admin API
  * New server admin web app
  * Added context menu to pressure curve editor
+ * Added clear button to key shortcut editor
 
 2015-01-02 Version 0.9.6
  * Added connection timeout check

@@ -22,6 +22,7 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
 #include "export/ffmpegexporter.h" // for setting ffmpeg path
+#include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
 
 #include "ui_settings.h"
@@ -40,10 +41,6 @@
 #include <QDebug>
 
 #include <algorithm>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-#include <QKeySequenceEdit>
-#endif
 
 class KeySequenceTableItem : public QTableWidgetItem
 {
@@ -75,13 +72,12 @@ private:
 	QKeySequence _keysequence;
 };
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 class KeySequenceEditFactory : public QItemEditorCreatorBase
 {
 public:
 	QWidget *createWidget(QWidget *parent) const
 	{
-		return new QKeySequenceEdit(parent);
+		return new widgets::KeySequenceEdit(parent);
 	}
 
 	QByteArray valuePropertyName() const
@@ -89,7 +85,6 @@ public:
 		return "keySequence";
 	}
 };
-#endif
 
 namespace dialogs {
 
@@ -146,13 +141,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->shortcuts->setRowCount(_customizableActions.size());
 
 	// QKeySequence editor delegate
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(_ui->shortcuts);
 	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
 	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
 	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
-#endif
 
 	QList<CustomAction> actions = getCustomizableActions();
 	for(int i=0;i<actions.size();++i) {
