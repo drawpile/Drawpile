@@ -1,10 +1,12 @@
 2015-01-?? Version 0.9.7
  * Fixed "host on remote server" dropdown box
+ * Fixed crash when reordering layers
  * Added new Retcon synchronization method
  * Removed preview strokes
  * Protocol change: 16 bit layer and annotation IDs
  * Updated server admin API
  * New server admin web app
+ * Added context menu to pressure curve editor
 
 2015-01-02 Version 0.9.6
  * Added connection timeout check

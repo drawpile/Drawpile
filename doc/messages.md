@@ -263,8 +263,8 @@ Create a new layer, filled with the given color (ARGB). The newly created layer
 is placed at the top of the layer stack. If layer controls are locked (session
 option,) only operators may use this command.
 
-The layer ID should be set to zero when this command is sent by a client.
-The server will assign an available ID to it.
+The first byte of the layer ID should be the user's context ID. This allows each
+user to come up with unique IDs independent of each other.
 
 ### MSG_LAYER_COPY (130)
 
@@ -292,18 +292,16 @@ use this command.
 ### MSG_LAYER_ORDER (133)
 
     uint8  user ID
-    uint8* layer IDs
+    uint16* layer IDs
 
 Change layer orders.
 This command includes a list of layer IDs that define the new stacking order.
-An order change command sent by the server must list all layers, while
-a command sent by the client may be missing (newly created) layers,
-in which case the missing layers will be included at the top of the stack in
-their existing relative order.
+The client must tolerate missing IDs (can happen e.g. layer creation is undone, for example.)
+IDs not found in the layer stack should be ignored and IDs missing from the reorder command
+should be added to the end in their current relative order.
 
-For example: if the current stack is `[1,2,3,4,5]` and the client sends
-a reordering command `[3,2,1]`, the server must add the missing layers:
-`[3,2,1,4,5]`.
+For example: if the current stack is `[1,2,3,4,5]` and the reorder message says
+`[3,7,2,1]`, the new order is: `[3,2,1,4,5]`.
 
 If layer controls are locked, only operators can use this command.
 
