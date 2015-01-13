@@ -156,7 +156,6 @@ void MessageQueue::sendDisconnect(int reason, const QString &message)
 void MessageQueue::sendPing()
 {
 	if(_pingSent==0) {
-		qDebug("pinging...");
 		_pingSent = QDateTime::currentMSecsSinceEpoch();
 		send(MessagePtr(new Ping(false)));
 	} else {

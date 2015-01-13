@@ -413,7 +413,6 @@ bool Filter::filterRecording(const QString &input, const QString &outputfile)
 	QByteArray buffer;
 	while(reader2.readNextToBuffer(buffer)) {
 		const unsigned int pos = reader2.currentIndex();
-		qDebug() << "filtering" << pos;
 
 		// Inject new marker
 		if(newmarkerpos < MARKERS) {

@@ -734,8 +734,6 @@ void StateTracker::makeSavepoint(int pos)
 			return;
 	}
 
-	qDebug() << "savepoint" << pos;
-
 	// Looks like a good spot for a savepoint
 	_savepoints.append(createSavepoint(pos));
 }

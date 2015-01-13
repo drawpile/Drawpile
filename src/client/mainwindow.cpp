@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
 #include <QApplication>
 #include <QMenuBar>
 #include <QToolBar>
@@ -1079,9 +1078,6 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		return;
 	}
 	address.setUserName(dlg->getUserName());
-
-	qDebug() << "host" << address << dlg->getRemoteAddress();
-
 
 	// Start server if hosting locally
 	if(useremote==false) {
