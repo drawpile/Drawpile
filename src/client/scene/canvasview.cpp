@@ -58,6 +58,7 @@ CanvasView::CanvasView(QWidget *parent)
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->grabGesture(Qt::PinchGesture);
+	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
 
 	// Draw the crosshair cursor
@@ -192,7 +193,6 @@ void CanvasView::selectLayer(int layer_id)
 void CanvasView::setOutline(bool enable)
 {
 	_enableoutline = enable;
-	viewport()->setMouseTracking(enable);
 }
 
 void CanvasView::setPixelGrid(bool enable)
