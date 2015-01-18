@@ -151,6 +151,8 @@ class MainWindow : public QMainWindow {
 
 		void toolChanged(tools::Type tool);
 
+		void hotBorderMenubar(bool show);
+
 	protected:
 		//! Handle closing of the main window
 		void closeEvent(QCloseEvent *event);

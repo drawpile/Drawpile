@@ -204,6 +204,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(dropUrl(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
 
+#ifndef Q_OS_MAC // OSX provides this feature itself
+	connect(_view, &widgets::CanvasView::hotBorder, this, &MainWindow::hotBorderMenubar);
+#endif
+
 	connect(viewstatus, SIGNAL(zoomChanged(qreal)), _view, SLOT(setZoom(qreal)));
 	connect(viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
 
@@ -1432,6 +1436,13 @@ void MainWindow::toggleFullscreen()
 		_viewStatusBar->show();
 		setGeometry(_fullscreen_oldgeometry);
 		restoreState(_fullscreen_oldstate);
+	}
+}
+
+void MainWindow::hotBorderMenubar(bool show)
+{
+	if(windowState().testFlag(Qt::WindowFullScreen)) {
+		menuBar()->setVisible(show);
 	}
 }
 

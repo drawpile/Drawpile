@@ -110,6 +110,9 @@ class CanvasView : public QGraphicsView
 		//! Pointer moved in pointer tracking mode
 		void pointerMoved(const QPointF &point);
 
+		//! Pointer was just brought to the top of the widget border
+		void hotBorder(bool hot);
+
 	public slots:
 		//! Select the active tool
 		void selectTool(tools::Type tool);
@@ -268,6 +271,8 @@ class CanvasView : public QGraphicsView
 		bool _pointertracking;
 		bool _enableTabletEvents;
 		bool _pixelgrid;
+
+		bool _hotBorderTop;
 };
 
 }

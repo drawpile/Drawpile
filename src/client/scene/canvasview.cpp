@@ -54,7 +54,8 @@ CanvasView::CanvasView(QWidget *parent)
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_zoomWheelDelta(0),
-	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true)
+	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true),
+	_hotBorderTop(false)
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->grabGesture(Qt::PinchGesture);
@@ -459,6 +460,22 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 		moveDrag(pos.x(), pos.y());
 
 	} else {
+		// Hot border detection. This is used to show the menu bar in fullscreen mode
+		// when the pointer is brought to the top of the screen.
+		if(!_pendown) {
+			if(_hotBorderTop) {
+				if(pos.y() > 30) {
+					emit hotBorder(false);
+					_hotBorderTop = false;
+				}
+			} else {
+				if(pos.y() < 3) {
+					emit hotBorder(true);
+					_hotBorderTop = true;
+				}
+			}
+		}
+
 		paintcore::Point point = mapToScene(pos, pressure);
 		updateOutline(point);
 		if(!_prevpoint.intSame(point)) {
