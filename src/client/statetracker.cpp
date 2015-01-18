@@ -1049,6 +1049,8 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	case MSG_ANNOTATION_EDIT: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationEdit>().id());
 	case MSG_ANNOTATION_DELETE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationDelete>().id());
 
+	case MSG_UNDOPOINT: return AffectedArea(AffectedArea::USERATTRS, 0);
+
 	default: return AffectedArea(AffectedArea::EVERYTHING, 0);
 	}
 }
