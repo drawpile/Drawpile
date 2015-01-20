@@ -199,7 +199,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 
 			int savepoint=0;
 			while(savepoint < _savepoints.count()) {
-				if(_savepoints[savepoint]->streampointer > undopoint) {
+				if(_savepoints[savepoint]->streampointer >= undopoint) {
 					--savepoint;
 					break;
 				}
@@ -207,14 +207,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			}
 
 			// Remove redundant save points
-			Q_ASSERT(savepoint>=0);
-			if(savepoint<0) {
-				qWarning() << "no savepoint for undo point" << undopoint << "after cleanup!";
-			} else {
-				qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
-				while(savepoint--)
-					_savepoints.removeFirst();
-			}
+			qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
+			while(savepoint-- > 0)
+				_savepoints.removeFirst();
 		}
 	}
 
@@ -584,13 +579,24 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 		}
 
 		if(upcount>protocol::UNDO_HISTORY_LIMIT) {
+			if(!_localfork.isEmpty())
+				i = qMin(i, _localfork.offset() - 1);
+
 			QMutableListIterator<StateSavepoint> spi(_savepoints);
-			while(spi.hasNext()) {
-				const StateSavepoint &sp = spi.next();
-				if(sp->streampointer <= i)
-					spi.remove();
-				else
-					break;
+			spi.toBack();
+
+			// In order to be able to return to the oldest undo point, we must leave
+			// one snapshot that is as old, or older.
+			bool first = true;
+
+			while(spi.hasPrevious()) {
+				const StateSavepoint &sp = spi.previous();
+				if(sp->streampointer <= i) {
+					if(first)
+						first = false;
+					else
+						spi.remove();
+				}
 			}
 		}
 	}
@@ -766,7 +772,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
-		_savepoints.takeLast();
+		_savepoints.removeLast();
 
 	// Replay all not-undo actions (and local fork)
 	int pos = savepoint->streampointer + 1;
