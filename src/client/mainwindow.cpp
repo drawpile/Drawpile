@@ -1418,6 +1418,7 @@ void MainWindow::toggleFullscreen()
 		// Hide everything except floating docks
 		menuBar()->hide();
 		_viewStatusBar->hide();
+		_view->setFrameShape(QFrame::NoFrame);
 		foreach(QObject *child, children()) {
 			if(child->inherits("QDockWidget")) {
 				QDockWidget *dw = qobject_cast<QDockWidget*>(child);
@@ -1434,6 +1435,7 @@ void MainWindow::toggleFullscreen()
 		showNormal();
 		menuBar()->show();
 		_viewStatusBar->show();
+		_view->setFrameShape(QFrame::StyledPanel);
 		setGeometry(_fullscreen_oldgeometry);
 		restoreState(_fullscreen_oldstate);
 	}
