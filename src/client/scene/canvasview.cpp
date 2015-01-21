@@ -635,7 +635,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 			tabev->button(),
 #else
-			Qt::NoButton,
+			Qt::LeftButton,
 #endif
 			tabev->modifiers(),
 			true
