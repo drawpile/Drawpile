@@ -1686,8 +1686,8 @@ void MainWindow::markSpotForRecording()
 void MainWindow::about()
 {
 	QMessageBox::about(0, tr("About Drawpile"),
-			tr("<p><b>Drawpile %1</b><br>"
-			"A collaborative drawing program.</p>"
+			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(DRAWPILE_VERSION) +
+			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
 			"<p>Copyright © 2006-2015 Calle Laakkonen</p>"
 
@@ -1703,7 +1703,7 @@ void MainWindow::about()
 
 			"<p>You should have received a copy of the GNU General Public License "
 			"along with this program.  If not, see <a href=\"http://www.gnu.org/licences/\">http://www.gnu.org/licenses/</a>.</p>"
-			).arg(DRAWPILE_VERSION)
+			)
 	);
 }
 
