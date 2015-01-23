@@ -1,6 +1,7 @@
 2015-0?-?? Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode
  * Fixed unnecessary retcon at start of new strokes
+ * Fixed annotation moving (regression)
 
 2015-01-16 Version 0.9.7
  * Fixed "host on remote server" dropdown box

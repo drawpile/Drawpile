@@ -96,7 +96,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
+	uint16_t _id;
 	int32_t _x;
 	int32_t _y;
 	uint16_t _w;
