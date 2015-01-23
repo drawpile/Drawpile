@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,8 +69,6 @@ AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point, float zoom)
 void AnnotationItem::adjustGeometry(Handle handle, const QPoint &delta)
 {
 	prepareGeometryChange();
-	if(_oldrect.isNull())
-		_oldrect = _rect;
 
 	switch(handle) {
 	case OUTSIDE: return;
@@ -128,7 +126,6 @@ void AnnotationItem::refresh()
 
 	prepareGeometryChange();
 	_rect = a->rect();
-	_oldrect = QRectF();
 	update();
 }
 
@@ -143,7 +140,7 @@ bool AnnotationItem::isChanged() const
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return _rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2) | _oldrect;
+	return _rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2);
 }
 
 void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
@@ -191,15 +188,6 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 			painter->drawPoint(_rect.bottomLeft() + QPointF(_rect.width()/2, 0));
 			painter->drawPoint(_rect.bottomRight());
 		}
-	}
-	if(!_oldrect.isNull()) {
-		// Annotation has been reshaped, but the shape changed command hasn't made the roundtrip yet
-		QPen bpen(Qt::DotLine);
-		bpen.setWidth(devicePixelRatio);
-		bpen.setCosmetic(true);
-		bpen.setColor(Qt::red);
-		painter->setPen(bpen);
-		painter->drawRect(_oldrect);
 	}
 
 	painter->restore();

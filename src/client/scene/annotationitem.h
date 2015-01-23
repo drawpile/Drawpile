@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ class AnnotationItem : public QGraphicsObject {
 	private:
 		int _id;
 		QRectF _rect;
-		QRectF _oldrect;
 
 		paintcore::LayerStack *_image;
 
