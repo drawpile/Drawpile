@@ -23,7 +23,6 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * media-skip-forward
  * media-seek-backward
  * media-skip-backward
- * network-idle
  * view-refresh
  * zoom-in
  * zoom-original

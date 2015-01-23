@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -116,13 +116,6 @@ NetStatus::NetStatus(QWidget *parent)
 	_label->addAction(showNetStats);
 	connect(showNetStats, SIGNAL(triggered()), this, SLOT(showNetStats()));
 
-	// Network connection status icon
-	_icon = new QLabel(QString(), this);
-	_icon->setFixedSize(QSize(16, 16));
-	_icon->setPixmap(icon::fromTheme("network-idle").pixmap(16, 16));
-	_icon->hide();
-	layout->addWidget(_icon);
-
 	// Security level icon
 	_security = new QLabel(QString(), this);
 	_security->setFixedSize(QSize(16, 16));
@@ -166,7 +159,6 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	// reset statistics
 	_recvbytes = 0;
 	_sentbytes = 0;
-	_icon->show();
 }
 
 void NetStatus::loggedIn(const QUrl &sessionUrl)
@@ -232,7 +224,6 @@ void NetStatus::hostDisconnected()
 	_discoverIp->setVisible(false);
 
 	message(tr("Disconnected"));
-	_icon->hide();
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
 
 	if(_netstats)
@@ -381,7 +372,7 @@ void NetStatus::kicked(const QString& user)
 void NetStatus::message(const QString& msg)
 {
 	_popup->showMessage(
-				mapToGlobal(_icon->pos() + QPoint(_icon->width()/2, 2)),
+				mapToGlobal(_label->pos() + QPoint(_label->width()/2, 2)),
 				msg);
 	emit statusMessage(msg);
 }
