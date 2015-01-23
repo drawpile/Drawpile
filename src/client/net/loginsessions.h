@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ public:
 	int columnCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const;
 
 	LoginSession sessionAt(int index) const { return _sessions.at(index); }
 	void updateSession(const LoginSession &session);
