@@ -67,7 +67,7 @@ bool Hibernation::init()
 			continue;
 		}
 
-		if(comp != recording::COMPATIBLE || comp != recording::MINOR_INCOMPATIBILITY) {
+		if(comp != recording::COMPATIBLE && comp != recording::MINOR_INCOMPATIBILITY) {
 			logger::warning() << "Incompatible hibernated session:" << filename;
 			continue;
 		}
