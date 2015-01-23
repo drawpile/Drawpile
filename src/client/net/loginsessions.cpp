@@ -74,6 +74,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}
+	} else if(role == Qt::ToolTipRole) {
+		if(ls.incompatible)
+			return tr("Incompatible version");
 	}
 
 	return QVariant();
