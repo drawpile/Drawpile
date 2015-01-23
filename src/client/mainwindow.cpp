@@ -1976,7 +1976,7 @@ void MainWindow::setupActions()
 	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &In"), QString(), QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", "view-refresh",tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *rotateorig = makeAction("rotatezero", 0, tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
 	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
@@ -2169,7 +2169,6 @@ void MainWindow::setupActions()
 	drawtools->addAction(zoomin);
 	drawtools->addAction(zoomout);
 	drawtools->addAction(zoomorig);
-	drawtools->addAction(rotateorig);
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
