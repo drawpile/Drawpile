@@ -120,6 +120,30 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	// Set defaults
 	QSettings cfg;
 
+	cfg.beginGroup("settings");
+	{
+		QString langOverride = cfg.value("language", QString()).toString();
+
+		// Get available languages
+		_ui->languageBox->addItem(tr("Default"), QString());
+		const QLocale localeC = QLocale::c();
+		QStringList locales;
+		for(const QString &datapath : DrawpileApp::dataPaths()) {
+			QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
+			for(const QString &file : files) {
+				QString localename = file.mid(9, file.length() - 3 - 9);
+				QLocale locale(localename);
+				if(locale != localeC && !locales.contains(localename)) {
+					locales << localename;
+					_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
+					if(localename == langOverride)
+						_ui->languageBox->setCurrentIndex(locales.size());
+				}
+			}
+		}
+	}
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/input");
 	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	cfg.endGroup();
@@ -238,6 +262,8 @@ void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
 	// Remember general settings
+	cfg.setValue("settings/language", _ui->languageBox->currentData());
+
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
 	cfg.endGroup();

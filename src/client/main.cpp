@@ -140,6 +140,18 @@ void DrawpileApp::openUrl(QUrl url)
 	}
 }
 
+QStringList DrawpileApp::dataPaths()
+{
+	QStringList datapaths;
+#ifndef Q_OS_MAC
+	datapaths << qApp->applicationDirPath();
+	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+#else
+	datapaths << qApp->applicationDirPath() + QStringLiteral("/../Resources");
+#endif
+	return datapaths;
+}
+
 void initTranslations(const QLocale &locale)
 {
 	QStringList preferredLangs = locale.uiLanguages();
@@ -166,15 +178,8 @@ void initTranslations(const QLocale &locale)
 
 	// Our translations
 	QTranslator *myTranslator = new QTranslator;
-	QStringList datapaths;
-#ifndef Q_OS_MAC
-	datapaths << qApp->applicationDirPath();
-	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-#else
-	datapaths << qApp->applicationDirPath() + "/../Resources";
-#endif
 
-	for(const QString &datapath : datapaths) {
+	for(const QString &datapath : DrawpileApp::dataPaths()) {
 		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
 			break;
 	}
@@ -200,7 +205,18 @@ int main(int argc, char *argv[]) {
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
-	initTranslations(QLocale::system());
+	{
+		// Set override locale from settings, or use system locale if no override is set
+		QLocale locale = QLocale::c();
+		QString overrideLang = QSettings().value("settings/language").toString();
+		if(!overrideLang.isEmpty())
+			locale = QLocale(overrideLang);
+
+		if(locale == QLocale::c())
+			locale = QLocale::system();
+
+		initTranslations(locale);
+	}
 
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
