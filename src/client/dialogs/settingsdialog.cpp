@@ -122,10 +122,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	cfg.beginGroup("settings");
 	{
-		QString langOverride = cfg.value("language", QString()).toString();
-
 		// Get available languages
 		_ui->languageBox->addItem(tr("Default"), QString());
+		_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));
+
 		const QLocale localeC = QLocale::c();
 		QStringList locales;
 		for(const QString &datapath : DrawpileApp::dataPaths()) {
@@ -136,9 +136,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 				if(locale != localeC && !locales.contains(localename)) {
 					locales << localename;
 					_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
-					if(localename == langOverride)
-						_ui->languageBox->setCurrentIndex(locales.size());
 				}
+			}
+		}
+		QVariant langOverride = cfg.value("language", QString());
+		for(int i=1;i<_ui->languageBox->count();++i) {
+			if(_ui->languageBox->itemData(i) == langOverride) {
+				_ui->languageBox->setCurrentIndex(i);
+				break;
 			}
 		}
 	}
