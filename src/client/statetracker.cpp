@@ -488,12 +488,16 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	
 	foreach(const protocol::PenPoint &pp, cmd.points()) {
 		paintcore::Point p(pp.x / 4.0, pp.y / 4.0, pp.p/qreal(0xffff));
+		const int r = ctx.tool.brush.fsize(p.pressure())/2 + 1;
 
 		if(ctx.pendown) {
 			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.stroke);
+			ctx.boundingRect |= QRect(p.x() - r, p.y() - r, r*2, r*2);
+
 		} else {
 			ctx.pendown = true;
 			ctx.stroke = paintcore::StrokeState(ctx.tool.brush);
+			ctx.boundingRect = QRect(p.x() - r, p.y() - r, r*2, r*2);
 			layer->dab(cmd.contextId(), ctx.tool.brush, p, ctx.stroke);
 		}
 		ctx.lastpoint = p;
@@ -919,6 +923,10 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		// Read stroke state
 		in >> ctx.stroke.distance >> ctx.stroke.smudgeDistance >> ctx.stroke.smudgeColor;
 
+		// Note: ctx.bounds is used only for retconning during online drawing
+		// so we don't need to restore it here, since saved snapshots are currently
+		// used only for session playback.
+
 		d->ctxstate[ctxid] = ctx;
 	}
 
@@ -1026,9 +1034,15 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	}
 	case MSG_TOOLCHANGE: return AffectedArea(AffectedArea::USERATTRS, 0);
 	case MSG_PEN_MOVE: {
-		const PenMove &m = msg.cast<PenMove>();
-		const DrawingContext &ctx = _contexts.value(m.contextId());
+		const DrawingContext &ctx = _contexts.value(msg->contextId());
 
+		// Non-incremental brush draws on a private layer: we must check ordering in PenUp
+		if(!ctx.tool.brush.incremental())
+			return AffectedArea(AffectedArea::USERATTRS, 0);
+
+		const PenMove &m = msg.cast<PenMove>();
+
+		// Find the bounding rectangle of the received piece of the stroke.
 		QRect bounds;
 
 		if(ctx.pendown)
@@ -1037,14 +1051,22 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 			bounds = QRect(m.points().first().x/4, m.points().first().y/4, 1, 1);
 
 		for(const PenPoint &pp : m.points()) {
-			bounds = bounds.united(QRect(pp.x/4, pp.y/4, 1, 1));
+			bounds |= QRect(pp.x/4, pp.y/4, 1, 1);
 		}
 
 		const int r = qMax(ctx.tool.brush.size1(), ctx.tool.brush.size2()) / 2 + 1;
 		bounds.adjust(-r, -r, r, r);
 		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, bounds);
 	}
-	case MSG_PEN_UP: return AffectedArea(AffectedArea::USERATTRS, 0);
+	case MSG_PEN_UP: {
+		const DrawingContext &ctx = _contexts.value(msg->contextId());
+		if(ctx.tool.brush.incremental())
+			return AffectedArea(AffectedArea::USERATTRS, 0);
+
+		// Non-incremental brushes get composited only at pen-up.
+		// We need the bounding rectangle of the entire stroke.
+		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, ctx.boundingRect);
+	}
 	case MSG_FILLRECT: {
 		const FillRect &fr = msg.cast<FillRect>();
 		return AffectedArea(AffectedArea::PIXELS, fr.layer(), QRect(fr.x(), fr.y(), fr.width(), fr.height()));

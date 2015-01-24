@@ -97,6 +97,11 @@ struct DrawingContext {
 	
 	//! State of the current stroke
 	paintcore::StrokeState stroke;
+
+	//! Bounding rectangle of current/last stroke
+	// This is used to determine if strokes (potentially)
+	// intersect and a canvas rollback/replay is needed.
+	QRect boundingRect;
 };
 
 class StateTracker;
