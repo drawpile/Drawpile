@@ -102,8 +102,14 @@ public slots:
 	//! Set the tool for which settings are shown
 	void setTool(tools::Type tool);
 
+	//! Select the tool previosly set with setTool
+	void setPreviousTool();
+
 	//! Set the currently active quick tool slot
 	void setToolSlot(int i);
+
+	//! Select the tool slot previously set with setToolSlot
+	void setPreviousToolSlot();
 
 	//! Set foreground color
 	void setForegroundColor(const QColor& color);
@@ -186,6 +192,9 @@ private:
 	int _currentQuickslot;
 	int _eraserOverride;
 	QList<tools::ToolsetProperties> _toolprops;
+
+	tools::Type _previousTool;
+	int _previousToolSlot;
 
 	QColor _foreground;
 	QColor _background;

@@ -709,6 +709,35 @@ bool MainWindow::event(QEvent *event)
 		_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
 		return true;
 	} else {
+		// Monitor key-up events to switch back from temporary tools/tool slots.
+		// A short tap of the tool switch shortcut switches the tool permanently as usual,
+		// but when holding it down, the tool is activated just temporarily. The
+		// previous tool be switched back automatically when the shortcut key is released.
+		// Note: for simplicity, we only support tools with single key shortcuts.
+		if(event->type() == QEvent::KeyRelease && _toolChangeTime.elapsed() > 250) {
+			const QKeyEvent *e = static_cast<const QKeyEvent*>(event);
+			if(!e->isAutoRepeat()) {
+
+				// Return from temporary tool change
+				for(const QAction *act : _drawingtools->actions()) {
+					const QKeySequence &seq = act->shortcut();
+					if(seq.count()==1 && e->key() == seq[0]) {
+						_dock_toolsettings->setPreviousTool();
+						break;
+					}
+				}
+
+				// Return from temporary tool slot change
+				for(const QAction *act : _toolslotactions->actions()) {
+					const QKeySequence &seq = act->shortcut();
+					if(seq.count()==1 && e->key() == seq[0]) {
+						_dock_toolsettings->setPreviousToolSlot();
+						break;
+					}
+				}
+			}
+		}
+
 		return QMainWindow::event(event);
 	}
 }
@@ -1461,6 +1490,7 @@ void MainWindow::selectTool(QAction *tool)
 		return;
 
 	_dock_toolsettings->setTool(tools::Type(idx));
+	_toolChangeTime.start();
 }
 
 /**
@@ -1738,6 +1768,8 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 		act->setShortcut(shortcut);
 
 	act->setCheckable(checkable);
+
+	act->setAutoRepeat(false);
 
 	if(tip.isEmpty()==false)
 		act->setStatusTip(tip);
@@ -2201,18 +2233,20 @@ void MainWindow::setupActions()
 	//
 	// Quick tool change slots
 	//
-	QActionGroup *toolslotactions = new QActionGroup(this);
+	_toolslotactions = new QActionGroup(this);
 	for(int i=0;i<docks::ToolSettings::QUICK_SLOTS;++i) {
 		QAction *q = new QAction(QString("Tool slot #%1").arg(i+1), this);
+		q->setAutoRepeat(false);
 		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
 		q->setProperty("toolslotidx", i);
 		dialogs::SettingsDialog::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		toolslotactions->addAction(q);
+		_toolslotactions->addAction(q);
 		addAction(q);
 	}
-	connect(toolslotactions, &QActionGroup::triggered, [this](QAction *a) {
+	connect(_toolslotactions, &QActionGroup::triggered, [this](QAction *a) {
 		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
+		_toolChangeTime.start();
 	});
 }
 

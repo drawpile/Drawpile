@@ -212,8 +212,15 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
  */
 void ToolSettings::setTool(tools::Type tool) {
 	// Save old tool settings, then switch to the new tool
+	_previousTool = currentTool();
 	saveCurrentTool();
 	selectTool(tool);
+}
+
+void ToolSettings::setPreviousTool()
+{
+	saveCurrentTool();
+	selectTool(_previousTool);
 }
 
 void ToolSettings::selectTool(tools::Type tool)
@@ -260,8 +267,15 @@ void ToolSettings::setToolSlot(int i)
 {
 	Q_ASSERT(i>=0 && i<QUICK_SLOTS);
 	// Save old tool state, then switch to new slot (and tool)
+	_previousToolSlot = _currentQuickslot;
 	saveCurrentTool();
 	selectToolSlot(i);
+}
+
+void ToolSettings::setPreviousToolSlot()
+{
+	saveCurrentTool();
+	selectToolSlot(_previousToolSlot);
 }
 
 void ToolSettings::selectToolSlot(int i)

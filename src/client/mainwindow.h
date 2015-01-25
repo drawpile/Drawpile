@@ -20,6 +20,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QElapsedTimer>
 
 #include "tools/tool.h"
 
@@ -223,10 +224,13 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_admintools; // session operator actions
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
+		QActionGroup *_toolslotactions; // tool slot selection
 
 		// Remember window state to return from fullscreen mode
 		QByteArray _fullscreen_oldstate;
 		QRect _fullscreen_oldgeometry;
+
+		QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
 };
 
 #endif
