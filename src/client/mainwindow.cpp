@@ -66,6 +66,7 @@
 #include "utils/whatismyip.h"
 #include "utils/icon.h"
 #include "utils/networkaccess.h"
+#include "utils/shortcutdetector.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -147,6 +148,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	setUnifiedTitleAndToolBarOnMac(true);
 #endif
+
+	_tempToolSwitchShortcut = new ShortcutDetector(this);
 
 	// Work area is split between the canvas view and the chatbox
 	_splitter = new QSplitter(Qt::Vertical, centralwidget);
@@ -717,24 +720,26 @@ bool MainWindow::event(QEvent *event)
 		if(event->type() == QEvent::KeyRelease && _toolChangeTime.elapsed() > 250) {
 			const QKeyEvent *e = static_cast<const QKeyEvent*>(event);
 			if(!e->isAutoRepeat()) {
+				if(_tempToolSwitchShortcut->isShortcutSent()) {
+					// Return from temporary tool change
+					for(const QAction *act : _drawingtools->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count()==1 && e->key() == seq[0]) {
+							_dock_toolsettings->setPreviousTool();
+							break;
+						}
+					}
 
-				// Return from temporary tool change
-				for(const QAction *act : _drawingtools->actions()) {
-					const QKeySequence &seq = act->shortcut();
-					if(seq.count()==1 && e->key() == seq[0]) {
-						_dock_toolsettings->setPreviousTool();
-						break;
+					// Return from temporary tool slot change
+					for(const QAction *act : _toolslotactions->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count()==1 && e->key() == seq[0]) {
+							_dock_toolsettings->setPreviousToolSlot();
+							break;
+						}
 					}
 				}
-
-				// Return from temporary tool slot change
-				for(const QAction *act : _toolslotactions->actions()) {
-					const QKeySequence &seq = act->shortcut();
-					if(seq.count()==1 && e->key() == seq[0]) {
-						_dock_toolsettings->setPreviousToolSlot();
-						break;
-					}
-				}
+				_tempToolSwitchShortcut->reset();
 			}
 		}
 
@@ -2248,6 +2253,12 @@ void MainWindow::setupActions()
 		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
 		_toolChangeTime.start();
 	});
+
+	// Add temporary tool change shortcut detector
+	for(QAction *act : _drawingtools->actions())
+		act->installEventFilter(_tempToolSwitchShortcut);
+	for(QAction *act : _toolslotactions->actions())
+		act->installEventFilter(_tempToolSwitchShortcut);
 }
 
 void MainWindow::createDocks()

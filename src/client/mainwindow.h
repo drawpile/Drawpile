@@ -63,6 +63,7 @@ namespace recording {
 }
 
 class SessionLoader;
+class ShortcutDetector;
 
 //! The application main window
 class MainWindow : public QMainWindow {
@@ -231,6 +232,7 @@ class MainWindow : public QMainWindow {
 		QRect _fullscreen_oldgeometry;
 
 		QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
+		ShortcutDetector *_tempToolSwitchShortcut;
 };
 
 #endif

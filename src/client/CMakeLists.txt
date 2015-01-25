@@ -58,6 +58,7 @@ set (
 	utils/networkaccess.cpp
 	utils/funstuff.cpp
 	utils/kis_cubic_curve.cpp
+	utils/shortcutdetector.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
