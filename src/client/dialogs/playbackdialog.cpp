@@ -200,6 +200,14 @@ void PlaybackDialog::closeEvent(QCloseEvent *event)
 		QDialog::closeEvent(event);
 }
 
+void PlaybackDialog::keyPressEvent(QKeyEvent *event)
+{
+	// This is not a OK/Cancel type dialog, so disable
+	// key events. Without this, it is easy to close
+	// the window accidentally by hitting Esc.
+	event->ignore();
+}
+
 void PlaybackDialog::done(int r)
 {
 	if(exitCleanup())

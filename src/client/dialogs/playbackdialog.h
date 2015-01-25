@@ -79,6 +79,7 @@ public slots:
 
 protected:
 	void closeEvent(QCloseEvent *);
+	void keyPressEvent(QKeyEvent *);
 
 private slots:
 	void exportFrame(int count=1);
