@@ -31,7 +31,6 @@ bool ShortcutDetector::eventFilter(QObject *obj, QEvent *event)
 {
 	if(event->type() == QEvent::Shortcut) {
 		_shortcutSent = true;
-		qDebug("shortcut sent");
 	}
 	return QObject::eventFilter(obj, event);
 }
