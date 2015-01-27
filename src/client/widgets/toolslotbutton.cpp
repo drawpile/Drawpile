@@ -53,44 +53,30 @@ void ToolSlotButton::setHoverColor(const QColor &c)
 
 void ToolSlotButton::paintEvent(QPaintEvent *)
 {
-	const int UNDERLINE = 3;
-	const int RADIUS = qMin(width(), height())/2 - UNDERLINE - 2;
-	QRectF rect(
-		(width()/2 - RADIUS) + 0.5,
-		(height()/2 - RADIUS) + 0.5 - UNDERLINE,
-		RADIUS*2,
-		RADIUS*2
-	);
+	const int UNDERLINE = 5;
 	QPainter p(this);
-
-	// Draw foreground and background colors
-	p.setRenderHint(QPainter::Antialiasing);
-
-	if(isChecked())
-		p.setPen(_highlight);
-	else
-		p.setPen(Qt::NoPen);
-
-	p.setBrush(_bg);
-	p.drawEllipse(rect.translated(2, 2));
-	p.setBrush(_fg);
-	p.drawEllipse(rect.translated(-1, -1));
+	const QRect rect(0, 0, width(), height());
+	// Draw background
+	p.fillRect(rect, _fg);
 
 	// Draw icon
-	int iconSize = qMin(rect.width(), rect.height()) * 0.5 * 1.414;
-	QPixmap pixmap = icon().pixmap(iconSize, iconSize);
-	p.drawPixmap(QRect(
-		rect.left() + (rect.width() - pixmap.width())/2,
-		rect.top() + (rect.height() - pixmap.height())/2,
-		pixmap.width(),
-		pixmap.height()
-	), pixmap);
+	// TODO select dark/light variant based on color
+	const int iconSize = qMax(16, qMin(rect.width(), rect.height()) / 2);
+	const QRect iconRect(
+		(rect.width() - iconSize)/2,
+		(rect.height() - iconSize)/2,
+		iconSize, iconSize);
+
+	icon().paint(&p, iconRect);
 
 	// Draw selection highlight
 	if(isChecked() || _isHovering) {
-		p.fillRect(0, height() - UNDERLINE, width(), UNDERLINE, isChecked() ? _highlight : _hover);
+		const QColor c = isChecked() ? _highlight : _hover;
+		p.fillRect(0, height() - UNDERLINE, width(), UNDERLINE, c);
 	}
 
+	// Draw bottom border
+	p.fillRect(0, height() - 1, width(), 1, _highlight);
 }
 
 void ToolSlotButton::enterEvent(QEvent *e)

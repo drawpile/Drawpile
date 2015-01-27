@@ -49,13 +49,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	auto *layout = new QVBoxLayout(w);
 	layout->setMargin(0);
+	layout->setSpacing(0);
 
 	// Create quick toolchange slot buttons
 	auto *hlayout = new QHBoxLayout;
 	hlayout->setContentsMargins(3, 3, 3, 0);
+	hlayout->setSpacing(0);
 	layout->addLayout(hlayout);
-
-	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
 
 	QButtonGroup *quickbuttons = new QButtonGroup(this);
 	quickbuttons->setExclusive(true);
@@ -68,6 +68,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
 		b->setMinimumSize(40, 40);
+		b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 		b->setAutoRaise(true);
 
 		hlayout->addWidget(b);
@@ -76,8 +77,6 @@ ToolSettings::ToolSettings(QWidget *parent)
 	}
 
 	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
-
-	hlayout->addSpacerItem(new QSpacerItem(10, 1, QSizePolicy::Expanding));
 
 	// Create a widget stack
 	_widgets = new QStackedWidget(this);
