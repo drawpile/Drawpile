@@ -96,8 +96,7 @@ set (
 	widgets/netstatus.cpp 
 	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
-	widgets/colorbutton.cpp 
-	widgets/imageselector.cpp
+	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
 	widgets/toolslotbutton.cpp
 	widgets/kis_curve_widget.cpp

@@ -71,7 +71,7 @@ MacMenu::MacMenu() :
 	QAction *host = makeAction(sessionmenu, "hostsession", MainWindow::tr("&Host..."), QKeySequence());
 	QAction *join = makeAction(sessionmenu, "joinsession", MainWindow::tr("&Join..."), QKeySequence());
 
-	connect(host, &QAction::triggered, this, &MacMenu::hostSession);
+	host->setEnabled(false);
 	connect(join, &QAction::triggered, this, &MacMenu::joinSession);
 
 	//
@@ -151,20 +151,6 @@ void MacMenu::openRecent(QAction *action)
 {
 	MainWindow *mw = new MainWindow;
 	mw->open(QUrl::fromLocalFile(action->property("filepath").toString()));
-}
-
-void MacMenu::hostSession()
-{
-	auto dlg = new dialogs::HostDialog(QImage());
-	connect(dlg, &dialogs::HostDialog::finished, [dlg](int i) {
-		if(i==QDialog::Accepted) {
-			dlg->rememberSettings();
-			MainWindow *mw = new MainWindow;
-			mw->hostSession(dlg);
-		}
-		dlg->deleteLater();
-	});
-	dlg->show();
 }
 
 void MacMenu::joinSession()

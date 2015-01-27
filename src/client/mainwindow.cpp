@@ -1082,7 +1082,7 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	auto dlg = new dialogs::HostDialog(_canvas->image(), this);
+	auto dlg = new dialogs::HostDialog(this);
 
 	connect(dlg, &dialogs::HostDialog::finished, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
@@ -1134,15 +1134,8 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 			address.setPort(port);
 	}
 
-	// Initialize session (unless original was used)
-	MainWindow *w = this;
-	if(dlg->useOriginalImage() == false) {
-		QScopedPointer<SessionLoader> loader(dlg->getSessionLoader());
-		w = loadDocument(*loader);
-	}
-
 	// Connect to server
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, w);
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, this);
 	login->setSessionId(dlg->getSessionId());
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
@@ -1151,7 +1144,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setLayerControlLock(dlg->getLayerControlLock());
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
-	w->_client->connectToServer(login);
+	_client->connectToServer(login);
 }
 
 /**

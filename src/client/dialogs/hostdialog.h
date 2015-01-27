@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,65 +30,48 @@ namespace dialogs {
 class HostDialog : public QDialog
 {
 	Q_OBJECT
-	public:
-		HostDialog(const QImage &original, QWidget *parent=0);
-		~HostDialog();
+public:
+	explicit HostDialog(QWidget *parent=0);
+	~HostDialog();
 
-		//! Store settings in configuration file
-		void rememberSettings() const;
+	//! Store settings in configuration file
+	void rememberSettings() const;
 
-		//! Get the remote host address
-		QString getRemoteAddress() const;
+	//! Get the remote host address
+	QString getRemoteAddress() const;
 
-		//! Host on a remote server?
-		bool useRemoteAddress() const;
+	//! Host on a remote server?
+	bool useRemoteAddress() const;
 
-		//! Get the username
-		QString getUserName() const;
+	//! Get the username
+	QString getUserName() const;
 
-		//! Get session title
-		QString getTitle() const;
+	//! Get session title
+	QString getTitle() const;
 
-		//! Get session password
-		QString getPassword() const;
+	//! Get session password
+	QString getPassword() const;
 
-		//! Get max. user count
-		int getUserLimit() const;
+	//! Get max. user count
+	int getUserLimit() const;
 
-		//! Should users be allowed to draw by default
-		bool getAllowDrawing() const;
+	//! Should users be allowed to draw by default
+	bool getAllowDrawing() const;
 
-		//! Should layer controls be locked by default
-		bool getLayerControlLock() const;
+	//! Should layer controls be locked by default
+	bool getLayerControlLock() const;
 
-		//! Should the session be persistent
-		bool getPersistentMode() const;
+	//! Should the session be persistent
+	bool getPersistentMode() const;
 
-		//! Should chat history be preserved in the session
-		bool getPreserveChat() const;
+	//! Should chat history be preserved in the session
+	bool getPreserveChat() const;
 
-		//! Get the desired session ID (or * if not specified)
-		QString getSessionId() const;
+	//! Get the desired session ID (or * if not specified)
+	QString getSessionId() const;
 
-		/**
-		 * @brief Get session loader for initializing a new session
-		 * @return session loader instance
-		 * @pre useOriginalImage() == false
-		 */
-		SessionLoader *getSessionLoader() const;
-
-		//! Use the original image?
-		bool useOriginalImage() const;
-
-	public slots:
-		void done(int r);
-
-	private slots:
-		bool selectPicture();
-		void newSelected();
-
-	private:
-		Ui_HostDialog *_ui;
+private:
+	Ui_HostDialog *_ui;
 };
 
 }
