@@ -2,9 +2,8 @@
 Version=1.0
 Name=Drawpile
 
-GenericName=Collaborative drawing program
+GenericName=Collaborative Drawing Program
 GenericName[fi]=Monen käyttäjän piirto-ohjelma
-Comment=Multiuser collaborative drawing program
 
 Exec=drawpile %u
 MimeType=image/openraster;image/png;image/jpeg;application/x-drawpile-recording;x-scheme-handler/drawpile

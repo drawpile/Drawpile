@@ -4,6 +4,9 @@ SET(base_files
 	../README.md
 	openraster.txt
 	textloader.md
+	protocol.md
+	messages.md
+	logins.md
 )
 
 SET(man1
