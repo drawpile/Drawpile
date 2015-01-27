@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>363</height>
+    <width>476</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -175,134 +175,71 @@
       <attribute name="title">
        <string>Network</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Server</string>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Default server port:</string>
          </property>
-         <property name="flat">
-          <bool>true</bool>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="serverport">
+         <property name="maximum">
+          <number>65536</number>
          </property>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Default port:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QSpinBox" name="serverport">
-              <property name="maximum">
-               <number>65536</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QDoubleSpinBox" name="historylimit">
-              <property name="specialValueText">
-               <string>unlimited</string>
-              </property>
-              <property name="suffix">
-               <string> Mb</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1024.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Session history:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Timeout:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QSpinBox" name="connTimeout">
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="minimum">
-               <number>15</number>
-              </property>
-              <property name="maximum">
-               <number>600</number>
-              </property>
-              <property name="value">
-               <number>60</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Session history:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="historylimit">
+         <property name="specialValueText">
+          <string>unlimited</string>
+         </property>
+         <property name="suffix">
+          <string> Mb</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1024.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Timeout:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="connTimeout">
+         <property name="suffix">
+          <string> s</string>
+         </property>
+         <property name="minimum">
+          <number>15</number>
+         </property>
+         <property name="maximum">
+          <number>600</number>
+         </property>
+         <property name="value">
+          <number>60</number>
+         </property>
         </widget>
        </item>
       </layout>
