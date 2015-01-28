@@ -208,7 +208,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 		_tiles.fill(bgtile);
 
-		putImage(left, top, oldcontent, false);
+		putImage(left, top, oldcontent, 0);
 
 	} else {
 		// top/left offset is aligned at tile boundary:
@@ -358,9 +358,9 @@ void Layer::setHidden(bool hide)
  * @param xpos target image position
  * @param ypos target image position
  * @param original the image to pad
- * @param alpha alpha blend image
+ * @param mode compositing mode
  */
-QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, bool alpha) const
+QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, int mode) const
 {
 	const int x0 = Tile::roundDown(xpos);
 	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
@@ -384,8 +384,13 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	
 	// Paint new image
 	QPainter painter(&image);
-	if(!alpha)
-		painter.setCompositionMode(QPainter::CompositionMode_Source);
+	switch(mode) {
+	// see protocol::PutImage for the modes
+	case 0: painter.setCompositionMode(QPainter::CompositionMode_Source); break;
+	case 2: painter.setCompositionMode(QPainter::CompositionMode_DestinationOver); break;
+	case 3: painter.setCompositionMode(QPainter::CompositionMode_DestinationOut); break;
+	}
+
 	painter.drawImage(xpos-x0, ypos-y0, original);
 	
 #if 0 /* debugging aid */
@@ -403,9 +408,9 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
  * @param x x coordinate
  * @param y y coordinate
  * @param image the image to draw
- * @param blend use alpha blending
+ * @param mode blending/compositing mode (see protocol::PutImage)
  */
-void Layer::putImage(int x, int y, QImage image, bool blend)
+void Layer::putImage(int x, int y, QImage image, int mode)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
 
@@ -422,8 +427,8 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 	const int x0 = Tile::roundDown(x);
 	const int y0 = Tile::roundDown(y);
 	
-	if(x-x0 || y-y0 || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
-		image = padImageToTileBoundary(x, y, image, blend);
+	if(x-x0 || y-y0 || image.width() % Tile::SIZE || image.height() % Tile::SIZE || mode!=0) {
+		image = padImageToTileBoundary(x, y, image, mode);
 	}
 	
 	const int tx0 = x0 / Tile::SIZE;

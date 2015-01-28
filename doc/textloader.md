@@ -137,11 +137,9 @@ be in the same format as used in the protocol.
 
 ### putimage
 
-Usage: `putimage ctxId layerId x y [blend] filename`
+Usage: `putimage ctxId layerId x y replace|blend|under|erase filename`
 
 Load an image and draw it onto the given canvas at the specified location.
-If the "blend" parameter is set, the image is alpha blended. Otherwise the
-image will simply replace the existing pixels.
 The file name is relative to the path of the command file.
 The special filename "-" means the latest inline image should be used.
 

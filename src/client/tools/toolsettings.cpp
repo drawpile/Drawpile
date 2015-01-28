@@ -1071,7 +1071,7 @@ void AnnotationSettings::bake()
 
 	int layer = _layerlist->currentLayer();
 	_client->sendUndopoint();
-	_client->sendImage(layer, a->rect().x(), a->rect().y(), img, true);
+	_client->sendImage(layer, a->rect().x(), a->rect().y(), img);
 	_client->sendAnnotationDelete(selected());
 	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }

@@ -8,7 +8,7 @@ putimage 1 1 64 64 blend test.png
 
 # Tile boundary aligned putimage without blending
 # This overwrites the background color with transparency
-putimage 1 1 128 64 test.png
+putimage 1 1 128 64 replace test.png
 
 # Not boundary aligned
 putimage 1 1 96 128 blend test.png
@@ -16,7 +16,7 @@ putimage 1 1 96 128 blend test.png
 # Not boundary aligned without blending
 # This uses the same code path as blended put, since
 # tile background must be preserved.
-putimage 1 1 160 128 test.png
+putimage 1 1 160 128 replace test.png
 
 # Putimages that are completely outside canvas boundaries
 putimage 1 1 300 0 blend test.png

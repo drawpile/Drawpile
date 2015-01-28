@@ -49,7 +49,7 @@ int PutImage::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	*(ptr++) = contextId();
 	qToBigEndian(_layer, ptr); ptr += 2;
-	*(ptr++) = _flags;
+	*(ptr++) = _mode;
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;
 	qToBigEndian(_w, ptr); ptr += 4;
@@ -64,7 +64,7 @@ bool PutImage::payloadEquals(const Message &m) const
 	const PutImage &p = static_cast<const PutImage&>(m);
 	return
 		layer() == p.layer() &&
-		flags() == p.flags() &&
+		mode() == p.mode() &&
 		x() == p.x() &&
 		y() == p.y() &&
 		width() == p.width() &&

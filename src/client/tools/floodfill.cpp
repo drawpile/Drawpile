@@ -66,7 +66,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 	// consist of large solid areas, meaning they should compress ridiculously well.
 	client().sendUndopoint();
-	client().sendImage(layer(), fill.x, fill.y, fill.image, true);
+	client().sendImage(layer(), fill.x, fill.y, fill.image);
 
 	QApplication::restoreOverrideCursor();
 }

@@ -176,13 +176,14 @@ Compatibility Reader::open()
 		if(myversion < _formatversion)
 			return MINOR_INCOMPATIBILITY;
 
-#if DRAWPILE_PROTO_MAJOR_VERSION != 13 || DRAWPILE_PROTO_MINOR_VERSION != 4
+#if DRAWPILE_PROTO_MAJOR_VERSION != 13 || DRAWPILE_PROTO_MINOR_VERSION != 5
 #error Update recording compatability check!
 #endif
 
 		// Old versions known to be compatible
 		switch(_formatversion) {
-		case version32(12, 4): // fully compatible (with support code)
+		case version32(12, 5): // fully compatible (with support code)
+		case version32(12, 4):
 			return COMPATIBLE;
 
 		case version32(11, 3): // supported, but expect minor rendering differences

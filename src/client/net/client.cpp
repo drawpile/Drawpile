@@ -259,9 +259,9 @@ void Client::sendPenup()
  * @param y imagee y coordinate
  * @param image image data
  */
-void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
+void Client::sendImage(int layer, int x, int y, const QImage &image, int mode)
 {
-	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, blend);
+	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, mode);
 	for(MessagePtr msg : msgs)
 		sendCommand(msg);
 

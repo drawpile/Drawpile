@@ -95,6 +95,11 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 13.5 (0.9.8)
+
+ * Added ERASE and UNDER composition modes to PutImage
+ * Fully backward compatible
+
 Protocol 13.4 (0.9.7)
 
  * Layer IDs and annotation IDs are now 16 bits long and assigned by the client.

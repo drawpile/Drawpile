@@ -47,13 +47,16 @@ namespace protocol {
  */
 class PutImage : public Message {
 public:
-	static const int MODE_BLEND = (1<<0);
+	static const uint8_t MODE_REPLACE = 0; // replace original pixels
+	static const uint8_t MODE_BLEND = 1;   // regular alpha blending
+	static const uint8_t MODE_UNDER = 2;   // alpha blend with Destination Over compositing
+	static const uint8_t MODE_ERASE = 3;   // Destination Out compositing
 
 	//! Maximum length of image data array
 	static const int MAX_LEN = (1<<16) - 19;
 
-	PutImage(uint8_t ctx, uint16_t layer, uint8_t flags, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
-	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
+	PutImage(uint8_t ctx, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
+	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _mode(mode), _x(x), _y(y), _w(w), _h(h), _image(image)
 	{
 		Q_ASSERT(image.length() <= MAX_LEN);
 	}
@@ -61,7 +64,7 @@ public:
 	static PutImage *deserialize(const uchar *data, uint len);
 	
 	uint16_t layer() const { return _layer; }
-	uint8_t flags() const { return _flags; }
+	uint8_t mode() const { return _mode; }
 	uint32_t x() const { return _x; }
 	uint32_t y() const { return _y; }
 	uint32_t width() const { return _w; }
@@ -75,7 +78,7 @@ protected:
 
 private:
 	uint16_t _layer;
-	uint8_t _flags;
+	uint8_t _mode;
 	uint32_t _x;
 	uint32_t _y;
 	uint32_t _w;

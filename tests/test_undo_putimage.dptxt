@@ -19,7 +19,7 @@ move 1 64 128
 penup 1
 
 undopoint 1
-putimage 1 1 64 64 test.png
+putimage 1 1 64 64 replace test.png
 
 undo 1 1
 

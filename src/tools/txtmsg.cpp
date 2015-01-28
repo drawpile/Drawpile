@@ -200,8 +200,12 @@ void putImageTxt(const PutImage *msg, QTextStream &out)
 		<< " " << msg->layer()
 		<< " " << msg->x()
 		<< " " << msg->y();
-	if((msg->flags() & PutImage::MODE_BLEND))
-		out << " blend";
+	switch(msg->mode()) {
+	case PutImage::MODE_REPLACE: out << " replace"; break;
+	case PutImage::MODE_BLEND: out << " blend"; break;
+	case PutImage::MODE_UNDER: out << " under"; break;
+	case PutImage::MODE_ERASE: out << " erase"; break;
+	}
 
 	out << " -\n";
 }

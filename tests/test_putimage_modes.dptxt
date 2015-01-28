@@ -1,0 +1,21 @@
+resize 1 0 300 300 0
+newlayer 1 1 #ffaacccc Background
+newlayer 1 2 #00000000 Foreground
+
+ctx 1 layer=2 size=20 hard=0
+
+move 1 0 150 ; 300 150
+penup 1
+
+# This should overwrite the background
+putimage 1 2 0 118 replace test.png
+
+# This is just regular alpha blending
+putimage 1 2 64 118 blend test.png
+
+# This should appear as if it was drawn on a layer below
+putimage 1 2 128 118 under test.png
+
+# This should erase the stroke
+putimage 1 2 192 118 erase test.png
+

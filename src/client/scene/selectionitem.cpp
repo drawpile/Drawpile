@@ -168,7 +168,7 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 
 		// Merge image
 		client->sendUndopoint();
-		client->sendImage(layer, _rect.x() + xoff, _rect.y() + yoff, image, true);
+		client->sendImage(layer, _rect.x() + xoff, _rect.y() + yoff, image);
 	}
 }
 

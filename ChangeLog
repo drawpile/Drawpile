@@ -7,6 +7,7 @@
  * New feature: Hold tool shortcut button to select the tool temporarily; releasing the button switches back.
  * Simplified Host dialog
  * Flat tool slot button style
+ * Minor protocol change: added new PutImage composition modes
 
 2015-01-16 Version 0.9.7
  * Fixed "host on remote server" dropdown box
