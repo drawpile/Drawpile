@@ -8,6 +8,7 @@
  * Simplified Host dialog
  * Flat tool slot button style
  * Minor protocol change: added new PutImage composition modes
+ * Blend flood fill color with soft outlines
 
 2015-01-16 Version 0.9.7
  * Fixed "host on remote server" dropdown box

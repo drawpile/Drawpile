@@ -31,11 +31,12 @@ namespace {
 
 class Floodfill {
 public:
-	Floodfill(const LayerStack *image, int sourceLayer, const QColor &color, int colorTolerance) :
+	Floodfill(const LayerStack *image, int sourceLayer, bool merge, const QColor &color, int colorTolerance) :
 		source(image),
 		scratch(0, 0, QString(), Qt::transparent, image->size()),
 		fill(0, 0, QString(), Qt::transparent, image->size()),
 		layer(sourceLayer),
+		merge(merge),
 		fillColor(color.rgba()),
 		tolerance(colorTolerance)
 	{ }
@@ -44,7 +45,9 @@ public:
 	{
 		Tile &t = scratch.rtile(x, y);
 		if(t.isNull()) {
-			if(layer>0) {
+			if(merge) {
+				t = source->getFlatTile(x, y);
+			} else {
 				const Layer *sl = source->getLayer(layer);
 				Q_ASSERT(sl);
 				const Tile &st = sl->tile(x, y);
@@ -52,9 +55,6 @@ public:
 					t = Tile(Qt::transparent);
 				else
 					t = st;
-
-			} else {
-				t = source->getFlatTile(x, y);
 			}
 		}
 
@@ -111,6 +111,19 @@ public:
 		if(isSameColor(oldColor, fillColor))
 			return;
 
+		// Get the original layer seed color (even in merged mode)
+		{
+			const Layer *sl = source->getLayer(layer);
+			Q_ASSERT(sl);
+
+			const int tx = startPoint.x() / Tile::SIZE;
+			const int ty = startPoint.y() / Tile::SIZE;
+			const int x = startPoint.x() - tx * Tile::SIZE;
+			const int y = startPoint.y() - ty * Tile::SIZE;
+
+			layerSeedColor = sl->tile(tx, ty).pixel(x, y);
+		}
+
 		QStack<QPoint> stack;
 		stack.push(startPoint);
 
@@ -154,6 +167,7 @@ public:
 	{
 		FillResult res;
 		res.image = fill.toCroppedImage(&res.x, &res.y);
+		res.layerSeedColor = layerSeedColor;
 		return res;
 	}
 
@@ -168,14 +182,18 @@ private:
 	// The fill layer, containing just the filled pixels
 	Layer fill;
 
-	// Layer to operate on. If 0, the merged image is used
+	// Target layer
 	int layer;
+
+	// Use merged pixel values?
+	bool merge;
 
 	// Fill color
 	QRgb fillColor;
 
 	// Seed color
 	QRgb oldColor;
+	QRgb layerSeedColor;
 
 	// Color matching tolerance
 	int tolerance;
@@ -218,12 +236,12 @@ QRect findOpaqueBoundingRect(const QImage &image)
 
 }
 
-FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer)
+FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge)
 {
 	Q_ASSERT(image);
 	Q_ASSERT(tolerance>=0);
 
-	Floodfill fill(image, layer, color, tolerance);
+	Floodfill fill(image, layer, merge, color, tolerance);
 
 	if(point.x() >=0 && point.x() < image->width() && point.y()>=0 && point.y() < image->height())
 		fill.start(point);
@@ -239,6 +257,8 @@ FillResult expandFill(const FillResult &input, int expansion, const QColor &colo
 	Q_ASSERT(input.image.format() == QImage::Format_ARGB32);
 
 	FillResult out;
+
+	out.layerSeedColor = input.layerSeedColor;
 
 	const int R = expansion;
 	const int D = R*2 + 1;

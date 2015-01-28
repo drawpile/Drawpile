@@ -35,6 +35,9 @@ struct FillResult {
 
 	//! bitmap Y offset
 	int y;
+
+	//! The pixel value of the point on the target layer where the fill started
+	QRgb layerSeedColor;
 };
 
 /**
@@ -44,10 +47,11 @@ struct FillResult {
  * @param point fill seed point
  * @param color fill color
  * @param tolerance color matching tolerance
- * @param layer the layer to operate on. If 0, the whole merged image is used
+ * @param layer the active layer
+ * @param merge if true, use merged pixel values from all layers
  * @return fill bitmap
  */
-FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer);
+FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge);
 
 /**
  * @brief Take a previous flood fill result and expand the filled area

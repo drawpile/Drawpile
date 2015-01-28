@@ -46,7 +46,8 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		QPoint(point.x(), point.y()),
 		color,
 		ts->fillTolerance(),
-		ts->sampleMerged() ? 0 : layer()
+		layer(),
+		ts->sampleMerged()
 	);
 
 	fill = paintcore::expandFill(fill, ts->fillExpansion(), color);
@@ -55,6 +56,13 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		QApplication::restoreOverrideCursor();
 		return;
 	}
+
+	// If the target area is transparent, use the UNDER compositing mode.
+	// This results in nice smooth blending with soft outlines, when the
+	// outline has different color than the fill.
+	int mode = 1;
+	if((fill.layerSeedColor & 0xff000000) == 0)
+		mode = 2;
 
 	// Flood fill is implemented using PutImage rather than a native command.
 	// This has the following advantages:
@@ -66,7 +74,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 	// consist of large solid areas, meaning they should compress ridiculously well.
 	client().sendUndopoint();
-	client().sendImage(layer(), fill.x, fill.y, fill.image);
+	client().sendImage(layer(), fill.x, fill.y, fill.image, mode);
 
 	QApplication::restoreOverrideCursor();
 }
