@@ -3,7 +3,8 @@
 set -e
 
 QTDIR="$HOME/Qt/5.4/clang_64"
-TITLE="Drawpile 0.9.7"
+VERSION=$(grep DRAWPILE_VERSION CMakeLists.txt | cut -d \" -f 2)
+TITLE="Drawpile $VERSION"
 
 # Create build directory
 mkdir -p mac-deploy
