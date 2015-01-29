@@ -20,7 +20,6 @@
 #include "collection.h"
 #include "colorbutton_plugin.h"
 #include "brushpreview_plugin.h"
-#include "imageselector_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)
@@ -28,7 +27,6 @@ DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
     widgets
 		<< new ColorButtonPlugin(this)
 		<< new BrushPreviewPlugin(this)
-		<< new ImageSelectorPlugin(this)
 		;
 }
 
