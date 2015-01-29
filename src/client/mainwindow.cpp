@@ -2185,6 +2185,9 @@ void MainWindow::setupActions()
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
+	smallerbrush->setAutoRepeat(true);
+	biggerbrush->setAutoRepeat(true);
+
 	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
 	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
 
