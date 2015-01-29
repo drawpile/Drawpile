@@ -25,17 +25,17 @@ namespace docks {
 
 	QString defaultDockStylesheet()
 	{
-#ifdef Q_OS_MAC // the default look is fine on Mac
-		return QString();
-#else
-		static QString css = QStringLiteral(
+#ifdef Q_OS_WIN
+		return QStringLiteral(
 			"QDockWidget {"
 				"titlebar-close-icon: url(:/icons/builtin/dock-close.png);"
 				"titlebar-normal-icon: url(:/icons/builtin/dock-detach.png);"
 
 			"}"
 		);
-		return css;
+#else
+		// Standard look is fine on Linux and OSX
+		return QString();
 #endif
 	}
 }
