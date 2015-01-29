@@ -35,6 +35,7 @@ namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
+	class ViewStatus;
 }
 namespace docks {
 	class ToolSettings;
@@ -209,6 +210,7 @@ class MainWindow : public QMainWindow {
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 		widgets::NetStatus *_netstatus;
+		widgets::ViewStatus *_viewstatus;
 
 		dialogs::PlaybackDialog *_dialog_playback;
 

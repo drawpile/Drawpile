@@ -18,25 +18,35 @@
 */
 
 #include "viewstatus.h"
+#include "utils/icon.h"
 
 #include <QLabel>
 #include <QSlider>
 #include <QHBoxLayout>
 #include <QAction>
+#include <QToolButton>
 
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
 	: QWidget(parent)
 {
-	setMinimumHeight(16+2);
+	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
 
 	layout->setMargin(1);
-	layout->setSpacing(4);
+	layout->setSpacing(0);
 
 	// Zoom level
 	QLabel *zlbl = new QLabel(tr("Zoom:"), this);
+
+	_zoomIn = new QToolButton(this);
+	_zoomIn->setAutoRaise(true);
+	_zoomOut = new QToolButton(this);
+	_zoomOut->setAutoRaise(true);
+	_zoomOriginal = new QToolButton(this);
+	_zoomOriginal->setAutoRaise(true);
+
 
 	_zoomSlider = new QSlider(Qt::Horizontal, this);
 	_zoomSlider->setMaximumWidth(120);
@@ -53,7 +63,10 @@ ViewStatus::ViewStatus(QWidget *parent)
 	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
 
 	layout->addWidget(zlbl);
+	layout->addWidget(_zoomOriginal);
+	layout->addWidget(_zoomOut);
 	layout->addWidget(_zoomSlider);
+	layout->addWidget(_zoomIn);
 	layout->addWidget(_zoom);
 
 	addZoomShortcut(50);
@@ -91,6 +104,13 @@ ViewStatus::ViewStatus(QWidget *parent)
 	addAngleShortcut(90);
 	addAngleShortcut(135);
 	addAngleShortcut(180);
+}
+
+void ViewStatus::setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal)
+{
+	_zoomIn->setDefaultAction(zoomIn);
+	_zoomOut->setDefaultAction(zoomOut);
+	_zoomOriginal->setDefaultAction(zoomOriginal);
 }
 
 void ViewStatus::addZoomShortcut(int zoomLevel)

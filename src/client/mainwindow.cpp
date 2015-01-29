@@ -162,7 +162,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	mainwinlayout->addWidget(_viewStatusBar);
 
 	// Create status indicator widgets
-	auto *viewstatus = new widgets::ViewStatus(this);
+	_viewstatus = new widgets::ViewStatus(this);
 
 	_netstatus = new widgets::NetStatus(this);
 	_recorderstatus = new QLabel(this);
@@ -184,7 +184,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	}
 #endif
 
-	_viewStatusBar->addPermanentWidget(viewstatus);
+	_viewStatusBar->addPermanentWidget(_viewstatus);
 	_viewStatusBar->addPermanentWidget(_netstatus);
 	_viewStatusBar->addPermanentWidget(_recorderstatus);
 	_viewStatusBar->addPermanentWidget(_lockstatus);
@@ -205,14 +205,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, SIGNAL(colorDropped(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(dropUrl(QUrl)));
-	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
+	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), _viewstatus, SLOT(setTransformation(qreal, qreal)));
 
 #ifndef Q_OS_MAC // OSX provides this feature itself
 	connect(_view, &widgets::CanvasView::hotBorder, this, &MainWindow::hotBorderMenubar);
 #endif
 
-	connect(viewstatus, SIGNAL(zoomChanged(qreal)), _view, SLOT(setZoom(qreal)));
-	connect(viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
+	connect(_viewstatus, SIGNAL(zoomChanged(qreal)), _view, SLOT(setZoom(qreal)));
+	connect(_viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
 
 	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
 	
@@ -2074,6 +2074,8 @@ void MainWindow::setupActions()
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
 	connect(showgrid, SIGNAL(triggered(bool)), _view, SLOT(setPixelGrid(bool)));
 
+	_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
+
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
@@ -2195,10 +2197,6 @@ void MainWindow::setupActions()
 	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
 	drawtools->addActions(_drawingtools->actions());
-	drawtools->addSeparator();
-	drawtools->addAction(zoomin);
-	drawtools->addAction(zoomout);
-	drawtools->addAction(zoomorig);
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 

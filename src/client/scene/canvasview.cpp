@@ -118,12 +118,15 @@ void CanvasView::setToolSettings(docks::ToolSettings *settings)
 
 void CanvasView::zoomin()
 {
-	setZoom(_zoom * 2);
+	setZoom(qRound((_zoom + 100) / 100) * 100);
 }
 
 void CanvasView::zoomout()
 {
-	setZoom(_zoom / 2);
+	if(_zoom <= 100)
+		setZoom(qRound((_zoom - 50) / 50) * 50);
+	else
+		setZoom(qRound((_zoom - 100) / 100) * 100);
 }
 
 /**

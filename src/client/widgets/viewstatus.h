@@ -23,6 +23,7 @@
 
 class QLabel;
 class QSlider;
+class QToolButton;
 
 namespace widgets {
 
@@ -31,6 +32,8 @@ class ViewStatus : public QWidget
 Q_OBJECT
 public:
 	ViewStatus(QWidget *parent=0);
+
+	void setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal);
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
@@ -45,6 +48,7 @@ private:
 
 	QSlider *_zoomSlider, *_angleSlider;
 	QLabel *_zoom, *_angle;
+	QToolButton *_zoomIn, *_zoomOut, *_zoomOriginal;
 };
 
 }
