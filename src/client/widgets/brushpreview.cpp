@@ -38,7 +38,7 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), _preview(0), _sizepressure(false),
 	_opacitypressure(false), _hardnesspressure(false), _colorpressure(false), _smudgepressure(false),
 	_color1(Qt::black), _color2(Qt::white),
-	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _tranparentbg(false)
+	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), _tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
@@ -96,6 +96,13 @@ void BrushPreview::setFloodFillTolerance(int tolerance)
 void BrushPreview::setFloodFillExpansion(int expansion)
 {
 	_fillExpansion = expansion;
+	_needupdate = true;
+	update();
+}
+
+void BrushPreview::setUnderFill(bool underfill)
+{
+	_underFill = underfill;
 	_needupdate = true;
 	update();
 }
@@ -185,7 +192,7 @@ void BrushPreview::updatePreview()
 		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), _color2, _fillTolerance, 0, false);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, _color2);
-		layer->putImage(fr.x, fr.y, fr.image, true);
+		layer->putImage(fr.x, fr.y, fr.image, _underFill ? 2 : 1);
 	}
 
 	_needupdate=false;

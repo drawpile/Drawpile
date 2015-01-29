@@ -1132,12 +1132,18 @@ bool FillSettings::sampleMerged() const
 	return _ui->samplemerged->isChecked();
 }
 
+bool FillSettings::underFill() const
+{
+	return _ui->fillunder->isChecked();
+}
+
 ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("tolerance", fillTolerance());
 	cfg.setValue("expand", fillExpansion());
 	cfg.setValue("samplemerged", sampleMerged());
+	cfg.setValue("underfill", underFill());
 	return cfg;
 }
 
@@ -1160,6 +1166,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->tolerance->setValue(cfg.value("tolerance", 0).toInt());
 	_ui->expand->setValue(cfg.value("expand", 0).toInt());
 	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
+	_ui->fillunder->setChecked(cfg.value("underfill", true).toBool());
 }
 
 void FillSettings::quickAdjust1(float adjustment)

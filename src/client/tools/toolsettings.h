@@ -464,6 +464,7 @@ public:
 	int fillTolerance() const;
 	int fillExpansion() const;
 	bool sampleMerged() const;
+	bool underFill() const;
 
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;

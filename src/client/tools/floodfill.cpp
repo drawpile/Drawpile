@@ -61,7 +61,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	// This results in nice smooth blending with soft outlines, when the
 	// outline has different color than the fill.
 	int mode = 1;
-	if((fill.layerSeedColor & 0xff000000) == 0)
+	if(ts->underFill() && (fill.layerSeedColor & 0xff000000) == 0)
 		mode = 2;
 
 	// Flood fill is implemented using PutImage rather than a native command.

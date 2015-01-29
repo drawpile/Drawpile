@@ -130,6 +130,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! This is used for flood fill preview only
 		void setFloodFillExpansion(int expansion);
 
+		//! This is used for flood fill preview only
+		void setUnderFill(bool underfill);
+
 	signals:
 		void requestFgColorChange();
 		void requestBgColorChange();
@@ -160,6 +163,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		qreal _oldhardness1, _oldhardness2;
 		int _fillTolerance;
 		int _fillExpansion;
+		bool _underFill;
 		bool _needupdate;
 		bool _tranparentbg;
 

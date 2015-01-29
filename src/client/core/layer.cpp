@@ -1040,7 +1040,7 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	layer->_opacity = opacity;
 	layer->_blend = blend;
 	layer->_hidden = hidden;
-	layer->putImage(0, 0, img, false);
+	layer->putImage(0, 0, img, 0);
 
 	// Read sublayers
 	quint8 sublayers;
