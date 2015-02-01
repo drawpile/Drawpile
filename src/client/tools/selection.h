@@ -22,39 +22,49 @@
 #include "scene/selectionitem.h"
 #include "tool.h"
 
-#include <QPolygon>
-
 namespace tools {
+
+//! Base class for selection tools
+class SelectionTool : public Tool {
+public:
+	SelectionTool(ToolCollection &owner, Type type, QCursor cursor=Qt::CrossCursor)
+		: Tool(owner, type,  cursor) { }
+
+	void begin(const paintcore::Point& point, bool right, float zoom);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
+	void end();
+
+protected:
+	virtual void initSelection() = 0;
+	virtual void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center) = 0;
+
+	QPoint _start, _p1;
+	drawingboard::SelectionItem::Handle _handle;
+};
 
 /**
  * @brief Selection tool
  *
  * This is used for selecting regions for copying & pasting.
  */
-class RectangleSelection : public Tool {
+class RectangleSelection : public SelectionTool {
 public:
 	RectangleSelection(ToolCollection &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
-
-private:
-	QPoint _start, _p1;
-	drawingboard::SelectionItem::Handle _handle;
+protected:
+	void initSelection();
+	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
 };
 
-class PolygonSelection : public Tool {
+class PolygonSelection : public SelectionTool {
 public:
 	PolygonSelection(ToolCollection &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
-private:
-	drawingboard::SelectionItem::Handle _handle;
-	QPoint _start;
+protected:
+	void initSelection();
+	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
 };
 
 }

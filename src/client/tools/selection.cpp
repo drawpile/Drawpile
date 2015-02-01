@@ -26,12 +26,7 @@
 
 namespace tools {
 
-RectangleSelection::RectangleSelection(ToolCollection &owner)
-	: Tool(owner, SELECTION, QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
-{
-}
-
-void RectangleSelection::begin(const paintcore::Point &point, bool right, float zoom)
+void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	// Right click to dismiss selection (and paste buffer)
 	if(right) {
@@ -51,28 +46,18 @@ void RectangleSelection::begin(const paintcore::Point &point, bool right, float 
 		if(scene().selectionItem())
 			scene().selectionItem()->pasteToCanvas(&client(), layer());
 
-		scene().setSelectionItem(QRectF(point, point).toRect());
+		initSelection();
 	}
 }
 
-void RectangleSelection::motion(const paintcore::Point &point, bool constrain, bool center)
+void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	if(!scene().selectionItem())
 		return;
 
 	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
-		QPointF p;
-		if(constrain)
-			p = constraints::square(_start, point);
-		else
-			p = point;
+		newSelectionMotion(point, constrain, center);
 
-		if(center)
-			_p1 = _start - (p.toPoint() - _start);
-		else
-			_p1 = _start;
-
-		scene().selectionItem()->setRect(QRectF(_p1, p).normalized().toRect());
 	} else {
 		// TODO constrain
 		QPointF p = point - _start;
@@ -81,7 +66,7 @@ void RectangleSelection::motion(const paintcore::Point &point, bool constrain, b
 	}
 }
 
-void RectangleSelection::end()
+void SelectionTool::end()
 {
 	if(!scene().selectionItem())
 		return;
@@ -92,64 +77,56 @@ void RectangleSelection::end()
 		scene().setSelectionItem(0);
 }
 
-PolygonSelection::PolygonSelection(ToolCollection &owner)
-	: Tool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 2))
+RectangleSelection::RectangleSelection(ToolCollection &owner)
+	: SelectionTool(owner, SELECTION, QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
 {
 }
 
-void PolygonSelection::begin(const paintcore::Point &point, bool right, float zoom)
+void RectangleSelection::initSelection()
 {
-	// Right click to dismiss selection (and paste buffer)
-	if(right) {
-		scene().setSelectionItem(nullptr);
-		return;
-	}
+	scene().setSelectionItem(QRect(_start, _start));
+}
 
-	if(scene().selectionItem())
-		_handle = scene().selectionItem()->handleAt(point.toPoint(), zoom);
+void RectangleSelection::newSelectionMotion(const paintcore::Point& point, bool constrain, bool center)
+{
+	QPointF p;
+	if(constrain)
+		p = constraints::square(_start, point);
 	else
-		_handle = drawingboard::SelectionItem::OUTSIDE;
+		p = point;
 
-	_start = point.toPoint();
+	if(center)
+		_p1 = _start - (p.toPoint() - _start);
+	else
+		_p1 = _start;
 
-	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		if(scene().selectionItem())
-			scene().selectionItem()->pasteToCanvas(&client(), layer());
-
-		scene().setSelectionItem(QPolygon({ point.toPoint() }));
-	}
+	scene().selectionItem()->setRect(QRectF(_p1, p).normalized().toRect());
 }
 
-void PolygonSelection::motion(const paintcore::Point &point, bool constrain, bool center)
+PolygonSelection::PolygonSelection(ToolCollection &owner)
+	: SelectionTool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 2))
+{
+}
+
+void PolygonSelection::initSelection()
+{
+	scene().setSelectionItem(QPolygon({ _start }));
+}
+
+void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	if(!scene().selectionItem())
-		return;
-
-	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
-		scene().selectionItem()->addPointToPolygon(point.toPoint());
-
-	} else {
-		// TODO constrain
-		QPointF p = point - _start;
-		scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
-		_start = point.toPoint();
-	}
+	scene().selectionItem()->addPointToPolygon(point.toPoint());
 }
 
 void PolygonSelection::end()
 {
-	if(!scene().selectionItem())
-		return;
+	if(scene().selectionItem())
+		scene().selectionItem()->closePolygon();
 
-	scene().selectionItem()->closePolygon();
-
-	// Remove tiny selections
-	QRect sel = scene().selectionItem()->polygonRect();
-	if(sel.width() * sel.height() <= 2)
-		scene().setSelectionItem(nullptr);
+	SelectionTool::end();
 }
 
 
