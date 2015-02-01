@@ -2157,12 +2157,13 @@ void MainWindow::setupActions()
 	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
 	QAction *smudgetool = makeAction("toolsmudge", "draw-watercolor", tr("&Watercolor"), tr("A brush that picks up color from the layer"), QKeySequence("W"), true);
 	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
-	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
 	QAction *filltool = makeAction("toolfill", "fill-color", tr("&Flood Fill"), tr("Fill areas"), QKeySequence("F"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
+
+	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
@@ -2173,12 +2174,12 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(brushtool);
 	_drawingtools->addAction(smudgetool);
 	_drawingtools->addAction(erasertool);
-	_drawingtools->addAction(pickertool);
 	_drawingtools->addAction(linetool);
 	_drawingtools->addAction(recttool);
 	_drawingtools->addAction(ellipsetool);
 	_drawingtools->addAction(filltool);
 	_drawingtools->addAction(annotationtool);
+	_drawingtools->addAction(pickertool);
 	_drawingtools->addAction(lasertool);
 	_drawingtools->addAction(selectiontool);
 
@@ -2207,7 +2208,12 @@ void MainWindow::setupActions()
 	drawtools->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
-	drawtools->addActions(_drawingtools->actions());
+	// Add a separator before color picker to separate brushes from non-destructive tools
+	for(QAction *dt : _drawingtools->actions()) {
+		if(dt == pickertool)
+			drawtools->addSeparator();
+		drawtools->addAction(dt);
+	}
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
