@@ -614,6 +614,10 @@ void MainWindow::readSettings(bool windowpos)
 	getAction("brushoutline")->setChecked(brushoutline);
 	_view->setOutline(brushoutline);
 
+	bool brushcrosshair = cfg.value("crosshair", true).toBool();
+	getAction("brushcrosshair")->setChecked(brushcrosshair);
+	_view->setCrosshair(brushcrosshair);
+
 	cfg.endGroup();
 
 	// Customize shortcuts
@@ -643,6 +647,7 @@ void MainWindow::writeSettings()
 	_dock_toolsettings->saveSettings();
 	cfg.beginGroup("tools");
 	cfg.setValue("outline", getAction("brushoutline")->isChecked());
+	cfg.setValue("crosshair", getAction("brushcrosshair")->isChecked());
 }
 
 /**
@@ -2012,6 +2017,7 @@ void MainWindow::setupActions()
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show Brush &Outline"), QString(), QKeySequence(), true);
+	QAction *showcrosshair = makeAction("brushcrosshair", 0, tr("Show Crosshair C&ursor"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
 	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
@@ -2068,6 +2074,7 @@ void MainWindow::setupActions()
 	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
 
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
+	connect(showcrosshair, SIGNAL(triggered(bool)), _view, SLOT(setCrosshair(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
@@ -2095,6 +2102,7 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(showoutline);
+	viewmenu->addAction(showcrosshair);
 	viewmenu->addAction(showannotations);
 	viewmenu->addAction(showusermarkers);
 	viewmenu->addAction(showuserlayers);

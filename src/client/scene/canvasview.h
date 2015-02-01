@@ -129,6 +129,9 @@ class CanvasView : public QGraphicsView
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);
 
+		//! Enable or disable the crosshair cursor
+		void setCrosshair(bool enable);
+
 		//! Enable or disable pixel grid (shown only at high zoom levels)
 		void setPixelGrid(bool enable);
 
@@ -245,6 +248,7 @@ class CanvasView : public QGraphicsView
 
 		float _outlinesize;
 		bool _enableoutline, _showoutline, _subpixeloutline;
+		bool _enablecrosshair;
 		QCursor _cursor, _colorpickcursor;
 
 		//! View zoom in percents

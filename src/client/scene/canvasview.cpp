@@ -50,8 +50,8 @@ namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
-	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(0),
-	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
+	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
+	_enableoutline(true), _showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true),
@@ -173,9 +173,9 @@ void CanvasView::resetCursor()
 	} else {
 		const QCursor &c = _current_tool->cursor();
 		// We use our own custom cross cursor instead of the standard one
-		if(c.shape() == Qt::CrossCursor)
-			viewport()->setCursor(_cursor);
-		else
+		if(c.shape() == Qt::CrossCursor) {
+			viewport()->setCursor(_enablecrosshair ? _cursor : QCursor(Qt::BlankCursor));
+		} else
 			viewport()->setCursor(c);
 	}
 }
@@ -199,6 +199,12 @@ void CanvasView::setOutline(bool enable)
 	_enableoutline = enable;
 }
 
+void CanvasView::setCrosshair(bool enable)
+{
+	_enablecrosshair = enable;
+	resetCursor();
+}
+
 void CanvasView::setPixelGrid(bool enable)
 {
 	_pixelgrid = enable;
@@ -211,7 +217,7 @@ void CanvasView::setPixelGrid(bool enable)
 void CanvasView::setOutlineSize(int size)
 {
 	float updatesize = _outlinesize;
-	_outlinesize = size;
+	_outlinesize = qMax(2, size);
 	if(_enableoutline && _showoutline) {
 		if(_outlinesize>updatesize)
 			updatesize = _outlinesize;
@@ -242,8 +248,8 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
-	if(_enableoutline && _showoutline && _outlinesize>1 && !_locked) {
-		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2,_outlinesize/2),
+	if(_enableoutline && _showoutline && !_locked) {
+		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2, _outlinesize/2),
 					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
 			painter->save();
