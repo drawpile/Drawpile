@@ -40,7 +40,6 @@ public:
 	void setPolygon(const QPolygon &polygon);
 	void translate(const QPoint &offset);
 
-	QPolygon polygon() const { return _polygon.toPolygon(); }
 	QRect polygonRect() const { return _polygon.boundingRect().toRect(); }
 
 	//! Get a mask image of the polygon
@@ -57,6 +56,9 @@ public:
 
 	//! Adjust selection position or size
 	void adjustGeometry(Handle handle, const QPoint &delta);
+
+	//! Rotate selection around its center by the given amount
+	void rotate(float angle);
 
 	//! Set the paste buffer
 	void setPasteImage(const QImage &image);
@@ -78,6 +80,7 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
+	QPolygon polygon() const { return _polygon.toPolygon(); }
 	void adjust(int dx1, int dy1, int dx2, int dy2);
 
 	QPolygonF _polygon;

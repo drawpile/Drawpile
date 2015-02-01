@@ -180,6 +180,23 @@ void SelectionItem::adjust(int dx1, int dy1, int dx2, int dy2)
 	}
 }
 
+void SelectionItem::rotate(float angle)
+{
+	if(qAbs(angle) < 0.0001)
+		return;
+
+	const QPointF origin = _polygon.boundingRect().center();
+	QTransform t;
+	t.translate(origin.x(), origin.y());
+	t.rotateRadians(angle);
+
+	prepareGeometryChange();
+	for(int i=0;i<_polygon.size();++i) {
+		QPointF p = _polygon[i] - origin;
+		_polygon[i] = t.map(p);
+	}
+}
+
 void SelectionItem::setPasteImage(const QImage &image)
 {
 	_pasteimg = image;
@@ -194,7 +211,26 @@ QRectF SelectionItem::boundingRect() const
 void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	if(!_pasteimg.isNull()) {
-		painter->drawImage(_polygon.boundingRect(), _pasteimg);
+		if(_polygon.size() == 4) {
+			QPolygonF src({
+				QPointF(0, 0),
+				QPointF(_pasteimg.width(), 0),
+				QPointF(_pasteimg.width(), _pasteimg.height()),
+				QPointF(0, _pasteimg.height())
+			});
+
+			QTransform t;
+			if(QTransform::quadToQuad(src, _polygon, t)) {
+				painter->save();
+				painter->setTransform(t, true);
+				painter->drawImage(0, 0, _pasteimg);
+				painter->restore();
+			} else
+				qWarning("Couldn't transform pasted image!");
+
+		} else {
+			qWarning("Pasted selection item with non-rectangular polygon!");
+		}
 	}
 
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
@@ -246,10 +282,35 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 
 	const QRect rect = _polygon.boundingRect().toRect();
 
-	QImage image = _pasteimg;
+	if(_polygon.size()!=4) {
+		qWarning("Paste selection is not a quad!");
+		return;
+	}
 
-	if(image.size() != rect.size())
-		image = image.scaled(rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	// Transform image to selection rectangle
+	QPolygonF src({
+		QPointF(0, 0),
+		QPointF(_pasteimg.width(), 0),
+		QPointF(_pasteimg.width(), _pasteimg.height()),
+		QPointF(0, _pasteimg.height())
+	});
+
+	QPolygonF target = _polygon.translated(-_polygon.boundingRect().topLeft());
+
+	QTransform transform;
+	if(!QTransform::quadToQuad(src, target, transform)) {
+		qWarning("Couldn't transform pasted image!");
+		return;
+	}
+
+	// Paint transformed image
+	QImage image(rect.size(), QImage::Format_ARGB32);
+	image.fill(0);
+	QPainter imagep(&image);
+	imagep.setRenderHint(QPainter::SmoothPixmapTransform);
+	imagep.setTransform(transform);
+	imagep.drawImage(0, 0, _pasteimg);
+
 
 	// Clip image to scene
 	const QRect scenerect(0, 0, scene()->width(), scene()->height());

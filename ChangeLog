@@ -1,5 +1,7 @@
 2015-0?-?? Version 0.9.9
  * Added "show crosshair cursor" menu action
+ * Added "Lasso" selection tool
+ * Selections (and pasted images) can now be rotated as well as scaled
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode

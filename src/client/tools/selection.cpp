@@ -24,6 +24,8 @@
 #include "tools/selection.h"
 #include "tools/utils.h"
 
+#include <cmath>
+
 namespace tools {
 
 void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
@@ -59,9 +61,23 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		// TODO constrain
 		QPointF p = point - _start;
-		scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
+
+		if(_handle == drawingboard::SelectionItem::TRANSLATE && center) {
+			// We use the center constraint during translation to rotate the selection
+			const QPoint center = scene().selectionItem()->polygonRect().center();
+
+			double a0 = atan2(_start.y() - center.y(), _start.x() - center.x());
+			double a1 = atan2(point.y() - center.y(), point.x() - center.x());
+
+			scene().selectionItem()->rotate(a1-a0);
+
+		} else {
+			// TODO constraints
+
+			scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
+		}
+
 		_start = point.toPoint();
 	}
 }
