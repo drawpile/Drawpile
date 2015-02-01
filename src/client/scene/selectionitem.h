@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,8 +37,20 @@ public:
 	SelectionItem(QGraphicsItem *parent=0);
 
 	void setRect(const QRect &rect);
+	void setPolygon(const QPolygon &polygon);
+	void translate(const QPoint &offset);
 
-	QRect rect() const { return _rect; }
+	QPolygon polygon() const { return _polygon.toPolygon(); }
+	QRect polygonRect() const { return _polygon.boundingRect().toRect(); }
+
+	//! Get a mask image of the polygon
+	QPair<QPoint,QImage> polygonMask(const QColor &color) const;
+
+	//! Check if this selection is a non-rotated rectangle
+	bool isAxisAlignedRectangle() const;
+
+	void addPointToPolygon(const QPoint &point);
+	void closePolygon();
 
 	//! Get the translation handle at the point
 	Handle handleAt(const QPoint &point, float zoom) const;
@@ -66,9 +78,12 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
-	QRect _rect;
+	void adjust(int dx1, int dy1, int dx2, int dy2);
+
+	QPolygonF _polygon;
 	qreal _marchingants;
 	QImage _pasteimg;
+	bool _closePolygon;
 };
 
 }

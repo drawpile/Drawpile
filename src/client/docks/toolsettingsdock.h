@@ -183,6 +183,7 @@ private:
 	tools::FillSettings *_fillsettings;
 	tools::AnnotationSettings *_textsettings;
 	tools::ToolSettings *_selectionsettings;
+	tools::ToolSettings *_polyselectionsettings;
 	tools::LaserPointerSettings  *_lasersettings;
 
 	tools::ToolSettings *_currenttool;

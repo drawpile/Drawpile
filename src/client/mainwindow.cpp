@@ -1605,7 +1605,9 @@ void MainWindow::pasteFile(const QUrl &url)
 void MainWindow::pasteImage(const QImage &image)
 {
 	if(_canvas->hasImage()) {
-		getAction("toolselectrect")->trigger();
+		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION)
+			getAction("toolselectrect")->trigger();
+
 		_canvas->pasteFromImage(image, _view->viewCenterPoint());
 	} else {
 		// Canvas not yet initialized? Initialize with clipboard content
@@ -1681,14 +1683,27 @@ void MainWindow::fillArea(const QColor &color)
 {
 	const QRect bounds = QRect(0, 0, _canvas->width(), _canvas->height());
 	QRect area;
-	if(_canvas->selectionItem())
-		area = _canvas->selectionItem()->rect().intersected(bounds);
-	else
+	QImage mask;
+	QPoint maskOffset;
+
+	if(_canvas->selectionItem()) {
+		if(_canvas->selectionItem()->isAxisAlignedRectangle()) {
+			area = _canvas->selectionItem()->polygonRect().intersected(bounds);
+		} else {
+			QPair<QPoint,QImage> m = _canvas->selectionItem()->polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
+			maskOffset = m.first;
+			mask = m.second;
+		}
+	} else
 		area = bounds;
 
-	if(!area.isEmpty()) {
+	if(!area.isEmpty() || !mask.isNull()) {
 		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), area, color);
+
+		if(mask.isNull())
+			_client->sendFillRect(_dock_layers->currentLayer(), area, color);
+		else
+			_client->sendImage(_dock_layers->currentLayer(), maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
 	}
 }
 
@@ -2165,7 +2180,8 @@ void MainWindow::setupActions()
 
 	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
-	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
+	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select (Rectangular)"), tr("Select area for copying"), QKeySequence("S"), true);
+	QAction *lassotool = makeAction("toolselectpolygon", "edit-select", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("P"), true); // TODO select-lasso drawicon
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
@@ -2182,6 +2198,7 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(pickertool);
 	_drawingtools->addAction(lasertool);
 	_drawingtools->addAction(selectiontool);
+	_drawingtools->addAction(lassotool);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());

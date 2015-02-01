@@ -44,7 +44,8 @@ ToolCollection::ToolCollection()
 	_tools[FLOODFILL] = new FloodFill(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
 	_tools[LASERPOINTER] = new LaserPointer(*this);
-	_tools[SELECTION] = new Selection(*this);
+	_tools[SELECTION] = new RectangleSelection(*this);
+	_tools[POLYGONSELECTION] = new PolygonSelection(*this);
 }
 
 /**

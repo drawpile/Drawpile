@@ -4,6 +4,7 @@
         <file>colorpicker.png</file>
         <file>ellipse.png</file>
         <file>rectangle.png</file>
+        <file>select-lasso.png</file>
         <file>select-rectangle.png</file>
         <file>text.png</file>
     </qresource>

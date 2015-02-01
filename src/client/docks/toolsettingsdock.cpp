@@ -113,8 +113,11 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
 	_widgets->addWidget(_textsettings->createUi(this));
 
-	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection"));
+	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"));
 	_widgets->addWidget(_selectionsettings->createUi(this));
+
+	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"));
+	_widgets->addWidget(_polyselectionsettings->createUi(this));
 
 	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
 	_widgets->addWidget(_lasersettings->createUi(this));
@@ -146,6 +149,7 @@ ToolSettings::~ToolSettings()
 	delete _fillsettings;
 	delete _textsettings;
 	delete _selectionsettings;
+	delete _polyselectionsettings;
 	delete _lasersettings;
 }
 
@@ -187,18 +191,19 @@ void ToolSettings::saveSettings()
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
 {
 	switch(tool) {
-		case tools::PEN: return _pensettings; break;
-		case tools::BRUSH: return _brushsettings; break;
-		case tools::SMUDGE: return _smudgesettings; break;
-		case tools::ERASER: return _erasersettings; break;
-		case tools::PICKER: return _pickersettings; break;
-		case tools::LINE: return _linesettings; break;
-		case tools::RECTANGLE: return _rectsettings; break;
-		case tools::ELLIPSE: return _ellipsesettings; break;
-		case tools::FLOODFILL: return _fillsettings; break;
-		case tools::ANNOTATION: return _textsettings; break;
-		case tools::SELECTION: return _selectionsettings; break;
-		case tools::LASERPOINTER: return _lasersettings; break;
+	case tools::PEN: return _pensettings;
+	case tools::BRUSH: return _brushsettings;
+	case tools::SMUDGE: return _smudgesettings;
+	case tools::ERASER: return _erasersettings;
+	case tools::LINE: return _linesettings;
+	case tools::RECTANGLE: return _rectsettings;
+	case tools::ELLIPSE: return _ellipsesettings;
+	case tools::FLOODFILL: return _fillsettings;
+	case tools::ANNOTATION: return _textsettings;
+	case tools::PICKER: return _pickersettings;
+	case tools::LASERPOINTER: return _lasersettings;
+	case tools::SELECTION: return _selectionsettings;
+	case tools::POLYGONSELECTION: return _polyselectionsettings;
 	}
 
 	qFatal("Unhandled tools::Type %d", tool);

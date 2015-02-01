@@ -152,9 +152,8 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 		QPoint offset(xoffset, yoffset);
 
 		// Adjust selection (if it exists)
-		if(_selection) {
-			_selection->setRect(_selection->rect().translated(offset));
-		}
+		if(_selection)
+			_selection->translate(offset);
 	}
 	emit canvasResized(xoffset, yoffset, oldsize);
 }
@@ -268,8 +267,18 @@ QImage CanvasScene::selectionToImage(int layerId)
 	else
 		img = image();
 
-	if(_selection)
-		img = img.copy(_selection->rect().intersected(QRect(0, 0, width(), height())));
+
+	if(_selection) {
+		img = img.copy(_selection->polygonRect().intersected(QRect(0, 0, width(), height())));
+
+		if(!_selection->isAxisAlignedRectangle()) {
+			// Mask out pixels outside the selection
+			QPainter mp(&img);
+			QPair<QPoint, QImage> mask = _selection->polygonMask(QColor(255, 255, 255));
+			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+			mp.drawImage(0, 0, mask.second);
+		}
+	}
 
 	return img;
 }
@@ -280,7 +289,7 @@ void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint
 
 	QPoint center;
 	if(_selection)
-		center = _selection->rect().center();
+		center = _selection->polygonRect().center();
 	else
 		center = defaultPoint;
 
@@ -388,6 +397,13 @@ void CanvasScene::setSelectionItem(const QRect &rect)
 {
 	auto *sel = new SelectionItem;
 	sel->setRect(rect);
+	setSelectionItem(sel);
+}
+
+void CanvasScene::setSelectionItem(const QPolygon &polygon)
+{
+	auto *sel = new SelectionItem;
+	sel->setPolygon(polygon);
 	setSelectionItem(sel);
 }
 

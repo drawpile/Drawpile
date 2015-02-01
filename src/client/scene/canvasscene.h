@@ -122,6 +122,7 @@ public:
 	//! Set the selection
 	void setSelectionItem(SelectionItem *selection);
 	void setSelectionItem(const QRect &rect);
+	void setSelectionItem(const QPolygon &polygon);
 
 	SelectionItem *selectionItem() { return _selection; }
 
