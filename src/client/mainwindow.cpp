@@ -2031,6 +2031,9 @@ void MainWindow::setupActions()
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
+	QAction *viewmirror = makeAction("viewmirror", "object-flip-horizontal", tr("Mirror"), QString(), QKeySequence("Ctrl+M"), true);
+	QAction *viewflip = makeAction("viewflip", "object-flip-vertical", tr("Flip"), QString(), QKeySequence("Ctrl+F"), true);
+
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show Brush &Outline"), QString(), QKeySequence(), true);
 	QAction *showcrosshair = makeAction("brushcrosshair", 0, tr("Show Crosshair C&ursor"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
@@ -2086,6 +2089,9 @@ void MainWindow::setupActions()
 	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
 	connect(rotate180, &QAction::triggered, [this]() { _view->setRotation(180); });
 	connect(rotate270, &QAction::triggered, [this]() { _view->setRotation(270); });
+	connect(viewflip, SIGNAL(triggered(bool)), _view, SLOT(setViewFlip(bool)));
+	connect(viewmirror, SIGNAL(triggered(bool)), _view, SLOT(setViewMirror(bool)));
+
 	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
 
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
@@ -2098,6 +2104,7 @@ void MainWindow::setupActions()
 
 	_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
 	_viewstatus->setRotationActions(rotateorig);
+	_viewstatus->setFlipActions(viewflip, viewmirror);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
@@ -2115,6 +2122,9 @@ void MainWindow::setupActions()
 	rotatemenu->addAction(rotate90);
 	rotatemenu->addAction(rotate180);
 	rotatemenu->addAction(rotate270);
+
+	viewmenu->addAction(viewmirror);
+	viewmenu->addAction(viewflip);
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(showoutline);

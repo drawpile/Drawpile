@@ -51,7 +51,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
-	_enableoutline(true), _showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _scene(0),
+	_enableoutline(true), _showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true),
@@ -143,6 +143,9 @@ void CanvasView::setZoom(qreal zoom)
 	QMatrix nm(1,0,0,1, matrix().dx(), matrix().dy());
 	nm.scale(_zoom/100.0, _zoom/100.0);
 	nm.rotate(_rotate);
+
+	nm.scale(_mirror ? -1 : 1, _flip ? -1 : 1);
+
 	setMatrix(nm);
 	emit viewTransformed(_zoom, _rotate);
 	viewRectChanged();
@@ -157,6 +160,22 @@ void CanvasView::setRotation(qreal angle)
 {
 	_rotate = angle;
 	setZoom(_zoom);
+}
+
+void CanvasView::setViewFlip(bool flip)
+{
+	if(flip != _flip) {
+		_flip = flip;
+		setZoom(_zoom);
+	}
+}
+
+void CanvasView::setViewMirror(bool mirror)
+{
+	if(mirror != _mirror) {
+		_mirror = mirror;
+		setZoom(_zoom);
+	}
 }
 
 void CanvasView::setLocked(bool lock)

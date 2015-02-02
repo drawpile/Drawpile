@@ -3,6 +3,7 @@
  * Added "Lasso" selection tool
  * Selections (and pasted images) can now be rotated as well as scaled
  * New dab mode button style
+ * Added view flipping and mirroring
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode

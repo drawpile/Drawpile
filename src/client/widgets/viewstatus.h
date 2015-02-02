@@ -35,6 +35,7 @@ public:
 
 	void setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal);
 	void setRotationActions(QAction *resetRotation);
+	void setFlipActions(QAction *flip, QAction *mirror);
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
@@ -54,6 +55,7 @@ private:
 	QSlider *_zoomSlider, *_angleSlider;
 	QLabel *_zoom, *_angle;
 	QToolButton *_zoomIn, *_zoomOut, *_zoomOriginal, *_resetRotation;
+	QToolButton *_viewFlip, *_viewMirror;
 };
 
 }

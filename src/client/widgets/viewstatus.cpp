@@ -71,6 +71,17 @@ ViewStatus::ViewStatus(QWidget *parent)
 	addZoomShortcut(200);
 	addZoomShortcut(400);
 
+	// View flipping
+	layout->addSpacing(10);
+	_viewFlip = new QToolButton(this);
+	_viewFlip->setAutoRaise(true);
+
+	_viewMirror = new QToolButton(this);
+	_viewMirror->setAutoRaise(true);
+
+	layout->addWidget(_viewMirror);
+	layout->addWidget(_viewFlip);
+
 	// Rotation angle
 	layout->addSpacing(10);
 	_resetRotation = new QToolButton(this);
@@ -128,6 +139,12 @@ void ViewStatus::setRotationActions(QAction *resetRotation)
 {
 	_resetRotation->setDefaultAction(resetRotation);
 	// Currently there are no external actions for rotation buttons
+}
+
+void ViewStatus::setFlipActions(QAction *flip, QAction *mirror)
+{
+	_viewFlip->setDefaultAction(flip);
+	_viewMirror->setDefaultAction(mirror);
 }
 
 void ViewStatus::addZoomShortcut(int zoomLevel)

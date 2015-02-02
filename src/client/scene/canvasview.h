@@ -144,6 +144,9 @@ class CanvasView : public QGraphicsView
 		//! Set the rotation angle in degrees
 		void setRotation(qreal angle);
 
+		void setViewFlip(bool flip);
+		void setViewMirror(bool mirror);
+
 		void setLocked(bool lock);
 
 		//! Send pointer position updates even when not drawing
@@ -251,10 +254,10 @@ class CanvasView : public QGraphicsView
 		bool _enablecrosshair;
 		QCursor _cursor, _colorpickcursor;
 
-		//! View zoom in percents
-		qreal _zoom;
-		//! View rotation in degrees
-		qreal _rotate;
+		qreal _zoom; // View zoom in percents
+		qreal _rotate; // View rotation in degrees
+		bool _flip; // Flip Y axis
+		bool _mirror; // Flip X axis
 
 		drawingboard::CanvasScene *_scene;
 		
