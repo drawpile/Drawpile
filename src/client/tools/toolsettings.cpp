@@ -115,8 +115,12 @@ void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
 
-	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
-	_ui->preview->setIncremental(_ui->incremental->isChecked());
+	if(cfg.boolValue("incremental", true))
+		_ui->paintmodeIncremental->setChecked(true);
+	else
+		_ui->paintmodeIndirect->setChecked(true);
+
+	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 
 	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
@@ -145,7 +149,7 @@ ToolProperties PenSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
-	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("spacing", _ui->brushspacing->value());
@@ -200,12 +204,12 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 
 	_ui->preview->setBlendingMode(0);
 
-	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) {
+	parent->connect(_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
 		_ui->brushhardness->setEnabled(!hard);
 		_ui->spinHardness->setEnabled(!hard);
 		_ui->pressurehardness->setEnabled(!hard);
 	});
-	parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
+	parent->connect(_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
 	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
@@ -223,8 +227,8 @@ ToolProperties EraserSettings::saveToolSettings()
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
-	cfg.setValue("hardedge", _ui->hardedge->isChecked());
-	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("hardedge", _ui->paintmodeHardedge->isChecked());
+	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	return cfg;
 }
 
@@ -251,10 +255,18 @@ void EraserSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
 	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
 
-	_ui->hardedge->setChecked(cfg.boolValue("hardedge", false));
+	if(cfg.boolValue("hardedge", false))
+		_ui->paintmodeHardedge->setChecked(true);
+	else
+		_ui->paintmodeSoftedge->setChecked(true);
 
-	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
-	_ui->preview->setIncremental(_ui->incremental->isChecked());
+
+	if(cfg.boolValue("incremental", true))
+		_ui->paintmodeIncremental->setChecked(true);
+	else
+		_ui->paintmodeIndirect->setChecked(true);
+
+	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 }
 
 void EraserSettings::setForeground(const QColor&)
@@ -287,7 +299,7 @@ int EraserSettings::getSize() const
 
 bool EraserSettings::getSubpixelMode() const
 {
-	return !_ui->hardedge->isChecked();
+	return !_ui->paintmodeHardedge->isChecked();
 }
 
 BrushSettings::BrushSettings(QString name, QString title)
@@ -318,7 +330,7 @@ ToolProperties BrushSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
-	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("hardness", _ui->brushhardness->value());
@@ -334,8 +346,12 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
 
-	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
-	_ui->preview->setIncremental(_ui->incremental->isChecked());
+	if(cfg.boolValue("incremental", true))
+		_ui->paintmodeIncremental->setChecked(true);
+	else
+		_ui->paintmodeIndirect->setChecked(true);
+
+	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 
 	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
@@ -622,7 +638,7 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) {
+	parent->connect(_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
 		_ui->brushhardness->setEnabled(!hard);
 		_ui->spinHardness->setEnabled(!hard);
 	});
@@ -639,9 +655,10 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 
 	if(!_subpixel) {
 		// Hard edge mode is always enabled for tools that do not support antialiasing
-		_ui->hardedge->hide();
+		_ui->paintmodeHardedge->hide();
+		_ui->paintmodeSmoothedge->hide();
 	} else {
-		parent->connect(_ui->hardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
+		parent->connect(_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	}
 
 	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
@@ -654,21 +671,18 @@ ToolProperties SimpleSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
-	cfg.setValue("incremental", _ui->incremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("hardness", _ui->brushhardness->value());
 	cfg.setValue("spacing", _ui->brushspacing->value());
-	cfg.setValue("hardedge", _ui->hardedge->isChecked());
+	cfg.setValue("hardedge", _ui->paintmodeHardedge->isChecked());
+	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	return cfg;
 }
 
 void SimpleSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
-
-	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
-	_ui->preview->setIncremental(_ui->incremental->isChecked());
 
 	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
@@ -682,7 +696,17 @@ void SimpleSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
 	_ui->preview->setSpacing(_ui->brushspacing->value());
 
-	_ui->hardedge->setChecked(cfg.boolValue("hardedge", false));
+	if(cfg.boolValue("hardedge", false))
+		_ui->paintmodeHardedge->setChecked(true);
+	else
+		_ui->paintmodeSmoothedge->setChecked(true);
+
+	if(cfg.boolValue("incremental", true))
+		_ui->paintmodeIncremental->setChecked(true);
+	else
+		_ui->paintmodeIndirect->setChecked(true);
+
+	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 }
 
 void SimpleSettings::setForeground(const QColor& color)
@@ -714,7 +738,7 @@ int SimpleSettings::getSize() const
 
 bool SimpleSettings::getSubpixelMode() const
 {
-	return !_ui->hardedge->isChecked();
+	return !_ui->paintmodeHardedge->isChecked();
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)

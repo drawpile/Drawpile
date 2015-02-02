@@ -51,7 +51,7 @@
    <item>
     <layout class="QHBoxLayout">
      <property name="spacing">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="topMargin">
       <number>3</number>
@@ -67,15 +67,54 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="incremental">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="paintmodeIndirect">
+       <property name="toolTip">
+        <string>Indirect drawing</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icons/builtin/builtin.qrc">
+         <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="paintmodeIncremental">
        <property name="toolTip">
         <string>Incremental drawing</string>
        </property>
        <property name="icon">
         <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
+         <normaloff>:/icons/builtin/paintmode-incremental.svg</normaloff>:/icons/builtin/paintmode-incremental.svg</iconset>
        </property>
        <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -303,7 +342,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>blendmode</tabstop>
-  <tabstop>incremental</tabstop>
+  <tabstop>paintmodeIncremental</tabstop>
   <tabstop>brushsize</tabstop>
   <tabstop>brushopacity</tabstop>
   <tabstop>brushhardness</tabstop>
@@ -398,7 +437,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>incremental</sender>
+   <sender>paintmodeIncremental</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>
    <slot>setIncremental(bool)</slot>

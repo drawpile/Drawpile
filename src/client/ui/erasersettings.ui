@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
+    <width>239</width>
     <height>300</height>
    </rect>
   </property>
@@ -50,6 +50,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <spacer>
        <property name="orientation">
@@ -64,31 +67,143 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="incremental">
-       <property name="toolTip">
-        <string>Incremental drawing</string>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>0</height>
+        </size>
        </property>
-       <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="paintmodeSoftedge">
+          <property name="toolTip">
+           <string>Smooth edge</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-smoothedge.svg</normaloff>:/icons/builtin/paintmode-smoothedge.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="paintmodeHardedge">
+          <property name="toolTip">
+           <string>Hard edge</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-hardedge.svg</normaloff>:/icons/builtin/paintmode-hardedge.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="hardedge">
-       <property name="toolTip">
-        <string>Hard edge</string>
+      <widget class="QWidget" name="widget_2" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>0</height>
+        </size>
        </property>
-       <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/hardedge.png</normaloff>:/icons/builtin/hardedge.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="paintmodeIndirect">
+          <property name="toolTip">
+           <string>Indirect drawing</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="paintmodeIncremental">
+          <property name="toolTip">
+           <string>Incremental drawing</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-incremental.svg</normaloff>:/icons/builtin/paintmode-incremental.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -306,8 +421,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>incremental</tabstop>
-  <tabstop>hardedge</tabstop>
   <tabstop>brushsize</tabstop>
   <tabstop>brushopacity</tabstop>
   <tabstop>brushhardness</tabstop>
@@ -327,8 +440,8 @@
    <slot>setSizePressure(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>249</y>
+     <x>143</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>60</x>
@@ -343,8 +456,8 @@
    <slot>setOpacityPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>195</x>
-     <y>249</y>
+     <x>233</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>167</x>
@@ -359,8 +472,8 @@
    <slot>setHardnessPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>272</y>
+     <x>138</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
@@ -369,14 +482,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>hardedge</sender>
+   <sender>paintmodeHardedge</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>
    <slot>setHardEdge(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>195</x>
-     <y>91</y>
+     <x>160</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>145</x>
@@ -385,14 +498,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>incremental</sender>
+   <sender>paintmodeIncremental</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>
    <slot>setIncremental(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>152</x>
-     <y>83</y>
+     <x>234</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>151</x>
@@ -439,8 +552,8 @@
    <slot>setHardness(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>125</x>
-     <y>169</y>
+     <x>158</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
      <x>101</x>
@@ -455,8 +568,8 @@
    <slot>setSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>125</x>
-     <y>195</y>
+     <x>158</x>
+     <y>222</y>
     </hint>
     <hint type="destinationlabel">
      <x>90</x>
@@ -471,12 +584,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>121</x>
-     <y>111</y>
+     <x>158</x>
+     <y>132</y>
     </hint>
     <hint type="destinationlabel">
-     <x>146</x>
-     <y>113</y>
+     <x>234</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -487,12 +600,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>108</y>
+     <x>234</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
-     <x>111</x>
-     <y>110</y>
+     <x>158</x>
+     <y>132</y>
     </hint>
    </hints>
   </connection>
@@ -503,12 +616,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>141</y>
+     <x>158</x>
+     <y>162</y>
     </hint>
     <hint type="destinationlabel">
-     <x>156</x>
-     <y>143</y>
+     <x>234</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>
@@ -519,12 +632,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>144</x>
-     <y>128</y>
+     <x>234</x>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
-     <x>110</x>
-     <y>137</y>
+     <x>158</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>
@@ -535,12 +648,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>166</y>
+     <x>158</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
-     <x>155</x>
-     <y>164</y>
+     <x>234</x>
+     <y>197</y>
     </hint>
    </hints>
   </connection>
@@ -551,12 +664,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>158</x>
-     <y>161</y>
+     <x>234</x>
+     <y>197</y>
     </hint>
     <hint type="destinationlabel">
-     <x>110</x>
-     <y>164</y>
+     <x>158</x>
+     <y>192</y>
     </hint>
    </hints>
   </connection>
@@ -567,12 +680,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>120</x>
-     <y>188</y>
+     <x>158</x>
+     <y>222</y>
     </hint>
     <hint type="destinationlabel">
-     <x>145</x>
-     <y>190</y>
+     <x>234</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>
@@ -583,12 +696,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>142</x>
-     <y>183</y>
+     <x>234</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>101</x>
-     <y>187</y>
+     <x>158</x>
+     <y>222</y>
     </hint>
    </hints>
   </connection>

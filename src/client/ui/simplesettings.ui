@@ -51,47 +51,159 @@
    <item>
     <layout class="QHBoxLayout" name="brushopts">
      <property name="spacing">
-      <number>3</number>
+      <number>10</number>
      </property>
      <property name="topMargin">
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="blendmode">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QComboBox" name="blendmode"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget_2" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="paintmodeSmoothedge">
+          <property name="toolTip">
+           <string>Smooth edge</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-smoothedge.svg</normaloff>:/icons/builtin/paintmode-smoothedge.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="paintmodeHardedge">
+          <property name="toolTip">
+           <string>Hard edge</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-hardedge.svg</normaloff>:/icons/builtin/paintmode-hardedge.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="incremental">
-       <property name="toolTip">
-        <string>Incremental drawing</string>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
        </property>
-       <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/incremental.png</normaloff>:/icons/builtin/incremental.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="hardedge">
-       <property name="toolTip">
-        <string>Hard edge</string>
-       </property>
-       <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/hardedge.png</normaloff>:/icons/builtin/hardedge.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="paintmodeIndirect">
+          <property name="toolTip">
+           <string>Indirect drawing</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="paintmodeIncremental">
+          <property name="toolTip">
+           <string>Incremental drawing</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons/builtin/builtin.qrc">
+            <normaloff>:/icons/builtin/paintmode-incremental.svg</normaloff>:/icons/builtin/paintmode-incremental.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -266,7 +378,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>hardedge</sender>
+   <sender>paintmodeHardedge</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>
    <slot>setHardEdge(bool)</slot>
@@ -282,7 +394,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>incremental</sender>
+   <sender>paintmodeIncremental</sender>
    <signal>toggled(bool)</signal>
    <receiver>preview</receiver>
    <slot>setIncremental(bool)</slot>

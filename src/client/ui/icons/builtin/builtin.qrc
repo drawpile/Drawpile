@@ -7,8 +7,10 @@
         <file>dock-close.png</file>
         <file>dock-detach.png</file>
         <file>drawpile.png</file>
-        <file>hardedge.png</file>
-        <file>incremental.png</file>
+        <file>paintmode-hardedge.svg</file>
+        <file>paintmode-smoothedge.svg</file>
+        <file>paintmode-incremental.svg</file>
+        <file>paintmode-indirect.svg</file>
         <file>stop.png</file>
     </qresource>
 </RCC>
