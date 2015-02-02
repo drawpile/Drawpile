@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setSpacing(0);
 
 	// Zoom level
-	QLabel *zlbl = new QLabel(tr("Zoom:"), this);
-
 	_zoomIn = new QToolButton(this);
 	_zoomIn->setAutoRaise(true);
 	_zoomOut = new QToolButton(this);
@@ -62,7 +60,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
 	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	layout->addWidget(zlbl);
 	layout->addWidget(_zoomOriginal);
 	layout->addWidget(_zoomOut);
 	layout->addWidget(_zoomSlider);
@@ -76,7 +73,19 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Rotation angle
 	layout->addSpacing(10);
-	QLabel *rlbl = new QLabel(tr("Angle:"), this);
+	_resetRotation = new QToolButton(this);
+	_resetRotation->setAutoRaise(true);
+
+	auto *rotateLeft = new QToolButton(this);
+	rotateLeft->setAutoRaise(true);
+	rotateLeft->setIcon(icon::fromTheme("object-rotate-left"));
+	connect(rotateLeft, &QToolButton::clicked, this, &ViewStatus::rotateLeft);
+
+	auto *rotateRight = new QToolButton(this);
+	rotateRight->setAutoRaise(true);
+	rotateRight->setIcon(icon::fromTheme("object-rotate-right"));
+	connect(rotateRight, &QToolButton::clicked, this, &ViewStatus::rotateRight);
+
 	_angle = new QLabel(QString::fromUtf8("0°"));
 	_angle->setFixedWidth(_angle->fontMetrics().width("9999.9"));
 	_angle->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -91,8 +100,10 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	_angleSlider->setToolTip(tr("Drag the view while holding ctrl-space to rotate"));
 
-	layout->addWidget(rlbl);
+	layout->addWidget(_resetRotation);
+	layout->addWidget(rotateLeft);
 	layout->addWidget(_angleSlider);
+	layout->addWidget(rotateRight);
 	layout->addWidget(_angle);
 
 	addAngleShortcut(-180);
@@ -111,6 +122,12 @@ void ViewStatus::setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoom
 	_zoomIn->setDefaultAction(zoomIn);
 	_zoomOut->setDefaultAction(zoomOut);
 	_zoomOriginal->setDefaultAction(zoomOriginal);
+}
+
+void ViewStatus::setRotationActions(QAction *resetRotation)
+{
+	_resetRotation->setDefaultAction(resetRotation);
+	// Currently there are no external actions for rotation buttons
 }
 
 void ViewStatus::addZoomShortcut(int zoomLevel)
@@ -141,5 +158,20 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 	_angle->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
 }
 
+void ViewStatus::rotateLeft()
+{
+	int a = _angleSlider->value() - 10;
+	if(a < _angleSlider->minimum())
+		a = _angleSlider->maximum() - 10;
+	_angleSlider->setValue(a);
 }
 
+void ViewStatus::rotateRight()
+{
+	int a = _angleSlider->value() + 10;
+	if(a > _angleSlider->maximum())
+		a = _angleSlider->minimum() + 10;
+	_angleSlider->setValue(a);
+}
+
+}

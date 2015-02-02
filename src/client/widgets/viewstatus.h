@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ public:
 	ViewStatus(QWidget *parent=0);
 
 	void setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal);
+	void setRotationActions(QAction *resetRotation);
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
@@ -42,13 +43,17 @@ signals:
 	void zoomChanged(qreal newZoom);
 	void angleChanged(qreal newAngle);
 
+private slots:
+	void rotateLeft();
+	void rotateRight();
+
 private:
 	void addZoomShortcut(int zoomLevel);
 	void addAngleShortcut(int angle);
 
 	QSlider *_zoomSlider, *_angleSlider;
 	QLabel *_zoom, *_angle;
-	QToolButton *_zoomIn, *_zoomOut, *_zoomOriginal;
+	QToolButton *_zoomIn, *_zoomOut, *_zoomOriginal, *_resetRotation;
 };
 
 }
