@@ -38,6 +38,7 @@ public slots:
 
 signals:
 	void focusMoved(const QPoint& to);
+	void wheelZoom(int steps);
 	
 protected:
 	void drawForeground(QPainter *painter, const QRectF& rect);
@@ -49,6 +50,7 @@ protected:
 
 private:
 	QPolygonF _focusrect;
+	int _zoomWheelDelta;
 	bool _dragging;
 };
 
@@ -69,6 +71,7 @@ public slots:
 
 signals:
 	void focusMoved(const QPoint& to);
+	void wheelZoom(int steps);
 	
 private:
 	NavigatorView *_view;

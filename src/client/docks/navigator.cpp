@@ -24,7 +24,7 @@
 namespace docks {
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QGraphicsView(parent), _dragging(false)
+	: QGraphicsView(parent), _zoomWheelDelta(0), _dragging(false)
 {
 	viewport()->setMouseTracking(true);
 	setInteractive(false);
@@ -72,10 +72,16 @@ void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 	_dragging = false;
 }
 
-void NavigatorView::wheelEvent(QWheelEvent *)
+void NavigatorView::wheelEvent(QWheelEvent *event)
 {
-	// disable scrolling
-	// the view is scaled so the whole scene is always visible.
+	// Use scroll wheel for zooming
+	_zoomWheelDelta += event->angleDelta().y();
+	int steps=_zoomWheelDelta / 120;
+	_zoomWheelDelta -= steps * 120;
+
+	if(steps != 0) {
+		emit wheelZoom(steps);
+	}
 }
 
 /**
@@ -138,6 +144,8 @@ Navigator::Navigator(QWidget *parent)
 
 	connect(_view, SIGNAL(focusMoved(const QPoint&)),
 			this, SIGNAL(focusMoved(const QPoint&)));
+
+	connect(_view, SIGNAL(wheelZoom(int)), this, SIGNAL(wheelZoom(int)));
 }
 
 void Navigator::setScene(QGraphicsScene *scene)

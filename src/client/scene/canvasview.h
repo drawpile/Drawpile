@@ -164,6 +164,9 @@ class CanvasView : public QGraphicsView
 		//! Set velocity to pressure curve
 		void setVelocityCurve(const KisCubicCurve &curve);
 
+		//! Increase/decrease zoom factor by this many steps
+		void zoomSteps(int steps);
+
 		//! Increase zoom factor
 		void zoomin();
 

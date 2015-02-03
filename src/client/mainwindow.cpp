@@ -254,6 +254,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			_view, SLOT(scrollTo(const QPoint&)));
 	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
 			_dock_navigator, SLOT(setViewFocus(const QPolygonF&)));
+	connect(_dock_navigator, SIGNAL(wheelZoom(int)), _view, SLOT(zoomSteps(int)));
 
 	// Create the network client
 	_client = new net::Client(this);

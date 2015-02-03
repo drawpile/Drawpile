@@ -116,17 +116,22 @@ void CanvasView::setToolSettings(docks::ToolSettings *settings)
 	connect(settings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), this, SLOT(setPointerTracking(bool)));
 }
 
+void CanvasView::zoomSteps(int steps)
+{
+	if(_zoom<100 || (_zoom==100 && steps<0))
+		setZoom(qRound((_zoom + steps * 10) / 10) * 10);
+	else
+		setZoom(qRound((_zoom + steps * 50) / 50) * 50);
+}
+
 void CanvasView::zoomin()
 {
-	setZoom(qRound((_zoom + 100) / 100) * 100);
+	zoomSteps(1);
 }
 
 void CanvasView::zoomout()
 {
-	if(_zoom <= 100)
-		setZoom(qRound((_zoom - 50) / 50) * 50);
-	else
-		setZoom(qRound((_zoom - 100) / 100) * 100);
+	zoomSteps(-1);
 }
 
 /**
@@ -573,10 +578,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		_zoomWheelDelta -= steps * 120;
 
 		if(steps != 0) {
-			if(_zoom<100 || (_zoom==100 && steps<0))
-				setZoom(qRound((_zoom + steps * 10) / 10) * 10);
-			else
-				setZoom(qRound((_zoom + steps * 50) / 50) * 50);
+			zoomSteps(steps);
 		}
 
 	} else if((event->modifiers() & Qt::ShiftModifier)) {
