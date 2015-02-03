@@ -79,8 +79,8 @@ ViewStatus::ViewStatus(QWidget *parent)
 	_viewMirror = new QToolButton(this);
 	_viewMirror->setAutoRaise(true);
 
-	layout->addWidget(_viewMirror);
 	layout->addWidget(_viewFlip);
+	layout->addWidget(_viewMirror);
 
 	// Rotation angle
 	layout->addSpacing(10);

@@ -2031,8 +2031,8 @@ void MainWindow::setupActions()
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
-	QAction *viewmirror = makeAction("viewmirror", "object-flip-horizontal", tr("Mirror"), QString(), QKeySequence("Ctrl+M"), true);
-	QAction *viewflip = makeAction("viewflip", "object-flip-vertical", tr("Flip"), QString(), QKeySequence("Ctrl+F"), true);
+	QAction *viewmirror = makeAction("viewmirror", "object-flip-horizontal", tr("Mirror"), QString(), QKeySequence("V"), true);
+	QAction *viewflip = makeAction("viewflip", "object-flip-vertical", tr("Flip"), QString(), QKeySequence("C"), true);
 
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show Brush &Outline"), QString(), QKeySequence(), true);
 	QAction *showcrosshair = makeAction("brushcrosshair", 0, tr("Show Crosshair C&ursor"), QString(), QKeySequence(), true);
@@ -2123,8 +2123,8 @@ void MainWindow::setupActions()
 	rotatemenu->addAction(rotate180);
 	rotatemenu->addAction(rotate270);
 
-	viewmenu->addAction(viewmirror);
 	viewmenu->addAction(viewflip);
+	viewmenu->addAction(viewmirror);
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(showoutline);
