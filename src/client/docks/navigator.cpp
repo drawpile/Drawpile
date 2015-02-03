@@ -124,9 +124,16 @@ void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 	Q_UNUSED(rect);
 	QPen pen(Qt::black);
 	pen.setCosmetic(true);
-	pen.setStyle(Qt::DashLine);
+	pen.setWidth(2);
+	pen.setColor(Qt::white);
 	painter->setPen(pen);
 	painter->drawPolygon(_focusrect);
+
+	pen.setStyle(Qt::DotLine);
+	pen.setColor(Qt::black);
+	painter->setPen(pen);
+	painter->drawPolygon(_focusrect);
+
 }
 
 /**
