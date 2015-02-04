@@ -24,6 +24,7 @@
 #include "export/ffmpegexporter.h" // for setting ffmpeg path
 #include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
+#include "utils/customshortcutmodel.h"
 
 #include "ui_settings.h"
 
@@ -37,40 +38,9 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QSslCertificate>
+#include <QSortFilterProxyModel>
 
 #include <QDebug>
-
-#include <algorithm>
-
-class KeySequenceTableItem : public QTableWidgetItem
-{
-public:
-	static const int TYPE = QTableWidgetItem::UserType + 1;
-	KeySequenceTableItem(const QString &name, const QKeySequence &keysequence)
-		: QTableWidgetItem(TYPE), _name(name), _keysequence(keysequence)
-	{}
-
-	const QString &actionName() const { return _name; }
-
-	QVariant data(int role) const
-	{
-		switch(role) {
-		case Qt::DisplayRole: return _keysequence.toString();
-		case Qt::EditRole: return _keysequence;
-		default: return QVariant();
-		}
-	}
-
-	void setData(int role, const QVariant &data)
-	{
-		if(role == Qt::EditRole)
-			_keysequence = data.value<QKeySequence>();
-	}
-
-private:
-	QString _name;
-	QKeySequence _keysequence;
-};
 
 class KeySequenceEditFactory : public QItemEditorCreatorBase
 {
@@ -87,8 +57,6 @@ public:
 };
 
 namespace dialogs {
-
-QMap<QString, SettingsDialog::CustomAction> SettingsDialog::_customizableActions;
 
 /**
  * Construct a settings dialog. The actions in the list should have
@@ -165,39 +133,22 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 	cfg.endGroup();
 
-	// Generate an editable list of shortcuts
-	_ui->shortcuts->verticalHeader()->setVisible(false);
-	_ui->shortcuts->setRowCount(_customizableActions.size());
+	// Editable shortcuts
+	_customShortcuts = new CustomShortcutModel(this);
+	auto filteredShortcuts = new QSortFilterProxyModel(this);
+	filteredShortcuts->setSourceModel(_customShortcuts);
+	connect(_ui->shortcutFilter, &QLineEdit::textChanged, filteredShortcuts, &QSortFilterProxyModel::setFilterFixedString);
+	filteredShortcuts->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	_ui->shortcuts->setModel(filteredShortcuts);
+	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	// QKeySequence editor delegate
-	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(_ui->shortcuts);
+	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(this);
 	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
 	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
 	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
-
-	QList<CustomAction> actions = getCustomizableActions();
-	for(int i=0;i<actions.size();++i) {
-		QTableWidgetItem *label = new QTableWidgetItem(actions[i].title);
-		label->setFlags(Qt::ItemIsSelectable);
-		if(actions[i].currentShortcut != actions[i].defaultShortcut) {
-			QFont font = label->font();
-			font.setBold(true);
-			label->setFont(font);
-		}
-		QTableWidgetItem *accel = new KeySequenceTableItem(actions[i].name, actions[i].currentShortcut);
-		QTableWidgetItem *def = new QTableWidgetItem(actions[i].defaultShortcut.toString());
-		def->setFlags(Qt::ItemIsSelectable);
-		_ui->shortcuts->setItem(i, 0, label);
-		_ui->shortcuts->setItem(i, 1, accel);
-		_ui->shortcuts->setItem(i, 2, def);
-	}
-	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
-	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
-	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
-
-	// TODO this signal doesn't seem to get emitted.
-	connect(_ui->shortcuts, &QTableWidget::cellChanged, this, &SettingsDialog::validateShortcut);
 
 	// Known hosts list
 	connect(_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
@@ -230,39 +181,6 @@ SettingsDialog::~SettingsDialog()
 	delete _ui;
 }
 
-void SettingsDialog::registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut)
-{
-	if(_customizableActions.contains(name))
-		return;
-
-	_customizableActions[name] = CustomAction(name, title, defaultShortcut);
-}
-
-QList<SettingsDialog::CustomAction> SettingsDialog::getCustomizableActions()
-{
-	QList<CustomAction> actions;
-	actions.reserve(_customizableActions.size());
-
-	QSettings cfg;
-	cfg.beginGroup("settings/shortcuts");
-
-	for(CustomAction a : _customizableActions) {
-		Q_ASSERT(!a.name.isEmpty());
-		if(cfg.contains(a.name))
-			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
-		if(a.currentShortcut.isEmpty())
-			a.currentShortcut = a.defaultShortcut;
-
-		actions.append(a);
-	}
-
-	std::sort(actions.begin(), actions.end(),
-		[](const CustomAction &a1, const CustomAction &a2) { return a1.title.compare(a2.title) < 0; }
-	);
-
-	return actions;
-}
-
 void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
@@ -292,22 +210,7 @@ void SettingsDialog::rememberSettings()
 	cfg.endGroup();
 
 	// Remember shortcuts.
-	cfg.beginGroup("settings/shortcuts");
-	cfg.remove("");
-
-	for(int i=0;i<_ui->shortcuts->rowCount();++i) {
-		KeySequenceTableItem *item = static_cast<KeySequenceTableItem*>(_ui->shortcuts->item(i, 1));
-		QTableWidgetItem *itemDefault = static_cast<QTableWidgetItem*>(_ui->shortcuts->item(i, 2));
-		Q_ASSERT(_customizableActions.contains(item->actionName()));
-
-		const CustomAction &ca = _customizableActions.value(item->actionName());
-		QKeySequence ks = item->data(Qt::EditRole).value<QKeySequence>();
-
-		if(ks.isEmpty() || ks.toString() == itemDefault->data(Qt::DisplayRole))
-			cfg.remove(ca.name);
-		else
-			cfg.setValue(ca.name, ks);
-	}
+	_customShortcuts->saveShortcuts();
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
@@ -340,16 +243,6 @@ void SettingsDialog::saveCertTrustChanges()
 
 		f.write(cert.toPem());
 	}
-}
-
-/**
- * Check that the new shortcut is valid
- */
-void SettingsDialog::validateShortcut(int row, int col)
-{
-	// TODO for some reason this function is never called
-	// TODO check for conflicting shortcuts here.
-	qDebug() << "validateShortcut" << row << col;
 }
 
 void SettingsDialog::viewCertificate(QListWidgetItem *item)

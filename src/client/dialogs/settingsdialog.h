@@ -25,6 +25,7 @@
 
 class Ui_SettingsDialog;
 class QListWidgetItem;
+class CustomShortcutModel;
 
 namespace dialogs {
 
@@ -35,13 +36,10 @@ class SettingsDialog : public QDialog
 		SettingsDialog(QWidget *parent=0);
 		~SettingsDialog();
 
-		static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
-
 	private slots:
 		void rememberSettings();
 		void saveCertTrustChanges();
 
-		void validateShortcut(int, int);
 		void viewCertificate(QListWidgetItem *item);
 		void markTrustedCertificates();
 		void removeCertificates();
@@ -54,21 +52,7 @@ class SettingsDialog : public QDialog
 		QStringList _removeCerts;
 		QStringList _trustCerts;
 		QList<QSslCertificate> _importCerts;
-
-		struct CustomAction {
-			QString name;
-			QString title;
-			QKeySequence defaultShortcut;
-			QKeySequence currentShortcut;
-
-			CustomAction() { }
-			CustomAction(const QString &n, const QString &t, const QKeySequence &s)
-				: name(n), title(t), defaultShortcut(s), currentShortcut(QKeySequence())
-			{ }
-		};
-
-		static QList<CustomAction> getCustomizableActions();
-		static QMap<QString, CustomAction> _customizableActions;
+		CustomShortcutModel *_customShortcuts;
 };
 
 }

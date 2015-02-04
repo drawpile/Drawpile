@@ -59,6 +59,7 @@ set (
 	utils/funstuff.cpp
 	utils/kis_cubic_curve.cpp
 	utils/shortcutdetector.cpp
+	utils/customshortcutmodel.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp

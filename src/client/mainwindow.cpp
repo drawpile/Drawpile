@@ -68,6 +68,7 @@
 #include "utils/icon.h"
 #include "utils/networkaccess.h"
 #include "utils/shortcutdetector.h"
+#include "utils/customshortcutmodel.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -1798,7 +1799,7 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 		act->setStatusTip(tip);
 
 	if(name!=0 && name[0]!='\0')
-		dialogs::SettingsDialog::registerCustomizableAction(act->objectName(), act->text().remove('&'), shortcut);
+		CustomShortcutModel::registerCustomizableAction(act->objectName(), act->text().remove('&'), shortcut);
 
 	// Add this action to the mainwindow so its shortcut can be used
 	// even when the menu/toolbar is not visible
@@ -2289,7 +2290,7 @@ void MainWindow::setupActions()
 		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
 		q->setProperty("toolslotidx", i);
-		dialogs::SettingsDialog::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
+		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
 		_toolslotactions->addAction(q);
 		addAction(q);
 	}

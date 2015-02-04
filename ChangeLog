@@ -5,6 +5,7 @@
  * New dab mode button style
  * Added view flipping and mirroring
  * Chat icon is now shown in statusbar when there are unread messages
+ * Added filter bar to shortcut settings editor
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode
