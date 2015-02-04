@@ -31,6 +31,7 @@
 #include <QInputDialog>
 #include <QCloseEvent>
 #include <QPushButton>
+#include <QToolButton>
 #include <QImageReader>
 #include <QImageWriter>
 #include <QSplitter>
@@ -170,6 +171,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_lockstatus = new QLabel(this);
 	_lockstatus->setFixedSize(QSize(16, 16));
 
+	// Statusbar chat button: this is normally hidden and only shown
+	// when there are unread chat messages.
+	_statusChatButton = new QToolButton(this);
+	_statusChatButton->setAutoRaise(true);
+	_statusChatButton->setIcon(icon::fromBuiltin("chat.svg"));
+	_statusChatButton->hide();
+	_viewStatusBar->addWidget(_statusChatButton);
+
 #ifndef NDEBUG
 	// Debugging tool: show amount of memory consumed by tiles
 	{
@@ -280,12 +289,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Meta commands
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
 			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool,bool)));
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
-			this, SLOT(statusbarChat(QString,QString)));
+	connect(_client, &net::Client::chatMessageReceived, [this]() {
+		// Show a "new message" indicator when the chatbox is collapsed
+		if(_splitter->sizes().at(1)==0)
+			_statusChatButton->show();
+	});
+
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			_chatbox, SLOT(receiveMarker(QString,QString)));
-	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
-			this, SLOT(statusbarChat(QString,QString)));
 	connect(_chatbox, SIGNAL(message(QString,bool,bool)), _client, SLOT(sendChat(QString,bool,bool)));
 	connect(_chatbox, SIGNAL(opCommand(QString)), _client, SLOT(sendOpCommand(QString)));
 
@@ -1065,13 +1076,6 @@ void MainWindow::startRecorder(const QString &filename)
 		QApplication::restoreOverrideCursor();
 		setRecorderStatus(true);
 	}
-}
-
-void MainWindow::statusbarChat(const QString &nick, const QString &msg)
-{
-	// Show message only if chat box is hidden
-	if(_splitter->sizes().at(1) == 0)
-		_viewStatusBar->showMessage(nick + ": " + msg, 3000);
 }
 
 /**
@@ -2060,7 +2064,10 @@ void MainWindow::setupActions()
 		});
 	}
 
+	connect(_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
+
 	connect(_chatbox, SIGNAL(expanded(bool)), toggleChat, SLOT(setChecked(bool)));
+	connect(_chatbox, SIGNAL(expanded(bool)), _statusChatButton, SLOT(hide()));
 	connect(toggleChat, &QAction::triggered, [this](bool show) {
 		QList<int> sizes;
 		if(show) {

@@ -30,6 +30,7 @@ class QUrl;
 class QLabel;
 class QSplitter;
 class QTimer;
+class QToolButton;
 
 namespace widgets {
 	class CanvasView;
@@ -128,7 +129,6 @@ class MainWindow : public QMainWindow {
 
 		void updateLockWidget();
 		void setRecorderStatus(bool on);
-		void statusbarChat(const QString &nick, const QString &msg);
 
 		void updateShortcuts();
 		void updateTabletSupportMode();
@@ -211,6 +211,7 @@ class MainWindow : public QMainWindow {
 		QLabel *_recorderstatus;
 		widgets::NetStatus *_netstatus;
 		widgets::ViewStatus *_viewstatus;
+		QToolButton *_statusChatButton;
 
 		dialogs::PlaybackDialog *_dialog_playback;
 
