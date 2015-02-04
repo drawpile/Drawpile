@@ -109,7 +109,7 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	ctx.textIcon = getIcon("draw-text");
 	ctx.markerIcon = getIcon("flag-red");
 	ctx.newMarkerIcon = getIcon("flag-blue");
-	ctx.chatIcon = getBuiltinIcon("chat");
+	ctx.chatIcon = getBuiltinIcon("chat.svg");
 	ctx.pauseIcon = getIcon("media-playback-pause");
 	ctx.laserIcon = getIcon("tool-laserpointer");
 	ctx.undoIcon = getIcon("edit-undo");

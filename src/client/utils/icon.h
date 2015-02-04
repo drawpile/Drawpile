@@ -36,7 +36,7 @@ inline QIcon fromTheme(const QString &name)
 
 inline QIcon fromBuiltin(const QString &name)
 {
-	return QIcon(QStringLiteral(":/icons/builtin/") + name + QStringLiteral(".png"));
+	return QIcon(QStringLiteral(":/icons/builtin/") + name);
 }
 
 }

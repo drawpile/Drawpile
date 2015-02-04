@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/icons/builtin">
-        <file>chat.png</file>
+        <file>chat.svg</file>
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>
