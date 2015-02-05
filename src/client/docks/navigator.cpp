@@ -36,6 +36,8 @@ NavigatorView::NavigatorView(QWidget *parent)
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
 	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
+
+	setBackgroundBrush(QColor(100, 100, 100));
 }
 
 

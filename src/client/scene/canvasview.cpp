@@ -62,6 +62,8 @@ CanvasView::CanvasView(QWidget *parent)
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
 
+	setBackgroundBrush(QColor(100,100,100));
+
 	// Get the color picker cursor
 	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 }
