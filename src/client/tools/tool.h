@@ -58,7 +58,7 @@ class ToolCollection;
 class Tool
 {
 public:
-	Tool(ToolCollection &owner, Type type, QCursor cursor=Qt::CrossCursor)
+	Tool(ToolCollection &owner, Type type, QCursor cursor)
 		: _owner(owner), _type(type), _cursor(cursor)
 		{}
 	virtual ~Tool() {}

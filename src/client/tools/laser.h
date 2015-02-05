@@ -25,7 +25,7 @@ namespace tools {
 
 class LaserPointer : public Tool {
 public:
-	LaserPointer(ToolCollection &owner) : Tool(owner, LASERPOINTER) {}
+	LaserPointer(ToolCollection &owner) : Tool(owner, LASERPOINTER, Qt::CrossCursor) {}
 
 	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);

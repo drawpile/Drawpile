@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@
 #include "tools/utils.h"
 
 namespace tools {
+
+Line::Line(ToolCollection &owner)
+	: Tool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
+{
+}
 
 void Line::begin(const paintcore::Point& point, bool right, float zoom)
 {

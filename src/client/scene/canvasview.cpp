@@ -51,7 +51,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
-	_enableoutline(true), _showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
+	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true),
@@ -61,19 +61,6 @@ CanvasView::CanvasView(QWidget *parent)
 	viewport()->grabGesture(Qt::PinchGesture);
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
-
-	// Draw the crosshair cursor
-	QBitmap bm(32,32);
-	bm.clear();
-	QPainter bmp(&bm);
-	bmp.setPen(Qt::color1);
-	bmp.drawLine(16,0,16,32);
-	bmp.drawLine(0,16,32,16);
-	QBitmap mask = bm;
-	bmp.setPen(Qt::color0);
-	bmp.drawPoint(16,16);
-	_cursor = QCursor(bm, mask);
-	viewport()->setCursor(_cursor);
 
 	// Get the color picker cursor
 	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
@@ -195,12 +182,7 @@ void CanvasView::resetCursor()
 		viewport()->setCursor(Qt::ForbiddenCursor);
 
 	} else {
-		const QCursor &c = _current_tool->cursor();
-		// We use our own custom cross cursor instead of the standard one
-		if(c.shape() == Qt::CrossCursor) {
-			viewport()->setCursor(_enablecrosshair ? _cursor : QCursor(Qt::BlankCursor));
-		} else
-			viewport()->setCursor(c);
+		viewport()->setCursor(_current_tool->cursor());
 	}
 }
 
@@ -215,20 +197,6 @@ void CanvasView::selectLayer(int layer_id)
 	_toolbox.selectLayer(layer_id);
 }
 
-/**
- * @param enable if true, brush outline is shown
- */
-void CanvasView::setOutline(bool enable)
-{
-	_enableoutline = enable;
-}
-
-void CanvasView::setCrosshair(bool enable)
-{
-	_enablecrosshair = enable;
-	resetCursor();
-}
-
 void CanvasView::setPixelGrid(bool enable)
 {
 	_pixelgrid = enable;
@@ -241,8 +209,8 @@ void CanvasView::setPixelGrid(bool enable)
 void CanvasView::setOutlineSize(int size)
 {
 	float updatesize = _outlinesize;
-	_outlinesize = qMax(2, size);
-	if(_enableoutline && _showoutline) {
+	_outlinesize = size<=0 ? 0 : qMax(2, size);
+	if(_showoutline) {
 		if(_outlinesize>updatesize)
 			updatesize = _outlinesize;
 		QList<QRectF> rect;
@@ -272,7 +240,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
-	if(_enableoutline && _showoutline && !_locked) {
+	if(_showoutline && _outlinesize>0 && !_specialpenmode && !_locked) {
 		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2, _outlinesize/2),
 					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
@@ -290,9 +258,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 void CanvasView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
-	if(_enableoutline) {
-		_showoutline = true;
-	}
+	_showoutline = true;
 
 	// Give focus to this widget on mouseover. This is so that
 	// using spacebar for dragging works rightaway. Avoid stealing
@@ -310,10 +276,8 @@ void CanvasView::enterEvent(QEvent *event)
 void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
-	if(_enableoutline) {
-		_showoutline = false;
-		updateOutline();
-	}
+	_showoutline = false;
+	updateOutline();
 }
 
 void CanvasView::scrollContentsBy(int dx, int dy)
@@ -733,7 +697,7 @@ void CanvasView::updateOutline(paintcore::Point point) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);
 	}
-	if(_enableoutline && _showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
+	if(_showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
 		QList<QRectF> rect;
 		const float oR = _outlinesize / 2;
 		rect.append(QRectF(
@@ -797,10 +761,8 @@ void CanvasView::startDrag(int x,int y, ViewTransform mode)
 	_dragx = x;
 	_dragy = y;
 	_isdragging = mode;
-	if(_enableoutline) {
-		_showoutline = false;
-		updateOutline();
-	}
+	_showoutline = false;
+	updateOutline();
 }
 
 /**
