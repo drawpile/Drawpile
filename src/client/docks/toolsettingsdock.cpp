@@ -244,7 +244,7 @@ void ToolSettings::selectTool(tools::Type tool)
 			_textsettings->setSelection(0);
 	}
 
-	setWindowTitle(_currenttool->getTitle());
+	setWindowTitle(QStringLiteral("%1. %2").arg(currentToolSlot()+1).arg(_currenttool->getTitle()));
 	_widgets->setCurrentWidget(_currenttool->getUi());
 	_currenttool->setForeground(foregroundColor());
 	_currenttool->setBackground(backgroundColor());
