@@ -37,51 +37,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(0);
 
-	// Zoom level
-	_zoomIn = new QToolButton(this);
-	_zoomIn->setAutoRaise(true);
-	_zoomOut = new QToolButton(this);
-	_zoomOut->setAutoRaise(true);
-	_zoomOriginal = new QToolButton(this);
-	_zoomOriginal->setAutoRaise(true);
-
-
-	_zoomSlider = new QSlider(Qt::Horizontal, this);
-	_zoomSlider->setMaximumWidth(120);
-	_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-	_zoomSlider->setMinimum(50);
-	_zoomSlider->setMaximum(1600);
-	_zoomSlider->setPageStep(50);
-	_zoomSlider->setValue(100);
-	_zoomSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
-	connect(_zoomSlider, &QSlider::valueChanged, [this](int val) { emit zoomChanged(val); });
-
-	_zoom = new QLabel("100%", this);
-	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
-	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
-
-	layout->addWidget(_zoomOriginal);
-	layout->addWidget(_zoomOut);
-	layout->addWidget(_zoomSlider);
-	layout->addWidget(_zoomIn);
-	layout->addWidget(_zoom);
-
-	addZoomShortcut(50);
-	addZoomShortcut(100);
-	addZoomShortcut(200);
-	addZoomShortcut(400);
-
-	// View flipping
-	layout->addSpacing(10);
-	_viewFlip = new QToolButton(this);
-	_viewFlip->setAutoRaise(true);
-
-	_viewMirror = new QToolButton(this);
-	_viewMirror->setAutoRaise(true);
-
-	layout->addWidget(_viewFlip);
-	layout->addWidget(_viewMirror);
-
 	// Rotation angle
 	layout->addSpacing(10);
 	_resetRotation = new QToolButton(this);
@@ -126,6 +81,51 @@ ViewStatus::ViewStatus(QWidget *parent)
 	addAngleShortcut(90);
 	addAngleShortcut(135);
 	addAngleShortcut(180);
+
+	// View flipping
+	layout->addSpacing(10);
+	_viewFlip = new QToolButton(this);
+	_viewFlip->setAutoRaise(true);
+
+	_viewMirror = new QToolButton(this);
+	_viewMirror->setAutoRaise(true);
+
+	layout->addWidget(_viewFlip);
+	layout->addWidget(_viewMirror);
+
+	// Zoom level
+	_zoomIn = new QToolButton(this);
+	_zoomIn->setAutoRaise(true);
+	_zoomOut = new QToolButton(this);
+	_zoomOut->setAutoRaise(true);
+	_zoomOriginal = new QToolButton(this);
+	_zoomOriginal->setAutoRaise(true);
+
+
+	_zoomSlider = new QSlider(Qt::Horizontal, this);
+	_zoomSlider->setMaximumWidth(120);
+	_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+	_zoomSlider->setMinimum(50);
+	_zoomSlider->setMaximum(1600);
+	_zoomSlider->setPageStep(50);
+	_zoomSlider->setValue(100);
+	_zoomSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
+	connect(_zoomSlider, &QSlider::valueChanged, [this](int val) { emit zoomChanged(val); });
+
+	_zoom = new QLabel("100%", this);
+	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
+	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+	layout->addWidget(_zoomOriginal);
+	layout->addWidget(_zoomOut);
+	layout->addWidget(_zoomSlider);
+	layout->addWidget(_zoomIn);
+	layout->addWidget(_zoom);
+
+	addZoomShortcut(50);
+	addZoomShortcut(100);
+	addZoomShortcut(200);
+	addZoomShortcut(400);
 }
 
 void ViewStatus::setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal)
