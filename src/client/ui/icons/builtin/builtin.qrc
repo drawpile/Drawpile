@@ -4,13 +4,13 @@
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>
-        <file>dock-close.png</file>
-        <file>dock-detach.png</file>
+        <file>dock-close.svg</file>
+        <file>dock-detach.svg</file>
         <file>drawpile.png</file>
         <file>paintmode-hardedge.svg</file>
         <file>paintmode-smoothedge.svg</file>
         <file>paintmode-incremental.svg</file>
         <file>paintmode-indirect.svg</file>
-        <file>stop.png</file>
+        <file>stop.svg</file>
     </qresource>
 </RCC>
