@@ -39,6 +39,9 @@ public:
 
 	void setSpacing(int spacing);
 
+	void setMaxRows(int maxRows);
+	void setEnableScrolling(bool enable);
+
 signals:
 	void colorSelected(const QColor& color);
 
@@ -91,6 +94,8 @@ private:
 	int _scroll;
 	int _selection;
 	int _dialogsel;
+	int _maxrows;
+	bool _enableScrolling;
 	QPoint _dragstart;
 	QRubberBand *_outline;
 };

@@ -39,7 +39,7 @@ namespace widgets {
 PaletteWidget::PaletteWidget(QWidget *parent)
 	: QWidget(parent), _palette(0),
 	  _swatchsize(13,8), _columns(16), _spacing(1), _leftMargin(0),
-	  _scroll(0), _selection(-1), _dialogsel(-2)
+	  _scroll(0), _selection(-1), _dialogsel(-2), _maxrows(0), _enableScrolling(true)
 {
 	setAcceptDrops(true);
 	setFocusPolicy(Qt::StrongFocus);
@@ -62,6 +62,16 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 
 	connect(_colordlg, SIGNAL(finished(int)),
 			this, SLOT(dialogDone()));
+}
+
+void PaletteWidget::setMaxRows(int maxRows)
+{
+	_maxrows = maxRows;
+}
+
+void PaletteWidget::setEnableScrolling(bool enable)
+{
+	_enableScrolling = enable;
 }
 
 void PaletteWidget::setPalette(Palette *palette)
@@ -121,7 +131,7 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 		rowsHeight = (count / _columns + 1) * (_swatchsize.height()+_spacing);
 	}
 
-	if(rowsHeight <= height()) {
+	if(rowsHeight <= height() || !_enableScrolling) {
 		_scrollbar->setVisible(false);
 		_scrollbar->setMaximum(0);
 
@@ -266,6 +276,9 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 
 	int totalCount = _palette->count() + (_palette->isReadonly() ? 0 : 1);
 
+	if(_maxrows>0)
+		totalCount = qMin(_columns, totalCount);
+
 	painter.fillRect(
 		QRectF(
 			_leftMargin, 0,
@@ -275,7 +288,7 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 		QColor("#646464")
 	);
 
-	for(int i=0;i<_palette->count();++i) {
+	for(int i=0;i<qMin(totalCount, _palette->count());++i) {
 		QRect swatch = swatchRect(i);
 		painter.fillRect(swatch, _palette->color(i).color);
 	}
@@ -441,7 +454,7 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 
 void PaletteWidget::wheelEvent(QWheelEvent *event)
 {
-	if(event->orientation() == Qt::Vertical) {
+	if(event->orientation() == Qt::Vertical && _enableScrolling) {
 		_scrollbar->setValue(_scrollbar->value() - event->delta()/16);
 	}
 }

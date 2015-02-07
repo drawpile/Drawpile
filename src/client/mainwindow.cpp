@@ -287,6 +287,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
+	connect(_client, SIGNAL(sentColorChange(QColor)), _dock_colors, SLOT(addLastUsedColor(QColor)));
+
 	// Meta commands
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
 			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool,bool)));

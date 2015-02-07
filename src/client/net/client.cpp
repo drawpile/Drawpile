@@ -230,6 +230,7 @@ void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 	if(ctx != _lastToolCtx) {
 		sendCommand(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 		_lastToolCtx = ctx;
+		emit sentColorChange(ctx.brush.color1());
 	}
 }
 

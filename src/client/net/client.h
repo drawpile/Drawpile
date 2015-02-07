@@ -255,6 +255,8 @@ signals:
 	void bytesSent(int);
 	void lagMeasured(qint64);
 
+	void sentColorChange(const QColor &color);
+
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
 	void handleConnect(QString sessionId, int userid, bool join);

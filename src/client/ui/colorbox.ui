@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>247</width>
-    <height>188</height>
+    <height>256</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -45,7 +45,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
-       <iconset>
+       <iconset resource="icons/builtin/builtin.qrc">
         <normaloff>:/icons/builtin/colorbox-pal.png</normaloff>:/icons/builtin/colorbox-pal.png</iconset>
       </attribute>
       <attribute name="title">
@@ -133,7 +133,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="icon">
-       <iconset>
+       <iconset resource="icons/builtin/builtin.qrc">
         <normaloff>:/icons/builtin/colorbox-hsv.png</normaloff>:/icons/builtin/colorbox-hsv.png</iconset>
       </attribute>
       <attribute name="title">
@@ -298,7 +298,7 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="icon">
-       <iconset>
+       <iconset resource="icons/builtin/builtin.qrc">
         <normaloff>:/icons/builtin/colorbox-wheel.png</normaloff>:/icons/builtin/colorbox-wheel.png</iconset>
       </attribute>
       <attribute name="title">
@@ -334,6 +334,16 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="PaletteWidget" name="lastused" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -358,5 +368,8 @@
    <header>widgets/palettewidget.h</header>
   </customwidget>
  </customwidgets>
+ <resources>
+  <include location="icons/builtin/builtin.qrc"/>
+ </resources>
  <connections/>
 </ui>

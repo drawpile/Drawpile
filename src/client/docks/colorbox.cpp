@@ -124,6 +124,17 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	connect(_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
 	connect(_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
+	//
+	// Last used colors
+	//
+	_lastused = new Palette(this);
+	_lastused->setReadonly(true);
+	_ui->lastused->setPalette(_lastused);
+	_ui->lastused->setEnableScrolling(false);
+	_ui->lastused->setMaxRows(1);
+
+	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
+	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 }
 
 ColorBox::~ColorBox()
@@ -260,6 +271,18 @@ void ColorBox::updateFromHsvSpinbox()
 		setColor(color);
 		emit colorChanged(color);
 	}
+}
+
+void ColorBox::addLastUsedColor(const QColor &color)
+{
+	if(_lastused->count()>0 && _lastused->color(0).color.rgb() == color.rgb())
+		return;
+
+	_lastused->setReadonly(false);
+	_lastused->insertColor(0, color);
+	if(_lastused->count() > 24)
+		_lastused->removeColor(24);
+	_lastused->setReadonly(true);
 }
 
 }

@@ -22,6 +22,7 @@
 #include <QDockWidget>
 
 class Ui_ColorBox;
+class Palette;
 
 namespace docks {
 
@@ -33,6 +34,7 @@ public:
 
 public slots:
 	void setColor(const QColor& color);
+	void addLastUsedColor(const QColor &color);
 
 signals:
 	void colorChanged(const QColor& color);
@@ -51,8 +53,10 @@ private slots:
 
 private:
 	Ui_ColorBox *_ui;
+	Palette *_lastused;
 
 	bool _updating;
+
 };
 
 }
