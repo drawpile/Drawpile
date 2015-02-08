@@ -35,6 +35,8 @@ enum Mouse_Status
     Drag_Square
 };
 
+static bool DEFAULT_COLORWHEEL_ROTATING = true;
+
 class Color_Wheel::Private
 {
 private:
@@ -46,10 +48,11 @@ public:
     Mouse_Status mouse_status;
     QPixmap hue_ring;
     QImage sat_val_square;
+    bool rotating_square;
 
     Private(Color_Wheel *widget)
         : w(widget), huem(0), sat(0), val(0),
-        wheel_width(20), mouse_status(Nothing)
+        wheel_width(20), mouse_status(Nothing), rotating_square(DEFAULT_COLORWHEEL_ROTATING)
     { }
 
     /// Calculate outer wheel radius from idget center
@@ -171,6 +174,16 @@ void Color_Wheel::setWheelWidth(unsigned int w)
     update();
 }
 
+void Color_Wheel::setRotatingSquare(bool rotate)
+{
+    p->rotating_square = rotate;
+    update();
+}
+
+bool Color_Wheel::rotatingSquare() const
+{
+    return p->rotating_square;
+}
 
 void Color_Wheel::paintEvent(QPaintEvent * )
 {
@@ -200,9 +213,14 @@ void Color_Wheel::paintEvent(QPaintEvent * )
     if(p->sat_val_square.isNull())
         p->render_rectangle();
 
-    painter.rotate(-p->huem*360-45);
+    if(p->rotating_square)
+        painter.rotate(-p->huem*360-45);
+    else
+        painter.scale(1,-1);
+
     ray.setLength(p->inner_radius());
     ray.setAngle(135);
+
     painter.drawImage(ray.p2(), p->sat_val_square);
 
     // lum-sat selector
@@ -233,11 +251,15 @@ void Color_Wheel::mouseMoveEvent(QMouseEvent *ev)
         QLineF glob_mouse_ln = p->line_to_point(ev->pos());
         QLineF center_mouse_ln ( QPointF(0,0),
                                  glob_mouse_ln.p2() - glob_mouse_ln.p1() );
-        center_mouse_ln.setAngle(center_mouse_ln.angle()-p->huem*360-45);
+
+        if(p->rotating_square)
+            center_mouse_ln.setAngle(center_mouse_ln.angle()-p->huem*360-45);
 
         p->sat = qBound(0.0, center_mouse_ln.x2()/p->square_size()+0.5, 1.0);
 
         p->val = qBound(0.0, center_mouse_ln.y2()/p->square_size()+0.5, 1.0);
+        if(!p->rotating_square)
+            p->val = 1 - p->val;
 
         emit colorSelected(color());
         emit colorChanged(color());
@@ -298,5 +320,10 @@ void Color_Wheel::setValue(qreal v)
 {
     p->val = qBound(0.0, v, 1.0);
     update();
+}
+
+void Color_Wheel::setDefaultRotatingSquare(bool rotate)
+{
+    DEFAULT_COLORWHEEL_ROTATING = rotate;
 }
 

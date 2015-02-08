@@ -81,6 +81,17 @@ void Gradient_Slider::setColors(const QGradientStops &colors)
     update();
 }
 
+QLinearGradient Gradient_Slider::gradient() const
+{
+    return p->gradient;
+}
+
+void Gradient_Slider::setGradient(const QLinearGradient &gradient)
+{
+    p->gradient = gradient;
+    update();
+}
+
 void Gradient_Slider::setColors(const QVector<QColor> &colors)
 {
     QGradientStops stops;

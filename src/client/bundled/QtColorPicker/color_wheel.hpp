@@ -40,6 +40,7 @@ class Color_Wheel : public QWidget
     Q_PROPERTY(qreal saturation READ saturation WRITE setSaturation DESIGNABLE false )
     Q_PROPERTY(qreal value READ value WRITE setValue DESIGNABLE false )
     Q_PROPERTY(unsigned wheelWidth READ wheelWidth WRITE setWheelWidth DESIGNABLE true )
+    Q_PROPERTY(bool rotatingSquare READ rotatingSquare WRITE setRotatingSquare DESIGNABLE true )
 
 public:
     explicit Color_Wheel(QWidget *parent = 0);
@@ -65,6 +66,12 @@ public:
     /// Set the width in pixels of the outer wheel
     void setWheelWidth(unsigned int w);
 
+    /// Does the color square rotate with hue selection
+    bool rotatingSquare() const;
+
+    /// Set the default value for rotatingSquare for new Color_Wheel objects
+    static void setDefaultRotatingSquare(bool rotate);
+
 public slots:
 
     /// Set current color
@@ -84,6 +91,9 @@ public slots:
      * @param v Value [0-1]
     */
     void setValue(qreal v);
+
+    //! Enable/disable color square rotation
+    void setRotatingSquare(bool rotate);
 
 signals:
     /**

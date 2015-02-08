@@ -38,6 +38,8 @@
 #include <QDesktopWidget>
 #include <QDateTime>
 
+#include <Color_Wheel>
+
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
@@ -204,6 +206,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
+
+	Color_Wheel::setDefaultRotatingSquare(false);
 
 	{
 		// Set override locale from settings, or use system locale if no override is set

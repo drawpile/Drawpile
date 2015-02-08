@@ -39,10 +39,11 @@ public:
 
     void updateGradient()
     {
+        static const double n_colors = 6;
         QGradientStops colors;
-        colors.reserve(8);
-        for(int i=0;i<=7;++i)
-            colors.append(QGradientStop(i/7.0, QColor::fromHsvF(i/7.0, saturation, value)));
+        colors.reserve(n_colors+1);
+        for(int i=0;i<=n_colors;++i)
+            colors.append(QGradientStop(i/n_colors, QColor::fromHsvF(i/n_colors, saturation, value)));
         w->setColors(colors);
     }
 };
