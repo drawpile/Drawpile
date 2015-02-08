@@ -338,10 +338,12 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 	// Paint transformed image
 	QImage image(rect.size(), QImage::Format_ARGB32);
 	image.fill(0);
-	QPainter imagep(&image);
-	imagep.setRenderHint(QPainter::SmoothPixmapTransform);
-	imagep.setTransform(transform);
-	imagep.drawImage(0, 0, _pasteimg);
+	{
+		QPainter imagep(&image);
+		imagep.setRenderHint(QPainter::SmoothPixmapTransform);
+		imagep.setTransform(transform);
+		imagep.drawImage(0, 0, _pasteimg);
+	}
 
 
 	// Clip image to scene
