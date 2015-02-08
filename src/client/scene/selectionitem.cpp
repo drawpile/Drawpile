@@ -54,6 +54,17 @@ void SelectionItem::translate(const QPoint &offset)
 	_polygon.translate(offset);
 }
 
+void SelectionItem::scale(qreal x, qreal y)
+{
+	QPointF center = _polygon.boundingRect().center();
+	for(QPointF &p : _polygon) {
+		QPointF sp = (p - center);
+		sp.rx() *= x;
+		sp.ry() *= y;
+		p = sp + center;
+	}
+}
+
 void SelectionItem::addPointToPolygon(const QPoint &point)
 {
 	prepareGeometryChange();

@@ -39,6 +39,7 @@ public:
 	void setRect(const QRect &rect);
 	void setPolygon(const QPolygon &polygon);
 	void translate(const QPoint &offset);
+	void scale(qreal x, qreal y);
 
 	QRect polygonRect() const { return _polygon.boundingRect().toRect(); }
 

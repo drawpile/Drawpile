@@ -47,6 +47,9 @@ namespace docks {
 namespace widgets {
 	class PaletteWidget;
 }
+namespace drawingboard {
+	class CanvasScene;
+}
 
 namespace tools {
 
@@ -418,16 +421,24 @@ private:
 	QCheckBox *_layerpick;
 };
 
-class SelectionSettings : public BrushlessSettings {
+class SelectionSettings : public QObject, public BrushlessSettings {
+	Q_OBJECT
 public:
 	SelectionSettings(const QString &name, const QString &title);
 	~SelectionSettings();
+
+	void setScene(drawingboard::CanvasScene *scene) { _scene = scene; }
+
+private slots:
+	void flipSelection();
+	void mirrorSelection();
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
 	Ui_SelectionSettings * _ui;
+	drawingboard::CanvasScene *_scene;
 };
 
 class LaserPointerSettings : public QObject, public BrushlessSettings {

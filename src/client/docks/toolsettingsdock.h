@@ -33,6 +33,7 @@ namespace tools {
 	class ColorPickerSettings;
 	class LaserPointerSettings;
 	class FillSettings;
+	class SelectionSettings;
 }
 
 namespace paintcore {
@@ -73,6 +74,9 @@ public:
 
 	//! Get the laser pointer settings page
 	tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
+
+	tools::SelectionSettings *getRectSelectionSettings() { return _selectionsettings; }
+	tools::SelectionSettings *getPolySelectionSettings() { return _polyselectionsettings; }
 
 	//! Get flood fill settings page
 	tools::FillSettings *getFillSettings() { return _fillsettings; }
@@ -182,8 +186,8 @@ private:
 	tools::ToolSettings *_ellipsesettings;
 	tools::FillSettings *_fillsettings;
 	tools::AnnotationSettings *_textsettings;
-	tools::ToolSettings *_selectionsettings;
-	tools::ToolSettings *_polyselectionsettings;
+	tools::SelectionSettings *_selectionsettings;
+	tools::SelectionSettings *_polyselectionsettings;
 	tools::LaserPointerSettings  *_lasersettings;
 
 	tools::ToolSettings *_currenttool;

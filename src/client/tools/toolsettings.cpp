@@ -36,6 +36,9 @@ using widgets::ColorButton;
 #include "ui_fillsettings.h"
 
 #include "scene/annotationitem.h"
+#include "scene/selectionitem.h"
+#include "scene/canvasview.h"
+#include "scene/canvasscene.h"
 #include "net/client.h"
 
 #include "utils/palette.h"
@@ -1101,7 +1104,7 @@ void AnnotationSettings::bake()
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title)
-	: BrushlessSettings(name, title, icon::fromTheme("select-rectangular")), _ui(0)
+	: QObject(), BrushlessSettings(name, title, icon::fromTheme("select-rectangular")), _ui(0)
 {
 }
 
@@ -1116,7 +1119,25 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_SelectionSettings;
 	_ui->setupUi(uiwidget);
 
+	connect(_ui->flip, SIGNAL(clicked()), this, SLOT(flipSelection()));
+	connect(_ui->mirror, SIGNAL(clicked()), this, SLOT(mirrorSelection()));
+
 	return uiwidget;
+}
+
+void SelectionSettings::flipSelection()
+{
+	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(sel)
+		sel->scale(1, -1);
+
+}
+
+void SelectionSettings::mirrorSelection()
+{
+	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(sel)
+		sel->scale(-1, 1);
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)
