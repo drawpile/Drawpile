@@ -43,6 +43,8 @@ public:
 
 	QRect polygonRect() const { return _polygon.boundingRect().toRect(); }
 
+	void resetPolygonShape();
+
 	//! Get a mask image of the polygon
 	QPair<QPoint,QImage> polygonMask(const QColor &color) const;
 
@@ -81,10 +83,12 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
+	void savePolygonShape();
 	QPolygon polygon() const { return _polygon.toPolygon(); }
 	void adjust(int dx1, int dy1, int dx2, int dy2);
 
 	QPolygonF _polygon;
+	QPolygonF _originalPolygonShape;
 	qreal _marchingants;
 	QImage _pasteimg;
 	bool _closePolygon;

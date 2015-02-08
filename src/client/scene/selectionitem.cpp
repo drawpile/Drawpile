@@ -31,6 +31,25 @@ SelectionItem::SelectionItem(QGraphicsItem *parent)
 {
 }
 
+void SelectionItem::savePolygonShape()
+{
+	QPolygonF poly;
+	poly.reserve(_polygon.size());
+	const QPointF center = _polygon.boundingRect().center();
+	for(const QPointF &p : _polygon)
+		poly << p - center;
+	_originalPolygonShape = poly;
+}
+
+void SelectionItem::resetPolygonShape()
+{
+	prepareGeometryChange();
+	const QPointF center = _polygon.boundingRect().center();
+	_polygon.clear();
+	for(const QPointF &p : _originalPolygonShape)
+		_polygon << p + center;
+}
+
 void SelectionItem::setRect(const QRect &rect)
 {
 	setPolygon(QPolygon({
@@ -46,6 +65,7 @@ void SelectionItem::setPolygon(const QPolygon &polygon)
 {
 	prepareGeometryChange();
 	_polygon = polygon;
+	savePolygonShape();
 }
 
 void SelectionItem::translate(const QPoint &offset)
@@ -74,6 +94,7 @@ void SelectionItem::addPointToPolygon(const QPoint &point)
 void SelectionItem::closePolygon()
 {
 	_closePolygon = true;
+	savePolygonShape();
 }
 
 bool SelectionItem::isAxisAlignedRectangle() const

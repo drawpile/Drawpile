@@ -7,6 +7,7 @@
  * Chat icon is now shown in statusbar when there are unread messages
  * Added filter bar to shortcut settings editor
  * Added last used colors selection to color dock
+ * Added selection transformation buttons
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode

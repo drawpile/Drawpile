@@ -46,6 +46,7 @@ namespace docks {
 }
 namespace widgets {
 	class PaletteWidget;
+	class CanvasView;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -428,10 +429,13 @@ public:
 	~SelectionSettings();
 
 	void setScene(drawingboard::CanvasScene *scene) { _scene = scene; }
+	void setView(widgets::CanvasView *view) { _view = view; }
 
 private slots:
 	void flipSelection();
 	void mirrorSelection();
+	void fitToScreen();
+	void resetSize();
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
@@ -439,6 +443,7 @@ protected:
 private:
 	Ui_SelectionSettings * _ui;
 	drawingboard::CanvasScene *_scene;
+	widgets::CanvasView *_view;
 };
 
 class LaserPointerSettings : public QObject, public BrushlessSettings {

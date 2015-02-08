@@ -273,7 +273,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_dock_toolsettings->getAnnotationSettings()->setClient(_client);
 	_dock_toolsettings->getAnnotationSettings()->setLayerSelector(_dock_layers);
 	_dock_toolsettings->getRectSelectionSettings()->setScene(_canvas);
+	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
 	_dock_toolsettings->getPolySelectionSettings()->setScene(_canvas);
+	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
 	_dock_users->setClient(_client);
 
 	_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {

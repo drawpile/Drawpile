@@ -1121,6 +1121,8 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 	connect(_ui->flip, SIGNAL(clicked()), this, SLOT(flipSelection()));
 	connect(_ui->mirror, SIGNAL(clicked()), this, SLOT(mirrorSelection()));
+	connect(_ui->fittoscreen, SIGNAL(clicked()), this, SLOT(fitToScreen()));
+	connect(_ui->resetsize, SIGNAL(clicked()), this, SLOT(resetSize()));
 
 	return uiwidget;
 }
@@ -1138,6 +1140,33 @@ void SelectionSettings::mirrorSelection()
 	drawingboard::SelectionItem *sel = _scene->selectionItem();
 	if(sel)
 		sel->scale(-1, 1);
+}
+
+void SelectionSettings::fitToScreen()
+{
+	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(sel) {
+		const QSizeF size = sel->polygonRect().size();
+		const QRectF screenRect = _view->mapToScene(_view->rect()).boundingRect();
+		const QSizeF screen = screenRect.size() * 0.7;
+
+		if(size.width() > screen.width() || size.height() > screen.height()) {
+			const QSizeF newsize = size.scaled(screen, Qt::KeepAspectRatio);
+			sel->scale(newsize.width() / size.width(), newsize.height() / size.height());
+		}
+
+		if(!sel->polygonRect().intersects(screenRect.toRect())) {
+			QPointF offset = screenRect.center() - sel->polygonRect().center();
+			sel->translate(offset.toPoint());
+		}
+	}
+}
+
+void SelectionSettings::resetSize()
+{
+	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(sel)
+		sel->resetPolygonShape();
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)
