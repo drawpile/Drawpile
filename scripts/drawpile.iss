@@ -59,9 +59,13 @@ Root: HKCR; Subkey: "drawpile"; ValueType: "string"; ValueName: "URL Protocol"; 
 Root: HKCR; Subkey: "drawpile\DefaultIcon"; ValueType: "string"; ValueData: "{app}\drawpile.exe,0"
 Root: HKCR; Subkey: "drawpile\shell\open\command"; ValueType: "string"; ValueData: """{app}\drawpile.exe"" ""%1"""
 
-; .dprec file association
-Root: HKCR; Subkey: ".dprec"; ValueType: string; ValueName: ""; ValueData: "DrawpileRecording"; Flags: uninsdeletevalue 
-Root: HKCR; Subkey: ".dprecz"; ValueType: string; ValueName: ""; ValueData: "DrawpileRecording"; Flags: uninsdeletevalue 
-Root: HKCR; Subkey: "DrawpileRecording"; ValueType: string; ValueName: ""; ValueData: "Drawpile recording"; Flags: uninsdeletekey 
-Root: HKCR; Subkey: "DrawpileRecording\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\drawpile.exe,0" 
-Root: HKCR; Subkey: "DrawpileRecording\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\drawpile.exe"" ""%1""" 
+; .dprec (and .ora) file association
+Root: HKCR; Subkey: ".dprec"; ValueType: string; ValueName: ""; ValueData: "DrawpileImage"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".dprecz"; ValueType: string; ValueName: ""; ValueData: "DrawpileImage"; Flags: uninsdeletevalue
+
+Root: HKCR; Subkey: ".ora"; ValueType: string; ValueName: ""; ValueData: "DrawpileImage"; Flags: createvalueifdoesntexist
+
+Root: HKCR; Subkey: "DrawpileImage"; ValueType: string; ValueName: ""; ValueData: "Drawpile image"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "DrawpileImage\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\drawpile.exe,0"
+Root: HKCR; Subkey: "DrawpileImage\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\drawpile.exe"" ""%1"""
+
