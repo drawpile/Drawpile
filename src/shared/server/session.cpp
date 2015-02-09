@@ -25,6 +25,9 @@
 #include "../net/snapshot.h"
 #include "../record/writer.h"
 #include "../util/passwordhash.h"
+#include "../util/announcementapi.h"
+
+#include <QTimer>
 
 namespace server {
 
@@ -33,6 +36,7 @@ using protocol::MessagePtr;
 SessionState::SessionState(const SessionId &id, int minorVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
+	_publicListing(nullptr),
 	_lastUserId(0),
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
@@ -40,7 +44,15 @@ SessionState::SessionState(const SessionId &id, int minorVersion, const QString 
 	_locked(false), _layerctrllocked(true), _closed(false),
 	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false),
 	_preservechat(false)
-{ }
+{
+	// Set up session announcement refresh timer
+	// If there is no announcement, nothing will happen.
+	QTimer *announcementRefreshTimer = new QTimer(this);
+	announcementRefreshTimer->setSingleShot(false);
+	announcementRefreshTimer->setInterval(1000 * 60 * 5);
+	connect(announcementRefreshTimer, &QTimer::timeout, this, &SessionState::refreshSessionAnnouncement);
+	announcementRefreshTimer->start(announcementRefreshTimer->interval());
+}
 
 QString SessionState::toLogString() const {
 	return QStringLiteral("Session %1:").arg(id());
@@ -567,6 +579,10 @@ void SessionState::kickAllUsers()
 
 void SessionState::killSession()
 {
+	if(_publicListing && _publicListing->isAnnounced()) {
+		_publicListing->unlistSession();
+	}
+
 	setClosed(true);
 	setHibernatable(false);
 	setPersistent(false);
@@ -670,6 +686,31 @@ QString SessionState::uptime() const
 		uptime += QString::number(minutes) + " minutes.";
 
 	return uptime;
+}
+
+sessionlisting::AnnouncementApi *SessionState::publicListing()
+{
+	if(!_publicListing) {
+		_publicListing = new sessionlisting::AnnouncementApi(this);
+	}
+	return _publicListing;
+}
+
+void SessionState::refreshSessionAnnouncement()
+{
+	if(_publicListing && _publicListing->isAnnounced()) {
+		_publicListing->refreshSession({
+			QString(),
+			0,
+			QString(),
+			QString(),
+			title(),
+			userCount(),
+			!passwordHash().isEmpty(),
+			founder(),
+			sessionStartTime()
+		});
+	}
 }
 
 }

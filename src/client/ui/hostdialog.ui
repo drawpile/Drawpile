@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>409</width>
-    <height>339</height>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,6 +119,29 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="announce">
+         <property name="toolTip">
+          <string>Announce the session at a public list</string>
+         </property>
+         <property name="text">
+          <string>Announce at:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="listingserver">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -132,7 +155,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_11">
          <property name="text">
-          <string>User limit:</string>
+          <string>&amp;User limit:</string>
          </property>
          <property name="buddy">
           <cstring>userlimit</cstring>
@@ -218,7 +241,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="uselocal">
         <property name="text">
-         <string>Built-in</string>
+         <string>Bui&amp;lt-in</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -228,7 +251,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="useremote">
         <property name="text">
-         <string>Remote:</string>
+         <string>Re&amp;mote:</string>
         </property>
        </widget>
       </item>
@@ -287,8 +310,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>250</x>
-     <y>533</y>
+     <x>258</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -303,8 +326,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>318</x>
-     <y>533</y>
+     <x>326</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -319,12 +342,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>193</x>
-     <y>233</y>
+     <x>90</x>
+     <y>290</y>
     </hint>
     <hint type="destinationlabel">
-     <x>275</x>
-     <y>237</y>
+     <x>371</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>announce</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listingserver</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>

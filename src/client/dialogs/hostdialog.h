@@ -70,6 +70,9 @@ public:
 	//! Get the desired session ID (or * if not specified)
 	QString getSessionId() const;
 
+	//! Get the announcement server URL (empty if not selected)
+	QString getAnnouncementUrl() const;
+
 private:
 	Ui_HostDialog *_ui;
 };

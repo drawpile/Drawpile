@@ -128,6 +128,11 @@ public:
 	void setPreserveChat(bool preserve) { Q_ASSERT(_mode==HOST); _preserveChat = preserve; }
 
 	/**
+	 * @brief Set session announcement URL
+	 */
+	void setAnnounceUrl(const QString &url) { _announceUrl = url; }
+
+	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
@@ -222,6 +227,7 @@ private:
 	bool _layerctrllock;
 	bool _requestPersistent;
 	bool _preserveChat;
+	QString _announceUrl;
 
 	// Process state
 	TcpServer *_server;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,32 +27,38 @@ class Ui_SettingsDialog;
 class QListWidgetItem;
 class CustomShortcutModel;
 
+namespace sessionlisting { class ListServerModel; }
+
 namespace dialogs {
 
 class SettingsDialog : public QDialog
 {
-	Q_OBJECT
-	public:
-		SettingsDialog(QWidget *parent=0);
-		~SettingsDialog();
+Q_OBJECT
+public:
+	SettingsDialog(QWidget *parent=0);
+	~SettingsDialog();
 
-	private slots:
-		void rememberSettings();
-		void saveCertTrustChanges();
+private slots:
+	void rememberSettings();
+	void saveCertTrustChanges();
 
-		void viewCertificate(QListWidgetItem *item);
-		void markTrustedCertificates();
-		void removeCertificates();
-		void certificateSelectionChanged();
-		void importTrustedCertificate();
+	void viewCertificate(QListWidgetItem *item);
+	void markTrustedCertificates();
+	void removeCertificates();
+	void certificateSelectionChanged();
+	void importTrustedCertificate();
 
-	private:
-		Ui_SettingsDialog *_ui;
+	void addListingServer();
+	void removeListingServer();
 
-		QStringList _removeCerts;
-		QStringList _trustCerts;
-		QList<QSslCertificate> _importCerts;
-		CustomShortcutModel *_customShortcuts;
+private:
+	Ui_SettingsDialog *_ui;
+
+	QStringList _removeCerts;
+	QStringList _trustCerts;
+	QList<QSslCertificate> _importCerts;
+	CustomShortcutModel *_customShortcuts;
+	sessionlisting::ListServerModel *_listservers;
 };
 
 }

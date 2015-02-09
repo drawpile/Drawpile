@@ -23,6 +23,7 @@ set (
 	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp
+	util/announcementapi.cpp
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp

@@ -21,6 +21,9 @@
 #include "client.h"
 #include "session.h"
 #include "../net/meta.h"
+#include "../util/announcementapi.h"
+
+#include "config.h"
 
 #include <QList>
 #include <QStringList>
@@ -254,6 +257,48 @@ void killSession(Client *client, const QString &, const QStringList &)
 	client->session()->killSession();
 }
 
+void announceSession(Client *client, const QString &cmd, const QStringList &)
+{
+	QUrl apiUrl(cmd.mid(cmd.indexOf(' ') + 1));
+	if(!apiUrl.isValid()) {
+		client->sendSystemChat("Invalid API URL");
+		return;
+	}
+
+	sessionlisting::AnnouncementApi *api = client->session()->publicListing();
+	if(api->isAnnounced()) {
+		// TODO support announcint at multiple sites simultaneously
+		client->sendSystemChat("Session already announced!");
+		return;
+	}
+
+	api->setApiUrl(apiUrl);
+	client->connect(api, &sessionlisting::AnnouncementApi::error, client, &Client::sendSystemChat, Qt::UniqueConnection);
+
+	api->announceSession({
+		 QString(),
+		 0,
+		 client->session()->id(),
+		 QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(client->session()->minorProtocolVersion()),
+		 client->session()->title(),
+		 client->session()->userCount(),
+		 !client->session()->passwordHash().isEmpty(),
+		 client->session()->founder(),
+		 client->session()->sessionStartTime()
+	 });
+}
+
+void unlistSession(Client *client, const QString &, const QStringList &)
+{
+	sessionlisting::AnnouncementApi *api = client->session()->publicListing();
+	if(!api->isAnnounced()) {
+		client->sendSystemChat("Session not announced!");
+		return;
+	}
+
+	api->unlistSession();
+}
+
 void showHelp(Client *client, const QString &, const QStringList &)
 {
 	QString message("Supported commands:\n");
@@ -323,6 +368,10 @@ OpCommandSet::OpCommandSet()
 #endif
 
 		<< OpCommand("killsession", killSession, QString(), "shut down this session").modOnly()
+
+		<< OpCommand("announce_at", announceSession, "<URL>", "announce session at a public listing service", 1, 1)
+		<< OpCommand("unlist", unlistSession, QString(), "unlist announcement")
+
 		<< OpCommand("who", listUsers, QString(), "list logged in users")
 		<< OpCommand("status", sessionStatus, QString(), "show session status")
 		<< OpCommand("help", showHelp, QString(), "show this help text")

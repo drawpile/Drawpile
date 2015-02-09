@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,46 +16,23 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef JOINDIALOG_H
-#define JOINDIALOG_H
+#ifndef LISTSERVERDELEGATE_H
+#define LISTSERVERDELEGATE_H
 
-#include <QDialog>
+#include <QItemDelegate>
 
-class Ui_JoinDialog;
+namespace sessionlisting {
 
-namespace dialogs {
-
-class JoinDialog : public QDialog
+class ListServerDelegate : public QItemDelegate
 {
-	Q_OBJECT
 public:
-	JoinDialog(QWidget *parent=0);
-	~JoinDialog();
+	ListServerDelegate(QObject *parent=0);
 
-	//! Get the host address
-	QString getAddress() const;
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-	//! Get the username
-	QString getUserName() const;
-
-	//! Should the session be recorded from the beginning
-	bool recordSession() const;
-
-	//! Get the join parameters encoded as an URL
-	QUrl getUrl() const;
-
-	//! Store settings in configuration file
-	void rememberSettings() const;
-
-private slots:
-	void showListingDialog();
-	void setUrl(const QUrl &url);
-
-private:
-	Ui_JoinDialog *_ui;
 };
 
 }
 
-#endif
-
+#endif // LISTSERVERDELEGATE_H

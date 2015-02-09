@@ -1146,6 +1146,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setLayerControlLock(dlg->getLayerControlLock());
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
+	login->setAnnounceUrl(dlg->getAnnouncementUrl());
 	_client->connectToServer(login);
 }
 

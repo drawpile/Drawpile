@@ -44,6 +44,7 @@ set (
 	net/layerlist.cpp
 	net/serverthread.cpp
 	net/builtinserver.cpp
+	net/sessionlistingmodel.cpp
 	utils/archive.cpp
 	utils/palette.cpp
 	utils/palettelistmodel.cpp
@@ -60,6 +61,8 @@ set (
 	utils/kis_cubic_curve.cpp
 	utils/shortcutdetector.cpp
 	utils/customshortcutmodel.cpp
+	utils/listservermodel.cpp
+	utils/listserverdelegate.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
@@ -91,6 +94,7 @@ set (
 	dialogs/recfilterdialog.cpp
 	dialogs/selectsessiondialog.cpp
 	dialogs/netstats.cpp
+	dialogs/sessionlistingdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -148,6 +152,7 @@ set (
 	ui/logindialog.ui
 	ui/colorbox.ui
 	ui/netstats.ui
+	ui/sessionlisting.ui
 )
 
 # Use bundled KArchive if library not found

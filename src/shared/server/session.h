@@ -45,6 +45,10 @@ namespace recording {
 	class Writer;
 }
 
+namespace sessionlisting {
+	class AnnouncementApi;
+}
+
 namespace server {
 
 class Client;
@@ -255,6 +259,14 @@ public:
 	const QList<Client*> &clients() const { return _clients; }
 
 	/**
+	 * @brief Get the name of the session owner
+	 *
+	 * The operator who has been in the session the longest
+	 * is considered the owner.
+	 */
+	QString ownerName() const;
+
+	/**
 	 * @brief Get the time the session was started
 	 * @return timestamp
 	 */
@@ -411,6 +423,11 @@ public:
 
 	QString toLogString() const;
 
+	/**
+	 * @brief Get the public listing API client instance for this session
+	 */
+	sessionlisting::AnnouncementApi *publicListing();
+
 signals:
 	//! A user just connected to the session
 	void userConnected(SessionState *thisSession, Client *client);
@@ -442,6 +459,7 @@ signals:
 private slots:
 	void removeUser(Client *user);
 	void userBarrierLocked();
+	void refreshSessionAnnouncement();
 
 private:
 	void cleanupCommandStream();
@@ -454,6 +472,8 @@ private:
 	QList<Client*> _clients;
 
 	protocol::MessageStream _mainstream;
+
+	sessionlisting::AnnouncementApi *_publicListing;
 
 	int _lastUserId;
 	QVector<LayerState> _layers;

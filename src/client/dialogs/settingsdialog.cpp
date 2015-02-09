@@ -25,6 +25,10 @@
 #include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
 #include "utils/customshortcutmodel.h"
+#include "utils/listservermodel.h"
+#include "utils/listserverdelegate.h"
+#include "utils/networkaccess.h"
+#include "../shared/util/announcementapi.h"
 
 #include "ui_settings.h"
 
@@ -34,11 +38,13 @@
 #include <QStyledItemDelegate>
 #include <QItemEditorFactory>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
 #include <QSslCertificate>
 #include <QSortFilterProxyModel>
+#include <QPointer>
 
 #include <QDebug>
 
@@ -174,6 +180,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		i->setData(Qt::UserRole, true);
 		i->setData(Qt::UserRole+1, trustedHostsDir.absoluteFilePath(filename));
 	}
+
+	// Session listing server list
+	_listservers = new sessionlisting::ListServerModel(this);
+	_ui->listserverview->setModel(_listservers);
+	_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
+
+	connect(_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
+	connect(_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -211,6 +225,8 @@ void SettingsDialog::rememberSettings()
 
 	// Remember shortcuts.
 	_customShortcuts->saveShortcuts();
+
+	_listservers->saveServers();
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
@@ -341,6 +357,58 @@ void SettingsDialog::importTrustedCertificate()
 	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);
+}
+
+void SettingsDialog::addListingServer()
+{
+	QString urlstr = QInputDialog::getText(this, tr("Add public listing server"), "URL");
+	if(!urlstr.isEmpty()) {
+		QUrl url(urlstr);
+		if(!url.isValid()) {
+			QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
+			return;
+		}
+
+		auto *api = new sessionlisting::AnnouncementApi;
+		api->setApiUrl(url);
+
+		QPointer<SettingsDialog> self(this);
+
+		connect(api, &sessionlisting::AnnouncementApi::error, [self, api](QString error) {
+			QMessageBox::warning(self, tr("Add public listing server"), error);
+			api->deleteLater();
+		});
+
+		connect(api, &sessionlisting::AnnouncementApi::serverInfo, [self, url, api](sessionlisting::ListServerInfo info) {
+			if(!self.isNull()) {
+				self->_listservers->addServer(info.name, url.toString(), info.description);
+
+				if(info.faviconUrl == "drawpile") {
+					self->_listservers->setFavicon(url.toString(), icon::fromBuiltin("drawpile").pixmap(128, 128).toImage());
+				} else {
+					QUrl favicon(info.faviconUrl);
+					if(favicon.isValid()) {
+						networkaccess::getImage(favicon, nullptr, [self, url](const QImage &image, const QString &) {
+							if(!self.isNull() && !image.isNull()) {
+								self->_listservers->setFavicon(url.toString(), image);
+							}
+						});
+					}
+				}
+			}
+			api->deleteLater();
+		});
+
+		api->getApiInfo();
+	}
+}
+
+void SettingsDialog::removeListingServer()
+{
+	QModelIndex selection = _ui->listserverview->selectionModel()->currentIndex();
+	if(selection.isValid()) {
+		_listservers->removeRow(selection.row());
+	}
 }
 
 }

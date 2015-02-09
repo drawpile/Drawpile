@@ -554,6 +554,9 @@ void LoginHandler::expectLoginOk(const QString &msg)
 			if(_preserveChat)
 				init << "preservechat on";
 
+			if(!_announceUrl.isEmpty())
+				init << "announce_at " + _announceUrl;
+
 			for(const QString msg : init)
 				_server->sendMessage(protocol::Chat::opCommand(0, msg));
 		}

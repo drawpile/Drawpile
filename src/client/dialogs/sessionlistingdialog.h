@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,46 +16,40 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef JOINDIALOG_H
-#define JOINDIALOG_H
+
+#ifndef SESSIONLISTINGDIALOG_H
+#define SESSIONLISTINGDIALOG_H
+
+class Ui_SessionListingDialog;
 
 #include <QDialog>
 
-class Ui_JoinDialog;
+namespace sessionlisting {
+	class SessionListingModel;
+	class AnnouncementApi;
+}
 
 namespace dialogs {
 
-class JoinDialog : public QDialog
+class SessionListingDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	JoinDialog(QWidget *parent=0);
-	~JoinDialog();
+	explicit SessionListingDialog(QWidget *parent=nullptr);
+	~SessionListingDialog();
 
-	//! Get the host address
-	QString getAddress() const;
-
-	//! Get the username
-	QString getUserName() const;
-
-	//! Should the session be recorded from the beginning
-	bool recordSession() const;
-
-	//! Get the join parameters encoded as an URL
-	QUrl getUrl() const;
-
-	//! Store settings in configuration file
-	void rememberSettings() const;
+signals:
+	void selected(const QUrl &sessionUrl);
 
 private slots:
-	void showListingDialog();
-	void setUrl(const QUrl &url);
+	void refreshListing();
 
 private:
-	Ui_JoinDialog *_ui;
+	Ui_SessionListingDialog *_ui;
+	sessionlisting::SessionListingModel * _model;
+	sessionlisting::AnnouncementApi *_apiClient;
 };
 
 }
 
-#endif
-
+#endif // SESSIONLISTINGDIALOG_H

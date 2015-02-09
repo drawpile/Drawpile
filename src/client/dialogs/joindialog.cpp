@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "joindialog.h"
+#include "sessionlistingdialog.h"
 #include "../utils/mandatoryfields.h"
 #include "../utils/usernamevalidator.h"
 
@@ -36,6 +37,8 @@ JoinDialog::JoinDialog(QWidget *parent)
 	_ui->setupUi(this);
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	QPushButton *findBtn = _ui->buttons->addButton(tr("Find..."), QDialogButtonBox::ActionRole);
+
 	_ui->username->setValidator(new UsernameValidator(this));
 
 	// Set defaults
@@ -45,6 +48,8 @@ JoinDialog::JoinDialog(QWidget *parent)
 	_ui->username->setText(cfg.value("username").toString());
 
 	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
+
+	connect(findBtn, &QPushButton::clicked, this, &JoinDialog::showListingDialog);
 }
 
 void JoinDialog::rememberSettings() const
@@ -97,6 +102,20 @@ QUrl JoinDialog::getUrl() const
 	url.setUserName(username);
 
 	return url;
+}
+
+void JoinDialog::setUrl(const QUrl &url)
+{
+	_ui->address->setCurrentText(url.toString());
+}
+
+void JoinDialog::showListingDialog()
+{
+	SessionListingDialog *ld = new SessionListingDialog(this);
+	connect(ld, &SessionListingDialog::selected, this, &JoinDialog::setUrl);
+	ld->setWindowModality(Qt::WindowModal);
+	ld->setAttribute(Qt::WA_DeleteOnClose);
+	ld->show();
 }
 
 }

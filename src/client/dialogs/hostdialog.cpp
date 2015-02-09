@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "utils/usernamevalidator.h"
 #include "utils/sessionidvalidator.h"
 #include "utils/imagesize.h"
+#include "utils/listservermodel.h"
 
 #include <QPushButton>
 #include <QFileDialog>
@@ -52,6 +53,10 @@ HostDialog::HostDialog(QWidget *parent)
 	cfg.beginGroup("history");
 	_ui->username->setText(cfg.value("username").toString());
 	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
+
+	_ui->listingserver->setModel(new sessionlisting::ListServerModel(this));
+	_ui->announce->setChecked(cfg.value("announce", false).toBool());
+	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 
 	// Settings tab defaults
 	_ui->persistentSession->setChecked(cfg.value("persistentsession", false).toBool());
@@ -81,6 +86,8 @@ void HostDialog::rememberSettings() const
 
 	cfg.setValue("username", getUserName());
 	cfg.setValue("sessiontitle", getTitle());
+	cfg.setValue("announce", _ui->announce->isChecked());
+	cfg.setValue("listingserver", _ui->listingserver->currentIndex());
 
 	// Move current address to the top of the list
 	QStringList hosts;
@@ -159,6 +166,14 @@ QString HostDialog::getSessionId() const
 bool HostDialog::getPreserveChat() const
 {
 	return _ui->preservechat->isChecked();
+}
+
+QString HostDialog::getAnnouncementUrl() const
+{
+	if(_ui->announce->isChecked())
+		return _ui->listingserver->currentData().toString();
+	else
+		return QString();
 }
 
 }
