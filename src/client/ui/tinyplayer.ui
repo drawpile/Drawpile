@@ -12,7 +12,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#TinyPlayer {
-background: #4d4d4d;
+background: #eff0f1;
+
 }
 
 QToolButton {
@@ -29,8 +30,8 @@ background: rgba(255,255,255,0.7);
 }
 
 QToolButton:checked {
-border: 1px solid #3c1;
-border-radius: 5px;
+background: #2ecc71;
+border-radius: 3px;
 }
 </string>
   </property>

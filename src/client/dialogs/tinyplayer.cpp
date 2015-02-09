@@ -34,7 +34,29 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 	hide();
 
 	_ui = new Ui_TinyPlayer;
+
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+	// This custom shadow only looks nice on Linux window managers
+	// TODO check under Wayland
+	{
+		QWidget *w = new QWidget(this);
+		_ui->setupUi(w);
+		auto *layout = new QHBoxLayout;
+		setLayout(layout);
+		layout->addWidget(w);
+
+		auto *shadow = new QGraphicsDropShadowEffect;
+		shadow->setBlurRadius(8);
+		shadow->setColor(QColor(0, 0, 0, 200));
+		shadow->setOffset(0);
+		setAttribute(Qt::WA_TranslucentBackground);
+		w->setGraphicsEffect(shadow);
+	}
+
+#else
+	// On other platforms the player will get a small window frame
 	_ui->setupUi(this);
+#endif
 
 	connect(_ui->prevMarker, SIGNAL(clicked()), this, SIGNAL(prevMarker()));
 	connect(_ui->nextMarker, SIGNAL(clicked()), this, SIGNAL(nextMarker()));
