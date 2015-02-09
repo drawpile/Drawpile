@@ -112,7 +112,7 @@ SessionListingDialog::~SessionListingDialog()
 
 void SessionListingDialog::refreshListing()
 {
-	QUrl url = _ui->listserver->currentData().toString();
+	QUrl url = _ui->listserver->itemData(_ui->listserver->currentIndex()).toString();
 	if(url.isValid()) {
 		_apiClient->setApiUrl(url);
 		const QString version = QStringLiteral(XPROTO_STR(DRAWPILE_PROTO_MAJOR_VERSION) "." XPROTO_STR(DRAWPILE_PROTO_MINOR_VERSION));

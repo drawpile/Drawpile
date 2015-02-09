@@ -170,10 +170,12 @@ bool HostDialog::getPreserveChat() const
 
 QString HostDialog::getAnnouncementUrl() const
 {
-	if(_ui->announce->isChecked())
-		return _ui->listingserver->currentData().toString();
-	else
-		return QString();
+	if(_ui->announce->isChecked()) {
+		// Qt >=5.2
+		//return _ui->listingserver->currentData().toString();
+		return _ui->listingserver->itemData(_ui->listingserver->currentIndex()).toString();
+	}
+	return QString();
 }
 
 }

@@ -199,7 +199,7 @@ void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
 	// Remember general settings
-	cfg.setValue("settings/language", _ui->languageBox->currentData());
+	cfg.setValue("settings/language", _ui->languageBox->itemData(_ui->languageBox->currentIndex()));
 
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
