@@ -28,6 +28,7 @@
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
 #include "utils/networkaccess.h"
+#include "utils/settings.h"
 #include "../shared/util/announcementapi.h"
 
 #include "ui_settings.h"
@@ -91,6 +92,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			_ui->ffmpegpath->setText(path);
 	});
 
+	connect(_ui->pickRecordingFolder, &QToolButton::clicked, [this]() {
+		QString path = QFileDialog::getExistingDirectory(this, tr("Recording folder"), _ui->recordingFolder->text());
+		if(!path.isEmpty())
+			_ui->recordingFolder->setText(path);
+	});
+
+
 	// Set defaults
 	QSettings cfg;
 
@@ -131,6 +139,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
 	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
 	_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
+	_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
@@ -209,6 +218,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("recordpause", _ui->recordpause->isChecked());
 	cfg.setValue("minimumpause", _ui->minimumpause->value());
 	FfmpegExporter::setFfmpegPath(_ui->ffmpegpath->text().trimmed());
+	cfg.setValue("folder", _ui->recordingFolder->text());
 	cfg.endGroup();
 
 	// Remember server settings

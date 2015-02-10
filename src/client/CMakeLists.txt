@@ -63,6 +63,7 @@ set (
 	utils/customshortcutmodel.cpp
 	utils/listservermodel.cpp
 	utils/listserverdelegate.cpp
+	utils/settings.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp

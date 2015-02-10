@@ -69,6 +69,7 @@
 #include "utils/networkaccess.h"
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
+#include "utils/settings.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -1330,7 +1331,7 @@ void MainWindow::loggedin(bool join)
 
 	// Automatically start recording
 	if(_autoRecordOnConnect)
-		startRecorder(utils::uniqueFilename(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation), "session-" + _client->sessionId(), "dprec"));
+		startRecorder(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + _client->sessionId(), "dprec"));
 
 	setDrawingToolsEnabled(true);
 }
