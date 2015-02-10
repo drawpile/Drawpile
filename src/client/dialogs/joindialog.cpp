@@ -52,6 +52,18 @@ JoinDialog::JoinDialog(QWidget *parent)
 	connect(findBtn, &QPushButton::clicked, this, &JoinDialog::showListingDialog);
 }
 
+static QString cleanAddress(const QString &addr)
+{
+	QUrl url(addr);
+	if(url.isValid()) {
+		QString a = url.host();
+		if(url.port()!=-1)
+			a += ":" + QString::number(url.port());
+		return a;
+	}
+	return addr;
+}
+
 void JoinDialog::rememberSettings() const
 {
 	QSettings cfg;
@@ -63,7 +75,7 @@ void JoinDialog::rememberSettings() const
 	int curindex = _ui->address->findText(current);
 	if(curindex>=0)
 		_ui->address->removeItem(curindex);
-	hosts << current;
+	hosts << cleanAddress(current);
 	for(int i=0;i<_ui->address->count();++i)
 		hosts << _ui->address->itemText(i);
 	cfg.setValue("recenthosts", hosts);
