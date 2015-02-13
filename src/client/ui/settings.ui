@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
+    <width>608</width>
     <height>369</height>
    </rect>
   </property>
@@ -106,6 +106,9 @@
          </item>
          <item>
           <layout class="QFormLayout" name="formLayout_3">
+           <property name="formAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
@@ -197,8 +200,8 @@
            <item>
             <widget class="QToolButton" name="pickRecordingFolder">
              <property name="icon">
-              <iconset theme="document-open" resource="icons/theme/icons.qrc">
-               <normaloff>:/icons/theme/document-open.png</normaloff>:/icons/theme/document-open.png</iconset>
+              <iconset theme="document-open">
+               <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -323,7 +326,7 @@
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Known hosts</string>
+       <string>Known Hosts</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -367,8 +370,8 @@
             <string>Mark as trusted</string>
            </property>
            <property name="icon">
-            <iconset theme="security-high">
-             <normaloff>icons:security-high.png</normaloff>icons:security-high.png</iconset>
+            <iconset resource="icons/builtin/builtin.qrc">
+             <normaloff>:/icons/builtin/trusted.svg</normaloff>:/icons/builtin/trusted.svg</iconset>
            </property>
           </widget>
          </item>
@@ -388,7 +391,7 @@
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
-       <string>List servers</string>
+       <string>List Servers</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -449,7 +452,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons/theme/icons.qrc"/>
+  <include location="icons/builtin/builtin.qrc"/>
  </resources>
  <connections>
   <connection>

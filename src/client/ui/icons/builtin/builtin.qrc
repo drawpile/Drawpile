@@ -12,5 +12,7 @@
         <file>paintmode-incremental.svg</file>
         <file>paintmode-indirect.svg</file>
         <file>stop.svg</file>
+        <file>trusted.svg</file>
+        <file>semi-trusted.svg</file>
     </qresource>
 </RCC>

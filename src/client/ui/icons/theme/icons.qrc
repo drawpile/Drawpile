@@ -39,9 +39,6 @@
         <file>media-skip-backward.png</file>
         <file>media-skip-forward.png</file>
         <file>object-locked.png</file>
-        <file>security-low.png</file>
-        <file>security-medium.png</file>
-        <file>security-high.png</file>
         <file>select-rectangular.png</file>
         <file>zoom-in.png</file>
         <file>zoom-original.png</file>

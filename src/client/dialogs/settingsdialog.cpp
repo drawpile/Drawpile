@@ -174,16 +174,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	QStringList pemfilter; pemfilter << "*.pem";
 	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
-	QIcon knownIcon = icon::fromTheme("security-medium");
 
 	for(const QString &filename : knownHostsDir.entryList(pemfilter, QDir::Files)) {
-		auto *i = new QListWidgetItem(knownIcon, filename.left(filename.length()-4), _ui->knownHostList);
+		auto *i = new QListWidgetItem(filename.left(filename.length()-4), _ui->knownHostList);
 		i->setData(Qt::UserRole, false);
 		i->setData(Qt::UserRole+1, knownHostsDir.absoluteFilePath(filename));
 	}
 
 	QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
-	QIcon trustedIcon = icon::fromTheme("security-high");
+	QIcon trustedIcon = icon::fromBuiltin("trusted");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), _ui->knownHostList);
 		i->setData(Qt::UserRole, true);
@@ -311,7 +310,7 @@ void SettingsDialog::certificateSelectionChanged()
 
 void SettingsDialog::markTrustedCertificates()
 {
-	QIcon trustedIcon = icon::fromTheme("security-high");
+	QIcon trustedIcon = icon::fromBuiltin("trusted");
 	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
 		if(!item->data(Qt::UserRole).toBool()) {
 			_trustCerts.append(item->data(Qt::UserRole+1).toString());
@@ -363,7 +362,7 @@ void SettingsDialog::importTrustedCertificate()
 
 	_importCerts.append(certs.at(0));
 
-	QIcon trustedIcon = icon::fromTheme("security-high");
+	QIcon trustedIcon = icon::fromBuiltin("trusted");
 	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);

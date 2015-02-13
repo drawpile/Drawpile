@@ -42,9 +42,6 @@ The following are originally from tango_icons.svg from inkscape (via myPaint) an
  * object-locked
 
 The following icons are from the Gnome icon theme, licensed under the LGPL and CCBYSA3:
- * security-low
- * security-medium
- * security-high
  * edit-delete
 
 Finally, the following are original to Drawpile:

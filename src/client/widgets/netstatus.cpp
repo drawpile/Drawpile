@@ -178,17 +178,17 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	switch(level) {
 	case net::Server::NO_SECURITY: break;
 	case net::Server::NEW_HOST:
-		iconname = "security-low";
+		iconname = "semi-trusted";
 		tooltip = tr("A previously unvisited host");
 		break;
 
 	case net::Server::KNOWN_HOST:
-		iconname = "security-medium";
+		iconname = "semi-trusted";
 		tooltip = tr("Host certificate has not changed since the last visit");
 		break;
 
 	case net::Server::TRUSTED_HOST:
-		iconname = "security-high";
+		iconname = "trusted";
 		tooltip = tr("This is a trusted host");
 		break;
 	}
@@ -196,7 +196,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	if(iconname.isEmpty()) {
 		_security->hide();
 	} else {
-		_security->setPixmap(icon::fromTheme(iconname).pixmap(16, 16));
+		_security->setPixmap(icon::fromBuiltin(iconname).pixmap(16, 16));
 		_security->setToolTip(tooltip);
 		_security->show();
 	}
