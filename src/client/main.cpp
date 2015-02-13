@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
-	Color_Wheel::setDefaultRotatingSquare(false);
+	Color_Wheel::setDefaultDisplayFlags(Color_Wheel::SHAPE_SQUARE | Color_Wheel::ANGLE_FIXED | Color_Wheel::COLOR_HSV);
 
 	{
 		// Set override locale from settings, or use system locale if no override is set

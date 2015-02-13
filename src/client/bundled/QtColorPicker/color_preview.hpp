@@ -24,12 +24,14 @@
 #ifndef COLOR_PREVIEW_HPP
 #define COLOR_PREVIEW_HPP
 
+#include "colorpicker_global.hpp"
+
 #include <QWidget>
 
 /**
     Simple widget that shows a preview of a color
 */
-class Color_Preview : public QWidget
+class QCP_EXPORT Color_Preview : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)

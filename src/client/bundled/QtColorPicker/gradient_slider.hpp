@@ -24,19 +24,22 @@
 #ifndef GRADIENT_SLIDER_HPP
 #define GRADIENT_SLIDER_HPP
 
+#include "colorpicker_global.hpp"
+
 #include <QSlider>
 #include <QGradient>
 
 /**
  * \brief A slider that mover on top of a gradient
  */
-class Gradient_Slider : public QSlider
+class QCP_EXPORT Gradient_Slider : public QSlider
 {
     Q_OBJECT
     Q_PROPERTY(QBrush background READ background WRITE setBackground)
     Q_PROPERTY(QGradientStops colors READ colors WRITE setColors DESIGNABLE false)
     Q_PROPERTY(QColor firstColor READ firstColor WRITE setFirstColor STORED false)
     Q_PROPERTY(QColor lastColor READ lastColor WRITE setLastColor STORED false)
+    Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
 
 public:
     explicit Gradient_Slider(QWidget *parent = 0);
@@ -52,6 +55,11 @@ public:
     QGradientStops colors() const;
     /// Set the colors that make up the gradient
     void setColors(const QGradientStops &colors);
+
+    /// Get the gradient
+    QLinearGradient gradient() const;
+    /// Set the gradient
+    void setGradient(const QLinearGradient &gradient);
 
     /**
      * Overload: create an evenly distributed gradient of the given colors

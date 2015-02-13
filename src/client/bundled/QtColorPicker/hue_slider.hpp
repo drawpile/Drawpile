@@ -28,7 +28,7 @@
 /**
  * \brief A slider for selecting a hue value
  */
-class Hue_Slider : public Gradient_Slider
+class QCP_EXPORT Hue_Slider : public Gradient_Slider
 {
     Q_OBJECT
     Q_PROPERTY(qreal colorSaturation READ colorSaturation WRITE setColorSaturation)
