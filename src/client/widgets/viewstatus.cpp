@@ -37,6 +37,17 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(0);
 
+	// View flipping
+	layout->addSpacing(10);
+	_viewFlip = new QToolButton(this);
+	_viewFlip->setAutoRaise(true);
+
+	_viewMirror = new QToolButton(this);
+	_viewMirror->setAutoRaise(true);
+
+	layout->addWidget(_viewFlip);
+	layout->addWidget(_viewMirror);
+
 	// Rotation angle
 	layout->addSpacing(10);
 	_resetRotation = new QToolButton(this);
@@ -81,17 +92,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	addAngleShortcut(90);
 	addAngleShortcut(135);
 	addAngleShortcut(180);
-
-	// View flipping
-	layout->addSpacing(10);
-	_viewFlip = new QToolButton(this);
-	_viewFlip->setAutoRaise(true);
-
-	_viewMirror = new QToolButton(this);
-	_viewMirror->setAutoRaise(true);
-
-	layout->addWidget(_viewFlip);
-	layout->addWidget(_viewMirror);
 
 	// Zoom level
 	_zoomIn = new QToolButton(this);
