@@ -41,6 +41,7 @@ Source: "imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversio
 Source: "iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion
 Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "palettes\*.gpl"; DestDir: "{app}\palettes"; Flags: ignoreversion
+Source: "sounds\*.*"; DestDir: "{app}\sounds"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

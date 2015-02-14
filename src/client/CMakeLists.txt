@@ -245,6 +245,8 @@ IF ( APPLE )
 		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/*.qm" "${ResourcesDir}/i18n"
 		COMMAND mkdir -p "${ResourcesDir}/palettes"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/palettes/*.gpl" "${ResourcesDir}/palettes"
+		COMMAND mkdir -p "${ResourcesDir}/sounds"
+		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/sounds/*.wav" "${ResourcesDir}/sounds"
 	)
 ENDIF()
 

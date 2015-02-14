@@ -42,6 +42,8 @@ COPY "%1\src\client\*.qm" "%3\i18n\"
 REM Copy extra files
 MKDIR "%3\palettes"
 COPY "%2\desktop\palettes\*" "%3\palettes\"
+MKDIR "%3\sounds"
+COPY "%2\desktop\sounds\*" "%3\sounds\"
 
 COPY "%2\README.md" "%3\Readme.txt"
 COPY "%2\AUTHORS" "%3\Authors.txt"
