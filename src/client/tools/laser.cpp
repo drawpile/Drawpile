@@ -29,6 +29,10 @@
 
 namespace tools {
 
+LaserPointer::LaserPointer(ToolCollection &owner)
+	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0))
+{}
+
 void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(right);

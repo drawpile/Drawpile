@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/cursors">
+        <file>arrow.png</file>
         <file>bucket.png</file>
         <file>colorpicker.png</file>
         <file>ellipse.png</file>
