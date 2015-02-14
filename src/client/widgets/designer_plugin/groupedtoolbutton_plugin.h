@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COLORBUTTONPLUGIN_H
-#define COLORBUTTONPLUGIN_H
+#ifndef GROUPEDTOOLBUTTONPLUGIN_H
+#define GROUPEDTOOLBUTTONPLUGIN_H
 
 #include <QDesignerCustomWidgetInterface>
 
-class ColorButtonPlugin : public QObject, public QDesignerCustomWidgetInterface
+class GroupedToolButtonPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
 Q_OBJECT
 Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-	ColorButtonPlugin(QObject *parent = 0);
+	GroupedToolButtonPlugin(QObject *parent = 0);
 
 	bool isContainer() const;
 	bool isInitialized() const;

@@ -91,7 +91,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="paintmodeSoftedge">
+         <widget class="GroupedToolButton" name="paintmodeSoftedge">
           <property name="toolTip">
            <string>Smooth edge</string>
           </property>
@@ -108,13 +108,13 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="paintmodeHardedge">
+         <widget class="GroupedToolButton" name="paintmodeHardedge">
           <property name="toolTip">
            <string>Hard edge</string>
           </property>
@@ -128,8 +128,8 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -161,7 +161,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="paintmodeIndirect">
+         <widget class="GroupedToolButton" name="paintmodeIndirect">
           <property name="toolTip">
            <string>Indirect drawing</string>
           </property>
@@ -178,13 +178,13 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="paintmodeIncremental">
+         <widget class="GroupedToolButton" name="paintmodeIncremental">
           <property name="toolTip">
            <string>Incremental drawing</string>
           </property>
@@ -198,8 +198,8 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -418,6 +418,11 @@
    <extends>QFrame</extends>
    <header>widgets/brushpreview.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

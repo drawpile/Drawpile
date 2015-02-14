@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>201</width>
+    <width>209</width>
     <height>284</height>
    </rect>
   </property>
@@ -57,20 +57,14 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="blendmode"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QComboBox" name="blendmode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      </widget>
      </item>
      <item>
       <widget class="QWidget" name="widget_2" native="true">
@@ -97,7 +91,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="paintmodeSmoothedge">
+         <widget class="GroupedToolButton" name="paintmodeSmoothedge">
           <property name="toolTip">
            <string>Smooth edge</string>
           </property>
@@ -111,13 +105,13 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="paintmodeHardedge">
+         <widget class="GroupedToolButton" name="paintmodeHardedge">
           <property name="toolTip">
            <string>Hard edge</string>
           </property>
@@ -131,8 +125,8 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -164,7 +158,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="paintmodeIndirect">
+         <widget class="GroupedToolButton" name="paintmodeIndirect">
           <property name="toolTip">
            <string>Indirect drawing</string>
           </property>
@@ -178,13 +172,13 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="paintmodeIncremental">
+         <widget class="GroupedToolButton" name="paintmodeIncremental">
           <property name="toolTip">
            <string>Incremental drawing</string>
           </property>
@@ -198,8 +192,8 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -371,6 +365,11 @@
    <extends>QFrame</extends>
    <header>widgets/brushpreview.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

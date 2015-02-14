@@ -32,7 +32,7 @@
       <enum>QTabWidget::East</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -70,7 +70,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
-          <number>3</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QComboBox" name="palettelist">
@@ -83,7 +83,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="addpalette">
+          <widget class="GroupedToolButton" name="addpalette">
            <property name="toolTip">
             <string>Add a new palette</string>
            </property>
@@ -91,13 +91,13 @@
             <iconset theme="list-add">
              <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
            </property>
-           <property name="autoRaise">
-            <bool>true</bool>
+           <property name="groupPosition">
+            <enum>GroupedToolButton::GroupLeft</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="copypalette">
+          <widget class="GroupedToolButton" name="copypalette">
            <property name="toolTip">
             <string>Duplicate palette</string>
            </property>
@@ -105,13 +105,13 @@
             <iconset theme="edit-copy">
              <normaloff>icons:edit-copy.png</normaloff>icons:edit-copy.png</iconset>
            </property>
-           <property name="autoRaise">
-            <bool>true</bool>
+           <property name="groupPosition">
+            <enum>GroupedToolButton::GroupCenter</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="delpalette">
+          <widget class="GroupedToolButton" name="delpalette">
            <property name="toolTip">
             <string>Delete the palette</string>
            </property>
@@ -119,15 +119,22 @@
             <iconset theme="edit-delete">
              <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
            </property>
-           <property name="autoRaise">
-            <bool>true</bool>
+           <property name="groupPosition">
+            <enum>GroupedToolButton::GroupRight</enum>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="PaletteWidget" name="palette" native="true"/>
+        <widget class="PaletteWidget" name="palette" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -361,6 +368,11 @@
    <class>Hue_Slider</class>
    <extends>Gradient_Slider</extends>
    <header>Hue_Slider</header>
+  </customwidget>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
   <customwidget>
    <class>PaletteWidget</class>

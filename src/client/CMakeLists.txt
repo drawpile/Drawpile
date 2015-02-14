@@ -107,6 +107,7 @@ set (
 	widgets/toolslotbutton.cpp
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
+	widgets/groupedtoolbutton.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 

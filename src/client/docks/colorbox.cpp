@@ -18,12 +18,15 @@
 */
 
 #include "widgets/palettewidget.h"
+#include "widgets/groupedtoolbutton.h"
 using widgets::PaletteWidget;
+using widgets::GroupedToolButton;
 
 #include "docks/colorbox.h"
 #include "docks/utils.h"
 #include "utils/palettelistmodel.h"
 #include "utils/palette.h"
+
 #include "ui_colorbox.h"
 
 #include <QSettings>

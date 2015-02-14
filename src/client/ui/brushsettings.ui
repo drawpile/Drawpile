@@ -67,20 +67,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QToolButton" name="paintmodeIndirect">
+      <widget class="GroupedToolButton" name="paintmodeIndirect">
        <property name="toolTip">
         <string>Indirect drawing</string>
        </property>
@@ -94,13 +81,13 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="paintmodeIncremental">
+      <widget class="GroupedToolButton" name="paintmodeIncremental">
        <property name="toolTip">
         <string>Incremental drawing</string>
        </property>
@@ -114,8 +101,8 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -338,6 +325,11 @@
    <extends>QFrame</extends>
    <header>widgets/brushpreview.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

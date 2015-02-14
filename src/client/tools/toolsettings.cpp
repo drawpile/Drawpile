@@ -23,8 +23,10 @@
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
 #include "widgets/palettewidget.h"
+#include "widgets/groupedtoolbutton.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
+using widgets::GroupedToolButton;
 #include "ui_pensettings.h"
 #include "ui_brushsettings.h"
 #include "ui_smudgesettings.h"

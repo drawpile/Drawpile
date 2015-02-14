@@ -29,10 +29,10 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>3</number>
+      <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="undoButton">
+      <widget class="GroupedToolButton" name="undoButton">
        <property name="toolTip">
         <string>Undo changes by selected user</string>
        </property>
@@ -40,13 +40,13 @@
         <iconset theme="edit-undo">
          <normaloff>icons:edit-undo.png</normaloff>icons:edit-undo.png</iconset>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="redoButton">
+      <widget class="GroupedToolButton" name="redoButton">
        <property name="toolTip">
         <string>Redo changes by selected user</string>
        </property>
@@ -54,8 +54,8 @@
         <iconset theme="edit-redo">
          <normaloff>icons:edit-redo.png</normaloff>icons:edit-redo.png</iconset>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -73,7 +73,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="opButton">
+      <widget class="GroupedToolButton" name="opButton">
        <property name="font">
         <font>
          <weight>75</weight>
@@ -90,30 +90,30 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="lockButton">
+      <widget class="GroupedToolButton" name="lockButton">
        <property name="toolTip">
         <string>Lock selected user</string>
        </property>
        <property name="icon">
         <iconset theme="object-locked">
-          <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
+         <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="kickButton">
+      <widget class="GroupedToolButton" name="kickButton">
        <property name="toolTip">
         <string>Kick selected user</string>
        </property>
@@ -121,8 +121,8 @@
         <iconset theme="edit-delete">
          <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -133,6 +133,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

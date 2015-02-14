@@ -27,6 +27,8 @@
 #include "net/client.h"
 #include "utils/icon.h"
 
+#include "widgets/groupedtoolbutton.h"
+using widgets::GroupedToolButton;
 #include "ui_userbox.h"
 
 namespace docks {

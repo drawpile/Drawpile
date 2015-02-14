@@ -25,6 +25,8 @@
 #include "docks/utils.h"
 #include "core/rasterop.h" // for blending modes
 
+#include "widgets/groupedtoolbutton.h"
+using widgets::GroupedToolButton;
 #include "ui_layerbox.h"
 
 #include <QDebug>

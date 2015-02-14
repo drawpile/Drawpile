@@ -29,7 +29,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>3</number>
+      <number>0</number>
      </property>
      <item>
       <widget class="QComboBox" name="blendmode">
@@ -52,7 +52,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="lockButton">
+      <widget class="GroupedToolButton" name="lockButton">
        <property name="toolTip">
         <string>Layer access control</string>
        </property>
@@ -66,13 +66,10 @@
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="addButton">
+      <widget class="GroupedToolButton" name="addButton">
        <property name="toolTip">
         <string>Add a new layer</string>
        </property>
@@ -80,13 +77,13 @@
         <iconset theme="list-add">
          <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="deleteButton">
+      <widget class="GroupedToolButton" name="deleteButton">
        <property name="toolTip">
         <string>Delete selected layer</string>
        </property>
@@ -94,8 +91,8 @@
         <iconset theme="edit-delete">
          <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -110,6 +107,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>blendmode</tabstop>
   <tabstop>lockButton</tabstop>
