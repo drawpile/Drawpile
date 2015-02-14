@@ -54,12 +54,14 @@ JoinDialog::JoinDialog(QWidget *parent)
 
 static QString cleanAddress(const QString &addr)
 {
-	QUrl url(addr);
-	if(url.isValid()) {
-		QString a = url.host();
-		if(url.port()!=-1)
-			a += ":" + QString::number(url.port());
-		return a;
+	if(addr.startsWith("drawpile://")) {
+		QUrl url(addr);
+		if(url.isValid()) {
+			QString a = url.host();
+			if(url.port()!=-1)
+				a += ":" + QString::number(url.port());
+			return a;
+		}
 	}
 	return addr;
 }
@@ -76,8 +78,10 @@ void JoinDialog::rememberSettings() const
 	if(curindex>=0)
 		_ui->address->removeItem(curindex);
 	hosts << cleanAddress(current);
-	for(int i=0;i<_ui->address->count();++i)
-		hosts << _ui->address->itemText(i);
+	for(int i=0;i<_ui->address->count();++i) {
+		if(!_ui->address->itemText(i).isEmpty())
+			hosts << _ui->address->itemText(i);
+	}
 	cfg.setValue("recenthosts", hosts);
 }
 
