@@ -21,6 +21,7 @@
 #include "chatwidget.h"
 #include "utils/html.h"
 #include "utils/funstuff.h"
+#include "notifications.h"
 
 #include <QDebug>
 #include <QResizeEvent>
@@ -108,11 +109,13 @@ void ChatBox::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(id);
 	systemMessage(tr("<b>%1</b> joined the session").arg(name.toHtmlEscaped()));
+	notification::playSound(notification::Event::LOGIN);
 }
 
 void ChatBox::userParted(const QString &name)
 {
 	systemMessage(tr("<b>%1</b> left the session").arg(name.toHtmlEscaped()));
+	notification::playSound(notification::Event::LOGOUT);
 }
 
 void ChatBox::kicked(const QString &kickedBy)
@@ -145,6 +148,8 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool a
 			"</span></p>"
 		);
 	}
+	if(!_myline->hasFocus())
+		notification::playSound(notification::Event::CHAT);
 }
 
 void ChatBox::receiveMarker(const QString &nick, const QString &message)

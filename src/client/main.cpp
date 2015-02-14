@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 
 #include "utils/icon.h"
+#include "notifications.h"
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"

@@ -3,6 +3,7 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
+find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5LinguistTools)
 
 find_package(KF5Archive NO_MODULE)
@@ -16,6 +17,7 @@ set (
 	retcon.cpp
 	loader.cpp
 	textloader.cpp
+	notifications.cpp
 	tools/toolsettings.cpp
 	tools/toolproperties.cpp
 	tools/tool.cpp
@@ -257,10 +259,10 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia)
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
-qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent)
+qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent Multimedia)
 
 if(NOT KF5Archive_FOUND)
 	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})

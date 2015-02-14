@@ -20,6 +20,7 @@
 #define SETTINGS_H
 
 class QString;
+class QStringList;
 
 namespace utils {
 namespace settings {
@@ -31,6 +32,12 @@ namespace settings {
  * or a built-in default if it does not exist
  */
 QString recordingFolder();
+
+/**
+ * @brief Get the standard data file locations in a platform independent manner
+ * @return
+ */
+QStringList dataPaths();
 
 }
 }

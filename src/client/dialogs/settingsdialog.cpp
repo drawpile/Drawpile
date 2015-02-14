@@ -102,6 +102,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	// Set defaults
 	QSettings cfg;
 
+	cfg.beginGroup("notifications");
+	_ui->notificationSounds->setChecked(cfg.value("enable", true).toBool());
+	_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
+	_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
+	_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
+	_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
+	cfg.endGroup();
+
 	cfg.beginGroup("settings");
 	{
 		// Get available languages
@@ -206,6 +214,15 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
+	// Remember notification settings
+	cfg.beginGroup("notifications");
+	cfg.setValue("enable", _ui->notificationSounds->isChecked());
+	cfg.setValue("chat", _ui->notifChat->isChecked());
+	cfg.setValue("marker", _ui->notifMarker->isChecked());
+	cfg.setValue("login", _ui->notifLogin->isChecked());
+	cfg.setValue("lock", _ui->notifLock->isChecked());
+	cfg.endGroup();
+
 	// Remember general settings
 	cfg.setValue("settings/language", _ui->languageBox->itemData(_ui->languageBox->currentIndex()));
 

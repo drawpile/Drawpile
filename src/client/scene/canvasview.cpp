@@ -45,6 +45,7 @@ inline float qRadiansToDegrees(float radians) {
 
 #include "net/client.h"
 #include "core/point.h"
+#include "notifications.h"
 
 namespace widgets {
 
@@ -174,6 +175,11 @@ void CanvasView::setViewMirror(bool mirror)
 
 void CanvasView::setLocked(bool lock)
 {
+	if(lock && !_locked)
+		notification::playSound(notification::Event::LOCKED);
+	else if(!lock && _locked)
+		notification::playSound(notification::Event::UNLOCKED);
+
 	_locked = lock;
 	resetCursor();
 }

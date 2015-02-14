@@ -45,6 +45,7 @@
 #include "recording/indexloader.h"
 #include "statetracker.h"
 #include "mainwindow.h"
+#include "notifications.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
@@ -288,6 +289,7 @@ void PlaybackDialog::nextCommand(int stepcount)
 			if(_play) {
 				if(msg->type() == protocol::MSG_MARKER && _ui->stopOnMarkers->isChecked()) {
 					_ui->play->setChecked(false);
+					notification::playSound(notification::Event::MARKER);
 				} else {
 					if(stepcount==1)
 						_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));

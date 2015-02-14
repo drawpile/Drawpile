@@ -16,39 +16,22 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef NOTIFICATIONS_H
+#define NOTIFICATIONS_H
 
-#include "settings.h"
+namespace notification {
 
-#include <QSettings>
-#include <QStandardPaths>
-#include <QDir>
-#include <QApplication>
+enum class Event {
+	CHAT,     // Chat message received
+	MARKER,   // Recording playback stopped on a marker
+	LOCKED,   // Active layer was locked
+	UNLOCKED, // ...unlocked
+	LOGIN,    // A user just logged in
+	LOGOUT    // ...logged out
+};
 
-namespace utils {
-namespace settings {
-
-QString recordingFolder()
-{
-	QString path = QSettings().value("settings/recording/folder").toString();
-	if(!path.isEmpty()) {
-		QDir dir(path);
-		if(dir.exists())
-			return path;
-	}
-
-	return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-}
-
-QStringList dataPaths()
-{
-	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-
-#ifdef Q_OS_MAC
-	// On Mac, we look for data files in the application bundle
-	datapaths << qApp->applicationDirPath() + "/../Resources";
-#endif
-	return datapaths;
-}
+void playSound(Event event);
 
 }
-}
+
+#endif // NOTIFICATIONS_H
