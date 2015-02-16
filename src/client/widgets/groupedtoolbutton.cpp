@@ -36,6 +36,19 @@ GroupedToolButton::GroupedToolButton(GroupPosition position, QWidget* parent)
 {
 	setFocusPolicy(Qt::NoFocus);
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+#ifdef Q_OS_MAC
+	setStyleSheet(QStringLiteral(
+		"QToolButton {"
+			"background: white;"
+			"border: 1px solid #c0c0c0;"
+			"border-radius: 3px;"
+			"padding: 1px"
+		"}"
+		"QToolButton:checked, QToolButton:pressed {"
+			"background: #c0c0c0"
+		"}"
+	));
+#endif
 }
 
 void GroupedToolButton::setGroupPosition(GroupedToolButton::GroupPosition groupPosition)

@@ -31,6 +31,12 @@ namespace widgets {
 ViewStatus::ViewStatus(QWidget *parent)
 	: QWidget(parent)
 {
+#ifdef Q_OS_MAC
+	setStyleSheet(QStringLiteral(
+		"QToolButton { border: none }"
+		"QToolButton:checked, QToolButton:pressed { background: #c0c0c0 }"
+	));
+#endif
 	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
 

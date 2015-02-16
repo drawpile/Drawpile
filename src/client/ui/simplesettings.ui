@@ -51,7 +51,7 @@
    <item>
     <layout class="QHBoxLayout" name="brushopts">
      <property name="spacing">
-      <number>10</number>
+      <number>3</number>
      </property>
      <property name="topMargin">
       <number>0</number>

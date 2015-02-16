@@ -39,6 +39,19 @@
       </widget>
      </item>
      <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>3</width>
+         <height>15</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QSlider" name="opacity">
        <property name="toolTip">
         <string>Layer opacity</string>
@@ -50,6 +63,19 @@
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>3</width>
+         <height>15</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="GroupedToolButton" name="lockButton">
@@ -66,6 +92,9 @@
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
        </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
       </widget>
      </item>
      <item>
@@ -78,7 +107,7 @@
          <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupLeft</enum>
+        <enum>GroupedToolButton::GroupCenter</enum>
        </property>
       </widget>
      </item>
