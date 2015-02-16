@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,12 +98,18 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			_ui->recordingFolder->setText(path);
 	});
 
+	connect(_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
+		if(val>0)
+			_ui->volumeLabel->setText(QString::number(val) + "%");
+		else
+			_ui->volumeLabel->setText(tr("off", "notifications sounds"));
+	});
 
 	// Set defaults
 	QSettings cfg;
 
 	cfg.beginGroup("notifications");
-	_ui->notificationSounds->setChecked(cfg.value("enable", true).toBool());
+	_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
 	_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
 	_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
 	_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
@@ -216,7 +222,7 @@ void SettingsDialog::rememberSettings()
 	QSettings cfg;
 	// Remember notification settings
 	cfg.beginGroup("notifications");
-	cfg.setValue("enable", _ui->notificationSounds->isChecked());
+	cfg.setValue("volume", _ui->notificationVolume->value());
 	cfg.setValue("chat", _ui->notifChat->isChecked());
 	cfg.setValue("marker", _ui->notifMarker->isChecked());
 	cfg.setValue("login", _ui->notifLogin->isChecked());

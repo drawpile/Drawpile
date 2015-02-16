@@ -44,7 +44,8 @@ void playSound(Event event)
 	// Check if this notification is enabled
 	QSettings cfg;
 	cfg.beginGroup("notifications");
-	if(!cfg.value("enable", true).toBool())
+	int volume = qBound(0, cfg.value("volume", 40).toInt(), 100);
+	if(volume==0)
 		return;
 
 	bool enabled = false;
@@ -98,6 +99,7 @@ void playSound(Event event)
 	}
 
 	// We have a sound effect... play it now
+	sounds[event]->setVolume(volume / 100.0);
 	sounds[event]->play();
 }
 
