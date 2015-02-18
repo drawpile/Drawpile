@@ -210,7 +210,7 @@ public:
         qreal side = triangle_side();
         qreal height = triangle_height();
         qreal ycenter = side/2;
-        inner_selector = QImage(height, side, QImage::Format_RGBA8888);
+        inner_selector = QImage(height, side, QImage::Format_RGB32);
 
         for (int x = 0; x < inner_selector.width(); x++ )
         {
@@ -221,7 +221,7 @@ public:
                 qreal ymin = ycenter-slice_h/2;
                 qreal psat = qBound(0.0,(y-ymin)/slice_h,1.0);
 
-                inner_selector.setPixel(x,y,color_from(hue,psat,pval,1).rgba());
+                inner_selector.setPixel(x,y,color_from(hue,psat,pval,1).rgb());
             }
         }
     }
