@@ -107,9 +107,6 @@ public:
 	//! Does opacity vary with pressure?
 	bool isOpacityVariable() const;
 
-	//! Will two or more dabs of this brush have the same result as just one?
-	bool isIdempotent() const;
-
 	bool operator==(const Brush& brush) const;
 	bool operator!=(const Brush& brush) const;
 

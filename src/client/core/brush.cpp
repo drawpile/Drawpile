@@ -131,13 +131,6 @@ bool Brush::isOpacityVariable() const
 	return qAbs(opacity1() - opacity2()) > (1/256.0);
 }
 
-bool Brush::isIdempotent() const
-{
-	return opacity1() == 1.0 && opacity2() == 1.0 &&
-			hardness1() == 1.0 && hardness2() == 1.0 &&
-			(blendingMode() == 0 || blendingMode() == 1);
-}
-
 bool Brush::operator==(const Brush& brush) const
 {
 	return size1() == brush.size1() && size2() == brush.size2() &&
