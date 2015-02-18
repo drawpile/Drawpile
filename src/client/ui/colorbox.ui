@@ -74,6 +74,12 @@
          </property>
          <item>
           <widget class="QComboBox" name="palettelist">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
