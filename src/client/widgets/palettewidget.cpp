@@ -395,7 +395,7 @@ void PaletteWidget::keyReleaseEvent(QKeyEvent *event)
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-color") && _palette != 0) {
+	if(event->mimeData()->hasFormat("application/x-color") && _palette && !_palette->isWriteProtected()) {
 		if(event->source() == this)
 			event->setDropAction(Qt::MoveAction);
 		event->accept();
