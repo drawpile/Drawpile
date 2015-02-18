@@ -230,7 +230,8 @@ void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 	if(ctx != _lastToolCtx) {
 		sendCommand(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 		_lastToolCtx = ctx;
-		emit sentColorChange(ctx.brush.color1());
+		if(ctx.brush.blendingMode() != 0) // color is not used in erase mode
+			emit sentColorChange(ctx.brush.color1());
 	}
 }
 
