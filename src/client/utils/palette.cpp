@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ Palette::Palette(QObject *parent) : Palette(QString(), QString(), false, parent)
 Palette::Palette(const QString &name, QObject *parent) : Palette(name, QString(), false, parent) { }
 
 Palette::Palette(const QString& name, const QString& filename, bool readonly, QObject *parent)
-	: QObject(parent), _name(name), _oldname(name), _filename(filename), _columns(8), _modified(false), _readonly(readonly)
+	: QObject(parent), _name(name), _oldname(name), _filename(filename), _columns(8), _modified(false), _readonly(readonly), _writeprotect(false)
 {
 }
 
@@ -50,8 +50,9 @@ Palette::Palette(const QString& name, const QString& filename, bool readonly, QO
  *     ...
  *
  * @param filename palette file name
+ * @param writeprotected is the source file read only
  */
-Palette *Palette::fromFile(const QFileInfo& file, QObject *parent)
+Palette *Palette::fromFile(const QFileInfo& file, bool readonly, QObject *parent)
 {
 	QFile palfile(file.absoluteFilePath());
 	if (!palfile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -61,7 +62,7 @@ Palette *Palette::fromFile(const QFileInfo& file, QObject *parent)
 	if(in.readLine() != "GIMP Palette")
 		return nullptr;
 
-	Palette *pal = new Palette(file.baseName(), file.absoluteFilePath(), !file.isWritable(), parent);
+	Palette *pal = new Palette(file.baseName(), file.absoluteFilePath(), !file.isWritable() | readonly, parent);
 
 	const QRegularExpression colorRe("^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s*(.+)?$");
 
@@ -97,6 +98,9 @@ Palette *Palette::fromFile(const QFileInfo& file, QObject *parent)
 			}
 		}
 	} while(!in.atEnd());
+
+	// Palettes loaded from file are write-protected by default
+	pal->_writeprotect = true;
 
 	return pal;
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,19 +62,16 @@ void PaletteListModel::loadPalettes()
 			if(!palettefiles.contains(pfile.fileName())) {
 				palettefiles.insert(pfile.fileName());
 
-				Palette *pal = Palette::fromFile(pfile, this);
-				if(!pal) {
+				// QFile::isWritable doesn't seem to work reliably on Windows.
+				// As a workaround, mark all palettes outside our own writable directory
+				// as read-only
+
+				Palette *pal = Palette::fromFile(pfile, datapath != writablepath, this);
+				if(!pal)
 					qWarning() << "Invalid palette:" << pfile.absoluteFilePath();
 
-				} else {
-					// QFile::isWritable doesn't seem to work reliably on Windows.
-					// As a workaround, mark all palettes outside our own writable directory
-					// as read-only
-					if(datapath != writablepath)
-						pal->setReadonly(true);
-
+				else
 					palettes.append(pal);
-				}
 			}
 		}
 	}

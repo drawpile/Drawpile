@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ public:
 	Palette(const QString& name, const QString& filename, bool readonly, QObject *parent=0);
 
 	//! Load a palette from a file
-	static Palette *fromFile(const QFileInfo& file, QObject *parent=0);
+	static Palette *fromFile(const QFileInfo& file, bool readonly=false, QObject *parent=0);
 
 	static Palette *copy(const Palette *pal, const QString &newname, QObject *parent=0);
 
@@ -65,11 +65,14 @@ public:
 	//! Has the palette been modified since it was last saved/loaded?
 	bool isModified() const { return _modified; }
 
-	//! Is this a read-only palette?
-	bool isReadonly() const { return _readonly; }
+	//! Is the palette write-protected?
+	bool isWriteProtected() const { return _writeprotect | _readonly; }
 
 	//! Set read-only mode
-	void setReadonly(bool ro) { _readonly = ro; }
+	void setWriteProtected(bool wp) { _writeprotect = wp; }
+
+	//! Is the palette file read-only?
+	bool isReadonly() const { return _readonly; }
 
 	//! Save palette to its original file (filename must be set)
 	bool save();
@@ -112,6 +115,7 @@ private:
 	int _columns;
 	bool _modified;
 	bool _readonly;
+	bool _writeprotect;
 };
 
 #endif

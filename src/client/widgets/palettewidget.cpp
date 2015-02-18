@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <QMenu>
 #include <QDrag>
 #include <QMimeData>
+#include <QActionGroup>
 
 #include <Color_Dialog>
 
@@ -46,10 +47,14 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 
 	_outline = new QRubberBand(QRubberBand::Rectangle, this);
 
+	_paletteActions = new QActionGroup(this);
 	_contextmenu = new QMenu(this);
-	_contextmenu->addAction(tr("Add"), this, SLOT(addColor()));
-	_contextmenu->addAction(tr("Modify"), this, SLOT(editCurrentColor()));
-	_contextmenu->addAction(tr("Remove"), this, SLOT(removeColor()));
+	_paletteActions->addAction(_contextmenu->addAction(tr("Add"), this, SLOT(addColor())));
+	_paletteActions->addAction(_contextmenu->addAction(tr("Modify"), this, SLOT(editCurrentColor())));
+	_paletteActions->addAction(_contextmenu->addAction(tr("Remove"), this, SLOT(removeColor())));
+	_contextmenu->addSeparator();
+	_writeprotectAction = _contextmenu->addAction(tr("Write Protect"), this, SLOT(toggleWriteProtect()));
+	_writeprotectAction->setCheckable(true);
 
 	_scrollbar = new QScrollBar(this);
 	connect(_scrollbar, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
@@ -85,6 +90,10 @@ void PaletteWidget::setPalette(Palette *palette)
 	if(palette) {
 		_columns = palette->columns();
 		connect(_palette, SIGNAL(colorsChanged()), this, SLOT(update()));
+
+		_writeprotectAction->setEnabled(!palette->isReadonly());
+		_writeprotectAction->setChecked(palette->isWriteProtected());
+		_paletteActions->setEnabled(!palette->isWriteProtected());
 	} else {
 		_columns = 1;
 	}
@@ -93,6 +102,15 @@ void PaletteWidget::setPalette(Palette *palette)
 	_dialogsel = -2;
 	resizeEvent(0);
 	update();
+}
+
+void PaletteWidget::toggleWriteProtect()
+{
+	if(_palette) {
+		_palette->setWriteProtected(!_palette->isWriteProtected());
+		_paletteActions->setEnabled(!_palette->isReadonly());
+		update();
+	}
 }
 
 void PaletteWidget::setSpacing(int spacing)
@@ -126,7 +144,7 @@ void PaletteWidget::resizeEvent(QResizeEvent*)
 
 	if(_palette) {
 		// First calculate required space without scrollbar
-		count = _palette->count() + (_palette->isReadonly() ? 0 : 1);
+		count = _palette->count() + (_palette->isWriteProtected() ? 0 : 1);
 		_swatchsize = calcSwatchSize(contentWidth);
 		rowsHeight = (count / _columns + 1) * (_swatchsize.height()+_spacing);
 	}
@@ -271,10 +289,10 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	//painter.fillRect(event->rect(), QColor("#646464"));
 
-	if(!_palette || (_palette->count()==0 && _palette->isReadonly()))
+	if(!_palette || (_palette->count()==0 && _palette->isWriteProtected()))
 		return;
 
-	int totalCount = _palette->count() + (_palette->isReadonly() ? 0 : 1);
+	int totalCount = _palette->count() + (_palette->isWriteProtected() ? 0 : 1);
 
 	if(_maxrows>0)
 		totalCount = qMin(_columns, totalCount);
@@ -293,7 +311,7 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 		painter.fillRect(swatch, _palette->color(i).color);
 	}
 
-	if(!_palette->isReadonly()) {
+	if(!_palette->isWriteProtected()) {
 		QRect swatch = swatchRect(_palette->count());
 		swatch.adjust(0, 0, -1, -1);
 		QPen p(QColor(220, 220, 220));
@@ -330,7 +348,7 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 
 void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	if(_palette && !_palette->isReadonly())
+	if(_palette)
 		_contextmenu->popup(mapToGlobal(event->pos()));
 }
 
@@ -361,7 +379,7 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
-	if(_palette && !_palette->isReadonly()) {
+	if(_palette && !_palette->isWriteProtected()) {
 		if(_selection > -1)
 			editCurrentColor();
 		else
@@ -486,7 +504,7 @@ int PaletteWidget::indexAt(const QPoint& point, bool extraPadding) const
 	// Allow the extra index if this is an editable palette
 	const int index = (y * _columns) + ix;
 	if(index >= _palette->count()) {
-		if(index > _palette->count() || _palette->isReadonly())
+		if(index > _palette->count() || _palette->isWriteProtected())
 			return -1;
 	}
 
