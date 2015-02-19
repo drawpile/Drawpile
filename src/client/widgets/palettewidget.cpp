@@ -31,7 +31,6 @@
 #include <QMenu>
 #include <QDrag>
 #include <QMimeData>
-#include <QActionGroup>
 
 #include <Color_Dialog>
 
@@ -47,14 +46,10 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 
 	_outline = new QRubberBand(QRubberBand::Rectangle, this);
 
-	_paletteActions = new QActionGroup(this);
 	_contextmenu = new QMenu(this);
-	_paletteActions->addAction(_contextmenu->addAction(tr("Add"), this, SLOT(addColor())));
-	_paletteActions->addAction(_contextmenu->addAction(tr("Modify"), this, SLOT(editCurrentColor())));
-	_paletteActions->addAction(_contextmenu->addAction(tr("Remove"), this, SLOT(removeColor())));
-	_contextmenu->addSeparator();
-	_writeprotectAction = _contextmenu->addAction(tr("Write Protect"), this, SLOT(toggleWriteProtect()));
-	_writeprotectAction->setCheckable(true);
+	_contextmenu->addAction(tr("Add"), this, SLOT(addColor()));
+	_contextmenu->addAction(tr("Modify"), this, SLOT(editCurrentColor()));
+	_contextmenu->addAction(tr("Remove"), this, SLOT(removeColor()));
 
 	_scrollbar = new QScrollBar(this);
 	connect(_scrollbar, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
@@ -91,9 +86,6 @@ void PaletteWidget::setPalette(Palette *palette)
 		_columns = palette->columns();
 		connect(_palette, SIGNAL(colorsChanged()), this, SLOT(update()));
 
-		_writeprotectAction->setEnabled(!palette->isReadonly());
-		_writeprotectAction->setChecked(palette->isWriteProtected());
-		_paletteActions->setEnabled(!palette->isWriteProtected());
 	} else {
 		_columns = 1;
 	}
@@ -102,15 +94,6 @@ void PaletteWidget::setPalette(Palette *palette)
 	_dialogsel = -2;
 	resizeEvent(0);
 	update();
-}
-
-void PaletteWidget::toggleWriteProtect()
-{
-	if(_palette) {
-		_palette->setWriteProtected(!_palette->isWriteProtected());
-		_paletteActions->setEnabled(!_palette->isReadonly());
-		update();
-	}
 }
 
 void PaletteWidget::setSpacing(int spacing)
@@ -348,7 +331,7 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 
 void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	if(_palette)
+	if(_palette && !_palette->isWriteProtected())
 		_contextmenu->popup(mapToGlobal(event->pos()));
 }
 

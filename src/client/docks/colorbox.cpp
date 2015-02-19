@@ -31,6 +31,7 @@ using widgets::GroupedToolButton;
 
 #include <QSettings>
 #include <QMessageBox>
+#include <QMenu>
 
 namespace docks {
 
@@ -87,9 +88,16 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	connect(_ui->palette, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
 	connect(_ui->palette, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
-	connect(_ui->addpalette, SIGNAL(clicked()), this, SLOT(addPalette()));
-	connect(_ui->copypalette, SIGNAL(clicked()), this, SLOT(copyPalette()));
-	connect(_ui->delpalette, SIGNAL(clicked()), this, SLOT(deletePalette()));
+	QMenu *paletteMenu = new QMenu(this);
+	paletteMenu->addAction(tr("New"), this, SLOT(addPalette()));
+	paletteMenu->addAction(tr("Duplicate"), this, SLOT(copyPalette()));
+	_deletePalette = paletteMenu->addAction(tr("Delete"), this, SLOT(deletePalette()));
+	paletteMenu->addSeparator();
+	_writeprotectPalette = paletteMenu->addAction(tr("Write Protect"), this, SLOT(toggleWriteProtect()));
+	_writeprotectPalette->setCheckable(true);
+	_ui->paletteMenuButton->setMenu(paletteMenu);
+	_ui->paletteMenuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
+
 	connect(_ui->palettelist, SIGNAL(currentIndexChanged(int)), this, SLOT(paletteChanged(int)));
 	connect(_ui->palettelist, SIGNAL(editTextChanged(QString)), this, SLOT(paletteNameChanged(QString)));
 
@@ -157,8 +165,19 @@ void ColorBox::paletteChanged(int index)
 	} else {
 		Palette *pal = static_cast<PaletteListModel*>(_ui->palettelist->model())->getPalette(index);
 		_ui->palette->setPalette(pal);
-		_ui->delpalette->setEnabled(!pal->isReadonly());
-		//_ui->palettelist->setEditable(!pal->isReadonly());
+		_deletePalette->setEnabled(!pal->isReadonly());
+		_writeprotectPalette->setEnabled(!pal->isReadonly());
+		_writeprotectPalette->setChecked(pal->isWriteProtected());
+	}
+}
+
+void ColorBox::toggleWriteProtect()
+{
+	Palette *pal = _ui->palette->palette();
+	if(pal) {
+		pal->setWriteProtected(!pal->isWriteProtected());
+		_writeprotectPalette->setChecked(pal->isWriteProtected());
+		_ui->palette->update();
 	}
 }
 

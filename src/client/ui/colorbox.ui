@@ -70,7 +70,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
-          <number>0</number>
+          <number>3</number>
          </property>
          <item>
           <widget class="QComboBox" name="palettelist">
@@ -89,60 +89,13 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>3</width>
-             <height>15</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="GroupedToolButton" name="addpalette">
-           <property name="toolTip">
-            <string>Add a new palette</string>
-           </property>
+          <widget class="QToolButton" name="paletteMenuButton">
            <property name="icon">
-            <iconset theme="list-add">
-             <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
+            <iconset resource="icons/builtin/builtin.qrc">
+             <normaloff>:/icons/builtin/hamburger.svg</normaloff>:/icons/builtin/hamburger.svg</iconset>
            </property>
-           <property name="groupPosition">
-            <enum>GroupedToolButton::GroupLeft</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="GroupedToolButton" name="copypalette">
-           <property name="toolTip">
-            <string>Duplicate palette</string>
-           </property>
-           <property name="icon">
-            <iconset theme="edit-copy">
-             <normaloff>icons:edit-copy.png</normaloff>icons:edit-copy.png</iconset>
-           </property>
-           <property name="groupPosition">
-            <enum>GroupedToolButton::GroupCenter</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="GroupedToolButton" name="delpalette">
-           <property name="toolTip">
-            <string>Delete the palette</string>
-           </property>
-           <property name="icon">
-            <iconset theme="edit-delete">
-             <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
-           </property>
-           <property name="groupPosition">
-            <enum>GroupedToolButton::GroupRight</enum>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
            </property>
           </widget>
          </item>
@@ -390,11 +343,6 @@
    <class>Hue_Slider</class>
    <extends>Gradient_Slider</extends>
    <header>Hue_Slider</header>
-  </customwidget>
-  <customwidget>
-   <class>GroupedToolButton</class>
-   <extends>QToolButton</extends>
-   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
   <customwidget>
    <class>PaletteWidget</class>

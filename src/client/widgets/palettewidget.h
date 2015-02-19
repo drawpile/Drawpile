@@ -26,7 +26,6 @@ class Palette;
 class QScrollBar;
 class QRubberBand;
 class QMenu;
-class QActionGroup;
 class Color_Dialog;
 
 namespace widgets {
@@ -37,6 +36,7 @@ public:
 	PaletteWidget(QWidget *parent);
 
 	void setPalette(Palette *palette);
+	Palette *palette() const { return _palette; }
 
 	void setSpacing(int spacing);
 
@@ -74,7 +74,6 @@ private slots:
 	void editCurrentColor();
 	void setCurrentColor(const QColor& color);
 	void dialogDone();
-	void toggleWriteProtect();
 
 private:
 	int indexAt(const QPoint& point, bool extraPadding=false) const;
@@ -87,8 +86,6 @@ private:
 	QScrollBar *_scrollbar;
 	Color_Dialog *_colordlg;
 	QMenu *_contextmenu;
-	QAction *_writeprotectAction;
-	QActionGroup *_paletteActions;
 
 	QSize _swatchsize;
 	int _columns;

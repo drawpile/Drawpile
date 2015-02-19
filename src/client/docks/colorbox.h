@@ -45,6 +45,7 @@ private slots:
 	void addPalette();
 	void copyPalette();
 	void deletePalette();
+	void toggleWriteProtect();
 
 	void updateFromRgbSliders();
 	void updateFromRgbSpinbox();
@@ -55,6 +56,8 @@ private:
 	Ui_ColorBox *_ui;
 	Palette *_lastused;
 
+	QAction *_deletePalette;
+	QAction *_writeprotectPalette;
 	bool _updating;
 
 };
