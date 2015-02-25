@@ -129,10 +129,18 @@ public:
 	/**
 	 * @brief Get the length of the stored message stream in bytes.
 	 *
+	 * This returns the length of the serialized messages, not the in-memory
+	 * representation.
 	 * Note. Snapshot point is not included.
-	 * @return length in bytes
+	 * @return (serialized) length in bytes
 	 */
 	uint lengthInBytes() const { return _bytes; }
+
+	/**
+	 * @brief Get the length of the whole message stream in bytes
+	 * @return (serialized) length in bytes, snapshot point included
+	 */
+	uint totalLengthInBytes() const;
 
 	/**
 	 * @brief return the whole stream as a list

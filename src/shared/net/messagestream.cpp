@@ -132,5 +132,17 @@ QList<MessagePtr> MessageStream::toCommandList() const
 	return lst;
 }
 
+uint MessageStream::totalLengthInBytes() const
+{
+	uint len=lengthInBytes();
+	if(hasSnapshot()) {
+		const SnapshotPoint &sp = snapshotPoint().cast<protocol::SnapshotPoint>();
+		for(const MessagePtr m : sp.substream())
+			len += m->length();
+	}
+
+	return len;
+}
+
 }
 

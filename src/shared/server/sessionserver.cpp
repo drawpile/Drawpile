@@ -324,6 +324,7 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 			else
 				logger::info() << session << "Closing persistent session due to lack of snapshot point!";
 
+			logger::info() << session << "History size was" << session->mainstream().totalLengthInBytes() << "bytes";
 			delSession = true;
 		}
 

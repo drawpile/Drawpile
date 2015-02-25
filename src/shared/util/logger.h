@@ -60,6 +60,7 @@ public:
 
     Logger &operator<<(bool t) { if(stream) { stream->ts << (t ? "true" : "false"); } return maybeSpace(); }
     Logger &operator<<(int t) { if(stream) { stream->ts << t; } return maybeSpace(); }
+    Logger &operator<<(uint t) { if(stream) { stream->ts << t; } return maybeSpace(); }
     Logger &operator<<(double t) { if(stream) { stream->ts << t; } return maybeSpace(); }
 	Logger &operator<<(const char* t) { if(stream) { stream->ts << QString::fromLocal8Bit(t); } return maybeSpace(); }
     Logger &operator<<(const QString & t) { if(stream) { stream->ts << '\"' << t  << '\"'; } return maybeSpace(); }
