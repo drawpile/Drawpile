@@ -141,6 +141,26 @@ void LayerListModel::createLayer(int id, const QString &title)
 	emit layerCreated(_items.count()==1);
 }
 
+void LayerListModel::copyLayer(int sourceId, int id, const QString &title)
+{
+	// Find source layer
+	int pos=-1;
+	for(int i=0;i<_items.size();++i) {
+		if(_items.at(i).id == sourceId) {
+			pos = i;
+			break;
+		}
+	}
+	Q_ASSERT(pos>=0);
+	if(pos<0)
+		return;
+
+	beginInsertRows(QModelIndex(),pos,pos);
+	_items.insert(pos, LayerListItem(id, title));
+	endInsertRows();
+	emit layerCreated(false);
+}
+
 void LayerListModel::deleteLayer(int id)
 {
 	int row = indexOf(id);

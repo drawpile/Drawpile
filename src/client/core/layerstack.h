@@ -50,6 +50,9 @@ class LayerStack : public QObject {
 		//! Add a new layer of solid color to the top of the stack
 		Layer *addLayer(int id, const QString& name, const QColor& color);
 
+		//! Copy an existing layer and add it above the source in the stack
+		Layer *copyLayer(int source, int id, const QString &name);
+
 		//! Delete a layer
 		bool deleteLayer(int id);
 

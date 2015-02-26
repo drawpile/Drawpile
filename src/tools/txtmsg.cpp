@@ -147,6 +147,16 @@ void layerCreateTxt(const LayerCreate *msg, QTextStream &out)
 		<< "\n";
 }
 
+void layerCopyText(const LayerCopy *msg, QTextStream &out)
+{
+	out << "copylayer "
+		<< msg->contextId()
+		<< " " << msg->source()
+		<< " " << msg->id()
+		<< " " << msg->title()
+		<< "\n";
+}
+
 void layerAttrTxt(const LayerAttributes *msg, QTextStream &out)
 {
 	out << "layerattr "

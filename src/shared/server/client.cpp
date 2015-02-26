@@ -328,6 +328,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		switch(msg->type()) {
 		using namespace protocol;
 		case MSG_LAYER_CREATE:
+		case MSG_LAYER_COPY:
 		case MSG_LAYER_ATTR:
 		case MSG_LAYER_ORDER:
 		case MSG_LAYER_RETITLE:
@@ -410,6 +411,11 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_LAYER_CREATE:
 		// drop message if it didn't pass validation
 		if(!_session->createLayer(msg.cast<LayerCreate>(), true))
+			return;
+		break;
+	case MSG_LAYER_COPY:
+		// drop message if it didn't pass validation
+		if(!_session->copyLayer(msg.cast<LayerCopy>(), true))
 			return;
 		break;
 	case MSG_LAYER_ORDER:

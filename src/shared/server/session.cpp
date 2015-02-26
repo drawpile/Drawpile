@@ -444,6 +444,9 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 			// accept all layer IDs here
 			createLayer(msg.cast<LayerCreate>(), false);
 			break;
+		case MSG_LAYER_COPY:
+			copyLayer(msg.cast<LayerCopy>(), false);
+			break;
 		case MSG_LAYER_ORDER:
 			reorderLayers(msg.cast<LayerOrder>());
 			break;
@@ -500,6 +503,32 @@ bool SessionState::createLayer(protocol::LayerCreate &cmd, bool validate)
 		_layers.append(LayerState(cmd.id()));
 
 	return ok;
+}
+
+bool SessionState::copyLayer(protocol::LayerCopy &cmd, bool validate)
+{
+	bool ok = cmd.isValidId();
+
+	if(validate) {
+		// check that layer doesn't exist already
+		for(const LayerState &ls : _layers)
+			if(ls.id == cmd.id())
+				return false;
+	}
+
+	// Make sure source layer exists
+	int pos = -1;
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers.at(i).id == cmd.source()) {
+			pos = i;
+			break;
+		}
+	}
+
+	if(pos>=0 && (ok || !validate))
+		_layers.insert(pos+1, LayerState(cmd.id()));
+
+	return ok && pos>=0;
 }
 
 void SessionState::reorderLayers(protocol::LayerOrder &cmd)

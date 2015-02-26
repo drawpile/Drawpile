@@ -80,6 +80,35 @@ int LayerCreate::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
+LayerCopy *LayerCopy::deserialize(const uchar *data, uint len)
+{
+	if(len<5)
+		return 0;
+
+	return new LayerCopy(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1),
+		qFromBigEndian<quint16>(data+3),
+		QByteArray((const char*)data+5, len-5)
+	);
+}
+
+int LayerCopy::payloadLength() const
+{
+	return 1 + 4 + _title.length();
+}
+
+int LayerCopy::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	qToBigEndian(_source, ptr); ptr += 2;
+	memcpy(ptr, _title.constData(), _title.length());
+	ptr += _title.length();
+	return ptr - data;
+}
+
+
 LayerAttributes *LayerAttributes::deserialize(const uchar *data, uint len)
 {
 	if(len!=5)

@@ -10,6 +10,7 @@
  * New dab mode button style
  * Chat icon is now shown in statusbar when there are unread messages
  * Crosshair cursor is no longer shown for brush tools
+ * Protocol change: added implementation for LayerCopy
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode

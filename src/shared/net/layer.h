@@ -106,6 +106,45 @@ private:
 };
 
 /**
+ * @brief Layer duplication command
+ *
+ * This command works much like LayerCreate, except rather than filling the layer with
+ * solid color, it duplicates the contents of another layer.
+ * Also, the new layer is placed right above the source layer, rather than the top of the stack
+ * as with LayerCreate.
+ *
+ * If layer controls are locked, this command requires session operator privileges.
+ */
+class LayerCopy : public Message {
+public:
+	LayerCopy(uint8_t ctxid, uint16_t source, uint16_t id, const QString &title)
+		: Message(MSG_LAYER_COPY, ctxid), _source(source), _id(id), _title(title.toUtf8())
+		{}
+
+	static LayerCopy *deserialize(const uchar *data, uint len);
+
+	uint16_t source() const { return _source; }
+	uint16_t id() const { return _id; }
+	QString title() const { return QString::fromUtf8(_title); }
+
+	/**
+	 * @brief Check if the ID's namespace portition matches the context ID
+	 * Note. The initial session snapshot may include IDs that do not conform to
+	 * the contextId|layerId format.
+	 */
+	bool isValidId() const { return (id()>>8) == contextId(); }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint16_t _source;
+	uint16_t _id;
+	QByteArray _title;
+};
+
+/**
  * @brief Layer attribute change command
  *
  * If the current layer or layer controls in general are locked, this command

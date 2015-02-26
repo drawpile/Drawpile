@@ -260,6 +260,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_LAYER_CREATE:
 			handleLayerCreate(msg.cast<LayerCreate>());
 			break;
+		case MSG_LAYER_COPY:
+			handleLayerCopy(msg.cast<LayerCopy>());
+			break;
 		case MSG_LAYER_ATTR:
 			handleLayerAttributes(msg.cast<LayerAttributes>());
 			break;
@@ -395,6 +398,16 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	if(_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()))) {
 		_layerlist->createLayer(cmd.id(), cmd.title());
+
+		if(cmd.contextId() == _myid || !_hasParticipated)
+			emit layerAutoselectRequest(cmd.id());
+	}
+}
+
+void StateTracker::handleLayerCopy(const protocol::LayerCopy &cmd)
+{
+	if(_image->copyLayer(cmd.source(), cmd.id(), cmd.title())) {
+		_layerlist->copyLayer(cmd.source(), cmd.id(), cmd.title());
 
 		if(cmd.contextId() == _myid || !_hasParticipated)
 			emit layerAutoselectRequest(cmd.id());

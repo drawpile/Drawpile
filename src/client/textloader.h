@@ -42,6 +42,7 @@ private:
 
 	void handleResize(const QString &args);
 	void handleNewLayer(const QString &args);
+	void handleCopyLayer(const QString &args);
 	void handleLayerAttr(const QString &args);
 	void handleRetitleLayer(const QString &args);
 	void handleDeleteLayer(const QString &args);

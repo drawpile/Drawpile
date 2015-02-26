@@ -65,6 +65,13 @@ Usage: `newlayer ctxId layerId fill [title]`
 
 This command creates a new layer. The fill color should be in format #rrggbbaa.
 
+### copylayer
+
+Usage: `copylayer ctxId sourceId newId [title]`
+
+This  command copies an existing layer. The new layer will be placed right above
+the source layer.
+
 ### layerattr
 
 Usage: `layerattr ctxId layerId *parameters`

@@ -104,6 +104,37 @@ Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 }
 
 /**
+ * @param source source layer ID
+ * @param id new layer ID
+ * @param name new layer name
+ * @return layer or nullptr if source did not exist
+ */
+Layer *LayerStack::copyLayer(int source, int id, const QString &name)
+{
+	// Find source layer
+	int pos=-1;
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers.at(i)->id() == source) {
+			pos = i;
+			break;
+		}
+	}
+
+	if(pos<0)
+		return nullptr;
+
+	// Copy layer and place it above the source
+	Layer *copy = new Layer(*_layers.at(pos));
+	copy->setTitle(name);
+	copy->setId(id);
+
+	_layers.insert(pos+1, copy);
+	copy->markOpaqueDirty();
+
+	return copy;
+}
+
+/**
  * @param id layer ID
  * @return true if layer was found and deleted
  */

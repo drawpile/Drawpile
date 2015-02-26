@@ -61,6 +61,9 @@ class Layer {
 		//! Get the layer ID
 		int id() const { return id_; }
 
+		//! Change layer ID
+		void setId(int id) { id_ = id; }
+
 		//! Get the layer name
 		const QString& title() const { return _title; }
 

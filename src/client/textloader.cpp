@@ -145,6 +145,28 @@ void TextCommandLoader::handleNewLayer(const QString &args)
 	)));
 }
 
+void TextCommandLoader::handleCopyLayer(const QString &args)
+{
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (.*)");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected context id, source id, layer id and title");
+
+	int srcId = str2int(m.captured(2));
+	int newId = str2int(m.captured(3));
+
+	net::LayerListItem layer = _layer[srcId];
+	layer.id = newId;
+	_layer[newId] = layer;
+
+	_messages.append(MessagePtr(new protocol::LayerCopy(
+		str2int(m.captured(1)),
+		srcId,
+		newId,
+		m.captured(4)
+	)));
+}
+
 void TextCommandLoader::handleLayerAttr(const QString &args)
 {
 	// extract context ID
@@ -563,6 +585,8 @@ bool TextCommandLoader::load()
 				handleResize(args);
 			else if(cmd=="newlayer")
 				handleNewLayer(args);
+			else if(cmd=="copylayer")
+				handleCopyLayer(args);
 			else if(cmd=="layerattr")
 				handleLayerAttr(args);
 			else if(cmd=="retitlelayer")
