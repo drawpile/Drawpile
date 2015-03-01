@@ -55,6 +55,8 @@ class CanvasView : public QGraphicsView
 	public:
 		enum PressureMode { PRESSUREMODE_STYLUS, PRESSUREMODE_DISTANCE, PRESSUREMODE_VELOCITY };
 
+		enum TabletMode { DISABLE_TABLET, ENABLE_TABLET, HYBRID_TABLET }; // hybrid mode combines tablet and mouse events to work around QTabletEvent bugs
+
 		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
@@ -86,7 +88,7 @@ class CanvasView : public QGraphicsView
 		void doQuickAdjust1(float delta);
 
 		//! Enable/disable tablet event handling
-		void enableTabletEvents(bool enable);
+		void setTabletMode(TabletMode mode);
 
 		//! Is drawing in progress at the moment?
 		bool isPenDown() const { return _pendown != NOTDOWN; }
@@ -268,11 +270,15 @@ class CanvasView : public QGraphicsView
 		KisCubicCurve _pressuredistance;
 		KisCubicCurve _pressurevelocity;
 
+		TabletMode _tabletmode;
+
+		qreal _lastPressure; // these two are used only with hybrid tablet mode
+		bool _stylusDown;
+
 		int _zoomWheelDelta;
 
 		bool _locked;
 		bool _pointertracking;
-		bool _enableTabletEvents;
 		bool _pixelgrid;
 
 		bool _hotBorderTop;

@@ -54,8 +54,9 @@ CanvasView::CanvasView(QWidget *parent)
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
 	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
+	_tabletmode(ENABLE_TABLET),
 	_zoomWheelDelta(0),
-	_locked(false), _pointertracking(false), _enableTabletEvents(true), _pixelgrid(true),
+	_locked(false), _pointertracking(false), _pixelgrid(true),
 	_hotBorderTop(false)
 {
 	viewport()->setAcceptDrops(true);
@@ -69,9 +70,9 @@ CanvasView::CanvasView(QWidget *parent)
 	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 }
 
-void CanvasView::enableTabletEvents(bool enable)
+void CanvasView::setTabletMode(TabletMode mode)
 {
-	_enableTabletEvents = enable;
+	_tabletmode = mode;
 }
 
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
@@ -452,7 +453,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	penPressEvent(
 		event->pos(),
-		1,
+		_tabletmode == HYBRID_TABLET && _stylusDown ? _lastPressure : 1,
 		event->button(),
 		event->modifiers(),
 		false
@@ -512,7 +513,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 	penMoveEvent(
 		event->pos(),
-		1,
+		_tabletmode == HYBRID_TABLET && _stylusDown ? _lastPressure : 1.0,
 		event->buttons(),
 		event->modifiers(),
 		false
@@ -627,50 +628,64 @@ bool CanvasView::viewportEvent(QEvent *event)
 		gestureEvent(static_cast<QGestureEvent*>(event));
 
 	}
-	else if(event->type() == QEvent::TabletPress && _enableTabletEvents) {
+	else if(event->type() == QEvent::TabletPress && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		tabev->accept();
+		_stylusDown = true;
+		_lastPressure = tabev->pressure();
+		if(_tabletmode==ENABLE_TABLET) {
+			tabev->accept();
 
-		penPressEvent(
-			tabev->posF(),
-			tabev->pressure(),
+			penPressEvent(
+				tabev->posF(),
+				tabev->pressure(),
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-			tabev->button(),
+				tabev->button(),
 #else
-			Qt::LeftButton,
+				Qt::LeftButton,
 #endif
-			tabev->modifiers(),
-			true
-		);
+				tabev->modifiers(),
+				true
+			);
+		} else
+			return QGraphicsView::viewportEvent(event);
 	}
-	else if(event->type() == QEvent::TabletMove && _enableTabletEvents) {
+	else if(event->type() == QEvent::TabletMove && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		tabev->accept();
+		_lastPressure = tabev->pressure();
+		_stylusDown = true;
+		if(_tabletmode==ENABLE_TABLET) {
+			tabev->accept();
 
-		penMoveEvent(
-			tabev->posF(),
-			tabev->pressure(),
+			penMoveEvent(
+				tabev->posF(),
+				tabev->pressure(),
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-			tabev->buttons(),
+				tabev->buttons(),
 #else
-			Qt::NoButton,
+				Qt::NoButton,
 #endif
-			tabev->modifiers(),
-			true
-		);
+				tabev->modifiers(),
+				true
+			);
+		} else
+			return QGraphicsView::viewportEvent(event);
 	}
-	else if(event->type() == QEvent::TabletRelease && _enableTabletEvents) {
+	else if(event->type() == QEvent::TabletRelease && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		tabev->accept();
+		_stylusDown = false;
+		if(_tabletmode==ENABLE_TABLET) {
+			tabev->accept();
 
-		penReleaseEvent(
-			tabev->posF(),
+			penReleaseEvent(
+				tabev->posF(),
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-			tabev->button()
+				tabev->button()
 #else
-			Qt::NoButton
+				Qt::NoButton
 #endif
-		);
+			);
+		} else
+			return QGraphicsView::viewportEvent(event);
 	}
 	else {
 		return QGraphicsView::viewportEvent(event);
@@ -683,7 +698,7 @@ float CanvasView::mapPressure(float pressure, bool stylus)
 {
 	switch(_pressuremode) {
 	case PRESSUREMODE_STYLUS:
-		return stylus ? _pressurecurve.value(pressure) : 1.0;
+		return stylus || (_tabletmode==HYBRID_TABLET && _stylusDown) ? _pressurecurve.value(pressure) : 1.0;
 
 	case PRESSUREMODE_DISTANCE: {
 		float d = qMin(_pointerdistance, _modeparam) / _modeparam;

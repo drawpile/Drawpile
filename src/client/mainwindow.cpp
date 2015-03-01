@@ -584,9 +584,21 @@ void MainWindow::updateShortcuts()
 
 void MainWindow::updateTabletSupportMode()
 {
-	bool enable = QSettings().value("settings/input/tabletevents", true).toBool();
+	QSettings cfg;
+	cfg.beginGroup("settings/input");
 
-	_view->enableTabletEvents(enable);
+	bool enable = cfg.value("tabletevents", true).toBool();
+	bool bugs = cfg.value("tabletbugs", false).toBool();
+
+	widgets::CanvasView::TabletMode mode;
+	if(!enable)
+		mode = widgets::CanvasView::DISABLE_TABLET;
+	else if(bugs)
+		mode = widgets::CanvasView::HYBRID_TABLET;
+	else
+		mode = widgets::CanvasView::ENABLE_TABLET;
+
+	_view->setTabletMode(mode);
 }
 
 /**

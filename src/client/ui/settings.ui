@@ -69,27 +69,14 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>Notification volume:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QSlider" name="notificationVolume">
@@ -122,33 +109,56 @@
          </item>
         </layout>
        </item>
-       <item row="9" column="1">
+       <item row="10" column="1">
         <widget class="QCheckBox" name="notifChat">
          <property name="text">
           <string>Chat</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="11" column="1">
         <widget class="QCheckBox" name="notifMarker">
          <property name="text">
           <string>Recording marker</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="12" column="1">
         <widget class="QCheckBox" name="notifLogin">
          <property name="text">
           <string>User login and logout</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="1">
+       <item row="13" column="1">
         <widget class="QCheckBox" name="notifLock">
          <property name="text">
           <string>Canvas lock</string>
          </property>
         </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="tabletBugWorkaround">
+         <property name="toolTip">
+          <string>Checking this may fix jaggy line and offset bugs on some tablets</string>
+         </property>
+         <property name="text">
+          <string>Enable bug workarounds</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -581,6 +591,22 @@
     <hint type="destinationlabel">
      <x>142</x>
      <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tabletSupport</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tabletBugWorkaround</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
