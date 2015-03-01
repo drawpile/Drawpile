@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ class QModelIndex;
 class QItemSelection;
 class QMenu;
 class QTimer;
+class QActionGroup;
 
 class Ui_LayerBox;
 
@@ -63,6 +64,8 @@ signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
 
+	void layerViewModeSelected(int mode);
+
 private slots:
 	void onLayerCreate(bool wasfirst);
 	void onLayerDelete(int id, int idx);
@@ -79,6 +82,7 @@ private slots:
 	void hideSelected();
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
+	void layerViewModeTriggered(QAction *act);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -102,6 +106,8 @@ private:
 	QAction *_addLayerAction;
 	QAction *_duplicateLayerAction;
 	QAction *_deleteLayerAction;
+
+	QActionGroup *_viewMode;
 
 	QAction *_menuHideAction;
 	QAction *_menuDeleteAction;

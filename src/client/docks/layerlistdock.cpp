@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using widgets::GroupedToolButton;
 #include <QItemSelection>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QActionGroup>
 #include <QTimer>
 
 namespace docks {
@@ -81,11 +82,29 @@ LayerList::LayerList(QWidget *parent)
 	_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
 	_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+	boxmenu->addSeparator();
+#else
+	boxmenu->addSection(tr("View mode"));
+#endif
+
+	_viewMode = new QActionGroup(this);
+	_viewMode->setExclusive(true);
+	QAction *viewNormal = _viewMode->addAction(tr("Normal"));
+	viewNormal->setCheckable(true);
+	viewNormal->setProperty("viewmode", 0);
+	QAction *viewSolo = _viewMode->addAction(tr("Solo"));
+	viewSolo->setCheckable(true);
+	viewSolo->setProperty("viewmode", 1);
+
+	boxmenu->addActions(_viewMode->actions());
+
 	_ui->menuButton->setMenu(boxmenu);
 
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
+	connect(_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
 
 	selectionChanged(QItemSelection());
 
@@ -174,6 +193,7 @@ void LayerList::selectLayer(int id)
 void LayerList::init()
 {
 	_ui->layerlist->setEnabled(true);
+	_viewMode->actions()[0]->setChecked(true);
 	setControlsLocked(false);
 }
 
@@ -247,6 +267,11 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 		layer.exclusive = exclusive;
 		_client->sendLayerAcl(layer.id, layer.locked, layer.exclusive);
 	}
+}
+
+void LayerList::layerViewModeTriggered(QAction *action)
+{
+	emit layerViewModeSelected(action->property("viewmode").toInt());
 }
 
 /**

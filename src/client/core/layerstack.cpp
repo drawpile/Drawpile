@@ -32,7 +32,7 @@
 namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), _width(0), _height(0)
+	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0)
 {
 }
 
@@ -414,8 +414,9 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 {
 	// Composite visible layers
+	int layeridx = 0;
 	foreach(const Layer *l, _layers) {
-		if(l->visible()) {
+		if(isVisible(layeridx)) {
 			const Tile &tile = l->tile(xindex, yindex);
 			if(l->sublayers().count()) {
 				// Sublayers present, composite them first
@@ -441,6 +442,8 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 						Tile::SIZE*Tile::SIZE, l->opacity());
 			}
 		}
+
+		++layeridx;
 	}
 }
 
@@ -497,6 +500,42 @@ void LayerStack::notifyAreaChanged()
 		emit areaChanged(_dirtyrect);
 		_dirtyrect = QRect();
 	}
+}
+
+void LayerStack::setViewMode(ViewMode mode)
+{
+	if(mode != _viewmode) {
+		qDebug("view mode set to %d", mode);
+		_viewmode = mode;
+		markDirty();
+	}
+}
+
+void LayerStack::setViewLayer(int id)
+{
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers.at(i)->id() == id) {
+			qDebug("view layer id=%d index=%d", id, i);
+			_viewlayeridx = i;
+			if(_viewmode != NORMAL)
+				markDirty();
+			break;
+		}
+	}
+}
+
+bool LayerStack::isVisible(int idx) const
+{
+	Q_ASSERT(idx>=0 && idx < _layers.size());
+	if(!_layers.at(idx)->visible())
+		return false;
+
+	switch(viewMode()) {
+	case NORMAL: break;
+	case SOLO: return idx == _viewlayeridx;
+	}
+
+	return true;
 }
 
 Savepoint::~Savepoint()

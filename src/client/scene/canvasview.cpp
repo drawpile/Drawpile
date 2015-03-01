@@ -44,6 +44,7 @@ inline float qRadiansToDegrees(float radians) {
 #include "tools/toolsettings.h"
 
 #include "net/client.h"
+#include "core/layerstack.h"
 #include "core/point.h"
 #include "notifications.h"
 
@@ -204,6 +205,15 @@ void CanvasView::selectTool(tools::Type tool)
 void CanvasView::selectLayer(int layer_id)
 {
 	_toolbox.selectLayer(layer_id);
+
+	if(_scene->layers())
+		_scene->layers()->setViewLayer(layer_id);
+}
+
+void CanvasView::setLayerViewMode(int mode)
+{
+	if(_scene->layers())
+		_scene->layers()->setViewMode(paintcore::LayerStack::ViewMode(mode));
 }
 
 void CanvasView::setPixelGrid(bool enable)

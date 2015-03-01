@@ -39,135 +39,149 @@ class Savepoint;
  * \brief A stack of layers.
  */
 class LayerStack : public QObject {
-	Q_OBJECT
-	public:
-		LayerStack(QObject *parent=0);
-		~LayerStack();
+Q_OBJECT
+public:
+	enum ViewMode { NORMAL, SOLO };
 
-		//! Adjust layer stack size
-		void resize(int top, int right, int bottom, int left);
+	LayerStack(QObject *parent=0);
+	~LayerStack();
 
-		//! Add a new layer of solid color to the top of the stack
-		Layer *addLayer(int id, const QString& name, const QColor& color);
+	//! Adjust layer stack size
+	void resize(int top, int right, int bottom, int left);
 
-		//! Copy an existing layer and add it above the source in the stack
-		Layer *copyLayer(int source, int id, const QString &name);
+	//! Add a new layer of solid color to the top of the stack
+	Layer *addLayer(int id, const QString& name, const QColor& color);
 
-		//! Delete a layer
-		bool deleteLayer(int id);
+	//! Copy an existing layer and add it above the source in the stack
+	Layer *copyLayer(int source, int id, const QString &name);
 
-		//! Merge the layer to the one below it
-		void mergeLayerDown(int id);
+	//! Delete a layer
+	bool deleteLayer(int id);
 
-		//! Re-order the layer stack
-		void reorderLayers(const QList<uint16_t> &neworder);
+	//! Merge the layer to the one below it
+	void mergeLayerDown(int id);
 
-		//! Get the number of layers in the stack
-		int layers() const { return _layers.count(); }
+	//! Re-order the layer stack
+	void reorderLayers(const QList<uint16_t> &neworder);
 
-		//! Get a layer by its index
-		Layer *getLayerByIndex(int index);
+	//! Get the number of layers in the stack
+	int layers() const { return _layers.count(); }
 
+	//! Get a layer by its index
+	Layer *getLayerByIndex(int index);
 
-		//! Get a read only layer by its index
-		const Layer *getLayerByIndex(int index) const;
+	//! Get a read only layer by its index
+	const Layer *getLayerByIndex(int index) const;
 
-		//! Get a layer by its ID
-		Layer *getLayer(int id);
+	//! Get a layer by its ID
+	Layer *getLayer(int id);
 
-		//! Get a layer by its ID
-		const Layer *getLayer(int id) const;
+	//! Get a layer by its ID
+	const Layer *getLayer(int id) const;
 
-		//! Check if there are any annotations
-		bool hasAnnotations() const { return !_annotations.isEmpty(); }
+	//! Check if there are any annotations
+	bool hasAnnotations() const { return !_annotations.isEmpty(); }
 
-		//! Get an annotation by its ID
-		Annotation *getAnnotation(int id);
+	//! Get an annotation by its ID
+	Annotation *getAnnotation(int id);
 
-		//! Get all annotations
-		const QList<Annotation*> &annotations() const { return _annotations; }
+	//! Get all annotations
+	const QList<Annotation*> &annotations() const { return _annotations; }
 
-		//! Add a new annotation
-		Annotation *addAnnotation(int id, const QRect &initialrect);
+	//! Add a new annotation
+	Annotation *addAnnotation(int id, const QRect &initialrect);
 
-		//! Move and/or resize annotation
-		void reshapeAnnotation(int id, const QRect &newrect);
+	//! Move and/or resize annotation
+	void reshapeAnnotation(int id, const QRect &newrect);
 
-		//! Change annotation content
-		void changeAnnotation(int id, const QString &newtext, const QColor &bgcolor);
+	//! Change annotation content
+	void changeAnnotation(int id, const QString &newtext, const QColor &bgcolor);
 
-		//! Delete an annotation
-		void deleteAnnotation(int id);
+	//! Delete an annotation
+	void deleteAnnotation(int id);
 
-		//! Get the index of the specified layer
-		int indexOf(int id) const;
+	//! Get the index of the specified layer
+	int indexOf(int id) const;
 
-		//! Get the width of the layer stack
-		int width() const { return _width; }
+	//! Get the width of the layer stack
+	int width() const { return _width; }
 
-		//! Get the height of the layer stack
-		int height() const { return _height; }
+	//! Get the height of the layer stack
+	int height() const { return _height; }
 
-		//! Get the width and height of the layer stack
-		QSize size() const { return QSize(_width, _height); }
+	//! Get the width and height of the layer stack
+	QSize size() const { return QSize(_width, _height); }
 
-		//! Paint all changed tiles in the given area
-		void paintChangedTiles(const QRect& rect, QPaintDevice *target);
+	//! Paint all changed tiles in the given area
+	void paintChangedTiles(const QRect& rect, QPaintDevice *target);
 
-		//! Get the merged color value at the point
-		QColor colorAt(int x, int y) const;
+	//! Get the merged color value at the point
+	QColor colorAt(int x, int y) const;
 
-		//! Return a flattened image of the layer stack
-		QImage toFlatImage(bool includeAnnotations) const;
+	//! Return a flattened image of the layer stack
+	QImage toFlatImage(bool includeAnnotations) const;
 
-		//! Get a merged tile
-		Tile getFlatTile(int x, int y) const;
+	//! Get a merged tile
+	Tile getFlatTile(int x, int y) const;
 
-		//! Mark the tiles under the area dirty
-		void markDirty(const QRect &area);
+	//! Mark the tiles under the area dirty
+	void markDirty(const QRect &area);
 
-		//! Mark all tiles as dirty and call notifyAreaChanged
-		void markDirty();
+	//! Mark all tiles as dirty and call notifyAreaChanged
+	void markDirty();
 
-		//! Mark the tile at the given index as dirty
-		void markDirty(int x, int y);
+	//! Mark the tile at the given index as dirty
+	void markDirty(int x, int y);
 
-		//! Mark the tile at the given index as dirty
-		void markDirty(int index);
+	//! Mark the tile at the given index as dirty
+	void markDirty(int index);
 
-		//! Emit areaChanged if anything has been marked as dirty
-		void notifyAreaChanged();
+	//! Emit areaChanged if anything has been marked as dirty
+	void notifyAreaChanged();
 
-		//! Create a new savepoint
-		Savepoint *makeSavepoint();
+	//! Create a new savepoint
+	Savepoint *makeSavepoint();
 
-		//! Restore layer stack to a previous savepoint
-		void restoreSavepoint(const Savepoint *savepoint);
+	//! Restore layer stack to a previous savepoint
+	void restoreSavepoint(const Savepoint *savepoint);
 
-	public slots:
-		//! Set or clear the "hidden" flag of a layer
-		void setLayerHidden(int layerid, bool hide);
+	//! Set layer view mode
+	void setViewMode(ViewMode mode);
 
-	signals:
-		//! Emitted when the visible layers are edited
-		void areaChanged(const QRect &area);
+	ViewMode viewMode() const { return _viewmode; }
 
-		//! Layer width/height changed
-		void resized(int xoffset, int yoffset, const QSize &oldsize);
+	//! Set the selected layer (used by view modes other than NORMAL)
+	void setViewLayer(int id);
 
-		//! Annotation with the given ID was just changed. (This includes addition and deletion)
-		void annotationChanged(int id);
+public slots:
+	//! Set or clear the "hidden" flag of a layer
+	void setLayerHidden(int layerid, bool hide);
 
-	private:
-		void flattenTile(quint32 *data, int xindex, int yindex) const;
+signals:
+	//! Emitted when the visible layers are edited
+	void areaChanged(const QRect &area);
 
-		int _width, _height;
-		int _xtiles, _ytiles;
-		QList<Layer*> _layers;
-		QList<Annotation*> _annotations;
+	//! Layer width/height changed
+	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
-		QBitArray _dirtytiles;
-		QRect _dirtyrect;
+	//! Annotation with the given ID was just changed. (This includes addition and deletion)
+	void annotationChanged(int id);
+
+private:
+	void flattenTile(quint32 *data, int xindex, int yindex) const;
+
+	bool isVisible(int idx) const;
+
+	int _width, _height;
+	int _xtiles, _ytiles;
+	QList<Layer*> _layers;
+	QList<Annotation*> _annotations;
+
+	QBitArray _dirtytiles;
+	QRect _dirtyrect;
+
+	ViewMode _viewmode;
+	int _viewlayeridx;
 };
 
 /// Layer stack savepoint for undo use

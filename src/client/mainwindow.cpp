@@ -207,6 +207,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_dock_input->connectCanvasView(_view);
 	connect(_dock_layers, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
 	connect(_dock_layers, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
+	connect(_dock_layers, SIGNAL(layerViewModeSelected(int)), _view, SLOT(setLayerViewMode(int)));
 
 	_splitter->addWidget(_view);
 	_splitter->setCollapsible(0, false);
