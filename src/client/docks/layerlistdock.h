@@ -69,6 +69,7 @@ private slots:
 	void onLayerReorder();
 
 	void addLayer();
+	void duplicateLayer();
 	void deleteOrMergeSelected();
 	void deleteSelected();
 	void mergeSelected();
@@ -97,6 +98,10 @@ private:
 	bool _noupdate;
 	LayerAclMenu *_aclmenu;
 	QMenu *_layermenu;
+
+	QAction *_addLayerAction;
+	QAction *_duplicateLayerAction;
+	QAction *_deleteLayerAction;
 
 	QAction *_menuHideAction;
 	QAction *_menuDeleteAction;

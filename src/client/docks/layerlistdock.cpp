@@ -75,8 +75,14 @@ LayerList::LayerList(QWidget *parent)
 
 	connect(_ui->layerlist, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(layerContextMenu(QPoint)));
 
-	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
-	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteOrMergeSelected()));
+	// Layer edit menu (hamburger button)
+	QMenu *boxmenu = new QMenu(this);
+	_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
+	_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
+	_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
+
+	_ui->menuButton->setMenu(boxmenu);
+
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
@@ -130,7 +136,7 @@ void LayerList::updateLockedControls()
 {
 	bool enabled = _client && (!_client->isUserLocked() & (_op | !_lockctrl));
 
-	_ui->addButton->setEnabled(enabled);
+	_addLayerAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
@@ -141,7 +147,8 @@ void LayerList::updateLockedControls()
 		enabled = false;
 
 	_ui->lockButton->setEnabled((_op && enabled) || (_client && !_client->isConnected()));
-	_ui->deleteButton->setEnabled(enabled);
+	_duplicateLayerAction->setEnabled(enabled);
+	_deleteLayerAction->setEnabled(enabled);
 	_ui->opacity->setEnabled(enabled);
 	_ui->blendmode->setEnabled(enabled);
 
@@ -247,35 +254,37 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
  */
 void LayerList::addLayer()
 {
-	QString name;
-	bool nameOk;
-	net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
 
-	for(int tries=0;tries<255;++tries) {
-		name = tr("New layer");
-		if(tries>0)
-			name = name + " " + QString::number(tries);
-
-		nameOk = true;
-		for(int l=0;l<layers->rowCount();++l) {
-			net::LayerListItem layer = layers->index(l).data().value<net::LayerListItem>();
-			if(layer.title.compare(name, Qt::CaseInsensitive)==0) {
-				nameOk=false;
-				break;
-			}
-		}
-		if(nameOk)
-			break;
-	}
-	if(!nameOk)
+	const int id = layers->getAvailableLayerId();
+	if(id==0)
 		return;
 
-	int id = layers->getAvailableLayerId();
-	if(id==0)
+	const QString name = layers->getAvailableLayerName(tr("New layer"));
+	if(name.isEmpty())
 		return;
 
 	_client->sendUndopoint();
 	_client->sendNewLayer(id, Qt::transparent, name);
+}
+
+void LayerList::duplicateLayer()
+{
+	const QModelIndex index = currentSelection();
+	const net::LayerListItem layer = index.data().value<net::LayerListItem>();
+
+	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+
+	const int id = layers->getAvailableLayerId();
+	if(id==0)
+		return;
+
+	const QString name = layers->getAvailableLayerName(layer.title);
+	if(name.isEmpty())
+		return;
+
+	_client->sendUndopoint();
+	_client->sendCopyLayer(layer.id, id, name);
 }
 
 bool LayerList::canMergeCurrent() const

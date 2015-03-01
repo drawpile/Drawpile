@@ -111,6 +111,13 @@ public:
 	 */
 	int getAvailableLayerId() const;
 
+	/**
+	 * @brief Find a unique name for a layer
+	 * @param basename
+	 * @return unique name or empty string if one couldn't be found
+	 */
+	QString getAvailableLayerName(QString basename) const;
+
 signals:
 	void layerCreated(bool wasfirst);
 	void layerDeleted(int id, int idx);

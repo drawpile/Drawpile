@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QBuffer>
 #include <QImage>
+#include <QRegularExpression>
 
 namespace net {
 
@@ -298,6 +299,47 @@ int LayerListModel::getAvailableLayerId() const
 	}
 
 	return 0;
+}
+
+QString LayerListModel::getAvailableLayerName(QString basename) const
+{
+	int tries=0;
+	// See if the base name ends with a number. If so, remove it
+	// and start iteration from there.
+	QRegularExpression re("(\\d+)$");
+	QRegularExpressionMatch m = re.match(basename);
+	if(m.hasMatch()) {
+		tries = m.captured(1).toInt();
+		if(tries<0 || tries>254)
+			tries = 0;
+		else
+			tries = tries + 1;
+
+		basename = basename.mid(0, m.capturedStart()).trimmed();
+	}
+
+	// Find first unused name
+	while(tries < 255) {
+		QString name = basename;
+		if(tries>0)
+			name = name + " " + QString::number(tries);
+
+		bool nameOk = true;
+		for(int l=0;l<_items.size();++l) {
+			const net::LayerListItem &layer = _items.at(l);
+			if(layer.title.compare(name, Qt::CaseInsensitive)==0) {
+				nameOk=false;
+				break;
+			}
+		}
+		if(nameOk)
+			return name;
+
+		++tries;
+	}
+
+	// Tried too many times without finding a name
+	return QString();
 }
 
 }

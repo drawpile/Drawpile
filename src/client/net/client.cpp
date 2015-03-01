@@ -194,6 +194,13 @@ void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
 }
 
+void Client::sendCopyLayer(int source, int id, const QString &title)
+{
+	Q_ASSERT(source>0 && source<=0xffff);
+	Q_ASSERT(id>0 && id<=0xffff);
+	sendCommand(MessagePtr(new protocol::LayerCopy(_my_id, source, id, title)));
+}
+
 void Client::sendLayerAttribs(int id, float opacity, int blend)
 {
 	Q_ASSERT(id>=0 && id<=0xffff);

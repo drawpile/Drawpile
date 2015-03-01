@@ -104,27 +104,13 @@
       </widget>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="addButton">
-       <property name="toolTip">
-        <string>Add a new layer</string>
-       </property>
+      <widget class="GroupedToolButton" name="menuButton">
        <property name="icon">
-        <iconset theme="list-add">
-         <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
+        <iconset resource="icons/builtin/builtin.qrc">
+         <normaloff>:/icons/builtin/hamburger.svg</normaloff>:/icons/builtin/hamburger.svg</iconset>
        </property>
-       <property name="groupPosition">
-        <enum>GroupedToolButton::GroupCenter</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="GroupedToolButton" name="deleteButton">
-       <property name="toolTip">
-        <string>Delete selected layer</string>
-       </property>
-       <property name="icon">
-        <iconset theme="edit-delete">
-         <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="groupPosition">
         <enum>GroupedToolButton::GroupRight</enum>
@@ -152,10 +138,11 @@
  <tabstops>
   <tabstop>blendmode</tabstop>
   <tabstop>lockButton</tabstop>
-  <tabstop>addButton</tabstop>
-  <tabstop>deleteButton</tabstop>
+  <tabstop>menuButton</tabstop>
   <tabstop>layerlist</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="icons/builtin/builtin.qrc"/>
+ </resources>
  <connections/>
 </ui>

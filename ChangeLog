@@ -12,6 +12,7 @@
  * Crosshair cursor is no longer shown for brush tools
  * Protocol change: added implementation for LayerCopy
  * Added experimental workaround for certain tablet event bugs
+ * Added "duplicate layer" button
 
 2015-01-30 Version 0.9.8
  * Show menu bar when pointer is brought to the top of the screen in full screen mode
