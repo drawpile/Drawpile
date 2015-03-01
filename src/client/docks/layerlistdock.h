@@ -25,7 +25,6 @@ class QModelIndex;
 class QItemSelection;
 class QMenu;
 class QTimer;
-class QActionGroup;
 
 class Ui_LayerBox;
 
@@ -107,7 +106,7 @@ private:
 	QAction *_duplicateLayerAction;
 	QAction *_deleteLayerAction;
 
-	QActionGroup *_viewMode;
+	QMenu *_viewMode;
 
 	QAction *_menuHideAction;
 	QAction *_menuDeleteAction;

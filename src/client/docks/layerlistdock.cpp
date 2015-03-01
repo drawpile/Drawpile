@@ -82,22 +82,18 @@ LayerList::LayerList(QWidget *parent)
 	_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
 	_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-	boxmenu->addSeparator();
-#else
-	boxmenu->addSection(tr("View mode"));
-#endif
-
-	_viewMode = new QActionGroup(this);
-	_viewMode->setExclusive(true);
-	QAction *viewNormal = _viewMode->addAction(tr("Normal"));
+	QActionGroup *viewmodes = new QActionGroup(this);
+	viewmodes->setExclusive(true);
+	QAction *viewNormal = viewmodes->addAction(tr("Normal"));
 	viewNormal->setCheckable(true);
 	viewNormal->setProperty("viewmode", 0);
-	QAction *viewSolo = _viewMode->addAction(tr("Solo"));
+	QAction *viewSolo = viewmodes->addAction(tr("Solo"));
 	viewSolo->setCheckable(true);
 	viewSolo->setProperty("viewmode", 1);
 
-	boxmenu->addActions(_viewMode->actions());
+	boxmenu->addSeparator();
+	_viewMode = boxmenu->addMenu(QString()); // title is set later
+	_viewMode->addActions(viewmodes->actions());
 
 	_ui->menuButton->setMenu(boxmenu);
 
@@ -194,6 +190,7 @@ void LayerList::init()
 {
 	_ui->layerlist->setEnabled(true);
 	_viewMode->actions()[0]->setChecked(true);
+	layerViewModeTriggered(_viewMode->actions()[0]);
 	setControlsLocked(false);
 }
 
@@ -271,6 +268,7 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 
 void LayerList::layerViewModeTriggered(QAction *action)
 {
+	_viewMode->setTitle(tr("Mode: ") + " " + action->text());
 	emit layerViewModeSelected(action->property("viewmode").toInt());
 }
 
