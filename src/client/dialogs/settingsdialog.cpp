@@ -404,7 +404,6 @@ void SettingsDialog::addListingServer()
 		}
 
 		auto *api = new sessionlisting::AnnouncementApi;
-		api->setApiUrl(url);
 
 		QPointer<SettingsDialog> self(this);
 
@@ -433,7 +432,7 @@ void SettingsDialog::addListingServer()
 			api->deleteLater();
 		});
 
-		api->getApiInfo();
+		api->getApiInfo(url);
 	}
 }
 

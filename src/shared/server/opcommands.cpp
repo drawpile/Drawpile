@@ -21,9 +21,6 @@
 #include "client.h"
 #include "session.h"
 #include "../net/meta.h"
-#include "../util/announcementapi.h"
-
-#include "config.h"
 
 #include <QList>
 #include <QStringList>
@@ -259,44 +256,31 @@ void killSession(Client *client, const QString &, const QStringList &)
 
 void announceSession(Client *client, const QString &cmd, const QStringList &)
 {
+
+
 	QUrl apiUrl(cmd.mid(cmd.indexOf(' ') + 1));
 	if(!apiUrl.isValid()) {
 		client->sendSystemChat("Invalid API URL");
 		return;
 	}
 
-	sessionlisting::AnnouncementApi *api = client->session()->publicListing();
-	if(api->isAnnounced()) {
-		// TODO support announcint at multiple sites simultaneously
+	if(client->session()->publicListing().listingId>0) {
+		// TODO support announcing at multiple sites simultaneously
 		client->sendSystemChat("Session already announced!");
 		return;
 	}
 
-	api->setApiUrl(apiUrl);
-	client->connect(api, &sessionlisting::AnnouncementApi::error, client, &Client::sendSystemChat, Qt::UniqueConnection);
-
-	api->announceSession({
-		 QString(),
-		 0,
-		 client->session()->id(),
-		 QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(client->session()->minorProtocolVersion()),
-		 client->session()->title(),
-		 client->session()->userCount(),
-		 !client->session()->passwordHash().isEmpty(),
-		 client->session()->founder(),
-		 client->session()->sessionStartTime()
-	 });
+	client->session()->makeAnnouncement(apiUrl);
 }
 
 void unlistSession(Client *client, const QString &, const QStringList &)
 {
-	sessionlisting::AnnouncementApi *api = client->session()->publicListing();
-	if(!api->isAnnounced()) {
+	if(client->session()->publicListing().listingId<=0) {
 		client->sendSystemChat("Session not announced!");
 		return;
 	}
 
-	api->unlistSession();
+	client->session()->unlistAnnouncement();
 }
 
 void showHelp(Client *client, const QString &, const QStringList &)

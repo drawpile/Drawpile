@@ -28,6 +28,7 @@
 
 #include "sessiondesc.h"
 #include "../util/logger.h"
+#include "../util/announcementapi.h"
 #include "../net/message.h"
 #include "../net/messagestream.h"
 
@@ -44,10 +45,6 @@ namespace protocol {
 
 namespace recording {
 	class Writer;
-}
-
-namespace sessionlisting {
-	class AnnouncementApi;
 }
 
 namespace server {
@@ -427,10 +424,20 @@ public:
 
 	QString toLogString() const;
 
+	sessionlisting::Announcement publicListing() const { return _publicListing; }
+	void setPublicListing(const sessionlisting::Announcement &a) { _publicListing = a; }
+
 	/**
-	 * @brief Get the public listing API client instance for this session
+	 * @brief Generate a request for session announcement
+	 *
+	 * @param url listing server API url
 	 */
-	sessionlisting::AnnouncementApi *publicListing();
+	void makeAnnouncement(const QUrl &url);
+
+	/**
+	 * @brief Generate a request for session announcement unlisting
+	 */
+	void unlistAnnouncement();
 
 signals:
 	//! A user just connected to the session
@@ -460,10 +467,15 @@ signals:
 	//! A new snapshot was just created
 	void snapshotCreated();
 
+	//! Request session announcement
+	void requestAnnouncement(const QUrl &url, const sessionlisting::Session &session);
+
+	//! Request this session to be unlisted
+	void requestUnlisting(const sessionlisting::Announcement &listing);
+
 private slots:
 	void removeUser(Client *user);
 	void userBarrierLocked();
-	void refreshSessionAnnouncement();
 
 private:
 	void cleanupCommandStream();
@@ -477,7 +489,7 @@ private:
 
 	protocol::MessageStream _mainstream;
 
-	sessionlisting::AnnouncementApi *_publicListing;
+	sessionlisting::Announcement _publicListing;
 
 	int _lastUserId;
 	QVector<LayerState> _layers;

@@ -21,6 +21,12 @@
 
 #include "sessiondesc.h"
 
+namespace sessionlisting {
+	class AnnouncementApi;
+	class Session;
+	class Announcement;
+}
+
 namespace server {
 
 class SessionState;
@@ -269,6 +275,10 @@ private slots:
 	void lobbyDisconnectedEvent(Client *client);
 	void userDisconnectedEvent(SessionState *session);
 	void cleanupSessions();
+	void refreshSessionAnnouncements();
+	void announceSession(const QUrl &url, const sessionlisting::Session &session);
+	void unlistSession(const sessionlisting::Announcement &listing);
+	void sessionAnnounced(const sessionlisting::Announcement &listing);
 
 private:
 	void initSession(SessionState *session);
@@ -278,6 +288,7 @@ private:
 	QList<Client*> _lobby;
 	SessionStore *_store;
 	IdentityManager *_identman;
+	sessionlisting::AnnouncementApi *_publicListingApi;
 
 	QString _title;
 	int _sessionLimit;

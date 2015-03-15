@@ -25,6 +25,7 @@
 #include "sessionstore.h"
 
 #include "../util/logger.h"
+#include "../util/announcementapi.h"
 
 #include <QTimer>
 
@@ -42,9 +43,18 @@ SessionServer::SessionServer(QObject *parent)
 	_mustSecure(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
-	connect(cleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSessions()));
+	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
+
+	_publicListingApi = new sessionlisting::AnnouncementApi(this);
+
+	connect(_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
+
+	QTimer *announcementRefreshTimer = new QTimer(this);
+	connect(announcementRefreshTimer, &QTimer::timeout, this, &SessionServer::refreshSessionAnnouncements);
+	announcementRefreshTimer->setInterval(1000 * 60 * 5);
+	announcementRefreshTimer->start(announcementRefreshTimer->interval());
 
 #ifndef NDEBUG
 	_randomlag = 0;
@@ -96,6 +106,9 @@ void SessionServer::initSession(SessionState *session)
 	connect(session, &SessionState::userDisconnected, this, &SessionServer::userDisconnectedEvent);
 	connect(session, &SessionState::sessionAttributeChanged, [this](SessionState *ses) { emit sessionChanged(SessionDescription(*ses)); });
 
+	connect(session, &SessionState::requestAnnouncement, this, &SessionServer::announceSession);
+	connect(session, &SessionState::requestUnlisting, this, &SessionServer::unlistSession);
+
 	_sessions.append(session);
 
 	emit sessionCreated(session);
@@ -112,6 +125,8 @@ void SessionServer::initSession(SessionState *session)
 void SessionServer::destroySession(SessionState *session)
 {
 	Q_ASSERT(_sessions.contains(session));
+
+	session->unlistAnnouncement();
 
 	logger::debug() << session << "Deleting session. User count is" << session->userCount();
 	_sessions.removeOne(session);
@@ -365,6 +380,46 @@ void SessionServer::cleanupSessions()
 			destroySession(s);
 		}
 	}
+}
+
+void SessionServer::refreshSessionAnnouncements()
+{
+	for(SessionState *s : _sessions) {
+		if(s->publicListing().listingId>0) {
+			_publicListingApi->refreshSession(s->publicListing(), {
+				QString(),
+				0,
+				QString(),
+				QString(),
+				s->title(),
+				s->userCount(),
+				!s->passwordHash().isEmpty(),
+				s->founder(),
+				s->sessionStartTime()
+			});
+		}
+	}
+}
+
+void SessionServer::announceSession(const QUrl &url, const sessionlisting::Session &session)
+{
+	_publicListingApi->announceSession(url, session);
+}
+
+void SessionServer::unlistSession(const sessionlisting::Announcement &listing)
+{
+	_publicListingApi->unlistSession(listing);
+}
+
+void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing)
+{
+	SessionState *s = getSessionById(listing.id);
+	if(!s) {
+		logger::warning() << "Announced non-existent session" << listing.id;
+		return;
+	}
+
+	s->setPublicListing(listing);
 }
 
 }

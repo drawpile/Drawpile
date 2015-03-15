@@ -50,29 +50,27 @@ static QString slashcat(QString s, const QString &s2)
 	return s;
 }
 
-AnnouncementApi::AnnouncementApi( QObject *parent)
-	: QObject(parent), _apiUrl(QUrl()), _listingId(-1)
+AnnouncementApi::AnnouncementApi(QObject *parent)
+	: QObject(parent)
 {
 	_net = new QNetworkAccessManager(this);
 	connect(_net, &QNetworkAccessManager::finished, this, &AnnouncementApi::handleResponse);
 }
 
-void AnnouncementApi::getApiInfo()
+void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 {
-	logger::debug() << "getting API info from" << apiUrl().toString();
+	logger::debug() << "getting API info from" << apiUrl.toString();
 
-	QNetworkRequest req(apiUrl());
+	QNetworkRequest req(apiUrl);
 
 	QNetworkReply *reply = _net->get(req);
 	reply->setProperty("QUERY_TYPE", "getinfo");
 }
 
-void AnnouncementApi::getSessionList(const QString &protocol, const QString &title)
+void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title)
 {
-	Q_ASSERT(apiUrl().isValid());
-
 	// Send request
-	QUrl url = apiUrl();
+	QUrl url = apiUrl;
 	url.setPath(slashcat(url.path(), "sessions/"));
 
 	QUrlQuery query;
@@ -88,11 +86,9 @@ void AnnouncementApi::getSessionList(const QString &protocol, const QString &tit
 	reply->setProperty("QUERY_TYPE", "getlist");
 }
 
-void AnnouncementApi::announceSession(const Session &session)
+void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session)
 {
-	Q_ASSERT(apiUrl().isValid());
-
-	logger::debug() << "announcing" << session.id << "at" << _apiUrl.toString();
+	logger::debug() << "announcing" << session.id << "at" << apiUrl.toString();
 
 	// Construct the announcement
 	QJsonObject o;
@@ -108,21 +104,20 @@ void AnnouncementApi::announceSession(const Session &session)
 	o["owner"] = session.owner;
 
 	// Send request
-	QUrl url = apiUrl();
+	QUrl url = apiUrl;
 	url.setPath(slashcat(url.path(), "sessions/"));
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
 	QNetworkReply *reply = _net->post(req, QJsonDocument(o).toJson());
 	reply->setProperty("QUERY_TYPE", "announce");
+	reply->setProperty("API_URL", apiUrl);
+	reply->setProperty("SESSION_ID", session.id);
 }
 
-void AnnouncementApi::refreshSession(const Session &session)
+void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
 {
-	Q_ASSERT(apiUrl().isValid());
-	Q_ASSERT(_listingId>0);
-
-	logger::debug() << "refreshing" << _listingId << "at" << _apiUrl.toString();
+	logger::debug() << "refreshing" << a.listingId << "at" << a.apiUrl.toString();
 
 	// Construct the announcement
 	QJsonObject o;
@@ -133,32 +128,30 @@ void AnnouncementApi::refreshSession(const Session &session)
 	o["owner"] = session.owner;
 
 	// Send request
-	QUrl url = apiUrl();
-	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(_listingId)));
+	QUrl url = a.apiUrl;
+	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	req.setRawHeader("X-Update-Key", _updateKey.toUtf8());
+	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = _net->put(req, QJsonDocument(o).toJson());
 	reply->setProperty("QUERY_TYPE", "refresh");
 }
 
-void AnnouncementApi::unlistSession()
+void AnnouncementApi::unlistSession(const Announcement &a)
 {
-	Q_ASSERT(apiUrl().isValid());
-	Q_ASSERT(_listingId>0);
+	logger::debug() << "unlisting" << a.listingId << "at" << a.apiUrl.toString();
 
-	logger::debug() << "unlisting" << _listingId << "at" << _apiUrl.toString();
-
-	QUrl url = apiUrl();
-	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(_listingId)));
+	QUrl url = a.apiUrl;
+	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
 	QNetworkRequest req(url);
-	req.setRawHeader("X-Update-Key", _updateKey.toUtf8());
+	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = _net->deleteResource(req);
 	reply->setProperty("QUERY_TYPE", "unlist");
+	reply->setProperty("SESSION_ID", a.id);
 }
 
 void AnnouncementApi::handleResponse(QNetworkReply *reply)
@@ -203,21 +196,20 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 	if(error.error != QJsonParseError::NoError)
 		throw ResponseError(QStringLiteral("Error parsing announcement response: %1").arg(error.errorString()));
 
-	_listingId = doc.object()["id"].toInt();
-	_updateKey = doc.object()["key"].toString();
+	Announcement a;
+	a.apiUrl = reply->property("API_URL").toUrl();
+	a.id = reply->property("SESSION_ID").toString();
+	a.updateKey = doc.object()["key"].toString();
+	a.listingId = doc.object()["id"].toInt();
 
-	logger::debug() << "Announced session. Got listing ID" << _listingId;
+	logger::debug() << "Announced session. Got listing ID" << a.listingId;
 
-	emit sessionAnnounced();
+	emit sessionAnnounced(a);
 }
 
 void AnnouncementApi::handleUnlistResponse(QNetworkReply *reply)
 {
-	Q_UNUSED(reply);
-	// No content
-
-	_listingId = -1;
-	_updateKey = QString();
+	emit unlisted(reply->property("SESSION_ID").toString());
 }
 
 void AnnouncementApi::handleRefreshResponse(QNetworkReply *reply)

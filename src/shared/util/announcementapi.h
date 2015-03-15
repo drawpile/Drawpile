@@ -48,6 +48,15 @@ struct Session {
 	QDateTime started;
 };
 
+struct Announcement {
+	Announcement() : listingId(0) { }
+
+	QUrl apiUrl;
+	QString id;
+	QString updateKey;
+	int listingId;
+};
+
 /**
  * @brief Public session listing API client
  */
@@ -57,13 +66,10 @@ class AnnouncementApi : public QObject
 public:
 	explicit AnnouncementApi(QObject *parent = 0);
 
-	void setApiUrl(const QUrl &url) { _apiUrl = url; }
-	QUrl apiUrl() const { return _apiUrl; }
-
 	/**
 	 * @brief Query information about the API
 	 */
-	void getApiInfo();
+	void getApiInfo(const QUrl &apiUrl);
 
 	/**
 	 * @brief Send a request for a session list
@@ -73,37 +79,31 @@ public:
 	 * @param protocol if empty, limit query to sessions with this protocol version
 	 * @param title if empty, limit query to sessions whose title contains this string
 	 */
-	void getSessionList(const QString &protocol=QString(), const QString &title=QString());
+	void getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString());
 
 	/**
 	 * @brief Send session announcement
-	 * @param host
-	 * @param port
+	 * @param apiUrl
 	 * @param session
 	 */
-	void announceSession(const Session &session);
+	void announceSession(const QUrl &apiUrl, const Session &session);
 
 	/**
 	 * @brief Refresh the session previously announced with announceSession
 	 */
-	void refreshSession(const Session &session);
+	void refreshSession(const Announcement &a, const Session &session);
 
 	/**
 	 * @brief Unlist the session previously announced with announceSession
 	 */
-	void unlistSession();
-
-	/**
-	 * @brief Has an announcement been succesfully made?
-	 * @return
-	 */
-	bool isAnnounced() const { return _listingId>0; }
+	void unlistSession(const Announcement &a);
 
 signals:
-	void serverInfo(ListServerInfo info);
-	void sessionListReceived(QList<Session> sessions);
-	void sessionAnnounced();
-	void error(QString errorString);
+	void serverInfo(const ListServerInfo &info);
+	void sessionListReceived(const QList<Session> &sessions);
+	void sessionAnnounced(const Announcement &session);
+	void unlisted(const QString &sessionId);
+	void error(const QString &errorString);
 
 private slots:
 	void handleResponse(QNetworkReply *reply);
@@ -115,11 +115,7 @@ private:
 	void handleListingResponse(QNetworkReply *reply);
 	void handleServerInfoResponse(QNetworkReply *reply);
 
-	QUrl _apiUrl;
 	QNetworkAccessManager *_net;
-
-	int _listingId;
-	QString _updateKey;
 };
 
 }
