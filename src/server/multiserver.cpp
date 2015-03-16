@@ -22,12 +22,14 @@
 #include "sslserver.h"
 #include "hibernation.h"
 #include "userfile.h"
+#include "announcementwhitelist.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
 
 #include "../shared/net/snapshot.h"
+#include "../shared/util/announcementapi.h"
 
 #include <QTcpSocket>
 #include <QFileInfo>
@@ -159,6 +161,14 @@ bool MultiServer::setUserFile(const QString &path)
 
 	_sessions->setIdentityManager(userfile);
 	return true;
+}
+
+void MultiServer::setAnnounceWhitelist(const QString &path)
+{
+	logger::info() << "Using announcement whitelist file" << path;
+	AnnouncementWhitelist *wl = new AnnouncementWhitelist(this);
+	wl->setWhitelistFile(path);
+	_sessions->announcementApiClient()->setWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
 }
 
 void MultiServer::setAllowGuests(bool allow)

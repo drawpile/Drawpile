@@ -138,6 +138,11 @@ public:
 	int connectionTimeout() const { return _connectionTimeout; }
 
 	/**
+	 * @brief Get the session announcement server client
+	 */
+	sessionlisting::AnnouncementApi *announcementApiClient() const { return _publicListingApi; }
+
+	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will

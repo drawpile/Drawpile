@@ -56,6 +56,8 @@ public:
 	bool setUserFile(const QString &path);
 	void setAllowGuests(bool allow);
 	void setConnectionTimeout(int timeout);
+	void setAnnounceWhitelist(const QString &path);
+
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
 #endif

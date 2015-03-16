@@ -24,6 +24,8 @@
 #include <QDateTime>
 #include <QUrl>
 
+#include <functional>
+
 class QNetworkAccessManager;
 class QNetworkReply;
 
@@ -57,6 +59,8 @@ struct Announcement {
 	int listingId;
 };
 
+typedef std::function<bool(const QUrl &)> WhitelistFunction;
+
 /**
  * @brief Public session listing API client
  */
@@ -65,6 +69,13 @@ class AnnouncementApi : public QObject
 	Q_OBJECT
 public:
 	explicit AnnouncementApi(QObject *parent = 0);
+
+	/**
+	 * @brief Set the API URL whitelist function to use
+	 *
+	 * @param whitelist
+	 */
+	void setWhitelist(WhitelistFunction whitelist) { _whitelist = whitelist; }
 
 	/**
 	 * @brief Query information about the API
@@ -109,6 +120,8 @@ private slots:
 	void handleResponse(QNetworkReply *reply);
 
 private:
+	bool isWhitelisted(const QUrl &url) const;
+
 	void handleAnnounceResponse(QNetworkReply *reply);
 	void handleUnlistResponse(QNetworkReply *reply);
 	void handleRefreshResponse(QNetworkReply *reply);
@@ -116,6 +129,7 @@ private:
 	void handleServerInfoResponse(QNetworkReply *reply);
 
 	QNetworkAccessManager *_net;
+	WhitelistFunction _whitelist;
 };
 
 }

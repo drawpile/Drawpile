@@ -183,6 +183,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption timeoutOption("timeout", "Connection timeout", "seconds", "60");
 	parser.addOption(timeoutOption);
 
+	// --announce-whitelist
+	QCommandLineOption announceWhitelist("announce-whitelist", "Session announcement server whitelist", "filename");
+	parser.addOption(announceWhitelist);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -353,6 +357,12 @@ int main(int argc, char *argv[]) {
 			server->setUserFile(userfile);
 
 		server->setAllowGuests(!cfgfile.override(parser, noGuestsOption).toBool());
+	}
+
+	{
+		QString announceWhitelistFile = cfgfile.override(parser, announceWhitelist).toString();
+		if(!announceWhitelistFile.isEmpty())
+			server->setAnnounceWhitelist(announceWhitelistFile);
 	}
 
 	{

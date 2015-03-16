@@ -111,6 +111,10 @@ By default, access is only permitted from localhost.
 .BR --userfile\  path
 set the user credential file to use. If set, users listed in the file must authenticate to log in.
 .TP
+.BR --announce-whitelist\  path
+set the session announcement server whitelist to use. If not set, all server URLs are allowed. The file is a text
+file with one regular expression that matches an URL per line. Lines beginning with '#' are comments.
+.TP
 .BR --no-guests
 all users must authenticate to log in. A userfile must have been set.
 .TP

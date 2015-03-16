@@ -13,6 +13,7 @@ set (
 	hibernation.cpp
 	updateablefile.cpp
 	userfile.cpp
+	announcementwhitelist.cpp
 	)
 
 # Unix specific features
