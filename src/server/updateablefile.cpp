@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,41 +17,45 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef USERFILE_H
-#define USERFILE_H
-
 #include "updateablefile.h"
-#include "../shared/server/identitymanager.h"
+#include "../shared/util/logger.h"
 
-#include <QHash>
+#include <QFileInfo>
+#include <QFile>
 
-namespace server {
-
-class UserFile : public IdentityManager
+UpdateableFile::UpdateableFile()
 {
-	Q_OBJECT
-public:
-	explicit UserFile(QObject *parent = 0);
-
-	bool setFile(const QString &path);
-
-protected:
-	void doCheckLogin(const QString &username, const QString &password, IdentityResult *result);
-
-private:
-	void updateUserFile();
-
-	struct User {
-		QString name;
-		QStringList flags;
-		QByteArray passwordhash;
-	};
-
-	UpdateableFile _file;
-	QHash<QString, User> _users;
-
-};
 
 }
 
-#endif // USERFILE_H
+UpdateableFile::UpdateableFile(const QString &path)
+{
+	setPath(path);
+}
+
+void UpdateableFile::setPath(const QString &path)
+{
+	_path = path;
+	_lastmod = QDateTime();
+}
+
+bool UpdateableFile::isModified() const
+{
+	Q_ASSERT(!_path.isEmpty());
+	QFileInfo f(_path);
+	if(!f.exists())
+		return false;
+
+	return f.lastModified() != _lastmod;
+}
+
+QSharedPointer<QFile> UpdateableFile::open()
+{
+	QSharedPointer<QFile> f(new QFile(_path));
+	if(!f->open(QFile::ReadOnly))
+		logger::error() << _path << "Error:" << f->errorString();
+	else
+		_lastmod = QFileInfo(*f).lastModified();
+
+	return f;
+}

@@ -11,6 +11,7 @@ set (
 	configfile.cpp
 	sslserver.cpp
 	hibernation.cpp
+	updateablefile.cpp
 	userfile.cpp
 	)
 

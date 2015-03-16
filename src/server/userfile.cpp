@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,15 +21,13 @@
 #include "../shared/util/logger.h"
 #include "../shared/util/passwordhash.h"
 
-#include <QFileSystemWatcher>
 #include <QFileInfo>
 
 namespace server {
 
 UserFile::UserFile(QObject *parent) :
-	IdentityManager(parent), _watcher(new QFileSystemWatcher(this)), _needupdate(true)
+	IdentityManager(parent)
 {
-	connect(_watcher, &QFileSystemWatcher::fileChanged, [this]() { _needupdate = true; });
 }
 
 bool UserFile::setFile(const QString &path)
@@ -45,15 +43,13 @@ bool UserFile::setFile(const QString &path)
 
 	logger::info() << "Using password file" << path;
 
-	_watcher->addPath(path);
-	_path = path;
-	_needupdate = true;
+	_file.setPath(path);
 	return true;
 }
 
 void UserFile::doCheckLogin(const QString &username, const QString &password, IdentityResult *result)
 {
-	if(_needupdate)
+	if(_file.isModified())
 		updateUserFile();
 
 	QString idname = username.toLower();
@@ -82,20 +78,18 @@ void UserFile::doCheckLogin(const QString &username, const QString &password, Id
 
 void UserFile::updateUserFile()
 {
-	logger::debug() << "Refreshing user list from" << _path;
+	logger::debug() << "Refreshing user list from" << _file.path();
 
-	QFile f(_path);
-	if(!f.open(QFile::ReadOnly)) {
-		logger::error() << _path << "Couldn't open password file!" << f.errorString();
+	QSharedPointer<QFile> f = _file.open();
+	if(!f->isOpen())
 		return;
-	}
 
 	QHash<QString, User> users;
 
 	int linen = 0;
 	while(true) {
 		++linen;
-		QByteArray line = f.readLine();
+		QByteArray line = f->readLine();
 		if(line.isEmpty())
 			break;
 		line = line.trimmed();
@@ -104,7 +98,7 @@ void UserFile::updateUserFile()
 
 		QList<QByteArray> tokens = line.split(':');
 		if(tokens.size()!=3) {
-			logger::warning() << _path << "invalid line" << linen << ": expected 3 tokens, got" << tokens.size();
+			logger::warning() << _file.path() << "invalid line" << linen << ": expected 3 tokens, got" << tokens.size();
 			continue;
 		}
 
@@ -116,7 +110,6 @@ void UserFile::updateUserFile()
 	}
 
 	_users = users;
-	_needupdate = false;
 }
 
 }
