@@ -187,6 +187,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption announceWhitelist("announce-whitelist", "Session announcement server whitelist", "filename");
 	parser.addOption(announceWhitelist);
 
+	// --banlist
+	QCommandLineOption banlist("banlist", "IP banlist", "filename");
+	parser.addOption(banlist);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -365,6 +369,11 @@ int main(int argc, char *argv[]) {
 			server->setAnnounceWhitelist(announceWhitelistFile);
 	}
 
+	{
+		QString banlistFile = cfgfile.override(parser, banlist).toString();
+		if(!banlistFile.isEmpty())
+			server->setBanlist(banlistFile);
+	}
 	{
 		bool ok;
 		float timeout = cfgfile.override(parser, timeoutOption).toFloat(&ok);

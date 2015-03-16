@@ -33,6 +33,7 @@ namespace server {
 class Client;
 class SessionState;
 class SessionServer;
+class BanList;
 
 /**
  * The drawpile server.
@@ -57,6 +58,7 @@ public:
 	void setAllowGuests(bool allow);
 	void setConnectionTimeout(int timeout);
 	void setAnnounceWhitelist(const QString &path);
+	void setBanlist(const QString &path);
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -87,6 +89,7 @@ private:
 
 	QTcpServer *_server;
 	SessionServer *_sessions;
+	BanList *_banlist;
 	State _state;
 
 	bool _autoStop;

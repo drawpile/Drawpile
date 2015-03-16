@@ -115,6 +115,10 @@ set the user credential file to use. If set, users listed in the file must authe
 set the session announcement server whitelist to use. If not set, all server URLs are allowed. The file is a text
 file with one regular expression that matches an URL per line. Lines beginning with '#' are comments.
 .TP
+.BR --banlist\  path
+set the IP ban list file. The is a text file with one IP address per line. Lines beginning with '#' are comments.
+A subnet mask (e.g. "192.168.1.1/24") can be included.
+.TP
 .BR --no-guests
 all users must authenticate to log in. A userfile must have been set.
 .TP

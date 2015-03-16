@@ -14,6 +14,7 @@ set (
 	updateablefile.cpp
 	userfile.cpp
 	announcementwhitelist.cpp
+	banlist.cpp
 	)
 
 # Unix specific features

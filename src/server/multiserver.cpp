@@ -23,6 +23,7 @@
 #include "hibernation.h"
 #include "userfile.h"
 #include "announcementwhitelist.h"
+#include "banlist.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -40,7 +41,8 @@ namespace server {
 
 MultiServer::MultiServer(QObject *parent)
 	: QObject(parent),
-	_server(0),
+	_server(nullptr),
+	_banlist(nullptr),
 	_state(NOT_STARTED),
 	_autoStop(false)
 {
@@ -169,6 +171,13 @@ void MultiServer::setAnnounceWhitelist(const QString &path)
 	AnnouncementWhitelist *wl = new AnnouncementWhitelist(this);
 	wl->setWhitelistFile(path);
 	_sessions->announcementApiClient()->setWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
+}
+
+void MultiServer::setBanlist(const QString &path)
+{
+	logger::info() << "Using IP ban list" << path;
+	_banlist = new BanList(this);
+	_banlist->setPath(path);
 }
 
 void MultiServer::setAllowGuests(bool allow)
@@ -315,6 +324,15 @@ void MultiServer::assignRecording(SessionState *session)
 void MultiServer::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
+
+	if(_banlist) {
+		if(_banlist->isBanned(socket->peerAddress())) {
+			logger::info() << "Banned client from address" << socket->peerAddress() << "not accepted.";
+			socket->disconnectFromHost();
+			socket->deleteLater();
+			return;
+		}
+	}
 
 	logger::info() << "Accepted new client from address" << socket->peerAddress();
 
