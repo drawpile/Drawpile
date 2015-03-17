@@ -505,7 +505,6 @@ void LayerStack::notifyAreaChanged()
 void LayerStack::setViewMode(ViewMode mode)
 {
 	if(mode != _viewmode) {
-		qDebug("view mode set to %d", mode);
 		_viewmode = mode;
 		markDirty();
 	}
@@ -515,7 +514,6 @@ void LayerStack::setViewLayer(int id)
 {
 	for(int i=0;i<_layers.size();++i) {
 		if(_layers.at(i)->id() == id) {
-			qDebug("view layer id=%d index=%d", id, i);
 			_viewlayeridx = i;
 			if(_viewmode != NORMAL)
 				markDirty();
