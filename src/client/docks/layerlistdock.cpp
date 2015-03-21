@@ -268,7 +268,7 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 
 void LayerList::layerViewModeTriggered(QAction *action)
 {
-	_viewMode->setTitle(tr("Mode: ") + " " + action->text());
+	_viewMode->setTitle(tr("Mode:") + " " + action->text());
 	emit layerViewModeSelected(action->property("viewmode").toInt());
 }
 

@@ -95,9 +95,6 @@
           <property name="toolTip">
            <string>Smooth edge</string>
           </property>
-          <property name="text">
-           <string>...</string>
-          </property>
           <property name="icon">
            <iconset resource="icons/builtin/builtin.qrc">
             <normaloff>:/icons/builtin/paintmode-smoothedge.svg</normaloff>:/icons/builtin/paintmode-smoothedge.svg</iconset>
@@ -107,9 +104,6 @@
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
@@ -127,9 +121,6 @@
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -165,9 +156,6 @@
           <property name="toolTip">
            <string>Indirect drawing</string>
           </property>
-          <property name="text">
-           <string>...</string>
-          </property>
           <property name="icon">
            <iconset resource="icons/builtin/builtin.qrc">
             <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
@@ -177,9 +165,6 @@
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
@@ -197,9 +182,6 @@
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
