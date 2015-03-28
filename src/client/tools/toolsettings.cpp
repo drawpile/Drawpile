@@ -530,7 +530,7 @@ paintcore::Brush BrushlessSettings::getBrush(bool swapcolors) const
 }
 
 LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title)
-	: QObject(), BrushlessSettings(name, title, icon::fromTheme("tool-laserpointer")), _ui(0)
+	: QObject(), BrushlessSettings(name, title, icon::fromTheme("cursor-arrow")), _ui(0)
 {
 }
 
@@ -1105,8 +1105,8 @@ void AnnotationSettings::bake()
 	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }
 
-SelectionSettings::SelectionSettings(const QString &name, const QString &title)
-	: QObject(), BrushlessSettings(name, title, icon::fromTheme("select-rectangular")), _ui(0)
+SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform)
+	: QObject(), BrushlessSettings(name, title, icon::fromTheme(freeform ? "edit-select-lasso" : "select-rectangular")), _ui(0)
 {
 }
 

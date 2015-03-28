@@ -425,7 +425,7 @@ private:
 class SelectionSettings : public QObject, public BrushlessSettings {
 	Q_OBJECT
 public:
-	SelectionSettings(const QString &name, const QString &title);
+	SelectionSettings(const QString &name, const QString &title, bool freeform);
 	~SelectionSettings();
 
 	void setScene(drawingboard::CanvasScene *scene) { _scene = scene; }

@@ -2199,9 +2199,9 @@ void MainWindow::setupActions()
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 
 	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
-	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
+	QAction *lasertool = makeAction("toollaser", "cursor-arrow", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select (Rectangular)"), tr("Select area for copying"), QKeySequence("S"), true);
-	QAction *lassotool = makeAction("toolselectpolygon", "edit-select", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("P"), true); // TODO select-lasso drawicon
+	QAction *lassotool = makeAction("toolselectpolygon", "edit-select-lasso", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("P"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));

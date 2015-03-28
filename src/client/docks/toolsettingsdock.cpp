@@ -113,10 +113,10 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
 	_widgets->addWidget(_textsettings->createUi(this));
 
-	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"));
+	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false);
 	_widgets->addWidget(_selectionsettings->createUi(this));
 
-	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"));
+	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true);
 	_widgets->addWidget(_polyselectionsettings->createUi(this));
 
 	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));

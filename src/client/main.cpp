@@ -38,6 +38,7 @@
 #include <QDir>
 #include <QDesktopWidget>
 #include <QDateTime>
+#include <QDebug>
 
 #include <Color_Wheel>
 
@@ -51,13 +52,10 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 
 	// Set resource search paths
 	QStringList iconPaths;
-#ifdef BUILTIN_ICONS
-	iconPaths << ":/icons/theme";
-#else
-	iconPaths << qApp->applicationDirPath() + "/icons/theme";
-	for(const QString path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
-		iconPaths << path + "/theme";
-#endif
+	iconPaths << qApp->applicationDirPath() + QStringLiteral("/theme");
+	for(const QString &path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
+		iconPaths << path + QStringLiteral("/theme");
+	qDebug() << iconPaths;
 	QDir::setSearchPaths("icons", iconPaths);
 
 	// Make sure a user name is set

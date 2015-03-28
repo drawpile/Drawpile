@@ -189,11 +189,6 @@ qt5_wrap_ui( UI_Headers ${UIs} )
 qt5_add_resources( QtResource ui/cursors/cursors.qrc )
 qt5_add_resources( QtResource ui/icons/builtin/builtin.qrc )
 
-if( BUILTIN_ICONS )
-	message(STATUS "Including icons in the executable" )
-	qt5_add_resources( QtResource ui/icons/theme/icons.qrc )
-endif( BUILTIN_ICONS )
-
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
 		i18n/drawpile_fi.ts
@@ -220,7 +215,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"Drawpile client"
 		${WEBSITE}
-		"2006-2014 Calle Laakkonen"
+		"2006-2015 Calle Laakkonen"
 		${DRAWPILE_VERSION}
 		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico"
 	)
@@ -287,7 +282,7 @@ set_target_properties (
 
 install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 
-if( NOT BUILTIN_ICONS )
+if( NOT APPLE )
 	install( DIRECTORY ui/icons/theme DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
 endif()
 
