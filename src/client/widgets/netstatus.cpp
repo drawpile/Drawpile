@@ -22,7 +22,6 @@
 #include "dialogs/certificateview.h"
 #include "dialogs/netstats.h"
 #include "utils/whatismyip.h"
-#include "utils/icon.h"
 
 #include <QAction>
 #include <QLabel>
@@ -196,7 +195,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	if(iconname.isEmpty()) {
 		_security->hide();
 	} else {
-		_security->setPixmap(icon::fromBuiltin(iconname).pixmap(16, 16));
+		_security->setPixmap(QIcon("builtin:" + iconname + ".svg").pixmap(16, 16));
 		_security->setToolTip(tooltip);
 		_security->show();
 	}

@@ -673,8 +673,5 @@ QProgressBar::chunk {
    <header>recording/indexgraphicsview.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
  <connections/>
 </ui>

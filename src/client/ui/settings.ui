@@ -461,8 +461,8 @@
             <string>Mark as trusted</string>
            </property>
            <property name="icon">
-            <iconset resource="icons/builtin/builtin.qrc">
-             <normaloff>:/icons/builtin/trusted.svg</normaloff>:/icons/builtin/trusted.svg</iconset>
+            <iconset>
+             <normaloff>builtin:trusted.svg</normaloff>builtin:trusted.svg</iconset>
            </property>
           </widget>
          </item>
@@ -542,9 +542,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="icons/builtin/builtin.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

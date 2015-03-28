@@ -39,14 +39,20 @@ void selectThemeVariant()
 	const QString darkpath = QStringLiteral("/theme/dark");
 	QString curpath;
 
+	QStringList builtinPaths;
+
 	if(isLightColor(QPalette().color(QPalette::Window))) {
 		THEME_VARIANT = LIGHT;
 		curpath = lightpath;
+		builtinPaths << QStringLiteral(":/icons/light");
 
 	} else {
 		THEME_VARIANT = DARK;
 		curpath = darkpath;
+		builtinPaths << QStringLiteral(":/icons/dark");
 	}
+
+	builtinPaths << QStringLiteral(":/icons");
 
 
 	QStringList themePaths, lightPaths, darkPaths;
@@ -59,6 +65,8 @@ void selectThemeVariant()
 	QDir::setSearchPaths("theme", themePaths);
 	QDir::setSearchPaths("themelight", lightPaths);
 	QDir::setSearchPaths("themedark", darkPaths);
+	QDir::setSearchPaths("builtin", builtinPaths);
+
 }
 
 QIcon fromTheme(const QString &name, Theme variant)

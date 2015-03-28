@@ -106,8 +106,8 @@
      <item>
       <widget class="GroupedToolButton" name="menuButton">
        <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/hamburger.svg</normaloff>:/icons/builtin/hamburger.svg</iconset>
+        <iconset>
+         <normaloff>builtin:hamburger.svg</normaloff>builtin:hamburger.svg</iconset>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
@@ -141,8 +141,5 @@
   <tabstop>menuButton</tabstop>
   <tabstop>layerlist</tabstop>
  </tabstops>
- <resources>
-  <include location="icons/builtin/builtin.qrc"/>
- </resources>
  <connections/>
 </ui>

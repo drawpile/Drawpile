@@ -85,8 +85,8 @@
         <string>Indirect drawing</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
+        <iconset>
+         <normaloff>builtin:paintmode-indirect.svg</normaloff>builtin:paintmode-indirect.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -105,8 +105,8 @@
         <string>Incremental drawing</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/builtin/builtin.qrc">
-         <normaloff>:/icons/builtin/paintmode-incremental.svg</normaloff>:/icons/builtin/paintmode-incremental.svg</iconset>
+        <iconset>
+         <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -357,9 +357,6 @@
   <tabstop>pressurehardness</tabstop>
   <tabstop>pressurecolor</tabstop>
  </tabstops>
- <resources>
-  <include location="icons/builtin/builtin.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>pressuresize</sender>

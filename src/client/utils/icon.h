@@ -32,12 +32,6 @@ void selectThemeVariant();
 //! Get an icon from the system theme, falling back to the bundled icon set
 QIcon fromTheme(const QString &name, Theme variant=CURRENT);
 
-//! Get an icon from the built-in icon set
-inline QIcon fromBuiltin(const QString &name)
-{
-	return QIcon(QStringLiteral(":/icons/builtin/") + name);
-}
-
 }
 
 #endif

@@ -70,7 +70,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 	} else if(role == Qt::DecorationRole) {
 		if(index.column()==0) {
 			if(ls.closed)
-				return icon::fromBuiltin("stop.svg").pixmap(16, 16);
+				return QIcon("builtin:stop.svg").pixmap(16, 16);
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}

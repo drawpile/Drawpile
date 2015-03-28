@@ -45,8 +45,8 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
-       <iconset resource="icons/builtin/builtin.qrc">
-        <normaloff>:/icons/builtin/colorbox-pal.png</normaloff>:/icons/builtin/colorbox-pal.png</iconset>
+       <iconset>
+        <normaloff>builtin:colorbox-pal.png</normaloff>builtin:colorbox-pal.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -91,8 +91,8 @@
          <item>
           <widget class="QToolButton" name="paletteMenuButton">
            <property name="icon">
-            <iconset resource="icons/builtin/builtin.qrc">
-             <normaloff>:/icons/builtin/hamburger.svg</normaloff>:/icons/builtin/hamburger.svg</iconset>
+            <iconset>
+             <normaloff>builtin:hamburger.svg</normaloff>builtin:hamburger.svg</iconset>
            </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
@@ -115,8 +115,8 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="icon">
-       <iconset resource="icons/builtin/builtin.qrc">
-        <normaloff>:/icons/builtin/colorbox-hsv.png</normaloff>:/icons/builtin/colorbox-hsv.png</iconset>
+       <iconset>
+        <normaloff>builtin:colorbox-hsv.png</normaloff>builtin:colorbox-hsv.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -280,8 +280,8 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="icon">
-       <iconset resource="icons/builtin/builtin.qrc">
-        <normaloff>:/icons/builtin/colorbox-wheel.png</normaloff>:/icons/builtin/colorbox-wheel.png</iconset>
+       <iconset>
+        <normaloff>builtin:colorbox-wheel.png</normaloff>builtin:colorbox-wheel.png</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -350,8 +350,5 @@
    <header>widgets/palettewidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons/builtin/builtin.qrc"/>
- </resources>
  <connections/>
 </ui>

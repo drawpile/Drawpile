@@ -63,7 +63,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 
 		cfg.setValue("username", defaultname);
 	}
-	setWindowIcon(icon::fromBuiltin("drawpile.png"));
+	setWindowIcon(QIcon(":/icons/drawpile.png"));
 }
 
 /**

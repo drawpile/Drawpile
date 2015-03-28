@@ -18,7 +18,6 @@
 */
 
 #include "listservermodel.h"
-#include "icon.h"
 
 #include <QDebug>
 #include <QImage>
@@ -147,7 +146,7 @@ void ListServerModel::loadServers()
 		};
 
 		if(ls.iconName == "drawpile")
-			ls.icon = icon::fromBuiltin("drawpile");
+			ls.icon = QIcon("builtin:drawpile.png");
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 
@@ -158,7 +157,7 @@ void ListServerModel::loadServers()
 	// Add the default drawpile.net server if there is nothing else
 	if(_servers.isEmpty()) {
 		_servers << ListServer {
-			icon::fromBuiltin("drawpile"),
+			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
 			QStringLiteral("http://drawpile.net/api/listing/"),

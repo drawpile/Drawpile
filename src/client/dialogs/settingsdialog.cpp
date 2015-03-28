@@ -197,7 +197,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
-	QIcon trustedIcon = icon::fromBuiltin("trusted");
+	QIcon trustedIcon("builtin:trusted.svg");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), _ui->knownHostList);
 		i->setData(Qt::UserRole, true);
@@ -335,7 +335,7 @@ void SettingsDialog::certificateSelectionChanged()
 
 void SettingsDialog::markTrustedCertificates()
 {
-	QIcon trustedIcon = icon::fromBuiltin("trusted");
+	QIcon trustedIcon("builtin:trusted.svg");
 	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
 		if(!item->data(Qt::UserRole).toBool()) {
 			_trustCerts.append(item->data(Qt::UserRole+1).toString());
@@ -387,7 +387,7 @@ void SettingsDialog::importTrustedCertificate()
 
 	_importCerts.append(certs.at(0));
 
-	QIcon trustedIcon = icon::fromBuiltin("trusted");
+	QIcon trustedIcon("builtin:trusted.svg");
 	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);
@@ -417,7 +417,7 @@ void SettingsDialog::addListingServer()
 				self->_listservers->addServer(info.name, url.toString(), info.description);
 
 				if(info.faviconUrl == "drawpile") {
-					self->_listservers->setFavicon(url.toString(), icon::fromBuiltin("drawpile").pixmap(128, 128).toImage());
+					self->_listservers->setFavicon(url.toString(), QIcon("builtin:drawpile.png").pixmap(128, 128).toImage());
 				} else {
 					QUrl favicon(info.faviconUrl);
 					if(favicon.isValid()) {

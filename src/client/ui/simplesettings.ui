@@ -96,8 +96,8 @@
            <string>Smooth edge</string>
           </property>
           <property name="icon">
-           <iconset resource="icons/builtin/builtin.qrc">
-            <normaloff>:/icons/builtin/paintmode-smoothedge.svg</normaloff>:/icons/builtin/paintmode-smoothedge.svg</iconset>
+           <iconset>
+            <normaloff>builtin:paintmode-smoothedge.svg</normaloff>builtin:paintmode-smoothedge.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -116,8 +116,8 @@
            <string>Hard edge</string>
           </property>
           <property name="icon">
-           <iconset resource="icons/builtin/builtin.qrc">
-            <normaloff>:/icons/builtin/paintmode-hardedge.svg</normaloff>:/icons/builtin/paintmode-hardedge.svg</iconset>
+           <iconset>
+            <normaloff>builtin:paintmode-hardedge.svg</normaloff>builtin:paintmode-hardedge.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -163,8 +163,8 @@
            <string>Indirect drawing</string>
           </property>
           <property name="icon">
-           <iconset resource="icons/builtin/builtin.qrc">
-            <normaloff>:/icons/builtin/paintmode-indirect.svg</normaloff>:/icons/builtin/paintmode-indirect.svg</iconset>
+           <iconset>
+            <normaloff>builtin:paintmode-indirect.svg</normaloff>builtin:paintmode-indirect.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -183,8 +183,8 @@
            <string>Incremental drawing</string>
           </property>
           <property name="icon">
-           <iconset resource="icons/builtin/builtin.qrc">
-            <normaloff>:/icons/builtin/paintmode-incremental.svg</normaloff>:/icons/builtin/paintmode-incremental.svg</iconset>
+           <iconset>
+            <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -372,9 +372,6 @@
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons/builtin/builtin.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>paintmodeHardedge</sender>

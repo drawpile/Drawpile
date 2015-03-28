@@ -74,7 +74,7 @@ namespace {
 
 	QPixmap getBuiltinIcon(const QString &name)
 	{
-		return icon::fromBuiltin(name).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
+		return QIcon("builtin:" + name).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
 	}
 }
 

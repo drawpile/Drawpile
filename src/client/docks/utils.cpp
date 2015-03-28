@@ -28,8 +28,8 @@ namespace docks {
 #ifdef Q_OS_WIN
 		return QStringLiteral(
 			"QDockWidget {"
-				"titlebar-close-icon: url(:/icons/builtin/dock-close.svg);"
-				"titlebar-normal-icon: url(:/icons/builtin/dock-detach.svg);"
+				"titlebar-close-icon: url(builtin:dock-close.svg);"
+				"titlebar-normal-icon: url(builtin:dock-detach.svg);"
 
 			"}"
 		);

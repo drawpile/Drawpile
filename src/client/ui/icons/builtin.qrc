@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>light/chat.svg</file>
+        <file>light/hamburger.svg</file>
+        <file>light/paintmode-hardedge.svg</file>
+        <file>light/paintmode-smoothedge.svg</file>
+        <file>light/paintmode-incremental.svg</file>
+        <file>light/paintmode-indirect.svg</file>
+
+        <file>dark/chat.svg</file>
+        <file>dark/hamburger.svg</file>
+        <file>dark/paintmode-hardedge.svg</file>
+        <file>dark/paintmode-smoothedge.svg</file>
+        <file>dark/paintmode-incremental.svg</file>
+        <file>dark/paintmode-indirect.svg</file>
+
+        <file>colorbox-hsv.png</file>
+        <file>colorbox-pal.png</file>
+        <file>colorbox-wheel.png</file>
+        <file>dock-close.svg</file>
+        <file>dock-detach.svg</file>
+        <file>drawpile.png</file>
+        <file>semi-trusted.svg</file>
+        <file>stop.svg</file>
+        <file>trusted.svg</file>
+    </qresource>
+</RCC>

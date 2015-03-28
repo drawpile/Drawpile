@@ -188,7 +188,7 @@ endif()
 qt5_wrap_ui( UI_Headers ${UIs} )
 
 qt5_add_resources( QtResource ui/cursors/cursors.qrc )
-qt5_add_resources( QtResource ui/icons/builtin/builtin.qrc )
+qt5_add_resources( QtResource ui/icons/builtin.qrc )
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS

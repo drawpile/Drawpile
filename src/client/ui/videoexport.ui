@@ -443,9 +443,6 @@ color: red;</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
