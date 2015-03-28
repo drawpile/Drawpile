@@ -31,6 +31,7 @@ public:
 	explicit ToolSlotButton(QWidget *parent = 0);
 
 	void setColors(const QColor &fg, const QColor &bg);
+	void setIcons(const QIcon &light, const QIcon &dark);
 
 	void setHighlightColor(const QColor &c);
 	void setHoverColor(const QColor &c);
@@ -46,6 +47,7 @@ protected:
 
 private:
 	QColor _fg, _bg, _highlight, _hover;
+	QIcon _lightIcon, _darkIcon;
 	bool _isHovering;
 };
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 #define TOOLSETTINGS_H
 
 #include <QPointer>
-#include <QIcon>
 
 #include "core/brush.h"
 #include "scene/annotationitem.h"
 #include "utils/palette.h"
+#include "utils/icon.h"
 
 class Ui_PenSettings;
 class Ui_BrushSettings;
@@ -64,7 +64,7 @@ class ToolProperties;
  */
 class ToolSettings {
 public:
-	ToolSettings(const QString &name, const QString &title, const QIcon &icon)
+	ToolSettings(const QString &name, const QString &title, const QString &icon)
 		: _name(name), _title(title), _icon(icon), _widget(0) {}
 	virtual ~ToolSettings() = default;
 
@@ -132,7 +132,7 @@ public:
 	const QString& getTitle() const { return _title; }
 
 	//! Get the icon for this tool type
-	const QIcon getIcon() const { return _icon; }
+	const QIcon getIcon(icon::Theme variant=icon::CURRENT) const { return icon::fromTheme(_icon, variant); }
 
 	/**
 	 * @brief Save the settings of this tool
@@ -152,7 +152,7 @@ protected:
 private:
 	QString _name;
 	QString _title;
-	QIcon _icon;
+	QString _icon;
 	QWidget *_widget;
 };
 
@@ -278,7 +278,7 @@ class SimpleSettings : public ToolSettings {
 public:
 	enum Type {Line, Rectangle, Ellipse};
 
-	SimpleSettings(const QString &name, const QString &title, const QIcon &icon, Type type, bool sp);
+	SimpleSettings(const QString &name, const QString &title, const QString &icon, Type type, bool sp);
 	~SimpleSettings();
 
 	void setForeground(const QColor& color);
@@ -306,7 +306,7 @@ private:
  */
 class BrushlessSettings : public ToolSettings {
 public:
-	BrushlessSettings(const QString &name, const QString &title, const QIcon &icon) : ToolSettings(name, title, icon) {}
+	BrushlessSettings(const QString &name, const QString &title, const QString &icon) : ToolSettings(name, title, icon) {}
 
 	paintcore::Brush getBrush(bool swapcolors) const;
 	void setForeground(const QColor& color);

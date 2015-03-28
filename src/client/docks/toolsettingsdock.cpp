@@ -98,13 +98,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color Picker"));
 	_widgets->addWidget(_pickersettings->createUi(this));
 
-	_linesettings = new tools::SimpleSettings("line", tr("Line"), icon::fromTheme("draw-line"), tools::SimpleSettings::Line, true);
+	_linesettings = new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true);
 	_widgets->addWidget(_linesettings->createUi(this));
 
-	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), icon::fromTheme("draw-rectangle"), tools::SimpleSettings::Rectangle, false);
+	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false);
 	_widgets->addWidget(_rectsettings->createUi(this));
 
-	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), icon::fromTheme("draw-ellipse"), tools::SimpleSettings::Ellipse, true);
+	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true);
 	_widgets->addWidget(_ellipsesettings->createUi(this));
 
 	_fillsettings = new tools::FillSettings("fill", tr("Flood Fill"));
@@ -396,7 +396,7 @@ void ToolSettings::updateToolSlot(int i, bool typeChanged)
 	_quickslot[i]->setColors(_toolprops[i].foregroundColor(), _toolprops[i].backgroundColor());
 
 	if(typeChanged) {
-		_quickslot[i]->setIcon(ts->getIcon());
+		_quickslot[i]->setIcons(ts->getIcon(icon::LIGHT), ts->getIcon(icon::DARK));
 		_quickslot[i]->setToolTip(QStringLiteral("#%1: %2").arg(i+1).arg(ts->getTitle()));
 	}
 }

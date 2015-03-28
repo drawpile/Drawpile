@@ -93,7 +93,7 @@ void ToolSettings::restoreToolSettings(const ToolProperties &)
 
 
 PenSettings::PenSettings(QString name, QString title)
-	: ToolSettings(name, title, icon::fromTheme("draw-freehand")), _ui(0)
+	: ToolSettings(name, title, "draw-freehand"), _ui(0)
 {
 }
 
@@ -192,7 +192,7 @@ int PenSettings::getSize() const
 }
 
 EraserSettings::EraserSettings(QString name, QString title)
-	: ToolSettings(name, title, icon::fromTheme("draw-eraser")), _ui(0)
+	: ToolSettings(name, title, "draw-eraser"), _ui(0)
 {
 }
 
@@ -308,7 +308,7 @@ bool EraserSettings::getSubpixelMode() const
 }
 
 BrushSettings::BrushSettings(QString name, QString title)
-	: ToolSettings(name, title, icon::fromTheme("draw-brush")), _ui(0)
+	: ToolSettings(name, title, "draw-brush"), _ui(0)
 {
 }
 
@@ -413,7 +413,7 @@ int BrushSettings::getSize() const
 }
 
 SmudgeSettings::SmudgeSettings(QString name, QString title)
-	: ToolSettings(name, title, icon::fromTheme("draw-watercolor")), _ui(0)
+	: ToolSettings(name, title, "draw-watercolor"), _ui(0)
 {
 }
 
@@ -530,7 +530,7 @@ paintcore::Brush BrushlessSettings::getBrush(bool swapcolors) const
 }
 
 LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title)
-	: QObject(), BrushlessSettings(name, title, icon::fromTheme("cursor-arrow")), _ui(0)
+	: QObject(), BrushlessSettings(name, title, "cursor-arrow"), _ui(0)
 {
 }
 
@@ -623,7 +623,7 @@ paintcore::Brush LaserPointerSettings::getBrush(bool swapcolors) const
 	return _dummybrush;
 }
 
-SimpleSettings::SimpleSettings(const QString &name, const QString &title, const QIcon &icon, Type type, bool sp)
+SimpleSettings::SimpleSettings(const QString &name, const QString &title, const QString &icon, Type type, bool sp)
 	: ToolSettings(name, title, icon), _ui(0), _type(type), _subpixel(sp)
 {
 }
@@ -747,7 +747,7 @@ bool SimpleSettings::getSubpixelMode() const
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
-	:  QObject(), BrushlessSettings(name, title, icon::fromTheme("color-picker")), _layerpick(0)
+	:  QObject(), BrushlessSettings(name, title, "color-picker"), _layerpick(0)
 {
 	_palette.setColumns(8);
 }
@@ -806,7 +806,7 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), BrushlessSettings(name, title, icon::fromTheme("draw-text")), _ui(0), _noupdate(false)
+	: QObject(), BrushlessSettings(name, title, "draw-text"), _ui(0), _noupdate(false)
 {
 }
 
@@ -1106,7 +1106,7 @@ void AnnotationSettings::bake()
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform)
-	: QObject(), BrushlessSettings(name, title, icon::fromTheme(freeform ? "edit-select-lasso" : "select-rectangular")), _ui(0)
+	: QObject(), BrushlessSettings(name, title, freeform ? "edit-select-lasso" : "select-rectangular"), _ui(0)
 {
 }
 
@@ -1172,7 +1172,7 @@ void SelectionSettings::resetSize()
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)
-	: BrushlessSettings(name, title, icon::fromTheme("fill-color")), _ui(0)
+	: BrushlessSettings(name, title, "fill-color"), _ui(0)
 {
 }
 

@@ -195,6 +195,8 @@ int main(int argc, char *argv[]) {
 	// Initialize application
 	DrawpileApp app(argc,argv);
 
+	icon::selectThemeVariant();
+
 #ifdef Q_OS_MAC
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);

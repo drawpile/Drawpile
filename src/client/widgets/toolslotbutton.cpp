@@ -39,6 +39,13 @@ void ToolSlotButton::setColors(const QColor &fg, const QColor &bg)
 	update();
 }
 
+void ToolSlotButton::setIcons(const QIcon &light, const QIcon &dark)
+{
+	_lightIcon = light;
+	_darkIcon = dark;
+	update();
+}
+
 void ToolSlotButton::setHighlightColor(const QColor &c)
 {
 	_highlight = c;
@@ -60,14 +67,14 @@ void ToolSlotButton::paintEvent(QPaintEvent *)
 	p.fillRect(rect, _fg);
 
 	// Draw icon
-	// TODO select dark/light variant based on color
 	const int iconSize = qMax(16, qMin(rect.width(), rect.height()) / 2);
 	const QRect iconRect(
 		(rect.width() - iconSize)/2,
 		(rect.height() - iconSize)/2,
 		iconSize, iconSize);
 
-	icon().paint(&p, iconRect);
+	QIcon icon = _fg.valueF() > 0.5 ? _lightIcon : _darkIcon;
+	icon.paint(&p, iconRect);
 
 	// Draw selection highlight
 	if(isChecked() || _isHovering) {
