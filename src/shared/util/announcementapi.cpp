@@ -110,6 +110,8 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 		QJsonObject o;
 		if(!session.host.isEmpty())
 			o["host"] = session.host;
+		else if(!_localAddress.isEmpty())
+			o["host"] = _localAddress;
 		if(session.port>0)
 			o["port"] = session.port;
 		o["id"] = session.id;

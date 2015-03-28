@@ -78,6 +78,17 @@ public:
 	void setWhitelist(WhitelistFunction whitelist) { _whitelist = whitelist; }
 
 	/**
+	 * @brief Set the address of this server to announce
+	 *
+	 * This can be used to set the canonical server address to use
+	 * when announcing a session. If not set, the listing server will use
+	 * the peer address of the announcing machine.
+	 *
+	 * @param addr canonical address of this server
+	 */
+	void setLocalAddress(const QString &addr) { _localAddress = addr; }
+
+	/**
 	 * @brief Query information about the API
 	 */
 	void getApiInfo(const QUrl &apiUrl);
@@ -130,6 +141,7 @@ private:
 
 	QNetworkAccessManager *_net;
 	WhitelistFunction _whitelist;
+	QString _localAddress;
 };
 
 }

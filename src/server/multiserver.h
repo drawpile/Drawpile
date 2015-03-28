@@ -58,6 +58,7 @@ public:
 	void setAllowGuests(bool allow);
 	void setConnectionTimeout(int timeout);
 	void setAnnounceWhitelist(const QString &path);
+	void setAnnounceLocalAddr(const QString &addr);
 	void setBanlist(const QString &path);
 
 #ifndef NDEBUG

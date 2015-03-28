@@ -173,6 +173,11 @@ void MultiServer::setAnnounceWhitelist(const QString &path)
 	_sessions->announcementApiClient()->setWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
 }
 
+void MultiServer::setAnnounceLocalAddr(const QString &addr)
+{
+	_sessions->announcementApiClient()->setLocalAddress(addr);
+}
+
 void MultiServer::setBanlist(const QString &path)
 {
 	logger::info() << "Using IP ban list" << path;

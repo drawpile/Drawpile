@@ -187,6 +187,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption announceWhitelist("announce-whitelist", "Session announcement server whitelist", "filename");
 	parser.addOption(announceWhitelist);
 
+	// --announce-local-addr
+	QCommandLineOption announceLocalAddr("announce-local-addr", "Local address for session announcement", "address");
+	parser.addOption(announceLocalAddr);
+
 	// --banlist
 	QCommandLineOption banlist("banlist", "IP banlist", "filename");
 	parser.addOption(banlist);
@@ -367,6 +371,12 @@ int main(int argc, char *argv[]) {
 		QString announceWhitelistFile = cfgfile.override(parser, announceWhitelist).toString();
 		if(!announceWhitelistFile.isEmpty())
 			server->setAnnounceWhitelist(announceWhitelistFile);
+	}
+
+	{
+		QString announceLocalAddress = cfgfile.override(parser, announceLocalAddr).toString();
+		if(!announceLocalAddress.isEmpty())
+			server->setAnnounceLocalAddr(announceLocalAddress);
 	}
 
 	{
