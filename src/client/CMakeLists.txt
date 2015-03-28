@@ -243,6 +243,7 @@ IF ( APPLE )
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/palettes/*.gpl" "${ResourcesDir}/palettes"
 		COMMAND mkdir -p "${ResourcesDir}/sounds"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/sounds/*.wav" "${ResourcesDir}/sounds"
+		COMMAND cp -r "${CMAKE_SOURCE_DIR}/desktop/theme" "${ResourcesDir}"
 	)
 ENDIF()
 
