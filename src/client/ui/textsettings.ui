@@ -69,7 +69,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-left">
-         <normaloff>icons:format-justify-left.png</normaloff>icons:format-justify-left.png</iconset>
+         <normaloff>theme:format-justify-left.svg</normaloff>theme:format-justify-left.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -97,7 +97,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-center">
-         <normaloff>icons:format-justify-center.png</normaloff>icons:format-justify-center.png</iconset>
+         <normaloff>theme:format-justify-center.svg</normaloff>theme:format-justify-center.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -122,7 +122,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-fill">
-         <normaloff>icons:format-justify-fill.png</normaloff>icons:format-justify-fill.png</iconset>
+         <normaloff>theme:format-justify-fill.svg</normaloff>theme:format-justify-fill.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -147,7 +147,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-right">
-         <normaloff>icons:format-justify-right.png</normaloff>icons:format-justify-right.png</iconset>
+         <normaloff>theme:format-justify-right.svg</normaloff>theme:format-justify-right.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -231,7 +231,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-bold">
-         <normaloff>icons:format-text-bold.png</normaloff>icons:format-text-bold.png</iconset>
+         <normaloff>theme:format-text-bold.svg</normaloff>theme:format-text-bold.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -253,7 +253,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-italic">
-         <normaloff>icons:format-text-italic.png</normaloff>icons:format-text-italic.png</iconset>
+         <normaloff>theme:format-text-italic.svg</normaloff>theme:format-text-italic.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -270,7 +270,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-underline">
-         <normaloff>icons:format-text-underline.png</normaloff>icons:format-text-underline.png</iconset>
+         <normaloff>theme:format-text-underline.svg</normaloff>theme:format-text-underline.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -287,7 +287,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-strikethrough">
-         <normaloff>icons:format-text-strikethrough.png</normaloff>icons:format-text-strikethrough.png</iconset>
+         <normaloff>theme:format-text-strikethrough.svg</normaloff>theme:format-text-strikethrough.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

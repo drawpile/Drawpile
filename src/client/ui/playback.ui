@@ -79,7 +79,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-playback-start">
-           <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
+           <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -102,7 +102,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-seek-forward">
-           <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
+           <normaloff>theme:media-seek-forward.svg</normaloff>theme:media-seek-forward.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -122,7 +122,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-skip-forward">
-           <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
+           <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -366,7 +366,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="media-skip-backward">
-             <normaloff>icons:media-skip-backward.png</normaloff>icons:media-skip-backward.png</iconset>
+             <normaloff>theme:media-skip-backward.svg</normaloff>theme:media-skip-backward.svg</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -380,7 +380,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="media-skip-forward">
-             <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
+             <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -398,7 +398,7 @@ QProgressBar::chunk {
           <widget class="QToolButton" name="prevMarker">
            <property name="icon">
             <iconset theme="media-seek-backward">
-             <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
+             <normaloff>theme:media-seek-backward.svg</normaloff>theme:media-seek-backward.svg</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -409,7 +409,7 @@ QProgressBar::chunk {
           <widget class="QToolButton" name="nextMarker">
            <property name="icon">
             <iconset theme="media-seek-forward">
-             <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
+             <normaloff>theme:media-seek-forward.svg</normaloff>theme:media-seek-forward.svg</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -420,7 +420,7 @@ QProgressBar::chunk {
           <widget class="QToolButton" name="jumpToMarker">
            <property name="icon">
             <iconset theme="go-jump">
-             <normaloff>icons:go-jump.png</normaloff>icons:go-jump.png</iconset>
+             <normaloff>theme:go-jump.svg</normaloff>theme:go-jump.svg</iconset>
            </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
@@ -450,7 +450,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="flag-blue">
-             <normaloff>icons:flag-blue.png</normaloff>icons:flag-blue.png</iconset>
+             <normaloff>theme:flag-blue.svg</normaloff>theme:flag-blue.svg</iconset>
            </property>
            <property name="autoDefault">
             <bool>false</bool>

@@ -271,7 +271,7 @@
              <widget class="QToolButton" name="pickSoundtrack">
               <property name="icon">
                <iconset theme="document-open">
-                <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
+                <normaloff>theme:document-open.svg</normaloff>theme:document-open.svg</iconset>
               </property>
               <property name="autoRaise">
                <bool>true</bool>

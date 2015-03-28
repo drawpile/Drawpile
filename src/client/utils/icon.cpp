@@ -18,34 +18,58 @@
 */
 
 #include "icon.h"
+#include "main.h"
 
+#include <QDir>
 #include <QPalette>
+#include <QStandardPaths>
 
 namespace icon {
 
-static QString LIGHT_THEME_ROOT = QStringLiteral("icons:light/");
-static QString DARK_THEME_ROOT = QStringLiteral("icons:dark/");
 static Theme THEME_VARIANT = LIGHT;
+
+bool isLightColor(const QColor &c)
+{
+	return c.valueF() > 0.5;
+}
 
 void selectThemeVariant()
 {
-	QColor bg = QPalette().color(QPalette::Window);
+	const QString lightpath = QStringLiteral("/theme/light");
+	const QString darkpath = QStringLiteral("/theme/dark");
+	QString curpath;
 
-	if(bg.valueF() > 0.5)
+	if(isLightColor(QPalette().color(QPalette::Window))) {
 		THEME_VARIANT = LIGHT;
-	else
+		curpath = lightpath;
+
+	} else {
 		THEME_VARIANT = DARK;
+		curpath = darkpath;
+	}
+
+
+	QStringList themePaths, lightPaths, darkPaths;
+	for(const QString &path : DrawpileApp::dataPaths()) {
+		themePaths << path + curpath;
+		lightPaths << path + lightpath;
+		darkPaths << path + darkpath;
+	}
+
+	QDir::setSearchPaths("theme", themePaths);
+	QDir::setSearchPaths("themelight", lightPaths);
+	QDir::setSearchPaths("themedark", darkPaths);
 }
 
 QIcon fromTheme(const QString &name, Theme variant)
 {
 
 	if(variant==CURRENT || variant==THEME_VARIANT)
-		return QIcon::fromTheme(name, QIcon((THEME_VARIANT == LIGHT ? LIGHT_THEME_ROOT : DARK_THEME_ROOT) + name + QStringLiteral(".svg")));
+		return QIcon::fromTheme(name, QIcon(QStringLiteral("theme:") + name + QStringLiteral(".svg")));
 
 	// Because QIcon::fromTheme doesn't support theme variants,
 	// we use bundled icons if current theme is not the selected variant
-	return QIcon((variant == LIGHT ? LIGHT_THEME_ROOT : DARK_THEME_ROOT) + name + QStringLiteral(".svg"));
+	return QIcon((variant == LIGHT ? QStringLiteral("themelight:") : QStringLiteral("themedark:")) + name + QStringLiteral(".svg"));
 }
 
 }

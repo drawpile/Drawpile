@@ -88,8 +88,8 @@ QProgressBar::chunk {
         <string>Previous marker</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-backward">
-         <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
+        <iconset>
+         <normaloff>themelight:media-seek-backward.svg</normaloff>themelight:media-seek-backward.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -108,8 +108,8 @@ QProgressBar::chunk {
         <string>Play</string>
        </property>
        <property name="icon">
-        <iconset theme="media-playback-start">
-         <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
+        <iconset>
+         <normaloff>themelight:media-playback-start.svg</normaloff>themelight:media-playback-start.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -131,8 +131,8 @@ QProgressBar::chunk {
         <string>Step</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-forward">
-         <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
+        <iconset>
+         <normaloff>themelight:media-seek-forward.svg</normaloff>themelight:media-seek-forward.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -151,8 +151,8 @@ QProgressBar::chunk {
         <string>Skip stroke</string>
        </property>
        <property name="icon">
-        <iconset theme="media-skip-forward">
-         <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
+        <iconset>
+         <normaloff>themelight:media-skip-forward.svg</normaloff>themelight:media-skip-forward.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -171,8 +171,8 @@ QProgressBar::chunk {
         <string>Next marker</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-forward">
-         <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
+        <iconset>
+         <normaloff>themelight:media-seek-forward.svg</normaloff>themelight:media-seek-forward.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

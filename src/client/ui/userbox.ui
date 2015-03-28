@@ -38,7 +38,7 @@
        </property>
        <property name="icon">
         <iconset theme="edit-undo">
-         <normaloff>icons:edit-undo.png</normaloff>icons:edit-undo.png</iconset>
+         <normaloff>theme:edit-undo.svg</normaloff>theme:edit-undo.svg</iconset>
        </property>
        <property name="groupPosition">
         <enum>GroupedToolButton::GroupLeft</enum>
@@ -52,7 +52,7 @@
        </property>
        <property name="icon">
         <iconset theme="edit-redo">
-         <normaloff>icons:edit-redo.png</normaloff>icons:edit-redo.png</iconset>
+         <normaloff>theme:edit-redo.svg</normaloff>theme:edit-redo.svg</iconset>
        </property>
        <property name="groupPosition">
         <enum>GroupedToolButton::GroupRight</enum>
@@ -85,7 +85,7 @@
        </property>
        <property name="icon">
         <iconset theme="irc-operator">
-         <normaloff>icons:irc-operator.png</normaloff>icons:irc-operator.png</iconset>
+         <normaloff>theme:irc-operator.svg</normaloff>theme:irc-operator.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -102,7 +102,7 @@
        </property>
        <property name="icon">
         <iconset theme="object-locked">
-         <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
+         <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -119,7 +119,7 @@
        </property>
        <property name="icon">
         <iconset theme="edit-delete">
-         <normaloff>icons:edit-delete.png</normaloff>icons:edit-delete.png</iconset>
+         <normaloff>theme:edit-delete.svg</normaloff>theme:edit-delete.svg</iconset>
        </property>
        <property name="groupPosition">
         <enum>GroupedToolButton::GroupRight</enum>

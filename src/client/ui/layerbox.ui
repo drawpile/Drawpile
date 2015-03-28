@@ -90,7 +90,7 @@
        </property>
        <property name="icon">
         <iconset theme="object-locked">
-         <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
+         <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
