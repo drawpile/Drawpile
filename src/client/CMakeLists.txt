@@ -284,10 +284,6 @@ set_target_properties (
 
 install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 
-if( NOT APPLE )
-	install( DIRECTORY ui/icons/theme DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
-endif()
-
 if( QM_TRANSLATIONS )
 	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
 endif( QM_TRANSLATIONS)
