@@ -44,6 +44,7 @@ MKDIR "%3\palettes"
 COPY "%2\desktop\palettes\*" "%3\palettes\"
 MKDIR "%3\sounds"
 COPY "%2\desktop\sounds\*" "%3\sounds\"
+XCOPY "%2\desktop\theme" "%3\theme" /s /i
 
 COPY "%2\README.md" "%3\Readme.txt"
 COPY "%2\AUTHORS" "%3\Authors.txt"
