@@ -18,6 +18,7 @@
 */
 
 #include "toolslotbutton.h"
+#include "utils/icon.h"
 
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
@@ -73,7 +74,7 @@ void ToolSlotButton::paintEvent(QPaintEvent *)
 		(rect.height() - iconSize)/2,
 		iconSize, iconSize);
 
-	QIcon icon = _fg.valueF() > 0.5 ? _lightIcon : _darkIcon;
+	const QIcon &icon = icon::isDark(_fg) ? _darkIcon : _lightIcon;
 	icon.paint(&p, iconRect);
 
 	// Draw selection highlight

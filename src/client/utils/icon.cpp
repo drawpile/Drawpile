@@ -28,9 +28,11 @@ namespace icon {
 
 static Theme THEME_VARIANT = LIGHT;
 
-bool isLightColor(const QColor &c)
+bool isDark(const QColor &c)
 {
-	return c.valueF() > 0.5;
+	const qreal luminance = c.redF() * 0.216 + c.greenF() * 0.7152 + c.redF() * 0.0722;
+
+	return luminance <= 0.5;
 }
 
 void selectThemeVariant()
@@ -41,7 +43,7 @@ void selectThemeVariant()
 
 	QStringList builtinPaths;
 
-	if(isLightColor(QPalette().color(QPalette::Window))) {
+	if(!isDark(QPalette().color(QPalette::Window))) {
 		THEME_VARIANT = LIGHT;
 		curpath = lightpath;
 		builtinPaths << QStringLiteral(":/icons/light");
