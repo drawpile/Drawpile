@@ -4,8 +4,8 @@ find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
+find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
-
 find_package(KF5Archive NO_MODULE)
 find_package(QtColorPicker)
 
@@ -258,10 +258,10 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
-qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent Multimedia)
+qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent Multimedia Svg)
 
 if(NOT KF5Archive_FOUND)
 	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})
