@@ -139,7 +139,7 @@ QStringList DrawpileApp::dataPaths()
 	datapaths << qApp->applicationDirPath();
 	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
 #else
-	datapaths << qApp->applicationDirPath() + QStringLiteral("/../Resources");
+	datapaths << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
 #endif
 	return datapaths;
 }
