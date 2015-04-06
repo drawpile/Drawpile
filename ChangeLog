@@ -1,3 +1,6 @@
+2015-0?-?? Version ?
+ * Fixed loading of older recording formats (<v11.x)
+
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool
  * Added view flipping and mirroring

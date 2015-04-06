@@ -340,7 +340,7 @@ Message *deserializeV11(const uchar *data, int length)
 	if(type == MSG_TOOLCHANGE) {
 		return ToolChangeV11(data + Message::HEADER_LEN, len);
 	} else {
-		return deserializeV12(data, len);
+		return deserializeV12(data, length);
 	}
 }
 
