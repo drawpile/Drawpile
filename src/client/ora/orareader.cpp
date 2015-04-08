@@ -183,7 +183,7 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 			QImage content;
 			{
 				QByteArray image = utils::getArchiveFile(zip, src);
-				if(image.isNull() || !content.loadFromData(image, "png")) {
+				if(image.isNull() || !content.loadFromData(image)) {
 					_error = tr("Couldn't load layer %1").arg(src);
 					return false;
 				}
