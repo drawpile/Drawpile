@@ -303,43 +303,32 @@ int LayerListModel::getAvailableLayerId() const
 
 QString LayerListModel::getAvailableLayerName(QString basename) const
 {
-	int tries=0;
-	// See if the base name ends with a number. If so, remove it
-	// and start iteration from there.
-	QRegularExpression re("(\\d+)$");
-	QRegularExpressionMatch m = re.match(basename);
-	if(m.hasMatch()) {
-		tries = m.captured(1).toInt();
-		if(tries<0 || tries>254)
-			tries = 0;
-		else
-			tries = tries + 1;
+	// Return a layer name of format "basename n" where n is one bigger than the
+	// biggest suffix number of layers named "basename n".
 
-		basename = basename.mid(0, m.capturedStart()).trimmed();
+	// First, strip suffix number from the basename (if it exists)
+
+	QRegularExpression suffixNumRe("(\\d+)$");
+	{
+		auto m = suffixNumRe.match(basename);
+		if(m.hasMatch()) {
+			basename = basename.mid(0, m.capturedStart()).trimmed();
+		}
 	}
 
-	// Find first unused name
-	while(tries < 255) {
-		QString name = basename;
-		if(tries>0)
-			name = name + " " + QString::number(tries);
-
-		bool nameOk = true;
-		for(int l=0;l<_items.size();++l) {
-			const net::LayerListItem &layer = _items.at(l);
-			if(layer.title.compare(name, Qt::CaseInsensitive)==0) {
-				nameOk=false;
-				break;
+	// Find the biggest suffix in the layer stack
+	int suffix = 0;
+	for(const LayerListItem &l : _items) {
+		auto m = suffixNumRe.match(l.title);
+		if(m.hasMatch()) {
+			if(l.title.startsWith(basename)) {
+				suffix = qMax(suffix, m.captured(1).toInt());
 			}
 		}
-		if(nameOk)
-			return name;
-
-		++tries;
 	}
 
-	// Tried too many times without finding a name
-	return QString();
+	// Make unique name
+	return QString("%2 %1").arg(suffix+1).arg(basename);
 }
 
 }

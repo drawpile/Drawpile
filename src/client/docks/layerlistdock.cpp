@@ -283,9 +283,7 @@ void LayerList::addLayer()
 	if(id==0)
 		return;
 
-	const QString name = layers->getAvailableLayerName(tr("New layer"));
-	if(name.isEmpty())
-		return;
+	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
 	_client->sendUndopoint();
 	_client->sendNewLayer(id, Qt::transparent, name);
@@ -303,8 +301,6 @@ void LayerList::duplicateLayer()
 		return;
 
 	const QString name = layers->getAvailableLayerName(layer.title);
-	if(name.isEmpty())
-		return;
 
 	_client->sendUndopoint();
 	_client->sendCopyLayer(layer.id, id, name);

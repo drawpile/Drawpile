@@ -114,7 +114,7 @@ public:
 	/**
 	 * @brief Find a unique name for a layer
 	 * @param basename
-	 * @return unique name or empty string if one couldn't be found
+	 * @return unique name
 	 */
 	QString getAvailableLayerName(QString basename) const;
 
