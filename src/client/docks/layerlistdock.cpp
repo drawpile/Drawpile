@@ -84,15 +84,26 @@ LayerList::LayerList(QWidget *parent)
 
 	QActionGroup *viewmodes = new QActionGroup(this);
 	viewmodes->setExclusive(true);
+
 	QAction *viewNormal = viewmodes->addAction(tr("Normal"));
 	viewNormal->setCheckable(true);
 	viewNormal->setProperty("viewmode", 0);
+
 	QAction *viewSolo = viewmodes->addAction(tr("Solo"));
 	viewSolo->setCheckable(true);
 	viewSolo->setProperty("viewmode", 1);
+
 	QAction *viewSoloBg = viewmodes->addAction(tr("Solo + BG"));
 	viewSoloBg->setCheckable(true);
 	viewSoloBg->setProperty("viewmode", 2);
+
+	QAction *viewOnionDown = viewmodes->addAction(tr("Onionskin"));
+	viewOnionDown->setCheckable(true);
+	viewOnionDown->setProperty("viewmode", 3);
+
+	QAction *viewOnionDownBg = viewmodes->addAction(tr("Onionskin + BG"));
+	viewOnionDownBg->setCheckable(true);
+	viewOnionDownBg->setProperty("viewmode", 4);
 
 	boxmenu->addSeparator();
 	_viewMode = boxmenu->addMenu(QString()); // title is set later

@@ -435,11 +435,11 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 
 				// Composite merged tile
 				compositePixels(l->blendmode(), data, ldata,
-						Tile::SIZE*Tile::SIZE, l->opacity());
+						Tile::SIZE*Tile::SIZE, layerOpacity(layeridx));
 			} else if(!tile.isNull()) {
 				// No sublayers, just this tile
 				compositePixels(l->blendmode(), data, tile.data(),
-						Tile::SIZE*Tile::SIZE, l->opacity());
+						Tile::SIZE*Tile::SIZE, layerOpacity(layeridx));
 			}
 		}
 
@@ -522,6 +522,31 @@ void LayerStack::setViewLayer(int id)
 	}
 }
 
+int LayerStack::layerOpacity(int idx) const
+{
+	Q_ASSERT(idx>=0 && idx < _layers.size());
+	int o = _layers.at(idx)->opacity();
+
+	static const int SKINS = 6;
+
+	switch(viewMode()) {
+	case ONIONSKIN_DOWN_BG:
+		if(idx==0)
+			return o;
+	case ONIONSKIN_DOWN: {
+		int d = _viewlayeridx - idx;
+		if(d<0 || d >= SKINS)
+			return 0;
+
+		return int(o * (SKINS-d)/qreal(SKINS));
+	}
+
+	default: break;
+	}
+
+	return o;
+}
+
 bool LayerStack::isVisible(int idx) const
 {
 	Q_ASSERT(idx>=0 && idx < _layers.size());
@@ -532,6 +557,8 @@ bool LayerStack::isVisible(int idx) const
 	case NORMAL: break;
 	case SOLO: return idx == _viewlayeridx;
 	case SOLO_BG: return idx == 0 || idx == _viewlayeridx;
+	case ONIONSKIN_DOWN:
+	case ONIONSKIN_DOWN_BG: return layerOpacity(idx) > 0;
 	}
 
 	return true;

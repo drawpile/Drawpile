@@ -41,7 +41,13 @@ class Savepoint;
 class LayerStack : public QObject {
 Q_OBJECT
 public:
-	enum ViewMode { NORMAL, SOLO, SOLO_BG };
+	enum ViewMode {
+		NORMAL,           // show all layers normally
+		SOLO,             // show only the view layer
+		SOLO_BG,          // show view layer + bottom layer
+		ONIONSKIN_DOWN,   // show view layer + few layers below it with decreasing opacity
+		ONIONSKIN_DOWN_BG // like ONIONSKIN_DOWN, but show bottom layer with full opacity
+	};
 
 	LayerStack(QObject *parent=0);
 	~LayerStack();
@@ -171,6 +177,7 @@ private:
 	void flattenTile(quint32 *data, int xindex, int yindex) const;
 
 	bool isVisible(int idx) const;
+	int layerOpacity(int idx) const;
 
 	int _width, _height;
 	int _xtiles, _ytiles;
