@@ -41,7 +41,7 @@ class Savepoint;
 class LayerStack : public QObject {
 Q_OBJECT
 public:
-	enum ViewMode { NORMAL, SOLO };
+	enum ViewMode { NORMAL, SOLO, SOLO_BG };
 
 	LayerStack(QObject *parent=0);
 	~LayerStack();

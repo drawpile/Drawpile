@@ -90,6 +90,9 @@ LayerList::LayerList(QWidget *parent)
 	QAction *viewSolo = viewmodes->addAction(tr("Solo"));
 	viewSolo->setCheckable(true);
 	viewSolo->setProperty("viewmode", 1);
+	QAction *viewSoloBg = viewmodes->addAction(tr("Solo + BG"));
+	viewSoloBg->setCheckable(true);
+	viewSoloBg->setProperty("viewmode", 2);
 
 	boxmenu->addSeparator();
 	_viewMode = boxmenu->addMenu(QString()); // title is set later

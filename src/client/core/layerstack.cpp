@@ -531,6 +531,7 @@ bool LayerStack::isVisible(int idx) const
 	switch(viewMode()) {
 	case NORMAL: break;
 	case SOLO: return idx == _viewlayeridx;
+	case SOLO_BG: return idx == 0 || idx == _viewlayeridx;
 	}
 
 	return true;

@@ -1,5 +1,6 @@
 2015-0?-?? Version ?
  * Fixed loading of older recording formats (<v11.x)
+ * Added Solo+BG layer view mode
 
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool
