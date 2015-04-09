@@ -96,6 +96,7 @@ class MainWindow : public QMainWindow {
 		void open(const QUrl &url);
 		bool save();
 		bool saveas();
+		void exportAnimation();
 
 		static void showSettings();
 		void changeSessionTitle();

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>409</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,6 +38,83 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="animOpts">
+     <property name="title">
+      <string>Animation Options</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Layers:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QSpinBox" name="animFirstLayer">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string notr="true">–</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="animLastLayer">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Background:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QComboBox" name="animBg">
+          <item>
+           <property name="text">
+            <string>Transparent</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bottom layer</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Solid color</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="ColorButton" name="animBgColor"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
@@ -443,6 +520,14 @@ color: red;</string>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/colorbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
@@ -451,8 +536,8 @@ color: red;</string>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>256</x>
-     <y>400</y>
+     <x>262</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -467,8 +552,8 @@ color: red;</string>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>324</x>
-     <y>400</y>
+     <x>330</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -487,8 +572,8 @@ color: red;</string>
      <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>35</x>
-     <y>251</y>
+     <x>43</x>
+     <y>565</y>
     </hint>
    </hints>
   </connection>

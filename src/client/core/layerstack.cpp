@@ -394,7 +394,7 @@ QColor LayerStack::colorAt(int x, int y) const
 
 QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
-	Layer flat(0, 0, "", Qt::transparent, QSize(_width, _height));
+	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
 
 	foreach(const Layer *l, _layers)
 		flat.merge(l, true);
@@ -408,6 +408,22 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	}
 
 	return image;
+}
+
+QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background)
+{
+	Q_ASSERT(layerIdx>=0 && layerIdx < _layers.size());
+
+	QScopedPointer<Layer> flat;
+
+	if(useBgLayer)
+		flat.reset(new Layer(*_layers.at(0)));
+	else
+		flat.reset(new Layer(nullptr, 0, QString(), background, QSize(_width, _height)));
+
+	flat->merge(_layers.at(layerIdx), false);
+
+	return flat->toImage();
 }
 
 // Flatten a single tile

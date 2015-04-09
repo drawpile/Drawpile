@@ -34,10 +34,29 @@ public:
 	~VideoExportDialog();
 
 	/**
+	 * @brief Show the settings related to animation export
+	 */
+	void showAnimationSettings(int layers);
+
+	/**
 	 * @brief Get the new video exporter configured in this dialog
 	 * @return exporter or 0 if non was configured
 	 */
 	VideoExporter *getExporter();
+
+	// Animation settings
+
+	//! Get the starting layer (animation)
+	int getFirstLayer() const;
+
+	//! Get the ending layer (animation)
+	int getLastLayer() const;
+
+	//! Should the bottom layer be used as the animation background?
+	bool useBackgroundLayer() const;
+
+	//! Animation background color (when not using the bottom layer)
+	QColor animationBackground() const;
 
 private slots:
 	void selectExportFormat(int idx);

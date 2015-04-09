@@ -127,6 +127,9 @@ public:
 	//! Return a flattened image of the layer stack
 	QImage toFlatImage(bool includeAnnotations) const;
 
+	//! Return a single layer composited with the given background
+	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background);
+
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;
 

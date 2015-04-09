@@ -98,6 +98,8 @@
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
 
+#include "export/animation.h"
+
 namespace {
 
 QString getLastPath() {
@@ -990,6 +992,11 @@ bool MainWindow::saveas()
 	return false;
 }
 
+void MainWindow::exportAnimation()
+{
+	AnimationExporter::exportAnimation(_canvas->layers(), this);
+}
+
 void MainWindow::setRecorderStatus(bool on)
 {
 	if(_dialog_playback) {
@@ -1861,6 +1868,8 @@ void MainWindow::setupActions()
 #endif
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), QString(), QKeySequence::SaveAs);
+	QAction *exportAnimation = makeAction("exportanim", 0, tr("&Animation..."));
+
 	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
@@ -1870,12 +1879,14 @@ void MainWindow::setupActions()
 #endif
 	_currentdoctools->addAction(save);
 	_currentdoctools->addAction(saveas);
+	_currentdoctools->addAction(exportAnimation);
 	_currentdoctools->addAction(record);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(exportAnimation, SIGNAL(triggered()), this, SLOT(exportAnimation()));
 	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
@@ -1897,6 +1908,9 @@ void MainWindow::setupActions()
 	filemenu->addAction(saveas);
 	filemenu->addSeparator();
 
+	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
+	exportMenu->setIcon(icon::fromTheme("document-export"));
+	exportMenu->addAction(exportAnimation);
 	filemenu->addAction(record);
 	filemenu->addSeparator();
 

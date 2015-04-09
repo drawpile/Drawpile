@@ -120,6 +120,7 @@ set (
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
 	docks/inputsettingsdock.cpp
+	export/animation.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp

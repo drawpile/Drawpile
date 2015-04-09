@@ -23,6 +23,9 @@
 #include "export/imageseriesexporter.h"
 #include "export/ffmpegexporter.h"
 
+#include "widgets/colorbutton.h"
+using widgets::ColorButton;
+
 #include "ui_videoexport.h"
 
 #include <QDebug>
@@ -99,6 +102,13 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	if(FfmpegExporter::isFfmpegAvailable())
 		_ui->noFfmpegWarning->setHidden(true);
 
+	// Animation settings
+	connect(_ui->animBg, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int idx) {
+		_ui->animBgColor->setVisible(idx==2);
+		if(idx==1 && _ui->animFirstLayer->value()==1)
+			_ui->animFirstLayer->setValue(2);
+	});
+
 	// Load settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
@@ -107,7 +117,15 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
 	_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
 	//_ui->keepOriginalSize->setChecked(cfg.value("keepOriginalSize", false).toBool());
+	_ui->animBgColor->setColor(cfg.value("bgcolor", QColor(255,255,255)).value<QColor>());
+	_ui->animBg->setCurrentIndex(cfg.value("animbg", 1).toInt());
+
+	_ui->animBgColor->setVisible(_ui->animBg->currentIndex()==2);
+
 	_lastpath = cfg.value("lastpath", "").toString();
+
+	// Animation settings are shown only when we ask for them
+	_ui->animOpts->setVisible(false);
 
 }
 
@@ -121,8 +139,20 @@ VideoExportDialog::~VideoExportDialog()
 	cfg.setValue("frameheight", _ui->frameheight->value());
 	cfg.setValue("sizeChoice", _ui->sizeChoice->currentIndex());
 	cfg.setValue("lastpath", _lastpath);
-
+	cfg.setValue("bgcolor", _ui->animBgColor->color());
+	cfg.setValue("animbg", _ui->animBg->currentIndex());
 	delete _ui;
+}
+
+void VideoExportDialog::showAnimationSettings(int layercount)
+{
+	_ui->animFirstLayer->setMaximum(layercount);
+	_ui->animLastLayer->setMaximum(layercount);
+	_ui->animFirstLayer->setValue(1);
+	_ui->animLastLayer->setValue(layercount);
+	_ui->animOpts->setVisible(true);
+	if(_ui->animBg->currentIndex()==1 && _ui->animFirstLayer->value()==1)
+		_ui->animFirstLayer->setValue(2);
 }
 
 void VideoExportDialog::selectExportFormat(int idx)
@@ -241,6 +271,26 @@ VideoExporter *VideoExportDialog::getFfmpegExporter()
 	exporter->setQuality(_ui->videoquality->currentIndex());
 
 	return exporter;
+}
+
+int VideoExportDialog::getFirstLayer() const {
+	return qMin(_ui->animFirstLayer->value(), _ui->animLastLayer->value());
+}
+
+int VideoExportDialog::getLastLayer() const {
+	return qMax(_ui->animFirstLayer->value(), _ui->animLastLayer->value());
+}
+
+bool VideoExportDialog::useBackgroundLayer() const
+{
+	return _ui->animBg->currentIndex() == 1;
+}
+
+QColor VideoExportDialog::animationBackground() const
+{
+	if(_ui->animBg->currentIndex()==0)
+		return QColor(0, 0, 0, 0);
+	return _ui->animBgColor->color();
 }
 
 }
