@@ -97,6 +97,7 @@ class MainWindow : public QMainWindow {
 		bool save();
 		bool saveas();
 		void exportAnimation();
+		void showFlipbook();
 
 		static void showSettings();
 		void changeSessionTitle();

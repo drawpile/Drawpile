@@ -97,6 +97,7 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
+#include "dialogs/flipbook.h"
 
 #include "export/animation.h"
 
@@ -995,6 +996,14 @@ bool MainWindow::saveas()
 void MainWindow::exportAnimation()
 {
 	AnimationExporter::exportAnimation(_canvas->layers(), this);
+}
+
+void MainWindow::showFlipbook()
+{
+	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
+	fp->setAttribute(Qt::WA_DeleteOnClose);
+	fp->setLayers(_canvas->layers());
+	fp->show();
 }
 
 void MainWindow::setRecorderStatus(bool on)
@@ -2049,6 +2058,8 @@ void MainWindow::setupActions()
 
 	QAction *toggleChat = makeAction("togglechat", 0, tr("Chat"), QString(), QKeySequence("Alt+C"), true);
 
+	QAction *showFlipbook = makeAction("showflipbook", 0, tr("Flipbook"), tr("Show animation preview window"));
+
 	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &In"), QString(), QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
@@ -2073,6 +2084,8 @@ void MainWindow::setupActions()
 	showgrid->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
+
+	_currentdoctools->addAction(showFlipbook);
 
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, [fullscreen](Qt::WindowState state) {
@@ -2109,6 +2122,8 @@ void MainWindow::setupActions()
 		_splitter->setSizes(sizes);
 	});
 
+	connect(showFlipbook, SIGNAL(triggered()), this, SLOT(showFlipbook()));
+
 	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
 	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
 	connect(zoomorig, &QAction::triggered, [this]() { _view->setZoom(100.0); });
@@ -2135,6 +2150,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
 	viewmenu->addAction(toggleChat);
+	viewmenu->addAction(showFlipbook);
 	viewmenu->addSeparator();
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));

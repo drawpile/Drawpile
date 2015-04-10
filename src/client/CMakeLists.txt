@@ -99,6 +99,7 @@ set (
 	dialogs/selectsessiondialog.cpp
 	dialogs/netstats.cpp
 	dialogs/sessionlistingdialog.cpp
+	dialogs/flipbook.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -159,6 +160,7 @@ set (
 	ui/colorbox.ui
 	ui/netstats.ui
 	ui/sessionlisting.ui
+	ui/flipbook.ui
 )
 
 # Use bundled KArchive if library not found
