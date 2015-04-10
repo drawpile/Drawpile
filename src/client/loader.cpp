@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QImage>
 #include <QMessageBox>
+#include <QImageReader>
 
 #include "loader.h"
 #include "textloader.h"
@@ -82,17 +83,33 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 
 		return txt.loadInitCommands();
 	} else {
-		// Load a simple single-layer image using Qt's image loader
+		// Load an image using Qt's image loader.
+		// If the image is animated, each frame is loaded as a layer
 		QList<MessagePtr> msgs;
+		QImageReader ir(_filename);
+		int layerId = 1;
 
-		QImage image;
-		if(image.load(_filename)==false) {
-			_error = "Couldn't load file"; // TODO get proper error message
-			return msgs;
+		while(true) {
+			QImage image = ir.read();
+
+			if(image.isNull()) {
+				if(layerId>1)
+					break;
+				_error = ir.errorString();
+				return QList<MessagePtr>();
+			}
+
+			if(layerId==1) {
+				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
+			}
+
+			image = image.convertToFormat(QImage::Format_ARGB32);
+			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, QStringLiteral("Layer %1").arg(layerId)));
+			msgs << net::putQImage(1, layerId, 0, 0, image, false);
+			++layerId;
 		}
 
-		QImageCanvasLoader imgloader(image);
-		return imgloader.loadInitCommands();
+		return msgs;
 	}
 }
 

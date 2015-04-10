@@ -4,6 +4,7 @@
  * Added Onionskin layer view mode
  * Added animation export feature
  * Added flipbook window for previewing animations
+ * When opening animated GIFs, each frame is loaded as a layer
 
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool
