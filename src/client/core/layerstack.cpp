@@ -554,7 +554,8 @@ int LayerStack::layerOpacity(int idx) const
 		if(d<0 || d >= SKINS)
 			return 0;
 
-		return int(o * (SKINS-d)/qreal(SKINS));
+		const qreal oo = (1-d/qreal(SKINS));
+		return int(o * (oo*oo));
 	}
 
 	default: break;
