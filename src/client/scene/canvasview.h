@@ -131,6 +131,9 @@ class CanvasView : public QGraphicsView
 		//! Enable subpixel precision for brush preview outline
 		void setOutlineSubpixelMode(bool subpixel);
 
+		//! Enable or disable the crosshair cursor
+		void setCrosshair(bool enable);
+
 		//! Enable or disable pixel grid (shown only at high zoom levels)
 		void setPixelGrid(bool enable);
 
@@ -253,7 +256,8 @@ class CanvasView : public QGraphicsView
 
 		float _outlinesize;
 		bool _showoutline, _subpixeloutline;
-		QCursor _colorpickcursor;
+		bool _enablecrosshair;
+		QCursor _crosshaircursor, _colorpickcursor;
 
 		qreal _zoom; // View zoom in percents
 		qreal _rotate; // View rotation in degrees

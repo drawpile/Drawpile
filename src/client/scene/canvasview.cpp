@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
-	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
+	_showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_tabletmode(ENABLE_TABLET),
 	_zoomWheelDelta(0),
@@ -66,6 +66,19 @@ CanvasView::CanvasView(QWidget *parent)
 	setAcceptDrops(true);
 
 	setBackgroundBrush(QColor(100,100,100));
+
+	// Draw the crosshair cursor
+	QBitmap bm(32,32);
+	bm.clear();
+	QPainter bmp(&bm);
+	bmp.setPen(Qt::color1);
+	bmp.drawLine(15,0,15,31);
+	bmp.drawLine(0,15,31,15);
+	QBitmap mask = bm;
+	bmp.setPen(Qt::color0);
+	bmp.drawPoint(15,15);
+	_crosshaircursor = QCursor(bm, mask, 15, 15);
+	viewport()->setCursor(_crosshaircursor);
 
 	// Get the color picker cursor
 	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
@@ -192,7 +205,16 @@ void CanvasView::resetCursor()
 		viewport()->setCursor(Qt::ForbiddenCursor);
 
 	} else {
-		viewport()->setCursor(_current_tool->cursor());
+		const QCursor &c = _current_tool->cursor();
+		// The standard crosshair cursor is (in some themes) too
+		// thick for accurate work, so we use a custom 1px wide cursor.
+		// Crosshair is safe to hide, because it is only used with brush
+		// tools for which an outline cursor is also drawn.
+		if(c.shape() == Qt::CrossCursor) {
+			viewport()->setCursor(_enablecrosshair ? _crosshaircursor : QCursor(Qt::BlankCursor));
+		} else {
+			viewport()->setCursor(c);
+		}
 	}
 }
 
@@ -214,6 +236,12 @@ void CanvasView::setLayerViewMode(int mode)
 {
 	if(_scene->layers())
 		_scene->layers()->setViewMode(paintcore::LayerStack::ViewMode(mode));
+}
+
+void CanvasView::setCrosshair(bool enable)
+{
+	_enablecrosshair = enable;
+	resetCursor();
 }
 
 void CanvasView::setPixelGrid(bool enable)

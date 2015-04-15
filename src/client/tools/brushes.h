@@ -27,7 +27,7 @@ namespace tools {
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, Qt::BlankCursor) {}
+		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, Qt::CrossCursor) {}
 
 		void begin(const paintcore::Point& point, bool right, float zoom);
 		void motion(const paintcore::Point& point, bool constrain, bool center);
