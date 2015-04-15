@@ -26,6 +26,8 @@
 #include <QSettings>
 #include <QRect>
 #include <QTimer>
+#include <QDesktopWidget>
+#include <QApplication>
 
 namespace dialogs {
 
@@ -127,7 +129,16 @@ void Flipbook::loadFrame()
 	const int f = _ui->layerIndex->value() - 1;
 	if(_layers && f < _frames.size()) {
 		if(_frames.at(f).isNull()) {
-			_frames[f] = QPixmap::fromImage(_layers->flatLayerImage(f, _ui->useBgLayer->isChecked(), QColor(0,0,0,0)));
+			QImage img = _layers->flatLayerImage(f, _ui->useBgLayer->isChecked(), QColor(0,0,0,0));
+
+			// Scale down the image if it is too big
+			QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
+			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
+				QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
+				img = img.scaled(newSize);
+			}
+
+			_frames[f] = QPixmap::fromImage(img);
 		}
 
 		_ui->pixmap->setPixmap(_frames.at(f));
