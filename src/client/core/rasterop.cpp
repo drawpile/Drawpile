@@ -361,6 +361,21 @@ void doPixelErase(quint32 *destination, const quint32 *source, uchar opacity, in
 	}
 }
 
+void tintPixels(quint32 *pixels, int len, quint32 tint)
+{
+	const quint8 *t = reinterpret_cast<quint8*>(&tint);
+	quint8 *c = reinterpret_cast<quint8*>(pixels);
+
+	const quint8 a0 = t[3];
+	const quint8 a1 = 255 - a0;
+
+	while(--len>=0) {
+		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[0]); ++c;
+		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[1]); ++c;
+		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[2]); ++c;
+		++c;
+	}
+}
 
 template<BlendOp BO>
 void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, int len)

@@ -77,6 +77,11 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len, ucha
 std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int w, int h, int maskskip, int pixelskip);
 
 /**
+ * Add tint to pixel values
+ */
+void tintPixels(quint32 *pixels, int len, quint32 tint);
+
+/**
  * @brief Get the blending mode for the given SVG composite operation name
  * @return blending mode or -1 if operation is not supported
  */

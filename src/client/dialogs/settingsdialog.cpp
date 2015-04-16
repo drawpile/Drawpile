@@ -157,6 +157,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
 
+	cfg.beginGroup("settings/animation");
+	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
+	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 0).toInt());
+	_ui->onionskinTint->setChecked(cfg.value("onionskintint", false).toBool());
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
@@ -243,6 +249,12 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("minimumpause", _ui->minimumpause->value());
 	FfmpegExporter::setFfmpegPath(_ui->ffmpegpath->text().trimmed());
 	cfg.setValue("folder", _ui->recordingFolder->text());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/animation");
+	cfg.setValue("onionskinsbelow", _ui->onionskinsBelow->value());
+	cfg.setValue("onionskinsabove", _ui->onionskinsAbove->value());
+	cfg.setValue("onionskintint", _ui->onionskinTint->isChecked());
 	cfg.endGroup();
 
 	// Remember server settings

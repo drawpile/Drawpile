@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@
 namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0)
+	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
+	  _onionskinsBelow(3), _onionskinsAbove(0), _onionskinTint(false)
 {
 }
 
@@ -434,8 +435,10 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 	foreach(const Layer *l, _layers) {
 		if(isVisible(layeridx)) {
 			const Tile &tile = l->tile(xindex, yindex);
-			if(l->sublayers().count()) {
-				// Sublayers present, composite them first
+			const quint32 tint = layerTint(layeridx);
+
+			if(l->sublayers().count() || tint!=0) {
+				// Sublayers (or tint) present, composite them first
 				quint32 ldata[Tile::SIZE*Tile::SIZE];
 				tile.copyTo(ldata);
 
@@ -449,11 +452,15 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 					}
 				}
 
+				if(tint)
+					tintPixels(ldata, sizeof ldata / sizeof *ldata, tint);
+
 				// Composite merged tile
 				compositePixels(l->blendmode(), data, ldata,
 						Tile::SIZE*Tile::SIZE, layerOpacity(layeridx));
+
 			} else if(!tile.isNull()) {
-				// No sublayers, just this tile
+				// No sublayers or tint, just this tile as it is
 				compositePixels(l->blendmode(), data, tile.data(),
 						Tile::SIZE*Tile::SIZE, layerOpacity(layeridx));
 			}
@@ -538,30 +545,63 @@ void LayerStack::setViewLayer(int id)
 	}
 }
 
+void LayerStack::setOnionskinMode(int below, int above, bool tint)
+{
+	_onionskinsBelow = below;
+	_onionskinsAbove = above;
+	_onionskinTint = tint;
+
+	if(_viewmode==ONIONSKIN || _viewmode==ONIONSKIN_BG)
+		markDirty();
+}
+
 int LayerStack::layerOpacity(int idx) const
 {
 	Q_ASSERT(idx>=0 && idx < _layers.size());
 	int o = _layers.at(idx)->opacity();
 
-	static const int SKINS = 6;
-
 	switch(viewMode()) {
-	case ONIONSKIN_DOWN_BG:
+	case ONIONSKIN_BG:
 		if(idx==0)
 			return o;
-	case ONIONSKIN_DOWN: {
-		int d = _viewlayeridx - idx;
-		if(d<0 || d >= SKINS)
+	case ONIONSKIN: {
+		const int d = _viewlayeridx - idx;
+		qreal rd;
+		if(d<0 && d>=-_onionskinsAbove)
+			rd = -d/qreal(_onionskinsAbove+1);
+		else if(d>=0 && d <=_onionskinsBelow)
+			rd = d/qreal(_onionskinsBelow+1);
+		else
 			return 0;
 
-		const qreal oo = (1-d/qreal(SKINS));
-		return int(o * (oo*oo));
+		return int(o * ((1-rd) * (1-rd)));
 	}
 
 	default: break;
 	}
 
 	return o;
+}
+
+quint32 LayerStack::layerTint(int idx) const
+{
+	if(_onionskinTint) {
+		switch(viewMode()) {
+		case ONIONSKIN_BG:
+			if(idx==0)
+				return 0;
+
+		case ONIONSKIN:
+			if(idx < _viewlayeridx)
+				return 0x80ff3333;
+			else if(idx > _viewlayeridx)
+				return 0x803333ff;
+
+		default: break;
+		}
+	}
+
+	return 0;
 }
 
 bool LayerStack::isVisible(int idx) const
@@ -574,8 +614,8 @@ bool LayerStack::isVisible(int idx) const
 	case NORMAL: break;
 	case SOLO: return idx == _viewlayeridx;
 	case SOLO_BG: return idx == 0 || idx == _viewlayeridx;
-	case ONIONSKIN_DOWN:
-	case ONIONSKIN_DOWN_BG: return layerOpacity(idx) > 0;
+	case ONIONSKIN:
+	case ONIONSKIN_BG: return layerOpacity(idx) > 0;
 	}
 
 	return true;

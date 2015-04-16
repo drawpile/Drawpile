@@ -25,6 +25,7 @@
 #include <QMimeData>
 #include <QApplication>
 #include <QGestureEvent>
+#include <QSettings>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -234,8 +235,21 @@ void CanvasView::selectLayer(int layer_id)
 
 void CanvasView::setLayerViewMode(int mode)
 {
-	if(_scene->layers())
+	if(_scene->layers()) {
 		_scene->layers()->setViewMode(paintcore::LayerStack::ViewMode(mode));
+		updateLayerViewParams();
+	}
+}
+
+void CanvasView::updateLayerViewParams()
+{
+	QSettings cfg;
+	cfg.beginGroup("settings/animation");
+	_scene->layers()->setOnionskinMode(
+		cfg.value("onionskinsbelow", 4).toInt(),
+		cfg.value("onionskinsabove", 0).toInt(),
+		cfg.value("onionskintint", false).toBool()
+	);
 }
 
 void CanvasView::setCrosshair(bool enable)

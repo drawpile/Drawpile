@@ -344,6 +344,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
+	connect(qApp, SIGNAL(settingsChanged()), _view, SLOT(updateLayerViewParams()));
 
 	updateTabletSupportMode();
 

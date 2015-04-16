@@ -124,6 +124,7 @@ class CanvasView : public QGraphicsView
 
 		//! Select the way layers are drawn
 		void setLayerViewMode(int mode);
+		void updateLayerViewParams();
 
 		//! Set the size of the brush preview outline
 		void setOutlineSize(int size);

@@ -42,11 +42,11 @@ class LayerStack : public QObject {
 Q_OBJECT
 public:
 	enum ViewMode {
-		NORMAL,           // show all layers normally
-		SOLO,             // show only the view layer
-		SOLO_BG,          // show view layer + bottom layer
-		ONIONSKIN_DOWN,   // show view layer + few layers below it with decreasing opacity
-		ONIONSKIN_DOWN_BG // like ONIONSKIN_DOWN, but show bottom layer with full opacity
+		NORMAL,      // show all layers normally
+		SOLO,        // show only the view layer
+		SOLO_BG,     // show view layer + bottom layer
+		ONIONSKIN,   // show view layer + few layers below it with decreasing opacity
+		ONIONSKIN_BG // like ONIONSKIN_DOWN, but show bottom layer with full opacity
 	};
 
 	LayerStack(QObject *parent=0);
@@ -162,6 +162,9 @@ public:
 	//! Set the selected layer (used by view modes other than NORMAL)
 	void setViewLayer(int id);
 
+	//! Set onionskin view mode parameters
+	void setOnionskinMode(int below, int above, bool tint);
+
 public slots:
 	//! Set or clear the "hidden" flag of a layer
 	void setLayerHidden(int layerid, bool hide);
@@ -181,6 +184,7 @@ private:
 
 	bool isVisible(int idx) const;
 	int layerOpacity(int idx) const;
+	quint32 layerTint(int idx) const;
 
 	int _width, _height;
 	int _xtiles, _ytiles;
@@ -192,6 +196,8 @@ private:
 
 	ViewMode _viewmode;
 	int _viewlayeridx;
+	int _onionskinsBelow, _onionskinsAbove;
+	bool _onionskinTint;
 };
 
 /// Layer stack savepoint for undo use
