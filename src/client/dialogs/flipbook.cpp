@@ -135,7 +135,7 @@ void Flipbook::loadFrame()
 			QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
 			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 				QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
-				img = img.scaled(newSize);
+				img = img.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 			}
 
 			_frames[f] = QPixmap::fromImage(img);
