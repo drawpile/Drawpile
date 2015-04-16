@@ -188,7 +188,7 @@ void Client::sendCanvasResize(int top, int right, int bottom, int left)
 	)));
 }
 
-void Client::sendNewLayer(int id, int source, const QColor &fill, bool copy, bool insert, const QString &title)
+void Client::sendNewLayer(int id, int source, const QColor &fill, bool insert, bool copy, const QString &title)
 {
 	Q_ASSERT(id>0 && id<=0xffff);
 	uint8_t flags = 0;

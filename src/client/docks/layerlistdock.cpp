@@ -64,6 +64,8 @@ LayerList::LayerList(QWidget *parent)
 
 	// Layer menu
 	_layermenu = new QMenu(this);
+	_menuInsertAction = _layermenu->addAction(tr("Insert layer"), this, SLOT(insertLayer()));
+	_layermenu->addSeparator();
 	_menuHideAction = _layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
 	_menuHideAction->setCheckable(true);
 	_menuRenameAction = _layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
@@ -166,6 +168,7 @@ void LayerList::updateLockedControls()
 	bool enabled = _client && (!_client->isUserLocked() & (_op | !_lockctrl));
 
 	_addLayerAction->setEnabled(enabled);
+	_menuInsertAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
@@ -301,6 +304,26 @@ void LayerList::addLayer()
 
 	_client->sendUndopoint();
 	_client->sendNewLayer(id, 0, Qt::transparent, false, false, name);
+}
+
+/**
+ * @brief Insert a new layer above the current selection
+ */
+void LayerList::insertLayer()
+{
+	const QModelIndex index = currentSelection();
+	const net::LayerListItem layer = index.data().value<net::LayerListItem>();
+
+	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+
+	const int id = layers->getAvailableLayerId();
+	if(id==0)
+		return;
+
+	const QString name = layers->getAvailableLayerName(tr("Layer"));
+
+	_client->sendUndopoint();
+	_client->sendNewLayer(id, layer.id, Qt::transparent, true, false, name);
 }
 
 void LayerList::duplicateLayer()
