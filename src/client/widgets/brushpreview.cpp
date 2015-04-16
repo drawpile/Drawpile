@@ -154,7 +154,7 @@ void BrushPreview::updatePreview()
 		_preview = new paintcore::LayerStack;
 		QSize size = contentsRect().size();
 		_preview->resize(0, size.width(), size.height(), 0);
-		_preview->addLayer(0, "", QColor(0,0,0));
+		_preview->createLayer(0, 0, QColor(0,0,0), false, false, QString());
 	} else if(_preview->width() != contentsRect().width() || _preview->height() != contentsRect().height()) {
 		_preview->resize(0, contentsRect().width() - _preview->width(), contentsRect().height() - _preview->height(), 0);
 	}

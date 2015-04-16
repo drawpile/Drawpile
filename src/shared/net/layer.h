@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,65 +72,45 @@ private:
  *
  * The layer ID must be prefixed with the context ID of the user creating it.
  * This allows users to choose the layer ID themselves without worrying about
- * clashes. The server enforces that id() >> 8 == contextId(), except in snapshots.
+ * clashes. In single user mode, the client can assign IDs as it pleases,
+ * but in multiuser mode the server validates the prefix for all new layers.
+ *
+ * The following flags can be used with layer creation:
+ * - COPY   -- a copy of the Source layer is made, rather than a blank layer
+ * - INSERT -- the new layer is inserted above the Source layer. Source 0 means
+ *             the layer will be placed bottom-most on the stack
+ *
+ * The Source layer ID should be zero when COPY or INSERT flags are not used.
+ * When COPY is used, it should refer to an existing layer. Copy commands
+ * referring to missing layers are dropped.
+ * When INSERT is used, referring to 0 or a nonexistent layer places
+ * the new layer at the bottom of the stack.
  *
  * If layer controls are locked, this command requires session operator privileges.
  */
 class LayerCreate : public Message {
 public:
-	LayerCreate(uint8_t ctxid, uint16_t id, uint32_t fill, const QString &title)
-		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _fill(fill), _title(title.toUtf8())
+	static const uint8_t FLAG_COPY = 0x01;
+	static const uint8_t FLAG_INSERT = 0x02;
+
+	LayerCreate(uint8_t ctxid, uint16_t id, uint16_t source, uint32_t fill, uint8_t flags, const QString &title)
+		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _source(source), _fill(fill), _flags(flags), _title(title.toUtf8())
 		{}
 
 	static LayerCreate *deserialize(const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
-	uint32_t fill() const { return _fill; }
-	QString title() const { return QString::fromUtf8(_title); }
-
-	/**
-	 * @brief Check if the ID's namespace portition matches the context ID
-	 * Note. The initial session snapshot may include IDs that do not conform to
-	 * the contextId|layerId format.
-	 */
-	bool isValidId() const { return (id()>>8) == contextId(); }
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-
-private:
-	uint16_t _id;
-	uint32_t _fill;
-	QByteArray _title;
-};
-
-/**
- * @brief Layer duplication command
- *
- * This command works much like LayerCreate, except rather than filling the layer with
- * solid color, it duplicates the contents of another layer.
- * Also, the new layer is placed right above the source layer, rather than the top of the stack
- * as with LayerCreate.
- *
- * If layer controls are locked, this command requires session operator privileges.
- */
-class LayerCopy : public Message {
-public:
-	LayerCopy(uint8_t ctxid, uint16_t source, uint16_t id, const QString &title)
-		: Message(MSG_LAYER_COPY, ctxid), _source(source), _id(id), _title(title.toUtf8())
-		{}
-
-	static LayerCopy *deserialize(const uchar *data, uint len);
-
 	uint16_t source() const { return _source; }
-	uint16_t id() const { return _id; }
+	uint32_t fill() const { return _fill; }
+	uint8_t flags() const { return _flags; }
 	QString title() const { return QString::fromUtf8(_title); }
 
 	/**
 	 * @brief Check if the ID's namespace portition matches the context ID
-	 * Note. The initial session snapshot may include IDs that do not conform to
-	 * the contextId|layerId format.
+	 *
+	 * Note. This check is only needed during normal multiuser operation. Layers
+	 * created in single-user mode can use any ID.
+	 * This means layer IDs of the initial snapshot need not be validated.
 	 */
 	bool isValidId() const { return (id()>>8) == contextId(); }
 
@@ -139,8 +119,10 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint16_t _source;
 	uint16_t _id;
+	uint16_t _source;
+	uint32_t _fill;
+	uint8_t _flags;
 	QByteArray _title;
 };
 

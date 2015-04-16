@@ -37,7 +37,6 @@ namespace protocol {
 	class PenMove;
 	class PenUp;
 	class LayerCreate;
-	class LayerCopy;
 	class LayerOrder;
 	class LayerACL;
 	class SessionConf;
@@ -363,9 +362,6 @@ public:
 	 * @return true if layer ID namespace matched context ID
 	 */
 	bool createLayer(protocol::LayerCreate &cmd, bool validate);
-
-
-	bool copyLayer(protocol::LayerCopy &cmd, bool validate);
 
 	/**
 	 * @brief Reorder layers

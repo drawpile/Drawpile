@@ -78,11 +78,15 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 }
 
 /**
- * @param id layer ID
- * @param name name of the new layer
- * @param color fill color
+ * @param id ID of the new layer
+ * @param source source layer ID (used when copy or insert is true)
+ * @param color background color (used when copy is false)
+ * @param insert if true, the new layer is inserted above source (source 0 inserts at the bottom of the stack)
+ * @param copy if true, the layer content is copied from the source
+ * @param name layer title
+ * @return newly created layer or null in case of error
  */
-Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
+Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool insert, bool copy, const QString &name)
 {
 	if(_width<=0 || _height<=0) {
 		// We tolerate this, but in normal operation the canvas size should be
@@ -90,49 +94,51 @@ Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 		qWarning("Layer created before canvas size was set!");
 	}
 
-	for(const Layer *l : _layers) {
-		if(l->id() == id) {
-			qWarning("Layer %d already exists!", id);
+	// Find source layer if specified
+	int sourceIdx=-1;
+	if(source>0) {
+		for(int i=0;i<_layers.size();++i) {
+			if(_layers.at(i)->id() == source) {
+				sourceIdx = i;
+				break;
+			}
+		}
+
+		if(sourceIdx<0) {
+			qWarning("Source layer %d not found!", source);
 			return nullptr;
 		}
 	}
 
-	Layer *nl = new Layer(this, id, name, color, QSize(_width, _height));
-	_layers.append(nl);
-	if(color.alpha() > 0)
-		markDirty();
-	return nl;
-}
-
-/**
- * @param source source layer ID
- * @param id new layer ID
- * @param name new layer name
- * @return layer or nullptr if source did not exist
- */
-Layer *LayerStack::copyLayer(int source, int id, const QString &name)
-{
-	// Find source layer
-	int pos=-1;
-	for(int i=0;i<_layers.size();++i) {
-		if(_layers.at(i)->id() == source) {
-			pos = i;
-			break;
+	// Create or copy new layer
+	Layer *nl;
+	if(copy) {
+		if(sourceIdx<0) {
+			qWarning("No layer copy source specified!");
+			return nullptr;
 		}
+
+		nl = new Layer(*_layers.at(sourceIdx));
+		nl->setTitle(name);
+		nl->setId(id);
+
+	} else {
+		nl = new Layer(this, id, name, color, QSize(_width, _height));
 	}
 
-	if(pos<0)
-		return nullptr;
+	// Insert the new layer in the appropriate spot
+	if(insert)
+		_layers.insert(sourceIdx+1, nl);
+	else
+		_layers.append(nl);
 
-	// Copy layer and place it above the source
-	Layer *copy = new Layer(*_layers.at(pos));
-	copy->setTitle(name);
-	copy->setId(id);
+	// Dirty regions must be marked after the layer is in the stack
+	if(copy)
+		nl->markOpaqueDirty();
+	else if(color.alpha()>0)
+		markDirty();
 
-	_layers.insert(pos+1, copy);
-	copy->markOpaqueDirty();
-
-	return copy;
+	return nl;
 }
 
 /**

@@ -1,8 +1,8 @@
 resize 1 0 200 200 0
 
-newlayer 1 2 #ffff0000 Background
+newlayer 1 2 0 #ffff0000 Background
 
-newlayer 1 1 #ff00ffff FillRect test
+newlayer 1 1 0 #ff00ffff FillRect test
 
 ctx 1 layer=1
 

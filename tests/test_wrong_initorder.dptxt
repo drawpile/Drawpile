@@ -1,7 +1,7 @@
 # Normally canvas size should be set first, but
 # out of order initialization should be tolerated
 
-newlayer 1 1 #ffffffff Background
+newlayer 1 1 0 #ffffffff Background
 
 # At this point the layer has zero size, so no drawing happens
 ctx 1 layer=1 color=#ff0000 opacity=1 size=1

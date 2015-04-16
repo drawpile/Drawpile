@@ -129,42 +129,29 @@ void TextCommandLoader::handleResize(const QString &args)
 
 void TextCommandLoader::handleNewLayer(const QString &args)
 {
-	QRegularExpression re("(\\d+) (\\d+) (#[0-9a-fA-F]{8}) (.*)");
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (#[0-9a-fA-F]{8})( copy)?( insert)? (.*)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
-		throw SyntaxError("Expected context id, layer id, color and title");
+		throw SyntaxError("Expected context id, layer id, source id, color, [copy], [insert], and title");
 
-	net::LayerListItem layer(str2int(m.captured(2)), m.captured(4));
+	net::LayerListItem layer(str2int(m.captured(2)), m.captured(7));
 	_layer[layer.id] = layer;
+
+	uint8_t flags = 0;
+	if(!m.captured(5).isEmpty())
+		flags |= protocol::LayerCreate::FLAG_COPY;
+	if(!m.captured(6).isEmpty())
+		flags |= protocol::LayerCreate::FLAG_INSERT;
 
 	_messages.append(MessagePtr(new protocol::LayerCreate(
 		str2int(m.captured(1)),
 		str2int(m.captured(2)),
-		str2color(m.captured(3)),
-		m.captured(4)
+		str2int(m.captured(3)),
+		str2color(m.captured(4)),
+		flags,
+		m.captured(7)
 	)));
-}
 
-void TextCommandLoader::handleCopyLayer(const QString &args)
-{
-	QRegularExpression re("(\\d+) (\\d+) (\\d+) (.*)");
-	QRegularExpressionMatch m = re.match(args);
-	if(!m.hasMatch())
-		throw SyntaxError("Expected context id, source id, layer id and title");
-
-	int srcId = str2int(m.captured(2));
-	int newId = str2int(m.captured(3));
-
-	net::LayerListItem layer = _layer[srcId];
-	layer.id = newId;
-	_layer[newId] = layer;
-
-	_messages.append(MessagePtr(new protocol::LayerCopy(
-		str2int(m.captured(1)),
-		srcId,
-		newId,
-		m.captured(4)
-	)));
 }
 
 void TextCommandLoader::handleLayerAttr(const QString &args)
@@ -585,8 +572,6 @@ bool TextCommandLoader::load()
 				handleResize(args);
 			else if(cmd=="newlayer")
 				handleNewLayer(args);
-			else if(cmd=="copylayer")
-				handleCopyLayer(args);
 			else if(cmd=="layerattr")
 				handleLayerAttr(args);
 			else if(cmd=="retitlelayer")

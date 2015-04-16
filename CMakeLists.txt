@@ -8,11 +8,11 @@ set(CMAKE_AUTOMOC ON)
 
 ### generic info
 set ( WEBSITE "http://drawpile.net/" )
-set ( DRAWPILE_VERSION "0.9.9" )
+set ( DRAWPILE_VERSION "0.9.10" )
 
 ### protocol versions
 # see doc/protocol.md for protocol version history
-set ( DRAWPILE_PROTO_MAJOR_VERSION 14 )
+set ( DRAWPILE_PROTO_MAJOR_VERSION 15 )
 set ( DRAWPILE_PROTO_MINOR_VERSION 5 )
 set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
 

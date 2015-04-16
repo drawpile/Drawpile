@@ -195,6 +195,8 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				1,
 				++_layerid,
 				0,
+				0,
+				0,
 				name
 			)));
 

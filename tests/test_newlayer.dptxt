@@ -1,0 +1,10 @@
+resize 1 0 300 300 0
+
+# Test layer insertion.
+
+newlayer 1 3 0 #00000000 Two
+newlayer 1 2 3 #00000000 insert Four
+newlayer 1 4 3 #00000000 insert Three
+newlayer 1 1 0 #ffffffff insert Background
+newlayer 1 5 1 #00000000 insert One
+

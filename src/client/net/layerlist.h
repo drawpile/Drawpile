@@ -85,8 +85,7 @@ public:
 	QModelIndex layerIndex(int id);
 	
 	void clear();
-	void createLayer(int id, const QString &title);
-	void copyLayer(int sourceId, int id, const QString &title);
+	void createLayer(int id, int index, const QString &title);
 	void deleteLayer(int id);
 	void changeLayer(int id, float opacity, int blend);
 	void retitleLayer(int id, const QString &title);

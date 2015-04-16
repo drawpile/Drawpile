@@ -1,6 +1,6 @@
 resize 1 0 300 300 0
-newlayer 1 1 #ffaacccc Background
-newlayer 1 2 #00000000 Foreground
+newlayer 1 1 0 #ffaacccc Background
+newlayer 1 2 0 #00000000 Foreground
 
 ctx 1 layer=2 size=20 hard=0
 

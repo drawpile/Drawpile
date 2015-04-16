@@ -1,16 +1,16 @@
 resize 1 0 300 300 0
 
-newlayer 1 1 #ffffffff Background
-newlayer 1 2 #000000ff One
+newlayer 1 1 0 #ffffffff Background
+newlayer 1 2 0 #000000ff One
 
 ctx 1 layer=2
 move 1 10 10; 290 290
 penup 1
 
-newlayer 1 3 #000000ff Two
+newlayer 1 3 0 #000000ff Two
 ctx 1 layer=3
 move 1 290 10; 10 290
 penup 1
 
-copylayer 1 2 4 Copy of One
+newlayer 1 4 2 #00000000 copy insert Copy of One
 

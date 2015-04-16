@@ -413,11 +413,6 @@ void Client::handleSessionMessage(MessagePtr msg)
 		if(!_session->createLayer(msg.cast<LayerCreate>(), true))
 			return;
 		break;
-	case MSG_LAYER_COPY:
-		// drop message if it didn't pass validation
-		if(!_session->copyLayer(msg.cast<LayerCopy>(), true))
-			return;
-		break;
 	case MSG_LAYER_ORDER:
 		_session->reorderLayers(msg.cast<LayerOrder>());
 		break;

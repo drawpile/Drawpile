@@ -142,18 +142,13 @@ void layerCreateTxt(const LayerCreate *msg, QTextStream &out)
 	out << "newlayer "
 		<< msg->contextId()
 		<< " " << msg->id()
-		<< " " << COLOR(msg->fill())
-		<< " " << msg->title()
-		<< "\n";
-}
-
-void layerCopyText(const LayerCopy *msg, QTextStream &out)
-{
-	out << "copylayer "
-		<< msg->contextId()
 		<< " " << msg->source()
-		<< " " << msg->id()
-		<< " " << msg->title()
+		<< " " << COLOR	(msg->fill());
+	if((msg->flags() & LayerCreate::FLAG_COPY))
+		out << " copy";
+	if((msg->flags() & LayerCreate::FLAG_INSERT))
+		out << " insert";
+	out << " " << msg->title()
 		<< "\n";
 }
 

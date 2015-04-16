@@ -300,7 +300,7 @@ void LayerList::addLayer()
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
 	_client->sendUndopoint();
-	_client->sendNewLayer(id, Qt::transparent, name);
+	_client->sendNewLayer(id, 0, Qt::transparent, false, false, name);
 }
 
 void LayerList::duplicateLayer()
@@ -317,7 +317,7 @@ void LayerList::duplicateLayer()
 	const QString name = layers->getAvailableLayerName(layer.title);
 
 	_client->sendUndopoint();
-	_client->sendCopyLayer(layer.id, id, name);
+	_client->sendNewLayer(id, layer.id, Qt::transparent, true, true, name);
 }
 
 bool LayerList::canMergeCurrent() const

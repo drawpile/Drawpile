@@ -95,6 +95,10 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 15.5 (0.9.10)
+
+ * Merged LayerCopy with LayerCreate
+
 Protocol 14.5 (0.9.9)
 
  * Implemented LayerCopy

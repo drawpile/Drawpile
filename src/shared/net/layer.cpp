@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,20 +53,22 @@ int CanvasResize::serializePayload(uchar *data) const
 
 LayerCreate *LayerCreate::deserialize(const uchar *data, uint len)
 {
-	if(len<7)
+	if(len<10)
 		return 0;
 
 	return new LayerCreate(
 		*(data+0),
 		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<quint32>(data+3),
-		QByteArray((const char*)data+7, len-7)
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint32>(data+5),
+		*(data+9),
+		QByteArray((const char*)data+10, len-10)
 	);
 }
 
 int LayerCreate::payloadLength() const
 {
-	return 1 + 6 + _title.length();
+	return 1 + 9 + _title.length();
 }
 
 int LayerCreate::serializePayload(uchar *data) const
@@ -74,40 +76,13 @@ int LayerCreate::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
-	qToBigEndian(_fill, ptr); ptr += 4;
-	memcpy(ptr, _title.constData(), _title.length());
-	ptr += _title.length();
-	return ptr - data;
-}
-
-LayerCopy *LayerCopy::deserialize(const uchar *data, uint len)
-{
-	if(len<5)
-		return 0;
-
-	return new LayerCopy(
-		*(data+0),
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<quint16>(data+3),
-		QByteArray((const char*)data+5, len-5)
-	);
-}
-
-int LayerCopy::payloadLength() const
-{
-	return 1 + 4 + _title.length();
-}
-
-int LayerCopy::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_source, ptr); ptr += 2;
+	qToBigEndian(_fill, ptr); ptr += 4;
+	*(ptr++) = _flags;
 	memcpy(ptr, _title.constData(), _title.length());
 	ptr += _title.length();
 	return ptr - data;
 }
-
 
 LayerAttributes *LayerAttributes::deserialize(const uchar *data, uint len)
 {

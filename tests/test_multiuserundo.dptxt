@@ -1,5 +1,5 @@
 resize 1 0 300 300 0
-newlayer 1 1 #ffffffff Multiuser undo test
+newlayer 1 1 0 #ffffffff Multiuser undo test
 
 ctx 1 layer=1 color=#ff0000 incremental=true
 ctx 2 layer=1 color=#0000ff

@@ -46,8 +46,8 @@ QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, _color.rgba(), QApplication::tr("Background"))));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, QApplication::tr("Foreground"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, _color.rgba(), 0, QApplication::tr("Background"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, 0, 0, QApplication::tr("Foreground"))));
 	return msgs;
 }
 
@@ -104,7 +104,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			}
 
 			image = image.convertToFormat(QImage::Format_ARGB32);
-			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, QStringLiteral("Layer %1").arg(layerId)));
+			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, 0, 0, QStringLiteral("Layer %1").arg(layerId)));
 			msgs << net::putQImage(1, layerId, 0, 0, image, false);
 			++layerId;
 		}
@@ -120,7 +120,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, "Background")));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, 0, 0, "Background")));
 	msgs.append(net::putQImage(1, 1, 0, 0, image, false));
 
 	return msgs;
@@ -141,7 +141,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Create layers
 	for(int i=0;i<_session->image()->layers();++i) {
 		const paintcore::Layer *layer = _session->image()->getLayerByIndex(i);
-		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, layer->title())));
+		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, 0, 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
 		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), false));
 		if(_session->isLayerLocked(layer->id()))

@@ -33,6 +33,36 @@ namespace compat {
 
 using namespace protocol;
 
+LayerCreate *LayerCreateV14(const uchar *data, uint len)
+{
+	if(len<7)
+		return 0;
+
+	return new LayerCreate(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1),
+		0,
+		qFromBigEndian<quint32>(data+3),
+		0,
+		QByteArray((const char*)data+7, len-7)
+	);
+}
+
+LayerCreate *LayerCopyV14(const uchar *data, uint len)
+{
+	if(len<5)
+		return 0;
+
+	return new LayerCreate(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1),
+		qFromBigEndian<quint16>(data+3),
+		0,
+		LayerCreate::FLAG_COPY|LayerCreate::FLAG_INSERT,
+		QByteArray((const char*)data+5, len-5)
+	);
+}
+
 LayerCreate *LayerCreateV12(const uchar *data, uint len)
 {
 	if(len<6)
@@ -41,7 +71,9 @@ LayerCreate *LayerCreateV12(const uchar *data, uint len)
 	return new LayerCreate(
 		*(data+0),
 		*(data+1),
+		0,
 		qFromBigEndian<quint32>(data+2),
+		0,
 		QByteArray((const char*)data+6, len-6)
 	);
 }
@@ -295,6 +327,26 @@ AnnotationDelete *AnnotationDeleteV12(const uchar *data, uint len)
 	return new AnnotationDelete(data[0], data[1]);
 }
 
+Message *deserializeV14(const uchar *data, int length)
+{
+	if(length<Message::HEADER_LEN)
+		return nullptr;
+
+	const quint16 len = qFromBigEndian<quint16>(data);
+
+	if(length < len+Message::HEADER_LEN)
+		return nullptr;
+
+	const MessageType type = MessageType(data[2]);
+
+	data += Message::HEADER_LEN;
+	switch(type) {
+	case MSG_LAYER_CREATE: return LayerCreateV14(data, len);
+	case MSG_LAYER_COPY: return LayerCopyV14(data, len);
+	default: return Message::deserialize(data-Message::HEADER_LEN, length);
+	}
+}
+
 Message *deserializeV12(const uchar *data, int length)
 {
 	if(length<Message::HEADER_LEN)
@@ -320,7 +372,7 @@ Message *deserializeV12(const uchar *data, int length)
 	case MSG_ANNOTATION_RESHAPE: return AnnotationReshapeV12(data, len);
 	case MSG_ANNOTATION_EDIT: return AnnotationEditV12(data, len);
 	case MSG_ANNOTATION_DELETE: return AnnotationDeleteV12(data, len);
-	default: return Message::deserialize(data-Message::HEADER_LEN, length);
+	default: return deserializeV14(data-Message::HEADER_LEN, length);
 	}
 }
 

@@ -1,5 +1,5 @@
 resize 1 0 300 300 0
-newlayer 1 1 #ffaacccc Putimage test
+newlayer 1 1 0 #ffaacccc Putimage test
 
 ctx 1 layer=1
 

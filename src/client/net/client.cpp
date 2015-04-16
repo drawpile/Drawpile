@@ -188,17 +188,14 @@ void Client::sendCanvasResize(int top, int right, int bottom, int left)
 	)));
 }
 
-void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
+void Client::sendNewLayer(int id, int source, const QColor &fill, bool copy, bool insert, const QString &title)
 {
 	Q_ASSERT(id>0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
-}
+	uint8_t flags = 0;
+	if(copy) flags |= protocol::LayerCreate::FLAG_COPY;
+	if(insert) flags |= protocol::LayerCreate::FLAG_INSERT;
 
-void Client::sendCopyLayer(int source, int id, const QString &title)
-{
-	Q_ASSERT(source>0 && source<=0xffff);
-	Q_ASSERT(id>0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerCopy(_my_id, source, id, title)));
+	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, source, fill.rgba(), flags, title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, int blend)
