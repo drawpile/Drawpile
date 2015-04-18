@@ -195,6 +195,22 @@ void LayerList::selectLayer(int id)
 	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
+void LayerList::selectAbove()
+{
+	QModelIndex current = currentSelection();
+	QModelIndex prev = current.sibling(current.row() - 1, 0);
+	if(prev.isValid())
+		_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+}
+
+void LayerList::selectBelow()
+{
+	QModelIndex current = currentSelection();
+	QModelIndex prev = current.sibling(current.row() + 1, 0);
+	if(prev.isValid())
+		_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+}
+
 void LayerList::init()
 {
 	_ui->layerlist->setEnabled(true);

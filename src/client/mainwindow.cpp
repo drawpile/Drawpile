@@ -2339,6 +2339,13 @@ void MainWindow::setupActions()
 		_toolChangeTime.start();
 	});
 
+	// Quick layer change actions
+	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Up));
+	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Down));
+	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
+	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
+
+
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
