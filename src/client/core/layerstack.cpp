@@ -33,7 +33,7 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
-	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true)
+	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true)
 {
 }
 
@@ -557,7 +557,14 @@ void LayerStack::setOnionskinMode(int below, int above, bool tint)
 	_onionskinsAbove = above;
 	_onionskinTint = tint;
 
-	if(_viewmode==ONIONSKIN || _viewmode==ONIONSKIN_BG)
+	if(_viewmode==ONIONSKIN)
+		markDirty();
+}
+
+void LayerStack::setViewBackgroundLayer(bool usebg)
+{
+	_viewBackgroundLayer = usebg;
+	if(_viewmode != NORMAL)
 		markDirty();
 }
 
@@ -566,11 +573,10 @@ int LayerStack::layerOpacity(int idx) const
 	Q_ASSERT(idx>=0 && idx < _layers.size());
 	int o = _layers.at(idx)->opacity();
 
-	switch(viewMode()) {
-	case ONIONSKIN_BG:
-		if(idx==0)
-			return o;
-	case ONIONSKIN: {
+	if(_viewBackgroundLayer && idx==0)
+		return o;
+
+	if(viewMode()==ONIONSKIN) {
 		const int d = _viewlayeridx - idx;
 		qreal rd;
 		if(d<0 && d>=-_onionskinsAbove)
@@ -583,28 +589,19 @@ int LayerStack::layerOpacity(int idx) const
 		return int(o * ((1-rd) * (1-rd)));
 	}
 
-	default: break;
-	}
-
 	return o;
 }
 
 quint32 LayerStack::layerTint(int idx) const
 {
-	if(_onionskinTint) {
-		switch(viewMode()) {
-		case ONIONSKIN_BG:
-			if(idx==0)
-				return 0;
+	if(_onionskinTint && viewMode() == ONIONSKIN) {
+		if(idx==0 && _viewBackgroundLayer)
+			return 0;
 
-		case ONIONSKIN:
-			if(idx < _viewlayeridx)
-				return 0x80ff3333;
-			else if(idx > _viewlayeridx)
-				return 0x803333ff;
-
-		default: break;
-		}
+		if(idx < _viewlayeridx)
+			return 0x80ff3333;
+		else if(idx > _viewlayeridx)
+			return 0x803333ff;
 	}
 
 	return 0;
@@ -616,12 +613,12 @@ bool LayerStack::isVisible(int idx) const
 	if(!_layers.at(idx)->visible())
 		return false;
 
+	if(idx==0 && _viewBackgroundLayer)
+		return true;
 	switch(viewMode()) {
 	case NORMAL: break;
 	case SOLO: return idx == _viewlayeridx;
-	case SOLO_BG: return idx == 0 || idx == _viewlayeridx;
-	case ONIONSKIN:
-	case ONIONSKIN_BG: return layerOpacity(idx) > 0;
+	case ONIONSKIN: return layerOpacity(idx) > 0;
 	}
 
 	return true;

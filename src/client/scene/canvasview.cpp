@@ -250,6 +250,7 @@ void CanvasView::updateLayerViewParams()
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
 	);
+	_scene->layers()->setViewBackgroundLayer(cfg.value("backgroundlayer", true).toBool());
 }
 
 void CanvasView::setCrosshair(bool enable)

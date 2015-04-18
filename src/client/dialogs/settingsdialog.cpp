@@ -161,6 +161,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
 	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
 	_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
+	_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
@@ -255,6 +256,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("onionskinsbelow", _ui->onionskinsBelow->value());
 	cfg.setValue("onionskinsabove", _ui->onionskinsAbove->value());
 	cfg.setValue("onionskintint", _ui->onionskinTint->isChecked());
+	cfg.setValue("backgroundlayer", _ui->backgroundlayer->isChecked());
 	cfg.endGroup();
 
 	// Remember server settings
