@@ -247,8 +247,8 @@ void CanvasView::updateLayerViewParams()
 	cfg.beginGroup("settings/animation");
 	_scene->layers()->setOnionskinMode(
 		cfg.value("onionskinsbelow", 4).toInt(),
-		cfg.value("onionskinsabove", 0).toInt(),
-		cfg.value("onionskintint", false).toBool()
+		cfg.value("onionskinsabove", 4).toInt(),
+		cfg.value("onionskintint", true).toBool()
 	);
 }
 

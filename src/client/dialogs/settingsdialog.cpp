@@ -159,8 +159,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	cfg.beginGroup("settings/animation");
 	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
-	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 0).toInt());
-	_ui->onionskinTint->setChecked(cfg.value("onionskintint", false).toBool());
+	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
+	_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");

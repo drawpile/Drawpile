@@ -33,7 +33,7 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
-	  _onionskinsBelow(3), _onionskinsAbove(0), _onionskinTint(false)
+	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true)
 {
 }
 
