@@ -16,49 +16,53 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LISTSERVERMODEL_H
-#define LISTSERVERMODEL_H
+#ifndef SERVERDISCOVERYMODEL_H
+#define SERVERDISCOVERYMODEL_H
 
-#include <QAbstractListModel>
-#include <QIcon>
+#include <QAbstractTableModel>
+#include <QUrl>
+#include <QDateTime>
 
-namespace sessionlisting {
+#include <KDNSSD/DNSSD/RemoteService>
 
-struct ListServer {
-	QIcon icon;
-	QString iconName;
+namespace KDNSSD {
+	class ServiceBrowser;
+}
+
+struct DiscoveredServer {
+	QUrl url;
 	QString name;
-	QString url;
-	QString description;
+	QString title;
+	QString protocol;
+	QDateTime started;
 };
 
-class ListServerModel : public QAbstractListModel
+class ServerDiscoveryModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
-	ListServerModel(bool showlocal, QObject *parent=0);
+	ServerDiscoveryModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	bool removeRows(int row, int count, const QModelIndex &parent);
+	//QUrl sessionUrl(int index) const;
 
-	void addServer(const QString &name, const QString &url, const QString &description);
+	void discover();
 
-	//!  Set the favicon for the server with the given URL
-	void setFavicon(const QString &url, const QImage &icon);
-
-	//! Load server list from the settings file
-	void loadServers();
-
-	//! Save (modified) server list. This replaces the existing list
-	void saveServers() const;
+private slots:
+	void addService(KDNSSD::RemoteService::Ptr service);
+	void removeService(KDNSSD::RemoteService::Ptr service);
 
 private:
-	QList<ListServer> _servers;
-	bool _showlocal;
+	QList<DiscoveredServer> _servers;
+	QString _myProtocol;
+
+	KDNSSD::ServiceBrowser *_browser;
 };
 
-}
+#endif
 
-#endif // LISTSERVERMODEL_H

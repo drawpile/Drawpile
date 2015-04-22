@@ -84,6 +84,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case 2: return s.owner;
 		case 3: return s.started;
 		}
+	} else if(role == Qt::UserRole+1) {
+		// User role+1 is used for the session URL
+		return sessionUrl(index.row());
 	}
 
 	return QVariant();

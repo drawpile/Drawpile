@@ -1161,7 +1161,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		net::ServerThread *server = new net::ServerThread;
 		server->setDeleteOnExit();
 
-		int port = server->startServer();
+		int port = server->startServer(dlg->getTitle());
 		if(!port) {
 			QMessageBox::warning(this, tr("Host Session"), server->errorString());
 			dlg->show();

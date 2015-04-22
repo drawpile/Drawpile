@@ -105,7 +105,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			_ui->volumeLabel->setText(tr("off", "notifications sounds"));
 	});
 
-	// Set defaults
+	// Load settings
 	QSettings cfg;
 
 	cfg.beginGroup("notifications");
@@ -168,6 +168,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
 	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
+#ifdef HAVE_DNSSD
+	_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
+#else
+	_ui->dnssd->setEnabled(false);
+#endif
 	cfg.endGroup();
 
 	// Editable shortcuts
@@ -212,7 +217,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Session listing server list
-	_listservers = new sessionlisting::ListServerModel(this);
+	_listservers = new sessionlisting::ListServerModel(false, this);
 	_ui->listserverview->setModel(_listservers);
 	_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 
@@ -268,6 +273,7 @@ void SettingsDialog::rememberSettings()
 
 	cfg.setValue("historylimit", _ui->historylimit->value());
 	cfg.setValue("timeout", _ui->connTimeout->value());
+	cfg.setValue("dnssd", _ui->dnssd->isChecked());
 
 	cfg.endGroup();
 

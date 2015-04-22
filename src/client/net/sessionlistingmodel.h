@@ -38,12 +38,12 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	QUrl sessionUrl(int index) const;
-
 public slots:
 	void setList(const QList<Session> sessions);
 
 private:
+	QUrl sessionUrl(int index) const;
+
 	QList<Session> _sessions;
 	QString _myProtocol;
 };

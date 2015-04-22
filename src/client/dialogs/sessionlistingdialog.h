@@ -29,6 +29,9 @@ namespace sessionlisting {
 	class AnnouncementApi;
 }
 
+class ServerDiscoveryModel;
+class QSortFilterProxyModel;
+
 namespace dialogs {
 
 class SessionListingDialog : public QDialog
@@ -46,8 +49,13 @@ private slots:
 
 private:
 	Ui_SessionListingDialog *_ui;
-	sessionlisting::SessionListingModel * _model;
 	sessionlisting::AnnouncementApi *_apiClient;
+
+	QSortFilterProxyModel *_model;
+	sessionlisting::SessionListingModel * _sessions;
+#ifdef HAVE_DNSSD
+	ServerDiscoveryModel *_localservers;
+#endif
 };
 
 }

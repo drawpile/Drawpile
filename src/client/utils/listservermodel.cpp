@@ -30,8 +30,8 @@
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(QObject *parent)
-	: QAbstractListModel(parent)
+ListServerModel::ListServerModel(bool showlocal, QObject *parent)
+	: QAbstractListModel(parent), _showlocal(showlocal)
 {
 	loadServers();
 }
@@ -166,6 +166,20 @@ void ListServerModel::loadServers()
 			"not suitable for everyone.")
 		};
 	}
+
+#ifdef HAVE_DNSSD
+	// Add an entry for local server discovery
+	if(_showlocal) {
+		_servers.prepend(ListServer {
+			QIcon(),
+			QString(),
+			tr("Nearby"),
+			QStringLiteral("local"),
+			QString()
+		});
+	}
+#endif
+
 	endResetModel();
 }
 

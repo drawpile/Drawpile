@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,11 @@
 #include "../shared/util/logger.h"
 
 #include <QSettings>
+#include <QDateTime>
+
+#ifdef HAVE_DNSSD
+#include <KDNSSD/DNSSD/PublicService>
+#endif
 
 namespace net {
 
@@ -35,7 +40,7 @@ ServerThread::ServerThread(QObject *parent)
 	_port = cfg.value("settings/server/port", DRAWPILE_PROTO_DEFAULT_PORT).toInt();
 }
 
-int ServerThread::startServer()
+int ServerThread::startServer(const QString &title)
 {
 	_startmutex.lock();
 
@@ -43,6 +48,32 @@ int ServerThread::startServer()
 
 	_starter.wait(&_startmutex);
 	_startmutex.unlock();
+
+#ifdef HAVE_DNSSD
+	// Publish this server via DNS-SD.
+	// Note: this code runs in the main thread
+	if(_port>0) {
+		QSettings cfg;
+		if(cfg.value("settings/server/dnssd", true).toBool()) {
+			qDebug("Announcing server (port %d) via DNSSD", _port);
+			auto dnssd = new KDNSSD::PublicService(
+				QString(),
+				"_drawpile._tcp",
+				_port,
+				"local"
+			);
+			dnssd->setParent(this);
+
+			QMap<QString,QByteArray> txt;
+			txt["protocol"] = QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(DRAWPILE_PROTO_MINOR_VERSION).toUtf8();
+			txt["started"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate).toUtf8();
+			txt["title"] = title.toUtf8();
+
+			dnssd->setTextData(txt);
+			dnssd->publishAsync();
+		}
+	}
+#endif
 
 	return _port;
 }

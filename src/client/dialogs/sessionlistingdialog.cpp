@@ -22,6 +22,10 @@
 #include "ui_sessionlisting.h"
 #include "utils/listservermodel.h"
 
+#ifdef HAVE_DNSSD
+#include "net/serverdiscoverymodel.h"
+#endif
+
 #include <QTimer>
 #include <QPushButton>
 #include <QSettings>
@@ -40,8 +44,8 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	QPushButton *ok = _ui->buttonBox->button(QDialogButtonBox::Ok);
 	ok->setEnabled(false);
 
-	_ui->listserver->setModel(new sessionlisting::ListServerModel(this));
-	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserver", 0).toInt());
+	_ui->listserver->setModel(new sessionlisting::ListServerModel(true, this));
+	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverilast", 0).toInt());
 	connect(_ui->listserver, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshListing()));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
@@ -49,27 +53,30 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	_ui->filter->setClearButtonEnabled(true);
 #endif
 
-	_model = new sessionlisting::SessionListingModel(this);
+	_sessions = new sessionlisting::SessionListingModel(this);
+#ifdef HAVE_DNSSD
+	_localservers = new ServerDiscoveryModel(this);
+#endif
 	_apiClient = new sessionlisting::AnnouncementApi(this);
 
 	//connect(_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, _model, &sessionlisting::SessionListingModel::setList);
 	connect(_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, [this](QList<sessionlisting::Session> list) {
 		_ui->liststack->setCurrentIndex(0);
-		_model->setList(list);
+		_sessions->setList(list);
 	});
 	connect(_apiClient, &sessionlisting::AnnouncementApi::error, [this](const QString &message) {
 		_ui->liststack->setCurrentIndex(1);
 		_ui->errormessage->setText(message);
 	});
 
-	QSortFilterProxyModel *filteredModel = new QSortFilterProxyModel(this);
-	filteredModel->setSourceModel(_model);
-	filteredModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	filteredModel->setFilterKeyColumn(-1);
+	_model = new QSortFilterProxyModel(this);
+	_model->setSourceModel(_sessions);
+	_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	_model->setFilterKeyColumn(-1);
 
-	connect(_ui->filter, &QLineEdit::textChanged, filteredModel, &QSortFilterProxyModel::setFilterFixedString);
+	connect(_ui->filter, &QLineEdit::textChanged, _model, &QSortFilterProxyModel::setFilterFixedString);
 
-	_ui->listing->setModel(filteredModel);
+	_ui->listing->setModel(_model);
 	QHeaderView *header = _ui->listing->horizontalHeader();
 	header->setSectionResizeMode(0, QHeaderView::Stretch);
 	header->setSectionResizeMode(1, QHeaderView::ResizeToContents);
@@ -83,9 +90,10 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	refreshListing();
 
 	connect(this, &QDialog::accepted, [this]() {
-		// Emit selection when OK is clicked
-		int row = _ui->listing->selectionModel()->selectedIndexes().at(0).row();
-		QUrl url = _model->sessionUrl(row);
+		// Emit selection when OK is clicked		
+		QModelIndex sel = _ui->listing->selectionModel()->selectedIndexes().at(0);
+		QUrl url = sel.data(Qt::UserRole+1).value<QUrl>();
+
 		emit selected(url);
 	});
 
@@ -103,19 +111,27 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 SessionListingDialog::~SessionListingDialog()
 {
 	QSettings cfg;
-	cfg.setValue("history/listingserver", _ui->listserver->currentIndex());
+	cfg.setValue("history/listingserverlast", _ui->listserver->currentIndex());
 	delete _ui;
 }
 
-#define PROTO_STR(x) #x
-#define XPROTO_STR(x) PROTO_STR(x)
-
 void SessionListingDialog::refreshListing()
 {
-	QUrl url = _ui->listserver->itemData(_ui->listserver->currentIndex()).toString();
-	if(url.isValid()) {
-		const QString version = QStringLiteral(XPROTO_STR(DRAWPILE_PROTO_MAJOR_VERSION) "." XPROTO_STR(DRAWPILE_PROTO_MINOR_VERSION));
-		_apiClient->getSessionList(url, version);
+	QString urlstr = _ui->listserver->itemData(_ui->listserver->currentIndex()).toString();
+	if(urlstr == "local") {
+#ifdef HAVE_DNSSD
+		// Local server discovery mode (DNS-SD)
+		_model->setSourceModel(_localservers);
+		_localservers->discover();
+#endif
+
+	} else {
+		// Session listing server mode
+		QUrl url = urlstr;
+		if(url.isValid()) {
+			_model->setSourceModel(_sessions);
+			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR);
+		}
 	}
 }
 

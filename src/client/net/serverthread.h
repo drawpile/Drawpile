@@ -44,9 +44,10 @@ public:
 
 	/**
 	 * @brief Start the thread and wait for the server to start
+	 * @param title the title of the server (used for DNSSD announcement)
 	 * @return the port the server is listening on or 0 in case of error
 	 */
-	int startServer();
+	int startServer(const QString &title);
 
 	/**
 	 * @brief Is the server listening on the default port

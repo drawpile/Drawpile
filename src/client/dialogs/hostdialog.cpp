@@ -54,7 +54,7 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->username->setText(cfg.value("username").toString());
 	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
 
-	_ui->listingserver->setModel(new sessionlisting::ListServerModel(this));
+	_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
 	_ui->announce->setChecked(cfg.value("announce", false).toBool());
 	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 

@@ -7,6 +7,7 @@ find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
 find_package(KF5Archive NO_MODULE)
+find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorPicker)
 
 set (
@@ -163,6 +164,14 @@ set (
 	ui/flipbook.ui
 )
 
+# Optional DNS-SD support
+if(KF5DNSSD_FOUND) 
+	set(
+		SOURCES ${SOURCES}
+		net/serverdiscoverymodel.cpp
+	)
+endif()
+
 # Use bundled KArchive if library not found
 if(NOT KF5Archive_FOUND)
 	message(WARNING "KArchive not found: using bundled copy!")
@@ -265,6 +274,11 @@ target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5
 
 # Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
 qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent Multimedia Svg)
+
+if(KF5DNSSD_FOUND) 
+    add_definitions(-DHAVE_DNSSD) 
+	target_link_libraries(${CLIENTNAME} KF5::DNSSD)
+endif() 
 
 if(NOT KF5Archive_FOUND)
 	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})

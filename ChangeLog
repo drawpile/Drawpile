@@ -7,6 +7,7 @@
  * When opening animated GIFs, each frame is loaded as a layer
  * Protocol change: merged LayerCreate and LayerCopy
  * Added "Insert layer" action
+ * LAN server discovery using Zeroconf
 
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool
