@@ -23,8 +23,8 @@
 
 namespace sessionlisting {
 	class AnnouncementApi;
-	class Session;
-	class Announcement;
+	struct Session;
+	struct Announcement;
 }
 
 namespace server {
