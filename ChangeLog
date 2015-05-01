@@ -1,4 +1,4 @@
-2015-0?-?? Version ?
+2015-0?-?? Version 0.9.10
  * Fixed loading of older recording formats (<v11.x)
  * Added Solo+BG layer view mode
  * Added Onionskin layer view mode
@@ -9,6 +9,8 @@
  * Added "Insert layer" action
  * LAN server discovery using Zeroconf
  * Added Japanese translation
+ * Fixed filling selections partially outside the canvas
+ * Moving a selection will now automatically move the pixels too
 
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool
