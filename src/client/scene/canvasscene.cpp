@@ -355,24 +355,12 @@ bool CanvasScene::hasImage() const {
 	return _image!=0;
 }
 
-/**
- * @return board width
- */
-int CanvasScene::width() const {
+QSize CanvasScene::imageSize() const
+{
 	if(_image)
-		return _image->image()->width();
+		return QSize(_image->image()->width(), _image->image()->height());
 	else
-		return -1;
-}
-
-/**
- * @return board height
- */
-int CanvasScene::height() const {
-	if(_image)
-		return _image->image()->height();
-	else
-		return -1;
+		return QSize();
 }
 
 /**

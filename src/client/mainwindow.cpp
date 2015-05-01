@@ -1556,7 +1556,7 @@ void MainWindow::toolChanged(tools::Type tool)
 void MainWindow::selectAll()
 {
 	getAction("toolselectrect")->trigger();
-	_canvas->setSelectionItem(QRect(0, 0, _canvas->width(), _canvas->height()));
+	_canvas->setSelectionItem(QRect(QPoint(), _canvas->imageSize()));
 }
 
 void MainWindow::selectNone()
@@ -1716,7 +1716,7 @@ void MainWindow::fillBgArea()
 
 void MainWindow::fillArea(const QColor &color)
 {
-	const QRect bounds = QRect(0, 0, _canvas->width(), _canvas->height());
+	const QRect bounds = QRect(QPoint(), _canvas->imageSize());
 	QRect area;
 	QImage mask;
 	QPoint maskOffset;
@@ -1744,7 +1744,7 @@ void MainWindow::fillArea(const QColor &color)
 
 void MainWindow::resizeCanvas()
 {
-	QSize size(_canvas->width(), _canvas->height());
+	QSize size = _canvas->imageSize();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 

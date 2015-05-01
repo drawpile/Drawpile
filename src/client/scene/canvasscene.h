@@ -61,11 +61,8 @@ public:
 	//! Clear and initialize the canvas
 	void initCanvas(net::Client *client);
 
-	//! Get canvas width
-	int width() const;
-
-	//! Get canvas height
-	int height() const;
+	//! Get the size of the canvas
+	QSize imageSize() const;
 
 	//! Get the layers
 	paintcore::LayerStack *layers();
