@@ -63,6 +63,13 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 	} else {
 		QPointF p = point - _start;
 
+		if(scene().selectionItem()->pasteImage().isNull() && !scene().statetracker()->isLayerLocked(layer())) {
+			// Automatically cut the layer when the selection is transformed
+			QImage img = scene().selectionToImage(layer());
+			scene().selectionItem()->fillCanvas(Qt::transparent, &client(), layer());
+			scene().selectionItem()->setPasteImage(img);
+		}
+
 		if(_handle == drawingboard::SelectionItem::TRANSLATE && center) {
 			// We use the center constraint during translation to rotate the selection
 			const QPoint center = scene().selectionItem()->polygonRect().center();
