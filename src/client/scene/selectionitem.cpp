@@ -19,10 +19,11 @@
 
 #include "selectionitem.h"
 #include "net/client.h"
+#include "scene/canvasscene.h"
 
 #include <QApplication>
 #include <QPainter>
-#include <QGraphicsScene>
+
 
 namespace drawingboard {
 
@@ -307,6 +308,13 @@ void SelectionItem::marchingAnts()
 	update();
 }
 
+QRect SelectionItem::canvasRect() const
+{
+	Q_ASSERT(qobject_cast<CanvasScene*>(scene()));
+
+	return QRect(QPoint(), static_cast<CanvasScene*>(scene())->imageSize());
+}
+
 void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 {
 	if(_pasteimg.isNull())
@@ -347,7 +355,7 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 
 
 	// Clip image to scene
-	const QRect scenerect(0, 0, scene()->width(), scene()->height());
+	const QRect scenerect = canvasRect();
 	QRect intersection = rect & scenerect;
 	if(!intersection.isEmpty()) {
 		int xoff=0, yoff=0;
@@ -365,6 +373,32 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 		// Merge image
 		client->sendUndopoint();
 		client->sendImage(layer, rect.x() + xoff, rect.y() + yoff, image);
+	}
+}
+
+void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int layer) const
+{
+	const QRect bounds = canvasRect();
+	QRect area;
+	QImage mask;
+	QPoint maskOffset;
+
+	if(isAxisAlignedRectangle()) {
+		area = polygonRect().intersected(bounds);
+
+	} else {
+		QPair<QPoint,QImage> m = polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
+		maskOffset = m.first;
+		mask = m.second;
+	}
+
+	if(!area.isEmpty() || !mask.isNull()) {
+		client->sendUndopoint();
+
+		if(mask.isNull())
+			client->sendFillRect(layer, area, color);
+		else
+			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
 	}
 }
 

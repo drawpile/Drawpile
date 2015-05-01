@@ -72,7 +72,9 @@ namespace net {
 
 /**
  * Multiple messages are generated if the image is too large to fit in just one.
- * If needed, the image is recursively split into smaller parts.
+ *
+ * If target coordinates are less than zero, the image is automatically cropped.
+ *
  * @param ctxid user context ID
  * @param layer target layer ID
  * @param x X coordinate
@@ -81,9 +83,26 @@ namespace net {
  * @param mode composition mode
  * @return
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const QImage &image, int mode)
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, int mode)
 {
 	QList<protocol::MessagePtr> list;
+
+	// Crop image if target coordinates are negative, since the protocol
+	// does not support negative coordites.
+	if(x<0 || y<0) {
+		if(x < -image.width() || y < -image.height()) {
+			// the entire image is outside the canvas
+			return list;
+		}
+
+		int xoffset = x<0 ? -x : 0;
+		int yoffset = y<0 ? -y : 0;
+		image = image.copy(xoffset, yoffset, image.width()-xoffset, image.height()-yoffset);
+		x += xoffset;
+		y += yoffset;
+	}
+
+	// Split image into pieces small enough to fit in a message
 	splitImage(ctxid, layer, x, y, image.convertToFormat(QImage::Format_ARGB32), mode, list);
 
 #ifndef NDEBUG

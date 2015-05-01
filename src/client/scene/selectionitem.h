@@ -77,12 +77,18 @@ public:
 
 	void marchingAnts();
 
+	//! Put the paste buffer to the canvas
 	void pasteToCanvas(net::Client *client, int layer) const;
+
+	//! Fill the selected pixels
+	void fillCanvas(const QColor &color, net::Client *client, int layer) const;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
+	QRect canvasRect() const;
+
 	void savePolygonShape();
 	QPolygon polygon() const { return _polygon.toPolygon(); }
 	void adjust(int dx1, int dy1, int dx2, int dy2);

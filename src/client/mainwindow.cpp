@@ -1716,29 +1716,14 @@ void MainWindow::fillBgArea()
 
 void MainWindow::fillArea(const QColor &color)
 {
-	const QRect bounds = QRect(QPoint(), _canvas->imageSize());
-	QRect area;
-	QImage mask;
-	QPoint maskOffset;
-
 	if(_canvas->selectionItem()) {
-		if(_canvas->selectionItem()->isAxisAlignedRectangle()) {
-			area = _canvas->selectionItem()->polygonRect().intersected(bounds);
-		} else {
-			QPair<QPoint,QImage> m = _canvas->selectionItem()->polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
-			maskOffset = m.first;
-			mask = m.second;
-		}
-	} else
-		area = bounds;
+		// Selection exists: fill selected area only
+		_canvas->selectionItem()->fillCanvas(color, _client, _dock_layers->currentLayer());
 
-	if(!area.isEmpty() || !mask.isNull()) {
+	} else {
+		// No selection: fill entire layer
 		_client->sendUndopoint();
-
-		if(mask.isNull())
-			_client->sendFillRect(_dock_layers->currentLayer(), area, color);
-		else
-			_client->sendImage(_dock_layers->currentLayer(), maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
+		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color);
 	}
 }
 
