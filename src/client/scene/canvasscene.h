@@ -211,6 +211,9 @@ signals:
 	//! Emitted when a new snapshot point was generated
 	void newSnapshot(QList<protocol::MessagePtr>);
 
+	//! The current selection was just deselected
+	void selectionRemoved();
+
 private slots:
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 	void handleAnnotationChange(int id);

@@ -136,7 +136,7 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false)
+	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false), _lastToolBeforePaste(-1)
 {
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -252,6 +252,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(layerAutoselectRequest(int)), _dock_layers, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
+	connect(_canvas, &drawingboard::CanvasScene::selectionRemoved, this, &MainWindow::selectionRemoved);
 	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
 		if(bg)
 			_dock_toolsettings->setBackgroundColor(c);
@@ -1529,6 +1530,7 @@ void MainWindow::selectTool(QAction *tool)
 
 	_dock_toolsettings->setTool(tools::Type(idx));
 	_toolChangeTime.start();
+	_lastToolBeforePaste = -1;
 }
 
 /**
@@ -1551,6 +1553,16 @@ void MainWindow::toolChanged(tools::Type tool)
 		_canvas->setSelectionItem(0);
 
 	_view->selectTool(tool);
+}
+
+void MainWindow::selectionRemoved()
+{
+	if(_lastToolBeforePaste>=0) {
+		// Selection was just removed and we had just pasted an image
+		// so restore the previously used tool
+		QAction *toolaction = _drawingtools->actions().at(_lastToolBeforePaste);
+		toolaction->trigger();
+	}
 }
 
 void MainWindow::selectAll()
@@ -1640,8 +1652,11 @@ void MainWindow::pasteFile(const QUrl &url)
 void MainWindow::pasteImage(const QImage &image)
 {
 	if(_canvas->hasImage()) {
-		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION)
+		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION) {
+			int currentTool = _dock_toolsettings->currentTool();
 			getAction("toolselectrect")->trigger();
+			_lastToolBeforePaste = currentTool;
+		}
 
 		_canvas->pasteFromImage(image, _view->viewCenterPoint());
 	} else {

@@ -397,10 +397,13 @@ void CanvasScene::setSelectionItem(const QPolygon &polygon)
 
 void CanvasScene::setSelectionItem(SelectionItem *selection)
 {
+	bool hadSelection = _selection != nullptr;
 	delete _selection;
 	_selection = selection;
 	if(selection)
 		addItem(selection);
+	else if(hadSelection)
+		emit selectionRemoved();
 }
 
 void CanvasScene::handleLocalCommand(protocol::MessagePtr cmd)

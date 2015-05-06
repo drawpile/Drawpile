@@ -156,6 +156,8 @@ class MainWindow : public QMainWindow {
 
 		void toolChanged(tools::Type tool);
 
+		void selectionRemoved();
+
 		void hotBorderMenubar(bool show);
 
 	protected:
@@ -231,6 +233,8 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
 		QActionGroup *_toolslotactions; // tool slot selection
+
+		int _lastToolBeforePaste; // Last selected tool before Paste was used
 
 		// Remember window state to return from fullscreen mode
 		QByteArray _fullscreen_oldstate;
