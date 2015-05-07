@@ -48,9 +48,7 @@ private slots:
 	void toggleWriteProtect();
 
 	void updateFromRgbSliders();
-	void updateFromRgbSpinbox();
 	void updateFromHsvSliders();
-	void updateFromHsvSpinbox();
 
 private:
 	Ui_ColorBox *_ui;
