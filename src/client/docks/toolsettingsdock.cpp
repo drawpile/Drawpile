@@ -43,27 +43,21 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	setStyleSheet(defaultDockStylesheet());
 
-	// Initialize UI
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-
-	auto *layout = new QVBoxLayout(w);
-	layout->setMargin(0);
-	layout->setSpacing(0);
-
 	// Create quick toolchange slot buttons
-	auto *hlayout = new QHBoxLayout;
+	// We use the buttons as the title bar for this dock.
+	// The widget has special event handling so it can be used
+	// to drag the dock like a normal titlebar
+	QWidget *tb = new QWidget(this);
+	auto *hlayout = new QHBoxLayout(tb);
 	hlayout->setContentsMargins(3, 3, 3, 0);
 	hlayout->setSpacing(0);
-	layout->addLayout(hlayout);
+	setTitleBarWidget(tb);
 
 	QButtonGroup *quickbuttons = new QButtonGroup(this);
 	quickbuttons->setExclusive(true);
 
 	for(int i=0;i<QUICK_SLOTS;++i) {
-		auto *b = new widgets::ToolSlotButton(w);
-
-		connect(b, SIGNAL(doubleClicked()), this, SLOT(changeForegroundColor()));
+		auto *b = new widgets::ToolSlotButton(tb);
 
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
@@ -80,7 +74,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	// Create a widget stack
 	_widgets = new QStackedWidget(this);
-	layout->addWidget(_widgets, 1);
+	setWidget(_widgets);
 
 	_pensettings = new tools::PenSettings("pen", tr("Pen"));
 	_widgets->addWidget(_pensettings->createUi(this));

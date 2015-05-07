@@ -22,6 +22,7 @@
 
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
+#include <QMouseEvent>
 
 namespace widgets {
 
@@ -87,21 +88,36 @@ void ToolSlotButton::paintEvent(QPaintEvent *)
 	p.fillRect(0, height() - 1, width(), 1, _highlight);
 }
 
-void ToolSlotButton::enterEvent(QEvent *e)
+bool ToolSlotButton::event(QEvent *e)
 {
-	_isHovering = true;
-	QToolButton::enterEvent(e);
-}
+	switch(e->type()) {
+	case QEvent::MouseButtonPress:
+	case QEvent::MouseButtonRelease:
+	case QEvent::MouseMove: {
+		// We let these propagate to the parent dock widget
+		// since we are using toolslotbuttons as the title
+		// However, we still need to respond to mouse clicks here,
+		// so we make a copy of the event for our own use.
+		QMouseEvent *me = static_cast<QMouseEvent*>(e);
+		QMouseEvent ce(me->type(), me->localPos(), me->button(), me->buttons(), me->modifiers());
+		QToolButton::event(&ce);
+		return false;
+	}
 
-void ToolSlotButton::leaveEvent(QEvent *e)
-{
-	_isHovering = false;
-	QToolButton::leaveEvent(e);
-}
+	case QEvent::MouseButtonDblClick:
+		// Double click event toggles floating mode
+		return false;
 
-void ToolSlotButton::mouseDoubleClickEvent(QMouseEvent *)
-{
-	emit doubleClicked();
+	case QEvent::Enter:
+		_isHovering = true;
+		break;
+	case QEvent::Leave:
+		_isHovering = false;
+		break;
+
+	default: break;
+	}
+	return QToolButton::event(e);
 }
 
 }

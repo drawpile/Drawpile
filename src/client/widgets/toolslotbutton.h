@@ -36,14 +36,9 @@ public:
 	void setHighlightColor(const QColor &c);
 	void setHoverColor(const QColor &c);
 
-signals:
-	void doubleClicked();
-
 protected:
 	void paintEvent(QPaintEvent *);
-	void enterEvent(QEvent *);
-	void leaveEvent(QEvent *);
-	void mouseDoubleClickEvent(QMouseEvent*);
+	bool event(QEvent *);
 
 private:
 	QColor _fg, _bg, _highlight, _hover;
