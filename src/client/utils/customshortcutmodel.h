@@ -49,7 +49,11 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
+	void loadShortcuts();
 	void saveShortcuts();
+
+	static bool hasDefaultShortcut(const QString &name);
+	static QKeySequence getDefaultShortcut(const QString &name);
 
 	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
 private:

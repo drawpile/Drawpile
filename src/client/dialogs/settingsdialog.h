@@ -39,6 +39,7 @@ public:
 	~SettingsDialog();
 
 private slots:
+	void resetSettings();
 	void rememberSettings();
 	void saveCertTrustChanges();
 
@@ -52,6 +53,8 @@ private slots:
 	void removeListingServer();
 
 private:
+	void restoreSettings();
+
 	Ui_SettingsDialog *_ui;
 
 	QStringList _removeCerts;

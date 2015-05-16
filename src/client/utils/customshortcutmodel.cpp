@@ -28,27 +28,6 @@ QMap<QString, CustomShortcut> CustomShortcutModel::_customizableActions;
 CustomShortcutModel::CustomShortcutModel(QObject *parent)
 	: QAbstractTableModel(parent)
 {
-	QList<CustomShortcut> actions;
-	actions.reserve(_customizableActions.size());
-
-	QSettings cfg;
-	cfg.beginGroup("settings/shortcuts");
-
-	for(CustomShortcut a : _customizableActions) {
-		Q_ASSERT(!a.name.isEmpty());
-		if(cfg.contains(a.name))
-			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
-		if(a.currentShortcut.isEmpty())
-			a.currentShortcut = a.defaultShortcut;
-
-		actions.append(a);
-	}
-
-	std::sort(actions.begin(), actions.end(),
-		[](const CustomShortcut &a1, const CustomShortcut &a2) { return a1.title.compare(a2.title) < 0; }
-	);
-
-	_shortcuts = actions;
 }
 
 int CustomShortcutModel::rowCount(const QModelIndex &parent) const
@@ -117,6 +96,33 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
+void CustomShortcutModel::loadShortcuts()
+{
+	QList<CustomShortcut> actions;
+	actions.reserve(_customizableActions.size());
+
+	QSettings cfg;
+	cfg.beginGroup("settings/shortcuts");
+
+	for(CustomShortcut a : _customizableActions) {
+		Q_ASSERT(!a.name.isEmpty());
+		if(cfg.contains(a.name))
+			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
+		if(a.currentShortcut.isEmpty())
+			a.currentShortcut = a.defaultShortcut;
+
+		actions.append(a);
+	}
+
+	std::sort(actions.begin(), actions.end(),
+		[](const CustomShortcut &a1, const CustomShortcut &a2) { return a1.title.compare(a2.title) < 0; }
+	);
+
+	beginResetModel();
+	_shortcuts = actions;
+	endResetModel();
+}
+
 void CustomShortcutModel::saveShortcuts()
 {
 	QSettings cfg;
@@ -136,4 +142,14 @@ void CustomShortcutModel::registerCustomizableAction(const QString &name, const 
 		return;
 
 	_customizableActions[name] = CustomShortcut(name, title, defaultShortcut);
+}
+
+bool CustomShortcutModel::hasDefaultShortcut(const QString &name)
+{
+	return _customizableActions.contains(name);
+}
+
+QKeySequence CustomShortcutModel::getDefaultShortcut(const QString &name)
+{
+	return _customizableActions[name].defaultShortcut;
 }

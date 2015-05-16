@@ -598,9 +598,13 @@ void MainWindow::loadShortcuts()
 	cfg.beginGroup("settings/shortcuts");
 
 	QList<QAction*> actions = findChildren<QAction*>();
-	foreach(QAction *a, actions) {
-		if(!a->objectName().isEmpty() && cfg.contains(a->objectName())) {
-			a->setShortcut(cfg.value(a->objectName()).value<QKeySequence>());
+	for(QAction *a : actions) {
+		const QString &name = a->objectName();
+		if(!name.isEmpty()) {
+			if(cfg.contains(name))
+				a->setShortcut(cfg.value(name).value<QKeySequence>());
+			else if(CustomShortcutModel::hasDefaultShortcut(name))
+				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
 		}
 	}
 }
@@ -2292,7 +2296,7 @@ void MainWindow::setupActions()
 	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *lasertool = makeAction("toollaser", "cursor-arrow", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select (Rectangular)"), tr("Select area for copying"), QKeySequence("S"), true);
-	QAction *lassotool = makeAction("toolselectpolygon", "edit-select-lasso", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("P"), true);
+	QAction *lassotool = makeAction("toolselectpolygon", "edit-select-lasso", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("D"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));

@@ -12,6 +12,7 @@
  * Fixed filling selections partially outside the canvas
  * Moving a selection will now automatically move the pixels too
  * Added autosave feature
+ * Added button to reset all settings
 
 2015-04-03 Version 0.9.9
  * Added "Lasso" selection tool

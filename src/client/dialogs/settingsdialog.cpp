@@ -40,6 +40,7 @@
 #include <QItemEditorFactory>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
@@ -80,6 +81,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
 	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveCertTrustChanges()));
+	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(resetSettings()));
 
 	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
 		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
@@ -105,78 +107,23 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			_ui->volumeLabel->setText(tr("off", "notifications sounds"));
 	});
 
-	// Load settings
-	QSettings cfg;
+	// Get available languages
+	_ui->languageBox->addItem(tr("Default"), QString());
+	_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));
 
-	cfg.beginGroup("notifications");
-	_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
-	_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
-	_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
-	_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
-	_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
-	cfg.endGroup();
-
-	cfg.beginGroup("settings");
-	{
-		// Get available languages
-		_ui->languageBox->addItem(tr("Default"), QString());
-		_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));
-
-		const QLocale localeC = QLocale::c();
-		QStringList locales;
-		for(const QString &datapath : DrawpileApp::dataPaths()) {
-			QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
-			for(const QString &file : files) {
-				QString localename = file.mid(9, file.length() - 3 - 9);
-				QLocale locale(localename);
-				if(locale != localeC && !locales.contains(localename)) {
-					locales << localename;
-					_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
-				}
-			}
-		}
-		QVariant langOverride = cfg.value("language", QString());
-		for(int i=1;i<_ui->languageBox->count();++i) {
-			if(_ui->languageBox->itemData(i) == langOverride) {
-				_ui->languageBox->setCurrentIndex(i);
-				break;
+	const QLocale localeC = QLocale::c();
+	QStringList locales;
+	for(const QString &datapath : DrawpileApp::dataPaths()) {
+		QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
+		for(const QString &file : files) {
+			QString localename = file.mid(9, file.length() - 3 - 9);
+			QLocale locale(localename);
+			if(locale != localeC && !locales.contains(localename)) {
+				locales << localename;
+				_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
 			}
 		}
 	}
-
-	_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
-
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/input");
-	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
-	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/recording");
-	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
-	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
-	_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
-	_ui->recordingFolder->setText(utils::settings::recordingFolder());
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/animation");
-	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
-	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
-	_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
-	_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/server");
-	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
-	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
-	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
-#ifdef HAVE_DNSSD
-	_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
-#else
-	_ui->dnssd->setEnabled(false);
-#endif
-	cfg.endGroup();
 
 	// Editable shortcuts
 	_customShortcuts = new CustomShortcutModel(this);
@@ -226,11 +173,88 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
 	connect(_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
+
+	// Load configuration
+	restoreSettings();
 }
 
 SettingsDialog::~SettingsDialog()
 {
 	delete _ui;
+}
+
+void SettingsDialog::resetSettings()
+{
+	QMessageBox::StandardButton b = QMessageBox::question(
+				this,
+				tr("Reset settings"),
+				tr("Clear all settings?")
+				);
+	if(b==QMessageBox::Yes) {
+		QSettings().clear();
+		restoreSettings();
+		rememberSettings();
+	}
+}
+
+void SettingsDialog::restoreSettings()
+{
+	QSettings cfg;
+
+	cfg.beginGroup("notifications");
+	_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
+	_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
+	_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
+	_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
+	_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings");
+	{
+		QVariant langOverride = cfg.value("language", QString());
+		for(int i=1;i<_ui->languageBox->count();++i) {
+			if(_ui->languageBox->itemData(i) == langOverride) {
+				_ui->languageBox->setCurrentIndex(i);
+				break;
+			}
+		}
+	}
+
+	_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
+
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/input");
+	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
+	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/recording");
+	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
+	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
+	_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
+	_ui->recordingFolder->setText(utils::settings::recordingFolder());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/animation");
+	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
+	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
+	_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
+	_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/server");
+	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
+	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
+	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
+#ifdef HAVE_DNSSD
+	_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
+#else
+	_ui->dnssd->setEnabled(false);
+#endif
+	cfg.endGroup();
+
+	_customShortcuts->loadShortcuts();
 }
 
 void SettingsDialog::rememberSettings()
@@ -281,9 +305,7 @@ void SettingsDialog::rememberSettings()
 
 	cfg.endGroup();
 
-	// Remember shortcuts.
 	_customShortcuts->saveShortcuts();
-
 	_listservers->saveServers();
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
