@@ -133,6 +133,22 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 	return formats;
 }
 
+bool isWritableFormat(const QString &filename)
+{
+	const int dot = filename.lastIndexOf('.');
+	if(dot<0)
+		return false;
+	const QByteArray suffix = filename.mid(dot+1).toUtf8();
+
+	QList<QPair<QString,QByteArray>> formats = writableImageFormats();
+	for(const QPair<QString,QByteArray> &fmt : writableImageFormats()) {
+		if(fmt.second == suffix) 
+			return true;
+	}
+
+	return false;
+}
+
 }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
@@ -146,6 +162,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	mainwinlayout->setContentsMargins(0, 0, 0 ,0);
 	mainwinlayout->setSpacing(0);
 	setCentralWidget(centralwidget);
+
+	// Autosaving
+	_autosaveTimer = new QTimer(this);
+	_autosaveTimer->setSingleShot(true);
+	connect(_autosaveTimer, &QTimer::timeout, this, &MainWindow::autosaveNow);
 
 	updateTitle();
 
@@ -251,7 +272,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setFocus);
 	connect(_canvas, SIGNAL(layerAutoselectRequest(int)), _dock_layers, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
-	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
+	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() {
+			setWindowModified(true);
+			if(_autosave->isChecked())
+				autosave();
+			});
 	connect(_canvas, &drawingboard::CanvasScene::selectionRemoved, this, &MainWindow::selectionRemoved);
 	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
 		if(bg)
@@ -439,6 +464,9 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	QApplication::restoreOverrideCursor();
 
 	_current_filename = loader.filename();
+	_autosave->setChecked(false);
+	_autosave->setEnabled(isWritableFormat(_current_filename));
+
 	setWindowModified(false);
 	updateTitle();
 	_currentdoctools->setEnabled(true);
@@ -465,6 +493,8 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	_canvas->statetracker()->setShowAllUserMarkers(true);
 
 	_current_filename = QString();
+	_autosave->setChecked(false);
+	_autosave->setEnabled(false);
 	setWindowModified(false);
 	updateTitle();
 	_currentdoctools->setEnabled(true);
@@ -897,46 +927,56 @@ bool MainWindow::confirmFlatten(QString& file) const
 	return true;
 }
 
+void MainWindow::autosave()
+{
+	if(!_autosaveTimer->isActive()) {
+		int autosaveInterval = qMax(0, QSettings().value("settings/autosave", 5000).toInt());
+		_autosaveTimer->start(autosaveInterval);
+	}
+}
+
+void MainWindow::autosaveNow()
+{
+	if(!isWindowModified() || !_autosave->isChecked())
+		return;
+	Q_ASSERT(isWritableFormat(_current_filename));
+
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	bool saved = _canvas->save(_current_filename);
+	QApplication::restoreOverrideCursor();
+	if(saved)
+		setWindowModified(false);
+	else
+		qWarning("Error autosaving");
+}
+
 /**
  * If no file name has been selected, \a saveas is called.
  */
 bool MainWindow::save()
 {
-	if(_current_filename.isEmpty()) {
+	if(_current_filename.isEmpty())
 		return saveas();
-	} else {
-		QByteArray suffix = QFileInfo(_current_filename).suffix().toLower().toUtf8();
 
-		// Check if suffix is one of the supported formats
-		// If not, we need to ask for a new file name
-		bool isSupported = false;
-		for(const QPair<QString,QByteArray> &fmt : writableImageFormats()) {
-			if(fmt.second == suffix) {
-				isSupported = true;
-				break;
-			}
-		}
-		if(!isSupported)
-			return saveas();
+	if(!isWritableFormat(_current_filename))
+		return saveas();
 
-		// Check if features that need OpenRaster format are used
-		if(suffix != "ora" && _canvas->needSaveOra()) {
-			if(confirmFlatten(_current_filename)==false)
-				return false;
-		}
-
-		// Overwrite current file
-		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		bool saved = _canvas->save(_current_filename);
-		QApplication::restoreOverrideCursor();
-		if(!saved) {
-			showErrorMessage(tr("Couldn't save image"));
+	if(!_current_filename.endsWith("ora", Qt::CaseInsensitive) && _canvas->needSaveOra()) {
+		if(confirmFlatten(_current_filename)==false)
 			return false;
-		} else {
-			setWindowModified(false);
-			addRecentFile(_current_filename);
-			return true;
-		}
+	}
+
+	// Overwrite current file
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	bool saved = _canvas->save(_current_filename);
+	QApplication::restoreOverrideCursor();
+	if(!saved) {
+		showErrorMessage(tr("Couldn't save image"));
+		return false;
+	} else {
+		setWindowModified(false);
+		addRecentFile(_current_filename);
+		return true;
 	}
 }
 
@@ -993,6 +1033,7 @@ bool MainWindow::saveas()
 			return false;
 		} else {
 			_current_filename = file;
+			_autosave->setEnabled(true);
 			setWindowModified(false);
 			updateTitle();
 			return true;
@@ -1064,6 +1105,12 @@ void MainWindow::toggleRecording()
 	if(!file.isEmpty()) {
 		startRecorder(file);
 	}
+}
+
+void MainWindow::toggleAutosave(bool enable)
+{
+	if(enable && isWindowModified())
+		autosave();
 }
 
 void MainWindow::startRecorder(const QString &filename)
@@ -1884,6 +1931,8 @@ void MainWindow::setupActions()
 #endif
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), QString(), QKeySequence::SaveAs);
+	_autosave = makeAction("autosave", 0, tr("Autosave"), QString(), QKeySequence(), true);
+	_autosave->setEnabled(false);
 	QAction *exportAnimation = makeAction("exportanim", 0, tr("&Animation..."));
 
 	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
@@ -1902,6 +1951,7 @@ void MainWindow::setupActions()
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(_autosave, &QAction::triggered, this, &MainWindow::toggleAutosave);
 	connect(exportAnimation, SIGNAL(triggered()), this, SLOT(exportAnimation()));
 	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
 #ifdef Q_OS_MAC
@@ -1922,6 +1972,7 @@ void MainWindow::setupActions()
 #endif
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
+	filemenu->addAction(_autosave);
 	filemenu->addSeparator();
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));

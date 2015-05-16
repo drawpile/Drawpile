@@ -143,6 +143,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			}
 		}
 	}
+
+	_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
+
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
@@ -244,6 +247,7 @@ void SettingsDialog::rememberSettings()
 
 	// Remember general settings
 	cfg.setValue("settings/language", _ui->languageBox->itemData(_ui->languageBox->currentIndex()));
+	cfg.setValue("settings/autosave", _ui->autosaveInterval->value() * 1000);
 
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());

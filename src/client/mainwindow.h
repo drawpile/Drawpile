@@ -120,6 +120,9 @@ class MainWindow : public QMainWindow {
 
 	private slots:
 		void toggleRecording();
+		void toggleAutosave(bool enable);
+		void autosave();
+		void autosaveNow();
 
 		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);
@@ -233,6 +236,7 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
 		QActionGroup *_toolslotactions; // tool slot selection
+		QAction *_autosave;
 
 		int _lastToolBeforePaste; // Last selected tool before Paste was used
 
@@ -242,6 +246,8 @@ class MainWindow : public QMainWindow {
 
 		QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
 		ShortcutDetector *_tempToolSwitchShortcut;
+
+		QTimer *_autosaveTimer;
 };
 
 #endif
