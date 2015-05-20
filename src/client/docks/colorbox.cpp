@@ -117,9 +117,17 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	connect(_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
 	connect(_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
 
+	connect(_ui->huebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+	connect(_ui->saturationbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+	connect(_ui->valuebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+
 	connect(_ui->red, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
 	connect(_ui->green, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
 	connect(_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
+
+	connect(_ui->redbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
 
 	//
 	// Color wheel tab
@@ -216,26 +224,33 @@ void ColorBox::setColor(const QColor& color)
 	_ui->red->setFirstColor(QColor(0, color.green(), color.blue()));
 	_ui->red->setLastColor(QColor(255, color.green(), color.blue()));
 	_ui->red->setValue(color.red());
+	_ui->redbox->setValue(color.red());
 
 	_ui->green->setFirstColor(QColor(color.red(), 0, color.blue()));
 	_ui->green->setLastColor(QColor(color.red(), 255, color.blue()));
 	_ui->green->setValue(color.green());
+	_ui->greenbox->setValue(color.green());
 
 	_ui->blue->setFirstColor(QColor(color.red(), color.green(), 0));
 	_ui->blue->setLastColor(QColor(color.red(), color.green(), 255));
 	_ui->blue->setValue(color.blue());
+	_ui->bluebox->setValue(color.blue());
+
 
 	_ui->hue->setColorSaturation(color.saturationF());
 	_ui->hue->setColorValue(color.valueF());
 	_ui->hue->setValue(color.hue());
+	_ui->huebox->setValue(color.hue());
 
 	_ui->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
 	_ui->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
 	_ui->saturation->setValue(color.saturation());
+	_ui->saturationbox->setValue(color.saturation());
 
 	_ui->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
 	_ui->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
 	_ui->value->setValue(color.value());
+	_ui->valuebox->setValue(color.value());
 
 	_ui->colorwheel->setColor(color);
 	_updating = false;
@@ -251,10 +266,29 @@ void ColorBox::updateFromRgbSliders()
 	}
 }
 
+void ColorBox::updateFromRgbSpinbox()
+{
+	if(!_updating) {
+		QColor color(_ui->redbox->value(), _ui->greenbox->value(), _ui->bluebox->value());
+		setColor(color);
+		emit colorChanged(color);
+	}
+}
+
 void ColorBox::updateFromHsvSliders()
 {
 	if(!_updating) {
 		QColor color = QColor::fromHsv(_ui->hue->value(), _ui->saturation->value(), _ui->value->value());
+
+		setColor(color);
+		emit colorChanged(color);
+	}
+}
+
+void ColorBox::updateFromHsvSpinbox()
+{
+	if(!_updating) {
+		QColor color = QColor::fromHsv(_ui->huebox->value(), _ui->saturationbox->value(), _ui->valuebox->value());
 
 		setColor(color);
 		emit colorChanged(color);
