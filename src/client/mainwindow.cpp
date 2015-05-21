@@ -39,9 +39,9 @@
 #include <QFile>
 #include <QWindow>
 #include <QVBoxLayout>
+#include <QTimer>
 
 #ifndef NDEBUG
-#include <QTimer>
 #include "core/tile.h"
 #endif
 
