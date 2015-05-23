@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.0" language="cs_CZ">
 <context>
     <name>BrushSettings</name>
     <message>
@@ -26,7 +26,7 @@
     <message>
         <location filename="../ui/brushsettings.ui" line="85"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepřímé kreslení</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="182"/>
@@ -231,17 +231,17 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="113"/>
         <source>Action</source>
-        <translation type="unfinished">Činnost</translation>
+        <translation>Činnost</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="114"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Klávesová zkratka</translation>
+        <translation>Klávesová zkratka</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="115"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
 </context>
 <context>
@@ -284,12 +284,12 @@
     <message>
         <location filename="../ui/erasersettings.ui" line="96"/>
         <source>Smooth edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Jemný okraj</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="157"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepřímé kreslení</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="336"/>
@@ -345,7 +345,7 @@
     <message>
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit méně než</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="89"/>
@@ -451,22 +451,22 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="102"/>
         <source>&amp;ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ID:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="128"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámit sezení ve veřejném seznamu</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="131"/>
         <source>Announce at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámit v:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="161"/>
         <source>&amp;User limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uživatelské omezení:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="238"/>
@@ -476,12 +476,12 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="247"/>
         <source>Bui&amp;lt-in</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vestavěný</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="257"/>
         <source>Re&amp;mote:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vz&amp;dálený:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="227"/>
@@ -496,17 +496,17 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="121"/>
         <source>Automatic</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="152"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="190"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="220"/>
@@ -600,12 +600,12 @@
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="74"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit bod</translation>
     </message>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="75"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit znovu</translation>
     </message>
 </context>
 <context>
@@ -667,7 +667,7 @@
     <message>
         <location filename="../widgets/macmenu.cpp" line="84"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmenšit</translation>
     </message>
     <message numerus="yes">
         <location filename="../widgets/macmenu.cpp" line="208"/>
@@ -910,22 +910,22 @@
     <message>
         <location filename="../mainwindow.cpp" line="1938"/>
         <source>Expand &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;nahoru</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1939"/>
         <source>Expand &amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;dolů</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1940"/>
         <source>Expand &amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;vlevo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1941"/>
         <source>Expand &amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit v&amp;pravo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1943"/>
@@ -955,7 +955,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2003"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozbalit plátno</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2030"/>
@@ -975,32 +975,32 @@
     <message>
         <location filename="../mainwindow.cpp" line="2046"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrcadlit</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2047"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Převrátit</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2050"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat laserová &amp;ukazovátka uživatele</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2051"/>
         <source>Show User &amp;Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat &amp;vrstvy uživatele</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2052"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat &amp;laserové stopy</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2053"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat pixelovou &amp;mřížku</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2120"/>
@@ -1073,12 +1073,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="2193"/>
         <source>&amp;Watercolor</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vodová barva</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2193"/>
         <source>A brush that picks up color from the layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Štětec, který sebere barvy z vrstvy</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2198"/>
@@ -1175,7 +1175,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1750"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Společný kreslicí program.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1860"/>
@@ -1407,17 +1407,17 @@
     <message>
         <location filename="../mainwindow.cpp" line="2203"/>
         <source>&amp;Select (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vybrat (obdélníkový)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2204"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vybrat (nepravidelně tvarovaný)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2204"/>
         <source>Select a free-form area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat nepravidelně tvarovanou oblast ke zkopírování</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2205"/>
@@ -1466,7 +1466,7 @@
     <message>
         <location filename="../widgets/macmenu.cpp" line="80"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno</translation>
     </message>
 </context>
 <context>
@@ -1528,7 +1528,7 @@
     <message>
         <location filename="../ui/pensettings.ui" line="85"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepřímé kreslení</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="105"/>
@@ -1752,7 +1752,7 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="60"/>
         <source>%1h %2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 h %2 m</translation>
     </message>
 </context>
 <context>
@@ -1816,22 +1816,22 @@
     <message>
         <location filename="../ui/selectsettings.ui" line="38"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Převrátit</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="50"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrcadlit</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="74"/>
         <source>Fit to screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Přizpůsobit obrazovce</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="81"/>
         <source>Reset size</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit velikost znovu</translation>
     </message>
 </context>
 <context>
@@ -1839,12 +1839,12 @@
     <message>
         <location filename="../ui/sessionlisting.ui" line="14"/>
         <source>Public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Veřejná sezení</translation>
     </message>
     <message>
         <location filename="../ui/sessionlisting.ui" line="25"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>Najít</translation>
     </message>
 </context>
 <context>
@@ -1882,87 +1882,87 @@
     <message>
         <location filename="../ui/settings.ui" line="343"/>
         <source>Session history:</source>
-        <translation>Historie sezení</translation>
+        <translation>Historie sezení:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="39"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelské rozhraní</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="48"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="58"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation>Destička (tablet)</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="65"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit tlakovou citlivost</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="75"/>
         <source>Notification volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlasitost oznámení:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="115"/>
         <source>Chat</source>
-        <translation type="unfinished">Rozhovor</translation>
+        <translation>Rozhovor</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="122"/>
         <source>Recording marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Značka záznamu</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="129"/>
         <source>User login and logout</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlášení a odhlášení uživatele</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="136"/>
         <source>Canvas lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Zámek plátna</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="143"/>
         <source>Checking this may fix jaggy line and offset bugs on some tablets</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="146"/>
         <source>Enable bug workarounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit ošetření chyb</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="167"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="173"/>
         <source>Record pauses</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam pozastaven</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="206"/>
         <source>Minimum:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nejméně:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="282"/>
         <source>Default folder:</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí složka:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="329"/>
         <source>Default server port:</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí serverová přípojka:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="372"/>
@@ -1982,22 +1982,22 @@
     <message>
         <location filename="../ui/settings.ui" line="402"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="420"/>
         <source>Known Hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Známí hostitelé</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="485"/>
         <source>List Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Vypsat servery</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="516"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="438"/>
@@ -2031,12 +2031,12 @@
     <message>
         <location filename="../ui/simplesettings.ui" line="96"/>
         <source>Smooth edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Jemný okraj</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="163"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepřímé kreslení</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="216"/>
@@ -2069,57 +2069,57 @@
     <message>
         <location filename="../ui/smudgesettings.ui" line="114"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="127"/>
         <source>Spacing:</source>
-        <translation type="unfinished">Rozteč:</translation>
+        <translation>Rozteč:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="134"/>
         <source>Pressure:</source>
-        <translation type="unfinished">Tlak:</translation>
+        <translation>Tlak:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="141"/>
         <source>Hardness:</source>
-        <translation type="unfinished">Tvrdost:</translation>
+        <translation>Tvrdost:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="174"/>
         <source>Size:</source>
-        <translation type="unfinished">Velikost:</translation>
+        <translation>Velikost:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="181"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Neprůhlednost:</translation>
+        <translation>Neprůhlednost:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="218"/>
         <source>Opacity</source>
-        <translation type="unfinished">Neprůhlednost</translation>
+        <translation>Neprůhlednost</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="225"/>
         <source>Size</source>
-        <translation type="unfinished">Velikost</translation>
+        <translation>Velikost</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="232"/>
         <source>Hardness</source>
-        <translation type="unfinished">Tvrdost</translation>
+        <translation>Tvrdost</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="239"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmazání</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="248"/>
         <source>Smudging:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmazání:</translation>
     </message>
 </context>
 <context>
@@ -2442,7 +2442,7 @@
     <message>
         <location filename="../dialogs/joindialog.cpp" line="40"/>
         <source>Find...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat...</translation>
     </message>
 </context>
 <context>
@@ -2614,18 +2614,18 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="96"/>
         <source>Recording folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Složka pro záznam</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="105"/>
         <source>off</source>
         <comment>notifications sounds</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vypnuto</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="122"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="369"/>
@@ -2654,12 +2654,12 @@
         <location filename="../dialogs/settingsdialog.cpp" line="402"/>
         <location filename="../dialogs/settingsdialog.cpp" line="411"/>
         <source>Add public listing server</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat server z veřejného seznamu</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="402"/>
         <source>Invalid URL!</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná adresa (URL)!</translation>
     </message>
 </context>
 <context>
@@ -2723,12 +2723,12 @@
     <message>
         <location filename="../docks/colorbox.cpp" line="92"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="93"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdvojit</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="94"/>
@@ -2739,7 +2739,7 @@
     <message>
         <location filename="../docks/colorbox.cpp" line="96"/>
         <source>Write Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Ochrana zápisu</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="213"/>
@@ -2806,27 +2806,27 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="81"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="82"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdvojit</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="87"/>
         <source>Normal</source>
-        <translation type="unfinished">Normální</translation>
+        <translation>Normální</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="90"/>
         <source>Solo</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="271"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Režim:</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="286"/>
@@ -2877,7 +2877,7 @@
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="92"/>
         <source>Watercolor</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodová barva</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="95"/>
@@ -2897,12 +2897,12 @@
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="116"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr (obdélníkový)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="119"/>
         <source>Selection (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>Výběr (nepravidelně tvarovaný)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="130"/>
@@ -3118,7 +3118,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="79"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Neslučitelná verze</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="100"/>
@@ -3256,27 +3256,27 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="69"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(Bez názvu)</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="98"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="99"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>Uživatelé</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="100"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastník</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="101"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Věk</translation>
     </message>
 </context>
 <context>
