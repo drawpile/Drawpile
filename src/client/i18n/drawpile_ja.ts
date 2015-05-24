@@ -26,7 +26,7 @@
     <message>
         <location filename="../ui/brushsettings.ui" line="85"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="182"/>
@@ -289,7 +289,7 @@
     <message>
         <location filename="../ui/erasersettings.ui" line="157"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="336"/>
@@ -358,7 +358,7 @@
     <message>
         <location filename="../ui/recfilter.ui" line="14"/>
         <source>Filter recording</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション記録をフィルタリング</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="22"/>
@@ -398,7 +398,7 @@
     <message>
         <location filename="../ui/recfilter.ui" line="79"/>
         <source>Flagged actions</source>
-        <translation type="unfinished"></translation>
+        <translation>フラグを付けたアクション</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="102"/>
@@ -408,7 +408,7 @@
     <message>
         <location filename="../ui/recfilter.ui" line="111"/>
         <source>Add new markers</source>
-        <translation>新しいマーカーを追加</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="118"/>
@@ -456,17 +456,17 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="128"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションを公開リストで告知</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="131"/>
         <source>Announce at:</source>
-        <translation type="unfinished"></translation>
+        <translation>告知:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="161"/>
         <source>&amp;User limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー数を制限(&amp;U):</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="238"/>
@@ -486,12 +486,12 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="227"/>
         <source>Preserve chat</source>
-        <translation type="unfinished"></translation>
+        <translation>チャットを保存</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="217"/>
         <source>A persistent session can be joined even after all users have left</source>
-        <translation type="unfinished"></translation>
+        <translation>永続セッションは、全ユーザーが退出しても終了しません</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="121"/>
@@ -511,7 +511,7 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="220"/>
         <source>Persistent session</source>
-        <translation type="unfinished"></translation>
+        <translation>永続セッション</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="17"/>
@@ -592,7 +592,7 @@
     <message>
         <location filename="../ui/joindialog.ui" line="88"/>
         <source>Record session</source>
-        <translation>セッションを録画</translation>
+        <translation>セッションを記録</translation>
     </message>
 </context>
 <context>
@@ -747,17 +747,17 @@
         <location filename="../mainwindow.cpp" line="839"/>
         <location filename="../mainwindow.cpp" line="1034"/>
         <source>Recordings (%1)</source>
-        <translation>記録 (%1)</translation>
+        <translation>セッション記録 (%1)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="873"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したフォーマットは、レイヤーまたは注釈をサポートしていません。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="875"/>
         <source>Flatten</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを統合</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="876"/>
@@ -783,7 +783,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1206"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1208"/>
@@ -813,7 +813,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1367"/>
         <source>Board is locked</source>
-        <translation>ボードはロック中です</translation>
+        <translation>ドローイングボードはロック中です</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1602"/>
@@ -973,12 +973,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="2046"/>
         <source>Mirror</source>
-        <translation>ミラー</translation>
+        <translation>左右反転</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2047"/>
         <source>Flip</source>
-        <translation>フリップ</translation>
+        <translation>上下反転</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2050"/>
@@ -1076,7 +1076,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2193"/>
         <source>A brush that picks up color from the layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー上の色の影響を受けるブラシ</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2198"/>
@@ -1133,7 +1133,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1035"/>
         <source>Compressed Recordings (%1)</source>
-        <translation>圧縮された記録 (%1)</translation>
+        <translation>圧縮されたセッション記録 (%1)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1038"/>
@@ -1143,7 +1143,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1079"/>
         <source>Stop Recording</source>
-        <translation>記録を停止</translation>
+        <translation>セッションの記録を停止</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1143"/>
@@ -1173,7 +1173,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1750"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1860"/>
@@ -1214,7 +1214,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1927"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>空の注釈を削除</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1928"/>
@@ -1225,7 +1225,7 @@
         <location filename="../mainwindow.cpp" line="1929"/>
         <location filename="../widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>設定(&amp;N)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1931"/>
@@ -1285,7 +1285,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2049"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>注釈を表示(&amp;A)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2061"/>
@@ -1295,7 +1295,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2158"/>
         <source>Lo&amp;ck the Board</source>
-        <translation>ボードをロック(&amp;C)</translation>
+        <translation>ドローイングボードをロック(&amp;C)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2159"/>
@@ -1315,7 +1315,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2191"/>
         <source>Draw with hard edged strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>エッジのくっきりしたストロークで描画</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2192"/>
@@ -1385,7 +1385,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2199"/>
         <source>&amp;Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>注釈(&amp;A)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2199"/>
@@ -1526,7 +1526,7 @@
     <message>
         <location filename="../ui/pensettings.ui" line="85"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="105"/>
@@ -1691,7 +1691,7 @@
     <message>
         <location filename="../ui/playback.ui" line="656"/>
         <source>Export Video...</source>
-        <translation>動画をエクスポート...</translation>
+        <translation>動画にエクスポート...</translation>
     </message>
 </context>
 <context>
@@ -1717,7 +1717,7 @@
         <location filename="../loader.cpp" line="67"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation>Drawpile は OpenRaster ファイルのすべての機能をサポートしていません。保存時にデータの損失が発生する場合があります。
+        <translation>Drawpile はこの OpenRaster ファイルで使用されている機能を一部サポートしていません。保存時にデータの損失が発生する場合があります。
 </translation>
     </message>
     <message>
@@ -1815,12 +1815,12 @@
     <message>
         <location filename="../ui/selectsettings.ui" line="38"/>
         <source>Flip</source>
-        <translation>フリップ</translation>
+        <translation>上下反転</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="50"/>
         <source>Mirror</source>
-        <translation>ミラー</translation>
+        <translation>左右反転</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="74"/>
@@ -1851,7 +1851,7 @@
     <message>
         <location filename="../ui/settings.ui" line="14"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>設定</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="257"/>
@@ -1916,7 +1916,7 @@
     <message>
         <location filename="../ui/settings.ui" line="122"/>
         <source>Recording marker</source>
-        <translation>記録マーカー</translation>
+        <translation>セッション記録マーカー</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="129"/>
@@ -1941,7 +1941,7 @@
     <message>
         <location filename="../ui/settings.ui" line="167"/>
         <source>Recording</source>
-        <translation>記録</translation>
+        <translation>セッション記録</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="173"/>
@@ -1986,7 +1986,7 @@
     <message>
         <location filename="../ui/settings.ui" line="420"/>
         <source>Known Hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>既知のホスト</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="485"/>
@@ -2020,7 +2020,7 @@
     <message>
         <location filename="../ui/simplesettings.ui" line="183"/>
         <source>Incremental drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>インクリメンタル描画</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="116"/>
@@ -2035,7 +2035,7 @@
     <message>
         <location filename="../ui/simplesettings.ui" line="163"/>
         <source>Indirect drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="216"/>
@@ -2186,7 +2186,7 @@
     <message>
         <location filename="../ui/textsettings.ui" line="320"/>
         <source>Delete this annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>この注釈を削除</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="323"/>
@@ -2227,12 +2227,12 @@
     <message>
         <location filename="../ui/userbox.ui" line="37"/>
         <source>Undo changes by selected user</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したユーザーによる変更を取り消す</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="51"/>
         <source>Redo changes by selected user</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したユーザーによる変更をやり直す</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="84"/>
@@ -2247,7 +2247,7 @@
     <message>
         <location filename="../ui/userbox.ui" line="118"/>
         <source>Kick selected user</source>
-        <translation>選択したユーザーを強制退出</translation>
+        <translation>選択したユーザーをキック</translation>
     </message>
 </context>
 <context>
@@ -2255,7 +2255,7 @@
     <message>
         <location filename="../ui/videoexport.ui" line="14"/>
         <source>Export video</source>
-        <translation>動画をエクスポート</translation>
+        <translation>動画にエクスポート</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="22"/>
@@ -2410,12 +2410,12 @@
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="66"/>
         <source>Recordings (%1)</source>
-        <translation>記録 (%1)</translation>
+        <translation>セッション記録 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="67"/>
         <source>Compressed recordings (%1)</source>
-        <translation>圧縮された記録 (%1)</translation>
+        <translation>圧縮されたセッション記録 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="97"/>
@@ -2483,7 +2483,7 @@
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="76"/>
         <source>Compressed recording</source>
-        <translation>圧縮された記録</translation>
+        <translation>セッション記録を圧縮しました</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="499"/>
@@ -2498,17 +2498,17 @@
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="519"/>
         <source>Recording ended</source>
-        <translation>記録を終了しました</translation>
+        <translation>セッションの記録を終了しました</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="594"/>
         <source>%1 m. %2 s.</source>
-        <translation>%1 分 %2 秒。</translation>
+        <translation>%1 分 %2 秒</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="596"/>
         <source>%1 s.</source>
-        <translation>%1 秒。</translation>
+        <translation>%1 秒</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="618"/>
@@ -2528,7 +2528,7 @@
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="656"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション記録に互換性がありません。このセッション記録は Drawpile バージョン %1 で作成されました。</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="660"/>
@@ -2544,17 +2544,17 @@
         <location filename="../dialogs/playbackdialog.cpp" line="671"/>
         <location filename="../dialogs/playbackdialog.cpp" line="674"/>
         <source>Open Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション記録を開く</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="719"/>
         <source>Jump To</source>
-        <translation type="unfinished"></translation>
+        <translation>ジャンプ</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="694"/>
         <source>Cannot index compressed recordings.</source>
-        <translation>圧縮された記録をインデクシングできません。</translation>
+        <translation>圧縮されたセッション記録をインデクシングできません。</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="701"/>
@@ -2769,7 +2769,7 @@
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="37"/>
         <source>Everyone can draw</source>
-        <translation>全員編集可能</translation>
+        <translation>全員に編集を許可</translation>
     </message>
 </context>
 <context>
@@ -2931,7 +2931,7 @@
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="113"/>
         <source>Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>注釈</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="122"/>
@@ -2958,7 +2958,7 @@
     <message>
         <location filename="../net/client.cpp" line="579"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーエラーが発生しました！</translation>
     </message>
     <message>
         <location filename="../net/client.cpp" line="581"/>
@@ -2983,7 +2983,7 @@
         <location filename="../net/login.cpp" line="525"/>
         <location filename="../net/login.cpp" line="571"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のないサーバー</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="171"/>
@@ -3028,7 +3028,7 @@
     <message>
         <location filename="../net/login.cpp" line="495"/>
         <source>Session for a different Drawpile version in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>バージョンの異なる Drawpile によるセッションが実行中です！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="579"/>
@@ -3156,27 +3156,27 @@
     <message>
         <location filename="../ora/orareader.cpp" line="56"/>
         <source>No error</source>
-        <translation>Žádná chyba</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="98"/>
         <source>File is not an OpenRaster file</source>
-        <translation>Soubor není souborem OpenRaster</translation>
+        <translation>このファイルは OpenRaster ファイルではありません</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="117"/>
         <source>Image has zero size!</source>
-        <translation>Obrázek má nulovou velikost!</translation>
+        <translation>画像のサイズにゼロが指定されています！</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="187"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation>Nepodařilo se nahrát vrstvu %1</translation>
+        <translation>レイヤー %1 を読み込めませんでした</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="193"/>
         <source>Unnamed layer</source>
-        <translation>Nepojmenovaná vrstva</translation>
+        <translation>名前のないレイヤー</translation>
     </message>
 </context>
 <context>
@@ -3184,57 +3184,57 @@
     <message>
         <location filename="../core/rasterop.cpp" line="28"/>
         <source>Erase</source>
-        <translation>Vymazat</translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="34"/>
         <source>Normal</source>
-        <translation>Normální</translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="39"/>
         <source>Recolor</source>
-        <translation>Přebarvit</translation>
+        <translation>色替え</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="45"/>
         <source>Multiply</source>
-        <translation>Násobit</translation>
+        <translation>乗算</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="50"/>
         <source>Divide</source>
-        <translation>Dělit</translation>
+        <translation>除算</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="55"/>
         <source>Burn</source>
-        <translation>Vypálit</translation>
+        <translation>焼き込み</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="60"/>
         <source>Dodge</source>
-        <translation>Pozměnit světlost</translation>
+        <translation>覆い焼き</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="65"/>
         <source>Darken</source>
-        <translation>Ztmavit</translation>
+        <translation>暗くする</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="70"/>
         <source>Lighten</source>
-        <translation>Zesvětlit</translation>
+        <translation>明るくする</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="75"/>
         <source>Subtract</source>
-        <translation>Odečíst</translation>
+        <translation>減算</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="80"/>
         <source>Add</source>
-        <translation>Přidat</translation>
+        <translation>加算</translation>
     </message>
 </context>
 <context>
@@ -3242,12 +3242,12 @@
     <message>
         <location filename="../recording/indexbuilder.cpp" line="57"/>
         <source>Error opening %1 for writing</source>
-        <translation>Chyba při otevírání %1 pro zápis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../recording/indexbuilder.cpp" line="118"/>
         <source>Error writing file</source>
-        <translation>Chyba při zápisu souboru</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3299,12 +3299,12 @@
     <message>
         <location filename="../widgets/brushpreview.cpp" line="48"/>
         <source>Change Foreground Color</source>
-        <translation>Změnit barvu popředí</translation>
+        <translation>前景色を変更</translation>
     </message>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="49"/>
         <source>Change Background Color</source>
-        <translation>Změnit barvu pozadí</translation>
+        <translation>背景色を変更</translation>
     </message>
 </context>
 <context>
@@ -3312,32 +3312,32 @@
     <message>
         <location filename="../widgets/chatwidget.cpp" line="75"/>
         <source>Chat (recorded)...</source>
-        <translation>Rozhovor (zaznamenáno)...</translation>
+        <translation>チャット (記録)...</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="78"/>
         <source>Chat...</source>
-        <translation>Rozhovor...</translation>
+        <translation>チャット...</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="111"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined the session</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; se připojil k sezení</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; がセッションに参加しました</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="117"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left the session</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; opustil sezení</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; がセッションから退出しました</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="123"/>
         <source>You have been kicked by %1</source>
-        <translation>Byl jste vykopnut %1</translation>
+        <translation>あなたは %1 にキックされました</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="206"/>
         <source>Invalid dice roll description: %1</source>
-        <translation>Neplatný popis kutálení kostky: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3354,89 +3354,89 @@
         <location filename="../widgets/netstatus.cpp" line="83"/>
         <location filename="../widgets/netstatus.cpp" line="220"/>
         <source>not connected</source>
-        <translation>Nepřipojeno</translation>
+        <translation>未接続</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="92"/>
         <source>Copy address to clipboard</source>
-        <translation>Kopírovat adresu do schránky</translation>
+        <translation>アドレスをクリップボードにコピー</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="98"/>
         <source>Copy session URL to clipboard</source>
-        <translation>Kopírovat adresu sezení (URL) do schránky</translation>
+        <translation>セッション URL をクリップボードにコピー</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="104"/>
         <source>Get externally visible IP address</source>
-        <translation>Získat z vnějšku viditelnou adresu IP</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="115"/>
         <source>Statistics</source>
-        <translation>Statistika</translation>
+        <translation>状態</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="127"/>
         <source>Show certificate</source>
-        <translation>Ukázat osvědčení</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="150"/>
         <source>Connecting to %1...</source>
-        <translation>Připojuje se k %1...</translation>
+        <translation>%1 に接続中...</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="168"/>
         <location filename="../widgets/netstatus.cpp" line="341"/>
         <source>Host: %1</source>
-        <translation>Server: %1</translation>
+        <translation>ホスト: %1</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="169"/>
         <source>Logged in!</source>
-        <translation>Přihlášen!</translation>
+        <translation>ログインしました！</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="182"/>
         <source>A previously unvisited host</source>
-        <translation>Předtím nenavštívený server</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="187"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation>Osvědčení serveru se od poslední návštěny nezměnilo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="192"/>
         <source>This is a trusted host</source>
-        <translation>Toto je důvěryhodný server</translation>
+        <translation>信頼したホストです</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="209"/>
         <location filename="../widgets/netstatus.cpp" line="210"/>
         <source>Logging out...</source>
-        <translation>Odhlašuje se...</translation>
+        <translation>ログアウト中...</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="226"/>
         <source>Disconnected</source>
-        <translation>Odpojen</translation>
+        <translation>切断しました</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="359"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; se připojil</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; が参加しました</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="364"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; odešel</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; が退出しました</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="369"/>
         <source>You have been kicked by %1</source>
-        <translation>Byl jste vykopnut %1</translation>
+        <translation>あなたは %1 にキックされました</translation>
     </message>
 </context>
 <context>
@@ -3444,22 +3444,22 @@
     <message>
         <location filename="../widgets/palettewidget.cpp" line="50"/>
         <source>Add</source>
-        <translation>Přidat</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="51"/>
         <source>Modify</source>
-        <translation>Změnit</translation>
+        <translation>変更</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="52"/>
         <source>Remove</source>
-        <translation>Odstranit</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="58"/>
         <source>Set palette color</source>
-        <translation>Nastavit barvu palety</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="253"/>
@@ -3469,10 +3469,10 @@ Green: %3
 Blue: %4
 Hex: %5</source>
         <translation>%1
-Červená: %2
-Zelená: %3
-Modrá: %4
-Hex: %5</translation>
+赤: %2
+緑: %3
+青: %4
+16 進数: %5</translation>
     </message>
 </context>
 <context>
