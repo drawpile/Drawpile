@@ -196,6 +196,8 @@ private:
 	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;
 	int _eraserOverride;
+	bool _eraserActive;
+
 	QList<tools::ToolsetProperties> _toolprops;
 
 	tools::Type _previousTool;

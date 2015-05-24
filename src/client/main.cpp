@@ -77,9 +77,17 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 		if(te->pointerType()==QTabletEvent::Eraser)
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
-
+#else
+		if(e->type() == QEvent::TabletEnterProximity) {
+			if(te->pointerType()==QTabletEvent::Eraser)
+				emit eraserNear(true);
+			else
+				emit eraserNear(false);
+		}
+#endif
 		return true;
 
 	} else if(e->type() == QEvent::FileOpen) {
