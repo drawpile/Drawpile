@@ -370,7 +370,7 @@
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
         <translatorcomment>Unsure: Does &quot;fill under&quot; mean something like &quot;fill transparent areas&quot; like in the bucket fill tool in gimp?</translatorcomment>
-        <translation type="unfinished">Transparente Bereiche füllen</translation>
+        <translation type="unfinished">Unterhalb füllen</translation>
     </message>
 </context>
 <context>
@@ -403,7 +403,7 @@
     <message>
         <location filename="../ui/recfilter.ui" line="49"/>
         <source>Markers</source>
-        <translation>Marker</translation>
+        <translation>Markierungen</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="56"/>
@@ -489,7 +489,7 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="17"/>
         <source>Host a Session</source>
-        <translation>Sitzung hosten</translation>
+        <translation type="unfinished">Sitzung bereitstellen</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="92"/>
@@ -524,12 +524,12 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="247"/>
         <source>Bui&amp;lt-in</source>
-        <translation>I&amp;nterner Server</translation>
+        <translation>I&amp;ntern</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="257"/>
         <source>Re&amp;mote:</source>
-        <translation>E&amp;xterner Server:</translation>
+        <translation>E&amp;xtern:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="227"/>
@@ -625,7 +625,7 @@
     <message>
         <location filename="../ui/joindialog.ui" line="28"/>
         <source>&amp;Host address:</source>
-        <translation>&amp;Host Adresse:</translation>
+        <translation type="unfinished">&amp;Host Adresse:</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="54"/>
@@ -857,7 +857,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1442"/>
         <source>Board is locked</source>
-        <translation>Das Board ist gesperrt</translation>
+        <translation>Das Zeichenbrett ist gesperrt</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1688"/>
@@ -961,7 +961,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2010"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Einfügen</translation>
+        <translation>E&amp;infügen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2018"/>
@@ -1113,7 +1113,7 @@
         <location filename="../mainwindow.cpp" line="2248"/>
         <location filename="../widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
-        <translation>&amp;Host...</translation>
+        <translation type="unfinished">&amp;Bereitstellen...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2248"/>
@@ -1144,7 +1144,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2253"/>
         <source>Prevent changes to the drawing board</source>
-        <translation>Veränderungen an der Zeichenebene verhindern</translation>
+        <translation>Veränderungen am Zeichenbrett verhindern</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2254"/>
@@ -1198,6 +1198,11 @@
         <translation>Pinsel ver&amp;größern</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="2339"/>
+        <source>Drawing tools</source>
+        <translation>Zeichenwerkzeuge</translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="2398"/>
         <source>Select Layer Above</source>
         <translation>Darüberliegende Ebene auswählen</translation>
@@ -1232,7 +1237,7 @@
         <location filename="../mainwindow.cpp" line="917"/>
         <location filename="../mainwindow.cpp" line="1004"/>
         <source>Save Image</source>
-        <translation>Tallenna kuva</translation>
+        <translation>Zeichnung speichern</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1104"/>
@@ -1252,7 +1257,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1218"/>
         <source>Host Session</source>
-        <translation>Sitzung hosten</translation>
+        <translation type="unfinished">Sitzung bereitstellen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1303"/>
@@ -1267,7 +1272,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1672"/>
         <source>Paste Image</source>
-        <translation>Zeichnung einfügen</translation>
+        <translation type="unfinished">Bild einfügen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1815"/>
@@ -1288,7 +1293,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1990"/>
         <source>File Tools</source>
-        <translation>Datei Werkzeuge</translation>
+        <translation>Dateiwerkzeuge</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2007"/>
@@ -1344,7 +1349,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2102"/>
         <source>Edit Tools</source>
-        <translation>Werkzeuge</translation>
+        <translation>Bearbeitungswerkzeuge</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2125"/>
@@ -1379,7 +1384,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2253"/>
         <source>Lo&amp;ck the Board</source>
-        <translation>Board &amp;sperren</translation>
+        <translation>Zeichenbrett &amp;sperren</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2254"/>
@@ -2134,7 +2139,8 @@
     <message>
         <location filename="../ui/settings.ui" line="514"/>
         <source>Known Hosts</source>
-        <translation>Bekannte Hosts</translation>
+        <translatorcomment>Would server be better than hosts in this context?</translatorcomment>
+        <translation type="unfinished">Bekannte Hosts</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="579"/>
@@ -2606,7 +2612,8 @@
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="46"/>
         <source>Host</source>
-        <translation>Host</translation>
+        <translatorcomment>Evtl. auch Hosten, Los oder Start?</translatorcomment>
+        <translation type="unfinished">Bereitstellen</translation>
     </message>
 </context>
 <context>
@@ -2975,8 +2982,7 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="69"/>
         <source>Hide from self</source>
-        <translatorcomment>Sounds a bit strange. Where does it appear?</translatorcomment>
-        <translation type="unfinished">Verbergen</translation>
+        <translation type="unfinished">Verbergen (nur lokal)</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="71"/>
@@ -3025,7 +3031,7 @@
         <location filename="../docks/layerlistdock.cpp" line="384"/>
         <source>Merge down</source>
         <translatorcomment>Does this merge with one or all layers below?</translatorcomment>
-        <translation type="unfinished">Mit darunterliegenden Ebenen vereinigen</translation>
+        <translation>Mit darunterliegenden Ebenen vereinigen</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="98"/>
@@ -3194,12 +3200,13 @@
     <message>
         <location filename="../net/login.cpp" line="347"/>
         <source>Password is needed to host a session</source>
-        <translation>Es wird ein Passwort benötigt um eine Sitzung zu hosten</translation>
+        <translation type="unfinished">Es wird ein Passwort benötigt um eine Sitzung bereitstellen zu können</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="347"/>
         <source>Enter hosting password</source>
-        <translation>Hostingpasswort eingeben</translation>
+        <translatorcomment>Unsure: What does this do exactly?</translatorcomment>
+        <translation type="unfinished">Hostingpasswort eingeben</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="212"/>
