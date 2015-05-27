@@ -65,6 +65,7 @@ private slots:
 private:
 	VideoExporter *getImageSeriesExporter();
 	VideoExporter *getFfmpegExporter();
+	VideoExporter *getGifExporter();
 
 	Ui_VideoExport *_ui;
 	QString _lastpath;
