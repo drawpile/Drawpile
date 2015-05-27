@@ -6,7 +6,7 @@
     <message>
         <location filename="../export/animation.cpp" line="73"/>
         <source>Export error</source>
-        <translation>Fehler beim Export</translation>
+        <translation>Fehler beim Exportieren</translation>
     </message>
     <message>
         <location filename="../export/animation.cpp" line="82"/>
@@ -369,7 +369,7 @@
     <message>
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
-        <translatorcomment>Unsure: Does &quot;fill under&quot; mean something like &quot;fill transparent areas&quot; like in the bucket fill tool in gimp?</translatorcomment>
+        <translatorcomment>Not intuitively clear to me. Maybe adding a tooltip could help.</translatorcomment>
         <translation type="unfinished">Unterhalb füllen</translation>
     </message>
 </context>
@@ -441,7 +441,8 @@
     <message>
         <location filename="../ui/flipbook.ui" line="14"/>
         <source>Flipbook</source>
-        <translation>Flipbook</translation>
+        <translatorcomment>Does this need to be translated to german?</translatorcomment>
+        <translation type="unfinished">Daumenkino</translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="86"/>
@@ -524,7 +525,7 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="247"/>
         <source>Bui&amp;lt-in</source>
-        <translation>I&amp;ntern</translation>
+        <translation>&amp;Intern</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="257"/>
@@ -534,7 +535,7 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="227"/>
         <source>Preserve chat</source>
-        <translation>Chat speichern</translation>
+        <translation>Chat erhalten</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="217"/>
@@ -625,7 +626,8 @@
     <message>
         <location filename="../ui/joindialog.ui" line="28"/>
         <source>&amp;Host address:</source>
-        <translation type="unfinished">&amp;Host Adresse:</translation>
+        <translatorcomment>Would &quot;server address&quot; also fit the context?</translatorcomment>
+        <translation type="unfinished">&amp;Hostadresse:</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="54"/>
@@ -716,8 +718,8 @@
         <location filename="../widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Die Zeichnung enthält ungespeicherte Änderungen. Möchten Sie diese vor dem Verlassen überprüfen?</numerusform>
-            <numerusform>%n Zeichnungen enthalten ungespeicherte Änderungen. Möchten Sie diese vor dem Verlassen überprüfen?</numerusform>
+            <numerusform>Das Bild enthält ungespeicherte Änderungen. Möchten Sie diese vor dem Verlassen überprüfen?</numerusform>
+            <numerusform>%n Bilder enthalten ungespeicherte Änderungen. Möchten Sie diese vor dem Verlassen überprüfen?</numerusform>
         </translation>
     </message>
     <message>
@@ -769,7 +771,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="751"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Es gibt ungespeicherte Änderungen. Diese vor dem Verlassen speichern?</translation>
+        <translation>Es gibt noch ungespeicherte Änderungen. Sollen diese vor dem Verlassen gespeichert werden?</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="754"/>
@@ -785,7 +787,7 @@
         <location filename="../mainwindow.cpp" line="883"/>
         <location filename="../mainwindow.cpp" line="1668"/>
         <source>Images (%1)</source>
-        <translation>Zeichnungen (%1)</translation>
+        <translation>Bilder (%1)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="884"/>
@@ -812,7 +814,7 @@
         <location filename="../mainwindow.cpp" line="978"/>
         <location filename="../mainwindow.cpp" line="1036"/>
         <source>Couldn&apos;t save image</source>
-        <translation>Zeichnung konnte nicht gespeicher werden</translation>
+        <translation>Bild konnte nicht gespeicher werden</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1206"/>
@@ -862,7 +864,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1688"/>
         <source>The image could not be loaded</source>
-        <translation>Die Zeichnung konnte nicht geladen werden</translation>
+        <translation>Das Bild konnte nicht geladen werden</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1815"/>
@@ -1037,7 +1039,8 @@
     <message>
         <location filename="../mainwindow.cpp" line="2123"/>
         <source>Flipbook</source>
-        <translation>Flipbook</translation>
+        <translatorcomment>Does this need to be translated to german?</translatorcomment>
+        <translation type="unfinished">Daumenkino</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2123"/>
@@ -1231,13 +1234,13 @@
         <location filename="../mainwindow.cpp" line="890"/>
         <location filename="../mainwindow.cpp" line="893"/>
         <source>Open Image</source>
-        <translation>Zeichnung öffnen</translation>
+        <translation>Bild öffnen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="917"/>
         <location filename="../mainwindow.cpp" line="1004"/>
         <source>Save Image</source>
-        <translation>Zeichnung speichern</translation>
+        <translation>Bild speichern</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1104"/>
@@ -1272,7 +1275,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="1672"/>
         <source>Paste Image</source>
-        <translation type="unfinished">Bild einfügen</translation>
+        <translation>Bild einfügen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1815"/>
@@ -1389,7 +1392,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2254"/>
         <source>Lock Layer Controls</source>
-        <translation>Layer Einstellungen sperren</translation>
+        <translation>Ebeneneinstellungen sperren</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2255"/>
@@ -1429,7 +1432,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2296"/>
         <source>Pick colors from the image</source>
-        <translation>Farben aus der Zeichnung aufnehmen</translation>
+        <translation>Farben aus dem Bild aufnehmen</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2296"/>
@@ -1968,7 +1971,7 @@
     <message>
         <location filename="../ui/settings.ui" line="272"/>
         <source>Ffmpeg path:</source>
-        <translation>ffmpeg Pfad:</translation>
+        <translation>Ffmpeg Pfad:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="233"/>
@@ -2104,7 +2107,8 @@
     <message>
         <location filename="../ui/settings.ui" line="385"/>
         <source>Onionskin layers:</source>
-        <translation>Onionskin Ebenen:</translation>
+        <translatorcomment>Does this need to be translated to german?</translatorcomment>
+        <translation type="unfinished">Zwiebelhaut Ebenen:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="392"/>
@@ -2139,13 +2143,13 @@
     <message>
         <location filename="../ui/settings.ui" line="514"/>
         <source>Known Hosts</source>
-        <translatorcomment>Would server be better than hosts in this context?</translatorcomment>
-        <translation type="unfinished">Bekannte Hosts</translation>
+        <translatorcomment>What&apos;s the distinction between server and host in this context?</translatorcomment>
+        <translation>Bekannte Hosts</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="579"/>
         <source>List Servers</source>
-        <translation>Server auflisten</translation>
+        <translation>Listenserver</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="610"/>
@@ -2155,7 +2159,7 @@
     <message>
         <location filename="../ui/settings.ui" line="532"/>
         <source>Import trusted...</source>
-        <translation>Vertrauenswürdige Server importieren...</translation>
+        <translation>Zertifikat importieren...</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="555"/>
@@ -2612,7 +2616,7 @@
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="46"/>
         <source>Host</source>
-        <translatorcomment>Evtl. auch Hosten, Los oder Start?</translatorcomment>
+        <translatorcomment>Other possibilities: &quot;Hosten&quot;, &quot;Los&quot; or &quot;Start&quot;?</translatorcomment>
         <translation type="unfinished">Bereitstellen</translation>
     </message>
 </context>
@@ -2788,7 +2792,7 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="87"/>
         <source>Set ffmepg path</source>
-        <translation>ffmpeg Pfad setzen</translation>
+        <translation>Ffmpeg Pfad setzen</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="89"/>
@@ -2848,7 +2852,7 @@
         <location filename="../dialogs/settingsdialog.cpp" line="448"/>
         <location filename="../dialogs/settingsdialog.cpp" line="457"/>
         <source>Add public listing server</source>
-        <translation>Öffentlichen Server hinzufügen</translation>
+        <translation>Öffentlichen Listenserver hinzufügen</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="448"/>
@@ -3030,13 +3034,13 @@
         <location filename="../docks/layerlistdock.cpp" line="72"/>
         <location filename="../docks/layerlistdock.cpp" line="384"/>
         <source>Merge down</source>
-        <translatorcomment>Does this merge with one or all layers below?</translatorcomment>
-        <translation>Mit darunterliegenden Ebenen vereinigen</translation>
+        <translation>Mit darunterliegender Ebene vereinigen</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="98"/>
         <source>Onionskin</source>
-        <translation>Onionskin</translation>
+        <translatorcomment>Does this need to be translated to german?</translatorcomment>
+        <translation type="unfinished">Zwiebelhaut</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="296"/>
@@ -3052,7 +3056,7 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="385"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
-        <translation>Drücken Sie &quot;Mit darunterliegenden Ebenen vereinigen&quot; um die Ebene mit der ersten darunterliegenden sichtbaren Ebene zu vereinigen anstatt zu löschen.</translation>
+        <translation>Drücken Sie &quot;Mit darunterliegender Ebene vereinigen&quot; um die Ebene mit der ersten darunterliegenden sichtbaren Ebene zu vereinigen anstatt zu löschen.</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="388"/>
@@ -3205,13 +3209,13 @@
     <message>
         <location filename="../net/login.cpp" line="347"/>
         <source>Enter hosting password</source>
-        <translatorcomment>Unsure: What does this do exactly?</translatorcomment>
+        <translatorcomment>Unsure: Would &quot;Server password&quot; be wrong here?</translatorcomment>
         <translation type="unfinished">Hostingpasswort eingeben</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="212"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation>Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
+        <translation type="unfinished">Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="217"/>
@@ -3548,6 +3552,7 @@
     <message>
         <location filename="../widgets/chatwidget.cpp" line="123"/>
         <source>You have been kicked by %1</source>
+        <translatorcomment>Maybe better to use the informal &quot;Du&quot; form?</translatorcomment>
         <translation type="unfinished">Sie wurden von %1 hinausgeworfen</translation>
     </message>
     <message>
@@ -3642,13 +3647,13 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="358"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
-        <translatorcomment>In which context does this appear?</translatorcomment>
+        <translatorcomment>See if this fits the context?</translatorcomment>
         <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; ist beigetreten</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="363"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
-        <translatorcomment>In which context does this appear?</translatorcomment>
+        <translatorcomment>See if this fits the context?</translatorcomment>
         <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; ist gegangen</translation>
     </message>
     <message>
