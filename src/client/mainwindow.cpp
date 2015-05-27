@@ -2336,7 +2336,7 @@ void MainWindow::setupActions()
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addAction(swapcolors);
 
-	QToolBar *drawtools = new QToolBar("Drawing tools");
+	QToolBar *drawtools = new QToolBar(tr("Drawing tools"));
 	drawtools->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
