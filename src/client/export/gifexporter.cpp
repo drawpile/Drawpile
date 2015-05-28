@@ -23,6 +23,13 @@
 
 #include "gifexporter.h"
 
+#if !defined(GIFLIB_MAJOR) || GIFLIB_MAJOR < 5
+#define OLD_API
+#define GifMakeMapObject MakeMapObject
+#define GifFreeMapObject FreeMapObject
+#define EGifCloseFile(a, b) EGifCloseFile(a)
+#endif
+
 struct GifExporter::Private {
 	QString path;
 	Qt::ImageConversionFlags conversionFlags;
@@ -72,7 +79,11 @@ void GifExporter::setOptimize(bool optimze)
 
 static QString gifErrorQString(int error)
 {
+#ifdef OLD_API
+	return QString("Gif error %1").arg(GifLastError());
+#else
 	return QString::fromUtf8(GifErrorString(error));
+#endif
 }
 
 struct Subframe {
@@ -168,7 +179,11 @@ void GifExporter::writeFrame(const QImage &image, int repeat)
 	// Write pixel data
 	for(int y=0;y<subframe.h;++y) {
 		if(EGifPutLine(p->gif, subframe.frame.scanLine(y), subframe.w) == GIF_ERROR) {
+#ifdef OLD_API
+			emit exporterError(gifErrorQString(0));
+#else
 			emit exporterError(gifErrorQString(p->gif->Error));
+#endif
 			return;
 		}
 	}
@@ -180,8 +195,13 @@ void GifExporter::initExporter()
 {
 	Q_ASSERT(!p->path.isEmpty());
 
-	int errorcode;
+	int errorcode=0;
+#ifdef OLD_API
+	EGifSetGifVersion("89a");
+	p->gif = EGifOpenFileName(p->path.toLocal8Bit().constData(), false);
+#else
 	p->gif = EGifOpenFileName(p->path.toLocal8Bit().constData(), false, &errorcode);
+#endif
 	if(!p->gif) {
 		emit exporterError(gifErrorQString(errorcode));
 		return;
@@ -190,7 +210,11 @@ void GifExporter::initExporter()
 	// Main header
 	// note: no global palette, each frame has its own.
 	if(EGifPutScreenDesc(p->gif, framesize().width(), framesize().height(), 8, 0, nullptr) == GIF_ERROR) {
+#ifdef OLD_API
+		emit exporterError(gifErrorQString(0));
+#else
 		emit exporterError(gifErrorQString(p->gif->Error));
+#endif
 		return;
 	}
 
@@ -201,10 +225,15 @@ void GifExporter::initExporter()
 		0, // little-endian loop counter:
 		0  // 0 for infinite loop.
 	};
+#ifdef OLD_API
+	EGifPutExtensionFirst(p->gif, APPLICATION_EXT_FUNC_CODE, 11, nsle);
+	EGifPutExtensionLast(p->gif, APPLICATION_EXT_FUNC_CODE, 3, subblock);
+#else
 	EGifPutExtensionLeader(p->gif, APPLICATION_EXT_FUNC_CODE);
 	EGifPutExtensionBlock(p->gif, 11, nsle);
 	EGifPutExtensionBlock(p->gif, 3, subblock);
 	EGifPutExtensionTrailer(p->gif);
+#endif
 
 	emit exporterReady();
 }

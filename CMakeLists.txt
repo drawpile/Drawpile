@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 2.8.9 )
 
-project ( drawpile CXX )
+project ( drawpile C CXX )
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

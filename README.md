@@ -22,7 +22,7 @@ Client dependencies:
 * Qt 5.0 or newer
 * [KF5 KArchive]
 * KF5 KDNSSD (optional)
-* GIFLIB 5.0 or newer (optional)
+* GIFLIB (optional)
 * [QtColorPicker]
 
 Server dependencies:
