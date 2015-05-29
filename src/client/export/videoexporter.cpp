@@ -46,7 +46,7 @@ void VideoExporter::saveFrame(const QImage &image, int count)
 	QImage frameImage = image;
 
 	if(!isVariableSize() && image.size() != _targetsize) {
-		QImage newframe = QImage(_targetsize, QImage::Format_ARGB32);
+		QImage newframe = QImage(_targetsize, QImage::Format_RGB32);
 		newframe.fill(Qt::black);
 
 		QSize newsize = image.size().scaled(_targetsize, Qt::KeepAspectRatio);

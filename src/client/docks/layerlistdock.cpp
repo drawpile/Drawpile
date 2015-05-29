@@ -157,7 +157,7 @@ void LayerList::setControlsLocked(bool locked)
 
 void LayerList::updateLockedControls()
 {
-	bool enabled = _client && (!_client->isUserLocked() & (_op | !_lockctrl));
+	bool enabled = _client && (!_client->isUserLocked() && (_op | !_lockctrl));
 
 	_addLayerAction->setEnabled(enabled);
 	_menuInsertAction->setEnabled(enabled);
