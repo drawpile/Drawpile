@@ -1780,7 +1780,7 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
         <location filename="../dialogs/settingsdialog.cpp" line="417"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="91"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="103"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
@@ -2419,134 +2419,164 @@
         <translation>動画</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="134"/>
+        <location filename="../ui/videoexport.ui" line="139"/>
         <source>Framerate:</source>
         <translation>フレームレート:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="143"/>
+        <location filename="../ui/videoexport.ui" line="148"/>
         <source> FPS</source>
         <translation> FPS</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="171"/>
+        <location filename="../ui/videoexport.ui" line="176"/>
         <source>Size:</source>
         <translation>サイズ:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="122"/>
+        <location filename="../ui/videoexport.ui" line="127"/>
         <source>Video Options</source>
         <translation>動画のオプション</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="45"/>
+        <location filename="../ui/videoexport.ui" line="40"/>
+        <source>Animated GIF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="50"/>
         <source>Animation Options</source>
         <translation>アニメーションのオプション</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="54"/>
+        <location filename="../ui/videoexport.ui" line="59"/>
         <source>Layers:</source>
         <translation>レイヤー:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="86"/>
+        <location filename="../ui/videoexport.ui" line="91"/>
         <source>Background:</source>
         <translation>背景:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="96"/>
+        <location filename="../ui/videoexport.ui" line="101"/>
         <source>Transparent</source>
         <translation>透明</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="101"/>
+        <location filename="../ui/videoexport.ui" line="106"/>
         <source>Bottom layer</source>
         <translation>一番下のレイヤー</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="106"/>
+        <location filename="../ui/videoexport.ui" line="111"/>
         <source>Solid color</source>
         <translation>単色</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="240"/>
+        <location filename="../ui/videoexport.ui" line="245"/>
         <source>Export Options</source>
         <translation>エクスポートのオプション</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="271"/>
+        <location filename="../ui/videoexport.ui" line="276"/>
         <source>Image format:</source>
         <translation>画像形式:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="298"/>
+        <location filename="../ui/videoexport.ui" line="303"/>
         <source>File name pattern:</source>
         <translation>ファイル名の書式:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="318"/>
+        <location filename="../ui/videoexport.ui" line="323"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;以下のプレースホルダを書式に使用できます。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - フレーム番号&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - ファイル拡張子&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="363"/>
+        <location filename="../ui/videoexport.ui" line="368"/>
         <source>Format:</source>
         <translation>形式:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="372"/>
+        <location filename="../ui/videoexport.ui" line="377"/>
         <source>Container format</source>
         <translation>コンテナ形式</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="401"/>
+        <location filename="../ui/videoexport.ui" line="406"/>
         <source>Video codec</source>
         <translation>動画コーデック</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="423"/>
+        <location filename="../ui/videoexport.ui" line="428"/>
         <source>Audio codec</source>
         <translation>音声コーデック</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="427"/>
+        <location filename="../ui/videoexport.ui" line="432"/>
         <source>Original</source>
         <translation>オリジナル</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="452"/>
+        <location filename="../ui/videoexport.ui" line="457"/>
         <source>Quality:</source>
         <translation>画質:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="463"/>
+        <location filename="../ui/videoexport.ui" line="468"/>
         <source>Low</source>
         <translation>低</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="468"/>
+        <location filename="../ui/videoexport.ui" line="473"/>
         <source>Normal</source>
         <translation>通常</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="473"/>
+        <location filename="../ui/videoexport.ui" line="478"/>
         <source>Good</source>
         <translation>良</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="478"/>
+        <location filename="../ui/videoexport.ui" line="483"/>
         <source>Very good</source>
         <translation>最良</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="486"/>
+        <location filename="../ui/videoexport.ui" line="491"/>
         <source>Soundtrack:</source>
         <translation>サウンドトラック:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="497"/>
+        <location filename="../ui/videoexport.ui" line="502"/>
         <source>Error: Ffmpeg executable not found!</source>
         <translation>エラー: FFmpeg 実行ファイルが見つかりません！</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="516"/>
+        <source>Dithering:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="524"/>
+        <source>Diffuse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="529"/>
+        <source>Ordered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="534"/>
+        <source>Treshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="542"/>
+        <source>Optimize frame difference</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2868,37 +2898,39 @@
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="61"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="72"/>
         <source>Original</source>
         <translation>オリジナル</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="62"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="73"/>
         <source>Custom:</source>
         <translation>カスタム:</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="89"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>Select soundtrack</source>
         <translation>サウンドトラックを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="90"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="102"/>
         <source>Sound files (%1)</source>
         <translation>音声ファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="222"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="240"/>
         <source>Select output directory</source>
         <translation>出力ディレクトリを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="254"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="272"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="296"/>
         <source>Export video</source>
         <translation>動画をエクスポート</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="254"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="272"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="296"/>
         <source>%1 files (*%2)</source>
         <translation>%1 ファイル (*%2)</translation>
     </message>
