@@ -43,7 +43,16 @@ void VideoExporter::saveFrame(const QImage &image, int count)
 	Q_ASSERT(count>0);
 	Q_ASSERT(!image.isNull());
 
+	if(count<=0 || image.isNull())
+		return;
+
 	QImage frameImage = image;
+
+	if(isVariableSize() && !variableSizeSupported()) {
+		// If exporter does not support variable size, fix frame
+		// size to the size of the first image.
+		setFrameSize(image.size());
+	}
 
 	if(!isVariableSize() && image.size() != _targetsize) {
 		QImage newframe = QImage(_targetsize, QImage::Format_RGB32);
@@ -60,16 +69,18 @@ void VideoExporter::saveFrame(const QImage &image, int count)
 		);
 
 		QPainter painter(&newframe);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform);
 		painter.drawImage(rect, image, QRect(QPoint(), image.size()));
 		painter.end();
 
 		frameImage = newframe;
 	}
 
-	if(count>0) {
-		writeFrame(frameImage, count);
-		_frame += count;
-	}
+	if(_frame==0)
+		startExporter();
+
+	writeFrame(frameImage, count);
+	_frame += count;
 }
 
 void VideoExporter::start()

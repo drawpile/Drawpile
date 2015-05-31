@@ -35,6 +35,7 @@ protected:
 	void initExporter();
 	void writeFrame(const QImage &image, int repeat);
 	void shutdownExporter();
+	bool variableSizeSupported() { return true; }
 
 private:
 	QString _path;

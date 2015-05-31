@@ -2,6 +2,7 @@
  * Fixed moving of freeform selections
  * Fixed merging (and export) of layers with sublayers
  * Fixed crash when closing animation export dialog
+ * Support original frame size for all video export types
  * Updated Czech and Finnish translations
  * Added animated GIF export feature
 

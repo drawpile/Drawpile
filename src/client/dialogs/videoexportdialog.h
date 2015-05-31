@@ -59,7 +59,6 @@ public:
 	QColor animationBackground() const;
 
 private slots:
-	void selectExportFormat(int idx);
 	void selectContainerFormat(const QString &fmt);
 
 private:

@@ -80,7 +80,6 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	// make sure currentIndexChanged gets called if saved setting was something other than Custom
 	_ui->sizeChoice->setCurrentIndex(1);
 
-	// TODO disable GIF choice if giflib was not available
 	connect(_ui->sizeChoice, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this]() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 		QVariant isCustom = _ui->sizeChoice->currentData(Qt::UserRole);
@@ -94,7 +93,6 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 		_ui->sizeXlabel->setVisible(e);
 	});
 
-	connect(_ui->exportFormatChoice, SIGNAL(activated(int)), this, SLOT(selectExportFormat(int)));
 	connect(_ui->videoFormat, SIGNAL(activated(QString)), this, SLOT(selectContainerFormat(QString)));
 
 	connect(_ui->pickSoundtrack, &QToolButton::clicked, [this]() {
@@ -170,15 +168,6 @@ void VideoExportDialog::showAnimationSettings(int layercount)
 	_ui->animOpts->setVisible(true);
 	if(_ui->animBg->currentIndex()==1 && _ui->animFirstLayer->value()==1)
 		_ui->animFirstLayer->setValue(2);
-}
-
-void VideoExportDialog::selectExportFormat(int idx)
-{
-	bool allow_variable_size = (idx == 0);
-
-	static_cast<QStandardItemModel*>(_ui->sizeChoice->model())->item(0)->setEnabled(allow_variable_size);
-	if(_ui->sizeChoice->currentIndex() == 0)
-		_ui->sizeChoice->setCurrentIndex(1);
 }
 
 void VideoExportDialog::selectContainerFormat(const QString &fmt)

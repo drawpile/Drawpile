@@ -207,6 +207,11 @@ void GifExporter::initExporter()
 		return;
 	}
 
+	emit exporterReady();
+}
+
+void GifExporter::startExporter()
+{
 	// Main header
 	// note: no global palette, each frame has its own.
 	if(EGifPutScreenDesc(p->gif, framesize().width(), framesize().height(), 8, 0, nullptr) == GIF_ERROR) {
@@ -234,8 +239,6 @@ void GifExporter::initExporter()
 	EGifPutExtensionBlock(p->gif, 3, subblock);
 	EGifPutExtensionTrailer(p->gif);
 #endif
-
-	emit exporterReady();
 }
 
 void GifExporter::shutdownExporter()
