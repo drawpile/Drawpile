@@ -91,6 +91,6 @@ void AnimationExporter::exportAnimation(paintcore::LayerStack *layers, QWidget *
 			}
 		}
 
-		delete dlg;
+		dlg->deleteLater();
 	});
 }
