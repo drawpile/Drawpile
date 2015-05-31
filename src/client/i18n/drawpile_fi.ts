@@ -1782,7 +1782,7 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
         <location filename="../dialogs/settingsdialog.cpp" line="417"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="91"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>Kaikki tiedostot (*)</translation>
     </message>
@@ -2420,134 +2420,164 @@
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="134"/>
+        <location filename="../ui/videoexport.ui" line="139"/>
         <source>Framerate:</source>
         <translation>Ruututaajuus:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="143"/>
+        <location filename="../ui/videoexport.ui" line="148"/>
         <source> FPS</source>
         <translation> FPS</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="171"/>
+        <location filename="../ui/videoexport.ui" line="176"/>
         <source>Size:</source>
         <translation>Koko:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="122"/>
+        <location filename="../ui/videoexport.ui" line="127"/>
         <source>Video Options</source>
         <translation>Videon asetukset</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="45"/>
+        <location filename="../ui/videoexport.ui" line="40"/>
+        <source>Animated GIF</source>
+        <translation>Animoitu GIF</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="50"/>
         <source>Animation Options</source>
         <translation>Animaatio</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="54"/>
+        <location filename="../ui/videoexport.ui" line="59"/>
         <source>Layers:</source>
-        <translation>Tasot</translation>
+        <translation>Tasot:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="86"/>
+        <location filename="../ui/videoexport.ui" line="91"/>
         <source>Background:</source>
         <translation>Tausta:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="96"/>
+        <location filename="../ui/videoexport.ui" line="101"/>
         <source>Transparent</source>
         <translation>Läpinäkyvä</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="101"/>
+        <location filename="../ui/videoexport.ui" line="106"/>
         <source>Bottom layer</source>
         <translation>Pohjimmainen taso</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="106"/>
+        <location filename="../ui/videoexport.ui" line="111"/>
         <source>Solid color</source>
         <translation>Väri</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="240"/>
+        <location filename="../ui/videoexport.ui" line="245"/>
         <source>Export Options</source>
         <translation>Viennin asetukset</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="271"/>
+        <location filename="../ui/videoexport.ui" line="276"/>
         <source>Image format:</source>
         <translation>Kuva formaatti:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="298"/>
+        <location filename="../ui/videoexport.ui" line="303"/>
         <source>File name pattern:</source>
         <translation>Tiedostonimimalli:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="318"/>
+        <location filename="../ui/videoexport.ui" line="323"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tuetut paikkamerkit:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - ruudun numero&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - tiedostopääte&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="363"/>
+        <location filename="../ui/videoexport.ui" line="368"/>
         <source>Format:</source>
         <translation>Muoto:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="372"/>
+        <location filename="../ui/videoexport.ui" line="377"/>
         <source>Container format</source>
         <translation>Säiliömuoto</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="401"/>
+        <location filename="../ui/videoexport.ui" line="406"/>
         <source>Video codec</source>
         <translation>Video kodekki</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="423"/>
+        <location filename="../ui/videoexport.ui" line="428"/>
         <source>Audio codec</source>
         <translation>Ääni kodekki</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="427"/>
+        <location filename="../ui/videoexport.ui" line="432"/>
         <source>Original</source>
         <translation>Alkuperäinen</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="452"/>
+        <location filename="../ui/videoexport.ui" line="457"/>
         <source>Quality:</source>
         <translation>Laatu:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="463"/>
+        <location filename="../ui/videoexport.ui" line="468"/>
         <source>Low</source>
         <translation>Matala</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="468"/>
+        <location filename="../ui/videoexport.ui" line="473"/>
         <source>Normal</source>
         <translation>Normaali</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="473"/>
+        <location filename="../ui/videoexport.ui" line="478"/>
         <source>Good</source>
         <translation>Hyvä</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="478"/>
+        <location filename="../ui/videoexport.ui" line="483"/>
         <source>Very good</source>
         <translation>Erittäin hyvä</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="486"/>
+        <location filename="../ui/videoexport.ui" line="491"/>
         <source>Soundtrack:</source>
         <translation>Ääniraita:</translation>
     </message>
     <message>
-        <location filename="../ui/videoexport.ui" line="497"/>
+        <location filename="../ui/videoexport.ui" line="502"/>
         <source>Error: Ffmpeg executable not found!</source>
         <translation>Virhe: Ffmpeg sovellusta ei löytynyt!</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="516"/>
+        <source>Dithering:</source>
+        <translation>Rasterointi:</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="524"/>
+        <source>Diffuse</source>
+        <translation>Diffuse</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="529"/>
+        <source>Ordered</source>
+        <translation>Järjestetty</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="534"/>
+        <source>Threshold</source>
+        <translation>Raja-arvo</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="542"/>
+        <source>Optimize frame difference</source>
+        <translation>Ruutujen eron optimointi</translation>
     </message>
 </context>
 <context>
@@ -2869,37 +2899,39 @@
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="61"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="72"/>
         <source>Original</source>
         <translation>Alkuperäinen</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="62"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="73"/>
         <source>Custom:</source>
         <translation>Omavalintainen:</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="89"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="99"/>
         <source>Select soundtrack</source>
         <translation>Valitse ääniraita</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="90"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="100"/>
         <source>Sound files (%1)</source>
         <translation>Äänitiedostot (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="222"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="229"/>
         <source>Select output directory</source>
         <translation>Valitse ulostulo hakemisto</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="254"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>Export video</source>
         <translation>Vie video</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="254"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>%1 files (*%2)</source>
         <translation>%1 tiedostot (%2)</translation>
     </message>
