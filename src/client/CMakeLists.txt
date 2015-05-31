@@ -135,7 +135,8 @@ ENDIF ( APPLE )
 
 if(GIF_FOUND)
 	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
-    add_definitions(-DHAVE_GIFLIB) 
+	add_definitions(-DHAVE_GIFLIB)
+	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
 endif()
 
 set (
