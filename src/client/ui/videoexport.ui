@@ -531,7 +531,7 @@ color: red;</string>
             </item>
             <item>
              <property name="text">
-              <string>Treshold</string>
+              <string>Threshold</string>
              </property>
             </item>
            </widget>

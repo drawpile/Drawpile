@@ -2570,7 +2570,7 @@
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="534"/>
-        <source>Treshold</source>
+        <source>Threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
