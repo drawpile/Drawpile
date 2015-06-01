@@ -1,4 +1,4 @@
-2015-05-?? Version 0.9.11
+2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections
  * Fixed merging (and export) of layers with sublayers
  * Fixed crash when closing animation export dialog
