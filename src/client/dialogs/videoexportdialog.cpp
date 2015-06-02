@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "videoexportdialog.h"
 #include "export/imageseriesexporter.h"
 #include "export/ffmpegexporter.h"
+#include "export/gifexporter.h"
 
 #include "widgets/colorbutton.h"
 using widgets::ColorButton;
@@ -57,6 +58,16 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	}
 #endif
 
+#ifndef HAVE_GIFLIB
+	// Disable GIF format choice if GIFLIB was not linked
+	{
+		QStandardItemModel *model = qobject_cast<QStandardItemModel*>(_ui->exportFormatChoice->model());
+		Q_ASSERT(model);
+		QStandardItem *item = model->item(2);
+		item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+	}
+#endif
+
 	QStandardItemModel *sizes = new QStandardItemModel(this);
 	sizes->appendRow(sizeItem(tr("Original"), QVariant(false)));
 	sizes->appendRow(sizeItem(tr("Custom:"), QVariant(true)));
@@ -82,7 +93,6 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 		_ui->sizeXlabel->setVisible(e);
 	});
 
-	connect(_ui->exportFormatChoice, SIGNAL(activated(int)), this, SLOT(selectExportFormat(int)));
 	connect(_ui->videoFormat, SIGNAL(activated(QString)), this, SLOT(selectContainerFormat(QString)));
 
 	connect(_ui->pickSoundtrack, &QToolButton::clicked, [this]() {
@@ -116,11 +126,13 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
 	_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
 	_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
-	//_ui->keepOriginalSize->setChecked(cfg.value("keepOriginalSize", false).toBool());
 	_ui->animBgColor->setColor(cfg.value("bgcolor", QColor(255,255,255)).value<QColor>());
 	_ui->animBg->setCurrentIndex(cfg.value("animbg", 1).toInt());
 
 	_ui->animBgColor->setVisible(_ui->animBg->currentIndex()==2);
+
+	_ui->ditheringMethod->setCurrentIndex(cfg.value("dithering", 0).toInt());
+	_ui->optimizeGif->setChecked(cfg.value("optimizegif", true).toBool());
 
 	_lastpath = cfg.value("lastpath", "").toString();
 
@@ -141,6 +153,9 @@ VideoExportDialog::~VideoExportDialog()
 	cfg.setValue("lastpath", _lastpath);
 	cfg.setValue("bgcolor", _ui->animBgColor->color());
 	cfg.setValue("animbg", _ui->animBg->currentIndex());
+	cfg.setValue("dithering", _ui->ditheringMethod->currentIndex());
+	cfg.setValue("optimizegif", _ui->optimizeGif->isChecked());
+
 	delete _ui;
 }
 
@@ -153,15 +168,6 @@ void VideoExportDialog::showAnimationSettings(int layercount)
 	_ui->animOpts->setVisible(true);
 	if(_ui->animBg->currentIndex()==1 && _ui->animFirstLayer->value()==1)
 		_ui->animFirstLayer->setValue(2);
-}
-
-void VideoExportDialog::selectExportFormat(int idx)
-{
-	bool allow_variable_size = (idx == 0);
-
-	static_cast<QStandardItemModel*>(_ui->sizeChoice->model())->item(0)->setEnabled(allow_variable_size);
-	if(_ui->sizeChoice->currentIndex() == 0)
-		_ui->sizeChoice->setCurrentIndex(1);
 }
 
 void VideoExportDialog::selectContainerFormat(const QString &fmt)
@@ -187,6 +193,7 @@ VideoExporter *VideoExportDialog::getExporter()
 	switch(_ui->exportFormatChoice->currentIndex()) {
 	case 0: ve = getImageSeriesExporter(); break;
 	case 1: ve = getFfmpegExporter(); break;
+	case 2: ve = getGifExporter(); break;
 	}
 
 	if(!ve)
@@ -262,7 +269,6 @@ VideoExporter *VideoExportDialog::getFfmpegExporter()
 
 	// Set exporter settings
 	FfmpegExporter *exporter = new FfmpegExporter;
-	qDebug() << "EXPORTING VIDEO" << outfile;
 	exporter->setFilename(outfile);
 	exporter->setSoundtrack(_ui->soundtrack->text());
 	exporter->setFormat(_ui->videoFormat->currentText());
@@ -271,6 +277,35 @@ VideoExporter *VideoExportDialog::getFfmpegExporter()
 	exporter->setQuality(_ui->videoquality->currentIndex());
 
 	return exporter;
+}
+
+VideoExporter *VideoExportDialog::getGifExporter()
+{
+#ifdef HAVE_GIFLIB
+	QString outfile = QFileDialog::getSaveFileName(this, tr("Export video"), _lastpath, tr("%1 files (*%2)").arg("GIF").arg(".gif"));
+	if(outfile.isEmpty())
+		return 0;
+
+	_lastpath = QFileInfo(outfile).dir().absolutePath();
+
+	GifExporter *exporter = new GifExporter;
+	exporter->setFilename(outfile);
+
+	GifExporter::DitheringMode dither;
+	switch(_ui->ditheringMethod->currentIndex()) {
+		case 0: dither = GifExporter::DIFFUSE; break;
+		case 1: dither = GifExporter::ORDERED; break;
+		case 2:
+		default: dither = GifExporter::THRESHOLD; break;
+	}
+	exporter->setDithering(dither);
+	exporter->setOptimize(_ui->optimizeGif->isChecked());
+
+	return exporter;
+#else
+	qWarning("Trying to export a GIF without GIFLIB!");
+	return nullptr;
+#endif
 }
 
 int VideoExportDialog::getFirstLayer() const {

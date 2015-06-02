@@ -59,12 +59,12 @@ public:
 	QColor animationBackground() const;
 
 private slots:
-	void selectExportFormat(int idx);
 	void selectContainerFormat(const QString &fmt);
 
 private:
 	VideoExporter *getImageSeriesExporter();
 	VideoExporter *getFfmpegExporter();
+	VideoExporter *getGifExporter();
 
 	Ui_VideoExport *_ui;
 	QString _lastpath;
