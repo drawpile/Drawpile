@@ -78,7 +78,7 @@ void playSound(Event event)
 
 		Q_ASSERT(!filename.isEmpty());
 		if(filename.isEmpty()) {
-			qWarning("Sound effect %d not defined!", event);
+			qWarning("Sound effect %d not defined!", int(event));
 			return;
 		}
 

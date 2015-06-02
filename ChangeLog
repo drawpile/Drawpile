@@ -1,6 +1,10 @@
-2015-05-?? Version 0.9.11
+2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections
- * Update Czech translation
+ * Fixed merging (and export) of layers with sublayers
+ * Fixed crash when closing animation export dialog
+ * Support original frame size for all video export types
+ * Updated Czech and Finnish translations
+ * Added animated GIF export feature
 
 2015-05-21 Version 0.9.10
  * Fixed loading of older recording formats (<v11.x)

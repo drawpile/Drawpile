@@ -851,14 +851,18 @@ void Layer::merge(const Layer *layer, bool sublayers)
 
 	// Merge tiles
 	QtConcurrent::blockingMap(mergeidx, [this, layer, sublayers](int idx) {
-		_tiles[idx].merge(layer->_tiles[idx], layer->_opacity, layer->blendmode());
-
 		if(sublayers) {
-			foreach(Layer *sl, layer->_sublayers) {
+			Tile t = layer->_tiles[idx];
+
+			for(Layer *sl : layer->_sublayers) {
 				if(sl->visible()) {
-					_tiles[idx].merge(sl->_tiles[idx], sl->_opacity, sl->blendmode());
+					t.merge(sl->_tiles[idx], sl->_opacity, sl->blendmode());
 				}
 			}
+			_tiles[idx].merge(t, layer->_opacity, layer->blendmode());
+
+		} else {
+			_tiles[idx].merge(layer->_tiles[idx], layer->_opacity, layer->blendmode());
 		}
 	});
 

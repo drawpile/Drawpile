@@ -41,8 +41,11 @@ public:
 	/**
 	 * @brief Can each frame keep their original size
 	 *
-	 * If variable size is false (as is required by some exporters, such as ffmpeg,)
-	 * frames are scaled to framesize() before they are passed to the exporter.
+	 * If variable size is false, frames are scaled to framesize() before
+	 * they are passed to the exporter.
+	 *
+	 * If the exporter does not support variable size, the size will be
+	 * automatically fixed to the size of the first frame.
 	 * @param vs
 	 */
 	void setVariableSize(bool vs) { _variablesize = vs; }
@@ -103,9 +106,36 @@ signals:
 
 protected:
 	void run();
+
+	/**
+	 * @brief Initialize the exporter before any images have been fed to it
+	 *
+	 * exporterReady should be emitted when the exporter is ready to receive images.
+	 */
 	virtual void initExporter() = 0;
+
+	/**
+	 * @brief Make last minute preparations
+	 * This is called just before writeFrame is called for the first time.
+	 * The desired frame size is know at this point.
+	 */
+	virtual void startExporter() { }
+
+	/**
+	 * @brief Export a frame, possible repeated more than once
+	 *
+	 * Emit exporterReady when the exporter is ready for more images
+	 */
 	virtual void writeFrame(const QImage &image, int repeat) = 0;
+
+	//! Last frame has been written, shut down the exporter
 	virtual void shutdownExporter() = 0;
+
+	/**
+	 * @brief Does this exporter support differently sized frames
+	 * @return true if exporter can accept images of different sizes
+	 */
+	virtual bool variableSizeSupported() { return false; }
 
 private:
 	int _fps;

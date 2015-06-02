@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,31 +16,34 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef IMAGESERIESEXPORTER_H
-#define IMAGESERIESEXPORTER_H
+#ifndef GIFEXPORTER_H
+#define GIFEXPORTER_H
 
 #include "videoexporter.h"
 
-class ImageSeriesExporter : public VideoExporter
+class GifExporter : public VideoExporter
 {
 	Q_OBJECT
 public:
-	ImageSeriesExporter(QObject *parent=0);
+	enum DitheringMode { DIFFUSE, ORDERED, THRESHOLD };
 
-	void setOutputPath(const QString &path) { _path = path; }
-	void setFilePattern(const QString &pattern) { _filepattern = pattern; }
-	void setFormat(const QString &format) { _format = format.toLatin1(); }
+	GifExporter(QObject *parent=0);
+	~GifExporter();
+
+	void setFilename(const QString &path);
+	void setDithering(DitheringMode mode);
+	void setOptimize(bool optimze);
 
 protected:
 	void initExporter();
+	void startExporter();
 	void writeFrame(const QImage &image, int repeat);
 	void shutdownExporter();
-	bool variableSizeSupported() { return true; }
 
 private:
-	QString _path;
-	QString _filepattern;
-	QByteArray _format;
+	struct Private;
+	Private *p;
 };
 
-#endif // IMAGESERIESEXPORTER_H
+#endif
+

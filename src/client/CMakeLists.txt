@@ -9,6 +9,7 @@ find_package(Qt5LinguistTools)
 find_package(KF5Archive NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorPicker)
+find_package(GIF)
 
 set (
 	SOURCES
@@ -131,6 +132,12 @@ set (
 IF ( APPLE )
 	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
 ENDIF ( APPLE )
+
+if(GIF_FOUND)
+	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
+	add_definitions(-DHAVE_GIFLIB)
+	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
+endif()
 
 set (
 	UIs
@@ -289,6 +296,10 @@ endif()
 
 if(QTCOLORPICKER_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORPICKER_LIBRARIES})
+endif()
+
+if(GIF_FOUND)
+	target_link_libraries(${CLIENTNAME} ${GIF_LIBRARIES})
 endif()
 
 if ( WIN32 )
