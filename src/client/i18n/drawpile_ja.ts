@@ -103,12 +103,12 @@
     <message>
         <location filename="../ui/certificateview.ui" line="60"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>発行元</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="67"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>満了日:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="130"/>
@@ -119,18 +119,18 @@
         <location filename="../ui/certificateview.ui" line="144"/>
         <location filename="../ui/certificateview.ui" line="158"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>組織単位:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="151"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>発行日:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="165"/>
         <location filename="../ui/certificateview.ui" line="215"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>コモンネーム:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="172"/>
@@ -140,12 +140,12 @@
     <message>
         <location filename="../ui/certificateview.ui" line="198"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>発行先</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="251"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>有効期限</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="264"/>
@@ -363,7 +363,7 @@
     <message>
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
-        <translation type="unfinished"></translation>
+        <translation>向こう側から塗りつぶす</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="89"/>
@@ -406,7 +406,7 @@
     <message>
         <location filename="../ui/recfilter.ui" line="56"/>
         <source>Non-participating users</source>
-        <translation type="unfinished"></translation>
+        <translation>参加していないユーザー</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="66"/>
@@ -527,7 +527,7 @@
     <message>
         <location filename="../ui/hostdialog.ui" line="227"/>
         <source>Preserve chat</source>
-        <translation>チャットを保存</translation>
+        <translation>チャットメッセージを保持</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="217"/>
@@ -669,7 +669,7 @@
     <message>
         <location filename="../ui/lasersettings.ui" line="147"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>マウスホバー中も追従</translation>
     </message>
 </context>
 <context>
@@ -1126,7 +1126,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2254"/>
         <source>Allow only session operators to add and change layers</source>
-        <translation>レイヤーの追加と変更をセッションの管理者にのみ許可</translation>
+        <translation>レイヤーの追加と変更をセッション管理者にのみ許可</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2255"/>
@@ -1501,12 +1501,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="2300"/>
         <source>&amp;Mark</source>
-        <translation>マーク(&amp;M)</translation>
+        <translation>マーカーを追加(&amp;M)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2300"/>
         <source>Leave a marker to find this spot on the recording</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション記録から現在の位置を検索するためのマーカーを追加</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2318"/>
@@ -1737,7 +1737,7 @@
     <message>
         <location filename="../ui/playback.ui" line="449"/>
         <source>Mark</source>
-        <translation>マーク</translation>
+        <translation>マーカーを追加</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="517"/>
@@ -1780,7 +1780,7 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
         <location filename="../dialogs/settingsdialog.cpp" line="417"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="103"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
@@ -2147,12 +2147,12 @@
     <message>
         <location filename="../ui/settings.ui" line="532"/>
         <source>Import trusted...</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済みホストをインポート...</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="555"/>
         <source>Mark as trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済みとしてマーク</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="569"/>
@@ -2383,7 +2383,7 @@
     <message>
         <location filename="../ui/userbox.ui" line="84"/>
         <source>Session operator</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション管理者</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="101"/>
@@ -2441,7 +2441,7 @@
     <message>
         <location filename="../ui/videoexport.ui" line="40"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーション GIF</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="50"/>
@@ -2556,27 +2556,27 @@
     <message>
         <location filename="../ui/videoexport.ui" line="516"/>
         <source>Dithering:</source>
-        <translation type="unfinished"></translation>
+        <translation>ディザリング:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="524"/>
         <source>Diffuse</source>
-        <translation type="unfinished"></translation>
+        <translation>拡散</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="529"/>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation>配列</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="534"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>しきい値</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="542"/>
         <source>Optimize frame difference</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム間の差分を最適化</translation>
     </message>
 </context>
 <context>
@@ -2598,7 +2598,7 @@
     <message>
         <location filename="../dialogs/certificateview.cpp" line="42"/>
         <source>SSL Certificate for %1</source>
-        <translation>%1 のための SSL 認証</translation>
+        <translation>%1 の SSL 証明書</translation>
     </message>
 </context>
 <context>
@@ -2611,7 +2611,7 @@
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="64"/>
         <source>Save filtered recording</source>
-        <translation type="unfinished"></translation>
+        <translation>フィルタリングしたセッション記録を保存</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="66"/>
@@ -2699,7 +2699,7 @@
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="499"/>
         <source>Mark Position</source>
-        <translation>マーク位置</translation>
+        <translation>マーカー位置</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="519"/>
@@ -2847,17 +2847,17 @@
         <location filename="../dialogs/settingsdialog.cpp" line="425"/>
         <location filename="../dialogs/settingsdialog.cpp" line="430"/>
         <source>Import trusted certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済み証明書をインポート</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="416"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>証明書 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="425"/>
         <source>Invalid certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な証明書です！</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="430"/>
@@ -2908,29 +2908,29 @@
         <translation>カスタム:</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="99"/>
         <source>Select soundtrack</source>
         <translation>サウンドトラックを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="102"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="100"/>
         <source>Sound files (%1)</source>
         <translation>音声ファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="240"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="229"/>
         <source>Select output directory</source>
         <translation>出力ディレクトリを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="272"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="296"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>Export video</source>
         <translation>動画をエクスポート</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="272"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="296"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>%1 files (*%2)</source>
         <translation>%1 ファイル (*%2)</translation>
     </message>
@@ -3247,7 +3247,7 @@
     <message>
         <location filename="../net/login.cpp" line="347"/>
         <source>Enter hosting password</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト用パスワードを入力</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="416"/>
@@ -3278,12 +3278,12 @@
     <message>
         <location filename="../net/login.cpp" line="669"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済みサーバーの証明書が更新されました！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="700"/>
         <source>The certificate of this server has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーの証明書が更新されました！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="702"/>
@@ -3318,7 +3318,7 @@
     <message>
         <location filename="../net/login.cpp" line="766"/>
         <source>This username has been banned!</source>
-        <translation type="unfinished"></translation>
+        <translation>このユーザー名は BAN されました！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="768"/>
@@ -3367,7 +3367,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="109"/>
+        <location filename="../net/tcpserver.cpp" line="130"/>
         <source>Received invalid data</source>
         <translation>無効なデータを受信しました</translation>
     </message>
@@ -3574,7 +3574,7 @@
     <message>
         <location filename="../widgets/chatwidget.cpp" line="206"/>
         <source>Invalid dice roll description: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なダイス表記です: %1</translation>
     </message>
 </context>
 <context>
@@ -3606,7 +3606,7 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="103"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>外部に公開している IP アドレスを取得</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="114"/>
@@ -3616,7 +3616,7 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="126"/>
         <source>Show certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>証明書を表示</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="149"/>
@@ -3637,17 +3637,17 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="181"/>
         <source>A previously unvisited host</source>
-        <translation type="unfinished"></translation>
+        <translation>過去に接続したことのないホストです</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="186"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストの証明書が前回の接続時から更新されていません</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="191"/>
         <source>This is a trusted host</source>
-        <translation>信頼したホストです</translation>
+        <translation>信頼済みホストです</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="208"/>
