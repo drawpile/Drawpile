@@ -3367,7 +3367,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="109"/>
+        <location filename="../net/tcpserver.cpp" line="130"/>
         <source>Received invalid data</source>
         <translation>無効なデータを受信しました</translation>
     </message>
@@ -3606,7 +3606,7 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="103"/>
         <source>Get externally visible IP address</source>
-        <translation>外部に公開されている IP アドレスを取得</translation>
+        <translation>外部に公開している IP アドレスを取得</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="114"/>
