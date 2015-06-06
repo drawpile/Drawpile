@@ -28,12 +28,14 @@
 #include <QSslSocket>
 #include <QSslConfiguration>
 #include <QSettings>
+#include <QApplication>
+#include <QElapsedTimer>
 
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
 	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
-	_localDisconnect(false)
+	_localDisconnect(false), _receiving(false)
 {
 	_socket = new QSslSocket(this);
 
@@ -94,13 +96,32 @@ void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 
 void TcpServer::handleMessage()
 {
+	if(_receiving)
+		return;
+	_receiving = true;
+
+	QElapsedTimer timer;
+	timer.start();
+
 	while(_msgqueue->isPending()) {
 		protocol::MessagePtr msg = _msgqueue->getPending();
 		if(_loginstate)
 			_loginstate->receiveMessage(msg);
 		else
 			emit messageReceived(msg);
+
+		// When joining a long-running session, there can be an influx of messages so large
+		// that processing them will block the main thread long enough for the server
+		// to disconnect the client due to lack of keepalive messages.
+		// To keep this from happening, force event processing when message handling
+		// takes too long.
+		if(timer.elapsed() > 100) {
+			QApplication::processEvents();
+			timer.restart();
+		}
 	}
+
+	_receiving = false;
 }
 
 void TcpServer::handleBadData(int len, int type)

@@ -88,6 +88,7 @@ private:
 	QString _error, _errorcode;
 	Security _securityLevel;
 	bool _localDisconnect;
+	bool _receiving;
 };
 
 }
