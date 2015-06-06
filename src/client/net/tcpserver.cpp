@@ -30,6 +30,7 @@
 #include <QSettings>
 #include <QApplication>
 #include <QElapsedTimer>
+#include <QScopedValueRollback>
 
 namespace net {
 
@@ -55,7 +56,12 @@ TcpServer::TcpServer(QObject *parent) :
 			emit loggingOut();
 	});
 
-	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
+
+	// Note: this must use a QueuedConnection to ensure we don't miss any readyRead signals
+	// (used inside MessageQueue) because it is not emitted recursively and
+	// handleMessage can re-enter the eventloop
+	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()), Qt::QueuedConnection);
+
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
@@ -98,7 +104,7 @@ void TcpServer::handleMessage()
 {
 	if(_receiving)
 		return;
-	_receiving = true;
+	QScopedValueRollback<bool> receivingInProgress(_receiving, true);
 
 	QElapsedTimer timer;
 	timer.start();
@@ -120,8 +126,6 @@ void TcpServer::handleMessage()
 			timer.restart();
 		}
 	}
-
-	_receiving = false;
 }
 
 void TcpServer::handleBadData(int len, int type)
