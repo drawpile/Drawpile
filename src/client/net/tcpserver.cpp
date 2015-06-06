@@ -36,7 +36,7 @@ namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
 	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
-	_localDisconnect(false), _receiving(false)
+	_localDisconnect(false), _receiving(false), _disconnecting(false)
 {
 	_socket = new QSslSocket(this);
 
@@ -123,6 +123,13 @@ void TcpServer::handleMessage()
 		// takes too long.
 		if(timer.elapsed() > 100) {
 			QApplication::processEvents();
+
+			if(_disconnecting) {
+				_receiving = false;
+				handleDisconnect();
+				return;
+			}
+
 			timer.restart();
 		}
 	}
@@ -137,8 +144,11 @@ void TcpServer::handleBadData(int len, int type)
 
 void TcpServer::handleDisconnect()
 {
-	emit serverDisconnected(_error, _errorcode, _localDisconnect);
-	deleteLater();
+	_disconnecting = true;
+	// If we are still inside handleMessage, defer disconnect notification
+	if(!_receiving) {
+		emit serverDisconnected(_error, _errorcode, _localDisconnect);
+	}
 }
 
 void TcpServer::handleSocketError()

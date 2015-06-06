@@ -140,9 +140,12 @@ void Client::handleConnect(QString sessionId, int userid, bool join)
 
 void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
 {
+	Q_ASSERT(_server != _loopback);
+
 	emit serverDisconnected(message, errorcode, localDisconnect);
 	_userlist->clearUsers();
 	_layerlist->unlockAll();
+	static_cast<TcpServer*>(_server)->deleteLater();
 	_server = _loopback;
 	_isloopback = true;
 	_isOp = false;

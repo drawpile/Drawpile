@@ -89,6 +89,7 @@ private:
 	Security _securityLevel;
 	bool _localDisconnect;
 	bool _receiving;
+	bool _disconnecting;
 };
 
 }
