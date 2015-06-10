@@ -37,7 +37,7 @@ struct BlendMode {
 };
 
 // Note. Protocol ordering and display ordering of the modes differ.
-static const int BLEND_MODES=11;
+static const int BLEND_MODES=12;
 extern const BlendMode BLEND_MODE[BLEND_MODES];
 
 /**

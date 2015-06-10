@@ -182,9 +182,15 @@ void BrushPreview::updatePreview()
 	paintcore::Layer *layer = _preview->getLayerByIndex(0);
 	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : _color2);
 
-	paintcore::StrokeState ss(_brush);
+	paintcore::Brush brush = _brush;
+	// Kludge: "behind" mode needs a transparent layer for anything to show up
+	// TODO implement proper mode specific view modes
+	if(brush.blendingMode() == 11)
+		brush.setBlendingMode(1);
+
+	paintcore::StrokeState ss(brush);
 	for(int i=1;i<pointvector.size();++i)
-		layer->drawLine(0, _brush, pointvector[i-1], pointvector[i], ss);
+		layer->drawLine(0, brush, pointvector[i-1], pointvector[i], ss);
 
 	layer->mergeSublayer(0);
 
