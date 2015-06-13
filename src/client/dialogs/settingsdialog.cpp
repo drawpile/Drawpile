@@ -229,6 +229,11 @@ void SettingsDialog::restoreSettings()
 	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
 	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
 	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
+#ifdef Q_OS_MAC
+	// Currently, these events are always handled on Macs
+	_ui->touchscroll->setEnabled(false);
+	_ui->touchpinch->setEnabled(false);
+#endif
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

@@ -765,9 +765,11 @@ bool CanvasView::viewportEvent(QEvent *event)
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
 	}
+#ifndef Q_OS_MAC // On Mac, the above gesture events work better
 	else if(event->type()==QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
 		touchEvent(static_cast<QTouchEvent*>(event));
 	}
+#endif
 	else if(event->type() == QEvent::TabletPress && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		_stylusDown = true;
