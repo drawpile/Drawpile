@@ -59,10 +59,15 @@ CanvasView::CanvasView(QWidget *parent)
 	_tabletmode(ENABLE_TABLET),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
-	_hotBorderTop(false)
+	_hotBorderTop(false),
+	_enableTouchScroll(true), _enableTouchPinch(true), _touching(false), _touchRotating(false)
 {
 	viewport()->setAcceptDrops(true);
+#ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
 	viewport()->grabGesture(Qt::PinchGesture);
+#else
+	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+#endif
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
 
@@ -504,6 +509,9 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	if(_pendown != NOTDOWN)
 		return;
 
+	if(_touching)
+		return;
+
 	penPressEvent(
 		event->pos(),
 		_tabletmode == HYBRID_TABLET && _stylusDown ? _lastPressure : 1,
@@ -558,6 +566,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(_pendown == TABLETDOWN)
 		return;
+	if(_touching)
+		return;
 	if(_pendown && event->buttons() == Qt::NoButton) {
 		// In case we missed a mouse release
 		mouseReleaseEvent(event);
@@ -588,6 +598,8 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
+	if(_touching)
+		return;
 	penReleaseEvent(event->pos(), event->button());
 }
 
@@ -670,6 +682,79 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 	}
 }
 
+static qreal squareDist(const QPointF &p)
+{
+	return p.x()*p.x() + p.y()*p.y();
+}
+
+void CanvasView::setTouchGestures(bool scroll, bool pinch)
+{
+	_enableTouchScroll = scroll;
+	_enableTouchPinch = pinch;
+}
+
+void CanvasView::touchEvent(QTouchEvent *event)
+{
+	event->accept();
+
+	switch(event->type()) {
+	case QEvent::TouchBegin:
+		_touchRotating = false;
+		break;
+
+	case QEvent::TouchUpdate: {
+		QPointF lastCenter, center;
+		const int points = event->touchPoints().size();
+		for(const auto &tp : event->touchPoints()) {
+			lastCenter += tp.lastPos();
+			center += tp.pos();
+		}
+		lastCenter /= points;
+		center /= points;
+
+		// Drag view with one or more finger
+		if(_enableTouchScroll) {
+			_touching = true;
+			float dx = center.x() - lastCenter.x();
+			float dy = center.y() - lastCenter.y();
+			horizontalScrollBar()->setValue(horizontalScrollBar()->value() - dx);
+			verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
+		}
+
+		if(points >= 2 && _enableTouchPinch) {
+			_touching = true;
+			// Two finger scaling and rotation
+			float lastAvgDist=0, avgDist=0;
+			for(const auto &tp : event->touchPoints()) {
+				lastAvgDist += squareDist(tp.lastPos() - lastCenter);
+				avgDist += squareDist(tp.pos() - center);
+			}
+			const qreal dZoom = sqrt(avgDist) / sqrt(lastAvgDist);
+
+			const QLineF l1 {event->touchPoints().first().lastPos(), event->touchPoints().last().lastPos() };
+			const QLineF l2 {event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+
+			const qreal dAngle = l1.angle() - l2.angle();
+
+			// require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
+			if(qAbs(dAngle) > 1.0 || _touchRotating) {
+				_touchRotating = true;
+				_rotate = _rotate + dAngle;
+			}
+
+			// Calling setZoom applies the rotation too
+			setZoom(zoom() * dZoom);
+		}
+	} break;
+
+	case QEvent::TouchEnd:
+	case QEvent::TouchCancel:
+		_touching = false;
+		break;
+	default: break;
+	}
+}
+
 //! Handle viewport events
 /**
  * Tablet events are handled here
@@ -679,7 +764,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 {
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
-
+	}
+	else if(event->type()==QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
+		touchEvent(static_cast<QTouchEvent*>(event));
 	}
 	else if(event->type() == QEvent::TabletPress && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);

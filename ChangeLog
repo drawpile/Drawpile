@@ -3,6 +3,7 @@
  * Fixed timeout disconnect caused by missing Ping messages (related to above)
  * Added "under" blending mode
  * Fixed missing button icons in flipbook window
+ * Improved touch gesture support (scrolling, zooming and rotating)
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

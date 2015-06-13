@@ -227,6 +227,8 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/input");
 	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
+	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
+	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -276,6 +278,8 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
 	cfg.setValue("tabletbugs", _ui->tabletBugWorkaround->isChecked());
+	cfg.setValue("touchscroll", _ui->touchscroll->isChecked());
+	cfg.setValue("touchpinch", _ui->touchpinch->isChecked());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

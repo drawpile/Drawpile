@@ -639,6 +639,12 @@ void MainWindow::updateTabletSupportMode()
 		mode = widgets::CanvasView::ENABLE_TABLET;
 
 	_view->setTabletMode(mode);
+
+	// not really tablet related, but close enough
+	_view->setTouchGestures(
+		cfg.value("touchscroll", true).toBool(),
+		cfg.value("touchpinch", true).toBool()
+	);
 }
 
 /**

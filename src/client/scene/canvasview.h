@@ -22,6 +22,7 @@
 #include <QGraphicsView>
 
 class QGestureEvent;
+class QTouchEvent;
 
 #include "core/point.h"
 #include "utils/strokesmoother.h"
@@ -89,6 +90,9 @@ class CanvasView : public QGraphicsView
 
 		//! Enable/disable tablet event handling
 		void setTabletMode(TabletMode mode);
+
+		//! Enable/disable touch gestures
+		void setTouchGestures(bool scroll, bool pinch);
 
 		//! Is drawing in progress at the moment?
 		bool isPenDown() const { return _pendown != NOTDOWN; }
@@ -225,6 +229,7 @@ class CanvasView : public QGraphicsView
 		void onPenUp(bool right);
 		
 		void gestureEvent(QGestureEvent *event);
+		void touchEvent(QTouchEvent *event);
 
 		void resetCursor();
 
@@ -290,6 +295,9 @@ class CanvasView : public QGraphicsView
 		bool _pixelgrid;
 
 		bool _hotBorderTop;
+
+		bool _enableTouchScroll, _enableTouchPinch;
+		bool _touching, _touchRotating;
 };
 
 }
