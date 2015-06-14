@@ -14,6 +14,7 @@ Some feature highlights:
 * Built-in chat
 * Supports OpenRaster file format
 * Encrypted connections using SSL
+* Automatic port forwarding with UPnP
 
 ## Building with cmake
 
@@ -24,6 +25,7 @@ Client dependencies:
 * KF5 KDNSSD (optional)
 * GIFLIB (optional)
 * [QtColorPicker]
+* MiniUPnP (optional)
 
 Server dependencies:
 

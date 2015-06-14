@@ -23,6 +23,10 @@
 #include "dialogs/netstats.h"
 #include "utils/whatismyip.h"
 
+#ifdef HAVE_UPNP
+#include "net/upnp.h"
+#endif
+
 #include <QAction>
 #include <QLabel>
 #include <QApplication>
@@ -105,6 +109,10 @@ NetStatus::NetStatus(QWidget *parent)
 	_label->addAction(_discoverIp);
 	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
 	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
+
+#ifdef HAVE_UPNP
+	connect(net::UPnPClient::instance(), SIGNAL(externalIp(QString)), this, SLOT(externalIpDiscovered(QString)));
+#endif
 
 	// Show network statistics
 	QAction *sep = new QAction(this);

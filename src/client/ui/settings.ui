@@ -445,14 +445,14 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Session history:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="historylimit">
          <property name="specialValueText">
           <string>unlimited</string>
@@ -474,14 +474,14 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Timeout:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="connTimeout">
          <property name="suffix">
           <string> s</string>
@@ -500,7 +500,14 @@
        <item row="1" column="1">
         <widget class="QCheckBox" name="dnssd">
          <property name="text">
-          <string>Announce with Bonjour</string>
+          <string>Announce with Zeroconf</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="useupnp">
+         <property name="text">
+          <string>Automatically set up port forwarding with UPnP</string>
          </property>
         </widget>
        </item>

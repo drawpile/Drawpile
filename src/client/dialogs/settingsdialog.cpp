@@ -259,6 +259,11 @@ void SettingsDialog::restoreSettings()
 #else
 	_ui->dnssd->setEnabled(false);
 #endif
+#ifdef HAVE_UPNP
+	_ui->useupnp->setChecked(cfg.value("upnp", true).toBool());
+#else
+	_ui->useupnp->setEnabled(false);
+#endif
 	cfg.endGroup();
 
 	_customShortcuts->loadShortcuts();
@@ -311,6 +316,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("historylimit", _ui->historylimit->value());
 	cfg.setValue("timeout", _ui->connTimeout->value());
 	cfg.setValue("dnssd", _ui->dnssd->isChecked());
+	cfg.setValue("upnp", _ui->useupnp->isChecked());
 
 	cfg.endGroup();
 

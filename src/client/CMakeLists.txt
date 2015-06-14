@@ -10,6 +10,7 @@ find_package(KF5Archive NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorPicker)
 find_package(GIF)
+find_package(Miniupnpc)
 
 set (
 	SOURCES
@@ -137,6 +138,11 @@ if(GIF_FOUND)
 	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
 	add_definitions(-DHAVE_GIFLIB)
 	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
+endif()
+
+if(LIBMINIUPNPC_FOUND)
+	set ( SOURCES ${SOURCES} net/upnp.cpp )
+	add_definitions(-DHAVE_UPNP)
 endif()
 
 set (
@@ -299,6 +305,10 @@ endif()
 
 if(GIF_FOUND)
 	target_link_libraries(${CLIENTNAME} ${GIF_LIBRARIES})
+endif()
+
+if(LIBMINIUPNPC_FOUND)
+	target_link_libraries(${CLIENTNAME} ${LIBMINIUPNPC_LIBRARIES})
 endif()
 
 if ( WIN32 )

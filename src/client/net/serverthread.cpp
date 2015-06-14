@@ -30,6 +30,9 @@
 #ifdef HAVE_DNSSD
 #include <KDNSSD/DNSSD/PublicService>
 #endif
+#ifdef HAVE_UPNP
+#include "upnp.h"
+#endif
 
 namespace net {
 
@@ -75,6 +78,13 @@ int ServerThread::startServer(const QString &title)
 	}
 #endif
 
+#ifdef HAVE_UPNP
+	if(_port>0) {
+		QSettings cfg;
+		if(cfg.value("settings/server/upnp", true).toBool())
+			UPnPClient::instance()->activateForward(_port);
+	}
+#endif
 	return _port;
 }
 
@@ -105,6 +115,14 @@ void ServerThread::run() {
 	_starter.wakeOne();
 
 	exec();
+
+#ifdef HAVE_UPNP
+	{
+		QSettings cfg;
+		if(cfg.value("settings/server/upnp", true).toBool())
+			UPnPClient::instance()->deactivateForward(_port);
+	}
+#endif
 
 	logger::info() << "server thread exiting.";
 	if(_deleteonexit)
