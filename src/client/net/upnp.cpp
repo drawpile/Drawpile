@@ -22,6 +22,8 @@
 
 #include <QThread>
 
+#define MINIUPNP_STATICLIB
+
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>

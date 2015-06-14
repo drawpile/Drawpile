@@ -309,10 +309,14 @@ endif()
 
 if(LIBMINIUPNPC_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBMINIUPNPC_LIBRARIES})
+        if ( WIN32 )
+                target_link_libraries (${CLIENTNAME} iphlpapi)
+        endif ( WIN32 )
+
 endif()
 
 if ( WIN32 )
-		target_link_libraries (${CLIENTNAME} ws2_32 )
+        target_link_libraries (${CLIENTNAME} ws2_32)
 endif ()
 
 set_target_properties (
