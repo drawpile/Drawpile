@@ -1779,7 +1779,7 @@
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="426"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="432"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
@@ -2130,48 +2130,53 @@
         <translation>背景レイヤーを使用</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="503"/>
-        <source>Announce with Bonjour</source>
-        <translation>Bonjour で告知</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="511"/>
+        <location filename="../ui/settings.ui" line="518"/>
         <source>Shortcuts</source>
         <translation>ショートカット</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="517"/>
+        <location filename="../ui/settings.ui" line="524"/>
         <source>Filter</source>
         <translation>フィルタ</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="535"/>
+        <location filename="../ui/settings.ui" line="542"/>
         <source>Known Hosts</source>
         <translation>既知のホスト</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="600"/>
+        <location filename="../ui/settings.ui" line="607"/>
         <source>List Servers</source>
         <translation>サーバーの一覧</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="631"/>
+        <location filename="../ui/settings.ui" line="638"/>
         <source>Add</source>
         <translation>追加</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="553"/>
+        <location filename="../ui/settings.ui" line="560"/>
         <source>Import trusted...</source>
         <translation>信頼済みホストをインポート...</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="576"/>
+        <location filename="../ui/settings.ui" line="503"/>
+        <source>Announce with Zeroconf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="510"/>
+        <source>Automatically set up port forwarding with UPnP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="583"/>
         <source>Mark as trusted</source>
         <translation>信頼済みとしてマーク</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="590"/>
-        <location filename="../ui/settings.ui" line="638"/>
+        <location filename="../ui/settings.ui" line="597"/>
+        <location filename="../ui/settings.ui" line="645"/>
         <source>Remove</source>
         <translation>削除</translation>
     </message>
@@ -2858,36 +2863,36 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="424"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="439"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="430"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="440"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="445"/>
         <source>Import trusted certificate</source>
         <translation>信頼済み証明書をインポート</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="425"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="431"/>
         <source>Certificates (%1)</source>
         <translation>証明書 (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="440"/>
         <source>Invalid certificate!</source>
         <translation>無効な証明書です！</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="439"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="445"/>
         <source>Certificate common name not set!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="453"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="457"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="459"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="463"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="472"/>
         <source>Add public listing server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="457"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="463"/>
         <source>Invalid URL!</source>
         <translation>無効な URL です！</translation>
     </message>
@@ -3608,90 +3613,90 @@
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="82"/>
-        <location filename="../widgets/netstatus.cpp" line="219"/>
+        <location filename="../widgets/netstatus.cpp" line="86"/>
+        <location filename="../widgets/netstatus.cpp" line="227"/>
         <source>not connected</source>
         <translation>未接続</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="91"/>
+        <location filename="../widgets/netstatus.cpp" line="95"/>
         <source>Copy address to clipboard</source>
         <translation>アドレスをクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="97"/>
+        <location filename="../widgets/netstatus.cpp" line="101"/>
         <source>Copy session URL to clipboard</source>
         <translation>セッション URL をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="103"/>
+        <location filename="../widgets/netstatus.cpp" line="107"/>
         <source>Get externally visible IP address</source>
         <translation>外部に公開している IP アドレスを取得</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="114"/>
+        <location filename="../widgets/netstatus.cpp" line="122"/>
         <source>Statistics</source>
         <translation>状態</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="126"/>
+        <location filename="../widgets/netstatus.cpp" line="134"/>
         <source>Show certificate</source>
         <translation>証明書を表示</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="149"/>
+        <location filename="../widgets/netstatus.cpp" line="157"/>
         <source>Connecting to %1...</source>
         <translation>%1 に接続中...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="167"/>
-        <location filename="../widgets/netstatus.cpp" line="340"/>
+        <location filename="../widgets/netstatus.cpp" line="175"/>
+        <location filename="../widgets/netstatus.cpp" line="348"/>
         <source>Host: %1</source>
         <translation>ホスト: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="168"/>
+        <location filename="../widgets/netstatus.cpp" line="176"/>
         <source>Logged in!</source>
         <translation>ログインしました！</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="181"/>
+        <location filename="../widgets/netstatus.cpp" line="189"/>
         <source>A previously unvisited host</source>
         <translation>過去に接続したことのないホストです</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="186"/>
+        <location filename="../widgets/netstatus.cpp" line="194"/>
         <source>Host certificate has not changed since the last visit</source>
         <translation>ホストの証明書が前回の接続時から更新されていません</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="191"/>
+        <location filename="../widgets/netstatus.cpp" line="199"/>
         <source>This is a trusted host</source>
         <translation>信頼済みホストです</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="208"/>
-        <location filename="../widgets/netstatus.cpp" line="209"/>
+        <location filename="../widgets/netstatus.cpp" line="216"/>
+        <location filename="../widgets/netstatus.cpp" line="217"/>
         <source>Logging out...</source>
         <translation>ログアウト中...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="225"/>
+        <location filename="../widgets/netstatus.cpp" line="233"/>
         <source>Disconnected</source>
         <translation>切断しました</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="358"/>
+        <location filename="../widgets/netstatus.cpp" line="366"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; が参加しました</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="363"/>
+        <location filename="../widgets/netstatus.cpp" line="371"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; が退出しました</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="368"/>
+        <location filename="../widgets/netstatus.cpp" line="376"/>
         <source>You have been kicked by %1</source>
         <translation>あなたは %1 にキックされました</translation>
     </message>

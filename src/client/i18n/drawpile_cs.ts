@@ -1781,7 +1781,7 @@
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="426"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="432"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>Všechny soubory (*)</translation>
@@ -2131,48 +2131,53 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="503"/>
-        <source>Announce with Bonjour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="511"/>
+        <location filename="../ui/settings.ui" line="518"/>
         <source>Shortcuts</source>
         <translation>Zkratky</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="517"/>
+        <location filename="../ui/settings.ui" line="524"/>
         <source>Filter</source>
         <translation>Filtr</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="535"/>
+        <location filename="../ui/settings.ui" line="542"/>
         <source>Known Hosts</source>
         <translation>Známí hostitelé</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="600"/>
+        <location filename="../ui/settings.ui" line="607"/>
         <source>List Servers</source>
         <translation>Vypsat servery</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="631"/>
+        <location filename="../ui/settings.ui" line="638"/>
         <source>Add</source>
         <translation>Přidat</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="553"/>
+        <location filename="../ui/settings.ui" line="560"/>
         <source>Import trusted...</source>
         <translation>Zavést důvěryhodné...</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="576"/>
+        <location filename="../ui/settings.ui" line="503"/>
+        <source>Announce with Zeroconf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="510"/>
+        <source>Automatically set up port forwarding with UPnP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="583"/>
         <source>Mark as trusted</source>
         <translation>Označit za důvěryhodné</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="590"/>
-        <location filename="../ui/settings.ui" line="638"/>
+        <location filename="../ui/settings.ui" line="597"/>
+        <location filename="../ui/settings.ui" line="645"/>
         <source>Remove</source>
         <translation>Odstranit</translation>
     </message>
@@ -2859,36 +2864,36 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="424"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="439"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="430"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="440"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="445"/>
         <source>Import trusted certificate</source>
         <translation>Zavést důvěryhodné osvědčení</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="425"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="431"/>
         <source>Certificates (%1)</source>
         <translation>Osvědčení (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="440"/>
         <source>Invalid certificate!</source>
         <translation>Neplatné osvědčení!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="439"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="445"/>
         <source>Certificate common name not set!</source>
         <translation>Obecný název osvědčení nenastaven!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="453"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="457"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="459"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="463"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="472"/>
         <source>Add public listing server</source>
         <translation>Přidat server z veřejného seznamu</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="457"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="463"/>
         <source>Invalid URL!</source>
         <translation>Neplatná adresa (URL)!</translation>
     </message>
@@ -3609,90 +3614,90 @@
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="82"/>
-        <location filename="../widgets/netstatus.cpp" line="219"/>
+        <location filename="../widgets/netstatus.cpp" line="86"/>
+        <location filename="../widgets/netstatus.cpp" line="227"/>
         <source>not connected</source>
         <translation>Nepřipojeno</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="91"/>
+        <location filename="../widgets/netstatus.cpp" line="95"/>
         <source>Copy address to clipboard</source>
         <translation>Kopírovat adresu do schránky</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="97"/>
+        <location filename="../widgets/netstatus.cpp" line="101"/>
         <source>Copy session URL to clipboard</source>
         <translation>Kopírovat adresu sezení (URL) do schránky</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="103"/>
+        <location filename="../widgets/netstatus.cpp" line="107"/>
         <source>Get externally visible IP address</source>
         <translation>Získat z vnějšku viditelnou adresu IP</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="114"/>
+        <location filename="../widgets/netstatus.cpp" line="122"/>
         <source>Statistics</source>
         <translation>Statistika</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="126"/>
+        <location filename="../widgets/netstatus.cpp" line="134"/>
         <source>Show certificate</source>
         <translation>Ukázat osvědčení</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="149"/>
+        <location filename="../widgets/netstatus.cpp" line="157"/>
         <source>Connecting to %1...</source>
         <translation>Připojuje se k %1...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="167"/>
-        <location filename="../widgets/netstatus.cpp" line="340"/>
+        <location filename="../widgets/netstatus.cpp" line="175"/>
+        <location filename="../widgets/netstatus.cpp" line="348"/>
         <source>Host: %1</source>
         <translation>Server: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="168"/>
+        <location filename="../widgets/netstatus.cpp" line="176"/>
         <source>Logged in!</source>
         <translation>Přihlášen!</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="181"/>
+        <location filename="../widgets/netstatus.cpp" line="189"/>
         <source>A previously unvisited host</source>
         <translation>Předtím nenavštívený server</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="186"/>
+        <location filename="../widgets/netstatus.cpp" line="194"/>
         <source>Host certificate has not changed since the last visit</source>
         <translation>Osvědčení serveru se od poslední návštěny nezměnilo</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="191"/>
+        <location filename="../widgets/netstatus.cpp" line="199"/>
         <source>This is a trusted host</source>
         <translation>Toto je důvěryhodný server</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="208"/>
-        <location filename="../widgets/netstatus.cpp" line="209"/>
+        <location filename="../widgets/netstatus.cpp" line="216"/>
+        <location filename="../widgets/netstatus.cpp" line="217"/>
         <source>Logging out...</source>
         <translation>Odhlašuje se...</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="225"/>
+        <location filename="../widgets/netstatus.cpp" line="233"/>
         <source>Disconnected</source>
         <translation>Odpojen</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="358"/>
+        <location filename="../widgets/netstatus.cpp" line="366"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; se připojil</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="363"/>
+        <location filename="../widgets/netstatus.cpp" line="371"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; odešel</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="368"/>
+        <location filename="../widgets/netstatus.cpp" line="376"/>
         <source>You have been kicked by %1</source>
         <translation>Byl jste vykopnut %1</translation>
     </message>
