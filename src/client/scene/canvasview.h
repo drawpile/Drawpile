@@ -197,6 +197,7 @@ class CanvasView : public QGraphicsView
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dragMoveEvent(QDragMoveEvent *event);
 		void dropEvent(QDropEvent *event);
+		void showEvent(QShowEvent *event);
 
 	private:
 		// unified mouse/stylus event handlers
@@ -298,6 +299,8 @@ class CanvasView : public QGraphicsView
 
 		bool _enableTouchScroll, _enableTouchPinch;
 		bool _touching, _touchRotating;
+		qreal _touchStartZoom, _touchStartRotate;
+		qreal _dpi;
 };
 
 }

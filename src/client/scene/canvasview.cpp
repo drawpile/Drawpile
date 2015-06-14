@@ -26,6 +26,8 @@
 #include <QApplication>
 #include <QGestureEvent>
 #include <QSettings>
+#include <QWindow>
+#include <QScreen>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -60,7 +62,8 @@ CanvasView::CanvasView(QWidget *parent)
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
 	_hotBorderTop(false),
-	_enableTouchScroll(true), _enableTouchPinch(true), _touching(false), _touchRotating(false)
+	_enableTouchScroll(true), _enableTouchPinch(true), _touching(false), _touchRotating(false),
+	_dpi(96)
 {
 	viewport()->setAcceptDrops(true);
 #ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
@@ -703,17 +706,26 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		break;
 
 	case QEvent::TouchUpdate: {
-		QPointF lastCenter, center;
+		QPointF startCenter, lastCenter, center;
 		const int points = event->touchPoints().size();
 		for(const auto &tp : event->touchPoints()) {
+			startCenter += tp.startPos();
 			lastCenter += tp.lastPos();
 			center += tp.pos();
 		}
+		startCenter /= points;
 		lastCenter /= points;
 		center /= points;
 
-		// Drag view with one or more finger
-		if(_enableTouchScroll) {
+		if(!_touching) {
+			_touchStartZoom = zoom();
+			_touchStartRotate = rotation();
+		}
+
+		// Single finger drag when touch scroll is enabled,
+		// but also drag with a pinch gesture. Single finger drag
+		// may be deactivated to support finger painting.
+		if(_enableTouchScroll || (_enableTouchPinch && points >= 2)) {
 			_touching = true;
 			float dx = center.x() - lastCenter.x();
 			float dy = center.y() - lastCenter.y();
@@ -721,30 +733,36 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
 		}
 
+		// Scaling and rotation with two fingers
 		if(points >= 2 && _enableTouchPinch) {
 			_touching = true;
-			// Two finger scaling and rotation
-			float lastAvgDist=0, avgDist=0;
+			float startAvgDist=0, avgDist=0;
 			for(const auto &tp : event->touchPoints()) {
-				lastAvgDist += squareDist(tp.lastPos() - lastCenter);
+				startAvgDist += squareDist(tp.startPos() - startCenter);
 				avgDist += squareDist(tp.pos() - center);
 			}
-			const qreal dZoom = sqrt(avgDist) / sqrt(lastAvgDist);
+			startAvgDist = sqrt(startAvgDist);
+			avgDist = sqrt(avgDist);
+			const qreal dZoom = avgDist / startAvgDist;
 
-			const QLineF l1 {event->touchPoints().first().lastPos(), event->touchPoints().last().lastPos() };
-			const QLineF l2 {event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+			const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
+			const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
 
 			const qreal dAngle = l1.angle() - l2.angle();
 
-			// require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
-			if(qAbs(dAngle) > 1.0 || _touchRotating) {
+			// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
+			// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
+			// is inaccurate when touchpoints are close together.
+			if(startAvgDist / _dpi > 0.8 && (qAbs(dAngle) > 3.0 || _touchRotating)) {
+				qDebug("dist %f/%f = %f", avgDist, _dpi, avgDist/_dpi);
 				_touchRotating = true;
-				_rotate = _rotate + dAngle;
+				_rotate = _touchStartRotate + dAngle;
 			}
 
 			// Calling setZoom applies the rotation too
-			setZoom(zoom() * dZoom);
+			setZoom(_touchStartZoom * dZoom);
 		}
+
 	} break;
 
 	case QEvent::TouchEnd:
@@ -1016,6 +1034,22 @@ void CanvasView::dropEvent(QDropEvent *event)
 		return;
 	}
 	event->acceptProposedAction();
+}
+
+void CanvasView::showEvent(QShowEvent *event)
+{
+	QGraphicsView::showEvent(event);
+	// Find the DPI of the screen
+	// TODO: if the window is moved to another screen, this should be updated
+	QWidget *w = this;
+	while(w) {
+		if(w->windowHandle() != nullptr) {
+			_dpi = w->windowHandle()->screen()->physicalDotsPerInch();
+			qDebug("dpi=%f", _dpi);
+			break;
+		}
+		w=w->parentWidget();
+	}
 }
 
 }
