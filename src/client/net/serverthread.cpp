@@ -26,18 +26,20 @@
 
 #include <QSettings>
 #include <QDateTime>
+#include <QDebug>
 
 #ifdef HAVE_DNSSD
 #include <KDNSSD/DNSSD/PublicService>
 #endif
 #ifdef HAVE_UPNP
 #include "upnp.h"
+#include "utils/whatismyip.h"
 #endif
 
 namespace net {
 
 ServerThread::ServerThread(QObject *parent)
-	: QThread(parent), _deleteonexit(false)
+	: QThread(parent), _deleteonexit(false), _portForwarded(false)
 {
 	QSettings cfg;
 	_port = cfg.value("settings/server/port", DRAWPILE_PROTO_DEFAULT_PORT).toInt();
@@ -81,8 +83,14 @@ int ServerThread::startServer(const QString &title)
 #ifdef HAVE_UPNP
 	if(_port>0) {
 		QSettings cfg;
-		if(cfg.value("settings/server/upnp", true).toBool())
-			UPnPClient::instance()->activateForward(_port);
+		if(cfg.value("settings/server/upnp", true).toBool()) {
+			QString myIp = WhatIsMyIp::localAddress();
+			if(WhatIsMyIp::isMyPrivateAddress(myIp)) {
+				qDebug() << "UPnP enabled: trying to forward" << _port << "to" << myIp;
+				UPnPClient::instance()->activateForward(_port);
+				_portForwarded = true;
+			}
+		}
 	}
 #endif
 	return _port;
@@ -117,10 +125,9 @@ void ServerThread::run() {
 	exec();
 
 #ifdef HAVE_UPNP
-	{
-		QSettings cfg;
-		if(cfg.value("settings/server/upnp", true).toBool())
-			UPnPClient::instance()->deactivateForward(_port);
+	if(_portForwarded) {
+		qDebug() << "Removing port" << _port << "forwarding";
+		UPnPClient::instance()->deactivateForward(_port);
 	}
 #endif
 
