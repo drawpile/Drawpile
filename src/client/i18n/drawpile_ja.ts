@@ -363,7 +363,7 @@
     <message>
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
-        <translation>向こう側から塗りつぶす</translation>
+        <translation>奥側で塗りつぶす</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="89"/>
@@ -2041,7 +2041,7 @@
     <message>
         <location filename="../ui/settings.ui" line="78"/>
         <source>Enable bug workarounds</source>
-        <translation>バグ措置を有効化</translation>
+        <translation>バグ対策を有効化</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="214"/>
@@ -2082,17 +2082,17 @@
     <message>
         <location filename="../ui/settings.ui" line="186"/>
         <source>Pinch to zoom and rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>ズームと回転をピンチ操作で行う</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="193"/>
         <source>Scroll with finger</source>
-        <translation type="unfinished"></translation>
+        <translation>指でスクロール</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="200"/>
         <source>Touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>タッチ:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="208"/>
@@ -2162,12 +2162,12 @@
     <message>
         <location filename="../ui/settings.ui" line="503"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeroconf で告知</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="510"/>
         <source>Automatically set up port forwarding with UPnP</source>
-        <translation type="unfinished"></translation>
+        <translation>UPnP でポート転送を自動的にセットアップ</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="583"/>
@@ -3448,7 +3448,7 @@
     <message>
         <location filename="../core/rasterop.cpp" line="45"/>
         <source>Underpaint</source>
-        <translation type="unfinished"></translation>
+        <translation>奥側に描画</translation>
     </message>
     <message>
         <location filename="../core/rasterop.cpp" line="51"/>
