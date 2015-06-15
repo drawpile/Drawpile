@@ -643,7 +643,8 @@ void MainWindow::updateTabletSupportMode()
 	// not really tablet related, but close enough
 	_view->setTouchGestures(
 		cfg.value("touchscroll", true).toBool(),
-		cfg.value("touchpinch", true).toBool()
+		cfg.value("touchpinch", true).toBool(),
+		cfg.value("touchtwist", true).toBool()
 	);
 }
 

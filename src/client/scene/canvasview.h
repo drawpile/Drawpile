@@ -92,7 +92,7 @@ class CanvasView : public QGraphicsView
 		void setTabletMode(TabletMode mode);
 
 		//! Enable/disable touch gestures
-		void setTouchGestures(bool scroll, bool pinch);
+		void setTouchGestures(bool scroll, bool pinch, bool twist);
 
 		//! Is drawing in progress at the moment?
 		bool isPenDown() const { return _pendown != NOTDOWN; }
@@ -297,7 +297,7 @@ class CanvasView : public QGraphicsView
 
 		bool _hotBorderTop;
 
-		bool _enableTouchScroll, _enableTouchPinch;
+		bool _enableTouchScroll, _enableTouchPinch, _enableTouchTwist;
 		bool _touching, _touchRotating;
 		qreal _touchStartZoom, _touchStartRotate;
 		qreal _dpi;

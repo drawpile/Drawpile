@@ -62,7 +62,8 @@ CanvasView::CanvasView(QWidget *parent)
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
 	_hotBorderTop(false),
-	_enableTouchScroll(true), _enableTouchPinch(true), _touching(false), _touchRotating(false),
+	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
+	_touching(false), _touchRotating(false),
 	_dpi(96)
 {
 	viewport()->setAcceptDrops(true);
@@ -677,10 +678,10 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 			_gestureStartAngle = _rotate;
 		}
 
-		if((pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
+		if(_enableTouchPinch && (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
 			setZoom(_gestureStartZoom * pinch->scaleFactor());
 
-		if((pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
+		if(_enableTouchTwist && (pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
 			setRotation(_gestureStartAngle + pinch->rotationAngle());
 	}
 }
@@ -690,10 +691,11 @@ static qreal squareDist(const QPointF &p)
 	return p.x()*p.x() + p.y()*p.y();
 }
 
-void CanvasView::setTouchGestures(bool scroll, bool pinch)
+void CanvasView::setTouchGestures(bool scroll, bool pinch, bool twist)
 {
 	_enableTouchScroll = scroll;
 	_enableTouchPinch = pinch;
+	_enableTouchTwist = twist;
 }
 
 void CanvasView::touchEvent(QTouchEvent *event)
@@ -734,7 +736,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		}
 
 		// Scaling and rotation with two fingers
-		if(points >= 2 && _enableTouchPinch) {
+		if(points >= 2 && (_enableTouchPinch | _enableTouchTwist)) {
 			_touching = true;
 			float startAvgDist=0, avgDist=0;
 			for(const auto &tp : event->touchPoints()) {
@@ -742,25 +744,31 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				avgDist += squareDist(tp.pos() - center);
 			}
 			startAvgDist = sqrt(startAvgDist);
-			avgDist = sqrt(avgDist);
-			const qreal dZoom = avgDist / startAvgDist;
 
-			const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
-			const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
-
-			const qreal dAngle = l1.angle() - l2.angle();
-
-			// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
-			// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
-			// is inaccurate when touchpoints are close together.
-			if(startAvgDist / _dpi > 0.8 && (qAbs(dAngle) > 3.0 || _touchRotating)) {
-				qDebug("dist %f/%f = %f", avgDist, _dpi, avgDist/_dpi);
-				_touchRotating = true;
-				_rotate = _touchStartRotate + dAngle;
+			if(_enableTouchPinch) {
+				avgDist = sqrt(avgDist);
+				const qreal dZoom = avgDist / startAvgDist;
+				_zoom = _touchStartZoom * dZoom;
 			}
 
-			// Calling setZoom applies the rotation too
-			setZoom(_touchStartZoom * dZoom);
+			if(_enableTouchTwist) {
+				const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
+				const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+
+				const qreal dAngle = l1.angle() - l2.angle();
+
+				// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
+				// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
+				// is inaccurate when touchpoints are close together.
+				if(startAvgDist / _dpi > 0.8 && (qAbs(dAngle) > 3.0 || _touchRotating)) {
+					_touchRotating = true;
+					_rotate = _touchStartRotate + dAngle;
+				}
+
+			}
+
+			// Recalculate view matrix
+			setZoom(zoom());
 		}
 
 	} break;

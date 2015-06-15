@@ -227,13 +227,15 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/input");
 	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
-	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
-	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
 #ifdef Q_OS_MAC
-	// Currently, these events are always handled on Macs
+	// Gesture scrolling is always enabled on Macs
+	_ui->touchscroll->setChecked(true);
 	_ui->touchscroll->setEnabled(false);
-	_ui->touchpinch->setEnabled(false);
+#else
+	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
 #endif
+	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
+	_ui->touchtwist->setChecked(cfg.value("touchtwist", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -290,6 +292,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("tabletbugs", _ui->tabletBugWorkaround->isChecked());
 	cfg.setValue("touchscroll", _ui->touchscroll->isChecked());
 	cfg.setValue("touchpinch", _ui->touchpinch->isChecked());
+	cfg.setValue("touchtwist", _ui->touchtwist->isChecked());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
