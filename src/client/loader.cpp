@@ -105,7 +105,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 
 			image = image.convertToFormat(QImage::Format_ARGB32);
 			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, 0, 0, QStringLiteral("Layer %1").arg(layerId)));
-			msgs << net::putQImage(1, layerId, 0, 0, image, false);
+			msgs << net::putQImage(1, layerId, 0, 0, image, protocol::PutImage::MODE_REPLACE);
 			++layerId;
 		}
 
@@ -121,7 +121,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, 0, 0, "Background")));
-	msgs.append(net::putQImage(1, 1, 0, 0, image, false));
+	msgs.append(net::putQImage(1, 1, 0, 0, image, protocol::PutImage::MODE_REPLACE));
 
 	return msgs;
 }
@@ -143,7 +143,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		const paintcore::Layer *layer = _session->image()->getLayerByIndex(i);
 		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, 0, 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
-		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), false));
+		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), protocol::PutImage::MODE_REPLACE));
 		if(_session->isLayerLocked(layer->id()))
 			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
 	}
