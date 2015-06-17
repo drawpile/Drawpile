@@ -2333,15 +2333,23 @@ void MainWindow::setupActions()
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
+	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence("Shift+Z"));
+	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence("Shift+X"));
+
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
 	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
 	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
+	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
+	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addAction(swapcolors);
+	toolshortcuts->addSeparator();
+	toolshortcuts->addAction(layerUpAct);
+	toolshortcuts->addAction(layerDownAct);
 
 	QToolBar *drawtools = new QToolBar("Drawing tools");
 	drawtools->setObjectName("drawtoolsbar");
@@ -2400,13 +2408,6 @@ void MainWindow::setupActions()
 		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
 		_toolChangeTime.start();
 	});
-
-	// Quick layer change actions
-	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Up));
-	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Down));
-	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
-	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
-
 
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
