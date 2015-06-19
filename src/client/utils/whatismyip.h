@@ -48,6 +48,12 @@ public:
 	static bool isMyPrivateAddress(const QString &address);
 
 	/**
+	 * @brief Check if the address belongs to the Carrier Grade NAT block
+	 * @param address
+	 */
+	static bool isCGNAddress(const QString &address);
+
+	/**
 	 * @brief Get the local address
 	 *
 	 * This function tries to find the address most likely reachable

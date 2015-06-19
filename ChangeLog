@@ -6,6 +6,7 @@
  * Improved touch gesture support (scrolling, zooming and rotating)
  * Added support for automatically setting up port forwarding with UPnP
  * Faster image loading
+ * Added notification about Carrier Grade NAT
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

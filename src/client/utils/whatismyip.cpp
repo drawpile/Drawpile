@@ -130,6 +130,26 @@ bool WhatIsMyIp::isMyPrivateAddress(const QString &address)
 	return QNetworkInterface::allAddresses().contains(addr);
 }
 
+bool WhatIsMyIp::isCGNAddress(const QString &address)
+{
+	QHostAddress addr;
+
+	// remove port (if included). This breaks IPv6 addresses,
+	// but it doesn't matter since CGN is only used with IPv4.
+	int portsep = address.indexOf(':');
+	if(portsep>0)
+		addr = address.left(portsep);
+	else
+		addr = address;
+
+	if(addr.isNull()) {
+		qWarning() << "unparseable address:" << address;
+		return false;
+	}
+
+	return addr.isInSubnet(QHostAddress(QStringLiteral("100.64.0.0")), 10);
+}
+
 /**
  * Attempt to discover the address most likely reachable from the
  * outside.

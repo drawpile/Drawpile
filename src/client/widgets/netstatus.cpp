@@ -34,7 +34,10 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QProgressBar>
+#include <QMessageBox>
+#include <QCheckBox>
 #include <QTimer>
+#include <QSettings>
 
 namespace widgets {
 
@@ -162,6 +165,9 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	bool isLocal = WhatIsMyIp::isMyPrivateAddress(address);
 	_discoverIp->setEnabled(isLocal);
 	_discoverIp->setVisible(isLocal);
+
+	if(!isLocal && WhatIsMyIp::isCGNAddress(address))
+		showCGNAlert();
 
 	// reset statistics
 	_recvbytes = 0;
@@ -346,6 +352,9 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 		_address = ip;
 		_sessionUrl.setHost(ip);
 		_label->setText(tr("Host: %1").arg(fullAddress()));
+
+		if(WhatIsMyIp::isCGNAddress(ip))
+			showCGNAlert();
 	}
 }
 
@@ -405,5 +414,31 @@ void NetStatus::showNetStats()
 	}
 	_netstats->show();
 }
+
+void NetStatus::showCGNAlert()
+{
+	QSettings cfg;
+
+	if(cfg.value("history/cgnalert", true).toBool()) {
+		QMessageBox box(
+			QMessageBox::Warning,
+			tr("Notice"),
+			tr("Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile's help page for workarounds."),
+			QMessageBox::Ok
+		);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
+#endif
+		box.exec();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+		if(box.checkBox()->isChecked()) {
+			cfg.setValue("history/cgnalert", false);
+		}
+#endif
+	}
+}
+
 }
 
