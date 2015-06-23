@@ -74,11 +74,11 @@
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
+#include "widgets/userlistwidget.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
-#include "docks/userlistdock.h"
 #include "docks/layerlistdock.h"
 #include "docks/inputsettingsdock.h"
 
@@ -252,9 +252,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
 	
-	// Create the chatbox
+	// Create the chatbox and user list
+	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
 	_chatbox = new widgets::ChatBox(this);
-	_splitter->addWidget(_chatbox);
+	chatsplitter->addWidget(_chatbox);
+
+	_userlist = new widgets::UserList(this);
+	chatsplitter->addWidget(_userlist);
+
+	chatsplitter->setStretchFactor(0, 5);
+	chatsplitter->setStretchFactor(1, 1);
+	_splitter->addWidget(chatsplitter);
 
 	// Make sure the canvas gets the majority share of the splitter the first time
 	_splitter->setStretchFactor(0, 1);
@@ -307,7 +315,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
 	_dock_toolsettings->getPolySelectionSettings()->setScene(_canvas);
 	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
-	_dock_users->setClient(_client);
+	_userlist->setClient(_client);
 
 	_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
 		if(_canvas->layers())
@@ -2430,12 +2438,6 @@ void MainWindow::createDocks()
 
 	addDockWidget(Qt::RightDockWidgetArea, _dock_colors);
 
-	// Create user list
-	_dock_users = new docks::UserList(this);
-	_dock_users->setObjectName("userlistdock");
-	_dock_users->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _dock_users);
-
 	// Create layer list
 	_dock_layers = new docks::LayerList(this);
 	_dock_layers->setObjectName("LayerList");
@@ -2455,6 +2457,5 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
 
 	// Tabify docks
-	tabifyDockWidget(_dock_users, _dock_layers);
 	tabifyDockWidget(_dock_layers, _dock_input);
 }

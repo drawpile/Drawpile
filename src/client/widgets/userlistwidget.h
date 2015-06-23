@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef USERLISTWIDGET_H
 #define USERLISTWIDGET_H
 
-#include <QDockWidget>
+#include <QWidget>
 #include <QItemDelegate>
 
 class Ui_UserBox;
@@ -28,14 +28,14 @@ namespace net {
 	class Client;
 }
 
-namespace docks {
+namespace widgets {
 
 /**
  * @brief User list window
  * A dock widget that displays a list of users, with session administration
  * controls.
  */
-class UserList: public QDockWidget
+class UserList: public QWidget
 {
 Q_OBJECT
 public:

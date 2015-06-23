@@ -115,11 +115,11 @@ set (
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
+	widgets/userlistwidget.cpp 
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
-	docks/userlistdock.cpp 
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp

@@ -7,6 +7,7 @@
  * Added support for automatically setting up port forwarding with UPnP
  * Faster image loading
  * Added notification about Carrier Grade NAT
+ * Moved user list to the chat box
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

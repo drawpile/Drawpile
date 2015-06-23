@@ -36,12 +36,12 @@ namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
+	class UserList;
 	class ViewStatus;
 }
 namespace docks {
 	class ToolSettings;
 	class InputSettings;
-	class UserList;
 	class LayerList;
 	class PaletteBox;
 	class ColorBox;
@@ -205,11 +205,11 @@ class MainWindow : public QMainWindow {
 
 		docks::ToolSettings *_dock_toolsettings;
 		docks::InputSettings *_dock_input;
-		docks::UserList *_dock_users;
 		docks::LayerList *_dock_layers;
 		docks::ColorBox *_dock_colors;
 		docks::Navigator *_dock_navigator;
 		widgets::ChatBox *_chatbox;
+		widgets::UserList *_userlist;
 
 		widgets::CanvasView *_view;
 
