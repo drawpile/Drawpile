@@ -103,12 +103,16 @@ LayerList::LayerList(QWidget *parent)
 	_viewMode = boxmenu->addMenu(QString()); // title is set later
 	_viewMode->addActions(viewmodes->actions());
 
+	_showNamesOrNumbersAction = boxmenu->addAction(tr("Show numbers"));
+
+
 	_ui->menuButton->setMenu(boxmenu);
 
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
 	connect(_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
+	connect(_showNamesOrNumbersAction, &QAction::triggered, this, &LayerList::toggleLayerNamesOrNumbers);
 
 	selectionChanged(QItemSelection());
 
@@ -295,6 +299,26 @@ void LayerList::layerViewModeTriggered(QAction *action)
 {
 	_viewMode->setTitle(tr("Mode:") + " " + action->text());
 	emit layerViewModeSelected(action->property("viewmode").toInt());
+}
+
+void LayerList::toggleLayerNamesOrNumbers()
+{
+	LayerListDelegate *del = static_cast<LayerListDelegate*>(_ui->layerlist->itemDelegate());
+
+	LayerListDelegate::TitleMode tm = del->titleMode();
+	switch(tm) {
+	case LayerListDelegate::SHOW_TITLE:
+		_showNamesOrNumbersAction->setText(tr("Show titles"));
+		tm = LayerListDelegate::SHOW_NUMBER;
+		break;
+	case LayerListDelegate::SHOW_NUMBER:
+		_showNamesOrNumbersAction->setText(tr("Show numbers"));
+		tm = LayerListDelegate::SHOW_TITLE;
+		break;
+	}
+
+	del->setTitleMode(tm);
+	_ui->layerlist->update();
 }
 
 /**

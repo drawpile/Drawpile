@@ -57,7 +57,14 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
-	drawDisplay(painter, opt, textrect, layer.title);
+
+	QString title;
+	switch(_titlemode) {
+	case SHOW_TITLE: title = layer.title; break;
+	case SHOW_NUMBER: title = QString::number(index.model()->rowCount() - index.row() - 1); break;
+	}
+
+	drawDisplay(painter, opt, textrect, title);
 
 	painter->restore();
 }
