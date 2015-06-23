@@ -8,6 +8,7 @@
  * Faster image loading
  * Added notification about Carrier Grade NAT
  * Moved user list to the chat box
+ * OpenRaster: new namespace for Drawpile extensions
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

@@ -41,7 +41,9 @@ using protocol::MessagePtr;
 namespace openraster {
 
 namespace {
-	const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
+	static const QString DP_NAMESPACE = QStringLiteral("http://drawpile.net/");
+	// Included for compatibility with files saved by versions <1.0
+	static const QString DP_NAMESPACE_OLD = QStringLiteral("http://drawpile.sourceforge.net/");
 
 	bool checkIsOraFile(KArchive &zip)
 	{
@@ -232,7 +234,7 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 			_warnings |= ORA_NESTED;
 			if(loadLayers(zip, e, offset)==false)
 				return false;
-		} else if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="annotations") {
+		} else if((e.namespaceURI()==DP_NAMESPACE || e.namespaceURI()==DP_NAMESPACE_OLD) && e.localName()=="annotations") {
 			loadAnnotations(e);
 		} else if(e.namespaceURI()==DP_NAMESPACE) {
 			qWarning() << "Unhandled drawpile extension in stack:" << e.tagName();
@@ -252,7 +254,7 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 		QDomElement e = nodes.at(n).toElement();
 		if(e.isNull())
 			continue;
-		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a") {
+		if(e.localName()=="a") {
 			_commands.append(MessagePtr(new protocol::AnnotationCreate(
 				0,
 				++_annotationid,
