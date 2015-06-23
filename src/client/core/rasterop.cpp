@@ -37,13 +37,13 @@ const BlendMode BLEND_MODE[BLEND_MODES] = {
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Recolor"),
-		QString("-dp-recolor"), /* not part of SVG or OpenRaster spec */
+		QString("src-atop"),
 		10,
 		false
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Underpaint"),
-		QString("-dp-under"), /* not part of SVG or OpenRaster spec */
+		QString("dst-over"),
 		11,
 		false
 	},
