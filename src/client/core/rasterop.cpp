@@ -42,7 +42,7 @@ const BlendMode BLEND_MODE[BLEND_MODES] = {
 		false
 	},
 	{
-		QT_TRANSLATE_NOOP("paintcore", "Underpaint"),
+		QT_TRANSLATE_NOOP("paintcore", "Behind"),
 		QString("dst-over"),
 		11,
 		false
