@@ -182,7 +182,7 @@ Compatibility Reader::open()
 
 		// Old versions known to be compatible
 		switch(_formatversion) {
-		case version32(14, 6): // fully compatible (with support code)
+		case version32(15, 5): // fully compatible (with support code)
 		case version32(14, 5):
 		case version32(13, 5):
 		case version32(13, 4):
