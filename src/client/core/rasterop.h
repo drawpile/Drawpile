@@ -41,6 +41,20 @@ static const int BLEND_MODES=12;
 extern const BlendMode BLEND_MODE[BLEND_MODES];
 
 /**
+ * @brief Find the blending mode with the given protocol ID
+ * @param id blend mode ID
+ * @return blend mode or default if ID does not exist
+ */
+const BlendMode &findBlendMode(int id);
+
+/**
+ * @brief Find the blending mode based on its SVG name
+ * @param svgname
+ * @return blend mode internal index or -1 if not found
+ */
+int findBlendModeByName(const QString &svgname);
+
+/**
  * Composite a color using a mask onto an image.
  * @param mode composition mode
  * @param base pixels onto which the color is composited
@@ -80,19 +94,6 @@ std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int 
  * Add tint to pixel values
  */
 void tintPixels(quint32 *pixels, int len, quint32 tint);
-
-/**
- * @brief Get the blending mode for the given SVG composite operation name
- * @return blending mode or -1 if operation is not supported
- */
-int blendModeSvg(const QString &name);
-
-/**
- * @brief Get the SVG composition operation name for the given blend mode
- * @param blendmode
- * @return name. The normal blend mode is returned if blendmode is invalid
- */
-const QString &svgBlendMode(int blendmode);
 
 }
 

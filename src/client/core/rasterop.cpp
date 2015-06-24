@@ -103,11 +103,28 @@ int blendModeSvg(const QString &name)
 	return -1;
 }
 
-const QString &svgBlendMode(int blendmode)
+const BlendMode &findBlendMode(int id)
 {
-	if(blendmode < 0 || blendmode>=BLEND_MODES)
-		return BLEND_MODE[1].svgname;
-	return BLEND_MODE[blendmode].svgname;
+	for(int i=0;i<BLEND_MODES;++i) {
+		if(BLEND_MODE[i].id == id)
+			return BLEND_MODE[i];
+	}
+	qWarning("findBlendMode(%d): no such mode!", id);
+	return BLEND_MODE[1];
+}
+
+int findBlendModeByName(const QString &name)
+{
+	QStringRef n;
+	if(name.startsWith("svg:"))
+		n = name.midRef(4);
+	else
+		n = name.midRef(0);
+
+	for(int i=0;i<BLEND_MODES;++i)
+		if(BLEND_MODE[i].svgname == n)
+			return i;
+	return -1;
 }
 
 // This is borrowed from Pigment of koffice libs:

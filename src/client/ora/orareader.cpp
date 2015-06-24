@@ -209,10 +209,12 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, false));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
-			int blendmode = paintcore::blendModeSvg(compositeOp);
+			int blendmode = paintcore::findBlendModeByName(compositeOp);
 			if(blendmode<0) {
 				_warnings |= ORA_EXTENDED;
 				blendmode = 1;
+			} else {
+				blendmode = paintcore::BLEND_MODE[blendmode].id;
 			}
 
 			_commands.append(MessagePtr(new protocol::LayerAttributes(

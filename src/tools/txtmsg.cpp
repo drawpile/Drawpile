@@ -158,7 +158,7 @@ void layerAttrTxt(const LayerAttributes *msg, QTextStream &out)
 		<< msg->contextId()
 		<< " " << msg->id()
 		<< " " << "opacity=" << (msg->opacity() / 255.0)
-		<< " " << "blend=" << paintcore::svgBlendMode(msg->blend())
+		<< " " << "blend=" << paintcore::findBlendMode(msg->blend()).svgname
 		<< "\n";
 }
 
@@ -227,7 +227,7 @@ void fillRectTxt(const FillRect *msg, QTextStream &out)
 		<< " " << COLOR(msg->color())
 		;
 	if(msg->blend() != 255)
-		out << " " << paintcore::svgBlendMode(msg->blend());
+		out << " " << paintcore::findBlendMode(msg->blend()).svgname;
 	out << "\n";
 }
 
@@ -236,7 +236,7 @@ void toolChangeTxt(const ToolChange *msg, QTextStream &out)
 	out << "ctx "
 		<< msg->contextId()
 		<< " layer=" << msg->layer()
-		<< " blend=" << paintcore::svgBlendMode(msg->blend())
+		<< " blend=" << paintcore::findBlendMode(msg->blend()).svgname
 		<< " hardedge=" << (msg->mode() & TOOL_MODE_SUBPIXEL ? "false" : "true")
 		<< " incremental=" << (msg->mode() & TOOL_MODE_INCREMENTAL ? "true" : "false")
 		<< " spacing=" << msg->spacing()

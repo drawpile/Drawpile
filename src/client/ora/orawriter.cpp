@@ -93,7 +93,7 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 		if(l->hidden())
 			layer.setAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
-			layer.setAttribute("composite-op", "svg:" + paintcore::svgBlendMode(l->blendmode()));
+			layer.setAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
 
 		// TODO lock and selection
 		stack.appendChild(layer);

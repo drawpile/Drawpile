@@ -176,10 +176,10 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 		if(i.key() == "opacity")
 			layer.opacity = str2real(i.value());
 		else if(i.key() == "blend") {
-			int mode = paintcore::blendModeSvg(i.value());
+			int mode = paintcore::findBlendModeByName(i.value());
 			if(mode<0)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
-			layer.blend = mode;
+			layer.blend = paintcore::BLEND_MODE[mode].id;
 		} else
 			throw SyntaxError("Unrecognized parameter: " + i.key());
 
@@ -296,10 +296,10 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 		else if(i.key() == "resmudge")
 			ctx.brush.setResmudge(str2int(i.value()));
 		else if(i.key() == "blend") {
-			int mode = paintcore::blendModeSvg(i.value());
+			int mode = paintcore::findBlendModeByName(i.value());
 			if(mode<0)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
-			ctx.brush.setBlendingMode(mode);
+			ctx.brush.setBlendingMode(paintcore::BLEND_MODE[mode].id);
 		} else if(i.key() == "hardedge")
 			ctx.brush.setSubpixel(!str2bool(i.value()));
 		else if(i.key() == "incremental")
@@ -429,11 +429,14 @@ void TextCommandLoader::handleFillRect(const QString &args)
 	int blend;
 	if(m.captured(8).isEmpty())
 		blend = 255;
-	else
-		blend = paintcore::blendModeSvg(m.captured(8));
+	else {
+		blend = paintcore::findBlendModeByName(m.captured(8));
 
-	if(blend<0)
-		throw SyntaxError("Invalid blending mode: " + m.captured(8));
+		if(blend<0)
+			throw SyntaxError("Invalid blending mode: " + m.captured(8));
+
+		blend = paintcore::BLEND_MODE[blend].id;
+	}
 
 	_messages.append(MessagePtr(new protocol::FillRect(ctxid, layer, blend, x, y, w, h, color)));
 
