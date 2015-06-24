@@ -28,6 +28,7 @@
 #include "brush.h"
 #include "brushmask.h"
 #include "point.h"
+#include "rasterop.h"
 
 namespace paintcore {
 
@@ -479,6 +480,12 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 		const int ty0 = rect.y() / size;
 		const int ty1 = (bottom-1) / size;
 
+		bool canIncrOpacity;
+		if(blendmode==255 && color.alpha()==0)
+			canIncrOpacity = false;
+		else
+			canIncrOpacity = findBlendMode(blendmode).flags.testFlag(BlendMode::IncrOpacity);
+
 		for(int ty=ty0;ty<=ty1;++ty) {
 			for(int tx=tx0;tx<=tx1;++tx) {
 				int left = qMax(tx * size, rect.x()) - tx*size;
@@ -488,7 +495,8 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 
 				Tile &t = _tiles[ty*_xtiles+tx];
 
-				t.composite(blendmode, mask, color, left, top, w, h, 0);
+				if(!t.isNull() || canIncrOpacity)
+					t.composite(blendmode, mask, color, left, top, w, h, 0);
 			}
 		}
 	}

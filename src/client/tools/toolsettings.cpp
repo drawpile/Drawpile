@@ -57,7 +57,7 @@ namespace tools {
 namespace {
 	void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview) {
 		for(int b=0;b<paintcore::BLEND_MODES;++b) {
-			if(paintcore::BLEND_MODE[b].visible)
+			if(paintcore::BLEND_MODE[b].flags.testFlag(paintcore::BlendMode::BrushMode))
 				box->addItem(
 					QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
 					paintcore::BLEND_MODE[b].id

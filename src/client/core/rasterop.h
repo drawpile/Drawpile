@@ -25,19 +25,30 @@
 namespace paintcore {
 
 struct BlendMode {
+	enum Flag {
+		PrivateMode = 0x00, // not available for selection
+		LayerMode   = 0x01, // available for use as a layer mode
+		BrushMode   = 0x02, // available for use as a brush mode
+		UniversalMode = 0x03, // can be used with brushes and layers
+		DecrOpacity = 0x04, // this mode can decrease pixel opacity
+		IncrOpacity = 0x08  // this mode can increase pixel opacity
+	};
+	Q_DECLARE_FLAGS(Flags, Flag)
+
 	const char *name;      // translatable name
 	const QString svgname; // SVG style name of this blending mode
-	int id;                // ID as used in the protocol
-
-	bool layermode;        // can this be used as a layer mode?
-	bool visible;          // can this mode be shown in mode selection lists?
+	const int id;          // ID as used in the protocol
+	const Flags flags;     // Metadata
 
 	BlendMode() : name(nullptr), id(-1) { }
-	BlendMode(const char *_name, const QString &_svgname, int _id, bool _layermode=true, bool _visible=true) : name(_name), svgname(_svgname), id(_id), layermode(_layermode), visible(_visible) { }
+	BlendMode(const char *n, const QString &s, int i, Flags f)
+		: name(n), svgname(s), id(i), flags(f) { }
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(BlendMode::Flags)
+
 // Note. Protocol ordering and display ordering of the modes differ.
-static const int BLEND_MODES=12;
+static const int BLEND_MODES=13;
 extern const BlendMode BLEND_MODE[BLEND_MODES];
 
 /**

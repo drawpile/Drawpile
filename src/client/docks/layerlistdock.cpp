@@ -55,7 +55,7 @@ LayerList::LayerList(QWidget *parent)
 
 	// Populate blend mode combobox
 	for(int b=0;b<paintcore::BLEND_MODES;++b) {
-		if(paintcore::BLEND_MODE[b].layermode)
+		if(paintcore::BLEND_MODE[b].flags.testFlag(paintcore::BlendMode::LayerMode))
 			_ui->blendmode->addItem(
 				QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
 				paintcore::BLEND_MODE[b].id
