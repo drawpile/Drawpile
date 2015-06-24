@@ -475,9 +475,9 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 		const int right = rect.x() + rect.width();
 
 		const int tx0 = rect.x() / size;
-		const int tx1 = right / size;
+		const int tx1 = (right-1) / size;
 		const int ty0 = rect.y() / size;
-		const int ty1 = bottom / size;
+		const int ty1 = (bottom-1) / size;
 
 		for(int ty=ty0;ty<=ty1;++ty) {
 			for(int tx=tx0;tx<=tx1;++tx) {

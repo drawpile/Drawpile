@@ -10,6 +10,7 @@
  * Moved user list to the chat box
  * OpenRaster: new namespace for Drawpile extensions
  * Added option to show layer numbers instead than titles
+ * Fixed crash when using filling a rectangle aligned with bottom right corner of the canvas
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections
