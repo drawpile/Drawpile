@@ -1785,16 +1785,6 @@ void MainWindow::clearOrDelete()
 	fillArea(Qt::transparent);
 }
 
-void MainWindow::fillFgArea()
-{
-	fillArea(_dock_toolsettings->foregroundColor());
-}
-
-void MainWindow::fillBgArea()
-{
-	fillArea(_dock_toolsettings->backgroundColor());
-}
-
 void MainWindow::fillArea(const QColor &color)
 {
 	if(_canvas->selectionItem()) {
@@ -2040,9 +2030,8 @@ void MainWindow::setupActions()
 	QAction *expandleft = makeAction("expandleft", 0, tr("Expand &Left"), "", QKeySequence(CTRL_KEY "+H"));
 	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
 
-	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG Color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
-	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G Color"), tr("Fill selected area with background color"), QKeySequence(CTRL_KEY "+."));
+	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill selection"), QString(), QKeySequence(CTRL_KEY "+,"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
@@ -2052,7 +2041,6 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
-	_currentdoctools->addAction(fillbgarea);
 	_currentdoctools->addAction(selectall);
 	_currentdoctools->addAction(selectnone);
 
@@ -2073,8 +2061,7 @@ void MainWindow::setupActions()
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
-	connect(fillfgarea, SIGNAL(triggered()), this, SLOT(fillFgArea()));
-	connect(fillbgarea, SIGNAL(triggered()), this, SLOT(fillBgArea()));
+	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor()); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
@@ -2110,7 +2097,6 @@ void MainWindow::setupActions()
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addAction(cleararea);
 	editmenu->addAction(fillfgarea);
-	editmenu->addAction(fillbgarea);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 

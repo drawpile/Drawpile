@@ -150,8 +150,6 @@ class MainWindow : public QMainWindow {
 		void dropUrl(const QUrl &url);
 
 		void clearOrDelete();
-		void fillFgArea();
-		void fillBgArea();
 
 		void removeEmptyAnnotations();
 		void resizeCanvas();
