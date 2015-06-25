@@ -379,7 +379,7 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 	}
 }
 
-void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int layer) const
+void SelectionItem::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const
 {
 	const QRect bounds = canvasRect();
 	QRect area;
@@ -390,6 +390,12 @@ void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int lay
 		area = polygonRect().intersected(bounds);
 
 	} else {
+		// TODO handle blend modes. Specifically, recolor and color erase
+		if(mode != paintcore::BlendMode::MODE_REPLACE) {
+			qWarning("fillCanvas(): unhandled blend mode %d", mode);
+			return;
+		}
+
 		QPair<QPoint,QImage> m = polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
 		maskOffset = m.first;
 		mask = m.second;
@@ -399,7 +405,7 @@ void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int lay
 		client->sendUndopoint();
 
 		if(mask.isNull())
-			client->sendFillRect(layer, area, color, paintcore::BlendMode::MODE_REPLACE);
+			client->sendFillRect(layer, area, color, mode);
 		else
 			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
 	}

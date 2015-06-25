@@ -1648,7 +1648,7 @@ void MainWindow::selectNone()
 void MainWindow::cutLayer()
 {
 	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	fillArea(Qt::transparent);
+	fillArea(Qt::transparent, paintcore::BlendMode::MODE_REPLACE);
 	QApplication::clipboard()->setImage(img);
 }
 
@@ -1782,19 +1782,19 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
-	fillArea(Qt::transparent);
+	fillArea(Qt::transparent, paintcore::BlendMode::MODE_REPLACE);
 }
 
-void MainWindow::fillArea(const QColor &color)
+void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 {
 	if(_canvas->selectionItem()) {
 		// Selection exists: fill selected area only
-		_canvas->selectionItem()->fillCanvas(color, _client, _dock_layers->currentLayer());
+		_canvas->selectionItem()->fillCanvas(color, mode, _client, _dock_layers->currentLayer());
 
 	} else {
 		// No selection: fill entire layer
 		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, paintcore::BlendMode::MODE_REPLACE);
+		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, mode);
 	}
 }
 
@@ -2032,6 +2032,8 @@ void MainWindow::setupActions()
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
 	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill selection"), QString(), QKeySequence(CTRL_KEY "+,"));
+	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
+	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color erase selection"), QString(), QKeySequence("Shift+Delete"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
@@ -2041,6 +2043,8 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
+	_currentdoctools->addAction(recolorarea);
+	_currentdoctools->addAction(colorerasearea);
 	_currentdoctools->addAction(selectall);
 	_currentdoctools->addAction(selectnone);
 
@@ -2061,7 +2065,9 @@ void MainWindow::setupActions()
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
-	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor()); });
+	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_REPLACE); });
+	connect(recolorarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
+	connect(colorerasearea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
@@ -2097,6 +2103,8 @@ void MainWindow::setupActions()
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addAction(cleararea);
 	editmenu->addAction(fillfgarea);
+	editmenu->addAction(recolorarea);
+	editmenu->addAction(colorerasearea);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 

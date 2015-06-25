@@ -23,6 +23,7 @@
 #include <QElapsedTimer>
 
 #include "tools/tool.h"
+#include "core/blendmodes.h"
 
 class QActionGroup;
 class QMessageBox;
@@ -197,7 +198,7 @@ class MainWindow : public QMainWindow {
 		void createDocks();
 		void setupActions();
 
-		void fillArea(const QColor &color);
+		void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
 
 		QSplitter *_splitter;
 

@@ -19,6 +19,8 @@
 #ifndef SELECTIONITEM_H
 #define SELECTIONITEM_H
 
+#include "core/blendmodes.h"
+
 #include <QGraphicsItem>
 
 namespace net {
@@ -81,7 +83,7 @@ public:
 	void pasteToCanvas(net::Client *client, int layer) const;
 
 	//! Fill the selected pixels
-	void fillCanvas(const QColor &color, net::Client *client, int layer) const;
+	void fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
