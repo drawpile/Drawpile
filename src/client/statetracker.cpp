@@ -97,7 +97,7 @@ StateSavepoint::Data *StateSavepoint::operator ->() {
 void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
 {
 	layer_id = cmd.layer();
-	brush.setBlendingMode(cmd.blend());
+	brush.setBlendingMode(paintcore::BlendMode::Mode(cmd.blend()));
 	brush.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
 	brush.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
 	brush.setSpacing(cmd.spacing());
@@ -425,8 +425,8 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	}
 	
 	layer->setOpacity(cmd.opacity());
-	layer->setBlend(cmd.blend());
-	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, cmd.blend());
+	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
+	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -559,11 +559,11 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 {
 	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "fillRect on non-existent layer" << cmd.layer();
+		qWarning("fillRect on non-existent layer %d", cmd.layer());
 		return;
 	}
 
-	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), cmd.blend());
+	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)
@@ -978,7 +978,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 			layerid,
 			title,
 			opacity,
-			blend,
+			paintcore::BlendMode::Mode(blend),
 			hidden,
 			locked,
 			acls

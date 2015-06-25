@@ -59,12 +59,12 @@ namespace {
 		for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode))
 			box->addItem(bm.second, bm.first);
 
-		preview->setBlendingMode(1);
+		preview->setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-			preview->setBlendingMode(box->currentData().toInt());
+			preview->setBlendingMode(paintcore::BlendMode::Mode(box->currentData().toInt()));
 #else
-			preview->setBlendingMode(box->itemData(box->currentIndex(), Qt::UserRole).toInt());
+			preview->setBlendingMode(paintcore::BlendMode::Mode(box->itemData(box->currentIndex(), Qt::UserRole).toInt()));
 #endif
 		});
 	}
@@ -202,7 +202,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_EraserSettings();
 	_ui->setupUi(widget);
 
-	_ui->preview->setBlendingMode(0);
+	_ui->preview->setBlendingMode(paintcore::BlendMode::MODE_ERASE);
 
 	parent->connect(_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
 		_ui->brushhardness->setEnabled(!hard);
@@ -215,7 +215,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
 	parent->connect(_ui->colorEraseMode, &QToolButton::toggled, [this](bool color) {
-		_ui->preview->setBlendingMode(color ? 12 : 0);
+		_ui->preview->setBlendingMode(color ? paintcore::BlendMode::MODE_COLORERASE : paintcore::BlendMode::MODE_ERASE);
 	});
 
 	return widget;

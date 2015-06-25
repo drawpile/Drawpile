@@ -186,7 +186,7 @@ void BrushPreview::updatePreview()
 	// TODO this could be implemented in some less ad-hoc way
 	if(brush.blendingMode() == 11) {
 		// "behind" mode needs a transparent layer for anything to show up
-		brush.setBlendingMode(1);
+		brush.setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 
 	} else if(brush.blendingMode() == 12) {
 		// Color-erase mode: use fg color as background
@@ -194,7 +194,7 @@ void BrushPreview::updatePreview()
 	}
 
 	paintcore::Layer *layer = _preview->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor, paintcore::BlendMode::MODE_REPLACE);
 
 	paintcore::StrokeState ss(brush);
 	for(int i=1;i<pointvector.size();++i)
@@ -356,7 +356,7 @@ void BrushPreview::setSubpixel(bool enable)
 	update();
 }
 
-void BrushPreview::setBlendingMode(int mode)
+void BrushPreview::setBlendingMode(paintcore::BlendMode::Mode mode)
 {
 	_brush.setBlendingMode(mode);
 	updatePreview();

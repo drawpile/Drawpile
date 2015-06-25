@@ -22,6 +22,8 @@
 #include <Qt>
 #include <array>
 
+#include "blendmodes.h"
+
 namespace paintcore {
 
 /**
@@ -35,7 +37,7 @@ namespace paintcore {
  * @param maskskip number of bytes to skip to get to the next line in the mask
  * @param baseskip number of (bytes) to skip to get to the next line in the base
  */
-void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip);
+void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip);
 
 /**
  * Composite two equally big image tiles.
@@ -45,7 +47,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, in
  * @param len number of pixels to blend
  * @param opacity blend opacity (0..255)
  */
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity);
+void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity);
 
 /**
  * Get a weighted average of the pixel data using the mask as the weights

@@ -469,45 +469,46 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 	}
 }
 
-void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
+void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
 	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
-	case 0: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
-	case 1: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
-	case 2: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 3: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 4: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 5: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 6: doMaskComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 7: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 8: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 9: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 10: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 11: doAlphaMaskUnder(base, color, mask, w, h, maskskip, baseskip); break;
-	case 12: doMaskColorErase(base, color, mask, w, h, maskskip, baseskip); break;
-	case 255: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_ERASE: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_NORMAL: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_MULTIPLY: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DIVIDE: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_BURN: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DODGE: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DARKEN: doMaskComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_LIGHTEN: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_SUBTRACT: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_ADD: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_RECOLOR: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_BEHIND: doAlphaMaskUnder(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_COLORERASE: doMaskColorErase(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_REPLACE: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
 	}
 }
 
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
+void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
 	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
-	case 0: doPixelErase(base, over, opacity, len); break;
-	case 1: doPixelAlphaBlend(base, over, opacity, len); break;
-	case 2: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
-	case 3: doPixelComposite<blend_divide>(base, over, opacity, len); break;
-	case 4: doPixelComposite<blend_burn>(base, over, opacity, len); break;
-	case 5: doPixelComposite<blend_dodge>(base, over, opacity, len); break;
-	case 6: doPixelComposite<blend_darken>(base, over, opacity, len); break;
-	case 7: doPixelComposite<blend_lighten>(base, over, opacity, len); break;
-	case 8: doPixelComposite<blend_subtract>(base, over, opacity, len); break;
-	case 9: doPixelComposite<blend_add>(base, over, opacity, len); break;
-	case 10: doPixelComposite<blend_blend>(base, over, opacity, len); break;
-	case 11: doPixelAlphaUnder(base, over, opacity, len); break;
-	case 12: /* TODO */ break;
+	case BlendMode::MODE_ERASE: doPixelErase(base, over, opacity, len); break;
+	case BlendMode::MODE_NORMAL: doPixelAlphaBlend(base, over, opacity, len); break;
+	case BlendMode::MODE_MULTIPLY: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
+	case BlendMode::MODE_DIVIDE: doPixelComposite<blend_divide>(base, over, opacity, len); break;
+	case BlendMode::MODE_BURN: doPixelComposite<blend_burn>(base, over, opacity, len); break;
+	case BlendMode::MODE_DODGE: doPixelComposite<blend_dodge>(base, over, opacity, len); break;
+	case BlendMode::MODE_DARKEN: doPixelComposite<blend_darken>(base, over, opacity, len); break;
+	case BlendMode::MODE_LIGHTEN: doPixelComposite<blend_lighten>(base, over, opacity, len); break;
+	case BlendMode::MODE_SUBTRACT: doPixelComposite<blend_subtract>(base, over, opacity, len); break;
+	case BlendMode::MODE_ADD: doPixelComposite<blend_add>(base, over, opacity, len); break;
+	case BlendMode::MODE_RECOLOR: doPixelComposite<blend_blend>(base, over, opacity, len); break;
+	case BlendMode::MODE_BEHIND: doPixelAlphaUnder(base, over, opacity, len); break;
+	case BlendMode::MODE_COLORERASE: /* not implemented */ break;
+	case BlendMode::MODE_REPLACE: /* not implemented */ break;
 	}
 }
 

@@ -95,13 +95,13 @@ class Layer {
 		void setOpacity(int opacity);
 
 		//! Set layer blending mode
-		void setBlend(int blend);
+		void setBlend(BlendMode::Mode blend);
 
 		/**
 		 * @brief Get the layer blending mode
 		 * @return blending mode number
 		 */
-		int blendmode() const { return _blend; }
+		BlendMode::Mode blendmode() const { return _blend; }
 
 		/**
 		 * @brief Is this layer hidden?
@@ -122,7 +122,7 @@ class Layer {
 		void putImage(int x, int y, QImage image, int mode);
 
 		//! Fill a rectangle
-		void fillRect(const QRect &rect, const QColor &color, int blendmode=255);
+		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
 
 		//! Dab the layer with a brush
 		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
@@ -186,7 +186,7 @@ class Layer {
 		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, int mode) const;
 
 		//! Get a sublayer
-		Layer *getSubLayer(int id, int blendmode, uchar opacity);
+		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
 
 		void directDab(const Brush &brush, const Point& point, StrokeState &state);
 		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
@@ -204,7 +204,7 @@ class Layer {
 		int _ytiles;
 		QVector<Tile> _tiles;
 		uchar _opacity;
-		int _blend;
+		BlendMode::Mode _blend;
 		bool _hidden;
 
 		QList<Layer*> _sublayers;

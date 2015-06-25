@@ -19,6 +19,7 @@
 
 #include "selectionitem.h"
 #include "net/client.h"
+#include "core/blendmodes.h"
 #include "scene/canvasscene.h"
 
 #include <QApplication>
@@ -398,7 +399,7 @@ void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int lay
 		client->sendUndopoint();
 
 		if(mask.isNull())
-			client->sendFillRect(layer, area, color);
+			client->sendFillRect(layer, area, color, paintcore::BlendMode::MODE_REPLACE);
 		else
 			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
 	}

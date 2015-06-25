@@ -201,10 +201,10 @@ void Client::sendNewLayer(int id, int source, const QColor &fill, bool insert, b
 	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, source, fill.rgba(), flags, title)));
 }
 
-void Client::sendLayerAttribs(int id, float opacity, int blend)
+void Client::sendLayerAttribs(int id, float opacity, paintcore::BlendMode::Mode blend)
 {
 	Q_ASSERT(id>=0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, blend)));
+	sendCommand(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, int(blend))));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)
@@ -278,11 +278,11 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, int mode)
 		emit sendingBytes(_server->uploadQueueBytes());
 }
 
-void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, int blend)
+void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, paintcore::BlendMode::Mode blend)
 {
 	sendCommand(MessagePtr(new protocol::FillRect(
 		_my_id, layer,
-		blend,
+		int(blend),
 		rect.x(), rect.y(),
 		rect.width(), rect.height(),
 		color.rgba()

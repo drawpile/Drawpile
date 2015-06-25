@@ -104,7 +104,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
 	: _owner(owner), id_(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
-	_opacity(255), _blend(1), _hidden(false)
+	_opacity(255), _blend(BlendMode::MODE_NORMAL), _hidden(false)
 {
 	resize(0, size.width(), size.height(), 0);
 	
@@ -338,7 +338,7 @@ void Layer::setOpacity(int opacity)
 	markOpaqueDirty(true);
 }
 
-void Layer::setBlend(int blend)
+void Layer::setBlend(BlendMode::Mode blend)
 {
 	_blend = blend;
 	markOpaqueDirty();
@@ -454,7 +454,7 @@ void Layer::putImage(int x, int y, QImage image, int mode)
 	}
 }
 
-void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
+void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mode blendmode)
 {
 	const QRect canvas(0, 0, _width, _height);
 
@@ -519,12 +519,12 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point, StrokeSta
 
 		effective_brush.setOpacity(1.0);
 		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 
 	} else if(contextId<0) {
 		// Special case: negative context IDs are temporary overlay strokes
 		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 	}
 
 	Point p = point;
@@ -555,12 +555,12 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 
 		effective_brush.setOpacity(1.0);
 		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 
 	} else if(contextId<0) {
 		// Special case: negative context IDs are temporary overlay strokes
 		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 	}
 
 	if(effective_brush.subpixel())
@@ -920,7 +920,7 @@ void Layer::makeBlank()
  * @param opacity layer opacity (set when creating the layer)
  * @return sublayer
  */
-Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
+Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 {
 	// See if the sublayer exists already
 	foreach(Layer *sl, _sublayers)
@@ -1051,7 +1051,7 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 
 	Layer *layer = new Layer(owner, id, title, Qt::transparent, img.size());
 	layer->_opacity = opacity;
-	layer->_blend = blend;
+	layer->_blend = BlendMode::Mode(blend);
 	layer->_hidden = hidden;
 	layer->putImage(0, 0, img, 0);
 

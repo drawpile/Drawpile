@@ -39,13 +39,33 @@ struct BlendMode {
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
+	//! The blending mode IDs
+	// Note: these IDs are part of the protocol, so they cannot be
+	// reordered without breaking it. The app internal order is different.
+	enum Mode {
+		MODE_ERASE=0,
+		MODE_NORMAL,
+		MODE_MULTIPLY,
+		MODE_DIVIDE,
+		MODE_BURN,
+		MODE_DODGE,
+		MODE_DARKEN,
+		MODE_LIGHTEN,
+		MODE_SUBTRACT,
+		MODE_ADD,
+		MODE_RECOLOR,
+		MODE_BEHIND,
+		MODE_COLORERASE,
+		MODE_REPLACE=255
+	};
+
 	const char *name;      // translatable name
 	const QString svgname; // SVG style name of this blending mode
-	const int id;          // ID as used in the protocol
+	const Mode id;         // ID as used in the protocol
 	const Flags flags;     // Behaviour info
 
-	BlendMode() : name(nullptr), id(-1) { }
-	BlendMode(const char *n, const QString &s, int i, Flags f)
+	BlendMode() : name(nullptr), id(MODE_ERASE) { }
+	BlendMode(const char *n, const QString &s, Mode i, Flags f)
 		: name(n), svgname(s), id(i), flags(f) { }
 };
 

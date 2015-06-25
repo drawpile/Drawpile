@@ -29,85 +29,85 @@ const BlendMode BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Erase"), // This is a special mode
 		QString("-dp-erase"), /* this is used internally only */
-		0,
+		BlendMode::MODE_ERASE,
 		BlendMode::PrivateMode | BlendMode::DecrOpacity
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Normal"),
 		QString("src-over"),
-		1,
+		BlendMode::MODE_NORMAL,
 		BlendMode::UniversalMode | BlendMode::IncrOpacity
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Recolor"),
 		QString("src-atop"),
-		10,
+		BlendMode::MODE_RECOLOR,
 		BlendMode::BrushMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Behind"),
 		QString("dst-over"),
-		11,
+		BlendMode::MODE_BEHIND,
 		BlendMode::BrushMode | BlendMode::IncrOpacity
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Multiply"),
 		QString("multiply"),
-		2,
+		BlendMode::MODE_MULTIPLY,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Divide"),
 		QString("screen"),
-		3,
+		BlendMode::MODE_DIVIDE,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Burn"),
 		QString("color-burn"),
-		4,
+		BlendMode::MODE_BURN,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Dodge"),
 		QString("color-dodge"),
-		5,
+		BlendMode::MODE_DODGE,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Darken"),
 		QString("darken"),
-		6,
+		BlendMode::MODE_DARKEN,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Lighten"),
 		QString("lighten"),
-		7,
+		BlendMode::MODE_LIGHTEN,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Subtract"),
 		QString("-dp-minus"), /* not part of SVG or OpenRaster spec */
-		8,
+		BlendMode::MODE_SUBTRACT,
 		BlendMode::UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("paintcore", "Add"),
 		QString("plus"),
-		9,
+		BlendMode::MODE_ADD,
 		BlendMode::UniversalMode
 	},
 	{
 		"Color erase", // This is a special mode
 		QString("-dp-cerase"), /* this is used internally only */
-		12,
+		BlendMode::MODE_COLORERASE,
 		BlendMode::PrivateMode | BlendMode::DecrOpacity
 	},
 	{
 		"Replace", // Not selectable
 		QString("-dp-replace"),
-		255,
+		BlendMode::MODE_REPLACE,
 		BlendMode::PrivateMode | BlendMode::IncrOpacity | BlendMode::DecrOpacity
 	}
 };

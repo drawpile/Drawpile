@@ -19,6 +19,8 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
+#include "core/blendmodes.h"
+
 #include <QAbstractListModel>
 #include <QMimeData>
 #include <QVector>
@@ -32,8 +34,8 @@ namespace paintcore {
 namespace net {
 
 struct LayerListItem {
-	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(1), hidden(false), locked(false) {}
-	LayerListItem(int id_, const QString &title_, float opacity_=1.0, int blend_=1, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
+	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(paintcore::BlendMode::MODE_NORMAL), hidden(false), locked(false) {}
+	LayerListItem(int id_, const QString &title_, float opacity_=1.0, paintcore::BlendMode::Mode blend_=paintcore::BlendMode::MODE_NORMAL, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
 		: id(id_), title(title_), opacity(opacity_), blend(blend_), hidden(hidden_), locked(locked_), exclusive(exclusive_)
 		{}
 
@@ -47,7 +49,7 @@ struct LayerListItem {
 	float opacity;
 	
 	//! Blending mode
-	int blend;
+	paintcore::BlendMode::Mode blend;
 
 	//! Layer hidden flag (local only)
 	bool hidden;
@@ -87,7 +89,7 @@ public:
 	void clear();
 	void createLayer(int id, int index, const QString &title);
 	void deleteLayer(int id);
-	void changeLayer(int id, float opacity, int blend);
+	void changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend);
 	void retitleLayer(int id, const QString &title);
 	void setLayerHidden(int id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);

@@ -22,6 +22,7 @@
 #include <QFrame>
 
 #include "core/brush.h"
+#include "core/blendmodes.h"
 
 class QMenu;
 
@@ -113,7 +114,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void setSubpixel(bool enable);
 
 		//! Select a blending mode
-		void setBlendingMode(int mode);
+		void setBlendingMode(paintcore::BlendMode::Mode mode);
 
 		//! Set/unset hard edge mode (100% hardness + no subpixels)
 		void setHardEdge(bool hard);

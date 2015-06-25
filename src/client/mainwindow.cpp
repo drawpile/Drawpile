@@ -1804,7 +1804,7 @@ void MainWindow::fillArea(const QColor &color)
 	} else {
 		// No selection: fill entire layer
 		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color);
+		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, paintcore::BlendMode::MODE_REPLACE);
 	}
 }
 

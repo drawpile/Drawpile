@@ -255,9 +255,9 @@ void LayerList::blendModeChanged()
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-		layer.blend = _ui->blendmode->currentData().toInt();
+		layer.blend = paintcore::BlendMode::Mode(_ui->blendmode->currentData().toInt());
 #else
-		layer.blend = _ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt();
+		layer.blend = paintcore::BlendMode::Mode(_ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt());
 #endif
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
