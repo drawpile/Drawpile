@@ -76,6 +76,7 @@ set (
 	core/layerstack.cpp
 	core/brush.cpp
 	core/brushmask.cpp
+	core/blendmodes.cpp
 	core/rasterop.cpp
 	core/shapes.cpp
 	core/floodfill.cpp

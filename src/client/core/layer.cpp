@@ -28,6 +28,7 @@
 #include "brush.h"
 #include "brushmask.h"
 #include "point.h"
+#include "blendmodes.h"
 #include "rasterop.h"
 
 namespace paintcore {

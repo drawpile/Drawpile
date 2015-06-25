@@ -27,7 +27,7 @@
 #include "../shared/net/meta.h"
 #include "../shared/net/recording.h"
 
-#include "../client/core/rasterop.h" // needed for svgBlendMode
+#include "../client/core/blendmodes.h"
 
 #include <QTextStream>
 

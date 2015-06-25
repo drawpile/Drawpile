@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "core/rasterop.h" // for blend modes
+#include "core/blendmodes.h"
 #include "ora/orareader.h"
 
 #include "../shared/net/layer.h"
@@ -209,13 +209,10 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, false));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
-			int blendmode = paintcore::findBlendModeByName(compositeOp);
-			if(blendmode<0) {
+			bool exact_blendop;
+			int blendmode = paintcore::findBlendModeByName(compositeOp, &exact_blendop).id;
+			if(!exact_blendop)
 				_warnings |= ORA_EXTENDED;
-				blendmode = 1;
-			} else {
-				blendmode = paintcore::BLEND_MODE[blendmode].id;
-			}
 
 			_commands.append(MessagePtr(new protocol::LayerAttributes(
 				1,

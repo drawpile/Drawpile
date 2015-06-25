@@ -47,7 +47,7 @@ using widgets::GroupedToolButton;
 #include "utils/icon.h"
 
 #include "core/annotation.h"
-#include "core/rasterop.h" // for blend modes
+#include "core/blendmodes.h"
 
 #include <QTimer>
 #include <QTextBlock>
@@ -56,13 +56,8 @@ namespace tools {
 
 namespace {
 	void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview) {
-		for(int b=0;b<paintcore::BLEND_MODES;++b) {
-			if(paintcore::BLEND_MODE[b].flags.testFlag(paintcore::BlendMode::BrushMode))
-				box->addItem(
-					QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
-					paintcore::BLEND_MODE[b].id
-				);
-		}
+		for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode))
+			box->addItem(bm.second, bm.first);
 
 		preview->setBlendingMode(1);
 		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {

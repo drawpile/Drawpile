@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,127 +20,6 @@
 #include "rasterop.h"
 
 namespace paintcore {
-
-// Note. The modes are listed in the order they appear in the user interface,
-// which is different from the internal PROTOCOL ORDER.
-const BlendMode BLEND_MODE[BLEND_MODES] = {
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Erase"), // This is a special mode
-		QString("-dp-erase"), /* this is used internally only */
-		0,
-		BlendMode::PrivateMode | BlendMode::DecrOpacity
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Normal"),
-		QString("src-over"),
-		1,
-		BlendMode::UniversalMode | BlendMode::IncrOpacity
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Recolor"),
-		QString("src-atop"),
-		10,
-		BlendMode::BrushMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Behind"),
-		QString("dst-over"),
-		11,
-		BlendMode::BrushMode | BlendMode::IncrOpacity
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Multiply"),
-		QString("multiply"),
-		2,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Divide"),
-		QString("screen"),
-		3,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Burn"),
-		QString("color-burn"),
-		4,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Dodge"),
-		QString("color-dodge"),
-		5,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Darken"),
-		QString("darken"),
-		6,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Lighten"),
-		QString("lighten"),
-		7,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Subtract"),
-		QString("-dp-minus"), /* not part of SVG or OpenRaster spec */
-		8,
-		BlendMode::UniversalMode
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Add"),
-		QString("plus"),
-		9,
-		BlendMode::UniversalMode
-	},
-	{
-		"Replace", // Not selectable
-		QString("-dp-replace"),
-		255,
-		BlendMode::PrivateMode | BlendMode::IncrOpacity | BlendMode::DecrOpacity
-	}
-};
-
-int blendModeSvg(const QString &name)
-{
-	QStringRef n;
-	if(name.startsWith("svg:"))
-		n = name.midRef(4);
-	else
-		n = name.midRef(0);
-
-	for(int i=0;i<BLEND_MODES;++i)
-		if(BLEND_MODE[i].svgname == n)
-			return BLEND_MODE[i].id;
-	return -1;
-}
-
-const BlendMode &findBlendMode(int id)
-{
-	for(int i=0;i<BLEND_MODES;++i) {
-		if(BLEND_MODE[i].id == id)
-			return BLEND_MODE[i];
-	}
-	qWarning("findBlendMode(%d): no such mode!", id);
-	return BLEND_MODE[1];
-}
-
-int findBlendModeByName(const QString &name)
-{
-	QStringRef n;
-	if(name.startsWith("svg:"))
-		n = name.midRef(4);
-	else
-		n = name.midRef(0);
-
-	for(int i=0;i<BLEND_MODES;++i)
-		if(BLEND_MODE[i].svgname == n)
-			return i;
-	return -1;
-}
 
 // This is borrowed from Pigment of koffice libs:
 /// Blending of two scale values as described by the alpha scale value
@@ -498,7 +377,7 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
-	// Note! These should appear in the PROTOCOL ORDER!
+	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
 	case 0: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
 	case 1: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
@@ -518,7 +397,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 
 void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
-	// Note! These should appear in the PROTOCOL ORDER!
+	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
 	case 0: doPixelErase(base, over, opacity, len); break;
 	case 1: doPixelAlphaBlend(base, over, opacity, len); break;

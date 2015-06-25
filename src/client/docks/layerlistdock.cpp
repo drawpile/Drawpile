@@ -23,7 +23,7 @@
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
 #include "docks/utils.h"
-#include "core/rasterop.h" // for blending modes
+#include "core/blendmodes.h"
 
 #include "widgets/groupedtoolbutton.h"
 using widgets::GroupedToolButton;
@@ -54,13 +54,8 @@ LayerList::LayerList(QWidget *parent)
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
-	for(int b=0;b<paintcore::BLEND_MODES;++b) {
-		if(paintcore::BLEND_MODE[b].flags.testFlag(paintcore::BlendMode::LayerMode))
-			_ui->blendmode->addItem(
-				QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
-				paintcore::BLEND_MODE[b].id
-			);
-	}
+	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode))
+		_ui->blendmode->addItem(bm.second, bm.first);
 
 	// Layer menu
 	_layermenu = new QMenu(this);

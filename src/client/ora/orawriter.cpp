@@ -21,7 +21,7 @@
 #include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/rasterop.h" // for blending modes
+#include "core/blendmodes.h"
 
 #include <QDomDocument>
 #include <QBuffer>

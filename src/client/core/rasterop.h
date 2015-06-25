@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,54 +16,13 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef RASTEROP_H
-#define RASTEROP_H
+#ifndef PAINTCORE_RASTEROP_H
+#define PAINTCORE_RASTEROP_H
 
-#include <QString>
+#include <Qt>
 #include <array>
 
 namespace paintcore {
-
-struct BlendMode {
-	enum Flag {
-		PrivateMode = 0x00, // not available for selection
-		LayerMode   = 0x01, // available for use as a layer mode
-		BrushMode   = 0x02, // available for use as a brush mode
-		UniversalMode = 0x03, // can be used with brushes and layers
-		DecrOpacity = 0x04, // this mode can decrease pixel opacity
-		IncrOpacity = 0x08  // this mode can increase pixel opacity
-	};
-	Q_DECLARE_FLAGS(Flags, Flag)
-
-	const char *name;      // translatable name
-	const QString svgname; // SVG style name of this blending mode
-	const int id;          // ID as used in the protocol
-	const Flags flags;     // Metadata
-
-	BlendMode() : name(nullptr), id(-1) { }
-	BlendMode(const char *n, const QString &s, int i, Flags f)
-		: name(n), svgname(s), id(i), flags(f) { }
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(BlendMode::Flags)
-
-// Note. Protocol ordering and display ordering of the modes differ.
-static const int BLEND_MODES=13;
-extern const BlendMode BLEND_MODE[BLEND_MODES];
-
-/**
- * @brief Find the blending mode with the given protocol ID
- * @param id blend mode ID
- * @return blend mode or default if ID does not exist
- */
-const BlendMode &findBlendMode(int id);
-
-/**
- * @brief Find the blending mode based on its SVG name
- * @param svgname
- * @return blend mode internal index or -1 if not found
- */
-int findBlendModeByName(const QString &svgname);
 
 /**
  * Composite a color using a mask onto an image.
