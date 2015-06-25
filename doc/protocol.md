@@ -97,7 +97,8 @@ Clients can connect to any server sharing the same major protocol version number
 
 Protocol 15.6 (1.0.0)
 
- * Added "under" blending mode
+ * Added "Behind" blending mode
+ * Added "Color erase" blending mode
  * Fully backward compatible
 
 Protocol 15.5 (0.9.10)

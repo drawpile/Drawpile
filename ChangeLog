@@ -1,7 +1,7 @@
 2015-0?-?? Version 1.0.0
  * Remain somewhat responsive when joining a long-running session
  * Fixed timeout disconnect caused by missing Ping messages (related to above)
- * Added "Behind" blending mode
+ * Added "Behind" and "Color erase" blending modes
  * Fixed missing button icons in flipbook window
  * Improved touch gesture support (scrolling, zooming and rotating)
  * Added support for automatically setting up port forwarding with UPnP

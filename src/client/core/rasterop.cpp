@@ -19,6 +19,8 @@
 
 #include "rasterop.h"
 
+#include <QRgb>
+
 namespace paintcore {
 
 // This is borrowed from Pigment of koffice libs:
@@ -178,6 +180,80 @@ void doAlphaMaskUnder(quint32 *base, quint32 color, const uchar *mask,
 	}
 }
 
+struct fRGBA {
+	qreal r, g, b, a;
+
+	fRGBA() = default;
+	fRGBA(quint32 pixel)
+		: r(qRed(pixel) / 255.0),
+		  g(qGreen(pixel) / 255.0),
+		  b(qBlue(pixel) / 255.0),
+		  a(qAlpha(pixel) / 255.0)
+	{ }
+	quint32 toPixel() const {
+		return qRgba(r*255, g*255, b*255, a*255);
+	}
+};
+
+// This was taken directly from GIMP's paint_funcs_color_erase_helper
+void color_erase_helper(fRGBA *src, const fRGBA *color)
+{
+	fRGBA alpha;
+
+	alpha.a = src->a;
+
+	if (color->r < 0.0001)
+		alpha.r = src->r;
+	else if ( src->r > color->r )
+		alpha.r = (src->r - color->r) / (1.0 - color->r);
+	else if (src->r < color->r)
+		alpha.r = (color->r - src->r) / color->r;
+	else
+		alpha.r = 0.0;
+
+	if (color->g < 0.0001)
+		alpha.g = src->g;
+	else if ( src->g > color->g )
+		alpha.g = (src->g - color->g) / (1.0 - color->g);
+	else if ( src->g < color->g )
+		alpha.g = (color->g - src->g) / (color->g);
+	else
+		alpha.g = 0.0;
+
+	if (color->b < 0.0001)
+		alpha.b = src->b;
+	else if ( src->b > color->b )
+		alpha.b = (src->b - color->b) / (1.0 - color->b);
+	else if ( src->b < color->b )
+		alpha.b = (color->b - src->b) / (color->b);
+	else
+		alpha.b = 0.0;
+
+	if ( alpha.r > alpha.g ) {
+		if ( alpha.r > alpha.b )
+			src->a = alpha.r;
+		else
+			src->a = alpha.b;
+
+	} else if ( alpha.g > alpha.b ) {
+		src->a = alpha.g;
+
+	} else {
+		src->a = alpha.b;
+	}
+
+	src->a = (1.0 - color->a) + (src->a * color->a);
+
+	if (src->a < 0.0001)
+		return;
+
+	src->r = (src->r - color->r) / src->a + color->r;
+	src->g = (src->g - color->g) / src->a + color->g;
+	src->b = (src->b - color->b) / src->a + color->b;
+
+	src->a *= alpha.a;
+}
+
 // Specialized pixel composition: erase alpha channel
 void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
 {
@@ -191,6 +267,25 @@ void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, i
 			++mask;
 		}
 		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
+void doMaskColorErase(quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip)
+{
+	fRGBA col = color;
+	uchar col_a = qAlpha(color);
+
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			fRGBA src = *base;
+			col.a = UINT8_MULT(col_a, *mask) / 255.0;
+			color_erase_helper(&src, &col);
+			*base = src.toPixel();
+			++mask;
+			++base;
+		}
+		base += baseskip;
 		mask += maskskip;
 	}
 }
@@ -391,6 +486,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 	case 9: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
 	case 10: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
 	case 11: doAlphaMaskUnder(base, color, mask, w, h, maskskip, baseskip); break;
+	case 12: doMaskColorErase(base, color, mask, w, h, maskskip, baseskip); break;
 	case 255: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
 	}
 }
@@ -411,6 +507,7 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len, ucha
 	case 9: doPixelComposite<blend_add>(base, over, opacity, len); break;
 	case 10: doPixelComposite<blend_blend>(base, over, opacity, len); break;
 	case 11: doPixelAlphaUnder(base, over, opacity, len); break;
+	case 12: /* TODO */ break;
 	}
 }
 

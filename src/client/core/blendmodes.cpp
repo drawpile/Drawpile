@@ -99,6 +99,12 @@ const BlendMode BLEND_MODE[] = {
 		BlendMode::UniversalMode
 	},
 	{
+		"Color erase", // This is a special mode
+		QString("-dp-cerase"), /* this is used internally only */
+		12,
+		BlendMode::PrivateMode | BlendMode::DecrOpacity
+	},
+	{
 		"Replace", // Not selectable
 		QString("-dp-replace"),
 		255,
