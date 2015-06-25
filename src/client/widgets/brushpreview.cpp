@@ -179,14 +179,22 @@ void BrushPreview::updatePreview()
 	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
-	paintcore::Layer *layer = _preview->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : _color2);
+	QColor bgcolor = _color2;
 
 	paintcore::Brush brush = _brush;
-	// Kludge: "behind" mode needs a transparent layer for anything to show up
-	// TODO implement proper mode specific view modes
-	if(brush.blendingMode() == 11)
+	// Special handling for some blending modes
+	// TODO this could be implemented in some less ad-hoc way
+	if(brush.blendingMode() == 11) {
+		// "behind" mode needs a transparent layer for anything to show up
 		brush.setBlendingMode(1);
+
+	} else if(brush.blendingMode() == 12) {
+		// Color-erase mode: use fg color as background
+		bgcolor = _color1;
+	}
+
+	paintcore::Layer *layer = _preview->getLayerByIndex(0);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor);
 
 	paintcore::StrokeState ss(brush);
 	for(int i=1;i<pointvector.size();++i)

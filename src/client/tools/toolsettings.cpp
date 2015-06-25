@@ -214,6 +214,10 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
 	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
 
+	parent->connect(_ui->colorEraseMode, &QToolButton::toggled, [this](bool color) {
+		_ui->preview->setBlendingMode(color ? 12 : 0);
+	});
+
 	return widget;
 }
 
@@ -229,6 +233,7 @@ ToolProperties EraserSettings::saveToolSettings()
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
 	cfg.setValue("hardedge", _ui->paintmodeHardedge->isChecked());
 	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
+	cfg.setValue("colorerase", _ui->colorEraseMode->isChecked());
 	return cfg;
 }
 
@@ -266,12 +271,15 @@ void EraserSettings::restoreToolSettings(const ToolProperties &cfg)
 	else
 		_ui->paintmodeIndirect->setChecked(true);
 
+	_ui->colorEraseMode->setChecked(cfg.boolValue("colorerase", false));
+
 	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 }
 
-void EraserSettings::setForeground(const QColor&)
+void EraserSettings::setForeground(const QColor& color)
 {
-	// Eraser has no foreground color
+	// Foreground color is used only in color-erase mode
+	_ui->preview->setColor1(color);
 }
 
 void EraserSettings::setBackground(const QColor& color)

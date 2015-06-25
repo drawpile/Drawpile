@@ -91,6 +91,20 @@
          <number>0</number>
         </property>
         <item>
+         <widget class="GroupedToolButton" name="colorEraseMode">
+          <property name="toolTip">
+           <string>Erase active color only</string>
+          </property>
+          <property name="icon">
+           <iconset theme="color-picker">
+            <normaloff>theme:color-picker.svg</normaloff>theme:color-picker.svg</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="GroupedToolButton" name="paintmodeSoftedge">
           <property name="toolTip">
            <string>Smooth edge</string>
@@ -428,6 +442,9 @@
   <tabstop>pressureopacity</tabstop>
   <tabstop>pressurehardness</tabstop>
  </tabstops>
+ <resources>
+  <include location="icons/builtin.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pressuresize</sender>
