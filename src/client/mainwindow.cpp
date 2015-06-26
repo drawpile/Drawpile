@@ -1648,7 +1648,7 @@ void MainWindow::selectNone()
 void MainWindow::cutLayer()
 {
 	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	fillArea(Qt::transparent, paintcore::BlendMode::MODE_REPLACE);
+	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
 	QApplication::clipboard()->setImage(img);
 }
 
@@ -1782,7 +1782,7 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
-	fillArea(Qt::transparent, paintcore::BlendMode::MODE_REPLACE);
+	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
 }
 
 void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)

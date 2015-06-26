@@ -22,6 +22,7 @@
 #include "../shared/net/message.h"
 #include "../shared/net/pen.h"
 #include "core/point.h"
+#include "core/blendmodes.h"
 
 namespace paintcore {
 	class Brush;
@@ -42,7 +43,7 @@ namespace net {
  * If mode is MODE_REPLACE and the image is large, it is split at tile boundaries (where possible)
  * to generate efficient PutImage commands.
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, int mode);
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode);
 
 //! Generate a tool change message
 protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush);

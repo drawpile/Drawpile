@@ -28,7 +28,7 @@ namespace {
 
 // Split image into tile boundary aligned PutImages.
 // These can be applied very efficiently when mode is MODE_REPLACE
-void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, int mode, QList<protocol::MessagePtr> &list)
+void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, paintcore::BlendMode::Mode mode, QList<protocol::MessagePtr> &list)
 {
 	static const int TILE = 64;
 
@@ -145,7 +145,7 @@ namespace net {
  * @param mode composition mode
  * @return
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, int mode)
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode)
 {
 	QList<protocol::MessagePtr> list;
 
@@ -164,15 +164,15 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 		y += yoffset;
 	}
 
-	// Optimization: if image is completely opaque, REPLACE mode is equivalent to BLEND,
+	// Optimization: if image is completely opaque, REPLACE mode is equivalent to NORMAL,
 	// except potentially more efficient when split at tile boundaries
-	if(mode == protocol::PutImage::MODE_BLEND && isOpaque(image)) {
-		mode = protocol::PutImage::MODE_REPLACE;
+	if(mode == paintcore::BlendMode::MODE_NORMAL && isOpaque(image)) {
+		mode = paintcore::BlendMode::MODE_REPLACE;
 	}
 
 	// Split image into pieces small enough to fit in a message
 	image = image.convertToFormat(QImage::Format_ARGB32);
-	if(mode == protocol::PutImage::MODE_REPLACE) {
+	if(mode == paintcore::BlendMode::MODE_REPLACE) {
 		splitImageAtTileBoundaries(ctxid, layer, x, y, image, mode, list);
 	} else {
 		splitImage(ctxid, layer, x, y, image, mode, list);

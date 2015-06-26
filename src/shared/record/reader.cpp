@@ -291,6 +291,10 @@ MessageRecord Reader::readNext()
 
 		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
+		case version32(15, 5):
+			message = compat::deserializeV15_5((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+
 		case version32(14, 5):
 		case version32(13, 5):
 			message = compat::deserializeV14((const uchar*)_msgbuf.constData(), _msgbuf.length());

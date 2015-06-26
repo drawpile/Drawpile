@@ -210,7 +210,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 		_tiles.fill(bgtile);
 
-		putImage(left, top, oldcontent, 0);
+		putImage(left, top, oldcontent, BlendMode::MODE_REPLACE);
 
 	} else {
 		// top/left offset is aligned at tile boundary:
@@ -362,7 +362,7 @@ void Layer::setHidden(bool hide)
  * @param original the image to pad
  * @param mode compositing mode
  */
-Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, int mode) const
+Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, BlendMode::Mode mode) const
 {
 	const int x0 = Tile::roundDown(xpos);
 	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
@@ -381,7 +381,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 		image = QImage(w, h, QImage::Format_ARGB32);
 		QPainter painter(&image);
 
-		if(mode == 0) {
+		if(mode == BlendMode::MODE_REPLACE) {
 			// Replace mode is special: we must copy the original pixels
 			// and do the composition with QPainter, since layer merge
 			// can't distinguish the padding from image transparency
@@ -418,7 +418,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 	}
 
 	// In replace mode, compositing was already done with QPainter
-	if(mode == 0) {
+	if(mode == BlendMode::MODE_REPLACE) {
 		return imglayer;
 	}
 
@@ -430,12 +430,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 	}
 
 	// Merge image using standard layer compositing ops
-	//imglayer.setBlend(mode);
-	switch(mode) {
-		case 1: imglayer.setBlend(BlendMode::MODE_NORMAL); break;
-		case 2: imglayer.setBlend(BlendMode::MODE_BEHIND); break;
-		case 3: imglayer.setBlend(BlendMode::MODE_ERASE); break;
-	}
+	imglayer.setBlend(mode);
 
 	scratch.merge(&imglayer);
 	return scratch;
@@ -447,7 +442,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
  * @param image the image to draw
  * @param mode blending/compositing mode (see protocol::PutImage)
  */
-void Layer::putImage(int x, int y, QImage image, int mode)
+void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
 
@@ -1083,7 +1078,7 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	layer->_opacity = opacity;
 	layer->_blend = BlendMode::Mode(blend);
 	layer->_hidden = hidden;
-	layer->putImage(0, 0, img, 0);
+	layer->putImage(0, 0, img, BlendMode::MODE_REPLACE);
 
 	// Read sublayers
 	quint8 sublayers;

@@ -28,6 +28,9 @@ namespace protocol {
 namespace recording {
 namespace compat {
 
+// Protocol version 15.x (<15.6)
+protocol::Message *deserializeV15_5(const uchar *data, int length);
+
 // Protocol version 14.x and 13.x messages
 protocol::Message *deserializeV14(const uchar *data, int length);
 

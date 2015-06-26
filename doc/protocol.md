@@ -99,7 +99,7 @@ Protocol 15.6 (1.0.0)
 
  * Added "Behind" blending mode
  * Added "Color erase" blending mode
- * Fully backward compatible
+ * PutImage now uses regular brush/layer blending modes
 
 Protocol 15.5 (0.9.10)
 

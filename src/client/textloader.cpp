@@ -362,7 +362,7 @@ void TextCommandLoader::handleInlineImage(const QString &args)
 
 void TextCommandLoader::handlePutImage(const QString &args)
 {
-	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+) (\\w+) (.+)");
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+) ([\\w-]+) (.+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
 		throw SyntaxError("Expected context id, layer id, x, y, mode and filename");
@@ -372,18 +372,12 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	int x = str2int(m.captured(3));
 	int y = str2int(m.captured(4));
 	QString modestr = m.captured(5);
-	int mode;
 
-	if(modestr == "replace")
-		mode = protocol::PutImage::MODE_REPLACE;
-	else if(modestr == "blend")
-		mode = protocol::PutImage::MODE_BLEND;
-	else if(modestr == "under")
-		mode = protocol::PutImage::MODE_UNDER;
-	else if(modestr == "erase")
-		mode = protocol::PutImage::MODE_ERASE;
-	else
-		throw SyntaxError("Unknown composition mode: " + modestr);
+	bool found;
+	paintcore::BlendMode::Mode mode = paintcore::findBlendModeByName(modestr, &found).id;
+
+	if(!found)
+		throw SyntaxError("Invalid blending mode: " + m.captured(8));
 
 	if(m.captured(6) == "-") {
 		// inline image

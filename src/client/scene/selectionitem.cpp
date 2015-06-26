@@ -390,13 +390,7 @@ void SelectionItem::fillCanvas(const QColor &color, paintcore::BlendMode::Mode m
 		area = polygonRect().intersected(bounds);
 
 	} else {
-		// TODO handle blend modes. Specifically, recolor and color erase
-		if(mode != paintcore::BlendMode::MODE_REPLACE) {
-			qWarning("fillCanvas(): unhandled blend mode %d", mode);
-			return;
-		}
-
-		QPair<QPoint,QImage> m = polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
+		QPair<QPoint,QImage> m = polygonMask(color);
 		maskOffset = m.first;
 		mask = m.second;
 	}
@@ -407,7 +401,7 @@ void SelectionItem::fillCanvas(const QColor &color, paintcore::BlendMode::Mode m
 		if(mask.isNull())
 			client->sendFillRect(layer, area, color, mode);
 		else
-			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
+			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, mode);
 	}
 }
 

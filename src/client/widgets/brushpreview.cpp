@@ -206,7 +206,7 @@ void BrushPreview::updatePreview()
 		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), _color2, _fillTolerance, 0, false);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, _color2);
-		layer->putImage(fr.x, fr.y, fr.image, _underFill ? 2 : 1);
+		layer->putImage(fr.x, fr.y, fr.image, _underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL);
 	}
 
 	_needupdate=false;

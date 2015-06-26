@@ -119,7 +119,7 @@ class Layer {
 		void makeBlank();
 
 		//! Draw an image onto the layer
-		void putImage(int x, int y, QImage image, int mode);
+		void putImage(int x, int y, QImage image, BlendMode::Mode mode);
 
 		//! Fill a rectangle
 		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
@@ -183,7 +183,7 @@ class Layer {
 		//! Construct a sublayer
 		Layer(LayerStack *owner, int id, const QSize& size);
 
-		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, int mode) const;
+		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
 
 		//! Get a sublayer
 		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);

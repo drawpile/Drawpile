@@ -186,7 +186,7 @@ public slots:
 	void sendStroke(const paintcore::Point &point);
 	void sendStroke(const paintcore::PointVector &points);
 	void sendPenup();
-	void sendImage(int layer, int x, int y, const QImage &image, int mode=1);
+	void sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode=paintcore::BlendMode::MODE_NORMAL);
 	void sendFillRect(int layer, const QRect &rect, const QColor &color, paintcore::BlendMode::Mode blend);
 
 	// Undo/redo

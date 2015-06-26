@@ -268,7 +268,7 @@ void Client::sendPenup()
  * @param y imagee y coordinate
  * @param image image data
  */
-void Client::sendImage(int layer, int x, int y, const QImage &image, int mode)
+void Client::sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode)
 {
 	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, mode);
 	for(MessagePtr msg : msgs)

@@ -66,7 +66,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		if(scene().selectionItem()->pasteImage().isNull() && !scene().statetracker()->isLayerLocked(layer())) {
 			// Automatically cut the layer when the selection is transformed
 			QImage img = scene().selectionToImage(layer());
-			scene().selectionItem()->fillCanvas(Qt::transparent, paintcore::BlendMode::MODE_REPLACE, &client(), layer());
+			scene().selectionItem()->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, &client(), layer());
 			scene().selectionItem()->setPasteImage(img);
 		}
 

@@ -8,14 +8,20 @@ move 1 0 150 ; 300 150
 penup 1
 
 # This should overwrite the background
-putimage 1 2 0 118 replace test.png
+putimage 1 2 0 118 -dp-replace test.png
 
 # This is just regular alpha blending
-putimage 1 2 64 118 blend test.png
+putimage 1 2 64 118 src-over test.png
 
 # This should appear as if it was drawn on a layer below
-putimage 1 2 128 118 under test.png
+putimage 1 2 128 118 dst-over test.png
 
 # This should erase the stroke
-putimage 1 2 192 118 erase test.png
+putimage 1 2 192 118 -dp-erase test.png
+
+# Various other modes
+putimage 1 1 0 200 plus test.png
+putimage 1 1 64 200 -dp-minus test.png
+putimage 1 1 128 200 lighten test.png
+putimage 1 1 192 200 darken test.png
 

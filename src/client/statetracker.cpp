@@ -552,7 +552,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 		return;
 	}
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
-	layer->putImage(cmd.x(), cmd.y(), img, cmd.mode());
+	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
 }
 
 void StateTracker::handleFillRect(const protocol::FillRect &cmd)
