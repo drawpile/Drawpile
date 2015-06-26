@@ -36,7 +36,7 @@ namespace widgets {
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), _preview(0), _sizepressure(false),
-	_opacitypressure(false), _hardnesspressure(false), _colorpressure(false), _smudgepressure(false),
+	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
 	_color1(Qt::black), _color2(Qt::white),
 	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), _tranparentbg(false)
 {
@@ -71,8 +71,7 @@ void BrushPreview::setColor1(const QColor& color)
 {
 	_color1 = color;
 	_brush.setColor(color);
-	if(_colorpressure==false)
-		_brush.setColor2(color);
+	_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
@@ -80,8 +79,6 @@ void BrushPreview::setColor1(const QColor& color)
 void BrushPreview::setColor2(const QColor& color)
 {
 	_color2 = color;
-	if(_colorpressure)
-		_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
@@ -112,10 +109,7 @@ paintcore::Brush BrushPreview::brush(bool swapcolors) const
 	if(swapcolors) {
 		paintcore::Brush swapbrush = _brush;
 		swapbrush.setColor(_color2);
-		if(_colorpressure)
-			swapbrush.setColor2(_color1);
-		else
-			swapbrush.setColor2(_color2);
+		swapbrush.setColor2(_color2);
 		return swapbrush;
 	} else {
 		return _brush;
@@ -334,17 +328,6 @@ void BrushPreview::setSmudgePressure(bool enable)
 		_brush.setSmudge2(0);
 	else
 		_brush.setSmudge2(_brush.smudge1());
-	updatePreview();
-	update();
-}
-
-void BrushPreview::setColorPressure(bool enable)
-{
-	_colorpressure = enable;
-	if(enable)
-		_brush.setColor2(_color2);
-	else
-		_brush.setColor2(_color1);
 	updatePreview();
 	update();
 }

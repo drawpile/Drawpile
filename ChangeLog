@@ -12,6 +12,7 @@
  * Added option to show layer numbers instead than titles
  * Fixed crash when using filling a rectangle aligned with bottom right corner of the canvas
  * Protocol change: all blending modes can now be used with PutImage
+ * Removed Color pressure mode
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

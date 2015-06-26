@@ -139,9 +139,6 @@ void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
 	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
 
-	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
-	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
-
 	_ui->preview->setSubpixel(false);
 }
 
@@ -155,7 +152,6 @@ ToolProperties PenSettings::saveToolSettings()
 	cfg.setValue("spacing", _ui->brushspacing->value());
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
-	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
 	return cfg;
 }
 
@@ -346,7 +342,6 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
-	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
 	return cfg;
 }
 
@@ -381,9 +376,6 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
 	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
-
-	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
-	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
 
 	_ui->preview->setSubpixel(true);
 }

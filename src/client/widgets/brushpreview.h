@@ -104,9 +104,6 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Enable/disable default hardness pressure sensitivity
 		void setHardnessPressure(bool enable);
 
-		//! Enable/disable color pressure sensitivity
-		void setColorPressure(bool enable);
-
 		//! Enable/disable smudging pressure sensitivity
 		void setSmudgePressure(bool enable);
 
@@ -157,7 +154,6 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		bool _sizepressure;
 		bool _opacitypressure;
 		bool _hardnesspressure;
-		bool _colorpressure;
 		bool _smudgepressure;
 		QColor _color1, _color2;
 		PreviewShape _shape;
