@@ -86,7 +86,7 @@ private slots:
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
 	void layerViewModeTriggered(QAction *act);
-	void toggleLayerNamesOrNumbers();
+	void showLayerNumbers(bool show);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -110,7 +110,7 @@ private:
 	QAction *_addLayerAction;
 	QAction *_duplicateLayerAction;
 	QAction *_deleteLayerAction;
-	QAction *_showNamesOrNumbersAction;
+	QAction *_showNumbersAction;
 
 	QMenu *_viewMode;
 

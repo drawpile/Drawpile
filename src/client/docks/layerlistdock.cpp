@@ -35,6 +35,7 @@ using widgets::GroupedToolButton;
 #include <QPushButton>
 #include <QActionGroup>
 #include <QTimer>
+#include <QSettings>
 
 namespace docks {
 
@@ -98,8 +99,8 @@ LayerList::LayerList(QWidget *parent)
 	_viewMode = boxmenu->addMenu(QString()); // title is set later
 	_viewMode->addActions(viewmodes->actions());
 
-	_showNamesOrNumbersAction = boxmenu->addAction(tr("Show numbers"));
-
+	_showNumbersAction = boxmenu->addAction(tr("Show numbers"));
+	_showNumbersAction->setCheckable(true);
 
 	_ui->menuButton->setMenu(boxmenu);
 
@@ -107,7 +108,7 @@ LayerList::LayerList(QWidget *parent)
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
 	connect(_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
-	connect(_showNamesOrNumbersAction, &QAction::triggered, this, &LayerList::toggleLayerNamesOrNumbers);
+	connect(_showNumbersAction, &QAction::triggered, this, &LayerList::showLayerNumbers);
 
 	selectionChanged(QItemSelection());
 
@@ -140,6 +141,11 @@ void LayerList::setClient(net::Client *client)
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
+
+	// Restore settings
+	QSettings cfg;
+	_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
+	del->setShowNumbers(_showNumbersAction->isChecked());
 }
 
 void LayerList::setOperatorMode(bool op)
@@ -296,24 +302,14 @@ void LayerList::layerViewModeTriggered(QAction *action)
 	emit layerViewModeSelected(action->property("viewmode").toInt());
 }
 
-void LayerList::toggleLayerNamesOrNumbers()
+void LayerList::showLayerNumbers(bool show)
 {
 	LayerListDelegate *del = static_cast<LayerListDelegate*>(_ui->layerlist->itemDelegate());
+	del->setShowNumbers(show);
 
-	LayerListDelegate::TitleMode tm = del->titleMode();
-	switch(tm) {
-	case LayerListDelegate::SHOW_TITLE:
-		_showNamesOrNumbersAction->setText(tr("Show titles"));
-		tm = LayerListDelegate::SHOW_NUMBER;
-		break;
-	case LayerListDelegate::SHOW_NUMBER:
-		_showNamesOrNumbersAction->setText(tr("Show numbers"));
-		tm = LayerListDelegate::SHOW_TITLE;
-		break;
-	}
+	QSettings cfg;
+	cfg.setValue("setting/layernumbers", _showNumbersAction->isChecked());
 
-	del->setTitleMode(tm);
-	_ui->layerlist->update();
 }
 
 /**

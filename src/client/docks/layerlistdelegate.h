@@ -34,8 +34,6 @@ namespace docks {
 class LayerListDelegate : public QItemDelegate {
 Q_OBJECT
 public:
-	enum TitleMode { SHOW_TITLE, SHOW_NUMBER };
-
 	LayerListDelegate(QObject *parent=0);
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -49,8 +47,7 @@ public:
 
 	void setClient(net::Client *client) { _client = client; }
 
-	TitleMode titleMode() const { return _titlemode; }
-	void setTitleMode(TitleMode tm) { _titlemode = tm; }
+	void setShowNumbers(bool show);
 
 signals:
 	void toggleVisibility(int layerId, bool visible);
@@ -62,7 +59,7 @@ private:
 	QPixmap _visibleicon;
 	QPixmap _hiddenicon;
 
-	TitleMode _titlemode;
+	bool _showNumbers;
 };
 
 }

@@ -33,7 +33,8 @@ namespace docks {
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
 	  _visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
-	  _hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16))
+	  _hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
+	  _showNumbers(false)
 {
 }
 
@@ -59,10 +60,10 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	textrect.setLeft(stylerect.right());
 
 	QString title;
-	switch(_titlemode) {
-	case SHOW_TITLE: title = layer.title; break;
-	case SHOW_NUMBER: title = QString::number(index.model()->rowCount() - index.row() - 1); break;
-	}
+	if(_showNumbers)
+		title = QString("%1 - %2").arg(index.model()->rowCount() - index.row() - 1).arg(layer.title);
+	else
+		title = layer.title;
 
 	drawDisplay(painter, opt, textrect, title);
 
@@ -126,6 +127,11 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 		painter->drawPixmap(x, y, _visibleicon);
 		painter->restore();
 	}
+}
+
+void LayerListDelegate::setShowNumbers(bool show) {
+	_showNumbers = show;
+	emit sizeHintChanged(QModelIndex()); // trigger repaint
 }
 
 }
