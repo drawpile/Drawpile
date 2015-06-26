@@ -430,6 +430,21 @@ void doPixelErase(quint32 *destination, const quint32 *source, uchar opacity, in
 	}
 }
 
+void doPixelColorErase(quint32 *destination, const quint32 *source, uchar opacity, int len)
+{
+	const qreal o = opacity / 255.0;
+
+	while(len--) {
+		fRGBA d = *destination;
+		fRGBA s = *source;
+		s.a *= o;
+		color_erase_helper(&d, &s);
+		*destination = d.toPixel();
+		++destination;
+		++source;
+	}
+}
+
 void tintPixels(quint32 *pixels, int len, quint32 tint)
 {
 	const quint8 *t = reinterpret_cast<quint8*>(&tint);
@@ -472,7 +487,6 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
-	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
 	case BlendMode::MODE_ERASE: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_NORMAL: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
@@ -493,7 +507,6 @@ void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uch
 
 void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
-	// Note! These are blend mode IDs, not internal index numbers!
 	switch(mode) {
 	case BlendMode::MODE_ERASE: doPixelErase(base, over, opacity, len); break;
 	case BlendMode::MODE_NORMAL: doPixelAlphaBlend(base, over, opacity, len); break;
@@ -507,7 +520,7 @@ void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, i
 	case BlendMode::MODE_ADD: doPixelComposite<blend_add>(base, over, opacity, len); break;
 	case BlendMode::MODE_RECOLOR: doPixelComposite<blend_blend>(base, over, opacity, len); break;
 	case BlendMode::MODE_BEHIND: doPixelAlphaUnder(base, over, opacity, len); break;
-	case BlendMode::MODE_COLORERASE: /* not implemented */ break;
+	case BlendMode::MODE_COLORERASE: doPixelColorErase(base, over, opacity, len); break;
 	case BlendMode::MODE_REPLACE: /* not implemented */ break;
 	}
 }
