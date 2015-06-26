@@ -59,10 +59,10 @@ class Layer {
 		int height() const { return _height; }
 
 		//! Get the layer ID
-		int id() const { return id_; }
+		int id() const { return _id; }
 
 		//! Change layer ID
-		void setId(int id) { id_ = id; }
+		void setId(int id) { _id = id; }
 
 		//! Get the layer name
 		const QString& title() const { return _title; }
@@ -183,7 +183,7 @@ class Layer {
 		//! Construct a sublayer
 		Layer(LayerStack *owner, int id, const QSize& size);
 
-		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, int mode) const;
+		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, int mode) const;
 
 		//! Get a sublayer
 		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
@@ -195,7 +195,7 @@ class Layer {
 		QColor getDabColor(const BrushStamp &stamp) const;
 
 		LayerStack *_owner;
-		int id_;
+		int _id;
 		QString _title;
 	
 		int _width;
