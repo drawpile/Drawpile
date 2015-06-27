@@ -60,7 +60,7 @@ public:
 	Handle handleAt(const QPoint &point, float zoom) const;
 
 	//! Adjust selection position or size
-	void adjustGeometry(Handle handle, const QPoint &delta);
+	void adjustGeometry(Handle handle, const QPoint &delta, bool keepAspect);
 
 	//! Rotate selection around its center by the given amount
 	void rotate(float angle);

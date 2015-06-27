@@ -13,6 +13,7 @@
  * Fixed crash when using filling a rectangle aligned with bottom right corner of the canvas
  * Protocol change: all blending modes can now be used with PutImage
  * Removed Color pressure mode
+ * Scale selections maintaining aspect ratio by holding shift
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

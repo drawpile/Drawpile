@@ -182,20 +182,39 @@ SelectionItem::Handle SelectionItem::handleAt(const QPoint &point, float zoom) c
 }
 
 
-void SelectionItem::adjustGeometry(Handle handle, const QPoint &delta)
+void SelectionItem::adjustGeometry(Handle handle, const QPoint &delta, bool keepAspect)
 {
 	prepareGeometryChange();
-	switch(handle) {
-	case OUTSIDE: return;
-	case TRANSLATE: _polygon.translate(delta); break;
-	case RS_TOPLEFT: adjust(delta.x(), delta.y(), 0, 0); break;
-	case RS_TOPRIGHT: adjust(0, delta.y(), delta.x(), 0); break;
-	case RS_BOTTOMRIGHT: adjust(0, 0, delta.x(), delta.y()); break;
-	case RS_BOTTOMLEFT: adjust(delta.x(), 0, 0, delta.y()); break;
-	case RS_TOP: adjust(0, delta.y(), 0, 0); break;
-	case RS_RIGHT: adjust(0, 0, delta.x(), 0); break;
-	case RS_BOTTOM: adjust(0, 0, 0, delta.y()); break;
-	case RS_LEFT: adjust(delta.x(), 0, 0, 0); break;
+	if(keepAspect) {
+		const int dxy = (qAbs(delta.x()) > qAbs(delta.y())) ? delta.x() : delta.y();
+		const int dxy2 = (qAbs(delta.x()) > qAbs(-delta.y())) ? delta.x() : -delta.y();
+		switch(handle) {
+		case OUTSIDE: return;
+		case TRANSLATE: _polygon.translate(delta); break;
+
+		case RS_TOPLEFT: adjust(dxy, dxy, 0, 0); break;
+		case RS_TOPRIGHT: adjust(0, -dxy2, dxy2, 0); break;
+		case RS_BOTTOMRIGHT: adjust(0, 0, dxy, dxy); break;
+		case RS_BOTTOMLEFT: adjust(dxy2, 0, 0, -dxy2); break;
+
+		case RS_TOP: adjust(delta.y(), delta.y(), -delta.y(), -delta.y()); break;
+		case RS_RIGHT: adjust(-delta.x(), -delta.x(), delta.x(), delta.x()); break;
+		case RS_BOTTOM: adjust(-delta.y(), -delta.y(), delta.y(), delta.y()); break;
+		case RS_LEFT: adjust(delta.x(), delta.x(), -delta.x(), -delta.x()); break;
+		}
+	} else {
+		switch(handle) {
+		case OUTSIDE: return;
+		case TRANSLATE: _polygon.translate(delta); break;
+		case RS_TOPLEFT: adjust(delta.x(), delta.y(), 0, 0); break;
+		case RS_TOPRIGHT: adjust(0, delta.y(), delta.x(), 0); break;
+		case RS_BOTTOMRIGHT: adjust(0, 0, delta.x(), delta.y()); break;
+		case RS_BOTTOMLEFT: adjust(delta.x(), 0, 0, delta.y()); break;
+		case RS_TOP: adjust(0, delta.y(), 0, 0); break;
+		case RS_RIGHT: adjust(0, 0, delta.x(), 0); break;
+		case RS_BOTTOM: adjust(0, 0, 0, delta.y()); break;
+		case RS_LEFT: adjust(delta.x(), 0, 0, 0); break;
+		}
 	}
 }
 

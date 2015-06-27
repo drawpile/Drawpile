@@ -80,9 +80,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 			scene().selectionItem()->rotate(a1-a0);
 
 		} else {
-			// TODO constraints
-
-			scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
+			scene().selectionItem()->adjustGeometry(_handle, p.toPoint(), constrain);
 		}
 
 		_start = point.toPoint();
