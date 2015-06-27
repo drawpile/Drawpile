@@ -1640,6 +1640,15 @@ void MainWindow::selectionRemoved()
 	}
 }
 
+void MainWindow::undo()
+{
+	if(_canvas->selectionItem()) {
+		cancelSelection();
+	} else {
+		_client->sendUndo();
+	}
+}
+
 void MainWindow::selectAll()
 {
 	getAction("toolselectrect")->trigger();
@@ -2084,7 +2093,7 @@ void MainWindow::setupActions()
 	_docadmintools->addAction(expandleft);
 	_docadmintools->addAction(expandright);
 
-	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
+	connect(undo, &QAction::triggered, this, &MainWindow::undo);
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
 	connect(copy, &QAction::triggered, this, &MainWindow::copyVisible);
 	connect(copylayer, &QAction::triggered, this, &MainWindow::copyLayer);

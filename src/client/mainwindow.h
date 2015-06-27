@@ -139,6 +139,8 @@ class MainWindow : public QMainWindow {
 		void updateShortcuts();
 		void updateTabletSupportMode();
 
+		void undo();
+
 		void selectAll();
 		void selectNone();
 		void copyVisible();
