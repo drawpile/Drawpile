@@ -163,9 +163,8 @@ class MainWindow : public QMainWindow {
 		void hotBorderMenubar(bool show);
 
 	protected:
-		//! Handle closing of the main window
 		void closeEvent(QCloseEvent *event);
-
+		void keyReleaseEvent(QKeyEvent *event);
 		bool event(QEvent *event);
 
 	private:

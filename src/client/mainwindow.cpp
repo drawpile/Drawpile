@@ -789,6 +789,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	exit();
 }
 
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+	QMainWindow::keyReleaseEvent(event);
+
+	if(event->key() == Qt::Key_Escape) {
+		_canvas->setSelectionItem(nullptr);
+	}
+}
+
 bool MainWindow::event(QEvent *event)
 {
 	if(event->type() == QEvent::StatusTip) {
