@@ -861,7 +861,7 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
  * @param file file to open
  * @pre file.isEmpty()!=false
  */
-void MainWindow::open(const QUrl& url)
+void MainWindow::openUrl(const QUrl& url)
 {
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
@@ -881,7 +881,7 @@ void MainWindow::open(const QUrl& url)
 	} else {
 		networkaccess::getFile(url, QString(), _netstatus, [this](const QFile &file, const QString &error) {
 			if(error.isEmpty()) {
-				open(QUrl::fromLocalFile(file.fileName()));
+				openUrl(QUrl::fromLocalFile(file.fileName()));
 			} else {
 				showErrorMessage(error);
 			}
@@ -920,7 +920,7 @@ void MainWindow::open()
 	// Open the file if it was selected
 	if(file.isValid()) {
 		setLastPath(file.toString());
-		open(file);
+		openUrl(file);
 	}
 }
 
@@ -1700,11 +1700,11 @@ void MainWindow::pasteFile()
 		const QFileInfo info(file);
 		setLastPath(info.absolutePath());
 
-		pasteFile(QUrl::fromLocalFile(file));
+		pasteFromUrl(QUrl::fromLocalFile(file));
 	}
 }
 
-void MainWindow::pasteFile(const QUrl &url)
+void MainWindow::pasteFromUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
 		QImage img(url.toLocalFile());
@@ -1756,7 +1756,7 @@ void MainWindow::dropUrl(const QUrl &url)
 		QImage img(url.toLocalFile());
 		if(img.isNull()) {
 			// Not a simple image, try opening it as a document
-			open(url);
+			openUrl(url);
 
 		} else {
 			pasteImage(img);
@@ -1935,7 +1935,7 @@ void MainWindow::setupActions()
 	_docadmintools->setEnabled(false);
 
 	_drawingtools = new QActionGroup(this);
-	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	connect(_drawingtools, &QActionGroup::triggered, this, &MainWindow::selectTool);
 
 	QMenu *toggletoolbarmenu = new QMenu(this);
 	QMenu *toggledockmenu = new QMenu(this);
@@ -1973,18 +1973,18 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(exportAnimation);
 	_currentdoctools->addAction(record);
 
-	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
-	connect(open, SIGNAL(triggered()), this, SLOT(open()));
-	connect(save, SIGNAL(triggered()), this, SLOT(save()));
-	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(newdocument, &QAction::triggered, this, &MainWindow::showNew);
+	connect(open, &QAction::triggered, this, &MainWindow::open);
+	connect(save, &QAction::triggered, this, &MainWindow::save);
+	connect(saveas, &QAction::triggered, this, &MainWindow::saveas);
 	connect(_autosave, &QAction::triggered, this, &MainWindow::toggleAutosave);
-	connect(exportAnimation, SIGNAL(triggered()), this, SLOT(exportAnimation()));
-	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
+	connect(exportAnimation, &QAction::triggered, this, &MainWindow::exportAnimation);
+	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
-	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
-	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
+	connect(closefile, &QAction::triggered, this, &MainWindow::close);
+	connect(quit, &QAction::triggered, MacMenu::instance(), &MacMenu::quitAll);
 #else
-	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
+	connect(quit, &QAction::triggered, this, &MainWindow::close);
 #endif
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
@@ -2018,7 +2018,7 @@ void MainWindow::setupActions()
 	addToolBar(Qt::TopToolBarArea, filetools);
 
 	connect(_recent, &QMenu::triggered, [this](QAction *action) {
-		this->open(QUrl::fromLocalFile(action->property("filepath").toString()));
+		this->openUrl(QUrl::fromLocalFile(action->property("filepath").toString()));
 	});
 
 	//
@@ -2076,21 +2076,21 @@ void MainWindow::setupActions()
 
 	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
-	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
-	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
-	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
-	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
+	connect(copy, &QAction::triggered, this, &MainWindow::copyVisible);
+	connect(copylayer, &QAction::triggered, this, &MainWindow::copyLayer);
+	connect(cutlayer, &QAction::triggered, this, &MainWindow::cutLayer);
+	connect(paste, &QAction::triggered, this, &MainWindow::paste);
 	connect(stamp, &QAction::triggered, this, &MainWindow::stamp);
-	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
-	connect(selectall, SIGNAL(triggered()), this, SLOT(selectAll()));
-	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
-	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
-	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
+	connect(pastefile, &QAction::triggered, this, &MainWindow::pasteFile);
+	connect(selectall, &QAction::triggered, this, &MainWindow::selectAll);
+	connect(selectnone, &QAction::triggered, this, &MainWindow::selectNone);
+	connect(deleteAnnotations, &QAction::triggered, this, &MainWindow::removeEmptyAnnotations);
+	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
 	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_REPLACE); });
 	connect(recolorarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
 	connect(colorerasearea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
-	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
-	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
+	connect(resize, &QAction::triggered, this, &MainWindow::resizeCanvas);
+	connect(preferences, &QAction::triggered, this, &MainWindow::showSettings);
 
 	// Expanding by multiples of tile size allows efficient resizing
 	connect(expandup, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(64, 0 ,0, 0);});
@@ -2216,10 +2216,10 @@ void MainWindow::setupActions()
 		_splitter->setSizes(sizes);
 	});
 
-	connect(showFlipbook, SIGNAL(triggered()), this, SLOT(showFlipbook()));
+	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
-	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
-	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
+	connect(zoomin, &QAction::triggered, _view, &widgets::CanvasView::zoomin);
+	connect(zoomout, &QAction::triggered, _view, &widgets::CanvasView::zoomout);
 	connect(zoomorig, &QAction::triggered, [this]() { _view->setZoom(100.0); });
 	connect(rotateorig, &QAction::triggered, [this]() { _view->setRotation(0); });
 	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
@@ -2228,7 +2228,7 @@ void MainWindow::setupActions()
 	connect(viewflip, SIGNAL(triggered(bool)), _view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), _view, SLOT(setViewMirror(bool)));
 
-	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
+	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showcrosshair, SIGNAL(triggered(bool)), _view, SLOT(setCrosshair(bool)));
@@ -2293,11 +2293,11 @@ void MainWindow::setupActions()
 	_admintools->addAction(changetitle);
 	_admintools->setEnabled(false);
 
-	connect(host, SIGNAL(triggered()), this, SLOT(host()));
-	connect(join, SIGNAL(triggered()), this, SLOT(join()));
-	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
-	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
-	connect(locksession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
+	connect(host, &QAction::triggered, this, &MainWindow::host);
+	connect(join, &QAction::triggered, this, &MainWindow::join);
+	connect(logout, &QAction::triggered, this, &MainWindow::leave);
+	connect(changetitle, &QAction::triggered, this, &MainWindow::changeSessionTitle);
+	connect(locksession, &QAction::triggered, _client, &net::Client::sendLockSession);
 	connect(locklayerctrl, SIGNAL(triggered(bool)), _client, SLOT(sendLockLayerControls(bool)));
 	connect(closesession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
@@ -2330,7 +2330,7 @@ void MainWindow::setupActions()
 	QAction *lassotool = makeAction("toolselectpolygon", "edit-select-lasso", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("D"), true);
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
-	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
+	connect(markertool, &QAction::triggered, this, &MainWindow::markSpotForRecording);
 
 	_drawingtools->addAction(pentool);
 	_drawingtools->addAction(brushtool);
@@ -2388,7 +2388,7 @@ void MainWindow::setupActions()
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
-	connect(swapcolors, SIGNAL(triggered()), _dock_toolsettings, SLOT(swapForegroundBackground()));
+	connect(swapcolors, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::swapForegroundBackground);
 
 	//
 	// Window menu (Mac only)

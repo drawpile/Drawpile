@@ -150,7 +150,7 @@ void MacMenu::openDocument()
 void MacMenu::openRecent(QAction *action)
 {
 	MainWindow *mw = new MainWindow;
-	mw->open(QUrl::fromLocalFile(action->property("filepath").toString()));
+	mw->openUrl(QUrl::fromLocalFile(action->property("filepath").toString()));
 }
 
 void MacMenu::joinSession()
