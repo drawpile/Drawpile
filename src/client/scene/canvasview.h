@@ -97,6 +97,9 @@ class CanvasView : public QGraphicsView
 		//! Is drawing in progress at the moment?
 		bool isPenDown() const { return _pendown != NOTDOWN; }
 
+		//! Is this point (scene coordinates) inside the viewport?
+		bool isPointVisible(const QPointF &point) const;
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);

@@ -151,6 +151,7 @@ class MainWindow : public QMainWindow {
 		void pasteFile();
 		void pasteFromUrl(const QUrl &url);
 		void pasteImage(const QImage &image);
+		void pasteImage(const QImage &image, const QPoint &point, bool forcePoint);
 		void dropUrl(const QUrl &url);
 
 		void clearOrDelete();
@@ -200,6 +201,7 @@ class MainWindow : public QMainWindow {
 		void createDocks();
 		void setupActions();
 
+		void copyFromLayer(int layer);
 		void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
 
 		void cancelSelection();

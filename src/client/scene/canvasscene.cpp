@@ -283,12 +283,12 @@ QImage CanvasScene::selectionToImage(int layerId)
 	return img;
 }
 
-void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint)
+void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault)
 {
 	Q_ASSERT(hasImage());
 
 	QPoint center;
-	if(_selection)
+	if(_selection && !forceDefault)
 		center = _selection->polygonRect().center();
 	else
 		center = defaultPoint;

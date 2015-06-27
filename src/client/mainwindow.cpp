@@ -1672,32 +1672,64 @@ void MainWindow::cancelSelection()
 	}
 }
 
+void MainWindow::copyFromLayer(int layer)
+{
+	QMimeData *data = new QMimeData;
+	data->setImageData(_canvas->selectionToImage(layer));
+
+	// Store also original coordinates
+	QPoint srcpos;
+	if(_canvas->selectionItem())
+		srcpos = _canvas->selectionItem()->polygonRect().center();
+	else
+		srcpos = QPoint(_canvas->width()/2, _canvas->height()/2);
+
+	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
+	data->setData("x-drawpile/pastesrc", srcbuf);
+
+	QApplication::clipboard()->setMimeData(data);
+}
+
 void MainWindow::cutLayer()
 {
-	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
+	copyFromLayer(_dock_layers->currentLayer());
 	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
-	QApplication::clipboard()->setImage(img);
 }
 
 void MainWindow::copyLayer()
 {
-	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	QApplication::clipboard()->setImage(img);
+	copyFromLayer(_dock_layers->currentLayer());
 }
 
 void MainWindow::copyVisible()
 {
-	QImage img = _canvas->selectionToImage(0);
-	QApplication::clipboard()->setImage(img);
+	copyFromLayer(0);
 }
 
 void MainWindow::paste()
 {
-	QImage img = QApplication::clipboard()->image();
-	if(img.isNull())
-		return;
+	const QMimeData *data = QApplication::clipboard()->mimeData();
+	if(data->hasImage()) {
+		QPoint pastepos;
+		bool pasteAtPos = false;
 
-	pasteImage(img);
+		// Get source position
+		QByteArray srcpos = data->data("x-drawpile/pastesrc");
+		if(!srcpos.isNull()) {
+			QList<QByteArray> pos = srcpos.split(',');
+			if(pos.size() == 2) {
+				bool ok1, ok2;
+				pastepos = QPoint(pos.at(0).toInt(&ok1), pos.at(1).toInt(&ok2));
+				pasteAtPos = ok1 && ok2;
+			}
+		}
+
+		// Paste-in-place if source was Drawpile (and source is visible)
+		if(pasteAtPos && _view->isPointVisible(pastepos))
+			pasteImage(data->imageData().value<QImage>(), pastepos, true);
+		else
+			pasteImage(data->imageData().value<QImage>());
+	}
 }
 
 void MainWindow::pasteFile()
@@ -1745,17 +1777,28 @@ void MainWindow::pasteFromUrl(const QUrl &url)
 void MainWindow::pasteImage(const QImage &image)
 {
 	if(_canvas->hasImage()) {
+		pasteImage(image, _view->viewCenterPoint(), false);
+
+	} else {
+		// Canvas not yet initialized? Initialize with clipboard content
+		QImageCanvasLoader loader(image);
+		loadDocument(loader);
+	}
+}
+
+void MainWindow::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
+{
+	if(!_canvas->hasImage()) {
+		pasteImage(image);
+
+	} else {
 		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION) {
 			int currentTool = _dock_toolsettings->currentTool();
 			getAction("toolselectrect")->trigger();
 			_lastToolBeforePaste = currentTool;
 		}
 
-		_canvas->pasteFromImage(image, _view->viewCenterPoint());
-	} else {
-		// Canvas not yet initialized? Initialize with clipboard content
-		QImageCanvasLoader loader(image);
-		loadDocument(loader);
+		_canvas->pasteFromImage(image, point, forcePoint);
 	}
 }
 

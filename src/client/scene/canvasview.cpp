@@ -930,6 +930,12 @@ QPoint CanvasView::viewCenterPoint() const
 	return mapToScene(rect().center()).toPoint();
 }
 
+bool CanvasView::isPointVisible(const QPointF &point) const
+{
+	QPoint p = mapFromScene(point);
+	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
+}
+
 void CanvasView::viewRectChanged()
 {
 	// Signal visible view rectangle change
