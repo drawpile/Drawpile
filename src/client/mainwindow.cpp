@@ -1741,6 +1741,14 @@ void MainWindow::pasteImage(const QImage &image)
 	}
 }
 
+void MainWindow::stamp()
+{
+	drawingboard::SelectionItem *sel = _canvas->selectionItem();
+	if(sel && !sel->pasteImage().isNull()) {
+		sel->pasteToCanvas(_client, _dock_layers->currentLayer());
+	}
+}
+
 void MainWindow::dropUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
@@ -2022,6 +2030,8 @@ void MainWindow::setupActions()
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
+	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence(Qt::Key_Return));
+
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &From File..."));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze Canvas..."));
@@ -2049,6 +2059,7 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(cutlayer);
+	_currentdoctools->addAction(stamp);
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
@@ -2069,6 +2080,7 @@ void MainWindow::setupActions()
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
+	connect(stamp, &QAction::triggered, this, &MainWindow::stamp);
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(selectall, SIGNAL(triggered()), this, SLOT(selectAll()));
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
@@ -2095,6 +2107,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
+	editmenu->addAction(stamp);
 	editmenu->addSeparator();
 
 	editmenu->addAction(selectall);

@@ -145,6 +145,7 @@ class MainWindow : public QMainWindow {
 		void copyLayer();
 		void cutLayer();
 		void paste();
+		void stamp();
 		void pasteFile();
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
