@@ -41,8 +41,10 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 	_p1 = _start;
 
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		if(scene().selectionItem())
+		if(scene().selectionItem()) {
 			scene().selectionItem()->pasteToCanvas(&client(), layer());
+			scene().selectionItem()->setMovedFromCanvas(false);
+		}
 
 		initSelection();
 	}
@@ -64,6 +66,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 			QImage img = scene().selectionToImage(layer());
 			scene().selectionItem()->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, &client(), layer());
 			scene().selectionItem()->setPasteImage(img);
+			scene().selectionItem()->setMovedFromCanvas(true);
 		}
 
 		if(_handle == drawingboard::SelectionItem::TRANSLATE && center) {

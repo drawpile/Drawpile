@@ -794,7 +794,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 	QMainWindow::keyReleaseEvent(event);
 
 	if(event->key() == Qt::Key_Escape) {
-		_canvas->setSelectionItem(nullptr);
+		cancelSelection();
 	}
 }
 
@@ -1625,7 +1625,7 @@ void MainWindow::toolChanged(tools::Type tool)
 
 	// Remove selection when not using selection tool
 	if(tool != tools::SELECTION)
-		_canvas->setSelectionItem(0);
+		cancelSelection();
 
 	_view->selectTool(tool);
 }
@@ -1650,7 +1650,16 @@ void MainWindow::selectNone()
 {
 	if(_canvas->selectionItem()) {
 		_canvas->selectionItem()->pasteToCanvas(_client, _dock_layers->currentLayer());
-		_canvas->setSelectionItem(0);
+		cancelSelection();
+	}
+}
+
+void MainWindow::cancelSelection()
+{
+	if(_canvas->selectionItem()) {
+		if(!_canvas->selectionItem()->pasteImage().isNull() && _canvas->selectionItem()->isMovedFromCanvas())
+			_client->sendUndo();
+		_canvas->setSelectionItem(nullptr);
 	}
 }
 
@@ -1746,6 +1755,7 @@ void MainWindow::stamp()
 	drawingboard::SelectionItem *sel = _canvas->selectionItem();
 	if(sel && !sel->pasteImage().isNull()) {
 		sel->pasteToCanvas(_client, _dock_layers->currentLayer());
+		sel->setMovedFromCanvas(false);
 	}
 }
 

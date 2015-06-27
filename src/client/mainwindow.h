@@ -200,6 +200,8 @@ class MainWindow : public QMainWindow {
 
 		void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
 
+		void cancelSelection();
+
 		QSplitter *_splitter;
 
 		docks::ToolSettings *_dock_toolsettings;

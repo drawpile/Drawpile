@@ -68,8 +68,13 @@ public:
 	//! Set the paste buffer
 	void setPasteImage(const QImage &image);
 
+	void setMovedFromCanvas(bool moved) { _movedFromCanvas = moved; }
+
 	//! Get the paste buffer
 	const QImage &pasteImage() const { return _pasteimg; }
+
+	//! Did the pasted image come directly from the canvas?
+	bool isMovedFromCanvas() const { return _movedFromCanvas; }
 
 	//! reimplementation
 	QRectF boundingRect() const;
@@ -100,6 +105,7 @@ private:
 	qreal _marchingants;
 	QImage _pasteimg;
 	bool _closePolygon;
+	bool _movedFromCanvas;
 };
 
 }
