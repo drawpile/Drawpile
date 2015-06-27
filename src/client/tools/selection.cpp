@@ -30,11 +30,7 @@ namespace tools {
 
 void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
-	// Right click to dismiss selection (and paste buffer)
-	if(right) {
-		scene().setSelectionItem(nullptr);
-		return;
-	}
+	Q_UNUSED(right);
 
 	if(scene().selectionItem())
 		_handle = scene().selectionItem()->handleAt(point.toPoint(), zoom);
