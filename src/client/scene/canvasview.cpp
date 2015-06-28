@@ -1059,7 +1059,6 @@ void CanvasView::showEvent(QShowEvent *event)
 	while(w) {
 		if(w->windowHandle() != nullptr) {
 			_dpi = w->windowHandle()->screen()->physicalDotsPerInch();
-			qDebug("dpi=%f", _dpi);
 			break;
 		}
 		w=w->parentWidget();
