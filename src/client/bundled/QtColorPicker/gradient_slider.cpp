@@ -4,7 +4,7 @@
 
 @section License
 
-    Copyright (C) 2013-2014 Mattia Basaglia
+    Copyright (C) 2013-2015 Mattia Basaglia
     Copyright (C) 2014 Calle Laakkonen
 
     This software is free software: you can redistribute it and/or modify
@@ -171,6 +171,9 @@ void Gradient_Slider::paintEvent(QPaintEvent *)
     opt_slider.subControls = QStyle::SC_SliderHandle;
     if (isSliderDown())
         opt_slider.state |= QStyle::State_Sunken;
+    opt_slider.rect = style()->subControlRect(QStyle::CC_Slider,&opt_slider,
+                                              QStyle::SC_SliderHandle,this);
+    opt_slider.rect.adjust(1,1,-1,-1);
     style()->drawComplexControl(QStyle::CC_Slider, &opt_slider, &painter, this);
 
 
