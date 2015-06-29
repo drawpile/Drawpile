@@ -439,6 +439,9 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
 		if(!win->loadDocument(loader)) {
+			// Whoops, this will delete the error dialog too. Show it again,
+			// parented to current window
+			showErrorMessage(loader.errorMessage());
 			delete win;
 			win = nullptr;
 		}
