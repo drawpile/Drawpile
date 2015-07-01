@@ -94,6 +94,9 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
       </widget>
      </item>
      <item>
@@ -110,6 +113,9 @@
        </property>
        <property name="autoExclusive">
         <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
