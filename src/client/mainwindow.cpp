@@ -2440,7 +2440,7 @@ void MainWindow::setupActions()
 	toolshortcuts->addAction(layerUpAct);
 	toolshortcuts->addAction(layerDownAct);
 
-	QToolBar *drawtools = new QToolBar("Drawing tools");
+	QToolBar *drawtools = new QToolBar(tr("Drawing tools"));
 	drawtools->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
