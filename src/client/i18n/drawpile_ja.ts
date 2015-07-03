@@ -958,7 +958,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2098"/>
         <source>&amp;Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>スタンプ(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2107"/>
@@ -1172,7 +1172,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2443"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>描画ツール</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2517"/>
