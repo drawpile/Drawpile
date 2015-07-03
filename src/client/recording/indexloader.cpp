@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QBuffer>
 #include <KZip>
+#include <QDataStream>
 
 namespace recording {
 
