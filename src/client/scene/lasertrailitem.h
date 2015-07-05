@@ -27,7 +27,9 @@ namespace drawingboard {
 class LaserTrailItem : public QGraphicsLineItem
 {
 public:
-	LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, QGraphicsItem *parent=0);
+	LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, bool thick, QGraphicsItem *parent=0);
+
+	void setThick(bool thick);
 
 	/**
 	 * @brief Advance fadeout animation

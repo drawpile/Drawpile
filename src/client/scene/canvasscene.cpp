@@ -41,7 +41,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0),
 	  _toolpreview(0),
 	  _selection(0),
-	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
+	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true), _thickLaserTrails(false)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -502,7 +502,7 @@ void CanvasScene::moveUserMarker(int id, const QPointF &point, int trail)
 	auto *item = getOrCreateUserMarker(id);
 
 	if(trail>0 && _showLaserTrails) {
-		auto *laser = new LaserTrailItem(QLineF(item->pos(), point), item->color(), trail);
+		auto *laser = new LaserTrailItem(QLineF(item->pos(), point), item->color(), trail, _thickLaserTrails);
 		_lasertrails.append(laser);
 		addItem(laser);
 
@@ -560,6 +560,14 @@ void CanvasScene::showLaserTrails(bool show)
 	if(!show) {
 		while(!_lasertrails.isEmpty())
 			delete _lasertrails.takeLast();
+	}
+}
+
+void CanvasScene::setThickLaserTrails(bool thick)
+{
+	_thickLaserTrails = thick;
+	for(LaserTrailItem *l : _lasertrails) {
+		l->setThick(thick);
 	}
 }
 

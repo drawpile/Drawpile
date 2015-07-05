@@ -693,6 +693,10 @@ void MainWindow::readSettings(bool windowpos)
 	getAction("showgrid")->setChecked(pixelgrid);
 	_view->setPixelGrid(pixelgrid);
 
+	bool thicklasers = cfg.value("thicklasers", false).toBool();
+	getAction("thicklasers")->setChecked(thicklasers);
+	_canvas->setThickLaserTrails(thicklasers);
+
 	cfg.endGroup();
 
 	// Restore tool settings
@@ -726,6 +730,7 @@ void MainWindow::writeSettings()
 	cfg.setValue("viewstate", _splitter->saveState());
 
 	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
+	cfg.setValue("thicklasers", getAction("thicklasers")->isChecked());
 	cfg.endGroup();
 	_dock_toolsettings->saveSettings();
 	cfg.setValue("tools/crosshair", getAction("brushcrosshair")->isChecked());
@@ -1539,6 +1544,7 @@ void MainWindow::setShowLaserTrails(bool show)
 	QAction *lasertool = getAction("toollaser");
 	lasertool->setEnabled(show);
 	_canvas->showLaserTrails(show);
+	getAction("thicklasers")->setEnabled(show);
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
@@ -2234,12 +2240,14 @@ void MainWindow::setupActions()
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
 	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
 	QAction *showlasers = makeAction("showlasers", 0, tr("Show La&ser Trails"), QString(), QKeySequence(), true);
+	QAction *thicklasers = makeAction("thicklasers", 0, tr("Thick Laser Trails"), QString(), QKeySequence(), true);
 	QAction *showgrid = makeAction("showgrid", 0, tr("Show Pixel &Grid"), QString(), QKeySequence(), true);
 	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showuserlayers->setChecked(true);
 	showlasers->setChecked(true);
+	thicklasers->setChecked(false);
 	showgrid->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
@@ -2300,6 +2308,7 @@ void MainWindow::setupActions()
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
+	connect(thicklasers, SIGNAL(triggered(bool)), _canvas, SLOT(setThickLaserTrails(bool)));
 	connect(showgrid, SIGNAL(triggered(bool)), _view, SLOT(setPixelGrid(bool)));
 
 	_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
@@ -2328,11 +2337,16 @@ void MainWindow::setupActions()
 	viewmenu->addAction(viewmirror);
 
 	viewmenu->addSeparator();
+
+	QMenu *userpointermenu = viewmenu->addMenu(tr("User &pointers"));
+	userpointermenu->addAction(showusermarkers);
+	userpointermenu->addAction(showuserlayers);
+	userpointermenu->addAction(showlasers);
+	userpointermenu->addAction(thicklasers);
+
 	viewmenu->addAction(showannotations);
 	viewmenu->addAction(showcrosshair);
-	viewmenu->addAction(showusermarkers);
-	viewmenu->addAction(showuserlayers);
-	viewmenu->addAction(showlasers);
+
 	viewmenu->addAction(showgrid);
 
 	viewmenu->addSeparator();
