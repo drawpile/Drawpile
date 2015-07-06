@@ -324,7 +324,7 @@ void TextCommandLoader::handlePenMove(const QString &args)
 
 	paintcore::PointVector points;
 	QStringList pargs = args.mid(idsep+1).split(';', QString::SkipEmptyParts);
-	QRegularExpression re("(\\d+(?:\\.\\d+)?) (\\d+(?:\\.\\d+)?)(?: (\\d(?:\\.\\d+)?))?");
+	QRegularExpression re("(-?\\d+(?:\\.\\d+)?) (-?\\d+(?:\\.\\d+)?)(?: (\\d(?:\\.\\d+)?))?");
 	foreach(const QString &parg, pargs) {
 		QRegularExpressionMatch m = re.match(parg);
 		if(!m.hasMatch())
