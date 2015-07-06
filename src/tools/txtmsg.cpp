@@ -204,15 +204,9 @@ void putImageTxt(const PutImage *msg, QTextStream &out)
 		<< msg->contextId()
 		<< " " << msg->layer()
 		<< " " << msg->x()
-		<< " " << msg->y();
-	switch(msg->mode()) {
-	case PutImage::MODE_REPLACE: out << " replace"; break;
-	case PutImage::MODE_BLEND: out << " blend"; break;
-	case PutImage::MODE_UNDER: out << " under"; break;
-	case PutImage::MODE_ERASE: out << " erase"; break;
-	}
-
-	out << " -\n";
+		<< " " << msg->y()
+		<< " " << paintcore::findBlendMode(msg->blendmode()).svgname
+		<< " -\n";
 }
 
 void fillRectTxt(const FillRect *msg, QTextStream &out)
