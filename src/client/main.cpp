@@ -136,7 +136,7 @@ void DrawpileApp::openUrl(QUrl url)
 
 	} else {
 		// Other protocols: load image
-		win->openUrl(url);
+		win->open(url);
 	}
 }
 

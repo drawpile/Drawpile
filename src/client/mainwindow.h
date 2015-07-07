@@ -94,7 +94,7 @@ class MainWindow : public QMainWindow {
 		// Triggerable actions
 		void showNew();
 		void open();
-		void openUrl(const QUrl &url);
+		void open(const QUrl &url);
 		bool save();
 		bool saveas();
 		void exportAnimation();
@@ -149,7 +149,7 @@ class MainWindow : public QMainWindow {
 		void paste();
 		void stamp();
 		void pasteFile();
-		void pasteFromUrl(const QUrl &url);
+		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
 		void pasteImage(const QImage &image, const QPoint &point, bool forcePoint);
 		void dropUrl(const QUrl &url);

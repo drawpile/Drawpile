@@ -804,7 +804,7 @@ void PlaybackDialog::filterRecording()
 
 		if(!filename.isEmpty()) {
 			MainWindow *win = new MainWindow(false);
-			win->openUrl(QUrl::fromLocalFile(filename));
+			win->open(QUrl::fromLocalFile(filename));
 		}
 	}
 }
