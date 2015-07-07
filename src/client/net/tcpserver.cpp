@@ -104,7 +104,8 @@ void TcpServer::handleMessage()
 {
 	if(_receiving)
 		return;
-	QScopedValueRollback<bool> receivingInProgress(_receiving, true);
+	QScopedValueRollback<bool> receivingInProgress {_receiving};
+	_receiving = true;
 
 	QElapsedTimer timer;
 	timer.start();
