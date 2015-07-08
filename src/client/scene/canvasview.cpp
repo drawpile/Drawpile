@@ -478,6 +478,7 @@ void CanvasView::onPenUp(bool right)
 
 		_smoother.reset();
 	}
+	_specialpenmode = false;
 }
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
