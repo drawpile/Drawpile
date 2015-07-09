@@ -1787,7 +1787,7 @@
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="435"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="438"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>Все файлы(*)</translation>
@@ -2181,7 +2181,7 @@
     </message>
     <message>
         <location filename="../ui/settings.ui" line="626"/>
-        <location filename="../ui/settings.ui" line="674"/>
+        <location filename="../ui/settings.ui" line="681"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
@@ -2191,7 +2191,12 @@
         <translation>Список серверов</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="667"/>
+        <location filename="../ui/settings.ui" line="654"/>
+        <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="674"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -2878,36 +2883,36 @@
         <translation>Очистить все настройки?</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="433"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="443"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="448"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="436"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="446"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="451"/>
         <source>Import trusted certificate</source>
         <translation>Импортировать доверенные сертификаты</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="437"/>
         <source>Certificates (%1)</source>
         <translation>Сертификаты (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="443"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="446"/>
         <source>Invalid certificate!</source>
         <translation>Недействительный сертификат!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="448"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="451"/>
         <source>Certificate common name not set!</source>
         <translation>Общее имя сертификата не указано!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="462"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="475"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="465"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="469"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="478"/>
         <source>Add public listing server</source>
         <translation>Добавить публичный сервер</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="469"/>
         <source>Invalid URL!</source>
         <translation>Неверный URL!</translation>
     </message>
@@ -3400,7 +3405,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="141"/>
+        <location filename="../net/tcpserver.cpp" line="142"/>
         <source>Received invalid data</source>
         <translation>Получены неверные данные</translation>
     </message>

@@ -268,6 +268,8 @@ void SettingsDialog::restoreSettings()
 #endif
 	cfg.endGroup();
 
+	_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
+
 	_customShortcuts->loadShortcuts();
 }
 
@@ -325,6 +327,7 @@ void SettingsDialog::rememberSettings()
 
 	_customShortcuts->saveShortcuts();
 	_listservers->saveServers();
+	cfg.setValue("listservers/nsfm", _ui->showNsfm->isChecked());
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }

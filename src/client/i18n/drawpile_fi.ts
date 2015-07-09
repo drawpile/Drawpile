@@ -1786,7 +1786,7 @@
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="435"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="438"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
         <translation>Kaikki tiedostot (*)</translation>
@@ -2161,7 +2161,12 @@
         <translation>Listauspalvelimet</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="667"/>
+        <location filename="../ui/settings.ui" line="654"/>
+        <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
+        <translation>Näytä sisältö joka on merkitty lapsille sopimattomaksi</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="674"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
@@ -2187,7 +2192,7 @@
     </message>
     <message>
         <location filename="../ui/settings.ui" line="626"/>
-        <location filename="../ui/settings.ui" line="674"/>
+        <location filename="../ui/settings.ui" line="681"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
@@ -2874,36 +2879,36 @@
         <translation>Nollataanko kaikki asetukset?</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="433"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="443"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="448"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="436"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="446"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="451"/>
         <source>Import trusted certificate</source>
         <translation>Tuo luotettava sertifikaatti</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="434"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="437"/>
         <source>Certificates (%1)</source>
         <translation>Sertifikaatit (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="443"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="446"/>
         <source>Invalid certificate!</source>
         <translation>Sertifikaatti ei ole kelvollinen!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="448"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="451"/>
         <source>Certificate common name not set!</source>
         <translation>Sertifikaatin yleistä nimeä (CN) ei ole asetettu!</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="462"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
-        <location filename="../dialogs/settingsdialog.cpp" line="475"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="465"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="469"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="478"/>
         <source>Add public listing server</source>
         <translation>Lisää listauspalvelin</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="466"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="469"/>
         <source>Invalid URL!</source>
         <translation>Epäkelpo osoite!</translation>
     </message>
@@ -3395,7 +3400,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="141"/>
+        <location filename="../net/tcpserver.cpp" line="142"/>
         <source>Received invalid data</source>
         <translation>Vastaanotettiin virheellistä dataa</translation>
     </message>

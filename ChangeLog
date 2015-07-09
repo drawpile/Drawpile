@@ -16,6 +16,7 @@
  * Scale selections maintaining aspect ratio by holding shift
  * Pasted images are now placed on their original positions (if copied from Drawpile)
  * Added "thick laser trail" option
+ * Public session listing filtering for adult content
 
 2015-06-02 Version 0.9.11
  * Fixed moving of freeform selections

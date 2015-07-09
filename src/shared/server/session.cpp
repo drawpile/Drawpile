@@ -711,6 +711,7 @@ void SessionState::makeAnnouncement(const QUrl &url)
 		title(),
 		userCount(),
 		!passwordHash().isEmpty(),
+		false, // TODO: explicit NSFM tag
 		founder(),
 		sessionStartTime()
 	};
