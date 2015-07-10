@@ -59,10 +59,10 @@ class Layer {
 		int height() const { return _height; }
 
 		//! Get the layer ID
-		int id() const { return id_; }
+		int id() const { return _id; }
 
 		//! Change layer ID
-		void setId(int id) { id_ = id; }
+		void setId(int id) { _id = id; }
 
 		//! Get the layer name
 		const QString& title() const { return _title; }
@@ -95,13 +95,13 @@ class Layer {
 		void setOpacity(int opacity);
 
 		//! Set layer blending mode
-		void setBlend(int blend);
+		void setBlend(BlendMode::Mode blend);
 
 		/**
 		 * @brief Get the layer blending mode
 		 * @return blending mode number
 		 */
-		int blendmode() const { return _blend; }
+		BlendMode::Mode blendmode() const { return _blend; }
 
 		/**
 		 * @brief Is this layer hidden?
@@ -119,10 +119,10 @@ class Layer {
 		void makeBlank();
 
 		//! Draw an image onto the layer
-		void putImage(int x, int y, QImage image, int mode);
+		void putImage(int x, int y, QImage image, BlendMode::Mode mode);
 
 		//! Fill a rectangle
-		void fillRect(const QRect &rect, const QColor &color, int blendmode=255);
+		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
 
 		//! Dab the layer with a brush
 		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
@@ -183,10 +183,10 @@ class Layer {
 		//! Construct a sublayer
 		Layer(LayerStack *owner, int id, const QSize& size);
 
-		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, int mode) const;
+		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
 
 		//! Get a sublayer
-		Layer *getSubLayer(int id, int blendmode, uchar opacity);
+		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
 
 		void directDab(const Brush &brush, const Point& point, StrokeState &state);
 		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
@@ -195,7 +195,7 @@ class Layer {
 		QColor getDabColor(const BrushStamp &stamp) const;
 
 		LayerStack *_owner;
-		int id_;
+		int _id;
 		QString _title;
 	
 		int _width;
@@ -204,7 +204,7 @@ class Layer {
 		int _ytiles;
 		QVector<Tile> _tiles;
 		uchar _opacity;
-		int _blend;
+		BlendMode::Mode _blend;
 		bool _hidden;
 
 		QList<Layer*> _sublayers;

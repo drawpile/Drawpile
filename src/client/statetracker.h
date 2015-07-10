@@ -123,8 +123,8 @@ public:
 	static StateSavepoint fromDatastream(QDataStream &ds, StateTracker *owner);
 
 	bool operator!() const { return !_data; }
-	bool operator==(const StateSavepoint &sp) { return _data == sp._data; }
-	bool operator!=(const StateSavepoint &sp) { return _data != sp._data; }
+	bool operator==(const StateSavepoint &sp) const { return _data == sp._data; }
+	bool operator!=(const StateSavepoint &sp) const { return _data != sp._data; }
 private:
 	struct Data;
 

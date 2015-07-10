@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,90 +19,9 @@
 
 #include "rasterop.h"
 
+#include <QRgb>
+
 namespace paintcore {
-
-// Note. The modes are listed in the order they appear in the user interface,
-// which is different from the internal PROTOCOL ORDER.
-const BlendMode BLEND_MODE[BLEND_MODES] = {
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Erase"), // This is a special mode
-		QString("-dp-erase"), /* this is used internally only */
-		0,
-		false, false
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Normal"),
-		QString("src-over"),
-		1,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Recolor"),
-		QString("-dp-recolor"), /* not part of SVG or OpenRaster spec */
-		10,
-		false
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Multiply"),
-		QString("multiply"),
-		2,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Divide"),
-		QString("screen"),
-		3,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Burn"),
-		QString("color-burn"),
-		4,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Dodge"),
-		QString("color-dodge"),
-		5,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Darken"),
-		QString("darken"),
-		6,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Lighten"),
-		QString("lighten"),
-		7,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Subtract"),
-		QString("-dp-minus"), /* not part of SVG or OpenRaster spec */
-		8,
-	},
-	{
-		QT_TRANSLATE_NOOP("paintcore", "Add"),
-		QString("plus"),
-		9,
-	}
-};
-
-int blendModeSvg(const QString &name)
-{
-	QStringRef n;
-	if(name.startsWith("svg:"))
-		n = name.midRef(4);
-	else
-		n = name.midRef(0);
-
-	for(int i=0;i<BLEND_MODES;++i)
-		if(BLEND_MODE[i].svgname == n)
-			return BLEND_MODE[i].id;
-	return -1;
-}
-
-const QString &svgBlendMode(int blendmode)
-{
-	if(blendmode < 0 || blendmode>=BLEND_MODES)
-		return BLEND_MODE[1].svgname;
-	return BLEND_MODE[blendmode].svgname;
-}
 
 // This is borrowed from Pigment of koffice libs:
 /// Blending of two scale values as described by the alpha scale value
@@ -224,6 +143,117 @@ void doAlphaMaskBlend(quint32 *base, quint32 color, const uchar *mask,
 	}
 }
 
+void doAlphaMaskUnder(quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	baseskip *= 4;
+	const uchar *src = reinterpret_cast<const uchar*>(&color);
+	uchar *dest = reinterpret_cast<uchar*>(base);
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x,++mask) {
+			// Special case: transparent mask pixel or opaque destination pixel
+			if(*mask==0 || dest[3]==255) {
+				dest += 4;
+			}
+			// The usual case: blending required
+			else {
+				if(dest[3]==0) {
+					// Special case: target is completely transparent, we can overwrite it.
+					*dest = src[0]; ++dest;
+					*dest = src[1]; ++dest;
+					*dest = src[2]; ++dest;
+					*dest = *mask; ++dest;
+				} else {
+					// Normal case: blend colors and alpha
+					const uchar a = UINT8_MULT(255-dest[3], *mask);
+					const uchar a2 = dest[3];
+					const uchar a_out = a+a2;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest), a_out); ++dest;
+					*dest = a_out; ++dest;
+				}
+			}
+		}
+		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
+struct fRGBA {
+	qreal r, g, b, a;
+
+	fRGBA() = default;
+	fRGBA(quint32 pixel)
+		: r(qRed(pixel) / 255.0),
+		  g(qGreen(pixel) / 255.0),
+		  b(qBlue(pixel) / 255.0),
+		  a(qAlpha(pixel) / 255.0)
+	{ }
+	quint32 toPixel() const {
+		return qRgba(r*255, g*255, b*255, a*255);
+	}
+};
+
+// This was taken directly from GIMP's paint_funcs_color_erase_helper
+void color_erase_helper(fRGBA *src, const fRGBA *color)
+{
+	fRGBA alpha;
+
+	alpha.a = src->a;
+
+	if (color->r < 0.0001)
+		alpha.r = src->r;
+	else if ( src->r > color->r )
+		alpha.r = (src->r - color->r) / (1.0 - color->r);
+	else if (src->r < color->r)
+		alpha.r = (color->r - src->r) / color->r;
+	else
+		alpha.r = 0.0;
+
+	if (color->g < 0.0001)
+		alpha.g = src->g;
+	else if ( src->g > color->g )
+		alpha.g = (src->g - color->g) / (1.0 - color->g);
+	else if ( src->g < color->g )
+		alpha.g = (color->g - src->g) / (color->g);
+	else
+		alpha.g = 0.0;
+
+	if (color->b < 0.0001)
+		alpha.b = src->b;
+	else if ( src->b > color->b )
+		alpha.b = (src->b - color->b) / (1.0 - color->b);
+	else if ( src->b < color->b )
+		alpha.b = (color->b - src->b) / (color->b);
+	else
+		alpha.b = 0.0;
+
+	if ( alpha.r > alpha.g ) {
+		if ( alpha.r > alpha.b )
+			src->a = alpha.r;
+		else
+			src->a = alpha.b;
+
+	} else if ( alpha.g > alpha.b ) {
+		src->a = alpha.g;
+
+	} else {
+		src->a = alpha.b;
+	}
+
+	src->a = (1.0 - color->a) + (src->a * color->a);
+
+	if (src->a < 0.0001)
+		return;
+
+	src->r = (src->r - color->r) / src->a + color->r;
+	src->g = (src->g - color->g) / src->a + color->g;
+	src->b = (src->b - color->b) / src->a + color->b;
+
+	src->a *= alpha.a;
+}
+
 // Specialized pixel composition: erase alpha channel
 void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
 {
@@ -237,6 +267,25 @@ void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, i
 			++mask;
 		}
 		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
+void doMaskColorErase(quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip)
+{
+	fRGBA col = color;
+	uchar col_a = qAlpha(color);
+
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			fRGBA src = *base;
+			col.a = UINT8_MULT(col_a, *mask) / 255.0;
+			color_erase_helper(&src, &col);
+			*base = src.toPixel();
+			++mask;
+			++base;
+		}
+		base += baseskip;
 		mask += maskskip;
 	}
 }
@@ -345,7 +394,27 @@ void doPixelAlphaBlend(quint32 *destination, const quint32 *source, uchar opacit
 			*dest = a_out; ++dest,++src;
 		}
 	}
+}
 
+void doPixelAlphaUnder(quint32 *destination, const quint32 *source, uchar opacity, int len)
+{
+	uchar *dest = reinterpret_cast<uchar*>(destination);
+	const uchar *src = reinterpret_cast<const uchar*>(source);
+
+	while(len--) {
+		const uchar a2 = dest[3];
+		const uchar a = UINT8_MULT(255-a2, UINT8_MULT(src[3], opacity));
+		const uchar a_out = a+a2;
+		if(a_out==0) {
+			src+=4;
+			dest+=4;
+		} else {
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = a_out; ++dest,++src;
+		}
+	}
 }
 
 // Specialized pixel composition: erase alpha channel
@@ -358,6 +427,21 @@ void doPixelErase(quint32 *destination, const quint32 *source, uchar opacity, in
 		*dest = a;
 		dest += 4;
 		src += 4;
+	}
+}
+
+void doPixelColorErase(quint32 *destination, const quint32 *source, uchar opacity, int len)
+{
+	const qreal o = opacity / 255.0;
+
+	while(len--) {
+		fRGBA d = *destination;
+		fRGBA s = *source;
+		s.a *= o;
+		color_erase_helper(&d, &s);
+		*destination = d.toPixel();
+		++destination;
+		++source;
 	}
 }
 
@@ -400,41 +484,44 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 	}
 }
 
-void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
+void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
-	// Note! These should appear in the PROTOCOL ORDER!
 	switch(mode) {
-	case 0: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
-	case 1: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
-	case 2: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 3: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 4: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 5: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 6: doMaskComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 7: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 8: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 9: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 10: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
-	case 255: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_ERASE: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_NORMAL: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_MULTIPLY: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DIVIDE: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_BURN: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DODGE: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_DARKEN: doMaskComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_LIGHTEN: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_SUBTRACT: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_ADD: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_RECOLOR: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_BEHIND: doAlphaMaskUnder(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_COLORERASE: doMaskColorErase(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_REPLACE: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
 	}
 }
 
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
+void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
-	// Note! These should appear in the PROTOCOL ORDER!
 	switch(mode) {
-	case 0: doPixelErase(base, over, opacity, len); break;
-	case 1: doPixelAlphaBlend(base, over, opacity, len); break;
-	case 2: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
-	case 3: doPixelComposite<blend_divide>(base, over, opacity, len); break;
-	case 4: doPixelComposite<blend_burn>(base, over, opacity, len); break;
-	case 5: doPixelComposite<blend_dodge>(base, over, opacity, len); break;
-	case 6: doPixelComposite<blend_darken>(base, over, opacity, len); break;
-	case 7: doPixelComposite<blend_lighten>(base, over, opacity, len); break;
-	case 8: doPixelComposite<blend_subtract>(base, over, opacity, len); break;
-	case 9: doPixelComposite<blend_add>(base, over, opacity, len); break;
-	case 10: doPixelComposite<blend_blend>(base, over, opacity, len); break;
+	case BlendMode::MODE_ERASE: doPixelErase(base, over, opacity, len); break;
+	case BlendMode::MODE_NORMAL: doPixelAlphaBlend(base, over, opacity, len); break;
+	case BlendMode::MODE_MULTIPLY: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
+	case BlendMode::MODE_DIVIDE: doPixelComposite<blend_divide>(base, over, opacity, len); break;
+	case BlendMode::MODE_BURN: doPixelComposite<blend_burn>(base, over, opacity, len); break;
+	case BlendMode::MODE_DODGE: doPixelComposite<blend_dodge>(base, over, opacity, len); break;
+	case BlendMode::MODE_DARKEN: doPixelComposite<blend_darken>(base, over, opacity, len); break;
+	case BlendMode::MODE_LIGHTEN: doPixelComposite<blend_lighten>(base, over, opacity, len); break;
+	case BlendMode::MODE_SUBTRACT: doPixelComposite<blend_subtract>(base, over, opacity, len); break;
+	case BlendMode::MODE_ADD: doPixelComposite<blend_add>(base, over, opacity, len); break;
+	case BlendMode::MODE_RECOLOR: doPixelComposite<blend_blend>(base, over, opacity, len); break;
+	case BlendMode::MODE_BEHIND: doPixelAlphaUnder(base, over, opacity, len); break;
+	case BlendMode::MODE_COLORERASE: doPixelColorErase(base, over, opacity, len); break;
+	case BlendMode::MODE_REPLACE: /* not implemented */ break;
 	}
 }
 

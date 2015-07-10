@@ -118,7 +118,7 @@ void Tile::copyToImage(QImage& image, int x, int y) const {
  * @param h values in tile (must be < SIZE)
  * @param skip values to skip to reach the next line
  */
-void Tile::composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip)
+void Tile::composite(BlendMode::Mode mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip)
 {
 	Q_ASSERT(x>=0 && x<SIZE && y>=0 && y<SIZE);
 	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
@@ -162,7 +162,7 @@ std::array<quint32, 5> Tile::weightedAverage(const uchar *weights, int x, int y,
  * @param opacity opacity modifier of tile
  * @param blend blending mode
  */
-void Tile::merge(const Tile &tile, uchar opacity, int blend)
+void Tile::merge(const Tile &tile, uchar opacity, BlendMode::Mode blend)
 {
 	if(!tile.isNull())
 		compositePixels(blend, getOrCreateData(), tile.data(), SIZE*SIZE, opacity);

@@ -46,6 +46,7 @@ struct Session {
 	QString title;
 	int users;
 	bool password;
+	bool nsfm;
 	QString owner;
 	QDateTime started;
 };
@@ -100,8 +101,9 @@ public:
 	 *
 	 * @param protocol if empty, limit query to sessions with this protocol version
 	 * @param title if empty, limit query to sessions whose title contains this string
+	 * @param nsfm if set to false, sessions tagged as "Not Suitable For Minors" will not be fetched
 	 */
-	void getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString());
+	void getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString(), bool nsfm=false);
 
 	/**
 	 * @brief Send session announcement

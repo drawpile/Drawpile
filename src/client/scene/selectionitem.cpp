@@ -19,6 +19,7 @@
 
 #include "selectionitem.h"
 #include "net/client.h"
+#include "core/blendmodes.h"
 #include "scene/canvasscene.h"
 
 #include <QApplication>
@@ -181,20 +182,39 @@ SelectionItem::Handle SelectionItem::handleAt(const QPoint &point, float zoom) c
 }
 
 
-void SelectionItem::adjustGeometry(Handle handle, const QPoint &delta)
+void SelectionItem::adjustGeometry(Handle handle, const QPoint &delta, bool keepAspect)
 {
 	prepareGeometryChange();
-	switch(handle) {
-	case OUTSIDE: return;
-	case TRANSLATE: _polygon.translate(delta); break;
-	case RS_TOPLEFT: adjust(delta.x(), delta.y(), 0, 0); break;
-	case RS_TOPRIGHT: adjust(0, delta.y(), delta.x(), 0); break;
-	case RS_BOTTOMRIGHT: adjust(0, 0, delta.x(), delta.y()); break;
-	case RS_BOTTOMLEFT: adjust(delta.x(), 0, 0, delta.y()); break;
-	case RS_TOP: adjust(0, delta.y(), 0, 0); break;
-	case RS_RIGHT: adjust(0, 0, delta.x(), 0); break;
-	case RS_BOTTOM: adjust(0, 0, 0, delta.y()); break;
-	case RS_LEFT: adjust(delta.x(), 0, 0, 0); break;
+	if(keepAspect) {
+		const int dxy = (qAbs(delta.x()) > qAbs(delta.y())) ? delta.x() : delta.y();
+		const int dxy2 = (qAbs(delta.x()) > qAbs(-delta.y())) ? delta.x() : -delta.y();
+		switch(handle) {
+		case OUTSIDE: return;
+		case TRANSLATE: _polygon.translate(delta); break;
+
+		case RS_TOPLEFT: adjust(dxy, dxy, 0, 0); break;
+		case RS_TOPRIGHT: adjust(0, -dxy2, dxy2, 0); break;
+		case RS_BOTTOMRIGHT: adjust(0, 0, dxy, dxy); break;
+		case RS_BOTTOMLEFT: adjust(dxy2, 0, 0, -dxy2); break;
+
+		case RS_TOP: adjust(delta.y(), delta.y(), -delta.y(), -delta.y()); break;
+		case RS_RIGHT: adjust(-delta.x(), -delta.x(), delta.x(), delta.x()); break;
+		case RS_BOTTOM: adjust(-delta.y(), -delta.y(), delta.y(), delta.y()); break;
+		case RS_LEFT: adjust(delta.x(), delta.x(), -delta.x(), -delta.x()); break;
+		}
+	} else {
+		switch(handle) {
+		case OUTSIDE: return;
+		case TRANSLATE: _polygon.translate(delta); break;
+		case RS_TOPLEFT: adjust(delta.x(), delta.y(), 0, 0); break;
+		case RS_TOPRIGHT: adjust(0, delta.y(), delta.x(), 0); break;
+		case RS_BOTTOMRIGHT: adjust(0, 0, delta.x(), delta.y()); break;
+		case RS_BOTTOMLEFT: adjust(delta.x(), 0, 0, delta.y()); break;
+		case RS_TOP: adjust(0, delta.y(), 0, 0); break;
+		case RS_RIGHT: adjust(0, 0, delta.x(), 0); break;
+		case RS_BOTTOM: adjust(0, 0, 0, delta.y()); break;
+		case RS_LEFT: adjust(delta.x(), 0, 0, 0); break;
+		}
 	}
 }
 
@@ -233,6 +253,7 @@ void SelectionItem::rotate(float angle)
 void SelectionItem::setPasteImage(const QImage &image)
 {
 	_pasteimg = image;
+	_movedFromCanvas = false;
 	if(!isAxisAlignedRectangle())
 		setRect(_polygon.boundingRect().toRect());
 	update();
@@ -378,7 +399,7 @@ void SelectionItem::pasteToCanvas(net::Client *client, int layer) const
 	}
 }
 
-void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int layer) const
+void SelectionItem::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const
 {
 	const QRect bounds = canvasRect();
 	QRect area;
@@ -389,7 +410,7 @@ void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int lay
 		area = polygonRect().intersected(bounds);
 
 	} else {
-		QPair<QPoint,QImage> m = polygonMask(color.alpha()>0 ? color : QColor(255,255,255));
+		QPair<QPoint,QImage> m = polygonMask(color);
 		maskOffset = m.first;
 		mask = m.second;
 	}
@@ -398,9 +419,9 @@ void SelectionItem::fillCanvas(const QColor &color, net::Client *client, int lay
 		client->sendUndopoint();
 
 		if(mask.isNull())
-			client->sendFillRect(layer, area, color);
+			client->sendFillRect(layer, area, color, mode);
 		else
-			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, color.alpha()>0 ? 1 : 3);
+			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, mode);
 	}
 }
 

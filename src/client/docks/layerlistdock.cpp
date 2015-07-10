@@ -23,7 +23,7 @@
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
 #include "docks/utils.h"
-#include "core/rasterop.h" // for blending modes
+#include "core/blendmodes.h"
 
 #include "widgets/groupedtoolbutton.h"
 using widgets::GroupedToolButton;
@@ -35,6 +35,7 @@ using widgets::GroupedToolButton;
 #include <QPushButton>
 #include <QActionGroup>
 #include <QTimer>
+#include <QSettings>
 
 namespace docks {
 
@@ -54,13 +55,8 @@ LayerList::LayerList(QWidget *parent)
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
-	for(int b=0;b<paintcore::BLEND_MODES;++b) {
-		if(paintcore::BLEND_MODE[b].layermode)
-			_ui->blendmode->addItem(
-				QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
-				paintcore::BLEND_MODE[b].id
-			);
-	}
+	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode))
+		_ui->blendmode->addItem(bm.second, bm.first);
 
 	// Layer menu
 	_layermenu = new QMenu(this);
@@ -103,12 +99,16 @@ LayerList::LayerList(QWidget *parent)
 	_viewMode = boxmenu->addMenu(QString()); // title is set later
 	_viewMode->addActions(viewmodes->actions());
 
+	_showNumbersAction = boxmenu->addAction(tr("Show numbers"));
+	_showNumbersAction->setCheckable(true);
+
 	_ui->menuButton->setMenu(boxmenu);
 
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
 	connect(_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
+	connect(_showNumbersAction, &QAction::triggered, this, &LayerList::showLayerNumbers);
 
 	selectionChanged(QItemSelection());
 
@@ -141,6 +141,11 @@ void LayerList::setClient(net::Client *client)
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
+
+	// Restore settings
+	QSettings cfg;
+	_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
+	del->setShowNumbers(_showNumbersAction->isChecked());
 }
 
 void LayerList::setOperatorMode(bool op)
@@ -256,9 +261,9 @@ void LayerList::blendModeChanged()
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-		layer.blend = _ui->blendmode->currentData().toInt();
+		layer.blend = paintcore::BlendMode::Mode(_ui->blendmode->currentData().toInt());
 #else
-		layer.blend = _ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt();
+		layer.blend = paintcore::BlendMode::Mode(_ui->blendmode->itemData(_ui->blendmode->currentIndex()).toInt());
 #endif
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
@@ -295,6 +300,16 @@ void LayerList::layerViewModeTriggered(QAction *action)
 {
 	_viewMode->setTitle(tr("Mode:") + " " + action->text());
 	emit layerViewModeSelected(action->property("viewmode").toInt());
+}
+
+void LayerList::showLayerNumbers(bool show)
+{
+	LayerListDelegate *del = static_cast<LayerListDelegate*>(_ui->layerlist->itemDelegate());
+	del->setShowNumbers(show);
+
+	QSettings cfg;
+	cfg.setValue("setting/layernumbers", _showNumbersAction->isChecked());
+
 }
 
 /**

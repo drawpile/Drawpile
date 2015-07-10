@@ -266,13 +266,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="pressurecolor">
-         <property name="text">
-          <string>Color</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
@@ -313,8 +306,8 @@
   <tabstop>brushspacing</tabstop>
   <tabstop>pressuresize</tabstop>
   <tabstop>pressureopacity</tabstop>
-  <tabstop>pressurecolor</tabstop>
  </tabstops>
+ <resources/>
  <connections>
   <connection>
    <sender>pressuresize</sender>
@@ -345,22 +338,6 @@
     <hint type="destinationlabel">
      <x>162</x>
      <y>30</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressurecolor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setColorPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>68</x>
-     <y>257</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>162</x>
-     <y>25</y>
     </hint>
    </hints>
   </connection>

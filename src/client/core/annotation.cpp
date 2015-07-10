@@ -113,7 +113,7 @@ QImage Annotation::toImage() const
 void Annotation::toDatastream(QDataStream &out) const
 {
 	// Write ID
-	out << qint16(_id);
+	out << quint16(_id);
 
 	// Write position and size
 	out << _rect;
@@ -125,7 +125,7 @@ void Annotation::toDatastream(QDataStream &out) const
 
 Annotation *Annotation::fromDatastream(QDataStream &in)
 {
-	qint16 id;
+	quint16 id;
 	in >> id;
 	Annotation *a = new Annotation(id);
 	in >> a->_rect;

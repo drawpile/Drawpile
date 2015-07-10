@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,29 +16,15 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef RASTEROP_H
-#define RASTEROP_H
+#ifndef PAINTCORE_RASTEROP_H
+#define PAINTCORE_RASTEROP_H
 
-#include <QString>
+#include <Qt>
 #include <array>
 
+#include "blendmodes.h"
+
 namespace paintcore {
-
-struct BlendMode {
-	const char *name;      // translatable name
-	const QString svgname; // SVG style name of this blending mode
-	int id;                // ID as used in the protocol
-
-	bool layermode;        // can this be used as a layer mode?
-	bool visible;          // can this mode be shown in mode selection lists?
-
-	BlendMode() : name(nullptr), id(-1) { }
-	BlendMode(const char *_name, const QString &_svgname, int _id, bool _layermode=true, bool _visible=true) : name(_name), svgname(_svgname), id(_id), layermode(_layermode), visible(_visible) { }
-};
-
-// Note. Protocol ordering and display ordering of the modes differ.
-static const int BLEND_MODES=11;
-extern const BlendMode BLEND_MODE[BLEND_MODES];
 
 /**
  * Composite a color using a mask onto an image.
@@ -51,7 +37,7 @@ extern const BlendMode BLEND_MODE[BLEND_MODES];
  * @param maskskip number of bytes to skip to get to the next line in the mask
  * @param baseskip number of (bytes) to skip to get to the next line in the base
  */
-void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip);
+void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip);
 
 /**
  * Composite two equally big image tiles.
@@ -61,7 +47,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, in
  * @param len number of pixels to blend
  * @param opacity blend opacity (0..255)
  */
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity);
+void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity);
 
 /**
  * Get a weighted average of the pixel data using the mask as the weights
@@ -80,19 +66,6 @@ std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int 
  * Add tint to pixel values
  */
 void tintPixels(quint32 *pixels, int len, quint32 tint);
-
-/**
- * @brief Get the blending mode for the given SVG composite operation name
- * @return blending mode or -1 if operation is not supported
- */
-int blendModeSvg(const QString &name);
-
-/**
- * @brief Get the SVG composition operation name for the given blend mode
- * @param blendmode
- * @return name. The normal blend mode is returned if blendmode is invalid
- */
-const QString &svgBlendMode(int blendmode);
 
 }
 

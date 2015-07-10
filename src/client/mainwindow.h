@@ -23,6 +23,7 @@
 #include <QElapsedTimer>
 
 #include "tools/tool.h"
+#include "core/blendmodes.h"
 
 class QActionGroup;
 class QMessageBox;
@@ -36,12 +37,12 @@ namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
+	class UserList;
 	class ViewStatus;
 }
 namespace docks {
 	class ToolSettings;
 	class InputSettings;
-	class UserList;
 	class LayerList;
 	class PaletteBox;
 	class ColorBox;
@@ -138,20 +139,22 @@ class MainWindow : public QMainWindow {
 		void updateShortcuts();
 		void updateTabletSupportMode();
 
+		void undo();
+
 		void selectAll();
 		void selectNone();
 		void copyVisible();
 		void copyLayer();
 		void cutLayer();
 		void paste();
+		void stamp();
 		void pasteFile();
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
+		void pasteImage(const QImage &image, const QPoint &point, bool forcePoint);
 		void dropUrl(const QUrl &url);
 
 		void clearOrDelete();
-		void fillFgArea();
-		void fillBgArea();
 
 		void removeEmptyAnnotations();
 		void resizeCanvas();
@@ -164,9 +167,8 @@ class MainWindow : public QMainWindow {
 		void hotBorderMenubar(bool show);
 
 	protected:
-		//! Handle closing of the main window
 		void closeEvent(QCloseEvent *event);
-
+		void keyReleaseEvent(QKeyEvent *event);
 		bool event(QEvent *event);
 
 	private:
@@ -199,17 +201,20 @@ class MainWindow : public QMainWindow {
 		void createDocks();
 		void setupActions();
 
-		void fillArea(const QColor &color);
+		void copyFromLayer(int layer);
+		void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
+
+		void cancelSelection();
 
 		QSplitter *_splitter;
 
 		docks::ToolSettings *_dock_toolsettings;
 		docks::InputSettings *_dock_input;
-		docks::UserList *_dock_users;
 		docks::LayerList *_dock_layers;
 		docks::ColorBox *_dock_colors;
 		docks::Navigator *_dock_navigator;
 		widgets::ChatBox *_chatbox;
+		widgets::UserList *_userlist;
 
 		widgets::CanvasView *_view;
 

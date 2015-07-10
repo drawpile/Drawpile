@@ -1,19 +1,22 @@
 Drawpile - a collaborative drawing program
 ------------------------------------------
 
-Drawpile is a drawing program with a twist: you can share your drawing
-live with other people.
+Drawpile is a drawing program that lets you share the canvas
+with other users in real time.
 
 Some feature highlights:
 
+* Runs on Linux, Windows and OSX
 * Shared canvas using the built-in server or a dedicated server
 * Record, play back and export drawing sessions
+* Simple animation support
 * Layers and blending modes
 * Text layers
 * Supports pressure sensitive Wacom tablets
 * Built-in chat
 * Supports OpenRaster file format
 * Encrypted connections using SSL
+* Automatic port forwarding with UPnP
 
 ## Building with cmake
 
@@ -24,6 +27,7 @@ Client dependencies:
 * KF5 KDNSSD (optional)
 * GIFLIB (optional)
 * [QtColorPicker]
+* MiniUPnP (optional)
 
 Server dependencies:
 
@@ -53,18 +57,11 @@ The configuration step supports some options:
 * CMAKE\_BUILD\_TYPE=debug: enable debugging features
 * INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 
-Example: `$ cmake .. -DDEBUG=on`
+Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug`
 
-When compiling on Windows, cmake may complain about missing zlib. Setting the zlib path explicitly on the command line will solve this. For example:
-
-    -DZLIB_LIBRARY:FILEPATH="C:\Qt\Tools\mingw48_32\lib\libz.a" -DZLIB_INCLUDE_DIR:PATH="C:\Qt\Tools\mingw48_32\include"
-
-On MacOS, you may need to set `CMAKE_PREFIX_PATH` to point to your Qt installation. For example:
-
-	$ cmake .. -DCMAKE_PREFIX_PATH=~/Qt/5.3/clang_64
-
-Running `make` will generate an app bundle in the `bin` subdirectory of your build directory. Run `macdeployqt` on it to package all dependencies inside for distribution.
+For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
 
 [KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive
 [QtColorPicker]: https://github.com/mbasaglia/Qt-Color-Picker 
+[Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources
 

@@ -47,7 +47,7 @@ using widgets::GroupedToolButton;
 #include "utils/icon.h"
 
 #include "core/annotation.h"
-#include "core/rasterop.h" // for blend modes
+#include "core/blendmodes.h"
 
 #include <QTimer>
 #include <QTextBlock>
@@ -56,20 +56,15 @@ namespace tools {
 
 namespace {
 	void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview) {
-		for(int b=0;b<paintcore::BLEND_MODES;++b) {
-			if(paintcore::BLEND_MODE[b].visible)
-				box->addItem(
-					QApplication::translate("paintcore", paintcore::BLEND_MODE[b].name),
-					paintcore::BLEND_MODE[b].id
-				);
-		}
+		for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode))
+			box->addItem(bm.second, bm.first);
 
-		preview->setBlendingMode(1);
+		preview->setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-			preview->setBlendingMode(box->currentData().toInt());
+			preview->setBlendingMode(paintcore::BlendMode::Mode(box->currentData().toInt()));
 #else
-			preview->setBlendingMode(box->itemData(box->currentIndex(), Qt::UserRole).toInt());
+			preview->setBlendingMode(paintcore::BlendMode::Mode(box->itemData(box->currentIndex(), Qt::UserRole).toInt()));
 #endif
 		});
 	}
@@ -144,9 +139,6 @@ void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
 	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
 
-	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
-	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
-
 	_ui->preview->setSubpixel(false);
 }
 
@@ -160,7 +152,6 @@ ToolProperties PenSettings::saveToolSettings()
 	cfg.setValue("spacing", _ui->brushspacing->value());
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
-	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
 	return cfg;
 }
 
@@ -207,7 +198,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_EraserSettings();
 	_ui->setupUi(widget);
 
-	_ui->preview->setBlendingMode(0);
+	_ui->preview->setBlendingMode(paintcore::BlendMode::MODE_ERASE);
 
 	parent->connect(_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
 		_ui->brushhardness->setEnabled(!hard);
@@ -218,6 +209,10 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
 	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+
+	parent->connect(_ui->colorEraseMode, &QToolButton::toggled, [this](bool color) {
+		_ui->preview->setBlendingMode(color ? paintcore::BlendMode::MODE_COLORERASE : paintcore::BlendMode::MODE_ERASE);
+	});
 
 	return widget;
 }
@@ -234,6 +229,7 @@ ToolProperties EraserSettings::saveToolSettings()
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
 	cfg.setValue("hardedge", _ui->paintmodeHardedge->isChecked());
 	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
+	cfg.setValue("colorerase", _ui->colorEraseMode->isChecked());
 	return cfg;
 }
 
@@ -271,12 +267,15 @@ void EraserSettings::restoreToolSettings(const ToolProperties &cfg)
 	else
 		_ui->paintmodeIndirect->setChecked(true);
 
+	_ui->colorEraseMode->setChecked(cfg.boolValue("colorerase", false));
+
 	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
 }
 
-void EraserSettings::setForeground(const QColor&)
+void EraserSettings::setForeground(const QColor& color)
 {
-	// Eraser has no foreground color
+	// Foreground color is used only in color-erase mode
+	_ui->preview->setColor1(color);
 }
 
 void EraserSettings::setBackground(const QColor& color)
@@ -343,7 +342,6 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
-	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
 	return cfg;
 }
 
@@ -378,9 +376,6 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
 	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
-
-	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
-	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
 
 	_ui->preview->setSubpixel(true);
 }

@@ -8,7 +8,7 @@ newlayer 1 1 0 #ffffffff Undo test
 ctx 1 layer=1 colorh=#ff0000 sizeh=2
 
 undopoint 1
-putimage 1 1 64 64 blend test.png
+putimage 1 1 64 64 src-over test.png
 
 undopoint 1
 move 1 64 64
@@ -19,7 +19,7 @@ move 1 64 128
 penup 1
 
 undopoint 1
-putimage 1 1 64 64 replace test.png
+putimage 1 1 64 64 -dp-replace test.png
 
 undo 1 1
 

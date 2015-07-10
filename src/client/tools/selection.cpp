@@ -30,11 +30,7 @@ namespace tools {
 
 void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
-	// Right click to dismiss selection (and paste buffer)
-	if(right) {
-		scene().setSelectionItem(nullptr);
-		return;
-	}
+	Q_UNUSED(right);
 
 	if(scene().selectionItem())
 		_handle = scene().selectionItem()->handleAt(point.toPoint(), zoom);
@@ -45,8 +41,10 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 	_p1 = _start;
 
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		if(scene().selectionItem())
+		if(scene().selectionItem()) {
 			scene().selectionItem()->pasteToCanvas(&client(), layer());
+			scene().selectionItem()->setMovedFromCanvas(false);
+		}
 
 		initSelection();
 	}
@@ -66,8 +64,9 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		if(scene().selectionItem()->pasteImage().isNull() && !scene().statetracker()->isLayerLocked(layer())) {
 			// Automatically cut the layer when the selection is transformed
 			QImage img = scene().selectionToImage(layer());
-			scene().selectionItem()->fillCanvas(Qt::transparent, &client(), layer());
+			scene().selectionItem()->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, &client(), layer());
 			scene().selectionItem()->setPasteImage(img);
+			scene().selectionItem()->setMovedFromCanvas(true);
 		}
 
 		if(_handle == drawingboard::SelectionItem::TRANSLATE && center) {
@@ -80,9 +79,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 			scene().selectionItem()->rotate(a1-a0);
 
 		} else {
-			// TODO constraints
-
-			scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
+			scene().selectionItem()->adjustGeometry(_handle, p.toPoint(), constrain);
 		}
 
 		_start = point.toPoint();

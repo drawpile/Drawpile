@@ -160,7 +160,7 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, float opacity, int blend)
+void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
 	Q_ASSERT(row>=0);

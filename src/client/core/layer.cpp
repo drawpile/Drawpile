@@ -28,6 +28,8 @@
 #include "brush.h"
 #include "brushmask.h"
 #include "point.h"
+#include "blendmodes.h"
+#include "rasterop.h"
 
 namespace paintcore {
 
@@ -101,8 +103,8 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: _owner(owner), id_(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
-	_opacity(255), _blend(1), _hidden(false)
+	: _owner(owner), _id(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
+	_opacity(255), _blend(BlendMode::MODE_NORMAL), _hidden(false)
 {
 	resize(0, size.width(), size.height(), 0);
 	
@@ -118,7 +120,7 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 }
 
 Layer::Layer(const Layer &layer)
-	: _owner(layer._owner), id_(layer.id()), _title(layer._title),
+	: _owner(layer._owner), _id(layer.id()), _title(layer._title),
 	  _width(layer._width), _height(layer._height),
 	  _xtiles(layer._xtiles), _ytiles(layer._ytiles),
 	  _tiles(layer._tiles),
@@ -208,7 +210,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 		_tiles.fill(bgtile);
 
-		putImage(left, top, oldcontent, 0);
+		putImage(left, top, oldcontent, BlendMode::MODE_REPLACE);
 
 	} else {
 		// top/left offset is aligned at tile boundary:
@@ -336,7 +338,7 @@ void Layer::setOpacity(int opacity)
 	markOpaqueDirty(true);
 }
 
-void Layer::setBlend(int blend)
+void Layer::setBlend(BlendMode::Mode blend)
 {
 	_blend = blend;
 	markOpaqueDirty();
@@ -352,15 +354,15 @@ void Layer::setHidden(bool hide)
 }
 
 /**
- * Return a copy of the image with the borders padded to align with tile boundaries.
- * The padding pixels are taken from the layer content, so the image can be used
- * to replace the existing tiles.
+ * Return a temporary layer with the original image padded and composited with the
+ * content of this layer.
+ *
  * @param xpos target image position
  * @param ypos target image position
  * @param original the image to pad
  * @param mode compositing mode
  */
-QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, int mode) const
+Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, BlendMode::Mode mode) const
 {
 	const int x0 = Tile::roundDown(xpos);
 	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
@@ -370,38 +372,68 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	const int w = x1 - x0;
 	const int h = y1 - y0;
 	
-	QImage image(w, h, QImage::Format_ARGB32);
-	//image.fill(0);
+	// Pad the image to tile boundaries
+	QImage image;
+	if(image.width() == w && image.height() == h) {
+		image = original;
 
-	// Copy background from existing tiles
+	} else {
+		image = QImage(w, h, QImage::Format_ARGB32);
+		QPainter painter(&image);
+
+		if(mode == BlendMode::MODE_REPLACE) {
+			// Replace mode is special: we must copy the original pixels
+			// and do the composition with QPainter, since layer merge
+			// can't distinguish the padding from image transparency
+			for(int y=0;y<h;y+=Tile::SIZE) {
+				for(int x=0;x<w;x+=Tile::SIZE) {
+					tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE).copyToImage(image, x, y);
+				}
+			}
+			painter.setCompositionMode(QPainter::CompositionMode_Source);
+
+		} else {
+			image.fill(0);
+		}
+
+		painter.drawImage(xpos-x0, ypos-y0, original);
+#if 0 /* debugging aid */
+		painter.setPen(Qt::red);
+		painter.drawLine(0, 0, w-1, 0);
+		painter.drawLine(0, 0, 0, h-1);
+		painter.drawLine(w-1, 0, w-1, h-1);
+		painter.drawLine(0, h-1, w-1, h-1);
+#endif
+	}
+
+	// Create scratch layers and composite
+	Layer scratch(nullptr, 0, QString(), Qt::transparent, QSize(w,h));
+	Layer imglayer = scratch;
+
+	// Copy image pixels to image layer
 	for(int y=0;y<h;y+=Tile::SIZE) {
-		//int yt = (y0 + y) / Tile::SIZE;
 		for(int x=0;x<w;x+=Tile::SIZE) {
-			const Tile &t = tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE);
-			t.copyToImage(image, x, y);
+			imglayer.rtile(x/Tile::SIZE, y/Tile::SIZE) = Tile(image, x, y);
 		}
 	}
-	
-	// Paint new image
-	QPainter painter(&image);
-	switch(mode) {
-	// see protocol::PutImage for the modes
-	case 0: painter.setCompositionMode(QPainter::CompositionMode_Source); break;
-	case 2: painter.setCompositionMode(QPainter::CompositionMode_DestinationOver); break;
-	case 3: painter.setCompositionMode(QPainter::CompositionMode_DestinationOut); break;
+
+	// In replace mode, compositing was already done with QPainter
+	if(mode == BlendMode::MODE_REPLACE) {
+		return imglayer;
 	}
 
-	painter.drawImage(xpos-x0, ypos-y0, original);
-	
-#if 0 /* debugging aid */
-	painter.setPen(Qt::red);
-	painter.drawLine(0, 0, w-1, 0);
-	painter.drawLine(0, 0, 0, h-1);
-	painter.drawLine(w-1, 0, w-1, h-1);
-	painter.drawLine(0, h-1, w-1, h-1);
-#endif
-	
-	return image;
+	// Copy tiles from current layer to scratch layer
+	for(int y=0;y<h;y+=Tile::SIZE) {
+		for(int x=0;x<w;x+=Tile::SIZE) {
+			scratch.rtile(x/Tile::SIZE, y/Tile::SIZE) = tile((x+x0)/Tile::SIZE, (y+y0)/Tile::SIZE);
+		}
+	}
+
+	// Merge image using standard layer compositing ops
+	imglayer.setBlend(mode);
+
+	scratch.merge(&imglayer);
+	return scratch;
 }
 
 /**
@@ -410,7 +442,7 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
  * @param image the image to draw
  * @param mode blending/compositing mode (see protocol::PutImage)
  */
-void Layer::putImage(int x, int y, QImage image, int mode)
+void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
 
@@ -427,22 +459,17 @@ void Layer::putImage(int x, int y, QImage image, int mode)
 	const int x0 = Tile::roundDown(x);
 	const int y0 = Tile::roundDown(y);
 	
-	if(x-x0 || y-y0 || image.width() % Tile::SIZE || image.height() % Tile::SIZE || mode!=0) {
-		image = padImageToTileBoundary(x, y, image, mode);
-	}
-	
+	Layer imageLayer = padImageToTileBoundary(x, y, image, mode);
+
+	// Replace this layer's tiles with the scratch tiles
 	const int tx0 = x0 / Tile::SIZE;
 	const int ty0 = y0 / Tile::SIZE;
-	const int tx1 = qMin((x0 + image.width() - 1) / Tile::SIZE, _xtiles-1);
-	const int ty1 = qMin((y0 + image.height() - 1) / Tile::SIZE, _ytiles-1);
+	const int tx1 = qMin((x0 + imageLayer.width() - 1) / Tile::SIZE, _xtiles-1);
+	const int ty1 = qMin((y0 + imageLayer.height() - 1) / Tile::SIZE, _ytiles-1);
 
 	for(int ty=ty0;ty<=ty1;++ty) {
-		int yoff = (ty-ty0) * Tile::SIZE;
 		for(int tx=tx0;tx<=tx1;++tx) {
-			int xoff = (tx-tx0) * Tile::SIZE;
-			int i = ty*_xtiles + tx;
-			Q_ASSERT(i>=0 && i < _xtiles*_ytiles);
-			_tiles[i] = Tile(image, xoff, yoff);
+			rtile(tx, ty) = imageLayer.tile(tx-tx0, ty-ty0);
 		}
 	}
 	
@@ -452,12 +479,12 @@ void Layer::putImage(int x, int y, QImage image, int mode)
 	}
 }
 
-void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
+void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mode blendmode)
 {
 	const QRect canvas(0, 0, _width, _height);
 
-	if(rectangle.contains(canvas) && blendmode==255) {
-		// Special case: rectangle covers entire layer and blendmode is OVERWRITE
+	if(rectangle.contains(canvas) && blendmode==BlendMode::MODE_REPLACE) {
+		// Special case: overwrite whole layer
 		_tiles.fill(Tile(color));
 
 	} else {
@@ -475,9 +502,15 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 		const int right = rect.x() + rect.width();
 
 		const int tx0 = rect.x() / size;
-		const int tx1 = right / size;
+		const int tx1 = (right-1) / size;
 		const int ty0 = rect.y() / size;
-		const int ty1 = bottom / size;
+		const int ty1 = (bottom-1) / size;
+
+		bool canIncrOpacity;
+		if(blendmode==255 && color.alpha()==0)
+			canIncrOpacity = false;
+		else
+			canIncrOpacity = findBlendMode(blendmode).flags.testFlag(BlendMode::IncrOpacity);
 
 		for(int ty=ty0;ty<=ty1;++ty) {
 			for(int tx=tx0;tx<=tx1;++tx) {
@@ -488,7 +521,8 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 
 				Tile &t = _tiles[ty*_xtiles+tx];
 
-				t.composite(blendmode, mask, color, left, top, w, h, 0);
+				if(!t.isNull() || canIncrOpacity)
+					t.composite(blendmode, mask, color, left, top, w, h, 0);
 			}
 		}
 	}
@@ -510,12 +544,12 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point, StrokeSta
 
 		effective_brush.setOpacity(1.0);
 		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 
 	} else if(contextId<0) {
 		// Special case: negative context IDs are temporary overlay strokes
 		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 	}
 
 	Point p = point;
@@ -546,12 +580,12 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 
 		effective_brush.setOpacity(1.0);
 		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 
 	} else if(contextId<0) {
 		// Special case: negative context IDs are temporary overlay strokes
 		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(1);
+		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
 	}
 
 	if(effective_brush.subpixel())
@@ -911,7 +945,7 @@ void Layer::makeBlank()
  * @param opacity layer opacity (set when creating the layer)
  * @return sublayer
  */
-Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
+Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 {
 	// See if the sublayer exists already
 	foreach(Layer *sl, _sublayers)
@@ -932,7 +966,7 @@ Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
 			// Set these flags directly to avoid markDirty call.
 			// We know the layer is invisible at this point
 			sl->makeBlank();
-			sl->id_ = id;
+			sl->_id = id;
 			sl->_opacity = opacity;
 			sl->_blend = blendmode;
 			sl->_hidden = false;
@@ -1000,7 +1034,7 @@ void Layer::markOpaqueDirty(bool forceVisible)
 void Layer::toDatastream(QDataStream &out) const
 {
 	// Write ID
-	out << qint32(id_);
+	out << qint32(id());
 
 	// Write title
 	out << _title;
@@ -1042,9 +1076,9 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 
 	Layer *layer = new Layer(owner, id, title, Qt::transparent, img.size());
 	layer->_opacity = opacity;
-	layer->_blend = blend;
+	layer->_blend = BlendMode::Mode(blend);
 	layer->_hidden = hidden;
-	layer->putImage(0, 0, img, 0);
+	layer->putImage(0, 0, img, BlendMode::MODE_REPLACE);
 
 	// Read sublayers
 	quint8 sublayers;

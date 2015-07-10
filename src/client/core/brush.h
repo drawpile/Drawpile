@@ -21,6 +21,8 @@
 
 #include <QColor>
 
+#include "blendmodes.h"
+
 namespace paintcore {
 
 /**
@@ -88,8 +90,8 @@ public:
 	void setIncremental(bool incremental) { _incremental = incremental; }
 	bool incremental() const { return _incremental; }
 
-	void setBlendingMode(int mode) { _blend = mode; }
-	int blendingMode() const { return _blend; }
+	void setBlendingMode(BlendMode::Mode mode) { _blend = mode; }
+	BlendMode::Mode blendingMode() const { return _blend; }
 
 	//! Get interpolated size
 	qreal fsize(qreal pressure) const;
@@ -118,7 +120,7 @@ private:
 	QColor _color1, _color2;
 	int _spacing;
 	int _resmudge;
-	int _blend;
+	BlendMode::Mode _blend;
 	bool _subpixel;
 	bool _incremental;
 };

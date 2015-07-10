@@ -86,6 +86,7 @@ private slots:
 	void showNetStats();
 
 private:
+	void showCGNAlert();
 	void message(const QString& msg);
 	QString fullAddress() const;
 

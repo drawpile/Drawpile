@@ -36,7 +36,7 @@ namespace widgets {
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), _preview(0), _sizepressure(false),
-	_opacitypressure(false), _hardnesspressure(false), _colorpressure(false), _smudgepressure(false),
+	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
 	_color1(Qt::black), _color2(Qt::white),
 	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), _tranparentbg(false)
 {
@@ -71,8 +71,7 @@ void BrushPreview::setColor1(const QColor& color)
 {
 	_color1 = color;
 	_brush.setColor(color);
-	if(_colorpressure==false)
-		_brush.setColor2(color);
+	_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
@@ -80,8 +79,6 @@ void BrushPreview::setColor1(const QColor& color)
 void BrushPreview::setColor2(const QColor& color)
 {
 	_color2 = color;
-	if(_colorpressure)
-		_brush.setColor2(color);
 	_needupdate = true;
 	update();
 }
@@ -112,10 +109,7 @@ paintcore::Brush BrushPreview::brush(bool swapcolors) const
 	if(swapcolors) {
 		paintcore::Brush swapbrush = _brush;
 		swapbrush.setColor(_color2);
-		if(_colorpressure)
-			swapbrush.setColor2(_color1);
-		else
-			swapbrush.setColor2(_color2);
+		swapbrush.setColor2(_color2);
 		return swapbrush;
 	} else {
 		return _brush;
@@ -179,12 +173,26 @@ void BrushPreview::updatePreview()
 	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
-	paintcore::Layer *layer = _preview->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : _color2);
+	QColor bgcolor = _color2;
 
-	paintcore::StrokeState ss(_brush);
+	paintcore::Brush brush = _brush;
+	// Special handling for some blending modes
+	// TODO this could be implemented in some less ad-hoc way
+	if(brush.blendingMode() == 11) {
+		// "behind" mode needs a transparent layer for anything to show up
+		brush.setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
+
+	} else if(brush.blendingMode() == 12) {
+		// Color-erase mode: use fg color as background
+		bgcolor = _color1;
+	}
+
+	paintcore::Layer *layer = _preview->getLayerByIndex(0);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor, paintcore::BlendMode::MODE_REPLACE);
+
+	paintcore::StrokeState ss(brush);
 	for(int i=1;i<pointvector.size();++i)
-		layer->drawLine(0, _brush, pointvector[i-1], pointvector[i], ss);
+		layer->drawLine(0, brush, pointvector[i-1], pointvector[i], ss);
 
 	layer->mergeSublayer(0);
 
@@ -192,7 +200,7 @@ void BrushPreview::updatePreview()
 		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), _color2, _fillTolerance, 0, false);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, _color2);
-		layer->putImage(fr.x, fr.y, fr.image, _underFill ? 2 : 1);
+		layer->putImage(fr.x, fr.y, fr.image, _underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL);
 	}
 
 	_needupdate=false;
@@ -324,17 +332,6 @@ void BrushPreview::setSmudgePressure(bool enable)
 	update();
 }
 
-void BrushPreview::setColorPressure(bool enable)
-{
-	_colorpressure = enable;
-	if(enable)
-		_brush.setColor2(_color2);
-	else
-		_brush.setColor2(_color1);
-	updatePreview();
-	update();
-}
-
 void BrushPreview::setSubpixel(bool enable)
 {
 	_brush.setSubpixel(enable);
@@ -342,7 +339,7 @@ void BrushPreview::setSubpixel(bool enable)
 	update();
 }
 
-void BrushPreview::setBlendingMode(int mode)
+void BrushPreview::setBlendingMode(paintcore::BlendMode::Mode mode)
 {
 	_brush.setBlendingMode(mode);
 	updatePreview();

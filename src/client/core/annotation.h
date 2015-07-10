@@ -21,6 +21,7 @@
 
 #include <QRectF>
 #include <QColor>
+#include <QImage>
 
 class QPainter;
 class QTextDocument;

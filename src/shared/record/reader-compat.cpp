@@ -33,6 +33,17 @@ namespace compat {
 
 using namespace protocol;
 
+// Pre 15.6 PutImage modes
+uchar oldImageMode(uchar mode) {
+	switch(mode) {
+	case 0: return 255;
+	case 1: return 1;
+	case 2: return 11;
+	case 3: return 0;
+	}
+	return 1;
+}
+
 LayerCreate *LayerCreateV14(const uchar *data, uint len)
 {
 	if(len<7)
@@ -172,6 +183,23 @@ Chat *ChatV10(const uchar *data, uint len)
 	return new Chat(*data, 0, QByteArray((const char*)data+1, len-1));
 }
 
+PutImage *PutImageV15_5(const uchar *data, uint len)
+{
+	if(len < 20)
+		return 0;
+
+	return new PutImage(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1),
+		oldImageMode(*(data+3)),
+		qFromBigEndian<quint32>(data+4),
+		qFromBigEndian<quint32>(data+8),
+		qFromBigEndian<quint32>(data+12),
+		qFromBigEndian<quint32>(data+16),
+		QByteArray((const char*)data+20, len-20)
+	);
+}
+
 PutImage *PutImageV10(const uchar *data, uint len)
 {
 	if(len < 11)
@@ -180,7 +208,7 @@ PutImage *PutImageV10(const uchar *data, uint len)
 	return new PutImage(
 		*(data+0),
 		*(data+1),
-		*(data+2),
+		oldImageMode(*(data+2)),
 		qFromBigEndian<quint16>(data+3),
 		qFromBigEndian<quint16>(data+5),
 		qFromBigEndian<quint16>(data+7),
@@ -253,7 +281,7 @@ PutImage *PutImageV12(const uchar *data, uint len)
 	return new PutImage(
 		*(data+0),
 		*(data+1),
-		*(data+2),
+		oldImageMode(*(data+2)),
 		qFromBigEndian<quint32>(data+3),
 		qFromBigEndian<quint32>(data+7),
 		qFromBigEndian<quint32>(data+11),
@@ -327,6 +355,24 @@ AnnotationDelete *AnnotationDeleteV12(const uchar *data, uint len)
 	return new AnnotationDelete(data[0], data[1]);
 }
 
+Message *deserializeV15_5(const uchar *data, int length)
+{
+	if(length<Message::HEADER_LEN)
+		return nullptr;
+
+	const quint16 len = qFromBigEndian<quint16>(data);
+
+	if(length < len+Message::HEADER_LEN)
+		return nullptr;
+
+	const MessageType type = MessageType(data[2]);
+
+	switch(type) {
+	case MSG_PUTIMAGE: return PutImageV15_5(data + Message::HEADER_LEN, len);
+	default: return Message::deserialize(data, length);
+	}
+}
+
 Message *deserializeV14(const uchar *data, int length)
 {
 	if(length<Message::HEADER_LEN)
@@ -343,7 +389,7 @@ Message *deserializeV14(const uchar *data, int length)
 	switch(type) {
 	case MSG_LAYER_CREATE: return LayerCreateV14(data, len);
 	case MSG_LAYER_COPY: return LayerCopyV14(data, len);
-	default: return Message::deserialize(data-Message::HEADER_LEN, length);
+	default: return deserializeV15_5(data-Message::HEADER_LEN, length);
 	}
 }
 

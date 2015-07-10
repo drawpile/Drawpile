@@ -10,6 +10,7 @@ find_package(KF5Archive NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorPicker)
 find_package(GIF)
+find_package(Miniupnpc)
 
 set (
 	SOURCES
@@ -75,6 +76,7 @@ set (
 	core/layerstack.cpp
 	core/brush.cpp
 	core/brushmask.cpp
+	core/blendmodes.cpp
 	core/rasterop.cpp
 	core/shapes.cpp
 	core/floodfill.cpp
@@ -114,11 +116,11 @@ set (
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
+	widgets/userlistwidget.cpp 
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
-	docks/userlistdock.cpp 
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
@@ -137,6 +139,11 @@ if(GIF_FOUND)
 	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
 	add_definitions(-DHAVE_GIFLIB)
 	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
+endif()
+
+if(LIBMINIUPNPC_FOUND)
+	set ( SOURCES ${SOURCES} net/upnp.cpp )
+	add_definitions(-DHAVE_UPNP)
 endif()
 
 set (
@@ -302,8 +309,16 @@ if(GIF_FOUND)
 	target_link_libraries(${CLIENTNAME} ${GIF_LIBRARIES})
 endif()
 
+if(LIBMINIUPNPC_FOUND)
+	target_link_libraries(${CLIENTNAME} ${LIBMINIUPNPC_LIBRARIES})
+        if ( WIN32 )
+                target_link_libraries (${CLIENTNAME} iphlpapi)
+        endif ( WIN32 )
+
+endif()
+
 if ( WIN32 )
-		target_link_libraries (${CLIENTNAME} ws2_32 )
+        target_link_libraries (${CLIENTNAME} ws2_32)
 endif ()
 
 set_target_properties (

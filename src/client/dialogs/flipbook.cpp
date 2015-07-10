@@ -65,6 +65,9 @@ Flipbook::Flipbook(QWidget *parent)
 	}
 
 	_ui->layerIndex->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
+
+	// Autoplay
+	_ui->playButton->click();
 }
 
 Flipbook::~Flipbook()

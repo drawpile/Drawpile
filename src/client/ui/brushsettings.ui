@@ -160,13 +160,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="pressurecolor">
-         <property name="text">
-          <string>Color</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="pressurehardness">
          <property name="text">
@@ -355,8 +348,8 @@
   <tabstop>pressuresize</tabstop>
   <tabstop>pressureopacity</tabstop>
   <tabstop>pressurehardness</tabstop>
-  <tabstop>pressurecolor</tabstop>
  </tabstops>
+ <resources/>
  <connections>
   <connection>
    <sender>pressuresize</sender>
@@ -403,38 +396,6 @@
     <hint type="destinationlabel">
      <x>43</x>
      <y>26</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressurecolor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setColorPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>195</x>
-     <y>274</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>22</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>blendmode</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setBlendingMode(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>127</x>
-     <y>94</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>137</x>
-     <y>41</y>
     </hint>
    </hints>
   </connection>

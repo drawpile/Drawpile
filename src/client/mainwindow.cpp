@@ -74,11 +74,11 @@
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
+#include "widgets/userlistwidget.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
-#include "docks/userlistdock.h"
 #include "docks/layerlistdock.h"
 #include "docks/inputsettingsdock.h"
 
@@ -252,9 +252,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
 	
-	// Create the chatbox
+	// Create the chatbox and user list
+	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
 	_chatbox = new widgets::ChatBox(this);
-	_splitter->addWidget(_chatbox);
+	chatsplitter->addWidget(_chatbox);
+
+	_userlist = new widgets::UserList(this);
+	chatsplitter->addWidget(_userlist);
+
+	chatsplitter->setStretchFactor(0, 5);
+	chatsplitter->setStretchFactor(1, 1);
+	_splitter->addWidget(chatsplitter);
 
 	// Make sure the canvas gets the majority share of the splitter the first time
 	_splitter->setStretchFactor(0, 1);
@@ -307,7 +315,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
 	_dock_toolsettings->getPolySelectionSettings()->setScene(_canvas);
 	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
-	_dock_users->setClient(_client);
+	_userlist->setClient(_client);
 
 	_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
 		if(_canvas->layers())
@@ -431,6 +439,9 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
 		if(!win->loadDocument(loader)) {
+			// Whoops, this will delete the error dialog too. Show it again,
+			// parented to current window
+			showErrorMessage(loader.errorMessage());
 			delete win;
 			win = nullptr;
 		}
@@ -639,6 +650,13 @@ void MainWindow::updateTabletSupportMode()
 		mode = widgets::CanvasView::ENABLE_TABLET;
 
 	_view->setTabletMode(mode);
+
+	// not really tablet related, but close enough
+	_view->setTouchGestures(
+		cfg.value("touchscroll", true).toBool(),
+		cfg.value("touchpinch", true).toBool(),
+		cfg.value("touchtwist", true).toBool()
+	);
 }
 
 /**
@@ -675,6 +693,10 @@ void MainWindow::readSettings(bool windowpos)
 	getAction("showgrid")->setChecked(pixelgrid);
 	_view->setPixelGrid(pixelgrid);
 
+	bool thicklasers = cfg.value("thicklasers", false).toBool();
+	getAction("thicklasers")->setChecked(thicklasers);
+	_canvas->setThickLaserTrails(thicklasers);
+
 	cfg.endGroup();
 
 	// Restore tool settings
@@ -708,6 +730,7 @@ void MainWindow::writeSettings()
 	cfg.setValue("viewstate", _splitter->saveState());
 
 	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
+	cfg.setValue("thicklasers", getAction("thicklasers")->isChecked());
 	cfg.endGroup();
 	_dock_toolsettings->saveSettings();
 	cfg.setValue("tools/crosshair", getAction("brushcrosshair")->isChecked());
@@ -772,6 +795,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		}
 	}
 	exit();
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+	QMainWindow::keyReleaseEvent(event);
+
+	if(event->key() == Qt::Key_Escape) {
+		cancelSelection();
+	}
 }
 
 bool MainWindow::event(QEvent *event)
@@ -1512,6 +1544,7 @@ void MainWindow::setShowLaserTrails(bool show)
 	QAction *lasertool = getAction("toollaser");
 	lasertool->setEnabled(show);
 	_canvas->showLaserTrails(show);
+	getAction("thicklasers")->setEnabled(show);
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
@@ -1601,7 +1634,7 @@ void MainWindow::toolChanged(tools::Type tool)
 
 	// Remove selection when not using selection tool
 	if(tool != tools::SELECTION)
-		_canvas->setSelectionItem(0);
+		cancelSelection();
 
 	_view->selectTool(tool);
 }
@@ -1616,6 +1649,15 @@ void MainWindow::selectionRemoved()
 	}
 }
 
+void MainWindow::undo()
+{
+	if(_canvas->selectionItem()) {
+		cancelSelection();
+	} else {
+		_client->sendUndo();
+	}
+}
+
 void MainWindow::selectAll()
 {
 	getAction("toolselectrect")->trigger();
@@ -1626,36 +1668,77 @@ void MainWindow::selectNone()
 {
 	if(_canvas->selectionItem()) {
 		_canvas->selectionItem()->pasteToCanvas(_client, _dock_layers->currentLayer());
-		_canvas->setSelectionItem(0);
+		cancelSelection();
 	}
+}
+
+void MainWindow::cancelSelection()
+{
+	if(_canvas->selectionItem()) {
+		if(!_canvas->selectionItem()->pasteImage().isNull() && _canvas->selectionItem()->isMovedFromCanvas())
+			_client->sendUndo();
+		_canvas->setSelectionItem(nullptr);
+	}
+}
+
+void MainWindow::copyFromLayer(int layer)
+{
+	QMimeData *data = new QMimeData;
+	data->setImageData(_canvas->selectionToImage(layer));
+
+	// Store also original coordinates
+	QPoint srcpos;
+	if(_canvas->selectionItem())
+		srcpos = _canvas->selectionItem()->polygonRect().center();
+	else
+		srcpos = QPoint(_canvas->width()/2, _canvas->height()/2);
+
+	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
+	data->setData("x-drawpile/pastesrc", srcbuf);
+
+	QApplication::clipboard()->setMimeData(data);
 }
 
 void MainWindow::cutLayer()
 {
-	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	fillArea(Qt::transparent);
-	QApplication::clipboard()->setImage(img);
+	copyFromLayer(_dock_layers->currentLayer());
+	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
 }
 
 void MainWindow::copyLayer()
 {
-	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
-	QApplication::clipboard()->setImage(img);
+	copyFromLayer(_dock_layers->currentLayer());
 }
 
 void MainWindow::copyVisible()
 {
-	QImage img = _canvas->selectionToImage(0);
-	QApplication::clipboard()->setImage(img);
+	copyFromLayer(0);
 }
 
 void MainWindow::paste()
 {
-	QImage img = QApplication::clipboard()->image();
-	if(img.isNull())
-		return;
+	const QMimeData *data = QApplication::clipboard()->mimeData();
+	if(data->hasImage()) {
+		QPoint pastepos;
+		bool pasteAtPos = false;
 
-	pasteImage(img);
+		// Get source position
+		QByteArray srcpos = data->data("x-drawpile/pastesrc");
+		if(!srcpos.isNull()) {
+			QList<QByteArray> pos = srcpos.split(',');
+			if(pos.size() == 2) {
+				bool ok1, ok2;
+				pastepos = QPoint(pos.at(0).toInt(&ok1), pos.at(1).toInt(&ok2));
+				pasteAtPos = ok1 && ok2;
+			}
+		}
+
+		// Paste-in-place if source was Drawpile (and source is visible)
+		if(pasteAtPos && _view->isPointVisible(pastepos))
+			pasteImage(data->imageData().value<QImage>(), pastepos, true);
+		else
+			pasteImage(data->imageData().value<QImage>());
+	}
 }
 
 void MainWindow::pasteFile()
@@ -1703,17 +1786,37 @@ void MainWindow::pasteFile(const QUrl &url)
 void MainWindow::pasteImage(const QImage &image)
 {
 	if(_canvas->hasImage()) {
+		pasteImage(image, _view->viewCenterPoint(), false);
+
+	} else {
+		// Canvas not yet initialized? Initialize with clipboard content
+		QImageCanvasLoader loader(image);
+		loadDocument(loader);
+	}
+}
+
+void MainWindow::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
+{
+	if(!_canvas->hasImage()) {
+		pasteImage(image);
+
+	} else {
 		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION) {
 			int currentTool = _dock_toolsettings->currentTool();
 			getAction("toolselectrect")->trigger();
 			_lastToolBeforePaste = currentTool;
 		}
 
-		_canvas->pasteFromImage(image, _view->viewCenterPoint());
-	} else {
-		// Canvas not yet initialized? Initialize with clipboard content
-		QImageCanvasLoader loader(image);
-		loadDocument(loader);
+		_canvas->pasteFromImage(image, point, forcePoint);
+	}
+}
+
+void MainWindow::stamp()
+{
+	drawingboard::SelectionItem *sel = _canvas->selectionItem();
+	if(sel && !sel->pasteImage().isNull()) {
+		sel->pasteToCanvas(_client, _dock_layers->currentLayer());
+		sel->setMovedFromCanvas(false);
 	}
 }
 
@@ -1767,29 +1870,19 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
-	fillArea(Qt::transparent);
+	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
 }
 
-void MainWindow::fillFgArea()
-{
-	fillArea(_dock_toolsettings->foregroundColor());
-}
-
-void MainWindow::fillBgArea()
-{
-	fillArea(_dock_toolsettings->backgroundColor());
-}
-
-void MainWindow::fillArea(const QColor &color)
+void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 {
 	if(_canvas->selectionItem()) {
 		// Selection exists: fill selected area only
-		_canvas->selectionItem()->fillCanvas(color, _client, _dock_layers->currentLayer());
+		_canvas->selectionItem()->fillCanvas(color, mode, _client, _dock_layers->currentLayer());
 
 	} else {
 		// No selection: fill entire layer
 		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color);
+		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, mode);
 	}
 }
 
@@ -2008,6 +2101,8 @@ void MainWindow::setupActions()
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
+	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence(Qt::Key_Return));
+
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &From File..."));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze Canvas..."));
@@ -2025,19 +2120,22 @@ void MainWindow::setupActions()
 	QAction *expandleft = makeAction("expandleft", 0, tr("Expand &Left"), "", QKeySequence(CTRL_KEY "+H"));
 	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
 
-	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Delete selection"), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG Color"), tr("Fill selected area with foreground color"), QKeySequence(CTRL_KEY "+,"));
-	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G Color"), tr("Fill selected area with background color"), QKeySequence(CTRL_KEY "+."));
+	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill selection"), QString(), QKeySequence(CTRL_KEY "+,"));
+	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
+	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color erase selection"), QString(), QKeySequence("Shift+Delete"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(cutlayer);
+	_currentdoctools->addAction(stamp);
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
-	_currentdoctools->addAction(fillbgarea);
+	_currentdoctools->addAction(recolorarea);
+	_currentdoctools->addAction(colorerasearea);
 	_currentdoctools->addAction(selectall);
 	_currentdoctools->addAction(selectnone);
 
@@ -2047,19 +2145,21 @@ void MainWindow::setupActions()
 	_docadmintools->addAction(expandleft);
 	_docadmintools->addAction(expandright);
 
-	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
+	connect(undo, &QAction::triggered, this, &MainWindow::undo);
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
+	connect(stamp, &QAction::triggered, this, &MainWindow::stamp);
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(selectall, SIGNAL(triggered()), this, SLOT(selectAll()));
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
-	connect(fillfgarea, SIGNAL(triggered()), this, SLOT(fillFgArea()));
-	connect(fillbgarea, SIGNAL(triggered()), this, SLOT(fillBgArea()));
+	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_REPLACE); });
+	connect(recolorarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
+	connect(colorerasearea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
@@ -2078,6 +2178,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
+	editmenu->addAction(stamp);
 	editmenu->addSeparator();
 
 	editmenu->addAction(selectall);
@@ -2095,7 +2196,8 @@ void MainWindow::setupActions()
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addAction(cleararea);
 	editmenu->addAction(fillfgarea);
-	editmenu->addAction(fillbgarea);
+	editmenu->addAction(recolorarea);
+	editmenu->addAction(colorerasearea);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 
@@ -2138,12 +2240,14 @@ void MainWindow::setupActions()
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
 	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
 	QAction *showlasers = makeAction("showlasers", 0, tr("Show La&ser Trails"), QString(), QKeySequence(), true);
+	QAction *thicklasers = makeAction("thicklasers", 0, tr("Thick Laser Trails"), QString(), QKeySequence(), true);
 	QAction *showgrid = makeAction("showgrid", 0, tr("Show Pixel &Grid"), QString(), QKeySequence(), true);
 	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showuserlayers->setChecked(true);
 	showlasers->setChecked(true);
+	thicklasers->setChecked(false);
 	showgrid->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
@@ -2204,6 +2308,7 @@ void MainWindow::setupActions()
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
+	connect(thicklasers, SIGNAL(triggered(bool)), _canvas, SLOT(setThickLaserTrails(bool)));
 	connect(showgrid, SIGNAL(triggered(bool)), _view, SLOT(setPixelGrid(bool)));
 
 	_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
@@ -2232,11 +2337,16 @@ void MainWindow::setupActions()
 	viewmenu->addAction(viewmirror);
 
 	viewmenu->addSeparator();
+
+	QMenu *userpointermenu = viewmenu->addMenu(tr("User &pointers"));
+	userpointermenu->addAction(showusermarkers);
+	userpointermenu->addAction(showuserlayers);
+	userpointermenu->addAction(showlasers);
+	userpointermenu->addAction(thicklasers);
+
 	viewmenu->addAction(showannotations);
 	viewmenu->addAction(showcrosshair);
-	viewmenu->addAction(showusermarkers);
-	viewmenu->addAction(showuserlayers);
-	viewmenu->addAction(showlasers);
+
 	viewmenu->addAction(showgrid);
 
 	viewmenu->addSeparator();
@@ -2326,15 +2436,23 @@ void MainWindow::setupActions()
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
+	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence("Shift+Z"));
+	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence("Shift+X"));
+
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
 	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
 	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
+	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
+	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addAction(swapcolors);
+	toolshortcuts->addSeparator();
+	toolshortcuts->addAction(layerUpAct);
+	toolshortcuts->addAction(layerDownAct);
 
 	QToolBar *drawtools = new QToolBar(tr("Drawing tools"));
 	drawtools->setObjectName("drawtoolsbar");
@@ -2394,13 +2512,6 @@ void MainWindow::setupActions()
 		_toolChangeTime.start();
 	});
 
-	// Quick layer change actions
-	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Up));
-	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence(Qt::CTRL | Qt::Key_Down));
-	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
-	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
-
-
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
@@ -2422,12 +2533,6 @@ void MainWindow::createDocks()
 
 	addDockWidget(Qt::RightDockWidgetArea, _dock_colors);
 
-	// Create user list
-	_dock_users = new docks::UserList(this);
-	_dock_users->setObjectName("userlistdock");
-	_dock_users->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _dock_users);
-
 	// Create layer list
 	_dock_layers = new docks::LayerList(this);
 	_dock_layers->setObjectName("LayerList");
@@ -2447,6 +2552,5 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
 
 	// Tabify docks
-	tabifyDockWidget(_dock_users, _dock_layers);
 	tabifyDockWidget(_dock_layers, _dock_input);
 }
