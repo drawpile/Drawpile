@@ -35,7 +35,7 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 
 	_ui = new Ui_TinyPlayer;
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+#if defined(Q_OS_UNIX) && !defined(Q_OS_OSX)
 	// This custom shadow only looks nice on Linux window managers
 	// TODO check under Wayland
 	{

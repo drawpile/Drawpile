@@ -59,7 +59,6 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 #endif
 	_apiClient = new sessionlisting::AnnouncementApi(this);
 
-	//connect(_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, _model, &sessionlisting::SessionListingModel::setList);
 	connect(_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, [this](QList<sessionlisting::Session> list) {
 		_ui->liststack->setCurrentIndex(0);
 		_sessions->setList(list);
@@ -130,7 +129,8 @@ void SessionListingDialog::refreshListing()
 		QUrl url = urlstr;
 		if(url.isValid()) {
 			_model->setSourceModel(_sessions);
-			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR);
+			const bool nsfm = QSettings().value("listservers/nsfm", false).toBool();
+			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR, QString(), nsfm);
 		}
 	}
 }

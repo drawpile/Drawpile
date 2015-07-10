@@ -394,6 +394,7 @@ void SessionServer::refreshSessionAnnouncements()
 				s->title(),
 				s->userCount(),
 				!s->passwordHash().isEmpty(),
+				false, // TODO: explicit NSFM tag
 				s->founder(),
 				s->sessionStartTime()
 			});

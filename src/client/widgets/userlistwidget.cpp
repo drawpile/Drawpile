@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-#include "docks/userlistdock.h"
-#include "docks/utils.h"
+#include "widgets/userlistwidget.h"
 #include "net/userlist.h"
 #include "net/client.h"
 #include "utils/icon.h"
@@ -31,17 +30,13 @@
 using widgets::GroupedToolButton;
 #include "ui_userbox.h"
 
-namespace docks {
+namespace widgets {
 
 UserList::UserList(QWidget *parent)
-	:QDockWidget(tr("Users"), parent)
+	:QWidget(parent)
 {
 	_ui = new Ui_UserBox;
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-	_ui->setupUi(w);
-
-	setStyleSheet(defaultDockStylesheet());
+	_ui->setupUi(this);
 
 	setOperatorMode(false);
 

@@ -25,7 +25,7 @@
 #include <QDir>
 
 #include "textloader.h"
-#include "core/rasterop.h"
+#include "core/blendmodes.h"
 #include "net/utils.h"
 
 #include "../shared/net/annotation.h"
@@ -176,10 +176,10 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 		if(i.key() == "opacity")
 			layer.opacity = str2real(i.value());
 		else if(i.key() == "blend") {
-			int mode = paintcore::blendModeSvg(i.value());
-			if(mode<0)
+			bool found;
+			layer.blend = paintcore::findBlendModeByName(i.value(), &found).id;
+			if(!found)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
-			layer.blend = mode;
 		} else
 			throw SyntaxError("Unrecognized parameter: " + i.key());
 
@@ -296,10 +296,10 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 		else if(i.key() == "resmudge")
 			ctx.brush.setResmudge(str2int(i.value()));
 		else if(i.key() == "blend") {
-			int mode = paintcore::blendModeSvg(i.value());
-			if(mode<0)
+			bool found;
+			ctx.brush.setBlendingMode(paintcore::findBlendModeByName(i.value(), &found).id);
+			if(!found)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
-			ctx.brush.setBlendingMode(mode);
 		} else if(i.key() == "hardedge")
 			ctx.brush.setSubpixel(!str2bool(i.value()));
 		else if(i.key() == "incremental")
@@ -324,7 +324,7 @@ void TextCommandLoader::handlePenMove(const QString &args)
 
 	paintcore::PointVector points;
 	QStringList pargs = args.mid(idsep+1).split(';', QString::SkipEmptyParts);
-	QRegularExpression re("(\\d+(?:\\.\\d+)?) (\\d+(?:\\.\\d+)?)(?: (\\d(?:\\.\\d+)?))?");
+	QRegularExpression re("(-?\\d+(?:\\.\\d+)?) (-?\\d+(?:\\.\\d+)?)(?: (\\d(?:\\.\\d+)?))?");
 	foreach(const QString &parg, pargs) {
 		QRegularExpressionMatch m = re.match(parg);
 		if(!m.hasMatch())
@@ -362,7 +362,7 @@ void TextCommandLoader::handleInlineImage(const QString &args)
 
 void TextCommandLoader::handlePutImage(const QString &args)
 {
-	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+) (\\w+) (.+)");
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+) ([\\w-]+) (.+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
 		throw SyntaxError("Expected context id, layer id, x, y, mode and filename");
@@ -372,18 +372,12 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	int x = str2int(m.captured(3));
 	int y = str2int(m.captured(4));
 	QString modestr = m.captured(5);
-	int mode;
 
-	if(modestr == "replace")
-		mode = protocol::PutImage::MODE_REPLACE;
-	else if(modestr == "blend")
-		mode = protocol::PutImage::MODE_BLEND;
-	else if(modestr == "under")
-		mode = protocol::PutImage::MODE_UNDER;
-	else if(modestr == "erase")
-		mode = protocol::PutImage::MODE_ERASE;
-	else
-		throw SyntaxError("Unknown composition mode: " + modestr);
+	bool found;
+	paintcore::BlendMode::Mode mode = paintcore::findBlendModeByName(modestr, &found).id;
+
+	if(!found)
+		throw SyntaxError("Invalid blending mode: " + m.captured(8));
 
 	if(m.captured(6) == "-") {
 		// inline image
@@ -429,11 +423,13 @@ void TextCommandLoader::handleFillRect(const QString &args)
 	int blend;
 	if(m.captured(8).isEmpty())
 		blend = 255;
-	else
-		blend = paintcore::blendModeSvg(m.captured(8));
+	else {
+		bool found;
+		blend = paintcore::findBlendModeByName(m.captured(8), &found).id;
 
-	if(blend<0)
-		throw SyntaxError("Invalid blending mode: " + m.captured(8));
+		if(!found)
+			throw SyntaxError("Invalid blending mode: " + m.captured(8));
+	}
 
 	_messages.append(MessagePtr(new protocol::FillRect(ctxid, layer, blend, x, y, w, h, color)));
 

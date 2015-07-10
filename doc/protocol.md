@@ -95,6 +95,12 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 15.6 (1.0.0)
+
+ * Added "Behind" blending mode
+ * Added "Color erase" blending mode
+ * PutImage now uses regular brush/layer blending modes
+
 Protocol 15.5 (0.9.10)
 
  * Merged LayerCopy with LayerCreate

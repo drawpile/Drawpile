@@ -48,7 +48,7 @@ Brush::Brush(int size, qreal hardness, qreal opacity, const QColor& color, int s
 	_hardness1(hardness), _hardness2(hardness),
 	_opacity1(opacity), _opacity2(opacity),
 	_smudge1(0), _smudge2(0),
-	_color1(color), _color2(color), _spacing(spacing), _resmudge(0), _blend(1),
+	_color1(color), _color2(color), _spacing(spacing), _resmudge(0), _blend(BlendMode::MODE_NORMAL),
 	_subpixel(false), _incremental(true)
 {
 	Q_ASSERT(size>0);

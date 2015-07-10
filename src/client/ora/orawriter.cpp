@@ -21,7 +21,7 @@
 #include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/rasterop.h" // for blending modes
+#include "core/blendmodes.h"
 
 #include <QDomDocument>
 #include <QBuffer>
@@ -44,6 +44,12 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
+
+	// Note: Qt's createElementNS and friends are buggy and repeat
+	// the namespace declaration at every element. Instead,
+	// we declare the namespace and use prefixes manually.
+	root.setAttribute("xmlns:drawpile", "http://drawpile.net/");
+
 	doc.appendChild(root);
 
 	// Width and height are required attributes
@@ -58,10 +64,10 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	// This will probably be replaced with proper text element support
 	// once standardized.
 	if(image->hasAnnotations()) {
-		QDomElement annotationEls = doc.createElementNS("http://drawpile.sourceforge.net/", "annotations");
+		QDomElement annotationEls = doc.createElement("drawpile:annotations");
 		annotationEls.setPrefix("drawpile");
 		foreach(const paintcore::Annotation *a, image->annotations()) {
-			QDomElement an = doc.createElementNS("http://drawpile.sourceforge.net/","a");
+			QDomElement an = doc.createElement("drawpile:a");
 			an.setPrefix("drawpile");
 
 			QRect ag = a->rect();
@@ -87,7 +93,7 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 		if(l->hidden())
 			layer.setAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
-			layer.setAttribute("composite-op", "svg:" + paintcore::svgBlendMode(l->blendmode()));
+			layer.setAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
 
 		// TODO lock and selection
 		stack.appendChild(layer);

@@ -19,6 +19,8 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include "blendmodes.h"
+
 #include <QSharedDataPointer>
 
 #ifndef NDEBUG
@@ -112,13 +114,13 @@ class Tile {
 		}
 
 		//! Composite values multiplied by color onto this tile
-		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip);
+		void composite(BlendMode::Mode mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip);
 
 		//! Get a weighted average of the tile pixels
 		std::array<quint32, 5> weightedAverage(const uchar *weights, int x, int y, int w, int h, int skip) const;
 
 		//! Composite another tile with this tile
-		void merge(const Tile &tile, uchar opacity, int blend);
+		void merge(const Tile &tile, uchar opacity, BlendMode::Mode mode);
 
 		//! Copy the contents of this tile onto the given spot on an image
 		void copyToImage(QImage& image, int x, int y) const;

@@ -47,6 +47,8 @@ public:
 
 	void setClient(net::Client *client) { _client = client; }
 
+	void setShowNumbers(bool show);
+
 signals:
 	void toggleVisibility(int layerId, bool visible);
 
@@ -56,6 +58,8 @@ private:
 	net::Client *_client;
 	QPixmap _visibleicon;
 	QPixmap _hiddenicon;
+
+	bool _showNumbers;
 };
 
 }

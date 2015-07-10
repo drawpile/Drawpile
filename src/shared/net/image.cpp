@@ -64,7 +64,7 @@ bool PutImage::payloadEquals(const Message &m) const
 	const PutImage &p = static_cast<const PutImage&>(m);
 	return
 		layer() == p.layer() &&
-		mode() == p.mode() &&
+		blendmode() == p.blendmode() &&
 		x() == p.x() &&
 		y() == p.y() &&
 		width() == p.width() &&

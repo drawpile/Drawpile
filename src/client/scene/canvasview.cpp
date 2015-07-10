@@ -26,6 +26,8 @@
 #include <QApplication>
 #include <QGestureEvent>
 #include <QSettings>
+#include <QWindow>
+#include <QScreen>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -59,10 +61,17 @@ CanvasView::CanvasView(QWidget *parent)
 	_tabletmode(ENABLE_TABLET),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
-	_hotBorderTop(false)
+	_hotBorderTop(false),
+	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
+	_touching(false), _touchRotating(false),
+	_dpi(96)
 {
 	viewport()->setAcceptDrops(true);
+#ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
 	viewport()->grabGesture(Qt::PinchGesture);
+#else
+	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+#endif
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
 
@@ -469,6 +478,7 @@ void CanvasView::onPenUp(bool right)
 
 		_smoother.reset();
 	}
+	_specialpenmode = false;
 }
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
@@ -502,6 +512,9 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(_pendown != NOTDOWN)
+		return;
+
+	if(_touching)
 		return;
 
 	penPressEvent(
@@ -558,6 +571,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(_pendown == TABLETDOWN)
 		return;
+	if(_touching)
+		return;
 	if(_pendown && event->buttons() == Qt::NoButton) {
 		// In case we missed a mouse release
 		mouseReleaseEvent(event);
@@ -588,6 +603,8 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
+	if(_touching)
+		return;
 	penReleaseEvent(event->pos(), event->button());
 }
 
@@ -662,11 +679,106 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 			_gestureStartAngle = _rotate;
 		}
 
-		if((pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
+		if(_enableTouchPinch && (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
 			setZoom(_gestureStartZoom * pinch->scaleFactor());
 
-		if((pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
+		if(_enableTouchTwist && (pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
 			setRotation(_gestureStartAngle + pinch->rotationAngle());
+	}
+}
+
+static qreal squareDist(const QPointF &p)
+{
+	return p.x()*p.x() + p.y()*p.y();
+}
+
+void CanvasView::setTouchGestures(bool scroll, bool pinch, bool twist)
+{
+	_enableTouchScroll = scroll;
+	_enableTouchPinch = pinch;
+	_enableTouchTwist = twist;
+}
+
+void CanvasView::touchEvent(QTouchEvent *event)
+{
+	event->accept();
+
+	switch(event->type()) {
+	case QEvent::TouchBegin:
+		_touchRotating = false;
+		break;
+
+	case QEvent::TouchUpdate: {
+		QPointF startCenter, lastCenter, center;
+		const int points = event->touchPoints().size();
+		for(const auto &tp : event->touchPoints()) {
+			startCenter += tp.startPos();
+			lastCenter += tp.lastPos();
+			center += tp.pos();
+		}
+		startCenter /= points;
+		lastCenter /= points;
+		center /= points;
+
+		if(!_touching) {
+			_touchStartZoom = zoom();
+			_touchStartRotate = rotation();
+		}
+
+		// Single finger drag when touch scroll is enabled,
+		// but also drag with a pinch gesture. Single finger drag
+		// may be deactivated to support finger painting.
+		if(_enableTouchScroll || (_enableTouchPinch && points >= 2)) {
+			_touching = true;
+			float dx = center.x() - lastCenter.x();
+			float dy = center.y() - lastCenter.y();
+			horizontalScrollBar()->setValue(horizontalScrollBar()->value() - dx);
+			verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
+		}
+
+		// Scaling and rotation with two fingers
+		if(points >= 2 && (_enableTouchPinch | _enableTouchTwist)) {
+			_touching = true;
+			float startAvgDist=0, avgDist=0;
+			for(const auto &tp : event->touchPoints()) {
+				startAvgDist += squareDist(tp.startPos() - startCenter);
+				avgDist += squareDist(tp.pos() - center);
+			}
+			startAvgDist = sqrt(startAvgDist);
+
+			if(_enableTouchPinch) {
+				avgDist = sqrt(avgDist);
+				const qreal dZoom = avgDist / startAvgDist;
+				_zoom = _touchStartZoom * dZoom;
+			}
+
+			if(_enableTouchTwist) {
+				const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
+				const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+
+				const qreal dAngle = l1.angle() - l2.angle();
+
+				// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
+				// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
+				// is inaccurate when touchpoints are close together.
+				if(startAvgDist / _dpi > 0.8 && (qAbs(dAngle) > 3.0 || _touchRotating)) {
+					_touchRotating = true;
+					_rotate = _touchStartRotate + dAngle;
+				}
+
+			}
+
+			// Recalculate view matrix
+			setZoom(zoom());
+		}
+
+	} break;
+
+	case QEvent::TouchEnd:
+	case QEvent::TouchCancel:
+		_touching = false;
+		break;
+	default: break;
 	}
 }
 
@@ -679,8 +791,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 {
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
-
 	}
+#ifndef Q_OS_MAC // On Mac, the above gesture events work better
+	else if(event->type()==QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
+		touchEvent(static_cast<QTouchEvent*>(event));
+	}
+#endif
 	else if(event->type() == QEvent::TabletPress && _tabletmode!=DISABLE_TABLET) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		_stylusDown = true;
@@ -815,6 +931,12 @@ QPoint CanvasView::viewCenterPoint() const
 	return mapToScene(rect().center()).toPoint();
 }
 
+bool CanvasView::isPointVisible(const QPointF &point) const
+{
+	QPoint p = mapFromScene(point);
+	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
+}
+
 void CanvasView::viewRectChanged()
 {
 	// Signal visible view rectangle change
@@ -927,6 +1049,21 @@ void CanvasView::dropEvent(QDropEvent *event)
 		return;
 	}
 	event->acceptProposedAction();
+}
+
+void CanvasView::showEvent(QShowEvent *event)
+{
+	QGraphicsView::showEvent(event);
+	// Find the DPI of the screen
+	// TODO: if the window is moved to another screen, this should be updated
+	QWidget *w = this;
+	while(w) {
+		if(w->windowHandle() != nullptr) {
+			_dpi = w->windowHandle()->screen()->physicalDotsPerInch();
+			break;
+		}
+		w=w->parentWidget();
+	}
 }
 
 }

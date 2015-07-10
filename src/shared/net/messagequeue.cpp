@@ -135,6 +135,15 @@ void MessageQueue::send(MessagePtr packet)
 	}
 }
 
+void MessageQueue::sendNow(MessagePtr msg)
+{
+	if(!_closeWhenReady) {
+		_sendqueue.prepend(msg);
+		if(_sendbuflen==0)
+			writeData();
+	}
+}
+
 void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 {
 	if(!_closeWhenReady) {
@@ -157,10 +166,12 @@ void MessageQueue::sendPing()
 {
 	if(_pingSent==0) {
 		_pingSent = QDateTime::currentMSecsSinceEpoch();
-		send(MessagePtr(new Ping(false)));
 	} else {
+		// This shouldn't happen, but we'll resend a ping anyway just to be safe.
 		qWarning("sendPing(): reply to previous ping not yet received!");
 	}
+
+	sendNow(MessagePtr(new Ping(false)));
 }
 
 int MessageQueue::uploadQueueBytes() const
@@ -182,10 +193,9 @@ void MessageQueue::readData() {
 	bool gotmessage = false, gotsnapshot = false;
 	int read, totalread=0;
 	do {
-		// Read available data
+		// Read as much as fits in to the deserialization buffer
 		read = _socket->read(_recvbuffer+_recvcount, MAX_BUF_LEN-_recvcount);
 		if(read<0) {
-			// Error!
 			emit socketError(_socket->errorString());
 			return;
 		}
@@ -230,7 +240,7 @@ void MessageQueue::readData() {
 							emit pingPong(roundtrip);
 						}
 					} else {
-						send(MessagePtr(new Ping(true)));
+						sendNow(MessagePtr(new Ping(true)));
 					}
 
 				} else if(_expectingSnapshot) {
@@ -249,11 +259,15 @@ void MessageQueue::readData() {
 					}
 				}
 			}
+
 			if(len < _recvcount) {
 				memmove(_recvbuffer, _recvbuffer+len, _recvcount-len);
 			}
 			_recvcount -= len;
 		}
+
+		// All messages extracted from buffer (if there were any):
+		// see if there are more bytes in the socket buffer
 		totalread += read;
 	} while(read>0);
 

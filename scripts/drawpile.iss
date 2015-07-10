@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Drawpile"
-#define MyAppVersion "0.9.11"
+#define MyAppVersion "1.0.0"
 #define MyAppURL "http://drawpile.net/"
 #define MyAppExeName "drawpile.exe"
 

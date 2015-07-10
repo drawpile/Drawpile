@@ -22,6 +22,7 @@
 #include <QGraphicsView>
 
 class QGestureEvent;
+class QTouchEvent;
 
 #include "core/point.h"
 #include "utils/strokesmoother.h"
@@ -90,8 +91,14 @@ class CanvasView : public QGraphicsView
 		//! Enable/disable tablet event handling
 		void setTabletMode(TabletMode mode);
 
+		//! Enable/disable touch gestures
+		void setTouchGestures(bool scroll, bool pinch, bool twist);
+
 		//! Is drawing in progress at the moment?
 		bool isPenDown() const { return _pendown != NOTDOWN; }
+
+		//! Is this point (scene coordinates) inside the viewport?
+		bool isPointVisible(const QPointF &point) const;
 
 	signals:
 		//! An image has been dropped on the widget
@@ -193,6 +200,7 @@ class CanvasView : public QGraphicsView
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dragMoveEvent(QDragMoveEvent *event);
 		void dropEvent(QDropEvent *event);
+		void showEvent(QShowEvent *event);
 
 	private:
 		// unified mouse/stylus event handlers
@@ -225,6 +233,7 @@ class CanvasView : public QGraphicsView
 		void onPenUp(bool right);
 		
 		void gestureEvent(QGestureEvent *event);
+		void touchEvent(QTouchEvent *event);
 
 		void resetCursor();
 
@@ -290,6 +299,11 @@ class CanvasView : public QGraphicsView
 		bool _pixelgrid;
 
 		bool _hotBorderTop;
+
+		bool _enableTouchScroll, _enableTouchPinch, _enableTouchTwist;
+		bool _touching, _touchRotating;
+		qreal _touchStartZoom, _touchStartRotate;
+		qreal _dpi;
 };
 
 }

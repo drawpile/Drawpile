@@ -22,6 +22,7 @@
 #include <QObject>
 
 #include "core/point.h"
+#include "core/blendmodes.h"
 #include "net/server.h"
 #include "../shared/net/message.h"
 #include "statetracker.h" // for ToolContext
@@ -174,7 +175,7 @@ public slots:
 	// Layer changing
 	void sendCanvasResize(int top, int right, int bottom, int left);
 	void sendNewLayer(int id, int source, const QColor &fill, bool insert, bool copy, const QString &title);
-	void sendLayerAttribs(int id, float opacity, int blend);
+	void sendLayerAttribs(int id, float opacity, paintcore::BlendMode::Mode blend);
 	void sendLayerTitle(int id, const QString &title);
 	void sendLayerVisibility(int id, bool hide);
 	void sendLayerReorder(const QList<uint16_t> &ids);
@@ -185,8 +186,8 @@ public slots:
 	void sendStroke(const paintcore::Point &point);
 	void sendStroke(const paintcore::PointVector &points);
 	void sendPenup();
-	void sendImage(int layer, int x, int y, const QImage &image, int mode=1);
-	void sendFillRect(int layer, const QRect &rect, const QColor &color, int blend=255);
+	void sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode=paintcore::BlendMode::MODE_NORMAL);
+	void sendFillRect(int layer, const QRect &rect, const QColor &color, paintcore::BlendMode::Mode blend);
 
 	// Undo/redo
 	void sendUndopoint();

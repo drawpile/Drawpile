@@ -57,12 +57,12 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		return;
 	}
 
-	// If the target area is transparent, use the UNDER compositing mode.
+	// If the target area is transparent, use the BEHIND compositing mode.
 	// This results in nice smooth blending with soft outlines, when the
 	// outline has different color than the fill.
-	int mode = 1;
+	paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
 	if(ts->underFill() && (fill.layerSeedColor & 0xff000000) == 0)
-		mode = 2;
+		mode = paintcore::BlendMode::MODE_BEHIND;
 
 	// Flood fill is implemented using PutImage rather than a native command.
 	// This has the following advantages:

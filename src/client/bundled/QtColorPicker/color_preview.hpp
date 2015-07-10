@@ -4,7 +4,7 @@
 
 @section License
 
-    Copyright (C) 2013-2014 Mattia Basaglia
+    Copyright (C) 2013-2015 Mattia Basaglia
     Copyright (C) 2014 Calle Laakkonen
 
     This software is free software: you can redistribute it and/or modify

@@ -81,7 +81,7 @@ public:
 	QImage selectionToImage(int layer);
 
 	//! Create a new selection and paste an image from the clipboard
-	void pasteFromImage(const QImage &image, const QPoint &defaultPoint);
+	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 
 	//! Save the canvas to a file
 	bool save(const QString& filename) const;
@@ -176,6 +176,9 @@ public slots:
 	//! Show hide laser pointer trails
 	void showLaserTrails(bool show);
 
+	//! Make laser trails thicker
+	void setThickLaserTrails(bool thick);
+
 	void handleLocalCommand(protocol::MessagePtr cmd);
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
@@ -248,6 +251,7 @@ private:
 	bool _showUserMarkers;
 	bool _showUserLayers;
 	bool _showLaserTrails;
+	bool _thickLaserTrails;
 };
 
 }

@@ -80,7 +80,7 @@ void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 	}
 }
 
-void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title)
+void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title, bool nsfm)
 {
 	if(isWhitelisted(apiUrl)) {
 		// Send request
@@ -92,6 +92,8 @@ void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol
 			query.addQueryItem("protocol", protocol);
 		if(!title.isEmpty())
 			query.addQueryItem("title", title);
+		if(nsfm)
+			query.addQueryItem("nsfm", "true");
 		url.setQuery(query);
 
 		QNetworkRequest req(url);
@@ -120,6 +122,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 		o["users"] = session.users;
 		o["password"] = session.password;
 		o["owner"] = session.owner;
+		// TODO: explicit NSFM tag
 
 		// Send request
 		QUrl url = apiUrl;
@@ -269,6 +272,7 @@ void AnnouncementApi::handleListingResponse(QNetworkReply *reply)
 			obj["title"].toString(),
 			obj["users"].toInt(),
 			obj["password"].toBool(),
+			obj["nsfm"].toBool(),
 			obj["owner"].toString(),
 			started
 		};

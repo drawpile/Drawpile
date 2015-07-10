@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>608</width>
-    <height>406</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,14 +69,88 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="tabletBugWorkaround">
+         <property name="toolTip">
+          <string>Checking this may fix jaggy line and offset bugs on some tablets</string>
+         </property>
+         <property name="text">
+          <string>Enable bug workarounds</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Touch:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="touchscroll">
+         <property name="text">
+          <string>Scroll with finger</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QCheckBox" name="touchpinch">
+         <property name="text">
+          <string>Pinch to zoom</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QCheckBox" name="touchtwist">
+         <property name="text">
+          <string>Twist to rotate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>5</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Autosave interval:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QSpinBox" name="autosaveInterval">
+         <property name="suffix">
+          <string> s</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>300</number>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>Notification volume:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="12" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QSlider" name="notificationVolume">
@@ -109,76 +183,49 @@
          </item>
         </layout>
        </item>
-       <item row="11" column="1">
+       <item row="16" column="1">
         <widget class="QCheckBox" name="notifChat">
          <property name="text">
           <string>Chat</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="1">
+       <item row="17" column="1">
         <widget class="QCheckBox" name="notifMarker">
          <property name="text">
           <string>Recording marker</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="18" column="1">
         <widget class="QCheckBox" name="notifLogin">
          <property name="text">
           <string>User login and logout</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="19" column="1">
         <widget class="QCheckBox" name="notifLock">
          <property name="text">
           <string>Canvas lock</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QCheckBox" name="tabletBugWorkaround">
-         <property name="toolTip">
-          <string>Checking this may fix jaggy line and offset bugs on some tablets</string>
-         </property>
-         <property name="text">
-          <string>Enable bug workarounds</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="1">
-        <spacer name="verticalSpacer_3">
+        <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>5</height>
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Autosave interval:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QSpinBox" name="autosaveInterval">
-         <property name="suffix">
-          <string> s</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>300</number>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -410,6 +457,9 @@
        <string>Network</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -424,14 +474,14 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Session history:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="historylimit">
          <property name="specialValueText">
           <string>unlimited</string>
@@ -453,14 +503,14 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Timeout:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="connTimeout">
          <property name="suffix">
           <string> s</string>
@@ -479,7 +529,14 @@
        <item row="1" column="1">
         <widget class="QCheckBox" name="dnssd">
          <property name="text">
-          <string>Announce with Bonjour</string>
+          <string>Announce with Zeroconf</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="useupnp">
+         <property name="text">
+          <string>Automatically set up port forwarding with UPnP</string>
          </property>
         </widget>
        </item>
@@ -591,6 +648,13 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QCheckBox" name="showNsfm">
+           <property name="text">
+            <string>Show content tagged as &quot;Not Suitable For Minors&quot;</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">

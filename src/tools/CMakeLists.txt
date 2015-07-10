@@ -7,7 +7,7 @@ set (
 	DPREC2TXT_SOURCES
 	dprec2txt.cpp
 	txtmsg.cpp
-	../client/core/rasterop.cpp # needed for svgBlendMode
+	../client/core/blendmodes.cpp # needed for svgBlendMode
 	)
 
 # Fall back to bundled KArchive if not found

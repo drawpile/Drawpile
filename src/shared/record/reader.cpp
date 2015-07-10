@@ -176,13 +176,14 @@ Compatibility Reader::open()
 		if(myversion < _formatversion)
 			return MINOR_INCOMPATIBILITY;
 
-#if DRAWPILE_PROTO_MAJOR_VERSION != 15 || DRAWPILE_PROTO_MINOR_VERSION != 5
+#if DRAWPILE_PROTO_MAJOR_VERSION != 15 || DRAWPILE_PROTO_MINOR_VERSION != 6
 #error Update recording compatability check!
 #endif
 
 		// Old versions known to be compatible
 		switch(_formatversion) {
-		case version32(14, 5): // fully compatible (with support code)
+		case version32(15, 5): // fully compatible (with support code)
+		case version32(14, 5):
 		case version32(13, 5):
 		case version32(13, 4):
 		case version32(12, 4):
@@ -290,6 +291,10 @@ MessageRecord Reader::readNext()
 
 		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
+		case version32(15, 5):
+			message = compat::deserializeV15_5((const uchar*)_msgbuf.constData(), _msgbuf.length());
+			break;
+
 		case version32(14, 5):
 		case version32(13, 5):
 			message = compat::deserializeV14((const uchar*)_msgbuf.constData(), _msgbuf.length());

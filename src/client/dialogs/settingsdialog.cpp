@@ -227,6 +227,15 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/input");
 	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
+#ifdef Q_OS_MAC
+	// Gesture scrolling is always enabled on Macs
+	_ui->touchscroll->setChecked(true);
+	_ui->touchscroll->setEnabled(false);
+#else
+	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
+#endif
+	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
+	_ui->touchtwist->setChecked(cfg.value("touchtwist", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -252,7 +261,14 @@ void SettingsDialog::restoreSettings()
 #else
 	_ui->dnssd->setEnabled(false);
 #endif
+#ifdef HAVE_UPNP
+	_ui->useupnp->setChecked(cfg.value("upnp", true).toBool());
+#else
+	_ui->useupnp->setEnabled(false);
+#endif
 	cfg.endGroup();
+
+	_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
 
 	_customShortcuts->loadShortcuts();
 }
@@ -276,6 +292,9 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
 	cfg.setValue("tabletbugs", _ui->tabletBugWorkaround->isChecked());
+	cfg.setValue("touchscroll", _ui->touchscroll->isChecked());
+	cfg.setValue("touchpinch", _ui->touchpinch->isChecked());
+	cfg.setValue("touchtwist", _ui->touchtwist->isChecked());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -302,11 +321,13 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("historylimit", _ui->historylimit->value());
 	cfg.setValue("timeout", _ui->connTimeout->value());
 	cfg.setValue("dnssd", _ui->dnssd->isChecked());
+	cfg.setValue("upnp", _ui->useupnp->isChecked());
 
 	cfg.endGroup();
 
 	_customShortcuts->saveShortcuts();
 	_listservers->saveServers();
+	cfg.setValue("listservers/nsfm", _ui->showNsfm->isChecked());
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }

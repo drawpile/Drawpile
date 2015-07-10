@@ -78,6 +78,7 @@ private:
 	QString _error;
 	QMutex _startmutex;
 	QWaitCondition _starter;
+	bool _portForwarded;
 };
 
 }

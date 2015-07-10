@@ -19,6 +19,8 @@
 #ifndef SELECTIONITEM_H
 #define SELECTIONITEM_H
 
+#include "core/blendmodes.h"
+
 #include <QGraphicsItem>
 
 namespace net {
@@ -58,7 +60,7 @@ public:
 	Handle handleAt(const QPoint &point, float zoom) const;
 
 	//! Adjust selection position or size
-	void adjustGeometry(Handle handle, const QPoint &delta);
+	void adjustGeometry(Handle handle, const QPoint &delta, bool keepAspect);
 
 	//! Rotate selection around its center by the given amount
 	void rotate(float angle);
@@ -66,8 +68,13 @@ public:
 	//! Set the paste buffer
 	void setPasteImage(const QImage &image);
 
+	void setMovedFromCanvas(bool moved) { _movedFromCanvas = moved; }
+
 	//! Get the paste buffer
 	const QImage &pasteImage() const { return _pasteimg; }
+
+	//! Did the pasted image come directly from the canvas?
+	bool isMovedFromCanvas() const { return _movedFromCanvas; }
 
 	//! reimplementation
 	QRectF boundingRect() const;
@@ -81,7 +88,7 @@ public:
 	void pasteToCanvas(net::Client *client, int layer) const;
 
 	//! Fill the selected pixels
-	void fillCanvas(const QColor &color, net::Client *client, int layer) const;
+	void fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
@@ -98,6 +105,7 @@ private:
 	qreal _marchingants;
 	QImage _pasteimg;
 	bool _closePolygon;
+	bool _movedFromCanvas;
 };
 
 }

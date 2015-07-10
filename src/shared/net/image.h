@@ -32,8 +32,7 @@ namespace protocol {
  * This is used when initializing the canvas from an existing file
  * and when pasting images.
  *
- * If the BLEND flag is set, the image is alpha-blended onto the canvas. Otherwise
- * the new pixels will simply overwrite the existing ones, alpha values and all.
+ * All brush/layer blending modes are supported.
  *
  * The image data is DEFLATEd 32bit non-premultiplied ARGB data.
  *
@@ -47,13 +46,8 @@ namespace protocol {
  */
 class PutImage : public Message {
 public:
-	static const uint8_t MODE_REPLACE = 0; // replace original pixels
-	static const uint8_t MODE_BLEND = 1;   // regular alpha blending
-	static const uint8_t MODE_UNDER = 2;   // alpha blend with Destination Over compositing
-	static const uint8_t MODE_ERASE = 3;   // Destination Out compositing
-
 	//! Maximum length of image data array
-	static const int MAX_LEN = (1<<16) - 19;
+	static const int MAX_LEN = 0xffff - 19;
 
 	PutImage(uint8_t ctx, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _mode(mode), _x(x), _y(y), _w(w), _h(h), _image(image)
@@ -64,7 +58,7 @@ public:
 	static PutImage *deserialize(const uchar *data, uint len);
 	
 	uint16_t layer() const { return _layer; }
-	uint8_t mode() const { return _mode; }
+	uint8_t blendmode() const { return _mode; }
 	uint32_t x() const { return _x; }
 	uint32_t y() const { return _y; }
 	uint32_t width() const { return _w; }
@@ -89,9 +83,7 @@ private:
 /**
  * @brief Fill a rectangle with solid color
  *
- * The rectangle is blended onto the layer using the normal blending operations.
- * The special mode 255 is used to indicate that no blending should be used and the
- * new color should just overwrite existing layer content.
+ * All brush blending modes are supported
  */
 class FillRect : public Message {
 public:

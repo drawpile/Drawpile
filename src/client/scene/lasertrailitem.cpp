@@ -24,17 +24,24 @@
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, QGraphicsItem *parent)
+LaserTrailItem::LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, bool thick, QGraphicsItem *parent)
 	: QGraphicsLineItem(line, parent), _blink(false)
 {
 	_pen1.setCosmetic(true);
-	_pen1.setWidth(qApp->devicePixelRatio());
 	_pen1.setColor(color.lighter(110));
 
 	_pen2 = _pen1;
 	_pen2.setColor(color.lighter(90));
 
+	setThick(thick);
+
 	_life = fadetime;
+}
+
+void LaserTrailItem::setThick(bool thick)
+{
+	_pen1.setWidth(qApp->devicePixelRatio() * (thick ? 3 : 1));
+	_pen2.setWidth(_pen1.width());
 }
 
 void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

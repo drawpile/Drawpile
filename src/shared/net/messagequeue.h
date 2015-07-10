@@ -206,6 +206,8 @@ private slots:
 	void checkIdleTimeout();
 
 private:
+	void sendNow(MessagePtr msg);
+
 	void writeData();
 
 	QTcpSocket *_socket;
