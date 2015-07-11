@@ -254,6 +254,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
+	chatsplitter->setChildrenCollapsible(false);
 	_chatbox = new widgets::ChatBox(this);
 	chatsplitter->addWidget(_chatbox);
 
