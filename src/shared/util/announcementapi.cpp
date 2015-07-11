@@ -230,6 +230,10 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 	logger::debug() << "Announced session. Got listing ID" << a.listingId;
 
 	emit sessionAnnounced(a);
+
+	QString welcome = doc.object()["message"].toString();
+	if(!welcome.isEmpty())
+		emit messageReceived(doc.object()["message"].toString());
 }
 
 void AnnouncementApi::handleUnlistResponse(QNetworkReply *reply)

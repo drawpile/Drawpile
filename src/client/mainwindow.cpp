@@ -254,6 +254,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
+	chatsplitter->setChildrenCollapsible(false);
 	_chatbox = new widgets::ChatBox(this);
 	chatsplitter->addWidget(_chatbox);
 
@@ -2101,7 +2102,7 @@ void MainWindow::setupActions()
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
-	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence(Qt::Key_Return));
+	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence("Ctrl+T"));
 
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &From File..."));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete Empty Annotations"));

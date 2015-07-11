@@ -125,6 +125,7 @@ public:
 signals:
 	void serverInfo(const ListServerInfo &info);
 	void sessionListReceived(const QList<Session> &sessions);
+	void messageReceived(const QString &message);
 	void sessionAnnounced(const Announcement &session);
 	void unlisted(const QString &sessionId);
 	void error(const QString &errorString);
