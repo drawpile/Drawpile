@@ -50,6 +50,9 @@ SessionServer::SessionServer(QObject *parent)
 	_publicListingApi = new sessionlisting::AnnouncementApi(this);
 
 	connect(_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
+	connect(_publicListingApi, &sessionlisting::AnnouncementApi::messageReceived, [this](const QString &msg) {
+		wall("Session announced: " + msg);
+	});
 
 	QTimer *announcementRefreshTimer = new QTimer(this);
 	connect(announcementRefreshTimer, &QTimer::timeout, this, &SessionServer::refreshSessionAnnouncements);
