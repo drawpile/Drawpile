@@ -1054,7 +1054,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2243"/>
         <source>Thick Laser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>レーザーの軌跡を太い線で表示</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2244"/>
@@ -2162,7 +2162,7 @@
     <message>
         <location filename="../ui/settings.ui" line="654"/>
         <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>成人向けコンテンツ用のセッションを表示</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="674"/>
@@ -3521,7 +3521,7 @@
     <message>
         <location filename="../utils/listservermodel.cpp" line="176"/>
         <source>Nearby</source>
-        <translation type="unfinished"></translation>
+        <translation>付近</translation>
     </message>
 </context>
 <context>
