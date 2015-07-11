@@ -54,7 +54,7 @@ ChatBox::ChatBox(QWidget *parent)
 	connect(_myline, SIGNAL(returnPressed(QString)), this, SLOT(sendMessage(QString)));
 
 	_view->document()->setDefaultStyleSheet(
-		"p { margin: 5px 0; white-space: pre }"
+		"p { margin: 5px 0; }"
 		".marker { color: #da4453 }"
 		".sysmsg { color: #fdbc4b }"
 		".announcement { color: #fcfcfc }"
