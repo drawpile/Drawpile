@@ -34,12 +34,16 @@ void StrokeSmoother::addPoint(const paintcore::Point &point)
 {
 	Q_ASSERT(_points.size()>0);
 
-	if(--_pos < 0)
-		_pos = _points.size()-1;
-	_points[_pos] = point;
-
-	if(_count < _points.size())
-		++_count;
+	if(_count == 0) {
+		// Pad the buffer with this point, so we blend away from it
+		// gradually as we gain more points.
+		_points.fill(point);
+		_count = _points.size();
+	} else {
+		if(--_pos < 0)
+			_pos = _points.size()-1;
+		_points[_pos] = point;
+	}
 }
 
 paintcore::Point StrokeSmoother::at(int i) const
