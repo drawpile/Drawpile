@@ -55,7 +55,7 @@ void StrokeSmoother::reset()
 
 bool StrokeSmoother::hasSmoothPoint() const
 {
-	return _count == _points.size();
+	return _count > 0;
 }
 
 paintcore::Point StrokeSmoother::smoothPoint() const
