@@ -454,6 +454,10 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 				if(_smoother.hasSmoothPoint()) {
 					_current_tool->motion(_smoother.smoothPoint(), shift, alt);
 				}
+				// Remember the keys in use in case we simulate
+				// catch-up moves on pen up
+				_prevshift = shift;
+				_prevalt = alt;
 			} else {
 				_current_tool->motion(p, shift, alt);
 			}
@@ -465,6 +469,15 @@ void CanvasView::onPenUp(bool right)
 {
 	if(_scene->hasImage() && !_locked) {
 		if(!_specialpenmode) {
+			// Drain any remaining points from the smoothing buffer
+			if(_smoother.hasSmoothPoint())
+				_smoother.removePoint();
+			while(_smoother.hasSmoothPoint()) {
+				_current_tool->motion(_smoother.smoothPoint(),
+					_prevshift, _prevalt);
+				_smoother.removePoint();
+			}
+
 			_current_tool->end();
 		}
 

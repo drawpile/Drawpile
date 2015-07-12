@@ -35,15 +35,19 @@ void StrokeSmoother::addPoint(const paintcore::Point &point)
 	Q_ASSERT(_points.size()>0);
 
 	if(_count == 0) {
-		// Pad the buffer with this point, so we blend away from it
-		// gradually as we gain more points.
+		/* Pad the buffer with this point, so we blend away from it
+		 * gradually as we gain more points. We still only count this
+		 * as one point so we know how much real data we have to
+		 * drain if it was a very short stroke. */
 		_points.fill(point);
-		_count = _points.size();
 	} else {
 		if(--_pos < 0)
 			_pos = _points.size()-1;
 		_points[_pos] = point;
 	}
+
+	if(_count < _points.size())
+		++_count;
 }
 
 paintcore::Point StrokeSmoother::at(int i) const
@@ -70,17 +74,25 @@ paintcore::Point StrokeSmoother::smoothPoint() const
 	paintcore::Point p = at(0);
 
 	float pressure = p.pressure();
-	for(int i=1;i<_count;++i) {
+	for(int i=1;i<_points.size();++i) {
 		paintcore::Point pi = at(i);
 		p.rx() += pi.x();
 		p.ry() += pi.y();
 		pressure += pi.pressure();
 	}
 
-	const float c = _count;
+	const float c = _points.size();
 	p.rx() /= c;
 	p.ry() /= c;
 	p.setPressure(pressure / c);
 
 	return p;
+}
+
+void StrokeSmoother::removePoint()
+{
+	/* Pad the buffer with the final point, overwriting the oldest first,
+	 * for symmetry with starting. For very short strokes this should
+	 * really set all points between --_count and _points.size()-1. */
+	_points[(_pos + --_count) % _points.size()] = latestPoint();
 }

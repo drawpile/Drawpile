@@ -63,12 +63,25 @@ public:
 	 */
 	paintcore::Point smoothPoint() const;
 
+	/**
+	 * @brief Remove one point from the buffer, for ending a line
+	 *
+	 * @pre hasSmoothPoint() == true
+	 */
+	void removePoint();
+
+	/**
+	 * @brief Get the last point added to the smoother
+	 * @return
+	 */
+	paintcore::Point latestPoint() const { return at(0); }
+
 private:
 	paintcore::Point at(int i) const;
 
 	QVector<paintcore::Point> _points;
 	int _pos;
-	int _count;
+	int _count; ///< Number of actually sampled points in the buffer
 };
 
 #endif // STROKESMOOTHER_H

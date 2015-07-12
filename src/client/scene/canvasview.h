@@ -260,6 +260,8 @@ class CanvasView : public QGraphicsView
 		float _pointerdistance;
 		float _pointervelocity;
 		StrokeSmoother _smoother;
+		bool _prevshift;
+		bool _prevalt;
 
 		qreal _gestureStartZoom;
 		qreal _gestureStartAngle;
