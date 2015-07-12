@@ -56,13 +56,6 @@ public:
 	bool hasSmoothPoint() const;
 
 	/**
-	 * @brief Is this the first available smoothed point
-	 *
-	 * @return true if this is the first smoothed point
-	 */
-	bool isFirstSmoothPoint() const { return _firstsmooth; }
-
-	/**
 	 * @brief Get the smoothed point
 	 *
 	 * @return smoothed point
@@ -70,19 +63,12 @@ public:
 	 */
 	paintcore::Point smoothPoint() const;
 
-	/**
-	 * @brief Get the last point added to the smoother
-	 * @return
-	 */
-	paintcore::Point latestPoint() const { return at(0); }
-
 private:
 	paintcore::Point at(int i) const;
 
 	QVector<paintcore::Point> _points;
 	int _pos;
 	int _count;
-	bool _firstsmooth;
 };
 
 #endif // STROKESMOOTHER_H

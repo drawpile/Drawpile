@@ -33,7 +33,6 @@ void StrokeSmoother::setSmoothing(int strength)
 void StrokeSmoother::addPoint(const paintcore::Point &point)
 {
 	Q_ASSERT(_points.size()>0);
-	bool hadSmooth = hasSmoothPoint();
 
 	if(--_pos < 0)
 		_pos = _points.size()-1;
@@ -41,8 +40,6 @@ void StrokeSmoother::addPoint(const paintcore::Point &point)
 
 	if(_count < _points.size())
 		++_count;
-
-	_firstsmooth = !hadSmooth && hasSmoothPoint();
 }
 
 paintcore::Point StrokeSmoother::at(int i) const
@@ -54,7 +51,6 @@ void StrokeSmoother::reset()
 {
 	_count=0;
 	_pos = 0;
-	_firstsmooth = false;
 }
 
 bool StrokeSmoother::hasSmoothPoint() const
