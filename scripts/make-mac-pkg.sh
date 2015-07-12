@@ -2,7 +2,7 @@
 
 set -e
 
-QTDIR="$HOME/Qt/5.4/clang_64"
+QTDIR="$HOME/Qt/5.5/clang_64"
 VERSION=$(grep DRAWPILE_VERSION CMakeLists.txt | cut -d \" -f 2)
 TITLE="Drawpile $VERSION"
 
