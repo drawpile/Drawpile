@@ -44,6 +44,7 @@ public:
 	explicit MultiServer(QObject *parent=0);
 
 	void setServerTitle(const QString &title);
+	void setWelcomeMessage(const QString &message);
 	void setHistoryLimit(uint limit);
 	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { _sslCertFile = certfile; _sslKeyFile = keyfile; }

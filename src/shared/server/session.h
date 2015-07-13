@@ -141,6 +141,13 @@ public:
 	void setPassword(const QString &password);
 
 	/**
+	 * @brief A chat message that will be sent to users who join the session
+	 * @param message message content. If empty, no welcome message will be sent
+	 */
+	void setWelcomeMessage(const QString &message) { _welcomeMessage = message; }
+	const QString &welcomeMessage() const { return _welcomeMessage; }
+
+	/**
 	 * @brief Get the title of the session
 	 * @return
 	 */
@@ -502,6 +509,7 @@ private:
 	QByteArray _passwordhash;
 	QString _title;
 	QString _founder;
+	QString _welcomeMessage;
 
 	bool _locked;
 	bool _layerctrllocked;

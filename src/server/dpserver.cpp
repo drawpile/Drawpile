@@ -123,6 +123,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption serverTitleOption(QStringList() << "title" << "t", "Set server title", "title");
 	parser.addOption(serverTitleOption);
 
+	// --welcome-message <message>
+	QCommandLineOption serverWelcomeOption(QStringList() << "welcome-message", "Set welcome message", "message");
+	parser.addOption(serverWelcomeOption);
+
 	// --ssl-cert <certificate file>
 	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
 	parser.addOption(sslCertOption);
@@ -216,6 +220,7 @@ int main(int argc, char *argv[]) {
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
 	server->setServerTitle(cfgfile.override(parser, serverTitleOption).toString());
+	server->setWelcomeMessage(cfgfile.override(parser, serverWelcomeOption).toString());
 
 	if(cfgfile.override(parser, verboseOption).toBool()) {
 #ifdef NDEBUG

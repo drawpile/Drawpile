@@ -103,6 +103,11 @@ void SessionState::joinUser(Client *user, bool host)
 		addToCommandStream(joinmsg);
 	}
 
+	// Welcome the user (this typically contains a link to the server's terms-of-use page or such)
+	if(!welcomeMessage().isEmpty()) {
+		user->sendDirectMessage(MessagePtr(new protocol::Chat(0, welcomeMessage(), false, false)));
+	}
+
 	// Give op to this user if it is the only one here
 	if(userCount() == 1)
 		user->grantOp();

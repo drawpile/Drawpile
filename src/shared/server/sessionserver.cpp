@@ -104,6 +104,7 @@ void SessionServer::initSession(SessionState *session)
 {
 	session->setHistoryLimit(_historyLimit);
 	session->setPersistenceAllowed(allowPersistentSessions());
+	session->setWelcomeMessage(welcomeMessage());
 
 	connect(session, &SessionState::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &SessionState::userDisconnected, this, &SessionServer::userDisconnectedEvent);
@@ -424,6 +425,13 @@ void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing
 	}
 
 	s->setPublicListing(listing);
+}
+
+void SessionServer::setWelcomeMessage(const QString &message)
+{
+	_welcomeMessage = message;
+	for(SessionState *s : _sessions)
+		s->setWelcomeMessage(message);
 }
 
 }
