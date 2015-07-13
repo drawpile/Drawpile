@@ -60,8 +60,6 @@ void SslServer::requireForwardSecrecy()
 {
 	QList<QSslCipher> ciphers;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-	// Note. Requires Qt 5.3 or newer. See: https://bugreports.qt-project.org/browse/QTBUG-20666
 	QStringList methods {"DH", "ECDH"};
 
 	for(const QSslCipher &cipher : QSslSocket::defaultCiphers()) {
@@ -69,7 +67,6 @@ void SslServer::requireForwardSecrecy()
 			ciphers.append(cipher);
 		}
 	}
-#endif
 
 	if(ciphers.isEmpty())
 		logger::warning() << "Forward secrecy not available!";

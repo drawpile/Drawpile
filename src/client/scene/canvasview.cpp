@@ -28,18 +28,7 @@
 #include <QSettings>
 #include <QWindow>
 #include <QScreen>
-
-// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-#include <cmath>
-#define qAtan2 atan2
-inline float qRadiansToDegrees(float radians) {
-	return radians * float(180/M_PI);
-}
-#define qFloor floor
-#else
 #include <QtMath>
-#endif
 
 #include "canvasview.h"
 #include "canvasscene.h"
@@ -812,11 +801,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			penPressEvent(
 				tabev->posF(),
 				tabev->pressure(),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 				tabev->button(),
-#else
-				Qt::LeftButton,
-#endif
 				tabev->modifiers(),
 				true
 			);
@@ -833,11 +818,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			penMoveEvent(
 				tabev->posF(),
 				tabev->pressure(),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 				tabev->buttons(),
-#else
-				Qt::NoButton,
-#endif
 				tabev->modifiers(),
 				true
 			);
@@ -849,15 +830,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		_stylusDown = false;
 		if(_tabletmode==ENABLE_TABLET) {
 			tabev->accept();
+			penReleaseEvent(tabev->posF(), tabev->button());
 
-			penReleaseEvent(
-				tabev->posF(),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
-				tabev->button()
-#else
-				Qt::NoButton
-#endif
-			);
 		} else
 			return QGraphicsView::viewportEvent(event);
 	}

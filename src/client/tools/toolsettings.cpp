@@ -61,11 +61,7 @@ namespace {
 
 		preview->setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 		box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 			preview->setBlendingMode(paintcore::BlendMode::Mode(box->currentData().toInt()));
-#else
-			preview->setBlendingMode(paintcore::BlendMode::Mode(box->itemData(box->currentIndex(), Qt::UserRole).toInt()));
-#endif
 		});
 	}
 }
@@ -820,11 +816,6 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	_updatetimer->setInterval(500);
 	_updatetimer->setSingleShot(true);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-	// Set editor placeholder
-	_ui->content->setPlaceholderText(tr("Annotation content"));
-#endif
-
 	// Editor events
 	connect(_ui->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
 	connect(_ui->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
@@ -946,7 +937,6 @@ void AnnotationSettings::changeAlignment()
 
 void AnnotationSettings::updateFontIfUniform()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	bool uniformFontFamily = true;
 	bool uniformSize = true;
 	bool uniformColor = true;
@@ -976,7 +966,6 @@ void AnnotationSettings::updateFontIfUniform()
 	}
 
 	resetContentFont(uniformFontFamily, uniformSize, uniformColor);
-#endif
 }
 
 void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool resetColor)

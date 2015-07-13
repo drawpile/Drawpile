@@ -19,12 +19,7 @@
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #include <Qt>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-#include <cmath>
-#define qAtan2 atan2
-#else
 #include <QtMath>
-#endif
 
 #include "tools/utils.h"
 

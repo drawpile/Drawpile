@@ -18,13 +18,7 @@
 */
 
 #include <Qt>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-#include <cmath>
-#define qSin sin
-#define qCos cos
-#else
 #include <QtMath>
-#endif
 
 #include "shapes.h"
 

@@ -427,16 +427,12 @@ void NetStatus::showCGNAlert()
 			QMessageBox::Ok
 		);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
-#endif
 		box.exec();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 		if(box.checkBox()->isChecked()) {
 			cfg.setValue("history/cgnalert", false);
 		}
-#endif
 	}
 }
 

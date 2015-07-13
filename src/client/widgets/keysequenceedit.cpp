@@ -17,20 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "keysequenceedit.h"
+
 #include <QToolButton>
 #include <QHBoxLayout>
-
-// Ugly hackery to substitute a normal text edit widget for
-// sequence editor on old Qt versions.
-#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
-#define QKeySequenceEdit QLineEdit
-#include <QLineEdit>
-#else
 #include <QKeySequenceEdit>
-#endif
-
-#include <QDebug>
-#include "keysequenceedit.h"
 
 namespace widgets {
 
@@ -55,20 +46,12 @@ KeySequenceEdit::KeySequenceEdit(QWidget *parent) : QWidget(parent)
 
 void KeySequenceEdit::setKeySequence(const QKeySequence &ks)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
-	_edit->setText(ks.toString());
-#else
 	_edit->setKeySequence(ks);
-#endif
 }
 
 QKeySequence KeySequenceEdit::keySequence() const
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
-	return QKeySequence(_edit->text());
-#else
 	return _edit->keySequence();
-#endif
 }
 
 }

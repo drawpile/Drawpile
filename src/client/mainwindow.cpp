@@ -172,9 +172,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	createDocks();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	setUnifiedTitleAndToolBarOnMac(true);
-#endif
 
 	_tempToolSwitchShortcut = new ShortcutDetector(this);
 
@@ -918,13 +916,8 @@ void MainWindow::open()
 			QApplication::tr("All Files (*)");
 
 	// Get the file name to open
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 	const QUrl file = QFileDialog::getOpenFileUrl(this,
 			tr("Open Image"), getLastPath(), filter);
-#else
-	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
-			tr("Open Image"), getLastPath(), filter));
-#endif
 
 	// Open the file if it was selected
 	if(file.isValid()) {
@@ -2110,7 +2103,7 @@ void MainWindow::setupActions()
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces")); preferences->setMenuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", 0, tr("Select &All"), QString(), QKeySequence::SelectAll);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0) || defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
+#if (defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence("Shift+Ctrl+A"));
 #else
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);

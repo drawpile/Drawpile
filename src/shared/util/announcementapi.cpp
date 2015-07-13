@@ -28,11 +28,6 @@
 #include <QJsonArray>
 #include <QUrlQuery>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
-// A horrible kludge to work around missing QJsonValue::toInt in Qt 5.0 and 5.1
-#define toInt toString().toInt
-#endif
-
 namespace sessionlisting {
 
 class ResponseError {

@@ -27,13 +27,7 @@
 #include <QVarLengthArray>
 #include <QDateTime>
 #include <QtEndian>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QSaveFile>
-#else
-#include <QFile>
-#define QSaveFile QFile
-#define NO_QSAVEFILE
-#endif
 
 #include <KCompressionDevice>
 
@@ -50,22 +44,15 @@ Writer::Writer(const QString &filename, QObject *parent)
 	else if(filename.endsWith(".xz", Qt::CaseInsensitive))
 		ct = KCompressionDevice::Xz;
 
-#ifdef NO_QSAVEFILE
-	if(ct != KCompressionDevice::None)
-		_file = new KCompressionDevice(_file, true, ct);
-#else
 	_savefile = static_cast<QSaveFile*>(_file);
 	if(ct != KCompressionDevice::None)
 		_file = new KCompressionDevice(_savefile, true, ct);
-#endif
 }
 
 
 Writer::Writer(QIODevice *file, bool autoclose, QObject *parent)
 	: QObject(parent), _file(file),
-#ifndef NO_QSAVEFILE
 	_savefile(nullptr),
-#endif
 	_autoclose(autoclose), _minInterval(0), _filterMeta(true)
 {
 }
@@ -92,7 +79,6 @@ bool Writer::open()
 	if(_file->isOpen())
 		return true;
 
-#ifndef NO_QSAVEFILE
 	// Open savefile explicitly, because otherwise the compression filter
 	// will open&close it for us, but we need to call commit() before it is closed
 	// but after the compressor is finished.
@@ -100,7 +86,6 @@ bool Writer::open()
 		if(!_savefile->open(QIODevice::WriteOnly))
 			return false;
 	}
-#endif
 
 	return _file->open(QIODevice::WriteOnly);
 }
@@ -241,7 +226,6 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 void Writer::close()
 {
 	if(_file->isOpen()) {
-#ifndef NO_QSAVEFILE // Qt 5.0 compatibility
 		if(_savefile) {
 			// If file is not the same as savefile, it is the compression device.
 			// We must close it first to ensure all buffers are flushed, then
@@ -254,9 +238,6 @@ void Writer::close()
 		} else {
 			_file->close();
 		}
-#else
-		_file->close();
-#endif
 	}
 }
 

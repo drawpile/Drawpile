@@ -48,11 +48,6 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverilast", 0).toInt());
 	connect(_ui->listserver, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshListing()));
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-	// move this to the .ui file when we no longer support Qt <5.2
-	_ui->filter->setClearButtonEnabled(true);
-#endif
-
 	_sessions = new sessionlisting::SessionListingModel(this);
 #ifdef HAVE_DNSSD
 	_localservers = new ServerDiscoveryModel(this);

@@ -28,11 +28,7 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 	_lock = addAction(tr("Lock this layer"));
 	_lock->setCheckable(true);
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
-	addSeparator();
-#else
 	addSection(tr("Exclusive access:"));
-#endif
 
 	_allusers = addAction(tr("Everyone can draw"));
 	_allusers->setCheckable(true);
