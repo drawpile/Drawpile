@@ -6,7 +6,7 @@ find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
-find_package(KF5Archive NO_MODULE)
+find_package(KF5Archive REQUIRED NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorPicker)
 find_package(GIF)
@@ -186,15 +186,6 @@ if(KF5DNSSD_FOUND)
 	)
 endif()
 
-# Use bundled KArchive if library not found
-if(NOT KF5Archive_FOUND)
-	message(WARNING "KArchive not found: using bundled copy!")
-
-	find_package (ZLIB REQUIRED)
-
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../shared/bundled/karchive")
-endif()
-
 # Use bundled QtColorPicker widgets if library not found
 if(QTCOLORPICKER_FOUND)
 	include_directories(${LIBQTCOLORPICKER_INCLUDE_DIRS})
@@ -296,10 +287,6 @@ if(KF5DNSSD_FOUND)
     add_definitions(-DHAVE_DNSSD) 
 	target_link_libraries(${CLIENTNAME} KF5::DNSSD)
 endif() 
-
-if(NOT KF5Archive_FOUND)
-	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})
-endif()
 
 if(QTCOLORPICKER_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORPICKER_LIBRARIES})

@@ -1,24 +1,9 @@
 Notes on bundled libraries:
 
-KArchive
---------
-
-This is a stripped down (only ZIP support included) version of KF5 KArchive with Qt 5.0 compatibility hacked in.
-It is included for the benefit of platforms where newer Qt versions or the KArchive library are not available.
-The bundled version is used only if the library is not found.
-
-KArchive homepage: https://projects.kde.org/projects/frameworks/karchive
-
 QtColorPicker
 ---------------
 
 Color picker widgets. The bundled version is used only if the library is not found.
 
 QtColorPicker homepage: https://github.com/mbasaglia/Qt-Color-Picker
-
-kis_cubic_curve
----------------
-
-This is a modified version of the curve object+widget taken from Krita's source code.
-It is currently not available in library form.
 

@@ -21,12 +21,7 @@
 #include <QScopedPointer>
 #include <QRegularExpression>
 #include <QSslSocket>
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
-#include "qcommandlineparser.h"
-#else
 #include <QCommandLineParser>
-#endif
 
 #include "config.h"
 
