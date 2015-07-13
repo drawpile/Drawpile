@@ -1,6 +1,9 @@
 Drawpile - a collaborative drawing program
 ------------------------------------------
 
+**Note:** This is the development branch that will become Drawpile 2.0. For versions 1.x,
+see the `stable-1.x` branch. 
+
 Drawpile is a drawing program that lets you share the canvas
 with other users in real time.
 
