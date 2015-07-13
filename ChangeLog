@@ -1,5 +1,6 @@
 2015-08-?? Version 1.0.1
  * Stroke are started immediately even when smoothing is enabled
+ * Ports in autolinked URLs are now recognized
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes
