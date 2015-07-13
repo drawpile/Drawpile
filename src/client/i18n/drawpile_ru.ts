@@ -1171,17 +1171,17 @@
     <message>
         <location filename="../mainwindow.cpp" line="2231"/>
         <source>Rotate to 90°</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернуть на 90°</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2232"/>
         <source>Rotate to 180°</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернуть на 180°</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2233"/>
         <source>Rotate to 270°</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернуть на 270°</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2235"/>
@@ -1221,7 +1221,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2243"/>
         <source>Thick Laser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Толстый след лазера</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2244"/>
@@ -1251,7 +1251,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2341"/>
         <source>User &amp;pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Указатели пользователей</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2358"/>
@@ -1494,7 +1494,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2457"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Интструменты рисования</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2482"/>
@@ -2193,7 +2193,7 @@
     <message>
         <location filename="../ui/settings.ui" line="654"/>
         <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать &quot;Неподходящие для несовершеннолетних&quot;</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="674"/>
@@ -2601,17 +2601,20 @@
     <message>
         <location filename="../ui/videoexport.ui" line="524"/>
         <source>Diffuse</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
+        <translation>Diffuse</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="529"/>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
+        <translation>Ordered</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="534"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
+        <translation>Threshold</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="542"/>
