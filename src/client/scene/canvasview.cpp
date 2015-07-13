@@ -437,8 +437,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 		} else {
 			if(_smoothing>0 && _current_tool->allowSmoothing())
 				_smoother.addPoint(p);
-			else
-				_current_tool->begin(p, right, _zoom);
+			_current_tool->begin(p, right, _zoom);
 		}
 	}
 }
@@ -453,11 +452,12 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 			if(_smoothing>0 && _current_tool->allowSmoothing()) {
 				_smoother.addPoint(p);
 				if(_smoother.hasSmoothPoint()) {
-					if(_smoother.isFirstSmoothPoint())
-						_current_tool->begin(_smoother.smoothPoint(), right, _zoom);
-					else
-						_current_tool->motion(_smoother.smoothPoint(), shift, alt);
+					_current_tool->motion(_smoother.smoothPoint(), shift, alt);
 				}
+				// Remember the keys in use in case we simulate
+				// catch-up moves on pen up
+				_prevshift = shift;
+				_prevalt = alt;
 			} else {
 				_current_tool->motion(p, shift, alt);
 			}
@@ -469,10 +469,15 @@ void CanvasView::onPenUp(bool right)
 {
 	if(_scene->hasImage() && !_locked) {
 		if(!_specialpenmode) {
-			// Add the missing single dab when smoothing is used
-			if(_smoothing>0 && _current_tool->allowSmoothing() && !_smoother.hasSmoothPoint()) {
-				_current_tool->begin(_smoother.latestPoint(), right, _zoom);
+			// Drain any remaining points from the smoothing buffer
+			if(_smoother.hasSmoothPoint())
+				_smoother.removePoint();
+			while(_smoother.hasSmoothPoint()) {
+				_current_tool->motion(_smoother.smoothPoint(),
+					_prevshift, _prevalt);
+				_smoother.removePoint();
 			}
+
 			_current_tool->end();
 		}
 
