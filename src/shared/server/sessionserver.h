@@ -110,6 +110,15 @@ public:
 #endif
 
 	/**
+	 * @brief Set the server's welcome message
+	 *
+	 * This is sent as a chat message to new clients
+	 * @param message message content
+	 */
+	void setWelcomeMessage(const QString &message);
+	const QString &welcomeMessage() const { return _welcomeMessage; }
+
+	/**
 	 * @brief Set the session storage to use (if any)
 	 *
 	 * Setting this enables restoration of hibernated sessions
@@ -296,6 +305,7 @@ private:
 	sessionlisting::AnnouncementApi *_publicListingApi;
 
 	QString _title;
+	QString _welcomeMessage;
 	int _sessionLimit;
 	int _connectionTimeout;
 	uint _historyLimit;

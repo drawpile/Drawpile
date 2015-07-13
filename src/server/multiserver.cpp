@@ -66,6 +66,11 @@ void MultiServer::setServerTitle(const QString &title)
 	_sessions->setTitle(title);
 }
 
+void MultiServer::setWelcomeMessage(const QString &message)
+{
+	_sessions->setWelcomeMessage(message);
+}
+
 void MultiServer::setHistoryLimit(uint limit)
 {
 	_sessions->setHistoryLimit(limit);
