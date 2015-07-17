@@ -2,6 +2,7 @@
  * Stroke are started immediately even when smoothing is enabled
  * Ports in autolinked URLs are now recognized
  * Dedicated server: added --welcome-message parameter
+ * Fixed "reset size" for polygonal selections
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes
