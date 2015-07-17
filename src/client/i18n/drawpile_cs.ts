@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.0" language="cs_CZ">
 <context>
     <name>AnimationExporter</name>
     <message>
         <location filename="../export/animation.cpp" line="73"/>
         <source>Export error</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba při vyvádění</translation>
     </message>
     <message>
         <location filename="../export/animation.cpp" line="82"/>
         <source>Exporting...</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvádí se...</translation>
     </message>
     <message>
         <location filename="../export/animation.cpp" line="82"/>
         <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -297,7 +297,7 @@
     <message>
         <location filename="../ui/erasersettings.ui" line="96"/>
         <source>Erase active color only</source>
-        <translation type="unfinished"></translation>
+        <translation>Vymazat pouze činnou barvu</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="110"/>
@@ -439,22 +439,22 @@
     <message>
         <location filename="../ui/flipbook.ui" line="14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázkový bloček</translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="86"/>
         <source>Layer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrstva:</translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="119"/>
         <source>FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>Snímků za sekundu:</translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="155"/>
         <source>Use background layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít vrstvu pozadí</translation>
     </message>
 </context>
 <context>
@@ -898,12 +898,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="2031"/>
         <source>Autosave</source>
-        <translation type="unfinished">Automaticky uložit</translation>
+        <translation>Automaticky uložit</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2033"/>
         <source>&amp;Animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Animace...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2035"/>
@@ -925,7 +925,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2075"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vyvést</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2098"/>
@@ -960,7 +960,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2104"/>
         <source>&amp;Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Orazítkovat</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2113"/>
@@ -1016,12 +1016,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="2225"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázkový bloček</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2225"/>
         <source>Show animation preview window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat okno s náhledem animace</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2235"/>
@@ -1036,7 +1036,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2238"/>
         <source>Show Crosshair C&amp;ursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat ukazovátko s nitkovým &amp;křížem</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2240"/>
@@ -1056,7 +1056,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2243"/>
         <source>Thick Laser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Roztáhnout laserové stopy</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2244"/>
@@ -1081,7 +1081,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="2341"/>
         <source>User &amp;pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelská &amp;ukazovátka</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2358"/>
@@ -1174,17 +1174,17 @@
     <message>
         <location filename="../mainwindow.cpp" line="2439"/>
         <source>Select Layer Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat vrstvu nad</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2440"/>
         <source>Select Layer Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat vrstvu pod</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2457"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Nástroje na kreslení</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2531"/>
@@ -1428,22 +1428,22 @@
     <message>
         <location filename="../mainwindow.cpp" line="2123"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2124"/>
         <source>Fill selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit výběr</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2125"/>
         <source>Recolor selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebarvit výběr</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2126"/>
         <source>Color erase selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat výběr podle barvy</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2400"/>
@@ -1926,22 +1926,22 @@
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="67"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(Bez názvu)</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="93"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="94"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="95"/>
         <source>Age</source>
-        <translation type="unfinished">Věk</translation>
+        <translation>Věk</translation>
     </message>
 </context>
 <context>
@@ -2017,7 +2017,7 @@
     <message>
         <location filename="../ui/settings.ui" line="129"/>
         <source>Autosave interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>Doba mezi automatickým ukládáním:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="149"/>
@@ -2057,7 +2057,7 @@
     <message>
         <location filename="../ui/settings.ui" line="240"/>
         <source>Record pauses</source>
-        <translation>Záznam pozastaven</translation>
+        <translation>Přestávky v zaznamenávání</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="273"/>
@@ -2088,57 +2088,57 @@
     <message>
         <location filename="../ui/settings.ui" line="92"/>
         <source>Scroll with finger</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunovat pomocí prstu</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="85"/>
         <source>Touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotek:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="99"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Tlačit pro přiblížení</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="106"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Otáčet pro otočení</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="234"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animace</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="387"/>
         <source> below</source>
-        <translation type="unfinished"></translation>
+        <translation> pod</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="394"/>
         <source> above</source>
-        <translation type="unfinished"></translation>
+        <translation> nad</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="432"/>
         <source>Onionskin layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrstvy průklepového papíru:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="439"/>
         <source>Tint layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrstvy obarvení</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="446"/>
         <source>Treat the bottom-most layer as the frame background</source>
-        <translation type="unfinished"></translation>
+        <translation>Zacházet se spodní vrstvou jako s pozadím snímku</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="449"/>
         <source>Use background layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít vrstvu pozadí</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="547"/>
@@ -2163,7 +2163,7 @@
     <message>
         <location filename="../ui/settings.ui" line="654"/>
         <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat obsah označený jako Nevhodný pro nezletilé</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="674"/>
@@ -2178,12 +2178,12 @@
     <message>
         <location filename="../ui/settings.ui" line="532"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámit přes Zeroconf</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="539"/>
         <source>Automatically set up port forwarding with UPnP</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky nastavit přeposílání přípojky pomocí UPnP</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="612"/>
@@ -2477,37 +2477,37 @@
     <message>
         <location filename="../ui/videoexport.ui" line="40"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Animovaný GIF</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="50"/>
         <source>Animation Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby pro animaci</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="59"/>
         <source>Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrstvy:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="91"/>
         <source>Background:</source>
-        <translation type="unfinished">Pozadí:</translation>
+        <translation>Pozadí:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="101"/>
         <source>Transparent</source>
-        <translation type="unfinished"></translation>
+        <translation>Průhledné</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="106"/>
         <source>Bottom layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Spodní vrstva</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="111"/>
         <source>Solid color</source>
-        <translation type="unfinished"></translation>
+        <translation>Kryjící barva</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="245"/>
@@ -2592,27 +2592,27 @@
     <message>
         <location filename="../ui/videoexport.ui" line="516"/>
         <source>Dithering:</source>
-        <translation type="unfinished"></translation>
+        <translation>Roztřesení:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="524"/>
         <source>Diffuse</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozptýlit</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="529"/>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation>Uspořádáno</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="534"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Práh</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="542"/>
         <source>Optimize frame difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyladit rozdíly snímku</translation>
     </message>
 </context>
 <context>
@@ -2871,12 +2871,12 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="190"/>
         <source>Reset settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Vynulovat nastavení</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="191"/>
         <source>Clear all settings?</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat všechna nastavení?</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="436"/>
@@ -3036,7 +3036,7 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="63"/>
         <source>Insert layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit vrstvu</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="65"/>
@@ -3084,12 +3084,12 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="94"/>
         <source>Onionskin</source>
-        <translation type="unfinished"></translation>
+        <translation>Průklepový papír</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="102"/>
         <source>Show numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat čísla</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="301"/>
@@ -3100,7 +3100,7 @@
         <location filename="../docks/layerlistdock.cpp" line="326"/>
         <location filename="../docks/layerlistdock.cpp" line="346"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrstva</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="388"/>
@@ -3461,7 +3461,7 @@
     <message>
         <location filename="../core/blendmodes.cpp" line="48"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Pod</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="54"/>
@@ -3522,7 +3522,7 @@
     <message>
         <location filename="../utils/listservermodel.cpp" line="176"/>
         <source>Nearby</source>
-        <translation type="unfinished"></translation>
+        <translation>V blízkosti</translation>
     </message>
 </context>
 <context>
@@ -3716,17 +3716,17 @@
     <message>
         <location filename="../widgets/netstatus.cpp" line="425"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornění</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="426"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Váš poskytovatel internetu používá Carrier Grade NAT. To druhým znemožňuje přímé spojení s vámi. Podívejte se do nápovědy k Drawpile, jak se to dá obejít.</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="431"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>Neukazovat znovu</translation>
     </message>
 </context>
 <context>
