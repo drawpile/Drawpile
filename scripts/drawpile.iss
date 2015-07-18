@@ -38,6 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "no-dnssd/drawpile.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not DnssdCheck();
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "i18n\*.qm"; DestDir: "{app}\i18n"; Flags: ignoreversion
@@ -46,6 +47,8 @@ Source: "iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion
 Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "palettes\*.gpl"; DestDir: "{app}\palettes"; Flags: ignoreversion
 Source: "sounds\*.*"; DestDir: "{app}\sounds"; Flags: ignoreversion
+Source: "audio\*.*"; DestDir: "{app}\sounds"; Flags: ignoreversion
+Source: "mediaservice\*.*"; DestDir: "{app}\sounds"; Flags: ignoreversion
 Source: "theme\*"; DestDir: "{app}\theme"; Flags: ignoreversion recursesubdirs
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -75,3 +78,12 @@ Root: HKCR; Subkey: "DrawpileImage"; ValueType: string; ValueName: ""; ValueData
 Root: HKCR; Subkey: "DrawpileImage\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\drawpile.exe,0"
 Root: HKCR; Subkey: "DrawpileImage\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\drawpile.exe"" ""%1"""
 
+[Code]
+function DnssdCheck(): Boolean;
+begin
+  Result := FileExists(ExpandConstant('{sys}\dnssd.dll'));
+  if Result = true then
+    Log('DNSSD.dll found')
+  else
+    Log('No DNSSD.dll');
+end;
