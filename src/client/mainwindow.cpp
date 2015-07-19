@@ -152,7 +152,7 @@ bool isWritableFormat(const QString &filename)
 }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false), _lastToolBeforePaste(-1)
+	: QMainWindow(), m_playbackDialog(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false), _lastToolBeforePaste(-1)
 {
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -411,7 +411,7 @@ MainWindow::~MainWindow()
 
 	// Close playback dialog explicitly since it adds the miniplayer as a direct child
 	// of the main window, but deletes it itself.
-	delete _dialog_playback;
+	delete m_playbackDialog;
 
 	// Make sure all child dialogs are closed
 	foreach(QObject *obj, children()) {
@@ -513,14 +513,15 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	QFileInfo fileinfo(reader->filename());
 
-	_dialog_playback = new dialogs::PlaybackDialog(_canvas, reader, this);
-	_dialog_playback->setWindowTitle(fileinfo.baseName() + " - " + _dialog_playback->windowTitle());
-	_dialog_playback->setAttribute(Qt::WA_DeleteOnClose);
+	m_playbackDialog = new dialogs::PlaybackDialog(_canvas, reader, this);
+	m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
+	m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(_dialog_playback, &dialogs::PlaybackDialog::commandRead, _client, &net::Client::playbackCommand);
-	connect(_dialog_playback, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
-	connect(_dialog_playback, &dialogs::PlaybackDialog::destroyed, [this]() {
-		_dialog_playback = 0;
+	connect(m_playbackDialog, &dialogs::PlaybackDialog::commandRead, _client, &net::Client::playbackCommand);
+
+	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
+	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, [this]() {
+		m_playbackDialog = 0;
 		getAction("recordsession")->setEnabled(true);
 		setRecorderStatus(false);
 		_canvas->statetracker()->setShowAllUserMarkers(false);
@@ -528,8 +529,8 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 		_canvas->statetracker()->endPlayback();
 	});
 
-	_dialog_playback->show();
-	_dialog_playback->centerOnParent();
+	m_playbackDialog->show();
+	m_playbackDialog->centerOnParent();
 
 	getAction("recordsession")->setEnabled(false);
 	setRecorderStatus(false);
@@ -550,7 +551,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _client->isConnected() || _recorder || _dialog_playback);
+	return !(isWindowModified() || _client->isConnected() || _recorder || m_playbackDialog);
 }
 
 /**
@@ -1087,8 +1088,8 @@ void MainWindow::showFlipbook()
 
 void MainWindow::setRecorderStatus(bool on)
 {
-	if(_dialog_playback) {
-		if(_dialog_playback->isPlaying()) {
+	if(m_playbackDialog) {
+		if(m_playbackDialog->isPlaying()) {
 			_recorderstatus->setPixmap(icon::fromTheme("media-playback-start").pixmap(16, 16));
 			_recorderstatus->setToolTip("Playing back recording");
 		} else {

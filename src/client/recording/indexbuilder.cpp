@@ -105,7 +105,7 @@ void IndexBuilder::run()
 	{
 		QBuffer indexBuffer;
 		indexBuffer.open(QBuffer::ReadWrite);
-		_index.writeIndex(&indexBuffer);
+		m_index.writeIndex(&indexBuffer);
 
 		zip.writeFile("index", indexBuffer.data());
 	}
@@ -151,7 +151,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 
 		// Save a snapshot every SNAPSHOT_INTERVAL or at every marker. (But no more often than SNAPSHOT_MIN_INTERVAL)
 		// Also: every index must have an initial snapshot
-		if(_index.snapshots().isEmpty() || snapshotCounter == SNAPSHOT_INTERVAL || (m->type() == protocol::MSG_MARKER && snapshotCounter>=SNAPSHOT_MIN_INTERVAL)) {
+		if(m_index.snapshots().isEmpty() || snapshotCounter == SNAPSHOT_INTERVAL || (m->type() == protocol::MSG_MARKER && snapshotCounter>=SNAPSHOT_MIN_INTERVAL)) {
 			snapshotCounter = 0;
 			qint64 streampos = reader.filePosition();
 			emit progress(streampos);
@@ -164,9 +164,9 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 				sp.toDatastream(ds);
 			}
 
-			int snapshotIdx = _index._snapshots.size();
+			int snapshotIdx = m_index.m_snapshots.size();
 			zip.writeFile(QString("snapshot-%1").arg(snapshotIdx), buf.data());
-			_index._snapshots.append(SnapshotEntry(streampos, reader.currentIndex()));
+			m_index.m_snapshots.append(SnapshotEntry(streampos, reader.currentIndex()));
 		}
 	}
 }
@@ -226,7 +226,7 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 		break;
 
 	case MSG_USER_JOIN:
-		_index._ctxnames[msg->contextId()] = msg.cast<const protocol::UserJoin>().name();
+		m_index.m_ctxnames[msg->contextId()] = msg.cast<const protocol::UserJoin>().name();
 		return;
 
 	default: break;
@@ -237,8 +237,8 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 
 	} else if(type==IDX_PUTIMAGE || type==IDX_ANNOTATE) {
 		// Combine consecutive messages from the same user
-		for(int i=_index._index.size()-1;i>=0;--i) {
-			IndexEntry &e = _index._index[i];
+		for(int i=m_index.m_index.size()-1;i>=0;--i) {
+			IndexEntry &e = m_index.m_index[i];
 			if(e.context_id == msg->contextId()) {
 				if(e.type == type) {
 					e.end = _pos;
@@ -250,8 +250,8 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 
 	} else if(type==IDX_LASER) {
 		// Combine laser pointer strokes and drop other MovePointer messages
-		for(int i=_index._index.size()-1;i>=0;--i) {
-			IndexEntry &e = _index._index[i];
+		for(int i=m_index.m_index.size()-1;i>=0;--i) {
+			IndexEntry &e = m_index.m_index[i];
 			if(e.context_id == msg->contextId()) {
 				if(e.type == type) {
 					int persistence = msg.cast<const protocol::MovePointer>().persistence();
@@ -269,8 +269,8 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 
 	} else if(type==IDX_STROKE) {
 		// Combine all strokes up to last pen-up from the same user
-		for(int i=_index._index.size()-1;i>=0;--i) {
-			IndexEntry &e = _index._index[i];
+		for(int i=m_index.m_index.size()-1;i>=0;--i) {
+			IndexEntry &e = m_index.m_index[i];
 			if(e.context_id == msg->contextId() && e.type == IDX_STROKE) {
 				if(!(e.flags & IndexEntry::FLAG_FINISHED)) {
 					e.end = _pos;
@@ -284,7 +284,7 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 	}
 
 	// New index entry
-	_index._index.append(IndexEntry(type, msg->contextId(), _offset, _pos, _pos, color, title));
+	m_index.m_index.append(IndexEntry(type, msg->contextId(), _offset, _pos, _pos, color, title));
 }
 
 }

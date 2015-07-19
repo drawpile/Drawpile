@@ -225,7 +225,7 @@ class MainWindow : public QMainWindow {
 		widgets::ViewStatus *_viewstatus;
 		QToolButton *_statusChatButton;
 
-		dialogs::PlaybackDialog *_dialog_playback;
+		dialogs::PlaybackDialog *m_playbackDialog;
 
 		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;

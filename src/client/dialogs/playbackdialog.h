@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,28 +24,20 @@
 
 #include "../shared/net/message.h"
 
+class QQuickView;
+
 namespace recording {
 	class Reader;
 	class IndexLoader;
 	class IndexBuilder;
+	class PlaybackController;
 }
 
 namespace drawingboard {
 	class CanvasScene;
 }
 
-class QGraphicsScene;
-class QTimer;
-class QMenu;
-
-class VideoExporter;
-class IndexPointerGraphicsItem;
-
-class Ui_PlaybackDialog;
-
 namespace dialogs {
-
-class TinyPlayer;
 
 class PlaybackDialog : public QDialog
 {
@@ -56,85 +48,32 @@ public:
 
 	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=0);
 
-	bool isPlaying() const { return _play; }
-
 	void centerOnParent();
+
+	bool isPlaying() const;
+
+public slots:
+	void done(int r);
+
+	void filterRecording();
+	void configureVideoExport();
+	void addMarker();
 
 signals:
 	void commandRead(protocol::MessagePtr msg);
 	void playbackToggled(bool play);
 
-public slots:
-	void togglePlay(bool play);
-	void nextCommand();
-	void nextSequence();
-
-	void prevSnapshot();
-	void nextSnapshot();
-
-	void prevMarker();
-	void nextMarker();
-
-	virtual void done(int r);
-
 protected:
 	void closeEvent(QCloseEvent *);
 	void keyPressEvent(QKeyEvent *);
 
-private slots:
-	void exportFrame(int count=1);
-	void exportConfig();
-
-	void exporterError(const QString &message);
-	void exporterReady();
-	void exporterFinished();
-
-	void makeIndex();
-	void indexMade(bool ok, const QString &msg);
-	void filterRecording();
-
-	void jumpTo(int pos);
-
-	void addMarkerHere();
-
-	void stopExportClicked();
-
 private:
-	void nextCommand(int stepCount);
-	void createIndexView();
-	void endOfFileReached();
-	bool waitForExporter();
-	void loadIndex();
-	void jumptToSnapshot(int idx);
-	void updateIndexPosition();
-
 	bool exitCleanup();
 
-	void updateMarkerMenu();
+	QPointer<QQuickView> m_view;
+	recording::PlaybackController *m_ctrl;
 
-	QString indexFileName() const;
-
-	Ui_PlaybackDialog *_ui;
-
-	recording::Reader *_reader;
-	recording::IndexLoader *_index;
-	QPointer<recording::IndexBuilder> _indexbuilder;
-
-	QGraphicsScene *_indexscene;
-	IndexPointerGraphicsItem *_indexpositem;
-	QMenu *_markermenu;
-
-	drawingboard::CanvasScene *_canvas;	
-	VideoExporter *_exporter;
-	QTimer *_timer;
-	float _speedfactor;
-
-	QPointer<TinyPlayer> _tinyPlayer;
-
-	bool _play;
-	bool _exporterReady;
-	bool _waitedForExporter;
-	bool _closing;
+	bool m_closing;
 };
 
 }

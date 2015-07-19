@@ -22,6 +22,7 @@
 #include <QVector>
 #include <QHash>
 #include <QString>
+#include <QSet>
 
 class QIODevice;
 
@@ -117,36 +118,44 @@ class Index {
 public:
 
 	//! Get the number of entries in the index
-	int size() const { return _index.size(); }
+	int size() const { return m_index.size(); }
 
 	//! Get the name associated with the given context ID
 	QString contextName(int context_id) const;
 
 	//! Get the given index entry
-	const IndexEntry &entry(int idx) const { return _index.at(idx); }
+	const IndexEntry &entry(int idx) const { return m_index.at(idx); }
 
 	//! Get the index entry vector
-	const IndexVector &entries() const { return _index; }
+	const IndexVector &entries() const { return m_index; }
 
 	//! Get all snapshots
-	const SnapshotVector &snapshots() const { return _snapshots; }
+	const SnapshotVector &snapshots() const { return m_snapshots; }
 
 	MarkerEntry nextMarker(unsigned int from) const;
 	MarkerEntry prevMarker(unsigned int from) const;
 
-	const QVector<MarkerEntry> &markers() const { return _markers; }
+	const QVector<MarkerEntry> &markers() const { return m_markers; }
+	IndexVector newMarkers() const { return m_newmarkers; }
 
 	//! Add a new marker. This can be turned in to a real marker using the recording filter
-	const IndexEntry &addMarker(qint64 offset, quint32 pos, const QString &title);
+	void addMarker(qint64 offset, quint32 pos, const QString &title);
+
+	//! Silence an index entry (silenced actions can be filtered out)
+	void setSilenced(int idx, bool silence);
+	const QSet<int> silencedIndices() const { return m_silenced; }
+	IndexVector silencedEntries() const;
 
 	bool writeIndex(QIODevice *out) const;
 	bool readIndex(QIODevice *in);
 
 private:
-	IndexVector _index;
-	SnapshotVector _snapshots;
-	QHash<int, QString> _ctxnames;
-	QVector<MarkerEntry> _markers;
+	IndexVector m_index;
+	SnapshotVector m_snapshots;
+	QHash<int, QString> m_ctxnames;
+	QVector<MarkerEntry> m_markers;
+	IndexVector m_newmarkers;
+	QSet<int> m_silenced;
 };
 
 //! Hash the recording file

@@ -41,7 +41,7 @@ bool Reader::isRecordingExtension(const QString &filename)
 }
 
 Reader::Reader(const QString &filename, QObject *parent)
-	: QObject(parent), _filename(filename), _current(-1), _autoclose(true), _eof(false), _isHibernation(false), _compat(true)
+	: QObject(parent), _filename(filename), _current(-1), _currentPos(0), _autoclose(true), _eof(false), _isHibernation(false), _compat(true)
 {
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
 	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,26 +16,22 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INDEXPOINTERGRAPHICSITEM_H
-#define INDEXPOINTERGRAPHICSITEM_H
 
-#include <QGraphicsItem>
-#include <QPolygon>
+#ifndef DP_UTILS_ICONPROVIDER_H
+#define DP_UTILS_ICONPROVIDER_H
 
-class IndexPointerGraphicsItem : public QGraphicsItem
+#include <QQuickImageProvider>
+
+namespace icon {
+
+class IconProvider : public QQuickImageProvider
 {
 public:
-	explicit IndexPointerGraphicsItem(int height, QGraphicsItem *parent=0);
+	IconProvider();
 
-	QRectF boundingRect() const;
-
-	void setIndex(int i);
-
-protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
-
-private:
-	QRectF _rect;
+	QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
 };
 
-#endif
+}
+
+#endif // ICONPROVIDER_H

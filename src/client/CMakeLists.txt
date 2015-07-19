@@ -2,6 +2,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Quick REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
@@ -70,6 +71,7 @@ set (
 	utils/listserverdelegate.cpp
 	utils/settings.cpp
 	utils/icon.cpp
+	utils/iconprovider.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
@@ -86,9 +88,7 @@ set (
 	recording/indexbuilder.cpp
 	recording/indexloader.cpp
 	recording/filter.cpp
-	recording/indexgraphicsitem.cpp
-	recording/indexpointergraphicsitem.cpp
-	recording/indexgraphicsview.cpp
+	recording/playbackcontroller.cpp
 	dialogs/certificateview.cpp
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
@@ -97,7 +97,6 @@ set (
 	dialogs/settingsdialog.cpp
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
-	dialogs/tinyplayer.cpp
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
 	dialogs/selectsessiondialog.cpp
@@ -165,11 +164,9 @@ set (
 	ui/userbox.ui
 	ui/newdialog.ui
 	ui/resizedialog.ui
-	ui/playback.ui
 	ui/videoexport.ui
 	ui/inputcfg.ui
 	ui/recfilter.ui
-	ui/tinyplayer.ui
 	ui/selectsession.ui
 	ui/logindialog.ui
 	ui/colorbox.ui
@@ -206,6 +203,7 @@ qt5_wrap_ui( UI_Headers ${UIs} )
 
 qt5_add_resources( QtResource ui/cursors/cursors.qrc )
 qt5_add_resources( QtResource ui/icons/builtin.qrc )
+qt5_add_resources( QtResource qml/qml.qrc )
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
@@ -278,10 +276,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
-
-# Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
-qt5_use_modules(${CLIENTNAME} Widgets Network Xml Concurrent Multimedia Svg)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Quick Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
 
 if(KF5DNSSD_FOUND) 
     add_definitions(-DHAVE_DNSSD) 

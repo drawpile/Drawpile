@@ -54,7 +54,7 @@ private:
 	QString _inputfile, _targetfile;
 	QAtomicInt _abortflag;
 
-	Index _index;
+	Index m_index;
 	qint64 _offset;
 	int _pos;
 	QHash<int, quint32> _colors;

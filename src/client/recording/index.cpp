@@ -28,8 +28,8 @@ namespace recording {
 
 QString Index::contextName(int context_id) const
 {
-	if(_ctxnames.contains(context_id))
-		return _ctxnames[context_id];
+	if(m_ctxnames.contains(context_id))
+		return m_ctxnames[context_id];
 	return QString("#%1").arg(context_id);
 }
 
@@ -42,20 +42,20 @@ bool Index::writeIndex(QIODevice *out) const
 	ds << INDEX_VERSION;
 
 	// Write context name map
-	ds << quint8(_ctxnames.size());
-	foreach(quint8 ctx, _ctxnames.keys()) {
-		ds << ctx << _ctxnames[ctx];
+	ds << quint8(m_ctxnames.size());
+	foreach(quint8 ctx, m_ctxnames.keys()) {
+		ds << ctx << m_ctxnames[ctx];
 	}
 
 	// Write index
-	ds << quint32(_index.size());
-	foreach(const IndexEntry &e, _index) {
+	ds << quint32(m_index.size());
+	foreach(const IndexEntry &e, m_index) {
 		ds << quint8(e.type) << e.context_id << e.offset << e.start << e.end << e.color << e.title;
 	}
 
 	// Write snapshot list
-	ds << quint32(_snapshots.size());
-	foreach(const SnapshotEntry &e, _snapshots) {
+	ds << quint32(m_snapshots.size());
+	foreach(const SnapshotEntry &e, m_snapshots) {
 		ds << e.stream_offset << e.pos;
 	}
 
@@ -82,7 +82,7 @@ bool Index::readIndex(QIODevice *out)
 		quint8 ctx;
 		QString name;
 		ds >> ctx >> name;
-		_ctxnames[ctx] = name;
+		m_ctxnames[ctx] = name;
 	}
 
 	// Read index
@@ -94,9 +94,9 @@ bool Index::readIndex(QIODevice *out)
 		ds >> type;
 		e.type = IndexType(type);
 		ds >> e.context_id >> e.offset >> e.start >> e.end >> e.color >> e.title;
-		_index.append(e);
+		m_index.append(e);
 		if(e.type == IDX_MARKER)
-			_markers.append(MarkerEntry(_index.size()-1, e.start, e.title));
+			m_markers.append(MarkerEntry(m_index.size()-1, e.start, e.title));
 	}
 
 	// Read snapshot list
@@ -105,7 +105,7 @@ bool Index::readIndex(QIODevice *out)
 	while(snapshots--) {
 		SnapshotEntry e;
 		ds >> e.stream_offset >> e.pos;
-		_snapshots.append(e);
+		m_snapshots.append(e);
 	}
 
 	return true;
@@ -114,11 +114,11 @@ bool Index::readIndex(QIODevice *out)
 MarkerEntry Index::prevMarker(unsigned int from) const
 {
 	MarkerEntry e;
-	for(int i=0;i<_markers.size();++i) {
-		if(_markers[i].pos >= from)
+	for(int i=0;i<m_markers.size();++i) {
+		if(m_markers[i].pos >= from)
 			break;
 
-		e = _markers[i];
+		e = m_markers[i];
 	}
 
 	if(e.pos == from)
@@ -130,11 +130,11 @@ MarkerEntry Index::prevMarker(unsigned int from) const
 MarkerEntry Index::nextMarker(unsigned int from) const
 {
 	MarkerEntry e;
-	for(int i=_markers.size()-1;i>=0;--i) {
-		if(_markers[i].pos <= from)
+	for(int i=m_markers.size()-1;i>=0;--i) {
+		if(m_markers[i].pos <= from)
 			break;
 
-		e = _markers[i];
+		e = m_markers[i];
 	}
 
 	if(e.pos == from)
@@ -143,30 +143,42 @@ MarkerEntry Index::nextMarker(unsigned int from) const
 	return e;
 }
 
-const IndexEntry &Index::addMarker(qint64 offset, quint32 pos, const QString &title)
+void Index::addMarker(qint64 offset, quint32 pos, const QString &title)
 {
 	IndexEntry e(IDX_MARKER, 0, offset, pos, pos, 0xffffffff, title);
 	e.flags = IndexEntry::FLAG_ADDED;
 
-	// Add new entry to the index
-	int idx=0;
-	while(idx<_index.size()) {
-		if(_index.at(idx).start >= pos)
-			break;
-		++idx;
-	}
-	_index.insert(idx, e);
+	m_newmarkers.append(e);
 
 	// Add entry to marker list
 	int i=0;
-	while(i<_markers.size()) {
-		if(_markers.at(i).pos >= pos)
+	while(i<m_markers.size()) {
+		if(m_markers.at(i).pos >= pos)
 			break;
 		++i;
 	}
-	_markers.insert(i, MarkerEntry(idx, pos, title));
+	m_markers.insert(i, MarkerEntry(0, pos, title));
 
-	return _index.at(idx);
+}
+
+void Index::setSilenced(int idx, bool silence)
+{
+	if(silence)
+		m_silenced.insert(idx);
+	else
+		m_silenced.remove(idx);
+}
+
+IndexVector Index::silencedEntries() const
+{
+	IndexVector iv;
+	for(int idx : silencedIndices()) {
+		if(idx<0 || idx >= m_index.size())
+			qWarning("Silenced non-existent index: %d", idx);
+		else
+			iv << m_index.at(idx);
+	}
+	return iv;
 }
 
 QByteArray hashRecording(const QString &filename)

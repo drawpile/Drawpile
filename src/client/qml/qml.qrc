@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>PlaybackDialog.qml</file>
+        <file>PlaybackIndexView.qml</file>
+
+        <file>Controls/qmldir</file>
+        <file>Controls/HLine.qml</file>
+        <file>Controls/PlaybackProgressStyle.qml</file>
+        <file>Controls/VcrButton.qml</file>
+    </qresource>
+</RCC>
