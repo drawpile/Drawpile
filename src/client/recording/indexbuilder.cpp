@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include <QBuffer>
 #include <QColor>
 #include <QBuffer>
+#include <QElapsedTimer>
 #include <KZip>
 
 namespace recording {
@@ -124,8 +125,8 @@ void IndexBuilder::run()
 
 void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 {
-	static const int SNAPSHOT_INTERVAL = 500;
-	static const int SNAPSHOT_MIN_INTERVAL = 100;
+	static const qint64 SNAPSHOT_INTERVAL_MS = 1000; // snapshot interval in milliseconds
+	static const int SNAPSHOT_MIN_ACTIONS = 200; // minimum number of actions between snapshots
 
 	paintcore::LayerStack image;
 	net::LayerListModel layermodel;
@@ -133,6 +134,8 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 
 	MessageRecord msg;
 	int snapshotCounter = 0;
+	QElapsedTimer timer;
+	timer.start();
 	while(true) {
 		if(_abortflag.load())
 			return;
@@ -144,15 +147,15 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 			continue;
 
 		protocol::MessagePtr m(msg.message);
-		if(m->isCommand())
+		if(m->isCommand()) {
 			statetracker.receiveCommand(m);
+			++snapshotCounter;
+		}
 
-		++snapshotCounter;
-
-		// Save a snapshot every SNAPSHOT_INTERVAL or at every marker. (But no more often than SNAPSHOT_MIN_INTERVAL)
-		// Also: every index must have an initial snapshot
-		if(_index.snapshots().isEmpty() || snapshotCounter == SNAPSHOT_INTERVAL || (m->type() == protocol::MSG_MARKER && snapshotCounter>=SNAPSHOT_MIN_INTERVAL)) {
-			snapshotCounter = 0;
+		// Save a snapshot every SNAPSHOT_INTERVAL or at every marker. (But no more often than SNAPSHOT_MIN_ACTIONS)
+		// Note. We use the actual elapsed rendering time to decide when to snapshot. This means that (ideally),
+		// the time it takes to jump to a snapshot is at most SNAPSHOT_INTERVAL milliseconds (+ the time it takes to load the snapshot)
+		if(_index.snapshots().isEmpty() || ((timer.hasExpired(SNAPSHOT_INTERVAL_MS) || m->type() == protocol::MSG_MARKER) && snapshotCounter>=SNAPSHOT_MIN_ACTIONS)) {
 			qint64 streampos = reader.filePosition();
 			emit progress(streampos);
 			drawingboard::StateSavepoint sp = statetracker.createSavepoint(-1);
@@ -167,6 +170,9 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 			int snapshotIdx = _index._snapshots.size();
 			zip.writeFile(QString("snapshot-%1").arg(snapshotIdx), buf.data());
 			_index._snapshots.append(SnapshotEntry(streampos, reader.currentIndex()));
+
+			snapshotCounter = 0;
+			timer.restart();
 		}
 	}
 }
