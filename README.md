@@ -25,7 +25,7 @@ Some feature highlights:
 
 Client dependencies:
 
-* Qt 5.0 or newer
+* Qt 5.5 or newer
 * [KF5 KArchive]
 * KF5 KDNSSD (optional)
 * GIFLIB (optional)
@@ -34,7 +34,7 @@ Client dependencies:
 
 Server dependencies:
 
-* Qt 5.0 or newer (QtCore and QtNetwork only)
+* Qt 5.4 or newer (QtCore and QtNetwork only)
 * [KF5 KArchive]
 * libsystemd (optional)
 * libmicrohttpd (optional)
