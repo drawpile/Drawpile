@@ -95,8 +95,10 @@ void SelectionItem::addPointToPolygon(const QPoint &point)
 
 void SelectionItem::closePolygon()
 {
-	_closePolygon = true;
-	savePolygonShape();
+	if(!_closePolygon) {
+		_closePolygon = true;
+		savePolygonShape();
+	}
 }
 
 bool SelectionItem::isAxisAlignedRectangle() const

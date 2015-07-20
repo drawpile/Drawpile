@@ -171,8 +171,10 @@ BrushStamp makeHighresMask(const Brush &brush, float pressure)
 
 BrushMask offsetMask(const BrushMask &mask, float xfrac, float yfrac)
 {
-	Q_ASSERT(xfrac>=0 && xfrac<=1);
-	Q_ASSERT(yfrac>=0 && yfrac<=1);
+#ifndef NDEBUG
+	if(xfrac<0 || xfrac>1 || yfrac<0 || yfrac>1)
+		qWarning("offsetMask(mask, %f, %f): offset out of bounds!", xfrac, yfrac);
+#endif
 
 	const int diameter = mask.diameter();
 
@@ -182,7 +184,12 @@ BrushMask offsetMask(const BrushMask &mask, float xfrac, float yfrac)
 		xfrac*(1.0-yfrac),
 		(1.0-xfrac)*(1.0-yfrac)
 	};
-	Q_ASSERT(fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0)<0.001);
+#ifndef NDEBUG
+	const qreal kernelsum = fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0);
+	if(kernelsum>0.001)
+		qWarning("offset kernel sum error=%f", kernelsum);
+#endif
+
 	const uchar *src = mask.data();
 
 	QVector<uchar> data(square(diameter));
