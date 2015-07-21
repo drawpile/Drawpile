@@ -46,7 +46,6 @@ namespace docks {
 	class LayerList;
 	class PaletteBox;
 	class ColorBox;
-	class Navigator;
 }
 namespace dialogs {
 	class PlaybackDialog;
@@ -212,7 +211,6 @@ class MainWindow : public QMainWindow {
 		docks::InputSettings *_dock_input;
 		docks::LayerList *_dock_layers;
 		docks::ColorBox *_dock_colors;
-		docks::Navigator *_dock_navigator;
 		widgets::ChatBox *_chatbox;
 		widgets::UserList *_userlist;
 

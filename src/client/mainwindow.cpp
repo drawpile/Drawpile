@@ -77,7 +77,6 @@
 #include "widgets/userlistwidget.h"
 
 #include "docks/toolsettingsdock.h"
-#include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
 #include "docks/inputsettingsdock.h"
@@ -272,7 +271,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvas);
-	_dock_navigator->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor, bool)), _dock_toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
@@ -296,13 +294,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_colors, SLOT(setColor(QColor)));
 	connect(_dock_colors, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
-
-	// Navigator <-> View
-	connect(_dock_navigator, SIGNAL(focusMoved(const QPoint&)),
-			_view, SLOT(scrollTo(const QPoint&)));
-	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
-			_dock_navigator, SLOT(setViewFocus(const QPolygonF&)));
-	connect(_dock_navigator, SIGNAL(wheelZoom(int)), _view, SLOT(zoomSteps(int)));
 
 	// Create the network client
 	_client = new net::Client(this);
@@ -2533,12 +2524,6 @@ void MainWindow::createDocks()
 	_dock_layers->setObjectName("LayerList");
 	_dock_layers->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_layers);
-
-	// Create navigator
-	_dock_navigator = new docks::Navigator(this);
-	_dock_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _dock_navigator);
-	_dock_navigator->hide(); // hidden by default
 
 	// Create input settings
 	_dock_input = new docks::InputSettings(this);
