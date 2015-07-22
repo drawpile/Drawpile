@@ -21,7 +21,6 @@
 #include <QPalette>
 #include <QPainter>
 
-#include "core/annotation.h"
 #include "core/layerstack.h"
 #include "scene/annotationitem.h"
 
@@ -114,28 +113,28 @@ void AnnotationItem::setShowBorder(bool show)
 
 const paintcore::Annotation *AnnotationItem::getAnnotation() const
 {
-	return _image->getAnnotation(_id);
+	return _image->annotations()->getById(_id);
 }
 
 void AnnotationItem::refresh()
 {
-	paintcore::Annotation *a = _image->getAnnotation(_id);
+	const paintcore::Annotation *a = getAnnotation();
 	Q_ASSERT(a);
 	if(!a)
 		return;
 
 	prepareGeometryChange();
-	_rect = a->rect();
+	_rect = a->rect;
 	update();
 }
 
 bool AnnotationItem::isChanged() const
 {
-	paintcore::Annotation *a = _image->getAnnotation(_id);
+	const paintcore::Annotation *a = getAnnotation();
 	Q_ASSERT(a);
 	if(!a)
 		return false;
-	return _rect != a->rect();
+	return _rect != a->rect;
 }
 
 QRectF AnnotationItem::boundingRect() const
@@ -150,7 +149,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 	const qreal devicePixelRatio = qApp->devicePixelRatio();
 
-	const paintcore::Annotation *state = _image->getAnnotation(_id);
+	const paintcore::Annotation *state = getAnnotation();
 	Q_ASSERT(state);
 	if(!state)
 		return;

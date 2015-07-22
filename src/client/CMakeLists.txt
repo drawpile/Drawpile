@@ -72,7 +72,7 @@ set (
 	utils/settings.cpp
 	utils/icon.cpp
 	utils/iconprovider.cpp
-	core/annotation.cpp
+	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

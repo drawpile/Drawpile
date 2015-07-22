@@ -30,7 +30,6 @@
 #include "statetracker.h"
 
 #include "net/client.h"
-#include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
@@ -78,7 +77,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
 
 	connect(_image->image(), SIGNAL(resized(int,int,QSize)), this, SLOT(handleCanvasResize(int,int,QSize)));
-	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
+	connect(_image->image()->annotations(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image->image(), SLOT(setLayerHidden(int,bool)));
 
 	addItem(_image);
@@ -131,9 +130,9 @@ AnnotationItem *CanvasScene::annotationAt(const QPoint &point)
 QList<int> CanvasScene::listEmptyAnnotations() const
 {
 	QList<int> ids;
-	foreach(const paintcore::Annotation *a, _image->image()->annotations()) {
-		if(a->isEmpty())
-			ids << a->id();
+	for(const paintcore::Annotation &a : _image->image()->annotations()->getAnnotations()) {
+		if(a.isEmpty())
+			ids << a.id;
 	}
 	return ids;
 }
@@ -193,7 +192,7 @@ int CanvasScene::getAvailableAnnotationId() const
 
 void CanvasScene::handleAnnotationChange(int id)
 {
-	const paintcore::Annotation *a = _image->image()->getAnnotation(id);
+	const paintcore::Annotation *a = _image->image()->annotations()->getById(id);
 
 	// Find annotation item
 	AnnotationItem *item = getAnnotationItem(id);
@@ -345,7 +344,7 @@ bool CanvasScene::save(const QString& file) const
  */
 bool CanvasScene::needSaveOra() const
 {
-	return _image->image()->layers() > 1 || _image->image()->hasAnnotations();
+	return _image->image()->layers() > 1 || !_image->image()->annotations()->isEmpty();
 }
 
 /**

@@ -22,7 +22,7 @@
 #include <QGraphicsObject>
 
 namespace paintcore {
-	class Annotation;
+	struct Annotation;
 	class LayerStack;
 }
 

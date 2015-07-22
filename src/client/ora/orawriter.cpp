@@ -18,7 +18,6 @@
 */
 
 #include "ora/orawriter.h"
-#include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/blendmodes.h"
@@ -63,20 +62,20 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	// Add annotations
 	// This will probably be replaced with proper text element support
 	// once standardized.
-	if(image->hasAnnotations()) {
+	if(!image->annotations()->isEmpty()) {
 		QDomElement annotationEls = doc.createElement("drawpile:annotations");
 		annotationEls.setPrefix("drawpile");
-		foreach(const paintcore::Annotation *a, image->annotations()) {
+		for(const paintcore::Annotation &a : image->annotations()->getAnnotations()) {
 			QDomElement an = doc.createElement("drawpile:a");
 			an.setPrefix("drawpile");
 
-			QRect ag = a->rect();
+			QRect ag = a.rect;
 			an.setAttribute("x", ag.x());
 			an.setAttribute("y", ag.y());
 			an.setAttribute("w", ag.width());
 			an.setAttribute("h", ag.height());
-			an.setAttribute("bg", QString("#%1").arg(uint(a->backgroundColor().rgba()), 8, 16, QChar('0')));
-			an.appendChild(doc.createCDATASection(a->text()));
+			an.setAttribute("bg", QString("#%1").arg(uint(a.background.rgba()), 8, 16, QChar('0')));
+			an.appendChild(doc.createCDATASection(a.text));
 			annotationEls.appendChild(an);
 		}
 		stack.appendChild(annotationEls);

@@ -23,7 +23,6 @@
 #include <QtConcurrent>
 #include <QDataStream>
 
-#include "annotation.h"
 #include "layer.h"
 #include "layerstack.h"
 #include "tile.h"
@@ -35,6 +34,7 @@ LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
 	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true)
 {
+	m_annotations = new AnnotationModel(this);
 }
 
 LayerStack::~LayerStack()
@@ -68,9 +68,8 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 	if(left || top) {
 		// Update annotation positions
 		QPoint offset(left, top);
-		foreach(Annotation *a, _annotations) {
-			a->setRect(a->rect().translated(offset));
-			emit annotationChanged(a->id());
+		Q_FOREACH(const Annotation &a, m_annotations->getAnnotations()) {
+			m_annotations->reshapeAnnotation(a.id, a.rect.translated(offset));
 		}
 	}
 
@@ -230,64 +229,6 @@ const Layer *LayerStack::getLayer(int id) const
 	return nullptr;
 }
 
-Annotation *LayerStack::getAnnotation(int id)
-{
-	foreach(Annotation *a, _annotations)
-		if(a->id() == id)
-			return a;
-	return 0;
-}
-
-Annotation *LayerStack::addAnnotation(int id, const QRect &initialrect)
-{
-	if(getAnnotation(id) != 0) {
-		qWarning() << "Tried to add annotation" << id << "which already exists!";
-		return 0;
-	}
-
-	Annotation *a = new Annotation(id);
-	a->setRect(initialrect);
-	_annotations.append(a);
-	emit annotationChanged(id);
-
-	return a;
-}
-
-void LayerStack::reshapeAnnotation(int id, const QRect &newrect)
-{
-	Annotation *a = getAnnotation(id);
-	if(!a) {
-		qWarning() << "Tried to reshape non-existent annotation" << id;
-		return;
-	}
-	a->setRect(newrect);
-	emit annotationChanged(id);
-}
-
-void LayerStack::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
-{
-	Annotation *a = getAnnotation(id);
-	if(!a) {
-		qWarning() << "Tried to change non-existent annotation" << id;
-		return;
-	}
-	a->setText(newtext);
-	a->setBackgroundColor(bgcolor);
-	emit annotationChanged(id);
-}
-
-void LayerStack::deleteAnnotation(int id)
-{
-	Annotation *a = getAnnotation(id);
-	if(!a) {
-		qWarning() << "Tried to delete non-existent annotation" << id;
-		return;
-	}
-	_annotations.removeAll(a);
-	delete a;
-	emit annotationChanged(id);
-}
-
 /**
  * @param id layer id
  * @return layer index. Returns a negative index if layer is not found
@@ -403,15 +344,15 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
 	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
 
-	foreach(const Layer *l, _layers)
+	for(const Layer *l : _layers)
 		flat.merge(l, true);
 
 	QImage image = flat.toImage();
 
 	if(includeAnnotations) {
 		QPainter painter(&image);
-		foreach(Annotation *a, _annotations)
-			a->paint(&painter);
+		for(const Annotation &a : m_annotations->getAnnotations())
+			a.paint(&painter);
 	}
 
 	return image;
@@ -628,8 +569,6 @@ Savepoint::~Savepoint()
 {
 	while(!layers.isEmpty())
 		delete layers.takeLast();
-	while(!annotations.isEmpty())
-		delete annotations.takeLast();
 }
 
 Savepoint *LayerStack::makeSavepoint()
@@ -640,8 +579,7 @@ Savepoint *LayerStack::makeSavepoint()
 		sp->layers.append(new Layer(*l));
 	}
 
-	foreach(Annotation *a, _annotations)
-		sp->annotations.append(new Annotation(*a));
+	sp->annotations = m_annotations->getAnnotations();
 
 	sp->width = _width;
 	sp->height = _height;
@@ -697,20 +635,7 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		_layers.append(new Layer(*l));
 
 	// Restore annotations
-	QSet<int> annotations;
-	while(!_annotations.isEmpty()) {
-		Annotation *a = _annotations.takeLast();
-		annotations.insert(a->id());
-		delete a;
-	}
-	foreach(const Annotation *a, savepoint->annotations) {
-		annotations.insert(a->id());
-		_annotations.append(new Annotation(*a));
-	}
-
-	foreach(int id, annotations)
-		emit annotationChanged(id);
-
+	m_annotations->setAnnotations(savepoint->annotations);
 
 	notifyAreaChanged();
 }
@@ -728,8 +653,8 @@ void Savepoint::toDatastream(QDataStream &out) const
 
 	// Write annotations
 	out << quint16(annotations.size());
-	foreach(const Annotation *annotation, annotations) {
-		annotation->toDatastream(out);
+	for(const Annotation &annotation : annotations) {
+		annotation.toDataStream(out);
 	}
 }
 
@@ -751,7 +676,7 @@ Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
 	quint16 annotations;
 	in >> annotations;
 	while(annotations--) {
-		sp->annotations.append(Annotation::fromDatastream(in));
+		sp->annotations.append(Annotation::fromDataStream(in));
 	}
 
 	return sp;

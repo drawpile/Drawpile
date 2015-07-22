@@ -30,7 +30,6 @@
 #include "ora/orareader.h"
 #include "statetracker.h"
 
-#include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -149,10 +148,10 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	}
 
 	// Create annotations
-	foreach(const paintcore::Annotation *a, _session->image()->annotations()) {
-		const QRect g = a->rect();
-		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a->id(), g.x(), g.y(), g.width(), g.height())));
-		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a->id(), a->backgroundColor().rgba(), a->text()))));
+	for(const paintcore::Annotation &a : _session->image()->annotations()->getAnnotations()) {
+		const QRect g = a.rect;
+		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a.id, g.x(), g.y(), g.width(), g.height())));
+		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a.id, a.background.rgba(), a.text))));
 	}
 
 	// User tool changes

@@ -816,24 +816,24 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
 {
-	_image->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
+	_image->annotations()->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
 	if(cmd.contextId() == _myid)
 		emit myAnnotationCreated(cmd.id());
 }
 
 void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)
 {
-	_image->reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
+	_image->annotations()->reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
 }
 
 void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 {
-	_image->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
+	_image->annotations()->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
 }
 
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 {
-	_image->deleteAnnotation(cmd.id());
+	_image->annotations()->deleteAnnotation(cmd.id());
 }
 
 void StateSavepoint::toDatastream(QDataStream &out) const

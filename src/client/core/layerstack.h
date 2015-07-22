@@ -28,9 +28,10 @@
 
 class QDataStream;
 
+#include "annotationmodel.h"
+
 namespace paintcore {
 
-class Annotation;
 class Layer;
 class Tile;
 class Savepoint;
@@ -80,26 +81,9 @@ public:
 	//! Get a layer by its ID
 	const Layer *getLayer(int id) const;
 
-	//! Check if there are any annotations
-	bool hasAnnotations() const { return !_annotations.isEmpty(); }
-
-	//! Get an annotation by its ID
-	Annotation *getAnnotation(int id);
-
-	//! Get all annotations
-	const QList<Annotation*> &annotations() const { return _annotations; }
-
-	//! Add a new annotation
-	Annotation *addAnnotation(int id, const QRect &initialrect);
-
-	//! Move and/or resize annotation
-	void reshapeAnnotation(int id, const QRect &newrect);
-
-	//! Change annotation content
-	void changeAnnotation(int id, const QString &newtext, const QColor &bgcolor);
-
-	//! Delete an annotation
-	void deleteAnnotation(int id);
+	//! Get this layer stack's annotations
+	const AnnotationModel *annotations() const { return m_annotations; }
+	AnnotationModel *annotations() { return m_annotations; }
 
 	//! Get the index of the specified layer
 	int indexOf(int id) const;
@@ -174,9 +158,6 @@ signals:
 	//! Layer width/height changed
 	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
-	//! Annotation with the given ID was just changed. (This includes addition and deletion)
-	void annotationChanged(int id);
-
 private:
 	void flattenTile(quint32 *data, int xindex, int yindex) const;
 
@@ -187,7 +168,7 @@ private:
 	int _width, _height;
 	int _xtiles, _ytiles;
 	QList<Layer*> _layers;
-	QList<Annotation*> _annotations;
+	AnnotationModel *m_annotations;
 
 	QBitArray _dirtytiles;
 	QRect _dirtyrect;
@@ -211,7 +192,7 @@ public:
 private:
 	Savepoint() {}
 	QList<Layer*> layers;
-	QList<Annotation*> annotations;
+	QList<Annotation> annotations;
 	int width, height;
 };
 

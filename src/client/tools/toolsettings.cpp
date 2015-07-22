@@ -46,8 +46,8 @@ using widgets::GroupedToolButton;
 #include "utils/palette.h"
 #include "utils/icon.h"
 
-#include "core/annotation.h"
 #include "core/blendmodes.h"
+#include "core/annotationmodel.h"
 
 #include <QTimer>
 #include <QTextBlock>
@@ -1015,10 +1015,10 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		item->setHighlight(true);
 		const paintcore::Annotation *a = item->getAnnotation();
 		Q_ASSERT(a);
-		_ui->content->setHtml(a->text());
-		_ui->btnBackground->setColor(a->backgroundColor());
-		setEditorBackgroundColor(a->backgroundColor());
-		if(a->text().isEmpty())
+		_ui->content->setHtml(a->text);
+		_ui->btnBackground->setColor(a->background);
+		setEditorBackgroundColor(a->background);
+		if(a->text.isEmpty())
 			resetContentFont(true, true, true);
 
 	}
@@ -1084,7 +1084,7 @@ void AnnotationSettings::bake()
 
 	int layer = _layerlist->currentLayer();
 	_client->sendUndopoint();
-	_client->sendImage(layer, a->rect().x(), a->rect().y(), img);
+	_client->sendImage(layer, a->rect.x(), a->rect.y(), img);
 	_client->sendAnnotationDelete(selected());
 	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }

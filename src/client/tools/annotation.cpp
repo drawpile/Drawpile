@@ -22,7 +22,7 @@
 #include "scene/canvasscene.h"
 #include "docks/toolsettingsdock.h"
 #include "net/client.h"
-#include "core/annotation.h"
+#include "core/annotationmodel.h"
 
 #include "tools/toolsettings.h"
 #include "tools/annotation.h"
@@ -113,7 +113,8 @@ void Annotation::end()
 				client().sendUndopoint();
 				client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
 			} else {
-				settings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
+				// TODO reimplement
+				//settings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
 			}
 
 			_selected = 0;
