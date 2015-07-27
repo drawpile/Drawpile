@@ -1634,7 +1634,7 @@ void MainWindow::toolChanged(tools::Type tool)
 	_view->setPointerTracking(tool==tools::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool
-	if(tool != tools::SELECTION)
+	if(tool != tools::SELECTION && tool != tools::POLYGONSELECTION)
 		cancelSelection();
 
 	_view->selectTool(tool);
