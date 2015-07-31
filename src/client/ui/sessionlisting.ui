@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
+    <width>267</width>
     <height>300</height>
    </rect>
   </property>
@@ -88,6 +88,16 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="nsfmSessionsLabel">
+     <property name="text">
+      <string notr="true">(age restricted session notice)</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
+     </property>
     </widget>
    </item>
    <item>

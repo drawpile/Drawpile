@@ -5,6 +5,7 @@
  * Fixed "reset size" for polygonal selections
  * Improved recording index file generation
  * Active selection is no longer cleared when switching from rectangle to lasso tool
+ * A link to unhide age restricted sessions is now shown in the session selector
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes

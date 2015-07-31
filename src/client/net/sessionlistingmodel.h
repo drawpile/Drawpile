@@ -38,14 +38,20 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
+	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
+
 public slots:
 	void setList(const QList<Session> sessions);
+	void setShowNsfm(bool nsfm);
 
 private:
+	void filterSessionList();
 	QUrl sessionUrl(int index) const;
 
-	QList<Session> _sessions;
-	QString _myProtocol;
+	QList<Session> m_filtered;
+	QList<Session> m_sessions;
+	QString m_myProtocol;
+	bool m_nsfm;
 };
 
 }

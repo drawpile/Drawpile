@@ -46,6 +46,7 @@ signals:
 
 private slots:
 	void refreshListing();
+	void stopNsfmFiltering();
 
 private:
 	Ui_SessionListingDialog *_ui;

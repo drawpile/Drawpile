@@ -29,16 +29,16 @@
 namespace sessionlisting {
 
 SessionListingModel::SessionListingModel(QObject *parent)
-	: QAbstractTableModel(parent)
+	: QAbstractTableModel(parent), m_nsfm(false)
 {
-	_myProtocol = QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(DRAWPILE_PROTO_MINOR_VERSION);
+	m_myProtocol = QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(DRAWPILE_PROTO_MINOR_VERSION);
 }
 
 int SessionListingModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _sessions.size();
+	return m_filtered.size();
 }
 
 int SessionListingModel::columnCount(const QModelIndex &parent) const
@@ -62,7 +62,7 @@ static QString ageString(const qint64 seconds)
 
 QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 {
-	const Session &s = _sessions.at(index.row());
+	const Session &s = m_filtered.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
@@ -109,8 +109,8 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 
 Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 {
-	const Session &s = _sessions.at(index.row());
-	if(s.protocol != _myProtocol)
+	const Session &s = m_filtered.at(index.row());
+	if(s.protocol != m_myProtocol)
 		return Qt::NoItemFlags;
 	else
 		return QAbstractTableModel::flags(index);
@@ -118,14 +118,33 @@ Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 
 void SessionListingModel::setList(const QList<sessionlisting::Session> sessions)
 {
+	m_sessions = sessions;
+	filterSessionList();
+}
+
+void SessionListingModel::setShowNsfm(bool nsfm)
+{
+	if(m_nsfm != nsfm) {
+		m_nsfm = nsfm;
+		if(!m_sessions.isEmpty())
+			filterSessionList();
+	}
+}
+
+void SessionListingModel::filterSessionList()
+{
 	beginResetModel();
-	_sessions = sessions;
+	m_filtered.clear();
+	for(const sessionlisting::Session &s : m_sessions) {
+		if(!s.nsfm || m_nsfm)
+			m_filtered << s;
+	}
 	endResetModel();
 }
 
 QUrl SessionListingModel::sessionUrl(int index) const
 {
-	const Session &s = _sessions.at(index);
+	const Session &s = m_filtered.at(index);
 	QUrl url;
 	url.setScheme("drawpile");
 	url.setHost(s.host);
