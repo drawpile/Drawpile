@@ -50,7 +50,7 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	ok->setEnabled(false);
 
 	_ui->listserver->setModel(new sessionlisting::ListServerModel(true, this));
-	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverilast", 0).toInt());
+	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverlast", 0).toInt());
 	connect(_ui->listserver, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshListing()));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
