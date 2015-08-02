@@ -14,4 +14,6 @@ CMakeLists.txt.user
 # Hidden files
 .*
 
+# Except the Travis-CI config
+!.travis.yml
 

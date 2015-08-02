@@ -1,0 +1,64 @@
+language: cpp
+
+sudo: false
+
+os:
+    - linux
+
+# The version of Clang available seems to be broken/too old.
+
+compiler:
+    - gcc
+
+# Some of our required dependencies aren't in Travis' whitelist, so we can't do
+# this the new way yet.
+#
+# Doing it the old way puts us on an Ubuntu 12.04 LTS host, so we need PPAs to
+# get sufficiently recent tools and libraries. The non-test toolchain PPA
+# misses out packages for 12.04 for some reason.
+
+sudo: required
+
+before_install:
+    - sudo add-apt-repository -y ppa:kalakris/cmake
+    - sudo apt-add-repository -y ppa:ubuntu-sdk-team/ppa
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq cmake g++-4.9 libgif-dev qtbase5-dev qtmultimedia5-dev libqt5svg5-dev
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 20
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 20
+    - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 30
+    - sudo update-alternatives --set cc /usr/bin/gcc
+    - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 30
+    - sudo update-alternatives --set c++ /usr/bin/g++
+    - sudo update-alternatives --set gcc /usr/bin/gcc-4.9
+    - sudo update-alternatives --set g++ /usr/bin/g++-4.9
+
+# For some reason, CMake in this hacked-up environment is setting an include
+# path of:
+#   /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
+# when the actual location of qplatformdefs.h is:
+#   /usr/share/qt5/mkspecs/linux-g++-64/
+# so we egregiously hack around this with CMAKE_CXX_FLAGS until Travis get a
+# newer environment because I've already burnt two weekends on trying to do it
+# properly.
+#
+# -DTOOLS=on is currently disabled because dprec2txt can't find
+# QCoreApplication.
+#
+# There is currently no 'test' target.
+#
+# Making VERBOSE=1 is handy for diagnosing build problems but masks compiler
+# warnings; Travis doesn't do anything to highlight them in the log.
+
+script:
+    - mkdir build
+    - cd build && cmake .. -DCMAKE_BUILD_TYPE=debug -DCMAKE_CXX_FLAGS="-I /usr/share/qt5/mkspecs/linux-g++-64/" && make -j 2
+
+# Don't try to build 2.x-series branches since we don't have the dependencies
+# for them (we currently depend on bundled ones which have been removed). Could
+# do this with 'only: stable-1.x', but want to be inclusive of PRs.
+
+branches:
+    except:
+        - master
