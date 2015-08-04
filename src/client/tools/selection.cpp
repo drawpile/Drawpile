@@ -17,120 +17,125 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "scene/selectionitem.h"
-#include "scene/canvasscene.h"
+#include "canvas/canvasmodel.h"
 #include "net/client.h"
 
 #include "tools/selection.h"
+#include "tools/toolcontroller.h"
 #include "tools/utils.h"
 
-#include <cmath>
+#include <QPixmap>
+#include <QtMath>
 
 namespace tools {
 
-void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
+void SelectionTool::begin(const paintcore::Point &point, float zoom)
 {
-	Q_UNUSED(right);
-
-	if(scene().selectionItem())
-		_handle = scene().selectionItem()->handleAt(point.toPoint(), zoom);
+	canvas::Selection *sel = owner.model()->selection();
+	if(sel)
+		m_handle = sel->handleAt(point, zoom);
 	else
-		_handle = drawingboard::SelectionItem::OUTSIDE;
+		m_handle = canvas::Selection::OUTSIDE;
 
-	_start = point.toPoint();
-	_p1 = _start;
+	m_start = point;
+	m_p1 = point;
 
-	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		if(scene().selectionItem()) {
-			scene().selectionItem()->pasteToCanvas(&client(), layer());
-			scene().selectionItem()->setMovedFromCanvas(false);
+	if(m_handle == canvas::Selection::OUTSIDE) {
+		if(sel) {
+			sel->pasteToCanvas(owner.client(), owner.activeLayer());
+			sel->setMovedFromCanvas(false);
 		}
 
-		initSelection();
+		sel = new canvas::Selection;
+		initSelection(sel);
+		owner.model()->setSelection(sel);
 	}
 }
 
 void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool center)
 {
-	if(!scene().selectionItem())
+	canvas::Selection *sel = owner.model()->selection();
+	if(!sel)
 		return;
 
-	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
+	if(m_handle==canvas::Selection::OUTSIDE) {
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		QPointF p = point - _start;
+		QPointF p = point - m_start;
 
-		if(scene().selectionItem()->pasteImage().isNull() && !scene().statetracker()->isLayerLocked(layer())) {
+		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
 			// Automatically cut the layer when the selection is transformed
-			QImage img = scene().selectionToImage(layer());
-			scene().selectionItem()->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, &client(), layer());
-			scene().selectionItem()->setPasteImage(img);
-			scene().selectionItem()->setMovedFromCanvas(true);
+			QImage img = owner.model()->selectionToImage(owner.activeLayer());
+			sel->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, owner.client(), owner.activeLayer());
+			sel->setPasteImage(img);
+			sel->setMovedFromCanvas(true);
 		}
 
-		if(_handle == drawingboard::SelectionItem::TRANSLATE && center) {
+		if(m_handle == canvas::Selection::TRANSLATE && center) {
 			// We use the center constraint during translation to rotate the selection
-			const QPoint center = scene().selectionItem()->polygonRect().center();
+			const QPointF center = sel->boundingRect().center();
 
-			double a0 = atan2(_start.y() - center.y(), _start.x() - center.x());
-			double a1 = atan2(point.y() - center.y(), point.x() - center.x());
+			double a0 = qAtan2(m_start.y() - center.y(), m_start.x() - center.x());
+			double a1 = qAtan2(point.y() - center.y(), point.x() - center.x());
 
-			scene().selectionItem()->rotate(a1-a0);
+			sel->rotate(a1-a0);
 
 		} else {
-			scene().selectionItem()->adjustGeometry(_handle, p.toPoint(), constrain);
+			sel->adjustGeometry(m_handle, p.toPoint(), constrain);
 		}
 
-		_start = point.toPoint();
+		m_start = point;
 	}
 }
 
 void SelectionTool::end()
 {
-	if(!scene().selectionItem())
+	canvas::Selection *sel = owner.model()->selection();
+	if(!sel)
 		return;
 
 	// Remove tiny selections
-	QRect sel = scene().selectionItem()->polygonRect();
-	if(sel.width() * sel.height() <= 2)
-		scene().setSelectionItem(0);
+	QRectF selrect = sel->boundingRect();
+	if(selrect.width() * selrect.height() <= 2)
+		owner.model()->setSelection(nullptr);
 }
 
-RectangleSelection::RectangleSelection(ToolCollection &owner)
+RectangleSelection::RectangleSelection(ToolController &owner)
 	: SelectionTool(owner, SELECTION, QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
 {
 }
 
-void RectangleSelection::initSelection()
+void RectangleSelection::initSelection(canvas::Selection *selection)
 {
-	scene().setSelectionItem(QRect(_start, _start));
+	QPoint p = m_start.toPoint();
+	selection->setShapeRect(QRect(p, p));
 }
 
 void RectangleSelection::newSelectionMotion(const paintcore::Point& point, bool constrain, bool center)
 {
 	QPointF p;
 	if(constrain)
-		p = constraints::square(_start, point);
+		p = constraints::square(m_start, point);
 	else
 		p = point;
 
 	if(center)
-		_p1 = _start - (p.toPoint() - _start);
+		m_p1 = m_start - (p.toPoint() - m_start);
 	else
-		_p1 = _start;
+		m_p1 = m_start;
 
-	scene().selectionItem()->setRect(QRectF(_p1, p).normalized().toRect());
+	owner.model()->selection()->setShapeRect(QRectF(m_p1, p).normalized().toRect());
 }
 
-PolygonSelection::PolygonSelection(ToolCollection &owner)
+PolygonSelection::PolygonSelection(ToolController &owner)
 	: SelectionTool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 2))
 {
 }
 
-void PolygonSelection::initSelection()
+void PolygonSelection::initSelection(canvas::Selection *selection)
 {
-	scene().setSelectionItem(QPolygon({ _start }));
+	selection->setShape(QPolygonF({ m_start }));
 }
 
 void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool constrain, bool center)
@@ -138,13 +143,14 @@ void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool co
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	scene().selectionItem()->addPointToPolygon(point.toPoint());
+	Q_ASSERT(owner.model()->selection());
+	owner.model()->selection()->addPointToShape(point);
 }
 
 void PolygonSelection::end()
 {
-	if(scene().selectionItem())
-		scene().selectionItem()->closePolygon();
+	if(owner.model()->selection())
+		owner.model()->selection()->closeShape();
 
 	SelectionTool::end();
 }

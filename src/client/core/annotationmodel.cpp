@@ -73,7 +73,6 @@ void AnnotationModel::addAnnotation(const Annotation &annotation)
 	beginInsertRows(QModelIndex(), m_annotations.size(), m_annotations.size());
 	m_annotations.append(annotation);
 	endInsertRows();
-	emit annotationChanged(annotation.id);
 }
 
 void AnnotationModel::addAnnotation(int id, const QRect &rect)
@@ -92,7 +91,6 @@ void AnnotationModel::deleteAnnotation(int id)
 	beginRemoveRows(QModelIndex(), idx, idx);
 	m_annotations.removeAt(idx);
 	endRemoveRows();
-	emit annotationChanged(id);
 }
 
 void AnnotationModel::reshapeAnnotation(int id, const QRect &newrect)
@@ -105,7 +103,6 @@ void AnnotationModel::reshapeAnnotation(int id, const QRect &newrect)
 
 	m_annotations[idx].rect = newrect;
 	emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
-	emit annotationChanged(id);
 }
 
 void AnnotationModel::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
@@ -119,37 +116,18 @@ void AnnotationModel::changeAnnotation(int id, const QString &newtext, const QCo
 	m_annotations[idx].background = bgcolor;
 
 	emit dataChanged(index(idx), index(idx), QVector<int>() << Qt::DisplayRole << BgColorRole);
-	emit annotationChanged(id);
 }
 
 void AnnotationModel::setAnnotations(const QList<Annotation> &annotations)
 {
-	// Old-style notification. To be removed once migration
-	// away from QGraphicsScene is complete.
-	QSet<int> ids;
-	for(const Annotation &a : m_annotations)
-		ids.insert(a.id);
-	for(const Annotation &a : annotations)
-		ids.insert(a.id);
-
 	beginResetModel();
 	m_annotations = annotations;
 	endResetModel();
-
-	for(int id : ids)
-		emit annotationChanged(id);
 }
 
 const Annotation *AnnotationModel::getById(int id) const
 {
 	for(const Annotation &a : m_annotations)
-		if(a.id == id)
-			return &a;
-	return nullptr;
-}
-Annotation *AnnotationModel::getById(int id)
-{
-	for(Annotation &a : m_annotations)
 		if(a.id == id)
 			return &a;
 	return nullptr;
@@ -161,6 +139,49 @@ int AnnotationModel::findById(int id) const
 		if(m_annotations.at(i).id == id)
 			return i;
 	return -1;
+}
+
+/**
+ * @brief Find the annotation at the given coordinates.
+ * @param pos point in canvas coordinates
+ * @return annotation ID or 0 if none found
+ */
+int AnnotationModel::annotationAtPos(const QPoint &pos) const
+{
+	for(const Annotation &a : m_annotations) {
+		if(a.rect.contains(pos))
+			return a.id;
+	}
+	return 0;
+}
+
+Annotation::Handle AnnotationModel::annotationHandleAt(int id, const QPoint &point, qreal zoom) const
+{
+	const Annotation *a = getById(id);
+	if(a)
+		return a->handleAt(point, zoom);
+	return Annotation::OUTSIDE;
+}
+
+void AnnotationModel::annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta)
+{
+	for(int idx=0;idx<m_annotations.size();++idx) {
+		if(m_annotations.at(idx).id == id) {
+			m_annotations[idx].adjustGeometry(handle, delta);
+			emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
+			return;
+		}
+	}
+}
+
+QList<int> AnnotationModel::getEmptyIds() const
+{
+	QList<int> ids;
+	for(const Annotation &a : m_annotations) {
+		if(a.isEmpty())
+			ids << a.id;
+	}
+	return ids;
 }
 
 void Annotation::paint(QPainter *painter) const
@@ -192,6 +213,59 @@ QImage Annotation::toImage() const
 	QPainter painter(&img);
 	paint(&painter, QRectF(0, 0, rect.width(), rect.height()));
 	return img;
+}
+
+/**
+ * Note. Assumes point is inside the text box.
+ */
+Annotation::Handle Annotation::handleAt(const QPoint &point, qreal zoom) const
+{
+	const qreal H = qMax(qreal(HANDLE_SIZE), HANDLE_SIZE / zoom);
+
+	const QRectF R = rect;
+
+	if(!R.contains(point))
+		return OUTSIDE;
+
+	QPointF p = point - R.topLeft();
+
+	if(p.x() < H) {
+		if(p.y() < H)
+			return RS_TOPLEFT;
+		else if(p.y() > R.height()-H)
+			return RS_BOTTOMLEFT;
+		return RS_LEFT;
+	} else if(p.x() > R.width() - H) {
+		if(p.y() < H)
+			return RS_TOPRIGHT;
+		else if(p.y() > R.height()-H)
+			return RS_BOTTOMRIGHT;
+		return RS_RIGHT;
+	} else if(p.y() < H)
+		return RS_TOP;
+	else if(p.y() > R.height()-H)
+		return RS_BOTTOM;
+
+	return TRANSLATE;
+}
+
+void Annotation::adjustGeometry(Handle handle, const QPoint &delta)
+{
+	switch(handle) {
+	case OUTSIDE: return;
+	case TRANSLATE: rect.translate(delta); break;
+	case RS_TOPLEFT: rect.adjust(delta.x(), delta.y(), 0, 0); break;
+	case RS_TOPRIGHT: rect.adjust(0, delta.y(), delta.x(), 0); break;
+	case RS_BOTTOMRIGHT: rect.adjust(0, 0, delta.x(), delta.y()); break;
+	case RS_BOTTOMLEFT: rect.adjust(delta.x(), 0, 0, delta.y()); break;
+	case RS_TOP: rect.adjust(0, delta.y(), 0, 0); break;
+	case RS_RIGHT: rect.adjust(0, 0, delta.x(), 0); break;
+	case RS_BOTTOM: rect.adjust(0, 0, 0, delta.y()); break;
+	case RS_LEFT: rect.adjust(delta.x(), 0, 0, 0); break;
+	}
+
+	if(rect.left() > rect.right() || rect.top() > rect.bottom())
+		rect = rect.normalized();
 }
 
 void Annotation::toDataStream(QDataStream &out) const

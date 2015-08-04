@@ -25,20 +25,11 @@ class QGestureEvent;
 class QTouchEvent;
 
 #include "core/point.h"
-#include "utils/strokesmoother.h"
-#include "utils/kis_cubic_curve.h"
 #include "tools/tool.h"
+#include "quick/pressure.h"
 
 namespace drawingboard {
 	class CanvasScene;
-}
-
-namespace net {
-	class Client;
-}
-
-namespace docs {
-	class ToolSettings;
 }
 
 namespace widgets {
@@ -54,20 +45,12 @@ class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
 	public:
-		enum PressureMode { PRESSUREMODE_STYLUS, PRESSUREMODE_DISTANCE, PRESSUREMODE_VELOCITY };
-
 		enum TabletMode { DISABLE_TABLET, ENABLE_TABLET, HYBRID_TABLET }; // hybrid mode combines tablet and mouse events to work around QTabletEvent bugs
 
 		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
 		void setCanvas(drawingboard::CanvasScene *scene);
-
-		//! Set the network client
-		void setClient(net::Client *client);
-
-		//! Set the tool settings panel
-		void setToolSettings(docks::ToolSettings *settings);
 		
 		//! Get the current zoom factor
 		qreal zoom() const { return _zoom; }
@@ -75,18 +58,12 @@ class CanvasView : public QGraphicsView
 		//! Get the current rotation angle in degrees
 		qreal rotation() const { return _rotate; }
 		
-		//! Set fake pressure mode
-		void setPressureMode(PressureMode mode, float param);
-
 		using QGraphicsView::mapToScene;
 		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
 		paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
 
 		//! The center point of the view in scene coordinates
 		QPoint viewCenterPoint() const;
-
-		//! Quick adjust current tool attribute 1 if possible
-		void doQuickAdjust1(float delta);
 
 		//! Enable/disable tablet event handling
 		void setTabletMode(TabletMode mode);
@@ -110,9 +87,6 @@ class CanvasView : public QGraphicsView
 		//! A color was dropped on the widget
 		void colorDropped(const QColor &color);
 
-		//! Viewport has changed
-		void viewRectChange(const QPolygonF& viewport);
-
 		//! The view has been transformed
 		void viewTransformed(qreal zoom, qreal angle);
 
@@ -122,17 +96,12 @@ class CanvasView : public QGraphicsView
 		//! Pointer was just brought to the top of the widget border
 		void hotBorder(bool hot);
 
+		void penDown(const QPointF &point, qreal pressure);
+		void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
+		void penUp();
+		void quickAdjust(qreal value);
+
 	public slots:
-		//! Select the active tool
-		void selectTool(tools::Type tool);
-		
-		//! Select the currently active layer
-		void selectLayer(int layer_id);
-
-		//! Select the way layers are drawn
-		void setLayerViewMode(int mode);
-		void updateLayerViewParams();
-
 		//! Set the size of the brush preview outline
 		void setOutlineSize(int size);
 
@@ -162,17 +131,7 @@ class CanvasView : public QGraphicsView
 		//! Send pointer position updates even when not drawing
 		void setPointerTracking(bool tracking);
 
-		//! Set stroke smoothing strength
-		void setStrokeSmoothing(int smoothing);
-
-		//! Set stylus pressure adjustment curve
-		void setPressureCurve(const KisCubicCurve &curve);
-
-		//! Set distance to pressure curve
-		void setDistanceCurve(const KisCubicCurve &curve);
-
-		//! Set velocity to pressure curve
-		void setVelocityCurve(const KisCubicCurve &curve);
+		void setPressureMapping(const PressureMapping &mapping);
 
 		//! Increase/decrease zoom factor by this many steps
 		void zoomSteps(int steps);
@@ -183,11 +142,11 @@ class CanvasView : public QGraphicsView
 		//! Decrease zoom factor
 		void zoomout();
 
+		void setToolCursor(const QCursor &cursor);
+
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
-		void scrollContentsBy(int dx, int dy);
-		void resizeEvent(QResizeEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
@@ -208,8 +167,9 @@ class CanvasView : public QGraphicsView
 		void penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 		void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
+		void doQuickAdjust1(float delta);
+
 	private:
-		void viewRectChanged();
 		float mapPressure(float pressure, bool stylus);
 
 		//! View transformation mode (for dragging)
@@ -257,9 +217,8 @@ class CanvasView : public QGraphicsView
 		//! Previous pointer location
 		paintcore::Point _prevpoint;
 		paintcore::Point _prevoutlinepoint;
-		float _pointerdistance;
-		float _pointervelocity;
-		StrokeSmoother _smoother;
+		qreal _pointerdistance;
+		qreal _pointervelocity;
 		bool _prevshift;
 		bool _prevalt;
 
@@ -270,6 +229,7 @@ class CanvasView : public QGraphicsView
 		bool _showoutline, _subpixeloutline;
 		bool _enablecrosshair;
 		QCursor _crosshaircursor, _colorpickcursor;
+		QCursor m_toolcursor;
 
 		qreal _zoom; // View zoom in percents
 		qreal _rotate; // View rotation in degrees
@@ -277,17 +237,9 @@ class CanvasView : public QGraphicsView
 		bool _mirror; // Flip X axis
 
 		drawingboard::CanvasScene *_scene;
-		
-		tools::ToolCollection _toolbox;
-		tools::Tool *_current_tool;
 
 		// Input settings
-		int _smoothing;
-		PressureMode _pressuremode;
-		float _modeparam;
-		KisCubicCurve _pressurecurve;
-		KisCubicCurve _pressuredistance;
-		KisCubicCurve _pressurevelocity;
+		PressureMapping m_pressuremapping;
 
 		TabletMode _tabletmode;
 

@@ -25,9 +25,9 @@ namespace tools {
 
 class LaserPointer : public Tool {
 public:
-	LaserPointer(ToolCollection &owner);
+	LaserPointer(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
+	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 

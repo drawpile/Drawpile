@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,30 +19,34 @@
 #ifndef LASERTRAILITEM_H
 #define LASERTRAILITEM_H
 
-#include <QGraphicsLineItem>
+#include <QGraphicsItem>
 #include <QPen>
 
 namespace drawingboard {
 
-class LaserTrailItem : public QGraphicsLineItem
+class LaserTrailItem : public QGraphicsItem
 {
 public:
-	LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, bool thick, QGraphicsItem *parent=0);
+	LaserTrailItem(bool thick, QGraphicsItem *parent=0);
 
 	void setThick(bool thick);
 
-	/**
-	 * @brief Advance fadeout animation
-	 * @return true if the item just became completely transparent
-	 */
-	bool fadeoutStep(float dt);
+	void animationStep(float dt);
 
+	void setPoints(const QVector<QPointF> &points);
+	void setColor(const QColor &color);
+	void setFadeVisible(bool visible);
+
+	QRectF boundingRect() const;
+protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-	float _life;
 	bool _blink;
+	bool m_visible;
 	QPen _pen1, _pen2;
+	QVector<QPointF> m_points;
+	QRectF m_bounds;
 };
 
 }

@@ -17,13 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-#include <QFile>
-#include <QTextStream>
-#include <QRegularExpression>
-#include <QFileInfo>
-#include <QDir>
-
 #include "textloader.h"
 #include "core/blendmodes.h"
 #include "net/utils.h"
@@ -35,6 +28,14 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 
+#include <QDebug>
+#include <QFile>
+#include <QTextStream>
+#include <QRegularExpression>
+#include <QFileInfo>
+#include <QDir>
+
+namespace canvas {
 
 using protocol::MessagePtr;
 
@@ -247,7 +248,7 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 
 	Params params = extractParams(args.mid(sep+1));
 
-	drawingboard::ToolContext &ctx = _ctx[id];
+	canvas::ToolContext &ctx = _ctx[id];
 
 	ParamIterator i = params.constBegin();
 	while (i!=params.constEnd()) {
@@ -613,5 +614,7 @@ bool TextCommandLoader::load()
 	}
 
 	return true;
+}
+
 }
 

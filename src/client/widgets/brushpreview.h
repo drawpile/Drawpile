@@ -60,7 +60,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return _shape; }
 
 		//! Get the displayed brush
-		paintcore::Brush brush(bool swapcolors) const;
+		paintcore::Brush brush(bool swapcolors=false) const;
 
 		bool isTransparentBackground() const { return _tranparentbg; }
 

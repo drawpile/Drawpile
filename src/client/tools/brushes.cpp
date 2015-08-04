@@ -17,28 +17,26 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "scene/canvasscene.h"
-#include "docks/toolsettingsdock.h"
 #include "core/brush.h"
 #include "net/client.h"
-#include "statetracker.h"
 
+#include "tools/toolcontroller.h"
 #include "tools/brushes.h"
 
 namespace tools {
 
-void BrushBase::begin(const paintcore::Point& point, bool right, float zoom)
+void BrushBase::begin(const paintcore::Point& point, float zoom)
 {
 	Q_UNUSED(zoom);
-	const paintcore::Brush &brush = settings().getBrush(right);
-	drawingboard::ToolContext tctx = {
-		layer(),
-		brush
+
+	canvas::ToolContext tctx = {
+		owner.activeLayer(),
+		owner.activeBrush()
 	};
 
-	client().sendUndopoint();
-	client().sendToolChange(tctx);
-	client().sendStroke(point);
+	owner.client()->sendUndopoint();
+	owner.client()->sendToolChange(tctx);
+	owner.client()->sendStroke(point);
 }
 
 void BrushBase::motion(const paintcore::Point& point, bool constrain, bool center)
@@ -46,12 +44,12 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	client().sendStroke(point);
+	owner.client()->sendStroke(point);
 }
 
 void BrushBase::end()
 {
-	client().sendPenup();
+	owner.client()->sendPenup();
 }
 
 }

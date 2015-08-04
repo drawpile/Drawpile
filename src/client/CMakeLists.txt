@@ -17,14 +17,10 @@ set (
 	SOURCES
 	main.cpp
 	mainwindow.cpp
-	statetracker.cpp
-	retcon.cpp
-	loader.cpp
-	textloader.cpp
 	notifications.cpp
+	tools/toolcontroller.cpp
 	tools/toolsettings.cpp
 	tools/toolproperties.cpp
-	tools/tool.cpp
 	tools/utils.cpp
 	tools/annotation.cpp
 	tools/brushes.cpp
@@ -33,6 +29,20 @@ set (
 	tools/selection.cpp
 	tools/shapetools.cpp
 	tools/floodfill.cpp
+	canvas/statetracker.cpp
+	canvas/canvasmodel.cpp
+	canvas/selection.cpp
+	canvas/usercursormodel.cpp
+	canvas/lasertrailmodel.cpp
+	canvas/retcon.cpp
+	canvas/loader.cpp
+	canvas/textloader.cpp
+	quick/layerstackitem.cpp
+	quick/canvasinputarea.cpp
+	quick/canvastransform.cpp
+	quick/eventfixfilter.cpp
+	quick/polylineitem.cpp
+	quick/tabletstate.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp

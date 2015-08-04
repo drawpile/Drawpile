@@ -19,6 +19,7 @@
 
 #include "toolsettings.h"
 #include "toolproperties.h"
+#include "toolcontroller.h"
 #include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
@@ -37,8 +38,8 @@ using widgets::GroupedToolButton;
 #include "ui_lasersettings.h"
 #include "ui_fillsettings.h"
 
-#include "scene/annotationitem.h"
-#include "scene/selectionitem.h"
+#include "canvas/canvasmodel.h"
+
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "net/client.h"
@@ -48,6 +49,7 @@ using widgets::GroupedToolButton;
 
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
+#include "core/layerstack.h"
 
 #include <QTimer>
 #include <QTextBlock>
@@ -168,9 +170,9 @@ void PenSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-paintcore::Brush PenSettings::getBrush(bool swapcolors) const
+paintcore::Brush PenSettings::getBrush() const
 {
-	return _ui->preview->brush(swapcolors);
+	return _ui->preview->brush();
 }
 
 int PenSettings::getSize() const
@@ -287,9 +289,9 @@ void EraserSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-paintcore::Brush EraserSettings::getBrush(bool swapcolors) const
+paintcore::Brush EraserSettings::getBrush() const
 {
-	return _ui->preview->brush(swapcolors);
+	return _ui->preview->brush();
 }
 
 int EraserSettings::getSize() const
@@ -393,9 +395,9 @@ void BrushSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-paintcore::Brush BrushSettings::getBrush(bool swapcolors) const
+paintcore::Brush BrushSettings::getBrush() const
 {
-	return _ui->preview->brush(swapcolors);
+	return _ui->preview->brush();
 }
 
 int BrushSettings::getSize() const
@@ -493,9 +495,9 @@ void SmudgeSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-paintcore::Brush SmudgeSettings::getBrush(bool swapcolors) const
+paintcore::Brush SmudgeSettings::getBrush() const
 {
-	return _ui->preview->brush(swapcolors);
+	return _ui->preview->brush();
 }
 
 int SmudgeSettings::getSize() const
@@ -514,9 +516,8 @@ void BrushlessSettings::setBackground(const QColor& color)
 	_dummybrush.setColor2(color);
 }
 
-paintcore::Brush BrushlessSettings::getBrush(bool swapcolors) const
+paintcore::Brush BrushlessSettings::getBrush() const
 {
-	Q_UNUSED(swapcolors);
 	return _dummybrush;
 }
 
@@ -595,21 +596,18 @@ void LaserPointerSettings::quickAdjust1(float adjustment)
 		_ui->persistence->setValue(_ui->persistence->value() + adj);
 }
 
-paintcore::Brush LaserPointerSettings::getBrush(bool swapcolors) const
+paintcore::Brush LaserPointerSettings::getBrush() const
 {
 	QColor c;
-	if(swapcolors)
-		c = _dummybrush.color2();
-	else {
-		if(_ui->color0->isChecked())
-			c = _ui->color0->color();
-		else if(_ui->color1->isChecked())
-			c = _ui->color1->color();
-		else if(_ui->color2->isChecked())
-			c = _ui->color2->color();
-		else if(_ui->color3->isChecked())
-			c = _ui->color3->color();
-	}
+	if(_ui->color0->isChecked())
+		c = _ui->color0->color();
+	else if(_ui->color1->isChecked())
+		c = _ui->color1->color();
+	else if(_ui->color2->isChecked())
+		c = _ui->color2->color();
+	else if(_ui->color3->isChecked())
+		c = _ui->color3->color();
+
 	const_cast<paintcore::Brush&>(_dummybrush).setColor(c);
 	return _dummybrush;
 }
@@ -722,9 +720,9 @@ void SimpleSettings::quickAdjust1(float adjustment)
 		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
 }
 
-paintcore::Brush SimpleSettings::getBrush(bool swapcolors) const
+paintcore::Brush SimpleSettings::getBrush() const
 {
-	return _ui->preview->brush(swapcolors);
+	return _ui->preview->brush();
 }
 
 int SimpleSettings::getSize() const
@@ -797,7 +795,8 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), BrushlessSettings(name, title, "draw-text"), _ui(0), _noupdate(false)
+	: QObject(), BrushlessSettings(name, title, "draw-text"), _ui(0), _noupdate(false),
+	  m_ctrl(nullptr)
 {
 }
 
@@ -989,38 +988,20 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 	cursor.mergeCharFormat(fmt);
 }
 
-int AnnotationSettings::selected() const
-{
-	if(_selection.isNull())
-		return 0;
-	return _selection->id();
-}
-
-void AnnotationSettings::unselect(int id)
-{
-	if(selected() == id)
-		setSelection(0);
-}
-
-void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
+void AnnotationSettings::setSelectionId(int id)
 {
 	_noupdate = true;
-	setUiEnabled(item!=0);
+	setUiEnabled(id>0);
 
-	if(_selection)
-		_selection->setHighlight(false);
-
-	_selection = item;
-	if(item) {
-		item->setHighlight(true);
-		const paintcore::Annotation *a = item->getAnnotation();
+	m_selectionId = id;
+	if(id) {
+		const paintcore::Annotation *a = m_ctrl->model()->layerStack()->annotations()->getById(id);
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text);
 		_ui->btnBackground->setColor(a->background);
 		setEditorBackgroundColor(a->background);
 		if(a->text.isEmpty())
 			resetContentFont(true, true, true);
-
 	}
 	_noupdate = false;
 }
@@ -1052,10 +1033,10 @@ void AnnotationSettings::saveChanges()
 	if(!selected())
 		return;
 
-	Q_ASSERT(_client);
+	Q_ASSERT(m_ctrl);
 
 	if(selected())
-		_client->sendAnnotationEdit(
+		m_ctrl->client()->sendAnnotationEdit(
 			selected(),
 			_ui->btnBackground->color(),
 			_ui->content->toHtml()
@@ -1065,28 +1046,25 @@ void AnnotationSettings::saveChanges()
 void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
-	Q_ASSERT(_client);
-	_client->sendUndopoint();
-	_client->sendAnnotationDelete(selected());
-	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
+	Q_ASSERT(m_ctrl);
+	m_ctrl->client()->sendUndopoint();
+	m_ctrl->client()->sendAnnotationDelete(selected());
 }
 
 void AnnotationSettings::bake()
 {
 	Q_ASSERT(selected());
-	Q_ASSERT(_layerlist);
-	Q_ASSERT(_client);
+	Q_ASSERT(m_ctrl);
 
-	const paintcore::Annotation *a = _selection->getAnnotation();
+	const paintcore::Annotation *a = m_ctrl->model()->layerStack()->annotations()->getById(selected());
 	Q_ASSERT(a);
 
 	QImage img = a->toImage();
 
-	int layer = _layerlist->currentLayer();
-	_client->sendUndopoint();
-	_client->sendImage(layer, a->rect.x(), a->rect.y(), img);
-	_client->sendAnnotationDelete(selected());
-	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
+	int layer = m_ctrl->activeLayer();
+	m_ctrl->client()->sendUndopoint();
+	m_ctrl->client()->sendImage(layer, a->rect.x(), a->rect.y(), img);
+	m_ctrl->client()->sendAnnotationDelete(selected());
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform)
@@ -1115,24 +1093,32 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 void SelectionSettings::flipSelection()
 {
-	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(!m_ctrl->model())
+		return;
+
+	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel)
 		sel->scale(1, -1);
-
 }
 
 void SelectionSettings::mirrorSelection()
 {
-	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(!m_ctrl->model())
+		return;
+
+	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel)
 		sel->scale(-1, 1);
 }
 
 void SelectionSettings::fitToScreen()
 {
-	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(!m_ctrl->model())
+		return;
+
+	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel) {
-		const QSizeF size = sel->polygonRect().size();
+		const QSizeF size = sel->boundingRect().size();
 		const QRectF screenRect = _view->mapToScene(_view->rect()).boundingRect();
 		const QSizeF screen = screenRect.size() * 0.7;
 
@@ -1141,8 +1127,8 @@ void SelectionSettings::fitToScreen()
 			sel->scale(newsize.width() / size.width(), newsize.height() / size.height());
 		}
 
-		if(!sel->polygonRect().intersects(screenRect.toRect())) {
-			QPointF offset = screenRect.center() - sel->polygonRect().center();
+		if(!sel->boundingRect().intersects(screenRect.toRect())) {
+			QPointF offset = screenRect.center() - sel->boundingRect().center();
 			sel->translate(offset.toPoint());
 		}
 	}
@@ -1150,9 +1136,12 @@ void SelectionSettings::fitToScreen()
 
 void SelectionSettings::resetSize()
 {
-	drawingboard::SelectionItem *sel = _scene->selectionItem();
+	if(!m_ctrl->model())
+		return;
+
+	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel)
-		sel->resetPolygonShape();
+		sel->resetShape();
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)

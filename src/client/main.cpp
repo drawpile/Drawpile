@@ -25,6 +25,9 @@
 #include "utils/icon.h"
 #include "notifications.h"
 
+#include "canvas/register.h"
+#include "quick/register.h"
+
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
 #endif
@@ -131,6 +134,30 @@ void DrawpileApp::openUrl(QUrl url)
 	}
 }
 
+void DrawpileApp::openBlankDocument()
+{
+	// Open a new window with a blank image
+	QSettings cfg;
+
+	QSize maxSize = desktop()->screenGeometry().size();
+	QSize size = cfg.value("history/newsize").toSize();
+
+	if(size.width()<100 || size.height()<100) {
+		// No previous size, or really small size
+		size = QSize(800, 600);
+	} else {
+		// Make sure previous size is not ridiculously huge
+		size = size.boundedTo(maxSize);
+	}
+
+	QColor color = cfg.value("history/newcolor").value<QColor>();
+	if(!color.isValid())
+		color = Qt::white;
+
+	MainWindow *win = new MainWindow;
+	win->newDocument(size, color);
+}
+
 QStringList DrawpileApp::dataPaths()
 {
 	QStringList datapaths;
@@ -185,6 +212,9 @@ int main(int argc, char *argv[]) {
 	// Initialize application
 	DrawpileApp app(argc,argv);
 
+	registerCanvasTypes();
+	registerQuickTypes();
+
 	icon::selectThemeVariant();
 
 #ifdef Q_OS_MAC
@@ -224,24 +254,7 @@ int main(int argc, char *argv[]) {
 		app.openUrl(url);
 	} else {
 		// No arguments, start with an empty document
-		QSettings cfg;
-
-		QSize maxSize = app.desktop()->screenGeometry().size();
-		QSize size = cfg.value("history/newsize").toSize();
-		if(size.width()<100 || size.height()<100) {
-			// No previous size, or really small size
-			size = QSize(800, 600);
-		} else {
-			// Make sure previous size is not ridiculously huge
-			size = size.boundedTo(maxSize);
-		}
-
-		QColor color = cfg.value("history/newcolor").value<QColor>();
-		if(!color.isValid())
-			color = Qt::white;
-
-		MainWindow *win = new MainWindow;
-		win->newDocument(size, color);
+		app.openBlankDocument();
 	}
 
 	return app.exec();

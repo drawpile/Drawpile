@@ -27,9 +27,9 @@ namespace tools {
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, Qt::CrossCursor) {}
+		BrushBase(ToolController &owner, Type type) : Tool(owner, type, Qt::CrossCursor) {}
 
-		void begin(const paintcore::Point& point, bool right, float zoom);
+		void begin(const paintcore::Point& point, float zoom);
 		void motion(const paintcore::Point& point, bool constrain, bool center);
 		void end();
 
@@ -43,7 +43,7 @@ class BrushBase : public Tool
  */
 class Pen : public BrushBase {
 	public:
-		Pen(ToolCollection &owner) : BrushBase(owner, PEN) {}
+		Pen(ToolController &owner) : BrushBase(owner, PEN) {}
 };
 
 /**
@@ -53,7 +53,7 @@ class Pen : public BrushBase {
  */
 class Brush : public BrushBase {
 	public:
-		Brush(ToolCollection &owner) : BrushBase(owner, BRUSH) {}
+		Brush(ToolController &owner) : BrushBase(owner, BRUSH) {}
 };
 
 /**
@@ -63,7 +63,7 @@ class Brush : public BrushBase {
  */
 class Smudge : public BrushBase {
 public:
-	Smudge(ToolCollection &owner) : BrushBase(owner, SMUDGE) { }
+	Smudge(ToolController &owner) : BrushBase(owner, SMUDGE) { }
 };
 
 /**
@@ -74,7 +74,7 @@ public:
  */
 class Eraser : public BrushBase {
 	public:
-		Eraser(ToolCollection &owner) : BrushBase(owner, ERASER) {}
+		Eraser(ToolController &owner) : BrushBase(owner, ERASER) {}
 };
 
 }

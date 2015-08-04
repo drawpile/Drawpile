@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include <QDebug>
 #include <QTimer>
 #include <QApplication>
-#include <QPainter>
 
 #include "scene/canvasscene.h"
 #include "scene/canvasitem.h"
@@ -27,26 +26,24 @@
 #include "scene/annotationitem.h"
 #include "scene/usermarkeritem.h"
 #include "scene/lasertrailitem.h"
-#include "statetracker.h"
 
-#include "net/client.h"
+#include "canvas/canvasmodel.h"
+#include "canvas/statetracker.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "ora/orawriter.h"
 
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0),
-	  _toolpreview(0),
-	  _selection(0),
-	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true), _thickLaserTrails(false)
+	: QGraphicsScene(parent), _image(0), m_model(nullptr),
+	  m_selection(nullptr),
+	  _showAnnotationBorders(false), _showAnnotations(true), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true), _thickLaserTrails(false)
 {
 	setItemIndexMethod(NoIndex);
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
 	_animTickTimer = new QTimer(this);
-	connect(_animTickTimer, SIGNAL(timeout()), this, SLOT(advanceUsermarkerAnimation()));
+	connect(_animTickTimer, &QTimer::timeout, this, &CanvasScene::advanceUsermarkerAnimation);
 	_animTickTimer->setInterval(200);
 	_animTickTimer->start(200);
 }
@@ -54,50 +51,68 @@ CanvasScene::CanvasScene(QObject *parent)
 CanvasScene::~CanvasScene()
 {
 	delete _image;
-	delete _statetracker;
 }
 
 /**
  * This prepares the canvas for new drawing commands.
  * @param myid the context id of the local user
  */
-void CanvasScene::initCanvas(net::Client *client)
+void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
 	delete _image;
-	delete _statetracker;
-	_image = new CanvasItem();
-	_statetracker = new StateTracker(_image->image(), client->layerlist(), client->myId(), this);
 
-	connect(_statetracker, &StateTracker::myAnnotationCreated, [this](int id) {
-		emit myAnnotationCreated(getAnnotationItem(id));
-	});
-	connect(_statetracker, SIGNAL(layerAutoselectRequest(int)), this, SIGNAL(layerAutoselectRequest(int)));
-	connect(_statetracker, SIGNAL(userMarkerAttribs(int,QColor,QString)), this, SLOT(setUserMarkerAttribs(int,QColor,QString)));
-	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
-	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
+	m_model = model;
 
-	connect(_image->image(), SIGNAL(resized(int,int,QSize)), this, SLOT(handleCanvasResize(int,int,QSize)));
-	connect(_image->image()->annotations(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
-	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image->image(), SLOT(setLayerHidden(int,bool)));
+	_image = new CanvasItem(m_model->layerStack());
+
+	connect(m_model->layerStack(), &paintcore::LayerStack::resized, this, &CanvasScene::handleCanvasResize);
+
+	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
+	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
+	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
+	connect(anns, &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
+
+	canvas::UserCursorModel *cursors = m_model->userCursors();
+	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
+	connect(cursors, &canvas::UserCursorModel::dataChanged, this, &CanvasScene::userCursorChanged);
+	connect(cursors, &canvas::UserCursorModel::rowsAboutToBeRemoved, this, &CanvasScene::userCursorRemoved);
+
+	canvas::LaserTrailModel *lasers = m_model->laserTrails();
+	connect(lasers, &canvas::LaserTrailModel::rowsInserted, this, &CanvasScene::laserAdded);
+	connect(lasers, &canvas::LaserTrailModel::dataChanged, this, &CanvasScene::laserChanged);
+	connect(lasers, &canvas::LaserTrailModel::rowsAboutToBeRemoved, this, &CanvasScene::laserRemoved);
+
+	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
 	addItem(_image);
 
 	// Clear out any old annotation items
-	foreach(QGraphicsItem *item, items()) {
+	Q_FOREACH(QGraphicsItem *item, items()) {
 		if(item->type() == AnnotationItem::Type) {
-			emit annotationDeleted(static_cast<AnnotationItem*>(item)->id());
 			delete item;
 		}
 	}
 
-	foreach(UserMarkerItem *i, _usermarkers)
+	Q_FOREACH(UserMarkerItem *i, m_usermarkers)
 		delete i;
-	_usermarkers.clear();
+	m_usermarkers.clear();
 	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
-	emit canvasInitialized();
 	emit changed(regions);
+}
+
+void CanvasScene::onSelectionChanged(canvas::Selection *selection)
+{
+	if(m_selection) {
+		removeItem(m_selection);
+		delete m_selection;
+		m_selection = nullptr;
+	}
+	if(selection) {
+		m_selection = new SelectionItem(selection);
+		addItem(m_selection);
+	}
 }
 
 void CanvasScene::showAnnotations(bool show)
@@ -118,25 +133,6 @@ void CanvasScene::showAnnotationBorders(bool hl)
 	}
 }
 
-AnnotationItem *CanvasScene::annotationAt(const QPoint &point)
-{
-	foreach(QGraphicsItem *i, items(point)) {
-		if(i->type() == AnnotationItem::Type)
-			return static_cast<AnnotationItem*>(i);
-	}
-	return 0;
-}
-
-QList<int> CanvasScene::listEmptyAnnotations() const
-{
-	QList<int> ids;
-	for(const paintcore::Annotation &a : _image->image()->annotations()->getAnnotations()) {
-		if(a.isEmpty())
-			ids << a.id;
-	}
-	return ids;
-}
-
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
 	QRectF bounds = _image->boundingRect();
@@ -147,13 +143,6 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 	const float hPadding = 300;
 
 	setSceneRect(bounds.adjusted(-wPadding, -hPadding, wPadding, hPadding));
-	if(xoffset || yoffset) {
-		QPoint offset(xoffset, yoffset);
-
-		// Adjust selection (if it exists)
-		if(_selection)
-			_selection->translate(offset);
-	}
 	emit canvasResized(xoffset, yoffset, oldsize);
 }
 
@@ -169,49 +158,100 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 	return 0;
 }
 
-int CanvasScene::getAvailableAnnotationId() const
+void CanvasScene::activeAnnotationChanged(int id)
 {
-	const int prefix = statetracker()->localId() << 8;
-	QList<int> takenIds;
 	foreach(QGraphicsItem *i, items()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *item = static_cast<AnnotationItem*>(i);
-			if((item->id() & 0xff00) == prefix)
-				takenIds.append(item->id());
+			item->setHighlight(item->id() == id);
 		}
 	}
-
-	for(int i=0;i<256;++i) {
-		int id = prefix | i;
-		if(!takenIds.contains(id))
-			return id;
-	}
-
-	return 0;
 }
 
-void CanvasScene::handleAnnotationChange(int id)
+void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 {
-	const paintcore::Annotation *a = _image->image()->annotations()->getById(id);
+	for(int i=first;i<=last;++i) {
+		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
+		AnnotationItem *item = new AnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
+		item->setShowBorder(showAnnotationBorders());
+		item->setVisible(_showAnnotations);
+		addItem(item);
+		annotationsChanged(a, a, QVector<int>());
+	}
+}
 
-	// Find annotation item
-	AnnotationItem *item = getAnnotationItem(id);
+void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
+{
+	for(int i=first;i<=last;++i) {
+		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
+		int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
+		AnnotationItem *item = getAnnotationItem(id);
+		if(item)
+			delete item;
+	}
 
-	// Refresh item
-	if(!a) {
-		// Annotation deleted
-		emit annotationDeleted(id);
-		delete item;
-	} else {
-		if(!item) {
-			// Annotation created
-			item = new AnnotationItem(id, _image->image());
-			item->setShowBorder(showAnnotationBorders());
-			item->setVisible(_showAnnotations);
-			addItem(item);
+}
+
+void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
+{
+	const int ifirst = first.row();
+	const int ilast = last.row();
+	for(int i=ifirst;i<=ilast;++i) {
+		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
+		AnnotationItem *item = getAnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
+		Q_ASSERT(item);
+		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
+			item->setText(a.data(Qt::DisplayRole).toString());
+
+		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::RectRole))
+			item->setGeometry(a.data(paintcore::AnnotationModel::RectRole).toRect());
+
+		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::BgColorRole))
+			item->setColor(a.data(paintcore::AnnotationModel::BgColorRole).value<QColor>());
+	}
+}
+
+void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
+{
+	for(int i=first;i<=last;++i) {
+		const QModelIndex l = m_model->laserTrails()->index(i);
+		LaserTrailItem *item = new LaserTrailItem(_thickLaserTrails);
+		addItem(item);
+		m_lasertrails[l.data(canvas::LaserTrailModel::InternalIdRole).toInt()] = item;
+		laserChanged(l, l, QVector<int>());
+	}
+}
+
+void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
+{
+	for(int i=first;i<=last;++i) {
+		const QModelIndex l = m_model->laserTrails()->index(i);
+		int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
+		delete m_lasertrails.take(id);
+	}
+
+}
+
+void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
+{
+	const int ifirst = first.row();
+	const int ilast = last.row();
+	for(int i=ifirst;i<=ilast;++i) {
+		const QModelIndex l = m_model->laserTrails()->index(i);
+		int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
+		if(!m_lasertrails.contains(id)) {
+			qWarning("Laser trail %d changed, but not yet created!", id);
+			return;
 		}
+		LaserTrailItem *item = m_lasertrails[id];
+		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::ColorRole))
+			item->setColor(l.data(canvas::LaserTrailModel::ColorRole).value<QColor>());
 
-		item->refresh();
+		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::PointsRole))
+			item->setPoints(l.data(canvas::LaserTrailModel::PointsRole).value<QVector<QPointF>>());
+
+		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::VisibleRole))
+			item->setFadeVisible(l.data(canvas::LaserTrailModel::VisibleRole).toBool());
 	}
 }
 
@@ -225,347 +265,111 @@ void CanvasScene::advanceUsermarkerAnimation()
 {
 	const float STEP = 0.2; // time delta in seconds
 
-	QMutableListIterator<LaserTrailItem*> laseri(_lasertrails);
-	while(laseri.hasNext()) {
-		auto *l = laseri.next();
-		if(l->fadeoutStep(STEP)) {
-			delete l;
-			laseri.remove();
-		}
-	}
+	for(LaserTrailItem *lt : m_lasertrails)
+		lt->animationStep(STEP);
 
-	foreach(UserMarkerItem *um, _usermarkers) {
+	for(UserMarkerItem *um : m_usermarkers) {
 		um->fadeoutStep(STEP);
 	}
 
-	if(_selection)
-		_selection->marchingAnts();
+	if(m_selection)
+		m_selection->marchingAnts();
 }
 
-/**
- * @return flattened canvas contents
- */
-QImage CanvasScene::image() const
+void CanvasScene::userCursorAdded(const QModelIndex&, int first, int last)
 {
-	if(!hasImage())
-		return QImage();
-
-	return _image->image()->toFlatImage(_showAnnotations);
+	for(int i=first;i<=last;++i) {
+		const QModelIndex um = m_model->userCursors()->index(i);
+		int id = um.data(canvas::UserCursorModel::IdRole).toInt();
+		UserMarkerItem *item = new UserMarkerItem(id);
+		item->setShowSubtext(_showUserLayers);
+		item->hide();
+		addItem(item);
+		m_usermarkers[id] = item;
+		userCursorChanged(um, um, QVector<int>());
+	}
 }
 
-QImage CanvasScene::selectionToImage(int layerId)
+void CanvasScene::userCursorRemoved(const QModelIndex&, int first, int last)
 {
-	if(!hasImage())
-		return QImage();
+	for(int i=first;i<=last;++i) {
+		const QModelIndex um = m_model->userCursors()->index(i);
+		delete m_usermarkers.take(um.data(canvas::UserCursorModel::IdRole).toInt());
+	}
+}
 
-	QImage img;
-
-	paintcore::Layer *layer = layers()->getLayer(layerId);
-	if(layer)
-		img = layer->toImage();
-	else
-		img = image();
-
-
-	if(_selection) {
-		img = img.copy(_selection->polygonRect().intersected(QRect(0, 0, width(), height())));
-
-		if(!_selection->isAxisAlignedRectangle()) {
-			// Mask out pixels outside the selection
-			QPainter mp(&img);
-			QPair<QPoint, QImage> mask = _selection->polygonMask(QColor(255, 255, 255));
-			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-			mp.drawImage(0, 0, mask.second);
+void CanvasScene::userCursorChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
+{
+	const int ifirst = first.row();
+	const int ilast = last.row();
+	for(int i=ifirst;i<=ilast;++i) {
+		const QModelIndex um = m_model->userCursors()->index(i);
+		int id = um.data(canvas::UserCursorModel::IdRole).toInt();
+		if(!m_usermarkers.contains(id)) {
+			qWarning("User marker %d changed, but not yet created!", id);
+			continue;
 		}
-	}
+		UserMarkerItem *item = m_usermarkers[id];
 
-	return img;
-}
+		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::PositionRole))
+			item->setPos(um.data(canvas::UserCursorModel::PositionRole).toPointF());
 
-void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault)
-{
-	Q_ASSERT(hasImage());
+		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
+			item->setText(um.data(Qt::DisplayRole).toString());
 
-	QPoint center;
-	if(_selection && !forceDefault)
-		center = _selection->polygonRect().center();
-	else
-		center = defaultPoint;
+		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::LayerRole))
+			item->setSubtext(um.data(canvas::UserCursorModel::LayerRole).toString());
 
-	SelectionItem *paste = new SelectionItem();
-	paste->setRect(QRect(QPoint(center.x() - image.width()/2, center.y() - image.height()/2), image.size()));
-	paste->setPasteImage(image);
+		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::ColorRole))
+			item->setColor(um.data(canvas::UserCursorModel::ColorRole).value<QColor>());
 
-	setSelectionItem(paste);
-}
-
-void CanvasScene::pickColor(int x, int y, int layer, bool bg)
-{
-	if(_image) {
-		QColor color;
-		if(layer>0) {
-			const paintcore::Layer *l = _image->image()->getLayer(layer);
-			if(layer)
-				color = l->colorAt(x, y);
-		} else {
-			color = _image->image()->colorAt(x, y);
+		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::VisibleRole)) {
+			if(_showUserMarkers) {
+				bool v = um.data(canvas::UserCursorModel::VisibleRole).toBool();
+				if(v)
+					item->fadein();
+				else
+					item->fadeout();
+			}
 		}
-
-		if(color.isValid() && color.alpha()>0) {
-			color.setAlpha(255);
-			emit colorPicked(color, bg);
-		}
-	}
-}
-
-/**
- * The file format is determined from the name of the file
- * @param file file path
- * @return true on succcess
- */
-bool CanvasScene::save(const QString& file) const
-{
-	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
-		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(file, _image->image());
-	} else {
-		// Regular image formats: flatten the image first.
-		return image().save(file);
-	}
-}
-
-/**
- * An image cannot be saved as a regular PNG without loss of information
- * if
- * <ul>
- * <li>It has more than one layer</li>
- * <li>It has annotations</li>
- * </ul>
- */
-bool CanvasScene::needSaveOra() const
-{
-	return _image->image()->layers() > 1 || !_image->image()->annotations()->isEmpty();
-}
-
-/**
- * @retval true if the board contains an image
- */
-bool CanvasScene::hasImage() const {
-	return _image!=0;
-}
-
-QSize CanvasScene::imageSize() const
-{
-	if(_image)
-		return QSize(_image->image()->width(), _image->image()->height());
-	else
-		return QSize();
-}
-
-/**
- * @return layer stack
- */
-paintcore::LayerStack *CanvasScene::layers()
-{
-	if(_image)
-		return _image->image();
-	return 0;
-}
-
-void CanvasScene::setToolPreview(QGraphicsItem *preview)
-{
-    delete _toolpreview;
-    _toolpreview = preview;
-	if(preview)
-		addItem(preview);
-}
-
-void CanvasScene::setSelectionItem(const QRect &rect)
-{
-	auto *sel = new SelectionItem;
-	sel->setRect(rect);
-	setSelectionItem(sel);
-}
-
-void CanvasScene::setSelectionItem(const QPolygon &polygon)
-{
-	auto *sel = new SelectionItem;
-	sel->setPolygon(polygon);
-	setSelectionItem(sel);
-}
-
-void CanvasScene::setSelectionItem(SelectionItem *selection)
-{
-	const bool hadSelection = _selection != nullptr;
-	delete _selection;
-	_selection = selection;
-	if(selection)
-		addItem(selection);
-	else if(hadSelection)
-		emit selectionRemoved();
-}
-
-void CanvasScene::handleLocalCommand(protocol::MessagePtr cmd)
-{
-	if(_statetracker) {
-		_statetracker->localCommand(cmd);
-		emit canvasModified();
-	} else {
-		qWarning() << "Received a local drawing command but canvas does not exist!";
-	}
-}
-
-void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
-{
-	if(_statetracker) {
-		_statetracker->receiveCommand(cmd);
-		emit canvasModified();
-	} else {
-		qWarning() << "Received a drawing command but canvas does not exist!";
-	}
-}
-
-void CanvasScene::sendSnapshot(bool forcenew)
-{
-	if(_statetracker) {
-		qDebug() << "generating snapshot point...";
-		emit newSnapshot(_statetracker->generateSnapshot(forcenew));
-	} else {
-		qWarning() << "This shouldn't happen... Received a snapshot request but canvas does not exist!";
-	}
-}
-
-QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
-{
-	const int size = brush.size2();
-	QColor color = brush.color(1.0);
-	QPen pen;
-	if(size<=1) {
-		pen.setWidth(1);
-		color.setAlphaF(brush.opacity(1.0));
-	} else {
-		pen.setWidth(size);
-		pen.setCapStyle(Qt::RoundCap);
-		pen.setJoinStyle(Qt::RoundJoin);
-		// Approximate brush transparency
-		const qreal a = brush.opacity(1.0) * qMin(1.0, 0.5+brush.hardness(1.0)) * (1-brush.spacing()/100.0);
-		color.setAlphaF(qMin(a, 1.0));
-	}
-	pen.setColor(color);
-	return pen;
-}
-
-void CanvasScene::setTitle(const QString &title)
-{
-	if(_statetracker)
-		_statetracker->setTitle(title);
-}
-
-QString CanvasScene::title() const
-{
-	if(_statetracker)
-		return _statetracker->title();
-	else
-		return QString();
-}
-
-UserMarkerItem *CanvasScene::getOrCreateUserMarker(int id)
-{
-	if(_usermarkers.contains(id))
-		return _usermarkers[id];
-
-	UserMarkerItem *item = new UserMarkerItem;
-	item->setColor(QColor(0, 0, 0));
-	item->setText(QString("#%1").arg(id));
-	item->hide();
-	addItem(item);
-	_usermarkers[id] = item;
-	return item;
-}
-
-void CanvasScene::setUserMarkerName(int id, const QString &name)
-{
-	auto *item = getOrCreateUserMarker(id);
-	item->setText(name);
-}
-
-void CanvasScene::setUserMarkerAttribs(int id, const QColor &color, const QString &layer)
-{
-	auto *item = getOrCreateUserMarker(id);
-	item->setColor(color);
-	item->setSubtext(_showUserLayers ? layer : QString());
-}
-
-void CanvasScene::moveUserMarker(int id, const QPointF &point, int trail)
-{
-	auto *item = getOrCreateUserMarker(id);
-
-	if(trail>0 && _showLaserTrails) {
-		auto *laser = new LaserTrailItem(QLineF(item->pos(), point), item->color(), trail, _thickLaserTrails);
-		_lasertrails.append(laser);
-		addItem(laser);
-
-		// Limit total laser trail length
-		if(_lasertrails.size() > 500)
-			delete _lasertrails.takeFirst();
-	}
-
-	item->setPos(point);
-
-	if(_showUserMarkers)
-		item->fadein();
-}
-
-void CanvasScene::hideUserMarker(int id)
-{
-	if(id<0 && _statetracker)
-		id = _statetracker->localId();
-
-	if(_usermarkers.contains(id)) {
-		_usermarkers[id]->fadeout();
 	}
 }
 
 void CanvasScene::showUserMarkers(bool show)
 {
-	_showUserMarkers = show;
-	if(!show) {
-		foreach(UserMarkerItem *item, _usermarkers)
-			item->hide();
+	if(_showUserMarkers != show) {
+		_showUserMarkers = show;
+		for(UserMarkerItem *item : m_usermarkers) {
+			if(show) {
+				if(m_model->userCursors()->indexForId(item->id()).data(canvas::UserCursorModel::VisibleRole).toBool())
+					item->fadein();
+			} else {
+				item->hide();
+			}
+		}
 	}
 }
 
 void CanvasScene::showUserLayers(bool show)
 {
-	_showUserLayers = show;
-	QHashIterator<int,UserMarkerItem*> i(_usermarkers);
-	while(i.hasNext()) {
-		i.next();
-
-		QString layer;
-		if(show && _statetracker->drawingContexts().contains(i.key())) {
-			int id = _statetracker->drawingContexts()[i.key()].tool.layer_id;
-			paintcore::Layer *l = _statetracker->image()->getLayer(id);
-			if(l)
-				layer = l->title();
-		}
-		i.value()->setSubtext(layer);
+	if(_showUserLayers != show) {
+		_showUserLayers = show;
+		for(UserMarkerItem *item : m_usermarkers)
+			item->setShowSubtext(show);
 	}
 }
 
 void CanvasScene::showLaserTrails(bool show)
 {
 	_showLaserTrails = show;
-	if(!show) {
-		while(!_lasertrails.isEmpty())
-			delete _lasertrails.takeLast();
-	}
+	for(LaserTrailItem *i : m_lasertrails)
+		i->hide();
 }
 
 void CanvasScene::setThickLaserTrails(bool thick)
 {
 	_thickLaserTrails = thick;
-	for(LaserTrailItem *l : _lasertrails) {
+	for(LaserTrailItem *l : m_lasertrails) {
 		l->setThick(thick);
 	}
 }

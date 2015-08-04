@@ -269,7 +269,7 @@ struct UpdateTile {
  * @param rect area of the image to limit repainting to (rounded upwards to tile boundaries)
  * @param target device to paint onto
  */
-void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target)
+void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean)
 {
 	if(_width<=0 || _height<=0)
 		return;
@@ -289,7 +289,10 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target)
 			const int i = y+tx;
 			if(_dirtytiles.testBit(i)) {
 				updates.append(new UpdateTile(tx, ty));
-				_dirtytiles.clearBit(i);
+
+				// TODO this conditional is for transitioning to QtQuick. Remove once old view is removed.
+				if(clean)
+					_dirtytiles.clearBit(i);
 			}
 		}
 	}
@@ -297,6 +300,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target)
 	if(!updates.isEmpty()) {
 		// Flatten tiles
 		QtConcurrent::blockingMap(updates, [this](UpdateTile *t) {
+			// TODO: don't draw the checkerboard here: use a QML item instead to draw the background
 			Tile::fillChecker(t->data, QColor(128,128,128), Qt::white);
 			flattenTile(t->data, t->x, t->y);
 		});

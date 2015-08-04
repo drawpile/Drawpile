@@ -17,11 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
-#include <Qt>
-#include <QtMath>
-
 #include "tools/utils.h"
+
+#include <QtMath>
 
 namespace tools {
 

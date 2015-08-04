@@ -18,7 +18,7 @@
 */
 
 #include "recording/indexloader.h"
-#include "statetracker.h"
+#include "canvas/statetracker.h"
 #include "utils/archive.h"
 
 #include <QDebug>
@@ -59,22 +59,22 @@ bool IndexLoader::open()
 	return true;
 }
 
-drawingboard::StateSavepoint IndexLoader::loadSavepoint(int idx, drawingboard::StateTracker *owner)
+canvas::StateSavepoint IndexLoader::loadSavepoint(int idx, canvas::StateTracker *owner)
 {
 	if(idx<0 || idx>=_index.snapshots().size())
-		return drawingboard::StateSavepoint();
+		return canvas::StateSavepoint();
 
 	QByteArray snapshotdata = utils::getArchiveFile(*_file, QString("snapshot-%1").arg(idx));
 	if(snapshotdata.isEmpty()) {
 		qWarning() << "no snapshot" << idx << "data!";
-		return drawingboard::StateSavepoint();
+		return canvas::StateSavepoint();
 	}
 
 	QBuffer snapshotbuffer(&snapshotdata);
 	snapshotbuffer.open(QBuffer::ReadOnly);
 	QDataStream ds(&snapshotbuffer);
 
-	return drawingboard::StateSavepoint::fromDatastream(ds, owner);
+	return canvas::StateSavepoint::fromDatastream(ds, owner);
 }
 
 }

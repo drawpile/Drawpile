@@ -26,7 +26,7 @@
 
 class KArchive;
 
-namespace drawingboard {
+namespace canvas {
 	class StateSavepoint;
 	class StateTracker;
 }
@@ -45,7 +45,7 @@ public:
 
 	Index &index() { return _index; }
 
-	drawingboard::StateSavepoint loadSavepoint(int idx, drawingboard::StateTracker *owner);
+	canvas::StateSavepoint loadSavepoint(int idx, canvas::StateTracker *owner);
 
 private:
 	QString _recordingfile;

@@ -131,6 +131,13 @@ bool Brush::isOpacityVariable() const
 	return qAbs(opacity1() - opacity2()) > (1/256.0);
 }
 
+QColor Brush::approxColor() const
+{
+	QColor c = color1();
+	c.setAlphaF(opacity1() * qMin(1.0, 0.5+hardness1()) * (1-spacing()/100.0));
+	return c;
+}
+
 bool Brush::operator==(const Brush& brush) const
 {
 	return size1() == brush.size1() && size2() == brush.size2() &&

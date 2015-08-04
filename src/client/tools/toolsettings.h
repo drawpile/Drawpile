@@ -22,7 +22,6 @@
 #include <QPointer>
 
 #include "core/brush.h"
-#include "scene/annotationitem.h"
 #include "utils/palette.h"
 #include "utils/icon.h"
 
@@ -48,13 +47,15 @@ namespace widgets {
 	class PaletteWidget;
 	class CanvasView;
 }
-namespace drawingboard {
-	class CanvasScene;
+namespace  canvas {
+	class CanvasModel;
 }
 
 namespace tools {
 
 class ToolProperties;
+class ToolController;
+
 /**
  * @brief Abstract base class for tool settings
  *
@@ -104,7 +105,7 @@ public:
 	 * @param swapcolors if true, foreground and background colors are swapped
 	 * @return brush with values from the UI widget
 	 */
-	virtual paintcore::Brush getBrush(bool swapcolors) const = 0;
+	virtual paintcore::Brush getBrush() const = 0;
 
 	/**
 	 * @brief Get the current brush size
@@ -170,7 +171,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	int getSize() const;
 	bool getSubpixelMode() const { return false; }
@@ -200,7 +201,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	int getSize() const;
 	bool getSubpixelMode() const;
@@ -228,7 +229,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	int getSize() const;
 	bool getSubpixelMode() const { return true; }
@@ -256,7 +257,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	int getSize() const;
 	bool getSubpixelMode() const { return true; }
@@ -284,7 +285,7 @@ public:
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	int getSize() const;
 	bool getSubpixelMode() const;
@@ -308,7 +309,7 @@ class BrushlessSettings : public ToolSettings {
 public:
 	BrushlessSettings(const QString &name, const QString &title, const QString &icon) : ToolSettings(name, title, icon) {}
 
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
@@ -332,17 +333,13 @@ public:
 	AnnotationSettings(QString name, QString title);
 	~AnnotationSettings();
 
-	//! Set the client to use for edit commands
-	void setClient(net::Client *client) { _client = client; }
-
-	//! Set the layer selection widget (needed for baking)
-	void setLayerSelector(docks::LayerList *layerlist) { _layerlist = layerlist; }
+	void setController(ToolController *ctrl) { m_ctrl = ctrl; }
 
 	/**
 	 * @brief Get the ID of the currently selected annotation
 	 * @return ID or 0 if none selected
 	 */
-	int selected() const;
+	int selected() const { return m_selectionId; }
 
 	/**
 	 * @brief Focus content editing box and set cursor position
@@ -352,13 +349,10 @@ public:
 
 public slots:
 	//! Set the currently selected annotation item
-	void setSelection(drawingboard::AnnotationItem *item);
+	void setSelectionId(int id);
 
 	//! Focus the content editing box
 	void setFocus();
-
-	//! Unselect this item if currently selected
-	void unselect(int id);
 
 private slots:
 	void changeAlignment();
@@ -384,11 +378,10 @@ private:
 	Ui_TextSettings *_ui;
 	QWidget *_uiwidget;
 
-	QPointer<drawingboard::AnnotationItem> _selection;
+	int m_selectionId;
 
 	bool _noupdate;
-	net::Client *_client;
-	docks::LayerList *_layerlist;
+	ToolController *m_ctrl;
 	QTimer *_updatetimer;
 };
 
@@ -428,7 +421,7 @@ public:
 	SelectionSettings(const QString &name, const QString &title, bool freeform);
 	~SelectionSettings();
 
-	void setScene(drawingboard::CanvasScene *scene) { _scene = scene; }
+	void setController(tools::ToolController *ctrl) { m_ctrl = ctrl; }
 	void setView(widgets::CanvasView *view) { _view = view; }
 
 private slots:
@@ -442,7 +435,7 @@ protected:
 
 private:
 	Ui_SelectionSettings * _ui;
-	drawingboard::CanvasScene *_scene;
+	tools::ToolController *m_ctrl;
 	widgets::CanvasView *_view;
 };
 
@@ -457,7 +450,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void quickAdjust1(float adjustment);
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;

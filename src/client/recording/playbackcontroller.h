@@ -30,8 +30,8 @@ class QStringList;
 
 class VideoExporter;
 
-namespace drawingboard {
-	class CanvasScene;
+namespace canvas {
+	class CanvasModel;
 }
 
 namespace recording {
@@ -62,7 +62,7 @@ class PlaybackController : public QObject
 
 	Q_OBJECT
 public:
-	PlaybackController(drawingboard::CanvasScene *canvas, recording::Reader *reader, QObject *parent = 0);
+	PlaybackController(canvas::CanvasModel *canvas, recording::Reader *reader, QObject *parent = 0);
 	~PlaybackController();
 
 	bool isPlaying() const { return m_play; }
@@ -157,7 +157,7 @@ private:
 	QPointer<IndexBuilder> m_indexbuilder;
 	VideoExporter *m_exporter;
 
-	drawingboard::CanvasScene *m_canvas;
+	canvas::CanvasModel *m_canvas;
 
 	QTimer *m_timer;
 

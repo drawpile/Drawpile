@@ -24,24 +24,61 @@
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, bool thick, QGraphicsItem *parent)
-	: QGraphicsLineItem(line, parent), _blink(false)
+LaserTrailItem::LaserTrailItem(bool thick, QGraphicsItem *parent)
+	: QGraphicsItem(parent), _blink(false)
+{
+	setThick(thick);
+}
+
+void LaserTrailItem::setColor(const QColor &color)
 {
 	_pen1.setCosmetic(true);
 	_pen1.setColor(color.lighter(110));
 
 	_pen2 = _pen1;
 	_pen2.setColor(color.lighter(90));
-
-	setThick(thick);
-
-	_life = fadetime;
 }
 
 void LaserTrailItem::setThick(bool thick)
 {
 	_pen1.setWidth(qApp->devicePixelRatio() * (thick ? 3 : 1));
 	_pen2.setWidth(_pen1.width());
+}
+
+QRectF LaserTrailItem::boundingRect() const
+{
+	return m_bounds;
+}
+
+void LaserTrailItem::setPoints(const QVector<QPointF> &points)
+{
+	prepareGeometryChange();
+	m_points = points;
+
+	QRectF bounds;
+	if(m_points.size()>0) {
+		bounds = QRectF(m_points.at(0), QSize(1,1));
+		for(int i=1;i<m_points.size();++i) {
+			qreal x = m_points.at(i).x();
+			qreal y = m_points.at(i).y();
+
+			if(x<bounds.left())
+				bounds.setLeft(x);
+			if(x>bounds.right())
+				bounds.setRight(x);
+			if(y<bounds.top())
+				bounds.setTop(y);
+			if(y>bounds.bottom())
+				bounds.setBottom(y);
+		}
+		m_bounds = bounds;
+	}
+}
+
+void LaserTrailItem::setFadeVisible(bool visible)
+{
+	// Visibility change is animated
+	m_visible = visible;
 }
 
 void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -51,22 +88,23 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
 	painter->setPen(_blink ? _pen1 : _pen2);
-	painter->drawLine(line());
+	painter->drawPolyline(m_points.constData(), m_points.size());
 	painter->restore();
 }
 
-bool LaserTrailItem::fadeoutStep(float dt)
+void LaserTrailItem::animationStep(float dt)
 {
 	_blink = !_blink;
-	_life -= dt;
-	if(_life<=0.0)
-		return true;
 
-	if(_life<1.0)
-		setOpacity(_life);
+	if(m_visible) {
+		if(opacity() < 1.0)
+			setOpacity(qMin(1.0, opacity() + dt));
+	} else {
+		if(opacity() > 0)
+			setOpacity(qMax(0.0, opacity() - dt));
+	}
 
 	update(boundingRect());
-	return false;
 }
 
 }

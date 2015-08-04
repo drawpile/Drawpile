@@ -20,47 +20,45 @@
 #define TOOLS_SHAPETOOLS_H
 
 #include "tool.h"
+#include "core/brush.h"
 
 namespace tools {
+
+/**
+ * \brief Base class for tools that draw a shape (as opposed to freehand tools)
+ */
+class ShapeTool : public Tool {
+public:
+	ShapeTool(ToolController &owner, Type type, QCursor cursor) : Tool(owner, type, cursor) {}
+
+	void begin(const paintcore::Point& point, float zoom);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
+	void end();
+
+protected:
+	virtual paintcore::PointVector pointVector() const = 0;
+	void updatePreview();
+	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
+
+	QPointF m_start, m_p1, m_p2;
+
+private:
+	paintcore::Brush m_brush;
+};
 
 /**
  * \brief Line tool
  *
  * The line tool draws straight lines.
  */
-class Line : public Tool {
+class Line : public ShapeTool {
 public:
-	Line(ToolCollection &owner);
+	Line(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
-
-private:
-	QPointF _p1, _p2;
-	bool _swap;
-};
-
-/**
- * \brief Base class for shape drawing tools that can be defined with a rectangle
- */
-class RectangularTool : public Tool {
-public:
-	RectangularTool(ToolCollection &owner, Type type, QCursor cursor) : Tool(owner, type, cursor) {}
-
-	void begin(const paintcore::Point& point, bool right, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
 
 protected:
-	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p) = 0;
-	virtual void updateToolPreview() = 0;
-	virtual paintcore::PointVector pointVector() = 0;
-	QRectF rect() const { return QRectF(_p1, _p2).normalized(); }
-
-private:
-	QPointF _start, _p1, _p2;
-	bool _swap;
+	virtual paintcore::PointVector pointVector() const;
 };
 
 /**
@@ -68,14 +66,12 @@ private:
  *
  * This tool is used for drawing squares and rectangles
  */
-class Rectangle : public RectangularTool {
+class Rectangle : public ShapeTool {
 public:
-	Rectangle(ToolCollection &owner);
+	Rectangle(ToolController &owner);
 
 protected:
-	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
-	virtual void updateToolPreview();
-	virtual paintcore::PointVector pointVector();
+	virtual paintcore::PointVector pointVector() const;
 };
 
 /**
@@ -83,14 +79,12 @@ protected:
  *
  * This tool is used for drawing circles and ellipses
  */
-class Ellipse : public RectangularTool {
+class Ellipse : public ShapeTool {
 public:
-	Ellipse(ToolCollection &owner);
+	Ellipse(ToolController &owner);
 
 protected:
-	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
-	virtual void updateToolPreview();
-	virtual paintcore::PointVector pointVector();
+	virtual paintcore::PointVector pointVector() const;
 };
 
 }

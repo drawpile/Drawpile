@@ -109,6 +109,9 @@ public:
 	//! Does opacity vary with pressure?
 	bool isOpacityVariable() const;
 
+	//! Get a color with transparency for approximating strokes with solid lines
+	QColor approxColor() const;
+
 	bool operator==(const Brush& brush) const;
 	bool operator!=(const Brush& brush) const;
 

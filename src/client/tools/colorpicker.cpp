@@ -17,23 +17,24 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "scene/canvasscene.h"
+#include "canvas/canvasmodel.h"
 #include "docks/toolsettingsdock.h"
 
+#include "tools/toolcontroller.h"
 #include "tools/toolsettings.h"
 #include "tools/colorpicker.h"
 
 namespace tools {
 
-ColorPicker::ColorPicker(ToolCollection &owner)
+ColorPicker::ColorPicker(ToolController &owner)
 	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29))
 {
 }
 
-void ColorPicker::begin(const paintcore::Point& point, bool right, float zoom)
+void ColorPicker::begin(const paintcore::Point& point, float zoom)
 {
 	Q_UNUSED(zoom);
-	_bg = right;
+
 	motion(point, false, false);
 }
 
@@ -42,10 +43,11 @@ void ColorPicker::motion(const paintcore::Point& point, bool constrain, bool cen
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 	int layer=0;
-	if(settings().getColorPickerSettings()->pickFromLayer()) {
-		layer = this->layer();
+	if(owner.toolSettings()->getColorPickerSettings()->pickFromLayer()) {
+		layer = owner.activeLayer();
 	}
-	scene().pickColor(point.x(), point.y(), layer, _bg);
+
+	owner.model()->pickColor(point.x(), point.y(), layer);
 }
 
 void ColorPicker::end()

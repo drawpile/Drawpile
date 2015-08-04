@@ -182,22 +182,22 @@ void ToolSettings::saveSettings()
 	}
 }
 
-tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
+tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
 	switch(tool) {
-	case tools::PEN: return _pensettings;
-	case tools::BRUSH: return _brushsettings;
-	case tools::SMUDGE: return _smudgesettings;
-	case tools::ERASER: return _erasersettings;
-	case tools::LINE: return _linesettings;
-	case tools::RECTANGLE: return _rectsettings;
-	case tools::ELLIPSE: return _ellipsesettings;
-	case tools::FLOODFILL: return _fillsettings;
-	case tools::ANNOTATION: return _textsettings;
-	case tools::PICKER: return _pickersettings;
-	case tools::LASERPOINTER: return _lasersettings;
-	case tools::SELECTION: return _selectionsettings;
-	case tools::POLYGONSELECTION: return _polyselectionsettings;
+	case tools::Tool::PEN: return _pensettings;
+	case tools::Tool::BRUSH: return _brushsettings;
+	case tools::Tool::SMUDGE: return _smudgesettings;
+	case tools::Tool::ERASER: return _erasersettings;
+	case tools::Tool::LINE: return _linesettings;
+	case tools::Tool::RECTANGLE: return _rectsettings;
+	case tools::Tool::ELLIPSE: return _ellipsesettings;
+	case tools::Tool::FLOODFILL: return _fillsettings;
+	case tools::Tool::ANNOTATION: return _textsettings;
+	case tools::Tool::PICKER: return _pickersettings;
+	case tools::Tool::LASERPOINTER: return _lasersettings;
+	case tools::Tool::SELECTION: return _selectionsettings;
+	case tools::Tool::POLYGONSELECTION: return _polyselectionsettings;
 	}
 
 	qFatal("Unhandled tools::Type %d", tool);
@@ -208,7 +208,7 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
  * Set which tool setting widget is visible
  * @param tool tool identifier
  */
-void ToolSettings::setTool(tools::Type tool) {
+void ToolSettings::setTool(tools::Tool::Type tool) {
 	// Save old tool settings, then switch to the new tool
 	_previousTool = currentTool();
 	saveCurrentTool();
@@ -221,7 +221,7 @@ void ToolSettings::setPreviousTool()
 	selectTool(_previousTool);
 }
 
-void ToolSettings::selectTool(tools::Type tool)
+void ToolSettings::selectTool(tools::Tool::Type tool)
 {
 	tools::ToolSettings *ts = getToolSettingsPage(tool);
 	if(!ts) {
@@ -230,13 +230,6 @@ void ToolSettings::selectTool(tools::Type tool)
 	}
 
 	_currenttool = ts;
-
-	// Deselect annotation on tool change
-	if(tool != tools::ANNOTATION) {
-		int a = _textsettings->selected();
-		if(a)
-			_textsettings->setSelection(0);
-	}
 
 	setWindowTitle(QStringLiteral("%1. %2").arg(currentToolSlot()+1).arg(_currenttool->getTitle()));
 	_widgets->setCurrentWidget(_currenttool->getUi());
@@ -256,9 +249,9 @@ void ToolSettings::updateSubpixelMode()
 	emit subpixelModeChanged(_currenttool->getSubpixelMode());
 }
 
-tools::Type ToolSettings::currentTool() const
+tools::Tool::Type ToolSettings::currentTool() const
 {
-	return tools::Type(_toolprops[_currentQuickslot].currentTool());
+	return tools::Tool::Type(_toolprops[_currentQuickslot].currentTool());
 }
 
 void ToolSettings::setToolSlot(int i)
@@ -284,7 +277,7 @@ void ToolSettings::selectToolSlot(int i)
 	setForegroundColor(_toolprops[i].foregroundColor());
 	setBackgroundColor(_toolprops[i].backgroundColor());
 
-	selectTool(tools::Type(_toolprops[i].currentTool()));
+	selectTool(tools::Tool::Type(_toolprops[i].currentTool()));
 }
 
 int ToolSettings::currentToolSlot() const
@@ -361,7 +354,7 @@ void ToolSettings::swapForegroundBackground()
 	emit backgroundColorChanged(_background);
 }
 
-void ToolSettings::quickAdjustCurrent1(float adjustment)
+void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 {
 	_currenttool->quickAdjust1(adjustment);
 }
@@ -370,9 +363,9 @@ void ToolSettings::quickAdjustCurrent1(float adjustment)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-paintcore::Brush ToolSettings::getBrush(bool swapcolors) const
+paintcore::Brush ToolSettings::getBrush() const
 {
-	return _currenttool->getBrush(swapcolors);
+	return _currenttool->getBrush();
 }
 
 /**
@@ -382,9 +375,9 @@ paintcore::Brush ToolSettings::getBrush(bool swapcolors) const
 void ToolSettings::updateToolSlot(int i, bool typeChanged)
 {
 	int tool = _toolprops[i].currentTool();
-	tools::ToolSettings *ts = getToolSettingsPage(tools::Type(tool));
+	tools::ToolSettings *ts = getToolSettingsPage(tools::Tool::Type(tool));
 	if(!ts)
-		ts = getToolSettingsPage(tools::PEN);
+		ts = getToolSettingsPage(tools::Tool::PEN);
 
 
 	_quickslot[i]->setColors(_toolprops[i].foregroundColor(), _toolprops[i].backgroundColor());
@@ -406,18 +399,18 @@ void ToolSettings::eraserNear(bool near)
 {
 	if(near && !_eraserActive) {
 		_eraserOverride = currentTool();
-		setTool(tools::ERASER);
+		setTool(tools::Tool::ERASER);
 		_eraserActive = true;
 	} else if(!near && _eraserActive) {
-		setTool(tools::Type(_eraserOverride));
+		setTool(tools::Tool::Type(_eraserOverride));
 		_eraserActive = false;
 	}
 }
 
-void ToolSettings::disableEraserOverride(tools::Type tool)
+void ToolSettings::disableEraserOverride(tools::Tool::Type tool)
 {
 	if(_eraserOverride == tool)
-		_eraserOverride = tools::BRUSH; // select some tool that can't be disabled
+		_eraserOverride = tools::Tool::BRUSH; // select some tool that can't be disabled
 }
 
 }

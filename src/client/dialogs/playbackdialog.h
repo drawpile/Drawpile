@@ -33,8 +33,8 @@ namespace recording {
 	class PlaybackController;
 }
 
-namespace drawingboard {
-	class CanvasScene;
+namespace canvas {
+	class CanvasModel;
 }
 
 namespace dialogs {
@@ -43,7 +43,7 @@ class PlaybackDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent = 0);
+	explicit PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent = 0);
 	~PlaybackDialog();
 
 	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=0);

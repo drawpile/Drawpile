@@ -27,8 +27,9 @@ namespace drawingboard {
 class UserMarkerItem : public QGraphicsItem
 {
 public:
-	UserMarkerItem(QGraphicsItem *parent=0);
+	UserMarkerItem(int id, QGraphicsItem *parent=0);
 
+	int id() const { return m_id; }
 	QRectF boundingRect() const;
 
 	void setColor(const QColor &color);
@@ -36,6 +37,7 @@ public:
 
 	void setText(const QString &text);
 	void setSubtext(const QString &text);
+	void setShowSubtext(bool show);
 
 	void fadein();
 	void fadeout();
@@ -47,6 +49,8 @@ protected:
 
 private:
 	void updateFullText();
+	int m_id;
+
 	QRectF _bounds;
 	QBrush _bgbrush;
 	QPen _textpen;
@@ -56,6 +60,7 @@ private:
 
 	QString _text1, _text2;
 	QString _fulltext;
+	bool m_showSubtext;
 };
 
 }

@@ -26,7 +26,7 @@
 #include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
-#include "statetracker.h"
+#include "canvas/statetracker.h"
 #include "core/layerstack.h"
 #include "net/layerlist.h"
 
@@ -130,7 +130,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 
 	paintcore::LayerStack image;
 	net::LayerListModel layermodel;
-	drawingboard::StateTracker statetracker(&image, &layermodel, 1);
+	canvas::StateTracker statetracker(&image, &layermodel, 1);
 
 	MessageRecord msg;
 	int snapshotCounter = 0;
@@ -158,7 +158,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 		if(m_index.snapshots().isEmpty() || ((timer.hasExpired(SNAPSHOT_INTERVAL_MS) || m->type() == protocol::MSG_MARKER) && snapshotCounter>=SNAPSHOT_MIN_ACTIONS)) {
 			qint64 streampos = reader.filePosition();
 			emit progress(streampos);
-			drawingboard::StateSavepoint sp = statetracker.createSavepoint(-1);
+			canvas::StateSavepoint sp = statetracker.createSavepoint(-1);
 
 			QBuffer buf;
 			buf.open(QBuffer::ReadWrite);

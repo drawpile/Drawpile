@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,22 +17,19 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-
-#include "scene/canvasscene.h"
-#include "docks/toolsettingsdock.h"
+#include "canvas/canvasmodel.h"
 #include "net/client.h"
-#include "core/annotationmodel.h"
 
-#include "tools/toolsettings.h"
-#include "tools/annotation.h"
-#include "tools/utils.h"
+#include "toolcontroller.h"
+#include "annotation.h"
+#include "utils.h"
+
+#include <QPixmap>
 
 namespace tools {
 
-Annotation::Annotation(ToolCollection &owner)
-	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2)),
-	  _selected(0)
+Annotation::Annotation(ToolController &owner)
+	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2))
 {
 }
 
@@ -40,31 +37,30 @@ Annotation::Annotation(ToolCollection &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
+void Annotation::begin(const paintcore::Point& point, float zoom)
 {
-	Q_UNUSED(right);
+	m_selectedId = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint());
+	m_p1 = point;
+	m_p2 = point;
+	m_isNew = m_selectedId==0;
 
-	drawingboard::AnnotationItem *item = scene().annotationAt(point.toPoint());
-	if(item) {
-		_selected = item;
-		_handle = _selected->handleAt(point.toPoint(), zoom);
-		settings().getAnnotationSettings()->setSelection(item);
-		_wasselected = true;
+	if(m_selectedId>0) {
+		m_handle = owner.model()->layerStack()->annotations()->annotationHandleAt(m_selectedId, point.toPoint(), zoom);
+
+		owner.setActiveAnnotation(m_selectedId);
+
 	} else {
-		QGraphicsRectItem *item = new QGraphicsRectItem();
-		QPen pen;
-		pen.setWidth(qApp->devicePixelRatio());
-		pen.setCosmetic(true);
-		pen.setColor(QApplication::palette().color(QPalette::Highlight));
-		pen.setStyle(Qt::DotLine);
-		item->setPen(pen);
-		item->setRect(QRectF(point, point));
-		scene().setToolPreview(item);
-		_p2 = point;
-		_wasselected = false;
+		// No annotation, start creating a new one
+
+		// I don't want to create a new preview item just for annotations,
+		// so we create the preview annotation directly in the model. Since this
+		// doesn't affect the other annotations, it shouldn't case any problems.
+		// Also, we use a special ID for the preview object that is outside the protocol range.
+		m_selectedId = PREVIEW_ID;
+
+		owner.model()->layerStack()->annotations()->addAnnotation(m_selectedId, QRect(m_p1.toPoint(), m_p1.toPoint() + QPoint(5,5)));
+		m_handle = paintcore::Annotation::RS_BOTTOMRIGHT;
 	}
-	_start = point;
-	_p1 = point;
 }
 
 /**
@@ -73,29 +69,12 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
  */
 void Annotation::motion(const paintcore::Point& point, bool constrain, bool center)
 {
-	if(_wasselected) {
-		// Annotation may have been deleted by other user while we were moving it.
-		if(_selected) {
-			QPointF p = point - _start;
-			// TODO constrain
-			_selected->adjustGeometry(_handle, p.toPoint());
-			_start = point;
-		}
-	} else {
-		if(constrain)
-			_p2 = constraints::square(_start, point);
-		else
-			_p2 = point;
+	Q_UNUSED(constrain);
+	Q_UNUSED(center);
 
-		if(center)
-			_p1 = _start - (_p2 - _start);
-		else
-			_p1 = _start;
-
-		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
-		if(item)
-			item->setRect(QRectF(_p1, _p2).normalized());
-	}
+	QPointF p = point - m_p2;
+	owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
+	m_p2 = point;
 }
 
 /**
@@ -104,25 +83,29 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
  */
 void Annotation::end()
 {
-	if(_wasselected) {
-		if(_selected) {
+	if(!m_selectedId)
+		return;
+
+	if(!m_isNew) {
+		if(m_p1.toPoint() != m_p2.toPoint()) {
+			const paintcore::Annotation *a = owner.model()->layerStack()->annotations()->getById(m_selectedId);
+			if(a) {
+				owner.client()->sendUndopoint();
+				owner.client()->sendAnnotationReshape(m_selectedId, a->rect);
+			}
+
+		} else {
 			// if geometry was not changed, user merely clicked on the annotation
 			// rather than dragging it. In that case, focus the text box to prepare
 			// for content editing.
-			if(_selected->isChanged()) {
-				client().sendUndopoint();
-				client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
-			} else {
-				// TODO reimplement
-				//settings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
-			}
 
-			_selected = 0;
+			// TODO reimplement
+			//owner.toolSettings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
 		}
-	} else {
-		scene().setToolPreview(0);
 
-		QRect rect = QRect(_p1.toPoint(), _p2.toPoint()).normalized();
+	} else {
+
+		QRect rect = QRect(m_p1.toPoint(), m_p2.toPoint()).normalized();
 
 		if(rect.width() < 10 && rect.height() < 10) {
 			// User created a tiny annotation, probably by clicking rather than dragging.
@@ -130,14 +113,18 @@ void Annotation::end()
 			rect.setSize(QSize(160, 60));
 		}
 
-		int id = scene().getAvailableAnnotationId();
-		if(id==0) {
-			qWarning("We ran out of annotation IDs!");
+		// Delete our preview annotation first
+		owner.model()->layerStack()->annotations()->deleteAnnotation(PREVIEW_ID);
 
-		} else {
-			client().sendUndopoint();
-			client().sendAnnotationCreate(id, rect);
+		int newId = owner.model()->getAvailableAnnotationId();
+
+		if(newId==0) {
+			qWarning("We ran out of annotation IDs!");
+			return;
 		}
+
+		owner.client()->sendUndopoint();
+		owner.client()->sendAnnotationCreate(newId, rect);
 	}
 }
 

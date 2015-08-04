@@ -32,8 +32,8 @@ namespace {
 static const float ARROW = 10;
 
 }
-UserMarkerItem::UserMarkerItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent), _fadeout(0)
+UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
+	: QGraphicsItem(parent), m_id(id), _fadeout(0)
 {
 	setFlag(ItemIgnoresTransformations);
 	_bgbrush.setStyle(Qt::SolidPattern);
@@ -73,6 +73,15 @@ void UserMarkerItem::setSubtext(const QString &text)
 {
 	if(_text2 != text) {
 		_text2 = text;
+		if(m_showSubtext)
+			updateFullText();
+	}
+}
+
+void UserMarkerItem::setShowSubtext(bool show)
+{
+	if(m_showSubtext != show) {
+		m_showSubtext = show;
 		updateFullText();
 	}
 }
@@ -81,7 +90,7 @@ void UserMarkerItem::updateFullText()
 {
 	prepareGeometryChange();
 
-	if(_text2.isEmpty())
+	if(_text2.isEmpty() || !m_showSubtext)
 		_fulltext = _text1;
 	else
 		_fulltext = _text1 + "\n[" + _text2 + ']';

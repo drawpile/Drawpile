@@ -41,6 +41,15 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
+#include <QQuickView>
+#include <QQmlEngine>
+#include <QQmlContext>
+#include <QQuickItem>
+
+// Note: when enabling this, change the paintChanged(..., false) to true in CanvasItem::paint
+// to enable the two canvases to update simultaneously.
+//#define ENABLE_QML_CANVAS
+
 #ifndef NDEBUG
 #include "core/tile.h"
 #endif
@@ -54,13 +63,16 @@
 
 #include "config.h"
 #include "mainwindow.h"
-#include "loader.h"
 
 #include "core/layerstack.h"
+#include "quick/eventfixfilter.h"
+#include "quick/tabletstate.h"
+#include "canvas/loader.h"
+#include "canvas/canvasmodel.h"
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
-#include "statetracker.h"
+#include "canvas/statetracker.h"
 #include "tools/toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
@@ -85,6 +97,8 @@
 #include "net/login.h"
 #include "net/serverthread.h"
 #include "net/layerlist.h"
+
+#include "tools/toolcontroller.h"
 
 #include "../shared/record/writer.h"
 #include "../shared/record/reader.h"
@@ -151,7 +165,9 @@ bool isWritableFormat(const QString &filename)
 }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), m_playbackDialog(0), _canvas(0), _recorder(0), _autoRecordOnConnect(false), _lastToolBeforePaste(-1)
+	: QMainWindow(), m_playbackDialog(nullptr),
+	  m_canvas(nullptr),
+	  _canvasscene(0), _recorder(0), _autoRecordOnConnect(false), _lastToolBeforePaste(-1)
 {
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -221,17 +237,46 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_viewStatusBar->addPermanentWidget(_recorderstatus);
 	_viewStatusBar->addPermanentWidget(_lockstatus);
 
+	int SPLITTER_WIDGET_IDX = 0;
+#ifdef ENABLE_QML_CANVAS
+	// Create QtQuick view
+	// Note: we use a QQuickWidget here instead of a QQuickView with createWindowContainer,
+	// because containered QQuickView's focus keyboard handling is utterly broken. (last tested with Qt 5.5.0)
+	// See https://bugreports.qt.io/browse/QTBUG-34414
+	// The downside is an additional layer of indirection and no threaded rendering.
+	// Additionally, we use our own TabletQuickWidget, since normal the QQuickWindow or Widget
+	// doesn't dispatch tablet events.
+	QQuickView *qqview = new QQuickView;
+	qqview->setResizeMode(QQuickView::SizeRootObjectToView);
+	qqview->engine()->addImportPath(":/qml/");
+	//qqview->engine()->addImageProvider(QStringLiteral("theme"), new icon::IconProvider);
+
+	QWidget *qqviewContainer = QWidget::createWindowContainer(qqview, _splitter);
+
+	TabletState *tabletstate = new TabletState(qqview);
+	qqview->installEventFilter(new EventFixFilter(tabletstate, qqviewContainer));
+	qqview->rootContext()->setContextProperty("tabletState", tabletstate);
+
+	qqview->rootContext()->setContextProperty("inputConfig", _dock_input);
+
+	_splitter->addWidget(qqviewContainer);
+	_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
+
+#endif
+
 	// Create canvas view
 	_view = new widgets::CanvasView(this);
-	_view->setToolSettings(_dock_toolsettings);
 	
-	_dock_input->connectCanvasView(_view);
-	connect(_dock_layers, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
+	connect(_dock_toolsettings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), _view, SLOT(setPointerTracking(bool)));
+
+	connect(_dock_input, &docks::InputSettings::pressureMappingChanged, _view, &widgets::CanvasView::setPressureMapping);
+	_view->setPressureMapping(_dock_input->getPressureMapping());
+
 	connect(_dock_layers, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
-	connect(_dock_layers, SIGNAL(layerViewModeSelected(int)), _view, SLOT(setLayerViewMode(int)));
 
 	_splitter->addWidget(_view);
-	_splitter->setCollapsible(0, false);
+	_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
+
 
 	connect(_dock_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineSize(int)));
 	connect(_dock_toolsettings, SIGNAL(subpixelModeChanged(bool)), _view, SLOT(setOutlineSubpixelMode(bool)));
@@ -247,7 +292,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_viewstatus, SIGNAL(zoomChanged(qreal)), _view, SLOT(setZoom(qreal)));
 	connect(_viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
 
-	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
+	connect(_dock_toolsettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 	
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
@@ -263,32 +308,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_splitter->addWidget(chatsplitter);
 
 	// Make sure the canvas gets the majority share of the splitter the first time
-	_splitter->setStretchFactor(0, 1);
-	_splitter->setStretchFactor(1, 0);
+	// (this if is just to so that the experimental QML canvas can be enabled/disabled easily)
+	if(SPLITTER_WIDGET_IDX==2) {
+		_splitter->setStretchFactor(0, 1);
+		_splitter->setStretchFactor(1, 1);
+		_splitter->setStretchFactor(2, 0);
+	}
 
 	// Create canvas scene
-	_canvas = new drawingboard::CanvasScene(this);
-	_canvas->setBackgroundBrush(
+	_canvasscene = new drawingboard::CanvasScene(this);
+	_canvasscene->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	_view->setCanvas(_canvas);
-
-	connect(_canvas, SIGNAL(colorPicked(QColor, bool)), _dock_toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
-	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
-	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setFocus);
-	connect(_canvas, SIGNAL(layerAutoselectRequest(int)), _dock_layers, SLOT(selectLayer(int)));
-	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
-	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() {
-			setWindowModified(true);
-			if(_autosave->isChecked())
-				autosave();
-			});
-	connect(_canvas, &drawingboard::CanvasScene::selectionRemoved, this, &MainWindow::selectionRemoved);
-	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
-		if(bg)
-			_dock_toolsettings->setBackgroundColor(c);
-		else
-			_dock_toolsettings->setForegroundColor(c);
-	});
+	_view->setCanvas(_canvasscene);
 
 	// Color docks
 
@@ -296,79 +327,96 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_dock_colors, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 
 	// Create the network client
-	_client = new net::Client(this);
-	_view->setClient(_client);
-	_dock_layers->setClient(_client);
-	_dock_toolsettings->getAnnotationSettings()->setClient(_client);
-	_dock_toolsettings->getAnnotationSettings()->setLayerSelector(_dock_layers);
-	_dock_toolsettings->getRectSelectionSettings()->setScene(_canvas);
-	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
-	_dock_toolsettings->getPolySelectionSettings()->setScene(_canvas);
-	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
-	_userlist->setClient(_client);
+	m_client = new net::Client(this);
 
-	_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
-		if(_canvas->layers())
-			return _canvas->layers()->getLayer(id);
+	connect(_view, SIGNAL(pointerMoved(QPointF)), m_client, SLOT(sendLaserPointer(QPointF)));
+
+	_dock_layers->setClient(m_client);
+	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
+	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
+	_userlist->setClient(m_client);
+
+	m_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
+		if(m_canvas)
+			return m_canvas->layerStack()->getLayer(id);
 		return nullptr;
 	});
 
-	// Client command receive signals
-	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
-	connect(_client, SIGNAL(drawingCommandLocal(protocol::MessagePtr)), _canvas, SLOT(handleLocalCommand(protocol::MessagePtr)));
-	connect(_client, SIGNAL(userPointerMoved(int,QPointF,int)), _canvas, SLOT(moveUserMarker(int,QPointF,int)));
-	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
-	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
+	// Tool controller
+	m_toolctrl = new tools::ToolController(m_client, _dock_toolsettings, this);
 
-	connect(_client, SIGNAL(sentColorChange(QColor)), _dock_colors, SLOT(addLastUsedColor(QColor)));
+	connect(m_toolctrl, &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
+
+	_dock_toolsettings->getRectSelectionSettings()->setController(m_toolctrl);
+	_dock_toolsettings->getPolySelectionSettings()->setController(m_toolctrl);
+
+#ifdef ENABLE_QML_CANVAS
+	qqview->rootContext()->setContextProperty("controller", m_toolctrl);
+#endif
+
+	connect(_dock_input, &docks::InputSettings::smoothingChanged, m_toolctrl, &tools::ToolController::setSmoothing);
+	connect(m_toolctrl, &tools::ToolController::toolCursorChanged, _view, &widgets::CanvasView::setToolCursor);
+	connect(_view, &widgets::CanvasView::penDown, m_toolctrl, &tools::ToolController::startDrawing);
+	connect(_view, &widgets::CanvasView::penMove, m_toolctrl, &tools::ToolController::continueDrawing);
+	connect(_view, &widgets::CanvasView::penUp, m_toolctrl, &tools::ToolController::endDrawing);
+	connect(_view, &widgets::CanvasView::quickAdjust, _dock_toolsettings, &docks::ToolSettings::quickAdjustCurrent1);
+
+	connect(_dock_layers, &docks::LayerList::layerSelected, m_toolctrl, &tools::ToolController::setActiveLayer);
+	connect(m_toolctrl, &tools::ToolController::activeAnnotationChanged, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelectionId);
+
+	// Client command receive signals
+	connect(m_client, &net::Client::needSnapshot, [this](bool forceNew) {
+		if(m_canvas) 
+			m_client->sendSnapshot(m_canvas->generateSnapshot(forceNew));
+		else
+			qWarning("Server requested snapshot, but canvas is not yet initialized!");
+	});
+
+	connect(m_client, SIGNAL(sentColorChange(QColor)), _dock_colors, SLOT(addLastUsedColor(QColor)));
 
 	// Meta commands
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
+	connect(m_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
 			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool,bool)));
-	connect(_client, &net::Client::chatMessageReceived, [this]() {
+	connect(m_client, &net::Client::chatMessageReceived, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(_splitter->sizes().at(1)==0)
 			_statusChatButton->show();
 	});
 
-	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
+	connect(m_client, SIGNAL(markerMessageReceived(QString,QString)),
 			_chatbox, SLOT(receiveMarker(QString,QString)));
-	connect(_chatbox, SIGNAL(message(QString,bool,bool)), _client, SLOT(sendChat(QString,bool,bool)));
-	connect(_chatbox, SIGNAL(opCommand(QString)), _client, SLOT(sendOpCommand(QString)));
+	connect(_chatbox, SIGNAL(message(QString,bool,bool)), m_client, SLOT(sendChat(QString,bool,bool)));
+	connect(_chatbox, SIGNAL(opCommand(QString)), m_client, SLOT(sendOpCommand(QString)));
 
-	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
-	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
-	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool)));
-	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
-	connect(_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
+	connect(m_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
+	connect(m_client, SIGNAL(sessionConfChange(bool,bool,bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool)));
+	connect(m_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
+	connect(m_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
 	// Network status changes
-	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
-	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
-	connect(_client, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(serverDisconnected(QString, QString, bool)));
+	connect(m_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
+	connect(m_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
+	connect(m_client, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(serverDisconnected(QString, QString, bool)));
 
-	connect(_client, SIGNAL(serverConnected(QString, int)), _netstatus, SLOT(connectingToHost(QString, int)));
-	connect(_client, SIGNAL(serverDisconnecting()), _netstatus, SLOT(hostDisconnecting()));
-	connect(_client, SIGNAL(serverDisconnected(QString, QString, bool)), _netstatus, SLOT(hostDisconnected()));
-	connect(_client, SIGNAL(expectingBytes(int)), _netstatus, SLOT(expectBytes(int)));
-	connect(_client, SIGNAL(sendingBytes(int)), _netstatus, SLOT(sendingBytes(int)));
-	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
-	connect(_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
-	connect(_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
+	connect(m_client, SIGNAL(serverConnected(QString, int)), _netstatus, SLOT(connectingToHost(QString, int)));
+	connect(m_client, SIGNAL(serverDisconnecting()), _netstatus, SLOT(hostDisconnecting()));
+	connect(m_client, SIGNAL(serverDisconnected(QString, QString, bool)), _netstatus, SLOT(hostDisconnected()));
+	connect(m_client, SIGNAL(expectingBytes(int)), _netstatus, SLOT(expectBytes(int)));
+	connect(m_client, SIGNAL(sendingBytes(int)), _netstatus, SLOT(sendingBytes(int)));
+	connect(m_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
+	connect(m_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
+	connect(m_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
 
-	connect(_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
-	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
-	connect(_client, SIGNAL(youWereKicked(QString)), _netstatus, SLOT(kicked(QString)));
+	connect(m_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
+	connect(m_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
+	connect(m_client, SIGNAL(youWereKicked(QString)), _netstatus, SLOT(kicked(QString)));
 
-	connect(_client, SIGNAL(userJoined(int, QString)), _chatbox, SLOT(userJoined(int, QString)));
-	connect(_client, SIGNAL(userLeft(QString)), _chatbox, SLOT(userParted(QString)));
-	connect(_client, SIGNAL(youWereKicked(QString)), _chatbox, SLOT(kicked(QString)));
-
-	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
+	connect(m_client, SIGNAL(userJoined(int, QString)), _chatbox, SLOT(userJoined(int, QString)));
+	connect(m_client, SIGNAL(userLeft(QString)), _chatbox, SLOT(userParted(QString)));
+	connect(m_client, SIGNAL(youWereKicked(QString)), _chatbox, SLOT(kicked(QString)));
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
-	connect(qApp, SIGNAL(settingsChanged()), _view, SLOT(updateLayerViewParams()));
 
 	updateTabletSupportMode();
 
@@ -388,6 +436,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 #ifdef Q_OS_MAC
 	MacMenu::instance()->addWindow(this);
+#endif
+
+#ifdef ENABLE_QML_CANVAS
+	// Initialize QML components
+	qqview->setSource(QUrl("qrc:/qml/Canvas/Canvas.qml"));
+
+	m_root = qqview->rootObject();
+	Q_ASSERT(m_root);
 #endif
 
 	// Show self
@@ -415,6 +471,43 @@ MainWindow::~MainWindow()
 		_recorder->close();
 }
 
+void MainWindow::initCanvas()
+{
+	m_canvas = new canvas::CanvasModel(m_client, this);
+	_canvasscene->initCanvas(m_canvas);
+
+	_dock_layers->init();
+	m_client->init();
+
+	_dock_toolsettings->getAnnotationSettings()->setController(m_toolctrl);
+
+	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &MainWindow::updateTitle);
+
+	connect(m_canvas, &canvas::CanvasModel::layerAutoselectRequest, _dock_layers, &docks::LayerList::selectLayer);
+	connect(m_canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings->getColorPickerSettings(), &tools::ColorPickerSettings::addColor);
+
+	connect(m_canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
+
+	connect(m_canvas, &canvas::CanvasModel::canvasModified, [this]() {
+		setWindowModified(true);
+		if(_autosave->isChecked())
+			autosave();
+	});
+
+	connect(_dock_layers, &docks::LayerList::layerViewModeSelected, m_canvas, &canvas::CanvasModel::setLayerViewMode);
+	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
+
+	_currentdoctools->setEnabled(true);
+
+	m_toolctrl->setModel(m_canvas);
+
+#ifdef ENABLE_QML_CANVAS
+	// Probably not needed
+	QMetaObject::invokeMethod(m_root, "initCanvas", Q_ARG(QVariant, QVariant::fromValue(m_canvas)));
+#endif
+}
+
 /**
  * @brief Initialize session state
  *
@@ -422,7 +515,7 @@ MainWindow::~MainWindow()
  *
  * @return the MainWindow instance in which the document was loaded or 0 in case of error
  */
-MainWindow *MainWindow::loadDocument(SessionLoader &loader)
+MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 {
 	if(!canReplace()) {
 		writeSettings();
@@ -448,9 +541,11 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		return nullptr;
 	}
 
-	_canvas->initCanvas(_client);
-	_dock_layers->init();
-	_client->init();
+	if(!loader.warningMessage().isEmpty()) {
+		QMessageBox::warning(0, QApplication::tr("Warning"), loader.warningMessage());
+	}
+
+	initCanvas();
 	
 	// Set local history size limit. This must be at least as big as the initializer,
 	// otherwise a new snapshot will always have to be generated when hosting a session.
@@ -459,8 +554,8 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		minsizelimit += msg->length();
 	minsizelimit *= 2;
 
-	_canvas->statetracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
-	_client->sendLocalInit(init);
+	m_canvas->stateTracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
+	m_client->sendLocalInit(init);
 
 	QApplication::restoreOverrideCursor();
 
@@ -486,12 +581,10 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 		return win->loadRecording(reader);
 	}
 
-	_canvas->initCanvas(_client);
-	_dock_layers->init();
-	_client->init();
+	initCanvas();
 
-	_canvas->statetracker()->setMaxHistorySize(1024*1024*10u);
-	_canvas->statetracker()->setShowAllUserMarkers(true);
+	m_canvas->stateTracker()->setMaxHistorySize(1024*1024*10u);
+	m_canvas->stateTracker()->setShowAllUserMarkers(true);
 
 	_current_filename = QString();
 	_autosave->setChecked(false);
@@ -504,20 +597,20 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	QFileInfo fileinfo(reader->filename());
 
-	m_playbackDialog = new dialogs::PlaybackDialog(_canvas, reader, this);
+	m_playbackDialog = new dialogs::PlaybackDialog(m_canvas, reader, this);
 	m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
 	m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(m_playbackDialog, &dialogs::PlaybackDialog::commandRead, _client, &net::Client::playbackCommand);
+	connect(m_playbackDialog, &dialogs::PlaybackDialog::commandRead, m_client, &net::Client::playbackCommand);
 
 	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
 	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, [this]() {
 		m_playbackDialog = 0;
 		getAction("recordsession")->setEnabled(true);
 		setRecorderStatus(false);
-		_canvas->statetracker()->setShowAllUserMarkers(false);
-		_client->endPlayback();
-		_canvas->statetracker()->endPlayback();
+		m_canvas->stateTracker()->setShowAllUserMarkers(false);
+		m_client->endPlayback();
+		m_canvas->stateTracker()->endPlayback();
 	});
 
 	m_playbackDialog->show();
@@ -542,7 +635,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _client->isConnected() || _recorder || m_playbackDialog);
+	return !(isWindowModified() || m_client->isConnected() || _recorder || m_playbackDialog);
 }
 
 /**
@@ -576,10 +669,10 @@ void MainWindow::updateTitle()
 		name = info.baseName();
 	}
 
-	if(!_canvas || _canvas->title().isEmpty())
+	if(!m_canvas || m_canvas->title().isEmpty())
 		setWindowTitle(QStringLiteral("%1[*]").arg(name));
 	else
-		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, _canvas->title()));
+		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, m_canvas->title()));
 
 #ifdef Q_OS_MAC
 	MacMenu::instance()->updateWindow(this);
@@ -588,7 +681,7 @@ void MainWindow::updateTitle()
 
 void MainWindow::setDrawingToolsEnabled(bool enable)
 {
-	_drawingtools->setEnabled(enable && _canvas->hasImage());
+	_drawingtools->setEnabled(enable && m_canvas);
 }
 
 /**
@@ -686,7 +779,7 @@ void MainWindow::readSettings(bool windowpos)
 
 	bool thicklasers = cfg.value("thicklasers", false).toBool();
 	getAction("thicklasers")->setChecked(thicklasers);
-	_canvas->setThickLaserTrails(thicklasers);
+	_canvasscene->setThickLaserTrails(thicklasers);
 
 	cfg.endGroup();
 
@@ -737,7 +830,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	if(canReplace() == false) {
 
 		// First confirm disconnection
-		if(_client->isLoggedIn()) {
+		if(m_client->isLoggedIn()) {
 			QMessageBox box(
 				QMessageBox::Information,
 				tr("Exit Drawpile"),
@@ -752,7 +845,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			box.exec();
 			if(box.clickedButton() == exitbtn) {
-				_client->disconnectFromServer();
+				m_client->disconnectFromServer();
 			} else {
 				event->ignore();
 				return;
@@ -851,7 +944,7 @@ void MainWindow::showNew()
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-   BlankCanvasLoader bcl(size, background);
+   canvas::BlankCanvasLoader bcl(size, background);
    loadDocument(bcl);
 }
 
@@ -873,7 +966,7 @@ void MainWindow::open(const QUrl& url)
 					delete reader;
 			}
 		} else {
-			ImageCanvasLoader icl(file);
+			canvas::ImageCanvasLoader icl(file);
 			if(loadDocument(icl))
 				addRecentFile(file);
 		}
@@ -964,7 +1057,7 @@ void MainWindow::autosaveNow()
 	Q_ASSERT(isWritableFormat(_current_filename));
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	bool saved = _canvas->save(_current_filename);
+	bool saved = m_canvas->save(_current_filename);
 	QApplication::restoreOverrideCursor();
 	if(saved)
 		setWindowModified(false);
@@ -983,14 +1076,14 @@ bool MainWindow::save()
 	if(!isWritableFormat(_current_filename))
 		return saveas();
 
-	if(!_current_filename.endsWith("ora", Qt::CaseInsensitive) && _canvas->needSaveOra()) {
+	if(!_current_filename.endsWith("ora", Qt::CaseInsensitive) && m_canvas->needsOpenRaster()) {
 		if(confirmFlatten(_current_filename)==false)
 			return false;
 	}
 
 	// Overwrite current file
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	bool saved = _canvas->save(_current_filename);
+	bool saved = m_canvas->save(_current_filename);
 	QApplication::restoreOverrideCursor();
 	if(!saved) {
 		showErrorMessage(tr("Couldn't save image"));
@@ -1028,7 +1121,7 @@ bool MainWindow::saveas()
 		if(info.suffix().isEmpty()) {
 			if(selfilter.isEmpty()) {
 				// If we don't have selfilter, pick what is best
-				if(_canvas->needSaveOra())
+				if(m_canvas->needsOpenRaster())
 					file += ".ora";
 				else
 					file += ".png";
@@ -1041,14 +1134,14 @@ bool MainWindow::saveas()
 		}
 
 		// Confirm format choice if saving would result in flattening layers
-		if(_canvas->needSaveOra() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
+		if(m_canvas->needsOpenRaster() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
 			if(confirmFlatten(file)==false)
 				return false;
 		}
 
 		// Save the image
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		bool saved = _canvas->save(file);
+		bool saved = m_canvas->save(file);
 		QApplication::restoreOverrideCursor();
 		if(!saved) {
 			showErrorMessage(tr("Couldn't save image"));
@@ -1066,14 +1159,14 @@ bool MainWindow::saveas()
 
 void MainWindow::exportAnimation()
 {
-	AnimationExporter::exportAnimation(_canvas->layers(), this);
+	AnimationExporter::exportAnimation(m_canvas->layerStack(), this);
 }
 
 void MainWindow::showFlipbook()
 {
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
 	fp->setAttribute(Qt::WA_DeleteOnClose);
-	fp->setLayers(_canvas->layers());
+	fp->setLayers(m_canvas->layerStack());
 	fp->show();
 }
 
@@ -1157,8 +1250,8 @@ void MainWindow::startRecorder(const QString &filename)
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 		_recorder->writeHeader();
 
-		QList<protocol::MessagePtr> snapshot = _canvas->statetracker()->generateSnapshot(false);
-		foreach(const protocol::MessagePtr ptr, snapshot) {
+		QList<protocol::MessagePtr> snapshot = m_canvas->generateSnapshot(false);
+		for(const protocol::MessagePtr ptr : snapshot) {
 			_recorder->recordMessage(ptr);
 		}
 
@@ -1167,7 +1260,7 @@ void MainWindow::startRecorder(const QString &filename)
 		if(cfg.value("recordpause", true).toBool())
 			_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
 
-		connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
+		connect(m_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
 		recordAction->setText(tr("Stop Recording"));
 		recordAction->setIcon(icon::fromTheme("media-playback-stop"));
@@ -1254,7 +1347,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl());
-	_client->connectToServer(login);
+	m_client->connectToServer(login);
 }
 
 /**
@@ -1289,7 +1382,7 @@ void MainWindow::leave()
 {
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
-		_canvas->title().isEmpty()?tr("Untitled"):_canvas->title(),
+		m_canvas->title().isEmpty() ? tr("Untitled") : m_canvas->title(),
 		tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
@@ -1302,10 +1395,10 @@ void MainWindow::leave()
 			);
 	connect(leavebox, &QMessageBox::finished, [this](int result) {
 		if(result == 0)
-			_client->disconnectFromServer();
+			m_client->disconnectFromServer();
 	});
 	
-	if(_client->uploadQueueBytes() > 0) {
+	if(m_client->uploadQueueBytes() > 0) {
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
 	}
@@ -1321,11 +1414,11 @@ void MainWindow::changeSessionTitle()
 				tr("Session Title"),
 				tr("Change session title"),
 				QLineEdit::Normal,
-				_canvas->title(),
+				m_canvas->title(),
 				&ok
 	);
-	if(ok && newtitle != _canvas->title()) {
-		_client->sendSetSessionTitle(newtitle);
+	if(ok && newtitle != m_canvas->title()) {
+		m_client->sendSetSessionTitle(newtitle);
 	}
 }
 
@@ -1343,7 +1436,7 @@ void MainWindow::joinSession(const QUrl& url, bool autoRecord)
 
 	_autoRecordOnConnect = autoRecord;
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
-	_client->connectToServer(login);
+	m_client->connectToServer(login);
 }
 
 /**
@@ -1374,14 +1467,14 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 	_view->setEnabled(true);
 	setDrawingToolsEnabled(true);
 
-	setSessionTitle(QString());
-
 	// Make sure all drawing is complete
-	if(_canvas->hasImage())
-		_canvas->statetracker()->endRemoteContexts();
+	if(m_canvas) {
+		m_canvas->stateTracker()->endRemoteContexts();
+		m_canvas->setTitle(QString());
+	}
 
 	// Display login error if not yet logged in
-	if(!_client->isLoggedIn() && !localDisconnect) {
+	if(!m_client->isLoggedIn() && !localDisconnect) {
 		QMessageBox *msgbox = new QMessageBox(
 			QMessageBox::Warning,
 			QString(),
@@ -1404,7 +1497,7 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 			msgbox->removeButton(msgbox->button(QMessageBox::Ok));
 			msgbox->addButton(QMessageBox::Cancel);
 
-			QUrl url = _client->sessionUrl(true);
+			QUrl url = m_client->sessionUrl(true);
 
 			connect(joinbutton, &QAbstractButton::clicked, [this, url]() {
 				joinSession(url);
@@ -1422,22 +1515,20 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 void MainWindow::loggedin(bool join)
 {
 	// Update netstatus widget
-	_netstatus->loggedIn(_client->sessionUrl());
-	_netstatus->setSecurityLevel(_client->securityLevel(), _client->hostCertificate());
+	_netstatus->loggedIn(m_client->sessionUrl());
+	_netstatus->setSecurityLevel(m_client->securityLevel(), m_client->hostCertificate());
 
 	// Re-enable UI
 	_view->setEnabled(true);
 
 	// Initialize the canvas (in host mode the canvas was prepared already)
 	if(join) {
-		_canvas->initCanvas(_client);
-		_dock_layers->init();
-		_currentdoctools->setEnabled(true);
+		initCanvas();
 	}
 
 	// Automatically start recording
 	if(_autoRecordOnConnect)
-		startRecorder(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + _client->sessionId(), "dprec"));
+		startRecorder(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
 
 	setDrawingToolsEnabled(true);
 }
@@ -1454,7 +1545,7 @@ void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool clos
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = _client->isLocked() || _dock_layers->isCurrentLayerLocked();
+	bool locked = m_client->isLocked() || _dock_layers->isCurrentLayerLocked();
 	if(locked) {
 		_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
 		_lockstatus->setToolTip(tr("Board is locked"));
@@ -1463,16 +1554,6 @@ void MainWindow::updateLockWidget()
 		_lockstatus->setToolTip(QString());
 	}
 	_view->setLocked(locked);
-}
-
-/**
- * Session title changed
- * @param title new title
- */
-void MainWindow::setSessionTitle(const QString& title)
-{
-	_canvas->setTitle(title);
-	updateTitle();
 }
 
 void MainWindow::setOperatorMode(bool op)
@@ -1517,11 +1598,11 @@ void MainWindow::setShowAnnotations(bool show)
 {
 	QAction *annotationtool = getAction("tooltext");
 	annotationtool->setEnabled(show);
-	_canvas->showAnnotations(show);
+	_canvasscene->showAnnotations(show);
 	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::ANNOTATION);
+		_dock_toolsettings->disableEraserOverride(tools::Tool::ANNOTATION);
 	}
 }
 
@@ -1529,12 +1610,12 @@ void MainWindow::setShowLaserTrails(bool show)
 {
 	QAction *lasertool = getAction("toollaser");
 	lasertool->setEnabled(show);
-	_canvas->showLaserTrails(show);
+	_canvasscene->showLaserTrails(show);
 	getAction("thicklasers")->setEnabled(show);
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::LASERPOINTER);
+		_dock_toolsettings->disableEraserOverride(tools::Tool::LASERPOINTER);
 	}
 }
 
@@ -1598,7 +1679,7 @@ void MainWindow::selectTool(QAction *tool)
 	if(idx<0)
 		return;
 
-	_dock_toolsettings->setTool(tools::Type(idx));
+	_dock_toolsettings->setTool(tools::Tool::Type(idx));
 	_toolChangeTime.start();
 	_lastToolBeforePaste = -1;
 }
@@ -1607,22 +1688,26 @@ void MainWindow::selectTool(QAction *tool)
  * @brief Handle tool change
  * @param tool
  */
-void MainWindow::toolChanged(tools::Type tool)
+void MainWindow::toolChanged(tools::Tool::Type tool)
 {
 	QAction *toolaction = _drawingtools->actions().at(int(tool));
 	toolaction->setChecked(true);
 
 	// When using the annotation tool, highlight all text boxes
-	_canvas->showAnnotationBorders(tool==tools::ANNOTATION);
+	_canvasscene->showAnnotationBorders(tool==tools::Tool::ANNOTATION);
 
 	// Send pointer updates when using the laser pointer (TODO checkbox)
-	_view->setPointerTracking(tool==tools::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
+	_view->setPointerTracking(tool==tools::Tool::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool
-	if(tool != tools::SELECTION)
+	if(tool != tools::Tool::SELECTION && tool != tools::Tool::POLYGONSELECTION)
 		cancelSelection();
 
-	_view->selectTool(tool);
+	// Deselect annotation when tool changed
+	if(tool != tools::Tool::ANNOTATION)
+		m_toolctrl->setActiveAnnotation(0);
+
+	m_toolctrl->setActiveTool(tool);
 }
 
 void MainWindow::selectionRemoved()
@@ -1637,47 +1722,62 @@ void MainWindow::selectionRemoved()
 
 void MainWindow::undo()
 {
-	if(_canvas->selectionItem()) {
+	if(!m_canvas)
+		return;
+
+	if(m_canvas->selection()) {
 		cancelSelection();
 	} else {
-		_client->sendUndo();
+		m_client->sendUndo();
 	}
 }
 
 void MainWindow::selectAll()
 {
-	getAction("toolselectrect")->trigger();
-	_canvas->setSelectionItem(QRect(QPoint(), _canvas->imageSize()));
+	if(m_canvas) {
+		getAction("toolselectrect")->trigger();
+		canvas::Selection *selection = new canvas::Selection;
+		selection->setShapeRect(QRect(QPoint(), m_canvas->layerStack()->size()));
+		m_canvas->setSelection(selection);
+	}
 }
 
 void MainWindow::selectNone()
 {
-	if(_canvas->selectionItem()) {
-		_canvas->selectionItem()->pasteToCanvas(_client, _dock_layers->currentLayer());
+	if(m_canvas && m_canvas->selection()) {
+		m_canvas->selection()->pasteToCanvas(m_client, _dock_layers->currentLayer());
 		cancelSelection();
 	}
 }
 
 void MainWindow::cancelSelection()
 {
-	if(_canvas->selectionItem()) {
-		if(!_canvas->selectionItem()->pasteImage().isNull() && _canvas->selectionItem()->isMovedFromCanvas())
-			_client->sendUndo();
-		_canvas->setSelectionItem(nullptr);
+	if(m_canvas && m_canvas->selection()) {
+		if(!m_canvas->selection()->pasteImage().isNull() && m_canvas->selection()->isMovedFromCanvas())
+			m_client->sendUndo();
+		m_canvas->setSelection(nullptr);
 	}
 }
 
 void MainWindow::copyFromLayer(int layer)
 {
+	if(!m_canvas) {
+		qWarning("copyFromLayer: no canvas!");
+		return;
+	}
+
 	QMimeData *data = new QMimeData;
-	data->setImageData(_canvas->selectionToImage(layer));
+	data->setImageData(m_canvas->selectionToImage(layer));
 
 	// Store also original coordinates
 	QPoint srcpos;
-	if(_canvas->selectionItem())
-		srcpos = _canvas->selectionItem()->polygonRect().center();
-	else
-		srcpos = QPoint(_canvas->width()/2, _canvas->height()/2);
+	if(m_canvas->selection()) {
+		srcpos = m_canvas->selection()->boundingRect().center();
+
+	} else {
+		QSize s = m_canvas->layerStack()->size();
+		srcpos = QPoint(s.width()/2, s.height()/2);
+	}
 
 	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
 	data->setData("x-drawpile/pastesrc", srcbuf);
@@ -1771,37 +1871,37 @@ void MainWindow::pasteFile(const QUrl &url)
 
 void MainWindow::pasteImage(const QImage &image)
 {
-	if(_canvas->hasImage()) {
+	if(m_canvas) {
 		pasteImage(image, _view->viewCenterPoint(), false);
 
 	} else {
 		// Canvas not yet initialized? Initialize with clipboard content
-		QImageCanvasLoader loader(image);
+		canvas::QImageCanvasLoader loader(image);
 		loadDocument(loader);
 	}
 }
 
 void MainWindow::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
 {
-	if(!_canvas->hasImage()) {
+	if(!m_canvas) {
 		pasteImage(image);
 
 	} else {
-		if(_dock_toolsettings->currentTool() != tools::SELECTION && _dock_toolsettings->currentTool() != tools::POLYGONSELECTION) {
+		if(_dock_toolsettings->currentTool() != tools::Tool::SELECTION && _dock_toolsettings->currentTool() != tools::Tool::POLYGONSELECTION) {
 			int currentTool = _dock_toolsettings->currentTool();
 			getAction("toolselectrect")->trigger();
 			_lastToolBeforePaste = currentTool;
 		}
 
-		_canvas->pasteFromImage(image, point, forcePoint);
+		m_canvas->pasteFromImage(image, point, forcePoint);
 	}
 }
 
 void MainWindow::stamp()
 {
-	drawingboard::SelectionItem *sel = _canvas->selectionItem();
+	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull()) {
-		sel->pasteToCanvas(_client, _dock_layers->currentLayer());
+		sel->pasteToCanvas(m_client, _dock_layers->currentLayer());
 		sel->setMovedFromCanvas(false);
 	}
 }
@@ -1831,11 +1931,11 @@ void MainWindow::dropUrl(const QUrl &url)
 
 void MainWindow::removeEmptyAnnotations()
 {
-	QList<int> ids = _canvas->listEmptyAnnotations();
+	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
-		_client->sendUndopoint();
-		foreach(int id, ids)
-			_client->sendAnnotationDelete(id);
+		m_client->sendUndopoint();
+		for(int id : ids)
+			m_client->sendAnnotationDelete(id);
 	}
 }
 
@@ -1849,8 +1949,8 @@ void MainWindow::clearOrDelete()
 	if(annotationtool->isChecked()) {
 		int a = _dock_toolsettings->getAnnotationSettings()->selected();
 		if(a>0) {
-			_client->sendUndopoint();
-			_client->sendAnnotationDelete(a);
+			m_client->sendUndopoint();
+			m_client->sendAnnotationDelete(a);
 			return;
 		}
 	}
@@ -1861,28 +1961,37 @@ void MainWindow::clearOrDelete()
 
 void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 {
-	if(_canvas->selectionItem()) {
+	if(!m_canvas) {
+		qWarning("fillArea: no canvas!");
+		return;
+	}
+	if(m_canvas->selection()) {
 		// Selection exists: fill selected area only
-		_canvas->selectionItem()->fillCanvas(color, mode, _client, _dock_layers->currentLayer());
+		m_canvas->selection()->fillCanvas(color, mode, m_client, _dock_layers->currentLayer());
 
 	} else {
 		// No selection: fill entire layer
-		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, mode);
+		m_client->sendUndopoint();
+		m_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), m_canvas->layerStack()->size()), color, mode);
 	}
 }
 
 void MainWindow::resizeCanvas()
 {
-	QSize size = _canvas->imageSize();
+	if(!m_canvas) {
+		qWarning("resizeCanvas: no canvas!");
+		return;
+	}
+
+	QSize size = m_canvas->layerStack()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	connect(dlg, &QDialog::accepted, [this, dlg]() {
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
-			_client->sendUndopoint();
-			_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
+			m_client->sendUndopoint();
+			m_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
 		}
 	});
 	dlg->show();
@@ -1893,7 +2002,7 @@ void MainWindow::markSpotForRecording()
 	bool ok;
 	QString text = QInputDialog::getText(this, tr("Mark"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
 	if(ok)
-		_client->sendMarker(text);
+		m_client->sendMarker(text);
 }
 
 void MainWindow::about()
@@ -2132,7 +2241,7 @@ void MainWindow::setupActions()
 	_docadmintools->addAction(expandright);
 
 	connect(undo, &QAction::triggered, this, &MainWindow::undo);
-	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
+	connect(redo, SIGNAL(triggered()), m_client, SLOT(sendRedo()));
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
@@ -2150,10 +2259,10 @@ void MainWindow::setupActions()
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
-	connect(expandup, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(64, 0 ,0, 0);});
-	connect(expandright, &QAction::triggered, [this] {_client->sendUndopoint();  _client->sendCanvasResize(0, 64, 0, 0);});
-	connect(expanddown, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(0,0, 64, 0);});
-	connect(expandleft, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(0,0, 0, 64);});
+	connect(expandup, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(64, 0 ,0, 0);});
+	connect(expandright, &QAction::triggered, [this] {m_client->sendUndopoint();  m_client->sendCanvasResize(0, 64, 0, 0);});
+	connect(expanddown, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(0,0, 64, 0);});
+	connect(expandleft, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(0,0, 0, 64);});
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(undo);
@@ -2291,10 +2400,10 @@ void MainWindow::setupActions()
 
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showcrosshair, SIGNAL(triggered(bool)), _view, SLOT(setCrosshair(bool)));
-	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
-	connect(showuserlayers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserLayers(bool)));
+	connect(showusermarkers, SIGNAL(triggered(bool)), _canvasscene, SLOT(showUserMarkers(bool)));
+	connect(showuserlayers, SIGNAL(triggered(bool)), _canvasscene, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
-	connect(thicklasers, SIGNAL(triggered(bool)), _canvas, SLOT(setThickLaserTrails(bool)));
+	connect(thicklasers, SIGNAL(triggered(bool)), _canvasscene, SLOT(setThickLaserTrails(bool)));
 	connect(showgrid, SIGNAL(triggered(bool)), _view, SLOT(setPixelGrid(bool)));
 
 	_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
@@ -2362,9 +2471,9 @@ void MainWindow::setupActions()
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
 	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
-	connect(locksession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
-	connect(locklayerctrl, SIGNAL(triggered(bool)), _client, SLOT(sendLockLayerControls(bool)));
-	connect(closesession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
+	connect(locksession, SIGNAL(triggered(bool)), m_client, SLOT(sendLockSession(bool)));
+	connect(locklayerctrl, SIGNAL(triggered(bool)), m_client, SLOT(sendLockLayerControls(bool)));
+	connect(closesession, SIGNAL(triggered(bool)), m_client, SLOT(sendCloseSession(bool)));
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);
@@ -2428,8 +2537,10 @@ void MainWindow::setupActions()
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
+#if 0 // TODO
 	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
 	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
+#endif
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 

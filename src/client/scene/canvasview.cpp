@@ -32,10 +32,9 @@
 
 #include "canvasview.h"
 #include "canvasscene.h"
-#include "docks/toolsettingsdock.h"
+#include "canvas/canvasmodel.h"
 #include "tools/toolsettings.h"
 
-#include "net/client.h"
 #include "core/layerstack.h"
 #include "core/point.h"
 #include "notifications.h"
@@ -46,7 +45,6 @@ CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
 	_showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
-	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_tabletmode(ENABLE_TABLET),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
@@ -66,17 +64,7 @@ CanvasView::CanvasView(QWidget *parent)
 
 	setBackgroundBrush(QColor(100,100,100));
 
-	// Draw the crosshair cursor
-	QBitmap bm(32,32);
-	bm.clear();
-	QPainter bmp(&bm);
-	bmp.setPen(Qt::color1);
-	bmp.drawLine(15,0,15,31);
-	bmp.drawLine(0,15,31,15);
-	QBitmap mask = bm;
-	bmp.setPen(Qt::color0);
-	bmp.drawPoint(15,15);
-	_crosshaircursor = QCursor(bm, mask, 15, 15);
+	_crosshaircursor = QCursor(QPixmap(":/cursors/crosshair.png"), 15, 15);
 	viewport()->setCursor(_crosshaircursor);
 
 	// Get the color picker cursor
@@ -91,12 +79,7 @@ void CanvasView::setTabletMode(TabletMode mode)
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	_scene = scene;
-	_toolbox.setScene(scene);
 	setScene(scene);
-
-	connect(_scene, &drawingboard::CanvasScene::canvasInitialized, [this]() {
-		viewRectChanged();
-	});
 
 	connect(_scene, &drawingboard::CanvasScene::canvasResized, [this](int xoff, int yoff, const QSize &oldsize) {
 		if(oldsize.isEmpty()) {
@@ -106,18 +89,6 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		}
 	});
 
-}
-
-void CanvasView::setClient(net::Client *client)
-{
-	_toolbox.setClient(client);
-	connect(this, SIGNAL(pointerMoved(QPointF)), client, SLOT(sendLaserPointer(QPointF)));
-}
-
-void CanvasView::setToolSettings(docks::ToolSettings *settings)
-{
-	_toolbox.setToolSettings(settings);
-	connect(settings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), this, SLOT(setPointerTracking(bool)));
 }
 
 void CanvasView::zoomSteps(int steps)
@@ -157,7 +128,6 @@ void CanvasView::setZoom(qreal zoom)
 
 	setMatrix(nm);
 	emit viewTransformed(_zoom, _rotate);
-	viewRectChanged();
 }
 
 /**
@@ -198,57 +168,28 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
+void CanvasView::setToolCursor(const QCursor &cursor)
+{
+	m_toolcursor = cursor;
+	resetCursor();
+}
+
 void CanvasView::resetCursor()
 {
 	if(_locked) {
 		viewport()->setCursor(Qt::ForbiddenCursor);
 
 	} else {
-		const QCursor &c = _current_tool->cursor();
 		// The standard crosshair cursor is (in some themes) too
 		// thick for accurate work, so we use a custom 1px wide cursor.
 		// Crosshair is safe to hide, because it is only used with brush
 		// tools for which an outline cursor is also drawn.
-		if(c.shape() == Qt::CrossCursor) {
+		if(m_toolcursor.shape() == Qt::CrossCursor) {
 			viewport()->setCursor(_enablecrosshair ? _crosshaircursor : QCursor(Qt::BlankCursor));
 		} else {
-			viewport()->setCursor(c);
+			viewport()->setCursor(m_toolcursor);
 		}
 	}
-}
-
-void CanvasView::selectTool(tools::Type tool)
-{
-	_current_tool = _toolbox.get(tool);
-	resetCursor();
-}
-
-void CanvasView::selectLayer(int layer_id)
-{
-	_toolbox.selectLayer(layer_id);
-
-	if(_scene->layers())
-		_scene->layers()->setViewLayer(layer_id);
-}
-
-void CanvasView::setLayerViewMode(int mode)
-{
-	if(_scene->layers()) {
-		_scene->layers()->setViewMode(paintcore::LayerStack::ViewMode(mode));
-		updateLayerViewParams();
-	}
-}
-
-void CanvasView::updateLayerViewParams()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/animation");
-	_scene->layers()->setOnionskinMode(
-		cfg.value("onionskinsbelow", 4).toInt(),
-		cfg.value("onionskinsabove", 4).toInt(),
-		cfg.value("onionskintint", true).toBool()
-	);
-	_scene->layers()->setViewBackgroundLayer(cfg.value("backgroundlayer", true).toBool());
 }
 
 void CanvasView::setCrosshair(bool enable)
@@ -340,18 +281,6 @@ void CanvasView::leaveEvent(QEvent *event)
 	updateOutline();
 }
 
-void CanvasView::scrollContentsBy(int dx, int dy)
-{
-	QGraphicsView::scrollContentsBy(dx, dy);
-	viewRectChanged();
-}
-
-void CanvasView::resizeEvent(QResizeEvent *event)
-{
-	QGraphicsView::resizeEvent(event);
-	viewRectChanged();
-}
-
 paintcore::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
 {
 	return paintcore::Point(mapToScene(point), pressure);
@@ -383,94 +312,50 @@ void CanvasView::setPointerTracking(bool tracking)
 {
 	_pointertracking = tracking;
 	if(!tracking && _scene) {
-		_scene->hideUserMarker();
+		// TODO
+		//_scene->hideUserMarker();
 	}
 }
 
-void CanvasView::setStrokeSmoothing(int smoothing)
+void CanvasView::setPressureMapping(const PressureMapping &mapping)
 {
-	Q_ASSERT(smoothing>=0);
-	_smoothing = smoothing;
-	if(smoothing>0)
-		_smoother.setSmoothing(smoothing);
-}
-
-void CanvasView::setPressureMode(PressureMode mode, float param)
-{
-	_pressuremode = PressureMode(mode);
-	_modeparam = param;
-}
-
-void CanvasView::setPressureCurve(const KisCubicCurve &curve)
-{
-	_pressurecurve = curve;
-}
-
-void CanvasView::setDistanceCurve(const KisCubicCurve &curve)
-{
-	_pressuredistance = curve;
-}
-
-void CanvasView::setVelocityCurve(const KisCubicCurve &curve)
-{
-	_pressurevelocity = curve;
+	m_pressuremapping = mapping;
 }
 
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
+	Q_UNUSED(right);
 	if(_scene->hasImage() && !_locked) {
 
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->pickColor(p.x(), p.y(), 0, right);
+			_scene->model()->pickColor(p.x(), p.y(), 0);
 		} else {
-			if(_smoothing>0 && _current_tool->allowSmoothing())
-				_smoother.addPoint(p);
-			_current_tool->begin(p, right, _zoom);
+			emit penDown(p, p.pressure());
 		}
 	}
 }
 
 void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt)
 {
+	Q_UNUSED(right);
+
 	if(_scene->hasImage() && !_locked) {
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->pickColor(p.x(), p.y(), 0, right);
+			_scene->model()->pickColor(p.x(), p.y(), 0);
 		} else {
-			if(_smoothing>0 && _current_tool->allowSmoothing()) {
-				_smoother.addPoint(p);
-				if(_smoother.hasSmoothPoint()) {
-					_current_tool->motion(_smoother.smoothPoint(), shift, alt);
-				}
-				// Remember the keys in use in case we simulate
-				// catch-up moves on pen up
-				_prevshift = shift;
-				_prevalt = alt;
-			} else {
-				_current_tool->motion(p, shift, alt);
-			}
+			emit penMove(p, p.pressure(), shift, alt);
 		}
 	}
 }
 
 void CanvasView::onPenUp(bool right)
 {
-	if(_scene->hasImage() && !_locked) {
-		if(!_specialpenmode) {
-			// Drain any remaining points from the smoothing buffer
-			if(_smoother.hasSmoothPoint())
-				_smoother.removePoint();
-			while(_smoother.hasSmoothPoint()) {
-				_current_tool->motion(_smoother.smoothPoint(),
-					_prevshift, _prevalt);
-				_smoother.removePoint();
-			}
-
-			_current_tool->end();
-		}
-
-		_smoother.reset();
+	Q_UNUSED(right);
+	if(!_locked) {
+		if(!_specialpenmode)
+			emit penUp();
 	}
 	_specialpenmode = false;
 }
@@ -844,18 +729,18 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 float CanvasView::mapPressure(float pressure, bool stylus)
 {
-	switch(_pressuremode) {
-	case PRESSUREMODE_STYLUS:
-		return stylus || (_tabletmode==HYBRID_TABLET && _stylusDown) ? _pressurecurve.value(pressure) : 1.0;
+	switch(m_pressuremapping.mode) {
+	case PressureMapping::STYLUS:
+		return stylus || (_tabletmode==HYBRID_TABLET && _stylusDown) ? m_pressuremapping.curve.value(pressure) : 1.0;
 
-	case PRESSUREMODE_DISTANCE: {
-		float d = qMin(_pointerdistance, _modeparam) / _modeparam;
-		return _pressuredistance.value(d);
+	case PressureMapping::DISTANCE: {
+		qreal d = qMin(_pointerdistance, m_pressuremapping.param) / m_pressuremapping.param;
+		return m_pressuremapping.curve.value(d);
 	}
 
-	case PRESSUREMODE_VELOCITY:
-		float v = qMin(_pointervelocity, _modeparam) / _modeparam;
-		return _pressurevelocity.value(v);
+	case PressureMapping::VELOCITY:
+		qreal v = qMin(_pointervelocity, m_pressuremapping.param) / m_pressuremapping.param;
+		return m_pressuremapping.curve.value(v);
 	}
 
 	// Shouldn't be reached
@@ -902,7 +787,7 @@ void CanvasView::doQuickAdjust1(float delta)
 {
 	// Brush attribute adjustment is allowed only when stroke is not in progress
 	if(_pendown == NOTDOWN)
-		_toolbox.toolsettings()->quickAdjustCurrent1(delta);
+		emit quickAdjust(delta);
 }
 
 QPoint CanvasView::viewCenterPoint() const
@@ -914,12 +799,6 @@ bool CanvasView::isPointVisible(const QPointF &point) const
 {
 	QPoint p = mapFromScene(point);
 	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
-}
-
-void CanvasView::viewRectChanged()
-{
-	// Signal visible view rectangle change
-	emit viewRectChange(mapToScene(rect()));
 }
 
 void CanvasView::scrollTo(const QPoint& point)

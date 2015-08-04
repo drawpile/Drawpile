@@ -43,7 +43,7 @@
 
 namespace dialogs {
 
-PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent) :
+PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent) :
 	QDialog(parent), m_closing(false)
 {
 	// Note: we contain the QtQuick view inside a widget based dialog, since

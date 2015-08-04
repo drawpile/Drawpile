@@ -35,12 +35,21 @@ struct Annotation {
 	QRect rect;
 	QColor background;
 
+	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
+	static const int HANDLE_SIZE = 10;
+
 	// TODO this needs to be HTML aware
 	bool isEmpty() const { return text.isEmpty(); }
 
 	void paint(QPainter *painter) const;
 	void paint(QPainter *painter, const QRectF &paintrect) const;
 	QImage toImage() const;
+
+	//! Get the translation handle at the point
+	Handle handleAt(const QPoint &point, qreal zoom) const;
+
+	//! Adjust annotation position or size
+	void adjustGeometry(Handle handle, const QPoint &delta);
 
 	void toDataStream(QDataStream &out) const;
 	static Annotation fromDataStream(QDataStream &in);
@@ -74,13 +83,15 @@ public:
 	void setAnnotations(const QList<Annotation> &list);
 	QList<Annotation> getAnnotations() const { return m_annotations; }
 
-	// Transitional: these won't be needed after the migration to QML is complete
-	const Annotation *getById(int id) const;
-	Annotation *getById(int id);
+	int annotationAtPos(const QPoint &pos) const;
 
-signals:
-	// Transitional
-	void annotationChanged(int id);
+	Annotation::Handle annotationHandleAt(int id, const QPoint &point, qreal zoom) const;
+	void annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta);
+
+	const Annotation *getById(int id) const;
+
+	//! Return the IDs of annotations that have no text content
+	QList<int> getEmptyIds() const;
 
 private:
 	int findById(int id) const;

@@ -28,8 +28,8 @@
 #include "../shared/net/recording.h"
 
 #include "notifications.h"
-#include "statetracker.h"
-#include "scene/canvasscene.h"
+#include "canvas/statetracker.h"
+#include "canvas/canvasmodel.h"
 
 #include <QStringList>
 #include <QThreadPool>
@@ -41,7 +41,7 @@
 
 namespace recording {
 
-PlaybackController::PlaybackController(drawingboard::CanvasScene *canvas, Reader *reader, QObject *parent)
+PlaybackController::PlaybackController(canvas::CanvasModel *canvas, Reader *reader, QObject *parent)
 	: QObject(parent),
 	  m_reader(reader), m_indexloader(nullptr), m_exporter(nullptr), m_canvas(canvas),
 	  m_play(false), m_exporterReady(false), m_waitedForExporter(false), m_autosave(true),
@@ -304,7 +304,7 @@ void PlaybackController::jumptToSnapshot(int idx)
 	Q_ASSERT(m_indexloader);
 
 	SnapshotEntry se = m_indexloader->index().snapshots().at(idx);
-	drawingboard::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->statetracker());
+	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->stateTracker());
 
 	if(!savepoint) {
 		qWarning() << "error loading savepoint";
@@ -312,7 +312,7 @@ void PlaybackController::jumptToSnapshot(int idx)
 	}
 
 	m_reader->seekTo(se.pos, se.stream_offset);
-	m_canvas->statetracker()->resetToSavepoint(savepoint);
+	m_canvas->stateTracker()->resetToSavepoint(savepoint);
 	updateIndexPosition();
 }
 
@@ -633,7 +633,7 @@ void PlaybackController::exportFrame(int count)
 {
 	Q_ASSERT(count>0);
 	if(m_exporter) {
-		QImage img = m_canvas->image();
+		QImage img = m_canvas->toImage();
 		if(!img.isNull()) {
 			Q_ASSERT(m_exporterReady);
 			m_exporterReady = false;

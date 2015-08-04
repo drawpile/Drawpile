@@ -17,149 +17,127 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QGraphicsLineItem>
-#include <QGraphicsRectItem>
-#include <QGraphicsEllipseItem>
+#include "canvas/canvasmodel.h"
 
-#include "scene/canvasscene.h"
-#include "docks/toolsettingsdock.h"
+#include "core/layerstack.h"
+#include "core/layer.h"
 #include "core/shapes.h"
 #include "net/client.h"
-#include "statetracker.h"
 
+#include "tools/toolcontroller.h"
 #include "tools/shapetools.h"
 #include "tools/utils.h"
 
+#include <QPixmap>
+
 namespace tools {
 
-Line::Line(ToolCollection &owner)
-	: Tool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
-{
-}
-
-void Line::begin(const paintcore::Point& point, bool right, float zoom)
+void ShapeTool::begin(const paintcore::Point& point, float zoom)
 {
 	Q_UNUSED(zoom);
-	QGraphicsLineItem *item = new QGraphicsLineItem();
-	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
-	item->setLine(QLineF(point, point));
-	scene().setToolPreview(item);
-	_p1 = point;
-	_p2 = point;
-	_swap = right;
+
+	m_start = point;
+	m_p1 = point;
+	m_p2 = point;
+	m_brush = owner.activeBrush();
+
+	updatePreview();
+}
+
+void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool center)
+{
+	if(constrain)
+		m_p2 = constraints::square(m_start, point);
+	else
+		m_p2 = point;
+
+	if(center)
+		m_p1 = m_start - (m_p2 - m_start);
+	else
+		m_p1 = m_start;
+
+	updatePreview();
+}
+
+void ShapeTool::end()
+{
+	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	if(layer) {
+		layer->removeSublayer(-1);
+	}
+
+	canvas::ToolContext tctx = {
+		owner.activeLayer(),
+		m_brush
+	};
+
+	owner.client()->sendUndopoint();
+	owner.client()->sendToolChange(tctx);
+	owner.client()->sendStroke(pointVector());
+	owner.client()->sendPenup();
+}
+
+void ShapeTool::updatePreview()
+{
+	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	if(layer) {
+		paintcore::StrokeState ss;
+		layer->removeSublayer(-1);
+
+		const paintcore::PointVector pv = pointVector();
+		Q_ASSERT(pv.size()>1);
+
+		layer->dab(-1, m_brush, pv[0], ss);
+
+		for(int i=1;i<pv.size();++i)
+			layer->drawLine(-1, m_brush, pv[i-1], pv[i], ss);
+	}
+}
+
+Line::Line(ToolController &owner)
+	: ShapeTool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
+{
 }
 
 void Line::motion(const paintcore::Point& point, bool constrain, bool center)
 {
-	Q_UNUSED(center);
 	if(constrain)
-		_p2 = constraints::angle(_p1, point);
+		m_p2 = constraints::angle(m_start, point);
 	else
-		_p2 = point;
-
-	QGraphicsLineItem *item = qgraphicsitem_cast<QGraphicsLineItem*>(scene().toolPreview());
-	if(item)
-		item->setLine(QLineF(_p1, _p2));
-}
-
-void Line::end()
-{
-	using namespace paintcore;
-	scene().setToolPreview(0);
-
-	drawingboard::ToolContext tctx = {
-		layer(),
-		settings().getBrush(_swap)
-	};
-
-	client().sendUndopoint();
-	client().sendToolChange(tctx);
-	client().sendStroke(PointVector() << Point(_p1, 1) << Point(_p2, 1));
-	client().sendPenup();
-}
-
-void RectangularTool::begin(const paintcore::Point& point, bool right, float zoom)
-{
-	Q_UNUSED(zoom);
-	auto *item = createPreview(point);
-	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
-	scene().setToolPreview(item);
-	_start = point;
-	_p1 = point;
-	_p2 = point;
-	_swap = right;
-}
-
-void RectangularTool::motion(const paintcore::Point& point, bool constrain, bool center)
-{
-	if(constrain)
-		_p2 = constraints::square(_start, point);
-	else
-		_p2 = point;
+		m_p2 = point;
 
 	if(center)
-		_p1 = _start - (_p2 - _start);
+		m_p1 = m_start - (m_p2 - m_start);
 	else
-		_p1 = _start;
+		m_p1 = m_start;
 
-	updateToolPreview();
+	updatePreview();
 }
 
-void RectangularTool::end()
+paintcore::PointVector Line::pointVector() const
 {
-	scene().setToolPreview(0);
-
-	drawingboard::ToolContext tctx = {
-		layer(),
-		settings().getBrush(_swap)
-	};
-
-	client().sendUndopoint();
-	client().sendToolChange(tctx);
-	client().sendStroke(pointVector());
-	client().sendPenup();
+	paintcore::PointVector pv;
+	pv.reserve(2);
+	pv << paintcore::Point(m_p1, 1) << paintcore::Point(m_p2, 1);
+	return pv;
 }
 
-Rectangle::Rectangle(ToolCollection &owner)
-	: RectangularTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
+Rectangle::Rectangle(ToolController &owner)
+	: ShapeTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
 {
 }
 
-QAbstractGraphicsShapeItem *Rectangle::createPreview(const paintcore::Point &p)
-{
-	return new QGraphicsRectItem(p.x(), p.y(), 1, 1, 0);
-}
-
-void Rectangle::updateToolPreview()
-{
-	auto *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
-	if(item)
-		item->setRect(rect());
-}
-
-paintcore::PointVector Rectangle::pointVector()
+paintcore::PointVector Rectangle::pointVector() const
 {
 	return paintcore::shapes::rectangle(rect());
 }
 
-Ellipse::Ellipse(ToolCollection &owner)
-	: RectangularTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 2, 2))
+Ellipse::Ellipse(ToolController &owner)
+	: ShapeTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 2, 2))
 {
 }
 
-QAbstractGraphicsShapeItem *Ellipse::createPreview(const paintcore::Point &p)
-{
-	return new QGraphicsEllipseItem(p.x(), p.y(), 1, 1, 0);
-}
-
-void Ellipse::updateToolPreview()
-{
-	auto *item = qgraphicsitem_cast<QGraphicsEllipseItem*>(scene().toolPreview());
-	if(item)
-		item->setRect(rect());
-}
-
-paintcore::PointVector Ellipse::pointVector()
+paintcore::PointVector Ellipse::pointVector() const
 {
 	return paintcore::shapes::ellipse(rect());
 }

@@ -30,14 +30,11 @@ namespace tools {
  */
 class ColorPicker : public Tool {
 public:
-	ColorPicker(ToolCollection &owner);
+	ColorPicker(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
+	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
-
-private:
-	bool _bg;
 };
 
 }

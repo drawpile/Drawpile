@@ -26,64 +26,28 @@
 
 namespace drawingboard {
 
-AnnotationItem::AnnotationItem(int id, paintcore::LayerStack *image, QGraphicsItem *parent)
-	: QGraphicsObject(parent), _id(id), _image(image), _highlight(false), _showborder(false)
+AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
+	: QGraphicsItem(parent), m_id(id), m_highlight(false), m_showborder(false)
 {
 }
 
-/**
- * Note. Assumes point is inside the text box.
- */
-AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point, float zoom) const
-{
-	const qreal H = HANDLE / (zoom/100.0f);
-
-	const QRectF R = _rect.adjusted(-H/2, -H/2, H/2, H/2);
-
-	if(!R.contains(point))
-		return OUTSIDE;
-
-	QPointF p = point - R.topLeft();
-
-	if(p.x() < H) {
-		if(p.y() < H)
-			return RS_TOPLEFT;
-		else if(p.y() > R.height()-H)
-			return RS_BOTTOMLEFT;
-		return RS_LEFT;
-	} else if(p.x() > R.width() - H) {
-		if(p.y() < H)
-			return RS_TOPRIGHT;
-		else if(p.y() > R.height()-H)
-			return RS_BOTTOMRIGHT;
-		return RS_RIGHT;
-	} else if(p.y() < H)
-		return RS_TOP;
-	else if(p.y() > R.height()-H)
-		return RS_BOTTOM;
-
-	return TRANSLATE;
-}
-
-void AnnotationItem::adjustGeometry(Handle handle, const QPoint &delta)
+void AnnotationItem::setGeometry(const QRect &rect)
 {
 	prepareGeometryChange();
+	m_rect = rect;
+	m_doc.setTextWidth(rect.width());
+}
 
-	switch(handle) {
-	case OUTSIDE: return;
-	case TRANSLATE: _rect.translate(delta); break;
-	case RS_TOPLEFT: _rect.adjust(delta.x(), delta.y(), 0, 0); break;
-	case RS_TOPRIGHT: _rect.adjust(0, delta.y(), delta.x(), 0); break;
-	case RS_BOTTOMRIGHT: _rect.adjust(0, 0, delta.x(), delta.y()); break;
-	case RS_BOTTOMLEFT: _rect.adjust(delta.x(), 0, 0, delta.y()); break;
-	case RS_TOP: _rect.adjust(0, delta.y(), 0, 0); break;
-	case RS_RIGHT: _rect.adjust(0, 0, delta.x(), 0); break;
-	case RS_BOTTOM: _rect.adjust(0, 0, 0, delta.y()); break;
-	case RS_LEFT: _rect.adjust(delta.x(), 0, 0, 0); break;
-	}
+void AnnotationItem::setColor(const QColor &color)
+{
+	m_color = color;
+	update();
+}
 
-	if(_rect.left() > _rect.right() || _rect.top() > _rect.bottom())
-		_rect = _rect.normalized();
+void AnnotationItem::setText(const QString &text)
+{
+	m_doc.setHtml(text);
+	update();
 }
 
 
@@ -93,10 +57,10 @@ void AnnotationItem::adjustGeometry(Handle handle, const QPoint &delta)
  */
 void AnnotationItem::setHighlight(bool hl)
 {
-	bool old = _highlight;
-	_highlight = hl;
-	if(hl != old)
+	if(m_highlight != hl) {
+		m_highlight = hl;
 		update();
+	}
 }
 
 /**
@@ -105,41 +69,15 @@ void AnnotationItem::setHighlight(bool hl)
  */
 void AnnotationItem::setShowBorder(bool show)
 {
-	bool old = _showborder;
-	_showborder = show;
-	if(show != old)
+	if(m_showborder != show) {
+		m_showborder = show;
 		update();
-}
-
-const paintcore::Annotation *AnnotationItem::getAnnotation() const
-{
-	return _image->annotations()->getById(_id);
-}
-
-void AnnotationItem::refresh()
-{
-	const paintcore::Annotation *a = getAnnotation();
-	Q_ASSERT(a);
-	if(!a)
-		return;
-
-	prepareGeometryChange();
-	_rect = a->rect;
-	update();
-}
-
-bool AnnotationItem::isChanged() const
-{
-	const paintcore::Annotation *a = getAnnotation();
-	Q_ASSERT(a);
-	if(!a)
-		return false;
-	return _rect != a->rect;
+	}
 }
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return _rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2);
+	return m_rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2);
 }
 
 void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
@@ -149,43 +87,39 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 	const qreal devicePixelRatio = qApp->devicePixelRatio();
 
-	const paintcore::Annotation *state = getAnnotation();
-	Q_ASSERT(state);
-	if(!state)
-		return;
-
 	painter->save();
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
-	state->paint(painter, _rect);
+	painter->fillRect(m_rect, m_color);
+	m_doc.drawContents(painter, m_rect);
 
-	if(_showborder || state->isEmpty()) {
+	if(m_showborder || m_doc.isEmpty()) {
 		QColor border = QApplication::palette().color(QPalette::Highlight);
 		border.setAlpha(255);
 
-		QPen bpen(_highlight && _showborder ? Qt::DashLine : Qt::DotLine);
+		QPen bpen(m_highlight && m_showborder ? Qt::DashLine : Qt::DotLine);
 		bpen.setWidth(devicePixelRatio);
 		bpen.setCosmetic(true);
 		bpen.setColor(border);
 		painter->setPen(bpen);
-		painter->drawRect(_rect);
+		painter->drawRect(m_rect);
 
 		// Draw resizing handles
-		if(_highlight) {
+		if(m_highlight) {
 			QPen pen(border);
 			pen.setCosmetic(true);
 			pen.setWidth(HANDLE);
 			painter->setPen(pen);
-			painter->drawPoint(_rect.topLeft());
-			painter->drawPoint(_rect.topLeft() + QPointF(_rect.width()/2, 0));
-			painter->drawPoint(_rect.topRight());
+			painter->drawPoint(m_rect.topLeft());
+			painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width()/2, 0));
+			painter->drawPoint(m_rect.topRight());
 
-			painter->drawPoint(_rect.topLeft() + QPointF(0, _rect.height()/2));
-			painter->drawPoint(_rect.topRight() + QPointF(0, _rect.height()/2));
+			painter->drawPoint(m_rect.topLeft() + QPointF(0, m_rect.height()/2));
+			painter->drawPoint(m_rect.topRight() + QPointF(0, m_rect.height()/2));
 
-			painter->drawPoint(_rect.bottomLeft());
-			painter->drawPoint(_rect.bottomLeft() + QPointF(_rect.width()/2, 0));
-			painter->drawPoint(_rect.bottomRight());
+			painter->drawPoint(m_rect.bottomLeft());
+			painter->drawPoint(m_rect.bottomLeft() + QPointF(m_rect.width()/2, 0));
+			painter->drawPoint(m_rect.bottomRight());
 		}
 	}
 

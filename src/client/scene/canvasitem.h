@@ -35,10 +35,7 @@ class CanvasItem : public QGraphicsObject
 Q_OBJECT
 public:
 	//! Construct an empty board
-	CanvasItem(QGraphicsItem *parent=0);
-
-	//! Get the image
-	paintcore::LayerStack *image() const { return _image; }
+	CanvasItem(paintcore::LayerStack *layerstack, QGraphicsItem *parent=0);
 
 	/** reimplematation */
 	QRectF boundingRect() const;
@@ -54,7 +51,7 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
 
 private:
-	paintcore::LayerStack *_image;
+	paintcore::LayerStack *m_image;
 	QPixmap _cache;
 };
 

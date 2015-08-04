@@ -25,7 +25,7 @@
 #include "core/blendmodes.h"
 #include "net/server.h"
 #include "../shared/net/message.h"
-#include "statetracker.h" // for ToolContext
+#include "canvas/statetracker.h" // for ToolContext
 
 namespace paintcore {
 	class Point;
@@ -182,7 +182,7 @@ public slots:
 	void sendDeleteLayer(int id, bool merge);
 
 	// Drawing
-	void sendToolChange(const drawingboard::ToolContext &ctx);
+	void sendToolChange(const canvas::ToolContext &ctx);
 	void sendStroke(const paintcore::Point &point);
 	void sendStroke(const paintcore::PointVector &points);
 	void sendPenup();
@@ -288,7 +288,7 @@ private:
 	UserListModel *_userlist;
 	LayerListModel *_layerlist;
 
-	drawingboard::ToolContext _lastToolCtx;
+	canvas::ToolContext m_lastToolCtx;
 };
 
 }

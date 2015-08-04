@@ -64,7 +64,7 @@ public:
 	~ToolSettings();
 
 	//! Get a brush with the current settings
-	paintcore::Brush getBrush(bool swapcolors) const;
+	paintcore::Brush getBrush() const;
 
 	//! Get the annotation settings page
 	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
@@ -81,9 +81,6 @@ public:
 	//! Get flood fill settings page
 	tools::FillSettings *getFillSettings() { return _fillsettings; }
 
-	//! Quick adjust current tool
-	void quickAdjustCurrent1(float adjustment);
-
 	//! Get the current foreground color
 	QColor foregroundColor() const;
 
@@ -94,7 +91,7 @@ public:
 	int currentToolSlot() const;
 
 	//! Get the currently selected tool
-	tools::Type currentTool() const;
+	tools::Tool::Type currentTool() const;
 
 	//! Load tool related settings
 	void readSettings();
@@ -104,7 +101,10 @@ public:
 
 public slots:
 	//! Set the tool for which settings are shown
-	void setTool(tools::Type tool);
+	void setTool(tools::Tool::Type tool);
+
+	//! Quick adjust current tool
+	void quickAdjustCurrent1(qreal adjustment);
 
 	//! Select the tool previosly set with setTool
 	void setPreviousTool();
@@ -147,7 +147,7 @@ public slots:
 	 *
 	 * @param tool the tool to disable
 	 */
-	void disableEraserOverride(tools::Type tool);
+	void disableEraserOverride(tools::Tool::Type tool);
 
 	//! Query current tool's subpixel mode and emit subpixelModeChanged
 	void updateSubpixelMode();
@@ -166,13 +166,13 @@ signals:
 	void backgroundColorChanged(const QColor &color);
 
 	//! Currently active tool was changed
-	void toolChanged(tools::Type tool);
+	void toolChanged(tools::Tool::Type tool);
 
 private:
-	tools::ToolSettings *getToolSettingsPage(tools::Type tool);
+	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
 
 	void updateToolSlot(int i, bool typeChanged);
-	void selectTool(tools::Type tool);
+	void selectTool(tools::Tool::Type tool);
 	void selectToolSlot(int i);
 	void saveCurrentTool();
 
@@ -200,7 +200,7 @@ private:
 
 	QList<tools::ToolsetProperties> _toolprops;
 
-	tools::Type _previousTool;
+	tools::Tool::Type _previousTool;
 	int _previousToolSlot;
 
 	QColor _foreground;

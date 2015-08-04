@@ -25,7 +25,7 @@
 #include <QRect>
 #include <QList>
 
-namespace drawingboard {
+namespace canvas {
 
 /**
  * @brief Bounds of an operations area of effect
@@ -57,9 +57,9 @@ private:
 
 }
 
-Q_DECLARE_TYPEINFO(drawingboard::AffectedArea, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(canvas::AffectedArea, Q_MOVABLE_TYPE);
 
-namespace drawingboard {
+namespace canvas {
 
 /**
  * @brief Local fork of the session history

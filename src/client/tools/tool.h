@@ -19,24 +19,9 @@
 #ifndef TOOLS_TOOL_H
 #define TOOLS_TOOL_H
 
-#include <QHash>
-#include <QPointer>
-#include <QAbstractGraphicsShapeItem>
-#include <QCursor>
-
 #include "core/point.h"
 
-namespace drawingboard {
-    class CanvasScene;
-}
-
-namespace docks {
-	class ToolSettings;
-}
-
-namespace net {
-	class Client;
-}
+#include <QCursor>
 
 /**
  * @brief Tools
@@ -47,9 +32,7 @@ namespace net {
  */
 namespace tools {
 
-enum Type {PEN, BRUSH, SMUDGE, ERASER, LINE, RECTANGLE, ELLIPSE, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION};
-
-class ToolCollection;
+class ToolController;
 
 /**
  * @brief Base class for all tools
@@ -58,16 +41,15 @@ class ToolCollection;
 class Tool
 {
 public:
-	Tool(ToolCollection &owner, Type type, QCursor cursor)
-		: _owner(owner), _type(type), _cursor(cursor)
+	enum Type {PEN, BRUSH, SMUDGE, ERASER, LINE, RECTANGLE, ELLIPSE, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION};
+
+	Tool(ToolController &owner, Type type, const QCursor &cursor)
+		: owner(owner), m_type(type), m_cursor(cursor)
 		{}
 	virtual ~Tool() {}
 
-	//! Get the type of this tool
-	Type type() const { return _type; }
-
-	//! Get the cursor to use for this tool
-	const QCursor &cursor() const { return _cursor; }
+	Type type() const { return m_type; }
+	const QCursor &cursor() const { return m_cursor; }
 
 	/**
 	 * @brief Start a new stroke
@@ -75,7 +57,7 @@ public:
 	 * @param right is the right mouse/pen button pressed instead of the left one
 	 * @param zoom the current view zoom factor
 	 */
-	virtual void begin(const paintcore::Point& point, bool right, float zoom) = 0;
+	virtual void begin(const paintcore::Point& point, float zoom) = 0;
 
 	/**
 	 * @brief Continue a stroke
@@ -85,66 +67,19 @@ public:
 	 */
 	virtual void motion(const paintcore::Point& point, bool constrain, bool center) = 0;
 
-	//! End drawing
+	//! End stroke
 	virtual void end() = 0;
 
 	//! Does this tool allow stroke smoothing to be used?
 	virtual bool allowSmoothing() const { return false; }
 
 protected:
-	inline docks::ToolSettings &settings();
-	inline net::Client &client();
-	inline drawingboard::CanvasScene &scene();
-	inline int layer();
+	ToolController &owner;
 
 private:
-	ToolCollection &_owner;
-	const Type _type;
-	QCursor _cursor;
+	const Type m_type;
+	const QCursor m_cursor;
 };
-
-/**
- * @brief A collection for tool instances.
- *
- * Note. This is not a singleton. Each mainwindow instance gets its own tool collection.
- */
-class ToolCollection {
-	friend class Tool;
-	public:
-		ToolCollection();
-		~ToolCollection();
-
-		//! Set network client to use
-		void setClient(net::Client *client);
-
-        //! Set the canvas scene to use
-        void setScene(drawingboard::CanvasScene *scene);
-
-		//! Set the tool settings widget from which current settings are fetched
-		void setToolSettings(docks::ToolSettings *settings);
-
-		//! Get the tool settings widget
-		docks::ToolSettings *toolsettings() const { return _toolsettings; }
-
-		//! Set the currently active layer
-		void selectLayer(int layer_id);
-
-		//! Get an instance of a specific tool
-		Tool *get(Type type);
-
-	private:
-		net::Client *_client;
-        drawingboard::CanvasScene *_scene;
-		docks::ToolSettings *_toolsettings;
-		QHash<Type, Tool*> _tools;
-		int _layer;
-
-};
-
-net::Client &Tool::client() { return *_owner._client; }
-docks::ToolSettings &Tool::settings() { return *_owner._toolsettings; }
-drawingboard::CanvasScene &Tool::scene() { return *_owner._scene; }
-int Tool::layer() { return _owner._layer; }
 
 }
 

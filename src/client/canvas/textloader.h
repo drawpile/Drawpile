@@ -19,11 +19,13 @@
 #ifndef DP_SESSION_TEXTLOADER_H
 #define DP_SESSION_TEXTLOADER_H
 
+#include "canvas/loader.h"
+#include "canvas/statetracker.h"
+#include "net/layerlist.h"
+
 #include <QHash>
 
-#include "loader.h"
-#include "statetracker.h"
-#include "net/layerlist.h"
+namespace canvas {
 
 /**
  * @brief A session loader that loads a text based command stream
@@ -67,7 +69,7 @@ private:
 	QString _filename;
 	QString _error;
 	QList<protocol::MessagePtr> _messages;
-	QHash<int, drawingboard::ToolContext> _ctx;
+	QHash<int, canvas::ToolContext> _ctx;
 	QHash<int, net::LayerListItem> _layer;
 
 	// Annotation edit buffer
@@ -80,5 +82,7 @@ private:
 	int _inlineImageWidth, _inlineImageHeight;
 	QByteArray _inlineImageData;
 };
+
+}
 
 #endif

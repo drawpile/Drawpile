@@ -30,12 +30,11 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-CanvasItem::CanvasItem(QGraphicsItem *parent)
-	: QGraphicsObject(parent)
+CanvasItem::CanvasItem(paintcore::LayerStack *layerstack, QGraphicsItem *parent)
+	: QGraphicsObject(parent), m_image(layerstack)
 {
-	_image = new paintcore::LayerStack(this);
-	connect(_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
-	connect(_image, SIGNAL(resized(int, int, QSize)), this, SLOT(canvasResize()));
+	connect(m_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
+	connect(m_image, SIGNAL(resized(int, int, QSize)), this, SLOT(canvasResize()));
 }
 
 void CanvasItem::refreshImage(const QRect &area)
@@ -45,20 +44,21 @@ void CanvasItem::refreshImage(const QRect &area)
 
 QRectF CanvasItem::boundingRect() const
 {
-	return QRectF(0,0, _image->width(), _image->height());
+	return QRectF(0,0, m_image->width(), m_image->height());
 }
 
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
-	if((_cache.isNull() || _cache.size() != _image->size()) && _image->size().isValid()) {
-		_cache = QPixmap(_image->size());
+	if((_cache.isNull() || _cache.size() != m_image->size()) && m_image->size().isValid()) {
+		_cache = QPixmap(m_image->size());
+		_cache.fill();
 	}
 
 	QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
 	exposed &= _cache.rect();
 
-	_image->paintChangedTiles(exposed, &_cache);
+	m_image->paintChangedTiles(exposed, &_cache, true);
 
 	painter->drawPixmap(exposed, _cache, exposed);
 }

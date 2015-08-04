@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,42 +18,38 @@
 */
 
 #include "docks/toolsettingsdock.h"
-#include "scene/canvasscene.h"
 #include "core/brush.h"
 #include "net/client.h"
-#include "statetracker.h"
 
-
+#include "tools/toolcontroller.h"
 #include "tools/toolsettings.h"
 #include "tools/laser.h"
 
 namespace tools {
 
-LaserPointer::LaserPointer(ToolCollection &owner)
+LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0))
 {}
 
-void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
+void LaserPointer::begin(const paintcore::Point &point, float zoom)
 {
-	Q_UNUSED(right);
 	Q_UNUSED(zoom);
 	// Send initial point to serve as the start of the line,
 	// and also a toolchange to set the laser color
 
-	const paintcore::Brush &brush = settings().getBrush(right);
-	drawingboard::ToolContext tctx = {
-		layer(),
-		brush
+	canvas::ToolContext tctx = {
+		owner.activeLayer(),
+		owner.activeBrush()
 	};
-	client().sendToolChange(tctx);
-	client().sendLaserPointer(point, 0);
+	owner.client()->sendToolChange(tctx);
+	owner.client()->sendLaserPointer(point, 0);
 }
 
 void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	client().sendLaserPointer(point, settings().getLaserPointerSettings()->trailPersistence());
+	owner.client()->sendLaserPointer(point, owner.toolSettings()->getLaserPointerSettings()->trailPersistence());
 }
 
 void LaserPointer::end()

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,36 +17,38 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "tools/toolcontroller.h"
 #include "tools/floodfill.h"
 #include "tools/toolsettings.h"
+
 #include "docks/toolsettingsdock.h"
 #include "core/floodfill.h"
-#include "scene/canvasscene.h"
+#include "canvas/canvasmodel.h"
 #include "net/client.h"
 
 #include <QApplication>
 
 namespace tools {
 
-FloodFill::FloodFill(ToolCollection &owner)
+FloodFill::FloodFill(ToolController &owner)
 	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29))
 {
 }
 
-void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
+void FloodFill::begin(const paintcore::Point &point, float zoom)
 {
 	Q_UNUSED(zoom);
-	FillSettings *ts = settings().getFillSettings();
-	QColor color = right ? settings().backgroundColor() : settings().foregroundColor();
+	FillSettings *ts = owner.toolSettings()->getFillSettings();
+	QColor color = owner.toolSettings()->foregroundColor();
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 	paintcore::FillResult fill = paintcore::floodfill(
-		scene().layers(),
+		owner.model()->layerStack(),
 		QPoint(point.x(), point.y()),
 		color,
 		ts->fillTolerance(),
-		layer(),
+		owner.activeLayer(),
 		ts->sampleMerged()
 	);
 
@@ -73,8 +75,8 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	// The disadvantage is increased bandwith consumption. However, this is not as bad
 	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 	// consist of large solid areas, meaning they should compress ridiculously well.
-	client().sendUndopoint();
-	client().sendImage(layer(), fill.x, fill.y, fill.image, mode);
+	owner.client()->sendUndopoint();
+	owner.client()->sendImage(owner.activeLayer(), fill.x, fill.y, fill.image, mode);
 
 	QApplication::restoreOverrideCursor();
 }

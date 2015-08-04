@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,58 +30,61 @@ namespace paintcore {
  */
 class Point : public QPointF {
 public:
-	Point() : QPointF(), _p(1) {}
+	Point() : QPointF(), m_p(1) {}
 
 	Point(qreal x, qreal y, qreal p)
-		: QPointF(x, y), _p(p)
+		: QPointF(x, y), m_p(p)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
 	Point(const QPointF& point, qreal p)
-		: QPointF(point), _p(p)
+		: QPointF(point), m_p(p)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
 	Point(const QPoint& point, qreal p)
-		: QPointF(point), _p(p)
+		: QPointF(point), m_p(p)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
 	//! Get the pressure value for this point
-	qreal pressure() const { return _p; }
+	qreal pressure() const { return m_p; }
 
 	//! Get a reference to the pressure value of this point
-	qreal &rpressure() { return _p; }
+	qreal &rpressure() { return m_p; }
 
 	//! Set this point's pressure value
-	void setPressure(qreal p) { Q_ASSERT(p>=0 && p<=1); _p = p; }
+	void setPressure(qreal p) { Q_ASSERT(p>=0 && p<=1); m_p = p; }
 
 	//! Compare two points at subpixel resolution
-	bool roughlySame(const Point& point) const {
-		qreal dx = x() - point.x();
-		qreal dy = y() - point.y();
+	static bool roughlySame(const QPointF& p1, const QPointF &p2) {
+		qreal dx = p1.x() - p2.x();
+		qreal dy = p1.y() - p2.y();
 		qreal d = dx*dx + dy*dy;
 		return d <= ((1/4.0)*(1/4.0));
 	}
+	bool roughlySame(const QPointF& point) const { return roughlySame(*this, point); }
 
 	//! Are the two points less than one pixel different?
-	bool intSame(const Point &point) const {
-		qreal dx = x() - point.x();
-		qreal dy = y() - point.y();
+	static bool intSame(const QPointF &p1, const QPointF &p2) {
+		qreal dx = p1.x() - p2.x();
+		qreal dy = p1.y() - p2.y();
 		qreal d = dx*dx + dy*dy;
 		return d < 1.0;
 	}
+	bool intSame(const QPointF &point) const { return intSame(*this, point); }
 
-	float distance(const QPointF &point) const
+	static float distance(const QPointF &p1, const QPointF &p2)
 	{
-		return hypot(point.x()-x(), point.y()-y());
+		return hypot(p1.x()-p2.x(), p1.y()-p2.y());
 	}
+	float distance(const QPointF &point) const { return distance(*this, point); }
 
 private:
-	qreal _p;
+	qreal m_p;
 };
 
 static inline Point operator-(const Point& p1, const QPointF& p2)

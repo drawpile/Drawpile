@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,33 +19,36 @@
 #ifndef InputSettings_H
 #define InputSettings_H
 
+#include "quick/pressure.h"
+
 #include <QDockWidget>
 
 class Ui_InputSettings;
 
-namespace widgets {
-	class CanvasView;
-}
-
 namespace docks {
-
-class CanvasView;
 
 class InputSettings : public QDockWidget
 {
+	Q_PROPERTY(PressureMapping pressureMapping READ getPressureMapping NOTIFY pressureMappingChanged)
+	Q_PROPERTY(int smoothing READ getSmoothing NOTIFY smoothingChanged)
+
 	Q_OBJECT
 public:
 	explicit InputSettings(QWidget *parent = 0);
 	~InputSettings();
 
-	void connectCanvasView(widgets::CanvasView *view);
+	int getSmoothing() const;
+	PressureMapping getPressureMapping() const;
+
+signals:
+	void smoothingChanged(int value);
+	void pressureMappingChanged(const PressureMapping &mapping);
 
 private slots:
-	void updateFakePressureMode();
+	void updatePressureMapping();
 
 private:
-	Ui_InputSettings *_ui;
-	widgets::CanvasView *_canvasview;
+	Ui_InputSettings *m_ui;
 };
 
 }

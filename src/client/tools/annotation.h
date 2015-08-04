@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
 
-#include "scene/annotationitem.h"
+#include "core/annotationmodel.h"
 #include "tool.h"
 
 namespace drawingboard {
@@ -33,17 +33,19 @@ namespace tools {
  */
 class Annotation : public Tool {
 public:
-	Annotation(ToolCollection &owner);
+	Annotation(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
+	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 private:
-	QPointer<drawingboard::AnnotationItem> _selected;
-	drawingboard::AnnotationItem::Handle _handle;
-	QPointF _start, _p1, _p2;
-	bool _wasselected;
+	static const int PREVIEW_ID = 0x010000;
+	int m_selectedId;
+	bool m_isNew;
+
+	QPointF m_p1, m_p2;
+	paintcore::Annotation::Handle m_handle;
 };
 
 }

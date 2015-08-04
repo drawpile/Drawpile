@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 
 #include "../shared/net/message.h"
 
-namespace drawingboard {
-	class StateTracker;
-}
+namespace canvas {
+
+class CanvasModel;
 
 /**
  * \brief Base class for session initializers.
@@ -41,7 +41,7 @@ namespace drawingboard {
  */
 class SessionLoader {
 public:
-	virtual ~SessionLoader() {};
+	virtual ~SessionLoader() {}
 	
 	/**
 	 * @brief Get the commands needed to initialize the session.
@@ -63,6 +63,11 @@ public:
 	virtual QString errorMessage() const = 0;
 
 	/**
+	 * @brief Get the warning message (if any)
+	 */
+	virtual QString warningMessage() const { return QString(); }
+
+	/**
 	 * @brief get the name of the file
 	 *
 	 * This if for image loaders. If there is no file (that can be saved again),
@@ -78,8 +83,8 @@ public:
 	{}
 	
 	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return ""; }
-	QString errorMessage() const { return ""; /* cannot fail */ }
+	QString filename() const { return QString(); }
+	QString errorMessage() const { return QString(); /* cannot fail */ }
 
 private:
 	QSize _size;
@@ -88,15 +93,17 @@ private:
 
 class ImageCanvasLoader : public SessionLoader {
 public:
-	ImageCanvasLoader(const QString &filename) : _filename(filename) {}
+	ImageCanvasLoader(const QString &filename) : m_filename(filename) {}
 	
 	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return _filename; }
-	QString errorMessage() const { return _error; }
+	QString filename() const { return m_filename; }
+	QString errorMessage() const { return m_error; }
+	QString warningMessage() const { return m_error; }
 
 private:
-	QString _filename;
-	QString _error;
+	QString m_filename;
+	QString m_error;
+	QString m_warning;
 };
 
 class QImageCanvasLoader : public SessionLoader {
@@ -104,8 +111,8 @@ public:
 	QImageCanvasLoader(const QImage &image) : _image(image) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return ""; }
-	QString errorMessage() const { return ""; }
+	QString filename() const { return QString(); }
+	QString errorMessage() const { return QString(); }
 
 private:
 	QImage _image;
@@ -116,14 +123,16 @@ private:
  */
 class SnapshotLoader : public SessionLoader {
 public:
-	SnapshotLoader(drawingboard::StateTracker *session) : _session(session) {}
+	SnapshotLoader(const canvas::CanvasModel *session) : m_session(session) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return ""; }
-	QString errorMessage() const { return ""; }
+	QString filename() const { return QString(); }
+	QString errorMessage() const { return QString(); }
 
 private:
-	drawingboard::StateTracker *_session;
+	const canvas::CanvasModel *m_session;
 };
+
+}
 
 #endif

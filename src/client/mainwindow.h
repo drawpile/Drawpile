@@ -32,6 +32,7 @@ class QLabel;
 class QSplitter;
 class QTimer;
 class QToolButton;
+class QQuickItem;
 
 namespace widgets {
 	class CanvasView;
@@ -54,6 +55,10 @@ namespace dialogs {
 namespace drawingboard {
 	class CanvasScene;
 }
+namespace canvas {
+	class CanvasModel;
+	class SessionLoader;
+}
 
 namespace net {
 	class Client;
@@ -64,7 +69,10 @@ namespace recording {
 	class Reader;
 }
 
-class SessionLoader;
+namespace tools {
+	class ToolController;
+}
+
 class ShortcutDetector;
 
 //! The application main window
@@ -74,7 +82,7 @@ class MainWindow : public QMainWindow {
 		MainWindow(bool restoreWindowPosition=true);
 		~MainWindow();
 
-		MainWindow *loadDocument(SessionLoader &loader);
+		MainWindow *loadDocument(canvas::SessionLoader &loader);
 		MainWindow *loadRecording(recording::Reader *reader);
 
 		//! Host a session using the settings from the given dialog
@@ -124,7 +132,6 @@ class MainWindow : public QMainWindow {
 		void autosave();
 		void autosaveNow();
 
-		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);
 
 		void connecting();
@@ -159,11 +166,13 @@ class MainWindow : public QMainWindow {
 		void resizeCanvas();
 		void markSpotForRecording();
 
-		void toolChanged(tools::Type tool);
+		void toolChanged(tools::Tool::Type tool);
 
 		void selectionRemoved();
 
 		void hotBorderMenubar(bool show);
+
+		void updateTitle();
 
 	protected:
 		void closeEvent(QCloseEvent *event);
@@ -171,6 +180,8 @@ class MainWindow : public QMainWindow {
 		bool event(QEvent *event);
 
 	private:
+		void initCanvas();
+
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
 
@@ -182,9 +193,6 @@ class MainWindow : public QMainWindow {
 
 		//! Add a new entry to recent files list
 		void addRecentFile(const QString& file);
-
-		//! Set the window title according to open file name
-		void updateTitle();
 
 		//! Enable or disable drawing tools
 		void setDrawingToolsEnabled(bool enable);
@@ -225,8 +233,12 @@ class MainWindow : public QMainWindow {
 
 		dialogs::PlaybackDialog *m_playbackDialog;
 
-		drawingboard::CanvasScene *_canvas;
-		net::Client *_client;
+		canvas::CanvasModel *m_canvas;
+		tools::ToolController *m_toolctrl;
+
+		QQuickItem *m_root;
+		drawingboard::CanvasScene *_canvasscene;
+		net::Client *m_client;
 
 		QString _current_filename;
 		QMenu *_recent;

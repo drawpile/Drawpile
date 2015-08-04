@@ -59,7 +59,7 @@ namespace net {
 
 class QTimer;
 
-namespace drawingboard {
+namespace canvas {
 
 struct ToolContext {
 	ToolContext() : layer_id(-1) {}
@@ -136,9 +136,9 @@ private:
 
 }
 
-Q_DECLARE_TYPEINFO(drawingboard::StateSavepoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(canvas::StateSavepoint, Q_MOVABLE_TYPE);
 
-namespace drawingboard {
+namespace canvas {
 
 /**
  * \brief Drawing context state tracker
@@ -159,7 +159,8 @@ public:
 	void endRemoteContexts();
 	void endPlayback();
 
-	QList<protocol::MessagePtr> generateSnapshot(bool forcenew);
+	bool hasFullHistory() const { return m_fullhistory; }
+	const protocol::MessageStream &getHistory() const { return m_msgstream; }
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
 
@@ -167,7 +168,7 @@ public:
 	 * @brief Set the maximum length of the stored history.
 	 * @param length
 	 */
-	void setMaxHistorySize(uint limit) { _msgstream_sizelimit = limit; }
+	void setMaxHistorySize(uint limit) { m_msgstream_sizelimit = limit; }
 
 	/**
 	 * @brief Set if all user markers (own included) should be shown
@@ -180,18 +181,6 @@ public:
 	 * @return
 	 */
 	int localId() const { return _myid; }
-
-	/**
-	 * @brief Set session title
-	 * @param title
-	 */
-	void setTitle(const QString &title) { _title = title; }
-
-	/**
-	 * @brief Get session title
-	 * @return
-	 */
-	const QString &title() const { return _title; }
 
 	/**
 	 * @brief Get the paint canvas
@@ -283,14 +272,14 @@ private:
 	QString _title;
 	int _myid;
 
-	protocol::MessageStream _msgstream;
+	protocol::MessageStream m_msgstream;
 	QList<StateSavepoint> _savepoints;
 
 	LocalFork _localfork;
 	QTimer *_localforkCleanupTimer;
 
-	uint _msgstream_sizelimit;
-	bool _hassnapshot;
+	uint m_msgstream_sizelimit;
+	bool m_fullhistory;
 	bool _showallmarkers;
 	bool _hasParticipated;
 };

@@ -30,6 +30,8 @@ public:
 
 	void openUrl(QUrl url);
 
+	void openBlankDocument();
+
 	static QStringList dataPaths();
 
 signals:

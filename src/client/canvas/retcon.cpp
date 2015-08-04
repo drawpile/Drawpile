@@ -21,7 +21,7 @@
 
 using protocol::MessagePtr;
 
-namespace drawingboard {
+namespace canvas {
 
 bool AffectedArea::isConcurrentWith(const AffectedArea &other) const
 {

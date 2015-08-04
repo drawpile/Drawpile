@@ -27,8 +27,6 @@
 #include "net/userlist.h"
 #include "net/layerlist.h"
 
-#include "statetracker.h"
-
 #include "core/point.h"
 
 #include "../shared/net/annotation.h"
@@ -94,7 +92,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
 
-	_lastToolCtx = drawingboard::ToolContext();
+	m_lastToolCtx = canvas::ToolContext();
 }
 
 void Client::disconnectFromServer()
@@ -232,11 +230,11 @@ void Client::sendLayerReorder(const QList<uint16_t> &ids)
 	sendCommand(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
 }
 
-void Client::sendToolChange(const drawingboard::ToolContext &ctx)
+void Client::sendToolChange(const canvas::ToolContext &ctx)
 {
-	if(ctx != _lastToolCtx) {
+	if(ctx != m_lastToolCtx) {
 		sendCommand(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
-		_lastToolCtx = ctx;
+		m_lastToolCtx = ctx;
 		if(ctx.brush.blendingMode() != 0) // color is not used in erase mode
 			emit sentColorChange(ctx.brush.color1());
 	}

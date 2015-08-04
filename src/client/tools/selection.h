@@ -19,7 +19,7 @@
 #ifndef TOOLS_SELECTION_H
 #define TOOLS_SELECTION_H
 
-#include "scene/selectionitem.h"
+#include "canvas/selection.h"
 #include "tool.h"
 
 namespace tools {
@@ -27,19 +27,19 @@ namespace tools {
 //! Base class for selection tools
 class SelectionTool : public Tool {
 public:
-	SelectionTool(ToolCollection &owner, Type type, QCursor cursor=Qt::CrossCursor)
+	SelectionTool(ToolController &owner, Type type, QCursor cursor=Qt::CrossCursor)
 		: Tool(owner, type,  cursor) { }
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
+	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 protected:
-	virtual void initSelection() = 0;
+	virtual void initSelection(canvas::Selection *selection) = 0;
 	virtual void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center) = 0;
 
-	QPoint _start, _p1;
-	drawingboard::SelectionItem::Handle _handle;
+	QPointF m_start, m_p1;
+	canvas::Selection::Handle m_handle;
 };
 
 /**
@@ -49,21 +49,21 @@ protected:
  */
 class RectangleSelection : public SelectionTool {
 public:
-	RectangleSelection(ToolCollection &owner);
+	RectangleSelection(ToolController &owner);
 
 protected:
-	void initSelection();
+	void initSelection(canvas::Selection *selection);
 	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
 };
 
 class PolygonSelection : public SelectionTool {
 public:
-	PolygonSelection(ToolCollection &owner);
+	PolygonSelection(ToolController &owner);
 
 	void end();
 
 protected:
-	void initSelection();
+	void initSelection(canvas::Selection *selection);
 	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
 };
 

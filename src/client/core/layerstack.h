@@ -40,7 +40,8 @@ class Savepoint;
  * \brief A stack of layers.
  */
 class LayerStack : public QObject {
-Q_OBJECT
+	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
+	Q_OBJECT
 public:
 	enum ViewMode {
 		NORMAL,   // show all layers normally
@@ -98,7 +99,7 @@ public:
 	QSize size() const { return QSize(_width, _height); }
 
 	//! Paint all changed tiles in the given area
-	void paintChangedTiles(const QRect& rect, QPaintDevice *target);
+	void paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean=true);
 
 	//! Get the merged color value at the point
 	QColor colorAt(int x, int y) const;

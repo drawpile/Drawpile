@@ -19,12 +19,10 @@
 #ifndef ANNOTATIONITEM_H
 #define ANNOTATIONITEM_H
 
-#include <QGraphicsObject>
+#include <QGraphicsItem>
+#include <QTextDocument>
 
-namespace paintcore {
-	struct Annotation;
-	class LayerStack;
-}
+namespace paintcore { struct Annotation; }
 
 namespace drawingboard {
 
@@ -34,59 +32,43 @@ namespace drawingboard {
  * This class inherits from QGraphicsObject so we can point to
  * its instances with QPointer
  */
-class AnnotationItem : public QGraphicsObject {
-	Q_OBJECT
-	public:
-		static const int HANDLE = 10;
-		enum { Type = UserType + 10 };
-		enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
+class AnnotationItem : public QGraphicsItem {
+public:
+	enum { Type = UserType + 10 };
+	static const int HANDLE=10;
 
-		AnnotationItem(int id, paintcore::LayerStack *image, QGraphicsItem *parent=0);
+	AnnotationItem(int id, QGraphicsItem *parent=0);
 
-		//! Get the ID number of this annotation
-		int id() const { return _id; }
+	void setGeometry(const QRect &rect);
+	void setColor(const QColor &color);
+	void setText(const QString &text);
 
-		//! Get the annotation model instance
-		const paintcore::Annotation *getAnnotation() const;
+	//! Get the ID number of this annotation
+	int id() const { return m_id; }
 
-		//! Get the translation handle at the point
-		Handle handleAt(const QPoint &point, float zoom) const;
+	//! Highlight this item
+	void setHighlight(bool h);
 
-		//! Adjust annotation position or size
-		void adjustGeometry(Handle handle, const QPoint &delta);
+	//! Enable border
+	void setShowBorder(bool show);
 
-		//! Get item position and size
-		const QRectF &geometry() const { return _rect; }
+	//! reimplementation
+	QRectF boundingRect() const;
 
-		//! Refresh item from underlaying annotation model
-		void refresh();
+	//! reimplementation
+	int type() const { return Type; }
 
-		//! Does the item geometry differ from the model geometry?
-		bool isChanged() const;
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
-		//! Highlight this item
-		void setHighlight(bool h);
+private:
+	int m_id;
+	QRectF m_rect;
+	QColor m_color;
+	QTextDocument m_doc;
 
-		//! Enable border
-		void setShowBorder(bool show);
-
-		//! reimplementation
-		QRectF boundingRect() const;
-
-		//! reimplementation
-		int type() const { return Type; }
-
-	protected:
-		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
-
-	private:
-		int _id;
-		QRectF _rect;
-
-		paintcore::LayerStack *_image;
-
-		bool _highlight;
-		bool _showborder;
+	bool m_highlight;
+	bool m_showborder;
 };
 
 }

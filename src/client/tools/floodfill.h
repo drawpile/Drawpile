@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ namespace tools {
 class FloodFill : public Tool
 {
 public:
-	FloodFill(ToolCollection &owner);
+	FloodFill(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom);
+	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 };

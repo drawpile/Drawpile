@@ -34,10 +34,14 @@ namespace net {
 
 class QGraphicsItem;
 
+namespace canvas {
+	class CanvasModel;
+	class Selection;
+}
+
 //! Drawing board related classes
 namespace drawingboard {
 
-class StateTracker;
 class CanvasItem;
 class AnnotationState;
 class AnnotationItem;
@@ -59,50 +63,10 @@ public:
 	~CanvasScene();
 
 	//! Clear and initialize the canvas
-	void initCanvas(net::Client *client);
-
-	//! Get the size of the canvas
-	QSize imageSize() const;
-
-	//! Get the layers
-	paintcore::LayerStack *layers();
-
-	//! Get canvas contents as an image
-	QImage image() const;
-
-	/**
-	 * @brief Get the current selection as an image
-	 *
-	 * If there is no selection, the whole canvas is copied
-	 * If a valid layer ID is provided, only the contents of that layer is copied.
-	 *
-	 * @param layer layer ID
-	 */
-	QImage selectionToImage(int layer);
-
-	//! Create a new selection and paste an image from the clipboard
-	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
-
-	//! Save the canvas to a file
-	bool save(const QString& filename) const;
-
-	//! Check if we are using features that require saving in OpenRaster format to preserve
-	bool needSaveOra() const;
+	void initCanvas(canvas::CanvasModel *model);
 
 	//! Is there an image on the drawing board
-	bool hasImage() const;
-
-	//! Return the annotation at the given coordinates (if any)
-	AnnotationItem *annotationAt(const QPoint &point);
-
-	/**
-	 * @brief Find an unused annotation ID
-	 * @return available ID or 0 if all are taken
-	 */
-	int getAvailableAnnotationId() const;
-
-	//! Get a list of annotations with no content
-	QList<int> listEmptyAnnotations() const;
+	bool hasImage() const { return m_model != nullptr; }
 
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return _showAnnotationBorders; }
@@ -110,58 +74,7 @@ public:
 	//! Show/hide annotations
 	void showAnnotations(bool show);
 
-	//! Set the graphics item used for tool preview
-	void setToolPreview(QGraphicsItem *item);
-
-	//! Get the current tool preview item
-	QGraphicsItem *toolPreview() { return _toolpreview; }
-
-	//! Set the selection
-	void setSelectionItem(SelectionItem *selection);
-	void setSelectionItem(const QRect &rect);
-	void setSelectionItem(const QPolygon &polygon);
-
-	SelectionItem *selectionItem() { return _selection; }
-
-	/**
-	 * @brief Pick a color at the given coordinates.
-	 *
-	 * Emits colorPicked
-	 * @param x X coordinate
-	 * @param y Y coordinate
-	 * @param layer layer ID. If 0, the merged pixel value is picked.
-	 * @param bg pick background color
-	 */
-	void pickColor(int x, int y, int layer, bool bg);
-
-	/**
-	 * @brief Get the state tracker for this session.
-	 *
-	 * Note! The state tracker is deleted when this board is reinitialized!
-	 * @return state tracker instance
-	 */
-	StateTracker *statetracker() const { return _statetracker; }
-
-	/**
-	 * @brief Get a QPen that resembles the given brush
-	 *
-	 * This is used for preview strokes
-	 * @param brush
-	 * @return qpen
-	 */
-	static QPen penForBrush(const paintcore::Brush &brush);
-
-	/**
-	 * @brief Set the session title
-	 * @param title
-	 */
-	void setTitle(const QString &title);
-
-	/**
-	 * @brief Get the session title
-	 * @return
-	 */
-	QString title() const;
+	canvas::CanvasModel *model() const { return m_model; }
 
 public slots:
 	//! Show annotation borders
@@ -179,75 +92,50 @@ public slots:
 	//! Make laser trails thicker
 	void setThickLaserTrails(bool thick);
 
-	void handleLocalCommand(protocol::MessagePtr cmd);
-	void handleDrawingCommand(protocol::MessagePtr cmd);
-
-	//! Generate a snapshot point and send it to the server
-	void sendSnapshot(bool forcenew);
-
-	void moveUserMarker(int id, const QPointF &point, int trail);
-	void setUserMarkerName(int id, const QString &name);
-	void setUserMarkerAttribs(int id, const QColor &color, const QString &layer);
-	void hideUserMarker(int id=-1);
+	void activeAnnotationChanged(int id);
 
 signals:
-	void canvasInitialized();
-
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
 
-	//! User used a color picker tool on this scene
-	void colorPicked(const QColor &color, bool background);
-
-	//! An annotation was just created (by the local user)
-	void myAnnotationCreated(AnnotationItem *item);
-
-	//! Request to select a layer (in response to layer creation)
-	void layerAutoselectRequest(int id);
-
-	//! An annotation was just deleted
-	void annotationDeleted(int id);
-
-	//! Emitted when a canvas modifying command is received
-	void canvasModified();
-
-	//! Emitted when a new snapshot point was generated
-	void newSnapshot(QList<protocol::MessagePtr>);
-
-	//! The current selection was just deselected
-	void selectionRemoved();
-
 private slots:
+	void onSelectionChanged(canvas::Selection *sel);
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
-	void handleAnnotationChange(int id);
 	void advanceUsermarkerAnimation();
 
+	void userCursorAdded(const QModelIndex&, int first, int last);
+	void userCursorRemoved(const QModelIndex&, int first, int last);
+	void userCursorChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
+
+	void annotationsAdded(const QModelIndex&, int first, int last);
+	void annotationsRemoved(const QModelIndex&, int first, int last);
+	void annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
+
+	void laserAdded(const QModelIndex&, int first, int last);
+	void laserRemoved(const QModelIndex&, int first, int last);
+	void laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
+
 private:
-	UserMarkerItem *getOrCreateUserMarker(int id);
 	AnnotationItem *getAnnotationItem(int id);
 
 	//! The board contents
 	CanvasItem *_image;
 
-	//! Drawing context state tracker
-	StateTracker *_statetracker;
+	canvas::CanvasModel *m_model;
 
 	//! Laser pointer trails
-	QList<LaserTrailItem*> _lasertrails;
-
-	//! Graphics item for previewing a special tool shape
-	QGraphicsItem *_toolpreview;
+	QHash<int, LaserTrailItem*> m_lasertrails;
 
 	//! Current selection
-	SelectionItem *_selection;
+	SelectionItem *m_selection;
 
 	//! User markers display remote user cursor positions
-	QHash<int, UserMarkerItem*> _usermarkers;
+	QHash<int, UserMarkerItem*> m_usermarkers;
 
 	QTimer *_animTickTimer;
 
-	bool _showAnnotations;
 	bool _showAnnotationBorders;
+	bool _showAnnotations;
 	bool _showUserMarkers;
 	bool _showUserLayers;
 	bool _showLaserTrails;
