@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,14 +29,12 @@
 #include <QSslConfiguration>
 #include <QSettings>
 #include <QApplication>
-#include <QElapsedTimer>
-#include <QScopedValueRollback>
 
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
 	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
-	_localDisconnect(false), _receiving(false), _disconnecting(false)
+	_localDisconnect(false)
 {
 	_socket = new QSslSocket(this);
 
@@ -57,11 +55,7 @@ TcpServer::TcpServer(QObject *parent) :
 	});
 
 
-	// Note: this must use a QueuedConnection to ensure we don't miss any readyRead signals
-	// (used inside MessageQueue) because it is not emitted recursively and
-	// handleMessage can re-enter the eventloop
-	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()), Qt::QueuedConnection);
-
+	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
@@ -102,37 +96,12 @@ void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 
 void TcpServer::handleMessage()
 {
-	if(_receiving)
-		return;
-	QScopedValueRollback<bool> receivingInProgress {_receiving};
-	_receiving = true;
-
-	QElapsedTimer timer;
-	timer.start();
-
 	while(_msgqueue->isPending()) {
 		protocol::MessagePtr msg = _msgqueue->getPending();
 		if(_loginstate)
 			_loginstate->receiveMessage(msg);
 		else
 			emit messageReceived(msg);
-
-		// When joining a long-running session, there can be an influx of messages so large
-		// that processing them will block the main thread long enough for the server
-		// to disconnect the client due to lack of keepalive messages.
-		// To keep this from happening, force event processing when message handling
-		// takes too long.
-		if(timer.elapsed() > 100) {
-			QApplication::processEvents();
-
-			if(_disconnecting) {
-				_receiving = false;
-				handleDisconnect();
-				return;
-			}
-
-			timer.restart();
-		}
 	}
 }
 
@@ -145,11 +114,7 @@ void TcpServer::handleBadData(int len, int type)
 
 void TcpServer::handleDisconnect()
 {
-	_disconnecting = true;
-	// If we are still inside handleMessage, defer disconnect notification
-	if(!_receiving) {
-		emit serverDisconnected(_error, _errorcode, _localDisconnect);
-	}
+	emit serverDisconnected(_error, _errorcode, _localDisconnect);
 }
 
 void TcpServer::handleSocketError()

@@ -1,5 +1,5 @@
 2015-08-?? Version 1.0.1
- * Stroke are started immediately even when smoothing is enabled
+ * Strokes are started immediately even when smoothing is enabled
  * Ports in autolinked URLs are now recognized
  * Dedicated server: added --welcome-message parameter
  * Fixed "reset size" for polygonal selections
@@ -7,6 +7,7 @@
  * Active selection is no longer cleared when switching from rectangle to lasso tool
  * A link to unhide age restricted sessions is now shown in the session selector
  * Bugfix: remember selected listing server in session finder dialog
+ * Improved UI lockup prevention when receiving large amount of commands
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes

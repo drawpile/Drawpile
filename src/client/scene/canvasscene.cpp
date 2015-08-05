@@ -419,7 +419,7 @@ void CanvasScene::handleLocalCommand(protocol::MessagePtr cmd)
 void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 {
 	if(_statetracker) {
-		_statetracker->receiveCommand(cmd);
+		_statetracker->receiveQueuedCommand(cmd);
 		emit canvasModified();
 	} else {
 		qWarning() << "Received a drawing command but canvas does not exist!";

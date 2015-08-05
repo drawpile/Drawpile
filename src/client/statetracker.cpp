@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QTimer>
+#include <QElapsedTimer>
 
 namespace drawingboard {
 
@@ -130,7 +131,8 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 		_msgstream_sizelimit(1024 * 1024 * 10),
 		_hassnapshot(true),
 		_showallmarkers(false),
-		_hasParticipated(false)
+		_hasParticipated(false),
+		m_isQueued(false)
 {
 	connect(_layerlist, SIGNAL(layerOpacityPreview(int,float)), this, SLOT(previewLayerOpacity(int,float)));
 
@@ -140,6 +142,12 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 	_localforkCleanupTimer = new QTimer(this);
 	_localforkCleanupTimer->setSingleShot(true);
 	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
+
+	// Timer for processing drawing commands in short chunks to avoid entirely locking up the UI.
+	// In the future, canvas rendering should be done in a separate thread.
+	m_queuetimer = new QTimer(this);
+	m_queuetimer->setSingleShot(true);
+	connect(m_queuetimer, &QTimer::timeout, this, &StateTracker::processQueuedCommands);
 }
 
 StateTracker::~StateTracker()
@@ -167,6 +175,32 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	}
 
 	_localforkCleanupTimer->start(60 * 1000);
+}
+
+void StateTracker::receiveQueuedCommand(protocol::MessagePtr msg)
+{
+	m_msgqueue.append(msg);
+
+	if(!m_isQueued)
+		processQueuedCommands();
+}
+
+void StateTracker::processQueuedCommands()
+{
+	QElapsedTimer elapsed;
+	elapsed.start();
+
+	while(!m_msgqueue.isEmpty() && elapsed.elapsed() < 100) {
+		receiveCommand(m_msgqueue.takeFirst());
+	}
+
+	if(!m_msgqueue.isEmpty()) {
+		qDebug("Taking a breather. Still %d messages in the queue.", m_msgqueue.size());
+		m_isQueued = true;
+		m_queuetimer->start(20);
+	} else {
+		m_isQueued = false;
+	}
 }
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
