@@ -26,9 +26,23 @@
 
 namespace {
 
+// Check if the given image consists entirely of fully transparent pixels
+bool isEmptyImage(const QImage &image)
+{
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	int len = image.width() * image.height();
+	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
+	while(len--) {
+		if(qAlpha(*pixels) != 0)
+			return false;
+		++pixels;
+	}
+	return true;
+}
+
 // Split image into tile boundary aligned PutImages.
 // These can be applied very efficiently when mode is MODE_REPLACE
-void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, paintcore::BlendMode::Mode mode, QList<protocol::MessagePtr> &list)
+void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, paintcore::BlendMode::Mode mode, bool skipempty, QList<protocol::MessagePtr> &list)
 {
 	static const int TILE = 64;
 
@@ -45,21 +59,24 @@ void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, c
 			const int nextX = qMin(((tx + TILE) / TILE) * TILE, x2);
 
 			const QImage i = image.copy(sx, sy, nextX-tx, nextY-ty);
-			const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(i.bits()), i.byteCount());
 
-			QByteArray compressed = qCompress(data);
-			Q_ASSERT(compressed.length() <= protocol::PutImage::MAX_LEN);
+			if(!skipempty || !isEmptyImage(i)) {
+				const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(i.bits()), i.byteCount());
 
-			list.append(protocol::MessagePtr(new protocol::PutImage(
-				ctxid,
-				layer,
-				mode,
-				tx,
-				ty,
-				i.width(),
-				i.height(),
-				compressed
-			)));
+				QByteArray compressed = qCompress(data);
+				Q_ASSERT(compressed.length() <= protocol::PutImage::MAX_LEN);
+
+				list.append(protocol::MessagePtr(new protocol::PutImage(
+					ctxid,
+					layer,
+					mode,
+					tx,
+					ty,
+					i.width(),
+					i.height(),
+					compressed
+				)));
+			}
 
 			sx += nextX-tx;
 			tx = nextX;
@@ -72,22 +89,26 @@ void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, c
 
 bool isOpaque(const QImage &image)
 {
-	if(image.hasAlphaChannel()) {
-		for(int y=0;y<image.height();++y)
-			for(int x=0;x<image.width();++x)
-				if(qAlpha(image.pixel(x,y)) < 255)
-					return false;
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	int len = image.width() * image.height();
+	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
+	while(len--) {
+		if(qAlpha(*pixels) != 255)
+			return false;
+		++pixels;
 	}
-
 	return true;
 }
 
 // Recursively split image into small enough pieces.
 // When mode is anything else than MODE_REPLACE, PutImage calls
 // are expensive, so we want to split the image into as few pieces as possible.
-void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mode, QList<protocol::MessagePtr> &list)
+void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mode, bool skipempty, QList<protocol::MessagePtr> &list)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+
+	if(skipempty && isEmptyImage(image))
+		return;
 
 	// Compress pixel data and see if it fits in a single message
 	const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(image.bits()), image.byteCount());
@@ -111,8 +132,8 @@ void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mod
 			i2 = image.copy(0, py, image.width(), image.height()-py);
 		}
 
-		splitImage(ctxid, layer, x, y, i1, mode, list);
-		splitImage(ctxid, layer, x+px, y+py, i2, mode, list);
+		splitImage(ctxid, layer, x, y, i1, mode, skipempty, list);
+		splitImage(ctxid, layer, x+px, y+py, i2, mode, skipempty, list);
 
 	} else {
 		// It fits! Send data!
@@ -143,9 +164,10 @@ namespace net {
  * @param y Y coordinate
  * @param image the image to put
  * @param mode composition mode
+ * @param skipempty skip empty tiles (be careful when using with REPLACE mode!)
  * @return
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode)
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
 	QList<protocol::MessagePtr> list;
 
@@ -164,27 +186,33 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 		y += yoffset;
 	}
 
+	image = image.convertToFormat(QImage::Format_ARGB32);
+
 	// Optimization: if image is completely opaque, REPLACE mode is equivalent to NORMAL,
 	// except potentially more efficient when split at tile boundaries
 	if(mode == paintcore::BlendMode::MODE_NORMAL && isOpaque(image)) {
 		mode = paintcore::BlendMode::MODE_REPLACE;
+		skipempty = false;
 	}
 
 	// Split image into pieces small enough to fit in a message
-	image = image.convertToFormat(QImage::Format_ARGB32);
 	if(mode == paintcore::BlendMode::MODE_REPLACE) {
-		splitImageAtTileBoundaries(ctxid, layer, x, y, image, mode, list);
+		splitImageAtTileBoundaries(ctxid, layer, x, y, image, mode, skipempty, list);
 	} else {
-		splitImage(ctxid, layer, x, y, image, mode, list);
+		splitImage(ctxid, layer, x, y, image, mode, skipempty, list);
 	}
 
 #ifndef NDEBUG
-	double truesize = image.width() * image.height() * 4;
-	double wiresize = 0;
-	for(protocol::MessagePtr msg : list)
-		wiresize += msg->length();
-	qDebug("Sending a %.2f kb image in %d piece%s. Compressed size is %.2f kb. Compression ratio is %.1f%%",
-		truesize/1024, list.size(), list.size()==1?"":"s", wiresize/1024, truesize/wiresize*100);
+	if(list.isEmpty()) {
+		qDebug("Not sending a %dx%d image because it was completely empty!", image.width(), image.height());
+	} else {
+		const double truesize = image.width() * image.height() * 4;
+		double wiresize = 0;
+		for(protocol::MessagePtr msg : list)
+			wiresize += msg->length();
+		qDebug("Sending a %.2f kb image in %d piece%s. Compressed size is %.2f kb. Compression ratio is %.1f%%",
+			truesize/1024, list.size(), list.size()==1?"":"s", wiresize/1024, truesize/wiresize*100);
+	}
 #endif
 	return list;
 }
