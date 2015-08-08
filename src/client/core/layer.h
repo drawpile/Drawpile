@@ -80,7 +80,7 @@ class Layer {
 		void resize(int top, int right, int bottom, int left);
 
 		//! Get the color at the specified coordinates
-		QColor colorAt(int x, int y) const;
+		QColor colorAt(int x, int y, int dia=0) const;
 
 		//! Get the raw pixel value at the specified coordinates
 		QRgb pixelAt(int x, int y) const;

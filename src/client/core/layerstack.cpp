@@ -385,7 +385,7 @@ Tile LayerStack::getFlatTile(int x, int y) const
 	return t;
 }
 
-QColor LayerStack::colorAt(int x, int y) const
+QColor LayerStack::colorAt(int x, int y, int dia) const
 {
 	if(_layers.isEmpty())
 		return QColor();
@@ -393,10 +393,29 @@ QColor LayerStack::colorAt(int x, int y) const
 	if(x<0 || y<0 || x>=_width || y>=_height)
 		return QColor();
 
-	// TODO some more efficient way of doing this
-	Tile tile = getFlatTile(x/Tile::SIZE, y/Tile::SIZE);
-	quint32 c = tile.data()[(y-Tile::roundDown(y)) * Tile::SIZE + (x-Tile::roundDown(x))];
-	return QColor(c);
+	if(dia<=1) {
+		// TODO some more efficient way of doing this
+		Tile tile = getFlatTile(x/Tile::SIZE, y/Tile::SIZE);
+		quint32 c = tile.data()[(y-Tile::roundDown(y)) * Tile::SIZE + (x-Tile::roundDown(x))];
+		return QColor(c);
+
+	} else {
+		const int r = dia/2+1;
+		const int x1 = (x-r) / Tile::SIZE;
+		const int x2 = (x+r) / Tile::SIZE;
+		const int y1 = (y-r) / Tile::SIZE;
+		const int y2 = (y+r) / Tile::SIZE;
+
+		Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
+
+		for(int tx=x1;tx<=x2;++tx) {
+			for(int ty=y1;ty<=y2;++ty) {
+				flat.rtile(tx,ty) = getFlatTile(tx, ty);
+			}
+		}
+
+		return flat.colorAt(x, y, dia);
+	}
 }
 
 QImage LayerStack::toFlatImage(bool includeAnnotations) const

@@ -309,12 +309,22 @@ QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
  * @param y
  * @return invalid color if x or y is outside image boundaries
  */
-QColor Layer::colorAt(int x, int y) const
+QColor Layer::colorAt(int x, int y, int dia) const
 {
 	if(x<0 || y<0 || x>=_width || y>=_height)
 		return QColor();
 
-	return QColor::fromRgb(pixelAt(x, y));
+	if(dia<=1) {
+		quint32 c = pixelAt(x, y);
+		if(qAlpha(c)==0)
+			return QColor();
+
+		return QColor::fromRgb(c);
+	} else {
+		Brush b(dia, 0.9);
+		BrushStamp bs = makeGimpStyleBrushStamp(b, Point(x, y, 1));
+		return getDabColor(bs);
+	}
 }
 
 QRgb Layer::pixelAt(int x, int y) const

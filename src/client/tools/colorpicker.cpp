@@ -45,7 +45,10 @@ void ColorPicker::motion(const paintcore::Point& point, bool constrain, bool cen
 	if(settings().getColorPickerSettings()->pickFromLayer()) {
 		layer = this->layer();
 	}
-	scene().pickColor(point.x(), point.y(), layer, _bg);
+
+	int size = settings().getColorPickerSettings()->getSize();
+
+	scene().pickColor(point.x(), point.y(), layer, size, _bg);
 }
 
 void ColorPicker::end()

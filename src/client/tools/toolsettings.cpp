@@ -758,6 +758,29 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	layout->setMargin(3);
 	widget->setLayout(layout);
 
+	QHBoxLayout *sizelayout = new QHBoxLayout;
+	layout->addLayout(sizelayout);
+
+	QLabel *sizelbl = new QLabel(tr("Size:"), widget);
+	sizelayout->addWidget(sizelbl);
+
+	QSlider *slider = new QSlider(widget);
+	slider->setOrientation(Qt::Horizontal);
+	sizelayout->addWidget(slider);
+
+	m_size = new QSpinBox(widget);
+	sizelayout->addWidget(m_size);
+
+	m_size->setMinimum(1);
+	slider->setMinimum(1);
+
+	m_size->setMaximum(128);
+	slider->setMaximum(128);
+
+	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	connect(slider, &QSlider::valueChanged, m_size, &QSpinBox::setValue);
+	connect(m_size, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
+
 	_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(_layerpick);
 
@@ -770,16 +793,30 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
+int ColorPickerSettings::getSize() const
+{
+	return m_size->value();
+}
+
+void ColorPickerSettings::quickAdjust1(float adjustment)
+{
+	int adj = qRound(adjustment);
+	if(adj!=0)
+		m_size->setValue(m_size->value() + adj);
+}
+
 ToolProperties ColorPickerSettings::saveToolSettings()
 {
 	ToolProperties cfg;
 	cfg.setValue("layerpick", _layerpick->isChecked());
+	cfg.setValue("size", m_size->value());
 	return cfg;
 }
 
 void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_layerpick->setChecked(cfg.boolValue("layerpick", false));
+	m_size->setValue(cfg.intValue("size", 1));
 }
 
 bool ColorPickerSettings::pickFromLayer() const

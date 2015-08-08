@@ -132,7 +132,7 @@ public:
 	 * @param layer layer ID. If 0, the merged pixel value is picked.
 	 * @param bg pick background color
 	 */
-	void pickColor(int x, int y, int layer, bool bg);
+	void pickColor(int x, int y, int layer, int size, bool bg);
 
 	/**
 	 * @brief Get the state tracker for this session.

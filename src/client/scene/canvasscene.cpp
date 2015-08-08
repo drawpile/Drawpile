@@ -300,16 +300,16 @@ void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint
 	setSelectionItem(paste);
 }
 
-void CanvasScene::pickColor(int x, int y, int layer, bool bg)
+void CanvasScene::pickColor(int x, int y, int layer, int size, bool bg)
 {
 	if(_image) {
 		QColor color;
 		if(layer>0) {
 			const paintcore::Layer *l = _image->image()->getLayer(layer);
 			if(layer)
-				color = l->colorAt(x, y);
+				color = l->colorAt(x, y, size);
 		} else {
-			color = _image->image()->colorAt(x, y);
+			color = _image->image()->colorAt(x, y, size);
 		}
 
 		if(color.isValid() && color.alpha()>0) {
