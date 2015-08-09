@@ -21,6 +21,7 @@
 
 StrokeSmoother::StrokeSmoother()
 {
+	reset();
 }
 
 void StrokeSmoother::setSmoothing(int strength)
@@ -91,6 +92,7 @@ paintcore::Point StrokeSmoother::smoothPoint() const
 
 void StrokeSmoother::removePoint()
 {
+	Q_ASSERT(!_points.isEmpty());
 	/* Pad the buffer with the final point, overwriting the oldest first,
 	 * for symmetry with starting. For very short strokes this should
 	 * really set all points between --_count and _points.size()-1. */
