@@ -29,7 +29,7 @@ class JoinDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	JoinDialog(QWidget *parent=0);
+	explicit JoinDialog(const QUrl &defaultUrl, QWidget *parent=0);
 	~JoinDialog();
 
 	//! Get the host address

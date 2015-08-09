@@ -102,7 +102,7 @@ public:
 	void paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean=true);
 
 	//! Get the merged color value at the point
-	QColor colorAt(int x, int y) const;
+	QColor colorAt(int x, int y, int dia=0) const;
 
 	//! Return a flattened image of the layer stack
 	QImage toFlatImage(bool includeAnnotations) const;

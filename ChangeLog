@@ -1,9 +1,16 @@
-2015-08-?? Version 1.0.1
- * Stroke are started immediately even when smoothing is enabled
+2015-08-09 Version 1.0.1
+ * Strokes are started immediately even when smoothing is enabled
  * Ports in autolinked URLs are now recognized
  * Dedicated server: added --welcome-message parameter
  * Fixed "reset size" for polygonal selections
  * Improved recording index file generation
+ * Active selection is no longer cleared when switching from rectangle to lasso tool
+ * A link to unhide age restricted sessions is now shown in the session selector
+ * Bugfix: remember selected listing server in session finder dialog
+ * Improved UI lockup prevention when receiving large amount of commands
+ * Smarter image sending: avoid sending blank images
+ * New feature: area sampling for color picker
+ * When opening a drawpile:// link, rather than connecting directly, the join dialog is shown
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes

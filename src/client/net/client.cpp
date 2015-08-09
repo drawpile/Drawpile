@@ -268,7 +268,8 @@ void Client::sendPenup()
  */
 void Client::sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode)
 {
-	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, mode);
+	// Note: since we can't know how sendImage is used, we set skipempty to false when using the replace mode.
+	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE);
 	for(MessagePtr msg : msgs)
 		sendCommand(msg);
 

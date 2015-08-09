@@ -30,6 +30,7 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QSortFilterProxyModel>
+#include <QMessageBox>
 
 #include "config.h"
 
@@ -41,14 +42,20 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	_ui = new Ui_SessionListingDialog;
 	_ui->setupUi(this);
 
+	_ui->nsfmSessionsLabel->setVisible(false);
+
+	connect(_ui->nsfmSessionsLabel, &QLabel::linkActivated, this, &SessionListingDialog::stopNsfmFiltering);
+
 	QPushButton *ok = _ui->buttonBox->button(QDialogButtonBox::Ok);
 	ok->setEnabled(false);
 
 	_ui->listserver->setModel(new sessionlisting::ListServerModel(true, this));
-	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverilast", 0).toInt());
+	_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverlast", 0).toInt());
 	connect(_ui->listserver, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshListing()));
 
 	_sessions = new sessionlisting::SessionListingModel(this);
+	_sessions->setShowNsfm(QSettings().value("listservers/nsfm", false).toBool());
+
 #ifdef HAVE_DNSSD
 	_localservers = new ServerDiscoveryModel(this);
 #endif
@@ -57,6 +64,10 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	connect(_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, [this](QList<sessionlisting::Session> list) {
 		_ui->liststack->setCurrentIndex(0);
 		_sessions->setList(list);
+		int filtered = _sessions->filteredCount();
+		if(filtered>0)
+			_ui->nsfmSessionsLabel->setText("<a href=\"#\">" + tr("%n age restricted session(s) hidden.", "", filtered) + "</a>");
+		_ui->nsfmSessionsLabel->setVisible(filtered>0);
 	});
 	connect(_apiClient, &sessionlisting::AnnouncementApi::error, [this](const QString &message) {
 		_ui->liststack->setCurrentIndex(1);
@@ -116,6 +127,7 @@ void SessionListingDialog::refreshListing()
 #ifdef HAVE_DNSSD
 		// Local server discovery mode (DNS-SD)
 		_model->setSourceModel(_localservers);
+		_ui->nsfmSessionsLabel->setVisible(false);
 		_localservers->discover();
 #endif
 
@@ -124,10 +136,22 @@ void SessionListingDialog::refreshListing()
 		QUrl url = urlstr;
 		if(url.isValid()) {
 			_model->setSourceModel(_sessions);
-			const bool nsfm = QSettings().value("listservers/nsfm", false).toBool();
-			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR, QString(), nsfm);
+			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR, QString(), true);
 		}
 	}
 }
 
+void SessionListingDialog::stopNsfmFiltering()
+{
+	QMessageBox::StandardButton btn = QMessageBox::question(this, QString(), tr("Show age restricted sessions?"));
+
+	if(btn == QMessageBox::Yes) {
+		_sessions->setShowNsfm(true);
+		_ui->nsfmSessionsLabel->setVisible(false);
+		QSettings cfg;
+		cfg.setValue("listservers/nsfm", true);
+	}
 }
+
+}
+

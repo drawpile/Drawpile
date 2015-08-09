@@ -400,7 +400,7 @@ void TextCommandLoader::handlePutImage(const QString &args)
 		QFileInfo filename(QFileInfo(_filename).dir(), m.captured(6));
 
 		QImage image(filename.absoluteFilePath());
-		_messages.append(net::putQImage(ctxid, layer, x, y, image, mode));
+		_messages.append(net::putQImage(ctxid, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE));
 	}
 
 

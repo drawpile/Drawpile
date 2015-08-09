@@ -329,7 +329,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->model()->pickColor(p.x(), p.y(), 0);
+			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		} else {
 			emit penDown(p, p.pressure());
 		}
@@ -343,7 +343,7 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 	if(_scene->hasImage() && !_locked) {
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->model()->pickColor(p.x(), p.y(), 0);
+			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		} else {
 			emit penMove(p, p.pressure(), shift, alt);
 		}

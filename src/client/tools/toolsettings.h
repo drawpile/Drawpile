@@ -36,6 +36,7 @@ class Ui_LaserSettings;
 class Ui_FillSettings;
 class QTimer;
 class QCheckBox;
+class QSpinBox;
 
 namespace net {
 	class Client;
@@ -399,6 +400,8 @@ public:
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+	virtual int getSize() const override;
+	virtual void quickAdjust1(float adjustment) override;
 
 public slots:
 	void addColor(const QColor &color);
@@ -413,6 +416,7 @@ private:
 	Palette _palette;
 	widgets::PaletteWidget *_palettewidget;
 	QCheckBox *_layerpick;
+	QSpinBox *m_size;
 };
 
 class SelectionSettings : public QObject, public BrushlessSettings {

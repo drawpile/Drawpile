@@ -69,7 +69,7 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 
 void CanvasModel::handleDrawingCommand(protocol::MessagePtr cmd)
 {
-	m_statetracker->receiveCommand(cmd);
+	m_statetracker->receiveQueuedCommand(cmd);
 	emit canvasModified();
 }
 
@@ -126,15 +126,15 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 	return snapshot;
 }
 
-void CanvasModel::pickColor(int x, int y, int layer)
+void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 {
 	QColor color;
 	if(layer>0) {
 		const paintcore::Layer *l = m_layerstack->getLayer(layer);
 		if(layer)
-			color = l->colorAt(x, y);
+			color = l->colorAt(x, y, diameter);
 	} else {
-		color = m_layerstack->colorAt(x, y);
+		color = m_layerstack->colorAt(x, y, diameter);
 	}
 
 	if(color.isValid() && color.alpha()>0) {

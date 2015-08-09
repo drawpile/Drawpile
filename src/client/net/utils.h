@@ -42,8 +42,11 @@ namespace net {
  *
  * If mode is MODE_REPLACE and the image is large, it is split at tile boundaries (where possible)
  * to generate efficient PutImage commands.
+ *
+ * Note: when using MODE_REPLACE, the skipempty parameter should be set to false, except when you know
+ * the layer is blank.
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode);
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
 
 //! Generate a tool change message
 protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush);

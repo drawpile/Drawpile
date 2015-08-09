@@ -42,7 +42,7 @@ int LayerListModel::rowCount(const QModelIndex &parent) const
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() <= _items.size()) {
+	if(index.isValid() && index.row() >= 0 && index.row() < _items.size()) {
 		if(role == Qt::DisplayRole) {
 			return QVariant::fromValue(_items.at(index.row()));
 		} else if(role == Qt::EditRole) {
