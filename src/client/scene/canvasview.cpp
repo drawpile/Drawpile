@@ -470,12 +470,14 @@ void CanvasView::onPenUp(bool right)
 	if(_scene->hasImage() && !_locked) {
 		if(!_specialpenmode) {
 			// Drain any remaining points from the smoothing buffer
-			if(_smoother.hasSmoothPoint())
-				_smoother.removePoint();
-			while(_smoother.hasSmoothPoint()) {
-				_current_tool->motion(_smoother.smoothPoint(),
-					_prevshift, _prevalt);
-				_smoother.removePoint();
+			if(_smoothing>0 && _current_tool->allowSmoothing()) {
+				if(_smoother.hasSmoothPoint())
+					_smoother.removePoint();
+				while(_smoother.hasSmoothPoint()) {
+					_current_tool->motion(_smoother.smoothPoint(),
+						_prevshift, _prevalt);
+					_smoother.removePoint();
+				}
 			}
 
 			_current_tool->end();
