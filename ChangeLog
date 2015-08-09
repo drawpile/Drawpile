@@ -1,4 +1,4 @@
-2015-08-?? Version 1.0.1
+2015-08-09 Version 1.0.1
  * Strokes are started immediately even when smoothing is enabled
  * Ports in autolinked URLs are now recognized
  * Dedicated server: added --welcome-message parameter
