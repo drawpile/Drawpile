@@ -10,6 +10,7 @@
  * Improved UI lockup prevention when receiving large amount of commands
  * Smarter image sending: avoid sending blank images
  * New feature: area sampling for color picker
+ * When opening a drawpile:// link, rather than connecting directly, the join dialog is shown
 
 2015-07-12 Version 1.0.0
  * Added "Behind" and "Color erase" blending modes

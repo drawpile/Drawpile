@@ -30,7 +30,7 @@
 
 namespace dialogs {
 
-JoinDialog::JoinDialog(QWidget *parent)
+JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	: QDialog(parent)
 {
 	_ui = new Ui_JoinDialog;
@@ -46,6 +46,9 @@ JoinDialog::JoinDialog(QWidget *parent)
 	cfg.beginGroup("history");
 	_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
 	_ui->username->setText(cfg.value("username").toString());
+
+	if(!url.isEmpty())
+		_ui->address->setCurrentText(url.toString());
 
 	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
 

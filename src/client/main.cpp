@@ -126,13 +126,7 @@ void DrawpileApp::openUrl(QUrl url)
 
 	if(url.scheme() == "drawpile") {
 		// Our own protocol: connect to a session
-
-		if(url.userName().isEmpty()) {
-			// Set username if not specified
-			QSettings cfg;
-			url.setUserName(cfg.value("history/username").toString());
-		}
-		win->joinSession(url);
+		win->join(url);
 
 	} else {
 		// Other protocols: load image

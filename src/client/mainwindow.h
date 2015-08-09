@@ -21,6 +21,7 @@
 
 #include <QMainWindow>
 #include <QElapsedTimer>
+#include <QUrl>
 
 #include "tools/tool.h"
 #include "core/blendmodes.h"
@@ -104,7 +105,7 @@ class MainWindow : public QMainWindow {
 		void changeSessionTitle();
 
 		void host();
-		void join();
+		void join(const QUrl &defaultUrl=QUrl());
 		void leave();
 
 		void toggleFullscreen();
