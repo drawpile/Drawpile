@@ -39,7 +39,7 @@ Annotation::Annotation(ToolController &owner)
  */
 void Annotation::begin(const paintcore::Point& point, float zoom)
 {
-	m_selectedId = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint());
+	m_selectedId = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
 	m_p1 = point;
 	m_p2 = point;
 	m_isNew = m_selectedId==0;
@@ -73,7 +73,7 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
 	Q_UNUSED(center);
 
 	QPointF p = point - m_p2;
-	owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
+	m_handle = owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
 	m_p2 = point;
 }
 

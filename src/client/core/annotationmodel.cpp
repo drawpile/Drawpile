@@ -146,10 +146,11 @@ int AnnotationModel::findById(int id) const
  * @param pos point in canvas coordinates
  * @return annotation ID or 0 if none found
  */
-int AnnotationModel::annotationAtPos(const QPoint &pos) const
+int AnnotationModel::annotationAtPos(const QPoint &pos, qreal zoom) const
 {
+	const int H = qRound(qMax(qreal(Annotation::HANDLE_SIZE), Annotation::HANDLE_SIZE / zoom) / 2.0);
 	for(const Annotation &a : m_annotations) {
-		if(a.rect.contains(pos))
+		if(a.rect.adjusted(-H, -H, H, H).contains(pos))
 			return a.id;
 	}
 	return 0;
@@ -163,15 +164,16 @@ Annotation::Handle AnnotationModel::annotationHandleAt(int id, const QPoint &poi
 	return Annotation::OUTSIDE;
 }
 
-void AnnotationModel::annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta)
+Annotation::Handle AnnotationModel::annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta)
 {
 	for(int idx=0;idx<m_annotations.size();++idx) {
 		if(m_annotations.at(idx).id == id) {
-			m_annotations[idx].adjustGeometry(handle, delta);
+			handle = m_annotations[idx].adjustGeometry(handle, delta);
 			emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
-			return;
+			return handle;
 		}
 	}
+	return Annotation::OUTSIDE;
 }
 
 QList<int> AnnotationModel::getEmptyIds() const
@@ -222,7 +224,7 @@ Annotation::Handle Annotation::handleAt(const QPoint &point, qreal zoom) const
 {
 	const qreal H = qMax(qreal(HANDLE_SIZE), HANDLE_SIZE / zoom);
 
-	const QRectF R = rect;
+	const QRectF R = QRectF(rect.x()-H/2, rect.y()-H/2, rect.width()+H, rect.height()+H);
 
 	if(!R.contains(point))
 		return OUTSIDE;
@@ -249,10 +251,10 @@ Annotation::Handle Annotation::handleAt(const QPoint &point, qreal zoom) const
 	return TRANSLATE;
 }
 
-void Annotation::adjustGeometry(Handle handle, const QPoint &delta)
+Annotation::Handle Annotation::adjustGeometry(Handle handle, const QPoint &delta)
 {
 	switch(handle) {
-	case OUTSIDE: return;
+	case OUTSIDE: return handle;
 	case TRANSLATE: rect.translate(delta); break;
 	case RS_TOPLEFT: rect.adjust(delta.x(), delta.y(), 0, 0); break;
 	case RS_TOPRIGHT: rect.adjust(0, delta.y(), delta.x(), 0); break;
@@ -264,8 +266,35 @@ void Annotation::adjustGeometry(Handle handle, const QPoint &delta)
 	case RS_LEFT: rect.adjust(delta.x(), 0, 0, 0); break;
 	}
 
-	if(rect.left() > rect.right() || rect.top() > rect.bottom())
+	if(rect.left() > rect.right() || rect.top() > rect.bottom()) {
+
+		if(rect.left() > rect.right()) {
+			switch(handle) {
+				case RS_TOPLEFT: handle = RS_TOPRIGHT; break;
+				case RS_TOPRIGHT: handle = RS_TOPLEFT; break;
+				case RS_BOTTOMRIGHT: handle = RS_BOTTOMLEFT; break;
+				case RS_BOTTOMLEFT: handle = RS_BOTTOMRIGHT; break;
+				case RS_LEFT: handle = RS_RIGHT; break;
+				case RS_RIGHT: handle = RS_LEFT; break;
+				default: break;
+			}
+		}
+		if(rect.top() > rect.bottom()) {
+			switch(handle) {
+				case RS_TOPLEFT: handle = RS_BOTTOMLEFT; break;
+				case RS_TOPRIGHT: handle = RS_BOTTOMRIGHT; break;
+				case RS_BOTTOMRIGHT: handle = RS_TOPRIGHT; break;
+				case RS_BOTTOMLEFT: handle = RS_TOPRIGHT; break;
+				case RS_TOP: handle = RS_BOTTOM; break;
+				case RS_BOTTOM: handle = RS_TOP; break;
+				default: break;
+			}
+		}
+
 		rect = rect.normalized();
+	}
+
+	return handle;
 }
 
 void Annotation::toDataStream(QDataStream &out) const

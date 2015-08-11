@@ -49,7 +49,7 @@ struct Annotation {
 	Handle handleAt(const QPoint &point, qreal zoom) const;
 
 	//! Adjust annotation position or size
-	void adjustGeometry(Handle handle, const QPoint &delta);
+	Handle adjustGeometry(Handle handle, const QPoint &delta);
 
 	void toDataStream(QDataStream &out) const;
 	static Annotation fromDataStream(QDataStream &in);
@@ -83,10 +83,10 @@ public:
 	void setAnnotations(const QList<Annotation> &list);
 	QList<Annotation> getAnnotations() const { return m_annotations; }
 
-	int annotationAtPos(const QPoint &pos) const;
+	int annotationAtPos(const QPoint &pos, qreal zoom) const;
 
 	Annotation::Handle annotationHandleAt(int id, const QPoint &point, qreal zoom) const;
-	void annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta);
+	Annotation::Handle annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta);
 
 	const Annotation *getById(int id) const;
 
