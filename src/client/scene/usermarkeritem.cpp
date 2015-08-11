@@ -33,7 +33,7 @@ static const float ARROW = 10;
 
 }
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_id(id), _fadeout(0)
+	: QGraphicsItem(parent), m_id(id), _fadeout(0), m_showSubtext(false)
 {
 	setFlag(ItemIgnoresTransformations);
 	_bgbrush.setStyle(Qt::SolidPattern);
@@ -147,7 +147,7 @@ void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
 
 void UserMarkerItem::fadein()
 {
-	_fadeout = 10.0;
+	_fadeout = 0;
 	setOpacity(1);
 	show();
 }
