@@ -347,10 +347,7 @@ OpCommandSet::OpCommandSet()
 		<< OpCommand("lock", lockUser, ID, "lock user", 1)
 		<< OpCommand("unlock", unlockUser, ID, "unlock user", 1)
 
-#ifndef NDEBUG
 		<< OpCommand("force_snapshot", [](Client *c, const QString&, const QStringList&) { c->session()->startSnapshotSync(); }, QString(), "force snapshot sync")
-#endif
-
 		<< OpCommand("killsession", killSession, QString(), "shut down this session").modOnly()
 
 		<< OpCommand("announce_at", announceSession, "<URL>", "announce session at a public listing service", 1, 1)
