@@ -1,3 +1,8 @@
+2015-09-?? Version 1.0.2
+ * Fixed crash when smoother was set to zero
+ * Server: added command line option to enable split recording mode (new recording for each snapshot)
+ * Server: /force_snapshot command can now be used outside debug mode
+
 2015-08-09 Version 1.0.1
  * Strokes are started immediately even when smoothing is enabled
  * Ports in autolinked URLs are now recognized
