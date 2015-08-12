@@ -736,818 +736,817 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="582"/>
-        <location filename="../mainwindow.cpp" line="1306"/>
+        <location filename="../mainwindow.cpp" line="666"/>
+        <location filename="../mainwindow.cpp" line="1386"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="752"/>
-        <location filename="../mainwindow.cpp" line="773"/>
+        <location filename="../mainwindow.cpp" line="836"/>
+        <location filename="../mainwindow.cpp" line="857"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile を終了</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="753"/>
+        <location filename="../mainwindow.cpp" line="837"/>
         <source>You are still connected to a drawing session.</source>
         <translation>ドローイングセッションに接続中です。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="757"/>
+        <location filename="../mainwindow.cpp" line="841"/>
         <source>Exit anyway</source>
         <translation>とにかく終了</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="759"/>
-        <location filename="../mainwindow.cpp" line="781"/>
+        <location filename="../mainwindow.cpp" line="843"/>
+        <location filename="../mainwindow.cpp" line="865"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="774"/>
+        <location filename="../mainwindow.cpp" line="858"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。保存してから終了しますか？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="777"/>
+        <location filename="../mainwindow.cpp" line="861"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="779"/>
+        <location filename="../mainwindow.cpp" line="863"/>
         <source>Discard</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="915"/>
-        <location filename="../mainwindow.cpp" line="1751"/>
+        <location filename="../mainwindow.cpp" line="999"/>
+        <location filename="../mainwindow.cpp" line="1838"/>
         <source>Images (%1)</source>
         <translation>画像 (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="916"/>
-        <location filename="../mainwindow.cpp" line="1135"/>
+        <location filename="../mainwindow.cpp" line="1000"/>
+        <location filename="../mainwindow.cpp" line="1214"/>
         <source>Recordings (%1)</source>
         <translation>セッション記録 (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="950"/>
+        <location filename="../mainwindow.cpp" line="1029"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>選択したファイル形式は、レイヤーまたは注釈をサポートしていません。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="952"/>
+        <location filename="../mainwindow.cpp" line="1031"/>
         <source>Flatten</source>
         <translation>レイヤーを統合</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="953"/>
+        <location filename="../mainwindow.cpp" line="1032"/>
         <source>Save as OpenRaster</source>
         <translation>OpenRaster として保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1010"/>
-        <location filename="../mainwindow.cpp" line="1068"/>
+        <location filename="../mainwindow.cpp" line="1089"/>
+        <location filename="../mainwindow.cpp" line="1147"/>
         <source>Couldn&apos;t save image</source>
         <translation>画像を保存できませんでした</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1238"/>
+        <location filename="../mainwindow.cpp" line="1317"/>
         <source>Invalid address</source>
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1307"/>
+        <location filename="../mainwindow.cpp" line="1387"/>
         <source>Really leave the session?</source>
         <translation>本当にセッションを退出しますか？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1313"/>
+        <location filename="../mainwindow.cpp" line="1393"/>
         <source>Leave</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1315"/>
+        <location filename="../mainwindow.cpp" line="1395"/>
         <source>Stay</source>
         <translation>とどまる</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1324"/>
+        <location filename="../mainwindow.cpp" line="1404"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>未送信のデータがあります！転送が完了するまでお待ちください！</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1336"/>
+        <location filename="../mainwindow.cpp" line="1416"/>
         <source>Change session title</source>
         <translation>セッションのタイトルを変更</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1414"/>
+        <location filename="../mainwindow.cpp" line="1494"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1416"/>
+        <location filename="../mainwindow.cpp" line="1496"/>
         <source>Join</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1474"/>
+        <location filename="../mainwindow.cpp" line="1552"/>
         <source>Board is locked</source>
         <translation>ドローイングボードはロック中です</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1771"/>
+        <location filename="../mainwindow.cpp" line="1858"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1908"/>
+        <location filename="../mainwindow.cpp" line="2004"/>
         <source>Marker text</source>
         <translation>マーカーテキスト</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1915"/>
+        <location filename="../mainwindow.cpp" line="2011"/>
         <source>About Drawpile</source>
         <translation>Drawpile について</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2024"/>
+        <location filename="../mainwindow.cpp" line="2120"/>
         <location filename="../widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2025"/>
+        <location filename="../mainwindow.cpp" line="2121"/>
         <location filename="../widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>開く(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2029"/>
+        <location filename="../mainwindow.cpp" line="2125"/>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2030"/>
+        <location filename="../mainwindow.cpp" line="2126"/>
         <source>Save &amp;As...</source>
         <translation>名前を付けて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2031"/>
+        <location filename="../mainwindow.cpp" line="2127"/>
         <source>Autosave</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2033"/>
+        <location filename="../mainwindow.cpp" line="2129"/>
         <source>&amp;Animation...</source>
         <translation>アニメーション(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2035"/>
+        <location filename="../mainwindow.cpp" line="2131"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2036"/>
+        <location filename="../mainwindow.cpp" line="2132"/>
         <location filename="../widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2061"/>
+        <location filename="../mainwindow.cpp" line="2157"/>
         <location filename="../widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2075"/>
+        <location filename="../mainwindow.cpp" line="2171"/>
         <source>&amp;Export</source>
         <translation>エクスポート(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2098"/>
+        <location filename="../mainwindow.cpp" line="2194"/>
         <source>&amp;Undo</source>
         <translation>取り消し(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2099"/>
+        <location filename="../mainwindow.cpp" line="2195"/>
         <source>&amp;Redo</source>
         <translation>やり直し(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2100"/>
+        <location filename="../mainwindow.cpp" line="2196"/>
         <source>Copy selected area to the clipboard</source>
         <translation>選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2101"/>
+        <location filename="../mainwindow.cpp" line="2197"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2102"/>
+        <location filename="../mainwindow.cpp" line="2198"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードに切り取り</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2103"/>
+        <location filename="../mainwindow.cpp" line="2199"/>
         <source>&amp;Paste</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2104"/>
+        <location filename="../mainwindow.cpp" line="2200"/>
         <source>&amp;Stamp</source>
         <translation>スタンプ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2113"/>
-        <location filename="../mainwindow.cpp" line="2115"/>
+        <location filename="../mainwindow.cpp" line="2209"/>
+        <location filename="../mainwindow.cpp" line="2211"/>
         <source>&amp;Deselect</source>
         <translation>選択解除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2118"/>
+        <location filename="../mainwindow.cpp" line="2214"/>
         <source>Expand &amp;Up</source>
         <translation>上に拡張(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2119"/>
+        <location filename="../mainwindow.cpp" line="2215"/>
         <source>Expand &amp;Down</source>
         <translation>下に拡張(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2120"/>
+        <location filename="../mainwindow.cpp" line="2216"/>
         <source>Expand &amp;Left</source>
         <translation>左に拡張(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2121"/>
+        <location filename="../mainwindow.cpp" line="2217"/>
         <source>Expand &amp;Right</source>
         <translation>右に拡張(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2172"/>
+        <location filename="../mainwindow.cpp" line="2268"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2189"/>
+        <location filename="../mainwindow.cpp" line="2285"/>
         <source>&amp;Expand Canvas</source>
         <translation>キャンバスを拡張(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2217"/>
+        <location filename="../mainwindow.cpp" line="2313"/>
         <source>&amp;Toolbars</source>
         <translation>ツールバー(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2220"/>
+        <location filename="../mainwindow.cpp" line="2316"/>
         <source>&amp;Docks</source>
         <translation>ドック(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2223"/>
+        <location filename="../mainwindow.cpp" line="2319"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2225"/>
+        <location filename="../mainwindow.cpp" line="2321"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2225"/>
+        <location filename="../mainwindow.cpp" line="2321"/>
         <source>Show animation preview window</source>
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2235"/>
+        <location filename="../mainwindow.cpp" line="2331"/>
         <source>Mirror</source>
         <translation>左右反転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2236"/>
+        <location filename="../mainwindow.cpp" line="2332"/>
         <source>Flip</source>
         <translation>上下反転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2238"/>
+        <location filename="../mainwindow.cpp" line="2334"/>
         <source>Show Crosshair C&amp;ursor</source>
         <translation>十字カーソルを表示(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2240"/>
+        <location filename="../mainwindow.cpp" line="2336"/>
         <source>Show User &amp;Pointers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2241"/>
+        <location filename="../mainwindow.cpp" line="2337"/>
         <source>Show User &amp;Layers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2242"/>
+        <location filename="../mainwindow.cpp" line="2338"/>
         <source>Show La&amp;ser Trails</source>
         <translation>レーザーの軌跡を表示(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2243"/>
+        <location filename="../mainwindow.cpp" line="2339"/>
         <source>Thick Laser Trails</source>
         <translation>レーザーの軌跡を太い線で表示</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2244"/>
+        <location filename="../mainwindow.cpp" line="2340"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>ピクセルグリッドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2318"/>
+        <location filename="../mainwindow.cpp" line="2414"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2325"/>
+        <location filename="../mainwindow.cpp" line="2421"/>
         <source>&amp;Zoom</source>
         <translation>ズーム(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2330"/>
+        <location filename="../mainwindow.cpp" line="2426"/>
         <source>Rotation</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2341"/>
+        <location filename="../mainwindow.cpp" line="2437"/>
         <source>User &amp;pointers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2358"/>
+        <location filename="../mainwindow.cpp" line="2454"/>
         <location filename="../widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>ホスト(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2358"/>
+        <location filename="../mainwindow.cpp" line="2454"/>
         <source>Share your drawingboard with others</source>
         <translation>ドローイングボードを他のユーザーと共有</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2359"/>
+        <location filename="../mainwindow.cpp" line="2455"/>
         <location filename="../widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>参加(&amp;J)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2359"/>
+        <location filename="../mainwindow.cpp" line="2455"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>他のユーザーのドローイングセッションに参加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2360"/>
+        <location filename="../mainwindow.cpp" line="2456"/>
         <source>&amp;Leave</source>
         <translation>退出(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2360"/>
+        <location filename="../mainwindow.cpp" line="2456"/>
         <source>Leave this drawing session</source>
         <translation>このドローイングセッションを退出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2363"/>
+        <location filename="../mainwindow.cpp" line="2459"/>
         <source>Prevent changes to the drawing board</source>
         <translation>ドローイングボードを変更されないようにします</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2364"/>
+        <location filename="../mainwindow.cpp" line="2460"/>
         <source>Allow only session operators to add and change layers</source>
         <translation>レイヤーの追加と変更をセッション管理者にのみ許可</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2365"/>
+        <location filename="../mainwindow.cpp" line="2461"/>
         <source>Prevent new users from joining the session</source>
         <translation>新規ユーザーのセッションへの参加を拒否</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2383"/>
+        <location filename="../mainwindow.cpp" line="2479"/>
         <location filename="../widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>セッション(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2398"/>
+        <location filename="../mainwindow.cpp" line="2494"/>
         <source>&amp;Watercolor</source>
         <translation>水彩(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2398"/>
+        <location filename="../mainwindow.cpp" line="2494"/>
         <source>A brush that picks up color from the layer</source>
         <translation>レイヤー上の色の影響を受けるブラシ</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2403"/>
+        <location filename="../mainwindow.cpp" line="2499"/>
         <source>Fill areas</source>
         <translation>空白を塗りつぶす</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2408"/>
+        <location filename="../mainwindow.cpp" line="2504"/>
         <source>Select area for copying</source>
         <translation>範囲を指定して選択</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2435"/>
+        <location filename="../mainwindow.cpp" line="2531"/>
         <source>&amp;Swap Colors</source>
         <translation>前景色と背景色を交換(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2436"/>
+        <location filename="../mainwindow.cpp" line="2532"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>ブラシサイズを小さく(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2437"/>
+        <location filename="../mainwindow.cpp" line="2533"/>
         <source>&amp;Increase Brush Size</source>
         <translation>ブラシサイズを大きく(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2439"/>
+        <location filename="../mainwindow.cpp" line="2535"/>
         <source>Select Layer Above</source>
         <translation>上のレイヤーを選択</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2440"/>
+        <location filename="../mainwindow.cpp" line="2536"/>
         <source>Select Layer Below</source>
         <translation>下のレイヤーを選択</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2457"/>
+        <location filename="../mainwindow.cpp" line="2555"/>
         <source>Drawing tools</source>
         <translation>描画ツール</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2531"/>
+        <location filename="../mainwindow.cpp" line="2629"/>
         <source>Color</source>
         <translation>色</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2396"/>
+        <location filename="../mainwindow.cpp" line="2492"/>
         <source>&amp;Pen</source>
         <translation>ペン(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="914"/>
+        <location filename="../mainwindow.cpp" line="998"/>
         <source>All Supported Files (%1)</source>
         <translation>サポートされたすべてのファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="922"/>
-        <location filename="../mainwindow.cpp" line="925"/>
+        <location filename="../mainwindow.cpp" line="1005"/>
         <source>Open Image</source>
         <translation>画像を開く</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="949"/>
-        <location filename="../mainwindow.cpp" line="1036"/>
+        <location filename="../mainwindow.cpp" line="1028"/>
+        <location filename="../mainwindow.cpp" line="1115"/>
         <source>Save Image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1136"/>
+        <location filename="../mainwindow.cpp" line="1215"/>
         <source>Compressed Recordings (%1)</source>
         <translation>圧縮されたセッション記録 (%1)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1139"/>
+        <location filename="../mainwindow.cpp" line="1218"/>
         <source>Record Session</source>
         <translation>セッションを記録</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1186"/>
+        <location filename="../mainwindow.cpp" line="1265"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1250"/>
+        <location filename="../mainwindow.cpp" line="1329"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1335"/>
+        <location filename="../mainwindow.cpp" line="1415"/>
         <source>Session Title</source>
         <translation>セッションのタイトル</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1402"/>
+        <location filename="../mainwindow.cpp" line="1482"/>
         <source>Could not connect to server</source>
         <translation>サーバーに接続できませんでした</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1755"/>
+        <location filename="../mainwindow.cpp" line="1842"/>
         <source>Paste Image</source>
         <translation>画像を貼り付け</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1908"/>
+        <location filename="../mainwindow.cpp" line="2004"/>
         <source>Mark</source>
         <translation>マーク</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1917"/>
+        <location filename="../mainwindow.cpp" line="2013"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2027"/>
+        <location filename="../mainwindow.cpp" line="2123"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2064"/>
+        <location filename="../mainwindow.cpp" line="2160"/>
         <location filename="../widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>最近使ったファイルを開く(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2083"/>
+        <location filename="../mainwindow.cpp" line="2179"/>
         <source>File Tools</source>
         <translation>ファイルツール</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2100"/>
+        <location filename="../mainwindow.cpp" line="2196"/>
         <source>&amp;Copy Visible</source>
         <translation>可視部分をコピー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2101"/>
+        <location filename="../mainwindow.cpp" line="2197"/>
         <source>Copy &amp;Layer</source>
         <translation>レイヤーをコピー(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2102"/>
+        <location filename="../mainwindow.cpp" line="2198"/>
         <source>Cu&amp;t Layer</source>
         <translation>レイヤーを切り取り(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2106"/>
+        <location filename="../mainwindow.cpp" line="2202"/>
         <source>Paste &amp;From File...</source>
         <translation>ファイルから貼り付け(&amp;F)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2107"/>
+        <location filename="../mainwindow.cpp" line="2203"/>
         <source>Delete Empty Annotations</source>
         <translation>空の注釈を削除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2108"/>
+        <location filename="../mainwindow.cpp" line="2204"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>キャンバスのサイズを変更(&amp;Z)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2109"/>
+        <location filename="../mainwindow.cpp" line="2205"/>
         <location filename="../widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>設定(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2111"/>
+        <location filename="../mainwindow.cpp" line="2207"/>
         <source>Select &amp;All</source>
         <translation>すべて選択(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2204"/>
+        <location filename="../mainwindow.cpp" line="2300"/>
         <source>Edit Tools</source>
         <translation>編集ツール</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2227"/>
+        <location filename="../mainwindow.cpp" line="2323"/>
         <source>Zoom &amp;In</source>
         <translation>ズームイン(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2228"/>
+        <location filename="../mainwindow.cpp" line="2324"/>
         <source>Zoom &amp;Out</source>
         <translation>ズームアウト(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2229"/>
+        <location filename="../mainwindow.cpp" line="2325"/>
         <source>&amp;Normal Size</source>
         <translation>通常のサイズ(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2230"/>
+        <location filename="../mainwindow.cpp" line="2326"/>
         <source>&amp;Reset Rotation</source>
         <translation>回転をリセット(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2231"/>
+        <location filename="../mainwindow.cpp" line="2327"/>
         <source>Rotate to 90°</source>
         <translation>90° 回転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2232"/>
+        <location filename="../mainwindow.cpp" line="2328"/>
         <source>Rotate to 180°</source>
         <translation>180° 回転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
+        <location filename="../mainwindow.cpp" line="2329"/>
         <source>Rotate to 270°</source>
         <translation>270° 回転</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2239"/>
+        <location filename="../mainwindow.cpp" line="2335"/>
         <source>Show &amp;Annotations</source>
         <translation>注釈を表示(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2253"/>
+        <location filename="../mainwindow.cpp" line="2349"/>
         <source>&amp;Full Screen</source>
         <translation>フルスクリーン(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2363"/>
+        <location filename="../mainwindow.cpp" line="2459"/>
         <source>Lo&amp;ck the Board</source>
         <translation>ドローイングボードをロック(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2364"/>
+        <location filename="../mainwindow.cpp" line="2460"/>
         <source>Lock Layer Controls</source>
         <translation>レイヤー操作をロック</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2365"/>
+        <location filename="../mainwindow.cpp" line="2461"/>
         <source>&amp;Deny Joins</source>
         <translation>参加を拒否(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2367"/>
+        <location filename="../mainwindow.cpp" line="2463"/>
         <source>Change &amp;Title...</source>
         <translation>タイトルを変更(&amp;T)...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2396"/>
+        <location filename="../mainwindow.cpp" line="2492"/>
         <source>Draw with hard edged strokes</source>
         <translation>エッジのくっきりしたストロークで描画</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2397"/>
+        <location filename="../mainwindow.cpp" line="2493"/>
         <source>&amp;Brush</source>
         <translation>ブラシ(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2397"/>
+        <location filename="../mainwindow.cpp" line="2493"/>
         <source>Draw with smooth strokes</source>
         <translation>エッジのなめらかなストロークで描画</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2399"/>
+        <location filename="../mainwindow.cpp" line="2495"/>
         <source>&amp;Eraser</source>
         <translation>消しゴム(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2399"/>
+        <location filename="../mainwindow.cpp" line="2495"/>
         <source>Erase layer content</source>
         <translation>レイヤーの内容を消去</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2406"/>
+        <location filename="../mainwindow.cpp" line="2502"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2406"/>
+        <location filename="../mainwindow.cpp" line="2502"/>
         <source>&amp;Color Picker</source>
         <translation>カラーピッカー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2400"/>
+        <location filename="../mainwindow.cpp" line="2496"/>
         <source>&amp;Line</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2123"/>
+        <location filename="../mainwindow.cpp" line="2219"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2124"/>
+        <location filename="../mainwindow.cpp" line="2220"/>
         <source>Fill selection</source>
         <translation>選択範囲を塗りつぶす</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2125"/>
+        <location filename="../mainwindow.cpp" line="2221"/>
         <source>Recolor selection</source>
         <translation>選択範囲を色替え</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2126"/>
+        <location filename="../mainwindow.cpp" line="2222"/>
         <source>Color erase selection</source>
         <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2400"/>
+        <location filename="../mainwindow.cpp" line="2496"/>
         <source>Draw straight lines</source>
         <translation>直線を描画</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2401"/>
+        <location filename="../mainwindow.cpp" line="2497"/>
         <source>&amp;Rectangle</source>
         <translation>矩形(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2401"/>
+        <location filename="../mainwindow.cpp" line="2497"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>矩形 (塗りつぶしなし) を描画</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2402"/>
+        <location filename="../mainwindow.cpp" line="2498"/>
         <source>&amp;Ellipse</source>
         <translation>楕円(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2402"/>
+        <location filename="../mainwindow.cpp" line="2498"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>円 (塗りつぶしなし) を描画</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2403"/>
+        <location filename="../mainwindow.cpp" line="2499"/>
         <source>&amp;Flood Fill</source>
         <translation>塗りつぶす(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2404"/>
+        <location filename="../mainwindow.cpp" line="2500"/>
         <source>&amp;Annotation</source>
         <translation>注釈(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2404"/>
+        <location filename="../mainwindow.cpp" line="2500"/>
         <source>Add text to the picture</source>
         <translation>画像にテキストを追加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2407"/>
+        <location filename="../mainwindow.cpp" line="2503"/>
         <source>Point out things on the canvas</source>
         <translation>キャンバス上の場所を指し示す</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2407"/>
+        <location filename="../mainwindow.cpp" line="2503"/>
         <source>&amp;Laser Pointer</source>
         <translation>レーザーポインター(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2408"/>
+        <location filename="../mainwindow.cpp" line="2504"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>選択 (矩形)(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2409"/>
+        <location filename="../mainwindow.cpp" line="2505"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>選択 (自由形状)(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2409"/>
+        <location filename="../mainwindow.cpp" line="2505"/>
         <source>Select a free-form area for copying</source>
         <translation>範囲を自由な形状で指定して選択</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2410"/>
+        <location filename="../mainwindow.cpp" line="2506"/>
         <source>&amp;Mark</source>
         <translation>マーカーを追加(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2410"/>
+        <location filename="../mainwindow.cpp" line="2506"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>セッション記録から現在の位置を検索するためのマーカーを追加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2428"/>
+        <location filename="../mainwindow.cpp" line="2524"/>
         <source>&amp;Tools</source>
         <translation>ツール(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2433"/>
+        <location filename="../mainwindow.cpp" line="2529"/>
         <source>&amp;Shortcuts</source>
         <translation>ショートカット(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2482"/>
+        <location filename="../mainwindow.cpp" line="2580"/>
         <location filename="../widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>ホームページ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2483"/>
+        <location filename="../mainwindow.cpp" line="2581"/>
         <location filename="../widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>Drawpile について(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2484"/>
+        <location filename="../mainwindow.cpp" line="2582"/>
         <location filename="../widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>&amp;Qt について</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2490"/>
+        <location filename="../mainwindow.cpp" line="2588"/>
         <location filename="../widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
@@ -1663,121 +1662,64 @@
 <context>
     <name>PlaybackDialog</name>
     <message>
-        <location filename="../ui/playback.ui" line="78"/>
-        <source>Play</source>
-        <translation>再生</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="101"/>
-        <source>Step</source>
-        <translation>コマ送り</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="121"/>
-        <source>Skip stroke</source>
-        <translation>ストロークをスキップ</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="148"/>
-        <source>Speed:</source>
-        <translation>速度:</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="180"/>
-        <source>Max. pause:</source>
-        <translation>中断 (最大):</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="187"/>
-        <source>s</source>
-        <comment>seconds</comment>
-        <translation>秒</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="216"/>
+        <location filename="../qml/PlaybackDialog.qml" line="156"/>
         <source>Stop on markers</source>
         <translation>マーカーで停止</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="226"/>
-        <source>Small player</source>
-        <translation>小さなプレーヤー</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="14"/>
-        <source>Playback</source>
-        <translation>再生</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="308"/>
-        <source>Build Index</source>
-        <translation>インデックスを構築</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="318"/>
-        <location filename="../ui/playback.ui" line="463"/>
+        <location filename="../qml/PlaybackDialog.qml" line="201"/>
         <source>Filter...</source>
         <translation>フィルタ...</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="358"/>
-        <source>Snapshots:</source>
-        <translation>スナップショット:</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="365"/>
-        <source>Previous snapshot</source>
-        <translation>前のスナップショット</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="379"/>
-        <source>Next snapshot</source>
-        <translation>次のスナップショット</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="393"/>
-        <source>Markers:</source>
-        <translation>マーカー:</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="449"/>
-        <source>Mark</source>
-        <translation>マーカーを追加</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="517"/>
+        <location filename="../qml/PlaybackDialog.qml" line="367"/>
         <source>Frame:</source>
         <translation>フレーム:</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="549"/>
+        <location filename="../qml/PlaybackDialog.qml" line="369"/>
         <source>Time:</source>
         <translation>時間:</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="597"/>
-        <source>Automatically save a frame at each step</source>
+        <location filename="../qml/PlaybackDialog.qml" line="116"/>
+        <source>Speed</source>
+        <translation>速度</translation>
+    </message>
+    <message>
+        <location filename="../qml/PlaybackDialog.qml" line="151"/>
+        <source>Markers</source>
+        <translation>マーカー</translation>
+    </message>
+    <message>
+        <location filename="../qml/PlaybackDialog.qml" line="164"/>
+        <source>Add here</source>
+        <translation>ここに追加</translation>
+    </message>
+    <message>
+        <location filename="../qml/PlaybackDialog.qml" line="315"/>
+        <source>Build index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="600"/>
+        <location filename="../qml/PlaybackDialog.qml" line="355"/>
+        <source>Export video...</source>
+        <translation>動画にエクスポート...</translation>
+    </message>
+    <message>
+        <location filename="../qml/PlaybackDialog.qml" line="376"/>
         <source>Autosave</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="610"/>
+        <location filename="../qml/PlaybackDialog.qml" line="386"/>
         <source>Save frame</source>
         <translation>フレームを保存</translation>
     </message>
     <message>
-        <location filename="../ui/playback.ui" line="617"/>
+        <location filename="../qml/PlaybackDialog.qml" line="390"/>
         <source>Stop</source>
         <translation>停止</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="656"/>
-        <source>Export Video...</source>
-        <translation>動画にエクスポート...</translation>
     </message>
 </context>
 <context>
@@ -1785,41 +1727,36 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="91"/>
         <location filename="../dialogs/settingsdialog.cpp" line="438"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="97"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../loader.cpp" line="49"/>
+        <location filename="../canvas/loader.cpp" line="49"/>
         <source>Background</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../loader.cpp" line="50"/>
+        <location filename="../canvas/loader.cpp" line="50"/>
         <source>Foreground</source>
         <translation>前面</translation>
     </message>
     <message>
-        <location filename="../loader.cpp" line="68"/>
+        <location filename="../canvas/loader.cpp" line="68"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
         <translation>Drawpile はこの OpenRaster ファイルで使用されている機能を一部サポートしていません。保存時にデータの損失が発生する場合があります。
 </translation>
     </message>
     <message>
-        <location filename="../loader.cpp" line="70"/>
+        <location filename="../canvas/loader.cpp" line="70"/>
         <source>Application specific extensions are used</source>
         <translation>アプリケーション固有の拡張機能が使用されています</translation>
     </message>
     <message>
-        <location filename="../loader.cpp" line="72"/>
+        <location filename="../canvas/loader.cpp" line="72"/>
         <source>Nested layers are not fully supported.</source>
         <translation>入れ子レイヤーは完全にサポートされていません。</translation>
-    </message>
-    <message>
-        <location filename="../loader.cpp" line="73"/>
-        <source>Partially supported OpenRaster</source>
-        <translation>OpenRaster の一部機能のみサポートしています</translation>
     </message>
     <message>
         <location filename="../utils/networkaccess.cpp" line="90"/>
@@ -1827,10 +1764,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="917"/>
-        <location filename="../mainwindow.cpp" line="1032"/>
-        <location filename="../mainwindow.cpp" line="1137"/>
-        <location filename="../mainwindow.cpp" line="1751"/>
+        <location filename="../mainwindow.cpp" line="545"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1001"/>
+        <location filename="../mainwindow.cpp" line="1111"/>
+        <location filename="../mainwindow.cpp" line="1216"/>
+        <location filename="../mainwindow.cpp" line="1838"/>
         <source>All Files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
@@ -2355,52 +2297,29 @@
         <translation>打ち消し線</translation>
     </message>
     <message>
-        <location filename="../ui/textsettings.ui" line="310"/>
+        <location filename="../ui/textsettings.ui" line="305"/>
+        <source>Annotation content</source>
+        <translation>注釈の内容を入力</translation>
+    </message>
+    <message>
+        <location filename="../ui/textsettings.ui" line="314"/>
         <source>Merge the text onto the current layer</source>
         <translation>テキストを現在のレイヤーに統合</translation>
     </message>
     <message>
-        <location filename="../ui/textsettings.ui" line="313"/>
+        <location filename="../ui/textsettings.ui" line="317"/>
         <source>Merge</source>
         <translation>統合</translation>
     </message>
     <message>
-        <location filename="../ui/textsettings.ui" line="320"/>
+        <location filename="../ui/textsettings.ui" line="324"/>
         <source>Delete this annotation</source>
         <translation>この注釈を削除</translation>
     </message>
     <message>
-        <location filename="../ui/textsettings.ui" line="323"/>
+        <location filename="../ui/textsettings.ui" line="327"/>
         <source>Remove</source>
         <translation>削除</translation>
-    </message>
-</context>
-<context>
-    <name>TinyPlayer</name>
-    <message>
-        <location filename="../ui/tinyplayer.ui" line="88"/>
-        <source>Previous marker</source>
-        <translation>前のマーカー</translation>
-    </message>
-    <message>
-        <location filename="../ui/tinyplayer.ui" line="108"/>
-        <source>Play</source>
-        <translation>再生</translation>
-    </message>
-    <message>
-        <location filename="../ui/tinyplayer.ui" line="131"/>
-        <source>Step</source>
-        <translation>コマ送り</translation>
-    </message>
-    <message>
-        <location filename="../ui/tinyplayer.ui" line="151"/>
-        <source>Skip stroke</source>
-        <translation>ストロークをスキップ</translation>
-    </message>
-    <message>
-        <location filename="../ui/tinyplayer.ui" line="171"/>
-        <source>Next marker</source>
-        <translation>次のマーカー</translation>
     </message>
 </context>
 <context>
@@ -2667,7 +2586,7 @@
 <context>
     <name>dialogs::HostDialog</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="46"/>
+        <location filename="../dialogs/hostdialog.cpp" line="44"/>
         <source>Host</source>
         <translation>ホスト</translation>
     </message>
@@ -2722,95 +2641,50 @@
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="76"/>
-        <source>Compressed recording</source>
-        <translation>セッション記録を圧縮しました</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="499"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="208"/>
         <source>Marker text</source>
         <translation>マーカーテキスト</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="499"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="208"/>
         <source>Mark Position</source>
         <translation>マーカー位置</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="519"/>
-        <source>Recording ended</source>
-        <translation>セッションの記録を終了しました</translation>
+        <location filename="../dialogs/playbackdialog.cpp" line="53"/>
+        <source>Playback</source>
+        <translation>再生</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="594"/>
-        <source>%1 m. %2 s.</source>
-        <translation>%1 分 %2 秒</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="596"/>
-        <source>%1 s.</source>
-        <translation>%1 秒</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="618"/>
-        <source>Video error</source>
-        <translation>動画のエラー</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="650"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="117"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
         <translation>このセッション記録は、現在お使いのものとは異なるバージョン (%1) の Drawpile で作成されたため、表示が異なる場合があります</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="653"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="120"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
         <translation>このセッション記録は、現在お使いのものよりも新しいバージョン (%1) の Drawpile で作成されたため、互換性がない可能性があります</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="656"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="123"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
         <translation>セッション記録に互換性がありません。このセッション記録は Drawpile バージョン %1 で作成されました。</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="660"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="127"/>
         <source>Selected file is not a Drawpile recording</source>
         <translation>選択したファイルは Drawpile のセッション記録ではありません</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="664"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="131"/>
         <source>Cannot read file: %1</source>
         <translation>ファイル %1 を読み込めません</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="671"/>
-        <location filename="../dialogs/playbackdialog.cpp" line="674"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="138"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="141"/>
         <source>Open Recording</source>
         <translation>セッション記録を開く</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="719"/>
-        <source>Jump To</source>
-        <translation>ジャンプ</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="694"/>
-        <source>Cannot index compressed recordings.</source>
-        <translation>圧縮されたセッション記録をインデクシングできません。</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="701"/>
-        <source>Index not yet generated</source>
-        <translation>インデックスはまだ生成されていません</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="709"/>
-        <source>Error loading index!</source>
-        <translation>インデックスの読み込み中のエラー！</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="776"/>
-        <source>Error</source>
-        <translation>エラー</translation>
     </message>
 </context>
 <context>
@@ -2837,6 +2711,21 @@
         <location filename="../dialogs/selectsessiondialog.cpp" line="38"/>
         <source>Join</source>
         <translation>参加</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::SessionListingDialog</name>
+    <message numerus="yes">
+        <location filename="../dialogs/sessionlistingdialog.cpp" line="69"/>
+        <source>%n age restricted session(s) hidden.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../dialogs/sessionlistingdialog.cpp" line="146"/>
+        <source>Show age restricted sessions?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2913,24 +2802,6 @@
     </message>
 </context>
 <context>
-    <name>dialogs::TinyPlayer</name>
-    <message>
-        <location filename="../dialogs/tinyplayer.cpp" line="73"/>
-        <source>Normal Player</source>
-        <translation>通常のプレーヤー</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/tinyplayer.cpp" line="75"/>
-        <source>Previous Snapshot</source>
-        <translation>前のスナップショット</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/tinyplayer.cpp" line="76"/>
-        <source>Next Snapshot</source>
-        <translation>次のスナップショット</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::VideoExportDialog</name>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="72"/>
@@ -2943,29 +2814,29 @@
         <translation>カスタム:</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="99"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="95"/>
         <source>Select soundtrack</source>
         <translation>サウンドトラックを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="100"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="96"/>
         <source>Sound files (%1)</source>
         <translation>音声ファイル (%1)</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="229"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="221"/>
         <source>Select output directory</source>
         <translation>出力ディレクトリを選択</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="253"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="277"/>
         <source>Export video</source>
-        <translation>動画をエクスポート</translation>
+        <translation>動画にエクスポート</translation>
     </message>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
-        <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="253"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="277"/>
         <source>%1 files (*%2)</source>
         <translation>%1 ファイル (*%2)</translation>
     </message>
@@ -3002,7 +2873,7 @@
 <context>
     <name>docks::InputSettings</name>
     <message>
-        <location filename="../docks/inputsettingsdock.cpp" line="35"/>
+        <location filename="../docks/inputsettingsdock.cpp" line="34"/>
         <source>Input</source>
         <translation>入力</translation>
     </message>
@@ -3015,12 +2886,12 @@
         <translation>このレイヤーをロック</translation>
     </message>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="34"/>
+        <location filename="../docks/layeraclmenu.cpp" line="31"/>
         <source>Exclusive access:</source>
         <translation>排他的アクセス:</translation>
     </message>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="37"/>
+        <location filename="../docks/layeraclmenu.cpp" line="33"/>
         <source>Everyone can draw</source>
         <translation>全員に編集を許可</translation>
     </message>
@@ -3049,14 +2920,14 @@
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="68"/>
-        <location filename="../docks/layerlistdock.cpp" line="399"/>
+        <location filename="../docks/layerlistdock.cpp" line="395"/>
         <source>Merge down</source>
         <translation>下へ統合</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="69"/>
         <location filename="../docks/layerlistdock.cpp" line="81"/>
-        <location filename="../docks/layerlistdock.cpp" line="393"/>
+        <location filename="../docks/layerlistdock.cpp" line="389"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
@@ -3091,43 +2962,35 @@
         <translation>番号を表示</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="301"/>
+        <location filename="../docks/layerlistdock.cpp" line="297"/>
         <source>Mode:</source>
         <translation>モード:</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="326"/>
-        <location filename="../docks/layerlistdock.cpp" line="346"/>
+        <location filename="../docks/layerlistdock.cpp" line="322"/>
+        <location filename="../docks/layerlistdock.cpp" line="342"/>
         <source>Layer</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="388"/>
+        <location filename="../docks/layerlistdock.cpp" line="384"/>
         <source>Delete layer</source>
         <translation>レイヤーを削除</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="389"/>
+        <location filename="../docks/layerlistdock.cpp" line="385"/>
         <source>Really delete &quot;%1&quot;?</source>
         <translation>本当に &quot;%1&quot; を削除しますか？</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="400"/>
+        <location filename="../docks/layerlistdock.cpp" line="396"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="403"/>
+        <location filename="../docks/layerlistdock.cpp" line="399"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>docks::Navigator</name>
-    <message>
-        <location filename="../docks/navigator.cpp" line="145"/>
-        <source>Navigator</source>
-        <translation>ナビゲーター</translation>
     </message>
 </context>
 <context>
@@ -3211,18 +3074,18 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="546"/>
-        <location filename="../net/client.cpp" line="588"/>
+        <location filename="../net/client.cpp" line="545"/>
+        <location filename="../net/client.cpp" line="587"/>
         <source>Server</source>
         <translation>サーバー</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="579"/>
+        <location filename="../net/client.cpp" line="578"/>
         <source>A server error occurred!</source>
         <translation>サーバーエラーが発生しました！</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="581"/>
+        <location filename="../net/client.cpp" line="580"/>
         <source>The server is shutting down!</source>
         <translation>このサーバーはシャットダウン中です！</translation>
     </message>
@@ -3399,7 +3262,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="142"/>
+        <location filename="../net/tcpserver.cpp" line="111"/>
         <source>Received invalid data</source>
         <translation>無効なデータを受信しました</translation>
     </message>
@@ -3506,14 +3369,47 @@
 <context>
     <name>recording::IndexBuilder</name>
     <message>
-        <location filename="../recording/indexbuilder.cpp" line="57"/>
+        <location filename="../recording/indexbuilder.cpp" line="58"/>
         <source>Error opening %1 for writing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../recording/indexbuilder.cpp" line="118"/>
+        <location filename="../recording/indexbuilder.cpp" line="119"/>
         <source>Error writing file</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>recording::PlaybackController</name>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="410"/>
+        <source>Cannot index compressed recordings.</source>
+        <translation>圧縮されたセッション記録をインデクシングできません。</translation>
+    </message>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="416"/>
+        <source>Index not yet generated</source>
+        <translation>インデックスはまだ生成されていません</translation>
+    </message>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="424"/>
+        <source>Error loading index!</source>
+        <translation>インデックス読み込み中のエラーです！</translation>
+    </message>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="569"/>
+        <source>%1 m. %2 s.</source>
+        <translation>%1 分 %2 秒</translation>
+    </message>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="571"/>
+        <source>%1 s.</source>
+        <translation>%1 秒</translation>
+    </message>
+    <message>
+        <location filename="../recording/playbackcontroller.cpp" line="619"/>
+        <source>Video error</source>
+        <translation>動画のエラー</translation>
     </message>
 </context>
 <context>
@@ -3553,17 +3449,14 @@
     </message>
 </context>
 <context>
-    <name>tools::AnnotationSettings</name>
-    <message>
-        <location filename="../tools/toolsettings.cpp" line="825"/>
-        <source>Annotation content</source>
-        <translation>注釈の内容を入力</translation>
-    </message>
-</context>
-<context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../tools/toolsettings.cpp" line="761"/>
+        <location filename="../tools/toolsettings.cpp" line="758"/>
+        <source>Size:</source>
+        <translation>サイズ:</translation>
+    </message>
+    <message>
+        <location filename="../tools/toolsettings.cpp" line="778"/>
         <source>Pick from current layer only</source>
         <translation>現在のレイヤーからのみ抽出</translation>
     </message>
@@ -3723,7 +3616,7 @@
         <translation>現在お使いの ISP がキャリアグレード NAT を使用しているため、他のユーザーはあなたのコンピュータに直接接続できません。対処法については Drawpile のヘルプページをご覧ください。</translation>
     </message>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="431"/>
+        <location filename="../widgets/netstatus.cpp" line="430"/>
         <source>Don&apos;t show this again</source>
         <translation>再び表示しない</translation>
     </message>
