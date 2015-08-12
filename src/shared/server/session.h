@@ -116,9 +116,10 @@ public:
 	 * @brief Set the name of the recording file to create
 	 *
 	 * The recording will be created after a snapshot point has been created.
-	 * @param writer
+	 * @param filename path to output file
+	 * @param split if true, a new file will be started at every snapshot
 	 */
-	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
+	void setRecordingFile(const QString &filename, bool split) { _recordingFile = filename; _splitRecording = split; }
 
 	/**
 	 * @brief Stop any recording that might be in progress
@@ -488,6 +489,8 @@ private:
 
 	recording::Writer *_recorder;
 	QString _recordingFile;
+	bool _splitRecording;
+
 	QList<Client*> _clients;
 
 	protocol::MessageStream _mainstream;

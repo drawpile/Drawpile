@@ -350,9 +350,11 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 		// Start a new recording using the fresh snapshot point
 		if(!_recordingFile.isEmpty()) {
-			logger::debug() << "Snapshotted: restarting recording" << _recordingFile;
-			stopRecording();
-			startRecording(sp.substream());
+			if(_splitRecording || !_recorder) {
+				logger::debug() << "Snapshotted: restarting recording" << _recordingFile;
+				stopRecording();
+				startRecording(sp.substream());
+			}
 
 		}
 	}

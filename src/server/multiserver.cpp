@@ -44,7 +44,7 @@ MultiServer::MultiServer(QObject *parent)
 	_server(nullptr),
 	_banlist(nullptr),
 	_state(NOT_STARTED),
-	_autoStop(false)
+	_autoStop(false), m_splitRecording(false)
 {
 	_sessions = new SessionServer(this);
 
@@ -309,7 +309,7 @@ void MultiServer::assignRecording(SessionState *session)
 
 	fi = filename;
 
-	session->setRecordingFile(fi.absoluteFilePath());
+	session->setRecordingFile(fi.absoluteFilePath(), m_splitRecording);
 }
 
 /**
