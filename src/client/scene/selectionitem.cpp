@@ -254,10 +254,13 @@ void SelectionItem::rotate(float angle)
 
 void SelectionItem::setPasteImage(const QImage &image)
 {
+	const QRect selectionBounds = _polygon.boundingRect().toRect();
+	if(selectionBounds.size() != image.size() || !isAxisAlignedRectangle()) {
+		const QPoint c = selectionBounds.center();
+		setRect(QRect(c.x() - image.width()/2, c.y()-image.height()/2, image.width(), image.height()));
+	}
 	_pasteimg = image;
 	_movedFromCanvas = false;
-	if(!isAxisAlignedRectangle())
-		setRect(_polygon.boundingRect().toRect());
 	update();
 }
 

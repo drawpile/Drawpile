@@ -276,7 +276,9 @@ QImage CanvasScene::selectionToImage(int layerId)
 			QPainter mp(&img);
 			QPair<QPoint, QImage> mask = _selection->polygonMask(QColor(255, 255, 255));
 			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-			mp.drawImage(0, 0, mask.second);
+			int xoff = qMin(mask.first.x(), 0);
+			int yoff = qMin(mask.first.y(), 0);
+			mp.drawImage(xoff, yoff, mask.second);
 		}
 	}
 
