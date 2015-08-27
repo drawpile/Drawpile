@@ -239,6 +239,9 @@ void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
 {
 	Q_ASSERT(_passwordDialog.isNull());
 
+	if(_selectorDialog)
+		_selectorDialog->hide();
+
 	_passwordDialog = new dialogs::LoginDialog(_widgetParent);
 
 	_passwordDialog->setWindowModality(Qt::WindowModal);
