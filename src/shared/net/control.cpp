@@ -18,10 +18,83 @@
 */
 
 #include <cstring>
+#include <QDebug>
 
 #include "control.h"
 
 namespace protocol {
+
+ServerCommand ServerCommand::fromJson(const QJsonDocument &doc)
+{
+	const QJsonObject o = doc.object();
+	ServerCommand c;
+	c.cmd = o.value("cmd").toString();
+	c.args = o.value("args").toArray();
+	c.kwargs = o.value("kwargs").toObject();
+	return c;
+}
+
+QJsonDocument ServerCommand::toJson() const
+{
+	QJsonObject o;
+	o["cmd"] = cmd;
+	if(!args.isEmpty())
+		o["args"] = args;
+	if(!kwargs.isEmpty())
+		o["kwargs"] = kwargs;
+	return QJsonDocument(o);
+}
+
+ServerReply ServerReply::fromJson(const QJsonDocument &doc)
+{
+	const QJsonObject o = doc.object();
+	ServerReply r;
+	QString typestr = o.value("type").toString();
+
+	if(typestr == "login")
+		r.type = LOGIN;
+	else if(typestr == "message")
+		r.type = MESSAGE;
+	else if(typestr == "chat")
+		r.type = CHAT;
+	else if(typestr == "alert")
+		r.type = ALERT;
+	else if(typestr == "error")
+		r.type = ERROR;
+	else if(typestr == "result")
+		r.type = RESULT;
+	else if(typestr == "sessionconf")
+		r.type = SESSIONCONF;
+	else
+		r.type = UNKNOWN;
+
+	r.message = o.value("message").toString();
+	r.reply = o;
+	return r;
+}
+
+QJsonDocument ServerReply::toJson() const
+{
+	QJsonObject o = reply;
+	QString typestr;
+	switch(type) {
+	case UNKNOWN: break;
+	case LOGIN: typestr="login"; break;
+	case MESSAGE: typestr="msg"; break;
+	case CHAT: typestr="chat"; break;
+	case ALERT: typestr="alert"; break;
+	case ERROR: typestr="error"; break;
+	case RESULT: typestr="result"; break;
+	case SESSIONCONF: typestr="sessionconf"; break;
+	}
+	o["type"] = typestr;
+
+	if(!o.contains("message"))
+		o["message"] = message;
+	return QJsonDocument(o);
+}
+
+
 
 Command *Command::deserialize(uint8_t ctxid, const uchar *data, uint len)
 {
@@ -39,5 +112,14 @@ int Command::payloadLength() const
 	return m_msg.length();
 }
 
+QJsonDocument Command::doc() const
+{
+	QJsonParseError e;
+	QJsonDocument d = QJsonDocument::fromJson(m_msg, &e);
+	if(e.error != QJsonParseError::NoError) {
+		qWarning() << "JSON parse error:" << e.errorString();
+	}
+	return d;
+}
 
 }

@@ -19,11 +19,46 @@
 #ifndef DP_NET_CTRL_H
 #define DP_NET_CTRL_H
 
-#include <QString>
-
 #include "message.h"
 
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+
 namespace protocol {
+
+/**
+ * @brief A command sent to the server using the Command message
+ */
+struct ServerCommand {
+	QString cmd;
+	QJsonArray args;
+	QJsonObject kwargs;
+
+	static ServerCommand fromJson(const QJsonDocument &doc);
+	QJsonDocument toJson() const;
+};
+
+/**
+ * @brief A reply or notification from the server received with the Command message
+ */
+struct ServerReply {
+	enum {
+		UNKNOWN,
+		LOGIN,
+		MESSAGE,
+		CHAT,
+		ALERT,
+		ERROR,
+		RESULT,
+		SESSIONCONF
+	} type;
+	QString message;
+	QJsonObject reply;
+
+	static ServerReply fromJson(const QJsonDocument &doc);
+	QJsonDocument toJson() const;
+};
 
 /**
  * @brief Server command message
@@ -37,11 +72,14 @@ namespace protocol {
 class Command : public Message {
 public:
 	Command(uint8_t ctx, const QByteArray &msg) : Message(MSG_COMMAND, ctx), m_msg(msg) {}
-	Command(uint8_t ctx, const QString &msg) : Command(ctx, msg.toUtf8()) {}
+	Command(uint8_t ctx, const QJsonDocument &doc) : Command(ctx, doc.toJson(QJsonDocument::Compact)) {}
+	template<typename T> Command(uint8_t ctx, const T &t) : Command(ctx, t.toJson()) { }
 
 	static Command *deserialize(uint8_t ctxid, const uchar *data, uint len);
 
-	QString message() const { return QString::fromUtf8(m_msg); }
+	QJsonDocument doc() const;
+	ServerCommand cmd() const { return ServerCommand::fromJson(doc()); }
+	ServerReply reply() const { return ServerReply::fromJson(doc()); }
 
 protected:
     int payloadLength() const;

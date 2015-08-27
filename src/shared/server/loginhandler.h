@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@
 #include <QObject>
 #include <QStringList>
 
+namespace protocol {
+	class ServerCommand;
+	struct ServerReply;
+}
+
 namespace server {
 
 class Client;
@@ -37,40 +42,30 @@ struct SessionDescription;
  * The login process is as follows:
  * (client C connects to [this] server S)
  *
- * S: DRAWPILE <proto-major> <FEATURES¹>
+ * S: Greeting (name and version info)
  *
- * - client should disconnect at this point if proto-major does not match -
+ * - client should disconnect at this point if version does not match -
  *
  * C: STARTTLS (if "TLS" is in FEATURES)
  * S: STARTTLS (starts SSL handshake)
  *
- * C: IDENT "<username>" [;<password⁵>]
- * S: IDENTIFIED <GUEST|USER> <flags⁶>
- *  - or -
- * S: NEEDPASS (cannot login as guest. Client may retry IDENT with a password attached)
- *  - or -
- * S: ERROR <BADNAME|BADPASS|BANNED>
+ * C: IDENT username and password
+ * S: IDENTIFIED OK or NEED PASSWORD or ERROR
  *
- * S: TITLE <server title> (if set)
- *
- * S: SESSION <id²> <proto-minor> <FLAGS³> <user-count> "<founder>" ;<title>
- *  - or -
- * S: NOSESSION [id⁴]
+ * S: SESSION LIST UPDATES
  *
  * - Note. Server may send updates to session list and title until the client has made a choice -
  *
- * C: HOST <*|session id⁷> <proto-minor> <userid> [;<server password⁸>]
- *  - or -
- * C: JOIN <id> [;<password>]
+ * C: HOST or JOIN session
  *
- * S: OK <session id> <userid>
- *  - or -
- * S: ERROR <NOSESSION|NAMEINUSE|SYNTAX|CLOSED>
+ * S: OK or ERROR
+ *
+ * - if OK, the client is added to the session. If the client is hosting, initial state must be uploaded next. -
  *
  * Notes:
  * ------
  *
- * 1) Possible server features (comma separated list):
+ * Possible server feature flags:
  *    -       - no optional features supported
  *    MULTI   - this server supports multiple sessions
  *    HOSTP   - a password is needed to host a session
@@ -80,28 +75,9 @@ struct SessionDescription;
  *    IDENT   - non-guest access is supported
  *    NOGUEST - guest access is disabled (users must identify with password)
  *
- * 2) ID is a string in the format [a-zA-Z0-9:-]{1,64}
- *    If the ID was specified by the user (vanity ID), it is prefixed with '!'
+ * Session ID is a string in the format [a-zA-Z0-9:-]{1,64}
+ * If the ID was specified by the user (vanity ID), it is prefixed with '!'
  *
- * 3) Set of comma delimited session flags:
- *    -       - no flags
- *    PASS    - password is needed to join
- *    CLOSED  - closed for new users
- *    PERSIST - this is a persistent session
- *
- * 4) If the ID is specified, this command indicates the session has just terminated.
- *    Otherwise, it means there are no available session at all.
- *
- * 5) If password is omitted the user logs in as a guest
- *
- * 6) Possible user flags (comma separated list) are:
- *    -     - no flags
- *    MOD   - user is a moderator
- *    HOST  - user may host sessions without providing the hosting password
- *
- * 7) The hosting user may request a specific vanity ID for the session, or use '*'
- *    and let the server decide.
- * 8) The server password must be provided if HOSTP was listed in server features.
  */
 class LoginHandler : public QObject
 {
@@ -126,21 +102,22 @@ private:
 	};
 
 	void announceServerInfo();
-	void handleIdentMessage(const QString &message);
-	void handleHostMessage(const QString &message);
-	void handleJoinMessage(const QString &message);
+	void handleIdentMessage(const protocol::ServerCommand &cmd);
+	void handleHostMessage(const protocol::ServerCommand &cmd);
+	void handleJoinMessage(const protocol::ServerCommand &cmd);
 	void handleStarttls();
 	void guestLogin(const QString &username);
-	void send(const QString &msg);
+	void send(const protocol::ServerReply &cmd);
+	void sendError(const QString &code, const QString &message);
 
 	bool validateUsername(const QString &name);
 
-	Client *_client;
-	SessionServer *_server;
+	Client *m_client;
+	SessionServer *m_server;
 
-	State _state;
-	bool _hostPrivilege;
-	bool _complete;
+	State m_state;
+	bool m_hostPrivilege;
+	bool m_complete;
 };
 
 }

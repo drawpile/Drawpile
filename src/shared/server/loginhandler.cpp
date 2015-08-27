@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,103 +36,118 @@
 namespace server {
 
 LoginHandler::LoginHandler(Client *client, SessionServer *server) :
-	QObject(client), _client(client), _server(server), _hostPrivilege(false), _complete(false)
+	QObject(client), m_client(client), m_server(server), m_hostPrivilege(false), m_complete(false)
 {
-	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this,
-			SLOT(handleLoginMessage(protocol::MessagePtr)));
-
+	connect(client, &Client::loginMessage, this, &LoginHandler::handleLoginMessage);
 	connect(server, &SessionServer::sessionChanged, this, &LoginHandler::announceSession);
 	connect(server, &SessionServer::sessionEnded, this, &LoginHandler::announceSessionEnd);
 }
 
 void LoginHandler::startLoginProcess()
 {
-	QStringList flags;
+	protocol::ServerReply greeting;
+	greeting.type = protocol::ServerReply::LOGIN;
+	greeting.message = "Drawpile server " DRAWPILE_PROTO_STR;
+	greeting.reply["version"] = DRAWPILE_PROTO_MAJOR_VERSION;
 
-	_state = WAIT_FOR_IDENT;
+	QJsonArray flags;
 
-	if(_server->sessionLimit()>1)
+	if(m_server->sessionLimit()>1)
 		flags << "MULTI";
-	if(!_server->hostPassword().isEmpty())
+	if(!m_server->hostPassword().isEmpty())
 		flags << "HOSTP";
-	if(_server->allowPersistentSessions())
+	if(m_server->allowPersistentSessions())
 		flags << "PERSIST";
-	if(_client->hasSslSupport())
+	if(m_client->hasSslSupport())
 		flags << "TLS";
-	if(_server->mustSecure() && _client->hasSslSupport()) {
+	if(m_server->mustSecure() && m_client->hasSslSupport()) {
 		flags << "SECURE";
-		_state = WAIT_FOR_SECURE;
+		m_state = WAIT_FOR_SECURE;
 	}
-	if(_server->identityManager()) {
+	if(m_server->identityManager()) {
 		flags << "IDENT";
-		if(_server->identityManager()->isAuthorizedOnly())
+		if(m_server->identityManager()->isAuthorizedOnly())
 			flags << "NOGUEST";
 	}
 
+	greeting.reply["flags"] = flags;
+
 	// Start by telling who we are
-	send(QString("DRAWPILE %1 %2")
-		 .arg(DRAWPILE_PROTO_MAJOR_VERSION)
-		 .arg(flags.isEmpty() ? "-" : flags.join(","))
-	);
+	m_state = WAIT_FOR_IDENT;
+	send(greeting);
 
 	// Client should disconnect upon receiving the above if the version number does not match
 }
 
+QJsonObject sessionDescription(const SessionDescription &session)
+{
+	Q_ASSERT(!session.id.isEmpty());
+	QJsonObject o;
+	o["id"] = session.id.id();
+	o["protocol"] = session.protoMinor;
+	o["users"] = session.userCount;
+	o["founder"] = session.founder;
+	o["title"] = session.title;
+	if(!session.passwordHash.isEmpty())
+		o["password"] = true;
+	if(session.closed)
+		o["closed"] = true;
+	if(session.persistent)
+		o["persistent"] = true;
+	if(session.hibernating)
+		o["asleep"] = true;
+
+	return o;
+}
+
 void LoginHandler::announceServerInfo()
 {
-	// Send server title
-	if(!_server->title().isEmpty())
-		send("TITLE " + _server->title());
+	protocol::ServerReply greeting;
+	greeting.type = protocol::ServerReply::LOGIN;
+	greeting.message = "Welcome";
 
-	// Tell about our session
-	QList<SessionDescription> sessions = _server->sessions();
+	const QList<SessionDescription> sessions = m_server->sessions();
 
-	if(sessions.isEmpty()) {
-		send("NOSESSION");
-	} else {
-		for(const SessionDescription &session : sessions) {
-			announceSession(session);
-		}
+	QJsonArray s;
+	for(const SessionDescription &session : sessions) {
+		s << sessionDescription(session);
 	}
+
+	greeting.reply["title"] = m_server->title();
+	greeting.reply["sessions"] = s;
+	send(greeting);
 }
 
 void LoginHandler::announceSession(const SessionDescription &session)
 {
-	if(_state != WAIT_FOR_LOGIN)
+	if(m_state != WAIT_FOR_LOGIN)
 		return;
 
-	Q_ASSERT(!session.id.isEmpty());
+	protocol::ServerReply greeting;
+	greeting.type = protocol::ServerReply::LOGIN;
+	greeting.message = "New session";
 
-	QStringList flags;
-	if(!session.passwordHash.isEmpty())
-		flags << "PASS";
+	QJsonArray s;
+	s << sessionDescription(session);
+	greeting.reply["sessions"] = s;
 
-	if(session.closed)
-		flags << "CLOSED";
-
-	if(session.persistent)
-		flags << "PERSIST";
-
-	if(session.hibernating)
-		flags << "ASLEEP";
-
-	send(QString("SESSION %1%2 %3 %4 %5 \"%6\" ;%7")
-			.arg(session.id.isCustom() ? QStringLiteral("!") : QString())
-			.arg(session.id)
-			.arg(session.protoMinor)
-			.arg(flags.isEmpty() ? "-" : flags.join(","))
-			.arg(session.userCount)
-			.arg(session.founder)
-			.arg(session.title)
-	);
+	send(greeting);
 }
 
 void LoginHandler::announceSessionEnd(const QString &id)
 {
-	if(_state != WAIT_FOR_LOGIN)
+	if(m_state != WAIT_FOR_LOGIN)
 		return;
 
-	send(QString("NOSESSION %1").arg(id));
+	protocol::ServerReply greeting;
+	greeting.type = protocol::ServerReply::LOGIN;
+	greeting.message = "Session ended";
+
+	QJsonArray s;
+	s << id;
+	greeting.reply["remove"] = s;
+
+	send(greeting);
 }
 
 void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
@@ -142,77 +157,72 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		return;
 	}
 
-	QString message = msg.cast<protocol::Command>().message();
+	protocol::ServerCommand cmd = msg.cast<protocol::Command>().cmd();
 
-	if(_state == WAIT_FOR_SECURE) {
+	if(m_state == WAIT_FOR_SECURE) {
 		// Secure mode: wait for STARTTLS before doing anything
-		if(message == "STARTTLS") {
+		if(cmd.cmd == "startTls") {
 			handleStarttls();
 		} else {
-			send("ERROR MUSTSECURE");
-			logger::notice() << _client << "Didn't secure connection!";
-			_client->disconnectError("must secure connection first");
+			logger::notice() << m_client << "Didn't secure connection!";
+			sendError("tlsRequired", "TLS required");
 		}
 
-	} else if(_state == WAIT_FOR_IDENT) {
+	} else if(m_state == WAIT_FOR_IDENT) {
 		// Wait for user identification before moving on to session listing
-		if(message == "STARTTLS") {
+		if(cmd.cmd == "startTls") {
 			handleStarttls();
-		} else if(message.startsWith("IDENT ")) {
-			handleIdentMessage(message);
+		} else if(cmd.cmd == "ident") {
+			handleIdentMessage(cmd);
 		} else {
-			logger::notice() << _client << "Invalid login message";
-			_client->disconnectError("invalid message");
+			logger::notice() << m_client << "Invalid login message";
+			m_client->disconnectError("invalid message");
 		}
 
-	} else if(_state == WAIT_FOR_IDENTITYMANAGER_REPLY) {
+	} else if(m_state == WAIT_FOR_IDENTITYMANAGER_REPLY) {
 		// Client shouldn't shouldn't send anything in this state
-		logger::notice() << _client << "Got login message while waiting for identity manager reply";
-		_client->disconnectError("unexpected message");
+		logger::notice() << m_client << "Got login message while waiting for identity manager reply";
+		m_client->disconnectError("unexpected message");
 
 	} else {
-		if(message.startsWith("HOST ")) {
-			handleHostMessage(message);
-		} else if(message.startsWith("JOIN ")) {
-			handleJoinMessage(message);
+		if(cmd.cmd == "host") {
+			handleHostMessage(cmd);
+		} else if(cmd.cmd == "join") {
+			handleJoinMessage(cmd);
 		} else {
-			logger::notice() << _client << "Got invalid login message";
-			_client->disconnectError("invalid message");
+			logger::notice() << m_client << "Got invalid login message";
+			m_client->disconnectError("invalid message");
 		}
 	}
 }
 
-void LoginHandler::handleIdentMessage(const QString &message)
+void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 {
-	const QRegularExpression re("\\IDENT \"([^\"]+)\"\\s*(?:;(.+))?\\z");
-	auto m = re.match(message);
-	if(!m.hasMatch()) {
-		send("ERROR SYNTAX");
-		_client->disconnectError("login error");
+	QString username, password;
+	if(cmd.args.size()!=1 && cmd.args.size()!=2) {
+		sendError("syntax", "Expected username and (optional) password");
 		return;
 	}
 
-	QString username = m.captured(1);
-	QString password;
-	if(m.lastCapturedIndex() == 2)
-		password = m.captured(2);
+	username = cmd.args[0].toString();
+	if(cmd.args.size()>1)
+		password = cmd.args[1].toString();
 
 	if(!validateUsername(username)) {
-		send("ERROR BADNAME");
-		_client->disconnectError("login error");
+		sendError("badUsername", "Invalid username");
 		return;
 	}
 
-	if(_server->identityManager()) {
-		_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
-		IdentityResult *result = _server->identityManager()->checkLogin(username, password);
+	if(m_server->identityManager()) {
+		m_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
+		IdentityResult *result = m_server->identityManager()->checkLogin(username, password);
 		connect(result, &IdentityResult::resultAvailable, [this, username, password](IdentityResult *result) {
-			QString error;
+			QString errorcode, errorstr;
 			Q_ASSERT(result->status() != IdentityResult::INPROGRESS);
 			switch(result->status()) {
 			case IdentityResult::INPROGRESS: /* can't happen */ break;
 			case IdentityResult::NOTFOUND:
-				if(!_server->identityManager()->isAuthorizedOnly()) {
+				if(!m_server->identityManager()->isAuthorizedOnly()) {
 					guestLogin(username);
 					break;
 				}
@@ -220,49 +230,62 @@ void LoginHandler::handleIdentMessage(const QString &message)
 			case IdentityResult::BADPASS:
 				if(password.isEmpty()) {
 					// No password: tell client that guest login is not possible (for this username)
-					_state = WAIT_FOR_IDENT;
-					send("NEEDPASS");
+					m_state = WAIT_FOR_IDENT;
+
+					protocol::ServerReply identReply;
+					identReply.type = protocol::ServerReply::RESULT;
+					identReply.message = "Password needed";
+					identReply.reply["state"] = "needPassword";
+					send(identReply);
+
 					return;
 				}
-				error = "BADPASS";
+				errorcode = "badPassword";
+				errorstr = "Incorrect password";
 				break;
-			case IdentityResult::BANNED: error = "BANNED"; break;
+
+			case IdentityResult::BANNED:
+				errorcode = "banned";
+				errorstr = "This username is banned";
+				break;
+
 			case IdentityResult::OK: {
 				// Yay, username and password were valid!
-				QString okstr = "IDENTIFIED USER ";
-				if(result->flags().isEmpty())
-					okstr += "-";
-				else
-					okstr += result->flags().join(",");
-
 				if(validateUsername(result->canonicalName())) {
-					_client->setUsername(result->canonicalName());
+					m_client->setUsername(result->canonicalName());
 
 				} else {
 					logger::warning() << "Identity manager gave us an invalid username:" << result->canonicalName();
-					_client->setUsername(username);
+					m_client->setUsername(username);
 				}
 
-				_client->setAuthenticated(true);
-				_client->setModerator(result->flags().contains("MOD"));
-				_hostPrivilege = result->flags().contains("HOST");
-				_state = WAIT_FOR_LOGIN;
-				send(okstr);
+				protocol::ServerReply identReply;
+				identReply.type = protocol::ServerReply::RESULT;
+				identReply.message = "Authenticated login OK!";
+				identReply.reply["state"] = "identOk";
+				identReply.reply["flags"] = QJsonArray::fromStringList(result->flags());
+				identReply.reply["ident"] = m_client->username();
+				identReply.reply["guest"] = false;
+
+				m_client->setAuthenticated(true);
+				m_client->setModerator(result->flags().contains("MOD"));
+				m_hostPrivilege = result->flags().contains("HOST");
+				m_state = WAIT_FOR_LOGIN;
+
+				send(identReply);
 				announceServerInfo();
 				} break;
 			}
 
-			if(!error.isEmpty()) {
-				send("ERROR " + error);
-				_client->disconnectError("login error");
+			if(!errorcode.isEmpty()) {
+				sendError(errorcode, errorstr);
 			}
 		});
 
 	} else {
 		if(!password.isNull()) {
 			// if we have no identity manager, we can't accept passwords
-			send("ERROR NOIDENT");
-			_client->disconnectError("login error");
+			sendError("noIdent", "This is a guest-only server");
 			return;
 		}
 		guestLogin(username);
@@ -271,173 +294,191 @@ void LoginHandler::handleIdentMessage(const QString &message)
 
 void LoginHandler::guestLogin(const QString &username)
 {
-	if(_server->identityManager() && _server->identityManager()->isAuthorizedOnly()) {
-		send("ERROR NOGUEST");
-		_client->disconnectError("login error");
+	if(m_server->identityManager() && m_server->identityManager()->isAuthorizedOnly()) {
+		sendError("noGuest", "Guest logins not allowed");
 		return;
 	}
 
-	_client->setUsername(username);
-	_state = WAIT_FOR_LOGIN;
-	send("IDENTIFIED GUEST -");
+	m_client->setUsername(username);
+	m_state = WAIT_FOR_LOGIN;
+	
+	protocol::ServerReply identReply;
+	identReply.type = protocol::ServerReply::RESULT;
+	identReply.message = "Guest login OK!";
+	identReply.reply["state"] = "identOk";
+	identReply.reply["flags"] = QJsonArray();
+	identReply.reply["ident"] = m_client->username();
+	identReply.reply["guest"] = true;
+	send(identReply);
+
 	announceServerInfo();
 }
 
-void LoginHandler::handleHostMessage(const QString &message)
+void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 {
-	Q_ASSERT(!_client->username().isEmpty());
+	Q_ASSERT(!m_client->username().isEmpty());
 
-	if(_server->sessionCount() >= _server->sessionLimit()) {
-		send("ERROR CLOSED");
-		_client->disconnectError("login error");
+	if(m_server->sessionCount() >= m_server->sessionLimit()) {
+		sendError("closed", "This server is full");
 		return;
 	}
 
-	const QRegularExpression re("\\AHOST (\\*|[a-zA-Z0-9:-]{1,64}) (\\d+) (\\d+)\\s*(?:;(.+))?\\z");
-	auto m = re.match(message);
-	if(!m.hasMatch()) {
-		send("ERROR SYNTAX");
-		_client->disconnectError("login error");
-		return;
-	}
+	QString sessionIdString = cmd.kwargs.value("id").toString();
+	int minorVersion = cmd.kwargs.value("protocol").toInt();
+	int userId = cmd.kwargs.value("user_id").toInt();
 
-	QString sessionIdString = m.captured(1);
-	SessionId sessionId;
-	int minorVersion = m.captured(2).toInt();
-	int userId = m.captured(3).toInt();
-
-	if(userId < 1 || userId>255) {
-		send("ERROR BADID");
-		_client->disconnectError("login error");
+	if(userId < 1 || userId>254) {
+		sendError("syntax", "Invalid user ID (must be in range 1-254)");
 		return;
 	}
 
 	// Check if session ID is available
-	if(sessionIdString == "*")
+	SessionId sessionId;
+	if(sessionIdString.isEmpty())
 		sessionId = SessionId::randomId();
 	else
 		sessionId = SessionId::customId(sessionIdString);
 
-	if(!_server->getSessionDescriptionById(sessionId).id.isEmpty()) {
-		send("ERROR SESSIONIDINUSE");
-		_client->disconnectError("login error");
+	if(!m_server->getSessionDescriptionById(sessionId).id.isEmpty()) {
+		sendError("idInUse", "This session ID is already in use");
 		return;
 	}
 
-	QString password = m.captured(4);
-	if(password != _server->hostPassword() && !_hostPrivilege) {
-		send("ERROR BADPASS");
-		_client->disconnectError("login error");
+	QString host_password = cmd.kwargs.value("host_password").toString();
+	if(host_password != m_server->hostPassword() && !m_hostPrivilege) {
+		sendError("badPassword", "Incorrect hosting password");
 		return;
 	}
 
-	_client->setId(userId);
+	m_client->setId(userId);
 
 	// Mark login phase as complete. No more login messages will be sent to this user
-	send(QString("OK %1 %2").arg(sessionId).arg(userId));
-	_complete = true;
+	protocol::ServerReply reply;
+	reply.type = protocol::ServerReply::RESULT;
+	reply.message = "Starting new session!";
+	reply.reply["state"] = "host";
+	QJsonObject joinInfo;
+	joinInfo["id"] = sessionId.id();
+	joinInfo["user"] = userId;
+	reply.reply["join"] = joinInfo;
+	send(reply);
+
+	m_complete = true;
 
 	// Create a new session
-	SessionState *session = _server->createSession(sessionId, minorVersion, _client->username());
+	SessionState *session = m_server->createSession(sessionId, minorVersion, m_client->username());
 
-	session->joinUser(_client, true);
+	session->joinUser(m_client, true);
 
 	deleteLater();
 }
 
-void LoginHandler::handleJoinMessage(const QString &message)
+void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 {
-	Q_ASSERT(!_client->username().isEmpty());
-
-	const QRegularExpression re("\\AJOIN ([a-zA-Z0-9:-]{1,64})\\s*(?:;(.+))?\\z");
-	auto m = re.match(message);
-	if(!m.hasMatch()) {
-		send("ERROR SYNTAX");
-		_client->disconnectError("login error");
+	Q_ASSERT(!m_client->username().isEmpty());
+	if(cmd.args.size()!=1) {
+		sendError("syntax", "Expected session ID");
 		return;
 	}
 
-	QString sessionId = m.captured(1);
-	SessionDescription sessiondesc = _server->getSessionDescriptionById(sessionId);
+	QString sessionId = cmd.args.at(0).toString();
+	SessionDescription sessiondesc = m_server->getSessionDescriptionById(sessionId);
 	if(sessiondesc.id==0) {
-		send("ERROR NOSESSION");
-		_client->disconnectError("login error");
+		sendError("notFound", "Session not found!");
 		return;
 	}
 
-	if(sessiondesc.closed && !_client->isModerator()) {
-		send("ERROR CLOSED");
-		_client->disconnectError("login error");
+	if(sessiondesc.closed && !m_client->isModerator()) {
+		sendError("closed", "This session is closed");
 		return;
 	}
 
-	QString password = m.captured(2);
+	QString password = cmd.kwargs.value("password").toString();
 
-	if(!passwordhash::check(password, sessiondesc.passwordHash) && !_client->isModerator()) {
-		send("ERROR BADPASS");
-		_client->disconnectError("login error");
+	if(!passwordhash::check(password, sessiondesc.passwordHash) && !m_client->isModerator()) {
+		sendError("badPassword", "Incorrect password");
 		return;
 	}
 
-	// Just the username uniqueness check to go, we can wake up the session now
+	// Just the username uniqueness check to go, we can wake up the session now.
 	// A freshly de-hibernated session will not have any users, so the last check
 	// will never fail in that case.
-	SessionState *session = _server->getSessionById(sessionId);
+	SessionState *session = m_server->getSessionById(sessionId);
 	if(!session) {
 		// The session was just deleted from under us! (or de-hibernation failed)
-		send("ERROR NOSESSION");
-		_client->disconnectError("login error");
+		sendError("notFound", "Session just went missing!");
 		return;
 	}
 
-	if(session->getClientByUsername(_client->username())) {
+	if(session->getClientByUsername(m_client->username())) {
 #ifdef NDEBUG
-		send("ERROR NAMEINUSE");
-		_client->disconnectError("login error");
+		sendError("nameInuse", "This username is already in use");
 		return;
 #else
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << _client->username() << "for" << session << "ignored because this is a debug build.";
+		logger::warning() << "Username clash" << m_client->username() << "for" << session << "ignored because this is a debug build.";
 #endif
 	}
 
 	// Ok, join the session
-	session->assignId(_client);
+	session->assignId(m_client);
 
-	send(QString("OK %1 %2").arg(session->id()).arg(_client->id()));
-	_complete = true;
+	protocol::ServerReply reply;
+	reply.type = protocol::ServerReply::RESULT;
+	reply.message = "Joining a session!";
+	reply.reply["state"] = "join";
+	QJsonObject joinInfo;
+	joinInfo["id"] = session->id().id();
+	joinInfo["user"] = m_client->id();
+	reply.reply["join"] = joinInfo;
+	send(reply);
 
-	session->joinUser(_client, false);
+	m_complete = true;
+
+	session->joinUser(m_client, false);
 
 	deleteLater();
 }
 
 void LoginHandler::handleStarttls()
 {
-	if(!_client->hasSslSupport()) {
+	if(!m_client->hasSslSupport()) {
 		// Note. Well behaved clients shouldn't send STARTTLS if TLS was not listed in server features.
-		send("ERROR NOTLS");
-		_client->disconnectError("login error");
+		sendError("noTls", "TLS not supported");
 		return;
 	}
 
-	if(_client->isSecure()) {
-		send("ERROR ALREADYSECURE");
-		_client->disconnectError("login error");
+	if(m_client->isSecure()) {
+		sendError("alreadySecure", "Connection already secured"); // shouldn't happen normally
 		return;
 	}
 
-	send("STARTTLS");
-	_client->startTls();
-	_state = WAIT_FOR_IDENT;
+	protocol::ServerReply reply;
+	reply.type = protocol::ServerReply::LOGIN;
+	reply.message = "Start TLS now!";
+	reply.reply["startTls"] = true;
+	send(reply);
+
+	m_client->startTls();
+	m_state = WAIT_FOR_IDENT;
 }
 
-void LoginHandler::send(const QString &msg)
+void LoginHandler::send(const protocol::ServerReply &cmd)
 {
-	if(!_complete)
-		_client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
+	if(!m_complete)
+		m_client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
+}
+
+void LoginHandler::sendError(const QString &code, const QString &message)
+{
+	protocol::ServerReply r;
+	r.type = protocol::ServerReply::ERROR;
+	r.message = message;
+	r.reply["code"] = code;
+	send(r);
+	m_client->disconnectError("Login error");
 }
 
 bool LoginHandler::validateUsername(const QString &username)

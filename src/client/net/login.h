@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,11 @@ namespace dialogs {
 	class LoginDialog;
 }
 
+namespace protocol {
+	struct ServerCommand;
+	struct ServerReply;
+}
+
 namespace net {
 
 class TcpServer;
@@ -57,7 +62,7 @@ public:
 	 *
 	 * @param userid
 	 */
-	void setUserId(int userid) { Q_ASSERT(_mode==HOST); _userid=userid; }
+	void setUserId(int userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
 
 	/**
 	 * @brief Set desired session ID
@@ -65,7 +70,7 @@ public:
 	 * Only in host mode. Use URL path when joining.
 	 * @param id
 	 */
-	void setSessionId(const QString &id) { Q_ASSERT(_mode==HOST); _hostSessionId=id; }
+	void setSessionId(const QString &id) { Q_ASSERT(m_mode==HOST); m_hostSessionId=id; }
 
 	/**
 	 * @brief Set the session password
@@ -74,7 +79,7 @@ public:
 	 *
 	 * @param password
 	 */
-	void setPassword(const QString &password) { Q_ASSERT(_mode==HOST); _sessionPassword=password; }
+	void setPassword(const QString &password) { Q_ASSERT(m_mode==HOST); m_sessionPassword=password; }
 
 	/**
 	 * @brief Set the session title
@@ -83,7 +88,7 @@ public:
 	 *
 	 * @param title
 	 */
-	void setTitle(const QString &title) { Q_ASSERT(_mode==HOST); _title=title; }
+	void setTitle(const QString &title) { Q_ASSERT(m_mode==HOST); m_title=title; }
 
 	/**
 	 * @brief Set the maximum number of users the session will accept
@@ -92,7 +97,7 @@ public:
 	 *
 	 * @param maxusers
 	 */
-	void setMaxUsers(int maxusers) { Q_ASSERT(_mode==HOST); _maxusers = maxusers; }
+	void setMaxUsers(int maxusers) { Q_ASSERT(m_mode==HOST); m_maxusers = maxusers; }
 
 	/**
 	 * @brief Set whether new users should be locked by default
@@ -101,7 +106,7 @@ public:
 	 *
 	 * @param allowdrawing
 	 */
-	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(_mode==HOST); _allowdrawing = allowdrawing; }
+	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(m_mode==HOST); m_allowdrawing = allowdrawing; }
 
 	/**
 	 * @brief Set whether layer controls should be locked to operators only by default
@@ -110,7 +115,7 @@ public:
 	 *
 	 * @param layerlock
 	 */
-	void setLayerControlLock(bool layerlock) { Q_ASSERT(_mode==HOST); _layerctrllock = layerlock; }
+	void setLayerControlLock(bool layerlock) { Q_ASSERT(m_mode==HOST); m_layerctrllock = layerlock; }
 
 	/**
 	 * @brief Set whether the session should be persistent
@@ -120,23 +125,23 @@ public:
 	 *
 	 * @param persistent
 	 */
-	void setPersistentSessions(bool persistent) { Q_ASSERT(_mode==HOST); _requestPersistent = persistent; }
+	void setPersistentSessions(bool persistent) { Q_ASSERT(m_mode==HOST); m_requestPersistent = persistent; }
 
 	/**
 	 * @brief Set whether chat history should be preserved in the session
 	 */
-	void setPreserveChat(bool preserve) { Q_ASSERT(_mode==HOST); _preserveChat = preserve; }
+	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
 
 	/**
 	 * @brief Set session announcement URL
 	 */
-	void setAnnounceUrl(const QString &url) { _announceUrl = url; }
+	void setAnnounceUrl(const QString &url) { m_announceUrl = url; }
 
 	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
-	void setServer(TcpServer *server) { _server = server; }
+	void setServer(TcpServer *server) { m_server = server; }
 
 	/**
 	 * @brief Handle a received message
@@ -148,19 +153,19 @@ public:
 	 * @brief Login mode (host or join)
 	 * @return
 	 */
-	Mode mode() const { return _mode; }
+	Mode mode() const { return m_mode; }
 
 	/**
 	 * @brief Server URL
 	 * @return
 	 */
-	const QUrl &url() const { return _address; }
+	const QUrl &url() const { return m_address; }
 
 	/**
 	 * @brief get the user ID assigned by the server
 	 * @return user id
 	 */
-	int userId() const { return _userid; }
+	int userId() const { return m_userid; }
 
 	/**
 	 * @brief get the ID of the session.
@@ -197,62 +202,62 @@ private:
 		ABORT_LOGIN
 	};
 
-	void expectNothing(const QString &msg);
-	void expectHello(const QString &msg);
-	void expectStartTls(const QString &msg);
+	void expectNothing(const protocol::ServerReply &msg);
+	void expectHello(const protocol::ServerReply &msg);
+	void expectStartTls(const protocol::ServerReply &msg);
 	void prepareToSendIdentity();
 	void sendIdentity();
-	void expectIdentified(const QString &msg);
+	void expectIdentified(const protocol::ServerReply &msg);
 	void showPasswordDialog(const QString &title, const QString &text);
-	void expectSessionDescriptionHost(const QString &msg);
+	void expectSessionDescriptionHost(const protocol::ServerReply &msg);
 	void sendHostCommand();
-	void expectSessionDescriptionJoin(const QString &msg);
+	void expectSessionDescriptionJoin(const protocol::ServerReply &msg);
 	void sendJoinCommand();
-	void expectNoErrors(const QString &msg);
-	void expectLoginOk(const QString &msg);
+	void expectNoErrors(const protocol::ServerReply &msg);
+	void expectLoginOk(const protocol::ServerReply &msg);
 	void startTls();
-	void send(const QString &message);
-	void handleError(const QString &msg);
+	void send(const protocol::ServerCommand &cmd);
+	void handleError(const QString &code, const QString &message);
 
-	Mode _mode;
-	QUrl _address;
+	Mode m_mode;
+	QUrl m_address;
 	QWidget *_widgetParent;
 
 	// session properties for hosting
-	int _userid;
-	QString _sessionPassword;
-	QString _title;
-	int _maxusers;
-	bool _allowdrawing;
-	bool _layerctrllock;
-	bool _requestPersistent;
-	bool _preserveChat;
-	QString _announceUrl;
+	int m_userid;
+	QString m_sessionPassword;
+	QString m_title;
+	int m_maxusers;
+	bool m_allowdrawing;
+	bool m_layerctrllock;
+	bool m_requestPersistent;
+	bool m_preserveChat;
+	QString m_announceUrl;
 
 	// Process state
-	TcpServer *_server;
-	State _state;
-	LoginSessionModel *_sessions;
+	TcpServer *m_server;
+	State m_state;
+	LoginSessionModel *m_sessions;
 
-	QString _hostPassword;
-	QString _joinPassword;
-	QString _hostSessionId;
-	QString _selectedId;
-	QString _loggedInSessionId;
+	QString m_hostPassword;
+	QString m_joinPassword;
+	QString m_hostSessionId;
+	QString m_selectedId;
+	QString m_loggedInSessionId;
 
-	QString _autoJoinId;
+	QString m_autoJoinId;
 
 	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
 	QPointer<dialogs::LoginDialog> _passwordDialog;
 	QPointer<QMessageBox> _certDialog;
 
 	// Server flags
-	bool _multisession;
-	bool _tls;
-	bool _canAuth;
-	bool _mustAuth;
-	bool _needUserPassword;
-	bool _needHostPassword;
+	bool m_multisession;
+	bool m_tls;
+	bool m_canAuth;
+	bool m_mustAuth;
+	bool m_needUserPassword;
+	bool m_needHostPassword;
 };
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,25 +65,25 @@ namespace net {
 
 LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
 	: QObject(parent),
-	  _mode(mode),
-	  _address(url),
+	  m_mode(mode),
+	  m_address(url),
 	  _widgetParent(parent),
-	  _maxusers(0),
-	  _allowdrawing(true),
-	  _layerctrllock(true),
-	  _state(EXPECT_HELLO),
-	  _multisession(false),
-	  _tls(false)
+	  m_maxusers(0),
+	  m_allowdrawing(true),
+	  m_layerctrllock(true),
+	  m_state(EXPECT_HELLO),
+	  m_multisession(false),
+	  m_tls(false)
 {
-	_sessions = new LoginSessionModel(this);
+	m_sessions = new LoginSessionModel(this);
 
 	// Automatically join a session if the ID is included in the URL
-	QString path = _address.path();
+	QString path = m_address.path();
 	if(path.length()>1) {
 		QRegularExpression idre("\\A/([a-zA-Z0-9:-]{1,64})/?\\z");
 		auto m = idre.match(path);
 		if(m.hasMatch())
-			_autoJoinId = m.captured(1);
+			m_autoJoinId = m.captured(1);
 	}
 }
 
@@ -100,7 +100,7 @@ void LoginHandler::serverDisconnected()
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
 	if(message->type() == protocol::MSG_DISCONNECT) {
-		// server reports login errors with MSG_LOGIN, so there is nothing
+		// server reports login errors with MSG_COMMAND, so there is nothing
 		// of more interest here.
 		return;
 	}
@@ -111,10 +111,10 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 		return;
 	}
 
-	QString msg = message.cast<protocol::Command>().message();
+	const protocol::ServerReply msg = message.cast<protocol::Command>().reply();
 
 #ifdef DEBUG_LOGIN
-	qDebug() << "login <--" << msg;
+	qDebug() << "login <--" << msg.reply;
 #endif
 
 	// Overall, the login process is:
@@ -127,13 +127,17 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	// 7. send host/join command
 	// 8. wait for OK
 
-	if(msg.startsWith("ERROR")) {
+	if(msg.type == protocol::ServerReply::ERROR) {
 		// The server disconnects us right after sending the error message
-		handleError(msg);
+		handleError(msg.reply["code"].toString(), msg.message);
 		return;
+
+	} else if(msg.type != protocol::ServerReply::LOGIN && msg.type != protocol::ServerReply::RESULT) {
+		qWarning() << "Login error: got reply type" << msg.type << "when expected LOGIN, RESULT or ERROR";
+		failLogin(tr("Invalid state"));
 	}
 
-	switch(_state) {
+	switch(m_state) {
 	case EXPECT_HELLO: expectHello(msg); break;
 	case EXPECT_STARTTLS: expectStartTls(msg); break;
 	case WAIT_FOR_LOGIN_PASSWORD: expectNothing(msg); break;
@@ -147,68 +151,68 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	}
 }
 
-void LoginHandler::expectNothing(const QString &msg)
+void LoginHandler::expectNothing(const protocol::ServerReply &msg)
 {
-	qWarning() << "Got login message" << msg << "while not expecting anything!";
+	Q_UNUSED(msg);
+	qWarning("Got login message while not expecting anything!");
 	failLogin(tr("Incompatible server"));
 }
 
-void LoginHandler::expectHello(const QString &msg)
+void LoginHandler::expectHello(const protocol::ServerReply &msg)
 {
-	// Greeting should be in format "DRAWPILE <majorVersion> <flags>
-	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+)\\z");
-	auto m = re.match(msg);
-
-	if(!m.hasMatch()) {
-		qWarning() << "Login error. Invalid greeting:" << msg;
+	if(msg.type != protocol::ServerReply::LOGIN) {
+		qWarning() << "Login error. Greeting type is not LOGIN:" << msg.type;
 		failLogin(tr("Incompatible server"));
 		return;
 	}
 
 	// Major version must match ours
-	int majorVersion = m.captured(1).toInt();
+	int majorVersion = msg.reply["version"].toInt();
 	if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
 	}
 
 	// Parse server capability flags
-	QStringList flags = m.captured(2).split(",");
+	QJsonArray flags = msg.reply["flags"].toArray();
+
 	bool mustSecure = false;
-	_needHostPassword = false;
-	_canAuth = false;
-	_mustAuth = false;
-	_needUserPassword = false;
-	for(const QString &flag : flags) {
-		if(flag == "-") {
-			// no flags
-		} else if(flag == "MULTI") {
-			_multisession = true;
+	m_needHostPassword = false;
+	m_canAuth = false;
+	m_mustAuth = false;
+	m_needUserPassword = false;
+
+	for(const QJsonValue &flag : flags) {
+		if(flag == "MULTI") {
+			m_multisession = true;
 		} else if(flag == "HOSTP") {
-			_needHostPassword = true;
+			m_needHostPassword = true;
 		} else if(flag == "TLS") {
-			_tls = true;
+			m_tls = true;
 		} else if(flag == "SECURE") {
 			mustSecure = true;
 		} else if(flag == "PERSIST") {
 			// TODO indicate persistent session support
 		} else if(flag == "IDENT") {
-			_canAuth = true;
+			m_canAuth = true;
 		} else if(flag == "NOGUEST") {
-			_mustAuth = true;
+			m_mustAuth = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
 	}
 
 	// Start secure mode if possible
-	if(QSslSocket::supportsSsl() && _tls) {
-		_state = EXPECT_STARTTLS;
-		send("STARTTLS");
+	if(QSslSocket::supportsSsl() && m_tls) {
+		m_state = EXPECT_STARTTLS;
+
+		protocol::ServerCommand cmd;
+		cmd.cmd = "startTls";
+		send(cmd);
 
 	} else {
 		// If this is a trusted host, it should always be in secure mode
-		if(QSslSocket::supportsSsl() && getCertFile(TRUSTED_HOSTS, _address.host()).exists()) {
+		if(QSslSocket::supportsSsl() && getCertFile(TRUSTED_HOSTS, m_address.host()).exists()) {
 			failLogin(tr("Secure mode not enabled on a trusted host!"));
 			return;
 		}
@@ -218,19 +222,19 @@ void LoginHandler::expectHello(const QString &msg)
 			return;
 		}
 
-		_tls = false;
+		m_tls = false;
 		prepareToSendIdentity();
 	}
 }
 
-void LoginHandler::expectStartTls(const QString &msg)
+void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(_tls);
-	if(msg == "STARTTLS") {
+	Q_ASSERT(m_tls);
+	if(msg.reply["startTls"].toBool()) {
 		startTls();
 
 	} else {
-		qWarning() << "Login error. Expected STARTTLS, got:" << msg;
+		qWarning() << "Login error. Expected startTls, got:" << msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
 }
@@ -247,7 +251,7 @@ void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
 	_passwordDialog->setWindowModality(Qt::WindowModal);
 	_passwordDialog->setWindowTitle(title);
 	_passwordDialog->setIntroText(text);
-	_passwordDialog->setUsername(_address.userName(), false);
+	_passwordDialog->setUsername(m_address.userName(), false);
 
 	connect(_passwordDialog, SIGNAL(login(QString,QString)), this, SLOT(passwordSet(QString)));
 	connect(_passwordDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
@@ -259,13 +263,13 @@ void LoginHandler::passwordSet(const QString &password)
 {
 	Q_ASSERT(!_passwordDialog.isNull());
 
-	switch(_state) {
+	switch(m_state) {
 	case WAIT_FOR_HOST_PASSWORD:
-		_hostPassword = password;
+		m_hostPassword = password;
 		sendHostCommand();
 		break;
 	case WAIT_FOR_JOIN_PASSWORD:
-		_joinPassword = password;
+		m_joinPassword = password;
 		sendJoinCommand();
 		break;
 	default:
@@ -277,24 +281,24 @@ void LoginHandler::passwordSet(const QString &password)
 
 void LoginHandler::prepareToSendIdentity()
 {
-	if(_mustAuth || _needUserPassword) {
+	if(m_mustAuth || m_needUserPassword) {
 		dialogs::LoginDialog *logindlg = new dialogs::LoginDialog(_widgetParent);
 		logindlg->setWindowModality(Qt::WindowModal);
 		logindlg->setAttribute(Qt::WA_DeleteOnClose);
 
-		logindlg->setWindowTitle(_address.host());
-		logindlg->setUsername(_address.userName(), true);
+		logindlg->setWindowTitle(m_address.host());
+		logindlg->setUsername(m_address.userName(), true);
 
-		if(_mustAuth)
+		if(m_mustAuth)
 			logindlg->setIntroText(tr("This server does not allow guest logins"));
 		else
-			logindlg->setIntroText(tr("Password needed to log in as \"%1\"").arg(_address.userName()));
+			logindlg->setIntroText(tr("Password needed to log in as \"%1\"").arg(m_address.userName()));
 
 
 		connect(logindlg, SIGNAL(rejected()), this, SLOT(cancelLogin()));
 		connect(logindlg, SIGNAL(login(QString,QString)), this, SLOT(selectIdentity(QString,QString)));
 
-		_state = WAIT_FOR_LOGIN_PASSWORD;
+		m_state = WAIT_FOR_LOGIN_PASSWORD;
 		logindlg->show();
 
 	} else {
@@ -304,56 +308,54 @@ void LoginHandler::prepareToSendIdentity()
 
 void LoginHandler::selectIdentity(const QString &password, const QString &username)
 {
-	_address.setUserName(username);
-	_address.setPassword(password);
+	m_address.setUserName(username);
+	m_address.setPassword(password);
 	sendIdentity();
 }
 
 void LoginHandler::sendIdentity()
 {
-	QString password = _address.password();
-	QString ident = QString("IDENT \"%1\"").arg(_address.userName());
+	protocol::ServerCommand cmd;
+	cmd.cmd = "ident";
+	cmd.args.append(m_address.userName());
 
-	if(!password.isEmpty())
-		ident = ident + ";" + password;
+	if(!m_address.password().isEmpty())
+		cmd.args.append(m_address.password());
 
-	_state = EXPECT_IDENTIFIED;
-	send(ident);
+	m_state = EXPECT_IDENTIFIED;
+	send(cmd);
 }
 
-void LoginHandler::expectIdentified(const QString &msg)
+void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 {
-	if(msg == "NEEDPASS") {
+	if(msg.reply["state"] == "needPass") {
 		// Looks like guest logins are not possible
-		_needUserPassword = true;
+		m_needUserPassword = true;
 		prepareToSendIdentity();
 		return;
 	}
 
-	const QRegularExpression re("\\AIDENTIFIED (USER|GUEST) (-|[\\w,]+)\\z");
-	auto m = re.match(msg);
-
-	if(!m.hasMatch()) {
-		qWarning() << "Login error. Expected IDENTIFIED, got:" << msg;
-		failLogin(tr("Incompatible server"));
+	if(msg.reply["state"] != "identOk") {
+		qWarning() << "Expected identOk state, got" << msg.reply["state"];
+		failLogin(tr("Invalid state"));
 		return;
 	}
 
-	//bool isGuest = m.captured(1) == "GUEST";
-	QStringList flags = m.captured(2).split(",", QString::SkipEmptyParts);
+	//bool isGuest = msg.reply["guest"].toBool();
+	QJsonArray flags = msg.reply["flags"].toArray();
 
-	if(_mode == HOST) {
-		_state = EXPECT_SESSIONLIST_TO_HOST;
+	if(m_mode == HOST) {
+		m_state = EXPECT_SESSIONLIST_TO_HOST;
 
 		// Query host password if needed
-		if(_mode == HOST && _needHostPassword && !flags.contains("HOST")) {
+		if(m_mode == HOST && m_needHostPassword && !flags.contains("HOST")) {
 			showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
 		}
 
 	} else {
 		// Show session selector if in multisession mode
-		if(_multisession) {
-			_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
+		if(m_multisession) {
+			_selectorDialog = new dialogs::SelectSessionDialog(m_sessions, _widgetParent);
 			_selectorDialog->setWindowModality(Qt::WindowModal);
 			_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -363,27 +365,24 @@ void LoginHandler::expectIdentified(const QString &msg)
 			_selectorDialog->show();
 		}
 
-		_state = EXPECT_SESSIONLIST_TO_JOIN;
+		m_state = EXPECT_SESSIONLIST_TO_JOIN;
 	}
 }
 
-void LoginHandler::expectSessionDescriptionHost(const QString &msg)
+void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(_mode == HOST);
+	Q_ASSERT(m_mode == HOST);
 
-	if(msg.startsWith("NOSESSION") || msg.startsWith("SESSION")) {
+	if(msg.type == protocol::ServerReply::LOGIN) {
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
-		if(!_passwordDialog.isNull() && _hostPassword.isEmpty())
-			_state = WAIT_FOR_HOST_PASSWORD; // password needed
+		if(!_passwordDialog.isNull() && m_hostPassword.isEmpty())
+			m_state = WAIT_FOR_HOST_PASSWORD; // password needed
 		else
 			sendHostCommand();
 
-	} else if(msg.startsWith("TITLE")) {
-		// title is not shown in this mode
-
 	} else {
-		qWarning() << "Expected session list, got" << msg;
+		qWarning() << "Expected session list, got" << msg.reply;
 		failLogin(tr("Incompatible server"));
 		return;
 	}
@@ -391,177 +390,137 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QString sessionId;
-	if(!_hostSessionId.isEmpty())
-		sessionId = _hostSessionId;
-	else
-		sessionId = "*";
+	protocol::ServerCommand cmd;
+	cmd.cmd = "host";
 
-	QString hostmsg = QString("HOST %1 %2 %3")
-			.arg(sessionId)
-			.arg(DRAWPILE_PROTO_MINOR_VERSION)
-			.arg(_userid);
+	if(!m_hostSessionId.isEmpty())
+		cmd.kwargs["id"] = m_hostSessionId;
 
-	if(!_hostPassword.isEmpty())
-		hostmsg += ";" + _hostPassword;
+	cmd.kwargs["protocol"] = DRAWPILE_PROTO_MINOR_VERSION;
+	cmd.kwargs["user_id"] = m_userid;
+	if(!m_hostPassword.isEmpty())
+		cmd.kwargs["host_password"] = m_hostPassword;
+	// TODO session password
 
-	send(hostmsg);
-	_state = EXPECT_LOGIN_OK;
+	send(cmd);
+	m_state = EXPECT_LOGIN_OK;
 }
 
-void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
+void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(_mode == JOIN);
+	Q_ASSERT(m_mode == JOIN);
 
-	if(msg.startsWith("NOSESSION")) {
-		// No sessions
-		if(!_multisession) {
-			failLogin(tr("Session does not exist yet!"));
-			return;
-		}
-
-		int sep = msg.indexOf(' ');
-		if(sep>0) {
-			QString id = msg.mid(sep+1).trimmed();
-			if(id.isEmpty())
-				qWarning() << "invalid NOSESSION message:" << msg;
-			else
-				_sessions->removeSession(id);
-		}
-		return;
-
-	} else if(msg.startsWith("TITLE ")) {
-		// Server title update
+	if(msg.reply.contains("title")) {
 		if(_selectorDialog)
-			_selectorDialog->setServerTitle(msg.mid(6));
-		return;
+			_selectorDialog->setServerTitle(msg.reply["title"].toString());
 	}
 
-	LoginSession session;
+	if(msg.reply.contains("sessions")) {
+		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
+			QJsonObject js = jsv.toObject();
+			LoginSession session;
 
-	// Expect session description in format:
-	// SESSION [!]<id> <minorVersion> <FLAGS> <user-count> "founder" ;title
-	const QRegularExpression re("\\ASESSION (!?[a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]+)\"\\s*;(.*)\\z");
-	auto m = re.match(msg);
+			session.id = js["id"].toString();
+			if(session.id.startsWith('!')) {
+				session.id = session.id.mid(1);
+				session.customId = true;
+			}
 
-	if(!m.hasMatch()) {
-		qWarning() << "Login error. Expected session description, got:" << msg;
-		failLogin(tr("Incompatible server"));
-		return;
-	}
+			const int minorVersion = js["protocol"].toInt();
+			session.incompatible = minorVersion != DRAWPILE_PROTO_MINOR_VERSION;
+			session.needPassword = js["password"].toBool();
+			session.closed = js["closed"].toBool();
+			session.asleep = js["asleep"].toBool();
+			session.persistent = js["persistent"].toBool();
+			session.userCount = js["users"].toInt();
+			session.founder = js["founder"].toString();
+			session.title = js["title"].toString();
 
-	session.id = m.captured(1);
-	if(session.id.at(0) == '!') {
-		session.id = session.id.mid(1);
-		session.customId = true;
-	}
+			m_sessions->updateSession(session);
 
-	const int minorVersion = m.captured(2).toInt();
-	if(minorVersion != DRAWPILE_PROTO_MINOR_VERSION) {
-		qWarning() << "Session" << session.id << "minor version" << minorVersion << "mismatch.";
-		session.incompatible = true;
-	}
-
-	const QStringList flags = m.captured(3).split(",");
-	for(const QString &flag : flags) {
-		if(flag=="-") {
-			// No flags marker
-		} else if(flag=="PASS") {
-			session.needPassword = true;
-		} else if(flag=="CLOSED") {
-			session.closed = true;
-		} else if(flag=="PERSIST") {
-			session.persistent = true;
-		} else if(flag=="ASLEEP") {
-			session.asleep = true;
-		} else {
-			qWarning() << "Session" << session.id << "has unknown flag:" << flag;
-			session.incompatible = true;
+			if(session.id == m_autoJoinId) {
+				// A session ID was given as part of the URL
+				joinSelectedSession(session.id, session.needPassword);
+			}
 		}
 	}
 
-	session.userCount = m.captured(4).toInt();
-	session.founder = m.captured(5);
-	session.title = m.captured(6);
+	if(msg.reply.contains("remove")) {
+		for(const QJsonValue j : msg.reply["remove"].toArray()) {
+			m_sessions->removeSession(j.toString());
+		}
+	}
 
-	if(session.id == _autoJoinId) {
-		// A session ID was given as part of the URL
-		joinSelectedSession(session.id, session.needPassword);
-
-	} else if(_multisession) {
-		// Multisesion mode: add session to list which is presented to the user
-		_sessions->updateSession(session);
-
-	} else {
+	if(!m_multisession) {
 		// Single session mode: automatically join the (only) session
-		if(session.incompatible) {
-			failLogin(tr("Session for a different Drawpile version in progress!"));
-			return;
-		}
 
-		joinSelectedSession(session.id, session.needPassword);
+		if(m_sessions->rowCount()==0) {
+			failLogin(tr("Session not yet started!"));
+
+		} else {
+			LoginSession session = m_sessions->sessionAt(0);
+
+			if(session.incompatible) {
+				failLogin(tr("Session for a different Drawpile version in progress!"));
+
+			} else {
+				joinSelectedSession(session.id, session.needPassword);
+			}
+		}
 	}
 }
 
-void LoginHandler::expectNoErrors(const QString &msg)
+void LoginHandler::expectNoErrors(const protocol::ServerReply &msg)
 {
 	// A "do nothing" handler while waiting for the user to enter a password
-	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE"))
+	if(msg.type == protocol::ServerReply::LOGIN)
 		return;
 
-	qWarning() << "Unexpected login message:" << msg;
+	qWarning() << "Unexpected login message:" << msg.reply;
 }
 
-void LoginHandler::expectLoginOk(const QString &msg)
+void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 {
-	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE")) {
+	if(msg.type == protocol::ServerReply::LOGIN) {
 		// We can still get session list updates here. They are safe to ignore.
 		return;
 	}
 
-	if(msg.startsWith("OK ")) {
-		const QRegularExpression re("\\AOK ([a-zA-Z0-9:-]{1,64}) (\\d+)\\z");
-		auto m = re.match(msg);
-
-		if(!m.hasMatch()) {
-			qWarning() << "Login error. Expected OK <session> <id>, got:" << msg;
-			failLogin(tr("Incompatible server"));
-			return;
-		}
-
-		_loggedInSessionId = m.captured(1);
-		_userid = m.captured(2).toInt();
-		_server->loginSuccess();
+	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
+		m_loggedInSessionId = msg.reply["join"].toObject()["id"].toString();
+		m_userid = msg.reply["join"].toObject()["user"].toInt();
+		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings
-		if(_mode==HOST) {
+		if(m_mode==HOST) {
+
 			QStringList init;
 
-			if(!_title.isEmpty())
-				init << "title " + _title;
+			if(!m_title.isEmpty())
+				init << "title " + m_title;
 
-			if(!_sessionPassword.isEmpty())
-				init << "password " + _sessionPassword;
+			if(!m_sessionPassword.isEmpty())
+				init << "password " + m_sessionPassword;
 
-			if(_maxusers>0)
-				init << QString("maxusers %1").arg(_maxusers);
+			if(m_maxusers>0)
+				init << QString("maxusers %1").arg(m_maxusers);
 
-			if(!_allowdrawing)
-				init <<  "lockdefault on";
+			if(!m_allowdrawing)
+				init << "lockdefault on";
 
-			init << QStringLiteral("locklayerctrl ") + (_layerctrllock ? "on" : "off");
+			init << QStringLiteral("locklayerctrl ") + (m_layerctrllock ? "on" : "off");
 
-			if(_requestPersistent)
+			if(m_requestPersistent)
 				init << "persistence on";
 
-			if(_preserveChat)
+			if(m_preserveChat)
 				init << "preservechat on";
 
-			if(!_announceUrl.isEmpty())
-				init << "announce_at " + _announceUrl;
+			if(!m_announceUrl.isEmpty())
+				init << "announce_at " + m_announceUrl;
 
 			for(const QString msg : init)
-				_server->sendMessage(protocol::Chat::opCommand(0, msg));
+				m_server->sendMessage(protocol::Chat::opCommand(0, msg));
 		}
 
 		delete _selectorDialog;
@@ -570,17 +529,17 @@ void LoginHandler::expectLoginOk(const QString &msg)
 
 	} else {
 		// Unexpected response
-		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg;
+		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
 }
 
 void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
-	_selectedId = id;
+	m_selectedId = id;
 	if(needPassword) {
 		showPasswordDialog(tr("Session is password protected"), tr("Enter session password"));
-		_state = WAIT_FOR_JOIN_PASSWORD;
+		m_state = WAIT_FOR_JOIN_PASSWORD;
 
 	} else {
 		sendJoinCommand();
@@ -589,24 +548,25 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 
 void LoginHandler::sendJoinCommand()
 {
-	QString joinmsg = QString("JOIN %1").arg(_selectedId);
+	protocol::ServerCommand cmd;
+	cmd.cmd = "join";
+	cmd.args.append(m_selectedId);
 
-	if(!_joinPassword.isEmpty()) {
-		joinmsg.append(';');
-		joinmsg.append(_joinPassword);
+	if(!m_joinPassword.isEmpty()) {
+		cmd.kwargs["password"] = m_joinPassword;
 	}
 
-	send(joinmsg);
-	_state = EXPECT_LOGIN_OK;
+	send(cmd);
+	m_state = EXPECT_LOGIN_OK;
 }
 
 void LoginHandler::startTls()
 {
-	connect(_server->_socket, SIGNAL(encrypted()), this, SLOT(tlsStarted()));
-	connect(_server->_socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(tlsError(QList<QSslError>)));
+	connect(m_server->_socket, SIGNAL(encrypted()), this, SLOT(tlsStarted()));
+	connect(m_server->_socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(tlsError(QList<QSslError>)));
 
-	_tls = false;
-	_server->_socket->startClientEncryption();
+	m_tls = false;
+	m_server->_socket->startClientEncryption();
 }
 
 void LoginHandler::tlsError(const QList<QSslError> &errors)
@@ -615,7 +575,7 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	QString errorstr;
 	bool fail = false;
 
-	bool isIp = QHostAddress().setAddress(_address.host());
+	bool isIp = QHostAddress().setAddress(m_address.host());
 
 	for(const QSslError &e : errors) {
 		if(e.error() == QSslError::SelfSignedCertificate) {
@@ -638,7 +598,7 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	if(fail)
 		failLogin(errorstr);
 	else
-		_server->_socket->ignoreSslErrors(ignore);
+		m_server->_socket->ignoreSslErrors(ignore);
 }
 
 namespace {
@@ -657,8 +617,8 @@ void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 }
 void LoginHandler::tlsStarted()
 {
-	QSslCertificate cert = _server->hostCertificate();
-	QString hostname = _address.host();
+	QSslCertificate cert = m_server->hostCertificate();
+	QString hostname = m_address.host();
 
 	// Check if this is a trusted certificate
 	QFileInfo trustedCertFile = getCertFile(TRUSTED_HOSTS, hostname);
@@ -673,7 +633,7 @@ void LoginHandler::tlsStarted()
 
 		} else {
 			// Certificate matches explicitly trusted one, proceed with login
-			_server->_securityLevel = Server::TRUSTED_HOST;
+			m_server->_securityLevel = Server::TRUSTED_HOST;
 			tlsAccepted();
 		}
 
@@ -719,18 +679,18 @@ void LoginHandler::tlsStarted()
 			});
 
 			_certDialog->show();
-			_server->_securityLevel = TcpServer::NEW_HOST;
+			m_server->_securityLevel = TcpServer::NEW_HOST;
 
 			return;
 
 		} else {
-			_server->_securityLevel = TcpServer::KNOWN_HOST;
+			m_server->_securityLevel = TcpServer::KNOWN_HOST;
 		}
 
 	} else {
 		// Host not encountered yet: rember the certificate for next time
 		saveCert(certFile, cert);
-		_server->_securityLevel = TcpServer::NEW_HOST;
+		m_server->_securityLevel = TcpServer::NEW_HOST;
 	}
 
 	// Certificate is acceptable
@@ -746,56 +706,56 @@ void LoginHandler::tlsAccepted()
 
 void LoginHandler::cancelLogin()
 {
-	_state = ABORT_LOGIN;
-	_server->loginFailure(tr("Cancelled"), "CANCELLED");
+	m_state = ABORT_LOGIN;
+	m_server->loginFailure(tr("Cancelled"), "CANCELLED");
 }
 
-void LoginHandler::handleError(const QString &msg)
+void LoginHandler::handleError(const QString &code, const QString &msg)
 {
-	const QString ecode = msg.mid(msg.indexOf(' ') + 1);
-	qWarning() << "Login error:" << ecode;
+	qWarning() << "Login error:" << code << msg;
+
 	QString error;
-	if(ecode == "NOSESSION")
+	if(code == "notFound")
 		error = tr("Session not found!");
-	else if(ecode == "BADPASS")
+	else if(code == "badPassword")
 		error = tr("Incorrect password!");
-	else if(ecode == "BADNAME")
+	else if(code == "badUsername")
 		error = tr("Invalid username!");
-	else if(ecode == "NAMEINUSE")
+	else if(code == "nameInUse")
 		error = tr("Username already taken!");
-	else if(ecode == "CLOSED")
+	else if(code == "closed")
 		error = tr("Session is closed!");
-	else if(ecode == "BANNED")
+	else if(code == "banned")
 		error = tr("This username has been banned!");
-	else if(ecode == "SESSIONIDINUSE")
+	else if(code == "sessionIdInUse")
 		error = tr("Session ID already in use!");
 	else
-		error = tr("Unknown error (%1)").arg(ecode);
+		error = msg;
 
-	failLogin(error, ecode);
+	failLogin(error, code);
 }
 
 void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 {
-	_state = ABORT_LOGIN;
-	_server->loginFailure(message, errorcode);
+	m_state = ABORT_LOGIN;
+	m_server->loginFailure(message, errorcode);
 }
 
-void LoginHandler::send(const QString &message)
+void LoginHandler::send(const protocol::ServerCommand &cmd)
 {
 #ifdef DEBUG_LOGIN
-	qDebug() << "login -->" << message;
+	qDebug() << "login -->" << cmd.toJson();
 #endif
-	_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, message)));
+	m_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }
 
 QString LoginHandler::sessionId() const {
-	if(!_loggedInSessionId.isEmpty())
-		return _loggedInSessionId;
-	if(_mode == HOST)
-		return _hostSessionId;
+	if(!m_loggedInSessionId.isEmpty())
+		return m_loggedInSessionId;
+	if(m_mode == HOST)
+		return m_hostSessionId;
 	else
-		return _autoJoinId;
+		return m_autoJoinId;
 }
 
 }
