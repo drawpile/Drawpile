@@ -40,17 +40,10 @@ static const int UNDO_HISTORY_LIMIT = 30;
  *
  * The client sends an UndoPoint message to signal the start of an undoable sequence.
  */
-class UndoPoint : public Message
+class UndoPoint : public ZeroLengthMessage<UndoPoint>
 {
 public:
-	UndoPoint(uint8_t ctx) : Message(MSG_UNDOPOINT, ctx) {}
-
-	static UndoPoint *deserialize(const uchar *data, uint len);
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
+	UndoPoint(uint8_t ctx) : ZeroLengthMessage(MSG_UNDOPOINT, ctx) {}
 };
 
 /**
@@ -62,7 +55,7 @@ class Undo : public Message
 public:
 	Undo(uint8_t ctx, uint8_t override, int8_t points) : Message(MSG_UNDO, ctx), _override(override), _points(points) { }
 
-	static Undo *deserialize(const uchar *data, uint len);
+	static Undo *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	/**
 	 * @brief override user ID

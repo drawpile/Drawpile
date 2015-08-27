@@ -40,7 +40,7 @@ public:
 		: Message(MSG_ANNOTATION_CREATE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
-	static AnnotationCreate *deserialize(const uchar *data, uint len);
+	static AnnotationCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	/**
 	 * @brief The ID of the newly created annotation
@@ -83,7 +83,7 @@ public:
 		: Message(MSG_ANNOTATION_RESHAPE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
-	static AnnotationReshape *deserialize(const uchar *data, uint len);
+	static AnnotationReshape *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	int32_t x() const { return _x; }
@@ -117,7 +117,7 @@ public:
 		: AnnotationEdit(ctx, id, bg, text.toUtf8())
 	{}
 
-	static AnnotationEdit *deserialize(const uchar *data, uint len);
+	static AnnotationEdit *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	uint32_t bg() const { return _bg; }
@@ -148,7 +148,7 @@ public:
 		: Message(MSG_ANNOTATION_DELETE, ctx), _id(id)
 	{}
 
-	static AnnotationDelete *deserialize(const uchar *data, uint len);
+	static AnnotationDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 

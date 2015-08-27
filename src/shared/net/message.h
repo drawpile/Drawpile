@@ -27,27 +27,30 @@ namespace protocol {
  * Drawpile network protocol message types
  */
 enum MessageType {
-	// Login stream
-	MSG_LOGIN,
+	// Control messages (transparent)
+	MSG_COMMAND,
+	MSG_DISCONNECT,
+	MSG_PING,
+	MSG_STREAMPOS,
 
-	// Meta stream
-	MSG_USER_JOIN,
+	// Meta messages (transparent)
+	MSG_USER_JOIN=32,
 	MSG_USER_ATTR,
 	MSG_USER_LEAVE,
-	MSG_CHAT,
-	MSG_LAYER_ACL,
+
 	MSG_SNAPSHOT,
 	MSG_SNAPSHOTPOINT,
 	MSG_SESSION_TITLE,
 	MSG_SESSION_CONFIG,
-	MSG_STREAMPOS,
+
+	// Meta messages (opaque)
+	MSG_CHAT=64,
 	MSG_INTERVAL,
 	MSG_MOVEPOINTER,
 	MSG_MARKER,
-	MSG_DISCONNECT,
-	MSG_PING,
+	MSG_LAYER_ACL,
 
-	// Command stream
+	// Command messages (opaque)
 	MSG_CANVAS_RESIZE=128,
 	MSG_LAYER_CREATE,
 	MSG_LAYER_COPY, /* unused: subsumed by LAYER_CREATE */
@@ -78,17 +81,34 @@ class Message {
 	friend class MessagePtr;
 public:
 	//! Length of the fixed message header
-	static const int HEADER_LEN = 3;
+	static const int HEADER_LEN = 4;
 
-	Message(MessageType type, uint8_t ctx): _type(type), _undone(DONE), _refcount(0), _contextid(ctx) {}
+	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), _refcount(0), m_contextid(ctx) {}
 	virtual ~Message() {}
 	
 	/**
 	 * @brief Get the type of this message.
 	 * @return message type
 	 */
-	MessageType type() const { return _type; }
+	MessageType type() const { return m_type; }
 	
+	/**
+	 * @brief Is this a control message
+	 *
+	 * Control messages are used for things that are related to the server and not
+	 * the session directly (e.g. setting server settings.)
+	 */
+	bool isControl() const { return m_type < 32; }
+
+	/**
+	 * @brief Is this a meta message?
+	 *
+	 * Meta messages are part of the session, but do not directly affect drawing.
+	 * However, some meta message (those related to access controls) do affect
+	 * how the command messages are filtered.
+	 */
+	bool isMeta() const { return m_type >= 31 && m_type < 128; }
+
 	/**
 	 * @brief Check if this message type is a command stream type
 	 * 
@@ -96,7 +116,15 @@ public:
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
 	 */
-	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE; }
+	bool isCommand() const { return m_type >= 128; }
+
+	/**
+	 * @brief Is this an opaque message
+	 *
+	 * Opaque messages are those messages that the server does not need to understand and can
+	 * merely pass along as binary data.
+	 */
+	bool isOpaque() const { return m_type >= 64; }
 
 	/**
 	 * @brief Get the message length, header included
@@ -110,14 +138,14 @@ public:
 	 * The ID is 0 for messages that are not related to any user
 	 * @return context ID or 0 if not applicable
 	 */
-	uint8_t contextId() const { return _contextid; }
+	uint8_t contextId() const { return m_contextid; }
 
 	/**
 	 * @brief Set the user ID of this message
 	 *
 	 * @param userid the new user id
 	 */
-	void setContextId(uint8_t userid) { _contextid = userid; }
+	void setContextId(uint8_t userid) { m_contextid = userid; }
 
 	/**
 	 * @brief Does this command need operator privileges to issue?
@@ -223,10 +251,30 @@ protected:
 	virtual bool payloadEquals(const Message &m) const;
 
 private:
-	const MessageType _type;
+	const MessageType m_type;
 	MessageUndoState _undone;
 	int _refcount;
-	uint8_t _contextid; // this is part of the payload for those message types that have it
+	uint8_t m_contextid;
+};
+
+/**
+ * @brief Base class for messages without a payload
+ */
+template<class M> class ZeroLengthMessage : public Message {
+public:
+	ZeroLengthMessage(MessageType type, uint8_t ctx) : Message(type, ctx) { }
+
+	static M *deserialize(uint8_t ctx, const uchar *data, int buflen) {
+		Q_UNUSED(data);
+		if(buflen!=0)
+			return nullptr;
+		return new M(ctx);
+	}
+
+protected:
+	int payloadLength() const { return 0; }
+	int serializePayload(uchar *data) const { Q_UNUSED(data); return 0; }
+	bool payloadEquals(const Message &m) const { Q_UNUSED(m); return true; }
 };
 
 /**

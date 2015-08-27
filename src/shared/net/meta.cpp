@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,96 +23,69 @@
 
 namespace protocol {
 
-UserJoin *UserJoin::deserialize(const uchar *data, uint len)
+UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len<2)
+	if(len<1)
 		return 0;
-	return new UserJoin(*data, QByteArray((const char*)data+1, len-1));
+	return new UserJoin(ctx, QByteArray((const char*)data, len));
 }
 
 int UserJoin::serializePayload(uchar *data) const
 {
-	uchar *ptr = data;
-	*(ptr++) = contextId();
-	memcpy(ptr, _name.constData(), _name.length());
-	ptr += _name.length();
-	return ptr - data;
+	memcpy(data, _name.constData(), _name.length());
+	return _name.length();
 }
 
 int UserJoin::payloadLength() const
 {
-	return 1 + _name.length();
+	return _name.length();
 }
 
-UserLeave *UserLeave::deserialize(const uchar *data, uint len)
+UserAttr *UserAttr::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=1)
-		return 0;
-	return new UserLeave(*data);
-}
-
-int UserLeave::serializePayload(uchar *data) const
-{
-	*data = contextId();
-	return 1;
-}
-
-int UserLeave::payloadLength() const
-{
-	return 1;
-}
-
-UserAttr *UserAttr::deserialize(const uchar *data, uint len)
-{
-	if(len!=3)
+	if(len!=2)
 		return 0;
 
 	return new UserAttr(
-		*(data+0),
-		qFromBigEndian<quint16>(data+1));
+		ctx,
+		qFromBigEndian<quint16>(data+0));
 }
 
 int UserAttr::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_attrs, ptr); ptr += 2;
 	return ptr-data;
 }
 
 int UserAttr::payloadLength() const
 {
-	return 1 + 2;
+	return 2;
 }
 
-SessionTitle *SessionTitle::deserialize(const uchar *data, uint len)
+SessionTitle *SessionTitle::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len<1)
-		return 0;
-
-	return new SessionTitle(data[0], QByteArray((const char*)data+1, len-1));
+	return new SessionTitle(ctx, QByteArray((const char*)data, len));
 }
 
 int SessionTitle::serializePayload(uchar *data) const
 {
-	uchar *ptr = data;
-	*(ptr++) = contextId();
-	memcpy(ptr, _title.constData(), _title.length());
-	ptr += _title.length();
-	return ptr - data;
+	memcpy(data, _title.constData(), _title.length());
+	return _title.length();
 }
 
 int SessionTitle::payloadLength() const
 {
-	return 1 + _title.length();
+	return _title.length();
 }
 
-SessionConf *SessionConf::deserialize(const uchar *data, uint len)
+SessionConf *SessionConf::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=3)
 		return 0;
 
 	return new SessionConf(
+		ctx,
 		*(data+0),
 		qFromBigEndian<quint16>(data+1));
 }
@@ -130,17 +103,16 @@ int SessionConf::payloadLength() const
 	return 3;
 }
 
-Chat *Chat::deserialize(const uchar *data, uint len)
+Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len<3)
-		return 0;
-	return new Chat(*data, *(data+1), QByteArray((const char*)data+2, len-2));
+	if(len<2)
+		return nullptr;
+	return new Chat(ctx, *(data+0), QByteArray((const char*)data+1, len-1));
 }
 
 int Chat::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	*(ptr++) = flags();
 	memcpy(ptr, _msg.constData(), _msg.length());
 	ptr += _msg.length();
@@ -149,30 +121,29 @@ int Chat::serializePayload(uchar *data) const
 
 int Chat::payloadLength() const
 {
-	return 2 + _msg.length();
+	return 1 + _msg.length();
 }
 
-MovePointer *MovePointer::deserialize(const uchar *data, uint len)
+MovePointer *MovePointer::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=10)
-		return 0;
+	if(len!=9)
+		return nullptr;
 	return new MovePointer(
-		*(data+0),
-		qFromBigEndian<quint32>(data+1),
-		qFromBigEndian<quint32>(data+5),
-		*(data+9)
+		ctx,
+		qFromBigEndian<quint32>(data+0),
+		qFromBigEndian<quint32>(data+4),
+		*(data+8)
 	);
 }
 
 int MovePointer::payloadLength() const
 {
-	return 1 + 2*4 + 1;
+	return 2*4 + 1;
 }
 
 int MovePointer::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;
 	*(ptr++) = _persistence;

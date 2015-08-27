@@ -20,49 +20,25 @@
 
 namespace protocol {
 
-UndoPoint *UndoPoint::deserialize(const uchar *data, uint len)
+Undo *Undo::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=1)
-		return 0;
-	return new UndoPoint(*data);
-}
-
-int UndoPoint::payloadLength() const
-{
-	return 1;
-}
-
-int UndoPoint::serializePayload(uchar *data) const
-{
-	*data = contextId();
-	return 1;
-}
-
-bool UndoPoint::payloadEquals(const Message &m) const
-{
-	return contextId() == m.contextId();
-}
-
-Undo *Undo::deserialize(const uchar *data, uint len)
-{
-	if(len!=3)
+	if(len!=2)
 		return 0;
 	return new Undo(
+		ctx,
 		data[0],
-		data[1],
-		data[2]
+		data[1]
 	);
 }
 
 int Undo::payloadLength() const
 {
-	return 1 + 2;
+	return 2;
 }
 
 int Undo::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	*(ptr++) = _override;
 	*(ptr++) = _points;
 	return ptr-data;
@@ -72,7 +48,6 @@ bool Undo::payloadEquals(const Message &m) const
 {
 	const Undo &u = static_cast<const Undo&>(m);
 	return
-		contextId() == u.contextId() &&
 		overrideId() == u.overrideId() &&
 		points() == u.points();
 }

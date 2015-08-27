@@ -637,6 +637,7 @@ void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 protocol::MessagePtr SessionState::sessionConf() const
 {
 	return protocol::MessagePtr(new protocol::SessionConf(
+		0,
 		_maxusers,
 		_locked,
 		_closed,

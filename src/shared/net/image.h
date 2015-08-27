@@ -55,7 +55,7 @@ public:
 		Q_ASSERT(image.length() <= MAX_LEN);
 	}
 
-	static PutImage *deserialize(const uchar *data, uint len);
+	static PutImage *deserialize(uint8_t ctx, const uchar *data, uint len);
 	
 	uint16_t layer() const { return _layer; }
 	uint8_t blendmode() const { return _mode; }
@@ -92,7 +92,7 @@ public:
 	{
 	}
 
-	static FillRect *deserialize(const uchar *data, uint len);
+	static FillRect *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t layer() const { return _layer; }
 	uint8_t blend() const { return _blend; }

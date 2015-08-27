@@ -40,10 +40,10 @@ public:
 		OTHER     // other unspecified error
 	};
 
-	Disconnect(Reason reason, const QString &message) : Message(MSG_DISCONNECT, 0),
+	Disconnect(uint8_t ctx, Reason reason, const QString &message) : Message(MSG_DISCONNECT, ctx),
 		_reason(reason), _message(message.toUtf8()) { }
 
-	static Disconnect *deserialize(const uchar *data, uint len);
+	static Disconnect *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	/**
 	 * Get the reason for the disconnection
@@ -74,10 +74,10 @@ private:
  */
 class StreamPos : public Message {
 public:
-	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS, 0),
+	StreamPos(uint8_t ctx, uint32_t bytes) : Message(MSG_STREAMPOS, ctx),
 		_bytes(bytes) {}
 
-	static StreamPos *deserialize(const uchar *data, uint len);
+	static StreamPos *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	/**
 	 * @brief Number of bytes behind the current stream head
@@ -103,9 +103,9 @@ private:
  */
 class Ping : public Message {
 public:
-	Ping(bool pong) : Message(MSG_PING, 0), _isPong(pong) { }
+	Ping(uint8_t ctx, bool pong) : Message(MSG_PING, ctx), _isPong(pong) { }
 
-	static Ping *deserialize(const uchar *data, int len);
+	static Ping *deserialize(uint8_t ctx, const uchar *data, int len);
 
 	bool isPong() const { return _isPong; }
 

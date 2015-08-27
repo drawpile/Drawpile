@@ -176,7 +176,7 @@ Compatibility Reader::open()
 		if(myversion < _formatversion)
 			return MINOR_INCOMPATIBILITY;
 
-#if DRAWPILE_PROTO_MAJOR_VERSION != 15 || DRAWPILE_PROTO_MINOR_VERSION != 6
+#if DRAWPILE_PROTO_MAJOR_VERSION != 16 || DRAWPILE_PROTO_MINOR_VERSION != 1
 #error Update recording compatability check!
 #endif
 

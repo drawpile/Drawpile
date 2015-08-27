@@ -40,9 +40,9 @@ class SnapshotMode : public Message {
 public:
 	enum Mode {REQUEST, REQUEST_NEW, ACK, SNAPSHOT, END};
 
-	SnapshotMode(Mode mode) : Message(MSG_SNAPSHOT, 0), _mode(mode) {}
+	SnapshotMode(uint8_t ctx, Mode mode) : Message(MSG_SNAPSHOT, ctx), _mode(mode) {}
 
-	static SnapshotMode *deserialize(const uchar *data, int len);
+	static SnapshotMode *deserialize(uint8_t ctx, const uchar *data, int len);
 
     Mode mode() const { return _mode; }
 

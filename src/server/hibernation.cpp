@@ -150,7 +150,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 		}
 	}
 
-	snapshot.append(protocol::MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::END)));
+	snapshot.append(protocol::MessagePtr(new protocol::SnapshotMode(0, protocol::SnapshotMode::END)));
 
 	// Bring session state up to speed with the content
 	session->syncInitialState(snapshot.substream());

@@ -22,19 +22,20 @@
 
 namespace protocol {
 
-ToolChange *ToolChange::deserialize(const uchar *data, uint len)
+ToolChange *ToolChange::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len != 23)
+	if(len != 22)
 		return 0;
 
 	return new ToolChange(
-		*(data+0),
-		qFromBigEndian<quint16>(data+1),
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		*(data+2),
 		*(data+3),
 		*(data+4),
-		*(data+5),
-		qFromBigEndian<quint32>(data+6),
-		qFromBigEndian<quint32>(data+10),
+		qFromBigEndian<quint32>(data+5),
+		qFromBigEndian<quint32>(data+9),
+		*(data+13),
 		*(data+14),
 		*(data+15),
 		*(data+16),
@@ -42,20 +43,18 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 		*(data+18),
 		*(data+19),
 		*(data+20),
-		*(data+21),
-		*(data+22)
+		*(data+21)
 	);
 }
 
 int ToolChange::payloadLength() const
 {
-	return 1 + 22;
+	return 22;
 }
 
 int ToolChange::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_layer, ptr); ptr += 2;
 	*(ptr++) = _blend;
 	*(ptr++) = _mode;
@@ -74,15 +73,13 @@ int ToolChange::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
-PenMove *PenMove::deserialize(const uchar *data, uint len)
+PenMove *PenMove::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len<11 || (len-1)%10)
-		return 0;
+	if(len<10 || len%10)
+		return nullptr;
 	PenPointVector pp;
 
-	uint8_t ctx = *(data++);
-
-	int points = (len-1)/10;
+	int points = len/10;
 	pp.reserve(points);
 	while(points--) {
 		pp.append(PenPoint(
@@ -97,13 +94,12 @@ PenMove *PenMove::deserialize(const uchar *data, uint len)
 
 int PenMove::payloadLength() const
 {
-	return 1 + 10 * _points.size();
+	return 10 * _points.size();
 }
 
 int PenMove::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	for(const PenPoint &p : _points) {
 		qToBigEndian(p.x, ptr); ptr += 4;
 		qToBigEndian(p.y, ptr); ptr += 4;
@@ -115,8 +111,6 @@ int PenMove::serializePayload(uchar *data) const
 bool PenMove::payloadEquals(const Message &m) const
 {
 	const PenMove &pm = static_cast<const PenMove&>(m);
-	if(contextId() != pm.contextId())
-		return false;
 
 	if(points().size() != pm.points().size())
 		return false;
@@ -127,30 +121,6 @@ bool PenMove::payloadEquals(const Message &m) const
 	}
 
 	return true;
-}
-
-PenUp *PenUp::deserialize(const uchar *data, uint len)
-{
-	if(len != 1)
-		return 0;
-
-	return new PenUp(*data);
-}
-
-int PenUp::payloadLength() const
-{
-	return 1;
-}
-
-int PenUp::serializePayload(uchar *data) const
-{
-	*data = contextId();
-	return 1;
-}
-
-bool PenUp::payloadEquals(const Message &m) const
-{
-	return contextId() == m.contextId();
 }
 
 }

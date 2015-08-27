@@ -25,7 +25,7 @@
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
 
-#include "../shared/net/login.h"
+#include "../shared/net/control.h"
 #include "../shared/net/meta.h"
 
 #include <QDebug>
@@ -105,13 +105,13 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 		return;
 	}
 
-	if(message->type() != protocol::MSG_LOGIN) {
+	if(message->type() != protocol::MSG_COMMAND) {
 		qWarning() << "Login error: got message type" << message->type() << "when expected type 0";
 		failLogin(tr("Invalid state"));
 		return;
 	}
 
-	QString msg = message.cast<protocol::Login>().message();
+	QString msg = message.cast<protocol::Command>().message();
 
 #ifdef DEBUG_LOGIN
 	qDebug() << "login <--" << msg;
@@ -786,7 +786,7 @@ void LoginHandler::send(const QString &message)
 #ifdef DEBUG_LOGIN
 	qDebug() << "login -->" << message;
 #endif
-	_server->sendMessage(protocol::MessagePtr(new protocol::Login(message)));
+	_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, message)));
 }
 
 QString LoginHandler::sessionId() const {

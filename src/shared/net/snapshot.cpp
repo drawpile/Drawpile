@@ -22,12 +22,12 @@
 
 namespace protocol {
 
-SnapshotMode *SnapshotMode::deserialize(const uchar *data, int len)
+SnapshotMode *SnapshotMode::deserialize(uint8_t ctx, const uchar *data, int len)
 {
 	if(len != 1)
 		return 0;
 
-	return new SnapshotMode(Mode(*data));
+	return new SnapshotMode(ctx, Mode(*data));
 }
 
 int SnapshotMode::payloadLength() const

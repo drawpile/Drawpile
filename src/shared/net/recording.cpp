@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 namespace protocol {
 
-Interval *Interval::deserialize(const uchar *data, uint len)
+Interval *Interval::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=2)
 		return 0;
-	return new Interval(qFromBigEndian<quint16>(data));
+	return new Interval(ctx, qFromBigEndian<quint16>(data));
 }
 
 int Interval::payloadLength() const
@@ -40,29 +40,23 @@ int Interval::serializePayload(uchar *data) const
 	return 2;
 }
 
-Marker *Marker::deserialize(const uchar *data, uint len)
+Marker *Marker::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len<1)
-		return 0;
-
 	return new Marker(
-		*(data+0),
-		QByteArray((const char*)data+1, len-1)
+		ctx,
+		QByteArray((const char*)data, len)
 	);
 }
 
 int Marker::payloadLength() const
 {
-	return 1 + _text.length();
+	return _text.length();
 }
 
 int Marker::serializePayload(uchar *data) const
 {
-	uchar *ptr = data;
-	*(ptr++) = contextId();
-	memcpy(ptr, _text.constData(), _text.length());
-	ptr += _text.length();
-	return ptr - data;
+	memcpy(data, _text.constData(), _text.length());
+	return _text.length();
 }
 
 }

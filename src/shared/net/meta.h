@@ -36,7 +36,7 @@ public:
 	UserJoin(uint8_t ctx, const QByteArray &name) : Message(MSG_USER_JOIN, ctx), _name(name) {}
 	UserJoin(uint8_t ctx, const QString &name) : UserJoin(ctx, name.toUtf8()) {}
 
-	static UserJoin *deserialize(const uchar *data, uint len);
+	static UserJoin *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	QString name() const { return QString::fromUtf8(_name); }
 
@@ -55,15 +55,9 @@ private:
  * clients will typically remove the user from the user listing. The client
  * is also allowed to release resources associated with this context ID.
  */
-class UserLeave : public Message {
+class UserLeave : public ZeroLengthMessage<UserLeave> {
 public:
-	explicit UserLeave(uint8_t ctx) : Message(MSG_USER_LEAVE, ctx) {}
-
-	static UserLeave *deserialize(const uchar *data, uint len);
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	explicit UserLeave(uint8_t ctx) : ZeroLengthMessage(MSG_USER_LEAVE, ctx) {}
 };
 
 /**
@@ -85,7 +79,7 @@ public:
 		: UserAttr(ctx, (locked?ATTR_LOCKED:0) | (op?ATTR_OP:0) | (mod?ATTR_MOD:0) | (auth?ATTR_AUTH:0))
 		{}
 
-	static UserAttr *deserialize(const uchar *data, uint len);
+	static UserAttr *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint8_t attrs() const { return _attrs; }
 
@@ -111,7 +105,7 @@ public:
 	SessionTitle(uint8_t ctx, const QByteArray &title) : Message(MSG_SESSION_TITLE, ctx), _title(title) {}
 	SessionTitle(uint8_t ctx, const QString &title) : SessionTitle(ctx, title.toUtf8()) {}
 
-	static SessionTitle *deserialize(const uchar *data, uint len);
+	static SessionTitle *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	QString title() const { return QString::fromUtf8(_title); }
 
@@ -140,9 +134,10 @@ public:
 	static const uint16_t ATTR_PERSISTENT = 0x10;
 	static const uint16_t ATTR_PRESERVECHAT = 0x20;
 
-	SessionConf(uint8_t maxusers, uint16_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
-	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent, bool preservechat)
+	SessionConf(uint8_t ctx, uint8_t maxusers, uint16_t attrs) : Message(MSG_SESSION_CONFIG, ctx), _maxusers(maxusers), _attrs(attrs) {}
+	SessionConf(uint8_t ctx, uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent, bool preservechat)
 		: SessionConf(
+			  ctx,
 			  maxusers,
 			  (locked?ATTR_LOCKED:0) |
 			  (closed?ATTR_CLOSED:0) |
@@ -152,7 +147,7 @@ public:
 			  (preservechat?ATTR_PRESERVECHAT:0)
 		) {}
 
-	static SessionConf *deserialize(const uchar *data, uint len);
+	static SessionConf *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	//! The maximum number of users in the session
 	uint8_t maxUsers() const { return _maxusers; }
@@ -209,7 +204,7 @@ public:
 	//! Construct a chat message that carries a session operator command
 	static MessagePtr opCommand(uint8_t ctx, const QString &cmd) { return MessagePtr(new Chat(ctx, FLAG_OPCMD, cmd.toUtf8())); }
 
-	static Chat *deserialize(const uchar *data, uint len);
+	static Chat *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint8_t flags() const { return _flags; }
 
@@ -259,7 +254,7 @@ public:
 		: Message(MSG_MOVEPOINTER, ctx), _x(x), _y(y), _persistence(persistence)
 	{}
 
-	static MovePointer *deserialize(const uchar *data, uint len);
+	static MovePointer *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	int32_t x() const { return _x; }
 	int32_t y() const { return _y; }

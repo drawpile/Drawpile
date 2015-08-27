@@ -9,7 +9,7 @@ set (
 	net/pen.cpp
 	net/image.cpp
 	net/annotation.cpp
-	net/login.cpp
+	net/control.cpp
 	net/snapshot.cpp
 	net/meta.cpp
 	net/flow.cpp

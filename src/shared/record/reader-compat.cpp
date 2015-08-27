@@ -163,6 +163,7 @@ SessionConf *SessionConfV10(const uchar *data, uint len)
 	if(len!=1)
 			return 0;
 	return new SessionConf(
+		0,
 		255, // no maxusers field in this version, but it doesn't really matter for playback
 		data[0] | protocol::SessionConf::ATTR_PRESERVECHAT // this version had less flags and preserve chat was always on
 	);

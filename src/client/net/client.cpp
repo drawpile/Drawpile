@@ -355,7 +355,7 @@ void Client::sendAnnotationDelete(int id)
 void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 {
 	// Send ACK to indicate the rest of the data is on its way
-	_server->sendMessage(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::ACK)));
+	_server->sendMessage(MessagePtr(new protocol::SnapshotMode(0, protocol::SnapshotMode::ACK)));
 
 	// The actual snapshot data will be sent in parallel with normal session traffic
 	_server->sendSnapshotMessages(commands);

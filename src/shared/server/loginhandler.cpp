@@ -24,7 +24,7 @@
 #include "sessiondesc.h"
 #include "identitymanager.h"
 
-#include "../net/login.h"
+#include "../net/control.h"
 #include "../util/logger.h"
 #include "../util/passwordhash.h"
 
@@ -137,12 +137,12 @@ void LoginHandler::announceSessionEnd(const QString &id)
 
 void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 {
-	if(msg->type() != protocol::MSG_LOGIN) {
+	if(msg->type() != protocol::MSG_COMMAND) {
 		logger::error() << "login handler was passed a non-login message!";
 		return;
 	}
 
-	QString message = msg.cast<protocol::Login>().message();
+	QString message = msg.cast<protocol::Command>().message();
 
 	if(_state == WAIT_FOR_SECURE) {
 		// Secure mode: wait for STARTTLS before doing anything
@@ -437,7 +437,7 @@ void LoginHandler::handleStarttls()
 void LoginHandler::send(const QString &msg)
 {
 	if(!_complete)
-		_client->sendDirectMessage(protocol::MessagePtr(new protocol::Login(msg)));
+		_client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
 }
 
 bool LoginHandler::validateUsername(const QString &username)

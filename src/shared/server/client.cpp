@@ -27,7 +27,7 @@
 #include "../net/annotation.h"
 #include "../net/image.h"
 #include "../net/layer.h"
-#include "../net/login.h"
+#include "../net/control.h"
 #include "../net/meta.h"
 #include "../net/flow.h"
 #include "../net/pen.h"
@@ -131,7 +131,7 @@ void Client::sendAvailableCommands()
 			for(int i=_streampointer+1;i<_session->mainstream().end();++i)
 				streamlen += _session->mainstream().at(i)->length();
 
-			_msgqueue->send(MessagePtr(new protocol::StreamPos(streamlen)));
+			_msgqueue->send(MessagePtr(new protocol::StreamPos(0, streamlen)));
 		}
 		// Enqueue substream
 		while(_substreampointer < sp.substream().length())
@@ -169,7 +169,7 @@ void Client::receiveMessages()
 		MessagePtr msg = _msgqueue->getPending();
 
 		if(_state == LOGIN) {
-			if(msg->type() == protocol::MSG_LOGIN)
+			if(msg->type() == protocol::MSG_COMMAND)
 				emit loginMessage(msg);
 			else
 				logger::notice() << this << "Got non-login message (type=" << msg->type() << ") in login state";
@@ -212,7 +212,7 @@ void Client::receiveSnapshot()
 		// Filter away blatantly unallowed messages
 		switch(msg->type()) {
 		using namespace protocol;
-		case MSG_LOGIN:
+		case MSG_COMMAND:
 		case MSG_SESSION_CONFIG:
 		case MSG_STREAMPOS:
 		case MSG_DISCONNECT:
@@ -285,7 +285,7 @@ void Client::requestSnapshot(bool forcenew)
 	sendSystemChat("(Requesting snapshot...)");
 #endif
 
-	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
+	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(0, forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 	_session->addSnapshotPoint();
 	logger::debug() << this << "Created a new snapshot point and requested data from";
@@ -304,7 +304,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	// Filter away blatantly unallowed messages
 	switch(msg->type()) {
 	using namespace protocol;
-	case MSG_LOGIN:
+	case MSG_COMMAND:
 	case MSG_USER_JOIN:
 	case MSG_USER_ATTR:
 	case MSG_USER_LEAVE:

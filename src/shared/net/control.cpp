@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,24 +18,25 @@
 */
 
 #include <cstring>
-#include "login.h"
+
+#include "control.h"
 
 namespace protocol {
 
-Login *Login::deserialize(const uchar *data, uint len)
+Command *Command::deserialize(uint8_t ctxid, const uchar *data, uint len)
 {
-	return new Login(QByteArray((const char*)data, len));
+	return new Command(ctxid, QByteArray((const char*)data, len));
 }
 
-int Login::serializePayload(uchar *data) const
+int Command::serializePayload(uchar *data) const
 {
-	memcpy(data, _msg.constData(), _msg.length());
-	return _msg.length();
+	memcpy(data, m_msg.constData(), m_msg.length());
+	return m_msg.length();
 }
 
-int Login::payloadLength() const
+int Command::payloadLength() const
 {
-    return _msg.length();
+	return m_msg.length();
 }
 
 

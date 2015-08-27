@@ -70,7 +70,7 @@ public:
 		_smudge_h(smudge_h), _smudge_l(smudge_l), _resmudge(resmudge)
 		{}
 
-		static ToolChange *deserialize(const uchar *data, uint len);
+		static ToolChange *deserialize(uint8_t ctx, const uchar *data, uint len);
 		
 		uint16_t layer() const { return _layer; }
 		uint8_t blend() const { return _blend; }
@@ -126,7 +126,7 @@ typedef QVector<PenPoint> PenPointVector;
 class PenMove : public Message {
 public:
 	//! The maximum number of points that will fit into a single PenMove message
-	static const int MAX_POINTS = (0xffff-1) / 10;
+	static const int MAX_POINTS = 0xffff / 10;
 
 	PenMove(uint8_t ctx, const PenPointVector &points)
 		: Message(MSG_PEN_MOVE, ctx),
@@ -135,7 +135,7 @@ public:
 		Q_ASSERT(points.size() <= MAX_POINTS);
 	}
 	
-	static PenMove *deserialize(const uchar *data, uint len);
+	static PenMove *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	const PenPointVector &points() const { return _points; }
 	PenPointVector &points() { return _points; }
@@ -155,18 +155,11 @@ private:
  * The pen up signals the end of the stroke. In indirect drawing mode, it causes
  * the stroke to be committed to the current layer.
  */
-class PenUp : public Message {
+class PenUp : public ZeroLengthMessage<PenUp> {
 public:
-	PenUp(uint8_t ctx) : Message(MSG_PEN_UP, ctx) {}
+	PenUp(uint8_t ctx) : ZeroLengthMessage(MSG_PEN_UP, ctx) {}
 	
-	static PenUp *deserialize(const uchar *data, uint len);
-
 	bool isUndoable() const { return true; }
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
 };
 
 }

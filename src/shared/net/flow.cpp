@@ -24,11 +24,11 @@
 
 namespace protocol {
 
-Disconnect *Disconnect::deserialize(const uchar *data, uint len)
+Disconnect *Disconnect::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<1)
 		return 0;
-	return new Disconnect(Reason(*data), QByteArray((const char*)data+1, len-1));
+	return new Disconnect(ctx, Reason(*data), QByteArray((const char*)data+1, len-1));
 }
 
 int Disconnect::serializePayload(uchar *data) const
@@ -45,11 +45,11 @@ int Disconnect::payloadLength() const
 	return 1 + _message.length();
 }
 
-StreamPos *StreamPos::deserialize(const uchar *data, uint len)
+StreamPos *StreamPos::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=4)
 		return 0;
-	return new StreamPos(qFromBigEndian<quint32>(data));
+	return new StreamPos(ctx, qFromBigEndian<quint32>(data));
 }
 
 int StreamPos::serializePayload(uchar *data) const
@@ -63,11 +63,11 @@ int StreamPos::payloadLength() const
 	return 4;
 }
 
-Ping *Ping::deserialize(const uchar *data, int len)
+Ping *Ping::deserialize(uint8_t ctx, const uchar *data, int len)
 {
 	if(len!=1)
 		return nullptr;
-	return new Ping(*data);
+	return new Ping(ctx, *data);
 }
 
 int Ping::payloadLength() const

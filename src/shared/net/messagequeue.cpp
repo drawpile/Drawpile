@@ -148,7 +148,7 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 {
 	if(!_closeWhenReady) {
 		_snapshot_send = snapshot;
-		_snapshot_send.append(MessagePtr(new SnapshotMode(SnapshotMode::END)));
+		_snapshot_send.append(MessagePtr(new SnapshotMode(0, SnapshotMode::END)));
 
 		if(_sendbuflen==0)
 			writeData();
@@ -157,7 +157,7 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 
 void MessageQueue::sendDisconnect(int reason, const QString &message)
 {
-	send(MessagePtr(new protocol::Disconnect(protocol::Disconnect::Reason(reason), message)));
+	send(MessagePtr(new protocol::Disconnect(0, protocol::Disconnect::Reason(reason), message)));
 	_ignoreIncoming = true;
 	_recvcount = 0;
 }
@@ -171,7 +171,7 @@ void MessageQueue::sendPing()
 		qWarning("sendPing(): reply to previous ping not yet received!");
 	}
 
-	sendNow(MessagePtr(new Ping(false)));
+	sendNow(MessagePtr(new Ping(0, false)));
 }
 
 int MessageQueue::uploadQueueBytes() const
@@ -240,7 +240,7 @@ void MessageQueue::readData() {
 							emit pingPong(roundtrip);
 						}
 					} else {
-						sendNow(MessagePtr(new Ping(true)));
+						sendNow(MessagePtr(new Ping(0, true)));
 					}
 
 				} else if(_expectingSnapshot) {
@@ -311,7 +311,7 @@ void MessageQueue::writeData() {
 
 		} else if(!_snapshot_send.isEmpty()) {
 			// When the main send queue is empty, messages from the snapshot queue are sent
-			SnapshotMode mode(SnapshotMode::SNAPSHOT);
+			SnapshotMode mode(0, SnapshotMode::SNAPSHOT);
 			_sendbuflen = mode.serialize(_sendbuffer);
 			_sendbuflen += _snapshot_send.takeFirst()->serialize(_sendbuffer + _sendbuflen);
 		}
