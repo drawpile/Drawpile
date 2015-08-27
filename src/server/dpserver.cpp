@@ -98,6 +98,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption recordOption(QStringList() << "record" << "r", "Record session", "filename");
 	parser.addOption(recordOption);
 
+	// --split-recording
+	QCommandLineOption splitRecordingOption(QStringList() << "split-recording", "Start a new recording at every snapshot");
+	parser.addOption(splitRecordingOption);
+
 	// --host-password <password>
 	QCommandLineOption hostPassOption("host-password", "Host password", "password");
 	parser.addOption(hostPassOption);
@@ -263,8 +267,12 @@ int main(int argc, char *argv[]) {
 
 	{
 		QVariant rv = cfgfile.override(parser, recordOption);
-		if(!rv.isNull())
+		if(!rv.isNull()) {
 			server->setRecordingFile(rv.toString());
+
+			QVariant sr = cfgfile.override(parser, splitRecordingOption);
+			server->setSplitRecording(sr.toBool());
+		}
 	}
 
 	{

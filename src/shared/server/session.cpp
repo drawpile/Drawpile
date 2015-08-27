@@ -25,6 +25,7 @@
 #include "../net/snapshot.h"
 #include "../record/writer.h"
 #include "../util/passwordhash.h"
+#include "../util/filename.h"
 
 #include "config.h"
 
@@ -346,6 +347,16 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 		// Messages older than the snapshot point can now be removed
 		cleanupCommandStream();
+
+		// Start a new recording using the fresh snapshot point
+		if(!_recordingFile.isEmpty()) {
+			if(_splitRecording || !_recorder) {
+				logger::debug() << "Snapshotted: restarting recording" << _recordingFile;
+				stopRecording();
+				startRecording(sp.substream());
+			}
+
+		}
 	}
 
 	emit newCommandsAvailable();
@@ -461,9 +472,6 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 		default: break;
 		}
 	}
-
-	if(!_recordingFile.isEmpty())
-		startRecording(messages);
 }
 
 const LayerState *SessionState::getLayerById(int id)
@@ -642,9 +650,9 @@ protocol::MessagePtr SessionState::sessionConf() const
 void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
 {
 	Q_ASSERT(_recorder==0);
-	QString filename = _recordingFile;
 
 	// Start recording
+	QString filename = utils::makeFilenameUnique(_recordingFile, ".dprec");
 	logger::info() << this << "Starting session recording" << filename;
 
 	_recorder = new recording::Writer(filename, this);

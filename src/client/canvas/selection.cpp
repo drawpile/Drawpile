@@ -267,10 +267,15 @@ QImage Selection::shapeMask(const QColor &color, QPoint *offset) const
 
 void Selection::setPasteImage(const QImage &image)
 {
+	const QRect selectionBounds = m_shape.boundingRect().toRect();
+	if(selectionBounds.size() != image.size() || !isAxisAlignedRectangle()) {
+		const QPoint c = selectionBounds.center();
+		setShapeRect(QRect(c.x() - image.width()/2, c.y()-image.height()/2, image.width(), image.height()));
+	}
+
 	m_pasteImage = image;
 	m_movedFromCanvas = false;
-	if(!isAxisAlignedRectangle())
-		setShapeRect(boundingRect());
+
 	emit pasteImageChanged(image);
 }
 

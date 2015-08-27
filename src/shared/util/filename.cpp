@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "filename.h"
 
 #include <QFileInfo>
+#include <QDir>
 
 namespace utils {
 
@@ -39,6 +40,30 @@ QString uniqueFilename(const QDir &dir, const QString &name, const QString &exte
 	} while(f.exists());
 
 	return f.absoluteFilePath();
+}
+
+QString makeFilenameUnique(const QString &path, const QString &defaultExtension)
+{
+	Q_ASSERT(defaultExtension.at(0) == '.');
+
+	const QFileInfo f(path);
+
+	if(!f.exists())
+		return path;
+
+	const QString name = f.fileName();
+	QString base, ext;
+
+	int exti = name.lastIndexOf(defaultExtension, -1, Qt::CaseInsensitive);
+	if(exti>0) {
+		base = name.left(exti);
+		ext = name.mid(exti+1);
+	} else {
+		base = name;
+		ext = defaultExtension.mid(1);
+	}
+
+	return uniqueFilename(f.absoluteDir(), base, ext);
 }
 
 }

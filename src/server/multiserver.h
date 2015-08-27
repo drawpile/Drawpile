@@ -47,6 +47,7 @@ public:
 	void setWelcomeMessage(const QString &message);
 	void setHistoryLimit(uint limit);
 	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
+	void setSplitRecording(bool split) { m_splitRecording = split; }
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { _sslCertFile = certfile; _sslKeyFile = keyfile; }
 	void setMustSecure(bool secure);
 	void setHostPassword(const QString &password);
@@ -95,6 +96,8 @@ private:
 	State _state;
 
 	bool _autoStop;
+	bool m_splitRecording;
+
 	QString _recordingFile;
 	QString _sslCertFile;
 	QString _sslKeyFile;

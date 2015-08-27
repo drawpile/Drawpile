@@ -45,7 +45,7 @@ QString linkify(const QString &input)
 {
 	// This regular expression is from: http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without-the
 	static const QRegularExpression linkre(
-		"((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)(?::\\d+)?((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\?" "?(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)"
+		"((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)(?::\\d+)?((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\?" "?(?:[\\-\\+=&;%@\\.\\w_]*)(?:#[^ ]*)?)?)"
 		);
 
 	static const QRegularExpression protore("^[a-zA-Z]{3,}:");

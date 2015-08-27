@@ -222,7 +222,11 @@ QImage CanvasModel::selectionToImage(int layerId) const
 			// Mask out pixels outside the selection
 			QPainter mp(&img);
 			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-			mp.drawImage(0, 0, m_selection->shapeMask(Qt::white));
+
+			QPoint offset;
+			const QImage mask = m_selection->shapeMask(Qt::white, &offset);
+
+			mp.drawImage(qMin(0, offset.x()), qMin(0, offset.y()), mask);
 		}
 	}
 

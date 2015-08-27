@@ -54,6 +54,9 @@ record sessions to files. Placeholders in the filename pattern will be expanded
 to generate the actual filename. If a directory is given, a default filename pattern
 will be used. The placeholders %d (date), %t (time) and %i (session ID) are supported.
 .TP
+.BR --split-recording
+start a new recording at every snapshot. Usually, a history limit should be set too.
+.TP
 .BR --host-password\  password
 set the session hosting password. If set, this password must be entered to host a session.
 .TP

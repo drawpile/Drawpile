@@ -44,7 +44,7 @@ MultiServer::MultiServer(QObject *parent)
 	_server(nullptr),
 	_banlist(nullptr),
 	_state(NOT_STARTED),
-	_autoStop(false)
+	_autoStop(false), m_splitRecording(false)
 {
 	_sessions = new SessionServer(this);
 
@@ -307,25 +307,9 @@ void MultiServer::assignRecording(SessionState *session)
 	filename.replace("%t", now.toString("HH.mm.ss"));
 	filename.replace("%i", session->id());
 
-	// Insert numeric suffix if file already exists
-	int suffixInsert = filename.lastIndexOf('.');
-	if(suffixInsert<0)
-		suffixInsert = filename.length();
-	int suffix = 1;
-
 	fi = filename;
-	int tries=0;
-	while(fi.exists()) {
-		if(++tries>999) {
-			logger::warning() << "Couldn't find unique filename for" << filename;
-			return;
-		}
-		QString f = filename;
-		f.insert(suffixInsert, QString(" (%1)").arg(suffix++));
-		fi = f;
-	}
 
-	session->setRecordingFile(fi.absoluteFilePath());
+	session->setRecordingFile(fi.absoluteFilePath(), m_splitRecording);
 }
 
 /**
