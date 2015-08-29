@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,16 +118,11 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	connect(_pickersettings, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
 
-	// Create color changer dialogs
+	// Create color changer dialog
 	_fgdialog = new Color_Dialog(this);
 	_fgdialog->setAlphaEnabled(false);
 	_fgdialog->setWindowTitle(tr("Foreground Color"));
 	connect(_fgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
-
-	_bgdialog = new Color_Dialog(this);
-	_bgdialog->setAlphaEnabled(false);
-	_bgdialog->setWindowTitle(tr("Background Color"));
-	connect(_bgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
 }
 
 ToolSettings::~ToolSettings()
@@ -234,7 +229,6 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	setWindowTitle(QStringLiteral("%1. %2").arg(currentToolSlot()+1).arg(_currenttool->getTitle()));
 	_widgets->setCurrentWidget(_currenttool->getUi());
 	_currenttool->setForeground(foregroundColor());
-	_currenttool->setBackground(backgroundColor());
 	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
 	_toolprops[_currentQuickslot].setCurrentTool(tool);
 
@@ -275,8 +269,6 @@ void ToolSettings::selectToolSlot(int i)
 	_currentQuickslot = i;
 
 	setForegroundColor(_toolprops[i].foregroundColor());
-	setBackgroundColor(_toolprops[i].backgroundColor());
-
 	selectTool(tools::Tool::Type(_toolprops[i].currentTool()));
 }
 
@@ -306,52 +298,9 @@ void ToolSettings::setForegroundColor(const QColor& color)
 	}
 }
 
-QColor ToolSettings::backgroundColor() const
-{
-	return _background;
-}
-
-void ToolSettings::setBackgroundColor(const QColor& color)
-{
-	if(color != _background) {
-		_background = color;
-
-		_currenttool->setBackground(color);
-		_toolprops[_currentQuickslot].setBackgroundColor(color);
-		updateToolSlot(_currentQuickslot, false);
-
-		if(_bgdialog->isVisible())
-			_bgdialog->setColor(color);
-
-		emit backgroundColorChanged(color);
-	}
-}
-
 void ToolSettings::changeForegroundColor()
 {
 	_fgdialog->showColor(_foreground);
-}
-
-
-void ToolSettings::changeBackgroundColor()
-{
-	_bgdialog->showColor(_background);
-}
-
-void ToolSettings::swapForegroundBackground()
-{
-	QColor oldForeground = _foreground;
-	_foreground = _background;
-	_background = oldForeground;
-
-	_currenttool->setForeground(_foreground);
-	_currenttool->setBackground(_background);
-	_toolprops[_currentQuickslot].setForegroundColor(_foreground);
-	_toolprops[_currentQuickslot].setBackgroundColor(_background);
-	updateToolSlot(_currentQuickslot, false);
-
-	emit foregroundColorChanged(_foreground);
-	emit backgroundColorChanged(_background);
 }
 
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)

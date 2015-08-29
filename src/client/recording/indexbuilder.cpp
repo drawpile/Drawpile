@@ -197,7 +197,7 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 	case MSG_PEN_UP: type = IDX_STROKE; break;
 
 	case MSG_TOOLCHANGE:
-		_colors[msg->contextId()] = msg.cast<const protocol::ToolChange>().color_h();
+		_colors[msg->contextId()] = msg.cast<const protocol::ToolChange>().color();
 		break;
 
 	case MSG_ANNOTATION_CREATE:

@@ -87,9 +87,6 @@ public:
 	//! Set the foreground color
 	virtual void setForeground(const QColor& color) = 0;
 
-	//! Set the background color
-	virtual void setBackground(const QColor& color) = 0;
-
 	/**
 	 * @brief Quick adjust a tool parameter
 	 *
@@ -102,8 +99,6 @@ public:
 	/**
 	 * @brief Get a brush based on the settings in the UI
 	 * An UI widget must have been created before this can be called.
-	 *
-	 * @param swapcolors if true, foreground and background colors are swapped
 	 * @return brush with values from the UI widget
 	 */
 	virtual paintcore::Brush getBrush() const = 0;
@@ -170,7 +165,6 @@ public:
 	~PenSettings();
 
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
 	paintcore::Brush getBrush() const;
 
@@ -200,7 +194,6 @@ public:
 	~EraserSettings();
 
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
 	paintcore::Brush getBrush() const;
 
@@ -228,7 +221,6 @@ public:
 	~BrushSettings();
 
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
 	paintcore::Brush getBrush() const;
 
@@ -256,7 +248,6 @@ public:
 	~SmudgeSettings();
 
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
 	paintcore::Brush getBrush() const;
 
@@ -284,7 +275,6 @@ public:
 	~SimpleSettings();
 
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment);
 	paintcore::Brush getBrush() const;
 
@@ -312,7 +302,6 @@ public:
 
 	paintcore::Brush getBrush() const;
 	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
 	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
 
 	int getSize() const { return 0; }
@@ -481,7 +470,6 @@ public:
 
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;
-	void setBackground(const QColor &color) override;
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

@@ -48,7 +48,7 @@ Brush::Brush(int size, qreal hardness, qreal opacity, const QColor& color, int s
 	_hardness1(hardness), _hardness2(hardness),
 	_opacity1(opacity), _opacity2(opacity),
 	_smudge1(0), _smudge2(0),
-	_color1(color), _color2(color), _spacing(spacing), _resmudge(0), _blend(BlendMode::MODE_NORMAL),
+	_color(color),_spacing(spacing), _resmudge(0), _blend(BlendMode::MODE_NORMAL),
 	_subpixel(false), _incremental(true)
 {
 	Q_ASSERT(size>0);
@@ -106,21 +106,6 @@ qreal Brush::smudge(qreal pressure) const
 	return interpolate(smudge1(), smudge2(), pressure);
 }
 
-/**
- * Get the brush color for certain pressure.
- * @param pressure pen pressure. Range is [0..1]
- * @return color
- * @pre 0 <= pressure <= 1
- */
-QColor Brush::color(qreal pressure) const
-{
-	return QColor(
-		qRound(interpolate(color1().red(), color2().red(), pressure)),
-		qRound(interpolate(color1().green(), color2().green(), pressure)),
-		qRound(interpolate(color1().blue(), color2().blue(), pressure))
-	);
-}
-
 qreal Brush::spacingDist(qreal pressure) const
 {
 	return spacing() / 100.0 * fsize(pressure);
@@ -129,13 +114,6 @@ qreal Brush::spacingDist(qreal pressure) const
 bool Brush::isOpacityVariable() const
 {
 	return qAbs(opacity1() - opacity2()) > (1/256.0);
-}
-
-QColor Brush::approxColor() const
-{
-	QColor c = color1();
-	c.setAlphaF(opacity1() * qMin(1.0, 0.5+hardness1()) * (1-spacing()/100.0));
-	return c;
 }
 
 bool Brush::operator==(const Brush& brush) const
@@ -147,8 +125,7 @@ bool Brush::operator==(const Brush& brush) const
 			qAbs(opacity2() - brush.opacity2()) <= 1.0/256.0 &&
 			qAbs(smudge1() - brush.smudge1()) <= 1.0/256.0 &&
 			qAbs(smudge2() - brush.smudge2()) <= 1.0/256.0 &&
-			color1() == brush.color1() &&
-			color2() == brush.color2() &&
+			color() == brush.color() &&
 			spacing() == brush.spacing() &&
 			subpixel() == brush.subpixel() &&
 			incremental() == brush.incremental() &&

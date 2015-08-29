@@ -753,7 +753,7 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 
 	// Composite the brush mask onto the layer
 	const uchar *values = bs.mask.data();
-	QColor color = smudge > 0 ? state.smudgeColor : brush.color(point.pressure());
+	QColor color = smudge > 0 ? state.smudgeColor : brush.color();
 
 	// A single dab can (and often does) span multiple tiles.
 	int y = top<0?0:top;

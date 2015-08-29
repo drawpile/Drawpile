@@ -2540,7 +2540,6 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap Colors"), QString(), QKeySequence(Qt::Key_X));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
@@ -2559,7 +2558,6 @@ void MainWindow::setupActions()
 
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
-	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addSeparator();
 	toolshortcuts->addAction(layerUpAct);
 	toolshortcuts->addAction(layerDownAct);
@@ -2576,8 +2574,6 @@ void MainWindow::setupActions()
 	}
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
-
-	connect(swapcolors, SIGNAL(triggered()), _dock_toolsettings, SLOT(swapForegroundBackground()));
 
 	//
 	// Window menu (Mac only)

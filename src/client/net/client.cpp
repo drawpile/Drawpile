@@ -235,7 +235,7 @@ void Client::sendToolChange(const canvas::ToolContext &ctx)
 		sendCommand(brushToToolChange(m_myId, ctx.layer_id, ctx.brush));
 		m_lastToolCtx = ctx;
 		if(ctx.brush.blendingMode() != 0) // color is not used in erase mode
-			emit sentColorChange(ctx.brush.color1());
+			emit sentColorChange(ctx.brush.color());
 	}
 }
 

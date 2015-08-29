@@ -62,9 +62,7 @@ public:
 	qreal opacity2() const { return _opacity2; }
 
 	//! Set color for heavy brush
-	void setColor(const QColor& color) { _color1 = color; }
-	//! Set color for light brush
-	void setColor2(const QColor& color) { _color2 = color; }
+	void setColor(const QColor& color) { _color = color; }
 
 	//! Set smudging pressure for heavy brush
 	void setSmudge(qreal smudge) { Q_ASSERT(smudge>=0 && smudge<=1); _smudge1 = smudge; }
@@ -74,8 +72,7 @@ public:
 	qreal smudge1() const { return _smudge1; }
 	qreal smudge2() const { return _smudge2; }
 
-	const QColor &color1() const { return _color1; }
-	const QColor &color2() const { return _color2; }
+	const QColor &color() const { return _color; }
 
 	void setSpacing(int spacing) { Q_ASSERT(spacing >= 0 && spacing <= 100); _spacing = spacing; }
 	int spacing() const { return _spacing; }
@@ -99,8 +96,6 @@ public:
 	qreal hardness(qreal pressure) const;
 	//! Get interpolated opacity
 	qreal opacity(qreal pressure) const;
-	//! Get interpolated color
-	QColor color(qreal pressure) const;
 	//! Get interpolated smudging pressure
 	qreal smudge(qreal pressure) const;
 	//! Get the dab spacing distance
@@ -120,7 +115,7 @@ private:
 	qreal _hardness1, _hardness2;
 	qreal _opacity1, _opacity2;
 	qreal _smudge1, _smudge2;
-	QColor _color1, _color2;
+	QColor _color;
 	int _spacing;
 	int _resmudge;
 	BlendMode::Mode _blend;
@@ -141,7 +136,7 @@ struct StrokeState {
 	QColor smudgeColor;
 
 	StrokeState() : distance(0), smudgeDistance(0) { }
-	explicit StrokeState(const Brush &b) : distance(0), smudgeDistance(0), smudgeColor(b.color1()) { }
+	explicit StrokeState(const Brush &b) : distance(0), smudgeDistance(0), smudgeColor(b.color()) { }
 };
 
 }

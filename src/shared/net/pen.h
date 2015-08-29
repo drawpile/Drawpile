@@ -55,7 +55,7 @@ public:
 	ToolChange(
 		uint8_t ctx, uint16_t layer,
 		uint8_t blend, uint8_t mode, uint8_t spacing,
-		uint32_t color_h, uint32_t color_l,
+		uint32_t color,
 		uint8_t hard_h, uint8_t hard_l,
 		uint8_t size_h, uint8_t size_l,
 		uint8_t opacity_h, uint8_t opacity_l,
@@ -64,29 +64,28 @@ public:
 		)
 		: Message(MSG_TOOLCHANGE, ctx),
 		_layer(layer), _blend(blend), _mode(mode),
-		_spacing(spacing), _color_h(color_h), _color_l(color_l),
+		_spacing(spacing), _color(color),
 		_hard_h(hard_h), _hard_l(hard_l), _size_h(size_h), _size_l(size_l),
 		_opacity_h(opacity_h), _opacity_l(opacity_l),
 		_smudge_h(smudge_h), _smudge_l(smudge_l), _resmudge(resmudge)
-		{}
+	{}
 
-		static ToolChange *deserialize(uint8_t ctx, const uchar *data, uint len);
-		
-		uint16_t layer() const { return _layer; }
-		uint8_t blend() const { return _blend; }
-		uint8_t mode() const { return _mode; }
-		uint8_t spacing() const { return _spacing; }
-		uint32_t color_h() const { return _color_h; }
-		uint32_t color_l() const { return _color_l; }
-		uint8_t hard_h() const { return _hard_h; }
-		uint8_t hard_l() const { return _hard_l; }
-		uint8_t size_h() const { return _size_h; }
-		uint8_t size_l() const { return _size_l; }
-		uint8_t opacity_h() const { return _opacity_h; }
-		uint8_t opacity_l() const { return _opacity_l; }
-		uint8_t smudge_h() const { return _smudge_h; }
-		uint8_t smudge_l() const { return _smudge_l; }
-		uint8_t resmudge() const { return _resmudge; }
+	static ToolChange *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	uint16_t layer() const { return _layer; }
+	uint8_t blend() const { return _blend; }
+	uint8_t mode() const { return _mode; }
+	uint8_t spacing() const { return _spacing; }
+	uint32_t color() const { return _color; }
+	uint8_t hard_h() const { return _hard_h; }
+	uint8_t hard_l() const { return _hard_l; }
+	uint8_t size_h() const { return _size_h; }
+	uint8_t size_l() const { return _size_l; }
+	uint8_t opacity_h() const { return _opacity_h; }
+	uint8_t opacity_l() const { return _opacity_l; }
+	uint8_t smudge_h() const { return _smudge_h; }
+	uint8_t smudge_l() const { return _smudge_l; }
+	uint8_t resmudge() const { return _resmudge; }
 
 	// The client resends ToolChange only if it has changed since
 	// the last time it was sent. If the ToolChange is undoable,
@@ -103,8 +102,7 @@ private:
 	uint8_t _blend;
 	uint8_t _mode;
 	uint8_t _spacing;
-	uint32_t _color_h;
-	uint32_t _color_l;
+	uint32_t _color;
 	uint8_t _hard_h;
 	uint8_t _hard_l;
 	uint8_t _size_h;
