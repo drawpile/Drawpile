@@ -23,7 +23,6 @@
 #include "../shared/util/passwordhash.h"
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
-#include "../shared/net/snapshot.h"
 
 #include <QDir>
 #include <QRegularExpression>
@@ -101,7 +100,7 @@ SessionDescription Hibernation::getSessionDescriptionById(const QString &id) con
 	return SessionDescription();
 }
 
-SessionState *Hibernation::takeSession(const QString &id)
+Session *Hibernation::takeSession(const QString &id)
 {
 	// Find and remove the session from the list
 	QMutableListIterator<SessionDescription> it(_sessions);
@@ -126,7 +125,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 		return nullptr;
 	}
 
-	SessionState *session = new SessionState(sd.id, reader.hibernationHeader().minorVersion, reader.hibernationHeader().founder);
+	Session *session = new Session(sd.id, reader.hibernationHeader().minorVersion, reader.hibernationHeader().founder);
 
 	// enable session persistence for now to get the flag right
 	session->setPersistenceAllowed(true);
@@ -135,6 +134,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 	session->setPasswordHash(sd.passwordHash);
 
 	// Create initial snapshot point
+#if 0 // TODO
 	session->addSnapshotPoint();
 	protocol::SnapshotPoint &snapshot = session->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>();
 
@@ -159,6 +159,7 @@ SessionState *Hibernation::takeSession(const QString &id)
 
 	if(errors>0)
 		logger::warning() << errors << "invalid message(s) were skipped while de-hibernating" << filename;
+#endif
 
 	reader.close();
 
@@ -168,13 +169,8 @@ SessionState *Hibernation::takeSession(const QString &id)
 	return session;
 }
 
-bool Hibernation::storeSession(const SessionState *session)
+bool Hibernation::storeSession(const Session *session)
 {
-	if(!session->mainstream().hasSnapshot()) {
-		logger::warning() << session << "Unable to hibernate due to lack of snapshot point!";
-		return false;
-	}
-
 	QString filename = QDir(_path).filePath(QString("session%1%2.dphib.gz").arg(session->id().isCustom() ? "." : "-", session->id()));
 
 	recording::Writer writer(filename);
@@ -200,11 +196,8 @@ bool Hibernation::storeSession(const SessionState *session)
 
 	// Write session
 	const protocol::MessageStream &msgs = session->mainstream();
-	const protocol::SnapshotPoint &sp = msgs.snapshotPoint().cast<protocol::SnapshotPoint>();
-	for(const protocol::MessagePtr &msg : sp.substream())
-		writer.recordMessage(msg);
 
-	int idx = msgs.snapshotPointIndex()+1;
+	int idx = msgs.offset();
 	while(msgs.isValidIndex(idx)) {
 		writer.recordMessage(msgs.at(idx));
 		++idx;

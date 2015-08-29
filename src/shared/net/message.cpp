@@ -26,9 +26,9 @@
 #include "control.h"
 #include "layer.h"
 #include "meta.h"
+#include "meta2.h"
 #include "flow.h"
 #include "pen.h"
-#include "snapshot.h"
 #include "undo.h"
 #include "recording.h"
 
@@ -102,26 +102,22 @@ Message *Message::deserialize(const uchar *data, int buflen)
 
 	switch(type) {
 	case MSG_COMMAND: return Command::deserialize(ctx, data, len);
+	case MSG_DISCONNECT: return Disconnect::deserialize(ctx, data, len);
+	case MSG_PING: return Ping::deserialize(ctx, data, len);
+	case MSG_STREAMPOS: return StreamPos::deserialize(ctx, data, len);
 
 	case MSG_USER_JOIN: return UserJoin::deserialize(ctx, data, len);
-	case MSG_USER_ATTR: return UserAttr::deserialize(ctx, data, len);
 	case MSG_USER_LEAVE: return UserLeave::deserialize(ctx, data, len);
+	case MSG_SESSION_OWNER: return SessionOwner::deserialize(ctx, data, len);
+
 	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
-	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
-	case MSG_SNAPSHOT: return SnapshotMode::deserialize(ctx, data, len);
-	case MSG_SNAPSHOTPOINT: return 0; /* this message is for internal use only */
-	case MSG_SESSION_TITLE: return SessionTitle::deserialize(ctx, data, len);
-	case MSG_SESSION_CONFIG: return SessionConf::deserialize(ctx, data, len);
-	case MSG_STREAMPOS: return StreamPos::deserialize(ctx, data, len);
 	case MSG_INTERVAL: return Interval::deserialize(ctx, data, len);
 	case MSG_MOVEPOINTER: return MovePointer::deserialize(ctx, data, len);
 	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
-	case MSG_DISCONNECT: return Disconnect::deserialize(ctx, data, len);
-	case MSG_PING: return Ping::deserialize(ctx, data, len);
+	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
 
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);
-	case MSG_LAYER_COPY: return 0; /* unused: subsumed by LAYER_CREATE */
 	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(ctx, data, len);
 	case MSG_LAYER_RETITLE: return LayerRetitle::deserialize(ctx, data, len);
 	case MSG_LAYER_ORDER: return LayerOrder::deserialize(ctx, data, len);

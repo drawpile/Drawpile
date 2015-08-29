@@ -24,7 +24,7 @@
 
 namespace server {
 
-class SessionState;
+class Session;
 
 class Hibernation : public SessionStore
 {
@@ -47,8 +47,8 @@ public:
 
 	SessionDescription getSessionDescriptionById(const QString &id) const;
 
-	SessionState *takeSession(const QString &id);
-	bool storeSession(const SessionState *session);
+	Session *takeSession(const QString &id);
+	bool storeSession(const Session *session);
 	bool deleteSession(const QString &id);
 
 private:

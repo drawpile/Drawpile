@@ -366,7 +366,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	m_complete = true;
 
 	// Create a new session
-	SessionState *session = m_server->createSession(sessionId, minorVersion, m_client->username());
+	Session *session = m_server->createSession(sessionId, minorVersion, m_client->username());
 
 	session->joinUser(m_client, true);
 
@@ -403,7 +403,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	// Just the username uniqueness check to go, we can wake up the session now.
 	// A freshly de-hibernated session will not have any users, so the last check
 	// will never fail in that case.
-	SessionState *session = m_server->getSessionById(sessionId);
+	Session *session = m_server->getSessionById(sessionId);
 	if(!session) {
 		// The session was just deleted from under us! (or de-hibernation failed)
 		sendError("notFound", "Session just went missing!");

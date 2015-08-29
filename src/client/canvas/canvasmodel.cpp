@@ -49,7 +49,6 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
-	connect(client, &net::Client::sessionTitleChange, this, &CanvasModel::setTitle);
 	connect(client, &net::Client::drawingCommandReceived, this, &CanvasModel::handleDrawingCommand);
 	connect(client, &net::Client::drawingCommandLocal, this, &CanvasModel::handleLocalCommand);
 

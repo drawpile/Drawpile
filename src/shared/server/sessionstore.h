@@ -25,7 +25,7 @@
 namespace server {
 
 struct SessionDescription;
-class SessionState;
+class Session;
 
 /**
  * @brief An abstract base class for session hibernation implementations
@@ -68,14 +68,14 @@ public:
 	 * @param id session ID
 	 * @return newly defrosted session or null if not found
 	 */
-	virtual SessionState *takeSession(const QString &id) =  0;
+	virtual Session *takeSession(const QString &id) =  0;
 
 	/**
 	 * @brief Put a session in non-volatile storage
 	 * @param session
 	 * @return false on error
 	 */
-	virtual bool storeSession(const SessionState *session) = 0;
+	virtual bool storeSession(const Session *session) = 0;
 
 	/**
 	 * @brief Delete the session with the given ID from the store

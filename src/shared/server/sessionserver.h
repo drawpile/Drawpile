@@ -29,7 +29,7 @@ namespace sessionlisting {
 
 namespace server {
 
-class SessionState;
+class Session;
 class Client;
 class SessionStore;
 class IdentityManager;
@@ -168,7 +168,7 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	SessionState *createSession(const SessionId &id, int minorVersion, const QString &founder);
+	Session *createSession(const SessionId &id, int minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions
@@ -194,7 +194,7 @@ public:
 	 * @param id session ID
 	 * @return session or null if not found
 	 */
-	SessionState *getSessionById(const QString &id);
+	Session *getSessionById(const QString &id);
 
 	/**
 	 * @brief Get the total number of users in all sessions
@@ -256,7 +256,7 @@ signals:
 	 * Note. sessionChanged is also emitted for this event.
 	 * @param session
 	 */
-	void sessionCreated(SessionState *session);
+	void sessionCreated(Session *session);
 
 	/**
 	 * @brief Published session information has changed
@@ -285,9 +285,9 @@ signals:
 	void sessionEnded(QString id);
 
 private slots:
-	void moveFromLobby(SessionState *session, Client *client);
+	void moveFromLobby(Session *session, Client *client);
 	void lobbyDisconnectedEvent(Client *client);
-	void userDisconnectedEvent(SessionState *session);
+	void userDisconnectedEvent(Session *session);
 	void cleanupSessions();
 	void refreshSessionAnnouncements();
 	void announceSession(const QUrl &url, const sessionlisting::Session &session);
@@ -295,10 +295,10 @@ private slots:
 	void sessionAnnounced(const sessionlisting::Announcement &listing);
 
 private:
-	void initSession(SessionState *session);
-	void destroySession(SessionState *session);
+	void initSession(Session *session);
+	void destroySession(Session *session);
 
-	QList<SessionState*> _sessions;
+	QList<Session*> _sessions;
 	QList<Client*> _lobby;
 	SessionStore *_store;
 	IdentityManager *_identman;

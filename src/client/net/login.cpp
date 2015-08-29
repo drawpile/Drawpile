@@ -493,34 +493,36 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 		// If in host mode, send initial session settings
 		if(m_mode==HOST) {
-
-			QStringList init;
+			protocol::ServerCommand conf;
+			conf.cmd = "sessionconf";
 
 			if(!m_title.isEmpty())
-				init << "title " + m_title;
+				conf.kwargs["title"] = m_title;
 
 			if(!m_sessionPassword.isEmpty())
-				init << "password " + m_sessionPassword;
+				conf.kwargs["password"] = m_sessionPassword;
 
 			if(m_maxusers>0)
-				init << QString("maxusers %1").arg(m_maxusers);
+				conf.kwargs["maxusers"] =m_maxusers;
 
-			if(!m_allowdrawing)
-				init << "lockdefault on";
+			// TODO
+			//if(!m_allowdrawing)
+				//init << "lockdefault on";
 
-			init << QStringLiteral("locklayerctrl ") + (m_layerctrllock ? "on" : "off");
+			//init << QStringLiteral("locklayerctrl ") + (m_layerctrllock ? "on" : "off");
 
 			if(m_requestPersistent)
-				init << "persistence on";
+				conf.kwargs["persistent"] = true;
 
-			if(m_preserveChat)
-				init << "preservechat on";
+			//if(m_preserveChat)
+			//	init << "preservechat on";
 
-			if(!m_announceUrl.isEmpty())
-				init << "announce_at " + m_announceUrl;
+			// TODO
+			//if(!m_announceUrl.isEmpty())
+			//	init << "announce_at " + m_announceUrl;
 
-			for(const QString msg : init)
-				m_server->sendMessage(protocol::Chat::opCommand(0, msg));
+			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
+			m_server->sendSnapshotMessages(m_initialState);
 		}
 
 		delete _selectorDialog;

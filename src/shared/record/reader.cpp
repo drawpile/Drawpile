@@ -18,7 +18,6 @@
 */
 
 #include "reader.h"
-#include "reader-compat.h"
 #include "util.h"
 #include "../net/recording.h"
 
@@ -289,6 +288,7 @@ MessageRecord Reader::readNext()
 	protocol::Message *message;
 	if(_compat && _formatversion != version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION)) {
 
+#if 0 // TODO
 		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
 		case version32(15, 5):
@@ -320,6 +320,8 @@ MessageRecord Reader::readNext()
 			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
 			break;
 		}
+#endif
+		message = 0;
 	} else {
 		message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
 	}

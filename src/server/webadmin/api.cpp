@@ -212,8 +212,6 @@ QJsonDocument sessionInfo(SessionServer *server, const HttpRequest &req)
 			flags.append(QStringLiteral("op"));
 		if(user.isMod)
 			flags.append(QStringLiteral("mod"));
-		if(user.isLocked)
-			flags.append(QStringLiteral("locked"));
 		if(user.isSecure)
 			flags.append(QStringLiteral("secure"));
 		u["flags"] = flags;

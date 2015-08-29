@@ -23,6 +23,7 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/image.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
@@ -187,8 +188,7 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 	using namespace protocol;
 	case MSG_CANVAS_RESIZE: type = IDX_RESIZE; break;
 
-	case MSG_LAYER_CREATE:
-	case MSG_LAYER_COPY: type = IDX_CREATELAYER; break;
+	case MSG_LAYER_CREATE: type = IDX_CREATELAYER; break;
 
 	case MSG_LAYER_DELETE: type = IDX_DELETELAYER; break;
 	case MSG_PUTIMAGE: type = IDX_PUTIMAGE; break;

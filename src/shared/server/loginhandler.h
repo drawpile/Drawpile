@@ -32,7 +32,7 @@ namespace protocol {
 namespace server {
 
 class Client;
-class SessionState;
+class Session;
 class SessionServer;
 struct SessionDescription;
 

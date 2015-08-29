@@ -31,7 +31,7 @@ class QTcpServer;
 namespace server {
 
 class Client;
-class SessionState;
+class Session;
 class SessionServer;
 class BanList;
 
@@ -80,7 +80,7 @@ private slots:
 	void newClient();
 	void printStatusUpdate();
 	void tryAutoStop();
-	void assignRecording(SessionState *session);
+	void assignRecording(Session *session);
 
 signals:
 	void serverStopped();

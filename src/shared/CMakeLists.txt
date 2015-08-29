@@ -10,8 +10,8 @@ set (
 	net/image.cpp
 	net/annotation.cpp
 	net/control.cpp
-	net/snapshot.cpp
 	net/meta.cpp
+	net/meta2.cpp
 	net/flow.cpp
 	net/undo.cpp
 	net/recording.cpp
@@ -19,7 +19,6 @@ set (
 	net/messagestream.cpp
 	record/writer.cpp
 	record/reader.cpp
-	record/reader-compat.cpp
 	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp

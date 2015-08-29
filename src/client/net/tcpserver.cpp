@@ -23,6 +23,7 @@
 
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/flow.h"
+#include "../shared/net/control.h"
 
 #include <QDebug>
 #include <QSslSocket>
@@ -91,7 +92,12 @@ void TcpServer::sendMessage(protocol::MessagePtr msg)
 void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 {
 	qDebug() << "sending" << msgs.length() << "snapshot messages";
-	_msgqueue->sendSnapshot(msgs);
+	for(protocol::MessagePtr msg : msgs)
+		_msgqueue->send(msg);
+
+	protocol::ServerCommand cmd;
+	cmd.cmd = "init-complete";
+	_msgqueue->send(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }
 
 void TcpServer::handleMessage()

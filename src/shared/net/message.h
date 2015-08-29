@@ -28,20 +28,15 @@ namespace protocol {
  */
 enum MessageType {
 	// Control messages (transparent)
-	MSG_COMMAND,
+	MSG_COMMAND=0,
 	MSG_DISCONNECT,
 	MSG_PING,
 	MSG_STREAMPOS,
 
 	// Meta messages (transparent)
 	MSG_USER_JOIN=32,
-	MSG_USER_ATTR,
 	MSG_USER_LEAVE,
-
-	MSG_SNAPSHOT,
-	MSG_SNAPSHOTPOINT,
-	MSG_SESSION_TITLE,
-	MSG_SESSION_CONFIG,
+	MSG_SESSION_OWNER,
 
 	// Meta messages (opaque)
 	MSG_CHAT=64,
@@ -51,14 +46,15 @@ enum MessageType {
 	MSG_LAYER_ACL,
 
 	// Command messages (opaque)
-	MSG_CANVAS_RESIZE=128,
+	MSG_UNDOPOINT=128,
+	MSG_CANVAS_RESIZE,
 	MSG_LAYER_CREATE,
-	MSG_LAYER_COPY, /* unused: subsumed by LAYER_CREATE */
 	MSG_LAYER_ATTR,
 	MSG_LAYER_RETITLE,
 	MSG_LAYER_ORDER,
 	MSG_LAYER_DELETE,
 	MSG_PUTIMAGE,
+	MSG_FILLRECT,
 	MSG_TOOLCHANGE,
 	MSG_PEN_MOVE,
 	MSG_PEN_UP,
@@ -66,9 +62,7 @@ enum MessageType {
 	MSG_ANNOTATION_RESHAPE,
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
-	MSG_UNDOPOINT,
-	MSG_UNDO,
-	MSG_FILLRECT
+	MSG_UNDO=255,
 };
 
 enum MessageUndoState {

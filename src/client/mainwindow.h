@@ -138,7 +138,7 @@ class MainWindow : public QMainWindow {
 		void connecting();
 		void loggedin(bool join);
 		void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
-		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat);
+		void sessionConfChanged(const QJsonObject &config);
 
 		void updateLockWidget();
 		void setRecorderStatus(bool on);

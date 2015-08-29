@@ -365,9 +365,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_toolctrl, &tools::ToolController::activeAnnotationChanged, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelectionId);
 
 	// Client command receive signals
-	connect(m_client, &net::Client::needSnapshot, [this](bool forceNew) {
+	connect(m_client, &net::Client::needSnapshot, [this]() {
 		if(m_canvas) 
-			m_client->sendSnapshot(m_canvas->generateSnapshot(forceNew));
+			m_client->sendInitialSnapshot(m_canvas->generateSnapshot(true));
 		else
 			qWarning("Server requested snapshot, but canvas is not yet initialized!");
 	});
@@ -389,7 +389,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_chatbox, SIGNAL(opCommand(QString)), m_client, SLOT(sendOpCommand(QString)));
 
 	connect(m_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
-	connect(m_client, SIGNAL(sessionConfChange(bool,bool,bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool)));
+	connect(m_client, &net::Client::sessionConfChange, this, &MainWindow::sessionConfChanged);
 	connect(m_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 	connect(m_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
@@ -555,7 +555,7 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 	minsizelimit *= 2;
 
 	m_canvas->stateTracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
-	m_client->sendLocalInit(init);
+	m_client->sendInitialSnapshot(init);
 
 	QApplication::restoreOverrideCursor();
 
@@ -1347,6 +1347,8 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl());
+	login->setInitialState(m_canvas->generateSnapshot(false));
+
 	m_client->connectToServer(login);
 }
 
@@ -1535,13 +1537,20 @@ void MainWindow::loggedin(bool join)
 }
 
 
-void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat)
+void MainWindow::sessionConfChanged(const QJsonObject &config)
 {
+	if(config.contains("closed"))
+		getAction("denyjoins")->setChecked(config["closed"].toBool());
+	if(config.contains("title"))
+		m_canvas->setTitle(config["title"].toString());
+
+#if 0 // TODO
 	getAction("locksession")->setChecked(locked);
 	getAction("locklayerctrl")->setChecked(layerctrllocked);
-	getAction("denyjoins")->setChecked(closed);
+
 	_dock_layers->setControlsLocked(layerctrllocked);
 	_chatbox->setPreserveMode(preservechat);
+#endif
 }
 
 void MainWindow::updateLockWidget()

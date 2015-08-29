@@ -28,7 +28,7 @@
 
 namespace server {
 
-class SessionState;
+class Session;
 class Client;
 
 /**
@@ -41,7 +41,6 @@ struct UserDescription {
 
 	bool isOp;
 	bool isMod;
-	bool isLocked;
 	bool isSecure;
 
 	UserDescription();
@@ -106,7 +105,7 @@ struct SessionDescription {
 	QString hibernationFile;
 
 	SessionDescription();
-	SessionDescription(const SessionState &session, bool getExtended=false, bool getUsers=false);
+	SessionDescription(const Session &session, bool getExtended=false, bool getUsers=false);
 };
 
 /**

@@ -77,7 +77,7 @@ QList<SessionDescription> SessionServer::sessions() const
 {
 	QList<SessionDescription> descs;
 
-	foreach(const SessionState *s, _sessions)
+	foreach(const Session *s, _sessions)
 		descs.append(SessionDescription(*s));
 
 	if(_store)
@@ -86,12 +86,12 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-SessionState *SessionServer::createSession(const SessionId &id, int minorVersion, const QString &founder)
+Session *SessionServer::createSession(const SessionId &id, int minorVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isEmpty());
 	Q_ASSERT(getSessionDescriptionById(id.id()).id.isEmpty());
 
-	SessionState *session = new SessionState(id, minorVersion, founder, this);
+	Session *session = new Session(id, minorVersion, founder, this);
 
 	initSession(session);
 
@@ -100,18 +100,18 @@ SessionState *SessionServer::createSession(const SessionId &id, int minorVersion
 	return session;
 }
 
-void SessionServer::initSession(SessionState *session)
+void SessionServer::initSession(Session *session)
 {
 	session->setHistoryLimit(_historyLimit);
 	session->setPersistenceAllowed(allowPersistentSessions());
 	session->setWelcomeMessage(welcomeMessage());
 
-	connect(session, &SessionState::userConnected, this, &SessionServer::moveFromLobby);
-	connect(session, &SessionState::userDisconnected, this, &SessionServer::userDisconnectedEvent);
-	connect(session, &SessionState::sessionAttributeChanged, [this](SessionState *ses) { emit sessionChanged(SessionDescription(*ses)); });
+	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
+	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
+	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(SessionDescription(*ses)); });
 
-	connect(session, &SessionState::requestAnnouncement, this, &SessionServer::announceSession);
-	connect(session, &SessionState::requestUnlisting, this, &SessionServer::unlistSession);
+	connect(session, &Session::requestAnnouncement, this, &SessionServer::announceSession);
+	connect(session, &Session::requestUnlisting, this, &SessionServer::unlistSession);
 
 	_sessions.append(session);
 
@@ -126,7 +126,7 @@ void SessionServer::initSession(SessionState *session)
  *
  * @param session
  */
-void SessionServer::destroySession(SessionState *session)
+void SessionServer::destroySession(Session *session)
 {
 	Q_ASSERT(_sessions.contains(session));
 
@@ -150,7 +150,7 @@ void SessionServer::destroySession(SessionState *session)
 
 SessionDescription SessionServer::getSessionDescriptionById(const QString &id, bool getExtended, bool getUsers) const
 {
-	for(SessionState *s : _sessions) {
+	for(Session *s : _sessions) {
 		if(s->id() == id)
 			return SessionDescription(*s, getExtended, getUsers);
 	}
@@ -161,15 +161,15 @@ SessionDescription SessionServer::getSessionDescriptionById(const QString &id, b
 	return SessionDescription();
 }
 
-SessionState *SessionServer::getSessionById(const QString &id)
+Session *SessionServer::getSessionById(const QString &id)
 {
-	for(SessionState *s : _sessions) {
+	for(Session *s : _sessions) {
 		if(s->id() == id)
 			return s;
 	}
 
 	if(_store) {
-		SessionState *session = _store->takeSession(id);
+		Session *session = _store->takeSession(id);
 		if(session) {
 			session->setParent(this);
 			initSession(session);
@@ -184,7 +184,7 @@ SessionState *SessionServer::getSessionById(const QString &id)
 int SessionServer::totalUsers() const
 {
 	int count = _lobby.size();
-	for(const SessionState * s : _sessions)
+	for(const Session * s : _sessions)
 		count += s->userCount();
 	return count;
 }
@@ -209,7 +209,7 @@ bool SessionServer::killSession(const QString &id)
 {
 	logger::info() << "Killing session" << id;
 
-	for(SessionState *s : _sessions) {
+	for(Session *s : _sessions) {
 		if(s->id() == id) {
 			s->killSession();
 			if(s->userCount()==0)
@@ -231,7 +231,7 @@ bool SessionServer::kickUser(const QString &sessionId, int userId)
 {
 	logger::info() << "Kicking user" << userId << "from" << sessionId;
 
-	SessionState *session = getSessionById(sessionId);
+	Session *session = getSessionById(sessionId);
 	if(!session)
 		return false;
 	
@@ -249,7 +249,7 @@ void SessionServer::stopAll()
 		c->disconnectShutdown();
 
 	auto sessions = _sessions;
-	for(SessionState *s : sessions) {
+	for(Session *s : sessions) {
 		if(_store)
 			s->setHibernatable(s->isPersistent() || _store->storeAllSessions());
 		s->stopRecording();
@@ -263,7 +263,7 @@ void SessionServer::stopAll()
 bool SessionServer::wall(const QString &message, const QString &sessionId)
 {
 	bool found = false;
-	for(SessionState *s : _sessions) {
+	for(Session *s : _sessions) {
 		if(sessionId.isNull() || s->id() == sessionId) {
 			s->wall(message);
 			found = true;
@@ -293,7 +293,7 @@ void SessionServer::addClient(Client *client)
  * @param session
  * @param client
  */
-void SessionServer::moveFromLobby(SessionState *session, Client *client)
+void SessionServer::moveFromLobby(Session *session, Client *client)
 {
 	logger::debug() << client << "moved from lobby to" << session;
 	Q_ASSERT(_lobby.contains(client));
@@ -327,23 +327,17 @@ void SessionServer::lobbyDisconnectedEvent(Client *client)
  * in case it needs to be closed.
  * @param session
  */
-void SessionServer::userDisconnectedEvent(SessionState *session)
+void SessionServer::userDisconnectedEvent(Session *session)
 {
 	bool delSession = false;
 	if(session->userCount()==0) {
 		logger::debug() << session << "Last user left";
 
-		bool hasSnapshot = session->mainstream().hasSnapshot();
-
 		// A non-persistent session is deleted when the last user leaves
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
-		if(!hasSnapshot || !session->isPersistent()) {
-			if(hasSnapshot)
-				logger::info() << session << "Closing non-persistent session";
-			else
-				logger::info() << session << "Closing persistent session due to lack of snapshot point!";
-
-			logger::info() << session << "History size was" << session->mainstream().totalLengthInBytes() << "bytes";
+		if(!session->isPersistent()) {
+			logger::info() << session << "Closing non-persistent session";
+			logger::info() << session << "History size was" << session->mainstream().lengthInBytes() << "bytes";
 			delSession = true;
 		}
 
@@ -365,9 +359,9 @@ void SessionServer::cleanupSessions()
 	if(_allowPersistentSessions && _expirationTime>0) {
 		QDateTime now = QDateTime::currentDateTime();
 
-		QList<SessionState*> expirelist;
+		QList<Session*> expirelist;
 
-		for(SessionState *s : _sessions) {
+		for(Session *s : _sessions) {
 			if(s->userCount()==0) {
 				if(s->lastEventTime().msecsTo(now) > _expirationTime) {
 					expirelist << s;
@@ -375,7 +369,7 @@ void SessionServer::cleanupSessions()
 			}
 		}
 
-		for(SessionState *s : expirelist) {
+		for(Session *s : expirelist) {
 			logger::info() << s << "Vacant session expired. Uptime was" << s->uptime();
 
 			if(_store && _store->autoStore() && s->isPersistent())
@@ -388,7 +382,7 @@ void SessionServer::cleanupSessions()
 
 void SessionServer::refreshSessionAnnouncements()
 {
-	for(SessionState *s : _sessions) {
+	for(Session *s : _sessions) {
 		if(s->publicListing().listingId>0) {
 			_publicListingApi->refreshSession(s->publicListing(), {
 				QString(),
@@ -418,7 +412,7 @@ void SessionServer::unlistSession(const sessionlisting::Announcement &listing)
 
 void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing)
 {
-	SessionState *s = getSessionById(listing.id);
+	Session *s = getSessionById(listing.id);
 	if(!s) {
 		logger::warning() << "Announced non-existent session" << listing.id;
 		return;
@@ -430,7 +424,7 @@ void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing
 void SessionServer::setWelcomeMessage(const QString &message)
 {
 	_welcomeMessage = message;
-	for(SessionState *s : _sessions)
+	for(Session *s : _sessions)
 		s->setWelcomeMessage(message);
 }
 

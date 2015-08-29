@@ -173,7 +173,6 @@ bool isRecordableMeta(protocol::MessageType type) {
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
 	case MSG_CHAT:
-	case MSG_SESSION_TITLE:
 	case MSG_INTERVAL:
 	case MSG_MOVEPOINTER:
 	case MSG_MARKER:

@@ -137,10 +137,6 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	const QSize imgsize = m_session->layerStack()->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
-	// Less important, but it's nice to see it straight away
-	if(!m_session->title().isEmpty())
-		msgs.append((MessagePtr(new protocol::SessionTitle(1, m_session->title()))));
-
 	// Create layers
 	for(int i=0;i<m_session->layerStack()->layers();++i) {
 		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);

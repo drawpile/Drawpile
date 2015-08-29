@@ -17,56 +17,59 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "meta2.h"
+
 #include <cstring>
 #include <QtEndian>
-#include "meta.h"
 
 namespace protocol {
 
-UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
+Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<2)
-		return 0;
-	return new UserJoin(ctx, *(data+0), QByteArray((const char*)data+1, len-1));
+		return nullptr;
+	return new Chat(ctx, *(data+0), QByteArray((const char*)data+1, len-1));
 }
 
-int UserJoin::serializePayload(uchar *data) const
+int Chat::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = m_flags;
-	memcpy(ptr, m_name.constData(), m_name.length());
-	ptr += m_name.length();
+	*(ptr++) = flags();
+	memcpy(ptr, m_msg.constData(), m_msg.length());
+	ptr += m_msg.length();
 	return ptr - data;
 }
 
-int UserJoin::payloadLength() const
+int Chat::payloadLength() const
 {
-	return 1 + m_name.length();
+	return 1 + m_msg.length();
 }
 
-SessionOwner *SessionOwner::deserialize(uint8_t ctx, const uchar *data, int len)
+MovePointer *MovePointer::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len>255)
+	if(len!=9)
 		return nullptr;
-
-	QList<uint8_t> ids;
-	ids.reserve(len);
-	for(int i=0;i<len;++i)
-		ids.append(data[i]);
-
-	return new SessionOwner(ctx, ids);
+	return new MovePointer(
+		ctx,
+		qFromBigEndian<quint32>(data+0),
+		qFromBigEndian<quint32>(data+4),
+		*(data+8)
+	);
 }
 
-int SessionOwner::serializePayload(uchar *data) const
+int MovePointer::payloadLength() const
 {
-	for(int i=0;i<m_ids.size();++i)
-		data[i] = m_ids[i];
-	return m_ids.size();
+	return 2*4 + 1;
 }
 
-int SessionOwner::payloadLength() const
+int MovePointer::serializePayload(uchar *data) const
 {
-	return m_ids.size();
+	uchar *ptr = data;
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
+	*(ptr++) = _persistence;
+
+	return ptr-data;
 }
 
 }

@@ -133,6 +133,12 @@ public:
 	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
 
 	/**
+	 * @brief Set the initial session content to upload to the server
+	 * @param msgs
+	 */
+	void setInitialState(const QList<protocol::MessagePtr> &msgs) { m_initialState = msgs; }
+
+	/**
 	 * @brief Set session announcement URL
 	 */
 	void setAnnounceUrl(const QString &url) { m_announceUrl = url; }
@@ -233,6 +239,7 @@ private:
 	bool m_requestPersistent;
 	bool m_preserveChat;
 	QString m_announceUrl;
+	QList<protocol::MessagePtr> m_initialState;
 
 	// Process state
 	TcpServer *m_server;

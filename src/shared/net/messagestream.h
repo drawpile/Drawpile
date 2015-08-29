@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@ public:
 	 *
 	 * @return index of first stored message
 	 */
-	int offset() const { return _offset; }
+	int offset() const { return m_offset; }
 
 	/**
 	 * @brief Get the end index of the stream
 	 * @return
 	 */
-	int end() const { return _offset + _messages.size(); }
+	int end() const { return m_offset + m_messages.size(); }
 
 	/**
 	 * @brief Check if a message at the given index exists in this stream
@@ -57,56 +57,15 @@ public:
 	 */
 	bool isValidIndex(int i) const { return i >= offset() && i < end(); }
 
-	MessagePtr at(int pos) { return _messages.at(pos-_offset); }
+	MessagePtr at(int pos) { return m_messages.at(pos-m_offset); }
 
-	const MessagePtr at(int pos) const { return _messages.at(pos-_offset); }
+	const MessagePtr at(int pos) const { return m_messages.at(pos-m_offset); }
 
 	/**
 	 * @brief Add a new command to the stream
 	 * @param msg command to add
 	 */
 	void append(MessagePtr msg);
-
-	/**
-	 * @brief Create a new snapshot point
-	 * @pre previous snapshot point must be complete
-	 */
-	void addSnapshotPoint();
-
-	/**
-	 * @brief Abandon the latest snapshot point
-	 *
-	 * Snapshot pointer is reverted to the previous un-abandoned snapshot point.
-	 * If none exists, the pointer will point to an invalid index.
-	 */
-	void abandonSnapshotPoint();
-
-	/**
-	 * @brief Does this stream contain a snapshot
-	 *
-	 * @return true if this stream contains a snapshot
-	 */
-	bool hasSnapshot() const { return isValidIndex(_snapshotpointer); }
-
-	/**
-	 * @brief Get the latest snapshot point
-	 * @return snapshot point
-	 * @pre hasSnapshot() == true
-	 */
-	MessagePtr snapshotPoint() const { return at(_snapshotpointer); }
-
-	/**
-	 * @brief Get the index to the snapshot point
-	 * @return snapshot point index
-	 * @pre hasSnapshot() == true
-	 */
-	int snapshotPointIndex() const { return _snapshotpointer; }
-
-	/**
-	 * @brief remove all messages before the last complete snapshot point
-	 * @return the number of messages removed
-	 */
-	int cleanup();
 
 	/**
 	 * @brief Clean up old messages
@@ -131,22 +90,15 @@ public:
 	 *
 	 * This returns the length of the serialized messages, not the in-memory
 	 * representation.
-	 * Note. Snapshot point is not included.
 	 * @return (serialized) length in bytes
 	 */
-	uint lengthInBytes() const { return _bytes; }
-
-	/**
-	 * @brief Get the length of the whole message stream in bytes
-	 * @return (serialized) length in bytes, snapshot point included
-	 */
-	uint totalLengthInBytes() const;
+	uint lengthInBytes() const { return m_bytes; }
 
 	/**
 	 * @brief return the whole stream as a list
 	 * @return list of messages
 	 */
-	QList<MessagePtr> toList() const { return _messages; }
+	QList<MessagePtr> toList() const { return m_messages; }
 
 	/**
 	 * @brief return a filtered copy of the stream as a list, containing only the command stream messages.
@@ -155,10 +107,9 @@ public:
 	QList<MessagePtr> toCommandList() const;
 
 private:
-	QList<MessagePtr> _messages;
-	int _offset;
-	int _snapshotpointer;
-	uint _bytes;
+	QList<MessagePtr> m_messages;
+	int m_offset;
+	uint m_bytes;
 };
 
 }

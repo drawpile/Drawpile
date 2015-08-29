@@ -27,7 +27,7 @@
 namespace server {
 
 UserDescription::UserDescription()
-	: id(0), isOp(false), isLocked(false), isSecure(false)
+	: id(0), isOp(false), isMod(false), isSecure(false)
 {
 }
 
@@ -37,7 +37,6 @@ UserDescription::UserDescription(const Client &client)
 	  address(client.peerAddress()),
 	  isOp(client.isOperator()),
 	  isMod(client.isModerator()),
-	  isLocked(client.isUserLocked()),
 	  isSecure(client.isSecure())
 {
 }
@@ -64,7 +63,7 @@ SessionDescription::SessionDescription()
 {
 }
 
-SessionDescription::SessionDescription(const SessionState &session, bool getExtended, bool getUsers)
+SessionDescription::SessionDescription(const Session &session, bool getExtended, bool getUsers)
 	: id(session.id()),
 	  protoMinor(session.minorProtocolVersion()),
 	  userCount(session.userCount()),
