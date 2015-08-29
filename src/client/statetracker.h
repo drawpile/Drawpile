@@ -236,6 +236,8 @@ signals:
 	void myAnnotationCreated(int id);
 	void layerAutoselectRequest(int);
 
+	void retconned();
+
 	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
 	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);

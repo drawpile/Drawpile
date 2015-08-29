@@ -232,6 +232,11 @@ void Client::sendLayerReorder(const QList<uint16_t> &ids)
 	sendCommand(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
 }
 
+void Client::forgetToolChange()
+{
+	_lastToolCtx = drawingboard::ToolContext();
+}
+
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
 	if(ctx != _lastToolCtx) {

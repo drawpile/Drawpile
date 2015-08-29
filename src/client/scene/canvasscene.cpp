@@ -77,6 +77,8 @@ void CanvasScene::initCanvas(net::Client *client)
 	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
 
+	connect(_statetracker, &StateTracker::retconned, client, &net::Client::forgetToolChange);
+
 	connect(_image->image(), SIGNAL(resized(int,int,QSize)), this, SLOT(handleCanvasResize(int,int,QSize)));
 	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image->image(), SLOT(setLayerHidden(int,bool)));
