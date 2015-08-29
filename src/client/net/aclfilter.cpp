@@ -123,9 +123,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		break;
 
 	case MSG_PUTIMAGE:
-		return m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId());
+		return !m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId());
 	case MSG_FILLRECT:
-		return m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId());
+		return !m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId());
 
 	case MSG_PEN_MOVE:
 		return !m_layers->isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
