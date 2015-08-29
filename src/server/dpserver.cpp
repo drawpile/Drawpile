@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
 #include "configfile.h"
 #include "sslserver.h"
 #include "../shared/util/logger.h"
-
-#ifdef HAVE_WEBADMIN
-#include "webadmin/webadmin.h"
-#endif
 
 #include <cstdio>
 
@@ -149,25 +145,6 @@ int main(int argc, char *argv[]) {
 	// --auto-hibernate
 	QCommandLineOption autoHibernateOption("auto-hibernate", "Hibernate sessions on expiration");
 	parser.addOption(autoHibernateOption);
-
-#ifdef HAVE_WEBADMIN
-	// --web-admin-port <port>
-	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port", "port", "0");
-	parser.addOption(webadminPortOption);
-
-	// --web-admin-app <root>
-	QCommandLineOption webadminRootOption("web-admin-app", "Web admin app root path", "root");
-	parser.addOption(webadminRootOption);
-
-	// --web-admin-auth <user:password>
-	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password", "user:password");
-	parser.addOption(webadminAuthOption);
-
-	// --web-admin-access <address/subnet>
-	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask", "address/subnet|all");
-	parser.addOption(webadminAccessOption);
-
-#endif
 
 #ifndef NDEBUG
 	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
@@ -337,29 +314,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-#ifdef HAVE_WEBADMIN
-	server::Webadmin webadmin;
-	int webadminPort = cfgfile.override(parser, webadminPortOption).toInt();
-
-	{
-		QString root = cfgfile.override(parser, webadminRootOption).toString();
-		if(!root.isEmpty())
-			webadmin.setWebappRoot(root);
-
-		QString auth = cfgfile.override(parser, webadminAuthOption).toString();
-		if(!auth.isEmpty())
-			webadmin.setBasicAuth(auth);
-
-		QString access = cfgfile.override(parser, webadminAccessOption).toString();
-		if(!access.isEmpty()) {
-			if(!webadmin.setAccessSubnet(access)) {
-				logger::error() << "invalid subnet:" << access;
-				return 1;
-			}
-		}
-	}
-#endif
-
 #ifndef NDEBUG
 	{
 		uint lag = cfgfile.override(parser, lagOption).toUInt();
@@ -416,12 +370,6 @@ int main(int argc, char *argv[]) {
 			if(!server->start(port, address))
 				return 1;
 
-#ifdef HAVE_WEBADMIN
-			if(webadminPort>0) {
-				webadmin.setSessions(server->sessionServer());
-				webadmin.start(webadminPort);
-			}
-#endif
 		} else {
 			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {

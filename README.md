@@ -37,7 +37,6 @@ Server dependencies:
 * Qt 5.4 or newer (QtCore and QtNetwork only)
 * [KF5 KArchive]
 * libsystemd (optional)
-* libmicrohttpd (optional)
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
