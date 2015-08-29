@@ -1792,12 +1792,12 @@
     <message>
         <location filename="../loader.cpp" line="49"/>
         <source>Background</source>
-        <translation>背面</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="50"/>
         <source>Foreground</source>
-        <translation>前面</translation>
+        <translation>前景</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="68"/>
@@ -1940,7 +1940,7 @@
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="95"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>経過時間</translation>
     </message>
 </context>
 <context>
@@ -3093,7 +3093,7 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="90"/>
         <source>Solo</source>
-        <translation type="unfinished"></translation>
+        <translation>ソロ</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="94"/>
@@ -3108,7 +3108,7 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="301"/>
         <source>Mode:</source>
-        <translation>モード:</translation>
+        <translation>表示モード:</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="326"/>
@@ -3253,11 +3253,11 @@
         <location filename="../net/login.cpp" line="153"/>
         <location filename="../net/login.cpp" line="164"/>
         <location filename="../net/login.cpp" line="234"/>
-        <location filename="../net/login.cpp" line="335"/>
-        <location filename="../net/login.cpp" line="384"/>
-        <location filename="../net/login.cpp" line="446"/>
-        <location filename="../net/login.cpp" line="525"/>
-        <location filename="../net/login.cpp" line="571"/>
+        <location filename="../net/login.cpp" line="338"/>
+        <location filename="../net/login.cpp" line="387"/>
+        <location filename="../net/login.cpp" line="449"/>
+        <location filename="../net/login.cpp" line="528"/>
+        <location filename="../net/login.cpp" line="574"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
@@ -3277,108 +3277,108 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="286"/>
+        <location filename="../net/login.cpp" line="289"/>
         <source>This server does not allow guest logins</source>
         <translation>このサーバーはゲストログインを許可していません</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="288"/>
+        <location filename="../net/login.cpp" line="291"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
         <translation>&quot;%1&quot; としてログインするにはパスワードが必要です</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="347"/>
+        <location filename="../net/login.cpp" line="350"/>
         <source>Password is needed to host a session</source>
         <translation>セッションをホストするにはパスワードが必要です</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="347"/>
+        <location filename="../net/login.cpp" line="350"/>
         <source>Enter hosting password</source>
         <translation>ホスト用パスワードを入力</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="416"/>
+        <location filename="../net/login.cpp" line="419"/>
         <source>Session does not exist yet!</source>
         <translation>セッションがまだ存在していません！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="495"/>
+        <location filename="../net/login.cpp" line="498"/>
         <source>Session for a different Drawpile version in progress!</source>
         <translation>異なるバージョンの Drawpile によるセッションが実行中です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="579"/>
+        <location filename="../net/login.cpp" line="582"/>
         <source>Session is password protected</source>
         <translation>セッションはパスワード保護されています</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="579"/>
+        <location filename="../net/login.cpp" line="582"/>
         <source>Enter session password</source>
         <translation>セッションのパスワードを入力してください</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="666"/>
-        <location filename="../net/login.cpp" line="686"/>
+        <location filename="../net/login.cpp" line="669"/>
+        <location filename="../net/login.cpp" line="689"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="669"/>
+        <location filename="../net/login.cpp" line="672"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>信頼済みサーバーの証明書が更新されました！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="700"/>
+        <location filename="../net/login.cpp" line="703"/>
         <source>The certificate of this server has changed!</source>
         <translation>このサーバーの証明書が更新されました！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="702"/>
+        <location filename="../net/login.cpp" line="705"/>
         <source>Continue</source>
         <translation>続行</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="747"/>
+        <location filename="../net/login.cpp" line="750"/>
         <source>Cancelled</source>
         <translation>キャンセルしました</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="756"/>
+        <location filename="../net/login.cpp" line="759"/>
         <source>Session not found!</source>
         <translation>セッションが見つかりません！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="758"/>
+        <location filename="../net/login.cpp" line="761"/>
         <source>Incorrect password!</source>
         <translation>パスワードが違います！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="760"/>
+        <location filename="../net/login.cpp" line="763"/>
         <source>Invalid username!</source>
         <translation>無効なユーザー名です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="764"/>
+        <location filename="../net/login.cpp" line="767"/>
         <source>Session is closed!</source>
         <translation>セッションは閉じられています！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="766"/>
+        <location filename="../net/login.cpp" line="769"/>
         <source>This username has been banned!</source>
         <translation>このユーザー名は BAN されました！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="768"/>
+        <location filename="../net/login.cpp" line="771"/>
         <source>Session ID already in use!</source>
         <translation>セッション ID は使用中です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="762"/>
+        <location filename="../net/login.cpp" line="765"/>
         <source>Username already taken!</source>
         <translation>ユーザー名は既に取得されています！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="770"/>
+        <location filename="../net/login.cpp" line="773"/>
         <source>Unknown error (%1)</source>
         <translation>不明なエラー (%1)</translation>
     </message>
@@ -3564,7 +3564,7 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="104"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>経過時間</translation>
     </message>
 </context>
 <context>
