@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,10 +21,6 @@
 
 #include <QAbstractListModel>
 #include <QList>
-
-namespace protocol {
-	class UserAttr;
-}
 
 namespace net {
 
@@ -57,6 +53,7 @@ class UserListModel : public QAbstractListModel {
 
 		void addUser(const User &user);
 		void updateOperators(const QList<uint8_t> ids);
+		void updateLocks(const QList<uint8_t> locks);
 		void removeUser(int id);
 		void clearUsers();
 
@@ -78,8 +75,11 @@ class UserListModel : public QAbstractListModel {
 		 */
 		QString getUsername(int id) const;
 
-		//! Get a list user's with operator privileges
+		//! Get a list of users with operator privileges
 		QList<uint8_t> operatorList() const;
+
+		//! Get a list of users who are locked
+		QList<uint8_t> lockList() const;
 
 	private:
 		QVector<User> m_users;

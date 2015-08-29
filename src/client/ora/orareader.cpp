@@ -22,7 +22,7 @@
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
-#include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "net/utils.h"
 #include "utils/archive.h"
 

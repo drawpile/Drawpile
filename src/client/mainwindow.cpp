@@ -97,6 +97,7 @@
 #include "net/login.h"
 #include "net/serverthread.h"
 #include "net/layerlist.h"
+#include "net/aclfilter.h"
 
 #include "tools/toolcontroller.h"
 
@@ -388,10 +389,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_chatbox, SIGNAL(message(QString,bool,bool)), m_client, SLOT(sendChat(QString,bool,bool)));
 	connect(_chatbox, SIGNAL(opCommand(QString)), m_client, SLOT(sendOpCommand(QString)));
 
-	connect(m_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
+	connect(m_client->aclFilter(), &net::AclFilter::localOpChanged, this, &MainWindow::setOperatorMode);
 	connect(m_client, &net::Client::sessionConfChange, this, &MainWindow::sessionConfChanged);
-	connect(m_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
-	connect(m_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
+	connect(m_client->aclFilter(), &net::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
+	connect(m_client, &net::Client::layerVisibilityChange, this, &MainWindow::updateLockWidget);
 
 	// Network status changes
 	connect(m_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
@@ -473,6 +474,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::initCanvas()
 {
+	delete m_canvas;
+
 	m_canvas = new canvas::CanvasModel(m_client, this);
 	_canvasscene->initCanvas(m_canvas);
 
@@ -1545,17 +1548,15 @@ void MainWindow::sessionConfChanged(const QJsonObject &config)
 		m_canvas->setTitle(config["title"].toString());
 
 #if 0 // TODO
-	getAction("locksession")->setChecked(locked);
-	getAction("locklayerctrl")->setChecked(layerctrllocked);
-
-	_dock_layers->setControlsLocked(layerctrllocked);
 	_chatbox->setPreserveMode(preservechat);
 #endif
 }
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = m_client->isLocked() || _dock_layers->isCurrentLayerLocked();
+	getAction("locksession")->setChecked(m_client->aclFilter()->isSessionLocked());
+
+	bool locked = m_client->aclFilter()->isLocked() || _dock_layers->isCurrentLayerLocked();
 	if(locked) {
 		_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
 		_lockstatus->setToolTip(tr("Board is locked"));
@@ -2484,6 +2485,8 @@ void MainWindow::setupActions()
 	connect(locksession, SIGNAL(triggered(bool)), m_client, SLOT(sendLockSession(bool)));
 	connect(locklayerctrl, SIGNAL(triggered(bool)), m_client, SLOT(sendLockLayerControls(bool)));
 	connect(closesession, SIGNAL(triggered(bool)), m_client, SLOT(sendCloseSession(bool)));
+
+	connect(m_client->aclFilter(), &net::AclFilter::layerControlLockChanged, locklayerctrl, &QAction::setChecked);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);

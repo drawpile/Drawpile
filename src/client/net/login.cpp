@@ -27,6 +27,7 @@
 
 #include "../shared/net/control.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -503,25 +504,31 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				conf.kwargs["password"] = m_sessionPassword;
 
 			if(m_maxusers>0)
-				conf.kwargs["maxusers"] =m_maxusers;
-
-			// TODO
-			//if(!m_allowdrawing)
-				//init << "lockdefault on";
-
-			//init << QStringLiteral("locklayerctrl ") + (m_layerctrllock ? "on" : "off");
+				conf.kwargs["maxusers"] = m_maxusers;
 
 			if(m_requestPersistent)
 				conf.kwargs["persistent"] = true;
 
+			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
+
+			uint16_t lockflags = 0;
+
+			if(!m_allowdrawing)
+				lockflags |= protocol::SessionACL::LOCK_DEFAULT;
+
+			if(m_layerctrllock)
+				lockflags |= protocol::SessionACL::LOCK_LAYERCTRL;
+
+			if(lockflags)
+				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
+
+			// TODO
 			//if(m_preserveChat)
 			//	init << "preservechat on";
 
-			// TODO
 			//if(!m_announceUrl.isEmpty())
 			//	init << "announce_at " + m_announceUrl;
 
-			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
 			m_server->sendSnapshotMessages(m_initialState);
 		}
 

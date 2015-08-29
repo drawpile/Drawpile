@@ -29,7 +29,7 @@
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
-#include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "../shared/net/image.h"
 
 #include <QDebug>

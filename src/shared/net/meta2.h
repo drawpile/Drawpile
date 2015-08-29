@@ -19,9 +19,10 @@
 #ifndef DP_NET_META_OPAQUE_H
 #define DP_NET_META_OPAQUE_H
 
-#include <QString>
-
 #include "message.h"
+
+#include <QString>
+#include <QList>
 
 namespace protocol {
 
@@ -103,6 +104,93 @@ private:
 	int32_t _x;
 	int32_t _y;
 	uint8_t _persistence;
+};
+
+/**
+ * @brief Set user specific locks
+ *
+ * This is an opaque meta command that contains a list of users to be locked.
+ * It can only be sent by session operators.
+ */
+class UserACL : public Message {
+public:
+	UserACL(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_USER_ACL, ctx), m_ids(ids) { }
+
+	static UserACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	bool isOpCommand() const { return true; }
+
+	QList<uint8_t> ids() const { return m_ids; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	QList<uint8_t> m_ids;
+};
+
+/**
+ * @brief Change layer access control list
+ *
+ * This is an opaque meta command. It is used to set the general layer lock
+ * as well as give exclusive access to selected users.
+ */
+class LayerACL : public Message {
+public:
+	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
+		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
+	{}
+
+	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	bool isOpCommand() const { return true; } // TODO if LOCK_OWNLAYERS is set, users can call this on their own layers
+
+	uint16_t id() const { return _id; }
+	uint8_t locked() const { return _locked; }
+	const QList<uint8_t> exclusive() const { return _exclusive; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint16_t _id;
+	uint8_t _locked;
+	QList<uint8_t> _exclusive;
+};
+
+/**
+ * @brief Change session wide access control settings
+ *
+ * This is an opaque meta command.
+ */
+class SessionACL : public Message {
+public:
+	static const uint16_t LOCK_SESSION = 0x01;   // General session-wide lock (locks even operators)
+	static const uint16_t LOCK_DEFAULT = 0x02;   // TODO how does this work?
+	static const uint16_t LOCK_LAYERCTRL = 0x04; // Layer controls are limited to session operators
+	static const uint16_t LOCK_OWNLAYERS = 0x08; // Users can only delete/adjust their own layers. (May set layer ACLs too)
+
+	SessionACL(uint8_t ctx, uint16_t flags) : Message(MSG_SESSION_ACL, ctx), m_flags(flags) {}
+
+	static SessionACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	bool isOpCommand() const { return true; }
+
+	uint16_t flags() const { return m_flags; }
+
+	bool isSessionLocked() const { return m_flags & LOCK_SESSION; }
+	bool isLockedByDefault() const { return m_flags & LOCK_DEFAULT; }
+	bool isLayerControlLocked() const { return m_flags & LOCK_LAYERCTRL; }
+	bool isOwnLayers() const { return m_flags & LOCK_OWNLAYERS; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint16_t m_flags;
 };
 
 }

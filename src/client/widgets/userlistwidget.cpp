@@ -24,6 +24,7 @@
 #include "widgets/userlistwidget.h"
 #include "net/userlist.h"
 #include "net/client.h"
+#include "net/aclfilter.h"
 #include "utils/icon.h"
 
 #include "widgets/groupedtoolbutton.h"
@@ -66,7 +67,7 @@ void UserList::setClient(net::Client *client)
 
 	connect(client->userlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(_ui->userlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
-	connect(client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(opPrivilegeChanged()));
+	connect(client->aclFilter(), &net::AclFilter::localOpChanged, this, &UserList::opPrivilegeChanged);
 }
 
 QModelIndex UserList::currentSelection()
@@ -116,7 +117,7 @@ void UserList::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
 
-	setOperatorMode(on && _client->isOperator() && _client->isLoggedIn());
+	setOperatorMode(on && _client->aclFilter()->isLocalUserOperator() && _client->isLoggedIn());
 
 	if(on) {
 		QModelIndex cs = currentSelection();
@@ -127,7 +128,7 @@ void UserList::selectionChanged(const QItemSelection &selected)
 void UserList::opPrivilegeChanged()
 {
 	bool on = currentSelection().isValid();
-	setOperatorMode(on && _client->isOperator() && _client->isLoggedIn());
+	setOperatorMode(on && _client->aclFilter()->isLocalUserOperator() && _client->isLoggedIn());
 }
 
 void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)

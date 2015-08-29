@@ -114,7 +114,9 @@ Message *Message::deserialize(const uchar *data, int buflen)
 	case MSG_INTERVAL: return Interval::deserialize(ctx, data, len);
 	case MSG_MOVEPOINTER: return MovePointer::deserialize(ctx, data, len);
 	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
+	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
 	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
+	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
 
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);

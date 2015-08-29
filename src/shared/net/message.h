@@ -43,7 +43,9 @@ enum MessageType {
 	MSG_INTERVAL,
 	MSG_MOVEPOINTER,
 	MSG_MARKER,
+	MSG_USER_ACL,
 	MSG_LAYER_ACL,
+	MSG_SESSION_ACL,
 
 	// Command messages (opaque)
 	MSG_UNDOPOINT=128,

@@ -19,6 +19,7 @@
 
 #include "net/client.h"
 #include "net/layerlist.h"
+#include "net/aclfilter.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
@@ -137,7 +138,8 @@ void LayerList::setClient(net::Client *client)
 	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
 	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 	connect(_client->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
-	connect(client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(_client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(_client->aclFilter(), &net::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
@@ -162,9 +164,9 @@ void LayerList::setControlsLocked(bool locked)
 
 void LayerList::updateLockedControls()
 {
-	bool enabled = _client && (!_client->isUserLocked() && (_op | !_lockctrl));
+	bool enabled = _client && _client->aclFilter()->canUseLayerControls(currentLayer());
 
-	_addLayerAction->setEnabled(enabled);
+	_addLayerAction->setEnabled(_client && _client->aclFilter()->canCreateLayer());
 	_menuInsertAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.

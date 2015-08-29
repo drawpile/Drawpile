@@ -283,7 +283,7 @@ void SessionServer::addClient(Client *client)
 
 	_lobby.append(client);
 
-	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
+	connect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 
 	(new LoginHandler(client, this))->startLoginProcess();
 }
@@ -300,7 +300,7 @@ void SessionServer::moveFromLobby(Session *session, Client *client)
 	_lobby.removeOne(client);
 
 	// the session handles disconnect events from now on
-	disconnect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
+	disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 
 	emit userLoggedIn();
 	emit sessionChanged(SessionDescription(*session));

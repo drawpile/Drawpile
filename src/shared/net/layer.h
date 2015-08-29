@@ -268,36 +268,6 @@ private:
 	uint8_t _merge;
 };
 
-/**
- * @brief Change layer access control list
- *
- * This is a meta command. It is used to set the general layer lock
- * as well as give exclusive access to selected users.
- */
-class LayerACL : public Message {
-public:
-	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
-		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
-	{}
-
-	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
-
-	bool isOpCommand() const { return true; }
-
-	uint16_t id() const { return _id; }
-	uint8_t locked() const { return _locked; }
-	const QList<uint8_t> exclusive() const { return _exclusive; }
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-
-private:
-	uint16_t _id;
-	uint8_t _locked;
-	QList<uint8_t> _exclusive;
-};
-
 }
 
 #endif

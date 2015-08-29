@@ -54,6 +54,7 @@ class LoopbackServer;
 class LoginHandler;
 class UserListModel;
 class LayerListModel;
+class AclFilter;
 
 /**
  * The client for accessing the drawing server.
@@ -135,26 +136,6 @@ public:
 	QSslCertificate hostCertificate() const { return _server->hostCertificate(); }
 
 	/**
-	 * @brief Is there a global lock on?
-	 *
-	 * @return true if there is a session or user lock
-	 */
-	bool isLocked() const { return _isSessionLocked || _isUserLocked; }
-
-	/**
-	 * @brief Has this user been individually locked?
-	 */
-	bool isUserLocked() const { return _isUserLocked; }
-
-	/**
-	 * @brief Is the currently logged in user a session operator?
-	 *
-	 * This is always true in local mode.
-	 * @return true
-	 */
-	bool isOperator() const { return _isloopback || m_isOp; }
-
-	/**
 	 * @brief Get the number of bytes waiting to be sent
 	 * @return upload queue length
 	 */
@@ -170,7 +151,13 @@ public:
 	 * @brief Get the layer list
 	 * @return layer list model
 	 */
-	LayerListModel *layerlist() const { return _layerlist; }
+	LayerListModel *layerlist() const { return m_layerlist; }
+
+	/**
+	 * @brief Get the ACL filter
+	 * @return
+	 */
+	AclFilter *aclFilter() const { return m_aclfilter; }
 
 	//! Reinitialize after clearing out the old board
 	void init();
@@ -270,10 +257,8 @@ private:
 	void handleChatMessage(const protocol::Chat &msg);
 	void handleMarkerMessage(const protocol::Marker &msg);
 	void handleUserJoin(const protocol::UserJoin &msg);
-	void handleSessionOwnership(const protocol::SessionOwner &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);
 	void handleServerCommand(const protocol::Command &msg);
-	void handleLayerAcl(const protocol::LayerACL &msg);
 	void handleMovePointer(const protocol::MovePointer &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
 
@@ -282,13 +267,12 @@ private:
 	Server *_server;
 	LoopbackServer *_loopback;
 
-	QString _sessionId;
+	QString m_sessionId;
 	int m_myId;
 	bool _isloopback;
-	bool m_isOp;
-	bool _isSessionLocked, _isUserLocked;
 	UserListModel *m_userlist;
-	LayerListModel *_layerlist;
+	LayerListModel *m_layerlist;
+	AclFilter *m_aclfilter;
 
 	canvas::ToolContext m_lastToolCtx;
 };

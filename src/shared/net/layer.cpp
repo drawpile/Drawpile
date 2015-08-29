@@ -213,32 +213,4 @@ int LayerDelete::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
-LayerACL *LayerACL::deserialize(uint8_t ctx, const uchar *data, uint len)
-{
-	if(len < 3 || len > 3+255)
-		return nullptr;
-	uint16_t id = qFromBigEndian<quint16>(data+0);
-	uint8_t lock = data[2];
-	QList<uint8_t> exclusive;
-	for(uint i=3;i<len;++i)
-		exclusive.append(data[i]);
-
-	return new LayerACL(ctx, id, lock, exclusive);
-}
-
-int LayerACL::payloadLength() const
-{
-	return 3 + _exclusive.count();
-}
-
-int LayerACL::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	*(ptr++) = _locked;
-	foreach(uint8_t e, _exclusive)
-		*(ptr++) = e;
-	return ptr-data;
-}
-
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -84,14 +84,38 @@ void UserListModel::updateOperators(const QList<uint8_t> ids)
 	}
 }
 
+void UserListModel::updateLocks(const QList<uint8_t> ids)
+{
+	for(int i=0;i<m_users.size();++i) {
+		User &u = m_users[i];
+
+		const bool lock = ids.contains(u.id);
+		if(lock != u.isLocked) {
+			u.isLocked = lock;
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+		}
+	}
+}
+
 QList<uint8_t> UserListModel::operatorList() const
 {
 	QList<uint8_t> ops;
 	for(int i=0;i<m_users.size();++i) {
 		if(m_users.at(i).isOperator || m_users.at(i).isMod)
-			ops << i;
+			ops << m_users.at(i).id;
 	}
 	return ops;
+}
+
+QList<uint8_t> UserListModel::lockList() const
+{
+	QList<uint8_t> locks;
+	for(int i=0;i<m_users.size();++i) {
+		if(m_users.at(i).isLocked)
+			locks << m_users.at(i).id;
+	}
+	return locks;
 }
 
 void UserListModel::removeUser(int id)
@@ -111,7 +135,7 @@ void UserListModel::removeUser(int id)
 void UserListModel::clearUsers()
 {
 	beginRemoveRows(QModelIndex(), 0, m_users.count()-1);
-	foreach(const User &u, m_users)
+	for(const User &u : m_users)
 		m_pastUsers[u.id] = u;
 	m_users.clear();
 	endRemoveRows();
@@ -139,15 +163,13 @@ QString UserListModel::getUsername(int id) const
 		return tr("Server");
 
 	// Try active users first
-	foreach(const User &u, m_users)
+	for(const User &u : m_users)
 		if(u.id == id)
 			return u.name;
 
 	// Then the past users
-	if(m_pastUsers.contains(id)) {
-		if(m_pastUsers.contains(id))
-			return m_pastUsers[id].name;
-	}
+	if(m_pastUsers.contains(id))
+		return m_pastUsers[id].name;
 
 	// Not found
 	return tr("User #%1").arg(id);

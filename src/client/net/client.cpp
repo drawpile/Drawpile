@@ -26,6 +26,7 @@
 #include "net/login.h"
 #include "net/userlist.h"
 #include "net/layerlist.h"
+#include "net/aclfilter.h"
 
 #include "core/point.h"
 
@@ -50,17 +51,18 @@ Client::Client(QObject *parent)
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;
 	_isloopback = true;
-	m_isOp = false;
-	_isSessionLocked = false;
-	_isUserLocked = false;
 
 	m_userlist = new UserListModel(this);
-	_layerlist = new LayerListModel(this);
+	m_layerlist = new LayerListModel(this);
+	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
 
-	_layerlist->setMyId(m_myId);
+	m_layerlist->setMyId(m_myId);
+	m_aclfilter->reset(m_myId, true);
 
 	connect(_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
-	connect(_layerlist, &LayerListModel::layerOrderChanged, this, &Client::sendLayerReorder);
+	connect(m_layerlist, &LayerListModel::layerOrderChanged, this, &Client::sendLayerReorder);
+	connect(m_aclfilter, &AclFilter::localOpChanged, this, &Client::opPrivilegeChange);
+	connect(m_aclfilter, &AclFilter::localLockChanged, this, &Client::lockBitsChanged);
 }
 
 Client::~Client()
@@ -74,7 +76,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	TcpServer *server = new TcpServer(this);
 	_server = server;
 	_isloopback = false;
-	_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
+	m_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
 
 	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
 	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(handleDisconnect(QString, QString, bool)));
@@ -108,7 +110,7 @@ bool Client::isLoggedIn() const
 
 QString Client::sessionId() const
 {
-	return _sessionId;
+	return m_sessionId;
 }
 
 QUrl Client::sessionUrl(bool includeUser) const
@@ -126,13 +128,14 @@ QUrl Client::sessionUrl(bool includeUser) const
 
 void Client::handleConnect(QString sessionId, int userid, bool join)
 {
-	_sessionId = sessionId;
+	m_sessionId = sessionId;
 	m_myId = userid;
-	_layerlist->setMyId(userid);
+	m_layerlist->setMyId(userid);
+	m_aclfilter->reset(m_myId, false);
 
 	// Joining: we'll get the correct layer list from the server
 	if(join)
-		_layerlist->clear();
+		m_layerlist->clear();
 
 	emit serverLoggedin(join);
 }
@@ -143,20 +146,16 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 
 	emit serverDisconnected(message, errorcode, localDisconnect);
 	m_userlist->clearUsers();
-	_layerlist->unlockAll();
+	m_aclfilter->reset(m_myId, true);
 	static_cast<TcpServer*>(_server)->deleteLater();
 	_server = _loopback;
 	_isloopback = true;
-	m_isOp = false;
-	_isSessionLocked = false;
-	_isUserLocked = false;
-	emit opPrivilegeChange(false);
-	emit lockBitsChanged();
 }
 
 void Client::init()
 {
-	_layerlist->clear();
+	m_layerlist->clear();
+	m_aclfilter->reset(m_myId, true);
 }
 
 bool Client::isLocalServer() const
@@ -214,7 +213,7 @@ void Client::sendLayerTitle(int id, const QString &title)
 void Client::sendLayerVisibility(int id, bool hide)
 {
 	// This one is actually a local only change
-	_layerlist->setLayerHidden(id, hide);
+	m_layerlist->setLayerHidden(id, hide);
 	emit layerVisibilityChange(id, hide);
 }
 
@@ -386,16 +385,16 @@ void Client::sendMarker(const QString &text)
 void Client::sendLockUser(int userid, bool lock)
 {
 	Q_ASSERT(userid>0 && userid<256);
-#if 0 // TODO
-	QString cmd;
-	if(lock)
-		cmd = "lock #";
-	else
-		cmd = "unlock #";
-	cmd += QString::number(userid);
-
-	sendOpCommand(cmd);
-#endif
+	QList<uint8_t> ids = m_userlist->lockList();
+	int oldLen = ids.size();
+	if(lock) {
+		if(!ids.contains(userid))
+			ids.append(userid);
+	} else {
+		ids.removeAll(userid);
+	}
+	if(ids.size() != oldLen)
+		_server->sendMessage(MessagePtr(new protocol::UserACL(m_myId, ids)));
 }
 
 void Client::sendOpUser(int userid, bool op)
@@ -428,14 +427,24 @@ void Client::sendSetSessionTitle(const QString &title)
 
 void Client::sendLockSession(bool lock)
 {
-	// TODO
-	//sendOpCommand(QStringLiteral("lockboard ") + (lock ? "on" : "off"));
+	uint16_t flags = m_aclfilter->sessionAclFlags();
+	if(lock)
+		flags |= protocol::SessionACL::LOCK_SESSION;
+	else
+		flags &= ~protocol::SessionACL::LOCK_SESSION;
+
+	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }
 
 void Client::sendLockLayerControls(bool lock)
 {
-	// TODO
-	//sendOpCommand(QStringLiteral("locklayerctrl ") + (lock ? "on" : "off"));
+	uint16_t flags = m_aclfilter->sessionAclFlags();
+	if(lock)
+		flags |= protocol::SessionACL::LOCK_LAYERCTRL;
+	else
+		flags &= ~protocol::SessionACL::LOCK_LAYERCTRL;
+
+	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }
 
 void Client::sendCloseSession(bool close)
@@ -447,15 +456,13 @@ void Client::sendCloseSession(bool close)
 
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 {
-#if 0 // TODO
 	if(_isloopback) {
 		// Allow layer locking in loopback mode. Exclusive access doesn't make any sense in this mode.
-		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, QList<uint8_t>())));
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(m_myId, layerid, locked, QList<uint8_t>())));
 
 	} else {
-		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, exclusive)));
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(m_myId, layerid, locked, exclusive)));
 	}
-#endif
 }
 
 void Client::playbackCommand(protocol::MessagePtr msg)
@@ -475,6 +482,12 @@ void Client::handleMessage(protocol::MessagePtr msg)
 {
 	// Emit message as-is for recording
 	emit messageReceived(msg);
+
+	// Filter messages
+	if(!m_aclfilter->filterMessage(*msg)) {
+		qDebug("Filtered message %d from %d", msg->type(), msg->contextId());
+		return;
+	}
 
 	// Emit command stream messages for drawing
 	if(msg->isCommand()) {
@@ -498,10 +511,10 @@ void Client::handleMessage(protocol::MessagePtr msg)
 		handleUserLeave(msg.cast<UserLeave>());
 		break;
 	case MSG_SESSION_OWNER:
-		handleSessionOwnership(msg.cast<SessionOwner>());
-		break;
+	case MSG_USER_ACL:
+	case MSG_SESSION_ACL:
 	case MSG_LAYER_ACL:
-		handleLayerAcl(msg.cast<LayerACL>());
+		// Handled by the ACL filter
 		break;
 	case MSG_INTERVAL:
 		/* intervals are used only when playing back recordings */
@@ -571,34 +584,12 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)
 {
-	m_userlist->addUser(User(msg.contextId(), msg.name(), msg.contextId() == m_myId, msg.isAuthenticated(), msg.isModerator()));
+	User u(msg.contextId(), msg.name(), msg.contextId() == m_myId, msg.isAuthenticated(), msg.isModerator());
+	if(m_aclfilter->isLockedByDefault())
+		u.isLocked = true;
+
+	m_userlist->addUser(u);
 	emit userJoined(msg.contextId(), msg.name());
-}
-
-#if 0
-void Client::handleUserAttr(const protocol::UserAttr &msg)
-{
-	if(msg.contextId() == m_myId) {
-		_isOp = msg.isOp();
-		_isUserLocked = msg.isLocked();
-		emit opPrivilegeChange(msg.isOp());
-		emit lockBitsChanged();
-	}
-	m_userlist->updateUser(msg);
-}
-#endif
-
-void Client::handleSessionOwnership(const protocol::SessionOwner &msg)
-{
-	QList<uint8_t> ids = msg.ids();
-	ids.append(msg.contextId());
-	m_userlist->updateOperators(ids);
-
-	bool amOp = ids.contains(m_myId);
-	if(amOp != m_isOp) {
-		m_isOp = amOp;
-		emit opPrivilegeChange(m_isOp);
-	}
 }
 
 void Client::handleUserLeave(const protocol::UserLeave &msg)
@@ -631,12 +622,6 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		emit sessionConfChange(reply.reply["config"].toObject());
 		break;
 	}
-}
-
-void Client::handleLayerAcl(const protocol::LayerACL &msg)
-{
-	_layerlist->updateLayerAcl(msg.id(), msg.locked(), msg.exclusive());
-	emit lockBitsChanged();
 }
 
 void Client::handleMovePointer(const protocol::MovePointer &msg)

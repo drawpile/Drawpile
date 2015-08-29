@@ -72,4 +72,79 @@ int MovePointer::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
+UserACL *UserACL::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len>255)
+		return nullptr;
+
+	QList<uint8_t> ids;
+	ids.reserve(len);
+	for(uint i=0;i<len;++i)
+		ids.append(data[i]);
+
+	return new UserACL(ctx, ids);
+}
+
+int UserACL::serializePayload(uchar *data) const
+{
+	for(int i=0;i<m_ids.size();++i)
+		data[i] = m_ids[i];
+	return m_ids.size();
+}
+
+int UserACL::payloadLength() const
+{
+	return m_ids.size();
+}
+
+
+LayerACL *LayerACL::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len < 3 || len > 3+255)
+		return nullptr;
+	uint16_t id = qFromBigEndian<quint16>(data+0);
+	uint8_t lock = data[2];
+	QList<uint8_t> exclusive;
+	for(uint i=3;i<len;++i)
+		exclusive.append(data[i]);
+
+	return new LayerACL(ctx, id, lock, exclusive);
+}
+
+int LayerACL::payloadLength() const
+{
+	return 3 + _exclusive.count();
+}
+
+int LayerACL::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	qToBigEndian(_id, ptr); ptr += 2;
+	*(ptr++) = _locked;
+	foreach(uint8_t e, _exclusive)
+		*(ptr++) = e;
+	return ptr-data;
+}
+
+SessionACL *SessionACL::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len != 2)
+		return nullptr;
+	uint16_t flags = qFromBigEndian<quint16>(data+0);
+
+	return new SessionACL(ctx, flags);
+}
+
+int SessionACL::payloadLength() const
+{
+	return 2;
+}
+
+int SessionACL::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	qToBigEndian(m_flags, ptr); ptr += 2;
+	return ptr-data;
+}
+
 }

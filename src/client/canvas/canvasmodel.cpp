@@ -30,7 +30,7 @@
 #include "ora/orawriter.h"
 #include "loader.h"
 
-#include "../shared/net/layer.h"
+#include "../shared/net/meta2.h"
 
 #include <QSettings>
 #include <QDebug>

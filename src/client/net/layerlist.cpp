@@ -134,6 +134,14 @@ QModelIndex LayerListModel::layerIndex(int id)
 	return QModelIndex();
 }
 
+bool LayerListModel::isLayerLockedFor(int layerId, int contextId) const
+{
+	int i = indexOf(layerId);
+	if(i>=0)
+		return _items.at(i).isLockedFor(contextId);
+	return false;
+}
+
 void LayerListModel::createLayer(int id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
