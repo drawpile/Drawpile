@@ -22,7 +22,6 @@
 #include "client.h"
 #include "loginhandler.h"
 #include "sessiondesc.h"
-#include "sessionstore.h"
 
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
@@ -64,24 +63,12 @@ SessionServer::SessionServer(QObject *parent)
 #endif
 }
 
-void SessionServer::setSessionStore(SessionStore *store)
-{
-	Q_ASSERT(store);
-	_store = store;
-	store->setParent(this);
-
-	connect(store, SIGNAL(sessionAvailable(SessionDescription)), this, SIGNAL(sessionChanged(SessionDescription)));
-}
-
 QList<SessionDescription> SessionServer::sessions() const
 {
 	QList<SessionDescription> descs;
 
-	foreach(const Session *s, _sessions)
+	for(const Session *s : _sessions)
 		descs.append(SessionDescription(*s));
-
-	if(_store)
-		descs += _store->sessions();
 
 	return descs;
 }
@@ -139,11 +126,6 @@ void SessionServer::destroySession(Session *session)
 
 	session->stopRecording();
 
-	if(session->isHibernatable() && _store) {
-		logger::info() << session << "Hibernating.";
-		_store->storeSession(session);
-	}
-
 	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
 	emit sessionEnded(id);
 }
@@ -155,9 +137,6 @@ SessionDescription SessionServer::getSessionDescriptionById(const QString &id, b
 			return SessionDescription(*s, getExtended, getUsers);
 	}
 
-	if(_store)
-		return _store->getSessionDescriptionById(id);
-
 	return SessionDescription();
 }
 
@@ -166,16 +145,6 @@ Session *SessionServer::getSessionById(const QString &id)
 	for(Session *s : _sessions) {
 		if(s->id() == id)
 			return s;
-	}
-
-	if(_store) {
-		Session *session = _store->takeSession(id);
-		if(session) {
-			session->setParent(this);
-			initSession(session);
-			logger::info() << session << "Restored from hibernation";
-			return session;
-		}
 	}
 
 	return nullptr;
@@ -189,22 +158,6 @@ int SessionServer::totalUsers() const
 	return count;
 }
 
-ServerStatus SessionServer::getServerStatus() const
-{
-	ServerStatus s;
-	s.activeSessions = sessionCount();
-	s.totalSessions = sessionCount() + (_store ? _store->sessions().size() : 0);
-	s.totalUsers = totalUsers();
-	s.maxActiveSessions = sessionLimit();
-	s.needHostPassword = !_hostPassword.isEmpty();
-	s.allowPersistentSessions = _allowPersistentSessions;
-	s.secureMode = _mustSecure;
-	s.hibernation = _store != nullptr;
-	s.title = title();
-
-	return s;
-}
-
 bool SessionServer::killSession(const QString &id)
 {
 	logger::info() << "Killing session" << id;
@@ -216,11 +169,6 @@ bool SessionServer::killSession(const QString &id)
 				destroySession(s);
 			return true;
 		}
-	}
-
-	// Not an active session? Maybe it's a stored session
-	if(_store) {
-		return _store->deleteSession(id);
 	}
 
 	// not found
@@ -250,8 +198,6 @@ void SessionServer::stopAll()
 
 	auto sessions = _sessions;
 	for(Session *s : sessions) {
-		if(_store)
-			s->setHibernatable(s->isPersistent() || _store->storeAllSessions());
 		s->stopRecording();
 		s->kickAllUsers();
 
@@ -340,10 +286,6 @@ void SessionServer::userDisconnectedEvent(Session *session)
 			logger::info() << session << "History size was" << session->mainstream().lengthInBytes() << "bytes";
 			delSession = true;
 		}
-
-		// If the hibernatable flag is set, it means we want to put the session
-		// into storage as soon as possible
-		delSession |= session->isHibernatable();
 	}
 
 	if(delSession)
@@ -371,9 +313,6 @@ void SessionServer::cleanupSessions()
 
 		for(Session *s : expirelist) {
 			logger::info() << s << "Vacant session expired. Uptime was" << s->uptime();
-
-			if(_store && _store->autoStore() && s->isPersistent())
-				s->setHibernatable(true);
 
 			destroySession(s);
 		}

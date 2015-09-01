@@ -164,14 +164,6 @@ public:
 	 */
 	bool isPersistent() const { return m_persistent; }
 
-	/**
-	 * @brief Is this session eligible for hibernation
-	 *
-	 * Hibernatable sessions will be stored before they are deleted
-	 */
-	bool isHibernatable() const { return m_hibernatable; }
-	void setHibernatable(bool h) { m_hibernatable = h; }
-
 	//! Set session attributes
 	void setSessionConfig(const QJsonObject &conf);
 
@@ -395,7 +387,6 @@ private:
 	bool m_closed;
 	bool m_allowPersistent;
 	bool m_persistent;
-	bool m_hibernatable;
 	bool m_preserveChat;
 };
 

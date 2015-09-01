@@ -9,7 +9,6 @@ set (
 	multiserver.cpp
 	configfile.cpp
 	sslserver.cpp
-	hibernation.cpp
 	updateablefile.cpp
 	userfile.cpp
 	announcementwhitelist.cpp

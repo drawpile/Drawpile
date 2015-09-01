@@ -58,7 +58,7 @@ SessionId SessionId::customId(const QString &id)
 
 SessionDescription::SessionDescription()
 	: protoMinor(0), userCount(0), maxUsers(0), title(QString()),
-	  closed(false), persistent(false), hibernating(false), historySizeMb(0), historyLimitMb(0),
+	  closed(false), persistent(false), historySizeMb(0), historyLimitMb(0),
 	  historyStart(0), historyEnd(0)
 {
 }
@@ -73,7 +73,6 @@ SessionDescription::SessionDescription(const Session &session, bool getExtended,
 	  founder(session.founder()),
 	  closed(session.isClosed()),
 	  persistent(session.isPersistent()),
-	  hibernating(false),
 	  startTime(session.sessionStartTime()),
 	  historySizeMb(0),
 	  historyLimitMb(session.historyLimit()),

@@ -55,7 +55,6 @@ public:
 	void setPersistentSessions(bool persistent);
 	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
-	bool setHibernation(const QString &directory, bool all, bool autoHibernate);
 	bool setUserFile(const QString &path);
 	void setAllowGuests(bool allow);
 	void setConnectionTimeout(int timeout);

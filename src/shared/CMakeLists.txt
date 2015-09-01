@@ -27,7 +27,6 @@ set (
 	server/session.cpp
 	server/sessionserver.cpp
 	server/sessiondesc.cpp
-	server/sessionstore.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/identitymanager.cpp

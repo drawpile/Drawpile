@@ -43,7 +43,7 @@ Session::Session(const SessionId &id, int minorVersion, const QString &founder, 
 	m_id(id), m_minorVersion(minorVersion), m_maxusers(255), m_historylimit(0),
 	m_founder(founder),
 	m_closed(false),
-	m_allowPersistent(false), m_persistent(false), m_hibernatable(false), m_preserveChat(false)
+	m_allowPersistent(false), m_persistent(false), m_preserveChat(false)
 {
 }
 
@@ -317,7 +317,6 @@ void Session::kickAllUsers()
 
 void Session::killSession()
 {
-	setHibernatable(false);
 	m_persistent = false;
 	switchState(Shutdown);
 }

@@ -88,7 +88,6 @@ struct SessionDescription {
 	QString founder;
 	bool closed;
 	bool persistent;
-	bool hibernating;
 	QDateTime startTime;
 
 	// Extended information
@@ -101,33 +100,12 @@ struct SessionDescription {
 	// User information
 	QList<UserDescription> users;
 
-	// Private stuff
-	QString hibernationFile;
-
 	SessionDescription();
 	SessionDescription(const Session &session, bool getExtended=false, bool getUsers=false);
-};
-
-/**
- * @brief Information about the current server status
- */
-struct ServerStatus {
-	int activeSessions;
-	int totalSessions;
-	int totalUsers;
-	int maxActiveSessions;
-
-	bool needHostPassword;
-	bool allowPersistentSessions;
-	bool secureMode;
-	bool hibernation;
-
-	QString title;
 };
 
 }
 
 Q_DECLARE_METATYPE(server::SessionDescription)
-Q_DECLARE_METATYPE(server::ServerStatus)
 
 #endif

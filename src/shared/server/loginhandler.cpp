@@ -94,8 +94,8 @@ QJsonObject sessionDescription(const SessionDescription &session)
 		o["closed"] = true;
 	if(session.persistent)
 		o["persistent"] = true;
-	if(session.hibernating)
-		o["asleep"] = true;
+	//if(session.hibernating) // not currently implemented in this server
+		//o["asleep"] = true;
 
 	return o;
 }

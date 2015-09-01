@@ -134,18 +134,6 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Mandatory SSL mode");
 	parser.addOption(secureOption);
 
-	// --hibernation <directory>
-	QCommandLineOption hibernationOption("hibernation", "Enable session hibernation", "directory");
-	parser.addOption(hibernationOption);
-
-	// --hibernate-all
-	QCommandLineOption hibernateAllOption("hibernate-all", "Hibernate even non-persistent sessions");
-	parser.addOption(hibernateAllOption);
-
-	// --auto-hibernate
-	QCommandLineOption autoHibernateOption("auto-hibernate", "Hibernate sessions on expiration");
-	parser.addOption(autoHibernateOption);
-
 #ifndef NDEBUG
 	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
 	parser.addOption(lagOption);
@@ -299,18 +287,6 @@ int main(int argc, char *argv[]) {
 			server->setSslCertFile(sslCert, sslKey);
 			server->setMustSecure(cfgfile.override(parser, secureOption).toBool());
 			server::SslServer::requireForwardSecrecy();
-		}
-	}
-
-	{
-		QString hibernation = cfgfile.override(parser, hibernationOption).toString();
-		if(!hibernation.isEmpty()) {
-			if(!server->setHibernation(
-						hibernation,
-						cfgfile.override(parser, hibernateAllOption).toBool(),
-						cfgfile.override(parser, autoHibernateOption).toBool()
-				))
-				return 1;
 		}
 	}
 

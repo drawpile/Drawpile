@@ -119,17 +119,6 @@ public:
 	const QString &welcomeMessage() const { return _welcomeMessage; }
 
 	/**
-	 * @brief Set the session storage to use (if any)
-	 *
-	 * Setting this enables restoration of hibernated sessions
-	 * This should be called either during the initialization phase or not at all.
-	 * This object will be made the parent of the session store.
-	 *
-	 * @param store
-	 */
-	void setSessionStore(SessionStore *store);
-
-	/**
 	 * @brief Set the user identity manager to use (if any)
 	 *
 	 * Setting this enables authenticated user logins.
@@ -174,7 +163,7 @@ public:
 	 * @brief Get all current sessions
 	 * @return list of all sessions
 	 */
-	Q_INVOKABLE QList<SessionDescription> sessions() const;
+	QList<SessionDescription> sessions() const;
 
 	/**
 	 * @brief Get a session description by ID
@@ -209,11 +198,6 @@ public:
 	int sessionCount() const { return _sessions.size(); }
 
 	/**
-	 * @brief Get a summarized server status
-	 */
-	Q_INVOKABLE ServerStatus getServerStatus() const;
-
-	/**
 	 * @brief Delete the session with the given ID
 	 *
 	 * The session will be deleted even if it is hibernating.
@@ -221,7 +205,7 @@ public:
 	 * @param id session ID
 	 * @return true on success
 	 */
-	Q_INVOKABLE bool killSession(const QString &id);
+	bool killSession(const QString &id);
 
 	/**
 	 * @brief kick a user user from a session
@@ -230,7 +214,7 @@ public:
 	 * @param userId
 	 * @return true on success
 	 */
-	Q_INVOKABLE bool kickUser(const QString &sessionId, int userId);
+	bool kickUser(const QString &sessionId, int userId);
 
 	/**
 	 * @brief Stop all running sessions
@@ -247,7 +231,7 @@ public:
 	 * @param sessionId if set, limit message to this session only
 	 * @return false if session was not found
 	 */
-	Q_INVOKABLE bool wall(const QString &message, const QString &sessionId=QString());
+	bool wall(const QString &message, const QString &sessionId=QString());
 
 signals:
 	/**

@@ -20,7 +20,6 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "sslserver.h"
-#include "hibernation.h"
 #include "userfile.h"
 #include "announcementwhitelist.h"
 #include "banlist.h"
@@ -141,22 +140,6 @@ void MultiServer::setRandomLag(uint lag)
 void MultiServer::setAutoStop(bool autostop)
 {
 	_autoStop = autostop;
-}
-
-bool MultiServer::setHibernation(const QString &directory, bool all, bool autoHibernate)
-{
-	Hibernation *hib = new Hibernation(directory);
-	if(!hib->init()) {
-		delete hib;
-		return false;
-	}
-
-	hib->setStoreAllSessions(all);
-	hib->setAutoStore(autoHibernate);
-
-	_sessions->setSessionStore(hib);
-
-	return true;
 }
 
 bool MultiServer::setUserFile(const QString &path)
