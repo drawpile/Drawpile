@@ -1041,6 +1041,23 @@ void Layer::markOpaqueDirty(bool forceVisible)
 	_owner->notifyAreaChanged();
 }
 
+QColor Layer::isSolidColor() const
+{
+	if(_width==0 || _height==0)
+		return QColor();
+
+	const QRgb p0 = pixelAt(0, 0);
+
+	for(int y=0;y<_height;++y) {
+		for(int x=0;x<_height;++x) {
+			QRgb p = pixelAt(x, y);
+			if(p != p0)
+				return QColor();
+		}
+	}
+	return QColor::fromRgba(p0);
+}
+
 void Layer::toDatastream(QDataStream &out) const
 {
 	// Write ID

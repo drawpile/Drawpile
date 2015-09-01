@@ -140,9 +140,15 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Create layers
 	for(int i=0;i<m_session->layerStack()->layers();++i) {
 		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);
-		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, 0, 0, layer->title())));
+
+		QColor fill = layer->isSolidColor();
+
+		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
-		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+
+		if(!fill.isValid())
+			msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+
 		if(m_session->stateTracker()->isLayerLocked(layer->id()))
 			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
 	}

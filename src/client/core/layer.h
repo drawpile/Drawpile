@@ -173,6 +173,12 @@ class Layer {
 		//! Mark non-empty tiles as dirty
 		void markOpaqueDirty(bool forceVisible=false);
 
+		/**
+		 * @brief Is the whole layer filled with the same color?
+		 * @return invalid color if there is more than one color on this canvas
+		 */
+		QColor isSolidColor() const;
+
 		// Disable assignment operator
 		Layer& operator=(const Layer&) = delete;
 
