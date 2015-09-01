@@ -25,7 +25,7 @@
 #include <QStringList>
 
 namespace protocol {
-	class ServerCommand;
+	struct ServerCommand;
 	struct ServerReply;
 }
 

@@ -22,6 +22,7 @@
 #include "message.h"
 
 #include <QList>
+#include <QString>
 
 namespace protocol {
 
