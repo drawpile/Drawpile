@@ -162,6 +162,15 @@ public:
 	//! Reinitialize after clearing out the old board
 	void init();
 
+	/**
+	 * @brief Whether to use recorded chat (Chat message) by default
+	 *
+	 * If set to false, chat messages are sent with ServerCommands and delivered
+	 * only to the currently active users.
+	 * @param recordedChat if true, chat messages are recorded in session history
+	 */
+	void setRecordedChatMode(bool recordedChat) { m_recordedChat = recordedChat; }
+
 public slots:
 	// Layer changing
 	void sendCanvasResize(int top, int right, int bottom, int left);
@@ -270,6 +279,7 @@ private:
 	QString m_sessionId;
 	int m_myId;
 	bool _isloopback;
+	bool m_recordedChat;
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
 	AclFilter *m_aclfilter;

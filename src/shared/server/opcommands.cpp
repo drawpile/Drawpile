@@ -51,9 +51,11 @@ public:
 
 	void call(Client *c, const QJsonArray &args, const QJsonObject &kwargs) const { m_fn(c, args, kwargs); }
 	const QString &name() const { return m_name; }
-	bool isModOnly() const { return m_modOnly; }
 
-	//SrvCommand &nonOp() { m_opOnly = false; return *this; }
+	bool isModOnly() const { return m_modOnly; }
+	bool isOpOnly() const { return m_opOnly; }
+
+	SrvCommand &nonOp() { m_opOnly = false; return *this; }
 	SrvCommand &modOnly() { m_modOnly = true; return *this; }
 
 private:
@@ -208,6 +210,19 @@ void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kw
 	client->session()->unlistAnnouncement();
 }
 
+void chatMessage(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: chat message");
+
+	protocol::ServerReply chat;
+	chat.type = protocol::ServerReply::CHAT;
+	chat.message = args.at(0).toString();
+	chat.reply["user"] = client->id();
+	if(!kwargs.isEmpty())
+		chat.reply["options"] = kwargs;
+	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::Command(0, chat)));
+}
 
 SrvCommandSet::SrvCommandSet()
 {
@@ -224,6 +239,7 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("who", listUsers)
 		<< SrvCommand("status", sessionStatus)
+		<< SrvCommand("chat", chatMessage).nonOp()
 	;
 }
 
@@ -233,22 +249,29 @@ void handleClientServerCommand(Client *client, const QString &command, const QJs
 {
 	for(const SrvCommand &c : COMMANDS.commands) {
 		if(c.name() == command) {
+			if(c.isModOnly() && !client->isModerator()) {
+				client->sendDirectMessage(protocol::Command::error("Not a moderator"));
+				return;
+			}
+			if(c.isOpOnly() && !client->isOperator()) {
+				client->sendDirectMessage(protocol::Command::error("Not a session owner"));
+				return;
+			}
+
 			try {
 				c.call(client, args, kwargs);
 			} catch(const CmdError &err) {
+
 				protocol::ServerReply reply;
 				reply.type = protocol::ServerReply::ERROR;
 				reply.message = err.message();
-				client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, reply)));
+				client->sendDirectMessage(protocol::Command::error(err.message()));
 			}
 			return;
 		}
 	}
 
-	protocol::ServerReply reply;
-	reply.type = protocol::ServerReply::ERROR;
-	reply.message = "Unknown command: " + command;
-	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, reply)));
+	client->sendDirectMessage(protocol::Command::error("Unknown command: " + command));
 }
 
 }

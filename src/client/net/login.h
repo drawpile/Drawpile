@@ -131,6 +131,7 @@ public:
 	 * @brief Set whether chat history should be preserved in the session
 	 */
 	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
+	bool isPreservedChat() const { return m_preserveChat; }
 
 	/**
 	 * @brief Set the initial session content to upload to the server

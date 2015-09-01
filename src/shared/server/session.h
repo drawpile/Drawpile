@@ -396,6 +396,7 @@ private:
 	bool m_allowPersistent;
 	bool m_persistent;
 	bool m_hibernatable;
+	bool m_preserveChat;
 };
 
 }

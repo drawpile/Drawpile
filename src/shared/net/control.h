@@ -77,6 +77,9 @@ public:
 
 	static Command *deserialize(uint8_t ctxid, const uchar *data, uint len);
 
+	//! Convenience function: make an ERROR type reply message
+	static MessagePtr error(const QString &message);
+
 	QJsonDocument doc() const;
 	ServerCommand cmd() const { return ServerCommand::fromJson(doc()); }
 	ServerReply reply() const { return ServerReply::fromJson(doc()); }

@@ -46,7 +46,7 @@ using protocol::MessagePtr;
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), m_myId(1)
+	: QObject(parent), m_myId(1), m_recordedChat(false)
 {
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;
@@ -361,7 +361,15 @@ void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
 
 void Client::sendChat(const QString &message, bool announce, bool action)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+	if(announce || m_recordedChat || _isloopback) {
+		_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+	} else {
+		QJsonObject kwargs;
+		if(action)
+			kwargs["action"] = true;
+
+		sendServerCommand("chat", QJsonArray() << message, kwargs);
+	}
 }
 
 void Client::sendServerCommand(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
@@ -616,7 +624,12 @@ void Client::handleServerCommand(const protocol::Command &msg)
 	case ServerReply::ALERT:
 	case ServerReply::ERROR:
 	case ServerReply::RESULT:
-		emit chatMessageReceived(tr("Server"), reply.message, false, false, false);
+		emit chatMessageReceived(
+			m_userlist->getUsername(reply.reply.value("user").toInt()),
+			reply.message,
+			false,
+			reply.reply.value("options").toObject().value("action").toBool(),
+			false);
 		break;
 	case ServerReply::SESSIONCONF:
 		emit sessionConfChange(reply.reply["config"].toObject());

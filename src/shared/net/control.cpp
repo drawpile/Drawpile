@@ -94,7 +94,13 @@ QJsonDocument ServerReply::toJson() const
 	return QJsonDocument(o);
 }
 
-
+MessagePtr Command::error(const QString &message)
+{
+	ServerReply sr;
+	sr.type = ServerReply::ERROR;
+	sr.message = message;
+	return MessagePtr(new Command(0, sr));
+}
 
 Command *Command::deserialize(uint8_t ctxid, const uchar *data, uint len)
 {

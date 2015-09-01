@@ -43,7 +43,7 @@ Session::Session(const SessionId &id, int minorVersion, const QString &founder, 
 	m_id(id), m_minorVersion(minorVersion), m_maxusers(255), m_historylimit(0),
 	m_founder(founder),
 	m_closed(false),
-	m_allowPersistent(false), m_persistent(false), m_hibernatable(false)
+	m_allowPersistent(false), m_persistent(false), m_hibernatable(false), m_preserveChat(false)
 {
 }
 
@@ -231,6 +231,12 @@ void Session::setSessionConfig(const QJsonObject &conf)
 			m_passwordhash = passwordhash::hash(pw);
 	}
 
+	// Note: this bit is only relayed by the server: it informs
+	// the client whether to send preserved/recorded chat messages
+	// by default.
+	if(conf.contains("preserve-chat"))
+		m_preserveChat = conf["preserve-chat"].toBool();
+
 	sendUpdatedSessionProperties();
 }
 
@@ -253,6 +259,8 @@ void Session::sendUpdatedSessionProperties()
 	conf["closed"] = isClosed();
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
+	conf["max-users"] = m_maxusers;
+	conf["preserve-chat"] = m_preserveChat;
 	props.reply["config"] = conf;
 
 	addToCommandStream(protocol::MessagePtr(new protocol::Command(0, props)));

@@ -1545,10 +1545,11 @@ void MainWindow::sessionConfChanged(const QJsonObject &config)
 		getAction("denyjoins")->setChecked(config["closed"].toBool());
 	if(config.contains("title"))
 		m_canvas->setTitle(config["title"].toString());
-
-#if 0 // TODO
-	_chatbox->setPreserveMode(preservechat);
-#endif
+	if(config.contains("preserve-chat")) {
+		bool pc = config["preserve-chat"].toBool();
+		_chatbox->setPreserveMode(pc);
+		m_client->setRecordedChatMode(pc);
+	}
 }
 
 void MainWindow::updateLockWidget()

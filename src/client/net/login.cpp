@@ -504,10 +504,13 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				conf.kwargs["password"] = m_sessionPassword;
 
 			if(m_maxusers>0)
-				conf.kwargs["maxusers"] = m_maxusers;
+				conf.kwargs["max-users"] = m_maxusers;
 
 			if(m_requestPersistent)
 				conf.kwargs["persistent"] = true;
+
+			if(m_preserveChat)
+				conf.kwargs["preserve-chat"] = true;
 
 			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
 
@@ -522,9 +525,6 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(lockflags)
 				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
-			// TODO
-			//if(m_preserveChat)
-			//	init << "preservechat on";
 
 			//if(!m_announceUrl.isEmpty())
 			//	init << "announce_at " + m_announceUrl;
