@@ -525,9 +525,12 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(lockflags)
 				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
-
-			//if(!m_announceUrl.isEmpty())
-			//	init << "announce_at " + m_announceUrl;
+			if(!m_announceUrl.isEmpty()) {
+				protocol::ServerCommand cmd;
+				cmd.cmd = "announce-session";
+				cmd.args = QJsonArray() << m_announceUrl;
+				m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), cmd)));
+			}
 
 			m_server->sendSnapshotMessages(m_initialState);
 		}
