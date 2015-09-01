@@ -130,11 +130,11 @@ void SessionServer::destroySession(Session *session)
 	emit sessionEnded(id);
 }
 
-SessionDescription SessionServer::getSessionDescriptionById(const QString &id, bool getExtended, bool getUsers) const
+SessionDescription SessionServer::getSessionDescriptionById(const QString &id) const
 {
 	for(Session *s : _sessions) {
 		if(s->id() == id)
-			return SessionDescription(*s, getExtended, getUsers);
+			return SessionDescription(*s);
 	}
 
 	return SessionDescription();

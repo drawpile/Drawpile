@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,21 +26,6 @@
 
 namespace server {
 
-UserDescription::UserDescription()
-	: id(0), isOp(false), isMod(false), isSecure(false)
-{
-}
-
-UserDescription::UserDescription(const Client &client)
-	: id(client.id()),
-	  name(client.username()),
-	  address(client.peerAddress()),
-	  isOp(client.isOperator()),
-	  isMod(client.isModerator()),
-	  isSecure(client.isSecure())
-{
-}
-
 SessionId SessionId::randomId()
 {
 	QString uuid = QUuid::createUuid().toString();
@@ -58,12 +43,11 @@ SessionId SessionId::customId(const QString &id)
 
 SessionDescription::SessionDescription()
 	: userCount(0), maxUsers(0), title(QString()),
-	  closed(false), persistent(false), historySizeMb(0), historyLimitMb(0),
-	  historyStart(0), historyEnd(0)
+	  closed(false), persistent(false), nsfm(false)
 {
 }
 
-SessionDescription::SessionDescription(const Session &session, bool getExtended, bool getUsers)
+SessionDescription::SessionDescription(const Session &session)
 	: id(session.id()),
 	  protocolVersion(session.protocolVersion()),
 	  userCount(session.userCount()),
@@ -73,22 +57,9 @@ SessionDescription::SessionDescription(const Session &session, bool getExtended,
 	  founder(session.founder()),
 	  closed(session.isClosed()),
 	  persistent(session.isPersistent()),
-	  startTime(session.sessionStartTime()),
-	  historySizeMb(0),
-	  historyLimitMb(session.historyLimit()),
-	  historyStart(0),
-	  historyEnd(0)
+	  nsfm(session.isNsfm()),
+	  startTime(session.sessionStartTime())
 {
-	if(getUsers) {
-		for(const Client *c : session.clients())
-			users.append(UserDescription(*c));
-	}
-
-	if(getExtended) {
-		historySizeMb = session.mainstream().lengthInBytes() / qreal(1024*1024);
-		historyStart = session.mainstream().offset();
-		historyEnd = session.mainstream().end();
-	}
 }
 
 }

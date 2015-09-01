@@ -43,7 +43,7 @@ Session::Session(const SessionId &id, const QString &protocolVersion, const QStr
 	m_id(id), m_protocolVersion(protocolVersion), m_maxusers(254), m_historylimit(0),
 	m_founder(founder),
 	m_closed(false),
-	m_allowPersistent(false), m_persistent(false), m_preserveChat(false)
+	m_allowPersistent(false), m_persistent(false), m_preserveChat(false), m_nsfm(false)
 {
 }
 
@@ -195,20 +195,6 @@ void Session::setClosed(bool closed)
 	}
 }
 
-void Session::setPassword(const QString &password)
-{
-	if(password.isEmpty())
-		setPasswordHash(QByteArray());
-	else
-		setPasswordHash(passwordhash::hash(password));
-}
-
-void Session::setPasswordHash(const QByteArray &passwordhash)
-{
-	m_passwordhash = passwordhash;
-	sendUpdatedSessionProperties();
-}
-
 void Session::setSessionConfig(const QJsonObject &conf)
 {
 	if(conf.contains("closed"))
@@ -237,6 +223,10 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	if(conf.contains("preserve-chat"))
 		m_preserveChat = conf["preserve-chat"].toBool();
 
+	// "Not Safe For Minors" tag can only be unset by resetting the session
+	if(conf["nsfm"].toBool())
+		m_nsfm = true;
+
 	sendUpdatedSessionProperties();
 }
 
@@ -261,6 +251,7 @@ void Session::sendUpdatedSessionProperties()
 	conf["title"] = title();
 	conf["max-users"] = m_maxusers;
 	conf["preserve-chat"] = m_preserveChat;
+	conf["nsfm"] = m_nsfm;
 	props.reply["config"] = conf;
 
 	addToCommandStream(protocol::MessagePtr(new protocol::Command(0, props)));
@@ -423,7 +414,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		title(),
 		userCount(),
 		!passwordHash().isEmpty(),
-		false, // TODO: explicit NSFM tag
+		isNsfm(),
 		founder(),
 		sessionStartTime()
 	};

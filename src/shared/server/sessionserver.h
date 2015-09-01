@@ -169,11 +169,9 @@ public:
 	 * @brief Get a session description by ID
 	 *
 	 * @param id the session ID
-	 * @param getExtended get extended information
-	 * @param getUsers get user list as well
 	 * @return session description or a blank object (id=0) if not found
 	 */
-	Q_INVOKABLE SessionDescription getSessionDescriptionById(const QString &id, bool getExtended=false, bool getUsers=false) const;
+	SessionDescription getSessionDescriptionById(const QString &id) const;
 
 	/**
 	 * @brief Get the session with the specified ID

@@ -84,6 +84,11 @@ public:
 	bool isPersistenceAllowed() const { return m_allowPersistent; }
 
 	/**
+	 * @brief Is this an age-restricted session?
+	 */
+	bool isNsfm() const { return m_nsfm; }
+
+	/**
 	 * @brief Get the maximum session history size in bytes
 	 *
 	 * If the session history grows beyond this limit, it will be shut down
@@ -113,13 +118,6 @@ public:
 	 * @return password
 	 */
 	const QByteArray &passwordHash() const { return m_passwordhash; }
-	void setPasswordHash(const QByteArray &passwordhash);
-
-	/**
-	 * @brief Set the session password
-	 * @param password
-	 */
-	void setPassword(const QString &password);
 
 	/**
 	 * @brief A chat message that will be sent to users who join the session
@@ -388,6 +386,7 @@ private:
 	bool m_allowPersistent;
 	bool m_persistent;
 	bool m_preserveChat;
+	bool m_nsfm;
 };
 
 }

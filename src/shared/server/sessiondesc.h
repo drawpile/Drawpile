@@ -32,22 +32,6 @@ class Session;
 class Client;
 
 /**
- * @brief Information about a user participating in a session
- */
-struct UserDescription {
-	int id;
-	QString name;
-	QHostAddress address;
-
-	bool isOp;
-	bool isMod;
-	bool isSecure;
-
-	UserDescription();
-	explicit UserDescription(const Client &client);
-};
-
-/**
  * @brief Session identifier
  */
 class SessionId {
@@ -88,20 +72,11 @@ struct SessionDescription {
 	QString founder;
 	bool closed;
 	bool persistent;
+	bool nsfm;
 	QDateTime startTime;
 
-	// Extended information
-	float historySizeMb;
-	float historyLimitMb;
-	int historyStart;
-	int historyEnd;
-
-
-	// User information
-	QList<UserDescription> users;
-
 	SessionDescription();
-	SessionDescription(const Session &session, bool getExtended=false, bool getUsers=false);
+	SessionDescription(const Session &session);
 };
 
 }
