@@ -48,7 +48,8 @@ void LoginHandler::startLoginProcess()
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
 	greeting.message = "Drawpile server " DRAWPILE_PROTO_STR;
-	greeting.reply["version"] = DRAWPILE_PROTO_MAJOR_VERSION;
+	greeting.reply["server-version"] = DRAWPILE_PROTO_SERVER_VERSION;
+	greeting.reply["major-version"] = DRAWPILE_PROTO_MAJOR_VERSION;
 
 	QJsonArray flags;
 
@@ -84,7 +85,7 @@ QJsonObject sessionDescription(const SessionDescription &session)
 	Q_ASSERT(!session.id.isEmpty());
 	QJsonObject o;
 	o["id"] = session.id.id();
-	o["protocol"] = session.protoMinor;
+	o["protocol"] = session.protocolVersion;
 	o["users"] = session.userCount;
 	o["founder"] = session.founder;
 	o["title"] = session.title;
@@ -324,7 +325,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	}
 
 	QString sessionIdString = cmd.kwargs.value("id").toString();
-	int minorVersion = cmd.kwargs.value("protocol").toInt();
+	QString protocolVersion = cmd.kwargs.value("protocol").toString();
 	int userId = cmd.kwargs.value("user_id").toInt();
 
 	if(userId < 1 || userId>254) {
@@ -366,7 +367,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	m_complete = true;
 
 	// Create a new session
-	Session *session = m_server->createSession(sessionId, minorVersion, m_client->username());
+	Session *session = m_server->createSession(sessionId, protocolVersion, m_client->username());
 
 	session->joinUser(m_client, true);
 

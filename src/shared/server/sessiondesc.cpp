@@ -57,7 +57,7 @@ SessionId SessionId::customId(const QString &id)
 }
 
 SessionDescription::SessionDescription()
-	: protoMinor(0), userCount(0), maxUsers(0), title(QString()),
+	: userCount(0), maxUsers(0), title(QString()),
 	  closed(false), persistent(false), historySizeMb(0), historyLimitMb(0),
 	  historyStart(0), historyEnd(0)
 {
@@ -65,7 +65,7 @@ SessionDescription::SessionDescription()
 
 SessionDescription::SessionDescription(const Session &session, bool getExtended, bool getUsers)
 	: id(session.id()),
-	  protoMinor(session.minorProtocolVersion()),
+	  protocolVersion(session.protocolVersion()),
 	  userCount(session.userCount()),
 	  maxUsers(session.maxUsers()),
 	  title(session.title()),

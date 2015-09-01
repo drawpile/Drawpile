@@ -53,7 +53,7 @@ public:
 		Shutdown
 	};
 
-	Session(const SessionId &id, int minorVersion, const QString &founder, QObject *parent=0);
+	Session(const SessionId &id, const QString &protocolVersion, const QString &founder, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
@@ -67,14 +67,14 @@ public:
 	QString founder() const { return m_founder; }
 
 	/**
-	 * @brief Get the minor protocol version of this session
+	 * @brief Get the full protocol version of this session
 	 *
-	 * The server does not care about differences in the minor version, but
-	 * clients do. The session's minor version is set by the user who creates
-	 * the session.
-	 * @return protocol minor version
+	 * A server only needs match the server-protocol version, but the
+	 * client must match the version exactly. (Note: this server, because it
+	 * shared message (de)serialization code with the client, must match
+	 * the major version too.)
 	 */
-	int minorProtocolVersion() const { return m_minorVersion; }
+	QString protocolVersion() const { return m_protocolVersion; }
 
 	/**
 	 * @brief Set whether session persistence is allowed
@@ -375,7 +375,7 @@ private:
 	QDateTime m_lastEventTime;
 
 	const SessionId m_id;
-	int m_minorVersion;
+	QString m_protocolVersion;
 	int m_maxusers;
 	uint m_historylimit;
 

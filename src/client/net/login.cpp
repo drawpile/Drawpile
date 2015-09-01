@@ -167,11 +167,20 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 		return;
 	}
 
-	// Major version must match ours
-	int majorVersion = msg.reply["version"].toInt();
-	if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
+	// Server protocol version must match ours
+	int serverVersion = msg.reply["server-version"].toInt();
+	if(serverVersion != DRAWPILE_PROTO_SERVER_VERSION) {
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
+	}
+
+	// Major version (if set) must match ours
+	if(msg.reply.contains("major-version")) {
+		int majorVersion = msg.reply["major-version"].toInt();
+		if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
+			failLogin(tr("Server is for a different Drawpile version!"));
+			return;
+		}
 	}
 
 	// Parse server capability flags
@@ -397,7 +406,7 @@ void LoginHandler::sendHostCommand()
 	if(!m_hostSessionId.isEmpty())
 		cmd.kwargs["id"] = m_hostSessionId;
 
-	cmd.kwargs["protocol"] = DRAWPILE_PROTO_MINOR_VERSION;
+	cmd.kwargs["protocol"] = DRAWPILE_PROTO_STR;
 	cmd.kwargs["user_id"] = m_userid;
 	if(!m_hostPassword.isEmpty())
 		cmd.kwargs["host_password"] = m_hostPassword;
@@ -427,8 +436,9 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 				session.customId = true;
 			}
 
-			const int minorVersion = js["protocol"].toInt();
-			session.incompatible = minorVersion != DRAWPILE_PROTO_MINOR_VERSION;
+			const QString protoVer = js["protocol"].toString();
+			session.incompatible = protoVer != DRAWPILE_PROTO_STR;
+			qDebug() << protoVer << " != " << DRAWPILE_PROTO_STR;
 			session.needPassword = js["password"].toBool();
 			session.closed = js["closed"].toBool();
 			session.asleep = js["asleep"].toBool();

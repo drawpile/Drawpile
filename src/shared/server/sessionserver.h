@@ -153,11 +153,11 @@ public:
 	/**
 	 * @brief Create a new session
 	 * @param id session ID
-	 * @param minorVersion client minor version
+	 * @param protocolVersion client protocol version
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	Session *createSession(const SessionId &id, int minorVersion, const QString &founder);
+	Session *createSession(const SessionId &id, const QString &minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions

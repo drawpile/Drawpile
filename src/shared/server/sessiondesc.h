@@ -80,7 +80,7 @@ private:
  */
 struct SessionDescription {
 	SessionId id;
-	int protoMinor;
+	QString protocolVersion;
 	int userCount;
 	int maxUsers;
 	QString title;
