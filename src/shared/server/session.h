@@ -280,6 +280,12 @@ public:
 	 */
 	void wall(const QString &message);
 
+	/**
+	 * @brief Start resetting this session
+	 * @param resetter ID of the user who started the reset
+	 */
+	void resetSession(int resetter);
+
 	QString toLogString() const;
 
 	sessionlisting::Announcement publicListing() const { return m_publicListing; }

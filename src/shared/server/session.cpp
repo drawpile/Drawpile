@@ -60,8 +60,36 @@ void Session::switchState(State newstate)
 		if(m_state!=Initialization && m_state!=Reset)
 			qFatal("Illegal state change to Running from %d", m_state);
 
-		m_resetstream.clear();
 		m_initUser = -1;
+
+		if(m_state==Reset) {
+			protocol::ServerReply resetcmd;
+			resetcmd.type = protocol::ServerReply::RESET;
+			resetcmd.reply["state"] = "reset";
+			resetcmd.message = "Session reset!";
+			MessagePtr resetmsg(new protocol::Command(0, resetcmd));
+
+			// Inform everyone of the reset
+			for(Client *c : m_clients)
+				c->sendDirectMessage(resetmsg);
+
+			// Update current state
+			QList<uint8_t> owners;
+			for(Client *c : m_clients) {
+				addToCommandStream(c->joinMessage());
+				if(c->isOperator())
+					owners << c->id();
+			}
+			addToCommandStream(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
+			sendUpdatedSessionProperties();
+
+			// Send reset snapshot
+			qDebug("Reset stream size %d", m_resetstream.size());
+			for(const MessagePtr &m : m_resetstream)
+				addToCommandStream(m);
+
+			m_resetstream.clear();
+		}
 
 		for(Client *c : m_clients)
 			c->enqueueHeldCommands();
@@ -118,11 +146,7 @@ void Session::joinUser(Client *user, bool host)
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
 	connect(this, &Session::newCommandsAvailable, user, &Client::sendAvailableCommands);
 
-	addToCommandStream(MessagePtr(new protocol::UserJoin(
-		user->id(),
-		(user->isAuthenticated() ? protocol::UserJoin::FLAG_AUTH : 0) | (user->isModerator() ? protocol::UserJoin::FLAG_MOD : 0),
-		user->username()
-	)));
+	addToCommandStream(user->joinMessage());
 
 	if(host) {
 		Q_ASSERT(m_state == Initialization);
@@ -147,7 +171,10 @@ void Session::removeUser(Client *user)
 	Q_ASSERT(m_clients.contains(user));
 
 	if(user->id() == m_initUser && m_state == Reset) {
-		qDebug("TODO abort reset");
+		// Whoops, the resetter left before the job was done!
+		// We simply cancel the reset in that case and go on
+		m_initUser = 0;
+		m_resetstream.clear();
 		switchState(Running);
 	}
 
@@ -290,11 +317,26 @@ void Session::handleInitComplete(int ctxId)
 	}
 
 	if(m_state == Reset) {
-		// TODO replace history with reset
+		m_mainstream.resetTo(m_mainstream.end());
 	}
 
 	logger::debug() << this << "init-complete by user" << ctxId;
 	switchState(Running);
+}
+
+void Session::resetSession(int resetter)
+{
+	Q_ASSERT(m_state == Running);
+
+	m_initUser = resetter;
+	switchState(Reset);
+
+	protocol::ServerReply resetRequest;
+	resetRequest.type = protocol::ServerReply::RESET;
+	resetRequest.reply["state"] = "init";
+	resetRequest.message = "Prepared to receive session data";
+
+	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
 }
 
 /**

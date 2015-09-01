@@ -2472,10 +2472,13 @@ void MainWindow::setupActions()
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 
+	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset"));
+
 	_admintools->addAction(locksession);
 	_admintools->addAction(locklayerctrl);
 	_admintools->addAction(closesession);
 	_admintools->addAction(changetitle);
+	_admintools->addAction(resetsession);
 	_admintools->setEnabled(false);
 
 	connect(host, SIGNAL(triggered()), this, SLOT(host()));
@@ -2485,6 +2488,7 @@ void MainWindow::setupActions()
 	connect(locksession, SIGNAL(triggered(bool)), m_client, SLOT(sendLockSession(bool)));
 	connect(locklayerctrl, SIGNAL(triggered(bool)), m_client, SLOT(sendLockLayerControls(bool)));
 	connect(closesession, SIGNAL(triggered(bool)), m_client, SLOT(sendCloseSession(bool)));
+	connect(resetsession, &QAction::triggered, m_client, &net::Client::sendResetSession);
 
 	connect(m_client->aclFilter(), &net::AclFilter::layerControlLockChanged, locklayerctrl, &QAction::setChecked);
 
@@ -2497,6 +2501,7 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(locklayerctrl);
 	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(changetitle);
+	sessionmenu->addAction(resetsession);
 
 	//
 	// Tools menu and toolbar

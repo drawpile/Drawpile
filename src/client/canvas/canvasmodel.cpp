@@ -56,6 +56,8 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 	connect(client, &net::Client::userPointerMoved, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(client, &net::Client::userPointerMoved, m_lasers, &LaserTrailModel::cursorMove);
 
+	connect(client, &net::Client::sessionResetted, this, &CanvasModel::resetCanvas);
+
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 	connect(client, &net::Client::layerVisibilityChange, m_layerstack, &paintcore::LayerStack::setLayerHidden);
 
@@ -259,6 +261,13 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 			m_selection->translate(offset);
 		}
 	}
+}
+
+void CanvasModel::resetCanvas()
+{
+	setTitle(QString());
+	m_layerstack->reset();
+	m_statetracker->reset();
 }
 
 }

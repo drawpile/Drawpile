@@ -178,6 +178,11 @@ public:
 	 */
 	void enqueueHeldCommands();
 
+	/**
+	 * @brief Get a Join message for this user
+	 */
+	protocol::MessagePtr joinMessage() const;
+
 signals:
 	void loginMessage(protocol::MessagePtr message);
 	void loggedOff(Client *client);

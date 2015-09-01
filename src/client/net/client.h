@@ -36,7 +36,6 @@ namespace paintcore {
 
 namespace protocol {
 	class Command;
-	class SnapshotMode;
 	class Chat;
 	class UserJoin;
 	class SessionOwner;
@@ -46,6 +45,7 @@ namespace protocol {
 	class MovePointer;
 	class Marker;
 	class Disconnect;
+	struct ServerReply;
 }
 
 namespace net {
@@ -218,6 +218,7 @@ public slots:
 	void sendLockSession(bool lock);
 	void sendLockLayerControls(bool lock);
 	void sendCloseSession(bool close);
+	void sendResetSession();
 
 	// Recording
 	void playbackCommand(protocol::MessagePtr msg);
@@ -229,8 +230,10 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
 	void markerMessageReceived(const QString &user, const QString &message);
-	void needSnapshot();
 	void userPointerMoved(int ctx, const QPointF &point, int trail);
+
+	void needSnapshot();
+	void sessionResetted();
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
@@ -262,7 +265,7 @@ private slots:
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
-	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
+	void handleResetRequest(const protocol::ServerReply &msg);
 	void handleChatMessage(const protocol::Chat &msg);
 	void handleMarkerMessage(const protocol::Marker &msg);
 	void handleUserJoin(const protocol::UserJoin &msg);

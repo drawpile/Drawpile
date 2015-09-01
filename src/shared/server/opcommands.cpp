@@ -224,6 +224,17 @@ void chatMessage(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::Command(0, chat)));
 }
 
+void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+
+	if(client->session()->state() != Session::Running)
+		throw CmdError("Unable to reset in this state");
+
+	client->session()->resetSession(client->id());
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands
@@ -231,7 +242,7 @@ SrvCommandSet::SrvCommandSet()
 		<< SrvCommand("sessionconf", sessionConf)
 		<< SrvCommand("kick-user", kickUser)
 
-		//<< SrvCommand("reset-session", [](Client *c, const QString&, const QStringList&) { c->session()->startSnapshotSync(); }, QString(), "force snapshot sync")
+		<< SrvCommand("reset-session", resetSession)
 		<< SrvCommand("kill-session", killSession).modOnly()
 
 		<< SrvCommand("announce-session", announceSession)

@@ -462,6 +462,11 @@ void Client::sendCloseSession(bool close)
 	sendServerCommand("sessionconf", QJsonArray(), kwargs);
 }
 
+void Client::sendResetSession()
+{
+	sendServerCommand("reset-session");
+}
+
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 {
 	if(_isloopback) {
@@ -541,9 +546,21 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	}
 }
 
-void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
+void Client::handleResetRequest(const protocol::ServerReply &msg)
 {
-	emit needSnapshot();
+	if(msg.reply["state"] == "init") {
+		qDebug("Requested session reset");
+		emit needSnapshot();
+
+	} else if(msg.reply["state"] == "reset") {
+		qDebug("Resetting session!");
+		m_aclfilter->reset(m_myId, false);
+		emit sessionResetted();
+
+	} else {
+		qWarning() << "Unknown reset state:" << msg.reply["state"].toString();
+		qWarning() << msg.message;
+	}
 }
 
 void Client::handleChatMessage(const protocol::Chat &msg)
@@ -633,6 +650,9 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		break;
 	case ServerReply::SESSIONCONF:
 		emit sessionConfChange(reply.reply["config"].toObject());
+		break;
+	case ServerReply::RESET:
+		handleResetRequest(reply);
 		break;
 	}
 }

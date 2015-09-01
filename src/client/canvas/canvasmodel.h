@@ -80,6 +80,8 @@ public slots:
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 	void handleLocalCommand(protocol::MessagePtr cmd);
 
+	void resetCanvas();
+
 	void pickColor(int x, int y, int layer, int diameter=0);
 
 	void setLayerViewMode(int mode);

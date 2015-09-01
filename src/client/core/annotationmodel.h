@@ -93,6 +93,8 @@ public:
 	//! Return the IDs of annotations that have no text content
 	QList<int> getEmptyIds() const;
 
+	void clear();
+
 private:
 	int findById(int id) const;
 

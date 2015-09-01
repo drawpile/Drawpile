@@ -153,6 +153,16 @@ StateTracker::~StateTracker()
 {
 }
 
+void StateTracker::reset()
+{
+	_savepoints.clear();
+	m_msgstream.resetTo(m_msgstream.end());
+	m_fullhistory = true;
+	_hasParticipated = false;
+	_localfork.clear();
+	_layerlist->clear();
+}
+
 void StateTracker::localCommand(protocol::MessagePtr msg)
 {
 	// A fork is created at the end of the mainline history

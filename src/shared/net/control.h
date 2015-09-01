@@ -51,7 +51,8 @@ struct ServerReply {
 		ALERT,
 		ERROR,
 		RESULT,
-		SESSIONCONF
+		SESSIONCONF,
+		RESET
 	} type;
 	QString message;
 	QJsonObject reply;

@@ -65,6 +65,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = RESULT;
 	else if(typestr == "sessionconf")
 		r.type = SESSIONCONF;
+	else if(typestr == "reset")
+		r.type = RESET;
 	else
 		r.type = UNKNOWN;
 
@@ -86,6 +88,7 @@ QJsonDocument ServerReply::toJson() const
 	case ERROR: typestr="error"; break;
 	case RESULT: typestr="result"; break;
 	case SESSIONCONF: typestr="sessionconf"; break;
+	case RESET: typestr="reset"; break;
 	}
 	o["type"] = typestr;
 

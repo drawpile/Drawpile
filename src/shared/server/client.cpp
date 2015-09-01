@@ -63,6 +63,15 @@ Client::~Client()
 {
 }
 
+protocol::MessagePtr Client::joinMessage() const
+{
+	return protocol::MessagePtr(new protocol::UserJoin(
+			id(),
+			(isAuthenticated() ? protocol::UserJoin::FLAG_AUTH : 0) | (isModerator() ? protocol::UserJoin::FLAG_MOD : 0),
+			username()
+	));
+}
+
 QString Client::toLogString() const {
 	if(m_session)
 		return QStringLiteral("#%1 [%2] %3@%4:").arg(QString::number(id()), peerAddress().toString(), username(), m_session->id());
@@ -156,22 +165,6 @@ void Client::socketDisconnect()
 {
 	emit loggedOff(this);
 }
-
-#if 0 // TODO rework this to session reset
-void Client::requestSnapshot(bool forcenew)
-{
-	Q_ASSERT(m_state != LOGIN);
-
-#ifndef NDEBUG
-	sendSystemChat("(Requesting snapshot...)");
-#endif
-
-	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(0, forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
-	_awaiting_snapshot = true;
-	_session->addSnapshotPoint();
-	logger::debug() << this << "Created a new snapshot point and requested data from";
-}
-#endif
 
 /**
  * @brief Handle messages in normal session mode

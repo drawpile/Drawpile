@@ -160,6 +160,9 @@ public:
 	void endRemoteContexts();
 	void endPlayback();
 
+	//! Reset the entire history
+	void reset();
+
 	bool hasFullHistory() const { return m_fullhistory; }
 	const protocol::MessageStream &getHistory() const { return m_msgstream; }
 
