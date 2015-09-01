@@ -480,14 +480,14 @@ void Client::endPlayback()
 
 void Client::handleMessage(protocol::MessagePtr msg)
 {
-	// Emit message as-is for recording
-	emit messageReceived(msg);
-
 	// Filter messages
 	if(!m_aclfilter->filterMessage(*msg)) {
 		qDebug("Filtered message %d from %d", msg->type(), msg->contextId());
 		return;
 	}
+
+	// Emit message as-is for recording
+	emit messageReceived(msg);
 
 	// Emit command stream messages for drawing
 	if(msg->isCommand()) {

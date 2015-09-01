@@ -387,7 +387,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_client, SIGNAL(markerMessageReceived(QString,QString)),
 			_chatbox, SLOT(receiveMarker(QString,QString)));
 	connect(_chatbox, SIGNAL(message(QString,bool,bool)), m_client, SLOT(sendChat(QString,bool,bool)));
-	connect(_chatbox, SIGNAL(opCommand(QString)), m_client, SLOT(sendOpCommand(QString)));
 
 	connect(m_client->aclFilter(), &net::AclFilter::localOpChanged, this, &MainWindow::setOperatorMode);
 	connect(m_client, &net::Client::sessionConfChange, this, &MainWindow::sessionConfChanged);
