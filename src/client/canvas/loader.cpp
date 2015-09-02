@@ -29,7 +29,7 @@
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
-#include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "../shared/net/image.h"
 
 #include <QDebug>
@@ -137,16 +137,18 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	const QSize imgsize = m_session->layerStack()->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
-	// Less important, but it's nice to see it straight away
-	if(!m_session->title().isEmpty())
-		msgs.append((MessagePtr(new protocol::SessionTitle(1, m_session->title()))));
-
 	// Create layers
 	for(int i=0;i<m_session->layerStack()->layers();++i) {
 		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);
-		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, 0, 0, layer->title())));
+
+		QColor fill = layer->isSolidColor();
+
+		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
-		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+
+		if(!fill.isValid())
+			msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+
 		if(m_session->stateTracker()->isLayerLocked(layer->id()))
 			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
 	}

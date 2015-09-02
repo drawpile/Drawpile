@@ -44,7 +44,7 @@ public:
 		: Message(MSG_CANVAS_RESIZE, ctx), _top(top), _right(right), _bottom(bottom), _left(left)
 		{}
 
-	static CanvasResize *deserialize(const uchar *data, uint len);
+	static CanvasResize *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	int32_t top() const { return _top; }
 	int32_t right() const { return _right; }
@@ -97,7 +97,7 @@ public:
 		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _source(source), _fill(fill), _flags(flags), _title(title.toUtf8())
 		{}
 
-	static LayerCreate *deserialize(const uchar *data, uint len);
+	static LayerCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	uint16_t source() const { return _source; }
@@ -139,7 +139,7 @@ public:
 		_opacity(opacity), _blend(blend)
 		{}
 
-	static LayerAttributes *deserialize(const uchar *data, uint len);
+	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	uint8_t opacity() const { return _opacity; }
@@ -170,7 +170,7 @@ public:
 		: LayerRetitle(ctx, id, title.toUtf8())
 		{}
 
-	static LayerRetitle *deserialize(const uchar *data, uint len);
+	static LayerRetitle *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	QString title() const { return QString::fromUtf8(_title); }
@@ -207,7 +207,7 @@ public:
 		_order(order)
 		{}
 	
-	static LayerOrder *deserialize(const uchar *data, uint len);
+	static LayerOrder *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	const QList<uint16_t> &order() const { return _order; }
 
@@ -252,7 +252,7 @@ public:
 		_merge(merge)
 		{}
 
-	static LayerDelete *deserialize(const uchar *data, uint len);
+	static LayerDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }
@@ -266,36 +266,6 @@ protected:
 private:
 	uint16_t _id;
 	uint8_t _merge;
-};
-
-/**
- * @brief Change layer access control list
- *
- * This is a meta command. It is used to set the general layer lock
- * as well as give exclusive access to selected users.
- */
-class LayerACL : public Message {
-public:
-	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
-		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
-	{}
-
-	static LayerACL *deserialize(const uchar *data, uint len);
-
-	bool isOpCommand() const { return true; }
-
-	uint16_t id() const { return _id; }
-	uint8_t locked() const { return _locked; }
-	const QList<uint8_t> exclusive() const { return _exclusive; }
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-
-private:
-	uint16_t _id;
-	uint8_t _locked;
-	QList<uint8_t> _exclusive;
 };
 
 }

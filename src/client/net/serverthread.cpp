@@ -70,7 +70,7 @@ int ServerThread::startServer(const QString &title)
 			dnssd->setParent(this);
 
 			QMap<QString,QByteArray> txt;
-			txt["protocol"] = QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(DRAWPILE_PROTO_MINOR_VERSION).toUtf8();
+			txt["protocol"] = QStringLiteral(DRAWPILE_PROTO_STR).toUtf8();
 			txt["started"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate).toUtf8();
 			txt["title"] = title.toUtf8();
 

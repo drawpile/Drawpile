@@ -29,7 +29,7 @@ namespace sessionlisting {
 
 namespace server {
 
-class SessionState;
+class Session;
 class Client;
 class SessionStore;
 class IdentityManager;
@@ -119,17 +119,6 @@ public:
 	const QString &welcomeMessage() const { return _welcomeMessage; }
 
 	/**
-	 * @brief Set the session storage to use (if any)
-	 *
-	 * Setting this enables restoration of hibernated sessions
-	 * This should be called either during the initialization phase or not at all.
-	 * This object will be made the parent of the session store.
-	 *
-	 * @param store
-	 */
-	void setSessionStore(SessionStore *store);
-
-	/**
 	 * @brief Set the user identity manager to use (if any)
 	 *
 	 * Setting this enables authenticated user logins.
@@ -164,27 +153,25 @@ public:
 	/**
 	 * @brief Create a new session
 	 * @param id session ID
-	 * @param minorVersion client minor version
+	 * @param protocolVersion client protocol version
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	SessionState *createSession(const SessionId &id, int minorVersion, const QString &founder);
+	Session *createSession(const SessionId &id, const QString &minorVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions
 	 * @return list of all sessions
 	 */
-	Q_INVOKABLE QList<SessionDescription> sessions() const;
+	QList<SessionDescription> sessions() const;
 
 	/**
 	 * @brief Get a session description by ID
 	 *
 	 * @param id the session ID
-	 * @param getExtended get extended information
-	 * @param getUsers get user list as well
 	 * @return session description or a blank object (id=0) if not found
 	 */
-	Q_INVOKABLE SessionDescription getSessionDescriptionById(const QString &id, bool getExtended=false, bool getUsers=false) const;
+	SessionDescription getSessionDescriptionById(const QString &id) const;
 
 	/**
 	 * @brief Get the session with the specified ID
@@ -194,7 +181,7 @@ public:
 	 * @param id session ID
 	 * @return session or null if not found
 	 */
-	SessionState *getSessionById(const QString &id);
+	Session *getSessionById(const QString &id);
 
 	/**
 	 * @brief Get the total number of users in all sessions
@@ -209,11 +196,6 @@ public:
 	int sessionCount() const { return _sessions.size(); }
 
 	/**
-	 * @brief Get a summarized server status
-	 */
-	Q_INVOKABLE ServerStatus getServerStatus() const;
-
-	/**
 	 * @brief Delete the session with the given ID
 	 *
 	 * The session will be deleted even if it is hibernating.
@@ -221,7 +203,7 @@ public:
 	 * @param id session ID
 	 * @return true on success
 	 */
-	Q_INVOKABLE bool killSession(const QString &id);
+	bool killSession(const QString &id);
 
 	/**
 	 * @brief kick a user user from a session
@@ -230,7 +212,7 @@ public:
 	 * @param userId
 	 * @return true on success
 	 */
-	Q_INVOKABLE bool kickUser(const QString &sessionId, int userId);
+	bool kickUser(const QString &sessionId, int userId);
 
 	/**
 	 * @brief Stop all running sessions
@@ -247,7 +229,7 @@ public:
 	 * @param sessionId if set, limit message to this session only
 	 * @return false if session was not found
 	 */
-	Q_INVOKABLE bool wall(const QString &message, const QString &sessionId=QString());
+	bool wall(const QString &message, const QString &sessionId=QString());
 
 signals:
 	/**
@@ -256,7 +238,7 @@ signals:
 	 * Note. sessionChanged is also emitted for this event.
 	 * @param session
 	 */
-	void sessionCreated(SessionState *session);
+	void sessionCreated(Session *session);
 
 	/**
 	 * @brief Published session information has changed
@@ -285,9 +267,9 @@ signals:
 	void sessionEnded(QString id);
 
 private slots:
-	void moveFromLobby(SessionState *session, Client *client);
+	void moveFromLobby(Session *session, Client *client);
 	void lobbyDisconnectedEvent(Client *client);
-	void userDisconnectedEvent(SessionState *session);
+	void userDisconnectedEvent(Session *session);
 	void cleanupSessions();
 	void refreshSessionAnnouncements();
 	void announceSession(const QUrl &url, const sessionlisting::Session &session);
@@ -295,10 +277,10 @@ private slots:
 	void sessionAnnounced(const sessionlisting::Announcement &listing);
 
 private:
-	void initSession(SessionState *session);
-	void destroySession(SessionState *session);
+	void initSession(Session *session);
+	void destroySession(Session *session);
 
-	QList<SessionState*> _sessions;
+	QList<Session*> _sessions;
 	QList<Client*> _lobby;
 	SessionStore *_store;
 	IdentityManager *_identman;

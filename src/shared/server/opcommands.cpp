@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 #include "opcommands.h"
 #include "client.h"
 #include "session.h"
-#include "../net/meta.h"
+//#include "../net/meta.h"
+#include "../net/control.h"
 
 #include <QList>
 #include <QStringList>
@@ -29,119 +30,68 @@ namespace server {
 
 namespace {
 
-class OpError {
+class CmdError {
 public:
-	OpError() {}
-	OpError(const QString &msg) : _msg(msg) {}
+	CmdError() {}
+	CmdError(const QString &msg) : m_msg(msg) {}
 
-	const QString &message() const { return _msg; }
+	const QString &message() const { return m_msg; }
 
 private:
-	QString _msg;
+	QString m_msg;
 };
 
-typedef void (*OpCommandFn)(Client *, const QString &, const QStringList &);
+typedef void (*SrvCommandFn)(Client *, const QJsonArray &, const QJsonObject &);
 
-class OpCommand {
+class SrvCommand {
 public:
-	OpCommand(const QString &name, OpCommandFn fn, const QString &paramsDesc, const QString &description, int minargs, int maxargs)
-		: _fn(fn), _name(name), _paramsDescription(paramsDesc), _description(description), _minargs(minargs), _maxargs(maxargs), _modOnly(false)
-	{}
-	OpCommand(const QString &name, OpCommandFn fn, const QString &paramsDesc, const QString &description, int args=0)
-		: OpCommand(name, fn, paramsDesc, description, args, args)
+	SrvCommand(const QString &name, SrvCommandFn fn)
+		: m_fn(fn), m_name(name), m_opOnly(true), m_modOnly(false)
 	{}
 
-	void call(Client *c, const QString &cmd, const QStringList &tokens) const { _fn(c, cmd, tokens); }
-	const QString &name() const { return _name; }
-	const QString &paramsDescription() const { return _paramsDescription; }
-	const QString &description() const { return _description; }
-	bool isModOnly() const { return _modOnly; }
+	void call(Client *c, const QJsonArray &args, const QJsonObject &kwargs) const { m_fn(c, args, kwargs); }
+	const QString &name() const { return m_name; }
 
-	OpCommand &modOnly() { _modOnly = true; return *this; }
+	bool isModOnly() const { return m_modOnly; }
+	bool isOpOnly() const { return m_opOnly; }
 
-	bool checkParamCount(int count) const {
-		return count >= _minargs && (_maxargs<0 || count <= _maxargs);
-	}
+	SrvCommand &nonOp() { m_opOnly = false; return *this; }
+	SrvCommand &modOnly() { m_modOnly = true; return *this; }
 
 private:
-	OpCommandFn _fn;
-	QString _name;
-	QString _paramsDescription;
-	QString _description;
-	int _minargs;
-	int _maxargs;
-	bool _modOnly;
+	SrvCommandFn m_fn;
+	QString m_name;
+	bool m_opOnly;
+	bool m_modOnly;
 };
 
-struct OpCommandSet {
-	QList<OpCommand> commands;
+struct SrvCommandSet {
+	QList<SrvCommand> commands;
 
-	OpCommandSet();
+	SrvCommandSet();
 };
 
-const OpCommandSet COMMANDS;
+const SrvCommandSet COMMANDS;
 
-bool _getOnOff(const QString &value) {
-	if(value.compare("on", Qt::CaseInsensitive)==0)
-		return true;
-	else if(value.compare("off", Qt::CaseInsensitive)==0)
-		return false;
-
-	throw OpError("invalid on/off value: " + value);
-}
-
-void lockBoard(Client *client, const QString &, const QStringList &tokens)
+void sendResult(Client *client, const QString &result)
 {
-	client->session()->setLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	protocol::ServerReply reply;
+	reply.type = protocol::ServerReply::RESULT;
+	reply.message = result;
+	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, reply)));
 }
 
-void lockLayerCtrls(Client *client, const QString &, const QStringList &tokens)
+void initComplete(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	client->session()->setLayerControlLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+	client->session()->handleInitComplete(client->id());
 }
 
-void loginsOpen(Client *client, const QString &, const QStringList &tokens)
+void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	client->session()->setClosed(!_getOnOff(tokens.at(1)));
-}
-
-void lockDefault(Client *client, const QString &, const QStringList &tokens)
-{
-	client->session()->setUsersLockedByDefault(tokens.size()==1 || _getOnOff(tokens.at(1)));
-}
-
-void setSessionTitle(Client *client, const QString &, const QStringList &tokens)
-{
-	QString title = QStringList(tokens.mid(1)).join(' ');
-	client->session()->setTitle(title);
-	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(client->id(), title)));
-}
-
-void setMaxUsers(Client *client, const QString &, const QStringList &tokens)
-{
-	bool ok;
-	int limit = tokens[1].toInt(&ok);
-	if(ok && limit>0)
-		client->session()->setMaxUsers(limit);
-	else
-		throw OpError("Invalid user limit: " + tokens[1]);
-}
-
-void setPassword(Client *client, const QString &cmd, const QStringList &tokens)
-{
-	if(tokens.length()==1)
-		client->session()->setPassword(QString());
-	else // note: password may contain spaces
-		client->session()->setPassword(cmd.mid(cmd.indexOf(' ') + 1));
-}
-
-void persistSession(Client *client, const QString &, const QStringList &tokens)
-{
-	client->session()->setPersistent(tokens.size()==1 || _getOnOff(tokens.at(1)));
-}
-
-void preserveChat(Client *client, const QString &, const QStringList &tokens) {
-	client->session()->setPreserveChat(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	Q_UNUSED(args);
+	client->session()->setSessionConfig(kwargs);
 }
 
 Client *_getClient(Client *me, const QString &name)
@@ -152,7 +102,7 @@ Client *_getClient(Client *me, const QString &name)
 		bool ok;
 		int id = name.mid(1).toInt(&ok);
 		if(!ok)
-			throw OpError("invalid user id: " + name);
+			throw CmdError("invalid user id: " + name);
 		c = me->session()->getClientById(id);
 
 	} else {
@@ -160,56 +110,32 @@ Client *_getClient(Client *me, const QString &name)
 		c = me->session()->getClientByUsername(name);
 	}
 	if(!c)
-		throw OpError("no such user: " + name);
+		throw CmdError("no such user: " + name);
 
 	return c;
 }
 
-void kickUser(Client *client, const QString &, const QStringList &tokens)
+void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	Client *target = _getClient(client, tokens.at(1));
+	Q_UNUSED(kwargs);
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: user #ID or name");
+
+	Client *target = _getClient(client, args.at(0).toString());
 	if(target == client)
-		throw OpError("cannot kick self");
+		throw CmdError("cannot kick self");
 
 	if(target->isModerator())
-		throw OpError("cannot kick moderators");
+		throw CmdError("cannot kick moderators");
 
 	target->disconnectKick(client->username());
 }
 
-void opUser(Client *client, const QString &, const QStringList &tokens)
+void listUsers(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	Client *target = _getClient(client, tokens.at(1));
-	if(!target->isOperator())
-		target->grantOp();
-}
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
 
-void deopUser(Client *client, const QString &, const QStringList &tokens)
-{
-	Client *target = _getClient(client, tokens.at(1));
-	if(target==client)
-		throw OpError("cannot deop self");
-
-	if(target->isModerator())
-		throw OpError("cannot deop moderators");
-
-	target->deOp();
-}
-
-void lockUser(Client *client, const QString &, const QStringList &tokens)
-{
-	Client *target = _getClient(client, tokens.at(1));
-	target->lockUser();
-}
-
-void unlockUser(Client *client, const QString &, const QStringList &tokens)
-{
-	Client *target = _getClient(client, tokens.at(1));
-	target->unlockUser();
-}
-
-void listUsers(Client *client, const QString &, const QStringList &)
-{
 	QString msg("Users:\n");
 
 	for(const Client *c : client->session()->clients()) {
@@ -219,21 +145,20 @@ void listUsers(Client *client, const QString &, const QStringList &)
 		else if(c->isOperator())
 			flags = "@";
 
-		if(c->isUserLocked())
-			flags += "L";
-		if(c->isHoldLocked())
-			flags += "l";
 		if(c->isAuthenticated())
 			flags += "A";
 
 		msg.append(QString("#%1: %2 [%3]\n").arg(c->id()).arg(c->username(), flags));
 	}
-	client->sendSystemChat(msg);
+	sendResult(client, msg);
 }
 
-void sessionStatus(Client *client, const QString &, const QStringList &)
+void sessionStatus(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	const SessionState *s = client->session();
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+
+	const Session *s = client->session();
 	QString msg;
 	msg.append(QString("Session #%1, up %2\n").arg(s->id()).arg(s->uptime()));
 	msg.append(QString("Logged in users: %1 (max: %2)\n").arg(s->userCount()).arg(s->maxUsers()));
@@ -243,144 +168,121 @@ void sessionStatus(Client *client, const QString &, const QStringList &)
 			.arg(s->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
 			.arg(s->historyLimit() / qreal(1024*1024), 0, 'f', 2));
 	msg.append(QString("History indices: %1 -- %2\n").arg(s->mainstream().offset()).arg(s->mainstream().end()));
-	msg.append(QString("Snapshot point exists: %1").arg(s->mainstream().hasSnapshot() ? "yes" : "no"));
 
-	client->sendSystemChat(msg);
+	sendResult(client, msg);
 }
 
-void killSession(Client *client, const QString &, const QStringList &)
+void killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+
 	client->session()->wall(QString("Session shut down by moderator (%1)").arg(client->username()));
 	client->session()->killSession();
 }
 
-void announceSession(Client *client, const QString &cmd, const QStringList &)
+void announceSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
+	Q_UNUSED(kwargs);
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: API URL");
 
+	QUrl apiUrl(args.at(0).toString());
+	if(!apiUrl.isValid())
+		throw CmdError("Expected one argument: API URL");
 
-	QUrl apiUrl(cmd.mid(cmd.indexOf(' ') + 1));
-	if(!apiUrl.isValid()) {
-		client->sendSystemChat("Invalid API URL");
-		return;
-	}
-
-	if(client->session()->publicListing().listingId>0) {
+	if(client->session()->publicListing().listingId>0)
 		// TODO support announcing at multiple sites simultaneously
-		client->sendSystemChat("Session already announced!");
-		return;
-	}
+		throw CmdError("Expected one argument: API URL");
 
 	client->session()->makeAnnouncement(apiUrl);
 }
 
-void unlistSession(Client *client, const QString &, const QStringList &)
+void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
 	if(client->session()->publicListing().listingId<=0) {
-		client->sendSystemChat("Session not announced!");
+		throw CmdError("Expected one argument: API URL");
 		return;
 	}
 
 	client->session()->unlistAnnouncement();
 }
 
-void showHelp(Client *client, const QString &, const QStringList &)
+void chatMessage(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	QString message("Supported commands:\n");
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: chat message");
 
-	// calculate padding for paramsDescription
-	int pdLen=0;
-	for(const OpCommand &c : COMMANDS.commands) {
-		if(c.isModOnly() && !client->isModerator())
-			continue;
-
-		int len = c.name().length();
-		if(!c.paramsDescription().isEmpty())
-			len += c.paramsDescription().length() + 1;
-		pdLen = qMax(pdLen, len);
-	}
-
-	// Generate help text
-	for(const OpCommand &c : COMMANDS.commands) {
-		if(c.isModOnly() && !client->isModerator())
-			continue;
-
-		message.append("/");
-
-		int padding = c.name().length();
-		message.append(c.name());
-		if(!c.paramsDescription().isEmpty()) {
-			message.append(' ');
-			message.append(c.paramsDescription());
-			padding += c.paramsDescription().length() + 1;
-		}
-		padding = pdLen - padding + 1;
-		while(padding--) message.append(' ');
-
-		message.append(c.description());
-		message.append('\n');
-	}
-
-	client->sendSystemChat(message);
+	protocol::ServerReply chat;
+	chat.type = protocol::ServerReply::CHAT;
+	chat.message = args.at(0).toString();
+	chat.reply["user"] = client->id();
+	if(!kwargs.isEmpty())
+		chat.reply["options"] = kwargs;
+	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::Command(0, chat)));
 }
 
-OpCommandSet::OpCommandSet()
+void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	const QString ID = QStringLiteral("<#id/name>");
-	const QString ONOFF = QStringLiteral("[on/off]");
-	const QString EONOFF = QStringLiteral("<on/off>");
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
 
+	if(client->session()->state() != Session::Running)
+		throw CmdError("Unable to reset in this state");
+
+	client->session()->resetSession(client->id());
+}
+
+SrvCommandSet::SrvCommandSet()
+{
 	commands
-		<< OpCommand("lockboard", lockBoard, ONOFF, "lock the drawing board", 0, 1)
-		<< OpCommand("locklayerctrl", lockLayerCtrls, ONOFF, "lock layer controls", 0, 1)
-		<< OpCommand("logins", loginsOpen, EONOFF, "enable/disable logins", 1)
-		<< OpCommand("lockdefault", lockDefault, ONOFF, "automatically lock new users", 0, 1)
-		<< OpCommand("persistence", persistSession, ONOFF, "make session persistent", 0, 1)
-		<< OpCommand("preservechat", preserveChat, ONOFF, "preserve chat messages", 0, 1)
+		<< SrvCommand("init-complete", initComplete)
+		<< SrvCommand("sessionconf", sessionConf)
+		<< SrvCommand("kick-user", kickUser)
 
-		<< OpCommand("maxusers", setMaxUsers, "<count>", "set user limit", 1)
-		<< OpCommand("title", setSessionTitle, "[title]", "set session title", 0, -1)
-		<< OpCommand("password", setPassword, "[password]", "set session password", 0, -1)
+		<< SrvCommand("reset-session", resetSession)
+		<< SrvCommand("kill-session", killSession).modOnly()
 
-		<< OpCommand("kick", kickUser, ID, "remove user from session", 1)
-		<< OpCommand("op", opUser, ID, "make session operator", 1)
-		<< OpCommand("deop", deopUser, ID, "revoke operator privileges", 1)
-		<< OpCommand("lock", lockUser, ID, "lock user", 1)
-		<< OpCommand("unlock", unlockUser, ID, "unlock user", 1)
+		<< SrvCommand("announce-session", announceSession)
+		<< SrvCommand("unlist-session", unlistSession)
 
-		<< OpCommand("force_snapshot", [](Client *c, const QString&, const QStringList&) { c->session()->startSnapshotSync(); }, QString(), "force snapshot sync")
-		<< OpCommand("killsession", killSession, QString(), "shut down this session").modOnly()
-
-		<< OpCommand("announce_at", announceSession, "<URL>", "announce session at a public listing service", 1, 1)
-		<< OpCommand("unlist", unlistSession, QString(), "unlist announcement")
-
-		<< OpCommand("who", listUsers, QString(), "list logged in users")
-		<< OpCommand("status", sessionStatus, QString(), "show session status")
-		<< OpCommand("help", showHelp, QString(), "show this help text")
+		<< SrvCommand("who", listUsers)
+		<< SrvCommand("status", sessionStatus)
+		<< SrvCommand("chat", chatMessage).nonOp()
 	;
 }
 
 } // end of anonymous namespace
 
-void handleSessionOperatorCommand(Client *client, const QString &command)
+void handleClientServerCommand(Client *client, const QString &command, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	QStringList tokens = command.split(' ', QString::SkipEmptyParts);
+	for(const SrvCommand &c : COMMANDS.commands) {
+		if(c.name() == command) {
+			if(c.isModOnly() && !client->isModerator()) {
+				client->sendDirectMessage(protocol::Command::error("Not a moderator"));
+				return;
+			}
+			if(c.isOpOnly() && !client->isOperator()) {
+				client->sendDirectMessage(protocol::Command::error("Not a session owner"));
+				return;
+			}
 
-	for(const OpCommand &c : COMMANDS.commands) {
-		if(c.name() == tokens.at(0)) {
-			if(c.checkParamCount(tokens.size()-1)) {
-				try {
-					c.call(client, command, tokens);
-				} catch(const OpError &err) {
-					client->sendSystemChat(command + ": " + err.message());
-				}
+			try {
+				c.call(client, args, kwargs);
+			} catch(const CmdError &err) {
 
-			} else {
-				client->sendSystemChat("Usage: /" + c.name() + " " + c.paramsDescription());
+				protocol::ServerReply reply;
+				reply.type = protocol::ServerReply::ERROR;
+				reply.message = err.message();
+				client->sendDirectMessage(protocol::Command::error(err.message()));
 			}
 			return;
 		}
 	}
-	client->sendSystemChat("Unrecognized command: " + tokens.at(0));
+
+	client->sendDirectMessage(protocol::Command::error("Unknown command: " + command));
 }
 
 }

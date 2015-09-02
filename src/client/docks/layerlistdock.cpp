@@ -19,6 +19,7 @@
 
 #include "net/client.h"
 #include "net/layerlist.h"
+#include "net/aclfilter.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
@@ -40,7 +41,7 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false), _op(false), _lockctrl(false)
+	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -137,7 +138,9 @@ void LayerList::setClient(net::Client *client)
 	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
 	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 	connect(_client->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
-	connect(client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(_client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(_client->aclFilter(), &net::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
+	connect(_client->aclFilter(), &net::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
@@ -150,32 +153,42 @@ void LayerList::setClient(net::Client *client)
 
 void LayerList::setOperatorMode(bool op)
 {
-	_op = op;
+	m_op = op;
 	updateLockedControls();
 }
 
 void LayerList::setControlsLocked(bool locked)
 {
-	_lockctrl = locked;
+	m_lockctrl = locked;
+	updateLockedControls();
+}
+
+void LayerList::setOwnLayers(bool own)
+{
+	m_ownlayers = own;
 	updateLockedControls();
 }
 
 void LayerList::updateLockedControls()
 {
-	bool enabled = _client && (!_client->isUserLocked() && (_op | !_lockctrl));
+	bool enabled = _client && _client->aclFilter()->canUseLayerControls(currentLayer());
 
-	_addLayerAction->setEnabled(enabled);
+	_addLayerAction->setEnabled(_client && _client->aclFilter()->canCreateLayer());
 	_menuInsertAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
 	// are locked for non-operators.
 	if(_selected)
-		enabled = enabled & (_op | !isCurrentLayerLocked());
+		enabled = enabled & (m_op | !isCurrentLayerLocked());
 	else
 		enabled = false;
 
-	_ui->lockButton->setEnabled((_op && enabled) || (_client && !_client->isConnected()));
+	_ui->lockButton->setEnabled(
+		m_op ||
+		(_client && !_client->isConnected()) ||
+		(m_ownlayers && _client && (currentLayer()>>8) == _client->myId())
+	);
 	_duplicateLayerAction->setEnabled(enabled);
 	_deleteLayerAction->setEnabled(enabled);
 	_ui->opacity->setEnabled(enabled);

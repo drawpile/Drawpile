@@ -55,6 +55,7 @@ public:
 
 	void setOperatorMode(bool op);
 	void setControlsLocked(bool locked);
+	void setOwnLayers(bool own);
 
 public slots:
 	void selectLayer(int id);
@@ -120,8 +121,9 @@ private:
 	QAction *_menuMergeAction;
 	QAction *_menuRenameAction;
 
-	bool _op;
-	bool _lockctrl;
+	bool m_op;
+	bool m_lockctrl;
+	bool m_ownlayers;
 	QTimer *_opacityUpdateTimer;
 };
 

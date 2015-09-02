@@ -43,6 +43,20 @@ LayerStack::~LayerStack()
 		delete l;
 }
 
+void LayerStack::reset()
+{
+	const QSize oldsize(_width, _height);
+	_width = 0;
+	_height = 0;
+	_xtiles = 0;
+	_ytiles = 0;
+	for(Layer *l : _layers)
+		delete l;
+	_layers.clear();
+	m_annotations->clear();
+	emit resized(0, 0, oldsize);
+}
+
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
 	const QSize oldsize(_width, _height);

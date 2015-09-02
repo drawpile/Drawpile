@@ -30,7 +30,7 @@
 #include "ora/orawriter.h"
 #include "loader.h"
 
-#include "../shared/net/layer.h"
+#include "../shared/net/meta2.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -49,13 +49,14 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
-	connect(client, &net::Client::sessionTitleChange, this, &CanvasModel::setTitle);
 	connect(client, &net::Client::drawingCommandReceived, this, &CanvasModel::handleDrawingCommand);
 	connect(client, &net::Client::drawingCommandLocal, this, &CanvasModel::handleLocalCommand);
 
 	connect(client, &net::Client::userJoined, m_usercursors, &UserCursorModel::setCursorName);
 	connect(client, &net::Client::userPointerMoved, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(client, &net::Client::userPointerMoved, m_lasers, &LaserTrailModel::cursorMove);
+
+	connect(client, &net::Client::sessionResetted, this, &CanvasModel::resetCanvas);
 
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 	connect(client, &net::Client::layerVisibilityChange, m_layerstack, &paintcore::LayerStack::setLayerHidden);
@@ -260,6 +261,13 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 			m_selection->translate(offset);
 		}
 	}
+}
+
+void CanvasModel::resetCanvas()
+{
+	setTitle(QString());
+	m_layerstack->reset();
+	m_statetracker->reset();
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
 #ifndef DP_NET_MSGQUEUE_H
 #define DP_NET_MSGQUEUE_H
 
+#include "message.h"
+
 #include <QQueue>
 #include <QObject>
-
-#include "message.h"
 
 class QTcpSocket;
 class QTimer;
@@ -46,6 +46,14 @@ public:
 	~MessageQueue();
 
 	/**
+	 * @brief Automatically decode opaque messages?
+	 *
+	 * This should be used on the client side only.
+	 * @param d
+	 */
+	void setDecodeOpaque(bool d) { m_decodeOpaque = d; }
+
+	/**
 	 * @brief Check if there are new messages available
 	 * @return true if getPending will return a message
 	 */
@@ -58,38 +66,9 @@ public:
 	MessagePtr getPending();
 
 	/**
-	 * @brief Check if there are new snapshot messages available
-	 * This command is used only on the server
-	 * @return true if getPendingSnapshot will return a message
-	 */
-	bool isPendingSnapshot() const;
-
-	/**
-	 * @brief Get the next snapshot message in the queue.
-	 *
-	 * This command is used only on the server. A SnapshotMode::END indicates
-	 * the end of the snapshot.
-	 * @return next snapshot message
-	 */
-	MessagePtr getPendingSnapshot();
-
-	/**
 	 * Enqueue a message for sending.
 	 */
 	void send(MessagePtr message);
-
-	/**
-	 * @brief Set the snapshot to upload
-	 *
-	 * This method is used to enqueue a snapshot point for asynchronous upload.
-	 * Messages from the snapshot queue are sent when there is a lull in the main queue.
-	 * This command is used only on the client side.
-	 *
-	 * Note. Calling this function will overwrite the old snapshot queue, so make
-	 * sure it has been fully sent first!
-	 * @param snapshot
-	 */
-	void sendSnapshot(const QList<MessagePtr> &snapshot);
 
 	/**
 	 * @brief Gracefully disconnect
@@ -137,7 +116,7 @@ public:
 	void setPingInterval(int msecs);
 
 #ifndef NDEBUG
-	void setRandomLag(uint lag) { _randomlag = lag; }
+	void setRandomLag(uint lag) { m_randomlag = lag; }
 #endif
 
 public slots:
@@ -175,11 +154,6 @@ signals:
 	void messageAvailable();
 
 	/**
-	 * New snapshot message(s) are available. Get them with getPendingSnapshot().
-	 */
-	void snapshotAvailable();
-
-	/**
 	 * All queued messages have been sent
 	 */
 	void allSent();
@@ -210,31 +184,29 @@ private:
 
 	void writeData();
 
-	QTcpSocket *_socket;
+	QTcpSocket *m_socket;
 
-	char *_recvbuffer;
-	char *_sendbuffer;
-	int _recvcount;
-	int _sentcount, _sendbuflen;
+	char *m_recvbuffer;
+	char *m_sendbuffer;
+	int m_recvcount;
+	int m_sentcount, m_sendbuflen;
 
-	QQueue<MessagePtr> _recvqueue;
-	QQueue<MessagePtr> _sendqueue;
+	QQueue<MessagePtr> m_recvqueue;
+	QQueue<MessagePtr> m_sendqueue;
 
-	QQueue<MessagePtr> _snapshot_recv;
-	QList<MessagePtr> _snapshot_send;
+	QTimer *m_idleTimer;
+	QTimer *m_pingTimer;
+	qint64 m_lastRecvTime;
+	qint64 m_idleTimeout;
+	qint64 m_pingSent;
 
-	QTimer *_idleTimer;
-	QTimer *_pingTimer;
-	qint64 _lastRecvTime;
-	qint64 _idleTimeout;
-	qint64 _pingSent;
+	bool m_closeWhenReady;
+	bool m_ignoreIncoming;
 
-	bool _closeWhenReady;
-	bool _expectingSnapshot;
-	bool _ignoreIncoming;
+	bool m_decodeOpaque;
 
 #ifndef NDEBUG
-	uint _randomlag;
+	uint m_randomlag;
 #endif
 };
 

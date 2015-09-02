@@ -173,7 +173,6 @@ bool isRecordableMeta(protocol::MessageType type) {
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
 	case MSG_CHAT:
-	case MSG_SESSION_TITLE:
 	case MSG_INTERVAL:
 	case MSG_MOVEPOINTER:
 	case MSG_MARKER:
@@ -201,7 +200,7 @@ void Writer::recordMessage(const protocol::Message &msg)
 			qint64 now = QDateTime::currentMSecsSinceEpoch();
 			qint64 interval = now - _interval;
 			if(interval >= _minInterval) {
-				protocol::Interval imsg(qMin(qint64(0xffff), interval));
+				protocol::Interval imsg(0, qMin(qint64(0xffff), interval));
 				QVarLengthArray<char> ibuf(imsg.length());
 				int ilen = imsg.serialize(ibuf.data());
 				_file->write(ibuf.data(), ilen);

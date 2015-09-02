@@ -84,9 +84,6 @@ public:
 	//! Get the current foreground color
 	QColor foregroundColor() const;
 
-	//! Get the current background color
-	QColor backgroundColor() const;
-
 	//! Get the currently selected tool slot
 	int currentToolSlot() const;
 
@@ -121,15 +118,6 @@ public slots:
 	//! Pop up a dialog for changing the foreground color
 	void changeForegroundColor();
 
-	//! Pop up a dialog for changing the foreground color
-	void changeBackgroundColor();
-
-	//! Set background color
-	void setBackgroundColor(const QColor& color);
-
-	//! Swap current foreground and background colors
-	void swapForegroundBackground();
-
 	//! Switch tool when eraser is brought near the tablet
 	void eraserNear(bool near);
 
@@ -161,9 +149,6 @@ signals:
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);
-
-	//! Current background color selection changed
-	void backgroundColorChanged(const QColor &color);
 
 	//! Currently active tool was changed
 	void toolChanged(tools::Tool::Type tool);
@@ -204,8 +189,7 @@ private:
 	int _previousToolSlot;
 
 	QColor _foreground;
-	QColor _background;
-	Color_Dialog *_fgdialog, *_bgdialog;
+	Color_Dialog *_fgdialog;
 };
 
 }

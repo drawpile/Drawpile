@@ -186,6 +186,13 @@ QList<int> AnnotationModel::getEmptyIds() const
 	return ids;
 }
 
+void AnnotationModel::clear()
+{
+	beginResetModel();
+	m_annotations.clear();
+	endResetModel();
+}
+
 void Annotation::paint(QPainter *painter) const
 {
 	paint(painter, rect);

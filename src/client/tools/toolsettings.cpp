@@ -104,8 +104,7 @@ QWidget *PenSettings::createUiWidget(QWidget *parent)
 	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	return widget;
 }
 
@@ -155,12 +154,7 @@ ToolProperties PenSettings::saveToolSettings()
 
 void PenSettings::setForeground(const QColor& color)
 {
-	_ui->preview->setColor1(color);
-}
-
-void PenSettings::setBackground(const QColor& color)
-{
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 }
 
 void PenSettings::quickAdjust1(float adjustment)
@@ -205,8 +199,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	});
 	parent->connect(_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	parent->connect(_ui->colorEraseMode, &QToolButton::toggled, [this](bool color) {
 		_ui->preview->setBlendingMode(color ? paintcore::BlendMode::MODE_COLORERASE : paintcore::BlendMode::MODE_ERASE);
@@ -273,13 +266,7 @@ void EraserSettings::restoreToolSettings(const ToolProperties &cfg)
 void EraserSettings::setForeground(const QColor& color)
 {
 	// Foreground color is used only in color-erase mode
-	_ui->preview->setColor1(color);
-}
-
-void EraserSettings::setBackground(const QColor& color)
-{
-	// This is used just for the preview background color
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 }
 
 void EraserSettings::quickAdjust1(float adjustment)
@@ -322,8 +309,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	populateBlendmodeBox(_ui->blendmode, _ui->preview);
 
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	return widget;
 }
@@ -380,12 +366,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	_ui->preview->setColor1(color);
-}
-
-void BrushSettings::setBackground(const QColor& color)
-{
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 }
 
 void BrushSettings::quickAdjust1(float adjustment)
@@ -422,8 +403,7 @@ QWidget *SmudgeSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(widget);
 
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	// Hardcoded value for now
 	_ui->preview->setSmudgeFrequency(2);
@@ -480,12 +460,7 @@ void SmudgeSettings::restoreToolSettings(const ToolProperties &cfg)
 
 void SmudgeSettings::setForeground(const QColor& color)
 {
-	_ui->preview->setColor1(color);
-}
-
-void SmudgeSettings::setBackground(const QColor& color)
-{
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 }
 
 void SmudgeSettings::quickAdjust1(float adjustment)
@@ -509,11 +484,6 @@ int SmudgeSettings::getSize() const
 void BrushlessSettings::setForeground(const QColor& color)
 {
 	_dummybrush.setColor(color);
-}
-
-void BrushlessSettings::setBackground(const QColor& color)
-{
-	_dummybrush.setColor2(color);
 }
 
 paintcore::Brush BrushlessSettings::getBrush() const
@@ -655,8 +625,7 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 		parent->connect(_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
 	}
 
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	return widget;
 }
@@ -705,12 +674,7 @@ void SimpleSettings::restoreToolSettings(const ToolProperties &cfg)
 
 void SimpleSettings::setForeground(const QColor& color)
 {
-	_ui->preview->setColor1(color);
-}
-
-void SimpleSettings::setBackground(const QColor& color)
-{
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 }
 
 void SimpleSettings::quickAdjust1(float adjustment)
@@ -1197,8 +1161,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_FillSettings;
 	_ui->setupUi(uiwidget);
 
-	parent->connect(_ui->preview, SIGNAL(requestFgColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, SIGNAL(requestBgColorChange()), parent, SLOT(changeBackgroundColor()));
+	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	return uiwidget;
 }
@@ -1235,16 +1198,8 @@ ToolProperties FillSettings::saveToolSettings()
 
 void FillSettings::setForeground(const QColor &color)
 {
-	// note: colors are swapped, because brushpreview widget uses
-	// the background color as the fill color
-	_ui->preview->setColor2(color);
+	_ui->preview->setColor(color);
 	BrushlessSettings::setForeground(color);
-}
-
-void FillSettings::setBackground(const QColor &color)
-{
-	_ui->preview->setColor1(color);
-	BrushlessSettings::setBackground(color);
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)

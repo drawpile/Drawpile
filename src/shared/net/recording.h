@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ namespace protocol {
 class Interval : public Message
 {
 public:
-	Interval(uint16_t milliseconds) : Message(MSG_INTERVAL, 0), _msecs(milliseconds) {}
+	Interval(uint8_t ctx, uint16_t milliseconds) : Message(MSG_INTERVAL, ctx), _msecs(milliseconds) {}
 
-	static Interval *deserialize(const uchar *data, uint len);
+	static Interval *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	uint16_t milliseconds() const { return _msecs; }
 
@@ -61,7 +61,7 @@ class Marker : public Message
 public:
 	Marker(uint8_t ctx, const QString &text) : Message(MSG_MARKER, ctx), _text(text.toUtf8()) { }
 
-	static Marker *deserialize(const uchar *data, uint len);
+	static Marker *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	QString text() const { return QString::fromUtf8(_text); }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,18 +22,14 @@
 #include <QAbstractListModel>
 #include <QList>
 
-namespace protocol {
-	class UserAttr;
-}
-
 namespace net {
 
 /**
  * @brief Information about a user
  */
 struct User {
-	User() : User(0, QString(), false) {}
-	User(int id_, const QString &name_, bool local) : id(id_), name(name_), isLocal(local), isOperator(false), isMod(false), isAuth(false), isLocked(false) {}
+	User() : User(0, QString(), false, false, false) {}
+	User(int id_, const QString &name_, bool local, bool auth, bool mod) : id(id_), name(name_), isLocal(local), isOperator(false), isMod(mod), isAuth(auth), isLocked(false) {}
 
 	int id;
 	QString name;
@@ -56,7 +52,8 @@ class UserListModel : public QAbstractListModel {
 		int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
 		void addUser(const User &user);
-		void updateUser(const protocol::UserAttr &ua);
+		void updateOperators(const QList<uint8_t> ids);
+		void updateLocks(const QList<uint8_t> locks);
 		void removeUser(int id);
 		void clearUsers();
 
@@ -78,9 +75,15 @@ class UserListModel : public QAbstractListModel {
 		 */
 		QString getUsername(int id) const;
 
+		//! Get a list of users with operator privileges
+		QList<uint8_t> operatorList() const;
+
+		//! Get a list of users who are locked
+		QList<uint8_t> lockList() const;
+
 	private:
-		QVector<User> _users;
-		QHash<int,User> _pastUsers;
+		QVector<User> m_users;
+		QHash<int,User> m_pastUsers;
 };
 
 }

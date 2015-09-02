@@ -9,17 +9,17 @@ set (
 	net/pen.cpp
 	net/image.cpp
 	net/annotation.cpp
-	net/login.cpp
-	net/snapshot.cpp
+	net/control.cpp
 	net/meta.cpp
+	net/meta2.cpp
 	net/flow.cpp
+	net/opaque.cpp
 	net/undo.cpp
 	net/recording.cpp
 	net/messagequeue.cpp
 	net/messagestream.cpp
 	record/writer.cpp
 	record/reader.cpp
-	record/reader-compat.cpp
 	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp
@@ -28,7 +28,6 @@ set (
 	server/session.cpp
 	server/sessionserver.cpp
 	server/sessiondesc.cpp
-	server/sessionstore.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/identitymanager.cpp

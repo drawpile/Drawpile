@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,17 +21,19 @@
 #define OPCOMMANDS_H
 
 class QString;
+class QJsonArray;
+class QJsonObject;
 
 namespace server {
 
 class Client;
 
 /**
- * @brief Handle an operator command sent by the given client
+ * @brief Handle a server command sent by the given client
  * @param client
  * @param command
  */
-void handleSessionOperatorCommand(Client *client, const QString &command);
+void handleClientServerCommand(Client *client, const QString &command, const QJsonArray &args, const QJsonObject &kwargs);
 
 }
 

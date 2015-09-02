@@ -95,6 +95,8 @@ public:
 	void reorderLayers(QList<uint16_t> neworder);
 	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 	void unlockAll();
+
+	bool isLayerLockedFor(int layerId, int contextId) const;
 	
 	QVector<LayerListItem> getLayers() const { return _items; }
 	void setLayers(const QVector<LayerListItem> &items);

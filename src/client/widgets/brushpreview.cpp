@@ -37,7 +37,7 @@ namespace widgets {
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), _preview(0), _sizepressure(false),
 	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
-	_color1(Qt::black), _color2(Qt::white),
+	m_color(Qt::black), m_bg(Qt::white),
 	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), _tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
@@ -45,8 +45,7 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 
 	_ctxmenu = new QMenu(this);
 
-	_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestFgColorChange()));
-	_ctxmenu->addAction(tr("Change Background Color"), this, SIGNAL(requestBgColorChange()));
+	_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestColorChange()));
 }
 
 BrushPreview::~BrushPreview() {
@@ -67,19 +66,21 @@ void BrushPreview::setTransparentBackground(bool transparent)
 	update();
 }
 
-void BrushPreview::setColor1(const QColor& color)
+void BrushPreview::setColor(const QColor& color)
 {
-	_color1 = color;
+	m_color = color;
 	_brush.setColor(color);
-	_brush.setColor2(color);
 	_needupdate = true;
-	update();
-}
 
-void BrushPreview::setColor2(const QColor& color)
-{
-	_color2 = color;
-	_needupdate = true;
+	// Decide background color
+	const qreal lum = color.redF() * 0.216 + color.greenF() * 0.7152 + color.redF() * 0.0722;
+
+	if(lum < 0.8) {
+		m_bg = Qt::white;
+	} else {
+		m_bg = QColor(32, 32, 32);
+	}
+
 	update();
 }
 
@@ -102,18 +103,6 @@ void BrushPreview::setUnderFill(bool underfill)
 	_underFill = underfill;
 	_needupdate = true;
 	update();
-}
-
-paintcore::Brush BrushPreview::brush(bool swapcolors) const
-{
-	if(swapcolors) {
-		paintcore::Brush swapbrush = _brush;
-		swapbrush.setColor(_color2);
-		swapbrush.setColor2(_color2);
-		return swapbrush;
-	} else {
-		return _brush;
-	}
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
@@ -173,7 +162,7 @@ void BrushPreview::updatePreview()
 	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
-	QColor bgcolor = _color2;
+	QColor bgcolor = m_bg;
 
 	paintcore::Brush brush = _brush;
 	// Special handling for some blending modes
@@ -184,7 +173,11 @@ void BrushPreview::updatePreview()
 
 	} else if(brush.blendingMode() == 12) {
 		// Color-erase mode: use fg color as background
-		bgcolor = _color1;
+		bgcolor = m_color;
+	}
+
+	if(_shape == FloodFill) {
+		brush.setColor(bgcolor);
 	}
 
 	paintcore::Layer *layer = _preview->getLayerByIndex(0);
@@ -197,9 +190,9 @@ void BrushPreview::updatePreview()
 	layer->mergeSublayer(0);
 
 	if(_shape == FloodFill) {
-		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), _color2, _fillTolerance, 0, false);
+		paintcore::FillResult fr = paintcore::floodfill(_preview, previewRect.center().toPoint(), m_color, _fillTolerance, 0, false);
 		if(_fillExpansion>0)
-			fr = paintcore::expandFill(fr, _fillExpansion, _color2);
+			fr = paintcore::expandFill(fr, _fillExpansion, m_color);
 		layer->putImage(fr.x, fr.y, fr.image, _underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL);
 	}
 
@@ -377,7 +370,7 @@ void BrushPreview::contextMenuEvent(QContextMenuEvent *e)
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)
 {
-	emit requestFgColorChange();
+	emit requestColorChange();
 }
 
 #ifndef DESIGNER_PLUGIN

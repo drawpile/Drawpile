@@ -71,7 +71,6 @@ private slots:
 
 signals:
 	void message(const QString &msg, bool announcement, bool action);
-	void opCommand(const QString &cmd);
 	void expanded(bool isVisible);
 
 protected:

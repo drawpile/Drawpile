@@ -60,7 +60,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return _shape; }
 
 		//! Get the displayed brush
-		paintcore::Brush brush(bool swapcolors=false) const;
+		const paintcore::Brush &brush() const { return _brush; }
 
 		bool isTransparentBackground() const { return _tranparentbg; }
 
@@ -86,11 +86,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Enable/disable default size pressure sensitivity
 		void setSizePressure(bool enable);
 
-		//! Set foreground color
-		void setColor1(const QColor& color);
-
-		//! Set background color
-		void setColor2(const QColor& color);
+		//! Set brush color
+		void setColor(const QColor& color);
 
 		//! Set dab spacing
 		void setSpacing(int spacing);
@@ -132,8 +129,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void setUnderFill(bool underfill);
 
 	signals:
-		void requestFgColorChange();
-		void requestBgColorChange();
+		void requestColorChange();
 
 	protected:
 		void paintEvent(QPaintEvent *event);
@@ -155,7 +151,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		bool _opacitypressure;
 		bool _hardnesspressure;
 		bool _smudgepressure;
-		QColor _color1, _color2;
+		QColor m_color, m_bg;
 		PreviewShape _shape;
 		qreal _oldhardness1, _oldhardness2;
 		int _fillTolerance;

@@ -23,29 +23,28 @@
 
 namespace protocol {
 
-AnnotationCreate *AnnotationCreate::deserialize(const uchar *data, uint len)
+AnnotationCreate *AnnotationCreate::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=15)
+	if(len!=14)
 		return 0;
 	return new AnnotationCreate(
-		*(data+0),
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<qint32>(data+3),
-		qFromBigEndian<qint32>(data+7),
-		qFromBigEndian<quint16>(data+11),
-		qFromBigEndian<quint16>(data+13)
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
 	);
 }
 
 int AnnotationCreate::payloadLength() const
 {
-	return 1 + 2 + 4*2 + 2*2;
+	return 2 + 4*2 + 2*2;
 }
 
 int AnnotationCreate::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;
@@ -56,27 +55,26 @@ int AnnotationCreate::serializePayload(uchar *data) const
 
 int AnnotationReshape::payloadLength() const
 {
-	return 1 + 2 + 4*2 + 2*2;
+	return 2 + 4*2 + 2*2;
 }
 
-AnnotationReshape *AnnotationReshape::deserialize(const uchar *data, uint len)
+AnnotationReshape *AnnotationReshape::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=15)
+	if(len!=14)
 		return 0;
 	return new AnnotationReshape(
-		*(data+0),
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<qint32>(data+3),
-		qFromBigEndian<qint32>(data+7),
-		qFromBigEndian<quint16>(data+11),
-		qFromBigEndian<quint16>(data+13)
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
 	);
 }
 
 int AnnotationReshape::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
 	qToBigEndian(_x, ptr); ptr += 4;
 	qToBigEndian(_y, ptr); ptr += 4;
@@ -85,22 +83,22 @@ int AnnotationReshape::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
-AnnotationEdit *AnnotationEdit::deserialize(const uchar *data, uint len)
+AnnotationEdit *AnnotationEdit::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len < 6)
+	if(len < 5)
 		return 0;
 
 	return new AnnotationEdit(
-		*data,
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<quint32>(data+3),
-		QByteArray((const char*)data+7, len-7)
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		qFromBigEndian<quint32>(data+2),
+		QByteArray((const char*)data+6, len-6)
 	);
 }
 
 int AnnotationEdit::payloadLength() const
 {
-	return 1 + 2 + 4 + _text.length();
+	return 2 + 4 + _text.length();
 }
 
 int AnnotationEdit::serializePayload(uchar *data) const
@@ -114,22 +112,21 @@ int AnnotationEdit::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
-AnnotationDelete *AnnotationDelete::deserialize(const uchar *data, uint len)
+AnnotationDelete *AnnotationDelete::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len != 3)
+	if(len != 2)
 		return 0;
-	return new AnnotationDelete(data[0], qFromBigEndian<quint16>(data+1));
+	return new AnnotationDelete(ctx, qFromBigEndian<quint16>(data));
 }
 
 int AnnotationDelete::payloadLength() const
 {
-	return 3;
+	return 2;
 }
 
 int AnnotationDelete::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
 	return ptr-data;
 }

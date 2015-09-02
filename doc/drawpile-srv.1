@@ -101,19 +101,6 @@ until it is woken up again.
 hibernate persistent sessions upon expiration instead of deleting them. Use together with
 .B --expire
 .TP
-.BR --web-admin-port\  port
-enable the web admin API. The HTTP server will listen on this port.
-.TP
-.BR --web-admin-app\  path
-the directory to server under the path "/app/". This can be used to serve a browser admin interface.
-.TP
-.BR --web-admin-auth\  user:password
-enable basic auth for the API using the given username and password
-.TP
-.BR --web-admin-access\  address/subnet
-set access controls for the web admin interface. A subnet mask (e.g. 192.168.1.1/24) or the special value "all" can be used.
-By default, access is only permitted from localhost.
-.TP
 .BR --userfile\  path
 set the user credential file to use. If set, users listed in the file must authenticate to log in.
 .TP

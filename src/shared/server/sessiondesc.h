@@ -28,25 +28,8 @@
 
 namespace server {
 
-class SessionState;
+class Session;
 class Client;
-
-/**
- * @brief Information about a user participating in a session
- */
-struct UserDescription {
-	int id;
-	QString name;
-	QHostAddress address;
-
-	bool isOp;
-	bool isMod;
-	bool isLocked;
-	bool isSecure;
-
-	UserDescription();
-	explicit UserDescription(const Client &client);
-};
 
 /**
  * @brief Session identifier
@@ -81,7 +64,7 @@ private:
  */
 struct SessionDescription {
 	SessionId id;
-	int protoMinor;
+	QString protocolVersion;
 	int userCount;
 	int maxUsers;
 	QString title;
@@ -89,46 +72,15 @@ struct SessionDescription {
 	QString founder;
 	bool closed;
 	bool persistent;
-	bool hibernating;
+	bool nsfm;
 	QDateTime startTime;
 
-	// Extended information
-	float historySizeMb;
-	float historyLimitMb;
-	int historyStart;
-	int historyEnd;
-
-
-	// User information
-	QList<UserDescription> users;
-
-	// Private stuff
-	QString hibernationFile;
-
 	SessionDescription();
-	SessionDescription(const SessionState &session, bool getExtended=false, bool getUsers=false);
-};
-
-/**
- * @brief Information about the current server status
- */
-struct ServerStatus {
-	int activeSessions;
-	int totalSessions;
-	int totalUsers;
-	int maxActiveSessions;
-
-	bool needHostPassword;
-	bool allowPersistentSessions;
-	bool secureMode;
-	bool hibernation;
-
-	QString title;
+	SessionDescription(const Session &session);
 };
 
 }
 
 Q_DECLARE_METATYPE(server::SessionDescription)
-Q_DECLARE_METATYPE(server::ServerStatus)
 
 #endif

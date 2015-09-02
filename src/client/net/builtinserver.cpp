@@ -30,7 +30,6 @@
 #include "../shared/server/sessionserver.h"
 
 #include "../shared/util/logger.h"
-#include "../shared/net/snapshot.h"
 
 namespace server {
 

@@ -254,14 +254,8 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 	while (i!=params.constEnd()) {
 		if(i.key() == "layer")
 			ctx.layer_id = str2ctxid(i.value());
-		else if(i.key() == "color") {
-			QColor c = str2color(i.value());
-			ctx.brush.setColor(c);
-			ctx.brush.setColor2(c);
-		} else if(i.key() == "colorh")
+		else if(i.key() == "color")
 			ctx.brush.setColor(str2color(i.value()));
-		else if(i.key() == "colorl")
-			ctx.brush.setColor2(str2color(i.value()));
 		else if(i.key() == "hard") {
 			qreal r = str2real(i.value());
 			ctx.brush.setHardness(r);

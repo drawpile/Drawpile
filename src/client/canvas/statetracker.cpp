@@ -108,8 +108,7 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
 	brush.setHardness2(cmd.hard_l() / 255.0);
 	brush.setOpacity(cmd.opacity_h() / 255.0);
 	brush.setOpacity2(cmd.opacity_l() / 255.0);
-	brush.setColor(cmd.color_h());
-	brush.setColor2(cmd.color_l());
+	brush.setColor(cmd.color());
 	brush.setSmudge(cmd.smudge_h() / 255.0);
 	brush.setSmudge2(cmd.smudge_l() / 255.0);
 	brush.setResmudge(cmd.resmudge());
@@ -152,6 +151,16 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 
 StateTracker::~StateTracker()
 {
+}
+
+void StateTracker::reset()
+{
+	_savepoints.clear();
+	m_msgstream.resetTo(m_msgstream.end());
+	m_fullhistory = true;
+	_hasParticipated = false;
+	_localfork.clear();
+	_layerlist->clear();
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
@@ -490,7 +499,7 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 	else
 		layername = QStringLiteral("???");
 
-	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color1(), layername);
+	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color(), layername);
 }
 
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
@@ -919,7 +928,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		unsigned int msglen;
 		in.readBytes(msgbuf, msglen);
 
-		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf, msglen);
+		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf, msglen, true);
 		delete [] msgbuf;
 		if(!tc) {
 			qWarning() << "invalid tool change message in snapshot!";

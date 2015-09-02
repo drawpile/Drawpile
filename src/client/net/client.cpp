@@ -26,16 +26,18 @@
 #include "net/login.h"
 #include "net/userlist.h"
 #include "net/layerlist.h"
+#include "net/aclfilter.h"
 
 #include "core/point.h"
 
+#include "../shared/net/control.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "../shared/net/flow.h"
 #include "../shared/net/pen.h"
-#include "../shared/net/snapshot.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
@@ -44,22 +46,23 @@ using protocol::MessagePtr;
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), _my_id(1)
+	: QObject(parent), m_myId(1), m_recordedChat(false)
 {
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;
 	_isloopback = true;
-	_isOp = false;
-	_isSessionLocked = false;
-	_isUserLocked = false;
 
-	_userlist = new UserListModel(this);
-	_layerlist = new LayerListModel(this);
+	m_userlist = new UserListModel(this);
+	m_layerlist = new LayerListModel(this);
+	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
 
-	_layerlist->setMyId(_my_id);
+	m_layerlist->setMyId(m_myId);
+	m_aclfilter->reset(m_myId, true);
 
 	connect(_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
-	connect(_layerlist, &LayerListModel::layerOrderChanged, this, &Client::sendLayerReorder);
+	connect(m_layerlist, &LayerListModel::layerOrderChanged, this, &Client::sendLayerReorder);
+	connect(m_aclfilter, &AclFilter::localOpChanged, this, &Client::opPrivilegeChange);
+	connect(m_aclfilter, &AclFilter::localLockChanged, this, &Client::lockBitsChanged);
 }
 
 Client::~Client()
@@ -73,7 +76,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	TcpServer *server = new TcpServer(this);
 	_server = server;
 	_isloopback = false;
-	_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
+	m_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
 
 	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
 	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(handleDisconnect(QString, QString, bool)));
@@ -87,7 +90,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, SIGNAL(lagMeasured(qint64)), this, SIGNAL(lagMeasured(qint64)));
 
 	if(loginhandler->mode() == LoginHandler::HOST)
-		loginhandler->setUserId(_my_id);
+		loginhandler->setUserId(m_myId);
 
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
@@ -107,7 +110,7 @@ bool Client::isLoggedIn() const
 
 QString Client::sessionId() const
 {
-	return _sessionId;
+	return m_sessionId;
 }
 
 QUrl Client::sessionUrl(bool includeUser) const
@@ -125,13 +128,14 @@ QUrl Client::sessionUrl(bool includeUser) const
 
 void Client::handleConnect(QString sessionId, int userid, bool join)
 {
-	_sessionId = sessionId;
-	_my_id = userid;
-	_layerlist->setMyId(userid);
+	m_sessionId = sessionId;
+	m_myId = userid;
+	m_layerlist->setMyId(userid);
+	m_aclfilter->reset(m_myId, false);
 
 	// Joining: we'll get the correct layer list from the server
 	if(join)
-		_layerlist->clear();
+		m_layerlist->clear();
 
 	emit serverLoggedin(join);
 }
@@ -141,22 +145,17 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	Q_ASSERT(_server != _loopback);
 
 	emit serverDisconnected(message, errorcode, localDisconnect);
-	_userlist->clearUsers();
-	_layerlist->unlockAll();
+	m_userlist->clearUsers();
+	m_aclfilter->reset(m_myId, true);
 	static_cast<TcpServer*>(_server)->deleteLater();
 	_server = _loopback;
 	_isloopback = true;
-	_isOp = false;
-	_isSessionLocked = false;
-	_isUserLocked = false;
-	emit opPrivilegeChange(false);
-	emit sessionConfChange(false, false, false, false);
-	emit lockBitsChanged();
 }
 
 void Client::init()
 {
-	_layerlist->clear();
+	m_layerlist->clear();
+	m_aclfilter->reset(m_myId, true);
 }
 
 bool Client::isLocalServer() const
@@ -166,7 +165,7 @@ bool Client::isLocalServer() const
 
 QString Client::myName() const
 {
-	return _userlist->getUserById(_my_id).name;
+	return m_userlist->getUserById(m_myId).name;
 }
 
 int Client::uploadQueueBytes() const
@@ -184,7 +183,7 @@ void Client::sendCommand(protocol::MessagePtr msg)
 void Client::sendCanvasResize(int top, int right, int bottom, int left)
 {
 	sendCommand(MessagePtr(new protocol::CanvasResize(
-		_my_id,
+		m_myId,
 		top, right, bottom, left
 	)));
 }
@@ -196,47 +195,47 @@ void Client::sendNewLayer(int id, int source, const QColor &fill, bool insert, b
 	if(copy) flags |= protocol::LayerCreate::FLAG_COPY;
 	if(insert) flags |= protocol::LayerCreate::FLAG_INSERT;
 
-	sendCommand(MessagePtr(new protocol::LayerCreate(_my_id, id, source, fill.rgba(), flags, title)));
+	sendCommand(MessagePtr(new protocol::LayerCreate(m_myId, id, source, fill.rgba(), flags, title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, paintcore::BlendMode::Mode blend)
 {
 	Q_ASSERT(id>=0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, int(blend))));
+	sendCommand(MessagePtr(new protocol::LayerAttributes(m_myId, id, opacity*255, int(blend))));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerRetitle(_my_id, id, title)));
+	sendCommand(MessagePtr(new protocol::LayerRetitle(m_myId, id, title)));
 }
 
 void Client::sendLayerVisibility(int id, bool hide)
 {
 	// This one is actually a local only change
-	_layerlist->setLayerHidden(id, hide);
+	m_layerlist->setLayerHidden(id, hide);
 	emit layerVisibilityChange(id, hide);
 }
 
 void Client::sendDeleteLayer(int id, bool merge)
 {
 	Q_ASSERT(id>=0 && id<=0xffff);
-	sendCommand(MessagePtr(new protocol::LayerDelete(_my_id, id, merge)));
+	sendCommand(MessagePtr(new protocol::LayerDelete(m_myId, id, merge)));
 }
 
 void Client::sendLayerReorder(const QList<uint16_t> &ids)
 {
 	Q_ASSERT(ids.size()>0);
-	sendCommand(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
+	sendCommand(MessagePtr(new protocol::LayerOrder(m_myId, ids)));
 }
 
 void Client::sendToolChange(const canvas::ToolContext &ctx)
 {
 	if(ctx != m_lastToolCtx) {
-		sendCommand(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
+		sendCommand(brushToToolChange(m_myId, ctx.layer_id, ctx.brush));
 		m_lastToolCtx = ctx;
 		if(ctx.brush.blendingMode() != 0) // color is not used in erase mode
-			emit sentColorChange(ctx.brush.color1());
+			emit sentColorChange(ctx.brush.color());
 	}
 }
 
@@ -244,17 +243,17 @@ void Client::sendStroke(const paintcore::Point &point)
 {
 	protocol::PenPointVector v(1);
 	v[0] = pointToProtocol(point);
-	sendCommand(MessagePtr(new protocol::PenMove(_my_id, v)));
+	sendCommand(MessagePtr(new protocol::PenMove(m_myId, v)));
 }
 
 void Client::sendStroke(const paintcore::PointVector &points)
 {
-	sendCommand(MessagePtr(new protocol::PenMove(_my_id, pointsToProtocol(points))));
+	sendCommand(MessagePtr(new protocol::PenMove(m_myId, pointsToProtocol(points))));
 }
 
 void Client::sendPenup()
 {
-	sendCommand(MessagePtr(new protocol::PenUp(_my_id)));
+	sendCommand(MessagePtr(new protocol::PenUp(m_myId)));
 }
 
 /**
@@ -269,7 +268,7 @@ void Client::sendPenup()
 void Client::sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode)
 {
 	// Note: since we can't know how sendImage is used, we set skipempty to false when using the replace mode.
-	QList<protocol::MessagePtr> msgs = putQImage(_my_id, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE);
+	QList<protocol::MessagePtr> msgs = putQImage(m_myId, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE);
 	for(MessagePtr msg : msgs)
 		sendCommand(msg);
 
@@ -280,7 +279,7 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, paintcore::
 void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, paintcore::BlendMode::Mode blend)
 {
 	sendCommand(MessagePtr(new protocol::FillRect(
-		_my_id, layer,
+		m_myId, layer,
 		int(blend),
 		rect.x(), rect.y(),
 		rect.width(), rect.height(),
@@ -290,14 +289,14 @@ void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, pai
 
 void Client::sendUndopoint()
 {
-	sendCommand(MessagePtr(new protocol::UndoPoint(_my_id)));
+	sendCommand(MessagePtr(new protocol::UndoPoint(m_myId)));
 }
 
 void Client::sendUndo(int actions, int override)
 {
 	Q_ASSERT(actions != 0);
 	Q_ASSERT(actions >= -128 && actions <= 127);
-	sendCommand(MessagePtr(new protocol::Undo(_my_id, override, actions)));
+	sendCommand(MessagePtr(new protocol::Undo(m_myId, override, actions)));
 }
 
 void Client::sendRedo(int actions, int override)
@@ -309,7 +308,7 @@ void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
 	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationCreate(
-		_my_id,
+		m_myId,
 		id,
 		rect.x(),
 		rect.y(),
@@ -322,7 +321,7 @@ void Client::sendAnnotationReshape(int id, const QRect &rect)
 {
 	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationReshape(
-		_my_id,
+		m_myId,
 		id,
 		rect.x(),
 		rect.y(),
@@ -335,7 +334,7 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 {
 	Q_ASSERT(id>0 && id <=0xffff);
 	sendCommand(MessagePtr(new protocol::AnnotationEdit(
-		_my_id,
+		m_myId,
 		id,
 		bg.rgba(),
 		text
@@ -345,18 +344,15 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 void Client::sendAnnotationDelete(int id)
 {
 	Q_ASSERT(id>0 && id <=0xffff);
-	sendCommand(MessagePtr(new protocol::AnnotationDelete(_my_id, id)));
+	sendCommand(MessagePtr(new protocol::AnnotationDelete(m_myId, id)));
 }
 
 /**
- * @brief Send the session initialization command stream
+ * @brief Send the session initialization or reset command stream
  * @param commands snapshot point commands
  */
-void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
+void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
 {
-	// Send ACK to indicate the rest of the data is on its way
-	_server->sendMessage(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::ACK)));
-
 	// The actual snapshot data will be sent in parallel with normal session traffic
 	_server->sendSnapshotMessages(commands);
 
@@ -365,97 +361,122 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 
 void Client::sendChat(const QString &message, bool announce, bool action)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce, action)));
+	if(announce || m_recordedChat || _isloopback) {
+		_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+	} else {
+		QJsonObject kwargs;
+		if(action)
+			kwargs["action"] = true;
+
+		sendServerCommand("chat", QJsonArray() << message, kwargs);
+	}
 }
 
-void Client::sendOpCommand(const QString &command)
+void Client::sendServerCommand(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	_server->sendMessage(protocol::Chat::opCommand(_my_id, command));
+	protocol::ServerCommand c { cmd, args, kwargs };
+	_server->sendMessage(MessagePtr(new protocol::Command(m_myId, c)));
 }
 
 void Client::sendLaserPointer(const QPointF &point, int trail)
 {
 	Q_ASSERT(trail>=0);
-	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, point.x() * 4, point.y() * 4, trail)));
+	_server->sendMessage(MessagePtr(new protocol::MovePointer(m_myId, point.x() * 4, point.y() * 4, trail)));
 }
 
 void Client::sendMarker(const QString &text)
 {
 	// Keep markers private
-	handleMessage(MessagePtr(new protocol::Marker(_my_id, text)));
-}
-
-/**
- * @brief Send a list of commands to initialize the session in local mode
- * @param commands
- */
-void Client::sendLocalInit(const QList<protocol::MessagePtr> commands)
-{
-	Q_ASSERT(_isloopback);
-	foreach(protocol::MessagePtr msg, commands)
-		_loopback->sendMessage(msg);
+	handleMessage(MessagePtr(new protocol::Marker(m_myId, text)));
 }
 
 void Client::sendLockUser(int userid, bool lock)
 {
 	Q_ASSERT(userid>0 && userid<256);
-	QString cmd;
-	if(lock)
-		cmd = "lock #";
-	else
-		cmd = "unlock #";
-	cmd += QString::number(userid);
-
-	sendOpCommand(cmd);
+	QList<uint8_t> ids = m_userlist->lockList();
+	int oldLen = ids.size();
+	if(lock) {
+		if(!ids.contains(userid))
+			ids.append(userid);
+	} else {
+		ids.removeAll(userid);
+	}
+	if(ids.size() != oldLen)
+		_server->sendMessage(MessagePtr(new protocol::UserACL(m_myId, ids)));
 }
 
 void Client::sendOpUser(int userid, bool op)
 {
-	Q_ASSERT(userid>0 && userid<256);
-	QString cmd;
-	if(op)
-		cmd = "op #";
-	else
-		cmd = "deop #";
-	cmd += QString::number(userid);
+	Q_ASSERT(userid>0 && userid<255);
 
-	sendOpCommand(cmd);
+	// List of current ops
+	QList<uint8_t> ops = m_userlist->operatorList();
+
+	if(op)
+		ops.append(userid);
+	else
+		ops.removeOne(userid);
+
+	_server->sendMessage(protocol::MessagePtr(new protocol::SessionOwner(m_myId, ops)));
 }
 
 void Client::sendKickUser(int userid)
 {
 	Q_ASSERT(userid>0 && userid<256);
-	sendOpCommand(QString("kick #%1").arg(userid));
+	sendServerCommand("kick", QJsonArray() << userid);
 }
 
 void Client::sendSetSessionTitle(const QString &title)
 {
-	_server->sendMessage(MessagePtr(new protocol::SessionTitle(_my_id, title)));
+	QJsonObject kwargs;
+	kwargs["title"] = title;
+	sendServerCommand("sessionconf", QJsonArray(), kwargs);
+}
+
+template<typename T> void setFlag(T &flags, T flag, bool on) {
+	if(on)
+		flags |= flag;
+	else
+		flags &= ~flag;
 }
 
 void Client::sendLockSession(bool lock)
 {
-	sendOpCommand(QStringLiteral("lockboard ") + (lock ? "on" : "off"));
+	uint16_t flags = m_aclfilter->sessionAclFlags();
+	setFlag(flags, protocol::SessionACL::LOCK_SESSION, lock);
+
+	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }
 
-void Client::sendLockLayerControls(bool lock)
+void Client::sendLockLayerControls(bool lock, bool ownlayers)
 {
-	sendOpCommand(QStringLiteral("locklayerctrl ") + (lock ? "on" : "off"));
+	uint16_t flags = m_aclfilter->sessionAclFlags();
+	setFlag(flags, protocol::SessionACL::LOCK_LAYERCTRL, lock);
+	setFlag(flags, protocol::SessionACL::LOCK_OWNLAYERS, ownlayers);
+
+	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }
 
 void Client::sendCloseSession(bool close)
 {
-	sendOpCommand(QStringLiteral("logins ") + (close ? "off" : "on"));
+	QJsonObject kwargs;
+	kwargs["closed"] = close;
+	sendServerCommand("sessionconf", QJsonArray(), kwargs);
+}
+
+void Client::sendResetSession()
+{
+	sendServerCommand("reset-session");
 }
 
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 {
 	if(_isloopback) {
 		// Allow layer locking in loopback mode. Exclusive access doesn't make any sense in this mode.
-		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, QList<uint8_t>())));
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(m_myId, layerid, locked, QList<uint8_t>())));
 
 	} else {
-		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, exclusive)));
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(m_myId, layerid, locked, exclusive)));
 	}
 }
 
@@ -469,11 +490,17 @@ void Client::playbackCommand(protocol::MessagePtr msg)
 
 void Client::endPlayback()
 {
-	_userlist->clearUsers();
+	m_userlist->clearUsers();
 }
 
 void Client::handleMessage(protocol::MessagePtr msg)
 {
+	// Filter messages
+	if(!m_aclfilter->filterMessage(*msg)) {
+		qDebug("Filtered message %d from %d", msg->type(), msg->contextId());
+		return;
+	}
+
 	// Emit message as-is for recording
 	emit messageReceived(msg);
 
@@ -486,8 +513,8 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	// Handle meta messages here
 	switch(msg->type()) {
 	using namespace protocol;
-	case MSG_SNAPSHOT:
-		handleSnapshotRequest(msg.cast<SnapshotMode>());
+	case MSG_COMMAND:
+		handleServerCommand(msg.cast<Command>());
 		break;
 	case MSG_CHAT:
 		handleChatMessage(msg.cast<Chat>());
@@ -495,20 +522,14 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_USER_JOIN:
 		handleUserJoin(msg.cast<UserJoin>());
 		break;
-	case MSG_USER_ATTR:
-		handleUserAttr(msg.cast<UserAttr>());
-		break;
 	case MSG_USER_LEAVE:
 		handleUserLeave(msg.cast<UserLeave>());
 		break;
-	case MSG_SESSION_TITLE:
-		emit sessionTitleChange(msg.cast<SessionTitle>().title());
-		break;
-	case MSG_SESSION_CONFIG:
-		handleSessionConfChange(msg.cast<SessionConf>());
-		break;
+	case MSG_SESSION_OWNER:
+	case MSG_USER_ACL:
+	case MSG_SESSION_ACL:
 	case MSG_LAYER_ACL:
-		handleLayerAcl(msg.cast<LayerACL>());
+		// Handled by the ACL filter
 		break;
 	case MSG_INTERVAL:
 		/* intervals are used only when playing back recordings */
@@ -527,38 +548,39 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	}
 }
 
-void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
+void Client::handleResetRequest(const protocol::ServerReply &msg)
 {
-	// The server should ever only send a REQUEST mode snapshot messages
-	if(msg.mode() != protocol::SnapshotMode::REQUEST && msg.mode() != protocol::SnapshotMode::REQUEST_NEW) {
-		qWarning() << "received unhandled snapshot mode" << msg.mode() << "message.";
-		return;
-	}
+	if(msg.reply["state"] == "init") {
+		qDebug("Requested session reset");
+		emit needSnapshot();
 
-	emit needSnapshot(msg.mode() == protocol::SnapshotMode::REQUEST_NEW);
+	} else if(msg.reply["state"] == "reset") {
+		qDebug("Resetting session!");
+		m_aclfilter->reset(m_myId, false);
+		emit sessionResetted();
+
+	} else {
+		qWarning() << "Unknown reset state:" << msg.reply["state"].toString();
+		qWarning() << msg.message;
+	}
 }
 
 void Client::handleChatMessage(const protocol::Chat &msg)
 {
-	QString username;
-	if(msg.contextId()==0)
-		username = tr("Server");
-	else
-		username = _userlist->getUsername(msg.contextId());
-
+	QString username = m_userlist->getUsername(msg.contextId());
 	emit chatMessageReceived(
 		username,
 		msg.message(),
 		msg.isAnnouncement(),
 		msg.isAction(),
-		msg.contextId() == _my_id
+		msg.contextId() == m_myId
 	);
 }
 
 void Client::handleMarkerMessage(const protocol::Marker &msg)
 {
 	emit markerMessageReceived(
-		_userlist->getUsername(msg.contextId()),
+		m_userlist->getUsername(msg.contextId()),
 		msg.text()
 	);
 }
@@ -589,39 +611,52 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)
 {
-	_userlist->addUser(User(msg.contextId(), msg.name(), msg.contextId() == _my_id));
-	emit userJoined(msg.contextId(), msg.name());
-}
+	User u(msg.contextId(), msg.name(), msg.contextId() == m_myId, msg.isAuthenticated(), msg.isModerator());
+	if(m_aclfilter->isLockedByDefault())
+		u.isLocked = true;
 
-void Client::handleUserAttr(const protocol::UserAttr &msg)
-{
-	if(msg.contextId() == _my_id) {
-		_isOp = msg.isOp();
-		_isUserLocked = msg.isLocked();
-		emit opPrivilegeChange(msg.isOp());
-		emit lockBitsChanged();
-	}
-	_userlist->updateUser(msg);
+	m_userlist->addUser(u);
+	emit userJoined(msg.contextId(), msg.name());
 }
 
 void Client::handleUserLeave(const protocol::UserLeave &msg)
 {
-	QString name = _userlist->getUserById(msg.contextId()).name;
-	_userlist->removeUser(msg.contextId());
+	QString name = m_userlist->getUserById(msg.contextId()).name;
+	m_userlist->removeUser(msg.contextId());
 	emit userLeft(name);
 }
 
-void Client::handleSessionConfChange(const protocol::SessionConf &msg)
+void Client::handleServerCommand(const protocol::Command &msg)
 {
-	_isSessionLocked = msg.isLocked();
-	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed(), msg.isChatPreserved());
-	emit lockBitsChanged();
-}
+	using protocol::ServerReply;
+	ServerReply reply = msg.reply();
 
-void Client::handleLayerAcl(const protocol::LayerACL &msg)
-{
-	_layerlist->updateLayerAcl(msg.id(), msg.locked(), msg.exclusive());
-	emit lockBitsChanged();
+	switch(reply.type) {
+	case ServerReply::UNKNOWN:
+		qWarning() << "Unknown server reply:" << reply.message << reply.reply;
+		break;
+	case ServerReply::LOGIN:
+		qWarning("got login message while in session!");
+		break;
+	case ServerReply::MESSAGE:
+	case ServerReply::CHAT:
+	case ServerReply::ALERT:
+	case ServerReply::ERROR:
+	case ServerReply::RESULT:
+		emit chatMessageReceived(
+			m_userlist->getUsername(reply.reply.value("user").toInt()),
+			reply.message,
+			false,
+			reply.reply.value("options").toObject().value("action").toBool(),
+			false);
+		break;
+	case ServerReply::SESSIONCONF:
+		emit sessionConfChange(reply.reply["config"].toObject());
+		break;
+	case ServerReply::RESET:
+		handleResetRequest(reply);
+		break;
+	}
 }
 
 void Client::handleMovePointer(const protocol::MovePointer &msg)

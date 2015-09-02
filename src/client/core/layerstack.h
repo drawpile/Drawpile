@@ -148,6 +148,9 @@ public:
 	//! Show background layer (bottom-most layer) in special view modes
 	void setViewBackgroundLayer(bool usebg);
 
+	//! Reset the entire layer stack
+	void reset();
+
 public slots:
 	//! Set or clear the "hidden" flag of a layer
 	void setLayerHidden(int layerid, bool hide);

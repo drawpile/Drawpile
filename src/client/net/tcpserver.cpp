@@ -23,6 +23,7 @@
 
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/flow.h"
+#include "../shared/net/control.h"
 
 #include <QDebug>
 #include <QSslSocket>
@@ -43,6 +44,7 @@ TcpServer::TcpServer(QObject *parent) :
 	_socket->setSslConfiguration(sslconf);
 
 	_msgqueue = new protocol::MessageQueue(_socket, this);
+	_msgqueue->setDecodeOpaque(true);
 
 	_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
 	_msgqueue->setPingInterval(15 * 1000);
@@ -91,7 +93,12 @@ void TcpServer::sendMessage(protocol::MessagePtr msg)
 void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 {
 	qDebug() << "sending" << msgs.length() << "snapshot messages";
-	_msgqueue->sendSnapshot(msgs);
+	for(protocol::MessagePtr msg : msgs)
+		_msgqueue->send(msg);
+
+	protocol::ServerCommand cmd;
+	cmd.cmd = "init-complete";
+	_msgqueue->send(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }
 
 void TcpServer::handleMessage()

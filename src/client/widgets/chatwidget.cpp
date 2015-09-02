@@ -173,6 +173,8 @@ void ChatBox::systemMessage(const QString& message)
 
 void ChatBox::sendMessage(const QString &msg)
 {
+	// TODO implement this in JavaScript?
+	// It would make it easy to add custom commands.
 	if(msg.at(0) == '/') {
 		// Special commands
 
@@ -216,11 +218,6 @@ void ChatBox::sendMessage(const QString &msg)
 				msg += QStringLiteral("%1: %2\n").arg(i+1).arg(d.at(i) * 100);
 			systemMessage(msg);
 #endif
-		} else {
-			// operator commands
-			if(!params.isEmpty())
-				params.prepend(' ');
-			emit opCommand(cmd + params);
 		}
 
 	} else {

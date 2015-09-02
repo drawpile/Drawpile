@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 */
 
 #include "messagequeue.h"
-#include "snapshot.h"
 #include "flow.h"
 
 #include <QTcpSocket>
@@ -32,15 +31,16 @@
 
 namespace protocol {
 
-// Reserve enough buffer space for one complete message + snapshot mode marker
-static const int MAX_BUF_LEN = 1024*64 + 4 + 5;
+// Reserve enough buffer space for one complete message
+static const int MAX_BUF_LEN = 1024*64 + protocol::Message::HEADER_LEN;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
-	: QObject(parent), _socket(socket),
-	  _pingTimer(nullptr),
-	  _lastRecvTime(0),
-	  _idleTimeout(0), _pingSent(0), _closeWhenReady(false), _expectingSnapshot(false),
-	  _ignoreIncoming(false)
+	: QObject(parent), m_socket(socket),
+	  m_pingTimer(nullptr),
+	  m_lastRecvTime(0),
+	  m_idleTimeout(0), m_pingSent(0), m_closeWhenReady(false),
+	  m_ignoreIncoming(false),
+	  m_decodeOpaque(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
@@ -49,158 +49,135 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 		connect(socket, SIGNAL(encrypted()), this, SLOT(sslEncrypted()));
 	}
 
-	_recvbuffer = new char[MAX_BUF_LEN];
-	_sendbuffer = new char[MAX_BUF_LEN];
-	_recvcount = 0;
-	_sentcount = 0;
-	_sendbuflen = 0;
+	m_recvbuffer = new char[MAX_BUF_LEN];
+	m_sendbuffer = new char[MAX_BUF_LEN];
+	m_recvcount = 0;
+	m_sentcount = 0;
+	m_sendbuflen = 0;
 
-	_idleTimer = new QTimer(this);
-	connect(_idleTimer, SIGNAL(timeout()), this, SLOT(checkIdleTimeout()));
-	_idleTimer->setInterval(1000);
-	_idleTimer->setSingleShot(false);
+	m_idleTimer = new QTimer(this);
+	connect(m_idleTimer, &QTimer::timeout, this, &MessageQueue::checkIdleTimeout);
+	m_idleTimer->setInterval(1000);
+	m_idleTimer->setSingleShot(false);
 
 #ifndef NDEBUG
-	_randomlag = 0;
+	m_randomlag = 0;
 #endif
 }
 
 void MessageQueue::sslEncrypted()
 {
-	disconnect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
-	connect(_socket, SIGNAL(encryptedBytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
+	disconnect(m_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
+	connect(m_socket, SIGNAL(encryptedBytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
 }
 
 void MessageQueue::checkIdleTimeout()
 {
-	if(_idleTimeout>0 && _socket->state() == QTcpSocket::ConnectedState && idleTime() > _idleTimeout) {
+	if(m_idleTimeout>0 && m_socket->state() == QTcpSocket::ConnectedState && idleTime() > m_idleTimeout) {
 		qWarning("MessageQueue timeout");
-		_socket->abort();
+		m_socket->abort();
 	}
 }
 
 void MessageQueue::setIdleTimeout(qint64 timeout)
 {
-	_idleTimeout = timeout;
-	_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+	m_idleTimeout = timeout;
+	m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
 	if(timeout>0)
-		_idleTimer->start(1000);
+		m_idleTimer->start(1000);
 	else
-		_idleTimer->stop();
+		m_idleTimer->stop();
 }
 
 void MessageQueue::setPingInterval(int msecs)
 {
-	if(!_pingTimer) {
-		_pingTimer = new QTimer(this);
-		_pingTimer->setSingleShot(false);
-		connect(_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
+	if(!m_pingTimer) {
+		m_pingTimer = new QTimer(this);
+		m_pingTimer->setSingleShot(false);
+		connect(m_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
 	}
-	_pingTimer->setInterval(msecs);
-	_pingTimer->start(msecs);
+	m_pingTimer->setInterval(msecs);
+	m_pingTimer->start(msecs);
 }
 
 MessageQueue::~MessageQueue()
 {
-	delete [] _recvbuffer;
-	delete [] _sendbuffer;
+	delete [] m_recvbuffer;
+	delete [] m_sendbuffer;
 }
 
 bool MessageQueue::isPending() const
 {
-	return !_recvqueue.isEmpty();
+	return !m_recvqueue.isEmpty();
 }
 
 MessagePtr MessageQueue::getPending()
 {
-	return _recvqueue.dequeue();
-}
-
-bool MessageQueue::isPendingSnapshot() const
-{
-	return !_snapshot_recv.isEmpty();
-}
-
-MessagePtr MessageQueue::getPendingSnapshot()
-{
-	return _snapshot_recv.dequeue();
+	return m_recvqueue.dequeue();
 }
 
 void MessageQueue::send(MessagePtr packet)
 {
-	if(!_closeWhenReady) {
-		_sendqueue.enqueue(packet);
-		if(_sendbuflen==0)
+	if(!m_closeWhenReady) {
+		m_sendqueue.enqueue(packet);
+		if(m_sendbuflen==0)
 			writeData();
 	}
 }
 
 void MessageQueue::sendNow(MessagePtr msg)
 {
-	if(!_closeWhenReady) {
-		_sendqueue.prepend(msg);
-		if(_sendbuflen==0)
-			writeData();
-	}
-}
-
-void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
-{
-	if(!_closeWhenReady) {
-		_snapshot_send = snapshot;
-		_snapshot_send.append(MessagePtr(new SnapshotMode(SnapshotMode::END)));
-
-		if(_sendbuflen==0)
+	if(!m_closeWhenReady) {
+		m_sendqueue.prepend(msg);
+		if(m_sendbuflen==0)
 			writeData();
 	}
 }
 
 void MessageQueue::sendDisconnect(int reason, const QString &message)
 {
-	send(MessagePtr(new protocol::Disconnect(protocol::Disconnect::Reason(reason), message)));
-	_ignoreIncoming = true;
-	_recvcount = 0;
+	send(MessagePtr(new protocol::Disconnect(0, protocol::Disconnect::Reason(reason), message)));
+	m_ignoreIncoming = true;
+	m_recvcount = 0;
 }
 
 void MessageQueue::sendPing()
 {
-	if(_pingSent==0) {
-		_pingSent = QDateTime::currentMSecsSinceEpoch();
+	if(m_pingSent==0) {
+		m_pingSent = QDateTime::currentMSecsSinceEpoch();
 	} else {
 		// This shouldn't happen, but we'll resend a ping anyway just to be safe.
 		qWarning("sendPing(): reply to previous ping not yet received!");
 	}
 
-	sendNow(MessagePtr(new Ping(false)));
+	sendNow(MessagePtr(new Ping(0, false)));
 }
 
 int MessageQueue::uploadQueueBytes() const
 {
-	int total = _socket->bytesToWrite() + _sendbuflen - _sentcount;
-	foreach(const MessagePtr msg, _sendqueue)
+	int total = m_socket->bytesToWrite() + m_sendbuflen - m_sentcount;
+	for(const MessagePtr msg : m_sendqueue)
 		total += msg->length();
-	foreach(const MessagePtr msg, _snapshot_send)
-		total += msg->length() + 4; /* include snapshot mode packets */
 	return total;
 }
 
 qint64 MessageQueue::idleTime() const
 {
-	return QDateTime::currentMSecsSinceEpoch() - _lastRecvTime;
+	return QDateTime::currentMSecsSinceEpoch() - m_lastRecvTime;
 }
 
 void MessageQueue::readData() {
-	bool gotmessage = false, gotsnapshot = false;
+	bool gotmessage = false;
 	int read, totalread=0;
 	do {
 		// Read as much as fits in to the deserialization buffer
-		read = _socket->read(_recvbuffer+_recvcount, MAX_BUF_LEN-_recvcount);
+		read = m_socket->read(m_recvbuffer+m_recvcount, MAX_BUF_LEN-m_recvcount);
 		if(read<0) {
-			emit socketError(_socket->errorString());
+			emit socketError(m_socket->errorString());
 			return;
 		}
 
-		if(_ignoreIncoming) {
+		if(m_ignoreIncoming) {
 			// Ignore incoming data mode is used when we're shutting down the connection
 			// but want to clear the upload queue
 			if(read>0)
@@ -209,15 +186,15 @@ void MessageQueue::readData() {
 				return;
 		}
 
-		_recvcount += read;
+		m_recvcount += read;
 
 		// Extract all complete messages
 		int len;
-		while(_recvcount >= Message::HEADER_LEN && _recvcount >= (len=Message::sniffLength(_recvbuffer))) {
+		while(m_recvcount >= Message::HEADER_LEN && m_recvcount >= (len=Message::sniffLength(m_recvbuffer))) {
 			// Whole message received!
-			Message *message = Message::deserialize((const uchar*)_recvbuffer, _recvcount);
+			Message *message = Message::deserialize((const uchar*)m_recvbuffer, m_recvcount, m_decodeOpaque);
 			if(!message) {
-				emit badData(len, _recvbuffer[2]);
+				emit badData(len, m_recvbuffer[2]);
 
 			} else {
 				MessagePtr msg(message);
@@ -231,39 +208,28 @@ void MessageQueue::readData() {
 					bool isPong = msg.cast<Ping>().isPong();
 
 					if(isPong) {
-						if(_pingSent==0) {
+						if(m_pingSent==0) {
 							qWarning("Received Pong, but no Ping was sent!");
 
 						} else {
-							qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - _pingSent;
-							_pingSent = 0;
+							qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - m_pingSent;
+							m_pingSent = 0;
 							emit pingPong(roundtrip);
 						}
 					} else {
-						sendNow(MessagePtr(new Ping(true)));
+						sendNow(MessagePtr(new Ping(0, true)));
 					}
-
-				} else if(_expectingSnapshot) {
-					// A message preceded by SnapshotMode::SNAPSHOT goes into the snapshot queue
-					_snapshot_recv.enqueue(msg);
-					_expectingSnapshot = false;
-					gotsnapshot = true;
 
 				} else {
-					if(msg->type() == MSG_SNAPSHOT && msg.cast<SnapshotMode>().mode() == SnapshotMode::SNAPSHOT) {
-						_expectingSnapshot = true;
-
-					} else {
-						_recvqueue.enqueue(msg);
-						gotmessage = true;
-					}
+					m_recvqueue.enqueue(msg);
+					gotmessage = true;
 				}
 			}
 
-			if(len < _recvcount) {
-				memmove(_recvbuffer, _recvbuffer+len, _recvcount-len);
+			if(len < m_recvcount) {
+				memmove(m_recvbuffer, m_recvbuffer+len, m_recvcount-len);
 			}
-			_recvcount -= len;
+			m_recvcount -= len;
 		}
 
 		// All messages extracted from buffer (if there were any):
@@ -272,14 +238,12 @@ void MessageQueue::readData() {
 	} while(read>0);
 
 	if(totalread) {
-		_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+		m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
 		emit bytesReceived(totalread);
 	}
 
 	if(gotmessage)
 		emit messageAvailable();
-	if(gotsnapshot)
-		emit snapshotAvailable();
 }
 
 void MessageQueue::dataWritten(qint64 bytes)
@@ -287,8 +251,8 @@ void MessageQueue::dataWritten(qint64 bytes)
 	emit bytesSent(bytes);
 
 	// Write more once the buffer is empty
-	if(_socket->bytesToWrite()==0) {
-		if(_sendbuflen==0 && _sendqueue.isEmpty() && _snapshot_send.isEmpty())
+	if(m_socket->bytesToWrite()==0) {
+		if(m_sendbuflen==0 && m_sendqueue.isEmpty())
 			emit allSent();
 		else
 			writeData();
@@ -296,47 +260,37 @@ void MessageQueue::dataWritten(qint64 bytes)
 }
 
 void MessageQueue::writeData() {
-	if(_sendbuflen==0) {
-		// If send buffer is empty, serialize the next message in the queue.
-		// The snapshot upload queue has lower priority than the normal queue.
-		if(!_sendqueue.isEmpty()) {
-			// There are messages in the higher priority queue, send one
-			MessagePtr msg = _sendqueue.dequeue();
-			_sendbuflen = msg->serialize(_sendbuffer);
-			if(msg->type() == protocol::MSG_DISCONNECT) {
-				// Automatically disconnect after Disconnect notification is sent
-				_closeWhenReady = true;
-				_sendqueue.clear();
-			}
+	if(m_sendbuflen==0 && !m_sendqueue.isEmpty()) {
+		MessagePtr msg = m_sendqueue.dequeue();
+		m_sendbuflen = msg->serialize(m_sendbuffer);
 
-		} else if(!_snapshot_send.isEmpty()) {
-			// When the main send queue is empty, messages from the snapshot queue are sent
-			SnapshotMode mode(SnapshotMode::SNAPSHOT);
-			_sendbuflen = mode.serialize(_sendbuffer);
-			_sendbuflen += _snapshot_send.takeFirst()->serialize(_sendbuffer + _sendbuflen);
+		if(msg->type() == protocol::MSG_DISCONNECT) {
+			// Automatically disconnect after Disconnect notification is sent
+			m_closeWhenReady = true;
+			m_sendqueue.clear();
 		}
 	}
 
-	if(_sentcount < _sendbuflen) {
+	if(m_sentcount < m_sendbuflen) {
 #ifndef NDEBUG
 		// Debugging tool: simulate bad network connections by sleeping at odd times
-		if(_randomlag>0) {
-			QThread::msleep(qrand() % _randomlag);
+		if(m_randomlag>0) {
+			QThread::msleep(qrand() % m_randomlag);
 		}
 #endif
 
-		int sent = _socket->write(_sendbuffer+_sentcount, _sendbuflen-_sentcount);
+		int sent = m_socket->write(m_sendbuffer+m_sentcount, m_sendbuflen-m_sentcount);
 		if(sent<0) {
 			// Error
-			emit socketError(_socket->errorString());
+			emit socketError(m_socket->errorString());
 			return;
 		}
-		_sentcount += sent;
-		if(_sentcount == _sendbuflen) {
-			_sendbuflen=0;
-			_sentcount=0;
-			if(_closeWhenReady) {
-				_socket->disconnectFromHost();
+		m_sentcount += sent;
+		if(m_sentcount == m_sendbuflen) {
+			m_sendbuflen=0;
+			m_sentcount=0;
+			if(m_closeWhenReady) {
+				m_socket->disconnectFromHost();
 
 			} else {
 				writeData();

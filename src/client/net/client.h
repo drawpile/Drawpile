@@ -20,6 +20,8 @@
 #define DP_NET_CLIENT_H
 
 #include <QObject>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "core/point.h"
 #include "core/blendmodes.h"
@@ -27,21 +29,23 @@
 #include "../shared/net/message.h"
 #include "canvas/statetracker.h" // for ToolContext
 
+
 namespace paintcore {
 	class Point;
 }
 
 namespace protocol {
-	class SnapshotMode;
+	class Command;
 	class Chat;
 	class UserJoin;
-	class UserAttr;
+	class SessionOwner;
 	class UserLeave;
 	class SessionConf;
 	class LayerACL;
 	class MovePointer;
 	class Marker;
 	class Disconnect;
+	struct ServerReply;
 }
 
 namespace net {
@@ -50,6 +54,7 @@ class LoopbackServer;
 class LoginHandler;
 class UserListModel;
 class LayerListModel;
+class AclFilter;
 
 /**
  * The client for accessing the drawing server.
@@ -75,7 +80,7 @@ public:
 	 * @brief Get the local user's user/context ID
 	 * @return user ID
 	 */
-	int myId() const { return _my_id; }
+	int myId() const { return m_myId; }
 
 	/**
 	 * @brief Return the URL of the current session
@@ -131,26 +136,6 @@ public:
 	QSslCertificate hostCertificate() const { return _server->hostCertificate(); }
 
 	/**
-	 * @brief Is there a global lock on?
-	 *
-	 * @return true if there is a session or user lock
-	 */
-	bool isLocked() const { return _isSessionLocked || _isUserLocked; }
-
-	/**
-	 * @brief Has this user been individually locked?
-	 */
-	bool isUserLocked() const { return _isUserLocked; }
-
-	/**
-	 * @brief Is the currently logged in user a session operator?
-	 *
-	 * This is always true in local mode.
-	 * @return true
-	 */
-	bool isOperator() const { return _isloopback || _isOp; }
-
-	/**
 	 * @brief Get the number of bytes waiting to be sent
 	 * @return upload queue length
 	 */
@@ -160,16 +145,31 @@ public:
 	 * @brief Get the user list
 	 * @return user list model
 	 */
-	UserListModel *userlist() const { return _userlist; }
+	UserListModel *userlist() const { return m_userlist; }
 
 	/**
 	 * @brief Get the layer list
 	 * @return layer list model
 	 */
-	LayerListModel *layerlist() const { return _layerlist; }
+	LayerListModel *layerlist() const { return m_layerlist; }
+
+	/**
+	 * @brief Get the ACL filter
+	 * @return
+	 */
+	AclFilter *aclFilter() const { return m_aclfilter; }
 
 	//! Reinitialize after clearing out the old board
 	void init();
+
+	/**
+	 * @brief Whether to use recorded chat (Chat message) by default
+	 *
+	 * If set to false, chat messages are sent with ServerCommands and delivered
+	 * only to the currently active users.
+	 * @param recordedChat if true, chat messages are recorded in session history
+	 */
+	void setRecordedChatMode(bool recordedChat) { m_recordedChat = recordedChat; }
 
 public slots:
 	// Layer changing
@@ -200,13 +200,12 @@ public slots:
 	void sendAnnotationEdit(int id, const QColor &bg, const QString &text);
 	void sendAnnotationDelete(int id);
 
-	// Snapshot	
-	void sendLocalInit(const QList<protocol::MessagePtr> commands);
-	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+	// Snapshot
+	void sendInitialSnapshot(const QList<protocol::MessagePtr> commands);
 
 	// Misc.
 	void sendChat(const QString &message, bool announce, bool action);
-	void sendOpCommand(const QString &command);
+	void sendServerCommand(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
 	void sendLaserPointer(const QPointF &point, int trail=0);
 	void sendMarker(const QString &text);
 
@@ -217,8 +216,9 @@ public slots:
 	void sendSetSessionTitle(const QString &title);
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 	void sendLockSession(bool lock);
-	void sendLockLayerControls(bool lock);
+	void sendLockLayerControls(bool lock, bool own);
 	void sendCloseSession(bool close);
+	void sendResetSession();
 
 	// Recording
 	void playbackCommand(protocol::MessagePtr msg);
@@ -230,8 +230,10 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
 	void markerMessageReceived(const QString &user, const QString &message);
-	void needSnapshot(bool forcenew);
 	void userPointerMoved(int ctx, const QPointF &point, int trail);
+
+	void needSnapshot();
+	void sessionResetted();
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
@@ -244,8 +246,7 @@ signals:
 
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
-	void sessionTitleChange(const QString &title);
-	void sessionConfChange(bool locked, bool layerctrllocked, bool closed, bool preservechat);
+	void sessionConfChange(const QJsonObject &config);
 	void lockBitsChanged();
 
 	void layerVisibilityChange(int id, bool hidden);
@@ -264,14 +265,12 @@ private slots:
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
-	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
+	void handleResetRequest(const protocol::ServerReply &msg);
 	void handleChatMessage(const protocol::Chat &msg);
 	void handleMarkerMessage(const protocol::Marker &msg);
 	void handleUserJoin(const protocol::UserJoin &msg);
-	void handleUserAttr(const protocol::UserAttr &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);
-	void handleSessionConfChange(const protocol::SessionConf &msg);
-	void handleLayerAcl(const protocol::LayerACL &msg);
+	void handleServerCommand(const protocol::Command &msg);
 	void handleMovePointer(const protocol::MovePointer &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
 
@@ -280,13 +279,13 @@ private:
 	Server *_server;
 	LoopbackServer *_loopback;
 
-	QString _sessionId;
-	int _my_id;
+	QString m_sessionId;
+	int m_myId;
 	bool _isloopback;
-	bool _isOp;
-	bool _isSessionLocked, _isUserLocked;
-	UserListModel *_userlist;
-	LayerListModel *_layerlist;
+	bool m_recordedChat;
+	UserListModel *m_userlist;
+	LayerListModel *m_layerlist;
+	AclFilter *m_aclfilter;
 
 	canvas::ToolContext m_lastToolCtx;
 };

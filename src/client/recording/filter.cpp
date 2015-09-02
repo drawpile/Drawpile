@@ -97,7 +97,6 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 		break;
 
 	case MSG_USER_JOIN:
-	case MSG_USER_ATTR:
 	case MSG_USER_LEAVE:
 		state.userjoins[msg->contextId()].append(state.index.size()-1);
 		return;

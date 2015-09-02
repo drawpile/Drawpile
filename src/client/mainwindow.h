@@ -134,11 +134,13 @@ class MainWindow : public QMainWindow {
 		void autosaveNow();
 
 		void setOperatorMode(bool op);
+		void setLayerCtrlMode(QAction *mode);
+		void updateLayerCtrlMode();
 
 		void connecting();
 		void loggedin(bool join);
 		void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
-		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat);
+		void sessionConfChanged(const QJsonObject &config);
 
 		void updateLockWidget();
 		void setRecorderStatus(bool on);
@@ -249,9 +251,10 @@ class MainWindow : public QMainWindow {
 
 		QActionGroup *_currentdoctools; // actions relating to the currently open document
 		QActionGroup *_admintools; // session operator actions
-		QActionGroup *_docadmintools; // current document related operator actions
+		QActionGroup *m_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
 		QActionGroup *_toolslotactions; // tool slot selection
+		QActionGroup *m_layerctrlmode; // layer control mode actions
 		QAction *_autosave;
 
 		int _lastToolBeforePaste; // Last selected tool before Paste was used

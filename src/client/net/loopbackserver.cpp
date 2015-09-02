@@ -36,9 +36,10 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 	emit messageReceived(msg);
 }
 
-void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr>)
+void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 {
-	// There are no snapshots in loopback mode
+	for(protocol::MessagePtr msg : msgs)
+		emit messageReceived(msg);
 }
 
 }

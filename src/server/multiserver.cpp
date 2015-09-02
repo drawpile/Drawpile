@@ -20,7 +20,6 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "sslserver.h"
-#include "hibernation.h"
 #include "userfile.h"
 #include "announcementwhitelist.h"
 #include "banlist.h"
@@ -29,7 +28,6 @@
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
 
-#include "../shared/net/snapshot.h"
 #include "../shared/util/announcementapi.h"
 
 #include <QTcpSocket>
@@ -48,7 +46,7 @@ MultiServer::MultiServer(QObject *parent)
 {
 	_sessions = new SessionServer(this);
 
-	connect(_sessions, SIGNAL(sessionCreated(SessionState*)), this, SLOT(assignRecording(SessionState*)));
+	connect(_sessions, SIGNAL(sessionCreated(Session*)), this, SLOT(assignRecording(Session*)));
 	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(tryAutoStop()));
 	connect(_sessions, SIGNAL(userLoggedIn()), this, SLOT(printStatusUpdate()));
 	connect(_sessions, &SessionServer::userDisconnected, [this]() {
@@ -142,22 +140,6 @@ void MultiServer::setRandomLag(uint lag)
 void MultiServer::setAutoStop(bool autostop)
 {
 	_autoStop = autostop;
-}
-
-bool MultiServer::setHibernation(const QString &directory, bool all, bool autoHibernate)
-{
-	Hibernation *hib = new Hibernation(directory);
-	if(!hib->init()) {
-		delete hib;
-		return false;
-	}
-
-	hib->setStoreAllSessions(all);
-	hib->setAutoStore(autoHibernate);
-
-	_sessions->setSessionStore(hib);
-
-	return true;
 }
 
 bool MultiServer::setUserFile(const QString &path)
@@ -283,7 +265,7 @@ bool MultiServer::startFd(int fd)
  *
  * @param session
  */
-void MultiServer::assignRecording(SessionState *session)
+void MultiServer::assignRecording(Session *session)
 {
 	if(_recordingFile.isEmpty())
 		return;
