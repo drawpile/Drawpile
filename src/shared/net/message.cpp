@@ -20,17 +20,10 @@
 #include <QtEndian>
 
 #include "message.h"
-
-#include "annotation.h"
-#include "image.h"
 #include "control.h"
-#include "layer.h"
 #include "meta.h"
-#include "meta2.h"
 #include "flow.h"
-#include "pen.h"
-#include "undo.h"
-#include "recording.h"
+#include "opaque.h"
 
 namespace protocol {
 
@@ -84,7 +77,7 @@ bool Message::payloadEquals(const Message &m) const
 	return b1 == b2;
 }
 
-Message *Message::deserialize(const uchar *data, int buflen)
+Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 {
 	// All valid messages have the fixed length header
 	if(buflen<HEADER_LEN)
@@ -101,42 +94,29 @@ Message *Message::deserialize(const uchar *data, int buflen)
 	data += HEADER_LEN;
 
 	switch(type) {
+	// Control messages
 	case MSG_COMMAND: return Command::deserialize(ctx, data, len);
 	case MSG_DISCONNECT: return Disconnect::deserialize(ctx, data, len);
 	case MSG_PING: return Ping::deserialize(ctx, data, len);
 	case MSG_STREAMPOS: return StreamPos::deserialize(ctx, data, len);
 
+	// Transparent meta messages
 	case MSG_USER_JOIN: return UserJoin::deserialize(ctx, data, len);
 	case MSG_USER_LEAVE: return UserLeave::deserialize(ctx, data, len);
 	case MSG_SESSION_OWNER: return SessionOwner::deserialize(ctx, data, len);
 
-	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
-	case MSG_INTERVAL: return Interval::deserialize(ctx, data, len);
-	case MSG_MOVEPOINTER: return MovePointer::deserialize(ctx, data, len);
-	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
-	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
-	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
-	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
-
-	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
-	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);
-	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(ctx, data, len);
-	case MSG_LAYER_RETITLE: return LayerRetitle::deserialize(ctx, data, len);
-	case MSG_LAYER_ORDER: return LayerOrder::deserialize(ctx, data, len);
-	case MSG_LAYER_DELETE: return LayerDelete::deserialize(ctx, data, len);
-	case MSG_PUTIMAGE: return PutImage::deserialize(ctx, data, len);
-	case MSG_TOOLCHANGE: return ToolChange::deserialize(ctx, data, len);
-	case MSG_PEN_MOVE: return PenMove::deserialize(ctx, data, len);
-	case MSG_PEN_UP: return PenUp::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_CREATE: return AnnotationCreate::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_RESHAPE: return AnnotationReshape::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_EDIT: return AnnotationEdit::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(ctx, data, len);
-	case MSG_UNDOPOINT: return UndoPoint::deserialize(ctx, data, len);
-	case MSG_UNDO: return Undo::deserialize(ctx, data, len);
-	case MSG_FILLRECT: return FillRect::deserialize(ctx, data, len);
+	// Opaque messages
+	default:
+		if(type >= 64) {
+			if(decodeOpaque)
+				return OpaqueMessage::decode(type, ctx, data, len);
+			else
+				return OpaqueMessage::deserialize(type, ctx, data, len);
+		}
 	}
+
 	// Unknown message type!
+	qWarning("Unhandled message type %d", type);
 	return nullptr;
 }
 

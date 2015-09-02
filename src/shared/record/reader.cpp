@@ -323,7 +323,7 @@ MessageRecord Reader::readNext()
 #endif
 		message = 0;
 	} else {
-		message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
+		message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length(), true);
 	}
 
 	if(message) {

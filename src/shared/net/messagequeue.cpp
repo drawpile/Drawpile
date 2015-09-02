@@ -39,7 +39,8 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	  m_pingTimer(nullptr),
 	  m_lastRecvTime(0),
 	  m_idleTimeout(0), m_pingSent(0), m_closeWhenReady(false),
-	  m_ignoreIncoming(false)
+	  m_ignoreIncoming(false),
+	  m_decodeOpaque(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
@@ -191,7 +192,7 @@ void MessageQueue::readData() {
 		int len;
 		while(m_recvcount >= Message::HEADER_LEN && m_recvcount >= (len=Message::sniffLength(m_recvbuffer))) {
 			// Whole message received!
-			Message *message = Message::deserialize((const uchar*)m_recvbuffer, m_recvcount);
+			Message *message = Message::deserialize((const uchar*)m_recvbuffer, m_recvcount, m_decodeOpaque);
 			if(!message) {
 				emit badData(len, m_recvbuffer[2]);
 

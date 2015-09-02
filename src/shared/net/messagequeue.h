@@ -46,6 +46,14 @@ public:
 	~MessageQueue();
 
 	/**
+	 * @brief Automatically decode opaque messages?
+	 *
+	 * This should be used on the client side only.
+	 * @param d
+	 */
+	void setDecodeOpaque(bool d) { m_decodeOpaque = d; }
+
+	/**
 	 * @brief Check if there are new messages available
 	 * @return true if getPending will return a message
 	 */
@@ -194,6 +202,8 @@ private:
 
 	bool m_closeWhenReady;
 	bool m_ignoreIncoming;
+
+	bool m_decodeOpaque;
 
 #ifndef NDEBUG
 	uint m_randomlag;

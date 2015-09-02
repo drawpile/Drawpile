@@ -928,7 +928,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		unsigned int msglen;
 		in.readBytes(msgbuf, msglen);
 
-		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf, msglen);
+		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf, msglen, true);
 		delete [] msgbuf;
 		if(!tc) {
 			qWarning() << "invalid tool change message in snapshot!";

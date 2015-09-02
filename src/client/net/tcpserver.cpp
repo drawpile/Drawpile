@@ -44,6 +44,7 @@ TcpServer::TcpServer(QObject *parent) :
 	_socket->setSslConfiguration(sslconf);
 
 	_msgqueue = new protocol::MessageQueue(_socket, this);
+	_msgqueue->setDecodeOpaque(true);
 
 	_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
 	_msgqueue->setPingInterval(15 * 1000);

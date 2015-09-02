@@ -210,9 +210,10 @@ public:
 	 *
 	 * @param data input data buffer
 	 * @param buflen length of the data buffer
+	 * @param decodeOpaque automatically decode opaque messages rather than returning OpaqueMessage
 	 * @return message or 0 if type is unknown
 	 */
-	static Message *deserialize(const uchar *data, int buflen);
+	static Message *deserialize(const uchar *data, int buflen, bool decodeOpaque);
 
 	/**
 	 * @brief Check if this message has the same content as the other one

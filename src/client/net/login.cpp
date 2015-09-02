@@ -168,23 +168,14 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	}
 
 	// Server protocol version must match ours
-	int serverVersion = msg.reply["server-version"].toInt();
+	const int serverVersion = msg.reply["server-version"].toInt();
 	if(serverVersion != DRAWPILE_PROTO_SERVER_VERSION) {
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
 	}
 
-	// Major version (if set) must match ours
-	if(msg.reply.contains("major-version")) {
-		int majorVersion = msg.reply["major-version"].toInt();
-		if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
-			failLogin(tr("Server is for a different Drawpile version!"));
-			return;
-		}
-	}
-
 	// Parse server capability flags
-	QJsonArray flags = msg.reply["flags"].toArray();
+	const QJsonArray flags = msg.reply["flags"].toArray();
 
 	bool mustSecure = false;
 	m_needHostPassword = false;

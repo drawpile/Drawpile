@@ -48,8 +48,7 @@ void LoginHandler::startLoginProcess()
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
 	greeting.message = "Drawpile server " DRAWPILE_PROTO_STR;
-	greeting.reply["server-version"] = DRAWPILE_PROTO_SERVER_VERSION;
-	greeting.reply["major-version"] = DRAWPILE_PROTO_MAJOR_VERSION;
+	greeting.reply["version"] = DRAWPILE_PROTO_SERVER_VERSION;
 
 	QJsonArray flags;
 
