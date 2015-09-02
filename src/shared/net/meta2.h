@@ -135,6 +135,9 @@ private:
  *
  * This is an opaque meta command. It is used to set the general layer lock
  * as well as give exclusive access to selected users.
+ *
+ * When the OWNLAYERS mode is set, any user can use this to change the ACLs on layers they themselves
+ * have created (identified by the ID prefix.)
  */
 class LayerACL : public Message {
 public:
@@ -144,7 +147,7 @@ public:
 
 	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
 
-	bool isOpCommand() const { return true; } // TODO if LOCK_OWNLAYERS is set, users can call this on their own layers
+	// Note: this is an operator only command, depending on the target layer and whether OWNLAYERS mode is set.
 
 	uint16_t id() const { return _id; }
 	uint8_t locked() const { return _locked; }
@@ -168,7 +171,7 @@ private:
 class SessionACL : public Message {
 public:
 	static const uint16_t LOCK_SESSION = 0x01;   // General session-wide lock (locks even operators)
-	static const uint16_t LOCK_DEFAULT = 0x02;   // TODO how does this work?
+	static const uint16_t LOCK_DEFAULT = 0x02;   // New users will be locked by default (lock applied when the JOIN message is received)
 	static const uint16_t LOCK_LAYERCTRL = 0x04; // Layer controls are limited to session operators
 	static const uint16_t LOCK_OWNLAYERS = 0x08; // Users can only delete/adjust their own layers. (May set layer ACLs too)
 

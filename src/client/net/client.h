@@ -216,7 +216,7 @@ public slots:
 	void sendSetSessionTitle(const QString &title);
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 	void sendLockSession(bool lock);
-	void sendLockLayerControls(bool lock);
+	void sendLockLayerControls(bool lock, bool own);
 	void sendCloseSession(bool close);
 	void sendResetSession();
 

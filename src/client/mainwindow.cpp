@@ -568,7 +568,7 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 	setWindowModified(false);
 	updateTitle();
 	_currentdoctools->setEnabled(true);
-	_docadmintools->setEnabled(true);
+	m_docadmintools->setEnabled(true);
 	setDrawingToolsEnabled(true);
 
 	return this;
@@ -594,7 +594,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	setWindowModified(false);
 	updateTitle();
 	_currentdoctools->setEnabled(true);
-	_docadmintools->setEnabled(true);
+	m_docadmintools->setEnabled(true);
 	setDrawingToolsEnabled(true);
 
 	QFileInfo fileinfo(reader->filename());
@@ -1466,7 +1466,8 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
 	_admintools->setEnabled(false);
-	_docadmintools->setEnabled(true);
+	m_docadmintools->setEnabled(true);
+	m_layerctrlmode->setEnabled(false);
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -1570,8 +1571,32 @@ void MainWindow::updateLockWidget()
 void MainWindow::setOperatorMode(bool op)
 {
 	_admintools->setEnabled(op);
-	_docadmintools->setEnabled(op);
+	m_docadmintools->setEnabled(op);
+	m_layerctrlmode->setEnabled(op && !m_client->isLocalServer());
 	_dock_layers->setOperatorMode(op);
+}
+
+void MainWindow::setLayerCtrlMode(QAction *action)
+{
+	int mode = action->property("mode").toInt();
+	Q_ASSERT(mode>=0 && mode<=2);
+	switch(mode) {
+	case 0: m_client->sendLockLayerControls(false, false); break;
+	case 1: m_client->sendLockLayerControls(true, false); break;
+	case 2: m_client->sendLockLayerControls(true, true); break;
+	}
+}
+
+void MainWindow::updateLayerCtrlMode()
+{
+	Q_ASSERT(m_layerctrlmode->actions().size()==3);
+	int i=0;
+	if(m_client->aclFilter()->isOwnLayers())
+		i=2;
+	else if(m_client->aclFilter()->isLayerControlLocked())
+		i=1;
+
+	m_layerctrlmode->actions()[i]->setChecked(true);
 }
 
 /**
@@ -2107,9 +2132,9 @@ void MainWindow::setupActions()
 	_admintools = new QActionGroup(this);
 	_admintools->setExclusive(false);
 
-	_docadmintools = new QActionGroup(this);
-	_docadmintools->setExclusive(false);
-	_docadmintools->setEnabled(false);
+	m_docadmintools = new QActionGroup(this);
+	m_docadmintools->setExclusive(false);
+	m_docadmintools->setEnabled(false);
 
 	_drawingtools = new QActionGroup(this);
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
@@ -2245,11 +2270,11 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(selectall);
 	_currentdoctools->addAction(selectnone);
 
-	_docadmintools->addAction(resize);
-	_docadmintools->addAction(expandup);
-	_docadmintools->addAction(expanddown);
-	_docadmintools->addAction(expandleft);
-	_docadmintools->addAction(expandright);
+	m_docadmintools->addAction(resize);
+	m_docadmintools->addAction(expandup);
+	m_docadmintools->addAction(expanddown);
+	m_docadmintools->addAction(expandleft);
+	m_docadmintools->addAction(expandright);
 
 	connect(undo, &QAction::triggered, this, &MainWindow::undo);
 	connect(redo, SIGNAL(triggered()), m_client, SLOT(sendRedo()));
@@ -2466,16 +2491,23 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
-	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock Layer Controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
-	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
+	m_layerctrlmode = new QActionGroup(this);
+	m_layerctrlmode->addAction(tr("Unlocked"))->setProperty("mode", 0);
+	m_layerctrlmode->addAction(tr("Operators only"))->setProperty("mode", 1);
+	m_layerctrlmode->addAction(tr("User specific"))->setProperty("mode", 2);
+	for(QAction *a : m_layerctrlmode->actions())
+		a->setCheckable(true);
+	m_layerctrlmode->actions()[0]->setChecked(true);
+	m_layerctrlmode->setExclusive(true);
+	m_layerctrlmode->setEnabled(false);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
-
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset"));
 
+	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
+	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
+
 	_admintools->addAction(locksession);
-	_admintools->addAction(locklayerctrl);
 	_admintools->addAction(closesession);
 	_admintools->addAction(changetitle);
 	_admintools->addAction(resetsession);
@@ -2486,22 +2518,25 @@ void MainWindow::setupActions()
 	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
 	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
 	connect(locksession, SIGNAL(triggered(bool)), m_client, SLOT(sendLockSession(bool)));
-	connect(locklayerctrl, SIGNAL(triggered(bool)), m_client, SLOT(sendLockLayerControls(bool)));
+	connect(m_layerctrlmode, &QActionGroup::triggered, this, &MainWindow::setLayerCtrlMode);
 	connect(closesession, SIGNAL(triggered(bool)), m_client, SLOT(sendCloseSession(bool)));
 	connect(resetsession, &QAction::triggered, m_client, &net::Client::sendResetSession);
 
-	connect(m_client->aclFilter(), &net::AclFilter::layerControlLockChanged, locklayerctrl, &QAction::setChecked);
+	connect(m_client->aclFilter(), &net::AclFilter::layerControlLockChanged, this, &MainWindow::updateLayerCtrlMode);
+	connect(m_client->aclFilter(), &net::AclFilter::ownLayersChanged, this, &MainWindow::updateLayerCtrlMode);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);
 	sessionmenu->addAction(join);
 	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(locksession);
-	sessionmenu->addAction(locklayerctrl);
-	sessionmenu->addAction(closesession);
+
+	QMenu *layerctrlmenu = sessionmenu->addMenu(tr("Layer Controls"));
+	layerctrlmenu->addActions(m_layerctrlmode->actions());
 	sessionmenu->addAction(changetitle);
 	sessionmenu->addAction(resetsession);
+	sessionmenu->addAction(closesession);
+	sessionmenu->addAction(locksession);
 
 	//
 	// Tools menu and toolbar

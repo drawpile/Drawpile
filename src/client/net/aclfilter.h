@@ -64,7 +64,17 @@ public:
 	//! Can the local user create new layers?
 	bool canCreateLayer() const;
 
+	//! Are layer controls limited to session operators
 	bool isLayerControlLocked() const { return m_layerCtrlLocked; }
+
+	/**
+	 * @brief Are users allowed to control layers they've created themselves?
+	 *
+	 * When layer controls are locked, this allows users to adjust their own
+	 * layer properties, but not anyone elses.
+	 * This also allows users to set the access controls for their own layers.
+	 */
+	bool isOwnLayers() const { return m_ownLayers; }
 
 	uint16_t sessionAclFlags() const;
 
@@ -72,12 +82,14 @@ signals:
 	void localOpChanged(bool op);
 	bool localLockChanged(bool lock);
 	bool layerControlLockChanged(bool lock);
+	void ownLayersChanged(bool own);
 
 private:
 	void setOperator(bool op);
 	void setSessionLock(bool lock);
 	void setUserLock(bool lock);
 	void setLayerControlLock(bool lock);
+	void setOwnLayers(bool own);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
@@ -89,6 +101,7 @@ private:
 	bool m_sessionLocked;
 	bool m_localUserLocked;
 	bool m_layerCtrlLocked;
+	bool m_ownLayers;
 	bool m_lockDefault;
 	QHash<int, int> m_userLayers;
 };

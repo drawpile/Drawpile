@@ -433,24 +433,26 @@ void Client::sendSetSessionTitle(const QString &title)
 	sendServerCommand("sessionconf", QJsonArray(), kwargs);
 }
 
+template<typename T> void setFlag(T &flags, T flag, bool on) {
+	if(on)
+		flags |= flag;
+	else
+		flags &= ~flag;
+}
+
 void Client::sendLockSession(bool lock)
 {
 	uint16_t flags = m_aclfilter->sessionAclFlags();
-	if(lock)
-		flags |= protocol::SessionACL::LOCK_SESSION;
-	else
-		flags &= ~protocol::SessionACL::LOCK_SESSION;
+	setFlag(flags, protocol::SessionACL::LOCK_SESSION, lock);
 
 	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }
 
-void Client::sendLockLayerControls(bool lock)
+void Client::sendLockLayerControls(bool lock, bool ownlayers)
 {
 	uint16_t flags = m_aclfilter->sessionAclFlags();
-	if(lock)
-		flags |= protocol::SessionACL::LOCK_LAYERCTRL;
-	else
-		flags &= ~protocol::SessionACL::LOCK_LAYERCTRL;
+	setFlag(flags, protocol::SessionACL::LOCK_LAYERCTRL, lock);
+	setFlag(flags, protocol::SessionACL::LOCK_OWNLAYERS, ownlayers);
 
 	_server->sendMessage(MessagePtr(new protocol::SessionACL(m_myId, flags)));
 }

@@ -25,6 +25,7 @@
 #include "../shared/net/meta2.h"
 #include "../shared/net/pen.h"
 #include "../shared/net/image.h"
+#include "../shared/net/layer.h"
 
 namespace net {
 
@@ -45,7 +46,13 @@ void AclFilter::reset(int myId, bool localMode)
 	emit localLockChanged(false);
 
 	setLayerControlLock(false);
+	setOwnLayers(false);
 	m_lockDefault = false;
+}
+
+// Get the ID of the layer's creator. This assumes the ID prefixing convention is used.
+static uint8_t layerCreator(uint16_t layerId) {
+	return layerId >> 8;
 }
 
 bool AclFilter::filterMessage(const protocol::Message &msg)
@@ -77,6 +84,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
 		// TODO allow layer ACL to be used by non-operators when OwnLayers mode is active
 
+		if(!isOperator && !(isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId()))
+			return false;
+
 		m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
 
 		// Emit this to refresh the UI in case our selected layer was (un)locked.
@@ -90,6 +100,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 		setSessionLock(lmsg.isSessionLocked());
 		setLayerControlLock(lmsg.isLayerControlLocked());
+		setOwnLayers(lmsg.isOwnLayers());
 		m_lockDefault = lmsg.isLockedByDefault();
 
 		return true;
@@ -114,12 +125,26 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	// Message specific filtering
 	switch(msg.type()) {
 	case MSG_LAYER_CREATE:
-		// TODO OwnLayers mode
 	case MSG_LAYER_ATTR:
 	case MSG_LAYER_RETITLE:
+	case MSG_LAYER_DELETE: {
+		uint16_t layerId=0;
+		if(msg.type() == MSG_LAYER_CREATE) layerId = static_cast<const protocol::LayerCreate&>(msg).id();
+		else if(msg.type() == MSG_LAYER_ATTR) layerId = static_cast<const protocol::LayerAttributes&>(msg).id();
+		else if(msg.type() == MSG_LAYER_RETITLE) layerId = static_cast<const protocol::LayerRetitle&>(msg).id();
+		else if(msg.type() == MSG_LAYER_DELETE) layerId = static_cast<const protocol::LayerDelete&>(msg).id();
+
+		// In OwnLayer mode, users may create, delete and adjust their own layers.
+		// Otherwise, session operator privileges are required.
+		if(isLayerControlLocked() && !isOperator && !(isOwnLayers() && layerCreator(layerId) == msg.contextId()))
+			return false;
+		break;
+	}
+
 	case MSG_LAYER_ORDER:
-	case MSG_LAYER_DELETE:
-		// TODO LockLayers mode
+		// Reordering is limited to session ops
+		if(!isOperator)
+			return false;
 		break;
 
 	case MSG_PUTIMAGE:
@@ -177,6 +202,14 @@ void AclFilter::setLayerControlLock(bool lock)
 	}
 }
 
+void AclFilter::setOwnLayers(bool own)
+{
+	if(m_ownLayers != own) {
+		m_ownLayers = own;
+		emit ownLayersChanged(own);
+	}
+}
+
 uint16_t AclFilter::sessionAclFlags() const
 {
 	uint16_t flags = 0;
@@ -189,20 +222,20 @@ uint16_t AclFilter::sessionAclFlags() const
 	if(m_lockDefault)
 		flags |= protocol::SessionACL::LOCK_LAYERCTRL;
 
-	// TODO OwnMode
+	if(m_ownLayers)
+		flags |= protocol::SessionACL::LOCK_OWNLAYERS;
+
 	return flags;
 }
 
 bool AclFilter::canUseLayerControls(int layerId) const
 {
-	// TODO OwnLayer mode
-	return !isLocalUserLocked() && (isLocalUserOperator() || !isLayerControlLocked());
+	return !isLocalUserLocked() && (isLocalUserOperator() || !isLayerControlLocked() || (isOwnLayers() && layerCreator(layerId) == m_myId));
 }
 
 bool AclFilter::canCreateLayer() const
 {
-	// TODO OwnLayer mode
-	return !isLocalUserLocked() && (isLocalUserOperator() || !isLayerControlLocked());
+	return !isLocalUserLocked() && (isLocalUserOperator() || !isLayerControlLocked() || isOwnLayers());
 }
 
 }
