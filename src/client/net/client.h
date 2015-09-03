@@ -40,8 +40,8 @@ namespace protocol {
 	class UserJoin;
 	class SessionOwner;
 	class UserLeave;
-	class SessionConf;
 	class LayerACL;
+	class LaserTrail;
 	class MovePointer;
 	class Marker;
 	class Disconnect;
@@ -206,7 +206,8 @@ public slots:
 	// Misc.
 	void sendChat(const QString &message, bool announce, bool action);
 	void sendServerCommand(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
-	void sendLaserPointer(const QPointF &point, int trail=0);
+	void sendLaserTrail(const QColor &color, int persistence);
+	void sendMovePointer(const QPointF &point);
 	void sendMarker(const QString &text);
 
 	// Operator commands
@@ -230,7 +231,8 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
 	void markerMessageReceived(const QString &user, const QString &message);
-	void userPointerMoved(int ctx, const QPointF &point, int trail);
+	void laserTrailStart(int ctx, const QColor &color, int persistence);
+	void userPointerMoved(int ctx, const QPointF &point);
 
 	void needSnapshot();
 	void sessionResetted();
@@ -271,6 +273,7 @@ private:
 	void handleUserJoin(const protocol::UserJoin &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);
 	void handleServerCommand(const protocol::Command &msg);
+	void handleLaserTrail(const protocol::LaserTrail &msg);
 	void handleMovePointer(const protocol::MovePointer &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
 

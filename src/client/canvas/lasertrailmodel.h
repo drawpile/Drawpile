@@ -61,7 +61,6 @@ public slots:
 	void startTrail(int ctxId, const QColor &color, int persistence);
 	void addPoint(int ctxId, const QPointF &point);
 	void endTrail(int ctxId);
-	void cursorMove(int ctxId, const QPointF &point, int trail);
 
 protected:
 	void timerEvent(QTimerEvent *e);

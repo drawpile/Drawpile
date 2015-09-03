@@ -74,36 +74,56 @@ private:
 };
 
 /**
- * @brief Move user pointer
+ * @brief Start/end drawing pointer laser trail
  *
- * This is message is used to update the position of the user pointer when no
- * actual drawing is taking place. It is also used to draw the "laser pointer" trail.
- * Note. This is a META message, since this is used for a temporary visual effect only,
- * and thus doesn't affect the actual canvas content.
+ * This signals the beginning or the end of a laser pointer trail. The trail coordinates
+ * are sent with MovePointer messages.
  *
- * When persistence is nonzero, a line is drawn from the previous pointer coordinates
- * to the new coordinates. The line will disappear in p seconds.
+ * A nonzero persistence indicates the start of the trail and zero the end.
  */
-class MovePointer : public Message {
+class LaserTrail : public Message {
 public:
-	MovePointer(uint8_t ctx, int32_t x, int32_t y, uint8_t persistence)
-		: Message(MSG_MOVEPOINTER, ctx), _x(x), _y(y), _persistence(persistence)
-	{}
+	LaserTrail(uint8_t ctx, quint32 color, uint8_t persistence) : Message(MSG_LASERTRAIL, ctx), m_color(color), m_persistence(persistence) { }
+	static LaserTrail *deserialize(uint8_t ctx, const uchar *data, uint len);
 
-	static MovePointer *deserialize(uint8_t ctx, const uchar *data, uint len);
-
-	int32_t x() const { return _x; }
-	int32_t y() const { return _y; }
-	uint8_t persistence() const { return _persistence; }
+	quint32 color() const { return m_color; }
+	uint8_t persistence() const { return m_persistence; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	int32_t _x;
-	int32_t _y;
-	uint8_t _persistence;
+	quint32 m_color;
+	uint8_t m_persistence;
+};
+
+/**
+ * @brief Move user pointer
+ *
+ * This is message is used to update the position of the user pointer when no
+ * actual drawing is taking place. It is also used to draw the "laser pointer" trail.
+ * Note. This is a META message, since this is used for a temporary visual effect only,
+ * and thus doesn't affect the actual canvas content.
+ */
+class MovePointer : public Message {
+public:
+	MovePointer(uint8_t ctx, int32_t x, int32_t y)
+		: Message(MSG_MOVEPOINTER, ctx), m_x(x), m_y(y)
+	{}
+
+	static MovePointer *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	int32_t x() const { return m_x; }
+	int32_t y() const { return m_y; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	int32_t m_x;
+	int32_t m_y;
 };
 
 /**

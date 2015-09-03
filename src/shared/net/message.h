@@ -41,6 +41,7 @@ enum MessageType {
 	// Meta messages (opaque)
 	MSG_CHAT=64,
 	MSG_INTERVAL,
+	MSG_LASERTRAIL,
 	MSG_MOVEPOINTER,
 	MSG_MARKER,
 	MSG_USER_ACL,

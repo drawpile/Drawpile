@@ -330,7 +330,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create the network client
 	m_client = new net::Client(this);
 
-	connect(_view, SIGNAL(pointerMoved(QPointF)), m_client, SLOT(sendLaserPointer(QPointF)));
+	connect(_view, SIGNAL(pointerMoved(QPointF)), m_client, SLOT(sendMovePointer(QPointF)));
 
 	_dock_layers->setClient(m_client);
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);

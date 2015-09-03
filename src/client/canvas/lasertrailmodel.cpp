@@ -98,11 +98,19 @@ void LaserTrailModel::timerEvent(QTimerEvent *e)
 
 void LaserTrailModel::startTrail(int ctxId, const QColor &color, int persistence)
 {
-#ifndef NDEBUG
-	for(int i=0;i<m_lasers.size();++i)
-		if(m_lasers.at(i).ctxid == ctxId && m_lasers.at(i).open)
-			qFatal("An open trail already exists!");
-#endif
+	if(persistence==0) {
+		endTrail(ctxId);
+		return;
+	}
+
+	// Only one open trail per user is allowed, so starting a new trail
+	// automatically closes the previous trail if it exists.
+	for(int i=0;i<m_lasers.size();++i) {
+		if(m_lasers.at(i).ctxid == ctxId && m_lasers.at(i).open) {
+			m_lasers[i].open = false;
+			break;
+		}
+	}
 
 	beginInsertRows(QModelIndex(), m_lasers.size(), m_lasers.size());
 	m_lasers.append(LaserTrail {
@@ -149,23 +157,6 @@ bool LaserTrailModel::isOpenTrail(int ctxId)
 		if(m_lasers.at(i).ctxid == ctxId && m_lasers.at(i).open)
 			return true;
 	return false;
-}
-
-void LaserTrailModel::cursorMove(int ctxId, const QPointF &point, int trail)
-{
-	// The old way of drawing trails (one segment per cursor motion)
-	// is not really compatible with the new way.
-	// TODO implement lasertrail start/move/end commands
-
-	if(trail==0) {
-		endTrail(ctxId);
-
-	} else {
-		if(!isOpenTrail(ctxId))
-			startTrail(ctxId, Qt::red, trail);
-
-		addPoint(ctxId, point);
-	}
 }
 
 }

@@ -54,7 +54,9 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 
 	connect(client, &net::Client::userJoined, m_usercursors, &UserCursorModel::setCursorName);
 	connect(client, &net::Client::userPointerMoved, m_usercursors, &UserCursorModel::setCursorPosition);
-	connect(client, &net::Client::userPointerMoved, m_lasers, &LaserTrailModel::cursorMove);
+
+	connect(client, &net::Client::laserTrailStart, m_lasers, &LaserTrailModel::startTrail);
+	connect(client, &net::Client::userPointerMoved, m_lasers, &LaserTrailModel::addPoint);
 
 	connect(client, &net::Client::sessionResetted, this, &CanvasModel::resetCanvas);
 

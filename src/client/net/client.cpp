@@ -378,10 +378,15 @@ void Client::sendServerCommand(const QString &cmd, const QJsonArray &args, const
 	_server->sendMessage(MessagePtr(new protocol::Command(m_myId, c)));
 }
 
-void Client::sendLaserPointer(const QPointF &point, int trail)
+void Client::sendLaserTrail(const QColor &color, int persistence)
 {
-	Q_ASSERT(trail>=0);
-	_server->sendMessage(MessagePtr(new protocol::MovePointer(m_myId, point.x() * 4, point.y() * 4, trail)));
+	Q_ASSERT(persistence>=0);
+	_server->sendMessage(MessagePtr(new protocol::LaserTrail(m_myId, color.rgb(), persistence)));
+}
+
+void Client::sendMovePointer(const QPointF &point)
+{
+	_server->sendMessage(MessagePtr(new protocol::MovePointer(m_myId, point.x() * 4, point.y() * 4)));
 }
 
 void Client::sendMarker(const QString &text)
@@ -534,6 +539,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_INTERVAL:
 		/* intervals are used only when playing back recordings */
 		break;
+	case MSG_LASERTRAIL:
+		handleLaserTrail(msg.cast<LaserTrail>());
+		break;
 	case MSG_MOVEPOINTER:
 		handleMovePointer(msg.cast<MovePointer>());
 		break;
@@ -659,9 +667,14 @@ void Client::handleServerCommand(const protocol::Command &msg)
 	}
 }
 
+void Client::handleLaserTrail(const protocol::LaserTrail &msg)
+{
+	emit laserTrailStart(msg.contextId(), QColor::fromRgb(msg.color()), msg.persistence());
+}
+
 void Client::handleMovePointer(const protocol::MovePointer &msg)
 {
-	emit userPointerMoved(msg.contextId(), QPointF(msg.x() / 4.0, msg.y() / 4.0), msg.persistence());
+	emit userPointerMoved(msg.contextId(), QPointF(msg.x() / 4.0, msg.y() / 4.0));
 }
 
 }

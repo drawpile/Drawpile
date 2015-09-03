@@ -45,29 +45,52 @@ int Chat::payloadLength() const
 	return 1 + m_msg.length();
 }
 
+LaserTrail *LaserTrail::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len!=5)
+		return nullptr;
+	return new LaserTrail(
+		ctx,
+		qFromBigEndian<quint32>(data+0),
+		*(data+4)
+	);
+}
+
+int LaserTrail::payloadLength() const
+{
+	return 4+1;
+}
+
+int LaserTrail::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	qToBigEndian(m_color, ptr); ptr += 4;
+	*(ptr++) = m_persistence;
+
+	return ptr-data;
+}
+
 MovePointer *MovePointer::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=9)
+	if(len!=8)
 		return nullptr;
 	return new MovePointer(
 		ctx,
 		qFromBigEndian<quint32>(data+0),
-		qFromBigEndian<quint32>(data+4),
-		*(data+8)
+		qFromBigEndian<quint32>(data+4)
 	);
 }
 
 int MovePointer::payloadLength() const
 {
-	return 2*4 + 1;
+	return 2*4;
 }
 
 int MovePointer::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_x, ptr); ptr += 4;
-	qToBigEndian(_y, ptr); ptr += 4;
-	*(ptr++) = _persistence;
+	qToBigEndian(m_x, ptr); ptr += 4;
+	qToBigEndian(m_y, ptr); ptr += 4;
 
 	return ptr-data;
 }

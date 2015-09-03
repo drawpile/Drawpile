@@ -255,19 +255,15 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 		}
 
 	} else if(type==IDX_LASER) {
-		// Combine laser pointer strokes and drop other MovePointer messages
+		// Combine laser pointer strokes
 		for(int i=m_index.m_index.size()-1;i>=0;--i) {
 			IndexEntry &e = m_index.m_index[i];
 			if(e.context_id == msg->contextId()) {
-				if(e.type == type) {
-					int persistence = msg.cast<const protocol::MovePointer>().persistence();
-					if(persistence==0) {
+				if(!(e.flags & IndexEntry::FLAG_FINISHED)) {
+					e.end = _pos;
+					if(msg->type() == protocol::MSG_LASERTRAIL)
 						e.flags |= IndexEntry::FLAG_FINISHED;
-						return;
-					} else if(!(e.flags & IndexEntry::FLAG_FINISHED)) {
-						e.end = _pos;
-						return;
-					}
+					return;
 				}
 				break;
 			}

@@ -34,27 +34,23 @@ LaserPointer::LaserPointer(ToolController &owner)
 void LaserPointer::begin(const paintcore::Point &point, float zoom)
 {
 	Q_UNUSED(zoom);
-	// Send initial point to serve as the start of the line,
-	// and also a toolchange to set the laser color
-
-	canvas::ToolContext tctx = {
-		owner.activeLayer(),
-		owner.activeBrush()
-	};
-	owner.client()->sendToolChange(tctx);
-	owner.client()->sendLaserPointer(point, 0);
+	owner.client()->sendLaserTrail(
+		owner.activeBrush().color(),
+		owner.toolSettings()->getLaserPointerSettings()->trailPersistence()
+	);
+	owner.client()->sendMovePointer(point);
 }
 
 void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	owner.client()->sendLaserPointer(point, owner.toolSettings()->getLaserPointerSettings()->trailPersistence());
+	owner.client()->sendMovePointer(point);
 }
 
 void LaserPointer::end()
 {
-	// Nothing to do here, laser trail does not need penup type notification
+	owner.client()->sendLaserTrail(Qt::black, 0);
 }
 
 }

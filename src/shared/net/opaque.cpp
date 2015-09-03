@@ -43,6 +43,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	switch(type) {
 	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
 	case MSG_INTERVAL: return Interval::deserialize(ctx, data, len);
+	case MSG_LASERTRAIL: return LaserTrail::deserialize(ctx, data, len);
 	case MSG_MOVEPOINTER: return MovePointer::deserialize(ctx, data, len);
 	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
 	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
