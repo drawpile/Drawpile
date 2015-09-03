@@ -2589,10 +2589,8 @@ void MainWindow::setupActions()
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
-#if 0 // TODO
-	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
-	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
-#endif
+	connect(smallerbrush, &QAction::triggered, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
+	connect(biggerbrush, &QAction::triggered, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
