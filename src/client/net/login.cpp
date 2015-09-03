@@ -168,7 +168,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	}
 
 	// Server protocol version must match ours
-	const int serverVersion = msg.reply["server-version"].toInt();
+	const int serverVersion = msg.reply["version"].toInt();
 	if(serverVersion != DRAWPILE_PROTO_SERVER_VERSION) {
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
