@@ -33,12 +33,13 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QScreen>
 #endif
+namespace color_widgets {
 
-class Color_Dialog::Private
+class ColorDialog::Private
 {
 public:
-    Ui_Color_Dialog ui;
-    Button_Mode button_mode;
+    Ui_ColorDialog ui;
+    ButtonMode button_mode;
     bool pick_from_screen;
     bool alpha_enabled;
 
@@ -47,7 +48,7 @@ public:
 
 };
 
-Color_Dialog::Color_Dialog(QWidget *parent, Qt::WindowFlags f) :
+ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     QDialog(parent, f), p(new Private)
 {
     p->ui.setupUi(this);
@@ -60,20 +61,20 @@ Color_Dialog::Color_Dialog(QWidget *parent, Qt::WindowFlags f) :
 
     setButtonMode(OkApplyCancel);
 
-    connect(p->ui.wheel,SIGNAL(displayFlagsChanged(Color_Wheel::Display_Flags)),SIGNAL(wheelFlagsChanged(Color_Wheel::Display_Flags)));
+    connect(p->ui.wheel,SIGNAL(displayFlagsChanged(ColorWheel::DisplayFlags)),SIGNAL(wheelFlagsChanged(ColorWheel::DisplayFlags)));
 }
 
-QSize Color_Dialog::sizeHint() const
+QSize ColorDialog::sizeHint() const
 {
     return QSize(400,0);
 }
 
-Color_Wheel::Display_Flags Color_Dialog::wheelFlags() const
+ColorWheel::DisplayFlags ColorDialog::wheelFlags() const
 {
     return p->ui.wheel->displayFlags();
 }
 
-QColor Color_Dialog::color() const
+QColor ColorDialog::color() const
 {
     QColor col = p->ui.wheel->color();
     if(p->alpha_enabled)
@@ -81,59 +82,67 @@ QColor Color_Dialog::color() const
     return col;
 }
 
-void Color_Dialog::setColor(const QColor &c)
+void ColorDialog::setColor(const QColor &c)
 {
     p->ui.preview->setComparisonColor(c);
+    p->ui.edit_hex->setModified(false);
     setColorInternal(c);
 }
 
-void Color_Dialog::setColorInternal(const QColor &c)
+void ColorDialog::setColorInternal(const QColor &c)
 {
-    // Note. The difference between this method and setColor, is that setColor
-    // sets the official starting color of the dialog, while this is used to update
-    // the current color which might not be the final selected color.
+    /**
+     * \note Unlike setColor, this is used to update the current color which
+     * migth differ from the final selected color
+     */
     p->ui.wheel->setColor(c);
     p->ui.slide_alpha->setValue(c.alpha());
     update_widgets();
 }
 
-void Color_Dialog::showColor(const QColor &c)
+void ColorDialog::showColor(const QColor &c)
 {
     setColor(c);
     show();
 }
 
-void Color_Dialog::setWheelFlags(Color_Wheel::Display_Flags flags)
+void ColorDialog::setWheelFlags(ColorWheel::DisplayFlags flags)
 {
     p->ui.wheel->setDisplayFlags(flags);
 }
 
-void Color_Dialog::setPreviewDisplayMode(Color_Preview::Display_Mode mode)
+void ColorDialog::setPreviewDisplayMode(ColorPreview::DisplayMode mode)
 {
     p->ui.preview->setDisplayMode(mode);
 }
 
-Color_Preview::Display_Mode Color_Dialog::previewDisplayMode() const
+ColorPreview::DisplayMode ColorDialog::previewDisplayMode() const
 {
     return p->ui.preview->displayMode();
 }
 
-void Color_Dialog::setAlphaEnabled(bool a)
+void ColorDialog::setAlphaEnabled(bool a)
 {
-    p->alpha_enabled = a;
+    if ( a != p->alpha_enabled )
+    {
+        p->alpha_enabled = a;
 
-    p->ui.line_alpha->setVisible(a);
-    p->ui.label_alpha->setVisible(a);
-    p->ui.slide_alpha->setVisible(a);
-    p->ui.spin_alpha->setVisible(a);
+        p->ui.edit_hex->setShowAlpha(a);
+        p->ui.line_alpha->setVisible(a);
+        p->ui.label_alpha->setVisible(a);
+        p->ui.slide_alpha->setVisible(a);
+        p->ui.spin_alpha->setVisible(a);
+
+        emit alphaEnabledChanged(a);
+    }
 }
 
-bool Color_Dialog::alphaEnabled() const
+bool ColorDialog::alphaEnabled() const
 {
     return p->alpha_enabled;
 }
 
-void Color_Dialog::setButtonMode(Button_Mode mode)
+void ColorDialog::setButtonMode(ButtonMode mode)
 {
     p->button_mode = mode;
     QDialogButtonBox::StandardButtons btns;
@@ -145,12 +154,12 @@ void Color_Dialog::setButtonMode(Button_Mode mode)
     p->ui.buttonBox->setStandardButtons(btns);
 }
 
-Color_Dialog::Button_Mode Color_Dialog::buttonMode() const
+ColorDialog::ButtonMode ColorDialog::buttonMode() const
 {
     return p->button_mode;
 }
 
-void Color_Dialog::update_widgets()
+void ColorDialog::update_widgets()
 {
     bool blocked = signalsBlocked();
     blockSignals(true);
@@ -197,8 +206,8 @@ void Color_Dialog::update_widgets()
     p->ui.slide_alpha->setLastColor(apha_color);
     p->ui.spin_alpha->setValue(p->ui.slide_alpha->value());
 
-
-    p->ui.edit_hex->setText(col.name());
+    if ( !p->ui.edit_hex->isModified() )
+        p->ui.edit_hex->setColor(col);
 
     p->ui.preview->setColor(col);
 
@@ -209,7 +218,7 @@ void Color_Dialog::update_widgets()
     emit colorChanged(col);
 }
 
-void Color_Dialog::set_hsv()
+void ColorDialog::set_hsv()
 {
     if ( !signalsBlocked() )
     {
@@ -222,7 +231,7 @@ void Color_Dialog::set_hsv()
     }
 }
 
-void Color_Dialog::set_rgb()
+void ColorDialog::set_rgb()
 {
     if ( !signalsBlocked() )
     {
@@ -238,65 +247,18 @@ void Color_Dialog::set_rgb()
     }
 }
 
-
-void Color_Dialog::on_edit_hex_editingFinished()
+void ColorDialog::on_edit_hex_colorChanged(const QColor& color)
 {
-    update_hex();
-
+    setColorInternal(color);
 }
 
-void Color_Dialog::on_edit_hex_textEdited(const QString &arg1)
+void ColorDialog::on_edit_hex_colorEditingFinished(const QColor& color)
 {
-    int cursor = p->ui.edit_hex->cursorPosition();
-    update_hex();
-    //edit_hex->blockSignals(true);
-    p->ui.edit_hex->setText(arg1);
-    //edit_hex->blockSignals(false);
-    p->ui.edit_hex->setCursorPosition(cursor);
+    p->ui.edit_hex->setModified(false);
+    setColorInternal(color);
 }
 
-void Color_Dialog::update_hex()
-{
-    QString xs = p->ui.edit_hex->text().trimmed();
-    xs.remove('#');
-
-    if ( xs.isEmpty() )
-        return;
-
-    if ( xs.indexOf(QRegExp("^[0-9a-fA-f]+$")) == -1 )
-    {
-        QColor c(xs);
-        if ( c.isValid() )
-        {
-            setColorInternal(c);
-            return;
-        }
-    }
-
-    if ( xs.size() == 3 )
-    {
-        p->ui.slide_red->setValue(QString(2,xs[0]).toInt(0,16));
-        p->ui.slide_green->setValue(QString(2,xs[1]).toInt(0,16));
-        p->ui.slide_blue->setValue(QString(2,xs[2]).toInt(0,16));
-    }
-    else
-    {
-        if ( xs.size() < 6 )
-        {
-            xs += QString(6-xs.size(),'0');
-        }
-        p->ui.slide_red->setValue(xs.mid(0,2).toInt(0,16));
-        p->ui.slide_green->setValue(xs.mid(2,2).toInt(0,16));
-        p->ui.slide_blue->setValue(xs.mid(4,2).toInt(0,16));
-
-        if ( xs.size() == 8 )
-            p->ui.slide_alpha->setValue(xs.mid(6,2).toInt(0,16));
-    }
-
-    set_rgb();
-}
-
-void Color_Dialog::on_buttonBox_clicked(QAbstractButton *btn)
+void ColorDialog::on_buttonBox_clicked(QAbstractButton *btn)
 {
     QDialogButtonBox::ButtonRole role = p->ui.buttonBox->buttonRole(btn);
 
@@ -323,7 +285,7 @@ void Color_Dialog::on_buttonBox_clicked(QAbstractButton *btn)
     }
 }
 
-void Color_Dialog::dragEnterEvent(QDragEnterEvent *event)
+void ColorDialog::dragEnterEvent(QDragEnterEvent *event)
 {
     if ( event->mimeData()->hasColor() ||
          ( event->mimeData()->hasText() && QColor(event->mimeData()->text()).isValid() ) )
@@ -331,7 +293,7 @@ void Color_Dialog::dragEnterEvent(QDragEnterEvent *event)
 }
 
 
-void Color_Dialog::dropEvent(QDropEvent *event)
+void ColorDialog::dropEvent(QDropEvent *event)
 {
     if ( event->mimeData()->hasColor() )
     {
@@ -349,8 +311,7 @@ void Color_Dialog::dropEvent(QDropEvent *event)
     }
 }
 
-namespace {
-QColor get_screen_color(const QPoint &global_pos)
+static QColor get_screen_color(const QPoint &global_pos)
 {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     WId id = QApplication::desktop()->winId();
@@ -365,9 +326,8 @@ QColor get_screen_color(const QPoint &global_pos)
 
     return img.pixel(0,0);
 }
-}
 
-void Color_Dialog::mouseReleaseEvent(QMouseEvent *event)
+void ColorDialog::mouseReleaseEvent(QMouseEvent *event)
 {
     if (p->pick_from_screen)
     {
@@ -377,7 +337,7 @@ void Color_Dialog::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void Color_Dialog::mouseMoveEvent(QMouseEvent *event)
+void ColorDialog::mouseMoveEvent(QMouseEvent *event)
 {
     if (p->pick_from_screen)
     {
@@ -385,3 +345,4 @@ void Color_Dialog::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
+} // namespace color_widgets

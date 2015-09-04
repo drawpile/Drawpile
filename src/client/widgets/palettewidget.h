@@ -26,7 +26,10 @@ class Palette;
 class QScrollBar;
 class QRubberBand;
 class QMenu;
-class Color_Dialog;
+
+namespace color_widgets {
+	class ColorDialog;
+}
 
 namespace widgets {
 
@@ -84,7 +87,7 @@ private:
 
 	QPointer<Palette> _palette;
 	QScrollBar *_scrollbar;
-	Color_Dialog *_colordlg;
+	color_widgets::ColorDialog *_colordlg;
 	QMenu *_contextmenu;
 
 	QSize _swatchsize;

@@ -39,7 +39,7 @@
 #include <QDesktopWidget>
 #include <QDateTime>
 
-#include <Color_Wheel>
+#include <ColorWheel>
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
-	Color_Wheel::setDefaultDisplayFlags(Color_Wheel::SHAPE_SQUARE | Color_Wheel::ANGLE_FIXED | Color_Wheel::COLOR_HSV);
+	color_widgets::ColorWheel::setDefaultDisplayFlags(color_widgets::ColorWheel::SHAPE_SQUARE | color_widgets::ColorWheel::ANGLE_FIXED | color_widgets::ColorWheel::COLOR_HSV);
 
 	{
 		// Set override locale from settings, or use system locale if no override is set

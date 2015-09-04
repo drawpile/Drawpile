@@ -25,7 +25,10 @@
 #include <QDockWidget>
 
 class QStackedWidget;
-class Color_Dialog;
+
+namespace color_widgets {
+	class ColorDialog;
+}
 
 namespace tools {
 	class ToolSettings;
@@ -205,7 +208,7 @@ private:
 
 	QColor _foreground;
 	QColor _background;
-	Color_Dialog *_fgdialog, *_bgdialog;
+	color_widgets::ColorDialog *_fgdialog, *_bgdialog;
 };
 
 }

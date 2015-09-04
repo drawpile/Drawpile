@@ -4,7 +4,7 @@
 
 @section License
 
-    Copyright (C) 2013-2014 Mattia Basaglia
+    Copyright (C) 2013-2015 Mattia Basaglia
 
     This software is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,130 +23,48 @@
 
 #include "color_wheel.hpp"
 
+#include <cmath>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineF>
-#include <qmath.h>
-#include <cmath>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include "color_utils.hpp"
 
-enum Mouse_Status
+namespace color_widgets {
+
+enum MouseStatus
 {
     Nothing,
-    Drag_Circle,
-    Drag_Square
+    DragCircle,
+    DragSquare
 };
 
-static const Color_Wheel::Display_Flags hard_default_flags = Color_Wheel::SHAPE_TRIANGLE|Color_Wheel::ANGLE_ROTATING|Color_Wheel::COLOR_HSV;
-static Color_Wheel::Display_Flags default_flags = hard_default_flags;
+static const ColorWheel::DisplayFlags hard_default_flags = ColorWheel::SHAPE_TRIANGLE|ColorWheel::ANGLE_ROTATING|ColorWheel::COLOR_HSV;
+static ColorWheel::DisplayFlags default_flags = hard_default_flags;
 static const double selector_radius = 6;
 
-static qreal color_chromaF(const QColor& c)
-{
-    qreal max = qMax(c.redF(), qMax(c.greenF(), c.blueF()));
-    qreal min = qMin(c.redF(), qMin(c.greenF(), c.blueF()));
-    return max - min;
-}
-static qreal color_lumaF(const QColor& c)
-{
-    return 0.30 * c.redF() + 0.59 * c.greenF() + 0.11 * c.blueF();
-}
-static QColor color_from_lch(qreal hue, qreal chroma, qreal luma, qreal alpha = 1 )
-{
-    qreal h1 = hue*6;
-    qreal x = chroma*(1-qAbs(std::fmod(h1,2)-1));
-    QColor col;
-    if ( h1 >= 0 && h1 < 1 )
-        col = QColor::fromRgbF(chroma,x,0);
-    else if ( h1 < 2 )
-        col = QColor::fromRgbF(x,chroma,0);
-    else if ( h1 < 3 )
-        col = QColor::fromRgbF(0,chroma,x);
-    else if ( h1 < 4 )
-        col = QColor::fromRgbF(0,x,chroma);
-    else if ( h1 < 5 )
-        col = QColor::fromRgbF(x,0,chroma);
-    else if ( h1 < 6 )
-        col = QColor::fromRgbF(chroma,0,x);
-
-    qreal m = luma - color_lumaF(col);
-
-    return QColor::fromRgbF(
-        qBound(0.0,col.redF()+m,1.0),
-        qBound(0.0,col.greenF()+m,1.0),
-        qBound(0.0,col.blueF()+m,1.0),
-        alpha);
-}
-static QColor rainbow_lch(qreal hue)
-{
-    return color_from_lch(hue,1,1);
-}
-static QColor rainbow_hsv(qreal hue)
-{
-    return QColor::fromHsvF(hue,1,1);
-}
-
-static qreal color_lightnessF(const QColor& c)
-{
-    return ( qMax(c.redF(),qMax(c.greenF(),c.blueF())) +
-             qMin(c.redF(),qMin(c.greenF(),c.blueF())) ) / 2;
-}
-static qreal color_HSL_saturationF(const QColor& col)
-{
-    qreal c = color_chromaF(col);
-    qreal l = color_lightnessF(col);
-    if ( qFuzzyCompare(l+1,1) || qFuzzyCompare(l+1,2) )
-        return 0;
-    return c / (1-qAbs(2*l-1));
-}
-static QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha = 1 )
-{
-    qreal chroma = (1 - qAbs(2*lig-1))*sat;
-    qreal h1 = hue*6;
-    qreal x = chroma*(1-qAbs(std::fmod(h1,2)-1));
-    QColor col;
-    if ( h1 >= 0 && h1 < 1 )
-        col = QColor::fromRgbF(chroma,x,0);
-    else if ( h1 < 2 )
-        col = QColor::fromRgbF(x,chroma,0);
-    else if ( h1 < 3 )
-        col = QColor::fromRgbF(0,chroma,x);
-    else if ( h1 < 4 )
-        col = QColor::fromRgbF(0,x,chroma);
-    else if ( h1 < 5 )
-        col = QColor::fromRgbF(x,0,chroma);
-    else if ( h1 < 6 )
-        col = QColor::fromRgbF(chroma,0,x);
-
-    qreal m = lig-chroma/2;
-
-    return QColor::fromRgbF(
-        qBound(0.0,col.redF()+m,1.0),
-        qBound(0.0,col.greenF()+m,1.0),
-        qBound(0.0,col.blueF()+m,1.0),
-        alpha);
-}
-
-class Color_Wheel::Private
+class ColorWheel::Private
 {
 private:
-    Color_Wheel * const w;
+    ColorWheel * const w;
 
 public:
 
     qreal hue, sat, val;
     unsigned int wheel_width;
-    Mouse_Status mouse_status;
+    MouseStatus mouse_status;
     QPixmap hue_ring;
     QImage inner_selector;
-    Display_Flags display_flags;
+    DisplayFlags display_flags;
     QColor (*color_from)(qreal,qreal,qreal,qreal);
     QColor (*rainbow_from_hue)(qreal);
 
-    Private(Color_Wheel *widget)
+    Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
         wheel_width(20), mouse_status(Nothing),
         display_flags(FLAGS_DEFAULT),
-        color_from(&QColor::fromHsvF), rainbow_from_hue(&rainbow_hsv)
+        color_from(&QColor::fromHsvF), rainbow_from_hue(&detail::rainbow_hsv)
     { }
 
     /// Calculate outer wheel radius from idget center
@@ -229,7 +147,7 @@ public:
     /// Updates the inner image that displays the saturation-value selector
     void render_inner_selector()
     {
-        if ( display_flags & Color_Wheel::SHAPE_TRIANGLE )
+        if ( display_flags & ColorWheel::SHAPE_TRIANGLE )
             render_triangle();
         else
             render_square();
@@ -295,78 +213,79 @@ public:
 
     void set_color(const QColor& c)
     {
-        if ( display_flags & Color_Wheel::COLOR_HSV )
+        if ( display_flags & ColorWheel::COLOR_HSV )
         {
             hue = qMax(0.0, c.hsvHueF());
             sat = c.hsvSaturationF();
             val = c.valueF();
         }
-        else if ( display_flags & Color_Wheel::COLOR_HSL )
+        else if ( display_flags & ColorWheel::COLOR_HSL )
         {
             hue = qMax(0.0, c.hueF());
-            sat = color_HSL_saturationF(c);
-            val = color_lightnessF(c);
+            sat = detail::color_HSL_saturationF(c);
+            val = detail::color_lightnessF(c);
         }
-        else if ( display_flags & Color_Wheel::COLOR_LCH )
+        else if ( display_flags & ColorWheel::COLOR_LCH )
         {
             hue = qMax(0.0, c.hsvHueF());
-            sat = color_chromaF(c);
-            val = color_lumaF(c);
+            sat = detail::color_chromaF(c);
+            val = detail::color_lumaF(c);
         }
     }
 };
 
-Color_Wheel::Color_Wheel(QWidget *parent) :
+ColorWheel::ColorWheel(QWidget *parent) :
     QWidget(parent), p(new Private(this))
 {
     setDisplayFlags(FLAGS_DEFAULT);
+    setAcceptDrops(true);
 }
 
-Color_Wheel::~Color_Wheel()
+ColorWheel::~ColorWheel()
 {
     delete p;
 }
 
-QColor Color_Wheel::color() const
+QColor ColorWheel::color() const
 {
     return p->color_from(p->hue, p->sat, p->val, 1);
 }
 
-QSize Color_Wheel::sizeHint() const
+QSize ColorWheel::sizeHint() const
 {
     return QSize(p->wheel_width*5, p->wheel_width*5);
 }
 
-qreal Color_Wheel::hue() const
+qreal ColorWheel::hue() const
 {
     if ( (p->display_flags & COLOR_LCH) && p->sat > 0.01 )
         return color().hueF();
     return p->hue;
 }
 
-qreal Color_Wheel::saturation() const
+qreal ColorWheel::saturation() const
 {
     return color().hsvSaturationF();
 }
 
-qreal Color_Wheel::value() const
+qreal ColorWheel::value() const
 {
     return color().valueF();
 }
 
-unsigned int Color_Wheel::wheelWidth() const
+unsigned int ColorWheel::wheelWidth() const
 {
     return p->wheel_width;
 }
 
-void Color_Wheel::setWheelWidth(unsigned int w)
+void ColorWheel::setWheelWidth(unsigned int w)
 {
     p->wheel_width = w;
     p->render_inner_selector();
     update();
 }
 
-void Color_Wheel::paintEvent(QPaintEvent * )
+void ColorWheel::paintEvent(QPaintEvent * )
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -428,9 +347,9 @@ void Color_Wheel::paintEvent(QPaintEvent * )
 
 }
 
-void Color_Wheel::mouseMoveEvent(QMouseEvent *ev)
+void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
 {
-    if (p->mouse_status == Drag_Circle )
+    if (p->mouse_status == DragCircle )
     {
         p->hue = p->line_to_point(ev->pos()).angle()/360.0;
         p->render_inner_selector();
@@ -439,7 +358,7 @@ void Color_Wheel::mouseMoveEvent(QMouseEvent *ev)
         emit colorChanged(color());
         update();
     }
-    else if(p->mouse_status == Drag_Square)
+    else if(p->mouse_status == DragSquare)
     {
         QLineF glob_mouse_ln = p->line_to_point(ev->pos());
         QLineF center_mouse_ln ( QPointF(0,0),
@@ -463,10 +382,9 @@ void Color_Wheel::mouseMoveEvent(QMouseEvent *ev)
 
             qreal ycenter = side/2;
             qreal ymin = ycenter-slice_h/2;
-            qreal ymax = ycenter+slice_h/2;
 
-            if ( pt.y() >= ymin && pt.y() <= ymax )
-                p->sat = (pt.y()-ymin)/slice_h;
+            if ( slice_h > 0 )
+                p->sat = qBound(0.0, (pt.y()-ymin)/slice_h, 1.0);
         }
 
         emit colorSelected(color());
@@ -475,34 +393,35 @@ void Color_Wheel::mouseMoveEvent(QMouseEvent *ev)
     }
 }
 
-void Color_Wheel::mousePressEvent(QMouseEvent *ev)
+void ColorWheel::mousePressEvent(QMouseEvent *ev)
 {
     if ( ev->buttons() & Qt::LeftButton )
     {
+        setFocus();
         QLineF ray = p->line_to_point(ev->pos());
         if ( ray.length() <= p->inner_radius() )
-            p->mouse_status = Drag_Square;
-        /// \todo if click inside with distance from the selector indicator
-        /// > selector_radius => place it there directly
-        /// (without the need to drag)
+            p->mouse_status = DragSquare;
         else if ( ray.length() <= p->outer_radius() )
-            p->mouse_status = Drag_Circle;
+            p->mouse_status = DragCircle;
+
+        // Update the color
+        mouseMoveEvent(ev);
     }
 }
 
-void Color_Wheel::mouseReleaseEvent(QMouseEvent *ev)
+void ColorWheel::mouseReleaseEvent(QMouseEvent *ev)
 {
     mouseMoveEvent(ev);
     p->mouse_status = Nothing;
 }
 
-void Color_Wheel::resizeEvent(QResizeEvent *)
+void ColorWheel::resizeEvent(QResizeEvent *)
 {
     p->render_ring();
     p->render_inner_selector();
 }
 
-void Color_Wheel::setColor(QColor c)
+void ColorWheel::setColor(QColor c)
 {
     qreal oldh = p->hue;
     p->set_color(c);
@@ -512,27 +431,27 @@ void Color_Wheel::setColor(QColor c)
     emit colorChanged(c);
 }
 
-void Color_Wheel::setHue(qreal h)
+void ColorWheel::setHue(qreal h)
 {
     p->hue = qBound(0.0, h, 1.0);
     p->render_inner_selector();
     update();
 }
 
-void Color_Wheel::setSaturation(qreal s)
+void ColorWheel::setSaturation(qreal s)
 {
     p->sat = qBound(0.0, s, 1.0);
     update();
 }
 
-void Color_Wheel::setValue(qreal v)
+void ColorWheel::setValue(qreal v)
 {
     p->val = qBound(0.0, v, 1.0);
     update();
 }
 
 
-void Color_Wheel::setDisplayFlags(Display_Flags flags)
+void ColorWheel::setDisplayFlags(DisplayFlags flags)
 {
     if ( ! (flags & COLOR_FLAGS) )
         flags |= default_flags & COLOR_FLAGS;
@@ -544,21 +463,21 @@ void Color_Wheel::setDisplayFlags(Display_Flags flags)
     if ( (flags & COLOR_FLAGS) != (p->display_flags & COLOR_FLAGS) )
     {
         QColor old_col = color();
-        if ( flags & Color_Wheel::COLOR_HSL )
+        if ( flags & ColorWheel::COLOR_HSL )
         {
             p->hue = old_col.hueF();
-            p->sat = color_HSL_saturationF(old_col);
-            p->val = color_lightnessF(old_col);
-            p->color_from = &color_from_hsl;
-            p->rainbow_from_hue = &rainbow_hsv;
+            p->sat = detail::color_HSL_saturationF(old_col);
+            p->val = detail::color_lightnessF(old_col);
+            p->color_from = &detail::color_from_hsl;
+            p->rainbow_from_hue = &detail::rainbow_hsv;
         }
-        else if ( flags & Color_Wheel::COLOR_LCH )
+        else if ( flags & ColorWheel::COLOR_LCH )
         {
             p->hue = old_col.hueF();
-            p->sat = color_chromaF(old_col);
-            p->val = color_lumaF(old_col);
-            p->color_from = &color_from_lch;
-            p->rainbow_from_hue = &rainbow_lch;
+            p->sat = detail::color_chromaF(old_col);
+            p->val = detail::color_lumaF(old_col);
+            p->color_from = &detail::color_from_lch;
+            p->rainbow_from_hue = &detail::rainbow_lch;
         }
         else
         {
@@ -566,7 +485,7 @@ void Color_Wheel::setDisplayFlags(Display_Flags flags)
             p->sat = old_col.hsvSaturationF();
             p->val = old_col.valueF();
             p->color_from = &QColor::fromHsvF;
-            p->rainbow_from_hue = &rainbow_hsv;
+            p->rainbow_from_hue = &detail::rainbow_hsv;
         }
         p->render_ring();
     }
@@ -577,12 +496,12 @@ void Color_Wheel::setDisplayFlags(Display_Flags flags)
     emit displayFlagsChanged(flags);
 }
 
-Color_Wheel::Display_Flags Color_Wheel::displayFlags(Display_Flags mask) const
+ColorWheel::DisplayFlags ColorWheel::displayFlags(DisplayFlags mask) const
 {
     return p->display_flags & mask;
 }
 
-void Color_Wheel::setDefaultDisplayFlags(Display_Flags flags)
+void ColorWheel::setDefaultDisplayFlags(DisplayFlags flags)
 {
     if ( !(flags & COLOR_FLAGS) )
         flags |= hard_default_flags & COLOR_FLAGS;
@@ -593,13 +512,39 @@ void Color_Wheel::setDefaultDisplayFlags(Display_Flags flags)
     default_flags = flags;
 }
 
-Color_Wheel::Display_Flags Color_Wheel::defaultDisplayFlags(Display_Flags mask)
+ColorWheel::DisplayFlags ColorWheel::defaultDisplayFlags(DisplayFlags mask)
 {
     return default_flags & mask;
 }
 
-void Color_Wheel::setDisplayFlag(Display_Flags flag, Display_Flags mask)
+void ColorWheel::setDisplayFlag(DisplayFlags flag, DisplayFlags mask)
 {
     setDisplayFlags((p->display_flags&~mask)|flag);
 }
 
+void ColorWheel::dragEnterEvent(QDragEnterEvent* event)
+{
+    if ( event->mimeData()->hasColor() ||
+         ( event->mimeData()->hasText() && QColor(event->mimeData()->text()).isValid() ) )
+        event->acceptProposedAction();
+}
+
+void ColorWheel::dropEvent(QDropEvent* event)
+{
+    if ( event->mimeData()->hasColor() )
+    {
+        setColor(event->mimeData()->colorData().value<QColor>());
+        event->accept();
+    }
+    else if ( event->mimeData()->hasText() )
+    {
+        QColor col(event->mimeData()->text());
+        if ( col.isValid() )
+        {
+            setColor(col);
+            event->accept();
+        }
+    }
+}
+
+} //  namespace color_widgets

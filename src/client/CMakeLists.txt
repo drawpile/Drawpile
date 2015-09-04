@@ -8,7 +8,7 @@ find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
 find_package(KF5Archive NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
-find_package(QtColorPicker)
+find_package(QtColorWidgets REQUIRED)
 find_package(GIF)
 find_package(Miniupnpc)
 
@@ -195,20 +195,23 @@ if(NOT KF5Archive_FOUND)
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../shared/bundled/karchive")
 endif()
 
-# Use bundled QtColorPicker widgets if library not found
-if(QTCOLORPICKER_FOUND)
-	include_directories(${LIBQTCOLORPICKER_INCLUDE_DIRS})
+# Use bundled QtColorWidgets widgets if library not found
+if(QTCOLORWIDGETS_FOUND)
+	include_directories(${LIBQTCOLORWIDGETS_INCLUDE_DIRS})
 else()
-	message(WARNING "QtColorPicker not found: using bundled copy!")
+	message(WARNING "QtColorWidgets not found: using bundled copy!")
 	set(
 		SOURCES ${SOURCES}
-		bundled/QtColorPicker/color_wheel.cpp
-		bundled/QtColorPicker/color_preview.cpp
-		bundled/QtColorPicker/color_dialog.cpp
-		bundled/QtColorPicker/gradient_slider.cpp
-		bundled/QtColorPicker/hue_slider.cpp
+		bundled/QtColorWidgets/color_wheel.cpp
+		bundled/QtColorWidgets/color_preview.cpp
+		bundled/QtColorWidgets/color_dialog.cpp
+		bundled/QtColorWidgets/gradient_slider.cpp
+		bundled/QtColorWidgets/hue_slider.cpp
+		bundled/QtColorWidgets/color_line_edit.cpp
+		bundled/QtColorWidgets/color_utils.cpp
 	)
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorPicker")
+	qt5_add_resources( QtResource bundled/QtColorWidgets/color_widgets.qrc )
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets")
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
@@ -301,8 +304,8 @@ if(NOT KF5Archive_FOUND)
 	target_link_libraries(${CLIENTNAME} ${ZLIB_LIBRARIES})
 endif()
 
-if(QTCOLORPICKER_FOUND)
-	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORPICKER_LIBRARIES})
+if(QTCOLORWIDGETS_FOUND)
+	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORWIDGETS_LIBRARIES})
 endif()
 
 if(GIF_FOUND)
