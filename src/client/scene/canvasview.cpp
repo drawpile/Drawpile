@@ -808,7 +808,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		_stylusDown = true;
 		_lastPressure = tabev->pressure();
-		if(_tabletmode==ENABLE_TABLET) {
+		if(_tabletmode==ENABLE_TABLET && _pendown == NOTDOWN) {
 			tabev->accept();
 
 			penPressEvent(
