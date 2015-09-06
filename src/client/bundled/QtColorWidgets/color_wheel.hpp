@@ -23,9 +23,11 @@
 #ifndef COLOR_WHEEL_HPP
 #define COLOR_WHEEL_HPP
 
-#include "colorpicker_global.hpp"
+#include "colorwidgets_global.hpp"
 
 #include <QWidget>
+
+namespace color_widgets {
 
 /**
  * \brief Display an analog widget that allows the selection of a HSV color
@@ -33,7 +35,7 @@
  * It has an outer wheel to select the Hue and an intenal square to select
  * Saturation and Lightness.
  */
-class QCP_EXPORT Color_Wheel : public QWidget
+class QCP_EXPORT ColorWheel : public QWidget
 {
     Q_OBJECT
 
@@ -42,10 +44,10 @@ class QCP_EXPORT Color_Wheel : public QWidget
     Q_PROPERTY(qreal saturation READ saturation WRITE setSaturation DESIGNABLE false )
     Q_PROPERTY(qreal value READ value WRITE setValue DESIGNABLE false )
     Q_PROPERTY(unsigned wheelWidth READ wheelWidth WRITE setWheelWidth DESIGNABLE true )
-    Q_PROPERTY(Display_Flags displayFlags READ displayFlags WRITE setDisplayFlags NOTIFY displayFlagsChanged DESIGNABLE true )
+    Q_PROPERTY(DisplayFlags displayFlags READ displayFlags WRITE setDisplayFlags NOTIFY displayFlagsChanged DESIGNABLE true )
 
 public:
-    enum Display_Enum
+    enum DisplayEnum
     {
         SHAPE_DEFAULT  = 0x000, ///< Use the default shape
         SHAPE_TRIANGLE = 0x001, ///< A triangle
@@ -66,11 +68,11 @@ public:
         FLAGS_DEFAULT  = 0x000, ///< Use all defaults
         FLAGS_ALL      = 0xfff  ///< Mask matching all flags
     };
-    Q_DECLARE_FLAGS(Display_Flags, Display_Enum)
-    Q_FLAGS(Display_Flags)
+    Q_DECLARE_FLAGS(DisplayFlags, DisplayEnum)
+    Q_FLAGS(DisplayFlags)
 
-    explicit Color_Wheel(QWidget *parent = 0);
-    ~Color_Wheel();
+    explicit ColorWheel(QWidget *parent = 0);
+    ~ColorWheel();
 
     /// Get current color
     QColor color() const;
@@ -93,20 +95,20 @@ public:
     void setWheelWidth(unsigned int w);
 
     /// Get display flags
-    Display_Flags displayFlags(Display_Flags mask = FLAGS_ALL) const;
+    DisplayFlags displayFlags(DisplayFlags mask = FLAGS_ALL) const;
 
     /// Set the default display flags
-    static void setDefaultDisplayFlags(Display_Flags flags);
+    static void setDefaultDisplayFlags(DisplayFlags flags);
 
     /// Get default display flags
-    static Display_Flags defaultDisplayFlags(Display_Flags mask = FLAGS_ALL);
+    static DisplayFlags defaultDisplayFlags(DisplayFlags mask = FLAGS_ALL);
 
     /**
      * @brief Set a specific display flag
      * @param flag  Flag replacing the mask
      * @param mask  Mask to be cleared
      */
-    void setDisplayFlag(Display_Flags flag, Display_Flags mask);
+    void setDisplayFlag(DisplayFlags flag, DisplayFlags mask);
 
 public slots:
 
@@ -132,7 +134,7 @@ public slots:
      * @brief Set the display flags
      * @param flags which will replace the current ones
      */
-    void setDisplayFlags(Color_Wheel::Display_Flags flags);
+    void setDisplayFlags(ColorWheel::DisplayFlags flags);
 
 signals:
     /**
@@ -145,20 +147,24 @@ signals:
      */
     void colorSelected(QColor);
 
-    void displayFlagsChanged(Color_Wheel::Display_Flags flags);
+    void displayFlagsChanged(ColorWheel::DisplayFlags flags);
 
 protected:
-    void paintEvent(QPaintEvent *);
-    void mouseMoveEvent(QMouseEvent *);
-    void mousePressEvent(QMouseEvent *);
-    void mouseReleaseEvent(QMouseEvent *);
-    void resizeEvent(QResizeEvent *);
+    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent* event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent* event) Q_DECL_OVERRIDE;
 
 private:
     class Private;
     Private * const p;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Color_Wheel::Display_Flags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ColorWheel::DisplayFlags)
+
+} // namespace color_widgets
 
 #endif // COLOR_WHEEL_HPP

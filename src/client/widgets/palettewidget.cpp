@@ -32,7 +32,7 @@
 #include <QDrag>
 #include <QMimeData>
 
-#include <Color_Dialog>
+#include <ColorDialog>
 
 namespace widgets {
 
@@ -54,7 +54,7 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	_scrollbar = new QScrollBar(this);
 	connect(_scrollbar, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 
-	_colordlg = new Color_Dialog(this);
+	_colordlg = new color_widgets::ColorDialog(this);
 	_colordlg->setWindowTitle(tr("Set palette color"));
 
 	connect(_colordlg, SIGNAL(colorSelected(QColor)),

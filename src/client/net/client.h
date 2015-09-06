@@ -182,6 +182,7 @@ public slots:
 	void sendDeleteLayer(int id, bool merge);
 
 	// Drawing
+	void forgetToolChange();
 	void sendToolChange(const canvas::ToolContext &ctx);
 	void sendStroke(const paintcore::Point &point);
 	void sendStroke(const paintcore::PointVector &points);

@@ -1,9 +1,9 @@
 Notes on bundled libraries:
 
-QtColorPicker
+QtColorWidgets
 ---------------
 
 Color picker widgets. The bundled version is used only if the library is not found.
 
-QtColorPicker homepage: https://github.com/mbasaglia/Qt-Color-Picker
+Homepage: https://github.com/mbasaglia/Qt-Color-Widgets
 

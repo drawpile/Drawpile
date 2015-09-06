@@ -29,7 +29,7 @@
 #include <QButtonGroup>
 #include <QSettings>
 
-#include <Color_Dialog>
+#include <ColorDialog>
 
 namespace docks {
 
@@ -118,8 +118,8 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	connect(_pickersettings, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
 
-	// Create color changer dialog
-	_fgdialog = new Color_Dialog(this);
+	// Create color changer dialogs
+	_fgdialog = new color_widgets::ColorDialog(this);
 	_fgdialog->setAlphaEnabled(false);
 	_fgdialog->setWindowTitle(tr("Foreground Color"));
 	connect(_fgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));

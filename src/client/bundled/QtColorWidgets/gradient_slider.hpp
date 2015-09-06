@@ -24,15 +24,17 @@
 #ifndef GRADIENT_SLIDER_HPP
 #define GRADIENT_SLIDER_HPP
 
-#include "colorpicker_global.hpp"
+#include "colorwidgets_global.hpp"
 
 #include <QSlider>
 #include <QGradient>
 
+namespace color_widgets {
+
 /**
  * \brief A slider that mover on top of a gradient
  */
-class QCP_EXPORT Gradient_Slider : public QSlider
+class QCP_EXPORT GradientSlider : public QSlider
 {
     Q_OBJECT
     Q_PROPERTY(QBrush background READ background WRITE setBackground)
@@ -42,9 +44,9 @@ class QCP_EXPORT Gradient_Slider : public QSlider
     Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
 
 public:
-    explicit Gradient_Slider(QWidget *parent = 0);
-    explicit Gradient_Slider(Qt::Orientation orientation, QWidget *parent = 0);
-    ~Gradient_Slider();
+    explicit GradientSlider(QWidget *parent = 0);
+    explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = 0);
+    ~GradientSlider();
 
     /// Get the background, it's visible for transparent gradient stops
     QBrush background() const;
@@ -67,14 +69,14 @@ public:
     void setColors(const QVector<QColor> &colors);
 
     /**
-     * Set the first color of the gradient
+     * \brief Set the first color of the gradient
      *
      * If the gradient is currently empty it will create a stop with the given color
      */
     void setFirstColor(const QColor &c);
 
     /**
-     * Set the last color of the gradient
+     * \brief Set the last color of the gradient
      *
      * If the gradient is has less than two colors,
      * it will create a stop with the given color
@@ -82,16 +84,16 @@ public:
     void setLastColor(const QColor &c);
 
     /**
-     * Get the first color
+     * \brief Get the first color
      *
-     * Returns QColor() con empty gradient
+     * \returns QColor() con empty gradient
      */
     QColor firstColor() const;
 
     /**
-     * Get the last color
+     * \brief Get the last color
      *
-     * Returns QColor() con empty gradient
+     * \returns QColor() con empty gradient
      */
     QColor lastColor() const;
     
@@ -102,5 +104,7 @@ private:
     class Private;
     Private * const p;
 };
+
+} // namespace color_widgets
 
 #endif // GRADIENT_SLIDER_HPP

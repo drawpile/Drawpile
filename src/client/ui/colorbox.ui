@@ -138,7 +138,7 @@
         <number>3</number>
        </property>
        <item row="2" column="1">
-        <widget class="Gradient_Slider" name="value">
+        <widget class="GradientSlider" name="value">
          <property name="maximum">
           <number>255</number>
          </property>
@@ -152,7 +152,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="Gradient_Slider" name="red">
+        <widget class="GradientSlider" name="red">
          <property name="maximum">
           <number>255</number>
          </property>
@@ -166,7 +166,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="Gradient_Slider" name="green">
+        <widget class="GradientSlider" name="green">
          <property name="maximum">
           <number>255</number>
          </property>
@@ -180,7 +180,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="Hue_Slider" name="hue">
+        <widget class="HueSlider" name="hue">
          <property name="maximum">
           <number>359</number>
          </property>
@@ -208,14 +208,14 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="Gradient_Slider" name="blue">
+        <widget class="GradientSlider" name="blue">
          <property name="maximum">
           <number>255</number>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="Gradient_Slider" name="saturation">
+        <widget class="GradientSlider" name="saturation">
          <property name="maximum">
           <number>255</number>
          </property>
@@ -303,7 +303,7 @@
         <number>3</number>
        </property>
        <item>
-        <widget class="Color_Wheel" name="colorwheel">
+        <widget class="ColorWheel" name="colorwheel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -330,19 +330,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Color_Wheel</class>
+   <class>ColorWheel</class>
    <extends>QWidget</extends>
-   <header>Color_Wheel</header>
+   <header>ColorWheel</header>
   </customwidget>
   <customwidget>
-   <class>Gradient_Slider</class>
+   <class>GradientSlider</class>
    <extends>QSlider</extends>
-   <header>Gradient_Slider</header>
+   <header>GradientSlider</header>
   </customwidget>
   <customwidget>
-   <class>Hue_Slider</class>
-   <extends>Gradient_Slider</extends>
-   <header>Hue_Slider</header>
+   <class>HueSlider</class>
+   <extends>GradientSlider</extends>
+   <header>HueSlider</header>
   </customwidget>
   <customwidget>
    <class>PaletteWidget</class>

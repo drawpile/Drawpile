@@ -812,16 +812,12 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 		++pos;
 	}
 
-	if(!_localfork.isEmpty()) {
-		Q_ASSERT(_localfork.offset() >= savepoint->streampointer);
-		_localfork.setOffset(pos-1);
-		const QList<protocol::MessagePtr> local = _localfork.messages();
-		for(const protocol::MessagePtr &msg : local) {
-			if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT)
-				handleCommand(msg, true, pos);
-		}
+	// Note. At this point we could replay the localfork, but this tends to
+	// cause more trouble than its worth. Since we're receiving data, the data
+	// should be making the roundtrip any moment now anyway.
+	_localfork.clear();
 
-	}
+	emit retconned();
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
