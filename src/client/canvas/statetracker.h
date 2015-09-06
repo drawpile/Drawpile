@@ -53,10 +53,6 @@ namespace paintcore {
 	class Savepoint;
 }
 
-namespace net {
-	class LayerListModel;
-}
-
 class QTimer;
 
 namespace canvas {
@@ -140,6 +136,8 @@ Q_DECLARE_TYPEINFO(canvas::StateSavepoint, Q_MOVABLE_TYPE);
 
 namespace canvas {
 
+class LayerListModel;
+
 /**
  * \brief Drawing context state tracker
  * 
@@ -149,7 +147,7 @@ namespace canvas {
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(paintcore::LayerStack *image, net::LayerListModel *layerlist, int myId, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent=0);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
@@ -184,7 +182,12 @@ public:
 	 * @brief Get the local user's ID
 	 * @return
 	 */
-	int localId() const { return _myid; }
+	int localId() const { return m_myId; }
+
+	/**
+	 * @brief Set the local user's ID
+	 */
+	void setLocalId(int id) { m_myId = id; }
 
 	/**
 	 * @brief Get the paint canvas
@@ -275,10 +278,10 @@ private:
 	QHash<int, DrawingContext> _contexts;
 
 	paintcore::LayerStack *_image;
-	net::LayerListModel *_layerlist;
+	LayerListModel *m_layerlist;
 
 	QString _title;
-	int _myid;
+	int m_myId;
 
 	protocol::MessageStream m_msgstream;
 	QList<StateSavepoint> _savepoints;

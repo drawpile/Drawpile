@@ -19,9 +19,13 @@
 
 #include "core/brush.h"
 #include "net/client.h"
+#include "net/commands.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/brushes.h"
+
+#include "../shared/net/undo.h"
+#include "../shared/net/pen.h"
 
 namespace tools {
 
@@ -29,14 +33,15 @@ void BrushBase::begin(const paintcore::Point& point, float zoom)
 {
 	Q_UNUSED(zoom);
 
-	canvas::ToolContext tctx = {
-		owner.activeLayer(),
-		owner.activeBrush()
-	};
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
 
-	owner.client()->sendUndopoint();
-	owner.client()->sendToolChange(tctx);
-	owner.client()->sendStroke(point);
+	// TODO remember last sent brush
+	msgs << net::command::brushToToolChange(0, owner.activeLayer(), owner.activeBrush());
+	protocol::PenPointVector v(1);
+	v[0] = net::command::pointToProtocol(point);
+	msgs << protocol::MessagePtr(new protocol::PenMove(0, v));
+	owner.client()->sendMessages(msgs);
 }
 
 void BrushBase::motion(const paintcore::Point& point, bool constrain, bool center)
@@ -44,12 +49,14 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	owner.client()->sendStroke(point);
+	protocol::PenPointVector v(1);
+	v[0] = net::command::pointToProtocol(point);
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(0, v)));
 }
 
 void BrushBase::end()
 {
-	owner.client()->sendPenup();
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(0)));
 }
 
 }

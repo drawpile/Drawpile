@@ -23,10 +23,14 @@
 #include "core/layer.h"
 #include "core/shapes.h"
 #include "net/client.h"
+#include "net/commands.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/shapetools.h"
 #include "tools/utils.h"
+
+#include "../shared/net/pen.h"
+#include "../shared/net/undo.h"
 
 #include <QPixmap>
 
@@ -65,16 +69,13 @@ void ShapeTool::end()
 	if(layer) {
 		layer->removeSublayer(-1);
 	}
-
-	canvas::ToolContext tctx = {
-		owner.activeLayer(),
-		m_brush
-	};
-
-	owner.client()->sendUndopoint();
-	owner.client()->sendToolChange(tctx);
-	owner.client()->sendStroke(pointVector());
-	owner.client()->sendPenup();
+	
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << net::command::brushToToolChange(0, owner.activeLayer(), owner.activeBrush());
+	msgs << net::command::penMove(0, pointVector());
+	msgs << protocol::MessagePtr(new protocol::PenUp(0));
+	owner.client()->sendMessages(msgs);
 }
 
 void ShapeTool::updatePreview()

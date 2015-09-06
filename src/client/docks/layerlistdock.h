@@ -28,9 +28,13 @@ class QTimer;
 
 class Ui_LayerBox;
 
-namespace net {
-	class Client;
+namespace protocol {
+	class MessagePtr;
+}
+
+namespace canvas {
 	struct LayerListItem;
+	class CanvasModel;
 }
 
 namespace docks {
@@ -43,7 +47,7 @@ Q_OBJECT
 public:
 	LayerList(QWidget *parent=0);
 
-	void setClient(net::Client *client);
+	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! Initialize the widget for a new session
 	void init();
@@ -68,6 +72,8 @@ signals:
 	void layerSelected(int id);
 
 	void layerViewModeSelected(int mode);
+
+	void layerCommand(protocol::MessagePtr msg);
 
 private slots:
 	void onLayerCreate(bool wasfirst);
@@ -101,7 +107,7 @@ private:
 
 	QModelIndex currentSelection() const;
 
-	net::Client *_client;
+	canvas::CanvasModel *m_canvas;
 	int _selected;
 	Ui_LayerBox *_ui;
 	bool _noupdate;

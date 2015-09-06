@@ -17,10 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstring>
-#include <QDebug>
-
 #include "control.h"
+
+#include <cstring>
+
+#include <QtEndian>
+#include <QDebug>
 
 namespace protocol {
 
@@ -129,6 +131,63 @@ QJsonDocument Command::doc() const
 		qWarning() << "JSON parse error:" << e.errorString();
 	}
 	return d;
+}
+
+Disconnect *Disconnect::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len<1)
+		return 0;
+	return new Disconnect(ctx, Reason(*data), QByteArray((const char*)data+1, len-1));
+}
+
+int Disconnect::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = _reason;
+	memcpy(ptr, _message.constData(), _message.length());
+	ptr += _message.length();
+	return ptr - data;
+}
+
+int Disconnect::payloadLength() const
+{
+	return 1 + _message.length();
+}
+
+StreamPos *StreamPos::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len!=4)
+		return 0;
+	return new StreamPos(ctx, qFromBigEndian<quint32>(data));
+}
+
+int StreamPos::serializePayload(uchar *data) const
+{
+	qToBigEndian(_bytes, data);
+	return 4;
+}
+
+int StreamPos::payloadLength() const
+{
+	return 4;
+}
+
+Ping *Ping::deserialize(uint8_t ctx, const uchar *data, int len)
+{
+	if(len!=1)
+		return nullptr;
+	return new Ping(ctx, *data);
+}
+
+int Ping::payloadLength() const
+{
+	return 1;
+}
+
+int Ping::serializePayload(uchar *data) const
+{
+	*data = _isPong;
+	return 1;
 }
 
 }

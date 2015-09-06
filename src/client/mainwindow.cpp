@@ -94,16 +94,23 @@
 #include "docks/inputsettingsdock.h"
 
 #include "net/client.h"
+#include "net/commands.h"
 #include "net/login.h"
 #include "net/serverthread.h"
-#include "net/layerlist.h"
-#include "net/aclfilter.h"
+#include "canvas/layerlist.h"
+#include "canvas/aclfilter.h"
 
 #include "tools/toolcontroller.h"
 
 #include "../shared/record/writer.h"
 #include "../shared/record/reader.h"
 #include "../shared/util/filename.h"
+#include "../shared/net/image.h"
+#include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
+#include "../shared/net/meta2.h"
+#include "../shared/net/undo.h"
+#include "../shared/net/recording.h"
 
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -330,18 +337,19 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create the network client
 	m_client = new net::Client(this);
 
-	connect(_view, SIGNAL(pointerMoved(QPointF)), m_client, SLOT(sendMovePointer(QPointF)));
+	connect(_view, &widgets::CanvasView::pointerMoved, [this](const QPointF &p) {
+		m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, p.x()/4.0, p.y()/4.0)));
+	});
 
-	_dock_layers->setClient(m_client);
+	connect(m_client, &net::Client::serverMessage, _chatbox, &widgets::ChatBox::systemMessage);
+	connect(_chatbox, &widgets::ChatBox::message, m_client, &net::Client::sendChat);
+	connect(m_client, &net::Client::sessionConfChange, this, &MainWindow::sessionConfChanged);
+
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
 	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
-	_userlist->setClient(m_client);
 
-	m_client->layerlist()->setLayerGetter([this](int id)->paintcore::Layer* {
-		if(m_canvas)
-			return m_canvas->layerStack()->getLayer(id);
-		return nullptr;
-	});
+	connect(_userlist, &widgets::UserList::opCommand, m_client, &net::Client::sendMessage);
+	connect(_dock_layers, &docks::LayerList::layerCommand, m_client, &net::Client::sendMessage);
 
 	// Tool controller
 	m_toolctrl = new tools::ToolController(m_client, _dock_toolsettings, this);
@@ -375,24 +383,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_client, SIGNAL(sentColorChange(QColor)), _dock_colors, SLOT(addLastUsedColor(QColor)));
 
-	// Meta commands
-	connect(m_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
-			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool,bool)));
-	connect(m_client, &net::Client::chatMessageReceived, [this]() {
-		// Show a "new message" indicator when the chatbox is collapsed
-		if(_splitter->sizes().at(1)==0)
-			_statusChatButton->show();
-	});
-
-	connect(m_client, SIGNAL(markerMessageReceived(QString,QString)),
-			_chatbox, SLOT(receiveMarker(QString,QString)));
-	connect(_chatbox, SIGNAL(message(QString,bool,bool)), m_client, SLOT(sendChat(QString,bool,bool)));
-
-	connect(m_client->aclFilter(), &net::AclFilter::localOpChanged, this, &MainWindow::setOperatorMode);
-	connect(m_client, &net::Client::sessionConfChange, this, &MainWindow::sessionConfChanged);
-	connect(m_client->aclFilter(), &net::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
-	connect(m_client, &net::Client::layerVisibilityChange, this, &MainWindow::updateLockWidget);
-
 	// Network status changes
 	connect(m_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
 	connect(m_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
@@ -406,14 +396,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
 	connect(m_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
 	connect(m_client, SIGNAL(lagMeasured(qint64)), _netstatus, SLOT(lagMeasured(qint64)));
+	connect(m_client, &net::Client::youWereKicked, _netstatus, &widgets::NetStatus::kicked);
 
-	connect(m_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
-	connect(m_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
-	connect(m_client, SIGNAL(youWereKicked(QString)), _netstatus, SLOT(kicked(QString)));
-
-	connect(m_client, SIGNAL(userJoined(int, QString)), _chatbox, SLOT(userJoined(int, QString)));
-	connect(m_client, SIGNAL(userLeft(QString)), _chatbox, SLOT(userParted(QString)));
-	connect(m_client, SIGNAL(youWereKicked(QString)), _chatbox, SLOT(kicked(QString)));
+	connect(m_client, &net::Client::youWereKicked, _chatbox, &widgets::ChatBox::kicked);
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
@@ -475,15 +460,38 @@ void MainWindow::initCanvas()
 {
 	delete m_canvas;
 
-	m_canvas = new canvas::CanvasModel(m_client, this);
+	m_canvas = new canvas::CanvasModel(m_client->myId(), this);
 	_canvasscene->initCanvas(m_canvas);
 
 	_dock_layers->init();
-	m_client->init();
+	_userlist->setCanvas(m_canvas);
+	_dock_layers->setCanvas(m_canvas);
 
 	_dock_toolsettings->getAnnotationSettings()->setController(m_toolctrl);
 
+	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
+	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
+	connect(m_client, &net::Client::sessionResetted, m_canvas, &canvas::CanvasModel::resetCanvas);
+
+	connect(m_client, &net::Client::layerVisibilityChange, m_canvas->layerStack(), &paintcore::LayerStack::setLayerHidden);
+	connect(m_client, &net::Client::layerVisibilityChange, this, &MainWindow::updateLockWidget);
+
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &MainWindow::updateTitle);
+
+	connect(m_canvas, &canvas::CanvasModel::chatMessageReceived, _chatbox, &widgets::ChatBox::receiveMessage);
+	connect(m_canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
+		// Show a "new message" indicator when the chatbox is collapsed
+		if(_splitter->sizes().at(1)==0)
+			_statusChatButton->show();
+	});
+
+	connect(m_canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &MainWindow::updateLayerCtrlMode);
+	connect(m_canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &MainWindow::updateLayerCtrlMode);
+
+	connect(m_canvas, &canvas::CanvasModel::markerMessageReceived, _chatbox, &widgets::ChatBox::receiveMarker);
+
+	connect(m_canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &MainWindow::setOperatorMode);
+	connect(m_canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
 
 	connect(m_canvas, &canvas::CanvasModel::layerAutoselectRequest, _dock_layers, &docks::LayerList::selectLayer);
 	connect(m_canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
@@ -496,6 +504,13 @@ void MainWindow::initCanvas()
 		if(_autosave->isChecked())
 			autosave();
 	});
+
+	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendMessage);
+
+	connect(m_canvas, &canvas::CanvasModel::userJoined, _netstatus, &widgets::NetStatus::join);
+	connect(m_canvas, &canvas::CanvasModel::userLeft, _netstatus, &widgets::NetStatus::leave);
+	connect(m_canvas, &canvas::CanvasModel::userJoined, _chatbox, &widgets::ChatBox::userJoined);
+	connect(m_canvas, &canvas::CanvasModel::userLeft, _chatbox, &widgets::ChatBox::userParted);
 
 	connect(_dock_layers, &docks::LayerList::layerViewModeSelected, m_canvas, &canvas::CanvasModel::setLayerViewMode);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
@@ -610,9 +625,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 		m_playbackDialog = 0;
 		getAction("recordsession")->setEnabled(true);
 		setRecorderStatus(false);
-		m_canvas->stateTracker()->setShowAllUserMarkers(false);
-		m_client->endPlayback();
-		m_canvas->stateTracker()->endPlayback();
+		m_canvas->endPlayback();
 	});
 
 	m_playbackDialog->show();
@@ -1423,7 +1436,7 @@ void MainWindow::changeSessionTitle()
 				&ok
 	);
 	if(ok && newtitle != m_canvas->title()) {
-		m_client->sendSetSessionTitle(newtitle);
+		m_client->sendMessage(net::command::sessionTitle(newtitle));
 	}
 }
 
@@ -1475,7 +1488,7 @@ void MainWindow::serverDisconnected(const QString &message, const QString &error
 
 	// Make sure all drawing is complete
 	if(m_canvas) {
-		m_canvas->stateTracker()->endRemoteContexts();
+		m_canvas->disconnectedFromServer();
 		m_canvas->setTitle(QString());
 	}
 
@@ -1532,6 +1545,8 @@ void MainWindow::loggedin(bool join)
 		initCanvas();
 	}
 
+	m_canvas->connectedToServer(m_client->myId());
+
 	// Automatically start recording
 	if(_autoRecordOnConnect)
 		startRecorder(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
@@ -1555,9 +1570,11 @@ void MainWindow::sessionConfChanged(const QJsonObject &config)
 
 void MainWindow::updateLockWidget()
 {
-	getAction("locksession")->setChecked(m_client->aclFilter()->isSessionLocked());
+	bool locked = m_canvas && m_canvas->aclFilter()->isSessionLocked();
+	getAction("locksession")->setChecked(locked);
 
-	bool locked = m_client->aclFilter()->isLocked() || _dock_layers->isCurrentLayerLocked();
+	locked |= (m_canvas && m_canvas->aclFilter()->isLocked()) || _dock_layers->isCurrentLayerLocked();
+
 	if(locked) {
 		_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
 		_lockstatus->setToolTip(tr("Board is locked"));
@@ -1576,24 +1593,48 @@ void MainWindow::setOperatorMode(bool op)
 	_dock_layers->setOperatorMode(op);
 }
 
+
+void MainWindow::setSessionLock(bool lock)
+{
+	Q_ASSERT(m_canvas);
+	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
+	if(lock)
+		flags |= protocol::SessionACL::LOCK_SESSION;
+	else
+		flags &= ~protocol::SessionACL::LOCK_SESSION;
+
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
+}
+
 void MainWindow::setLayerCtrlMode(QAction *action)
 {
+	Q_ASSERT(m_canvas);
 	int mode = action->property("mode").toInt();
 	Q_ASSERT(mode>=0 && mode<=2);
+
+	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
+	flags &= ~(protocol::SessionACL::LOCK_LAYERCTRL|protocol::SessionACL::LOCK_OWNLAYERS);
+
 	switch(mode) {
-	case 0: m_client->sendLockLayerControls(false, false); break;
-	case 1: m_client->sendLockLayerControls(true, false); break;
-	case 2: m_client->sendLockLayerControls(true, true); break;
+	case 0: break;
+	case 1: flags |= protocol::SessionACL::LOCK_LAYERCTRL; break;
+	case 2: flags |= protocol::SessionACL::LOCK_LAYERCTRL | protocol::SessionACL::LOCK_OWNLAYERS; break;
+	default: return;
 	}
+
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
 }
 
 void MainWindow::updateLayerCtrlMode()
 {
+	if(!m_canvas)
+		return;
+
 	Q_ASSERT(m_layerctrlmode->actions().size()==3);
 	int i=0;
-	if(m_client->aclFilter()->isOwnLayers())
+	if(m_canvas->aclFilter()->isOwnLayers())
 		i=2;
-	else if(m_client->aclFilter()->isLayerControlLocked())
+	else if(m_canvas->aclFilter()->isLayerControlLocked())
 		i=1;
 
 	m_layerctrlmode->actions()[i]->setChecked(true);
@@ -1764,8 +1805,16 @@ void MainWindow::undo()
 	if(m_canvas->selection()) {
 		cancelSelection();
 	} else {
-		m_client->sendUndo();
+		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, 1)));
 	}
+}
+
+void MainWindow::redo()
+{
+	if(!m_canvas)
+		return;
+
+	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, -1)));
 }
 
 void MainWindow::selectAll()
@@ -1781,7 +1830,7 @@ void MainWindow::selectAll()
 void MainWindow::selectNone()
 {
 	if(m_canvas && m_canvas->selection()) {
-		m_canvas->selection()->pasteToCanvas(m_client, _dock_layers->currentLayer());
+		m_client->sendMessages(m_canvas->selection()->pasteToCanvas(_dock_layers->currentLayer()));
 		cancelSelection();
 	}
 }
@@ -1790,7 +1839,7 @@ void MainWindow::cancelSelection()
 {
 	if(m_canvas && m_canvas->selection()) {
 		if(!m_canvas->selection()->pasteImage().isNull() && m_canvas->selection()->isMovedFromCanvas())
-			m_client->sendUndo();
+			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, 1)));
 		m_canvas->setSelection(nullptr);
 	}
 }
@@ -1937,7 +1986,7 @@ void MainWindow::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull()) {
-		sel->pasteToCanvas(m_client, _dock_layers->currentLayer());
+		m_client->sendMessages(sel->pasteToCanvas(_dock_layers->currentLayer()));
 		sel->setMovedFromCanvas(false);
 	}
 }
@@ -1969,9 +2018,11 @@ void MainWindow::removeEmptyAnnotations()
 {
 	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
-		m_client->sendUndopoint();
+		QList<protocol::MessagePtr> msgs;
+		msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
 		for(int id : ids)
-			m_client->sendAnnotationDelete(id);
+			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, id));
+		m_client->sendMessages(msgs);
 	}
 }
 
@@ -1985,8 +2036,10 @@ void MainWindow::clearOrDelete()
 	if(annotationtool->isChecked()) {
 		int a = _dock_toolsettings->getAnnotationSettings()->selected();
 		if(a>0) {
-			m_client->sendUndopoint();
-			m_client->sendAnnotationDelete(a);
+			QList<protocol::MessagePtr> msgs;
+			msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, a));
+			m_client->sendMessages(msgs);
 			return;
 		}
 	}
@@ -2003,12 +2056,14 @@ void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 	}
 	if(m_canvas->selection()) {
 		// Selection exists: fill selected area only
-		m_canvas->selection()->fillCanvas(color, mode, m_client, _dock_layers->currentLayer());
+		m_client->sendMessages(m_canvas->selection()->fillCanvas(color, mode, _dock_layers->currentLayer()));
 
 	} else {
 		// No selection: fill entire layer
-		m_client->sendUndopoint();
-		m_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), m_canvas->layerStack()->size()), color, mode);
+		QList<protocol::MessagePtr> msgs;
+		msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+		msgs << protocol::MessagePtr(new protocol::FillRect(0, _dock_layers->currentLayer(), int(mode), 0, 0, m_canvas->layerStack()->width(), m_canvas->layerStack()->height(), color.rgba()));
+		m_client->sendMessages(msgs);
 	}
 }
 
@@ -2026,19 +2081,27 @@ void MainWindow::resizeCanvas()
 	connect(dlg, &QDialog::accepted, [this, dlg]() {
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
-			m_client->sendUndopoint();
-			m_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
+			resizeCanvasBy(r.top, r.right, r.bottom, r.left);
 		}
 	});
 	dlg->show();
+}
+
+void MainWindow::resizeCanvasBy(int top, int right, int bottom, int left)
+{
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << protocol::MessagePtr(new protocol::CanvasResize(0, top, right, bottom, left));
+	m_client->sendMessages(msgs);
 }
 
 void MainWindow::markSpotForRecording()
 {
 	bool ok;
 	QString text = QInputDialog::getText(this, tr("Mark"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
-	if(ok)
-		m_client->sendMarker(text);
+	if(ok) {
+		m_client->sendMessage(protocol::MessagePtr(new protocol::Marker(0, text)));
+	}
 }
 
 void MainWindow::about()
@@ -2277,7 +2340,7 @@ void MainWindow::setupActions()
 	m_docadmintools->addAction(expandright);
 
 	connect(undo, &QAction::triggered, this, &MainWindow::undo);
-	connect(redo, SIGNAL(triggered()), m_client, SLOT(sendRedo()));
+	connect(redo, &QAction::triggered, this, &MainWindow::redo);
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
@@ -2295,10 +2358,10 @@ void MainWindow::setupActions()
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
-	connect(expandup, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(64, 0 ,0, 0);});
-	connect(expandright, &QAction::triggered, [this] {m_client->sendUndopoint();  m_client->sendCanvasResize(0, 64, 0, 0);});
-	connect(expanddown, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(0,0, 64, 0);});
-	connect(expandleft, &QAction::triggered, [this] { m_client->sendUndopoint(); m_client->sendCanvasResize(0,0, 0, 64);});
+	connect(expandup, &QAction::triggered, [this] { resizeCanvasBy(64, 0 ,0, 0);});
+	connect(expandright, &QAction::triggered, [this] { resizeCanvasBy(0, 64, 0, 0);});
+	connect(expanddown, &QAction::triggered, [this] { resizeCanvasBy(0,0, 64, 0);});
+	connect(expandleft, &QAction::triggered, [this] { resizeCanvasBy(0,0, 0, 64);});
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(undo);
@@ -2513,17 +2576,20 @@ void MainWindow::setupActions()
 	_admintools->addAction(resetsession);
 	_admintools->setEnabled(false);
 
-	connect(host, SIGNAL(triggered()), this, SLOT(host()));
+	connect(host, &QAction::triggered, this, &MainWindow::host);
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
-	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
-	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
-	connect(locksession, SIGNAL(triggered(bool)), m_client, SLOT(sendLockSession(bool)));
+	connect(logout, &QAction::triggered, this, &MainWindow::leave);
+	connect(changetitle, &QAction::triggered, this, &MainWindow::changeSessionTitle);
+	connect(locksession, &QAction::triggered, this, &MainWindow::setSessionLock);
 	connect(m_layerctrlmode, &QActionGroup::triggered, this, &MainWindow::setLayerCtrlMode);
-	connect(closesession, SIGNAL(triggered(bool)), m_client, SLOT(sendCloseSession(bool)));
-	connect(resetsession, &QAction::triggered, m_client, &net::Client::sendResetSession);
-
-	connect(m_client->aclFilter(), &net::AclFilter::layerControlLockChanged, this, &MainWindow::updateLayerCtrlMode);
-	connect(m_client->aclFilter(), &net::AclFilter::ownLayersChanged, this, &MainWindow::updateLayerCtrlMode);
+	connect(closesession, &QAction::triggered, [this](bool close) {
+		QJsonObject kwargs;
+		kwargs["closed"] = close;
+		m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+	});
+	connect(resetsession, &QAction::triggered, [this]() {
+		m_client->sendMessage(net::command::serverCommand("reset-session"));
+	});
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);

@@ -19,7 +19,7 @@
 
 #include "textloader.h"
 #include "core/blendmodes.h"
-#include "net/utils.h"
+#include "net/commands.h"
 
 #include "../shared/net/annotation.h"
 #include "../shared/net/image.h"
@@ -135,7 +135,7 @@ void TextCommandLoader::handleNewLayer(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected context id, layer id, source id, color, [copy], [insert], and title");
 
-	net::LayerListItem layer(str2int(m.captured(2)), m.captured(7));
+	LayerListItem layer(str2int(m.captured(2)), m.captured(7));
 	_layer[layer.id] = layer;
 
 	uint8_t flags = 0;
@@ -170,7 +170,7 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 
 	Params params = extractParams(args.mid(sep2+1));
 
-	net::LayerListItem &layer = _layer[id];
+	LayerListItem &layer = _layer[id];
 
 	ParamIterator i = params.constBegin();
 	while (i!=params.constEnd()) {
@@ -197,7 +197,7 @@ void TextCommandLoader::handleRetitleLayer(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected id and title");
 
-	net::LayerListItem &layer = _layer[str2int(m.captured(2))];
+	LayerListItem &layer = _layer[str2int(m.captured(2))];
 	layer.title = m.captured(3);
 
 	_messages.append(MessagePtr(new protocol::LayerRetitle(
@@ -248,7 +248,7 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 
 	Params params = extractParams(args.mid(sep+1));
 
-	canvas::ToolContext &ctx = _ctx[id];
+	ToolContext &ctx = _ctx[id];
 
 	ParamIterator i = params.constBegin();
 	while (i!=params.constEnd()) {
@@ -307,7 +307,7 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 		++i;
 	}
 
-	_messages.append(MessagePtr(net::brushToToolChange(id, ctx.layer_id, ctx.brush)));
+	_messages.append(MessagePtr(net::command::brushToToolChange(id, ctx.layer_id, ctx.brush)));
 }
 
 void TextCommandLoader::handlePenMove(const QString &args)
@@ -334,7 +334,7 @@ void TextCommandLoader::handlePenMove(const QString &args)
 		));
 	}
 
-	_messages.append(MessagePtr(new protocol::PenMove(id, net::pointsToProtocol(points))));
+	_messages.append(net::command::penMove(id, points));
 }
 
 void TextCommandLoader::handlePenUp(const QString &args)
@@ -394,7 +394,7 @@ void TextCommandLoader::handlePutImage(const QString &args)
 		QFileInfo filename(QFileInfo(_filename).dir(), m.captured(6));
 
 		QImage image(filename.absoluteFilePath());
-		_messages.append(net::putQImage(ctxid, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE));
+		_messages.append(net::command::putQImage(ctxid, layer, x, y, image, mode, mode!=paintcore::BlendMode::MODE_REPLACE));
 	}
 
 

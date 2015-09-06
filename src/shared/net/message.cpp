@@ -22,7 +22,6 @@
 #include "message.h"
 #include "control.h"
 #include "meta.h"
-#include "flow.h"
 #include "opaque.h"
 
 namespace protocol {

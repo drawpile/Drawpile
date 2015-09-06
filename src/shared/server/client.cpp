@@ -27,7 +27,6 @@
 #include "../net/control.h"
 #include "../net/meta.h"
 #include "../net/meta2.h"
-#include "../net/flow.h"
 #include "../util/logger.h"
 
 #include <QTcpSocket>

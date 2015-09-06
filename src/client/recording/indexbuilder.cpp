@@ -29,7 +29,7 @@
 
 #include "canvas/statetracker.h"
 #include "core/layerstack.h"
-#include "net/layerlist.h"
+#include "canvas/layerlist.h"
 
 #include <QDebug>
 #include <QBuffer>
@@ -130,7 +130,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 	static const int SNAPSHOT_MIN_ACTIONS = 200; // minimum number of actions between snapshots
 
 	paintcore::LayerStack image;
-	net::LayerListModel layermodel;
+	canvas::LayerListModel layermodel;
 	canvas::StateTracker statetracker(&image, &layermodel, 1);
 
 	MessageRecord msg;

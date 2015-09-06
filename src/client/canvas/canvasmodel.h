@@ -30,14 +30,21 @@
 #include "selection.h"
 #include "core/layerstack.h"
 
-namespace net {
-	class Client;
-	class LayerListModel;
+namespace protocol {
+	class UserJoin;
+	class UserLeave;
+	class LaserTrail;
+	class MovePointer;
+	class Chat;
+	class Marker;
 }
 
 namespace canvas {
 
 class StateTracker;
+class AclFilter;
+class UserListModel;
+class LayerListModel;
 
 class CanvasModel : public QObject
 {
@@ -52,7 +59,7 @@ class CanvasModel : public QObject
 	Q_OBJECT
 
 public:
-	explicit CanvasModel(net::Client *client, QObject *parent = 0);
+	explicit CanvasModel(int localUserId, QObject *parent = 0);
 
 	paintcore::LayerStack *layerStack() const { return m_layerstack; }
 	StateTracker *stateTracker() const { return m_statetracker; }
@@ -71,13 +78,33 @@ public:
 
 	QList<protocol::MessagePtr> generateSnapshot(bool forceNew) const;
 
+	int localUserId() const;
+
 	int getAvailableAnnotationId() const;
 
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 
+	void connectedToServer(int myUserId);
+	void disconnectedFromServer();
+	void endPlayback();
+
+	AclFilter *aclFilter() const { return m_aclfilter; }
+	UserListModel *userlist() const { return m_userlist; }
+	LayerListModel *layerlist() const { return m_layerlist; }
+
+	/**
+	 * @brief Is the canvas in "online mode"?
+	 *
+	 * This mainly affects how certain access controls are checked.
+	 */
+	bool isOnline() const { return m_onlinemode; }
+
 public slots:
-	void handleDrawingCommand(protocol::MessagePtr cmd);
+	//! Handle a meta/command message received from the server
+	void handleCommand(protocol::MessagePtr cmd);
+
+	//! Handle a local drawing command (will be put in the local fork)
 	void handleLocalCommand(protocol::MessagePtr cmd);
 
 	void resetCanvas();
@@ -98,18 +125,38 @@ signals:
 
 	void colorPicked(const QColor &color);
 
+	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
+	void markerMessageReceived(const QString &user, const QString &message);
+
+	void userJoined(int id, const QString &name);
+	void userLeft(const QString &name);
+
+	void canvasLocked(bool locked);
+
 private slots:
 	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 
 private:
+	void metaUserJoin(const protocol::UserJoin &msg);
+	void metaUserLeave(const protocol::UserLeave &msg);
+	void metaLaserTrail(const protocol::LaserTrail &msg);
+	void metaMovePointer(const protocol::MovePointer &msg);
+	void metaChat(const protocol::Chat &msg);
+	void metaMarkerMessage(const protocol::Marker &msg);
+
+	AclFilter *m_aclfilter;
+	UserListModel *m_userlist;
+	LayerListModel *m_layerlist;
+
 	paintcore::LayerStack *m_layerstack;
-	net::LayerListModel *m_layerlist;
 	StateTracker *m_statetracker;
 	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;
 
 	QString m_title;
+
+	bool m_onlinemode;
 };
 
 }

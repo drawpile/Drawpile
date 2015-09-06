@@ -43,6 +43,7 @@ using widgets::GroupedToolButton;
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "net/client.h"
+#include "net/commands.h"
 
 #include "utils/palette.h"
 #include "utils/icon.h"
@@ -50,6 +51,9 @@ using widgets::GroupedToolButton;
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
 #include "core/layerstack.h"
+
+#include "../shared/net/annotation.h"
+#include "../shared/net/undo.h"
 
 #include <QTimer>
 #include <QTextBlock>
@@ -1036,20 +1040,24 @@ void AnnotationSettings::saveChanges()
 
 	Q_ASSERT(m_ctrl);
 
-	if(selected())
-		m_ctrl->client()->sendAnnotationEdit(
+	if(selected()) {
+		m_ctrl->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
+			0,
 			selected(),
-			_ui->btnBackground->color(),
+			_ui->btnBackground->color().rgba(),
 			_ui->content->toHtml()
-		);
+		)));
+	}
 }
 
 void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
 	Q_ASSERT(m_ctrl);
-	m_ctrl->client()->sendUndopoint();
-	m_ctrl->client()->sendAnnotationDelete(selected());
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, selected()));
+	m_ctrl->client()->sendMessages(msgs);
 }
 
 void AnnotationSettings::bake()
@@ -1063,9 +1071,12 @@ void AnnotationSettings::bake()
 	QImage img = a->toImage();
 
 	int layer = m_ctrl->activeLayer();
-	m_ctrl->client()->sendUndopoint();
-	m_ctrl->client()->sendImage(layer, a->rect.x(), a->rect.y(), img);
-	m_ctrl->client()->sendAnnotationDelete(selected());
+
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << net::command::putQImage(0, layer, a->rect.x(), a->rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
+	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, selected()));
+	m_ctrl->client()->sendMessages(msgs);
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform)

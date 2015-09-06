@@ -18,7 +18,7 @@
 */
 
 #include "messagequeue.h"
-#include "flow.h"
+#include "control.h"
 
 #include <QTcpSocket>
 #include <QDateTime>

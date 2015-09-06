@@ -134,6 +134,8 @@ class MainWindow : public QMainWindow {
 		void autosaveNow();
 
 		void setOperatorMode(bool op);
+
+		void setSessionLock(bool lock);
 		void setLayerCtrlMode(QAction *mode);
 		void updateLayerCtrlMode();
 
@@ -149,6 +151,7 @@ class MainWindow : public QMainWindow {
 		void updateTabletSupportMode();
 
 		void undo();
+		void redo();
 
 		void selectAll();
 		void selectNone();
@@ -167,6 +170,7 @@ class MainWindow : public QMainWindow {
 
 		void removeEmptyAnnotations();
 		void resizeCanvas();
+		void resizeCanvasBy(int top, int right, int bottom, int left);
 		void markSpotForRecording();
 
 		void toolChanged(tools::Tool::Type tool);

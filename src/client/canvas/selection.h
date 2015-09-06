@@ -21,14 +21,11 @@
 #define SELECTION_H
 
 #include "core/blendmodes.h"
+#include "../shared/net/message.h"
 
 #include <QObject>
 #include <QImage>
 #include <QPolygonF>
-
-namespace net {
-	class Client;
-}
 
 namespace canvas {
 
@@ -72,8 +69,8 @@ public:
 	void setPasteImage(const QImage &image);
 	QImage pasteImage() const { return m_pasteImage; }
 
-	void pasteToCanvas(net::Client *client, int layer) const;
-	void fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const;
+	QList<protocol::MessagePtr> pasteToCanvas(int layer) const;
+	QList<protocol::MessagePtr> fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
 	int handleSize() const { return 10; }
 

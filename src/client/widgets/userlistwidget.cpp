@@ -22,10 +22,15 @@
 #include <QMouseEvent>
 
 #include "widgets/userlistwidget.h"
-#include "net/userlist.h"
-#include "net/client.h"
-#include "net/aclfilter.h"
+#include "canvas/canvasmodel.h"
+#include "canvas/userlist.h"
+#include "canvas/aclfilter.h"
 #include "utils/icon.h"
+#include "net/commands.h"
+
+#include "../shared/net/control.h"
+#include "../shared/net/meta2.h"
+#include "../shared/net/undo.h"
 
 #include "widgets/groupedtoolbutton.h"
 using widgets::GroupedToolButton;
@@ -39,6 +44,7 @@ UserList::UserList(QWidget *parent)
 	_ui = new Ui_UserBox;
 	_ui->setupUi(this);
 
+	_ui->userlist->setItemDelegate(new UserListDelegate(this));
 	setOperatorMode(false);
 
 	_ui->userlist->setSelectionMode(QListView::SingleSelection);
@@ -59,15 +65,15 @@ void UserList::setOperatorMode(bool op)
 	_ui->opButton->setEnabled(op);
 }
 
-void UserList::setClient(net::Client *client)
+void UserList::setCanvas(canvas::CanvasModel *canvas)
 {
-	_client = client;
-	_ui->userlist->setModel(client->userlist());
-	_ui->userlist->setItemDelegate(new UserListDelegate(this));
+	m_canvas = canvas;
+	_ui->userlist->setModel(m_canvas->userlist());
 
-	connect(client->userlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(m_canvas->userlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(m_canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &UserList::opPrivilegeChanged);
+
 	connect(_ui->userlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
-	connect(client->aclFilter(), &net::AclFilter::localOpChanged, this, &UserList::opPrivilegeChanged);
 }
 
 QModelIndex UserList::currentSelection()
@@ -81,43 +87,52 @@ QModelIndex UserList::currentSelection()
 void UserList::lockSelected()
 {
 	QModelIndex idx = currentSelection();
-	if(idx.isValid())
-		_client->sendLockUser(idx.data().value<net::User>().id, _ui->lockButton->isChecked());
+	if(idx.isValid()) {
+		const int id = idx.data().value<canvas::User>().id;
+		bool lock = _ui->lockButton->isChecked();
+
+		emit opCommand(m_canvas->userlist()->getLockUserCommand(m_canvas->localUserId(), id, lock));
+	}
 }
 
 void UserList::kickSelected()
 {
 	QModelIndex idx = currentSelection();
-	if(idx.isValid())
-		_client->sendKickUser(idx.data().value<net::User>().id);
+	if(idx.isValid()) {
+		emit opCommand(net::command::kick(idx.data().value<canvas::User>().id));
+	}
 }
 
 void UserList::undoSelected()
 {
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
-		_client->sendUndo(1, idx.data().value<net::User>().id);
+		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, 1)));
 }
 
 void UserList::redoSelected()
 {
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
-		_client->sendUndo(-1, idx.data().value<net::User>().id);
+		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, -1)));
 }
 
 void UserList::opSelected()
 {
 	QModelIndex idx = currentSelection();
-	if(idx.isValid())
-		_client->sendOpUser(idx.data().value<net::User>().id, _ui->opButton->isChecked());
+	if(idx.isValid()) {
+		const int id = idx.data().value<canvas::User>().id;
+		bool op = _ui->opButton->isChecked();
+
+		emit opCommand(m_canvas->userlist()->getOpUserCommand(m_canvas->localUserId(), id, op));
+	}
 }
 
 void UserList::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
 
-	setOperatorMode(on && _client->aclFilter()->isLocalUserOperator() && _client->isLoggedIn());
+	setOperatorMode(on && m_canvas->aclFilter()->isLocalUserOperator() && m_canvas->isOnline());
 
 	if(on) {
 		QModelIndex cs = currentSelection();
@@ -128,14 +143,14 @@ void UserList::selectionChanged(const QItemSelection &selected)
 void UserList::opPrivilegeChanged()
 {
 	bool on = currentSelection().isValid();
-	setOperatorMode(on && _client->aclFilter()->isLocalUserOperator() && _client->isLoggedIn());
+	setOperatorMode(on && m_canvas->aclFilter()->isLocalUserOperator() && m_canvas->isOnline());
 }
 
 void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
-		const net::User &user = currentSelection().data().value<net::User>();
+		const canvas::User &user = currentSelection().data().value<canvas::User>();
 		_ui->lockButton->setChecked(user.isLocked);
 		_ui->opButton->setChecked(user.isOperator);
 		if(user.isLocal) {
@@ -157,7 +172,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	QStyleOptionViewItem opt = setOptions(index, option);
 	painter->save();
 
-	const net::User user = index.data().value<net::User>();
+	const canvas::User user = index.data().value<canvas::User>();
 
 	// Background
 	drawBackground(painter, opt, index);

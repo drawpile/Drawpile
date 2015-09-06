@@ -93,6 +93,98 @@ private:
 	QByteArray m_msg;
 };
 
+/**
+ * @brief Disconnect notification
+ *
+ * This message is used when closing the connection gracefully. The message queue
+ * will automatically close the socket after sending this message.
+ */
+class Disconnect : public Message {
+public:
+	enum Reason {
+		ERROR,    // client/server error
+		KICK,     // user kicked by session operator
+		SHUTDOWN, // client/server closed
+		OTHER     // other unspecified error
+	};
+
+	Disconnect(uint8_t ctx, Reason reason, const QString &message) : Message(MSG_DISCONNECT, ctx),
+		_reason(reason), _message(message.toUtf8()) { }
+
+	static Disconnect *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	/**
+	 * Get the reason for the disconnection
+	 */
+	Reason reason() const { return _reason; }
+
+	/**
+	 * Get the disconnect message
+	 *
+	 * When reason is KICK, this is the name of the operator who kicked this user.
+	 */
+	QString message() const { return QString::fromUtf8(_message); }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	Reason _reason;
+	QByteArray _message;
+};
+
+/**
+ * @brief Download progress message
+ *
+ * The StreamPos message is used to inform the client of roughly how many bytes
+ * of data to expect. The client can use this to show a download progress bar.
+ */
+class StreamPos : public Message {
+public:
+	StreamPos(uint8_t ctx, uint32_t bytes) : Message(MSG_STREAMPOS, ctx),
+		_bytes(bytes) {}
+
+	static StreamPos *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	/**
+	 * @brief Number of bytes behind the current stream head
+	 * @return byte count
+	 */
+	uint32_t bytes() const { return _bytes; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint32_t _bytes;
+};
+
+/**
+ * @brief Ping message
+ *
+ * This is used for latency measurement as well as a keepalive. Normally, the client
+ * should be the one to send the ping messages.
+ *
+ * The server should return with a Ping with the pong message setenv()
+ */
+class Ping : public Message {
+public:
+	Ping(uint8_t ctx, bool pong) : Message(MSG_PING, ctx), _isPong(pong) { }
+
+	static Ping *deserialize(uint8_t ctx, const uchar *data, int len);
+
+	bool isPong() const { return _isPong; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	bool _isPong;
+};
+
 }
 
 #endif

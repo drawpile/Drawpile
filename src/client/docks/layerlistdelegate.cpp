@@ -17,24 +17,23 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "docks/layerlistdelegate.h"
+#include "canvas/layerlist.h"
+#include "utils/icon.h"
+#include "../shared/net/layer.h"
+
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineEdit>
 
-#include "net/client.h"
-#include "net/layerlist.h"
-#include "utils/icon.h"
-
-#include "docks/layerlistdelegate.h"
-
 namespace docks {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
-	  _hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
-	  _showNumbers(false)
+	  m_visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
+	  m_hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
+	  m_showNumbers(false)
 {
 }
 
@@ -43,9 +42,10 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	QStyleOptionViewItem opt = setOptions(index, option);
 	painter->save();
 
-	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 
-	if(layer.isLockedFor(_client->myId()))
+	const int myId = static_cast<const canvas::LayerListModel*>(index.model())->myId();
+	if(layer.isLockedFor(myId))
 		opt.state &= ~QStyle::State_Enabled;
 
 	drawBackground(painter, option, index);
@@ -60,7 +60,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	textrect.setLeft(stylerect.right());
 
 	QString title;
-	if(_showNumbers)
+	if(m_showNumbers)
 		title = QString("%1 - %2").arg(index.model()->rowCount() - index.row() - 1).arg(layer.title);
 	else
 		title = layer.title;
@@ -73,7 +73,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	if(event->type() == QEvent::MouseButtonRelease) {
-		const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
 		if(me->button() == Qt::LeftButton) {
@@ -90,7 +90,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = _visibleicon.size();
+	const QSize iconsize = m_visibleicon.size();
 	QFontMetrics fm(option.font);
 	int minheight = qMax(fm.height() * 3 / 2, iconsize.height()) + 2;
 	if(size.height() < minheight)
@@ -108,10 +108,10 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, const QModelIndex& index) const
 {
-	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
+	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 	QString newtitle = static_cast<QLineEdit*>(editor)->text();
 	if(layer.title != newtitle) {
-		_client->sendLayerTitle(layer.id, newtitle);
+		emit const_cast<LayerListDelegate*>(this)->layerOp(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));
 	}
 }
 
@@ -120,17 +120,17 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 	int x = rect.left() + rect.width() / 2 - 8;
 	int y = rect.top() + rect.height() / 2 - 8;
 	if(hidden) {
-		painter->drawPixmap(x, y, _hiddenicon);
+		painter->drawPixmap(x, y, m_hiddenicon);
 	} else {
 		painter->save();
 		painter->setOpacity(value);
-		painter->drawPixmap(x, y, _visibleicon);
+		painter->drawPixmap(x, y, m_visibleicon);
 		painter->restore();
 	}
 }
 
 void LayerListDelegate::setShowNumbers(bool show) {
-	_showNumbers = show;
+	m_showNumbers = show;
 	emit sizeHintChanged(QModelIndex()); // trigger repaint
 }
 

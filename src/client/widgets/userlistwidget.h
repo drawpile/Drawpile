@@ -19,13 +19,15 @@
 #ifndef USERLISTWIDGET_H
 #define USERLISTWIDGET_H
 
+#include "../shared/net/message.h"
+
 #include <QWidget>
 #include <QItemDelegate>
 
 class Ui_UserBox;
 
-namespace net {
-	class Client;
+namespace canvas {
+	class CanvasModel;
 }
 
 namespace widgets {
@@ -41,10 +43,13 @@ Q_OBJECT
 public:
 	UserList(QWidget *parent=0);
 
-	void setClient(net::Client *client);
+	void setCanvas(canvas::CanvasModel *canvas);
 
 public slots:
 	void opPrivilegeChanged();
+
+signals:
+	void opCommand(protocol::MessagePtr msg);
 
 private slots:
 	void lockSelected();
@@ -61,7 +66,7 @@ private:
 	QModelIndex currentSelection();
 
 	Ui_UserBox *_ui;
-	net::Client *_client;
+	canvas::CanvasModel *m_canvas;
 };
 
 /**

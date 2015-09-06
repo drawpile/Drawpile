@@ -27,7 +27,7 @@
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 
-namespace net {
+namespace canvas {
 
 AclFilter::AclFilter(UserListModel *users, LayerListModel *layers, QObject *parent)
 	: QObject(parent), m_users(users), m_layers(layers)

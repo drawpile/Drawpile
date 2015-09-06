@@ -18,7 +18,10 @@
 */
 
 #include "selection.h"
-#include "net/client.h"
+#include "net/commands.h"
+
+#include "../shared/net/undo.h"
+#include "../shared/net/image.h"
 
 #include <QPainter>
 
@@ -279,16 +282,18 @@ void Selection::setPasteImage(const QImage &image)
 	emit pasteImageChanged(image);
 }
 
-void Selection::pasteToCanvas(net::Client *client, int layer) const
+QList<protocol::MessagePtr> Selection::pasteToCanvas(int layer) const
 {
+	QList<protocol::MessagePtr> msgs;
+
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
-		return;
+		return msgs;
 	}
 
 	if(m_shape.size()!=4) {
 		qWarning("Paste selection is not a quad!");
-		return;
+		return msgs;
 	}
 
 	const QRect rect = boundingRect();
@@ -306,7 +311,7 @@ void Selection::pasteToCanvas(net::Client *client, int layer) const
 	QTransform transform;
 	if(!QTransform::quadToQuad(src, target, transform)) {
 		qWarning("Couldn't transform pasted image!");
-		return;
+		return msgs;
 	}
 
 	// Paint transformed image
@@ -320,11 +325,12 @@ void Selection::pasteToCanvas(net::Client *client, int layer) const
 	}
 
 	// Merge image
-	client->sendUndopoint();
-	client->sendImage(layer, rect.x(), rect.y(), image);
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << net::command::putQImage(0, layer, rect.x(), rect.y(), image, paintcore::BlendMode::MODE_NORMAL);
+	return msgs;
 }
 
-void Selection::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, net::Client *client, int layer) const
+QList<protocol::MessagePtr> Selection::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
 {
 	QRect area;
 	QImage mask;
@@ -335,14 +341,19 @@ void Selection::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode,
 	else
 		mask = shapeMask(color, &maskOffset);
 
-	if(!area.isEmpty() || !mask.isNull()) {
-		client->sendUndopoint();
+	QList<protocol::MessagePtr> msgs;
 
+	if(!area.isEmpty() || !mask.isNull()) {
 		if(mask.isNull())
-			client->sendFillRect(layer, area, color, mode);
+			msgs << protocol::MessagePtr(new protocol::FillRect(0, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
 		else
-			client->sendImage(layer, maskOffset.x(), maskOffset.y(), mask, mode);
+			msgs << net::command::putQImage(0, layer, maskOffset.x(), maskOffset.y(), mask, mode);
 	}
+
+	if(!msgs.isEmpty())
+		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(0)));
+
+	return msgs;
 }
 
 }

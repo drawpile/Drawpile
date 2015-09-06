@@ -17,14 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "net/client.h"
-#include "net/layerlist.h"
-#include "net/aclfilter.h"
+#include "canvas/layerlist.h"
+#include "canvas/aclfilter.h"
+#include "canvas/canvasmodel.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
 #include "docks/utils.h"
 #include "core/blendmodes.h"
+
+#include "../shared/net/layer.h"
+#include "../shared/net/meta2.h"
+#include "../shared/net/undo.h"
 
 #include "widgets/groupedtoolbutton.h"
 using widgets::GroupedToolButton;
@@ -41,7 +45,7 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), _selected(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -121,29 +125,25 @@ LayerList::LayerList(QWidget *parent)
 	connect(_opacityUpdateTimer, SIGNAL(timeout()), this, SLOT(sendOpacityUpdate()));
 }
 
-void LayerList::setClient(net::Client *client)
+void LayerList::setCanvas(canvas::CanvasModel *canvas)
 {
-	Q_ASSERT(_client==0);
-
-	_client = client;
-	_ui->layerlist->setModel(client->layerlist());
+	m_canvas = canvas;
+	_ui->layerlist->setModel(canvas->layerlist());
 
 	LayerListDelegate *del = new LayerListDelegate(this);
-	del->setClient(client);
+	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
 	_ui->layerlist->setItemDelegate(del);
 
-	_aclmenu->setUserList(client->userlist());
+	_aclmenu->setUserList(canvas->userlist());
 
-	connect(_client->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
-	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
-	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
-	connect(_client->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
-	connect(_client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-	connect(_client->aclFilter(), &net::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
-	connect(_client->aclFilter(), &net::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
+	connect(canvas->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
+	connect(canvas->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
+	connect(canvas->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
+	connect(canvas->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
+	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
+	connect(canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
-
-	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
 
 	// Restore settings
 	QSettings cfg;
@@ -171,9 +171,9 @@ void LayerList::setOwnLayers(bool own)
 
 void LayerList::updateLockedControls()
 {
-	bool enabled = _client && _client->aclFilter()->canUseLayerControls(currentLayer());
+	bool enabled = m_canvas && m_canvas->aclFilter()->canUseLayerControls(currentLayer());
 
-	_addLayerAction->setEnabled(_client && _client->aclFilter()->canCreateLayer());
+	_addLayerAction->setEnabled(m_canvas && m_canvas->aclFilter()->canCreateLayer());
 	_menuInsertAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.
@@ -186,8 +186,8 @@ void LayerList::updateLockedControls()
 
 	_ui->lockButton->setEnabled(
 		m_op ||
-		(_client && !_client->isConnected()) ||
-		(m_ownlayers && _client && (currentLayer()>>8) == _client->myId())
+		(m_canvas && !m_canvas->isOnline()) ||
+		(m_ownlayers && m_canvas && (currentLayer()>>8) == m_canvas->localUserId())
 	);
 	_duplicateLayerAction->setEnabled(enabled);
 	_deleteLayerAction->setEnabled(enabled);
@@ -210,7 +210,7 @@ void LayerList::layerContextMenu(const QPoint &pos)
 
 void LayerList::selectLayer(int id)
 {
-	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	_ui->layerlist->selectionModel()->select(m_canvas->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
 void LayerList::selectAbove()
@@ -245,9 +245,10 @@ void LayerList::opacityAdjusted()
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		net::LayerListItem layer = index.data().value<net::LayerListItem>();
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		float opacity = _ui->opacity->value() / 255.0;
-		_client->layerlist()->previewOpacityChange(layer.id, opacity);
+
+		m_canvas->layerlist()->previewOpacityChange(layer.id, opacity);
 		_opacityUpdateTimer->start(100);
 	}
 }
@@ -256,10 +257,8 @@ void LayerList::sendOpacityUpdate()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		Q_ASSERT(_client);
-		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		layer.opacity = _ui->opacity->value() / 255.0;
-		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, _ui->opacity->value(), int(layer.blend))));
 	}
 }
 
@@ -271,37 +270,34 @@ void LayerList::blendModeChanged()
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		Q_ASSERT(_client);
-		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		layer.blend = paintcore::BlendMode::Mode(_ui->blendmode->currentData().toInt());
-		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, layer.opacity*255, _ui->blendmode->currentData().toInt())));
 	}
 }
 
 void LayerList::hideSelected()
 {
-	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		_client->sendLayerVisibility(index.data().value<net::LayerListItem>().id, _menuHideAction->isChecked());
+		// TODO
+		//_client->sendLayerVisibility(index.data().value<canvas::LayerListItem>().id, _menuHideAction->isChecked());
 	}
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	Q_ASSERT(_client);
-	_client->sendLayerVisibility(layerId, !visible);
+	// TODO
+	//_client->sendLayerVisibility(layerId, !visible);
 }
 
 void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 {
-	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		net::LayerListItem layer = index.data().value<net::LayerListItem>();
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		layer.locked = lock;
 		layer.exclusive = exclusive;
-		_client->sendLayerAcl(layer.id, layer.locked, layer.exclusive);
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(0, layer.id, layer.locked, layer.exclusive)));
 	}
 }
 
@@ -326,7 +322,7 @@ void LayerList::showLayerNumbers(bool show)
  */
 void LayerList::addLayer()
 {
-	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -334,8 +330,8 @@ void LayerList::addLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	_client->sendUndopoint();
-	_client->sendNewLayer(id, 0, Qt::transparent, false, false, name);
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, 0, 0, 0, name)));
 }
 
 /**
@@ -344,9 +340,9 @@ void LayerList::addLayer()
 void LayerList::insertLayer()
 {
 	const QModelIndex index = currentSelection();
-	const net::LayerListItem layer = index.data().value<net::LayerListItem>();
+	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -354,16 +350,16 @@ void LayerList::insertLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	_client->sendUndopoint();
-	_client->sendNewLayer(id, layer.id, Qt::transparent, true, false, name);
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT, name)));
 }
 
 void LayerList::duplicateLayer()
 {
 	const QModelIndex index = currentSelection();
-	const net::LayerListItem layer = index.data().value<net::LayerListItem>();
+	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const net::LayerListModel *layers = static_cast<net::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -371,8 +367,8 @@ void LayerList::duplicateLayer()
 
 	const QString name = layers->getAvailableLayerName(layer.title);
 
-	_client->sendUndopoint();
-	_client->sendNewLayer(id, layer.id, Qt::transparent, true, true, name);
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
 }
 
 bool LayerList::canMergeCurrent() const
@@ -381,17 +377,16 @@ bool LayerList::canMergeCurrent() const
 	const QModelIndex below = index.sibling(index.row()+1, 0);
 
 	return index.isValid() && below.isValid() &&
-		   !below.data().value<net::LayerListItem>().isLockedFor(_client->myId());
+		   !below.data().value<canvas::LayerListItem>().isLockedFor(m_canvas->localUserId());
 }
 
 void LayerList::deleteOrMergeSelected()
 {
-	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
 	if(!index.isValid())
 		return;
 
-	net::LayerListItem layer = index.data().value<net::LayerListItem>();
+	canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
 	QMessageBox box(QMessageBox::Question,
 		tr("Delete layer"),
@@ -429,8 +424,8 @@ void LayerList::deleteSelected()
 	if(!index.isValid())
 		return;
 
-	_client->sendUndopoint();
-	_client->sendDeleteLayer(index.data().value<net::LayerListItem>().id, false);
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, false)));
 }
 
 void LayerList::mergeSelected()
@@ -439,8 +434,8 @@ void LayerList::mergeSelected()
 	if(!index.isValid())
 		return;
 
-	_client->sendUndopoint();
-	_client->sendDeleteLayer(index.data().value<net::LayerListItem>().id, true);
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, true)));
 }
 
 void LayerList::renameSelected()
@@ -506,12 +501,13 @@ int LayerList::currentLayer()
 
 bool LayerList::isCurrentLayerLocked() const
 {
-	Q_ASSERT(_client);
+	if(!m_canvas)
+		return false;
 
 	QModelIndexList idx = _ui->layerlist->selectionModel()->selectedIndexes();
 	if(!idx.isEmpty()) {
-		const net::LayerListItem &item = idx.at(0).data().value<net::LayerListItem>();
-		return item.hidden || item.isLockedFor(_client->myId());
+		const canvas::LayerListItem &item = idx.at(0).data().value<canvas::LayerListItem>();
+		return item.hidden || item.isLockedFor(m_canvas->localUserId());
 	}
 	return false;
 }
@@ -523,7 +519,7 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 	if(on) {
 		QModelIndex cs = currentSelection();
 		dataChanged(cs,cs);
-		_selected = cs.data().value<net::LayerListItem>().id;
+		_selected = cs.data().value<canvas::LayerListItem>().id;
 	} else {
 		_selected = 0;
 	}
@@ -537,7 +533,7 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 {
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
-		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
+		const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
 		_noupdate = true;
 		_menuHideAction->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);

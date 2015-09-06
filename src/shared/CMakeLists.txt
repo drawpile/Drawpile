@@ -12,7 +12,6 @@ set (
 	net/control.cpp
 	net/meta.cpp
 	net/meta2.cpp
-	net/flow.cpp
 	net/opaque.cpp
 	net/undo.cpp
 	net/recording.cpp

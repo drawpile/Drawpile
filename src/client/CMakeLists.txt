@@ -37,6 +37,9 @@ set (
 	canvas/retcon.cpp
 	canvas/loader.cpp
 	canvas/textloader.cpp
+	canvas/aclfilter.cpp
+	canvas/userlist.cpp
+	canvas/layerlist.cpp
 	quick/layerstackitem.cpp
 	quick/canvasinputarea.cpp
 	quick/canvastransform.cpp
@@ -51,17 +54,14 @@ set (
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
 	net/client.cpp
-	net/aclfilter.cpp
 	net/loopbackserver.cpp
 	net/tcpserver.cpp
-	net/utils.cpp
 	net/login.cpp
 	net/loginsessions.cpp
-	net/userlist.cpp
-	net/layerlist.cpp
 	net/serverthread.cpp
 	net/builtinserver.cpp
 	net/sessionlistingmodel.cpp
+	net/commands.cpp
 	utils/archive.cpp
 	utils/palette.cpp
 	utils/palettelistmodel.cpp

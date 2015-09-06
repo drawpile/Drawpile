@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include <QMenu>
 #include <QList>
 
-namespace net {
+namespace canvas {
 	class UserListModel;
 }
 
@@ -34,7 +34,7 @@ class LayerAclMenu : public QMenu
 public:
 	explicit LayerAclMenu(QWidget *parent = 0);
 
-	void setUserList(net::UserListModel *model);
+	void setUserList(canvas::UserListModel *model);
 	void setAcl(bool lock, const QList<uint8_t> acl);
 
 signals:
@@ -58,7 +58,7 @@ private slots:
 private:
 	void addUser(int index);
 
-	net::UserListModel *_model;
+	canvas::UserListModel *m_model;
 	QAction *_lock;
 	QAction *_allusers;
 	QList<QAction*> _users;

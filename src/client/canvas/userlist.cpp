@@ -16,12 +16,14 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "userlist.h"
+#include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
+
 #include <QDebug>
 
-#include "net/userlist.h"
-#include "../shared/net/meta.h"
-
-namespace net {
+namespace canvas {
 
 UserListModel::UserListModel(QObject *parent)
 	: QAbstractListModel(parent)
@@ -173,6 +175,33 @@ QString UserListModel::getUsername(int id) const
 
 	// Not found
 	return tr("User #%1").arg(id);
+}
+
+protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
+{
+	QList<uint8_t> ids = lockList();
+	if(lock) {
+		if(!ids.contains(userId))
+			ids.append(userId);
+	} else {
+		ids.removeAll(userId);
+	}
+
+	return protocol::MessagePtr(new protocol::UserACL(localId, ids));
+}
+
+protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bool op) const
+{
+	Q_ASSERT(userId>0 && userId<255);
+
+	QList<uint8_t> ops = operatorList();
+
+	if(op)
+		ops.append(userId);
+	else
+		ops.removeOne(userId);
+
+	return protocol::MessagePtr(new protocol::SessionOwner(localId, ops));
 }
 
 }

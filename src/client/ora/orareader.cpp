@@ -23,7 +23,7 @@
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/meta2.h"
-#include "net/utils.h"
+#include "net/commands.h"
 #include "utils/archive.h"
 
 #include <QApplication>
@@ -206,7 +206,7 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				e.attribute("x", "0").toInt(),
 				e.attribute("y", "0").toInt()
 				);
-			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, paintcore::BlendMode::MODE_REPLACE));
+			_commands.append(net::command::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, paintcore::BlendMode::MODE_REPLACE));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
 			bool exact_blendop;

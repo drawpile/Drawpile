@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "layerlist.h"
 #include "core/layer.h"
+#include "../shared/net/layer.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -26,7 +27,7 @@
 #include <QImage>
 #include <QRegularExpression>
 
-namespace net {
+namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractListModel(parent)
@@ -115,7 +116,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	for(int i=0;i<count/2;++i)
 		layers.swap(i,count-(1+i));
 
-	emit layerOrderChanged(layers);
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(0, layers)));
 }
 
 int LayerListModel::indexOf(int id) const
@@ -274,7 +275,7 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 
 int LayerListModel::getAvailableLayerId() const
 {
-	const int prefix = _myId << 8;
+	const int prefix = m_myId << 8;
 	QList<int> takenIds;
 	for(const LayerListItem &item : _items) {
 		if((item.id & 0xff00) == prefix)

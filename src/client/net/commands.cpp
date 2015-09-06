@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,12 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QImage>
+#include "commands.h"
+#include "core/brush.h"
 
-#include "utils.h"
+#include "../shared/net/control.h"
 #include "../shared/net/image.h"
 #include "../shared/net/pen.h"
-#include "core/brush.h"
+
+#include <QImage>
+
+namespace net {
+namespace command {
 
 namespace {
 
@@ -149,24 +154,29 @@ void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mod
 		)));
 	}
 }
+} // End anonymous namespace
+
+using namespace protocol;
+
+MessagePtr serverCommand(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	protocol::ServerCommand c { cmd, args, kwargs };
+	return MessagePtr(new Command(0, c));
 }
 
-namespace net {
+MessagePtr kick(int target)
+{
+	Q_ASSERT(target>0 && target<256);
+	return serverCommand("kick", QJsonArray() << target);
+}
 
-/**
- * Multiple messages are generated if the image is too large to fit in just one.
- *
- * If target coordinates are less than zero, the image is automatically cropped.
- *
- * @param ctxid user context ID
- * @param layer target layer ID
- * @param x X coordinate
- * @param y Y coordinate
- * @param image the image to put
- * @param mode composition mode
- * @param skipempty skip empty tiles (be careful when using with REPLACE mode!)
- * @return
- */
+MessagePtr sessionTitle(const QString &title)
+{
+	QJsonObject kwargs;
+	kwargs["title"] = title;
+	return serverCommand("sessionconf", QJsonArray(), kwargs);
+}
+
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
 	QList<protocol::MessagePtr> list;
@@ -273,5 +283,27 @@ protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
 	return ppvec;
 }
 
+QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points)
+{
+	const int batches = points.size() / protocol::PenMove::MAX_POINTS + 1;
+	QList<protocol::MessagePtr> msgs;
+	msgs.reserve(batches);
 
+	int i=0;
+	for(int batch=0;batch<=batches;++batch) {
+		const int j=qMin(points.size(), (i+1)*protocol::PenMove::MAX_POINTS);
+		protocol::PenPointVector ppvec;
+		ppvec.reserve(j-i);
+		while(i<j) {
+			ppvec.append(pointToProtocol(points[i]));
+			++i;
+		}
+		msgs << protocol::MessagePtr(new protocol::PenMove(ctxid, ppvec));
+
+	}
+
+	return msgs;
+}
+
+}
 }

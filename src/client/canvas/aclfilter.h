@@ -28,7 +28,7 @@ namespace protocol {
 	class SessionOwner;
 }
 
-namespace net {
+namespace canvas {
 
 class UserListModel;
 class LayerListModel;

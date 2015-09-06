@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,11 +27,15 @@
 
 #include <functional>
 
+namespace protocol {
+	class MessagePtr;
+
+}
 namespace paintcore {
 	class Layer;
 }
 
-namespace net {
+namespace canvas {
 
 struct LayerListItem {
 	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(paintcore::BlendMode::MODE_NORMAL), hidden(false), locked(false) {}
@@ -65,9 +69,9 @@ struct LayerListItem {
 
 }
 
-Q_DECLARE_TYPEINFO(net::LayerListItem, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(canvas::LayerListItem, Q_MOVABLE_TYPE);
 
-namespace net {
+namespace canvas {
 
 typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
 
@@ -106,7 +110,8 @@ public:
 	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
 	const paintcore::Layer *getLayerData(int id) const;
 
-	void setMyId(int id) { _myId = id; }
+	int myId() const { return m_myId; }
+	void setMyId(int id) { m_myId = id; }
 
 	/**
 	 * @brief Find a free layer ID
@@ -127,7 +132,7 @@ signals:
 	void layersReordered();
 
 	//! Emitted when layers are manually reordered
-	void layerOrderChanged(const QList<uint16_t> neworder);
+	void layerCommand(protocol::MessagePtr msg);
 
 	//! Request local change of layer opacity for preview purpose
 	void layerOpacityPreview(int id, float opacity);
@@ -139,7 +144,7 @@ private:
 	
 	QVector<LayerListItem> _items;
 	GetLayerFunction _getlayerfn;
-	int _myId;
+	int m_myId;
 };
 
 /**
@@ -168,7 +173,7 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(net::LayerListItem)
+Q_DECLARE_METATYPE(canvas::LayerListItem)
 
 #endif
 

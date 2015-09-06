@@ -22,7 +22,9 @@
 #include <QAbstractListModel>
 #include <QList>
 
-namespace net {
+namespace protocol { class MessagePtr; }
+
+namespace canvas {
 
 /**
  * @brief Information about a user
@@ -81,6 +83,24 @@ class UserListModel : public QAbstractListModel {
 		//! Get a list of users who are locked
 		QList<uint8_t> lockList() const;
 
+		/**
+		 * @brief Get the command for (un)locking a single user
+		 * @param localId
+		 * @param userId
+		 * @param lock
+		 * @return
+		 */
+		protocol::MessagePtr getLockUserCommand(int localId, int userId, bool lock) const;
+
+		/**
+		 * @brief Get the command for granting or revoking operator privileges
+		 * @param localId
+		 * @param userId
+		 * @param op
+		 * @return
+		 */
+		protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
+
 	private:
 		QVector<User> m_users;
 		QHash<int,User> m_pastUsers;
@@ -88,7 +108,7 @@ class UserListModel : public QAbstractListModel {
 
 }
 
-Q_DECLARE_METATYPE(net::User)
+Q_DECLARE_METATYPE(canvas::User)
 
 #endif
 

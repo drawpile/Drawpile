@@ -25,6 +25,9 @@
 #include "core/floodfill.h"
 #include "canvas/canvasmodel.h"
 #include "net/client.h"
+#include "net/commands.h"
+
+#include "../shared/net/undo.h"
 
 #include <QApplication>
 
@@ -75,8 +78,10 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	// The disadvantage is increased bandwith consumption. However, this is not as bad
 	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 	// consist of large solid areas, meaning they should compress ridiculously well.
-	owner.client()->sendUndopoint();
-	owner.client()->sendImage(owner.activeLayer(), fill.x, fill.y, fill.image, mode);
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << net::command::putQImage(0, owner.activeLayer(), fill.x, fill.y, fill.image, mode);
+	owner.client()->sendMessages(msgs);
 
 	QApplication::restoreOverrideCursor();
 }

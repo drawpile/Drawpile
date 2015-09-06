@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 #include "docks/layeraclmenu.h"
-#include "net/userlist.h"
+#include "canvas/userlist.h"
 
 namespace docks {
 
@@ -37,9 +37,9 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 	connect(this, SIGNAL(triggered(QAction*)), this, SLOT(userClicked(QAction*)));
 }
 
-void LayerAclMenu::setUserList(net::UserListModel *model)
+void LayerAclMenu::setUserList(canvas::UserListModel *model)
 {
-	_model = model;
+	m_model = model;
 	for(int i=0;i<model->rowCount();++i)
 		addUser(i);
 
@@ -50,7 +50,7 @@ void LayerAclMenu::setUserList(net::UserListModel *model)
 
 void LayerAclMenu::addUser(int index)
 {
-	const net::User &user = _model->data(_model->index(index)).value<net::User>();
+	const canvas::User &user = m_model->data(m_model->index(index)).value<canvas::User>();
 	QAction *userAction = new QAction(user.name, this);
 	userAction->setCheckable(true);
 	userAction->setProperty("userid", user.id);

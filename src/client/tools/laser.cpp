@@ -25,6 +25,8 @@
 #include "tools/toolsettings.h"
 #include "tools/laser.h"
 
+#include "../shared/net/meta2.h"
+
 namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
@@ -34,23 +36,26 @@ LaserPointer::LaserPointer(ToolController &owner)
 void LaserPointer::begin(const paintcore::Point &point, float zoom)
 {
 	Q_UNUSED(zoom);
-	owner.client()->sendLaserTrail(
-		owner.activeBrush().color(),
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::LaserTrail(0,
+		owner.activeBrush().color().rgb(),
 		owner.toolSettings()->getLaserPointerSettings()->trailPersistence()
-	);
-	owner.client()->sendMovePointer(point);
+	));
+	msgs << protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4));
+	owner.client()->sendMessages(msgs);
+
 }
 
 void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	owner.client()->sendMovePointer(point);
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4)));
 }
 
 void LaserPointer::end()
 {
-	owner.client()->sendLaserTrail(Qt::black, 0);
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(0, 0, 0)));
 }
 
 }

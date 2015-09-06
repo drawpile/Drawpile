@@ -1,9 +1,7 @@
-#ifndef DP_NET_UTILS_H
-#define DP_NET_UTILS_H
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,19 +16,51 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef NET_COMMANDS_H
+#define NET_COMMANDS_H
 
-#include "../shared/net/message.h"
-#include "../shared/net/pen.h"
 #include "core/point.h"
 #include "core/blendmodes.h"
+
+#include <QJsonArray>
+#include <QJsonObject>
+
+namespace protocol {
+	class MessagePtr;
+	struct PenPoint;
+}
 
 namespace paintcore {
 	class Brush;
 }
 
+class QImage;
+
 namespace net {
 
-//! Generate a list of PutImage commands from a QImage
+//! Convenience functions for constructing various messsages
+namespace command {
+
+/**
+ * @param Get a ServerCommand
+ * @param cmd command name
+ * @param args positional arguments
+ * @param kwargs keyword arguments
+ */
+protocol::MessagePtr serverCommand(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
+
+/**
+ * @brief Get a "kick user" message
+ * @param target ID of the user to kick
+ */
+protocol::MessagePtr kick(int target);
+
+/**
+ * @brief Get a session title change command
+ * @param title the new title
+ */
+protocol::MessagePtr sessionTitle(const QString &title);
+
 /**
  * @brief Generate one or more PutImage command from a QImage
  *
@@ -49,12 +79,15 @@ namespace net {
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
 
 //! Generate a tool change message
-protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush);
+protocol::MessagePtr brushToToolChange(int ctxid, int layer, const paintcore::Brush &brush);
 
-
+//! Convert a paintcore point to protocol format
 protocol::PenPoint pointToProtocol(const paintcore::Point &p);
-protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points);
+
+//! Generate penMove(s) for multiple points.
+QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points);
+
 
 }
-
+}
 #endif

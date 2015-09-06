@@ -36,14 +36,6 @@ namespace paintcore {
 
 namespace protocol {
 	class Command;
-	class Chat;
-	class UserJoin;
-	class SessionOwner;
-	class UserLeave;
-	class LayerACL;
-	class LaserTrail;
-	class MovePointer;
-	class Marker;
 	class Disconnect;
 	struct ServerReply;
 }
@@ -52,9 +44,6 @@ namespace net {
 	
 class LoopbackServer;
 class LoginHandler;
-class UserListModel;
-class LayerListModel;
-class AclFilter;
 
 /**
  * The client for accessing the drawing server.
@@ -94,12 +83,6 @@ public:
 	 * @return
 	 */
 	QString sessionId() const;
-
-	/**
-	 * @brief Get the local user's username
-	 * @return user name
-	 */
-	QString myName() const;
 
 	/**
 	 * @brief Is the client connected to a local server?
@@ -142,27 +125,6 @@ public:
 	int uploadQueueBytes() const;
 
 	/**
-	 * @brief Get the user list
-	 * @return user list model
-	 */
-	UserListModel *userlist() const { return m_userlist; }
-
-	/**
-	 * @brief Get the layer list
-	 * @return layer list model
-	 */
-	LayerListModel *layerlist() const { return m_layerlist; }
-
-	/**
-	 * @brief Get the ACL filter
-	 * @return
-	 */
-	AclFilter *aclFilter() const { return m_aclfilter; }
-
-	//! Reinitialize after clearing out the old board
-	void init();
-
-	/**
 	 * @brief Whether to use recorded chat (Chat message) by default
 	 *
 	 * If set to false, chat messages are sent with ServerCommands and delivered
@@ -172,87 +134,51 @@ public:
 	void setRecordedChatMode(bool recordedChat) { m_recordedChat = recordedChat; }
 
 public slots:
-	// Layer changing
-	void sendCanvasResize(int top, int right, int bottom, int left);
-	void sendNewLayer(int id, int source, const QColor &fill, bool insert, bool copy, const QString &title);
-	void sendLayerAttribs(int id, float opacity, paintcore::BlendMode::Mode blend);
-	void sendLayerTitle(int id, const QString &title);
-	void sendLayerVisibility(int id, bool hide);
-	void sendLayerReorder(const QList<uint16_t> &ids);
-	void sendDeleteLayer(int id, bool merge);
+	/**
+	 * @brief Send a message to the server
+	 *
+	 * The context ID of the message is automatically set to the local user's ID.
+	 *
+	 * If this is a Command type message, drawingCommandLocal is emitted
+	 * before the message is sent.
+	 *
+	 * TODO: replace all the other send* functions with this
+	 * @param msg the message to send
+	 */
+	void sendMessage(protocol::MessagePtr msg);
+	void sendMessages(const QList<protocol::MessagePtr> &msgs);
 
-	// Drawing
-	void forgetToolChange();
-	void sendToolChange(const canvas::ToolContext &ctx);
-	void sendStroke(const paintcore::Point &point);
-	void sendStroke(const paintcore::PointVector &points);
-	void sendPenup();
-	void sendImage(int layer, int x, int y, const QImage &image, paintcore::BlendMode::Mode mode=paintcore::BlendMode::MODE_NORMAL);
-	void sendFillRect(int layer, const QRect &rect, const QColor &color, paintcore::BlendMode::Mode blend);
-
-	// Undo/redo
-	void sendUndopoint();
-	void sendUndo(int actions=1, int override=0);
-	void sendRedo(int actions=1, int override=0);
-
-	// Annotations
-	void sendAnnotationCreate(int id, const QRect &rect);
-	void sendAnnotationReshape(int id, const QRect &rect);
-	void sendAnnotationEdit(int id, const QColor &bg, const QString &text);
-	void sendAnnotationDelete(int id);
-
-	// Snapshot
 	void sendInitialSnapshot(const QList<protocol::MessagePtr> commands);
 
-	// Misc.
+	/**
+	 * @brief Send a chat message
+	 *
+	 * Depending on the "recorded chat" bit, this sends either a real Chat
+	 * message (recorded) or a ServerCommand chat which bypasses the session history.
+	 * @param message
+	 * @param announce
+	 * @param action
+	 */
 	void sendChat(const QString &message, bool announce, bool action);
-	void sendServerCommand(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
-	void sendLaserTrail(const QColor &color, int persistence);
-	void sendMovePointer(const QPointF &point);
-	void sendMarker(const QString &text);
-
-	// Operator commands
-	void sendLockUser(int userid, bool lock);
-	void sendKickUser(int userid);
-	void sendOpUser(int userid, bool op);
-	void sendSetSessionTitle(const QString &title);
-	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
-	void sendLockSession(bool lock);
-	void sendLockLayerControls(bool lock, bool own);
-	void sendCloseSession(bool close);
-	void sendResetSession();
 
 	// Recording
-	void playbackCommand(protocol::MessagePtr msg);
-	void endPlayback();
+	void playbackCommand(protocol::MessagePtr msg); // TODO not needed anymore
 
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandLocal(protocol::MessagePtr msg);
-	void drawingCommandReceived(protocol::MessagePtr msg);
-	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
-	void markerMessageReceived(const QString &user, const QString &message);
-	void laserTrailStart(int ctx, const QColor &color, int persistence);
-	void userPointerMoved(int ctx, const QPointF &point);
 
 	void needSnapshot();
 	void sessionResetted();
+	void sessionConfChange(const QJsonObject &config);
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
 	void serverDisconnecting();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
-
-	void userJoined(int id, const QString &name);
-	void userLeft(const QString &name);
 	void youWereKicked(const QString &kickedBy);
 
-	void canvasLocked(bool locked);
-	void opPrivilegeChange(bool op);
-	void sessionConfChange(const QJsonObject &config);
-	void lockBitsChanged();
-
-	void layerVisibilityChange(int id, bool hidden);
+	void serverMessage(const QString &message);
 
 	void expectingBytes(int);
 	void sendingBytes(int);
@@ -261,6 +187,7 @@ signals:
 	void lagMeasured(qint64);
 
 	void sentColorChange(const QColor &color);
+	void layerVisibilityChange(int id, bool hidden); // TODO refactor. This doesn't go through the network at all
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
@@ -269,16 +196,8 @@ private slots:
 
 private:
 	void handleResetRequest(const protocol::ServerReply &msg);
-	void handleChatMessage(const protocol::Chat &msg);
-	void handleMarkerMessage(const protocol::Marker &msg);
-	void handleUserJoin(const protocol::UserJoin &msg);
-	void handleUserLeave(const protocol::UserLeave &msg);
 	void handleServerCommand(const protocol::Command &msg);
-	void handleLaserTrail(const protocol::LaserTrail &msg);
-	void handleMovePointer(const protocol::MovePointer &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
-
-	void sendCommand(protocol::MessagePtr msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;
@@ -287,9 +206,6 @@ private:
 	int m_myId;
 	bool _isloopback;
 	bool m_recordedChat;
-	UserListModel *m_userlist;
-	LayerListModel *m_layerlist;
-	AclFilter *m_aclfilter;
 
 	canvas::ToolContext m_lastToolCtx;
 };

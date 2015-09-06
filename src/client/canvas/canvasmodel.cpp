@@ -21,16 +21,19 @@
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "statetracker.h"
+#include "layerlist.h"
+#include "userlist.h"
+#include "aclfilter.h"
+#include "loader.h"
 
-#include "net/client.h"
-#include "net/layerlist.h"
 #include "core/layerstack.h"
 #include "core/annotationmodel.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
-#include "loader.h"
 
+#include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
+#include "../shared/net/recording.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -38,30 +41,27 @@
 
 namespace canvas {
 
-CanvasModel::CanvasModel(net::Client *client, QObject *parent)
-	: QObject(parent), m_selection(nullptr)
+CanvasModel::CanvasModel(int localUserId, QObject *parent)
+	: QObject(parent), m_selection(nullptr), m_onlinemode(false)
 {
-	Q_ASSERT(client);
+	m_layerlist = new LayerListModel(this);
+	m_userlist = new UserListModel(this);
 
-	m_layerlist = client->layerlist();
+	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
+
 	m_layerstack = new paintcore::LayerStack(this);
-	m_statetracker = new StateTracker(m_layerstack, m_layerlist, client->myId(), this);
+	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
-	connect(client, &net::Client::drawingCommandReceived, this, &CanvasModel::handleDrawingCommand);
-	connect(client, &net::Client::drawingCommandLocal, this, &CanvasModel::handleLocalCommand);
+	m_aclfilter->reset(localUserId, true);
 
-	connect(client, &net::Client::userJoined, m_usercursors, &UserCursorModel::setCursorName);
-	connect(client, &net::Client::userPointerMoved, m_usercursors, &UserCursorModel::setCursorPosition);
-
-	connect(client, &net::Client::laserTrailStart, m_lasers, &LaserTrailModel::startTrail);
-	connect(client, &net::Client::userPointerMoved, m_lasers, &LaserTrailModel::addPoint);
-
-	connect(client, &net::Client::sessionResetted, this, &CanvasModel::resetCanvas);
+	m_layerlist->setMyId(localUserId);
+	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
+		return m_layerstack->getLayer(id);
+	});
 
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
-	connect(client, &net::Client::layerVisibilityChange, m_layerstack, &paintcore::LayerStack::setLayerHidden);
 
 	connect(m_statetracker, &StateTracker::userMarkerAttribs, m_usercursors, &UserCursorModel::setCursorAttributes);
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
@@ -70,10 +70,85 @@ CanvasModel::CanvasModel(net::Client *client, QObject *parent)
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
 }
 
-void CanvasModel::handleDrawingCommand(protocol::MessagePtr cmd)
+int CanvasModel::localUserId() const
 {
-	m_statetracker->receiveQueuedCommand(cmd);
-	emit canvasModified();
+	return m_statetracker->localId();
+}
+
+void CanvasModel::connectedToServer(int myUserId)
+{
+	m_layerlist->setMyId(myUserId);
+	m_statetracker->setLocalId(myUserId);
+	m_aclfilter->reset(myUserId, false);
+	m_onlinemode = true;
+}
+
+void CanvasModel::disconnectedFromServer()
+{
+	m_statetracker->endRemoteContexts();
+	m_userlist->clearUsers();
+	m_aclfilter->reset(m_statetracker->localId(), true);
+	m_onlinemode = false;
+}
+
+void CanvasModel::endPlayback()
+{
+	m_statetracker->setShowAllUserMarkers(false);
+	m_statetracker->endPlayback();
+}
+
+void CanvasModel::handleCommand(protocol::MessagePtr cmd)
+{
+	using namespace protocol;
+
+	// Apply ACL filter
+	if(!m_aclfilter->filterMessage(*cmd)) {
+		qDebug("Filtered message %d from %d", cmd->type(), cmd->contextId());
+		return;
+	}
+
+	if(cmd->isMeta()) {
+		// Handle meta commands here
+		switch(cmd->type()) {
+		case MSG_CHAT:
+			metaChat(cmd.cast<Chat>());
+			break;
+		case MSG_USER_JOIN:
+			metaUserJoin(cmd.cast<UserJoin>());
+			break;
+		case MSG_USER_LEAVE:
+			metaUserLeave(cmd.cast<UserLeave>());
+			break;
+		case MSG_SESSION_OWNER:
+		case MSG_USER_ACL:
+		case MSG_SESSION_ACL:
+		case MSG_LAYER_ACL:
+			// Handled by the ACL filter
+			break;
+		case MSG_INTERVAL:
+			/* intervals are used only when playing back recordings */
+			break;
+		case MSG_LASERTRAIL:
+			metaLaserTrail(cmd.cast<protocol::LaserTrail>());
+			break;
+		case MSG_MOVEPOINTER:
+			metaMovePointer(cmd.cast<MovePointer>());
+			break;
+		case MSG_MARKER:
+			metaMarkerMessage(cmd.cast<Marker>());
+			break;
+		default:
+			qWarning("Unhandled meta message type %d", cmd->type());
+		}
+
+	} else if(cmd->isCommand()) {
+		// The state tracker handles all drawing commands
+		m_statetracker->receiveQueuedCommand(cmd);
+		emit canvasModified();
+
+	} else {
+		qWarning("CanvasModel::handleDrawingCommand: command %d is neither Meta nor Command type!", cmd->type());
+	}
 }
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
@@ -120,7 +195,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		// Add layer ACL status
 		// This is for the initial session snapshot. For new snapshots the
 		// server will add the correct layer ACLs.
-		for(const net::LayerListItem &layer : m_layerlist->getLayers()) {
+		for(const LayerListItem &layer : m_layerlist->getLayers()) {
 			if(layer.isLockedFor(m_statetracker->localId()))
 				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));
 		}
@@ -270,6 +345,59 @@ void CanvasModel::resetCanvas()
 	setTitle(QString());
 	m_layerstack->reset();
 	m_statetracker->reset();
+	m_aclfilter->reset(m_statetracker->localId(), false);
 }
+
+void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
+{
+	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator());
+	if(m_aclfilter->isLockedByDefault())
+		u.isLocked = true;
+
+	m_userlist->addUser(u);
+	m_usercursors->setCursorName(msg.contextId(), msg.name());
+
+	emit userJoined(msg.contextId(), msg.name());
+}
+
+void CanvasModel::metaUserLeave(const protocol::UserLeave &msg)
+{
+	QString name = m_userlist->getUserById(msg.contextId()).name;
+	m_userlist->removeUser(msg.contextId());
+	emit userLeft(name);
+}
+
+void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
+{
+	m_lasers->startTrail(msg.contextId(), QColor::fromRgb(msg.color()), msg.persistence());
+}
+
+void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
+{
+	QPointF p(msg.x() / 4.0, msg.y() / 4.0);
+	m_usercursors->setCursorPosition(msg.contextId(), p);
+	m_lasers->addPoint(msg.contextId(), p);
+}
+
+void CanvasModel::metaChat(const protocol::Chat &msg)
+{
+	QString username = m_userlist->getUsername(msg.contextId());
+	emit chatMessageReceived(
+		username,
+		msg.message(),
+		msg.isAnnouncement(),
+		msg.isAction(),
+		msg.contextId() == m_statetracker->localId()
+	);
+}
+
+void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
+{
+	emit markerMessageReceived(
+		m_userlist->getUsername(msg.contextId()),
+		msg.text()
+	);
+}
+
 
 }

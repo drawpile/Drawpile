@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
-namespace net {
-	class Client;
+namespace canvas {
 	struct LayerListItem;
+}
+
+namespace protocol {
+	class MessagePtr;
 }
 namespace docks {
 
@@ -45,21 +48,19 @@ public:
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
-	void setClient(net::Client *client) { _client = client; }
-
 	void setShowNumbers(bool show);
 
 signals:
 	void toggleVisibility(int layerId, bool visible);
+	void layerOp(protocol::MessagePtr msg);
 
 private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;
 
-	net::Client *_client;
-	QPixmap _visibleicon;
-	QPixmap _hiddenicon;
+	QPixmap m_visibleicon;
+	QPixmap m_hiddenicon;
 
-	bool _showNumbers;
+	bool m_showNumbers;
 };
 
 }

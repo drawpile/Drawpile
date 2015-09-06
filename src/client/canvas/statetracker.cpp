@@ -18,13 +18,12 @@
 */
 
 #include "statetracker.h"
+#include "layerlist.h"
 #include "loader.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-
-#include "net/layerlist.h"
-#include "net/utils.h"
+#include "net/commands.h"
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
@@ -49,7 +48,7 @@ struct StateSavepoint::Data {
 	int streampointer;
 	paintcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
-	QVector<net::LayerListItem> layermodel;
+	QVector<LayerListItem> layermodel;
 
 private:
 	int _refcount;
@@ -122,18 +121,18 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
  * @param myId ID of the local user
  * @param parent
  */
-StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *layerlist, int myId, QObject *parent)
+StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent)
 	: QObject(parent),
 		_image(image),
-		_layerlist(layerlist),
-		_myid(myId),
+		m_layerlist(layerlist),
+		m_myId(myId),
 		m_msgstream_sizelimit(1024 * 1024 * 10),
 		m_fullhistory(true),
 		_showallmarkers(false),
 		_hasParticipated(false),
 		m_isQueued(false)
 {
-	connect(_layerlist, SIGNAL(layerOpacityPreview(int,float)), this, SLOT(previewLayerOpacity(int,float)));
+	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
 
 	// Timer for periodically resetting the local fork to keep cruft from accumulating.
 	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
@@ -160,7 +159,7 @@ void StateTracker::reset()
 	m_fullhistory = true;
 	_hasParticipated = false;
 	_localfork.clear();
-	_layerlist->clear();
+	m_layerlist->clear();
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
@@ -370,7 +369,7 @@ void StateTracker::endRemoteContexts()
 	QHashIterator<int, DrawingContext> iter(_contexts);
 	while(iter.hasNext()) {
 		iter.next();
-		if(iter.key() != _myid) {
+		if(iter.key() != localId()) {
 			// Simulate pen-up
 			if(iter.value().pendown)
 				receiveCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
@@ -415,13 +414,13 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 	if(layer) {
 		// Note: layers are listed bottom-first in the stack,
 		// but topmost first in the view
-		_layerlist->createLayer(
+		m_layerlist->createLayer(
 			cmd.id(),
 			_image->layers() - _image->indexOf(layer->id()) - 1,
 			cmd.title()
 		);
 
-		if(cmd.contextId() == _myid || !_hasParticipated)
+		if(cmd.contextId() == localId() || !_hasParticipated)
 			emit layerAutoselectRequest(cmd.id());
 	}
 }
@@ -436,7 +435,7 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -457,7 +456,7 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 	}
 
 	layer->setTitle(cmd.title());
-	_layerlist->retitleLayer(cmd.id(), cmd.title());
+	m_layerlist->retitleLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
@@ -476,7 +475,7 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 	}
 
 	_image->reorderLayers(newOrder);
-	_layerlist->reorderLayers(newOrder);
+	m_layerlist->reorderLayers(newOrder);
 }
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
@@ -484,7 +483,7 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 	if(cmd.merge())
 		_image->mergeLayerDown(cmd.id());
 	_image->deleteLayer(cmd.id());
-	_layerlist->deleteLayer(cmd.id());
+	m_layerlist->deleteLayer(cmd.id());
 }
 
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
@@ -528,7 +527,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		ctx.lastpoint = p;
 	}
 
-	if(_showallmarkers || cmd.contextId() != _myid)
+	if(_showallmarkers || cmd.contextId() != localId())
 		emit userMarkerMove(cmd.contextId(), ctx.lastpoint, 0);
 }
 
@@ -636,7 +635,7 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 	// To be correct, we should set the "participated" flag on any command
 	// sent by us. In practice, however, an UndoPoint is always sent
 	// when making changes so it is enough to set the flag here.
-	if(cmd.contextId() == _myid)
+	if(cmd.contextId() == localId())
 		_hasParticipated = true;
 }
 
@@ -744,7 +743,7 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 	savepoint->streampointer = pos<0 ? m_msgstream.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
 	savepoint->ctxstate = _contexts;
-	savepoint->layermodel = _layerlist->getLayers();
+	savepoint->layermodel = m_layerlist->getLayers();
 
 	return savepoint;
 }
@@ -783,7 +782,7 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
-	_layerlist->setLayers(savepoint->layermodel);
+	m_layerlist->setLayers(savepoint->layermodel);
 
 	_savepoints.append(savepoint);
 }
@@ -797,7 +796,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
-	_layerlist->setLayers(savepoint->layermodel);
+	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
@@ -823,7 +822,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
 {
 	_image->annotations()->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-	if(cmd.contextId() == _myid)
+	if(cmd.contextId() == localId())
 		emit myAnnotationCreated(cmd.id());
 }
 
@@ -859,7 +858,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		out << ctxid;
 
 		// write tool context
-		protocol::MessagePtr tc = net::brushToToolChange(ctxid, ctx.tool.layer_id, ctx.tool.brush);
+		protocol::MessagePtr tc = net::command::brushToToolChange(ctxid, ctx.tool.layer_id, ctx.tool.brush);
 		QByteArray tcb(tc->length(), '\0');
 		tc->serialize(tcb.data());
 		out.writeBytes(tcb.data(), tcb.length());
@@ -878,7 +877,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write layer model
 	out << quint8(d->layermodel.size());
-	foreach(const net::LayerListItem &layer, d->layermodel) {
+	foreach(const LayerListItem &layer, d->layermodel) {
 		// Write layer ID
 		out << qint32(layer.id);
 
@@ -980,7 +979,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		QList<uint8_t> acls;
 		in >> acls;
 
-		sp->layermodel.append(net::LayerListItem {
+		sp->layermodel.append(LayerListItem {
 			layerid,
 			title,
 			opacity,
@@ -999,9 +998,9 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 
 bool StateTracker::isLayerLocked(int id) const
 {
-	for(const net::LayerListItem &l : _layerlist->getLayers()) {
+	for(const LayerListItem &l : m_layerlist->getLayers()) {
 		if(l.id == id)
-			return l.isLockedFor(_myid);
+			return l.isLockedFor(localId());
 	}
 
 	qWarning("isLayerLocked(%d): no such layer!", id);

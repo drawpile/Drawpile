@@ -22,7 +22,6 @@
 #include "login.h"
 
 #include "../shared/net/messagequeue.h"
-#include "../shared/net/flow.h"
 #include "../shared/net/control.h"
 
 #include <QDebug>
