@@ -17,28 +17,34 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "imagesize.h"
+#ifndef IMAGESIZECHECK_H
+#define IMAGESIZECHECK_H
 
-#include <QSize>
+class QSize;
+
+#include "../shared/net/message.h"
+
+#include <QList>
+#include <QPair>
 
 namespace utils {
 
 //! Check if image dimensions are not too big. Returns true if size is OK
-bool checkImageSize(const QSize &size)
-{
-	// The protocol limits width and height to 2^29 (PenMove, 2^32 for others)
-	// However, QPixmap can be at most 32767 pixels wide/tall
-	static const int MAX_SIZE = 32767;
+bool checkImageSize(const QSize &size);
 
-	// Rather than limiting the image dimensions to a safe square, allow large rectangular images
-	// by limiting size by required memory
-	static const quint64 MAX_MEM = 1024 * 1024 * 1024;
-	static const quint64 MAX_PIXELS = MAX_MEM / 4;
+/**
+ * @brief Check if we support writing an image file with this format
+ *
+ * The the format is identified from the filename suffix.
+ *
+ * @param filename
+ * @return
+ */
+bool isWritableFormat(const QString &filename);
 
-	return
-		size.width() <= MAX_SIZE &&
-		size.height() <= MAX_SIZE &&
-		quint64(size.width())*quint64(size.height()) <= MAX_PIXELS;
-}
+//! Get a whitelisted set of writable image formats
+QList<QPair<QString,QByteArray>> writableImageFormats();
 
 }
+
+#endif // IMAGESIZECHECK_H

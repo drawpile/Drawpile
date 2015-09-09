@@ -181,14 +181,6 @@ void Client::sendChat(const QString &message, bool announce, bool action)
 	}
 }
 
-void Client::playbackCommand(protocol::MessagePtr msg)
-{
-	if(_isloopback)
-		_server->sendMessage(msg);
-	else
-		qWarning("Tried to play back command in network mode");
-}
-
 void Client::handleMessage(protocol::MessagePtr msg)
 {
 	// Handle control messages here

@@ -17,6 +17,7 @@ set (
 	SOURCES
 	main.cpp
 	mainwindow.cpp
+	document.cpp
 	notifications.cpp
 	tools/toolcontroller.cpp
 	tools/toolsettings.cpp
@@ -72,7 +73,7 @@ set (
 	utils/html.cpp
 	utils/usernamevalidator.cpp
 	utils/sessionidvalidator.cpp
-	utils/imagesize.cpp
+	utils/images.cpp
 	utils/networkaccess.cpp
 	utils/funstuff.cpp
 	utils/kis_cubic_curve.cpp

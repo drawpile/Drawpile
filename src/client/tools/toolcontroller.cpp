@@ -36,13 +36,12 @@
 
 namespace tools {
 
-ToolController::ToolController(net::Client *client, docks::ToolSettings *toolSettings, QObject *parent)
+ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent),
-	m_client(client), m_toolsettings(toolSettings),
+	m_client(client), m_toolsettings(nullptr),
 	m_model(nullptr), m_activeTool(nullptr), m_smoothing(0)
 {
 	Q_ASSERT(client);
-	Q_ASSERT(toolSettings);
 
 	registerTool(new Pen(*this));
 	registerTool(new Brush(*this));
@@ -124,7 +123,7 @@ void ToolController::setActiveLayer(int id)
 
 paintcore::Brush ToolController::activeBrush() const
 {
-	return m_toolsettings->getBrush();
+	return toolSettings()->getBrush();
 }
 
 void ToolController::setModel(canvas::CanvasModel *model)

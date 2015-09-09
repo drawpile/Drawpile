@@ -18,7 +18,7 @@
 */
 
 #include "resizedialog.h"
-#include "utils/imagesize.h"
+#include "utils/images.h"
 #include "ui_resizedialog.h"
 
 #include <QMessageBox>

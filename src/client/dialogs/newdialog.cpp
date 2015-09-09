@@ -23,7 +23,7 @@
 
 #include "newdialog.h"
 #include "widgets/colorbutton.h"
-#include "utils/imagesize.h"
+#include "utils/images.h"
 using widgets::ColorButton;
 
 #include "ui_newdialog.h"

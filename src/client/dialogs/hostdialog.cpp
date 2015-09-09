@@ -22,7 +22,7 @@
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
 #include "utils/sessionidvalidator.h"
-#include "utils/imagesize.h"
+#include "utils/images.h"
 #include "utils/listservermodel.h"
 
 #include <QPushButton>

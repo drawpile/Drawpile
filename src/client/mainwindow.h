@@ -24,7 +24,6 @@
 #include <QUrl>
 
 #include "tools/tool.h"
-#include "core/blendmodes.h"
 
 class QActionGroup;
 class QMessageBox;
@@ -34,6 +33,8 @@ class QSplitter;
 class QTimer;
 class QToolButton;
 class QQuickItem;
+
+class Document;
 
 namespace widgets {
 	class CanvasView;
@@ -79,198 +80,163 @@ class ShortcutDetector;
 //! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
-	public:
-		MainWindow(bool restoreWindowPosition=true);
-		~MainWindow();
+public:
+	MainWindow(bool restoreWindowPosition=true);
+	~MainWindow();
 
-		MainWindow *loadDocument(canvas::SessionLoader &loader);
-		MainWindow *loadRecording(recording::Reader *reader);
+	MainWindow *loadDocument(canvas::SessionLoader &loader);
+	MainWindow *loadRecording(recording::Reader *reader);
 
-		//! Host a session using the settings from the given dialog
-		void hostSession(dialogs::HostDialog *dlg);
+	//! Host a session using the settings from the given dialog
+	void hostSession(dialogs::HostDialog *dlg);
 
-		//! Connect to a host and join a session if full URL is provided.
-		void joinSession(const QUrl& url, bool autoRecord=false);
+	//! Connect to a host and join a session if full URL is provided.
+	void joinSession(const QUrl& url, bool autoRecord=false);
 
-		//! Check if the current board can be replaced
-		bool canReplace() const;
+	//! Check if the current board can be replaced
+	bool canReplace() const;
 
-		//! Save settings and exit
-		void exit();
+	//! Save settings and exit
+	void exit();
 
-	public slots:
-		// Triggerable actions
-		void showNew();
-		void open();
-		void open(const QUrl &url);
-		bool save();
-		bool saveas();
-		void exportAnimation();
-		void showFlipbook();
+public slots:
+	// Triggerable actions
+	void showNew();
+	void open();
+	void open(const QUrl &url);
+	bool save();
+	bool saveas();
+	void exportAnimation();
+	void showFlipbook();
 
-		static void showSettings();
-		void changeSessionTitle();
+	static void showSettings();
+	void changeSessionTitle();
 
-		void host();
-		void join(const QUrl &defaultUrl=QUrl());
-		void leave();
+	void host();
+	void join(const QUrl &defaultUrl=QUrl());
+	void leave();
 
-		void toggleFullscreen();
-		void setShowAnnotations(bool show);
-		void setShowLaserTrails(bool show);
+	void toggleFullscreen();
+	void setShowAnnotations(bool show);
+	void setShowLaserTrails(bool show);
 
-		void selectTool(QAction *tool);
+	void selectTool(QAction *tool);
 
-		static void about();
-		static void homepage();
+	static void about();
+	static void homepage();
 
-		//! Create a blank new document
-		void newDocument(const QSize &size, const QColor &background);
+	//! Create a blank new document
+	void newDocument(const QSize &size, const QColor &background);
 
-	private slots:
-		void toggleRecording();
-		void toggleAutosave(bool enable);
-		void autosave();
-		void autosaveNow();
+private slots:
+	void toggleRecording();
 
-		void setOperatorMode(bool op);
+	void onOperatorModeChange(bool op);
+	void updateLayerCtrlMode();
 
-		void setSessionLock(bool lock);
-		void setLayerCtrlMode(QAction *mode);
-		void updateLayerCtrlMode();
+	void onServerConnected();
+	void onServerLogin();
+	void onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
-		void connecting();
-		void loggedin(bool join);
-		void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
-		void sessionConfChanged(const QJsonObject &config);
+	void updateLockWidget();
+	void setRecorderStatus(bool on);
 
-		void updateLockWidget();
-		void setRecorderStatus(bool on);
+	void updateShortcuts();
+	void updateTabletSupportMode();
 
-		void updateShortcuts();
-		void updateTabletSupportMode();
+	void paste();
+	void pasteFile();
+	void pasteFile(const QUrl &url);
+	void pasteImage(const QImage &image, const QPoint *point=nullptr);
+	void dropUrl(const QUrl &url);
 
-		void undo();
-		void redo();
+	void clearOrDelete();
 
-		void selectAll();
-		void selectNone();
-		void copyVisible();
-		void copyLayer();
-		void cutLayer();
-		void paste();
-		void stamp();
-		void pasteFile();
-		void pasteFile(const QUrl &url);
-		void pasteImage(const QImage &image);
-		void pasteImage(const QImage &image, const QPoint &point, bool forcePoint);
-		void dropUrl(const QUrl &url);
+	void resizeCanvas();
+	void markSpotForRecording();
 
-		void clearOrDelete();
+	void toolChanged(tools::Tool::Type tool);
 
-		void removeEmptyAnnotations();
-		void resizeCanvas();
-		void resizeCanvasBy(int top, int right, int bottom, int left);
-		void markSpotForRecording();
+	void selectionRemoved();
 
-		void toolChanged(tools::Tool::Type tool);
+	void hotBorderMenubar(bool show);
 
-		void selectionRemoved();
+	void updateTitle();
 
-		void hotBorderMenubar(bool show);
+	void onCanvasChanged(canvas::CanvasModel *canvas);
 
-		void updateTitle();
+protected:
+	void closeEvent(QCloseEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
+	bool event(QEvent *event);
 
-	protected:
-		void closeEvent(QCloseEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
-		bool event(QEvent *event);
+private:
+	//! Confirm saving of image in a format that doesn't support all required features
+	bool confirmFlatten(QString& file) const;
 
-	private:
-		void initCanvas();
+	QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence(), bool checkable=false);
+	QAction *getAction(const QString &name);
 
-		//! Confirm saving of image in a format that doesn't support all required features
-		bool confirmFlatten(QString& file) const;
+	//! Load customized shortcuts
+	void loadShortcuts();
 
-		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence(), bool checkable=false);
-		QAction *getAction(const QString &name);
+	//! Add a new entry to recent files list
+	void addRecentFile(const QString& file);
 
-		//! Load customized shortcuts
-		void loadShortcuts();
+	//! Enable or disable drawing tools
+	void setDrawingToolsEnabled(bool enable);
 
-		//! Add a new entry to recent files list
-		void addRecentFile(const QString& file);
+	//! Display an error message
+	void showErrorMessage(const QString& message, const QString& details=QString());
 
-		//! Enable or disable drawing tools
-		void setDrawingToolsEnabled(bool enable);
+	void readSettings(bool windowpos=true);
+	void writeSettings();
 
-		//! Display an error message
-		void showErrorMessage(const QString& message, const QString& details=QString());
+	void createDocks();
+	void setupActions();
 
-		void startRecorder(const QString &filename);
+	QSplitter *_splitter;
 
-		void readSettings(bool windowpos=true);
-		void writeSettings();
+	docks::ToolSettings *_dock_toolsettings;
+	docks::InputSettings *_dock_input;
+	docks::LayerList *_dock_layers;
+	docks::ColorBox *_dock_colors;
+	widgets::ChatBox *_chatbox;
+	widgets::UserList *_userlist;
 
-		void createDocks();
-		void setupActions();
+	widgets::CanvasView *_view;
 
-		void copyFromLayer(int layer);
-		void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
+	QStatusBar *_viewStatusBar;
+	QLabel *_lockstatus;
+	QLabel *_recorderstatus;
+	widgets::NetStatus *_netstatus;
+	widgets::ViewStatus *_viewstatus;
+	QToolButton *_statusChatButton;
 
-		void cancelSelection();
+	dialogs::PlaybackDialog *m_playbackDialog;
 
-		QSplitter *_splitter;
+	QQuickItem *m_root;
+	drawingboard::CanvasScene *_canvasscene;
 
-		docks::ToolSettings *_dock_toolsettings;
-		docks::InputSettings *_dock_input;
-		docks::LayerList *_dock_layers;
-		docks::ColorBox *_dock_colors;
-		widgets::ChatBox *_chatbox;
-		widgets::UserList *_userlist;
+	QMenu *_recent;
 
-		widgets::CanvasView *_view;
+	QActionGroup *_currentdoctools; // actions relating to the currently open document
+	QActionGroup *_admintools; // session operator actions
+	QActionGroup *m_docadmintools; // current document related operator actions
+	QActionGroup *_drawingtools; // drawing tool selection
+	QActionGroup *_toolslotactions; // tool slot selection
+	QActionGroup *m_layerctrlmode; // layer control mode actions
 
-		QStatusBar *_viewStatusBar;
-		QLabel *_lockstatus;
-		QLabel *_recorderstatus;
-		widgets::NetStatus *_netstatus;
-		widgets::ViewStatus *_viewstatus;
-		QToolButton *_statusChatButton;
+	int _lastToolBeforePaste; // Last selected tool before Paste was used
 
-		dialogs::PlaybackDialog *m_playbackDialog;
+	// Remember window state to return from fullscreen mode
+	QByteArray _fullscreen_oldstate;
+	QRect _fullscreen_oldgeometry;
 
-		canvas::CanvasModel *m_canvas;
-		tools::ToolController *m_toolctrl;
+	QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
+	ShortcutDetector *_tempToolSwitchShortcut;
 
-		QQuickItem *m_root;
-		drawingboard::CanvasScene *_canvasscene;
-		net::Client *m_client;
-
-		QString _current_filename;
-		QMenu *_recent;
-
-		recording::Writer *_recorder;
-		bool _autoRecordOnConnect;
-
-		QActionGroup *_currentdoctools; // actions relating to the currently open document
-		QActionGroup *_admintools; // session operator actions
-		QActionGroup *m_docadmintools; // current document related operator actions
-		QActionGroup *_drawingtools; // drawing tool selection
-		QActionGroup *_toolslotactions; // tool slot selection
-		QActionGroup *m_layerctrlmode; // layer control mode actions
-		QAction *_autosave;
-
-		int _lastToolBeforePaste; // Last selected tool before Paste was used
-
-		// Remember window state to return from fullscreen mode
-		QByteArray _fullscreen_oldstate;
-		QRect _fullscreen_oldgeometry;
-
-		QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
-		ShortcutDetector *_tempToolSwitchShortcut;
-
-		QTimer *_autosaveTimer;
+	Document *m_doc;
 };
 
 #endif

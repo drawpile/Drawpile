@@ -190,7 +190,7 @@ void Writer::writeFromBuffer(const QByteArray &buffer)
 	_file->write(buffer.constData(), len);
 }
 
-void Writer::recordMessage(const protocol::Message &msg)
+void Writer::writeMessage(const protocol::Message &msg)
 {
 	Q_ASSERT(_file->isOpen());
 
@@ -219,7 +219,7 @@ void Writer::recordMessage(const protocol::Message &msg)
 
 void Writer::recordMessage(const protocol::MessagePtr msg)
 {
-	recordMessage(*msg);
+	writeMessage(*msg);
 }
 
 void Writer::close()

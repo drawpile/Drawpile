@@ -50,7 +50,7 @@ class ToolController : public QObject
 
 	Q_OBJECT
 public:
-	ToolController(net::Client *client, docks::ToolSettings *toolSettings, QObject *parent=nullptr);
+	explicit ToolController(net::Client *client, QObject *parent=nullptr);
 	~ToolController();
 
 	void setActiveTool(Tool::Type tool);
@@ -70,8 +70,13 @@ public:
 	void setSmoothing(int smoothing);
 	int smoothing() const { return m_smoothing; }
 
+	// TODO this is used just for sending the commands. Replace with a signal?
 	inline net::Client *client() const { return m_client; }
-	inline docks::ToolSettings *toolSettings() const { return m_toolsettings; }
+
+	// TODO: replace this with something that does not depend on the UI
+	void setToolSettings(docks::ToolSettings *toolsettings) { m_toolsettings = toolsettings; }
+
+	inline docks::ToolSettings *toolSettings() const { Q_ASSERT(m_toolsettings); return m_toolsettings; }
 
 	paintcore::Brush activeBrush() const;
 

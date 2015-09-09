@@ -429,7 +429,7 @@ bool Filter::filterRecording(const QString &input, const QString &outputfile)
 		if(!isDeleted(state.index[pos])) {
 
 			if(state.replacements.contains(pos))
-				writer.recordMessage(*state.replacements[pos]);
+				writer.writeMessage(*state.replacements[pos]);
 			else
 				writer.writeFromBuffer(buffer);
 		}

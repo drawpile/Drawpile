@@ -161,9 +161,6 @@ public slots:
 	 */
 	void sendChat(const QString &message, bool announce, bool action);
 
-	// Recording
-	void playbackCommand(protocol::MessagePtr msg); // TODO not needed anymore
-
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandLocal(protocol::MessagePtr msg);

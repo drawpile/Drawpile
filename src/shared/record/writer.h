@@ -104,8 +104,7 @@ public:
 	 * @param buffer
 	 */
 	void writeFromBuffer(const QByteArray &buffer);
-
-	void recordMessage(const protocol::Message &msg);
+	void writeMessage(const protocol::Message &msg);
 
 public slots:
 	void recordMessage(const protocol::MessagePtr msg);
