@@ -184,7 +184,6 @@ signals:
 	void lagMeasured(qint64);
 
 	void sentColorChange(const QColor &color);
-	void layerVisibilityChange(int id, bool hidden); // TODO refactor. This doesn't go through the network at all
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);

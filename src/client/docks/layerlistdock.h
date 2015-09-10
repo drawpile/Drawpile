@@ -70,6 +70,7 @@ public slots:
 signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
+	void activeLayerVisibilityChanged();
 
 	void layerViewModeSelected(int mode);
 

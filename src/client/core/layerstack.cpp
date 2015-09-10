@@ -255,16 +255,6 @@ int LayerStack::indexOf(int id) const
 	return -1;
 }
 
-void LayerStack::setLayerHidden(int layerid, bool hide)
-{
-	Layer *l = getLayer(layerid);
-	if(l) {
-		l->setHidden(hide);
-	} else {
-		qWarning() << "Tried to set hidden flag of non-existent layer" << layerid;
-	}
-}
-
 namespace {
 
 struct UpdateTile {

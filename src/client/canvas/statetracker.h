@@ -32,6 +32,7 @@ namespace protocol {
 	class CanvasResize;
 	class LayerCreate;
 	class LayerAttributes;
+	class LayerVisibility;
 	class LayerRetitle;
 	class LayerOrder;
 	class LayerDelete;
@@ -252,6 +253,7 @@ private:
 	void handleCanvasResize(const protocol::CanvasResize &cmd, int pos);
 	void handleLayerCreate(const protocol::LayerCreate &cmd);
 	void handleLayerAttributes(const protocol::LayerAttributes &cmd);
+	void handleLayerVisibility(const protocol::LayerVisibility &cmd);
 	void handleLayerTitle(const protocol::LayerRetitle &cmd);
 	void handleLayerOrder(const protocol::LayerOrder &cmd);
 	void handleLayerDelete(const protocol::LayerDelete &cmd);

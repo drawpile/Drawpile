@@ -305,6 +305,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_LAYER_ATTR:
 			handleLayerAttributes(msg.cast<LayerAttributes>());
 			break;
+		case MSG_LAYER_VISIBILITY:
+			handleLayerVisibility(msg.cast<LayerVisibility>());
+			break;
 		case MSG_LAYER_RETITLE:
 			handleLayerTitle(msg.cast<LayerRetitle>());
 			break;
@@ -436,6 +439,23 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
 	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+}
+
+void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
+{
+	// Layer visibility affects the sending user only
+	// (to hide a layer from all users, one can just set its opacity to zero.)
+	if(cmd.contextId() != localId())
+		return;
+
+	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	if(!layer) {
+		qWarning() << "received layer visibility for non-existent layer" << cmd.id();
+		return;
+	}
+
+	layer->setHidden(!cmd.visible());
+	m_layerlist->setLayerHidden(cmd.id(), !cmd.visible());
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)

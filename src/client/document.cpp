@@ -88,7 +88,6 @@ void Document::initCanvas()
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
 	connect(m_client, &net::Client::sessionResetted, m_canvas, &canvas::CanvasModel::resetCanvas);
-	connect(m_client, &net::Client::layerVisibilityChange, m_canvas->layerStack(), &paintcore::LayerStack::setLayerHidden);
 
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
 

@@ -278,16 +278,13 @@ void LayerList::blendModeChanged()
 void LayerList::hideSelected()
 {
 	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		// TODO
-		//_client->sendLayerVisibility(index.data().value<canvas::LayerListItem>().id, _menuHideAction->isChecked());
-	}
+	if(index.isValid())
+		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, _menuHideAction->isChecked());
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	// TODO
-	//_client->sendLayerVisibility(layerId, !visible);
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerVisibility(0, layerId, visible)));
 }
 
 void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
@@ -551,6 +548,8 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
 		_aclmenu->setAcl(layer.locked, layer.exclusive);
 		updateLockedControls();
+		// TODO use change flags to detect if this really changed
+		emit activeLayerVisibilityChanged();
 		_noupdate = false;
 	}
 }

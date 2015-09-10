@@ -151,10 +151,6 @@ public:
 	//! Reset the entire layer stack
 	void reset();
 
-public slots:
-	//! Set or clear the "hidden" flag of a layer
-	void setLayerHidden(int layerid, bool hide);
-
 signals:
 	//! Emitted when the visible layers are edited
 	void areaChanged(const QRect &area);

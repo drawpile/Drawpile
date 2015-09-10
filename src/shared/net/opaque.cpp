@@ -56,6 +56,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_LAYER_RETITLE: return LayerRetitle::deserialize(ctx, data, len);
 	case MSG_LAYER_ORDER: return LayerOrder::deserialize(ctx, data, len);
 	case MSG_LAYER_DELETE: return LayerDelete::deserialize(ctx, data, len);
+	case MSG_LAYER_VISIBILITY: return LayerVisibility::deserialize(ctx, data, len);
 	case MSG_PUTIMAGE: return PutImage::deserialize(ctx, data, len);
 	case MSG_TOOLCHANGE: return ToolChange::deserialize(ctx, data, len);
 	case MSG_PEN_MOVE: return PenMove::deserialize(ctx, data, len);

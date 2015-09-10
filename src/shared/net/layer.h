@@ -156,6 +156,38 @@ private:
 };
 
 /**
+ * @brief Layer visibility (visible/hidden) change command
+ *
+ * This command is used to toggle the layer visibility for the local user.
+ * (I.e. any user is allowed to send this command and it has no effect on
+ * other users.)
+ * Even though this only affects the sending user, this message can be
+ * sent through the official session history to keep the architecture simple.
+ *
+ * Note: to hide the layer for all users, use LayerAttributes to set its opacity
+ * to zero.
+ */
+class LayerVisibility : public Message {
+public:
+	LayerVisibility(uint8_t ctx, uint16_t id, uint8_t visible)
+		: Message(MSG_LAYER_VISIBILITY, ctx), m_id(id), m_visible(visible)
+	{ }
+
+	static LayerVisibility *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	uint16_t id() const { return m_id; }
+	uint8_t visible() const { return m_visible; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint16_t m_id;
+	uint8_t m_visible;
+};
+
+/**
  * @brief Layer title change command
  *
  * If the current layer or layer controls in general are locked, this command

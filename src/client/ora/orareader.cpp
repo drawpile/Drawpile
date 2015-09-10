@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2014 Calle Laakkonen
+   Copyright (C) 2009-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -225,8 +225,9 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				_commands.append(MessagePtr(new protocol::LayerACL(1, _layerid, true, QList<uint8_t>())));
 			}
 
-			// TODO visibility flag
-			//layer->setHidden(e.attribute("visibility", "visible") != "visible");
+			if(e.attribute("visibility", "visible") != "visible") {
+				_commands.append(MessagePtr(new protocol::LayerVisibility(1, _layerid, false)));
+			}
 
 		} else if(e.tagName()=="stack") {
 			// Nested stacks are not fully supported

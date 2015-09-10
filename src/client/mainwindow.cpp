@@ -243,7 +243,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_dock_input, &docks::InputSettings::pressureMappingChanged, _view, &widgets::CanvasView::setPressureMapping);
 	_view->setPressureMapping(_dock_input->getPressureMapping());
 
-	connect(_dock_layers, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
+	connect(_dock_layers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
+	connect(_dock_layers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
 
 	_splitter->addWidget(_view);
 	_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
@@ -299,7 +300,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network client <-> UI connections
 	connect(_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
 
-	connect(m_doc->client(), &net::Client::layerVisibilityChange, this, &MainWindow::updateLockWidget);
 	connect(m_doc->client(), &net::Client::serverMessage, _chatbox, &widgets::ChatBox::systemMessage);
 	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 

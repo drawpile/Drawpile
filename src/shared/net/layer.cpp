@@ -108,6 +108,32 @@ int LayerAttributes::serializePayload(uchar *data) const
 	*(ptr++) = _blend;
 	return ptr-data;
 }
+
+LayerVisibility *LayerVisibility::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len!=3)
+		return 0;
+	return new LayerVisibility(
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		*(data+2)
+	);
+}
+
+int LayerVisibility::payloadLength() const
+{
+	return 3;
+}
+
+
+int LayerVisibility::serializePayload(uchar *data) const
+{
+	uchar *ptr=data;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	*(ptr++) = m_visible;
+	return ptr-data;
+}
+
 LayerRetitle *LayerRetitle::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<2)
