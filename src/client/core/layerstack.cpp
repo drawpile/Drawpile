@@ -422,8 +422,10 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
 	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
 
-	foreach(const Layer *l, _layers)
-		flat.merge(l, true);
+	for(const Layer *l : _layers) {
+		if(l->visible())
+			flat.merge(l, true);
+	}
 
 	QImage image = flat.toImage();
 
