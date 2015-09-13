@@ -20,6 +20,8 @@
 #include "imagesize.h"
 
 #include <QSize>
+#include <QImage>
+#include <QColor>
 
 namespace utils {
 
@@ -39,6 +41,25 @@ bool checkImageSize(const QSize &size)
 		size.width() <= MAX_SIZE &&
 		size.height() <= MAX_SIZE &&
 		quint64(size.width())*quint64(size.height()) <= MAX_PIXELS;
+}
+
+QColor isSolidColorImage(const QImage &image)
+{
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	if(image.format() != QImage::Format_ARGB32) {
+		qWarning("isSolidColorImage: not an ARGB32 image!");
+		return QColor();
+	}
+
+	const quint32 c = *reinterpret_cast<const quint32*>(image.bits());
+	const quint32 *p = reinterpret_cast<const quint32*>(image.bits());
+
+	int len = image.width() * image.height();
+	while(--len) {
+		if(*(++p) != c)
+			return QColor();
+	}
+	return QColor::fromRgba(c);
 }
 
 }

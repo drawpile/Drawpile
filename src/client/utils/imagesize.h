@@ -21,6 +21,8 @@
 #define IMAGESIZECHECK_H
 
 class QSize;
+class QImage;
+class QColor;
 
 #include "../shared/net/message.h"
 
@@ -30,6 +32,10 @@ namespace utils {
 
 //! Check if image dimensions are not too big. Returns true if size is OK
 bool checkImageSize(const QSize &size);
+
+// Note: this file will be renamed later
+//! Check if this image consists of a single solid color
+QColor isSolidColorImage(const QImage &image);
 
 }
 

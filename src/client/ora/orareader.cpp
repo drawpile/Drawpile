@@ -25,6 +25,7 @@
 #include "../shared/net/meta.h"
 #include "net/utils.h"
 #include "utils/archive.h"
+#include "utils/imagesize.h"
 
 #include <QApplication>
 #include <QImageReader>
@@ -120,6 +121,11 @@ bool Reader::load(const QString &filename)
 		return false;
 	}
 
+	if(!utils::checkImageSize(imagesize)) {
+		_error = tr("Image is too big!");
+		return false;
+	}
+
 	// Initialize the layer stack now that we know the size
 	_commands.append(MessagePtr(new protocol::CanvasResize(1, 0, imagesize.width(), imagesize.height(), 0)));
 
@@ -191,13 +197,15 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				}
 			}
 
+			QColor solidColor = utils::isSolidColorImage(content);
+
 			// Create layer
 			QString name = e.attribute("name", tr("Unnamed layer"));
 			_commands.append(MessagePtr(new protocol::LayerCreate(
 				1,
 				++_layerid,
 				0,
-				0,
+				solidColor.isValid() ? solidColor.rgba() : 0,
 				0,
 				name
 			)));
@@ -206,7 +214,9 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 				e.attribute("x", "0").toInt(),
 				e.attribute("y", "0").toInt()
 				);
-			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, paintcore::BlendMode::MODE_REPLACE));
+
+			if(!solidColor.isValid())
+				_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, paintcore::BlendMode::MODE_REPLACE));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
 			bool exact_blendop;
