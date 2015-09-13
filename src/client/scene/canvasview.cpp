@@ -429,36 +429,59 @@ void CanvasView::setVelocityCurve(const KisCubicCurve &curve)
 
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
-	if(_scene->hasImage() && !_locked) {
-
+	if(_scene->hasImage()) {
 		if(_specialpenmode) {
 			// quick color pick mode
 			_scene->pickColor(p.x(), p.y(), 0, 0, right);
 		} else {
-			if(_smoothing>0 && _current_tool->allowSmoothing())
-				_smoother.addPoint(p);
-			_current_tool->begin(p, right, _zoom);
+			// Start of a stroke. It is possible to get TabletPress and MousePress
+			// events in the wrong order (mouse event generated before the real tablet event)
+			// so the only thing we do here is remember the position of the starting point.
+			// The real tool begin action will be executed in onPenMove, or onPenUp
+			// in case of a single point dab.
+			m_firstpoint = p;
+			m_isFirstpoint = true;
 		}
 	}
 }
 
 void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt)
 {
-	if(_scene->hasImage() && !_locked) {
+	if(_scene->hasImage()) {
 		if(_specialpenmode) {
 			// quick color pick mode
 			_scene->pickColor(p.x(), p.y(), 0, 0, right);
-		} else {
+
+		} else if(!_locked) {
 			if(_smoothing>0 && _current_tool->allowSmoothing()) {
+
+				bool hadSmooth = _smoother.hasSmoothPoint();
+
+				// Deferred stroke start. See onPenDown
+				if(m_isFirstpoint) {
+					m_firstpoint.setPressure(p.pressure());
+					_smoother.addPoint(m_firstpoint);
+					m_isFirstpoint = false;
+				}
+
 				_smoother.addPoint(p);
 				if(_smoother.hasSmoothPoint()) {
-					_current_tool->motion(_smoother.smoothPoint(), shift, alt);
+					if(!hadSmooth)
+						_current_tool->begin(_smoother.smoothPoint(), right, _zoom);
+					else
+						_current_tool->motion(_smoother.smoothPoint(), shift, alt);
 				}
 				// Remember the keys in use in case we simulate
 				// catch-up moves on pen up
 				_prevshift = shift;
 				_prevalt = alt;
+
 			} else {
+				if(m_isFirstpoint) {
+					m_firstpoint.setPressure(p.pressure());
+					_current_tool->begin(m_firstpoint, right, _zoom);
+					m_isFirstpoint = false;
+				}
 				_current_tool->motion(p, shift, alt);
 			}
 		}
@@ -469,6 +492,12 @@ void CanvasView::onPenUp(bool right)
 {
 	if(_scene->hasImage() && !_locked) {
 		if(!_specialpenmode) {
+
+			// Deferred stroke start: single point dab
+			if(m_isFirstpoint) {
+				_current_tool->begin(m_firstpoint, right, _zoom);
+			}
+
 			// Drain any remaining points from the smoothing buffer
 			if(_smoothing>0 && _current_tool->allowSmoothing()) {
 				if(_smoother.hasSmoothPoint())
@@ -808,7 +837,13 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		_stylusDown = true;
 		_lastPressure = tabev->pressure();
-		if(_tabletmode==ENABLE_TABLET && _pendown == NOTDOWN) {
+
+		// Note: it is possible to get a mouse press event for a tablet event (even before
+		// the tablet event is received or even though tabev->accept() is called), but
+		// it is never possible to get a TabletPress for a real mouse press. Therefore,
+		// we don't actually do anything yet in the penDown handler other than remember
+		// the initial point and we'll let a TabletEvent override the mouse event.
+		if(_tabletmode==ENABLE_TABLET) {
 			tabev->accept();
 
 			penPressEvent(

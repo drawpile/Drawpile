@@ -255,11 +255,13 @@ class CanvasView : public QGraphicsView
 		int _dragx,_dragy;
 
 		//! Previous pointer location
+		paintcore::Point m_firstpoint;
 		paintcore::Point _prevpoint;
 		paintcore::Point _prevoutlinepoint;
 		float _pointerdistance;
 		float _pointervelocity;
 		StrokeSmoother _smoother;
+		bool m_isFirstpoint;
 		bool _prevshift;
 		bool _prevalt;
 
