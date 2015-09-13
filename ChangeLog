@@ -1,4 +1,4 @@
-2015-09-?? Version 1.0.2
+2015-09-13 Version 1.0.2
  * Fixed crash when smoother was set to zero
  * Server: added command line option to enable split recording mode (new recording for each snapshot)
  * Server: /force_snapshot command can now be used outside debug mode
