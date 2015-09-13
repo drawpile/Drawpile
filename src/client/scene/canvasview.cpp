@@ -491,7 +491,9 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 void CanvasView::onPenUp(bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		if(!_specialpenmode) {
+		// Skip movementless tablet dabs to avoid the buggy pressure
+		// value in the first (in this case only) point.
+		if(!_specialpenmode && !(m_isFirstpoint && _stylusDown)) {
 
 			// Deferred stroke start: single point dab
 			if(m_isFirstpoint) {
@@ -631,8 +633,8 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 		stopDrag();
 
 	} else if(_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && _pendown == MOUSEDOWN)) {
-		_pendown = NOTDOWN;
 		onPenUp(button == Qt::RightButton);
+		_pendown = NOTDOWN;
 	}
 }
 
