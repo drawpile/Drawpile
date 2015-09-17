@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 #ifndef REC_READER_H
 #define REC_READER_H
 
-#include <QObject>
-
-#include "hibernate.h"
 #include "../net/message.h"
+
+#include <QObject>
+#include <QJsonObject>
 
 class QIODevice;
 
@@ -92,25 +92,25 @@ public:
 	static bool isRecordingExtension(const QString &filename);
 
 	//! Name of the currently open file
-	QString filename() const { return _filename; }
+	QString filename() const { return m_filename; }
 
 	//! Size of the currently open file
 	qint64 filesize() const;
 
 	//! Index of the last read message
-	int currentIndex() const { return _current; }
+	int currentIndex() const { return m_current; }
 
 	//! Position of the last read message in the file
-	qint64 currentPosition() const { return _currentPos; }
+	qint64 currentPosition() const { return m_currentPos; }
 
 	//! Position in the file (position of the next message to be read)
 	qint64 filePosition() const;
 
 	//! Did the last read hit the end of the file?
-	bool isEof() const { return _eof; }
+	bool isEof() const { return m_eof; }
 
 	//! Is this recording compressed?
-	bool isCompressed() const { return _isCompressed; }
+	bool isCompressed() const { return m_isCompressed; }
 
 	QString errorString() const;
 
@@ -118,22 +118,22 @@ public:
 	 * @brief Get the version number of the program that made the recording.
 	 *
 	 * The version number is available after opening the file.
-	 * @return
+	 *
+	 * @return human readable version number string
 	 */
-	const QString writerVersion() const { return _writerversion; }
+	QString writerVersion() const;
 
 	/**
 	 * @brief Get the recording's protocol version
 	 * @return
 	 */
-	quint32 formatVersion() const { return _formatversion; }
+	quint32 formatVersion() const { return m_formatversion; }
 
 	/**
-	 * @brief Enable/disable compatability mode
-	 *
-	 * Support for older format versions is enabled by default.
+	 * @brief Get the header metadata
+	 * @return
 	 */
-	void setCompatabilityMode(bool enable) { _compat = enable; }
+	QJsonObject metadata() const { return m_metadata; }
 
 	/**
 	 * @brief Open the file
@@ -143,15 +143,6 @@ public:
 
 	//! Close the file
 	void close();
-
-	/**
-	 * @brief Get the session hibernation header
-	 * @pre isHibernation() == true
-	 */
-	const HibernationHeader &hibernationHeader() const { return _hibheader; }
-
-	//! Is this a session hibernation file instead of a normal recording?
-	bool isHibernation() const { return _isHibernation; }
 
 	//! Rewind to the first message
 	void rewind();
@@ -183,20 +174,19 @@ public:
 	void seekTo(int pos, qint64 offset);
 
 private:
-	QString _filename;
-	QIODevice *_file;
-	QByteArray _msgbuf;
-	QString _writerversion;
-	quint32 _formatversion;
-	HibernationHeader _hibheader;
-	int _current;
-	qint64 _currentPos;
-	qint64 _beginning;
-	bool _autoclose;
-	bool _eof;
-	bool _isHibernation;
-	bool _isCompressed;
-	bool _compat;
+	QString m_filename;
+	QIODevice *m_file;
+	QByteArray m_msgbuf;
+	QString m_writerversion;
+	quint32 m_formatversion;
+	QJsonObject m_metadata;
+	int m_current;
+	qint64 m_currentPos;
+	qint64 m_beginning;
+	bool m_autoclose;
+	bool m_eof;
+	bool m_isHibernation;
+	bool m_isCompressed;
 };
 
 }

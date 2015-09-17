@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,16 +19,14 @@
 #ifndef WRITER_H
 #define WRITER_H
 
-#include <QObject>
-
 #include "../net/message.h"
+
+#include <QObject>
 
 class QIODevice;
 class QSaveFile;
 
 namespace recording {
-
-struct HibernationHeader;
 
 class Writer : public QObject
 {
@@ -70,14 +68,6 @@ public:
 	void setMinimumInterval(int min);
 
 	/**
-	 * @brief Enable/disable meta message filtering.
-	 *
-	 * This is enabled by default
-	 * @param filter
-	 */
-	void setFilterMeta(bool filter);
-
-	/**
 	 * @brief Write recording header
 	 *
 	 * This should be called before writing the first message.
@@ -85,17 +75,6 @@ public:
 	 * @return false on error
 	 */
 	bool writeHeader();
-
-	/**
-	 * @brief Write session hibernation file header
-	 *
-	 * Use this instead of writeHeader when creating a session hibernation file.
-	 * You should also call setFilterMeta(false) to make sure all messages are saved.
-	 *
-	 * @param header
-	 * @return
-	 */
-	bool writeHibernationHeader(const HibernationHeader &header);
 
 	/**
 	 * @brief Write a message from a buffer
@@ -110,12 +89,11 @@ public slots:
 	void recordMessage(const protocol::MessagePtr msg);
 
 private:
-	QIODevice *_file;
-	QSaveFile *_savefile;
-	bool _autoclose;
-	qint64 _minInterval;
-	qint64 _interval;
-	bool _filterMeta;
+	QIODevice *m_file;
+	QSaveFile *m_savefile;
+	bool m_autoclose;
+	qint64 m_minInterval;
+	qint64 m_interval;
 };
 
 }

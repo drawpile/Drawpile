@@ -59,34 +59,25 @@ There are two meta message types that are relevant only to recordings:
 The recording header can be described as follows:
 
     struct Header {
-        char magic[7];        // "DPRECR\0"
-        uint32_t version;     // Protocol version number (major and minor)
-        char clientversion[]; // Client version string (variable length, \0 terminated)
+        char magic[6];        // "DPREC\0"
+		uint16_t metadatalen; // length of the metadata section
+		char metadata[];      // JSON encoded metadata
     };
+
+The metadata section has the following format:
+
+    {
+        "version": {
+            "major": major-version-number,
+            "minor": minor-version-number,
+            "str": "human readable version string (application version)"
+         },
+         "filtered": if false, this is a raw recording and the ACL filter must be applied
+    }
 
 The recording can be accompanied by an *index file*. The index file must have the same name as the recording file, except for the file extension, which must be "dpidx".
 
 The format of the index file is not documented and it can change from version to version. However, the index can always be regenerated from the main recording. The index contains a map of message offsets and snapshots of drawingboard state to enable quick jumping in the recording.
-
-A session hibernation file is a special type of recording with an extended header. Also, all messages types are recorded in the hibernation file.
-
-    struct HibernationHeader {
-        char magic[7];         // "DPRECH\0"
-        uint32_t version;      // Protocol version number (server major and session minor)
-        char serverversion[];  // Server version string (variable length, \0 terminated)
-        uint8_t hibformat;     // Hibernation format version
-    
-        uint16_t titlelen;     // Session title length
-        char title[titlelen];  // Session title
-    
-        uint16_t fnamelen;     // Session founder name length
-        char fname[fnamelen];  // Session founder name
-    
-        uint8_t flags;         // Session flags bit field
-    
-        uint16_t passwdlen;    // Session password length
-        char fname[passwdlen]; // Session password (algorith;hash)
-    };
 
 
 ## Protocol revision history
@@ -95,7 +86,7 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
-Protocol 16.0 (2.0.0)
+Protocol 20.1 (2.0.0)
 
  * Protocol major revision 4. Lots of changes!
 

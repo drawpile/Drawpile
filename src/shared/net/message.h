@@ -125,6 +125,14 @@ public:
 	bool isOpaque() const { return m_type >= 64; }
 
 	/**
+	 * @brief Is this a recordable message?
+	 *
+	 * All Meta and Command messages are recordable. Only the Control messages,
+	 * which are used just for client/server communications, are ignored.
+	 */
+	bool isRecordable() const { return m_type >= 32; }
+
+	/**
 	 * @brief Get the message length, header included
 	 * @return message length in bytes
 	 */
