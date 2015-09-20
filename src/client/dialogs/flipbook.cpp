@@ -111,8 +111,8 @@ void Flipbook::setLayers(paintcore::LayerStack *layers)
 {
 	Q_ASSERT(layers);
 	_layers = layers;
-	_ui->layerIndex->setMaximum(_layers->layers());
-	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(_layers->layers()));
+	_ui->layerIndex->setMaximum(_layers->layerCount());
+	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(_layers->layerCount()));
 
 	resetFrameCache();
 	loadFrame();
@@ -122,7 +122,7 @@ void Flipbook::resetFrameCache()
 {
 	_frames.clear();
 	if(_layers) {
-		for(int i=0;i<_layers->layers();++i)
+		for(int i=0;i<_layers->layerCount();++i)
 			_frames.append(QPixmap());
 	}
 }

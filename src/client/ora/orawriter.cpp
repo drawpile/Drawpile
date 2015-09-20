@@ -82,14 +82,14 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	}
 
 	// Add layers (topmost layer goes first in ORA)
-	for(int i=image->layers()-1;i>=0;--i) {
+	for(int i=image->layerCount()-1;i>=0;--i) {
 		const paintcore::Layer *l = image->getLayerByIndex(i);
 
 		QDomElement layer = doc.createElement("layer");
 		layer.setAttribute("src", QString("data/layer%1.png").arg(i));
 		layer.setAttribute("name", l->title());
 		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
-		if(l->hidden())
+		if(l->isHidden())
 			layer.setAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
 			layer.setAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
@@ -146,7 +146,7 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 	writeStackXml(zf, image);
 
 	// Each layer is written as an individual PNG image
-	for(int i=image->layers()-1;i>=0;--i)
+	for(int i=image->layerCount()-1;i>=0;--i)
 		writeLayer(zf, image, i);
 
 	// Ready to use images for viewers

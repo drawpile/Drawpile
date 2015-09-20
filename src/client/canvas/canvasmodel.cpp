@@ -165,7 +165,7 @@ QImage CanvasModel::toImage() const
 
 bool CanvasModel::needsOpenRaster() const
 {
-	return m_layerstack->layers() > 1 || !m_layerstack->annotations()->isEmpty();
+	return m_layerstack->layerCount() > 1 || !m_layerstack->annotations()->isEmpty();
 }
 
 bool CanvasModel::save(const QString &filename) const

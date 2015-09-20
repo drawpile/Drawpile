@@ -419,7 +419,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 		// but topmost first in the view
 		m_layerlist->createLayer(
 			cmd.id(),
-			_image->layers() - _image->indexOf(layer->id()) - 1,
+			_image->layerCount() - _image->indexOf(layer->id()) - 1,
 			cmd.title()
 		);
 
@@ -482,7 +482,7 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 {
 	QList<uint16_t> currentOrder;
-	for(int i=0;i<_image->layers();++i)
+	for(int i=0;i<_image->layerCount();++i)
 		currentOrder.append(_image->getLayerByIndex(i)->id());
 
 	QList<uint16_t> newOrder = cmd.sanitizedOrder(currentOrder);
