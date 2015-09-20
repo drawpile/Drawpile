@@ -78,6 +78,11 @@ typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
 class LayerListModel : public QAbstractListModel {
 	Q_OBJECT
 public:
+	enum LayerListRoles {
+		IdRole = Qt::UserRole + 1,
+		TitleRole,
+	};
+
 	LayerListModel(QObject *parent=0);
 	
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -127,8 +132,6 @@ public:
 	QString getAvailableLayerName(QString basename) const;
 
 signals:
-	void layerCreated(bool wasfirst);
-	void layerDeleted(int id, int idx);
 	void layersReordered();
 
 	//! Emitted when layers are manually reordered

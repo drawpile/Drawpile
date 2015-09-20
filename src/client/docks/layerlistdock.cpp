@@ -45,7 +45,7 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), _selected(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -136,8 +136,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 	_aclmenu->setUserList(canvas->userlist());
 
-	connect(canvas->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
-	connect(canvas->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
+	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
+	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::onLayerDelete);
 	connect(canvas->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
@@ -179,7 +179,7 @@ void LayerList::updateLockedControls()
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
 	// are locked for non-operators.
-	if(_selected)
+	if(m_selectedId)
 		enabled = enabled & (m_op | !isCurrentLayerLocked());
 	else
 		enabled = false;
@@ -446,41 +446,36 @@ void LayerList::renameSelected()
 
 /**
  * @brief Respond to creation of a new layer
- * @param wasfirst
  */
-void LayerList::onLayerCreate(bool wasfirst)
+void LayerList::onLayerCreate(const QModelIndex&, int, int)
 {
 	// Automatically select the first layer
-	if(wasfirst)
+	if(m_canvas->layerlist()->rowCount()==1)
 		_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(0,0), QItemSelectionModel::SelectCurrent);
 }
 
 /**
  * @brief Respond to layer deletion
- * @param id layer id
- * @param idx layer index in stack
  */
-void LayerList::onLayerDelete(int id, int idx)
+void LayerList::onLayerDelete(const QModelIndex &, int first, int last)
 {
-	Q_UNUSED(id);
-	if(!currentSelection().isValid()) {
-		if(idx >= _ui->layerlist->model()->rowCount())
-			idx = _ui->layerlist->model()->rowCount()-1;
-		else if(idx>0)
-			--idx;
+	const QModelIndex cursel = currentSelection();
+	int row = cursel.isValid() ? 0 : cursel.row();
 
-		// Automatically select neighbouring layer on delete
-		if(idx>=0)
-			_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(idx,0), QItemSelectionModel::SelectCurrent);
+	// Automatically select neighbouring on deletion
+	if(row >= first && row <= last) {
+		if(first==0)
+			row=last+1;
 		else
-			_selected = 0;
+			row = first-1;
+		selectLayer(m_canvas->layerlist()->index(row).data(canvas::LayerListModel::IdRole).toInt());
 	}
 }
 
 void LayerList::onLayerReorder()
 {
-	if(_selected)
-		selectLayer(_selected);
+	if(m_selectedId)
+		selectLayer(m_selectedId);
 }
 
 QModelIndex LayerList::currentSelection() const
@@ -493,7 +488,7 @@ QModelIndex LayerList::currentSelection() const
 
 int LayerList::currentLayer()
 {
-	return _selected;
+	return m_selectedId;
 }
 
 bool LayerList::isCurrentLayerLocked() const
@@ -516,14 +511,14 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 	if(on) {
 		QModelIndex cs = currentSelection();
 		dataChanged(cs,cs);
-		_selected = cs.data().value<canvas::LayerListItem>().id;
+		m_selectedId = cs.data(canvas::LayerListModel::IdRole).toInt();
 	} else {
-		_selected = 0;
+		m_selectedId = 0;
 	}
 
 	updateLockedControls();
 
-	emit layerSelected(_selected);
+	emit layerSelected(m_selectedId);
 }
 
 void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)

@@ -44,11 +44,13 @@ int LayerListModel::rowCount(const QModelIndex &parent) const
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
 	if(index.isValid() && index.row() >= 0 && index.row() < _items.size()) {
-		if(role == Qt::DisplayRole) {
-			return QVariant::fromValue(_items.at(index.row()));
-		} else if(role == Qt::EditRole) {
-			// Edit role is for renaming the layer
-			return _items.at(index.row()).title;
+		const LayerListItem &item = _items.at(index.row());
+
+		switch(role) {
+		case Qt::DisplayRole: return QVariant::fromValue(item);
+		case TitleRole:
+		case Qt::EditRole: return item.title;
+		case IdRole: return item.id;
 		}
 	}
 	return QVariant();
@@ -148,8 +150,6 @@ void LayerListModel::createLayer(int id, int index, const QString &title)
 	beginInsertRows(QModelIndex(), index, index);
 	_items.insert(index, LayerListItem(id, title));
 	endInsertRows();
-
-	emit layerCreated(_items.count()==1);
 }
 
 void LayerListModel::deleteLayer(int id)
@@ -159,7 +159,6 @@ void LayerListModel::deleteLayer(int id)
 	beginRemoveRows(QModelIndex(), row, row);
 	_items.remove(row);
 	endRemoveRows();
-	emit layerDeleted(id, row+1);
 }
 
 void LayerListModel::clear()
