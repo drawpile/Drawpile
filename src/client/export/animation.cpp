@@ -58,7 +58,7 @@ void AnimationExporter::saveNextFrame()
 void AnimationExporter::exportAnimation(paintcore::LayerStack *layers, QWidget *parent)
 {
 	auto *dlg = new dialogs::VideoExportDialog(parent);
-	dlg->showAnimationSettings(layers->layers());
+	dlg->showAnimationSettings(layers->layerCount());
 	dlg->show();
 
 	connect(dlg, &QDialog::finished, [layers, dlg, parent](int result) {

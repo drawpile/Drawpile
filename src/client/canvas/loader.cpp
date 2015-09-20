@@ -138,7 +138,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
 	// Create layers
-	for(int i=0;i<m_session->layerStack()->layers();++i) {
+	for(int i=0;i<m_session->layerStack()->layerCount();++i) {
 		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);
 
 		QColor fill = layer->isSolidColor();

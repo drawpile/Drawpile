@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace paintcore {
 class Layer;
 class Tile;
 class Savepoint;
+struct LayerInfo;
 
 /**
  * \brief A stack of layers.
@@ -68,7 +69,7 @@ public:
 	void reorderLayers(const QList<uint16_t> &neworder);
 
 	//! Get the number of layers in the stack
-	int layers() const { return _layers.count(); }
+	int layerCount() const { return m_layers.count(); }
 
 	//! Get a layer by its index
 	Layer *getLayerByIndex(int index);
@@ -128,6 +129,9 @@ public:
 	//! Emit areaChanged if anything has been marked as dirty
 	void notifyAreaChanged();
 
+	//! Emit a layer info change notification
+	void notifyLayerInfoChange(const Layer *layer);
+
 	//! Create a new savepoint
 	Savepoint *makeSavepoint();
 
@@ -148,7 +152,7 @@ public:
 	//! Show background layer (bottom-most layer) in special view modes
 	void setViewBackgroundLayer(bool usebg);
 
-	//! Reset the entire layer stack
+	//! Clear the entire layer stack
 	void reset();
 
 signals:
@@ -158,6 +162,18 @@ signals:
 	//! Layer width/height changed
 	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
+	//! A layer's info has just changed
+	void layerChanged(int idx);
+
+	//! A layer was just added
+	void layerCreated(int idx, const LayerInfo &info);
+
+	//! A layer was just deleted
+	void layerDeleted(int idx);
+
+	//! All (or at least a lot of) layers have just changed
+	void layersChanged(const QList<LayerInfo> &layers);
+
 private:
 	void flattenTile(quint32 *data, int xindex, int yindex) const;
 
@@ -165,9 +181,11 @@ private:
 	int layerOpacity(int idx) const;
 	quint32 layerTint(int idx) const;
 
+	QList<LayerInfo> layerInfos() const;
+
 	int _width, _height;
 	int _xtiles, _ytiles;
-	QList<Layer*> _layers;
+	QList<Layer*> m_layers;
 	AnnotationModel *m_annotations;
 
 	QBitArray _dirtytiles;
