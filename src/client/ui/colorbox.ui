@@ -91,8 +91,8 @@
          <item>
           <widget class="QToolButton" name="paletteMenuButton">
            <property name="icon">
-            <iconset>
-             <normaloff>builtin:hamburger.svg</normaloff>builtin:hamburger.svg</iconset>
+            <iconset theme="application-menu">
+             <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
            </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
