@@ -52,7 +52,7 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
-	m_aclfilter = new AclFilter(m_userlist, m_layerstack, this);
+	m_aclfilter = new AclFilter(m_layerstack, this);
 	m_aclfilter->reset(localUserId, true);
 
 	m_layerlist->setMyId(localUserId);
@@ -126,7 +126,11 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			metaUserLeave(cmd.cast<UserLeave>());
 			break;
 		case MSG_SESSION_OWNER:
+			m_userlist->updateOperators(cmd->contextId(), cmd.cast<protocol::SessionOwner>().ids());
+			break;
 		case MSG_USER_ACL:
+			m_userlist->updateLocks(cmd.cast<protocol::UserACL>().ids());
+			break;
 		case MSG_SESSION_ACL:
 		case MSG_LAYER_ACL:
 			// Handled by the ACL filter

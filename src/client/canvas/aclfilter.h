@@ -34,13 +34,11 @@ namespace paintcore {
 
 namespace canvas {
 
-class UserListModel;
-
 class AclFilter : public QObject
 {
 	Q_OBJECT
 public:
-	AclFilter(UserListModel *users, paintcore::LayerStack *layers, QObject *parent = 0);
+	explicit AclFilter(paintcore::LayerStack *layers, QObject *parent = 0);
 
 	//! Reset all access controls
 	void reset(int myId, bool localMode);
@@ -98,7 +96,6 @@ private:
 
 	bool isLayerLockedFor(int layerId, uint8_t userId) const;
 
-	UserListModel *m_users;
 	paintcore::LayerStack *m_layers;
 	int m_myId;
 
@@ -109,6 +106,12 @@ private:
 	bool m_ownLayers;
 	bool m_lockDefault;
 	QHash<int, int> m_userLayers;
+
+	struct User {
+		bool isOperator;
+		bool isLocked;
+	};
+	User m_users[256];
 };
 
 }

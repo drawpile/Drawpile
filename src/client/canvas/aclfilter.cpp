@@ -18,8 +18,6 @@
 */
 
 #include "aclfilter.h"
-#include "userlist.h"
-#include "layerlist.h"
 
 #include "core/layer.h"
 #include "core/layerstack.h"
@@ -32,13 +30,17 @@
 
 namespace canvas {
 
-AclFilter::AclFilter(UserListModel *users, paintcore::LayerStack *layers, QObject *parent)
-	: QObject(parent), m_users(users), m_layers(layers)
+AclFilter::AclFilter(paintcore::LayerStack *layers, QObject *parent)
+	: QObject(parent), m_layers(layers)
 {
+	Q_ASSERT(layers);
 }
 
 void AclFilter::reset(int myId, bool localMode)
 {
+	for(int i=0;i<256;++i)
+		m_users[i] = {false, false};
+
 	for(int i=0;i<m_layers->layerCount();++i)
 		m_layers->getLayerByIndex(i)->setAcl(false, QList<uint8_t>());
 	m_myId = myId;
@@ -63,7 +65,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 {
 	using namespace protocol;
 
-	User u = m_users->getUserById(msg.contextId());
+	// Note: contextId is an unsigned 8 bit value, so we just keep
+	// an array of user contexts rather than use a hashmap.
+	User u = m_users[msg.contextId()];
 
 	// User list is empty in local mode
 	bool isOperator = u.isOperator || (msg.contextId() == m_myId && m_isOperator);
@@ -114,12 +118,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return true;
 	}
 
-	case MSG_USER_ACL: {
-		const auto &lmsg = static_cast<const UserACL&>(msg);
-		m_users->updateLocks(lmsg.ids());
-		setUserLock(lmsg.ids().contains(m_myId));
+	case MSG_USER_ACL:
+		setUserLock(static_cast<const UserACL&>(msg).ids().contains(m_myId));
 		return true;
-	}
+
 	case MSG_TOOLCHANGE:
 		m_userLayers[msg.contextId()] = static_cast<const ToolChange&>(msg).layer();
 		return true;
@@ -180,11 +182,7 @@ bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 {
-	QList<uint8_t> ids = msg.ids();
-	ids.append(msg.contextId());
-	m_users->updateOperators(ids);
-
-	setOperator(ids.contains(m_myId));
+	setOperator(msg.ids().contains(m_myId) || m_myId==msg.contextId());
 }
 
 void AclFilter::setOperator(bool op)
