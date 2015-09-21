@@ -48,7 +48,6 @@ struct StateSavepoint::Data {
 	int streampointer;
 	paintcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
-	QVector<LayerListItem> layermodel;
 
 private:
 	int _refcount;
@@ -121,10 +120,9 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
  * @param myId ID of the local user
  * @param parent
  */
-StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent)
+StateTracker::StateTracker(paintcore::LayerStack *image, int myId, QObject *parent)
 	: QObject(parent),
 		_image(image),
-		m_layerlist(layerlist),
 		m_myId(myId),
 		m_msgstream_sizelimit(1024 * 1024 * 10),
 		m_fullhistory(true),
@@ -132,8 +130,6 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		_hasParticipated(false),
 		m_isQueued(false)
 {
-	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
-
 	// Timer for periodically resetting the local fork to keep cruft from accumulating.
 	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
 	// draw anything in a while.
@@ -159,7 +155,6 @@ void StateTracker::reset()
 	m_fullhistory = true;
 	_hasParticipated = false;
 	_localfork.clear();
-	m_layerlist->clear();
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
@@ -415,14 +410,6 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 	);
 
 	if(layer) {
-		// Note: layers are listed bottom-first in the stack,
-		// but topmost first in the view
-		m_layerlist->createLayer(
-			cmd.id(),
-			_image->layerCount() - _image->indexOf(layer->id()) - 1,
-			cmd.title()
-		);
-
 		if(cmd.contextId() == localId() || !_hasParticipated)
 			emit layerAutoselectRequest(cmd.id());
 	}
@@ -438,7 +425,6 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
@@ -455,7 +441,6 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 	}
 
 	layer->setHidden(!cmd.visible());
-	m_layerlist->setLayerHidden(cmd.id(), !cmd.visible());
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -476,7 +461,6 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 	}
 
 	layer->setTitle(cmd.title());
-	m_layerlist->retitleLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
@@ -495,7 +479,6 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 	}
 
 	_image->reorderLayers(newOrder);
-	m_layerlist->reorderLayers(newOrder);
 }
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
@@ -503,7 +486,6 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 	if(cmd.merge())
 		_image->mergeLayerDown(cmd.id());
 	_image->deleteLayer(cmd.id());
-	m_layerlist->deleteLayer(cmd.id());
 }
 
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
@@ -763,7 +745,6 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 	savepoint->streampointer = pos<0 ? m_msgstream.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
 	savepoint->ctxstate = _contexts;
-	savepoint->layermodel = m_layerlist->getLayers();
 
 	return savepoint;
 }
@@ -802,7 +783,6 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
-	m_layerlist->setLayers(savepoint->layermodel);
 
 	_savepoints.append(savepoint);
 }
@@ -816,7 +796,6 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
-	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
@@ -895,24 +874,6 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		out << ctx.stroke.distance << ctx.stroke.smudgeDistance << ctx.stroke.smudgeColor;
 	}
 
-	// Write layer model
-	out << quint8(d->layermodel.size());
-	foreach(const LayerListItem &layer, d->layermodel) {
-		// Write layer ID
-		out << qint32(layer.id);
-
-		// Write layer title
-		out << layer.title;
-
-		// Write layer opacity and flags
-		out << layer.opacity;
-		out << quint8(layer.blend);
-		out << layer.hidden << layer.locked;
-
-		// Write layer ACL
-		out << layer.exclusive;
-	}
-
 	// Write layer stack
 	d->canvas->toDatastream(out);
 }
@@ -970,46 +931,6 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		d->ctxstate[ctxid] = ctx;
 	}
 
-	// Read layer list
-	quint8 layercount;
-	in >> layercount;
-	while(layercount--) {
-		// Read layer ID
-		qint32 layerid;
-		in >> layerid;
-
-		// Read layer title
-		QString title;
-		in >> title;
-
-		// Read opacity and flags
-		float opacity;
-		in >> opacity;
-
-		quint8 blend;
-		in >> blend;
-
-		bool hidden;
-		in >> hidden;
-
-		bool locked;
-		in >> locked;
-
-		// Read layer ACL
-		QList<uint8_t> acls;
-		in >> acls;
-
-		sp->layermodel.append(LayerListItem {
-			layerid,
-			title,
-			opacity,
-			paintcore::BlendMode::Mode(blend),
-			hidden,
-			locked,
-			acls
-		});
-	}
-
 	// Read layerstack snapshot
 	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
 
@@ -1018,13 +939,13 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 
 bool StateTracker::isLayerLocked(int id) const
 {
-	for(const LayerListItem &l : m_layerlist->getLayers()) {
-		if(l.id == id)
-			return l.isLockedFor(localId());
+	paintcore::Layer *l = _image->getLayer(id);
+	if(!l) {
+		qWarning("isLayerLocked(%d): no such layer!", id);
+		return false;
 	}
 
-	qWarning("isLayerLocked(%d): no such layer!", id);
-	return false;
+	return l->info().isLockedFor(m_myId);
 }
 
 void StateTracker::resetLocalFork()

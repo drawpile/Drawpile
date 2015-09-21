@@ -515,12 +515,12 @@ void LayerStack::notifyAreaChanged()
 void LayerStack::notifyLayerInfoChange(const Layer *layer)
 {
 	Q_ASSERT(layer);
-	// Note: Sublayes changes can trigger, but will not be found
+	// Note: Sublayer changes can trigger, but will not be found
 	// by indexOf. That's OK, since sublayers are for internal use
 	// only and we don't need to announce changes to them.
 	const int idx = indexOf(layer->id());
 	if(idx>=0) {
-		emit layerChanged(idx);
+		emit layerChanged(idx, layer->info());
 	}
 }
 

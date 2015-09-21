@@ -33,7 +33,6 @@ namespace protocol {
 }
 
 namespace canvas {
-	struct LayerListItem;
 	class CanvasModel;
 }
 

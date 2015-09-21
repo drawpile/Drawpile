@@ -253,6 +253,16 @@ void Layer::setTitle(const QString& title)
 	}
 }
 
+void Layer::setAcl(bool locked, const QList<uint8_t> &exclusive)
+{
+	if(m_info.locked != locked || m_info.exclusive != exclusive) {
+		m_info.locked = locked;
+		m_info.exclusive = exclusive;
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
+}
+
 QImage Layer::toImage() const {
 	QImage image(m_width, m_height, QImage::Format_ARGB32);
 	int i=0;
@@ -1077,11 +1087,13 @@ void Layer::toDatastream(QDataStream &out) const
 {
 	// Write ID
 	out << qint32(id());
-
-	// Write title
 	out << m_info.title;
 
-	// Write opacity, blend mode and hidden flag
+	// Write access controls
+	out << m_info.locked;
+	out << m_info.exclusive;
+
+	// Write rendering controls
 	out << m_info.opacity;
 	out << quint8(m_info.blend);
 	out << m_info.hidden;
@@ -1102,9 +1114,14 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	qint32 id;
 	in >> id;
 
-	// Read title
 	QString title;
 	in >> title;
+
+	// Read access controls
+	bool locked;
+	in >> locked;
+	QList<uint8_t> exclusive;
+	in >> exclusive;
 
 	// Read opacity, blend mode and hidden flag
 	uchar opacity;
@@ -1120,6 +1137,8 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	layer->m_info.opacity = opacity;
 	layer->m_info.blend = BlendMode::Mode(blend);
 	layer->m_info.hidden = hidden;
+	layer->m_info.locked = locked;
+	layer->m_info.exclusive = exclusive;
 	layer->putImage(0, 0, img, BlendMode::MODE_REPLACE);
 
 	// Read sublayers

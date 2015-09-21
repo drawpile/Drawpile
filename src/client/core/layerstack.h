@@ -162,14 +162,14 @@ signals:
 	//! Layer width/height changed
 	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
-	//! A layer's info has just changed
-	void layerChanged(int idx);
-
 	//! A layer was just added
 	void layerCreated(int idx, const LayerInfo &info);
 
 	//! A layer was just deleted
 	void layerDeleted(int idx);
+
+	//! A single layer's info has just changed
+	void layerChanged(int idx, const LayerInfo &info);
 
 	//! All (or at least a lot of) layers have just changed
 	void layersChanged(const QList<LayerInfo> &layers);

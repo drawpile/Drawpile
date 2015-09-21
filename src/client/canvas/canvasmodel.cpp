@@ -47,19 +47,25 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
 
-	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
-
 	m_layerstack = new paintcore::LayerStack(this);
-	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
+	m_statetracker = new StateTracker(m_layerstack, localUserId, this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
+	m_aclfilter = new AclFilter(m_userlist, m_layerstack, this);
 	m_aclfilter->reset(localUserId, true);
 
 	m_layerlist->setMyId(localUserId);
 	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
 		return m_layerstack->getLayer(id);
 	});
+
+	connect(m_layerstack, &paintcore::LayerStack::layerCreated, m_layerlist, &LayerListModel::addLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layerDeleted, m_layerlist, &LayerListModel::deleteLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layerChanged, m_layerlist, &LayerListModel::updateLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layersChanged, m_layerlist, &LayerListModel::updateLayers);
+
+	connect(m_layerlist, &LayerListModel::layerOpacityPreview, m_statetracker, &StateTracker::previewLayerOpacity);
 
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 
@@ -192,13 +198,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		// Message stream contains (starts with) a snapshot: use it
 		snapshot = m_statetracker->getHistory().toList();
 
-		// Add layer ACL status
-		// This is for the initial session snapshot. For new snapshots the
-		// server will add the correct layer ACLs.
-		for(const LayerListItem &layer : m_layerlist->getLayers()) {
-			if(layer.isLockedFor(m_statetracker->localId()))
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));
-		}
+		// TODO layer ACL status
 	}
 
 	return snapshot;

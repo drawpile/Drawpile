@@ -22,6 +22,7 @@
 #include "canvas/loader.h"
 #include "canvas/statetracker.h"
 #include "canvas/layerlist.h"
+#include "core/layer.h"
 
 #include <QHash>
 
@@ -70,7 +71,7 @@ private:
 	QString _error;
 	QList<protocol::MessagePtr> _messages;
 	QHash<int, ToolContext> _ctx;
-	QHash<int, LayerListItem> _layer;
+	QHash<int, paintcore::LayerInfo> _layer;
 
 	// Annotation edit buffer
 	int _edit_a_ctx;

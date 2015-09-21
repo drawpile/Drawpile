@@ -137,8 +137,6 @@ Q_DECLARE_TYPEINFO(canvas::StateSavepoint, Q_MOVABLE_TYPE);
 
 namespace canvas {
 
-class LayerListModel;
-
 /**
  * \brief Drawing context state tracker
  * 
@@ -148,7 +146,7 @@ class LayerListModel;
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, int myId, QObject *parent=0);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
@@ -280,7 +278,6 @@ private:
 	QHash<int, DrawingContext> _contexts;
 
 	paintcore::LayerStack *_image;
-	LayerListModel *m_layerlist;
 
 	QString _title;
 	int m_myId;

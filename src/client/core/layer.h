@@ -19,13 +19,16 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include <QColor>
-
 #include "tile.h"
+
+#include <QColor>
+#include <QVector>
+#include <QMetaType>
 
 class QImage;
 class QSize;
 class QDataStream;
+class QRect;
 
 namespace paintcore {
 
@@ -89,6 +92,9 @@ class Layer {
 
 		//! Set the layer name
 		void setTitle(const QString& title);
+
+		//! Set layer access controls
+		void setAcl(bool locked, const QList<uint8_t> &exclusive);
 
 		//! Get the layer as an image
 		QImage toImage() const;
@@ -239,7 +245,9 @@ class Layer {
 
 }
 
-Q_DECLARE_TYPEINFO(paintcore::LayerInfo, Q_MOVABLE_TYPE);
+//Q_DECLARE_TYPEINFO(paintcore::LayerInfo, Q_MOVABLE_TYPE);
+
+Q_DECLARE_METATYPE(paintcore::LayerInfo)
 
 #endif
 
