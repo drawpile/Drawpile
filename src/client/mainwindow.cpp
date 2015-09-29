@@ -104,8 +104,8 @@
 namespace {
 
 QString getLastPath() {
-	QSettings cfg;
-	return cfg.value("window/lastpath").toString();
+	QFileInfo fi(QSettings().value("window/lastpath").toString());
+	return fi.absoluteDir().absolutePath();
 }
 
 void setLastPath(const QString &lastpath) {
@@ -918,13 +918,8 @@ void MainWindow::open()
 			QApplication::tr("All Files (*)");
 
 	// Get the file name to open
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-	const QUrl file = QFileDialog::getOpenFileUrl(this,
-			tr("Open Image"), getLastPath(), filter);
-#else
 	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
 			tr("Open Image"), getLastPath(), filter));
-#endif
 
 	// Open the file if it was selected
 	if(file.isValid()) {
@@ -1035,7 +1030,6 @@ bool MainWindow::saveas()
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save Image"), getLastPath(), filter.join(";;"), &selfilter);
-
 	if(file.isEmpty()==false) {
 
 		// Set file suffix if missing
@@ -1073,6 +1067,8 @@ bool MainWindow::saveas()
 			_autosave->setEnabled(true);
 			setWindowModified(false);
 			updateTitle();
+			setLastPath(file);
+			addRecentFile(file);
 			return true;
 		}
 	}
