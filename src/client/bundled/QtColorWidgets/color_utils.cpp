@@ -22,6 +22,8 @@
 */
 #include "color_utils.hpp"
 
+#include <cmath>
+
 namespace color_widgets {
 namespace detail {
 
