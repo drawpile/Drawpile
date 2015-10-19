@@ -57,6 +57,8 @@ paintcore::AnnotationModel *LayerStackItem::annotations() const
 
 void LayerStackItem::paint(QPainter *painter)
 {
+	paintcore::LayerStack::Locker locker(m_model);
+
 	if(m_cache.isNull())
 		m_cache = QPixmap(m_model->size());
 

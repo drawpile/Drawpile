@@ -134,6 +134,8 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	// Most important bit first: canvas initialization
+	paintcore::LayerStack::Locker lslocker(m_session->layerStack());
+
 	const QSize imgsize = m_session->layerStack()->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 

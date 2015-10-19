@@ -152,7 +152,6 @@ public:
 
 	void localCommand(protocol::MessagePtr msg);
 	void receiveCommand(protocol::MessagePtr msg);
-	void receiveQueuedCommand(protocol::MessagePtr msg);
 
 	void endRemoteContexts();
 	void endPlayback();
@@ -240,8 +239,6 @@ public slots:
 	void previewLayerOpacity(int id, float opacity);
 	void resetLocalFork();
 
-private slots:
-	void processQueuedCommands();
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
 
@@ -292,10 +289,6 @@ private:
 	bool m_fullhistory;
 	bool _showallmarkers;
 	bool _hasParticipated;
-
-	QList<protocol::MessagePtr> m_msgqueue;
-	QTimer *m_queuetimer;
-	bool m_isQueued;
 };
 
 }

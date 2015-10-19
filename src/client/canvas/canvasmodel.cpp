@@ -18,6 +18,7 @@
 */
 
 #include "canvasmodel.h"
+#include "commandqueue.h"
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "statetracker.h"
@@ -38,22 +39,32 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
+#include <QThread>
+#include <QApplication>
 
 namespace canvas {
 
 CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_onlinemode(false)
 {
+	// Models
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
-
-	m_layerstack = new paintcore::LayerStack(this);
-	m_statetracker = new StateTracker(m_layerstack, localUserId, this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
-	m_aclfilter = new AclFilter(m_layerstack, this);
-	m_aclfilter->reset(localUserId, true);
+	// Processing thread
+	m_thread = new QThread(this);
+	m_thread->start();
+
+	m_cmdqueue = new CommandQueue(this);
+
+	m_layerstack = new paintcore::LayerStack(m_cmdqueue);
+	m_statetracker = new StateTracker(m_layerstack, localUserId, m_cmdqueue);
+	m_aclfilter = new AclFilter(m_layerstack, m_cmdqueue);
+	m_aclfilter->reset(localUserId, m_cmdqueue);
+
+	m_cmdqueue->moveToThread(m_thread);
 
 	m_layerlist->setMyId(localUserId);
 	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
@@ -74,6 +85,15 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
+}
+
+CanvasModel::~CanvasModel()
+{
+	qDebug("Terminating canvas processing thread...");
+	m_thread->quit();
+	m_thread->wait();
+	qDebug("Thread ended.");
+	delete m_cmdqueue;
 }
 
 int CanvasModel::localUserId() const
@@ -105,66 +125,12 @@ void CanvasModel::endPlayback()
 
 void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 {
-	using namespace protocol;
-
-	// Apply ACL filter
-	if(!m_aclfilter->filterMessage(*cmd)) {
-		qDebug("Filtered message %d from %d", cmd->type(), cmd->contextId());
-		return;
-	}
-
-	if(cmd->isMeta()) {
-		// Handle meta commands here
-		switch(cmd->type()) {
-		case MSG_CHAT:
-			metaChat(cmd.cast<Chat>());
-			break;
-		case MSG_USER_JOIN:
-			metaUserJoin(cmd.cast<UserJoin>());
-			break;
-		case MSG_USER_LEAVE:
-			metaUserLeave(cmd.cast<UserLeave>());
-			break;
-		case MSG_SESSION_OWNER:
-			m_userlist->updateOperators(cmd->contextId(), cmd.cast<protocol::SessionOwner>().ids());
-			break;
-		case MSG_USER_ACL:
-			m_userlist->updateLocks(cmd.cast<protocol::UserACL>().ids());
-			break;
-		case MSG_SESSION_ACL:
-		case MSG_LAYER_ACL:
-			// Handled by the ACL filter
-			break;
-		case MSG_INTERVAL:
-			/* intervals are used only when playing back recordings */
-			break;
-		case MSG_LASERTRAIL:
-			metaLaserTrail(cmd.cast<protocol::LaserTrail>());
-			break;
-		case MSG_MOVEPOINTER:
-			metaMovePointer(cmd.cast<MovePointer>());
-			break;
-		case MSG_MARKER:
-			metaMarkerMessage(cmd.cast<Marker>());
-			break;
-		default:
-			qWarning("Unhandled meta message type %d", cmd->type());
-		}
-
-	} else if(cmd->isCommand()) {
-		// The state tracker handles all drawing commands
-		m_statetracker->receiveQueuedCommand(cmd);
-		emit canvasModified();
-
-	} else {
-		qWarning("CanvasModel::handleDrawingCommand: command %d is neither Meta nor Command type!", cmd->type());
-	}
+	QApplication::postEvent(m_cmdqueue, new CommandEvent(cmd, false));
 }
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
-	m_statetracker->localCommand(cmd);
-	emit canvasModified();
+	QApplication::postEvent(m_cmdqueue, new CommandEvent(cmd, true));
 }
 
 QImage CanvasModel::toImage() const
@@ -229,6 +195,14 @@ void CanvasModel::setLayerViewMode(int mode)
 {
 	m_layerstack->setViewMode(paintcore::LayerStack::ViewMode(mode));
 	updateLayerViewOptions();
+}
+
+void CanvasModel::setTitle(const QString &title)
+{
+	if(m_title != title) {
+		m_title = title;
+		emit titleChanged(title);
+	}
 }
 
 void CanvasModel::setSelection(Selection *selection)

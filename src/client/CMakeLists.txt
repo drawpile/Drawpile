@@ -32,6 +32,7 @@ set (
 	tools/floodfill.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
+	canvas/commandqueue.cpp
 	canvas/selection.cpp
 	canvas/usercursormodel.cpp
 	canvas/lasertrailmodel.cpp

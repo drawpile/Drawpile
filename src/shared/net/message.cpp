@@ -26,6 +26,11 @@
 
 namespace protocol {
 
+void registerTypes()
+{
+	qRegisterMetaType<MessagePtr>("MessagePtr");
+}
+
 int Message::sniffLength(const char *data)
 {
 	// extract payload length

@@ -21,6 +21,8 @@
 
 #include <QGraphicsObject>
 
+class QTimer;
+
 namespace paintcore {
 	class LayerStack;
 }
@@ -52,7 +54,9 @@ protected:
 
 private:
 	paintcore::LayerStack *m_image;
-	QPixmap _cache;
+	QPixmap m_cache;
+	QRect m_refresh;
+	QTimer *m_refreshTimer;
 };
 
 }

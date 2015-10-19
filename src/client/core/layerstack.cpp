@@ -32,7 +32,8 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
-	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true)
+	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true),
+	  m_locked(false)
 {
 	m_annotations = new AnnotationModel(this);
 }
@@ -56,6 +57,26 @@ void LayerStack::reset()
 	m_annotations->clear();
 	emit resized(0, 0, oldsize);
 	emit layersChanged(QList<LayerInfo>());
+}
+
+bool LayerStack::lock(int timeout)
+{
+	bool l = m_mutex.tryLock(timeout);
+	if(l)
+		m_locked = true;
+	return l;
+}
+
+void LayerStack::unlock()
+{
+	Q_ASSERT(m_locked);
+	m_locked = false;
+	QRect dr = m_dirtyrect;
+	m_dirtyrect = QRect();
+	m_mutex.unlock();
+
+	if(!dr.isEmpty())
+		emit areaChanged(dr);
 }
 
 void LayerStack::resize(int top, int right, int bottom, int left)
@@ -469,7 +490,7 @@ void LayerStack::markDirty(const QRect &area)
 	for(;ty0<=ty1;++ty0) {
 		_dirtytiles.fill(true, ty0*_xtiles + tx0, ty0*_xtiles + tx1);
 	}
-	_dirtyrect |= area;
+	m_dirtyrect |= area;
 }
 
 void LayerStack::markDirty()
@@ -478,7 +499,7 @@ void LayerStack::markDirty()
 		return;
 	_dirtytiles.fill(true);
 
-	_dirtyrect = QRect(0, 0, _width, _height);
+	m_dirtyrect = QRect(0, 0, _width, _height);
 	notifyAreaChanged();
 }
 
@@ -489,7 +510,7 @@ void LayerStack::markDirty(int x, int y)
 
 	_dirtytiles.setBit(y*_xtiles + x);
 
-	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::markDirty(int index)
@@ -501,14 +522,14 @@ void LayerStack::markDirty(int index)
 	const int y = index / _xtiles;
 	const int x = index % _xtiles;
 
-	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::notifyAreaChanged()
 {
-	if(!_dirtyrect.isEmpty()) {
-		emit areaChanged(_dirtyrect);
-		_dirtyrect = QRect();
+	if(!m_locked && !m_dirtyrect.isEmpty()) {
+		emit areaChanged(m_dirtyrect);
+		m_dirtyrect = QRect();
 	}
 }
 
@@ -657,7 +678,7 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 			// Layers added or deleted, just refresh everything
 			// (force refresh even if layer stack is empty)
 			_dirtytiles.fill(true);
-			_dirtyrect = QRect(0, 0, _width, _height);
+			m_dirtyrect = QRect(0, 0, _width, _height);
 
 		} else {
 			// Layer count has not changed, compare layer contents

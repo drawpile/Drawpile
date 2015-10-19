@@ -127,8 +127,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, int myId, QObject *pare
 		m_msgstream_sizelimit(1024 * 1024 * 10),
 		m_fullhistory(true),
 		_showallmarkers(false),
-		_hasParticipated(false),
-		m_isQueued(false)
+		_hasParticipated(false)
 {
 	// Timer for periodically resetting the local fork to keep cruft from accumulating.
 	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
@@ -136,12 +135,6 @@ StateTracker::StateTracker(paintcore::LayerStack *image, int myId, QObject *pare
 	_localforkCleanupTimer = new QTimer(this);
 	_localforkCleanupTimer->setSingleShot(true);
 	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
-
-	// Timer for processing drawing commands in short chunks to avoid entirely locking up the UI.
-	// In the future, canvas rendering should be done in a separate thread.
-	m_queuetimer = new QTimer(this);
-	m_queuetimer->setSingleShot(true);
-	connect(m_queuetimer, &QTimer::timeout, this, &StateTracker::processQueuedCommands);
 }
 
 StateTracker::~StateTracker()
@@ -159,6 +152,8 @@ void StateTracker::reset()
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
 {
+	paintcore::LayerStack::Locker lock(_image);
+
 	// A fork is created at the end of the mainline history
 	if(_localfork.isEmpty()) {
 		_localfork.setOffset(m_msgstream.end()-1);
@@ -178,32 +173,6 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	}
 
 	_localforkCleanupTimer->start(60 * 1000);
-}
-
-void StateTracker::receiveQueuedCommand(protocol::MessagePtr msg)
-{
-	m_msgqueue.append(msg);
-
-	if(!m_isQueued)
-		processQueuedCommands();
-}
-
-void StateTracker::processQueuedCommands()
-{
-	QElapsedTimer elapsed;
-	elapsed.start();
-
-	while(!m_msgqueue.isEmpty() && elapsed.elapsed() < 100) {
-		receiveCommand(m_msgqueue.takeFirst());
-	}
-
-	if(!m_msgqueue.isEmpty()) {
-		qDebug("Taking a breather. Still %d messages in the queue.", m_msgqueue.size());
-		m_isQueued = true;
-		m_queuetimer->start(20);
-	} else {
-		m_isQueued = false;
-	}
 }
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
@@ -277,12 +246,14 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			const StateSavepoint &sp = _savepoints.at(savepoint);
 			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_msgstream.end(), _localfork.offset(), sp->streampointer);
 
+			paintcore::LayerStack::Locker lock(_image);
 			revertSavepointAndReplay(sp);
 		}
 
 	} else if(lfa==LocalFork::CONCURRENT) {
 		// Concurrent operation: safe to execute
 		int pos = m_msgstream.end() - 1;
+		paintcore::LayerStack::Locker lock(_image);
 		handleCommand(msg, false, pos);
 	} // else ALREADYDONE
 }

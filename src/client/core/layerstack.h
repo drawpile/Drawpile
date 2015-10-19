@@ -25,6 +25,7 @@
 #include <QList>
 #include <QImage>
 #include <QBitArray>
+#include <QMutex>
 
 class QDataStream;
 
@@ -52,6 +53,25 @@ public:
 
 	LayerStack(QObject *parent=0);
 	~LayerStack();
+
+	/**
+	 * @brief Acquire a mutex
+	 *
+	 * This also blocks the emission of areaChanged and resized
+	 * until unlock() is called.
+	 *
+	 * Note. Rather than calling this directly, it's usually easier to use
+	 * the Locker class.
+	 * @return true if the mutex was locked
+	 */
+	bool lock(int timeout=-1);
+
+	/**
+	 * @brief Release the mutex
+	 * This also triggers the emission of areaChanged if there were any
+	 * changes while the stack was locked.
+	 */
+	void unlock();
 
 	//! Adjust layer stack size
 	void resize(int top, int right, int bottom, int left);
@@ -155,6 +175,20 @@ public:
 	//! Clear the entire layer stack
 	void reset();
 
+	/** A convenience class for locking the layer stack */
+	class Locker {
+	public:
+		Locker(LayerStack *ls) : m_layerstack(ls) {
+			ls->lock();
+		}
+		Locker(const Locker &) = delete;
+		Locker &operator=(const Locker&) = delete;
+		~Locker() { m_layerstack->unlock(); }
+
+	private:
+		LayerStack *m_layerstack;
+	};
+
 signals:
 	//! Emitted when the visible layers are edited
 	void areaChanged(const QRect &area);
@@ -189,13 +223,16 @@ private:
 	AnnotationModel *m_annotations;
 
 	QBitArray _dirtytiles;
-	QRect _dirtyrect;
+	QRect m_dirtyrect;
 
 	ViewMode _viewmode;
 	int _viewlayeridx;
 	int _onionskinsBelow, _onionskinsAbove;
 	bool _onionskinTint;
 	bool _viewBackgroundLayer;
+
+	QMutex m_mutex;
+	bool m_locked;
 };
 
 /// Layer stack savepoint for undo use
