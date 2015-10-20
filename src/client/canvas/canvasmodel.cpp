@@ -28,7 +28,6 @@
 #include "loader.h"
 
 #include "core/layerstack.h"
-#include "core/annotationmodel.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
 
@@ -52,6 +51,7 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_userlist = new UserListModel(this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
+	m_annotations = new AnnotationModel(this);
 
 	// Processing thread
 	m_thread = new QThread(this);
@@ -85,6 +85,10 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
+
+	connect(m_statetracker->annotations(), &AnnotationState::annotationChanged, m_annotations, &AnnotationModel::changeAnnotation);
+	connect(m_statetracker->annotations(), &AnnotationState::annotationDeleted, m_annotations, &AnnotationModel::deleteAnnotation);
+	connect(m_statetracker->annotations(), &AnnotationState::annotationsReset, m_annotations, &AnnotationModel::setAnnotations);
 }
 
 CanvasModel::~CanvasModel()
@@ -136,19 +140,25 @@ void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 QImage CanvasModel::toImage() const
 {
 	// TODO include annotations or not?
-	return m_layerstack->toFlatImage(false);
+#if 0
+	QPainter painter(&image);
+	for(const Annotation &a : m_annotations->getAnnotations())
+		a.paint(&painter);
+#endif
+
+	return m_layerstack->toFlatImage();
 }
 
 bool CanvasModel::needsOpenRaster() const
 {
-	return m_layerstack->layerCount() > 1 || !m_layerstack->annotations()->isEmpty();
+	return m_layerstack->layerCount() > 1 || !m_annotations->isEmpty();
 }
 
 bool CanvasModel::save(const QString &filename) const
 {
 	if(filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(filename, m_layerstack);
+		return openraster::saveOpenRaster(filename, m_layerstack, m_annotations->getAnnotations());
 
 	} else {
 		// Regular image formats: flatten the image first.
@@ -246,7 +256,7 @@ int CanvasModel::getAvailableAnnotationId() const
 {
 	const int prefix = m_statetracker->localId() << 8;
 	QList<int> takenIds;
-	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
+	for(const Annotation &a : annotations()->getAnnotations()) {
 		if((a.id & 0xff00) == prefix)
 				takenIds << a.id;
 	}
@@ -308,14 +318,10 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
 	Q_UNUSED(oldsize);
 
-	// Adjust selection when new space was added to the left or top side
-	// so it remains visually in the same place
-	if(m_selection) {
-		if(xoffset || yoffset) {
-			QPoint offset(xoffset, yoffset);
-			m_selection->translate(offset);
-		}
+	if((xoffset || yoffset) && m_selection) {
+		m_selection->translate(QPoint(xoffset, yoffset));
 	}
+	// Note: the state tracker updates annotation positions in the same way
 }
 
 void CanvasModel::resetCanvas()

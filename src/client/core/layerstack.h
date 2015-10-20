@@ -29,8 +29,6 @@
 
 class QDataStream;
 
-#include "annotationmodel.h"
-
 namespace paintcore {
 
 class Layer;
@@ -42,7 +40,6 @@ struct LayerInfo;
  * \brief A stack of layers.
  */
 class LayerStack : public QObject {
-	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
 	Q_OBJECT
 public:
 	enum ViewMode {
@@ -103,10 +100,6 @@ public:
 	//! Get a layer by its ID
 	const Layer *getLayer(int id) const;
 
-	//! Get this layer stack's annotations
-	const AnnotationModel *annotations() const { return m_annotations; }
-	AnnotationModel *annotations() { return m_annotations; }
-
 	//! Get the index of the specified layer
 	int indexOf(int id) const;
 
@@ -126,7 +119,7 @@ public:
 	QColor colorAt(int x, int y, int dia=0) const;
 
 	//! Return a flattened image of the layer stack
-	QImage toFlatImage(bool includeAnnotations) const;
+	QImage toFlatImage() const;
 
 	//! Return a single layer composited with the given background
 	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background);
@@ -220,7 +213,6 @@ private:
 	int _width, _height;
 	int _xtiles, _ytiles;
 	QList<Layer*> m_layers;
-	AnnotationModel *m_annotations;
 
 	QBitArray _dirtytiles;
 	QRect m_dirtyrect;
@@ -247,7 +239,6 @@ public:
 private:
 	Savepoint() {}
 	QList<Layer*> layers;
-	QList<Annotation> annotations;
 	int width, height;
 };
 

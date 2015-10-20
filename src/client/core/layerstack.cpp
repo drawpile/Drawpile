@@ -35,7 +35,6 @@ LayerStack::LayerStack(QObject *parent)
 	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true),
 	  m_locked(false)
 {
-	m_annotations = new AnnotationModel(this);
 }
 
 LayerStack::~LayerStack()
@@ -54,7 +53,6 @@ void LayerStack::reset()
 	for(Layer *l : m_layers)
 		delete l;
 	m_layers.clear();
-	m_annotations->clear();
 	emit resized(0, 0, oldsize);
 	emit layersChanged(QList<LayerInfo>());
 }
@@ -100,14 +98,6 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 
 	for(Layer *l : m_layers)
 		l->resize(top, right, bottom, left);
-
-	if(left || top) {
-		// Update annotation positions
-		QPoint offset(left, top);
-		Q_FOREACH(const Annotation &a, m_annotations->getAnnotations()) {
-			m_annotations->reshapeAnnotation(a.id, a.rect.translated(offset));
-		}
-	}
 
 	emit resized(left, top, oldsize);
 }
@@ -399,7 +389,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 	}
 }
 
-QImage LayerStack::toFlatImage(bool includeAnnotations) const
+QImage LayerStack::toFlatImage() const
 {
 	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
 
@@ -408,15 +398,7 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 			flat.merge(l, true);
 	}
 
-	QImage image = flat.toImage();
-
-	if(includeAnnotations) {
-		QPainter painter(&image);
-		for(const Annotation &a : m_annotations->getAnnotations())
-			a.paint(&painter);
-	}
-
-	return image;
+	return flat.toImage();
 }
 
 QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background)
@@ -652,8 +634,6 @@ Savepoint *LayerStack::makeSavepoint()
 		sp->layers.append(new Layer(*l));
 	}
 
-	sp->annotations = m_annotations->getAnnotations();
-
 	sp->width = _width;
 	sp->height = _height;
 
@@ -707,9 +687,6 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 	for(const Layer *l : savepoint->layers)
 		m_layers.append(new Layer(*l));
 
-	// Restore annotations
-	m_annotations->setAnnotations(savepoint->annotations);
-
 	notifyAreaChanged();
 	emit layersChanged(layerInfos());
 }
@@ -733,12 +710,6 @@ void Savepoint::toDatastream(QDataStream &out) const
 	for(const Layer *layer : layers) {
 		layer->toDatastream(out);
 	}
-
-	// Write annotations
-	out << quint16(annotations.size());
-	for(const Annotation &annotation : annotations) {
-		annotation.toDataStream(out);
-	}
 }
 
 Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
@@ -754,12 +725,6 @@ Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
 	in >> layers;
 	while(layers--) {
 		sp->layers.append(Layer::fromDatastream(owner, in));
-	}
-
-	quint16 annotations;
-	in >> annotations;
-	while(annotations--) {
-		sp->annotations.append(Annotation::fromDataStream(in));
 	}
 
 	return sp;

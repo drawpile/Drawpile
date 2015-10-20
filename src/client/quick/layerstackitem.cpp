@@ -50,11 +50,6 @@ void LayerStackItem::setModel(paintcore::LayerStack *model)
 	}
 }
 
-paintcore::AnnotationModel *LayerStackItem::annotations() const
-{
-	return m_model ? m_model->annotations() : nullptr;
-}
-
 void LayerStackItem::paint(QPainter *painter)
 {
 	paintcore::LayerStack::Locker locker(m_model);

@@ -42,13 +42,13 @@ Annotation::Annotation(ToolController &owner)
  */
 void Annotation::begin(const paintcore::Point& point, float zoom)
 {
-	m_selectedId = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
+	m_selectedId = owner.model()->annotations()->annotationAtPos(point.toPoint(), zoom);
 	m_p1 = point;
 	m_p2 = point;
 	m_isNew = m_selectedId==0;
 
 	if(m_selectedId>0) {
-		m_handle = owner.model()->layerStack()->annotations()->annotationHandleAt(m_selectedId, point.toPoint(), zoom);
+		m_handle = owner.model()->annotations()->annotationHandleAt(m_selectedId, point.toPoint(), zoom);
 
 		owner.setActiveAnnotation(m_selectedId);
 
@@ -61,8 +61,14 @@ void Annotation::begin(const paintcore::Point& point, float zoom)
 		// Also, we use a special ID for the preview object that is outside the protocol range.
 		m_selectedId = PREVIEW_ID;
 
-		owner.model()->layerStack()->annotations()->addAnnotation(m_selectedId, QRect(m_p1.toPoint(), m_p1.toPoint() + QPoint(5,5)));
-		m_handle = paintcore::Annotation::RS_BOTTOMRIGHT;
+		owner.model()->annotations()->changeAnnotation(canvas::Annotation {
+			m_selectedId,
+			QString(),
+			QRect(m_p1.toPoint(), m_p1.toPoint() + QPoint(5,5)),
+			QColor(Qt::transparent)
+			}
+		);
+		m_handle = canvas::Annotation::RS_BOTTOMRIGHT;
 	}
 }
 
@@ -76,7 +82,7 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
 	Q_UNUSED(center);
 
 	QPointF p = point - m_p2;
-	m_handle = owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
+	m_handle = owner.model()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
 	m_p2 = point;
 }
 
@@ -93,7 +99,7 @@ void Annotation::end()
 
 	if(!m_isNew) {
 		if(m_p1.toPoint() != m_p2.toPoint()) {
-			const paintcore::Annotation *a = owner.model()->layerStack()->annotations()->getById(m_selectedId);
+			const canvas::Annotation *a = owner.model()->annotations()->getById(m_selectedId);
 			if(a) {
 				msgs << protocol::MessagePtr(new protocol::AnnotationReshape(0, m_selectedId, a->rect.x(), a->rect.y(), a->rect.width(), a->rect.height()));
 			}
@@ -118,7 +124,7 @@ void Annotation::end()
 		}
 
 		// Delete our preview annotation first
-		owner.model()->layerStack()->annotations()->deleteAnnotation(PREVIEW_ID);
+		owner.model()->annotations()->deleteAnnotation(PREVIEW_ID);
 
 		int newId = owner.model()->getAvailableAnnotationId();
 

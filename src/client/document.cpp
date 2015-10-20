@@ -526,7 +526,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 
 void Document::removeEmptyAnnotations()
 {
-	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
+	QList<int> ids = m_canvas->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		QList<protocol::MessagePtr> msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(0));

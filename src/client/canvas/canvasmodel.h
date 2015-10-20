@@ -28,6 +28,7 @@
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "selection.h"
+#include "annotationmodel.h"
 #include "core/layerstack.h"
 
 namespace protocol {
@@ -53,6 +54,7 @@ class CanvasModel : public QObject
 {
 	friend class CommandQueue;
 	Q_PROPERTY(paintcore::LayerStack* layerStack READ layerStack CONSTANT)
+	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
 	Q_PROPERTY(UserCursorModel* userCursors READ userCursors CONSTANT)
 	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
 	Q_PROPERTY(StateTracker* stateTracker READ stateTracker CONSTANT)
@@ -77,6 +79,7 @@ public:
 	LaserTrailModel *laserTrails() const { return m_lasers; }
 	UserListModel *userlist() const { return m_userlist; }
 	LayerListModel *layerlist() const { return m_layerlist; }
+	AnnotationModel *annotations() const { return m_annotations; }
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title);
@@ -165,6 +168,7 @@ private:
 	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;
+	AnnotationModel *m_annotations;
 
 	QString m_title;
 

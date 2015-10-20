@@ -156,7 +156,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	}
 
 	// Create annotations
-	for(const paintcore::Annotation &a : m_session->layerStack()->annotations()->getAnnotations()) {
+	for(const canvas::Annotation &a : m_session->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a.id, g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a.id, a.background.rgba(), a.text))));

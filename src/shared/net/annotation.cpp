@@ -85,7 +85,7 @@ int AnnotationReshape::serializePayload(uchar *data) const
 
 AnnotationEdit *AnnotationEdit::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len < 5)
+	if(len < 6)
 		return 0;
 
 	return new AnnotationEdit(
@@ -104,7 +104,6 @@ int AnnotationEdit::payloadLength() const
 int AnnotationEdit::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
 	qToBigEndian(_bg, ptr); ptr += 4;
 	memcpy(ptr, _text.constData(), _text.length());

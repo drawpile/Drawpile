@@ -67,10 +67,10 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	connect(m_model->layerStack(), &paintcore::LayerStack::resized, this, &CanvasScene::handleCanvasResize);
 
-	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
-	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
-	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
-	connect(anns, &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
+	canvas::AnnotationModel *anns = m_model->annotations();
+	connect(anns, &canvas::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
+	connect(anns, &canvas::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
+	connect(anns, &canvas::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
 
 	canvas::UserCursorModel *cursors = m_model->userCursors();
 	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
@@ -127,7 +127,7 @@ void CanvasScene::showAnnotations(bool show)
 void CanvasScene::showAnnotationBorders(bool hl)
 {
 	_showAnnotationBorders = hl;
-	foreach(QGraphicsItem *item, items()) {
+	for(QGraphicsItem *item : items()) {
 		if(item->type() == AnnotationItem::Type)
 			static_cast<AnnotationItem*>(item)->setShowBorder(hl);
 	}
@@ -160,7 +160,7 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 
 void CanvasScene::activeAnnotationChanged(int id)
 {
-	foreach(QGraphicsItem *i, items()) {
+	for(QGraphicsItem *i : items()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *item = static_cast<AnnotationItem*>(i);
 			item->setHighlight(item->id() == id);
@@ -171,8 +171,8 @@ void CanvasScene::activeAnnotationChanged(int id)
 void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		AnnotationItem *item = new AnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
+		const QModelIndex a = m_model->annotations()->index(i);
+		AnnotationItem *item = new AnnotationItem(a.data(canvas::AnnotationModel::IdRole).toInt());
 		item->setShowBorder(showAnnotationBorders());
 		item->setVisible(_showAnnotations);
 		addItem(item);
@@ -183,8 +183,8 @@ void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
+		const QModelIndex a = m_model->annotations()->index(i);
+		int id = a.data(canvas::AnnotationModel::IdRole).toInt();
 		AnnotationItem *item = getAnnotationItem(id);
 		if(item)
 			delete item;
@@ -197,17 +197,17 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 	const int ifirst = first.row();
 	const int ilast = last.row();
 	for(int i=ifirst;i<=ilast;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		AnnotationItem *item = getAnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
+		const QModelIndex a = m_model->annotations()->index(i);
+		AnnotationItem *item = getAnnotationItem(a.data(canvas::AnnotationModel::IdRole).toInt());
 		Q_ASSERT(item);
 		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
 			item->setText(a.data(Qt::DisplayRole).toString());
 
-		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::RectRole))
-			item->setGeometry(a.data(paintcore::AnnotationModel::RectRole).toRect());
+		if(changed.isEmpty() || changed.contains(canvas::AnnotationModel::RectRole))
+			item->setGeometry(a.data(canvas::AnnotationModel::RectRole).toRect());
 
-		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::BgColorRole))
-			item->setColor(a.data(paintcore::AnnotationModel::BgColorRole).value<QColor>());
+		if(changed.isEmpty() || changed.contains(canvas::AnnotationModel::BgColorRole))
+			item->setColor(a.data(canvas::AnnotationModel::BgColorRole).value<QColor>());
 	}
 }
 

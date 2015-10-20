@@ -18,6 +18,7 @@
 */
 
 #include "statetracker.h"
+#include "annotationstate.h"
 #include "layerlist.h"
 #include "loader.h"
 
@@ -47,6 +48,7 @@ struct StateSavepoint::Data {
 	qint64 timestamp;
 	int streampointer;
 	paintcore::Savepoint *canvas;
+	QList<Annotation> annotations;
 	QHash<int, DrawingContext> ctxstate;
 
 private:
@@ -129,12 +131,16 @@ StateTracker::StateTracker(paintcore::LayerStack *image, int myId, QObject *pare
 		_showallmarkers(false),
 		_hasParticipated(false)
 {
+	m_annotations = new AnnotationState(this);
+
 	// Timer for periodically resetting the local fork to keep cruft from accumulating.
 	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
 	// draw anything in a while.
 	_localforkCleanupTimer = new QTimer(this);
 	_localforkCleanupTimer->setSingleShot(true);
 	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
+
+	connect(image, &paintcore::LayerStack::resized, m_annotations, &AnnotationState::offsetAll);
 }
 
 StateTracker::~StateTracker()
@@ -302,16 +308,10 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 			handleUndo(msg.cast<Undo>());
 			break;
 		case MSG_ANNOTATION_CREATE:
-			handleAnnotationCreate(msg.cast<AnnotationCreate>());
-			break;
 		case MSG_ANNOTATION_RESHAPE:
-			handleAnnotationReshape(msg.cast<AnnotationReshape>());
-			break;
 		case MSG_ANNOTATION_EDIT:
-			handleAnnotationEdit(msg.cast<AnnotationEdit>());
-			break;
 		case MSG_ANNOTATION_DELETE:
-			handleAnnotationDelete(msg.cast<AnnotationDelete>());
+			m_annotations->handleAnnotationCommand(msg);
 			break;
 		case MSG_FILLRECT:
 			handleFillRect(msg.cast<FillRect>());
@@ -715,6 +715,7 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
 	savepoint->streampointer = pos<0 ? m_msgstream.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
+	savepoint->annotations = m_annotations->getAnnotations();
 	savepoint->ctxstate = _contexts;
 
 	return savepoint;
@@ -753,6 +754,7 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	_savepoints.clear();
 
 	_image->restoreSavepoint(savepoint->canvas);
+	m_annotations->setAnnotations(savepoint->annotations);
 	_contexts = savepoint->ctxstate;
 
 	_savepoints.append(savepoint);
@@ -789,28 +791,6 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	emit retconned();
 }
 
-void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
-{
-	_image->annotations()->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-	if(cmd.contextId() == localId())
-		emit myAnnotationCreated(cmd.id());
-}
-
-void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)
-{
-	_image->annotations()->reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-}
-
-void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
-{
-	_image->annotations()->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
-}
-
-void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
-{
-	_image->annotations()->deleteAnnotation(cmd.id());
-}
-
 void StateSavepoint::toDatastream(QDataStream &out) const
 {
 	Q_ASSERT(_data);
@@ -821,7 +801,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write drawing contexts
 	out << quint8(d->ctxstate.size());
-	foreach(quint8 ctxid, d->ctxstate.keys()) {
+	for(quint8 ctxid : d->ctxstate.keys()) {
 		const DrawingContext &ctx = d->ctxstate[ctxid];
 
 		// write context ID
@@ -847,6 +827,12 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write layer stack
 	d->canvas->toDatastream(out);
+
+	// Write annotations
+	out << quint16(d->annotations.size());
+	for(const Annotation &annotation : d->annotations) {
+		annotation.toDataStream(out);
+	}
 }
 
 StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *owner)
@@ -905,6 +891,13 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 	// Read layerstack snapshot
 	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
 
+	// Read annotations
+	quint16 annotations;
+	in >> annotations;
+	while(annotations--) {
+		sp->annotations.append(Annotation::fromDataStream(in));
+	}
+	
 	return sp;
 }
 

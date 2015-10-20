@@ -43,10 +43,6 @@ namespace protocol {
 	class FillRect;
 	class UndoPoint;
 	class Undo;
-	class AnnotationCreate;
-	class AnnotationReshape;
-	class AnnotationEdit;
-	class AnnotationDelete;
 }
 
 namespace paintcore {
@@ -57,6 +53,8 @@ namespace paintcore {
 class QTimer;
 
 namespace canvas {
+
+class AnnotationState;
 
 struct ToolContext {
 	ToolContext() : layer_id(-1) {}
@@ -164,6 +162,8 @@ public:
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
 
+	const AnnotationState *annotations() const { return m_annotations; }
+
 	/**
 	 * @brief Set the maximum length of the stored history.
 	 * @param length
@@ -226,7 +226,8 @@ public:
 	void resetToSavepoint(StateSavepoint sp);
 
 signals:
-	void myAnnotationCreated(int id);
+	//! These must be handled externally
+	void annotationCommand(protocol::MessagePtr &msg);
 	void layerAutoselectRequest(int);
 
 	void retconned();
@@ -266,15 +267,10 @@ private:
 	void makeSavepoint(int pos);
 	void revertSavepointAndReplay(const StateSavepoint savepoint);
 
-	// Annotation related commands
-	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
-	void handleAnnotationReshape(const protocol::AnnotationReshape &cmd);
-	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
-	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
-
 	QHash<int, DrawingContext> _contexts;
 
 	paintcore::LayerStack *_image;
+	AnnotationState *m_annotations;
 
 	QString _title;
 	int m_myId;

@@ -21,6 +21,7 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/blendmodes.h"
+#include "canvas/annotationstate.h"
 
 #include <QDomDocument>
 #include <QBuffer>
@@ -39,7 +40,7 @@ bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
 	return zip.writeFile(filename, buf.data());
 }
 
-bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
+bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const QList<canvas::Annotation> &annotations)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
@@ -62,10 +63,10 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	// Add annotations
 	// This will probably be replaced with proper text element support
 	// once standardized.
-	if(!image->annotations()->isEmpty()) {
+	if(!annotations.isEmpty()) {
 		QDomElement annotationEls = doc.createElement("drawpile:annotations");
 		annotationEls.setPrefix("drawpile");
-		for(const paintcore::Annotation &a : image->annotations()->getAnnotations()) {
+		for(const canvas::Annotation &a : annotations) {
 			QDomElement an = doc.createElement("drawpile:a");
 			an.setPrefix("drawpile");
 
@@ -112,7 +113,7 @@ bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 
 bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 {
-	QImage img = layers->toFlatImage(false);
+	QImage img = layers->toFlatImage();
 
 	// Flattened full size version for image viewers
 	if(!putPngInZip(zf, "mergedimage.png", img))
@@ -129,7 +130,7 @@ bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 
 namespace openraster {
 
-bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
+bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image, const QList<canvas::Annotation> &annotations)
 {
 	KZip zf(filename);
 	if(!zf.open(QIODevice::WriteOnly))
@@ -143,7 +144,7 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 
 	// The stack XML contains the image structure
 	// definition.
-	writeStackXml(zf, image);
+	writeStackXml(zf, image, annotations);
 
 	// Each layer is written as an individual PNG image
 	for(int i=image->layerCount()-1;i>=0;--i)

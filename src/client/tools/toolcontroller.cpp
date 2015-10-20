@@ -30,7 +30,7 @@
 
 #include "core/point.h"
 #include "core/layerstack.h"
-#include "core/annotationmodel.h"
+#include "canvas/annotationmodel.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/statetracker.h"
 
@@ -130,24 +130,36 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
 		if(m_model) {
-			disconnect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
-			disconnect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+			// TODO
+			disconnect(m_model->annotations(), &canvas::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+			disconnect(m_model->annotations(), &canvas::AnnotationModel::rowsInserted, this, &ToolController::onAnnotationRowInserted);
 		}
 
 		m_model = model;
 
-		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
-		connect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+		// TODO: reimplement with rowsInserted
+		connect(m_model->annotations(), &canvas::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+		connect(m_model->annotations(), &canvas::AnnotationModel::rowsInserted, this, &ToolController::onAnnotationRowInserted);
 
 		emit modelChanged(model);
+	}
+}
+
+void ToolController::onAnnotationRowInserted(const QModelIndex &, int first, int last)
+{
+	// Autoselect our own layer when we just created it
+	const int id = m_model->annotations()->index(first).data(canvas::AnnotationModel::IdRole).toInt();
+	const int userid = (id & 0xff00) >> 8;
+	if(userid == m_model->localUserId()) {
+		setActiveAnnotation(id);
 	}
 }
 
 void ToolController::onAnnotationRowDelete(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
-		const QModelIndex &a = m_model->layerStack()->annotations()->index(i);
-		if(a.data(paintcore::AnnotationModel::IdRole).toInt() == activeAnnotation())
+		const QModelIndex &a = m_model->annotations()->index(i);
+		if(a.data(canvas::AnnotationModel::IdRole).toInt() == activeAnnotation())
 			setActiveAnnotation(0);
 	}
 }
