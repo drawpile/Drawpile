@@ -1,17 +1,20 @@
 # Docker Drawpile
 
-Docker is a way to easily package applications into shippable 'containers'
-which can be run on any server running a docker container. 
+[Docker](https://www.docker.com/) is a way to easily package applications into shippable 'containers'. This directory 
+contains the Dockerfile defintion for creating a drawpile server. 
 
-This directory contains the Dockerfile defintion for creating a drawpile
-server from docker. 
+To build, simply run the following command in this directory:
 
-To build, simply run the following commands:
+```
+docker build -t drawpile .
+```
 
-`docker build -t drawpile .`
+Which will download and compile the latest Drawpile server. At the end of this process you will have a Docker container image ready to be run.
 
-And to run:
+To run the your Drawpile docker container, simply use the following command:
 
-`docker run --daemonize --tty -p 8080:8080 drawpile` 
+```
+docker run --detach --tty --name drawpile -p 8080:8080 drawpile
+``` 
 
-This will start a drawpile server running on port 8080
+This will start a drawpile server in the background running on port 8080. 
