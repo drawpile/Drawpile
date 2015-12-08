@@ -28,6 +28,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QHash>
+#include <QtCore/QIODevice>
 
 #ifdef Q_OS_WIN
 #include <qplatformdefs.h> // mode_t
