@@ -182,6 +182,11 @@ bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 {
+	for(int i=0;i<255;++i)
+		m_users[i].isOperator = false;
+	for(uint8_t id : msg.ids())
+		m_users[id].isOperator = true;
+
 	setOperator(msg.ids().contains(m_myId) || m_myId==msg.contextId());
 }
 
