@@ -18,6 +18,7 @@
 */
 
 #include "canvasmodel.h"
+#include "commandqueue.h"
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "statetracker.h"
@@ -27,7 +28,6 @@
 #include "loader.h"
 
 #include "core/layerstack.h"
-#include "core/annotationmodel.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
 
@@ -38,28 +38,45 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
+#include <QThread>
+#include <QApplication>
 
 namespace canvas {
 
 CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_onlinemode(false)
 {
+	// Models
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
-
-	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
-
-	m_layerstack = new paintcore::LayerStack(this);
-	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
+	m_annotations = new AnnotationModel(this);
 
-	m_aclfilter->reset(localUserId, true);
+	// Processing thread
+	m_thread = new QThread(this);
+	m_thread->start();
+
+	m_cmdqueue = new CommandQueue(this);
+
+	m_layerstack = new paintcore::LayerStack(m_cmdqueue);
+	m_statetracker = new StateTracker(m_layerstack, localUserId, m_cmdqueue);
+	m_aclfilter = new AclFilter(m_layerstack, m_cmdqueue);
+	m_aclfilter->reset(localUserId, m_cmdqueue);
+
+	m_cmdqueue->moveToThread(m_thread);
 
 	m_layerlist->setMyId(localUserId);
 	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
 		return m_layerstack->getLayer(id);
 	});
+
+	connect(m_layerstack, &paintcore::LayerStack::layerCreated, m_layerlist, &LayerListModel::addLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layerDeleted, m_layerlist, &LayerListModel::deleteLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layerChanged, m_layerlist, &LayerListModel::updateLayer);
+	connect(m_layerstack, &paintcore::LayerStack::layersChanged, m_layerlist, &LayerListModel::updateLayers);
+
+	connect(m_layerlist, &LayerListModel::layerOpacityPreview, m_statetracker, &StateTracker::previewLayerOpacity);
 
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 
@@ -68,6 +85,23 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
+
+	connect(m_statetracker->annotations(), &AnnotationState::annotationChanged, m_annotations, &AnnotationModel::changeAnnotation);
+	connect(m_statetracker->annotations(), &AnnotationState::annotationDeleted, m_annotations, &AnnotationModel::deleteAnnotation);
+	connect(m_statetracker->annotations(), &AnnotationState::annotationsReset, m_annotations, &AnnotationModel::setAnnotations);
+}
+
+CanvasModel::~CanvasModel()
+{
+	qDebug("Terminating canvas processing thread...");
+
+	QMetaObject::invokeMethod(m_statetracker, "stop", Qt::BlockingQueuedConnection);
+
+	m_thread->quit();
+	m_thread->wait();
+
+	qDebug("Thread ended.");
+	delete m_cmdqueue;
 }
 
 int CanvasModel::localUserId() const
@@ -99,80 +133,77 @@ void CanvasModel::endPlayback()
 
 void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 {
-	using namespace protocol;
-
-	// Apply ACL filter
-	if(!m_aclfilter->filterMessage(*cmd)) {
-		qDebug("Filtered message %d from %d", cmd->type(), cmd->contextId());
-		return;
-	}
-
-	if(cmd->isMeta()) {
-		// Handle meta commands here
-		switch(cmd->type()) {
-		case MSG_CHAT:
-			metaChat(cmd.cast<Chat>());
-			break;
-		case MSG_USER_JOIN:
-			metaUserJoin(cmd.cast<UserJoin>());
-			break;
-		case MSG_USER_LEAVE:
-			metaUserLeave(cmd.cast<UserLeave>());
-			break;
-		case MSG_SESSION_OWNER:
-		case MSG_USER_ACL:
-		case MSG_SESSION_ACL:
-		case MSG_LAYER_ACL:
-			// Handled by the ACL filter
-			break;
-		case MSG_INTERVAL:
-			/* intervals are used only when playing back recordings */
-			break;
-		case MSG_LASERTRAIL:
-			metaLaserTrail(cmd.cast<protocol::LaserTrail>());
-			break;
-		case MSG_MOVEPOINTER:
-			metaMovePointer(cmd.cast<MovePointer>());
-			break;
-		case MSG_MARKER:
-			metaMarkerMessage(cmd.cast<Marker>());
-			break;
-		default:
-			qWarning("Unhandled meta message type %d", cmd->type());
-		}
-
-	} else if(cmd->isCommand()) {
-		// The state tracker handles all drawing commands
-		m_statetracker->receiveQueuedCommand(cmd);
-		emit canvasModified();
-
-	} else {
-		qWarning("CanvasModel::handleDrawingCommand: command %d is neither Meta nor Command type!", cmd->type());
-	}
+	QApplication::postEvent(m_cmdqueue, new CommandEvent(cmd, false));
 }
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
-	m_statetracker->localCommand(cmd);
-	emit canvasModified();
+	QApplication::postEvent(m_cmdqueue, new CommandEvent(cmd, true));
+}
+
+/**
+ * Most meta-commands are related to the UI rather than the canvas
+ * itself and must be handled on the main thread. The meta commands
+ * not handled here are handled by CommandQueue in the canvas thread.
+ * @param cmd
+ */
+void CanvasModel::handleMeta(protocol::MessagePtr cmd)
+{
+	Q_ASSERT(cmd->isMeta());
+
+	switch(cmd->type()) {
+	using namespace::protocol;
+	case MSG_CHAT:
+		metaChat(cmd.cast<Chat>());
+		break;
+	case MSG_USER_JOIN:
+		metaUserJoin(cmd.cast<UserJoin>());
+		break;
+	case MSG_USER_LEAVE:
+		metaUserLeave(cmd.cast<UserLeave>());
+		break;
+	case MSG_SESSION_OWNER:
+		m_userlist->updateOperators(cmd->contextId(), cmd.cast<protocol::SessionOwner>().ids());
+		break;
+	case MSG_USER_ACL:
+		m_userlist->updateLocks(cmd.cast<protocol::UserACL>().ids());
+		break;
+	case MSG_LASERTRAIL:
+		metaLaserTrail(cmd.cast<protocol::LaserTrail>());
+		break;
+	case MSG_MOVEPOINTER:
+		metaMovePointer(cmd.cast<MovePointer>());
+		break;
+	case MSG_MARKER:
+		metaMarkerMessage(cmd.cast<Marker>());
+		break;
+	default:
+		break;
+	}
 }
 
 QImage CanvasModel::toImage() const
 {
 	// TODO include annotations or not?
-	return m_layerstack->toFlatImage(false);
+#if 0
+	QPainter painter(&image);
+	for(const Annotation &a : m_annotations->getAnnotations())
+		a.paint(&painter);
+#endif
+
+	return m_layerstack->toFlatImage();
 }
 
 bool CanvasModel::needsOpenRaster() const
 {
-	return m_layerstack->layers() > 1 || !m_layerstack->annotations()->isEmpty();
+	return m_layerstack->layerCount() > 1 || !m_annotations->isEmpty();
 }
 
 bool CanvasModel::save(const QString &filename) const
 {
 	if(filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(filename, m_layerstack);
+		return openraster::saveOpenRaster(filename, m_layerstack, m_annotations->getAnnotations());
 
 	} else {
 		// Regular image formats: flatten the image first.
@@ -192,13 +223,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		// Message stream contains (starts with) a snapshot: use it
 		snapshot = m_statetracker->getHistory().toList();
 
-		// Add layer ACL status
-		// This is for the initial session snapshot. For new snapshots the
-		// server will add the correct layer ACLs.
-		for(const LayerListItem &layer : m_layerlist->getLayers()) {
-			if(layer.isLockedFor(m_statetracker->localId()))
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));
-		}
+		// TODO layer ACL status
 	}
 
 	return snapshot;
@@ -225,6 +250,14 @@ void CanvasModel::setLayerViewMode(int mode)
 {
 	m_layerstack->setViewMode(paintcore::LayerStack::ViewMode(mode));
 	updateLayerViewOptions();
+}
+
+void CanvasModel::setTitle(const QString &title)
+{
+	if(m_title != title) {
+		m_title = title;
+		emit titleChanged(title);
+	}
 }
 
 void CanvasModel::setSelection(Selection *selection)
@@ -268,7 +301,7 @@ int CanvasModel::getAvailableAnnotationId() const
 {
 	const int prefix = m_statetracker->localId() << 8;
 	QList<int> takenIds;
-	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
+	for(const Annotation &a : annotations()->getAnnotations()) {
 		if((a.id & 0xff00) == prefix)
 				takenIds << a.id;
 	}
@@ -330,14 +363,10 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
 	Q_UNUSED(oldsize);
 
-	// Adjust selection when new space was added to the left or top side
-	// so it remains visually in the same place
-	if(m_selection) {
-		if(xoffset || yoffset) {
-			QPoint offset(xoffset, yoffset);
-			m_selection->translate(offset);
-		}
+	if((xoffset || yoffset) && m_selection) {
+		m_selection->translate(QPoint(xoffset, yoffset));
 	}
+	// Note: the state tracker updates annotation positions in the same way
 }
 
 void CanvasModel::resetCanvas()

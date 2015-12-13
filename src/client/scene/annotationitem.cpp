@@ -91,7 +91,12 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	painter->fillRect(m_rect, m_color);
-	m_doc.drawContents(painter, m_rect);
+
+	painter->save();
+	painter->translate(m_rect.x(), m_rect.y());
+	QRect docrect(0, 0, m_rect.width(), m_rect.height());
+	m_doc.drawContents(painter, docrect);
+	painter->restore();
 
 	if(m_showborder || m_doc.isEmpty()) {
 		QColor border = QApplication::palette().color(QPalette::Highlight);

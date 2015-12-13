@@ -19,6 +19,7 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
+#include "core/layer.h"
 #include "core/blendmodes.h"
 
 #include <QAbstractListModel>
@@ -29,47 +30,7 @@
 
 namespace protocol {
 	class MessagePtr;
-
 }
-namespace paintcore {
-	class Layer;
-}
-
-namespace canvas {
-
-struct LayerListItem {
-	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(paintcore::BlendMode::MODE_NORMAL), hidden(false), locked(false) {}
-	LayerListItem(int id_, const QString &title_, float opacity_=1.0, paintcore::BlendMode::Mode blend_=paintcore::BlendMode::MODE_NORMAL, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
-		: id(id_), title(title_), opacity(opacity_), blend(blend_), hidden(hidden_), locked(locked_), exclusive(exclusive_)
-		{}
-
-	//! Layer ID
-	int id;
-	
-	//! Layer title
-	QString title;
-	
-	//! Layer opacity
-	float opacity;
-	
-	//! Blending mode
-	paintcore::BlendMode::Mode blend;
-
-	//! Layer hidden flag (local only)
-	bool hidden;
-
-	//! General layer lock
-	bool locked;
-
-	//! Exclusive access to these users
-	QList<uint8_t> exclusive;
-
-	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
-};
-
-}
-
-Q_DECLARE_TYPEINFO(canvas::LayerListItem, Q_MOVABLE_TYPE);
 
 namespace canvas {
 
@@ -78,6 +39,11 @@ typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
 class LayerListModel : public QAbstractListModel {
 	Q_OBJECT
 public:
+	enum LayerListRoles {
+		IdRole = Qt::UserRole + 1,
+		TitleRole,
+	};
+
 	LayerListModel(QObject *parent=0);
 	
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -91,23 +57,10 @@ public:
 	QModelIndex layerIndex(int id);
 	
 	void clear();
-	void createLayer(int id, int index, const QString &title);
-	void deleteLayer(int id);
-	void changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend);
-	void retitleLayer(int id, const QString &title);
-	void setLayerHidden(int id, bool hidden);
-	void reorderLayers(QList<uint16_t> neworder);
-	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
-	void unlockAll();
-
-	bool isLayerLockedFor(int layerId, int contextId) const;
 	
-	QVector<LayerListItem> getLayers() const { return _items; }
-	void setLayers(const QVector<LayerListItem> &items);
-
 	void previewOpacityChange(int id, float opacity);
 
-	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
+	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	const paintcore::Layer *getLayerData(int id) const;
 
 	int myId() const { return m_myId; }
@@ -126,9 +79,13 @@ public:
 	 */
 	QString getAvailableLayerName(QString basename) const;
 
+public slots:
+	void addLayer(int idx, const paintcore::LayerInfo &layer);
+	void deleteLayer(int idx);
+	void updateLayer(int idx, const paintcore::LayerInfo &layer);
+	void updateLayers(const QList<paintcore::LayerInfo> &layers);
+
 signals:
-	void layerCreated(bool wasfirst);
-	void layerDeleted(int id, int idx);
 	void layersReordered();
 
 	//! Emitted when layers are manually reordered
@@ -142,8 +99,8 @@ private:
 
 	int indexOf(int id) const;
 	
-	QVector<LayerListItem> _items;
-	GetLayerFunction _getlayerfn;
+	QList<paintcore::LayerInfo> m_layers;
+	GetLayerFunction m_getlayerfn;
 	int m_myId;
 };
 
@@ -172,8 +129,6 @@ private:
 };
 
 }
-
-Q_DECLARE_METATYPE(canvas::LayerListItem)
 
 #endif
 

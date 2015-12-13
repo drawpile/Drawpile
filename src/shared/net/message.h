@@ -19,7 +19,8 @@
 #ifndef DP_NET_MESSAGE_H
 #define DP_NET_MESSAGE_H
 
-#include <Qt>
+#include <QAtomicInt>
+#include <QMetaType>
 
 namespace protocol {
 
@@ -81,7 +82,7 @@ public:
 	//! Length of the fixed message header
 	static const int HEADER_LEN = 4;
 
-	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), _refcount(0), m_contextid(ctx) {}
+	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), m_refcount(0), m_contextid(ctx) {}
 	virtual ~Message() {}
 	
 	/**
@@ -260,7 +261,7 @@ protected:
 private:
 	const MessageType m_type;
 	MessageUndoState _undone;
-	int _refcount;
+	QAtomicInt m_refcount;
 	uint8_t m_contextid;
 };
 
@@ -289,60 +290,73 @@ protected:
 *
 * This object is the length of a normal pointer so it can be used
 * efficiently with QList.
-*
-* @todo use QAtomicInt if thread safety is needed
 */
 class MessagePtr {
 public:
+	MessagePtr() : m_ptr(nullptr) { }
+
 	/**
 	 * @brief Take ownership of the given raw Message pointer.
 	 *
 	 * The message will be deleted when reference count falls to zero.
-	 * Null pointers are not allowed.
 	 * @param msg
 	 */
 	explicit MessagePtr(Message *msg)
-		: _ptr(msg)
+		: m_ptr(msg)
 	{
-		Q_ASSERT(_ptr);
-		Q_ASSERT(_ptr->_refcount==0);
-		++_ptr->_refcount;
+		if(m_ptr) {
+			Q_ASSERT(m_ptr->m_refcount.load()==0);
+			m_ptr->m_refcount.ref();
+		}
 	}
 
-	MessagePtr(const MessagePtr &ptr) : _ptr(ptr._ptr) { ++_ptr->_refcount; }
+	MessagePtr(const MessagePtr &ptr) : m_ptr(ptr.m_ptr) {
+		if(m_ptr)
+			m_ptr->m_refcount.ref();
+	}
 
 	~MessagePtr()
 	{
-		Q_ASSERT(_ptr->_refcount>0);
-		if(--_ptr->_refcount == 0)
-			delete _ptr;
+		if(m_ptr && !m_ptr->m_refcount.deref())
+			delete m_ptr;
 	}
 
 	MessagePtr &operator=(const MessagePtr &msg)
 	{
-		if(msg._ptr != _ptr) {
-			Q_ASSERT(_ptr->_refcount>0);
-			if(--_ptr->_refcount == 0)
-				delete _ptr;
-			_ptr = msg._ptr;
-			++_ptr->_refcount;
+		if(msg.m_ptr != m_ptr) {
+			if(m_ptr && !m_ptr->m_refcount.deref())
+				delete m_ptr;
+
+			m_ptr = msg.m_ptr;
+
+			if(m_ptr)
+				m_ptr->m_refcount.ref();
 		}
 		return *this;
 	}
 
-	Message &operator*() const { return *_ptr; }
-	Message *operator ->() const { return _ptr; }
+	Message &operator*() const { return *m_ptr; }
+	Message *operator ->() const { return m_ptr; }
 
-	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*_ptr); }
+	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*m_ptr); }
 
-	bool equals(const MessagePtr &m) const { return _ptr->equals(*m); }
+	bool isNull() const { return m_ptr == nullptr; }
+
+	bool equals(const MessagePtr &m) const {
+		if(isNull() || m.isNull())
+			return false;
+		return m_ptr->equals(*m);
+	}
 
 private:
-	Message *_ptr;
+	Message *m_ptr;
 };
+
+void registerTypes();
 
 }
 
 Q_DECLARE_TYPEINFO(protocol::MessagePtr, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(protocol::MessagePtr)
 
 #endif

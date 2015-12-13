@@ -29,6 +29,8 @@
 
 namespace canvas {
 
+using paintcore::LayerInfo;
+
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractListModel(parent)
 {
@@ -38,17 +40,19 @@ int LayerListModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _items.size();
+	return m_layers.size();
 }
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < _items.size()) {
-		if(role == Qt::DisplayRole) {
-			return QVariant::fromValue(_items.at(index.row()));
-		} else if(role == Qt::EditRole) {
-			// Edit role is for renaming the layer
-			return _items.at(index.row()).title;
+	if(index.isValid() && index.row() >= 0 && index.row() < m_layers.size()) {
+		const LayerInfo &item = m_layers.at(index.row());
+
+		switch(role) {
+		case Qt::DisplayRole: return QVariant::fromValue(item);
+		case TitleRole:
+		case Qt::EditRole: return item.title;
+		case IdRole: return item.id;
 		}
 	}
 	return QVariant();
@@ -73,7 +77,7 @@ QStringList LayerListModel::mimeTypes() const {
 
 QMimeData *LayerListModel::mimeData(const QModelIndexList& indexes) const
 {
-	return new LayerMimeData(this, indexes[0].data().value<LayerListItem>().id);
+	return new LayerMimeData(this, indexes[0].data().value<LayerInfo>().id);
 }
 
 bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
@@ -86,7 +90,7 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 	if(ldata && ldata->source() == this) {
 		// note: if row is -1, the item was dropped on the parent element, which in the
 		// case of the list view means the empty area below the items.
-		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? _items.count() : row);
+		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? m_layers.size() : row);
 	} else {
 		// TODO support new layer drops
 		qWarning() << "External layer drag&drop not supported";
@@ -97,13 +101,13 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 {
 	// Need at least two layers for this to make sense
-	const int count = _items.count();
+	const int count = m_layers.size();
 	if(count < 2)
 		return;
 
 	QList<uint16_t> layers;
 	layers.reserve(count);
-	foreach(const LayerListItem &li, _items)
+	for(const LayerInfo &li : m_layers)
 		layers.append(li.id);
 
 	if(newIdx>oldIdx)
@@ -121,8 +125,8 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 
 int LayerListModel::indexOf(int id) const
 {
-	for(int i=0;i<_items.size();++i)
-		if(_items.at(i).id == id)
+	for(int i=0;i<m_layers.size();++i)
+		if(m_layers.at(i).id == id)
 			return i;
 	return -1;
 }
@@ -135,119 +139,49 @@ QModelIndex LayerListModel::layerIndex(int id)
 	return QModelIndex();
 }
 
-bool LayerListModel::isLayerLockedFor(int layerId, int contextId) const
+void LayerListModel::addLayer(int idx, const paintcore::LayerInfo &layer)
 {
-	int i = indexOf(layerId);
-	if(i>=0)
-		return _items.at(i).isLockedFor(contextId);
-	return false;
-}
+	// Reverse index since the topmost layer is shown first
+	idx = m_layers.size() - idx;
 
-void LayerListModel::createLayer(int id, int index, const QString &title)
-{
-	beginInsertRows(QModelIndex(), index, index);
-	_items.insert(index, LayerListItem(id, title));
+	beginInsertRows(QModelIndex(), idx, idx);
+	m_layers.insert(idx, layer);
 	endInsertRows();
-
-	emit layerCreated(_items.count()==1);
 }
 
-void LayerListModel::deleteLayer(int id)
+void LayerListModel::deleteLayer(int idx)
 {
-	int row = indexOf(id);
-	Q_ASSERT(row>=0);
-	beginRemoveRows(QModelIndex(), row, row);
-	_items.remove(row);
+	// Reverse index
+	idx = m_layers.size() - 1 - idx;
+
+	Q_ASSERT(idx>=0 && idx<m_layers.size());
+	beginRemoveRows(QModelIndex(), idx, idx);
+	m_layers.removeAt(idx);
 	endRemoveRows();
-	emit layerDeleted(id, row+1);
+
 }
 
-void LayerListModel::clear()
+void LayerListModel::updateLayer(int idx, const paintcore::LayerInfo &layer)
 {
-	beginRemoveRows(QModelIndex(), 0, _items.size());
-	_items.clear();
-	endRemoveRows();
-}
+	// Reverse index
+	idx = m_layers.size() - 1 - idx;
+	m_layers[idx] = layer;
 
-void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend)
-{
-	int row = indexOf(id);
-	Q_ASSERT(row>=0);
-	LayerListItem &item = _items[row];
-	item.opacity = opacity;
-	item.blend = blend;
-	const QModelIndex qmi = index(row);
+	const QModelIndex qmi = index(idx);
 	emit dataChanged(qmi, qmi);
 }
 
-void LayerListModel::retitleLayer(int id, const QString &title)
-{
-	int row = indexOf(id);
-	Q_ASSERT(row>=0);
-	LayerListItem &item = _items[row];
-	item.title = title;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::setLayerHidden(int id, bool hidden)
-{
-	int row = indexOf(id);
-	Q_ASSERT(row>=0);
-	LayerListItem &item = _items[row];
-	item.hidden = hidden;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
-{
-	int row = indexOf(id);
-	Q_ASSERT(row>=0);
-	LayerListItem &item = _items[row];
-	item.locked = locked;
-	item.exclusive = exclusive;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::unlockAll()
-{
-	for(int i=0;i<_items.count();++i) {
-		_items[i].locked = false;
-		_items[i].exclusive.clear();
-	}
-	emit dataChanged(index(0), index(_items.count()));
-}
-
-void LayerListModel::reorderLayers(QList<uint16_t> neworder)
-{
-	QVector<LayerListItem> newitems;
-	for(int j=neworder.size()-1;j>=0;--j) {
-		const uint16_t id=neworder[j];
-		for(int i=0;i<_items.size();++i) {
-			if(_items[i].id == id) {
-				newitems << _items[i];
-				break;
-			}
-		}
-	}
-	_items = newitems;
-	emit dataChanged(index(0), index(_items.size()));
-	emit layersReordered();
-}
-
-void LayerListModel::setLayers(const QVector<LayerListItem> &items)
+void LayerListModel::updateLayers(const QList<paintcore::LayerInfo> &layers)
 {
 	beginResetModel();
-	_items = items;
+	m_layers = layers;
 	endResetModel();
 }
 
 const paintcore::Layer *LayerListModel::getLayerData(int id) const
 {
-	if(_getlayerfn)
-		return _getlayerfn(id);
+	if(m_getlayerfn)
+		return m_getlayerfn(id);
 	return nullptr;
 }
 
@@ -277,7 +211,7 @@ int LayerListModel::getAvailableLayerId() const
 {
 	const int prefix = m_myId << 8;
 	QList<int> takenIds;
-	for(const LayerListItem &item : _items) {
+	for(const LayerInfo &item : m_layers) {
 		if((item.id & 0xff00) == prefix)
 			takenIds.append(item.id);
 	}
@@ -308,7 +242,7 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 	// Find the biggest suffix in the layer stack
 	int suffix = 0;
-	for(const LayerListItem &l : _items) {
+	for(const LayerInfo &l : m_layers) {
 		auto m = suffixNumRe.match(l.title);
 		if(m.hasMatch()) {
 			if(l.title.startsWith(basename)) {

@@ -18,6 +18,7 @@
 */
 
 #include "statetracker.h"
+#include "annotationstate.h"
 #include "layerlist.h"
 #include "loader.h"
 
@@ -47,8 +48,8 @@ struct StateSavepoint::Data {
 	qint64 timestamp;
 	int streampointer;
 	paintcore::Savepoint *canvas;
+	QList<Annotation> annotations;
 	QHash<int, DrawingContext> ctxstate;
-	QVector<LayerListItem> layermodel;
 
 private:
 	int _refcount;
@@ -121,18 +122,16 @@ void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
  * @param myId ID of the local user
  * @param parent
  */
-StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent)
+StateTracker::StateTracker(paintcore::LayerStack *image, int myId, QObject *parent)
 	: QObject(parent),
 		_image(image),
-		m_layerlist(layerlist),
 		m_myId(myId),
 		m_msgstream_sizelimit(1024 * 1024 * 10),
 		m_fullhistory(true),
 		_showallmarkers(false),
-		_hasParticipated(false),
-		m_isQueued(false)
+		_hasParticipated(false)
 {
-	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
+	m_annotations = new AnnotationState(this);
 
 	// Timer for periodically resetting the local fork to keep cruft from accumulating.
 	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
@@ -141,15 +140,16 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 	_localforkCleanupTimer->setSingleShot(true);
 	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
 
-	// Timer for processing drawing commands in short chunks to avoid entirely locking up the UI.
-	// In the future, canvas rendering should be done in a separate thread.
-	m_queuetimer = new QTimer(this);
-	m_queuetimer->setSingleShot(true);
-	connect(m_queuetimer, &QTimer::timeout, this, &StateTracker::processQueuedCommands);
+	connect(image, &paintcore::LayerStack::resized, m_annotations, &AnnotationState::offsetAll);
 }
 
 StateTracker::~StateTracker()
 {
+}
+
+void StateTracker::stop()
+{
+	_localforkCleanupTimer->stop();
 }
 
 void StateTracker::reset()
@@ -159,11 +159,12 @@ void StateTracker::reset()
 	m_fullhistory = true;
 	_hasParticipated = false;
 	_localfork.clear();
-	m_layerlist->clear();
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
 {
+	paintcore::LayerStack::Locker lock(_image);
+
 	// A fork is created at the end of the mainline history
 	if(_localfork.isEmpty()) {
 		_localfork.setOffset(m_msgstream.end()-1);
@@ -183,32 +184,6 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	}
 
 	_localforkCleanupTimer->start(60 * 1000);
-}
-
-void StateTracker::receiveQueuedCommand(protocol::MessagePtr msg)
-{
-	m_msgqueue.append(msg);
-
-	if(!m_isQueued)
-		processQueuedCommands();
-}
-
-void StateTracker::processQueuedCommands()
-{
-	QElapsedTimer elapsed;
-	elapsed.start();
-
-	while(!m_msgqueue.isEmpty() && elapsed.elapsed() < 100) {
-		receiveCommand(m_msgqueue.takeFirst());
-	}
-
-	if(!m_msgqueue.isEmpty()) {
-		qDebug("Taking a breather. Still %d messages in the queue.", m_msgqueue.size());
-		m_isQueued = true;
-		m_queuetimer->start(20);
-	} else {
-		m_isQueued = false;
-	}
 }
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
@@ -282,12 +257,14 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			const StateSavepoint &sp = _savepoints.at(savepoint);
 			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_msgstream.end(), _localfork.offset(), sp->streampointer);
 
+			paintcore::LayerStack::Locker lock(_image);
 			revertSavepointAndReplay(sp);
 		}
 
 	} else if(lfa==LocalFork::CONCURRENT) {
 		// Concurrent operation: safe to execute
 		int pos = m_msgstream.end() - 1;
+		paintcore::LayerStack::Locker lock(_image);
 		handleCommand(msg, false, pos);
 	} // else ALREADYDONE
 }
@@ -336,16 +313,10 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 			handleUndo(msg.cast<Undo>());
 			break;
 		case MSG_ANNOTATION_CREATE:
-			handleAnnotationCreate(msg.cast<AnnotationCreate>());
-			break;
 		case MSG_ANNOTATION_RESHAPE:
-			handleAnnotationReshape(msg.cast<AnnotationReshape>());
-			break;
 		case MSG_ANNOTATION_EDIT:
-			handleAnnotationEdit(msg.cast<AnnotationEdit>());
-			break;
 		case MSG_ANNOTATION_DELETE:
-			handleAnnotationDelete(msg.cast<AnnotationDelete>());
+			m_annotations->handleAnnotationCommand(msg);
 			break;
 		case MSG_FILLRECT:
 			handleFillRect(msg.cast<FillRect>());
@@ -415,14 +386,6 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 	);
 
 	if(layer) {
-		// Note: layers are listed bottom-first in the stack,
-		// but topmost first in the view
-		m_layerlist->createLayer(
-			cmd.id(),
-			_image->layers() - _image->indexOf(layer->id()) - 1,
-			cmd.title()
-		);
-
 		if(cmd.contextId() == localId() || !_hasParticipated)
 			emit layerAutoselectRequest(cmd.id());
 	}
@@ -438,7 +401,6 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
@@ -455,7 +417,6 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 	}
 
 	layer->setHidden(!cmd.visible());
-	m_layerlist->setLayerHidden(cmd.id(), !cmd.visible());
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -476,13 +437,12 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 	}
 
 	layer->setTitle(cmd.title());
-	m_layerlist->retitleLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 {
 	QList<uint16_t> currentOrder;
-	for(int i=0;i<_image->layers();++i)
+	for(int i=0;i<_image->layerCount();++i)
 		currentOrder.append(_image->getLayerByIndex(i)->id());
 
 	QList<uint16_t> newOrder = cmd.sanitizedOrder(currentOrder);
@@ -495,7 +455,6 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 	}
 
 	_image->reorderLayers(newOrder);
-	m_layerlist->reorderLayers(newOrder);
 }
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
@@ -503,7 +462,6 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 	if(cmd.merge())
 		_image->mergeLayerDown(cmd.id());
 	_image->deleteLayer(cmd.id());
-	m_layerlist->deleteLayer(cmd.id());
 }
 
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
@@ -762,8 +720,8 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
 	savepoint->streampointer = pos<0 ? m_msgstream.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
+	savepoint->annotations = m_annotations->getAnnotations();
 	savepoint->ctxstate = _contexts;
-	savepoint->layermodel = m_layerlist->getLayers();
 
 	return savepoint;
 }
@@ -801,8 +759,8 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	_savepoints.clear();
 
 	_image->restoreSavepoint(savepoint->canvas);
+	m_annotations->setAnnotations(savepoint->annotations);
 	_contexts = savepoint->ctxstate;
-	m_layerlist->setLayers(savepoint->layermodel);
 
 	_savepoints.append(savepoint);
 }
@@ -816,7 +774,6 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
-	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
@@ -839,28 +796,6 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	emit retconned();
 }
 
-void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
-{
-	_image->annotations()->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-	if(cmd.contextId() == localId())
-		emit myAnnotationCreated(cmd.id());
-}
-
-void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)
-{
-	_image->annotations()->reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-}
-
-void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
-{
-	_image->annotations()->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
-}
-
-void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
-{
-	_image->annotations()->deleteAnnotation(cmd.id());
-}
-
 void StateSavepoint::toDatastream(QDataStream &out) const
 {
 	Q_ASSERT(_data);
@@ -871,7 +806,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write drawing contexts
 	out << quint8(d->ctxstate.size());
-	foreach(quint8 ctxid, d->ctxstate.keys()) {
+	for(quint8 ctxid : d->ctxstate.keys()) {
 		const DrawingContext &ctx = d->ctxstate[ctxid];
 
 		// write context ID
@@ -895,26 +830,14 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		out << ctx.stroke.distance << ctx.stroke.smudgeDistance << ctx.stroke.smudgeColor;
 	}
 
-	// Write layer model
-	out << quint8(d->layermodel.size());
-	foreach(const LayerListItem &layer, d->layermodel) {
-		// Write layer ID
-		out << qint32(layer.id);
-
-		// Write layer title
-		out << layer.title;
-
-		// Write layer opacity and flags
-		out << layer.opacity;
-		out << quint8(layer.blend);
-		out << layer.hidden << layer.locked;
-
-		// Write layer ACL
-		out << layer.exclusive;
-	}
-
 	// Write layer stack
 	d->canvas->toDatastream(out);
+
+	// Write annotations
+	out << quint16(d->annotations.size());
+	for(const Annotation &annotation : d->annotations) {
+		annotation.toDataStream(out);
+	}
 }
 
 StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *owner)
@@ -970,61 +893,28 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		d->ctxstate[ctxid] = ctx;
 	}
 
-	// Read layer list
-	quint8 layercount;
-	in >> layercount;
-	while(layercount--) {
-		// Read layer ID
-		qint32 layerid;
-		in >> layerid;
-
-		// Read layer title
-		QString title;
-		in >> title;
-
-		// Read opacity and flags
-		float opacity;
-		in >> opacity;
-
-		quint8 blend;
-		in >> blend;
-
-		bool hidden;
-		in >> hidden;
-
-		bool locked;
-		in >> locked;
-
-		// Read layer ACL
-		QList<uint8_t> acls;
-		in >> acls;
-
-		sp->layermodel.append(LayerListItem {
-			layerid,
-			title,
-			opacity,
-			paintcore::BlendMode::Mode(blend),
-			hidden,
-			locked,
-			acls
-		});
-	}
-
 	// Read layerstack snapshot
 	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
 
+	// Read annotations
+	quint16 annotations;
+	in >> annotations;
+	while(annotations--) {
+		sp->annotations.append(Annotation::fromDataStream(in));
+	}
+	
 	return sp;
 }
 
 bool StateTracker::isLayerLocked(int id) const
 {
-	for(const LayerListItem &l : m_layerlist->getLayers()) {
-		if(l.id == id)
-			return l.isLockedFor(localId());
+	paintcore::Layer *l = _image->getLayer(id);
+	if(!l) {
+		qWarning("isLayerLocked(%d): no such layer!", id);
+		return false;
 	}
 
-	qWarning("isLayerLocked(%d): no such layer!", id);
-	return false;
+	return l->info().isLockedFor(m_myId);
 }
 
 void StateTracker::resetLocalFork()

@@ -310,7 +310,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections
-	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
+	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged, Qt::QueuedConnection); // note: this is a queued connection to ensure it will get delivered after the corresponding canvas item has been created (which happens in response to the same signal that triggers this signal's emission)
 
 	_dock_toolsettings->getRectSelectionSettings()->setController(m_doc->toolCtrl());
 	_dock_toolsettings->getPolySelectionSettings()->setController(m_doc->toolCtrl());

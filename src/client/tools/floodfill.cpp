@@ -40,12 +40,14 @@ FloodFill::FloodFill(ToolController &owner)
 
 void FloodFill::begin(const paintcore::Point &point, float zoom)
 {
+	// TODO do this in the layer thread?
 	Q_UNUSED(zoom);
 	FillSettings *ts = owner.toolSettings()->getFillSettings();
 	QColor color = owner.toolSettings()->foregroundColor();
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
+	owner.model()->layerStack()->lock();
 	paintcore::FillResult fill = paintcore::floodfill(
 		owner.model()->layerStack(),
 		QPoint(point.x(), point.y()),
@@ -54,6 +56,7 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 		owner.activeLayer(),
 		ts->sampleMerged()
 	);
+	owner.model()->layerStack()->unlock();
 
 	fill = paintcore::expandFill(fill, ts->fillExpansion(), color);
 

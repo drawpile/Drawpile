@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2015 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -103,13 +103,13 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: _owner(owner), _id(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
-	_opacity(255), _blend(BlendMode::MODE_NORMAL), _hidden(false)
+	: m_owner(owner), m_info({id, title, false, QList<uint8_t>(), 255, false, BlendMode::MODE_NORMAL}),
+	  m_width(0), m_height(0), m_xtiles(0), m_ytiles(0)
 {
 	resize(0, size.width(), size.height(), 0);
 	
 	if(color.alpha() > 0) {
-		_tiles.fill(Tile(color));
+		m_tiles.fill(Tile(color));
 	}
 }
 
@@ -120,23 +120,22 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 }
 
 Layer::Layer(const Layer &layer)
-	: _owner(layer._owner), _id(layer.id()), _title(layer._title),
-	  _width(layer._width), _height(layer._height),
-	  _xtiles(layer._xtiles), _ytiles(layer._ytiles),
-	  _tiles(layer._tiles),
-	  _opacity(layer._opacity), _blend(layer._blend), _hidden(layer._hidden)
+	: m_owner(layer.m_owner), m_info(layer.m_info),
+	  m_width(layer.m_width), m_height(layer.m_height),
+	  m_xtiles(layer.m_xtiles), m_ytiles(layer.m_ytiles),
+	  m_tiles(layer.m_tiles)
 {
 	// Hidden and ephemeral layers are not copied, since hiding a sublayer is
 	// effectively the same as deleting it and ephemeral layers are not considered
 	// part of the true layer content.
-	foreach(const Layer *sl, layer._sublayers) {
-		if(sl->id() >= 0 && !sl->hidden())
-			_sublayers.append(new Layer(*sl));
+	for(const Layer *sl : layer.sublayers()) {
+		if(sl->id() >= 0 && !sl->isHidden())
+			m_sublayers.append(new Layer(*sl));
 	}
 }
 
 Layer::~Layer() {
-	foreach(Layer *sl, _sublayers)
+	for(Layer *sl : m_sublayers)
 		delete sl;
 }
 
@@ -146,12 +145,12 @@ void Layer::resize(int top, int right, int bottom, int left)
 	optimize();
 
 	// Resize sublayers
-	foreach(Layer *sl, _sublayers)
+	for(Layer *sl : m_sublayers)
 		sl->resize(top, right, bottom, left);
 
 	// Calculate new size
-	int width = left + _width + right;
-	int height = top + _height + bottom;
+	int width = left + m_width + right;
+	int height = top + m_height + bottom;
 
 	int xtiles = Tile::roundTiles(width);
 	int ytiles = Tile::roundTiles(height);
@@ -159,18 +158,18 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 	// if there is no old content, resizing is simple
 	bool hascontent = false;
-	for(int i=0;i<_tiles.count();++i) {
-		if(!_tiles.at(i).isBlank()) {
+	for(int i=0;i<m_tiles.count();++i) {
+		if(!m_tiles.at(i).isBlank()) {
 			hascontent = true;
 			break;
 		}
 	}
 	if(!hascontent) {
-		_width = width;
-		_height = height;
-		_xtiles = xtiles;
-		_ytiles = ytiles;
-		_tiles = tiles;
+		m_width = width;
+		m_height = height;
+		m_xtiles = xtiles;
+		m_ytiles = ytiles;
+		m_tiles = tiles;
 		return;
 	}
 
@@ -189,11 +188,11 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 		QImage oldcontent = toImage();
 
-		_width = width;
-		_height = height;
-		_xtiles = xtiles;
-		_ytiles = ytiles;
-		_tiles = tiles;
+		m_width = width;
+		m_height = height;
+		m_xtiles = xtiles;
+		m_ytiles = ytiles;
+		m_tiles = tiles;
 		if(left<0 || top<0) {
 			int cropx = 0;
 			if(left<0) {
@@ -208,7 +207,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 			oldcontent = oldcontent.copy(cropx, cropy, oldcontent.width()-cropx, oldcontent.height()-cropy);
 		}
 
-		_tiles.fill(bgtile);
+		m_tiles.fill(bgtile);
 
 		putImage(left, top, oldcontent, BlendMode::MODE_REPLACE);
 
@@ -222,53 +221,67 @@ void Layer::resize(int top, int right, int bottom, int left)
 		int oldy = firstrow;
 		for(int y=0;y<ytiles;++y,++oldy) {
 			int oldx = firstcol;
-			const int oldyy = _xtiles * oldy;
+			const int oldyy = m_xtiles * oldy;
 			const int yy = xtiles * y;
 			for(int x=0;x<xtiles;++x,++oldx) {
 				const int i = yy + x;
 
-				if(oldy<0 || oldy>=_ytiles || oldx<0 || oldx>=_xtiles) {
+				if(oldy<0 || oldy>=m_ytiles || oldx<0 || oldx>=m_xtiles) {
 					tiles[i] = bgtile;
 
 				} else {
 					const int oldi = oldyy + oldx;
-					tiles[i] = _tiles.at(oldi);
+					tiles[i] = m_tiles.at(oldi);
 				}
 			}
 		}
 
-		_width = width;
-		_height = height;
-		_xtiles = xtiles;
-		_ytiles = ytiles;
-		_tiles = tiles;
+		m_width = width;
+		m_height = height;
+		m_xtiles = xtiles;
+		m_ytiles = ytiles;
+		m_tiles = tiles;
 	}
 }
 
 void Layer::setTitle(const QString& title)
 {
-	_title = title;
+	if(m_info.title != title) {
+		m_info.title = title;
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
+}
+
+void Layer::setAcl(bool locked, const QList<uint8_t> &exclusive)
+{
+	if(m_info.locked != locked || m_info.exclusive != exclusive) {
+		m_info.locked = locked;
+		m_info.exclusive = exclusive;
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
 }
 
 QImage Layer::toImage() const {
-	QImage image(_width, _height, QImage::Format_ARGB32);
+	QImage image(m_width, m_height, QImage::Format_ARGB32);
 	int i=0;
-	for(int y=0;y<_ytiles;++y) {
-		for(int x=0;x<_xtiles;++x,++i)
-			_tiles[i].copyToImage(image, x*Tile::SIZE, y*Tile::SIZE);
+	for(int y=0;y<m_ytiles;++y) {
+		for(int x=0;x<m_xtiles;++x,++i)
+			m_tiles[i].copyToImage(image, x*Tile::SIZE, y*Tile::SIZE);
 	}
 	return image;
 }
 
 QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
 {
-	int top=_ytiles, bottom=0;
-	int left=_xtiles, right=0;
+	int top=m_ytiles, bottom=0;
+	int left=m_xtiles, right=0;
 
 	// Find bounding rectangle of non-blank tiles
-	for(int y=0;y<_ytiles;++y) {
-		for(int x=0;x<_xtiles;++x) {
-			const Tile &t = _tiles.at(y*_xtiles + x);
+	for(int y=0;y<m_ytiles;++y) {
+		for(int x=0;x<m_xtiles;++x) {
+			const Tile &t = m_tiles.at(y*m_xtiles + x);
 			if(!t.isBlank()) {
 				if(x<left)
 					left=x;
@@ -282,7 +295,7 @@ QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
 		}
 	}
 
-	if(top==_ytiles) {
+	if(top==m_ytiles) {
 		// Entire layer appears to be blank
 		return QImage();
 	}
@@ -291,7 +304,7 @@ QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
 	QImage image((right-left+1)*Tile::SIZE, (bottom-top+1)*Tile::SIZE, QImage::Format_ARGB32);
 	for(int y=top;y<=bottom;++y) {
 		for(int x=left;x<=right;++x) {
-			_tiles.at(y*_xtiles+x).copyToImage(image, (x-left)*Tile::SIZE, (y-top)*Tile::SIZE);
+			m_tiles.at(y*m_xtiles+x).copyToImage(image, (x-left)*Tile::SIZE, (y-top)*Tile::SIZE);
 		}
 	}
 
@@ -311,7 +324,7 @@ QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
  */
 QColor Layer::colorAt(int x, int y, int dia) const
 {
-	if(x<0 || y<0 || x>=_width || y>=_height)
+	if(x<0 || y<0 || x>=m_width || y>=m_height)
 		return QColor();
 
 	if(dia<=1) {
@@ -329,7 +342,7 @@ QColor Layer::colorAt(int x, int y, int dia) const
 
 QRgb Layer::pixelAt(int x, int y) const
 {
-	if(x<0 || y<0 || x>=_width || y>=_height)
+	if(x<0 || y<0 || x>=m_width || y>=m_height)
 		return 0;
 
 	const int yindex = y/Tile::SIZE;
@@ -344,14 +357,22 @@ QRgb Layer::pixelAt(int x, int y) const
 void Layer::setOpacity(int opacity)
 {
 	Q_ASSERT(opacity>=0 && opacity<256);
-	_opacity = opacity;
-	markOpaqueDirty(true);
+	if(m_info.opacity != opacity) {
+		m_info.opacity = opacity;
+		markOpaqueDirty(true);
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
 }
 
 void Layer::setBlend(BlendMode::Mode blend)
 {
-	_blend = blend;
-	markOpaqueDirty();
+	if(m_info.blend != blend) {
+		m_info.blend = blend;
+		markOpaqueDirty();
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
 }
 
 /**
@@ -359,8 +380,12 @@ void Layer::setBlend(BlendMode::Mode blend)
  */
 void Layer::setHidden(bool hide)
 {
-	_hidden = hide;
-	markOpaqueDirty(true);
+	if(m_info.hidden != hide) {
+		m_info.hidden = hide;
+		markOpaqueDirty(true);
+		if(m_owner)
+			m_owner->notifyLayerInfoChange(this);
+	}
 }
 
 /**
@@ -375,9 +400,9 @@ void Layer::setHidden(bool hide)
 Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, BlendMode::Mode mode) const
 {
 	const int x0 = Tile::roundDown(xpos);
-	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
+	const int x1 = qMin(m_width, Tile::roundUp(xpos+original.width()));
 	const int y0 = Tile::roundDown(ypos);
-	const int y1 = qMin(_height, Tile::roundUp(ypos+original.height()));
+	const int y1 = qMin(m_height, Tile::roundUp(ypos+original.height()));
 
 	const int w = x1 - x0;
 	const int h = y1 - y0;
@@ -463,7 +488,7 @@ void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 		return;
 	
 	// Check if the image is completely outside the layer
-	if(x >= _width || y >= _height)
+	if(x >= m_width || y >= m_height)
 		return;
 
 	const int x0 = Tile::roundDown(x);
@@ -474,8 +499,8 @@ void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 	// Replace this layer's tiles with the scratch tiles
 	const int tx0 = x0 / Tile::SIZE;
 	const int ty0 = y0 / Tile::SIZE;
-	const int tx1 = qMin((x0 + imageLayer.width() - 1) / Tile::SIZE, _xtiles-1);
-	const int ty1 = qMin((y0 + imageLayer.height() - 1) / Tile::SIZE, _ytiles-1);
+	const int tx1 = qMin((x0 + imageLayer.width() - 1) / Tile::SIZE, m_xtiles-1);
+	const int ty1 = qMin((y0 + imageLayer.height() - 1) / Tile::SIZE, m_ytiles-1);
 
 	for(int ty=ty0;ty<=ty1;++ty) {
 		for(int tx=tx0;tx<=tx1;++tx) {
@@ -483,19 +508,19 @@ void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 		}
 	}
 	
-	if(_owner && visible()) {
-		_owner->markDirty(QRect(x, y, image.width(), image.height()));
-		_owner->notifyAreaChanged();
+	if(m_owner && isVisible()) {
+		m_owner->markDirty(QRect(x, y, image.width(), image.height()));
+		m_owner->notifyAreaChanged();
 	}
 }
 
 void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mode blendmode)
 {
-	const QRect canvas(0, 0, _width, _height);
+	const QRect canvas(0, 0, m_width, m_height);
 
 	if(rectangle.contains(canvas) && blendmode==BlendMode::MODE_REPLACE) {
 		// Special case: overwrite whole layer
-		_tiles.fill(Tile(color));
+		m_tiles.fill(Tile(color));
 
 	} else {
 		// The usual case: only a portion of the layer is filled or pixel blending is needed
@@ -529,7 +554,7 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mod
 				int w = qMin((tx+1)*size, right) - tx*size - left;
 				int h = qMin((ty+1)*size, bottom) - ty*size - top;
 
-				Tile &t = _tiles[ty*_xtiles+tx];
+				Tile &t = m_tiles[ty*m_xtiles+tx];
 
 				if(!t.isNull() || canIncrOpacity)
 					t.composite(blendmode, mask, color, left, top, w, h, 0);
@@ -537,9 +562,9 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mod
 		}
 	}
 
-	if(_owner && visible()) {
-		_owner->markDirty(rectangle);
-		_owner->notifyAreaChanged();
+	if(m_owner && isVisible()) {
+		m_owner->markDirty(rectangle);
+		m_owner->notifyAreaChanged();
 	}
 }
 
@@ -570,8 +595,8 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point, StrokeSta
 
 	l->directDab(effective_brush, p, state);
 
-	if(_owner)
-		_owner->notifyAreaChanged();
+	if(m_owner)
+		m_owner->notifyAreaChanged();
 }
 
 /**
@@ -603,8 +628,8 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 	else
 		l->drawHardLine(effective_brush, from, to, state);
 
-	if(_owner)
-		_owner->notifyAreaChanged();
+	if(m_owner)
+		m_owner->notifyAreaChanged();
 }
 
 /**
@@ -730,10 +755,10 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 	const BrushStamp bs = makeGimpStyleBrushStamp(brush, point);
 	const int top=bs.top, left=bs.left;
 	const int dia = bs.mask.diameter();
-	const int bottom = qMin(top + dia, _height);
-	const int right = qMin(left + dia, _width);
+	const int bottom = qMin(top + dia, m_height);
+	const int right = qMin(left + dia, m_width);
 
-	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
+	if(left+dia<=0 || top+dia<=0 || left>=m_width || top>=m_height)
 		return;
 
 	const qreal smudge = brush.smudge(point.pressure());
@@ -770,8 +795,8 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
 			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
-			const int i = _xtiles * yindex + xindex;
-			_tiles[i].composite(
+			const int i = m_xtiles * yindex + xindex;
+			m_tiles[i].composite(
 					brush.blendingMode(),
 					values + yb * dia + xb,
 					color,
@@ -787,8 +812,8 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 		yb = yb + hb;
 	}
 
-	if(_owner && visible())
-		_owner->markDirty(QRect(left, top, right-left, bottom-top));
+	if(m_owner && isVisible())
+		m_owner->markDirty(QRect(left, top, right-left, bottom-top));
 
 }
 
@@ -804,8 +829,8 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 
 	// The mask can overlap multiple tiles
 	const int dia = stamp.mask.diameter();
-	const int bottom = qMin(stamp.top + dia, _height);
-	const int right = qMin(stamp.left + dia, _width);
+	const int bottom = qMin(stamp.top + dia, m_height);
+	const int right = qMin(stamp.left + dia, m_width);
 
 	int y = qMax(0, stamp.top);
 	int yb = stamp.top<0?-stamp.top:0; // y in relation to brush origin
@@ -825,9 +850,9 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
 			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
-			const int i = _xtiles * yindex + xindex;
+			const int i = m_xtiles * yindex + xindex;
 
-			std::array<quint32, 5> avg = _tiles.at(i).weightedAverage(weights + yb * dia + xb, xt, yt, wb, hb, dia-wb);
+			std::array<quint32, 5> avg = m_tiles.at(i).weightedAverage(weights + yb * dia + xb, xt, yt, wb, hb, dia-wb);
 			weight += avg[0];
 			red += avg[1];
 			green += avg[2];
@@ -867,18 +892,18 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
  */
 void Layer::merge(const Layer *layer, bool sublayers)
 {
-	Q_ASSERT(layer->_xtiles == _xtiles);
-	Q_ASSERT(layer->_ytiles == _ytiles);
+	Q_ASSERT(layer->m_xtiles == m_xtiles);
+	Q_ASSERT(layer->m_ytiles == m_ytiles);
 
 	// Gather a list of non-null tiles to merge
 	QVector<int> mergeidx;
-	mergeidx.reserve(_tiles.size());
-	for(int i=0;i<_tiles.size();++i) {
-		bool isnull = layer->_tiles[i].isNull();
+	mergeidx.reserve(m_tiles.size());
+	for(int i=0;i<m_tiles.size();++i) {
+		bool isnull = layer->m_tiles[i].isNull();
 
 		if(isnull && sublayers) {
-			foreach(Layer *sl, _sublayers) {
-				if(sl->_tiles[i].isNull()) {
+			for(Layer *sl : m_sublayers) {
+				if(sl->m_tiles[i].isNull()) {
 					isnull = false;
 					break;
 				}
@@ -891,22 +916,22 @@ void Layer::merge(const Layer *layer, bool sublayers)
 
 	// Detach tile vector explicitly to make sure concurrent modifications
 	// are all done to the same vector
-	_tiles.detach();
+	m_tiles.detach();
 
 	// Merge tiles
 	QtConcurrent::blockingMap(mergeidx, [this, layer, sublayers](int idx) {
 		if(sublayers) {
-			Tile t = layer->_tiles[idx];
+			Tile t = layer->m_tiles[idx];
 
-			for(Layer *sl : layer->_sublayers) {
-				if(sl->visible()) {
-					t.merge(sl->_tiles[idx], sl->_opacity, sl->blendmode());
+			for(Layer *sl : layer->m_sublayers) {
+				if(sl->isVisible()) {
+					t.merge(sl->m_tiles[idx], sl->opacity(), sl->blendmode());
 				}
 			}
-			_tiles[idx].merge(t, layer->_opacity, layer->blendmode());
+			m_tiles[idx].merge(t, layer->opacity(), layer->blendmode());
 
 		} else {
-			_tiles[idx].merge(layer->_tiles[idx], layer->_opacity, layer->blendmode());
+			m_tiles[idx].merge(layer->m_tiles[idx], layer->opacity(), layer->blendmode());
 		}
 	});
 
@@ -920,16 +945,16 @@ void Layer::merge(const Layer *layer, bool sublayers)
 void Layer::optimize()
 {
 	// Optimize tile memory usage
-	for(int i=0;i<_tiles.size();++i) {
-		if(!_tiles[i].isNull() && _tiles[i].isBlank())
-			_tiles[i] = Tile();
+	for(int i=0;i<m_tiles.size();++i) {
+		if(!m_tiles[i].isNull() && m_tiles[i].isBlank())
+			m_tiles[i] = Tile();
 	}
 
 	// Delete unused sublayers
-	QMutableListIterator<Layer*> li(_sublayers);
+	QMutableListIterator<Layer*> li(m_sublayers);
 	while(li.hasNext()) {
 		Layer *sl = li.next();
-		if(sl->hidden()) {
+		if(sl->isHidden()) {
 			delete sl;
 			li.remove();
 		}
@@ -938,10 +963,10 @@ void Layer::optimize()
 
 void Layer::makeBlank()
 {
-	_tiles.fill(Tile());
+	m_tiles.fill(Tile());
 
-	if(_owner && visible())
-		_owner->markDirty();
+	if(m_owner && isVisible())
+		m_owner->markDirty();
 }
 
 /**
@@ -958,37 +983,37 @@ void Layer::makeBlank()
 Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 {
 	// See if the sublayer exists already
-	foreach(Layer *sl, _sublayers)
+	for(Layer *sl : m_sublayers)
 		if(sl->id() == id) {
-			if(sl->hidden()) {
+			if(sl->isHidden()) {
 				// Hidden, reset properties
 				sl->makeBlank();
-				sl->_opacity = opacity;
-				sl->_blend = blendmode;
-				sl->_hidden = false;
+				sl->m_info.opacity = opacity;
+				sl->m_info.blend = blendmode;
+				sl->m_info.hidden = false;
 			}
 			return sl;
 		}
 
 	// Okay, try recycling a sublayer
-	foreach(Layer *sl, _sublayers) {
-		if(sl->hidden()) {
+	for(Layer *sl : m_sublayers) {
+		if(sl->isHidden()) {
 			// Set these flags directly to avoid markDirty call.
 			// We know the layer is invisible at this point
 			sl->makeBlank();
-			sl->_id = id;
-			sl->_opacity = opacity;
-			sl->_blend = blendmode;
-			sl->_hidden = false;
+			sl->m_info.id = id;
+			sl->m_info.opacity = opacity;
+			sl->m_info.blend = blendmode;
+			sl->m_info.hidden = false;
 			return sl;
 		}
 	}
 
 	// No available sublayers, create a new one
-	Layer *sl = new Layer(_owner, id, QSize(_width, _height));
-	sl->_opacity = opacity;
-	sl->_blend = blendmode;
-	_sublayers.append(sl);
+	Layer *sl = new Layer(m_owner, id, QSize(m_width, m_height));
+	sl->m_info.opacity = opacity;
+	sl->m_info.blend = blendmode;
+	m_sublayers.append(sl);
 	return sl;
 }
 
@@ -999,13 +1024,13 @@ Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
  */
 void Layer::mergeSublayer(int id)
 {
-	foreach(Layer *sl, _sublayers) {
+	for(Layer *sl : m_sublayers) {
 		if(sl->id() == id) {
-			if(!sl->hidden()) {
+			if(!sl->isHidden()) {
 				merge(sl);
 				// Set hidden flag directly to avoid markDirty call.
 				// The merge should cause no visual change.
-				sl->_hidden = true;
+				sl->m_info.hidden = true;
 			}
 			return;
 		}
@@ -1021,7 +1046,7 @@ void Layer::mergeSublayer(int id)
  */
 void Layer::removeSublayer(int id)
 {
-	foreach(Layer *sl, _sublayers) {
+	for(Layer *sl : m_sublayers) {
 		if(sl->id() == id) {
 			sl->setHidden(true);
 			return;
@@ -1031,25 +1056,25 @@ void Layer::removeSublayer(int id)
 
 void Layer::markOpaqueDirty(bool forceVisible)
 {
-	if(!_owner || !(forceVisible || visible()))
+	if(!m_owner || !(forceVisible || isVisible()))
 		return;
 
-	for(int i=0;i<_xtiles*_ytiles;++i) {
-		if(!_tiles.at(i).isNull())
-			_owner->markDirty(i);
+	for(int i=0;i<m_tiles.size();++i) {
+		if(!m_tiles.at(i).isNull())
+			m_owner->markDirty(i);
 	}
-	_owner->notifyAreaChanged();
+	m_owner->notifyAreaChanged();
 }
 
 QColor Layer::isSolidColor() const
 {
-	if(_width==0 || _height==0)
+	if(m_width==0 || m_height==0)
 		return QColor();
 
 	const QRgb p0 = pixelAt(0, 0);
 
-	for(int y=0;y<_height;++y) {
-		for(int x=0;x<_height;++x) {
+	for(int y=0;y<m_height;++y) {
+		for(int x=0;x<m_width;++x) {
 			QRgb p = pixelAt(x, y);
 			if(p != p0)
 				return QColor();
@@ -1062,21 +1087,23 @@ void Layer::toDatastream(QDataStream &out) const
 {
 	// Write ID
 	out << qint32(id());
+	out << m_info.title;
 
-	// Write title
-	out << _title;
+	// Write access controls
+	out << m_info.locked;
+	out << m_info.exclusive;
 
-	// Write opacity, blend mode and hidden flag
-	out << _opacity;
-	out << quint8(_blend);
-	out << _hidden;
+	// Write rendering controls
+	out << m_info.opacity;
+	out << quint8(m_info.blend);
+	out << m_info.hidden;
 
 	// Write layer data
 	out << toImage();
 
 	// Write sublayers
-	out << quint8(_sublayers.size());
-	foreach(const Layer *sl, _sublayers) {
+	out << quint8(m_sublayers.size());
+	for(const Layer *sl : m_sublayers) {
 		sl->toDatastream(out);
 	}
 }
@@ -1087,9 +1114,14 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	qint32 id;
 	in >> id;
 
-	// Read title
 	QString title;
 	in >> title;
+
+	// Read access controls
+	bool locked;
+	in >> locked;
+	QList<uint8_t> exclusive;
+	in >> exclusive;
 
 	// Read opacity, blend mode and hidden flag
 	uchar opacity;
@@ -1102,9 +1134,11 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 	in >> img;
 
 	Layer *layer = new Layer(owner, id, title, Qt::transparent, img.size());
-	layer->_opacity = opacity;
-	layer->_blend = BlendMode::Mode(blend);
-	layer->_hidden = hidden;
+	layer->m_info.opacity = opacity;
+	layer->m_info.blend = BlendMode::Mode(blend);
+	layer->m_info.hidden = hidden;
+	layer->m_info.locked = locked;
+	layer->m_info.exclusive = exclusive;
 	layer->putImage(0, 0, img, BlendMode::MODE_REPLACE);
 
 	// Read sublayers
@@ -1116,7 +1150,7 @@ Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 			delete layer;
 			return 0;
 		}
-		layer->_sublayers.append(sl);
+		layer->m_sublayers.append(sl);
 	}
 
 	return layer;

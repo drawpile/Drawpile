@@ -25,9 +25,13 @@ namespace paintcore {
 	class LayerStack;
 }
 
+namespace canvas {
+	struct Annotation;
+}
+
 namespace openraster {
 
-bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image);
+bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image, const QList<canvas::Annotation> &annotations);
 
 }
 

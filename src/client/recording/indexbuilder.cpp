@@ -130,8 +130,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 	static const int SNAPSHOT_MIN_ACTIONS = 200; // minimum number of actions between snapshots
 
 	paintcore::LayerStack image;
-	canvas::LayerListModel layermodel;
-	canvas::StateTracker statetracker(&image, &layermodel, 1);
+	canvas::StateTracker statetracker(&image, 1);
 
 	MessageRecord msg;
 	int snapshotCounter = 0;

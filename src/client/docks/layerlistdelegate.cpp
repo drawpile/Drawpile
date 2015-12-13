@@ -42,7 +42,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	QStyleOptionViewItem opt = setOptions(index, option);
 	painter->save();
 
-	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+	const auto &layer = index.data().value<paintcore::LayerInfo>();
 
 	const int myId = static_cast<const canvas::LayerListModel*>(index.model())->myId();
 	if(layer.isLockedFor(myId))
@@ -73,7 +73,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	if(event->type() == QEvent::MouseButtonRelease) {
-		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+		const auto &layer = index.data().value<paintcore::LayerInfo>();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
 		if(me->button() == Qt::LeftButton) {
@@ -108,7 +108,7 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, const QModelIndex& index) const
 {
-	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+	const auto &layer = index.data().value<paintcore::LayerInfo>();
 	QString newtitle = static_cast<QLineEdit*>(editor)->text();
 	if(layer.title != newtitle) {
 		emit const_cast<LayerListDelegate*>(this)->layerOp(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));

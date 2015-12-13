@@ -134,11 +134,13 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	// Most important bit first: canvas initialization
+	paintcore::LayerStack::Locker lslocker(m_session->layerStack());
+
 	const QSize imgsize = m_session->layerStack()->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
 	// Create layers
-	for(int i=0;i<m_session->layerStack()->layers();++i) {
+	for(int i=0;i<m_session->layerStack()->layerCount();++i) {
 		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);
 
 		QColor fill = layer->isSolidColor();
@@ -154,7 +156,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	}
 
 	// Create annotations
-	for(const paintcore::Annotation &a : m_session->layerStack()->annotations()->getAnnotations()) {
+	for(const canvas::Annotation &a : m_session->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a.id, g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a.id, a.background.rgba(), a.text))));

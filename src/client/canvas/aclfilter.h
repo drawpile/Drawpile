@@ -28,16 +28,17 @@ namespace protocol {
 	class SessionOwner;
 }
 
-namespace canvas {
+namespace paintcore {
+	class LayerStack;
+}
 
-class UserListModel;
-class LayerListModel;
+namespace canvas {
 
 class AclFilter : public QObject
 {
 	Q_OBJECT
 public:
-	AclFilter(UserListModel *users, LayerListModel *layers, QObject *parent = 0);
+	explicit AclFilter(paintcore::LayerStack *layers, QObject *parent = 0);
 
 	//! Reset all access controls
 	void reset(int myId, bool localMode);
@@ -93,8 +94,9 @@ private:
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
-	UserListModel *m_users;
-	LayerListModel *m_layers;
+	bool isLayerLockedFor(int layerId, uint8_t userId) const;
+
+	paintcore::LayerStack *m_layers;
 	int m_myId;
 
 	bool m_isOperator;
@@ -104,6 +106,12 @@ private:
 	bool m_ownLayers;
 	bool m_lockDefault;
 	QHash<int, int> m_userLayers;
+
+	struct User {
+		bool isOperator;
+		bool isLocked;
+	};
+	User m_users[256];
 };
 
 }

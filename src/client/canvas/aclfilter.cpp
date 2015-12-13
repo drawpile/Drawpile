@@ -18,8 +18,9 @@
 */
 
 #include "aclfilter.h"
-#include "userlist.h"
-#include "layerlist.h"
+
+#include "core/layer.h"
+#include "core/layerstack.h"
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -29,14 +30,19 @@
 
 namespace canvas {
 
-AclFilter::AclFilter(UserListModel *users, LayerListModel *layers, QObject *parent)
-	: QObject(parent), m_users(users), m_layers(layers)
+AclFilter::AclFilter(paintcore::LayerStack *layers, QObject *parent)
+	: QObject(parent), m_layers(layers)
 {
+	Q_ASSERT(layers);
 }
 
 void AclFilter::reset(int myId, bool localMode)
 {
-	m_layers->unlockAll();
+	for(int i=0;i<256;++i)
+		m_users[i] = {false, false};
+
+	for(int i=0;i<m_layers->layerCount();++i)
+		m_layers->getLayerByIndex(i)->setAcl(false, QList<uint8_t>());
 	m_myId = myId;
 	setOperator(localMode);
 
@@ -59,7 +65,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 {
 	using namespace protocol;
 
-	User u = m_users->getUserById(msg.contextId());
+	// Note: contextId is an unsigned 8 bit value, so we just keep
+	// an array of user contexts rather than use a hashmap.
+	User u = m_users[msg.contextId()];
 
 	// User list is empty in local mode
 	bool isOperator = u.isOperator || (msg.contextId() == m_myId && m_isOperator);
@@ -82,12 +90,16 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return true;
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
-		// TODO allow layer ACL to be used by non-operators when OwnLayers mode is active
 
 		if(!isOperator && !(isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId()))
 			return false;
 
-		m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
+		paintcore::Layer *layer = m_layers->getLayer(lmsg.id());
+		if(layer) {
+			layer->setAcl(lmsg.locked(), lmsg.exclusive());
+		} else {
+			qWarning("LayerACL: layer %d does not exist!", lmsg.id());
+		}
 
 		// Emit this to refresh the UI in case our selected layer was (un)locked.
 		// (We don't actually know which layer is selected in the UI here.)
@@ -106,12 +118,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return true;
 	}
 
-	case MSG_USER_ACL: {
-		const auto &lmsg = static_cast<const UserACL&>(msg);
-		m_users->updateLocks(lmsg.ids());
-		setUserLock(lmsg.ids().contains(m_myId));
+	case MSG_USER_ACL:
+		setUserLock(static_cast<const UserACL&>(msg).ids().contains(m_myId));
 		return true;
-	}
+
 	case MSG_TOOLCHANGE:
 		m_userLayers[msg.contextId()] = static_cast<const ToolChange&>(msg).layer();
 		return true;
@@ -148,26 +158,36 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		break;
 
 	case MSG_PUTIMAGE:
-		return !m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId());
+		return !isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId());
 	case MSG_FILLRECT:
-		return !m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId());
-
+		return !isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId());
 	case MSG_PEN_MOVE:
-		return !m_layers->isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
-
+		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
 	default: break;
 	}
 
 	return true;
 }
 
+bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
+{
+	paintcore::Layer *l = m_layers->getLayer(layerId);
+	if(!l) {
+		qWarning("isLayerLockedFor(%d, %d): no such layer!", layerId, userId);
+		return false;
+	}
+
+	return l->info().isLockedFor(userId);
+}
+
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 {
-	QList<uint8_t> ids = msg.ids();
-	ids.append(msg.contextId());
-	m_users->updateOperators(ids);
+	for(int i=0;i<255;++i)
+		m_users[i].isOperator = false;
+	for(uint8_t id : msg.ids())
+		m_users[id].isOperator = true;
 
-	setOperator(ids.contains(m_myId));
+	setOperator(msg.ids().contains(m_myId) || m_myId==msg.contextId());
 }
 
 void AclFilter::setOperator(bool op)
