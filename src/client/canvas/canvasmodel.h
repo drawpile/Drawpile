@@ -125,6 +125,9 @@ public slots:
 	void setLayerViewMode(int mode);
 	void updateLayerViewOptions();
 
+private slots:
+	void handleMeta(protocol::MessagePtr cmd);
+
 signals:
 	void layerAutoselectRequest(int id);
 	void canvasModified();

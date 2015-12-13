@@ -147,6 +147,11 @@ StateTracker::~StateTracker()
 {
 }
 
+void StateTracker::stop()
+{
+	_localforkCleanupTimer->stop();
+}
+
 void StateTracker::reset()
 {
 	_savepoints.clear();

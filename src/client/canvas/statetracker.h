@@ -240,6 +240,9 @@ public slots:
 	void previewLayerOpacity(int id, float opacity);
 	void resetLocalFork();
 
+	//! Prepare to be deleted
+	void stop();
+
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
 

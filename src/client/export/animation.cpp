@@ -46,7 +46,9 @@ void AnimationExporter::saveNextFrame()
 		_exporter->finish();
 
 	} else {
+		_layers->lock();
 		QImage image = _layers->flatLayerImage(_currentFrame - 1, _useBgLayer, _bgColor);
+		_layers->unlock();
 
 		_exporter->saveFrame(image, 1);
 

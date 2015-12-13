@@ -23,6 +23,7 @@
 #include <QList>
 #include <QObject>
 #include <QEvent>
+#include <QMetaMethod>
 
 #include "../shared/net/message.h"
 
@@ -66,6 +67,7 @@ private:
 	void handleLocalCommand(protocol::MessagePtr msg);
 
 	CanvasModel *m_canvas;
+	QMetaMethod m_metahandler;
 };
 
 }

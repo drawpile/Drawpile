@@ -114,8 +114,10 @@ void ToolController::setActiveLayer(int id)
 {
 	if(m_activeLayer != id) {
 		m_activeLayer = id;
-		if(m_model)
+		if(m_model) {
+			paintcore::LayerStack::Locker(m_model->layerStack());
 			m_model->layerStack()->setViewLayer(id);
+		}
 
 		emit activeLayerChanged(id);
 	}

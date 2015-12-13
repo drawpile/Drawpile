@@ -27,11 +27,16 @@
 #include "../shared/net/meta2.h"
 #include "../shared/net/recording.h"
 
+#include <QMetaObject>
+
 namespace canvas {
 
 CommandQueue::CommandQueue(CanvasModel *canvas, QObject *parent)
 	: QObject(parent), m_canvas(canvas)
 {
+	int idx = m_canvas->metaObject()->indexOfMethod("handleMeta(MessagePtr)");
+	Q_ASSERT(idx>=0);
+	m_metahandler = m_canvas->metaObject()->method(idx);
 }
 
 bool CommandQueue::event(QEvent *e)
@@ -61,41 +66,17 @@ void CommandQueue::handleCommand(protocol::MessagePtr cmd)
 	if(cmd->isMeta()) {
 		// Handle meta commands here
 		switch(cmd->type()) {
-		case MSG_CHAT:
-			m_canvas->metaChat(cmd.cast<Chat>());
-			break;
-		case MSG_USER_JOIN:
-			m_canvas->metaUserJoin(cmd.cast<UserJoin>());
-			break;
-		case MSG_USER_LEAVE:
-			m_canvas->metaUserLeave(cmd.cast<UserLeave>());
-			break;
-		case MSG_SESSION_OWNER:
-			// TODO
-			//m_canvas->m_userlist->updateOperators(cmd->contextId(), cmd.cast<protocol::SessionOwner>().ids());
-			break;
-		case MSG_USER_ACL:
-			// TODO
-			//m_canvas->m_userlist->updateLocks(cmd.cast<protocol::UserACL>().ids());
-			break;
 		case MSG_SESSION_ACL:
 		case MSG_LAYER_ACL:
 			// Handled by the ACL filter
 			break;
 		case MSG_INTERVAL:
-			/* intervals are used only when playing back recordings */
-			break;
-		case MSG_LASERTRAIL:
-			m_canvas->metaLaserTrail(cmd.cast<protocol::LaserTrail>());
-			break;
-		case MSG_MOVEPOINTER:
-			m_canvas->metaMovePointer(cmd.cast<MovePointer>());
-			break;
-		case MSG_MARKER:
-			m_canvas->metaMarkerMessage(cmd.cast<Marker>());
+			// intervals are used only when playing back recordings
 			break;
 		default:
-			qWarning("Unhandled meta message type %d", cmd->type());
+			// Rest of the META messages affect things that are shown
+			// in the UI, so they are best handled back in the main thread.
+			m_metahandler.invoke(m_canvas, Qt::AutoConnection, Q_ARG(protocol::MessagePtr, cmd));
 		}
 
 	} else if(cmd->isCommand()) {

@@ -94,8 +94,12 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 CanvasModel::~CanvasModel()
 {
 	qDebug("Terminating canvas processing thread...");
+
+	QMetaObject::invokeMethod(m_statetracker, "stop", Qt::BlockingQueuedConnection);
+
 	m_thread->quit();
 	m_thread->wait();
+
 	qDebug("Thread ended.");
 	delete m_cmdqueue;
 }
@@ -135,6 +139,47 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
 	QApplication::postEvent(m_cmdqueue, new CommandEvent(cmd, true));
+}
+
+/**
+ * Most meta-commands are related to the UI rather than the canvas
+ * itself and must be handled on the main thread. The meta commands
+ * not handled here are handled by CommandQueue in the canvas thread.
+ * @param cmd
+ */
+void CanvasModel::handleMeta(protocol::MessagePtr cmd)
+{
+	Q_ASSERT(cmd->isMeta());
+
+	switch(cmd->type()) {
+	using namespace::protocol;
+	case MSG_CHAT:
+		metaChat(cmd.cast<Chat>());
+		break;
+	case MSG_USER_JOIN:
+		metaUserJoin(cmd.cast<UserJoin>());
+		break;
+	case MSG_USER_LEAVE:
+		metaUserLeave(cmd.cast<UserLeave>());
+		break;
+	case MSG_SESSION_OWNER:
+		m_userlist->updateOperators(cmd->contextId(), cmd.cast<protocol::SessionOwner>().ids());
+		break;
+	case MSG_USER_ACL:
+		m_userlist->updateLocks(cmd.cast<protocol::UserACL>().ids());
+		break;
+	case MSG_LASERTRAIL:
+		metaLaserTrail(cmd.cast<protocol::LaserTrail>());
+		break;
+	case MSG_MOVEPOINTER:
+		metaMovePointer(cmd.cast<MovePointer>());
+		break;
+	case MSG_MARKER:
+		metaMarkerMessage(cmd.cast<Marker>());
+		break;
+	default:
+		break;
+	}
 }
 
 QImage CanvasModel::toImage() const

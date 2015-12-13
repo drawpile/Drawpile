@@ -312,6 +312,8 @@ void PlaybackController::jumptToSnapshot(int idx)
 	}
 
 	m_reader->seekTo(se.pos, se.stream_offset);
+	// TODO this needs more cooperation from the canvas thread: there may be
+	// commands in the queue still which needs to be cleared.
 	m_canvas->stateTracker()->resetToSavepoint(savepoint);
 	updateIndexPosition();
 }
