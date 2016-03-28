@@ -1,6 +1,7 @@
-2015-1?-?? Version 1.0.3
+2016-0?-?? Version 1.0.3
  * Remember last used path when saving files
  * Support new miniupnpc library version
+ * Added txt2dprec tool
 
 2015-09-13 Version 1.0.2
  * Fixed crash when smoother was set to zero

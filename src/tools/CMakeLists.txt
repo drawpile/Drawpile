@@ -10,20 +10,21 @@ set (
 	../client/core/blendmodes.cpp # needed for svgBlendMode
 	)
 
-# Fall back to bundled KArchive if not found
-if(NOT KF5Archive_FOUND)
-        find_package (ZLIB REQUIRED)
-        include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../shared/bundled/karchive")
-endif()
+set (
+	TXT2DPREC_SOURCES
+	txt2dprec.cpp
+	txtreader.cpp
+	../client/core/blendmodes.cpp # needed for svgBlendMode
+	)
 
 add_executable( dprec2txt ${DPREC2TXT_SOURCES} )
 target_link_libraries( dprec2txt ${DPSHAREDLIB} Qt5::Core)
 
-if(NOT KF5Archive_FOUND)
-	target_link_libraries(dprec2txt ${ZLIB_LIBRARIES})
-endif()
+add_executable( txt2dprec ${TXT2DPREC_SOURCES} )
+target_link_libraries( txt2dprec ${DPSHAREDLIB} Qt5::Core)
+
 
 if ( UNIX AND NOT APPLE )
-	install ( TARGETS dprec2txt DESTINATION bin )
+	install ( TARGETS dprec2txt txt2dprec DESTINATION bin )
 endif ()
 
