@@ -79,10 +79,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_ui = new Ui_SettingsDialog;
 	_ui->setupUi(this);
 
-	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
-	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveCertTrustChanges()));
-	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(resetSettings()));
-
 	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
 		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
 #ifdef Q_OS_WIN
@@ -142,6 +138,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
 	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
 
+	// Deselect item before saving. This causes the editor widget to close
+	// and commit the change.
+	connect(_ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
+		_ui->shortcuts->setCurrentIndex(QModelIndex());
+	});
+
 	// Known hosts list
 	connect(_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
 	connect(_ui->knownHostList, SIGNAL(itemSelectionChanged()), this, SLOT(certificateSelectionChanged()));
@@ -176,6 +178,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// Load configuration
 	restoreSettings();
+
+	// Settings saving
+	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
+	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveCertTrustChanges()));
+	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(resetSettings()));
 }
 
 SettingsDialog::~SettingsDialog()
