@@ -77,11 +77,24 @@ QList<SessionDescription> SessionServer::sessions() const
 {
 	QList<SessionDescription> descs;
 
-	foreach(const SessionState *s, _sessions)
+	for(const SessionState *s : _sessions)
 		descs.append(SessionDescription(*s));
 
 	if(_store)
 		descs += _store->sessions();
+
+	// Deduplicate session list. Duplicates happen when session templates are used.
+	// The templates are always at the end of the list, so deduplicating
+	// will remove them if an active or hibernated instance exists.
+	QSet<QString> ids;
+	QMutableListIterator<SessionDescription> it(descs);
+	while(it.hasNext()) {
+		const SessionDescription sd = it.next();
+		if(ids.contains(sd.id.id()))
+			it.remove();
+		else
+			ids.insert(sd.id.id());
+	}
 
 	return descs;
 }

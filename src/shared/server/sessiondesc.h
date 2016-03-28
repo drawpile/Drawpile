@@ -104,6 +104,7 @@ struct SessionDescription {
 
 	// Private stuff
 	QString hibernationFile;
+	bool sessionTemplate; // like a hibernated session, except it is not deleted or overwritten
 
 	SessionDescription();
 	SessionDescription(const SessionState &session, bool getExtended=false, bool getUsers=false);

@@ -47,9 +47,9 @@ bool Hibernation::init()
 	}
 
 	// Scan for sessions
-	const QRegularExpression re("^session([.-])([a-zA-Z0-9:-]{1,64})\\.dphib(?:\\.(?:gz|bz2|xz))?$");
+	const QRegularExpression re("^session([.-])([a-zA-Z0-9:-]{1,64})\\.dp(hib|tpl)(?:\\.(?:gz|bz2|xz))?$");
 
-	for(const QString &filename : dir.entryList(QStringList() << "session*.dphib*", QDir::Files | QDir::Readable)) {
+	for(const QString &filename : dir.entryList(QStringList() << "session*.dp*", QDir::Files | QDir::Readable)) {
 		QRegularExpressionMatch m = re.match(filename);
 		if(!m.hasMatch())
 			continue;
@@ -83,10 +83,26 @@ bool Hibernation::init()
 		desc.persistent = reader.hibernationHeader().flags & recording::HibernationHeader::PERSISTENT;
 		desc.hibernating = true;
 		desc.hibernationFile = reader.filename();
+		desc.sessionTemplate = m.captured(3) == "tpl";
 
 		_sessions.append(desc);
 		logger::debug() << "Found hibernated session:" << filename;
 	}
+
+	// Sort sessions so templates are at the bottom. All newly stores sessions
+	// will be added to the top of the list. This ensures that hibernated
+	// sessions have precedence over templates.
+	std::sort(_sessions.begin(), _sessions.end(),
+		[](SessionDescription &a, SessionDescription &b) -> bool {
+			const QString ai = a.id.id();
+			const QString bi = b.id.id();
+			if(ai==bi) {
+				if(a.sessionTemplate)
+					return false;
+			}
+			return ai > bi;
+		}
+	);
 
 	logger::info() << "Found" << _sessions.size() << "hibernated session(s)";
 
@@ -110,7 +126,8 @@ SessionState *Hibernation::takeSession(const QString &id)
 		SessionDescription s = it.next();
 		if(s.id.id() == id) {
 			sd = s;
-			it.remove();
+			if(!sd.sessionTemplate)
+				it.remove();
 			break;
 		}
 	}
@@ -163,7 +180,8 @@ SessionState *Hibernation::takeSession(const QString &id)
 	reader.close();
 
 	// Session has been woken up, so delete the hibernation file.
-	QFile(filename).remove();
+	if(!sd.sessionTemplate)
+		QFile(filename).remove();
 
 	return session;
 }
@@ -214,7 +232,7 @@ bool Hibernation::storeSession(const SessionState *session)
 
 	SessionDescription desc(*session);
 	desc.hibernationFile = filename;
-	_sessions.append(desc);
+	_sessions.prepend(desc);
 	emit sessionAvailable(desc);
 
 	return true;
@@ -228,6 +246,10 @@ bool Hibernation::deleteSession(const QString &id)
 	while(it.hasNext()) {
 		SessionDescription s = it.next();
 		if(s.id == id) {
+			// Templates cannot be removed
+			if(s.sessionTemplate)
+				return false;
+
 			sd = s;
 			it.remove();
 			break;
