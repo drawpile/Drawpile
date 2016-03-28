@@ -160,11 +160,17 @@ void ListServerModel::loadServers()
 			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
-			QStringLiteral("http://drawpile.net/api/listing/"),
+			QStringLiteral("https://drawpile.net/api/listing/"),
 			QStringLiteral("This is the default public listing server.\n"
 			"Note that as this server is open to all, please do not share any images that would "
 			"not suitable for everyone.")
 		};
+	}
+
+	// Replace the old drawpile.net HTTP listing with HTTPS
+	for(ListServer &ls : _servers) {
+		if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
+			ls.url = QStringLiteral("https://drawpile.net/api/listing/");
 	}
 
 #ifdef HAVE_DNSSD
