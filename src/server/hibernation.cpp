@@ -93,7 +93,7 @@ bool Hibernation::init()
 	// will be added to the top of the list. This ensures that hibernated
 	// sessions have precedence over templates.
 	std::sort(_sessions.begin(), _sessions.end(),
-		[](SessionDescription &a, SessionDescription &b) -> bool {
+		[](const SessionDescription &a, const SessionDescription &b) -> bool {
 			const QString ai = a.id.id();
 			const QString bi = b.id.id();
 			if(ai==bi) {
