@@ -4,6 +4,7 @@
  * Added txt2dprec tool
  * Added support for session templates in the standalone server
  * Fix shortcut saving when editor widget was not manually closed 
+ * Removed default canvas size limit (screen size)
 
 2015-09-13 Version 1.0.2
  * Fixed crash when smoother was set to zero

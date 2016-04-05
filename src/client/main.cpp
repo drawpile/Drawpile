@@ -36,7 +36,6 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDir>
-#include <QDesktopWidget>
 #include <QDateTime>
 
 #include <ColorWheel>
@@ -229,13 +228,13 @@ int main(int argc, char *argv[]) {
 		// No arguments, start with an empty document
 		QSettings cfg;
 
-		QSize maxSize = app.desktop()->screenGeometry().size();
+		const QSize maxSize {65536, 65536};
 		QSize size = cfg.value("history/newsize").toSize();
 		if(size.width()<100 || size.height()<100) {
 			// No previous size, or really small size
-			size = QSize(800, 600);
+			size = QSize(1920, 1080);
 		} else {
-			// Make sure previous size is not ridiculously huge
+			// Make sure previous size is not large enough to break things
 			size = size.boundedTo(maxSize);
 		}
 
