@@ -1185,6 +1185,8 @@ void MainWindow::startRecorder(const QString &filename)
 
 		QApplication::restoreOverrideCursor();
 		setRecorderStatus(true);
+
+		_recorder->setAutoflush();
 	}
 }
 

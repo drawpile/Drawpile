@@ -28,6 +28,7 @@
 #include <QDateTime>
 #include <QtEndian>
 #include <QFile>
+#include <QTimer>
 
 #include <KCompressionDevice>
 
@@ -51,7 +52,7 @@ Writer::Writer(const QString &filename, QObject *parent)
 
 Writer::Writer(QIODevice *file, bool autoclose, QObject *parent)
 	: QObject(parent), _file(file),
-	_autoclose(autoclose), _minInterval(0), _filterMeta(true)
+	_autoclose(autoclose), _minInterval(0), _filterMeta(true), m_autoflush(nullptr)
 {
 }
 
@@ -65,6 +66,23 @@ void Writer::setMinimumInterval(int min)
 {
 	_minInterval = min;
 	_interval = QDateTime::currentMSecsSinceEpoch();
+}
+
+void Writer::setAutoflush()
+{
+	if(m_autoflush != nullptr)
+		return;
+
+	auto *fd = qobject_cast<QFileDevice*>(_file);
+	if(!fd) {
+		qWarning("Cannot enable recording autoflush: output device not a QFileDevice");
+		return;
+	}
+
+	m_autoflush = new QTimer(this);
+	m_autoflush->setSingleShot(false);
+	connect(m_autoflush, &QTimer::timeout, fd, &QFileDevice::flush);
+	m_autoflush->start(5000);
 }
 
 void Writer::setFilterMeta(bool filter)
@@ -215,6 +233,12 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 
 void Writer::close()
 {
+	if(m_autoflush) {
+		m_autoflush->stop();
+		delete m_autoflush;
+		m_autoflush = nullptr;
+	}
+
 	if(_file->isOpen())
 		_file->close();
 }

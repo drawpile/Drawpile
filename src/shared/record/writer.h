@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "../net/message.h"
 
 class QIODevice;
+class QTimer;
 
 namespace recording {
 
@@ -58,6 +59,9 @@ public:
 
 	//! Close the file
 	void close();
+
+	//! Enable periodic flushing of the output file
+	void setAutoflush();
 
 	/**
 	 * @brief Set the minimum time between messages before writing an Interval message
@@ -115,6 +119,7 @@ private:
 	qint64 _minInterval;
 	qint64 _interval;
 	bool _filterMeta;
+	QTimer *m_autoflush;
 };
 
 }
