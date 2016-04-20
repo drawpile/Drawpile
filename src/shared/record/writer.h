@@ -24,7 +24,6 @@
 #include "../net/message.h"
 
 class QIODevice;
-class QSaveFile;
 
 namespace recording {
 
@@ -112,9 +111,6 @@ public slots:
 
 private:
 	QIODevice *_file;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-	QSaveFile *_savefile;
-#endif
 	bool _autoclose;
 	qint64 _minInterval;
 	qint64 _interval;
