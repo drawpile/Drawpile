@@ -196,6 +196,7 @@ public:
 	static const uint8_t FLAG_ANNOUNCE = 0x01; // public announcement are included in the session history
 	static const uint8_t FLAG_OPCMD = 0x02;    // this message is an operator command
 	static const uint8_t FLAG_ACTION = 0x04;   // this is an "action message" (like /me in IRC)
+	static const uint8_t FLAG_PIN = 0x08;      // pin this message
 
 	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), _flags(flags), _msg(msg) {}
 	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement, bool action)
@@ -208,6 +209,9 @@ public:
 
 	//! Construct a chat message that carries a session operator command
 	static MessagePtr opCommand(uint8_t ctx, const QString &cmd) { return MessagePtr(new Chat(ctx, FLAG_OPCMD, cmd.toUtf8())); }
+
+	//! Construct a pinned message
+	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, FLAG_ANNOUNCE|FLAG_PIN, message.toUtf8())); }
 
 	static Chat *deserialize(const uchar *data, uint len);
 
@@ -232,6 +236,13 @@ public:
 	 * @brief Is this chat message an operator command?
 	 */
 	bool isOpCommand() const { return _flags & FLAG_OPCMD; }
+
+	/**
+	 * @brief Is this a pinned message?
+	 *
+	 * Only session owners may pin messages.
+	 */
+	bool isPinned() const { return _flags & FLAG_PIN; }
 
 protected:
     int payloadLength() const;

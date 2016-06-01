@@ -334,8 +334,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(sentColorChange(QColor)), _dock_colors, SLOT(addLastUsedColor(QColor)));
 
 	// Meta commands
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool,bool)),
-			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool,bool)));
+	connect(_client, &net::Client::chatMessageReceived, _chatbox, &widgets::ChatBox::receiveMessage);
+	connect(_client, &net::Client::pinnedChatReceived, _chatbox, &widgets::ChatBox::setPinnedMessage);
+
 	connect(_client, &net::Client::chatMessageReceived, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(_splitter->sizes().at(1)==0)
@@ -345,6 +346,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			_chatbox, SLOT(receiveMarker(QString,QString)));
 	connect(_chatbox, SIGNAL(message(QString,bool,bool)), _client, SLOT(sendChat(QString,bool,bool)));
+	connect(_chatbox, &widgets::ChatBox::pinMessage, _client, &net::Client::sendPinnedChat);
 	connect(_chatbox, SIGNAL(opCommand(QString)), _client, SLOT(sendOpCommand(QString)));
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));

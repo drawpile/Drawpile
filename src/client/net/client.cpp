@@ -375,6 +375,11 @@ void Client::sendChat(const QString &message, bool announce, bool action)
 	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce, action)));
 }
 
+void Client::sendPinnedChat(const QString &message)
+{
+	_server->sendMessage(protocol::Chat::pin(_my_id, message));
+}
+
 void Client::sendOpCommand(const QString &command)
 {
 	_server->sendMessage(protocol::Chat::opCommand(_my_id, command));
@@ -552,6 +557,15 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 		username = tr("Server");
 	else
 		username = _userlist->getUsername(msg.contextId());
+
+	// Session operators can pin messages
+	if(msg.isPinned()) {
+		User u = _userlist->getUserById(msg.contextId());
+		if(u.isOperator) {
+			emit pinnedChatReceived(msg.message());
+			return;
+		}
+	}
 
 	emit chatMessageReceived(
 		username,

@@ -33,10 +33,11 @@ QString newlineToBr(const QString &input);
 /**
  * @brief Take an input string and wrap all links in <a> tags
  *
- * @param input
- * @return
+ * @param input text to linkify
+ * @param extra additional link tag attributes
+ * @return text with links wrapped in a tags
  */
-QString linkify(const QString &input);
+QString linkify(const QString &input, const QString &extra=QString());
 
 }
 

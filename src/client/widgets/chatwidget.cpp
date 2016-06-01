@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 #include <QTextDocument>
 #include <QUrl>
-
+#include <QLabel>
 
 namespace widgets {
 
@@ -40,6 +40,16 @@ ChatBox::ChatBox(QWidget *parent)
 
 	layout->setSpacing(0);
 	layout->setMargin(0);
+
+	m_pinned = new QLabel(this);
+	m_pinned->setVisible(false);
+	m_pinned->setOpenExternalLinks(true);
+	m_pinned->setStyleSheet(QStringLiteral(
+		"background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #8d8d8d, stop:1 #31363b);"
+		"color: #eff0f1;"
+		"padding: 3px;"
+		));
+	layout->addWidget(m_pinned, 0);
 
 	_view = new QTextBrowser(this);
 	_view->setOpenExternalLinks(true);
@@ -152,6 +162,20 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool a
 		notification::playSound(notification::Event::CHAT);
 }
 
+void ChatBox::setPinnedMessage(const QString &message)
+{
+	if(message == "-") {
+		// note: the protocol doesn't allow empty chat messages,
+		// which is why we have to use a special value like this
+		// to clear the pinning.
+		m_pinned->setVisible(false);
+		m_pinned->setText(QString());
+	} else {
+		m_pinned->setText(htmlutils::linkify(message.toHtmlEscaped(), QStringLiteral("style=\"color:#3daae9\"")));
+		m_pinned->setVisible(true);
+	}
+}
+
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
 {
 	_view->append(
@@ -194,6 +218,13 @@ void ChatBox::sendMessage(const QString &msg)
 		} else if(cmd == "me") {
 			if(!params.isEmpty())
 				emit message(msg.mid(msg.indexOf(' ')+1), false, true);
+
+		} else if(cmd == "pin") {
+			if(!params.isEmpty())
+				emit pinMessage(msg.mid(msg.indexOf(' ')+1));
+
+		} else if(cmd == "unpin") {
+			emit pinMessage(QStringLiteral("-"));
 
 		} else if(cmd == "roll") {
 			if(params.isEmpty())

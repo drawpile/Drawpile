@@ -207,6 +207,7 @@ public slots:
 
 	// Misc.
 	void sendChat(const QString &message, bool announce, bool action);
+	void sendPinnedChat(const QString &message);
 	void sendOpCommand(const QString &command);
 	void sendLaserPointer(const QPointF &point, int trail=0);
 	void sendMarker(const QString &text);
@@ -230,6 +231,7 @@ signals:
 	void drawingCommandLocal(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
+	void pinnedChatReceived(const QString &message);
 	void markerMessageReceived(const QString &user, const QString &message);
 	void needSnapshot(bool forcenew);
 	void userPointerMoved(int ctx, const QPointF &point, int trail);
