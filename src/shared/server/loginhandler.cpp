@@ -359,7 +359,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 
 	QString sessionId = m.captured(1);
 	SessionDescription sessiondesc = _server->getSessionDescriptionById(sessionId);
-	if(sessiondesc.id==0) {
+	if(sessiondesc.id.isEmpty()) {
 		send("ERROR NOSESSION");
 		_client->disconnectError("login error");
 		return;

@@ -257,7 +257,7 @@ bool Hibernation::deleteSession(const QString &id)
 	}
 
 	// not found
-	if(sd.id==0)
+	if(sd.id.isEmpty())
 		return false;
 
 	// Remove from filesystem
