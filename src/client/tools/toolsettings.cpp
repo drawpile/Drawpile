@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1164,22 +1164,27 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 void SelectionSettings::flipSelection()
 {
 	drawingboard::SelectionItem *sel = _scene->selectionItem();
-	if(sel)
+	if(sel) {
+		cutSelection();
 		sel->scale(1, -1);
+	}
 
 }
 
 void SelectionSettings::mirrorSelection()
 {
 	drawingboard::SelectionItem *sel = _scene->selectionItem();
-	if(sel)
+	if(sel) {
+		cutSelection();
 		sel->scale(-1, 1);
+	}
 }
 
 void SelectionSettings::fitToScreen()
 {
 	drawingboard::SelectionItem *sel = _scene->selectionItem();
 	if(sel) {
+		cutSelection();
 		const QSizeF size = sel->polygonRect().size();
 		const QRectF screenRect = _view->mapToScene(_view->rect()).boundingRect();
 		const QSizeF screen = screenRect.size() * 0.7;
@@ -1201,6 +1206,19 @@ void SelectionSettings::resetSize()
 	drawingboard::SelectionItem *sel = _scene->selectionItem();
 	if(sel)
 		sel->resetPolygonShape();
+}
+
+void SelectionSettings::cutSelection()
+{
+	Q_ASSERT(_scene->selectionItem());
+	const int layer = _layerlist->currentLayer();
+	if(_scene->selectionItem()->pasteImage().isNull() && !_scene->statetracker()->isLayerLocked(layer)) {
+		// Automatically cut the layer when the selection is transformed
+		QImage img = _scene->selectionToImage(layer);
+		_scene->selectionItem()->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, _client, layer);
+		_scene->selectionItem()->setPasteImage(img);
+		_scene->selectionItem()->setMovedFromCanvas(true);
+	}
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)

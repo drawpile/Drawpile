@@ -434,6 +434,8 @@ public:
 
 	void setScene(drawingboard::CanvasScene *scene) { _scene = scene; }
 	void setView(widgets::CanvasView *view) { _view = view; }
+	void setLayerSelector(docks::LayerList *layerlist) { _layerlist = layerlist; }
+	void setClient(net::Client *client) { _client = client; }
 
 private slots:
 	void flipSelection();
@@ -445,9 +447,13 @@ protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
+	void cutSelection();
+
 	Ui_SelectionSettings * _ui;
 	drawingboard::CanvasScene *_scene;
 	widgets::CanvasView *_view;
+	docks::LayerList *_layerlist;
+	net::Client *_client;
 };
 
 class LaserPointerSettings : public QObject, public BrushlessSettings {
