@@ -92,11 +92,15 @@ macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMEN
 		
 		set ( ${resfile} "${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj" )
 		
-		add_custom_command(
-			OUTPUT ${${resfile}}
-			COMMAND windres ${win32RC} ${${resfile}}
-			DEPENDS ${win32RC}
-		)
+		if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+			add_custom_command(
+				OUTPUT ${${resfile}}
+				COMMAND windres ${win32RC} ${${resfile}}
+				DEPENDS ${win32RC}
+			)
+		# TODO use resource compiler when using MSVC
+		endif ()
+
 	endif ( )
 endmacro ( )
 
