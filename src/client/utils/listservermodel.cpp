@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSettings>
+#include <QSslSocket>
 
 namespace sessionlisting {
 
@@ -160,17 +161,21 @@ void ListServerModel::loadServers()
 			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
-			QStringLiteral("https://drawpile.net/api/listing/"),
+			QStringLiteral("http://drawpile.net/api/listing/"),
 			QStringLiteral("This is the default public listing server.\n"
 			"Note that as this server is open to all, please do not share any images that would "
 			"not suitable for everyone.")
 		};
 	}
 
-	// Replace the old drawpile.net HTTP listing with HTTPS
-	for(ListServer &ls : _servers) {
-		if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
-			ls.url = QStringLiteral("https://drawpile.net/api/listing/");
+	// Use HTTPS for drawpile.net listing if possible. It would be better to
+	// just always use HTTPS, but SSL support is not always available (on Windows,
+	// since OpenSSL is not part of the base system.)
+	if(QSslSocket::supportsSsl()) {
+		for(ListServer &ls : _servers) {
+			if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
+				ls.url = QStringLiteral("https://drawpile.net/api/listing/");
+		}
 	}
 
 #ifdef HAVE_DNSSD
