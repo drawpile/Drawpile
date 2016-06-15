@@ -1,0 +1,40 @@
+##########################################################################
+#
+# This is a minimal session template example.
+# This template creates a session with a blank 1200x1200px canvas with
+# a white background layer and a transparent foreground layer.
+#
+# A session template works just like a regular hibernated session, except
+# it is not removed once the session ends. A hibernated session either
+# goes back to sleep or is removed when the last user leaves, but a
+# template session resets back to its starting point. I.e. the live
+# session ends and the template it was started from becomes visible again.
+#
+# You can create a session template in two ways: by making a copy of a
+# hibernated session or manually using a file like this.
+#
+# To turn this file into a working template, convert it to the binary
+# recording format using the txt2dprec tool:
+#
+# txt2dprec --title "Session title" --founder "Session founder name" example.dptpl.txt session.example.dptl
+#
+# Place the output file into the server's hibernation directory.
+# Note: the filename must follow the naming scheme "session.ID.dptl"
+# ID may contain letters (a-Z), numbers (0-9) and the characters ':' and '-'
+#
+# The server must be started with hibernation support enabled. To do this,
+# set the hibernation directory:
+#
+# drawpile-srv --hibernation <hiberation directory path>
+#
+##########################################################################
+
+# A session must begin with a "resize" command to set the initial canvas size.
+resize 1 0 1200 1000 0
+
+# Create default layers
+newlayer 1 1 0 #ffffffff Background
+newlayer 1 2 0 #00000000 Foreground
+
+# See textloader.md for the full list of supported commands
+
