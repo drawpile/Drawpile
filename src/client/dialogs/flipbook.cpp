@@ -39,7 +39,10 @@ Flipbook::Flipbook(QWidget *parent)
 	_timer = new QTimer(this);
 
 	connect(_ui->useBgLayer, &QCheckBox::toggled, [this](bool usebg) {
-		_ui->layerIndex->setMinimum(usebg ? 2 : 1);
+		const int min = usebg ? 2 : 1;
+		_ui->loopStart->setMinimum(min);
+		_ui->loopEnd->setMinimum(min);
+		updateRange();
 		resetFrameCache();
 		loadFrame();
 	});
@@ -47,6 +50,8 @@ Flipbook::Flipbook(QWidget *parent)
 	connect(_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
 	connect(_ui->layerIndex, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
+	connect(_ui->loopStart, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
+	connect(_ui->loopEnd, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
 	connect(_ui->fps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
 	connect(_timer, &QTimer::timeout, _ui->layerIndex, &QSpinBox::stepUp);
 
@@ -64,7 +69,8 @@ Flipbook::Flipbook(QWidget *parent)
 		setGeometry(geom);
 	}
 
-	_ui->layerIndex->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
+	_ui->loopStart->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
+	_ui->loopEnd->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
 
 	// Autoplay
 	_ui->playButton->click();
@@ -81,6 +87,12 @@ Flipbook::~Flipbook()
 	cfg.setValue("window", geometry());
 
 	delete _ui;
+}
+
+void Flipbook::updateRange()
+{
+	_ui->layerIndex->setMinimum(_ui->loopStart->value());
+	_ui->layerIndex->setMaximum(_ui->loopEnd->value());
 }
 
 void Flipbook::rewind()
@@ -111,8 +123,12 @@ void Flipbook::setLayers(paintcore::LayerStack *layers)
 {
 	Q_ASSERT(layers);
 	_layers = layers;
-	_ui->layerIndex->setMaximum(_layers->layers());
+	const int max = _layers->layers();
+	_ui->loopStart->setMaximum(max);
+	_ui->loopEnd->setMaximum(max);
+	_ui->layerIndex->setMaximum(max);
 	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(_layers->layers()));
+	_ui->loopEnd->setValue(max);
 
 	resetFrameCache();
 	loadFrame();
