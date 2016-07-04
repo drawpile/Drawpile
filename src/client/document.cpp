@@ -48,6 +48,7 @@ Document::Document(QObject *parent)
 	  m_canvas(nullptr),
 	  m_recorder(nullptr),
 	  m_autoRecordOnConnect(false),
+	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false)
 {
