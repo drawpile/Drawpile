@@ -211,6 +211,7 @@ else()
 	)
 	qt5_add_resources( QtResource bundled/QtColorWidgets/color_widgets.qrc )
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets")
+        add_definitions(-DQTCOLORPICKER_STATICALLY_LINKED)
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
@@ -226,6 +227,7 @@ if( Qt5LinguistTools_FOUND)
 		i18n/drawpile_ja.ts
 		i18n/drawpile_ru.ts
 		i18n/drawpile_de.ts
+		i18n/drawpile_zh.ts
 	)
 
 	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})

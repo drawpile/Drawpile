@@ -141,14 +141,22 @@ Usage:
 
 Define a image content to use with `putimage`. The image data should
 be in the same format as used in the protocol.
+You can use the `make-inline-image.py` script to convert an image file to
+encoded image data.
+
+Note: the image data must fit into a single message (max length is 65517 bytes)
 
 ### putimage
 
-Usage: `putimage ctxId layerId x y replace|blend|under|erase filename`
+Usage: `putimage ctxId layerId x y blendmode filename`
 
 Load an image and draw it onto the given canvas at the specified location.
+Blendmode is one of the supported SVG composition modes. Most commonly used
+ones are `src-over` and `-dp-replace`.
 The file name is relative to the path of the command file.
-The special filename "-" means the latest inline image should be used.
+The special filename `-` means the latest inline image should be used.
+
+Note: the txt2dprec tool only supports inline images.
 
 ### fillrect
 
@@ -168,3 +176,4 @@ Usage: `undo ctxId actions`
 
 Undo or redo the given number of actions. If the number is negative,
 the actions are redone.
+

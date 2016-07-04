@@ -326,7 +326,6 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	Q_UNUSED(right);
 	if(_scene->hasImage() && !_locked) {
-
 		if(_specialpenmode) {
 			// quick color pick mode
 			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -474,8 +473,8 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 		stopDrag();
 
 	} else if(_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && _pendown == MOUSEDOWN)) {
-		_pendown = NOTDOWN;
 		onPenUp(button == Qt::RightButton);
+		_pendown = NOTDOWN;
 	}
 }
 
@@ -680,7 +679,13 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		_stylusDown = true;
 		_lastPressure = tabev->pressure();
-		if(_tabletmode==ENABLE_TABLET && _pendown == NOTDOWN) {
+
+		// Note: it is possible to get a mouse press event for a tablet event (even before
+		// the tablet event is received or even though tabev->accept() is called), but
+		// it is never possible to get a TabletPress for a real mouse press. Therefore,
+		// we don't actually do anything yet in the penDown handler other than remember
+		// the initial point and we'll let a TabletEvent override the mouse event.
+		if(_tabletmode==ENABLE_TABLET) {
 			tabev->accept();
 
 			penPressEvent(

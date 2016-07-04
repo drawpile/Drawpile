@@ -92,7 +92,11 @@ bool UPnPClient::doDiscover()
 		return true;
 
 	int error;
+#if MINIUPNPC_API_VERSION < 14
 	d->devices = upnpDiscover(2000, nullptr, nullptr, 0, 0, &error);
+#else
+	d->devices = upnpDiscover(2000, nullptr, nullptr, 0, 0, 2, &error);
+#endif
 	if(!d->devices) {
 		qWarning("UPnP: Error (%d) discovering devices!", error);
 		return false;

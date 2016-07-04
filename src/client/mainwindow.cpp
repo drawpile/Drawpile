@@ -122,8 +122,8 @@
 namespace {
 
 QString getLastPath() {
-	QSettings cfg;
-	return cfg.value("window/lastpath").toString();
+	QFileInfo fi(QSettings().value("window/lastpath").toString());
+	return fi.absoluteDir().absolutePath();
 }
 
 void setLastPath(const QString &lastpath) {
@@ -304,7 +304,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
+	_dock_toolsettings->getRectSelectionSettings()->setLayerSelector(_dock_layers);
+	_dock_toolsettings->getRectSelectionSettings()->setClient(m_doc->client());
 	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
+	_dock_toolsettings->getPolySelectionSettings()->setLayerSelector(_dock_layers);
+	_dock_toolsettings->getPolySelectionSettings()->setClient(m_doc->client());
 
 	connect(_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
@@ -914,8 +918,8 @@ void MainWindow::open()
 			QApplication::tr("All Files (*)");
 
 	// Get the file name to open
-	const QUrl file = QFileDialog::getOpenFileUrl(this,
-			tr("Open Image"), getLastPath(), filter);
+	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
+			tr("Open Image"), getLastPath(), filter));
 
 	// Open the file if it was selected
 	if(file.isValid()) {
@@ -1006,7 +1010,6 @@ bool MainWindow::saveas()
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save Image"), getLastPath(), filter.join(";;"), &selfilter);
-
 	if(file.isEmpty()==false) {
 
 		// Set file suffix if missing
@@ -1037,10 +1040,15 @@ bool MainWindow::saveas()
 		bool saved = m_doc->saveCanvas(file);
 		QApplication::restoreOverrideCursor();
 
-		if(saved)
-			return true;
-		else
+		if(!saved) {
 			showErrorMessage(tr("Couldn't save image"));
+			return false;
+		} else {
+			setWindowModified(false);
+			updateTitle();
+			addRecentFile(file);
+			return true;
+		}
 	}
 	return false;
 }

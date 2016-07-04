@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
 #include <QVarLengthArray>
 #include <QDateTime>
 #include <QtEndian>
-#include <QSaveFile>
+#include <QFile>
+#include <QTimer>
 
 #include <KCompressionDevice>
 #include <QJsonObject>
@@ -35,7 +36,7 @@
 namespace recording {
 
 Writer::Writer(const QString &filename, QObject *parent)
-	: Writer(new QSaveFile(filename), true, parent)
+	: Writer(new QFile(filename), true, parent)
 {
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
 	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))
@@ -45,16 +46,14 @@ Writer::Writer(const QString &filename, QObject *parent)
 	else if(filename.endsWith(".xz", Qt::CaseInsensitive))
 		ct = KCompressionDevice::Xz;
 
-	m_savefile = static_cast<QSaveFile*>(m_file);
 	if(ct != KCompressionDevice::None)
-		m_file = new KCompressionDevice(m_savefile, true, ct);
+		m_file = new KCompressionDevice(m_file, true, ct);
 }
 
 
 Writer::Writer(QIODevice *file, bool autoclose, QObject *parent)
 	: QObject(parent), m_file(file),
-	m_savefile(nullptr),
-	m_autoclose(autoclose), m_minInterval(0)
+	m_autoclose(autoclose), m_minInterval(0), m_autoflush(nullptr)
 {
 }
 
@@ -70,18 +69,27 @@ void Writer::setMinimumInterval(int min)
 	m_interval = QDateTime::currentMSecsSinceEpoch();
 }
 
+void Writer::setAutoflush()
+{
+	if(m_autoflush != nullptr)
+		return;
+
+	auto *fd = qobject_cast<QFileDevice*>(m_file);
+	if(!fd) {
+		qWarning("Cannot enable recording autoflush: output device not a QFileDevice");
+		return;
+	}
+
+	m_autoflush = new QTimer(this);
+	m_autoflush->setSingleShot(false);
+	connect(m_autoflush, &QTimer::timeout, fd, &QFileDevice::flush);
+	m_autoflush->start(5000);
+}
+
 bool Writer::open()
 {
 	if(m_file->isOpen())
 		return true;
-
-	// Open savefile explicitly, because otherwise the compression filter
-	// will open&close it for us. We need to call commit() before savefile is
-	// closed but after the compressor is finished.
-	if(m_savefile && m_savefile != m_file) {
-		if(!m_savefile->open(QIODevice::WriteOnly))
-			return false;
-	}
 
 	return m_file->open(QIODevice::WriteOnly);
 }
@@ -160,20 +168,15 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 
 void Writer::close()
 {
-	if(m_file->isOpen()) {
-		if(m_savefile) {
-			// If file is not the same as savefile, it is the compression device.
-			// We must close it first to ensure all buffers are flushed, then
-			// commit the savefile.
-			if(m_file != m_savefile)
-				m_file->close();
-
-			m_savefile->commit();
-
-		} else {
-			m_file->close();
-		}
+	if(m_autoflush) {
+		m_autoflush->stop();
+		delete m_autoflush;
+		m_autoflush = nullptr;
 	}
+
+	if(m_file->isOpen())
+		m_file->close();
 }
 
 }
+

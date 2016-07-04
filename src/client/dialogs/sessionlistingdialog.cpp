@@ -78,6 +78,7 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	_model->setSourceModel(_sessions);
 	_model->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	_model->setFilterKeyColumn(-1);
+	_model->setSortRole(Qt::UserRole);
 
 	connect(_ui->filter, &QLineEdit::textChanged, _model, &QSortFilterProxyModel::setFilterFixedString);
 

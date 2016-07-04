@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1109,8 +1109,10 @@ void SelectionSettings::flipSelection()
 		return;
 
 	canvas::Selection *sel = m_ctrl->model()->selection();
-	if(sel)
+	if(sel) {
+		cutSelection();
 		sel->scale(1, -1);
+	}
 }
 
 void SelectionSettings::mirrorSelection()
@@ -1119,8 +1121,10 @@ void SelectionSettings::mirrorSelection()
 		return;
 
 	canvas::Selection *sel = m_ctrl->model()->selection();
-	if(sel)
+	if(sel) {
+		cutSelection();
 		sel->scale(-1, 1);
+	}
 }
 
 void SelectionSettings::fitToScreen()
@@ -1130,7 +1134,8 @@ void SelectionSettings::fitToScreen()
 
 	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel) {
-		const QSizeF size = sel->boundingRect().size();
+		cutSelection();
+		const QSizeF size = sel->shape().boundingRect().size();
 		const QRectF screenRect = _view->mapToScene(_view->rect()).boundingRect();
 		const QSizeF screen = screenRect.size() * 0.7;
 
@@ -1154,6 +1159,21 @@ void SelectionSettings::resetSize()
 	canvas::Selection *sel = m_ctrl->model()->selection();
 	if(sel)
 		sel->resetShape();
+}
+
+void SelectionSettings::cutSelection()
+{
+	canvas::Selection *sel = m_ctrl->model()->selection();
+	Q_ASSERT(sel);
+
+	const int layer = _layerlist->currentLayer();
+	if(sel->pasteImage().isNull() && !m_ctrl->model()->stateTracker()->isLayerLocked(layer)) {
+		// Automatically cut the layer when the selection is transformed
+		QImage img = m_ctrl->model()->selectionToImage(layer);
+		m_ctrl->client()->sendMessages(sel->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, layer));
+		sel->setPasteImage(img);
+		sel->setMovedFromCanvas(true);
+	}
 }
 
 FillSettings::FillSettings(const QString &name, const QString &title)

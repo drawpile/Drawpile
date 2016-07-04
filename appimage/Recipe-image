@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Set up the build environment for building Drawpile appimages.
+# Run inside a CentOS 6 docker image.
+# This script is partially based on the scripts at
+# https://github.com/probonopd/AppImages/blob/master/recipes/
+
+set -e
+set -x
+
+# Install build-dependencies
+yum -y install epel-release wget
+wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
+yum -y install devtoolset-2-gcc devtoolset-2-gcc-c++ devtoolset-2-binutils
+yum -y install zlib-devel qt5-qtbase-devel qt5-qtsvg-devel qt5-qtmultimedia-devel qt5-linguist cmake make giflib-devel wget unzip git xz
+yum -y install binutils fuse glibc-devel glib2-devel fuse-devel zlib-devel libpng12
+
+export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib:$LD_LIBRARY_PATH
+export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$CMAKE_PATH:$PATH
+
+# Non-repo deps: ECM (needed to build KF5 libs)
+cd /
+wget -O ecm.tar.xz http://download.kde.org/stable/frameworks/5.23/extra-cmake-modules-5.23.0.tar.xz
+tar xfJ ecm.tar.xz
+cd extra-cmake-modules*/
+cmake . -DCMAKE_INSTALL_PREFIX=/usr
+make install
+
+# Non-repo deps: Get and build KArchive
+cd /
+wget -O karchive.tar.xz http://download.kde.org/stable/frameworks/5.23/karchive-5.23.0.tar.xz
+tar xfJ karchive.tar.xz
+cd karchive*/
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+make
+make install
+
+
+# Non-repo deps: Get and build KDNSSD
+# TODO
+
+# Non-repo tools: AppimageKit
+cd /
+wget -O appimagekit.zip https://github.com/probonopd/AppImageKit/archive/master.zip
+unzip appimagekit.zip
+APPIMGKIT=/AppImageKit-master
+cd $APPIMGKIT
+
+cmake .
+make
+
+# Get Drawpile source code
+cd /
+git clone https://github.com/callaa/Drawpile.git --depth 1 --branch stable-1.x
+

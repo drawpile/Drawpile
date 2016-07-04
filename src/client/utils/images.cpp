@@ -21,6 +21,8 @@
 
 #include <QSize>
 #include <QImageWriter>
+#include <QImage>
+#include <QColor>
 
 namespace utils {
 
@@ -74,6 +76,25 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 			formats.append(QPair<QString,QByteArray>("JPEG2000", fmt));
 	}
 	return formats;
+}
+
+QColor isSolidColorImage(const QImage &image)
+{
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	if(image.format() != QImage::Format_ARGB32) {
+		qWarning("isSolidColorImage: not an ARGB32 image!");
+		return QColor();
+	}
+
+	const quint32 c = *reinterpret_cast<const quint32*>(image.bits());
+	const quint32 *p = reinterpret_cast<const quint32*>(image.bits());
+
+	int len = image.width() * image.height();
+	while(--len) {
+		if(*(++p) != c)
+			return QColor();
+	}
+	return QColor::fromRgba(c);
 }
 
 }

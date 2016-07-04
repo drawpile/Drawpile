@@ -39,7 +39,6 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDir>
-#include <QDesktopWidget>
 #include <QDateTime>
 
 #include <ColorWheel>
@@ -133,7 +132,7 @@ void DrawpileApp::openBlankDocument()
 	// Open a new window with a blank image
 	QSettings cfg;
 
-	QSize maxSize = desktop()->screenGeometry().size();
+	const QSize maxSize {65536, 65536};
 	QSize size = cfg.value("history/newsize").toSize();
 
 	if(size.width()<100 || size.height()<100) {

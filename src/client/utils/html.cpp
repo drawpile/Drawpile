@@ -41,7 +41,7 @@ QString newlineToBr(const QString &input)
 	return out;
 }
 
-QString linkify(const QString &input)
+QString linkify(const QString &input, const QString &extra)
 {
 	// This regular expression is from: http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without-the
 	static const QRegularExpression linkre(
@@ -64,7 +64,12 @@ QString linkify(const QString &input)
 		if(!protore.match(url).hasMatch())
 			out.append("http://");
 		out.append(url);
-		out.append("\">");
+		out.append('"');
+		if(!extra.isEmpty()) {
+			out.append(' ');
+			out.append(extra);
+		}
+		out.append('>');
 		out.append(url);
 		out.append("</a>");
 	}

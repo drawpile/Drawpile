@@ -1,10 +1,25 @@
-2015-09-?? Version 1.0.2
+2016-07-02 Version 1.0.3
+ * Remember last used path when saving files
+ * Support new miniupnpc library version
+ * Added txt2dprec tool
+ * Added support for session templates in the standalone server
+ * Fix shortcut saving when editor widget was not manually closed 
+ * Removed default canvas size limit (screen size)
+ * Recording buffer is now periodically flushed to minimize data loss in case of a crash
+ * New feature: chat message pinning
+ * Selection mirror & flip buttons now automatically cut the selection
+ * Flipbook playback range can now be selected
+
+2015-09-13 Version 1.0.2
  * Fixed crash when smoother was set to zero
  * Server: added command line option to enable split recording mode (new recording for each snapshot)
  * Server: /force_snapshot command can now be used outside debug mode
  * Fixed stretched selection contents if selected area was (partially) outside the canvas
  * Chat URL autolinker now accepts more characters in the fragment identifier
  * Retcon simplification: just discard the local fork on conflict rather than replaying
+ * Hidden layers are no longer saved when in a flattened image
+ * Fixed pressure glitch at the start of a stroke
+ * OpenRaster loader optimization: more efficient loading of solid fill layers
 
 2015-08-09 Version 1.0.1
  * Strokes are started immediately even when smoothing is enabled

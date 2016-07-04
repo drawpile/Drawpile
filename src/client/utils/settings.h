@@ -33,12 +33,6 @@ namespace settings {
  */
 QString recordingFolder();
 
-/**
- * @brief Get the standard data file locations in a platform independent manner
- * @return
- */
-QStringList dataPaths();
-
 }
 }
 

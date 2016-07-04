@@ -35,6 +35,7 @@ class Chat : public Message {
 public:
 	static const uint8_t FLAG_ANNOUNCE = 0x01; // public announcement are included in the session history
 	static const uint8_t FLAG_ACTION = 0x04;   // this is an "action message" (like /me in IRC)
+	static const uint8_t FLAG_PIN = 0x08;      // pin this message
 
 	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), m_flags(flags), m_msg(msg) {}
 	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement, bool action)
@@ -44,6 +45,9 @@ public:
 			(action ? FLAG_ACTION : 0),
 			msg.toUtf8()
 			) {}
+
+	//! Construct a pinned message
+	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, FLAG_ANNOUNCE|FLAG_PIN, message.toUtf8())); }
 
 	static Chat *deserialize(uint8_t ctx, const uchar *data, uint len);
 

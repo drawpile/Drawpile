@@ -39,16 +39,5 @@ QString recordingFolder()
 	return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 }
 
-QStringList dataPaths()
-{
-	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-
-#ifdef Q_OS_MAC
-	// On Mac, we look for data files in the application bundle
-	datapaths << qApp->applicationDirPath() + "/../Resources";
-#endif
-	return datapaths;
-}
-
 }
 }

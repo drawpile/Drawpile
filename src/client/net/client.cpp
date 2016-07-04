@@ -170,15 +170,12 @@ void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
 
 void Client::sendChat(const QString &message, bool announce, bool action)
 {
-	if(announce || m_recordedChat || _isloopback) {
-		_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
-	} else {
-		QJsonObject kwargs;
-		if(action)
-			kwargs["action"] = true;
+	_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+}
 
-		sendMessage(command::serverCommand("chat", QJsonArray() << message, kwargs));
-	}
+void Client::sendPinnedChat(const QString &message)
+{
+	_server->sendMessage(protocol::Chat::pin(m_myId, message));
 }
 
 void Client::handleMessage(protocol::MessagePtr msg)

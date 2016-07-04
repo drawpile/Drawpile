@@ -48,6 +48,7 @@ private slots:
 	void playPause();
 	void rewind();
 	void updateFps(int newFps);
+	void updateRange();
 
 private:
 	void resetFrameCache();

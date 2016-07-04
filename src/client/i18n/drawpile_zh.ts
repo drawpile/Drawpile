@@ -1,80 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AnimationExporter</name>
     <message>
         <location filename="../export/animation.cpp" line="73"/>
         <source>Export error</source>
-        <translation>Ошибка экспортирования</translation>
+        <translation>导出故障</translation>
     </message>
     <message>
         <location filename="../export/animation.cpp" line="82"/>
         <source>Exporting...</source>
-        <translation>Экспортирование...</translation>
+        <translation>导出中……</translation>
     </message>
     <message>
         <location filename="../export/animation.cpp" line="82"/>
         <source>Cancel</source>
-        <translation>Отмена</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
     <name>BrushSettings</name>
     <message>
-        <location filename="../ui/brushsettings.ui" line="85"/>
-        <source>Indirect drawing</source>
-        <translation>Косвенное рисование</translation>
-    </message>
-    <message>
         <location filename="../ui/brushsettings.ui" line="105"/>
         <source>Incremental drawing</source>
-        <translation>Дополняющее рисование</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="152"/>
-        <source>Opacity</source>
-        <translation>Непрозрачность</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="159"/>
-        <source>Size</source>
-        <translation>Размер</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="166"/>
-        <source>Hardness</source>
-        <translation>Жёсткость</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="175"/>
-        <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>新加绘画</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="195"/>
         <source>Opacity:</source>
-        <translation>Непрозрачность:</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="215"/>
-        <source>Hardness:</source>
-        <translation>Жёсткость:</translation>
-    </message>
-    <message>
-        <location filename="../ui/brushsettings.ui" line="222"/>
-        <source>Spacing:</source>
-        <translation>Интервал:</translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="255"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>像素</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="215"/>
+        <source>Hardness:</source>
+        <translation>硬度:</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="85"/>
+        <source>Indirect drawing</source>
+        <translation>间接绘画</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="175"/>
+        <source>Size:</source>
+        <translation>大小:</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="222"/>
+        <source>Spacing:</source>
+        <translation>间距:</translation>
     </message>
     <message>
         <location filename="../ui/brushsettings.ui" line="307"/>
         <source>Pressure:</source>
-        <translation>Сила нажатия:</translation>
+        <translation>压感:</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="159"/>
+        <source>Size</source>
+        <translation>大小</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="152"/>
+        <source>Opacity</source>
+        <translation>透明度</translation>
+    </message>
+    <message>
+        <location filename="../ui/brushsettings.ui" line="166"/>
+        <source>Hardness</source>
+        <translation>硬度</translation>
     </message>
 </context>
 <context>
@@ -82,75 +82,75 @@
     <message>
         <location filename="../ui/certificateview.ui" line="24"/>
         <source>Info</source>
-        <translation>Информация</translation>
+        <translation>关于</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="30"/>
         <location filename="../ui/certificateview.ui" line="137"/>
         <source>Organization:</source>
-        <translation>Организация:</translation>
+        <translation>组织:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="37"/>
         <source>SHA1 fingerprint:</source>
-        <translation>Отпечаток SHA1:</translation>
+        <translation>SHA1 摘要:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="60"/>
         <source>Issued by</source>
-        <translation>Кем выдан</translation>
+        <translation>发布者</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="67"/>
         <source>Expires on:</source>
-        <translation>Действителен до:</translation>
+        <translation>到期至:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="130"/>
         <source>MD5 fingerprint:</source>
-        <translation>Отпечаток MD5:</translation>
+        <translation>MD5 摘要:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="144"/>
         <location filename="../ui/certificateview.ui" line="158"/>
         <source>Organization unit:</source>
-        <translation>Подразделение:</translation>
+        <translation>组织部门:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="151"/>
         <source>Issued on:</source>
-        <translation>Когда выдан:</translation>
+        <translation>发行日期:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="165"/>
         <location filename="../ui/certificateview.ui" line="215"/>
         <source>Common name:</source>
-        <translation>Общее имя:</translation>
+        <translation>通用名、网址:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="172"/>
         <source>Serial number:</source>
-        <translation>Серийный номер:</translation>
+        <translation>编号:</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="198"/>
         <source>Issued to</source>
-        <translation>Кому выдан</translation>
+        <translation>发布至</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="251"/>
         <source>Validity period</source>
-        <translation>Срок действия</translation>
+        <translation>有效期</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="264"/>
         <source>Fingerprints</source>
-        <translation>Отпечатки</translation>
+        <translation>摘要</translation>
     </message>
     <message>
         <location filename="../ui/certificateview.ui" line="305"/>
         <source>Details</source>
-        <translation>Детали</translation>
+        <translation>更多细节</translation>
     </message>
 </context>
 <context>
@@ -191,47 +191,47 @@
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="321"/>
         <source>Select Color</source>
-        <translation type="unfinished">Выберите цвет</translation>
+        <translation type="unfinished">选取颜色</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="322"/>
         <source>Saturation</source>
-        <translation type="unfinished">Насыщенность</translation>
+        <translation type="unfinished">饱和度</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="323"/>
         <source>Hue</source>
-        <translation type="unfinished">Тон</translation>
+        <translation type="unfinished">色相</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="324"/>
         <source>Hex</source>
-        <translation type="unfinished">Hex</translation>
+        <translation type="unfinished">Hex取色</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="325"/>
         <source>Blue</source>
-        <translation type="unfinished">Синий</translation>
+        <translation type="unfinished">蓝色</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="326"/>
         <source>Value</source>
-        <translation type="unfinished">Значение</translation>
+        <translation type="unfinished">明度</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="327"/>
         <source>Green</source>
-        <translation type="unfinished">Зелёный</translation>
+        <translation type="unfinished">绿色</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="328"/>
         <source>Alpha</source>
-        <translation type="unfinished">Альфа</translation>
+        <translation type="unfinished">透明度</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/ui_color_dialog.h" line="329"/>
         <source>Red</source>
-        <translation type="unfinished">Красный</translation>
+        <translation type="unfinished">红色</translation>
     </message>
 </context>
 <context>
@@ -239,90 +239,90 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="92"/>
         <source>Action</source>
-        <translation>Действие</translation>
+        <translation>动作</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="93"/>
         <source>Shortcut</source>
-        <translation>Горячие клавиши</translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="94"/>
         <source>Default</source>
-        <translation>По умолчанию</translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
     <name>EraserSettings</name>
     <message>
-        <location filename="../ui/erasersettings.ui" line="96"/>
-        <source>Erase active color only</source>
-        <translation>Стирать только активный цвет</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="110"/>
-        <source>Smooth edge</source>
-        <translation>Гладкая грань</translation>
+        <location filename="../ui/erasersettings.ui" line="197"/>
+        <source>Incremental drawing</source>
+        <translation>新加绘画</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="130"/>
         <source>Hard edge</source>
-        <translation>Жёсткая грань</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="177"/>
-        <source>Indirect drawing</source>
-        <translation>Косвенное рисование</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="197"/>
-        <source>Incremental drawing</source>
-        <translation>Дополняющее рисование</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="256"/>
-        <source>Opacity:</source>
-        <translation>Непрозрачность:</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="263"/>
-        <source>Hardness:</source>
-        <translation>Жёсткость:</translation>
-    </message>
-    <message>
-        <location filename="../ui/erasersettings.ui" line="270"/>
-        <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>边缘硬度</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="277"/>
         <source>Spacing:</source>
-        <translation>Интервал:</translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="310"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>像素</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="263"/>
+        <source>Hardness:</source>
+        <translation>硬度:</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="270"/>
+        <source>Size:</source>
+        <translation>大小:</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="256"/>
+        <source>Opacity:</source>
+        <translation>透明度:</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="96"/>
+        <source>Erase active color only</source>
+        <translation>只擦除活动颜色</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="110"/>
+        <source>Smooth edge</source>
+        <translation>边缘柔化</translation>
+    </message>
+    <message>
+        <location filename="../ui/erasersettings.ui" line="177"/>
+        <source>Indirect drawing</source>
+        <translation>间接绘画</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="362"/>
         <source>Pressure:</source>
-        <translation>Сила нажатия:</translation>
+        <translation>压感:</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="386"/>
         <source>Size</source>
-        <translation>Размер</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="393"/>
         <source>Opacity</source>
-        <translation>Непрозрачность</translation>
+        <translation>透明度</translation>
     </message>
     <message>
         <location filename="../ui/erasersettings.ui" line="400"/>
         <source>Hardness</source>
-        <translation>Жёсткость</translation>
+        <translation>硬度</translation>
     </message>
 </context>
 <context>
@@ -330,17 +330,17 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="129"/>
         <source>Couldn&apos;t start ffmpeg!</source>
-        <translation>Невозможно запустить ffmpeg!</translation>
+        <translation>FFmpeg无法开始</translation>
     </message>
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="132"/>
         <source>Ffmpeg crashed!</source>
-        <translation>Аварийное завершение ffmpeg!</translation>
+        <translation>FFmpeg 故障崩溃</translation>
     </message>
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="135"/>
         <source>Ffmpeg process error</source>
-        <translation>Ошибка процесса ffmpeg</translation>
+        <translation>FFmpeg 处理故障</translation>
     </message>
 </context>
 <context>
@@ -348,22 +348,22 @@
     <message>
         <location filename="../ui/fillsettings.ui" line="32"/>
         <source>Tolerance:</source>
-        <translation>Допущение:</translation>
-    </message>
-    <message>
-        <location filename="../ui/fillsettings.ui" line="89"/>
-        <source>Sample merged</source>
-        <translation>Слияние</translation>
+        <translation>容错率:</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="96"/>
         <source>Expand:</source>
-        <translation>Расширение:</translation>
+        <translation>扩展:</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="125"/>
         <source>Fill under</source>
-        <translation>Заполнение снизу</translation>
+        <translation>填充</translation>
+    </message>
+    <message>
+        <location filename="../ui/fillsettings.ui" line="89"/>
+        <source>Sample merged</source>
+        <translation>合并参照</translation>
     </message>
 </context>
 <context>
@@ -371,62 +371,62 @@
     <message>
         <location filename="../ui/recfilter.ui" line="14"/>
         <source>Filter recording</source>
-        <translation>Отфильтровать запись</translation>
+        <translation>录像滤镜</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="22"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="28"/>
         <source>Pauses</source>
-        <translation>Паузы</translation>
+        <translation>暂停</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="35"/>
         <source>Chat messages</source>
-        <translation>Сообщения чата</translation>
+        <translation>聊天信息</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="42"/>
         <source>Laser pointers</source>
-        <translation>Лазерные указатели</translation>
+        <translation>激光笔</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="49"/>
         <source>Markers</source>
-        <translation>Метки</translation>
+        <translation>马克笔</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="56"/>
         <source>Non-participating users</source>
-        <translation>Не участвующие пользователи</translation>
+        <translation>围观群众（不绘画）</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="66"/>
         <source>Undone actions</source>
-        <translation>Отменённые действия</translation>
+        <translation>撤销活动</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="79"/>
         <source>Flagged actions</source>
-        <translation>Отмеченные действия</translation>
+        <translation>标记的活动</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="102"/>
         <source>Modify</source>
-        <translation>Изменить</translation>
+        <translation>修改</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="111"/>
         <source>Add new markers</source>
-        <translation>Добавить новые метки</translation>
+        <translation>加入新标记</translation>
     </message>
     <message>
         <location filename="../ui/recfilter.ui" line="118"/>
         <source>Squish strokes</source>
-        <translation>Сжать штрихи</translation>
+        <translation>挤压笔记</translation>
     </message>
 </context>
 <context>
@@ -434,12 +434,12 @@
     <message>
         <location filename="../ui/flipbook.ui" line="14"/>
         <source>Flipbook</source>
-        <translation>Кинеограф</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="86"/>
         <source>Layer:</source>
-        <translation>Слой:</translation>
+        <translation>图层:</translation>
     </message>
     <message>
         <location filename="../ui/flipbook.ui" line="106"/>
@@ -454,45 +454,40 @@
     <message>
         <location filename="../ui/flipbook.ui" line="175"/>
         <source>Use background layer</source>
-        <translation>Фоновый слой</translation>
+        <translation>使用背景图层</translation>
     </message>
 </context>
 <context>
     <name>HostDialog</name>
     <message>
-        <location filename="../ui/hostdialog.ui" line="17"/>
-        <source>Host a Session</source>
-        <translation>Начать сессию</translation>
-    </message>
-    <message>
         <location filename="../ui/hostdialog.ui" line="27"/>
         <source>Session</source>
-        <translation>Сессия</translation>
+        <translation>连接</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="36"/>
         <source>&amp;Title:</source>
-        <translation>&amp;Название:</translation>
+        <translation>标题(&amp;T):</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="46"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Это название указано в заголовке приложения и в диалоге выбора сессии</translation>
+        <translation>本连接标题将在窗口标题栏和对话中显示</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="53"/>
         <source>&amp;Username:</source>
-        <translation>&amp;Имя пользователя:</translation>
+        <translation>用户名(&amp;U):</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="76"/>
         <source>&amp;Password:</source>
-        <translation>&amp;Пароль:</translation>
+        <translation>密码(&amp;P):</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="92"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>Опционально, если оставить пустым, пароль не понадобится, чтобы присоединиться к этой сессии.</translation>
+        <translation>可选，如果不填写，加入连接将不需要密码</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="102"/>
@@ -500,79 +495,84 @@
         <translation>&amp;ID:</translation>
     </message>
     <message>
-        <location filename="../ui/hostdialog.ui" line="118"/>
-        <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
-        <translation>ID для использования в URL сессии. Оставьте пустым, чтобы сервер сам сгенерировал ID</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="121"/>
-        <source>Automatic</source>
-        <translation>Автоматически</translation>
-    </message>
-    <message>
         <location filename="../ui/hostdialog.ui" line="128"/>
         <source>Announce the session at a public list</source>
-        <translation>Анонсировать сессию в общедоступном списке</translation>
+        <translation>在公开列表中广播</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="131"/>
         <source>Announce at:</source>
-        <translation>Анонсировать на:</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="152"/>
-        <source>Settings</source>
-        <translation>Настройки</translation>
+        <translation>广播于:</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="161"/>
         <source>&amp;User limit:</source>
-        <translation>&amp;Лимит пользователей:</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="190"/>
-        <source>Options:</source>
-        <translation>Опции:</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="197"/>
-        <source>Allow drawing by default</source>
-        <translation>Разрешить рисование по умолчанию</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="207"/>
-        <source>Lock layer controls</source>
-        <translation>Заблокировать управление слоями</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="217"/>
-        <source>A persistent session can be joined even after all users have left</source>
-        <translation>К постоянной сессии можно присоединиться даже после того, как все пользователи её покинут</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="220"/>
-        <source>Persistent session</source>
-        <translation>Постоянная сессия</translation>
-    </message>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="227"/>
-        <source>Preserve chat</source>
-        <translation>Сохранять чат</translation>
+        <translation>用户数限制(&amp;U):</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="238"/>
         <source>Server</source>
-        <translation>Сервер</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="247"/>
         <source>Bui&amp;lt-in</source>
-        <translation>&amp;Встроенный</translation>
+        <translation>本地内置(&amp;L)</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="257"/>
         <source>Re&amp;mote:</source>
-        <translation>&amp;Удалённый:</translation>
+        <translation>远程服务器(&amp;M):</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="227"/>
+        <source>Preserve chat</source>
+        <translation>保留聊天记录</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="217"/>
+        <source>A persistent session can be joined even after all users have left</source>
+        <translation>被保护的连接在所有用户离开后不会被删除</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="121"/>
+        <source>Automatic</source>
+        <translation>自动</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="152"/>
+        <source>Settings</source>
+        <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="190"/>
+        <source>Options:</source>
+        <translation>选项:</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="220"/>
+        <source>Persistent session</source>
+        <translation>延长保护连接</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="17"/>
+        <source>Host a Session</source>
+        <translation>创建连接</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="118"/>
+        <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
+        <translation>连接URL的ID，不填时服务器自动生成</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="197"/>
+        <source>Allow drawing by default</source>
+        <translation>默认允许绘画</translation>
+    </message>
+    <message>
+        <location filename="../ui/hostdialog.ui" line="207"/>
+        <source>Lock layer controls</source>
+        <translation>锁定图层操作</translation>
     </message>
 </context>
 <context>
@@ -580,37 +580,37 @@
     <message>
         <location filename="../ui/inputcfg.ui" line="43"/>
         <source>Smoothing:</source>
-        <translation>Сглаживание:</translation>
+        <translation>平滑:</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="66"/>
         <source>Pressure:</source>
-        <translation>Сила нажатия:</translation>
+        <translation>压感:</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="74"/>
         <source>Stylus</source>
-        <translation>Стилус</translation>
+        <translation>压感笔</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="79"/>
         <source>Distance</source>
-        <translation>Расстояние</translation>
+        <translation>路径长度</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="84"/>
         <source>Velocity</source>
-        <translation>Скорость</translation>
+        <translation>速度</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="145"/>
         <source>Curve distance</source>
-        <translation>Кривая расстояния</translation>
+        <translation>曲线距离</translation>
     </message>
     <message>
         <location filename="../ui/inputcfg.ui" line="202"/>
         <source>Velocity range</source>
-        <translation>Диапазон скорости</translation>
+        <translation>速度范围</translation>
     </message>
 </context>
 <context>
@@ -618,22 +618,22 @@
     <message>
         <location filename="../ui/joindialog.ui" line="17"/>
         <source>Join a Session</source>
-        <translation>Присоединиться к сессии</translation>
+        <translation>加入连接</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="28"/>
         <source>&amp;Host address:</source>
-        <translation>&amp;Адрес хоста:</translation>
+        <translation>服务器地址(&amp;H):</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="54"/>
         <source>&amp;Username:</source>
-        <translation>&amp;Имя пользователя:</translation>
+        <translation>用户名(&amp;U):</translation>
     </message>
     <message>
         <location filename="../ui/joindialog.ui" line="88"/>
         <source>Record session</source>
-        <translation>Запись сессии</translation>
+        <translation>录制连接内容</translation>
     </message>
 </context>
 <context>
@@ -641,12 +641,12 @@
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="74"/>
         <source>Remove point</source>
-        <translation>Удалить точку</translation>
+        <translation>移除点</translation>
     </message>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="75"/>
         <source>Reset</source>
-        <translation>Сброс</translation>
+        <translation>重置</translation>
     </message>
 </context>
 <context>
@@ -654,22 +654,22 @@
     <message>
         <location filename="../ui/lasersettings.ui" line="17"/>
         <source>Trail:</source>
-        <translation>След:</translation>
+        <translation>轨迹:</translation>
     </message>
     <message>
         <location filename="../ui/lasersettings.ui" line="45"/>
         <source>s</source>
-        <translation>сек</translation>
+        <translation>s</translation>
     </message>
     <message>
         <location filename="../ui/lasersettings.ui" line="60"/>
         <source>Color:</source>
-        <translation>Цвет:</translation>
+        <translation>颜色:</translation>
     </message>
     <message>
         <location filename="../ui/lasersettings.ui" line="147"/>
         <source>Track hovering pointer</source>
-        <translation>Отслеживать парящий указатель</translation>
+        <translation>追踪悬停指针</translation>
     </message>
 </context>
 <context>
@@ -677,17 +677,17 @@
     <message>
         <location filename="../ui/layerbox.ui" line="37"/>
         <source>Layer blending mode</source>
-        <translation>Режим смешивания</translation>
+        <translation>图层渲染模式</translation>
     </message>
     <message>
         <location filename="../ui/layerbox.ui" line="60"/>
         <source>Layer opacity</source>
-        <translation>Непрозрачность слоя</translation>
+        <translation>图层透明度</translation>
     </message>
     <message>
         <location filename="../ui/layerbox.ui" line="89"/>
         <source>Layer access control</source>
-        <translation>Контроль доступа к слою</translation>
+        <translation>图层使用管理</translation>
     </message>
 </context>
 <context>
@@ -695,12 +695,12 @@
     <message>
         <location filename="../ui/logindialog.ui" line="43"/>
         <source>Username:</source>
-        <translation>Имя пользователя:</translation>
+        <translation>用户名:</translation>
     </message>
     <message>
         <location filename="../ui/logindialog.ui" line="57"/>
         <source>Password:</source>
-        <translation>Пароль:</translation>
+        <translation>密码:</translation>
     </message>
 </context>
 <context>
@@ -708,31 +708,29 @@
     <message>
         <location filename="../widgets/macmenu.cpp" line="84"/>
         <source>Minimize</source>
-        <translation>Свернуть</translation>
+        <translation>最小化</translation>
     </message>
     <message numerus="yes">
         <location filename="../widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Несохранённых изображений: %n. Хотите просмотреть изменения перед закрытием?</numerusform>
-            <numerusform>Несохранённых изображений: %n. Хотите просмотреть изменения перед закрытием?</numerusform>
-            <numerusform>Несохранённых изображений: %n. Хотите просмотреть изменения перед закрытием?</numerusform>
+            <numerusform>您有%n 个未保存图片，退出前要查看么？</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="209"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>Если вы не проверите ваши документы, все изменения будут потеряны</translation>
+        <translation>如果不查看，所有改动自动放弃</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="210"/>
         <source>Review changes...</source>
-        <translation>Проверить изменения...</translation>
+        <translation>修改恢复中</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="212"/>
         <source>Discard changes</source>
-        <translation>Не сохранять изменения</translation>
+        <translation>放弃改动</translation>
     </message>
 </context>
 <context>
@@ -741,823 +739,822 @@
         <location filename="../mainwindow.cpp" line="589"/>
         <location filename="../mainwindow.cpp" line="1312"/>
         <source>Untitled</source>
-        <translation>Без названия</translation>
+        <translation>未命名</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="759"/>
         <location filename="../mainwindow.cpp" line="780"/>
         <source>Exit Drawpile</source>
-        <translation>Выйти из Drawpile</translation>
+        <translation>退出Drawpile</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="760"/>
         <source>You are still connected to a drawing session.</source>
-        <translation>Вы всё ещё подключены к общей сессии.</translation>
+        <translation>您还有未退出的连接</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="764"/>
         <source>Exit anyway</source>
-        <translation>Всё равно выйти</translation>
+        <translation>仍然离开</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="766"/>
         <location filename="../mainwindow.cpp" line="788"/>
         <source>Cancel</source>
-        <translation>Отмена</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="781"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Есть несохранённые изменения.
-Сохранить их перед выходом?</translation>
+        <translation>未保存改动，要存么？</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="784"/>
         <source>Save</source>
-        <translation>Сохранить</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="786"/>
         <source>Discard</source>
-        <translation>Не сохранять</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="921"/>
-        <source>All Supported Files (%1)</source>
-        <translation>Все поддерживаемые файлы (%1)</translation>
+        <translation>放弃</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="922"/>
         <location filename="../mainwindow.cpp" line="1757"/>
         <source>Images (%1)</source>
-        <translation>Изображения (%1)</translation>
+        <translation>图片 (%1)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="923"/>
         <location filename="../mainwindow.cpp" line="1138"/>
         <source>Recordings (%1)</source>
-        <translation>Записи (%1)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="928"/>
-        <source>Open Image</source>
-        <translation>Открыть изображение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="951"/>
-        <location filename="../mainwindow.cpp" line="1038"/>
-        <source>Save Image</source>
-        <translation>Сохранить изображение</translation>
+        <translation>录像 (%1)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="952"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation>Выбранный формат не поддерживает слои или аннотации.</translation>
+        <translation>所选格式不支持图层或注释</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="954"/>
         <source>Flatten</source>
-        <translation>Объединить</translation>
+        <translation>Flatten</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="955"/>
         <source>Save as OpenRaster</source>
-        <translation>Сохранить как OpenRaster</translation>
+        <translation>以OpenRaster格式保存</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1012"/>
         <location filename="../mainwindow.cpp" line="1069"/>
         <source>Couldn&apos;t save image</source>
-        <translation>Невозможно сохранить изображение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1139"/>
-        <source>Compressed Recordings (%1)</source>
-        <translation>Сжатые записи (%1)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1142"/>
-        <source>Record Session</source>
-        <translation>Запись сессии</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1189"/>
-        <source>Stop Recording</source>
-        <translation>Остановить запись</translation>
+        <translation>无法保存图片</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1243"/>
         <source>Invalid address</source>
-        <translation>Неправильный адрес</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1255"/>
-        <source>Host Session</source>
-        <translation>Начать сессию</translation>
+        <translation>地址无效</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1313"/>
         <source>Really leave the session?</source>
-        <translation>Действительно покинуть сессию?</translation>
+        <translation>确认断开连接？</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1319"/>
         <source>Leave</source>
-        <translation>Покинуть</translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1321"/>
         <source>Stay</source>
-        <translation>Остаться</translation>
+        <translation>保留</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1330"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>Ещё есть неотправленные данные! Пожалуйста, подождите пока передача завершится!</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1341"/>
-        <source>Session Title</source>
-        <translation>Название сессии</translation>
+        <translation>信息未完全传出，请稍后。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1342"/>
         <source>Change session title</source>
-        <translation>Изменить название сессии</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1408"/>
-        <source>Could not connect to server</source>
-        <translation>Невозможно подключиться к серверу</translation>
+        <translation>更改连接标题</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1420"/>
         <source>Would you like to join the session instead?</source>
-        <translation>Хотите присоединиться к этой сессии?</translation>
+        <translation>要改为加入连接吗？</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1422"/>
         <source>Join</source>
-        <translation>Присоединиться</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1480"/>
         <source>Board is locked</source>
-        <translation>Рабочая область заблокирована</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1761"/>
-        <source>Paste Image</source>
-        <translation>Вставить изображение</translation>
+        <translation>画板被锁定</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1777"/>
         <source>The image could not be loaded</source>
-        <translation>Изображение не может быть загружено</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1914"/>
-        <source>Mark</source>
-        <translation>Метка</translation>
+        <translation>无法载入图片</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1914"/>
         <source>Marker text</source>
-        <translation>Текст метки</translation>
+        <translation>标记文字</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1921"/>
         <source>About Drawpile</source>
-        <translation>О Drawpile</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1923"/>
-        <source>A collaborative drawing program.</source>
-        <translation>Программа для совместного рисования.</translation>
+        <translation>关于Drawpile</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2030"/>
         <location filename="../widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
-        <translation>&amp;Новый</translation>
+        <translation>新建(&amp;N)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2031"/>
         <location filename="../widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
-        <translation>&amp;Открыть...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2033"/>
-        <source>Close</source>
-        <translation>Закрыть</translation>
+        <translation>打开(&amp;O)...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2035"/>
         <source>&amp;Save</source>
-        <translation>&amp;Сохранить</translation>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2036"/>
         <source>Save &amp;As...</source>
-        <translation>Сохранить &amp;как...</translation>
+        <translation>另存为(&amp;A)...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2037"/>
         <source>Autosave</source>
-        <translation>Автосохранение</translation>
+        <translation>自动保存</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2039"/>
         <source>&amp;Animation...</source>
-        <translation>&amp;Анимация...</translation>
+        <translation>动画(&amp;A)...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2041"/>
         <source>Record...</source>
-        <translation>Записать...</translation>
+        <translation>录像...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2042"/>
         <location filename="../widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Выйти</translation>
+        <translation>退出(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2067"/>
         <location filename="../widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
-        <translation>&amp;Файл</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2070"/>
-        <location filename="../widgets/macmenu.cpp" line="54"/>
-        <source>Open &amp;Recent</source>
-        <translation>Открыть не&amp;давнее</translation>
+        <translation>文件(&amp;F)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2081"/>
         <source>&amp;Export</source>
-        <translation>&amp;Экспортировать</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2089"/>
-        <source>File Tools</source>
-        <translation>Файловые инструменты</translation>
+        <translation>导出(&amp;E)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2104"/>
         <source>&amp;Undo</source>
-        <translation>От&amp;менить действие</translation>
+        <translation>撤销(&amp;U)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2105"/>
         <source>&amp;Redo</source>
-        <translation>&amp;Повторить действие</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2106"/>
-        <source>&amp;Copy Visible</source>
-        <translation>&amp;Копировать видимое</translation>
+        <translation>重做(&amp;R)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2106"/>
         <source>Copy selected area to the clipboard</source>
-        <translation>Копировать выбранную область в буфер</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2107"/>
-        <source>Copy &amp;Layer</source>
-        <translation>Копировать &amp;слой</translation>
+        <translation>复制选中至剪贴板</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2107"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation>Копировать выбранную область текущего слоя в буфер</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2108"/>
-        <source>Cu&amp;t Layer</source>
-        <translation>Вы&amp;резать слой</translation>
+        <translation>复制本图层选中至剪贴板</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2108"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>Вырезать выбранную область текущего слоя в буфер</translation>
+        <translation>剪切本图层选中至剪贴板</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2109"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Вставить</translation>
+        <translation>粘贴(&amp;P)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2110"/>
         <source>&amp;Stamp</source>
-        <translation>&amp;Штамп</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2112"/>
-        <source>Paste &amp;From File...</source>
-        <translation>Вставить &amp;из файла...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2113"/>
-        <source>Delete Empty Annotations</source>
-        <translation>Удалить пустые аннотации</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2114"/>
-        <source>Resi&amp;ze Canvas...</source>
-        <translation>Изменить размер &amp;холста...</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2115"/>
-        <location filename="../widgets/macmenu.cpp" line="62"/>
-        <source>Prefere&amp;nces</source>
-        <translation>П&amp;араметры</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2117"/>
-        <source>Select &amp;All</source>
-        <translation>Выделить вс&amp;ё</translation>
+        <translation>印章(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2119"/>
         <location filename="../mainwindow.cpp" line="2121"/>
         <source>&amp;Deselect</source>
-        <translation>Сн&amp;ять выделение</translation>
+        <translation>取消选择(&amp;D)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2124"/>
         <source>Expand &amp;Up</source>
-        <translation>Расширить &amp;вверх</translation>
+        <translation>向上扩大(&amp;U)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2125"/>
         <source>Expand &amp;Down</source>
-        <translation>Расширить в&amp;низ</translation>
+        <translation>向下扩大(&amp;D)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2126"/>
         <source>Expand &amp;Left</source>
-        <translation>Расширить в&amp;лево</translation>
+        <translation>向左扩大(&amp;H)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2127"/>
         <source>Expand &amp;Right</source>
-        <translation>Расширить в&amp;право</translation>
+        <translation>向右扩大(&amp;R)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2178"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Правка</translation>
+        <translation>编辑(&amp;E)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2195"/>
         <source>&amp;Expand Canvas</source>
-        <translation>Расширить х&amp;олст</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2210"/>
-        <source>Edit Tools</source>
-        <translation>Инструменты редактирования</translation>
+        <translation>扩大画布(&amp;E)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2223"/>
         <source>&amp;Toolbars</source>
-        <translation>Панели &amp;инструментов</translation>
+        <translation>工具栏(&amp;T)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2226"/>
         <source>&amp;Docks</source>
-        <translation>&amp;Доки</translation>
+        <translation>面板(&amp;D)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2229"/>
         <source>Chat</source>
-        <translation>Чат</translation>
+        <translation>聊天</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2231"/>
         <source>Flipbook</source>
-        <translation>Кинеограф</translation>
+        <translation>Flipbook</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2231"/>
         <source>Show animation preview window</source>
-        <translation>Показать окно предпросмотра анимации</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2233"/>
-        <source>Zoom &amp;In</source>
-        <translation>У&amp;величить</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2234"/>
-        <source>Zoom &amp;Out</source>
-        <translation>У&amp;меньшить</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2235"/>
-        <source>&amp;Normal Size</source>
-        <translation>&amp;Нормальный размер</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2236"/>
-        <source>&amp;Reset Rotation</source>
-        <translation>&amp;Сбросить вращение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2237"/>
-        <source>Rotate to 90°</source>
-        <translation>Повернуть на 90°</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2238"/>
-        <source>Rotate to 180°</source>
-        <translation>Повернуть на 180°</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2239"/>
-        <source>Rotate to 270°</source>
-        <translation>Повернуть на 270°</translation>
+        <translation>显示动画预览</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2241"/>
         <source>Mirror</source>
-        <translation>Отразить</translation>
+        <translation>镜像翻转</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2242"/>
         <source>Flip</source>
-        <translation>Перевернуть</translation>
+        <translation>纵向翻转</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2244"/>
         <source>Show Crosshair C&amp;ursor</source>
-        <translation>Показывать перекрестие &amp;курсора</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2245"/>
-        <source>Show &amp;Annotations</source>
-        <translation>Показывать &amp;аннотации</translation>
+        <translation>显示光标十字(&amp;U)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2246"/>
         <source>Show User &amp;Pointers</source>
-        <translation>Показывать &amp;указатели пользователей</translation>
+        <translation>显示用户光标</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2247"/>
         <source>Show User &amp;Layers</source>
-        <translation>Показывать &amp;слои пользователей</translation>
+        <translation>显示用户图层</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2248"/>
         <source>Show La&amp;ser Trails</source>
-        <translation>Показывать след &amp;лазера</translation>
+        <translation>显示图层轨迹(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2249"/>
         <source>Thick Laser Trails</source>
-        <translation>Толстый след лазера</translation>
+        <translation>加粗激光笔轨迹</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2250"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation>Показывать &amp;пиксельную сетку</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2259"/>
-        <source>&amp;Full Screen</source>
-        <translation>На весь &amp;экран</translation>
+        <translation>显示像素(&amp;G)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2324"/>
         <source>&amp;View</source>
-        <translation>&amp;Вид</translation>
+        <translation>显示(&amp;V)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2331"/>
         <source>&amp;Zoom</source>
-        <translation>&amp;Масштаб</translation>
+        <translation>缩放(&amp;Z)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2336"/>
         <source>Rotation</source>
-        <translation>Вращение</translation>
+        <translation>旋转</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2347"/>
         <source>User &amp;pointers</source>
-        <translation>&amp;Указатели пользователей</translation>
+        <translation>用户 &amp;指针</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2364"/>
         <location filename="../widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
-        <translation>&amp;Начать...</translation>
+        <translation>服务器(&amp;H)...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2364"/>
         <source>Share your drawingboard with others</source>
-        <translation>Разделить рабочую область с другими</translation>
+        <translation>分享画板</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2365"/>
         <location filename="../widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
-        <translation>&amp;Присоединиться...</translation>
+        <translation>加入(&amp;J)...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2365"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation>Присоединиться к сессии другого пользователя</translation>
+        <translation>加入其他用户画板</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2366"/>
         <source>&amp;Leave</source>
-        <translation>По&amp;кинуть</translation>
+        <translation>离开(&amp;L)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2366"/>
         <source>Leave this drawing session</source>
-        <translation>Покинуть эту сессию</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2369"/>
-        <source>Lo&amp;ck the Board</source>
-        <translation>За&amp;блокировать рабочую область</translation>
+        <translation>退出这个绘图连接</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2369"/>
         <source>Prevent changes to the drawing board</source>
-        <translation>Запретить изменения в рабочей области</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2370"/>
-        <source>Lock Layer Controls</source>
-        <translation>Заблокировать управление слоями</translation>
+        <translation>保护画板设置</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2370"/>
         <source>Allow only session operators to add and change layers</source>
-        <translation>Разрешить только операторам сессии удалять и изменять слои</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2371"/>
-        <source>&amp;Deny Joins</source>
-        <translation>&amp;Отклонять соединения</translation>
+        <translation>只允许连接管理者添加或修改图层</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2371"/>
         <source>Prevent new users from joining the session</source>
-        <translation>Запретить новым пользователям присоединяться к сессии</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2373"/>
-        <source>Change &amp;Title...</source>
-        <translation>&amp;Изменить название...</translation>
+        <translation>禁止新用户加入连接</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2389"/>
         <location filename="../widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
-        <translation>&amp;Сессия</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2402"/>
-        <source>&amp;Pen</source>
-        <translation>&amp;Ручка</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2402"/>
-        <source>Draw with hard edged strokes</source>
-        <translation>Рисует штрихами с жёсткой гранью</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2403"/>
-        <source>&amp;Brush</source>
-        <translation>&amp;Кисть</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2403"/>
-        <source>Draw with smooth strokes</source>
-        <translation>Рисует гладкими штрихами</translation>
+        <translation>连接(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2404"/>
         <source>&amp;Watercolor</source>
-        <translation>&amp;Акварель</translation>
+        <translation>水彩(&amp;W)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2404"/>
         <source>A brush that picks up color from the layer</source>
-        <translation>Кисть. которая использует цвета со слоя</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2405"/>
-        <source>&amp;Eraser</source>
-        <translation>&amp;Ластик</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2405"/>
-        <source>Erase layer content</source>
-        <translation>Стирает содержимое слоя</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2406"/>
-        <source>&amp;Line</source>
-        <translation>Л&amp;иния</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2406"/>
-        <source>Draw straight lines</source>
-        <translation>Рисует прямую линию</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2407"/>
-        <source>&amp;Rectangle</source>
-        <translation>&amp;Прямоугольник</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2407"/>
-        <source>Draw unfilled squares and rectangles</source>
-        <translation>Рисует незаполненные квадраты и прямоугольники</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2408"/>
-        <source>&amp;Ellipse</source>
-        <translation>&amp;Эллипс</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2408"/>
-        <source>Draw unfilled circles and ellipses</source>
-        <translation>Рисует незаполненные круги и эллипсы</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2409"/>
-        <source>&amp;Flood Fill</source>
-        <translation>&amp;Заливка</translation>
+        <translation>混色画笔</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2409"/>
         <source>Fill areas</source>
-        <translation>Заполняет область</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2410"/>
-        <source>&amp;Annotation</source>
-        <translation>А&amp;ннотация</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2410"/>
-        <source>Add text to the picture</source>
-        <translation>Добавляет текст к изображению</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2412"/>
-        <source>&amp;Color Picker</source>
-        <translation>Выбор &amp;цвета</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2412"/>
-        <source>Pick colors from the image</source>
-        <translation>Выбирает цвет с изображения</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2413"/>
-        <source>&amp;Laser Pointer</source>
-        <translation>Лазерный указа&amp;тель</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2413"/>
-        <source>Point out things on the canvas</source>
-        <translation>Указывает что-либо на холсте</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2414"/>
-        <source>&amp;Select (Rectangular)</source>
-        <translation>Выделение (прямо&amp;угольное)</translation>
+        <translation>颜料桶</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2414"/>
         <source>Select area for copying</source>
-        <translation>Выделяет область для копирования</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2415"/>
-        <source>&amp;Select (Free-Form)</source>
-        <translation>Выделение (произ&amp;вольное)</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2415"/>
-        <source>Select a free-form area for copying</source>
-        <translation>Выделяет область произвольной формы для копирования</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2416"/>
-        <source>&amp;Mark</source>
-        <translation>&amp;Метка</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2416"/>
-        <source>Leave a marker to find this spot on the recording</source>
-        <translation>Ставит метку, чтобы можно было найти это место на записи</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2434"/>
-        <source>&amp;Tools</source>
-        <translation>&amp;Инструменты</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2439"/>
-        <source>&amp;Shortcuts</source>
-        <translation>&amp;Горячие клавиши</translation>
+        <translation>选择复制区域</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2441"/>
         <source>&amp;Swap Colors</source>
-        <translation>&amp;Поменять местами цвета</translation>
+        <translation>前背景色互换(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2442"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation>У&amp;меньшить размер кисти</translation>
+        <translation>缩小笔刷(&amp;D)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2443"/>
         <source>&amp;Increase Brush Size</source>
-        <translation>У&amp;величить размер кисти</translation>
+        <translation>放大笔刷(&amp;I)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2445"/>
+        <source>Select Layer Above</source>
+        <translation>选择上一个图层</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2446"/>
+        <source>Select Layer Below</source>
+        <translation>选择上一个图层</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2463"/>
         <source>Drawing tools</source>
-        <translation>Интструменты рисования</translation>
+        <translation>绘画工具</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2537"/>
+        <source>Color</source>
+        <translation>颜色</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2402"/>
+        <source>&amp;Pen</source>
+        <translation>笔(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="921"/>
+        <source>All Supported Files (%1)</source>
+        <translation>所有支持格式 (%1)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="928"/>
+        <source>Open Image</source>
+        <translation>打开图像</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="951"/>
+        <location filename="../mainwindow.cpp" line="1038"/>
+        <source>Save Image</source>
+        <translation>保存图片</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1139"/>
+        <source>Compressed Recordings (%1)</source>
+        <translation> 压缩录像 (%1)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1142"/>
+        <source>Record Session</source>
+        <translation>录制连接</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1189"/>
+        <source>Stop Recording</source>
+        <translation>停止录像</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1255"/>
+        <source>Host Session</source>
+        <translation>创建连接</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1341"/>
+        <source>Session Title</source>
+        <translation>连接名</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1408"/>
+        <source>Could not connect to server</source>
+        <translation>无法连接至服务器</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1761"/>
+        <source>Paste Image</source>
+        <translation>粘贴图像</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1914"/>
+        <source>Mark</source>
+        <translation>标记</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1923"/>
+        <source>A collaborative drawing program.</source>
+        <translation>一个协同绘画程序</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2033"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2070"/>
+        <location filename="../widgets/macmenu.cpp" line="54"/>
+        <source>Open &amp;Recent</source>
+        <translation>最近文件(&amp;R)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2089"/>
+        <source>File Tools</source>
+        <translation>文件工具</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2106"/>
+        <source>&amp;Copy Visible</source>
+        <translation>复制可见部分(&amp;C)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2107"/>
+        <source>Copy &amp;Layer</source>
+        <translation>复制图层(&amp;L)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2108"/>
+        <source>Cu&amp;t Layer</source>
+        <translation>剪切图层(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2112"/>
+        <source>Paste &amp;From File...</source>
+        <translation>从文件 粘贴(&amp;F)...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2113"/>
+        <source>Delete Empty Annotations</source>
+        <translation>删除空白注释</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2114"/>
+        <source>Resi&amp;ze Canvas...</source>
+        <translation>修改图层大小(&amp;Z)...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2115"/>
+        <location filename="../widgets/macmenu.cpp" line="62"/>
+        <source>Prefere&amp;nces</source>
+        <translation>设置(&amp;N)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2117"/>
+        <source>Select &amp;All</source>
+        <translation>全选(&amp;A)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2210"/>
+        <source>Edit Tools</source>
+        <translation>编辑工具</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2233"/>
+        <source>Zoom &amp;In</source>
+        <translation>放大(&amp;I)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2234"/>
+        <source>Zoom &amp;Out</source>
+        <translation>缩小(&amp;O)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2235"/>
+        <source>&amp;Normal Size</source>
+        <translation>一般大小(&amp;N)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2236"/>
+        <source>&amp;Reset Rotation</source>
+        <translation>旋转角度归零(&amp;R)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2237"/>
+        <source>Rotate to 90°</source>
+        <translation>90° 旋转</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2238"/>
+        <source>Rotate to 180°</source>
+        <translation>180° 旋转</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2239"/>
+        <source>Rotate to 270°</source>
+        <translation>270° 旋转</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2245"/>
+        <source>Show &amp;Annotations</source>
+        <translation>显示注释(&amp;A)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2259"/>
+        <source>&amp;Full Screen</source>
+        <translation>全屏(&amp;F)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2369"/>
+        <source>Lo&amp;ck the Board</source>
+        <translation>锁版(&amp;C)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2370"/>
+        <source>Lock Layer Controls</source>
+        <translation>锁定图层控制</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2371"/>
+        <source>&amp;Deny Joins</source>
+        <translation>禁止加入(&amp;D)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2373"/>
+        <source>Change &amp;Title...</source>
+        <translation>更改标题(&amp;T)...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2402"/>
+        <source>Draw with hard edged strokes</source>
+        <translation>使用硬边画笔</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2403"/>
+        <source>&amp;Brush</source>
+        <translation>笔刷(&amp;B)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2403"/>
+        <source>Draw with smooth strokes</source>
+        <translation>用光滑边儿画</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2405"/>
+        <source>&amp;Eraser</source>
+        <translation>擦除(&amp;E)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2405"/>
+        <source>Erase layer content</source>
+        <translation>清空图层</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2412"/>
+        <source>Pick colors from the image</source>
+        <translation>从当前图层吸色</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2412"/>
+        <source>&amp;Color Picker</source>
+        <translation>拾色器(&amp;C)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2406"/>
+        <source>&amp;Line</source>
+        <translation type="unfinished">直线(&amp;L)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2129"/>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2130"/>
+        <source>Fill selection</source>
+        <translation>填充选中区域</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2131"/>
+        <source>Recolor selection</source>
+        <translation>替换选中区域</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2132"/>
+        <source>Color erase selection</source>
+        <translation>清除选中区域</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2406"/>
+        <source>Draw straight lines</source>
+        <translation type="unfinished">直线</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2407"/>
+        <source>&amp;Rectangle</source>
+        <translation>矩形(&amp;R)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2407"/>
+        <source>Draw unfilled squares and rectangles</source>
+        <translation>无填充矩形</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2408"/>
+        <source>&amp;Ellipse</source>
+        <translation>椭圆(&amp;E)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2408"/>
+        <source>Draw unfilled circles and ellipses</source>
+        <translation>无填充椭圆</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2409"/>
+        <source>&amp;Flood Fill</source>
+        <translation>填充工具(&amp;F)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2410"/>
+        <source>&amp;Annotation</source>
+        <translation>注释(&amp;A)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2410"/>
+        <source>Add text to the picture</source>
+        <translation>在图中插入文字</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2413"/>
+        <source>Point out things on the canvas</source>
+        <translation>指出画布上的东西</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2413"/>
+        <source>&amp;Laser Pointer</source>
+        <translation>激光笔(&amp;L)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2414"/>
+        <source>&amp;Select (Rectangular)</source>
+        <translation>选择 (方形)(&amp;S)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2415"/>
+        <source>&amp;Select (Free-Form)</source>
+        <translation>选择(自由形状)(&amp;S)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2415"/>
+        <source>Select a free-form area for copying</source>
+        <translation>不规则图形选择</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2416"/>
+        <source>&amp;Mark</source>
+        <translation>添加标记(&amp;M)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2416"/>
+        <source>Leave a marker to find this spot on the recording</source>
+        <translation>添加标记用以在录像中快速跳转</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2434"/>
+        <source>&amp;Tools</source>
+        <translation>工具(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="2439"/>
+        <source>&amp;Shortcuts</source>
+        <translation>快捷键(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2488"/>
         <location filename="../widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
-        <translation>&amp;Домашняя страница</translation>
+        <translation>主页(&amp;H)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2489"/>
         <location filename="../widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
-        <translation>&amp;О Drawpile</translation>
+        <translation>关于Drawpile(&amp;A)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2490"/>
         <location filename="../widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
-        <translation>О &amp;Qt</translation>
+        <translation>关于 &amp;Qt </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2496"/>
         <location filename="../widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
-        <translation>По&amp;мощь</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2445"/>
-        <source>Select Layer Above</source>
-        <translation>Выбрать слой выше</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2129"/>
-        <source>Delete</source>
-        <translation>Удалить</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2130"/>
-        <source>Fill selection</source>
-        <translation>Заполнить выделение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2131"/>
-        <source>Recolor selection</source>
-        <translation>Перекрасить выделение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2132"/>
-        <source>Color erase selection</source>
-        <translation>Обесцветить выделение</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2446"/>
-        <source>Select Layer Below</source>
-        <translation>Выбрать слой ниже</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="2537"/>
-        <source>Color</source>
-        <translation>Цвет</translation>
+        <translation>帮助(&amp;H)</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="80"/>
         <source>Window</source>
-        <translation>Окно</translation>
+        <translation>窗口</translation>
     </message>
 </context>
 <context>
@@ -1565,22 +1562,22 @@
     <message>
         <location filename="../ui/netstats.ui" line="14"/>
         <source>Statistics</source>
-        <translation>Статистика</translation>
+        <translation>状态</translation>
     </message>
     <message>
         <location filename="../ui/netstats.ui" line="52"/>
         <source>Latency:</source>
-        <translation>Задержка:</translation>
+        <translation>延迟:</translation>
     </message>
     <message>
         <location filename="../ui/netstats.ui" line="69"/>
         <source>Sent:</source>
-        <translation>Отправлено:</translation>
+        <translation>已发送:</translation>
     </message>
     <message>
         <location filename="../ui/netstats.ui" line="76"/>
         <source>Received:</source>
-        <translation>Получено:</translation>
+        <translation>已接受:</translation>
     </message>
 </context>
 <context>
@@ -1588,22 +1585,22 @@
     <message>
         <location filename="../ui/newdialog.ui" line="17"/>
         <source>New Drawing</source>
-        <translation>Новый рисунок</translation>
+        <translation>新绘画</translation>
     </message>
     <message>
         <location filename="../ui/newdialog.ui" line="25"/>
         <source>Width:</source>
-        <translation>Ширина:</translation>
+        <translation>宽度:</translation>
     </message>
     <message>
         <location filename="../ui/newdialog.ui" line="48"/>
         <source>Height:</source>
-        <translation>Высота:</translation>
+        <translation>高度:</translation>
     </message>
     <message>
         <location filename="../ui/newdialog.ui" line="71"/>
         <source>Background:</source>
-        <translation>Фон:</translation>
+        <translation>背景:</translation>
     </message>
 </context>
 <context>
@@ -1611,7 +1608,7 @@
     <message>
         <location filename="../utils/palettelistmodel.cpp" line="165"/>
         <source>New palette</source>
-        <translation>Новая палитра</translation>
+        <translation>新调色盘</translation>
     </message>
 </context>
 <context>
@@ -1619,27 +1616,27 @@
     <message>
         <location filename="../ui/pensettings.ui" line="85"/>
         <source>Indirect drawing</source>
-        <translation>Косвенное рисование</translation>
+        <translation>非直接绘画</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="105"/>
         <source>Incremental drawing</source>
-        <translation>Дополняющее рисование</translation>
+        <translation>新加绘画</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="135"/>
         <source>Spacing:</source>
-        <translation>Интервал:</translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="142"/>
         <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>大小:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="149"/>
         <source>Opacity:</source>
-        <translation>Непрозрачность:</translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="195"/>
@@ -1649,17 +1646,17 @@
     <message>
         <location filename="../ui/pensettings.ui" line="234"/>
         <source>Pressure:</source>
-        <translation>Сила нажатия:</translation>
+        <translation>笔压:</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="258"/>
         <source>Size</source>
-        <translation>Размер</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../ui/pensettings.ui" line="265"/>
         <source>Opacity</source>
-        <translation>Непрозрачность</translation>
+        <translation>不透明度</translation>
     </message>
 </context>
 <context>
@@ -1667,119 +1664,119 @@
     <message>
         <location filename="../ui/playback.ui" line="14"/>
         <source>Playback</source>
-        <translation>Воспроизведение</translation>
+        <translation type="unfinished">回放</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="78"/>
         <source>Play</source>
-        <translation>Воспроизвести</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="101"/>
         <source>Step</source>
-        <translation>Шаг</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="121"/>
         <source>Skip stroke</source>
-        <translation>Пропустить штрих</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="148"/>
         <source>Speed:</source>
-        <translation>Скорость:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="180"/>
         <source>Max. pause:</source>
-        <translation>Макс. пауза:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="187"/>
         <source>s</source>
         <comment>seconds</comment>
-        <translation>сек</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="216"/>
         <source>Stop on markers</source>
-        <translation>Останавливаться на метках</translation>
+        <translation>停止标记</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="226"/>
         <source>Small player</source>
-        <translation>Маленький плеер</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="308"/>
         <source>Build Index</source>
-        <translation>Проиндексировать</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="318"/>
         <location filename="../ui/playback.ui" line="463"/>
         <source>Filter...</source>
-        <translation>Фильтр...</translation>
+        <translation>筛选...</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="358"/>
         <source>Snapshots:</source>
-        <translation>Снимки:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="365"/>
         <source>Previous snapshot</source>
-        <translation>Предыдущий снимок</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="379"/>
         <source>Next snapshot</source>
-        <translation>Следующий снимок</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="393"/>
         <source>Markers:</source>
-        <translation>Метки:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="449"/>
         <source>Mark</source>
-        <translation>Метка</translation>
+        <translation type="unfinished">标记</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="517"/>
         <source>Frame:</source>
-        <translation>Кадр:</translation>
+        <translation>框架:</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="549"/>
         <source>Time:</source>
-        <translation>Время:</translation>
+        <translation>时间:</translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="597"/>
         <source>Automatically save a frame at each step</source>
-        <translation>На каждом шагу автоматически сохранять кадр</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="600"/>
-        <source>Autosave</source>
-        <translation>Автосохранение</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="610"/>
-        <source>Save frame</source>
-        <translation>Сохранить кадр</translation>
-    </message>
-    <message>
-        <location filename="../ui/playback.ui" line="617"/>
-        <source>Stop</source>
-        <translation>Остановить</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/playback.ui" line="656"/>
         <source>Export Video...</source>
-        <translation>Экспортировать видео...</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/playback.ui" line="600"/>
+        <source>Autosave</source>
+        <translation>自动保存</translation>
+    </message>
+    <message>
+        <location filename="../ui/playback.ui" line="610"/>
+        <source>Save frame</source>
+        <translation>保存框架</translation>
+    </message>
+    <message>
+        <location filename="../ui/playback.ui" line="617"/>
+        <source>Stop</source>
+        <translation>停止</translation>
     </message>
 </context>
 <context>
@@ -1789,39 +1786,44 @@
         <location filename="../dialogs/settingsdialog.cpp" line="445"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="101"/>
         <source>All files (*)</source>
-        <translation>Все файлы(*)</translation>
+        <translation>所有格式 (*)</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="49"/>
         <source>Background</source>
-        <translation>Фон</translation>
+        <translation>背景:</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="50"/>
         <source>Foreground</source>
-        <translation>Передний план</translation>
+        <translation>前景</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="68"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation>Drawpile поддерживает не все функции используемые в этом файле OpenRaster. Сохранение этого файла может привести к потери данных.
+        <translation>Drawpile不支持全部OpenRaster格式功能，存储可能导致数据丢失。
 </translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="70"/>
         <source>Application specific extensions are used</source>
-        <translation>Используются специфические расширения приложения</translation>
+        <translation>特定拓展插件正被使用</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="72"/>
         <source>Nested layers are not fully supported.</source>
-        <translation>Вложенные слои поддерживаются не полностью.</translation>
+        <translation>图层组不完全支持</translation>
     </message>
     <message>
         <location filename="../loader.cpp" line="73"/>
         <source>Partially supported OpenRaster</source>
-        <translation>Частично поддерживаемый OpenRaster</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/networkaccess.cpp" line="90"/>
+        <source>Unexpected file format</source>
+        <translation>未知文件格式</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="924"/>
@@ -1829,18 +1831,13 @@
         <location filename="../mainwindow.cpp" line="1140"/>
         <location filename="../mainwindow.cpp" line="1757"/>
         <source>All Files (*)</source>
-        <translation>Все файлы(*)</translation>
+        <translation>所有文件 (*)</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="58"/>
         <location filename="../net/sessionlistingmodel.cpp" line="60"/>
         <source>%1h %2m</source>
-        <translation>%1ч %2мин</translation>
-    </message>
-    <message>
-        <location filename="../utils/networkaccess.cpp" line="90"/>
-        <source>Unexpected file format</source>
-        <translation>Непредвиденный формат файла</translation>
+        <translation>%1&lt;b&gt;小时&lt;/b&gt;%2&lt;b&gt;分钟&lt;/b&gt;</translation>
     </message>
 </context>
 <context>
@@ -1848,32 +1845,32 @@
     <message>
         <location filename="../ui/resizedialog.ui" line="14"/>
         <source>Resize Canvas</source>
-        <translation>Изменить размер холста</translation>
+        <translation>修改图层大小</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="22"/>
         <source>Canvas size</source>
-        <translation>Размер холста</translation>
+        <translation>图层大小</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="31"/>
         <source>&amp;Width:</source>
-        <translation>&amp;Ширина:</translation>
+        <translation>宽度(&amp;W):</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="51"/>
         <source>&amp;Height:</source>
-        <translation>&amp;Высота:</translation>
+        <translation>高度(&amp;H):</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="71"/>
         <source>Keep aspect ratio</source>
-        <translation>Сохранить соотношение сторон</translation>
+        <translation>保持比例</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="81"/>
         <source>Offset</source>
-        <translation>Отступ</translation>
+        <translation>偏离</translation>
     </message>
     <message>
         <location filename="../ui/resizedialog.ui" line="87"/>
@@ -1888,7 +1885,7 @@
     <message>
         <location filename="../ui/resizedialog.ui" line="127"/>
         <source>Center</source>
-        <translation>Центрировать</translation>
+        <translation>中心</translation>
     </message>
 </context>
 <context>
@@ -1896,7 +1893,7 @@
     <message>
         <location filename="../ui/selectsession.ui" line="14"/>
         <source>Select Session</source>
-        <translation>Выбрать сессию</translation>
+        <translation>选择连接</translation>
     </message>
 </context>
 <context>
@@ -1904,22 +1901,22 @@
     <message>
         <location filename="../ui/selectsettings.ui" line="38"/>
         <source>Flip</source>
-        <translation>Перевернуть</translation>
+        <translation>纵向翻转</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="50"/>
         <source>Mirror</source>
-        <translation>Отразить</translation>
+        <translation>镜像翻转</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="74"/>
         <source>Fit to screen</source>
-        <translation>Уместить в экран</translation>
+        <translation>合适屏幕大小</translation>
     </message>
     <message>
         <location filename="../ui/selectsettings.ui" line="81"/>
         <source>Reset size</source>
-        <translation>Сбросить размер</translation>
+        <translation>重置大小</translation>
     </message>
 </context>
 <context>
@@ -1927,22 +1924,22 @@
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="67"/>
         <source>(untitled)</source>
-        <translation>(без названия)</translation>
+        <translation>（未命名）</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="93"/>
         <source>Title</source>
-        <translation>Название</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="94"/>
         <source>Server</source>
-        <translation>Сервер</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="95"/>
         <source>Age</source>
-        <translation>Возраст</translation>
+        <translation>存在时长</translation>
     </message>
 </context>
 <context>
@@ -1950,12 +1947,12 @@
     <message>
         <location filename="../ui/sessionlisting.ui" line="14"/>
         <source>Public sessions</source>
-        <translation>Общедоступные сессии</translation>
+        <translation>公有连接</translation>
     </message>
     <message>
         <location filename="../ui/sessionlisting.ui" line="25"/>
         <source>Find</source>
-        <translation>Найти</translation>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>
@@ -1963,289 +1960,290 @@
     <message>
         <location filename="../ui/settings.ui" line="14"/>
         <source>Preferences</source>
-        <translation>Параметры</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="39"/>
-        <source>User Interface</source>
-        <translation>Интерфейс</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="48"/>
-        <source>Language:</source>
-        <translation>Язык:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="58"/>
-        <source>Tablet:</source>
-        <translation>Планшет:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="65"/>
-        <source>Enable pressure sensitivity</source>
-        <translation>Чувствительность к силе нажатия</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="149"/>
-        <source>Notification volume:</source>
-        <translation>Громкость уведомлений:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="189"/>
-        <source>Chat</source>
-        <translation>Чат</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="196"/>
-        <source>Recording marker</source>
-        <translation>Метка на записи</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="203"/>
-        <source>User login and logout</source>
-        <translation>Вход и выход пользователя</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="210"/>
-        <source>Canvas lock</source>
-        <translation>Блокировка холста</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="75"/>
-        <source>Checking this may fix jaggy line and offset bugs on some tablets</source>
-        <translation>Может исправить неровные линии и неверные отступы
-при работе с некоторыми планшетами</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="78"/>
-        <source>Enable bug workarounds</source>
-        <translation>Включить обход ошибок</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="129"/>
-        <source>Autosave interval:</source>
-        <translation>Интервал автосохранения:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="92"/>
-        <source>Scroll with finger</source>
-        <translation>Прокручивать пальцем</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="85"/>
-        <source>Touch:</source>
-        <translation>Сенсорный экран:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="99"/>
-        <source>Pinch to zoom</source>
-        <translation>Масштабировать щипком</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="106"/>
-        <source>Twist to rotate</source>
-        <translation>Крутить для поворота</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="234"/>
-        <source>Animation</source>
-        <translation>Анимация</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="240"/>
-        <source>Record pauses</source>
-        <translation>Записывать паузы</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="273"/>
-        <source>Minimum:</source>
-        <translation>Минимум:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="280"/>
-        <source>s</source>
-        <translation>сек</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="319"/>
         <source>Ffmpeg path:</source>
-        <translation>Путь к ffmpeg:</translation>
+        <translation>FFmpeg路径:</translation>
     </message>
     <message>
-        <location filename="../ui/settings.ui" line="344"/>
-        <source>Default folder:</source>
-        <translation>Папка по умолчанию:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="387"/>
-        <source> below</source>
-        <translation>ниже</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="394"/>
-        <source> above</source>
-        <translation>выше</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="432"/>
-        <source>Onionskin layers:</source>
-        <translation>Слои восковки:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="439"/>
-        <source>Tint layers</source>
-        <translation>Оттенять слои</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="446"/>
-        <source>Treat the bottom-most layer as the frame background</source>
-        <translation>Считать самый нижний слой фоном</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="449"/>
-        <source>Use background layer</source>
-        <translation>Фоновый слой</translation>
+        <location filename="../ui/settings.ui" line="280"/>
+        <source>s</source>
+        <translation>秒</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="457"/>
         <source>Network</source>
-        <translation>Сеть</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="466"/>
-        <source>Default server port:</source>
-        <translation>Порт сервера по умолчанию:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="480"/>
-        <source>Session history:</source>
-        <translation>История сессии:</translation>
+        <translation>网络</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="487"/>
         <source>unlimited</source>
-        <translation>без ограничений</translation>
+        <translation>不限</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="490"/>
         <source> Mb</source>
-        <translation>Мб</translation>
+        <translation> Mb</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="480"/>
+        <source>Session history:</source>
+        <translation>连接历史:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="39"/>
+        <source>User Interface</source>
+        <translation>用户界面</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="48"/>
+        <source>Language:</source>
+        <translation>语言:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="58"/>
+        <source>Tablet:</source>
+        <translation type="unfinished">Tablet</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="65"/>
+        <source>Enable pressure sensitivity</source>
+        <translation>启用压感</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="149"/>
+        <source>Notification volume:</source>
+        <translation>通知音量:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="189"/>
+        <source>Chat</source>
+        <translation>聊天</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="196"/>
+        <source>Recording marker</source>
+        <translation type="unfinished">录像标记</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="203"/>
+        <source>User login and logout</source>
+        <translation>用户登入登出</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="210"/>
+        <source>Canvas lock</source>
+        <translation>图层锁</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="75"/>
+        <source>Checking this may fix jaggy line and offset bugs on some tablets</source>
+        <translation type="unfinished">Checking this may fix jaggy line and offset bugs on some tablets</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="78"/>
+        <source>Enable bug workarounds</source>
+        <translation type="unfinished">Enable bug workarounds</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="240"/>
+        <source>Record pauses</source>
+        <translation>暂停录制</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="273"/>
+        <source>Minimum:</source>
+        <translation>最小:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="344"/>
+        <source>Default folder:</source>
+        <translation>默认文件夹:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="466"/>
+        <source>Default server port:</source>
+        <translation>默认服务器端口:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="509"/>
         <source>Timeout:</source>
-        <translation>Таймаут:</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="532"/>
-        <source>Announce with Zeroconf</source>
-        <translation>Анонсировать с помощью Zeroconf</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="539"/>
-        <source>Automatically set up port forwarding with UPnP</source>
-        <translation>Автоматически настраивать
-перенаправление порта с помощью UPnP</translation>
+        <translation>Timeout:</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="136"/>
         <location filename="../ui/settings.ui" line="516"/>
         <source> s</source>
-        <translation>сек</translation>
+        <translation> 秒</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="129"/>
+        <source>Autosave interval:</source>
+        <translation>自动保存间隔:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="92"/>
+        <source>Scroll with finger</source>
+        <translation>二指拖拽</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="85"/>
+        <source>Touch:</source>
+        <translation>触控:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="99"/>
+        <source>Pinch to zoom</source>
+        <translation>缩放手势</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="106"/>
+        <source>Twist to rotate</source>
+        <translation>旋转手势</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="234"/>
+        <source>Animation</source>
+        <translation>动画</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="387"/>
+        <source> below</source>
+        <translation type="unfinished">下</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="394"/>
+        <source> above</source>
+        <translation type="unfinished">上</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="432"/>
+        <source>Onionskin layers:</source>
+        <translation type="unfinished">覆盖层蓝图显示:</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="439"/>
+        <source>Tint layers</source>
+        <translation type="unfinished">Tint Layers</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="446"/>
+        <source>Treat the bottom-most layer as the frame background</source>
+        <translation>最底层作为背景</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="449"/>
+        <source>Use background layer</source>
+        <translation>使用背景层</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="547"/>
         <source>Shortcuts</source>
-        <translation>Горячие клавиши</translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="553"/>
         <source>Filter</source>
-        <translation>Фильтр</translation>
+        <translation>筛选</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="571"/>
         <source>Known Hosts</source>
-        <translation>Известные хосты</translation>
+        <translation>已知服务器</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="636"/>
+        <source>List Servers</source>
+        <translation>服务器清单</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="654"/>
+        <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
+        <translatorcomment>成人向けコンテンツを表示</translatorcomment>
+        <translation type="unfinished">标记为18R</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="674"/>
+        <source>Add</source>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="589"/>
         <source>Import trusted...</source>
-        <translation>Импортировать доверенные...</translation>
+        <translation>导入信任……</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="532"/>
+        <source>Announce with Zeroconf</source>
+        <translatorcomment>Zeroconf で告知</translatorcomment>
+        <translation type="unfinished">零设置发布</translation>
+    </message>
+    <message>
+        <location filename="../ui/settings.ui" line="539"/>
+        <source>Automatically set up port forwarding with UPnP</source>
+        <translatorcomment>UPnP でポート転送を自動的にセットアップ</translatorcomment>
+        <translation>自动使用UpnP端口转发</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="612"/>
         <source>Mark as trusted</source>
-        <translation>Пометить как доверенный</translation>
+        <translation>标记信任</translation>
     </message>
     <message>
         <location filename="../ui/settings.ui" line="626"/>
         <location filename="../ui/settings.ui" line="681"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="636"/>
-        <source>List Servers</source>
-        <translation>Список серверов</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="654"/>
-        <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation>Показывать &quot;Неподходящие для несовершеннолетних&quot;</translation>
-    </message>
-    <message>
-        <location filename="../ui/settings.ui" line="674"/>
-        <source>Add</source>
-        <translation>Добавить</translation>
+        <translation>移除</translation>
     </message>
 </context>
 <context>
     <name>SimpleSettings</name>
     <message>
-        <location filename="../ui/simplesettings.ui" line="96"/>
-        <source>Smooth edge</source>
-        <translation>Гладкая грань</translation>
+        <location filename="../ui/simplesettings.ui" line="183"/>
+        <source>Incremental drawing</source>
+        <translation>新加绘画</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="116"/>
         <source>Hard edge</source>
-        <translation>Жёсткая грань</translation>
+        <translation>边缘硬化</translation>
+    </message>
+    <message>
+        <location filename="../ui/simplesettings.ui" line="96"/>
+        <source>Smooth edge</source>
+        <translation>边缘柔化</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="163"/>
         <source>Indirect drawing</source>
-        <translation>Косвенное рисование</translation>
-    </message>
-    <message>
-        <location filename="../ui/simplesettings.ui" line="183"/>
-        <source>Incremental drawing</source>
-        <translation>Дополняющее рисование</translation>
+        <translation>间接绘画</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="216"/>
         <source>Spacing:</source>
-        <translation>Интервал:</translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="223"/>
         <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>大小:</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="243"/>
         <source>Hardness:</source>
-        <translation>Жёсткость:</translation>
+        <translation>硬度:</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="263"/>
         <source>Opacity:</source>
-        <translation>Непрозрачность:</translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="../ui/simplesettings.ui" line="296"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>像素</translation>
     </message>
 </context>
 <context>
@@ -2253,57 +2251,57 @@
     <message>
         <location filename="../ui/smudgesettings.ui" line="114"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>像素</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="127"/>
         <source>Spacing:</source>
-        <translation>Интервал:</translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="134"/>
         <source>Pressure:</source>
-        <translation>Сила нажатия:</translation>
+        <translation>压感:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="141"/>
         <source>Hardness:</source>
-        <translation>Жёсткость:</translation>
+        <translation>硬度:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="174"/>
         <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>大小:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="181"/>
         <source>Opacity:</source>
-        <translation>Непрозрачность:</translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="218"/>
         <source>Opacity</source>
-        <translation>Непрозрачность</translation>
+        <translation>透明度</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="225"/>
         <source>Size</source>
-        <translation>Размер</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="232"/>
         <source>Hardness</source>
-        <translation>Жёсткость</translation>
+        <translation>硬度</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="239"/>
         <source>Smudging</source>
-        <translation>Смазывание</translation>
+        <translation>涂抹</translation>
     </message>
     <message>
         <location filename="../ui/smudgesettings.ui" line="248"/>
         <source>Smudging:</source>
-        <translation>Смазывание:</translation>
+        <translation>涂抹：</translation>
     </message>
 </context>
 <context>
@@ -2311,72 +2309,72 @@
     <message>
         <location filename="../ui/textsettings.ui" line="68"/>
         <source>Left align</source>
-        <translation>По левому краю</translation>
+        <translation>左对齐</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="96"/>
         <source>Center</source>
-        <translation>По центру</translation>
+        <translation>居中</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="121"/>
         <source>Justify</source>
-        <translation>По ширине</translation>
+        <translation>平均</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="146"/>
         <source>Right align</source>
-        <translation>По правому краю</translation>
+        <translation>右对齐</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="185"/>
         <source>Background color</source>
-        <translation>Фоновый цвет</translation>
+        <translation>背景色</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="211"/>
         <source>Text color</source>
-        <translation>Цвет текста</translation>
+        <translation>文字颜色</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="230"/>
         <source>Bold</source>
-        <translation>Жирный</translation>
+        <translation>加粗</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="252"/>
         <source>Italic</source>
-        <translation>Курсив</translation>
+        <translation>斜体</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="269"/>
         <source>Underline</source>
-        <translation>Подчёркнутый</translation>
+        <translation>下划线</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="286"/>
         <source>Strikethrough</source>
-        <translation>Зачёркнутый</translation>
+        <translation>删除线</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="310"/>
         <source>Merge the text onto the current layer</source>
-        <translation>Соединить текст с текущим слоем</translation>
+        <translation>合并入当前图层</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="313"/>
         <source>Merge</source>
-        <translation>Соединить</translation>
+        <translation>合并</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="320"/>
         <source>Delete this annotation</source>
-        <translation>Удалить эту аннотацию</translation>
+        <translation>删除注释</translation>
     </message>
     <message>
         <location filename="../ui/textsettings.ui" line="323"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>移除</translation>
     </message>
 </context>
 <context>
@@ -2384,27 +2382,27 @@
     <message>
         <location filename="../ui/tinyplayer.ui" line="88"/>
         <source>Previous marker</source>
-        <translation>Предыдущая метка</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/tinyplayer.ui" line="108"/>
         <source>Play</source>
-        <translation>Воспроизвести</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/tinyplayer.ui" line="131"/>
         <source>Step</source>
-        <translation>Шаг</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/tinyplayer.ui" line="151"/>
         <source>Skip stroke</source>
-        <translation>Пропустить штрих</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/tinyplayer.ui" line="171"/>
         <source>Next marker</source>
-        <translation>Следующая метка</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2412,27 +2410,27 @@
     <message>
         <location filename="../ui/userbox.ui" line="37"/>
         <source>Undo changes by selected user</source>
-        <translation>Отменить изменения выбранного пользователя</translation>
+        <translation>撤销所选用户活动</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="51"/>
         <source>Redo changes by selected user</source>
-        <translation>Повторить изменения выбранного пользователя</translation>
+        <translation>重做所选用户活动</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="84"/>
         <source>Session operator</source>
-        <translation>Оператор сессии</translation>
+        <translation>连接管理者</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="101"/>
         <source>Lock selected user</source>
-        <translation>Заблокировать выбранного пользователя</translation>
+        <translation>锁定所选用户</translation>
     </message>
     <message>
         <location filename="../ui/userbox.ui" line="118"/>
         <source>Kick selected user</source>
-        <translation>Выгнать выбранного пользователя</translation>
+        <translation>剔除所选用户</translation>
     </message>
 </context>
 <context>
@@ -2440,67 +2438,27 @@
     <message>
         <location filename="../ui/videoexport.ui" line="14"/>
         <source>Export video</source>
-        <translation>Экспортировать видео</translation>
+        <translation type="unfinished">导出视频</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="22"/>
         <source>Export format:</source>
-        <translation>Формат экспорта:</translation>
+        <translation>导出格式:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="30"/>
         <source>Image series</source>
-        <translation>Серия изображений</translation>
+        <translation>图像序列</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="35"/>
         <source>Video</source>
-        <translation>Видео</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="40"/>
-        <source>Animated GIF</source>
-        <translation>Анимированный GIF</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="50"/>
-        <source>Animation Options</source>
-        <translation>Опции анимации</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="59"/>
-        <source>Layers:</source>
-        <translation>Слои:</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="91"/>
-        <source>Background:</source>
-        <translation>Фон:</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="101"/>
-        <source>Transparent</source>
-        <translation>Прозрачный</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="106"/>
-        <source>Bottom layer</source>
-        <translation>Нижний слой</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="111"/>
-        <source>Solid color</source>
-        <translation>Сплошной цвет</translation>
-    </message>
-    <message>
-        <location filename="../ui/videoexport.ui" line="127"/>
-        <source>Video Options</source>
-        <translation>Опции видео</translation>
+        <translation>视频</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="139"/>
         <source>Framerate:</source>
-        <translation>Частота кадров:</translation>
+        <translation>帧数:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="148"/>
@@ -2510,115 +2468,153 @@
     <message>
         <location filename="../ui/videoexport.ui" line="176"/>
         <source>Size:</source>
-        <translation>Размер:</translation>
+        <translation>大小:</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="127"/>
+        <source>Video Options</source>
+        <translation>视频选项</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="40"/>
+        <source>Animated GIF</source>
+        <translation>动画 GIF</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="50"/>
+        <source>Animation Options</source>
+        <translation>动画选项</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="59"/>
+        <source>Layers:</source>
+        <translation>图层:</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="91"/>
+        <source>Background:</source>
+        <translation>背景:</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="101"/>
+        <source>Transparent</source>
+        <translation>透明</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="106"/>
+        <source>Bottom layer</source>
+        <translation>底部图层</translation>
+    </message>
+    <message>
+        <location filename="../ui/videoexport.ui" line="111"/>
+        <source>Solid color</source>
+        <translation>单色</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="245"/>
         <source>Export Options</source>
-        <translation>Опции экспорта</translation>
+        <translation>导出选项</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="276"/>
         <source>Image format:</source>
-        <translation>Формат изображения:</translation>
+        <translation>图片格式:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="303"/>
         <source>File name pattern:</source>
-        <translation>Шаблон имени файла:</translation>
+        <translation>命名规则:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="323"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Поддерживаемые обозначения:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - номер кадра&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - расширение файла&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translatorcomment>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;以下のプレースホルダを書式に使用できます。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - フレーム番号&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - ファイル拡張子&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;支持占位符格式:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - 帧数&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - 文件拓展名&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="368"/>
         <source>Format:</source>
-        <translation>Формат:</translation>
+        <translation>格式:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="377"/>
         <source>Container format</source>
-        <translation>Формат контейнера</translation>
+        <translation>容器格式</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="406"/>
         <source>Video codec</source>
-        <translation>Видео кодек</translation>
+        <translation>视频编码</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="428"/>
         <source>Audio codec</source>
-        <translation>Аудио кодек</translation>
+        <translation>录音编码</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="432"/>
         <source>Original</source>
-        <translation>Оригинальный</translation>
+        <translation>源</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="457"/>
         <source>Quality:</source>
-        <translation>Качество:</translation>
+        <translation>画质:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="468"/>
         <source>Low</source>
-        <translation>Низкое</translation>
+        <translation>低</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="473"/>
         <source>Normal</source>
-        <translation>Нормальное</translation>
+        <translation>中</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="478"/>
         <source>Good</source>
-        <translation>Хорошее</translation>
+        <translation>高</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="483"/>
         <source>Very good</source>
-        <translation>Очень хорошее</translation>
+        <translation>最高</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="491"/>
         <source>Soundtrack:</source>
-        <translation>Звуковая дорожка:</translation>
+        <translation>音轨:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="502"/>
         <source>Error: Ffmpeg executable not found!</source>
-        <translation>Ошибка: исполняемый файл ffmpeg не найден!</translation>
+        <translation>未找到ffmpeg可执行文件</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="516"/>
         <source>Dithering:</source>
-        <translation>Дизеринг:</translation>
+        <translation>抖动:</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="524"/>
         <source>Diffuse</source>
-        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
-        <translation>Diffuse</translation>
+        <translation>扩散</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="529"/>
         <source>Ordered</source>
-        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
-        <translation>Ordered</translation>
+        <translation>排序</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="534"/>
         <source>Threshold</source>
-        <translatorcomment>Не уверен, что есть адекватный русский перевод понятия. Наверное будет лучше без перевода.</translatorcomment>
-        <translation>Threshold</translation>
+        <translation>阈值</translation>
     </message>
     <message>
         <location filename="../ui/videoexport.ui" line="542"/>
         <source>Optimize frame difference</source>
-        <translation>Оптимизировать разницу кадров</translation>
+        <translation type="unfinished">优化帧差分</translation>
     </message>
 </context>
 <context>
@@ -2627,12 +2623,12 @@
         <location filename="../utils/whatismyip.cpp" line="90"/>
         <location filename="../utils/whatismyip.cpp" line="97"/>
         <source>IP lookup error</source>
-        <translation>Ошибка поиска IP</translation>
+        <translation>IP查找错误</translation>
     </message>
     <message>
         <location filename="../utils/whatismyip.cpp" line="97"/>
         <source>Received invalid data</source>
-        <translation>Получены неверные данные</translation>
+        <translation>接受无效信息</translation>
     </message>
 </context>
 <context>
@@ -2640,7 +2636,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="59"/>
         <source>Pick</source>
-        <translation type="unfinished">Выбрать</translation>
+        <translation type="unfinished">拾色</translation>
     </message>
 </context>
 <context>
@@ -2648,7 +2644,7 @@
     <message>
         <location filename="../dialogs/certificateview.cpp" line="42"/>
         <source>SSL Certificate for %1</source>
-        <translation>SSL сертификат для %1</translation>
+        <translation>%1 的SSL证书</translation>
     </message>
 </context>
 <context>
@@ -2656,27 +2652,27 @@
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="37"/>
         <source>Filter</source>
-        <translation>Фильтр</translation>
+        <translation>滤镜(Filter)</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="64"/>
         <source>Save filtered recording</source>
-        <translation>Сохранить отфильтрованную запись</translation>
+        <translation type="unfinished">保存录像滤镜</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="66"/>
         <source>Recordings (%1)</source>
-        <translation>Записи (%1)</translation>
+        <translation>录像 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="67"/>
         <source>Compressed recordings (%1)</source>
-        <translation>Сжатые записи (%1)</translation>
+        <translation>压缩录像 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/recfilterdialog.cpp" line="97"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation>错误</translation>
     </message>
 </context>
 <context>
@@ -2684,7 +2680,7 @@
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="46"/>
         <source>Host</source>
-        <translation>Начать</translation>
+        <translation>主机</translation>
     </message>
 </context>
 <context>
@@ -2692,12 +2688,12 @@
     <message>
         <location filename="../dialogs/joindialog.cpp" line="38"/>
         <source>Join</source>
-        <translation>Присоединиться</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location filename="../dialogs/joindialog.cpp" line="40"/>
         <source>Find...</source>
-        <translation>Найти...</translation>
+        <translation>搜索...</translation>
     </message>
 </context>
 <context>
@@ -2705,7 +2701,7 @@
     <message>
         <location filename="../dialogs/logindialog.cpp" line="36"/>
         <source>Continue</source>
-        <translation>Продолжить</translation>
+        <translation>继续</translation>
     </message>
 </context>
 <context>
@@ -2713,7 +2709,7 @@
     <message>
         <location filename="../dialogs/netstats.cpp" line="59"/>
         <source>not connected</source>
-        <translation>не подключен</translation>
+        <translation>未连接</translation>
     </message>
 </context>
 <context>
@@ -2721,111 +2717,111 @@
     <message>
         <location filename="../dialogs/newdialog.cpp" line="38"/>
         <source>Create</source>
-        <translation>Создать</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../dialogs/newdialog.cpp" line="74"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation>错误</translation>
     </message>
     <message>
         <location filename="../dialogs/newdialog.cpp" line="74"/>
         <source>Size is too large</source>
-        <translation>Размер слишком большой</translation>
+        <translation>大小超过上限</translation>
     </message>
 </context>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="76"/>
-        <source>Compressed recording</source>
-        <translation>Сжатая запись</translation>
+        <location filename="../dialogs/playbackdialog.cpp" line="499"/>
+        <source>Marker text</source>
+        <translation>标记文字</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="499"/>
         <source>Mark Position</source>
-        <translation>Позиция метки</translation>
+        <translation>标记位置</translation>
     </message>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="499"/>
-        <source>Marker text</source>
-        <translation>Текст метки</translation>
+        <location filename="../dialogs/playbackdialog.cpp" line="76"/>
+        <source>Compressed recording</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="519"/>
         <source>Recording ended</source>
-        <translation>Запись закончилась</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="594"/>
         <source>%1 m. %2 s.</source>
-        <translation>%1 мин. %2 сек.</translation>
+        <translation type="unfinished">%1 分 %2 秒</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="596"/>
         <source>%1 s.</source>
-        <translation>%1 сек.</translation>
+        <translation type="unfinished">%1 秒</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="618"/>
         <source>Video error</source>
-        <translation>Ошибка видео</translation>
+        <translation type="unfinished">视频错误</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="650"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
-        <translation>Эта запись была сделана в другой версии Drawpile (%1) и может выглядеть по-другому</translation>
+        <translation>此录像由drawpile (%1) 版本录制可能无法完全还原</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="653"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
-        <translation>Эта запись была сделана в более новой  версии Drawpile (%1) и может быть несовместимой</translation>
+        <translation>此录像由drawpile (%1) 更新的版本录制，可能无法解析。</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="656"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
-        <translation>Запись несовместима. Эта запись была сделана в версии Drawpile %1.</translation>
+        <translation>此录像由drawpile %1 录制，不兼容。</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="660"/>
         <source>Selected file is not a Drawpile recording</source>
-        <translation>Выбранный файл не является записью Drawpile</translation>
+        <translation>所选文件不是drapile录像</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="664"/>
         <source>Cannot read file: %1</source>
-        <translation>Невозможно прочесть файл: %1</translation>
+        <translation>无法读取文件 %1 </translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="671"/>
         <location filename="../dialogs/playbackdialog.cpp" line="674"/>
         <source>Open Recording</source>
-        <translation>Открыть запись</translation>
+        <translation>打开录像</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="694"/>
         <source>Cannot index compressed recordings.</source>
-        <translation>Невозможно проиндексировать сжатые записи.</translation>
+        <translation type="unfinished">无法压缩录像</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="701"/>
         <source>Index not yet generated</source>
-        <translation>Ещё не проиндексировано</translation>
+        <translation type="unfinished">未生成索引</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="709"/>
         <source>Error loading index!</source>
-        <translation>Ошибка загрузки индекса!</translation>
+        <translation type="unfinished">索引打开失败</translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="719"/>
         <source>Jump To</source>
-        <translation>Перейти к</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="776"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="unfinished">错误</translation>
     </message>
 </context>
 <context>
@@ -2833,17 +2829,17 @@
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="33"/>
         <source>Resize</source>
-        <translation>Изменить размер</translation>
+        <translation>重置大小</translation>
     </message>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="55"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation>错误</translation>
     </message>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="55"/>
         <source>Size is too large</source>
-        <translation>Размер слишком большой</translation>
+        <translation>大小超过上限</translation>
     </message>
 </context>
 <context>
@@ -2851,7 +2847,7 @@
     <message>
         <location filename="../dialogs/selectsessiondialog.cpp" line="38"/>
         <source>Join</source>
-        <translation>Присоединиться</translation>
+        <translation>加入</translation>
     </message>
 </context>
 <context>
@@ -2860,15 +2856,13 @@
         <location filename="../dialogs/sessionlistingdialog.cpp" line="74"/>
         <source>%n age restricted session(s) hidden.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n age restricted session(s) hidden.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../dialogs/sessionlistingdialog.cpp" line="152"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show age restricted sessions?</translation>
     </message>
 </context>
 <context>
@@ -2876,72 +2870,72 @@
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="83"/>
         <source>Set ffmepg path</source>
-        <translation>Указать путь к ffmepg</translation>
+        <translation>选择FFmpeg路径</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="85"/>
         <source>Executables (%1)</source>
-        <translation>Исполняемые файлы (%1)</translation>
+        <translation>可执行文件 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="94"/>
         <source>Recording folder</source>
-        <translation>Папка для записи</translation>
+        <translation>录像文件夹</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="103"/>
         <source>off</source>
         <comment>notifications sounds</comment>
-        <translation>выключено</translation>
+        <translation>关</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="107"/>
         <source>Default</source>
-        <translation>По умолчанию</translation>
+        <translation>默认</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="197"/>
         <source>Reset settings</source>
-        <translation>Сбросить настройки</translation>
+        <translation>重置设定</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="198"/>
         <source>Clear all settings?</source>
-        <translation>Очистить все настройки?</translation>
+        <translation>清空所以设置？</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="443"/>
         <location filename="../dialogs/settingsdialog.cpp" line="453"/>
         <location filename="../dialogs/settingsdialog.cpp" line="458"/>
         <source>Import trusted certificate</source>
-        <translation>Импортировать доверенные сертификаты</translation>
+        <translation>导入信任证书</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="444"/>
         <source>Certificates (%1)</source>
-        <translation>Сертификаты (%1)</translation>
+        <translation>证书 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="453"/>
         <source>Invalid certificate!</source>
-        <translation>Недействительный сертификат!</translation>
+        <translation>证书无效！</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="458"/>
         <source>Certificate common name not set!</source>
-        <translation>Общее имя сертификата не указано!</translation>
+        <translation>证书公用名未设置</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="472"/>
         <location filename="../dialogs/settingsdialog.cpp" line="476"/>
         <location filename="../dialogs/settingsdialog.cpp" line="485"/>
         <source>Add public listing server</source>
-        <translation>Добавить публичный сервер</translation>
+        <translation>新加清单服务器</translation>
     </message>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="476"/>
         <source>Invalid URL!</source>
-        <translation>Неверный URL!</translation>
+        <translation>URL无效</translation>
     </message>
 </context>
 <context>
@@ -2949,17 +2943,17 @@
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="73"/>
         <source>Normal Player</source>
-        <translation>Нормальный плеер</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="75"/>
         <source>Previous Snapshot</source>
-        <translation>Предыдущий снимок</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/tinyplayer.cpp" line="76"/>
         <source>Next Snapshot</source>
-        <translation>Следующий снимок</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2967,39 +2961,39 @@
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="72"/>
         <source>Original</source>
-        <translation>Оригинальный</translation>
+        <translation>源(Original)</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="73"/>
         <source>Custom:</source>
-        <translation>Указанный:</translation>
+        <translation>自定义:</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="99"/>
         <source>Select soundtrack</source>
-        <translation>Выберите звуковую дорожку</translation>
+        <translation>选择音轨</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="100"/>
         <source>Sound files (%1)</source>
-        <translation>Звуковые файлы (%1)</translation>
+        <translation>音频文件 (%1)</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="229"/>
         <source>Select output directory</source>
-        <translation>Выберите каталог назначения</translation>
+        <translation>选择输出文件夹</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>Export video</source>
-        <translation>Экспортировать видео</translation>
+        <translation>导出视频</translation>
     </message>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="261"/>
         <location filename="../dialogs/videoexportdialog.cpp" line="285"/>
         <source>%1 files (*%2)</source>
-        <translation>%1 файлов (*%2)</translation>
+        <translation>%1 文件 (*%2)</translation>
     </message>
 </context>
 <context>
@@ -3007,28 +3001,28 @@
     <message>
         <location filename="../docks/colorbox.cpp" line="95"/>
         <source>New</source>
-        <translation>Новая</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="96"/>
         <source>Duplicate</source>
-        <translation>Дублировать</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="97"/>
         <location filename="../docks/colorbox.cpp" line="215"/>
         <source>Delete</source>
-        <translation>Удалить</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="99"/>
         <source>Write Protect</source>
-        <translation>Защита от записи</translation>
+        <translation>只读</translation>
     </message>
     <message>
         <location filename="../docks/colorbox.cpp" line="216"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation>Удалить палитру &quot;%1&quot;?</translation>
+        <translation>删除调色盘 &quot;%1&quot; </translation>
     </message>
 </context>
 <context>
@@ -3036,7 +3030,7 @@
     <message>
         <location filename="../docks/inputsettingsdock.cpp" line="35"/>
         <source>Input</source>
-        <translation>Ввод</translation>
+        <translation>输入源</translation>
     </message>
 </context>
 <context>
@@ -3044,17 +3038,17 @@
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="28"/>
         <source>Lock this layer</source>
-        <translation>Заблокировать этот слой</translation>
+        <translation>锁定此图层</translation>
     </message>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="34"/>
         <source>Exclusive access:</source>
-        <translation>Эксклюзивный доступ:</translation>
+        <translation>禁止:</translation>
     </message>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="37"/>
         <source>Everyone can draw</source>
-        <translation>Все могут рисовать</translation>
+        <translation>任何人可绘画</translation>
     </message>
 </context>
 <context>
@@ -3062,97 +3056,96 @@
     <message>
         <location filename="../docks/layerlistdock.cpp" line="43"/>
         <source>Layers</source>
-        <translation>Слои</translation>
+        <translation>图层组</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="63"/>
         <source>Insert layer</source>
-        <translation>Вставить слой</translation>
+        <translation>插入图层</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="65"/>
         <source>Hide from self</source>
-        <translation>Спрятать</translation>
+        <translation>Hide from self</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="67"/>
         <source>Rename</source>
-        <translation>Переименовать</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="68"/>
         <location filename="../docks/layerlistdock.cpp" line="399"/>
         <source>Merge down</source>
-        <translation>Соединить с нижним</translation>
+        <translation>向下合并</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="69"/>
         <location filename="../docks/layerlistdock.cpp" line="81"/>
         <location filename="../docks/layerlistdock.cpp" line="393"/>
         <source>Delete</source>
-        <translation>Удалить</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="79"/>
         <source>New</source>
-        <translation>Новый</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="80"/>
         <source>Duplicate</source>
-        <translation>Дублировать</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="86"/>
         <source>Normal</source>
-        <translation>Нормальный</translation>
+        <translation>通常</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="90"/>
         <source>Solo</source>
-        <translation>Соло</translation>
+        <translation>唯一显示</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="94"/>
         <source>Onionskin</source>
-        <translation>Восковка</translation>
+        <translation>覆盖层蓝图显示</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="102"/>
         <source>Show numbers</source>
-        <translation>Показывать номера</translation>
+        <translation>显示编号</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="301"/>
         <source>Mode:</source>
-        <translation>Режим:</translation>
+        <translation>模式:</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="326"/>
         <location filename="../docks/layerlistdock.cpp" line="346"/>
         <source>Layer</source>
-        <translation>Слой</translation>
+        <translation>图层</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="388"/>
         <source>Delete layer</source>
-        <translation>Удалить слой</translation>
+        <translation>删除图层</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="389"/>
         <source>Really delete &quot;%1&quot;?</source>
-        <translation>Действительно удалить &quot;%1&quot;?</translation>
+        <translation>确认删除 &quot;%1&quot; ？</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="400"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
-        <translation>Нажмите &quot;Соединить с нижним&quot;, чтобы соединить слой с первым видимым слоем
-снизу вместо удаления.</translation>
+        <translation>向下合并将合并最近可见图层</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="403"/>
         <source>Cancel</source>
-        <translation>Отмена</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -3160,7 +3153,7 @@
     <message>
         <location filename="../docks/navigator.cpp" line="145"/>
         <source>Navigator</source>
-        <translation>Навигатор</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3168,77 +3161,77 @@
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="79"/>
         <source>Pen</source>
-        <translation>Ручка</translation>
+        <translation>笔</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="82"/>
         <source>Brush</source>
-        <translation>Кисть</translation>
+        <translation>笔刷</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="86"/>
         <source>Watercolor</source>
-        <translation>Акварель</translation>
+        <translation>水彩</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="89"/>
         <source>Eraser</source>
-        <translation>Ластик</translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="92"/>
         <source>Color Picker</source>
-        <translation>Выбор цвета</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="95"/>
-        <source>Line</source>
-        <translation>Линия</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="98"/>
-        <source>Rectangle</source>
-        <translation>Прямоугольник</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="101"/>
-        <source>Ellipse</source>
-        <translation>Эллипс</translation>
+        <translation>拾色器</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="104"/>
         <source>Flood Fill</source>
-        <translation>Заливка</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="107"/>
-        <source>Annotation</source>
-        <translation>Аннотация</translation>
+        <translation>填充工具</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="110"/>
         <source>Selection (Rectangular)</source>
-        <translation>Выделение (прямоугольное)</translation>
+        <translation>选择 (方形)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="113"/>
         <source>Selection (Free-Form)</source>
-        <translation>Выделение (произвольное)</translation>
-    </message>
-    <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="116"/>
-        <source>Laser pointer</source>
-        <translation>Лазерный указатель</translation>
+        <translation>选择(自由形状)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="124"/>
         <source>Foreground Color</source>
-        <translation>Основной цвет</translation>
+        <translation>前景色</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="129"/>
         <source>Background Color</source>
-        <translation>Фоновый цвет</translation>
+        <translation>背景色</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="95"/>
+        <source>Line</source>
+        <translation>直线</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="98"/>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="101"/>
+        <source>Ellipse</source>
+        <translation>椭圆</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="107"/>
+        <source>Annotation</source>
+        <translation>注释</translation>
+    </message>
+    <message>
+        <location filename="../docks/toolsettingsdock.cpp" line="116"/>
+        <source>Laser pointer</source>
+        <translation>激光笔</translation>
     </message>
 </context>
 <context>
@@ -3247,17 +3240,17 @@
         <location filename="../net/client.cpp" line="557"/>
         <location filename="../net/client.cpp" line="608"/>
         <source>Server</source>
-        <translation>Сервер</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location filename="../net/client.cpp" line="599"/>
         <source>A server error occurred!</source>
-        <translation>Произошла ошибка сервера!</translation>
+        <translation>服务器故障</translation>
     </message>
     <message>
         <location filename="../net/client.cpp" line="601"/>
         <source>The server is shutting down!</source>
-        <translation>Сервер выключается!</translation>
+        <translation>服务器已关闭！</translation>
     </message>
 </context>
 <context>
@@ -3265,7 +3258,7 @@
     <message>
         <location filename="../net/login.cpp" line="110"/>
         <source>Invalid state</source>
-        <translation>Недопустимое состояние</translation>
+        <translation>状态无效</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="153"/>
@@ -3277,128 +3270,128 @@
         <location filename="../net/login.cpp" line="528"/>
         <location filename="../net/login.cpp" line="574"/>
         <source>Incompatible server</source>
-        <translation>Несовместимый сервер</translation>
+        <translation>服务器不兼容</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="171"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation>Сервер для другой версии Drawpile!</translation>
+        <translation>服务器drawpile版本不同！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="212"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation>Безопасный режим не включен на доверенном хосте!</translation>
+        <translation>信任主机安全模式已启动</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="217"/>
         <source>This is a secure secure server, but secure connection support is not available!</source>
-        <translation>Это безопасный сервер, но поддержка защищенного соединения не доступна!</translation>
+        <translation>安全连接无法建立</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="289"/>
         <source>This server does not allow guest logins</source>
-        <translation>На этом сервере не разрешён гостевой вход</translation>
+        <translation>此服务器不支持访客登录</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="291"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation>Требуется пароль для входа под логином &quot;%1&quot;</translation>
+        <translation> &quot;%1&quot; 需要登录密码</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="350"/>
         <source>Password is needed to host a session</source>
-        <translation>Требуется пароль, чтобы начать сессию</translation>
+        <translation>新建连接需要密码</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="350"/>
         <source>Enter hosting password</source>
-        <translation>Введите пароль хоста</translation>
+        <translation>请输入主机密码</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="419"/>
         <source>Session does not exist yet!</source>
-        <translation>Сессия ещё не существует!</translation>
+        <translation>连接未退出！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="498"/>
         <source>Session for a different Drawpile version in progress!</source>
-        <translation>Запущена сессия для другой версии Drawpile!</translation>
+        <translation>正在连接其他版本！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="582"/>
         <source>Session is password protected</source>
-        <translation>Сессия защищена паролем</translation>
+        <translation>连接被密码保护</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="582"/>
         <source>Enter session password</source>
-        <translation>Введите пароль сессии</translation>
+        <translation>请输入连接密码</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="669"/>
         <location filename="../net/login.cpp" line="689"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation>Недействительный SSL сертификат для хоста %1</translation>
+        <translation>服务器 %1 证书无效</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="672"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation>Сертификат доверенного сервера изменился!</translation>
+        <translation>服务器信任证书不匹配！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="703"/>
         <source>The certificate of this server has changed!</source>
-        <translation>Сертификат этого сервера изменился!</translation>
+        <translation>服务器证书变更！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="705"/>
         <source>Continue</source>
-        <translation>Продолжить</translation>
+        <translation>继续</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="750"/>
         <source>Cancelled</source>
-        <translation>Отменено</translation>
+        <translation>已取消</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="759"/>
         <source>Session not found!</source>
-        <translation>Сессия не найдена!</translation>
+        <translation>未找到连接！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="761"/>
         <source>Incorrect password!</source>
-        <translation>Неверный пароль!</translation>
+        <translation>密码错误！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="763"/>
         <source>Invalid username!</source>
-        <translation>Неверное имя пользователя!</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="765"/>
-        <source>Username already taken!</source>
-        <translation>Имя уже занято!</translation>
+        <translation>用户名无效！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="767"/>
         <source>Session is closed!</source>
-        <translation>Сессия закрыта!</translation>
+        <translation>连接关闭！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="769"/>
         <source>This username has been banned!</source>
-        <translation>Это имя пользователя запрещено!</translation>
+        <translation>此用户名已禁用！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="771"/>
         <source>Session ID already in use!</source>
-        <translation>ID сессии уже занят!</translation>
+        <translation>ID已存在！</translation>
+    </message>
+    <message>
+        <location filename="../net/login.cpp" line="765"/>
+        <source>Username already taken!</source>
+        <translation>用户名已被使用！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="773"/>
         <source>Unknown error (%1)</source>
-        <translation>Неизвестная ошибка (%1)</translation>
+        <translation>位置错误 (%1)</translation>
     </message>
 </context>
 <context>
@@ -3406,27 +3399,27 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="62"/>
         <source>(untitled)</source>
-        <translation>(без названия)</translation>
+        <translation>（未命名）</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="79"/>
         <source>Incompatible version</source>
-        <translation>Несовместимая версия</translation>
+        <translation>版本不兼容</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="100"/>
         <source>Title</source>
-        <translation>Название</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="101"/>
         <source>Started by</source>
-        <translation>Кем начато</translation>
+        <translation>开始于</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="102"/>
         <source>Users</source>
-        <translation>Пользователи</translation>
+        <translation>用户</translation>
     </message>
 </context>
 <context>
@@ -3434,7 +3427,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="111"/>
         <source>Received invalid data</source>
-        <translation>Получены неверные данные</translation>
+        <translation>接受信息无效</translation>
     </message>
 </context>
 <context>
@@ -3442,7 +3435,7 @@
     <message>
         <location filename="../net/userlist.cpp" line="141"/>
         <source>User #%1</source>
-        <translation>Пользователь #%1</translation>
+        <translation>用户 #%1</translation>
     </message>
 </context>
 <context>
@@ -3450,17 +3443,17 @@
     <message>
         <location filename="../ora/orareader.cpp" line="59"/>
         <source>No error</source>
-        <translation>Нет ошибок</translation>
+        <translation>一切正常</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="101"/>
         <source>File is not an OpenRaster file</source>
-        <translation>Файл не является файлом OpenRaster</translation>
+        <translation>文件不是 OpenRaster 格式</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="120"/>
         <source>Image has zero size!</source>
-        <translation>Изображение имеет нулевой размер!</translation>
+        <translation>图片大小未指定！</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="125"/>
@@ -3470,12 +3463,12 @@
     <message>
         <location filename="../ora/orareader.cpp" line="195"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation>Невозможно загрузить слой %1</translation>
+        <translation>无法加载图层 %1 </translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="203"/>
         <source>Unnamed layer</source>
-        <translation>Неназванный слой</translation>
+        <translation>未命名图层</translation>
     </message>
 </context>
 <context>
@@ -3483,62 +3476,62 @@
     <message>
         <location filename="../core/blendmodes.cpp" line="30"/>
         <source>Erase</source>
-        <translation>Стирание</translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="36"/>
         <source>Normal</source>
-        <translation>Нормальный</translation>
+        <translation>普通</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="42"/>
         <source>Recolor</source>
-        <translation>Перекрашивание</translation>
+        <translation>Recolor</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="48"/>
         <source>Behind</source>
-        <translation>Позади</translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="54"/>
         <source>Multiply</source>
-        <translation>Умножение</translation>
+        <translation>乘</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="60"/>
         <source>Divide</source>
-        <translation>Деление</translation>
+        <translation>除</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="66"/>
         <source>Burn</source>
-        <translation>Затемнение</translation>
+        <translation>Burn</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="72"/>
         <source>Dodge</source>
-        <translation>Осветление</translation>
+        <translation>Dodge</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="78"/>
         <source>Darken</source>
-        <translation>Темнее</translation>
+        <translation>变暗</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="84"/>
         <source>Lighten</source>
-        <translation>Светлее</translation>
+        <translation>变亮</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="90"/>
         <source>Subtract</source>
-        <translation>Извлечение</translation>
+        <translation>减</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="96"/>
         <source>Add</source>
-        <translation>Добавление</translation>
+        <translation>加</translation>
     </message>
 </context>
 <context>
@@ -3546,12 +3539,12 @@
     <message>
         <location filename="../recording/indexbuilder.cpp" line="58"/>
         <source>Error opening %1 for writing</source>
-        <translation>Ошибка открытия %1 для записи</translation>
+        <translation>读写打开 %1 错误</translation>
     </message>
     <message>
         <location filename="../recording/indexbuilder.cpp" line="119"/>
         <source>Error writing file</source>
-        <translation>Ошибка записи файла</translation>
+        <translation>写入文件错误</translation>
     </message>
 </context>
 <context>
@@ -3559,7 +3552,7 @@
     <message>
         <location filename="../utils/listservermodel.cpp" line="187"/>
         <source>Nearby</source>
-        <translation>Рядом</translation>
+        <translation>附近</translation>
     </message>
 </context>
 <context>
@@ -3567,27 +3560,27 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="69"/>
         <source>(untitled)</source>
-        <translation>(без названия)</translation>
+        <translation>（未命名）</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="101"/>
         <source>Title</source>
-        <translation>Название</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="102"/>
         <source>Users</source>
-        <translation>Пользователи</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="103"/>
         <source>Owner</source>
-        <translation>Владелец</translation>
+        <translation>所有者</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="104"/>
         <source>Age</source>
-        <translation>Возраст</translation>
+        <translation>存在时长</translation>
     </message>
 </context>
 <context>
@@ -3595,7 +3588,7 @@
     <message>
         <location filename="../tools/toolsettings.cpp" line="862"/>
         <source>Annotation content</source>
-        <translation>Содержимое аннотации</translation>
+        <translation type="unfinished">注释内容</translation>
     </message>
 </context>
 <context>
@@ -3603,12 +3596,12 @@
     <message>
         <location filename="../tools/toolsettings.cpp" line="764"/>
         <source>Size:</source>
-        <translation type="unfinished">Размер:</translation>
+        <translation>大小:</translation>
     </message>
     <message>
         <location filename="../tools/toolsettings.cpp" line="784"/>
         <source>Pick from current layer only</source>
-        <translation>Выбирать только с текущего слоя</translation>
+        <translation>仅从当前图层选择</translation>
     </message>
 </context>
 <context>
@@ -3616,12 +3609,12 @@
     <message>
         <location filename="../widgets/brushpreview.cpp" line="48"/>
         <source>Change Foreground Color</source>
-        <translation>Изменить основной цвет</translation>
+        <translation>更改前景色</translation>
     </message>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="49"/>
         <source>Change Background Color</source>
-        <translation>Изменить фоновый цвет</translation>
+        <translation>更改背景色</translation>
     </message>
 </context>
 <context>
@@ -3629,35 +3622,32 @@
     <message>
         <location filename="../widgets/chatwidget.cpp" line="85"/>
         <source>Chat (recorded)...</source>
-        <translation>Чат (записывается)...</translation>
+        <translation>聊天已记录...</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="88"/>
         <source>Chat...</source>
-        <translation>Чат...</translation>
+        <translation>聊天...</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="121"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined the session</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>&lt;b&gt;%1&lt;/b&gt; присоединяется к сессии</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; 加入连接</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="127"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left the session</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>&lt;b&gt;%1&lt;/b&gt; покидает сессию</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; 离开连接</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="133"/>
         <source>You have been kicked by %1</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>Вас выгоняет %1</translation>
+        <translation>你被 %1 踢了，少年。</translation>
     </message>
     <message>
         <location filename="../widgets/chatwidget.cpp" line="237"/>
         <source>Invalid dice roll description: %1</source>
-        <translation>Неверное описание броска кости: %1</translation>
+        <translation>随机决策无效: %1</translation>
     </message>
 </context>
 <context>
@@ -3665,7 +3655,7 @@
     <message>
         <location filename="../widgets/colorbutton.cpp" line="56"/>
         <source>Select a color</source>
-        <translation>Выберите цвет</translation>
+        <translation>选择颜色</translation>
     </message>
 </context>
 <context>
@@ -3674,107 +3664,104 @@
         <location filename="../widgets/netstatus.cpp" line="89"/>
         <location filename="../widgets/netstatus.cpp" line="233"/>
         <source>not connected</source>
-        <translation>не подключен</translation>
+        <translation>未连接</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="98"/>
         <source>Copy address to clipboard</source>
-        <translation>Копировать адрес в буфер</translation>
+        <translation>复制地址到剪贴板</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="104"/>
         <source>Copy session URL to clipboard</source>
-        <translation>Копировать URL сессии в буфер</translation>
+        <translation>复制连接URL到剪贴板</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="110"/>
         <source>Get externally visible IP address</source>
-        <translation>Получить внешний IP адрес</translation>
+        <translation>获取外网可访问地址</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="125"/>
         <source>Statistics</source>
-        <translation>Статистика</translation>
+        <translation>状态</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="137"/>
         <source>Show certificate</source>
-        <translation>Показать сертификат</translation>
+        <translation>查看证书</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="160"/>
         <source>Connecting to %1...</source>
-        <translation>Подключение к %1...</translation>
+        <translation>正在连接%1...</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="181"/>
         <location filename="../widgets/netstatus.cpp" line="354"/>
         <source>Host: %1</source>
-        <translation>Хост: %1</translation>
+        <translation>服务器: %1</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="182"/>
         <source>Logged in!</source>
-        <translation>Авторизация успешна!</translation>
+        <translation>已登录！</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="195"/>
         <source>A previously unvisited host</source>
-        <translation>Непосещаемый прежде хост</translation>
+        <translation>未访问过的服务器</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="200"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation>Сертификат хоста не изменился с последнего визита</translation>
+        <translation>服务器证书</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="205"/>
         <source>This is a trusted host</source>
-        <translation>Это доверенный хост</translation>
+        <translation>信任服务器</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="222"/>
         <location filename="../widgets/netstatus.cpp" line="223"/>
         <source>Logging out...</source>
-        <translation>Выход...</translation>
+        <translation>登出...</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="239"/>
         <source>Disconnected</source>
-        <translation>Отключен</translation>
+        <translation>断开连接</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="375"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>&lt;b&gt;%1&lt;/b&gt; присоединяется</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; 加入连接</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="380"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>&lt;b&gt;%1&lt;/b&gt; уходит</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; 离开连接</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="385"/>
         <source>You have been kicked by %1</source>
-        <translatorcomment>В переводе прошедшее время заменено настоящим, чтобы при использовании женского рода в имени пользователя предложение не становилось грамматически неправильным.</translatorcomment>
-        <translation>Вас выгоняет %1</translation>
+        <translation>你被 %1 踢了，少年。</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="425"/>
         <source>Notice</source>
-        <translation>Уведомление</translation>
+        <translation>注意</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="426"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation>Ваш интернет провайдер использует Carrier Grade NAT. Это делает невозможным подключение к вам напрямую. Обратитесь к странице помощи Drawpile для решения проблемы.</translation>
+        <translation>您的网络提供者使用NAT，计算机无法从外网访问。请从drawpile帮助寻找取代方案。</translation>
     </message>
     <message>
         <location filename="../widgets/netstatus.cpp" line="431"/>
         <source>Don&apos;t show this again</source>
-        <translation>Не показывать снова</translation>
+        <translation>不再次提示</translation>
     </message>
 </context>
 <context>
@@ -3782,22 +3769,22 @@
     <message>
         <location filename="../widgets/palettewidget.cpp" line="50"/>
         <source>Add</source>
-        <translation>Добавить</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="51"/>
         <source>Modify</source>
-        <translation>Изменить</translation>
+        <translation>修改</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="52"/>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="58"/>
         <source>Set palette color</source>
-        <translation>Указать цвет палитры</translation>
+        <translation>设定调色盘</translation>
     </message>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="253"/>
@@ -3807,9 +3794,9 @@ Green: %3
 Blue: %4
 Hex: %5</source>
         <translation>%1
-Красный: %2
-Зелёный: %3
-Синий: %4
+红: %2
+绿: %3
+蓝: %4
 Hex: %5</translation>
     </message>
 </context>
@@ -3818,7 +3805,7 @@ Hex: %5</translation>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="84"/>
         <source>Drag the view while holding ctrl-space to rotate</source>
-        <translation>Для вращения перемещайте мышь удерживая ЛКМ-ctrl-space</translation>
+        <translation>按Ctrl-Space同时拖拽来旋转画布</translation>
     </message>
 </context>
 </TS>

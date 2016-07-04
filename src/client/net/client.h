@@ -160,6 +160,7 @@ public slots:
 	 * @param action
 	 */
 	void sendChat(const QString &message, bool announce, bool action);
+	void sendPinnedChat(const QString &message);
 
 signals:
 	void messageReceived(protocol::MessagePtr msg);

@@ -38,7 +38,7 @@ class QCP_EXPORT ColorDialog : public QDialog
     Q_OBJECT
     Q_ENUMS(ButtonMode)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)
-    Q_PROPERTY(ColorWheel::DisplayFlags wheelFlags READ wheelFlags WRITE setWheelFlags NOTIFY wheelFlagsChanged)
+    Q_PROPERTY(color_widgets::ColorWheel::DisplayFlags wheelFlags READ wheelFlags WRITE setWheelFlags NOTIFY wheelFlagsChanged)
     /**
      * \brief whether the color alpha channel can be edited.
      *

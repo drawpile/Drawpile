@@ -23,6 +23,7 @@
 
 class QTextBrowser;
 class ChatLineEdit;
+class QLabel;
 
 namespace widgets {
 
@@ -59,6 +60,9 @@ public slots:
 	//! Display a system message
 	void systemMessage(const QString& message);
 
+	//! Pin a message. An empty string will remove the pinned message (if any)
+	void setPinnedMessage(const QString &message);
+
 	void userJoined(int id, const QString &name);
 	void userParted(const QString &name);
 	void kicked(const QString &kickedBy);
@@ -71,6 +75,7 @@ private slots:
 
 signals:
 	void message(const QString &msg, bool announcement, bool action);
+	void pinMessage(const QString &msg);
 	void expanded(bool isVisible);
 
 protected:
@@ -79,6 +84,7 @@ protected:
 private:
 	QTextBrowser *_view;
 	ChatLineEdit *_myline;
+	QLabel *m_pinned;
 	bool _wasCollapsed;
 };
 

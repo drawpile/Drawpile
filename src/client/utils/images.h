@@ -21,6 +21,8 @@
 #define IMAGESIZECHECK_H
 
 class QSize;
+class QImage;
+class QColor;
 
 #include "../shared/net/message.h"
 
@@ -45,6 +47,9 @@ bool isWritableFormat(const QString &filename);
 //! Get a whitelisted set of writable image formats
 QList<QPair<QString,QByteArray>> writableImageFormats();
 
+QColor isSolidColorImage(const QImage &image);
+
 }
 
-#endif // IMAGESIZECHECK_H
+#endif
+

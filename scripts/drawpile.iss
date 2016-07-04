@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Drawpile"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.3"
 #define MyAppURL "http://drawpile.net/"
 #define MyAppExeName "drawpile.exe"
 
@@ -38,7 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "no-dnssd/drawpile.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not DnssdCheck();
+;Source: "no-dnssd/drawpile.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not DnssdCheck();
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "i18n\*.qm"; DestDir: "{app}\i18n"; Flags: ignoreversion

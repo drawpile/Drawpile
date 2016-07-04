@@ -18,7 +18,7 @@
 */
 
 #include "notifications.h"
-#include "utils/settings.h"
+#include "main.h"
 
 #include <QSoundEffect>
 #include <QMap>
@@ -83,7 +83,7 @@ void playSound(Event event)
 		}
 
 		QString fullpath;
-		for(const QString &path : utils::settings::dataPaths()) {
+		for(const QString &path : DrawpileApp::dataPaths()) {
 			QFileInfo f(QDir(path), filename);
 			if(f.exists())
 				fullpath = f.absoluteFilePath();

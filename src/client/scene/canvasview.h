@@ -215,6 +215,7 @@ class CanvasView : public QGraphicsView
 		int _dragx,_dragy;
 
 		//! Previous pointer location
+		paintcore::Point m_firstpoint;
 		paintcore::Point _prevpoint;
 		paintcore::Point _prevoutlinepoint;
 		qreal _pointerdistance;

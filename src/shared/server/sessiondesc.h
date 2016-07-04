@@ -84,3 +84,4 @@ struct SessionDescription {
 Q_DECLARE_METATYPE(server::SessionDescription)
 
 #endif
+
