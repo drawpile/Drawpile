@@ -46,9 +46,7 @@ void AnimationExporter::saveNextFrame()
 		_exporter->finish();
 
 	} else {
-		_layers->lock();
 		QImage image = _layers->flatLayerImage(_currentFrame - 1, _useBgLayer, _bgColor);
-		_layers->unlock();
 
 		_exporter->saveFrame(image, 1);
 
@@ -60,7 +58,7 @@ void AnimationExporter::saveNextFrame()
 void AnimationExporter::exportAnimation(paintcore::LayerStack *layers, QWidget *parent)
 {
 	auto *dlg = new dialogs::VideoExportDialog(parent);
-	dlg->showAnimationSettings(layers->layerCount());
+	dlg->showAnimationSettings(layers->layers());
 	dlg->show();
 
 	connect(dlg, &QDialog::finished, [layers, dlg, parent](int result) {

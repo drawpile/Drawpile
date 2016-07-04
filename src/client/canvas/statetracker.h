@@ -43,6 +43,10 @@ namespace protocol {
 	class FillRect;
 	class UndoPoint;
 	class Undo;
+	class AnnotationCreate;
+	class AnnotationReshape;
+	class AnnotationEdit;
+	class AnnotationDelete;
 }
 
 namespace paintcore {
@@ -53,8 +57,6 @@ namespace paintcore {
 class QTimer;
 
 namespace canvas {
-
-class AnnotationState;
 
 struct ToolContext {
 	ToolContext() : layer_id(-1) {}
@@ -135,6 +137,8 @@ Q_DECLARE_TYPEINFO(canvas::StateSavepoint, Q_MOVABLE_TYPE);
 
 namespace canvas {
 
+class LayerListModel;
+
 /**
  * \brief Drawing context state tracker
  * 
@@ -144,12 +148,13 @@ namespace canvas {
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(paintcore::LayerStack *image, int myId, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent=0);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
 	void localCommand(protocol::MessagePtr msg);
 	void receiveCommand(protocol::MessagePtr msg);
+	void receiveQueuedCommand(protocol::MessagePtr msg);
 
 	void endRemoteContexts();
 	void endPlayback();
@@ -161,8 +166,6 @@ public:
 	const protocol::MessageStream &getHistory() const { return m_msgstream; }
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
-
-	const AnnotationState *annotations() const { return m_annotations; }
 
 	/**
 	 * @brief Set the maximum length of the stored history.
@@ -226,8 +229,7 @@ public:
 	void resetToSavepoint(StateSavepoint sp);
 
 signals:
-	//! These must be handled externally
-	void annotationCommand(protocol::MessagePtr &msg);
+	void myAnnotationCreated(int id);
 	void layerAutoselectRequest(int);
 
 	void retconned();
@@ -240,9 +242,8 @@ public slots:
 	void previewLayerOpacity(int id, float opacity);
 	void resetLocalFork();
 
-	//! Prepare to be deleted
-	void stop();
-
+private slots:
+	void processQueuedCommands();
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
 
@@ -270,10 +271,16 @@ private:
 	void makeSavepoint(int pos);
 	void revertSavepointAndReplay(const StateSavepoint savepoint);
 
+	// Annotation related commands
+	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
+	void handleAnnotationReshape(const protocol::AnnotationReshape &cmd);
+	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
+	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
+
 	QHash<int, DrawingContext> _contexts;
 
 	paintcore::LayerStack *_image;
-	AnnotationState *m_annotations;
+	LayerListModel *m_layerlist;
 
 	QString _title;
 	int m_myId;
@@ -288,6 +295,10 @@ private:
 	bool m_fullhistory;
 	bool _showallmarkers;
 	bool _hasParticipated;
+
+	QList<protocol::MessagePtr> m_msgqueue;
+	QTimer *m_queuetimer;
+	bool m_isQueued;
 };
 
 }

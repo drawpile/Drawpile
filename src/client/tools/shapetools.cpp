@@ -65,7 +65,6 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::end()
 {
-	paintcore::LayerStack::Locker(owner.model()->layerStack());
 	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 	if(layer) {
 		layer->removeSublayer(-1);
@@ -81,7 +80,6 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	paintcore::LayerStack::Locker(owner.model()->layerStack());
 	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 	if(layer) {
 		paintcore::StrokeState ss;

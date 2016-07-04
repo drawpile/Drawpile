@@ -111,13 +111,8 @@ void Flipbook::setLayers(paintcore::LayerStack *layers)
 {
 	Q_ASSERT(layers);
 	_layers = layers;
-
-	_layers->lock();
-	int count = _layers->layerCount();
-	_layers->unlock();
-
-	_ui->layerIndex->setMaximum(count);
-	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(count));
+	_ui->layerIndex->setMaximum(_layers->layers());
+	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(_layers->layers()));
 
 	resetFrameCache();
 	loadFrame();
@@ -127,10 +122,7 @@ void Flipbook::resetFrameCache()
 {
 	_frames.clear();
 	if(_layers) {
-		_layers->lock();
-		int count = _layers->layerCount();
-		_layers->unlock();
-		for(int i=0;i<count;++i)
+		for(int i=0;i<_layers->layers();++i)
 			_frames.append(QPixmap());
 	}
 }
@@ -140,9 +132,7 @@ void Flipbook::loadFrame()
 	const int f = _ui->layerIndex->value() - 1;
 	if(_layers && f < _frames.size()) {
 		if(_frames.at(f).isNull()) {
-			_layers->lock();
 			QImage img = _layers->flatLayerImage(f, _ui->useBgLayer->isChecked(), QColor(0,0,0,0));
-			_layers->unlock();
 
 			// Scale down the image if it is too big
 			QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;

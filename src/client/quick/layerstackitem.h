@@ -19,6 +19,7 @@
 #ifndef LAYERSTACKITEM_H
 #define LAYERSTACKITEM_H
 
+#include "core/annotationmodel.h"
 #include "core/layerstack.h"
 
 //#include <QQuickItem>
@@ -30,6 +31,7 @@
 class LayerStackItem : public QQuickPaintedItem
 {
 	Q_PROPERTY(paintcore::LayerStack* model READ model WRITE setModel NOTIFY modelChanged)
+	Q_PROPERTY(paintcore::AnnotationModel* annotations READ annotations NOTIFY modelChanged)
 
 	Q_OBJECT
 public:
@@ -37,6 +39,8 @@ public:
 
 	void setModel(paintcore::LayerStack *model);
 	paintcore::LayerStack *model() const { return m_model.data(); }
+
+	paintcore::AnnotationModel *annotations() const; // model attribute shortcut
 
 	void paint(QPainter *painter);
 

@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvasitem.h"
-#include "core/layerstack.h"
-
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QTimer>
+
+#include "canvasitem.h"
+
+#include "core/layerstack.h"
 
 namespace drawingboard {
 
@@ -33,33 +33,13 @@ namespace drawingboard {
 CanvasItem::CanvasItem(paintcore::LayerStack *layerstack, QGraphicsItem *parent)
 	: QGraphicsObject(parent), m_image(layerstack)
 {
-	connect(m_image, &paintcore::LayerStack::areaChanged, this, &CanvasItem::refreshImage);
-	connect(m_image, &paintcore::LayerStack::resized, this, &CanvasItem::canvasResize);
-
-	m_refreshTimer = new QTimer(this);
-	m_refreshTimer->setSingleShot(true);
-	connect(m_refreshTimer, &QTimer::timeout, [this]() { refreshImage(QRect()); });
+	connect(m_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
+	connect(m_image, SIGNAL(resized(int, int, QSize)), this, SLOT(canvasResize()));
 }
 
 void CanvasItem::refreshImage(const QRect &area)
 {
-	m_refresh |= area;
-	if(m_image->lock(5)) {
-		if((m_cache.isNull() || m_cache.size() != m_image->size()) && m_image->size().isValid()) {
-			m_cache = QPixmap(m_image->size());
-			m_cache.fill();
-		}
-
-		m_image->paintChangedTiles(m_refresh, &m_cache, true);
-		m_image->unlock();
-
-		update(m_refresh.adjusted(-2, -2, 2, 2));
-		m_refresh = QRect();
-
-	} else if(!m_refreshTimer->isActive()) {
-		// Couldn't get a lock: re-enter the eventloop and try again
-		m_refreshTimer->start(10);
-	}
+	update(area.adjusted(-2, -2, 2, 2));
 }
 
 QRectF CanvasItem::boundingRect() const
@@ -70,10 +50,17 @@ QRectF CanvasItem::boundingRect() const
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
-	QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
-	exposed &= m_cache.rect();
+	if((_cache.isNull() || _cache.size() != m_image->size()) && m_image->size().isValid()) {
+		_cache = QPixmap(m_image->size());
+		_cache.fill();
+	}
 
-	painter->drawPixmap(exposed, m_cache, exposed);
+	QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
+	exposed &= _cache.rect();
+
+	m_image->paintChangedTiles(exposed, &_cache, true);
+
+	painter->drawPixmap(exposed, _cache, exposed);
 }
 
 void CanvasItem::canvasResize()

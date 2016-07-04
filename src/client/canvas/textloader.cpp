@@ -135,15 +135,7 @@ void TextCommandLoader::handleNewLayer(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected context id, layer id, source id, color, [copy], [insert], and title");
 
-	paintcore::LayerInfo layer {
-		str2int(m.captured(2)),
-		m.captured(7),
-		false,
-		QList<uint8_t>(),
-		255,
-		false,
-		paintcore::BlendMode::MODE_NORMAL
-	};
+	LayerListItem layer(str2int(m.captured(2)), m.captured(7));
 	_layer[layer.id] = layer;
 
 	uint8_t flags = 0;
@@ -178,12 +170,12 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 
 	Params params = extractParams(args.mid(sep2+1));
 
-	paintcore::LayerInfo &layer = _layer[id];
+	LayerListItem &layer = _layer[id];
 
 	ParamIterator i = params.constBegin();
 	while (i!=params.constEnd()) {
 		if(i.key() == "opacity")
-			layer.opacity = str2real(i.value()) * 255;
+			layer.opacity = str2real(i.value());
 		else if(i.key() == "blend") {
 			bool found;
 			layer.blend = paintcore::findBlendModeByName(i.value(), &found).id;
@@ -205,7 +197,7 @@ void TextCommandLoader::handleRetitleLayer(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected id and title");
 
-	paintcore::LayerInfo &layer = _layer[str2int(m.captured(2))];
+	LayerListItem &layer = _layer[str2int(m.captured(2))];
 	layer.title = m.captured(3);
 
 	_messages.append(MessagePtr(new protocol::LayerRetitle(

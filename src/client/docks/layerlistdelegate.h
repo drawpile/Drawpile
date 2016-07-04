@@ -22,6 +22,10 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
+namespace canvas {
+	struct LayerListItem;
+}
+
 namespace protocol {
 	class MessagePtr;
 }

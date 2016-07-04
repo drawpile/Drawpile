@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,16 +19,13 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include "tile.h"
-
 #include <QColor>
-#include <QVector>
-#include <QMetaType>
+
+#include "tile.h"
 
 class QImage;
 class QSize;
 class QDataStream;
-class QRect;
 
 namespace paintcore {
 
@@ -37,26 +34,6 @@ struct BrushStamp;
 class Point;
 class LayerStack;
 struct StrokeState;
-
-/**
- * @brief The non-pixeldata part of the layer
- */
-struct LayerInfo {
-	// Identification
-	int id;
-	QString title;
-
-	// Access controls
-	bool locked;
-	QList<uint8_t> exclusive;
-
-	// Rendering controls
-	uchar opacity;
-	bool hidden;
-	BlendMode::Mode blend;
-
-	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
-};
 
 /**
  * @brief A drawing layer/tile manage
@@ -76,25 +53,22 @@ class Layer {
 		~Layer();
 
 		//! Get the layer width in pixels
-		int width() const { return m_width; }
+		int width() const { return _width; }
 
 		//! Get the layer height in pixels
-		int height() const { return m_height; }
+		int height() const { return _height; }
 
 		//! Get the layer ID
-		int id() const { return m_info.id; }
+		int id() const { return _id; }
 
 		//! Change layer ID
-		void setId(int id) { m_info.id = id; }
+		void setId(int id) { _id = id; }
 
 		//! Get the layer name
-		const QString& title() const { return m_info.title; }
+		const QString& title() const { return _title; }
 
 		//! Set the layer name
 		void setTitle(const QString& title);
-
-		//! Set layer access controls
-		void setAcl(bool locked, const QList<uint8_t> &exclusive);
 
 		//! Get the layer as an image
 		QImage toImage() const;
@@ -112,10 +86,10 @@ class Layer {
 		QRgb pixelAt(int x, int y) const;
 
 		//! Get layer opacity
-		int opacity() const { return m_info.opacity; }
+		int opacity() const { return _opacity; }
 
 		//! Get the effective layer opacity (0 if hidden)
-		int effectiveOpacity() const { return isHidden() ? 0 : m_info.opacity; }
+		int effectiveOpacity() const { return hidden() ? 0 : _opacity; }
 
 		//! Set layer opacity
 		void setOpacity(int opacity);
@@ -127,7 +101,7 @@ class Layer {
 		 * @brief Get the layer blending mode
 		 * @return blending mode number
 		 */
-		BlendMode::Mode blendmode() const { return m_info.blend; }
+		BlendMode::Mode blendmode() const { return _blend; }
 
 		/**
 		 * @brief Is this layer hidden?
@@ -136,7 +110,7 @@ class Layer {
 		 * is purely local: setting it will not hide the layer for other
 		 * users.
 		 */
-		bool isHidden() const { return m_info.hidden; }
+		bool hidden() const { return _hidden; }
 
 		//! Hide this layer
 		void setHidden(bool hide);
@@ -170,23 +144,23 @@ class Layer {
 
 		//! Get a tile
 		const Tile &tile(int x, int y) const {
-			Q_ASSERT(x>=0 && x<m_xtiles);
-			Q_ASSERT(y>=0 && y<m_ytiles);
-			return m_tiles[y*m_xtiles+x];
+			Q_ASSERT(x>=0 && x<_xtiles);
+			Q_ASSERT(y>=0 && y<_ytiles);
+			return _tiles[y*_xtiles+x];
 		}
 
 		//! Get an editable reference to a tile
 		Tile &rtile(int x, int y) {
-			Q_ASSERT(x>=0 && x<m_xtiles);
-			Q_ASSERT(y>=0 && y<m_ytiles);
-			return m_tiles[y*m_xtiles+x];
+			Q_ASSERT(x>=0 && x<_xtiles);
+			Q_ASSERT(y>=0 && y<_ytiles);
+			return _tiles[y*_xtiles+x];
 		}
 
 		//! Get a tile
-		const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<m_xtiles*m_ytiles); return m_tiles[index]; }
+		const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<_xtiles*_ytiles); return _tiles[index]; }
 
 		//! Get the sublayers
-		const QList<Layer*> &sublayers() const { return m_sublayers; }
+		const QList<Layer*> &sublayers() const { return _sublayers; }
 
 		/**
 		 * @brief Is this layer visible
@@ -194,7 +168,7 @@ class Layer {
 		 * it is not explicitly hidden.
 		 * @return true if layer is visible
 		 */
-		bool isVisible() const { return m_info.opacity > 0 && !m_info.hidden; }
+		bool visible() const { return _opacity > 0 && !_hidden; }
 
 		//! Mark non-empty tiles as dirty
 		void markOpaqueDirty(bool forceVisible=false);
@@ -204,11 +178,6 @@ class Layer {
 		 * @return invalid color if there is more than one color on this canvas
 		 */
 		QColor isSolidColor() const;
-
-		/**
-		 * @brief Get the non-pixeldata related properties
-		 */
-		const LayerInfo &info() const { return m_info; }
 
 		// Disable assignment operator
 		Layer& operator=(const Layer&) = delete;
@@ -231,23 +200,23 @@ class Layer {
 
 		QColor getDabColor(const BrushStamp &stamp) const;
 
-		LayerStack *m_owner;
-		LayerInfo m_info;
+		LayerStack *_owner;
+		int _id;
+		QString _title;
 	
-		int m_width;
-		int m_height;
-		int m_xtiles;
-		int m_ytiles;
-		QVector<Tile> m_tiles;
+		int _width;
+		int _height;
+		int _xtiles;
+		int _ytiles;
+		QVector<Tile> _tiles;
+		uchar _opacity;
+		BlendMode::Mode _blend;
+		bool _hidden;
 
-		QList<Layer*> m_sublayers;
+		QList<Layer*> _sublayers;
 };
 
 }
-
-//Q_DECLARE_TYPEINFO(paintcore::LayerInfo, Q_MOVABLE_TYPE);
-
-Q_DECLARE_METATYPE(paintcore::LayerInfo)
 
 #endif
 

@@ -94,7 +94,6 @@ signals:
 	void smoothingChanged(int smoothing);
 
 private slots:
-	void onAnnotationRowInserted(const QModelIndex&, int first, int last);
 	void onAnnotationRowDelete(const QModelIndex&, int first, int last);
 
 private:

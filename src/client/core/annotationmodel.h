@@ -16,21 +16,18 @@
   You should have received a copy of the GNU General Public License
   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef PAINTCORE_ANNOTATION_MODEL_H
+#define PAINTCORE_ANNOTATION_MODEL_H
 
-#ifndef CANVAS_ANNOTATION_STATE_H
-#define CANVAS_ANNOTATION_STATE_H
-
-#include "../shared/net/message.h"
-
-#include <QObject>
-#include <QRect>
+#include <QAbstractListModel>
 #include <QColor>
+#include <QRect>
 
+class QDataStream;
 class QPainter;
 class QImage;
-class QDataStream;
 
-namespace canvas {
+namespace paintcore {
 
 struct Annotation {
 	int id;
@@ -58,47 +55,53 @@ struct Annotation {
 	static Annotation fromDataStream(QDataStream &in);
 };
 
-/**
- * @brief List of annotations maintained by the StateTracker
- *
- * This is the annotation state that lives in the same thread as the state
- * tracker. For use in the UI, the annotation list is replicated in the AnnotationModel
- * that lives in the main GUI thread.
- */
-class AnnotationState : public QObject {
+class AnnotationModel : public QAbstractListModel {
 	Q_OBJECT
 public:
-	AnnotationState(QObject *parent=nullptr);
+	enum AnnotationRoles {
+		// DisplayRole is used to get the text
+		IdRole = Qt::UserRole + 1,
+		RectRole,
+		BgColorRole // avoid clash with Qt's own BackgroundColorRole
+	};
 
-	void handleAnnotationCommand(protocol::MessagePtr msg);
+	explicit AnnotationModel(QObject *parent=nullptr);
 
-	QList<Annotation> getAnnotations() const { return m_annotations; }
-	void setAnnotations(const QList<Annotation> &annotations);
+	int rowCount(const QModelIndex &parent=QModelIndex()) const;
+	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 
-public slots:
-	//! Translate every annotation (this is used to fix positions after canvas resize)
-	void offsetAll(int x, int y);
+	QHash<int, QByteArray> roleNames() const;
 
-signals:
-	void annotationChanged(const Annotation &annotation);
-	void annotationDeleted(int id);
-	void annotationsReset(const QList<Annotation> &annotations);
+	bool isEmpty() const { return m_annotations.isEmpty(); }
 
-private:
 	void addAnnotation(const Annotation &annotation);
+	void addAnnotation(int id, const QRect &rect);
 	void deleteAnnotation(int id);
 	void reshapeAnnotation(int id, const QRect &newrect);
 	void changeAnnotation(int id, const QString &newtext, const QColor &bgcolor);
 
+	void setAnnotations(const QList<Annotation> &list);
+	QList<Annotation> getAnnotations() const { return m_annotations; }
+
+	int annotationAtPos(const QPoint &pos, qreal zoom) const;
+
+	Annotation::Handle annotationHandleAt(int id, const QPoint &point, qreal zoom) const;
+	Annotation::Handle annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta);
+
+	const Annotation *getById(int id) const;
+
+	//! Return the IDs of annotations that have no text content
+	QList<int> getEmptyIds() const;
+
+	void clear();
+
+private:
 	int findById(int id) const;
 
 	QList<Annotation> m_annotations;
 };
 
 }
-
-Q_DECLARE_METATYPE(canvas::Annotation)
-
 
 #endif
 

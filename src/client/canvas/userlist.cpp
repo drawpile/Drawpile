@@ -72,12 +72,12 @@ void UserListModel::addUser(const User &user)
 	endInsertRows();
 }
 
-void UserListModel::updateOperators(uint8_t implicitId, const QList<uint8_t> ids)
+void UserListModel::updateOperators(const QList<uint8_t> ids)
 {
 	for(int i=0;i<m_users.size();++i) {
 		User &u = m_users[i];
 
-		const bool op = ids.contains(u.id) || u.id == implicitId;
+		const bool op = ids.contains(u.id);
 		if(op != u.isOperator) {
 			u.isOperator = op;
 			QModelIndex idx = index(i);

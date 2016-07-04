@@ -39,7 +39,6 @@ using widgets::GroupedToolButton;
 #include "ui_fillsettings.h"
 
 #include "canvas/canvasmodel.h"
-#include "canvas/annotationmodel.h"
 
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
@@ -50,6 +49,7 @@ using widgets::GroupedToolButton;
 #include "utils/icon.h"
 
 #include "core/blendmodes.h"
+#include "core/annotationmodel.h"
 #include "core/layerstack.h"
 
 #include "../shared/net/annotation.h"
@@ -1000,7 +1000,7 @@ void AnnotationSettings::setSelectionId(int id)
 
 	m_selectionId = id;
 	if(id) {
-		const canvas::Annotation *a = m_ctrl->model()->annotations()->getById(id);
+		const paintcore::Annotation *a = m_ctrl->model()->layerStack()->annotations()->getById(id);
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text);
 		_ui->btnBackground->setColor(a->background);
@@ -1040,12 +1040,14 @@ void AnnotationSettings::saveChanges()
 
 	Q_ASSERT(m_ctrl);
 
-	m_ctrl->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
-		0,
-		selected(),
-		_ui->btnBackground->color().rgba(),
-		_ui->content->toHtml()
-	)));
+	if(selected()) {
+		m_ctrl->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
+			0,
+			selected(),
+			_ui->btnBackground->color().rgba(),
+			_ui->content->toHtml()
+		)));
+	}
 }
 
 void AnnotationSettings::removeAnnotation()
@@ -1063,7 +1065,7 @@ void AnnotationSettings::bake()
 	Q_ASSERT(selected());
 	Q_ASSERT(m_ctrl);
 
-	const canvas::Annotation *a = m_ctrl->model()->annotations()->getById(selected());
+	const paintcore::Annotation *a = m_ctrl->model()->layerStack()->annotations()->getById(selected());
 	Q_ASSERT(a);
 
 	QImage img = a->toImage();

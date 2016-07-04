@@ -21,7 +21,6 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/blendmodes.h"
-#include "canvas/annotationstate.h"
 
 #include <QDomDocument>
 #include <QBuffer>
@@ -40,7 +39,7 @@ bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
 	return zip.writeFile(filename, buf.data());
 }
 
-bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const QList<canvas::Annotation> &annotations)
+bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
@@ -63,10 +62,10 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const QList<ca
 	// Add annotations
 	// This will probably be replaced with proper text element support
 	// once standardized.
-	if(!annotations.isEmpty()) {
+	if(!image->annotations()->isEmpty()) {
 		QDomElement annotationEls = doc.createElement("drawpile:annotations");
 		annotationEls.setPrefix("drawpile");
-		for(const canvas::Annotation &a : annotations) {
+		for(const paintcore::Annotation &a : image->annotations()->getAnnotations()) {
 			QDomElement an = doc.createElement("drawpile:a");
 			an.setPrefix("drawpile");
 
@@ -83,14 +82,14 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const QList<ca
 	}
 
 	// Add layers (topmost layer goes first in ORA)
-	for(int i=image->layerCount()-1;i>=0;--i) {
+	for(int i=image->layers()-1;i>=0;--i) {
 		const paintcore::Layer *l = image->getLayerByIndex(i);
 
 		QDomElement layer = doc.createElement("layer");
 		layer.setAttribute("src", QString("data/layer%1.png").arg(i));
 		layer.setAttribute("name", l->title());
 		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
-		if(l->isHidden())
+		if(l->hidden())
 			layer.setAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
 			layer.setAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
@@ -113,7 +112,7 @@ bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 
 bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 {
-	QImage img = layers->toFlatImage();
+	QImage img = layers->toFlatImage(false);
 
 	// Flattened full size version for image viewers
 	if(!putPngInZip(zf, "mergedimage.png", img))
@@ -130,7 +129,7 @@ bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 
 namespace openraster {
 
-bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image, const QList<canvas::Annotation> &annotations)
+bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 {
 	KZip zf(filename);
 	if(!zf.open(QIODevice::WriteOnly))
@@ -144,10 +143,10 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image,
 
 	// The stack XML contains the image structure
 	// definition.
-	writeStackXml(zf, image, annotations);
+	writeStackXml(zf, image);
 
 	// Each layer is written as an individual PNG image
-	for(int i=image->layerCount()-1;i>=0;--i)
+	for(int i=image->layers()-1;i>=0;--i)
 		writeLayer(zf, image, i);
 
 	// Ready to use images for viewers

@@ -28,7 +28,6 @@
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "selection.h"
-#include "annotationmodel.h"
 #include "core/layerstack.h"
 
 namespace protocol {
@@ -40,21 +39,16 @@ namespace protocol {
 	class Marker;
 }
 
-class QThread;
-
 namespace canvas {
 
 class StateTracker;
 class AclFilter;
 class UserListModel;
 class LayerListModel;
-class CommandQueue;
 
 class CanvasModel : public QObject
 {
-	friend class CommandQueue;
 	Q_PROPERTY(paintcore::LayerStack* layerStack READ layerStack CONSTANT)
-	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
 	Q_PROPERTY(UserCursorModel* userCursors READ userCursors CONSTANT)
 	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
 	Q_PROPERTY(StateTracker* stateTracker READ stateTracker CONSTANT)
@@ -66,23 +60,14 @@ class CanvasModel : public QObject
 
 public:
 	explicit CanvasModel(int localUserId, QObject *parent = 0);
-	~CanvasModel();
 
-	// These live in a background processing thread.
-	// Remember to synchronize when accessing their properties!
 	paintcore::LayerStack *layerStack() const { return m_layerstack; }
 	StateTracker *stateTracker() const { return m_statetracker; }
-	AclFilter *aclFilter() const { return m_aclfilter; }
-
-	// Rest of the models live in the same thread as this object
 	UserCursorModel *userCursors() const { return m_usercursors; }
 	LaserTrailModel *laserTrails() const { return m_lasers; }
-	UserListModel *userlist() const { return m_userlist; }
-	LayerListModel *layerlist() const { return m_layerlist; }
-	AnnotationModel *annotations() const { return m_annotations; }
 
 	QString title() const { return m_title; }
-	void setTitle(const QString &title);
+	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
 
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
@@ -104,6 +89,10 @@ public:
 	void disconnectedFromServer();
 	void endPlayback();
 
+	AclFilter *aclFilter() const { return m_aclfilter; }
+	UserListModel *userlist() const { return m_userlist; }
+	LayerListModel *layerlist() const { return m_layerlist; }
+
 	/**
 	 * @brief Is the canvas in "online mode"?
 	 *
@@ -124,9 +113,6 @@ public slots:
 
 	void setLayerViewMode(int mode);
 	void updateLayerViewOptions();
-
-private slots:
-	void handleMeta(protocol::MessagePtr cmd);
 
 signals:
 	void layerAutoselectRequest(int id);
@@ -158,20 +144,15 @@ private:
 	void metaChat(const protocol::Chat &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
 
-	// Processing thread
-	QThread *m_thread;
-	CommandQueue *m_cmdqueue;
 	AclFilter *m_aclfilter;
-	paintcore::LayerStack *m_layerstack;
-	StateTracker *m_statetracker;
-
-	// Main thread
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
+
+	paintcore::LayerStack *m_layerstack;
+	StateTracker *m_statetracker;
 	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;
-	AnnotationModel *m_annotations;
 
 	QString m_title;
 

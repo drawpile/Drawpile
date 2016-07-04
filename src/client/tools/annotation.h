@@ -19,7 +19,7 @@
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
 
-#include "canvas/annotationmodel.h"
+#include "core/annotationmodel.h"
 #include "tool.h"
 
 namespace drawingboard {
@@ -45,7 +45,7 @@ private:
 	bool m_isNew;
 
 	QPointF m_p1, m_p2;
-	canvas::Annotation::Handle m_handle;
+	paintcore::Annotation::Handle m_handle;
 };
 
 }

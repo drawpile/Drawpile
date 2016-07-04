@@ -54,7 +54,7 @@ class UserListModel : public QAbstractListModel {
 		int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
 		void addUser(const User &user);
-		void updateOperators(uint8_t implicitId, const QList<uint8_t> ids);
+		void updateOperators(const QList<uint8_t> ids);
 		void updateLocks(const QList<uint8_t> locks);
 		void removeUser(int id);
 		void clearUsers();

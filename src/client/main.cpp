@@ -27,8 +27,6 @@
 
 #include "canvas/register.h"
 #include "quick/register.h"
-#include "core/register.h"
-#include "../shared/net/message.h"
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
@@ -210,8 +208,6 @@ int main(int argc, char *argv[]) {
 
 	registerCanvasTypes();
 	registerQuickTypes();
-	protocol::registerTypes();
-	paintcore::registerTypes();
 
 	icon::selectThemeVariant();
 

@@ -16,66 +16,53 @@
   You should have received a copy of the GNU General Public License
   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "annotationmodel.h"
 
-#include "annotationstate.h"
-#include "../shared/net/annotation.h"
-
+#include <QTextDocument>
 #include <QPainter>
 #include <QImage>
-#include <QDataStream>
-#include <QTextDocument>
+#include <QSet> // for old-style change notifications
 
-namespace canvas {
+namespace paintcore {
 
-AnnotationState::AnnotationState(QObject *parent)
-	: QObject(parent)
+AnnotationModel::AnnotationModel(QObject *parent)
+	: QAbstractListModel(parent)
 {
 }
 
-void AnnotationState::offsetAll(int x, int y)
+int AnnotationModel::rowCount(const QModelIndex &parent) const
 {
-	if(x || y) {
-		QPoint offset(x,y);
-		for(const Annotation &a : m_annotations) {
-			reshapeAnnotation(a.id, a.rect.translated(offset));
+	if(parent.isValid())
+		return 0;
+	return m_annotations.size();
+}
+
+QVariant AnnotationModel::data(const QModelIndex &index, int role) const
+{
+	if(index.isValid() && index.row() >= 0 && index.row() < m_annotations.size()) {
+		const Annotation &a = m_annotations.at(index.row());
+		switch(role) {
+			case Qt::DisplayRole: return a.text;
+			case IdRole: return a.id;
+			case RectRole: return a.rect;
+			case BgColorRole: return a.background;
+			default: break;
 		}
 	}
+	return QVariant();
 }
 
-void AnnotationState::handleAnnotationCommand(protocol::MessagePtr msg)
+QHash<int, QByteArray> AnnotationModel::roleNames() const
 {
-	switch(msg->type()) {
-	case protocol::MSG_ANNOTATION_CREATE: {
-		const auto &cmd = msg.cast<const protocol::AnnotationCreate>();
-		addAnnotation(Annotation { cmd.id(), QString(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()), QColor(Qt::transparent) });
-		break;
-	}
-	case protocol::MSG_ANNOTATION_RESHAPE: {
-			const auto &cmd = msg.cast<const protocol::AnnotationReshape>();
-			reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-			break;
-	}
-	case protocol::MSG_ANNOTATION_EDIT: {
-			const auto &cmd = msg.cast<const protocol::AnnotationEdit>();
-			changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
-			break;
-	}
-	case protocol::MSG_ANNOTATION_DELETE: {
-			const auto &cmd = msg.cast<const protocol::AnnotationDelete>();
-			deleteAnnotation(cmd.id());
-			break;
-	}
-	default: qFatal("unhandled annotation command: %d", msg->type());
-	}
+	QHash<int, QByteArray> roles;
+	roles[Qt::DisplayRole] = "display";
+	roles[IdRole] = "annotationId";
+	roles[RectRole] = "rect";
+	roles[BgColorRole] = "background";
+	return roles;
 }
 
-void AnnotationState::setAnnotations(const QList<Annotation> &annotations)
-{
-	m_annotations = annotations;
-	emit annotationsReset(annotations);
-}
-
-void AnnotationState::addAnnotation(const Annotation &annotation)
+void AnnotationModel::addAnnotation(const Annotation &annotation)
 {
 	// Make sure ID is unique
 	if(findById(annotation.id)>=0) {
@@ -83,11 +70,17 @@ void AnnotationState::addAnnotation(const Annotation &annotation)
 		return;
 	}
 
+	beginInsertRows(QModelIndex(), m_annotations.size(), m_annotations.size());
 	m_annotations.append(annotation);
-	emit annotationChanged(annotation);
+	endInsertRows();
 }
 
-void AnnotationState::deleteAnnotation(int id)
+void AnnotationModel::addAnnotation(int id, const QRect &rect)
+{
+	addAnnotation(Annotation {id, QString(), rect, QColor(Qt::transparent)});
+}
+
+void AnnotationModel::deleteAnnotation(int id)
 {
 	int idx = findById(id);
 	if(idx<0) {
@@ -95,11 +88,12 @@ void AnnotationState::deleteAnnotation(int id)
 		return;
 	}
 
+	beginRemoveRows(QModelIndex(), idx, idx);
 	m_annotations.removeAt(idx);
-	emit annotationDeleted(id);
+	endRemoveRows();
 }
 
-void AnnotationState::reshapeAnnotation(int id, const QRect &newrect)
+void AnnotationModel::reshapeAnnotation(int id, const QRect &newrect)
 {
 	int idx = findById(id);
 	if(idx<0) {
@@ -108,10 +102,10 @@ void AnnotationState::reshapeAnnotation(int id, const QRect &newrect)
 	}
 
 	m_annotations[idx].rect = newrect;
-	emit annotationChanged(m_annotations[idx]);
+	emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
 }
 
-void AnnotationState::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
+void AnnotationModel::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
 {
 	int idx = findById(id);
 	if(idx<0) {
@@ -120,15 +114,83 @@ void AnnotationState::changeAnnotation(int id, const QString &newtext, const QCo
 	}
 	m_annotations[idx].text = newtext;
 	m_annotations[idx].background = bgcolor;
-	emit annotationChanged(m_annotations[idx]);
+
+	emit dataChanged(index(idx), index(idx), QVector<int>() << Qt::DisplayRole << BgColorRole);
 }
 
-int AnnotationState::findById(int id) const
+void AnnotationModel::setAnnotations(const QList<Annotation> &annotations)
+{
+	beginResetModel();
+	m_annotations = annotations;
+	endResetModel();
+}
+
+const Annotation *AnnotationModel::getById(int id) const
+{
+	for(const Annotation &a : m_annotations)
+		if(a.id == id)
+			return &a;
+	return nullptr;
+}
+
+int AnnotationModel::findById(int id) const
 {
 	for(int i=0;i<m_annotations.size();++i)
 		if(m_annotations.at(i).id == id)
 			return i;
 	return -1;
+}
+
+/**
+ * @brief Find the annotation at the given coordinates.
+ * @param pos point in canvas coordinates
+ * @return annotation ID or 0 if none found
+ */
+int AnnotationModel::annotationAtPos(const QPoint &pos, qreal zoom) const
+{
+	const int H = qRound(qMax(qreal(Annotation::HANDLE_SIZE), Annotation::HANDLE_SIZE / zoom) / 2.0);
+	for(const Annotation &a : m_annotations) {
+		if(a.rect.adjusted(-H, -H, H, H).contains(pos))
+			return a.id;
+	}
+	return 0;
+}
+
+Annotation::Handle AnnotationModel::annotationHandleAt(int id, const QPoint &point, qreal zoom) const
+{
+	const Annotation *a = getById(id);
+	if(a)
+		return a->handleAt(point, zoom);
+	return Annotation::OUTSIDE;
+}
+
+Annotation::Handle AnnotationModel::annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta)
+{
+	for(int idx=0;idx<m_annotations.size();++idx) {
+		if(m_annotations.at(idx).id == id) {
+			handle = m_annotations[idx].adjustGeometry(handle, delta);
+			emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
+			return handle;
+		}
+	}
+	return Annotation::OUTSIDE;
+}
+
+QList<int> AnnotationModel::getEmptyIds() const
+{
+	QList<int> ids;
+	for(const Annotation &a : m_annotations) {
+		if(a.isEmpty())
+			ids << a.id;
+	}
+	return ids;
+}
+
+void AnnotationModel::clear()
+{
+	beginResetModel();
+	m_annotations.clear();
+	endResetModel();
 }
 
 void Annotation::paint(QPainter *painter) const

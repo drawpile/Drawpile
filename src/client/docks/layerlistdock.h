@@ -33,6 +33,7 @@ namespace protocol {
 }
 
 namespace canvas {
+	struct LayerListItem;
 	class CanvasModel;
 }
 
@@ -76,8 +77,8 @@ signals:
 	void layerCommand(protocol::MessagePtr msg);
 
 private slots:
-	void onLayerCreate(const QModelIndex &parent, int first, int last);
-	void onLayerDelete(const QModelIndex &parent, int first, int last);
+	void onLayerCreate(bool wasfirst);
+	void onLayerDelete(int id, int idx);
 	void onLayerReorder();
 
 	void addLayer();
@@ -108,7 +109,7 @@ private:
 	QModelIndex currentSelection() const;
 
 	canvas::CanvasModel *m_canvas;
-	int m_selectedId;
+	int _selected;
 	Ui_LayerBox *_ui;
 	bool _noupdate;
 	LayerAclMenu *_aclmenu;

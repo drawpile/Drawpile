@@ -11,7 +11,7 @@ find_package(KF5Archive REQUIRED NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
 find_package(QtColorWidgets)
 find_package(GIF)
-#find_package(Miniupnpc)
+find_package(Miniupnpc)
 
 set (
 	SOURCES
@@ -32,7 +32,6 @@ set (
 	tools/floodfill.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
-	canvas/commandqueue.cpp
 	canvas/selection.cpp
 	canvas/usercursormodel.cpp
 	canvas/lasertrailmodel.cpp
@@ -42,8 +41,6 @@ set (
 	canvas/aclfilter.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
-	canvas/annotationstate.cpp
-	canvas/annotationmodel.cpp
 	quick/layerstackitem.cpp
 	quick/canvasinputarea.cpp
 	quick/canvastransform.cpp
@@ -87,6 +84,7 @@ set (
 	utils/settings.cpp
 	utils/icon.cpp
 	utils/iconprovider.cpp
+	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

@@ -32,14 +32,14 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
-	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true),
-	  m_locked(false)
+	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true)
 {
+	m_annotations = new AnnotationModel(this);
 }
 
 LayerStack::~LayerStack()
 {
-	for(Layer *l : m_layers)
+	foreach(Layer *l, _layers)
 		delete l;
 }
 
@@ -50,31 +50,11 @@ void LayerStack::reset()
 	_height = 0;
 	_xtiles = 0;
 	_ytiles = 0;
-	for(Layer *l : m_layers)
+	for(Layer *l : _layers)
 		delete l;
-	m_layers.clear();
+	_layers.clear();
+	m_annotations->clear();
 	emit resized(0, 0, oldsize);
-	emit layersChanged(QList<LayerInfo>());
-}
-
-bool LayerStack::lock(int timeout)
-{
-	bool l = m_mutex.tryLock(timeout);
-	if(l)
-		m_locked = true;
-	return l;
-}
-
-void LayerStack::unlock()
-{
-	Q_ASSERT(m_locked);
-	m_locked = false;
-	QRect dr = m_dirtyrect;
-	m_dirtyrect = QRect();
-	m_mutex.unlock();
-
-	if(!dr.isEmpty())
-		emit areaChanged(dr);
 }
 
 void LayerStack::resize(int top, int right, int bottom, int left)
@@ -96,8 +76,16 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 	_ytiles = Tile::roundTiles(_height);
 	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
 
-	for(Layer *l : m_layers)
+	foreach(Layer *l, _layers)
 		l->resize(top, right, bottom, left);
+
+	if(left || top) {
+		// Update annotation positions
+		QPoint offset(left, top);
+		Q_FOREACH(const Annotation &a, m_annotations->getAnnotations()) {
+			m_annotations->reshapeAnnotation(a.id, a.rect.translated(offset));
+		}
+	}
 
 	emit resized(left, top, oldsize);
 }
@@ -122,8 +110,8 @@ Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool ins
 	// Find source layer if specified
 	int sourceIdx=-1;
 	if(source>0) {
-		for(int i=0;i<m_layers.size();++i) {
-			if(m_layers.at(i)->id() == source) {
+		for(int i=0;i<_layers.size();++i) {
+			if(_layers.at(i)->id() == source) {
 				sourceIdx = i;
 				break;
 			}
@@ -143,7 +131,7 @@ Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool ins
 			return nullptr;
 		}
 
-		nl = new Layer(*m_layers.at(sourceIdx));
+		nl = new Layer(*_layers.at(sourceIdx));
 		nl->setTitle(name);
 		nl->setId(id);
 
@@ -152,21 +140,16 @@ Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool ins
 	}
 
 	// Insert the new layer in the appropriate spot
-	int pos;
 	if(insert)
-		pos = sourceIdx+1;
+		_layers.insert(sourceIdx+1, nl);
 	else
-		pos = m_layers.size();
-
-	m_layers.insert(pos, nl);
+		_layers.append(nl);
 
 	// Dirty regions must be marked after the layer is in the stack
 	if(copy)
 		nl->markOpaqueDirty();
 	else if(color.alpha()>0)
 		markDirty();
-
-	emit layerCreated(pos, nl->info());
 
 	return nl;
 }
@@ -177,13 +160,10 @@ Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool ins
  */
 bool LayerStack::deleteLayer(int id)
 {
-	for(int i=0;i<m_layers.size();++i) {
-		if(m_layers.at(i)->id() == id) {
-			m_layers.at(i)->markOpaqueDirty();
-			delete m_layers.takeAt(i);
-
-			emit layerDeleted(i);
-
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers.at(i)->id() == id) {
+			_layers.at(i)->markOpaqueDirty();
+			delete _layers.takeAt(i);
 			return true;
 		}
 	}
@@ -196,24 +176,22 @@ bool LayerStack::deleteLayer(int id)
  */
 void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
 {
-	Q_ASSERT(neworder.size() == m_layers.size());
+	Q_ASSERT(neworder.size() == _layers.size());
 	QList<Layer*> newstack;
-	newstack.reserve(m_layers.size());
+	newstack.reserve(_layers.size());
 	foreach(int id, neworder) {
 		Layer *l = 0;
-		for(int i=0;i<m_layers.size();++i) {
-			if(m_layers.at(i)->id() == id) {
-				l=m_layers.takeAt(i);
+		for(int i=0;i<_layers.size();++i) {
+			if(_layers.at(i)->id() == id) {
+				l=_layers.takeAt(i);
 				break;
 			}
 		}
 		Q_ASSERT(l);
 		newstack.append(l);
 	}
-	m_layers = newstack;
+	_layers = newstack;
 	markDirty();
-
-	emit layersChanged(layerInfos());
 }
 
 /**
@@ -222,11 +200,11 @@ void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
 void LayerStack::mergeLayerDown(int id) {
 	const Layer *top;
 	Layer *btm=0;
-	for(int i=0;i<m_layers.size();++i) {
-		if(m_layers[i]->id() == id) {
-			top = m_layers[i];
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers[i]->id() == id) {
+			top = _layers[i];
 			if(i>0)
-				btm = m_layers[i-1];
+				btm = _layers[i-1];
 			break;
 		}
 	}
@@ -238,12 +216,12 @@ void LayerStack::mergeLayerDown(int id) {
 
 Layer *LayerStack::getLayerByIndex(int index)
 {
-	return m_layers.at(index);
+	return _layers.at(index);
 }
 
 const Layer *LayerStack::getLayerByIndex(int index) const
 {
-	return m_layers.at(index);
+	return _layers.at(index);
 }
 
 Layer *LayerStack::getLayer(int id)
@@ -251,7 +229,7 @@ Layer *LayerStack::getLayer(int id)
 	// Since the expected number of layers is always fairly low,
 	// we can get away with a simple linear search. (Note that IDs
 	// may appear in random order due to layers being moved around.)
-	for(Layer *l : m_layers)
+	foreach(Layer *l, _layers)
 		if(l->id() == id)
 			return l;
 	return 0;
@@ -259,7 +237,7 @@ Layer *LayerStack::getLayer(int id)
 
 const Layer *LayerStack::getLayer(int id) const
 {
-	for(const Layer *l : m_layers)
+	for(const Layer *l : _layers)
 		if(l->id() == id)
 			return l;
 	return nullptr;
@@ -271,8 +249,8 @@ const Layer *LayerStack::getLayer(int id) const
  */
 int LayerStack::indexOf(int id) const
 {
-	for(int i=0;i<m_layers.size();++i)
-		if(m_layers.at(i)->id() == id)
+	for(int i=0;i<_layers.size();++i)
+		if(_layers.at(i)->id() == id)
 			return i;
 	return -1;
 }
@@ -358,7 +336,7 @@ Tile LayerStack::getFlatTile(int x, int y) const
 
 QColor LayerStack::colorAt(int x, int y, int dia) const
 {
-	if(m_layers.isEmpty())
+	if(_layers.isEmpty())
 		return QColor();
 
 	if(x<0 || y<0 || x>=_width || y>=_height)
@@ -389,30 +367,38 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 	}
 }
 
-QImage LayerStack::toFlatImage() const
+QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
 	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
 
-	for(const Layer *l : m_layers) {
-		if(l->isVisible())
+	for(const Layer *l : _layers) {
+		if(l->visible())
 			flat.merge(l, true);
 	}
 
-	return flat.toImage();
+	QImage image = flat.toImage();
+
+	if(includeAnnotations) {
+		QPainter painter(&image);
+		for(const Annotation &a : m_annotations->getAnnotations())
+			a.paint(&painter);
+	}
+
+	return image;
 }
 
 QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background)
 {
-	Q_ASSERT(layerIdx>=0 && layerIdx < m_layers.size());
+	Q_ASSERT(layerIdx>=0 && layerIdx < _layers.size());
 
 	QScopedPointer<Layer> flat;
 
 	if(useBgLayer)
-		flat.reset(new Layer(*m_layers.at(0)));
+		flat.reset(new Layer(*_layers.at(0)));
 	else
 		flat.reset(new Layer(nullptr, 0, QString(), background, QSize(_width, _height)));
 
-	flat->merge(m_layers.at(layerIdx), false);
+	flat->merge(_layers.at(layerIdx), false);
 
 	return flat->toImage();
 }
@@ -422,7 +408,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 {
 	// Composite visible layers
 	int layeridx = 0;
-	for(const Layer *l : m_layers) {
+	foreach(const Layer *l, _layers) {
 		if(isVisible(layeridx)) {
 			const Tile &tile = l->tile(xindex, yindex);
 			const quint32 tint = layerTint(layeridx);
@@ -432,8 +418,8 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 				quint32 ldata[Tile::SIZE*Tile::SIZE];
 				tile.copyTo(ldata);
 
-				for(const Layer *sl : l->sublayers()) {
-					if(sl->isVisible()) {
+				foreach(const Layer *sl, l->sublayers()) {
+					if(sl->visible()) {
 						const Tile &subtile = sl->tile(xindex, yindex);
 						if(!subtile.isNull()) {
 							compositePixels(sl->blendmode(), ldata, subtile.data(),
@@ -462,7 +448,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 
 void LayerStack::markDirty(const QRect &area)
 {
-	if(m_layers.isEmpty() || _width<=0 || _height<=0)
+	if(_layers.isEmpty() || _width<=0 || _height<=0)
 		return;
 	const int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
 	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1) + 1;
@@ -472,16 +458,16 @@ void LayerStack::markDirty(const QRect &area)
 	for(;ty0<=ty1;++ty0) {
 		_dirtytiles.fill(true, ty0*_xtiles + tx0, ty0*_xtiles + tx1);
 	}
-	m_dirtyrect |= area;
+	_dirtyrect |= area;
 }
 
 void LayerStack::markDirty()
 {
-	if(m_layers.isEmpty() || _width<=0 || _height<=0)
+	if(_layers.isEmpty() || _width<=0 || _height<=0)
 		return;
 	_dirtytiles.fill(true);
 
-	m_dirtyrect = QRect(0, 0, _width, _height);
+	_dirtyrect = QRect(0, 0, _width, _height);
 	notifyAreaChanged();
 }
 
@@ -492,7 +478,7 @@ void LayerStack::markDirty(int x, int y)
 
 	_dirtytiles.setBit(y*_xtiles + x);
 
-	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::markDirty(int index)
@@ -504,26 +490,14 @@ void LayerStack::markDirty(int index)
 	const int y = index / _xtiles;
 	const int x = index % _xtiles;
 
-	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::notifyAreaChanged()
 {
-	if(!m_locked && !m_dirtyrect.isEmpty()) {
-		emit areaChanged(m_dirtyrect);
-		m_dirtyrect = QRect();
-	}
-}
-
-void LayerStack::notifyLayerInfoChange(const Layer *layer)
-{
-	Q_ASSERT(layer);
-	// Note: Sublayer changes can trigger, but will not be found
-	// by indexOf. That's OK, since sublayers are for internal use
-	// only and we don't need to announce changes to them.
-	const int idx = indexOf(layer->id());
-	if(idx>=0) {
-		emit layerChanged(idx, layer->info());
+	if(!_dirtyrect.isEmpty()) {
+		emit areaChanged(_dirtyrect);
+		_dirtyrect = QRect();
 	}
 }
 
@@ -537,8 +511,8 @@ void LayerStack::setViewMode(ViewMode mode)
 
 void LayerStack::setViewLayer(int id)
 {
-	for(int i=0;i<m_layers.size();++i) {
-		if(m_layers.at(i)->id() == id) {
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers.at(i)->id() == id) {
 			_viewlayeridx = i;
 			if(_viewmode != NORMAL)
 				markDirty();
@@ -566,8 +540,8 @@ void LayerStack::setViewBackgroundLayer(bool usebg)
 
 int LayerStack::layerOpacity(int idx) const
 {
-	Q_ASSERT(idx>=0 && idx < m_layers.size());
-	int o = m_layers.at(idx)->opacity();
+	Q_ASSERT(idx>=0 && idx < _layers.size());
+	int o = _layers.at(idx)->opacity();
 
 	if(_viewBackgroundLayer && idx==0)
 		return o;
@@ -605,8 +579,8 @@ quint32 LayerStack::layerTint(int idx) const
 
 bool LayerStack::isVisible(int idx) const
 {
-	Q_ASSERT(idx>=0 && idx < m_layers.size());
-	if(!m_layers.at(idx)->isVisible())
+	Q_ASSERT(idx>=0 && idx < _layers.size());
+	if(!_layers.at(idx)->visible())
 		return false;
 
 	if(idx==0 && _viewBackgroundLayer)
@@ -629,10 +603,12 @@ Savepoint::~Savepoint()
 Savepoint *LayerStack::makeSavepoint()
 {
 	Savepoint *sp = new Savepoint;
-	for(Layer *l : m_layers) {
+	foreach(Layer *l, _layers) {
 		l->optimize();
 		sp->layers.append(new Layer(*l));
 	}
+
+	sp->annotations = m_annotations->getAnnotations();
 
 	sp->width = _width;
 	sp->height = _height;
@@ -654,16 +630,16 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 	} else {
 		// Mark changed tiles as changed. Usually savepoints are quite close together
 		// so most tiles will remain unchanged
-		if(savepoint->layers.size() != m_layers.size()) {
+		if(savepoint->layers.size() != _layers.size()) {
 			// Layers added or deleted, just refresh everything
 			// (force refresh even if layer stack is empty)
 			_dirtytiles.fill(true);
-			m_dirtyrect = QRect(0, 0, _width, _height);
+			_dirtyrect = QRect(0, 0, _width, _height);
 
 		} else {
 			// Layer count has not changed, compare layer contents
 			for(int l=0;l<savepoint->layers.size();++l) {
-				const Layer *l0 = m_layers.at(l);
+				const Layer *l0 = _layers.at(l);
 				const Layer *l1 = savepoint->layers.at(l);
 				if(l0->effectiveOpacity() != l1->effectiveOpacity()) {
 					// Layer opacity has changed, refresh everything
@@ -682,22 +658,15 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 	}
 
 	// Restore layers
-	while(!m_layers.isEmpty())
-		delete m_layers.takeLast();
-	for(const Layer *l : savepoint->layers)
-		m_layers.append(new Layer(*l));
+	while(!_layers.isEmpty())
+		delete _layers.takeLast();
+	foreach(const Layer *l, savepoint->layers)
+		_layers.append(new Layer(*l));
+
+	// Restore annotations
+	m_annotations->setAnnotations(savepoint->annotations);
 
 	notifyAreaChanged();
-	emit layersChanged(layerInfos());
-}
-
-QList<LayerInfo> LayerStack::layerInfos() const
-{
-	QList<LayerInfo> infos;
-	infos.reserve(m_layers.size());
-	for(const Layer *l : m_layers)
-		infos << l->info();
-	return infos;
 }
 
 void Savepoint::toDatastream(QDataStream &out) const
@@ -707,8 +676,14 @@ void Savepoint::toDatastream(QDataStream &out) const
 
 	// Write layers
 	out << quint8(layers.size());
-	for(const Layer *layer : layers) {
+	foreach(const Layer *layer, layers) {
 		layer->toDatastream(out);
+	}
+
+	// Write annotations
+	out << quint16(annotations.size());
+	for(const Annotation &annotation : annotations) {
+		annotation.toDataStream(out);
 	}
 }
 
@@ -725,6 +700,12 @@ Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
 	in >> layers;
 	while(layers--) {
 		sp->layers.append(Layer::fromDatastream(owner, in));
+	}
+
+	quint16 annotations;
+	in >> annotations;
+	while(annotations--) {
+		sp->annotations.append(Annotation::fromDataStream(in));
 	}
 
 	return sp;

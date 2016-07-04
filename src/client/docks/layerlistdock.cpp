@@ -45,7 +45,7 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), _selected(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -136,8 +136,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 	_aclmenu->setUserList(canvas->userlist());
 
-	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
-	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::onLayerDelete);
+	connect(canvas->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
+	connect(canvas->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
 	connect(canvas->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
@@ -179,7 +179,7 @@ void LayerList::updateLockedControls()
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
 	// are locked for non-operators.
-	if(m_selectedId)
+	if(_selected)
 		enabled = enabled & (m_op | !isCurrentLayerLocked());
 	else
 		enabled = false;
@@ -245,10 +245,10 @@ void LayerList::opacityAdjusted()
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		float opacity = _ui->opacity->value() / 255.0;
 
-		m_canvas->layerlist()->previewOpacityChange(layerId, opacity);
+		m_canvas->layerlist()->previewOpacityChange(layer.id, opacity);
 		_opacityUpdateTimer->start(100);
 	}
 }
@@ -257,7 +257,7 @@ void LayerList::sendOpacityUpdate()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		paintcore::LayerInfo layer = index.data().value<paintcore::LayerInfo>();
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, _ui->opacity->value(), int(layer.blend))));
 	}
 }
@@ -270,8 +270,8 @@ void LayerList::blendModeChanged()
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		paintcore::LayerInfo layer = index.data().value<paintcore::LayerInfo>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, layer.opacity, _ui->blendmode->currentData().toInt())));
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, layer.opacity*255, _ui->blendmode->currentData().toInt())));
 	}
 }
 
@@ -279,7 +279,7 @@ void LayerList::hideSelected()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid())
-		setLayerVisibility(index.data(canvas::LayerListModel::IdRole).toInt(), _menuHideAction->isChecked());
+		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, _menuHideAction->isChecked());
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
@@ -291,7 +291,7 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		paintcore::LayerInfo layer = index.data().value<paintcore::LayerInfo>();
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		layer.locked = lock;
 		layer.exclusive = exclusive;
 		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(0, layer.id, layer.locked, layer.exclusive)));
@@ -337,7 +337,7 @@ void LayerList::addLayer()
 void LayerList::insertLayer()
 {
 	const QModelIndex index = currentSelection();
-	const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
 	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
 
@@ -348,14 +348,13 @@ void LayerList::insertLayer()
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
 	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layerId, 0, protocol::LayerCreate::FLAG_INSERT, name)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT, name)));
 }
 
 void LayerList::duplicateLayer()
 {
 	const QModelIndex index = currentSelection();
-	const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-	const QString layerTitle = index.data(canvas::LayerListModel::TitleRole).toString();
+	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
 	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
 
@@ -363,10 +362,10 @@ void LayerList::duplicateLayer()
 	if(id==0)
 		return;
 
-	const QString name = layers->getAvailableLayerName(layerTitle);
+	const QString name = layers->getAvailableLayerName(layer.title);
 
 	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layerId, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
 }
 
 bool LayerList::canMergeCurrent() const
@@ -375,7 +374,7 @@ bool LayerList::canMergeCurrent() const
 	const QModelIndex below = index.sibling(index.row()+1, 0);
 
 	return index.isValid() && below.isValid() &&
-		   !below.data().value<paintcore::LayerInfo>().isLockedFor(m_canvas->localUserId());
+		   !below.data().value<canvas::LayerListItem>().isLockedFor(m_canvas->localUserId());
 }
 
 void LayerList::deleteOrMergeSelected()
@@ -384,11 +383,11 @@ void LayerList::deleteOrMergeSelected()
 	if(!index.isValid())
 		return;
 
-	const QString layerTitle = index.data(canvas::LayerListModel::TitleRole).toString();
+	canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
 	QMessageBox box(QMessageBox::Question,
 		tr("Delete layer"),
-		tr("Really delete \"%1\"?").arg(layerTitle),
+		tr("Really delete \"%1\"?").arg(layer.title),
 		QMessageBox::NoButton
 	);
 
@@ -423,7 +422,7 @@ void LayerList::deleteSelected()
 		return;
 
 	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data(canvas::LayerListModel::IdRole).toInt(), false)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, false)));
 }
 
 void LayerList::mergeSelected()
@@ -433,7 +432,7 @@ void LayerList::mergeSelected()
 		return;
 
 	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data(canvas::LayerListModel::IdRole).toInt(), true)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, true)));
 }
 
 void LayerList::renameSelected()
@@ -447,36 +446,41 @@ void LayerList::renameSelected()
 
 /**
  * @brief Respond to creation of a new layer
+ * @param wasfirst
  */
-void LayerList::onLayerCreate(const QModelIndex&, int, int)
+void LayerList::onLayerCreate(bool wasfirst)
 {
 	// Automatically select the first layer
-	if(m_canvas->layerlist()->rowCount()==1)
+	if(wasfirst)
 		_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(0,0), QItemSelectionModel::SelectCurrent);
 }
 
 /**
  * @brief Respond to layer deletion
+ * @param id layer id
+ * @param idx layer index in stack
  */
-void LayerList::onLayerDelete(const QModelIndex &, int first, int last)
+void LayerList::onLayerDelete(int id, int idx)
 {
-	const QModelIndex cursel = currentSelection();
-	int row = cursel.isValid() ? 0 : cursel.row();
+	Q_UNUSED(id);
+	if(!currentSelection().isValid()) {
+		if(idx >= _ui->layerlist->model()->rowCount())
+			idx = _ui->layerlist->model()->rowCount()-1;
+		else if(idx>0)
+			--idx;
 
-	// Automatically select neighbouring on deletion
-	if(row >= first && row <= last) {
-		if(first==0)
-			row=last+1;
+		// Automatically select neighbouring layer on delete
+		if(idx>=0)
+			_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(idx,0), QItemSelectionModel::SelectCurrent);
 		else
-			row = first-1;
-		selectLayer(m_canvas->layerlist()->index(row).data(canvas::LayerListModel::IdRole).toInt());
+			_selected = 0;
 	}
 }
 
 void LayerList::onLayerReorder()
 {
-	if(m_selectedId)
-		selectLayer(m_selectedId);
+	if(_selected)
+		selectLayer(_selected);
 }
 
 QModelIndex LayerList::currentSelection() const
@@ -489,7 +493,7 @@ QModelIndex LayerList::currentSelection() const
 
 int LayerList::currentLayer()
 {
-	return m_selectedId;
+	return _selected;
 }
 
 bool LayerList::isCurrentLayerLocked() const
@@ -499,7 +503,7 @@ bool LayerList::isCurrentLayerLocked() const
 
 	QModelIndexList idx = _ui->layerlist->selectionModel()->selectedIndexes();
 	if(!idx.isEmpty()) {
-		const paintcore::LayerInfo &item = idx.at(0).data().value<paintcore::LayerInfo>();
+		const canvas::LayerListItem &item = idx.at(0).data().value<canvas::LayerListItem>();
 		return item.hidden || item.isLockedFor(m_canvas->localUserId());
 	}
 	return false;
@@ -512,24 +516,24 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 	if(on) {
 		QModelIndex cs = currentSelection();
 		dataChanged(cs,cs);
-		m_selectedId = cs.data(canvas::LayerListModel::IdRole).toInt();
+		_selected = cs.data().value<canvas::LayerListItem>().id;
 	} else {
-		m_selectedId = 0;
+		_selected = 0;
 	}
 
 	updateLockedControls();
 
-	emit layerSelected(m_selectedId);
+	emit layerSelected(_selected);
 }
 
 void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
-		const paintcore::LayerInfo &layer = currentSelection().data().value<paintcore::LayerInfo>();
+		const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
 		_noupdate = true;
 		_menuHideAction->setChecked(layer.hidden);
-		_ui->opacity->setValue(layer.opacity);
+		_ui->opacity->setValue(layer.opacity * 255);
 
 		int blendmode = _ui->blendmode->currentData().toInt();
 		if(blendmode != layer.blend) {

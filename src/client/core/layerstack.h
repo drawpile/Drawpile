@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,21 +25,22 @@
 #include <QList>
 #include <QImage>
 #include <QBitArray>
-#include <QMutex>
 
 class QDataStream;
+
+#include "annotationmodel.h"
 
 namespace paintcore {
 
 class Layer;
 class Tile;
 class Savepoint;
-struct LayerInfo;
 
 /**
  * \brief A stack of layers.
  */
 class LayerStack : public QObject {
+	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
 	Q_OBJECT
 public:
 	enum ViewMode {
@@ -50,25 +51,6 @@ public:
 
 	LayerStack(QObject *parent=0);
 	~LayerStack();
-
-	/**
-	 * @brief Acquire a mutex
-	 *
-	 * This also blocks the emission of areaChanged and resized
-	 * until unlock() is called.
-	 *
-	 * Note. Rather than calling this directly, it's usually easier to use
-	 * the Locker class.
-	 * @return true if the mutex was locked
-	 */
-	bool lock(int timeout=-1);
-
-	/**
-	 * @brief Release the mutex
-	 * This also triggers the emission of areaChanged if there were any
-	 * changes while the stack was locked.
-	 */
-	void unlock();
 
 	//! Adjust layer stack size
 	void resize(int top, int right, int bottom, int left);
@@ -86,7 +68,7 @@ public:
 	void reorderLayers(const QList<uint16_t> &neworder);
 
 	//! Get the number of layers in the stack
-	int layerCount() const { return m_layers.count(); }
+	int layers() const { return _layers.count(); }
 
 	//! Get a layer by its index
 	Layer *getLayerByIndex(int index);
@@ -99,6 +81,10 @@ public:
 
 	//! Get a layer by its ID
 	const Layer *getLayer(int id) const;
+
+	//! Get this layer stack's annotations
+	const AnnotationModel *annotations() const { return m_annotations; }
+	AnnotationModel *annotations() { return m_annotations; }
 
 	//! Get the index of the specified layer
 	int indexOf(int id) const;
@@ -119,7 +105,7 @@ public:
 	QColor colorAt(int x, int y, int dia=0) const;
 
 	//! Return a flattened image of the layer stack
-	QImage toFlatImage() const;
+	QImage toFlatImage(bool includeAnnotations) const;
 
 	//! Return a single layer composited with the given background
 	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background);
@@ -142,9 +128,6 @@ public:
 	//! Emit areaChanged if anything has been marked as dirty
 	void notifyAreaChanged();
 
-	//! Emit a layer info change notification
-	void notifyLayerInfoChange(const Layer *layer);
-
 	//! Create a new savepoint
 	Savepoint *makeSavepoint();
 
@@ -165,22 +148,8 @@ public:
 	//! Show background layer (bottom-most layer) in special view modes
 	void setViewBackgroundLayer(bool usebg);
 
-	//! Clear the entire layer stack
+	//! Reset the entire layer stack
 	void reset();
-
-	/** A convenience class for locking the layer stack */
-	class Locker {
-	public:
-		Locker(LayerStack *ls) : m_layerstack(ls) {
-			ls->lock();
-		}
-		Locker(const Locker &) = delete;
-		Locker &operator=(const Locker&) = delete;
-		~Locker() { m_layerstack->unlock(); }
-
-	private:
-		LayerStack *m_layerstack;
-	};
 
 signals:
 	//! Emitted when the visible layers are edited
@@ -189,18 +158,6 @@ signals:
 	//! Layer width/height changed
 	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
-	//! A layer was just added
-	void layerCreated(int idx, const LayerInfo &info);
-
-	//! A layer was just deleted
-	void layerDeleted(int idx);
-
-	//! A single layer's info has just changed
-	void layerChanged(int idx, const LayerInfo &info);
-
-	//! All (or at least a lot of) layers have just changed
-	void layersChanged(const QList<LayerInfo> &layers);
-
 private:
 	void flattenTile(quint32 *data, int xindex, int yindex) const;
 
@@ -208,23 +165,19 @@ private:
 	int layerOpacity(int idx) const;
 	quint32 layerTint(int idx) const;
 
-	QList<LayerInfo> layerInfos() const;
-
 	int _width, _height;
 	int _xtiles, _ytiles;
-	QList<Layer*> m_layers;
+	QList<Layer*> _layers;
+	AnnotationModel *m_annotations;
 
 	QBitArray _dirtytiles;
-	QRect m_dirtyrect;
+	QRect _dirtyrect;
 
 	ViewMode _viewmode;
 	int _viewlayeridx;
 	int _onionskinsBelow, _onionskinsAbove;
 	bool _onionskinTint;
 	bool _viewBackgroundLayer;
-
-	QMutex m_mutex;
-	bool m_locked;
 };
 
 /// Layer stack savepoint for undo use
@@ -239,6 +192,7 @@ public:
 private:
 	Savepoint() {}
 	QList<Layer*> layers;
+	QList<Annotation> annotations;
 	int width, height;
 };
 
