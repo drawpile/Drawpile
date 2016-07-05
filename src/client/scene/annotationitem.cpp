@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -91,7 +91,6 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	painter->fillRect(m_rect, m_color);
-	m_doc.drawContents(painter, m_rect);
 
 	if(m_showborder || m_doc.isEmpty()) {
 		QColor border = QApplication::palette().color(QPalette::Highlight);
@@ -122,6 +121,9 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 			painter->drawPoint(m_rect.bottomRight());
 		}
 	}
+
+	painter->translate(m_rect.topLeft());
+	m_doc.drawContents(painter, QRectF(QPointF(), m_rect.size()));
 
 	painter->restore();
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,8 +39,13 @@ public:
 
 	AnnotationItem(int id, QGraphicsItem *parent=0);
 
+	//! Set the text box position and size
 	void setGeometry(const QRect &rect);
+
+	//! Set the background color (transparent by default)
 	void setColor(const QColor &color);
+
+	//! Set the text content (subset of HTML is supported)
 	void setText(const QString &text);
 
 	//! Get the ID number of this annotation
