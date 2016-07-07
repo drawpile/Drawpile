@@ -65,6 +65,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="maxLength">
+          <number>22</number>
+         </property>
          <property name="mandatoryfield" stdset="0">
           <bool>true</bool>
          </property>

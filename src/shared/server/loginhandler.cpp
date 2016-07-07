@@ -445,6 +445,14 @@ bool LoginHandler::validateUsername(const QString &username)
 	if(username.isEmpty())
 		return false;
 
+	// Note: the length check is not for any technical limitation, just to
+	// make sure people don't use annoyinly long names. QString::length()
+	// returns the number of UTF-16 QChars in the string, which might
+	// not correspond to the actual number of logical characters, but
+	// it should be close enough for this use case.
+	if(username.length() > 22)
+		return false;
+
 	if(username.contains('"'))
 		return false;
 
