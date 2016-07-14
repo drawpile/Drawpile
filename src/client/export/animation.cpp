@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,78 +19,38 @@
 
 #include "animation.h"
 #include "videoexporter.h"
-#include "dialogs/videoexportdialog.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
-#include <QProgressDialog>
-#include <QMessageBox>
-
 AnimationExporter::AnimationExporter(paintcore::LayerStack *layers, VideoExporter *exporter, QObject *parent)
-	: QObject(parent), _layers(layers), _exporter(exporter),
-	  _currentFrame(1)
+	: QObject(parent), m_layers(layers), m_exporter(exporter),
+	  m_startFrame(0), m_endFrame(layers->layerCount()),
+	  m_useBgLayer(false), m_bgColor(Qt::white),
+	  m_currentFrame(0)
 {
-	connect(_exporter, &VideoExporter::exporterReady, this, &AnimationExporter::saveNextFrame, Qt::QueuedConnection);
-	connect(_exporter, &VideoExporter::exporterError, this, &AnimationExporter::error);
-	connect(_exporter, &VideoExporter::exporterFinished, this, &AnimationExporter::done);
+	connect(m_exporter, &VideoExporter::exporterReady, this, &AnimationExporter::saveNextFrame, Qt::QueuedConnection);
+	connect(m_exporter, &VideoExporter::exporterError, this, &AnimationExporter::error);
+	connect(m_exporter, &VideoExporter::exporterFinished, this, &AnimationExporter::done);
+
 }
 
 void AnimationExporter::start()
 {
-	_exporter->start();
+	m_exporter->start();
 }
 
 void AnimationExporter::saveNextFrame()
 {
-	if(_currentFrame > _endFrame) {
-		_exporter->finish();
+	if(m_currentFrame > m_endFrame) {
+		m_exporter->finish();
 
 	} else {
-		QImage image = _layers->flatLayerImage(_currentFrame - 1, _useBgLayer, _bgColor);
+		QImage image = m_layers->flatLayerImage(m_currentFrame - 1, m_useBgLayer, m_bgColor);
 
-		_exporter->saveFrame(image, 1);
+		m_exporter->saveFrame(image, 1);
 
-		emit progress(_currentFrame);
-		_currentFrame++;
+		emit progress(m_currentFrame);
+		m_currentFrame++;
 	}
 }
 
-void AnimationExporter::exportAnimation(paintcore::LayerStack *layers, QWidget *parent)
-{
-	auto *dlg = new dialogs::VideoExportDialog(parent);
-	dlg->showAnimationSettings(layers->layerCount());
-	dlg->show();
-
-	connect(dlg, &QDialog::finished, [layers, dlg, parent](int result) {
-		if(result == QDialog::Accepted) {
-			VideoExporter *vexp = dlg->getExporter();
-			if(vexp) {
-				auto *exporter = new AnimationExporter(layers, vexp, parent);
-				vexp->setParent(exporter);
-				connect(exporter, &AnimationExporter::done, exporter, &AnimationExporter::deleteLater);
-
-				connect(exporter, &AnimationExporter::error, [parent](const QString &msg) {
-					QMessageBox::warning(parent, tr("Export error"), msg);
-				});
-
-				exporter->_startFrame = dlg->getFirstLayer();
-				exporter->_endFrame = dlg->getLastLayer();
-				exporter->_currentFrame = exporter->_startFrame;
-				exporter->_useBgLayer = dlg->useBackgroundLayer();
-				exporter->_bgColor = dlg->animationBackground();
-
-				auto *pdlg = new QProgressDialog(tr("Exporting..."), tr("Cancel"), 1, 10, parent);
-				pdlg->setWindowModality(Qt::WindowModal);
-				pdlg->setAttribute(Qt::WA_DeleteOnClose);
-
-				connect(exporter, &AnimationExporter::progress, pdlg, &QProgressDialog::setValue);
-				connect(exporter, &AnimationExporter::done, pdlg, &QProgressDialog::close);
-				pdlg->show();
-
-				exporter->start();
-			}
-		}
-
-		dlg->deleteLater();
-	});
-}

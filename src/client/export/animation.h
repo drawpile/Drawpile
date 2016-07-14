@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,9 +36,16 @@ class AnimationExporter : public QObject
 public:
 	AnimationExporter(paintcore::LayerStack *layers, VideoExporter *exporter, QObject *parent);
 
-	static void exportAnimation(paintcore::LayerStack *layers, QWidget *parent);
-
 	void start();
+
+	void setStartFrame(int f) {
+		m_startFrame = f;
+		if(m_currentFrame < f)
+			m_currentFrame = f;
+	}
+	void setEndFrame(int f) { m_endFrame = f; }
+	void setUseBgLayer(bool usebg) { m_useBgLayer = usebg; }
+	void setBackground(const QColor &color) { m_bgColor = color; }
 
 signals:
 	void error(const QString &message);
@@ -49,14 +56,14 @@ private slots:
 	void saveNextFrame();
 
 private:
-	paintcore::LayerStack *_layers;
-	VideoExporter *_exporter;
+	paintcore::LayerStack *m_layers;
+	VideoExporter *m_exporter;
 
-	int _startFrame, _endFrame;
-	bool _useBgLayer;
-	QColor _bgColor;
+	int m_startFrame, m_endFrame;
+	bool m_useBgLayer;
+	QColor m_bgColor;
 
-	int _currentFrame;
+	int m_currentFrame;
 };
 
 

@@ -29,6 +29,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QProgressDialog>
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QToolButton>
@@ -116,8 +117,10 @@
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
 #include "dialogs/flipbook.h"
+#include "dialogs/videoexportdialog.h"
 
 #include "export/animation.h"
+#include "export/videoexporter.h"
 
 namespace {
 
@@ -1055,7 +1058,41 @@ bool MainWindow::saveas()
 
 void MainWindow::exportAnimation()
 {
-	AnimationExporter::exportAnimation(m_doc->canvas()->layerStack(), this);
+	auto *dlg = new dialogs::VideoExportDialog(this);
+	dlg->showAnimationSettings(m_doc->canvas()->layerStack()->layerCount());
+
+	connect(dlg, &QDialog::finished, [dlg, this](int result) {
+		if(result == QDialog::Accepted) {
+			VideoExporter *vexp = dlg->getExporter();
+			if(vexp) {
+				auto *exporter = new AnimationExporter(m_doc->canvas()->layerStack(), vexp, this);
+				vexp->setParent(exporter);
+
+				connect(exporter, &AnimationExporter::done, exporter, &AnimationExporter::deleteLater);
+				connect(exporter, &AnimationExporter::error, [this](const QString &msg) {
+						QMessageBox::warning(this, tr("Export error"), msg);
+				});
+
+				exporter->setStartFrame(dlg->getFirstLayer());
+				exporter->setEndFrame(dlg->getLastLayer());
+				exporter->setUseBgLayer(dlg->useBackgroundLayer());
+				exporter->setBackground(dlg->animationBackground());
+
+				auto *pdlg = new QProgressDialog(tr("Exporting..."), tr("Cancel"), 1, dlg->getLastLayer(), this);
+				pdlg->setWindowModality(Qt::WindowModal);
+				pdlg->setAttribute(Qt::WA_DeleteOnClose);
+
+				connect(exporter, &AnimationExporter::progress, pdlg, &QProgressDialog::setValue);
+				connect(exporter, &AnimationExporter::done, pdlg, &QProgressDialog::close);
+
+				pdlg->show();
+				exporter->start();
+			}
+		}
+		dlg->deleteLater();
+	});
+
+	dlg->show();
 }
 
 void MainWindow::showFlipbook()
