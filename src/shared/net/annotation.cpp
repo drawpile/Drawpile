@@ -104,7 +104,6 @@ int AnnotationEdit::payloadLength() const
 int AnnotationEdit::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = contextId();
 	qToBigEndian(_id, ptr); ptr += 2;
 	qToBigEndian(_bg, ptr); ptr += 4;
 	memcpy(ptr, _text.constData(), _text.length());
