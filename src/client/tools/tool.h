@@ -41,7 +41,7 @@ class ToolController;
 class Tool
 {
 public:
-	enum Type {PEN, BRUSH, SMUDGE, ERASER, LINE, RECTANGLE, ELLIPSE, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION};
+	enum Type {PEN, BRUSH, SMUDGE, ERASER, LINE, RECTANGLE, ELLIPSE, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION, _LASTTOOL};
 
 	Tool(ToolController &owner, Type type, const QCursor &cursor)
 		: owner(owner), m_type(type), m_cursor(cursor)

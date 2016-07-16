@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ namespace tools {
 
 ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent),
+
 	m_client(client), m_model(nullptr),
 	m_activeTool(nullptr), m_smoothing(0)
 {
@@ -63,7 +64,8 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 
 void ToolController::registerTool(Tool *tool)
 {
-	Q_ASSERT(!m_toolbox.contains(tool->type()));
+	Q_ASSERT(tool->type() >= 0 && tool->type() < Tool::_LASTTOOL);
+	Q_ASSERT(m_toolbox[int(tool->type())] == nullptr);
 	m_toolbox[tool->type()] = tool;
 }
 
@@ -75,6 +77,7 @@ ToolController::~ToolController()
 
 Tool *ToolController::getTool(Tool::Type type)
 {
+	Q_ASSERT(type >= 0 && type < Tool::_LASTTOOL);
 	Tool *t = m_toolbox[type];
 	Q_ASSERT(t);
 	return t;

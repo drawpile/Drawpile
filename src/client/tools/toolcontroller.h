@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include "core/brush.h"
 
 #include <QObject>
-#include <QHash>
 
 class QCursor;
 
@@ -99,7 +98,7 @@ private slots:
 private:
 	void registerTool(Tool *tool);
 
-	QHash<Tool::Type, Tool*> m_toolbox;
+	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;
 
 	canvas::CanvasModel *m_model;

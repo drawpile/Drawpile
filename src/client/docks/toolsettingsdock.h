@@ -67,21 +67,6 @@ public:
 
 	~ToolSettings();
 
-	//! Get the annotation settings page
-	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
-
-	//! Get the color picker page
-	tools::ColorPickerSettings *getColorPickerSettings() { return _pickersettings; }
-
-	//! Get the laser pointer settings page
-	tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
-
-	tools::SelectionSettings *getRectSelectionSettings() { return _selectionsettings; }
-	tools::SelectionSettings *getPolySelectionSettings() { return _polyselectionsettings; }
-
-	//! Get flood fill settings page
-	tools::FillSettings *getFillSettings() { return _fillsettings; }
-
 	//! Get the current foreground color
 	QColor foregroundColor() const;
 
@@ -90,6 +75,9 @@ public:
 
 	//! Get the currently selected tool
 	tools::Tool::Type currentTool() const;
+
+	//! Get a tool settings page
+	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
 
 	//! Load tool related settings
 	void readSettings();
@@ -155,30 +143,18 @@ signals:
 	void toolChanged(tools::Tool::Type tool);
 
 private:
-	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
+	void addPage(tools::Tool::Type type, tools::ToolSettings *page);
 
 	void updateToolSlot(int i, bool typeChanged);
 	void selectTool(tools::Tool::Type tool);
 	void selectToolSlot(int i);
 	void saveCurrentTool();
 
-	tools::ToolSettings *_pensettings;
-	tools::ToolSettings *_brushsettings;
-	tools::ToolSettings *_smudgesettings;
-	tools::ToolSettings *_erasersettings;
-	tools::ColorPickerSettings *_pickersettings;
-	tools::ToolSettings *_linesettings;
-	tools::ToolSettings *_rectsettings;
-	tools::ToolSettings *_ellipsesettings;
-	tools::FillSettings *_fillsettings;
-	tools::AnnotationSettings *_textsettings;
-	tools::SelectionSettings *_selectionsettings;
-	tools::SelectionSettings *_polyselectionsettings;
-	tools::LaserPointerSettings  *_lasersettings;
+	tools::ToolSettings *m_settingspage[tools::Tool::_LASTTOOL];
 
 	tools::ToolController *m_ctrl;
 	tools::ToolSettings *_currenttool;
-	QStackedWidget *_widgets;
+	QStackedWidget *m_widgets;
 
 	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;

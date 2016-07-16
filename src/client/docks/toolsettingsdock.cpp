@@ -83,50 +83,27 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
 
 	// Create a widget stack
-	_widgets = new QStackedWidget(this);
-	setWidget(_widgets);
+	m_widgets = new QStackedWidget(this);
+	setWidget(m_widgets);
 
-	_pensettings = new tools::PenSettings("pen", tr("Pen"), m_ctrl);
-	_widgets->addWidget(_pensettings->createUi(this));
+	addPage(tools::Tool::PEN, new tools::PenSettings("pen", tr("Pen"), m_ctrl));
+	addPage(tools::Tool::BRUSH, new tools::BrushSettings("brush", tr("Brush"), m_ctrl));
+	addPage(tools::Tool::SMUDGE, new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl));
+	addPage(tools::Tool::ERASER, new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl));
+	addPage(tools::Tool::PICKER, new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl));
+	addPage(tools::Tool::LINE, new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl));
+	addPage(tools::Tool::RECTANGLE, new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl));
+	addPage(tools::Tool::ELLIPSE, new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl));
+	addPage(tools::Tool::FLOODFILL, new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl));
+	addPage(tools::Tool::ANNOTATION, new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl));
+	addPage(tools::Tool::SELECTION, new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl));
+	addPage(tools::Tool::POLYGONSELECTION, new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl));
+	addPage(tools::Tool::LASERPOINTER, new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl));
 
-	_brushsettings = new tools::BrushSettings("brush", tr("Brush"), m_ctrl);
-	_widgets->addWidget(_brushsettings->createUi(this));
-	_currenttool = _brushsettings;
+	_currenttool = getToolSettingsPage(tools::Tool::BRUSH);
 
-	_smudgesettings = new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl);
-	_widgets->addWidget(_smudgesettings->createUi(this));
-
-	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl);
-	_widgets->addWidget(_erasersettings->createUi(this));
-
-	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl);
-	_widgets->addWidget(_pickersettings->createUi(this));
-
-	_linesettings = new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl);
-	_widgets->addWidget(_linesettings->createUi(this));
-
-	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl);
-	_widgets->addWidget(_rectsettings->createUi(this));
-
-	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl);
-	_widgets->addWidget(_ellipsesettings->createUi(this));
-
-	_fillsettings = new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl);
-	_widgets->addWidget(_fillsettings->createUi(this));
-
-	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl);
-	_widgets->addWidget(_textsettings->createUi(this));
-
-	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl);
-	_widgets->addWidget(_selectionsettings->createUi(this));
-
-	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl);
-	_widgets->addWidget(_polyselectionsettings->createUi(this));
-
-	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl);
-	_widgets->addWidget(_lasersettings->createUi(this));
-
-	connect(_pickersettings, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
+	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
+			this, &ToolSettings::setForegroundColor);
 
 	// Create color changer dialogs
 	_fgdialog = new color_widgets::ColorDialog(this);
@@ -137,19 +114,17 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 
 ToolSettings::~ToolSettings()
 {
-	delete _pensettings;
-	delete _brushsettings;
-	delete _smudgesettings;
-	delete _erasersettings;
-	delete _pickersettings;
-	delete _linesettings;
-	delete _rectsettings;
-	delete _ellipsesettings;
-	delete _fillsettings;
-	delete _textsettings;
-	delete _selectionsettings;
-	delete _polyselectionsettings;
-	delete _lasersettings;
+	for(unsigned int i=0;i<(sizeof(m_settingspage) / sizeof(*m_settingspage));++i)
+		delete m_settingspage[i];
+}
+
+void ToolSettings::addPage(tools::Tool::Type type, tools::ToolSettings *page)
+{
+	Q_ASSERT(type >= 0 && type < tools::Tool::_LASTTOOL);
+	Q_ASSERT(m_settingspage[type] == nullptr);
+
+	m_settingspage[type] = page;
+	m_widgets->addWidget(page->createUi(this));
 }
 
 void ToolSettings::readSettings()
@@ -189,24 +164,9 @@ void ToolSettings::saveSettings()
 
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
-	switch(tool) {
-	case tools::Tool::PEN: return _pensettings;
-	case tools::Tool::BRUSH: return _brushsettings;
-	case tools::Tool::SMUDGE: return _smudgesettings;
-	case tools::Tool::ERASER: return _erasersettings;
-	case tools::Tool::LINE: return _linesettings;
-	case tools::Tool::RECTANGLE: return _rectsettings;
-	case tools::Tool::ELLIPSE: return _ellipsesettings;
-	case tools::Tool::FLOODFILL: return _fillsettings;
-	case tools::Tool::ANNOTATION: return _textsettings;
-	case tools::Tool::PICKER: return _pickersettings;
-	case tools::Tool::LASERPOINTER: return _lasersettings;
-	case tools::Tool::SELECTION: return _selectionsettings;
-	case tools::Tool::POLYGONSELECTION: return _polyselectionsettings;
-	}
-
-	qFatal("Unhandled tools::Type %d", tool);
-	return nullptr;
+	Q_ASSERT(tool>=0 && tool < tools::Tool::_LASTTOOL);
+	Q_ASSERT(m_settingspage[tool] != nullptr);
+	return m_settingspage[tool];
 }
 
 /**
@@ -237,7 +197,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	_currenttool = ts;
 
 	setWindowTitle(QStringLiteral("%1. %2").arg(currentToolSlot()+1).arg(_currenttool->getTitle()));
-	_widgets->setCurrentWidget(_currenttool->getUi());
+	m_widgets->setCurrentWidget(_currenttool->getUi());
 	_currenttool->setForeground(foregroundColor());
 	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
 	_toolprops[_currentQuickslot].setCurrentTool(tool);

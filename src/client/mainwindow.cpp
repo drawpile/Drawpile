@@ -244,7 +244,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create canvas view
 	_view = new widgets::CanvasView(this);
 	
-	connect(_dock_toolsettings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), _view, SLOT(setPointerTracking(bool)));
+	connect(static_cast<tools::LaserPointerSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::LASERPOINTER)), &tools::LaserPointerSettings::pointerTrackingToggled,
+		_view, &widgets::CanvasView::setPointerTracking);
 
 	connect(_dock_input, &docks::InputSettings::pressureMappingChanged, _view, &widgets::CanvasView::setPressureMapping);
 	_view->setPressureMapping(_dock_input->getPressureMapping());
@@ -309,8 +310,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::serverMessage, _chatbox, &widgets::ChatBox::systemMessage);
 	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
-	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
-	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
+	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
+	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::POLYGONSELECTION))->setView(_view);
 
 	connect(_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
@@ -331,7 +332,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, &widgets::CanvasView::quickAdjust, _dock_toolsettings, &docks::ToolSettings::quickAdjustCurrent1);
 
 	connect(_dock_layers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
-	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelectionId);
+	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
+			static_cast<tools::AnnotationSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::ANNOTATION)), &tools::AnnotationSettings::setSelectionId);
 
 	// Client command receive signals
 
@@ -427,7 +429,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, _dock_layers, &docks::LayerList::selectLayer);
 	connect(canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
-	connect(canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings->getColorPickerSettings(), &tools::ColorPickerSettings::addColor);
+	connect(canvas, &canvas::CanvasModel::colorPicked, static_cast<tools::ColorPickerSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::addColor);
 
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
 
@@ -1578,7 +1580,7 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	_canvasscene->showAnnotationBorders(tool==tools::Tool::ANNOTATION);
 
 	// Send pointer updates when using the laser pointer (TODO checkbox)
-	_view->setPointerTracking(tool==tools::Tool::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
+	_view->setPointerTracking(tool==tools::Tool::LASERPOINTER && static_cast<tools::LaserPointerSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::LASERPOINTER))->pointerTracking());
 
 	// Remove selection when not using selection tool
 	if(tool != tools::Tool::SELECTION && tool != tools::Tool::POLYGONSELECTION)
@@ -1721,7 +1723,7 @@ void MainWindow::clearOrDelete()
 	// that instead of clearing out the canvas.
 	QAction *annotationtool = getAction("tooltext");
 	if(annotationtool->isChecked()) {
-		int a = _dock_toolsettings->getAnnotationSettings()->selected();
+		const int a = static_cast<tools::AnnotationSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
 		if(a>0) {
 			QList<protocol::MessagePtr> msgs;
 			msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
