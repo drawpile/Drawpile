@@ -336,7 +336,7 @@ void Document::stopRecording()
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x()/4.0, point.y()/4.0)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4)));
 }
 
 void Document::sendCloseSession(bool close)
