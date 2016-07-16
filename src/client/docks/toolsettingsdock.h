@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ namespace color_widgets {
 
 namespace tools {
 	class ToolSettings;
+	class ToolController;
 	class AnnotationSettings;
 	class ColorPickerSettings;
 	class LaserPointerSettings;
@@ -60,14 +61,11 @@ public:
 	//! Number of quick tool change slots
 	static const int QUICK_SLOTS = 5;
 
-	ToolSettings(QWidget *parent=0);
+	ToolSettings(tools::ToolController *ctrl, QWidget *parent=0);
 	ToolSettings(const ToolSettings& ts) = delete;
 	ToolSettings& operator=(const ToolSettings& ts) = delete;
 
 	~ToolSettings();
-
-	//! Get a brush with the current settings
-	paintcore::Brush getBrush() const;
 
 	//! Get the annotation settings page
 	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
@@ -178,6 +176,7 @@ private:
 	tools::SelectionSettings *_polyselectionsettings;
 	tools::LaserPointerSettings  *_lasersettings;
 
+	tools::ToolController *m_ctrl;
 	tools::ToolSettings *_currenttool;
 	QStackedWidget *_widgets;
 

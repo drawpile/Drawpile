@@ -20,7 +20,6 @@ set (
 	document.cpp
 	notifications.cpp
 	tools/toolcontroller.cpp
-	tools/toolsettings.cpp
 	tools/toolproperties.cpp
 	tools/utils.cpp
 	tools/annotation.cpp
@@ -30,6 +29,14 @@ set (
 	tools/selection.cpp
 	tools/shapetools.cpp
 	tools/floodfill.cpp
+	toolwidgets/toolsettings.cpp
+	toolwidgets/brushsettings.cpp
+	toolwidgets/shapetoolsettings.cpp
+	toolwidgets/colorpickersettings.cpp
+	toolwidgets/selectionsettings.cpp
+	toolwidgets/annotationsettings.cpp
+	toolwidgets/fillsettings.cpp
+	toolwidgets/lasersettings.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp

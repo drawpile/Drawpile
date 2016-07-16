@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return _shape; }
 
 		//! Get the displayed brush
-		const paintcore::Brush &brush() const { return _brush; }
+		const paintcore::Brush &brush() const { return m_brush; }
 
 		bool isTransparentBackground() const { return _tranparentbg; }
 
@@ -130,6 +130,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 	signals:
 		void requestColorChange();
+		void brushChanged(const paintcore::Brush&);
 
 	protected:
 		void paintEvent(QPaintEvent *event);
@@ -139,13 +140,14 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void contextMenuEvent(QContextMenuEvent *);
 
 	private:
+		void notifyBrushChange();
 		void updatePreview();
 		void updateBackground();
 
-		paintcore::Brush _brush;
+		paintcore::Brush m_brush;
 
-		paintcore::LayerStack *_preview;
-		QPixmap _previewCache;
+		paintcore::LayerStack *m_preview;
+		QPixmap m_previewCache;
 
 		bool _sizepressure;
 		bool _opacitypressure;
@@ -157,7 +159,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		int _fillTolerance;
 		int _fillExpansion;
 		bool _underFill;
-		bool _needupdate;
+		bool m_needupdate;
 		bool _tranparentbg;
 
 		QMenu *_ctxmenu;

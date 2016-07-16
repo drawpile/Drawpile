@@ -35,6 +35,16 @@ public:
 	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
+
+	//! Pick from the current active layer only?
+	void setPickFromCurrentLayer(bool p) { m_pickFromCurrentLayer = p; }
+
+	//! Set picker size (color is averaged from the area)
+	void setSize(int size) { m_size = size; }
+
+private:
+	bool m_pickFromCurrentLayer;
+	int m_size;
 };
 
 }

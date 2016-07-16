@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,21 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/toolsettingsdock.h"
 #include "core/brush.h"
 #include "net/client.h"
 
 #include "tools/toolcontroller.h"
-#include "tools/toolsettings.h"
 #include "tools/laser.h"
 
 #include "../shared/net/meta2.h"
 
+#include <QPixmap>
+
 namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
-	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0))
+	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0)),
+	m_persistence(1)
 {}
 
 void LaserPointer::begin(const paintcore::Point &point, float zoom)
@@ -39,7 +40,7 @@ void LaserPointer::begin(const paintcore::Point &point, float zoom)
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::LaserTrail(0,
 		owner.activeBrush().color().rgb(),
-		owner.toolSettings()->getLaserPointerSettings()->trailPersistence()
+		m_persistence
 	));
 	msgs << protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4));
 	owner.client()->sendMessages(msgs);

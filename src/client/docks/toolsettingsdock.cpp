@@ -19,9 +19,17 @@
 
 #include "docks/toolsettingsdock.h"
 #include "docks/utils.h"
-#include "tools/toolsettings.h"
+#include "tools/toolcontroller.h"
 #include "widgets/toolslotbutton.h"
 #include "utils/icon.h"
+
+#include "toolwidgets/brushsettings.h"
+#include "toolwidgets/shapetoolsettings.h"
+#include "toolwidgets/colorpickersettings.h"
+#include "toolwidgets/selectionsettings.h"
+#include "toolwidgets/annotationsettings.h"
+#include "toolwidgets/fillsettings.h"
+#include "toolwidgets/lasersettings.h"
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -33,9 +41,11 @@
 
 namespace docks {
 
-ToolSettings::ToolSettings(QWidget *parent)
-	: QDockWidget(parent), _currentQuickslot(0), _eraserOverride(0), _eraserActive(false)
+ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
+	: QDockWidget(parent), m_ctrl(ctrl), _currentQuickslot(0), _eraserOverride(0), _eraserActive(false)
 {
+	Q_ASSERT(ctrl);
+
 	// Initialize tool slots
 	_toolprops.reserve(QUICK_SLOTS);
 	for(int i=0;i<QUICK_SLOTS;++i)
@@ -76,44 +86,44 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_widgets = new QStackedWidget(this);
 	setWidget(_widgets);
 
-	_pensettings = new tools::PenSettings("pen", tr("Pen"));
+	_pensettings = new tools::PenSettings("pen", tr("Pen"), m_ctrl);
 	_widgets->addWidget(_pensettings->createUi(this));
 
-	_brushsettings = new tools::BrushSettings("brush", tr("Brush"));
+	_brushsettings = new tools::BrushSettings("brush", tr("Brush"), m_ctrl);
 	_widgets->addWidget(_brushsettings->createUi(this));
 	_currenttool = _brushsettings;
 
-	_smudgesettings = new tools::SmudgeSettings("smudge", tr("Watercolor"));
+	_smudgesettings = new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl);
 	_widgets->addWidget(_smudgesettings->createUi(this));
 
-	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"));
+	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl);
 	_widgets->addWidget(_erasersettings->createUi(this));
 
-	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color Picker"));
+	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl);
 	_widgets->addWidget(_pickersettings->createUi(this));
 
-	_linesettings = new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true);
+	_linesettings = new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl);
 	_widgets->addWidget(_linesettings->createUi(this));
 
-	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false);
+	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl);
 	_widgets->addWidget(_rectsettings->createUi(this));
 
-	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true);
+	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl);
 	_widgets->addWidget(_ellipsesettings->createUi(this));
 
-	_fillsettings = new tools::FillSettings("fill", tr("Flood Fill"));
+	_fillsettings = new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl);
 	_widgets->addWidget(_fillsettings->createUi(this));
 
-	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
+	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl);
 	_widgets->addWidget(_textsettings->createUi(this));
 
-	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false);
+	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl);
 	_widgets->addWidget(_selectionsettings->createUi(this));
 
-	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true);
+	_polyselectionsettings = new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl);
 	_widgets->addWidget(_polyselectionsettings->createUi(this));
 
-	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
+	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl);
 	_widgets->addWidget(_lasersettings->createUi(this));
 
 	connect(_pickersettings, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
@@ -306,15 +316,6 @@ void ToolSettings::changeForegroundColor()
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 {
 	_currenttool->quickAdjust1(adjustment);
-}
-
-/**
- * Get a brush with settings from the currently visible widget
- * @return brush
- */
-paintcore::Brush ToolSettings::getBrush() const
-{
-	return _currenttool->getBrush();
 }
 
 /**

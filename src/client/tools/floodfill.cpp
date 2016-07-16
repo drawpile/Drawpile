@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "tools/toolcontroller.h"
 #include "tools/floodfill.h"
-#include "tools/toolsettings.h"
+#include "toolwidgets/toolsettings.h"
 
 #include "docks/toolsettingsdock.h"
 #include "core/floodfill.h"
@@ -34,15 +34,15 @@
 namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
-	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29))
+	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29)),
+	m_tolerance(1), m_expansion(0), m_sampleMerged(true), m_underFill(true)
 {
 }
 
 void FloodFill::begin(const paintcore::Point &point, float zoom)
 {
 	Q_UNUSED(zoom);
-	FillSettings *ts = owner.toolSettings()->getFillSettings();
-	QColor color = owner.toolSettings()->foregroundColor();
+	QColor color = owner.activeBrush().color();
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -50,12 +50,12 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 		owner.model()->layerStack(),
 		QPoint(point.x(), point.y()),
 		color,
-		ts->fillTolerance(),
+		m_tolerance,
 		owner.activeLayer(),
-		ts->sampleMerged()
+		m_sampleMerged
 	);
 
-	fill = paintcore::expandFill(fill, ts->fillExpansion(), color);
+	fill = paintcore::expandFill(fill, m_expansion, color);
 
 	if(fill.image.isNull()) {
 		QApplication::restoreOverrideCursor();
@@ -66,7 +66,7 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	// This results in nice smooth blending with soft outlines, when the
 	// outline has different color than the fill.
 	paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
-	if(ts->underFill() && (fill.layerSeedColor & 0xff000000) == 0)
+	if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
 		mode = paintcore::BlendMode::MODE_BEHIND;
 
 	// Flood fill is implemented using PutImage rather than a native command.

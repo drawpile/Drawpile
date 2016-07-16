@@ -22,6 +22,7 @@
 
 #include "utils/strokesmoother.h"
 #include "tool.h"
+#include "core/brush.h"
 
 #include <QObject>
 #include <QHash>
@@ -31,7 +32,6 @@ class QCursor;
 namespace canvas { class CanvasModel; }
 namespace paintcore { class Brush; }
 namespace net { class Client; }
-namespace docks { class ToolSettings; }
 
 namespace tools {
 
@@ -46,6 +46,7 @@ class ToolController : public QObject
 	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
 	Q_PROPERTY(int activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
 	Q_PROPERTY(int activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
+	Q_PROPERTY(paintcore::Brush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
 	Q_PROPERTY(canvas::CanvasModel* model READ model WRITE setModel NOTIFY modelChanged)
 
 	Q_OBJECT
@@ -64,6 +65,9 @@ public:
 	void setActiveAnnotation(int id);
 	int activeAnnotation() const { return m_activeAnnotation; }
 
+	void setActiveBrush(const paintcore::Brush &b);
+	const paintcore::Brush &activeBrush() const { return m_activebrush; }
+
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
 
@@ -73,12 +77,7 @@ public:
 	// TODO this is used just for sending the commands. Replace with a signal?
 	inline net::Client *client() const { return m_client; }
 
-	// TODO: replace this with something that does not depend on the UI
-	void setToolSettings(docks::ToolSettings *toolsettings) { m_toolsettings = toolsettings; }
-
-	inline docks::ToolSettings *toolSettings() const { Q_ASSERT(m_toolsettings); return m_toolsettings; }
-
-	paintcore::Brush activeBrush() const;
+	Tool *getTool(Tool::Type type);
 
 public slots:
 	void startDrawing(const QPointF &point, qreal pressure);
@@ -90,6 +89,7 @@ signals:
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(int annotationId);
+	void activeBrushChanged(const paintcore::Brush&);
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
 
@@ -99,14 +99,12 @@ private slots:
 private:
 	void registerTool(Tool *tool);
 
-	Tool *getTool(Tool::Type type) const;
-
 	QHash<Tool::Type, Tool*> m_toolbox;
 	net::Client *m_client;
-	docks::ToolSettings *m_toolsettings; // TODO: decouple from UI
 
 	canvas::CanvasModel *m_model;
 
+	paintcore::Brush m_activebrush;
 	Tool *m_activeTool;
 	int m_activeLayer;
 	int m_activeAnnotation;

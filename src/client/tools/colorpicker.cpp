@@ -18,16 +18,18 @@
 */
 
 #include "canvas/canvasmodel.h"
-#include "docks/toolsettingsdock.h"
 
 #include "tools/toolcontroller.h"
-#include "tools/toolsettings.h"
 #include "tools/colorpicker.h"
+
+#include <QPixmap>
 
 namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
-	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29))
+	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29)),
+	m_pickFromCurrentLayer(false),
+	m_size(0)
 {
 }
 
@@ -42,13 +44,12 @@ void ColorPicker::motion(const paintcore::Point& point, bool constrain, bool cen
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	int layer=0;
-	if(owner.toolSettings()->getColorPickerSettings()->pickFromLayer()) {
-		layer = owner.activeLayer();
-	}
-	int size = owner.toolSettings()->getColorPickerSettings()->getSize();
 
-	owner.model()->pickColor(point.x(), point.y(), layer, size);
+	int layer=0;
+	if(m_pickFromCurrentLayer)
+		layer = owner.activeLayer();
+
+	owner.model()->pickColor(point.x(), point.y(), layer, m_size);
 }
 
 void ColorPicker::end()

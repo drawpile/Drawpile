@@ -33,7 +33,6 @@
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
-#include "tools/toolsettings.h"
 
 #include "core/layerstack.h"
 #include "core/point.h"

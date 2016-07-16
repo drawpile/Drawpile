@@ -16,27 +16,40 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_LASER_H
-#define TOOLS_LASER_H
+#ifndef TOOLSETTINGS_LASER_H
+#define TOOLSETTINGS_LASER_H
 
-#include "tool.h"
+#include "toolsettings.h"
+
+class Ui_LaserSettings;
 
 namespace tools {
 
-class LaserPointer : public Tool {
+class LaserPointerSettings : public QObject, public BrushlessSettings {
+	Q_OBJECT
 public:
-	LaserPointer(ToolController &owner);
+	LaserPointerSettings(const QString &name, const QString &title, ToolController *ctrl);
+	~LaserPointerSettings();
 
-	void begin(const paintcore::Point& point, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
+	bool pointerTracking() const;
 
-	bool allowSmoothing() const { return true; }
+	void setForeground(const QColor& color);
+	void quickAdjust1(float adjustment);
 
-	void setPersistence(int p) { m_persistence = p; }
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
+private slots:
+	void updateTool();
+
+signals:
+	void pointerTrackingToggled(bool);
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
-	int m_persistence;
+	Ui_LaserSettings * _ui;
 };
 
 }

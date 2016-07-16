@@ -18,7 +18,6 @@
 */
 
 #include "toolcontroller.h"
-#include "docks/toolsettingsdock.h"
 
 #include "annotation.h"
 #include "brushes.h"
@@ -38,8 +37,8 @@ namespace tools {
 
 ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent),
-	m_client(client), m_toolsettings(nullptr),
-	m_model(nullptr), m_activeTool(nullptr), m_smoothing(0)
+	m_client(client), m_model(nullptr),
+	m_activeTool(nullptr), m_smoothing(0)
 {
 	Q_ASSERT(client);
 
@@ -74,7 +73,7 @@ ToolController::~ToolController()
 		delete t;
 }
 
-Tool *ToolController::getTool(Tool::Type type) const
+Tool *ToolController::getTool(Tool::Type type)
 {
 	Tool *t = m_toolbox[type];
 	Q_ASSERT(t);
@@ -121,9 +120,10 @@ void ToolController::setActiveLayer(int id)
 	}
 }
 
-paintcore::Brush ToolController::activeBrush() const
+void ToolController::setActiveBrush(const paintcore::Brush &b)
 {
-	return toolSettings()->getBrush();
+	m_activebrush = b;
+	emit activeBrushChanged(b);
 }
 
 void ToolController::setModel(canvas::CanvasModel *model)

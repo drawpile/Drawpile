@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,34 +16,41 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_FLOODFILL_H
-#define TOOLS_FLOODFILL_H
+#ifndef TOOLSETTINGS_FILL_H
+#define TOOLSETTINGS_FILL_H
 
-#include "tool.h"
+#include "toolsettings.h"
+
+class Ui_FillSettings;
 
 namespace tools {
 
-class FloodFill : public Tool
-{
+/**
+ * @brief Settings for the flood fill tool
+ */
+class FillSettings : public QObject, public BrushlessSettings {
+	Q_OBJECT
 public:
-	FloodFill(ToolController &owner);
+	FillSettings(const QString &name, const QString &title, ToolController *ctrl);
+	~FillSettings();
 
-	void begin(const paintcore::Point& point, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
+	void quickAdjust1(float adjustment) override;
+	void setForeground(const QColor &color) override;
 
-	void setTolerance(int tolerance) { m_tolerance = tolerance; }
-	void setExpansion(int expansion) { m_expansion = expansion; }
-	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
-	void setUnderFill(bool uf) { m_underFill = uf; }
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
+
+private slots:
+	void updateTool();
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
-	int m_tolerance;
-	int m_expansion;
-	bool m_sampleMerged;
-	bool m_underFill;
+	Ui_FillSettings * _ui;
 };
 
 }
 
 #endif
+

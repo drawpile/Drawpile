@@ -75,7 +75,6 @@
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
 #include "canvas/statetracker.h"
-#include "tools/toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
 #include "utils/whatismyip.h"
@@ -104,6 +103,10 @@
 #include "canvas/aclfilter.h"
 
 #include "tools/toolcontroller.h"
+#include "toolwidgets/colorpickersettings.h"
+#include "toolwidgets/selectionsettings.h"
+#include "toolwidgets/annotationsettings.h"
+#include "toolwidgets/lasersettings.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/annotation.h"
@@ -307,21 +310,13 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
 	_dock_toolsettings->getRectSelectionSettings()->setView(_view);
-	_dock_toolsettings->getRectSelectionSettings()->setLayerSelector(_dock_layers);
-	_dock_toolsettings->getRectSelectionSettings()->setClient(m_doc->client());
 	_dock_toolsettings->getPolySelectionSettings()->setView(_view);
-	_dock_toolsettings->getPolySelectionSettings()->setLayerSelector(_dock_layers);
-	_dock_toolsettings->getPolySelectionSettings()->setClient(m_doc->client());
 
 	connect(_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
-
-	_dock_toolsettings->getRectSelectionSettings()->setController(m_doc->toolCtrl());
-	_dock_toolsettings->getPolySelectionSettings()->setController(m_doc->toolCtrl());
-	_dock_toolsettings->getAnnotationSettings()->setController(m_doc->toolCtrl());
 
 #ifdef ENABLE_QML_CANVAS
 	qqview->rootContext()->setContextProperty("controller", m_toolctrl);
@@ -2407,10 +2402,9 @@ void MainWindow::setupActions()
 void MainWindow::createDocks()
 {
 	// Create tool settings
-	_dock_toolsettings = new docks::ToolSettings(this);
+	_dock_toolsettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	_dock_toolsettings->setObjectName("ToolSettings");
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	m_doc->toolCtrl()->setToolSettings(_dock_toolsettings);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
 	// Create color box
