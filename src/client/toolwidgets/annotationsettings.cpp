@@ -41,7 +41,7 @@ using widgets::GroupedToolButton;
 namespace tools {
 
 AnnotationSettings::AnnotationSettings(QString name, QString title, ToolController *ctrl)
-	: QObject(), BrushlessSettings(name, title, "draw-text", ctrl), _ui(nullptr), _noupdate(false)
+	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), _noupdate(false)
 {
 }
 

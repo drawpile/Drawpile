@@ -33,7 +33,7 @@ namespace tools {
  * Unlike most tool settings widgets, this one also includes buttons to trigger
  * various actions on the active selection (e.g. flip/mirror.)
  */
-class SelectionSettings : public QObject, public BrushlessSettings {
+class SelectionSettings : public QObject, public ToolSettings {
 	Q_OBJECT
 public:
 	SelectionSettings(const QString &name, const QString &title, bool freeform, ToolController *ctrl);
@@ -45,6 +45,12 @@ public:
 	 * This is used to get the current view rectangle needed by fitToScreen()
 	 */
 	void setView(widgets::CanvasView *view) { m_view = view; }
+
+	virtual void setForeground(const QColor&) override {}
+	virtual void quickAdjust1(float) override {}
+
+	virtual int getSize() const override { return 0; }
+	virtual bool getSubpixelMode() const override { return false; }
 
 private slots:
 	void flipSelection();

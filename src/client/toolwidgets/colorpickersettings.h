@@ -33,7 +33,7 @@ namespace tools {
 /**
  * @brief Color picker history
  */
-class ColorPickerSettings : public QObject, public BrushlessSettings {
+class ColorPickerSettings : public QObject, public ToolSettings {
 Q_OBJECT
 public:
 	ColorPickerSettings(const QString &name, const QString &title, ToolController *ctrl);
@@ -41,8 +41,14 @@ public:
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
-	virtual int getSize() const override;
+
+	virtual void setForeground(const QColor &color) override { Q_UNUSED(color); }
 	virtual void quickAdjust1(float adjustment) override;
+
+	virtual int getSize() const override;
+	virtual bool getSubpixelMode() const override { return false; }
+
+
 
 public slots:
 	void addColor(const QColor &color);

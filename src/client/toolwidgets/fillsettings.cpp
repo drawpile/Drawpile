@@ -31,7 +31,7 @@ using widgets::BrushPreview;
 namespace tools {
 
 FillSettings::FillSettings(const QString &name, const QString &title, ToolController *ctrl)
-	: QObject(), BrushlessSettings(name, title, "fill-color", ctrl), _ui(nullptr)
+	: QObject(), ToolSettings(name, title, "fill-color", ctrl), _ui(nullptr)
 {
 }
 
@@ -77,7 +77,9 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::setForeground(const QColor &color)
 {
 	_ui->preview->setColor(color);
-	BrushlessSettings::setForeground(color);
+	paintcore::Brush b;
+	b.setColor(color);
+	controller()->setActiveBrush(b);
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)

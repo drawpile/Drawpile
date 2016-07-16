@@ -28,7 +28,7 @@ namespace tools {
 /**
  * @brief Settings for the flood fill tool
  */
-class FillSettings : public QObject, public BrushlessSettings {
+class FillSettings : public QObject, public ToolSettings {
 	Q_OBJECT
 public:
 	FillSettings(const QString &name, const QString &title, ToolController *ctrl);
@@ -36,6 +36,9 @@ public:
 
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;
+
+	virtual int getSize() const override { return 0; }
+	virtual bool getSubpixelMode() const override { return false; }
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

@@ -32,7 +32,7 @@ namespace tools {
  * The annotation tool is special because it is used to manipulate
  * annotation objects rather than pixel data.
  */
-class AnnotationSettings : public QObject, public BrushlessSettings {
+class AnnotationSettings : public QObject, public ToolSettings {
 Q_OBJECT
 public:
 	AnnotationSettings(QString name, QString title, ToolController *ctrl);
@@ -49,6 +49,11 @@ public:
 	 * @param cursorPos cursor position
 	 */
 	void setFocusAt(int cursorPos);
+
+	virtual void setForeground(const QColor &) override {}
+	virtual void quickAdjust1(float) override {}
+	virtual int getSize() const override { return 0; }
+	virtual bool getSubpixelMode() const { return false; }
 
 public slots:
 	//! Set the currently selected annotation item

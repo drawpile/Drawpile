@@ -31,7 +31,7 @@ using widgets::ColorButton;
 namespace tools {
 
 LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title, ToolController *ctrl)
-	: QObject(), BrushlessSettings(name, title, "cursor-arrow", ctrl), _ui(nullptr)
+	: QObject(), ToolSettings(name, title, "cursor-arrow", ctrl), _ui(nullptr)
 {
 }
 

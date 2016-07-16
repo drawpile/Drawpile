@@ -25,7 +25,7 @@ class Ui_LaserSettings;
 
 namespace tools {
 
-class LaserPointerSettings : public QObject, public BrushlessSettings {
+class LaserPointerSettings : public QObject, public ToolSettings {
 	Q_OBJECT
 public:
 	LaserPointerSettings(const QString &name, const QString &title, ToolController *ctrl);
@@ -35,6 +35,9 @@ public:
 
 	void setForeground(const QColor& color);
 	void quickAdjust1(float adjustment);
+
+	virtual int getSize() const override { return 0; }
+	virtual bool getSubpixelMode() const override { return false; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;

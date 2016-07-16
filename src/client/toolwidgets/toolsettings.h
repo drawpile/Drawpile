@@ -19,8 +19,6 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
-#include <QPointer>
-
 #include "core/brush.h"
 #include "utils/icon.h"
 
@@ -127,25 +125,6 @@ private:
 	QString m_icon;
 	QWidget *m_widget;
 };
-
-/**
- * @brief Settings base class for non-brush based tools
- *
- * TODO remove. This class is not really needed anymore.
- */
-class BrushlessSettings : public ToolSettings {
-public:
-	BrushlessSettings(const QString &name, const QString &title, const QString &icon, ToolController *ctrl)
-		: ToolSettings(name, title, icon, ctrl)
-	{}
-
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
-
-	int getSize() const { return 0; }
-	bool getSubpixelMode() const { return false; }
-};
-
 
 /**
  * \brief Add the available brush blending modes to a dropdown box

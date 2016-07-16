@@ -33,7 +33,7 @@
 namespace tools {
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title, ToolController *ctrl)
-	:  QObject(), BrushlessSettings(name, title, "color-picker", ctrl), m_layerpick(nullptr)
+	:  QObject(), ToolSettings(name, title, "color-picker", ctrl)
 {
 	m_palette.setColumns(8);
 }

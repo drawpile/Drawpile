@@ -54,13 +54,5 @@ void ToolSettings::restoreToolSettings(const ToolProperties &)
 {
 }
 
-
-void BrushlessSettings::setForeground(const QColor& color)
-{
-	paintcore::Brush b;
-	b.setColor(color);
-	controller()->setActiveBrush(b);
-}
-
 }
 

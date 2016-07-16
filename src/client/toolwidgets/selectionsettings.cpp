@@ -31,7 +31,7 @@
 namespace tools {
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform, ToolController *ctrl)
-	: QObject(), BrushlessSettings(name, title, freeform ? "edit-select-lasso" : "select-rectangular", ctrl), m_ui(nullptr)
+	: QObject(), ToolSettings(name, title, freeform ? "edit-select-lasso" : "select-rectangular", ctrl), m_ui(nullptr)
 {
 }
 
