@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,13 +25,8 @@
 #include <QUrl>
 #include <QObject>
 #include <QPointer>
-#include <QMessageBox>
 #include <QSslError>
-
-namespace dialogs {
-	class SelectSessionDialog;
-	class LoginDialog;
-}
+#include <QFileInfo>
 
 namespace protocol {
 	struct ServerCommand;
@@ -47,13 +42,16 @@ class LoginSessionModel;
  * @brief Login process state machine
  *
  * See also LoginHandler in src/shared/server/ for the serverside implementation
+ *
+ * In some situations, the user must prompted for decisions (e.g. password is needed
+ * or user must decide which session to join.) In these situations, a signal is emitted.
  */
 class LoginHandler : public QObject {
 	Q_OBJECT
 public:
 	enum Mode {HOST, JOIN};
 
-	LoginHandler(Mode mode, const QUrl &url, QWidget *parent=0);
+	LoginHandler(Mode mode, const QUrl &url, QObject *parent=0);
 
 	/**
 	 * @brief Set the desired user ID
@@ -185,15 +183,105 @@ public:
 public slots:
 	void serverDisconnected();
 
-private slots:
+	/**
+	 * @brief Send password
+	 *
+	 * Call this in response to the needPassword signal after
+	 * the user has entered their password.
+	 *
+	 * @param password
+	 */
+	void gotPassword(const QString &password);
+
+	/**
+	 * @brief Send identity
+	 *
+	 * Call this in response to loginNeeded signal after
+	 * the user has entered their username and password.
+	 *
+	 * @param password
+	 * @param username
+	 */
+	void selectIdentity(const QString &username, const QString &password);
+
+	/**
+	 * @brief Join the session with the given ID
+	 *
+	 * Call this to join the session the user selected after
+	 * the sessionChoiceNeeded signal.
+	 *
+	 * @param id session ID
+	 * @param needPassword if true, ask for password before joining
+	 */
 	void joinSelectedSession(const QString &id, bool needPassword);
-	void selectIdentity(const QString &password, const QString &username);
+
+	/**
+	 * @brief Accept server certificate and proceed with login
+	 */
+	void acceptServerCertificate();
+
+	/**
+	 * @brief Abort login process
+	 *
+	 * Call this if a user clicks on "Cancel".
+	 */
 	void cancelLogin();
+
+signals:
+	/**
+	 * @brief The user must enter a password to proceed
+	 *
+	 * This is emitted when a session is password protected or
+	 * a password is needed to host a session
+	 * After the user has made a decision, call either
+	 * gotPassword(password) to proceed or cancelLogin() to exit.
+	 *
+	 * @param prompt prompt text
+	 */
+	void passwordNeeded(const QString &prompt);
+
+	/**
+	 * @brief Login details are needeed to proceed
+	 *
+	 * This is emitted when a password is needed to log in,
+	 * either because the account is protected or because guest
+	 * logins are not allowed.
+	 *
+	 * Proceed by calling either selectIdentity(username, password) or cancelLogin()
+	 *
+	 * @param prompt prompt text
+	 */
+	void loginNeeded(const QString &prompt);
+
+	/**
+	 * @brief User must select which session to join
+	 *
+	 * Call joinSelectedSession(id, needPassword) or cancelLogin()
+	 * to proceed.
+	 * @param sessions
+	 */
+	void sessionChoiceNeeded(LoginSessionModel *sessions);
+
+	/**
+	 * @brief certificateCheckNeeded
+	 *
+	 * The certificate does not match the stored one, but the user may still
+	 * proceed.
+	 *
+	 * Call acceptServerCertificate() or cancelLogin() to proceed()
+	 */
+	void certificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
+
+	/**
+	 * @brief Server title has changed
+	 * @param title new title
+	 */
+	void serverTitleChanged(const QString &title);
+
+private slots:
 	void failLogin(const QString &message, const QString &errorcode=QString());
-	void passwordSet(const QString &password);
 	void tlsStarted();
 	void tlsError(const QList<QSslError> &errors);
-	void tlsAccepted();
 
 private:
 	enum State {
@@ -223,12 +311,12 @@ private:
 	void expectNoErrors(const protocol::ServerReply &msg);
 	void expectLoginOk(const protocol::ServerReply &msg);
 	void startTls();
+	void continueTls();
 	void send(const protocol::ServerCommand &cmd);
 	void handleError(const QString &code, const QString &message);
 
 	Mode m_mode;
 	QUrl m_address;
-	QWidget *_widgetParent;
 
 	// session properties for hosting
 	int m_userid;
@@ -255,9 +343,7 @@ private:
 
 	QString m_autoJoinId;
 
-	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
-	QPointer<dialogs::LoginDialog> _passwordDialog;
-	QPointer<QMessageBox> _certDialog;
+	QFileInfo m_certFile;
 
 	// Server flags
 	bool m_multisession;

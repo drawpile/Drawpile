@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 
 #include "config.h"
 
-#include "dialogs/selectsessiondialog.h"
-#include "dialogs/logindialog.h"
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
@@ -31,17 +29,14 @@
 
 #include <QDebug>
 #include <QStringList>
-#include <QInputDialog>
 #include <QRegularExpression>
 #include <QSslSocket>
 #include <QStandardPaths>
 #include <QDir>
 #include <QFile>
-#include <QPushButton>
 #include <QHostAddress>
-#include <QMessageBox>
 
-//#define DEBUG_LOGIN
+#define DEBUG_LOGIN
 
 namespace {
 
@@ -64,11 +59,10 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 
 namespace net {
 
-LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
+LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	: QObject(parent),
 	  m_mode(mode),
 	  m_address(url),
-	  _widgetParent(parent),
 	  m_maxusers(0),
 	  m_allowdrawing(true),
 	  m_layerctrllock(true),
@@ -90,12 +84,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
 
 void LoginHandler::serverDisconnected()
 {
-	if(_selectorDialog)
-		_selectorDialog->deleteLater();
-	if(_passwordDialog)
-		_passwordDialog->deleteLater();
-	if(_certDialog)
-		_certDialog->deleteLater();
 }
 
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
@@ -240,30 +228,8 @@ void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 	}
 }
 
-void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
+void LoginHandler::gotPassword(const QString &password)
 {
-	Q_ASSERT(_passwordDialog.isNull());
-
-	if(_selectorDialog)
-		_selectorDialog->hide();
-
-	_passwordDialog = new dialogs::LoginDialog(_widgetParent);
-
-	_passwordDialog->setWindowModality(Qt::WindowModal);
-	_passwordDialog->setWindowTitle(title);
-	_passwordDialog->setIntroText(text);
-	_passwordDialog->setUsername(m_address.userName(), false);
-
-	connect(_passwordDialog, SIGNAL(login(QString,QString)), this, SLOT(passwordSet(QString)));
-	connect(_passwordDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
-
-	_passwordDialog->show();
-}
-
-void LoginHandler::passwordSet(const QString &password)
-{
-	Q_ASSERT(!_passwordDialog.isNull());
-
 	switch(m_state) {
 	case WAIT_FOR_HOST_PASSWORD:
 		m_hostPassword = password;
@@ -283,31 +249,22 @@ void LoginHandler::passwordSet(const QString &password)
 void LoginHandler::prepareToSendIdentity()
 {
 	if(m_mustAuth || m_needUserPassword) {
-		dialogs::LoginDialog *logindlg = new dialogs::LoginDialog(_widgetParent);
-		logindlg->setWindowModality(Qt::WindowModal);
-		logindlg->setAttribute(Qt::WA_DeleteOnClose);
-
-		logindlg->setWindowTitle(m_address.host());
-		logindlg->setUsername(m_address.userName(), true);
-
-		if(m_mustAuth)
-			logindlg->setIntroText(tr("This server does not allow guest logins"));
-		else
-			logindlg->setIntroText(tr("Password needed to log in as \"%1\"").arg(m_address.userName()));
-
-
-		connect(logindlg, SIGNAL(rejected()), this, SLOT(cancelLogin()));
-		connect(logindlg, SIGNAL(login(QString,QString)), this, SLOT(selectIdentity(QString,QString)));
-
 		m_state = WAIT_FOR_LOGIN_PASSWORD;
-		logindlg->show();
+
+		QString prompt;
+		if(m_mustAuth)
+			prompt = tr("This server does not allow guest logins");
+		else
+			prompt = tr("Password needed to log in as \"%1\"").arg(m_address.userName());
+
+		emit loginNeeded(prompt);
 
 	} else {
 		sendIdentity();
 	}
 }
 
-void LoginHandler::selectIdentity(const QString &password, const QString &username)
+void LoginHandler::selectIdentity(const QString &username, const QString &password)
 {
 	m_address.setUserName(username);
 	m_address.setPassword(password);
@@ -329,7 +286,7 @@ void LoginHandler::sendIdentity()
 
 void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 {
-	if(msg.reply["state"] == "needPass") {
+	if(msg.reply["state"] == "needPassword") {
 		// Looks like guest logins are not possible
 		m_needUserPassword = true;
 		prepareToSendIdentity();
@@ -348,23 +305,12 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 	if(m_mode == HOST) {
 		m_state = EXPECT_SESSIONLIST_TO_HOST;
 
-		// Query host password if needed
-		if(m_mode == HOST && m_needHostPassword && !flags.contains("HOST")) {
-			showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
-		}
-
 	} else {
 		// Show session selector if in multisession mode
-		if(m_multisession) {
-			_selectorDialog = new dialogs::SelectSessionDialog(m_sessions, _widgetParent);
-			_selectorDialog->setWindowModality(Qt::WindowModal);
-			_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
-
-			connect(_selectorDialog, SIGNAL(selected(QString,bool)), this, SLOT(joinSelectedSession(QString,bool)));
-			connect(_selectorDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
-
-			_selectorDialog->show();
-		}
+		// In single-session mode we can just automatically join
+		// the first session we see.
+		if(m_multisession)
+			emit sessionChoiceNeeded(m_sessions);
 
 		m_state = EXPECT_SESSIONLIST_TO_JOIN;
 	}
@@ -377,10 +323,13 @@ void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg
 	if(msg.type == protocol::ServerReply::LOGIN) {
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
-		if(!_passwordDialog.isNull() && m_hostPassword.isEmpty())
-			m_state = WAIT_FOR_HOST_PASSWORD; // password needed
-		else
+		if(m_needHostPassword) {
+			m_state = WAIT_FOR_HOST_PASSWORD;
+			emit passwordNeeded(tr("Enter hosting password"));
+
+		} else {
 			sendHostCommand();
+		}
 
 	} else {
 		qWarning() << "Expected session list, got" << msg.reply;
@@ -412,8 +361,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	Q_ASSERT(m_mode == JOIN);
 
 	if(msg.reply.contains("title")) {
-		if(_selectorDialog)
-			_selectorDialog->setServerTitle(msg.reply["title"].toString());
+		emit serverTitleChanged(msg.reply["title"].toString());
 	}
 
 	if(msg.reply.contains("sessions")) {
@@ -536,10 +484,6 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			m_server->sendSnapshotMessages(m_initialState);
 		}
 
-		delete _selectorDialog;
-		delete _passwordDialog;
-		delete _certDialog;
-
 	} else {
 		// Unexpected response
 		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg.reply;
@@ -551,7 +495,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
 	m_selectedId = id;
 	if(needPassword) {
-		showPasswordDialog(tr("Session is password protected"), tr("Enter session password"));
+		emit passwordNeeded(tr("Enter session password"));
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 
 	} else {
@@ -630,13 +574,14 @@ void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 }
 void LoginHandler::tlsStarted()
 {
-	QSslCertificate cert = m_server->hostCertificate();
-	QString hostname = m_address.host();
+	const QSslCertificate cert = m_server->hostCertificate();
+	const QString hostname = m_address.host();
 
 	// Check if this is a trusted certificate
-	QFileInfo trustedCertFile = getCertFile(TRUSTED_HOSTS, hostname);
-	if(trustedCertFile.exists()) {
-		QList<QSslCertificate> trustedcerts = QSslCertificate::fromPath(trustedCertFile.absoluteFilePath());
+	m_certFile = getCertFile(TRUSTED_HOSTS, hostname);
+
+	if(m_certFile.exists()) {
+		QList<QSslCertificate> trustedcerts = QSslCertificate::fromPath(m_certFile.absoluteFilePath());
 
 		if(trustedcerts.isEmpty() || trustedcerts.at(0).isNull()) {
 			failLogin(tr("Invalid SSL certificate for host %1").arg(hostname));
@@ -647,16 +592,16 @@ void LoginHandler::tlsStarted()
 		} else {
 			// Certificate matches explicitly trusted one, proceed with login
 			m_server->_securityLevel = Server::TRUSTED_HOST;
-			tlsAccepted();
+			continueTls();
 		}
 
 		return;
 	}
 
-	// Check if we have seen this host certificate before
-	QFileInfo certFile = getCertFile(KNOWN_HOSTS, hostname);
-	if(certFile.exists()) {
-		QList<QSslCertificate> knowncerts = QSslCertificate::fromPath(certFile.absoluteFilePath());
+	// Okay, not a trusted certificate, but check if we've seen it before
+	m_certFile = getCertFile(KNOWN_HOSTS, hostname);
+	if(m_certFile.exists()) {
+		QList<QSslCertificate> knowncerts = QSslCertificate::fromPath(m_certFile.absoluteFilePath());
 
 		if(knowncerts.isEmpty() || knowncerts.at(0).isNull()) {
 			failLogin(tr("Invalid SSL certificate for host %1").arg(hostname));
@@ -665,35 +610,8 @@ void LoginHandler::tlsStarted()
 
 		if(knowncerts.at(0) != cert) {
 			// Certificate mismatch!
-
-			if(_selectorDialog)
-				_selectorDialog->hide();
-
-			_certDialog = new QMessageBox(_widgetParent);
-			_certDialog->setWindowTitle(hostname);
-			_certDialog->setWindowModality(Qt::WindowModal);
-			_certDialog->setIcon(QMessageBox::Warning);
-			_certDialog->setText(tr("The certificate of this server has changed!"));
-
-			QAbstractButton *continueBtn = _certDialog->addButton(tr("Continue"), QMessageBox::AcceptRole);
-			_certDialog->addButton(QMessageBox::Cancel);
-
-			// WTF, accepted() and rejected() signals do not work correctly:
-			// http://qt-project.org/forums/viewthread/21172
-			// https://bugreports.qt-project.org/browse/QTBUG-23967
-			connect(_certDialog.data(), &QMessageBox::finished, [this, cert, certFile, continueBtn]() {
-				if(_certDialog->clickedButton() == continueBtn) {
-					saveCert(certFile, cert);
-					tlsAccepted();
-
-				} else {
-					cancelLogin();
-				}
-			});
-
-			_certDialog->show();
+			emit certificateCheckNeeded(cert, knowncerts.at(0));
 			m_server->_securityLevel = TcpServer::NEW_HOST;
-
 			return;
 
 		} else {
@@ -702,15 +620,22 @@ void LoginHandler::tlsStarted()
 
 	} else {
 		// Host not encountered yet: rember the certificate for next time
-		saveCert(certFile, cert);
+		saveCert(m_certFile, cert);
 		m_server->_securityLevel = TcpServer::NEW_HOST;
 	}
 
 	// Certificate is acceptable
-	tlsAccepted();
+	continueTls();
 }
 
-void LoginHandler::tlsAccepted()
+void LoginHandler::acceptServerCertificate()
+{
+	// User accepted the mismatching certificate: save it for the future
+	saveCert(m_certFile, m_server->hostCertificate());
+	continueTls();
+}
+
+void LoginHandler::continueTls()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
 	// Next up is user authentication.

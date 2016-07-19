@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,50 +18,191 @@
 */
 
 #include "logindialog.h"
-#include "ui_logindialog.h"
+#include "net/login.h"
+#include "net/loginsessions.h"
 
-#include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
+#include "utils/html.h"
+
+#include "ui_logindialog.h"
 
 #include <QPushButton>
 
 namespace dialogs {
 
-LoginDialog::LoginDialog(QWidget *parent) :
-	QDialog(parent), _ui(new Ui_LoginDialog)
+LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
+	QDialog(parent), m_mode(LABEL), m_login(login), m_ui(new Ui_LoginDialog)
 {
-	_ui->setupUi(this);
+	setWindowModality(Qt::WindowModal);
+	setWindowTitle(login->url().host());
 
-	_ui->username->setValidator(new UsernameValidator(this));
-	_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Continue"));
+	m_ui->setupUi(this);
+	m_ui->servertitle->hide();
 
-	new MandatoryFields(this, _ui->buttonBox->button(QDialogButtonBox::Ok));
+	// Login page
+	m_ui->username->setText(login->url().userName());
+	m_ui->username->setValidator(new UsernameValidator(this));
 
-	connect(this, &LoginDialog::accepted, [this]() {
-		emit login(_ui->password->text(), _ui->username->text());
+	auto requireFields = [this]() {
+		// Enable Continue button when required fields are not empty
+		bool ok = true;
+		if(m_ui->username->isEnabled() && m_ui->username->text().trimmed().isEmpty())
+			ok = false;
+		if(m_ui->password->text().isEmpty())
+			ok = false;
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ok);
+	};
+	connect(m_ui->username, &QLineEdit::textChanged, requireFields);
+	connect(m_ui->password, &QLineEdit::textChanged, requireFields);
+
+	// Session list page
+	connect(m_ui->sessionlist, &QTableView::doubleClicked, [this](const QModelIndex&) {
+		if(m_ui->buttonBox->button(QDialogButtonBox::Ok)->isEnabled())
+			m_ui->buttonBox->button(QDialogButtonBox::Ok)->click();
 	});
+
+	// Login process
+	connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &LoginDialog::onButtonClick);
+	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
+	connect(login, &net::LoginHandler::destroyed, this, &QWidget::deleteLater);
+
+	connect(login, &net::LoginHandler::passwordNeeded, this, &LoginDialog::onPasswordNeeded);
+	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
+	connect(login, &net::LoginHandler::sessionChoiceNeeded, this, &LoginDialog::onSessionChoiceNeeded);
+	connect(login, &net::LoginHandler::certificateCheckNeeded, this, &LoginDialog::onCertificateCheckNeeded);
+	connect(login, &net::LoginHandler::serverTitleChanged, this, &LoginDialog::onServerTitleChanged);
+
+	resetMode();
 }
 
 LoginDialog::~LoginDialog()
 {
-	delete _ui;
+	delete m_ui;
 }
 
-void LoginDialog::setIntroText(const QString &text)
+void LoginDialog::resetMode(Mode mode)
 {
-	if(text.isEmpty()) {
-		_ui->intro->hide();
+	m_mode = mode;
+
+	if(mode == LABEL) {
+		m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
 	} else {
-		_ui->intro->setText(text);
-		_ui->intro->show();
+		m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Continue"));
+	}
+
+	switch(mode) {
+	case LABEL:
+		m_ui->pages->setCurrentIndex(0);
+		return;
+
+	case PASSWORD:
+	case LOGIN:
+		m_ui->pages->setCurrentIndex(1);
+		m_ui->username->setEnabled(mode == LOGIN);
+		break;
+
+	case SESSION:
+		m_ui->pages->setCurrentIndex(2);
+		break;
+
+	case CERT:
+		m_ui->pages->setCurrentIndex(3);
+		break;
+	}
+
+	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(mode == CERT);
+	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+}
+
+void LoginDialog::onPasswordNeeded(const QString &prompt)
+{
+	m_ui->intro->setText(prompt);
+	m_ui->password->setText(QString());
+	resetMode(PASSWORD);
+}
+
+void LoginDialog::onLoginNeeded(const QString &prompt)
+{
+	m_ui->intro->setText(prompt);
+	m_ui->password->setText(QString());
+	resetMode(LOGIN);
+}
+
+void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
+{
+	m_ui->sessionlist->setModel(sessions);
+
+	QHeaderView *header = m_ui->sessionlist->horizontalHeader();
+	header->setSectionResizeMode(1, QHeaderView::Stretch);
+	header->setSectionResizeMode(0, QHeaderView::Fixed);
+	header->resizeSection(0, 24);
+
+	connect(m_ui->sessionlist->selectionModel(), &QItemSelectionModel::selectionChanged, [this](const QItemSelection &sel) {
+		// Enable/disable OK button depending on the selection
+		bool ok;
+
+		if(sel.indexes().isEmpty())
+			ok = false;
+		else
+			ok = sel.indexes().at(0).data(net::LoginSessionModel::JoinableRole).toBool();
+
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ok);
+	});
+
+	resetMode(SESSION);
+}
+
+void LoginDialog::onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert)
+{
+	Q_UNUSED(newCert);
+	Q_UNUSED(oldCert);
+	// TODO display certificate for comparison
+	resetMode(CERT);
+}
+
+void LoginDialog::onServerTitleChanged(const QString &title)
+{
+	if(title.isEmpty()) {
+		m_ui->servertitle->setVisible(false);
+
+	} else {
+		m_ui->servertitle->setVisible(true);
+		m_ui->servertitle->setText(htmlutils::newlineToBr(htmlutils::linkify(title.toHtmlEscaped())));
 	}
 }
 
-void LoginDialog::setUsername(const QString &username, bool enabled)
+void LoginDialog::onButtonClick(QAbstractButton *btn)
 {
-	_ui->username->setText(username);
-	_ui->username->setEnabled(enabled);
-}
+	QDialogButtonBox::StandardButton b = m_ui->buttonBox->standardButton(btn);
 
+	if(b == QDialogButtonBox::Ok) {
+		switch(m_mode) {
+		case LABEL: /* no OK button in this mode */; break;
+		case PASSWORD:
+			m_login->gotPassword(m_ui->password->text());
+			resetMode();
+			break;
+		case LOGIN:
+			m_login->selectIdentity(m_ui->username->text(), m_ui->password->text());
+			resetMode();
+			break;
+		case SESSION: {
+			Q_ASSERT(m_ui->sessionlist->selectionModel()->selectedIndexes().size()==1);
+
+			const int row = m_ui->sessionlist->selectionModel()->selectedIndexes().at(0).row();
+			const net::LoginSession &s = static_cast<net::LoginSessionModel*>(m_ui->sessionlist->model())->sessionAt(row);
+			m_login->joinSelectedSession(s.id, s.needPassword);
+			break; }
+		case CERT:
+			m_login->acceptServerCertificate();
+			resetMode();
+			break;
+		}
+
+	} else {
+		reject();
+	}
+}
 
 }

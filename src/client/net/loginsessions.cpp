@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ int LoginSessionModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _sessions.size();
+	return m_sessions.size();
 }
 
 int LoginSessionModel::columnCount(const QModelIndex &parent) const
@@ -54,7 +54,7 @@ int LoginSessionModel::columnCount(const QModelIndex &parent) const
 QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 {
 
-	const LoginSession &ls = _sessions.at(index.row());
+	const LoginSession &ls = m_sessions.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
@@ -67,6 +67,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case 2: return ls.founder;
 		case 3: return ls.userCount;
 		}
+
 	} else if(role == Qt::DecorationRole) {
 		if(index.column()==0) {
 			if(ls.closed)
@@ -74,9 +75,25 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}
+
 	} else if(role == Qt::ToolTipRole) {
 		if(ls.incompatible)
 			return tr("Incompatible version");
+
+	} else {
+		switch(role) {
+		case IdRole: return ls.id;
+		case IsCustomIdRole: return ls.customId;
+		case UserCountRole: return ls.userCount;
+		case TitleRole: return ls.title;
+		case FounderRole: return ls.founder;
+		case NeedPasswordRole: return ls.needPassword;
+		case PersistentRole: return ls.persistent;
+		case ClosedRole: return ls.closed;
+		case AsleepRole: return ls.asleep;
+		case IncompatibleRole: return ls.incompatible;
+		case JoinableRole: return !(ls.closed | ls.incompatible);
+		}
 	}
 
 	return QVariant();
@@ -84,7 +101,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 {
-	const LoginSession &ls = _sessions.at(index.row());
+	const LoginSession &ls = m_sessions.at(index.row());
 	if(ls.incompatible)
 		return Qt::NoItemFlags;
 	else
@@ -108,19 +125,19 @@ QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation,
 void LoginSessionModel::updateSession(const LoginSession &session)
 {
 	int oldIndex=-1;
-	for(int i=0;i<_sessions.size();++i) {
-		if(_sessions.at(i).id == session.id) {
+	for(int i=0;i<m_sessions.size();++i) {
+		if(m_sessions.at(i).id == session.id) {
 			oldIndex = i;
 			break;
 		}
 	}
 
 	if(oldIndex>=0) {
-		_sessions[oldIndex] = session;
+		m_sessions[oldIndex] = session;
 		emit dataChanged(index(oldIndex, 0), index(oldIndex, columnCount()));
 	} else {
-		beginInsertRows(QModelIndex(), _sessions.size(), _sessions.size());
-		_sessions.append(session);
+		beginInsertRows(QModelIndex(), m_sessions.size(), m_sessions.size());
+		m_sessions.append(session);
 		endInsertRows();
 	}
 }
@@ -128,8 +145,8 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 void LoginSessionModel::removeSession(const QString &id)
 {
 	int idx=-1;
-	for(int i=0;i<_sessions.size();++i) {
-		if(_sessions.at(i).id == id) {
+	for(int i=0;i<m_sessions.size();++i) {
+		if(m_sessions.at(i).id == id) {
 			idx = i;
 			break;
 		}
@@ -138,7 +155,7 @@ void LoginSessionModel::removeSession(const QString &id)
 		qWarning() << "removeSession: id" << id << "does not exist!";
 	} else {
 		beginRemoveRows(QModelIndex(), idx, idx);
-		_sessions.removeAt(idx);
+		m_sessions.removeAt(idx);
 		endRemoveRows();
 	}
 }

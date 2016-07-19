@@ -64,6 +64,7 @@ namespace canvas {
 
 namespace net {
 	class Client;
+	class LoginHandler;
 }
 
 namespace recording {

@@ -116,6 +116,7 @@
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
 #include "dialogs/joindialog.h"
+#include "dialogs/logindialog.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
@@ -1236,6 +1237,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl());
 	login->setInitialState(m_doc->canvas()->generateSnapshot(false));
+	(new dialogs::LoginDialog(login, this))->show();
 
 	m_doc->client()->connectToServer(login);
 }
@@ -1326,6 +1328,7 @@ void MainWindow::joinSession(const QUrl& url, bool autoRecord)
 	}
 
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
+	(new dialogs::LoginDialog(login, this))->show();
 	m_doc->setAutoRecordOnConnect(autoRecord);
 	m_doc->client()->connectToServer(login);
 }

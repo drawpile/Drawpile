@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,6 +50,20 @@ class LoginSessionModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
+	enum LoginSessionRoles {
+		IdRole = Qt::UserRole + 1, // Session ID
+		IsCustomIdRole,            // Is this a manually selected ID?
+		UserCountRole,             // Number of logged in users
+		TitleRole,                 // Session title
+		FounderRole,               // Name of session founder
+		NeedPasswordRole,          // Is a password needed to join
+		PersistentRole,            // Is this a persistent session
+		ClosedRole,                // Is this session closed to new users
+		AsleepRole,                // Is the session currently hibernating
+		IncompatibleRole,          // Is the session meant for some other client version
+		JoinableRole               // Is this session joinable
+	};
+
 	explicit LoginSessionModel(QObject *parent = 0);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -58,12 +72,12 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	LoginSession sessionAt(int index) const { return _sessions.at(index); }
+	LoginSession sessionAt(int index) const { return m_sessions.at(index); }
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);
 
 private:
-	QList<LoginSession> _sessions;
+	QList<LoginSession> m_sessions;
 };
 
 }

@@ -118,7 +118,6 @@ set (
 	dialogs/playbackdialog.cpp
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
-	dialogs/selectsessiondialog.cpp
 	dialogs/netstats.cpp
 	dialogs/sessionlistingdialog.cpp
 	dialogs/flipbook.cpp
@@ -185,7 +184,6 @@ set (
 	ui/videoexport.ui
 	ui/inputcfg.ui
 	ui/recfilter.ui
-	ui/selectsession.ui
 	ui/logindialog.ui
 	ui/colorbox.ui
 	ui/netstats.ui

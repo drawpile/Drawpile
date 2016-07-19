@@ -22,24 +22,52 @@
 #include <QDialog>
 
 class Ui_LoginDialog;
+class QAbstractButton;
+class QSslCertificate;
+
+namespace net {
+	class LoginHandler;
+	class LoginSessionModel;
+}
 
 namespace dialogs {
 
+/**
+ * @brief The dialog that is shown during the login process
+ *
+ * This dialog handles all the user interaction needed while logging in.
+ * (Quite often, no interaction is needed at all.)
+ */
 class LoginDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit LoginDialog(QWidget *parent = 0);
+	explicit LoginDialog(net::LoginHandler *login, QWidget *parent = 0);
 	~LoginDialog();
 
-	void setIntroText(const QString &text);
-	void setUsername(const QString &username, bool enabled);
+private slots:
+	void onButtonClick(QAbstractButton*);
 
-signals:
-	void login(const QString &password, const QString &username);
+	void onPasswordNeeded(const QString &prompt);
+	void onLoginNeeded(const QString &prompt);
+	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
+	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
+	void onServerTitleChanged(const QString &title);
 
 private:
-	Ui_LoginDialog *_ui;
+	enum Mode {
+		LABEL,    // Show "logging in..." label
+		PASSWORD, // Ask for just the password
+		LOGIN,    // Ask for username and password
+		SESSION,  // Select sesssion
+		CERT      // Inspect a certificate
+	};
+
+	void resetMode(Mode mode=LABEL);
+
+	Mode m_mode;
+	net::LoginHandler *m_login;
+	Ui_LoginDialog *m_ui;
 };
 
 }
