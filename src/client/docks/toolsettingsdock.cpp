@@ -42,7 +42,8 @@
 namespace docks {
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: QDockWidget(parent), m_ctrl(ctrl), _currentQuickslot(0), _eraserOverride(0), _eraserActive(false)
+	: QDockWidget(parent), m_settingspage{},
+	m_ctrl(ctrl), _currentQuickslot(0), _eraserOverride(0), _eraserActive(false)
 {
 	Q_ASSERT(ctrl);
 

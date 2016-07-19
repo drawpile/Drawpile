@@ -37,7 +37,7 @@ namespace tools {
 
 ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent),
-
+	m_toolbox{},
 	m_client(client), m_model(nullptr),
 	m_activeTool(nullptr), m_smoothing(0)
 {
