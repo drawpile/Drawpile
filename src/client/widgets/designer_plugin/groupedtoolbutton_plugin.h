@@ -20,7 +20,7 @@
 #ifndef GROUPEDTOOLBUTTONPLUGIN_H
 #define GROUPEDTOOLBUTTONPLUGIN_H
 
-#include <QDesignerCustomWidgetInterface>
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
 class GroupedToolButtonPlugin : public QObject, public QDesignerCustomWidgetInterface
 {

@@ -25,7 +25,7 @@
 namespace widgets {
 #define PLUGIN_EXPORT
 #else
-#include <QtDesigner/QDesignerExportWidget>
+#include <QtUiPlugin/QDesignerExportWidget>
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 

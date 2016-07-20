@@ -20,7 +20,7 @@
 #ifndef DRAWPILE_PLUGIN_COLLECTION_H
 #define DRAWPILE_PLUGIN_COLLECTION_H
 
-#include <QDesignerCustomWidgetCollectionInterface>
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
 class DrawpileWidgetCollection : public QObject, public QDesignerCustomWidgetCollectionInterface
 {

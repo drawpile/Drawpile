@@ -34,7 +34,7 @@
 #include <QList>
 
 #ifdef DESIGNER_PLUGIN
-#include <QtDesigner/QDesignerExportWidget>
+#include <QtUiPlugin/QDesignerExportWidget>
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #else
 #define PLUGIN_EXPORT
