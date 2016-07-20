@@ -1315,6 +1315,27 @@ void MainWindow::changeSessionTitle()
 	}
 }
 
+void MainWindow::changeSessionPassword()
+{
+	QString prompt;
+	if(m_doc->isSessionPasswordProtected())
+		prompt = tr("Set a new password or leave blank to remove.");
+	else
+		prompt = tr("Set a password for the session.");
+
+	bool ok;
+	QString newpass = QInputDialog::getText(
+				this,
+				tr("Session Password"),
+				prompt,
+				QLineEdit::Password,
+				QString(),
+				&ok
+	);
+	if(ok)
+		m_doc->sendPasswordChange(newpass);
+}
+
 /**
  * @param url URL
  */
@@ -2237,6 +2258,7 @@ void MainWindow::setupActions()
 	m_layerctrlmode->setEnabled(false);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
+	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset"));
 
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
@@ -2245,6 +2267,7 @@ void MainWindow::setupActions()
 	_admintools->addAction(locksession);
 	_admintools->addAction(closesession);
 	_admintools->addAction(changetitle);
+	_admintools->addAction(changepassword);
 	_admintools->addAction(resetsession);
 	_admintools->setEnabled(false);
 
@@ -2252,6 +2275,10 @@ void MainWindow::setupActions()
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
 	connect(changetitle, &QAction::triggered, this, &MainWindow::changeSessionTitle);
+	connect(changepassword, &QAction::triggered, this, &MainWindow::changeSessionPassword);
+	connect(m_doc, &Document::sessionPasswordChanged, [changepassword](bool hasPassword) {
+		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
+	});
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 	connect(m_layerctrlmode, &QActionGroup::triggered, [this](QAction *action) {
 		switch(action->property("mode").toInt()) {
@@ -2275,6 +2302,7 @@ void MainWindow::setupActions()
 	QMenu *layerctrlmenu = sessionmenu->addMenu(tr("Layer Controls"));
 	layerctrlmenu->addActions(m_layerctrlmode->actions());
 	sessionmenu->addAction(changetitle);
+	sessionmenu->addAction(changepassword);
 	sessionmenu->addAction(resetsession);
 	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(locksession);

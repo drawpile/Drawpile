@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,10 @@ Document::Document(QObject *parent)
 	  m_autoRecordOnConnect(false),
 	  m_dirty(false),
 	  m_autosave(false),
-	  m_canAutosave(false)
+	  m_canAutosave(false),
+	  m_sessionClosed(false),
+	  m_sessionPreserveChat(false),
+	  m_sessionPasswordProtected(false)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -61,7 +64,6 @@ Document::Document(QObject *parent)
 	connect(m_autosaveTimer, &QTimer::timeout, this, &Document::autosaveNow);
 
 	// Make connections
-
 	connect(m_client, &net::Client::serverConnected, this, &Document::serverConnected);
 	connect(m_client, &net::Client::serverLoggedin, this, &Document::onServerLogin);
 	connect(m_client, &net::Client::serverLoggedin, this, &Document::serverLoggedin);
@@ -163,6 +165,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("preserve-chat"))
 		setSessionPreserveChat(config["preserve-chat"].toBool());
+
+	if(config.contains("password"))
+		setSessionPasswordProtected(config["password"].toBool());
 }
 
 void Document::setSessionClosed(bool closed)
@@ -179,6 +184,14 @@ void Document::setSessionPreserveChat(bool pc)
 		m_sessionPreserveChat = pc;
 		m_client->setRecordedChatMode(pc);
 		emit sessionPreserveChatChanged(pc);
+	}
+}
+
+void Document::setSessionPasswordProtected(bool pp)
+{
+	if(m_sessionPasswordProtected != pp) {
+		m_sessionPasswordProtected = pp;
+		emit sessionPasswordChanged(pp);
 	}
 }
 
@@ -343,6 +356,13 @@ void Document::sendCloseSession(bool close)
 {
 	QJsonObject kwargs;
 	kwargs["closed"] = close;
+	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+}
+
+void Document::sendPasswordChange(const QString &password)
+{
+	QJsonObject kwargs;
+	kwargs["password"] = password;
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
 }
 

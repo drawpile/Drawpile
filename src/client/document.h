@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,8 +38,7 @@ namespace tools { class ToolController; }
 /**
  * @brief An active document and its associated data, including the network connection
  *
- * This is an UI agnostic class (well, not entirely yet: Client and ToolController
- * have some references to widget based UIs) that should be usable from both a widget
+ * This is an UI agnostic class that should be usable from both a widget
  * based application or a pure QML app.
  *
  */
@@ -55,6 +54,7 @@ class Document : public QObject
 
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
+	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
 	Q_OBJECT
 public:
 	explicit Document(QObject *parent = 0);
@@ -109,6 +109,7 @@ public:
 
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
+	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
 
 	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
 
@@ -128,11 +129,13 @@ signals:
 	void sessionTitleChanged(const QString &title);
 	void sessionPreserveChatChanged(bool pc);
 	void sessionClosedChanged(bool closed);
+	void sessionPasswordChanged(bool passwordProtected);
 
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendCloseSession(bool close);
+	void sendPasswordChange(const QString &password);
 	void sendResetSession();
 	void sendLockSession(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
@@ -170,6 +173,7 @@ private:
 	void setCurrentFilename(const QString &filename);
 	void setSessionClosed(bool closed);
 	void setSessionPreserveChat(bool pc);
+	void setSessionPasswordProtected(bool pp);
 
 	void copyFromLayer(int layer);
 
@@ -191,6 +195,8 @@ private:
 
 	bool m_sessionClosed;
 	bool m_sessionPreserveChat;
+	bool m_sessionPasswordProtected;
 };
 
 #endif // DOCUMENT_H
+
