@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@
 
 #include "index.h"
 
-#include <QScopedPointer>
-
 class KArchive;
+class QImage;
 
 namespace canvas {
 	class StateSavepoint;
@@ -43,14 +42,15 @@ public:
 
 	bool open();
 
-	Index &index() { return _index; }
+	Index &index() { return m_index; }
 
 	canvas::StateSavepoint loadSavepoint(int idx, canvas::StateTracker *owner);
+	QImage loadThumbnail(int idx);
 
 private:
-	QString _recordingfile;
-	QScopedPointer<KArchive> _file;
-	Index _index;
+	QString m_recordingfile;
+	KArchive *m_file;
+	Index m_index;
 };
 
 }

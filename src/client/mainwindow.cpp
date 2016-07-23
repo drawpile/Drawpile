@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -441,9 +441,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(_dock_layers, &docks::LayerList::layerViewModeSelected, canvas, &canvas::CanvasModel::setLayerViewMode);
 
-	_dock_layers->init();
-	_userlist->setCanvas(canvas);
 	_dock_layers->setCanvas(canvas);
+	_userlist->setCanvas(canvas);
 
 	_currentdoctools->setEnabled(true);
 

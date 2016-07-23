@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,38 +26,48 @@
 
 namespace recording {
 
-QString Index::contextName(int context_id) const
+int Index::findPreviousStop(unsigned int pos) const
 {
-	if(m_ctxnames.contains(context_id))
-		return m_ctxnames[context_id];
-	return QString("#%1").arg(context_id);
+	int i=0;
+	while(i<m_stops.size() && m_stops.at(i).index < pos)
+		++i;
+	return qMax(0, i-1);
+}
+
+int Index::findClosestSnapshot(unsigned int pos) const
+{
+	int i=0;
+	int snap=0;
+	while(i<m_stops.size() && m_stops.at(i).index < pos) {
+		if((m_stops.at(i).flags & StopEntry::HAS_SNAPSHOT))
+			snap = i;
+		++i;
+	}
+	return snap;
 }
 
 bool Index::writeIndex(QIODevice *out) const
 {
 	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_0);
+	ds.setVersion(QDataStream::Qt_5_6);
 
 	// Write index format version
 	ds << INDEX_VERSION;
 
-	// Write context name map
-	ds << quint8(m_ctxnames.size());
-	foreach(quint8 ctx, m_ctxnames.keys()) {
-		ds << ctx << m_ctxnames[ctx];
+	// Write stops
+	ds << quint32(m_stops.size());
+	for(const StopEntry &e : m_stops) {
+		ds << e.index << e.pos << e.flags;
 	}
 
-	// Write index
-	ds << quint32(m_index.size());
-	foreach(const IndexEntry &e, m_index) {
-		ds << quint8(e.type) << e.context_id << e.offset << e.start << e.end << e.color << e.title;
+	// Write markers
+	ds << quint32(m_markers.size());
+	for(const MarkerEntry &e : m_markers) {
+		ds << e.stop << e.title;
 	}
 
-	// Write snapshot list
-	ds << quint32(m_snapshots.size());
-	foreach(const SnapshotEntry &e, m_snapshots) {
-		ds << e.stream_offset << e.pos;
-	}
+	// Write action count
+	ds << quint32(m_actioncount);
 
 	return true;
 }
@@ -65,7 +75,7 @@ bool Index::writeIndex(QIODevice *out) const
 bool Index::readIndex(QIODevice *out)
 {
 	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_0);
+	ds.setVersion(QDataStream::Qt_5_6);
 
 	// Read version
 	quint16 version;
@@ -75,110 +85,41 @@ bool Index::readIndex(QIODevice *out)
 		return false;
 	}
 
-	// Read context name map
-	quint8 names;
-	ds >> names;
-	while(names-->0) {
-		quint8 ctx;
-		QString name;
-		ds >> ctx >> name;
-		m_ctxnames[ctx] = name;
+	// Read stops
+	quint32 stopcount;
+	QVector<StopEntry> stops;
+	QList<int> thumbs;
+	ds >> stopcount;
+	while(stopcount--) {
+		StopEntry e;
+		ds >> e.index >> e.pos >> e.flags;
+
+		if((e.flags & StopEntry::HAS_THUMBNAIL))
+			thumbs.append(stops.size());
+
+		stops.append(e);
 	}
 
-	// Read index
-	quint32 entries;
-	ds >> entries;
-	while(entries--) {
-		IndexEntry e;
-		quint8 type;
-		ds >> type;
-		e.type = IndexType(type);
-		ds >> e.context_id >> e.offset >> e.start >> e.end >> e.color >> e.title;
-		m_index.append(e);
-		if(e.type == IDX_MARKER)
-			m_markers.append(MarkerEntry(m_index.size()-1, e.start, e.title));
+	// Read markers
+	quint32 markercount;
+	QVector<MarkerEntry> markers;
+	ds >> markercount;
+	while(markercount--) {
+		MarkerEntry e;
+		ds >> e.stop >> e.title;
+		markers.append(e);
 	}
 
-	// Read snapshot list
-	quint32 snapshots;
-	ds >> snapshots;
-	while(snapshots--) {
-		SnapshotEntry e;
-		ds >> e.stream_offset >> e.pos;
-		m_snapshots.append(e);
-	}
+	// Read action count
+	quint32 actioncount;
+	ds >> actioncount;
+
+	m_stops = stops;
+	m_markers = markers;
+	m_thumbnails = thumbs;
+	m_actioncount = actioncount;
 
 	return true;
-}
-
-MarkerEntry Index::prevMarker(unsigned int from) const
-{
-	MarkerEntry e;
-	for(int i=0;i<m_markers.size();++i) {
-		if(m_markers[i].pos >= from)
-			break;
-
-		e = m_markers[i];
-	}
-
-	if(e.pos == from)
-		e = MarkerEntry();
-
-	return e;
-}
-
-MarkerEntry Index::nextMarker(unsigned int from) const
-{
-	MarkerEntry e;
-	for(int i=m_markers.size()-1;i>=0;--i) {
-		if(m_markers[i].pos <= from)
-			break;
-
-		e = m_markers[i];
-	}
-
-	if(e.pos == from)
-		e = MarkerEntry();
-
-	return e;
-}
-
-void Index::addMarker(qint64 offset, quint32 pos, const QString &title)
-{
-	IndexEntry e(IDX_MARKER, 0, offset, pos, pos, 0xffffffff, title);
-	e.flags = IndexEntry::FLAG_ADDED;
-
-	m_newmarkers.append(e);
-
-	// Add entry to marker list
-	int i=0;
-	while(i<m_markers.size()) {
-		if(m_markers.at(i).pos >= pos)
-			break;
-		++i;
-	}
-	m_markers.insert(i, MarkerEntry(0, pos, title));
-
-}
-
-void Index::setSilenced(int idx, bool silence)
-{
-	if(silence)
-		m_silenced.insert(idx);
-	else
-		m_silenced.remove(idx);
-}
-
-IndexVector Index::silencedEntries() const
-{
-	IndexVector iv;
-	for(int idx : silencedIndices()) {
-		if(idx<0 || idx >= m_index.size())
-			qWarning("Silenced non-existent index: %d", idx);
-		else
-			iv << m_index.at(idx);
-	}
-	return iv;
 }
 
 QByteArray hashRecording(const QString &filename)

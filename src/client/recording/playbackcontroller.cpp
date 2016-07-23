@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #include "canvas/canvasmodel.h"
 
 #include <QStringList>
-#include <QThreadPool>
+#include <QThread>
 #include <QFileInfo>
 #include <QSettings>
 #include <QTimer>
@@ -48,6 +48,8 @@ PlaybackController::PlaybackController(canvas::CanvasModel *canvas, Reader *read
 	  m_maxInterval(60.0), m_speedFactor(1.0),
 	  m_indexBuildProgress(0)
 {
+	reader->setParent(this);
+
 	m_timer = new QTimer(this);
 	m_timer->setSingleShot(true);
 	connect(m_timer, &QTimer::timeout, this, &PlaybackController::nextCommand);
@@ -82,6 +84,18 @@ qint64 PlaybackController::maxProgress() const
 	if(m_reader->isCompressed())
 		return -1;
 	return m_reader->filesize();
+}
+
+int PlaybackController::indexPosition() const
+{
+	return m_reader->currentIndex();
+}
+
+int PlaybackController::maxIndexPosition() const
+{
+	if(!m_indexloader)
+		return -1;
+	return m_indexloader->index().actionCount();
 }
 
 void PlaybackController::setPauses(bool pauses)
@@ -227,25 +241,15 @@ void PlaybackController::prevSequence()
 		return;
 	}
 	const Index &index = m_indexloader->index();
-
-	// Find previous index entry
-	int i=0;
-	const unsigned int pos = m_reader->currentIndex();
-	for(const IndexEntry &e : index.entries()) {
-		if(e.end >= pos) {
-			i = qMax(0, i-1);
-			break;
-		}
-		++i;
-	}
-
-	if(i < index.entries().size())
-		jumpTo(index.entry(i).start - 1);
+	jumpTo(index.entry(index.findPreviousStop(m_reader->currentIndex())).index);
 }
 
 void PlaybackController::jumpTo(int pos)
 {
-	Q_ASSERT(m_indexloader);
+	if(!m_indexloader) {
+		qWarning("jumpTo(%d): index not loaded!", pos);
+		return;
+	}
 
 	if(pos == m_reader->currentIndex())
 		return;
@@ -256,20 +260,13 @@ void PlaybackController::jumpTo(int pos)
 	// If the target position is behind current position or sufficiently far ahead, jump
 	// to the closest snapshot point first
 	if(pos < m_reader->currentIndex() || pos - m_reader->currentIndex() > 500) {
-		int seIdx=0;
 		const Index &index = m_indexloader->index();
-		for(int i=1;i<index.snapshots().size();++i) {
-			const SnapshotEntry &next = index.snapshots().at(i);
-			if(int(next.pos) > pos)
-				break;
-
-			seIdx = i;
-		}
+		int snap = index.findClosestSnapshot(pos);
 
 		// When jumping forward, don't restore the snapshot if the snapshot is behind
 		// the current position
-		if(pos < m_reader->currentIndex() || index.snapshots().at(seIdx).pos > quint32(m_reader->currentIndex()))
-			jumptToSnapshot(seIdx);
+		if(pos < m_reader->currentIndex() || index.entries().at(snap).pos > quint32(m_reader->currentIndex()))
+			jumpToSnapshot(snap);
 	}
 
 	// Now the current position is somewhere before the target position: replay commands
@@ -299,11 +296,11 @@ void PlaybackController::jumpTo(int pos)
 	updateIndexPosition();
 }
 
-void PlaybackController::jumptToSnapshot(int idx)
+void PlaybackController::jumpToSnapshot(int idx)
 {
 	Q_ASSERT(m_indexloader);
 
-	SnapshotEntry se = m_indexloader->index().snapshots().at(idx);
+	StopEntry se = m_indexloader->index().entry(idx);
 	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->stateTracker());
 
 	if(!savepoint) {
@@ -311,7 +308,7 @@ void PlaybackController::jumptToSnapshot(int idx)
 		return;
 	}
 
-	m_reader->seekTo(se.pos, se.stream_offset);
+	m_reader->seekTo(se.index, se.pos);
 	m_canvas->stateTracker()->resetToSavepoint(savepoint);
 	updateIndexPosition();
 }
@@ -327,36 +324,7 @@ void PlaybackController::jumpToMarker(int index)
 		return;
 	}
 
-	jumpTo(markers.at(index).pos);
-}
-
-void PlaybackController::prevMarker()
-{
-	if(!m_indexloader)
-		return;
-	recording::MarkerEntry e = m_indexloader->index().prevMarker(qMax(0, m_reader->currentIndex()));
-	if(e.pos>0) {
-		jumpTo(e.pos);
-	}
-}
-
-void PlaybackController::nextMarker()
-{
-	if(!m_indexloader)
-		return;
-	recording::MarkerEntry e = m_indexloader->index().nextMarker(qMax(0, m_reader->currentIndex()));
-	if(e.pos>0) {
-		jumpTo(e.pos);
-	}
-}
-
-void PlaybackController::addMarker(const QString &text)
-{
-	if(!m_indexloader)
-		return;
-
-	m_indexloader->index().addMarker(m_reader->currentPosition(), m_reader->currentIndex(), text);
-	emit markersChanged();
+	jumpTo(m_indexloader->index().entry(markers.at(index).stop).index);
 }
 
 void PlaybackController::updateIndexPosition()
@@ -383,7 +351,9 @@ void PlaybackController::buildIndex()
 		return;
 	}
 
+	QThread *thread = new QThread;
 	m_indexbuilder = new IndexBuilder(m_reader->filename(), indexFileName());
+	m_indexbuilder->moveToThread(thread);
 
 	const qreal filesize = m_reader->filesize();
 	connect(m_indexbuilder, &IndexBuilder::progress, [this, filesize](int progress) {
@@ -401,7 +371,12 @@ void PlaybackController::buildIndex()
 		}
 	});
 
-	QThreadPool::globalInstance()->start(m_indexbuilder);
+	connect(thread, &QThread::started, m_indexbuilder, &IndexBuilder::run);
+	connect(m_indexbuilder, &IndexBuilder::done, thread, &QThread::quit);
+	connect(m_indexbuilder, &IndexBuilder::done, m_indexbuilder, &QThread::deleteLater);
+	connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+
+	thread->start();
 }
 
 void PlaybackController::loadIndex()
@@ -417,10 +392,9 @@ void PlaybackController::loadIndex()
 		return;
 	}
 
-	m_indexloader = new IndexLoader(m_reader->filename(), indexFileName());
+	m_indexloader.reset(new IndexLoader(m_reader->filename(), indexFileName()));
 	if(!m_indexloader->open()) {
-		delete m_indexloader;
-		m_indexloader = nullptr;
+		m_indexloader.reset();
 		emit indexLoadError(tr("Error loading index!"), true);
 		return;
 	}
@@ -441,103 +415,20 @@ QStringList PlaybackController::getMarkers() const
 	return markers;
 }
 
-IndexVector PlaybackController::getSilencedEntries() const
+int PlaybackController::indexThumbnailCount() const
 {
-	if(!m_indexloader)
-		return IndexVector();
-	return m_indexloader->index().silencedEntries();
+	if(m_indexloader)
+		return m_indexloader->index().thumbnails().size();
+	else
+		return -1;
 }
 
-IndexVector PlaybackController::getNewMarkers() const
+QImage PlaybackController::getIndexThumbnail(int idx) const
 {
 	if(!m_indexloader)
-		return IndexVector();
-	return m_indexloader->index().newMarkers();
-}
+		return QImage();
 
-/**
- * The returned object is used in QML to build the index scene.
- * @return
- */
-QVariantMap PlaybackController::getIndexItems() const
-{
-	if(!m_indexloader)
-		return QVariantMap();
-
-	QVariantList items, contextNames;
-
-	int contextNameIdx[255];
-	contextNameIdx[0] = 0;
-	for(int i=1;i<255;++i)
-		contextNameIdx[i] = -1;
-	contextNames.append(QString());
-
-	// Icons for IndexTypes
-	QString typeIcons[] = {
-		QString(),
-		QStringLiteral("flag-red"),
-		QString(),
-		QStringLiteral("list-add"),
-		QStringLiteral("list-remove"),
-		QStringLiteral("edit-paste"),
-		QStringLiteral("draw-brush"),
-		QStringLiteral("draw-text"),
-		QStringLiteral("chat"), // TODO
-		QStringLiteral("media-playback-pause"),
-		QString(), // TODO
-		QStringLiteral("edit-undo"),
-		QStringLiteral("edit-redo"),
-		QStringLiteral("draw-rectangle"),
-	};
-
-	// Get index items and context names.
-	// Context names are added to the list in the order they appear
-	const Index &index = m_indexloader->index();
-	for(const IndexEntry &e : index.entries()) {
-
-		// Check if this context ID has already appeared
-		// and get it's name if it hasn't
-		int nameIdx = 0;
-		for(;nameIdx<contextNames.size();++nameIdx)
-			if(contextNameIdx[nameIdx] == e.context_id)
-				break;
-		if(nameIdx >= contextNames.size()) {
-			contextNameIdx[nameIdx] = e.context_id;
-			contextNames.append(index.contextName(e.context_id));
-		}
-
-		QVariantMap item;
-		item["title"] = e.title;
-		item["row"] = nameIdx;
-		item["ctx"] = e.context_id;
-		item["color"] = QColor::fromRgb(e.color);
-		item["icon"] = typeIcons[e.type];
-		item["start"] = e.start;
-		item["end"] = e.end;
-
-		items.append(item);
-	}
-
-	// Get snapshot positions
-	QVariantList snapshots;
-	for(const SnapshotEntry &e : index.snapshots())
-		snapshots.append(e.pos);
-
-	QVariantMap indexmap;
-	indexmap["names"] = contextNames;
-	indexmap["items"] = items;
-	indexmap["snapshots"] = snapshots;
-	return indexmap;
-}
-
-void PlaybackController::setIndexItemSilenced(int idx, bool silence)
-{
-	if(!m_indexloader) {
-		qWarning("setIndexItemSilenced: index not loaded!");
-		return;
-	}
-
-	m_indexloader->index().setSilenced(idx, silence);
+	return m_indexloader->loadThumbnail(idx);
 }
 
 QString PlaybackController::recordingFilename() const
@@ -588,6 +479,7 @@ void PlaybackController::startVideoExport(VideoExporter *exporter)
 
 	m_exporter->start();
 	emit exportStarted();
+	emit canSaveFrameChanged(canSaveFrame());
 }
 
 void PlaybackController::exporterReady()
@@ -605,7 +497,7 @@ void PlaybackController::exporterReady()
 		nextCommand();
 	}
 
-	emit canSaveFrameChanged();
+	emit canSaveFrameChanged(canSaveFrame());
 }
 
 void PlaybackController::exporterError(const QString &message)
@@ -631,24 +523,30 @@ void PlaybackController::exporterFinished()
 
 void PlaybackController::exportFrame(int count)
 {
-	Q_ASSERT(count>0);
+	if(count<1)
+		count = 1;
+
 	if(m_exporter) {
 		QImage img = m_canvas->toImage();
 		if(!img.isNull()) {
 			Q_ASSERT(m_exporterReady);
 			m_exporterReady = false;
-			emit canSaveFrameChanged();
+			emit canSaveFrameChanged(canSaveFrame());
 			m_exporter->saveFrame(img, count);
 		}
+	} else {
+		qWarning("exportFrame(%d): exported not active!", count);
 	}
 }
 
 void PlaybackController::stopExporter()
 {
-	Q_ASSERT(m_exporter);
 	if(isPlaying())
 		setPlaying(false);
-	m_exporter->finish();
+	if(m_exporter)
+		m_exporter->finish();
+	else
+		qWarning("stopExporter(): exported not active!");
 }
 
 bool PlaybackController::waitForExporter()
@@ -657,3 +555,4 @@ bool PlaybackController::waitForExporter()
 }
 
 }
+

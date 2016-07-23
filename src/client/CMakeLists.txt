@@ -134,6 +134,7 @@ set (
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
 	widgets/userlistwidget.cpp 
+	widgets/filmstrip.cpp 
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/colorbox.cpp
@@ -189,6 +190,7 @@ set (
 	ui/netstats.ui
 	ui/sessionlisting.ui
 	ui/flipbook.ui
+	ui/playback.ui
 )
 
 # Optional DNS-SD support

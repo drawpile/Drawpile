@@ -49,9 +49,6 @@ public:
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
-	//! Initialize the widget for a new session
-	void init();
-
 	//! Get the ID of the currently selected layer
 	int currentLayer();
 

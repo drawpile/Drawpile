@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,28 +16,35 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INDEXRECDIALOG_H
-#define INDEXRECDIALOG_H
 
-#include <QDialog>
+#ifndef FILMSTRIPPLUGIN_H
+#define FILMSTRIPPLUGIN_H
 
-class Ui_FilterRecording;
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
-namespace dialogs {
-
-class FilterRecordingDialog : public QDialog
+class FilmstripPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
-	Q_OBJECT
-public:
-	explicit FilterRecordingDialog(QWidget *parent = 0);
-	~FilterRecordingDialog();
+Q_OBJECT
+Q_INTERFACES(QDesignerCustomWidgetInterface)
 
-	QString filterRecording(const QString &recordingFile);
+public:
+	FilmstripPlugin(QObject *parent = 0);
+
+	bool isContainer() const;
+	bool isInitialized() const;
+	QIcon icon() const;
+	QString domXml() const;
+	QString group() const;
+	QString includeFile() const;
+	QString name() const;
+	QString toolTip() const;
+	QString whatsThis() const;
+	QWidget *createWidget(QWidget *parent);
+	void initialize(QDesignerFormEditorInterface *core);
 
 private:
-	Ui_FilterRecording *_ui;
+	bool initialized;
 };
 
-}
-
 #endif
+

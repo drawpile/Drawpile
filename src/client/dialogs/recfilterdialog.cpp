@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QSettings>
-
 #include "dialogs/recfilterdialog.h"
 #include "recording/filter.h"
 
 #include "ui_recfilter.h"
+
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSettings>
 
 namespace dialogs {
 
@@ -40,20 +40,6 @@ FilterRecordingDialog::FilterRecordingDialog(QWidget *parent) :
 FilterRecordingDialog::~FilterRecordingDialog()
 {
 	delete _ui;
-}
-
-void FilterRecordingDialog::setSilence(const recording::IndexVector &silence)
-{
-	_silence = silence;
-	_ui->removeSilenced->setChecked(!silence.isEmpty());
-	_ui->removeSilenced->setDisabled(silence.isEmpty());
-}
-
-void FilterRecordingDialog::setNewMarkers(const recording::IndexVector &markers)
-{
-	_newmarkers = markers;
-	_ui->addNewMarkers->setChecked(!markers.isEmpty());
-	_ui->addNewMarkers->setDisabled(markers.isEmpty());
 }
 
 QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
@@ -85,12 +71,6 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	filter.setRemoveLasers(_ui->removeLasers->isChecked());
 	filter.setRemoveMarkers(_ui->removeMarkers->isChecked());
 	filter.setSquishStrokes(_ui->squishStrokes->isChecked());
-
-	if(_ui->removeSilenced->isChecked())
-		filter.setSilenceVector(_silence);
-
-	if(_ui->addNewMarkers->isChecked())
-		filter.setNewMarkers(_newmarkers);
 
 	// Perform filtering
 	if(!filter.filterRecording(recordingFile, outfile)) {

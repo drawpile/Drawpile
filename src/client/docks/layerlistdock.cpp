@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -149,6 +149,12 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	QSettings cfg;
 	_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
 	del->setShowNumbers(_showNumbersAction->isChecked());
+
+	// Init
+	_ui->layerlist->setEnabled(true);
+	_viewMode->actions()[0]->setChecked(true);
+	layerViewModeTriggered(_viewMode->actions()[0]);
+	setControlsLocked(false);
 }
 
 void LayerList::setOperatorMode(bool op)
@@ -227,14 +233,6 @@ void LayerList::selectBelow()
 	QModelIndex prev = current.sibling(current.row() + 1, 0);
 	if(prev.isValid())
 		_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
-}
-
-void LayerList::init()
-{
-	_ui->layerlist->setEnabled(true);
-	_viewMode->actions()[0]->setChecked(true);
-	layerViewModeTriggered(_viewMode->actions()[0]);
-	setControlsLocked(false);
 }
 
 void LayerList::opacityAdjusted()

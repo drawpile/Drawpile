@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 
 #include "../shared/net/message.h"
 
-class QQuickView;
-
 namespace recording {
 	class Reader;
 	class IndexLoader;
@@ -36,6 +34,9 @@ namespace recording {
 namespace canvas {
 	class CanvasModel;
 }
+
+class Ui_PlaybackDialog;
+class QMenu;
 
 namespace dialogs {
 
@@ -55,10 +56,6 @@ public:
 public slots:
 	void done(int r);
 
-	void filterRecording();
-	void configureVideoExport();
-	void addMarker();
-
 signals:
 	void commandRead(protocol::MessagePtr msg);
 	void playbackToggled(bool play);
@@ -67,11 +64,24 @@ protected:
 	void closeEvent(QCloseEvent *);
 	void keyPressEvent(QKeyEvent *);
 
+private slots:
+	void onIndexLoaded();
+	void onIndexLoadError(const QString&, bool);
+	void onBuildIndexClicked();
+	void onMarkerMenuTriggered(QAction *a);
+	void onFilterRecordingClicked();
+	void onVideoExportClicked();
+	void onVideoExportStarted();
+	void onVideoExportEnded();
+
+
 private:
 	bool exitCleanup();
+	void rebuildMarkerMenu();
 
-	QPointer<QQuickView> m_view;
+	Ui_PlaybackDialog *m_ui;
 	recording::PlaybackController *m_ctrl;
+	QMenu *m_markers;
 
 	bool m_closing;
 };

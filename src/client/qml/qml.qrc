@@ -1,15 +1,7 @@
 <RCC>
     <qresource prefix="/qml">
-        <file>PlaybackDialog.qml</file>
-
         <file>Canvas/AnnotationItem.qml</file>
         <file>Canvas/Canvas.qml</file>
         <file>Canvas/UserCursor.qml</file>
-
-        <file>Controls/qmldir</file>
-        <file>Controls/HLine.qml</file>
-        <file>Controls/PlaybackIndexView.qml</file>
-        <file>Controls/PlaybackProgressStyle.qml</file>
-        <file>Controls/VcrButton.qml</file>
     </qresource>
 </RCC>

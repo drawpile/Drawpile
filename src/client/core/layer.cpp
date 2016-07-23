@@ -1087,6 +1087,7 @@ void Layer::toDatastream(QDataStream &out) const
 	out << m_info.hidden;
 
 	// Write layer data
+	// TODO write tile-by-tile, with optimization for solid tiles
 	out << toImage();
 
 	// Write sublayers

@@ -21,6 +21,7 @@
 #include "colorbutton_plugin.h"
 #include "brushpreview_plugin.h"
 #include "groupedtoolbutton_plugin.h"
+#include "filmstrip_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)
@@ -29,6 +30,7 @@ DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 		<< new ColorButtonPlugin(this)
 		<< new BrushPreviewPlugin(this)
 		<< new GroupedToolButtonPlugin(this)
+		<< new FilmstripPlugin(this)
 		;
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -217,17 +217,6 @@ void filterLookyloos(State &state)
 	}
 }
 
-//! Remove all silenced actions
-void filterSilenced(const IndexVector &silence, State &state)
-{
-	foreach(const IndexEntry &e, silence) {
-		for(quint32 i=e.start;i<=e.end;++i) {
-			if(state.index[i].ctxid == e.context_id)
-				mark_delete(state.index[i]);
-		}
-	}
-}
-
 /**
  * @brief Remove adjacent undo points by the same user
  *
@@ -354,9 +343,6 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 	if(filter.removeLookyloos())
 		filterLookyloos(state);
 
-	if(!filter.silenceVector().isEmpty())
-		filterSilenced(filter.silenceVector(), state);
-
 	if(filter.squishStrokes())
 		squishStrokes(state, recording);
 
@@ -406,24 +392,9 @@ bool Filter::filterRecording(const QString &input, const QString &outputfile)
 
 	writer.writeHeader();
 
-	unsigned int newmarkerpos = 0;
-	const unsigned int MARKERS = _newmarkers.size();
-
 	QByteArray buffer;
 	while(reader2.readNextToBuffer(buffer)) {
 		const unsigned int pos = reader2.currentIndex();
-
-		// Inject new marker
-		if(newmarkerpos < MARKERS) {
-			while(newmarkerpos < MARKERS && _newmarkers.at(newmarkerpos).start < pos)
-				++newmarkerpos;
-			if(newmarkerpos < MARKERS && _newmarkers.at(newmarkerpos).start == pos) {
-				const IndexEntry &m = _newmarkers.at(newmarkerpos);
-				protocol::MessagePtr msg(new protocol::Marker(m.context_id, m.title));
-				writer.recordMessage(msg);
-				++newmarkerpos;
-			}
-		}
 
 		// Copy (or replace) original message, unless marked for deletion
 		if(!isDeleted(state.index[pos])) {

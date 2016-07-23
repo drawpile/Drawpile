@@ -1,7 +1,0 @@
-module Controls
-
-HLine 1.0 HLine.qml
-PlaybackProgressStyle 1.0 PlaybackProgressStyle.qml
-PlaybackIndexView 1.0 PlaybackIndexView.qml
-VcrButton 1.0 VcrButton.qml
-

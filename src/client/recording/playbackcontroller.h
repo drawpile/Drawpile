@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QScopedPointer>
 
 class QTimer;
 class QStringList;
@@ -70,6 +71,9 @@ public:
 	qreal speedFactor() const { return m_speedFactor; }
 	void setSpeedFactor(qreal value) { m_speedFactor = qMax(0.01, value); emit speedFactorChanged(m_speedFactor); }
 
+	int indexPosition() const;
+	int maxIndexPosition() const;
+
 	qint64 progress() const;
 	qint64 maxProgress() const;
 	qreal indexBuildProgress() const { return m_indexBuildProgress; }
@@ -82,11 +86,7 @@ public:
 	void setAutosave(bool as) { m_autosave = as; emit autosaveChanged(); }
 	bool isAutosaving() const { return m_autosave; }
 
-	Q_INVOKABLE QVariantMap getIndexItems() const;
 	QStringList getMarkers() const;
-
-	IndexVector getSilencedEntries() const;
-	IndexVector getNewMarkers() const;
 
 	bool stopOnMarkers() const { return m_stopOnMarkers; }
 	void setStopOnMarkers(bool s) { if(s!= m_stopOnMarkers) { m_stopOnMarkers = s; emit stopOnMarkersChanged(); } }
@@ -95,7 +95,10 @@ public:
 
 	void startVideoExport(VideoExporter *exporter);
 
-	void addMarker(const QString &text);
+	bool hasIndex() const { return !m_indexloader.isNull(); }
+
+	int indexThumbnailCount() const;
+	QImage getIndexThumbnail(int idx) const;
 
 signals:
 	void commandRead(protocol::MessagePtr msg);
@@ -106,7 +109,7 @@ signals:
 	void stopOnMarkersChanged();
 	void endOfFileReached();
 	void markersChanged();
-	void canSaveFrameChanged();
+	void canSaveFrameChanged(bool);
 	void autosaveChanged();
 	void exportedFrame();
 
@@ -124,8 +127,6 @@ public slots:
 	void nextSequence();
 	void prevSequence();
 
-	void prevMarker();
-	void nextMarker();
 	void jumpToMarker(int index);
 
 	void jumpTo(int pos);
@@ -133,7 +134,6 @@ public slots:
 	void loadIndex();
 	void buildIndex();
 
-	void setIndexItemSilenced(int idx, bool silence);
 	void setPauses(bool pauses);
 
 	void exportFrame(int count=1);
@@ -146,14 +146,14 @@ private slots:
 
 private:
 	void nextCommands(int stepCount);
-	void jumptToSnapshot(int idx);
+	void jumpToSnapshot(int idx);
 	void updateIndexPosition();
 	bool waitForExporter();
 
 	QString indexFileName() const;
 
 	Reader *m_reader;
-	IndexLoader *m_indexloader;
+	QScopedPointer<IndexLoader> m_indexloader;
 	QPointer<IndexBuilder> m_indexbuilder;
 	VideoExporter *m_exporter;
 

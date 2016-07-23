@@ -132,11 +132,6 @@ void ToolController::setActiveBrush(const paintcore::Brush &b)
 void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
-		if(m_model) {
-			disconnect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
-			disconnect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
-		}
-
 		m_model = model;
 
 		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);

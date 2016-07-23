@@ -871,7 +871,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write drawing contexts
 	out << quint8(d->ctxstate.size());
-	foreach(quint8 ctxid, d->ctxstate.keys()) {
+	for(const quint8 ctxid : d->ctxstate.keys()) {
 		const DrawingContext &ctx = d->ctxstate[ctxid];
 
 		// write context ID
