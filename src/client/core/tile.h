@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 class QColor;
 class QImage;
+class QDataStream;
 
 namespace paintcore {
 
@@ -146,6 +147,13 @@ class Tile {
 		//! Check if this tile is completely transparent
 		bool isBlank() const;
 
+		/**
+		 * @brief Is this tile filled with a single solid color?
+		 *
+		 * @return tile color or an invalid color if not solid
+		 */
+		QColor solidColor() const;
+
 		//! Fill a tile sized memory buffer with a checker pattern
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 
@@ -159,12 +167,15 @@ class Tile {
 		 */
 		bool operator==(const Tile &other) const { return _data == other._data; }
 		bool operator!=(const Tile &other) const { return !(*this == other); }
+		friend QDataStream &operator>>(QDataStream&, Tile&);
 
 	private:
 		quint32 *getOrCreateData();
 
 		QSharedDataPointer<TileData> _data;
 };
+
+QDataStream &operator<<(QDataStream&, const Tile&);
 
 }
 

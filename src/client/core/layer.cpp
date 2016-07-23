@@ -1061,34 +1061,32 @@ QColor Layer::isSolidColor() const
 	if(m_width==0 || m_height==0)
 		return QColor();
 
-	const QRgb p0 = pixelAt(0, 0);
+	const QColor c = m_tiles.at(0).solidColor();
+	if(!c.isValid())
+		return QColor();
 
-	for(int y=0;y<m_height;++y) {
-		for(int x=0;x<m_width;++x) {
-			QRgb p = pixelAt(x, y);
-			if(p != p0)
-				return QColor();
-		}
+	for(int i=1;i<m_tiles.size();++i) {
+		const QColor c2 = m_tiles.at(i).solidColor();
+		if(c2 != c)
+			return QColor();
 	}
-	return QColor::fromRgba(p0);
+
+	return c;
 }
 
 void Layer::toDatastream(QDataStream &out) const
 {
-	// Write ID
+	// Write Layer metadata
 	out << qint32(id());
-
-	// Write title
+	out << quint32(width()) << quint32(height());
 	out << m_info.title;
-
-	// Write opacity, blend mode and hidden flag
 	out << m_info.opacity;
 	out << quint8(m_info.blend);
 	out << m_info.hidden;
 
-	// Write layer data
-	// TODO write tile-by-tile, with optimization for solid tiles
-	out << toImage();
+	// Write layer content
+	for(const Tile &t : m_tiles)
+		out << t;
 
 	// Write sublayers
 	out << quint8(m_sublayers.size());
@@ -1099,29 +1097,30 @@ void Layer::toDatastream(QDataStream &out) const
 
 Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
 {
-	// Read ID
+	// Read metadata
 	qint32 id;
 	in >> id;
 
-	// Read title
+	quint32 lw, lh;
+	in >> lw >> lh;
+
 	QString title;
 	in >> title;
 
-	// Read opacity, blend mode and hidden flag
 	uchar opacity;
 	uchar blend;
 	bool hidden;
 	in >> opacity >> blend >> hidden;
 
-	// Read image data
-	QImage img;
-	in >> img;
+	// Read tiles
+	Layer *layer = new Layer(owner, id, title, Qt::transparent, QSize(lw, lh));
 
-	Layer *layer = new Layer(owner, id, title, Qt::transparent, img.size());
+	for(Tile &t : layer->m_tiles)
+		in >> t;
+
 	layer->m_info.opacity = opacity;
 	layer->m_info.blend = BlendMode::Mode(blend);
 	layer->m_info.hidden = hidden;
-	layer->putImage(0, 0, img, BlendMode::MODE_REPLACE);
 
 	// Read sublayers
 	quint8 sublayers;

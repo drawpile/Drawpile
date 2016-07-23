@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -186,12 +186,58 @@ bool Tile::isBlank() const
 	return true;
 }
 
+QColor Tile::solidColor() const
+{
+	if(isNull())
+		return Qt::transparent;
+
+	// Special case check for transparent tiles: look only at the alpha channel
+	if(qAlpha(_data->data[0]) == 0 && isBlank())
+		return Qt::transparent;
+
+	const quint32 c = _data->data[0];
+	for(int i=1;i<BYTES;++i)
+		if(_data->data[i] != c)
+			return QColor();
+
+	return QColor::fromRgba(c);
+}
+
 quint32 *Tile::getOrCreateData() {
 	if(!_data) {
 		_data = new TileData;
 		memset(_data->data, 0, BYTES);
 	}
 	return _data->data;
+}
+
+QDataStream &operator<<(QDataStream &ds, const Tile &t)
+{
+	const QColor solid = t.solidColor();
+	if(solid.isValid()) {
+		ds << quint8(1) << solid.rgba();
+	} else {
+		ds << quint8(0);
+		ds.writeRawData(reinterpret_cast<const char*>(t.data()), Tile::BYTES);
+	}
+	return ds;
+}
+
+QDataStream &operator>>(QDataStream &ds, Tile &t)
+{
+	quint8 isSolid;
+	ds >> isSolid;
+	if(isSolid) {
+		QRgb color;
+		ds >> color;
+		if(qAlpha(color) == 0)
+			t = Tile();
+		else
+			t = Tile(QColor::fromRgba(color));
+	} else {
+		ds.readRawData(reinterpret_cast<char*>(t.getOrCreateData()), Tile::BYTES);
+	}
+	return ds;
 }
 
 #ifndef NDEBUG

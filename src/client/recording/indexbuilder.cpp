@@ -54,7 +54,6 @@ void IndexBuilder::run()
 		return;
 	}
 
-	// Only the actual index at the end is worth compressing
 	zip.setCompression(KZip::NoCompression);
 
 	// Write recording hash
@@ -150,6 +149,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 						sp.toDatastream(ds);
 					}
 
+					zip.setCompression(KZip::DeflateCompression);
 					zip.writeFile(QString("snapshot/%1").arg(m_index.size()), buf.data());
 					stop.flags |= StopEntry::HAS_SNAPSHOT;
 
@@ -166,6 +166,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 					QBuffer buf;
 					buf.open(QBuffer::ReadWrite);
 					thumb.save(&buf, "PNG");
+					zip.setCompression(KZip::NoCompression);
 					zip.writeFile(QString("thumbnail/%1").arg(m_index.size()), buf.data());
 					stop.flags |= StopEntry::HAS_THUMBNAIL;
 				}
