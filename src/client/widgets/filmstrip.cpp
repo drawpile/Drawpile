@@ -74,12 +74,13 @@ void Filmstrip::resizeEvent(QResizeEvent *e)
 
 void Filmstrip::mouseDoubleClickEvent(QMouseEvent *e)
 {
-	//const int fw = frameSize().width();
 	const int x = e->pos().x() + m_scrollbar->value();
-
-	qDebug("Click %d", x);
-
 	emit doubleClicked(x / qreal((frameSize().width()+FRAME_MARGIN) * m_frames) * m_length);
+}
+
+void Filmstrip::wheelEvent(QWheelEvent *e)
+{
+	m_scrollbar->event(e);
 }
 
 void Filmstrip::paintEvent(QPaintEvent *event)

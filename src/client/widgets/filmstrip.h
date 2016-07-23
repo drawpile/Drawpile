@@ -68,6 +68,7 @@ protected:
 	void paintEvent(QPaintEvent *event);
 	void resizeEvent(QResizeEvent *);
 	void mouseDoubleClickEvent(QMouseEvent*);
+	void wheelEvent(QWheelEvent *);
 
 private:
 	QSize frameSize() const;
