@@ -44,6 +44,8 @@ public:
 
 	Index &index() { return m_index; }
 
+	int thumbnailsAvailable() const { return m_thumbnailcount; }
+
 	canvas::StateSavepoint loadSavepoint(int idx, canvas::StateTracker *owner);
 	QImage loadThumbnail(int idx);
 
@@ -51,6 +53,7 @@ private:
 	QString m_recordingfile;
 	KArchive *m_file;
 	Index m_index;
+	int m_thumbnailcount;
 };
 
 }

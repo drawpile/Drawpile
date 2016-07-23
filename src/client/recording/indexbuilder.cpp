@@ -92,8 +92,8 @@ void IndexBuilder::run()
 void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 {
 	static const qint64 SNAPSHOT_INTERVAL_MS = 1000; // snapshot interval in milliseconds
-	static const int SNAPSHOT_MIN_STOPS = 50; // minimum number of stops between snapshots
-	static const int THUMBNAIL_INTERVAL = 200; // minimum number of stops between thumbnails
+	static const int SNAPSHOT_MIN_STOPS = 25; // minimum number of stops between snapshots
+	static const int THUMBNAIL_INTERVAL = 1000; // minimum number of actions between thumbnails
 
 	// We must replay the recorded session to generate canvas snapshots
 	paintcore::LayerStack image;
@@ -104,7 +104,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 	MessageRecord record;
 	QElapsedTimer timer;
 	int snapshotStops = 0;
-	int thumbnailStops = 0;
+	int thumbnailActions = 0;
 	int snapshotCount = 0;
 	int thumbnailCount = 0;
 	timer.start();
@@ -127,7 +127,6 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 			if(msg->type() == protocol::MSG_UNDOPOINT || msg->type() == protocol::MSG_MARKER) {
 				StopEntry stop { quint32(reader.currentIndex()), offset, 0 };
 				++snapshotStops;
-				++thumbnailStops;
 
 				// Snapshots can be saved at stops, but with some limits:
 				// - Must have at least SNAPSHOT_MIN_ACTIONS actions between them
@@ -157,20 +156,6 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 					timer.restart();
 				}
 
-				// Add thumbnails at even intervals
-				if(thumbnailCount==0 || thumbnailStops >= THUMBNAIL_INTERVAL) {
-					thumbnailStops = 0;
-					++thumbnailCount;
-
-					QImage thumb = image.toFlatImage(false).scaled(171, 128, Qt::KeepAspectRatio);
-					QBuffer buf;
-					buf.open(QBuffer::ReadWrite);
-					thumb.save(&buf, "PNG");
-					zip.setCompression(KZip::NoCompression);
-					zip.writeFile(QString("thumbnail/%1").arg(m_index.size()), buf.data());
-					stop.flags |= StopEntry::HAS_THUMBNAIL;
-				}
-
 				m_index.m_stops.append(stop);
 
 				// Add marker entry if message was a MARKER
@@ -180,6 +165,21 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 						msg.cast<protocol::Marker>().text()
 						});
 				}
+			}
+
+			// Add thumbnails at even intervals
+			if(thumbnailCount==0 || thumbnailActions >= THUMBNAIL_INTERVAL) {
+				thumbnailActions = 0;
+
+				QImage thumb = image.toFlatImage(false).scaled(171, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				QBuffer buf;
+				buf.open(QBuffer::ReadWrite);
+				thumb.save(&buf, "PNG");
+				zip.setCompression(KZip::NoCompression);
+				zip.writeFile(QString("thumbnail/%1").arg(thumbnailCount), buf.data());
+				++thumbnailCount;
+			} else {
+				++thumbnailActions;
 			}
 
 		} else if(record.status == MessageRecord::INVALID) {

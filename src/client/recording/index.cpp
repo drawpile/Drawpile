@@ -93,10 +93,6 @@ bool Index::readIndex(QIODevice *out)
 	while(stopcount--) {
 		StopEntry e;
 		ds >> e.index >> e.pos >> e.flags;
-
-		if((e.flags & StopEntry::HAS_THUMBNAIL))
-			thumbs.append(stops.size());
-
 		stops.append(e);
 	}
 
@@ -116,7 +112,6 @@ bool Index::readIndex(QIODevice *out)
 
 	m_stops = stops;
 	m_markers = markers;
-	m_thumbnails = thumbs;
 	m_actioncount = actioncount;
 
 	return true;

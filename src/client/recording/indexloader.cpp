@@ -32,6 +32,7 @@ IndexLoader::IndexLoader(const QString &recording, const QString &index)
 {
 	m_recordingfile = recording;
 	m_file = new KZip(index);
+	m_thumbnailcount = 0;
 }
 
 IndexLoader::~IndexLoader()
@@ -51,11 +52,25 @@ bool IndexLoader::open()
 	if(idxHash != recHash)
 		return false;
 
+	// Load the index
 	QByteArray indexdata = utils::getArchiveFile(*m_file, "index");
 	QBuffer indexbuffer(&indexdata);
 	indexbuffer.open(QBuffer::ReadOnly);
 	if(!m_index.readIndex(&indexbuffer))
 		return false;
+
+	// Count thumbnails
+	const KArchiveEntry *thumbdirentry = m_file->directory()->entry("thumbnail");
+	if(!thumbdirentry) {
+		qWarning("No thumbnails in index!");
+		return true;
+	}
+	if(!thumbdirentry->isDirectory()) {
+		qWarning("Index thumbnail/ not a directory!");
+		return true;
+	}
+	const KArchiveDirectory *thumbdir = static_cast<const KArchiveDirectory*>(thumbdirentry);
+	m_thumbnailcount = thumbdir->entries().size();
 
 	return true;
 }
@@ -85,11 +100,9 @@ canvas::StateSavepoint IndexLoader::loadSavepoint(int idx, canvas::StateTracker 
 
 QImage IndexLoader::loadThumbnail(int idx)
 {
-	Q_ASSERT(idx>=0 && idx<m_index.thumbnails().size());
+	Q_ASSERT(idx>=0 && idx<m_thumbnailcount);
 
-	const int stop = m_index.thumbnails().at(idx);
-
-	QByteArray data = utils::getArchiveFile(*m_file, QString("thumbnail/%1").arg(stop));
+	QByteArray data = utils::getArchiveFile(*m_file, QString("thumbnail/%1").arg(idx));
 	return QImage::fromData(data, "PNG");
 }
 

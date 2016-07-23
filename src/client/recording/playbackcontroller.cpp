@@ -418,7 +418,7 @@ QStringList PlaybackController::getMarkers() const
 int PlaybackController::indexThumbnailCount() const
 {
 	if(m_indexloader)
-		return m_indexloader->index().thumbnails().size();
+		return m_indexloader->thumbnailsAvailable();
 	else
 		return -1;
 }

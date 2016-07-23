@@ -31,7 +31,6 @@ static const quint16 INDEX_VERSION = 0x0004;
 
 struct StopEntry {
 	static const quint8 HAS_SNAPSHOT = 0x01;
-	static const quint8 HAS_THUMBNAIL = 0x02;
 
 	//! Index number of the message
 	quint32 index;
@@ -69,9 +68,6 @@ public:
 	//! Get the marker vector
 	const QVector<MarkerEntry> &markers() const { return m_markers; }
 
-	//! Get list of available thumbnail indices
-	const QList<int> &thumbnails() const { return m_thumbnails; }
-
 	//! Get the total number of actions in the recording
 	int actionCount() const { return m_actioncount; }
 
@@ -93,7 +89,6 @@ public:
 private:
 	QVector<StopEntry> m_stops;
 	QVector<MarkerEntry> m_markers;
-	QList<int> m_thumbnails;
 	int m_actioncount;
 };
 
