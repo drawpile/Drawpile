@@ -140,6 +140,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
+	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -1051,13 +1052,19 @@ void MainWindow::setRecorderStatus(bool on)
 		}
 		_recorderstatus->show();
 	} else {
+		QAction *recordAction = getAction("recordsession");
 		if(on) {
 			QIcon icon = icon::fromTheme("media-record");
 			_recorderstatus->setPixmap(icon.pixmap(16, 16));
 			_recorderstatus->setToolTip("Recording session");
 			_recorderstatus->show();
+			recordAction->setText(tr("Stop Recording"));
+			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
 		} else {
+
 			_recorderstatus->hide();
+			recordAction->setText(tr("Record..."));
+			recordAction->setIcon(icon::fromTheme("media-record"));
 		}
 
 		getAction("toolmarker")->setEnabled(on);
@@ -1066,14 +1073,8 @@ void MainWindow::setRecorderStatus(bool on)
 
 void MainWindow::toggleRecording()
 {
-	QAction *recordAction = getAction("recordsession");
-
 	if(m_doc->isRecording()) {
 		m_doc->stopRecording();
-
-		recordAction->setText("Record...");
-		recordAction->setIcon(icon::fromTheme("media-record"));
-		setRecorderStatus(false);
 		return;
 	}
 
@@ -1086,14 +1087,8 @@ void MainWindow::toggleRecording()
 
 	if(!file.isEmpty()) {
 		QString error;
-		if(m_doc->startRecording(file, &error)) {
-			recordAction->setText(tr("Stop Recording"));
-			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
-			setRecorderStatus(true);
-
-		} else {
+		if(!m_doc->startRecording(file, &error))
 			showErrorMessage(error);
-		}
 	}
 }
 
