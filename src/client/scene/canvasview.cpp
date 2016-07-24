@@ -88,8 +88,9 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		} else {
 			scrollContentsBy(-xoff, -yoff);
 		}
+		viewRectChanged();
 	});
-
+	viewRectChanged();
 }
 
 void CanvasView::zoomSteps(int steps)
@@ -98,6 +99,7 @@ void CanvasView::zoomSteps(int steps)
 		setZoom(qRound((_zoom + steps * 10) / 10) * 10);
 	else
 		setZoom(qRound((_zoom + steps * 50) / 50) * 50);
+	viewRectChanged();
 }
 
 void CanvasView::zoomin()
@@ -928,6 +930,23 @@ void CanvasView::showEvent(QShowEvent *event)
 		}
 		w=w->parentWidget();
 	}
+}
+
+void CanvasView::scrollContentsBy(int dx, int dy)
+{
+	QGraphicsView::scrollContentsBy(dx, dy);
+	viewRectChanged();
+}
+
+void CanvasView::resizeEvent(QResizeEvent *e)
+{
+	QGraphicsView::resizeEvent(e);
+	viewRectChanged();
+}
+
+void CanvasView::viewRectChanged()
+{
+	emit viewRectChange(mapToScene(rect()));
 }
 
 }

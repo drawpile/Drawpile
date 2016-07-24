@@ -101,6 +101,8 @@ class CanvasView : public QGraphicsView
 		void penUp();
 		void quickAdjust(qreal value);
 
+		void viewRectChange(const QPolygonF &viewport);
+
 	public slots:
 		//! Set the size of the brush preview outline
 		void setOutlineSize(int size);
@@ -160,6 +162,8 @@ class CanvasView : public QGraphicsView
 		void dragMoveEvent(QDragMoveEvent *event);
 		void dropEvent(QDropEvent *event);
 		void showEvent(QShowEvent *event);
+		void scrollContentsBy(int dx, int dy);
+		void resizeEvent(QResizeEvent *);
 
 	private:
 		// unified mouse/stylus event handlers
@@ -196,6 +200,8 @@ class CanvasView : public QGraphicsView
 		void touchEvent(QTouchEvent *event);
 
 		void resetCursor();
+
+		void viewRectChanged();
 
 		/**
 		 * @brief State of the pen

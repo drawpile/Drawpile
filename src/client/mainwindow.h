@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ namespace docks {
 	class LayerList;
 	class PaletteBox;
 	class ColorBox;
+	class Navigator;
 }
 namespace dialogs {
 	class PlaybackDialog;
@@ -204,6 +205,7 @@ private:
 	docks::ColorBox *_dock_colors;
 	widgets::ChatBox *_chatbox;
 	widgets::UserList *_userlist;
+	docks::Navigator *_dock_navigator;
 
 	widgets::CanvasView *_view;
 

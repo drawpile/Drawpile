@@ -129,6 +129,7 @@ set (
 	widgets/filmstrip.cpp 
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
+	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp

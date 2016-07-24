@@ -80,6 +80,7 @@
 #include "widgets/userlistwidget.h"
 
 #include "docks/toolsettingsdock.h"
+#include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
 #include "docks/inputsettingsdock.h"
@@ -257,10 +258,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_canvasscene->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvasscene);
+	_dock_navigator->setScene(_canvasscene);
 
 	// Color docks
 	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_colors, SLOT(setColor(QColor)));
 	connect(_dock_colors, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
+
+	// Navigator <-> View
+	connect(_dock_navigator, &docks::Navigator::focusMoved, _view, &widgets::CanvasView::scrollTo);
+	connect(_view, &widgets::CanvasView::viewRectChange, _dock_navigator, &docks::Navigator::setViewFocus);
+	connect(_dock_navigator, &docks::Navigator::wheelZoom, _view, &widgets::CanvasView::zoomSteps);
+
 
 	// Network client <-> UI connections
 	connect(_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
@@ -2384,6 +2392,12 @@ void MainWindow::createDocks()
 	_dock_layers->setObjectName("LayerList");
 	_dock_layers->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_layers);
+
+	// Create navigator
+	_dock_navigator = new docks::Navigator(this);
+	_dock_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_navigator);
+	_dock_navigator->hide(); // hidden by default
 
 	// Create input settings
 	_dock_input = new docks::InputSettings(this);
