@@ -45,6 +45,8 @@ CanvasView::CanvasView(QWidget *parent)
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
 	_showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_tabletmode(ENABLE_TABLET),
+	_lastPressure(0),
+	_stylusDown(false),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
 	_hotBorderTop(false),
