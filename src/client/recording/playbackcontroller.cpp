@@ -35,8 +35,6 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QTimer>
-#include <QDebug>
-#include <QMessageBox> // TODO move away from here
 
 namespace recording {
 
@@ -177,7 +175,7 @@ void PlaybackController::nextCommands(int stepCount)
 		break;
 	}
 	case MessageRecord::INVALID:
-		qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
+		qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
 		if(m_play)
 			m_timer->start(1);
 		break;
@@ -218,7 +216,7 @@ void PlaybackController::nextSequence()
 			}
 			break;
 		case MessageRecord::INVALID:
-			qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
+			qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
 			break;
 		case MessageRecord::END_OF_RECORDING:
 			emit endOfFileReached();
@@ -281,7 +279,7 @@ void PlaybackController::jumpTo(int pos)
 			}
 			break;
 		case MessageRecord::INVALID:
-			qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
+			qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
 			break;
 		case MessageRecord::END_OF_RECORDING:
 			emit endOfFileReached();
@@ -303,7 +301,7 @@ void PlaybackController::jumpToSnapshot(int idx)
 	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->stateTracker());
 
 	if(!savepoint) {
-		qWarning() << "error loading savepoint";
+		qWarning("error loading savepoint");
 		return;
 	}
 
@@ -505,9 +503,7 @@ void PlaybackController::exporterError(const QString &message)
 	if(isPlaying())
 		setPlaying(false);
 
-	// Show warning message
-	// TODO move this away from here
-	QMessageBox::warning(0, tr("Video error"), message);
+	emit exportError(message);
 
 	exporterFinished();
 }

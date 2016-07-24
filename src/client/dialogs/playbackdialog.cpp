@@ -98,6 +98,9 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 
 	connect(m_ctrl, &PlaybackController::exportStarted, this, &PlaybackDialog::onVideoExportStarted);
 	connect(m_ctrl, &PlaybackController::exportEnded, this, &PlaybackDialog::onVideoExportEnded);
+	connect(m_ctrl, &PlaybackController::exportError, [this](const QString &msg) {
+		QMessageBox::warning(this, tr("Video error"), msg);
+	});
 
 	connect(m_ui->saveFrame, &QAbstractButton::clicked, m_ctrl, &PlaybackController::exportFrame);
 	connect(m_ui->stopExport, &QAbstractButton::clicked, m_ctrl, &PlaybackController::stopExporter);

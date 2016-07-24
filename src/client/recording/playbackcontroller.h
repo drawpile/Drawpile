@@ -115,6 +115,7 @@ signals:
 
 	void exportStarted();
 	void exportEnded();
+	void exportError(const QString &message);
 
 	void indexLoadError(const QString &message, bool canRetry);
 	void indexBuildProgressed(qreal progress);
