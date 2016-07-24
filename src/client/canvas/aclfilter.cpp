@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,16 +38,19 @@ void AclFilter::reset(int myId, bool localMode)
 {
 	m_layers->unlockAll();
 	m_myId = myId;
-	setOperator(localMode);
-
+	m_isOperator = localMode;
 	m_sessionLocked = false;
 	m_localUserLocked = false;
+	m_layerCtrlLocked = false;
+	m_ownLayers = false;
 	m_userLayers.clear();
-	emit localLockChanged(false);
 
-	setLayerControlLock(false);
-	setOwnLayers(false);
 	m_lockDefault = false;
+
+	emit localOpChanged(m_isOperator);
+	emit localLockChanged(false);
+	emit ownLayersChanged(m_ownLayers);
+	emit layerControlLockChanged(m_layerCtrlLocked);
 }
 
 // Get the ID of the layer's creator. This assumes the ID prefixing convention is used.
