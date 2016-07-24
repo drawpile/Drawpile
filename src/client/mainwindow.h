@@ -32,7 +32,6 @@ class QLabel;
 class QSplitter;
 class QTimer;
 class QToolButton;
-class QQuickItem;
 
 class Document;
 
@@ -217,7 +216,6 @@ private:
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 
-	QQuickItem *m_root;
 	drawingboard::CanvasScene *_canvasscene;
 
 	QMenu *_recent;

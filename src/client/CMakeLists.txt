@@ -2,7 +2,6 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Quick REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
@@ -48,12 +47,6 @@ set (
 	canvas/aclfilter.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
-	quick/layerstackitem.cpp
-	quick/canvasinputarea.cpp
-	quick/canvastransform.cpp
-	quick/eventfixfilter.cpp
-	quick/polylineitem.cpp
-	quick/tabletstate.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp
@@ -90,7 +83,6 @@ set (
 	utils/listserverdelegate.cpp
 	utils/settings.cpp
 	utils/icon.cpp
-	utils/iconprovider.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp
@@ -225,7 +217,6 @@ qt5_wrap_ui( UI_Headers ${UIs} )
 
 qt5_add_resources( QtResource ui/cursors/cursors.qrc )
 qt5_add_resources( QtResource ui/icons/builtin.qrc )
-qt5_add_resources( QtResource qml/qml.qrc )
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
@@ -299,7 +290,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Quick Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
 
 if(KF5DNSSD_FOUND) 
     add_definitions(-DHAVE_DNSSD) 

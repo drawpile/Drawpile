@@ -19,7 +19,7 @@
 #ifndef InputSettings_H
 #define InputSettings_H
 
-#include "quick/pressure.h"
+#include "canvas/pressure.h"
 
 #include <QDockWidget>
 

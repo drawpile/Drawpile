@@ -26,7 +26,7 @@ class QTouchEvent;
 
 #include "core/point.h"
 #include "tools/tool.h"
-#include "quick/pressure.h"
+#include "canvas/pressure.h"
 
 namespace drawingboard {
 	class CanvasScene;

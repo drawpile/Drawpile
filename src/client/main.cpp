@@ -25,9 +25,6 @@
 #include "utils/icon.h"
 #include "notifications.h"
 
-#include "canvas/register.h"
-#include "quick/register.h"
-
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
 #endif
@@ -204,9 +201,6 @@ void initTranslations(const QLocale &locale)
 int main(int argc, char *argv[]) {
 	// Initialize application
 	DrawpileApp app(argc,argv);
-
-	registerCanvasTypes();
-	registerQuickTypes();
 
 	icon::selectThemeVariant();
 

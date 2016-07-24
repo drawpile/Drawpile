@@ -42,15 +42,6 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
-#include <QQuickView>
-#include <QQmlEngine>
-#include <QQmlContext>
-#include <QQuickItem>
-
-// Note: when enabling this, change the paintChanged(..., false) to true in CanvasItem::paint
-// to enable the two canvases to update simultaneously.
-//#define ENABLE_QML_CANVAS
-
 #ifndef NDEBUG
 #include "core/tile.h"
 #endif
@@ -67,8 +58,6 @@
 #include "document.h"
 
 #include "core/layerstack.h"
-#include "quick/eventfixfilter.h"
-#include "quick/tabletstate.h"
 #include "canvas/loader.h"
 #include "canvas/canvasmodel.h"
 #include "scene/canvasview.h"
@@ -216,31 +205,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_viewStatusBar->addPermanentWidget(_lockstatus);
 
 	int SPLITTER_WIDGET_IDX = 0;
-#ifdef ENABLE_QML_CANVAS
-	// Create QtQuick view
-	// Note: we use a QQuickWidget here instead of a QQuickView with createWindowContainer,
-	// because containered QQuickView's focus keyboard handling is utterly broken. (last tested with Qt 5.5.0)
-	// See https://bugreports.qt.io/browse/QTBUG-34414
-	// The downside is an additional layer of indirection and no threaded rendering.
-	// Additionally, we use our own TabletQuickWidget, since normal the QQuickWindow or Widget
-	// doesn't dispatch tablet events.
-	QQuickView *qqview = new QQuickView;
-	qqview->setResizeMode(QQuickView::SizeRootObjectToView);
-	qqview->engine()->addImportPath(":/qml/");
-	//qqview->engine()->addImageProvider(QStringLiteral("theme"), new icon::IconProvider);
-
-	QWidget *qqviewContainer = QWidget::createWindowContainer(qqview, _splitter);
-
-	TabletState *tabletstate = new TabletState(qqview);
-	qqview->installEventFilter(new EventFixFilter(tabletstate, qqviewContainer));
-	qqview->rootContext()->setContextProperty("tabletState", tabletstate);
-
-	qqview->rootContext()->setContextProperty("inputConfig", _dock_input);
-
-	_splitter->addWidget(qqviewContainer);
-	_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
-
-#endif
 
 	// Create canvas view
 	_view = new widgets::CanvasView(this);
@@ -287,14 +251,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	chatsplitter->setStretchFactor(1, 1);
 	_splitter->addWidget(chatsplitter);
 
-	// Make sure the canvas gets the majority share of the splitter the first time
-	// (this if is just to so that the experimental QML canvas can be enabled/disabled easily)
-	if(SPLITTER_WIDGET_IDX==2) {
-		_splitter->setStretchFactor(0, 1);
-		_splitter->setStretchFactor(1, 1);
-		_splitter->setStretchFactor(2, 0);
-	}
-
 	// Create canvas scene
 	_canvasscene = new drawingboard::CanvasScene(this);
 	_canvasscene->setBackgroundBrush(
@@ -319,10 +275,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
-
-#ifdef ENABLE_QML_CANVAS
-	qqview->rootContext()->setContextProperty("controller", m_toolctrl);
-#endif
 
 	connect(_dock_input, &docks::InputSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, _view, &widgets::CanvasView::setToolCursor);
@@ -378,14 +330,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 #ifdef Q_OS_MAC
 	MacMenu::instance()->addWindow(this);
-#endif
-
-#ifdef ENABLE_QML_CANVAS
-	// Initialize QML components
-	qqview->setSource(QUrl("qrc:/qml/Canvas/Canvas.qml"));
-
-	m_root = qqview->rootObject();
-	Q_ASSERT(m_root);
 #endif
 
 	// Show self
@@ -445,11 +389,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	_userlist->setCanvas(canvas);
 
 	_currentdoctools->setEnabled(true);
-
-#ifdef ENABLE_QML_CANVAS
-	// Probably not needed
-	QMetaObject::invokeMethod(m_root, "initCanvas", Q_ARG(QVariant, QVariant::fromValue(m_canvas)));
-#endif
 }
 
 /**

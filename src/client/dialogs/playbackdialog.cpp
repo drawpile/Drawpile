@@ -31,7 +31,6 @@ using widgets::Filmstrip;
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
 
-#include "utils/iconprovider.h"
 #include "ui_playback.h"
 
 #include <QDebug>

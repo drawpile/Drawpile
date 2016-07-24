@@ -21,7 +21,6 @@
 #include "indexbuilder.h"
 #include "indexloader.h"
 
-#include "utils/iconprovider.h"
 #include "export/videoexporter.h"
 
 #include "../shared/record/reader.h"
