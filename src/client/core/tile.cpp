@@ -177,9 +177,9 @@ bool Tile::isBlank() const
 		return true;
 
 	const quint32 *pixel = _data->data;
-	const quint32 *end = pixel + SIZE*SIZE;
+	const quint32 *end = pixel + LENGTH;
 	while(pixel<end) {
-		if((*pixel & 0xff000000))
+		if(qAlpha(*pixel))
 			return false;
 		++pixel;
 	}
@@ -188,15 +188,12 @@ bool Tile::isBlank() const
 
 QColor Tile::solidColor() const
 {
-	if(isNull())
-		return Qt::transparent;
-
 	// Special case check for transparent tiles: look only at the alpha channel
-	if(qAlpha(_data->data[0]) == 0 && isBlank())
+	if(isBlank())
 		return Qt::transparent;
 
 	const quint32 c = _data->data[0];
-	for(int i=1;i<BYTES;++i)
+	for(int i=1;i<LENGTH;++i)
 		if(_data->data[i] != c)
 			return QColor();
 
