@@ -764,7 +764,7 @@ void LoginHandler::handleError(const QString &msg)
 	else if(ecode == "NAMEINUSE")
 		error = tr("Username already taken!");
 	else if(ecode == "CLOSED")
-		error = tr("Session is closed!");
+		error = _mode == JOIN ? tr("Session is closed!") : tr("Server is full!");
 	else if(ecode == "BANNED")
 		error = tr("This username has been banned!");
 	else if(ecode == "SESSIONIDINUSE")
