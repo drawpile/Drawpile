@@ -27,6 +27,7 @@
 
 #include "../shared/net/login.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/flow.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -100,8 +101,11 @@ void LoginHandler::serverDisconnected()
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
 	if(message->type() == protocol::MSG_DISCONNECT) {
-		// server reports login errors with MSG_LOGIN, so there is nothing
-		// of more interest here.
+		const protocol::Disconnect &dmsg = message.cast<protocol::Disconnect>();
+		if(dmsg.reason() == protocol::Disconnect::KICK) {
+			qWarning("We are IP banned from this server!");
+			failLogin(tr("Your IP address is banned from this server"));
+		}
 		return;
 	}
 

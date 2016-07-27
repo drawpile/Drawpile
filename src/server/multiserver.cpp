@@ -319,18 +319,17 @@ void MultiServer::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
 
-	if(_banlist) {
-		if(_banlist->isBanned(socket->peerAddress())) {
-			logger::info() << "Banned client from address" << socket->peerAddress() << "not accepted.";
-			socket->disconnectFromHost();
-			socket->deleteLater();
-			return;
-		}
-	}
-
 	logger::info() << "Accepted new client from address" << socket->peerAddress();
 
-	_sessions->addClient(new Client(socket));
+	auto *client = new Client(socket);
+	_sessions->addClient(client);
+
+	if(_banlist) {
+		if(_banlist->isBanned(socket->peerAddress())) {
+			logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
+			client->disconnectKick("BANNED");
+		}
+	}
 
 	printStatusUpdate();
 }
