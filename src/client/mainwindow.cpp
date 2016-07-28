@@ -372,6 +372,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
 
+	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
+
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, _chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
@@ -1394,6 +1396,22 @@ void MainWindow::onOperatorModeChange(bool op)
 	m_docadmintools->setEnabled(op);
 	m_layerctrlmode->setEnabled(op && !m_doc->client()->isLocalServer());
 	_dock_layers->setOperatorMode(op);
+	onImageCmdLockChange(m_doc->canvas()->aclFilter()->isImagesLocked());
+}
+
+void MainWindow::onImageCmdLockChange(bool lock)
+{
+	getAction("imagecmdlock")->setChecked(lock);
+
+	const bool e = !lock || m_doc->canvas()->aclFilter()->isLocalUserOperator();
+
+	static const char *IMAGE_ACTIONS[] = {
+		"cutlayer", "paste", "pastefile", "stamp",
+		"cleararea", "fillfgarea", "recolorarea", "colorerasearea",
+		"toolfill"
+	};
+	for(const char *a : IMAGE_ACTIONS)
+		getAction(a)->setEnabled(e);
 }
 
 void MainWindow::updateLayerCtrlMode()
@@ -1805,6 +1823,8 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 QAction *MainWindow::getAction(const QString &name)
 {
 	QAction *a = findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
+	if(!a)
+		qFatal("%s: no such action", name.toLocal8Bit().constData());
 	Q_ASSERT(a);
 	return a;
 }
@@ -2202,11 +2222,13 @@ void MainWindow::setupActions()
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset"));
 
+	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	_admintools->addAction(locksession);
 	_admintools->addAction(closesession);
+	_admintools->addAction(imagecmdlock);
 	_admintools->addAction(changetitle);
 	_admintools->addAction(changepassword);
 	_admintools->addAction(resetsession);
@@ -2221,6 +2243,7 @@ void MainWindow::setupActions()
 		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
 	});
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
+	connect(imagecmdlock, &QAction::triggered, m_doc, &Document::sendLockImageCommands);
 	connect(m_layerctrlmode, &QActionGroup::triggered, [this](QAction *action) {
 		switch(action->property("mode").toInt()) {
 		case 0: m_doc->sendLayerCtrlMode(false, false); break;
@@ -2245,6 +2268,7 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(changetitle);
 	sessionmenu->addAction(changepassword);
 	sessionmenu->addAction(resetsession);
+	sessionmenu->addAction(imagecmdlock);
 	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(locksession);
 

@@ -138,6 +138,7 @@ public slots:
 	void sendPasswordChange(const QString &password);
 	void sendResetSession();
 	void sendLockSession(bool lock);
+	void sendLockImageCommands(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 

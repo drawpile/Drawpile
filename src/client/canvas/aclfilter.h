@@ -76,6 +76,15 @@ public:
 	 */
 	bool isOwnLayers() const { return m_ownLayers; }
 
+	/**
+	 * @brief Are image commands (PutImage, FillRect) locked?
+	 *
+	 * When image commands are locked, commands that can be used to
+	 * upload arbitrary pixel data or affect large areas at once are
+	 * limited to session operators.
+	 */
+	bool isImagesLocked() const { return m_imagesLocked; }
+
 	uint16_t sessionAclFlags() const;
 
 signals:
@@ -83,6 +92,7 @@ signals:
 	bool localLockChanged(bool lock);
 	bool layerControlLockChanged(bool lock);
 	void ownLayersChanged(bool own);
+	void imageCmdLockChanged(bool lock);
 
 private:
 	void setOperator(bool op);
@@ -90,6 +100,7 @@ private:
 	void setUserLock(bool lock);
 	void setLayerControlLock(bool lock);
 	void setOwnLayers(bool own);
+	void setLockImages(bool lock);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
@@ -101,6 +112,7 @@ private:
 	bool m_sessionLocked;
 	bool m_localUserLocked;
 	bool m_layerCtrlLocked;
+	bool m_imagesLocked;
 	bool m_ownLayers;
 	bool m_lockDefault;
 	QHash<int, int> m_userLayers;

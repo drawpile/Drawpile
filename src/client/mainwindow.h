@@ -134,6 +134,7 @@ private slots:
 	void toggleRecording();
 
 	void onOperatorModeChange(bool op);
+	void onImageCmdLockChange(bool lock);
 	void updateLayerCtrlMode();
 
 	void onServerConnected();

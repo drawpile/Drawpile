@@ -42,6 +42,7 @@ void AclFilter::reset(int myId, bool localMode)
 	m_sessionLocked = false;
 	m_localUserLocked = false;
 	m_layerCtrlLocked = false;
+	m_imagesLocked = false;
 	m_ownLayers = false;
 	m_userLayers.clear();
 
@@ -51,6 +52,7 @@ void AclFilter::reset(int myId, bool localMode)
 	emit localLockChanged(false);
 	emit ownLayersChanged(m_ownLayers);
 	emit layerControlLockChanged(m_layerCtrlLocked);
+	emit imageCmdLockChanged(m_imagesLocked);
 }
 
 // Get the ID of the layer's creator. This assumes the ID prefixing convention is used.
@@ -65,10 +67,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	User u = m_users->getUserById(msg.contextId());
 
 	// User list is empty in local mode
-	bool isOperator = u.isOperator || (msg.contextId() == m_myId && m_isOperator);
+	const bool isOpUser = u.isOperator || (msg.contextId() == m_myId && m_isOperator);
 
 	// First: check if this is an operator-only command
-	if(msg.contextId()!=0 && msg.isOpCommand() && !isOperator)
+	if(msg.contextId()!=0 && msg.isOpCommand() && !isOpUser)
 		return false;
 
 	// Special commands that affect access controls
@@ -87,7 +89,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
 		// TODO allow layer ACL to be used by non-operators when OwnLayers mode is active
 
-		if(!isOperator && !(isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId()))
+		if(!isOpUser && !(isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId()))
 			return false;
 
 		m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
@@ -104,6 +106,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		setSessionLock(lmsg.isSessionLocked());
 		setLayerControlLock(lmsg.isLayerControlLocked());
 		setOwnLayers(lmsg.isOwnLayers());
+		setLockImages(lmsg.isImagesLocked());
 		m_lockDefault = lmsg.isLockedByDefault();
 
 		return true;
@@ -139,21 +142,21 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 		// In OwnLayer mode, users may create, delete and adjust their own layers.
 		// Otherwise, session operator privileges are required.
-		if(isLayerControlLocked() && !isOperator && !(isOwnLayers() && layerCreator(layerId) == msg.contextId()))
+		if(isLayerControlLocked() && !isOpUser && !(isOwnLayers() && layerCreator(layerId) == msg.contextId()))
 			return false;
 		break;
 	}
 
 	case MSG_LAYER_ORDER:
 		// Reordering is limited to session ops
-		if(!isOperator)
+		if(!isOpUser)
 			return false;
 		break;
 
 	case MSG_PUTIMAGE:
-		return !m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId());
+		return !((isImagesLocked() && !isOpUser) || m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
 	case MSG_FILLRECT:
-		return !m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId());
+		return !((isImagesLocked() && !isOpUser) || m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId()));
 
 	case MSG_PEN_MOVE:
 		return !m_layers->isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
@@ -202,6 +205,14 @@ void AclFilter::setLayerControlLock(bool lock)
 	if(m_layerCtrlLocked != lock) {
 		m_layerCtrlLocked = lock;
 		emit layerControlLockChanged(lock);
+	}
+}
+
+void AclFilter::setLockImages(bool lock)
+{
+	if(m_imagesLocked != lock) {
+		m_imagesLocked = lock;
+		emit imageCmdLockChanged(lock);
 	}
 }
 

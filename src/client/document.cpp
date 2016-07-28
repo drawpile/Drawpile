@@ -384,6 +384,19 @@ void Document::sendLockSession(bool lock)
 	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
 }
 
+void Document::sendLockImageCommands(bool lock)
+{
+	Q_ASSERT(m_canvas);
+
+	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
+	if(lock)
+		flags |= protocol::SessionACL::LOCK_IMAGES;
+	else
+		flags &= ~protocol::SessionACL::LOCK_IMAGES;
+
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
+}
+
 void Document::sendLayerCtrlMode(bool lockCtrl, bool ownLayers)
 {
 	Q_ASSERT(m_canvas);

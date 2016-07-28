@@ -198,6 +198,7 @@ public:
 	static const uint16_t LOCK_DEFAULT = 0x02;   // New users will be locked by default (lock applied when the JOIN message is received)
 	static const uint16_t LOCK_LAYERCTRL = 0x04; // Layer controls are limited to session operators
 	static const uint16_t LOCK_OWNLAYERS = 0x08; // Users can only delete/adjust their own layers. (May set layer ACLs too)
+	static const uint16_t LOCK_IMAGES = 0x10;    // PutImage and FillRect commands (and features that use them) are limited to session operators
 
 	SessionACL(uint8_t ctx, uint16_t flags) : Message(MSG_SESSION_ACL, ctx), m_flags(flags) {}
 
@@ -211,6 +212,7 @@ public:
 	bool isLockedByDefault() const { return m_flags & LOCK_DEFAULT; }
 	bool isLayerControlLocked() const { return m_flags & LOCK_LAYERCTRL; }
 	bool isOwnLayers() const { return m_flags & LOCK_OWNLAYERS; }
+	bool isImagesLocked() const { return m_flags & LOCK_IMAGES; }
 
 protected:
 	int payloadLength() const;
