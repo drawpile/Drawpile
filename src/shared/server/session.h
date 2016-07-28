@@ -182,6 +182,13 @@ public:
 	void setLayerControlLocked(bool locked);
 
 	/**
+	 * @brief Have putimage and fillrect been locked for non-operators?
+	 * @return true if putimages are locked
+	 */
+	bool isPutImageLocked() const { return _putimagelocked; }
+	void setPutImageLocked(bool locked);
+
+	/**
 	 * @brief Are newly joining users locked by default?
 	 * @return true if users are automatically locked when they join
 	 */
@@ -516,6 +523,7 @@ private:
 
 	bool _locked;
 	bool _layerctrllocked;
+	bool _putimagelocked;
 	bool _closed;
 	bool _lockdefault;
 	bool _allowPersistent;

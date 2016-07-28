@@ -378,11 +378,11 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 			} break;
 		case MSG_PUTIMAGE:
-			if(isLayerLocked(msg.cast<PutImage>().layer()))
+			if((_session->isPutImageLocked() && !isOperator()) || isLayerLocked(msg.cast<PutImage>().layer()))
 				return;
 			break;
 		case MSG_FILLRECT:
-			if(isLayerLocked(msg.cast<FillRect>().layer()))
+			if((_session->isPutImageLocked() && !isOperator()) || isLayerLocked(msg.cast<FillRect>().layer()))
 				return;
 			break;
 		default: /* other types are always allowed */ break;

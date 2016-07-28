@@ -139,9 +139,10 @@ public:
 	static const uint16_t ATTR_LOCKDEFAULT = 0x08;
 	static const uint16_t ATTR_PERSISTENT = 0x10;
 	static const uint16_t ATTR_PRESERVECHAT = 0x20;
+	static const uint16_t ATTR_LOCKIMAGE = 0x40;
 
 	SessionConf(uint8_t maxusers, uint16_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
-	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent, bool preservechat)
+	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent, bool preservechat, bool putimagelocked)
 		: SessionConf(
 			  maxusers,
 			  (locked?ATTR_LOCKED:0) |
@@ -149,7 +150,8 @@ public:
 			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0) |
 			  (lockdefault?ATTR_LOCKDEFAULT:0) |
 			  (persistent?ATTR_PERSISTENT:0) |
-			  (preservechat?ATTR_PRESERVECHAT:0)
+			  (preservechat?ATTR_PRESERVECHAT:0) |
+			  (putimagelocked?ATTR_LOCKIMAGE:0)
 		) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
@@ -167,6 +169,9 @@ public:
 
 	//! Are layer controls limited to operators only?
 	bool isLayerControlsLocked() const { return _attrs & ATTR_LAYERCTRLLOCKED; }
+
+	//! Is PutImage and FillRect locked?
+	bool isPutImageLocked() const { return _attrs & ATTR_LOCKIMAGE; }
 
 	//! Are new users locked automatically when they join?
 	bool isUsersLockedByDefault() const { return _attrs & ATTR_LOCKDEFAULT; }

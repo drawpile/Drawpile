@@ -43,7 +43,7 @@ SessionState::SessionState(const SessionId &id, int minorVersion, const QString 
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_founder(founder),
-	_locked(false), _layerctrllocked(true), _closed(false),
+	_locked(false), _layerctrllocked(true), _putimagelocked(false), _closed(false),
 	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false),
 	_preservechat(false)
 {
@@ -200,6 +200,14 @@ void SessionState::setLayerControlLocked(bool locked)
 {
 	if(_layerctrllocked != locked) {
 		_layerctrllocked = locked;
+		addToCommandStream(sessionConf());
+	}
+}
+
+void SessionState::setPutImageLocked(bool locked)
+{
+	if(_putimagelocked != locked) {
+		_putimagelocked = locked;
 		addToCommandStream(sessionConf());
 	}
 }
@@ -630,6 +638,7 @@ void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 	_locked = cmd.isLocked();
 	_closed = cmd.isClosed();
 	_layerctrllocked = cmd.isLayerControlsLocked();
+	_putimagelocked = cmd.isPutImageLocked();
 	_lockdefault = cmd.isUsersLockedByDefault();
 	_persistent = cmd.isPersistent() && isPersistenceAllowed();
 }
@@ -643,7 +652,8 @@ protocol::MessagePtr SessionState::sessionConf() const
 		_layerctrllocked,
 		_lockdefault,
 		_persistent,
-		_preservechat
+		_preservechat,
+		_putimagelocked
 	));
 }
 

@@ -355,7 +355,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
-	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool)));
+	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool, bool, bool)), this, SLOT(sessionConfChanged(bool,bool,bool, bool, bool)));
 	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 	connect(_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
@@ -1463,11 +1463,24 @@ void MainWindow::loggedin(bool join)
 }
 
 
-void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat)
+void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed, bool preservechat, bool imagelocked)
 {
 	getAction("locksession")->setChecked(locked);
 	getAction("locklayerctrl")->setChecked(layerctrllocked);
+	getAction("lockputimage")->setChecked(imagelocked);
 	getAction("denyjoins")->setChecked(closed);
+
+	bool imgLock = imagelocked && !_client->isOperator();
+	getAction("cutlayer")->setEnabled(!imgLock);
+	getAction("paste")->setEnabled(!imgLock);
+	getAction("pastefile")->setEnabled(!imgLock);
+	getAction("stamp")->setEnabled(!imgLock);
+	getAction("cleararea")->setEnabled(!imgLock);
+	getAction("fillfgarea")->setEnabled(!imgLock);
+	getAction("recolorarea")->setEnabled(!imgLock);
+	getAction("colorerasearea")->setEnabled(!imgLock);
+	getAction("toolfill")->setEnabled(!imgLock);
+
 	_dock_layers->setControlsLocked(layerctrllocked);
 	_chatbox->setPreserveMode(preservechat);
 }
@@ -2368,12 +2381,14 @@ void MainWindow::setupActions()
 
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock Layer Controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
+	QAction *lockputimage = makeAction("lockputimage", 0, tr("Lock Cut, Paste && Fill"), tr("Allow only session operators to cut, paste and fill operations"), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 
 	_admintools->addAction(locksession);
 	_admintools->addAction(locklayerctrl);
+	_admintools->addAction(lockputimage);
 	_admintools->addAction(closesession);
 	_admintools->addAction(changetitle);
 	_admintools->setEnabled(false);
@@ -2384,6 +2399,7 @@ void MainWindow::setupActions()
 	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
 	connect(locksession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
 	connect(locklayerctrl, SIGNAL(triggered(bool)), _client, SLOT(sendLockLayerControls(bool)));
+	connect(lockputimage, SIGNAL(triggered(bool)), _client, SLOT(sendLockPutImage(bool)));
 	connect(closesession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
@@ -2393,6 +2409,7 @@ void MainWindow::setupActions()
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(locksession);
 	sessionmenu->addAction(locklayerctrl);
+	sessionmenu->addAction(lockputimage);
 	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(changetitle);
 

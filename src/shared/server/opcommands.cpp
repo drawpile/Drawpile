@@ -100,6 +100,11 @@ void lockLayerCtrls(Client *client, const QString &, const QStringList &tokens)
 	client->session()->setLayerControlLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
 }
 
+void lockPutImage(Client *client, const QString &, const QStringList &tokens)
+{
+	client->session()->setPutImageLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+}
+
 void loginsOpen(Client *client, const QString &, const QStringList &tokens)
 {
 	client->session()->setClosed(!_getOnOff(tokens.at(1)));
@@ -332,6 +337,7 @@ OpCommandSet::OpCommandSet()
 	commands
 		<< OpCommand("lockboard", lockBoard, ONOFF, "lock the drawing board", 0, 1)
 		<< OpCommand("locklayerctrl", lockLayerCtrls, ONOFF, "lock layer controls", 0, 1)
+		<< OpCommand("lockputimage", lockPutImage, ONOFF, "lock cut&paste and fill", 0, 1)
 		<< OpCommand("logins", loginsOpen, EONOFF, "enable/disable logins", 1)
 		<< OpCommand("lockdefault", lockDefault, ONOFF, "automatically lock new users", 0, 1)
 		<< OpCommand("persistence", persistSession, ONOFF, "make session persistent", 0, 1)

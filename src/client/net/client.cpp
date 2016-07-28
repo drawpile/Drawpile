@@ -152,7 +152,7 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	_isSessionLocked = false;
 	_isUserLocked = false;
 	emit opPrivilegeChange(false);
-	emit sessionConfChange(false, false, false, false);
+	emit sessionConfChange(false, false, false, false, false);
 	emit lockBitsChanged();
 }
 
@@ -455,6 +455,11 @@ void Client::sendLockLayerControls(bool lock)
 	sendOpCommand(QStringLiteral("locklayerctrl ") + (lock ? "on" : "off"));
 }
 
+void Client::sendLockPutImage(bool lock)
+{
+	sendOpCommand(QStringLiteral("lockputimage ") + (lock ? "on" : "off"));
+}
+
 void Client::sendCloseSession(bool close)
 {
 	sendOpCommand(QStringLiteral("logins ") + (close ? "off" : "on"));
@@ -635,7 +640,7 @@ void Client::handleUserLeave(const protocol::UserLeave &msg)
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
 	_isSessionLocked = msg.isLocked();
-	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed(), msg.isChatPreserved());
+	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed(), msg.isChatPreserved(), msg.isPutImageLocked());
 	emit lockBitsChanged();
 }
 

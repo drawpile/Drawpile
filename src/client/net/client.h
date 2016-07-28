@@ -220,6 +220,7 @@ public slots:
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 	void sendLockSession(bool lock);
 	void sendLockLayerControls(bool lock);
+	void sendLockPutImage(bool lock);
 	void sendCloseSession(bool close);
 
 	// Recording
@@ -248,7 +249,7 @@ signals:
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
-	void sessionConfChange(bool locked, bool layerctrllocked, bool closed, bool preservechat);
+	void sessionConfChange(bool locked, bool layerctrllocked, bool closed, bool preservechat, bool imagelocked);
 	void lockBitsChanged();
 
 	void layerVisibilityChange(int id, bool hidden);
