@@ -62,6 +62,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,3">
        <item>
         <widget class="QLineEdit" name="username">
+         <property name="maxLength">
+          <number>22</number>
+         </property>
          <property name="mandatoryfield" stdset="0">
           <bool>true</bool>
          </property>

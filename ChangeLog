@@ -1,3 +1,9 @@
+2016-0?-?? Version 1.0.4
+ * Username length is now limited to 22 characters
+ * Show correct error message when server is full
+ * Let the user know if their IP address has been banned
+ * Added option to restrict cut&paste and fill operations
+
 2016-07-02 Version 1.0.3
  * Remember last used path when saving files
  * Support new miniupnpc library version

@@ -26,6 +26,7 @@
 #include "../shared/net/control.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
+#include "../shared/net/control.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -89,8 +90,11 @@ void LoginHandler::serverDisconnected()
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
 	if(message->type() == protocol::MSG_DISCONNECT) {
-		// server reports login errors with MSG_COMMAND, so there is nothing
-		// of more interest here.
+		const protocol::Disconnect &dmsg = message.cast<protocol::Disconnect>();
+		if(dmsg.reason() == protocol::Disconnect::KICK) {
+			qWarning("We are IP banned from this server!");
+			failLogin(tr("Your IP address is banned from this server"));
+		}
 		return;
 	}
 
@@ -662,7 +666,7 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	else if(code == "nameInUse")
 		error = tr("Username already taken!");
 	else if(code == "closed")
-		error = tr("Session is closed!");
+		error = m_mode == JOIN ? tr("Session is closed!") : tr("Server is full!");
 	else if(code == "banned")
 		error = tr("This username has been banned!");
 	else if(code == "sessionIdInUse")
