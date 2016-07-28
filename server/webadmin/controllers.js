@@ -1,5 +1,7 @@
 var dpserverApp = angular.module('dpserverApp', ['ngRoute', 'ngDialog']);
 
+var APIROOT = "../api";
+
 dpserverApp.config(function($routeProvider) {
 	$routeProvider
 		.when('/', {
@@ -14,10 +16,10 @@ dpserverApp.config(function($routeProvider) {
 
 dpserverApp.controller('ServerStatusController', function($scope, $http, $interval, ngDialog) {
 	function refreshData() {
-		$http.get('/api/status/').success(function(data) {
+		$http.get(APIROOT + '/status/').success(function(data) {
 			$scope.status = data;
 		});
-		$http.get('/api/sessions/').success(function(data) {
+		$http.get(APIROOT + '/sessions/').success(function(data) {
 			$scope.sessions = data;
 		});
 	}
@@ -39,7 +41,7 @@ dpserverApp.controller('ServerStatusController', function($scope, $http, $interv
 			controller: function($scope) {
 				$scope.title = pscope.status.title;
 				$scope.save = function() {
-					sendJson($http, '/api/status/', 'PUT', {
+					sendJson($http, APIROOT + '/status/', 'PUT', {
 						'title': $scope.title
 					}, function(data) { pscope.status = data; });
 					$scope.closeThisDialog();
@@ -56,7 +58,7 @@ dpserverApp.controller('ServerStatusController', function($scope, $http, $interv
 			controller: function($scope) {
 				$scope.maxActiveSessions = pscope.status.maxActiveSessions;
 				$scope.save = function() {
-					sendJson($http, '/api/status/', 'PUT', {
+					sendJson($http, APIROOT + '/status/', 'PUT', {
 						'maxActiveSessions': parseInt($scope.maxActiveSessions, 10),
 					}, function(data) { pscope.status = data; });
 					$scope.closeThisDialog();
@@ -73,7 +75,7 @@ dpserverApp.controller('ServerStatusController', function($scope, $http, $interv
 				$scope.message = "";
 				$scope.save = function() {
 					if($scope.message.length>0) {
-						sendJson($http, '/api/wall/', 'POST', {
+						sendJson($http, APIROOT + '/wall/', 'POST', {
 							'message': $scope.message
 						});
 						$scope.closeThisDialog();
@@ -87,7 +89,7 @@ dpserverApp.controller('ServerStatusController', function($scope, $http, $interv
 
 dpserverApp.controller('SessionStatusController', function($scope, $http, $routeParams, $location, $interval, ngDialog) {
 	function refreshData() {
-		$http.get('/api/sessions/' + $routeParams.sessionId)
+		$http.get(APIROOT + '/sessions/' + $routeParams.sessionId)
 			.success(function(data) {
 				$scope.status = data;
 			}).error(function() {
@@ -113,7 +115,7 @@ dpserverApp.controller('SessionStatusController', function($scope, $http, $route
 				$scope.message = "";
 				$scope.save = function() {
 					if($scope.message.length>0) {
-						sendJson($http, '/api/sessions/' + $routeParams.sessionId + '/wall/', 'POST', {
+						sendJson($http, APIROOT + '/sessions/' + $routeParams.sessionId + '/wall/', 'POST', {
 							'message': $scope.message
 						});
 						$scope.closeThisDialog();
@@ -131,7 +133,7 @@ dpserverApp.controller('SessionStatusController', function($scope, $http, $route
 			controller: function($scope) {
 				$scope.sessionId = pscope.status.id;
 				$scope.kill = function() {
-					$http.delete('/api/sessions/' + $routeParams.sessionId).success(function() {
+					$http.delete(APIROOT + '/sessions/' + $routeParams.sessionId).success(function() {
 						$scope.closeThisDialog();
 						$location.path("/");
 					});
@@ -148,7 +150,7 @@ dpserverApp.controller('SessionStatusController', function($scope, $http, $route
 			controller: function($scope) {
 				$scope.userId = userId;
 				$scope.kick = function() {
-					$http.delete('/api/sessions/' + $routeParams.sessionId + "/user/" + userId).success(function() {
+					$http.delete(APIROOT + '/sessions/' + $routeParams.sessionId + "/user/" + userId).success(function() {
 						$scope.closeThisDialog();
 						refreshData();
 					});
