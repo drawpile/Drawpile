@@ -534,7 +534,7 @@ void MainWindow::updateTitle()
 		name = info.baseName();
 	}
 
-	if(!m_doc->sessionTitle().isEmpty())
+	if(m_doc->sessionTitle().isEmpty())
 		setWindowTitle(QStringLiteral("%1[*]").arg(name));
 	else
 		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, m_doc->sessionTitle()));
