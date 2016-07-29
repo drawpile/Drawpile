@@ -129,7 +129,7 @@ bool Writer::writeHeader()
 
 void Writer::writeFromBuffer(const QByteArray &buffer)
 {
-	int len = protocol::Message::sniffLength(buffer.constData());
+	const int len = protocol::Message::sniffLength(buffer.constData());
 	Q_ASSERT(len <= buffer.length());
 	m_file->write(buffer.constData(), len);
 }
@@ -138,32 +138,28 @@ void Writer::writeMessage(const protocol::Message &msg)
 {
 	Q_ASSERT(m_file->isOpen());
 
-	if(msg.isRecordable()) {
-		// Write Interval message if sufficient time has passed since last message was written
+	QVarLengthArray<char> buf(msg.length());
+	const int len = msg.serialize(buf.data());
+	Q_ASSERT(len == buf.length());
+
+	m_file->write(buf.data(), len);
+}
+
+
+void Writer::recordMessage(const protocol::MessagePtr &msg)
+{
+	if(msg->isRecordable()) {
 		if(m_minInterval>0) {
-			qint64 now = QDateTime::currentMSecsSinceEpoch();
-			qint64 interval = now - m_interval;
+			const qint64 now = QDateTime::currentMSecsSinceEpoch();
+			const qint64 interval = now - m_interval;
 			if(interval >= m_minInterval) {
-				protocol::Interval imsg(0, qMin(qint64(0xffff), interval));
-				QVarLengthArray<char> ibuf(imsg.length());
-				int ilen = imsg.serialize(ibuf.data());
-				m_file->write(ibuf.data(), ilen);
+				writeMessage(protocol::Interval(0, qMin(qint64(0xffff), interval)));
 			}
 			m_interval = now;
 		}
 
-		// Write the actual message
-		QVarLengthArray<char> buf(msg.length());
-		int len = msg.serialize(buf.data());
-		Q_ASSERT(len == buf.length());
-		m_file->write(buf.data(), len);
+		writeMessage(*msg);
 	}
-}
-
-
-void Writer::recordMessage(const protocol::MessagePtr msg)
-{
-	writeMessage(*msg);
 }
 
 void Writer::close()

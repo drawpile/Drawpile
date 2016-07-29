@@ -89,7 +89,14 @@ public:
 	void writeMessage(const protocol::Message &msg);
 
 public slots:
-	void recordMessage(const protocol::MessagePtr msg);
+	/**
+	 * @brief Record a message
+	 *
+	 * This writes the message to the recording only if the type is recordable.
+	 * If a minimum interval is set and enough time has passed
+	 * since the last recordMessage call, an Interval message is writen as well.
+	 */
+	void recordMessage(const protocol::MessagePtr &msg);
 
 private:
 	QIODevice *m_file;
