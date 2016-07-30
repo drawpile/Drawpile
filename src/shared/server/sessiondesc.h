@@ -20,6 +20,8 @@
 #ifndef SESSIONDESC_H
 #define SESSIONDESC_H
 
+#include "../net/protover.h"
+
 #include <QString>
 #include <QMetaType>
 #include <QList>
@@ -64,7 +66,7 @@ private:
  */
 struct SessionDescription {
 	SessionId id;
-	QString protocolVersion;
+	protocol::ProtocolVersion protocolVersion;
 	int userCount;
 	int maxUsers;
 	QString title;

@@ -33,7 +33,7 @@ namespace server {
 
 using protocol::MessagePtr;
 
-Session::Session(const SessionId &id, const QString &protocolVersion, const QString &founder, QObject *parent)
+Session::Session(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	m_state(Initialization),
 	m_initUser(-1),
@@ -395,7 +395,11 @@ void Session::startRecording(const QList<protocol::MessagePtr> &snapshot)
 		return;
 	}
 
-	m_recorder->writeHeader();
+	QJsonObject metadata;
+	metadata["server-recording"] = true;
+	metadata["version"] = m_protocolVersion.asString();
+
+	m_recorder->writeHeader(metadata);
 
 	// Record snapshot and what is in the main stream
 	for(protocol::MessagePtr msg : snapshot) {

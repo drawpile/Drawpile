@@ -23,6 +23,7 @@
 
 #include "builtinserver.h"
 #include "../shared/util/logger.h"
+#include "../shared/net/protover.h"
 
 #include <QSettings>
 #include <QDateTime>
@@ -70,7 +71,7 @@ int ServerThread::startServer(const QString &title)
 			dnssd->setParent(this);
 
 			QMap<QString,QByteArray> txt;
-			txt["protocol"] = QStringLiteral(DRAWPILE_PROTO_STR).toUtf8();
+			txt["protocol"] = protocol::ProtocolVersion::current().asString().toUtf8();
 			txt["started"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate).toUtf8();
 			txt["title"] = title.toUtf8();
 

@@ -19,6 +19,8 @@
 #ifndef SERVERDISCOVERYMODEL_H
 #define SERVERDISCOVERYMODEL_H
 
+#include "../shared/net/protover.h"
+
 #include <QAbstractTableModel>
 #include <QUrl>
 #include <QDateTime>
@@ -33,7 +35,7 @@ struct DiscoveredServer {
 	QUrl url;
 	QString name;
 	QString title;
-	QString protocol;
+	protocol::ProtocolVersion protocol;
 	QDateTime started;
 };
 
@@ -59,7 +61,6 @@ private slots:
 
 private:
 	QList<DiscoveredServer> _servers;
-	QString _myProtocol;
 
 	KDNSSD::ServiceBrowser *_browser;
 };

@@ -117,22 +117,23 @@ Compatibility Reader::open()
 	m_beginning = m_file->pos();
 
 	// Check version numbers
-	m_formatversion = version32(
-		m_metadata["version"].toObject()["major"].toInt(),
-		m_metadata["version"].toObject()["minor"].toInt()
-	);
+	m_version = protocol::ProtocolVersion::fromString(m_metadata["version"].toString());
 
 	// Best case is exact match.
-	const quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
-	if(myversion == m_formatversion)
+	const protocol::ProtocolVersion current = protocol::ProtocolVersion::current();
+	if(m_version == current)
 		return COMPATIBLE;
 
+	// Different namespace means this recording is meant for some other program
+	if(m_version.ns() != current.ns())
+		return NOT_DPREC;
+
 	// A recording made with a newer (major) version may contain unsupported commands.
-	if(majorVersion(myversion) < majorVersion(m_formatversion))
+	if(current.major() < m_version.major())
 		return UNKNOWN_COMPATIBILITY;
 
 	// Newer minor version: expect rendering differences
-	if(myversion < m_formatversion)
+	if(current.minor() < m_version.minor())
 		return MINOR_INCOMPATIBILITY;
 
 #if 0
@@ -170,7 +171,7 @@ QString Reader::errorString() const
 
 QString Reader::writerVersion() const
 {
-	return m_metadata["version"].toObject()["str"].toString();
+	return m_metadata["writerversion"].toString();
 }
 
 qint64 Reader::filesize() const
@@ -243,9 +244,10 @@ MessageRecord Reader::readNext()
 		return msg;
 
 	protocol::Message *message;
+#if 0 // TODO
 	if(m_formatversion != version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION)) {
 
-#if 0 // TODO
+
 		// see protocol changelog in doc/protocol.md
 		switch(_formatversion) {
 		case version32(15, 5):
@@ -277,12 +279,14 @@ MessageRecord Reader::readNext()
 			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
 			break;
 		}
-#endif
+
 		qWarning("TODO: recording compatability mode not yet implemented!");
 		message = 0;
 	} else {
 		message = protocol::Message::deserialize((const uchar*)m_msgbuf.constData(), m_msgbuf.length(), true);
 	}
+#endif
+	message = protocol::Message::deserialize((const uchar*)m_msgbuf.constData(), m_msgbuf.length(), true);
 
 	if(message) {
 		msg.status = MessageRecord::OK;

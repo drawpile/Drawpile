@@ -23,6 +23,7 @@
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
 
+#include "../shared/net/protover.h"
 #include "../shared/net/control.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -350,7 +351,7 @@ void LoginHandler::sendHostCommand()
 	if(!m_hostSessionId.isEmpty())
 		cmd.kwargs["id"] = m_hostSessionId;
 
-	cmd.kwargs["protocol"] = DRAWPILE_PROTO_STR;
+	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	cmd.kwargs["user_id"] = m_userid;
 	if(!m_hostPassword.isEmpty())
 		cmd.kwargs["host_password"] = m_hostPassword;
@@ -379,9 +380,8 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 				session.customId = true;
 			}
 
-			const QString protoVer = js["protocol"].toString();
-			session.incompatible = protoVer != DRAWPILE_PROTO_STR;
-			qDebug() << protoVer << " != " << DRAWPILE_PROTO_STR;
+			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
+			session.incompatible = !protoVer.isCurrent();
 			session.needPassword = js["password"].toBool();
 			session.closed = js["closed"].toBool();
 			session.asleep = js["asleep"].toBool();

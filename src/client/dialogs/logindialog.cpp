@@ -188,7 +188,7 @@ void LoginDialog::onButtonClick(QAbstractButton *btn)
 			resetMode();
 			break;
 		case SESSION: {
-			Q_ASSERT(m_ui->sessionlist->selectionModel()->selectedIndexes().size()==1);
+			Q_ASSERT(!m_ui->sessionlist->selectionModel()->selectedIndexes().isEmpty());
 
 			const int row = m_ui->sessionlist->selectionModel()->selectedIndexes().at(0).row();
 			const net::LoginSession &s = static_cast<net::LoginSessionModel*>(m_ui->sessionlist->model())->sessionAt(row);

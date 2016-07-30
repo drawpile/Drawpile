@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <QObject>
 
 #include "sessiondesc.h"
+#include "../net/protover.h"
 
 namespace sessionlisting {
 	class AnnouncementApi;
@@ -157,7 +158,7 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	Session *createSession(const SessionId &id, const QString &minorVersion, const QString &founder);
+	Session *createSession(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions

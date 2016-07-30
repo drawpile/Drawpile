@@ -137,7 +137,7 @@ void SessionListingDialog::refreshListing()
 		QUrl url = urlstr;
 		if(url.isValid()) {
 			_model->setSourceModel(_sessions);
-			_apiClient->getSessionList(url, DRAWPILE_PROTO_STR, QString(), true);
+			_apiClient->getSessionList(url, protocol::ProtocolVersion::current().asString(), QString(), true);
 		}
 	}
 }

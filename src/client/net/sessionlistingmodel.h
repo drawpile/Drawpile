@@ -50,7 +50,6 @@ private:
 
 	QList<Session> m_filtered;
 	QList<Session> m_sessions;
-	QString m_myProtocol;
 	bool m_nsfm;
 };
 

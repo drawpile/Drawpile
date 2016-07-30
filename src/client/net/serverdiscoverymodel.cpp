@@ -30,7 +30,6 @@
 ServerDiscoveryModel::ServerDiscoveryModel(QObject *parent)
 	: QAbstractTableModel(parent), _browser(nullptr)
 {
-	_myProtocol = DRAWPILE_PROTO_STR;
 }
 
 int ServerDiscoveryModel::rowCount(const QModelIndex &parent) const
@@ -101,10 +100,10 @@ QVariant ServerDiscoveryModel::headerData(int section, Qt::Orientation orientati
 Qt::ItemFlags ServerDiscoveryModel::flags(const QModelIndex &index) const
 {
 	const DiscoveredServer &s = _servers.at(index.row());
-	if(s.protocol != _myProtocol)
-		return Qt::NoItemFlags;
-	else
+	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);
+	else
+		return Qt::NoItemFlags;
 }
 
 void ServerDiscoveryModel::discover()
@@ -136,7 +135,7 @@ void ServerDiscoveryModel::addService(KDNSSD::RemoteService::Ptr service)
 		url,
 		service->serviceName(),
 		service->textData()["title"],
-		service->textData()["protocol"],
+		protocol::ProtocolVersion::fromString(service->textData()["protocol"]),
 		started
 	};
 

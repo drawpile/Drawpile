@@ -22,6 +22,7 @@
 #include "../net/message.h"
 
 #include <QObject>
+#include <QJsonObject>
 
 class QIODevice;
 class QTimer;
@@ -75,9 +76,12 @@ public:
 	 *
 	 * This should be called before writing the first message.
 	 *
+	 * Custom metadata can be included. If no "version" field is set,
+	 * the current protocol version will be used.
+	 *
 	 * @return false on error
 	 */
-	bool writeHeader();
+	bool writeHeader(const QJsonObject &customMetadata=QJsonObject());
 
 	/**
 	 * @brief Write a message from a buffer

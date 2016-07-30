@@ -73,7 +73,7 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-Session *SessionServer::createSession(const SessionId &id, const QString &protocolVersion, const QString &founder)
+Session *SessionServer::createSession(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isEmpty());
 	Q_ASSERT(getSessionDescriptionById(id.id()).id.isEmpty());
@@ -327,7 +327,7 @@ void SessionServer::refreshSessionAnnouncements()
 				QString(),
 				0,
 				QString(),
-				QString(),
+				protocol::ProtocolVersion(),
 				s->title(),
 				s->userCount(),
 				!s->passwordHash().isEmpty(),

@@ -20,6 +20,7 @@
 #include "writer.h"
 #include "util.h"
 #include "../net/recording.h"
+#include "../net/protover.h"
 
 #include "config.h"
 
@@ -30,7 +31,6 @@
 #include <QTimer>
 
 #include <KCompressionDevice>
-#include <QJsonObject>
 #include <QJsonDocument>
 
 namespace recording {
@@ -99,7 +99,7 @@ QString Writer::errorString() const
 	return m_file->errorString();
 }
 
-bool Writer::writeHeader()
+bool Writer::writeHeader(const QJsonObject &customMetadata)
 {
 	Q_ASSERT(m_file->isOpen());
 
@@ -108,15 +108,20 @@ bool Writer::writeHeader()
 	m_file->write(MAGIC, 6);
 
 	// Metadata block
-	QJsonObject metadata;
-	QJsonObject version;
-	version["major"] = DRAWPILE_PROTO_MAJOR_VERSION;
-	version["minor"] = DRAWPILE_PROTO_MINOR_VERSION;
-	version["str"] = DRAWPILE_VERSION;
-	metadata["version"] = version;
+	QJsonObject metadata = customMetadata;
+
+	if(!metadata.contains("version"))
+		metadata["version"] = protocol::ProtocolVersion::current().asString();
+
+	metadata["writerversion"] = DRAWPILE_VERSION;
 
 	// Write metadata
 	QByteArray metadatabuf = QJsonDocument(metadata).toJson(QJsonDocument::Compact);
+
+	if(metadatabuf.length() > 0xffff) {
+		qWarning("Recording metadata block too long (%d)", metadatabuf.length());
+		return false;
+	}
 
 	uchar lenbuf[2];
 	qToBigEndian(quint16(metadatabuf.length()), lenbuf);

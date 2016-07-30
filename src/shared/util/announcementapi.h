@@ -20,6 +20,8 @@
 #ifndef ANNOUNCEMENTAPI_H
 #define ANNOUNCEMENTAPI_H
 
+#include "../net/protover.h"
+
 #include <QObject>
 #include <QDateTime>
 #include <QUrl>
@@ -42,7 +44,7 @@ struct Session {
 	QString host;
 	int port;
 	QString id;
-	QString protocol;
+	protocol::ProtocolVersion protocol;
 	QString title;
 	int users;
 	bool password;

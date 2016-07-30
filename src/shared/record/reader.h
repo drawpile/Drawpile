@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define REC_READER_H
 
 #include "../net/message.h"
+#include "../net/protover.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -112,27 +113,16 @@ public:
 	//! Is this recording compressed?
 	bool isCompressed() const { return m_isCompressed; }
 
+	//! Get the last error message
 	QString errorString() const;
 
-	/**
-	 * @brief Get the version number of the program that made the recording.
-	 *
-	 * The version number is available after opening the file.
-	 *
-	 * @return human readable version number string
-	 */
+	//! Get the recording's protocol version
+	protocol::ProtocolVersion formatVersion() const { return m_version; }
+
+	//! Get the version number of the program that made the recording
 	QString writerVersion() const;
 
-	/**
-	 * @brief Get the recording's protocol version
-	 * @return
-	 */
-	quint32 formatVersion() const { return m_formatversion; }
-
-	/**
-	 * @brief Get the header metadata
-	 * @return
-	 */
+	//! Get header metadata
 	QJsonObject metadata() const { return m_metadata; }
 
 	/**
@@ -178,7 +168,7 @@ private:
 	QIODevice *m_file;
 	QByteArray m_msgbuf;
 	QString m_writerversion;
-	quint32 m_formatversion;
+	protocol::ProtocolVersion m_version;
 	QJsonObject m_metadata;
 	int m_current;
 	qint64 m_currentPos;

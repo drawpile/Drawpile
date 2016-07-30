@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "../util/announcementapi.h"
 #include "../net/message.h"
 #include "../net/messagestream.h"
+#include "../net/protover.h"
 
 namespace recording {
 	class Writer;
@@ -53,7 +54,7 @@ public:
 		Shutdown
 	};
 
-	Session(const SessionId &id, const QString &protocolVersion, const QString &founder, QObject *parent=0);
+	Session(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
@@ -70,11 +71,9 @@ public:
 	 * @brief Get the full protocol version of this session
 	 *
 	 * A server only needs match the server-protocol version, but the
-	 * client must match the version exactly. (Note: this server, because it
-	 * shared message (de)serialization code with the client, must match
-	 * the major version too.)
+	 * client must match the version exactly.
 	 */
-	QString protocolVersion() const { return m_protocolVersion; }
+	protocol::ProtocolVersion protocolVersion() const { return m_protocolVersion; }
 
 	/**
 	 * @brief Set whether session persistence is allowed
@@ -379,7 +378,7 @@ private:
 	QDateTime m_lastEventTime;
 
 	const SessionId m_id;
-	QString m_protocolVersion;
+	protocol::ProtocolVersion m_protocolVersion;
 	int m_maxusers;
 	uint m_historylimit;
 

@@ -47,7 +47,7 @@ void LoginHandler::startLoginProcess()
 {
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
-	greeting.message = "Drawpile server " DRAWPILE_PROTO_STR;
+	greeting.message = "Drawpile server " DRAWPILE_VERSION;
 	greeting.reply["version"] = DRAWPILE_PROTO_SERVER_VERSION;
 
 	QJsonArray flags;
@@ -84,7 +84,7 @@ QJsonObject sessionDescription(const SessionDescription &session)
 	Q_ASSERT(!session.id.isEmpty());
 	QJsonObject o;
 	o["id"] = session.id.id();
-	o["protocol"] = session.protocolVersion;
+	o["protocol"] = session.protocolVersion.asString();
 	o["users"] = session.userCount;
 	o["founder"] = session.founder;
 	o["title"] = session.title;
@@ -324,7 +324,13 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	}
 
 	QString sessionIdString = cmd.kwargs.value("id").toString();
-	QString protocolVersion = cmd.kwargs.value("protocol").toString();
+	protocol::ProtocolVersion protocolVersion = protocol::ProtocolVersion::fromString(cmd.kwargs.value("protocol").toString());
+
+	if(!protocolVersion.isValid()) {
+		sendError("syntax", "Unparseable protocol version");
+		return;
+	}
+
 	int userId = cmd.kwargs.value("user_id").toInt();
 
 	if(userId < 1 || userId>254) {

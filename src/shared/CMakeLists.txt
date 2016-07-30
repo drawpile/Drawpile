@@ -17,6 +17,7 @@ set (
 	net/recording.cpp
 	net/messagequeue.cpp
 	net/messagestream.cpp
+	net/protover.cpp
 	record/writer.cpp
 	record/reader.cpp
 	util/logger.cpp

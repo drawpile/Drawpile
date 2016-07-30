@@ -112,7 +112,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 		if(session.port>0)
 			o["port"] = session.port;
 		o["id"] = session.id;
-		o["protocol"] = session.protocol;
+		o["protocol"] = session.protocol.asString();
 		o["title"] = session.title;
 		o["users"] = session.users;
 		o["password"] = session.password;
@@ -267,7 +267,7 @@ void AnnouncementApi::handleListingResponse(QNetworkReply *reply)
 			obj["host"].toString(),
 			obj["port"].toInt(),
 			obj["id"].toString(),
-			obj["protocol"].toString(),
+			protocol::ProtocolVersion::fromString(obj["protocol"].toString()),
 			obj["title"].toString(),
 			obj["users"].toInt(),
 			obj["password"].toBool(),

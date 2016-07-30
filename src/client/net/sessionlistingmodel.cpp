@@ -19,7 +19,6 @@
 
 #include "sessionlistingmodel.h"
 #include "utils/icon.h"
-
 #include "config.h"
 
 #include <QApplication>
@@ -31,7 +30,6 @@ namespace sessionlisting {
 SessionListingModel::SessionListingModel(QObject *parent)
 	: QAbstractTableModel(parent), m_nsfm(false)
 {
-	m_myProtocol = QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(DRAWPILE_PROTO_MINOR_VERSION);
 }
 
 int SessionListingModel::rowCount(const QModelIndex &parent) const
@@ -110,10 +108,10 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 {
 	const Session &s = m_filtered.at(index.row());
-	if(s.protocol != m_myProtocol)
-		return Qt::NoItemFlags;
-	else
+	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);
+	else
+		return Qt::NoItemFlags;
 }
 
 void SessionListingModel::setList(const QList<sessionlisting::Session> sessions)
