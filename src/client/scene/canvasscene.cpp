@@ -71,6 +71,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
 	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
 	connect(anns, &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
+	connect(anns, &paintcore::AnnotationModel::modelReset, this, &CanvasScene::annotationsReset);
 
 	canvas::UserCursorModel *cursors = m_model->userCursors();
 	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
@@ -86,14 +87,9 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	addItem(_image);
 
-	// Clear out any old annotation items
-	Q_FOREACH(QGraphicsItem *item, items()) {
-		if(item->type() == AnnotationItem::Type) {
-			delete item;
-		}
-	}
+	annotationsReset();
 
-	Q_FOREACH(UserMarkerItem *i, m_usermarkers)
+	for(UserMarkerItem *i : m_usermarkers)
 		delete i;
 	m_usermarkers.clear();
 	
@@ -208,6 +204,20 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 
 		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::BgColorRole))
 			item->setColor(a.data(paintcore::AnnotationModel::BgColorRole).value<QColor>());
+	}
+}
+
+void CanvasScene::annotationsReset()
+{
+	// Clear out any old annotation items
+	Q_FOREACH(QGraphicsItem *item, items()) {
+		if(item->type() == AnnotationItem::Type) {
+			delete item;
+		}
+	}
+
+	if(!m_model->layerStack()->annotations()->isEmpty()) {
+		annotationsAdded(QModelIndex(), 0, m_model->layerStack()->annotations()->rowCount()-1);
 	}
 }
 

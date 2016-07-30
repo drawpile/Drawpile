@@ -110,6 +110,7 @@ private slots:
 	void annotationsAdded(const QModelIndex&, int first, int last);
 	void annotationsRemoved(const QModelIndex&, int first, int last);
 	void annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
+	void annotationsReset();
 
 	void laserAdded(const QModelIndex&, int first, int last);
 	void laserRemoved(const QModelIndex&, int first, int last);
