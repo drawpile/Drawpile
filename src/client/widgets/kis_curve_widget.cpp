@@ -281,8 +281,10 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
             d->m_pixmapDirty = false;
         }
         p.drawPixmap(0, 0, *d->m_pixmapCache);
-    } else
+
+	} else {
         p.fillRect(rect(), palette().background());
+	}
 
 	p.setPen(QPen(palette().color(QPalette::Mid), 1, Qt::SolidLine));
 	d->drawGrid(p, wWidth, wHeight);
