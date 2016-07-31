@@ -17,6 +17,7 @@ APPIMGKIT=/AppImageKit-master
 
 # Refresh source code
 cd $SRCDIR
+git checkout master
 git pull
 
 mkdir $APPDIR
