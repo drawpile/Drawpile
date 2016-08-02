@@ -134,14 +134,14 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	// Most important bit first: canvas initialization
-	const QSize imgsize = m_session->layerStack()->size();
+	const QSize imgsize = m_layers->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
 	// Create layers
-	for(int i=0;i<m_session->layerStack()->layerCount();++i) {
-		const paintcore::Layer *layer = m_session->layerStack()->getLayerByIndex(i);
+	for(int i=0;i<m_layers->layerCount();++i) {
+		const paintcore::Layer *layer = m_layers->getLayerByIndex(i);
 
-		QColor fill = layer->isSolidColor();
+		const QColor fill = layer->isSolidColor();
 
 		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
@@ -149,27 +149,29 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		if(!fill.isValid())
 			msgs.append(net::command::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
 
-		if(m_session->stateTracker()->isLayerLocked(layer->id()))
+		if(m_session && m_session->stateTracker()->isLayerLocked(layer->id()))
 			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
 	}
 
 	// Create annotations
-	for(const paintcore::Annotation &a : m_session->layerStack()->annotations()->getAnnotations()) {
+	for(const paintcore::Annotation &a : m_layers->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a.id, g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a.id, a.background.rgba(), a.text))));
 	}
 
 	// User tool changes
-	QHashIterator<int, canvas::DrawingContext> iter(m_session->stateTracker()->drawingContexts());
-	while(iter.hasNext()) {
-		iter.next();
+	if(m_session) {
+		QHashIterator<int, canvas::DrawingContext> iter(m_session->stateTracker()->drawingContexts());
+		while(iter.hasNext()) {
+			iter.next();
 
-		msgs.append(net::command::brushToToolChange(
-			iter.key(),
-			iter.value().tool.layer_id,
-			iter.value().tool.brush
-		));
+			msgs.append(net::command::brushToToolChange(
+				iter.key(),
+				iter.value().tool.layer_id,
+				iter.value().tool.brush
+			));
+		}
 	}
 
 	return msgs;

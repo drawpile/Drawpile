@@ -113,6 +113,7 @@ public slots:
 	static void showSettings();
 	void changeSessionTitle();
 	void changeSessionPassword();
+	void resetSession();
 
 	void host();
 	void join(const QUrl &defaultUrl=QUrl());

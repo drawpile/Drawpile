@@ -366,9 +366,17 @@ void Document::sendPasswordChange(const QString &password)
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
 }
 
-void Document::sendResetSession()
+void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
 {
 	m_client->sendMessage(net::command::serverCommand("reset-session"));
+
+	if(!savepoint) {
+		qInfo("Preparing session reset from current canvas content");
+		m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
+	} else {
+		qInfo("Preparing session reset from a savepoint");
+		m_resetstate = savepoint.initCommands();
+	}
 }
 
 void Document::sendLockSession(bool lock)
@@ -424,10 +432,17 @@ void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 void Document::snapshotNeeded()
 {
 	// (We) requested a session reset and the server is now ready for it.
-	if(m_canvas)
-		m_client->sendInitialSnapshot(m_canvas->generateSnapshot(true));
-	else
+	if(m_canvas) {
+		if(m_resetstate.isEmpty()) {
+			qWarning("Session reset snapshot requested, but we have not prepared it! Generating one now...");
+			m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
+		}
+		m_client->sendInitialSnapshot(m_resetstate);
+		m_resetstate = QList<protocol::MessagePtr>();
+
+	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
+	}
 }
 
 void Document::undo()

@@ -26,6 +26,10 @@
 
 #include "../shared/net/message.h"
 
+namespace paintcore {
+	class LayerStack;
+}
+
 namespace canvas {
 
 class CanvasModel;
@@ -119,17 +123,21 @@ private:
 };
 
 /**
- * @brief A session loader that takes an existing session and generates a new snapshot from it
+ * @brief A session loader that takes an existing layer stack and generates a new snapshot from it
+ *
+ * If the optional canvas is given, extra data will be included.
  */
 class SnapshotLoader : public SessionLoader {
 public:
-	SnapshotLoader(const canvas::CanvasModel *session) : m_session(session) {}
+	SnapshotLoader(const paintcore::LayerStack *layers, const canvas::CanvasModel *session=nullptr)
+		: m_layers(layers), m_session(session) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return QString(); }
 	QString errorMessage() const { return QString(); }
 
 private:
+	const paintcore::LayerStack *m_layers;
 	const canvas::CanvasModel *m_session;
 };
 

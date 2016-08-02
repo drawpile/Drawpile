@@ -114,6 +114,7 @@ set (
 	dialogs/netstats.cpp
 	dialogs/sessionlistingdialog.cpp
 	dialogs/flipbook.cpp
+	dialogs/resetdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -185,6 +186,7 @@ set (
 	ui/sessionlisting.ui
 	ui/flipbook.ui
 	ui/playback.ui
+	ui/resetsession.ui
 )
 
 # Optional DNS-SD support

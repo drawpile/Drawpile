@@ -56,42 +56,73 @@ private:
 };
 
 StateSavepoint::StateSavepoint(const StateSavepoint &sp)
-	: _data(sp._data)
+	: m_data(sp.m_data)
 {
-	if(_data)
-		++_data->_refcount;
+	if(m_data)
+		++m_data->_refcount;
 }
 
 StateSavepoint &StateSavepoint::operator =(const StateSavepoint &sp)
 {
-	if(_data) {
-		if(sp._data != _data) {
-			Q_ASSERT(_data->_refcount>0);
-			if(--_data->_refcount == 0)
-				delete _data;
-			_data = sp._data;
-			++_data->_refcount;
+	if(m_data) {
+		if(sp.m_data != m_data) {
+			Q_ASSERT(m_data->_refcount>0);
+			if(--m_data->_refcount == 0)
+				delete m_data;
+			m_data = sp.m_data;
+			++m_data->_refcount;
 		}
 	} else {
-		_data = sp._data;
-		++_data->_refcount;
+		m_data = sp.m_data;
+		++m_data->_refcount;
 	}
 	return *this;
 }
 
 StateSavepoint::~StateSavepoint()
 {
-	if(_data) {
-		Q_ASSERT(_data->_refcount>0);
-		if(--_data->_refcount == 0)
-			delete _data;
+	if(m_data) {
+		Q_ASSERT(m_data->_refcount>0);
+		if(--m_data->_refcount == 0)
+			delete m_data;
 	}
 }
 
 StateSavepoint::Data *StateSavepoint::operator ->() {
-	if(!_data)
-		_data = new StateSavepoint::Data;
-	return _data;
+	if(!m_data)
+		m_data = new StateSavepoint::Data;
+	return m_data;
+}
+
+qint64 StateSavepoint::timestamp() const
+{
+	return m_data ? m_data->timestamp : 0;
+
+}
+
+QImage StateSavepoint::thumbnail(const QSize &maxSize) const
+{
+	if(!m_data)
+		return QImage();
+
+	paintcore::LayerStack stack;
+	stack.restoreSavepoint(m_data->canvas);
+	QImage img = stack.toFlatImage(true);
+	if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
+		img = img.scaled(maxSize, Qt::KeepAspectRatio);
+	}
+	return img;
+}
+
+QList<protocol::MessagePtr> StateSavepoint::initCommands() const
+{
+	if(!m_data)
+		return QList<protocol::MessagePtr>();
+
+	paintcore::LayerStack stack;
+	stack.restoreSavepoint(m_data->canvas);
+	SnapshotLoader loader(&stack);
+	return loader.loadInitCommands();
 }
 
 void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
@@ -154,7 +185,7 @@ StateTracker::~StateTracker()
 
 void StateTracker::reset()
 {
-	_savepoints.clear();
+	m_savepoints.clear();
 	m_msgstream.resetTo(m_msgstream.end());
 	m_fullhistory = true;
 	_hasParticipated = false;
@@ -240,8 +271,8 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 				undopoint = qMin(undopoint, _localfork.offset());
 
 			int savepoint=0;
-			while(savepoint < _savepoints.count()) {
-				if(_savepoints[savepoint]->streampointer >= undopoint) {
+			while(savepoint < m_savepoints.count()) {
+				if(m_savepoints[savepoint]->streampointer >= undopoint) {
 					--savepoint;
 					break;
 				}
@@ -249,9 +280,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			}
 
 			// Remove redundant save points
-			qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
+			qDebug() << "removing" << savepoint << "redundant save points out of" << m_savepoints.count();
 			while(savepoint-- > 0)
-				_savepoints.removeFirst();
+				m_savepoints.removeFirst();
 		}
 	}
 
@@ -268,9 +299,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		// Uh oh! An inconsistency was detected: roll back the history and replay
 
 		// first, find the newest savepoint that precedes the fork
-		int savepoint = _savepoints.size()-1;
+		int savepoint = m_savepoints.size()-1;
 		while(savepoint>0) {
-			if(_savepoints.at(savepoint)->streampointer <= _localfork.offset())
+			if(m_savepoints.at(savepoint)->streampointer <= _localfork.offset())
 				break;
 			--savepoint;
 		}
@@ -279,7 +310,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			// should never happen
 			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
 		} else {
-			const StateSavepoint &sp = _savepoints.at(savepoint);
+			const StateSavepoint &sp = m_savepoints.at(savepoint);
 			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_msgstream.end(), _localfork.offset(), sp->streampointer);
 
 			revertSavepointAndReplay(sp);
@@ -630,7 +661,7 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 			if(!_localfork.isEmpty())
 				i = qMin(i, _localfork.offset() - 1);
 
-			QMutableListIterator<StateSavepoint> spi(_savepoints);
+			QMutableListIterator<StateSavepoint> spi(m_savepoints);
 			spi.toBack();
 
 			// In order to be able to return to the oldest undo point, we must leave
@@ -715,9 +746,9 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 
 	// Step 2. Find nearest save point
 	StateSavepoint savepoint;
-	for(int i=_savepoints.count()-1;i>=0;--i) {
-		if(_savepoints.at(i)->streampointer <= pos) {
-			savepoint = _savepoints.at(i);
+	for(int i=m_savepoints.count()-1;i>=0;--i) {
+		if(m_savepoints.at(i)->streampointer <= pos) {
+			savepoint = m_savepoints.at(i);
 			break;
 		}
 	}
@@ -781,15 +812,15 @@ void StateTracker::makeSavepoint(int pos)
 		return;
 
 	// Check if sufficient time and actions has elapsed from previous savepoint
-	if(!_savepoints.isEmpty()) {
-		const StateSavepoint sp = _savepoints.last();
+	if(!m_savepoints.isEmpty()) {
+		const StateSavepoint sp = m_savepoints.last();
 		quint64 now = QDateTime::currentMSecsSinceEpoch();
 		if(now - sp->timestamp < 1000 && m_msgstream.end() - sp->streampointer < 100)
 			return;
 	}
 
 	// Looks like a good spot for a savepoint
-	_savepoints.append(createSavepoint(pos));
+	m_savepoints.append(createSavepoint(pos));
 }
 
 
@@ -798,13 +829,13 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	// This function is called when jumping to a recorded savepoint
 
 	m_msgstream.resetTo(savepoint->streampointer);
-	_savepoints.clear();
+	m_savepoints.clear();
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
 	m_layerlist->setLayers(savepoint->layermodel);
 
-	_savepoints.append(savepoint);
+	m_savepoints.append(savepoint);
 }
 
 void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
@@ -812,15 +843,15 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	// This function is called when reverting to an earlier state to undo
 	// an action.
 
-	Q_ASSERT(_savepoints.contains(savepoint));
+	Q_ASSERT(m_savepoints.contains(savepoint));
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
 	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints
-	while(_savepoints.last() != savepoint)
-		_savepoints.removeLast();
+	while(m_savepoints.last() != savepoint)
+		m_savepoints.removeLast();
 
 	// Replay all not-undo actions (and local fork)
 	int pos = savepoint->streampointer + 1;
@@ -863,8 +894,8 @@ void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 
 void StateSavepoint::toDatastream(QDataStream &out) const
 {
-	Q_ASSERT(_data);
-	const auto *d = _data;
+	Q_ASSERT(m_data);
+	const auto *d = m_data;
 
 	// Write stream pointer
 	out << quint32(d->streampointer);
@@ -920,8 +951,8 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *owner)
 {
 	StateSavepoint sp;
-	sp._data = new StateSavepoint::Data;
-	auto *d = sp._data;
+	sp.m_data = new StateSavepoint::Data;
+	auto *d = sp.m_data;
 
 	// Read stream pointer
 	quint32 sptr;
@@ -1030,9 +1061,9 @@ bool StateTracker::isLayerLocked(int id) const
 void StateTracker::resetLocalFork()
 {
 	if(!_localfork.isEmpty()) {
-		int savepoint = _savepoints.size()-1;
+		int savepoint = m_savepoints.size()-1;
 		while(savepoint>0) {
-			if(_savepoints.at(savepoint)->streampointer <= _localfork.offset())
+			if(m_savepoints.at(savepoint)->streampointer <= _localfork.offset())
 				break;
 			--savepoint;
 		}
@@ -1041,7 +1072,7 @@ void StateTracker::resetLocalFork()
 			// should never happen
 			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
 		} else {
-			const StateSavepoint &sp = _savepoints.at(savepoint);
+			const StateSavepoint &sp = m_savepoints.at(savepoint);
 			qDebug("Resetting local fork and rolling back %d commands", m_msgstream.end() - sp->streampointer);
 
 			_localfork.clear();

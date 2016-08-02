@@ -112,6 +112,7 @@
 #include "dialogs/playbackdialog.h"
 #include "dialogs/flipbook.h"
 #include "dialogs/videoexportdialog.h"
+#include "dialogs/resetdialog.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -1279,6 +1280,32 @@ void MainWindow::changeSessionPassword()
 		m_doc->sendPasswordChange(newpass);
 }
 
+void MainWindow::resetSession()
+{
+	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
+	dlg->setWindowModality(Qt::WindowModal);
+
+	// Automatically lock the session while we are preparing to reset
+	bool wasLocked = m_doc->canvas()->aclFilter()->isSessionLocked();
+	if(!wasLocked) {
+		m_doc->sendLockSession(true);
+	}
+
+	connect(dlg, &dialogs::ResetDialog::accepted, [this, dlg]() {
+		// Send request for reset. No need to unlock the session,
+		// since the reset itself will do that for us.
+		m_doc->sendResetSession(dlg->selectedSavepoint());
+	});
+
+	connect(dlg, &dialogs::ResetDialog::rejected, [this, wasLocked]() {
+		// Reset cancelled: unlock the session (if locked by as)
+		if(!wasLocked)
+			m_doc->sendLockSession(false);
+	});
+
+	dlg->show();
+}
+
 /**
  * @param url URL
  */
@@ -2220,7 +2247,7 @@ void MainWindow::setupActions()
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
-	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset"));
+	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 
 	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
@@ -2255,7 +2282,7 @@ void MainWindow::setupActions()
 
 	connect(closesession, &QAction::triggered, m_doc, &Document::sendCloseSession);
 	connect(m_doc, &Document::sessionClosedChanged, closesession, &QAction::setChecked);
-	connect(resetsession, &QAction::triggered, m_doc, &Document::sendResetSession);
+	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);

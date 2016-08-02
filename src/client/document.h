@@ -23,6 +23,7 @@
 #include <QObject>
 
 #include "core/blendmodes.h"
+#include "../shared/net/message.h" // TODO hide this
 
 class QString;
 class QTimer;
@@ -30,6 +31,7 @@ class QTimer;
 namespace canvas {
 	class CanvasModel;
 	class SessionLoader;
+	class StateSavepoint;
 }
 namespace net { class Client; }
 namespace recording { class Writer; }
@@ -136,7 +138,7 @@ public slots:
 	void sendPointerMove(const QPointF &point);
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
-	void sendResetSession();
+	void sendResetSession(const canvas::StateSavepoint &savepoint);
 	void sendLockSession(bool lock);
 	void sendLockImageCommands(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
@@ -181,6 +183,8 @@ private:
 	void autosave();
 
 	QString m_currentFilename;
+
+	QList<protocol::MessagePtr> m_resetstate;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;

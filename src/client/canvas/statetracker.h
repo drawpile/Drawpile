@@ -111,7 +111,7 @@ class StateTracker;
 class StateSavepoint {
 	friend class StateTracker;
 public:
-	StateSavepoint() : _data(0) {}
+	StateSavepoint() : m_data(nullptr) {}
 	StateSavepoint(const StateSavepoint &sp);
 	StateSavepoint &operator=(const StateSavepoint &sp);
 	~StateSavepoint();
@@ -119,16 +119,33 @@ public:
 	void toDatastream(QDataStream &ds) const;
 	static StateSavepoint fromDatastream(QDataStream &ds, StateTracker *owner);
 
-	bool operator!() const { return !_data; }
-	bool operator==(const StateSavepoint &sp) const { return _data == sp._data; }
-	bool operator!=(const StateSavepoint &sp) const { return _data != sp._data; }
+	bool operator!() const { return !m_data; }
+	bool operator==(const StateSavepoint &sp) const { return m_data == sp.m_data; }
+	bool operator!=(const StateSavepoint &sp) const { return m_data != sp.m_data; }
+
+	//! Get this snapshots timestamp
+	qint64 timestamp() const;
+
+	/**
+	 * @brief Get a thumbnail of savepoint content
+	 * @param maxSize maximum thumbnail size
+	 */
+	QImage thumbnail(const QSize &maxSize) const;
+
+	/**
+	 * @brief Generate a list of commands to initialize a session to this savepoint
+	 *
+	 * (Used when resetting a session to a prior state.)
+	 */
+	QList<protocol::MessagePtr> initCommands() const;
+
 private:
 	struct Data;
 
-	const Data *operator ->() const { return _data; }
+	const Data *operator ->() const { return m_data; }
 	Data *operator ->();
 
-	Data *_data;
+	Data *m_data;
 };
 
 }
@@ -194,7 +211,7 @@ public:
 	 * @brief Get the paint canvas
 	 * @return
 	 */
-	paintcore::LayerStack *image() { return _image; }
+	paintcore::LayerStack *image() const { return _image; }
 
 	/**
 	 * @brief Check if the given layer is locked.
@@ -227,6 +244,9 @@ public:
 	 * @param sp
 	 */
 	void resetToSavepoint(StateSavepoint sp);
+
+	//! Get all existing savepoints (can be used for selecting a reset point)
+	QList<StateSavepoint> getSavepoints() const { return m_savepoints; }
 
 signals:
 	void myAnnotationCreated(int id);
@@ -286,7 +306,7 @@ private:
 	int m_myId;
 
 	protocol::MessageStream m_msgstream;
-	QList<StateSavepoint> _savepoints;
+	QList<StateSavepoint> m_savepoints;
 
 	LocalFork _localfork;
 	QTimer *_localforkCleanupTimer;
