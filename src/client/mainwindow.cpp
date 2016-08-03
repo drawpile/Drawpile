@@ -1483,6 +1483,7 @@ void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool clos
 
 	_dock_layers->setControlsLocked(layerctrllocked);
 	_chatbox->setPreserveMode(preservechat);
+	_dock_toolsettings->getAnnotationSettings()->setMergeEnabled(!imgLock);
 }
 
 void MainWindow::updateLockWidget()

@@ -361,6 +361,9 @@ public slots:
 	//! Unselect this item if currently selected
 	void unselect(int id);
 
+	//! Set whether the merge feature is enabled or not
+	void setMergeEnabled(bool enable);
+
 private slots:
 	void changeAlignment();
 	void toggleBold(bool bold);
@@ -388,6 +391,7 @@ private:
 	QPointer<drawingboard::AnnotationItem> _selection;
 
 	bool _noupdate;
+	bool m_mergeEnabled;
 	net::Client *_client;
 	docks::LayerList *_layerlist;
 	QTimer *_updatetimer;

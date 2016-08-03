@@ -838,7 +838,7 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), BrushlessSettings(name, title, "draw-text"), _ui(0), _noupdate(false)
+	: QObject(), BrushlessSettings(name, title, "draw-text"), _ui(0), _noupdate(false), m_mergeEnabled(true)
 {
 }
 
@@ -907,7 +907,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 void AnnotationSettings::setUiEnabled(bool enabled)
 {
 	_ui->content->setEnabled(enabled);
-	_ui->btnBake->setEnabled(enabled);
+	_ui->btnBake->setEnabled(enabled & m_mergeEnabled);
 	_ui->btnRemove->setEnabled(enabled);
 }
 
@@ -1048,6 +1048,12 @@ void AnnotationSettings::unselect(int id)
 {
 	if(selected() == id)
 		setSelection(0);
+}
+
+void AnnotationSettings::setMergeEnabled(bool enable)
+{
+	m_mergeEnabled = enable;
+	_ui->btnBake->setEnabled(enable && selected());
 }
 
 void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
