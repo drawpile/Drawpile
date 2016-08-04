@@ -62,6 +62,7 @@ public:
 	void setAnnounceWhitelist(const QString &path);
 	void setAnnounceLocalAddr(const QString &addr);
 	void setBanlist(const QString &path);
+	void setPrivateUserList(bool p);
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);

@@ -120,6 +120,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 		o["protocol"] = session.protocol;
 		o["title"] = session.title;
 		o["users"] = session.users;
+		o["usernames"] = QJsonArray::fromStringList(session.usernames);
 		o["password"] = session.password;
 		o["owner"] = session.owner;
 		// TODO: explicit NSFM tag
@@ -147,6 +148,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 
 		o["title"] = session.title;
 		o["users"] = session.users;
+		o["usernames"] = QJsonArray::fromStringList(session.usernames);
 		o["password"] = session.password;
 		o["owner"] = session.owner;
 
@@ -275,6 +277,7 @@ void AnnouncementApi::handleListingResponse(QNetworkReply *reply)
 			obj["protocol"].toString(),
 			obj["title"].toString(),
 			obj["users"].toInt(),
+			obj["usernames"].toVariant().toStringList(),
 			obj["password"].toBool(),
 			obj["nsfm"].toBool(),
 			obj["owner"].toString(),

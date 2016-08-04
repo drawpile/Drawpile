@@ -45,7 +45,7 @@ SessionState::SessionState(const SessionId &id, int minorVersion, const QString 
 	_founder(founder),
 	_locked(false), _layerctrllocked(true), _putimagelocked(false), _closed(false),
 	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false),
-	_preservechat(false)
+	_preservechat(false), m_privateUserList(false)
 {
 }
 
@@ -724,6 +724,14 @@ QString SessionState::uptime() const
 	return uptime;
 }
 
+QStringList SessionState::userNames() const
+{
+	QStringList lst;
+	for(const Client *c : _clients)
+		lst << c->username();
+	return lst;
+}
+
 void SessionState::makeAnnouncement(const QUrl &url)
 {
 	sessionlisting::Session s {
@@ -733,6 +741,7 @@ void SessionState::makeAnnouncement(const QUrl &url)
 		QStringLiteral("%1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(minorProtocolVersion()),
 		title(),
 		userCount(),
+		passwordHash().isEmpty() && !m_privateUserList ? userNames() : QStringList(),
 		!passwordHash().isEmpty(),
 		false, // TODO: explicit NSFM tag
 		founder(),

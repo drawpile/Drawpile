@@ -47,6 +47,7 @@ BuiltinServer::BuiltinServer(QObject *parent)
 
 	_sessions->setHistoryLimit(qMax(0, int(cfg.value("historylimit", 0).toDouble() * 1024 * 1024)));
 	_sessions->setConnectionTimeout(cfg.value("timeout", 60).toInt() * 1000);
+	_sessions->setPrivateUserList(cfg.value("privateUserList", false).toBool());
 
 	// Only one session per server is supported here
 	_sessions->setSessionLimit(1);

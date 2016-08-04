@@ -98,6 +98,9 @@ public:
 	 */
 	void setExpirationTime(uint seconds) { _expirationTime = qint64(seconds) * 1000; }
 
+	//! Never include user lists in announcements
+	void setPrivateUserList(bool p) { m_privateUserList = p; }
+
 	/**
 	 * @brief Set whether a secure connection is mandatory
 	 * @param mustSecure
@@ -313,6 +316,7 @@ private:
 	QString _hostPassword;
 	bool _allowPersistentSessions;
 	bool _mustSecure;
+	bool m_privateUserList;
 
 #ifndef NDEBUG
 	uint _randomlag;

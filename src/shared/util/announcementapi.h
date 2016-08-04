@@ -45,6 +45,7 @@ struct Session {
 	QString protocol;
 	QString title;
 	int users;
+	QStringList usernames;
 	bool password;
 	bool nsfm;
 	QString owner;
