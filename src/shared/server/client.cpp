@@ -342,8 +342,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 	// Locking (note. applies only to command stream)
 	if(msg->isCommand()) {
 		if(isDropLocked()) {
-			// ignore command
-			return;
+			// ignore command, with the exception of undo overrides which are allowed
+			// even when the session is locked (used by OPs to undo vandalism)
+			if(!(msg->type() == protocol::MSG_UNDO && msg.cast<protocol::Undo>().overrideId()))
+				return;
 		} else if(isHoldLocked()) {
 			_holdqueue.append(msg);
 			return;
