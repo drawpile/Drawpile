@@ -1,3 +1,10 @@
+2016-08-06 Version 2.0.0 beta 1
+ * Major refactoring
+ * Protocol version 4
+ * Some server features removed (to be reimplemented later)
+ * New simplified recording playback dialog
+ * Session resetting to previous snapshots
+
 2016-08-06 Version 1.0.4
  * Username length is now limited to 22 characters
  * Show correct error message when server is full
