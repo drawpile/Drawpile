@@ -163,6 +163,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption banlist("banlist", "IP banlist", "filename");
 	parser.addOption(banlist);
 
+	// --private-userlist
+	QCommandLineOption privateUserListOption("private-userlist", "Never include user lists in announcements");
+	parser.addOption(privateUserListOption);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -331,6 +335,8 @@ int main(int argc, char *argv[]) {
 		}
 		server->setConnectionTimeout(timeout * 1000);
 	}
+
+	server->setPrivateUserList(cfgfile.override(parser, privateUserListOption).toBool());
 
 	// Catch signals
 #ifdef Q_OS_UNIX

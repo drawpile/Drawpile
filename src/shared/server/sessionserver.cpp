@@ -39,7 +39,8 @@ SessionServer::SessionServer(QObject *parent)
 	_historyLimit(0),
 	_expirationTime(0),
 	_allowPersistentSessions(false),
-	_mustSecure(false)
+	_mustSecure(false),
+	m_privateUserList(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
 	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
@@ -92,6 +93,7 @@ void SessionServer::initSession(Session *session)
 	session->setHistoryLimit(_historyLimit);
 	session->setPersistenceAllowed(allowPersistentSessions());
 	session->setWelcomeMessage(welcomeMessage());
+	session->setPrivateUserList(m_privateUserList);
 
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
@@ -330,6 +332,7 @@ void SessionServer::refreshSessionAnnouncements()
 				protocol::ProtocolVersion(),
 				s->title(),
 				s->userCount(),
+				s->passwordHash().isEmpty() && !s->isPrivateUserList() ? s->userNames() : QStringList(),
 				!s->passwordHash().isEmpty(),
 				false, // TODO: explicit NSFM tag
 				s->founder(),

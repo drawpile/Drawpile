@@ -1,8 +1,10 @@
-2016-0?-?? Version 1.0.4
+2016-08-06 Version 1.0.4
  * Username length is now limited to 22 characters
  * Show correct error message when server is full
  * Let the user know if their IP address has been banned
  * Added option to restrict cut&paste and fill operations
+ * List of logged in users can now be included in session announcement
+ * Allow undo override even while session is locked
 
 2016-07-02 Version 1.0.3
  * Remember last used path when saving files

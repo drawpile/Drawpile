@@ -474,14 +474,14 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Session history:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <widget class="QDoubleSpinBox" name="historylimit">
          <property name="specialValueText">
           <string>unlimited</string>
@@ -503,14 +503,14 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Timeout:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QSpinBox" name="connTimeout">
          <property name="suffix">
           <string> s</string>
@@ -537,6 +537,13 @@
         <widget class="QCheckBox" name="useupnp">
          <property name="text">
           <string>Automatically set up port forwarding with UPnP</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="privateUserList">
+         <property name="text">
+          <string>Never publish user list</string>
          </property>
         </widget>
        </item>

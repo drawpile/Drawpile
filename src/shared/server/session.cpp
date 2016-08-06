@@ -43,7 +43,8 @@ Session::Session(const SessionId &id, const protocol::ProtocolVersion &protocolV
 	m_id(id), m_protocolVersion(protocolVersion), m_maxusers(254), m_historylimit(0),
 	m_founder(founder),
 	m_closed(false),
-	m_allowPersistent(false), m_persistent(false), m_preserveChat(false), m_nsfm(false)
+	m_allowPersistent(false), m_persistent(false), m_preserveChat(false), m_nsfm(false),
+	m_privateUserList(false)
 {
 }
 
@@ -450,6 +451,13 @@ QString Session::uptime() const
 	return uptime;
 }
 
+QStringList Session::userNames() const
+{
+	QStringList lst;
+	for(const Client *c : m_clients)
+		lst << c->username();
+	return lst;
+}
 void Session::makeAnnouncement(const QUrl &url)
 {
 	sessionlisting::Session s {
@@ -459,6 +467,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		protocolVersion(),
 		title(),
 		userCount(),
+		passwordHash().isEmpty() && !m_privateUserList ? userNames() : QStringList(),
 		!passwordHash().isEmpty(),
 		isNsfm(),
 		founder(),

@@ -172,6 +172,11 @@ void MultiServer::setBanlist(const QString &path)
 	_banlist->setPath(path);
 }
 
+void MultiServer::setPrivateUserList(bool p)
+{
+	_sessions->setPrivateUserList(p);
+}
+
 void MultiServer::setAllowGuests(bool allow)
 {
 	if(!_sessions->identityManager()) {

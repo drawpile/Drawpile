@@ -97,6 +97,15 @@ public:
 	void setHistoryLimit(uint limit) { m_historylimit = limit; }
 
 	/**
+	 * @brief Don't include user list in session announcement?
+	 *
+	 * Password protected sessions are implicitly private
+	 * @param p
+	 */
+	void setPrivateUserList(bool p) { m_privateUserList = p; }
+	bool isPrivateUserList() const { return m_privateUserList; }
+
+	/**
 	 * @brief Set the name of the recording file to create
 	 *
 	 * The recording will be created after a snapshot point has been created.
@@ -209,6 +218,9 @@ public:
 	 * @return user ID or invalid ID if init not in progress
 	 */
 	int initUserId() const { return m_initUser; }
+
+	//! Get the names of this session's users
+	QStringList userNames() const;
 
 	/**
 	 * @brief Get the name of the session owner
@@ -392,6 +404,7 @@ private:
 	bool m_persistent;
 	bool m_preserveChat;
 	bool m_nsfm;
+	bool m_privateUserList;
 };
 
 }

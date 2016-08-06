@@ -273,6 +273,7 @@ void SettingsDialog::restoreSettings()
 #else
 	_ui->useupnp->setEnabled(false);
 #endif
+	_ui->privateUserList->setChecked(cfg.value("privateUserList", false).toBool());
 	cfg.endGroup();
 
 	_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
@@ -329,6 +330,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("timeout", _ui->connTimeout->value());
 	cfg.setValue("dnssd", _ui->dnssd->isChecked());
 	cfg.setValue("upnp", _ui->useupnp->isChecked());
+	cfg.setValue("privateUserList", _ui->privateUserList->isChecked());
 
 	cfg.endGroup();
 
