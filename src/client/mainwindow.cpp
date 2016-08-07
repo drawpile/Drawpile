@@ -287,6 +287,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, _canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
 
 	connect(_dock_input, &docks::InputSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
+	m_doc->toolCtrl()->setSmoothing(_dock_input->getSmoothing());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, _view, &widgets::CanvasView::setToolCursor);
 
 	connect(_view, &widgets::CanvasView::penDown, m_doc->toolCtrl(), &tools::ToolController::startDrawing);
