@@ -282,7 +282,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(layerAutoselectRequest(int)), _dock_layers, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() {
-			setWindowModified(true);
+			if(!isWindowModified())
+				setWindowModified(true);
 			if(_autosave->isChecked())
 				autosave();
 			});
