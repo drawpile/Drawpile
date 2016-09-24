@@ -155,9 +155,10 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		bool _opacitypressure;
 		bool _hardnesspressure;
 		bool _smudgepressure;
+		bool m_hardedge;
 		QColor _color1, _color2;
 		PreviewShape _shape;
-		qreal _oldhardness1, _oldhardness2;
+		qreal m_hardness;
 		int _fillTolerance;
 		int _fillExpansion;
 		bool _underFill;

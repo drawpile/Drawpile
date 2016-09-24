@@ -248,10 +248,12 @@ void BrushPreview::setOpacity(int opacity)
  */
 void BrushPreview::setHardness(int hardness)
 {
-	const qreal h = hardness/100.0;
-	_brush.setHardness(h);
-	if(_hardnesspressure==false)
-		_brush.setHardness2(h);
+	m_hardness = hardness/100.0;
+	if(!m_hardedge) {
+		_brush.setHardness(m_hardness);
+		_brush.setHardness2(_hardnesspressure ? 0 : m_hardness);
+	}
+
 	updatePreview();
 	update();
 }
@@ -313,10 +315,9 @@ void BrushPreview::setOpacityPressure(bool enable)
 void BrushPreview::setHardnessPressure(bool enable)
 {
 	_hardnesspressure = enable;
-	if(enable)
-		_brush.setHardness2(0);
-	else
-		_brush.setHardness2(_brush.hardness1());
+	if(!m_hardedge)
+		_brush.setHardness2(enable ? 0 : _brush.hardness1());
+
 	updatePreview();
 	update();
 }
@@ -348,15 +349,14 @@ void BrushPreview::setBlendingMode(paintcore::BlendMode::Mode mode)
 
 void BrushPreview::setHardEdge(bool hard)
 {
+	m_hardedge = hard;
 	if(hard) {
-		_oldhardness1 = _brush.hardness(0);
-		_oldhardness2 = _brush.hardness(1);
 		_brush.setHardness(1);
 		_brush.setHardness2(1);
 		_brush.setSubpixel(false);
 	} else {
-		_brush.setHardness(_oldhardness1);
-		_brush.setHardness2(_oldhardness2);
+		_brush.setHardness(m_hardness);
+		_brush.setHardness2(_hardnesspressure ? 0 : m_hardness);
 		_brush.setSubpixel(true);
 	}
 	updatePreview();
