@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QUrl>
+#include <QStringList>
 
 #include <functional>
 

@@ -547,6 +547,13 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 			// Ignore CN mismatch when using an IP address rather than a hostname
 			ignore << e;
 
+#ifdef Q_OS_OSX
+		} else if(e.error() == QSslError::CertificateUntrusted) {
+			// Ignore "The root CA certificate is not trusted for this purpose" error that
+			// started happening on OSX. We still check that the certificate matches the one
+			// we have saved. (Most server certs are expected to be self-signed)
+			ignore << e;
+#endif
 		} else {
 			fail = true;
 
