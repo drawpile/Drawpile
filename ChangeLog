@@ -1,6 +1,8 @@
 2016-??-?? Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)
  * Fixed untrusted certificate error (OSX specific)
+ * Improved performance when joining a session (task bar related bugfix)
+ * Fixed restoration of eraser hard edge mode when switching tools
 
 2016-08-06 Version 1.0.4
  * Username length is now limited to 22 characters
