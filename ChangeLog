@@ -1,4 +1,4 @@
-2016-??-?? Version 1.0.5
+2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)
  * Fixed untrusted certificate error (OSX specific)
  * Improved performance when joining a session (task bar related bugfix)
