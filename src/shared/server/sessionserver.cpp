@@ -377,26 +377,29 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 
 void SessionServer::cleanupSessions()
 {
-	if(_allowPersistentSessions && _expirationTime>0) {
+	if(_expirationTime>0) {
 		QDateTime now = QDateTime::currentDateTime();
 
 		QList<SessionState*> expirelist;
 
 		for(SessionState *s : _sessions) {
-			if(s->userCount()==0) {
-				if(s->lastEventTime().msecsTo(now) > _expirationTime) {
-					expirelist << s;
-				}
+			if(s->lastEventTime().msecsTo(now) > _expirationTime) {
+				expirelist << s;
 			}
 		}
 
 		for(SessionState *s : expirelist) {
-			logger::info() << s << "Vacant session expired. Uptime was" << s->uptime();
+			logger::info() << s << "Session timeout. Uptime was" << s->uptime();
 
 			if(_store && _store->autoStore() && s->isPersistent())
 				s->setHibernatable(true);
 
-			destroySession(s);
+			if(s->clients().isEmpty()) {
+				destroySession(s);
+			} else {
+				s->wall("Session shutdown due to idle time limit");
+				s->killSession();
+			}
 		}
 	}
 }

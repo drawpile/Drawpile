@@ -1,3 +1,6 @@
+2017-??-?? Version 1.0.6
+ * Server: non-persistent session idle time can now also be limited
+
 2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)
  * Fixed untrusted certificate error (OSX specific)

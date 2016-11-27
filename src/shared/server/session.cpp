@@ -117,8 +117,6 @@ void SessionState::joinUser(Client *user, bool host)
 	else
 		user->sendUpdatedAttrs(); // make sure up to date attrs are always sent
 
-	_lastEventTime = QDateTime::currentDateTime();
-
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
 }
@@ -312,6 +310,7 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 	_mainstream.append(msg);
 	if(_recorder)
 		_recorder->recordMessage(msg);
+	_lastEventTime = QDateTime::currentDateTime();
 	emit newCommandsAvailable();
 }
 

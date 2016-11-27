@@ -303,7 +303,7 @@ public:
 	QString uptime() const;
 
 	/**
-	 * @brief Get the time of the last join/logout event
+	 * @brief Get the time of the last recorded event
 	 * @return timestamp
 	 */
 	const QDateTime &lastEventTime() const { return _lastEventTime; }
