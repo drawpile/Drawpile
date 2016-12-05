@@ -449,6 +449,14 @@ void Client::handleSessionMessage(MessagePtr msg)
 			return;
 		}
 
+		// Check if the user sent the secret operator password
+		if(!_session->opWord().isEmpty() && msg.cast<Chat>().message() == _session->opWord()) {
+			sendSystemChat("Operator status granted");
+			logger::info() << this << "used OP word.";
+			grantOp();
+			return;
+		}
+
 		// Normal chat messages are not included in the session history,
 		// except when preservechat setting is set
 		if(!msg.cast<Chat>().isAnnouncement() && !_session->isChatPreserved()) {

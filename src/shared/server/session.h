@@ -145,6 +145,15 @@ public:
 	void setPasswordHash(const QByteArray &passwordhash);
 
 	/**
+	 * @brief Get the secret operator word
+	 *
+	 * Sending this word as a chat message grants operator status. By default,
+	 * a session has no op-word.
+	 */
+	QString opWord() const { return m_opword; }
+	void setOpWord(const QString &opWord) { m_opword = opWord; }
+
+	/**
 	 * @brief Set the session password
 	 * @param password
 	 */
@@ -532,6 +541,7 @@ private:
 	QString _title;
 	QString _founder;
 	QString _welcomeMessage;
+	QString m_opword;
 
 	bool _locked;
 	bool _layerctrllocked;

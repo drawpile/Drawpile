@@ -24,6 +24,7 @@
 
 #include <QList>
 #include <QStringList>
+#include <QRegularExpression>
 
 namespace server {
 
@@ -288,6 +289,25 @@ void unlistSession(Client *client, const QString &, const QStringList &)
 	client->session()->unlistAnnouncement();
 }
 
+void setOpWord(Client *client, const QString &cmd, const QStringList &)
+{
+	logger::info() << cmd;
+	QRegularExpression re("opword\\s+\"([^\"]*)\"\\s+\"([^\"]*)\"");
+	auto m = re.match(cmd);
+	if(!m.hasMatch()) {
+		client->sendSystemChat("Give both the old and new operator passwords");
+		return;
+	}
+
+	if(m.captured(1) != client->session()->opWord()) {
+		client->sendSystemChat("Incorrect password");
+		return;
+	}
+	client->session()->setOpWord(m.captured(2));
+	client->sendSystemChat("Operator password set. Send the password as a chat message to regain operator status.");
+	logger::info() << client << "set the OP word";
+}
+
 void showHelp(Client *client, const QString &, const QStringList &)
 {
 	QString message("Supported commands:\n");
@@ -352,6 +372,7 @@ OpCommandSet::OpCommandSet()
 		<< OpCommand("deop", deopUser, ID, "revoke operator privileges", 1)
 		<< OpCommand("lock", lockUser, ID, "lock user", 1)
 		<< OpCommand("unlock", unlockUser, ID, "unlock user", 1)
+		<< OpCommand("opword", setOpWord, "\"old password\" \"new password\"", "change secret operator password", 1, 999)
 
 		<< OpCommand("force_snapshot", [](Client *c, const QString&, const QStringList&) { c->session()->startSnapshotSync(); }, QString(), "force snapshot sync")
 		<< OpCommand("killsession", killSession, QString(), "shut down this session").modOnly()
