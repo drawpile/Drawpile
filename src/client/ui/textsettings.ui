@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>286</width>
+    <width>302</width>
     <height>308</height>
    </rect>
   </property>
@@ -187,7 +187,7 @@
        <property name="autoRaise">
         <bool>true</bool>
        </property>
-       <property name="color">
+       <property name="color" stdset="0">
         <color>
          <red>0</red>
          <green>0</green>
@@ -325,6 +325,16 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="ownerLabel">
+     <property name="text">
+      <string notr="true">(#0)</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

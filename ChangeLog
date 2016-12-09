@@ -1,6 +1,7 @@
 2017-??-?? Version 1.0.6
  * Server: non-persistent session idle time can now also be limited
  * Server: added /opword command
+ * Name of the user who created an annotation is now displayed in the editing widget
 
 2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)

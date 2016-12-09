@@ -42,6 +42,7 @@ using widgets::GroupedToolButton;
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "net/client.h"
+#include "net/userlist.h"
 
 #include "utils/palette.h"
 #include "utils/icon.h"
@@ -1071,6 +1072,7 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		Q_ASSERT(a);
 		_ui->content->setHtml(a->text());
 		_ui->btnBackground->setColor(a->backgroundColor());
+		_ui->ownerLabel->setText(QString("(%1)").arg(_client->userlist()->getUsername(a->id() & 0xff00 >> 8)));
 		setEditorBackgroundColor(a->backgroundColor());
 		if(a->text().isEmpty())
 			resetContentFont(true, true, true);
