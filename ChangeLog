@@ -6,6 +6,7 @@
  * Bugfix: Filling freeform selections now uses the correct blending mode
  * Cut and fill commands now only operate on selections to avoid accidentally clearing or filling whole layers
  * Added an option to lock dock widgets in their places
+ * Added server log chat messages for operator actions
 
 2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)

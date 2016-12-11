@@ -236,7 +236,7 @@ signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandLocal(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
-	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
+	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me, bool log);
 	void pinnedChatReceived(const QString &message);
 	void markerMessageReceived(const QString &user, const QString &message);
 	void needSnapshot(bool forcenew);

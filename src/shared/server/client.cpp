@@ -472,6 +472,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_SESSION_TITLE:
 		// Keep track of title changes
 		_session->setTitle(msg.cast<SessionTitle>().title());
+		_session->sendLog(QString("Session title changed by %1").arg(username()));
 		break;
 	default: break;
 	}

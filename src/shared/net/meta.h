@@ -202,6 +202,7 @@ public:
 	static const uint8_t FLAG_OPCMD = 0x02;    // this message is an operator command
 	static const uint8_t FLAG_ACTION = 0x04;   // this is an "action message" (like /me in IRC)
 	static const uint8_t FLAG_PIN = 0x08;      // pin this message
+	static const uint8_t FLAG_LOG = 0x10;      // this is a server event log message
 
 	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), _flags(flags), _msg(msg) {}
 	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement, bool action)
@@ -217,6 +218,9 @@ public:
 
 	//! Construct a pinned message
 	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, FLAG_ANNOUNCE|FLAG_PIN, message.toUtf8())); }
+
+	//! Construct a server log message
+	static MessagePtr log(const QString &message) { return MessagePtr(new Chat(0, FLAG_LOG, message.toUtf8())); }
 
 	static Chat *deserialize(const uchar *data, uint len);
 
@@ -248,6 +252,11 @@ public:
 	 * Only session owners may pin messages.
 	 */
 	bool isPinned() const { return _flags & FLAG_PIN; }
+
+	/**
+	 * @brief Is this a server log message?
+	 */
+	bool isLog() const { return contextId() == 0 && (_flags & FLAG_LOG); }
 
 protected:
     int payloadLength() const;

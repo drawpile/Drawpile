@@ -94,21 +94,28 @@ bool _getOnOff(const QString &value) {
 void lockBoard(Client *client, const QString &, const QStringList &tokens)
 {
 	client->session()->setLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	client->session()->sendLog(QString("Board locked by %1").arg(client->username()));
 }
 
 void lockLayerCtrls(Client *client, const QString &, const QStringList &tokens)
 {
-	client->session()->setLayerControlLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	const bool lock = tokens.size()==1 || _getOnOff(tokens.at(1));
+	client->session()->setLayerControlLocked(lock);
+	client->session()->sendLog(QString("Layer controls %2 by %1").arg(client->username()).arg(lock ? "locked" : "unlocked"));
 }
 
 void lockPutImage(Client *client, const QString &, const QStringList &tokens)
 {
-	client->session()->setPutImageLocked(tokens.size()==1 || _getOnOff(tokens.at(1)));
+	const bool lock = tokens.size()==1 || _getOnOff(tokens.at(1));
+	client->session()->setPutImageLocked(lock);
+	client->session()->sendLog(QString("Image upload %2 by %1").arg(client->username()).arg(lock ? "locked" : "unlocked"));
 }
 
 void loginsOpen(Client *client, const QString &, const QStringList &tokens)
 {
-	client->session()->setClosed(!_getOnOff(tokens.at(1)));
+	bool open = _getOnOff(tokens.at(1));
+	client->session()->setClosed(!open);
+	client->session()->sendLog(QString("Session %2 by %1").arg(client->username()).arg(open ? "opened" : "closed"));
 }
 
 void lockDefault(Client *client, const QString &, const QStringList &tokens)
@@ -121,24 +128,31 @@ void setSessionTitle(Client *client, const QString &, const QStringList &tokens)
 	QString title = QStringList(tokens.mid(1)).join(' ');
 	client->session()->setTitle(title);
 	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(client->id(), title)));
+	client->session()->sendLog(QString("Session title changed by %1").arg(client->username()));
 }
 
 void setMaxUsers(Client *client, const QString &, const QStringList &tokens)
 {
 	bool ok;
 	int limit = tokens[1].toInt(&ok);
-	if(ok && limit>0)
+	if(ok && limit>0) {
 		client->session()->setMaxUsers(limit);
-	else
+		client->session()->sendLog(QString("User limit set to %2 by %1").arg(client->username()).arg(limit));
+	} else {
 		throw OpError("Invalid user limit: " + tokens[1]);
+	}
 }
 
 void setPassword(Client *client, const QString &cmd, const QStringList &tokens)
 {
-	if(tokens.length()==1)
+	if(tokens.length()==1) {
 		client->session()->setPassword(QString());
-	else // note: password may contain spaces
+		client->session()->sendLog(QString("Session password removed by %1").arg(client->username()));
+	} else {
+		// note: password may contain spaces
 		client->session()->setPassword(cmd.mid(cmd.indexOf(' ') + 1));
+		client->session()->sendLog(QString("Session password changed by %1").arg(client->username()));
+	}
 }
 
 void persistSession(Client *client, const QString &, const QStringList &tokens)
@@ -180,14 +194,17 @@ void kickUser(Client *client, const QString &, const QStringList &tokens)
 	if(target->isModerator())
 		throw OpError("cannot kick moderators");
 
+	client->session()->sendLog(QString("%2 kicked by %1").arg(client->username()).arg(target->username()));
 	target->disconnectKick(client->username());
 }
 
 void opUser(Client *client, const QString &, const QStringList &tokens)
 {
 	Client *target = _getClient(client, tokens.at(1));
-	if(!target->isOperator())
+	if(!target->isOperator()) {
 		target->grantOp();
+		client->session()->sendLog(QString("%2 was granted operator status by %1").arg(client->username()).arg(target->username()));
+	}
 }
 
 void deopUser(Client *client, const QString &, const QStringList &tokens)
@@ -200,18 +217,21 @@ void deopUser(Client *client, const QString &, const QStringList &tokens)
 		throw OpError("cannot deop moderators");
 
 	target->deOp();
+	client->session()->sendLog(QString("%2 was deopped by %1").arg(client->username()).arg(target->username()));
 }
 
 void lockUser(Client *client, const QString &, const QStringList &tokens)
 {
 	Client *target = _getClient(client, tokens.at(1));
 	target->lockUser();
+	client->session()->sendLog(QString("%2 was locked by %1").arg(client->username()).arg(target->username()));
 }
 
 void unlockUser(Client *client, const QString &, const QStringList &tokens)
 {
 	Client *target = _getClient(client, tokens.at(1));
 	target->unlockUser();
+	client->session()->sendLog(QString("%2 was unlocked by %1").arg(client->username()).arg(target->username()));
 }
 
 void listUsers(Client *client, const QString &, const QStringList &)
@@ -256,7 +276,7 @@ void sessionStatus(Client *client, const QString &, const QStringList &)
 
 void killSession(Client *client, const QString &, const QStringList &)
 {
-	client->session()->wall(QString("Session shut down by moderator (%1)").arg(client->username()));
+	client->session()->sendLog(QString("Session shut down by moderator (%1)").arg(client->username()));
 	client->session()->killSession();
 }
 
@@ -304,8 +324,7 @@ void setOpWord(Client *client, const QString &cmd, const QStringList &)
 		return;
 	}
 	client->session()->setOpWord(m.captured(2));
-	client->sendSystemChat("Operator password set. Send the password as a chat message to regain operator status.");
-	logger::info() << client << "set the OP word";
+	client->session()->sendLog(QString("Operator password set by %1").arg(client->username()));
 }
 
 void showHelp(Client *client, const QString &, const QStringList &)

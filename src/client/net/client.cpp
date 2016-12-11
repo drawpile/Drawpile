@@ -579,7 +579,8 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 		msg.message(),
 		msg.isAnnouncement(),
 		msg.isAction(),
-		msg.contextId() == _my_id
+		msg.contextId() == _my_id,
+		msg.isLog()
 	);
 }
 
@@ -612,7 +613,7 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 	if(!message.isEmpty())
 		chat += QString(" (%1)").arg(message);
 
-	emit chatMessageReceived(tr("Server"), chat, false, false, false);
+	emit chatMessageReceived(tr("Server"), chat, false, false, false, false);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

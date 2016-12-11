@@ -631,6 +631,11 @@ void SessionState::wall(const QString &message)
 	}
 }
 
+void SessionState::sendLog(const QString &message)
+{
+	addToCommandStream(protocol::Chat::log(message));
+}
+
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 {
 	_maxusers = cmd.maxUsers();

@@ -454,6 +454,13 @@ public:
 	 */
 	void wall(const QString &message);
 
+	/**
+	 * @brief Send a server event log message
+	 * Event log messages are included in the session history
+	 * @param message
+	 */
+	void sendLog(const QString &message);
+
 	QString toLogString() const;
 
 	sessionlisting::Announcement publicListing() const { return _publicListing; }

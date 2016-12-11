@@ -1521,6 +1521,7 @@ void MainWindow::setOperatorMode(bool op)
 	getAction("toolfill")->setEnabled(!imgLock);
 	_dock_toolsettings->getAnnotationSettings()->setMergeEnabled(!imgLock);
 
+	_chatbox->setOperator(op);
 }
 
 /**
