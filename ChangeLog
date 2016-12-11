@@ -3,6 +3,7 @@
  * Server: added /opword command
  * Name of the user who created an annotation is now displayed in the editing widget
  * Bugfix: enable/disable fill commands when operator status changes and image lock is in place
+ * Bugfix: Filling freeform selections now uses the correct blending mode
 
 2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)

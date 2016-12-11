@@ -2181,7 +2181,7 @@ void MainWindow::setupActions()
 	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearOrDelete()));
-	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_REPLACE); });
+	connect(fillfgarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
 	connect(recolorarea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
 	connect(colorerasearea, &QAction::triggered, [this]() { fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
