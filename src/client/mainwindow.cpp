@@ -696,6 +696,8 @@ void MainWindow::readSettings(bool windowpos)
 		_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
+	getAction("freezedocks")->setChecked(cfg.value("freezedocks", false).toBool());
+
 	// Restore view settings
 	bool pixelgrid = cfg.value("showgrid", true).toBool();
 	getAction("showgrid")->setChecked(pixelgrid);
@@ -736,6 +738,7 @@ void MainWindow::writeSettings()
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", _splitter->saveState());
+	cfg.setValue("freezedocks", getAction("freezedocks")->isChecked());
 
 	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
 	cfg.setValue("thicklasers", getAction("thicklasers")->isChecked());
@@ -1624,6 +1627,21 @@ void MainWindow::hotBorderMenubar(bool show)
 	}
 }
 
+void MainWindow::setFreezeDocks(bool freeze)
+{
+	const auto features = QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable;
+
+	foreach(QObject *c, children()) {
+		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+		if(dw) {
+			if(freeze)
+				dw->setFeatures(dw->features() & ~features);
+			else
+				dw->setFeatures(dw->features() | features);
+		}
+	}
+}
+
 /**
  * User selected a tool
  * @param tool action representing the tool
@@ -2039,6 +2057,10 @@ void MainWindow::setupActions()
 		if(dw)
 			toggledockmenu->addAction(dw->toggleViewAction());
 	}
+	toggledockmenu->addSeparator();
+	QAction *freezeDocks = makeAction("freezedocks", nullptr, tr("Lock in place"), QString(), QKeySequence(), true);
+	toggledockmenu->addAction(freezeDocks);
+	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
 	//
 	// File menu and toolbar

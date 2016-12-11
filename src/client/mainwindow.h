@@ -167,6 +167,8 @@ class MainWindow : public QMainWindow {
 
 		void hotBorderMenubar(bool show);
 
+		void setFreezeDocks(bool freeze);
+
 	protected:
 		void closeEvent(QCloseEvent *event);
 		void keyReleaseEvent(QKeyEvent *event);
