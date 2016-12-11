@@ -143,6 +143,11 @@ public:
 	bool isUserLocked() const { return _isUserLocked; }
 
 	/**
+	 * @brief Is the put-image lock in place?
+	 */
+	bool isImageLocked() const { return m_isImageLocked; }
+
+	/**
 	 * @brief Is the currently logged in user a session operator?
 	 *
 	 * This is always true in local mode.
@@ -288,7 +293,7 @@ private:
 	int _my_id;
 	bool _isloopback;
 	bool _isOp;
-	bool _isSessionLocked, _isUserLocked;
+	bool _isSessionLocked, _isUserLocked, m_isImageLocked;
 	UserListModel *_userlist;
 	LayerListModel *_layerlist;
 

@@ -1471,20 +1471,10 @@ void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool clos
 	getAction("lockputimage")->setChecked(imagelocked);
 	getAction("denyjoins")->setChecked(closed);
 
-	bool imgLock = imagelocked && !_client->isOperator();
-	getAction("cutlayer")->setEnabled(!imgLock);
-	getAction("paste")->setEnabled(!imgLock);
-	getAction("pastefile")->setEnabled(!imgLock);
-	getAction("stamp")->setEnabled(!imgLock);
-	getAction("cleararea")->setEnabled(!imgLock);
-	getAction("fillfgarea")->setEnabled(!imgLock);
-	getAction("recolorarea")->setEnabled(!imgLock);
-	getAction("colorerasearea")->setEnabled(!imgLock);
-	getAction("toolfill")->setEnabled(!imgLock);
+	setOperatorMode(_client->isOperator());
 
 	_dock_layers->setControlsLocked(layerctrllocked);
 	_chatbox->setPreserveMode(preservechat);
-	_dock_toolsettings->getAnnotationSettings()->setMergeEnabled(!imgLock);
 }
 
 void MainWindow::updateLockWidget()
@@ -1515,6 +1505,19 @@ void MainWindow::setOperatorMode(bool op)
 	_admintools->setEnabled(op);
 	_docadmintools->setEnabled(op);
 	_dock_layers->setOperatorMode(op);
+
+	const bool imgLock = _client->isImageLocked() && !op;
+	getAction("cutlayer")->setEnabled(!imgLock);
+	getAction("paste")->setEnabled(!imgLock);
+	getAction("pastefile")->setEnabled(!imgLock);
+	getAction("stamp")->setEnabled(!imgLock);
+	getAction("cleararea")->setEnabled(!imgLock);
+	getAction("fillfgarea")->setEnabled(!imgLock);
+	getAction("recolorarea")->setEnabled(!imgLock);
+	getAction("colorerasearea")->setEnabled(!imgLock);
+	getAction("toolfill")->setEnabled(!imgLock);
+	_dock_toolsettings->getAnnotationSettings()->setMergeEnabled(!imgLock);
+
 }
 
 /**

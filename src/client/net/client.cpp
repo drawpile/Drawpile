@@ -54,6 +54,7 @@ Client::Client(QObject *parent)
 	_isOp = false;
 	_isSessionLocked = false;
 	_isUserLocked = false;
+	m_isImageLocked = false;
 
 	_userlist = new UserListModel(this);
 	_layerlist = new LayerListModel(this);
@@ -151,6 +152,7 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	_isOp = false;
 	_isSessionLocked = false;
 	_isUserLocked = false;
+	m_isImageLocked = false;
 	emit opPrivilegeChange(false);
 	emit sessionConfChange(false, false, false, false, false);
 	emit lockBitsChanged();
@@ -640,6 +642,7 @@ void Client::handleUserLeave(const protocol::UserLeave &msg)
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
 	_isSessionLocked = msg.isLocked();
+	m_isImageLocked = msg.isPutImageLocked();
 	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed(), msg.isChatPreserved(), msg.isPutImageLocked());
 	emit lockBitsChanged();
 }
