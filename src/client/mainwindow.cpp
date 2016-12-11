@@ -1725,8 +1725,10 @@ void MainWindow::copyFromLayer(int layer)
 
 void MainWindow::cutLayer()
 {
-	copyFromLayer(_dock_layers->currentLayer());
-	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+	if(_canvas->selectionItem()) {
+		copyFromLayer(_dock_layers->currentLayer());
+		fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+	}
 }
 
 void MainWindow::copyLayer()
@@ -1903,10 +1905,6 @@ void MainWindow::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		// Selection exists: fill selected area only
 		_canvas->selectionItem()->fillCanvas(color, mode, _client, _dock_layers->currentLayer());
 
-	} else {
-		// No selection: fill entire layer
-		_client->sendUndopoint();
-		_client->sendFillRect(_dock_layers->currentLayer(), QRect(QPoint(), _canvas->imageSize()), color, mode);
 	}
 }
 
@@ -2123,7 +2121,7 @@ void MainWindow::setupActions()
 	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy Visible"), tr("Copy selected area to the clipboard"), QKeySequence("Shift+Ctrl+C"));
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
-	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
+	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Selection"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
 	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence("Ctrl+T"));
 
@@ -2144,7 +2142,7 @@ void MainWindow::setupActions()
 	QAction *expandleft = makeAction("expandleft", 0, tr("Expand &Left"), "", QKeySequence(CTRL_KEY "+H"));
 	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
 
-	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
+	QAction *cleararea = makeAction("cleararea", 0, tr("Delete selection"), QString(), QKeySequence("Delete"));
 	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill selection"), QString(), QKeySequence(CTRL_KEY "+,"));
 	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
 	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color erase selection"), QString(), QKeySequence("Shift+Delete"));
