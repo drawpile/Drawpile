@@ -8,6 +8,7 @@
  * Added an option to lock dock widgets in their places
  * Added server log chat messages for operator actions
  * Server: remove kicked users from the session immediately
+ * Display user pointer on FillRect and PutImage commands
 
 2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)
