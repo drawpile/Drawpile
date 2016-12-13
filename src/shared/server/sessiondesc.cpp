@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,20 +26,36 @@
 
 namespace server {
 
-SessionId SessionId::randomId()
+QString sessionIdString(const QUuid &id)
 {
-	QString uuid = QUuid::createUuid().toString();
-
-	return SessionId(
-		uuid.mid(1, uuid.length()-2), // strip the { and } chars
-		false
-	);
+	QString s = id.toString();
+	return s.mid(1, s.length()-2);
 }
 
-SessionId SessionId::customId(const QString &id)
+bool isValidSessionAlias(const QString &alias)
 {
-	return SessionId(id, true);
+	if(alias.length() > 32 || alias.length() < 1)
+		return false;
+
+	for(int i=0;i<alias.length();++i) {
+		const QChar c = alias.at(i);
+		if(!(
+			(c >= 'a' && c<'z') ||
+			(c >= 'A' && c<'Z') ||
+			(c >= '0' && c<'9') ||
+			c=='-'
+			))
+			return false;
+	}
+
+	// To avoid confusion with real session IDs,
+	// aliases may not be valid UUIDs.
+	if(!QUuid(alias).isNull())
+		return false;
+
+	return true;
 }
+
 
 SessionDescription::SessionDescription()
 	: userCount(0), maxUsers(0), title(QString()),
@@ -49,6 +65,7 @@ SessionDescription::SessionDescription()
 
 SessionDescription::SessionDescription(const Session &session)
 	: id(session.id()),
+	  alias(session.idAlias()),
 	  protocolVersion(session.protocolVersion()),
 	  userCount(session.userCount()),
 	  maxUsers(session.maxUsers()),

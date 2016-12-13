@@ -73,7 +73,7 @@ protocol::MessagePtr Client::joinMessage() const
 
 QString Client::toLogString() const {
 	if(m_session)
-		return QStringLiteral("#%1 [%2] %3@%4:").arg(QString::number(id()), peerAddress().toString(), username(), m_session->id());
+		return QStringLiteral("#%1 [%2] %3@%4:").arg(QString::number(id()), peerAddress().toString(), username(), m_session->id().toString());
 	else
 		return QStringLiteral("[%1] %2@(lobby):").arg(peerAddress().toString(), username());
 }

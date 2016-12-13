@@ -160,7 +160,7 @@ void sessionStatus(Client *client, const QJsonArray &args, const QJsonObject &kw
 
 	const Session *s = client->session();
 	QString msg;
-	msg.append(QString("Session #%1, up %2\n").arg(s->id()).arg(s->uptime()));
+	msg.append(QString("%1, up %2\n").arg(s->toLogString()).arg(s->uptime()));
 	msg.append(QString("Logged in users: %1 (max: %2)\n").arg(s->userCount()).arg(s->maxUsers()));
 	msg.append(QString("Persistent session: %1\n").arg(s->isPersistenceAllowed() ? (s->isPersistent() ? "yes" : "no") : "not allowed"));
 	msg.append(QString("Password protected: %1\n").arg(s->passwordHash().isEmpty() ? "no" : "yes"));

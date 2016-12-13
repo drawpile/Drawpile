@@ -54,12 +54,19 @@ public:
 		Shutdown
 	};
 
-	Session(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent=0);
+	Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
 	 */
-	SessionId id() const { return m_id; }
+	QUuid id() const { return m_id; }
+
+	/**
+	 * @brief Get the custom alias for the session ID
+	 *
+	 * Session ID alias is optional. If set, it can be used in place of the ID when joining a session.
+	 */
+	QString idAlias() const { return m_idAlias; }
 
 	/**
 	 * @brief Get the name of the user who started this session
@@ -389,7 +396,8 @@ private:
 	const QDateTime m_startTime;
 	QDateTime m_lastEventTime;
 
-	const SessionId m_id;
+	const QUuid m_id;
+	const QString m_idAlias;
 	protocol::ProtocolVersion m_protocolVersion;
 	int m_maxusers;
 	uint m_historylimit;

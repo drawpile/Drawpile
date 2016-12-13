@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ LoginHandler::LoginHandler(Client *client, SessionServer *server) :
 
 void LoginHandler::startLoginProcess()
 {
+	m_state = WAIT_FOR_IDENT;
+
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
 	greeting.message = "Drawpile server " DRAWPILE_VERSION;
@@ -73,7 +75,6 @@ void LoginHandler::startLoginProcess()
 	greeting.reply["flags"] = flags;
 
 	// Start by telling who we are
-	m_state = WAIT_FOR_IDENT;
 	send(greeting);
 
 	// Client should disconnect upon receiving the above if the version number does not match
@@ -81,9 +82,9 @@ void LoginHandler::startLoginProcess()
 
 QJsonObject sessionDescription(const SessionDescription &session)
 {
-	Q_ASSERT(!session.id.isEmpty());
+	Q_ASSERT(!session.id.isNull());
 	QJsonObject o;
-	o["id"] = session.id.id();
+	o["id"] = session.alias.isEmpty() ? sessionIdString(session.id) : session.alias;
 	o["protocol"] = session.protocolVersion.asString();
 	o["users"] = session.userCount;
 	o["founder"] = session.founder;
@@ -94,8 +95,6 @@ QJsonObject sessionDescription(const SessionDescription &session)
 		o["closed"] = true;
 	if(session.persistent)
 		o["persistent"] = true;
-	//if(session.hibernating) // not currently implemented in this server
-		//o["asleep"] = true;
 
 	return o;
 }
@@ -323,7 +322,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 		return;
 	}
 
-	QString sessionIdString = cmd.kwargs.value("id").toString();
+	QString sessionAlias = cmd.kwargs.value("alias").toString();
 	protocol::ProtocolVersion protocolVersion = protocol::ProtocolVersion::fromString(cmd.kwargs.value("protocol").toString());
 
 	if(!protocolVersion.isValid()) {
@@ -338,16 +337,16 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 		return;
 	}
 
-	// Check if session ID is available
-	SessionId sessionId;
-	if(sessionIdString.isEmpty())
-		sessionId = SessionId::randomId();
-	else
-		sessionId = SessionId::customId(sessionIdString);
-
-	if(!m_server->getSessionDescriptionById(sessionId).id.isEmpty()) {
-		sendError("idInUse", "This session ID is already in use");
-		return;
+	// Check if session alias is available
+	if(!sessionAlias.isEmpty()) {
+		if(!isValidSessionAlias(sessionAlias)) {
+			sendError("idInUse", "Invalid session alias");
+			return;
+		}
+		if(m_server->getSessionById(sessionAlias)) {
+			sendError("idInUse", "This session alias is already in use");
+			return;
+		}
 	}
 
 	QString host_password = cmd.kwargs.value("host_password").toString();
@@ -363,8 +362,10 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	reply.type = protocol::ServerReply::RESULT;
 	reply.message = "Starting new session!";
 	reply.reply["state"] = "host";
+
+	QUuid sessionId = QUuid::createUuid();
 	QJsonObject joinInfo;
-	joinInfo["id"] = sessionId.id();
+	joinInfo["id"] = sessionAlias.isEmpty() ? sessionIdString(sessionId) : sessionAlias;
 	joinInfo["user"] = userId;
 	reply.reply["join"] = joinInfo;
 	send(reply);
@@ -372,7 +373,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	m_complete = true;
 
 	// Create a new session
-	Session *session = m_server->createSession(sessionId, protocolVersion, m_client->username());
+	Session *session = m_server->createSession(sessionId, sessionAlias, protocolVersion, m_client->username());
 
 	session->joinUser(m_client, true);
 
@@ -436,7 +437,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	reply.message = "Joining a session!";
 	reply.reply["state"] = "join";
 	QJsonObject joinInfo;
-	joinInfo["id"] = session->id().id();
+	joinInfo["id"] = session->idAlias().isEmpty() ? sessionIdString(session->id()) : session->idAlias();
 	joinInfo["user"] = m_client->id();
 	reply.reply["join"] = joinInfo;
 	send(reply);

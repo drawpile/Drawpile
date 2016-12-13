@@ -157,11 +157,12 @@ public:
 	/**
 	 * @brief Create a new session
 	 * @param id session ID
+	 * @param idAlias session ID alias (empty if no alias set)
 	 * @param protocolVersion client protocol version
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	Session *createSession(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
+	Session *createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 
 	/**
 	 * @brief Get all current sessions
@@ -185,7 +186,7 @@ public:
 	 * @param id session ID
 	 * @return session or null if not found
 	 */
-	Session *getSessionById(const QString &id);
+	Session *getSessionById(const QString &id) const;
 
 	/**
 	 * @brief Get the total number of users in all sessions
@@ -268,7 +269,7 @@ signals:
 	/**
 	 * @brief Session with the given ID has just been destroyed
 	 */
-	void sessionEnded(QString id);
+	void sessionEnded(const QString &id);
 
 private slots:
 	void moveFromLobby(Session *session, Client *client);

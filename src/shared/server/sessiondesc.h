@@ -27,45 +27,25 @@
 #include <QList>
 #include <QHostAddress>
 #include <QDateTime>
+#include <QUuid>
 
 namespace server {
 
 class Session;
 class Client;
 
-/**
- * @brief Session identifier
- */
-class SessionId {
-public:
-	SessionId() : _custom(false) { }
-	SessionId(const QString &id, bool custom) : _id(id), _custom(custom) { }
+//! Return a properly formatted session ID string
+QString sessionIdString(const QUuid &id);
 
-	//! Get the ID string
-	const QString &id() const { return _id; }
-
-	//! Is this a user specified ID?
-	bool isCustom() const { return _custom; }
-
-	//! Generate a random session ID
-	static SessionId randomId();
-
-	//! Get a SessionId with a user specified ID
-	static SessionId customId(const QString &id);
-
-	operator QString() const { return _id; }
-	bool isEmpty() const { return _id.isEmpty(); }
-
-private:
-	QString _id;
-	bool _custom;
-};
+//! Is the given string a valid session ID alias?
+bool isValidSessionAlias(const QString &alias);
 
 /**
  * @brief Information about an available session
  */
 struct SessionDescription {
-	SessionId id;
+	QUuid id;
+	QString alias;
 	protocol::ProtocolVersion protocolVersion;
 	int userCount;
 	int maxUsers;

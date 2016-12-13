@@ -33,14 +33,14 @@ namespace server {
 
 using protocol::MessagePtr;
 
-Session::Session(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent)
+Session::Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent)
 	: QObject(parent),
 	m_state(Initialization),
 	m_initUser(-1),
 	m_recorder(0),
 	m_lastUserId(0),
 	m_startTime(QDateTime::currentDateTime()), m_lastEventTime(QDateTime::currentDateTime()),
-	m_id(id), m_protocolVersion(protocolVersion), m_maxusers(254), m_historylimit(0),
+	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254), m_historylimit(0),
 	m_founder(founder),
 	m_closed(false),
 	m_allowPersistent(false), m_persistent(false), m_preserveChat(false), m_nsfm(false),
@@ -49,7 +49,10 @@ Session::Session(const SessionId &id, const protocol::ProtocolVersion &protocolV
 }
 
 QString Session::toLogString() const {
-	return QStringLiteral("Session %1:").arg(id());
+	if(idAlias().isEmpty())
+		return QStringLiteral("Session %1:").arg(id().toString());
+	else
+		return QStringLiteral("Session %1|%2:").arg(id().toString(), idAlias());
 }
 
 void Session::switchState(State newstate)
@@ -463,7 +466,7 @@ void Session::makeAnnouncement(const QUrl &url)
 	sessionlisting::Session s {
 		QString(),
 		0,
-		id(),
+		idAlias().isEmpty() ? id().toString() : idAlias(),
 		protocolVersion(),
 		title(),
 		userCount(),

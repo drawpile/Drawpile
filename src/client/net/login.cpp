@@ -349,7 +349,7 @@ void LoginHandler::sendHostCommand()
 	cmd.cmd = "host";
 
 	if(!m_hostSessionId.isEmpty())
-		cmd.kwargs["id"] = m_hostSessionId;
+		cmd.kwargs["alias"] = m_hostSessionId;
 
 	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	cmd.kwargs["user_id"] = m_userid;

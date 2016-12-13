@@ -74,12 +74,12 @@ QList<SessionDescription> SessionServer::sessions() const
 	return descs;
 }
 
-Session *SessionServer::createSession(const SessionId &id, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
-	Q_ASSERT(!id.isEmpty());
-	Q_ASSERT(getSessionDescriptionById(id.id()).id.isEmpty());
+	Q_ASSERT(!id.isNull());
+	Q_ASSERT(getSessionDescriptionById(id.toString()).id.isNull());
 
-	Session *session = new Session(id, protocolVersion, founder, this);
+	Session *session = new Session(id, idAlias, protocolVersion, founder, this);
 
 	initSession(session);
 
@@ -124,29 +124,32 @@ void SessionServer::destroySession(Session *session)
 	logger::debug() << session << "Deleting session. User count is" << session->userCount();
 	_sessions.removeOne(session);
 
-	QString id = session->id();
-
 	session->stopRecording();
 
 	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
-	emit sessionEnded(id);
+	emit sessionEnded(sessionIdString(session->id()));
 }
 
 SessionDescription SessionServer::getSessionDescriptionById(const QString &id) const
 {
-	for(Session *s : _sessions) {
-		if(s->id() == id)
-			return SessionDescription(*s);
-	}
+	const Session *s = getSessionById(id);
+	if(s)
+		return SessionDescription(*s);
 
 	return SessionDescription();
 }
 
-Session *SessionServer::getSessionById(const QString &id)
+Session *SessionServer::getSessionById(const QString &id) const
 {
+	QUuid uuid(id);
 	for(Session *s : _sessions) {
-		if(s->id() == id)
-			return s;
+		if(uuid.isNull()) {
+			if(s->idAlias() == id)
+				return s;
+		} else {
+			if(s->id() == uuid)
+				return s;
+		}
 	}
 
 	return nullptr;
