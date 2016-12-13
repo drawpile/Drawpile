@@ -52,7 +52,7 @@ public:
 
 signals:
 	void toggleVisibility(int layerId, bool visible);
-	void layerOp(protocol::MessagePtr msg);
+	void layerCommand(protocol::MessagePtr msg);
 
 private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;

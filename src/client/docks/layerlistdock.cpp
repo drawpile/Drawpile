@@ -131,6 +131,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	_ui->layerlist->setModel(canvas->layerlist());
 
 	LayerListDelegate *del = new LayerListDelegate(this);
+	connect(del, &LayerListDelegate::layerCommand, this, &LayerList::layerCommand);
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
 	_ui->layerlist->setItemDelegate(del);
 

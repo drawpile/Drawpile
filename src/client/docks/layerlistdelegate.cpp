@@ -111,7 +111,7 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, cons
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 	QString newtitle = static_cast<QLineEdit*>(editor)->text();
 	if(layer.title != newtitle) {
-		emit const_cast<LayerListDelegate*>(this)->layerOp(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));
+		emit const_cast<LayerListDelegate*>(this)->layerCommand(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));
 	}
 }
 
