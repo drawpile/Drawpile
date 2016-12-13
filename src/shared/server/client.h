@@ -50,7 +50,8 @@ class Client : public QObject
 	enum State {
 		LOGIN,
 		WAIT_FOR_SYNC,
-		IN_SESSION
+		IN_SESSION,
+		DISCONNECTING
 	};
 
 public:
@@ -276,6 +277,7 @@ public:
 
 signals:
 	void loginMessage(protocol::MessagePtr message);
+	//! Emitted when the client is disconnected or starting to disconnect. May be emitted twice!
 	void disconnected(Client *client);
 	void barrierLocked();
 

@@ -330,8 +330,8 @@ void SessionServer::lobbyDisconnectedEvent(Client *client)
 	logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
 	Q_ASSERT(_lobby.contains(client));
 	_lobby.removeOne(client);
+	disconnect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
 
-	client->deleteLater();
 	emit userDisconnected();
 }
 

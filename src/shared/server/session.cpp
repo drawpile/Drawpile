@@ -125,6 +125,10 @@ void SessionState::removeUser(Client *user)
 {
 	Q_ASSERT(_clients.contains(user));
 
+	disconnect(user, SIGNAL(barrierLocked()), this, SLOT(userBarrierLocked()));
+	disconnect(user, SIGNAL(disconnected(Client*)), this, SLOT(removeUser(Client*)));
+	disconnect(this, SIGNAL(newCommandsAvailable()), user, SLOT(sendAvailableCommands()));
+
 	if(user->isUploadingSnapshot()) {
 		abandonSnapshotPoint();
 	}
@@ -151,8 +155,6 @@ void SessionState::removeUser(Client *user)
 	if(_clients.isEmpty()) {
 		setClosed(false);
 	}
-
-	user->deleteLater();
 
 	_lastEventTime = QDateTime::currentDateTime();
 

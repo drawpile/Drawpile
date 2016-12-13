@@ -168,11 +168,15 @@ void Client::receiveMessages()
 	while(_msgqueue->isPending()) {
 		MessagePtr msg = _msgqueue->getPending();
 
-		if(_state == LOGIN) {
+		if(_state == DISCONNECTING) {
+			// ignore
+
+		} else if(_state == LOGIN) {
 			if(msg->type() == protocol::MSG_LOGIN)
 				emit loginMessage(msg);
 			else
 				logger::notice() << this << "Got non-login message (type=" << msg->type() << ") in login state";
+
 		} else {
 			handleSessionMessage(msg);
 		}
@@ -261,7 +265,9 @@ void Client::socketError(QAbstractSocket::SocketError error)
 
 void Client::socketDisconnect()
 {
+	_state = DISCONNECTING;
 	emit disconnected(this);
+	deleteLater();
 }
 
 bool Client::isDownloadingLatestSnapshot() const
@@ -546,17 +552,22 @@ void Client::disconnectKick(const QString &kickedBy)
 {
 	logger::info() << this << "Kicked by" << kickedBy;
 	_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
+	_state = DISCONNECTING;
+	emit disconnected(this);
 }
 
 void Client::disconnectError(const QString &message)
 {
 	logger::info() << this << "Disconnecting due to error:" << message;
 	_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
+	_state = DISCONNECTING;
+	emit disconnected(this);
 }
 
 void Client::disconnectShutdown()
 {
 	_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
+	_state = DISCONNECTING;
 }
 
 void Client::sendUpdatedAttrs()
