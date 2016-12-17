@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 
 ### generic info
 set ( WEBSITE "http://drawpile.net/" )
-set ( DRAWPILE_VERSION "1.0.5" )
+set ( DRAWPILE_VERSION "1.0.6" )
 
 ### protocol versions
 # see doc/protocol.md for protocol version history
