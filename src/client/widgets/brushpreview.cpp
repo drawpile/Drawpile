@@ -38,7 +38,8 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), m_preview(nullptr), _sizepressure(false),
 	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
 	m_color(Qt::black), m_bg(Qt::white),
-	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), _tranparentbg(false)
+	m_hardedge(false),
+	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), m_needupdate(true), _tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
