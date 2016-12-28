@@ -613,6 +613,9 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	}
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
 	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
+
+	if(_showallmarkers || cmd.contextId() != m_myId)
+		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
 }
 
 void StateTracker::handleFillRect(const protocol::FillRect &cmd)
@@ -624,6 +627,9 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 	}
 
 	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), paintcore::BlendMode::Mode(cmd.blend()));
+
+	if(_showallmarkers || cmd.contextId() != m_myId)
+		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)

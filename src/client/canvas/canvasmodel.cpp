@@ -387,7 +387,8 @@ void CanvasModel::metaChat(const protocol::Chat &msg)
 		msg.message(),
 		msg.isAnnouncement(),
 		msg.isAction(),
-		msg.contextId() == m_statetracker->localId()
+		msg.contextId() == m_statetracker->localId(),
+		false // TODO port Log message type from stable branch over here
 	);
 }
 

@@ -30,6 +30,7 @@
 #include <QTextDocument>
 #include <QUrl>
 #include <QLabel>
+#include <QSettings>
 
 namespace widgets {
 
@@ -70,6 +71,7 @@ ChatBox::ChatBox(QWidget *parent)
 		".announcement { color: #fcfcfc }"
 		".nick { font-weight: bold }"
 		".nick.me { color: #fcfcfc }"
+		".log { color: #aaaaaa; font-style: italic }"
 		".action { color: #fcfcfc }"
 		"a:link { color: #1d99f3 }"
 	);
@@ -140,8 +142,15 @@ void ChatBox::kicked(const QString &kickedBy)
  * @param announcement is this a public announcement?
  * @param isme if true, the message was sent by this user
  */
-void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool action, bool isme)
+void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool action, bool isme, bool islog)
 {
+	if(islog) {
+		const int loglevel = QSettings().value("settings/serverlog", 1).toInt();
+		if(loglevel==0)
+			return;
+		else if(loglevel==1 && !m_operator)
+			return;
+	}
 	if(action) {
 		_view->append(
 			"<p class=\"chat action\"> * " + nick.toHtmlEscaped() +
@@ -151,7 +160,7 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool a
 		);
 	} else {
 		_view->append(
-			"<p class=\"chat\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
+			"<p class=\"chat" + QString(islog ? " log" : "") + "\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
 			nick.toHtmlEscaped() +
 			"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
 			htmlutils::linkify(message.toHtmlEscaped()) +

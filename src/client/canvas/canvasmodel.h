@@ -125,7 +125,7 @@ signals:
 
 	void colorPicked(const QColor &color);
 
-	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me);
+	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me, bool islog);
 	void markerMessageReceived(const QString &user, const QString &message);
 
 	void userJoined(int id, const QString &name);

@@ -1,7 +1,19 @@
 2016-??-?? Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document
 
-2016-??-?? Version 1.0.5
+2016-12-17 Version 1.0.6
+ * Server: non-persistent session idle time can now also be limited
+ * Server: added /opword command
+ * Name of the user who created an annotation is now displayed in the editing widget
+ * Bugfix: enable/disable fill commands when operator status changes and image lock is in place
+ * Bugfix: Filling freeform selections now uses the correct blending mode
+ * Cut and fill commands now only operate on selections to avoid accidentally clearing or filling whole layers
+ * Added an option to lock dock widgets in their places
+ * Added server log chat messages for operator actions
+ * Server: remove kicked users from the session immediately
+ * Display user pointer on FillRect and PutImage commands
+
+2016-10-15 Version 1.0.5
  * Fixed edited palette loading (OSX specific regression)
  * Fixed untrusted certificate error (OSX specific)
  * Improved performance when joining a session (task bar related bugfix)

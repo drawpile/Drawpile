@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(persistentSessionOption);
 
 	// --expire <time> (<time>[prefix], where prefix is d, h, m or s. No prefix defaults to s)
-	QCommandLineOption expireOption("expire", "Persistent session expiration time", "expiration", "0");
+	QCommandLineOption expireOption("expire", "Idle session expiration time", "expiration", "0");
 	parser.addOption(expireOption);
 
 	// --title, -t <server title>
@@ -263,25 +263,25 @@ int main(int argc, char *argv[]) {
 	{
 		bool persist = cfgfile.override(parser, persistentSessionOption).toBool();
 		server->setPersistentSessions(persist);
-		if(persist) {
-			QString expire = cfgfile.override(parser, expireOption).toString();
-			QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");
-			auto m = re.match(expire);
-			if(!m.hasMatch()) {
-				logger::error() << "Invalid expiration time:" << expire;
-				return 1;
-			}
 
-			float t = m.captured(1).toFloat();
-			if(m.captured(2)=="d")
-				t *= 24*60*60;
-			else if(m.captured(2)=="h")
-				t *= 60*60;
-			else if(m.captured(2)=="m")
-				t *= 60;
-
-			server->setExpirationTime(t);
+		// Expiration time now works for non-persistent sessions as well.
+		QString expire = cfgfile.override(parser, expireOption).toString();
+		QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");
+		auto m = re.match(expire);
+		if(!m.hasMatch()) {
+			logger::error() << "Invalid expiration time:" << expire;
+			return 1;
 		}
+
+		float t = m.captured(1).toFloat();
+		if(m.captured(2)=="d")
+			t *= 24*60*60;
+		else if(m.captured(2)=="h")
+			t *= 60*60;
+		else if(m.captured(2)=="m")
+			t *= 60;
+
+		server->setExpirationTime(t);
 	}
 
 	{

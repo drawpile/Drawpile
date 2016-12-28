@@ -52,7 +52,7 @@ public:
 
 public slots:
 	//! Display a received message
-	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool action, bool isme);
+	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool action, bool isme, bool islog);
 
 	//! Display a received marker
 	void receiveMarker(const QString &nick, const QString &message);
@@ -70,6 +70,9 @@ public slots:
 	//! Empty the chat box
 	void clear();
 
+	//! Set current user OP status
+	void setOperator(bool op) { m_operator = op; }
+
 private slots:
 	void sendMessage(const QString &msg);
 
@@ -86,6 +89,7 @@ private:
 	ChatLineEdit *_myline;
 	QLabel *m_pinned;
 	bool _wasCollapsed;
+	bool m_operator;
 };
 
 }
