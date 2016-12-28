@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,27 +16,30 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QCoreApplication>
-#include <QStringList>
-#include <QScopedPointer>
-#include <QRegularExpression>
-#include <QSslSocket>
-#include <QCommandLineParser>
-
 #include "config.h"
 
 #include "multiserver.h"
 #include "initsys.h"
-#include "configfile.h"
 #include "sslserver.h"
+
+#include "configfile.h"
+#include "banlist.h"
+#include "userfile.h"
+#include "announcementwhitelist.h"
 #include "../shared/util/logger.h"
 
-#include <cstdio>
+#include <QCoreApplication>
+#include <QStringList>
+#include <QRegularExpression>
+#include <QSslSocket>
+#include <QCommandLineParser>
 
 #ifdef Q_OS_UNIX
-#include <unistd.h>
 #include "unixsignals.h"
 #endif
+
+namespace server {
+namespace headless {
 
 void printVersion()
 {
@@ -46,24 +49,7 @@ void printVersion()
 	printf("SSL library version: %s (%lu)\n", QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(), QSslSocket::sslLibraryVersionNumber());
 }
 
-int main(int argc, char *argv[]) {
-#ifdef Q_OS_UNIX
-	// Security check
-	if(geteuid() == 0) {
-		fprintf(stderr, "This program should not be run as root!\n");
-		return 1;
-	}
-#endif
-
-	QCoreApplication app(argc, argv);
-
-	QCoreApplication::setOrganizationName("drawpile");
-	QCoreApplication::setOrganizationDomain("drawpile.sourceforge.net");
-	QCoreApplication::setApplicationName("drawpile-srv");
-	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
-
-	initsys::setInitSysLogger();
-
+bool start() {
 	// Set up command line arguments
 	QCommandLineParser parser;
 
@@ -172,11 +158,11 @@ int main(int argc, char *argv[]) {
 	parser.addOption(configFileOption);
 
 	// Parse
-	parser.process(app);
+	parser.process(*QCoreApplication::instance());
 
 	if(parser.isSet(versionOption)) {
 		printVersion();
-		return 0;
+		::exit(0);
 	}
 
 	// Load configuration file (if set)
@@ -185,7 +171,7 @@ int main(int argc, char *argv[]) {
 	// Initialize the server
 	server::MultiServer *server = new server::MultiServer;
 
-	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
+	server->connect(server, SIGNAL(serverStopped()), QCoreApplication::instance(), SLOT(quit()));
 
 	server->setServerTitle(cfgfile.override(parser, serverTitleOption).toString());
 	server->setWelcomeMessage(cfgfile.override(parser, serverWelcomeOption).toString());
@@ -207,7 +193,7 @@ int main(int argc, char *argv[]) {
 		port = pv.toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
 			logger::error() << "Invalid port" << pv.toString();
-			return 1;
+			return false;
 		}
 	}
 
@@ -217,7 +203,7 @@ int main(int argc, char *argv[]) {
 		if(!av.isNull()) {
 			if(!address.setAddress(av.toString())) {
 				logger::error() << "Invalid listening address" << av.toString();
-				return 1;
+				return false;
 			}
 		}
 	}
@@ -228,7 +214,7 @@ int main(int argc, char *argv[]) {
 		float limit = lv.toFloat(&ok);
 		if(!ok || limit<0) {
 			logger::error() << "Invalid history limit: " << lv.toString();
-			return 1;
+			return false;
 		}
 		uint limitbytes = limit * 1024 * 1024;
 		server->setHistoryLimit(limitbytes);
@@ -255,7 +241,7 @@ int main(int argc, char *argv[]) {
 		int sessionLimit = cfgfile.override(parser, sessionLimitOption).toInt(&ok);
 		if(!ok || sessionLimit<1) {
 			logger::error() << "Invalid session count limit";
-			return 1;
+			return false;
 		}
 		server->setSessionLimit(sessionLimit);
 	}
@@ -270,7 +256,7 @@ int main(int argc, char *argv[]) {
 		auto m = re.match(expire);
 		if(!m.hasMatch()) {
 			logger::error() << "Invalid expiration time:" << expire;
-			return 1;
+			return false;
 		}
 
 		float t = m.captured(1).toFloat();
@@ -303,16 +289,24 @@ int main(int argc, char *argv[]) {
 
 	{
 		QString userfile = cfgfile.override(parser, userfileOption).toString();
-		if(!userfile.isEmpty())
-			server->setUserFile(userfile);
-
-		server->setAllowGuests(!cfgfile.override(parser, noGuestsOption).toBool());
+		if(!userfile.isEmpty()) {
+			auto *idman = new UserFile(server);
+			idman->setAuthorizedOnly(cfgfile.override(parser, noGuestsOption).toBool());
+			if(!idman->setFile(userfile))
+				logger::error() << "Couldn't open" << userfile;
+			else
+				server->setIdentityManager(idman);
+		}
 	}
 
 	{
 		QString announceWhitelistFile = cfgfile.override(parser, announceWhitelist).toString();
-		if(!announceWhitelistFile.isEmpty())
-			server->setAnnounceWhitelist(announceWhitelistFile);
+		if(!announceWhitelistFile.isEmpty()) {
+			logger::info() << "Using announcement whitelist file" << announceWhitelistFile;
+			AnnouncementWhitelist *wl = new AnnouncementWhitelist(server);
+			wl->setWhitelistFile(announceWhitelistFile);
+			server->setAnnounceWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
+		}
 	}
 
 	{
@@ -323,15 +317,18 @@ int main(int argc, char *argv[]) {
 
 	{
 		QString banlistFile = cfgfile.override(parser, banlist).toString();
-		if(!banlistFile.isEmpty())
-			server->setBanlist(banlistFile);
+		if(!banlistFile.isEmpty()) {
+			auto *bl = new BanList(server);
+			bl->setPath(banlistFile);
+			server->setBanlist(std::bind(&BanList::isBanned, bl, std::placeholders::_1));
+		}
 	}
 	{
 		bool ok;
 		float timeout = cfgfile.override(parser, timeoutOption).toFloat(&ok);
 		if(!ok) {
 			logger::error() << "invalid timeout";
-			return 1;
+			return false;
 		}
 		server->setConnectionTimeout(timeout * 1000);
 	}
@@ -350,19 +347,19 @@ int main(int argc, char *argv[]) {
 		if(listenfds.isEmpty()) {
 			// socket activation not used
 			if(!server->start(port, address))
-				return 1;
+				return false;
 
 		} else {
 			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {
 				logger::error() << "Too many file descriptors received.";
-				return 1;
+				return false;
 			}
 
 			server->setAutoStop(true);
 
 			if(!server->startFd(listenfds[0]))
-				return 1;
+				return false;
 
 			// TODO start webadmin if two fds were passsed
 		}
@@ -371,6 +368,8 @@ int main(int argc, char *argv[]) {
 
 	initsys::notifyReady();
 
-	return app.exec();
+	return true;
 }
 
+}
+}

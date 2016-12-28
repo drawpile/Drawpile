@@ -24,6 +24,7 @@
 #include <QFileInfo>
 
 namespace server {
+namespace headless {
 
 UserFile::UserFile(QObject *parent) :
 	IdentityManager(parent)
@@ -113,4 +114,4 @@ void UserFile::updateUserFile()
 }
 
 }
-
+}

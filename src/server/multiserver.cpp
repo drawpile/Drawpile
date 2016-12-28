@@ -20,9 +20,6 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "sslserver.h"
-#include "userfile.h"
-#include "announcementwhitelist.h"
-#include "banlist.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -40,11 +37,11 @@ namespace server {
 MultiServer::MultiServer(QObject *parent)
 	: QObject(parent),
 	_server(nullptr),
-	_banlist(nullptr),
 	_state(NOT_STARTED),
 	_autoStop(false), m_splitRecording(false)
 {
 	_sessions = new SessionServer(this);
+	m_banlist = [](const QHostAddress&) { return false; };
 
 	connect(_sessions, SIGNAL(sessionCreated(Session*)), this, SLOT(assignRecording(Session*)));
 	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(tryAutoStop()));
@@ -142,22 +139,14 @@ void MultiServer::setAutoStop(bool autostop)
 	_autoStop = autostop;
 }
 
-bool MultiServer::setUserFile(const QString &path)
+void MultiServer::setIdentityManager(IdentityManager *idman)
 {
-	UserFile *userfile = new UserFile(_sessions);
-	if(!userfile->setFile(path))
-		return false;
-
-	_sessions->setIdentityManager(userfile);
-	return true;
+	_sessions->setIdentityManager(idman);
 }
 
-void MultiServer::setAnnounceWhitelist(const QString &path)
+void MultiServer::setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc)
 {
-	logger::info() << "Using announcement whitelist file" << path;
-	AnnouncementWhitelist *wl = new AnnouncementWhitelist(this);
-	wl->setWhitelistFile(path);
-	_sessions->announcementApiClient()->setWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
+	_sessions->announcementApiClient()->setWhitelist(whitelistfunc);
 }
 
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
@@ -165,26 +154,14 @@ void MultiServer::setAnnounceLocalAddr(const QString &addr)
 	_sessions->announcementApiClient()->setLocalAddress(addr);
 }
 
-void MultiServer::setBanlist(const QString &path)
+void MultiServer::setBanlist(BanListFunc func)
 {
-	logger::info() << "Using IP ban list" << path;
-	_banlist = new BanList(this);
-	_banlist->setPath(path);
+	m_banlist = func;
 }
 
 void MultiServer::setPrivateUserList(bool p)
 {
 	_sessions->setPrivateUserList(p);
-}
-
-void MultiServer::setAllowGuests(bool allow)
-{
-	if(!_sessions->identityManager()) {
-		if(!allow)
-			logger::warning() << "Cannot disable guest access: no user file selected!";
-		return;
-	}
-	_sessions->identityManager()->setAuthorizedOnly(!allow);
 }
 
 bool MultiServer::createServer()
@@ -311,11 +288,9 @@ void MultiServer::newClient()
 	auto *client = new Client(socket);
 	_sessions->addClient(client);
 
-	if(_banlist) {
-		if(_banlist->isBanned(socket->peerAddress())) {
-			logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
-			client->disconnectKick("BANNED");
-		}
+	if(m_banlist(socket->peerAddress())) {
+		logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
+		client->disconnectKick("BANNED");
 	}
 
 	printStatusUpdate();

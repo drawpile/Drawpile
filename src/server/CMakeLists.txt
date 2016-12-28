@@ -5,19 +5,20 @@ find_package( KF5Archive REQUIRED NO_MODULE )
 
 set (
 	SOURCES
-	dpserver.cpp
+	main.cpp
 	multiserver.cpp
-	configfile.cpp
 	sslserver.cpp
-	updateablefile.cpp
-	userfile.cpp
-	announcementwhitelist.cpp
-	banlist.cpp
+	headless/headless.cpp
+	headless/configfile.cpp
+	headless/updateablefile.cpp
+	headless/userfile.cpp
+	headless/announcementwhitelist.cpp
+	headless/banlist.cpp
 	)
 
 # Unix specific features
 if ( UNIX )
-	set ( SOURCES ${SOURCES} unixsignals.cpp )
+	set ( SOURCES ${SOURCES} headless/unixsignals.cpp )
 endif ( UNIX )
 
 # Select init system integration backend

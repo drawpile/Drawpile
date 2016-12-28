@@ -26,6 +26,7 @@
 #include <QHash>
 
 namespace server {
+namespace headless {
 
 class UserFile : public IdentityManager
 {
@@ -52,6 +53,7 @@ private:
 
 };
 
+}
 }
 
 #endif // USERFILE_H

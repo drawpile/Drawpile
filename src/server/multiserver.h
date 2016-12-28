@@ -33,7 +33,9 @@ namespace server {
 class Client;
 class Session;
 class SessionServer;
-class BanList;
+class IdentityManager;
+
+typedef std::function<bool(const QHostAddress &address)> BanListFunc;
 
 /**
  * The drawpile server.
@@ -55,12 +57,11 @@ public:
 	void setPersistentSessions(bool persistent);
 	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
-	bool setUserFile(const QString &path);
-	void setAllowGuests(bool allow);
+	void setIdentityManager(IdentityManager *idman);
 	void setConnectionTimeout(int timeout);
-	void setAnnounceWhitelist(const QString &path);
+	void setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc);
 	void setAnnounceLocalAddr(const QString &addr);
-	void setBanlist(const QString &path);
+	void setBanlist(BanListFunc func);
 	void setPrivateUserList(bool p);
 
 #ifndef NDEBUG
@@ -92,7 +93,7 @@ private:
 
 	QTcpServer *_server;
 	SessionServer *_sessions;
-	BanList *_banlist;
+	BanListFunc m_banlist;
 	State _state;
 
 	bool _autoStop;
