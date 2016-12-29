@@ -41,6 +41,7 @@ public:
 	void setConfigString(ConfigKey key, const QString &value) override;
 
 	bool isAllowedAnnouncementUrl(const QUrl &url) override;
+	bool isAddressBanned(const QHostAddress &addr) override;
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
 

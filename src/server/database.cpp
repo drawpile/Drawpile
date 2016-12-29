@@ -25,6 +25,8 @@
 #include <QVariant>
 #include <QUrl>
 #include <QRegularExpression>
+#include <QDateTime>
+#include <QHostAddress>
 
 namespace server {
 
@@ -36,13 +38,21 @@ static bool initDatabase(QSqlDatabase db)
 {
 	QSqlQuery q(db);
 
+	// Settings key/value table
 	if(!q.exec(
 		"CREATE TABLE IF NOT EXISTS settings (key PRIMARY KEY, value);"
 		))
 		return false;
 
+	// Listing server URL whitelist (regular expressions)
 	if(!q.exec(
 		"CREATE TABLE IF NOT EXISTS listingservers (url);"
+		))
+		return false;
+
+	// List of serverwide IP address bans
+	if(!q.exec(
+		"CREATE TABLE IF NOT EXISTS ipbans (ip, subnet, expires, comment, added);"
 		))
 		return false;
 
@@ -122,6 +132,29 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url)
 			if(re.match(urlStr).hasMatch())
 				return true;
 		}
+	}
+
+	return false;
+}
+
+bool Database::isAddressBanned(const QHostAddress &addr)
+{
+	QSqlQuery q(d->db);
+	q.exec("SELECT ip, subnet FROM ipbans WHERE expires > datetime('now')");
+
+	while(q.next()) {
+		const QHostAddress a(q.value(0).toString());
+		int subnet = q.value(1).toInt();
+		if(subnet==0) {
+			switch(a.protocol()) {
+			case QAbstractSocket::IPv4Protocol: subnet=32; break;
+			case QAbstractSocket::IPv6Protocol: subnet=128; break;
+			default: break;
+			}
+		}
+
+		if(addr.isInSubnet(a, subnet))
+			return true;
 	}
 
 	return false;

@@ -35,8 +35,6 @@ class SessionServer;
 class IdentityManager;
 class ServerConfig;
 
-typedef std::function<bool(const QHostAddress &address)> BanListFunc;
-
 /**
  * The drawpile server.
  */
@@ -50,7 +48,6 @@ public:
 	void setAutoStop(bool autostop);
 	void setIdentityManager(IdentityManager *idman);
 	void setAnnounceLocalAddr(const QString &addr);
-	void setBanlist(BanListFunc func);
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -83,7 +80,6 @@ private:
 	QTcpServer *m_server;
 	SessionServer *m_sessions;
 
-	BanListFunc m_banlist; // TODO remove
 	State m_state;
 
 	bool m_autoStop;

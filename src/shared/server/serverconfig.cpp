@@ -116,6 +116,12 @@ bool ServerConfig::isAllowedAnnouncementUrl(const QUrl &url)
 	return true;
 }
 
+bool ServerConfig::isAddressBanned(const QHostAddress &addr)
+{
+	Q_UNUSED(addr);
+	return false;
+}
+
 int ServerConfig::parseTimeString(const QString &str)
 {
 	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");

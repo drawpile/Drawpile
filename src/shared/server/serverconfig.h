@@ -24,6 +24,8 @@
 #include <QString>
 #include <QHash>
 
+class QHostAddress;
+
 namespace  server {
 
 class ConfigKey {
@@ -104,6 +106,13 @@ public:
 	 * The default implementation always returns true
 	 */
 	virtual bool isAllowedAnnouncementUrl(const QUrl &url);
+
+	/**
+	 * @brief Check if the given address is banned from this server
+	 *
+	 * The default implementation always returns false
+	 */
+	virtual bool isAddressBanned(const QHostAddress &addr);
 
 	/**
 	 * @brief Parse a time interval string (e.g. "1d" or "5h")

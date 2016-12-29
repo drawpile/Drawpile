@@ -43,7 +43,6 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	m_autoStop(false)
 {
 	m_sessions = new SessionServer(config, this);
-	m_banlist = [](const QHostAddress&) { return false; };
 
 	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
 	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
@@ -90,11 +89,6 @@ void MultiServer::setIdentityManager(IdentityManager *idman)
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
 {
 	m_sessions->announcementApiClient()->setLocalAddress(addr);
-}
-
-void MultiServer::setBanlist(BanListFunc func)
-{
-	m_banlist = func;
 }
 
 bool MultiServer::createServer()
@@ -220,7 +214,7 @@ void MultiServer::newClient()
 
 	auto *client = new Client(socket);
 
-	if(m_banlist(socket->peerAddress())) {
+	if(m_config->isAddressBanned(socket->peerAddress())) {
 		logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
 		client->disconnectKick("BANNED");
 
