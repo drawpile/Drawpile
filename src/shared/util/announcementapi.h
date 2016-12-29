@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include <QUrl>
 #include <QStringList>
 
-#include <functional>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -64,8 +63,6 @@ struct Announcement {
 	int listingId;
 };
 
-typedef std::function<bool(const QUrl &)> WhitelistFunction;
-
 /**
  * @brief Public session listing API client
  */
@@ -74,13 +71,6 @@ class AnnouncementApi : public QObject
 	Q_OBJECT
 public:
 	explicit AnnouncementApi(QObject *parent = 0);
-
-	/**
-	 * @brief Set the API URL whitelist function to use
-	 *
-	 * @param whitelist
-	 */
-	void setWhitelist(WhitelistFunction whitelist) { _whitelist = whitelist; }
 
 	/**
 	 * @brief Set the address of this server to announce
@@ -138,8 +128,6 @@ private slots:
 	void handleResponse(QNetworkReply *reply);
 
 private:
-	bool isWhitelisted(const QUrl &url) const;
-
 	void handleAnnounceResponse(QNetworkReply *reply);
 	void handleUnlistResponse(QNetworkReply *reply);
 	void handleRefreshResponse(QNetworkReply *reply);
@@ -147,7 +135,6 @@ private:
 	void handleServerInfoResponse(QNetworkReply *reply);
 
 	QNetworkAccessManager *_net;
-	WhitelistFunction _whitelist;
 	QString _localAddress;
 };
 

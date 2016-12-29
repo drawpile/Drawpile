@@ -18,10 +18,13 @@
 */
 
 #include "database.h"
+#include "../shared/util/logger.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QUrl>
+#include <QRegularExpression>
 
 namespace server {
 
@@ -35,6 +38,11 @@ static bool initDatabase(QSqlDatabase db)
 
 	if(!q.exec(
 		"CREATE TABLE IF NOT EXISTS settings (key PRIMARY KEY, value);"
+		))
+		return false;
+
+	if(!q.exec(
+		"CREATE TABLE IF NOT EXISTS listingservers (url);"
 		))
 		return false;
 
@@ -55,15 +63,16 @@ bool Database::openFile(const QString &path)
 {
 	d->db.setDatabaseName(path);
 	if(!d->db.open()) {
-		qWarning("Unable to open database");
+		logger::warning() << "Unable to open database:" << path;
 		return false;
 	}
 
 	if(!initDatabase(d->db)) {
-		qWarning("Database initialization failed");
+		logger::warning() << "Database initialization failed:" << path;
 		return false;
 	}
 
+	logger::info() << "Opened configuration database:" << path;
 	return true;
 }
 
@@ -89,6 +98,33 @@ QString Database::getConfigValue(const ConfigKey key, bool &found) const
 		found = false;
 		return QString();
 	}
+}
+
+bool Database::isAllowedAnnouncementUrl(const QUrl &url)
+{
+	if(!url.isValid())
+		return false;
+
+	// If whitelisting is not enabled, allow all URLs
+	if(!getConfigBool(config::AnnounceWhiteList))
+		return true;
+
+	const QString urlStr = url.toString();
+
+	QSqlQuery q(d->db);
+	q.exec("SELECT url FROM listingservers");
+	while(q.next()) {
+		const QString serverUrl = q.value(0).toString();
+		const QRegularExpression re(serverUrl);
+		if(!re.isValid()) {
+			logger::warning() << "Invalid listingserver whitelist regular expression:" << serverUrl;
+		} else {
+			if(re.match(urlStr).hasMatch())
+				return true;
+		}
+	}
+
+	return false;
 }
 
 }

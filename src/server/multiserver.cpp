@@ -87,11 +87,6 @@ void MultiServer::setIdentityManager(IdentityManager *idman)
 	m_sessions->setIdentityManager(idman);
 }
 
-void MultiServer::setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc)
-{
-	m_sessions->announcementApiClient()->setWhitelist(whitelistfunc);
-}
-
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
 {
 	m_sessions->announcementApiClient()->setLocalAddress(addr);

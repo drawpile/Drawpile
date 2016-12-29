@@ -36,6 +36,7 @@ using protocol::MessagePtr;
 
 Session::Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, ServerConfig *config, QObject *parent)
 	: QObject(parent),
+	m_config(config),
 	m_state(Initialization),
 	m_initUser(-1),
 	m_recorder(0),

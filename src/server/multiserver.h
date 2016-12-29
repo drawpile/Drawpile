@@ -49,7 +49,6 @@ public:
 	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
 	void setIdentityManager(IdentityManager *idman);
-	void setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc);
 	void setAnnounceLocalAddr(const QString &addr);
 	void setBanlist(BanListFunc func);
 

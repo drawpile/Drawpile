@@ -344,7 +344,11 @@ void SessionServer::refreshSessionAnnouncements()
 
 void SessionServer::announceSession(const QUrl &url, const sessionlisting::Session &session)
 {
-	_publicListingApi->announceSession(url, session);
+	if(m_config->isAllowedAnnouncementUrl(url)) {
+		_publicListingApi->announceSession(url, session);
+	} else {
+		logger::warning() << "Announcement API URL not allowed:" << url.toString();
+	}
 }
 
 void SessionServer::unlistSession(const sessionlisting::Announcement &listing)

@@ -110,6 +110,12 @@ void ServerConfig::setConfigBool(ConfigKey key, bool value)
 	setConfigString(key, value ? QStringLiteral("true") : QStringLiteral("false"));
 }
 
+bool ServerConfig::isAllowedAnnouncementUrl(const QUrl &url)
+{
+	Q_UNUSED(url);
+	return true;
+}
+
 int ServerConfig::parseTimeString(const QString &str)
 {
 	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");

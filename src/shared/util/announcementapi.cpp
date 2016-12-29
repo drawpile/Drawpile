@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,129 +52,107 @@ AnnouncementApi::AnnouncementApi(QObject *parent)
 	connect(_net, &QNetworkAccessManager::finished, this, &AnnouncementApi::handleResponse);
 }
 
-bool AnnouncementApi::isWhitelisted(const QUrl &url) const
-{
-	if(_whitelist) {
-		if(!_whitelist(url)) {
-			logger::warning() << "Announcement API not whitelisted:" << url.toString();
-			return false;
-		}
-	}
-	return true;
-}
-
 void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 {
-	if(isWhitelisted(apiUrl)) {
-		logger::debug() << "getting API info from" << apiUrl.toString();
+	logger::debug() << "getting API info from" << apiUrl.toString();
 
-		QNetworkRequest req(apiUrl);
-
-		QNetworkReply *reply = _net->get(req);
-		reply->setProperty("QUERY_TYPE", "getinfo");
-	}
+	QNetworkRequest req(apiUrl);
+	QNetworkReply *reply = _net->get(req);
+	reply->setProperty("QUERY_TYPE", "getinfo");
 }
 
 void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title, bool nsfm)
 {
-	if(isWhitelisted(apiUrl)) {
-		// Send request
-		QUrl url = apiUrl;
-		url.setPath(slashcat(url.path(), "sessions/"));
+	// Send request
+	QUrl url = apiUrl;
+	url.setPath(slashcat(url.path(), "sessions/"));
 
-		QUrlQuery query;
-		if(!protocol.isEmpty())
-			query.addQueryItem("protocol", protocol);
-		if(!title.isEmpty())
-			query.addQueryItem("title", title);
-		if(nsfm)
-			query.addQueryItem("nsfm", "true");
-		url.setQuery(query);
+	QUrlQuery query;
+	if(!protocol.isEmpty())
+		query.addQueryItem("protocol", protocol);
+	if(!title.isEmpty())
+		query.addQueryItem("title", title);
+	if(nsfm)
+		query.addQueryItem("nsfm", "true");
+	url.setQuery(query);
 
-		QNetworkRequest req(url);
+	QNetworkRequest req(url);
 
-		QNetworkReply *reply = _net->get(req);
-		reply->setProperty("QUERY_TYPE", "getlist");
-	}
+	QNetworkReply *reply = _net->get(req);
+	reply->setProperty("QUERY_TYPE", "getlist");
 }
 
 void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session)
 {
-	if(isWhitelisted(apiUrl)) {
-		logger::debug() << "announcing" << session.id << "at" << apiUrl.toString();
+	logger::debug() << "announcing" << session.id << "at" << apiUrl.toString();
 
-		// Construct the announcement
-		QJsonObject o;
-		if(!session.host.isEmpty())
-			o["host"] = session.host;
-		else if(!_localAddress.isEmpty())
-			o["host"] = _localAddress;
-		if(session.port>0)
-			o["port"] = session.port;
-		o["id"] = session.id;
-		o["protocol"] = session.protocol.asString();
-		o["title"] = session.title;
-		o["users"] = session.users;
-		o["usernames"] = QJsonArray::fromStringList(session.usernames);
-		o["password"] = session.password;
-		o["owner"] = session.owner;
-		// TODO: explicit NSFM tag
+	// Construct the announcement
+	QJsonObject o;
+	if(!session.host.isEmpty())
+		o["host"] = session.host;
+	else if(!_localAddress.isEmpty())
+		o["host"] = _localAddress;
+	if(session.port>0)
+		o["port"] = session.port;
+	o["id"] = session.id;
+	o["protocol"] = session.protocol.asString();
+	o["title"] = session.title;
+	o["users"] = session.users;
+	o["usernames"] = QJsonArray::fromStringList(session.usernames);
+	o["password"] = session.password;
+	o["owner"] = session.owner;
+	// TODO: explicit NSFM tag
 
-		// Send request
-		QUrl url = apiUrl;
-		url.setPath(slashcat(url.path(), "sessions/"));
-		QNetworkRequest req(url);
-		req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	// Send request
+	QUrl url = apiUrl;
+	url.setPath(slashcat(url.path(), "sessions/"));
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-		QNetworkReply *reply = _net->post(req, QJsonDocument(o).toJson());
-		reply->setProperty("QUERY_TYPE", "announce");
-		reply->setProperty("API_URL", apiUrl);
-		reply->setProperty("SESSION_ID", session.id);
-	}
+	QNetworkReply *reply = _net->post(req, QJsonDocument(o).toJson());
+	reply->setProperty("QUERY_TYPE", "announce");
+	reply->setProperty("API_URL", apiUrl);
+	reply->setProperty("SESSION_ID", session.id);
 }
 
 void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
 {
-	if(isWhitelisted(a.apiUrl)) {
-		logger::debug() << "refreshing" << a.listingId << "at" << a.apiUrl.toString();
+	logger::debug() << "refreshing" << a.listingId << "at" << a.apiUrl.toString();
 
-		// Construct the announcement
-		QJsonObject o;
+	// Construct the announcement
+	QJsonObject o;
 
-		o["title"] = session.title;
-		o["users"] = session.users;
-		o["usernames"] = QJsonArray::fromStringList(session.usernames);
-		o["password"] = session.password;
-		o["owner"] = session.owner;
+	o["title"] = session.title;
+	o["users"] = session.users;
+	o["usernames"] = QJsonArray::fromStringList(session.usernames);
+	o["password"] = session.password;
+	o["owner"] = session.owner;
 
-		// Send request
-		QUrl url = a.apiUrl;
-		url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
+	// Send request
+	QUrl url = a.apiUrl;
+	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
-		QNetworkRequest req(url);
-		req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-		req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
-		QNetworkReply *reply = _net->put(req, QJsonDocument(o).toJson());
-		reply->setProperty("QUERY_TYPE", "refresh");
-	}
+	QNetworkReply *reply = _net->put(req, QJsonDocument(o).toJson());
+	reply->setProperty("QUERY_TYPE", "refresh");
 }
 
 void AnnouncementApi::unlistSession(const Announcement &a)
 {
-	if(isWhitelisted(a.apiUrl)) {
-		logger::debug() << "unlisting" << a.listingId << "at" << a.apiUrl.toString();
+	logger::debug() << "unlisting" << a.listingId << "at" << a.apiUrl.toString();
 
-		QUrl url = a.apiUrl;
-		url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
+	QUrl url = a.apiUrl;
+	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
-		QNetworkRequest req(url);
-		req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
+	QNetworkRequest req(url);
+	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
-		QNetworkReply *reply = _net->deleteResource(req);
-		reply->setProperty("QUERY_TYPE", "unlist");
-		reply->setProperty("SESSION_ID", a.id);
-	}
+	QNetworkReply *reply = _net->deleteResource(req);
+	reply->setProperty("QUERY_TYPE", "unlist");
+	reply->setProperty("SESSION_ID", a.id);
 }
 
 void AnnouncementApi::handleResponse(QNetworkReply *reply)

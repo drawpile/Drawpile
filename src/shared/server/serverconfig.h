@@ -99,6 +99,13 @@ public:
 	void setConfigBool(ConfigKey, bool value);
 
 	/**
+	 * @brief Check if the given listing site URL is allowed
+	 *
+	 * The default implementation always returns true
+	 */
+	virtual bool isAllowedAnnouncementUrl(const QUrl &url);
+
+	/**
 	 * @brief Parse a time interval string (e.g. "1d" or "5h")
 	 * @param str
 	 * @return time in seconds or a negative value in case of error
