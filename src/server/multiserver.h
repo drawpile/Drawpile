@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #include <QObject>
 #include <QHostAddress>
-#include <QHash>
 
 #include "../shared/util/logger.h"
 
@@ -34,6 +33,7 @@ class Client;
 class Session;
 class SessionServer;
 class IdentityManager;
+class ServerConfig;
 
 typedef std::function<bool(const QHostAddress &address)> BanListFunc;
 
@@ -43,26 +43,15 @@ typedef std::function<bool(const QHostAddress &address)> BanListFunc;
 class MultiServer : public QObject {
 Q_OBJECT
 public:
-	explicit MultiServer(QObject *parent=0);
+	explicit MultiServer(ServerConfig *config, QObject *parent=0);
 
-	void setServerTitle(const QString &title);
-	void setWelcomeMessage(const QString &message);
-	void setHistoryLimit(uint limit);
-	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
-	void setSplitRecording(bool split) { m_splitRecording = split; }
-	void setSslCertFile(const QString &certfile, const QString &keyfile) { _sslCertFile = certfile; _sslKeyFile = keyfile; }
+	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setMustSecure(bool secure);
-	void setHostPassword(const QString &password);
-	void setSessionLimit(int limit);
-	void setPersistentSessions(bool persistent);
-	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
 	void setIdentityManager(IdentityManager *idman);
-	void setConnectionTimeout(int timeout);
 	void setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc);
 	void setAnnounceLocalAddr(const QString &addr);
 	void setBanlist(BanListFunc func);
-	void setPrivateUserList(bool p);
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -71,7 +60,7 @@ public:
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);
 
-	SessionServer *sessionServer() { return _sessions; }
+	SessionServer *sessionServer() { return m_sessions; }
 
 public slots:
 	 //! Stop the server. All clients are disconnected.
@@ -91,17 +80,17 @@ private:
 
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
-	QTcpServer *_server;
-	SessionServer *_sessions;
-	BanListFunc m_banlist;
-	State _state;
+	ServerConfig *m_config;
+	QTcpServer *m_server;
+	SessionServer *m_sessions;
 
-	bool _autoStop;
-	bool m_splitRecording;
+	BanListFunc m_banlist; // TODO remove
+	State m_state;
 
-	QString _recordingFile;
-	QString _sslCertFile;
-	QString _sslKeyFile;
+	bool m_autoStop;
+
+	QString m_sslCertFile;
+	QString m_sslKeyFile;
 };
 
 }

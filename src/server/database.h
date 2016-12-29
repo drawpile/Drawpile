@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2016 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,38 +17,37 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BANLIST_H
-#define BANLIST_H
+#ifndef SERVER_CFG_DATABASE_H
+#define SERVER_CFG_DATABASE_H
 
-#include "updateablefile.h"
-
-#include <QList>
-#include <QHostAddress>
+#include "../shared/server/serverconfig.h"
 
 namespace server {
 
-typedef QPair<QHostAddress, int> BannedIP; // <address, subnet mask>
-
 /**
- * @brief List of IP addresses banned from this server
+ * @brief Configuration database access object.
+ *
+ *
  */
-class BanList : public QObject
+class Database : public ServerConfig
 {
 	Q_OBJECT
 public:
-	explicit BanList(QObject *parent = 0);
+	explicit Database(QObject *parent=nullptr);
+	~Database();
 
-	void setPath(const QString &path) { _file.setPath(path); }
+	bool openFile(const QString &path);
 
-	bool isBanned(const QHostAddress &address);
+	void setConfigString(ConfigKey key, const QString &value) override;
+
+protected:
+	QString getConfigValue(const ConfigKey key, bool &found) const override;
 
 private:
-	void reloadBanList();
-
-	QList<BannedIP> _banlist;
-	UpdateableFile _file;
+	struct Private;
+	Private *d;
 };
 
 }
 
-#endif
+#endif // DATABASE_H

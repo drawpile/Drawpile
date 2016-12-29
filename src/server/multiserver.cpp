@@ -24,6 +24,7 @@
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
+#include "../shared/server/serverconfig.h"
 
 #include "../shared/util/announcementapi.h"
 
@@ -34,97 +35,39 @@
 
 namespace server {
 
-MultiServer::MultiServer(QObject *parent)
+MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
-	_server(nullptr),
-	_state(NOT_STARTED),
-	_autoStop(false), m_splitRecording(false)
+	m_config(config),
+	m_server(nullptr),
+	m_state(NOT_STARTED),
+	m_autoStop(false)
 {
-	_sessions = new SessionServer(this);
+	m_sessions = new SessionServer(config, this);
 	m_banlist = [](const QHostAddress&) { return false; };
 
-	connect(_sessions, SIGNAL(sessionCreated(Session*)), this, SLOT(assignRecording(Session*)));
-	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(tryAutoStop()));
-	connect(_sessions, SIGNAL(userLoggedIn()), this, SLOT(printStatusUpdate()));
-	connect(_sessions, &SessionServer::userDisconnected, [this]() {
+	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
+	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
+	connect(m_sessions, &SessionServer::userLoggedIn, this, &MultiServer::printStatusUpdate);
+	connect(m_sessions, &SessionServer::userDisconnected, [this]() {
 		printStatusUpdate();
 		// The server will be fully stopped after all users have disconnected
-		if(_state == STOPPING)
+		if(m_state == STOPPING)
 			stop();
 		else
 			tryAutoStop();
 	});
 }
 
-void MultiServer::setServerTitle(const QString &title)
-{
-	_sessions->setTitle(title);
-}
-
-void MultiServer::setWelcomeMessage(const QString &message)
-{
-	_sessions->setWelcomeMessage(message);
-}
-
-void MultiServer::setHistoryLimit(uint limit)
-{
-	_sessions->setHistoryLimit(limit);
-}
-
 void MultiServer::setMustSecure(bool secure)
 {
-	_sessions->setMustSecure(secure);
-}
-
-void MultiServer::setHostPassword(const QString &password)
-{
-	_sessions->setHostPassword(password);
-}
-
-/**
- * @brief Set the maximum number of sessions
- *
- * Setting this to 1 disables the "multisession" capability flag. Clients
- * will not display the session selector dialog in that case, but will automatically
- * connect to the only session.
- * @param limit
- */
-void MultiServer::setSessionLimit(int limit)
-{
-	_sessions->setSessionLimit(limit);
-}
-
-/**
- * @brief Enable or disable persistent sessions
- * @param persistent
- */
-void MultiServer::setPersistentSessions(bool persistent)
-{
-	_sessions->setAllowPersistentSessions(persistent);
-}
-
-/**
- * @brief Set persistent session expiration time
- *
- * Setting this to 0 means sessions will not expire.
- * @param seconds
- */
-void MultiServer::setExpirationTime(uint seconds)
-{
-	_sessions->setExpirationTime(seconds);
-}
-
-void MultiServer::setConnectionTimeout(int timeout)
-{
-	_sessions->setConnectionTimeout(timeout);
+	m_sessions->setMustSecure(secure);
 }
 
 #ifndef NDEBUG
 void MultiServer::setRandomLag(uint lag)
 {
-	_sessions->setRandomLag(lag);
+	m_sessions->setRandomLag(lag);
 }
-
 #endif
 
 /**
@@ -136,22 +79,22 @@ void MultiServer::setRandomLag(uint lag)
  */
 void MultiServer::setAutoStop(bool autostop)
 {
-	_autoStop = autostop;
+	m_autoStop = autostop;
 }
 
 void MultiServer::setIdentityManager(IdentityManager *idman)
 {
-	_sessions->setIdentityManager(idman);
+	m_sessions->setIdentityManager(idman);
 }
 
 void MultiServer::setAnnounceWhitelist(std::function<bool(const QUrl&)> whitelistfunc)
 {
-	_sessions->announcementApiClient()->setWhitelist(whitelistfunc);
+	m_sessions->announcementApiClient()->setWhitelist(whitelistfunc);
 }
 
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
 {
-	_sessions->announcementApiClient()->setLocalAddress(addr);
+	m_sessions->announcementApiClient()->setLocalAddress(addr);
 }
 
 void MultiServer::setBanlist(BanListFunc func)
@@ -159,24 +102,19 @@ void MultiServer::setBanlist(BanListFunc func)
 	m_banlist = func;
 }
 
-void MultiServer::setPrivateUserList(bool p)
-{
-	_sessions->setPrivateUserList(p);
-}
-
 bool MultiServer::createServer()
 {
-	if(!_sslCertFile.isEmpty() && !_sslKeyFile.isEmpty()) {
-		SslServer *server = new SslServer(_sslCertFile, _sslKeyFile, this);
+	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
+		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
 		if(!server->isValidCert())
 			return false;
-		_server = server;
+		m_server = server;
 
 	} else {
-		_server = new QTcpServer(this);
+		m_server = new QTcpServer(this);
 	}
 
-	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+	connect(m_server, &QTcpServer::newConnection, this, &MultiServer::newClient);
 
 	return true;
 }
@@ -188,16 +126,16 @@ bool MultiServer::createServer()
  * @return true on success
  */
 bool MultiServer::start(quint16 port, const QHostAddress& address) {
-	Q_ASSERT(_state == NOT_STARTED);
-	_state = RUNNING;
+	Q_ASSERT(m_state == NOT_STARTED);
+	m_state = RUNNING;
 	if(!createServer())
 		return false;
 
-	if(!_server->listen(address, port)) {
-		logger::error() << _server->errorString();
-		delete _server;
-		_server = 0;
-		_state = NOT_STARTED;
+	if(!m_server->listen(address, port)) {
+		logger::error() << m_server->errorString();
+		delete m_server;
+		m_server = nullptr;
+		m_state = NOT_STARTED;
 		return false;
 	}
 
@@ -212,16 +150,16 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
  */
 bool MultiServer::startFd(int fd)
 {
-	Q_ASSERT(_state == NOT_STARTED);
-	_state = RUNNING;
+	Q_ASSERT(m_state == NOT_STARTED);
+	m_state = RUNNING;
 	if(!createServer())
 		return false;
 
-	if(!_server->setSocketDescriptor(fd)) {
+	if(!m_server->setSocketDescriptor(fd)) {
 		logger::error() << "Couldn't set server socket descriptor!";
-		delete _server;
-		_server = 0;
-		_state = NOT_STARTED;
+		delete m_server;
+		m_server = nullptr;
+		m_state = NOT_STARTED;
 		return false;
 	}
 
@@ -249,10 +187,10 @@ bool MultiServer::startFd(int fd)
  */
 void MultiServer::assignRecording(Session *session)
 {
-	if(_recordingFile.isEmpty())
-		return;
+	QString filename = m_config->getConfigString(config::RecordingPath);
 
-	QString filename = _recordingFile;
+	if(filename.isEmpty())
+		return;
 
 	// Expand home directory
 	if(filename.startsWith("~/")) {
@@ -273,7 +211,7 @@ void MultiServer::assignRecording(Session *session)
 
 	fi = filename;
 
-	session->setRecordingFile(fi.absoluteFilePath(), m_splitRecording);
+	session->setRecordingFile(fi.absoluteFilePath());
 }
 
 /**
@@ -281,27 +219,28 @@ void MultiServer::assignRecording(Session *session)
  */
 void MultiServer::newClient()
 {
-	QTcpSocket *socket = _server->nextPendingConnection();
+	QTcpSocket *socket = m_server->nextPendingConnection();
 
 	logger::info() << "Accepted new client from address" << socket->peerAddress();
 
 	auto *client = new Client(socket);
-	_sessions->addClient(client);
 
 	if(m_banlist(socket->peerAddress())) {
 		logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
 		client->disconnectKick("BANNED");
-	}
 
-	printStatusUpdate();
+	} else {
+		m_sessions->addClient(client);
+		printStatusUpdate();
+	}
 }
 
 
 void MultiServer::printStatusUpdate()
 {
 	initsys::notifyStatus(QString("%1 users and %2 sessions")
-		.arg(_sessions->totalUsers())
-		.arg(_sessions->sessionCount())
+		.arg(m_sessions->totalUsers())
+		.arg(m_sessions->sessionCount())
 	);
 }
 
@@ -310,7 +249,7 @@ void MultiServer::printStatusUpdate()
  */
 void MultiServer::tryAutoStop()
 {
-	if(_state == RUNNING && _autoStop && _sessions->sessionCount() == 0 && _sessions->totalUsers() == 0) {
+	if(m_state == RUNNING && m_autoStop && m_sessions->sessionCount() == 0 && m_sessions->totalUsers() == 0) {
 		logger::info() << "Autostopping due to lack of sessions";
 		stop();
 	}
@@ -320,17 +259,17 @@ void MultiServer::tryAutoStop()
  * Disconnect all clients and stop listening.
  */
 void MultiServer::stop() {
-	if(_state == RUNNING) {
-		logger::info() << "Stopping server and kicking out" << _sessions->totalUsers() << "users...";
-		_state = STOPPING;
-		_server->close();
+	if(m_state == RUNNING) {
+		logger::info() << "Stopping server and kicking out" << m_sessions->totalUsers() << "users...";
+		m_state = STOPPING;
+		m_server->close();
 
-		_sessions->stopAll();
+		m_sessions->stopAll();
 	}
 
-	if(_state == STOPPING) {
-		if(_sessions->totalUsers() == 0) {
-			_state = STOPPED;
+	if(m_state == STOPPING) {
+		if(m_sessions->totalUsers() == 0) {
+			m_state = STOPPED;
 			logger::info() << "Server stopped.";
 			emit serverStopped();
 		}

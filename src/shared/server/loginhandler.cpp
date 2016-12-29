@@ -23,6 +23,7 @@
 #include "sessionserver.h"
 #include "sessiondesc.h"
 #include "identitymanager.h"
+#include "serverconfig.h"
 
 #include "../net/control.h"
 #include "../util/logger.h"
@@ -54,11 +55,11 @@ void LoginHandler::startLoginProcess()
 
 	QJsonArray flags;
 
-	if(m_server->sessionLimit()>1)
+	if(m_server->config()->getConfigInt(config::SessionCountLimit) > 1)
 		flags << "MULTI";
-	if(!m_server->hostPassword().isEmpty())
+	if(!m_server->config()->getConfigString(config::HostPassword).isEmpty())
 		flags << "HOSTP";
-	if(m_server->allowPersistentSessions())
+	if(m_server->config()->getConfigBool(config::EnablePersistence))
 		flags << "PERSIST";
 	if(m_client->hasSslSupport())
 		flags << "TLS";
@@ -112,7 +113,7 @@ void LoginHandler::announceServerInfo()
 		s << sessionDescription(session);
 	}
 
-	greeting.reply["title"] = m_server->title();
+	greeting.reply["title"] = m_server->config()->getConfigString(config::ServerTitle);
 	greeting.reply["sessions"] = s;
 	send(greeting);
 }
@@ -317,7 +318,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
 
-	if(m_server->sessionCount() >= m_server->sessionLimit()) {
+	if(m_server->sessionCount() >= m_server->config()->getConfigInt(config::SessionCountLimit)) {
 		sendError("closed", "This server is full");
 		return;
 	}
@@ -350,7 +351,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	}
 
 	QString host_password = cmd.kwargs.value("host_password").toString();
-	if(host_password != m_server->hostPassword() && !m_hostPrivilege) {
+	if(host_password != m_server->config()->getConfigString(config::HostPassword) && !m_hostPrivilege) {
 		sendError("badPassword", "Incorrect hosting password");
 		return;
 	}

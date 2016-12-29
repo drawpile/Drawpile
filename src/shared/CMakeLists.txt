@@ -31,6 +31,7 @@ set (
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/identitymanager.cpp
+	server/serverconfig.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})

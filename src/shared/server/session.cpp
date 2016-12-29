@@ -19,6 +19,7 @@
 
 #include "session.h"
 #include "client.h"
+#include "serverconfig.h"
 #include "../net/control.h"
 #include "../net/meta.h"
 #include "../record/writer.h"
@@ -33,19 +34,20 @@ namespace server {
 
 using protocol::MessagePtr;
 
-Session::Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent)
+Session::Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_state(Initialization),
 	m_initUser(-1),
 	m_recorder(0),
 	m_lastUserId(0),
 	m_startTime(QDateTime::currentDateTime()), m_lastEventTime(QDateTime::currentDateTime()),
-	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254), m_historylimit(0),
+	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254),
 	m_founder(founder),
 	m_closed(false),
-	m_allowPersistent(false), m_persistent(false), m_preserveChat(false), m_nsfm(false),
-	m_privateUserList(false)
+	m_persistent(false), m_preserveChat(false), m_nsfm(false)
 {
+	// Cache history limit, since this value is checked very often
+	m_historylimit = config->getConfigSize(config::SessionSizeLimit);
 }
 
 QString Session::toLogString() const {
@@ -158,13 +160,12 @@ void Session::joinUser(Client *user, bool host)
 		m_initUser = user->id();
 	}
 
-	if(!welcomeMessage().isEmpty()) {
-		user->sendSystemChat(welcomeMessage());
+	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
+	if(!welcomeMessage.isEmpty()) {
+		user->sendSystemChat(welcomeMessage);
 	}
 
 	ensureOperatorExists();
-
-	m_lastEventTime = QDateTime::currentDateTime();
 
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
@@ -194,8 +195,6 @@ void Session::removeUser(Client *user)
 	}
 
 	user->deleteLater();
-
-	m_lastEventTime = QDateTime::currentDateTime();
 
 	emit userDisconnected(this);
 }
@@ -232,7 +231,7 @@ void Session::setSessionConfig(const QJsonObject &conf)
 		m_closed = conf["closed"].toBool();
 
 	if(conf.contains("persistent"))
-		m_persistent = m_allowPersistent && conf["persistent"].toBool();
+		m_persistent = conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence);
 
 	if(conf.contains("title"))
 		m_title = conf["title"].toString();
@@ -294,6 +293,7 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 	m_mainstream.append(msg);
 	if(m_recorder)
 		m_recorder->recordMessage(msg);
+	m_lastEventTime = QDateTime::currentDateTime();
 	emit newCommandsAvailable();
 
 	if(m_historylimit>0 && m_mainstream.lengthInBytes() > m_historylimit) {
@@ -463,6 +463,8 @@ QStringList Session::userNames() const
 }
 void Session::makeAnnouncement(const QUrl &url)
 {
+	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
+
 	sessionlisting::Session s {
 		QString(),
 		0,
@@ -470,7 +472,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		protocolVersion(),
 		title(),
 		userCount(),
-		passwordHash().isEmpty() && !m_privateUserList ? userNames() : QStringList(),
+		passwordHash().isEmpty() && !privateUserList ? userNames() : QStringList(),
 		!passwordHash().isEmpty(),
 		isNsfm(),
 		founder(),

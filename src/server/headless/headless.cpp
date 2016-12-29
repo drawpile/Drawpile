@@ -21,16 +21,12 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "sslserver.h"
+#include "database.h"
 
-#include "configfile.h"
-#include "banlist.h"
-#include "userfile.h"
-#include "announcementwhitelist.h"
 #include "../shared/util/logger.h"
 
 #include <QCoreApplication>
 #include <QStringList>
-#include <QRegularExpression>
 #include <QSslSocket>
 #include <QCommandLineParser>
 
@@ -72,42 +68,6 @@ bool start() {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
-	// --limit <size>
-	QCommandLineOption limitOption("history-limit", "Limit history size", "size (Mb)", "0");
-	parser.addOption(limitOption);
-
-	// --record, -r <filename>
-	QCommandLineOption recordOption(QStringList() << "record" << "r", "Record session", "filename");
-	parser.addOption(recordOption);
-
-	// --split-recording
-	QCommandLineOption splitRecordingOption(QStringList() << "split-recording", "Start a new recording at every snapshot");
-	parser.addOption(splitRecordingOption);
-
-	// --host-password <password>
-	QCommandLineOption hostPassOption("host-password", "Host password", "password");
-	parser.addOption(hostPassOption);
-
-	// --sessions <count>
-	QCommandLineOption sessionLimitOption("sessions", "Maximum number of sessions", "count", "20");
-	parser.addOption(sessionLimitOption);
-
-	// --persistent, -P
-	QCommandLineOption persistentSessionOption(QStringList() << "persistent" << "P", "Enable persistent sessions");
-	parser.addOption(persistentSessionOption);
-
-	// --expire <time> (<time>[prefix], where prefix is d, h, m or s. No prefix defaults to s)
-	QCommandLineOption expireOption("expire", "Idle session expiration time", "expiration", "0");
-	parser.addOption(expireOption);
-
-	// --title, -t <server title>
-	QCommandLineOption serverTitleOption(QStringList() << "title" << "t", "Set server title", "title");
-	parser.addOption(serverTitleOption);
-
-	// --welcome-message <message>
-	QCommandLineOption serverWelcomeOption(QStringList() << "welcome-message", "Set welcome message", "message");
-	parser.addOption(serverWelcomeOption);
-
 	// --ssl-cert <certificate file>
 	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
 	parser.addOption(sslCertOption);
@@ -125,37 +85,9 @@ bool start() {
 	parser.addOption(lagOption);
 #endif
 
-	// --userfile <path>
-	QCommandLineOption userfileOption("userfile", "Use user/password file", "path");
-	parser.addOption(userfileOption);
-
-	// --no-guests
-	QCommandLineOption noGuestsOption("no-guests", "Users must authenticate to log in");
-	parser.addOption(noGuestsOption);
-
-	// --timeout
-	QCommandLineOption timeoutOption("timeout", "Connection timeout", "seconds", "60");
-	parser.addOption(timeoutOption);
-
-	// --announce-whitelist
-	QCommandLineOption announceWhitelist("announce-whitelist", "Session announcement server whitelist", "filename");
-	parser.addOption(announceWhitelist);
-
-	// --announce-local-addr
-	QCommandLineOption announceLocalAddr("announce-local-addr", "Local address for session announcement", "address");
-	parser.addOption(announceLocalAddr);
-
-	// --banlist
-	QCommandLineOption banlist("banlist", "IP banlist", "filename");
-	parser.addOption(banlist);
-
-	// --private-userlist
-	QCommandLineOption privateUserListOption("private-userlist", "Never include user lists in announcements");
-	parser.addOption(privateUserListOption);
-
-	// --config, -c <filename>
-	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
-	parser.addOption(configFileOption);
+	// --database, -d <filename>
+	QCommandLineOption dbFileOption(QStringList() << "database" << "d", "Use configuration database", "filename");
+	parser.addOption(dbFileOption);
 
 	// Parse
 	parser.process(*QCoreApplication::instance());
@@ -165,18 +97,29 @@ bool start() {
 		::exit(0);
 	}
 
-	// Load configuration file (if set)
-	ConfigFile cfgfile(parser.value(configFileOption));
+	// Open server configuration database
+	ServerConfig *serverconfig;
+	if(parser.isSet(dbFileOption)) {
+		auto *db = new Database;
+		if(!db->openFile(parser.value(dbFileOption))) {
+			logger::error() << "Couldn't open database file" << parser.value(dbFileOption);
+			delete db;
+			return false;
+		}
+		serverconfig = db;
+
+	} else {
+		// No database file given: settings are non-persistent
+		serverconfig = new ServerConfig;
+	}
 
 	// Initialize the server
-	server::MultiServer *server = new server::MultiServer;
+	server::MultiServer *server = new server::MultiServer(serverconfig);
+	serverconfig->setParent(server);
 
 	server->connect(server, SIGNAL(serverStopped()), QCoreApplication::instance(), SLOT(quit()));
 
-	server->setServerTitle(cfgfile.override(parser, serverTitleOption).toString());
-	server->setWelcomeMessage(cfgfile.override(parser, serverWelcomeOption).toString());
-
-	if(cfgfile.override(parser, verboseOption).toBool()) {
+	if(parser.isSet(verboseOption)) {
 #ifdef NDEBUG
 		logger::setLogLevel(logger::LOG_INFO);
 #else
@@ -189,151 +132,40 @@ bool start() {
 	int port;
 	{
 		bool ok;
-		QVariant pv = cfgfile.override(parser, portOption);
-		port = pv.toInt(&ok);
+		port = parser.value(portOption).toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
-			logger::error() << "Invalid port" << pv.toString();
+			logger::error() << "Invalid port" << parser.value(portOption);
 			return false;
 		}
 	}
 
 	QHostAddress address = QHostAddress::Any;
 	{
-		QVariant av = cfgfile.override(parser, listenOption);
-		if(!av.isNull()) {
-			if(!address.setAddress(av.toString())) {
-				logger::error() << "Invalid listening address" << av.toString();
+		QString av = parser.value(listenOption);
+		if(!av.isEmpty()) {
+			if(!address.setAddress(av)) {
+				logger::error() << "Invalid listening address" << av;
 				return false;
 			}
 		}
 	}
 
 	{
-		QVariant lv = cfgfile.override(parser, limitOption);
-		bool ok;
-		float limit = lv.toFloat(&ok);
-		if(!ok || limit<0) {
-			logger::error() << "Invalid history limit: " << lv.toString();
-			return false;
-		}
-		uint limitbytes = limit * 1024 * 1024;
-		server->setHistoryLimit(limitbytes);
-	}
-
-	{
-		QVariant rv = cfgfile.override(parser, recordOption);
-		if(!rv.isNull()) {
-			server->setRecordingFile(rv.toString());
-
-			QVariant sr = cfgfile.override(parser, splitRecordingOption);
-			server->setSplitRecording(sr.toBool());
-		}
-	}
-
-	{
-		QVariant hpv = cfgfile.override(parser, hostPassOption);
-		if(!hpv.isNull())
-			server->setHostPassword(hpv.toString());
-	}
-
-	{
-		bool ok;
-		int sessionLimit = cfgfile.override(parser, sessionLimitOption).toInt(&ok);
-		if(!ok || sessionLimit<1) {
-			logger::error() << "Invalid session count limit";
-			return false;
-		}
-		server->setSessionLimit(sessionLimit);
-	}
-
-	{
-		bool persist = cfgfile.override(parser, persistentSessionOption).toBool();
-		server->setPersistentSessions(persist);
-
-		// Expiration time now works for non-persistent sessions as well.
-		QString expire = cfgfile.override(parser, expireOption).toString();
-		QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");
-		auto m = re.match(expire);
-		if(!m.hasMatch()) {
-			logger::error() << "Invalid expiration time:" << expire;
-			return false;
-		}
-
-		float t = m.captured(1).toFloat();
-		if(m.captured(2)=="d")
-			t *= 24*60*60;
-		else if(m.captured(2)=="h")
-			t *= 60*60;
-		else if(m.captured(2)=="m")
-			t *= 60;
-
-		server->setExpirationTime(t);
-	}
-
-	{
-		QString sslCert = cfgfile.override(parser, sslCertOption).toString();
-		QString sslKey = cfgfile.override(parser, sslKeyOption).toString();
+		QString sslCert = parser.value(sslCertOption);
+		QString sslKey = parser.value(sslKeyOption);
 		if(!sslCert.isEmpty() && !sslKey.isEmpty()) {
 			server->setSslCertFile(sslCert, sslKey);
-			server->setMustSecure(cfgfile.override(parser, secureOption).toBool());
+			server->setMustSecure(parser.isSet(secureOption));
 			server::SslServer::requireForwardSecrecy();
 		}
 	}
 
 #ifndef NDEBUG
 	{
-		uint lag = cfgfile.override(parser, lagOption).toUInt();
+		uint lag = parser.value(lagOption).toUInt();
 		server->setRandomLag(lag);
 	}
 #endif
-
-	{
-		QString userfile = cfgfile.override(parser, userfileOption).toString();
-		if(!userfile.isEmpty()) {
-			auto *idman = new UserFile(server);
-			idman->setAuthorizedOnly(cfgfile.override(parser, noGuestsOption).toBool());
-			if(!idman->setFile(userfile))
-				logger::error() << "Couldn't open" << userfile;
-			else
-				server->setIdentityManager(idman);
-		}
-	}
-
-	{
-		QString announceWhitelistFile = cfgfile.override(parser, announceWhitelist).toString();
-		if(!announceWhitelistFile.isEmpty()) {
-			logger::info() << "Using announcement whitelist file" << announceWhitelistFile;
-			AnnouncementWhitelist *wl = new AnnouncementWhitelist(server);
-			wl->setWhitelistFile(announceWhitelistFile);
-			server->setAnnounceWhitelist(std::bind(&AnnouncementWhitelist::isWhitelisted, wl, std::placeholders::_1));
-		}
-	}
-
-	{
-		QString announceLocalAddress = cfgfile.override(parser, announceLocalAddr).toString();
-		if(!announceLocalAddress.isEmpty())
-			server->setAnnounceLocalAddr(announceLocalAddress);
-	}
-
-	{
-		QString banlistFile = cfgfile.override(parser, banlist).toString();
-		if(!banlistFile.isEmpty()) {
-			auto *bl = new BanList(server);
-			bl->setPath(banlistFile);
-			server->setBanlist(std::bind(&BanList::isBanned, bl, std::placeholders::_1));
-		}
-	}
-	{
-		bool ok;
-		float timeout = cfgfile.override(parser, timeoutOption).toFloat(&ok);
-		if(!ok) {
-			logger::error() << "invalid timeout";
-			return false;
-		}
-		server->setConnectionTimeout(timeout * 1000);
-	}
-
-	server->setPrivateUserList(cfgfile.override(parser, privateUserListOption).toBool());
 
 	// Catch signals
 #ifdef Q_OS_UNIX

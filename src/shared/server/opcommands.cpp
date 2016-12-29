@@ -162,7 +162,7 @@ void sessionStatus(Client *client, const QJsonArray &args, const QJsonObject &kw
 	QString msg;
 	msg.append(QString("%1, up %2\n").arg(s->toLogString()).arg(s->uptime()));
 	msg.append(QString("Logged in users: %1 (max: %2)\n").arg(s->userCount()).arg(s->maxUsers()));
-	msg.append(QString("Persistent session: %1\n").arg(s->isPersistenceAllowed() ? (s->isPersistent() ? "yes" : "no") : "not allowed"));
+	msg.append(QString("Persistent session: %1\n").arg(s->isPersistent() ? "yes" : "no"));
 	msg.append(QString("Password protected: %1\n").arg(s->passwordHash().isEmpty() ? "no" : "yes"));
 	msg.append(QString("History size: %1 Mb (limit: %2 Mb)\n")
 			.arg(s->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)

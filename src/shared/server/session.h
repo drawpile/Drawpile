@@ -40,6 +40,7 @@ namespace recording {
 namespace server {
 
 class Client;
+class ServerConfig;
 
 /**
  * The serverside session state.
@@ -54,7 +55,9 @@ public:
 		Shutdown
 	};
 
-	Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, QObject *parent=0);
+	Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, ServerConfig *config, QObject *parent=0);
+
+	const ServerConfig *config() const { return m_config; }
 
 	/**
 	 * \brief Get the ID of the session
@@ -83,43 +86,25 @@ public:
 	protocol::ProtocolVersion protocolVersion() const { return m_protocolVersion; }
 
 	/**
-	 * @brief Set whether session persistence is allowed
-	 * @param allow
-	 */
-	void setPersistenceAllowed(bool allowed) { m_allowPersistent = allowed; m_persistent = m_persistent & allowed; }
-	bool isPersistenceAllowed() const { return m_allowPersistent; }
-
-	/**
 	 * @brief Is this an age-restricted session?
 	 */
 	bool isNsfm() const { return m_nsfm; }
 
 	/**
-	 * @brief Get the maximum session history size in bytes
+	 * @brief Get the current history limit for this session
 	 *
-	 * If the session history grows beyond this limit, it will be shut down
+	 * This is the upper limit. If the size goes above this, the session is terminated.
 	 * @return
 	 */
 	uint historyLimit() const { return m_historylimit; }
-	void setHistoryLimit(uint limit) { m_historylimit = limit; }
-
-	/**
-	 * @brief Don't include user list in session announcement?
-	 *
-	 * Password protected sessions are implicitly private
-	 * @param p
-	 */
-	void setPrivateUserList(bool p) { m_privateUserList = p; }
-	bool isPrivateUserList() const { return m_privateUserList; }
 
 	/**
 	 * @brief Set the name of the recording file to create
 	 *
 	 * The recording will be created after a snapshot point has been created.
 	 * @param filename path to output file
-	 * @param split if true, a new file will be started at every snapshot
 	 */
-	void setRecordingFile(const QString &filename, bool split) { m_recordingFile = filename; m_splitRecording = split; }
+	void setRecordingFile(const QString &filename) { m_recordingFile = filename; }
 
 	/**
 	 * @brief Stop any recording that might be in progress
@@ -133,13 +118,6 @@ public:
 	 * @return password
 	 */
 	const QByteArray &passwordHash() const { return m_passwordhash; }
-
-	/**
-	 * @brief A chat message that will be sent to users who join the session
-	 * @param message message content. If empty, no welcome message will be sent
-	 */
-	void setWelcomeMessage(const QString &message) { m_welcomeMessage = message; }
-	const QString &welcomeMessage() const { return m_welcomeMessage; }
 
 	/**
 	 * @brief Get the title of the session
@@ -377,12 +355,13 @@ private:
 
 	void switchState(State newstate);
 
+	ServerConfig *m_config;
+
 	State m_state;
 	int m_initUser; // the user who is currently uploading init/reset data
 
 	recording::Writer *m_recorder;
 	QString m_recordingFile;
-	bool m_splitRecording;
 
 	QList<Client*> m_clients;
 
@@ -405,14 +384,11 @@ private:
 	QByteArray m_passwordhash;
 	QString m_title;
 	QString m_founder;
-	QString m_welcomeMessage;
 
 	bool m_closed;
-	bool m_allowPersistent;
 	bool m_persistent;
 	bool m_preserveChat;
 	bool m_nsfm;
-	bool m_privateUserList;
 };
 
 }

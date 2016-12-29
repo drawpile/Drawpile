@@ -34,6 +34,7 @@ class Session;
 class Client;
 class SessionStore;
 class IdentityManager;
+class ServerConfig;
 
 /**
  * @brief Session manager
@@ -42,65 +43,13 @@ class IdentityManager;
 class SessionServer : public QObject {
 Q_OBJECT
 public:
-	explicit SessionServer(QObject *parent=0);
+	explicit SessionServer(ServerConfig *config, QObject *parent=0);
 
 	/**
-	 * @brief Set the title of the server
-	 *
-	 * The server title is shown by the client in the session selection dialog.
-	 * @param title
+	 * @brief Get the server configuration
+	 * @return
 	 */
-	Q_INVOKABLE void setTitle(const QString& title) { _title = title; }
-	const QString &title() const { return _title; }
-
-	/**
-	 * @brief Set the maximum number of sessions
-	 *
-	 * This does not affect existing sessions.
-	 *
-	 * @param limit
-	 */
-	Q_INVOKABLE void setSessionLimit(int limit) { _sessionLimit = qMax(0, limit); }
-	int sessionLimit() const { return _sessionLimit; }
-
-	/**
-	 * @brief Set session history limit
-	 *
-	 * A limit of 0 means size is unlimited.
-	 *
-	 * @param limit max history size in bytes
-	 */
-	void setHistoryLimit(uint limit) { _historyLimit = limit; }
-	uint historyLimit() const { return _historyLimit; }
-
-	/**
-	 * @brief Set the password needed to host a sessionCount()
-	 *
-	 * By default, an empty password is set, meaning no password is needed.
-	 *
-	 * @param password
-	 */
-	Q_INVOKABLE void setHostPassword(const QString &password) { _hostPassword = password; }
-	const QString &hostPassword() const { return _hostPassword; }
-
-	/**
-	 * @brief Set whether persistent sessions are allowed
-	 * @param persistent
-	 */
-	void setAllowPersistentSessions(bool persistent) { _allowPersistentSessions = persistent; }
-	bool allowPersistentSessions() const { return _allowPersistentSessions; }
-
-	/**
-	 * @brief Set persistent session expiration time
-	 *
-	 * A session must be vacant for this many seconds before it is automatically deleted.
-	 *
-	 * @param seconds expiration time in seconds
-	 */
-	void setExpirationTime(uint seconds) { _expirationTime = qint64(seconds) * 1000; }
-
-	//! Never include user lists in announcements
-	void setPrivateUserList(bool p) { m_privateUserList = p; }
+	const ServerConfig *config() const { return m_config; }
 
 	/**
 	 * @brief Set whether a secure connection is mandatory
@@ -114,15 +63,6 @@ public:
 #endif
 
 	/**
-	 * @brief Set the server's welcome message
-	 *
-	 * This is sent as a chat message to new clients
-	 * @param message message content
-	 */
-	void setWelcomeMessage(const QString &message);
-	const QString &welcomeMessage() const { return _welcomeMessage; }
-
-	/**
 	 * @brief Set the user identity manager to use (if any)
 	 *
 	 * Setting this enables authenticated user logins.
@@ -131,13 +71,6 @@ public:
 	 */
 	void setIdentityManager(IdentityManager *identman) { _identman = identman; }
 	IdentityManager *identityManager() const { return _identman; }
-
-	/**
-	 * @brief Set client connection idle timeout
-	 * @param timeout timeout in milliseconds
-	 */
-	void setConnectionTimeout(int timeout) { _connectionTimeout = timeout; }
-	int connectionTimeout() const { return _connectionTimeout; }
 
 	/**
 	 * @brief Get the session announcement server client
@@ -285,22 +218,18 @@ private:
 	void initSession(Session *session);
 	void destroySession(Session *session);
 
+	ServerConfig *m_config;
+
 	QList<Session*> _sessions;
 	QList<Client*> _lobby;
 	SessionStore *_store;
 	IdentityManager *_identman;
 	sessionlisting::AnnouncementApi *_publicListingApi;
 
-	QString _title;
-	QString _welcomeMessage;
-	int _sessionLimit;
 	int _connectionTimeout;
-	uint _historyLimit;
 	qint64 _expirationTime;
 	QString _hostPassword;
-	bool _allowPersistentSessions;
 	bool _mustSecure;
-	bool m_privateUserList;
 
 #ifndef NDEBUG
 	uint _randomlag;

@@ -22,6 +22,7 @@
 #include "client.h"
 #include "loginhandler.h"
 #include "sessiondesc.h"
+#include "serverconfig.h"
 
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
@@ -30,17 +31,14 @@
 
 namespace server {
 
-SessionServer::SessionServer(QObject *parent)
+SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
+	m_config(config),
 	_store(nullptr),
 	_identman(nullptr),
-	_sessionLimit(1),
 	_connectionTimeout(0),
-	_historyLimit(0),
 	_expirationTime(0),
-	_allowPersistentSessions(false),
-	_mustSecure(false),
-	m_privateUserList(false)
+	_mustSecure(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
 	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
@@ -79,7 +77,7 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 	Q_ASSERT(!id.isNull());
 	Q_ASSERT(getSessionDescriptionById(id.toString()).id.isNull());
 
-	Session *session = new Session(id, idAlias, protocolVersion, founder, this);
+	Session *session = new Session(id, idAlias, protocolVersion, founder, m_config, this);
 
 	initSession(session);
 
@@ -90,11 +88,6 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 
 void SessionServer::initSession(Session *session)
 {
-	session->setHistoryLimit(_historyLimit);
-	session->setPersistenceAllowed(allowPersistentSessions());
-	session->setWelcomeMessage(welcomeMessage());
-	session->setPrivateUserList(m_privateUserList);
-
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
 	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(SessionDescription(*ses)); });
@@ -226,7 +219,7 @@ bool SessionServer::wall(const QString &message, const QString &sessionId)
 void SessionServer::addClient(Client *client)
 {
 	client->setParent(this);
-	client->setConnectionTimeout(_connectionTimeout);
+	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
 
 #ifndef NDEBUG
 	client->setRandomLag(_randomlag);
@@ -303,21 +296,23 @@ void SessionServer::userDisconnectedEvent(Session *session)
 
 void SessionServer::cleanupSessions()
 {
-	if(_allowPersistentSessions && _expirationTime>0) {
+	const int expirationTime = m_config->getConfigTime(config::IdleTimeLimit);
+
+	if(expirationTime>0) {
 		QDateTime now = QDateTime::currentDateTime();
 
 		QList<Session*> expirelist;
 
 		for(Session *s : _sessions) {
 			if(s->userCount()==0) {
-				if(s->lastEventTime().msecsTo(now) > _expirationTime) {
+				if(s->lastEventTime().msecsTo(now) > expirationTime) {
 					expirelist << s;
 				}
 			}
 		}
 
 		for(Session *s : expirelist) {
-			logger::info() << s << "Vacant session expired. Uptime was" << s->uptime();
+			logger::info() << s << "Idle session expired. Uptime was" << s->uptime();
 
 			destroySession(s);
 		}
@@ -326,6 +321,8 @@ void SessionServer::cleanupSessions()
 
 void SessionServer::refreshSessionAnnouncements()
 {
+	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
+
 	for(Session *s : _sessions) {
 		if(s->publicListing().listingId>0) {
 			_publicListingApi->refreshSession(s->publicListing(), {
@@ -335,7 +332,7 @@ void SessionServer::refreshSessionAnnouncements()
 				protocol::ProtocolVersion(),
 				s->title(),
 				s->userCount(),
-				s->passwordHash().isEmpty() && !s->isPrivateUserList() ? s->userNames() : QStringList(),
+				s->passwordHash().isEmpty() && !privateUserList ? s->userNames() : QStringList(),
 				!s->passwordHash().isEmpty(),
 				false, // TODO: explicit NSFM tag
 				s->founder(),
@@ -364,13 +361,6 @@ void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing
 	}
 
 	s->setPublicListing(listing);
-}
-
-void SessionServer::setWelcomeMessage(const QString &message)
-{
-	_welcomeMessage = message;
-	for(Session *s : _sessions)
-		s->setWelcomeMessage(message);
 }
 
 }

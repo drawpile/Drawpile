@@ -1,6 +1,7 @@
 # src/server/CMakeLists.txt
 
 find_package( Qt5Network REQUIRED)
+find_package( Qt5Sql REQUIRED)
 find_package( KF5Archive REQUIRED NO_MODULE )
 
 set (
@@ -8,12 +9,8 @@ set (
 	main.cpp
 	multiserver.cpp
 	sslserver.cpp
+	database.cpp
 	headless/headless.cpp
-	headless/configfile.cpp
-	headless/updateablefile.cpp
-	headless/userfile.cpp
-	headless/announcementwhitelist.cpp
-	headless/banlist.cpp
 	)
 
 # Unix specific features
@@ -30,7 +27,7 @@ else ()
 endif ()
 
 add_executable( ${SRVNAME} ${SOURCES} )
-target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network ${INITSYS_LIB} ${MHD_LIBRARIES} )
+target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
 
 if ( UNIX AND NOT APPLE )
 	install ( TARGETS ${SRVNAME} DESTINATION bin )

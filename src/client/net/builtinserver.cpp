@@ -28,6 +28,7 @@
 #include "../shared/server/loginhandler.h"
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
+#include "../shared/server/serverconfig.h"
 
 #include "../shared/util/logger.h"
 
@@ -38,18 +39,18 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	  _server(0),
 	  _state(NOT_STARTED)
 {
-	_sessions = new SessionServer(this);
-
-	// Set configurable settings
+	// Fixed configuration
+	ServerConfig *servercfg = new ServerConfig(this);
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
 
-	_sessions->setHistoryLimit(qMax(0, int(cfg.value("historylimit", 0).toDouble() * 1024 * 1024)));
-	_sessions->setConnectionTimeout(cfg.value("timeout", 60).toInt() * 1000);
-	_sessions->setPrivateUserList(cfg.value("privateUserList", false).toBool());
+	servercfg->setConfigInt(config::SessionSizeLimit, cfg.value("historylimit", 0).toInt());
+	servercfg->setConfigInt(config::SessionCountLimit, 1);
+	servercfg->setConfigBool(config::PrivateUserList, cfg.value("privateUserList", false).toBool());
+	servercfg->setConfigInt(config::ClientTimeout, cfg.value("timeout", 60).toInt());
 
-	// Only one session per server is supported here
-	_sessions->setSessionLimit(1);
+	_sessions = new SessionServer(servercfg, this);
+
 	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(stop()));
 	connect(_sessions, &SessionServer::userDisconnected, [this]() {
 		// The server will be fully stopped after all users have disconnected
