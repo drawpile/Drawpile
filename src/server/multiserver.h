@@ -32,7 +32,6 @@ namespace server {
 class Client;
 class Session;
 class SessionServer;
-class IdentityManager;
 class ServerConfig;
 
 /**
@@ -46,7 +45,6 @@ public:
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
-	void setIdentityManager(IdentityManager *idman);
 	void setAnnounceLocalAddr(const QString &addr);
 
 #ifndef NDEBUG

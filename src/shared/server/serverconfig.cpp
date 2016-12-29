@@ -110,16 +110,26 @@ void ServerConfig::setConfigBool(ConfigKey key, bool value)
 	setConfigString(key, value ? QStringLiteral("true") : QStringLiteral("false"));
 }
 
-bool ServerConfig::isAllowedAnnouncementUrl(const QUrl &url)
+bool ServerConfig::isAllowedAnnouncementUrl(const QUrl &url) const
 {
 	Q_UNUSED(url);
 	return true;
 }
 
-bool ServerConfig::isAddressBanned(const QHostAddress &addr)
+bool ServerConfig::isAddressBanned(const QHostAddress &addr) const
 {
 	Q_UNUSED(addr);
 	return false;
+}
+
+RegisteredUser ServerConfig::getUserAccount(const QString &username, const QString &password) const
+{
+	Q_UNUSED(password);
+	return RegisteredUser {
+		RegisteredUser::NotFound,
+		username,
+		QStringList()
+	};
 }
 
 int ServerConfig::parseTimeString(const QString &str)

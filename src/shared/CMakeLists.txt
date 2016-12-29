@@ -30,7 +30,6 @@ set (
 	server/sessiondesc.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
-	server/identitymanager.cpp
 	server/serverconfig.cpp
 	)
 

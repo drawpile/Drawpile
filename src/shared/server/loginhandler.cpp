@@ -22,7 +22,6 @@
 #include "session.h"
 #include "sessionserver.h"
 #include "sessiondesc.h"
-#include "identitymanager.h"
 #include "serverconfig.h"
 
 #include "../net/control.h"
@@ -67,11 +66,8 @@ void LoginHandler::startLoginProcess()
 		flags << "SECURE";
 		m_state = WAIT_FOR_SECURE;
 	}
-	if(m_server->identityManager()) {
-		flags << "IDENT";
-		if(m_server->identityManager()->isAuthorizedOnly())
-			flags << "NOGUEST";
-	}
+	if(!m_server->config()->getConfigBool(config::AllowGuests))
+		flags << "NOGUEST";
 
 	greeting.reply["flags"] = flags;
 
@@ -178,12 +174,6 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 			logger::notice() << m_client << "Invalid login message";
 			m_client->disconnectError("invalid message");
 		}
-
-	} else if(m_state == WAIT_FOR_IDENTITYMANAGER_REPLY) {
-		// Client shouldn't shouldn't send anything in this state
-		logger::notice() << m_client << "Got login message while waiting for identity manager reply";
-		m_client->disconnectError("unexpected message");
-
 	} else {
 		if(cmd.cmd == "host") {
 			handleHostMessage(cmd);
@@ -213,88 +203,62 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 		return;
 	}
 
-	if(m_server->identityManager()) {
-		m_state = WAIT_FOR_IDENTITYMANAGER_REPLY;
-		IdentityResult *result = m_server->identityManager()->checkLogin(username, password);
-		connect(result, &IdentityResult::resultAvailable, [this, username, password](IdentityResult *result) {
-			QString errorcode, errorstr;
-			Q_ASSERT(result->status() != IdentityResult::INPROGRESS);
-			switch(result->status()) {
-			case IdentityResult::INPROGRESS: /* can't happen */ break;
-			case IdentityResult::NOTFOUND:
-				if(!m_server->identityManager()->isAuthorizedOnly()) {
-					guestLogin(username);
-					break;
-				}
-				// fall through to badpass if guest logins are disabled
-			case IdentityResult::BADPASS:
-				if(password.isEmpty()) {
-					// No password: tell client that guest login is not possible (for this username)
-					m_state = WAIT_FOR_IDENT;
+	const RegisteredUser userAccount = m_server->config()->getUserAccount(username, password);
 
-					protocol::ServerReply identReply;
-					identReply.type = protocol::ServerReply::RESULT;
-					identReply.message = "Password needed";
-					identReply.reply["state"] = "needPassword";
-					send(identReply);
-
-					return;
-				}
-				errorcode = "badPassword";
-				errorstr = "Incorrect password";
-				break;
-
-			case IdentityResult::BANNED:
-				errorcode = "banned";
-				errorstr = "This username is banned";
-				break;
-
-			case IdentityResult::OK: {
-				// Yay, username and password were valid!
-				if(validateUsername(result->canonicalName())) {
-					m_client->setUsername(result->canonicalName());
-
-				} else {
-					logger::warning() << "Identity manager gave us an invalid username:" << result->canonicalName();
-					m_client->setUsername(username);
-				}
-
-				protocol::ServerReply identReply;
-				identReply.type = protocol::ServerReply::RESULT;
-				identReply.message = "Authenticated login OK!";
-				identReply.reply["state"] = "identOk";
-				identReply.reply["flags"] = QJsonArray::fromStringList(result->flags());
-				identReply.reply["ident"] = m_client->username();
-				identReply.reply["guest"] = false;
-
-				m_client->setAuthenticated(true);
-				m_client->setModerator(result->flags().contains("MOD"));
-				m_hostPrivilege = result->flags().contains("HOST");
-				m_state = WAIT_FOR_LOGIN;
-
-				send(identReply);
-				announceServerInfo();
-				} break;
-			}
-
-			if(!errorcode.isEmpty()) {
-				sendError(errorcode, errorstr);
-			}
-		});
-
-	} else {
-		if(!password.isNull()) {
-			// if we have no identity manager, we can't accept passwords
-			sendError("noIdent", "This is a guest-only server");
+	switch(userAccount.status) {
+	case RegisteredUser::NotFound:
+		if(m_server->config()->getConfigBool(config::AllowGuests)) {
+			guestLogin(username);
 			return;
 		}
-		guestLogin(username);
+		// fall through to badpass if guest logins are disabled
+
+	case RegisteredUser::BadPass:
+		if(password.isEmpty()) {
+			// No password: tell client that guest login is not possible (for this username)
+			m_state = WAIT_FOR_IDENT;
+
+			protocol::ServerReply identReply;
+			identReply.type = protocol::ServerReply::RESULT;
+			identReply.message = "Password needed";
+			identReply.reply["state"] = "needPassword";
+			send(identReply);
+
+		} else {
+			sendError("badPassword", "Incorrect password");
+		}
+		return;
+
+	case RegisteredUser::Banned:
+		sendError("banned", "This username is banned");
+		return;
+
+	case RegisteredUser::Ok: {
+		// Yay, username and password were valid!
+		m_client->setUsername(username);
+
+		protocol::ServerReply identReply;
+		identReply.type = protocol::ServerReply::RESULT;
+		identReply.message = "Authenticated login OK!";
+		identReply.reply["state"] = "identOk";
+		identReply.reply["flags"] = QJsonArray::fromStringList(userAccount.flags);
+		identReply.reply["ident"] = m_client->username();
+		identReply.reply["guest"] = false;
+
+		m_client->setAuthenticated(true);
+		m_client->setModerator(userAccount.flags.contains("MOD"));
+		m_hostPrivilege = userAccount.flags.contains("HOST");
+		m_state = WAIT_FOR_LOGIN;
+
+		send(identReply);
+		announceServerInfo();
+		break; }
 	}
 }
 
 void LoginHandler::guestLogin(const QString &username)
 {
-	if(m_server->identityManager() && m_server->identityManager()->isAuthorizedOnly()) {
+	if(!m_server->config()->getConfigBool(config::AllowGuests)) {
 		sendError("noGuest", "Guest logins not allowed");
 		return;
 	}

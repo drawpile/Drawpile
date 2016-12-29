@@ -81,11 +81,6 @@ void MultiServer::setAutoStop(bool autostop)
 	m_autoStop = autostop;
 }
 
-void MultiServer::setIdentityManager(IdentityManager *idman)
-{
-	m_sessions->setIdentityManager(idman);
-}
-
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
 {
 	m_sessions->announcementApiClient()->setLocalAddress(addr);

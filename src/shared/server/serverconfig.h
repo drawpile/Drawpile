@@ -67,6 +67,19 @@ namespace config {
 		;
 }
 
+struct RegisteredUser {
+	enum Status {
+		NotFound, // User with this name not found
+		BadPass,  // Supplied password did not match
+		Banned,   // This username is banned
+		Ok        // Can log in
+	};
+
+	Status status;
+	QString username;
+	QStringList flags;
+};
+
 /**
  * @brief Server configuration class
  *
@@ -105,14 +118,21 @@ public:
 	 *
 	 * The default implementation always returns true
 	 */
-	virtual bool isAllowedAnnouncementUrl(const QUrl &url);
+	virtual bool isAllowedAnnouncementUrl(const QUrl &url) const;
 
 	/**
 	 * @brief Check if the given address is banned from this server
 	 *
 	 * The default implementation always returns false
 	 */
-	virtual bool isAddressBanned(const QHostAddress &addr);
+	virtual bool isAddressBanned(const QHostAddress &addr) const;
+
+	/**
+	 * @brief See if there is a registered user with the given credentials
+	 *
+	 * The default implementation always returns NotFound
+	 */
+	virtual RegisteredUser getUserAccount(const QString &username, const QString &password) const;
 
 	/**
 	 * @brief Parse a time interval string (e.g. "1d" or "5h")

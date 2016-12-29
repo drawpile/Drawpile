@@ -56,6 +56,17 @@ static bool initDatabase(QSqlDatabase db)
 		))
 		return false;
 
+	// Registered user accounts
+	if(!q.exec(
+		"CREATE TABLE IF NOT EXISTS users ("
+			"username PRIMARY KEY," // the username
+			"password,"             // hashed password
+			"locked,"               // is this username locked/banned
+			"flags"                 // comma separated list of extra features (e.g. "mod")
+			");"
+		))
+		return false;
+
 	return true;
 }
 
@@ -110,7 +121,7 @@ QString Database::getConfigValue(const ConfigKey key, bool &found) const
 	}
 }
 
-bool Database::isAllowedAnnouncementUrl(const QUrl &url)
+bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 {
 	if(!url.isValid())
 		return false;
@@ -137,7 +148,7 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url)
 	return false;
 }
 
-bool Database::isAddressBanned(const QHostAddress &addr)
+bool Database::isAddressBanned(const QHostAddress &addr) const
 {
 	QSqlQuery q(d->db);
 	q.exec("SELECT ip, subnet FROM ipbans WHERE expires > datetime('now')");
@@ -158,6 +169,48 @@ bool Database::isAddressBanned(const QHostAddress &addr)
 	}
 
 	return false;
+}
+
+RegisteredUser Database::getUserAccount(const QString &username, const QString &password) const
+{
+	QSqlQuery q(d->db);
+	q.prepare("SELECT password, locked, flags FROM users WHERE username=?");
+	q.bindValue(0, username);
+	q.exec();
+	if(q.next()) {
+		const QString passwordHash = q.value(0).toString();
+		const int locked = q.value(1).toInt();
+		const QStringList flags = q.value(2).toString().split(',',QString::SkipEmptyParts);
+
+		if(locked) {
+			return RegisteredUser {
+				RegisteredUser::Banned,
+				username,
+				QStringList()
+			};
+		}
+
+		// TODO password hashing
+		if(passwordHash != password) {
+			return RegisteredUser {
+				RegisteredUser::BadPass,
+				username,
+				QStringList()
+			};
+		}
+
+		return RegisteredUser {
+			RegisteredUser::Ok,
+			username,
+			flags
+		};
+	} else {
+		return RegisteredUser {
+			RegisteredUser::NotFound,
+			username,
+			QStringList()
+		};
+	}
 }
 
 }

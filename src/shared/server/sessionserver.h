@@ -33,7 +33,6 @@ namespace server {
 class Session;
 class Client;
 class SessionStore;
-class IdentityManager;
 class ServerConfig;
 
 /**
@@ -61,16 +60,6 @@ public:
 #ifndef NDEBUG
 	void setRandomLag(uint lag) { _randomlag = lag; }
 #endif
-
-	/**
-	 * @brief Set the user identity manager to use (if any)
-	 *
-	 * Setting this enables authenticated user logins.
-	 *
-	 * @param identman
-	 */
-	void setIdentityManager(IdentityManager *identman) { _identman = identman; }
-	IdentityManager *identityManager() const { return _identman; }
 
 	/**
 	 * @brief Get the session announcement server client
@@ -223,7 +212,6 @@ private:
 	QList<Session*> _sessions;
 	QList<Client*> _lobby;
 	SessionStore *_store;
-	IdentityManager *_identman;
 	sessionlisting::AnnouncementApi *_publicListingApi;
 
 	int _connectionTimeout;

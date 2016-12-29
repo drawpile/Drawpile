@@ -35,7 +35,6 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	_store(nullptr),
-	_identman(nullptr),
 	_connectionTimeout(0),
 	_expirationTime(0),
 	_mustSecure(false)

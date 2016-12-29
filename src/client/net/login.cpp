@@ -172,7 +172,6 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 
 	bool mustSecure = false;
 	m_needHostPassword = false;
-	m_canAuth = false;
 	m_mustAuth = false;
 	m_needUserPassword = false;
 
@@ -187,8 +186,6 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 			mustSecure = true;
 		} else if(flag == "PERSIST") {
 			// TODO indicate persistent session support
-		} else if(flag == "IDENT") {
-			m_canAuth = true;
 		} else if(flag == "NOGUEST") {
 			m_mustAuth = true;
 		} else {

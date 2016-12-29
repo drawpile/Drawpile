@@ -40,8 +40,10 @@ public:
 
 	void setConfigString(ConfigKey key, const QString &value) override;
 
-	bool isAllowedAnnouncementUrl(const QUrl &url) override;
-	bool isAddressBanned(const QHostAddress &addr) override;
+	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
+	bool isAddressBanned(const QHostAddress &addr) const override;
+	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
+
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
 

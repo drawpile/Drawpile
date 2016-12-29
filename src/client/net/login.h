@@ -348,7 +348,6 @@ private:
 	// Server flags
 	bool m_multisession;
 	bool m_tls;
-	bool m_canAuth;
 	bool m_mustAuth;
 	bool m_needUserPassword;
 	bool m_needHostPassword;
