@@ -261,6 +261,13 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	sendUpdatedSessionProperties();
 }
 
+bool Session::checkPassword(const QString &password) const
+{
+	if(m_passwordhash.isEmpty())
+		return true;
+	return passwordhash::check(password, m_passwordhash);
+}
+
 QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids)
 {
 	QList<uint8_t> truelist;
@@ -455,6 +462,29 @@ QString Session::uptime() const
 	return uptime;
 }
 
+QJsonObject Session::getDescription(bool full) const
+{
+	QJsonObject o;
+	o["id"] = idString();
+	o["alias"] = idAlias();
+	o["protocol"] = protocolVersion().asString();
+	o["userCount"] = userCount();
+	o["maxUserCount"] = maxUsers();
+	o["founder"] = founder();
+	o["title"] = title();
+	o["hasPassword"] = hasPassword();
+	o["closed"] = isClosed();
+	o["persistent"] = isPersistent();
+	o["nsfm"] = isNsfm();
+	o["startTime"] = sessionStartTime().toString();
+
+	if(full) {
+		// TODO
+	}
+
+	return o;
+}
+
 QStringList Session::userNames() const
 {
 	QStringList lst;
@@ -462,6 +492,7 @@ QStringList Session::userNames() const
 		lst << c->username();
 	return lst;
 }
+
 void Session::makeAnnouncement(const QUrl &url)
 {
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
@@ -473,8 +504,8 @@ void Session::makeAnnouncement(const QUrl &url)
 		protocolVersion(),
 		title(),
 		userCount(),
-		passwordHash().isEmpty() && !privateUserList ? userNames() : QStringList(),
-		!passwordHash().isEmpty(),
+		hasPassword() || privateUserList ? QStringList() : userNames(),
+		hasPassword(),
 		isNsfm(),
 		founder(),
 		sessionStartTime()

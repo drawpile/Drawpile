@@ -25,8 +25,9 @@
 #include <QString>
 #include <QObject>
 #include <QDateTime>
+#include <QUuid>
+#include <QJsonObject>
 
-#include "sessiondesc.h"
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
 #include "../net/message.h"
@@ -63,6 +64,14 @@ public:
 	 * \brief Get the ID of the session
 	 */
 	QUuid id() const { return m_id; }
+
+	/**
+	 * @brief Get the ID of the session as a properly formatted string
+	 */
+	QString idString() const {
+		QString s = m_id.toString();
+		return s.mid(1, s.length()-2);
+	}
 
 	/**
 	 * @brief Get the custom alias for the session ID
@@ -112,12 +121,19 @@ public:
 	void stopRecording();
 
 	/**
-	 * @brief Get the session password hash
-	 *
-	 * This is an empty string if no password is required
-	 * @return password
+	 * @brief Is this session password protected?
 	 */
-	const QByteArray &passwordHash() const { return m_passwordhash; }
+	bool hasPassword() const { return !m_passwordhash.isEmpty(); }
+
+	/**
+	 * @brief Check if the password is OK
+	 *
+	 * If no session password is set, this will always return true.
+	 *
+	 * @param password
+	 * @return true if password matches the session password
+	 */
+	bool checkPassword(const QString &password) const;
 
 	/**
 	 * @brief Get the title of the session
@@ -310,6 +326,17 @@ public:
 	 * @return sanitized list of actual session operators
 	 */
 	QList<uint8_t> updateOwnership(QList<uint8_t> ids);
+
+	/**
+	 * @brief Get a JSON object describing the session
+	 *
+	 * This is used in the login phase session list
+	 * and the JSON api.
+	 *
+	 * @param full - include detailed information (for admin use)
+	 * @return
+	 */
+	QJsonObject getDescription(bool full=false) const;
 
 signals:
 	//! A user just connected to the session

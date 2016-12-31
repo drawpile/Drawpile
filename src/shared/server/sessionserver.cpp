@@ -21,33 +21,30 @@
 #include "session.h"
 #include "client.h"
 #include "loginhandler.h"
-#include "sessiondesc.h"
 #include "serverconfig.h"
 
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
 
 #include <QTimer>
+#include <QJsonArray>
 
 namespace server {
 
 SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
-	_store(nullptr),
-	_connectionTimeout(0),
-	_expirationTime(0),
-	_mustSecure(false)
+	m_mustSecure(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
 	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
 
-	_publicListingApi = new sessionlisting::AnnouncementApi(this);
+	m_publicListingApi = new sessionlisting::AnnouncementApi(this);
 
-	connect(_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
-	connect(_publicListingApi, &sessionlisting::AnnouncementApi::messageReceived, [this](const QString &msg) {
+	connect(m_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
+	connect(m_publicListingApi, &sessionlisting::AnnouncementApi::messageReceived, [this](const QString &msg) {
 		wall("Session announced: " + msg);
 	});
 
@@ -61,12 +58,12 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 #endif
 }
 
-QList<SessionDescription> SessionServer::sessions() const
+QJsonArray SessionServer::sessionDescriptions() const
 {
-	QList<SessionDescription> descs;
+	QJsonArray descs;
 
-	for(const Session *s : _sessions)
-		descs.append(SessionDescription(*s));
+	for(const Session *s : m_sessions)
+		descs.append(s->getDescription());
 
 	return descs;
 }
@@ -74,7 +71,7 @@ QList<SessionDescription> SessionServer::sessions() const
 Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
-	Q_ASSERT(getSessionDescriptionById(id.toString()).id.isNull());
+	Q_ASSERT(!getSessionById(id.toString()));
 
 	Session *session = new Session(id, idAlias, protocolVersion, founder, m_config, this);
 
@@ -89,15 +86,15 @@ void SessionServer::initSession(Session *session)
 {
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
-	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(SessionDescription(*ses)); });
+	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
 
 	connect(session, &Session::requestAnnouncement, this, &SessionServer::announceSession);
 	connect(session, &Session::requestUnlisting, this, &SessionServer::unlistSession);
 
-	_sessions.append(session);
+	m_sessions.append(session);
 
 	emit sessionCreated(session);
-	emit sessionChanged(SessionDescription(*session));
+	emit sessionChanged(session->getDescription());
 }
 
 /**
@@ -109,32 +106,33 @@ void SessionServer::initSession(Session *session)
  */
 void SessionServer::destroySession(Session *session)
 {
-	Q_ASSERT(_sessions.contains(session));
+	Q_ASSERT(session);
+	Q_ASSERT(m_sessions.contains(session));
 
 	session->unlistAnnouncement();
 
 	logger::debug() << session << "Deleting session. User count is" << session->userCount();
-	_sessions.removeOne(session);
+	m_sessions.removeOne(session);
 
 	session->stopRecording();
 
 	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
-	emit sessionEnded(sessionIdString(session->id()));
+	emit sessionEnded(session->idString());
 }
 
-SessionDescription SessionServer::getSessionDescriptionById(const QString &id) const
+QJsonObject SessionServer::getSessionDescriptionById(const QString &id, bool full) const
 {
 	const Session *s = getSessionById(id);
 	if(s)
-		return SessionDescription(*s);
+		return s->getDescription(full);
 
-	return SessionDescription();
+	return QJsonObject();
 }
 
 Session *SessionServer::getSessionById(const QString &id) const
 {
-	QUuid uuid(id);
-	for(Session *s : _sessions) {
+	const QUuid uuid(id);
+	for(Session *s : m_sessions) {
 		if(uuid.isNull()) {
 			if(s->idAlias() == id)
 				return s;
@@ -149,51 +147,34 @@ Session *SessionServer::getSessionById(const QString &id) const
 
 int SessionServer::totalUsers() const
 {
-	int count = _lobby.size();
-	for(const Session * s : _sessions)
+	int count = m_lobby.size();
+	for(const Session * s : m_sessions)
 		count += s->userCount();
 	return count;
 }
 
 bool SessionServer::killSession(const QString &id)
 {
-	logger::info() << "Killing session" << id;
-
-	for(Session *s : _sessions) {
-		if(s->id() == id) {
-			s->killSession();
-			if(s->userCount()==0)
-				destroySession(s);
-			return true;
-		}
+	Session *s = getSessionById(id);
+	if(s) {
+		logger::info() << "Killing session" << id;
+		s->killSession();
+		if(s->userCount()==0)
+			destroySession(s);
+		return true;
+	} else {
+		logger::info() << "Cannot kill non-existent session" << id;
+		return false;
 	}
-
-	// not found
-	return false;
-}
-
-bool SessionServer::kickUser(const QString &sessionId, int userId)
-{
-	logger::info() << "Kicking user" << userId << "from" << sessionId;
-
-	Session *session = getSessionById(sessionId);
-	if(!session)
-		return false;
-	
-	Client *c = session->getClientById(userId);
-	if(!c)
-		return false;
-	
-	c->disconnectKick(QString());
-	return true;
 }
 
 void SessionServer::stopAll()
 {
-	for(Client *c : _lobby)
+	for(Client *c : m_lobby)
 		c->disconnectShutdown();
 
-	auto sessions = _sessions;
+	auto sessions = m_sessions;
+	sessions.detach();
 	for(Session *s : sessions) {
 		s->stopRecording();
 		s->kickAllUsers();
@@ -206,8 +187,8 @@ void SessionServer::stopAll()
 bool SessionServer::wall(const QString &message, const QString &sessionId)
 {
 	bool found = false;
-	for(Session *s : _sessions) {
-		if(sessionId.isNull() || s->id() == sessionId) {
+	for(Session *s : m_sessions) {
+		if(sessionId.isNull() || s->idString() == sessionId || s->idAlias() == sessionId) {
 			s->wall(message);
 			found = true;
 		}
@@ -224,7 +205,7 @@ void SessionServer::addClient(Client *client)
 	client->setRandomLag(_randomlag);
 #endif
 
-	_lobby.append(client);
+	m_lobby.append(client);
 
 	connect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 
@@ -239,14 +220,14 @@ void SessionServer::addClient(Client *client)
 void SessionServer::moveFromLobby(Session *session, Client *client)
 {
 	logger::debug() << client << "moved from lobby to" << session;
-	Q_ASSERT(_lobby.contains(client));
-	_lobby.removeOne(client);
+	Q_ASSERT(m_lobby.contains(client));
+	m_lobby.removeOne(client);
 
 	// the session handles disconnect events from now on
 	disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 
 	emit userLoggedIn();
-	emit sessionChanged(SessionDescription(*session));
+	emit sessionChanged(session->getDescription());
 }
 
 /**
@@ -256,8 +237,8 @@ void SessionServer::moveFromLobby(Session *session, Client *client)
 void SessionServer::lobbyDisconnectedEvent(Client *client)
 {
 	logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
-	Q_ASSERT(_lobby.contains(client));
-	_lobby.removeOne(client);
+	Q_ASSERT(m_lobby.contains(client));
+	m_lobby.removeOne(client);
 
 	client->deleteLater();
 	emit userDisconnected();
@@ -288,7 +269,7 @@ void SessionServer::userDisconnectedEvent(Session *session)
 	if(delSession)
 		destroySession(session);
 	else
-		emit sessionChanged(SessionDescription(*session));
+		emit sessionChanged(session->getDescription());
 
 	emit userDisconnected();
 }
@@ -302,7 +283,7 @@ void SessionServer::cleanupSessions()
 
 		QList<Session*> expirelist;
 
-		for(Session *s : _sessions) {
+		for(Session *s : m_sessions) {
 			if(s->userCount()==0) {
 				if(s->lastEventTime().msecsTo(now) > expirationTime) {
 					expirelist << s;
@@ -322,18 +303,18 @@ void SessionServer::refreshSessionAnnouncements()
 {
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
 
-	for(Session *s : _sessions) {
+	for(Session *s : m_sessions) {
 		if(s->publicListing().listingId>0) {
-			_publicListingApi->refreshSession(s->publicListing(), {
+			m_publicListingApi->refreshSession(s->publicListing(), {
 				QString(),
 				0,
 				QString(),
 				protocol::ProtocolVersion(),
 				s->title(),
 				s->userCount(),
-				s->passwordHash().isEmpty() && !privateUserList ? s->userNames() : QStringList(),
-				!s->passwordHash().isEmpty(),
-				false, // TODO: explicit NSFM tag
+				s->hasPassword() || privateUserList ? QStringList() : s->userNames(),
+				s->hasPassword(),
+				s->isNsfm(),
 				s->founder(),
 				s->sessionStartTime()
 			});
@@ -344,7 +325,7 @@ void SessionServer::refreshSessionAnnouncements()
 void SessionServer::announceSession(const QUrl &url, const sessionlisting::Session &session)
 {
 	if(m_config->isAllowedAnnouncementUrl(url)) {
-		_publicListingApi->announceSession(url, session);
+		m_publicListingApi->announceSession(url, session);
 	} else {
 		logger::warning() << "Announcement API URL not allowed:" << url.toString();
 	}
@@ -352,7 +333,7 @@ void SessionServer::announceSession(const QUrl &url, const sessionlisting::Sessi
 
 void SessionServer::unlistSession(const sessionlisting::Announcement &listing)
 {
-	_publicListingApi->unlistSession(listing);
+	m_publicListingApi->unlistSession(listing);
 }
 
 void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing)

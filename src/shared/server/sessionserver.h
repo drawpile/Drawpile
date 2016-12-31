@@ -19,7 +19,6 @@
 
 #include <QObject>
 
-#include "sessiondesc.h"
 #include "../net/protover.h"
 
 namespace sessionlisting {
@@ -32,7 +31,6 @@ namespace server {
 
 class Session;
 class Client;
-class SessionStore;
 class ServerConfig;
 
 /**
@@ -54,17 +52,17 @@ public:
 	 * @brief Set whether a secure connection is mandatory
 	 * @param mustSecure
 	 */
-	void setMustSecure(bool mustSecure) { _mustSecure = mustSecure; }
-	bool mustSecure() const { return _mustSecure; }
+	void setMustSecure(bool mustSecure) { m_mustSecure = mustSecure; }
+	bool mustSecure() const { return m_mustSecure; }
 
 #ifndef NDEBUG
-	void setRandomLag(uint lag) { _randomlag = lag; }
+	void setRandomLag(uint lag) { m_randomlag = lag; }
 #endif
 
 	/**
 	 * @brief Get the session announcement server client
 	 */
-	sessionlisting::AnnouncementApi *announcementApiClient() const { return _publicListingApi; }
+	sessionlisting::AnnouncementApi *announcementApiClient() const { return m_publicListingApi; }
 
 	/**
 	 * @brief Add a new client
@@ -87,23 +85,21 @@ public:
 	Session *createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 
 	/**
-	 * @brief Get all current sessions
-	 * @return list of all sessions
+	 * @brief Get descriptions of all sessions
 	 */
-	QList<SessionDescription> sessions() const;
+	QJsonArray sessionDescriptions() const;
 
 	/**
 	 * @brief Get a session description by ID
 	 *
 	 * @param id the session ID
-	 * @return session description or a blank object (id=0) if not found
+	 * @param full return full session info
+	 * @return session description or a blank object if not found
 	 */
-	SessionDescription getSessionDescriptionById(const QString &id) const;
+	QJsonObject getSessionDescriptionById(const QString &id, bool full=false) const;
 
 	/**
 	 * @brief Get the session with the specified ID
-	 *
-	 * This may trigger the de-hibernation of a stored session
 	 *
 	 * @param id session ID
 	 * @return session or null if not found
@@ -111,35 +107,25 @@ public:
 	Session *getSessionById(const QString &id) const;
 
 	/**
-	 * @brief Get the total number of users in all sessions
-	 * @return user count
+	 * @brief Get the total number of connected users
 	 */
 	int totalUsers() const;
 
 	/**
 	 * @brief Get the number of active sessions
-	 * @return session count
 	 */
-	int sessionCount() const { return _sessions.size(); }
+	int sessionCount() const { return m_sessions.size(); }
 
 	/**
 	 * @brief Delete the session with the given ID
 	 *
 	 * The session will be deleted even if it is hibernating.
+	 * TODO replace with json api
 	 *
 	 * @param id session ID
 	 * @return true on success
 	 */
 	bool killSession(const QString &id);
-
-	/**
-	 * @brief kick a user user from a session
-	 *
-	 * @param sessionId
-	 * @param userId
-	 * @return true on success
-	 */
-	bool kickUser(const QString &sessionId, int userId);
 
 	/**
 	 * @brief Stop all running sessions
@@ -149,6 +135,7 @@ public:
 	/**
 	 * @brief Write a message to all active users
 	 *
+	 * TODO replace with json api
 	 * This sends a system chat message to all users of
 	 * every active session.
 	 *
@@ -176,7 +163,7 @@ signals:
 	 * - participant count change
 	 * - closed/open status change
 	 */
-	void sessionChanged(const SessionDescription &session);
+	void sessionChanged(const QJsonObject &session);
 
 	/**
 	 * @brief A user just logged in to a session
@@ -209,18 +196,14 @@ private:
 
 	ServerConfig *m_config;
 
-	QList<Session*> _sessions;
-	QList<Client*> _lobby;
-	SessionStore *_store;
-	sessionlisting::AnnouncementApi *_publicListingApi;
+	QList<Session*> m_sessions;
+	QList<Client*> m_lobby;
+	sessionlisting::AnnouncementApi *m_publicListingApi;
 
-	int _connectionTimeout;
-	qint64 _expirationTime;
-	QString _hostPassword;
-	bool _mustSecure;
+	bool m_mustSecure;
 
 #ifndef NDEBUG
-	uint _randomlag;
+	uint m_randomlag;
 #endif
 };
 

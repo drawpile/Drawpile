@@ -192,7 +192,7 @@ void MultiServer::assignRecording(Session *session)
 	QDateTime now = QDateTime::currentDateTime();
 	filename.replace("%d", now.toString("yyyy-MM-dd"));
 	filename.replace("%t", now.toString("HH.mm.ss"));
-	filename.replace("%i", sessionIdString(session->id()));
+	filename.replace("%i", session->idString());
 
 	fi = filename;
 

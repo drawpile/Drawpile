@@ -90,7 +90,6 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case NeedPasswordRole: return ls.needPassword;
 		case PersistentRole: return ls.persistent;
 		case ClosedRole: return ls.closed;
-		case AsleepRole: return ls.asleep;
 		case IncompatibleRole: return ls.incompatible;
 		case JoinableRole: return !(ls.closed | ls.incompatible);
 		}

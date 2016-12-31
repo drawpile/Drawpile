@@ -379,11 +379,10 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 			session.incompatible = !protoVer.isCurrent();
-			session.needPassword = js["password"].toBool();
+			session.needPassword = js["hasPassword"].toBool();
 			session.closed = js["closed"].toBool();
-			session.asleep = js["asleep"].toBool();
 			session.persistent = js["persistent"].toBool();
-			session.userCount = js["users"].toInt();
+			session.userCount = js["userCount"].toInt();
 			session.founder = js["founder"].toString();
 			session.title = js["title"].toString();
 

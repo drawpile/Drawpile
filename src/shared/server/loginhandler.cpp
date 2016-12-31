@@ -21,12 +21,10 @@
 #include "client.h"
 #include "session.h"
 #include "sessionserver.h"
-#include "sessiondesc.h"
 #include "serverconfig.h"
 
 #include "../net/control.h"
 #include "../util/logger.h"
-#include "../util/passwordhash.h"
 
 #include "config.h"
 
@@ -77,45 +75,21 @@ void LoginHandler::startLoginProcess()
 	// Client should disconnect upon receiving the above if the version number does not match
 }
 
-QJsonObject sessionDescription(const SessionDescription &session)
-{
-	Q_ASSERT(!session.id.isNull());
-	QJsonObject o;
-	o["id"] = session.alias.isEmpty() ? sessionIdString(session.id) : session.alias;
-	o["protocol"] = session.protocolVersion.asString();
-	o["users"] = session.userCount;
-	o["founder"] = session.founder;
-	o["title"] = session.title;
-	if(!session.passwordHash.isEmpty())
-		o["password"] = true;
-	if(session.closed)
-		o["closed"] = true;
-	if(session.persistent)
-		o["persistent"] = true;
-
-	return o;
-}
-
 void LoginHandler::announceServerInfo()
 {
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
 	greeting.message = "Welcome";
-
-	const QList<SessionDescription> sessions = m_server->sessions();
-
-	QJsonArray s;
-	for(const SessionDescription &session : sessions) {
-		s << sessionDescription(session);
-	}
-
 	greeting.reply["title"] = m_server->config()->getConfigString(config::ServerTitle);
-	greeting.reply["sessions"] = s;
+	// TODO if message length exceeds maximum, split session list into multiple messages
+	greeting.reply["sessions"] = m_server->sessionDescriptions();
 	send(greeting);
 }
 
-void LoginHandler::announceSession(const SessionDescription &session)
+void LoginHandler::announceSession(const QJsonObject &session)
 {
+	Q_ASSERT(session.contains("id"));
+
 	if(m_state != WAIT_FOR_LOGIN)
 		return;
 
@@ -124,7 +98,7 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	greeting.message = "New session";
 
 	QJsonArray s;
-	s << sessionDescription(session);
+	s << session;
 	greeting.reply["sessions"] = s;
 
 	send(greeting);
@@ -278,6 +252,30 @@ void LoginHandler::guestLogin(const QString &username)
 	announceServerInfo();
 }
 
+static bool isValidSessionAlias(const QString &alias)
+{
+	if(alias.length() > 32 || alias.length() < 1)
+		return false;
+
+	for(int i=0;i<alias.length();++i) {
+		const QChar c = alias.at(i);
+		if(!(
+			(c >= 'a' && c<'z') ||
+			(c >= 'A' && c<'Z') ||
+			(c >= '0' && c<'9') ||
+			c=='-'
+			))
+			return false;
+	}
+
+	// To avoid confusion with real session IDs,
+	// aliases may not be valid UUIDs.
+	if(!QUuid(alias).isNull())
+		return false;
+
+	return true;
+}
+
 void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
@@ -322,24 +320,22 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 
 	m_client->setId(userId);
 
+	// Create a new session
+	Session *session = m_server->createSession(QUuid::createUuid(), sessionAlias, protocolVersion, m_client->username());
+
 	// Mark login phase as complete. No more login messages will be sent to this user
 	protocol::ServerReply reply;
 	reply.type = protocol::ServerReply::RESULT;
 	reply.message = "Starting new session!";
 	reply.reply["state"] = "host";
 
-	QUuid sessionId = QUuid::createUuid();
 	QJsonObject joinInfo;
-	joinInfo["id"] = sessionAlias.isEmpty() ? sessionIdString(sessionId) : sessionAlias;
+	joinInfo["id"] = sessionAlias.isEmpty() ? session->idString() : sessionAlias;
 	joinInfo["user"] = userId;
 	reply.reply["join"] = joinInfo;
 	send(reply);
 
 	m_complete = true;
-
-	// Create a new session
-	Session *session = m_server->createSession(sessionId, sessionAlias, protocolVersion, m_client->username());
-
 	session->joinUser(m_client, true);
 
 	deleteLater();
@@ -354,32 +350,24 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	}
 
 	QString sessionId = cmd.args.at(0).toString();
-	SessionDescription sessiondesc = m_server->getSessionDescriptionById(sessionId);
-	if(sessiondesc.id==0) {
+
+	Session *session = m_server->getSessionById(sessionId);
+	if(!session) {
 		sendError("notFound", "Session not found!");
 		return;
 	}
 
-	if(sessiondesc.closed && !m_client->isModerator()) {
-		sendError("closed", "This session is closed");
-		return;
-	}
+	if(!m_client->isModerator()) {
+		// Non-moderators have to obey access restrictions
+		if(session->isClosed()) {
+			sendError("closed", "This session is closed");
+			return;
+		}
 
-	QString password = cmd.kwargs.value("password").toString();
-
-	if(!passwordhash::check(password, sessiondesc.passwordHash) && !m_client->isModerator()) {
-		sendError("badPassword", "Incorrect password");
-		return;
-	}
-
-	// Just the username uniqueness check to go, we can wake up the session now.
-	// A freshly de-hibernated session will not have any users, so the last check
-	// will never fail in that case.
-	Session *session = m_server->getSessionById(sessionId);
-	if(!session) {
-		// The session was just deleted from under us! (or de-hibernation failed)
-		sendError("notFound", "Session just went missing!");
-		return;
+		if(session->checkPassword(cmd.kwargs.value("password").toString())) {
+			sendError("badPassword", "Incorrect password");
+			return;
+		}
 	}
 
 	if(session->getClientByUsername(m_client->username())) {
@@ -402,7 +390,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	reply.message = "Joining a session!";
 	reply.reply["state"] = "join";
 	QJsonObject joinInfo;
-	joinInfo["id"] = session->idAlias().isEmpty() ? sessionIdString(session->id()) : session->idAlias();
+	joinInfo["id"] = session->idAlias().isEmpty() ? session->idString() : session->idAlias();
 	joinInfo["user"] = m_client->id();
 	reply.reply["join"] = joinInfo;
 	send(reply);

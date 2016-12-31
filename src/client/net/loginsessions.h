@@ -37,10 +37,9 @@ struct LoginSession {
 	bool needPassword;
 	bool persistent;
 	bool closed;
-	bool asleep;
 	bool incompatible;
 
-	LoginSession() : customId(false), userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
+	LoginSession() : customId(false), userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
 };
 
 /**
@@ -59,7 +58,6 @@ public:
 		NeedPasswordRole,          // Is a password needed to join
 		PersistentRole,            // Is this a persistent session
 		ClosedRole,                // Is this session closed to new users
-		AsleepRole,                // Is the session currently hibernating
 		IncompatibleRole,          // Is the session meant for some other client version
 		JoinableRole               // Is this session joinable
 	};

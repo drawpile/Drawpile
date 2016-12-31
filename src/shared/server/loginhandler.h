@@ -90,7 +90,7 @@ public:
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 
-	void announceSession(const SessionDescription &session);
+	void announceSession(const QJsonObject &session);
 	void announceSessionEnd(const QString &id);
 
 private:
