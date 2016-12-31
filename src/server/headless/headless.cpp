@@ -25,6 +25,10 @@
 
 #include "../shared/util/logger.h"
 
+#ifdef HAVE_WEBADMIN
+#include "webadmin/webadmin.h"
+#endif
+
 #include <QCoreApplication>
 #include <QStringList>
 #include <QSslSocket>
@@ -83,6 +87,20 @@ bool start() {
 #ifndef NDEBUG
 	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
 	parser.addOption(lagOption);
+#endif
+
+#ifdef HAVE_WEBADMIN
+	// --web-admin-port <port>
+	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port", "port", "0");
+	parser.addOption(webadminPortOption);
+
+	// --web-admin-auth <user:password>
+	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password", "user:password");
+	parser.addOption(webadminAuthOption);
+
+	// --web-admin-access <address/subnet>
+	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask", "address/subnet|all");
+	parser.addOption(webadminAccessOption);
 #endif
 
 	// --database, -d <filename>
@@ -167,6 +185,24 @@ bool start() {
 	}
 #endif
 
+#ifdef HAVE_WEBADMIN
+	server::Webadmin *webadmin = new server::Webadmin;
+	int webadminPort = parser.value(webadminPortOption).toInt();
+	{
+		QString auth = parser.value(webadminAuthOption);
+		if(!auth.isEmpty())
+			webadmin->setBasicAuth(auth);
+
+		QString access = parser.value(webadminAccessOption);
+		if(!access.isEmpty()) {
+			if(!webadmin->setAccessSubnet(access)) {
+				logger::error() << "invalid subnet:" << access;
+				return false;
+			}
+		}
+	}
+#endif
+
 	// Catch signals
 #ifdef Q_OS_UNIX
 	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
@@ -181,6 +217,13 @@ bool start() {
 			if(!server->start(port, address))
 				return false;
 
+#ifdef HAVE_WEBADMIN
+		if(webadminPort>0) {
+			webadmin->setSessions(server);
+			webadmin->start(webadminPort);
+		}
+#endif
+
 		} else {
 			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {
@@ -194,9 +237,11 @@ bool start() {
 				return false;
 
 			// TODO start webadmin if two fds were passsed
+#ifdef HAVE_WEBADMIN
+			logger::error() << "webadmin socket activation not implemented";
+#endif
 		}
 	}
-
 
 	initsys::notifyReady();
 

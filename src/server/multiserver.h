@@ -24,6 +24,7 @@
 #include <QHostAddress>
 
 #include "../shared/util/logger.h"
+#include "../shared/server/jsonapi.h"
 
 class QTcpServer;
 
@@ -59,6 +60,18 @@ public:
 public slots:
 	 //! Stop the server. All clients are disconnected.
 	void stop();
+
+	/**
+	 * @brief Call the server's JSON administration API
+	 *
+	 * This is used by the HTTP admin API.
+	 *
+	 * @param method query method
+	 * @param path path components
+	 * @param request request body content
+	 * @return JSON API response content
+	 */
+	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 private slots:
 	void newClient();

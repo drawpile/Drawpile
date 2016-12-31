@@ -32,6 +32,7 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDir>
+#include <QJsonObject>
 
 namespace server {
 
@@ -258,6 +259,17 @@ void MultiServer::stop() {
 			emit serverStopped();
 		}
 	}
+}
+
+JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	QJsonObject reply;
+	reply["status"] = "hello world";
+
+	return JsonApiResult {
+		JsonApiResult::Ok,
+		QJsonDocument(reply)
+	};
 }
 
 }

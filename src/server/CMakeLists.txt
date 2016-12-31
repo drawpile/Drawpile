@@ -2,6 +2,7 @@
 
 find_package( Qt5Network REQUIRED)
 find_package( Qt5Sql REQUIRED)
+find_package( Libmicrohttpd )
 find_package( KF5Archive REQUIRED NO_MODULE )
 
 set (
@@ -25,6 +26,18 @@ if ( INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND )
 else ()
 	set ( SOURCES ${SOURCES} initsys_dummy.cpp )
 endif ()
+
+# Enable HTTP admin API if libmicrohttpd was found
+if( MHD_FOUND )
+	set( SOURCES ${SOURCES}
+		webadmin/qmhttp.cpp
+		webadmin/webadmin.cpp
+	)
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WEBADMIN" )
+else( MHD_FOUND )
+	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
+endif( MHD_FOUND )
+
 
 add_executable( ${SRVNAME} ${SOURCES} )
 target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )

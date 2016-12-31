@@ -27,16 +27,17 @@ Client dependencies:
 
 * Qt 5.5 or newer
 * [KF5 KArchive]
-* KF5 KDNSSD (optional)
-* GIFLIB (optional)
 * [QtColorPicker]
-* MiniUPnP (optional)
+* KF5 KDNSSD (optional: local server discovery with Zeroconf)
+* GIFLIB (optional: animated GIF export)
+* MiniUPnP (optional: automatic port forwarding setup)
 
 Server dependencies:
 
 * Qt 5.4 or newer (QtCore and QtNetwork only)
 * [KF5 KArchive]
-* libsystemd (optional)
+* libsystemd (optional: systemd socket activation support)
+* libmicrohttpd (optional: HTTP admin API)
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.

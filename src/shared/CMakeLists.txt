@@ -31,6 +31,7 @@ set (
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/serverconfig.cpp
+	server/jsonapi.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})
