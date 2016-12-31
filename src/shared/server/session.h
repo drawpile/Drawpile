@@ -33,6 +33,7 @@
 #include "../net/message.h"
 #include "../net/messagestream.h"
 #include "../net/protover.h"
+#include "jsonapi.h"
 
 namespace recording {
 	class Writer;
@@ -337,6 +338,18 @@ public:
 	 * @return
 	 */
 	QJsonObject getDescription(bool full=false) const;
+
+	/**
+	 * @brief Call the server's JSON administration API
+	 *
+	 * This is used by the HTTP admin API.
+	 *
+	 * @param method query method
+	 * @param path path components
+	 * @param request request body content
+	 * @return JSON API response content
+	 */
+	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 signals:
 	//! A user just connected to the session

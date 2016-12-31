@@ -107,13 +107,6 @@ void Session::switchState(State newstate)
 
 		Q_ASSERT(m_resetstream.isEmpty());
 
-	} else if(newstate==Shutdown) {
-		unlistAnnouncement();
-		setClosed(true);
-		stopRecording();
-
-		for(Client *c : m_clients)
-			c->disconnectKick(QString());
 	}
 
 	m_state = newstate;
@@ -228,17 +221,31 @@ void Session::setClosed(bool closed)
 
 void Session::setSessionConfig(const QJsonObject &conf)
 {
-	if(conf.contains("closed"))
+	bool changed = false;
+
+	if(conf.contains("closed")) {
 		m_closed = conf["closed"].toBool();
+		changed = true;
+	}
 
-	if(conf.contains("persistent"))
+	if(conf.contains("persistent")) {
 		m_persistent = conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence);
+		changed = true;
+	}
 
-	if(conf.contains("title"))
-		m_title = conf["title"].toString();
+	if(conf.contains("title")) {
+		QString newTitle = conf["title"].toString().mid(0, 100);
+		m_title = newTitle;
+		changed = true;
+	}
 
-	if(conf.contains("max-users"))
-		m_maxusers = qBound(1, conf["max-users"].toInt(), 254);
+	if(conf.contains("maxUserCount")) {
+		const int newUserCount = conf["maxUserCount"].toInt();
+		if(newUserCount>0 && newUserCount<255) {
+			m_maxusers = newUserCount;
+			changed = true;
+		}
+	}
 
 	if(conf.contains("password")) {
 		QString pw = conf["password"].toString();
@@ -246,19 +253,25 @@ void Session::setSessionConfig(const QJsonObject &conf)
 			m_passwordhash = QByteArray();
 		else
 			m_passwordhash = passwordhash::hash(pw);
+		changed = true;
 	}
 
 	// Note: this bit is only relayed by the server: it informs
 	// the client whether to send preserved/recorded chat messages
 	// by default.
-	if(conf.contains("preserve-chat"))
-		m_preserveChat = conf["preserve-chat"].toBool();
+	if(conf.contains("preserveChat")) {
+		m_preserveChat = conf["preserveChat"].toBool();
+		changed = true;
+	}
 
 	// "Not Safe For Minors" tag can only be unset by resetting the session
-	if(conf["nsfm"].toBool())
+	if(conf["nsfm"].toBool()) {
 		m_nsfm = true;
+		changed = true;
+	}
 
-	sendUpdatedSessionProperties();
+	if(changed)
+		sendUpdatedSessionProperties();
 }
 
 bool Session::checkPassword(const QString &password) const
@@ -287,8 +300,8 @@ void Session::sendUpdatedSessionProperties()
 	conf["closed"] = isClosed();
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
-	conf["max-users"] = m_maxusers;
-	conf["preserve-chat"] = m_preserveChat;
+	conf["maxUserCount"] = m_maxusers;
+	conf["preserveChat"] = m_preserveChat;
 	conf["nsfm"] = m_nsfm;
 	props.reply["config"] = conf;
 
@@ -362,8 +375,16 @@ void Session::kickAllUsers()
 
 void Session::killSession()
 {
-	m_persistent = false;
-	switchState(Shutdown);
+	m_state = Shutdown;
+	unlistAnnouncement();
+	setClosed(true);
+	stopRecording();
+
+	for(Client *c : m_clients)
+		c->disconnectKick(QString());
+	m_clients.clear();
+
+	this->deleteLater();
 }
 
 void Session::wall(const QString &message)
@@ -427,7 +448,7 @@ void Session::stopRecording()
 	if(m_recorder) {
 		m_recorder->close();
 		delete m_recorder;
-		m_recorder = 0;
+		m_recorder = nullptr;
 	}
 }
 
@@ -462,29 +483,6 @@ QString Session::uptime() const
 	return uptime;
 }
 
-QJsonObject Session::getDescription(bool full) const
-{
-	QJsonObject o;
-	o["id"] = idString();
-	o["alias"] = idAlias();
-	o["protocol"] = protocolVersion().asString();
-	o["userCount"] = userCount();
-	o["maxUserCount"] = maxUsers();
-	o["founder"] = founder();
-	o["title"] = title();
-	o["hasPassword"] = hasPassword();
-	o["closed"] = isClosed();
-	o["persistent"] = isPersistent();
-	o["nsfm"] = isNsfm();
-	o["startTime"] = sessionStartTime().toString();
-
-	if(full) {
-		// TODO
-	}
-
-	return o;
-}
-
 QStringList Session::userNames() const
 {
 	QStringList lst;
@@ -504,7 +502,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		protocolVersion(),
 		title(),
 		userCount(),
-		hasPassword() || privateUserList ? QStringList() : userNames(),
+		(hasPassword() || privateUserList) ? QStringList() : userNames(),
 		hasPassword(),
 		isNsfm(),
 		founder(),
@@ -520,6 +518,60 @@ void Session::unlistAnnouncement()
 		emit requestUnlisting(m_publicListing);
 		m_publicListing.listingId=0;
 	}
+}
+
+QJsonObject Session::getDescription(bool full) const
+{
+	QJsonObject o;
+	o["id"] = idString();
+	o["alias"] = idAlias();
+	o["protocol"] = protocolVersion().asString();
+	o["userCount"] = userCount();
+	o["maxUserCount"] = maxUsers();
+	o["founder"] = founder();
+	o["title"] = title();
+	o["hasPassword"] = hasPassword();
+	o["closed"] = isClosed();
+	o["persistent"] = isPersistent();
+	o["nsfm"] = isNsfm();
+	o["startTime"] = sessionStartTime().toString();
+
+	if(full) {
+		QJsonArray users;
+		for(const Client *user : m_clients) {
+			QJsonObject u;
+			u["id"] = user->id();
+			u["name"] = user->username();
+			u["ip"] = user->peerAddress().toString();
+			u["auth"] = user->isAuthenticated();
+			u["op"] = user->isOperator();
+			u["mod"] = user->isModerator();
+			u["tls"] = user->isSecure();
+			users << u;
+		}
+		o["users"] = users;
+	}
+
+	return o;
+}
+
+JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	// TODO user management
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Update) {
+		setSessionConfig(request);
+
+	} else if(method == JsonApiMethod::Delete) {
+		killSession();
+		QJsonObject o;
+		o["status"] = "ok";
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
+	}
+
+	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(getDescription(true))};
 }
 
 }

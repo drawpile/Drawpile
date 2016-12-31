@@ -17,9 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QObject>
-
 #include "../net/protover.h"
+#include "jsonapi.h"
+
+#include <QObject>
 
 namespace sessionlisting {
 	class AnnouncementApi;
@@ -90,15 +91,6 @@ public:
 	QJsonArray sessionDescriptions() const;
 
 	/**
-	 * @brief Get a session description by ID
-	 *
-	 * @param id the session ID
-	 * @param full return full session info
-	 * @return session description or a blank object if not found
-	 */
-	QJsonObject getSessionDescriptionById(const QString &id, bool full=false) const;
-
-	/**
 	 * @brief Get the session with the specified ID
 	 *
 	 * @param id session ID
@@ -117,17 +109,6 @@ public:
 	int sessionCount() const { return m_sessions.size(); }
 
 	/**
-	 * @brief Delete the session with the given ID
-	 *
-	 * The session will be deleted even if it is hibernating.
-	 * TODO replace with json api
-	 *
-	 * @param id session ID
-	 * @return true on success
-	 */
-	bool killSession(const QString &id);
-
-	/**
 	 * @brief Stop all running sessions
 	 */
 	void stopAll();
@@ -135,15 +116,24 @@ public:
 	/**
 	 * @brief Write a message to all active users
 	 *
-	 * TODO replace with json api
 	 * This sends a system chat message to all users of
 	 * every active session.
 	 *
 	 * @param message the message
-	 * @param sessionId if set, limit message to this session only
-	 * @return false if session was not found
 	 */
-	bool wall(const QString &message, const QString &sessionId=QString());
+	void wall(const QString &message);
+
+	/**
+	 * @brief Call the server's JSON administration API
+	 *
+	 * This is used by the HTTP admin API.
+	 *
+	 * @param method query method
+	 * @param path path components
+	 * @param request request body content
+	 * @return JSON API response content
+	 */
+	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 signals:
 	/**
@@ -192,7 +182,6 @@ private slots:
 
 private:
 	void initSession(Session *session);
-	void destroySession(Session *session);
 
 	ServerConfig *m_config;
 

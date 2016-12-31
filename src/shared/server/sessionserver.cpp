@@ -28,6 +28,7 @@
 
 #include <QTimer>
 #include <QJsonArray>
+#include <QJsonDocument>
 
 namespace server {
 
@@ -44,9 +45,6 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	m_publicListingApi = new sessionlisting::AnnouncementApi(this);
 
 	connect(m_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
-	connect(m_publicListingApi, &sessionlisting::AnnouncementApi::messageReceived, [this](const QString &msg) {
-		wall("Session announced: " + msg);
-	});
 
 	QTimer *announcementRefreshTimer = new QTimer(this);
 	connect(announcementRefreshTimer, &QTimer::timeout, this, &SessionServer::refreshSessionAnnouncements);
@@ -84,49 +82,21 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 
 void SessionServer::initSession(Session *session)
 {
+	m_sessions.append(session);
+
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
 	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
+	connect(session, &Session::destroyed, [this, session]() {
+		m_sessions.removeOne(session);
+		emit sessionEnded(session->idString());
+	});
 
 	connect(session, &Session::requestAnnouncement, this, &SessionServer::announceSession);
 	connect(session, &Session::requestUnlisting, this, &SessionServer::unlistSession);
 
-	m_sessions.append(session);
-
 	emit sessionCreated(session);
 	emit sessionChanged(session->getDescription());
-}
-
-/**
- * @brief Delete a session
- *
- * If the session is hibernatable, it will be stored before it is deleted.
- *
- * @param session
- */
-void SessionServer::destroySession(Session *session)
-{
-	Q_ASSERT(session);
-	Q_ASSERT(m_sessions.contains(session));
-
-	session->unlistAnnouncement();
-
-	logger::debug() << session << "Deleting session. User count is" << session->userCount();
-	m_sessions.removeOne(session);
-
-	session->stopRecording();
-
-	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
-	emit sessionEnded(session->idString());
-}
-
-QJsonObject SessionServer::getSessionDescriptionById(const QString &id, bool full) const
-{
-	const Session *s = getSessionById(id);
-	if(s)
-		return s->getDescription(full);
-
-	return QJsonObject();
 }
 
 Session *SessionServer::getSessionById(const QString &id) const
@@ -153,21 +123,6 @@ int SessionServer::totalUsers() const
 	return count;
 }
 
-bool SessionServer::killSession(const QString &id)
-{
-	Session *s = getSessionById(id);
-	if(s) {
-		logger::info() << "Killing session" << id;
-		s->killSession();
-		if(s->userCount()==0)
-			destroySession(s);
-		return true;
-	} else {
-		logger::info() << "Cannot kill non-existent session" << id;
-		return false;
-	}
-}
-
 void SessionServer::stopAll()
 {
 	for(Client *c : m_lobby)
@@ -176,24 +131,15 @@ void SessionServer::stopAll()
 	auto sessions = m_sessions;
 	sessions.detach();
 	for(Session *s : sessions) {
-		s->stopRecording();
-		s->kickAllUsers();
-
-		if(s->userCount()==0)
-			destroySession(s);
+		s->killSession();
 	}
 }
 
-bool SessionServer::wall(const QString &message, const QString &sessionId)
+void SessionServer::wall(const QString &message)
 {
-	bool found = false;
 	for(Session *s : m_sessions) {
-		if(sessionId.isNull() || s->idString() == sessionId || s->idAlias() == sessionId) {
-			s->wall(message);
-			found = true;
-		}
+		s->wall(message);
 	}
-	return found;
 }
 
 void SessionServer::addClient(Client *client)
@@ -267,7 +213,7 @@ void SessionServer::userDisconnectedEvent(Session *session)
 	}
 
 	if(delSession)
-		destroySession(session);
+		session->killSession();
 	else
 		emit sessionChanged(session->getDescription());
 
@@ -281,20 +227,13 @@ void SessionServer::cleanupSessions()
 	if(expirationTime>0) {
 		QDateTime now = QDateTime::currentDateTime();
 
-		QList<Session*> expirelist;
-
 		for(Session *s : m_sessions) {
 			if(s->userCount()==0) {
 				if(s->lastEventTime().msecsTo(now) > expirationTime) {
-					expirelist << s;
+					logger::info() << s << "Idle session expired. Uptime was" << s->uptime();
+					s->killSession();
 				}
 			}
-		}
-
-		for(Session *s : expirelist) {
-			logger::info() << s << "Idle session expired. Uptime was" << s->uptime();
-
-			destroySession(s);
 		}
 	}
 }
@@ -345,6 +284,28 @@ void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing
 	}
 
 	s->setPublicListing(listing);
+}
+
+JsonApiResult SessionServer::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	QString head;
+	QStringList tail;
+	std::tie(head, tail) = popApiPath(path);
+
+	if(!head.isEmpty()) {
+		Session *s = getSessionById(head);
+		if(s)
+			return s->callJsonApi(method, tail, request);
+		else
+			return JsonApiNotFound();
+	}
+
+	if(method == JsonApiMethod::Get) {
+		return {JsonApiResult::Ok, QJsonDocument(sessionDescriptions())};
+
+	} else {
+		return JsonApiBadMethod();
+	}
 }
 
 }

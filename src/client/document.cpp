@@ -163,11 +163,11 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("title"))
 		m_canvas->setTitle(config["title"].toString());
 
-	if(config.contains("preserve-chat"))
-		setSessionPreserveChat(config["preserve-chat"].toBool());
+	if(config.contains("preserveChat"))
+		setSessionPreserveChat(config["preserveChat"].toBool());
 
-	if(config.contains("password"))
-		setSessionPasswordProtected(config["password"].toBool());
+	if(config.contains("hasPassword"))
+		setSessionPasswordProtected(config["hasPassword"].toBool());
 }
 
 void Document::setSessionClosed(bool closed)

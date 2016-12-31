@@ -453,13 +453,13 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				conf.kwargs["password"] = m_sessionPassword;
 
 			if(m_maxusers>0)
-				conf.kwargs["max-users"] = m_maxusers;
+				conf.kwargs["maxUserCount"] = m_maxusers;
 
 			if(m_requestPersistent)
 				conf.kwargs["persistent"] = true;
 
 			if(m_preserveChat)
-				conf.kwargs["preserve-chat"] = true;
+				conf.kwargs["preserveChat"] = true;
 
 			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
 
