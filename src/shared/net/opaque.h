@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef DP_NET_OPAQUE_H
-#define DP_NET_OPAQUEO_H
+#define DP_NET_OPAQUE_H
 
 #include "message.h"
 

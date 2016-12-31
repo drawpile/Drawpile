@@ -21,6 +21,8 @@
 #define DP_SERVER_JSONAPI_H
 
 #include <QJsonDocument>
+#include <QStringList>
+#include <tuple>
 
 namespace server {
 
@@ -47,6 +49,11 @@ struct JsonApiResult {
 
 //! A convenience function to generate a standard error message
 JsonApiResult JsonApiErrorResult(JsonApiResult::Status status, const QString &message);
+inline JsonApiResult JsonApiNotFound() { return JsonApiErrorResult(JsonApiResult::NotFound, QStringLiteral("Not found")); }
+inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResult::BadRequest, QStringLiteral("Unsupported methid")); /* TODO: correct error type */ }
+
+//! A convenience function that returns the fist path element and the remaining path
+std::tuple<QString, QStringList> popApiPath(const QStringList &path);
 
 }
 

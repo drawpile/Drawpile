@@ -97,7 +97,7 @@ bool Database::openFile(const QString &path)
 	return true;
 }
 
-void Database::setConfigString(ConfigKey key, const QString &value)
+void Database::setConfigValue(ConfigKey key, const QString &value)
 {
 	QSqlQuery q(d->db);
 	q.prepare("INSERT OR REPLACE INTO settings VALUES (?, ?)");

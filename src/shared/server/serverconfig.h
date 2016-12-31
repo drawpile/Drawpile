@@ -107,8 +107,9 @@ public:
 	 *
 	 * @param key
 	 * @param value
+	 * @return false if value didn't validate
 	 */
-	virtual void setConfigString(ConfigKey key, const QString &value);
+	bool setConfigString(ConfigKey key, const QString &value);
 
 	void setConfigInt(ConfigKey, int value);
 	void setConfigBool(ConfigKey, bool value);
@@ -159,6 +160,7 @@ protected:
 	 * @return
 	 */
 	virtual QString getConfigValue(const ConfigKey key, bool &found) const;
+	virtual void setConfigValue(const ConfigKey key, const QString &value);
 
 private:
 	QHash<int, QString> m_nonpersistent;

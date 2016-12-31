@@ -85,6 +85,8 @@ signals:
 private:
 	bool createServer();
 
+	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	ServerConfig *m_config;

@@ -263,6 +263,17 @@ void MultiServer::stop() {
 
 JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
+	QString head;
+	QStringList tail;
+	std::tie(head, tail) = popApiPath(path);
+
+	if(head == "server")
+		return serverJsonApi(method, tail, request);
+	//else if(head == "sessions")
+	//	return m_sessions->callJsonApi(method, tail, request);
+
+	return JsonApiNotFound();
+
 	QJsonObject reply;
 	reply["status"] = "hello world";
 
@@ -270,6 +281,54 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		JsonApiResult::Ok,
 		QJsonDocument(reply)
 	};
+}
+
+/**
+ * @brief Serverwide settings
+ *
+ * @param method
+ * @param path
+ * @param request
+ * @return
+ */
+JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+	if(method != JsonApiMethod::Get && method != JsonApiMethod::Update)
+		return JsonApiBadMethod();
+
+	const ConfigKey settings[] = {
+		config::ClientTimeout,
+		config::SessionSizeLimit,
+		config::SessionCountLimit,
+		config::EnablePersistence,
+		config::IdleTimeLimit,
+		config::ServerTitle,
+		config::WelcomeMessage,
+		config::AnnounceWhiteList,
+		config::LocalAddress,
+		config::PrivateUserList,
+		config::RecordingPath,
+		config::EnableRecording,
+		config::AllowGuests
+	};
+	const int settingCount = sizeof(settings) / sizeof(settings[0]);
+
+	if(method==JsonApiMethod::Update) {
+		for(int i=0;i<settingCount;++i) {
+			if(request.contains(settings[i].name)) {
+				m_config->setConfigString(settings[i], request[settings[i].name].toString());
+			}
+		}
+	}
+
+	QJsonObject result;
+	for(int i=0;i<settingCount;++i) {
+		result[settings[i].name] = QJsonValue::fromVariant(m_config->getConfigVariant(settings[i]));
+	}
+
+	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
 }
 
 }

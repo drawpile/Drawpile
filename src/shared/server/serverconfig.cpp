@@ -93,9 +93,42 @@ QVariant ServerConfig::getConfigVariant(ConfigKey key) const
 	return QVariant(); // Shouldn't happen
 }
 
-void ServerConfig::setConfigString(ConfigKey key, const QString &value)
+void ServerConfig::setConfigValue(ConfigKey key, const QString &value)
 {
 	m_nonpersistent[key.index] = value;
+}
+
+bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
+{
+	// Type specific sanity check
+	if(!value.isEmpty()) {
+		switch(key.type) {
+		case ConfigKey::STRING:
+		case ConfigKey::BOOL:
+			// no type specific validation for these
+			break;
+		case ConfigKey::SIZE:
+			if(parseSizeString(value)<0)
+				return false;
+			break;
+		case ConfigKey::TIME:
+			if(parseTimeString(value)<0)
+				return false;
+			break;
+		case ConfigKey::INT: {
+			bool ok;
+			value.toInt(&ok);
+			if(!ok)
+				return false;
+			break;
+			}
+		}
+	}
+
+	// TODO key specific validation
+
+	setConfigValue(key, value);
+	return true;
 }
 
 void ServerConfig::setConfigInt(ConfigKey key, int value)

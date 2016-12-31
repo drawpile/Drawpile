@@ -34,5 +34,13 @@ JsonApiResult JsonApiErrorResult(JsonApiResult::Status status, const QString &me
 	};
 }
 
+std::tuple<QString, QStringList> popApiPath(const QStringList &path)
+{
+	if(path.isEmpty())
+		return std::make_tuple(QString(), QStringList());
+	QStringList tail = path.mid(1);
+	return std::make_tuple(path.at(0), tail);
+}
+
 }
 
