@@ -52,6 +52,7 @@ struct ServerReply {
 		ERROR,
 		RESULT,
 		SESSIONCONF,
+		SIZELIMITWARNING,
 		RESET
 	} type;
 	QString message;

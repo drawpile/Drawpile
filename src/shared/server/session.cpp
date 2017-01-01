@@ -45,10 +45,12 @@ Session::Session(const QUuid &id, const QString &alias, const protocol::Protocol
 	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254),
 	m_founder(founder),
 	m_closed(false),
-	m_persistent(false), m_preserveChat(false), m_nsfm(false)
+	m_persistent(false), m_preserveChat(false), m_nsfm(false),
+	m_historytLimitWarningSent(false)
 {
 	// Cache history limit, since this value is checked very often
 	m_historylimit = config->getConfigSize(config::SessionSizeLimit);
+	m_historyLimitWarning = m_historylimit * 0.7;
 }
 
 QString Session::toLogString() const {
@@ -315,9 +317,31 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 	m_lastEventTime = QDateTime::currentDateTime();
 	emit newCommandsAvailable();
 
-	if(m_historylimit>0 && m_mainstream.lengthInBytes() > m_historylimit) {
-		wall("Session size limit reached!");
-		killSession();
+	if(m_historylimit>0) {
+		// Send a warning if approaching size limit.
+		// The clients should update their internal size limits
+		// and reset the session when necessary.
+		const uint hlen = m_mainstream.lengthInBytes();
+		if(hlen > m_historyLimitWarning && !m_historytLimitWarningSent) {
+			protocol::ServerReply warning;
+			warning.type = protocol::ServerReply::SIZELIMITWARNING;
+			warning.reply["size"] = int(hlen);
+			warning.reply["maxSize"] = int(m_historylimit);
+
+			protocol::MessagePtr msg(new protocol::Command(0, warning));
+			for(Client *c : m_clients) {
+				c->sendDirectMessage(msg);
+				m_historytLimitWarningSent = true;
+			}
+		}
+
+		// Shut down session when maximum size limit is reached.
+		// Well behaved clients should have resetted the session
+		// before this happens.
+		if(m_mainstream.lengthInBytes() > m_historylimit) {
+			wall("Session size limit reached!");
+			killSession();
+		}
 	}
 }
 
@@ -521,6 +545,8 @@ void Session::unlistAnnouncement()
 QJsonObject Session::getDescription(bool full) const
 {
 	QJsonObject o;
+	// The basic description contains just the information
+	// needed for the login session listing
 	o["id"] = idString();
 	o["alias"] = idAlias();
 	o["protocol"] = protocolVersion().asString();
@@ -533,8 +559,12 @@ QJsonObject Session::getDescription(bool full) const
 	o["persistent"] = isPersistent();
 	o["nsfm"] = isNsfm();
 	o["startTime"] = sessionStartTime().toString();
+	o["size"] = int(m_mainstream.lengthInBytes());
 
 	if(full) {
+		// Full descriptions includes detailed info for server admins.
+		o["maxSize"] = int(m_historylimit);
+
 		QJsonArray users;
 		for(const Client *user : m_clients) {
 			QJsonObject u;

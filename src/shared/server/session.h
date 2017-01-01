@@ -420,6 +420,7 @@ private:
 	protocol::ProtocolVersion m_protocolVersion;
 	int m_maxusers;
 	uint m_historylimit;
+	uint m_historyLimitWarning;
 
 	QByteArray m_passwordhash;
 	QString m_title;
@@ -429,6 +430,7 @@ private:
 	bool m_persistent;
 	bool m_preserveChat;
 	bool m_nsfm;
+	bool m_historytLimitWarningSent;
 };
 
 }
