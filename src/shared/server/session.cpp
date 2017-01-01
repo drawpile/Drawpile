@@ -324,6 +324,11 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 	if(m_state == Shutdown)
 		return;
 
+	if(m_historylimit>0 && m_mainstream.lengthInBytes() + msg->length() > m_historylimit) {
+		wall("History size limit reached! Session must be reset to continue drawing");
+		return;
+	}
+
 	m_mainstream.append(msg);
 	if(m_recorder)
 		m_recorder->recordMessage(msg);
@@ -348,15 +353,6 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 				c->sendDirectMessage(msg);
 				m_historytLimitWarningSent = true;
 			}
-		}
-
-		// Shut down session when maximum size limit is reached.
-		// Well behaved clients should have resetted the session
-		// before this happens.
-		if(m_mainstream.lengthInBytes() > m_historylimit) {
-			logger::info() << this << "history limit" << m_historylimit << "reached.";
-			wall("Session size limit reached!");
-			killSession();
 		}
 	}
 }
