@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,10 +23,9 @@
 #include <QHash>
 
 #include "retcon.h"
+#include "history.h"
 #include "core/brush.h"
 #include "core/point.h"
-#include "../shared/net/message.h"
-#include "../shared/net/messagestream.h"
 
 namespace protocol {
 	class CanvasResize;
@@ -180,15 +179,9 @@ public:
 	void reset();
 
 	bool hasFullHistory() const { return m_fullhistory; }
-	const protocol::MessageStream &getHistory() const { return m_msgstream; }
+	const History &getHistory() const { return m_history; }
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
-
-	/**
-	 * @brief Set the maximum length of the stored history.
-	 * @param length
-	 */
-	void setMaxHistorySize(uint limit) { m_msgstream_sizelimit = limit; }
 
 	/**
 	 * @brief Set if all user markers (own included) should be shown
@@ -305,13 +298,12 @@ private:
 	QString _title;
 	int m_myId;
 
-	protocol::MessageStream m_msgstream;
+	History m_history;
 	QList<StateSavepoint> m_savepoints;
 
 	LocalFork _localfork;
 	QTimer *_localforkCleanupTimer;
 
-	uint m_msgstream_sizelimit;
 	bool m_fullhistory;
 	bool _showallmarkers;
 	bool _hasParticipated;

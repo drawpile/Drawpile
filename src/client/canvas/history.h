@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,26 +17,25 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DP_SHARED_NET_MSGSTREAM_H
-#define DP_SHARED_NET_MSGSTREAM_H
+#ifndef CANVAS_HISTORY_H
+#define CANVAS_HISTORY_H
 
 #include <QList>
 
-#include "message.h"
+#include "../shared/net/message.h"
 
-namespace protocol {
+namespace canvas {
 
 /**
- * @brief The ordered stream of command messages
+ * @brief Sequence of messages to reproduce the canvas state
  *
- * TODO: this was previously used by the client and the server
- * to store the session history. No longer used by the client.
- * Replace this with a server specific class that can be
- * specialized for in-memory or file backed storage.
+ * The whole session history might not be in memory, but it
+ * should always contain enough messages to reach
+ * end of the Undo history.
  */
-class MessageStream {
+class History {
 public:
-	MessageStream();
+	History();
 
 	/**
 	 * @brief Get the current stream offset
@@ -55,32 +54,32 @@ public:
 	int end() const { return m_offset + m_messages.size(); }
 
 	/**
-	 * @brief Check if a message at the given index exists in this stream
+	 * @brief Check if a message at the given index is in memory
 	 * @param i
 	 * @return true if message can be got with at(i)
 	 */
 	bool isValidIndex(int i) const { return i >= offset() && i < end(); }
 
-	MessagePtr at(int pos) { return m_messages.at(pos-m_offset); }
-
-	const MessagePtr at(int pos) const { return m_messages.at(pos-m_offset); }
+	/**
+	 * @brief at Get the message at the given index
+	 */
+	protocol::MessagePtr at(int pos) const { return m_messages.at(pos-m_offset); }
 
 	/**
 	 * @brief Add a new command to the stream
 	 * @param msg command to add
 	 */
-	void append(MessagePtr msg);
+	void append(protocol::MessagePtr msg);
 
 	/**
-	 * @brief Clean up old messages
+	 * @brief Delete old messages
 	 *
-	 * Old messages are removed until the size of the buffer is less than the
-	 * given limit.
-	 * @param sizelimit maximum size
-	 * @param indexlimit last index that can be cleaned up
+	 * Delete old messages until the tail of undo history or the given
+	 * limit is reached.
+	 * @param indexlimit index of first protected message
 	 * @pre indexlimit <= end()
 	 */
-	void hardCleanup(uint sizelimit, int indexlimit);
+	void cleanup(int indexlimit);
 
 	/**
 	 * @brief Remove all messages and change the offset
@@ -102,16 +101,10 @@ public:
 	 * @brief return the whole stream as a list
 	 * @return list of messages
 	 */
-	QList<MessagePtr> toList() const { return m_messages; }
-
-	/**
-	 * @brief return a filtered copy of the stream as a list, containing only the command stream messages.
-	 * @return command stream messages
-	 */
-	QList<MessagePtr> toCommandList() const;
+	QList<protocol::MessagePtr> toList() const { return m_messages; }
 
 private:
-	QList<MessagePtr> m_messages;
+	QList<protocol::MessagePtr> m_messages;
 	int m_offset;
 	uint m_bytes;
 };

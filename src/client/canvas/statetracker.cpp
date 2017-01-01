@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -157,7 +157,6 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		_image(image),
 		m_layerlist(layerlist),
 		m_myId(myId),
-		m_msgstream_sizelimit(1024 * 1024 * 10),
 		m_fullhistory(true),
 		_showallmarkers(false),
 		_hasParticipated(false),
@@ -186,7 +185,7 @@ StateTracker::~StateTracker()
 void StateTracker::reset()
 {
 	m_savepoints.clear();
-	m_msgstream.resetTo(m_msgstream.end());
+	m_history.resetTo(m_history.end());
 	m_fullhistory = true;
 	_hasParticipated = false;
 	_localfork.clear();
@@ -197,19 +196,19 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 {
 	// A fork is created at the end of the mainline history
 	if(_localfork.isEmpty()) {
-		_localfork.setOffset(m_msgstream.end()-1);
+		_localfork.setOffset(m_history.end()-1);
 
 		// Since the presence of a local fork blocks savepoint creation,
 		// now is a good time to try to create one.
 		if(msg->type() == protocol::MSG_UNDOPOINT)
-			makeSavepoint(m_msgstream.end()-1);
+			makeSavepoint(m_history.end()-1);
 	}
 
 	_localfork.addLocalMessage(msg, affectedArea(msg));
 
 	// for the future: handle undo messages in the local fork too
 	if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT) {
-		int pos = m_msgstream.end() - 1;
+		int pos = m_history.end() - 1;
 		handleCommand(msg, false, pos);
 	}
 
@@ -244,24 +243,26 @@ void StateTracker::processQueuedCommands()
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
-	// Cleanup
-	if(m_msgstream_sizelimit>0 && m_msgstream.lengthInBytes() > m_msgstream_sizelimit) {
-		uint oldlen = m_msgstream.lengthInBytes();
+	static const uint HISTORY_SIZE_LIMIT = 10 * 1024*1024;
+
+	if(m_history.lengthInBytes() > HISTORY_SIZE_LIMIT) {
+		const uint oldlen = m_history.lengthInBytes();
+
 		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
-		m_msgstream.hardCleanup(0, _localfork.isEmpty() ? m_msgstream.end() : _localfork.offset());
-		qDebug() << "Released" << (oldlen-m_msgstream.lengthInBytes()) / float(1024*1024) << "Mb.";
+		m_history.cleanup(_localfork.isEmpty() ? m_history.end() : _localfork.offset());
+		qDebug() << "Released" << (oldlen-m_history.lengthInBytes()) / float(1024*1024) << "Mb.";
 		m_fullhistory = false;
 
 		// Clear out old savepoints
 		// First, find the oldest undo point in the stream
-		int undopoint = m_msgstream.offset();
-		while(undopoint<m_msgstream.end()) {
-			if(m_msgstream.at(undopoint)->type() == protocol::MSG_UNDOPOINT)
+		int undopoint = m_history.offset();
+		while(undopoint<m_history.end()) {
+			if(m_history.at(undopoint)->type() == protocol::MSG_UNDOPOINT)
 				break;
 			++undopoint;
 		}
 
-		if(undopoint == m_msgstream.end()) {
+		if(undopoint == m_history.end()) {
 			qWarning() << "no undo point found after cleaning history!";
 		} else {
 			// Find the newest savepoint older or same age as the undo point
@@ -287,7 +288,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 	}
 
 	// Add command to history and execute it
-	m_msgstream.append(msg);
+	m_history.append(msg);
 
 	LocalFork::MessageAction lfa = _localfork.handleReceivedMessage(msg, affectedArea(msg));
 
@@ -300,7 +301,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 
 		// first, find the newest savepoint that precedes the fork
 		int savepoint = m_savepoints.size()-1;
-		while(savepoint>0) {
+		while(savepoint>=0) {
 			if(m_savepoints.at(savepoint)->streampointer <= _localfork.offset())
 				break;
 			--savepoint;
@@ -311,14 +312,14 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
 		} else {
 			const StateSavepoint &sp = m_savepoints.at(savepoint);
-			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_msgstream.end(), _localfork.offset(), sp->streampointer);
+			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_history.end(), _localfork.offset(), sp->streampointer);
 
 			revertSavepointAndReplay(sp);
 		}
 
 	} else if(lfa==LocalFork::CONCURRENT) {
 		// Concurrent operation: safe to execute
-		int pos = m_msgstream.end() - 1;
+		int pos = m_history.end() - 1;
 		handleCommand(msg, false, pos);
 	} // else ALREADYDONE
 }
@@ -397,7 +398,7 @@ void StateTracker::endRemoteContexts()
 	_localfork.clear();
 
 	for(protocol::MessagePtr m : localfork)
-		m_msgstream.append(m);
+		m_history.append(m);
 
 	// End drawing contexts
 	QHashIterator<int, DrawingContext> iter(_contexts);
@@ -639,8 +640,8 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 	// the unreachable commands as GONE.
 	if(!replay) {
 		int i = pos - 1; // skip the one just added
-		while(m_msgstream.isValidIndex(i)) {
-			protocol::MessagePtr msg = m_msgstream.at(i);
+		while(m_history.isValidIndex(i)) {
+			protocol::MessagePtr msg = m_history.at(i);
 			if(msg->contextId() == cmd.contextId()) {
 				// optimization: we can stop searching after finding the first GONE command
 				if(msg->type() != protocol::MSG_UNDO && msg->undoState() == protocol::GONE)
@@ -654,8 +655,8 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 		// Release state snapshots older than the oldest allowed undopoint
 		i = pos - 1;
 		int upcount = 0;
-		while(m_msgstream.isValidIndex(i)) {
-			if(m_msgstream.at(i)->type() == protocol::MSG_UNDOPOINT) {
+		while(m_history.isValidIndex(i)) {
+			if(m_history.at(i)->type() == protocol::MSG_UNDOPOINT) {
 				++upcount;
 				if(upcount>protocol::UNDO_HISTORY_LIMIT)
 					break;
@@ -712,12 +713,12 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	int actions = qAbs(cmd.points());
 
 	// Step 1. Find undo or redo point
-	int pos = m_msgstream.end();
+	int pos = m_history.end();
 	if(undo) {
 		// Search for undoable actions from the end of the
 		// command stream towards the beginning
-		while(actions>0 && m_msgstream.isValidIndex(--pos)) {
-			protocol::MessagePtr msg = m_msgstream.at(pos);
+		while(actions>0 && m_history.isValidIndex(--pos)) {
+			protocol::MessagePtr msg = m_history.at(pos);
 			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
 				if(msg->undoState() == protocol::DONE)
 					--actions;
@@ -726,8 +727,8 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	} else {
 		// Find the start of the undo sequence
 		int redostart = pos;
-		while(m_msgstream.isValidIndex(--pos)) {
-			protocol::MessagePtr msg = m_msgstream.at(pos);
+		while(m_history.isValidIndex(--pos)) {
+			protocol::MessagePtr msg = m_history.at(pos);
 			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
 				if(msg->undoState() != protocol::DONE)
 					redostart = pos;
@@ -736,14 +737,14 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 			}
 		}
 
-		if(redostart == m_msgstream.end()) {
+		if(redostart == m_history.end()) {
 			qWarning() << "nothing to redo for user" << cmd.contextId();
 			return;
 		}
 		pos = redostart;
 	}
 
-	if(!m_msgstream.isValidIndex(pos)) {
+	if(!m_history.isValidIndex(pos)) {
 		// Normally the server should enforce undo limits to prevent
 		// this from happening
 		qWarning() << "Cannot undo action by user" << ctxid << ": not enough messages in buffer!";
@@ -766,16 +767,16 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 
 	// Step 3. (Un)mark all actions by the user as undone
 	if(undo) {
-		for(int i=pos;i<m_msgstream.end();++i) {
-			protocol::MessagePtr msg = m_msgstream.at(i);
+		for(int i=pos;i<m_history.end();++i) {
+			protocol::MessagePtr msg = m_history.at(i);
 			if(msg->contextId() == ctxid)
 				msg->setUndoState(protocol::MessageUndoState(protocol::UNDONE | msg->undoState()));
 		}
 	} else {
 		int i=pos;
 		++actions;
-		while(i<m_msgstream.end()) {
-			protocol::MessagePtr msg = m_msgstream.at(i);
+		while(i<m_history.end()) {
+			protocol::MessagePtr msg = m_history.at(i);
 			if(msg->contextId() == ctxid) {
 				if(msg->type() == protocol::MSG_UNDOPOINT && msg->undoState() != protocol::GONE)
 					if(--actions==0)
@@ -797,7 +798,7 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 {
 	StateSavepoint savepoint;
 	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
-	savepoint->streampointer = pos<0 ? m_msgstream.end() : pos;
+	savepoint->streampointer = pos<0 ? m_history.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
 	savepoint->ctxstate = _contexts;
 	savepoint->layermodel = m_layerlist->getLayers();
@@ -808,7 +809,7 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 void StateTracker::makeSavepoint(int pos)
 {
 	// Make sure there is something in the message stream buffer
-	if(m_msgstream.end() <= m_msgstream.offset())
+	if(m_history.end() <= m_history.offset())
 		return;
 
 	// Don't make savepoints while a local fork exists, since
@@ -821,7 +822,7 @@ void StateTracker::makeSavepoint(int pos)
 	if(!m_savepoints.isEmpty()) {
 		const StateSavepoint sp = m_savepoints.last();
 		quint64 now = QDateTime::currentMSecsSinceEpoch();
-		if(now - sp->timestamp < 1000 && m_msgstream.end() - sp->streampointer < 100)
+		if(now - sp->timestamp < 1000 && m_history.end() - sp->streampointer < 100)
 			return;
 	}
 
@@ -834,7 +835,7 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 {
 	// This function is called when jumping to a recorded savepoint
 
-	m_msgstream.resetTo(savepoint->streampointer);
+	m_history.resetTo(savepoint->streampointer);
 	m_savepoints.clear();
 
 	_image->restoreSavepoint(savepoint->canvas);
@@ -861,9 +862,9 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 
 	// Replay all not-undo actions (and local fork)
 	int pos = savepoint->streampointer + 1;
-	while(pos < m_msgstream.end()) {
-		if(m_msgstream.at(pos)->undoState() == protocol::DONE) {
-			handleCommand(m_msgstream.at(pos), true, pos);
+	while(pos < m_history.end()) {
+		if(m_history.at(pos)->undoState() == protocol::DONE) {
+			handleCommand(m_history.at(pos), true, pos);
 		}
 		++pos;
 	}
@@ -1079,7 +1080,7 @@ void StateTracker::resetLocalFork()
 			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
 		} else {
 			const StateSavepoint &sp = m_savepoints.at(savepoint);
-			qDebug("Resetting local fork and rolling back %d commands", m_msgstream.end() - sp->streampointer);
+			qDebug("Resetting local fork and rolling back %d commands", m_history.end() - sp->streampointer);
 
 			_localfork.clear();
 			revertSavepointAndReplay(sp);

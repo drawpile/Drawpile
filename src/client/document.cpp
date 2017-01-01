@@ -100,8 +100,6 @@ void Document::initCanvas()
 
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
-	m_canvas->stateTracker()->setMaxHistorySize(1024*1024*10u);
-
 	emit canvasChanged(m_canvas);
 
 	setCurrentFilename(QString());
@@ -125,7 +123,6 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 		minsizelimit += msg->length();
 	minsizelimit *= 2;
 
-	m_canvas->stateTracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
 	m_client->sendInitialSnapshot(init);
 
 	setCurrentFilename(loader.filename());

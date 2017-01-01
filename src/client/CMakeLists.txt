@@ -47,6 +47,7 @@ set (
 	canvas/aclfilter.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
+	canvas/history.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp
