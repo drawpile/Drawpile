@@ -44,6 +44,11 @@ QString ServerConfig::getConfigValue(const ConfigKey key, bool &found) const
 	}
 }
 
+void ServerConfig::setConfigValue(ConfigKey key, const QString &value)
+{
+	m_nonpersistent[key.index] = value;
+}
+
 int ServerConfig::getConfigTime(ConfigKey key) const
 {
 	Q_ASSERT(key.type == ConfigKey::TIME);
@@ -91,11 +96,6 @@ QVariant ServerConfig::getConfigVariant(ConfigKey key) const
 	case ConfigKey::BOOL: return getConfigBool(key);
 	}
 	return QVariant(); // Shouldn't happen
-}
-
-void ServerConfig::setConfigValue(ConfigKey key, const QString &value)
-{
-	m_nonpersistent[key.index] = value;
 }
 
 bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
@@ -167,7 +167,7 @@ RegisteredUser ServerConfig::getUserAccount(const QString &username, const QStri
 
 int ServerConfig::parseTimeString(const QString &str)
 {
-	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");
+	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)\\s*([dhms]?)\\z");
 	const auto m = re.match(str);
 	if(!m.hasMatch())
 		return -1;

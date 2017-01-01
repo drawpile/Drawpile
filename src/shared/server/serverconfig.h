@@ -50,20 +50,20 @@ public:
 
 namespace config {
 	static const ConfigKey
-		ClientTimeout(0, "client-timeout", "60", ConfigKey::TIME),            // Connection ping timeout for clients
-		SessionSizeLimit(1, "session-size-limit", "15mb", ConfigKey::SIZE),   // Session history size limit in bytes (int)
-		SessionCountLimit(2, "session-countlimit", "25", ConfigKey::INT),     // Maximum number of active sessions (int)
-		EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),        // Enable session persistence (bool)
-		HostPassword(4, "host-password", "", ConfigKey::STRING),              // Session hosting password (string)
-		IdleTimeLimit(5, "idle-time-limit", "0", ConfigKey::TIME),            // Session idle time limit in seconds (int)
-		ServerTitle(6, "server-title", "", ConfigKey::STRING),                // Server title (string)
-		WelcomeMessage(7, "welcome-message", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)
-		AnnounceWhiteList(8, "announce-whitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
-		LocalAddress(9, "local-address", "", ConfigKey::STRING),              // Local address to use for session listing (string)
-		PrivateUserList(10, "private-user-list", "false", ConfigKey::BOOL),   // Don't include user list in announcement (bool)
-		RecordingPath(11, "recording-path", "", ConfigKey::STRING),           // Where to put session recordings (string)
-		EnableRecording(12, "enable-recording", "false", ConfigKey::BOOL),    // Should sessions be recorded? (bool)
-		AllowGuests(13, "allow-guests", "true", ConfigKey::BOOL)              // Allow unauthenticated users (bool)
+		ClientTimeout(0, "clientTimeout", "60", ConfigKey::TIME),            // Connection ping timeout for clients
+		SessionSizeLimit(1, "sessionSizeLimit", "15mb", ConfigKey::SIZE),    // Session history size limit in bytes (int)
+		SessionCountLimit(2, "sessionCountLimit", "25", ConfigKey::INT),     // Maximum number of active sessions (int)
+		EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),       // Enable session persistence (bool)
+		HostPassword(4, "hostPassword", "", ConfigKey::STRING),              // Session hosting password (string)
+		IdleTimeLimit(5, "idleTimeLimit", "0", ConfigKey::TIME),             // Session idle time limit in seconds (int)
+		ServerTitle(6, "serverTitle", "", ConfigKey::STRING),                // Server title (string)
+		WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)
+		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
+		LocalAddress(9, "localAddress", "", ConfigKey::STRING),              // Local address to use for session listing (string)
+		PrivateUserList(10, "privateUserList", "false", ConfigKey::BOOL),    // Don't include user list in announcement (bool)
+		RecordingPath(11, "recordingPath", "", ConfigKey::STRING),           // Where to put session recordings (string)
+		EnableRecording(12, "enableRecording", "false", ConfigKey::BOOL),    // Should sessions be recorded? (bool)
+		AllowGuests(13, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users (bool)
 		;
 }
 

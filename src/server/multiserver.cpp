@@ -269,8 +269,8 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 
 	if(head == "server")
 		return serverJsonApi(method, tail, request);
-	//else if(head == "sessions")
-	//	return m_sessions->callJsonApi(method, tail, request);
+	else if(head == "sessions")
+		return m_sessions->callJsonApi(method, tail, request);
 
 	return JsonApiNotFound();
 
@@ -295,6 +295,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 {
 	if(!path.isEmpty())
 		return JsonApiNotFound();
+
 	if(method != JsonApiMethod::Get && method != JsonApiMethod::Update)
 		return JsonApiBadMethod();
 
@@ -318,7 +319,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 	if(method==JsonApiMethod::Update) {
 		for(int i=0;i<settingCount;++i) {
 			if(request.contains(settings[i].name)) {
-				m_config->setConfigString(settings[i], request[settings[i].name].toString());
+				m_config->setConfigString(settings[i], request[settings[i].name].toVariant().toString());
 			}
 		}
 	}

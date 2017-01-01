@@ -52,7 +52,7 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	announcementRefreshTimer->start(announcementRefreshTimer->interval());
 
 #ifndef NDEBUG
-	_randomlag = 0;
+	m_randomlag = 0;
 #endif
 }
 
@@ -148,7 +148,7 @@ void SessionServer::addClient(Client *client)
 	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
 
 #ifndef NDEBUG
-	client->setRandomLag(_randomlag);
+	client->setRandomLag(m_randomlag);
 #endif
 
 	m_lobby.append(client);
