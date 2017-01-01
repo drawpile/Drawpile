@@ -167,7 +167,7 @@ MessagePtr serverCommand(const QString &cmd, const QJsonArray &args, const QJson
 MessagePtr kick(int target)
 {
 	Q_ASSERT(target>0 && target<256);
-	return serverCommand("kick", QJsonArray() << target);
+	return serverCommand("kick-user", QJsonArray() << target);
 }
 
 MessagePtr sessionTitle(const QString &title)

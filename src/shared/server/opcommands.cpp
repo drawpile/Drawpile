@@ -94,23 +94,24 @@ void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	client->session()->setSessionConfig(kwargs);
 }
 
-Client *_getClient(Client *me, const QString &name)
+Client *_getClient(Client *me, const QJsonValue &idOrName)
 {
 	Client *c = nullptr;
-	if(name.startsWith("#")) {
+	if(idOrName.isDouble()) {
 		// ID number
-		bool ok;
-		int id = name.mid(1).toInt(&ok);
-		if(!ok)
-			throw CmdError("invalid user id: " + name);
+		const int id = idOrName.toInt();
+		if(id<1 || id > 254)
+			throw CmdError("invalid user id: " + QString::number(id));
 		c = me->session()->getClientById(id);
 
-	} else {
+	} else if(idOrName.isString()){
 		// Username
-		c = me->session()->getClientByUsername(name);
+		c = me->session()->getClientByUsername(idOrName.toString());
+	} else {
+		throw CmdError("invalid user ID or name");
 	}
 	if(!c)
-		throw CmdError("no such user: " + name);
+		throw CmdError("user not found");
 
 	return c;
 }
@@ -119,9 +120,9 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(kwargs);
 	if(args.size()!=1)
-		throw CmdError("Expected one argument: user #ID or name");
+		throw CmdError("Expected one argument: user ID or name");
 
-	Client *target = _getClient(client, args.at(0).toString());
+	Client *target = _getClient(client, args.at(0));
 	if(target == client)
 		throw CmdError("cannot kick self");
 
