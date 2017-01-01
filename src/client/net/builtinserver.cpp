@@ -44,7 +44,7 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
 
-	servercfg->setConfigInt(config::SessionSizeLimit, cfg.value("historylimit", 0).toInt());
+	servercfg->setConfigInt(config::SessionSizeLimit, cfg.value("historylimit", 0).toFloat() * 1024 * 1024);
 	servercfg->setConfigInt(config::SessionCountLimit, 1);
 	servercfg->setConfigBool(config::PrivateUserList, cfg.value("privateUserList", false).toBool());
 	servercfg->setConfigInt(config::ClientTimeout, cfg.value("timeout", 60).toInt());

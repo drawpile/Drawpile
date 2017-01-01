@@ -62,6 +62,7 @@ QString Session::toLogString() const {
 
 void Session::switchState(State newstate)
 {
+	logger::debug() << this << "switch state to" << newstate << "from" << m_state;
 	if(newstate==Initialization) {
 		qFatal("Illegal state change to Initialization from %d", m_state);
 
@@ -151,6 +152,7 @@ void Session::joinUser(Client *user, bool host)
 	addToCommandStream(user->joinMessage());
 
 	if(host) {
+		logger::info() << "join user. State is" << m_state;
 		Q_ASSERT(m_state == Initialization);
 
 		m_initUser = user->id();
@@ -162,6 +164,16 @@ void Session::joinUser(Client *user, bool host)
 	}
 
 	ensureOperatorExists();
+
+	// Let new users know about the size limit too
+	if(m_mainstream.lengthInBytes() > m_historyLimitWarning) {
+		protocol::ServerReply warning;
+		warning.type = protocol::ServerReply::SIZELIMITWARNING;
+		warning.reply["size"] = int(m_mainstream.lengthInBytes());
+		warning.reply["maxSize"] = int(m_historylimit);
+		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
+		logger::info() << "notified new user about the limit";
+	}
 
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
@@ -311,6 +323,9 @@ void Session::sendUpdatedSessionProperties()
 
 void Session::addToCommandStream(protocol::MessagePtr msg)
 {
+	if(m_state == Shutdown)
+		return;
+
 	m_mainstream.append(msg);
 	if(m_recorder)
 		m_recorder->recordMessage(msg);
@@ -323,6 +338,8 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 		// and reset the session when necessary.
 		const uint hlen = m_mainstream.lengthInBytes();
 		if(hlen > m_historyLimitWarning && !m_historytLimitWarningSent) {
+			logger::debug() << this << "history limit warning threshold reached.";
+
 			protocol::ServerReply warning;
 			warning.type = protocol::ServerReply::SIZELIMITWARNING;
 			warning.reply["size"] = int(hlen);
@@ -339,6 +356,7 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 		// Well behaved clients should have resetted the session
 		// before this happens.
 		if(m_mainstream.lengthInBytes() > m_historylimit) {
+			logger::info() << this << "history limit" << m_historylimit << "reached.";
 			wall("Session size limit reached!");
 			killSession();
 		}
@@ -347,7 +365,7 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 
 void Session::addToInitStream(protocol::MessagePtr msg)
 {
-	Q_ASSERT(m_state == Initialization || m_state == Reset);
+	Q_ASSERT(m_state == Initialization || m_state == Reset || m_state == Shutdown);
 
 	if(m_state == Initialization) {
 		addToCommandStream(msg);
@@ -383,27 +401,19 @@ void Session::resetSession(int resetter)
 	resetRequest.reply["state"] = "init";
 	resetRequest.message = "Prepared to receive session data";
 
-	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
-}
+	m_historytLimitWarningSent = false;
 
-/**
- * @brief Kick all users off the server
- */
-void Session::kickAllUsers()
-{
-	for(Client *c : m_clients)
-		c->disconnectShutdown();
+	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
 }
 
 void Session::killSession()
 {
-	m_state = Shutdown;
+	switchState(Shutdown);
 	unlistAnnouncement();
-	setClosed(true);
 	stopRecording();
 
 	for(Client *c : m_clients)
-		c->disconnectKick(QString());
+		c->disconnectShutdown();
 	m_clients.clear();
 
 	this->deleteLater();

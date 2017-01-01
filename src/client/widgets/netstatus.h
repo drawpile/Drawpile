@@ -72,6 +72,8 @@ public slots:
 	//! This user was kicked off the session
 	void kicked(const QString& user);
 
+	void setLowSpaceAlert(bool lowSpace);
+
 	void copyAddress();
 	void copyUrl();
 
@@ -94,7 +96,7 @@ private:
 	QProgressBar *_download;
 	QProgressBar *_upload;
 
-	QLabel *_label, *_security;
+	QLabel *_label, *_security, *m_lowspace;
 	PopupMessage *_popup;
 	QString _address;
 	int _port;

@@ -72,6 +72,7 @@ Document::Document(QObject *parent)
 
 	connect(m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
 	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
+	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
 }
 
 Document::~Document()
@@ -90,14 +91,17 @@ void Document::initCanvas()
 
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
-	connect(m_client, &net::Client::sessionResetted, m_canvas, &canvas::CanvasModel::resetCanvas);
-
+	connect(m_client, &net::Client::sessionResetted, [this]() {
+		m_canvas->resetCanvas();
+		if(m_serverSpaceLow) {
+			// Session reset is the only thing that can free up history space
+			m_serverSpaceLow = false;
+			emit serverSpaceLowChanged(false);
+		}
+	});
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
-
 	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendMessage);
-
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
-
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
 	emit canvasChanged(m_canvas);
@@ -142,6 +146,9 @@ void Document::onServerLogin(bool join)
 	if(m_autoRecordOnConnect) {
 		startRecording(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
 	}
+
+	m_serverSpaceLow = false;
+	emit serverSpaceLowChanged(false);
 }
 
 void Document::onServerDisconnect()
@@ -165,6 +172,17 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("hasPassword"))
 		setSessionPasswordProtected(config["hasPassword"].toBool());
+}
+
+void Document::onServerHistoryLimitReceived(int maxSpace)
+{
+	Q_UNUSED(maxSpace);
+	if(!m_serverSpaceLow) {
+		m_serverSpaceLow = true;
+		emit serverSpaceLowChanged(true);
+	}
+
+	// TODO autoreset
 }
 
 void Document::setSessionClosed(bool closed)

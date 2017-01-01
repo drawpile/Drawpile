@@ -113,7 +113,7 @@ void TcpServer::handleMessage()
 
 void TcpServer::handleBadData(int len, int type)
 {
-	qWarning() << "Received" << len << "bytes of unknown message type" << type;
+	qWarning() << "Received" << len << "bytes of unknown message type" << (unsigned int)type;
 	_error = tr("Received invalid data");
 	_socket->abort();
 }

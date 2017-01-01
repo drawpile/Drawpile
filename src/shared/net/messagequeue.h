@@ -186,13 +186,14 @@ private:
 
 	QTcpSocket *m_socket;
 
-	char *m_recvbuffer;
-	char *m_sendbuffer;
-	int m_recvcount;
-	int m_sentcount, m_sendbuflen;
+	char *m_recvbuffer; // raw message reception buffer
+	char *m_sendbuffer; // raw message upload buffer
+	int m_recvbytes;    // number of bytes in reception buffer
+	int m_sentbytes;    // number of bytes in upload buffer already sent
+	int m_sendbuflen;   // length of the data in the upload buffer
 
-	QQueue<MessagePtr> m_recvqueue;
-	QQueue<MessagePtr> m_sendqueue;
+	QQueue<MessagePtr> m_inbox;  // pending messages
+	QQueue<MessagePtr> m_outbox; // messages to be sent
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;

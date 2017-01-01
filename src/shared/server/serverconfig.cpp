@@ -133,7 +133,7 @@ bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 
 void ServerConfig::setConfigInt(ConfigKey key, int value)
 {
-	Q_ASSERT(key.type == ConfigKey::INT);
+	Q_ASSERT(key.type == ConfigKey::INT || key.type == ConfigKey::SIZE || key.type==ConfigKey::TIME);
 	setConfigString(key, QString::number(value));
 }
 

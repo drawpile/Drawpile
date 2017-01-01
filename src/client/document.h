@@ -53,6 +53,7 @@ class Document : public QObject
 	Q_PROPERTY(QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
 	Q_PROPERTY(QString currentFilename READ currentFilename() NOTIFY currentFilenameChanged)
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
+	Q_PROPERTY(bool serverSpaceLow READ isServerSpaceLow NOTIFY serverSpaceLowChanged)
 
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
@@ -108,6 +109,7 @@ public:
 	void stopRecording();
 
 	bool isDirty() const { return m_dirty; }
+	bool isServerSpaceLow() const { return m_serverSpaceLow; }
 
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
@@ -132,6 +134,7 @@ signals:
 	void sessionPreserveChatChanged(bool pc);
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
+	void serverSpaceLowChanged(bool isLow);
 
 public slots:
 	// Convenience slots
@@ -166,6 +169,7 @@ private slots:
 	void onServerDisconnect();
 
 	void onSessionConfChanged(const QJsonObject &config);
+	void onServerHistoryLimitReceived(int maxSpace);
 
 	void snapshotNeeded();
 	void markDirty();
@@ -201,6 +205,7 @@ private:
 	bool m_sessionClosed;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;
+	bool m_serverSpaceLow;
 };
 
 #endif // DOCUMENT_H

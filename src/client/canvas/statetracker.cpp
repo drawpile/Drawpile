@@ -35,6 +35,7 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QSettings>
 
 namespace canvas {
 

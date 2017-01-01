@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 
+
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
 	// We don't use the normal QMainWindow statusbar to save some vertical space for the docks.
@@ -174,7 +175,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create status indicator widgets
 	_viewstatus = new widgets::ViewStatus(this);
 
-	_netstatus = new widgets::NetStatus(this);
+	m_netstatus = new widgets::NetStatus(this);
 	_recorderstatus = new QLabel(this);
 	_recorderstatus->hide();
 	_lockstatus = new QLabel(this);
@@ -203,7 +204,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #endif
 
 	_viewStatusBar->addPermanentWidget(_viewstatus);
-	_viewStatusBar->addPermanentWidget(_netstatus);
+	_viewStatusBar->addPermanentWidget(m_netstatus);
 	_viewStatusBar->addPermanentWidget(_recorderstatus);
 	_viewStatusBar->addPermanentWidget(_lockstatus);
 
@@ -308,16 +309,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverLoggedin, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
 
-	connect(m_doc, &Document::serverConnected, _netstatus, &widgets::NetStatus::connectingToHost);
-	connect(m_doc->client(), &net::Client::serverDisconnecting, _netstatus, &widgets::NetStatus::hostDisconnecting);
-	connect(m_doc, &Document::serverDisconnected, _netstatus, &widgets::NetStatus::hostDisconnected);
+	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
+	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
+	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
+	connect(m_doc, &Document::serverSpaceLowChanged, m_netstatus, &widgets::NetStatus::setLowSpaceAlert);
 
-	connect(m_doc->client(), &net::Client::expectingBytes, _netstatus, &widgets::NetStatus::expectBytes);
-	connect(m_doc->client(), &net::Client::sendingBytes, _netstatus, &widgets::NetStatus::sendingBytes);
-	connect(m_doc->client(), SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
-	connect(m_doc->client(), &net::Client::bytesSent, _netstatus, &widgets::NetStatus::bytesSent);
-	connect(m_doc->client(), &net::Client::lagMeasured, _netstatus, &widgets::NetStatus::lagMeasured);
-	connect(m_doc->client(), &net::Client::youWereKicked, _netstatus, &widgets::NetStatus::kicked);
+	connect(m_doc->client(), &net::Client::expectingBytes, m_netstatus, &widgets::NetStatus::expectBytes);
+	connect(m_doc->client(), &net::Client::sendingBytes, m_netstatus, &widgets::NetStatus::sendingBytes);
+	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
+	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
+	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
+	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
 	connect(m_doc->client(), &net::Client::youWereKicked, _chatbox, &widgets::ChatBox::kicked);
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
@@ -391,8 +393,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
 
-	connect(canvas, &canvas::CanvasModel::userJoined, _netstatus, &widgets::NetStatus::join);
-	connect(canvas, &canvas::CanvasModel::userLeft, _netstatus, &widgets::NetStatus::leave);
+	connect(canvas, &canvas::CanvasModel::userJoined, m_netstatus, &widgets::NetStatus::join);
+	connect(canvas, &canvas::CanvasModel::userLeft, m_netstatus, &widgets::NetStatus::leave);
 	connect(canvas, &canvas::CanvasModel::userJoined, _chatbox, &widgets::ChatBox::userJoined);
 	connect(canvas, &canvas::CanvasModel::userLeft, _chatbox, &widgets::ChatBox::userParted);
 
@@ -840,7 +842,7 @@ void MainWindow::open(const QUrl& url)
 				addRecentFile(file);
 		}
 	} else {
-		networkaccess::getFile(url, QString(), _netstatus, [this](const QFile &file, const QString &error) {
+		networkaccess::getFile(url, QString(), m_netstatus, [this](const QFile &file, const QString &error) {
 			if(error.isEmpty()) {
 				open(QUrl::fromLocalFile(file.fileName()));
 			} else {
@@ -1395,8 +1397,8 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
  */
 void MainWindow::onServerLogin()
 {
-	_netstatus->loggedIn(m_doc->client()->sessionUrl());
-	_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
+	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
+	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
 	_view->setEnabled(true);
 	setDrawingToolsEnabled(true);
 }
@@ -1673,7 +1675,7 @@ void MainWindow::pasteFile(const QUrl &url)
 
 		pasteImage(img);
 	} else {
-		networkaccess::getImage(url, _netstatus, [this](const QImage &image, const QString &error) {
+		networkaccess::getImage(url, m_netstatus, [this](const QImage &image, const QString &error) {
 			if(image.isNull())
 				showErrorMessage(error);
 			else
@@ -1717,7 +1719,7 @@ void MainWindow::dropUrl(const QUrl &url)
 		}
 
 	} else {
-		networkaccess::getFile(url, "", _netstatus, [this](const QFile &file, const QString &error) {
+		networkaccess::getFile(url, "", m_netstatus, [this](const QFile &file, const QString &error) {
 			if(error.isEmpty())
 				dropUrl(QUrl::fromLocalFile(file.fileName()));
 			else

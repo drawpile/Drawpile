@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ private:
 	QStatusBar *_viewStatusBar;
 	QLabel *_lockstatus;
 	QLabel *_recorderstatus;
-	widgets::NetStatus *_netstatus;
+	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *_viewstatus;
 	QToolButton *_statusChatButton;
 

@@ -138,6 +138,15 @@ NetStatus::NetStatus(QWidget *parent)
 	_security->addAction(showcert);
 	connect(showcert, SIGNAL(triggered()), this, SLOT(showCertificate()));
 
+	// Low space alert
+	m_lowspace = new QLabel(tr("Low space!"), this);
+	m_lowspace->setToolTip(tr("Server is almost out of space for session history! Reset the session to free some up."));
+	QPalette lowSpacePalette = m_lowspace->palette();
+	lowSpacePalette.setColor(QPalette::WindowText, Qt::red);
+	m_lowspace->setPalette(lowSpacePalette);
+	m_lowspace->setVisible(false);
+	layout->addWidget(m_lowspace);
+
 	// Popup label
 	_popup = new PopupMessage(this);
 
@@ -217,6 +226,11 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	_certificate = certificate;
 }
 
+void NetStatus::setLowSpaceAlert(bool lowSpace)
+{
+	m_lowspace->setVisible(lowSpace);
+}
+
 void NetStatus::hostDisconnecting()
 {
 	_label->setText(tr("Logging out..."));
@@ -238,6 +252,7 @@ void NetStatus::hostDisconnected()
 
 	message(tr("Disconnected"));
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
+	setLowSpaceAlert(false);
 
 	if(_netstats)
 		_netstats->setDisconnected();

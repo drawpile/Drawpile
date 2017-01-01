@@ -257,6 +257,7 @@ public slots:
 
 private slots:
 	void processQueuedCommands();
+
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
 

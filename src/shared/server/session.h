@@ -153,7 +153,7 @@ public:
 	 *
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed() const { return m_closed || userCount() >= maxUsers() || m_state == Reset; }
+	bool isClosed() const { return m_closed || userCount() >= maxUsers() || m_state != Running; }
 	void setClosed(bool closed);
 
 	/**
@@ -273,11 +273,6 @@ public:
 	 * @param msg
 	 */
 	void addToInitStream(protocol::MessagePtr msg);
-
-	/**
-	 * @brief Disconnect all users
-	 */
-	void kickAllUsers();
 
 	/**
 	 * @brief Initiate the shutdown of this session
