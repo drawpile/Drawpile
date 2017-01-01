@@ -285,8 +285,9 @@ public:
 	/**
 	 * @brief Send a message to every user of this session
 	 * @param message
+	 * @param alert is this an alert type message?
 	 */
-	void wall(const QString &message);
+	void messageAll(const QString &message, bool alert);
 
 	/**
 	 * @brief Start resetting this session

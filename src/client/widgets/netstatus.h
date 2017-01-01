@@ -63,6 +63,9 @@ public slots:
 
 	void lagMeasured(qint64 lag);
 
+	//! Show the message in the balloon popup if alert is true
+	void alertMessage(const QString &msg, bool alert);
+
 	// this is used with QNetworkReplies
 	void bytesReceived(qint64 received, qint64 total);
 
@@ -89,7 +92,8 @@ private slots:
 
 private:
 	void showCGNAlert();
-	void message(const QString& msg);
+	void message(const QString &msg);
+
 	QString fullAddress() const;
 
 	QPointer<dialogs::NetStats> _netstats;
@@ -97,7 +101,7 @@ private:
 	QProgressBar *_upload;
 
 	QLabel *_label, *_security, *m_lowspace;
-	PopupMessage *_popup;
+	PopupMessage *m_popup;
 	QString _address;
 	int _port;
 	QUrl _sessionUrl;

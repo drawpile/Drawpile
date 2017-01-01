@@ -238,7 +238,7 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 	if(!message.isEmpty())
 		chat += QString(" (%1)").arg(message);
 
-	emit serverMessage(chat);
+	emit serverMessage(chat, true);
 }
 
 void Client::handleServerCommand(const protocol::Command &msg)
@@ -267,7 +267,7 @@ void Client::handleServerCommand(const protocol::Command &msg)
 	case ServerReply::ALERT:
 	case ServerReply::ERROR:
 	case ServerReply::RESULT:
-		emit serverMessage(reply.message);
+		emit serverMessage(reply.message, reply.type == ServerReply::ALERT);
 		break;
 	case ServerReply::SESSIONCONF:
 		emit sessionConfChange(reply.reply["config"].toObject());

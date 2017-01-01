@@ -199,8 +199,9 @@ void ChatBox::receiveMarker(const QString &nick, const QString &message)
 /**
  * @param message the message
  */
-void ChatBox::systemMessage(const QString& message)
+void ChatBox::systemMessage(const QString& message, bool alert)
 {
+	Q_UNUSED(alert);
 	_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
 }
 

@@ -58,7 +58,7 @@ public slots:
 	void receiveMarker(const QString &nick, const QString &message);
 
 	//! Display a system message
-	void systemMessage(const QString& message);
+	void systemMessage(const QString& message, bool isAlert=false);
 
 	//! Pin a message. An empty string will remove the pinned message (if any)
 	void setPinnedMessage(const QString &message);

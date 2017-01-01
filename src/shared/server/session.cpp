@@ -110,7 +110,7 @@ void Session::switchState(State newstate)
 			qFatal("Illegal state change to Reset from %d", m_state);
 
 		Q_ASSERT(m_resetstream.isEmpty());
-
+		messageAll("Preparing for session reset!", true);
 	}
 
 	m_state = newstate;
@@ -195,6 +195,7 @@ void Session::removeUser(Client *user)
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
 		switchState(Running);
+		messageAll("Session reset cancelled.", true);
 	}
 
 	addToCommandStream(MessagePtr(new protocol::UserLeave(user->id())));
@@ -330,7 +331,8 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 
 	if(m_historylimit>0 && m_mainstream.lengthInBytes() + msg->length() > m_historylimit) {
 		const Client *shame = getClientById(msg->contextId());
-		wall("History size limit reached! (" + (shame ? shame->username() : QString("user #%1").arg(msg->contextId())) + " broke the camel's back.) Session must be reset to continue drawing.");
+		messageAll("History size limit reached!", false);
+		messageAll((shame ? shame->username() : QString("user #%1").arg(msg->contextId())) + " broke the camel's back. Session must be reset to continue drawing.", false);
 		return;
 	}
 
@@ -426,10 +428,17 @@ void Session::killSession()
 	this->deleteLater();
 }
 
-void Session::wall(const QString &message)
+void Session::messageAll(const QString &message, bool alert)
 {
+	auto msg = protocol::MessagePtr(new protocol::Command(0,
+		(protocol::ServerReply {
+			alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
+			message,
+			QJsonObject()
+		}).toJson()));
+
 	for(Client *c : m_clients) {
-		c->sendSystemChat(message);
+		c->sendDirectMessage(msg);
 	}
 }
 

@@ -176,7 +176,7 @@ signals:
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 	void youWereKicked(const QString &kickedBy);
 
-	void serverMessage(const QString &message);
+	void serverMessage(const QString &message, bool isAlert);
 
 	void expectingBytes(int);
 	void sendingBytes(int);

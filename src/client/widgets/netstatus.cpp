@@ -148,13 +148,13 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->addWidget(m_lowspace);
 
 	// Popup label
-	_popup = new PopupMessage(this);
+	m_popup = new PopupMessage(this);
 
 	// Some styles are buggy and have bad tooltip colors, so we force the colors here.
 	QPalette popupPalette;
 	popupPalette.setColor(QPalette::ToolTipBase, Qt::black);
 	popupPalette.setColor(QPalette::ToolTipText, Qt::white);
-	_popup->setPalette(popupPalette);
+	m_popup->setPalette(popupPalette);
 }
 
 /**
@@ -400,12 +400,18 @@ void NetStatus::kicked(const QString& user)
 	message(tr("You have been kicked by %1").arg(user.toHtmlEscaped()));
 }
 
-void NetStatus::message(const QString& msg)
+void NetStatus::message(const QString &msg)
 {
-	_popup->showMessage(
+	m_popup->showMessage(
 				mapToGlobal(_label->pos() + QPoint(_label->width()/2, 2)),
 				msg);
 	emit statusMessage(msg);
+}
+
+void NetStatus::alertMessage(const QString &msg, bool alert)
+{
+	if(alert)
+		message(msg);
 }
 
 void NetStatus::showCertificate()

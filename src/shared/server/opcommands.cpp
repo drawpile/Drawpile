@@ -177,7 +177,7 @@ void killSession(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	Q_UNUSED(args);
 	Q_UNUSED(kwargs);
 
-	client->session()->wall(QString("Session shut down by moderator (%1)").arg(client->username()));
+	client->session()->messageAll(QString("Session shut down by moderator (%1)").arg(client->username()), true);
 	client->session()->killSession();
 }
 

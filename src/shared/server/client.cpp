@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include "../net/messagequeue.h"
 #include "../net/control.h"
 #include "../net/meta.h"
-#include "../net/meta2.h"
 #include "../util/logger.h"
 
 #include <QTcpSocket>
@@ -125,7 +124,13 @@ void Client::sendDirectMessage(protocol::MessagePtr msg)
 
 void Client::sendSystemChat(const QString &message)
 {
-	m_msgqueue->send(MessagePtr(new protocol::Chat(0, message, false, false)));
+	protocol::ServerReply msg {
+		protocol::ServerReply::MESSAGE,
+		message,
+		QJsonObject()
+	};
+
+	m_msgqueue->send(MessagePtr(new protocol::Command(0, msg.toJson())));
 }
 
 void Client::receiveMessages()

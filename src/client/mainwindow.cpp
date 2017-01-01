@@ -288,6 +288,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
 
 	connect(m_doc->client(), &net::Client::serverMessage, _chatbox, &widgets::ChatBox::systemMessage);
+	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
+
 	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);

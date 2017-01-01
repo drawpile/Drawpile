@@ -114,14 +114,11 @@ public:
 	void stopAll();
 
 	/**
-	 * @brief Write a message to all active users
-	 *
-	 * This sends a system chat message to all users of
-	 * every active session.
-	 *
+	 * @brief Send a global message to all active sessions
 	 * @param message the message
+	 * @param alert is this an alert type message?
 	 */
-	void wall(const QString &message);
+	void messageAll(const QString &message, bool alert);
 
 	/**
 	 * @brief Call the server's JSON administration API

@@ -135,10 +135,10 @@ void SessionServer::stopAll()
 	}
 }
 
-void SessionServer::wall(const QString &message)
+void SessionServer::messageAll(const QString &message, bool alert)
 {
 	for(Session *s : m_sessions) {
-		s->wall(message);
+		s->messageAll(message, alert);
 	}
 }
 
