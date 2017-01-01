@@ -329,7 +329,8 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 		return;
 
 	if(m_historylimit>0 && m_mainstream.lengthInBytes() + msg->length() > m_historylimit) {
-		wall("History size limit reached! Session must be reset to continue drawing");
+		const Client *shame = getClientById(msg->contextId());
+		wall("History size limit reached! (" + (shame ? shame->username() : QString("user #%1").arg(msg->contextId())) + " broke the camel's back.) Session must be reset to continue drawing.");
 		return;
 	}
 
