@@ -23,19 +23,19 @@ Some feature highlights:
 
 ## Building with cmake
 
-Client dependencies:
-
-* Qt 5.5 or newer
+Common dependencies:
+ * Qt 5.5 or newer (QtGui not required for headless server)
 * [KF5 KArchive]
+
+Client specific dependencies:
+
 * [QtColorPicker]
 * KF5 KDNSSD (optional: local server discovery with Zeroconf)
 * GIFLIB (optional: animated GIF export)
 * MiniUPnP (optional: automatic port forwarding setup)
 
-Server dependencies:
+Server specific dependencies:
 
-* Qt 5.4 or newer (QtCore and QtNetwork only)
-* [KF5 KArchive]
 * libsystemd (optional: systemd socket activation support)
 * libmicrohttpd (optional: HTTP admin API)
 
