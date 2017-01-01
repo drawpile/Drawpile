@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ Session::Session(const QUuid &id, const QString &alias, const protocol::Protocol
 	m_config(config),
 	m_state(Initialization),
 	m_initUser(-1),
-	m_recorder(0),
+	m_recorder(nullptr),
+	m_resetstreamsize(0),
 	m_lastUserId(0),
 	m_startTime(QDateTime::currentDateTime()), m_lastEventTime(QDateTime::currentDateTime()),
 	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254),
@@ -94,11 +95,11 @@ void Session::switchState(State newstate)
 			sendUpdatedSessionProperties();
 
 			// Send reset snapshot
-			qDebug("Reset stream size %d", m_resetstream.size());
 			for(const MessagePtr &m : m_resetstream)
 				addToCommandStream(m);
 
 			m_resetstream.clear();
+			m_resetstreamsize = 0;
 		}
 
 		for(Client *c : m_clients)
@@ -181,17 +182,20 @@ void Session::joinUser(Client *user, bool host)
 
 void Session::removeUser(Client *user)
 {
-	Q_ASSERT(m_clients.contains(user));
+	if(!m_clients.removeOne(user))
+		return;
+
+	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
+	disconnect(this, &Session::newCommandsAvailable, user, &Client::sendAvailableCommands);
 
 	if(user->id() == m_initUser && m_state == Reset) {
 		// Whoops, the resetter left before the job was done!
 		// We simply cancel the reset in that case and go on
 		m_initUser = 0;
 		m_resetstream.clear();
+		m_resetstreamsize = 0;
 		switchState(Running);
 	}
-
-	m_clients.removeOne(user);
 
 	addToCommandStream(MessagePtr(new protocol::UserLeave(user->id())));
 
@@ -364,7 +368,15 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 	if(m_state == Initialization) {
 		addToCommandStream(msg);
 	} else if(m_state == Reset) {
+		m_resetstreamsize += msg->length();
 		m_resetstream.append(msg);
+
+		// Well behaved clients should be aware of the history limit and not exceed it.
+		if(m_historylimit>0 && m_resetstreamsize > m_historylimit) {
+			Client *resetter = getClientById(m_initUser);
+			if(resetter)
+				resetter->disconnectError("History limit exceeded");
+		}
 	}
 }
 

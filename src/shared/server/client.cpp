@@ -226,18 +226,21 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 void Client::disconnectKick(const QString &kickedBy)
 {
+	emit loggedOff(this);
 	logger::info() << this << "Kicked by" << kickedBy;
 	m_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 
 void Client::disconnectError(const QString &message)
 {
+	emit loggedOff(this);
 	logger::info() << this << "Disconnecting due to error:" << message;
 	m_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
 }
 
 void Client::disconnectShutdown()
 {
+	emit loggedOff(this);
 	m_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
 }
 

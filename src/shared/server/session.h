@@ -402,6 +402,7 @@ private:
 
 	protocol::MessageStream m_mainstream;
 	QList<protocol::MessagePtr> m_resetstream;
+	uint m_resetstreamsize;
 
 	sessionlisting::Announcement m_publicListing;
 
