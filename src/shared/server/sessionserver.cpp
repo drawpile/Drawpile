@@ -186,7 +186,6 @@ void SessionServer::lobbyDisconnectedEvent(Client *client)
 	Q_ASSERT(m_lobby.contains(client));
 	m_lobby.removeOne(client);
 
-	client->deleteLater();
 	emit userDisconnected();
 }
 

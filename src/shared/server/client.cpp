@@ -81,7 +81,6 @@ QString Client::toLogString() const {
 void Client::setSession(Session *session)
 {
 	m_session = session;
-	setParent(session);
 
 	m_state = IN_SESSION;
 	m_streampointer = m_session->mainstream().offset();
@@ -163,6 +162,7 @@ void Client::socketError(QAbstractSocket::SocketError error)
 void Client::socketDisconnect()
 {
 	emit loggedOff(this);
+	this->deleteLater();
 }
 
 /**

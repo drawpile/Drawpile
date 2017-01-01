@@ -202,8 +202,6 @@ void Session::removeUser(Client *user)
 		setClosed(false);
 	}
 
-	user->deleteLater();
-
 	emit userDisconnected(this);
 }
 
