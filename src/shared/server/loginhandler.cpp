@@ -364,7 +364,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 			return;
 		}
 
-		if(session->checkPassword(cmd.kwargs.value("password").toString())) {
+		if(!session->checkPassword(cmd.kwargs.value("password").toString())) {
 			sendError("badPassword", "Incorrect password");
 			return;
 		}

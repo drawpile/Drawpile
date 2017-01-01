@@ -276,8 +276,6 @@ void Session::setSessionConfig(const QJsonObject &conf)
 
 bool Session::checkPassword(const QString &password) const
 {
-	if(m_passwordhash.isEmpty())
-		return true;
 	return passwordhash::check(password, m_passwordhash);
 }
 
