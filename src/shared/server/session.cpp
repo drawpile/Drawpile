@@ -318,6 +318,7 @@ void Session::sendUpdatedSessionProperties()
 	conf["maxUserCount"] = m_maxusers;
 	conf["preserveChat"] = m_preserveChat;
 	conf["nsfm"] = m_nsfm;
+	conf["hasPassword"] = hasPassword();
 	props.reply["config"] = conf;
 
 	addToCommandStream(protocol::MessagePtr(new protocol::Command(0, props)));
