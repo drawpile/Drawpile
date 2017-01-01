@@ -312,7 +312,7 @@ void Session::sendUpdatedSessionProperties()
 	protocol::ServerReply props;
 	props.type = protocol::ServerReply::SESSIONCONF;
 	QJsonObject	conf;
-	conf["closed"] = isClosed();
+	conf["closed"] = m_closed; // this refers specifically to the closed flag, not the general status
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
 	conf["maxUserCount"] = m_maxusers;

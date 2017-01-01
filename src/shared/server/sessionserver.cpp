@@ -182,11 +182,11 @@ void SessionServer::moveFromLobby(Session *session, Client *client)
  */
 void SessionServer::lobbyDisconnectedEvent(Client *client)
 {
-	logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
-	Q_ASSERT(m_lobby.contains(client));
-	m_lobby.removeOne(client);
-
-	emit userDisconnected();
+	if(m_lobby.removeOne(client)) {
+		logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
+		disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
+		emit userDisconnected();
+	}
 }
 
 /**
