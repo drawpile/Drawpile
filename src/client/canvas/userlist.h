@@ -83,6 +83,9 @@ class UserListModel : public QAbstractListModel {
 		//! Get a list of users who are locked
 		QList<uint8_t> lockList() const;
 
+		//! Get the ID of the operator with the lowest ID number
+		int getPrimeOp() const;
+
 		/**
 		 * @brief Get the command for (un)locking a single user
 		 * @param localId

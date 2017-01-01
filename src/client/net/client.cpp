@@ -274,7 +274,7 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		break;
 	case ServerReply::SIZELIMITWARNING:
 		qWarning() << "Session history size warning:" << reply.reply["maxSize"].toInt() - reply.reply["size"].toInt() << "bytes of space left!";
-		emit serverHistoryLimitReceived(reply.reply["maxSize"].toInt() - reply.reply["size"].toInt());
+		emit serverHistoryLimitReceived(reply.reply["maxSize"].toInt());
 		break;
 	case ServerReply::RESET:
 		handleResetRequest(reply);

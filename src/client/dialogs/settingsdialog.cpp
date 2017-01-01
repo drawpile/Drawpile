@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -264,6 +264,7 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
+	_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
 	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 #ifdef HAVE_DNSSD
 	_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
@@ -330,6 +331,7 @@ void SettingsDialog::rememberSettings()
 		cfg.setValue("port", _ui->serverport->value());
 
 	cfg.setValue("historylimit", _ui->historylimit->value());
+	cfg.setValue("autoreset", _ui->lowspaceAutoreset->isChecked());
 	cfg.setValue("timeout", _ui->connTimeout->value());
 	cfg.setValue("dnssd", _ui->dnssd->isChecked());
 	cfg.setValue("upnp", _ui->useupnp->isChecked());

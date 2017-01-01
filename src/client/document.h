@@ -135,13 +135,14 @@ signals:
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
 	void serverSpaceLowChanged(bool isLow);
+	void autoResetTooLarge(int maxSize);
 
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
-	void sendResetSession(const canvas::StateSavepoint &savepoint);
+	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
 	void sendLockSession(bool lock);
 	void sendLockImageCommands(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);

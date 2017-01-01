@@ -120,6 +120,16 @@ QList<uint8_t> UserListModel::lockList() const
 	return locks;
 }
 
+int UserListModel::getPrimeOp() const
+{
+	int lowest = 255;
+	for(const User &u : m_users) {
+		if(u.isOperator && u.id < lowest)
+			lowest = u.id;
+	}
+	return lowest;
+}
+
 void UserListModel::removeUser(int id)
 {
 	for(int pos=0;pos<m_users.count();++pos) {

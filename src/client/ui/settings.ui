@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>608</width>
-    <height>501</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -500,14 +500,14 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Session history:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QDoubleSpinBox" name="historylimit">
          <property name="specialValueText">
           <string>unlimited</string>
@@ -529,14 +529,14 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Timeout:</string>
+          <string>Connection timeout:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="8" column="1">
         <widget class="QSpinBox" name="connTimeout">
          <property name="suffix">
           <string> s</string>
@@ -572,6 +572,39 @@
           <string>Never publish user list</string>
          </property>
         </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="lowspaceAutoreset">
+         <property name="text">
+          <string>Automatically reset when space is low</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <spacer name="verticalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="1">
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

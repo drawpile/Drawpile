@@ -144,6 +144,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 
+	connect(m_doc, &Document::autoResetTooLarge, [this](int maxSize) {
+		m_doc->sendLockSession(true);
+		auto *msgbox = new QMessageBox(
+					QMessageBox::Warning,
+					tr("Server out of space"),
+					tr("Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)\nSimplify the canvas and reset manually before space runs out.")
+						.arg(maxSize / double(1024*1024), 0, 'f', 2),
+					QMessageBox::Ok,
+					this
+					);
+		msgbox->show();
+	});
 
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.

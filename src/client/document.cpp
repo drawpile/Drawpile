@@ -25,6 +25,7 @@
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 #include "canvas/loader.h"
+#include "canvas/userlist.h"
 #include "tools/toolcontroller.h"
 #include "utils/settings.h"
 #include "utils/images.h"
@@ -176,13 +177,20 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 void Document::onServerHistoryLimitReceived(int maxSpace)
 {
-	Q_UNUSED(maxSpace);
 	if(!m_serverSpaceLow) {
 		m_serverSpaceLow = true;
 		emit serverSpaceLowChanged(true);
 	}
 
-	// TODO autoreset
+	if(m_client->myId() == m_canvas->userlist()->getPrimeOp() &&
+		QSettings().value("settings/server/autoreset", true).toBool())
+	{
+		// We're the "prime operator", meaning it's our responsibility
+		// to handle the autoreset
+		if(!sendResetSession(canvas::StateSavepoint(), maxSpace)) {
+			emit autoResetTooLarge(maxSpace);
+		}
+	}
 }
 
 void Document::setSessionClosed(bool closed)
@@ -381,10 +389,15 @@ void Document::sendPasswordChange(const QString &password)
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
 }
 
-void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
+/**
+ * @brief Generate a reset snapshot and send a reset request
+ *
+ * @param savepoint the savepoint from which to generate. Use a null savepoint to generate from the current state
+ * @param sizelimit if larger than zero, the snapshot must not exceed this size
+ * @return true on success
+ */
+bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit)
 {
-	m_client->sendMessage(net::command::serverCommand("reset-session"));
-
 	if(!savepoint) {
 		qInfo("Preparing session reset from current canvas content");
 		m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
@@ -392,6 +405,21 @@ void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
 		qInfo("Preparing session reset from a savepoint");
 		m_resetstate = savepoint.initCommands();
 	}
+
+	if(sizelimit>0) {
+		int resetsize = 0;
+		for(protocol::MessagePtr msg : m_resetstate)
+			resetsize += msg->length();
+
+		if(resetsize > sizelimit) {
+			qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", resetsize, sizelimit);
+			m_resetstate.clear();
+			return false;
+		}
+	}
+
+	m_client->sendMessage(net::command::serverCommand("reset-session"));
+	return true;
 }
 
 void Document::sendLockSession(bool lock)

@@ -170,7 +170,7 @@ void Session::joinUser(Client *user, bool host)
 		protocol::ServerReply warning;
 		warning.type = protocol::ServerReply::SIZELIMITWARNING;
 		warning.reply["size"] = int(m_mainstream.lengthInBytes());
-		warning.reply["maxSize"] = int(m_historylimit);
+		warning.reply["maxSize"] = int(m_historyLimitWarning);
 		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
 		logger::info() << "notified new user about the limit";
 	}
@@ -343,7 +343,7 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 			protocol::ServerReply warning;
 			warning.type = protocol::ServerReply::SIZELIMITWARNING;
 			warning.reply["size"] = int(hlen);
-			warning.reply["maxSize"] = int(m_historylimit);
+			warning.reply["maxSize"] = int(m_historyLimitWarning);
 
 			protocol::MessagePtr msg(new protocol::Command(0, warning));
 			for(Client *c : m_clients) {
