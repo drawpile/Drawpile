@@ -1297,6 +1297,24 @@ void MainWindow::changeSessionPassword()
 		m_doc->sendPasswordChange(newpass);
 }
 
+void MainWindow::changeSessionMaxUsers()
+{
+	bool ok;
+	int newLimit = QInputDialog::getInt(
+			this,
+			tr("Session user limit"),
+			tr("Set the maximum number of simultaneous users to allow in.\nChanging this does not affect current users."),
+			m_doc->sessionMaxUserCount(),
+			1,
+			254,
+			1,
+			&ok
+			);
+
+	if(ok)
+		m_doc->sendUserLimitChange(newLimit);
+}
+
 void MainWindow::resetSession()
 {
 	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
@@ -2264,6 +2282,8 @@ void MainWindow::setupActions()
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
+	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User limit: %1...").arg(254));
+
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 
 	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
@@ -2275,6 +2295,7 @@ void MainWindow::setupActions()
 	_admintools->addAction(imagecmdlock);
 	_admintools->addAction(changetitle);
 	_admintools->addAction(changepassword);
+	_admintools->addAction(changemaxusers);
 	_admintools->addAction(resetsession);
 	_admintools->setEnabled(false);
 
@@ -2286,6 +2307,11 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::sessionPasswordChanged, [changepassword](bool hasPassword) {
 		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
 	});
+	connect(changemaxusers, &QAction::triggered, this, &MainWindow::changeSessionMaxUsers);
+	connect(m_doc, &Document::sessionMaxUserCountChanged, [changemaxusers](int count) {
+		changemaxusers->setText(tr("User limit: %1...").arg(count));
+	});
+
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 	connect(imagecmdlock, &QAction::triggered, m_doc, &Document::sendLockImageCommands);
 	connect(m_layerctrlmode, &QActionGroup::triggered, [this](QAction *action) {
@@ -2306,14 +2332,19 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(join);
 	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
+	sessionmenu->addAction(resetsession);
+	sessionmenu->addSeparator();
 
 	QMenu *layerctrlmenu = sessionmenu->addMenu(tr("Layer Controls"));
 	layerctrlmenu->addActions(m_layerctrlmode->actions());
-	sessionmenu->addAction(changetitle);
-	sessionmenu->addAction(changepassword);
-	sessionmenu->addAction(resetsession);
+
+	QMenu *sessionSettingsMenu = sessionmenu->addMenu(tr("Settings"));
+	sessionSettingsMenu->addAction(changetitle);
+	sessionSettingsMenu->addAction(changepassword);
+	sessionSettingsMenu->addAction(changemaxusers);
+	sessionSettingsMenu->addAction(closesession);
+
 	sessionmenu->addAction(imagecmdlock);
-	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(locksession);
 
 	//

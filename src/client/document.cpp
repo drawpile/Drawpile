@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,7 +54,8 @@ Document::Document(QObject *parent)
 	  m_canAutosave(false),
 	  m_sessionClosed(false),
 	  m_sessionPreserveChat(false),
-	  m_sessionPasswordProtected(false)
+	  m_sessionPasswordProtected(false),
+	  m_sessionMaxUserCount(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -173,6 +174,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("hasPassword"))
 		setSessionPasswordProtected(config["hasPassword"].toBool());
+
+	if(config.contains("maxUserCount"))
+		setSessionMaxUserCount(config["maxUserCount"].toInt());
 }
 
 void Document::onServerHistoryLimitReceived(int maxSpace)
@@ -198,6 +202,14 @@ void Document::setSessionClosed(bool closed)
 	if(m_sessionClosed != closed) {
 		m_sessionClosed = closed;
 		emit sessionClosedChanged(closed);
+	}
+}
+
+void Document::setSessionMaxUserCount(int count)
+{
+	if(m_sessionMaxUserCount != count) {
+		m_sessionMaxUserCount = count;
+		emit sessionMaxUserCountChanged(count);
 	}
 }
 
@@ -386,6 +398,13 @@ void Document::sendPasswordChange(const QString &password)
 {
 	QJsonObject kwargs;
 	kwargs["password"] = password;
+	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+}
+
+void Document::sendUserLimitChange(int newLimit)
+{
+	QJsonObject kwargs;
+	kwargs["maxUserCount"] = newLimit;
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
 }
 

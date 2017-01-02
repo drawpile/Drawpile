@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
+	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
 	Q_OBJECT
 public:
 	explicit Document(QObject *parent = 0);
@@ -114,6 +115,7 @@ public:
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
+	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 
 	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
 
@@ -134,6 +136,7 @@ signals:
 	void sessionPreserveChatChanged(bool pc);
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
+	void sessionMaxUserCountChanged(int count);
 	void serverSpaceLowChanged(bool isLow);
 	void autoResetTooLarge(int maxSize);
 
@@ -142,6 +145,7 @@ public slots:
 	void sendPointerMove(const QPointF &point);
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
+	void sendUserLimitChange(int newLimit);
 	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
 	void sendLockSession(bool lock);
 	void sendLockImageCommands(bool lock);
@@ -182,6 +186,7 @@ private:
 	void setSessionClosed(bool closed);
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
+	void setSessionMaxUserCount(int count);
 
 	void copyFromLayer(int layer);
 
@@ -207,6 +212,8 @@ private:
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;
 	bool m_serverSpaceLow;
+
+	int m_sessionMaxUserCount;
 };
 
 #endif // DOCUMENT_H

@@ -6,6 +6,7 @@
  * Server settings are now stored in an SQLite database
  * Most server settings can now be changed via API and persist in the database
  * Client now automatically resets the session when server space is running low
+ * Session user limit can now be changed via the GUI
 
 2016-12-17 Version 1.0.6
  * Server: non-persistent session idle time can now also be limited

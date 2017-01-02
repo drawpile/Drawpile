@@ -113,6 +113,7 @@ public slots:
 	static void showSettings();
 	void changeSessionTitle();
 	void changeSessionPassword();
+	void changeSessionMaxUsers();
 	void resetSession();
 
 	void host();
