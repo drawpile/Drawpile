@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -94,6 +94,31 @@ void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	client->session()->setSessionConfig(kwargs);
 }
 
+void getBanList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+
+	// The banlist is not usually included in the sessionconf.
+	// Moderators and local users get to see the actual IP addresses too
+	protocol::ServerReply msg;
+	msg.type = protocol::ServerReply::SESSIONCONF;
+	QJsonObject conf;
+	conf["banlist"]= client->session()->banlist().toJson(client->isModerator() || client->peerAddress().isLoopback());
+	msg.reply["config"] = conf;
+	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
+}
+
+void removeBan(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: ban entry ID");
+
+	client->session()->removeBan(args.at(0).toInt(), client->username());
+	getBanList(client, QJsonArray(), QJsonObject());
+}
+
 Client *_getClient(Session *session, const QJsonValue &idOrName)
 {
 	Client *c = nullptr;
@@ -130,6 +155,7 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(kwargs["ban"].toBool()) {
 		client->session()->addBan(target, client->username());
+		getBanList(client, QJsonArray(), QJsonObject());
 	}
 
 	target->disconnectKick(client->username());
@@ -251,6 +277,9 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("announce-session", announceSession)
 		<< SrvCommand("unlist-session", unlistSession)
+
+		<< SrvCommand("get-banlist", getBanList).nonOp()
+		<< SrvCommand("remove-ban", removeBan)
 
 		<< SrvCommand("who", listUsers)
 		<< SrvCommand("status", sessionStatus)

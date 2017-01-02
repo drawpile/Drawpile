@@ -63,6 +63,7 @@ set (
 	net/serverthread.cpp
 	net/builtinserver.cpp
 	net/sessionlistingmodel.cpp
+	net/banlistmodel.cpp
 	net/commands.cpp
 	utils/archive.cpp
 	utils/palette.cpp
@@ -116,6 +117,7 @@ set (
 	dialogs/sessionlistingdialog.cpp
 	dialogs/flipbook.cpp
 	dialogs/resetdialog.cpp
+	dialogs/banlistdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp

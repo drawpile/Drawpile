@@ -234,6 +234,13 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 	}
 }
 
+void Session::removeBan(int entryId, const QString &removedBy)
+{
+	if(m_banlist.removeBan(entryId)) {
+		logger::info() << this << "ban entry" << entryId << "removed by" << removedBy;
+	}
+}
+
 void Session::setClosed(bool closed)
 {
 	if(m_closed != closed) {

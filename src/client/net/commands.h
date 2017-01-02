@@ -57,6 +57,18 @@ protocol::MessagePtr serverCommand(const QString &cmd, const QJsonArray &args=QJ
 protocol::MessagePtr kick(int target, bool ban);
 
 /**
+ * @brief Get a request to fetch the current banlist
+ */
+protocol::MessagePtr fetchBanlist();
+
+/**
+ * @brief Get a command to request the removal of the specified IP ban
+ * @param entryId
+ * @return
+ */
+protocol::MessagePtr unban(int entryId);
+
+/**
  * @brief Get a session title change command
  * @param title the new title
  */

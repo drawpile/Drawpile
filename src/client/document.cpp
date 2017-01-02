@@ -21,6 +21,7 @@
 
 #include "net/client.h"
 #include "net/commands.h"
+#include "net/banlistmodel.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
@@ -60,6 +61,7 @@ Document::Document(QObject *parent)
 	// Initialize
 	m_client = new net::Client(this);
 	m_toolctrl = new tools::ToolController(m_client, this);
+	m_banlist = new BanlistModel(this);
 
 	m_autosaveTimer = new QTimer(this);
 	m_autosaveTimer->setSingleShot(true);
@@ -159,6 +161,7 @@ void Document::onServerDisconnect()
 		m_canvas->disconnectedFromServer();
 		m_canvas->setTitle(QString());
 	}
+	m_banlist->clear();
 }
 
 void Document::onSessionConfChanged(const QJsonObject &config)
@@ -177,6 +180,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
+
+	if(config.contains("banlist"))
+		m_banlist->updateBans(config["banlist"].toArray());
 }
 
 void Document::onServerHistoryLimitReceived(int maxSpace)
@@ -495,6 +501,11 @@ void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
 	msgs << protocol::MessagePtr(new protocol::CanvasResize(0, top, right, bottom, left));
 	m_client->sendMessages(msgs);
+}
+
+void Document::sendUnban(int entryId)
+{
+	m_client->sendMessage(net::command::unban(entryId));
 }
 
 

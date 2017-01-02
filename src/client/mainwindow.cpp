@@ -113,6 +113,7 @@
 #include "dialogs/flipbook.h"
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/resetdialog.h"
+#include "dialogs/banlistdialog.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -1317,6 +1318,15 @@ void MainWindow::changeSessionMaxUsers()
 		m_doc->sendUserLimitChange(newLimit);
 }
 
+void MainWindow::showBanListDialog()
+{
+	m_doc->client()->sendMessage(net::command::fetchBanlist());
+	auto *dlg = new dialogs::BanlistDialog(m_doc->banlist(), m_doc->canvas()->aclFilter()->isLocalUserOperator(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &dialogs::BanlistDialog::requestBanRemoval, m_doc, &Document::sendUnban);
+	dlg->show();
+}
+
 void MainWindow::resetSession()
 {
 	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
@@ -1369,6 +1379,7 @@ void MainWindow::onServerConnected()
 	// Enable connection related actions
 	getAction("hostsession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(true);
+	getAction("viewbanlist")->setEnabled(true);
 
 	// Disable UI until login completes
 	_view->setEnabled(false);
@@ -1382,6 +1393,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 {
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
+	getAction("viewbanlist")->setEnabled(false);
 	_admintools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
 	m_layerctrlmode->setEnabled(false);
@@ -2284,6 +2296,8 @@ void MainWindow::setupActions()
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
+	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
+	viewbanlist->setEnabled(false);
 	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User limit: %1...").arg(254));
 	QAction *keepchat = makeAction("keepchat", 0, tr("Keep chat history"), QString(), QKeySequence(), true);
 
@@ -2312,6 +2326,7 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::sessionPasswordChanged, [changepassword](bool hasPassword) {
 		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
 	});
+	connect(viewbanlist, &QAction::triggered, this, &MainWindow::showBanListDialog);
 	connect(changemaxusers, &QAction::triggered, this, &MainWindow::changeSessionMaxUsers);
 	connect(m_doc, &Document::sessionMaxUserCountChanged, [changemaxusers](int count) {
 		changemaxusers->setText(tr("User limit: %1...").arg(count));
@@ -2348,6 +2363,7 @@ void MainWindow::setupActions()
 	QMenu *sessionSettingsMenu = sessionmenu->addMenu(tr("Settings"));
 	sessionSettingsMenu->addAction(changetitle);
 	sessionSettingsMenu->addAction(changepassword);
+	sessionSettingsMenu->addAction(viewbanlist);
 	sessionSettingsMenu->addAction(changemaxusers);
 	sessionSettingsMenu->addAction(keepchat);
 	sessionSettingsMenu->addAction(closesession);

@@ -209,14 +209,23 @@ public:
 	Client *getClientByUsername(const QString &username);
 
 	/**
+	 * @brief Get the session internal ban list
+	 *
+	 * Don't manipulate the banlist directly, instead use tha addBan and
+	 * removeBan functions so the events are logged properly.
+	 */
+	const SessionBanList &banlist() const { return m_banlist; }
+
+	/**
 	 * @brief Add an in-session IP ban for the given client
 	 */
 	void addBan(const Client *client, const QString &bannedBy);
 
 	/**
-	 * @brief Check if the given IP address is banned from this session
+	 * @brief Remove a session specific IP ban
+	 * @param entryId ban entry ID
 	 */
-	bool isBanned(const QHostAddress &address) { return m_banlist.isBanned(address); }
+	void removeBan(int entryId, const QString &removedBy);
 
 	/**
 	 * @brief Get the number of clients in the session

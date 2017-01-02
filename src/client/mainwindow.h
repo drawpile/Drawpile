@@ -114,6 +114,7 @@ public slots:
 	void changeSessionTitle();
 	void changeSessionPassword();
 	void changeSessionMaxUsers();
+	void showBanListDialog();
 	void resetSession();
 
 	void host();

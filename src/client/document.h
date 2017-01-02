@@ -36,6 +36,7 @@ namespace canvas {
 namespace net { class Client; }
 namespace recording { class Writer; }
 namespace tools { class ToolController; }
+class BanlistModel;
 
 /**
  * @brief An active document and its associated data, including the network connection
@@ -47,6 +48,7 @@ namespace tools { class ToolController; }
 class Document : public QObject
 {
 	Q_PROPERTY(canvas::CanvasModel* canvas READ canvas() NOTIFY canvasChanged)
+	Q_PROPERTY(BanlistModel* banlist READ banlist() CONSTANT)
 	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
 	Q_PROPERTY(bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
 	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
@@ -69,6 +71,7 @@ public:
 	canvas::CanvasModel *canvas() const { return m_canvas; }
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
 	net::Client *client() const { return m_client; }
+	BanlistModel *banlist() const { return m_banlist; }
 
 	/**
 	 * @brief (Re)initialize the canvas
@@ -152,6 +155,7 @@ public slots:
 	void sendLockImageCommands(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
+	void sendUnban(int entryId);
 
 	// Tool related functions
 	void undo();
@@ -200,6 +204,7 @@ private:
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;
 	net::Client *m_client;
+	BanlistModel *m_banlist;
 
 	recording::Writer *m_recorder;
 	bool m_autoRecordOnConnect;

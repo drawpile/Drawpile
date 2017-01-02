@@ -359,7 +359,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		if(session->isBanned(m_client->peerAddress())) {
+		if(session->banlist().isBanned(m_client->peerAddress())) {
 			sendError("banned", "You have been banned from this session");
 			return;
 		}

@@ -174,6 +174,16 @@ MessagePtr kick(int target, bool ban)
 	return serverCommand("kick-user", QJsonArray() << target, kwargs);
 }
 
+MessagePtr fetchBanlist()
+{
+	return serverCommand("get-banlist");
+}
+
+MessagePtr unban(int entryid)
+{
+	return serverCommand("remove-ban", QJsonArray() << entryid);
+}
+
 MessagePtr sessionTitle(const QString &title)
 {
 	QJsonObject kwargs;
