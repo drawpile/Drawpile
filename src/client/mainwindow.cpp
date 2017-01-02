@@ -257,8 +257,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
 	chatsplitter->setChildrenCollapsible(false);
-	_chatbox = new widgets::ChatBox(this);
-	chatsplitter->addWidget(_chatbox);
+	m_chatbox = new widgets::ChatBox(this);
+	chatsplitter->addWidget(m_chatbox);
 
 	_userlist = new widgets::UserList(this);
 	chatsplitter->addWidget(_userlist);
@@ -287,10 +287,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network client <-> UI connections
 	connect(_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
 
-	connect(m_doc->client(), &net::Client::serverMessage, _chatbox, &widgets::ChatBox::systemMessage);
+	connect(m_doc->client(), &net::Client::serverMessage, m_chatbox, &widgets::ChatBox::systemMessage);
 	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
 
-	connect(_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
+	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::POLYGONSELECTION))->setView(_view);
@@ -334,7 +334,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
-	connect(m_doc->client(), &net::Client::youWereKicked, _chatbox, &widgets::ChatBox::kicked);
+	connect(m_doc->client(), &net::Client::youWereKicked, m_chatbox, &widgets::ChatBox::kicked);
+
+	connect(m_doc, &Document::sessionPreserveChatChanged, m_chatbox, &widgets::ChatBox::setPreserveMode);
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
@@ -392,14 +394,14 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
 
-	connect(canvas, &canvas::CanvasModel::chatMessageReceived, _chatbox, &widgets::ChatBox::receiveMessage);
+	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(_splitter->sizes().at(1)==0)
 			_statusChatButton->show();
 	});
 
-	connect(canvas, &canvas::CanvasModel::markerMessageReceived, _chatbox, &widgets::ChatBox::receiveMarker);
+	connect(canvas, &canvas::CanvasModel::markerMessageReceived, m_chatbox, &widgets::ChatBox::receiveMarker);
 
 	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, _dock_layers, &docks::LayerList::selectLayer);
 	connect(canvas, &canvas::CanvasModel::colorPicked, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
@@ -409,8 +411,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::userJoined, m_netstatus, &widgets::NetStatus::join);
 	connect(canvas, &canvas::CanvasModel::userLeft, m_netstatus, &widgets::NetStatus::leave);
-	connect(canvas, &canvas::CanvasModel::userJoined, _chatbox, &widgets::ChatBox::userJoined);
-	connect(canvas, &canvas::CanvasModel::userLeft, _chatbox, &widgets::ChatBox::userParted);
+	connect(canvas, &canvas::CanvasModel::userJoined, m_chatbox, &widgets::ChatBox::userJoined);
+	connect(canvas, &canvas::CanvasModel::userLeft, m_chatbox, &widgets::ChatBox::userParted);
 
 	connect(_dock_layers, &docks::LayerList::layerViewModeSelected, canvas, &canvas::CanvasModel::setLayerViewMode);
 
@@ -2175,12 +2177,12 @@ void MainWindow::setupActions()
 
 	connect(_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
-	connect(_chatbox, SIGNAL(expanded(bool)), toggleChat, SLOT(setChecked(bool)));
-	connect(_chatbox, SIGNAL(expanded(bool)), _statusChatButton, SLOT(hide()));
+	connect(m_chatbox, &widgets::ChatBox::expanded, toggleChat, &QAction::setChecked);
+	connect(m_chatbox, &widgets::ChatBox::expanded, _statusChatButton, &QToolButton::hide);
 	connect(toggleChat, &QAction::triggered, [this](bool show) {
 		QList<int> sizes;
 		if(show) {
-			QVariant oldHeight = _chatbox->property("oldheight");
+			QVariant oldHeight = m_chatbox->property("oldheight");
 			if(oldHeight.isNull()) {
 				const int h = height();
 				sizes << h * 2 / 3;
@@ -2190,9 +2192,9 @@ void MainWindow::setupActions()
 				sizes << height() - oh;
 				sizes << oh;
 			}
-			_chatbox->focusInput();
+			m_chatbox->focusInput();
 		} else {
-			_chatbox->setProperty("oldheight", _chatbox->height());
+			m_chatbox->setProperty("oldheight", m_chatbox->height());
 			sizes << 1;
 			sizes << 0;
 		}
@@ -2283,11 +2285,13 @@ void MainWindow::setupActions()
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User limit: %1...").arg(254));
+	QAction *keepchat = makeAction("keepchat", 0, tr("Keep chat history"), QString(), QKeySequence(), true);
+
+	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 
 	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
-	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	_admintools->addAction(locksession);
@@ -2296,6 +2300,7 @@ void MainWindow::setupActions()
 	_admintools->addAction(changetitle);
 	_admintools->addAction(changepassword);
 	_admintools->addAction(changemaxusers);
+	_admintools->addAction(keepchat);
 	_admintools->addAction(resetsession);
 	_admintools->setEnabled(false);
 
@@ -2311,6 +2316,8 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::sessionMaxUserCountChanged, [changemaxusers](int count) {
 		changemaxusers->setText(tr("User limit: %1...").arg(count));
 	});
+	connect(keepchat, &QAction::triggered, m_doc, &Document::sendPreserveChatChange);
+	connect(m_doc, &Document::sessionPreserveChatChanged, keepchat, &QAction::setChecked);
 
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 	connect(imagecmdlock, &QAction::triggered, m_doc, &Document::sendLockImageCommands);
@@ -2342,6 +2349,7 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(changetitle);
 	sessionSettingsMenu->addAction(changepassword);
 	sessionSettingsMenu->addAction(changemaxusers);
+	sessionSettingsMenu->addAction(keepchat);
 	sessionSettingsMenu->addAction(closesession);
 
 	sessionmenu->addAction(imagecmdlock);

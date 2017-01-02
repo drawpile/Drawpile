@@ -222,7 +222,7 @@ void chatMessage(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	chat.reply["user"] = client->id();
 	if(!kwargs.isEmpty())
 		chat.reply["options"] = kwargs;
-	client->session()->addToCommandStream(protocol::MessagePtr(new protocol::Command(0, chat)));
+	client->session()->directToAll(protocol::MessagePtr(new protocol::Command(0, chat)));
 }
 
 void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)

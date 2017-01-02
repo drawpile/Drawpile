@@ -283,6 +283,14 @@ public:
 	void killSession();
 
 	/**
+	 * @brief Send a direct message to all session participants
+	 *
+	 * This bypasses the session history.
+	 * @param msg
+	 */
+	void directToAll(protocol::MessagePtr msg);
+
+	/**
 	 * @brief Send a message to every user of this session
 	 * @param message
 	 * @param alert is this an alert type message?

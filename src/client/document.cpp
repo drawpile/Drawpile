@@ -408,6 +408,13 @@ void Document::sendUserLimitChange(int newLimit)
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
 }
 
+void Document::sendPreserveChatChange(bool keepChat)
+{
+	QJsonObject kwargs;
+	kwargs["preserveChat"] = keepChat;
+	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+}
+
 /**
  * @brief Generate a reset snapshot and send a reset request
  *

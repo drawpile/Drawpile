@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,16 +41,16 @@ public:
 	//! Focus the text input widget
 	void focusInput();
 
+public slots:
 	/**
 	 * @brief Set default message preservation mode
 	 *
 	 * This sets a visual cue that informs the user whether chat messages are preserved
-	 * in the session history or not.
+	 * in the session history or not
 	 *
 	 */
 	void setPreserveMode(bool preservechat);
 
-public slots:
 	//! Display a received message
 	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool action, bool isme, bool islog);
 
@@ -77,7 +77,7 @@ private slots:
 	void sendMessage(const QString &msg);
 
 signals:
-	void message(const QString &msg, bool announcement, bool action);
+	void message(const QString &msg, bool preserve, bool announcement, bool action);
 	void pinMessage(const QString &msg);
 	void expanded(bool isVisible);
 
@@ -85,11 +85,12 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
-	QTextBrowser *_view;
-	ChatLineEdit *_myline;
+	QTextBrowser *m_view;
+	ChatLineEdit *m_myline;
 	QLabel *m_pinned;
-	bool _wasCollapsed;
+	bool m_wasCollapsed;
 	bool m_operator;
+	bool m_preserveChat;
 };
 
 }

@@ -206,7 +206,7 @@ private:
 	docks::InputSettings *_dock_input;
 	docks::LayerList *_dock_layers;
 	docks::ColorBox *_dock_colors;
-	widgets::ChatBox *_chatbox;
+	widgets::ChatBox *m_chatbox;
 	widgets::UserList *_userlist;
 	docks::Navigator *_dock_navigator;
 

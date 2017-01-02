@@ -168,9 +168,24 @@ void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
 	emit sendingBytes(_server->uploadQueueBytes());
 }
 
-void Client::sendChat(const QString &message, bool announce, bool action)
+void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+	if(preserve || announce) {
+		_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+
+	} else {
+		QJsonObject opts;
+		if(action)
+			opts["action"] = true;
+
+		protocol::ServerCommand cmd {
+			"chat",
+			QJsonArray() << message,
+			opts
+		};
+
+		_server->sendMessage(MessagePtr(new protocol::Command(m_myId, cmd.toJson())));
+	}
 }
 
 void Client::sendPinnedChat(const QString &message)

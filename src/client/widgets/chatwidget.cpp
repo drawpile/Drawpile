@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,10 @@
 namespace widgets {
 
 ChatBox::ChatBox(QWidget *parent)
-	:  QWidget(parent), _wasCollapsed(false)
+	:  QWidget(parent),
+	  m_wasCollapsed(false),
+	  m_operator(false),
+	  m_preserveChat(false)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -52,19 +55,19 @@ ChatBox::ChatBox(QWidget *parent)
 		));
 	layout->addWidget(m_pinned, 0);
 
-	_view = new QTextBrowser(this);
-	_view->setOpenExternalLinks(true);
+	m_view = new QTextBrowser(this);
+	m_view->setOpenExternalLinks(true);
 
-	layout->addWidget(_view, 1);
+	layout->addWidget(m_view, 1);
 
-	_myline = new ChatLineEdit(this);
-	layout->addWidget(_myline);
+	m_myline = new ChatLineEdit(this);
+	layout->addWidget(m_myline);
 
 	setLayout(layout);
 
-	connect(_myline, SIGNAL(returnPressed(QString)), this, SLOT(sendMessage(QString)));
+	connect(m_myline, &ChatLineEdit::returnPressed, this, &ChatBox::sendMessage);
 
-	_view->document()->setDefaultStyleSheet(
+	m_view->document()->setDefaultStyleSheet(
 		"p { margin: 5px 0; }"
 		".marker { color: #da4453 }"
 		".sysmsg { color: #fdbc4b }"
@@ -83,6 +86,8 @@ void ChatBox::setPreserveMode(bool preservechat)
 {
 	QString placeholder, color;
 
+	m_preserveChat = preservechat;
+
 	if(preservechat) {
 		placeholder = tr("Chat (recorded)...");
 		color = "#da4453";
@@ -92,7 +97,7 @@ void ChatBox::setPreserveMode(bool preservechat)
 	}
 
 	// Set placeholder text and window style based on the mode
-	_myline->setPlaceholderText(placeholder);
+	m_myline->setPlaceholderText(placeholder);
 	setStyleSheet(QStringLiteral(
 		"QTextEdit, QLineEdit {"
 			"border: none;"
@@ -109,12 +114,12 @@ void ChatBox::setPreserveMode(bool preservechat)
 
 void ChatBox::focusInput()
 {
-	_myline->setFocus();
+	m_myline->setFocus();
 }
 
 void ChatBox::clear()
 {
-	_view->clear();
+	m_view->clear();
 }
 
 void ChatBox::userJoined(int id, const QString &name)
@@ -152,14 +157,14 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool a
 			return;
 	}
 	if(action) {
-		_view->append(
+		m_view->append(
 			"<p class=\"chat action\"> * " + nick.toHtmlEscaped() +
 			" " +
 			htmlutils::linkify(message.toHtmlEscaped()) +
 			"</p>"
 		);
 	} else {
-		_view->append(
+		m_view->append(
 			"<p class=\"chat" + QString(islog ? " log" : "") + "\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
 			nick.toHtmlEscaped() +
 			"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
@@ -167,7 +172,7 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool a
 			"</span></p>"
 		);
 	}
-	if(!_myline->hasFocus())
+	if(!m_myline->hasFocus())
 		notification::playSound(notification::Event::CHAT);
 }
 
@@ -187,7 +192,7 @@ void ChatBox::setPinnedMessage(const QString &message)
 
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
 {
-	_view->append(
+	m_view->append(
 		"<p class=\"marker\"><span class=\"nick\">&lt;" +
 		nick.toHtmlEscaped() +
 		"&gt;</span> <span class=\"msg\">" +
@@ -202,7 +207,7 @@ void ChatBox::receiveMarker(const QString &nick, const QString &message)
 void ChatBox::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);
-	_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
+	m_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
 }
 
 void ChatBox::sendMessage(const QString &msg)
@@ -225,11 +230,11 @@ void ChatBox::sendMessage(const QString &msg)
 
 		} else if(cmd.at(0)=='!') {
 			// public announcement
-			emit message(msg.mid(2), true, false);
+			emit message(msg.mid(2), m_preserveChat, true, false);
 
 		} else if(cmd == "me") {
 			if(!params.isEmpty())
-				emit message(msg.mid(msg.indexOf(' ')+1), false, true);
+				emit message(msg.mid(msg.indexOf(' ')+1), m_preserveChat, false, true);
 
 		} else if(cmd == "pin") {
 			if(!params.isEmpty())
@@ -244,7 +249,7 @@ void ChatBox::sendMessage(const QString &msg)
 
 			utils::DiceRoll result = utils::diceRoll(params);
 			if(result.number>0)
-				emit message("rolls " + result.toString(), false, true);
+				emit message("rolls " + result.toString(), m_preserveChat, false, true);
 			else
 				systemMessage(tr("Invalid dice roll description: %1").arg(params));
 
@@ -263,7 +268,7 @@ void ChatBox::sendMessage(const QString &msg)
 
 	} else {
 		// A normal chat message
-		emit message(msg, false, false);
+		emit message(msg, m_preserveChat, false, false);
 	}
 }
 
@@ -271,11 +276,11 @@ void ChatBox::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
 	if(event->size().height() == 0) {
-		if(!_wasCollapsed)
+		if(!m_wasCollapsed)
 			emit expanded(false);
-		_wasCollapsed = true;
-	} else if(_wasCollapsed) {
-		_wasCollapsed = false;
+		m_wasCollapsed = true;
+	} else if(m_wasCollapsed) {
+		m_wasCollapsed = false;
 		emit expanded(true);
 	}
 }

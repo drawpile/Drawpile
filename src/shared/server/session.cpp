@@ -74,15 +74,12 @@ void Session::switchState(State newstate)
 		m_initUser = -1;
 
 		if(m_state==Reset) {
+			// Inform everyone of the reset
 			protocol::ServerReply resetcmd;
 			resetcmd.type = protocol::ServerReply::RESET;
 			resetcmd.reply["state"] = "reset";
 			resetcmd.message = "Session reset!";
-			MessagePtr resetmsg(new protocol::Command(0, resetcmd));
-
-			// Inform everyone of the reset
-			for(Client *c : m_clients)
-				c->sendDirectMessage(resetmsg);
+			directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
 
 			// Update current state
 			QList<uint8_t> owners;
@@ -356,11 +353,7 @@ void Session::addToCommandStream(protocol::MessagePtr msg)
 			warning.reply["size"] = int(hlen);
 			warning.reply["maxSize"] = int(m_historyLimitWarning);
 
-			protocol::MessagePtr msg(new protocol::Command(0, warning));
-			for(Client *c : m_clients) {
-				c->sendDirectMessage(msg);
-				m_historytLimitWarningSent = true;
-			}
+			directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
 		}
 	}
 }
@@ -429,18 +422,22 @@ void Session::killSession()
 	this->deleteLater();
 }
 
+void Session::directToAll(protocol::MessagePtr msg)
+{
+	for(Client *c : m_clients) {
+		c->sendDirectMessage(msg);
+	}
+}
+
 void Session::messageAll(const QString &message, bool alert)
 {
-	auto msg = protocol::MessagePtr(new protocol::Command(0,
+	directToAll(protocol::MessagePtr(new protocol::Command(0,
 		(protocol::ServerReply {
 			alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
 			message,
 			QJsonObject()
-		}).toJson()));
-
-	for(Client *c : m_clients) {
-		c->sendDirectMessage(msg);
-	}
+		}).toJson()))
+	);
 }
 
 void Session::ensureOperatorExists()

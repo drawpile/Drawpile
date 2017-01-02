@@ -153,13 +153,12 @@ public slots:
 	/**
 	 * @brief Send a chat message
 	 *
-	 * Depending on the "recorded chat" bit, this sends either a real Chat
-	 * message (recorded) or a ServerCommand chat which bypasses the session history.
-	 * @param message
-	 * @param announce
-	 * @param action
+	 * @param message the chat message
+	 * @param preserve include the chat message in session history, or send to everyone directly?
+	 * @param announce is this an announcement type message
+	 * @param action action (/me) type message
 	 */
-	void sendChat(const QString &message, bool announce, bool action);
+	void sendChat(const QString &message, bool preserve, bool announce, bool action);
 	void sendPinnedChat(const QString &message);
 
 signals:

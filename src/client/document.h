@@ -146,6 +146,7 @@ public slots:
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
 	void sendUserLimitChange(int newLimit);
+	void sendPreserveChatChange(bool keepChat);
 	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
 	void sendLockSession(bool lock);
 	void sendLockImageCommands(bool lock);
