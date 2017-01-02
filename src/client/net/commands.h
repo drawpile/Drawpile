@@ -52,8 +52,9 @@ protocol::MessagePtr serverCommand(const QString &cmd, const QJsonArray &args=QJ
 /**
  * @brief Get a "kick user" message
  * @param target ID of the user to kick
+ * @param ban ban the user while we're at it?
  */
-protocol::MessagePtr kick(int target);
+protocol::MessagePtr kick(int target, bool ban);
 
 /**
  * @brief Get a session title change command

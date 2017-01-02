@@ -164,10 +164,14 @@ MessagePtr serverCommand(const QString &cmd, const QJsonArray &args, const QJson
 	return MessagePtr(new Command(0, c));
 }
 
-MessagePtr kick(int target)
+MessagePtr kick(int target, bool ban)
 {
 	Q_ASSERT(target>0 && target<256);
-	return serverCommand("kick-user", QJsonArray() << target);
+	QJsonObject kwargs;
+	if(ban)
+		kwargs["ban"] = true;
+
+	return serverCommand("kick-user", QJsonArray() << target, kwargs);
 }
 
 MessagePtr sessionTitle(const QString &title)

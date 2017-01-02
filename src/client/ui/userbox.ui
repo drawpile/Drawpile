@@ -108,7 +108,7 @@
         <bool>true</bool>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupCenter</enum>
+        <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -118,8 +118,22 @@
         <string>Kick selected user</string>
        </property>
        <property name="icon">
-        <iconset theme="edit-delete">
-         <normaloff>theme:edit-delete.svg</normaloff>theme:edit-delete.svg</iconset>
+        <iconset theme="im-kick-user">
+         <normaloff>theme:im-kick-user.svg</normaloff>theme:im-kick-user.svg</iconset>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="banButton">
+       <property name="toolTip">
+        <string>Ban selected user</string>
+       </property>
+       <property name="icon">
+        <iconset theme="im-ban-user">
+         <normaloff>theme:im-ban-user.svg</normaloff>theme:im-ban-user.svg</iconset>
        </property>
        <property name="groupPosition">
         <enum>GroupedToolButton::GroupRight</enum>

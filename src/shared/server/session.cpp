@@ -225,6 +225,15 @@ Client *Session::getClientByUsername(const QString &username)
 	return nullptr;
 }
 
+void Session::addBan(const Client *target, const QString &bannedBy)
+{
+	Q_ASSERT(target);
+	if(m_banlist.addBan(target->username(), target->peerAddress(), bannedBy)) {
+		logger::info() << this << target->username() << "banned from session by" << bannedBy;
+		// TODO structured logging
+	}
+}
+
 void Session::setClosed(bool closed)
 {
 	if(m_closed != closed) {

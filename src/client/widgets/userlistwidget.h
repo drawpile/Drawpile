@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ signals:
 private slots:
 	void lockSelected();
 	void kickSelected();
+	void kickBanSelected();
 	void opSelected();
 	void undoSelected();
 	void redoSelected();
@@ -65,7 +66,7 @@ private:
 	void setOperatorMode(bool op);
 	QModelIndex currentSelection();
 
-	Ui_UserBox *_ui;
+	Ui_UserBox *m_ui;
 	canvas::CanvasModel *m_canvas;
 };
 

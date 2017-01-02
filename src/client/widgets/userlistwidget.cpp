@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,44 +41,45 @@ namespace widgets {
 UserList::UserList(QWidget *parent)
 	:QWidget(parent)
 {
-	_ui = new Ui_UserBox;
-	_ui->setupUi(this);
+	m_ui = new Ui_UserBox;
+	m_ui->setupUi(this);
 
-	_ui->userlist->setItemDelegate(new UserListDelegate(this));
+	m_ui->userlist->setItemDelegate(new UserListDelegate(this));
 	setOperatorMode(false);
 
-	_ui->userlist->setSelectionMode(QListView::SingleSelection);
+	m_ui->userlist->setSelectionMode(QListView::SingleSelection);
 
-	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
-	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));
-	connect(_ui->undoButton, SIGNAL(clicked()), this, SLOT(undoSelected()));
-	connect(_ui->redoButton, SIGNAL(clicked()), this, SLOT(redoSelected()));
-	connect(_ui->opButton, SIGNAL(clicked()), this, SLOT(opSelected()));
+	connect(m_ui->lockButton, &QAbstractButton::clicked, this, &UserList::lockSelected);
+	connect(m_ui->kickButton, &QAbstractButton::clicked, this, &UserList::kickSelected);
+	connect(m_ui->banButton, &QAbstractButton::clicked, this, &UserList::kickBanSelected);
+	connect(m_ui->undoButton, &QAbstractButton::clicked, this, &UserList::undoSelected);
+	connect(m_ui->redoButton, &QAbstractButton::clicked, this, &UserList::redoSelected);
+	connect(m_ui->opButton, &QAbstractButton::clicked, this, &UserList::opSelected);
 }
 
 void UserList::setOperatorMode(bool op)
 {
-	_ui->lockButton->setEnabled(op);
-	_ui->kickButton->setEnabled(op);
-	_ui->undoButton->setEnabled(op);
-	_ui->redoButton->setEnabled(op);
-	_ui->opButton->setEnabled(op);
+	m_ui->lockButton->setEnabled(op);
+	m_ui->kickButton->setEnabled(op);
+	m_ui->banButton->setEnabled(op);
+	m_ui->undoButton->setEnabled(op);
+	m_ui->redoButton->setEnabled(op);
+	m_ui->opButton->setEnabled(op);
 }
 
 void UserList::setCanvas(canvas::CanvasModel *canvas)
 {
 	m_canvas = canvas;
-	_ui->userlist->setModel(m_canvas->userlist());
+	m_ui->userlist->setModel(m_canvas->userlist());
 
-	connect(m_canvas->userlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(m_canvas->userlist(), &canvas::UserListModel::dataChanged, this, &UserList::dataChanged);
 	connect(m_canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &UserList::opPrivilegeChanged);
-
-	connect(_ui->userlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+	connect(m_ui->userlist->selectionModel(), &QItemSelectionModel::selectionChanged, this, &UserList::selectionChanged);
 }
 
 QModelIndex UserList::currentSelection()
 {
-	QModelIndexList sel = _ui->userlist->selectionModel()->selectedIndexes();
+	QModelIndexList sel = m_ui->userlist->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
 		return QModelIndex();
 	return sel.first();
@@ -89,7 +90,7 @@ void UserList::lockSelected()
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
 		const int id = idx.data().value<canvas::User>().id;
-		bool lock = _ui->lockButton->isChecked();
+		bool lock = m_ui->lockButton->isChecked();
 
 		emit opCommand(m_canvas->userlist()->getLockUserCommand(m_canvas->localUserId(), id, lock));
 	}
@@ -99,7 +100,15 @@ void UserList::kickSelected()
 {
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
-		emit opCommand(net::command::kick(idx.data().value<canvas::User>().id));
+		emit opCommand(net::command::kick(idx.data().value<canvas::User>().id, false));
+	}
+}
+
+void UserList::kickBanSelected()
+{
+	QModelIndex idx = currentSelection();
+	if(idx.isValid()) {
+		emit opCommand(net::command::kick(idx.data().value<canvas::User>().id, true));
 	}
 }
 
@@ -122,7 +131,7 @@ void UserList::opSelected()
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
 		const int id = idx.data().value<canvas::User>().id;
-		bool op = _ui->opButton->isChecked();
+		bool op = m_ui->opButton->isChecked();
 
 		emit opCommand(m_canvas->userlist()->getOpUserCommand(m_canvas->localUserId(), id, op));
 	}
@@ -151,11 +160,12 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const canvas::User &user = currentSelection().data().value<canvas::User>();
-		_ui->lockButton->setChecked(user.isLocked);
-		_ui->opButton->setChecked(user.isOperator);
+		m_ui->lockButton->setChecked(user.isLocked);
+		m_ui->opButton->setChecked(user.isOperator);
 		if(user.isLocal) {
-			_ui->kickButton->setEnabled(false);
-			_ui->opButton->setEnabled(false);
+			m_ui->kickButton->setEnabled(false);
+			m_ui->banButton->setEnabled(false);
+			m_ui->opButton->setEnabled(false);
 		}
 	}
 }

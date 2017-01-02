@@ -27,6 +27,7 @@ set (
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp
+	server/sessionban.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/serverconfig.cpp

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -359,6 +359,10 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
+		if(session->isBanned(m_client->peerAddress())) {
+			sendError("banned", "You have been banned from this session");
+			return;
+		}
 		if(session->isClosed()) {
 			sendError("closed", "This session is closed");
 			return;

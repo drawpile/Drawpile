@@ -34,6 +34,7 @@
 #include "../net/messagestream.h"
 #include "../net/protover.h"
 #include "jsonapi.h"
+#include "sessionban.h"
 
 namespace recording {
 	class Writer;
@@ -206,6 +207,16 @@ public:
 	 * @return
 	 */
 	Client *getClientByUsername(const QString &username);
+
+	/**
+	 * @brief Add an in-session IP ban for the given client
+	 */
+	void addBan(const Client *client, const QString &bannedBy);
+
+	/**
+	 * @brief Check if the given IP address is banned from this session
+	 */
+	bool isBanned(const QHostAddress &address) { return m_banlist.isBanned(address); }
 
 	/**
 	 * @brief Get the number of clients in the session
@@ -414,6 +425,7 @@ private:
 	uint m_resetstreamsize;
 
 	sessionlisting::Announcement m_publicListing;
+	SessionBanList m_banlist;
 
 	int m_lastUserId;
 
