@@ -1446,6 +1446,7 @@ void MainWindow::onServerLogin()
 	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
 	_view->setEnabled(true);
+	getAction("persistentsession")->setEnabled(m_doc->client()->serverSuppotsPersistence());
 	setDrawingToolsEnabled(true);
 }
 
@@ -2300,7 +2301,7 @@ void MainWindow::setupActions()
 	viewbanlist->setEnabled(false);
 	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User limit: %1...").arg(254));
 	QAction *keepchat = makeAction("keepchat", 0, tr("Keep chat history"), QString(), QKeySequence(), true);
-
+	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist without users"), QString(), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
@@ -2309,6 +2310,7 @@ void MainWindow::setupActions()
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	_admintools->addAction(locksession);
+	_admintools->addAction(persistentsession);
 	_admintools->addAction(closesession);
 	_admintools->addAction(imagecmdlock);
 	_admintools->addAction(changetitle);
@@ -2345,8 +2347,11 @@ void MainWindow::setupActions()
 		}
 	});
 
+	connect(persistentsession, &QAction::triggered, m_doc, &Document::sendPersistentSession);
+	connect(m_doc, &Document::sessionPersistentChanged, persistentsession, &QAction::setChecked);
 	connect(closesession, &QAction::triggered, m_doc, &Document::sendCloseSession);
 	connect(m_doc, &Document::sessionClosedChanged, closesession, &QAction::setChecked);
+
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
@@ -2366,6 +2371,7 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(viewbanlist);
 	sessionSettingsMenu->addAction(changemaxusers);
 	sessionSettingsMenu->addAction(keepchat);
+	sessionSettingsMenu->addAction(persistentsession);
 	sessionSettingsMenu->addAction(closesession);
 
 	sessionmenu->addAction(imagecmdlock);

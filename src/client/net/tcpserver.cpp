@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,79 +33,78 @@
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
-	_localDisconnect(false)
+	Server(true, parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
+	m_localDisconnect(false), m_supportsPersistence(false)
 {
-	_socket = new QSslSocket(this);
+	m_socket = new QSslSocket(this);
 
-	QSslConfiguration sslconf = _socket->sslConfiguration();
+	QSslConfiguration sslconf = m_socket->sslConfiguration();
 	sslconf.setSslOption(QSsl::SslOptionDisableCompression, false);
-	_socket->setSslConfiguration(sslconf);
+	m_socket->setSslConfiguration(sslconf);
 
-	_msgqueue = new protocol::MessageQueue(_socket, this);
-	_msgqueue->setDecodeOpaque(true);
+	m_msgqueue = new protocol::MessageQueue(m_socket, this);
+	m_msgqueue->setDecodeOpaque(true);
 
-	_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
-	_msgqueue->setPingInterval(15 * 1000);
+	m_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
+	m_msgqueue->setPingInterval(15 * 1000);
 
-	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
-	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
-	connect(_socket, &QSslSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
+	connect(m_socket, &QSslSocket::disconnected, this, &TcpServer::handleDisconnect);
+	connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpServer::handleSocketError);
+	connect(m_socket, &QSslSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
 		if(state==QAbstractSocket::ClosingState)
 			emit loggingOut();
 	});
 
-
-	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
-	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
-	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
-	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
-	connect(_msgqueue, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
-	connect(_msgqueue, SIGNAL(pingPong(qint64)), this, SIGNAL(lagMeasured(qint64)));
+	connect(m_msgqueue, &protocol::MessageQueue::messageAvailable, this, &TcpServer::handleMessage);
+	connect(m_msgqueue, &protocol::MessageQueue::bytesReceived, this, &TcpServer::bytesReceived);
+	connect(m_msgqueue, &protocol::MessageQueue::bytesSent, this, &TcpServer::bytesSent);
+	connect(m_msgqueue, &protocol::MessageQueue::badData, this, &TcpServer::handleBadData);
+	connect(m_msgqueue, &protocol::MessageQueue::expectingBytes, this, &TcpServer::expectingBytes);
+	connect(m_msgqueue, &protocol::MessageQueue::pingPong, this, &TcpServer::lagMeasured);
 }
 
 void TcpServer::login(LoginHandler *login)
 {
-	_url = login->url();
-	_loginstate = login;
-	_loginstate->setParent(this);
-	_loginstate->setServer(this);
-	_socket->connectToHost(login->url().host(), login->url().port(DRAWPILE_PROTO_DEFAULT_PORT));
+	m_url = login->url();
+	m_loginstate = login;
+	m_loginstate->setParent(this);
+	m_loginstate->setServer(this);
+	m_socket->connectToHost(login->url().host(), login->url().port(DRAWPILE_PROTO_DEFAULT_PORT));
 }
 
 void TcpServer::logout()
 {
-	_localDisconnect = true;
-	_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
+	m_localDisconnect = true;
+	m_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
 }
 
 int TcpServer::uploadQueueBytes() const
 {
-	return _msgqueue->uploadQueueBytes();
+	return m_msgqueue->uploadQueueBytes();
 }
 
-void TcpServer::sendMessage(protocol::MessagePtr msg)
+void TcpServer::sendMessage(const protocol::MessagePtr &msg)
 {
-	_msgqueue->send(msg);
+	m_msgqueue->send(msg);
 }
 
-void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
+void TcpServer::sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs)
 {
 	qDebug() << "sending" << msgs.length() << "snapshot messages";
 	for(protocol::MessagePtr msg : msgs)
-		_msgqueue->send(msg);
+		m_msgqueue->send(msg);
 
 	protocol::ServerCommand cmd;
 	cmd.cmd = "init-complete";
-	_msgqueue->send(protocol::MessagePtr(new protocol::Command(0, cmd)));
+	m_msgqueue->send(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }
 
 void TcpServer::handleMessage()
 {
-	while(_msgqueue->isPending()) {
-		protocol::MessagePtr msg = _msgqueue->getPending();
-		if(_loginstate)
-			_loginstate->receiveMessage(msg);
+	while(m_msgqueue->isPending()) {
+		protocol::MessagePtr msg = m_msgqueue->getPending();
+		if(m_loginstate)
+			m_loginstate->receiveMessage(msg);
 		else
 			emit messageReceived(msg);
 	}
@@ -114,26 +113,26 @@ void TcpServer::handleMessage()
 void TcpServer::handleBadData(int len, int type)
 {
 	qWarning() << "Received" << len << "bytes of unknown message type" << (unsigned int)type;
-	_error = tr("Received invalid data");
-	_socket->abort();
+	m_error = tr("Received invalid data");
+	m_socket->abort();
 }
 
 void TcpServer::handleDisconnect()
 {
-	emit serverDisconnected(_error, _errorcode, _localDisconnect);
+	emit serverDisconnected(m_error, m_errorcode, m_localDisconnect);
 }
 
 void TcpServer::handleSocketError()
 {
-	qWarning() << "Socket error:" << _socket->errorString();
+	qWarning() << "Socket error:" << m_socket->errorString();
 
-	if(_socket->error() == QTcpSocket::RemoteHostClosedError)
+	if(m_socket->error() == QTcpSocket::RemoteHostClosedError)
 		return;
 
-	if(_error.isEmpty())
-		_error = _socket->errorString();
-	if(_socket->state() != QTcpSocket::UnconnectedState)
-		_socket->disconnectFromHost();
+	if(m_error.isEmpty())
+		m_error = m_socket->errorString();
+	if(m_socket->state() != QTcpSocket::UnconnectedState)
+		m_socket->disconnectFromHost();
 	else
 		handleDisconnect();
 }
@@ -141,24 +140,27 @@ void TcpServer::handleSocketError()
 void TcpServer::loginFailure(const QString &message, const QString &errorcode)
 {
 	qWarning() << "Login failed:" << message;
-	_error = message;
-	_errorcode = errorcode;
-	_localDisconnect = errorcode == "CANCELLED";
-	_socket->disconnectFromHost();
+	m_error = message;
+	m_errorcode = errorcode;
+	m_localDisconnect = errorcode == "CANCELLED";
+	m_socket->disconnectFromHost();
 }
 
 void TcpServer::loginSuccess()
 {
-	qDebug() << "logged in to session" << _loginstate->sessionId() << ". Got user id" << _loginstate->userId();
-	emit loggedIn(_loginstate->sessionId(), _loginstate->userId(), _loginstate->mode() == LoginHandler::JOIN);
+	qDebug() << "logged in to session" << m_loginstate->sessionId() << ". Got user id" << m_loginstate->userId();
 
-	_loginstate->deleteLater();
-	_loginstate = 0;
+	m_supportsPersistence = m_loginstate->supportsPersistence();
+
+	emit loggedIn(m_loginstate->sessionId(), m_loginstate->userId(), m_loginstate->mode() == LoginHandler::JOIN);
+
+	m_loginstate->deleteLater();
+	m_loginstate = nullptr;
 }
 
 QSslCertificate TcpServer::hostCertificate() const
 {
-	return _socket->peerCertificate();
+	return m_socket->peerCertificate();
 }
 
 }

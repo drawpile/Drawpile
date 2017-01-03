@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,32 +19,31 @@
 #ifndef DP_NET_LOOPBACKSERVER_H
 #define DP_NET_LOOPBACKSERVER_H
 
-#include <QObject>
-
 #include "server.h"
+
+#include <QSslCertificate>
 
 namespace net {
 
 /**
  * \brief Loopback sever for local single user mode
  */
-class LoopbackServer : public QObject, public Server
+class LoopbackServer : public Server
 {
 	Q_OBJECT
 public:
-	explicit LoopbackServer(QObject *parent=0);
+	explicit LoopbackServer(QObject *parent=nullptr);
 	
-	/**
-	 * \brief Send a message to the server
-	 */
-	void sendMessage(protocol::MessagePtr msg);
+	void sendMessage(const protocol::MessagePtr &msg) override;
+	void sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs) override;
+	void logout() override;
 
-	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
+	bool isLoggedIn() const override { return false; }
+	int uploadQueueBytes() const override { return 0; }
+	Security securityLevel() const override { return NO_SECURITY; }
+	QSslCertificate hostCertificate() const override { return QSslCertificate(); }
+	bool supportsPersistence() const override { return false; }
 
-	void logout();
-
-signals:
-	void messageReceived(protocol::MessagePtr message);
 };
 
 

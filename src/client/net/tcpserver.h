@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 #include "server.h"
 
-#include <QObject>
 #include <QUrl>
 
 class QSslSocket;
@@ -34,39 +33,40 @@ namespace net {
 
 class LoginHandler;
 
-class TcpServer : public QObject, public Server
+class TcpServer : public Server
 {
 	Q_OBJECT
 	friend class LoginHandler;
 public:
-	explicit TcpServer(QObject *parent = 0);
+	explicit TcpServer(QObject *parent=nullptr);
 
 	void login(LoginHandler *login);
-	void logout();
+	void logout() override;
 
-	void sendMessage(protocol::MessagePtr msg);
-	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
+	void sendMessage(const protocol::MessagePtr &msg) override;
+	void sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs) override;
 
-	bool isLoggedIn() const { return _loginstate == 0; }
+	bool isLoggedIn() const { return m_loginstate == nullptr; }
 
-	int uploadQueueBytes() const;
+	int uploadQueueBytes() const override;
 
 	void startTls();
 
-	virtual Security securityLevel() const { return _securityLevel; }
-	virtual QSslCertificate hostCertificate() const;
+	Security securityLevel() const override { return m_securityLevel; }
+	QSslCertificate hostCertificate() const override;
 
-	QUrl url() const { return _url; }
+	bool supportsPersistence() const override { return m_supportsPersistence; }
+
+	QUrl url() const { return m_url; }
 
 signals:
-	void loggedIn(QString sessionId, int userid, bool join);
+	void loggedIn(const QString &sessionId, int userid, bool join);
 	void loggingOut();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
 	void expectingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
-	void messageReceived(protocol::MessagePtr message);
 
 	void lagMeasured(qint64 lag);
 
@@ -81,13 +81,14 @@ private slots:
 	void handleSocketError();
 
 private:
-	QUrl _url;
-	QSslSocket *_socket;
-	protocol::MessageQueue *_msgqueue;
-	LoginHandler *_loginstate;
-	QString _error, _errorcode;
-	Security _securityLevel;
-	bool _localDisconnect;
+	QUrl m_url;
+	QSslSocket *m_socket;
+	protocol::MessageQueue *m_msgqueue;
+	LoginHandler *m_loginstate;
+	QString m_error, m_errorcode;
+	Security m_securityLevel;
+	bool m_localDisconnect;
+	bool m_supportsPersistence;
 };
 
 }

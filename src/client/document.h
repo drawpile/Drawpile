@@ -27,6 +27,7 @@
 
 class QString;
 class QTimer;
+class QJsonValue;
 
 namespace canvas {
 	class CanvasModel;
@@ -57,6 +58,7 @@ class Document : public QObject
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
 	Q_PROPERTY(bool serverSpaceLow READ isServerSpaceLow NOTIFY serverSpaceLowChanged)
 
+	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY sessionPersistentChanged)
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
@@ -115,6 +117,7 @@ public:
 	bool isDirty() const { return m_dirty; }
 	bool isServerSpaceLow() const { return m_serverSpaceLow; }
 
+	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
@@ -137,6 +140,7 @@ signals:
 
 	void sessionTitleChanged(const QString &title);
 	void sessionPreserveChatChanged(bool pc);
+	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
 	void sessionMaxUserCountChanged(int count);
@@ -146,6 +150,7 @@ signals:
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
+	void sendPersistentSession(bool p);
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
 	void sendUserLimitChange(int newLimit);
@@ -188,10 +193,13 @@ private slots:
 	void autosaveNow();
 private:
 	void setCurrentFilename(const QString &filename);
+	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
 	void setSessionMaxUserCount(int count);
+
+	void sendSessionConf(const QString &key, const QJsonValue &value);
 
 	void copyFromLayer(int layer);
 
@@ -214,6 +222,7 @@ private:
 	bool m_canAutosave;
 	QTimer *m_autosaveTimer;
 
+	bool m_sessionPersistent;
 	bool m_sessionClosed;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;

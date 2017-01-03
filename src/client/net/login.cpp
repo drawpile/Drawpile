@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2016 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -70,7 +70,10 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_layerctrllock(true),
 	  m_state(EXPECT_HELLO),
 	  m_multisession(false),
-	  m_tls(false)
+	  m_tls(false),
+	  m_canPersist(false),
+	  m_needUserPassword(false),
+	  m_needHostPassword(false)
 {
 	m_sessions = new LoginSessionModel(this);
 
@@ -174,6 +177,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	m_needHostPassword = false;
 	m_mustAuth = false;
 	m_needUserPassword = false;
+	m_canPersist = false;
 
 	for(const QJsonValue &flag : flags) {
 		if(flag == "MULTI") {
@@ -185,7 +189,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 		} else if(flag == "SECURE") {
 			mustSecure = true;
 		} else if(flag == "PERSIST") {
-			// TODO indicate persistent session support
+			m_canPersist = true;
 		} else if(flag == "NOGUEST") {
 			m_mustAuth = true;
 		} else {
@@ -519,11 +523,11 @@ void LoginHandler::sendJoinCommand()
 
 void LoginHandler::startTls()
 {
-	connect(m_server->_socket, SIGNAL(encrypted()), this, SLOT(tlsStarted()));
-	connect(m_server->_socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(tlsError(QList<QSslError>)));
+	connect(m_server->m_socket, &QSslSocket::encrypted, this, &LoginHandler::tlsStarted);
+	connect(m_server->m_socket, static_cast<void(QSslSocket::*)(const QList<QSslError>&)>(&QSslSocket::sslErrors), this, &LoginHandler::tlsError);
 
 	m_tls = false;
-	m_server->_socket->startClientEncryption();
+	m_server->m_socket->startClientEncryption();
 }
 
 void LoginHandler::tlsError(const QList<QSslError> &errors)
@@ -562,7 +566,7 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	if(fail)
 		failLogin(errorstr);
 	else
-		m_server->_socket->ignoreSslErrors(ignore);
+		m_server->m_socket->ignoreSslErrors(ignore);
 }
 
 namespace {
@@ -598,7 +602,7 @@ void LoginHandler::tlsStarted()
 
 		} else {
 			// Certificate matches explicitly trusted one, proceed with login
-			m_server->_securityLevel = Server::TRUSTED_HOST;
+			m_server->m_securityLevel = Server::TRUSTED_HOST;
 			continueTls();
 		}
 
@@ -618,17 +622,17 @@ void LoginHandler::tlsStarted()
 		if(knowncerts.at(0) != cert) {
 			// Certificate mismatch!
 			emit certificateCheckNeeded(cert, knowncerts.at(0));
-			m_server->_securityLevel = TcpServer::NEW_HOST;
+			m_server->m_securityLevel = TcpServer::NEW_HOST;
 			return;
 
 		} else {
-			m_server->_securityLevel = TcpServer::KNOWN_HOST;
+			m_server->m_securityLevel = TcpServer::KNOWN_HOST;
 		}
 
 	} else {
 		// Host not encountered yet: rember the certificate for next time
 		saveCert(m_certFile, cert);
-		m_server->_securityLevel = TcpServer::NEW_HOST;
+		m_server->m_securityLevel = TcpServer::NEW_HOST;
 	}
 
 	// Certificate is acceptable

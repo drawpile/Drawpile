@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,14 +21,17 @@
 
 #include "../shared/net/message.h"
 
-#include <QSslCertificate>
+#include <QObject>
+
+class QSslCertificate;
 
 namespace net {
 
 /**
- * \brief Abstract base class for servers
+ * \brief Abstract base class for servers interfaces
  */
-class Server {
+class Server : public QObject {
+	Q_OBJECT
 public:
 	enum Security {
 		NO_SECURITY, // No secure connection
@@ -37,22 +40,14 @@ public:
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
-	Server(bool local) : _local(local) {}
-	virtual ~Server() {}
+	Server(bool local, QObject *parent);
 	
 	/**
 	 * \brief Send a message to the server
 	 */
-    virtual void sendMessage(protocol::MessagePtr msg) = 0;
+	virtual void sendMessage(const protocol::MessagePtr &msg) = 0;
 
-    /**
-     * @brief Enqueue messages needed to construct an initial state
-     *
-     * Unlike normal messages, the snapshot messages are kept in a separate queue
-     * and are sent asynchronously so snapshot uploading won't entirely block this user.
-     * @param msgs
-     */
-    virtual void sendSnapshotMessages(QList<protocol::MessagePtr> msgs) = 0;
+	virtual void sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs) = 0;
 
     /**
      * @brief Log out from the server
@@ -63,18 +58,38 @@ public:
      * @brief Is this a local server?
      * @return true if local
      */
-    bool isLocal() const { return _local; }
+	bool isLocal() const { return m_local; }
 
-    virtual bool isLoggedIn() const { return false; }
+	/**
+	 * @brief Is the user in a session
+	 */
+	virtual bool isLoggedIn() const = 0;
 
-    virtual int uploadQueueBytes() const { return 0; }
+	/**
+	 * @brief Return the number of bytes in the upload buffer
+	 */
+	virtual int uploadQueueBytes() const = 0;
 
-	virtual Security securityLevel() const { return NO_SECURITY; }
+	/**
+	 * @brief Current security level
+	 */
+	virtual Security securityLevel() const = 0;
 
-	virtual QSslCertificate hostCertificate() const { return QSslCertificate(); }
+	/**
+	 * @brief Get the server's SSL certificate (if any)
+	 */
+	virtual QSslCertificate hostCertificate() const = 0;
+
+	/**
+	 * @brief Does the server support persistent sessions?
+	 */
+	virtual bool supportsPersistence() const = 0;
+
+signals:
+	void messageReceived(protocol::MessagePtr message);
 
 private:
-    bool _local;
+	bool m_local;
 };
 
 

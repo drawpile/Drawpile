@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 namespace net {
 
 LoopbackServer::LoopbackServer(QObject *parent)
-	: QObject(parent), Server(true)
+	: Server(true, parent)
 {
 }
 
@@ -31,12 +31,12 @@ void LoopbackServer::logout()
 	qWarning("tried to log out from the loopback server!");
 }
 
-void LoopbackServer::sendMessage(protocol::MessagePtr msg)
+void LoopbackServer::sendMessage(const protocol::MessagePtr &msg)
 {
 	emit messageReceived(msg);
 }
 
-void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
+void LoopbackServer::sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs)
 {
 	for(protocol::MessagePtr msg : msgs)
 		emit messageReceived(msg);

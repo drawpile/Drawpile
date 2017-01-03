@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,16 +19,16 @@
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
 
-#include <QObject>
-#include <QJsonArray>
-#include <QJsonObject>
-
 #include "core/point.h"
 #include "core/blendmodes.h"
 #include "net/server.h"
 #include "../shared/net/message.h"
 #include "canvas/statetracker.h" // for ToolContext
 
+#include <QObject>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QSslCertificate>
 
 namespace paintcore {
 	class Point;
@@ -97,26 +97,30 @@ public:
 	 * @brief Is the client connected by network?
 	 * @return true if a network connection is open
 	 */
-	bool isConnected() const { return !_isloopback; }
-
+	bool isConnected() const { return !m_isloopback; }
 
 	/**
 	 * @brief Is the user connected and logged in?
 	 * @return true if there is an active network connection and login process has completed
 	 */
-	bool isLoggedIn() const;
+	bool isLoggedIn() const { return m_server->isLoggedIn(); }
 
 	/**
 	 * @brief Get connection security level
 	 */
-	Server::Security securityLevel() const { return _server->securityLevel(); }
+	Server::Security securityLevel() const { return m_server->securityLevel(); }
 
 	/**
 	 * @brief Get host certificate
 	 *
 	 * This is meaningful only if securityLevel != NO_SECURITY
 	 */
-	QSslCertificate hostCertificate() const { return _server->hostCertificate(); }
+	QSslCertificate hostCertificate() const { return m_server->hostCertificate(); }
+
+	/**
+	 * @brief Does the server support persistent sessions?
+	 */
+	bool serverSuppotsPersistence() const { return m_server->supportsPersistence(); }
 
 	/**
 	 * @brief Get the number of bytes waiting to be sent
@@ -145,7 +149,7 @@ public slots:
 	 * TODO: replace all the other send* functions with this
 	 * @param msg the message to send
 	 */
-	void sendMessage(protocol::MessagePtr msg);
+	void sendMessage(const protocol::MessagePtr &msg);
 	void sendMessages(const QList<protocol::MessagePtr> &msgs);
 
 	void sendInitialSnapshot(const QList<protocol::MessagePtr> commands);
@@ -187,8 +191,8 @@ signals:
 	void sentColorChange(const QColor &color);
 
 private slots:
-	void handleMessage(protocol::MessagePtr msg);
-	void handleConnect(QString sessionId, int userid, bool join);
+	void handleMessage(const protocol::MessagePtr &msg);
+	void handleConnect(const QString &sessionId, int userid, bool join);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
@@ -196,12 +200,12 @@ private:
 	void handleServerCommand(const protocol::Command &msg);
 	void handleDisconnectMessage(const protocol::Disconnect &msg);
 
-	Server *_server;
-	LoopbackServer *_loopback;
+	Server *m_server;
+	LoopbackServer *m_loopback;
 
 	QString m_sessionId;
 	int m_myId;
-	bool _isloopback;
+	bool m_isloopback;
 	bool m_recordedChat;
 
 	canvas::ToolContext m_lastToolCtx;

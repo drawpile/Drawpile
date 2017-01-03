@@ -56,6 +56,7 @@ set (
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
 	net/client.cpp
+	net/server.cpp
 	net/loopbackserver.cpp
 	net/tcpserver.cpp
 	net/login.cpp

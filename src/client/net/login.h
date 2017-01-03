@@ -180,6 +180,11 @@ public:
 	 */
 	QString sessionId() const;
 
+	/**
+	 * @brief Does the server support session persistence?
+	 */
+	bool supportsPersistence() const { return m_canPersist; }
+
 public slots:
 	void serverDisconnected();
 
@@ -348,6 +353,7 @@ private:
 	// Server flags
 	bool m_multisession;
 	bool m_tls;
+	bool m_canPersist;
 	bool m_mustAuth;
 	bool m_needUserPassword;
 	bool m_needHostPassword;

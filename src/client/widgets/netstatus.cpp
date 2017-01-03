@@ -223,7 +223,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 		_security->show();
 	}
 
-	_certificate = certificate;
+	m_certificate = certificate;
 }
 
 void NetStatus::setLowSpaceAlert(bool lowSpace)
@@ -416,7 +416,7 @@ void NetStatus::alertMessage(const QString &msg, bool alert)
 
 void NetStatus::showCertificate()
 {
-	dialogs::CertificateView *certdlg = new dialogs::CertificateView(_address, _certificate, parentWidget());
+	dialogs::CertificateView *certdlg = new dialogs::CertificateView(_address, m_certificate, parentWidget());
 	certdlg->setAttribute(Qt::WA_DeleteOnClose);
 	certdlg->show();
 }

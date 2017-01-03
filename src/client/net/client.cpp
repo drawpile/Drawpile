@@ -38,11 +38,11 @@ namespace net {
 Client::Client(QObject *parent)
 	: QObject(parent), m_myId(1), m_recordedChat(false)
 {
-	_loopback = new LoopbackServer(this);
-	_server = _loopback;
-	_isloopback = true;
+	m_loopback = new LoopbackServer(this);
+	m_server = m_loopback;
+	m_isloopback = true;
 
-	connect(_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
+	connect(m_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
 }
 
 Client::~Client()
@@ -51,23 +51,23 @@ Client::~Client()
 
 void Client::connectToServer(LoginHandler *loginhandler)
 {
-	Q_ASSERT(_isloopback);
+	Q_ASSERT(m_isloopback);
 
 	TcpServer *server = new TcpServer(this);
-	_server = server;
-	_isloopback = false;
+	m_server = server;
+	m_isloopback = false;
 	m_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
 
-	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
-	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), this, SLOT(handleDisconnect(QString, QString, bool)));
-	connect(server, SIGNAL(serverDisconnected(QString, QString, bool)), loginhandler, SLOT(serverDisconnected()));
-	connect(server, SIGNAL(loggedIn(QString, int, bool)), this, SLOT(handleConnect(QString, int, bool)));
-	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
+	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
+	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
+	connect(server, &TcpServer::serverDisconnected, loginhandler, &LoginHandler::serverDisconnected);
+	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
+	connect(server, &TcpServer::messageReceived, this, &Client::handleMessage);
 
-	connect(server, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
-	connect(server, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
-	connect(server, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
-	connect(server, SIGNAL(lagMeasured(qint64)), this, SIGNAL(lagMeasured(qint64)));
+	connect(server, &TcpServer::expectingBytes, this, &Client::expectingBytes);
+	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
+	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
+	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
 
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(m_myId);
@@ -80,12 +80,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 void Client::disconnectFromServer()
 {
-	_server->logout();
-}
-
-bool Client::isLoggedIn() const
-{
-	return _server->isLoggedIn();
+	m_server->logout();
 }
 
 QString Client::sessionId() const
@@ -98,7 +93,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 	if(!isConnected())
 		return QUrl();
 
-	QUrl url = static_cast<const TcpServer*>(_server)->url();
+	QUrl url = static_cast<const TcpServer*>(m_server)->url();
 	url.setScheme("drawpile");
 	if(!includeUser)
 		url.setUserInfo(QString());
@@ -106,7 +101,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(QString sessionId, int userid, bool join)
+void Client::handleConnect(const QString &sessionId, int userid, bool join)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
@@ -116,25 +111,25 @@ void Client::handleConnect(QString sessionId, int userid, bool join)
 
 void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
 {
-	Q_ASSERT(_server != _loopback);
+	Q_ASSERT(m_server != m_loopback);
 
 	emit serverDisconnected(message, errorcode, localDisconnect);
-	static_cast<TcpServer*>(_server)->deleteLater();
-	_server = _loopback;
-	_isloopback = true;
+	m_server->deleteLater();
+	m_server = m_loopback;
+	m_isloopback = true;
 }
 
 bool Client::isLocalServer() const
 {
-	return _server->isLocal();
+	return m_server->isLocal();
 }
 
 int Client::uploadQueueBytes() const
 {
-	return _server->uploadQueueBytes();
+	return m_server->uploadQueueBytes();
 }
 
-void Client::sendMessage(protocol::MessagePtr msg)
+void Client::sendMessage(const protocol::MessagePtr &msg)
 {
 	msg->setContextId(m_myId);
 
@@ -142,7 +137,7 @@ void Client::sendMessage(protocol::MessagePtr msg)
 	if(msg->isCommand())
 		emit drawingCommandLocal(msg);
 
-	_server->sendMessage(msg);
+	m_server->sendMessage(msg);
 }
 
 void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
@@ -152,8 +147,8 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 		sendMessage(msg);
 	}
 
-	if(isConnected() && _server->uploadQueueBytes() > 1024 * 10)
-		emit sendingBytes(_server->uploadQueueBytes());
+	if(isConnected() && m_server->uploadQueueBytes() > 1024 * 10)
+		emit sendingBytes(m_server->uploadQueueBytes());
 }
 
 /**
@@ -163,15 +158,15 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
 {
 	// The actual snapshot data will be sent in parallel with normal session traffic
-	_server->sendSnapshotMessages(commands);
+	m_server->sendSnapshotMessages(commands);
 
-	emit sendingBytes(_server->uploadQueueBytes());
+	emit sendingBytes(m_server->uploadQueueBytes());
 }
 
 void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)
 {
 	if(preserve || announce) {
-		_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
+		m_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
 
 	} else {
 		QJsonObject opts;
@@ -184,16 +179,16 @@ void Client::sendChat(const QString &message, bool preserve, bool announce, bool
 			opts
 		};
 
-		_server->sendMessage(MessagePtr(new protocol::Command(m_myId, cmd.toJson())));
+		m_server->sendMessage(MessagePtr(new protocol::Command(m_myId, cmd.toJson())));
 	}
 }
 
 void Client::sendPinnedChat(const QString &message)
 {
-	_server->sendMessage(protocol::Chat::pin(m_myId, message));
+	m_server->sendMessage(protocol::Chat::pin(m_myId, message));
 }
 
-void Client::handleMessage(protocol::MessagePtr msg)
+void Client::handleMessage(const protocol::MessagePtr &msg)
 {
 	// Handle control messages here
 	// (these are sent only by the server and are not stored in the session)

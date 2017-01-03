@@ -53,6 +53,7 @@ Document::Document(QObject *parent)
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
+	  m_sessionPersistent(false),
 	  m_sessionClosed(false),
 	  m_sessionPreserveChat(false),
 	  m_sessionPasswordProtected(false),
@@ -166,6 +167,9 @@ void Document::onServerDisconnect()
 
 void Document::onSessionConfChanged(const QJsonObject &config)
 {
+	if(config.contains("persistent"))
+		setSessionPersistent(config["persistent"].toBool());
+
 	if(config.contains("closed"))
 		setSessionClosed(config["closed"].toBool());
 
@@ -200,6 +204,14 @@ void Document::onServerHistoryLimitReceived(int maxSpace)
 		if(!sendResetSession(canvas::StateSavepoint(), maxSpace)) {
 			emit autoResetTooLarge(maxSpace);
 		}
+	}
+}
+
+void Document::setSessionPersistent(bool p)
+{
+	if(m_sessionPersistent != p) {
+		m_sessionPersistent = p;
+		emit sessionPersistentChanged(p);
 	}
 }
 
@@ -393,32 +405,37 @@ void Document::sendPointerMove(const QPointF &point)
 	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4)));
 }
 
-void Document::sendCloseSession(bool close)
+// Convenience function
+void Document::sendSessionConf(const QString &key, const QJsonValue &value)
 {
 	QJsonObject kwargs;
-	kwargs["closed"] = close;
+	kwargs[key] = value;
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+}
+
+void Document::sendPersistentSession(bool p)
+{
+	sendSessionConf("persistent", p);
+}
+
+void Document::sendCloseSession(bool close)
+{
+	sendSessionConf("closed", close);
 }
 
 void Document::sendPasswordChange(const QString &password)
 {
-	QJsonObject kwargs;
-	kwargs["password"] = password;
-	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+	sendSessionConf("password", password);
 }
 
 void Document::sendUserLimitChange(int newLimit)
 {
-	QJsonObject kwargs;
-	kwargs["maxUserCount"] = newLimit;
-	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+	sendSessionConf("maxUserCount", newLimit);
 }
 
 void Document::sendPreserveChatChange(bool keepChat)
 {
-	QJsonObject kwargs;
-	kwargs["preserveChat"] = keepChat;
-	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+	sendSessionConf("preserveChat", keepChat);
 }
 
 /**

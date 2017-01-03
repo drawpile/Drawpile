@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QUrl>
 #include <QPointer>
+#include <QSslCertificate>
 
 class QLabel;
 class QTimer;
@@ -112,7 +113,7 @@ private:
 
 	quint64 _sentbytes, _recvbytes, _lag;
 
-	QSslCertificate _certificate;
+	QSslCertificate m_certificate;
 };
 
 }
