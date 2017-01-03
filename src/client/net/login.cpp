@@ -676,12 +676,14 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		error = tr("Incorrect password!");
 	else if(code == "badUsername")
 		error = tr("Invalid username!");
+	else if(code == "bannedName")
+		error = tr("This username has been locked");
 	else if(code == "nameInUse")
 		error = tr("Username already taken!");
 	else if(code == "closed")
 		error = m_mode == JOIN ? tr("Session is closed!") : tr("Server is full!");
 	else if(code == "banned")
-		error = tr("This username has been banned!");
+		error = tr("You have been banned from this session!");
 	else if(code == "sessionIdInUse")
 		error = tr("Session ID already in use!");
 	else

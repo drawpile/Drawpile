@@ -204,7 +204,7 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 		return;
 
 	case RegisteredUser::Banned:
-		sendError("banned", "This username is banned");
+		sendError("bannedName", "This username is banned");
 		return;
 
 	case RegisteredUser::Ok: {
