@@ -151,18 +151,6 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 		emit sendingBytes(m_server->uploadQueueBytes());
 }
 
-/**
- * @brief Send the session initialization or reset command stream
- * @param commands snapshot point commands
- */
-void Client::sendInitialSnapshot(const QList<protocol::MessagePtr> commands)
-{
-	// The actual snapshot data will be sent in parallel with normal session traffic
-	m_server->sendSnapshotMessages(commands);
-
-	emit sendingBytes(m_server->uploadQueueBytes());
-}
-
 void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)
 {
 	if(preserve || announce) {

@@ -47,7 +47,7 @@ public:
 	 */
 	virtual void sendMessage(const protocol::MessagePtr &msg) = 0;
 
-	virtual void sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs) = 0;
+	void sendMessages(const QList<protocol::MessagePtr> &msgs);
 
     /**
      * @brief Log out from the server

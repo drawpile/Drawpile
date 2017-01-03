@@ -35,7 +35,6 @@ public:
 	explicit LoopbackServer(QObject *parent=nullptr);
 	
 	void sendMessage(const protocol::MessagePtr &msg) override;
-	void sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs) override;
 	void logout() override;
 
 	bool isLoggedIn() const override { return false; }

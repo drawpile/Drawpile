@@ -31,6 +31,7 @@
 #include "utils/settings.h"
 #include "utils/images.h"
 
+#include "../shared/net/control.h"
 #include "../shared/net/meta2.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/layer.h"
@@ -132,7 +133,7 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 		minsizelimit += msg->length();
 	minsizelimit *= 2;
 
-	m_client->sendInitialSnapshot(init);
+	m_client->sendMessages(init);
 
 	setCurrentFilename(loader.filename());
 	unmarkDirty();
@@ -534,7 +535,15 @@ void Document::snapshotNeeded()
 			qWarning("Session reset snapshot requested, but we have not prepared it! Generating one now...");
 			m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
 		}
-		m_client->sendInitialSnapshot(m_resetstate);
+
+		m_client->sendMessages(m_resetstate);
+
+		if(!m_client->isLocalServer()) {
+			protocol::ServerCommand cmd;
+			cmd.cmd = "init-complete";
+			m_client->sendMessage(protocol::MessagePtr(new protocol::Command(m_client->myId(), cmd)));
+		}
+
 		m_resetstate = QList<protocol::MessagePtr>();
 
 	} else {

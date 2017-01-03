@@ -485,7 +485,13 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), cmd)));
 			}
 
-			m_server->sendSnapshotMessages(m_initialState);
+			// Upload initial session content
+			m_server->sendMessages(m_initialState);
+
+			// Mark initialization phase as done
+			protocol::ServerCommand cmd;
+			cmd.cmd = "init-complete";
+			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(m_userid, cmd)));
 		}
 
 	} else {

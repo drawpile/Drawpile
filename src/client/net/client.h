@@ -146,13 +146,10 @@ public slots:
 	 * If this is a Command type message, drawingCommandLocal is emitted
 	 * before the message is sent.
 	 *
-	 * TODO: replace all the other send* functions with this
 	 * @param msg the message to send
 	 */
 	void sendMessage(const protocol::MessagePtr &msg);
 	void sendMessages(const QList<protocol::MessagePtr> &msgs);
-
-	void sendInitialSnapshot(const QList<protocol::MessagePtr> commands);
 
 	/**
 	 * @brief Send a chat message

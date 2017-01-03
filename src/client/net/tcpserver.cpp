@@ -88,17 +88,6 @@ void TcpServer::sendMessage(const protocol::MessagePtr &msg)
 	m_msgqueue->send(msg);
 }
 
-void TcpServer::sendSnapshotMessages(const QList<protocol::MessagePtr> &msgs)
-{
-	qDebug() << "sending" << msgs.length() << "snapshot messages";
-	for(protocol::MessagePtr msg : msgs)
-		m_msgqueue->send(msg);
-
-	protocol::ServerCommand cmd;
-	cmd.cmd = "init-complete";
-	m_msgqueue->send(protocol::MessagePtr(new protocol::Command(0, cmd)));
-}
-
 void TcpServer::handleMessage()
 {
 	while(m_msgqueue->isPending()) {
