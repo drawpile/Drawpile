@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2016 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
 #include "../net/message.h"
-#include "../net/messagestream.h"
 #include "../net/protover.h"
 #include "jsonapi.h"
 #include "sessionban.h"
@@ -44,6 +43,7 @@ namespace server {
 
 class Client;
 class ServerConfig;
+class SessionHistory;
 
 /**
  * The serverside session state.
@@ -102,25 +102,12 @@ public:
 	bool isNsfm() const { return m_nsfm; }
 
 	/**
-	 * @brief Get the current history limit for this session
-	 *
-	 * This is the upper limit. If the size goes above this, the session is terminated.
-	 * @return
-	 */
-	uint historyLimit() const { return m_historylimit; }
-
-	/**
 	 * @brief Set the name of the recording file to create
 	 *
 	 * The recording will be created after a snapshot point has been created.
 	 * @param filename path to output file
 	 */
 	void setRecordingFile(const QString &filename) { m_recordingFile = filename; }
-
-	/**
-	 * @brief Stop any recording that might be in progress
-	 */
-	void stopRecording();
 
 	/**
 	 * @brief Is this session password protected?
@@ -271,18 +258,15 @@ public:
 	const QDateTime &lastEventTime() const { return m_lastEventTime; }
 
 	/**
-	 * @brief get the main command stream
-	 * @return reference to main command stream
+	 * @brief Get the session history
 	 */
-	const protocol::MessageStream &mainstream() const { return m_mainstream; }
+	const SessionHistory *history() const { return m_history; }
 
 	/**
-	 * @brief Add a command to the message stream.
-	 *
-	 * Emits newCommandsAvailable
+	 * @brief Add a message to the session history
 	 * @param msg
 	 */
-	void addToCommandStream(protocol::MessagePtr msg);
+	void addToHistory(const protocol::MessagePtr &msg);
 
 	/**
 	 * @brief Add a message to the initialization stream
@@ -397,9 +381,6 @@ signals:
 	 */
 	void sessionAttributeChanged(Session *thisSession);
 
-	//! New commands have been added to the main stream
-	void newCommandsAvailable();
-
 	//! Request session announcement
 	void requestAnnouncement(const QUrl &url, const sessionlisting::Session &session);
 
@@ -412,7 +393,11 @@ private slots:
 
 private:
 	void cleanupCommandStream();
+#if 0 // TODO
 	void startRecording(const QList<protocol::MessagePtr> &snapshot);
+	void stopRecording();
+#endif
+
 
 	void sendUpdatedSessionProperties();
 	void ensureOperatorExists();
@@ -429,9 +414,10 @@ private:
 
 	QList<Client*> m_clients;
 
-	protocol::MessageStream m_mainstream;
+	SessionHistory *m_history;
 	QList<protocol::MessagePtr> m_resetstream;
 	uint m_resetstreamsize;
+	uint m_historyLimitWarning;
 
 	sessionlisting::Announcement m_publicListing;
 	SessionBanList m_banlist;
@@ -445,8 +431,6 @@ private:
 	const QString m_idAlias;
 	protocol::ProtocolVersion m_protocolVersion;
 	int m_maxusers;
-	uint m_historylimit;
-	uint m_historyLimitWarning;
 
 	QByteArray m_passwordhash;
 	QString m_title;
@@ -456,7 +440,7 @@ private:
 	bool m_persistent;
 	bool m_preserveChat;
 	bool m_nsfm;
-	bool m_historytLimitWarningSent;
+	bool m_historyLimitWarningSent;
 };
 
 }

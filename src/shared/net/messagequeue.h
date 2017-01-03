@@ -89,6 +89,11 @@ public:
 	int uploadQueueBytes() const;
 
 	/**
+	 * @brief Is there still data in the upload buffer?
+	 */
+	bool isUploading() const;
+
+	/**
 	 * @brief Get the number of milliseconds since the last message sent by the remote end
 	 */
 	qint64 idleTime() const;

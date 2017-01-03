@@ -20,6 +20,8 @@
 #include "session.h"
 #include "client.h"
 #include "serverconfig.h"
+#include "inmemoryhistory.h"
+
 #include "../net/control.h"
 #include "../net/meta.h"
 #include "../record/writer.h"
@@ -47,11 +49,12 @@ Session::Session(const QUuid &id, const QString &alias, const protocol::Protocol
 	m_founder(founder),
 	m_closed(false),
 	m_persistent(false), m_preserveChat(false), m_nsfm(false),
-	m_historytLimitWarningSent(false)
+	m_historyLimitWarningSent(false)
 {
-	// Cache history limit, since this value is checked very often
-	m_historylimit = config->getConfigSize(config::SessionSizeLimit);
-	m_historyLimitWarning = m_historylimit * 0.7;
+	m_history = new InMemoryHistory(this); // TODO inject this from outside
+	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
+
+	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
 }
 
 QString Session::toLogString() const {
@@ -73,27 +76,36 @@ void Session::switchState(State newstate)
 
 		m_initUser = -1;
 
-		if(m_state==Reset) {
-			// Inform everyone of the reset
-			protocol::ServerReply resetcmd;
-			resetcmd.type = protocol::ServerReply::RESET;
-			resetcmd.reply["state"] = "reset";
-			resetcmd.message = "Session reset!";
-			directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
+		if(m_state==Reset && !m_resetstream.isEmpty()) {
+			// Reset buffer uploaded. Now perform the reset before returning to
+			// normal running state.
 
-			// Update current state
+			// Add list of currently logged in users to reset snapshot
 			QList<uint8_t> owners;
-			for(Client *c : m_clients) {
-				addToCommandStream(c->joinMessage());
+			for(const Client *c : m_clients) {
+				m_resetstream.prepend(c->joinMessage());
 				if(c->isOperator())
 					owners << c->id();
 			}
-			addToCommandStream(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
-			sendUpdatedSessionProperties();
+			m_resetstream.prepend(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
 
 			// Send reset snapshot
-			for(const MessagePtr &m : m_resetstream)
-				addToCommandStream(m);
+			if(!m_history->reset(m_resetstream)) {
+				// This shouldn't normally happen, as the size limit should be caught while
+				// still uploading the reset.
+				messageAll("Session reset failed!", true);
+
+			} else {
+				protocol::ServerReply resetcmd;
+				resetcmd.type = protocol::ServerReply::RESET;
+				resetcmd.reply["state"] = "reset";
+				resetcmd.message = "Session reset!";
+				directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
+
+				m_historyLimitWarningSent = false;
+
+				sendUpdatedSessionProperties();
+			}
 
 			m_resetstream.clear();
 			m_resetstreamsize = 0;
@@ -106,7 +118,8 @@ void Session::switchState(State newstate)
 		if(m_state!=Running)
 			qFatal("Illegal state change to Reset from %d", m_state);
 
-		Q_ASSERT(m_resetstream.isEmpty());
+		m_resetstream.clear();
+		m_resetstreamsize = 0;
 		messageAll("Preparing for session reset!", true);
 	}
 
@@ -145,16 +158,14 @@ void Session::joinUser(Client *user, bool host)
 	m_clients.append(user);
 
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
-	connect(this, &Session::newCommandsAvailable, user, &Client::sendAvailableCommands);
-
-	addToCommandStream(user->joinMessage());
+	connect(history(), &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
 
 	if(host) {
-		logger::info() << "join user. State is" << m_state;
 		Q_ASSERT(m_state == Initialization);
-
 		m_initUser = user->id();
 	}
+
+	addToHistory(user->joinMessage());
 
 	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
 	if(!welcomeMessage.isEmpty()) {
@@ -164,13 +175,12 @@ void Session::joinUser(Client *user, bool host)
 	ensureOperatorExists();
 
 	// Let new users know about the size limit too
-	if(m_mainstream.lengthInBytes() > m_historyLimitWarning) {
+	if(m_historyLimitWarning > 0 && m_history->sizeInBytes() > m_historyLimitWarning) {
 		protocol::ServerReply warning;
 		warning.type = protocol::ServerReply::SIZELIMITWARNING;
-		warning.reply["size"] = int(m_mainstream.lengthInBytes());
+		warning.reply["size"] = int(m_history->sizeInBytes());
 		warning.reply["maxSize"] = int(m_historyLimitWarning);
 		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
-		logger::info() << "notified new user about the limit";
 	}
 
 	logger::info() << user << "Joined session";
@@ -183,19 +193,19 @@ void Session::removeUser(Client *user)
 		return;
 
 	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
-	disconnect(this, &Session::newCommandsAvailable, user, &Client::sendAvailableCommands);
+	disconnect(m_history, &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
 
 	if(user->id() == m_initUser && m_state == Reset) {
 		// Whoops, the resetter left before the job was done!
 		// We simply cancel the reset in that case and go on
-		m_initUser = 0;
+		m_initUser = -1;
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
 		switchState(Running);
 		messageAll("Session reset cancelled.", true);
 	}
 
-	addToCommandStream(MessagePtr(new protocol::UserLeave(user->id())));
+	addToHistory(MessagePtr(new protocol::UserLeave(user->id())));
 
 	ensureOperatorExists();
 
@@ -334,43 +344,54 @@ void Session::sendUpdatedSessionProperties()
 	conf["hasPassword"] = hasPassword();
 	props.reply["config"] = conf;
 
-	addToCommandStream(protocol::MessagePtr(new protocol::Command(0, props)));
+	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));
 	emit sessionAttributeChanged(this);
 }
 
-void Session::addToCommandStream(protocol::MessagePtr msg)
+void Session::addToHistory(const protocol::MessagePtr &msg)
 {
 	if(m_state == Shutdown)
 		return;
 
-	if(m_historylimit>0 && m_mainstream.lengthInBytes() + msg->length() > m_historylimit) {
+	// Add message to history (if there is space)
+	if(!m_history->addMessage(msg)) {
 		const Client *shame = getClientById(msg->contextId());
 		messageAll("History size limit reached!", false);
 		messageAll((shame ? shame->username() : QString("user #%1").arg(msg->contextId())) + " broke the camel's back. Session must be reset to continue drawing.", false);
 		return;
 	}
 
-	m_mainstream.append(msg);
+
+	// The hosting user must skip the history uploaded during initialization
+	// (since they originated it), but we still want to send them notifications.
+	if(m_state == Initialization) {
+		Client *origin = getClientById(m_initUser);
+		Q_ASSERT(origin);
+		if(origin) {
+			origin->setHistoryPosition(m_history->lastIndex());
+			// transparent message probably came from us, or is at least safe to receive twice
+			if(!msg->isOpaque())
+				origin->sendDirectMessage(msg);
+		}
+	}
+
+	// Add message to recording
 	if(m_recorder)
 		m_recorder->recordMessage(msg);
 	m_lastEventTime = QDateTime::currentDateTime();
-	emit newCommandsAvailable();
 
-	if(m_historylimit>0) {
-		// Send a warning if approaching size limit.
-		// The clients should update their internal size limits
-		// and reset the session when necessary.
-		const uint hlen = m_mainstream.lengthInBytes();
-		if(hlen > m_historyLimitWarning && !m_historytLimitWarningSent) {
-			logger::debug() << this << "history limit warning threshold reached.";
+	// Send a warning if approaching size limit.
+	// The clients should update their internal size limits and reset the session when necessary.
+	if(m_historyLimitWarning>0 && !m_historyLimitWarningSent && m_history->sizeInBytes() > m_historyLimitWarning) {
+		logger::debug() << this << "history limit warning threshold reached.";
 
-			protocol::ServerReply warning;
-			warning.type = protocol::ServerReply::SIZELIMITWARNING;
-			warning.reply["size"] = int(hlen);
-			warning.reply["maxSize"] = int(m_historyLimitWarning);
+		protocol::ServerReply warning;
+		warning.type = protocol::ServerReply::SIZELIMITWARNING;
+		warning.reply["size"] = int(m_history->sizeInBytes());
+		warning.reply["maxSize"] = int(m_historyLimitWarning);
 
-			directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
-		}
+		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
+		m_historyLimitWarningSent = true;
 	}
 }
 
@@ -379,13 +400,14 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 	Q_ASSERT(m_state == Initialization || m_state == Reset || m_state == Shutdown);
 
 	if(m_state == Initialization) {
-		addToCommandStream(msg);
+		addToHistory(msg);
+
 	} else if(m_state == Reset) {
 		m_resetstreamsize += msg->length();
 		m_resetstream.append(msg);
 
 		// Well behaved clients should be aware of the history limit and not exceed it.
-		if(m_historylimit>0 && m_resetstreamsize > m_historylimit) {
+		if(m_history->sizeLimit()>0 && m_resetstreamsize > m_history->sizeLimit()) {
 			Client *resetter = getClientById(m_initUser);
 			if(resetter)
 				resetter->disconnectError("History limit exceeded");
@@ -400,10 +422,6 @@ void Session::handleInitComplete(int ctxId)
 		return;
 	}
 
-	if(m_state == Reset) {
-		m_mainstream.resetTo(m_mainstream.end());
-	}
-
 	logger::debug() << this << "init-complete by user" << ctxId;
 	switchState(Running);
 }
@@ -411,6 +429,7 @@ void Session::handleInitComplete(int ctxId)
 void Session::resetSession(int resetter)
 {
 	Q_ASSERT(m_state == Running);
+	Q_ASSERT(getClientById(resetter));
 
 	m_initUser = resetter;
 	switchState(Reset);
@@ -420,8 +439,6 @@ void Session::resetSession(int resetter)
 	resetRequest.reply["state"] = "init";
 	resetRequest.message = "Prepared to receive session data";
 
-	m_historytLimitWarningSent = false;
-
 	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
 }
 
@@ -429,7 +446,9 @@ void Session::killSession()
 {
 	switchState(Shutdown);
 	unlistAnnouncement();
+#if 0 // TODO
 	stopRecording();
+#endif
 
 	for(Client *c : m_clients)
 		c->disconnectShutdown();
@@ -470,10 +489,11 @@ void Session::ensureOperatorExists()
 		QList<uint8_t> ids;
 		ids << m_clients.first()->id();
 		updateOwnership(ids);
-		addToCommandStream(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+		addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
 	}
 }
 
+#if 0 // TODO
 void Session::startRecording(const QList<protocol::MessagePtr> &snapshot)
 {
 	Q_ASSERT(m_recorder==0);
@@ -513,6 +533,7 @@ void Session::stopRecording()
 		m_recorder = nullptr;
 	}
 }
+#endif
 
 QString Session::uptime() const
 {
@@ -599,11 +620,11 @@ QJsonObject Session::getDescription(bool full) const
 	o["persistent"] = isPersistent();
 	o["nsfm"] = isNsfm();
 	o["startTime"] = sessionStartTime().toString();
-	o["size"] = int(m_mainstream.lengthInBytes());
+	o["size"] = int(m_history->sizeInBytes());
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
-		o["maxSize"] = int(m_historylimit);
+		o["maxSize"] = int(m_history->sizeLimit());
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {

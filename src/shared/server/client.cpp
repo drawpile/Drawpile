@@ -17,10 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
-
 #include "client.h"
 #include "session.h"
+#include "sessionhistory.h"
 #include "opcommands.h"
 
 #include "../net/messagequeue.h"
@@ -28,7 +27,6 @@
 #include "../net/meta.h"
 #include "../util/logger.h"
 
-#include <QTcpSocket>
 #include <QSslSocket>
 #include <QStringList>
 
@@ -38,10 +36,9 @@ using protocol::MessagePtr;
 
 Client::Client(QTcpSocket *socket, QObject *parent)
 	: QObject(parent),
-	  m_state(LOGIN),
 	  m_session(nullptr),
 	  m_socket(socket),
-	  m_streampointer(0),
+	  m_historyPosition(-1),
 	  m_id(0),
 	  m_isOperator(false),
 	  m_isModerator(false),
@@ -79,10 +76,12 @@ QString Client::toLogString() const {
 
 void Client::setSession(Session *session)
 {
+	Q_ASSERT(session);
 	m_session = session;
+	m_historyPosition = -1;
 
-	m_state = IN_SESSION;
-	m_streampointer = m_session->mainstream().offset();
+	// Enqueue the next batch (if available) when upload queue is empty
+	connect(m_msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
 }
 
 void Client::setConnectionTimeout(int timeout)
@@ -102,18 +101,20 @@ QHostAddress Client::peerAddress() const
 	return m_socket->peerAddress();
 }
 
-void Client::sendAvailableCommands()
+void Client::sendNextHistoryBatch()
 {
-	Q_ASSERT(m_state == IN_SESSION);
+	// Only enqueue messages for uploading when upload queue is empty
+	// and session is in a normal running state.
+	// (We'll get another messagesAvailable signal when ready)
+	if(m_session == nullptr || m_msgqueue->isUploading() || m_session->state() != Session::Running)
+		return;
 
-	// If we're at the moment initializing the session, skip any drawing
-	// commands, because we just sent them.
-	bool skipCommands = m_session->initUserId() == m_id;
-
-	while(m_streampointer < m_session->mainstream().end()) {
-		MessagePtr m = m_session->mainstream().at(m_streampointer++);
-		if(!skipCommands || !m->isCommand())
-			m_msgqueue->send(m);
+	QList<protocol::MessagePtr> batch;
+	int batchLast;
+	std::tie(batch, batchLast) = m_session->history()->getBatch(m_historyPosition);
+	m_historyPosition = batchLast;
+	for(const protocol::MessagePtr &msg : batch) {
+		m_msgqueue->send(msg);
 	}
 }
 
@@ -138,7 +139,8 @@ void Client::receiveMessages()
 	while(m_msgqueue->isPending()) {
 		MessagePtr msg = m_msgqueue->getPending();
 
-		if(m_state == LOGIN) {
+		if(m_session == nullptr) {
+			// No session? We must be in the login phase
 			if(msg->type() == protocol::MSG_COMMAND)
 				emit loginMessage(msg);
 			else
@@ -226,7 +228,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	else if(isHoldLocked())
 		m_holdqueue.append(msg);
 	else
-		m_session->addToCommandStream(msg);
+		m_session->addToHistory(msg);
 }
 
 void Client::disconnectKick(const QString &kickedBy)
@@ -262,7 +264,7 @@ void Client::enqueueHeldCommands()
 		return;
 
 	for(MessagePtr msg : m_holdqueue)
-		m_session->addToCommandStream(msg);
+		m_session->addToHistory(msg);
 	m_holdqueue.clear();
 }
 

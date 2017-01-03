@@ -16,7 +16,6 @@ set (
 	net/undo.cpp
 	net/recording.cpp
 	net/messagequeue.cpp
-	net/messagestream.cpp
 	net/protover.cpp
 	record/writer.cpp
 	record/reader.cpp
@@ -28,6 +27,8 @@ set (
 	server/session.cpp
 	server/sessionserver.cpp
 	server/sessionban.cpp
+	server/sessionhistory.cpp
+	server/inmemoryhistory.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/serverconfig.cpp

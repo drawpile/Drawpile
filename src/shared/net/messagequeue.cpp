@@ -161,6 +161,11 @@ int MessageQueue::uploadQueueBytes() const
 	return total;
 }
 
+bool MessageQueue::isUploading() const
+{
+	return m_sendbuflen > 0 || m_socket->bytesToWrite() > 0;
+}
+
 qint64 MessageQueue::idleTime() const
 {
 	return QDateTime::currentMSecsSinceEpoch() - m_lastRecvTime;

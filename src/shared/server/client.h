@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,9 @@
 #include "../util/logger.h"
 
 #include <QObject>
-#include <QHostAddress>
 #include <QTcpSocket>
+
+class QHostAddress;
 
 namespace protocol {
 	class MessageQueue;
@@ -45,10 +46,6 @@ class Session;
 class Client : public QObject
 {
     Q_OBJECT
-	enum State {
-		LOGIN,
-		IN_SESSION
-	};
 
 public:
 	explicit Client(QTcpSocket *socket, QObject *parent=0);
@@ -133,8 +130,8 @@ public:
 	/**
 	 * @brief Send a message directly to this client
 	 *
-	 * Note. Typically messages are sent via the main message stream. This is
-	 * used during the login phase and for client specific notifications.
+	 * Note. Typically messages are sent via the shared session history. Direct
+	 * messages are used during the login phase and for client specific notifications.
 	 * @param msg
 	 */
 	void sendDirectMessage(protocol::MessagePtr msg);
@@ -146,10 +143,19 @@ public:
 	void sendSystemChat(const QString &message);
 
 	/**
-	 * @brief Get this client's position in the message stream
-	 * @return message stream index
+	 * @brief Get this client's position in the session history
+	 * The returned index in the index of the last history message that
+	 * is (or was) in the client's upload queue.
 	 */
-	int streampointer() const { return m_streampointer; }
+	int historyPosition() const { return m_historyPosition; }
+
+	/**
+	 * @brief Manually change the history position.
+	 *
+	 * Only time this needs to be done is during the session initialization
+	 * phase when the hosting user must skip the history they themselves uploaded.
+	 */
+	void setHistoryPosition(int newpos) { m_historyPosition = newpos; }
 
 	QString toLogString() const;
 
@@ -184,14 +190,22 @@ public:
 	protocol::MessagePtr joinMessage() const;
 
 signals:
+	/**
+	 * @brief Message received while not part of a session
+	 */
 	void loginMessage(protocol::MessagePtr message);
+
+	/**
+	 * @brief This client is disconnecting
+	 *
+	 * This signal may be emitted twice: first when the client
+	 * is instructed to disconnect (e.g. kicked)
+	 * and the second time when the socket actually disconnects.
+	 */
 	void loggedOff(Client *client);
 
 public slots:
-	/**
-	 * @brief Enqueue all available commands for sending
-	 */
-	void sendAvailableCommands();
+	void sendNextHistoryBatch();
 
 private slots:
 	void gotBadData(int len, int type);
@@ -201,23 +215,14 @@ private slots:
 
 private:
 	void handleSessionMessage(protocol::MessagePtr msg);
-	void handleLoginMessage(const protocol::Command &msg);
-	void handleLoginPassword(const QString &pass);
-	void handleHostSession(const QString &msg);
-	void handleJoinSession(const QString &msg);
-
-	void updateState(protocol::MessagePtr msg);
-
 	bool isHoldLocked() const;
-
-	State m_state;
 
 	Session *m_session;
 	QTcpSocket *m_socket;
 
 	protocol::MessageQueue *m_msgqueue;
 	QList<protocol::MessagePtr> m_holdqueue;
-	int m_streampointer;
+	int m_historyPosition;
 
 	int m_id;
 	QString m_username;

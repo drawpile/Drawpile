@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -206,7 +206,6 @@ void SessionServer::userDisconnectedEvent(Session *session)
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
 		if(!session->isPersistent()) {
 			logger::info() << session << "Closing non-persistent session";
-			logger::info() << session << "History size was" << session->mainstream().lengthInBytes() << "bytes";
 			delSession = true;
 		}
 	}

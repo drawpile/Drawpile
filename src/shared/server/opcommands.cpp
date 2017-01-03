@@ -73,14 +73,6 @@ struct SrvCommandSet {
 
 const SrvCommandSet COMMANDS;
 
-void sendResult(Client *client, const QString &result)
-{
-	protocol::ServerReply reply;
-	reply.type = protocol::ServerReply::RESULT;
-	reply.message = result;
-	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, reply)));
-}
-
 void initComplete(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
@@ -159,47 +151,6 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	}
 
 	target->disconnectKick(client->username());
-}
-
-void listUsers(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-
-	QString msg("Users:\n");
-
-	for(const Client *c : client->session()->clients()) {
-		QString flags;
-		if(c->isModerator())
-			flags = "M";
-		else if(c->isOperator())
-			flags = "@";
-
-		if(c->isAuthenticated())
-			flags += "A";
-
-		msg.append(QString("#%1: %2 [%3]\n").arg(c->id()).arg(c->username(), flags));
-	}
-	sendResult(client, msg);
-}
-
-void sessionStatus(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-
-	const Session *s = client->session();
-	QString msg;
-	msg.append(QString("%1, up %2\n").arg(s->toLogString()).arg(s->uptime()));
-	msg.append(QString("Logged in users: %1 (max: %2)\n").arg(s->userCount()).arg(s->maxUsers()));
-	msg.append(QString("Persistent session: %1\n").arg(s->isPersistent() ? "yes" : "no"));
-	msg.append(QString("Password protected: %1\n").arg(s->hasPassword() ? "yes" : "no"));
-	msg.append(QString("History size: %1 Mb (limit: %2 Mb)\n")
-			.arg(s->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
-			.arg(s->historyLimit() / qreal(1024*1024), 0, 'f', 2));
-	msg.append(QString("History indices: %1 -- %2\n").arg(s->mainstream().offset()).arg(s->mainstream().end()));
-
-	sendResult(client, msg);
 }
 
 void killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
@@ -281,8 +232,6 @@ SrvCommandSet::SrvCommandSet()
 		<< SrvCommand("get-banlist", getBanList).nonOp()
 		<< SrvCommand("remove-ban", removeBan)
 
-		<< SrvCommand("who", listUsers)
-		<< SrvCommand("status", sessionStatus)
 		<< SrvCommand("chat", chatMessage).nonOp()
 	;
 }
