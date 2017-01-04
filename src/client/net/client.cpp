@@ -56,7 +56,6 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	TcpServer *server = new TcpServer(this);
 	m_server = server;
 	m_isloopback = false;
-	m_sessionId = loginhandler->sessionId(); // target host/join ID (if known already)
 
 	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
 	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);

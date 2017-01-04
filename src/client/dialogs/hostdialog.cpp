@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
 	_ui->username->setValidator(new UsernameValidator(this));
-	_ui->vanityId->setValidator(new SessionIdValidator(this));
+	_ui->idAlias->setValidator(new SessionIdAliasValidator(this));
 
 	// Session tab defaults
 	QSettings cfg;
@@ -62,7 +62,7 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->userlimit->setValue(cfg.value("userlimit", 20).toInt());
 	_ui->allowdrawing->setChecked(cfg.value("allowdrawing", true).toBool());
 	_ui->layerctrllock->setChecked(cfg.value("layerctrllock", true).toBool());
-	_ui->vanityId->setText(cfg.value("vanityid").toString());
+	_ui->idAlias->setText(cfg.value("idalias").toString());
 
 	// Server box defaults
 	if(cfg.value("hostremote", false).toBool())
@@ -107,7 +107,7 @@ void HostDialog::rememberSettings() const
 	cfg.setValue("userlimit", _ui->userlimit->value());
 	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
 	cfg.setValue("layerctrllock", _ui->layerctrllock->isChecked());
-	cfg.setValue("vanityid", _ui->vanityId->text());
+	cfg.setValue("idalias", _ui->idAlias->text());
 
 }
 
@@ -156,9 +156,9 @@ bool HostDialog::getPersistentMode() const
 	return _ui->persistentSession->isChecked();
 }
 
-QString HostDialog::getSessionId() const
+QString HostDialog::getSessionAlias() const
 {
-	return _ui->vanityId->text();
+	return _ui->idAlias->text();
 }
 
 bool HostDialog::getPreserveChat() const
@@ -168,11 +168,8 @@ bool HostDialog::getPreserveChat() const
 
 QString HostDialog::getAnnouncementUrl() const
 {
-	if(_ui->announce->isChecked()) {
-		// Qt >=5.2
-		//return _ui->listingserver->currentData().toString();
-		return _ui->listingserver->itemData(_ui->listingserver->currentIndex()).toString();
-	}
+	if(_ui->announce->isChecked())
+		return _ui->listingserver->currentData().toString();
 	return QString();
 }
 

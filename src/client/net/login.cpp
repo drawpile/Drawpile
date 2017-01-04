@@ -17,8 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
-
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
@@ -160,7 +158,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 
 	// Server protocol version must match ours
 	const int serverVersion = msg.reply["version"].toInt();
-	if(serverVersion != DRAWPILE_PROTO_SERVER_VERSION) {
+	if(serverVersion != protocol::ProtocolVersion::current().server()) {
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
 	}
@@ -329,8 +327,8 @@ void LoginHandler::sendHostCommand()
 	protocol::ServerCommand cmd;
 	cmd.cmd = "host";
 
-	if(!m_hostSessionId.isEmpty())
-		cmd.kwargs["alias"] = m_hostSessionId;
+	if(!m_sessionAlias.isEmpty())
+		cmd.kwargs["alias"] = m_sessionAlias;
 
 	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	cmd.kwargs["user_id"] = m_userid;
@@ -355,11 +353,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 			LoginSession session;
 
 			session.id = js["id"].toString();
-			if(session.id.startsWith('!')) {
-				session.id = session.id.mid(1);
-				session.customId = true;
-			}
-
+			session.alias = js["alias"].toString();
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 			session.incompatible = !protoVer.isCurrent();
 			session.needPassword = js["hasPassword"].toBool();
@@ -685,12 +679,11 @@ void LoginHandler::send(const protocol::ServerCommand &cmd)
 }
 
 QString LoginHandler::sessionId() const {
-	if(!m_loggedInSessionId.isEmpty())
-		return m_loggedInSessionId;
-	if(m_mode == HOST)
-		return m_hostSessionId;
-	else
-		return m_autoJoinId;
+	Q_ASSERT(!m_loggedInSessionId.isEmpty());
+	if(m_mode == HOST && !m_sessionAlias.isEmpty())
+		return m_sessionAlias;
+
+	return m_loggedInSessionId;
 }
 
 }

@@ -1191,7 +1191,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 
 	// Connect to server
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, this);
-	login->setSessionId(dlg->getSessionId());
+	login->setSessionAlias(dlg->getSessionAlias());
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
 	login->setMaxUsers(dlg->getUserLimit());

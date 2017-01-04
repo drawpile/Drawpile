@@ -86,6 +86,8 @@ public:
 
 	void startLoginProcess();
 
+	static bool validateSessionIdAlias(const QString &alias);
+
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 

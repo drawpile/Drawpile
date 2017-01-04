@@ -51,7 +51,7 @@ class LoginHandler : public QObject {
 public:
 	enum Mode {HOST, JOIN};
 
-	LoginHandler(Mode mode, const QUrl &url, QObject *parent=0);
+	LoginHandler(Mode mode, const QUrl &url, QObject *parent=nullptr);
 
 	/**
 	 * @brief Set the desired user ID
@@ -63,12 +63,12 @@ public:
 	void setUserId(int userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
 
 	/**
-	 * @brief Set desired session ID
+	 * @brief Set desired session ID alias
 	 *
-	 * Only in host mode. Use URL path when joining.
+	 * Only in host mode.
 	 * @param id
 	 */
-	void setSessionId(const QString &id) { Q_ASSERT(m_mode==HOST); m_hostSessionId=id; }
+	void setSessionAlias(const QString &alias) { Q_ASSERT(m_mode==HOST); m_sessionAlias=alias; }
 
 	/**
 	 * @brief Set the session password
@@ -135,12 +135,12 @@ public:
 	 * @brief Set the initial session content to upload to the server
 	 * @param msgs
 	 */
-	void setInitialState(const QList<protocol::MessagePtr> &msgs) { m_initialState = msgs; }
+	void setInitialState(const QList<protocol::MessagePtr> &msgs) { Q_ASSERT(m_mode==HOST); m_initialState = msgs; }
 
 	/**
 	 * @brief Set session announcement URL
 	 */
-	void setAnnounceUrl(const QString &url) { m_announceUrl = url; }
+	void setAnnounceUrl(const QString &url) { Q_ASSERT(m_mode==HOST); m_announceUrl = url; }
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -175,7 +175,7 @@ public:
 	/**
 	 * @brief get the ID of the session.
 	 *
-	 * This is set to the actual session ID after login succeeds.
+	 * This is valid only after a successful login.
 	 * @return session ID
 	 */
 	QString sessionId() const;
@@ -321,9 +321,10 @@ private:
 	Mode m_mode;
 	QUrl m_address;
 
-	// session properties for hosting
+	// Settings for hosting
 	int m_userid;
 	QString m_sessionPassword;
+	QString m_sessionAlias;
 	QString m_title;
 	int m_maxusers;
 	bool m_allowdrawing;
@@ -333,17 +334,17 @@ private:
 	QString m_announceUrl;
 	QList<protocol::MessagePtr> m_initialState;
 
+	// Settings for joining
+	QString m_joinPassword;
+	QString m_autoJoinId;
+
 	// Process state
 	TcpServer *m_server;
 	State m_state;
 	LoginSessionModel *m_sessions;
 
-	QString m_joinPassword;
-	QString m_hostSessionId;
 	QString m_selectedId;
 	QString m_loggedInSessionId;
-
-	QString m_autoJoinId;
 
 	QFileInfo m_certFile;
 

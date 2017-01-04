@@ -33,7 +33,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>&amp;Title:</string>
+          <string>T&amp;itle:</string>
          </property>
          <property name="buddy">
           <cstring>sessiontitle</cstring>
@@ -102,15 +102,15 @@
        <item row="3" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>&amp;ID:</string>
+          <string>ID alias:</string>
          </property>
          <property name="buddy">
-          <cstring>vanityId</cstring>
+          <cstring>idAlias</cstring>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="vanityId">
+        <widget class="QLineEdit" name="idAlias">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -118,10 +118,7 @@
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>The ID to use in a session URL. Leave blank to let the server generate an ID</string>
-         </property>
-         <property name="placeholderText">
-          <string>Automatic</string>
+          <string>An optional user friendly ID for the session</string>
          </property>
         </widget>
        </item>

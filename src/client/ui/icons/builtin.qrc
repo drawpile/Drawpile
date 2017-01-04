@@ -19,7 +19,6 @@
         <file>dock-detach.svg</file>
         <file>drawpile.png</file>
         <file>semi-trusted.svg</file>
-        <file>stop.svg</file>
         <file>trusted.svg</file>
     </qresource>
 </RCC>

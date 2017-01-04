@@ -250,7 +250,7 @@ void LoginHandler::guestLogin(const QString &username)
 	announceServerInfo();
 }
 
-static bool isValidSessionAlias(const QString &alias)
+bool LoginHandler::validateSessionIdAlias(const QString &alias)
 {
 	if(alias.length() > 32 || alias.length() < 1)
 		return false;
@@ -305,7 +305,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	// Check if session alias is available
 	QString sessionAlias = cmd.kwargs.value("alias").toString();
 	if(!sessionAlias.isEmpty()) {
-		if(!isValidSessionAlias(sessionAlias)) {
+		if(!validateSessionIdAlias(sessionAlias)) {
 			sendError("idInUse", "Invalid session alias");
 			return;
 		}

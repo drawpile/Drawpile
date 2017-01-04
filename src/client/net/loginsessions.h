@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace net {
  */
 struct LoginSession {
 	QString id;
-	bool customId;
+	QString alias;
 	int userCount;
 	QString title;
 	QString founder;
@@ -39,7 +39,7 @@ struct LoginSession {
 	bool closed;
 	bool incompatible;
 
-	LoginSession() : customId(false), userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
+	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
 };
 
 /**
@@ -51,7 +51,7 @@ class LoginSessionModel : public QAbstractTableModel
 public:
 	enum LoginSessionRoles {
 		IdRole = Qt::UserRole + 1, // Session ID
-		IsCustomIdRole,            // Is this a manually selected ID?
+		IdAliasRole,               // ID alias
 		UserCountRole,             // Number of logged in users
 		TitleRole,                 // Session title
 		FounderRole,               // Name of session founder

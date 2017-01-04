@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		switch(index.column()) {
 		case 1: {
 			QString title = ls.title.isEmpty() ? tr("(untitled)") : ls.title;
-			if(ls.customId)
-				title = title + QStringLiteral(" [") + ls.id + QStringLiteral("]");
+			if(!ls.alias.isEmpty())
+				title = QStringLiteral("%1 [%2]").arg(title).arg(ls.alias);
 			return title;
 		}
 		case 2: return ls.founder;
@@ -71,7 +71,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 	} else if(role == Qt::DecorationRole) {
 		if(index.column()==0) {
 			if(ls.closed)
-				return QIcon("builtin:stop.svg").pixmap(16, 16);
+				return icon::fromTheme("im-ban-user").pixmap(16, 16);
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}
@@ -83,7 +83,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 	} else {
 		switch(role) {
 		case IdRole: return ls.id;
-		case IsCustomIdRole: return ls.customId;
+		case IdAliasRole: return ls.alias;
 		case UserCountRole: return ls.userCount;
 		case TitleRole: return ls.title;
 		case FounderRole: return ls.founder;
@@ -101,7 +101,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 {
 	const LoginSession &ls = m_sessions.at(index.row());
-	if(ls.incompatible)
+	if(ls.incompatible || ls.closed)
 		return Qt::NoItemFlags;
 	else
 		return QAbstractTableModel::flags(index);

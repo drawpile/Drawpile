@@ -147,7 +147,7 @@ public:
 	 *
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed() const { return m_closed || userCount() >= maxUsers() || m_state != Running; }
+	bool isClosed() const { return m_closed || userCount() >= maxUsers() || (m_state != Initialization && m_state != Running); }
 	void setClosed(bool closed);
 
 	/**

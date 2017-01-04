@@ -67,8 +67,8 @@ public:
 	//! Should chat history be preserved in the session
 	bool getPreserveChat() const;
 
-	//! Get the desired session ID (or * if not specified)
-	QString getSessionId() const;
+	//! Get the desired session alias
+	QString getSessionAlias() const;
 
 	//! Get the announcement server URL (empty if not selected)
 	QString getAnnouncementUrl() const;
