@@ -16,4 +16,4 @@ penup 1
 undopoint 1
 resize 1 128 148 148 128
 
-undo 1 1
+undo 1

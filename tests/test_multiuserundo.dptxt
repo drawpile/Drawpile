@@ -7,20 +7,19 @@ ctx 2 layer=1 color=#0000ff
 # Start stroke 1
 undopoint 1
 move 1 10 10
-move 1 290 290
 
 # Start stroke 2 while 1 is still underway
 undopoint 2
-move 2 210 10
+move 2 290 10
 
 # Finish stroke 1
-move 1 10 290
+move 1 290 290
 penup 1
 
 # Finish stroke 2
-move 2 10 210
+move 2 10 290
 penup 2
 
 # Undo stroke 1
-undo 1 1
+undo 1
 

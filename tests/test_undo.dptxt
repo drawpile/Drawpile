@@ -1,7 +1,7 @@
 resize 1 0 800 600 0
 newlayer 1 1 0 #ffffffff Undo test
 
-ctx 1 layer=1 colorh=#ff0000
+ctx 1 layer=1 color=#ff0000
 
 # Simple undo test.
 # first, draw a diagonal
@@ -14,7 +14,7 @@ undopoint 1
 move 1 100 100
 move 1 100 10
 penup 1
-undo 1 1
+undo 1
 
 # draw a line to the left.
 # Expected result: red shape like: _\
@@ -23,7 +23,7 @@ move 1 10 100
 penup 1
 
 # Multi user undo: undo an overwritten stroke
-ctx 2 layer=1 colorh=#0000ff
+ctx 2 layer=1 color=#0000ff
 
 undopoint 1
 move 1 110 10
@@ -36,7 +36,7 @@ move 2 110 100
 penup 2
 
 # expected result: blue stroke: /
-undo 1 1
+undo 1
 
 # Multi user undo: undo the topmost stroke
 undopoint 1
@@ -50,19 +50,19 @@ move 2 210 100
 penup 2
 
 # expected result: red stroke: \
-undo 2 1
+undo 2
 
 # Test missing missing undo point
 # This should just print a waning message and not undo anything
-ctx 3 layer=1 colorh=#00ff00
+ctx 3 layer=1 color=#00ff00
 move 3 310 10
 move 3 400 100
 penup 3
-undo 3 1
+undo 3
 
 # Test empty undo
 undopoint 3
-undo 3 1
+undo 3
 
 # Test redo
 move 1 10 110
@@ -73,7 +73,7 @@ undopoint 1
 move 1 100 200
 move 1 100 110
 penup 1
-undo 1 1
+undo 1
 
 undopoint 1
 move 1 100 200
@@ -81,7 +81,7 @@ move 1 10 200
 penup 1
 # This shouldn't work, because there is a non-undone undo-point in between
 # expected result: same as the shape above (_\)
-undo 1 -1
+redo 1
 
 # Test redo again
 move 1 110 110
@@ -99,9 +99,10 @@ move 1 110 200
 penup 1
 # This should work, as the last two blocks are undone
 # expected result: bottom right pointing arrow shape: _\|
-undo 1 1
-undo 1 1
-undo 1 -2
+undo 1
+undo 1
+redo 1
+redo 1
 
 # Third redo test. Redo, then continue
 undopoint 1
@@ -120,8 +121,9 @@ move 1 210 200
 penup 1
 
 # Undo the last two strokes, then redo the first (upward stroke)
-undo 1 2
-undo 1 -1
+undo 1
+undo 1
+redo 1
 
 # Make a stroke. Expected result is a triangle pointo north-east
 undopoint 1
@@ -142,7 +144,8 @@ undopoint 1
 move 1 360 110
 penup 1
 
-undo 1 2
+undo 1
+undo 1
 
 # draw after undoing: this should branch the undo history
 undopoint 1
@@ -150,19 +153,20 @@ move 1 380 110
 penup 1
 
 # expected result: 1 dot, two empty spaces, 1 dot
-undo 1 1
-undo 1 -1
+undo 1
+redo 1
 
 # Test undo after branch+undo+redo pair
 undopoint 1
 move 1 320 200
 penup 1
 
-undo 1 1
+undo 1
 
 undopoint 1
 move 1 340 200
 penup 1
 
-undo 1 1
-undo 1 -1
+undo 1
+redo 1 
+
