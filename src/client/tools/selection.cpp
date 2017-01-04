@@ -42,7 +42,7 @@ void SelectionTool::begin(const paintcore::Point &point, float zoom)
 
 	if(m_handle == canvas::Selection::OUTSIDE) {
 		if(sel) {
-			owner.client()->sendMessages(sel->pasteToCanvas(owner.activeLayer()));
+			owner.client()->sendMessages(sel->pasteToCanvas(owner.client()->myId(), owner.activeLayer()));
 			sel->setMovedFromCanvas(false);
 		}
 
@@ -67,7 +67,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
 			// Automatically cut the layer when the selection is transformed
 			QImage img = owner.model()->selectionToImage(owner.activeLayer());
-			owner.client()->sendMessages(sel->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, owner.activeLayer()));
+			owner.client()->sendMessages(sel->fillCanvas(owner.client()->myId(), Qt::white, paintcore::BlendMode::MODE_ERASE, owner.activeLayer()));
 			sel->setPasteImage(img);
 			sel->setMovedFromCanvas(true);
 		}

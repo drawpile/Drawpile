@@ -34,13 +34,12 @@ void BrushBase::begin(const paintcore::Point& point, float zoom)
 	Q_UNUSED(zoom);
 
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
 
-	// TODO remember last sent brush
-	msgs << net::command::brushToToolChange(0, owner.activeLayer(), owner.activeBrush());
+	msgs << net::command::brushToToolChange(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
 	protocol::PenPointVector v(1);
 	v[0] = net::command::pointToProtocol(point);
-	msgs << protocol::MessagePtr(new protocol::PenMove(0, v));
+	msgs << protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v));
 	owner.client()->sendMessages(msgs);
 }
 
@@ -51,12 +50,12 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 
 	protocol::PenPointVector v(1);
 	v[0] = net::command::pointToProtocol(point);
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(0, v)));
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
 }
 
 void BrushBase::end()
 {
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(0)));
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(owner.client()->myId())));
 }
 
 }

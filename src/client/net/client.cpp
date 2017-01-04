@@ -130,7 +130,11 @@ int Client::uploadQueueBytes() const
 
 void Client::sendMessage(const protocol::MessagePtr &msg)
 {
-	msg->setContextId(m_myId);
+#ifndef NDEBUG
+	if(!msg->isControl() && msg->contextId()==0) {
+		qWarning("Context ID not set for message type %d", msg->type());
+	}
+#endif
 
 	// Command type messages go to the local fork too
 	if(msg->isCommand())

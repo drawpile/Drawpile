@@ -30,7 +30,7 @@
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: QAbstractListModel(parent), m_myId(1)
 {
 }
 	
@@ -118,7 +118,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	for(int i=0;i<count/2;++i)
 		layers.swap(i,count-(1+i));
 
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(0, layers)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_myId, layers)));
 }
 
 int LayerListModel::indexOf(int id) const

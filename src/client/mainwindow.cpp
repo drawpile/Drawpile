@@ -1786,8 +1786,8 @@ void MainWindow::clearOrDelete()
 		const int a = static_cast<tools::AnnotationSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
 		if(a>0) {
 			QList<protocol::MessagePtr> msgs;
-			msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, a));
+			msgs << protocol::MessagePtr(new protocol::UndoPoint(m_doc->client()->myId()));
+			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_doc->client()->myId(), a));
 			m_doc->client()->sendMessages(msgs);
 			return;
 		}

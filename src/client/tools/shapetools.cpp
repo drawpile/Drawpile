@@ -70,11 +70,13 @@ void ShapeTool::end()
 		layer->removeSublayer(-1);
 	}
 	
+	const uint8_t contextId = owner.client()->myId();
+
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << net::command::brushToToolChange(0, owner.activeLayer(), owner.activeBrush());
-	msgs << net::command::penMove(0, pointVector());
-	msgs << protocol::MessagePtr(new protocol::PenUp(0));
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
+	msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
+	msgs << net::command::penMove(contextId, pointVector());
+	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 	owner.client()->sendMessages(msgs);
 }
 

@@ -282,7 +282,7 @@ void Selection::setPasteImage(const QImage &image)
 	emit pasteImageChanged(image);
 }
 
-QList<protocol::MessagePtr> Selection::pasteToCanvas(int layer) const
+QList<protocol::MessagePtr> Selection::pasteToCanvas(uint8_t contextId, int layer) const
 {
 	QList<protocol::MessagePtr> msgs;
 
@@ -325,12 +325,12 @@ QList<protocol::MessagePtr> Selection::pasteToCanvas(int layer) const
 	}
 
 	// Merge image
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << net::command::putQImage(0, layer, rect.x(), rect.y(), image, paintcore::BlendMode::MODE_NORMAL);
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
+	msgs << net::command::putQImage(contextId, layer, rect.x(), rect.y(), image, paintcore::BlendMode::MODE_NORMAL);
 	return msgs;
 }
 
-QList<protocol::MessagePtr> Selection::fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
+QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
 {
 	QRect area;
 	QImage mask;
@@ -347,11 +347,11 @@ QList<protocol::MessagePtr> Selection::fillCanvas(const QColor &color, paintcore
 		if(mask.isNull())
 			msgs << protocol::MessagePtr(new protocol::FillRect(0, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
 		else
-			msgs << net::command::putQImage(0, layer, maskOffset.x(), maskOffset.y(), mask, mode);
+			msgs << net::command::putQImage(contextId, layer, maskOffset.x(), maskOffset.y(), mask, mode);
 	}
 
 	if(!msgs.isEmpty())
-		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(0)));
+		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(contextId)));
 
 	return msgs;
 }

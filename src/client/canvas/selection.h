@@ -69,8 +69,8 @@ public:
 	void setPasteImage(const QImage &image);
 	QImage pasteImage() const { return m_pasteImage; }
 
-	QList<protocol::MessagePtr> pasteToCanvas(int layer) const;
-	QList<protocol::MessagePtr> fillCanvas(const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
+	QList<protocol::MessagePtr> pasteToCanvas(uint8_t contextId, int layer) const;
+	QList<protocol::MessagePtr> fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
 	int handleSize() const { return 10; }
 

@@ -122,7 +122,7 @@ void SelectionSettings::cutSelection()
 	if(sel->pasteImage().isNull() && !controller()->model()->stateTracker()->isLayerLocked(layer)) {
 		// Automatically cut the layer when the selection is transformed
 		QImage img = controller()->model()->selectionToImage(layer);
-		controller()->client()->sendMessages(sel->fillCanvas(Qt::white, paintcore::BlendMode::MODE_ERASE, layer));
+		controller()->client()->sendMessages(sel->fillCanvas(controller()->client()->myId(), Qt::white, paintcore::BlendMode::MODE_ERASE, layer));
 		sel->setPasteImage(img);
 		sel->setMovedFromCanvas(true);
 	}

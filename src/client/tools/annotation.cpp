@@ -90,12 +90,13 @@ void Annotation::end()
 		return;
 
 	QList<protocol::MessagePtr> msgs;
+	const uint8_t contextId = owner.client()->myId();
 
 	if(!m_isNew) {
 		if(m_p1.toPoint() != m_p2.toPoint()) {
 			const paintcore::Annotation *a = owner.model()->layerStack()->annotations()->getById(m_selectedId);
 			if(a) {
-				msgs << protocol::MessagePtr(new protocol::AnnotationReshape(0, m_selectedId, a->rect.x(), a->rect.y(), a->rect.width(), a->rect.height()));
+				msgs << protocol::MessagePtr(new protocol::AnnotationReshape(contextId, m_selectedId, a->rect.x(), a->rect.y(), a->rect.width(), a->rect.height()));
 			}
 
 		} else {
@@ -127,11 +128,11 @@ void Annotation::end()
 			return;
 		}
 
-		msgs << protocol::MessagePtr(new protocol::AnnotationCreate(0, newId, rect.x(), rect.y(), rect.width(), rect.height()));
+		msgs << protocol::MessagePtr(new protocol::AnnotationCreate(contextId, newId, rect.x(), rect.y(), rect.width(), rect.height()));
 	}
 
 	if(!msgs.isEmpty()) {
-		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(0)));
+		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(contextId)));
 		owner.client()->sendMessages(msgs);
 	}
 }

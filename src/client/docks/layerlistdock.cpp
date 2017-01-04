@@ -131,7 +131,10 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	_ui->layerlist->setModel(canvas->layerlist());
 
 	LayerListDelegate *del = new LayerListDelegate(this);
-	connect(del, &LayerListDelegate::layerCommand, this, &LayerList::layerCommand);
+	connect(del, &LayerListDelegate::layerCommand, [this](protocol::MessagePtr msg) {
+		msg->setContextId(m_canvas->localUserId());
+		emit layerCommand(msg);
+	});
 	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
 	_ui->layerlist->setItemDelegate(del);
 
@@ -257,7 +260,7 @@ void LayerList::sendOpacityUpdate()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, _ui->opacity->value(), int(layer.blend))));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, _ui->opacity->value(), int(layer.blend))));
 	}
 }
 
@@ -270,7 +273,7 @@ void LayerList::blendModeChanged()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(0, layer.id, layer.opacity*255, _ui->blendmode->currentData().toInt())));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, layer.opacity*255, _ui->blendmode->currentData().toInt())));
 	}
 }
 
@@ -283,7 +286,7 @@ void LayerList::hideSelected()
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerVisibility(0, layerId, visible)));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerVisibility(m_canvas->localUserId(), layerId, visible)));
 }
 
 void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
@@ -293,7 +296,7 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 		layer.locked = lock;
 		layer.exclusive = exclusive;
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(0, layer.id, layer.locked, layer.exclusive)));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(m_canvas->localUserId(), layer.id, layer.locked, layer.exclusive)));
 	}
 }
 
@@ -326,8 +329,8 @@ void LayerList::addLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, 0, 0, 0, name)));
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, 0, 0, 0, name)));
 }
 
 /**
@@ -346,8 +349,8 @@ void LayerList::insertLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT, name)));
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT, name)));
 }
 
 void LayerList::duplicateLayer()
@@ -363,8 +366,8 @@ void LayerList::duplicateLayer()
 
 	const QString name = layers->getAvailableLayerName(layer.title);
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(0, id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
 }
 
 bool LayerList::canMergeCurrent() const
@@ -420,8 +423,8 @@ void LayerList::deleteSelected()
 	if(!index.isValid())
 		return;
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, false)));
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, false)));
 }
 
 void LayerList::mergeSelected()
@@ -430,8 +433,8 @@ void LayerList::mergeSelected()
 	if(!index.isValid())
 		return;
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(0)));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(0, index.data().value<canvas::LayerListItem>().id, true)));
+	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, true)));
 }
 
 void LayerList::renameSelected()

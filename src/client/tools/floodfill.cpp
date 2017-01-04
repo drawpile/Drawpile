@@ -79,8 +79,8 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 	// consist of large solid areas, meaning they should compress ridiculously well.
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << net::command::putQImage(0, owner.activeLayer(), fill.x, fill.y, fill.image, mode);
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
+	msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
 	owner.client()->sendMessages(msgs);
 
 	QApplication::restoreOverrideCursor();

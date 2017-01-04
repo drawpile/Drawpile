@@ -135,7 +135,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 
 	// Most important bit first: canvas initialization
 	const QSize imgsize = m_layers->size();
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
+	msgs.append(MessagePtr(new protocol::CanvasResize(m_contextId, 0, imgsize.width(), imgsize.height(), 0)));
 
 	// Create layers
 	for(int i=0;i<m_layers->layerCount();++i) {
@@ -143,21 +143,21 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 
 		const QColor fill = layer->isSolidColor();
 
-		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
-		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
+		msgs.append(MessagePtr(new protocol::LayerCreate(m_contextId, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
+		msgs.append(MessagePtr(new protocol::LayerAttributes(m_contextId, layer->id(), layer->opacity(), 1)));
 
 		if(!fill.isValid())
-			msgs.append(net::command::putQImage(1, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+			msgs.append(net::command::putQImage(m_contextId, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
 
 		if(m_session && m_session->stateTracker()->isLayerLocked(layer->id()))
-			msgs.append(MessagePtr(new protocol::LayerACL(1, layer->id(), true, QList<uint8_t>())));
+			msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), true, QList<uint8_t>())));
 	}
 
 	// Create annotations
 	for(const paintcore::Annotation &a : m_layers->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
-		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a.id, g.x(), g.y(), g.width(), g.height())));
-		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a.id, a.background.rgba(), a.text))));
+		msgs.append(MessagePtr(new protocol::AnnotationCreate(m_contextId, a.id, g.x(), g.y(), g.width(), g.height())));
+		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), a.text))));
 	}
 
 	// User tool changes

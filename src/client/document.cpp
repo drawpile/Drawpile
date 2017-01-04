@@ -403,7 +403,7 @@ void Document::stopRecording()
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), point.x() * 4, point.y() * 4)));
 }
 
 // Convenience function
@@ -450,10 +450,10 @@ bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int siz
 {
 	if(!savepoint) {
 		qInfo("Preparing session reset from current canvas content");
-		m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
+		m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
 	} else {
 		qInfo("Preparing session reset from a savepoint");
-		m_resetstate = savepoint.initCommands();
+		m_resetstate = savepoint.initCommands(m_client->myId());
 	}
 
 	if(sizelimit>0) {
@@ -482,7 +482,7 @@ void Document::sendLockSession(bool lock)
 	else
 		flags &= ~protocol::SessionACL::LOCK_SESSION;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
 }
 
 void Document::sendLockImageCommands(bool lock)
@@ -495,7 +495,7 @@ void Document::sendLockImageCommands(bool lock)
 	else
 		flags &= ~protocol::SessionACL::LOCK_IMAGES;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
 }
 
 void Document::sendLayerCtrlMode(bool lockCtrl, bool ownLayers)
@@ -510,14 +510,14 @@ void Document::sendLayerCtrlMode(bool lockCtrl, bool ownLayers)
 	if(ownLayers)
 		flags |= protocol::SessionACL::LOCK_OWNLAYERS;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(0, flags)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << protocol::MessagePtr(new protocol::CanvasResize(0, top, right, bottom, left));
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
+	msgs << protocol::MessagePtr(new protocol::CanvasResize(m_client->myId(), top, right, bottom, left));
 	m_client->sendMessages(msgs);
 }
 
@@ -533,16 +533,13 @@ void Document::snapshotNeeded()
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
 			qWarning("Session reset snapshot requested, but we have not prepared it! Generating one now...");
-			m_resetstate = canvas::SnapshotLoader(m_canvas->layerStack()).loadInitCommands();
+			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
 		}
 
 		m_client->sendMessages(m_resetstate);
 
-		if(!m_client->isLocalServer()) {
-			protocol::ServerCommand cmd;
-			cmd.cmd = "init-complete";
-			m_client->sendMessage(protocol::MessagePtr(new protocol::Command(m_client->myId(), cmd)));
-		}
+		if(!m_client->isLocalServer())
+			m_client->sendMessage(net::command::serverCommand("init-complete"));
 
 		m_resetstate = QList<protocol::MessagePtr>();
 
@@ -559,7 +556,7 @@ void Document::undo()
 	if(m_canvas->selection()) {
 		cancelSelection();
 	} else {
-		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, false)));
+		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, false)));
 	}
 }
 
@@ -568,7 +565,7 @@ void Document::redo()
 	if(!m_canvas)
 		return;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, true)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, true)));
 }
 
 void Document::selectAll()
@@ -584,7 +581,7 @@ void Document::selectAll()
 void Document::selectNone()
 {
 	if(m_canvas && m_canvas->selection()) {
-		m_client->sendMessages(m_canvas->selection()->pasteToCanvas(m_toolctrl->activeLayer()));
+		m_client->sendMessages(m_canvas->selection()->pasteToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
 		cancelSelection();
 	}
 }
@@ -593,7 +590,7 @@ void Document::cancelSelection()
 {
 	if(m_canvas && m_canvas->selection()) {
 		if(!m_canvas->selection()->pasteImage().isNull() && m_canvas->selection()->isMovedFromCanvas())
-			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, false)));
+			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, false)));
 		m_canvas->setSelection(nullptr);
 	}
 }
@@ -655,7 +652,7 @@ void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull()) {
-		m_client->sendMessages(sel->pasteToCanvas(m_toolctrl->activeLayer()));
+		m_client->sendMessages(sel->pasteToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
 		sel->setMovedFromCanvas(false);
 	}
 }
@@ -667,15 +664,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		return;
 	}
 	if(m_canvas->selection()) {
-		// Selection exists: fill selected area only
-		m_client->sendMessages(m_canvas->selection()->fillCanvas(color, mode, m_toolctrl->activeLayer()));
-
-	} else {
-		// No selection: fill entire layer
-		QList<protocol::MessagePtr> msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-		msgs << protocol::MessagePtr(new protocol::FillRect(0, m_toolctrl->activeLayer(), int(mode), 0, 0, m_canvas->layerStack()->width(), m_canvas->layerStack()->height(), color.rgba()));
-		m_client->sendMessages(msgs);
+		m_client->sendMessages(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }
 
@@ -684,9 +673,9 @@ void Document::removeEmptyAnnotations()
 	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		QList<protocol::MessagePtr> msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
+		msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
 		for(int id : ids)
-			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, id));
+			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
 		m_client->sendMessages(msgs);
 	}
 }

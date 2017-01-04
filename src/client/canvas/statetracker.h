@@ -136,7 +136,7 @@ public:
 	 *
 	 * (Used when resetting a session to a prior state.)
 	 */
-	QList<protocol::MessagePtr> initCommands() const;
+	QList<protocol::MessagePtr> initCommands(uint8_t contextId) const;
 
 private:
 	struct Data;

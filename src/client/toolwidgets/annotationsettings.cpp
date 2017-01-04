@@ -280,7 +280,7 @@ void AnnotationSettings::saveChanges()
 
 	if(selected()) {
 		controller()->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
-			0,
+			controller()->client()->myId(),
 			selected(),
 			_ui->btnBackground->color().rgba(),
 			_ui->content->toHtml()
@@ -291,9 +291,10 @@ void AnnotationSettings::saveChanges()
 void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
+	const uint8_t contextId = controller()->client()->myId();
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, selected()));
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
+	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
 	controller()->client()->sendMessages(msgs);
 }
 
@@ -306,12 +307,13 @@ void AnnotationSettings::bake()
 
 	const QImage img = a->toImage();
 
+	const uint8_t contextId = controller()->client()->myId();
 	const int layer = controller()->activeLayer();
 
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(0));
-	msgs << net::command::putQImage(0, layer, a->rect.x(), a->rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
-	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(0, selected()));
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
+	msgs << net::command::putQImage(contextId, layer, a->rect.x(), a->rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
+	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
 	controller()->client()->sendMessages(msgs);
 }
 

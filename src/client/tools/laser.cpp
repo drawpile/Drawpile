@@ -38,11 +38,11 @@ void LaserPointer::begin(const paintcore::Point &point, float zoom)
 {
 	Q_UNUSED(zoom);
 	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::LaserTrail(0,
+	msgs << protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(),
 		owner.activeBrush().color().rgb(),
 		m_persistence
 	));
-	msgs << protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4));
+	msgs << protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4));
 	owner.client()->sendMessages(msgs);
 
 }
@@ -51,12 +51,12 @@ void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool ce
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(0, point.x() * 4, point.y() * 4)));
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4)));
 }
 
 void LaserPointer::end()
 {
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(0, 0, 0)));
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(), 0, 0)));
 }
 
 }

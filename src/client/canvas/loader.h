@@ -129,8 +129,8 @@ private:
  */
 class SnapshotLoader : public SessionLoader {
 public:
-	SnapshotLoader(const paintcore::LayerStack *layers, const canvas::CanvasModel *session=nullptr)
-		: m_layers(layers), m_session(session) {}
+	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const canvas::CanvasModel *session=nullptr)
+		: m_layers(layers), m_session(session), m_contextId(contextId) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return QString(); }
@@ -139,6 +139,7 @@ public:
 private:
 	const paintcore::LayerStack *m_layers;
 	const canvas::CanvasModel *m_session;
+	uint8_t m_contextId;
 };
 
 }
