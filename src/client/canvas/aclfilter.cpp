@@ -87,18 +87,15 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return true;
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
-		// TODO allow layer ACL to be used by non-operators when OwnLayers mode is active
+		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId())) {
+			m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
 
-		if(!isOpUser && !(isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId()))
-			return false;
-
-		m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
-
-		// Emit this to refresh the UI in case our selected layer was (un)locked.
-		// (We don't actually know which layer is selected in the UI here.)
-		emit localLockChanged(isLocked());
-
-		return true;
+			// Emit this to refresh the UI in case our selected layer was (un)locked.
+			// (We don't actually know which layer is selected in the UI here.)
+			emit localLockChanged(isLocked());
+			return true;
+		}
+		return false;
 	}
 	case MSG_SESSION_ACL: {
 		const auto &lmsg = static_cast<const SessionACL&>(msg);
