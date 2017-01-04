@@ -54,7 +54,7 @@ namespace config {
 		SessionSizeLimit(1, "sessionSizeLimit", "15mb", ConfigKey::SIZE),    // Session history size limit in bytes (int)
 		SessionCountLimit(2, "sessionCountLimit", "25", ConfigKey::INT),     // Maximum number of active sessions (int)
 		EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),       // Enable session persistence (bool)
-		HostPassword(4, "hostPassword", "", ConfigKey::STRING),              // Session hosting password (string)
+		AllowGuestHosts(4, "allowGuestHosts", "true", ConfigKey::BOOL),      // Allow guests (or users without the HOST flag) to host sessions
 		IdleTimeLimit(5, "idleTimeLimit", "0", ConfigKey::TIME),             // Session idle time limit in seconds (int)
 		ServerTitle(6, "serverTitle", "", ConfigKey::STRING),                // Server title (string)
 		WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)

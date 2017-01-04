@@ -25,9 +25,7 @@
 
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
-#include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
-#include "../shared/net/control.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -72,8 +70,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_multisession(false),
 	  m_tls(false),
 	  m_canPersist(false),
-	  m_needUserPassword(false),
-	  m_needHostPassword(false)
+	  m_needUserPassword(false)
 {
 	m_sessions = new LoginSessionModel(this);
 
@@ -118,11 +115,10 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	// 1. wait for server greeting
 	// 2. Upgrade to secure connection (if available)
 	// 3. Authenticate user (or do guest login)
-	// 4. get hosting password from user if needed
-	// 5. wait for session list
-	// 6. wait for user to finish typing host/join password if needed
-	// 7. send host/join command
-	// 8. wait for OK
+	// 4. wait for session list
+	// 5. wait for user to finish typing join password if needed
+	// 6. send host/join command
+	// 7. wait for OK
 
 	if(msg.type == protocol::ServerReply::ERROR) {
 		// The server disconnects us right after sending the error message
@@ -142,7 +138,6 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
 	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
 	case WAIT_FOR_JOIN_PASSWORD:
-	case WAIT_FOR_HOST_PASSWORD:
 	case EXPECT_LOGIN_OK: expectLoginOk(msg); break;
 	case ABORT_LOGIN: /* ignore messages in this state */ break;
 	}
@@ -174,7 +169,6 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	const QJsonArray flags = msg.reply["flags"].toArray();
 
 	bool mustSecure = false;
-	m_needHostPassword = false;
 	m_mustAuth = false;
 	m_needUserPassword = false;
 	m_canPersist = false;
@@ -182,8 +176,6 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	for(const QJsonValue &flag : flags) {
 		if(flag == "MULTI") {
 			m_multisession = true;
-		} else if(flag == "HOSTP") {
-			m_needHostPassword = true;
 		} else if(flag == "TLS") {
 			m_tls = true;
 		} else if(flag == "SECURE") {
@@ -236,19 +228,13 @@ void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 
 void LoginHandler::gotPassword(const QString &password)
 {
-	switch(m_state) {
-	case WAIT_FOR_HOST_PASSWORD:
-		m_hostPassword = password;
-		sendHostCommand();
-		break;
-	case WAIT_FOR_JOIN_PASSWORD:
+	if(m_state == WAIT_FOR_JOIN_PASSWORD) {
 		m_joinPassword = password;
 		sendJoinCommand();
-		break;
-	default:
+
+	} else {
 		// shouldn't happen...
-		qFatal("invalid state");
-		return;
+		qWarning("gotPassword() in invalid state (%d)", m_state);
 	}
 }
 
@@ -329,13 +315,7 @@ void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg
 	if(msg.type == protocol::ServerReply::LOGIN) {
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
-		if(m_needHostPassword) {
-			m_state = WAIT_FOR_HOST_PASSWORD;
-			emit passwordNeeded(tr("Enter hosting password"));
-
-		} else {
-			sendHostCommand();
-		}
+		sendHostCommand();
 
 	} else {
 		qWarning() << "Expected session list, got" << msg.reply;
@@ -354,8 +334,6 @@ void LoginHandler::sendHostCommand()
 
 	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	cmd.kwargs["user_id"] = m_userid;
-	if(!m_hostPassword.isEmpty())
-		cmd.kwargs["host_password"] = m_hostPassword;
 	// TODO session password
 
 	send(cmd);
@@ -682,10 +660,12 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		error = tr("Username already taken!");
 	else if(code == "closed")
 		error = m_mode == JOIN ? tr("Session is closed!") : tr("Server is full!");
+	else if(code == "unauthorizedHost")
+		error = tr("Hosting not authorized");
 	else if(code == "banned")
 		error = tr("You have been banned from this session!");
-	else if(code == "sessionIdInUse")
-		error = tr("Session ID already in use!");
+	else if(code == "idInUse")
+		error = tr("Session alias is reserved!");
 	else
 		error = msg;
 

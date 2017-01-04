@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2016 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -236,8 +236,7 @@ signals:
 	/**
 	 * @brief The user must enter a password to proceed
 	 *
-	 * This is emitted when a session is password protected or
-	 * a password is needed to host a session
+	 * This is emitted when a session is password protected.
 	 * After the user has made a decision, call either
 	 * gotPassword(password) to proceed or cancelLogin() to exit.
 	 *
@@ -297,7 +296,6 @@ private:
 		EXPECT_SESSIONLIST_TO_JOIN,
 		EXPECT_SESSIONLIST_TO_HOST,
 		WAIT_FOR_JOIN_PASSWORD,
-		WAIT_FOR_HOST_PASSWORD,
 		EXPECT_LOGIN_OK,
 		ABORT_LOGIN
 	};
@@ -340,7 +338,6 @@ private:
 	State m_state;
 	LoginSessionModel *m_sessions;
 
-	QString m_hostPassword;
 	QString m_joinPassword;
 	QString m_hostSessionId;
 	QString m_selectedId;
@@ -356,7 +353,6 @@ private:
 	bool m_canPersist;
 	bool m_mustAuth;
 	bool m_needUserPassword;
-	bool m_needHostPassword;
 };
 
 }

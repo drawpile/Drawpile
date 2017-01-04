@@ -54,8 +54,6 @@ void LoginHandler::startLoginProcess()
 
 	if(m_server->config()->getConfigInt(config::SessionCountLimit) > 1)
 		flags << "MULTI";
-	if(!m_server->config()->getConfigString(config::HostPassword).isEmpty())
-		flags << "HOSTP";
 	if(m_server->config()->getConfigBool(config::EnablePersistence))
 		flags << "PERSIST";
 	if(m_client->hasSslSupport())
@@ -280,12 +278,16 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
 
+	if(!m_server->config()->getConfigBool(config::AllowGuestHosts) && !m_hostPrivilege) {
+		sendError("unauthorizedHost", "Hosting not authorized");
+		return;
+	}
+
 	if(m_server->sessionCount() >= m_server->config()->getConfigInt(config::SessionCountLimit)) {
 		sendError("closed", "This server is full");
 		return;
 	}
 
-	QString sessionAlias = cmd.kwargs.value("alias").toString();
 	protocol::ProtocolVersion protocolVersion = protocol::ProtocolVersion::fromString(cmd.kwargs.value("protocol").toString());
 
 	if(!protocolVersion.isValid()) {
@@ -301,6 +303,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	}
 
 	// Check if session alias is available
+	QString sessionAlias = cmd.kwargs.value("alias").toString();
 	if(!sessionAlias.isEmpty()) {
 		if(!isValidSessionAlias(sessionAlias)) {
 			sendError("idInUse", "Invalid session alias");
@@ -310,12 +313,6 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 			sendError("idInUse", "This session alias is already in use");
 			return;
 		}
-	}
-
-	QString host_password = cmd.kwargs.value("host_password").toString();
-	if(host_password != m_server->config()->getConfigString(config::HostPassword) && !m_hostPrivilege) {
-		sendError("badPassword", "Incorrect hosting password");
-		return;
 	}
 
 	m_client->setId(userId);

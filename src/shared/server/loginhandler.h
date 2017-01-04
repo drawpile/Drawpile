@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,7 +68,6 @@ struct SessionDescription;
  * Possible server feature flags:
  *    -       - no optional features supported
  *    MULTI   - this server supports multiple sessions
- *    HOSTP   - a password is needed to host a session
  *    TLS     - the server supports SSL/TLS encryption
  *    SECURE  - user must initiate encryption before login can proceed
  *    PERSIST - persistent sessions are supported
