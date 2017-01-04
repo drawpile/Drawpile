@@ -115,6 +115,12 @@ public:
 	bool hasPassword() const { return !m_passwordhash.isEmpty(); }
 
 	/**
+	 * @brief Set the session password.
+	 * @param password
+	 */
+	void setPassword(const QString &password);
+
+	/**
 	 * @brief Check if the password is OK
 	 *
 	 * If no session password is set, this will always return true.

@@ -334,7 +334,8 @@ void LoginHandler::sendHostCommand()
 
 	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	cmd.kwargs["user_id"] = m_userid;
-	// TODO session password
+	if(!m_sessionPassword.isEmpty())
+		cmd.kwargs["password"] = m_sessionPassword;
 
 	send(cmd);
 	m_state = EXPECT_LOGIN_OK;
@@ -430,9 +431,6 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 			if(!m_title.isEmpty())
 				conf.kwargs["title"] = m_title;
-
-			if(!m_sessionPassword.isEmpty())
-				conf.kwargs["password"] = m_sessionPassword;
 
 			if(m_maxusers>0)
 				conf.kwargs["maxUserCount"] = m_maxusers;

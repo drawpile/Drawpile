@@ -288,11 +288,7 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	}
 
 	if(conf.contains("password")) {
-		QString pw = conf["password"].toString();
-		if(pw.isEmpty())
-			m_passwordhash = QByteArray();
-		else
-			m_passwordhash = passwordhash::hash(pw);
+		setPassword(conf["password"].toString());
 		changed = true;
 	}
 
@@ -312,6 +308,14 @@ void Session::setSessionConfig(const QJsonObject &conf)
 
 	if(changed)
 		sendUpdatedSessionProperties();
+}
+
+void Session::setPassword(const QString &password)
+{
+	if(password.isEmpty())
+		m_passwordhash = QByteArray();
+	else
+		m_passwordhash = passwordhash::hash(password);
 }
 
 bool Session::checkPassword(const QString &password) const

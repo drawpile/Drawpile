@@ -320,6 +320,9 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	// Create a new session
 	Session *session = m_server->createSession(QUuid::createUuid(), sessionAlias, protocolVersion, m_client->username());
 
+	if(cmd.kwargs["password"].isString())
+		session->setPassword(cmd.kwargs["password"].toString());
+
 	// Mark login phase as complete. No more login messages will be sent to this user
 	protocol::ServerReply reply;
 	reply.type = protocol::ServerReply::RESULT;
