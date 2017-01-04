@@ -162,7 +162,7 @@ int LayerRetitle::serializePayload(uchar *data) const
 
 LayerOrder *LayerOrder::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if((len%2) == 0)
+	if((len%2) != 0)
 		return nullptr;
 
 	QList<uint16_t> order;

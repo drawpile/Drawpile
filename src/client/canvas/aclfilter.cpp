@@ -148,11 +148,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	}
 
 	case MSG_LAYER_ORDER:
-		// Reordering is limited to session ops
-		if(!isOpUser)
-			return false;
-		break;
-
+		return isOpUser || !isLayerControlLocked();
 	case MSG_PUTIMAGE:
 		return !((isImagesLocked() && !isOpUser) || m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
 	case MSG_FILLRECT:

@@ -373,8 +373,7 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		Q_ASSERT(origin);
 		if(origin) {
 			origin->setHistoryPosition(m_history->lastIndex());
-			// transparent message probably came from us, or is at least safe to receive twice
-			if(!msg->isOpaque())
+			if(!msg->isCommand())
 				origin->sendDirectMessage(msg);
 		}
 	}

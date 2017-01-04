@@ -227,7 +227,7 @@ private:
 	QMenu *_recent;
 
 	QActionGroup *_currentdoctools; // actions relating to the currently open document
-	QActionGroup *_admintools; // session operator actions
+	QActionGroup *m_admintools; // session operator actions
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *_drawingtools; // drawing tool selection
 	QActionGroup *_toolslotactions; // tool slot selection

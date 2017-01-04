@@ -1394,7 +1394,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
 	getAction("viewbanlist")->setEnabled(false);
-	_admintools->setEnabled(false);
+	m_admintools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
 	m_layerctrlmode->setEnabled(false);
 
@@ -1469,9 +1469,9 @@ void MainWindow::updateLockWidget()
 
 void MainWindow::onOperatorModeChange(bool op)
 {
-	_admintools->setEnabled(op);
+	m_admintools->setEnabled(op);
 	m_docadmintools->setEnabled(op);
-	m_layerctrlmode->setEnabled(op && !m_doc->client()->isLocalServer());
+	m_layerctrlmode->setEnabled(op);
 	_dock_layers->setOperatorMode(op);
 	onImageCmdLockChange(m_doc->canvas()->aclFilter()->isImagesLocked());
 }
@@ -1916,8 +1916,8 @@ void MainWindow::setupActions()
 	_currentdoctools->setExclusive(false);
 	_currentdoctools->setEnabled(false);
 
-	_admintools = new QActionGroup(this);
-	_admintools->setExclusive(false);
+	m_admintools = new QActionGroup(this);
+	m_admintools->setExclusive(false);
 
 	m_docadmintools = new QActionGroup(this);
 	m_docadmintools->setExclusive(false);
@@ -2289,8 +2289,9 @@ void MainWindow::setupActions()
 	m_layerctrlmode->addAction(tr("Unlocked"))->setProperty("mode", 0);
 	m_layerctrlmode->addAction(tr("Operators only"))->setProperty("mode", 1);
 	m_layerctrlmode->addAction(tr("User specific"))->setProperty("mode", 2);
-	for(QAction *a : m_layerctrlmode->actions())
+	for(QAction *a : m_layerctrlmode->actions()) {
 		a->setCheckable(true);
+	}
 	m_layerctrlmode->actions()[0]->setChecked(true);
 	m_layerctrlmode->setExclusive(true);
 	m_layerctrlmode->setEnabled(false);
@@ -2309,16 +2310,16 @@ void MainWindow::setupActions()
 	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
-	_admintools->addAction(locksession);
-	_admintools->addAction(persistentsession);
-	_admintools->addAction(closesession);
-	_admintools->addAction(imagecmdlock);
-	_admintools->addAction(changetitle);
-	_admintools->addAction(changepassword);
-	_admintools->addAction(changemaxusers);
-	_admintools->addAction(keepchat);
-	_admintools->addAction(resetsession);
-	_admintools->setEnabled(false);
+	m_admintools->addAction(locksession);
+	m_admintools->addAction(persistentsession);
+	m_admintools->addAction(closesession);
+	m_admintools->addAction(imagecmdlock);
+	m_admintools->addAction(changetitle);
+	m_admintools->addAction(changepassword);
+	m_admintools->addAction(changemaxusers);
+	m_admintools->addAction(keepchat);
+	m_admintools->addAction(resetsession);
+	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
