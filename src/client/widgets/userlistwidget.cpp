@@ -116,14 +116,14 @@ void UserList::undoSelected()
 {
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
-		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, 1)));
+		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, false)));
 }
 
 void UserList::redoSelected()
 {
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
-		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, -1)));
+		emit opCommand(protocol::MessagePtr(new protocol::Undo(m_canvas->localUserId(), idx.data().value<canvas::User>().id, true)));
 }
 
 void UserList::opSelected()

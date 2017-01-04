@@ -58,7 +58,7 @@ private:
 	void handleFillRect(const QString &args);
 
 	void handleUndoPoint(const QString &args);
-	void handleUndo(const QString &args);
+	void handleUndoRedo(const QString &args, bool redo);
 
 	void handleAddAnnotation(const QString &args);
 	void handleReshapeAnnotation(const QString &args);

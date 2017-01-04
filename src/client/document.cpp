@@ -559,7 +559,7 @@ void Document::undo()
 	if(m_canvas->selection()) {
 		cancelSelection();
 	} else {
-		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, 1)));
+		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, false)));
 	}
 }
 
@@ -568,7 +568,7 @@ void Document::redo()
 	if(!m_canvas)
 		return;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, -1)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, true)));
 }
 
 void Document::selectAll()
@@ -593,7 +593,7 @@ void Document::cancelSelection()
 {
 	if(m_canvas && m_canvas->selection()) {
 		if(!m_canvas->selection()->pasteImage().isNull() && m_canvas->selection()->isMovedFromCanvas())
-			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, 1)));
+			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(0, 0, false)));
 		m_canvas->setSelection(nullptr);
 	}
 }

@@ -42,7 +42,7 @@ void History::cleanup(int indexlimit)
 	// First, find the index of the last protected undo point
 	int undo_point = m_offset;
 	int undo_points = 0;
-	for(int i=end()-1;i>=offset() && undo_points<UNDO_HISTORY_LIMIT;--i) {
+	for(int i=end()-1;i>=offset() && undo_points<UNDO_DEPTH_LIMIT;--i) {
 		if(at(i)->type() == MSG_UNDOPOINT) {
 			undo_point = i;
 			++undo_points;

@@ -641,8 +641,13 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 	// the unreachable commands as GONE.
 	if(!replay) {
 		int i = pos - 1; // skip the one just added
-		while(m_history.isValidIndex(i)) {
+		int upCount = 1;
+
+		// Mark undone actions as GONE
+		while(m_history.isValidIndex(i) && upCount < protocol::UNDO_DEPTH_LIMIT) {
 			protocol::MessagePtr msg = m_history.at(i);
+			if(msg->type() == protocol::MSG_UNDOPOINT)
+				++upCount;
 			if(msg->contextId() == cmd.contextId()) {
 				// optimization: we can stop searching after finding the first GONE command
 				if(msg->type() != protocol::MSG_UNDO && msg->undoState() == protocol::GONE)
@@ -653,19 +658,16 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 			--i;
 		}
 
-		// Release state snapshots older than the oldest allowed undopoint
-		i = pos - 1;
-		int upcount = 0;
-		while(m_history.isValidIndex(i)) {
+		// Keep rewinding until the oldest reachable undo point is found
+		while(m_history.isValidIndex(i) && upCount < protocol::UNDO_DEPTH_LIMIT) {
 			if(m_history.at(i)->type() == protocol::MSG_UNDOPOINT) {
-				++upcount;
-				if(upcount>protocol::UNDO_HISTORY_LIMIT)
-					break;
+				++upCount;
 			}
 			--i;
 		}
 
-		if(upcount>protocol::UNDO_HISTORY_LIMIT) {
+		// Release all state savepoints older then the oldest UndoPoint
+		if(upCount>=protocol::UNDO_DEPTH_LIMIT) {
 			if(!_localfork.isEmpty())
 				i = qMin(i, _localfork.offset() - 1);
 
@@ -704,51 +706,54 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	// by marking it as unavailable.
 	cmd.setUndoState(protocol::GONE);
 
-	if(cmd.points()==0) {
-		qWarning() << "zero undo from user" << cmd.contextId();
-		return;
-	}
-
 	const uint8_t ctxid = cmd.overrideId() ? cmd.overrideId() : cmd.contextId();
-	const bool undo = cmd.points()>0;
-	int actions = qAbs(cmd.points());
 
 	// Step 1. Find undo or redo point
 	int pos = m_history.end();
-	if(undo) {
-		// Search for undoable actions from the end of the
-		// command stream towards the beginning
-		while(actions>0 && m_history.isValidIndex(--pos)) {
-			protocol::MessagePtr msg = m_history.at(pos);
-			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
-				if(msg->undoState() == protocol::DONE)
-					--actions;
-			}
-		}
-	} else {
-		// Find the start of the undo sequence
+	int upCount = 0;
+
+	if(cmd.isRedo()) {
+		// Find the oldest undone UndoPoint
 		int redostart = pos;
-		while(m_history.isValidIndex(--pos)) {
-			protocol::MessagePtr msg = m_history.at(pos);
-			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
-				if(msg->undoState() != protocol::DONE)
-					redostart = pos;
-				else
-					break;
+		while(m_history.isValidIndex(--pos) && upCount <= protocol::UNDO_DEPTH_LIMIT) {
+			const protocol::MessagePtr msg = m_history.at(pos);
+			if(msg->type() == protocol::MSG_UNDOPOINT) {
+				++upCount;
+				if(msg->contextId() == ctxid) {
+					if(msg->undoState() != protocol::DONE)
+						redostart = pos;
+					else
+						break;
+				}
 			}
 		}
 
 		if(redostart == m_history.end()) {
-			qWarning() << "nothing to redo for user" << cmd.contextId();
+			qDebug() << "nothing to redo for user" << cmd.contextId();
 			return;
 		}
 		pos = redostart;
+
+	} else {
+		// Find the newest UndoPoint not marked as undone.
+		while(m_history.isValidIndex(--pos) && upCount <= protocol::UNDO_DEPTH_LIMIT) {
+			const protocol::MessagePtr msg = m_history.at(pos);
+			if(msg->type() == protocol::MSG_UNDOPOINT) {
+				++upCount;
+				if(msg->contextId() == ctxid && msg->undoState() == protocol::DONE)
+					break;
+			}
+		}
 	}
 
+	if(upCount > protocol::UNDO_DEPTH_LIMIT) {
+		qDebug() << "user" << cmd.contextId() << "cannot undo/redo beyond history limit";
+		return;
+	}
+
+	// pos is now at the starting UndoPoint
 	if(!m_history.isValidIndex(pos)) {
-		// Normally the server should enforce undo limits to prevent
-		// this from happening
-		qWarning() << "Cannot undo action by user" << ctxid << ": not enough messages in buffer!";
+		qWarning() << "Cannot " << (cmd.isRedo() ? "redo" : "undo") << "action by user" << ctxid << ": not enough messages in buffer!";
 		return;
 	}
 
@@ -762,25 +767,20 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	}
 
 	if(!savepoint) {
-		qWarning() << "Cannot undo action by user" << ctxid << ": no savepoint found!";
+		qWarning() << "Cannot" << (cmd.isRedo() ? "redo" : "undo") << "action by user" << ctxid << ": no savepoint found!";
 		return;
 	}
 
 	// Step 3. (Un)mark all actions by the user as undone
-	if(undo) {
-		for(int i=pos;i<m_history.end();++i) {
-			protocol::MessagePtr msg = m_history.at(i);
-			if(msg->contextId() == ctxid)
-				msg->setUndoState(protocol::MessageUndoState(protocol::UNDONE | msg->undoState()));
-		}
-	} else {
+	if(cmd.isRedo()) {
 		int i=pos;
-		++actions;
+		int sequence=2;
+		// Un-undo messages until the start of the next undone sequence
 		while(i<m_history.end()) {
 			protocol::MessagePtr msg = m_history.at(i);
 			if(msg->contextId() == ctxid) {
 				if(msg->type() == protocol::MSG_UNDOPOINT && msg->undoState() != protocol::GONE)
-					if(--actions==0)
+					if(--sequence==0)
 						break;
 
 				// GONE messages cannot be redone
@@ -789,9 +789,17 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 			}
 			++i;
 		}
+
+	} else {
+		// Mark all messages from undo point to the end as undone.
+		for(int i=pos;i<m_history.end();++i) {
+			protocol::MessagePtr msg = m_history.at(i);
+			if(msg->contextId() == ctxid)
+				msg->setUndoState(protocol::MessageUndoState(protocol::UNDONE | msg->undoState()));
+		}
 	}
 
-	// Step 4. Revert to savepoint and replay with undone commands removed
+	// Step 4. Revert to the savepoint and replay with undone commands removed (or added back)
 	revertSavepointAndReplay(savepoint);
 }
 

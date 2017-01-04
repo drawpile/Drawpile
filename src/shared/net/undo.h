@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,16 +24,13 @@
 namespace protocol {
 
 /**
- * @brief The minimum number of undo points clients must store
+ * @brief Undo history depth
  *
- * To ensure undo works on all clients, each must keep at least this
- * many undo points in their command history.
- *
- * Note. This number is part of the protocol! Increasing it will break
- * compatibility with previous clients, as they may not store enough
- * history the perform an undo!
+ * To ensure undo works consistently, each client must store at least this many
+ * undo points in their session history, but also limit the functional undo depth
+ * to this many points.
  */
-static const int UNDO_HISTORY_LIMIT = 30;
+static const int UNDO_DEPTH_LIMIT = 30;
 
 /**
  * @brief Undo demarcation point
@@ -53,7 +50,7 @@ public:
 class Undo : public Message
 {
 public:
-	Undo(uint8_t ctx, uint8_t override, int8_t points) : Message(MSG_UNDO, ctx), _override(override), _points(points) { }
+	Undo(uint8_t ctx, uint8_t override, bool redo) : Message(MSG_UNDO, ctx), m_override(override), m_redo(redo) { }
 
 	static Undo *deserialize(uint8_t ctx, const uchar *data, uint len);
 
@@ -65,26 +62,18 @@ public:
 	 *
 	 * @return context id
 	 */
-	uint8_t overrideId() const { return _override; }
+	uint8_t overrideId() const { return m_override; }
 
 	/**
-	 * @brief number of actions to undo/redo
-	 *
-	 * This is the number of undo points the given user's actions should be rolled back.
-	 * If the number is negative, the undo points are un-undone.
-	 * Zero is not allowed.
-	 *
-	 * @return points
+	 * @brief Is this a redo operation?
 	 */
-	int8_t points() const { return _points; }
-
-	void setPoints(int8_t points) { _points = points; }
+	bool isRedo() const { return m_redo; }
 
 	/**
 	 * @brief Undo command requires operator privileges if the override field is set
 	 * @return true if override field is set
 	 */
-	bool isOpCommand() const { return _override!=0; }
+	bool isOpCommand() const { return m_override!=0; }
 
 protected:
 	int payloadLength() const;
@@ -92,8 +81,8 @@ protected:
 	bool payloadEquals(const Message &m) const;
 
 private:
-	uint8_t _override;
-	int8_t _points;
+	uint8_t m_override;
+	uint8_t m_redo;
 };
 
 }

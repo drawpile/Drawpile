@@ -133,59 +133,65 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 		const protocol::Undo &cmd = msg.cast<protocol::Undo>();
 
 		const uchar ctxid = cmd.contextId();
-		const bool undo = cmd.points()>0;
-		int actions = qAbs(cmd.points());
 
 		// Step 1. Find undo or redo point
 		int pos = state.index.size();
-		if(undo) {
-			// Search for undoable actions from the end of the
-			// command stream towards the beginning
-			while(actions>0 && --pos>=0) {
-				const FilterIndex u = state.index[pos];
+		int upCount = 0;
 
-				if(u.type == protocol::MSG_UNDOPOINT && u.ctxid == ctxid) {
-					if(undostate(u) == protocol::DONE)
-						--actions;
-				}
-			}
-		} else {
-			// Find the start of the undo sequence
+		if(cmd.isRedo()) {
+			// Find the start of the undo sequence (oldest undone UndoPoint)
 			int redostart = pos;
-			while(--pos>=0) {
+			while(--pos>=0 && upCount <= protocol::UNDO_DEPTH_LIMIT) {
 				const FilterIndex u = state.index[pos];
-				if(u.type == protocol::MSG_UNDOPOINT && u.ctxid == ctxid) {
-					if(undostate(u) != protocol::DONE)
-						redostart = pos;
-					else
-						break;
+				if(u.type == protocol::MSG_UNDOPOINT) {
+					++upCount;
+					if(u.ctxid == ctxid) {
+						if(undostate(u) != protocol::DONE)
+							redostart = pos;
+						else
+							break;
+					}
 				}
 			}
 
 			if(redostart == state.index.size()) {
-				qWarning() << "nothing to redo for user" << cmd.contextId();
+				qDebug() << "nothing to redo for user" << cmd.contextId();
 				mark_delete(state.index.last());
 				return;
 			}
 			pos = redostart;
+
+		} else {
+			// Search for undoable actions from the end of the
+			// command stream towards the beginning
+			while(--pos>=0 && upCount <= protocol::UNDO_DEPTH_LIMIT) {
+				const FilterIndex u = state.index[pos];
+
+				if(u.type == protocol::MSG_UNDOPOINT) {
+					++upCount;
+					if(u.ctxid == ctxid && undostate(u) == protocol::DONE)
+						break;
+				}
+			}
+		}
+
+		if(upCount > protocol::UNDO_DEPTH_LIMIT) {
+			qDebug() << "user" << cmd.contextId() << "cannot undo/redo beyond history limit";
+			mark_delete(state.index.last());
+			return;
 		}
 
 		// Step 2 is not needed here
+
 		// Step 3. (Un)mark all actions by the user as undone
-		if(undo) {
-			for(int i=pos;i<state.index.size();++i) {
-				FilterIndex &u = state.index[i];
-				if(u.ctxid == ctxid && isUndoable(u))
-					u.flags |= protocol::UNDONE;
-			}
-		} else {
+		if(cmd.isRedo()) {
 			int i=pos;
-			++actions;
+			int sequence=2;
 			while(i<state.index.size()) {
 				FilterIndex &u = state.index[i];
 				if(u.ctxid == ctxid) {
 					if(u.type == protocol::MSG_UNDOPOINT && undostate(u) != protocol::GONE)
-						if(--actions==0)
+						if(--sequence==0)
 							break;
 
 					// GONE messages cannot be redone
@@ -194,9 +200,14 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 				}
 				++i;
 			}
+		} else {
+			for(int i=pos;i<state.index.size();++i) {
+				FilterIndex &u = state.index[i];
+				if(u.ctxid == ctxid && isUndoable(u))
+					u.flags |= protocol::UNDONE;
+			}
 		}
-
-		// Steps 4 & 5 not needed here.
+		// Steps 4 is not needed here.
 	}
 
 	if(msg->contextId()>0)

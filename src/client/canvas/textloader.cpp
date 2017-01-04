@@ -437,19 +437,16 @@ void TextCommandLoader::handleUndoPoint(const QString &args)
 	_messages.append(MessagePtr(new protocol::UndoPoint(ctxid)));
 }
 
-void TextCommandLoader::handleUndo(const QString &args)
+void TextCommandLoader::handleUndoRedo(const QString &args, bool redo)
 {
-	QRegularExpression re("(\\d+) (-?\\d+)");
+	QRegularExpression re("(\\d+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
-		throw SyntaxError("Expected context id and undo count");
+		throw SyntaxError("Expected context id");
 
 	int ctxid = str2ctxid(m.captured(1));
-	int count = str2int(m.captured(2));
-	if(count==0)
-		throw SyntaxError("zero undo is not allowed");
 
-	_messages.append(MessagePtr(new protocol::Undo(ctxid, 0, count)));
+	_messages.append(MessagePtr(new protocol::Undo(ctxid, 0, redo)));
 }
 
 void TextCommandLoader::handleAddAnnotation(const QString &args)
@@ -587,7 +584,9 @@ bool TextCommandLoader::load()
 			else if(cmd=="undopoint")
 				handleUndoPoint(args);
 			else if(cmd=="undo")
-				handleUndo(args);
+				handleUndoRedo(args, false);
+			else if(cmd=="redo")
+				handleUndoRedo(args, true);
 			else if(cmd=="addannotation")
 				handleAddAnnotation(args);
 			else if(cmd=="reshapeannotation")
