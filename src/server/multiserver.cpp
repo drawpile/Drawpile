@@ -87,6 +87,11 @@ void MultiServer::setAnnounceLocalAddr(const QString &addr)
 	m_sessions->announcementApiClient()->setLocalAddress(addr);
 }
 
+void MultiServer::setRecordingPath(const QString &path)
+{
+	m_recordingPath = path;
+}
+
 bool MultiServer::createServer()
 {
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
@@ -167,12 +172,13 @@ bool MultiServer::startFd(int fd)
  *  %d - the current date (YYYY-MM-DD)
  *  %h - the current time (HH.MM.SS)
  *  %i - session ID
+ *  %a - session alias (or ID if not assigned)
  *
  * @param session
  */
 void MultiServer::assignRecording(Session *session)
 {
-	QString filename = m_config->getConfigString(config::RecordingPath);
+	QString filename = m_recordingPath;
 
 	if(filename.isEmpty())
 		return;
@@ -193,6 +199,7 @@ void MultiServer::assignRecording(Session *session)
 	filename.replace("%d", now.toString("yyyy-MM-dd"));
 	filename.replace("%t", now.toString("HH.mm.ss"));
 	filename.replace("%i", session->idString());
+	filename.replace("%a", session->idAlias().isEmpty() ? session->idString() : session->idAlias());
 
 	fi = filename;
 
@@ -310,8 +317,6 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::AnnounceWhiteList,
 		config::LocalAddress,
 		config::PrivateUserList,
-		config::RecordingPath,
-		config::EnableRecording,
 		config::AllowGuests
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);

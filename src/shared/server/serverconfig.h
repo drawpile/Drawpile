@@ -61,9 +61,7 @@ namespace config {
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
 		LocalAddress(9, "localAddress", "", ConfigKey::STRING),              // Local address to use for session listing (string)
 		PrivateUserList(10, "privateUserList", "false", ConfigKey::BOOL),    // Don't include user list in announcement (bool)
-		RecordingPath(11, "recordingPath", "", ConfigKey::STRING),           // Where to put session recordings (string)
-		EnableRecording(12, "enableRecording", "false", ConfigKey::BOOL),    // Should sessions be recorded? (bool)
-		AllowGuests(13, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users (bool)
+		AllowGuests(11, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users (bool)
 		;
 }
 

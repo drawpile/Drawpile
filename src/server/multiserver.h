@@ -47,6 +47,7 @@ public:
 	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
 	void setAnnounceLocalAddr(const QString &addr);
+	void setRecordingPath(const QString &path);
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -99,6 +100,7 @@ private:
 
 	QString m_sslCertFile;
 	QString m_sslKeyFile;
+	QString m_recordingPath;
 };
 
 }

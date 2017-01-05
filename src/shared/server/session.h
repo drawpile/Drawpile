@@ -399,10 +399,9 @@ private slots:
 
 private:
 	void cleanupCommandStream();
-#if 0 // TODO
-	void startRecording(const QList<protocol::MessagePtr> &snapshot);
+
+	void restartRecording();
 	void stopRecording();
-#endif
 
 
 	void sendUpdatedSessionProperties();

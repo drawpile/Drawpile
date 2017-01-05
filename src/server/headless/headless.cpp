@@ -84,6 +84,10 @@ bool start() {
 	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Mandatory SSL mode");
 	parser.addOption(secureOption);
 
+	// --record <path>
+	QCommandLineOption recordOption("record", "Record sessions", "path");
+	parser.addOption(recordOption);
+
 #ifndef NDEBUG
 	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
 	parser.addOption(lagOption);
@@ -175,6 +179,13 @@ bool start() {
 			server->setSslCertFile(sslCert, sslKey);
 			server->setMustSecure(parser.isSet(secureOption));
 			server::SslServer::requireForwardSecrecy();
+		}
+	}
+
+	{
+		QString recordingPath = parser.value(recordOption);
+		if(!recordingPath.isEmpty()) {
+			server->setRecordingPath(recordingPath);
 		}
 	}
 

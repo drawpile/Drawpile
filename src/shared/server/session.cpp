@@ -75,6 +75,7 @@ void Session::switchState(State newstate)
 			qFatal("Illegal state change to Running from %d", m_state);
 
 		m_initUser = -1;
+		bool success = true;
 
 		if(m_state==Reset && !m_resetstream.isEmpty()) {
 			// Reset buffer uploaded. Now perform the reset before returning to
@@ -94,6 +95,7 @@ void Session::switchState(State newstate)
 				// This shouldn't normally happen, as the size limit should be caught while
 				// still uploading the reset.
 				messageAll("Session reset failed!", true);
+				success = false;
 
 			} else {
 				protocol::ServerReply resetcmd;
@@ -110,6 +112,9 @@ void Session::switchState(State newstate)
 			m_resetstream.clear();
 			m_resetstreamsize = 0;
 		}
+
+		if(success && !m_recordingFile.isEmpty())
+			restartRecording();
 
 		for(Client *c : m_clients)
 			c->enqueueHeldCommands();
@@ -448,9 +453,7 @@ void Session::killSession()
 {
 	switchState(Shutdown);
 	unlistAnnouncement();
-#if 0 // TODO
 	stopRecording();
-#endif
 
 	for(Client *c : m_clients)
 		c->disconnectShutdown();
@@ -495,10 +498,12 @@ void Session::ensureOperatorExists()
 	}
 }
 
-#if 0 // TODO
-void Session::startRecording(const QList<protocol::MessagePtr> &snapshot)
+void Session::restartRecording()
 {
-	Q_ASSERT(m_recorder==0);
+	if(m_recorder) {
+		m_recorder->close();
+		delete m_recorder;
+	}
 
 	// Start recording
 	QString filename = utils::makeFilenameUnique(m_recordingFile, ".dprec");
@@ -508,7 +513,7 @@ void Session::startRecording(const QList<protocol::MessagePtr> &snapshot)
 	if(!m_recorder->open()) {
 		logger::error() << this << "Couldn't write session recording to" << filename << m_recorder->errorString();
 		delete m_recorder;
-		m_recorder = 0;
+		m_recorder = nullptr;
 		return;
 	}
 
@@ -517,14 +522,16 @@ void Session::startRecording(const QList<protocol::MessagePtr> &snapshot)
 	metadata["version"] = m_protocolVersion.asString();
 
 	m_recorder->writeHeader(metadata);
+	m_recorder->setAutoflush();
 
-	// Record snapshot and what is in the main stream
-	for(protocol::MessagePtr msg : snapshot) {
-		m_recorder->recordMessage(msg);
-	}
+	int lastBatchIndex=0;
+	do {
+		QList<protocol::MessagePtr> history;
+		std::tie(history, lastBatchIndex) = m_history->getBatch(lastBatchIndex);
+		for(const MessagePtr &m : history)
+			m_recorder->recordMessage(m);
 
-	for(int i=m_mainstream.offset();i<m_mainstream.end();++i)
-		m_recorder->recordMessage(m_mainstream.at(i));
+	} while(lastBatchIndex<m_history->lastIndex());
 }
 
 void Session::stopRecording()
@@ -535,7 +542,6 @@ void Session::stopRecording()
 		m_recorder = nullptr;
 	}
 }
-#endif
 
 QString Session::uptime() const
 {
