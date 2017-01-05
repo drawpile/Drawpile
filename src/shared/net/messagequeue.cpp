@@ -199,7 +199,7 @@ void MessageQueue::readData() {
 			// Whole message received!
 			Message *message = Message::deserialize((const uchar*)m_recvbuffer, m_recvbytes, m_decodeOpaque);
 			if(!message) {
-				emit badData(len, (unsigned char)m_recvbuffer[2]);
+				emit badData(len, (unsigned char)m_recvbuffer[2], (unsigned char)m_recvbuffer[3]);
 
 			} else {
 				MessagePtr msg(message);

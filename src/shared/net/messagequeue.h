@@ -167,8 +167,9 @@ signals:
 	 * An unrecognized message was received
 	 * @param len length of the unrecognized message
 	 * @param the unknown message identifier
+	 * @param contextId the context ID of the message
 	 */
-	void badData(int len, int type);
+	void badData(int len, int type, int contextId);
 
 	void socketError(const QString &errorstring);
 

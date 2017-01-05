@@ -99,11 +99,17 @@ void TcpServer::handleMessage()
 	}
 }
 
-void TcpServer::handleBadData(int len, int type)
+void TcpServer::handleBadData(int len, int type, int contextId)
 {
-	qWarning() << "Received" << len << "bytes of unknown message type" << (unsigned int)type;
-	m_error = tr("Received invalid data");
-	m_socket->abort();
+	qWarning() << "Received" << len << "bytes of unknown or invalid message type" << type << "from context ID" << contextId;
+	if(type < 64 || contextId == 0) {
+		// If message type is Transparent, the bad data came from the server. Something is wrong for sure.
+		m_error = tr("Received invalid data");
+		m_socket->abort();
+	} else {
+		// Opaque messages are merely passed along by the server.
+		// TODO autokick misbehaving clients?
+	}
 }
 
 void TcpServer::handleDisconnect()

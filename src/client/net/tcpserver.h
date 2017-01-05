@@ -75,7 +75,7 @@ protected:
 
 private slots:
 	void handleMessage();
-	void handleBadData(int len, int type);
+	void handleBadData(int len, int type, int contextId);
 	void handleDisconnect();
 	void handleSocketError();
 
