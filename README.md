@@ -59,6 +59,7 @@ The configuration step supports some options:
 * TOOLS=on: build dprec2txt command line tool
 * CMAKE\_BUILD\_TYPE=debug: enable debugging features
 * INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
+* TESTS=on: build unit tests (run test suite with `make test`)
 
 Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug`
 

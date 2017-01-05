@@ -40,3 +40,7 @@ add_library(${DPSHAREDLIB} STATIC ${SOURCES})
 target_link_libraries(${DPSHAREDLIB} Qt5::Network)
 target_link_libraries(${DPSHAREDLIB} KF5::Archive)
 
+if(TESTS)
+	add_subdirectory(tests)
+endif(TESTS)
+

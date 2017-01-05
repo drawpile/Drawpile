@@ -26,6 +26,7 @@ option ( SERVER "Compile UI-less server" ON )
 option ( TOOLS "Compile extra tools" OFF )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )
+option ( TESTS "Build unit tests" OFF )
 
 if (NOT CMAKE_BUILD_TYPE)
 	message(STATUS "No build type selected, default to Release")
@@ -38,6 +39,11 @@ message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
 
 # Include some nice macros
 include ( "config/Macros.cmake" )
+
+if(TESTS)
+	enable_testing()
+	include("config/Tests.cmake")
+endif(TESTS)
 
 ### binary and library output ###
 set ( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" )
