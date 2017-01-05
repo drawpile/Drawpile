@@ -20,6 +20,7 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "sslserver.h"
+#include "database.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -33,6 +34,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QJsonObject>
+#include <QJsonArray>
 
 namespace server {
 
@@ -278,16 +280,10 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		return serverJsonApi(method, tail, request);
 	else if(head == "sessions")
 		return m_sessions->callJsonApi(method, tail, request);
+	else if(head == "banlist")
+		return banlistJsonApi(method, tail, request);
 
 	return JsonApiNotFound();
-
-	QJsonObject reply;
-	reply["status"] = "hello world";
-
-	return JsonApiResult {
-		JsonApiResult::Ok,
-		QJsonDocument(reply)
-	};
 }
 
 /**
@@ -335,6 +331,52 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 	}
 
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
+}
+
+/**
+ * @brief View and modify the serverwide banlist
+ *
+ * @param method
+ * @param path
+ * @param request
+ * @return
+ */
+JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	// Database is needed to manipulate the banlist
+	Database *db = qobject_cast<Database*>(m_config);
+	if(!db)
+		return JsonApiNotFound();
+
+	if(path.size()==1) {
+		if(method != JsonApiMethod::Delete)
+			return JsonApiBadMethod();
+		if(db->deleteBan(path.at(0).toInt()))
+			return JsonApiResult {JsonApiResult::Ok, QJsonDocument()};
+		else
+			return JsonApiNotFound();
+	}
+
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Get) {
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->getBanlist()) };
+
+	} else if(method == JsonApiMethod::Create) {
+		QHostAddress ip { request["ip"].toString() };
+		if(ip.isNull())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid IP address required");
+		int subnet = request["subnet"].toInt();
+		QDateTime expiration = QDateTime::fromString(request["expiration"].toString(), "yyyy-MM-dd HH:mm:ss");
+		if(expiration.isNull())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid expiration time required");
+		QString comment = request["comment"].toString();
+
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->addBan(ip, subnet, expiration, comment)) };
+
+	} else
+		return JsonApiBadMethod();
 }
 
 }

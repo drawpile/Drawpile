@@ -87,6 +87,7 @@ private:
 	bool createServer();
 
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 

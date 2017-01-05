@@ -27,6 +27,8 @@
 #include <QRegularExpression>
 #include <QDateTime>
 #include <QHostAddress>
+#include <QJsonObject>
+#include <QJsonArray>
 
 namespace server {
 
@@ -169,6 +171,73 @@ bool Database::isAddressBanned(const QHostAddress &addr) const
 	}
 
 	return false;
+}
+
+static QJsonObject banResultToJson(const QSqlQuery &q)
+{
+	QJsonObject b;
+	b["id"] = q.value(0).toInt();
+	b["ip"] = q.value(1).toString();
+	b["subnet"] = q.value(2).toInt();
+	b["expires"] = q.value(3).toString();
+	b["comment"] = q.value(4).toString();
+	b["added"] = q.value(5).toString();
+	return b;
+}
+
+QJsonArray Database::getBanlist() const
+{
+	QJsonArray result;
+	QSqlQuery q(d->db);
+	q.exec("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans");
+
+	while(q.next()) {
+		result.append(banResultToJson(q));
+	}
+	return result;
+}
+
+QJsonObject Database::addBan(const QHostAddress &ip, int subnet, const QDateTime &expiration, const QString &comment)
+{
+	QSqlQuery q(d->db);
+	q.prepare("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans WHERE ip=? AND subnet=?");
+	q.bindValue(0, ip.toString());
+	q.bindValue(1, subnet);
+	q.exec();
+	if(q.next()) {
+		// Matching entry already in database
+		return banResultToJson(q);
+	} else {
+		const QString datefmt = "yyyy-MM-dd HH:mm:ss";
+		QString datestr = expiration.toString(datefmt);
+		QString now = QDateTime::currentDateTime().toString(datefmt);
+
+		q.prepare("INSERT INTO ipbans (ip, subnet, expires, comment, added) VALUES (?, ?, ?, ?, ?)");
+		q.bindValue(0, ip.toString());
+		q.bindValue(1, subnet);
+		q.bindValue(2, datestr);
+		q.bindValue(3, comment);
+		q.bindValue(4, now);
+		q.exec();
+
+		QJsonObject b;
+		b["id"] = q.lastInsertId().toInt();
+		b["ip"] = ip.toString();
+		b["subnet"] = subnet;
+		b["expires"] = datestr;
+		b["comment"] = comment;
+		b["added"] = now;
+		return b;
+	}
+}
+
+bool Database::deleteBan(int entryId)
+{
+	QSqlQuery q(d->db);
+	q.prepare("DELETE FROM ipbans WHERE rowid=?");
+	q.bindValue(0, entryId);
+	q.exec();
+	return q.numRowsAffected()>0;
 }
 
 RegisteredUser Database::getUserAccount(const QString &username, const QString &password) const

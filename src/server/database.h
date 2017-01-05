@@ -42,6 +42,11 @@ public:
 	bool isAddressBanned(const QHostAddress &addr) const override;
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
 
+	//! Get a JSON representation of the full banlist
+	QJsonArray getBanlist() const;
+	QJsonObject addBan(const QHostAddress &ip, int subnet,	const QDateTime &expiration, const QString &comment);
+	bool deleteBan(int entryId);
+
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
 	void setConfigValue(ConfigKey key, const QString &value) override;

@@ -28,6 +28,7 @@ namespace server {
 
 enum class JsonApiMethod {
 	Get,    // Get info about a resource
+	Create, // Create a new resource
 	Update, // Change resource values
 	Delete  // Delete a resource
 };
@@ -50,7 +51,7 @@ struct JsonApiResult {
 //! A convenience function to generate a standard error message
 JsonApiResult JsonApiErrorResult(JsonApiResult::Status status, const QString &message);
 inline JsonApiResult JsonApiNotFound() { return JsonApiErrorResult(JsonApiResult::NotFound, QStringLiteral("Not found")); }
-inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResult::BadRequest, QStringLiteral("Unsupported methid")); /* TODO: correct error type */ }
+inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResult::BadRequest, QStringLiteral("Unsupported method")); /* TODO: correct error type */ }
 
 //! A convenience function that returns the fist path element and the remaining path
 std::tuple<QString, QStringList> popApiPath(const QStringList &path);
