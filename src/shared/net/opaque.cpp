@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,9 +31,21 @@
 
 namespace protocol {
 
-OpaqueMessage *OpaqueMessage::deserialize(MessageType type, uint8_t ctx, const uchar *data, uint len)
+OpaqueMessage::OpaqueMessage(MessageType type, uint8_t ctx, const uchar *payload, int payloadLen)
+	: Message(type, ctx), m_length(payloadLen)
 {
-	return new OpaqueMessage(type, ctx, QByteArray(reinterpret_cast<const char*>(data), len));
+	Q_ASSERT(type >= 64);
+	if(payloadLen>0) {
+		m_payload = new uchar[payloadLen];
+		memcpy(m_payload, payload, payloadLen);
+	} else {
+		m_payload = nullptr;
+	}
+}
+
+OpaqueMessage::~OpaqueMessage()
+{
+	delete []m_payload;
 }
 
 Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data, uint len)
@@ -76,23 +88,28 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 
 Message *OpaqueMessage::decode() const
 {
-	return decode(type(), contextId(), reinterpret_cast<const uchar*>(m_payload.constData()), m_payload.length());
+	return decode(type(), contextId(), m_payload, m_length);
 }
 
 int OpaqueMessage::payloadLength() const
 {
-	return m_payload.length();
+	return m_length;
 }
 
 int OpaqueMessage::serializePayload(uchar *data) const
 {
-	memcpy(data, m_payload.constData(), m_payload.length());
-	return m_payload.length();
+	memcpy(data, m_payload, m_length);
+	return m_length;
 }
 
 bool OpaqueMessage::payloadEquals(const Message &m) const
 {
-	return payload() == static_cast<const OpaqueMessage&>(m).payload();
+	const OpaqueMessage &om = static_cast<const OpaqueMessage&>(m);
+	if(m_length != om.m_length)
+		return false;
+
+	return memcmp(m_payload, om.m_payload, m_length) == 0;
 }
 
 }
+

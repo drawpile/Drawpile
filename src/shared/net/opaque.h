@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,10 +35,11 @@ namespace protocol {
 class OpaqueMessage : public Message
 {
 public:
-	OpaqueMessage(MessageType type, uint8_t ctx, const QByteArray &payload) : Message(type, ctx), m_payload(payload)
-	{ Q_ASSERT(type >= 64); }
+	OpaqueMessage(MessageType type, uint8_t ctx, const uchar *payload, int payloadLen);
+	~OpaqueMessage();
+	OpaqueMessage(const OpaqueMessage &m) = delete;
+	OpaqueMessage &operator=(const OpaqueMessage &m) = delete;
 
-	static OpaqueMessage *deserialize(MessageType type, uint8_t ctx, const uchar *data, uint len);
 	static Message *decode(MessageType type, uint8_t ctx, const uchar *data, uint len);
 
 	/**
@@ -47,15 +48,14 @@ public:
 	 */
 	Message *decode() const;
 
-	QByteArray payload() const { return m_payload; }
-
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 	bool payloadEquals(const Message &m) const;
 
 private:
-	QByteArray m_payload;
+	uchar *m_payload;
+	int m_length;
 };
 
 }

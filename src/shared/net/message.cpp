@@ -110,7 +110,7 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 			if(decodeOpaque)
 				return OpaqueMessage::decode(type, ctx, data, len);
 			else
-				return OpaqueMessage::deserialize(type, ctx, data, len);
+				return new OpaqueMessage(type, ctx, data, len);
 		}
 	}
 
