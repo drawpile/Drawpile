@@ -291,7 +291,7 @@ protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
 {
 	protocol::PenPointVector ppvec;
 	ppvec.reserve(points.size());
-	foreach(const paintcore::Point &p, points)
+	for(const paintcore::Point &p : points)
 		ppvec.append(pointToProtocol(p));
 
 	return ppvec;
@@ -304,7 +304,7 @@ QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &poi
 	msgs.reserve(batches);
 
 	int i=0;
-	for(int batch=0;batch<=batches;++batch) {
+	for(int batch=0;batch<batches;++batch) {
 		const int j=qMin(points.size(), (i+1)*protocol::PenMove::MAX_POINTS);
 		protocol::PenPointVector ppvec;
 		ppvec.reserve(j-i);

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 #ifndef DP_NET_PEN_H
 #define DP_NET_PEN_H
 
+#include "message.h"
+
 #include <cstdint>
 #include <QVector>
-
-#include "message.h"
 
 namespace protocol {
 	struct PenPoint {
@@ -130,6 +130,7 @@ public:
 		: Message(MSG_PEN_MOVE, ctx),
 		_points(points)
 	{
+		Q_ASSERT(!points.isEmpty());
 		Q_ASSERT(points.size() <= MAX_POINTS);
 	}
 	
@@ -156,8 +157,6 @@ private:
 class PenUp : public ZeroLengthMessage<PenUp> {
 public:
 	PenUp(uint8_t ctx) : ZeroLengthMessage(MSG_PEN_UP, ctx) {}
-	
-	bool isUndoable() const { return true; }
 };
 
 }
