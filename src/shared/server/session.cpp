@@ -300,9 +300,8 @@ void Session::setSessionConfig(const QJsonObject &conf)
 		changed = true;
 	}
 
-	// "Not Safe For Minors" tag can only be unset by resetting the session
-	if(conf["nsfm"].toBool()) {
-		m_nsfm = true;
+	if(conf.contains("nsfm")) {
+		m_nsfm = conf["nsfm"].toBool();
 		changed = true;
 	}
 

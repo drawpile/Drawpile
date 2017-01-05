@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ void AclFilter::reset(int myId, bool localMode)
 	emit ownLayersChanged(m_ownLayers);
 	emit layerControlLockChanged(m_layerCtrlLocked);
 	emit imageCmdLockChanged(m_imagesLocked);
+	emit lockByDefaultChanged(m_lockDefault);
 }
 
 // Get the ID of the layer's creator. This assumes the ID prefixing convention is used.
@@ -104,7 +105,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		setLayerControlLock(lmsg.isLayerControlLocked());
 		setOwnLayers(lmsg.isOwnLayers());
 		setLockImages(lmsg.isImagesLocked());
-		m_lockDefault = lmsg.isLockedByDefault();
+		setLockByDefault(lmsg.isLockedByDefault());
 
 		return true;
 	}
@@ -206,6 +207,14 @@ void AclFilter::setLockImages(bool lock)
 	if(m_imagesLocked != lock) {
 		m_imagesLocked = lock;
 		emit imageCmdLockChanged(lock);
+	}
+}
+
+void AclFilter::setLockByDefault(bool lock)
+{
+	if(m_lockDefault != lock) {
+		m_lockDefault = lock;
+		emit lockByDefaultChanged(lock);
 	}
 }
 

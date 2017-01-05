@@ -58,6 +58,8 @@ Document::Document(QObject *parent)
 	  m_sessionClosed(false),
 	  m_sessionPreserveChat(false),
 	  m_sessionPasswordProtected(false),
+	  m_sessionNsfm(false),
+	  m_serverSpaceLow(false),
 	  m_sessionMaxUserCount(0)
 {
 	// Initialize
@@ -183,6 +185,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("hasPassword"))
 		setSessionPasswordProtected(config["hasPassword"].toBool());
 
+	if(config.contains("nsfm"))
+		setSessionNsfm(config["nsfm"].toBool());
+
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
 
@@ -246,6 +251,14 @@ void Document::setSessionPasswordProtected(bool pp)
 	if(m_sessionPasswordProtected != pp) {
 		m_sessionPasswordProtected = pp;
 		emit sessionPasswordChanged(pp);
+	}
+}
+
+void Document::setSessionNsfm(bool nsfm)
+{
+	if(m_sessionNsfm != nsfm) {
+		m_sessionNsfm = nsfm;
+		emit sessionNsfmChanged(nsfm);
 	}
 }
 
@@ -439,6 +452,11 @@ void Document::sendPreserveChatChange(bool keepChat)
 	sendSessionConf("preserveChat", keepChat);
 }
 
+void Document::sendNsfm(bool nsfm)
+{
+	sendSessionConf("nsfm", nsfm);
+}
+
 /**
  * @brief Generate a reset snapshot and send a reset request
  *
@@ -472,30 +490,32 @@ bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int siz
 	return true;
 }
 
-void Document::sendLockSession(bool lock)
+void Document::sendSessionAclChange(uint16_t flag, bool set)
 {
 	Q_ASSERT(m_canvas);
-
 	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
-	if(lock)
-		flags |= protocol::SessionACL::LOCK_SESSION;
+	if(set)
+		flags |= flag;
 	else
-		flags &= ~protocol::SessionACL::LOCK_SESSION;
+		flags &= ~flag;
 
 	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
+
+}
+
+void Document::sendLockSession(bool lock)
+{
+	sendSessionAclChange(protocol::SessionACL::LOCK_SESSION, lock);
 }
 
 void Document::sendLockImageCommands(bool lock)
 {
-	Q_ASSERT(m_canvas);
+	sendSessionAclChange(protocol::SessionACL::LOCK_IMAGES, lock);
+}
 
-	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
-	if(lock)
-		flags |= protocol::SessionACL::LOCK_IMAGES;
-	else
-		flags &= ~protocol::SessionACL::LOCK_IMAGES;
-
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
+void Document::sendLockByDefault(bool lock)
+{
+	sendSessionAclChange(protocol::SessionACL::LOCK_DEFAULT, lock);
 }
 
 void Document::sendLayerCtrlMode(bool lockCtrl, bool ownLayers)

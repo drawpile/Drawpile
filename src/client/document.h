@@ -62,6 +62,7 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
+	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
 	Q_OBJECT
 public:
@@ -121,6 +122,7 @@ public:
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
+	bool isSessionNsfm() const { return m_sessionNsfm; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 
 	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
@@ -143,6 +145,7 @@ signals:
 	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
+	void sessionNsfmChanged(bool nsfm);
 	void sessionMaxUserCountChanged(int count);
 	void serverSpaceLowChanged(bool isLow);
 	void autoResetTooLarge(int maxSize);
@@ -155,10 +158,12 @@ public slots:
 	void sendPasswordChange(const QString &password);
 	void sendUserLimitChange(int newLimit);
 	void sendPreserveChatChange(bool keepChat);
+	void sendNsfm(bool nsfm);
 	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
 	void sendLockSession(bool lock);
 	void sendLockImageCommands(bool lock);
 	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
+	void sendLockByDefault(bool lock);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 
@@ -198,8 +203,10 @@ private:
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
 	void setSessionMaxUserCount(int count);
+	void setSessionNsfm(bool nsfm);
 
 	void sendSessionConf(const QString &key, const QJsonValue &value);
+	void sendSessionAclChange(uint16_t flag, bool set);
 
 	void copyFromLayer(int layer);
 
@@ -226,6 +233,7 @@ private:
 	bool m_sessionClosed;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;
+	bool m_sessionNsfm;
 	bool m_serverSpaceLow;
 
 	int m_sessionMaxUserCount;

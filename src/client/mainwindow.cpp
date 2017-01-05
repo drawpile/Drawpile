@@ -395,6 +395,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
 
+	connect(canvas->aclFilter(), &canvas::AclFilter::lockByDefaultChanged, getAction("lockbydefault"), &QAction::setChecked);
+
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
@@ -2300,24 +2302,28 @@ void MainWindow::setupActions()
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
 	viewbanlist->setEnabled(false);
-	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User limit: %1...").arg(254));
-	QAction *keepchat = makeAction("keepchat", 0, tr("Keep chat history"), QString(), QKeySequence(), true);
-	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist without users"), QString(), QKeySequence(), true);
+	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User Limit: %1...").arg(254));
+	QAction *keepchat = makeAction("keepchat", 0, tr("Keep Chat History"), QString(), QKeySequence(), true);
+	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist Without Users"), QString(), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
+	QAction *lockbydefault = makeAction("lockbydefault", 0, tr("Lock New Users"), QString(), QKeySequence(), true);
+	QAction *nsfm = makeAction("nsfm", 0, tr("NSFM"), tr("Content not suitable for minors"), QKeySequence(), true);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 
-	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock cut, paste && fill"), QString(), QKeySequence(), true);
+	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock Cut, Paste && Fill"), QString(), QKeySequence(), true);
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	m_admintools->addAction(locksession);
 	m_admintools->addAction(persistentsession);
 	m_admintools->addAction(closesession);
+	m_admintools->addAction(lockbydefault);
 	m_admintools->addAction(imagecmdlock);
 	m_admintools->addAction(changetitle);
 	m_admintools->addAction(changepassword);
 	m_admintools->addAction(changemaxusers);
 	m_admintools->addAction(keepchat);
+	m_admintools->addAction(nsfm);
 	m_admintools->addAction(resetsession);
 	m_admintools->setEnabled(false);
 
@@ -2337,6 +2343,9 @@ void MainWindow::setupActions()
 	connect(keepchat, &QAction::triggered, m_doc, &Document::sendPreserveChatChange);
 	connect(m_doc, &Document::sessionPreserveChatChanged, keepchat, &QAction::setChecked);
 
+	connect(nsfm, &QAction::triggered, m_doc, &Document::sendNsfm);
+	connect(m_doc, &Document::sessionNsfmChanged, nsfm, &QAction::setChecked);
+
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 	connect(imagecmdlock, &QAction::triggered, m_doc, &Document::sendLockImageCommands);
 	connect(m_layerctrlmode, &QActionGroup::triggered, [this](QAction *action) {
@@ -2352,6 +2361,7 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::sessionPersistentChanged, persistentsession, &QAction::setChecked);
 	connect(closesession, &QAction::triggered, m_doc, &Document::sendCloseSession);
 	connect(m_doc, &Document::sessionClosedChanged, closesession, &QAction::setChecked);
+	connect(lockbydefault, &QAction::triggered, m_doc, &Document::sendLockByDefault);
 
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
 
@@ -2374,6 +2384,8 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(keepchat);
 	sessionSettingsMenu->addAction(persistentsession);
 	sessionSettingsMenu->addAction(closesession);
+	sessionSettingsMenu->addAction(lockbydefault);
+	sessionSettingsMenu->addAction(nsfm);
 
 	sessionmenu->addAction(imagecmdlock);
 	sessionmenu->addAction(locksession);

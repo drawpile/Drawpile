@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -93,6 +93,7 @@ signals:
 	bool layerControlLockChanged(bool lock);
 	void ownLayersChanged(bool own);
 	void imageCmdLockChanged(bool lock);
+	void lockByDefaultChanged(bool lock);
 
 private:
 	void setOperator(bool op);
@@ -101,6 +102,7 @@ private:
 	void setLayerControlLock(bool lock);
 	void setOwnLayers(bool own);
 	void setLockImages(bool lock);
+	void setLockByDefault(bool lock);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
