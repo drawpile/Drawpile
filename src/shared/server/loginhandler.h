@@ -87,6 +87,7 @@ public:
 	void startLoginProcess();
 
 	static bool validateSessionIdAlias(const QString &alias);
+	static bool validateUsername(const QString &name);
 
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
@@ -109,8 +110,6 @@ private:
 	void guestLogin(const QString &username);
 	void send(const protocol::ServerReply &cmd);
 	void sendError(const QString &code, const QString &message);
-
-	bool validateUsername(const QString &name);
 
 	Client *m_client;
 	SessionServer *m_server;

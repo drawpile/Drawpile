@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "usernamevalidator.h"
+#include "../shared/server/loginhandler.h"
 
 UsernameValidator::UsernameValidator(QObject *parent) :
 	QValidator(parent)
@@ -31,8 +32,8 @@ QValidator::State UsernameValidator::validate(QString &input, int &pos) const
 	if(input.isEmpty())
 		return Intermediate;
 
-	if(input.contains('"'))
-		return Invalid;
+	if(server::LoginHandler::validateUsername(input))
+		return Acceptable;
 
-	return Acceptable;
+	return Invalid;
 }
