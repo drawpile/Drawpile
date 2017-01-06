@@ -42,7 +42,7 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	m_server(nullptr),
-	m_state(NOT_STARTED),
+	m_state(STOPPED),
 	m_autoStop(false)
 {
 	m_sessions = new SessionServer(config, this);
@@ -118,19 +118,23 @@ bool MultiServer::createServer()
  * @return true on success
  */
 bool MultiServer::start(quint16 port, const QHostAddress& address) {
-	Q_ASSERT(m_state == NOT_STARTED);
+	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
-	if(!createServer())
-		return false;
-
-	if(!m_server->listen(address, port)) {
-		logger::error() << m_server->errorString();
-		delete m_server;
-		m_server = nullptr;
-		m_state = NOT_STARTED;
+	if(!createServer()) {
+		emit serverStartError("Couldn't create server");
 		return false;
 	}
 
+	if(!m_server->listen(address, port)) {
+		emit serverStartError(m_server->errorString());
+		logger::error() << m_server->errorString();
+		delete m_server;
+		m_server = nullptr;
+		m_state = STOPPED;
+		return false;
+	}
+
+	emit serverStarted();
 	logger::info() << "Started listening on port" << port << "at address" << address.toString();
 	return true;
 }
@@ -142,7 +146,7 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
  */
 bool MultiServer::startFd(int fd)
 {
-	Q_ASSERT(m_state == NOT_STARTED);
+	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
 	if(!createServer())
 		return false;
@@ -151,7 +155,7 @@ bool MultiServer::startFd(int fd)
 		logger::error() << "Couldn't set server socket descriptor!";
 		delete m_server;
 		m_server = nullptr;
-		m_state = NOT_STARTED;
+		m_state = STOPPED;
 		return false;
 	}
 

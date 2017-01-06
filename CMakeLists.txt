@@ -22,7 +22,8 @@ include ( "config/Names.cmake" )
 
 ### options ###
 option ( CLIENT "Compile client" ON )
-option ( SERVER "Compile UI-less server" ON )
+option ( SERVER "Compile dedicated server" ON )
+option ( SERVERGUI "Enable server GUI" ON )
 option ( TOOLS "Compile extra tools" OFF )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )

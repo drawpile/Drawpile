@@ -53,12 +53,17 @@ public:
 	void setRandomLag(uint lag);
 #endif
 
-	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
+	Q_INVOKABLE bool isRunning() const { return m_state != STOPPED; }
+
+	//! Start the server with the given socket descriptor
 	bool startFd(int fd);
 
 	SessionServer *sessionServer() { return m_sessions; }
 
 public slots:
+	//! Start the server on the given port and listening address
+	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
+
 	 //! Stop the server. All clients are disconnected.
 	void stop();
 
@@ -81,6 +86,8 @@ private slots:
 	void assignRecording(Session *session);
 
 signals:
+	void serverStartError(const QString &message);
+	void serverStarted();
 	void serverStopped();
 
 private:
@@ -89,7 +96,7 @@ private:
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
-	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
+	enum State {RUNNING, STOPPING, STOPPED};
 
 	ServerConfig *m_config;
 	QTcpServer *m_server;

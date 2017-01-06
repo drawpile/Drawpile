@@ -72,9 +72,9 @@ static bool initDatabase(QSqlDatabase db)
 	return true;
 }
 
-Database::Database(QObject *parent) : ServerConfig(parent), d(new Private)
+Database::Database(QObject *parent)
+	: ServerConfig(parent), d(new Private)
 {
-	d->db = QSqlDatabase::addDatabase("QSQLITE");
 }
 
 Database::~Database()
@@ -84,6 +84,7 @@ Database::~Database()
 
 bool Database::openFile(const QString &path)
 {
+	d->db = QSqlDatabase::addDatabase("QSQLITE");
 	d->db.setDatabaseName(path);
 	if(!d->db.open()) {
 		logger::warning() << "Unable to open database:" << path;

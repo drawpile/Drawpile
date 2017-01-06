@@ -1,0 +1,154 @@
+/*
+   Drawpile - a collaborative drawing program.
+
+   Copyright (C) 2017 Calle Laakkonen
+
+   Drawpile is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Drawpile is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "sidebarmodel.h"
+
+#include "serversummarypage.h"
+
+#include <QDebug>
+#include <QBrush>
+
+namespace server {
+namespace gui {
+
+SidebarModel::SidebarModel(QObject *parent)
+	: QAbstractItemModel(parent)
+{
+	m_summarypages << new ServersummaryPageFactory;
+}
+
+SidebarModel::~SidebarModel()
+{
+	for(PageFactory *pf : m_summarypages)
+		delete pf;
+}
+
+QModelIndex SidebarModel::index(int row, int column, const QModelIndex &parent) const
+{
+	// The model tree has two levels:
+	// Sections
+	// Section specific pages
+	// The leaf item ID is the section number (section row() + 1)
+
+	if(parent.isValid()) {
+		if(parent.internalId()==0)
+			return createIndex(row, column, parent.row()+1);
+
+	} else {
+		return createIndex(row, column, quintptr(0));
+	}
+	return QModelIndex();
+}
+
+QModelIndex SidebarModel::parent(const QModelIndex &index) const
+{
+	if(!index.isValid() || index.internalId()==0)
+		return QModelIndex();
+
+	return createIndex(index.internalId()-1, index.column(), quintptr(0));
+}
+
+int SidebarModel::rowCount(const QModelIndex &parent) const
+{
+	if(parent.isValid()) {
+		// Second level items (section pages) have no subitems
+		if(parent.parent().isValid())
+			return 0;
+
+		// Only top-level sections have subitems
+		switch(parent.row()) {
+		case 0: return m_summarypages.size();
+		case 1:
+		default: return 0;
+		}
+	} else {
+		return 2;
+	}
+}
+
+int SidebarModel::columnCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return 1;
+}
+
+QVariant SidebarModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	Q_UNUSED(section);
+	Q_UNUSED(orientation);
+	Q_UNUSED(role);
+	return QVariant();
+}
+
+Qt::ItemFlags SidebarModel::flags(const QModelIndex &index) const
+{
+	if(index.isValid()) {
+		if(index.parent().isValid())
+			return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+		return Qt::ItemIsEnabled;
+	}
+	return Qt::NoItemFlags;
+}
+
+QVariant SidebarModel::data(const QModelIndex &index, int role) const
+{
+	if(!index.isValid())
+		return QVariant();
+
+	if(role == Qt::DisplayRole) {
+		if(index.parent().isValid()) {
+			switch(index.internalId()) {
+			case 1:
+				// Summary pages
+				if(index.row()>=0 && index.row()<m_summarypages.size())
+					return m_summarypages.at(index.row())->title();
+				break;
+			case 2:
+				// Sessions
+				break;
+			}
+
+		} else {
+			// Top level categories
+			switch(index.row()) {
+			case 0: return tr("Summary");
+			case 1: return tr("Sesssions");
+			}
+		}
+	} else if(role == PageFactoryRole) {
+		if(index.parent().isValid()) {
+			switch(index.internalId()) {
+			case 1:
+				// Summary pages
+				if(index.row()>=0 && index.row()<m_summarypages.size())
+					return qVariantFromValue((void*)m_summarypages.at(index.row()));
+				break;
+			case 2:
+				// Sessions
+				break;
+			}
+		}
+	}
+
+	return QVariant();
+}
+
+}
+
+}

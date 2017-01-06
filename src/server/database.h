@@ -36,7 +36,7 @@ public:
 	explicit Database(QObject *parent=nullptr);
 	~Database();
 
-	bool openFile(const QString &path);
+	Q_INVOKABLE bool openFile(const QString &path);
 
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
 	bool isAddressBanned(const QHostAddress &addr) const override;

@@ -14,6 +14,20 @@ set (
 	headless/headless.cpp
 	)
 
+if(SERVERGUI)
+	find_package(Qt5Widgets REQUIRED)
+	set(SOURCES ${SOURCES}
+		gui/gui.cpp
+		gui/mainwindow.cpp
+		gui/server.cpp
+		gui/localserver.cpp
+		gui/sidebarmodel.cpp
+		gui/sidebaritemdelegate.cpp
+		gui/serversummarypage.cpp
+		)
+	add_definitions(-DHAVE_SERVERGUI)
+endif(SERVERGUI)
+
 # Unix specific features
 if ( UNIX )
 	set ( SOURCES ${SOURCES} headless/unixsignals.cpp )
@@ -41,7 +55,11 @@ endif( MHD_FOUND )
 
 add_executable( ${SRVNAME} ${SOURCES} )
 target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
+if(SERVERGUI)
+	target_link_libraries( ${SRVNAME}  Qt5::Widgets )
+endif()
 
 if ( UNIX AND NOT APPLE )
 	install ( TARGETS ${SRVNAME} DESTINATION bin )
 endif ()
+

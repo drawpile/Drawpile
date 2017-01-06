@@ -60,6 +60,12 @@ bool start() {
 	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
 	parser.addOption(versionOption);
 
+#ifdef HAVE_SERVERGUI
+	// --gui (this is just for the help text)
+	QCommandLineOption guiOption(QStringList() << "gui", "Run the graphical version.");
+	parser.addOption(guiOption);
+#endif
+
 	// --verbose, -V
 	QCommandLineOption verboseOption(QStringList() << "verbose" << "V", "Verbose mode");
 	parser.addOption(verboseOption);

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2016 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,16 @@
 #include "initsys.h"
 #include "headless/headless.h"
 
+#ifdef HAVE_SERVERGUI
+#include "gui/gui.h"
+#include <QApplication>
+
+#else
 #include <QCoreApplication>
+#endif
+
 #include <cstdio>
+#include <cstring>
 
 #ifdef Q_OS_UNIX
 #include <unistd.h>
@@ -41,12 +49,28 @@ int main(int argc, char *argv[]) {
 
 	QCoreApplication *app;
 
-	// TODO: decide here whether to run the headless or GUI version
 	// GUI version is started if:
 	//  * --gui command line argument is given
 	//  * or no command line arguments are given
 	//  * and listening fds were not passed by an init system
-	app = new QCoreApplication(argc, argv);
+	bool useGui = false;
+#ifdef HAVE_SERVERGUI
+	if(initsys::getListenFds().isEmpty()) {
+		useGui = argc==1;
+		for(int i=1;i<argc;++i) {
+			if(strcmp(argv[i], "--gui")==0) {
+				useGui = true;
+				break;
+			}
+		}
+	}
+
+	if(useGui)
+		app = new QApplication(argc, argv);
+	else
+#endif
+		app = new QCoreApplication(argc, argv);
+
 
 	// Set common settings
 	QCoreApplication::setOrganizationName("drawpile");
@@ -57,8 +81,15 @@ int main(int argc, char *argv[]) {
 	initsys::setInitSysLogger();
 
 	// Start the server
-	if(!server::headless::start())
-		return 1;
+	if(useGui) {
+#ifdef HAVE_SERVERGUI
+		if(!server::gui::start())
+			return 1;
+#endif
+	} else {
+		if(!server::headless::start())
+			return 1;
+	}
 
 	initsys::notifyReady();
 	return app->exec();
