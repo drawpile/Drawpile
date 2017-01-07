@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #include <QDebug>
 #include <QNetworkInterface>
 #include <QNetworkReply>
-#include <QMessageBox>
 
 #include <algorithm>
 
@@ -64,7 +63,7 @@ bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 }
 
 WhatIsMyIp::WhatIsMyIp(QObject *parent) :
-	QObject(parent), _querying(false)
+	QObject(parent), m_querying(false)
 {
 }
 
@@ -78,26 +77,26 @@ WhatIsMyIp *WhatIsMyIp::instance()
 
 void WhatIsMyIp::discoverMyIp()
 {
-	if(_querying)
+	if(m_querying)
 		return;
-	_querying = true;
+	m_querying = true;
 
-	QNetworkReply *reply = networkaccess::get(QUrl("http://ipecho.net/plain"), QString(), nullptr);
+	QNetworkReply *reply = networkaccess::get(QUrl("http://ipecho.net/plain"), QString());
 
 	connect(reply, &QNetworkReply::finished, [this, reply]() {
 		if(reply->error() != QNetworkReply::NoError) {
 			qWarning() << "ipecho.net error:" << reply->errorString();
-			QMessageBox::warning(0, tr("IP lookup error"), reply->errorString());
+			emit ipLookupError(reply->errorString());
 
 		} else {
 			QByteArray buf = reply->read(64);
 			QHostAddress addr;
 			if(!addr.setAddress(QString::fromUtf8(buf))) {
 				qWarning() << "ipecho.net received invalid data:" << buf;
-				QMessageBox::warning(0, tr("IP lookup error"), tr("Received invalid data"));
+				emit ipLookupError(tr("Received invalid data"));
 			} else {
 				emit myAddressIs(addr.toString());
-				_querying = false;
+				m_querying = false;
 			}
 		}
 
@@ -155,19 +154,19 @@ bool WhatIsMyIp::isCGNAddress(const QString &address)
  * outside.
  * @return server hostname
  */
-QString WhatIsMyIp::localAddress()
+QString WhatIsMyIp::guessLocalAddress()
 {
 	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 	QList<QHostAddress> alist;
 
 	// Gather a list of acceptable addresses
-	foreach (QNetworkInterface iface, list) {
+	for(const QNetworkInterface &iface : list) {
 		// Ignore inactive interfaces
 		if(!(iface.flags() & QNetworkInterface::IsUp) ||
 			!(iface.flags() & QNetworkInterface::IsRunning))
 			continue;
 
-		foreach (QNetworkAddressEntry entry, iface.addressEntries()) {
+		for(const QNetworkAddressEntry &entry : iface.addressEntries()) {
 			// Ignore IPv6 addresses with scope ID, because QUrl doesn't accept them (last tested with Qt 5.1.1)
 			QHostAddress a = entry.ip();
 			if(a.scopeId().isEmpty())
@@ -186,3 +185,4 @@ QString WhatIsMyIp::localAddress()
 
 	return "127.0.0.1";
 }
+

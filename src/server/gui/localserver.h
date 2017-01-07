@@ -38,8 +38,8 @@ public:
 	explicit LocalServer(MultiServer *server, QObject *parent=nullptr);
 
 	bool isLocal() const override { return true; }
-	QString address() const override { return "127.0.0.1"; }
-	int port() const override { return 27750; }
+	QString address() const override;
+	int port() const override;
 
 	// Local server specific:
 	bool isRunning() const;

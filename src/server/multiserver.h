@@ -49,9 +49,17 @@ public:
 	void setAnnounceLocalAddr(const QString &addr);
 	void setRecordingPath(const QString &path);
 
+	QString announceLocalAddr() const;
+
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
 #endif
+
+	/**
+	 * @brief Get the port the server is running from
+	 * @return port number or zero if server is not running
+	 */
+	int port() const { return m_port; }
 
 	Q_INVOKABLE bool isRunning() const { return m_state != STOPPED; }
 
@@ -105,6 +113,7 @@ private:
 	State m_state;
 
 	bool m_autoStop;
+	int m_port;
 
 	QString m_sslCertFile;
 	QString m_sslKeyFile;

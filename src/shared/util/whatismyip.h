@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,16 @@ public:
     explicit WhatIsMyIp(QObject *parent = 0);
 
 	/**
+	 * @brief Get the local address
+	 *
+	 * If a local IP query has finished already, this
+	 * will return the true external address. Otherwise,
+	 * it returns the best guess from the available
+	 * network interfaces.
+	 */
+	QString myAddress() const { return m_ip.isEmpty() ? guessLocalAddress() : m_ip; }
+
+	/**
 	 * @brief Get a singleton instance of this class
 	 * @return
 	 */
@@ -60,17 +70,27 @@ public:
 	 * from the Internet.
 	 * @return local host IP address in URL friendly format
 	 */
-	static QString localAddress();
+	static QString guessLocalAddress();
 
 signals:
+	//! External IP lookup finished
 	void myAddressIs(const QString &ip);
 
+	//! An error occurred during external IP lookup
+	void ipLookupError(const QString &message);
+
 public slots:
+	/**
+	 * @brief Start the external IP query
+	 * 
+	 * The signal myAddressIs(QString) will be emitted when the address is known.
+	 */
 	void discoverMyIp();
 
 private:
-	bool _querying;
-	QString _ip;
+	bool m_querying;
+	QString m_ip;
 };
 
-#endif // WHATISMYIP_H
+#endif
+

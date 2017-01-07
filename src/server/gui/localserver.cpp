@@ -19,6 +19,7 @@
 
 #include "localserver.h"
 #include "multiserver.h"
+#include "../shared/util/whatismyip.h"
 
 namespace server {
 namespace gui {
@@ -31,6 +32,20 @@ LocalServer::LocalServer(MultiServer *server, QObject *parent)
 	connect(server, &MultiServer::serverStartError, this, &LocalServer::serverError);
 	connect(server, &MultiServer::serverStarted, this, &LocalServer::serverStateChanged);
 	connect(server, &MultiServer::serverStopped, this, &LocalServer::serverStateChanged);
+}
+
+QString LocalServer::address() const
+{
+	QString addr = m_server->announceLocalAddr();
+	if(addr.isEmpty())
+		addr = WhatIsMyIp::instance()->myAddress();
+	return addr;
+}
+
+int LocalServer::port() const
+{
+	const int p = m_server->port();
+	return p;
 }
 
 bool LocalServer::isRunning() const

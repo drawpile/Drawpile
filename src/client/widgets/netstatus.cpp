@@ -21,7 +21,7 @@
 #include "widgets/popupmessage.h"
 #include "dialogs/certificateview.h"
 #include "dialogs/netstats.h"
-#include "utils/whatismyip.h"
+#include "../shared/util/whatismyip.h"
 
 #ifdef HAVE_UPNP
 #include "net/upnp.h"

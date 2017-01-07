@@ -66,10 +66,10 @@
 #include "canvas/statetracker.h"
 
 #include "utils/recentfiles.h"
-#include "utils/whatismyip.h"
+#include "../shared/util/whatismyip.h"
 #include "utils/icon.h"
 #include "utils/images.h"
-#include "utils/networkaccess.h"
+#include "utils/netfiles.h"
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
 #include "utils/settings.h"
@@ -1164,7 +1164,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 				QUrl::TolerantMode);
 
 	} else {
-		address.setHost(WhatIsMyIp::localAddress());
+		address.setHost(WhatIsMyIp::guessLocalAddress());
 	}
 
 	if(address.isValid() == false || address.host().isEmpty()) {

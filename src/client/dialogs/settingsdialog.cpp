@@ -27,7 +27,7 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
-#include "utils/networkaccess.h"
+#include "utils/netfiles.h"
 #include "utils/settings.h"
 #include "../shared/util/announcementapi.h"
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <QUrl>
 #include <QStringList>
 
+#include <functional>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -70,10 +71,10 @@ class AnnouncementApi : public QObject
 {
 	Q_OBJECT
 public:
-	explicit AnnouncementApi(QObject *parent = 0);
+	explicit AnnouncementApi(QObject *parent=nullptr);
 
 	/**
-	 * @brief Set the address of this server to announce
+	 * @brief Set the address of this server
 	 *
 	 * This can be used to set the canonical server address to use
 	 * when announcing a session. If not set, the listing server will use
@@ -81,7 +82,14 @@ public:
 	 *
 	 * @param addr canonical address of this server
 	 */
-	void setLocalAddress(const QString &addr) { _localAddress = addr; }
+	void setLocalAddress(const QString &addr) { m_localAddress = addr; }
+
+	/**
+	 * @brief Get the local address
+	 *
+	 * This will return an empty string if local address is not explicitly set
+	 */
+	QString localAddress() const { return m_localAddress; }
 
 	/**
 	 * @brief Query information about the API
@@ -124,18 +132,17 @@ signals:
 	void unlisted(const QString &sessionId);
 	void error(const QString &errorString);
 
-private slots:
-	void handleResponse(QNetworkReply *reply);
-
 private:
+	typedef void (AnnouncementApi::*HandlerFunc)(QNetworkReply*);
+	void handleResponse(QNetworkReply *reply, HandlerFunc);
+
 	void handleAnnounceResponse(QNetworkReply *reply);
 	void handleUnlistResponse(QNetworkReply *reply);
 	void handleRefreshResponse(QNetworkReply *reply);
 	void handleListingResponse(QNetworkReply *reply);
 	void handleServerInfoResponse(QNetworkReply *reply);
 
-	QNetworkAccessManager *_net;
-	QString _localAddress;
+	QString m_localAddress;
 };
 
 }

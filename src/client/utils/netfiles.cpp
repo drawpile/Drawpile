@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,47 +17,19 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "networkaccess.h"
+#include "netfiles.h"
 #include "widgets/netstatus.h"
+#include "../shared/util/networkaccess.h"
 
 #include <QNetworkReply>
 #include <QDebug>
 #include <QApplication>
-#include <QMimeDatabase>
+
 #include <QTemporaryFile>
 #include <QDir>
 #include <QImageReader>
 
 namespace networkaccess {
-
-QNetworkAccessManager *getInstance()
-{
-	static QNetworkAccessManager *instance;
-	if(!instance)
-		instance = new QNetworkAccessManager;
-
-	return instance;
-}
-
-QNetworkReply *get(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus)
-{
-	QNetworkRequest req(url);
-
-	QNetworkReply *reply = getInstance()->get(req);
-	if(netstatus) {
-		netstatus->connect(reply, SIGNAL(downloadProgress(qint64,qint64)), netstatus, SLOT(bytesReceived(qint64,qint64)));
-		netstatus->connect(reply, &QNetworkReply::finished, [netstatus]() { netstatus->bytesReceived(0,0); });
-	}
-
-	reply->connect(reply, &QNetworkReply::metaDataChanged, [reply, expectType]() {
-		QVariant mimetype = reply->header(QNetworkRequest::ContentTypeHeader);
-		if(mimetype.isValid()) {
-			if(mimetype.toString().startsWith(expectType)==false)
-				reply->close();
-		}
-	});
-	return reply;
-}
 
 void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void (QFile &, const QString &)> callback)
 {
@@ -74,7 +46,12 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
 		return;
 	}
 
-	QNetworkReply *reply = get(url, expectType, netstatus);
+	QNetworkReply *reply = get(url, expectType);
+
+	if(netstatus) {
+		netstatus->connect(reply, SIGNAL(downloadProgress(qint64,qint64)), netstatus, SLOT(bytesReceived(qint64,qint64)));
+		netstatus->connect(reply, &QNetworkReply::finished, [netstatus]() { netstatus->bytesReceived(0,0); });
+	}
 
 	reply->connect(reply, &QNetworkReply::readyRead, [reply, tempfile]() {
 		tempfile->write(reply->readAll());

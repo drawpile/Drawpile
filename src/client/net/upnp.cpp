@@ -18,7 +18,7 @@
 */
 
 #include "upnp.h"
-#include "utils/whatismyip.h"
+#include "../shared/util/whatismyip.h"
 
 #include <QThread>
 
@@ -119,7 +119,7 @@ void UPnPClient::doActivateForward(int port)
 	if(!doDiscover())
 			return;
 
-	QByteArray internalAddr = WhatIsMyIp::localAddress().toUtf8();
+	QByteArray internalAddr = WhatIsMyIp::guessLocalAddress().toUtf8();
 	QByteArray portstr = QByteArray::number(port);
 
 	int r = UPNP_AddPortMapping(

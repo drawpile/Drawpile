@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 */
 
 #include "announcementapi.h"
+#include "networkaccess.h"
 #include "logger.h"
 
-#include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QJsonDocument>
@@ -48,8 +48,6 @@ static QString slashcat(QString s, const QString &s2)
 AnnouncementApi::AnnouncementApi(QObject *parent)
 	: QObject(parent)
 {
-	_net = new QNetworkAccessManager(this);
-	connect(_net, &QNetworkAccessManager::finished, this, &AnnouncementApi::handleResponse);
 }
 
 void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
@@ -57,8 +55,8 @@ void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 	logger::debug() << "getting API info from" << apiUrl.toString();
 
 	QNetworkRequest req(apiUrl);
-	QNetworkReply *reply = _net->get(req);
-	reply->setProperty("QUERY_TYPE", "getinfo");
+	QNetworkReply *reply = networkaccess::getInstance()->get(req);
+	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleServerInfoResponse);} );
 }
 
 void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title, bool nsfm)
@@ -78,8 +76,8 @@ void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol
 
 	QNetworkRequest req(url);
 
-	QNetworkReply *reply = _net->get(req);
-	reply->setProperty("QUERY_TYPE", "getlist");
+	QNetworkReply *reply = networkaccess::getInstance()->get(req);
+	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleListingResponse);} );
 }
 
 void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session)
@@ -90,8 +88,8 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	QJsonObject o;
 	if(!session.host.isEmpty())
 		o["host"] = session.host;
-	else if(!_localAddress.isEmpty())
-		o["host"] = _localAddress;
+	else if(!m_localAddress.isEmpty())
+		o["host"] = m_localAddress;
 	if(session.port>0)
 		o["port"] = session.port;
 	o["id"] = session.id;
@@ -109,10 +107,10 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-	QNetworkReply *reply = _net->post(req, QJsonDocument(o).toJson());
-	reply->setProperty("QUERY_TYPE", "announce");
+	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	reply->setProperty("API_URL", apiUrl);
 	reply->setProperty("SESSION_ID", session.id);
+	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleAnnounceResponse);} );
 }
 
 void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
@@ -136,8 +134,8 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
-	QNetworkReply *reply = _net->put(req, QJsonDocument(o).toJson());
-	reply->setProperty("QUERY_TYPE", "refresh");
+	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
+	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRefreshResponse);} );
 }
 
 void AnnouncementApi::unlistSession(const Announcement &a)
@@ -150,32 +148,23 @@ void AnnouncementApi::unlistSession(const Announcement &a)
 	QNetworkRequest req(url);
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
-	QNetworkReply *reply = _net->deleteResource(req);
-	reply->setProperty("QUERY_TYPE", "unlist");
+	QNetworkReply *reply = networkaccess::getInstance()->deleteResource(req);
 	reply->setProperty("SESSION_ID", a.id);
+	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleUnlistResponse);} );
 }
 
-void AnnouncementApi::handleResponse(QNetworkReply *reply)
+void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::HandlerFunc handlerFunc)
 {
+	Q_ASSERT(reply);
+	Q_ASSERT(handlerFunc);
+
 	try {
 		if(reply->error() != QNetworkReply::NoError)
 			throw ResponseError(reply->errorString());
 
 		// TODO handle redirects
 
-		const QString querytype = reply->property("QUERY_TYPE").toString();
-		if(querytype == "announce")
-			handleAnnounceResponse(reply);
-		else if(querytype == "unlist")
-			handleUnlistResponse(reply);
-		else if(querytype == "refresh")
-			handleRefreshResponse(reply);
-		else if(querytype == "getlist")
-			handleListingResponse(reply);
-		else if(querytype == "getinfo")
-			handleServerInfoResponse(reply);
-		else // shouldn't happen
-			qFatal("Unhandled Announcement API response query type");
+		((this)->*(handlerFunc))(reply);
 
 	} catch(const ResponseError &e) {
 		logger::error() << "Announce API error:" << e.error;

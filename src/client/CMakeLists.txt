@@ -71,13 +71,12 @@ set (
 	utils/palettelistmodel.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
-	utils/whatismyip.cpp
 	utils/strokesmoother.cpp
 	utils/html.cpp
 	utils/usernamevalidator.cpp
 	utils/sessionidvalidator.cpp
 	utils/images.cpp
-	utils/networkaccess.cpp
+	utils/netfiles.cpp
 	utils/funstuff.cpp
 	utils/kis_cubic_curve.cpp
 	utils/shortcutdetector.cpp

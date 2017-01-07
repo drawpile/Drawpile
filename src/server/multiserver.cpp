@@ -43,7 +43,8 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	m_config(config),
 	m_server(nullptr),
 	m_state(STOPPED),
-	m_autoStop(false)
+	m_autoStop(false),
+	m_port(0)
 {
 	m_sessions = new SessionServer(config, this);
 
@@ -87,6 +88,11 @@ void MultiServer::setAutoStop(bool autostop)
 void MultiServer::setAnnounceLocalAddr(const QString &addr)
 {
 	m_sessions->announcementApiClient()->setLocalAddress(addr);
+}
+
+QString MultiServer::announceLocalAddr() const
+{
+	return m_sessions->announcementApiClient()->localAddress();
 }
 
 void MultiServer::setRecordingPath(const QString &path)
@@ -134,6 +140,8 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 		return false;
 	}
 
+	m_port = m_server->serverPort();
+
 	emit serverStarted();
 	logger::info() << "Started listening on port" << port << "at address" << address.toString();
 	return true;
@@ -158,6 +166,8 @@ bool MultiServer::startFd(int fd)
 		m_state = STOPPED;
 		return false;
 	}
+
+	m_port = m_server->serverPort();
 
 	logger::info() << "Started listening on passed socket";
 	return true;
@@ -261,6 +271,7 @@ void MultiServer::stop() {
 		logger::info() << "Stopping server and kicking out" << m_sessions->totalUsers() << "users...";
 		m_state = STOPPING;
 		m_server->close();
+		m_port = 0;
 
 		m_sessions->stopAll();
 	}

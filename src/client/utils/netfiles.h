@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKACCESS_H
-#define NETWORKACCESS_H
+#ifndef NETFILES_H
+#define NETFILES_H
 
 #include <functional>
 
@@ -34,22 +34,6 @@ namespace widgets {
 }
 
 namespace networkaccess {
-
-/**
- * @brief Get a shared instance of a QNetworkAccessManager
- */
-QNetworkAccessManager *getInstance();
-
-/**
- * @brief A convenience wrapper around getInstance()->get()
- *
- *
- * @param url the URL to fetch
- * @param expectType expected mime type
- * @param netstatus the status widget whose progress meter to update
- * @return network reply
- */
-QNetworkReply *get(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus);
 
 /**
  * @brief Load a potentially large file from the network

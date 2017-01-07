@@ -34,7 +34,7 @@
 #endif
 #ifdef HAVE_UPNP
 #include "upnp.h"
-#include "utils/whatismyip.h"
+#include "../shared/util/whatismyip.h"
 #endif
 
 namespace net {
@@ -85,7 +85,7 @@ int ServerThread::startServer(const QString &title)
 	if(_port>0) {
 		QSettings cfg;
 		if(cfg.value("settings/server/upnp", true).toBool()) {
-			QString myIp = WhatIsMyIp::localAddress();
+			QString myIp = WhatIsMyIp::guessLocalAddress();
 			if(WhatIsMyIp::isMyPrivateAddress(myIp)) {
 				qDebug() << "UPnP enabled: trying to forward" << _port << "to" << myIp;
 				UPnPClient::instance()->activateForward(_port);

@@ -23,6 +23,8 @@ set (
 	util/passwordhash.cpp
 	util/filename.cpp
 	util/announcementapi.cpp
+	util/whatismyip.cpp
+	util/networkaccess.cpp
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp
