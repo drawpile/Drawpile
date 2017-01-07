@@ -315,7 +315,6 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ServerTitle,
 		config::WelcomeMessage,
 		config::AnnounceWhiteList,
-		config::LocalAddress,
 		config::PrivateUserList,
 		config::AllowGuests
 	};

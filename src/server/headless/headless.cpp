@@ -78,6 +78,10 @@ bool start() {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
+	// --local-addr
+	QCommandLineOption localAddr("local-addr", "Local address for session announcement", "address");
+	parser.addOption(localAddr);
+
 	// --ssl-cert <certificate file>
 	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
 	parser.addOption(sslCertOption);
@@ -176,6 +180,12 @@ bool start() {
 				return false;
 			}
 		}
+	}
+
+	{
+		QString localAddress = parser.value(localAddr);
+		if(!localAddress.isEmpty())
+			server->setAnnounceLocalAddr(localAddress);
 	}
 
 	{

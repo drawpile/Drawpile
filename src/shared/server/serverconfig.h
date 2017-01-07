@@ -59,9 +59,8 @@ namespace config {
 		ServerTitle(6, "serverTitle", "", ConfigKey::STRING),                // Server title (string)
 		WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
-		LocalAddress(9, "localAddress", "", ConfigKey::STRING),              // Local address to use for session listing (string)
-		PrivateUserList(10, "privateUserList", "false", ConfigKey::BOOL),    // Don't include user list in announcement (bool)
-		AllowGuests(11, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users (bool)
+		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
+		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users
 		;
 }
 
