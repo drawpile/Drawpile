@@ -21,6 +21,9 @@
 #include "multiserver.h"
 #include "../shared/util/whatismyip.h"
 
+#include <QSettings>
+#include <QJsonObject>
+
 namespace server {
 namespace gui {
 
@@ -32,6 +35,7 @@ LocalServer::LocalServer(MultiServer *server, QObject *parent)
 	connect(server, &MultiServer::serverStartError, this, &LocalServer::serverError);
 	connect(server, &MultiServer::serverStarted, this, &LocalServer::serverStateChanged);
 	connect(server, &MultiServer::serverStopped, this, &LocalServer::serverStateChanged);
+	connect(server, &MultiServer::jsonApiResult, this, &LocalServer::onApiResponse);
 }
 
 QString LocalServer::address() const
@@ -44,7 +48,9 @@ QString LocalServer::address() const
 
 int LocalServer::port() const
 {
-	const int p = m_server->port();
+	int p = m_server->port();
+	if(p==0)
+		p = QSettings().value("guiserver/port", "27750").toInt();
 	return p;
 }
 
@@ -66,15 +72,22 @@ void LocalServer::startServer()
 	}
 
 	// These settings are safe to set from another thread when the server isn't running
-#if 0
-	m_server->setSslCertFile(cert, key);
-	m_server->setMustSecure(false);
-	m_server->setAnnounceLocalAddr(QString());
-	m_server->setRecordingPath(QString());
-#endif
+	QSettings cfg;
+	cfg.beginGroup("guiserver");
+
+	if(cfg.value("use-ssl", false).toBool()) {
+		m_server->setSslCertFile(cfg.value("sslcert").toString(), cfg.value("sslkey").toString());
+		m_server->setMustSecure(cfg.value("force-ssl", false).toBool());
+	} else {
+		m_server->setSslCertFile(QString(), QString());
+		m_server->setMustSecure(false);
+	}
+
+	m_server->setAnnounceLocalAddr(cfg.value("local-addr").toString());
+	m_server->setRecordingPath(cfg.value("recording-path").toString());
 
 	// Start the server
-	quint16 port = 27750;
+	quint16 port = cfg.value("port", 27750).toInt();
 
 	QMetaObject::invokeMethod(
 		m_server, "start", Qt::QueuedConnection,
@@ -86,6 +99,18 @@ void LocalServer::stopServer()
 {
 	// Calling stop is safe in any state
 	QMetaObject::invokeMethod(m_server, "stop", Qt::QueuedConnection);
+}
+
+void LocalServer::makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request)
+{
+	// Note: we can call the internal server's JSON API even when the server is stopped
+	QMetaObject::invokeMethod(
+		m_server, "callJsonApiAsync", Qt::QueuedConnection,
+		Q_ARG(QString, requestId),
+		Q_ARG(JsonApiMethod, method),
+		Q_ARG(QStringList, path),
+		Q_ARG(QJsonObject, request)
+		);
 }
 
 }

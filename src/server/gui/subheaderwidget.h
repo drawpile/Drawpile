@@ -16,46 +16,22 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SERVERSUMMARYPAGE_H
-#define SERVERSUMMARYPAGE_H
+#ifndef SUBHEADERWIDGET_H
+#define SUBHEADERWIDGET_H
 
-#include "pagefactory.h"
-
-#include <QWidget>
-#include <QApplication>
+#include <QLabel>
 
 namespace server {
-
-struct JsonApiResult;
-
 namespace gui {
 
-class ServerSummaryPage : public QWidget
+class SubheaderWidget : public QLabel
 {
 	Q_OBJECT
 public:
-	struct Private;
-	explicit ServerSummaryPage(Server *server, QWidget *parent=nullptr);
-	~ServerSummaryPage();
+	SubheaderWidget(const QString &text, int level, QWidget *parent=nullptr);
 
-private slots:
-	void startOrStopServer();
-	void handleResponse(const QString &requestId, const JsonApiResult &result);
-
-	void saveSettings();
-
-private:
-	void refreshPage();
-
-	Private *d;
-};
-
-class ServersummaryPageFactory : public PageFactory
-{
-public:
-	QString pageId() const override { return QStringLiteral("summary:server"); }
-	QString title() const override { return QApplication::tr("Server"); }
-	ServerSummaryPage *makePage(Server *server) const { return new ServerSummaryPage(server); }
+protected:
+	void paintEvent(QPaintEvent*);
 };
 
 }

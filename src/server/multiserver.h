@@ -87,6 +87,11 @@ public slots:
 	 */
 	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
+	/**
+	 * @brief Like callJsonApi(), but the jsonApiResponse signal will be emitted instead of the return value
+	 */
+	void callJsonApiAsync(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
 private slots:
 	void newClient();
 	void printStatusUpdate();
@@ -97,6 +102,7 @@ signals:
 	void serverStartError(const QString &message);
 	void serverStarted();
 	void serverStopped();
+	void jsonApiResult(const QString &serverId, const JsonApiResult &result);
 
 private:
 	bool createServer();

@@ -301,6 +301,12 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 	return JsonApiNotFound();
 }
 
+void MultiServer::callJsonApiAsync(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	JsonApiResult result = callJsonApi(method, path, request);
+	emit jsonApiResult(requestId, result);
+}
+
 /**
  * @brief Serverwide settings
  *
@@ -327,6 +333,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::WelcomeMessage,
 		config::AnnounceWhiteList,
 		config::PrivateUserList,
+		config::AllowGuestHosts,
 		config::AllowGuests
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);

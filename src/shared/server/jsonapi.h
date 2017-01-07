@@ -22,6 +22,7 @@
 
 #include <QJsonDocument>
 #include <QStringList>
+#include <QMetaType>
 #include <tuple>
 
 namespace server {
@@ -57,5 +58,8 @@ inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResul
 std::tuple<QString, QStringList> popApiPath(const QStringList &path);
 
 }
+
+Q_DECLARE_METATYPE(server::JsonApiMethod)
+Q_DECLARE_METATYPE(server::JsonApiResult)
 
 #endif

@@ -17,34 +17,34 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server.h"
+#include "subheaderwidget.h"
 
-#include <QJsonObject>
+#include <QPainter>
 
 namespace server {
 namespace gui {
 
-static const QString REFRESH_REQID = "sessionlist";
-
-Server::Server(QObject *parent)
-	: QObject(parent)
+SubheaderWidget::SubheaderWidget(const QString &text, int level, QWidget *parent)
+	: QLabel(text, parent)
 {
+	QFont f = font();
+	f.setBold(true);
 
+	if(level<=1)
+		f.setPointSizeF(f.pointSizeF()*2);
+	else if(level==2)
+		f.setPointSizeF(f.pointSizeF()*1.3);
+
+	setFont(f);
+	setMargin(5);
 }
 
-void Server::refreshSessionList()
+void SubheaderWidget::paintEvent(QPaintEvent *e)
 {
-	makeApiRequest(REFRESH_REQID, JsonApiMethod::Get, QStringList() << "sessions", QJsonObject());
-}
-
-void Server::onApiResponse(const QString &requestId, const JsonApiResult &result)
-{
-	if(requestId == REFRESH_REQID) {
-		m_sessionlist = result.body.array();
-		emit sessionListRefreshed(m_sessionlist);
-	} else {
-		emit apiResponse(requestId, result);
-	}
+	QLabel::paintEvent(e);
+	QPainter p(this);
+	p.setPen(palette().color(QPalette::Highlight));
+	p.drawLine(0, height()-3, width(), height()-3);
 }
 
 }

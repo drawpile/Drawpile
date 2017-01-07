@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#include "../shared/server/jsonapi.h" // for datatype registration
+
 #include "initsys.h"
 #include "headless/headless.h"
 
@@ -48,6 +50,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	QCoreApplication *app;
+
+	qRegisterMetaType<server::JsonApiMethod>("JsonApiMethod");
+	qRegisterMetaType<server::JsonApiResult>("JsonApiResult");
 
 	// GUI version is started if:
 	//  * --gui command line argument is given

@@ -17,10 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef GUI_SERVER_CONNECTOR_H
+#define GUI_SERVER_CONNECTOR_H
 
 #include <QObject>
+#include <QJsonArray>
+
+#include "../shared/server/jsonapi.h"
 
 namespace server {
 namespace gui {
@@ -51,6 +54,34 @@ public:
 	 * @brief Get the port the server is (or will be) running on
 	 */
 	virtual int port() const = 0;
+
+	/**
+	 * @brief Make a request to the server's JSON API
+	 *
+	 * An apiResponse signal with the given requestId will be emitted
+	 * when the server responds.
+	 *
+	 * @param requestId internal request ID
+	 * @param method request method
+	 * @param path path
+	 * @param request request body
+	 */
+	virtual void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request) = 0;
+
+	/**
+	 * @brief Refresh the session list
+	 */
+	void refreshSessionList();
+
+signals:
+	void apiResponse(const QString &requestId, const JsonApiResult &result);
+	void sessionListRefreshed(const QJsonArray &sessions);
+
+protected slots:
+	void onApiResponse(const QString &requestId, const JsonApiResult &result);
+
+private:
+	QJsonArray m_sessionlist;
 };
 
 }

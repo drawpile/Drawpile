@@ -24,6 +24,7 @@ if(SERVERGUI)
 		gui/sidebarmodel.cpp
 		gui/sidebaritemdelegate.cpp
 		gui/serversummarypage.cpp
+		gui/subheaderwidget.cpp
 		)
 	add_definitions(-DHAVE_SERVERGUI)
 endif(SERVERGUI)

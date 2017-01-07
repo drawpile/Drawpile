@@ -46,6 +46,8 @@ public:
 	void startServer();
 	void stopServer();
 
+	void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request) override;
+
 signals:
 	//! Server just started or stopped
 	void serverStateChanged();
