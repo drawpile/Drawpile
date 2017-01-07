@@ -26,6 +26,7 @@ if(SERVERGUI)
 		gui/serversummarypage.cpp
 		gui/sessionpage.cpp
 		gui/subheaderwidget.cpp
+		gui/userlistmodel.cpp
 		)
 	add_definitions(-DHAVE_SERVERGUI)
 endif(SERVERGUI)

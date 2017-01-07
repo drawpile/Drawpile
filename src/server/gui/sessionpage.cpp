@@ -19,6 +19,7 @@
 
 #include "sessionpage.h"
 #include "subheaderwidget.h"
+#include "userlistmodel.h"
 #include "server.h"
 #include "../shared/server/jsonapi.h"
 
@@ -31,6 +32,8 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QTableView>
+#include <QHeaderView>
 #include <QTimer>
 
 namespace server {
@@ -45,7 +48,9 @@ struct SessionPage::Private {
 	QSpinBox *maxUsers;
 	QCheckBox *closed, *nsfm, *persistent;
 
-	QTimer *saveTimer;
+	UserListModel *userlist;
+
+	QTimer *saveTimer, *refreshTimer;
 	QJsonObject lastUpdate;
 
 	Private() :
@@ -102,11 +107,18 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	d->server = server;
 	d->id = id;
 	d->refreshReqId = "refresh-" + id;
+	d->userlist = new UserListModel(this);
 
 	d->saveTimer = new QTimer(this);
 	d->saveTimer->setSingleShot(true);
 	d->saveTimer->setInterval(500);
 	connect(d->saveTimer, &QTimer::timeout, this, &SessionPage::saveSettings);
+
+	d->refreshTimer = new QTimer(this);
+	d->refreshTimer->setSingleShot(false);
+	d->refreshTimer->setInterval(15 * 1000);
+	connect(d->refreshTimer, &QTimer::timeout, this, &SessionPage::refreshPage);
+	d->refreshTimer->start(15 * 1000);
 
 	auto *layout = new QVBoxLayout;
 	setLayout(layout);
@@ -153,6 +165,19 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 		layout->addLayout(buttons);
 	}
 
+	{
+		layout->addWidget(new SubheaderWidget(tr("Users"), 2));
+
+		QTableView *userview = new QTableView;
+		userview->setModel(d->userlist);
+		userview->setColumnHidden(0, true);
+		userview->horizontalHeader()->setStretchLastSection(true);
+		userview->setSelectionMode(QTableView::SingleSelection);
+		userview->setSelectionBehavior(QTableView::SelectRows);
+
+		layout->addWidget(userview);
+	}
+
 	layout->addStretch(1);
 
 	connect(server, &Server::apiResponse, this, &SessionPage::handleResponse);
@@ -189,6 +214,7 @@ void SessionPage::changePassword()
 		QJsonObject o;
 		o["password"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
+		d->refreshTimer->start(); // reset refresh timer
 	});
 	dlg->show();
 
@@ -205,12 +231,14 @@ void SessionPage::changeTitle()
 		QJsonObject o;
 		o["title"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
+		d->refreshTimer->start(); // reset refresh timer
 	});
 	dlg->show();
 }
 
 void SessionPage::refreshPage()
 {
+	qDebug() << "Refreshing session" << d->id << "details";
 	d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Get, QStringList() << "sessions" << d->id, QJsonObject());
 }
 
@@ -235,6 +263,8 @@ void SessionPage::saveSettings()
 		qDebug() << "update" << update;
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, update);
 	}
+
+	d->refreshTimer->start(); // reset refresh timer
 }
 
 void SessionPage::handleResponse(const QString &requestId, const JsonApiResult &result)
@@ -274,6 +304,8 @@ void SessionPage::handleResponse(const QString &requestId, const JsonApiResult &
 	}
 
 	d->nsfm->setChecked(o["nsfm"].toBool());
+
+	d->userlist->setUserList(o["users"].toArray());
 
 	/* TODO user list
 	 "users":[
