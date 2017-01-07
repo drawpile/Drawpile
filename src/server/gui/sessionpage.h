@@ -16,33 +16,34 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SERVERSUMMARYPAGE_H
-#define SERVERSUMMARYPAGE_H
+
+#ifndef SESSIONPAGE_H
+#define SESSIONPAGE_H
 
 #include "pagefactory.h"
 
 #include <QWidget>
-#include <QApplication>
 
-namespace server {
+namespace  server {
 
 struct JsonApiResult;
 
 namespace gui {
 
-class ServerSummaryPage : public QWidget
+class SessionPage : public QWidget
 {
 	Q_OBJECT
 public:
 	struct Private;
-	explicit ServerSummaryPage(Server *server, QWidget *parent=nullptr);
-	~ServerSummaryPage();
+
+	explicit SessionPage(Server *server, const QString &id, QWidget *parent=nullptr);
 
 private slots:
-	void startOrStopServer();
-	void handleResponse(const QString &requestId, const JsonApiResult &result);
-
 	void saveSettings();
+	void terminateSession();
+	void changePassword();
+	void changeTitle();
+	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
 	void refreshPage();
@@ -50,13 +51,19 @@ private:
 	Private *d;
 };
 
-class ServersummaryPageFactory : public PageFactory
+class SessionPageFactory : public PageFactory
 {
 public:
-	QString pageId() const override { return QStringLiteral("summary:server"); }
-	QString title() const override { return QApplication::tr("Server"); }
-	ServerSummaryPage *makePage(Server *server) const override { return new ServerSummaryPage(server); }
+	SessionPageFactory(const QString &id) : m_id(id) { }
+	QString pageId() const override { return QStringLiteral("session:") + m_id; }
+	QString title() const override { return m_id; }
+
+	SessionPage *makePage(Server *server) const override { return new SessionPage(server, m_id); }
+
+private:
+	QString m_id;
 };
+
 
 }
 }

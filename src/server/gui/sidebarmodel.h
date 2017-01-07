@@ -49,8 +49,12 @@ public:
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
+public slots:
+	void setSessionList(const QJsonArray &sessions);
+
 private:
 	QList<PageFactory*> m_summarypages;
+	QList<PageFactory*> m_sessions;
 };
 
 }

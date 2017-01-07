@@ -625,7 +625,8 @@ QJsonObject Session::getDescription(bool full) const
 	o["title"] = title();
 	o["hasPassword"] = hasPassword();
 	o["closed"] = isClosed();
-	o["persistent"] = isPersistent();
+	if(m_config->getConfigBool(config::EnablePersistence))
+		o["persistent"] = isPersistent();
 	o["nsfm"] = isNsfm();
 	o["startTime"] = sessionStartTime().toString();
 	o["size"] = int(m_history->sizeInBytes());

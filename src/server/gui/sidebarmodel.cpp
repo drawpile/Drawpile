@@ -20,9 +20,12 @@
 #include "sidebarmodel.h"
 
 #include "serversummarypage.h"
+#include "sessionpage.h"
 
 #include <QDebug>
 #include <QBrush>
+#include <QJsonArray>
+#include <QJsonObject>
 
 namespace server {
 namespace gui {
@@ -37,6 +40,49 @@ SidebarModel::~SidebarModel()
 {
 	for(PageFactory *pf : m_summarypages)
 		delete pf;
+}
+
+void SidebarModel::setSessionList(const QJsonArray &sessions)
+{
+	//qDebug() << "setSessionList" << sessions;
+	QStringList ids;
+	for(const QJsonValue &v : sessions) {
+		const QJsonObject o = v.toObject();
+		QString id = o["alias"].toString();
+		if(id.isEmpty())
+			id = o["id"].toString();
+
+		ids << id;
+	}
+
+	// Remove missing sessions
+	QMutableListIterator<PageFactory*> i(m_sessions);
+	const QModelIndex section = createIndex(1, 0, quintptr(0));
+	int row=0;
+	while(i.hasNext()) {
+		PageFactory *pf = i.next();
+		if(!ids.contains(pf->title())) {
+			qDebug() << "removing" << row;
+			beginRemoveRows(section, row, row);
+			delete pf;
+			i.remove();
+			endRemoveRows();
+		} else {
+			ids.removeAll(pf->title());
+			++row;
+		}
+	}
+
+	// Append new sessions
+	if(!ids.isEmpty()) {
+		row=m_sessions.size();
+		qDebug() << "adding" << ids.size();
+		beginInsertRows(section, row, row+ids.size()-1);
+		for(const QString &id : ids) {
+			m_sessions << new SessionPageFactory(id);
+		}
+		endInsertRows();
+	}
 }
 
 QModelIndex SidebarModel::index(int row, int column, const QModelIndex &parent) const
@@ -74,7 +120,7 @@ int SidebarModel::rowCount(const QModelIndex &parent) const
 		// Only top-level sections have subitems
 		switch(parent.row()) {
 		case 0: return m_summarypages.size();
-		case 1:
+		case 1: return m_sessions.size();
 		default: return 0;
 		}
 	} else {
@@ -101,7 +147,6 @@ Qt::ItemFlags SidebarModel::flags(const QModelIndex &index) const
 	if(index.isValid()) {
 		if(index.parent().isValid())
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-		return Qt::ItemIsEnabled;
 	}
 	return Qt::NoItemFlags;
 }
@@ -121,6 +166,8 @@ QVariant SidebarModel::data(const QModelIndex &index, int role) const
 				break;
 			case 2:
 				// Sessions
+				if(index.row()>=0 && index.row()<m_sessions.size())
+					return m_sessions.at(index.row())->title();
 				break;
 			}
 
@@ -141,6 +188,8 @@ QVariant SidebarModel::data(const QModelIndex &index, int role) const
 				break;
 			case 2:
 				// Sessions
+				if(index.row()>=0 && index.row()<m_sessions.size())
+					return qVariantFromValue((void*)m_sessions.at(index.row()));
 				break;
 			}
 		}

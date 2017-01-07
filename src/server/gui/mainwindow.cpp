@@ -29,6 +29,7 @@
 #include <QTreeView>
 #include <QScrollArea>
 #include <QPointer>
+#include <QTimer>
 
 namespace server {
 namespace gui {
@@ -64,6 +65,7 @@ MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 
 	// Create internal model
 	m_model = new SidebarModel(this);
+	connect(m_server, &Server::sessionListRefreshed, m_model, &SidebarModel::setSessionList);
 
 	// Splitter to divide the window into a sidebar and the main work area
 	QSplitter *splitter = new QSplitter(Qt::Horizontal);
@@ -77,13 +79,14 @@ MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 	sidebar->setFrameShape(QFrame::NoFrame);
 	sidebar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	sidebar->setItemDelegate(new SidebarItemDelegate);
+	sidebar->setExpandsOnDoubleClick(false);
 	QPalette sidebarPalette = sidebar->palette();
 	sidebarPalette.setColor(QPalette::Base, sidebarPalette.color(QPalette::Window));
 	sidebar->setPalette(sidebarPalette);
 
 	sidebar->expandAll();
 
-	connect(sidebar, &QTreeView::activated, this, &MainWindow::onPageSelect);
+	connect(sidebar->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onPageSelect);
 
 	splitter->addWidget(sidebar);
 	splitter->setStretchFactor(0, 1);
@@ -104,13 +107,27 @@ MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 	sidebar->setCurrentIndex(firstPage);
 	onPageSelect(firstPage);
 
+	// Periodically refresh session list
+	QTimer *timer = new QTimer(this);
+	timer->setSingleShot(false);
+	timer->setInterval(5000);
+	connect(timer, &QTimer::timeout, m_server, &Server::refreshSessionList);
+	timer->start();
+
 	resize(800, 600);
 }
 
 void MainWindow::onPageSelect(const QModelIndex &index)
 {
 	PageFactory *pf = (PageFactory*)index.data(SidebarModel::PageFactoryRole).value<void*>();
-	if(!pf || pf->pageId() == m_currentPage)
+	if(!pf) {
+		qDebug() << "Switch to a blank page";
+		delete m_pageArea->takeWidget();
+		m_currentPage = QString();
+		return;
+	}
+
+	if(pf->pageId() == m_currentPage)
 		return;
 
 	qDebug() << "Switching from page" << m_currentPage << "to" << pf->pageId();
