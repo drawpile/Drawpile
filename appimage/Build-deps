@@ -46,5 +46,5 @@ make
 
 # Get Drawpile source code
 cd /
-git clone https://github.com/callaa/Drawpile.git --depth 1
+git clone https://github.com/callaa/Drawpile.git
 
