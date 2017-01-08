@@ -2377,6 +2377,7 @@ void MainWindow::setupActions()
 	layerctrlmenu->addActions(m_layerctrlmode->actions());
 
 	QMenu *sessionSettingsMenu = sessionmenu->addMenu(tr("Settings"));
+	sessionSettingsMenu->menuAction()->setMenuRole(QAction::NoRole); // keep this menu where it is on macOS
 	sessionSettingsMenu->addAction(changetitle);
 	sessionSettingsMenu->addAction(changepassword);
 	sessionSettingsMenu->addAction(viewbanlist);
