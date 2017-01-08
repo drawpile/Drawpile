@@ -33,7 +33,7 @@
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	Server(true, parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
+	Server(false, parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
 	m_localDisconnect(false), m_supportsPersistence(false)
 {
 	m_socket = new QSslSocket(this);
