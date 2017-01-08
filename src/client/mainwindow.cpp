@@ -2301,6 +2301,8 @@ void MainWindow::setupActions()
 	m_layerctrlmode->setExclusive(true);
 	m_layerctrlmode->setEnabled(false);
 
+	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
+
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
@@ -2310,11 +2312,9 @@ void MainWindow::setupActions()
 	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist Without Users"), QString(), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 	QAction *lockbydefault = makeAction("lockbydefault", 0, tr("Lock New Users"), QString(), QKeySequence(), true);
+	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock Cut, Paste && Fill"), QString(), QKeySequence(), true);
 	QAction *nsfm = makeAction("nsfm", 0, tr("NSFM"), tr("Content not suitable for minors"), QKeySequence(), true);
 
-	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
-
-	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock Cut, Paste && Fill"), QString(), QKeySequence(), true);
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	m_admintools->addAction(locksession);
@@ -2389,9 +2389,9 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(persistentsession);
 	sessionSettingsMenu->addAction(closesession);
 	sessionSettingsMenu->addAction(lockbydefault);
+	sessionSettingsMenu->addAction(imagecmdlock);
 	sessionSettingsMenu->addAction(nsfm);
 
-	sessionmenu->addAction(imagecmdlock);
 	sessionmenu->addAction(locksession);
 
 	//
