@@ -32,7 +32,6 @@ make -j5
 mkdir -p $APPDIR/usr/bin
 cp bin/drawpile-srv $APPDIR/usr/bin
 mkdir -p $APPDIR/usr/share/drawpile-srv
-cp -r ../server/webadmin $APPDIR/usr/share/drawpile-srv/
 
 # Construct AppDir bundle
 cd $APPDIR
