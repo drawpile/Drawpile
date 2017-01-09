@@ -28,7 +28,8 @@ private slots:
 		QTest::newRow("ping") << (Message*)new Ping(2, true);
 		QTest::newRow("streampos") << (Message*)new StreamPos(3, 0xffffff);
 
-		QTest::newRow("userjoin") << (Message*)new UserJoin(4, 0x03, QString("Test"));
+		QTest::newRow("userjoin") << (Message*)new UserJoin(4, 0x03, QString("Test"), "asd");
+		QTest::newRow("userjoin(no hash)") << (Message*)new UserJoin(4, 0x03, QString("Test"), QByteArray());
 		QTest::newRow("userleave") << (Message*)new UserLeave(5);
 		QTest::newRow("sessionowner") << (Message*)new SessionOwner(6, QList<uint8_t>() << 1 << 2 << 5);
 

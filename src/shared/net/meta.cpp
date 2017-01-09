@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,31 +17,46 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstring>
-#include <QtEndian>
 #include "meta.h"
+
+#include <QtEndian>
+#include <cstring>
 
 namespace protocol {
 
 UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<2)
-		return 0;
-	return new UserJoin(ctx, *(data+0), QByteArray((const char*)data+1, len-1));
+		return nullptr;
+
+	const uint8_t flags = data[0];
+	const uint nameLen = data[1];
+
+	// Name must be at least one character long, but hash is optional
+	if(nameLen==0 || nameLen+2 > len)
+		return nullptr;
+
+	const QByteArray name = QByteArray((const char*)data+2, nameLen);
+	const QByteArray hash = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
+	return new UserJoin(ctx, flags, name, hash);
 }
 
 int UserJoin::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = m_flags;
+	*(ptr++) = m_name.length();
 	memcpy(ptr, m_name.constData(), m_name.length());
 	ptr += m_name.length();
+	memcpy(ptr, m_hash.constData(), m_hash.length());
+	ptr += m_hash.length();
+
 	return ptr - data;
 }
 
 int UserJoin::payloadLength() const
 {
-	return 1 + m_name.length();
+	return 1 + 1 + m_name.length() + m_hash.length();
 }
 
 SessionOwner *SessionOwner::deserialize(uint8_t ctx, const uchar *data, int len)

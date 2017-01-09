@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,18 +31,24 @@ namespace protocol {
  *
  * This message is sent only be the server. It associates a username
  * with a context ID.
+ *
+ * The identityHash is not yet used, but is present for forward compatibility.
+ * In the future, it will contain a hash made with some secret info (e.g. tripcode or salted IP address)
+ * to allow guest users to prove their identity to other users.
  */
 class UserJoin : public Message {
 public:
 	static const uint8_t FLAG_AUTH = 0x01; // authenticated user (not a guest)
 	static const uint8_t FLAG_MOD = 0x02;  // user is a moderator
 
-	UserJoin(uint8_t ctx, uint8_t flags, const QByteArray &name) : Message(MSG_USER_JOIN, ctx), m_name(name), m_flags(flags) {}
-	UserJoin(uint8_t ctx, uint8_t flags, const QString &name) : UserJoin(ctx, flags, name.toUtf8()) {}
+	UserJoin(uint8_t ctx, uint8_t flags, const QByteArray &name, const QByteArray &hash) : Message(MSG_USER_JOIN, ctx), m_name(name), m_hash(hash), m_flags(flags) { Q_ASSERT(name.length()>0 && name.length()<256); }
+	UserJoin(uint8_t ctx, uint8_t flags, const QString &name, const QByteArray &hash=QByteArray()) : UserJoin(ctx, flags, name.toUtf8(), hash) {}
 
 	static UserJoin *deserialize(uint8_t ctx, const uchar *data, uint len);
 
 	QString name() const { return QString::fromUtf8(m_name); }
+
+	QByteArray identityHash() const { return m_hash; }
 
 	uint8_t flags() const { return m_flags; }
 
@@ -55,6 +61,7 @@ protected:
 
 private:
 	QByteArray m_name;
+	QByteArray m_hash;
 	uint8_t m_flags;
 };
 
