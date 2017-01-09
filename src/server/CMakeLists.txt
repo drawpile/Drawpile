@@ -12,6 +12,7 @@ set (
 	sslserver.cpp
 	database.cpp
 	headless/headless.cpp
+	headless/configfile.cpp
 	)
 
 if(SERVERGUI)

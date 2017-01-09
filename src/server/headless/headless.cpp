@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2016 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "initsys.h"
 #include "sslserver.h"
 #include "database.h"
+#include "configfile.h"
 
 #include "../shared/util/logger.h"
 
@@ -121,6 +122,10 @@ bool start() {
 	QCommandLineOption dbFileOption(QStringList() << "database" << "d", "Use configuration database", "filename");
 	parser.addOption(dbFileOption);
 
+	// --config, -c <filename>
+	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Use configuration file", "filename");
+	parser.addOption(configFileOption);
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 
@@ -129,9 +134,14 @@ bool start() {
 		::exit(0);
 	}
 
-	// Open server configuration database
+	// Set server configuration file or database
 	ServerConfig *serverconfig;
 	if(parser.isSet(dbFileOption)) {
+		if(parser.isSet(configFileOption)) {
+			logger::error() << "Configuration file and database are mutually exclusive options";
+			return false;
+		}
+
 		auto *db = new Database;
 		if(!db->openFile(parser.value(dbFileOption))) {
 			logger::error() << "Couldn't open database file" << parser.value(dbFileOption);
@@ -140,8 +150,11 @@ bool start() {
 		}
 		serverconfig = db;
 
+	} else if(parser.isSet(configFileOption)) {
+		serverconfig = new ConfigFile(parser.value(configFileOption));
+
 	} else {
-		// No database file given: settings are non-persistent
+		// No database or config file: just use the defaults
 		serverconfig = new ServerConfig;
 	}
 
