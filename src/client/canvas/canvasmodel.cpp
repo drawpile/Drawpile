@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ void CanvasModel::metaChat(const protocol::Chat &msg)
 	emit chatMessageReceived(
 		username,
 		msg.message(),
-		msg.isAnnouncement(),
+		msg.isShout(),
 		msg.isAction(),
 		msg.contextId() == m_statetracker->localId(),
 		false // TODO port Log message type from stable branch over here

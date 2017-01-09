@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 	case MSG_USER_JOIN: return UserJoin::deserialize(ctx, data, len);
 	case MSG_USER_LEAVE: return UserLeave::deserialize(ctx, data, len);
 	case MSG_SESSION_OWNER: return SessionOwner::deserialize(ctx, data, len);
+	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
 
 	// Opaque messages
 	default:

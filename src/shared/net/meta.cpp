@@ -84,4 +84,27 @@ int SessionOwner::payloadLength() const
 	return m_ids.size();
 }
 
+Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len<3)
+		return nullptr;
+	return new Chat(ctx, *(data+0), *(data+1), QByteArray((const char*)data+2, len-2));
 }
+
+int Chat::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = transparentFlags();
+	*(ptr++) = opaqueFlags();
+	memcpy(ptr, m_msg.constData(), m_msg.length());
+	ptr += m_msg.length();
+	return ptr - data;
+}
+
+int Chat::payloadLength() const
+{
+	return 2 + m_msg.length();
+}
+
+}
+

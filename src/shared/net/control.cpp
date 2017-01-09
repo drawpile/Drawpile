@@ -57,8 +57,6 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = LOGIN;
 	else if(typestr == "message")
 		r.type = MESSAGE;
-	else if(typestr == "chat")
-		r.type = CHAT;
 	else if(typestr == "alert")
 		r.type = ALERT;
 	else if(typestr == "error")
@@ -87,7 +85,6 @@ QJsonDocument ServerReply::toJson() const
 	case UNKNOWN: break;
 	case LOGIN: typestr="login"; break;
 	case MESSAGE: typestr="msg"; break;
-	case CHAT: typestr="chat"; break;
 	case ALERT: typestr="alert"; break;
 	case ERROR: typestr="error"; break;
 	case RESULT: typestr="result"; break;

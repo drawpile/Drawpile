@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,10 @@ enum MessageType {
 	MSG_USER_JOIN=32,
 	MSG_USER_LEAVE,
 	MSG_SESSION_OWNER,
+	MSG_CHAT,
 
 	// Meta messages (opaque)
-	MSG_CHAT=64,
-	MSG_INTERVAL,
+	MSG_INTERVAL=64,
 	MSG_LASERTRAIL,
 	MSG_MOVEPOINTER,
 	MSG_MARKER,

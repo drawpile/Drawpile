@@ -191,20 +191,6 @@ void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kw
 	client->session()->unlistAnnouncement();
 }
 
-void chatMessage(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	if(args.size()!=1)
-		throw CmdError("Expected one argument: chat message");
-
-	protocol::ServerReply chat;
-	chat.type = protocol::ServerReply::CHAT;
-	chat.message = args.at(0).toString();
-	chat.reply["user"] = client->id();
-	if(!kwargs.isEmpty())
-		chat.reply["options"] = kwargs;
-	client->session()->directToAll(protocol::MessagePtr(new protocol::Command(0, chat)));
-}
-
 void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
@@ -231,8 +217,6 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("get-banlist", getBanList).nonOp()
 		<< SrvCommand("remove-ban", removeBan)
-
-		<< SrvCommand("chat", chatMessage).nonOp()
 	;
 }
 

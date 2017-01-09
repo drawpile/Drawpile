@@ -108,6 +108,72 @@ private:
 	QList<uint8_t> m_ids;
 };
 
+/**
+ * @brief A chat message
+ *
+ * Chat message sent by the server with the context ID 0 are server messages.
+ * (Typically a Command message is used for server announcements, but the Chat message
+ * is used for those messages that must be stored in the session history.)
+ */
+class Chat : public Message {
+public:
+	// Transparent flags: these affect serverside behavior
+	static const uint8_t FLAG_BYPASS = 0x01; // bypass session history and send directly to logged in users
+
+	// Opaque flags: the server doesn't know anything about these
+	static const uint8_t FLAG_SHOUT = 0x01;  // public announcement
+	static const uint8_t FLAG_ACTION = 0x02; // this is an "action message" (like /me in IRC)
+	static const uint8_t FLAG_PIN = 0x04;    // pin this message
+
+	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QByteArray &msg) : Message(MSG_CHAT, ctx), m_tflags(tflags), m_oflags(oflags), m_msg(msg) {}
+	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QString &msg) : Chat(ctx, tflags, oflags, msg.toUtf8()) {}
+
+	//! Construct a pinned message
+	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, 0, FLAG_SHOUT|FLAG_PIN, message.toUtf8())); }
+
+	static Chat *deserialize(uint8_t ctx, const uchar *data, uint len);
+
+	uint8_t transparentFlags() const { return m_tflags; }
+	uint8_t opaqueFlags() const { return m_oflags; }
+
+	QString message() const { return QString::fromUtf8(m_msg); }
+
+	/**
+	 * @brief Is this a history bypass message?
+	 *
+	 * If this flag is set, the message is sent directly to other users and not included
+	 * in the session history.
+	 */
+	bool isBypass() const { return m_tflags & FLAG_BYPASS; }
+
+	/**
+	 * @brief Is this a shout?
+	 *
+	 * Shout messages are highlighted so they stand out. Typically used
+	 * without the BYPASS flag.
+	 *
+	 * Clientside only.
+	 */
+	bool isShout() const { return m_oflags & FLAG_SHOUT; }
+
+	/**
+	 * @brief Is this an action message?
+	 *
+	 * Clientside only.
+	 */
+	bool isAction() const { return m_oflags & FLAG_ACTION; }
+
+protected:
+    int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint8_t m_tflags;
+	uint8_t m_oflags;
+	QByteArray m_msg;
+};
+
+
 }
 
 #endif

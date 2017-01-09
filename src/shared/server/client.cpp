@@ -219,6 +219,12 @@ void Client::handleSessionMessage(MessagePtr msg)
 			msg.cast<protocol::SessionOwner>().setIds(ids);
 			break;
 		}
+		case protocol::MSG_CHAT: {
+			if(msg.cast<protocol::Chat>().isBypass()) {
+				m_session->directToAll(msg);
+				return;
+			}
+		}
 		default: break;
 	}
 

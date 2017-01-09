@@ -24,27 +24,6 @@
 
 namespace protocol {
 
-Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
-{
-	if(len<2)
-		return nullptr;
-	return new Chat(ctx, *(data+0), QByteArray((const char*)data+1, len-1));
-}
-
-int Chat::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	*(ptr++) = flags();
-	memcpy(ptr, m_msg.constData(), m_msg.length());
-	ptr += m_msg.length();
-	return ptr - data;
-}
-
-int Chat::payloadLength() const
-{
-	return 1 + m_msg.length();
-}
-
 LaserTrail *LaserTrail::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=5)

@@ -156,22 +156,13 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 
 void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)
 {
-	if(preserve || announce) {
-		m_server->sendMessage(MessagePtr(new protocol::Chat(m_myId, message, announce, action)));
-
-	} else {
-		QJsonObject opts;
-		if(action)
-			opts["action"] = true;
-
-		protocol::ServerCommand cmd {
-			"chat",
-			QJsonArray() << message,
-			opts
-		};
-
-		m_server->sendMessage(MessagePtr(new protocol::Command(m_myId, cmd.toJson())));
-	}
+	m_server->sendMessage(MessagePtr(new protocol::Chat(
+		m_myId,
+		preserve|announce ? 0 : protocol::Chat::FLAG_BYPASS,
+		(announce ? protocol::Chat::FLAG_SHOUT : 0) |
+		(action ? protocol::Chat::FLAG_ACTION : 0),
+		message
+		)));
 }
 
 void Client::sendPinnedChat(const QString &message)
@@ -253,16 +244,6 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		break;
 	case ServerReply::LOGIN:
 		qWarning("got login message while in session!");
-		break;
-	case ServerReply::CHAT:
-		// So that we don't need to handle chat messages in two places,
-		// synthesize a ChatMessage for this one
-
-		emit messageReceived(protocol::MessagePtr(new protocol::Chat(
-			reply.reply.value("user").toInt(),
-			reply.message,
-			false, reply.reply.value("options").toObject().value("action").toBool()
-		)));
 		break;
 	case ServerReply::MESSAGE:
 	case ServerReply::ALERT:

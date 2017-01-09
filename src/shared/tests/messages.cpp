@@ -32,8 +32,8 @@ private slots:
 		QTest::newRow("userjoin(no hash)") << (Message*)new UserJoin(4, 0x03, QString("Test"), QByteArray());
 		QTest::newRow("userleave") << (Message*)new UserLeave(5);
 		QTest::newRow("sessionowner") << (Message*)new SessionOwner(6, QList<uint8_t>() << 1 << 2 << 5);
+		QTest::newRow("chat") << (Message*)new Chat(7, 0x01, 0x04, QByteArray("Test"));
 
-		QTest::newRow("chat") << (Message*)new Chat(7, 0x10, QByteArray("Test"));
 		QTest::newRow("interval") << (Message*)new Interval(8, 0x1020);
 		QTest::newRow("lasertrail") << (Message*)new LaserTrail(9, 0x11223344, 0x80);
 		QTest::newRow("movepointer") << (Message*)new MovePointer(10, 0x11223344, 0x55667788);
