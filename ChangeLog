@@ -1,9 +1,9 @@
-2017-??-?? Version 2.0.0 beta 2
+2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document
  * Regression fix: layer retitling
  * Regression fix: non-preserved chat messages
  * Custom session ID replaced with session aliases (every session now has a unique ID)
- * Server HTTP admin API restored
+ * Server HTTP admin API (mostly) restored
  * Server settings are now stored in an SQLite database
  * Most server settings can now be changed via API and persist in the database
  * Client now automatically resets the session when server space is running low
@@ -11,6 +11,9 @@
  * Chat message preservation mode can now be changed via the GUI
  * Users can now be banned from individual sessions
  * Hosting password feature removed. (Instead, hosting privilege can be limited to registered users)
+ * Graphical mode for dedicated server (not yet feature complete)
+ * Protocol change: Chat message type changed to Transparent
+ * Protocol change: added an extra bytearray field to JoinUser message for future proofing
 
 2016-12-17 Version 1.0.6
  * Server: non-persistent session idle time can now also be limited
