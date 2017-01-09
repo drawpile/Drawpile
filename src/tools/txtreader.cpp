@@ -256,14 +256,8 @@ void TextReader::handleDrawingContext(const QString &args)
 	while (i!=params.constEnd()) {
 		if(i.key() == "layer")
 			ctx.layer_id = str2ctxid(i.value());
-		else if(i.key() == "color") {
-			uint32_t c = str2color(i.value());
-			ctx.color1 = c;
-			ctx.color2 = c;
-		} else if(i.key() == "colorh")
-			ctx.color1 = str2color(i.value());
-		else if(i.key() == "colorl")
-			ctx.color2 = str2color(i.value());
+		else if(i.key() == "color")
+			ctx.color = str2color(i.value());
 		else if(i.key() == "hard") {
 			qreal r = str2real(i.value());
 			ctx.hard1 = r;
@@ -325,8 +319,7 @@ void TextReader::handleDrawingContext(const QString &args)
 		ctx.blendmode,
 		mode,
 		ctx.spacing,
-		ctx.color1,
-		ctx.color2,
+		ctx.color,
 		ctx.hard1*255,
 		ctx.hard2*255,
 		ctx.size1,

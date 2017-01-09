@@ -25,6 +25,7 @@
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/meta2.h"
 #include "../shared/net/recording.h"
 
 #include "../client/core/blendmodes.h"
@@ -42,29 +43,33 @@ void userJoinTxt(const UserJoin *msg, QTextStream &out)
 	out << "# META: joinuser " << msg->contextId() << " " << msg->name() << "\n";
 }
 
-void userAttrTxt(const UserAttr *msg, QTextStream &out)
-{
-	out << "# MET: userattributes " << msg->contextId();
-	if(msg->isLocked())
-		out << " LOCKED";
-	if(msg->isOp())
-		out << " OP";
-	if(msg->isMod())
-		out << " MOD";
-	if(msg->isAuth())
-		out << " AUTH";
-	out << "\n";
-}
-
 void userLeaveTxt(const UserLeave *msg, QTextStream &out)
 {
 	out << "# META: userleave " << msg->contextId() << "\n";
+}
+
+void sessionOwnerTxt(const SessionOwner *msg, QTextStream &out)
+{
+	out << "# META: SessionOwner: ";
+	for(uint8_t id : msg->ids())
+		out << id << ", ";
+
+	out << "\n";
 }
 
 void chatTxt(const Chat *msg, QTextStream &out)
 {
 	for(const QString line : msg->message().split('\n'))
 		out << "# META chat " << msg->contextId() << " " << line << "\n";
+}
+
+void userAclTxt(const UserACL *msg, QTextStream &out)
+{
+	out << "# META: UserACL: ";
+	for(uint8_t id : msg->ids())
+		out << id << ", ";
+
+	out << "\n";
 }
 
 void layerAclTxt(const LayerACL *msg, QTextStream &out)
@@ -79,29 +84,19 @@ void layerAclTxt(const LayerACL *msg, QTextStream &out)
 	out << "\n";
 }
 
-void sessionTitleTxt(const SessionTitle *msg, QTextStream &out)
+void sessionAclTxt(const SessionACL *msg, QTextStream &out)
 {
-	for(const QString line : msg->title().split('\n'))
-		out << "# META: sessiontitle " << msg->contextId() << " " << line << "\n";
-}
-
-void sessionConfigTxt(const SessionConf *msg, QTextStream &out)
-{
-	out << "# META: sessionconfig "
-		<< "maxusers=" << msg->maxUsers()
-		<< "flags:";
-	if(msg->isLocked())
-		out << " LOCKED";
-	if(msg->isClosed())
-		out << " CLOSED";
-	if(msg->isLayerControlsLocked())
-		out << " LAYERCTRLLOCKED";
-	if(msg->isUsersLockedByDefault())
-		out << " LOCKBYDEFAULT";
-	if(msg->isPersistent())
-		out << " PERSISTENT";
-	if(msg->isChatPreserved())
-		out << " PRESERVECHAT";
+	out << "# META: SessionACL flags:";
+	if(msg->isSessionLocked())
+		out << " LOCK_SESSION";
+	if(msg->isLockedByDefault())
+		out << " LOCK_DEFAULT";
+	if(msg->isLayerControlLocked())
+		out << " LOCK_LAYERCTRL";
+	if(msg->isOwnLayers())
+		out << " LOCK_OWNLAYERS";
+	if(msg->isImagesLocked())
+		out << " LOCK_IMAGES";
 	out << "\n";
 }
 
@@ -110,13 +105,21 @@ void intervalTxt(const Interval *msg, QTextStream &out)
 	out << "# META: interval " << msg->milliseconds() << " ms.\n";
 }
 
+void laserTrailTxt(const LaserTrail *msg, QTextStream &out)
+{
+	out << "# META: LaserTrail "
+		<< msg->contextId()
+		<< " color: " << COLOR(msg->color())
+		<< " persistence: " << msg->persistence()
+		<< "\n";
+}
+
 void movePointerTxt(const MovePointer *msg, QTextStream &out)
 {
-	out << "# META: movepointer "
+	out << "# META: MovePointer "
 		<< msg->contextId()
 		<< " " << msg->x()
 		<< " " << msg->y()
-		<< " " << msg->persistence()
 		<< "\n";
 }
 
@@ -189,6 +192,15 @@ void layerDeleteTxt(const LayerDelete *msg, QTextStream &out)
 	out << "\n";
 }
 
+void layerVisibilityTxt(const LayerVisibility *msg, QTextStream &out)
+{
+	out << "LayerVisibility "
+		<< msg->contextId()
+		<< " " << msg->id()
+		<< " " << (msg->visible() ? "visible" : "hidden")
+		<< "\n";
+}
+
 void putImageTxt(const PutImage *msg, QTextStream &out)
 {
 	out << "inlineimage " << msg->width() << " " << msg->height() << "\n";
@@ -236,12 +248,8 @@ void toolChangeTxt(const ToolChange *msg, QTextStream &out)
 		<< " spacing=" << msg->spacing()
 		<< " sizeh=" << msg->size_h()
 		<< " sizel=" << msg->size_l()
-		<< " resmudge=" << msg->resmudge();
-
-	if(msg->color_h() == msg->color_l())
-		out << " color=" << COLOR(msg->color_h());
-	else
-		out << " colorh=" << COLOR(msg->color_h()) << " colorl=" << COLOR(msg->color_l());
+		<< " resmudge=" << msg->resmudge()
+		<< " color=" << COLOR(msg->color());
 
 	if(msg->hard_h() == msg->hard_l())
 		out << " hard=" << (msg->hard_h() / 255.0);
@@ -337,7 +345,10 @@ void undoPointTxt(const UndoPoint *msg, QTextStream &out)
 
 void undoTxt(const Undo *msg, QTextStream &out)
 {
-	out << "undo " << msg->contextId() << " " << msg->points() << "\n";
+	if(msg->isRedo())
+		out << "redo " << msg->contextId() << "\n";
+	else
+		out << "undo " << msg->contextId() << "\n";
 }
 
 void messageToText(const Message *msg, QTextStream &out)
@@ -345,24 +356,26 @@ void messageToText(const Message *msg, QTextStream &out)
 	switch(msg->type()) {
 	// Meta messages
 	case MSG_USER_JOIN: userJoinTxt(static_cast<const UserJoin*>(msg), out); break;
-	case MSG_USER_ATTR: userAttrTxt(static_cast<const UserAttr*>(msg), out); break;
 	case MSG_USER_LEAVE: userLeaveTxt(static_cast<const UserLeave*>(msg), out); break;
+	case MSG_SESSION_OWNER: sessionOwnerTxt(static_cast<const SessionOwner*>(msg), out); break;
 	case MSG_CHAT: chatTxt(static_cast<const Chat*>(msg), out); break;
-	case MSG_LAYER_ACL: layerAclTxt(static_cast<const LayerACL*>(msg), out); break;
-	case MSG_SESSION_TITLE: sessionTitleTxt(static_cast<const SessionTitle*>(msg), out); break;
-	case MSG_SESSION_CONFIG: sessionConfigTxt(static_cast<const SessionConf*>(msg), out); break;
+
 	case MSG_INTERVAL: intervalTxt(static_cast<const Interval*>(msg), out); break;
+	case MSG_LASERTRAIL: laserTrailTxt(static_cast<const LaserTrail*>(msg), out); break;
 	case MSG_MOVEPOINTER: movePointerTxt(static_cast<const MovePointer*>(msg), out); break;
 	case MSG_MARKER: markerTxt(static_cast<const Marker*>(msg), out); break;
+	case MSG_USER_ACL: userAclTxt(static_cast<const UserACL*>(msg), out); break;
+	case MSG_LAYER_ACL: layerAclTxt(static_cast<const LayerACL*>(msg), out); break;
 
 	// Command messages
+	case MSG_UNDOPOINT: undoPointTxt(static_cast<const UndoPoint*>(msg), out); break;
 	case MSG_CANVAS_RESIZE: canvasResizeTxt(static_cast<const CanvasResize*>(msg), out); break;
 	case MSG_LAYER_CREATE: layerCreateTxt(static_cast<const LayerCreate*>(msg), out); break;
-	case MSG_LAYER_COPY: out << "# WARNING: Layer copy is not implemented yet\n"; break;
 	case MSG_LAYER_ATTR: layerAttrTxt(static_cast<const LayerAttributes*>(msg), out); break;
 	case MSG_LAYER_RETITLE: layerRetitleTxt(static_cast<const LayerRetitle*>(msg), out); break;
 	case MSG_LAYER_ORDER: layerOrderTxt(static_cast<const LayerOrder*>(msg), out); break;
 	case MSG_LAYER_DELETE: layerDeleteTxt(static_cast<const LayerDelete*>(msg), out); break;
+	case MSG_LAYER_VISIBILITY: layerVisibilityTxt(static_cast<const LayerVisibility*>(msg), out); break;
 
 	case MSG_PUTIMAGE: putImageTxt(static_cast<const PutImage*>(msg), out); break;
 	case MSG_FILLRECT:fillRectTxt(static_cast<const FillRect*>(msg), out); break;
@@ -376,7 +389,6 @@ void messageToText(const Message *msg, QTextStream &out)
 	case MSG_ANNOTATION_EDIT: annotationEditTxt(static_cast<const AnnotationEdit*>(msg), out); break;
 	case MSG_ANNOTATION_DELETE:annotationDeleteTxt(static_cast<const AnnotationDelete*>(msg), out); break;
 
-	case MSG_UNDOPOINT: undoPointTxt(static_cast<const UndoPoint*>(msg), out); break;
 	case MSG_UNDO: undoTxt(static_cast<const Undo*>(msg), out); break;
 
 	default:

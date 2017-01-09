@@ -25,7 +25,6 @@
 #include "txtreader.h"
 
 #include "../shared/record/writer.h"
-#include "../shared/record/hibernate.h"
 
 using namespace recording;
 
@@ -36,7 +35,7 @@ void printVersion()
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 }
 
-bool convertRecording(const QString &infile, const QString &outfile, recording::HibernationHeader *hibernation)
+bool convertRecording(const QString &infile, const QString &outfile)
 {
 	TextReader reader(infile);
 	if(!reader.load()) {
@@ -49,13 +48,8 @@ bool convertRecording(const QString &infile, const QString &outfile, recording::
 	if(!writer.open())
 		return false;
 
-	writer.setFilterMeta(false);
-
 	bool ok;
-	if(hibernation)
-		ok = writer.writeHibernationHeader(*hibernation);
-	else
-		ok = writer.writeHeader();
+	ok = writer.writeHeader();
 
 	if(!ok) {
 		fprintf(stderr, "%s\n", writer.errorString().toLocal8Bit().constData());
@@ -121,18 +115,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	HibernationHeader hib;
-
-	hib.minorVersion = DRAWPILE_PROTO_MINOR_VERSION;
-	hib.title = parser.value(titleOption);
-	hib.founder = parser.value(founderOption);
-	hib.flags = parser.isSet(persistentOption) ? recording::HibernationHeader::PERSISTENT : recording::HibernationHeader::NOFLAGS;
-
-	// Setting any of the hibernation properties means the hibernation
-	// header must be written.
-	const bool hibernate = !hib.title.isEmpty() || hib.founder.isEmpty();
-
-	if(!convertRecording(files.at(0), files.at(1), hibernate ? &hib : nullptr))
+	if(!convertRecording(files.at(0), files.at(1)))
 		return 1;
 
 	return 0;

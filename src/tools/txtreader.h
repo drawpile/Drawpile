@@ -30,7 +30,7 @@ struct ToolContext {
 	int size1, size2;
 	qreal hard1, hard2;
 	qreal opacity1, opacity2;
-	uint32_t color1, color2;
+	uint32_t color;
 	qreal smudge1, smudge2;
 	int resmudge;
 	int spacing;
@@ -43,7 +43,7 @@ struct ToolContext {
 		size1(1), size2(1),
 		hard1(1), hard2(1),
 		opacity1(1), opacity2(1),
-		color1(0xff000000), color2(0xff000000),
+		color(0xff000000),
 		smudge1(0), smudge2(0),
 		resmudge(1),
 		spacing(25),

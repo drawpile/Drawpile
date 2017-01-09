@@ -48,9 +48,8 @@ bool convertRecording(const QString &inputfilename, bool printMeta, QTextStream 
 	case INCOMPATIBLE:
 		fprintf(
 			stderr,
-			"This recording is incompatible (format version %d.%d). It was made with Drawpile version %s.\n",
-			majorVersion(reader.formatVersion()),
-			minorVersion(reader.formatVersion()),
+			"This recording is incompatible (format version %s). It was made with Drawpile version %s.\n",
+			reader.formatVersion().asString().toLocal8Bit().constData(),
 			reader.writerVersion().toLocal8Bit().constData()
 		);
 		return false;
@@ -70,16 +69,9 @@ bool convertRecording(const QString &inputfilename, bool printMeta, QTextStream 
 
 	// Print some header comments
 	out << "## dprec2txt " DRAWPILE_VERSION ": " << inputfilename << "\n";
-	out << "## Format version " << majorVersion(reader.formatVersion()) << "." << minorVersion(reader.formatVersion()) << " (Drawpile version " << reader.writerVersion() << ")\n";
+	out << "## Format version " << reader.formatVersion().asString() << " (Drawpile version " << reader.writerVersion() << ")\n";
 
-	if(reader.isHibernation()) {
-		out << "## This was a hibernation file.\n";
-		out << "## Session founder: " << reader.hibernationHeader().founder << "\n";
-		out << "## Title: " << reader.hibernationHeader().title << "\n";
-		out << "## Persistent: " << (reader.hibernationHeader().flags.testFlag(HibernationHeader::PERSISTENT) ? "yes" : "no") << "\n";
-	}
-
-	protocol::MessageType lastType = protocol::MSG_LOGIN;
+	protocol::MessageType lastType = protocol::MSG_COMMAND;
 
 	// Print messages
 	bool notEof = true;
