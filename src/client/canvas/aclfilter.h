@@ -118,6 +118,9 @@ private:
 	bool m_ownLayers;
 	bool m_lockDefault;
 	QHash<int, int> m_userLayers;
+
+	QList<uint8_t> m_ops;
+	QList<uint8_t> m_userlocks;
 };
 
 }

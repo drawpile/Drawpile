@@ -48,6 +48,12 @@ void AclFilter::reset(int myId, bool localMode)
 
 	m_lockDefault = false;
 
+	m_ops.clear();
+	m_userlocks.clear();
+
+	if(localMode)
+		m_ops << myId;
+
 	emit localOpChanged(m_isOperator);
 	emit localLockChanged(false);
 	emit ownLayersChanged(m_ownLayers);
@@ -65,10 +71,8 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 {
 	using namespace protocol;
 
-	User u = m_users->getUserById(msg.contextId());
-
 	// User list is empty in local mode
-	const bool isOpUser = u.isOperator || (msg.contextId() == m_myId && m_isOperator);
+	const bool isOpUser = m_ops.contains(msg.contextId());
 
 	// First: check if this is an operator-only command
 	if(msg.contextId()!=0 && msg.isOpCommand() && !isOpUser)
@@ -81,6 +85,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		// here, since it hasn't been created yet.
 		if(msg.contextId() == m_myId && isLockedByDefault())
 			setUserLock(true);
+
+		// Make sure the user's OP status bits are up to date
+		m_users->updateOperators(m_ops);
 		break;
 
 	case MSG_SESSION_OWNER:
@@ -112,6 +119,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_USER_ACL: {
 		const auto &lmsg = static_cast<const UserACL&>(msg);
+		m_userlocks = lmsg.ids();
 		m_users->updateLocks(lmsg.ids());
 		setUserLock(lmsg.ids().contains(m_myId));
 		return true;
@@ -123,7 +131,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	}
 
 	// General action filtering when user is locked
-	if(msg.isCommand() && (m_sessionLocked || u.isLocked))
+	if(msg.isCommand() && (m_sessionLocked || m_userlocks.contains(msg.contextId())))
 		return false;
 
 	// Message specific filtering
@@ -163,11 +171,12 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 {
-	QList<uint8_t> ids = msg.ids();
-	ids.append(msg.contextId());
-	m_users->updateOperators(ids);
+	m_ops = msg.ids();
+	if(msg.contextId()!=0 && !m_ops.contains(msg.contextId()))
+		m_ops << msg.contextId();
 
-	setOperator(ids.contains(m_myId));
+	m_users->updateOperators(m_ops);
+	setOperator(m_ops.contains(m_myId));
 }
 
 void AclFilter::setOperator(bool op)
