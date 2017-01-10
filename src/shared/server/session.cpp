@@ -25,8 +25,8 @@
 #include "../net/control.h"
 #include "../net/meta.h"
 #include "../record/writer.h"
-#include "../util/passwordhash.h"
 #include "../util/filename.h"
+#include "../util/passwordhash.h"
 
 #include "config.h"
 
@@ -36,23 +36,21 @@ namespace server {
 
 using protocol::MessagePtr;
 
-Session::Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, ServerConfig *config, QObject *parent)
+Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	m_state(Initialization),
 	m_initUser(-1),
 	m_recorder(nullptr),
+	m_history(history),
 	m_resetstreamsize(0),
 	m_lastUserId(0),
-	m_startTime(QDateTime::currentDateTime()), m_lastEventTime(QDateTime::currentDateTime()),
-	m_id(id), m_idAlias(alias), m_protocolVersion(protocolVersion), m_maxusers(254),
-	m_founder(founder),
+	m_lastEventTime(QDateTime::currentDateTime()),
 	m_closed(false),
-	m_persistent(false), m_preserveChat(false), m_nsfm(false),
 	m_historyLimitWarningSent(false)
 {
-	m_history = new InMemoryHistory(this); // TODO inject this from outside
-	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
+	m_history->setParent(this);
+	//m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 
 	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
 }
@@ -273,27 +271,25 @@ void Session::setSessionConfig(const QJsonObject &conf)
 		changed = true;
 	}
 
+	SessionHistory::Flags flags = m_history->flags();
+	const SessionHistory::Flags oldFlags = flags;
+
 	if(conf.contains("persistent")) {
-		m_persistent = conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence);
-		changed = true;
+		flags.setFlag(SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
 	}
 
 	if(conf.contains("title")) {
-		QString newTitle = conf["title"].toString().mid(0, 100);
-		m_title = newTitle;
+		m_history->setTitle(conf["title"].toString().mid(0, 100));
 		changed = true;
 	}
 
 	if(conf.contains("maxUserCount")) {
-		const int newUserCount = conf["maxUserCount"].toInt();
-		if(newUserCount>0 && newUserCount<255) {
-			m_maxusers = newUserCount;
-			changed = true;
-		}
+		m_history->setMaxUsers(conf["maxUserCount"].toInt());
+		changed = true;
 	}
 
 	if(conf.contains("password")) {
-		setPassword(conf["password"].toString());
+		m_history->setPassword(conf["password"].toString());
 		changed = true;
 	}
 
@@ -301,30 +297,23 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	// the client whether to send preserved/recorded chat messages
 	// by default.
 	if(conf.contains("preserveChat")) {
-		m_preserveChat = conf["preserveChat"].toBool();
-		changed = true;
+		flags.setFlag(SessionHistory::PreserveChat, conf["preserveChat"].toBool());
 	}
 
 	if(conf.contains("nsfm")) {
-		m_nsfm = conf["nsfm"].toBool();
-		changed = true;
+		flags.setFlag(SessionHistory::Nsfm, conf["nsfm"].toBool());
 	}
+
+	m_history->setFlags(flags);
+	changed |= oldFlags != flags;
 
 	if(changed)
 		sendUpdatedSessionProperties();
 }
 
-void Session::setPassword(const QString &password)
-{
-	if(password.isEmpty())
-		m_passwordhash = QByteArray();
-	else
-		m_passwordhash = passwordhash::hash(password);
-}
-
 bool Session::checkPassword(const QString &password) const
 {
-	return passwordhash::check(password, m_passwordhash);
+	return passwordhash::check(password, m_history->passwordHash());
 }
 
 QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids)
@@ -346,9 +335,9 @@ void Session::sendUpdatedSessionProperties()
 	conf["closed"] = m_closed; // this refers specifically to the closed flag, not the general status
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
-	conf["maxUserCount"] = m_maxusers;
-	conf["preserveChat"] = m_preserveChat;
-	conf["nsfm"] = m_nsfm;
+	conf["maxUserCount"] = m_history->maxUsers();
+	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
+	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
 	conf["hasPassword"] = hasPassword();
 	props.reply["config"] = conf;
 
@@ -519,7 +508,7 @@ void Session::restartRecording()
 
 	QJsonObject metadata;
 	metadata["server-recording"] = true;
-	metadata["version"] = m_protocolVersion.asString();
+	metadata["version"] = m_history->protocolVersion().asString();
 
 	m_recorder->writeHeader(metadata);
 	m_recorder->setAutoflush();
@@ -545,7 +534,7 @@ void Session::stopRecording()
 
 QString Session::uptime() const
 {
-	qint64 up = (QDateTime::currentMSecsSinceEpoch() - m_startTime.toMSecsSinceEpoch()) / 1000;
+	qint64 up = (QDateTime::currentMSecsSinceEpoch() - m_history->startTime().toMSecsSinceEpoch()) / 1000;
 
 	int days = up / (60*60*24);
 	up -= days * (60*60*24);

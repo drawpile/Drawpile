@@ -16,12 +16,20 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "inmemoryhistory.h"
+#include "../util/passwordhash.h"
 
 namespace server {
 
-InMemoryHistory::InMemoryHistory(QObject *parent)
-	: SessionHistory(parent)
+InMemoryHistory::InMemoryHistory(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
+	: SessionHistory(id, parent),
+	  m_alias(alias),
+	  m_founder(founder),
+	  m_version(version),
+	  m_startTime(QDateTime::currentDateTime()),
+	  m_maxUsers(254),
+	  m_flags(0)
 {
 }
 
@@ -44,6 +52,14 @@ void InMemoryHistory::historyAdd(const protocol::MessagePtr &msg)
 void InMemoryHistory::historyReset(const QList<protocol::MessagePtr> &newHistory)
 {
 	m_history = newHistory;
+}
+
+void InMemoryHistory::setPassword(const QString &password)
+{
+	if(password.isEmpty())
+		m_password = QByteArray();
+	else
+		m_password = passwordhash::hash(password);
 }
 
 }

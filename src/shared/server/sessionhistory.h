@@ -22,18 +22,79 @@
 #include "../shared/net/message.h"
 
 #include <QObject>
+#include <QUuid>
 #include <tuple>
+
+namespace protocol {
+	class ProtocolVersion;
+}
 
 namespace server {
 
 /**
  * @brief Abstract base class for session history implementations
  *
+ * Both the session content as well as the metadata that can persist between
+ * server restarts is stored here.
  */
 class SessionHistory : public QObject {
 	Q_OBJECT
 public:
-	SessionHistory(QObject *parent);
+	enum Flag {
+		Persistent = 0x01,
+		PreserveChat = 0x02,
+		Nsfm = 0x04
+	};
+	Q_DECLARE_FLAGS(Flags, Flag)
+
+	SessionHistory(const QUuid &id, QObject *parent);
+
+	//! Get the unique ID of the session
+	QUuid id() const { return m_id; }
+
+	/**
+	 * @brief Get the alias for the session ID (if set)
+	 *
+	 * This should not change during the lifetime of the session.
+	 */
+	virtual QString idAlias() const = 0;
+
+	//! Get the name of the user who started the session
+	virtual QString founderName() const = 0;
+
+	//! Get the full protocol version of the session
+	virtual protocol::ProtocolVersion protocolVersion() const = 0;
+
+	/**
+	 * @brief Get the session's password hash
+	 *
+	 * An empty QByteArray is returned if no password is set
+	 */
+	virtual QByteArray passwordHash() const = 0;
+
+	//! Set (or clear) this session's password
+	virtual void setPassword(const QString &password) = 0;
+
+	//! Get the starting timestamp
+	virtual QDateTime startTime() const = 0;
+
+	//! Get the maximum number of users allowed
+	virtual int maxUsers() const = 0;
+
+	//! Set the maximum number of users allowed
+	virtual void setMaxUsers(int count) = 0;
+
+	//! Get the title of the session
+	virtual QString title() const = 0;
+
+	//! Set the title of the session
+	virtual void setTitle(const QString &title) = 0;
+
+	//! Get the persistent session flags
+	virtual Flags flags() const = 0;
+
+	//! Set the persistent session flags
+	virtual void setFlags(Flags f) = 0;
 
 	/**
 	 * @brief Add a new message to the history
@@ -127,11 +188,15 @@ protected:
 	virtual void historyReset(const QList<protocol::MessagePtr> &newHistory) = 0;
 
 private:
+	QUuid m_id;
+
 	uint m_sizeInBytes;
 	uint m_sizeLimit;
 	int m_firstIndex;
 	int m_lastIndex;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(SessionHistory::Flags)
 
 }
 

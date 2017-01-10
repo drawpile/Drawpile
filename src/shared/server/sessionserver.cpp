@@ -22,6 +22,7 @@
 #include "client.h"
 #include "loginhandler.h"
 #include "serverconfig.h"
+#include "inmemoryhistory.h"
 
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
@@ -71,7 +72,7 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 	Q_ASSERT(!id.isNull());
 	Q_ASSERT(!getSessionById(id.toString()));
 
-	Session *session = new Session(id, idAlias, protocolVersion, founder, m_config, this);
+	Session *session = new Session(new InMemoryHistory(id, idAlias, protocolVersion, founder), m_config, this);
 
 	initSession(session);
 

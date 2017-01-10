@@ -32,6 +32,7 @@
 #include "../util/announcementapi.h"
 #include "../net/message.h"
 #include "../net/protover.h"
+#include "sessionhistory.h"
 #include "jsonapi.h"
 #include "sessionban.h"
 
@@ -43,7 +44,6 @@ namespace server {
 
 class Client;
 class ServerConfig;
-class SessionHistory;
 
 /**
  * The serverside session state.
@@ -58,20 +58,20 @@ public:
 		Shutdown
 	};
 
-	Session(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder, ServerConfig *config, QObject *parent=0);
+	Session(SessionHistory *history, ServerConfig *config, QObject *parent=0);
 
 	const ServerConfig *config() const { return m_config; }
 
 	/**
 	 * \brief Get the ID of the session
 	 */
-	QUuid id() const { return m_id; }
+	QUuid id() const { return m_history->id(); }
 
 	/**
 	 * @brief Get the ID of the session as a properly formatted string
 	 */
 	QString idString() const {
-		QString s = m_id.toString();
+		QString s = id().toString();
 		return s.mid(1, s.length()-2);
 	}
 
@@ -80,13 +80,13 @@ public:
 	 *
 	 * Session ID alias is optional. If set, it can be used in place of the ID when joining a session.
 	 */
-	QString idAlias() const { return m_idAlias; }
+	QString idAlias() const { return m_history->idAlias(); }
 
 	/**
 	 * @brief Get the name of the user who started this session
 	 * @return founder username
 	 */
-	QString founder() const { return m_founder; }
+	QString founder() const { return m_history->founderName(); }
 
 	/**
 	 * @brief Get the full protocol version of this session
@@ -94,12 +94,12 @@ public:
 	 * A server only needs match the server-protocol version, but the
 	 * client must match the version exactly.
 	 */
-	protocol::ProtocolVersion protocolVersion() const { return m_protocolVersion; }
+	protocol::ProtocolVersion protocolVersion() const { return m_history->protocolVersion(); }
 
 	/**
 	 * @brief Is this an age-restricted session?
 	 */
-	bool isNsfm() const { return m_nsfm; }
+	bool isNsfm() const { return m_history->flags().testFlag(SessionHistory::Nsfm); }
 
 	/**
 	 * @brief Set the name of the recording file to create
@@ -112,13 +112,13 @@ public:
 	/**
 	 * @brief Is this session password protected?
 	 */
-	bool hasPassword() const { return !m_passwordhash.isEmpty(); }
+	bool hasPassword() const { return !m_history->passwordHash().isEmpty(); }
 
 	/**
 	 * @brief Set the session password.
 	 * @param password
 	 */
-	void setPassword(const QString &password);
+	void setPassword(const QString &password) { m_history->setPassword(password); }
 
 	/**
 	 * @brief Check if the password is OK
@@ -134,7 +134,7 @@ public:
 	 * @brief Get the title of the session
 	 * @return
 	 */
-	const QString &title() const { return m_title; }
+	QString title() const { return m_history->title(); }
 
 	/**
 	 * @brief Is the session closed to new users?
@@ -157,14 +157,14 @@ public:
 	 * even if the limit is lowered.
 	 * @return user limit
 	 */
-	int maxUsers() const { return m_maxusers; }
+	int maxUsers() const { return m_history->maxUsers(); }
 
 	/**
 	 * @brief Is this a persistent session
 	 *
 	 * A persistent session is not automatically deleted when the last user leaves.
 	 */
-	bool isPersistent() const { return m_persistent; }
+	bool isPersistent() const { return m_history->flags().testFlag(SessionHistory::Persistent); }
 
 	//! Set session attributes
 	void setSessionConfig(const QJsonObject &conf);
@@ -249,7 +249,7 @@ public:
 	 * @brief Get the time the session was started
 	 * @return timestamp
 	 */
-	const QDateTime &sessionStartTime() const { return m_startTime; }
+	QDateTime sessionStartTime() const { return m_history->startTime(); }
 
 	/**
 	 * @brief Get session uptime in nice human readable format
@@ -429,22 +429,9 @@ private:
 
 	int m_lastUserId;
 
-	const QDateTime m_startTime;
 	QDateTime m_lastEventTime;
 
-	const QUuid m_id;
-	const QString m_idAlias;
-	protocol::ProtocolVersion m_protocolVersion;
-	int m_maxusers;
-
-	QByteArray m_passwordhash;
-	QString m_title;
-	QString m_founder;
-
 	bool m_closed;
-	bool m_persistent;
-	bool m_preserveChat;
-	bool m_nsfm;
 	bool m_historyLimitWarningSent;
 };
 
