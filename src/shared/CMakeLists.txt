@@ -19,6 +19,7 @@ set (
 	net/protover.cpp
 	record/writer.cpp
 	record/reader.cpp
+	record/header.cpp
 	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp

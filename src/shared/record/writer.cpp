@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,20 +18,15 @@
 */
 
 #include "writer.h"
-#include "util.h"
+#include "header.h"
 #include "../net/recording.h"
-#include "../net/protover.h"
-
-#include "config.h"
 
 #include <QVarLengthArray>
 #include <QDateTime>
-#include <QtEndian>
 #include <QFile>
 #include <QTimer>
 
 #include <KCompressionDevice>
-#include <QJsonDocument>
 
 namespace recording {
 
@@ -101,35 +96,7 @@ QString Writer::errorString() const
 
 bool Writer::writeHeader(const QJsonObject &customMetadata)
 {
-	Q_ASSERT(m_file->isOpen());
-
-	// Format identification
-	const char *MAGIC = "DPREC";
-	m_file->write(MAGIC, 6);
-
-	// Metadata block
-	QJsonObject metadata = customMetadata;
-
-	if(!metadata.contains("version"))
-		metadata["version"] = protocol::ProtocolVersion::current().asString();
-
-	metadata["writerversion"] = DRAWPILE_VERSION;
-
-	// Write metadata
-	QByteArray metadatabuf = QJsonDocument(metadata).toJson(QJsonDocument::Compact);
-
-	if(metadatabuf.length() > 0xffff) {
-		qWarning("Recording metadata block too long (%d)", metadatabuf.length());
-		return false;
-	}
-
-	uchar lenbuf[2];
-	qToBigEndian(quint16(metadatabuf.length()), lenbuf);
-	m_file->write((const char*)lenbuf, 2);
-
-	m_file->write(metadatabuf);
-
-	return true;
+	return writeRecordingHeader(m_file, customMetadata);
 }
 
 void Writer::writeFromBuffer(const QByteArray &buffer)

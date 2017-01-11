@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 #include "reader.h"
-#include "util.h"
+#include "header.h"
 #include "../net/recording.h"
 
 #include "config.h"
@@ -28,10 +28,6 @@
 #include <QFile>
 #include <KCompressionDevice>
 #include <QRegularExpression>
-#include <QJsonDocument>
-#include <QDebug>
-
-#include <cstring>
 
 namespace recording {
 
@@ -81,37 +77,12 @@ Compatibility Reader::open()
 		}
 	}
 
-	// Read magic bytes "DPREC\0"
-	char buf[6];
-	if(m_file->read(buf, 6) != 6)
-		return CANNOT_READ;
+	// Read the header
+	m_metadata = readRecordingHeader(m_file);
 
-	if(memcmp(buf, "DPREC", 6) != 0) {
-		// This may be a pre 2.0 recording
-		if(memcmp(buf, "DPRECR", 6)==0)
-			return INCOMPATIBLE;
-
+	if(m_metadata.isEmpty()) {
 		return NOT_DPREC;
 	}
-
-	// Read metadata block
-	if(m_file->read(buf, 2) != 2)
-		return NOT_DPREC;
-	const quint16 metadatalen = qFromBigEndian<quint16>((const uchar*)buf);
-
-	QByteArray metadatabuf = m_file->read(metadatalen);
-	if(metadatabuf.length() != metadatalen)
-		return NOT_DPREC;
-
-	QJsonParseError jsonError;
-	QJsonDocument metadatadoc = QJsonDocument::fromJson(metadatabuf, &jsonError);
-
-	if(jsonError.error != QJsonParseError::NoError) {
-		qWarning() << jsonError.errorString();
-		return NOT_DPREC;
-	}
-
-	m_metadata = metadatadoc.object();
 
 	// Header completed!
 	m_beginning = m_file->pos();
@@ -208,25 +179,9 @@ void Reader::seekTo(int pos, qint64 position)
 
 bool Reader::readNextToBuffer(QByteArray &buffer)
 {
-	// Read length and type header
-	if(buffer.length() < protocol::Message::HEADER_LEN)
-		buffer.resize(1024);
-
 	m_currentPos = filePosition();
 
-	if(m_file->read(buffer.data(), protocol::Message::HEADER_LEN) != protocol::Message::HEADER_LEN) {
-		m_eof = true;
-		return false;
-	}
-
-	const int len = protocol::Message::sniffLength(buffer.constData());
-
-	if(buffer.length() < len)
-		buffer.resize(len);
-
-	// Read message payload
-	const int payloadlen = len - protocol::Message::HEADER_LEN;
-	if(m_file->read(buffer.data()+protocol::Message::HEADER_LEN, payloadlen) != payloadlen) {
+	if(!readRecordingMessage(m_file, buffer)) {
 		m_eof = true;
 		return false;
 	}
