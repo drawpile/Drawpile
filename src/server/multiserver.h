@@ -27,6 +27,7 @@
 #include "../shared/server/jsonapi.h"
 
 class QTcpServer;
+class QDir;
 
 namespace server {
 
@@ -48,6 +49,7 @@ public:
 	void setAutoStop(bool autostop);
 	void setAnnounceLocalAddr(const QString &addr);
 	void setRecordingPath(const QString &path);
+	void setSessionDirectory(const QDir &dir);
 
 	QString announceLocalAddr() const;
 

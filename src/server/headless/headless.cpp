@@ -34,6 +34,7 @@
 #include <QStringList>
 #include <QSslSocket>
 #include <QCommandLineParser>
+#include <QDir>
 
 #ifdef Q_OS_UNIX
 #include "unixsignals.h"
@@ -126,6 +127,10 @@ bool start() {
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Use configuration file", "filename");
 	parser.addOption(configFileOption);
 
+	// --sessions, -s <path>
+	QCommandLineOption sessionsOption(QStringList() << "sessions" << "s", "File backed sessions", "path");
+	parser.addOption(sessionsOption);
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 
@@ -215,6 +220,19 @@ bool start() {
 		QString recordingPath = parser.value(recordOption);
 		if(!recordingPath.isEmpty()) {
 			server->setRecordingPath(recordingPath);
+		}
+	}
+
+	{
+		QString sessionDirPath = parser.value(sessionsOption);
+		if(!sessionDirPath.isEmpty()) {
+			QDir sessionDir { sessionDirPath };
+			if(!sessionDir.isReadable()) {
+				logger::error() << "Cannot open" << sessionDirPath;
+				return false;
+			} else {
+				server->setSessionDirectory(sessionDir);
+			}
 		}
 	}
 

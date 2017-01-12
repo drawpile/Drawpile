@@ -50,9 +50,11 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_historyLimitWarningSent(false)
 {
 	m_history->setParent(this);
-	//m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
-
+	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
+
+	if(history->sizeInBytes()>0)
+		m_state = Running;
 }
 
 QString Session::toLogString() const {

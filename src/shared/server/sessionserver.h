@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "jsonapi.h"
 
 #include <QObject>
+#include <QDir>
 
 namespace sessionlisting {
 	class AnnouncementApi;
@@ -41,7 +42,20 @@ class ServerConfig;
 class SessionServer : public QObject {
 Q_OBJECT
 public:
-	explicit SessionServer(ServerConfig *config, QObject *parent=0);
+	SessionServer(ServerConfig *config, QObject *parent=nullptr);
+
+	/**
+	 * @brief Enable file backed sessions
+	 * @param dir session directory
+	 */
+	void setSessionDir(const QDir &dir);
+
+	/**
+	 * @brief Load new sessions from the directory
+	 *
+	 * If no session directory is set, this does nothing.
+	 */
+	void loadNewSessions();
 
 	/**
 	 * @brief Get the server configuration
@@ -181,6 +195,8 @@ private:
 	void initSession(Session *session);
 
 	ServerConfig *m_config;
+	QDir m_sessiondir;
+	bool m_useFiledSessions;
 
 	QList<Session*> m_sessions;
 	QList<Client*> m_lobby;

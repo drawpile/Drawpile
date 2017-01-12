@@ -100,6 +100,11 @@ void MultiServer::setRecordingPath(const QString &path)
 	m_recordingPath = path;
 }
 
+void MultiServer::setSessionDirectory(const QDir &path)
+{
+	m_sessions->setSessionDir(path);
+}
+
 bool MultiServer::createServer()
 {
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {

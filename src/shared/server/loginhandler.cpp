@@ -320,6 +320,11 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	// Create a new session
 	Session *session = m_server->createSession(QUuid::createUuid(), sessionAlias, protocolVersion, m_client->username());
 
+	if(!session) {
+		sendError("internalError", "An internal server error occurred.");
+		return;
+	}
+
 	if(cmd.kwargs["password"].isString())
 		session->setPassword(cmd.kwargs["password"].toString());
 

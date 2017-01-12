@@ -23,6 +23,7 @@
 #include "loginhandler.h"
 #include "serverconfig.h"
 #include "inmemoryhistory.h"
+#include "filedhistory.h"
 
 #include "../util/logger.h"
 #include "../util/announcementapi.h"
@@ -36,6 +37,7 @@ namespace server {
 SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
+	m_useFiledSessions(false),
 	m_mustSecure(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
@@ -57,6 +59,36 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 #endif
 }
 
+void SessionServer::setSessionDir(const QDir &dir)
+{
+	if(dir.isReadable()) {
+		m_sessiondir = dir;
+		m_useFiledSessions = true;
+		loadNewSessions();
+	} else {
+		logger::warning() << dir.absolutePath() << "is not readable";
+	}
+}
+
+void SessionServer::loadNewSessions()
+{
+	if(!m_useFiledSessions)
+		return;
+
+	auto sessionFiles = m_sessiondir.entryInfoList(QStringList() << "*.session", QDir::Files|QDir::Writable|QDir::Readable);
+	for(const QFileInfo &f : sessionFiles) {
+		if(getSessionById(f.baseName()))
+			continue;
+
+		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
+		if(fh) {
+			Session *session = new Session(fh, m_config, this);
+			initSession(session);
+			logger::info() << session << "loaded.";
+		}
+	}
+}
+
 QJsonArray SessionServer::sessionDescriptions() const
 {
 	QJsonArray descs;
@@ -72,7 +104,13 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 	Q_ASSERT(!id.isNull());
 	Q_ASSERT(!getSessionById(id.toString()));
 
-	Session *session = new Session(new InMemoryHistory(id, idAlias, protocolVersion, founder), m_config, this);
+	SessionHistory *h;
+	if(m_useFiledSessions) {
+		h = FiledHistory::startNew(m_sessiondir, id, idAlias, protocolVersion, founder);
+	} else {
+		h = new InMemoryHistory(id, idAlias, protocolVersion, founder);
+	}
+	Session *session = new Session(h, m_config, this);
 
 	initSession(session);
 
