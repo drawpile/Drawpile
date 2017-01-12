@@ -59,6 +59,13 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata);
  */
 bool readRecordingMessage(QIODevice *file, QByteArray &buffer);
 
+/**
+ * @brief Skip a single message in the recording
+ * @param file
+ * @return length of the message skipped or -1 if end whole message is not in the file
+ */
+int skipRecordingMessage(QIODevice *file);
+
 }
 
 #endif

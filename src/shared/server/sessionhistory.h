@@ -19,7 +19,7 @@
 #ifndef DP_SERVER_SESSION_HISTORY_H
 #define DP_SERVER_SESSION_HISTORY_H
 
-#include "../shared/net/message.h"
+#include "../net/message.h"
 
 #include <QObject>
 #include <QUuid>
@@ -186,6 +186,7 @@ signals:
 protected:
 	virtual void historyAdd(const protocol::MessagePtr &msg) = 0;
 	virtual void historyReset(const QList<protocol::MessagePtr> &newHistory) = 0;
+	void historyLoaded(uint size, int messageCount);
 
 private:
 	QUuid m_id;

@@ -25,6 +25,13 @@ SessionHistory::SessionHistory(const QUuid &id, QObject *parent)
 {
 }
 
+void SessionHistory::historyLoaded(uint size, int messageCount)
+{
+	Q_ASSERT(m_lastIndex==-1);
+	m_sizeInBytes = size;
+	m_lastIndex = messageCount - 1;
+}
+
 bool SessionHistory::addMessage(const protocol::MessagePtr &msg)
 {
 	m_sizeInBytes += msg->length();
@@ -48,7 +55,7 @@ bool SessionHistory::reset(const QList<protocol::MessagePtr> &newHistory)
 	if(m_sizeLimit>0 && newSize > m_sizeLimit)
 		return false;
 
-	m_sizeInBytes = 0;
+	m_sizeInBytes = newSize;
 	m_firstIndex = m_lastIndex + 1;
 	m_lastIndex += newHistory.size();
 	historyReset(newHistory);

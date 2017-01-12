@@ -28,7 +28,6 @@
 #include "txtmsg.h"
 
 #include "../shared/record/reader.h"
-#include "../shared/record/util.h"
 
 using namespace recording;
 

@@ -16,4 +16,5 @@ AddUnitTest(passwordhash)
 AddUnitTest(filename)
 AddUnitTest(messages)
 AddUnitTest(recording)
+AddUnitTest(filedhistory)
 

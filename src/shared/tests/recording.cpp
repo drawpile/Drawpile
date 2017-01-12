@@ -1,5 +1,6 @@
 #include "../record/reader.h"
 #include "../record/writer.h"
+#include "../record/header.h"
 
 #include "../net/control.h"
 #include "../net/meta.h"
@@ -129,6 +130,26 @@ private slots:
 
 		// Autoclose is not enabled
 		QVERIFY(buffer.isOpen());
+	}
+
+	void testSkip()
+	{
+		QBuffer buffer;
+		buffer.open(QBuffer::ReadWrite);
+
+		MessagePtr testMsg(new UserJoin(1, 0, QByteArray("hello"), QByteArray("world")));
+		Writer writer(&buffer, false);
+		writer.writeMessage(*testMsg);
+		writer.writeMessage(*testMsg);
+
+		buffer.seek(0);
+		QCOMPARE(skipRecordingMessage(&buffer), testMsg->length());
+		QCOMPARE(buffer.pos(), testMsg->length());
+
+		QCOMPARE(skipRecordingMessage(&buffer), testMsg->length());
+		QCOMPARE(buffer.pos(), buffer.size());
+
+		QVERIFY(skipRecordingMessage(&buffer)<0);
 	}
 };
 

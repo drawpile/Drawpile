@@ -32,6 +32,7 @@ set (
 	server/sessionban.cpp
 	server/sessionhistory.cpp
 	server/inmemoryhistory.cpp
+	server/filedhistory.cpp
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/serverconfig.cpp
