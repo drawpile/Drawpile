@@ -143,8 +143,11 @@ private slots:
 		writer.writeMessage(*testMsg);
 
 		buffer.seek(0);
-		QCOMPARE(skipRecordingMessage(&buffer), testMsg->length());
+		uint8_t mtype, ctx;
+		QCOMPARE(skipRecordingMessage(&buffer, &mtype, &ctx), testMsg->length());
 		QCOMPARE(buffer.pos(), testMsg->length());
+		QCOMPARE(mtype, uint8_t(MSG_USER_JOIN));
+		QCOMPARE(ctx, uint8_t(1));
 
 		QCOMPARE(skipRecordingMessage(&buffer), testMsg->length());
 		QCOMPARE(buffer.pos(), buffer.size());

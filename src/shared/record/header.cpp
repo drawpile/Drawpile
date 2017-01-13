@@ -130,7 +130,7 @@ bool readRecordingMessage(QIODevice *file, QByteArray &buffer)
 	return true;
 }
 
-int skipRecordingMessage(QIODevice *file)
+int skipRecordingMessage(QIODevice *file, uint8_t *msgType, uint8_t *ctxId)
 {
 	Q_ASSERT(file && file->isOpen());
 	Q_ASSERT(!file->isSequential()); // skipping in sequential streams not currently needed
@@ -145,6 +145,11 @@ int skipRecordingMessage(QIODevice *file)
 	const qint64 target = file->pos() + payloadLen;
 	if(target > file->size() || !file->seek(target))
 		return -1;
+
+	if(msgType)
+		*msgType = header[2];
+	if(ctxId)
+		*ctxId = header[3];
 
 	return protocol::Message::HEADER_LEN + payloadLen;
 }

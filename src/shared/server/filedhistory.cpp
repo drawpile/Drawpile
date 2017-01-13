@@ -22,6 +22,7 @@
 #include "../shared/util/filename.h"
 #include "../shared/util/logger.h"
 #include "../shared/record/header.h"
+#include "../shared/net/meta.h"
 
 #include <QFile>
 #include <QJsonObject>
@@ -301,10 +302,13 @@ bool FiledHistory::scanBlocks()
 		QList<protocol::MessagePtr>()
 	};
 
+	QSet<uint8_t> users;
+
 	do {
 		Block &b = m_blocks.last();
+		uint8_t msgType, ctxId;
 
-		const int msglen = recording::skipRecordingMessage(m_recording);
+		const int msglen = recording::skipRecordingMessage(m_recording, &msgType, &ctxId);
 		if(msglen<0) {
 			// Truncated message encountered.
 			// Rewind back to the end of the previous message
@@ -326,8 +330,22 @@ bool FiledHistory::scanBlocks()
 				QList<protocol::MessagePtr>()
 			};
 		}
+
+		switch(msgType) {
+		case protocol::MSG_USER_JOIN: users.insert(ctxId); break;
+		case protocol::MSG_USER_LEAVE: users.remove(ctxId); break;
+		}
 	} while(!m_recording->atEnd());
 
+	// There should be no users at the end of the recording.
+	for(const uint8_t user : users) {
+		protocol::UserLeave msg(user);
+		m_blocks.last().count++;
+		m_blocks.last().endOffset += msg.length();
+		char buf[16];
+		msg.serialize(buf);
+		m_recording->write(buf, msg.length());
+	}
 	return true;
 }
 

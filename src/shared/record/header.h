@@ -20,6 +20,8 @@
 #ifndef DP_REC_HEADER_H
 #define DP_REC_HEADER_H
 
+#include <cstdint>
+
 class QIODevice;
 class QByteArray;
 class QJsonObject;
@@ -62,9 +64,11 @@ bool readRecordingMessage(QIODevice *file, QByteArray &buffer);
 /**
  * @brief Skip a single message in the recording
  * @param file
+ * @param msgType
+ * @param ctxId
  * @return length of the message skipped or -1 if end whole message is not in the file
  */
-int skipRecordingMessage(QIODevice *file);
+int skipRecordingMessage(QIODevice *file, uint8_t *msgType=nullptr, uint8_t *ctxId=nullptr);
 
 }
 

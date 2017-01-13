@@ -202,6 +202,30 @@ private slots:
 		QCOMPARE(lastIdx, 5);
 	}
 
+	void testUserLeave()
+	{
+		QUuid id = QUuid::createUuid();
+		{
+			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, id, QString(), protocol::ProtocolVersion::current(), "test") };
+
+			fh->addMessage(protocol::MessagePtr(new protocol::UserJoin(1, 0, QByteArray("u1"), QByteArray())));
+			fh->addMessage(protocol::MessagePtr(new protocol::UserJoin(2, 0, QByteArray("u2"), QByteArray())));
+			fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test1"))));
+			fh->addMessage(protocol::MessagePtr(new protocol::UserLeave(2)));
+		}
+		{
+			std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(FiledHistory::journalFilename(id))) };
+			QVERIFY(fh.get());
+
+			QList<protocol::MessagePtr> msgs;
+			int lastIdx;
+			std::tie(msgs, lastIdx) = fh->getBatch(-1);
+			QCOMPARE(msgs.size(), 5);
+			QCOMPARE(msgs.last()->type(), protocol::MSG_USER_LEAVE);
+			QCOMPARE(msgs.last()->contextId(), uint8_t(1));
+		}
+	}
+
 private:
 	QString makeTestRecording()
 	{
