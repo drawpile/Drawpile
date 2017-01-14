@@ -251,6 +251,8 @@ signals:
 	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);
 
+	void catchupProgress(int percent);
+
 public slots:
 	void previewLayerOpacity(int id, float opacity);
 	void resetLocalFork();

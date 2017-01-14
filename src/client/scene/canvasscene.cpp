@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), m_model(nullptr),
+	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
 	  _showAnnotationBorders(false), _showAnnotations(true), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true), _thickLaserTrails(false)
 {
@@ -50,7 +50,7 @@ CanvasScene::CanvasScene(QObject *parent)
 
 CanvasScene::~CanvasScene()
 {
-	delete _image;
+	delete m_image;
 }
 
 /**
@@ -59,11 +59,11 @@ CanvasScene::~CanvasScene()
  */
 void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
-	delete _image;
+	delete m_image;
 
 	m_model = model;
 
-	_image = new CanvasItem(m_model->layerStack());
+	m_image = new CanvasItem(m_model->layerStack());
 
 	connect(m_model->layerStack(), &paintcore::LayerStack::resized, this, &CanvasScene::handleCanvasResize);
 
@@ -85,7 +85,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
-	addItem(_image);
+	addItem(m_image);
 
 	annotationsReset();
 
@@ -96,6 +96,16 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
+}
+
+void CanvasScene::showCanvas()
+{
+	m_image->setVisible(true);
+}
+
+void CanvasScene::hideCanvas()
+{
+	m_image->setVisible(false);
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
@@ -131,7 +141,7 @@ void CanvasScene::showAnnotationBorders(bool hl)
 
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
-	QRectF bounds = _image->boundingRect();
+	QRectF bounds = m_image->boundingRect();
 
 	// Include some empty space around the canvas to make working
 	// near the borders easier.
@@ -223,6 +233,10 @@ void CanvasScene::annotationsReset()
 
 void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 {
+	// Don't add new lasers when canvas is hidden
+	if(!m_image->isVisible())
+		return;
+
 	for(int i=first;i<=last;++i) {
 		const QModelIndex l = m_model->laserTrails()->index(i);
 		LaserTrailItem *item = new LaserTrailItem(_thickLaserTrails);
@@ -244,6 +258,9 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 
 void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
+	if(!m_image->isVisible())
+		return;
+
 	const int ifirst = first.row();
 	const int ilast = last.row();
 	for(int i=ifirst;i<=ilast;++i) {

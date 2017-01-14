@@ -24,6 +24,7 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "net/commands.h"
+#include "net/internalmsg.h"
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
@@ -245,6 +246,14 @@ void StateTracker::processQueuedCommands()
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
 	static const uint HISTORY_SIZE_LIMIT = 10 * 1024*1024;
+
+	if(msg->type() == protocol::MSG_INTERNAL) {
+		const auto &ci = msg.cast<protocol::ClientInternal>();
+		qDebug("catchup progress %d", ci.value());
+		if(ci.internalType() == protocol::ClientInternal::Type::Catchup)
+			emit catchupProgress(ci.value());
+		return;
+	}
 
 	if(m_history.lengthInBytes() > HISTORY_SIZE_LIMIT) {
 		const uint oldlen = m_history.lengthInBytes();

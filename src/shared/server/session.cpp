@@ -172,14 +172,21 @@ void Session::joinUser(Client *user, bool host)
 	if(host) {
 		Q_ASSERT(m_state == Initialization);
 		m_initUser = user->id();
+	} else {
+		// Notify the client how many messages to expect (at least)
+		// The client can use this information to display a progress bar during the login phase
+		protocol::ServerReply catchup;
+		catchup.type = protocol::ServerReply::CATCHUP;
+		catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
+		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, catchup)));
 	}
-
-	addToHistory(user->joinMessage());
 
 	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
 	if(!welcomeMessage.isEmpty()) {
 		user->sendSystemChat(welcomeMessage);
 	}
+
+	addToHistory(user->joinMessage());
 
 	ensureOperatorExists();
 

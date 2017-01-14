@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -94,6 +94,12 @@ public slots:
 
 	void activeAnnotationChanged(int id);
 
+	//! Reveal the canvas item
+	void showCanvas();
+
+	//! Hide canvas item
+	void hideCanvas();
+
 signals:
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
@@ -120,7 +126,7 @@ private:
 	AnnotationItem *getAnnotationItem(int id);
 
 	//! The board contents
-	CanvasItem *_image;
+	CanvasItem *m_image;
 
 	canvas::CanvasModel *m_model;
 

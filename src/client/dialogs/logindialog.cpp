@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,7 +64,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	// Login process
 	connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &LoginDialog::onButtonClick);
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
-	connect(login, &net::LoginHandler::destroyed, this, &QWidget::deleteLater);
+
+	m_loginDestructConnection = connect(login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
 
 	connect(login, &net::LoginHandler::passwordNeeded, this, &LoginDialog::onPasswordNeeded);
 	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
@@ -86,6 +87,8 @@ void LoginDialog::resetMode(Mode mode)
 
 	if(mode == LABEL) {
 		m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
+	} else if(mode == CATCHUP) {
+		m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
 	} else {
 		m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Continue"));
@@ -109,9 +112,13 @@ void LoginDialog::resetMode(Mode mode)
 	case CERT:
 		m_ui->pages->setCurrentIndex(3);
 		break;
+
+	case CATCHUP:
+		m_ui->pages->setCurrentIndex(4);
+		break;
 	}
 
-	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(mode == CERT);
+	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(mode == CERT || mode == CATCHUP);
 	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 }
 
@@ -161,6 +168,15 @@ void LoginDialog::onCertificateCheckNeeded(const QSslCertificate &newCert, const
 	resetMode(CERT);
 }
 
+void LoginDialog::onLoginDone(bool join)
+{
+	if(join) {
+		// Show catchup progress page when joining
+		disconnect(m_loginDestructConnection);
+		resetMode(CATCHUP);
+	}
+}
+
 void LoginDialog::onServerTitleChanged(const QString &title)
 {
 	if(title.isEmpty()) {
@@ -198,11 +214,21 @@ void LoginDialog::onButtonClick(QAbstractButton *btn)
 			m_login->acceptServerCertificate();
 			resetMode();
 			break;
+		case CATCHUP:
+			deleteLater();
+			break;
 		}
 
 	} else {
 		reject();
 	}
+}
+
+void LoginDialog::catchupProgress(int value)
+{
+	m_ui->catchupProgress->setValue(value);
+	if(m_mode == CATCHUP && value >= 100)
+		this->deleteLater();
 }
 
 }

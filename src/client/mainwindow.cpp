@@ -322,7 +322,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
-	connect(m_doc, &Document::serverLoggedin, this, &MainWindow::onServerLogin);
+	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
@@ -1410,7 +1410,15 @@ void MainWindow::joinSession(const QUrl& url, bool autoRecord)
 	}
 
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
-	(new dialogs::LoginDialog(login, this))->show();
+	auto *dlg = new dialogs::LoginDialog(login, this);
+	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
+	connect(m_doc, &Document::serverLoggedIn, dlg, [dlg,this](bool join) {
+		dlg->onLoginDone(join);
+		_canvasscene->hideCanvas();
+	});
+	connect(dlg, &dialogs::LoginDialog::destroyed, _canvasscene, &drawingboard::CanvasScene::showCanvas);
+
+	dlg->show();
 	m_doc->setAutoRecordOnConnect(autoRecord);
 	m_doc->client()->connectToServer(login);
 }

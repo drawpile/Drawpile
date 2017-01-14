@@ -205,6 +205,10 @@ private:
 	bool m_isloopback;
 	bool m_recordedChat;
 
+	int m_catchupTo;
+	int m_caughtUp;
+	int m_catchupProgress;
+
 	canvas::ToolContext m_lastToolCtx;
 };
 

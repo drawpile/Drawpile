@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,6 +45,10 @@ public:
 	explicit LoginDialog(net::LoginHandler *login, QWidget *parent = 0);
 	~LoginDialog();
 
+public slots:
+	void catchupProgress(int value);
+	void onLoginDone(bool join);
+
 private slots:
 	void onButtonClick(QAbstractButton*);
 
@@ -60,7 +64,8 @@ private:
 		PASSWORD, // Ask for just the password
 		LOGIN,    // Ask for username and password
 		SESSION,  // Select sesssion
-		CERT      // Inspect a certificate
+		CERT,     // Inspect a certificate
+		CATCHUP   // "Catching up..." page with progress bar
 	};
 
 	void resetMode(Mode mode=LABEL);
@@ -68,6 +73,7 @@ private:
 	Mode m_mode;
 	net::LoginHandler *m_login;
 	Ui_LoginDialog *m_ui;
+	QMetaObject::Connection m_loginDestructConnection;
 };
 
 }

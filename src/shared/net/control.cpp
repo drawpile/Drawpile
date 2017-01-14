@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,6 +69,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = SIZELIMITWARNING;
 	else if(typestr == "reset")
 		r.type = RESET;
+	else if(typestr == "catchup")
+		r.type = CATCHUP;
 	else
 		r.type = UNKNOWN;
 
@@ -91,6 +93,7 @@ QJsonDocument ServerReply::toJson() const
 	case SESSIONCONF: typestr="sessionconf"; break;
 	case SIZELIMITWARNING: typestr="sizelimit"; break;
 	case RESET: typestr="reset"; break;
+	case CATCHUP: typestr="catchup"; break;
 	}
 	o["type"] = typestr;
 

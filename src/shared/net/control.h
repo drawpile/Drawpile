@@ -45,14 +45,15 @@ struct ServerCommand {
 struct ServerReply {
 	enum {
 		UNKNOWN,
-		LOGIN,
-		MESSAGE,
-		ALERT,
-		ERROR,
-		RESULT,
-		SESSIONCONF,
-		SIZELIMITWARNING,
-		RESET
+		LOGIN,   // used during the login phase
+		MESSAGE, // general chat type notifcation message
+		ALERT,   // urgen notification message
+		ERROR,   // error occurred
+		RESULT,  // comand result
+		SESSIONCONF, // session configuration update
+		SIZELIMITWARNING, // session history size nearing limit
+		RESET,   // session reset state
+		CATCHUP  // number of messages queued for upload (use for progress bars)
 	} type;
 	QString message;
 	QJsonObject reply;

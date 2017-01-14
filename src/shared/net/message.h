@@ -33,6 +33,9 @@ enum MessageType {
 	MSG_PING,
 	MSG_STREAMPOS,
 
+	// Reserved ID for internal use (not serializable)
+	MSG_INTERNAL=31,
+
 	// Meta messages (transparent)
 	MSG_USER_JOIN=32,
 	MSG_USER_LEAVE,

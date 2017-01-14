@@ -76,7 +76,6 @@ Document::Document(QObject *parent)
 	// Make connections
 	connect(m_client, &net::Client::serverConnected, this, &Document::serverConnected);
 	connect(m_client, &net::Client::serverLoggedin, this, &Document::onServerLogin);
-	connect(m_client, &net::Client::serverLoggedin, this, &Document::serverLoggedin);
 	connect(m_client, &net::Client::serverDisconnected, this, &Document::onServerDisconnect);
 	connect(m_client, &net::Client::serverDisconnected, this, &Document::serverDisconnected);
 
@@ -113,6 +112,8 @@ void Document::initCanvas()
 	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendMessage);
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
+
+	connect(m_canvas->stateTracker(), &canvas::StateTracker::catchupProgress, this, &Document::catchupProgress);
 
 	emit canvasChanged(m_canvas);
 
@@ -159,6 +160,7 @@ void Document::onServerLogin(bool join)
 
 	m_serverSpaceLow = false;
 	emit serverSpaceLowChanged(false);
+	emit serverLoggedIn(join);
 }
 
 void Document::onServerDisconnect()

@@ -22,6 +22,7 @@
 #include "net/tcpserver.h"
 #include "net/login.h"
 #include "net/commands.h"
+#include "net/internalmsg.h"
 
 #include "core/point.h"
 
@@ -75,6 +76,8 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	server->login(loginhandler);
 
 	m_lastToolCtx = canvas::ToolContext();
+
+	m_catchupTo = 0;
 }
 
 void Client::disconnectFromServer()
@@ -172,6 +175,20 @@ void Client::sendPinnedChat(const QString &message)
 
 void Client::handleMessage(const protocol::MessagePtr &msg)
 {
+	if(m_catchupTo>0) {
+		++m_caughtUp;
+		if(m_caughtUp >= m_catchupTo) {
+			emit messageReceived(protocol::ClientInternal::makeCatchup(100));
+			m_catchupTo = 0;
+		} else {
+			int progress = 100 * m_caughtUp / m_catchupTo;
+			if(progress != m_catchupProgress) {
+				m_catchupProgress = progress;
+				emit messageReceived(protocol::ClientInternal::makeCatchup(progress));
+			}
+		}
+	}
+
 	// Handle control messages here
 	// (these are sent only by the server and are not stored in the session)
 	if(msg->isControl()) {
@@ -260,6 +277,11 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		break;
 	case ServerReply::RESET:
 		handleResetRequest(reply);
+		break;
+	case ServerReply::CATCHUP:
+		m_catchupTo = reply.reply["count"].toInt();
+		m_caughtUp = 0;
+		m_catchupProgress = 0;
 		break;
 	}
 }

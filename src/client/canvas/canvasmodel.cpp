@@ -101,6 +101,11 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 {
 	using namespace protocol;
 
+	if(cmd->type() == protocol::MSG_INTERNAL) {
+		m_statetracker->receiveQueuedCommand(cmd);
+		return;
+	}
+
 	// Apply ACL filter
 	if(!m_aclfilter->filterMessage(*cmd)) {
 		qDebug("Filtered message %d from %d", cmd->type(), cmd->contextId());

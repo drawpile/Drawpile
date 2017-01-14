@@ -135,7 +135,7 @@ public:
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);
-	void serverLoggedin();
+	void serverLoggedIn(bool join);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
 	void canvasChanged(canvas::CanvasModel *canvas);
@@ -155,6 +155,8 @@ signals:
 	void sessionMaxUserCountChanged(int count);
 	void serverSpaceLowChanged(bool isLow);
 	void autoResetTooLarge(int maxSize);
+
+	void catchupProgress(int perent);
 
 public slots:
 	// Convenience slots
