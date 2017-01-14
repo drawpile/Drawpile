@@ -56,6 +56,9 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 
 	if(history->sizeInBytes()>0)
 		m_state = Running;
+
+	for(const QString &announcement : m_history->announcements())
+		makeAnnouncement(QUrl(announcement));
 }
 
 QString Session::toLogString() const {
@@ -495,7 +498,7 @@ void Session::killSession(bool terminate)
 		return;
 
 	switchState(Shutdown);
-	unlistAnnouncement("*");
+	unlistAnnouncement("*", false);
 	stopRecording();
 
 	for(Client *c : m_clients)
@@ -634,6 +637,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 		m_publicListingClient = new sessionlisting::AnnouncementApi(this);
 		m_publicListingClient->setLocalAddress(m_config->getConfigString(config::LocalAddress));
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
+		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
 
 		QTimer *refreshTimer = new QTimer(this);
 		connect(refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
@@ -646,7 +650,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 
 void Session::makeAnnouncement(const QUrl &url)
 {
-	if(!m_config->isAllowedAnnouncementUrl(url)) {
+	if(!url.isValid() || !m_config->isAllowedAnnouncementUrl(url)) {
 		logger::warning() << this << "Announcement API URL not allowed:" << url.toString();
 		return;
 	}
@@ -678,19 +682,28 @@ void Session::makeAnnouncement(const QUrl &url)
 	publicListingClient()->announceSession(url, s);
 }
 
-void Session::unlistAnnouncement(const QString &url)
+void Session::unlistAnnouncement(const QString &url, bool terminate, bool removeOnly)
 {
 	QMutableListIterator<sessionlisting::Announcement> i = m_publicListings;
+	bool changed = false;
 	while(i.hasNext()) {
 		const sessionlisting::Announcement &a = i.next();
 		if(a.apiUrl == url || url == QStringLiteral("*")) {
 			logger::debug() << this << "removed listing" << a.apiUrl.toString() << a.listingId;
-			publicListingClient()->unlistSession(a);
+
+			if(!removeOnly)
+				publicListingClient()->unlistSession(a);
+
+			if(terminate)
+				m_history->removeAnnouncement(a.apiUrl.toString());
+
 			i.remove();
-			break;
+			changed = true;
 		}
 	}
-	sendUpdatedAnnouncementList();
+
+	if(changed)
+		sendUpdatedAnnouncementList();
 }
 
 void Session::refreshAnnouncements()
@@ -724,8 +737,15 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 		}
 	}
 
+	m_history->addAnnouncement(announcement.apiUrl.toString());
 	m_publicListings << announcement;
 	sendUpdatedAnnouncementList();
+}
+
+void Session::sessionAnnouncementError(const QString &apiUrl)
+{
+	// Remove listing on error
+	unlistAnnouncement(apiUrl, true, true);
 }
 
 QJsonObject Session::getDescription(bool full) const

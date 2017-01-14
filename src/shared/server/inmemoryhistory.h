@@ -52,6 +52,10 @@ public:
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
 
+	void addAnnouncement(const QString &) override { /* not persistent */ }
+	void removeAnnouncement(const QString &) override { /* not persistent */ }
+	QStringList announcements() const override { return QStringList(); }
+
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;

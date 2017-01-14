@@ -34,6 +34,8 @@ private slots:
 		const QString opUser = "op";
 		const QHostAddress bannedAddress("::ffff:192.168.0.100");
 
+		const QString announcementUrl = "http://example.com/";
+
 		QUuid testId = QUuid::createUuid();
 		{
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
@@ -46,6 +48,9 @@ private slots:
 			fh->addBan(bannedUser, bannedAddress, opUser);
 			fh->addBan("test", QHostAddress("192.168.0.101"), opUser);
 			fh->removeBan(2);
+			fh->addAnnouncement(announcementUrl);
+			fh->addAnnouncement("http://example.com/2/");
+			fh->removeAnnouncement("http://example.com/2/");
 		}
 
 		{
@@ -66,6 +71,10 @@ private slots:
 			QCOMPARE(banlist.at(0).toObject()["username"].toString(), bannedUser);
 			QCOMPARE(banlist.at(0).toObject()["bannedBy"].toString(), opUser);
 			QCOMPARE(banlist.at(0).toObject()["ip"].toString(), bannedAddress.toString());
+
+			QStringList announcements = fh->announcements();
+			QCOMPARE(announcements.size(), 1);
+			QCOMPARE(announcements.at(0), announcementUrl);
 		}
 	}
 

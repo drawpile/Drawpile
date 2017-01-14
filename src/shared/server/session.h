@@ -336,8 +336,11 @@ public:
 
 	/**
 	 * @brief Generate a request for session announcement unlisting
+	 * @param url API url
+	 * @param terminate if false, the removal is not logged in the history journal
+	 * @param removeOnly if true, an unlisting request is not sent (use in case of error)
 	 */
-	void unlistAnnouncement(const QString &url);
+	void unlistAnnouncement(const QString &url, bool terminate=true, bool removeOnly=false);
 
 	//! Get the session state
 	State state() const { return m_state; }
@@ -407,6 +410,7 @@ private slots:
 
 	void refreshAnnouncements();
 	void sessionAnnounced(const sessionlisting::Announcement &announcement);
+	void sessionAnnouncementError(const QString &apiUrl);
 
 private:
 	sessionlisting::AnnouncementApi *publicListingClient();

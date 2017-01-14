@@ -90,6 +90,10 @@ public:
 	void cleanupBatches(int before) override;
 	std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const override;
 
+	void addAnnouncement(const QString &) override;
+	void removeAnnouncement(const QString &url) override;
+	QStringList announcements() const override { return m_announcements; }
+
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
@@ -125,6 +129,7 @@ private:
 	QByteArray m_password;
 	int m_maxUsers;
 	Flags m_flags;
+	QStringList m_announcements;
 
 	QVector<Block> m_blocks;
 	bool m_archive;

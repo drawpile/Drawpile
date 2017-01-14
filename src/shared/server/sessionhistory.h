@@ -195,6 +195,23 @@ public:
 	 */
 	bool removeBan(int id);
 
+	/**
+	 * @brief Public listing added
+	 */
+	virtual void addAnnouncement(const QString &url) = 0;
+
+	/**
+	 * @brief Public listing removed
+	 */
+	virtual void removeAnnouncement(const QString &url) = 0;
+
+	/**
+	 * @brief Get all announcements that haven't been removed
+	 *
+	 * This is used at the beginning when a session has been loaded from storage
+	 */
+	virtual QStringList announcements() const = 0;
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history

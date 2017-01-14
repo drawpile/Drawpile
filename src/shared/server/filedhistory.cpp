@@ -251,6 +251,13 @@ bool FiledHistory::load()
 		} else if(cmd == "UNBAN") {
 			m_banlist.removeBan(params.toInt());
 
+		} else if(cmd == "ANNOUNCE") {
+			if(!m_announcements.contains(params))
+				m_announcements << params;
+
+		} else if(cmd == "UNANNOUNCE") {
+			m_announcements.removeAll(params);
+
 		} else {
 			logger::warning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
@@ -539,6 +546,22 @@ void FiledHistory::historyAddBan(int id, const QString &username, const QHostAdd
 void FiledHistory::historyRemoveBan(int id)
 {
 	m_journal->write(QByteArray("UNBAN ") + QByteArray::number(id) + "\n");
+}
+
+void FiledHistory::addAnnouncement(const QString &url)
+{
+	if(!m_announcements.contains(url)) {
+		m_announcements << url;
+		m_journal->write(QString("ANNOUNCE %1\n").arg(url).toUtf8());
+	}
+}
+
+void FiledHistory::removeAnnouncement(const QString &url)
+{
+	if(m_announcements.contains(url)) {
+		m_announcements.removeAll(url);
+		m_journal->write(QString("UNANNOUNCE %1\n").arg(url).toUtf8());
+	}
 }
 
 }
