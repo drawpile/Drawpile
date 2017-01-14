@@ -25,7 +25,7 @@ Some feature highlights:
 
 Common dependencies:
  * Qt 5.5 or newer (QtGui not required for headless server)
-* [KF5 KArchive]
+ * [KF5 KArchive]
 
 Client specific dependencies:
 
@@ -54,12 +54,13 @@ or install them with `make install`.
 
 The configuration step supports some options:
 
-* CLIENT=off: don't build the client (useful when building the stand-alone server only)
-* SERVER=off: don't build the stand-alone server.
-* TOOLS=on: build dprec2txt command line tool
-* CMAKE\_BUILD\_TYPE=debug: enable debugging features
-* INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
-* TESTS=on: build unit tests (run test suite with `make test`)
+* `CLIENT=off`: don't build the client (useful when building the stand-alone server only)
+* `SERVER=off`: don't build the stand-alone server.
+* `SERVERGUI=off`: build a headless-only stand-alone serveer.
+* `TOOLS=on`: build dprec2txt command line tool
+* `CMAKE_BUILD_TYPE=debug`: enable debugging features
+* `INITSYS=""`: select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
+* `TESTS=on`: build unit tests (run test suite with `make test`)
 
 Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug`
 
