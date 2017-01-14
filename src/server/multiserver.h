@@ -47,11 +47,11 @@ public:
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
-	void setAnnounceLocalAddr(const QString &addr);
+	void setAnnounceLocalAddr(const QString &addr) { m_localAddress = addr; }
 	void setRecordingPath(const QString &path);
 	void setSessionDirectory(const QDir &dir);
 
-	QString announceLocalAddr() const;
+	QString announceLocalAddr() const { return m_localAddress; }
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -126,6 +126,7 @@ private:
 	QString m_sslCertFile;
 	QString m_sslKeyFile;
 	QString m_recordingPath;
+	QString m_localAddress;
 };
 
 }

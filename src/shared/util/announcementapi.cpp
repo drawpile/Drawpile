@@ -30,6 +30,9 @@
 
 namespace sessionlisting {
 
+static const char *PROP_APIURL = "APIURL";        // The base API URL of the request
+static const char *PROP_SESSION_ID = "SESSIONID"; // The ID of the session being announced or unlisted
+
 class ResponseError {
 public:
 	ResponseError(const QString &e) : error(e) { }
@@ -56,6 +59,7 @@ void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 
 	QNetworkRequest req(apiUrl);
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
+	reply->setProperty(PROP_APIURL, apiUrl);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleServerInfoResponse);} );
 }
 
@@ -77,6 +81,7 @@ void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol
 	QNetworkRequest req(url);
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
+	reply->setProperty(PROP_APIURL, apiUrl);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleListingResponse);} );
 }
 
@@ -99,7 +104,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
-	// TODO: explicit NSFM tag
+	o["nsfm"] = session.nsfm;
 
 	// Send request
 	QUrl url = apiUrl;
@@ -108,8 +113,8 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
 	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
-	reply->setProperty("API_URL", apiUrl);
-	reply->setProperty("SESSION_ID", session.id);
+	reply->setProperty(PROP_APIURL, apiUrl);
+	reply->setProperty(PROP_SESSION_ID, session.id);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleAnnounceResponse);} );
 }
 
@@ -125,6 +130,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
+	o["nsfm"] = session.nsfm;
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -135,6 +141,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
+	reply->setProperty(PROP_APIURL, a.apiUrl);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRefreshResponse);} );
 }
 
@@ -149,7 +156,8 @@ void AnnouncementApi::unlistSession(const Announcement &a)
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = networkaccess::getInstance()->deleteResource(req);
-	reply->setProperty("SESSION_ID", a.id);
+	reply->setProperty(PROP_APIURL, a.apiUrl);
+	reply->setProperty(PROP_SESSION_ID, a.id);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleUnlistResponse);} );
 }
 
@@ -168,7 +176,7 @@ void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::Hand
 
 	} catch(const ResponseError &e) {
 		logger::error() << "Announce API error:" << e.error;
-		emit error("Session announcement: " + e.error);
+		emit error(reply->property(PROP_APIURL).toString(), "Session announcement: " + e.error);
 #ifndef NDEBUG
 		logger::error() << "Announcement API error:" << QString::fromUtf8(reply->readAll());
 #endif
@@ -186,8 +194,8 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 		throw ResponseError(QStringLiteral("Error parsing announcement response: %1").arg(error.errorString()));
 
 	Announcement a;
-	a.apiUrl = reply->property("API_URL").toUrl();
-	a.id = reply->property("SESSION_ID").toString();
+	a.apiUrl = reply->property(PROP_APIURL).toUrl();
+	a.id = reply->property(PROP_SESSION_ID).toString();
 	a.updateKey = doc.object()["key"].toString();
 	a.listingId = doc.object()["id"].toInt();
 
@@ -202,7 +210,10 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 
 void AnnouncementApi::handleUnlistResponse(QNetworkReply *reply)
 {
-	emit unlisted(reply->property("SESSION_ID").toString());
+	emit unlisted(
+				reply->property(PROP_APIURL).toString(),
+				reply->property(PROP_SESSION_ID).toString()
+				);
 }
 
 void AnnouncementApi::handleRefreshResponse(QNetworkReply *reply)

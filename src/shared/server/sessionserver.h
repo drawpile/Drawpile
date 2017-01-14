@@ -75,11 +75,6 @@ public:
 #endif
 
 	/**
-	 * @brief Get the session announcement server client
-	 */
-	sessionlisting::AnnouncementApi *announcementApiClient() const { return m_publicListingApi; }
-
-	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will
@@ -186,10 +181,6 @@ private slots:
 	void lobbyDisconnectedEvent(Client *client);
 	void userDisconnectedEvent(Session *session);
 	void cleanupSessions();
-	void refreshSessionAnnouncements();
-	void announceSession(const QUrl &url, const sessionlisting::Session &session);
-	void unlistSession(const sessionlisting::Announcement &listing);
-	void sessionAnnounced(const sessionlisting::Announcement &listing);
 
 private:
 	void initSession(Session *session);
@@ -200,7 +191,6 @@ private:
 
 	QList<Session*> m_sessions;
 	QList<Client*> m_lobby;
-	sessionlisting::AnnouncementApi *m_publicListingApi;
 
 	bool m_mustSecure;
 

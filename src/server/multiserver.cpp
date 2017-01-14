@@ -85,16 +85,6 @@ void MultiServer::setAutoStop(bool autostop)
 	m_autoStop = autostop;
 }
 
-void MultiServer::setAnnounceLocalAddr(const QString &addr)
-{
-	m_sessions->announcementApiClient()->setLocalAddress(addr);
-}
-
-QString MultiServer::announceLocalAddr() const
-{
-	return m_sessions->announcementApiClient()->localAddress();
-}
-
 void MultiServer::setRecordingPath(const QString &path)
 {
 	m_recordingPath = path;
@@ -107,6 +97,8 @@ void MultiServer::setSessionDirectory(const QDir &path)
 
 bool MultiServer::createServer()
 {
+	m_config->setConfigString(config::LocalAddress, m_localAddress);
+
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
 		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
 		if(!server->isValidCert())

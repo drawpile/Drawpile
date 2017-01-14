@@ -125,12 +125,23 @@ public:
 	void unlistSession(const Announcement &a);
 
 signals:
+	//! Server info reply received
 	void serverInfo(const ListServerInfo &info);
+
+	//! Session list received
 	void sessionListReceived(const QList<Session> &sessions);
+
+	//! A message was received in response to a succesfull announcement
 	void messageReceived(const QString &message);
+
+	//! Session was announced succesfully
 	void sessionAnnounced(const Announcement &session);
-	void unlisted(const QString &sessionId);
-	void error(const QString &errorString);
+
+	//! Session was unlisted succesfully
+	void unlisted(const QString &apiUrl, const QString &sessionId);
+
+	//! An error occurred
+	void error(const QString &apiUrl, const QString &errorString);
 
 private:
 	typedef void (AnnouncementApi::*HandlerFunc)(QNetworkReply*);

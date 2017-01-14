@@ -61,7 +61,8 @@ namespace config {
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
 		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
 		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),             // Allow unauthenticated users
-		ArchiveMode(11, "archive", "false", ConfigKey::BOOL)                 // Don't delete terminated session files
+		ArchiveMode(11, "archive", "false", ConfigKey::BOOL),                // Don't delete terminated session files
+		LocalAddress(12, "localAddress", "", ConfigKey::STRING)              // Server local address (used for session announcements)
 		;
 }
 

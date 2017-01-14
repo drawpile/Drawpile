@@ -170,25 +170,39 @@ void announceSession(Client *client, const QJsonArray &args, const QJsonObject &
 
 	QUrl apiUrl(args.at(0).toString());
 	if(!apiUrl.isValid())
-		throw CmdError("Expected one argument: API URL");
-
-	if(client->session()->publicListing().listingId>0)
-		// TODO support announcing at multiple sites simultaneously
-		throw CmdError("Expected one argument: API URL");
+		throw CmdError("Invalid API URL");
 
 	client->session()->makeAnnouncement(apiUrl);
 }
 
-void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+void getAnnouncementList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
 	Q_UNUSED(kwargs);
-	if(client->session()->publicListing().listingId<=0) {
+
+	// The announcement list is not usually included in the sessionconf.
+	protocol::ServerReply msg;
+	msg.type = protocol::ServerReply::SESSIONCONF;
+	QJsonArray announcements;
+	for(const sessionlisting::Announcement &a : client->session()->announcements()) {
+		announcements.append(a.apiUrl.toString());
+	}
+
+	QJsonObject conf;
+	conf["announcements"]= announcements;
+	msg.reply["config"] = conf;
+	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
+}
+
+void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
 		throw CmdError("Expected one argument: API URL");
 		return;
 	}
 
-	client->session()->unlistAnnouncement();
+	client->session()->unlistAnnouncement(args.at(0).toString());
 }
 
 void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
@@ -214,6 +228,7 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("announce-session", announceSession)
 		<< SrvCommand("unlist-session", unlistSession)
+		<< SrvCommand("get-announcements", getAnnouncementList)
 
 		<< SrvCommand("get-banlist", getBanList).nonOp()
 		<< SrvCommand("remove-ban", removeBan)

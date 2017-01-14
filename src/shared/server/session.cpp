@@ -44,6 +44,7 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_recorder(nullptr),
 	m_history(history),
 	m_resetstreamsize(0),
+	m_publicListingClient(nullptr),
 	m_lastUserId(0),
 	m_lastEventTime(QDateTime::currentDateTime()),
 	m_closed(false),
@@ -446,7 +447,7 @@ void Session::killSession(bool terminate)
 		return;
 
 	switchState(Shutdown);
-	unlistAnnouncement();
+	unlistAnnouncement("*");
 	stopRecording();
 
 	for(Client *c : m_clients)
@@ -579,14 +580,41 @@ QStringList Session::userNames() const
 	return lst;
 }
 
+sessionlisting::AnnouncementApi *Session::publicListingClient()
+{
+	if(!m_publicListingClient) {
+		m_publicListingClient = new sessionlisting::AnnouncementApi(this);
+		m_publicListingClient->setLocalAddress(m_config->getConfigString(config::LocalAddress));
+		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
+
+		QTimer *refreshTimer = new QTimer(this);
+		connect(refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
+		refreshTimer->setInterval(1000 * 60 * 5);
+		refreshTimer->start(refreshTimer->interval());
+	}
+
+	return m_publicListingClient;
+}
+
 void Session::makeAnnouncement(const QUrl &url)
 {
+	if(!m_config->isAllowedAnnouncementUrl(url)) {
+		logger::warning() << this << "Announcement API URL not allowed:" << url.toString();
+		return;
+	}
+
+	// Don't announce twice at the same server
+	for(const sessionlisting::Announcement &a : m_publicListings) {
+		if(a.apiUrl == url)
+			return;
+	}
+
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
 
-	sessionlisting::Session s {
+	const sessionlisting::Session s {
 		QString(),
 		0,
-		idAlias().isEmpty() ? id().toString() : idAlias(),
+		aliasOrId(),
 		protocolVersion(),
 		title(),
 		userCount(),
@@ -597,15 +625,57 @@ void Session::makeAnnouncement(const QUrl &url)
 		sessionStartTime()
 	};
 
-	emit requestAnnouncement(url, s);
+	qDebug() << "announcing" << s.id;
+
+	publicListingClient()->announceSession(url, s);
 }
 
-void Session::unlistAnnouncement()
+void Session::unlistAnnouncement(const QString &url)
 {
-	if(m_publicListing.listingId>0) {
-		emit requestUnlisting(m_publicListing);
-		m_publicListing.listingId=0;
+	QMutableListIterator<sessionlisting::Announcement> i = m_publicListings;
+	while(i.hasNext()) {
+		const sessionlisting::Announcement &a = i.next();
+		if(a.apiUrl == url || url == QStringLiteral("*")) {
+			logger::debug() << this << "removed listing" << a.apiUrl.toString() << a.listingId;
+			publicListingClient()->unlistSession(a);
+			i.remove();
+			break;
+		}
 	}
+}
+
+void Session::refreshAnnouncements()
+{
+	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
+
+	for(const sessionlisting::Announcement &a : m_publicListings) {
+		m_publicListingClient->refreshSession(a, {
+			QString(),
+			0,
+			QString(),
+			protocol::ProtocolVersion(),
+			title(),
+			userCount(),
+			hasPassword() || privateUserList ? QStringList() : userNames(),
+			hasPassword(),
+			isNsfm(),
+			founder(),
+			sessionStartTime()
+		});
+	}
+}
+
+void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
+{
+	// Make sure there are no double announcements
+	for(const sessionlisting::Announcement &a : m_publicListings) {
+		if(a.apiUrl == announcement.apiUrl) {
+			logger::warning() << this << "double announcement at" << announcement.apiUrl.toString();
+			return;
+		}
+	}
+
+	m_publicListings << announcement;
 }
 
 QJsonObject Session::getDescription(bool full) const

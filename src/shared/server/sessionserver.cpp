@@ -45,15 +45,6 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
 
-	m_publicListingApi = new sessionlisting::AnnouncementApi(this);
-
-	connect(m_publicListingApi, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &SessionServer::sessionAnnounced);
-
-	QTimer *announcementRefreshTimer = new QTimer(this);
-	connect(announcementRefreshTimer, &QTimer::timeout, this, &SessionServer::refreshSessionAnnouncements);
-	announcementRefreshTimer->setInterval(1000 * 60 * 5);
-	announcementRefreshTimer->start(announcementRefreshTimer->interval());
-
 #ifndef NDEBUG
 	m_randomlag = 0;
 #endif
@@ -133,9 +124,6 @@ void SessionServer::initSession(Session *session)
 		m_sessions.removeOne(session);
 		emit sessionEnded(session->idString());
 	});
-
-	connect(session, &Session::requestAnnouncement, this, &SessionServer::announceSession);
-	connect(session, &Session::requestUnlisting, this, &SessionServer::unlistSession);
 
 	emit sessionCreated(session);
 	emit sessionChanged(session->getDescription());
@@ -276,54 +264,6 @@ void SessionServer::cleanupSessions()
 			}
 		}
 	}
-}
-
-void SessionServer::refreshSessionAnnouncements()
-{
-	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
-
-	for(Session *s : m_sessions) {
-		if(s->publicListing().listingId>0) {
-			m_publicListingApi->refreshSession(s->publicListing(), {
-				QString(),
-				0,
-				QString(),
-				protocol::ProtocolVersion(),
-				s->title(),
-				s->userCount(),
-				s->hasPassword() || privateUserList ? QStringList() : s->userNames(),
-				s->hasPassword(),
-				s->isNsfm(),
-				s->founder(),
-				s->sessionStartTime()
-			});
-		}
-	}
-}
-
-void SessionServer::announceSession(const QUrl &url, const sessionlisting::Session &session)
-{
-	if(m_config->isAllowedAnnouncementUrl(url)) {
-		m_publicListingApi->announceSession(url, session);
-	} else {
-		logger::warning() << "Announcement API URL not allowed:" << url.toString();
-	}
-}
-
-void SessionServer::unlistSession(const sessionlisting::Announcement &listing)
-{
-	m_publicListingApi->unlistSession(listing);
-}
-
-void SessionServer::sessionAnnounced(const sessionlisting::Announcement &listing)
-{
-	Session *s = getSessionById(listing.id);
-	if(!s) {
-		logger::warning() << "Announced non-existent session" << listing.id;
-		return;
-	}
-
-	s->setPublicListing(listing);
 }
 
 JsonApiResult SessionServer::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)

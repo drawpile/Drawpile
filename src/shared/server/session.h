@@ -82,6 +82,13 @@ public:
 	QString idAlias() const { return m_history->idAlias(); }
 
 	/**
+	 * @brief Return the ID alias if set, or else the unique ID
+	 */
+	QString aliasOrId() const {
+		return m_history->idAlias().isEmpty() ? idString() : m_history->idAlias();
+	}
+
+	/**
 	 * @brief Get the name of the user who started this session
 	 * @return founder username
 	 */
@@ -315,8 +322,10 @@ public:
 
 	QString toLogString() const;
 
-	sessionlisting::Announcement publicListing() const { return m_publicListing; }
-	void setPublicListing(const sessionlisting::Announcement &a) { m_publicListing = a; }
+	/**
+	 * @brief Get all active announcements for this session
+	 */
+	QList<sessionlisting::Announcement> announcements() const { return m_publicListings; }
 
 	/**
 	 * @brief Generate a request for session announcement
@@ -328,7 +337,7 @@ public:
 	/**
 	 * @brief Generate a request for session announcement unlisting
 	 */
-	void unlistAnnouncement();
+	void unlistAnnouncement(const QString &url);
 
 	//! Get the session state
 	State state() const { return m_state; }
@@ -387,17 +396,15 @@ signals:
 	 */
 	void sessionAttributeChanged(Session *thisSession);
 
-	//! Request session announcement
-	void requestAnnouncement(const QUrl &url, const sessionlisting::Session &session);
-
-	//! Request this session to be unlisted
-	void requestUnlisting(const sessionlisting::Announcement &listing);
-
 private slots:
 	void removeUser(Client *user);
 
+	void refreshAnnouncements();
+	void sessionAnnounced(const sessionlisting::Announcement &announcement);
 
 private:
+	sessionlisting::AnnouncementApi *publicListingClient();
+
 	void cleanupCommandStream();
 
 	void restartRecording();
@@ -424,7 +431,8 @@ private:
 	uint m_resetstreamsize;
 	uint m_historyLimitWarning;
 
-	sessionlisting::Announcement m_publicListing;
+	QList<sessionlisting::Announcement> m_publicListings;
+	sessionlisting::AnnouncementApi *m_publicListingClient;
 
 	int m_lastUserId;
 
