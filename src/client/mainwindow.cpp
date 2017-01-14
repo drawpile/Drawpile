@@ -1282,6 +1282,18 @@ void MainWindow::changeSessionTitle()
 	}
 }
 
+void MainWindow::tryToGainOp()
+{
+	QString opword = QInputDialog::getText(
+				this,
+				tr("Become Operator"),
+				tr("Enter operator password"),
+				QLineEdit::Password
+	);
+	if(!opword.isEmpty())
+		m_doc->sendOpword(opword);
+}
+
 void MainWindow::changeSessionPassword()
 {
 	QString prompt;
@@ -1301,6 +1313,27 @@ void MainWindow::changeSessionPassword()
 	);
 	if(ok)
 		m_doc->sendPasswordChange(newpass);
+}
+
+void MainWindow::changeSessionOpword()
+{
+	QString prompt;
+	if(m_doc->isSessionOpword())
+		prompt = tr("Set a new password or leave blank to remove.");
+	else
+		prompt = tr("Set a password for gaining operator status.");
+
+	bool ok;
+	QString newpass = QInputDialog::getText(
+				this,
+				tr("Operator Password"),
+				prompt,
+				QLineEdit::Password,
+				QString(),
+				&ok
+	);
+	if(ok)
+		m_doc->sendOpwordChange(newpass);
 }
 
 void MainWindow::changeSessionMaxUsers()
@@ -1490,6 +1523,7 @@ void MainWindow::onOperatorModeChange(bool op)
 	m_layerctrlmode->setEnabled(op);
 	_dock_layers->setOperatorMode(op);
 	onImageCmdLockChange(m_doc->canvas()->aclFilter()->isImagesLocked());
+	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
 }
 
 void MainWindow::onImageCmdLockChange(bool lock)
@@ -2313,9 +2347,12 @@ void MainWindow::setupActions()
 	m_layerctrlmode->setEnabled(false);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
+	QAction *gainop = makeAction("gainop", 0, tr("Become operator..."));
+	gainop->setEnabled(false);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
-	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
+	QAction *changepassword = makeAction("changepassword", 0, tr("Set Session Password..."));
+	QAction *changeopword = makeAction("changeopword", 0, tr("Set Operator Password..."));
 	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
 	QAction *viewannouncementlist = makeAction("viewannouncementlist", 0, tr("Public listings..."));
 	viewbanlist->setEnabled(false); // even non-admins can look at these
@@ -2337,6 +2374,7 @@ void MainWindow::setupActions()
 	m_admintools->addAction(imagecmdlock);
 	m_admintools->addAction(changetitle);
 	m_admintools->addAction(changepassword);
+	m_admintools->addAction(changeopword);
 	m_admintools->addAction(changemaxusers);
 	m_admintools->addAction(keepchat);
 	m_admintools->addAction(nsfm);
@@ -2346,10 +2384,17 @@ void MainWindow::setupActions()
 	connect(host, &QAction::triggered, this, &MainWindow::host);
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
+	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
+
 	connect(changetitle, &QAction::triggered, this, &MainWindow::changeSessionTitle);
 	connect(changepassword, &QAction::triggered, this, &MainWindow::changeSessionPassword);
 	connect(m_doc, &Document::sessionPasswordChanged, [changepassword](bool hasPassword) {
-		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
+		changepassword->setText(hasPassword ? tr("Change Session Password...") : tr("Set Session Password..."));
+	});
+	connect(changeopword, &QAction::triggered, this, &MainWindow::changeSessionOpword);
+	connect(m_doc, &Document::sessionOpwordChanged, [changeopword, gainop, this](bool hasOpword) {
+		changeopword->setText(hasOpword ? tr("Change Operator Password...") : tr("Set Operator Password..."));
+		gainop->setEnabled(hasOpword && !m_doc->canvas()->aclFilter()->isLocalUserOperator());
 	});
 	connect(viewbanlist, &QAction::triggered, this, &MainWindow::showBanListDialog);
 	connect(viewannouncementlist, &QAction::triggered, this, &MainWindow::showAnnouncementListDialog);
@@ -2397,9 +2442,12 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->menuAction()->setMenuRole(QAction::NoRole); // keep this menu where it is on macOS
 	sessionSettingsMenu->addAction(changetitle);
 	sessionSettingsMenu->addAction(changepassword);
+	sessionSettingsMenu->addAction(changeopword);
+	sessionSettingsMenu->addAction(changemaxusers);
+	sessionSettingsMenu->addSeparator();
 	sessionSettingsMenu->addAction(viewbanlist);
 	sessionSettingsMenu->addAction(viewannouncementlist);
-	sessionSettingsMenu->addAction(changemaxusers);
+	sessionSettingsMenu->addSeparator();
 	sessionSettingsMenu->addAction(keepchat);
 	sessionSettingsMenu->addAction(persistentsession);
 	sessionSettingsMenu->addAction(closesession);
@@ -2407,6 +2455,7 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(imagecmdlock);
 	sessionSettingsMenu->addAction(nsfm);
 
+	sessionmenu->addAction(gainop);
 	sessionmenu->addAction(locksession);
 
 	//

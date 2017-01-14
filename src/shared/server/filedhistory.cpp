@@ -216,6 +216,9 @@ bool FiledHistory::load()
 		} else if(cmd == "PASSWORD") {
 			m_password = params;
 
+		} else if(cmd == "OPWORD") {
+			m_opword = params;
+
 		} else if(cmd == "MAXUSERS") {
 			m_maxUsers = qBound(1, params.toInt(), 254);
 
@@ -413,6 +416,16 @@ void FiledHistory::setPassword(const QString &password)
 	m_journal->write("PASSWORD ");
 	if(!m_password.isEmpty())
 		m_journal->write(m_password);
+	m_journal->write("\n");
+}
+
+void FiledHistory::setOpword(const QString &opword)
+{
+	m_opword = passwordhash::hash(opword);
+
+	m_journal->write("OPWORD ");
+	if(!m_opword.isEmpty())
+		m_journal->write(m_opword);
 	m_journal->write("\n");
 }
 

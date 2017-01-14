@@ -64,6 +64,7 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
 	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
+	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
 	Q_OBJECT
@@ -125,6 +126,7 @@ public:
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
+	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 
@@ -148,6 +150,7 @@ signals:
 	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
 	void sessionPasswordChanged(bool passwordProtected);
+	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
 	void sessionMaxUserCountChanged(int count);
 	void serverSpaceLowChanged(bool isLow);
@@ -159,6 +162,8 @@ public slots:
 	void sendPersistentSession(bool p);
 	void sendCloseSession(bool close);
 	void sendPasswordChange(const QString &password);
+	void sendOpwordChange(const QString &newOpword);
+	void sendOpword(const QString &opword);
 	void sendUserLimitChange(int newLimit);
 	void sendPreserveChatChange(bool keepChat);
 	void sendNsfm(bool nsfm);
@@ -207,6 +212,7 @@ private:
 	void setSessionClosed(bool closed);
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
+	void setSessionOpword(bool ow);
 	void setSessionMaxUserCount(int count);
 	void setSessionNsfm(bool nsfm);
 
@@ -239,6 +245,7 @@ private:
 	bool m_sessionClosed;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;
+	bool m_sessionOpword;
 	bool m_sessionNsfm;
 	bool m_serverSpaceLow;
 

@@ -58,6 +58,7 @@ Document::Document(QObject *parent)
 	  m_sessionClosed(false),
 	  m_sessionPreserveChat(false),
 	  m_sessionPasswordProtected(false),
+	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
 	  m_serverSpaceLow(false),
 	  m_sessionMaxUserCount(0)
@@ -168,6 +169,7 @@ void Document::onServerDisconnect()
 	}
 	m_banlist->clear();
 	m_announcementlist->setStringList(QStringList());
+	setSessionOpword(false);
 }
 
 void Document::onSessionConfChanged(const QJsonObject &config)
@@ -186,6 +188,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("hasPassword"))
 		setSessionPasswordProtected(config["hasPassword"].toBool());
+
+	if(config.contains("hasOpword"))
+		setSessionOpword(config["hasOpword"].toBool());
 
 	if(config.contains("nsfm"))
 		setSessionNsfm(config["nsfm"].toBool());
@@ -261,6 +266,14 @@ void Document::setSessionPasswordProtected(bool pp)
 	if(m_sessionPasswordProtected != pp) {
 		m_sessionPasswordProtected = pp;
 		emit sessionPasswordChanged(pp);
+	}
+}
+
+void Document::setSessionOpword(bool ow)
+{
+	if(m_sessionOpword != ow) {
+		m_sessionOpword = ow;
+		emit sessionOpwordChanged(ow);
 	}
 }
 
@@ -450,6 +463,16 @@ void Document::sendCloseSession(bool close)
 void Document::sendPasswordChange(const QString &password)
 {
 	sendSessionConf("password", password);
+}
+
+void Document::sendOpwordChange(const QString &newOpword)
+{
+	sendSessionConf("opword", newOpword);
+}
+
+void Document::sendOpword(const QString &opword)
+{
+	m_client->sendMessage(net::command::serverCommand("gain-op", QJsonArray() << opword));
 }
 
 void Document::sendUserLimitChange(int newLimit)

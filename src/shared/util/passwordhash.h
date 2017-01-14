@@ -40,6 +40,9 @@ bool check(const QString &password, const QByteArray &hash);
 
 /**
  * @brief Generate a password hash
+ *
+ * If an empty string is given, the returned hash is also empty.
+ *
  * @param password the password to hash
  * @param algorithm the algorithm to use
  * @return

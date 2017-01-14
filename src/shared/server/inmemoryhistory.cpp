@@ -56,11 +56,14 @@ void InMemoryHistory::historyReset(const QList<protocol::MessagePtr> &newHistory
 
 void InMemoryHistory::setPassword(const QString &password)
 {
-	if(password.isEmpty())
-		m_password = QByteArray();
-	else
-		m_password = passwordhash::hash(password);
+	m_password = passwordhash::hash(password);
 }
+
+void InMemoryHistory::setOpword(const QString &opword)
+{
+	m_opword = passwordhash::hash(opword);
+}
+
 
 }
 

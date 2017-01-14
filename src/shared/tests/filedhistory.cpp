@@ -23,6 +23,7 @@ private slots:
 	void testMetadata()
 	{
 		const QString password = "pass";
+		const QString opword = "magic";
 		const int maxUsers = 11;
 		const QString title = "Hello world";
 		const QString idAlias = "test";
@@ -41,6 +42,7 @@ private slots:
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
 			QVERIFY(fh.get());
 			fh->setPassword(password);
+			fh->setOpword(opword);
 			fh->setMaxUsers(200);
 			fh->setMaxUsers(maxUsers); // this should replace the previously set value
 			fh->setTitle(title);
@@ -62,6 +64,7 @@ private slots:
 			QCOMPARE(fh->founderName(), founder);
 			QCOMPARE(fh->protocolVersion(), protover);
 			QVERIFY(passwordhash::check(password, fh->passwordHash()));
+			QVERIFY(passwordhash::check(opword, fh->opwordHash()));
 			QCOMPARE(fh->maxUsers(), maxUsers);
 			QCOMPARE(fh->title(), title);
 			QCOMPARE(fh->flags(), flags);

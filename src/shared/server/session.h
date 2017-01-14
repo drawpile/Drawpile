@@ -121,6 +121,11 @@ public:
 	bool hasPassword() const { return !m_history->passwordHash().isEmpty(); }
 
 	/**
+	 * @brief Does this session have a password for gaining operator status?
+	 */
+	bool hasOpword() const { return !m_history->opwordHash().isEmpty(); }
+
+	/**
 	 * @brief Set the session password.
 	 * @param password
 	 */

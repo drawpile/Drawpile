@@ -73,6 +73,9 @@ bool check(const QString &password, const QByteArray &hash)
 
 QByteArray hash(const QString &password, Algorithm algorithm)
 {
+	if(password.isEmpty())
+		return QByteArray();
+
 	QByteArray salt = makesalt(16);
 
 	// TODO support real password hashing algorithms, like PBKDF2

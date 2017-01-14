@@ -44,6 +44,8 @@ public:
 	protocol::ProtocolVersion protocolVersion() const { return m_version; }
 	QByteArray passwordHash() const override { return m_password; }
 	void setPassword(const QString &password) override;
+	QByteArray opwordHash() const override { return m_opword; }
+	void setOpword(const QString &opword) override;
 	QDateTime startTime() const { return m_startTime; }
 	int maxUsers() const override { return m_maxUsers; }
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }
@@ -59,8 +61,8 @@ public:
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
-	void historyAddBan(int, const QString &, const QHostAddress &, const QString &) override { /* not persistent */ };
-	void historyRemoveBan(int) override { /* not persistent */ };
+	void historyAddBan(int, const QString &, const QHostAddress &, const QString &) override { /* not persistent */ }
+	void historyRemoveBan(int) override { /* not persistent */ }
 
 private:
 	QList<protocol::MessagePtr> m_history;
@@ -70,6 +72,7 @@ private:
 	protocol::ProtocolVersion m_version;
 	QDateTime m_startTime;
 	QByteArray m_password;
+	QByteArray m_opword;
 	int m_maxUsers;
 	Flags m_flags;
 };

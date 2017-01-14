@@ -76,12 +76,14 @@ public:
 	QString founderName() const override { return m_founder; }
 	protocol::ProtocolVersion protocolVersion() const { return m_version; }
 	QByteArray passwordHash() const override { return m_password; }
+	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
 	Flags flags() const override { return m_flags; }
 
 	QDateTime startTime() const;
 	void setPassword(const QString &password) override;
+	void setOpword(const QString &opword) override;
 	void setMaxUsers(int max) override;
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
@@ -127,6 +129,7 @@ private:
 	QString m_title;
 	protocol::ProtocolVersion m_version;
 	QByteArray m_password;
+	QByteArray m_opword;
 	int m_maxUsers;
 	Flags m_flags;
 	QStringList m_announcements;

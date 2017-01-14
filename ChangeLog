@@ -2,6 +2,7 @@
  * Implemented file backed session history (enables session hibernation)
  * All session attributes can now be restored from file
  * Public session announcements can now be added and removed via a GUI
+ * Reimplemented /opword command (GUI version)
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document

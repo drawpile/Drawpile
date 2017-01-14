@@ -20,8 +20,9 @@
 #include "opcommands.h"
 #include "client.h"
 #include "session.h"
-//#include "../net/meta.h"
 #include "../net/control.h"
+#include "../net/meta.h"
+#include "../util/passwordhash.h"
 
 #include <QList>
 #include <QStringList>
@@ -45,24 +46,25 @@ typedef void (*SrvCommandFn)(Client *, const QJsonArray &, const QJsonObject &);
 
 class SrvCommand {
 public:
-	SrvCommand(const QString &name, SrvCommandFn fn)
-		: m_fn(fn), m_name(name), m_opOnly(true), m_modOnly(false)
+	enum Mode {
+		NONOP, // usable by all
+		OP,    // needs OP privileges
+		MOD    // needs MOD privileges
+	};
+
+	SrvCommand(const QString &name, SrvCommandFn fn, Mode mode=OP)
+		: m_fn(fn), m_name(name), m_mode(mode)
 	{}
 
 	void call(Client *c, const QJsonArray &args, const QJsonObject &kwargs) const { m_fn(c, args, kwargs); }
 	const QString &name() const { return m_name; }
 
-	bool isModOnly() const { return m_modOnly; }
-	bool isOpOnly() const { return m_opOnly; }
-
-	SrvCommand &nonOp() { m_opOnly = false; return *this; }
-	SrvCommand &modOnly() { m_modOnly = true; return *this; }
+	Mode mode() const { return m_mode; }
 
 private:
 	SrvCommandFn m_fn;
 	QString m_name;
-	bool m_opOnly;
-	bool m_modOnly;
+	Mode m_mode;
 };
 
 struct SrvCommandSet {
@@ -84,6 +86,31 @@ void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwar
 {
 	Q_UNUSED(args);
 	client->session()->setSessionConfig(kwargs);
+}
+
+void opWord(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1)
+		throw CmdError("Expected one argument: opword");
+
+	const QByteArray opwordHash = client->session()->history()->opwordHash();
+	if(opwordHash.isEmpty())
+		throw CmdError("No opword set");
+
+	if(passwordhash::check(args.at(0).toString(), opwordHash)) {
+		client->setOperator(true);
+
+		QList<uint8_t> ids;
+		for(const Client *c : client->session()->clients())
+			if(c->isOperator())
+				ids << c->id();
+
+		client->session()->addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+
+	} else {
+		throw CmdError("Incorrect password");
+	}
 }
 
 Client *_getClient(Session *session, const QJsonValue &idOrName)
@@ -186,9 +213,10 @@ SrvCommandSet::SrvCommandSet()
 		<< SrvCommand("init-complete", initComplete)
 		<< SrvCommand("sessionconf", sessionConf)
 		<< SrvCommand("kick-user", kickUser)
+		<< SrvCommand("gain-op", opWord, SrvCommand::NONOP)
 
 		<< SrvCommand("reset-session", resetSession)
-		<< SrvCommand("kill-session", killSession).modOnly()
+		<< SrvCommand("kill-session", killSession, SrvCommand::MOD)
 
 		<< SrvCommand("announce-session", announceSession)
 		<< SrvCommand("unlist-session", unlistSession)
@@ -203,11 +231,11 @@ void handleClientServerCommand(Client *client, const QString &command, const QJs
 {
 	for(const SrvCommand &c : COMMANDS.commands) {
 		if(c.name() == command) {
-			if(c.isModOnly() && !client->isModerator()) {
+			if(c.mode() == SrvCommand::MOD && !client->isModerator()) {
 				client->sendDirectMessage(protocol::Command::error("Not a moderator"));
 				return;
 			}
-			if(c.isOpOnly() && !client->isOperator()) {
+			else if(c.mode() == SrvCommand::OP && !client->isOperator()) {
 				client->sendDirectMessage(protocol::Command::error("Not a session owner"));
 				return;
 			}

@@ -307,6 +307,11 @@ void Session::setSessionConfig(const QJsonObject &conf)
 		changed = true;
 	}
 
+	if(conf.contains("opword")) {
+		m_history->setOpword(conf["opword"].toString());
+		changed = true;
+	}
+
 	// Note: this bit is only relayed by the server: it informs
 	// the client whether to send preserved/recorded chat messages
 	// by default.
@@ -353,6 +358,7 @@ void Session::sendUpdatedSessionProperties()
 	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
 	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
 	conf["hasPassword"] = hasPassword();
+	conf["hasOpword"] = hasOpword();
 	props.reply["config"] = conf;
 
 	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));

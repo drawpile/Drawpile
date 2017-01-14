@@ -111,8 +111,10 @@ public slots:
 	void showFlipbook();
 
 	static void showSettings();
+	void tryToGainOp();
 	void changeSessionTitle();
 	void changeSessionPassword();
+	void changeSessionOpword();
 	void changeSessionMaxUsers();
 	void showBanListDialog();
 	void showAnnouncementListDialog();
