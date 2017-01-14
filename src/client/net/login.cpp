@@ -20,6 +20,7 @@
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
+#include "commands.h"
 
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
@@ -448,12 +449,8 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(lockflags)
 				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
-			if(!m_announceUrl.isEmpty()) {
-				protocol::ServerCommand cmd;
-				cmd.cmd = "announce-session";
-				cmd.args = QJsonArray() << m_announceUrl;
-				m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), cmd)));
-			}
+			if(!m_announceUrl.isEmpty())
+				m_server->sendMessage(command::announce(m_announceUrl));
 
 			// Upload initial session content
 			m_server->sendMessages(m_initialState);

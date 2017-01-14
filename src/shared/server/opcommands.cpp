@@ -86,31 +86,6 @@ void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	client->session()->setSessionConfig(kwargs);
 }
 
-void getBanList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-
-	// The banlist is not usually included in the sessionconf.
-	// Moderators and local users get to see the actual IP addresses too
-	protocol::ServerReply msg;
-	msg.type = protocol::ServerReply::SESSIONCONF;
-	QJsonObject conf;
-	conf["banlist"]= client->session()->banlist().toJson(client->isModerator() || client->peerAddress().isLoopback());
-	msg.reply["config"] = conf;
-	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
-}
-
-void removeBan(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	Q_UNUSED(kwargs);
-	if(args.size()!=1)
-		throw CmdError("Expected one argument: ban entry ID");
-
-	client->session()->removeBan(args.at(0).toInt(), client->username());
-	getBanList(client, QJsonArray(), QJsonObject());
-}
-
 Client *_getClient(Session *session, const QJsonValue &idOrName)
 {
 	Client *c = nullptr;
@@ -147,10 +122,18 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(kwargs["ban"].toBool()) {
 		client->session()->addBan(target, client->username());
-		getBanList(client, QJsonArray(), QJsonObject());
 	}
 
 	target->disconnectKick(client->username());
+}
+
+void removeBan(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size()!=1)
+		throw CmdError("Expected one argument: ban entry ID");
+
+	client->session()->removeBan(args.at(0).toInt(), client->username());
 }
 
 void killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
@@ -173,25 +156,6 @@ void announceSession(Client *client, const QJsonArray &args, const QJsonObject &
 		throw CmdError("Invalid API URL");
 
 	client->session()->makeAnnouncement(apiUrl);
-}
-
-void getAnnouncementList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
-{
-	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-
-	// The announcement list is not usually included in the sessionconf.
-	protocol::ServerReply msg;
-	msg.type = protocol::ServerReply::SESSIONCONF;
-	QJsonArray announcements;
-	for(const sessionlisting::Announcement &a : client->session()->announcements()) {
-		announcements.append(a.apiUrl.toString());
-	}
-
-	QJsonObject conf;
-	conf["announcements"]= announcements;
-	msg.reply["config"] = conf;
-	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, msg)));
 }
 
 void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
@@ -228,9 +192,7 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("announce-session", announceSession)
 		<< SrvCommand("unlist-session", unlistSession)
-		<< SrvCommand("get-announcements", getAnnouncementList)
 
-		<< SrvCommand("get-banlist", getBanList).nonOp()
 		<< SrvCommand("remove-ban", removeBan)
 	;
 }

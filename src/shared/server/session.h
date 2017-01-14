@@ -351,6 +351,12 @@ public:
 	 */
 	QList<uint8_t> updateOwnership(QList<uint8_t> ids);
 
+	//! Send refreshed ban list to all logged in users
+	void sendUpdatedBanlist();
+
+	//! Send refreshed session announcement list to all logged in users
+	void sendUpdatedAnnouncementList();
+
 	/**
 	 * @brief Get a JSON object describing the session
 	 *

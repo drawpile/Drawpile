@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 namespace sessionlisting {
 
 ListServerModel::ListServerModel(bool showlocal, QObject *parent)
-	: QAbstractListModel(parent), _showlocal(showlocal)
+	: QAbstractListModel(parent), m_showlocal(showlocal)
 {
 	loadServers();
 }
@@ -41,13 +41,13 @@ int ListServerModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _servers.size();
+	return m_servers.size();
 }
 
 QVariant ListServerModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < _servers.size()) {
-		const ListServer &srv = _servers.at(index.row());
+	if(index.isValid() && index.row() >= 0 && index.row() < m_servers.size()) {
+		const ListServer &srv = m_servers.at(index.row());
 		switch(role) {
 		case Qt::DisplayRole: return srv.name;
 		case Qt::DecorationRole: return srv.icon;
@@ -63,19 +63,19 @@ bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 	if(parent.isValid())
 		return false;
 
-	if(row<0 || count<=0 || row+count>_servers.count())
+	if(row<0 || count<=0 || row+count>m_servers.count())
 		return false;
 
 	beginRemoveRows(parent, row, row+count-1);
-	while(count-->0) _servers.removeAt(row);
+	while(count-->0) m_servers.removeAt(row);
 	endRemoveRows();
 	return true;
 }
 
 void ListServerModel::addServer(const QString &name, const QString &url, const QString &description)
 {
-	beginInsertRows(QModelIndex(), _servers.size(), _servers.size());
-	_servers << ListServer {
+	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
+	m_servers << ListServer {
 		QIcon(),
 		QString(),
 		name,
@@ -88,8 +88,8 @@ void ListServerModel::addServer(const QString &name, const QString &url, const Q
 void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 {
 	// Find the server
-	for(int i=0;i<_servers.size();++i) {
-		ListServer &s = _servers[i];
+	for(int i=0;i<m_servers.size();++i) {
+		ListServer &s = m_servers[i];
 		if(s.url != url)
 			continue;
 
@@ -131,7 +131,7 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 void ListServerModel::loadServers()
 {
 	beginResetModel();
-	_servers.clear();
+	m_servers.clear();
 
 	QSettings cfg;
 	const QString iconPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/favicons/";
@@ -151,13 +151,13 @@ void ListServerModel::loadServers()
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 
-		_servers << ls;
+		m_servers << ls;
 	}
 	cfg.endArray();
 
 	// Add the default drawpile.net server if there is nothing else
-	if(_servers.isEmpty()) {
-		_servers << ListServer {
+	if(m_servers.isEmpty()) {
+		m_servers << ListServer {
 			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
@@ -172,7 +172,7 @@ void ListServerModel::loadServers()
 	// just always use HTTPS, but SSL support is not always available (on Windows,
 	// since OpenSSL is not part of the base system.)
 	if(QSslSocket::supportsSsl()) {
-		for(ListServer &ls : _servers) {
+		for(ListServer &ls : m_servers) {
 			if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
 				ls.url = QStringLiteral("https://drawpile.net/api/listing/");
 		}
@@ -180,8 +180,8 @@ void ListServerModel::loadServers()
 
 #ifdef HAVE_DNSSD
 	// Add an entry for local server discovery
-	if(_showlocal) {
-		_servers.prepend(ListServer {
+	if(m_showlocal) {
+		m_servers.prepend(ListServer {
 			QIcon(),
 			QString(),
 			tr("Nearby"),
@@ -198,9 +198,9 @@ void ListServerModel::loadServers()
 void ListServerModel::saveServers() const
 {
 	QSettings cfg;
-	cfg.beginWriteArray("listservers", _servers.size());
-	for(int i=0;i<_servers.size();++i) {
-		const ListServer &s = _servers.at(i);
+	cfg.beginWriteArray("listservers", m_servers.size());
+	for(int i=0;i<m_servers.size();++i) {
+		const ListServer &s = m_servers.at(i);
 		cfg.setArrayIndex(i);
 
 		cfg.setValue("name", s.name);

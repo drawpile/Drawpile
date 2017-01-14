@@ -66,6 +66,7 @@ Document::Document(QObject *parent)
 	m_client = new net::Client(this);
 	m_toolctrl = new tools::ToolController(m_client, this);
 	m_banlist = new BanlistModel(this);
+	m_announcementlist = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
 	m_autosaveTimer->setSingleShot(true);
@@ -166,6 +167,7 @@ void Document::onServerDisconnect()
 		m_canvas->setTitle(QString());
 	}
 	m_banlist->clear();
+	m_announcementlist->setStringList(QStringList());
 }
 
 void Document::onSessionConfChanged(const QJsonObject &config)
@@ -193,6 +195,14 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("banlist"))
 		m_banlist->updateBans(config["banlist"].toArray());
+
+	if(config.contains("announcements")) {
+		QStringList alist;
+		for(const QJsonValue &v : config["announcements"].toArray()) {
+			alist << v.toString();
+		}
+		m_announcementlist->setStringList(alist);
+	}
 }
 
 void Document::onServerHistoryLimitReceived(int maxSpace)
@@ -546,6 +556,15 @@ void Document::sendUnban(int entryId)
 	m_client->sendMessage(net::command::unban(entryId));
 }
 
+void Document::sendAnnounce(const QString &url)
+{
+	m_client->sendMessage(net::command::announce(url));
+}
+
+void Document::sendUnannounce(const QString &url)
+{
+	m_client->sendMessage(net::command::unannounce(url));
+}
 
 void Document::snapshotNeeded()
 {

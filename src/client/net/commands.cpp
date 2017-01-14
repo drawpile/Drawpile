@@ -174,9 +174,14 @@ MessagePtr kick(int target, bool ban)
 	return serverCommand("kick-user", QJsonArray() << target, kwargs);
 }
 
-MessagePtr fetchBanlist()
+MessagePtr announce(const QString &url)
 {
-	return serverCommand("get-banlist");
+	return serverCommand("announce-session", QJsonArray() << url);
+}
+
+MessagePtr unannounce(const QString &url)
+{
+	return serverCommand("unlist-session", QJsonArray() << url);
 }
 
 MessagePtr unban(int entryid)

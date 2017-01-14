@@ -20,10 +20,11 @@
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
 
-#include <QObject>
-
 #include "core/blendmodes.h"
 #include "../shared/net/message.h" // TODO hide this
+
+#include <QObject>
+#include <QStringListModel>
 
 class QString;
 class QTimer;
@@ -50,6 +51,7 @@ class Document : public QObject
 {
 	Q_PROPERTY(canvas::CanvasModel* canvas READ canvas() NOTIFY canvasChanged)
 	Q_PROPERTY(BanlistModel* banlist READ banlist() CONSTANT)
+	Q_PROPERTY(QStringListModel* announcementList READ announcementList() CONSTANT)
 	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
 	Q_PROPERTY(bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
 	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
@@ -75,6 +77,7 @@ public:
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
 	net::Client *client() const { return m_client; }
 	BanlistModel *banlist() const { return m_banlist; }
+	QStringListModel *announcementList() const { return m_announcementlist; }
 
 	/**
 	 * @brief (Re)initialize the canvas
@@ -166,6 +169,8 @@ public slots:
 	void sendLockByDefault(bool lock);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
+	void sendAnnounce(const QString &url);
+	void sendUnannounce(const QString &url);
 
 	// Tool related functions
 	void undo();
@@ -220,6 +225,7 @@ private:
 	tools::ToolController *m_toolctrl;
 	net::Client *m_client;
 	BanlistModel *m_banlist;
+	QStringListModel *m_announcementlist;
 
 	recording::Writer *m_recorder;
 	bool m_autoRecordOnConnect;

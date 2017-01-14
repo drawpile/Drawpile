@@ -114,6 +114,7 @@
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/resetdialog.h"
 #include "dialogs/banlistdialog.h"
+#include "dialogs/announcementdialog.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -1322,10 +1323,18 @@ void MainWindow::changeSessionMaxUsers()
 
 void MainWindow::showBanListDialog()
 {
-	m_doc->client()->sendMessage(net::command::fetchBanlist());
 	auto *dlg = new dialogs::BanlistDialog(m_doc->banlist(), m_doc->canvas()->aclFilter()->isLocalUserOperator(), this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::BanlistDialog::requestBanRemoval, m_doc, &Document::sendUnban);
+	dlg->show();
+}
+
+void MainWindow::showAnnouncementListDialog()
+{
+	auto *dlg = new dialogs::AnnouncementDialog(m_doc->announcementList(), m_doc->canvas()->aclFilter()->isLocalUserOperator(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &dialogs::AnnouncementDialog::requestAnnouncement, m_doc, &Document::sendAnnounce);
+	connect(dlg, &dialogs::AnnouncementDialog::requestUnlisting, m_doc, &Document::sendUnannounce);
 	dlg->show();
 }
 
@@ -1382,6 +1391,7 @@ void MainWindow::onServerConnected()
 	getAction("hostsession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(true);
 	getAction("viewbanlist")->setEnabled(true);
+	getAction("viewannouncementlist")->setEnabled(true);
 
 	// Disable UI until login completes
 	_view->setEnabled(false);
@@ -1396,6 +1406,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
 	getAction("viewbanlist")->setEnabled(false);
+	getAction("viewannouncementlist")->setEnabled(false);
 	m_admintools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
 	m_layerctrlmode->setEnabled(false);
@@ -2306,7 +2317,9 @@ void MainWindow::setupActions()
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
 	QAction *changepassword = makeAction("changepassword", 0, tr("Set &Password..."));
 	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
-	viewbanlist->setEnabled(false);
+	QAction *viewannouncementlist = makeAction("viewannouncementlist", 0, tr("Public listings..."));
+	viewbanlist->setEnabled(false); // even non-admins can look at these
+	viewannouncementlist->setEnabled(false);
 	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User Limit: %1...").arg(254));
 	QAction *keepchat = makeAction("keepchat", 0, tr("Keep Chat History"), QString(), QKeySequence(), true);
 	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist Without Users"), QString(), QKeySequence(), true);
@@ -2339,6 +2352,7 @@ void MainWindow::setupActions()
 		changepassword->setText(hasPassword ? tr("Change &Password...") : tr("Set &Password..."));
 	});
 	connect(viewbanlist, &QAction::triggered, this, &MainWindow::showBanListDialog);
+	connect(viewannouncementlist, &QAction::triggered, this, &MainWindow::showAnnouncementListDialog);
 	connect(changemaxusers, &QAction::triggered, this, &MainWindow::changeSessionMaxUsers);
 	connect(m_doc, &Document::sessionMaxUserCountChanged, [changemaxusers](int count) {
 		changemaxusers->setText(tr("User limit: %1...").arg(count));
@@ -2384,6 +2398,7 @@ void MainWindow::setupActions()
 	sessionSettingsMenu->addAction(changetitle);
 	sessionSettingsMenu->addAction(changepassword);
 	sessionSettingsMenu->addAction(viewbanlist);
+	sessionSettingsMenu->addAction(viewannouncementlist);
 	sessionSettingsMenu->addAction(changemaxusers);
 	sessionSettingsMenu->addAction(keepchat);
 	sessionSettingsMenu->addAction(persistentsession);

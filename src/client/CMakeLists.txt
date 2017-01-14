@@ -118,6 +118,7 @@ set (
 	dialogs/flipbook.cpp
 	dialogs/resetdialog.cpp
 	dialogs/banlistdialog.cpp
+	dialogs/announcementdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -190,6 +191,7 @@ set (
 	ui/flipbook.ui
 	ui/playback.ui
 	ui/resetsession.ui
+	ui/announcementdialog.ui
 )
 
 # Optional DNS-SD support

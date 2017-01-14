@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class ListServerModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
-	ListServerModel(bool showlocal, QObject *parent=0);
+	explicit ListServerModel(bool showlocal, QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -54,9 +54,11 @@ public:
 	//! Save (modified) server list. This replaces the existing list
 	void saveServers() const;
 
+	QList<ListServer> servers() const { return m_servers; }
+
 private:
-	QList<ListServer> _servers;
-	bool _showlocal;
+	QList<ListServer> m_servers;
+	bool m_showlocal;
 };
 
 }

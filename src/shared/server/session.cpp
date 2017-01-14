@@ -189,6 +189,10 @@ void Session::joinUser(Client *user, bool host)
 		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
 	}
 
+	// Make sure everyone is up to date
+	sendUpdatedAnnouncementList();
+	sendUpdatedBanlist();
+
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
 }
@@ -247,6 +251,7 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 	if(m_history->addBan(target->username(), target->peerAddress(), bannedBy)) {
 		logger::info() << this << target->username() << "banned from session by" << bannedBy;
 		// TODO structured logging
+		sendUpdatedBanlist();
 	}
 }
 
@@ -254,6 +259,7 @@ void Session::removeBan(int entryId, const QString &removedBy)
 {
 	if(m_history->removeBan(entryId)) {
 		logger::info() << this << "ban entry" << entryId << "removed by" << removedBy;
+		sendUpdatedBanlist();
 	}
 }
 
@@ -346,6 +352,48 @@ void Session::sendUpdatedSessionProperties()
 
 	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));
 	emit sessionAttributeChanged(this);
+}
+
+void Session::sendUpdatedBanlist()
+{
+	// The banlist is not usually included in the sessionconf.
+	// Moderators and local users get to see the actual IP addresses too
+	protocol::ServerReply msg;
+	msg.type = protocol::ServerReply::SESSIONCONF;
+	QJsonObject conf;
+	conf["banlist"] = banlist().toJson(false);
+	msg.reply["config"] = conf;
+
+	// Normal users don't get to see the actual IP addresses
+	protocol::MessagePtr normalVersion(new protocol::Command(0, msg));
+
+	// But moderators and local users do
+	conf["banlist"] = banlist().toJson(true);
+	msg.reply["config"] = conf;
+	protocol::MessagePtr modVersion(new protocol::Command(0, msg));
+
+	for(Client *c : m_clients) {
+		if(c->isModerator() || c->peerAddress().isLoopback())
+			c->sendDirectMessage(modVersion);
+		else
+			c->sendDirectMessage(normalVersion);
+	}
+}
+
+void Session::sendUpdatedAnnouncementList()
+{
+	// The announcement list is not usually included in the sessionconf.
+	protocol::ServerReply msg;
+	msg.type = protocol::ServerReply::SESSIONCONF;
+	QJsonArray list;
+	for(const sessionlisting::Announcement &a : announcements()) {
+		list.append(a.apiUrl.toString());
+	}
+
+	QJsonObject conf;
+	conf["announcements"]= list;
+	msg.reply["config"] = conf;
+	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
 }
 
 void Session::addToHistory(const protocol::MessagePtr &msg)
@@ -642,6 +690,7 @@ void Session::unlistAnnouncement(const QString &url)
 			break;
 		}
 	}
+	sendUpdatedAnnouncementList();
 }
 
 void Session::refreshAnnouncements()
@@ -676,6 +725,7 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 	}
 
 	m_publicListings << announcement;
+	sendUpdatedAnnouncementList();
 }
 
 QJsonObject Session::getDescription(bool full) const
