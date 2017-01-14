@@ -440,8 +440,11 @@ void Session::resetSession(int resetter)
 	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
 }
 
-void Session::killSession()
+void Session::killSession(bool terminate)
 {
+	if(m_state == Shutdown)
+		return;
+
 	switchState(Shutdown);
 	unlistAnnouncement();
 	stopRecording();
@@ -449,6 +452,9 @@ void Session::killSession()
 	for(Client *c : m_clients)
 		c->disconnectShutdown();
 	m_clients.clear();
+
+	if(terminate)
+		m_history->terminate();
 
 	this->deleteLater();
 }

@@ -138,6 +138,11 @@ public:
 	virtual void cleanupBatches(int before) = 0;
 
 	/**
+	 * @brief End this session and delete any associated files (if any)
+	 */
+	virtual void terminate() = 0;
+
+	/**
 	 * @brief Set the size limit for the history.
 	 *
 	 * The size limit is checked when new messages are added to the session.

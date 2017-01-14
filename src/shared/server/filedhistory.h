@@ -60,6 +60,15 @@ public:
 	 */
 	void closeBlock();
 
+	/**
+	 * @brief Enable archival mode
+	 *
+	 * In archive mode, files are not deleted when session ends or is reset.
+	 * Instead, ".archived" is appended to the end of the journal file on termination.
+	 * @param archive
+	 */
+	void setArchive(bool archive) { m_archive = archive; }
+
 	//! Get the metadata journal file name for the given session ID
 	static QString journalFilename(const QUuid &id);
 
@@ -77,6 +86,7 @@ public:
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
 
+	void terminate() override;
 	void cleanupBatches(int before) override;
 	std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const override;
 
@@ -115,6 +125,7 @@ private:
 	Flags m_flags;
 
 	QVector<Block> m_blocks;
+	bool m_archive;
 };
 
 }

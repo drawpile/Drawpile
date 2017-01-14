@@ -82,6 +82,7 @@ void SessionServer::loadNewSessions()
 
 		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
 		if(fh) {
+			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
 			Session *session = new Session(fh, m_config, this);
 			initSession(session);
 			logger::info() << session << "loaded.";
@@ -106,7 +107,9 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 
 	SessionHistory *h;
 	if(m_useFiledSessions) {
-		h = FiledHistory::startNew(m_sessiondir, id, idAlias, protocolVersion, founder);
+		FiledHistory *fh = FiledHistory::startNew(m_sessiondir, id, idAlias, protocolVersion, founder);
+		fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
+		h = fh;
 	} else {
 		h = new InMemoryHistory(id, idAlias, protocolVersion, founder);
 	}
@@ -170,7 +173,7 @@ void SessionServer::stopAll()
 	auto sessions = m_sessions;
 	sessions.detach();
 	for(Session *s : sessions) {
-		s->killSession();
+		s->killSession(false);
 	}
 }
 

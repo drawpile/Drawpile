@@ -42,7 +42,8 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, con
 	  m_founder(founder),
 	  m_version(version),
 	  m_maxUsers(254),
-	  m_flags(0)
+	  m_flags(0),
+	  m_archive(false)
 {
 	Q_ASSERT(journal);
 }
@@ -349,6 +350,19 @@ bool FiledHistory::scanBlocks()
 	return true;
 }
 
+void FiledHistory::terminate()
+{
+	m_recording->close();
+	m_journal->close();
+
+	if(m_archive) {
+		m_journal->rename(m_journal->fileName() + ".archived");
+	} else {
+		m_recording->remove();
+		m_journal->remove();
+	}
+}
+
 void FiledHistory::closeBlock()
 {
 	// Flush the output files just to be safe
@@ -476,6 +490,8 @@ void FiledHistory::historyAdd(const protocol::MessagePtr &msg)
 void FiledHistory::historyReset(const QList<protocol::MessagePtr> &newHistory)
 {
 	m_recording->close();
+	if(!m_archive)
+		m_recording->remove();
 	delete m_recording;
 	m_blocks.clear();
 	initRecording();

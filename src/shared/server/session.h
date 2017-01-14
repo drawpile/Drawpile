@@ -287,10 +287,11 @@ public:
 	/**
 	 * @brief Initiate the shutdown of this session
 	 *
-	 * The session will not persist after the users have been disconnected,
-	 * nor will it be hibernated.
+	 * If the terminate parameter is false, the session history
+	 * will not be terminated. This allows the session to survive
+	 * server restarts.
 	 */
-	void killSession();
+	void killSession(bool terminate=true);
 
 	/**
 	 * @brief Send a direct message to all session participants

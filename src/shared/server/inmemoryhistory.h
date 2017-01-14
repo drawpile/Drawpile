@@ -36,6 +36,7 @@ public:
 
 	std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const override;
 
+	void terminate() override { /* nothing to do */ }
 	void cleanupBatches(int) override { /* no caching, nothing to do */ }
 
 	QString idAlias() const override { return m_alias; }

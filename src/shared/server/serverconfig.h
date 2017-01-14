@@ -60,7 +60,8 @@ namespace config {
 		WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
 		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
-		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL)              // Allow unauthenticated users
+		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),             // Allow unauthenticated users
+		ArchiveMode(11, "archive", "false", ConfigKey::BOOL)                 // Don't delete terminated session files
 		;
 }
 
