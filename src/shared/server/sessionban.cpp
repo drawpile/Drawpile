@@ -29,18 +29,36 @@ SessionBanList::SessionBanList()
 {
 }
 
-bool SessionBanList::addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy)
+static QHostAddress toIpv6(const QHostAddress &ip) {
+	if(ip.protocol() == QAbstractSocket::IPv4Protocol)
+		return QHostAddress(ip.toIPv6Address());
+	return ip;
+}
+
+int SessionBanList::addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy, int id)
 {
 	if(ip.isNull() || ip.isLoopback() || isBanned(ip))
-		return false;
+		return 0;
+
+	if(id>0) {
+		// Make sure this ID doesn't exist already
+		for(const SessionBan &b : m_banlist) {
+			if(b.id == id)
+				return 0;
+		}
+		m_idautoinc = qMax(m_idautoinc, id);
+
+	} else {
+		id = ++m_idautoinc;
+	}
 
 	m_banlist << SessionBan {
-		++m_idautoinc,
+		id,
 		username,
-		ip,
+		toIpv6(ip), // Always use IPv6 notation for consistency
 		bannedBy
 	};
-	return true;
+	return id;
 }
 
 bool SessionBanList::removeBan(int id)
@@ -57,8 +75,9 @@ bool SessionBanList::removeBan(int id)
 
 bool SessionBanList::isBanned(const QHostAddress &address) const
 {
+	const QHostAddress ip = toIpv6(address);
 	for(const SessionBan &b : m_banlist) {
-		if(b.ip == address)
+		if(b.ip == ip)
 			return true;
 	}
 	return false;

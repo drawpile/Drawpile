@@ -93,6 +93,8 @@ public:
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
+	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy);
+	void historyRemoveBan(int id);
 
 private:
 	FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent);

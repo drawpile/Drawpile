@@ -236,6 +236,21 @@ bool FiledHistory::load()
 			}
 			m_flags = flags;
 
+		} else if(cmd == "BAN") {
+			const QList<QByteArray> args = params.split(' ');
+			if(args.length() != 4) {
+				logger::warning() << id().toString() << "invalid ban entry:" << QString::fromUtf8(params);
+			} else {
+				int id = args.at(0).toInt();
+				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
+				QHostAddress ip { QString::fromUtf8(args.at(2)) };
+				QString bannedBy { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(3))) };
+				m_banlist.addBan(name, ip, bannedBy, id);
+			}
+
+		} else if(cmd == "UNBAN") {
+			m_banlist.removeBan(params.toInt());
+
 		} else {
 			logger::warning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
@@ -508,6 +523,22 @@ void FiledHistory::cleanupBatches(int before)
 		if(!b.messages.isEmpty())
 			b.messages = QList<protocol::MessagePtr>();
 	}
+}
+
+void FiledHistory::historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy)
+{
+	const QByteArray include = " ";
+	QByteArray entry = "BAN " +
+			QByteArray::number(id) + " " +
+			username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
+			ip.toString().toUtf8() + " " +
+			bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
+	m_journal->write(entry);
+}
+
+void FiledHistory::historyRemoveBan(int id)
+{
+	m_journal->write(QByteArray("UNBAN ") + QByteArray::number(id) + "\n");
 }
 
 }

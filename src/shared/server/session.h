@@ -34,7 +34,6 @@
 #include "../net/protover.h"
 #include "sessionhistory.h"
 #include "jsonapi.h"
-#include "sessionban.h"
 
 namespace recording {
 	class Writer;
@@ -207,7 +206,7 @@ public:
 	 * Don't manipulate the banlist directly, instead use tha addBan and
 	 * removeBan functions so the events are logged properly.
 	 */
-	const SessionBanList &banlist() const { return m_banlist; }
+	const SessionBanList &banlist() const { return m_history->banlist(); }
 
 	/**
 	 * @brief Add an in-session IP ban for the given client
@@ -426,7 +425,6 @@ private:
 	uint m_historyLimitWarning;
 
 	sessionlisting::Announcement m_publicListing;
-	SessionBanList m_banlist;
 
 	int m_lastUserId;
 

@@ -25,6 +25,25 @@ SessionHistory::SessionHistory(const QUuid &id, QObject *parent)
 {
 }
 
+bool SessionHistory::addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy)
+{
+	const int id = m_banlist.addBan(username, ip, bannedBy);
+	if(id>0) {
+		historyAddBan(id, username, ip, bannedBy);
+		return true;
+	}
+	return false;
+}
+
+bool SessionHistory::removeBan(int id)
+{
+	if(m_banlist.removeBan(id)) {
+		historyRemoveBan(id);
+		return true;
+	}
+	return false;
+}
+
 void SessionHistory::historyLoaded(uint size, int messageCount)
 {
 	Q_ASSERT(m_lastIndex==-1);

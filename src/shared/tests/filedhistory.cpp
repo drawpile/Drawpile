@@ -30,6 +30,10 @@ private slots:
 		const QString founder = "me!";
 		const SessionHistory::Flags flags = SessionHistory::Persistent | SessionHistory::PreserveChat | SessionHistory::Nsfm;
 
+		const QString bannedUser = "troll user with a long \\ \"name}%[";
+		const QString opUser = "op";
+		const QHostAddress bannedAddress("::ffff:192.168.0.100");
+
 		QUuid testId = QUuid::createUuid();
 		{
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
@@ -39,6 +43,9 @@ private slots:
 			fh->setMaxUsers(maxUsers); // this should replace the previously set value
 			fh->setTitle(title);
 			fh->setFlags(flags);
+			fh->addBan(bannedUser, bannedAddress, opUser);
+			fh->addBan("test", QHostAddress("192.168.0.101"), opUser);
+			fh->removeBan(2);
 		}
 
 		{
@@ -53,6 +60,12 @@ private slots:
 			QCOMPARE(fh->maxUsers(), maxUsers);
 			QCOMPARE(fh->title(), title);
 			QCOMPARE(fh->flags(), flags);
+
+			QJsonArray banlist = fh->banlist().toJson(true);
+			QCOMPARE(banlist.size(), 1);
+			QCOMPARE(banlist.at(0).toObject()["username"].toString(), bannedUser);
+			QCOMPARE(banlist.at(0).toObject()["bannedBy"].toString(), opUser);
+			QCOMPARE(banlist.at(0).toObject()["ip"].toString(), bannedAddress.toString());
 		}
 	}
 

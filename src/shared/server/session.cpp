@@ -243,7 +243,7 @@ Client *Session::getClientByUsername(const QString &username)
 void Session::addBan(const Client *target, const QString &bannedBy)
 {
 	Q_ASSERT(target);
-	if(m_banlist.addBan(target->username(), target->peerAddress(), bannedBy)) {
+	if(m_history->addBan(target->username(), target->peerAddress(), bannedBy)) {
 		logger::info() << this << target->username() << "banned from session by" << bannedBy;
 		// TODO structured logging
 	}
@@ -251,7 +251,7 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 
 void Session::removeBan(int entryId, const QString &removedBy)
 {
-	if(m_banlist.removeBan(entryId)) {
+	if(m_history->removeBan(entryId)) {
 		logger::info() << this << "ban entry" << entryId << "removed by" << removedBy;
 	}
 }

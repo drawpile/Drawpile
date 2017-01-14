@@ -20,6 +20,7 @@
 #define DP_SERVER_SESSION_HISTORY_H
 
 #include "../net/message.h"
+#include "sessionban.h"
 
 #include <QObject>
 #include <QUuid>
@@ -179,6 +180,21 @@ public:
 	 */
 	int lastIndex() const { return m_lastIndex; }
 
+	/**
+	 * @brief Get the list of in-session IP bans
+	 */
+	const SessionBanList &banlist() const { return m_banlist; }
+
+	/**
+	 * @brief Add a new banlist entry
+	 */
+	bool addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy);
+
+	/**
+	 * @brief removeBan Remove a banlist entry
+	 */
+	bool removeBan(int id);
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history
@@ -191,7 +207,11 @@ signals:
 protected:
 	virtual void historyAdd(const protocol::MessagePtr &msg) = 0;
 	virtual void historyReset(const QList<protocol::MessagePtr> &newHistory) = 0;
+	virtual void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy) = 0;
+	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);
+
+	SessionBanList m_banlist;
 
 private:
 	QUuid m_id;

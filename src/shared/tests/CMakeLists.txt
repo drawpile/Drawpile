@@ -17,4 +17,5 @@ AddUnitTest(filename)
 AddUnitTest(messages)
 AddUnitTest(recording)
 AddUnitTest(filedhistory)
+AddUnitTest(sessionban)
 

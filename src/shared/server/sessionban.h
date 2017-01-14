@@ -55,9 +55,10 @@ public:
 	 * @param username the username of the user being banned
 	 * @param ip IP address to be banned
 	 * @param bannedBy name of the user who did the banning
-	 * @return true if ban was added
+	 * @param id explicitly specified ID
+	 * @return id of newly added ban entry or 0 if not added
 	 */
-	bool addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy);
+	int addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy, int id=0);
 
 	/**
 	 * @brief Remove a ban entry

@@ -55,6 +55,8 @@ public:
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
+	void historyAddBan(int, const QString &, const QHostAddress &, const QString &) override { /* not persistent */ };
+	void historyRemoveBan(int) override { /* not persistent */ };
 
 private:
 	QList<protocol::MessagePtr> m_history;
