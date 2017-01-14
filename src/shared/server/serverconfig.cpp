@@ -168,7 +168,7 @@ RegisteredUser ServerConfig::getUserAccount(const QString &username, const QStri
 int ServerConfig::parseTimeString(const QString &str)
 {
 	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)\\s*([dhms]?)\\z");
-	const auto m = re.match(str);
+	const auto m = re.match(str.toLower());
 	if(!m.hasMatch())
 		return -1;
 

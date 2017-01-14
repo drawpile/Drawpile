@@ -18,4 +18,6 @@ AddUnitTest(messages)
 AddUnitTest(recording)
 AddUnitTest(filedhistory)
 AddUnitTest(sessionban)
+AddUnitTest(messagequeue)
+AddUnitTest(serverconfig)
 
