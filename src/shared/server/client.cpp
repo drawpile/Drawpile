@@ -109,6 +109,8 @@ void Client::sendNextHistoryBatch()
 	if(m_session == nullptr || m_msgqueue->isUploading() || m_session->state() != Session::Running)
 		return;
 
+	m_session->historyCacheCleanup();
+
 	QList<protocol::MessagePtr> batch;
 	int batchLast;
 	std::tie(batch, batchLast) = m_session->history()->getBatch(m_historyPosition);

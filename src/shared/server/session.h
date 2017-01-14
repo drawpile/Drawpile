@@ -360,6 +360,9 @@ public:
 	//! Send refreshed session announcement list to all logged in users
 	void sendUpdatedAnnouncementList();
 
+	//! Release caches that can be released
+	void historyCacheCleanup();
+
 	/**
 	 * @brief Get a JSON object describing the session
 	 *

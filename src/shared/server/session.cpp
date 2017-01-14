@@ -227,6 +227,8 @@ void Session::removeUser(Client *user)
 		setClosed(false);
 	}
 
+	historyCacheCleanup();
+
 	emit userDisconnected(this);
 }
 
@@ -746,6 +748,15 @@ void Session::sessionAnnouncementError(const QString &apiUrl)
 {
 	// Remove listing on error
 	unlistAnnouncement(apiUrl, true, true);
+}
+
+void Session::historyCacheCleanup()
+{
+	int minIdx = m_history->lastIndex();
+	for(const Client *c : m_clients) {
+		minIdx = qMin(c->historyPosition(), minIdx);
+	}
+	m_history->cleanupBatches(minIdx);
 }
 
 QJsonObject Session::getDescription(bool full) const
