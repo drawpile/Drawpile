@@ -94,7 +94,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
 		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId())) {
-			m_layers[lmsg.id()] = LayerAcl { lmsg.locked(), lmsg.exclusive() };
+			m_layers[lmsg.id()] = LayerAcl(lmsg.locked(), lmsg.exclusive());
 			emit layerAclChange(lmsg.id(), lmsg.locked(), lmsg.exclusive());
 
 			// Emit this to refresh the UI in case our selected layer was (un)locked.
