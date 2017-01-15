@@ -189,7 +189,6 @@ void Client::handleSessionMessage(MessagePtr msg)
 	using namespace protocol;
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
-	case MSG_STREAMPOS:
 		logger::notice() << this << "Got server-to-user only command" << msg->type();
 		return;
 	case MSG_DISCONNECT:

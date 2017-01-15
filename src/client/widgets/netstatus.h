@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,8 +57,6 @@ public slots:
 	void hostDisconnecting();
 	void hostDisconnected();
 
-	void expectBytes(int count);
-	void sendingBytes(int count);
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
@@ -67,8 +65,14 @@ public slots:
 	//! Show the message in the balloon popup if alert is true
 	void alertMessage(const QString &msg, bool alert);
 
-	// this is used with QNetworkReplies
-	void bytesReceived(qint64 received, qint64 total);
+	//! Update the download progress bar with message catchup progress (0-100)
+	void setCatchupProgress(int progress);
+
+	//! Update the download progress bar with file download progress (0-total)
+	void setDownloadProgress(qint64 received, qint64 total);
+
+	//! Download over, hide the progress bar
+	void hideDownloadProgress();
 
 	void join(int id, const QString& user);
 	void leave(const QString& user);
@@ -98,8 +102,7 @@ private:
 	QString fullAddress() const;
 
 	QPointer<dialogs::NetStats> _netstats;
-	QProgressBar *_download;
-	QProgressBar *_upload;
+	QProgressBar *m_download;
 
 	QLabel *_label, *_security, *m_lowspace;
 	PopupMessage *m_popup;

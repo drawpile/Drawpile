@@ -291,6 +291,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_doc->client(), &net::Client::serverMessage, m_chatbox, &widgets::ChatBox::systemMessage);
 	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
+	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
 
@@ -330,8 +331,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_doc, &Document::serverSpaceLowChanged, m_netstatus, &widgets::NetStatus::setLowSpaceAlert);
 
-	connect(m_doc->client(), &net::Client::expectingBytes, m_netstatus, &widgets::NetStatus::expectBytes);
-	connect(m_doc->client(), &net::Client::sendingBytes, m_netstatus, &widgets::NetStatus::sendingBytes);
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);

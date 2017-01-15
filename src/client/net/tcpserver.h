@@ -63,7 +63,6 @@ signals:
 	void loggingOut();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
-	void expectingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
 

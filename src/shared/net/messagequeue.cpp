@@ -204,11 +204,7 @@ void MessageQueue::readData() {
 			} else {
 				MessagePtr msg(message);
 
-				if(msg->type() == MSG_STREAMPOS) {
-					// Special handling for Stream Position message
-					emit expectingBytes(msg.cast<StreamPos>().bytes() + totalread);
-
-				} else if(msg->type() == MSG_PING) {
+				 if(msg->type() == MSG_PING) {
 					// Special handling for Ping messages
 					bool isPong = msg.cast<Ping>().isPong();
 

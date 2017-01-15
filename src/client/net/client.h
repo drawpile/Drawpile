@@ -178,8 +178,6 @@ signals:
 
 	void serverMessage(const QString &message, bool isAlert);
 
-	void expectingBytes(int);
-	void sendingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
 	void lagMeasured(qint64);

@@ -136,12 +136,6 @@ public slots:
 
 signals:
 	/**
-	 * @brief information about the amount of data to be received
-	 * @param count
-	 */
-	void expectingBytes(int count);
-
-	/**
 	 * @brief data reception statistics
 	 * @param number of bytes received since last signal
 	 */

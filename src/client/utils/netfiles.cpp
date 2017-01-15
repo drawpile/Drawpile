@@ -49,8 +49,8 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
 	QNetworkReply *reply = get(url, expectType);
 
 	if(netstatus) {
-		netstatus->connect(reply, SIGNAL(downloadProgress(qint64,qint64)), netstatus, SLOT(bytesReceived(qint64,qint64)));
-		netstatus->connect(reply, &QNetworkReply::finished, [netstatus]() { netstatus->bytesReceived(0,0); });
+		netstatus->connect(reply, &QNetworkReply::downloadProgress, netstatus, &widgets::NetStatus::setDownloadProgress);
+		netstatus->connect(reply, &QNetworkReply::finished, netstatus, &widgets::NetStatus::NetStatus::hideDownloadProgress);
 	}
 
 	reply->connect(reply, &QNetworkReply::readyRead, [reply, tempfile]() {

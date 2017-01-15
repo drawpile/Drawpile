@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,40 +50,14 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(4);
 
-	// Data transfer progress (not always shown)
-	QVBoxLayout *progresslayout = new QVBoxLayout;
-	progresslayout->setContentsMargins(0, 0, 0 ,0);
-	progresslayout->setSpacing(0);
-
-	// Upload progress bar
-	_upload = new QProgressBar(this);
-	_upload->setMaximumWidth(120);
-	_upload->setSizePolicy(QSizePolicy());
-	_upload->setTextVisible(false);
-	_upload->hide();
-	{
-		// Red progress bar for upload
-		QPalette pal = _upload->palette();
-		pal.setColor(QPalette::Highlight, QColor(198, 48, 48));
-		_upload->setPalette(pal);
-	}
-	progresslayout->addWidget(_upload);
-
 	// Download progress bar
-	_download = new QProgressBar(this);
-	_download->setMaximumWidth(120);
-	_download->setSizePolicy(QSizePolicy());
-	_download->setTextVisible(false);
-	_download->hide();
-	{
-		// Blue progress bar for download
-		QPalette pal = _upload->palette();
-		pal.setColor(QPalette::Highlight, QColor(48, 140, 198));
-		_download->setPalette(pal);
-	}
-	progresslayout->addWidget(_download);
-
-	layout->addLayout(progresslayout);
+	m_download = new QProgressBar(this);
+	m_download->setMaximumWidth(120);
+	m_download->setSizePolicy(QSizePolicy());
+	m_download->setTextVisible(false);
+	m_download->setMaximum(100);
+	m_download->hide();
+	layout->addWidget(m_download);
 
 	// Host address label
 	_label = new QLabel(tr("not connected"), this);
@@ -258,49 +232,37 @@ void NetStatus::hostDisconnected()
 		_netstats->setDisconnected();
 }
 
-void NetStatus::expectBytes(int count)
-{
-	_download->reset();
-	_download->setMaximum(count);
-	_download->show();
-}
-
-void NetStatus::sendingBytes(int count)
-{
-	_upload->reset();
-	// this is count-1, because there always seems to be exactly one extra byte.
-	_upload->setMaximum(count - 1);
-	_upload->show();
-}
-
 void NetStatus::bytesReceived(int count)
 {
 	_recvbytes += count;
 	if(_netstats)
 		_netstats->setRecvBytes(_recvbytes);
+}
 
-	if(_download->isVisible()) {
-		int val = _download->value() + count;
-		if(val>=_download->maximum())
-			_download->hide();
-		else
-			_download->setValue(val);
+void NetStatus::setCatchupProgress(int progress)
+{
+	if(progress<100) {
+		m_download->show();
+		m_download->setValue(progress);
+	} else {
+		hideDownloadProgress();
 	}
 }
 
-void NetStatus::bytesReceived(qint64 received, qint64 total)
+void NetStatus::setDownloadProgress(qint64 received, qint64 total)
 {
-	if(_download->isVisible()) {
-		if(received >= total) {
-			_download->hide();
-			return;
-		}
-
-	} else if(received < total) {
-		_download->setMaximum(total);
-		_download->show();
+	if(received < total) {
+		m_download->show();
+		int progress = 100 * received / total;
+		m_download->setValue(progress);
+	} else {
+		hideDownloadProgress();
 	}
-	_download->setValue(received);
+}
+
+void NetStatus::hideDownloadProgress()
+{
+	m_download->hide();
 }
 
 void NetStatus::bytesSent(int count)
@@ -309,14 +271,6 @@ void NetStatus::bytesSent(int count)
 
 	if(_netstats)
 		_netstats->setSentBytes(_recvbytes);
-
-	if(_upload->isVisible()) {
-		int val = _upload->value() + count;
-		if(val>=_upload->maximum())
-			_upload->hide();
-		else
-			_upload->setValue(val);
-	}
 }
 
 void NetStatus::lagMeasured(qint64 lag)

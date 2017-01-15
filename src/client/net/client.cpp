@@ -37,7 +37,8 @@ using protocol::MessagePtr;
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), m_myId(1), m_recordedChat(false)
+	: QObject(parent), m_myId(1), m_recordedChat(false),
+	  m_catchupTo(0), m_caughtUp(0), m_catchupProgress(0)
 {
 	m_loopback = new LoopbackServer(this);
 	m_server = m_loopback;
@@ -64,7 +65,6 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
 	connect(server, &TcpServer::messageReceived, this, &Client::handleMessage);
 
-	connect(server, &TcpServer::expectingBytes, this, &Client::expectingBytes);
 	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
 	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
@@ -78,6 +78,8 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	m_lastToolCtx = canvas::ToolContext();
 
 	m_catchupTo = 0;
+	m_caughtUp = 0;
+	m_catchupProgress = 0;
 }
 
 void Client::disconnectFromServer()
@@ -152,9 +154,6 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 		// TODO batch send
 		sendMessage(msg);
 	}
-
-	if(isConnected() && m_server->uploadQueueBytes() > 1024 * 10)
-		emit sendingBytes(m_server->uploadQueueBytes());
 }
 
 void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)

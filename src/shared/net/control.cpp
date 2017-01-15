@@ -157,24 +157,6 @@ int Disconnect::payloadLength() const
 	return 1 + _message.length();
 }
 
-StreamPos *StreamPos::deserialize(uint8_t ctx, const uchar *data, uint len)
-{
-	if(len!=4)
-		return 0;
-	return new StreamPos(ctx, qFromBigEndian<quint32>(data));
-}
-
-int StreamPos::serializePayload(uchar *data) const
-{
-	qToBigEndian(_bytes, data);
-	return 4;
-}
-
-int StreamPos::payloadLength() const
-{
-	return 4;
-}
-
 Ping *Ping::deserialize(uint8_t ctx, const uchar *data, int len)
 {
 	if(len!=1)

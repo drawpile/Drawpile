@@ -59,7 +59,6 @@ TcpServer::TcpServer(QObject *parent) :
 	connect(m_msgqueue, &protocol::MessageQueue::bytesReceived, this, &TcpServer::bytesReceived);
 	connect(m_msgqueue, &protocol::MessageQueue::bytesSent, this, &TcpServer::bytesSent);
 	connect(m_msgqueue, &protocol::MessageQueue::badData, this, &TcpServer::handleBadData);
-	connect(m_msgqueue, &protocol::MessageQueue::expectingBytes, this, &TcpServer::expectingBytes);
 	connect(m_msgqueue, &protocol::MessageQueue::pingPong, this, &TcpServer::lagMeasured);
 }
 

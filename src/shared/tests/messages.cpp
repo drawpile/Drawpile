@@ -26,7 +26,6 @@ private slots:
 		QTest::newRow("command") << (Message*)new Command(0, QByteArray("testing..."));
 		QTest::newRow("disconnect") << (Message*)new Disconnect(1, Disconnect::KICK, "hello");
 		QTest::newRow("ping") << (Message*)new Ping(2, true);
-		QTest::newRow("streampos") << (Message*)new StreamPos(3, 0xffffff);
 
 		QTest::newRow("userjoin") << (Message*)new UserJoin(4, 0x03, QString("Test"), "asd");
 		QTest::newRow("userjoin(no hash)") << (Message*)new UserJoin(4, 0x03, QString("Test"), QByteArray());

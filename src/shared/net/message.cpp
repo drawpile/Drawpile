@@ -97,7 +97,6 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 	case MSG_COMMAND: return Command::deserialize(ctx, data, len);
 	case MSG_DISCONNECT: return Disconnect::deserialize(ctx, data, len);
 	case MSG_PING: return Ping::deserialize(ctx, data, len);
-	case MSG_STREAMPOS: return StreamPos::deserialize(ctx, data, len);
 	case MSG_INTERNAL: { qWarning("Tried to deserialize MSG_INTERVAL"); return nullptr; }
 
 	// Transparent meta messages
