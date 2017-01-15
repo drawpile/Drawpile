@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "tools/toolproperties.h"
 #include "tools/annotation.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/userlist.h"
 #include "net/client.h"
 #include "net/commands.h"
 
@@ -242,11 +243,16 @@ void AnnotationSettings::setSelectionId(int id)
 	if(id) {
 		const paintcore::Annotation *a = controller()->model()->layerStack()->annotations()->getById(id);
 		Q_ASSERT(a);
+		if(!a)
+			return;
+
 		_ui->content->setHtml(a->text);
 		_ui->btnBackground->setColor(a->background);
 		setEditorBackgroundColor(a->background);
 		if(a->text.isEmpty())
 			resetContentFont(true, true, true);
+		_ui->ownerLabel->setText(QString("(%1)").arg(
+			controller()->model()->userlist()->getUsername((a->id & 0xff00) >> 8)));
 	}
 	_noupdate = false;
 }
