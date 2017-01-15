@@ -331,14 +331,25 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="ownerLabel">
-     <property name="text">
-      <string notr="true">(#0)</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="protect">
+       <property name="text">
+        <string>Protected</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="ownerLabel">
+       <property name="text">
+        <string notr="true">(#0)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

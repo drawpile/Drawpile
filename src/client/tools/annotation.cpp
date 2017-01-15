@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/aclfilter.h"
 #include "net/client.h"
 
 #include "toolcontroller.h"
@@ -42,14 +43,17 @@ Annotation::Annotation(ToolController &owner)
  */
 void Annotation::begin(const paintcore::Point& point, float zoom)
 {
-	m_selectedId = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
+	const paintcore::Annotation *selection = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
 	m_p1 = point;
 	m_p2 = point;
-	m_isNew = m_selectedId==0;
+	m_isNew = selection==nullptr;
 
-	if(m_selectedId>0) {
-		m_handle = owner.model()->layerStack()->annotations()->annotationHandleAt(m_selectedId, point.toPoint(), zoom);
-
+	if(selection) {
+		m_selectedId = selection->id;
+		if(selection->protect && !owner.model()->aclFilter()->isLocalUserOperator() && selection->userId() != owner.client()->myId())
+			m_handle = paintcore::Annotation::OUTSIDE;
+		else
+			m_handle = owner.model()->layerStack()->annotations()->annotationHandleAt(m_selectedId, point.toPoint(), zoom);
 		owner.setActiveAnnotation(m_selectedId);
 
 	} else {
@@ -74,6 +78,9 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+
+	if(m_handle == paintcore::Annotation::OUTSIDE)
+		return;
 
 	QPointF p = point - m_p2;
 	m_handle = owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());

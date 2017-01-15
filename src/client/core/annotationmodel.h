@@ -1,7 +1,7 @@
 /*
   Drawpile - a collaborative drawing program.
 
-  Copyright (C) 2015 Calle Laakkonen
+  Copyright (C) 2015-2017 Calle Laakkonen
 
   Drawpile is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ struct Annotation {
 	QString text;
 	QRect rect;
 	QColor background;
+	bool protect;
 
 	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 	static const int HANDLE_SIZE = 10;
@@ -51,6 +52,9 @@ struct Annotation {
 	//! Adjust annotation position or size
 	Handle adjustGeometry(Handle handle, const QPoint &delta);
 
+	//! Get the ID of the user who created this annotation
+	uint8_t userId() const { return id>>8; }
+
 	void toDataStream(QDataStream &out) const;
 	static Annotation fromDataStream(QDataStream &in);
 };
@@ -62,7 +66,8 @@ public:
 		// DisplayRole is used to get the text
 		IdRole = Qt::UserRole + 1,
 		RectRole,
-		BgColorRole // avoid clash with Qt's own BackgroundColorRole
+		BgColorRole, // avoid clash with Qt's own BackgroundColorRole
+		ProtectedRole
 	};
 
 	explicit AnnotationModel(QObject *parent=nullptr);
@@ -78,12 +83,12 @@ public:
 	void addAnnotation(int id, const QRect &rect);
 	void deleteAnnotation(int id);
 	void reshapeAnnotation(int id, const QRect &newrect);
-	void changeAnnotation(int id, const QString &newtext, const QColor &bgcolor);
+	void changeAnnotation(int id, const QString &newtext, bool protect, const QColor &bgcolor);
 
 	void setAnnotations(const QList<Annotation> &list);
 	QList<Annotation> getAnnotations() const { return m_annotations; }
 
-	int annotationAtPos(const QPoint &pos, qreal zoom) const;
+	const Annotation *annotationAtPos(const QPoint &pos, qreal zoom) const;
 
 	Annotation::Handle annotationHandleAt(int id, const QPoint &point, qreal zoom) const;
 	Annotation::Handle annotationAdjustGeometry(int id, Annotation::Handle handle, const QPoint &delta);

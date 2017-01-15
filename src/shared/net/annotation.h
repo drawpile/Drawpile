@@ -107,30 +107,38 @@ private:
  * @brief A command for changing annotation contents
  *
  * Accepted contents is the subset of HTML understood by QTextDocument
+ *
+ * If an annotation is flagged as protected, it cannot be modified by users
+ * other than the one who created it, or session operators.
  */
 class AnnotationEdit : public Message {
 public:
-	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, const QByteArray &text)
-		: Message(MSG_ANNOTATION_EDIT, ctx), _id(id), _bg(bg), _text(text)
+	static const uint8_t FLAG_PROTECT = 0x01; // disallow further modifications from other users
+	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, uint8_t flags, uint8_t border, const QByteArray &text)
+		: Message(MSG_ANNOTATION_EDIT, ctx), m_id(id), m_bg(bg), m_flags(flags), m_border(border), m_text(text)
 	{}
-	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, const QString &text)
-		: AnnotationEdit(ctx, id, bg, text.toUtf8())
+	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, uint8_t flags, uint8_t border, const QString &text)
+		: AnnotationEdit(ctx, id, bg, flags, border, text.toUtf8())
 	{}
 
 	static AnnotationEdit *deserialize(uint8_t ctx, const uchar *data, uint len);
 
-	uint16_t id() const { return _id; }
-	uint32_t bg() const { return _bg; }
-	QString text() const { return QString::fromUtf8(_text); }
+	uint16_t id() const { return m_id; }
+	uint32_t bg() const { return m_bg; }
+	uint8_t flags() const { return m_flags; }
+	uint8_t border() const { return m_border; } /* reserved for future use */
+	QString text() const { return QString::fromUtf8(m_text); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint16_t _id;
-	uint32_t _bg;
-	QByteArray _text;
+	uint16_t m_id;
+	uint32_t m_bg;
+	uint8_t m_flags;
+	uint8_t m_border;
+	QByteArray m_text;
 };
 
 /**

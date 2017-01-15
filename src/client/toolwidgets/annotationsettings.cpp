@@ -23,6 +23,7 @@
 #include "tools/annotation.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
+#include "canvas/aclfilter.h"
 #include "net/client.h"
 #include "net/commands.h"
 
@@ -42,7 +43,7 @@ using widgets::GroupedToolButton;
 namespace tools {
 
 AnnotationSettings::AnnotationSettings(QString name, QString title, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), _noupdate(false)
+	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), m_noupdate(false)
 {
 }
 
@@ -57,9 +58,9 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_TextSettings;
 	_ui->setupUi(widget);
 
-	_updatetimer = new QTimer(this);
-	_updatetimer->setInterval(500);
-	_updatetimer->setSingleShot(true);
+	m_updatetimer = new QTimer(this);
+	m_updatetimer->setInterval(500);
+	m_updatetimer->setSingleShot(true);
 
 	// Editor events
 	connect(_ui->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
@@ -76,6 +77,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->font, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFontIfUniform()));
 	connect(_ui->size, SIGNAL(valueChanged(double)), this, SLOT(updateFontIfUniform()));
 	connect(_ui->btnTextColor, SIGNAL(colorChanged(QColor)), this, SLOT(updateFontIfUniform()));
+	connect(_ui->protect, &QCheckBox::clicked, this, &AnnotationSettings::saveChanges);
 
 	// Intra-editor connections that couldn't be made in the UI designer
 	connect(_ui->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
@@ -85,7 +87,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
 
-	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
+	connect(m_updatetimer, &QTimer::timeout, this, &AnnotationSettings::saveChanges);
 
 	// Select a nice default font
 	QStringList defaultFonts;
@@ -108,6 +110,7 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 	_ui->content->setEnabled(enabled);
 	_ui->btnBake->setEnabled(enabled);
 	_ui->btnRemove->setEnabled(enabled);
+	_ui->protect->setEnabled(enabled);
 }
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
@@ -236,7 +239,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 
 void AnnotationSettings::setSelectionId(int id)
 {
-	_noupdate = true;
+	m_noupdate = true;
 	setUiEnabled(id>0);
 
 	m_selectionId = id;
@@ -252,9 +255,16 @@ void AnnotationSettings::setSelectionId(int id)
 		if(a->text.isEmpty())
 			resetContentFont(true, true, true);
 		_ui->ownerLabel->setText(QString("(%1)").arg(
-			controller()->model()->userlist()->getUsername((a->id & 0xff00) >> 8)));
+			controller()->model()->userlist()->getUsername(a->userId())));
+		_ui->protect->setChecked(a->protect);
+
+		const bool opOrOwner = controller()->model()->aclFilter()->isLocalUserOperator() || a->userId() == controller()->client()->myId();
+		if(a->protect && !opOrOwner)
+			setUiEnabled(false);
+		else if(!opOrOwner)
+			_ui->protect->setEnabled(false);
 	}
-	_noupdate = false;
+	m_noupdate = false;
 }
 
 void AnnotationSettings::setFocusAt(int cursorPos)
@@ -274,9 +284,9 @@ void AnnotationSettings::setFocus()
 
 void AnnotationSettings::applyChanges()
 {
-	if(_noupdate || !selected())
+	if(m_noupdate || !selected())
 		return;
-	_updatetimer->start();
+	m_updatetimer->start();
 }
 
 void AnnotationSettings::saveChanges()
@@ -284,11 +294,15 @@ void AnnotationSettings::saveChanges()
 	if(!selected())
 		return;
 
+	m_updatetimer->stop();
+
 	if(selected()) {
 		controller()->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
 			controller()->client()->myId(),
 			selected(),
 			_ui->btnBackground->color().rgba(),
+			(_ui->protect->isChecked() ? protocol::AnnotationEdit::FLAG_PROTECT : 0),
+			0,
 			_ui->content->toHtml()
 		)));
 	}

@@ -176,6 +176,23 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		}
 		break;
 	}
+	case MSG_ANNOTATION_EDIT: {
+		const protocol::AnnotationEdit &ae = static_cast<const AnnotationEdit&>(msg);
+		if(m_protectedAnnotations.contains(ae.id()) && !isOpUser && (ae.id()>>8)!=msg.contextId())
+			return false;
+		if((ae.flags() & protocol::AnnotationEdit::FLAG_PROTECT))
+			m_protectedAnnotations.insert(ae.id());
+		else
+			m_protectedAnnotations.remove(ae.id());
+		break;
+	}
+	case MSG_ANNOTATION_DELETE:
+	case MSG_ANNOTATION_RESHAPE: {
+		uint16_t id = msg.type() == MSG_ANNOTATION_DELETE ? static_cast<const AnnotationDelete&>(msg).id() : static_cast<const AnnotationReshape&>(msg).id();
+		if(m_protectedAnnotations.contains(id) && !isOpUser && (id>>8)!=msg.contextId())
+			return false;
+		break;
+	}
 
 	default: break;
 	}

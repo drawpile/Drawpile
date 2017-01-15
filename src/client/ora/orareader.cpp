@@ -277,6 +277,7 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 				1,
 				_annotationid,
 				e.attribute("bg").mid(1).toUInt(0,16),
+				0, 0,
 				e.text()
 			)));
 		} else {

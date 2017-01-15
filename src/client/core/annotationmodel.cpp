@@ -1,7 +1,7 @@
 /*
   Drawpile - a collaborative drawing program.
 
-  Copyright (C) 2015 Calle Laakkonen
+  Copyright (C) 2015-2017 Calle Laakkonen
 
   Drawpile is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ QVariant AnnotationModel::data(const QModelIndex &index, int role) const
 			case IdRole: return a.id;
 			case RectRole: return a.rect;
 			case BgColorRole: return a.background;
+			case ProtectedRole: return a.protect;
 			default: break;
 		}
 	}
@@ -77,7 +78,7 @@ void AnnotationModel::addAnnotation(const Annotation &annotation)
 
 void AnnotationModel::addAnnotation(int id, const QRect &rect)
 {
-	addAnnotation(Annotation {id, QString(), rect, QColor(Qt::transparent)});
+	addAnnotation(Annotation {id, QString(), rect, QColor(Qt::transparent), false});
 }
 
 void AnnotationModel::deleteAnnotation(int id)
@@ -105,7 +106,7 @@ void AnnotationModel::reshapeAnnotation(int id, const QRect &newrect)
 	emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
 }
 
-void AnnotationModel::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
+void AnnotationModel::changeAnnotation(int id, const QString &newtext, bool protect, const QColor &bgcolor)
 {
 	int idx = findById(id);
 	if(idx<0) {
@@ -114,6 +115,7 @@ void AnnotationModel::changeAnnotation(int id, const QString &newtext, const QCo
 	}
 	m_annotations[idx].text = newtext;
 	m_annotations[idx].background = bgcolor;
+	m_annotations[idx].protect = protect;
 
 	emit dataChanged(index(idx), index(idx), QVector<int>() << Qt::DisplayRole << BgColorRole);
 }
@@ -144,16 +146,16 @@ int AnnotationModel::findById(int id) const
 /**
  * @brief Find the annotation at the given coordinates.
  * @param pos point in canvas coordinates
- * @return annotation ID or 0 if none found
+ * @return annotation or nullptr if not found
  */
-int AnnotationModel::annotationAtPos(const QPoint &pos, qreal zoom) const
+const Annotation *AnnotationModel::annotationAtPos(const QPoint &pos, qreal zoom) const
 {
 	const int H = qRound(qMax(qreal(Annotation::HANDLE_SIZE), Annotation::HANDLE_SIZE / zoom) / 2.0);
 	for(const Annotation &a : m_annotations) {
 		if(a.rect.adjusted(-H, -H, H, H).contains(pos))
-			return a.id;
+			return &a;
 	}
-	return 0;
+	return nullptr;
 }
 
 Annotation::Handle AnnotationModel::annotationHandleAt(int id, const QPoint &point, qreal zoom) const
@@ -314,6 +316,7 @@ void Annotation::toDataStream(QDataStream &out) const
 
 	// Write content
 	out << background;
+	out << protect;
 	out << text;
 }
 
@@ -328,9 +331,12 @@ Annotation Annotation::fromDataStream(QDataStream &in)
 	QColor color;
 	in >> color;
 
+	bool protect;
+	in >> protect;
+
 	QString text;
 	in >> text;
-	return Annotation {id, text, rect, color};
+	return Annotation {id, text, rect, color, protect};
 }
 
 }

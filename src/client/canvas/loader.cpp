@@ -157,7 +157,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	for(const paintcore::Annotation &a : m_layers->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(m_contextId, a.id, g.x(), g.y(), g.width(), g.height())));
-		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), a.text))));
+		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), 0, 0, a.text))));
 	}
 
 	// User tool changes

@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QSet>
 
 namespace protocol {
 	class Message;
@@ -131,6 +132,7 @@ private:
 
 	QList<uint8_t> m_ops;
 	QList<uint8_t> m_userlocks;
+	QSet<uint16_t> m_protectedAnnotations;
 };
 
 }

@@ -914,7 +914,12 @@ void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cm
 
 void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 {
-	_image->annotations()->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
+	_image->annotations()->changeAnnotation(
+		cmd.id(),
+		cmd.text(),
+		cmd.flags() & protocol::AnnotationEdit::FLAG_PROTECT,
+		QColor::fromRgba(cmd.bg())
+		);
 }
 
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)

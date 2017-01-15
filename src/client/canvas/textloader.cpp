@@ -507,7 +507,7 @@ void TextCommandLoader::handlEditAnnotation(const QString &args)
 
 void TextCommandLoader::editAnnotationDone()
 {
-	_messages.append(MessagePtr(new protocol::AnnotationEdit(_edit_a_ctx, _edit_a_id, _edit_a_color, _edit_a_text)));
+	_messages.append(MessagePtr(new protocol::AnnotationEdit(_edit_a_ctx, _edit_a_id, _edit_a_color, 0, 0, _edit_a_text)));
 }
 
 bool TextCommandLoader::load()

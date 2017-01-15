@@ -85,29 +85,33 @@ int AnnotationReshape::serializePayload(uchar *data) const
 
 AnnotationEdit *AnnotationEdit::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len < 5)
+	if(len < 8)
 		return 0;
 
 	return new AnnotationEdit(
 		ctx,
 		qFromBigEndian<quint16>(data+0),
 		qFromBigEndian<quint32>(data+2),
-		QByteArray((const char*)data+6, len-6)
+		*(data+6),
+		*(data+7),
+		QByteArray((const char*)data+8, len-8)
 	);
 }
 
 int AnnotationEdit::payloadLength() const
 {
-	return 2 + 4 + _text.length();
+	return 2 + 4 + 2 + m_text.length();
 }
 
 int AnnotationEdit::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	qToBigEndian(_bg, ptr); ptr += 4;
-	memcpy(ptr, _text.constData(), _text.length());
-	ptr += _text.length();
+	qToBigEndian(m_id, ptr); ptr += 2;
+	qToBigEndian(m_bg, ptr); ptr += 4;
+	*(ptr++) = m_flags;
+	*(ptr++) = m_border;
+	memcpy(ptr, m_text.constData(), m_text.length());
+	ptr += m_text.length();
 	return ptr - data;
 }
 
