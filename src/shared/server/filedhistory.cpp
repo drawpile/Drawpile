@@ -482,7 +482,7 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 	if(idxOffset >= b.count)
 		return std::make_tuple(QList<protocol::MessagePtr>(), b.startIndex+b.count-1);
 
-	if(b.messages.isEmpty() && b.count>0 && idxOffset < b.count) {
+	if(b.messages.isEmpty() && b.count>0) {
 		// Load the block worth of messages to memory if not already loaded
 		const qint64 prevPos = m_recording->pos();
 		logger::debug() << m_recording->fileName() << "loading block" << i;
@@ -505,6 +505,7 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 
 		m_recording->seek(prevPos);
 	}
+	Q_ASSERT(b.messages.size() == b.count);
 	return std::make_tuple(b.messages.mid(idxOffset), b.startIndex+b.count-1);
 }
 
@@ -518,6 +519,11 @@ void FiledHistory::historyAdd(const protocol::MessagePtr &msg)
 	Block &b = m_blocks.last();
 	b.count++;
 	b.endOffset += len;
+
+	// Add message to cache, if already active (if cache is empty, it will be loaded from disk when needed)
+	if(!b.messages.isEmpty())
+		b.messages.append(msg);
+
 	if(b.endOffset-b.startOffset > MAX_BLOCK_SIZE)
 		closeBlock();
 }
@@ -540,8 +546,10 @@ void FiledHistory::cleanupBatches(int before)
 	for(Block &b : m_blocks) {
 		if(b.startIndex+b.count >= before)
 			break;
-		if(!b.messages.isEmpty())
+		if(!b.messages.isEmpty()) {
+			logger::debug() << "releasing history block cache from" << b.startIndex << "to" << b.startIndex+b.count-1;
 			b.messages = QList<protocol::MessagePtr>();
+		}
 	}
 }
 

@@ -114,6 +114,31 @@ private slots:
 		QCOMPARE(lastIdx, 2);
 	}
 
+	// Make sure messages are added correctly to the recording
+	// after it has been cached
+	void testLoadAppend()
+	{
+		QString file = makeTestRecording();
+		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+
+		// Read the whole recording to load it into the cache
+		fh->getBatch(-1);
+
+		// Add something to it. This should go to the cache as well
+		auto testMsg = protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("appended")));
+
+		fh->addMessage(testMsg);
+
+		// The recording should now have a length of 4 and the last message should be there
+		QList<protocol::MessagePtr> msgs;
+		int lastIdx;
+		std::tie(msgs, lastIdx) = fh->getBatch(-1);
+
+		QCOMPARE(msgs.size(), 4);
+		QCOMPARE(lastIdx, 3);
+		QVERIFY(msgs.last().equals(testMsg));
+	}
+
 	// Tolerate truncated messages
 	void testTruncation()
 	{
@@ -252,6 +277,7 @@ private slots:
 	}
 
 private:
+	// Generate a test recording containing three messages.
 	QString makeTestRecording()
 	{
 		QUuid id = QUuid::createUuid();
