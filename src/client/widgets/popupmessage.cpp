@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,20 +30,21 @@
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(parent, Qt::ToolTip), _arrowoffset(0), _timer(new QTimer(this)), _doc(new QTextDocument(this))
+	: QWidget(parent, Qt::ToolTip), m_arrowoffset(0), m_timer(new QTimer(this)), m_doc(new QTextDocument(this))
 {
-	_timer->setSingleShot(true);
-	_timer->setInterval(2500);
+	m_timer->setSingleShot(true);
+	m_timer->setInterval(2500);
 
-	connect(_timer, SIGNAL(timeout()), this, SLOT(hide()));
+	connect(m_timer, &QTimer::timeout, this, &PopupMessage::hide);
 }
 
-void PopupMessage::setMessage(const QString& message)
+void PopupMessage::setMessage(const QString &message)
 {
+	static const int MAX_LINES = 6;
 	if(!isVisible())
-		_doc->clear();
+		m_doc->clear();
 
-	QTextCursor cursor(_doc);
+	QTextCursor cursor(m_doc);
 	cursor.movePosition(QTextCursor::End);
 	if(cursor.position()>0)
 		cursor.insertBlock();
@@ -55,6 +56,15 @@ void PopupMessage::setMessage(const QString& message)
 	fmt.setForeground(palette().toolTipText());
 	cursor.select(QTextCursor::BlockUnderCursor);
 	cursor.mergeCharFormat(fmt);
+
+	// Limit the number of lines
+	while(m_doc->lineCount() > MAX_LINES) {
+		cursor.movePosition(QTextCursor::Start);
+		cursor.select(QTextCursor::LineUnderCursor);
+		cursor.removeSelectedText();
+		cursor.deleteChar(); // remove the newline too
+	}
+
 }
 
 namespace {
@@ -66,7 +76,7 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 {
 	setMessage(message);
 
-	resize(_doc->size().toSize() + QSize(PADDING*2, PADDING*2 + ARROW_H));
+	resize(m_doc->size().toSize() + QSize(PADDING*2, PADDING*2 + ARROW_H));
 
 	QRect rect(point - QPoint(width() - width()/6,height()), size());
 	const QRect screen = qApp->desktop()->availableGeometry(parentWidget());
@@ -77,7 +87,7 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 	} else if(rect.x() < screen.x()) {
 		rect.moveLeft(screen.x());
 	}
-	_arrowoffset = point.x() - rect.x();
+	m_arrowoffset = point.x() - rect.x();
 
 	// Make sure the popup fits vertically
 	if(rect.y() + rect.height() > screen.y() + screen.height())
@@ -89,17 +99,17 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 	redrawBubble();
 	move(rect.topLeft());
 	show();
-	_timer->start();
+	m_timer->start();
 }
 
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 	painter.setBrush(palette().toolTipBase());
-	painter.drawPath(_bubble);
+	painter.drawPath(m_bubble);
 
 	painter.translate(PADDING, PADDING);
-	_doc->drawContents(&painter);
+	m_doc->drawContents(&painter);
 }
 
 void PopupMessage::redrawBubble()
@@ -110,33 +120,33 @@ void PopupMessage::redrawBubble()
 	const qreal rad = 4;
 	const qreal h1 = h - ARROW_H;
 	const qreal aw = 10;
-	qreal arrowsafe = _arrowoffset;
+	qreal arrowsafe = m_arrowoffset;
 	if(arrowsafe-aw < rad)
 		arrowsafe = rad+aw;
 	else if(arrowsafe+aw > w-rad)
 		arrowsafe = w-rad-aw;
 
-	_bubble = QPainterPath(QPointF(w-rad, 0));
-	_bubble.cubicTo(w-rad/2, 0, w, rad/2, w, rad);
-	_bubble.lineTo(w, h1-rad);
-	_bubble.cubicTo(w, h1-rad/2, w-rad/2, h1, w-rad, h1);
+	m_bubble = QPainterPath(QPointF(w-rad, 0));
+	m_bubble.cubicTo(w-rad/2, 0, w, rad/2, w, rad);
+	m_bubble.lineTo(w, h1-rad);
+	m_bubble.cubicTo(w, h1-rad/2, w-rad/2, h1, w-rad, h1);
 
-	_bubble.lineTo(arrowsafe+aw, h1);
-	_bubble.lineTo(arrowsafe, h);
-	_bubble.lineTo(arrowsafe-aw, h1);
+	m_bubble.lineTo(arrowsafe+aw, h1);
+	m_bubble.lineTo(arrowsafe, h);
+	m_bubble.lineTo(arrowsafe-aw, h1);
 
-	_bubble.lineTo(rad, h1);
-	_bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
-	_bubble.lineTo(0, rad);
-	_bubble.cubicTo(0, rad/2, rad/2, 0, rad, 0);
-	_bubble.closeSubpath();
+	m_bubble.lineTo(rad, h1);
+	m_bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
+	m_bubble.lineTo(0, rad);
+	m_bubble.cubicTo(0, rad/2, rad/2, 0, rad, 0);
+	m_bubble.closeSubpath();
 
 	// Set the widget transparency mask
 	QBitmap mask(width(), height());
 	mask.fill(Qt::color0);
 	QPainter painter(&mask);
 	painter.setBrush(Qt::color1);
-	painter.drawPath(_bubble);
+	painter.drawPath(m_bubble);
 	setMask(mask);
 }
 

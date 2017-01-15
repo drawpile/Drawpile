@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,32 +33,32 @@ namespace widgets {
 class PopupMessage : public QWidget
 {
 	Q_OBJECT
-	public:
-		PopupMessage(QWidget *parent);
+public:
+	PopupMessage(QWidget *parent);
 
-		/***
-		 * @brief Pop up the message box and show a message
-		 *
-		 * If the popup is already visible, the message will be appended
-		 * to the existing one.
-		 *
-		 * @param point origin point for the popup (the little arrow will point here)
-		 * @param message the message to show.
-		 */
-		void showMessage(const QPoint& point, const QString &message);
+	/**
+	 * @brief Pop up the message box and show a message
+	 *
+	 * If the popup is already visible, the message will be appended
+	 * to the existing one.
+	 *
+	 * @param point origin point for the popup (the little arrow will point here)
+	 * @param message the message to show.
+	 */
+	void showMessage(const QPoint& point, const QString &message);
 
-	protected:
-		//void resizeEvent(QResizeEvent *);
-		void paintEvent(QPaintEvent *);
+protected:
+	//void resizeEvent(QResizeEvent *);
+	void paintEvent(QPaintEvent *);
 
-	private:
-		void setMessage(const QString &message);
-		void redrawBubble();
+private:
+	void setMessage(const QString &message);
+	void redrawBubble();
 
-		qreal _arrowoffset;
-		QPainterPath _bubble;
-		QTimer *_timer;
-		QTextDocument *_doc;
+	qreal m_arrowoffset;
+	QPainterPath m_bubble;
+	QTimer *m_timer;
+	QTextDocument *m_doc;
 };
 
 }
