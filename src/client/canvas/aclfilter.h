@@ -30,14 +30,11 @@ namespace protocol {
 
 namespace canvas {
 
-class UserListModel;
-class LayerListModel;
-
 class AclFilter : public QObject
 {
 	Q_OBJECT
 public:
-	AclFilter(UserListModel *users, LayerListModel *layers, QObject *parent = 0);
+	explicit AclFilter(QObject *parent=nullptr);
 
 	//! Reset all access controls
 	void reset(int myId, bool localMode);
@@ -95,7 +92,18 @@ signals:
 	void imageCmdLockChanged(bool lock);
 	void lockByDefaultChanged(bool lock);
 
+	void userLocksChanged(const QList<uint8_t> lockedUsers);
+	void operatorListChanged(const QList<uint8_t> opUsers);
+	void layerAclChange(int layerId, bool locked, const QList<uint8_t> &exclusive);
+
 private:
+	struct LayerAcl {
+		bool locked;
+		QList<uint8_t> exclusive;
+		LayerAcl() : locked(false), exclusive(QList<uint8_t>()) {}
+		LayerAcl(bool locked, const QList<uint8_t> exclusive) : locked(locked), exclusive(exclusive) { }
+	};
+
 	void setOperator(bool op);
 	void setSessionLock(bool lock);
 	void setUserLock(bool lock);
@@ -106,8 +114,11 @@ private:
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
-	UserListModel *m_users;
-	LayerListModel *m_layers;
+	bool isLayerLockedFor(int layerId, uint8_t userId) const;
+
+	QHash<int,LayerAcl> m_layers;
+	QHash<int, int> m_userLayers; // Users' selected layers for brush operations
+
 	int m_myId;
 
 	bool m_isOperator;
@@ -117,7 +128,6 @@ private:
 	bool m_imagesLocked;
 	bool m_ownLayers;
 	bool m_lockDefault;
-	QHash<int, int> m_userLayers;
 
 	QList<uint8_t> m_ops;
 	QList<uint8_t> m_userlocks;

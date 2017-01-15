@@ -221,8 +221,14 @@ void StateTracker::receiveQueuedCommand(protocol::MessagePtr msg)
 {
 	m_msgqueue.append(msg);
 
-	if(!m_isQueued)
-		processQueuedCommands();
+	if(!m_isQueued) {
+		// This introduces a tiny bit of lag, but allows sequential
+		// messages to queue up even when the system is not under very heavy
+		// load. Won't be needed anymore when the paint engine runs in its own
+		// thread.
+		m_isQueued = true;
+		m_queuetimer->start(1);
+	}
 }
 
 void StateTracker::processQueuedCommands()
@@ -249,7 +255,6 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 
 	if(msg->type() == protocol::MSG_INTERNAL) {
 		const auto &ci = msg.cast<protocol::ClientInternal>();
-		qDebug("catchup progress %d", ci.value());
 		if(ci.internalType() == protocol::ClientInternal::Type::Catchup)
 			emit catchupProgress(ci.value());
 		return;
@@ -417,7 +422,7 @@ void StateTracker::endRemoteContexts()
 		if(iter.key() != localId()) {
 			// Simulate pen-up
 			if(iter.value().pendown)
-				receiveCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
+				receiveQueuedCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
 		}
 	}
 }
@@ -431,7 +436,7 @@ void StateTracker::endPlayback()
 	while(iter.hasNext()) {
 		iter.next();
 		if(iter.value().pendown)
-			receiveCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
+			receiveQueuedCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
 	}
 }
 

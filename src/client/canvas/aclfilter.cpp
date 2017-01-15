@@ -18,8 +18,6 @@
 */
 
 #include "aclfilter.h"
-#include "userlist.h"
-#include "layerlist.h"
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -29,14 +27,14 @@
 
 namespace canvas {
 
-AclFilter::AclFilter(UserListModel *users, LayerListModel *layers, QObject *parent)
-	: QObject(parent), m_users(users), m_layers(layers)
+AclFilter::AclFilter(QObject *parent)
+	: QObject(parent)
 {
 }
 
 void AclFilter::reset(int myId, bool localMode)
 {
-	m_layers->unlockAll();
+	m_layers.clear();
 	m_myId = myId;
 	m_isOperator = localMode;
 	m_sessionLocked = false;
@@ -87,7 +85,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 			setUserLock(true);
 
 		// Make sure the user's OP status bits are up to date
-		m_users->updateOperators(m_ops);
+		emit operatorListChanged(m_ops);
 		break;
 
 	case MSG_SESSION_OWNER:
@@ -96,7 +94,8 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
 		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId())) {
-			m_layers->updateLayerAcl(lmsg.id(), lmsg.locked(), lmsg.exclusive());
+			m_layers[lmsg.id()] = LayerAcl { lmsg.locked(), lmsg.exclusive() };
+			emit layerAclChange(lmsg.id(), lmsg.locked(), lmsg.exclusive());
 
 			// Emit this to refresh the UI in case our selected layer was (un)locked.
 			// (We don't actually know which layer is selected in the UI here.)
@@ -120,7 +119,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_USER_ACL: {
 		const auto &lmsg = static_cast<const UserACL&>(msg);
 		m_userlocks = lmsg.ids();
-		m_users->updateLocks(lmsg.ids());
+		emit userLocksChanged(lmsg.ids());
 		setUserLock(lmsg.ids().contains(m_myId));
 		return true;
 	}
@@ -156,17 +155,26 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_LAYER_ORDER:
 		return isOpUser || !isLayerControlLocked();
 	case MSG_PUTIMAGE:
-		return !((isImagesLocked() && !isOpUser) || m_layers->isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
+		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
 	case MSG_FILLRECT:
-		return !((isImagesLocked() && !isOpUser) || m_layers->isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId()));
+		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId()));
 
 	case MSG_PEN_MOVE:
-		return !m_layers->isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
+		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
 
 	default: break;
 	}
 
 	return true;
+}
+
+bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
+{
+	if(!m_layers.contains(layerId))
+		return false;
+
+	const LayerAcl &l = m_layers[layerId];
+	return l.locked || l.exclusive.contains(userId);
 }
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
@@ -175,7 +183,7 @@ void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 	if(msg.contextId()!=0 && !m_ops.contains(msg.contextId()))
 		m_ops << msg.contextId();
 
-	m_users->updateOperators(m_ops);
+	emit operatorListChanged(m_ops);
 	setOperator(m_ops.contains(m_myId));
 }
 

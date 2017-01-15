@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -155,7 +155,9 @@ void LayerListModel::createLayer(int id, int index, const QString &title)
 void LayerListModel::deleteLayer(int id)
 {
 	int row = indexOf(id);
-	Q_ASSERT(row>=0);
+	if(row<0)
+		return;
+
 	beginRemoveRows(QModelIndex(), row, row);
 	_items.remove(row);
 	endRemoveRows();
@@ -171,7 +173,9 @@ void LayerListModel::clear()
 void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
-	Q_ASSERT(row>=0);
+	if(row<0)
+		return;
+
 	LayerListItem &item = _items[row];
 	item.opacity = opacity;
 	item.blend = blend;
@@ -182,7 +186,9 @@ void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mo
 void LayerListModel::retitleLayer(int id, const QString &title)
 {
 	int row = indexOf(id);
-	Q_ASSERT(row>=0);
+	if(row<0)
+		return;
+
 	LayerListItem &item = _items[row];
 	item.title = title;
 	const QModelIndex qmi = index(row);
@@ -192,7 +198,9 @@ void LayerListModel::retitleLayer(int id, const QString &title)
 void LayerListModel::setLayerHidden(int id, bool hidden)
 {
 	int row = indexOf(id);
-	Q_ASSERT(row>=0);
+	if(row<0)
+		return;
+
 	LayerListItem &item = _items[row];
 	item.hidden = hidden;
 	const QModelIndex qmi = index(row);
@@ -202,7 +210,9 @@ void LayerListModel::setLayerHidden(int id, bool hidden)
 void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
 {
 	int row = indexOf(id);
-	Q_ASSERT(row>=0);
+	if(row<0)
+		return;
+
 	LayerListItem &item = _items[row];
 	item.locked = locked;
 	item.exclusive = exclusive;

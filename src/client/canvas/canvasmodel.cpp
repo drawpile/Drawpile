@@ -47,7 +47,11 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
 
-	m_aclfilter = new AclFilter(m_userlist, m_layerlist, this);
+	m_aclfilter = new AclFilter(this);
+
+	connect(m_aclfilter, &AclFilter::operatorListChanged, m_userlist, &UserListModel::updateOperators);
+	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
+	connect(m_aclfilter, &AclFilter::layerAclChange, m_layerlist, &LayerListModel::updateLayerAcl);
 
 	m_layerstack = new paintcore::LayerStack(this);
 	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
@@ -78,6 +82,7 @@ int CanvasModel::localUserId() const
 void CanvasModel::connectedToServer(int myUserId)
 {
 	m_layerlist->setMyId(myUserId);
+	m_layerlist->unlockAll();
 	m_statetracker->setLocalId(myUserId);
 	m_aclfilter->reset(myUserId, false);
 	m_onlinemode = true;
@@ -87,6 +92,7 @@ void CanvasModel::disconnectedFromServer()
 {
 	m_statetracker->endRemoteContexts();
 	m_userlist->clearUsers();
+	m_layerlist->unlockAll();
 	m_aclfilter->reset(m_statetracker->localId(), true);
 	m_onlinemode = false;
 }
@@ -348,6 +354,7 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
+	m_layerlist->unlockAll();
 	m_layerstack->reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);

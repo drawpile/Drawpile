@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,7 +102,6 @@ public:
 	void retitleLayer(int id, const QString &title);
 	void setLayerHidden(int id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);
-	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 	void unlockAll();
 
 	bool isLayerLockedFor(int layerId, int contextId) const;
@@ -130,6 +129,9 @@ public:
 	 * @return unique name
 	 */
 	QString getAvailableLayerName(QString basename) const;
+
+public slots:
+	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 
 signals:
 	void layersReordered();

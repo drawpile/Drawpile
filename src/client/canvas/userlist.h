@@ -54,8 +54,6 @@ class UserListModel : public QAbstractListModel {
 		int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
 		void addUser(const User &user);
-		void updateOperators(const QList<uint8_t> ids);
-		void updateLocks(const QList<uint8_t> locks);
 		void removeUser(int id);
 		void clearUsers();
 
@@ -103,6 +101,10 @@ class UserListModel : public QAbstractListModel {
 		 * @return
 		 */
 		protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
+
+	public slots:
+		void updateOperators(const QList<uint8_t> operatorIds);
+		void updateLocks(const QList<uint8_t> lockedUserIds);
 
 	private:
 		QVector<User> m_users;
