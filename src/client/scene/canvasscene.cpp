@@ -100,12 +100,14 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 void CanvasScene::showCanvas()
 {
-	m_image->setVisible(true);
+	if(m_image)
+		m_image->setVisible(true);
 }
 
 void CanvasScene::hideCanvas()
 {
-	m_image->setVisible(false);
+	if(m_image)
+		m_image->setVisible(false);
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
@@ -141,6 +143,8 @@ void CanvasScene::showAnnotationBorders(bool hl)
 
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
+	if(!m_image)
+		return;
 	QRectF bounds = m_image->boundingRect();
 
 	// Include some empty space around the canvas to make working
@@ -233,6 +237,9 @@ void CanvasScene::annotationsReset()
 
 void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 {
+	if(!m_image)
+		return;
+
 	// Don't add new lasers when canvas is hidden
 	if(!m_image->isVisible())
 		return;
@@ -258,7 +265,7 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 
 void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
-	if(!m_image->isVisible())
+	if(!m_image || !m_image->isVisible())
 		return;
 
 	const int ifirst = first.row();
