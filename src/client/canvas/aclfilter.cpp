@@ -24,6 +24,7 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
 
 namespace canvas {
 
@@ -140,8 +141,13 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_LAYER_RETITLE:
 	case MSG_LAYER_DELETE: {
 		uint16_t layerId=0;
-		if(msg.type() == MSG_LAYER_CREATE) layerId = static_cast<const protocol::LayerCreate&>(msg).id();
-		else if(msg.type() == MSG_LAYER_ATTR) layerId = static_cast<const protocol::LayerAttributes&>(msg).id();
+		if(msg.type() == MSG_LAYER_CREATE) {
+			layerId = static_cast<const protocol::LayerCreate&>(msg).id();
+			if(!isOpUser && (layerId>>8) != msg.contextId()) {
+				qWarning("non-op user %d tried to create layer with context id %d", msg.contextId(), (layerId>>8));
+				return false;
+			}
+		} else if(msg.type() == MSG_LAYER_ATTR) layerId = static_cast<const protocol::LayerAttributes&>(msg).id();
 		else if(msg.type() == MSG_LAYER_RETITLE) layerId = static_cast<const protocol::LayerRetitle&>(msg).id();
 		else if(msg.type() == MSG_LAYER_DELETE) layerId = static_cast<const protocol::LayerDelete&>(msg).id();
 
@@ -161,6 +167,15 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_PEN_MOVE:
 		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
+
+	case MSG_ANNOTATION_CREATE: {
+		const uint16_t annotationId = static_cast<const AnnotationCreate&>(msg).id();
+		if(!isOpUser && (annotationId>>8) != msg.contextId()) {
+			qWarning("non-op user %d tried to create annotation with context id %d", msg.contextId(), (annotationId>>8));
+			return false;
+		}
+		break;
+	}
 
 	default: break;
 	}
