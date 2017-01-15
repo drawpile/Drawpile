@@ -67,6 +67,8 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 private:
+	void paintHiddenBorder(QPainter *painter);
+
 	int m_id;
 	QRectF m_rect;
 	QColor m_color;

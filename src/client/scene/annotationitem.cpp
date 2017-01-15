@@ -85,47 +85,56 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	Q_UNUSED(options);
 	Q_UNUSED(widget);
 
-	const qreal devicePixelRatio = qApp->devicePixelRatio();
-
 	painter->save();
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	painter->fillRect(m_rect, m_color);
 
-	if(m_showborder || m_doc.isEmpty()) {
+	paintHiddenBorder(painter);
+
+	if(m_highlight) {
+		// Draw resizing handles
 		QColor border = QApplication::palette().color(QPalette::Highlight);
 		border.setAlpha(255);
 
-		QPen bpen(m_highlight && m_showborder ? Qt::DashLine : Qt::DotLine);
-		bpen.setWidth(devicePixelRatio);
-		bpen.setCosmetic(true);
-		bpen.setColor(border);
-		painter->setPen(bpen);
-		painter->drawRect(m_rect);
+		QPen pen(border);
+		pen.setCosmetic(true);
+		pen.setWidth(HANDLE);
+		painter->setPen(pen);
+		painter->drawPoint(m_rect.topLeft());
+		painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width()/2, 0));
+		painter->drawPoint(m_rect.topRight());
 
-		// Draw resizing handles
-		if(m_highlight) {
-			QPen pen(border);
-			pen.setCosmetic(true);
-			pen.setWidth(HANDLE);
-			painter->setPen(pen);
-			painter->drawPoint(m_rect.topLeft());
-			painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width()/2, 0));
-			painter->drawPoint(m_rect.topRight());
+		painter->drawPoint(m_rect.topLeft() + QPointF(0, m_rect.height()/2));
+		painter->drawPoint(m_rect.topRight() + QPointF(0, m_rect.height()/2));
 
-			painter->drawPoint(m_rect.topLeft() + QPointF(0, m_rect.height()/2));
-			painter->drawPoint(m_rect.topRight() + QPointF(0, m_rect.height()/2));
-
-			painter->drawPoint(m_rect.bottomLeft());
-			painter->drawPoint(m_rect.bottomLeft() + QPointF(m_rect.width()/2, 0));
-			painter->drawPoint(m_rect.bottomRight());
-		}
+		painter->drawPoint(m_rect.bottomLeft());
+		painter->drawPoint(m_rect.bottomLeft() + QPointF(m_rect.width()/2, 0));
+		painter->drawPoint(m_rect.bottomRight());
 	}
 
 	painter->translate(m_rect.topLeft());
 	m_doc.drawContents(painter, QRectF(QPointF(), m_rect.size()));
 
 	painter->restore();
+}
+
+void AnnotationItem::paintHiddenBorder(QPainter *painter)
+{
+	// Hidden border is usually hidden
+	if(!m_showborder && !m_doc.isEmpty())
+		return;
+
+	const qreal devicePixelRatio = qApp->devicePixelRatio();
+	QColor highlightColor = QApplication::palette().color(QPalette::Highlight);
+	highlightColor.setAlpha(255);
+
+	QPen bpen(m_highlight && m_showborder ? Qt::DashLine : Qt::DotLine);
+	bpen.setWidth(devicePixelRatio);
+	bpen.setCosmetic(true);
+	bpen.setColor(highlightColor);
+	painter->setPen(bpen);
+	painter->drawRect(m_rect);
 }
 
 }
