@@ -189,6 +189,11 @@ MessagePtr unban(int entryid)
 	return serverCommand("remove-ban", QJsonArray() << entryid);
 }
 
+MessagePtr mute(int userId, bool mute)
+{
+	return serverCommand("mute", QJsonArray() << userId << mute);
+}
+
 MessagePtr sessionTitle(const QString &title)
 {
 	QJsonObject kwargs;

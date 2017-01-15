@@ -42,7 +42,8 @@ Client::Client(QTcpSocket *socket, QObject *parent)
 	  m_id(0),
 	  m_isOperator(false),
 	  m_isModerator(false),
-	  m_isAuthenticated(false)
+	  m_isAuthenticated(false),
+	  m_isMuted(false)
 {
 	m_msgqueue = new protocol::MessageQueue(socket, this);
 
@@ -221,6 +222,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 			break;
 		}
 		case protocol::MSG_CHAT: {
+			if(isMuted())
+				return;
 			if(msg.cast<protocol::Chat>().isBypass()) {
 				m_session->directToAll(msg);
 				return;

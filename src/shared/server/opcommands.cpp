@@ -188,10 +188,8 @@ void announceSession(Client *client, const QJsonArray &args, const QJsonObject &
 void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(kwargs);
-	if(args.size() != 1) {
+	if(args.size() != 1)
 		throw CmdError("Expected one argument: API URL");
-		return;
-	}
 
 	client->session()->unlistAnnouncement(args.at(0).toString());
 }
@@ -205,6 +203,19 @@ void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwa
 		throw CmdError("Unable to reset in this state");
 
 	client->session()->resetSession(client->id());
+}
+
+void setMute(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+
+	if(args.size() != 2)
+		throw CmdError("Expected two arguments: userId true/false");
+
+	Client *c = _getClient(client->session(), args.at(0));
+
+	c->setMuted(args.at(1).toBool());
+	client->session()->sendUpdatedMuteList();
 }
 
 SrvCommandSet::SrvCommandSet()
@@ -222,6 +233,7 @@ SrvCommandSet::SrvCommandSet()
 		<< SrvCommand("unlist-session", unlistSession)
 
 		<< SrvCommand("remove-ban", removeBan)
+		<< SrvCommand("mute", setMute)
 	;
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include <QAbstractListModel>
 #include <QList>
 
+class QJsonArray;
+
 namespace protocol { class MessagePtr; }
 
 namespace canvas {
@@ -31,7 +33,9 @@ namespace canvas {
  */
 struct User {
 	User() : User(0, QString(), false, false, false) {}
-	User(int id_, const QString &name_, bool local, bool auth, bool mod) : id(id_), name(name_), isLocal(local), isOperator(false), isMod(mod), isAuth(auth), isLocked(false) {}
+	User(int id_, const QString &name_, bool local, bool auth, bool mod)
+		: id(id_), name(name_), isLocal(local), isOperator(false), isMod(mod), isAuth(auth), isLocked(false), isMuted(false)
+	{}
 
 	int id;
 	QString name;
@@ -40,6 +44,7 @@ struct User {
 	bool isMod;
 	bool isAuth;
 	bool isLocked;
+	bool isMuted;
 };
 
 /**
@@ -105,6 +110,7 @@ class UserListModel : public QAbstractListModel {
 	public slots:
 		void updateOperators(const QList<uint8_t> operatorIds);
 		void updateLocks(const QList<uint8_t> lockedUserIds);
+		void updateMuteList(const QJsonArray &mutedUserIds);
 
 	private:
 		QVector<User> m_users;

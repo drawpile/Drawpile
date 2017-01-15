@@ -202,6 +202,7 @@ void Session::joinUser(Client *user, bool host)
 	// Make sure everyone is up to date
 	sendUpdatedAnnouncementList();
 	sendUpdatedBanlist();
+	sendUpdatedMuteList();
 
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
@@ -410,6 +411,23 @@ void Session::sendUpdatedAnnouncementList()
 
 	QJsonObject conf;
 	conf["announcements"]= list;
+	msg.reply["config"] = conf;
+	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
+}
+
+void Session::sendUpdatedMuteList()
+{
+	// The mute list is not usually included in the sessionconf.
+	protocol::ServerReply msg;
+	msg.type = protocol::ServerReply::SESSIONCONF;
+	QJsonArray muted;
+	for(const Client *c : m_clients) {
+		if(c->isMuted())
+			muted.append(c->id());
+	}
+
+	QJsonObject conf;
+	conf["muted"]= muted;
 	msg.reply["config"] = conf;
 	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
 }

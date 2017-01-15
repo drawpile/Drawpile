@@ -108,10 +108,27 @@
         <bool>true</bool>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupRight</enum>
+	    <enum>GroupedToolButton::GroupCenter</enum>
        </property>
       </widget>
      </item>
+	 <item>
+	  <widget class="GroupedToolButton" name="muteButton">
+	   <property name="toolTip">
+	    <string>Block selected user from chat</string>
+		</property>
+		<property name="icon">
+		<iconset theme="irc-unvoice">
+		 <normaloff>theme:irc-unvoice.svg</normaloff>theme:irc-unvoice.svg</iconset>
+		</property>
+		<property name="checkable">
+		 <bool>true</bool>
+		</property>
+		<property name="groupPosition">
+		<enum>GroupedToolButton::GroupRight</enum>
+		</property>
+		</widget>
+		</item>
      <item>
       <widget class="GroupedToolButton" name="kickButton">
        <property name="toolTip">
@@ -136,7 +153,7 @@
          <normaloff>theme:im-ban-user.svg</normaloff>theme:im-ban-user.svg</iconset>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupRight</enum>
+	    <enum>GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>

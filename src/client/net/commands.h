@@ -64,6 +64,13 @@ protocol::MessagePtr kick(int target, bool ban);
 protocol::MessagePtr unban(int entryId);
 
 /**
+ * @brief Get a "(un)mute user" message
+ * @param target ID of the user whose mute flag to change
+ * @param mute
+ */
+protocol::MessagePtr mute(int target, bool mute);
+
+/**
  * @brief Announce this session at the given listing server
  */
 protocol::MessagePtr announce(const QString &url);

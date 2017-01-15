@@ -365,6 +365,9 @@ public:
 	//! Send refreshed session announcement list to all logged in users
 	void sendUpdatedAnnouncementList();
 
+	//! Send a refreshed list of muted users
+	void sendUpdatedMuteList();
+
 	//! Release caches that can be released
 	void historyCacheCleanup();
 

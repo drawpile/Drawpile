@@ -55,6 +55,7 @@ UserList::UserList(QWidget *parent)
 	connect(m_ui->undoButton, &QAbstractButton::clicked, this, &UserList::undoSelected);
 	connect(m_ui->redoButton, &QAbstractButton::clicked, this, &UserList::redoSelected);
 	connect(m_ui->opButton, &QAbstractButton::clicked, this, &UserList::opSelected);
+	connect(m_ui->muteButton, &QAbstractButton::clicked, this, &UserList::muteSelected);
 }
 
 void UserList::setOperatorMode(bool op)
@@ -65,6 +66,7 @@ void UserList::setOperatorMode(bool op)
 	m_ui->undoButton->setEnabled(op);
 	m_ui->redoButton->setEnabled(op);
 	m_ui->opButton->setEnabled(op);
+	m_ui->muteButton->setEnabled(op);
 }
 
 void UserList::setCanvas(canvas::CanvasModel *canvas)
@@ -109,6 +111,16 @@ void UserList::kickBanSelected()
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
 		emit opCommand(net::command::kick(idx.data().value<canvas::User>().id, true));
+	}
+}
+
+void UserList::muteSelected()
+{
+	QModelIndex idx = currentSelection();
+	if(idx.isValid()) {
+		const int id = idx.data().value<canvas::User>().id;
+		const bool mute = m_ui->muteButton->isChecked();
+		emit opCommand(net::command::mute(id, mute));
 	}
 }
 
@@ -162,6 +174,7 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 		const canvas::User &user = currentSelection().data().value<canvas::User>();
 		m_ui->lockButton->setChecked(user.isLocked);
 		m_ui->opButton->setChecked(user.isOperator);
+		m_ui->muteButton->setChecked(user.isMuted);
 		if(user.isLocal) {
 			m_ui->kickButton->setEnabled(false);
 			m_ui->banButton->setEnabled(false);
@@ -172,8 +185,9 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 
 UserListDelegate::UserListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
-	  _opicon(icon::fromTheme("irc-operator").pixmap(16, 16))
+	  m_lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
+	  m_opicon(icon::fromTheme("irc-operator").pixmap(16, 16)),
+	  m_muteicon(icon::fromTheme("irc-unvoice").pixmap(16, 16))
 {
 }
 
@@ -189,7 +203,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// (auth) + [OP/MOD] + Name
 	QRect textrect = opt.rect;
-	const QSize locksize = _lockicon.size();
+	const QSize locksize = m_lockicon.size();
 	{
 		QFontMetrics fm(opt.font);
 		QString authmsg = QStringLiteral("☆");
@@ -204,7 +218,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		if(user.isMod)
 			drawDisplay(painter, opt, textrect, modmsg);
 		else if(user.isOperator)
-			painter->drawPixmap(QRect(textrect.topLeft(), _opicon.size()), _opicon);
+			painter->drawPixmap(QRect(textrect.topLeft(), m_opicon.size()), m_opicon);
 
 		textrect.moveLeft(textrect.left() + fm.width(modmsg) + 7);
 		opt.font.setBold(false);
@@ -219,7 +233,14 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	if(user.isLocked)
 		painter->drawPixmap(
 			opt.rect.topRight()-QPoint(locksize.width(), -opt.rect.height()/2+locksize.height()/2),
-			_lockicon
+			m_lockicon
+		);
+
+	// Mute indicator
+	if(user.isMuted)
+		painter->drawPixmap(
+			opt.rect.topRight()-QPoint(locksize.width()*2, -opt.rect.height()/2+locksize.height()/2),
+			m_muteicon
 		);
 
 	painter->restore();
@@ -228,7 +249,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = _lockicon.size();
+	const QSize iconsize = m_lockicon.size();
 	if(size.height() < iconsize.height())
 		size.setHeight(iconsize.height());
 	return size;

@@ -58,6 +58,7 @@ private slots:
 	void opSelected();
 	void undoSelected();
 	void redoSelected();
+	void muteSelected();
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -82,8 +83,9 @@ public:
 	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 
 private:
-	QPixmap _lockicon;
-	QPixmap _opicon;
+	QPixmap m_lockicon;
+	QPixmap m_opicon;
+	QPixmap m_muteicon;
 };
 
 

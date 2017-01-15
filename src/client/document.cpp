@@ -203,6 +203,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("banlist"))
 		m_banlist->updateBans(config["banlist"].toArray());
 
+	if(config.contains("muted"))
+		m_canvas->userlist()->updateMuteList(config["muted"].toArray());
+
 	if(config.contains("announcements")) {
 		QStringList alist;
 		for(const QJsonValue &v : config["announcements"].toArray()) {

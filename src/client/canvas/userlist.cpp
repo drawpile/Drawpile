@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "../shared/net/meta2.h"
 
 #include <QDebug>
+#include <QJsonArray>
 
 namespace canvas {
 
@@ -59,6 +60,7 @@ void UserListModel::addUser(const User &user)
 			u.isLocal = user.isLocal;
 			u.isAuth = user.isAuth;
 			u.isMod = user.isMod;
+			u.isMuted = user.isMuted;
 
 			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx);
@@ -94,6 +96,19 @@ void UserListModel::updateLocks(const QList<uint8_t> ids)
 		const bool lock = ids.contains(u.id);
 		if(lock != u.isLocked) {
 			u.isLocked = lock;
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+		}
+	}
+}
+
+void UserListModel::updateMuteList(const QJsonArray &mutedUserIds)
+{
+	for(int i=0;i<m_users.size();++i) {
+		User &u = m_users[i];
+		const bool mute = mutedUserIds.contains(u.id);
+		if(u.isMuted != mute) {
+			u.isMuted = mute;
 			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx);
 		}

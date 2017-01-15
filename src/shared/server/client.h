@@ -101,6 +101,12 @@ public:
 	void setAuthenticated(bool auth) { m_isAuthenticated = auth; }
 
 	/**
+	 * @brief Has this user been blocked from sending chat messages?
+	 */
+	bool isMuted() const { return m_isMuted; }
+	void setMuted(bool m) { m_isMuted = m; }
+
+	/**
 	 * @brief Set connection idle timeout
 	 * @param timeout timeout in milliseconds
 	 */
@@ -230,6 +236,7 @@ private:
 	bool m_isOperator;
 	bool m_isModerator;
 	bool m_isAuthenticated;
+	bool m_isMuted;
 };
 
 }
