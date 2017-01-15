@@ -35,6 +35,7 @@ struct Annotation {
 	QRect rect;
 	QColor background;
 	bool protect;
+	int valign;
 
 	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 	static const int HANDLE_SIZE = 10;
@@ -67,7 +68,8 @@ public:
 		IdRole = Qt::UserRole + 1,
 		RectRole,
 		BgColorRole, // avoid clash with Qt's own BackgroundColorRole
-		ProtectedRole
+		ProtectedRole,
+		VAlignRole
 	};
 
 	explicit AnnotationModel(QObject *parent=nullptr);
@@ -83,7 +85,7 @@ public:
 	void addAnnotation(int id, const QRect &rect);
 	void deleteAnnotation(int id);
 	void reshapeAnnotation(int id, const QRect &newrect);
-	void changeAnnotation(int id, const QString &newtext, bool protect, const QColor &bgcolor);
+	void changeAnnotation(int id, const QString &newtext, bool protect, int valign, const QColor &bgcolor);
 
 	void setAnnotations(const QList<Annotation> &list);
 	QList<Annotation> getAnnotations() const { return m_annotations; }

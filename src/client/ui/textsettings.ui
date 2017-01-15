@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
+    <width>320</width>
     <height>308</height>
    </rect>
   </property>
@@ -58,27 +58,17 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="left">
+      <widget class="QToolButton" name="halign">
        <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
        <property name="toolTip">
-        <string>Left align</string>
+        <string>Horizontal alignment</string>
        </property>
-       <property name="icon">
-        <iconset theme="format-justify-left">
-         <normaloff>theme:format-justify-left.svg</normaloff>theme:format-justify-left.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -86,74 +76,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="center">
-       <property name="font">
-        <font>
-         <italic>true</italic>
-        </font>
-       </property>
+      <widget class="QToolButton" name="valign">
        <property name="toolTip">
-        <string>Center</string>
+        <string>Vertical alignment</string>
        </property>
-       <property name="icon">
-        <iconset theme="format-justify-center">
-         <normaloff>theme:format-justify-center.svg</normaloff>theme:format-justify-center.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="justify">
-       <property name="font">
-        <font>
-         <italic>true</italic>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Justify</string>
-       </property>
-       <property name="icon">
-        <iconset theme="format-justify-fill">
-         <normaloff>theme:format-justify-fill.svg</normaloff>theme:format-justify-fill.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="right">
-       <property name="font">
-        <font>
-         <italic>true</italic>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Right align</string>
-       </property>
-       <property name="icon">
-        <iconset theme="format-justify-right">
-         <normaloff>theme:format-justify-right.svg</normaloff>theme:format-justify-right.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -187,7 +115,7 @@
        <property name="autoRaise">
         <bool>true</bool>
        </property>
-       <property name="color" stdset="0">
+       <property name="color">
         <color>
          <red>0</red>
          <green>0</green>

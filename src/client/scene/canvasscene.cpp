@@ -218,6 +218,9 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 
 		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::BgColorRole))
 			item->setColor(a.data(paintcore::AnnotationModel::BgColorRole).value<QColor>());
+
+		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::VAlignRole))
+			item->setValign(a.data(paintcore::AnnotationModel::VAlignRole).toInt());
 	}
 }
 

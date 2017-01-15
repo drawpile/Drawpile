@@ -48,6 +48,9 @@ public:
 	//! Set the text content (subset of HTML is supported)
 	void setText(const QString &text);
 
+	//! Set vertical alignment
+	void setValign(int valign);
+
 	//! Get the ID number of this annotation
 	int id() const { return m_id; }
 
@@ -70,6 +73,7 @@ private:
 	void paintHiddenBorder(QPainter *painter);
 
 	int m_id;
+	int m_valign;
 	QRectF m_rect;
 	QColor m_color;
 	QTextDocument m_doc;

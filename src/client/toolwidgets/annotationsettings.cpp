@@ -26,6 +26,7 @@
 #include "canvas/aclfilter.h"
 #include "net/client.h"
 #include "net/commands.h"
+#include "utils/icon.h"
 
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
@@ -39,8 +40,12 @@ using widgets::GroupedToolButton;
 
 #include <QTimer>
 #include <QTextBlock>
+#include <QMenu>
 
 namespace tools {
+
+static const char *HALIGN_PROP = "HALIGN";
+static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(QString name, QString title, ToolController *ctrl)
 	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), m_noupdate(false)
@@ -62,6 +67,25 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_updatetimer->setInterval(500);
 	m_updatetimer->setSingleShot(true);
 
+	// Horizontal alignment options
+	QMenu *halignMenu = new QMenu;
+	halignMenu->addAction(icon::fromTheme("format-justify-left"), tr("Left"))->setProperty(HALIGN_PROP, Qt::AlignLeft);
+	halignMenu->addAction(icon::fromTheme("format-justify-center"), tr("Center"))->setProperty(HALIGN_PROP, Qt::AlignCenter);
+	halignMenu->addAction(icon::fromTheme("format-justify-fill"), tr("Justify"))->setProperty(HALIGN_PROP, Qt::AlignJustify);
+	halignMenu->addAction(icon::fromTheme("format-justify-right"), tr("Right"))->setProperty(HALIGN_PROP, Qt::AlignRight);
+	_ui->halign->setIcon(halignMenu->actions().first()->icon());
+	connect(halignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
+	_ui->halign->setMenu(halignMenu);
+
+	// Vertical alignment options
+	QMenu *valignMenu = new QMenu;
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, protocol::AnnotationEdit::FLAG_VALIGN_CENTER);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM);
+	_ui->valign->setIcon(valignMenu->actions().first()->icon());
+	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
+	_ui->valign->setMenu(valignMenu);
+
 	// Editor events
 	connect(_ui->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
 	connect(_ui->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
@@ -80,10 +104,6 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->protect, &QCheckBox::clicked, this, &AnnotationSettings::saveChanges);
 
 	// Intra-editor connections that couldn't be made in the UI designer
-	connect(_ui->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(_ui->center, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(_ui->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(_ui->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
 
@@ -130,12 +150,13 @@ void AnnotationSettings::updateStyleButtons()
 {
 	QTextBlockFormat bf = _ui->content->textCursor().blockFormat();
 	switch(bf.alignment()) {
-	case Qt::AlignLeft: _ui->left->setChecked(true); break;
-	case Qt::AlignCenter: _ui->center->setChecked(true); break;
-	case Qt::AlignJustify: _ui->justify->setChecked(true); break;
-	case Qt::AlignRight: _ui->right->setChecked(true); break;
+	case Qt::AlignLeft: _ui->halign->setIcon(icon::fromTheme("format-justify-left")); break;
+	case Qt::AlignCenter: _ui->halign->setIcon(icon::fromTheme("format-justify-center")); break;
+	case Qt::AlignJustify: _ui->halign->setIcon(icon::fromTheme("format-justify-fill")); break;
+	case Qt::AlignRight: _ui->halign->setIcon(icon::fromTheme("format-justify-right")); break;
 	default: break;
 	}
+
 	QTextCharFormat cf = _ui->content->textCursor().charFormat();
 	_ui->btnTextColor->setColor(cf.foreground().color());
 
@@ -168,19 +189,20 @@ void AnnotationSettings::toggleStrikethrough(bool strike)
 	_ui->content->setCurrentFont(font);
 }
 
-void AnnotationSettings::changeAlignment()
+void AnnotationSettings::changeAlignment(const QAction *action)
 {
-	Qt::Alignment a = Qt::AlignLeft;
-	if(_ui->left->isChecked())
-		a = Qt::AlignLeft;
-	else if(_ui->center->isChecked())
-		a = Qt::AlignCenter;
-	else if(_ui->justify->isChecked())
-		a = Qt::AlignJustify;
-	else if(_ui->right->isChecked())
-		a = Qt::AlignRight;
+	if(action->property(HALIGN_PROP).isNull()) {
+		_ui->valign->setIcon(action->icon());
+		_ui->valign->setProperty(VALIGN_PROP, action->property(VALIGN_PROP));
 
-	_ui->content->setAlignment(a);
+		applyChanges();
+
+	} else {
+		Qt::Alignment a = Qt::Alignment(action->property(HALIGN_PROP).toInt());
+
+		_ui->content->setAlignment(a);
+		_ui->halign->setIcon(action->icon());
+	}
 }
 
 void AnnotationSettings::updateFontIfUniform()
@@ -254,6 +276,13 @@ void AnnotationSettings::setSelectionId(int id)
 		setEditorBackgroundColor(a->background);
 		if(a->text.isEmpty())
 			resetContentFont(true, true, true);
+
+		switch(a->valign) {
+		case 0: _ui->valign->setIcon(icon::fromTheme("format-align-vertical-top")); break;
+		case protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM: _ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom")); break;
+		case protocol::AnnotationEdit::FLAG_VALIGN_CENTER: _ui->valign->setIcon(icon::fromTheme("format-align-vertical-center")); break;
+		}
+
 		_ui->ownerLabel->setText(QString("(%1)").arg(
 			controller()->model()->userlist()->getUsername(a->userId())));
 		_ui->protect->setChecked(a->protect);
@@ -301,7 +330,8 @@ void AnnotationSettings::saveChanges()
 			controller()->client()->myId(),
 			selected(),
 			_ui->btnBackground->color().rgba(),
-			(_ui->protect->isChecked() ? protocol::AnnotationEdit::FLAG_PROTECT : 0),
+			(_ui->protect->isChecked() ? protocol::AnnotationEdit::FLAG_PROTECT : 0)
+			| uint8_t(_ui->valign->property(VALIGN_PROP).toInt()),
 			0,
 			_ui->content->toHtml()
 		)));

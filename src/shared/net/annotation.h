@@ -113,7 +113,10 @@ private:
  */
 class AnnotationEdit : public Message {
 public:
-	static const uint8_t FLAG_PROTECT = 0x01; // disallow further modifications from other users
+	static const uint8_t FLAG_PROTECT = 0x01;       // disallow further modifications from other users
+	static const uint8_t FLAG_VALIGN_CENTER = 0x02; // center vertically
+	static const uint8_t FLAG_VALIGN_BOTTOM = 0x06; // align to bottom
+
 	AnnotationEdit(uint8_t ctx, uint16_t id, uint32_t bg, uint8_t flags, uint8_t border, const QByteArray &text)
 		: Message(MSG_ANNOTATION_EDIT, ctx), m_id(id), m_bg(bg), m_flags(flags), m_border(border), m_text(text)
 	{}

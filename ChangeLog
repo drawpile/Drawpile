@@ -5,6 +5,7 @@
  * Reimplemented /opword command (GUI version)
  * Login dialog now shows a progress bar during catchup phase
  * Improved login performance
+ * Annotations can now be aligned vertically
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document

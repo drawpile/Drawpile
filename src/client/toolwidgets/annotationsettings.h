@@ -23,6 +23,7 @@
 
 class Ui_TextSettings;
 class QTimer;
+class QAction;
 
 namespace tools {
 
@@ -63,7 +64,7 @@ public slots:
 	void setFocus();
 
 private slots:
-	void changeAlignment();
+	void changeAlignment(const QAction *action);
 	void toggleBold(bool bold);
 	void toggleStrikethrough(bool strike);
 	void updateStyleButtons();

@@ -47,6 +47,7 @@ QVariant AnnotationModel::data(const QModelIndex &index, int role) const
 			case RectRole: return a.rect;
 			case BgColorRole: return a.background;
 			case ProtectedRole: return a.protect;
+			case VAlignRole: return a.valign;
 			default: break;
 		}
 	}
@@ -60,6 +61,8 @@ QHash<int, QByteArray> AnnotationModel::roleNames() const
 	roles[IdRole] = "annotationId";
 	roles[RectRole] = "rect";
 	roles[BgColorRole] = "background";
+	roles[ProtectedRole] = "protect";
+	roles[VAlignRole] = "valign";
 	return roles;
 }
 
@@ -78,7 +81,7 @@ void AnnotationModel::addAnnotation(const Annotation &annotation)
 
 void AnnotationModel::addAnnotation(int id, const QRect &rect)
 {
-	addAnnotation(Annotation {id, QString(), rect, QColor(Qt::transparent), false});
+	addAnnotation(Annotation {id, QString(), rect, QColor(Qt::transparent), false, 0});
 }
 
 void AnnotationModel::deleteAnnotation(int id)
@@ -106,7 +109,7 @@ void AnnotationModel::reshapeAnnotation(int id, const QRect &newrect)
 	emit dataChanged(index(idx), index(idx), QVector<int>() << RectRole);
 }
 
-void AnnotationModel::changeAnnotation(int id, const QString &newtext, bool protect, const QColor &bgcolor)
+void AnnotationModel::changeAnnotation(int id, const QString &newtext, bool protect, int valign, const QColor &bgcolor)
 {
 	int idx = findById(id);
 	if(idx<0) {
@@ -116,8 +119,9 @@ void AnnotationModel::changeAnnotation(int id, const QString &newtext, bool prot
 	m_annotations[idx].text = newtext;
 	m_annotations[idx].background = bgcolor;
 	m_annotations[idx].protect = protect;
+	m_annotations[idx].valign = valign;
 
-	emit dataChanged(index(idx), index(idx), QVector<int>() << Qt::DisplayRole << BgColorRole);
+	emit dataChanged(index(idx), index(idx), QVector<int>() << Qt::DisplayRole << BgColorRole << ProtectedRole << VAlignRole);
 }
 
 void AnnotationModel::setAnnotations(const QList<Annotation> &annotations)
@@ -317,6 +321,7 @@ void Annotation::toDataStream(QDataStream &out) const
 	// Write content
 	out << background;
 	out << protect;
+	out << quint8(valign);
 	out << text;
 }
 
@@ -334,9 +339,12 @@ Annotation Annotation::fromDataStream(QDataStream &in)
 	bool protect;
 	in >> protect;
 
+	quint8 valign;
+	in >> valign;
+
 	QString text;
 	in >> text;
-	return Annotation {id, text, rect, color, protect};
+	return Annotation {id, text, rect, color, protect, valign};
 }
 
 }

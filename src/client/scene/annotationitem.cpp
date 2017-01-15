@@ -23,11 +23,12 @@
 
 #include "core/layerstack.h"
 #include "scene/annotationitem.h"
+#include "../shared/net/annotation.h"
 
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_id(id), m_highlight(false), m_showborder(false)
+	: QGraphicsItem(parent), m_id(id), m_valign(0), m_highlight(false), m_showborder(false)
 {
 }
 
@@ -50,6 +51,11 @@ void AnnotationItem::setText(const QString &text)
 	update();
 }
 
+void AnnotationItem::setValign(int valign)
+{
+	m_valign = valign;
+	update();
+}
 
 /**
  * Highlight is used to indicate the selected annotation.
@@ -113,8 +119,18 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->drawPoint(m_rect.bottomRight());
 	}
 
-	painter->translate(m_rect.topLeft());
-	m_doc.drawContents(painter, QRectF(QPointF(), m_rect.size()));
+	m_doc.setTextWidth(m_rect.width());
+
+	QPointF offset;
+	if(m_valign == protocol::AnnotationEdit::FLAG_VALIGN_CENTER) {
+		offset.setY((m_rect.height() - m_doc.size().height()) / 2);
+
+	} else if(m_valign == protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM) {
+		offset.setY(m_rect.height() - m_doc.size().height());
+	}
+
+	painter->translate(m_rect.topLeft() + offset);
+	m_doc.drawContents(painter, QRectF(-offset, m_rect.size()));
 
 	painter->restore();
 }

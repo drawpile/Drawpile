@@ -918,6 +918,7 @@ void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 		cmd.id(),
 		cmd.text(),
 		cmd.flags() & protocol::AnnotationEdit::FLAG_PROTECT,
+		cmd.flags() & (protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM|protocol::AnnotationEdit::FLAG_VALIGN_CENTER),
 		QColor::fromRgba(cmd.bg())
 		);
 }
