@@ -25,10 +25,12 @@ if(SERVERGUI)
 		gui/sidebarmodel.cpp
 		gui/sidebaritemdelegate.cpp
 		gui/serversummarypage.cpp
+		gui/sessionlistpage.cpp
 		gui/userlistpage.cpp
 		gui/sessionpage.cpp
 		gui/subheaderwidget.cpp
 		gui/userlistmodel.cpp
+		gui/sessionlistmodel.cpp
 		)
 	add_definitions(-DHAVE_SERVERGUI)
 endif(SERVERGUI)

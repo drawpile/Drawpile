@@ -184,6 +184,11 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	refreshPage();
 }
 
+SessionPage::~SessionPage()
+{
+	delete d;
+}
+
 void SessionPage::terminateSession()
 {
 	QMessageBox *msg = new QMessageBox(

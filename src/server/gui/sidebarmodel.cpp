@@ -20,6 +20,7 @@
 #include "sidebarmodel.h"
 
 #include "serversummarypage.h"
+#include "sessionlistpage.h"
 #include "userlistpage.h"
 #include "sessionpage.h"
 
@@ -36,6 +37,7 @@ SidebarModel::SidebarModel(QObject *parent)
 {
 	m_summarypages
 		<< new ServersummaryPageFactory
+		<< new SessionListPageFactory
 		<< new UserListPageFactory;
 }
 

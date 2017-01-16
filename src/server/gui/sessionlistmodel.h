@@ -17,42 +17,35 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server.h"
-#include "sessionlistmodel.h"
+#ifndef SESSIONLISTMODEL_H
+#define SESSIONLISTMODEL_H
 
-#include <QJsonObject>
-#include <QDebug>
+#include <QAbstractTableModel>
+#include <QJsonArray>
 
 namespace server {
 namespace gui {
 
-static const QString REFRESH_REQID = "sessionlist";
-
-Server::Server(QObject *parent)
-	: QObject(parent), m_sessions(new SessionListModel(this))
+class SessionListModel : public QAbstractTableModel
 {
+	Q_OBJECT
+public:
+	explicit SessionListModel(QObject *parent=nullptr);
 
-}
+	void setSessionList(const QJsonArray &sessions);
 
-void Server::refreshSessionList()
-{
-	makeApiRequest(REFRESH_REQID, JsonApiMethod::Get, QStringList() << "sessions", QJsonObject());
-}
+	int rowCount(const QModelIndex &parent) const override;
+	int columnCount(const QModelIndex &parent) const override;
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-void Server::onApiResponse(const QString &requestId, const JsonApiResult &result)
-{
-	if(result.status != result.Ok) {
-		qWarning() << requestId << "query failed:" << result.body;
-	}
+	const QJsonArray &sessionList() const { return m_sessions; }
 
-	if(requestId == REFRESH_REQID) {
-		QJsonArray sessions = result.body.array();
-		m_sessions->setSessionList(sessions);
-		emit sessionListRefreshed(sessions);
-	} else {
-		emit apiResponse(requestId, result);
-	}
-}
+private:
+	QJsonArray m_sessions;
+};
 
 }
 }
+
+#endif

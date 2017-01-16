@@ -28,6 +28,8 @@
 namespace server {
 namespace gui {
 
+class SessionListModel;
+
 /**
  * @brief Abstract base class for server connectors
  */
@@ -73,15 +75,18 @@ public:
 	 */
 	void refreshSessionList();
 
+	//! Get the last refreshed session list
+	SessionListModel *sessionList() const { return m_sessions; }
+
 signals:
 	void apiResponse(const QString &requestId, const JsonApiResult &result);
-	void sessionListRefreshed(const QJsonArray &sessions);
+	void sessionListRefreshed(const QJsonArray &sessionlist);
 
 protected slots:
 	void onApiResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
-	QJsonArray m_sessionlist;
+	SessionListModel *m_sessions;
 };
 
 }

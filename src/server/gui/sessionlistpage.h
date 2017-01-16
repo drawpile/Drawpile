@@ -17,12 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SESSIONPAGE_H
-#define SESSIONPAGE_H
+#ifndef SESSIONLISTPAGE_H
+#define SESSIONLISTPAGE_H
 
 #include "pagefactory.h"
 
 #include <QWidget>
+#include <QApplication>
 
 namespace  server {
 
@@ -30,39 +31,28 @@ struct JsonApiResult;
 
 namespace gui {
 
-class SessionPage : public QWidget
+class SessionListModel;
+
+class SessionListPage : public QWidget
 {
 	Q_OBJECT
 public:
 	struct Private;
 
-	explicit SessionPage(Server *server, const QString &id, QWidget *parent=nullptr);
-	~SessionPage();
-
-private slots:
-	void saveSettings();
-	void terminateSession();
-	void changePassword();
-	void changeTitle();
-	void handleResponse(const QString &requestId, const JsonApiResult &result);
+	explicit SessionListPage(Server *server, QWidget *parent=nullptr);
+	~SessionListPage();
 
 private:
-	void refreshPage();
-
 	Private *d;
 };
 
-class SessionPageFactory : public PageFactory
+class SessionListPageFactory : public PageFactory
 {
 public:
-	SessionPageFactory(const QString &id) : m_id(id) { }
-	QString pageId() const override { return QStringLiteral("session:") + m_id; }
-	QString title() const override { return m_id; }
+	QString pageId() const override { return QStringLiteral("sessionlist"); }
+	QString title() const override { return QApplication::tr("Sessions"); }
 
-	SessionPage *makePage(Server *server) const override { return new SessionPage(server, m_id); }
-
-private:
-	QString m_id;
+	SessionListPage *makePage(Server *server) const override { return new SessionListPage(server); }
 };
 
 
