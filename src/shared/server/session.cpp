@@ -284,6 +284,16 @@ void Session::setClosed(bool closed)
 	}
 }
 
+// In Qt 5.7 we can just use Flags.setFlag(flag, true/false);
+// Remove this once we can drop support for older Qt versions
+template<class F, class Ff> static void setFlag(F &flags, Ff f, bool set)
+{
+	if(set)
+		flags |= f;
+	else
+		flags &= ~f;
+}
+
 void Session::setSessionConfig(const QJsonObject &conf)
 {
 	bool changed = false;
@@ -297,7 +307,7 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	const SessionHistory::Flags oldFlags = flags;
 
 	if(conf.contains("persistent")) {
-		flags.setFlag(SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
+		setFlag(flags, SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
 	}
 
 	if(conf.contains("title")) {
@@ -324,11 +334,11 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	// the client whether to send preserved/recorded chat messages
 	// by default.
 	if(conf.contains("preserveChat")) {
-		flags.setFlag(SessionHistory::PreserveChat, conf["preserveChat"].toBool());
+		setFlag(flags, SessionHistory::PreserveChat, conf["preserveChat"].toBool());
 	}
 
 	if(conf.contains("nsfm")) {
-		flags.setFlag(SessionHistory::Nsfm, conf["nsfm"].toBool());
+		setFlag(flags, SessionHistory::Nsfm, conf["nsfm"].toBool());
 	}
 
 	m_history->setFlags(flags);

@@ -229,11 +229,11 @@ bool FiledHistory::load()
 			Flags flags;
 			for(const QByteArray &f : params.split(' ')) {
 				if(f == "persistent")
-					flags.setFlag(Persistent);
+					flags |= Persistent;
 				else if(f == "preserveChat")
-					flags.setFlag(PreserveChat);
+					flags |= PreserveChat;
 				else if(f == "nsfm")
-					flags.setFlag(Nsfm);
+					flags |= Nsfm;
 				else
 					logger::warning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
 			}
