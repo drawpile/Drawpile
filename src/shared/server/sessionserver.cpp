@@ -266,7 +266,7 @@ void SessionServer::cleanupSessions()
 	}
 }
 
-JsonApiResult SessionServer::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	QString head;
 	QStringList tail;
@@ -282,6 +282,29 @@ JsonApiResult SessionServer::callJsonApi(JsonApiMethod method, const QStringList
 
 	if(method == JsonApiMethod::Get) {
 		return {JsonApiResult::Ok, QJsonDocument(sessionDescriptions())};
+
+	} else {
+		return JsonApiBadMethod();
+	}
+}
+
+JsonApiResult SessionServer::callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Q_UNUSED(request);
+	if(path.size()!=0)
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Get) {
+		QJsonArray userlist;
+		for(const Client *c : m_lobby)
+			userlist << c->description();
+
+		for(const Session *s : m_sessions) {
+			for(const Client *c : s->clients())
+				userlist << c->description();
+		}
+
+		return {JsonApiResult::Ok, QJsonDocument(userlist)};
 
 	} else {
 		return JsonApiBadMethod();

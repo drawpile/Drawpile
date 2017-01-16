@@ -25,6 +25,7 @@ if(SERVERGUI)
 		gui/sidebarmodel.cpp
 		gui/sidebaritemdelegate.cpp
 		gui/serversummarypage.cpp
+		gui/userlistpage.cpp
 		gui/sessionpage.cpp
 		gui/subheaderwidget.cpp
 		gui/userlistmodel.cpp

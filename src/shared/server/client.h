@@ -195,6 +195,13 @@ public:
 	 */
 	protocol::MessagePtr joinMessage() const;
 
+	/**
+	 * @brief Get a JSON object describing this user
+	 *
+	 * This is used by the admin API
+	 */
+	QJsonObject description(bool includeSession=true) const;
+
 signals:
 	/**
 	 * @brief Message received while not part of a session

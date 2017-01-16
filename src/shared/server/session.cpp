@@ -826,15 +826,7 @@ QJsonObject Session::getDescription(bool full) const
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {
-			QJsonObject u;
-			u["id"] = user->id();
-			u["name"] = user->username();
-			u["ip"] = user->peerAddress().toString();
-			u["auth"] = user->isAuthenticated();
-			u["op"] = user->isOperator();
-			u["mod"] = user->isModerator();
-			u["tls"] = user->isSecure();
-			users << u;
+			users << user->description(false);
 		}
 		o["users"] = users;
 	}

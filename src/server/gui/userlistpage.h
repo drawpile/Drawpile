@@ -16,41 +16,46 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef USERLISTPAGE_H
+#define USERLISTPAGE_H
 
-#include "server.h"
+#include "pagefactory.h"
 
-#include <QJsonObject>
-#include <QDebug>
+#include <QWidget>
+#include <QApplication>
 
 namespace server {
+
+struct JsonApiResult;
+
 namespace gui {
 
-static const QString REFRESH_REQID = "sessionlist";
-
-Server::Server(QObject *parent)
-	: QObject(parent)
+class UserListPage : public QWidget
 {
+	Q_OBJECT
+public:
+	struct Private;
+	explicit UserListPage(Server *server, QWidget *parent=nullptr);
+	~UserListPage();
 
-}
+private slots:
+	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
-void Server::refreshSessionList()
+private:
+	void refreshPage();
+
+	Private *d;
+};
+
+class UserListPageFactory : public PageFactory
 {
-	makeApiRequest(REFRESH_REQID, JsonApiMethod::Get, QStringList() << "sessions", QJsonObject());
-}
-
-void Server::onApiResponse(const QString &requestId, const JsonApiResult &result)
-{
-	if(result.status != result.Ok) {
-		qWarning() << requestId << "query failed:" << result.body;
-	}
-
-	if(requestId == REFRESH_REQID) {
-		m_sessionlist = result.body.array();
-		emit sessionListRefreshed(m_sessionlist);
-	} else {
-		emit apiResponse(requestId, result);
-	}
-}
+public:
+	QString pageId() const override { return QStringLiteral("summary:users"); }
+	QString title() const override { return QApplication::tr("Users"); }
+	UserListPage *makePage(Server *server) const override { return new UserListPage(server); }
+};
 
 }
 }
+
+#endif

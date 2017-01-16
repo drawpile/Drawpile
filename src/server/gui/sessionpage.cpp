@@ -306,18 +306,6 @@ void SessionPage::handleResponse(const QString &requestId, const JsonApiResult &
 	d->nsfm->setChecked(o["nsfm"].toBool());
 
 	d->userlist->setUserList(o["users"].toArray());
-
-	/* TODO user list
-	 "users":[
-	{"auth":false,
-	"id":1,
-	"ip":"::1",
-	"mod":false,
-	"name":"myUserName",
-	"op":true,
-	"tls":false
-	}]
-	*/
 }
 
 }

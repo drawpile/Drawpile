@@ -291,7 +291,9 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 	if(head == "server")
 		return serverJsonApi(method, tail, request);
 	else if(head == "sessions")
-		return m_sessions->callJsonApi(method, tail, request);
+		return m_sessions->callSessionJsonApi(method, tail, request);
+	else if(head == "users")
+		return m_sessions->callUserJsonApi(method, tail, request);
 	else if(head == "banlist")
 		return banlistJsonApi(method, tail, request);
 

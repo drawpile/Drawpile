@@ -130,7 +130,7 @@ public:
 	void messageAll(const QString &message, bool alert);
 
 	/**
-	 * @brief Call the server's JSON administration API
+	 * @brief Call the server's JSON administration API (session list)
 	 *
 	 * This is used by the HTTP admin API.
 	 *
@@ -139,7 +139,10 @@ public:
 	 * @param request request body content
 	 * @return JSON API response content
 	 */
-	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callSessionJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
+	//! Like callSessionJsonApi, but for the user list
+	JsonApiResult callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 signals:
 	/**

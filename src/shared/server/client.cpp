@@ -75,6 +75,20 @@ QString Client::toLogString() const {
 		return QStringLiteral("[%1] %2@(lobby):").arg(peerAddress().toString(), username());
 }
 
+QJsonObject Client::description(bool includeSession) const
+{
+	QJsonObject u;
+	u["id"] = id();
+	u["name"] = username();
+	u["ip"] = peerAddress().toString();
+	u["auth"] = isAuthenticated();
+	u["op"] = isOperator();
+	u["mod"] = isModerator();
+	u["tls"] = isSecure();
+	if(includeSession && m_session)
+		u["session"] = m_session->idString();
+	return u;
+}
 void Client::setSession(Session *session)
 {
 	Q_ASSERT(session);

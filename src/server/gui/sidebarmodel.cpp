@@ -20,6 +20,7 @@
 #include "sidebarmodel.h"
 
 #include "serversummarypage.h"
+#include "userlistpage.h"
 #include "sessionpage.h"
 
 #include <QDebug>
@@ -33,7 +34,9 @@ namespace gui {
 SidebarModel::SidebarModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
-	m_summarypages << new ServersummaryPageFactory;
+	m_summarypages
+		<< new ServersummaryPageFactory
+		<< new UserListPageFactory;
 }
 
 SidebarModel::~SidebarModel()
