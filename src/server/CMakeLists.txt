@@ -17,7 +17,10 @@ set (
 
 if(SERVERGUI)
 	find_package(Qt5Widgets REQUIRED)
-	set(SOURCES ${SOURCES}
+
+	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui )
+
+	set(SOURCES ${SOURCES} ${UI_Headers}
 		gui/gui.cpp
 		gui/mainwindow.cpp
 		gui/server.cpp
@@ -27,12 +30,15 @@ if(SERVERGUI)
 		gui/serversummarypage.cpp
 		gui/sessionlistpage.cpp
 		gui/userlistpage.cpp
+		gui/banlistpage.cpp
 		gui/sessionpage.cpp
 		gui/subheaderwidget.cpp
 		gui/userlistmodel.cpp
 		gui/sessionlistmodel.cpp
+		gui/banlistmodel.cpp
 		)
 	add_definitions(-DHAVE_SERVERGUI)
+
 endif(SERVERGUI)
 
 # Unix specific features

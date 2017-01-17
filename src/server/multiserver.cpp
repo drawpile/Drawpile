@@ -371,9 +371,12 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 	if(path.size()==1) {
 		if(method != JsonApiMethod::Delete)
 			return JsonApiBadMethod();
-		if(db->deleteBan(path.at(0).toInt()))
-			return JsonApiResult {JsonApiResult::Ok, QJsonDocument()};
-		else
+		if(db->deleteBan(path.at(0).toInt())) {
+			QJsonObject body;
+			body["status"] = "ok";
+			body["deleted"] = path.at(0).toInt();
+			return JsonApiResult {JsonApiResult::Ok, QJsonDocument(body)};
+		} else
 			return JsonApiNotFound();
 	}
 

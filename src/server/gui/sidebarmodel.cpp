@@ -22,6 +22,7 @@
 #include "serversummarypage.h"
 #include "sessionlistpage.h"
 #include "userlistpage.h"
+#include "banlistpage.h"
 #include "sessionpage.h"
 
 #include <QDebug>
@@ -38,7 +39,8 @@ SidebarModel::SidebarModel(QObject *parent)
 	m_summarypages
 		<< new ServersummaryPageFactory
 		<< new SessionListPageFactory
-		<< new UserListPageFactory;
+		<< new UserListPageFactory
+		<< new BanListPageFactory;
 }
 
 SidebarModel::~SidebarModel()
