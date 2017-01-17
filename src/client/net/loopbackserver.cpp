@@ -36,4 +36,10 @@ void LoopbackServer::sendMessage(const protocol::MessagePtr &msg)
 	emit messageReceived(msg);
 }
 
+void LoopbackServer::sendMessages(const QList<protocol::MessagePtr> &msgs)
+{
+	for(const protocol::MessagePtr &msg : msgs)
+		emit messageReceived(msg);
+}
+
 }

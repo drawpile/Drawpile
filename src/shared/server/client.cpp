@@ -130,9 +130,7 @@ void Client::sendNextHistoryBatch()
 	int batchLast;
 	std::tie(batch, batchLast) = m_session->history()->getBatch(m_historyPosition);
 	m_historyPosition = batchLast;
-	for(const protocol::MessagePtr &msg : batch) {
-		m_msgqueue->send(msg);
-	}
+	m_msgqueue->send(batch);
 }
 
 void Client::sendDirectMessage(protocol::MessagePtr msg)

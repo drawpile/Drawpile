@@ -150,10 +150,16 @@ void Client::sendMessage(const protocol::MessagePtr &msg)
 
 void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 {
-	for(protocol::MessagePtr msg : msgs) {
-		// TODO batch send
-		sendMessage(msg);
+	for(const protocol::MessagePtr &msg : msgs) {
+#ifndef NDEBUG
+		if(!msg->isControl() && msg->contextId()==0) {
+			qWarning("Context ID not set for message type %d", msg->type());
+		}
+#endif
+		if(msg->isCommand())
+			emit drawingCommandLocal(msg);
 	}
+	m_server->sendMessages(msgs);
 }
 
 void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)

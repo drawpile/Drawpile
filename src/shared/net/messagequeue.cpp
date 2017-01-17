@@ -116,10 +116,19 @@ MessagePtr MessageQueue::getPending()
 	return m_inbox.dequeue();
 }
 
-void MessageQueue::send(MessagePtr packet)
+void MessageQueue::send(const MessagePtr &message)
 {
 	if(!m_closeWhenReady) {
-		m_outbox.enqueue(packet);
+		m_outbox.enqueue(message);
+		if(m_sendbuflen==0)
+			writeData();
+	}
+}
+
+void MessageQueue::send(const QList<MessagePtr> &messages)
+{
+	if(!m_closeWhenReady) {
+		m_outbox << messages;
 		if(m_sendbuflen==0)
 			writeData();
 	}
