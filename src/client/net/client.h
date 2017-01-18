@@ -151,17 +151,6 @@ public slots:
 	void sendMessage(const protocol::MessagePtr &msg);
 	void sendMessages(const QList<protocol::MessagePtr> &msgs);
 
-	/**
-	 * @brief Send a chat message
-	 *
-	 * @param message the chat message
-	 * @param preserve include the chat message in session history, or send to everyone directly?
-	 * @param announce is this an announcement type message
-	 * @param action action (/me) type message
-	 */
-	void sendChat(const QString &message, bool preserve, bool announce, bool action);
-	void sendPinnedChat(const QString &message);
-
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandLocal(protocol::MessagePtr msg);

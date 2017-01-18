@@ -23,22 +23,21 @@
 #include "utils/funstuff.h"
 #include "notifications.h"
 
+#include "../shared/net/meta.h"
+
 #include <QDebug>
 #include <QResizeEvent>
 #include <QTextBrowser>
 #include <QVBoxLayout>
-#include <QTextDocument>
-#include <QUrl>
 #include <QLabel>
-#include <QSettings>
 
 namespace widgets {
 
 ChatBox::ChatBox(QWidget *parent)
 	:  QWidget(parent),
 	  m_wasCollapsed(false),
-	  m_operator(false),
-	  m_preserveChat(false)
+	  m_preserveChat(false),
+	  m_myId(1)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -140,54 +139,46 @@ void ChatBox::kicked(const QString &kickedBy)
 	systemMessage(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
 }
 
-/**
- * The received message is displayed in the chat box.
- * @param nick nickname of the user who said something
- * @param message what was said
- * @param announcement is this a public announcement?
- * @param isme if true, the message was sent by this user
- */
-void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool action, bool isme, bool islog)
+void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &msg)
 {
-	if(islog) {
-		const int loglevel = QSettings().value("settings/serverlog", 1).toInt();
-		if(loglevel==0)
-			return;
-		else if(loglevel==1 && !m_operator)
-			return;
+	if(msg->type() != protocol::MSG_CHAT) {
+		qWarning("ChatBox::receiveMessage: message type (%d) is not MSG_CHAT!", msg->type());
+		return;
 	}
-	if(action) {
-		m_view->append(
-			"<p class=\"chat action\"> * " + nick.toHtmlEscaped() +
-			" " +
-			htmlutils::linkify(message.toHtmlEscaped()) +
-			"</p>"
-		);
+
+	const protocol::Chat &chat = msg.cast<protocol::Chat>();
+	QString txt = chat.message().toHtmlEscaped();
+
+	if(chat.isPin()) {
+		if(txt == "-") {
+			// note: the protocol doesn't allow empty chat messages,
+			// which is why we have to use a special value like this
+			// to clear the pinning.
+			m_pinned->setVisible(false);
+			m_pinned->setText(QString());
+		} else {
+			m_pinned->setText(htmlutils::linkify(txt, QStringLiteral("style=\"color:#3daae9\"")));
+			m_pinned->setVisible(true);
+		}
+
+	} else if(chat.isAction()) {
+		m_view->append(QStringLiteral("<p class=\"chat action\"> * %1 %2</p>")
+			.arg(nick.toHtmlEscaped(), htmlutils::linkify(txt))
+			);
+
 	} else {
-		m_view->append(
-			"<p class=\"chat" + QString(islog ? " log" : "") + "\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
-			nick.toHtmlEscaped() +
-			"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
-			htmlutils::linkify(message.toHtmlEscaped()) +
-			"</span></p>"
-		);
+		m_view->append(QStringLiteral("<p><span class=\"nick %1\">&lt;%2&gt;</span> <span class=\"msg %3\">%4</span></p>")
+			.arg(
+				chat.contextId() == m_myId ? QStringLiteral("me") : QString(),
+				nick.toHtmlEscaped(),
+				chat.isShout() ? QStringLiteral("announcement") : QString(),
+				htmlutils::linkify(txt)
+			));
 	}
+
 	if(!m_myline->hasFocus())
 		notification::playSound(notification::Event::CHAT);
-}
 
-void ChatBox::setPinnedMessage(const QString &message)
-{
-	if(message == "-") {
-		// note: the protocol doesn't allow empty chat messages,
-		// which is why we have to use a special value like this
-		// to clear the pinning.
-		m_pinned->setVisible(false);
-		m_pinned->setText(QString());
-	} else {
-		m_pinned->setText(htmlutils::linkify(message.toHtmlEscaped(), QStringLiteral("style=\"color:#3daae9\"")));
-		m_pinned->setVisible(true);
-	}
 }
 
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
@@ -212,8 +203,6 @@ void ChatBox::systemMessage(const QString& message, bool alert)
 
 void ChatBox::sendMessage(const QString &msg)
 {
-	// TODO implement this in JavaScript?
-	// It would make it easy to add custom commands.
 	if(msg.at(0) == '/') {
 		// Special commands
 
@@ -227,21 +216,26 @@ void ChatBox::sendMessage(const QString &msg)
 		if(cmd == "clear") {
 			// client side command: clear chat window
 			clear();
+			return;
 
 		} else if(cmd.at(0)=='!') {
 			// public announcement
-			emit message(msg.mid(2), m_preserveChat, true, false);
+			emit message(protocol::Chat::announce(m_myId, msg.mid(2)));
+			return;
 
 		} else if(cmd == "me") {
 			if(!params.isEmpty())
-				emit message(msg.mid(msg.indexOf(' ')+1), m_preserveChat, false, true);
+				emit message(protocol::Chat::action(m_myId, msg.mid(msg.indexOf(' ')+1), !m_preserveChat));
+			return;
 
 		} else if(cmd == "pin") {
 			if(!params.isEmpty())
-				emit pinMessage(msg.mid(msg.indexOf(' ')+1));
+				emit message(protocol::Chat::pin(m_myId, msg.mid(msg.indexOf(' ')+1)));
+			return;
 
 		} else if(cmd == "unpin") {
-			emit pinMessage(QStringLiteral("-"));
+			emit message(protocol::Chat::pin(m_myId, QStringLiteral("-")));
+			return;
 
 		} else if(cmd == "roll") {
 			if(params.isEmpty())
@@ -249,9 +243,10 @@ void ChatBox::sendMessage(const QString &msg)
 
 			utils::DiceRoll result = utils::diceRoll(params);
 			if(result.number>0)
-				emit message("rolls " + result.toString(), m_preserveChat, false, true);
+				emit message(protocol::Chat::action(m_myId, "rolls " + result.toString(), !m_preserveChat));
 			else
 				systemMessage(tr("Invalid dice roll description: %1").arg(params));
+			return;
 
 #ifndef NDEBUG
 		} else if(cmd == "rolltest") {
@@ -263,13 +258,14 @@ void ChatBox::sendMessage(const QString &msg)
 			for(int i=0;i<d.size();++i)
 				msg += QStringLiteral("%1: %2\n").arg(i+1).arg(d.at(i) * 100);
 			systemMessage(msg);
+			return;
 #endif
 		}
 
-	} else {
-		// A normal chat message
-		emit message(msg, m_preserveChat, false, false);
 	}
+
+	// A normal chat message
+	emit message(protocol::Chat::regular(m_myId, msg, !m_preserveChat));
 }
 
 void ChatBox::resizeEvent(QResizeEvent *event)

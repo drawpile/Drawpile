@@ -122,7 +122,10 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		// Handle meta commands here
 		switch(cmd->type()) {
 		case MSG_CHAT:
-			metaChat(cmd.cast<Chat>());
+			emit chatMessageReceived(
+				m_userlist->getUsername(cmd.cast<protocol::Chat>().contextId()),
+				cmd
+				);
 			break;
 		case MSG_USER_JOIN:
 			metaUserJoin(cmd.cast<UserJoin>());
@@ -389,19 +392,6 @@ void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 	QPointF p(msg.x() / 4.0, msg.y() / 4.0);
 	m_usercursors->setCursorPosition(msg.contextId(), p);
 	m_lasers->addPoint(msg.contextId(), p);
-}
-
-void CanvasModel::metaChat(const protocol::Chat &msg)
-{
-	QString username = m_userlist->getUsername(msg.contextId());
-	emit chatMessageReceived(
-		username,
-		msg.message(),
-		msg.isShout(),
-		msg.isAction(),
-		msg.contextId() == m_statetracker->localId(),
-		false // TODO port Log message type from stable branch over here
-	);
 }
 
 void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)

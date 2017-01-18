@@ -293,7 +293,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
-	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendChat);
+	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::POLYGONSELECTION))->setView(_view);
@@ -1501,6 +1501,7 @@ void MainWindow::onServerLogin()
 {
 	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
+	m_chatbox->setLocalUserId(m_doc->client()->myId());
 	_view->setEnabled(true);
 	getAction("persistentsession")->setEnabled(m_doc->client()->serverSuppotsPersistence());
 	setDrawingToolsEnabled(true);

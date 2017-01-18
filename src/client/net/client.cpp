@@ -162,22 +162,6 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 	m_server->sendMessages(msgs);
 }
 
-void Client::sendChat(const QString &message, bool preserve, bool announce, bool action)
-{
-	m_server->sendMessage(MessagePtr(new protocol::Chat(
-		m_myId,
-		preserve|announce ? 0 : protocol::Chat::FLAG_BYPASS,
-		(announce ? protocol::Chat::FLAG_SHOUT : 0) |
-		(action ? protocol::Chat::FLAG_ACTION : 0),
-		message
-		)));
-}
-
-void Client::sendPinnedChat(const QString &message)
-{
-	m_server->sendMessage(protocol::Chat::pin(m_myId, message));
-}
-
 void Client::handleMessage(const protocol::MessagePtr &msg)
 {
 	if(m_catchupTo>0) {

@@ -125,7 +125,7 @@ signals:
 
 	void colorPicked(const QColor &color);
 
-	void chatMessageReceived(const QString &user, const QString &message, bool announcement, bool action, bool me, bool islog);
+	void chatMessageReceived(const QString &nick, const protocol::MessagePtr &msg);
 	void markerMessageReceived(const QString &user, const QString &message);
 
 	void userJoined(int id, const QString &name);
@@ -141,7 +141,6 @@ private:
 	void metaUserLeave(const protocol::UserLeave &msg);
 	void metaLaserTrail(const protocol::LaserTrail &msg);
 	void metaMovePointer(const protocol::MovePointer &msg);
-	void metaChat(const protocol::Chat &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
 
 	AclFilter *m_aclfilter;

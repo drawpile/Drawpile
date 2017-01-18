@@ -25,6 +25,8 @@ class QTextBrowser;
 class ChatLineEdit;
 class QLabel;
 
+namespace protocol { class MessagePtr; }
+
 namespace widgets {
 
 /**
@@ -52,16 +54,13 @@ public slots:
 	void setPreserveMode(bool preservechat);
 
 	//! Display a received message
-	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool action, bool isme, bool islog);
+	void receiveMessage(const QString& nick, const protocol::MessagePtr &msg);
 
 	//! Display a received marker
 	void receiveMarker(const QString &nick, const QString &message);
 
 	//! Display a system message
 	void systemMessage(const QString& message, bool isAlert=false);
-
-	//! Pin a message. An empty string will remove the pinned message (if any)
-	void setPinnedMessage(const QString &message);
 
 	void userJoined(int id, const QString &name);
 	void userParted(const QString &name);
@@ -70,15 +69,14 @@ public slots:
 	//! Empty the chat box
 	void clear();
 
-	//! Set current user OP status
-	void setOperator(bool op) { m_operator = op; }
+	//! Set the ID of the local user
+	void setLocalUserId(int myId) { m_myId = myId; }
 
 private slots:
 	void sendMessage(const QString &msg);
 
 signals:
-	void message(const QString &msg, bool preserve, bool announcement, bool action);
-	void pinMessage(const QString &msg);
+	void message(const protocol::MessagePtr &msg);
 	void expanded(bool isVisible);
 
 protected:
@@ -89,8 +87,8 @@ private:
 	ChatLineEdit *m_myline;
 	QLabel *m_pinned;
 	bool m_wasCollapsed;
-	bool m_operator;
 	bool m_preserveChat;
+	int m_myId;
 };
 
 }

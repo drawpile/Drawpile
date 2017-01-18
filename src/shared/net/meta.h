@@ -128,6 +128,15 @@ public:
 	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QByteArray &msg) : Message(MSG_CHAT, ctx), m_tflags(tflags), m_oflags(oflags), m_msg(msg) {}
 	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QString &msg) : Chat(ctx, tflags, oflags, msg.toUtf8()) {}
 
+	//! Construct a regular chat message
+	static MessagePtr regular(uint8_t ctx, const QString &message, bool bypass) { return MessagePtr(new Chat(ctx, bypass ? FLAG_BYPASS : 0, 0, message.toUtf8())); }
+
+	//! Construct a public announcement message
+	static MessagePtr announce(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, 0, FLAG_SHOUT, message.toUtf8())); }
+
+	//! Construct an action type message
+	static MessagePtr action(uint8_t ctx, const QString &message, bool bypass) { return MessagePtr(new Chat(ctx, bypass ? FLAG_BYPASS : 0, FLAG_ACTION, message.toUtf8())); }
+
 	//! Construct a pinned message
 	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, 0, FLAG_SHOUT|FLAG_PIN, message.toUtf8())); }
 
@@ -162,6 +171,13 @@ public:
 	 * Clientside only.
 	 */
 	bool isAction() const { return m_oflags & FLAG_ACTION; }
+
+	/**
+	 * @brief Is this a pinned chat message?
+	 *
+	 * Clientside only. Requires OP privileges.
+	 */
+	bool isPin() const { return m_oflags & FLAG_PIN; }
 
 protected:
     int payloadLength() const;

@@ -136,6 +136,12 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	// Message specific filtering
 	switch(msg.type()) {
+	case MSG_CHAT:
+		// Only OPs can pin messages
+		if(static_cast<const protocol::Chat&>(msg).isPin() && !isOpUser)
+			return false;
+		break;
+
 	case MSG_LAYER_CREATE:
 	case MSG_LAYER_ATTR:
 	case MSG_LAYER_RETITLE:
