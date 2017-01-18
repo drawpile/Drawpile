@@ -55,6 +55,7 @@ public:
 	bool isLocalUserLocked() const { return m_localUserLocked; }
 	bool isLocked() const { return m_sessionLocked | m_localUserLocked; }
 	bool isLockedByDefault() const { return m_lockDefault; }
+	bool isAnnotationCreationLocked() const { return m_lockAnnotationCreation; }
 
 	//! Can the local user access this layer's controls?
 	bool canUseLayerControls(int layerId) const;
@@ -92,6 +93,7 @@ signals:
 	void ownLayersChanged(bool own);
 	void imageCmdLockChanged(bool lock);
 	void lockByDefaultChanged(bool lock);
+	void annotationCreationLockChanged(bool lock);
 
 	void userLocksChanged(const QList<uint8_t> lockedUsers);
 	void operatorListChanged(const QList<uint8_t> opUsers);
@@ -112,6 +114,7 @@ private:
 	void setOwnLayers(bool own);
 	void setLockImages(bool lock);
 	void setLockByDefault(bool lock);
+	void setAnnotationCreationLock(bool lock);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 
@@ -129,6 +132,7 @@ private:
 	bool m_imagesLocked;
 	bool m_ownLayers;
 	bool m_lockDefault;
+	bool m_lockAnnotationCreation;
 
 	QList<uint8_t> m_ops;
 	QList<uint8_t> m_userlocks;

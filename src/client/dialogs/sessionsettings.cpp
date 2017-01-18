@@ -192,8 +192,8 @@ void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(acl, &canvas::AclFilter::ownLayersChanged, m_ui->ownLayers, &QCheckBox::setChecked);
 	connect(acl, &canvas::AclFilter::imageCmdLockChanged, m_ui->lockImages, &QCheckBox::setChecked);
 	connect(acl, &canvas::AclFilter::lockByDefaultChanged, m_ui->lockNewUsers, &QCheckBox::setChecked);
+	connect(acl, &canvas::AclFilter::annotationCreationLockChanged, m_ui->lockAnnotations, &QCheckBox::setChecked);
 	connect(acl, &canvas::AclFilter::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
-
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
@@ -277,12 +277,7 @@ void SessionSettingsDialog::maxUsersChanged() { changeSesionConf("maxUserCount",
 void SessionSettingsDialog::denyJoinsChanged(bool set) { changeSesionConf("closed", set); }
 void SessionSettingsDialog::lockNewUsersChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_DEFAULT, set); }
 void SessionSettingsDialog::lockImagesChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_IMAGES, set); }
-
-void SessionSettingsDialog::lockAnnotationsChanged(bool set)
-{
-	// TODO not implemented yet
-}
-
+void SessionSettingsDialog::lockAnnotationsChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_ANNOTATIONS, set); }
 void SessionSettingsDialog::lockLayerCtrlChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_LAYERCTRL, set); }
 void SessionSettingsDialog::ownLayersChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_OWNLAYERS, set); }
 

@@ -59,6 +59,11 @@ void Annotation::begin(const paintcore::Point& point, float zoom)
 	} else {
 		// No annotation, start creating a new one
 
+		if(owner.model()->aclFilter()->isAnnotationCreationLocked() && !owner.model()->aclFilter()->isLocalUserOperator()) {
+			m_handle = paintcore::Annotation::OUTSIDE;
+			return;
+		}
+
 		// I don't want to create a new preview item just for annotations,
 		// so we create the preview annotation directly in the model. Since this
 		// doesn't affect the other annotations, it shouldn't case any problems.
@@ -115,7 +120,7 @@ void Annotation::end()
 			//owner.toolSettings().getAnnotationSettings()->setFocusAt(_selected->getAnnotation()->cursorAt(_start.toPoint()));
 		}
 
-	} else {
+	} else if(m_handle != paintcore::Annotation::OUTSIDE) {
 
 		QRect rect = QRect(m_p1.toPoint(), m_p2.toPoint()).normalized();
 

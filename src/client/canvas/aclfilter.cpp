@@ -43,12 +43,14 @@ void AclFilter::reset(int myId, bool localMode)
 	m_layerCtrlLocked = false;
 	m_imagesLocked = false;
 	m_ownLayers = false;
+	m_lockAnnotationCreation = false;
 	m_userLayers.clear();
 
 	m_lockDefault = false;
 
 	m_ops.clear();
 	m_userlocks.clear();
+	m_protectedAnnotations.clear();
 
 	if(localMode)
 		m_ops << myId;
@@ -59,6 +61,7 @@ void AclFilter::reset(int myId, bool localMode)
 	emit layerControlLockChanged(m_layerCtrlLocked);
 	emit imageCmdLockChanged(m_imagesLocked);
 	emit lockByDefaultChanged(m_lockDefault);
+	emit annotationCreationLockChanged(m_lockAnnotationCreation);
 }
 
 // Get the ID of the layer's creator. This assumes the ID prefixing convention is used.
@@ -113,7 +116,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		setOwnLayers(lmsg.isOwnLayers());
 		setLockImages(lmsg.isImagesLocked());
 		setLockByDefault(lmsg.isLockedByDefault());
-
+		setAnnotationCreationLock(lmsg.isAnnotationCreationLocked());
 		return true;
 	}
 
@@ -180,6 +183,8 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 			qWarning("non-op user %d tried to create annotation with context id %d", msg.contextId(), (annotationId>>8));
 			return false;
 		}
+		if(m_lockAnnotationCreation && !isOpUser)
+			return false;
 		break;
 	}
 	case MSG_ANNOTATION_EDIT: {
@@ -270,6 +275,14 @@ void AclFilter::setLockByDefault(bool lock)
 	if(m_lockDefault != lock) {
 		m_lockDefault = lock;
 		emit lockByDefaultChanged(lock);
+	}
+}
+
+void AclFilter::setAnnotationCreationLock(bool lock)
+{
+	if(m_lockAnnotationCreation != lock) {
+		m_lockAnnotationCreation = lock;
+		emit annotationCreationLockChanged(lock);
 	}
 }
 
