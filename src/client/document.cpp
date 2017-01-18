@@ -447,52 +447,28 @@ void Document::sendPointerMove(const QPointF &point)
 	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), point.x() * 4, point.y() * 4)));
 }
 
-// Convenience function
-void Document::sendSessionConf(const QString &key, const QJsonValue &value)
+void Document::sendSessionConf(const QJsonObject &sessionconf)
 {
-	QJsonObject kwargs;
-	kwargs[key] = value;
-	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), kwargs));
+	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendPersistentSession(bool p)
+void Document::sendSessionAclChange(uint16_t flags, uint16_t mask)
 {
-	sendSessionConf("persistent", p);
+	Q_ASSERT(m_canvas);
+	uint16_t acl = m_canvas->aclFilter()->sessionAclFlags();
+	acl = (acl & ~mask) | flags;
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
 }
 
-void Document::sendCloseSession(bool close)
+void Document::sendLockSession(bool lock)
 {
-	sendSessionConf("closed", close);
-}
-
-void Document::sendPasswordChange(const QString &password)
-{
-	sendSessionConf("password", password);
-}
-
-void Document::sendOpwordChange(const QString &newOpword)
-{
-	sendSessionConf("opword", newOpword);
+	const uint16_t flag = protocol::SessionACL::LOCK_SESSION;
+	sendSessionAclChange(lock ? flag : 0, flag);
 }
 
 void Document::sendOpword(const QString &opword)
 {
 	m_client->sendMessage(net::command::serverCommand("gain-op", QJsonArray() << opword));
-}
-
-void Document::sendUserLimitChange(int newLimit)
-{
-	sendSessionConf("maxUserCount", newLimit);
-}
-
-void Document::sendPreserveChatChange(bool keepChat)
-{
-	sendSessionConf("preserveChat", keepChat);
-}
-
-void Document::sendNsfm(bool nsfm)
-{
-	sendSessionConf("nsfm", nsfm);
 }
 
 /**
@@ -526,49 +502,6 @@ bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int siz
 
 	m_client->sendMessage(net::command::serverCommand("reset-session"));
 	return true;
-}
-
-void Document::sendSessionAclChange(uint16_t flag, bool set)
-{
-	Q_ASSERT(m_canvas);
-	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
-	if(set)
-		flags |= flag;
-	else
-		flags &= ~flag;
-
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
-
-}
-
-void Document::sendLockSession(bool lock)
-{
-	sendSessionAclChange(protocol::SessionACL::LOCK_SESSION, lock);
-}
-
-void Document::sendLockImageCommands(bool lock)
-{
-	sendSessionAclChange(protocol::SessionACL::LOCK_IMAGES, lock);
-}
-
-void Document::sendLockByDefault(bool lock)
-{
-	sendSessionAclChange(protocol::SessionACL::LOCK_DEFAULT, lock);
-}
-
-void Document::sendLayerCtrlMode(bool lockCtrl, bool ownLayers)
-{
-	Q_ASSERT(m_canvas);
-
-	uint16_t flags = m_canvas->aclFilter()->sessionAclFlags();
-	flags &= ~(protocol::SessionACL::LOCK_LAYERCTRL|protocol::SessionACL::LOCK_OWNLAYERS);
-
-	if(lockCtrl)
-		flags |= protocol::SessionACL::LOCK_LAYERCTRL;
-	if(ownLayers)
-		flags |= protocol::SessionACL::LOCK_OWNLAYERS;
-
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)

@@ -81,12 +81,6 @@ protocol::MessagePtr announce(const QString &url);
 protocol::MessagePtr unannounce(const QString &url);
 
 /**
- * @brief Get a session title change command
- * @param title the new title
- */
-protocol::MessagePtr sessionTitle(const QString &title);
-
-/**
  * @brief Generate one or more PutImage command from a QImage
  *
  * Due to the 64k payload length limit, a large image may not fit inside

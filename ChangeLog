@@ -7,6 +7,8 @@
  * Improved login performance
  * Annotations can now be aligned vertically
  * Individual users can now be blocked from sending chat messages
+ * Fixed chat message pinning
+ * Session settings now have a dialog window
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document

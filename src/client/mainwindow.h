@@ -53,6 +53,7 @@ namespace docks {
 namespace dialogs {
 	class PlaybackDialog;
 	class HostDialog;
+	class SessionSettingsDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -112,12 +113,6 @@ public slots:
 
 	static void showSettings();
 	void tryToGainOp();
-	void changeSessionTitle();
-	void changeSessionPassword();
-	void changeSessionOpword();
-	void changeSessionMaxUsers();
-	void showBanListDialog();
-	void showAnnouncementListDialog();
 	void resetSession();
 
 	void host();
@@ -141,7 +136,6 @@ private slots:
 
 	void onOperatorModeChange(bool op);
 	void onImageCmdLockChange(bool lock);
-	void updateLayerCtrlMode();
 
 	void onServerConnected();
 	void onServerLogin();
@@ -224,6 +218,7 @@ private:
 	QToolButton *_statusChatButton;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
+	dialogs::SessionSettingsDialog *m_sessionSettings;
 
 	drawingboard::CanvasScene *_canvasscene;
 
@@ -234,7 +229,6 @@ private:
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *_drawingtools; // drawing tool selection
 	QActionGroup *_toolslotactions; // tool slot selection
-	QActionGroup *m_layerctrlmode; // layer control mode actions
 
 	int _lastToolBeforePaste; // Last selected tool before Paste was used
 

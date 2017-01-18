@@ -161,19 +161,11 @@ signals:
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
-	void sendPersistentSession(bool p);
-	void sendCloseSession(bool close);
-	void sendPasswordChange(const QString &password);
-	void sendOpwordChange(const QString &newOpword);
+	void sendSessionConf(const QJsonObject &sessionconf);
+	void sendSessionAclChange(uint16_t flags, uint16_t mask);
+	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
-	void sendUserLimitChange(int newLimit);
-	void sendPreserveChatChange(bool keepChat);
-	void sendNsfm(bool nsfm);
 	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
-	void sendLockSession(bool lock);
-	void sendLockImageCommands(bool lock);
-	void sendLayerCtrlMode(bool lockCtrl, bool ownLayers);
-	void sendLockByDefault(bool lock);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url);
@@ -217,9 +209,6 @@ private:
 	void setSessionOpword(bool ow);
 	void setSessionMaxUserCount(int count);
 	void setSessionNsfm(bool nsfm);
-
-	void sendSessionConf(const QString &key, const QJsonValue &value);
-	void sendSessionAclChange(uint16_t flag, bool set);
 
 	void copyFromLayer(int layer);
 

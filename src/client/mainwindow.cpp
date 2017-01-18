@@ -113,8 +113,7 @@
 #include "dialogs/flipbook.h"
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/resetdialog.h"
-#include "dialogs/banlistdialog.h"
-#include "dialogs/announcementdialog.h"
+#include "dialogs/sessionsettings.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -158,6 +157,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 					);
 		msgbox->show();
 	});
+
+	m_sessionSettings = new dialogs::SessionSettingsDialog(m_doc, this);
 
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -387,15 +388,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	_canvasscene->initCanvas(canvas);
 
-	connect(canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &MainWindow::updateLayerCtrlMode);
-	connect(canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &MainWindow::updateLayerCtrlMode);
-
 	connect(canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
-
 	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
-
-	connect(canvas->aclFilter(), &canvas::AclFilter::lockByDefaultChanged, getAction("lockbydefault"), &QAction::setChecked);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
@@ -1265,22 +1260,6 @@ void MainWindow::leave()
 	leavebox->show();
 }
 
-void MainWindow::changeSessionTitle()
-{
-	bool ok;
-	QString newtitle = QInputDialog::getText(
-				this,
-				tr("Session Title"),
-				tr("Change session title"),
-				QLineEdit::Normal,
-				m_doc->sessionTitle(),
-				&ok
-	);
-	if(ok && newtitle != m_doc->sessionTitle()) {
-		m_doc->client()->sendMessage(net::command::sessionTitle(newtitle));
-	}
-}
-
 void MainWindow::tryToGainOp()
 {
 	QString opword = QInputDialog::getText(
@@ -1291,83 +1270,6 @@ void MainWindow::tryToGainOp()
 	);
 	if(!opword.isEmpty())
 		m_doc->sendOpword(opword);
-}
-
-void MainWindow::changeSessionPassword()
-{
-	QString prompt;
-	if(m_doc->isSessionPasswordProtected())
-		prompt = tr("Set a new password or leave blank to remove.");
-	else
-		prompt = tr("Set a password for the session.");
-
-	bool ok;
-	QString newpass = QInputDialog::getText(
-				this,
-				tr("Session Password"),
-				prompt,
-				QLineEdit::Password,
-				QString(),
-				&ok
-	);
-	if(ok)
-		m_doc->sendPasswordChange(newpass);
-}
-
-void MainWindow::changeSessionOpword()
-{
-	QString prompt;
-	if(m_doc->isSessionOpword())
-		prompt = tr("Set a new password or leave blank to remove.");
-	else
-		prompt = tr("Set a password for gaining operator status.");
-
-	bool ok;
-	QString newpass = QInputDialog::getText(
-				this,
-				tr("Operator Password"),
-				prompt,
-				QLineEdit::Password,
-				QString(),
-				&ok
-	);
-	if(ok)
-		m_doc->sendOpwordChange(newpass);
-}
-
-void MainWindow::changeSessionMaxUsers()
-{
-	bool ok;
-	int newLimit = QInputDialog::getInt(
-			this,
-			tr("Session user limit"),
-			tr("Set the maximum number of simultaneous users to allow in.\nChanging this does not affect current users."),
-			m_doc->sessionMaxUserCount(),
-			1,
-			254,
-			1,
-			&ok
-			);
-
-	if(ok)
-		m_doc->sendUserLimitChange(newLimit);
-}
-
-void MainWindow::showBanListDialog()
-{
-	auto *dlg = new dialogs::BanlistDialog(m_doc->banlist(), m_doc->canvas()->aclFilter()->isLocalUserOperator(), this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, &dialogs::BanlistDialog::requestBanRemoval, m_doc, &Document::sendUnban);
-	dlg->show();
-}
-
-void MainWindow::showAnnouncementListDialog()
-{
-	auto *dlg = new dialogs::AnnouncementDialog(m_doc->announcementList(), m_doc->canvas()->aclFilter()->isLocalUserOperator(), this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, &dialogs::AnnouncementDialog::requestAnnouncement, m_doc, &Document::sendAnnounce);
-	connect(dlg, &dialogs::AnnouncementDialog::requestUnlisting, m_doc, &Document::sendUnannounce);
-	dlg->show();
 }
 
 void MainWindow::resetSession()
@@ -1430,8 +1332,7 @@ void MainWindow::onServerConnected()
 	// Enable connection related actions
 	getAction("hostsession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(true);
-	getAction("viewbanlist")->setEnabled(true);
-	getAction("viewannouncementlist")->setEnabled(true);
+	getAction("sessionsettings")->setEnabled(true);
 
 	// Disable UI until login completes
 	_view->setEnabled(false);
@@ -1445,11 +1346,10 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 {
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
-	getAction("viewbanlist")->setEnabled(false);
-	getAction("viewannouncementlist")->setEnabled(false);
+	getAction("sessionsettings")->setEnabled(false);
 	m_admintools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
-	m_layerctrlmode->setEnabled(false);
+	m_sessionSettings->close();
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -1503,7 +1403,7 @@ void MainWindow::onServerLogin()
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
 	m_chatbox->setLocalUserId(m_doc->client()->myId());
 	_view->setEnabled(true);
-	getAction("persistentsession")->setEnabled(m_doc->client()->serverSuppotsPersistence());
+	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
 	setDrawingToolsEnabled(true);
 }
 
@@ -1528,7 +1428,6 @@ void MainWindow::onOperatorModeChange(bool op)
 {
 	m_admintools->setEnabled(op);
 	m_docadmintools->setEnabled(op);
-	m_layerctrlmode->setEnabled(op);
 	_dock_layers->setOperatorMode(op);
 	onImageCmdLockChange(m_doc->canvas()->aclFilter()->isImagesLocked());
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
@@ -1536,8 +1435,6 @@ void MainWindow::onOperatorModeChange(bool op)
 
 void MainWindow::onImageCmdLockChange(bool lock)
 {
-	getAction("imagecmdlock")->setChecked(lock);
-
 	const bool e = !lock || m_doc->canvas()->aclFilter()->isLocalUserOperator();
 
 	static const char *IMAGE_ACTIONS[] = {
@@ -1547,21 +1444,6 @@ void MainWindow::onImageCmdLockChange(bool lock)
 	};
 	for(const char *a : IMAGE_ACTIONS)
 		getAction(a)->setEnabled(e);
-}
-
-void MainWindow::updateLayerCtrlMode()
-{
-	if(!m_doc->canvas())
-		return;
-
-	Q_ASSERT(m_layerctrlmode->actions().size()==3);
-	int i=0;
-	if(m_doc->canvas()->aclFilter()->isOwnLayers())
-		i=2;
-	else if(m_doc->canvas()->aclFilter()->isLayerControlLocked())
-		i=1;
-
-	m_layerctrlmode->actions()[i]->setChecked(true);
 }
 
 /**
@@ -2343,95 +2225,30 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
-	m_layerctrlmode = new QActionGroup(this);
-	m_layerctrlmode->addAction(tr("Unlocked"))->setProperty("mode", 0);
-	m_layerctrlmode->addAction(tr("Operators only"))->setProperty("mode", 1);
-	m_layerctrlmode->addAction(tr("User specific"))->setProperty("mode", 2);
-	for(QAction *a : m_layerctrlmode->actions()) {
-		a->setCheckable(true);
-	}
-	m_layerctrlmode->actions()[0]->setChecked(true);
-	m_layerctrlmode->setExclusive(true);
-	m_layerctrlmode->setEnabled(false);
+	QAction *sessionSettings = makeAction("sessionsettings", 0, tr("Settings..."), QString(), QKeySequence("F11"));
+	sessionSettings->setMenuRole(QAction::NoRole); // Keep this item where it is on OSX
+	sessionSettings->setEnabled(false);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 	QAction *gainop = makeAction("gainop", 0, tr("Become operator..."));
 	gainop->setEnabled(false);
 
-	QAction *changetitle = makeAction("changetitle", 0, tr("Change &Title..."));
-	QAction *changepassword = makeAction("changepassword", 0, tr("Set Session Password..."));
-	QAction *changeopword = makeAction("changeopword", 0, tr("Set Operator Password..."));
-	QAction *viewbanlist = makeAction("viewbanlist", 0, tr("Bans..."));
-	QAction *viewannouncementlist = makeAction("viewannouncementlist", 0, tr("Public listings..."));
-	viewbanlist->setEnabled(false); // even non-admins can look at these
-	viewannouncementlist->setEnabled(false);
-	QAction *changemaxusers = makeAction("changemaxusers", 0, tr("User Limit: %1...").arg(254));
-	QAction *keepchat = makeAction("keepchat", 0, tr("Keep Chat History"), QString(), QKeySequence(), true);
-	QAction *persistentsession = makeAction("persistentsession", 0, tr("Persist Without Users"), QString(), QKeySequence(), true);
-	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny Joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
-	QAction *lockbydefault = makeAction("lockbydefault", 0, tr("Lock New Users"), QString(), QKeySequence(), true);
-	QAction *imagecmdlock = makeAction("imagecmdlock", 0, tr("Lock Cut, Paste && Fill"), QString(), QKeySequence(), true);
-	QAction *nsfm = makeAction("nsfm", 0, tr("NSFM"), tr("Content not suitable for minors"), QKeySequence(), true);
-
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	m_admintools->addAction(locksession);
-	m_admintools->addAction(persistentsession);
-	m_admintools->addAction(closesession);
-	m_admintools->addAction(lockbydefault);
-	m_admintools->addAction(imagecmdlock);
-	m_admintools->addAction(changetitle);
-	m_admintools->addAction(changepassword);
-	m_admintools->addAction(changeopword);
-	m_admintools->addAction(changemaxusers);
-	m_admintools->addAction(keepchat);
-	m_admintools->addAction(nsfm);
 	m_admintools->addAction(resetsession);
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
+	connect(sessionSettings, &QAction::triggered, m_sessionSettings, &dialogs::SessionSettingsDialog::show);
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
+	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 
-	connect(changetitle, &QAction::triggered, this, &MainWindow::changeSessionTitle);
-	connect(changepassword, &QAction::triggered, this, &MainWindow::changeSessionPassword);
-	connect(m_doc, &Document::sessionPasswordChanged, [changepassword](bool hasPassword) {
-		changepassword->setText(hasPassword ? tr("Change Session Password...") : tr("Set Session Password..."));
-	});
-	connect(changeopword, &QAction::triggered, this, &MainWindow::changeSessionOpword);
-	connect(m_doc, &Document::sessionOpwordChanged, [changeopword, gainop, this](bool hasOpword) {
-		changeopword->setText(hasOpword ? tr("Change Operator Password...") : tr("Set Operator Password..."));
+	connect(m_doc, &Document::sessionOpwordChanged, [gainop, this](bool hasOpword) {
 		gainop->setEnabled(hasOpword && !m_doc->canvas()->aclFilter()->isLocalUserOperator());
 	});
-	connect(viewbanlist, &QAction::triggered, this, &MainWindow::showBanListDialog);
-	connect(viewannouncementlist, &QAction::triggered, this, &MainWindow::showAnnouncementListDialog);
-	connect(changemaxusers, &QAction::triggered, this, &MainWindow::changeSessionMaxUsers);
-	connect(m_doc, &Document::sessionMaxUserCountChanged, [changemaxusers](int count) {
-		changemaxusers->setText(tr("User limit: %1...").arg(count));
-	});
-	connect(keepchat, &QAction::triggered, m_doc, &Document::sendPreserveChatChange);
-	connect(m_doc, &Document::sessionPreserveChatChanged, keepchat, &QAction::setChecked);
-
-	connect(nsfm, &QAction::triggered, m_doc, &Document::sendNsfm);
-	connect(m_doc, &Document::sessionNsfmChanged, nsfm, &QAction::setChecked);
-
-	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
-	connect(imagecmdlock, &QAction::triggered, m_doc, &Document::sendLockImageCommands);
-	connect(m_layerctrlmode, &QActionGroup::triggered, [this](QAction *action) {
-		switch(action->property("mode").toInt()) {
-		case 0: m_doc->sendLayerCtrlMode(false, false); break;
-		case 1: m_doc->sendLayerCtrlMode(true, false); break;
-		case 2: m_doc->sendLayerCtrlMode(true, true); break;
-		default: qCritical("Unhandled layer lock mode"); break;
-		}
-	});
-
-	connect(persistentsession, &QAction::triggered, m_doc, &Document::sendPersistentSession);
-	connect(m_doc, &Document::sessionPersistentChanged, persistentsession, &QAction::setChecked);
-	connect(closesession, &QAction::triggered, m_doc, &Document::sendCloseSession);
-	connect(m_doc, &Document::sessionClosedChanged, closesession, &QAction::setChecked);
-	connect(lockbydefault, &QAction::triggered, m_doc, &Document::sendLockByDefault);
 
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
 
@@ -2442,28 +2259,8 @@ void MainWindow::setupActions()
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(resetsession);
 	sessionmenu->addSeparator();
-
-	QMenu *layerctrlmenu = sessionmenu->addMenu(tr("Layer Controls"));
-	layerctrlmenu->addActions(m_layerctrlmode->actions());
-
-	QMenu *sessionSettingsMenu = sessionmenu->addMenu(tr("Settings"));
-	sessionSettingsMenu->menuAction()->setMenuRole(QAction::NoRole); // keep this menu where it is on macOS
-	sessionSettingsMenu->addAction(changetitle);
-	sessionSettingsMenu->addAction(changepassword);
-	sessionSettingsMenu->addAction(changeopword);
-	sessionSettingsMenu->addAction(changemaxusers);
-	sessionSettingsMenu->addSeparator();
-	sessionSettingsMenu->addAction(viewbanlist);
-	sessionSettingsMenu->addAction(viewannouncementlist);
-	sessionSettingsMenu->addSeparator();
-	sessionSettingsMenu->addAction(keepchat);
-	sessionSettingsMenu->addAction(persistentsession);
-	sessionSettingsMenu->addAction(closesession);
-	sessionSettingsMenu->addAction(lockbydefault);
-	sessionSettingsMenu->addAction(imagecmdlock);
-	sessionSettingsMenu->addAction(nsfm);
-
 	sessionmenu->addAction(gainop);
+	sessionmenu->addAction(sessionSettings);
 	sessionmenu->addAction(locksession);
 
 	//

@@ -194,13 +194,6 @@ MessagePtr mute(int userId, bool mute)
 	return serverCommand("mute", QJsonArray() << userId << mute);
 }
 
-MessagePtr sessionTitle(const QString &title)
-{
-	QJsonObject kwargs;
-	kwargs["title"] = title;
-	return serverCommand("sessionconf", QJsonArray(), kwargs);
-}
-
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
 	QList<protocol::MessagePtr> list;
