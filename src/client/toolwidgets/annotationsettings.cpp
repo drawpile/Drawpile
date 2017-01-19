@@ -296,6 +296,7 @@ void AnnotationSettings::setSelectionId(int id)
 		case protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM: _ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom")); break;
 		case protocol::AnnotationEdit::FLAG_VALIGN_CENTER: _ui->valign->setIcon(icon::fromTheme("format-align-vertical-center")); break;
 		}
+		_ui->valign->setProperty(VALIGN_PROP, a->valign);
 
 		_ui->ownerLabel->setText(QString("(%1)").arg(
 			controller()->model()->userlist()->getUsername(a->userId())));
