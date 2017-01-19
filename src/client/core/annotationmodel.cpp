@@ -17,6 +17,7 @@
   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "annotationmodel.h"
+#include "../shared/net/annotation.h"
 
 #include <QTextDocument>
 #include <QPainter>
@@ -216,7 +217,17 @@ void Annotation::paint(QPainter *painter, const QRectF &paintrect) const
 	QTextDocument doc;
 	doc.setHtml(text);
 	doc.setTextWidth(rect0.width());
-	doc.drawContents(painter, rect0);
+
+	QPointF offset;
+	if(valign == protocol::AnnotationEdit::FLAG_VALIGN_CENTER) {
+		offset.setY((rect0.height() - doc.size().height()) / 2);
+
+	} else if(valign == protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM) {
+		offset.setY(rect0.height() - doc.size().height());
+	}
+	painter->translate(offset);
+
+	doc.drawContents(painter, QRectF(-offset, rect0.size()));
 
 	painter->restore();
 }

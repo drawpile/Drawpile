@@ -367,8 +367,10 @@ void AnnotationSettings::bake()
 	Q_ASSERT(selected());
 
 	const paintcore::Annotation *a = controller()->model()->layerStack()->annotations()->getById(selected());
-	Q_ASSERT(a);
-
+	if(!a) {
+		qWarning("Selected annotation %d not found!", selected());
+		return;
+	}
 	const QImage img = a->toImage();
 
 	const uint8_t contextId = controller()->client()->myId();
