@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,33 +19,52 @@
 
 #include "resizedialog.h"
 #include "utils/images.h"
+#include "widgets/resizerwidget.h"
+
+using widgets::ResizerWidget;
+
 #include "ui_resizedialog.h"
 
 #include <QMessageBox>
+#include <QPushButton>
 
 namespace dialogs {
 
 ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
-	QDialog(parent), _oldsize(oldsize), _aspectratio(0), _lastchanged(0)
+	QDialog(parent), m_oldsize(oldsize), m_aspectratio(0), m_lastchanged(0)
 {
-	_ui = new Ui_ResizeDialog;
-	_ui->setupUi(this);
-	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Resize"));
+	m_ui = new Ui_ResizeDialog;
+	m_ui->setupUi(this);
 
-	_ui->width->setValue(_oldsize.width());
-	_ui->height->setValue(_oldsize.height());
+	m_ui->resizer->setOriginalSize(oldsize);
+	m_ui->resizer->setTargetSize(oldsize);
 
-	connect(_ui->width, SIGNAL(valueChanged(int)), this, SLOT(widthChanged(int)));
-	connect(_ui->height, SIGNAL(valueChanged(int)), this, SLOT(heightChanged(int)));
-	connect(_ui->keepaspect, SIGNAL(toggled(bool)), this, SLOT(toggleAspectRatio(bool)));
-	connect(_ui->centerButton, SIGNAL(clicked()), this, SLOT(centerOffset()));
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Resize"));
 
-	connect(_ui->buttons->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(reset()));
+	QPushButton *centerButton = new QPushButton(tr("Center"));
+	m_ui->buttons->addButton(centerButton, QDialogButtonBox::ActionRole);
+
+	m_ui->width->setValue(m_oldsize.width());
+	m_ui->height->setValue(m_oldsize.height());
+
+	connect(m_ui->width, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ResizeDialog::widthChanged);
+	connect(m_ui->height, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ResizeDialog::heightChanged);
+	connect(m_ui->keepaspect, &QCheckBox::toggled, this, &ResizeDialog::toggleAspectRatio);
+
+	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &ResizerWidget::center);
+	connect(m_ui->buttons->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this, &ResizeDialog::reset);
+
+	m_ui->keepaspect->setChecked(true);
 }
 
 ResizeDialog::~ResizeDialog()
 {
-	delete _ui;
+	delete m_ui;
+}
+
+void ResizeDialog::setPreviewImage(const QImage &image)
+{
+	m_ui->resizer->setImage(image);
 }
 
 void ResizeDialog::done(int r)
@@ -62,66 +81,60 @@ void ResizeDialog::done(int r)
 
 void ResizeDialog::widthChanged(int newWidth)
 {
-	if(_aspectratio) {
-		_ui->height->blockSignals(true);
-		_ui->height->setValue(newWidth / _aspectratio);
-		_ui->height->blockSignals(false);
+	if(m_aspectratio) {
+		m_ui->height->blockSignals(true);
+		m_ui->height->setValue(newWidth / m_aspectratio);
+		m_ui->height->blockSignals(false);
 	}
-	_lastchanged = 0;
+	m_ui->resizer->setTargetSize(QSize(newWidth, m_ui->height->value()));
+	m_lastchanged = 0;
 }
 
 void ResizeDialog::heightChanged(int newHeight)
 {
-	if(_aspectratio) {
-		_ui->width->blockSignals(true);
-		_ui->width->setValue(newHeight * _aspectratio);
-		_ui->width->blockSignals(false);
+	if(m_aspectratio) {
+		m_ui->width->blockSignals(true);
+		m_ui->width->setValue(newHeight * m_aspectratio);
+		m_ui->width->blockSignals(false);
 	}
-	_lastchanged = 1;
+	m_ui->resizer->setTargetSize(QSize(m_ui->width->value(), newHeight));
+	m_lastchanged = 1;
 }
 
 void ResizeDialog::toggleAspectRatio(bool keep)
 {
 	if(keep) {
-		_aspectratio = _oldsize.width() / float(_oldsize.height());
+		m_aspectratio = m_oldsize.width() / float(m_oldsize.height());
 
-		if(_lastchanged==0)
-			widthChanged(_ui->width->value());
+		if(m_lastchanged==0)
+			widthChanged(m_ui->width->value());
 		else
-			heightChanged(_ui->height->value());
+			heightChanged(m_ui->height->value());
 
 	} else {
-		_aspectratio = 0;
+		m_aspectratio = 0;
 	}
-}
-
-void ResizeDialog::centerOffset()
-{
-	QSize newsize = newSize();
-	_ui->xoffset->setValue((newsize.width() - _oldsize.width()) / 2);
-	_ui->yoffset->setValue((newsize.height() - _oldsize.height()) / 2);
 }
 
 void ResizeDialog::reset()
 {
-	_ui->width->blockSignals(true);
-	_ui->height->blockSignals(true);
-	_ui->width->setValue(_oldsize.width());
-	_ui->height->setValue(_oldsize.height());
-	_ui->width->blockSignals(false);
-	_ui->height->blockSignals(false);
-	_ui->xoffset->setValue(0);
-	_ui->yoffset->setValue(0);
+	m_ui->width->blockSignals(true);
+	m_ui->height->blockSignals(true);
+	m_ui->width->setValue(m_oldsize.width());
+	m_ui->height->setValue(m_oldsize.height());
+	m_ui->width->blockSignals(false);
+	m_ui->height->blockSignals(false);
+	m_ui->resizer->setTargetSize(m_oldsize);
 }
 
 QSize ResizeDialog::newSize() const
 {
-	return QSize(_ui->width->value(), _ui->height->value());
+	return QSize(m_ui->width->value(), m_ui->height->value());
 }
 
 QPoint ResizeDialog::newOffset() const
 {
-	return QPoint(_ui->xoffset->value(), _ui->yoffset->value());
+	return m_ui->resizer->offset();
 }
 
 ResizeVector ResizeDialog::resizeVector() const
@@ -132,8 +145,8 @@ ResizeVector ResizeDialog::resizeVector() const
 
 	rv.top = o.y();
 	rv.left = o.x();
-	rv.right = s.width() - _oldsize.width() - o.x();
-	rv.bottom = s.height() - _oldsize.height() - o.y();
+	rv.right = s.width() - m_oldsize.width() - o.x();
+	rv.bottom = s.height() - m_oldsize.height() - o.y();
 
 	return rv;
 }

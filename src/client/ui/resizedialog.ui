@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
-    <height>175</height>
+    <width>381</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,121 +17,85 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Canvas size</string>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>&amp;Width:</string>
-          </property>
-          <property name="buddy">
-           <cstring>width</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="width">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>32767</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>&amp;Height:</string>
-          </property>
-          <property name="buddy">
-           <cstring>height</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="height">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>32767</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QCheckBox" name="keepaspect">
-          <property name="text">
-           <string>Keep aspect ratio</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="width">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>32767</number>
+       </property>
+       <property name="singleStep">
+        <number>64</number>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Offset</string>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>×</string>
        </property>
-       <layout class="QFormLayout" name="formLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>&amp;X:</string>
-          </property>
-          <property name="buddy">
-           <cstring>xoffset</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="xoffset">
-          <property name="minimum">
-           <number>-32767</number>
-          </property>
-          <property name="maximum">
-           <number>32767</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>&amp;Y:</string>
-          </property>
-          <property name="buddy">
-           <cstring>yoffset</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="yoffset">
-          <property name="minimum">
-           <number>-32767</number>
-          </property>
-          <property name="maximum">
-           <number>32767</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="centerButton">
-          <property name="text">
-           <string>Center</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <property name="buddy">
+        <cstring>height</cstring>
+       </property>
       </widget>
      </item>
+     <item>
+      <widget class="QSpinBox" name="height">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>32767</number>
+       </property>
+       <property name="singleStep">
+        <number>64</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="ResizerWidget" name="resizer" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="keepaspect">
+     <property name="text">
+      <string>Keep aspect ratio</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttons">
@@ -145,6 +109,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ResizerWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/resizerwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

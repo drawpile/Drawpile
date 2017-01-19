@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@ class ResizeDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit ResizeDialog(const QSize &oldsize, QWidget *parent = 0);
+	explicit ResizeDialog(const QSize &oldsize, QWidget *parent=nullptr);
 	~ResizeDialog();
+
+	void setPreviewImage(const QImage &image);
 
 	QSize newSize() const;
 	QPoint newOffset() const;
 	ResizeVector resizeVector() const;
-
-signals:
 
 public slots:
 	void done(int r);
@@ -53,17 +53,16 @@ private slots:
 	void widthChanged(int);
 	void heightChanged(int);
 	void toggleAspectRatio(bool keep);
-	void centerOffset();
 	void reset();
 
 private:
-	Ui_ResizeDialog *_ui;
+	Ui_ResizeDialog *m_ui;
 
-	QSize _oldsize;
-	float _aspectratio;
-	int _lastchanged;
+	QSize m_oldsize;
+	float m_aspectratio;
+	int m_lastchanged;
 };
 
 }
 
-#endif // RESIZEDIALOG_H
+#endif

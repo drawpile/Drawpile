@@ -132,6 +132,7 @@ set (
 	widgets/groupedtoolbutton.cpp
 	widgets/userlistwidget.cpp 
 	widgets/filmstrip.cpp 
+	widgets/resizerwidget.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 

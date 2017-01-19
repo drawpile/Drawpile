@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "brushpreview_plugin.h"
 #include "groupedtoolbutton_plugin.h"
 #include "filmstrip_plugin.h"
+#include "resizer_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)
@@ -31,6 +32,7 @@ DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 		<< new BrushPreviewPlugin(this)
 		<< new GroupedToolButtonPlugin(this)
 		<< new FilmstripPlugin(this)
+		<< new ResizerPlugin(this)
 		;
 }
 

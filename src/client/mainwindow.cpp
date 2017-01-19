@@ -1746,6 +1746,7 @@ void MainWindow::resizeCanvas()
 
 	QSize size = m_doc->canvas()->layerStack()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
+	dlg->setPreviewImage(m_doc->canvas()->toImage().scaled(300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	connect(dlg, &QDialog::accepted, [this, dlg]() {
