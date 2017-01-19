@@ -48,7 +48,7 @@ static const char *HALIGN_PROP = "HALIGN";
 static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(QString name, QString title, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), m_noupdate(false)
+	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), m_selectionId(0), m_noupdate(false)
 {
 }
 
@@ -127,10 +127,24 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 void AnnotationSettings::setUiEnabled(bool enabled)
 {
-	_ui->content->setEnabled(enabled);
-	_ui->btnBake->setEnabled(enabled);
-	_ui->btnRemove->setEnabled(enabled);
-	_ui->protect->setEnabled(enabled);
+	QWidget *w[] = {
+		_ui->content,
+		_ui->btnBake,
+		_ui->btnRemove,
+		_ui->btnBackground,
+		_ui->btnTextColor,
+		_ui->protect,
+		_ui->halign,
+		_ui->valign,
+		_ui->bold,
+		_ui->italic,
+		_ui->underline,
+		_ui->strikethrough,
+		_ui->font,
+		_ui->size
+	};
+	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
+		w[i]->setEnabled(enabled);
 }
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
