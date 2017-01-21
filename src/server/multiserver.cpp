@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -296,6 +296,8 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		return m_sessions->callUserJsonApi(method, tail, request);
 	else if(head == "banlist")
 		return banlistJsonApi(method, tail, request);
+	else if(head == "accounts")
+		return accountsJsonApi(method, tail, request);
 
 	return JsonApiNotFound();
 }
@@ -397,6 +399,67 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 		QString comment = request["comment"].toString();
 
 		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->addBan(ip, subnet, expiration, comment)) };
+
+	} else
+		return JsonApiBadMethod();
+}
+
+/**
+ * @brief View and modify registered user accounts
+ *
+ * @param method
+ * @param path
+ * @param request
+ * @return
+ */
+JsonApiResult MultiServer::accountsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	// Database is needed to manipulate account list
+	Database *db = qobject_cast<Database*>(m_config);
+	if(!db)
+		return JsonApiNotFound();
+
+	if(path.size()==1) {
+		if(method == JsonApiMethod::Update) {
+			QJsonObject o = db->updateAccount(path.at(0).toInt(), request);
+			if(o.isEmpty())
+				return JsonApiNotFound();
+			return JsonApiResult {JsonApiResult::Ok, QJsonDocument(o)};
+
+		} else if(method == JsonApiMethod::Delete) {
+			if(db->deleteAccount(path.at(0).toInt())) {
+				QJsonObject body;
+				body["status"] = "ok";
+				body["deleted"] = path.at(0).toInt();
+				return JsonApiResult {JsonApiResult::Ok, QJsonDocument(body)};
+			} else {
+				return JsonApiNotFound();
+			}
+		} else {
+			return JsonApiBadMethod();
+		}
+	}
+
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Get) {
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->getAccountList()) };
+
+	} else if(method == JsonApiMethod::Create) {
+		QString username = request["username"].toString();
+		QString password = request["password"].toString();
+		bool locked = request["locked"].toBool();
+		QString flags = request["flags"].toString();
+		if(username.isEmpty())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Username required");
+		if(password.isEmpty())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Password required");
+
+		QJsonObject o = db->addAccount(username, password, locked, flags.split(','));
+		if(o.isEmpty())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Error");
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(o) };
 
 	} else
 		return JsonApiBadMethod();

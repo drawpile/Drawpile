@@ -24,6 +24,7 @@
 #include "userlistpage.h"
 #include "banlistpage.h"
 #include "sessionpage.h"
+#include "accountlistpage.h"
 
 #include <QDebug>
 #include <QBrush>
@@ -40,7 +41,8 @@ SidebarModel::SidebarModel(QObject *parent)
 		<< new ServersummaryPageFactory
 		<< new SessionListPageFactory
 		<< new UserListPageFactory
-		<< new BanListPageFactory;
+		<< new BanListPageFactory
+		<< new AccountListPageFactory;
 }
 
 SidebarModel::~SidebarModel()
@@ -181,7 +183,7 @@ QVariant SidebarModel::data(const QModelIndex &index, int role) const
 		} else {
 			// Top level categories
 			switch(index.row()) {
-			case 0: return tr("Summary");
+			case 0: return tr("Server");
 			case 1: return tr("Sesssions");
 			}
 		}

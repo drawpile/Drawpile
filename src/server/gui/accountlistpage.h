@@ -16,33 +16,36 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SERVERSUMMARYPAGE_H
-#define SERVERSUMMARYPAGE_H
+
+#ifndef ACCOUNTLISTPAGE_H
+#define ACCOUNTLISTPAGE_H
 
 #include "pagefactory.h"
 
 #include <QWidget>
 #include <QApplication>
 
-namespace server {
+namespace  server {
 
 struct JsonApiResult;
 
 namespace gui {
 
-class ServerSummaryPage : public QWidget
+class AccountListPage : public QWidget
 {
 	Q_OBJECT
 public:
 	struct Private;
-	explicit ServerSummaryPage(Server *server, QWidget *parent=nullptr);
-	~ServerSummaryPage();
+
+	explicit AccountListPage(Server *server, QWidget *parent=nullptr);
+	~AccountListPage();
 
 private slots:
-	void startOrStopServer();
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
-	void saveSettings();
+	void addNewAccount();
+	void editSelectedAccount();
+	void removeSelectedAccount();
 
 private:
 	void refreshPage();
@@ -50,13 +53,15 @@ private:
 	Private *d;
 };
 
-class ServersummaryPageFactory : public PageFactory
+class AccountListPageFactory : public PageFactory
 {
 public:
-	QString pageId() const override { return QStringLiteral("summary:server"); }
-	QString title() const override { return QApplication::tr("Settings"); }
-	ServerSummaryPage *makePage(Server *server) const override { return new ServerSummaryPage(server); }
+	QString pageId() const override { return QStringLiteral("accountlist"); }
+	QString title() const override { return QApplication::tr("Accounts"); }
+
+	AccountListPage *makePage(Server *server) const override { return new AccountListPage(server); }
 };
+
 
 }
 }

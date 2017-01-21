@@ -47,6 +47,12 @@ public:
 	QJsonObject addBan(const QHostAddress &ip, int subnet,	const QDateTime &expiration, const QString &comment);
 	bool deleteBan(int entryId);
 
+	//! Get a JSON representation of registered user accounts
+	QJsonArray getAccountList() const;
+	QJsonObject addAccount(const QString &username, const QString &password, bool locked, const QStringList &flags);
+	QJsonObject updateAccount(int id, const QJsonObject &update);
+	bool deleteAccount(int id);
+
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
 	void setConfigValue(ConfigKey key, const QString &value) override;

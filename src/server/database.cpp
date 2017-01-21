@@ -19,9 +19,12 @@
 
 #include "database.h"
 #include "../shared/util/logger.h"
+#include "../shared/util/passwordhash.h"
+#include "../shared/server/loginhandler.h" // for username validation
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QVariant>
 #include <QUrl>
 #include <QRegularExpression>
@@ -61,10 +64,10 @@ static bool initDatabase(QSqlDatabase db)
 	// Registered user accounts
 	if(!q.exec(
 		"CREATE TABLE IF NOT EXISTS users ("
-			"username PRIMARY KEY," // the username
-			"password,"             // hashed password
-			"locked,"               // is this username locked/banned
-			"flags"                 // comma separated list of extra features (e.g. "mod")
+			"username UNIQUE," // the username
+			"password,"        // hashed password
+			"locked,"          // is this username locked/banned
+			"flags"            // comma separated list of extra features (e.g. "mod")
 			");"
 		))
 		return false;
@@ -248,7 +251,7 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 	q.bindValue(0, username);
 	q.exec();
 	if(q.next()) {
-		const QString passwordHash = q.value(0).toString();
+		const QByteArray passwordHash = q.value(0).toByteArray();
 		const int locked = q.value(1).toInt();
 		const QStringList flags = q.value(2).toString().split(',',QString::SkipEmptyParts);
 
@@ -260,8 +263,7 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 			};
 		}
 
-		// TODO password hashing
-		if(passwordHash != password) {
+		if(passwordhash::check(password, passwordHash)) {
 			return RegisteredUser {
 				RegisteredUser::BadPass,
 				username,
@@ -281,6 +283,102 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 			QStringList()
 		};
 	}
+}
+
+static QJsonObject userQueryToJson(const QSqlQuery &q)
+{
+	QJsonObject o;
+	o["id"] = q.value(0).toInt();
+	o["username"] = q.value(1).toString();
+	o["locked"] = q.value(2).toBool();
+	o["flags"] = q.value(3).toString();
+	return o;
+}
+
+QJsonArray Database::getAccountList() const
+{
+	QJsonArray list;
+	QSqlQuery q(d->db);
+	q.exec("SELECT rowid, username, locked, flags FROM users");
+	while(q.next()) {
+		list << userQueryToJson(q);
+	}
+	return list;
+}
+
+QJsonObject Database::addAccount(const QString &username, const QString &password, bool locked, const QStringList &flags)
+{
+	if(!LoginHandler::validateUsername(username))
+		return QJsonObject();
+
+	QSqlQuery q(d->db);
+	q.prepare("INSERT INTO users (username, password, locked, flags) VALUES (?, ?, ?, ?)");
+	q.bindValue(0, username);
+	q.bindValue(1, password);
+	q.bindValue(2, locked);
+	q.bindValue(3, flags.join(','));
+	if(q.exec()) {
+		q.exec("SELECT rowid, username, locked, flags FROM users WHERE rowid IN (SELECT last_insert_rowid())");
+		if(q.next())
+			return userQueryToJson(q);
+	}
+	logger::error() << "Error adding user account:" << q.lastError().text();
+	return QJsonObject();
+}
+
+QJsonObject Database::updateAccount(int id, const QJsonObject &update)
+{
+	QStringList updates;
+	QVariantList params;
+
+	if(LoginHandler::validateUsername(update["username"].toString())) {
+		updates << "username=?";
+		params << update["username"].toString();
+	}
+
+	if(!update["password"].toString().isEmpty()) {
+		updates << "password=?";
+		params << passwordhash::hash(update["password"].toString());
+	}
+
+	if(update.contains("locked")) {
+		updates << "locked=?";
+		params << update["locked"].toBool();
+	}
+
+	if(update.contains("flags")) {
+		updates << "flags=?";
+		params << update["flags"].toString();
+	}
+
+	QSqlQuery q(d->db);
+
+	if(!updates.isEmpty()) {
+		QString sql = QString("UPDATE users SET %1 WHERE rowid=?").arg(updates.join(','));
+		q.prepare(sql);
+		for(int i=0;i<params.size();++i)
+			q.bindValue(i, params[i]);
+		q.bindValue(params.size(), id);
+		if(!q.exec())
+			return QJsonObject();
+	}
+
+	q.prepare("SELECT rowid, username, locked, flags FROM users WHERE rowid=?");
+	q.bindValue(0, id);
+	q.exec();
+	if(q.next())
+		return userQueryToJson(q);
+	logger::error() << "Error updating user account" << id << q.lastError().text();
+	return QJsonObject();
+}
+
+bool Database::deleteAccount(int userId)
+{
+	QSqlQuery q(d->db);
+	q.prepare("DELETE FROM users WHERE rowid=?");
+	q.bindValue(0, userId);
+	q.exec();
+	return q.numRowsAffected()>0;
 }
 
 }

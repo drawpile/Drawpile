@@ -16,46 +16,36 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SERVERSUMMARYPAGE_H
-#define SERVERSUMMARYPAGE_H
 
-#include "pagefactory.h"
+#ifndef ACCOUNTLISTMODEL_H
+#define ACCOUNTLISTMODEL_H
 
-#include <QWidget>
-#include <QApplication>
+#include <QAbstractTableModel>
+#include <QJsonArray>
 
 namespace server {
-
-struct JsonApiResult;
-
 namespace gui {
 
-class ServerSummaryPage : public QWidget
+class AccountListModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
-	struct Private;
-	explicit ServerSummaryPage(Server *server, QWidget *parent=nullptr);
-	~ServerSummaryPage();
+	explicit AccountListModel(QObject *parent=nullptr);
 
-private slots:
-	void startOrStopServer();
-	void handleResponse(const QString &requestId, const JsonApiResult &result);
+	void setAccountList(const QJsonArray &accounts);
+	void addAccount(const QJsonObject &entry);
+	void updateAccount(const QJsonObject &entry);
+	void removeAccount(int id);
 
-	void saveSettings();
+	QJsonObject accountAt(int row) const;
+
+	int rowCount(const QModelIndex &parent) const override;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-	void refreshPage();
-
-	Private *d;
-};
-
-class ServersummaryPageFactory : public PageFactory
-{
-public:
-	QString pageId() const override { return QStringLiteral("summary:server"); }
-	QString title() const override { return QApplication::tr("Settings"); }
-	ServerSummaryPage *makePage(Server *server) const override { return new ServerSummaryPage(server); }
+	QJsonArray m_accountlist;
 };
 
 }

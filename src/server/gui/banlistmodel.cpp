@@ -29,10 +29,10 @@ BanListModel::BanListModel(QObject *parent)
 {
 }
 
-void BanListModel::setBanList(const QJsonArray &sessions)
+void BanListModel::setBanList(const QJsonArray &banlist)
 {
 	beginResetModel();
-	m_banlist = sessions;
+	m_banlist = banlist;
 	endResetModel();
 }
 
@@ -50,7 +50,7 @@ void BanListModel::removeBanEntry(int id)
 			beginRemoveRows(QModelIndex(), i, i);
 			m_banlist.removeAt(i);
 			endRemoveRows();
-			break;
+			return;
 		}
 	}
 }

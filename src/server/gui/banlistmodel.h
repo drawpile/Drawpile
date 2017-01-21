@@ -32,7 +32,7 @@ class BanListModel : public QAbstractTableModel
 public:
 	explicit BanListModel(QObject *parent=nullptr);
 
-	void setBanList(const QJsonArray &sessions);
+	void setBanList(const QJsonArray &banlist);
 	void addBanEntry(const QJsonObject &entry);
 	void removeBanEntry(int id);
 
