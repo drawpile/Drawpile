@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2015 Calle Laakkonen
+   Copyright (C) 2009-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "core/blendmodes.h"
+#include "core/annotationmodel.h"
 #include "ora/orareader.h"
 
 #include "../shared/net/layer.h"
@@ -277,7 +278,8 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 				1,
 				_annotationid,
 				e.attribute("bg").mid(1).toUInt(0,16),
-				0, 0,
+				paintcore::Annotation::valignFromString(e.attribute("valign")),
+				0,
 				e.text()
 			)));
 		} else {

@@ -56,6 +56,12 @@ struct Annotation {
 	//! Get the ID of the user who created this annotation
 	uint8_t userId() const { return id>>8; }
 
+	//! Get the name of the vertical-align setting
+	QString valignToString() const;
+
+	//! Get the vertical align flags from the name
+	static int valignFromString(const QString &va);
+
 	void toDataStream(QDataStream &out) const;
 	static Annotation fromDataStream(QDataStream &in);
 };

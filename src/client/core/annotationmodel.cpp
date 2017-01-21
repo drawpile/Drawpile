@@ -358,5 +358,25 @@ Annotation Annotation::fromDataStream(QDataStream &in)
 	return Annotation {id, text, rect, color, protect, valign};
 }
 
+int Annotation::valignFromString(const QString &va)
+{
+	if(va == "center")
+		return protocol::AnnotationEdit::FLAG_VALIGN_CENTER;
+	else if(va == "bottom")
+		return protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM;
+	else
+		return 0;
+}
+
+QString Annotation::valignToString() const
+{
+	switch(valign) {
+	case 0: return "top";
+	case protocol::AnnotationEdit::FLAG_VALIGN_CENTER: return "center";
+	case protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM: return "bottom";
+	default: return QString();
+	}
+}
+
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2014 Calle Laakkonen
+   Copyright (C) 2009-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 			an.setAttribute("w", ag.width());
 			an.setAttribute("h", ag.height());
 			an.setAttribute("bg", QString("#%1").arg(uint(a.background.rgba()), 8, 16, QChar('0')));
+			an.setAttribute("valign", a.valignToString());
 			an.appendChild(doc.createCDATASection(a.text));
 			annotationEls.appendChild(an);
 		}
