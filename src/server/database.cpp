@@ -263,7 +263,7 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 			};
 		}
 
-		if(passwordhash::check(password, passwordHash)) {
+		if(!passwordhash::check(password, passwordHash)) {
 			return RegisteredUser {
 				RegisteredUser::BadPass,
 				username,
@@ -314,7 +314,7 @@ QJsonObject Database::addAccount(const QString &username, const QString &passwor
 	QSqlQuery q(d->db);
 	q.prepare("INSERT INTO users (username, password, locked, flags) VALUES (?, ?, ?, ?)");
 	q.bindValue(0, username);
-	q.bindValue(1, password);
+	q.bindValue(1, passwordhash::hash(password));
 	q.bindValue(2, locked);
 	q.bindValue(3, flags.join(','));
 	if(q.exec()) {
