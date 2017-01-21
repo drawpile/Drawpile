@@ -55,7 +55,7 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 
 	if(typestr == "login")
 		r.type = LOGIN;
-	else if(typestr == "message")
+	else if(typestr == "msg")
 		r.type = MESSAGE;
 	else if(typestr == "alert")
 		r.type = ALERT;
