@@ -160,6 +160,10 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 		connect(titleBtn, &QPushButton::clicked, this, &SessionPage::changeTitle);
 		buttons->addWidget(titleBtn);
 
+		auto *messageBtn = new QPushButton(tr("Send message"));
+		connect(messageBtn, &QPushButton::clicked, this, &SessionPage::sendMessage);
+		buttons->addWidget(messageBtn);
+
 		buttons->addStretch(1);
 
 		layout->addLayout(buttons);
@@ -211,6 +215,7 @@ void SessionPage::terminateSession()
 void SessionPage::changePassword()
 {
 	QInputDialog *dlg = new QInputDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setTextEchoMode(QLineEdit::PasswordEchoOnEdit);
@@ -228,6 +233,7 @@ void SessionPage::changePassword()
 void SessionPage::changeTitle()
 {
 	QInputDialog *dlg = new QInputDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setInputMode(QInputDialog::TextInput);
 	dlg->setLabelText(tr("Change title"));
@@ -235,6 +241,22 @@ void SessionPage::changeTitle()
 	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
 		QJsonObject o;
 		o["title"] = dlg->textValue();
+		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
+		d->refreshTimer->start(); // reset refresh timer
+	});
+	dlg->show();
+}
+
+void SessionPage::sendMessage()
+{
+	QInputDialog *dlg = new QInputDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowModality(Qt::WindowModal);
+	dlg->setInputMode(QInputDialog::TextInput);
+	dlg->setLabelText(tr("Send message"));
+	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
+		QJsonObject o;
+		o["message"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
 		d->refreshTimer->start(); // reset refresh timer
 	});
@@ -279,7 +301,6 @@ void SessionPage::handleResponse(const QString &requestId, const JsonApiResult &
 
 	QJsonObject o = result.body.object();
 
-	qDebug() << o;
 	d->alias->setText(o["alias"].toString());
 	d->founder->setText(o["founder"].toString());
 	d->password->setText(o["hasPassword"].toBool() ? tr("Yes") : tr("No"));

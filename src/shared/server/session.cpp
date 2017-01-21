@@ -563,6 +563,9 @@ void Session::directToAll(protocol::MessagePtr msg)
 
 void Session::messageAll(const QString &message, bool alert)
 {
+	if(message.isEmpty())
+		return;
+
 	directToAll(protocol::MessagePtr(new protocol::Command(0,
 		(protocol::ServerReply {
 			alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
@@ -842,6 +845,11 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 
 	if(method == JsonApiMethod::Update) {
 		setSessionConfig(request);
+
+		if(request.contains("message"))
+			messageAll(request["message"].toString(), false);
+		if(request.contains("alert"))
+			messageAll(request["alert"].toString(), true);
 
 	} else if(method == JsonApiMethod::Delete) {
 		killSession();

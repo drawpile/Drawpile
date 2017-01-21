@@ -44,6 +44,7 @@ private slots:
 	void terminateSession();
 	void changePassword();
 	void changeTitle();
+	void sendMessage();
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
