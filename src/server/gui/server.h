@@ -68,7 +68,7 @@ public:
 	 * @param path path
 	 * @param request request body
 	 */
-	virtual void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request) = 0;
+	virtual void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request) = 0;
 
 	/**
 	 * @brief Refresh the session list

@@ -19,11 +19,13 @@
 
 #include "trayicon.h"
 #include "mainwindow.h"
+#include "remoteserver.h"
 
 #include <QMenu>
 #include <QApplication>
 #include <QPainter>
 #include <QFont>
+#include <QInputDialog>
 
 namespace server {
 namespace gui {
@@ -66,6 +68,7 @@ TrayIcon::TrayIcon()
 {
 	QMenu *menu = new QMenu;
 	menu->addAction(tr("Show"), &MainWindow::showDefaultInstance);
+	menu->addAction(tr("Remote..."), this, &TrayIcon::openRemote);
 	menu->addAction(tr("Quit"), qApp, &QApplication::exit);
 
 	setContextMenu(menu);
@@ -142,6 +145,20 @@ void TrayIcon::onActivated(QSystemTrayIcon::ActivationReason reason)
 		MainWindow::showDefaultInstance();
 		break;
 	default: break;
+	}
+}
+
+void TrayIcon::openRemote()
+{
+	QString url = QInputDialog::getText(nullptr, tr("Remote Admin"), tr("Remote server admin URL"));
+	if(!url.isEmpty()) {
+		QUrl remoteUrl(url);
+		if(remoteUrl.isValid()) {
+			RemoteServer *server = new RemoteServer(remoteUrl);
+			MainWindow *win = new MainWindow(server);
+			server->setParent(win);
+			win->show();
+		}
 	}
 }
 

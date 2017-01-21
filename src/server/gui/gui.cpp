@@ -19,6 +19,7 @@
 
 #include "mainwindow.h"
 #include "localserver.h"
+#include "remoteserver.h"
 #include "multiserver.h"
 #include "database.h"
 #include "trayicon.h"
@@ -106,6 +107,23 @@ bool startServer()
 	return true;
 }
 
+bool startRemote(const QString &address)
+{
+	QUrl url(address);
+	if(!url.isValid()) {
+		QMessageBox::critical(nullptr, QApplication::tr("Drawpile Server"), QApplication::tr("Invalid URL"));
+		return false;
+	}
+
+	RemoteServer *remote = new RemoteServer(url);
+
+	MainWindow *win = new MainWindow(remote);
+	remote->setParent(win);
+
+	win->show();
+	return true;
+}
+
 bool start() {
 	// Set up command line arguments
 	QCommandLineParser parser;
@@ -117,11 +135,21 @@ bool start() {
 	QCommandLineOption guiOption(QStringList() << "gui", "Run the graphical version.");
 	parser.addOption(guiOption);
 
+	// remote <address>
+	QCommandLineOption remoteOption(QStringList() << "remote", "Remote admin mode", "address");
+	parser.addOption(remoteOption);
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 
-	// Start the server
-	return startServer();
+	if(parser.isSet(remoteOption)) {
+		// Remote admin mode
+		return startRemote(parser.value(remoteOption));
+
+	} else {
+		// Normal server mode
+		return startServer();
+	}
 }
 
 }

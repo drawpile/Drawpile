@@ -42,7 +42,8 @@ struct JsonApiResult {
 		Ok=200,
 		BadRequest=400,
 		NotFound=404,
-		InternalError=505
+		InternalError=505,
+		ConnectionError=-1
 	};
 
 	Status status;

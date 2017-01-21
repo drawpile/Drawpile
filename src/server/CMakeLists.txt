@@ -26,6 +26,7 @@ if(SERVERGUI)
 		gui/mainwindow.cpp
 		gui/server.cpp
 		gui/localserver.cpp
+		gui/remoteserver.cpp
 		gui/sidebarmodel.cpp
 		gui/sidebaritemdelegate.cpp
 		gui/serversummarypage.cpp

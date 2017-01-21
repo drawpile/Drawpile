@@ -117,7 +117,7 @@ void LocalServer::stopServer()
 	QMetaObject::invokeMethod(m_server, "stop", Qt::QueuedConnection);
 }
 
-void LocalServer::makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request)
+void LocalServer::makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	// Note: we can call the internal server's JSON API even when the server is stopped
 	QMetaObject::invokeMethod(

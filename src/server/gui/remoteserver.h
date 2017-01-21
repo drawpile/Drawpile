@@ -17,49 +17,30 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOCALSERVER_H
-#define LOCALSERVER_H
+#ifndef REMOTESERVER_H
+#define REMOTESERVER_H
 
 #include "server.h"
 
+#include <QUrl>
+
 namespace server {
-
-class MultiServer;
-
 namespace gui {
 
-/**
- * @brief Abstract base class for server connectors
- */
-class LocalServer : public Server
+class RemoteServer : public Server
 {
 	Q_OBJECT
 public:
-	explicit LocalServer(MultiServer *server, QObject *parent=nullptr);
+	explicit RemoteServer(const QUrl &url, QObject *parent=nullptr);
 
-	bool isLocal() const override { return true; }
-	QString address() const override;
-	int port() const override;
-
-	// Local server specific:
-	bool isRunning() const;
-	void startServer();
-	void stopServer();
+	bool isLocal() const override { return false; }
+	QString address() const override { return m_baseurl.host(); }
+	int port() const override { return 27750; /* todo */ }
 
 	void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request) override;
 
-private slots:
-	void onStartStop();
-
-signals:
-	//! Server just started or stopped
-	void serverStateChanged(bool serverOn);
-
-	void serverError(const QString &message);
-
 private:
-	// Note: this runs in another thread!
-	MultiServer *m_server;
+	QUrl m_baseurl;
 };
 
 }

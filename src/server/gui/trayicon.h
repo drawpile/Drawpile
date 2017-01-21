@@ -40,6 +40,7 @@ public slots:
 
 private slots:
 	void onActivated(QSystemTrayIcon::ActivationReason reason);
+	void openRemote();
 
 private:
 	TrayIcon();
