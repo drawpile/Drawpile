@@ -329,6 +329,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::SessionSizeLimit,
 		config::SessionCountLimit,
 		config::EnablePersistence,
+		config::ArchiveMode,
 		config::IdleTimeLimit,
 		config::ServerTitle,
 		config::WelcomeMessage,

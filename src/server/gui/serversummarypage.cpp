@@ -21,6 +21,7 @@
 #include "subheaderwidget.h"
 #include "localserver.h"
 #include "../shared/server/serverconfig.h"
+#include "ui_settings.h"
 
 #include <QDebug>
 #include <QJsonObject>
@@ -31,6 +32,12 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QTimer>
+#include <QDialog>
+#include <QSettings>
+#include <QSystemTrayIcon>
+#include <QFileDialog>
+
+#include <functional>
 
 namespace server {
 namespace gui {
@@ -55,6 +62,7 @@ struct ServerSummaryPage::Private {
 	QSpinBox *maxSessions;
 	QCheckBox *persistence;
 	QCheckBox *privateUserList;
+	QCheckBox *archiveSessions;
 
 	QPushButton *startStopButton;
 	QJsonObject lastUpdate;
@@ -74,7 +82,8 @@ struct ServerSummaryPage::Private {
 		  idleTimeout(new QDoubleSpinBox),
 		  maxSessions(new QSpinBox),
 		  persistence(new QCheckBox),
-		  privateUserList(new QCheckBox)
+		  privateUserList(new QCheckBox),
+		  archiveSessions(new QCheckBox)
 	{
 		clientTimeout->setSuffix(" min");
 		clientTimeout->setSingleStep(0.5);
@@ -90,6 +99,7 @@ struct ServerSummaryPage::Private {
 
 		persistence->setText(ServerSummaryPage::tr("Allow sessions to persist without users"));
 		privateUserList->setText(ServerSummaryPage::tr("Do not include user list is session announcement"));
+		archiveSessions->setText(ServerSummaryPage::tr("Archive terminated sessions"));
 	}
 };
 
@@ -158,6 +168,7 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 		buttons->addWidget(d->startStopButton);
 
 		auto *settingsButton = new QPushButton(tr("Settings"));
+		connect(settingsButton, &QPushButton::clicked, this, &ServerSummaryPage::showSettingsDialog);
 		buttons->addWidget(settingsButton);
 
 		buttons->addStretch(1);
@@ -181,6 +192,7 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	addWidgets(d, layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
 	addWidgets(d, layout, row++, tr("Maximum sessions"), d->maxSessions, true);
 	addWidgets(d, layout, row++, QString(), d->persistence);
+	addWidgets(d, layout, row++, QString(), d->archiveSessions);
 	addWidgets(d, layout, row++, QString(), d->privateUserList);
 
 	layout->addItem(new QSpacerItem(1,1, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
@@ -250,6 +262,7 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->idleTimeout->setValue(o[config::IdleTimeLimit.name].toDouble() / 60);
 	d->maxSessions->setValue(o[config::SessionCountLimit.name].toInt());
 	d->persistence->setChecked(o[config::EnablePersistence.name].toBool());
+	d->archiveSessions->setChecked(o[config::ArchiveMode.name].toBool());
 	d->privateUserList->setChecked(o[config::PrivateUserList.name].toBool());
 }
 
@@ -263,6 +276,7 @@ void ServerSummaryPage::saveSettings()
 		{config::IdleTimeLimit.name, d->idleTimeout->value() * 60},
 		{config::SessionCountLimit.name, d->sessionSizeLimit->value()},
 		{config::EnablePersistence.name, d->persistence->isChecked()},
+		{config::ArchiveMode.name, d->archiveSessions->isChecked()},
 		{config::PrivateUserList.name, d->privateUserList->isChecked()}
 	};
 
@@ -278,6 +292,73 @@ void ServerSummaryPage::saveSettings()
 		qDebug() << "update" << update;
 		d->server->makeApiRequest(REQ_ID, JsonApiMethod::Update, QStringList() << "server", update);
 	}
+}
+
+static void pickFilePath(QWidget *parent, QLineEdit *target)
+{
+	QFileDialog *dlg = new QFileDialog(parent, QString(), QDir(target->text()).absolutePath());
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	QObject::connect(dlg, &QFileDialog::fileSelected, target, &QLineEdit::setText);
+	dlg->show();
+}
+
+void ServerSummaryPage::showSettingsDialog()
+{
+	Q_ASSERT(d->server->isLocal());
+
+	// Show a dialog for changing the local server's settings.
+	QDialog *dlg = new QDialog(parentWidget());
+	Ui_SettingsDialog ui;
+	ui.setupUi(dlg);
+
+	ui.restartAlert->setVisible(static_cast<const LocalServer*>(d->server)->isRunning());
+
+	connect(ui.pickCert, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.certFile));
+	connect(ui.pickKey, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.keyFile));
+
+	QSettings cfg;
+	cfg.beginGroup("ui");
+
+	ui.trayIcon->setChecked(cfg.value("trayicon", true).toBool());
+	ui.trayIcon->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
+
+	cfg.endGroup();
+
+	cfg.beginGroup("guiserver");
+	if(cfg.value("session-storage", "file").toString() == "file")
+		ui.storageFile->setChecked(true);
+	else
+		ui.storageMemory->setChecked(true);
+
+	ui.port->setValue(cfg.value("port", 27750).toInt());
+	ui.localAddress->setText(cfg.value("local-address").toString());
+
+	if(cfg.value("use-ssl", false).toBool()) {
+		if(cfg.value("force-ssl", false).toBool())
+			ui.tlsRequired->setChecked(true);
+		else
+			ui.tlsOn->setChecked(true);
+	} else {
+		ui.tlsOff->setChecked(true);
+	}
+	ui.certFile->setText(cfg.value("sslcert").toString());
+	ui.keyFile->setText(cfg.value("sslkey").toString());
+
+	connect(dlg, &QDialog::accepted, this, [ui]() {
+		QSettings cfg;
+		cfg.setValue("ui/trayicon", ui.trayIcon->isChecked());
+		cfg.beginGroup("guiserver");
+		cfg.setValue("session-storage", ui.storageFile->isChecked() ? "file" : "memory");
+		cfg.setValue("port", ui.port->value());
+		cfg.setValue("local-address", ui.localAddress->text());
+		cfg.setValue("use-ssl", !ui.tlsOff->isChecked());
+		cfg.setValue("force-ssl", ui.tlsRequired->isChecked());
+		cfg.setValue("sslcert", ui.certFile->text());
+		cfg.setValue("sslkey", ui.keyFile->text());
+	});
+
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->show();
 }
 
 }

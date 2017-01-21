@@ -18,7 +18,7 @@ set (
 if(SERVERGUI)
 	find_package(Qt5Widgets REQUIRED)
 
-	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui )
+	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui gui/settings.ui )
 
 	set(SOURCES ${SOURCES} ${UI_Headers}
 		gui/gui.cpp

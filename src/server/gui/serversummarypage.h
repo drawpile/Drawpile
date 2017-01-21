@@ -44,6 +44,8 @@ private slots:
 
 	void saveSettings();
 
+	void showSettingsDialog();
+
 private:
 	void refreshPage();
 

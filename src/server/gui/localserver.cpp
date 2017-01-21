@@ -23,6 +23,8 @@
 
 #include <QSettings>
 #include <QJsonObject>
+#include <QStandardPaths>
+#include <QDir>
 
 namespace server {
 namespace gui {
@@ -83,8 +85,16 @@ void LocalServer::startServer()
 		m_server->setMustSecure(false);
 	}
 
-	m_server->setAnnounceLocalAddr(cfg.value("local-addr").toString());
-	m_server->setRecordingPath(cfg.value("recording-path").toString());
+	m_server->setAnnounceLocalAddr(cfg.value("local-address").toString());
+
+	if(cfg.value("session-storage").toString() == "file") {
+		QDir sessionDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/sessions";
+		if(!sessionDir.mkpath(".")) {
+			qWarning("Couldn't create session directory");
+		} else {
+			m_server->setSessionDirectory(sessionDir);
+		}
+	}
 
 	// Start the server
 	quint16 port = cfg.value("port", 27750).toInt();
