@@ -166,13 +166,15 @@ signals:
 
 	/**
 	 * @brief A user just logged in to a session
+	 * @param count total number of logged in users (including the new one)
 	 */
-	void userLoggedIn();
+	void userLoggedIn(int count);
 
 	/**
 	 * @brief A user just disconnected
+	 * @param count total number of logged in users
 	 */
-	void userDisconnected();
+	void userDisconnected(int count);
 
 	/**
 	 * @brief Session with the given ID has just been destroyed

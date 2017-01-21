@@ -21,6 +21,7 @@
 #include "localserver.h"
 #include "multiserver.h"
 #include "database.h"
+#include "trayicon.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -30,6 +31,9 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 #include <QDir>
+#include <QSystemTrayIcon>
+#include <QSettings>
+#include <QMenu>
 
 namespace server {
 namespace gui {
@@ -80,8 +84,23 @@ bool startServer()
 
 	Q_ASSERT(server);
 
+	// The local server connector to use
+	LocalServer *localServer = new LocalServer(server);
+
+	QObject::connect(localServer, &LocalServer::serverError, [](const QString &error) {
+		QMessageBox::warning(nullptr, QApplication::tr("Drawpile Server"), error);
+	});
+
+	// Create the system tray menu
+	if(QSettings().value("ui/trayicon", true).toBool()) {
+		TrayIcon::showTrayIcon();
+	}
+
+	QObject::connect(server, &MultiServer::userCountChanged, TrayIcon::instance(), &TrayIcon::setNumber);
+	QObject::connect(localServer, &LocalServer::serverStateChanged, TrayIcon::instance(), &TrayIcon::setServerOn);
+
 	// Open the main window
-	MainWindow::setDefaultInstanceServer(new LocalServer(server));
+	MainWindow::setDefaultInstanceServer(localServer);
 	MainWindow::showDefaultInstance();
 
 	return true;

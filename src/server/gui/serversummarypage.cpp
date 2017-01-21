@@ -20,6 +20,7 @@
 #include "serversummarypage.h"
 #include "subheaderwidget.h"
 #include "localserver.h"
+#include "trayicon.h"
 #include "../shared/server/serverconfig.h"
 #include "ui_settings.h"
 
@@ -34,7 +35,6 @@
 #include <QTimer>
 #include <QDialog>
 #include <QSettings>
-#include <QSystemTrayIcon>
 #include <QFileDialog>
 
 #include <functional>
@@ -355,6 +355,11 @@ void ServerSummaryPage::showSettingsDialog()
 		cfg.setValue("force-ssl", ui.tlsRequired->isChecked());
 		cfg.setValue("sslcert", ui.certFile->text());
 		cfg.setValue("sslkey", ui.keyFile->text());
+
+		if(ui.trayIcon->isChecked())
+			TrayIcon::showTrayIcon();
+		else
+			TrayIcon::hideTrayIcon();
 	});
 
 	dlg->setAttribute(Qt::WA_DeleteOnClose);

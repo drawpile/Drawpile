@@ -51,8 +51,10 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
 	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
 	connect(m_sessions, &SessionServer::userLoggedIn, this, &MultiServer::printStatusUpdate);
-	connect(m_sessions, &SessionServer::userDisconnected, [this]() {
+	connect(m_sessions, &SessionServer::userLoggedIn, this, &MultiServer::userCountChanged);
+	connect(m_sessions, &SessionServer::userDisconnected, [this](int users) {
 		printStatusUpdate();
+		emit userCountChanged(users);
 		// The server will be fully stopped after all users have disconnected
 		if(m_state == STOPPING)
 			stop();
@@ -101,8 +103,10 @@ bool MultiServer::createServer()
 
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
 		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
-		if(!server->isValidCert())
+		if(!server->isValidCert()) {
+			emit serverStartError("Couldn't load TLS certificate");
 			return false;
+		}
 		m_server = server;
 
 	} else {
@@ -124,7 +128,9 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
 	if(!createServer()) {
-		emit serverStartError("Couldn't create server");
+		delete m_server;
+		m_server = nullptr;
+		m_state = STOPPED;
 		return false;
 	}
 
@@ -276,6 +282,8 @@ void MultiServer::stop() {
 	if(m_state == STOPPING) {
 		if(m_sessions->totalUsers() == 0) {
 			m_state = STOPPED;
+			delete m_server;
+			m_server = nullptr;
 			logger::info() << "Server stopped.";
 			emit serverStopped();
 		}

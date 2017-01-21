@@ -35,9 +35,15 @@ LocalServer::LocalServer(MultiServer *server, QObject *parent)
 	Q_ASSERT(server);
 
 	connect(server, &MultiServer::serverStartError, this, &LocalServer::serverError);
-	connect(server, &MultiServer::serverStarted, this, &LocalServer::serverStateChanged);
-	connect(server, &MultiServer::serverStopped, this, &LocalServer::serverStateChanged);
+	connect(server, &MultiServer::serverStartError, this, &LocalServer::onStartStop);
+	connect(server, &MultiServer::serverStarted, this, &LocalServer::onStartStop);
+	connect(server, &MultiServer::serverStopped, this, &LocalServer::onStartStop);
 	connect(server, &MultiServer::jsonApiResult, this, &LocalServer::onApiResponse);
+}
+
+void LocalServer::onStartStop()
+{
+	emit serverStateChanged(isRunning());
 }
 
 QString LocalServer::address() const

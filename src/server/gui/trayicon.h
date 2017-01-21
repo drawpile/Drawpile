@@ -17,49 +17,38 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOCALSERVER_H
-#define LOCALSERVER_H
+#ifndef TRAYICON_H
+#define TRAYICON_H
 
-#include "server.h"
+#include <QSystemTrayIcon>
 
 namespace server {
-
-class MultiServer;
-
 namespace gui {
 
-/**
- * @brief Abstract base class for server connectors
- */
-class LocalServer : public Server
+class TrayIcon : public QSystemTrayIcon
 {
 	Q_OBJECT
 public:
-	explicit LocalServer(MultiServer *server, QObject *parent=nullptr);
+	static TrayIcon *instance();
+	static bool isTrayIconVisible();
+	static void showTrayIcon();
+	static void hideTrayIcon();
 
-	bool isLocal() const override { return true; }
-	QString address() const override;
-	int port() const override;
-
-	// Local server specific:
-	bool isRunning() const;
-	void startServer();
-	void stopServer();
-
-	void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject request) override;
+public slots:
+	void setNumber(int userCount);
+	void setServerOn(bool on);
 
 private slots:
-	void onStartStop();
-
-signals:
-	//! Server just started or stopped
-	void serverStateChanged(bool serverOn);
-
-	void serverError(const QString &message);
+	void onActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
-	// Note: this runs in another thread!
-	MultiServer *m_server;
+	TrayIcon();
+	void updateIcon();
+
+	int m_number;
+	bool m_serverOn;
+	bool m_needIconRefresh;
+	QImage m_icon;
 };
 
 }

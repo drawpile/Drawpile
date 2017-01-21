@@ -202,7 +202,7 @@ void SessionServer::moveFromLobby(Session *session, Client *client)
 	// the session handles disconnect events from now on
 	disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 
-	emit userLoggedIn();
+	emit userLoggedIn(totalUsers());
 	emit sessionChanged(session->getDescription());
 }
 
@@ -215,7 +215,7 @@ void SessionServer::lobbyDisconnectedEvent(Client *client)
 	if(m_lobby.removeOne(client)) {
 		logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
 		disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
-		emit userDisconnected();
+		emit userDisconnected(totalUsers());
 	}
 }
 
@@ -245,7 +245,7 @@ void SessionServer::userDisconnectedEvent(Session *session)
 	else
 		emit sessionChanged(session->getDescription());
 
-	emit userDisconnected();
+	emit userDisconnected(totalUsers());
 }
 
 void SessionServer::cleanupSessions()

@@ -40,22 +40,23 @@ static QPointer<MainWindow> DEFAULT_INSTANCE;
 void MainWindow::setDefaultInstanceServer(Server *serverConnection)
 {
 	Q_ASSERT(serverConnection);
-	Q_ASSERT(!DEFAULT_INSTANCE);
+	Q_ASSERT(DEFAULT_INSTANCE.isNull());
 	DEFAULT_SERVER = serverConnection;
 }
 
 void MainWindow::showDefaultInstance()
 {
 	Q_ASSERT(DEFAULT_SERVER);
-	if(!DEFAULT_INSTANCE)
+	if(DEFAULT_INSTANCE.isNull())
 		DEFAULT_INSTANCE = new MainWindow(DEFAULT_SERVER);
 	DEFAULT_INSTANCE->show();
+	DEFAULT_INSTANCE->raise();
 }
 
 MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 	: QMainWindow(parent), m_server(serverConnection)
 {
-	m_server->setParent(this);
+	setAttribute(Qt::WA_DeleteOnClose);
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	QString windowTitle = tr("Drawpile Server");

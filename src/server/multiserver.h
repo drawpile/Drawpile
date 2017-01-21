@@ -105,6 +105,7 @@ signals:
 	void serverStarted();
 	void serverStopped();
 	void jsonApiResult(const QString &serverId, const JsonApiResult &result);
+	void userCountChanged(int count);
 
 private:
 	bool createServer();
