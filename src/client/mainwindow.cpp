@@ -2023,7 +2023,7 @@ void MainWindow::setupActions()
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_REPLACE); });
+	connect(fillfgarea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
 	connect(recolorarea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
 	connect(colorerasearea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
