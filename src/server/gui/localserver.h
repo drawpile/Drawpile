@@ -48,6 +48,9 @@ public:
 
 	void makeApiRequest(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request) override;
 
+	//! Show a "really quit?" dialog and exit if yes is chosen
+	void confirmQuit();
+
 private slots:
 	void onStartStop();
 

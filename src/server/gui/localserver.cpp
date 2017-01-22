@@ -25,6 +25,9 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QDir>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QApplication>
 
 namespace server {
 namespace gui {
@@ -127,6 +130,21 @@ void LocalServer::makeApiRequest(const QString &requestId, JsonApiMethod method,
 		Q_ARG(QStringList, path),
 		Q_ARG(QJsonObject, request)
 		);
+}
+
+void LocalServer::confirmQuit()
+{
+	QMessageBox box(QMessageBox::Question, tr("Drawpile Server"), tr("The server is still running."));
+	QPushButton *quit = box.addButton(QMessageBox::Yes);
+	QPushButton *cancel = box.addButton(QMessageBox::Cancel);
+	quit->setText(tr("Stop server"));
+
+	box.setDefaultButton(cancel);
+
+	if(box.exec() == QMessageBox::Yes) {
+		stopServer();
+		qApp->exit();
+	}
 }
 
 }

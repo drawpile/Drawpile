@@ -40,10 +40,13 @@ public:
 	//! Set the server connection to use for the default mainwindow instance
 	static void setDefaultInstanceServer(Server *serverConnection);
 
+	static Server *defaultInstanceServer();
+
 	//! Show the default MainWindow
 	static void showDefaultInstance();
 
-signals:
+protected:
+	void closeEvent(QCloseEvent *event) override;
 
 private slots:
 	void onPageSelect(const QModelIndex &index);

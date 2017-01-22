@@ -20,7 +20,8 @@
 #include "mainwindow.h"
 #include "sidebarmodel.h"
 #include "sidebaritemdelegate.h"
-#include "server.h"
+#include "localserver.h"
+#include "trayicon.h"
 
 #include <QDebug>
 #include <QAction>
@@ -30,6 +31,7 @@
 #include <QScrollArea>
 #include <QPointer>
 #include <QTimer>
+#include <QCloseEvent>
 
 namespace server {
 namespace gui {
@@ -42,6 +44,11 @@ void MainWindow::setDefaultInstanceServer(Server *serverConnection)
 	Q_ASSERT(serverConnection);
 	Q_ASSERT(DEFAULT_INSTANCE.isNull());
 	DEFAULT_SERVER = serverConnection;
+}
+
+Server *MainWindow::defaultInstanceServer()
+{
+	return DEFAULT_SERVER;
 }
 
 void MainWindow::showDefaultInstance()
@@ -138,6 +145,17 @@ void MainWindow::onPageSelect(const QModelIndex &index)
 	QWidget *page = pf->makePage(m_server);
 	m_pageArea->setWidget(page);
 	page->show();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	if(!TrayIcon::isTrayIconVisible() && m_server->isLocal()) {
+		LocalServer *srv = static_cast<LocalServer*>(m_server);
+		if(srv->isRunning()) {
+			event->ignore();
+			srv->confirmQuit();
+		}
+	}
 }
 
 }

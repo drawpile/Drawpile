@@ -19,6 +19,7 @@
 
 #include "trayicon.h"
 #include "mainwindow.h"
+#include "localserver.h"
 #include "remoteserver.h"
 
 #include <QMenu>
@@ -69,7 +70,7 @@ TrayIcon::TrayIcon()
 	QMenu *menu = new QMenu;
 	menu->addAction(tr("Show"), &MainWindow::showDefaultInstance);
 	menu->addAction(tr("Remote..."), this, &TrayIcon::openRemote);
-	menu->addAction(tr("Quit"), qApp, &QApplication::exit);
+	menu->addAction(tr("Quit"), this, &TrayIcon::quitServer);
 
 	setContextMenu(menu);
 
@@ -159,6 +160,16 @@ void TrayIcon::openRemote()
 			server->setParent(win);
 			win->show();
 		}
+	}
+}
+
+void TrayIcon::quitServer()
+{
+	LocalServer *srv = qobject_cast<LocalServer*>(MainWindow::defaultInstanceServer());
+	if(srv && srv->isRunning()) {
+		srv->confirmQuit();
+	} else {
+		qApp->exit();
 	}
 }
 

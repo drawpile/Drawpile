@@ -49,9 +49,8 @@ struct ServerSummaryPage::Private {
 	QLabel
 		*status,
 		*address,
-		*port,
-		*remoteAdmin,
-		*recording;
+		*port
+		;
 
 	QDoubleSpinBox *clientTimeout;
 	QCheckBox *allowGuests;
@@ -73,8 +72,6 @@ struct ServerSummaryPage::Private {
 		  status(new QLabel),
 		  address(new QLabel),
 		  port(new QLabel),
-		  remoteAdmin(new QLabel),
-		  recording(new QLabel),
 		  clientTimeout(new QDoubleSpinBox),
 		  allowGuests(new QCheckBox),
 		  allowGuestHosts(new QCheckBox),
@@ -155,8 +152,6 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	// General info about the server
 	addLabels(layout, row++, tr("Address"), d->address);
 	addLabels(layout, row++, tr("Port"), d->port);
-	addLabels(layout, row++, tr("Remote admin port"), d->remoteAdmin);
-	addLabels(layout, row++, tr("Recording"), d->recording);
 
 	// Server start/config buttons
 	if(server->isLocal()) {
@@ -232,15 +227,10 @@ void ServerSummaryPage::refreshPage()
 	if(d->server->isLocal()) {
 		const bool isRunning = static_cast<LocalServer*>(d->server)->isRunning();
 		d->status->setText(isRunning ? tr("Started") : tr("Stopped"));
-		d->remoteAdmin->setText("-");
-		d->recording->setText("???");
 
 		d->startStopButton->setText(isRunning ? tr("Stop") : tr("Start"));
 		d->startStopButton->setEnabled(true);
 
-	} else {
-		d->remoteAdmin->setText("port goes here");
-		d->recording->setText("unknown");
 	}
 
 	d->server->makeApiRequest(REQ_ID, JsonApiMethod::Get, QStringList() << "server", QJsonObject());

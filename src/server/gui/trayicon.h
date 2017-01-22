@@ -40,6 +40,7 @@ public slots:
 
 private slots:
 	void onActivated(QSystemTrayIcon::ActivationReason reason);
+	void quitServer();
 	void openRemote();
 
 private:
