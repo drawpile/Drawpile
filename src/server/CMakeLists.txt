@@ -22,6 +22,7 @@ if(SERVERGUI)
 
 	set(SOURCES ${SOURCES} ${UI_Headers}
 		gui/gui.cpp
+		gui/singleinstance.cpp
 		gui/trayicon.cpp
 		gui/mainwindow.cpp
 		gui/server.cpp

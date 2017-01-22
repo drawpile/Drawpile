@@ -23,6 +23,7 @@
 #include "multiserver.h"
 #include "database.h"
 #include "trayicon.h"
+#include "singleinstance.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -148,6 +149,13 @@ bool start() {
 
 	} else {
 		// Normal server mode
+		SingleInstance *guard = new SingleInstance;
+		if(!guard->tryStart()) {
+			qWarning("Another instance is already running");
+			return false;
+		}
+		QObject::connect(qApp, &QApplication::aboutToQuit, guard, &SingleInstance::deleteLater);
+
 		return startServer();
 	}
 }
