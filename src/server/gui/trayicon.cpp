@@ -74,7 +74,9 @@ TrayIcon::TrayIcon()
 
 	setContextMenu(menu);
 
+#ifndef Q_OS_MAC
 	connect(this, &TrayIcon::activated, this, &TrayIcon::onActivated);
+#endif
 
 	m_icon = QImage(":/icons/icon.svg", "SVG");
 }

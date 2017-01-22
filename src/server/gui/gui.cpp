@@ -156,6 +156,10 @@ bool start() {
 		}
 		QObject::connect(qApp, &QApplication::aboutToQuit, guard, &SingleInstance::deleteLater);
 
+#ifdef Q_OS_MAC
+		qApp->setQuitOnLastWindowClosed(false);
+#endif
+
 		return startServer();
 	}
 }
