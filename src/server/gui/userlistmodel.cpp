@@ -74,6 +74,9 @@ QVariant UserListModel::data(const QModelIndex &index, int role) const
 	if(!index.isValid() || index.row()<0 || index.row()>=m_users.size())
 		return QVariant();
 
+	if(role == Qt::UserRole)
+		return m_users.at(index.row()).toObject()["id"].toInt();
+
 	if(role != Qt::DisplayRole)
 		return QVariant();
 

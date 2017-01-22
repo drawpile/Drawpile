@@ -45,10 +45,13 @@ private slots:
 	void changePassword();
 	void changeTitle();
 	void sendMessage();
+	void kickUser();
+	void sendUserMessage();
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
 	void refreshPage();
+	int selectedUser() const;
 
 	Private *d;
 };

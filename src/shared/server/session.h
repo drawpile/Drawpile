@@ -359,6 +359,13 @@ public:
 	 */
 	QList<uint8_t> updateOwnership(QList<uint8_t> ids);
 
+	/**
+	 * @brief Grant or revoke OP status of a user
+	 * @param id user ID
+	 * @param op new status
+	 */
+	void changeOpStatus(int id, bool op);
+
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
 

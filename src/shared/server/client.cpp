@@ -83,12 +83,46 @@ QJsonObject Client::description(bool includeSession) const
 	u["ip"] = peerAddress().toString();
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
+	u["muted"] = isMuted();
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
 	if(includeSession && m_session)
 		u["session"] = m_session->idString();
 	return u;
 }
+
+JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Delete) {
+		disconnectKick("server operator");
+		QJsonObject o;
+		o["status"] = "ok";
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
+
+	} else if(method == JsonApiMethod::Update) {
+		QString msg = request["message"].toString();
+		if(!msg.isEmpty())
+			sendSystemChat(msg);
+
+		if(request.contains("op")) {
+			const bool op = request["op"].toBool();
+			if(m_isOperator != op && m_session) {
+				m_session->changeOpStatus(id(), op);
+			}
+		}
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
+
+	} else if(method == JsonApiMethod::Get) {
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
+
+	} else {
+		return JsonApiBadMethod();
+	}
+}
+
 void Client::setSession(Session *session)
 {
 	Q_ASSERT(session);

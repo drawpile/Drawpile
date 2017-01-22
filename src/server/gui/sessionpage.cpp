@@ -49,6 +49,7 @@ struct SessionPage::Private {
 	QCheckBox *closed, *nsfm, *persistent;
 
 	UserListModel *userlist;
+	QTableView *userview;
 
 	QTimer *saveTimer, *refreshTimer;
 	QJsonObject lastUpdate;
@@ -172,14 +173,29 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	{
 		layout->addWidget(new SubheaderWidget(tr("Users"), 2));
 
-		QTableView *userview = new QTableView;
-		userview->setModel(d->userlist);
-		userview->setColumnHidden(0, true);
-		userview->horizontalHeader()->setStretchLastSection(true);
-		userview->setSelectionMode(QTableView::SingleSelection);
-		userview->setSelectionBehavior(QTableView::SelectRows);
+		d->userview = new QTableView;
+		d->userview->setModel(d->userlist);
+		d->userview->setColumnHidden(0, true);
+		d->userview->horizontalHeader()->setStretchLastSection(true);
+		d->userview->setSelectionMode(QTableView::SingleSelection);
+		d->userview->setSelectionBehavior(QTableView::SelectRows);
 
-		layout->addWidget(userview);
+		layout->addWidget(d->userview);
+	}
+
+	{
+		auto *buttons = new QHBoxLayout;
+
+		auto *kickBtn = new QPushButton(tr("Kick"));
+		connect(kickBtn, &QPushButton::clicked, this, &SessionPage::kickUser);
+		buttons->addWidget(kickBtn);
+
+		auto *messageBtn = new QPushButton(tr("Send message"));
+		connect(messageBtn, &QPushButton::clicked, this, &SessionPage::sendUserMessage);
+		buttons->addWidget(messageBtn);
+
+		buttons->addStretch(1);
+		layout->addLayout(buttons);
 	}
 
 	layout->addStretch(1);
@@ -261,6 +277,43 @@ void SessionPage::sendMessage()
 		d->refreshTimer->start(); // reset refresh timer
 	});
 	dlg->show();
+}
+
+void SessionPage::kickUser()
+{
+	const int id = selectedUser();
+	if(id>0) {
+		d->server->makeApiRequest("kickuser", JsonApiMethod::Delete, QStringList() << "sessions" << d->id << QString::number(id), QJsonObject());
+	}
+}
+
+void SessionPage::sendUserMessage()
+{
+	const int id = selectedUser();
+	if(id<1)
+		return;
+
+	QInputDialog *dlg = new QInputDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowModality(Qt::WindowModal);
+	dlg->setInputMode(QInputDialog::TextInput);
+	dlg->setLabelText(tr("Send message"));
+	connect(dlg, &QInputDialog::accepted, [dlg, id, this]() {
+		QJsonObject o;
+		o["message"] = dlg->textValue();
+		d->server->makeApiRequest("kickuser", JsonApiMethod::Update, QStringList() << "sessions" << d->id << QString::number(id), o);
+	});
+	dlg->show();
+
+}
+
+int SessionPage::selectedUser() const
+{
+	const QModelIndexList sel = d->userview->selectionModel()->selectedIndexes();
+	if(sel.isEmpty())
+		return 0;
+
+	return sel.at(0).data(Qt::UserRole).toInt();
 }
 
 void SessionPage::refreshPage()

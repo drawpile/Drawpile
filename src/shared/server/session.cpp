@@ -364,6 +364,20 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids)
 	return truelist;
 }
 
+void Session::changeOpStatus(int id, bool op)
+{
+	QList<uint8_t> ids;
+	for(Client *c : m_clients) {
+		if(c->id() == id)
+			c->setOperator(op);
+
+		if(c->isOperator())
+			ids << c->id();
+	}
+
+	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+}
+
 void Session::sendUpdatedSessionProperties()
 {
 	protocol::ServerReply props;
@@ -586,10 +600,7 @@ void Session::ensureOperatorExists()
 	}
 
 	if(!hasOp && !m_clients.isEmpty()) {
-		QList<uint8_t> ids;
-		ids << m_clients.first()->id();
-		updateOwnership(ids);
-		addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+		changeOpStatus(m_clients.first()->id(), true);
 	}
 }
 
@@ -839,9 +850,20 @@ QJsonObject Session::getDescription(bool full) const
 
 JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	// TODO user management
-	if(!path.isEmpty())
+	if(!path.isEmpty()) {
+		QString head;
+		QStringList tail;
+		std::tie(head, tail) = popApiPath(path);
+
+		int userId = head.toInt();
+		if(userId>0) {
+			Client *c = getClientById(userId);
+			if(c)
+				c->callJsonApi(method, tail, request);
+		}
+
 		return JsonApiNotFound();
+	}
 
 	if(method == JsonApiMethod::Update) {
 		setSessionConfig(request);
