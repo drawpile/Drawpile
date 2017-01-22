@@ -561,10 +561,10 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 		}
 
 		if(_enableTouchPinch && (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
-			setZoom(_gestureStartZoom * pinch->scaleFactor());
+			setZoom(_gestureStartZoom * pinch->totalScaleFactor());
 
 		if(_enableTouchTwist && (pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
-			setRotation(_gestureStartAngle + pinch->rotationAngle());
+			setRotation(_gestureStartAngle + pinch->totalRotationAngle());
 	}
 }
 
