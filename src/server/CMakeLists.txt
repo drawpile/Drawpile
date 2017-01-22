@@ -19,8 +19,9 @@ if(SERVERGUI)
 	find_package(Qt5Widgets REQUIRED)
 
 	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui gui/settings.ui )
+	qt5_add_resources( QtResource gui/res/resources.qrc )
 
-	set(SOURCES ${SOURCES} ${UI_Headers}
+	set(SOURCES ${SOURCES} ${UI_Headers} ${QtResource}
 		gui/gui.cpp
 		gui/singleinstance.cpp
 		gui/trayicon.cpp

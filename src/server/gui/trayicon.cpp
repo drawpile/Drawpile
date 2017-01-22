@@ -76,7 +76,7 @@ TrayIcon::TrayIcon()
 
 	connect(this, &TrayIcon::activated, this, &TrayIcon::onActivated);
 
-	m_icon = QImage("/home/calle/src/drawpile/desktop/drawpile-32x32.png");
+	m_icon = QImage(":/icons/icon.svg", "SVG");
 }
 
 void TrayIcon::setNumber(int num)
