@@ -695,6 +695,9 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 		m_publicListingClient->setLocalAddress(m_config->getConfigString(config::LocalAddress));
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
+		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
+			this->messageAll(message, false);
+		});
 
 		QTimer *refreshTimer = new QTimer(this);
 		connect(refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
