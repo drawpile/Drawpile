@@ -132,6 +132,7 @@ set (
 	widgets/userlistwidget.cpp 
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
+	widgets/presetpie.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 

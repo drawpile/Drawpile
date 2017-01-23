@@ -78,6 +78,7 @@
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
 #include "widgets/userlistwidget.h"
+#include "widgets/presetpie.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
@@ -257,6 +258,21 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_dock_toolsettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 	
+	// Create the tool preset pie menu
+	m_presetPie = new widgets::PresetPie(_view);
+	m_presetPie->hide();
+	m_presetPie->resize(448, 448);
+
+	connect(_view, &widgets::CanvasView::rightClicked, m_presetPie, &widgets::PresetPie::showAt);
+	connect(_dock_colors, &docks::ColorBox::colorChanged, m_presetPie, &widgets::PresetPie::setColor);
+	connect(_dock_toolsettings, &docks::ToolSettings::foregroundColorChanged, m_presetPie, &widgets::PresetPie::setColor);
+	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_colors, &docks::ColorBox::setColor);
+	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_presetPie, &widgets::PresetPie::presetRequest, [this](int slice) {
+		m_presetPie->setToolPreset(slice, _dock_toolsettings->getCurrentToolProperties());
+	});
+	connect(m_presetPie, &widgets::PresetPie::toolSelected, _dock_toolsettings, &docks::ToolSettings::setToolAndProps);
+
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
 	chatsplitter->setChildrenCollapsible(false);
@@ -2364,6 +2380,15 @@ void MainWindow::setupActions()
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
+
+	//
+	// Tool preset pie menu
+	//
+	QAction *showPie = makeAction("showpiemenu", nullptr, tr("Show Preset Pie Menu"), QString(), QKeySequence("z"));
+	connect(showPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::showAtCursor);
+
+	QAction *assignPie = makeAction("assignpreset", nullptr, tr("Assign Tool To Preset Pie Menu"), QString(), QKeySequence("x"));
+	connect(assignPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::assignSelectedPreset);
 
 	//
 	// Quick tool change slots

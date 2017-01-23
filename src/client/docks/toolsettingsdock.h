@@ -92,6 +92,9 @@ public slots:
 	//! Set the tool for which settings are shown
 	void setTool(tools::Tool::Type tool);
 
+	//! Select a tool and set its properties too
+	void setToolAndProps(const tools::ToolProperties &tool);
+
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 

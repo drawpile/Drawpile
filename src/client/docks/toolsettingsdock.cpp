@@ -181,6 +181,14 @@ void ToolSettings::setTool(tools::Tool::Type tool) {
 	selectTool(tool);
 }
 
+void ToolSettings::setToolAndProps(const tools::ToolProperties &tool)
+{
+	if(tool.toolType()<0)
+		return;
+	setTool(tools::Tool::Type(tool.toolType()));
+	_currenttool->restoreToolSettings(tool);
+}
+
 void ToolSettings::setPreviousTool()
 {
 	saveCurrentTool();

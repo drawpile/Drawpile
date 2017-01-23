@@ -50,16 +50,23 @@ void ToolProperties::save(QSettings &cfg) const
 {
 	Q_ASSERT(!cfg.group().isEmpty());
 
+	// Remove any old values that may interfere
+	cfg.remove(QString());
+
 	QHashIterator<QString, QVariant> i(m_props);
 	while(i.hasNext()) {
 		i.next();
 		cfg.setValue(i.key(), i.value());
 	}
+	cfg.setValue("tooltype", m_tool);
 }
 
 ToolProperties ToolProperties::load(const QSettings &cfg)
 {
-	ToolProperties tp;
+	bool ok;
+	ToolProperties tp(cfg.value("tooltype", -1).toInt(&ok));
+	if(!ok)
+		tp.m_tool = -1;
 
 	for(const QString &key : cfg.allKeys()) {
 		tp.m_props[key] = cfg.value(key);

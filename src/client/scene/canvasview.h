@@ -34,7 +34,6 @@ namespace drawingboard {
 
 namespace widgets {
 
-
 /**
  * @brief Editor view
  * The editor view is a customized QGraphicsView that displays
@@ -102,6 +101,8 @@ class CanvasView : public QGraphicsView
 		void quickAdjust(qreal value);
 
 		void viewRectChange(const QPolygonF &viewport);
+
+		void rightClicked(const QPoint &p);
 
 	public slots:
 		//! Set the size of the brush preview outline

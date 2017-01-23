@@ -153,3 +153,15 @@ QKeySequence CustomShortcutModel::getDefaultShortcut(const QString &name)
 {
 	return _customizableActions[name].defaultShortcut;
 }
+
+QKeySequence CustomShortcutModel::getShorcut(const QString &name)
+{
+	QSettings cfg;
+	cfg.beginGroup("settings/shortcuts");
+	if(cfg.contains(name))
+		return cfg.value(name).value<QKeySequence>();
+	else if(_customizableActions.contains(name))
+		return _customizableActions[name].defaultShortcut;
+	else
+		return QKeySequence();
+}
