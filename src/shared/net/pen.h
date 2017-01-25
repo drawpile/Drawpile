@@ -39,8 +39,8 @@ Q_DECLARE_TYPEINFO(protocol::PenPoint, Q_PRIMITIVE_TYPE);
 
 namespace protocol {
 
-static const uint8_t TOOL_MODE_SUBPIXEL = (1<<0);
-static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
+static const uint8_t TOOL_MODE_SUBPIXEL = 0x01;
+static const uint8_t TOOL_MODE_INCREMENTAL = 0x02;
 
 /**
  * @brief Tool setting change command
@@ -63,29 +63,30 @@ public:
 		uint8_t resmudge
 		)
 		: Message(MSG_TOOLCHANGE, ctx),
-		_layer(layer), _blend(blend), _mode(mode),
-		_spacing(spacing), _color(color),
-		_hard_h(hard_h), _hard_l(hard_l), _size_h(size_h), _size_l(size_l),
-		_opacity_h(opacity_h), _opacity_l(opacity_l),
-		_smudge_h(smudge_h), _smudge_l(smudge_l), _resmudge(resmudge)
+		m_layer(layer), m_blend(blend), m_mode(mode),
+		m_spacing(spacing), m_color(color),
+		m_hard_h(hard_h), m_hard_l(hard_l), m_size_h(size_h), m_size_l(size_l),
+		m_opacity_h(opacity_h), m_opacity_l(opacity_l),
+		m_smudge_h(smudge_h), m_smudge_l(smudge_l), m_resmudge(resmudge)
 	{}
 
 	static ToolChange *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static ToolChange *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t layer() const { return _layer; }
-	uint8_t blend() const { return _blend; }
-	uint8_t mode() const { return _mode; }
-	uint8_t spacing() const { return _spacing; }
-	uint32_t color() const { return _color; }
-	uint8_t hard_h() const { return _hard_h; }
-	uint8_t hard_l() const { return _hard_l; }
-	uint8_t size_h() const { return _size_h; }
-	uint8_t size_l() const { return _size_l; }
-	uint8_t opacity_h() const { return _opacity_h; }
-	uint8_t opacity_l() const { return _opacity_l; }
-	uint8_t smudge_h() const { return _smudge_h; }
-	uint8_t smudge_l() const { return _smudge_l; }
-	uint8_t resmudge() const { return _resmudge; }
+	uint16_t layer() const { return m_layer; }
+	uint8_t blend() const { return m_blend; }
+	uint8_t mode() const { return m_mode; }
+	uint8_t spacing() const { return m_spacing; }
+	uint32_t color() const { return m_color; }
+	uint8_t hard_h() const { return m_hard_h; }
+	uint8_t hard_l() const { return m_hard_l; }
+	uint8_t size_h() const { return m_size_h; }
+	uint8_t size_l() const { return m_size_l; }
+	uint8_t opacity_h() const { return m_opacity_h; }
+	uint8_t opacity_l() const { return m_opacity_l; }
+	uint8_t smudge_h() const { return m_smudge_h; }
+	uint8_t smudge_l() const { return m_smudge_l; }
+	uint8_t resmudge() const { return m_resmudge; }
 
 	// The client resends ToolChange only if it has changed since
 	// the last time it was sent. If the ToolChange is undoable,
@@ -93,25 +94,28 @@ public:
 	// To keep things simple, we just don't undo ToolChanges.
 	bool isUndoable() const { return false; }
 
+	QString messageName() const override { return QStringLiteral("brush"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _layer;
-	uint8_t _blend;
-	uint8_t _mode;
-	uint8_t _spacing;
-	uint32_t _color;
-	uint8_t _hard_h;
-	uint8_t _hard_l;
-	uint8_t _size_h;
-	uint8_t _size_l;
-	uint8_t _opacity_h;
-	uint8_t _opacity_l;
-	uint8_t _smudge_h;
-	uint8_t _smudge_l;
-	uint8_t _resmudge;
+	uint16_t m_layer;
+	uint8_t m_blend;
+	uint8_t m_mode;
+	uint8_t m_spacing;
+	uint32_t m_color;
+	uint8_t m_hard_h;
+	uint8_t m_hard_l;
+	uint8_t m_size_h;
+	uint8_t m_size_l;
+	uint8_t m_opacity_h;
+	uint8_t m_opacity_l;
+	uint8_t m_smudge_h;
+	uint8_t m_smudge_l;
+	uint8_t m_resmudge;
 };
 
 typedef QVector<PenPoint> PenPointVector;
@@ -128,7 +132,7 @@ public:
 
 	PenMove(uint8_t ctx, const PenPointVector &points)
 		: Message(MSG_PEN_MOVE, ctx),
-		_points(points)
+		m_points(points)
 	{
 		Q_ASSERT(!points.isEmpty());
 		Q_ASSERT(points.size() <= MAX_POINTS);
@@ -136,16 +140,20 @@ public:
 	
 	static PenMove *deserialize(uint8_t ctx, const uchar *data, uint len);
 
-	const PenPointVector &points() const { return _points; }
-	PenPointVector &points() { return _points; }
+	const PenPointVector &points() const { return m_points; }
+	PenPointVector &points() { return m_points; }
+
+	QString toString() const override;
+	QString messageName() const override { return QStringLiteral("penmove"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
-	PenPointVector _points;
+	PenPointVector m_points;
 };
 
 /**
@@ -157,6 +165,8 @@ private:
 class PenUp : public ZeroLengthMessage<PenUp> {
 public:
 	PenUp(uint8_t ctx) : ZeroLengthMessage(MSG_PEN_UP, ctx) {}
+
+	QString messageName() const override { return QStringLiteral("penup"); }
 };
 
 }

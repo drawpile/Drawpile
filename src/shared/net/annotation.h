@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,11 @@ namespace protocol {
 class AnnotationCreate : public Message {
 public:
 	AnnotationCreate(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
-		: Message(MSG_ANNOTATION_CREATE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
+		: Message(MSG_ANNOTATION_CREATE, ctx), m_id(id), m_x(x), m_y(y), m_w(w), m_h(h)
 	{}
 
 	static AnnotationCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static AnnotationCreate *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	/**
 	 * @brief The ID of the newly created annotation
@@ -48,12 +49,12 @@ public:
 	 * The same rules apply as in layer creation.
 	 * @return annotation ID number
 	 */
-	uint16_t id() const { return _id; }
+	uint16_t id() const { return m_id; }
 
-	int32_t x() const { return _x; }
-	int32_t y() const { return _y; }
-	uint16_t w() const { return _w; }
-	uint16_t h() const { return _h; }
+	int32_t x() const { return m_x; }
+	int32_t y() const { return m_y; }
+	uint16_t w() const { return m_w; }
+	uint16_t h() const { return m_h; }
 
 	/**
 	 * @brief Check if the ID's namespace portition matches the context ID
@@ -62,16 +63,19 @@ public:
 	 */
 	bool isValidId() const { return (id()>>8) == contextId(); }
 
+	QString messageName() const override { return QStringLiteral("newannotation"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	int32_t _x;
-	int32_t _y;
-	uint16_t _w;
-	uint16_t _h;
+	uint16_t m_id;
+	int32_t m_x;
+	int32_t m_y;
+	uint16_t m_w;
+	uint16_t m_h;
 };
 
 /**
@@ -80,27 +84,31 @@ private:
 class AnnotationReshape : public Message {
 public:
 	AnnotationReshape(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
-		: Message(MSG_ANNOTATION_RESHAPE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
+		: Message(MSG_ANNOTATION_RESHAPE, ctx), m_id(id), m_x(x), m_y(y), m_w(w), m_h(h)
 	{}
 
 	static AnnotationReshape *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static AnnotationReshape *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
-	int32_t x() const { return _x; }
-	int32_t y() const { return _y; }
-	uint16_t w() const { return _w; }
-	uint16_t h() const { return _h; }
+	uint16_t id() const { return m_id; }
+	int32_t x() const { return m_x; }
+	int32_t y() const { return m_y; }
+	uint16_t w() const { return m_w; }
+	uint16_t h() const { return m_h; }
+
+	QString messageName() const override { return QStringLiteral("reshapeannotation"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	int32_t _x;
-	int32_t _y;
-	uint16_t _w;
-	uint16_t _h;
+	uint16_t m_id;
+	int32_t m_x;
+	int32_t m_y;
+	uint16_t m_w;
+	uint16_t m_h;
 };
 
 /**
@@ -125,6 +133,7 @@ public:
 	{}
 
 	static AnnotationEdit *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static AnnotationEdit *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint16_t id() const { return m_id; }
 	uint32_t bg() const { return m_bg; }
@@ -132,9 +141,12 @@ public:
 	uint8_t border() const { return m_border; } /* reserved for future use */
 	QString text() const { return QString::fromUtf8(m_text); }
 
+	QString messageName() const override { return QStringLiteral("editannotation"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	uint16_t m_id;
@@ -156,19 +168,23 @@ private:
 class AnnotationDelete : public Message {
 public:
 	AnnotationDelete(uint8_t ctx, uint16_t id)
-		: Message(MSG_ANNOTATION_DELETE, ctx), _id(id)
+		: Message(MSG_ANNOTATION_DELETE, ctx), m_id(id)
 	{}
 
 	static AnnotationDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static AnnotationDelete *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
+	uint16_t id() const { return m_id; }
+
+	QString messageName() const override { return QStringLiteral("deleteannotation"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
+	uint16_t m_id;
 };
 
 }

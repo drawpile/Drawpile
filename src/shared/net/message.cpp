@@ -16,13 +16,14 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QObject>
-#include <QtEndian>
-
 #include "message.h"
 #include "control.h"
 #include "meta.h"
 #include "opaque.h"
+
+#include <QObject>
+#include <QtEndian>
+#include <QRegExp>
 
 namespace protocol {
 
@@ -118,6 +119,46 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 	// Unknown message type!
 	qWarning("Unhandled message type %d", type);
 	return nullptr;
+}
+
+QString Message::toString() const
+{
+	const Kwargs kw = kwargs();
+	QString str = QStringLiteral("%1 %2").arg(contextId()).arg(messageName());
+
+	// Add non-multiline keyword args
+	const QRegExp space("\\s");
+	bool hasMultiline = false;
+	QHashIterator<QString,QString> i(kw);
+	while(i.hasNext()) {
+		i.next();
+		if(i.value().contains(space)) {
+			hasMultiline = true;
+		} else {
+			str = str + ' ' + i.key() + '=' + i.value();
+		}
+	}
+
+	// Add multiline keyword args
+	if(hasMultiline) {
+		str += " {";
+		QHashIterator<QString,QString> i(kw);
+		i.toFront();
+		do {
+			i.next();
+			if(i.value().contains(space)) {
+				QStringList lines = i.value().split('\n');
+				for(const QString line : lines) {
+					str += "\n\t";
+					str += i.key();
+					str += "=";
+					str += line;
+				}
+			}
+		} while(i.hasNext());
+		str += "\n}";
+	}
+	return str;
 }
 
 }

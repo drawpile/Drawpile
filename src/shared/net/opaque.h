@@ -48,10 +48,13 @@ public:
 	 */
 	Message *decode() const;
 
+	QString messageName() const override { return QStringLiteral("_opaque"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
 	uchar *m_payload;

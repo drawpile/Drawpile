@@ -136,6 +136,11 @@ QJsonDocument Command::doc() const
 	return d;
 }
 
+QString Command::toString() const
+{
+	return QStringLiteral("# Command");
+}
+
 Disconnect *Disconnect::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<1)
@@ -157,6 +162,11 @@ int Disconnect::payloadLength() const
 	return 1 + _message.length();
 }
 
+QString Disconnect::toString() const
+{
+	return QStringLiteral("# Disconnected: ") + message();
+}
+
 Ping *Ping::deserialize(uint8_t ctx, const uchar *data, int len)
 {
 	if(len!=1)
@@ -171,8 +181,14 @@ int Ping::payloadLength() const
 
 int Ping::serializePayload(uchar *data) const
 {
-	*data = _isPong;
+	*data = m_isPong;
 	return 1;
 }
 
+QString Ping::toString() const
+{
+	return QStringLiteral("# ") + messageName();
 }
+
+}
+

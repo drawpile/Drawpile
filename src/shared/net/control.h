@@ -86,9 +86,13 @@ public:
 	ServerCommand cmd() const { return ServerCommand::fromJson(doc()); }
 	ServerReply reply() const { return ServerReply::fromJson(doc()); }
 
+	QString toString() const override;
+	QString messageName() const override { return QStringLiteral("command"); }
+
 protected:
-    int payloadLength() const;
-	int serializePayload(uchar *data) const;
+    int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
 	QByteArray m_msg;
@@ -126,9 +130,13 @@ public:
 	 */
 	QString message() const { return QString::fromUtf8(_message); }
 
+	QString toString() const override;
+	QString messageName() const override { return QStringLiteral("disconnect"); }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
 	Reason _reason;
@@ -145,18 +153,22 @@ private:
  */
 class Ping : public Message {
 public:
-	Ping(uint8_t ctx, bool pong) : Message(MSG_PING, ctx), _isPong(pong) { }
+	Ping(uint8_t ctx, bool pong) : Message(MSG_PING, ctx), m_isPong(pong) { }
 
 	static Ping *deserialize(uint8_t ctx, const uchar *data, int len);
 
-	bool isPong() const { return _isPong; }
+	bool isPong() const { return m_isPong; }
+
+	QString toString() const override;
+	QString messageName() const override { return m_isPong ? QStringLiteral("pong") : QStringLiteral("ping"); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
-	bool _isPong;
+	bool m_isPong;
 };
 
 }

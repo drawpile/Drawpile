@@ -45,6 +45,8 @@ public:
 	Type internalType() const { return m_type; }
 	int value() const { return m_value; }
 
+	QString messageName() const { return QStringLiteral("_internal_"); }
+
 protected:
     int payloadLength() const override { return 0; }
 	int serializePayload(uchar*) const override { qWarning("Tried to serialize MSG_INTERNAL"); return 0; }
@@ -52,6 +54,7 @@ protected:
 		const ClientInternal &mm = static_cast<const ClientInternal&>(m);
 		return m_type == mm.m_type && m_value == mm.m_value;
 	}
+	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
 	ClientInternal(Type type, int value) : Message(MSG_INTERNAL, 0), m_type(type), m_value(value) {}

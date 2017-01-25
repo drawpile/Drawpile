@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,34 +50,38 @@ public:
 	static const int MAX_LEN = 0xffff - 19;
 
 	PutImage(uint8_t ctx, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &image)
-	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _mode(mode), _x(x), _y(y), _w(w), _h(h), _image(image)
+	: Message(MSG_PUTIMAGE, ctx), m_layer(layer), m_mode(mode), m_x(x), m_y(y), m_w(w), m_h(h), m_image(image)
 	{
 		Q_ASSERT(image.length() <= MAX_LEN);
 	}
 
 	static PutImage *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static PutImage *fromText(uint8_t ctx, const Kwargs &kwargs);
 	
-	uint16_t layer() const { return _layer; }
-	uint8_t blendmode() const { return _mode; }
-	uint32_t x() const { return _x; }
-	uint32_t y() const { return _y; }
-	uint32_t width() const { return _w; }
-	uint32_t height() const { return _h; }
-	const QByteArray &image() const { return _image; }
+	uint16_t layer() const { return m_layer; }
+	uint8_t blendmode() const { return m_mode; }
+	uint32_t x() const { return m_x; }
+	uint32_t y() const { return m_y; }
+	uint32_t width() const { return m_w; }
+	uint32_t height() const { return m_h; }
+	const QByteArray &image() const { return m_image; }
+
+	QString messageName() const override { return QStringLiteral("putimage"); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 	bool payloadEquals(const Message &m) const;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _layer;
-	uint8_t _mode;
-	uint32_t _x;
-	uint32_t _y;
-	uint32_t _w;
-	uint32_t _h;
-	QByteArray _image;
+	uint16_t m_layer;
+	uint8_t m_mode;
+	uint32_t m_x;
+	uint32_t m_y;
+	uint32_t m_w;
+	uint32_t m_h;
+	QByteArray m_image;
 };
 
 /**
@@ -88,32 +92,36 @@ private:
 class FillRect : public Message {
 public:
 	FillRect(uint8_t ctx, uint16_t layer, uint8_t blend, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
-		: Message(MSG_FILLRECT, ctx), _layer(layer), _blend(blend), _x(x), _y(y), _w(w), _h(h), _color(color)
+		: Message(MSG_FILLRECT, ctx), m_layer(layer), m_blend(blend), m_x(x), m_y(y), m_w(w), m_h(h), m_color(color)
 	{
 	}
 
 	static FillRect *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static FillRect *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t layer() const { return _layer; }
-	uint8_t blend() const { return _blend; }
-	uint32_t x() const { return _x; }
-	uint32_t y() const { return _y; }
-	uint32_t width() const { return _w; }
-	uint32_t height() const { return _h; }
-	uint32_t color() const { return _color; }
+	uint16_t layer() const { return m_layer; }
+	uint8_t blend() const { return m_blend; }
+	uint32_t x() const { return m_x; }
+	uint32_t y() const { return m_y; }
+	uint32_t width() const { return m_w; }
+	uint32_t height() const { return m_h; }
+	uint32_t color() const { return m_color; }
+
+	QString messageName() const override { return QStringLiteral("fillrect"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _layer;
-	uint8_t _blend;
-	uint32_t _x;
-	uint32_t _y;
-	uint32_t _w;
-	uint32_t _h;
-	uint32_t _color;
+	uint16_t m_layer;
+	uint8_t m_blend;
+	uint32_t m_x;
+	uint32_t m_y;
+	uint32_t m_w;
+	uint32_t m_h;
+	uint32_t m_color;
 };
 
 }

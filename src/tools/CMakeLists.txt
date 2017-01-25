@@ -6,15 +6,11 @@ find_package( Qt5Core )
 set (
 	DPREC2TXT_SOURCES
 	dprec2txt.cpp
-	txtmsg.cpp
-	../client/core/blendmodes.cpp # needed for svgBlendMode
 	)
 
 set (
 	TXT2DPREC_SOURCES
 	txt2dprec.cpp
-	txtreader.cpp
-	../client/core/blendmodes.cpp # needed for svgBlendMode
 	)
 
 add_executable( dprec2txt ${DPREC2TXT_SOURCES} )

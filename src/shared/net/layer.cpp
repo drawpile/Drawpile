@@ -17,8 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtEndian>
 #include "layer.h"
+#include "textmode.h"
+
+#include <QtEndian>
 
 namespace protocol {
 
@@ -43,11 +45,36 @@ int CanvasResize::payloadLength() const
 int CanvasResize::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_top, ptr); ptr += 4;
-	qToBigEndian(_right, ptr); ptr += 4;
-	qToBigEndian(_bottom, ptr); ptr += 4;
-	qToBigEndian(_left, ptr); ptr += 4;
+	qToBigEndian(m_top, ptr); ptr += 4;
+	qToBigEndian(m_right, ptr); ptr += 4;
+	qToBigEndian(m_bottom, ptr); ptr += 4;
+	qToBigEndian(m_left, ptr); ptr += 4;
 	return ptr - data;
+}
+
+Kwargs CanvasResize::kwargs() const
+{
+	Kwargs kw;
+	if(m_top)
+		kw["top"] = QString::number(m_top);
+	if(m_right)
+		kw["right"] = QString::number(m_right);
+	if(m_bottom)
+		kw["bottom"] = QString::number(m_bottom);
+	if(m_left)
+		kw["left"] = QString::number(m_left);
+	return kw;
+}
+
+CanvasResize *CanvasResize::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new CanvasResize(
+		ctx,
+		kwargs["top"].toInt(),
+		kwargs["right"].toInt(),
+		kwargs["bottom"].toInt(),
+		kwargs["left"].toInt()
+		);
 }
 
 LayerCreate *LayerCreate::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -67,19 +94,52 @@ LayerCreate *LayerCreate::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int LayerCreate::payloadLength() const
 {
-	return 9 + _title.length();
+	return 9 + m_title.length();
 }
 
 int LayerCreate::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	qToBigEndian(_source, ptr); ptr += 2;
-	qToBigEndian(_fill, ptr); ptr += 4;
-	*(ptr++) = _flags;
-	memcpy(ptr, _title.constData(), _title.length());
-	ptr += _title.length();
+	qToBigEndian(m_id, ptr); ptr += 2;
+	qToBigEndian(m_source, ptr); ptr += 2;
+	qToBigEndian(m_fill, ptr); ptr += 4;
+	*(ptr++) = m_flags;
+	memcpy(ptr, m_title.constData(), m_title.length());
+	ptr += m_title.length();
 	return ptr - data;
+}
+
+Kwargs LayerCreate::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	if(m_source)
+		kw["source"] = text::idString(m_source);
+	if(m_fill)
+		kw["fill"] = text::argbString(m_fill);
+	QStringList flags;
+	if((m_flags&FLAG_COPY))
+		flags << "copy";
+	if((m_flags&FLAG_INSERT))
+		flags << "insert";
+	if(!flags.isEmpty())
+		kw["flags"] = flags.join(',');
+	kw["title"] = title();
+	return kw;
+}
+
+LayerCreate *LayerCreate::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+	return new LayerCreate(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		text::parseIdString16(kwargs["source"]),
+		text::parseColor(kwargs["fill"]),
+		(flags.contains("copy") ? FLAG_COPY : 0) |
+		(flags.contains("insert") ? FLAG_INSERT : 0),
+		kwargs["title"]
+		);
 }
 
 LayerAttributes *LayerAttributes::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -103,10 +163,29 @@ int LayerAttributes::payloadLength() const
 int LayerAttributes::serializePayload(uchar *data) const
 {
 	uchar *ptr=data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	*(ptr++) = _opacity;
-	*(ptr++) = _blend;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	*(ptr++) = m_opacity;
+	*(ptr++) = m_blend;
 	return ptr-data;
+}
+
+Kwargs LayerAttributes::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["opacity"] = text::decimal(m_opacity);
+	kw["blend"] = QString::number(m_blend);
+	return kw;
+}
+
+LayerAttributes *LayerAttributes::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerAttributes(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		text::parseDecimal8(kwargs["opacity"]),
+		kwargs["blend"].toInt()
+		);
 }
 
 LayerVisibility *LayerVisibility::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -134,6 +213,23 @@ int LayerVisibility::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
+Kwargs LayerVisibility::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["visible"] = m_visible ? "true" : "false";
+	return kw;
+}
+
+LayerVisibility *LayerVisibility::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerVisibility(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["visible"] == "true"
+		);
+}
+
 LayerRetitle *LayerRetitle::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<2)
@@ -147,17 +243,34 @@ LayerRetitle *LayerRetitle::deserialize(uint8_t ctx, const uchar *data, uint len
 
 int LayerRetitle::payloadLength() const
 {
-	return 2 + _title.length();
+	return 2 + m_title.length();
 }
 
 
 int LayerRetitle::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	memcpy(ptr, _title.constData(), _title.length());
-	ptr += _title.length();
+	qToBigEndian(m_id, ptr); ptr += 2;
+	memcpy(ptr, m_title.constData(), m_title.length());
+	ptr += m_title.length();
 	return ptr - data;
+}
+
+Kwargs LayerRetitle::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["title"] = title();
+	return kw;
+}
+
+LayerRetitle *LayerRetitle::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerRetitle(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["title"]
+		);
 }
 
 LayerOrder *LayerOrder::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -175,13 +288,13 @@ LayerOrder *LayerOrder::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int LayerOrder::payloadLength() const
 {
-	return _order.size() * 2;
+	return m_order.size() * 2;
 }
 
 int LayerOrder::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	foreach(uint16_t l, _order) {
+	for(uint16_t l : m_order) {
 		qToBigEndian(l, ptr); ptr += 2;
 	}
 	return ptr - data;
@@ -193,7 +306,7 @@ QList<uint16_t> LayerOrder::sanitizedOrder(const QList<uint16_t> &currentOrder) 
 	S.reserve(currentOrder.size());
 
 	// remove duplicates and IDs not found in the current order
-	for(uint16_t l : _order) {
+	for(uint16_t l : m_order) {
 		if(!S.contains(l) && currentOrder.contains(l))
 			S.append(l);
 	}
@@ -215,6 +328,21 @@ QList<uint16_t> LayerOrder::sanitizedOrder(const QList<uint16_t> &currentOrder) 
 	return S;
 }
 
+Kwargs LayerOrder::kwargs() const
+{
+	Kwargs kw;
+	kw["layers"] = text::idListString(m_order);
+	return kw;
+}
+
+LayerOrder *LayerOrder::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerOrder(
+		ctx,
+		text::parseIdListString16(kwargs["layers"])
+		);
+}
+
 LayerDelete *LayerDelete::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len != 3)
@@ -234,9 +362,27 @@ int LayerDelete::payloadLength() const
 int LayerDelete::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	*(ptr++) = _merge;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	*(ptr++) = m_merge;
 	return ptr - data;
+}
+
+Kwargs LayerDelete::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	if(m_merge)
+		kw["merge"] = "true";
+	return kw;
+}
+
+LayerDelete *LayerDelete::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerDelete(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["merge"] == "true"
+		);
 }
 
 }

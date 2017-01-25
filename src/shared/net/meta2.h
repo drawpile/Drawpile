@@ -38,13 +38,17 @@ class LaserTrail : public Message {
 public:
 	LaserTrail(uint8_t ctx, quint32 color, uint8_t persistence) : Message(MSG_LASERTRAIL, ctx), m_color(color), m_persistence(persistence) { }
 	static LaserTrail *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LaserTrail *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	quint32 color() const { return m_color; }
 	uint8_t persistence() const { return m_persistence; }
 
+	QString messageName() const override { return QStringLiteral("laser"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	quint32 m_color;
@@ -66,13 +70,17 @@ public:
 	{}
 
 	static MovePointer *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static MovePointer *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	int32_t x() const { return m_x; }
 	int32_t y() const { return m_y; }
 
+	QString messageName() const override { return QStringLiteral("movepointer"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	int32_t m_x;
@@ -90,14 +98,18 @@ public:
 	UserACL(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_USER_ACL, ctx), m_ids(ids) { }
 
 	static UserACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static UserACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	bool isOpCommand() const { return true; }
 
 	QList<uint8_t> ids() const { return m_ids; }
 
+	QString messageName() const override { return QStringLiteral("useracl"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	QList<uint8_t> m_ids;
@@ -115,25 +127,29 @@ private:
 class LayerACL : public Message {
 public:
 	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
-		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
+		: Message(MSG_LAYER_ACL, ctx), m_id(id), m_locked(locked), m_exclusive(exclusive)
 	{}
 
 	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	// Note: this is an operator only command, depending on the target layer and whether OWNLAYERS mode is set.
 
-	uint16_t id() const { return _id; }
-	uint8_t locked() const { return _locked; }
-	const QList<uint8_t> exclusive() const { return _exclusive; }
+	uint16_t id() const { return m_id; }
+	uint8_t locked() const { return m_locked; }
+	const QList<uint8_t> exclusive() const { return m_exclusive; }
+
+	QString messageName() const override { return QStringLiteral("layeracl"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	uint8_t _locked;
-	QList<uint8_t> _exclusive;
+	uint16_t m_id;
+	uint8_t m_locked;
+	QList<uint8_t> m_exclusive;
 };
 
 /**
@@ -153,6 +169,7 @@ public:
 	SessionACL(uint8_t ctx, uint16_t flags) : Message(MSG_SESSION_ACL, ctx), m_flags(flags) {}
 
 	static SessionACL *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static SessionACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	bool isOpCommand() const { return true; }
 
@@ -165,9 +182,12 @@ public:
 	bool isImagesLocked() const { return m_flags & LOCK_IMAGES; }
 	bool isAnnotationCreationLocked() const { return m_flags & LOCK_ANNOTATIONS; }
 
+	QString messageName() const override { return QStringLiteral("sessionacl"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	uint16_t m_flags;

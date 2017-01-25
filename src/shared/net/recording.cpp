@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,8 +36,23 @@ int Interval::payloadLength() const
 
 int Interval::serializePayload(uchar *data) const
 {
-	qToBigEndian(_msecs, data);
+	qToBigEndian(m_msecs, data);
 	return 2;
+}
+
+Kwargs Interval::kwargs() const
+{
+	Kwargs kw;
+	kw["msecs"] = QString::number(m_msecs);
+	return kw;
+}
+
+Interval *Interval::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new Interval(
+		ctx,
+		kwargs["msecs"].toInt()
+		);
 }
 
 Marker *Marker::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -50,13 +65,28 @@ Marker *Marker::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int Marker::payloadLength() const
 {
-	return _text.length();
+	return m_text.length();
 }
 
 int Marker::serializePayload(uchar *data) const
 {
-	memcpy(data, _text.constData(), _text.length());
-	return _text.length();
+	memcpy(data, m_text.constData(), m_text.length());
+	return m_text.length();
+}
+
+Kwargs Marker::kwargs() const
+{
+	Kwargs kw;
+	kw["text"] = text();
+	return kw;
+}
+
+Marker *Marker::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new Marker(
+		ctx,
+		kwargs["text"]
+		);
 }
 
 }

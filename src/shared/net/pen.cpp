@@ -18,6 +18,7 @@
 */
 
 #include "pen.h"
+#include "textmode.h"
 
 #include <QtEndian>
 
@@ -55,21 +56,104 @@ int ToolChange::payloadLength() const
 int ToolChange::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_layer, ptr); ptr += 2;
-	*(ptr++) = _blend;
-	*(ptr++) = _mode;
-	*(ptr++) = _spacing;
-	qToBigEndian(_color, ptr); ptr += 4;
-	*(ptr++) = _hard_h;
-	*(ptr++) = _hard_l;
-	*(ptr++) = _size_h;
-	*(ptr++) = _size_l;
-	*(ptr++) = _opacity_h;
-	*(ptr++) = _opacity_l;
-	*(ptr++) = _smudge_h;
-	*(ptr++) = _smudge_l;
-	*(ptr++) = _resmudge;
+	qToBigEndian(m_layer, ptr); ptr += 2;
+	*(ptr++) = m_blend;
+	*(ptr++) = m_mode;
+	*(ptr++) = m_spacing;
+	qToBigEndian(m_color, ptr); ptr += 4;
+	*(ptr++) = m_hard_h;
+	*(ptr++) = m_hard_l;
+	*(ptr++) = m_size_h;
+	*(ptr++) = m_size_l;
+	*(ptr++) = m_opacity_h;
+	*(ptr++) = m_opacity_l;
+	*(ptr++) = m_smudge_h;
+	*(ptr++) = m_smudge_l;
+	*(ptr++) = m_resmudge;
 	return ptr-data;
+}
+
+Kwargs ToolChange::kwargs() const
+{
+	Kwargs kw;
+	kw["layer"] = text::idString(m_layer);
+	kw["blend"] = QString::number(m_blend);
+	kw["mode"] = QString::number(m_mode);
+	kw["spacing"] = QString::number(m_spacing);
+	kw["color"] = text::rgbString(m_color);
+	if(m_hard_h != m_hard_l) {
+		kw["hardh"] = text::decimal(m_hard_h);
+		kw["hardl"] = text::decimal(m_hard_l);
+	} else {
+		kw["hard"] = text::decimal(m_hard_h);
+	}
+	if(m_size_h != m_size_l) {
+		kw["sizeh"] = QString::number(m_size_h);
+		kw["sizel"] = QString::number(m_size_l);
+	} else {
+		kw["size"] = QString::number(m_size_h);
+	}
+	if(m_opacity_h != m_opacity_l) {
+		kw["opacityh"] = text::decimal(m_opacity_h);
+		kw["opacityl"] = text::decimal(m_opacity_l);
+	} else {
+		kw["opacity"] = text::decimal(m_opacity_h);
+	}
+	if(m_smudge_h != m_smudge_l) {
+		kw["smudgeh"] = text::decimal(m_smudge_h);
+		kw["smudgel"] = text::decimal(m_smudge_l);
+	} else if(m_smudge_h>0) {
+		kw["smudge"] = text::decimal(m_smudge_h);
+	}
+	if(m_resmudge>0)
+		kw["resmudge"] = QString::number(m_resmudge);
+	return kw;
+}
+
+ToolChange *ToolChange::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	uint8_t hardh, hardl, sizeh, sizel, opacityh, opacityl, smudgeh, smudgel;
+	if(kwargs.contains("hard")) {
+		hardh = hardl = text::parseDecimal8(kwargs["hard"]);
+	} else {
+		hardh = text::parseDecimal8(kwargs["hardh"]);
+		hardl = text::parseDecimal8(kwargs["hardl"]);
+	}
+
+	if(kwargs.contains("size")) {
+		sizeh = sizel = text::parseDecimal8(kwargs["size"]);
+	} else {
+		sizeh = kwargs["sizeh"].toInt();
+		sizel = kwargs["sizel"].toInt();
+	}
+
+	if(kwargs.contains("opacity")) {
+		opacityh = opacityl = text::parseDecimal8(kwargs["opacity"]);
+	} else {
+		opacityh = text::parseDecimal8(kwargs["opacityh"]);
+		opacityl = text::parseDecimal8(kwargs["opacityl"]);
+	}
+
+	if(kwargs.contains("smudge")) {
+		smudgeh = smudgel = text::parseDecimal8(kwargs["smudge"]);
+	} else {
+		smudgeh = text::parseDecimal8(kwargs["smudgeh"]);
+		smudgel = text::parseDecimal8(kwargs["smudgel"]);
+	}
+
+	return new ToolChange(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs["blend"].toInt(),
+		kwargs["mode"].toInt(),
+		kwargs["spacing"].toInt(),
+		text::parseColor(kwargs["color"]),
+		hardh, hardl,
+		sizeh, sizel,
+		opacityh, opacityl,
+		smudgeh, smudgel,
+		kwargs["resmudge"].toInt()
+		);
 }
 
 PenMove *PenMove::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -93,13 +177,13 @@ PenMove *PenMove::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int PenMove::payloadLength() const
 {
-	return 10 * _points.size();
+	return 10 * m_points.size();
 }
 
 int PenMove::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	for(const PenPoint &p : _points) {
+	for(const PenPoint &p : m_points) {
 		qToBigEndian(p.x, ptr); ptr += 4;
 		qToBigEndian(p.y, ptr); ptr += 4;
 		qToBigEndian(p.p, ptr); ptr += 2;
@@ -122,4 +206,35 @@ bool PenMove::payloadEquals(const Message &m) const
 	return true;
 }
 
+static QString penPointToString(const PenPoint &pp)
+{
+	if(pp.p < 0xffff)
+		return QStringLiteral("%1 %2 %3")
+			.arg(pp.x / 4.0, 0, 'f', 1)
+			.arg(pp.y / 4.0, 0, 'f', 1)
+			.arg(pp.p * 100.0 / double(0xffff), 0, 'f', 3);
+	else
+		return QStringLiteral("%1 %2")
+			.arg(pp.x / 4.0, 0, 'f', 1)
+			.arg(pp.y / 4.0, 0, 'f', 1);
 }
+
+QString PenMove::toString() const
+{
+	QString s = QString::number(contextId()) + " penmove ";
+	if(m_points.size()==1) {
+		s += penPointToString(m_points[0]);
+
+	} else {
+		s += "{\n\t";
+		for(const PenPoint &p : m_points) {
+			s += penPointToString(p);
+			s += "\n\t";
+		}
+		s += "}";
+	}
+	return s;
+}
+
+}
+

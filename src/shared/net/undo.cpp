@@ -52,4 +52,21 @@ bool Undo::payloadEquals(const Message &m) const
 		isRedo() == u.isRedo();
 }
 
+Kwargs Undo::kwargs() const
+{
+	Kwargs kw;
+	if(overrideId()>0)
+		kw["override"] = QString::number(overrideId());
+	return kw;
+}
+
+Undo *Undo::fromText(uint8_t ctx, const Kwargs &kwargs, bool redo)
+{
+	return new Undo(
+		ctx,
+		kwargs["override"].toInt(),
+		redo
+		);
+}
+
 }

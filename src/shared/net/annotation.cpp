@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtEndian>
-
 #include "annotation.h"
+#include "textmode.h"
+
+#include <QtEndian>
 
 namespace protocol {
 
@@ -45,12 +46,35 @@ int AnnotationCreate::payloadLength() const
 int AnnotationCreate::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	qToBigEndian(_x, ptr); ptr += 4;
-	qToBigEndian(_y, ptr); ptr += 4;
-	qToBigEndian(_w, ptr); ptr += 2;
-	qToBigEndian(_h, ptr); ptr += 2;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	qToBigEndian(m_x, ptr); ptr += 4;
+	qToBigEndian(m_y, ptr); ptr += 4;
+	qToBigEndian(m_w, ptr); ptr += 2;
+	qToBigEndian(m_h, ptr); ptr += 2;
 	return ptr - data;
+}
+
+Kwargs AnnotationCreate::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["x"] = QString::number(m_x);
+	kw["y"] = QString::number(m_y);
+	kw["w"] = QString::number(m_w);
+	kw["h"] = QString::number(m_h);
+	return kw;
+}
+
+AnnotationCreate *AnnotationCreate::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new AnnotationCreate(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["x"].toInt(),
+		kwargs["y"].toInt(),
+		kwargs["w"].toInt(),
+		kwargs["h"].toInt()
+		);
 }
 
 int AnnotationReshape::payloadLength() const
@@ -75,12 +99,35 @@ AnnotationReshape *AnnotationReshape::deserialize(uint8_t ctx, const uchar *data
 int AnnotationReshape::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	qToBigEndian(_x, ptr); ptr += 4;
-	qToBigEndian(_y, ptr); ptr += 4;
-	qToBigEndian(_w, ptr); ptr += 2;
-	qToBigEndian(_h, ptr); ptr += 2;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	qToBigEndian(m_x, ptr); ptr += 4;
+	qToBigEndian(m_y, ptr); ptr += 4;
+	qToBigEndian(m_w, ptr); ptr += 2;
+	qToBigEndian(m_h, ptr); ptr += 2;
 	return ptr - data;
+}
+
+Kwargs AnnotationReshape::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["x"] = QString::number(m_x);
+	kw["y"] = QString::number(m_y);
+	kw["w"] = QString::number(m_w);
+	kw["h"] = QString::number(m_h);
+	return kw;
+}
+
+AnnotationReshape *AnnotationReshape::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new AnnotationReshape(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["x"].toInt(),
+		kwargs["y"].toInt(),
+		kwargs["w"].toInt(),
+		kwargs["h"].toInt()
+		);
 }
 
 AnnotationEdit *AnnotationEdit::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -115,6 +162,42 @@ int AnnotationEdit::serializePayload(uchar *data) const
 	return ptr - data;
 }
 
+Kwargs AnnotationEdit::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	if(m_bg>0)
+		kw["bg"] = text::argbString(m_bg);
+
+	if((m_flags&FLAG_PROTECT))
+		kw["flags"] = "protect";
+	if((m_flags&FLAG_VALIGN_BOTTOM)==FLAG_VALIGN_BOTTOM)
+		kw["valign"] = "bottom";
+	else if((m_flags&FLAG_VALIGN_CENTER))
+		kw["valign"] = "center";
+
+	if(m_border>0)
+		kw["border"] = QString::number(m_border);
+
+	kw["text"] = text();
+	return kw;
+}
+
+AnnotationEdit *AnnotationEdit::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+	return new AnnotationEdit(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		text::parseColor(kwargs["bg"]),
+		(flags.contains("protect") ? FLAG_PROTECT : 0) |
+		(kwargs["valign"]=="bottom" ? FLAG_VALIGN_BOTTOM : 0) |
+		(kwargs["valign"]=="center" ? FLAG_VALIGN_CENTER : 0),
+		kwargs["border"].toInt(),
+		kwargs["text"]
+		);
+}
+
 AnnotationDelete *AnnotationDelete::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len != 2)
@@ -130,8 +213,23 @@ int AnnotationDelete::payloadLength() const
 int AnnotationDelete::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
+	qToBigEndian(m_id, ptr); ptr += 2;
 	return ptr-data;
+}
+
+Kwargs AnnotationDelete::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	return kw;
+}
+
+AnnotationDelete *AnnotationDelete::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new AnnotationDelete(
+		ctx,
+		text::parseIdString16(kwargs["id"])
+		);
 }
 
 }

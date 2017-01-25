@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,18 +37,22 @@ namespace protocol {
 class Interval : public Message
 {
 public:
-	Interval(uint8_t ctx, uint16_t milliseconds) : Message(MSG_INTERVAL, ctx), _msecs(milliseconds) {}
+	Interval(uint8_t ctx, uint16_t milliseconds) : Message(MSG_INTERVAL, ctx), m_msecs(milliseconds) {}
 
 	static Interval *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static Interval *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t milliseconds() const { return _msecs; }
+	uint16_t milliseconds() const { return m_msecs; }
+
+	QString messageName() const override { return QStringLiteral("interval"); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _msecs;
+	uint16_t m_msecs;
 };
 
 /**
@@ -59,18 +63,22 @@ private:
 class Marker : public Message
 {
 public:
-	Marker(uint8_t ctx, const QString &text) : Message(MSG_MARKER, ctx), _text(text.toUtf8()) { }
+	Marker(uint8_t ctx, const QString &text) : Message(MSG_MARKER, ctx), m_text(text.toUtf8()) { }
 
 	static Marker *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static Marker *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	QString text() const { return QString::fromUtf8(_text); }
+	QString text() const { return QString::fromUtf8(m_text); }
+
+	QString messageName() const override { return QStringLiteral("marker"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	QByteArray _text;
+	QByteArray m_text;
 };
 
 }

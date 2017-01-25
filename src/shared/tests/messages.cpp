@@ -7,6 +7,7 @@
 #include "../net/image.h"
 #include "../net/undo.h"
 #include "../net/pen.h"
+#include "../net/textmode.h"
 
 #include <QtTest/QtTest>
 
@@ -34,37 +35,39 @@ private slots:
 		QTest::newRow("chat") << (Message*)new Chat(7, 0x01, 0x04, QByteArray("Test"));
 
 		QTest::newRow("interval") << (Message*)new Interval(8, 0x1020);
-		QTest::newRow("lasertrail") << (Message*)new LaserTrail(9, 0x11223344, 0x80);
+		QTest::newRow("lasertrail") << (Message*)new LaserTrail(9, 0xff223344, 0x80);
 		QTest::newRow("movepointer") << (Message*)new MovePointer(10, 0x11223344, 0x55667788);
 		QTest::newRow("marker") << (Message*)new Marker(11, QString("Test"));
 		QTest::newRow("useracl") << (Message*)new UserACL(12, QList<uint8_t>() << 1 << 2 << 4);
 		QTest::newRow("layeracl") << (Message*)new LayerACL(13, 0x1122, 0x01, QList<uint8_t>() << 1 << 2 << 4);
-		QTest::newRow("sessionacl") << (Message*)new SessionACL(14, 0x1122);
+		QTest::newRow("sessionacl") << (Message*)new SessionACL(14, 63);
 
 		QTest::newRow("undopoint") << (Message*)new UndoPoint(15);
 		QTest::newRow("canvasresize") << (Message*)new CanvasResize(16, -0xfff, 0xaaa, -0xbbb, 0xccc);
-		QTest::newRow("layercreate") << (Message*)new LayerCreate(17, 0xaabb, 0xccdd, 0x11223344, 0x01, QString("Test"));
+		QTest::newRow("layercreate") << (Message*)new LayerCreate(17, 0xaabb, 0xccdd, 0x11223344, 0x01, QString("Test layer"));
 		QTest::newRow("layerattributes") << (Message*)new LayerAttributes(18, 0xaabb, 0xcc, 0x10);
 		QTest::newRow("layerretitle") << (Message*)new LayerRetitle(19, 0xaabb, QString("Test"));
 		QTest::newRow("layerorder") << (Message*)new LayerOrder(20, QList<uint16_t>() << 0x1122 << 0x3344 << 0x4455);
 		QTest::newRow("layervisibility") << (Message*)new LayerVisibility(21, 0x1122, 1);
 		QTest::newRow("putimage") << (Message*)new PutImage(22, 0x1122, 0x10, 100, 200, 300, 400, QByteArray("Test"));
-		QTest::newRow("fillrect") << (Message*)new FillRect(23, 0x1122, 0x10, 100, 200, 300, 400, 0x11223344);
-		QTest::newRow("toolchange") << (Message*)new ToolChange(24, 0x1122, 1, 2, 3, 0xaabbccdd, 10, 11, 20, 21, 30, 31, 40, 41, 60);
+		QTest::newRow("fillrect") << (Message*)new FillRect(23, 0x1122, 0x10, 3, 200, 300, 400, 0x11223344);
+		QTest::newRow("toolchange") << (Message*)new ToolChange(24, 0x1122, 1, 2, 3, 0xffbbccdd, 10, 11, 20, 21, 30, 31, 40, 41, 60);
 		QTest::newRow("penmove") << (Message*)new PenMove(25, PenPointVector() << PenPoint {-10, 10, 0x00ff} << PenPoint { -100, 100, 0xff00 });
 		QTest::newRow("penup") << (Message*)new PenUp(26);
 		QTest::newRow("annotationcreate") << (Message*)new AnnotationCreate(27, 0x1122, -100, -100, 200, 200);
 		QTest::newRow("annotationreshape") << (Message*)new AnnotationReshape(28, 0x1122, -100, -100, 200, 200);
-		QTest::newRow("annotationedit") << (Message*)new AnnotationEdit(29, 0x1122, 0x12345678, 9, 0x0a, QByteArray("Test"));
+		QTest::newRow("annotationedit") << (Message*)new AnnotationEdit(29, 0x1122, 0x12345678, 7, 0x0a, QByteArray("Test"));
 		QTest::newRow("annotationdelete") << (Message*)new AnnotationDelete(30, 0x1122);
 
-		QTest::newRow("undo") << (Message*)new Undo(254, 1, true);
+		QTest::newRow("undo") << (Message*)new Undo(254, 1, false);
+		QTest::newRow("redo") << (Message*)new Undo(254, 1, true);
 	}
 
 	void testMessageSerialization()
 	{
 		QFETCH(Message*, msg);
 
+		// Test binary serialization
 		auto notEqual = Command(1, QByteArray("testing..."));
 		QVERIFY(!msg->equals(notEqual));
 		QVERIFY(msg->equals(*msg));
@@ -76,6 +79,24 @@ private slots:
 		QVERIFY(msg2);
 
 		QVERIFY(msg->equals(*msg2));
+
+		// Test text serialization (only valid for recordable types)
+		if(msg->isRecordable()) {
+			QStringList text = msg->toString().split('\n');
+
+			text::Parser parser;
+			text::Parser::Result r { text::Parser::Result::NeedMore, nullptr };
+			for(const QString &line : text) {
+				QCOMPARE(r.status, text::Parser::Result::NeedMore);
+				r = parser.parseLine(line.trimmed());
+				if(r.status == text::Parser::Result::Error)
+					QFAIL(parser.errorString().toLocal8Bit().constData());
+			};
+			QCOMPARE(r.status, text::Parser::Result::Ok);
+			QVERIFY(r.msg);
+			QVERIFY(msg->equals(*r.msg));
+			delete r.msg;
+		}
 	}
 
 	void testLayerOrderSanitation_data()

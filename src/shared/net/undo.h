@@ -41,6 +41,8 @@ class UndoPoint : public ZeroLengthMessage<UndoPoint>
 {
 public:
 	UndoPoint(uint8_t ctx) : ZeroLengthMessage(MSG_UNDOPOINT, ctx) {}
+
+	QString messageName() const override { return QStringLiteral("undopoint"); }
 };
 
 /**
@@ -53,6 +55,7 @@ public:
 	Undo(uint8_t ctx, uint8_t override, bool redo) : Message(MSG_UNDO, ctx), m_override(override), m_redo(redo) { }
 
 	static Undo *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static Undo *fromText(uint8_t ctx, const Kwargs &kwargs, bool redo);
 
 	/**
 	 * @brief override user ID
@@ -75,10 +78,13 @@ public:
 	 */
 	bool isOpCommand() const { return m_override!=0; }
 
+	QString messageName() const override { return m_redo ? QStringLiteral("redo") : QStringLiteral("undo"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override;
 
 private:
 	uint8_t m_override;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,27 +41,31 @@ namespace protocol {
 class CanvasResize : public Message {
 public:
 	CanvasResize(uint8_t ctx, int32_t top, int32_t right, int32_t bottom, int32_t left)
-		: Message(MSG_CANVAS_RESIZE, ctx), _top(top), _right(right), _bottom(bottom), _left(left)
+		: Message(MSG_CANVAS_RESIZE, ctx), m_top(top), m_right(right), m_bottom(bottom), m_left(left)
 		{}
 
 	static CanvasResize *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static CanvasResize *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	int32_t top() const { return _top; }
-	int32_t right() const { return _right; }
-	int32_t bottom() const { return _bottom; }
-	int32_t left() const { return _left; }
+	int32_t top() const { return m_top; }
+	int32_t right() const { return m_right; }
+	int32_t bottom() const { return m_bottom; }
+	int32_t left() const { return m_left; }
 
 	bool isOpCommand() const { return true; }
 
+	QString messageName() const override { return QStringLiteral("resize"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;	
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	int32_t _top;
-	int32_t _right;
-	int32_t _bottom;
-	int32_t _left;
+	int32_t m_top;
+	int32_t m_right;
+	int32_t m_bottom;
+	int32_t m_left;
 };
 
 /**
@@ -94,16 +98,17 @@ public:
 	static const uint8_t FLAG_INSERT = 0x02;
 
 	LayerCreate(uint8_t ctxid, uint16_t id, uint16_t source, uint32_t fill, uint8_t flags, const QString &title)
-		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _source(source), _fill(fill), _flags(flags), _title(title.toUtf8())
+		: Message(MSG_LAYER_CREATE, ctxid), m_id(id), m_source(source), m_fill(fill), m_flags(flags), m_title(title.toUtf8())
 		{}
 
 	static LayerCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerCreate *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
-	uint16_t source() const { return _source; }
-	uint32_t fill() const { return _fill; }
-	uint8_t flags() const { return _flags; }
-	QString title() const { return QString::fromUtf8(_title); }
+	uint16_t id() const { return m_id; }
+	uint16_t source() const { return m_source; }
+	uint32_t fill() const { return m_fill; }
+	uint8_t flags() const { return m_flags; }
+	QString title() const { return QString::fromUtf8(m_title); }
 
 	/**
 	 * @brief Check if the ID's namespace portition matches the context ID
@@ -114,16 +119,19 @@ public:
 	 */
 	bool isValidId() const { return (id()>>8) == contextId(); }
 
+	QString messageName() const override { return QStringLiteral("newlayer"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	uint16_t _source;
-	uint32_t _fill;
-	uint8_t _flags;
-	QByteArray _title;
+	uint16_t m_id;
+	uint16_t m_source;
+	uint32_t m_fill;
+	uint8_t m_flags;
+	QByteArray m_title;
 };
 
 /**
@@ -135,24 +143,28 @@ private:
 class LayerAttributes : public Message {
 public:
 	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t opacity, uint8_t blend)
-		: Message(MSG_LAYER_ATTR, ctx), _id(id),
-		_opacity(opacity), _blend(blend)
+		: Message(MSG_LAYER_ATTR, ctx), m_id(id),
+		m_opacity(opacity), m_blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerAttributes *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
-	uint8_t opacity() const { return _opacity; }
-	uint8_t blend() const { return _blend; }
+	uint16_t id() const { return m_id; }
+	uint8_t opacity() const { return m_opacity; }
+	uint8_t blend() const { return m_blend; }
+
+	QString messageName() const override { return QStringLiteral("layerattr"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	uint8_t _opacity;
-	uint8_t _blend;
+	uint16_t m_id;
+	uint8_t m_opacity;
+	uint8_t m_blend;
 };
 
 /**
@@ -174,13 +186,17 @@ public:
 	{ }
 
 	static LayerVisibility *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerVisibility *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint16_t id() const { return m_id; }
 	uint8_t visible() const { return m_visible; }
 
+	QString messageName() const override { return QStringLiteral("layervisibility"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	uint16_t m_id;
@@ -196,24 +212,28 @@ private:
 class LayerRetitle : public Message {
 public:
 	LayerRetitle(uint8_t ctx, uint16_t id, const QByteArray &title)
-		: Message(MSG_LAYER_RETITLE, ctx), _id(id), _title(title)
+		: Message(MSG_LAYER_RETITLE, ctx), m_id(id), m_title(title)
 		{}
 	LayerRetitle(uint8_t ctx, uint16_t id, const QString &title)
 		: LayerRetitle(ctx, id, title.toUtf8())
 		{}
 
 	static LayerRetitle *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerRetitle *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
-	QString title() const { return QString::fromUtf8(_title); }
+	uint16_t id() const { return m_id; }
+	QString title() const { return QString::fromUtf8(m_title); }
+
+	QString messageName() const override { return QStringLiteral("retitlelayer"); }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	QByteArray _title;
+	uint16_t m_id;
+	QByteArray m_title;
 };
 
 /**
@@ -236,12 +256,13 @@ class LayerOrder : public Message {
 public:
 	LayerOrder(uint8_t ctx, const QList<uint16_t> &order)
 		: Message(MSG_LAYER_ORDER, ctx),
-		_order(order)
+		m_order(order)
 		{}
 	
 	static LayerOrder *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerOrder *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	const QList<uint16_t> &order() const { return _order; }
+	const QList<uint16_t> &order() const { return m_order; }
 
 	/**
 	 * @brief Get sanitized layer order
@@ -259,12 +280,14 @@ public:
 	 */
 	QList<uint16_t> sanitizedOrder(const QList<uint16_t> &currentOrder) const;
 
+	QString messageName() const override { return QStringLiteral("layerorder"); }
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	QList<uint16_t> _order;
+	QList<uint16_t> m_order;
 };
 
 /**
@@ -280,24 +303,27 @@ class LayerDelete : public Message {
 public:
 	LayerDelete(uint8_t ctx, uint16_t id, uint8_t merge)
 		: Message(MSG_LAYER_DELETE, ctx),
-		_id(id),
-		_merge(merge)
+		m_id(id),
+		m_merge(merge)
 		{}
 
 	static LayerDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static LayerDelete *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return _id; }
-	uint8_t merge() const { return _merge; }
+	uint16_t id() const { return m_id; }
+	uint8_t merge() const { return m_merge; }
 
 	bool isUndoable() const { return true; }
 	
+	QString messageName() const override { return QStringLiteral("deletelayer"); }
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
-	uint16_t _id;
-	uint8_t _merge;
+	uint16_t m_id;
+	uint8_t m_merge;
 };
 
 }

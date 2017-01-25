@@ -18,6 +18,7 @@
 */
 
 #include "meta.h"
+#include "textmode.h"
 
 #include <QtEndian>
 #include <cstring>
@@ -59,6 +60,36 @@ int UserJoin::payloadLength() const
 	return 1 + 1 + m_name.length() + m_hash.length();
 }
 
+Kwargs UserJoin::kwargs() const
+{
+	Kwargs kw;
+	kw["name"] = name();
+	if(!m_hash.isEmpty())
+		kw["hash"] = QString::fromUtf8(m_hash);
+	QStringList flags;
+	if(isModerator())
+		flags << "mod";
+	if(isAuthenticated())
+		flags << "auth";
+	if(!flags.isEmpty())
+		kw["flags"] = flags.join(',');
+	return kw;
+}
+
+UserJoin *UserJoin::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+
+	return new UserJoin(
+		ctx,
+		(flags.contains("mod") ? FLAG_MOD : 0) |
+		(flags.contains("auth") ? FLAG_AUTH : 0),
+		kwargs["name"],
+		kwargs["hash"].toUtf8()
+		);
+}
+
+
 SessionOwner *SessionOwner::deserialize(uint8_t ctx, const uchar *data, int len)
 {
 	if(len>255)
@@ -84,6 +115,19 @@ int SessionOwner::payloadLength() const
 	return m_ids.size();
 }
 
+Kwargs SessionOwner::kwargs() const
+{
+	Kwargs kw;
+	if(!m_ids.isEmpty())
+		kw["users"] = text::idListString(m_ids);
+	return kw;
+}
+
+SessionOwner *SessionOwner::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new SessionOwner(ctx, text::parseIdListString8(kwargs["users"]));
+}
+
 Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<3)
@@ -104,6 +148,37 @@ int Chat::serializePayload(uchar *data) const
 int Chat::payloadLength() const
 {
 	return 2 + m_msg.length();
+}
+
+Kwargs Chat::kwargs() const
+{
+	Kwargs kw;
+	kw["message"] = message();
+	QStringList flags;
+	if(isBypass())
+		flags << "bypass";
+	if(isShout())
+		flags << "shout";
+	if(isAction())
+		flags << "action";
+	if(isPin())
+		flags << "pin";
+	if(!flags.isEmpty())
+		kw["flags"] = flags.join(',');
+	return kw;
+}
+
+Chat *Chat::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+	return new Chat(
+		ctx,
+		(flags.contains("bypass") ? FLAG_BYPASS : 0),
+		(flags.contains("shout") ? FLAG_SHOUT : 0) |
+		(flags.contains("action") ? FLAG_ACTION : 0) |
+		(flags.contains("pin") ? FLAG_PIN : 0),
+		kwargs["message"]
+		);
 }
 
 }

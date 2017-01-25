@@ -45,6 +45,7 @@ public:
 	UserJoin(uint8_t ctx, uint8_t flags, const QString &name, const QByteArray &hash=QByteArray()) : UserJoin(ctx, flags, name.toUtf8(), hash) {}
 
 	static UserJoin *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static UserJoin *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	QString name() const { return QString::fromUtf8(m_name); }
 
@@ -55,9 +56,12 @@ public:
 	bool isModerator() const { return m_flags & FLAG_MOD; }
 	bool isAuthenticated() const { return m_flags & FLAG_AUTH; }
 
+	QString messageName() const override { return QStringLiteral("join"); }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	QByteArray m_name;
@@ -75,6 +79,8 @@ private:
 class UserLeave : public ZeroLengthMessage<UserLeave> {
 public:
 	explicit UserLeave(uint8_t ctx) : ZeroLengthMessage(MSG_USER_LEAVE, ctx) {}
+
+	QString messageName() const override { return "leave"; }
 };
 
 /**
@@ -94,15 +100,19 @@ public:
 	SessionOwner(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_SESSION_OWNER, ctx), m_ids(ids) { }
 
 	static SessionOwner *deserialize(uint8_t ctx, const uchar *data, int buflen);
+	static SessionOwner *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	bool isOpCommand() const { return true; }
 
 	QList<uint8_t> ids() const { return m_ids; }
 	void setIds(const QList<uint8_t> ids) { m_ids = ids; }
 
+	QString messageName() const override { return "owner"; }
+
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	QList<uint8_t> m_ids;
@@ -141,6 +151,7 @@ public:
 	static MessagePtr pin(uint8_t ctx, const QString &message) { return MessagePtr(new Chat(ctx, 0, FLAG_SHOUT|FLAG_PIN, message.toUtf8())); }
 
 	static Chat *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static Chat *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint8_t transparentFlags() const { return m_tflags; }
 	uint8_t opaqueFlags() const { return m_oflags; }
@@ -179,9 +190,12 @@ public:
 	 */
 	bool isPin() const { return m_oflags & FLAG_PIN; }
 
+	QString messageName() const override { return QStringLiteral("chat"); }
+
 protected:
-    int payloadLength() const;
-	int serializePayload(uchar *data) const;
+    int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
 
 private:
 	uint8_t m_tflags;

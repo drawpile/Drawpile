@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#include "txtmsg.h"
-
 #include "../shared/record/reader.h"
 
 using namespace recording;
@@ -38,7 +36,7 @@ void printVersion()
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 }
 
-bool convertRecording(const QString &inputfilename, bool printMeta, QTextStream &out)
+bool convertRecording(const QString &inputfilename, QTextStream &out)
 {
 	Reader reader(inputfilename);
 	Compatibility compat = reader.open();
@@ -67,8 +65,10 @@ bool convertRecording(const QString &inputfilename, bool printMeta, QTextStream 
 	}
 
 	// Print some header comments
-	out << "## dprec2txt " DRAWPILE_VERSION ": " << inputfilename << "\n";
-	out << "## Format version " << reader.formatVersion().asString() << " (Drawpile version " << reader.writerVersion() << ")\n";
+	out << "# dprec2txt " DRAWPILE_VERSION ": " << inputfilename << "\n";
+	out << "# Recording made with Drawpile version: " << reader.writerVersion() << "\n";
+	out << "!version:" << reader.formatVersion().asString() << "\n";
+	out << "\n";
 
 	protocol::MessageType lastType = protocol::MSG_COMMAND;
 
@@ -79,13 +79,11 @@ bool convertRecording(const QString &inputfilename, bool printMeta, QTextStream 
 		switch(mr.status) {
 		case MessageRecord::OK:
 
-			if(printMeta || mr.message->isCommand()) {
-				if(mr.message->type() != lastType)
-					out << "\n";
-				lastType = mr.message->type();
+			if(mr.message->type() != lastType)
+				out << "\n";
+			lastType = mr.message->type();
 
-				messageToText(mr.message, out);
-			}
+			out << mr.message->toString() << "\n";
 
 			delete mr.message;
 			break;
@@ -123,10 +121,6 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
 	parser.addOption(versionOption);
 
-	// --meta, -m
-	QCommandLineOption metaOption(QStringList() << "meta" << "m", "Include meta messages");
-	parser.addOption(metaOption);
-
 	// input file name
 	parser.addPositionalArgument("input", "recording file", "<input.dprec>");
 
@@ -145,7 +139,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	QTextStream out(stdout, QIODevice::WriteOnly);
-	if(!convertRecording(inputfiles.at(0), parser.isSet(metaOption), out))
+	if(!convertRecording(inputfiles.at(0), out))
 		return 1;
 
 	return 0;

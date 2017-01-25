@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016 Calle Laakkonen
+   Copyright (C) 2016-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,14 +19,15 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QCommandLineParser>
+#include <QFile>
 
 #include "config.h"
 
-#include "txtreader.h"
-
 #include "../shared/record/writer.h"
+#include "../shared/net/textmode.h"
 
 using namespace recording;
+using protocol::text::Parser;
 
 void printVersion()
 {
@@ -35,15 +36,17 @@ void printVersion()
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 }
 
-bool convertRecording(const QString &infile, const QString &outfile)
+bool convertRecording(const QString &infileName, const QString &outfileName)
 {
-	TextReader reader(infile);
-	if(!reader.load()) {
-		fprintf(stderr, "%s\n", reader.errorMessage().toLocal8Bit().constData());
+	QFile infile(infileName);
+	if(!infile.open(QFile::ReadOnly|QFile::Text)) {
+		fprintf(stderr, "%s\n", infile.errorString().toLocal8Bit().constData());
 		return false;
 	}
 
-	recording::Writer writer(outfile);
+	Parser parser;
+
+	recording::Writer writer(outfileName);
 
 	if(!writer.open())
 		return false;
@@ -56,8 +59,33 @@ bool convertRecording(const QString &infile, const QString &outfile)
 		return false;
 	}
 
-	for(protocol::MessagePtr msg : reader.messages())
-		writer.recordMessage(msg);
+	int lineNum = 0;
+	for(;;) {
+		++lineNum;
+		QByteArray bline = infile.readLine();
+		if(bline.isEmpty())
+			break;
+
+		QString line = QString::fromUtf8(bline.trimmed());
+
+		if(line.isEmpty() || line.at(0) == '#')
+			continue;
+
+		Parser::Result r = parser.parseLine(line);
+		switch(r.status) {
+		case Parser::Result::Ok:
+			writer.writeMessage(*r.msg);
+			delete r.msg;
+			break;
+		case Parser::Result::Skip:
+		case Parser::Result::NeedMore:
+			break;
+		case Parser::Result::Error:
+			fprintf(stderr, "%s:%d: %s\n", infileName.toLocal8Bit().constData(), lineNum, parser.errorString().toLocal8Bit().constData());
+			break;
+		}
+
+	}
 
 	writer.close();
 
@@ -81,19 +109,6 @@ int main(int argc, char *argv[]) {
 	// --version, -v
 	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
 	parser.addOption(versionOption);
-
-	// --title, -t
-	QCommandLineOption titleOption(QStringList() << "title" << "t", "Set session title (hibernated session)", "title");
-	parser.addOption(titleOption);
-
-	// --founder, -f
-	QCommandLineOption founderOption(QStringList() << "founder" << "f", "Set founder name (hibernated session)", "name");
-	parser.addOption(founderOption);
-
-	// --persistent, -p
-	QCommandLineOption persistentOption(QStringList() << "persistent" << "p", "Persistent session (hibernated session)");
-	parser.addOption(persistentOption);
-
 
 	// input file name
 	parser.addPositionalArgument("input", "text file", "<input.dptxt>");

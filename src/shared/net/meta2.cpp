@@ -18,6 +18,7 @@
 */
 
 #include "meta2.h"
+#include "textmode.h"
 
 #include <cstring>
 #include <QtEndian>
@@ -49,6 +50,23 @@ int LaserTrail::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
+Kwargs LaserTrail::kwargs() const
+{
+	Kwargs kw;
+	kw["color"] = text::rgbString(m_color);
+	kw["persistence"] = QString::number(m_persistence);
+	return kw;
+}
+
+LaserTrail *LaserTrail::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LaserTrail(
+		ctx,
+		text::parseColor(kwargs["color"]),
+		kwargs["persistence"].toInt()
+		);
+}
+
 MovePointer *MovePointer::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=8)
@@ -72,6 +90,23 @@ int MovePointer::serializePayload(uchar *data) const
 	qToBigEndian(m_y, ptr); ptr += 4;
 
 	return ptr-data;
+}
+
+Kwargs MovePointer::kwargs() const
+{
+	Kwargs kw;
+	kw["x"] = QString::number(m_x);
+	kw["y"] = QString::number(m_y);
+	return kw;
+}
+
+MovePointer *MovePointer::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new MovePointer(
+		ctx,
+		kwargs["x"].toInt(),
+		kwargs["y"].toInt()
+		);
 }
 
 UserACL *UserACL::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -99,6 +134,21 @@ int UserACL::payloadLength() const
 	return m_ids.size();
 }
 
+Kwargs UserACL::kwargs() const
+{
+	Kwargs kw;
+	if(!m_ids.isEmpty())
+		kw["users"] = text::idListString(m_ids);
+	return kw;
+}
+
+UserACL *UserACL::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new UserACL(
+		ctx,
+		text::parseIdListString8(kwargs["users"])
+		);
+}
 
 LayerACL *LayerACL::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
@@ -115,17 +165,37 @@ LayerACL *LayerACL::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int LayerACL::payloadLength() const
 {
-	return 3 + _exclusive.count();
+	return 3 + m_exclusive.count();
 }
 
 int LayerACL::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_id, ptr); ptr += 2;
-	*(ptr++) = _locked;
-	foreach(uint8_t e, _exclusive)
+	qToBigEndian(m_id, ptr); ptr += 2;
+	*(ptr++) = m_locked;
+	for(uint8_t e : m_exclusive)
 		*(ptr++) = e;
 	return ptr-data;
+}
+
+Kwargs LayerACL::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	kw["locked"] = m_locked ? "true" : "false";
+	if(!m_exclusive.isEmpty())
+		kw["exclusive"] = text::idListString(m_exclusive);
+	return kw;
+}
+
+LayerACL *LayerACL::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new LayerACL(
+		ctx,
+		text::parseIdString16(kwargs["id"]),
+		kwargs["locked"] == "true",
+		text::parseIdListString8(kwargs["exclusive"])
+		);
 }
 
 SessionACL *SessionACL::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -147,6 +217,35 @@ int SessionACL::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	qToBigEndian(m_flags, ptr); ptr += 2;
 	return ptr-data;
+}
+
+Kwargs SessionACL::kwargs() const
+{
+	QStringList locks;
+	if(isSessionLocked()) locks << "session";
+	if(isLockedByDefault()) locks << "default";
+	if(isLayerControlLocked()) locks << "layerctrl";
+	if(isOwnLayers()) locks << "ownlayers";
+	if(isImagesLocked()) locks << "images";
+	if(isAnnotationCreationLocked()) locks << "annotations";
+	Kwargs kw;
+	kw["locks"] = locks.join(',');
+	return kw;
+}
+
+SessionACL *SessionACL::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList locks = kwargs["locks"].split(',');
+
+	return new SessionACL(
+		ctx,
+		(locks.contains("session") ? LOCK_SESSION : 0) |
+		(locks.contains("default") ? LOCK_DEFAULT : 0) |
+		(locks.contains("layerctrl") ? LOCK_LAYERCTRL : 0) |
+		(locks.contains("ownlayers") ? LOCK_OWNLAYERS : 0) |
+		(locks.contains("images") ? LOCK_IMAGES : 0) |
+		(locks.contains("annotations") ? LOCK_ANNOTATIONS : 0)
+		);
 }
 
 }

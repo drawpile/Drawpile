@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtEndian>
 #include "image.h"
+#include "textmode.h"
+
+#include <QtEndian>
 
 namespace protocol {
 
@@ -41,20 +43,20 @@ PutImage *PutImage::deserialize(uint8_t ctx, const uchar *data, uint len)
 
 int PutImage::payloadLength() const
 {
-	return 3 + 4*4 + _image.size();
+	return 3 + 4*4 + m_image.size();
 }
 
 int PutImage::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_layer, ptr); ptr += 2;
-	*(ptr++) = _mode;
-	qToBigEndian(_x, ptr); ptr += 4;
-	qToBigEndian(_y, ptr); ptr += 4;
-	qToBigEndian(_w, ptr); ptr += 4;
-	qToBigEndian(_h, ptr); ptr += 4;
-	memcpy(ptr, _image.constData(), _image.length());
-	ptr += _image.length();
+	qToBigEndian(m_layer, ptr); ptr += 2;
+	*(ptr++) = m_mode;
+	qToBigEndian(m_x, ptr); ptr += 4;
+	qToBigEndian(m_y, ptr); ptr += 4;
+	qToBigEndian(m_w, ptr); ptr += 4;
+	qToBigEndian(m_h, ptr); ptr += 4;
+	memcpy(ptr, m_image.constData(), m_image.length());
+	ptr += m_image.length();
 	return ptr-data;
 }
 
@@ -69,6 +71,46 @@ bool PutImage::payloadEquals(const Message &m) const
 		width() == p.width() &&
 		height() == p.height() &&
 		image() == p.image();
+}
+
+Kwargs PutImage::kwargs() const
+{
+	Kwargs kw;
+	kw["layer"] = text::idString(m_layer);
+	kw["mode"] = QString::number(m_mode);
+	kw["x"] = QString::number(m_x);
+	kw["y"] = QString::number(m_y);
+	kw["w"] = QString::number(m_w);
+	kw["h"] = QString::number(m_h);
+
+	// Split the base64 encoded image data into multiple lines
+	// so the text file is nicer to look at
+	const int cols = 70;
+	QByteArray img = m_image.toBase64();
+	QString imgstr;
+	imgstr.reserve(img.length() + img.length()/cols);
+	imgstr += QString::fromUtf8(img.left(cols));
+	for(int i=cols;i<img.length();i+=cols) {
+		imgstr += '\n';
+		imgstr += QString::fromUtf8(img.mid(i, cols));
+	}
+	kw["img"] = imgstr;
+
+	return kw;
+}
+
+PutImage *PutImage::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new PutImage(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs["mode"].toInt(),
+		kwargs["x"].toInt(),
+		kwargs["y"].toInt(),
+		kwargs["w"].toInt(),
+		kwargs["h"].toInt(),
+		QByteArray::fromBase64(kwargs["img"].toUtf8())
+		);
 }
 
 FillRect *FillRect::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -96,15 +138,42 @@ int FillRect::payloadLength() const
 int FillRect::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	qToBigEndian(_layer, ptr); ptr += 2;
-	*(ptr++) = _blend;
-	qToBigEndian(_x, ptr); ptr += 4;
-	qToBigEndian(_y, ptr); ptr += 4;
-	qToBigEndian(_w, ptr); ptr += 4;
-	qToBigEndian(_h, ptr); ptr += 4;
-	qToBigEndian(_color, ptr); ptr += 4;
+	qToBigEndian(m_layer, ptr); ptr += 2;
+	*(ptr++) = m_blend;
+	qToBigEndian(m_x, ptr); ptr += 4;
+	qToBigEndian(m_y, ptr); ptr += 4;
+	qToBigEndian(m_w, ptr); ptr += 4;
+	qToBigEndian(m_h, ptr); ptr += 4;
+	qToBigEndian(m_color, ptr); ptr += 4;
 
 	return ptr-data;
+}
+
+Kwargs FillRect::kwargs() const
+{
+	Kwargs kw;
+	kw["layer"] = text::idString(m_layer);
+	kw["blend"] = QString::number(m_blend);
+	kw["color"] = text::argbString(m_color);
+	kw["x"] = QString::number(m_x);
+	kw["y"] = QString::number(m_y);
+	kw["w"] = QString::number(m_w);
+	kw["h"] = QString::number(m_h);
+	return kw;
+}
+
+FillRect *FillRect::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new FillRect(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs["blend"].toInt(),
+		kwargs["x"].toInt(),
+		kwargs["y"].toInt(),
+		kwargs["w"].toInt(),
+		kwargs["h"].toInt(),
+		text::parseColor(kwargs["color"])
+		);
 }
 
 

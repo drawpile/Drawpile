@@ -20,6 +20,8 @@
 #define DP_NET_MESSAGE_H
 
 #include <Qt>
+#include <QHash>
+#include <QString>
 
 namespace protocol {
 
@@ -76,6 +78,8 @@ enum MessageUndoState {
 	UNDONE = 0x01, /* marked as undone, can be redone */
 	GONE   = 0x03  /* marked as undone, cannot be redone */
 };
+
+typedef QHash<QString,QString> Kwargs;
 
 class Message {
 	friend class MessagePtr;
@@ -234,6 +238,14 @@ public:
 	 */
 	bool equals(const Message &m) const;
 
+	/**
+	 * @brief Get the textmode serialization of this message
+	 */
+	virtual QString toString() const;
+
+	//! Get the name of this message
+	virtual QString messageName() const = 0;
+
 protected:
 	/**
 	 * @brief Get the length of the message payload
@@ -259,6 +271,13 @@ protected:
 	 */
 	virtual bool payloadEquals(const Message &m) const;
 
+	/**
+	 * @brief Get the keyword arguments that describe this message
+	 *
+	 * This is used by toString() to generate the textmode serialization.
+	 */
+	virtual Kwargs kwargs() const = 0;
+
 private:
 	const MessageType m_type;
 	MessageUndoState _undone;
@@ -280,10 +299,15 @@ public:
 		return new M(ctx);
 	}
 
+	static M *fromText(uint8_t ctx, const Kwargs &) {
+		return new M(ctx);
+	}
+
 protected:
 	int payloadLength() const { return 0; }
 	int serializePayload(uchar *data) const { Q_UNUSED(data); return 0; }
 	bool payloadEquals(const Message &m) const { Q_UNUSED(m); return true; }
+	Kwargs kwargs() const override { return Kwargs(); }
 };
 
 /**
