@@ -70,6 +70,18 @@ QJsonObject readRecordingHeader(QIODevice *file)
 	return doc.object();
 }
 
+static QJsonObject withDefaults(const QJsonObject metadata)
+{
+	QJsonObject header = metadata;
+	if(!header.contains("version"))
+		header["version"] = protocol::ProtocolVersion::current().asString();
+
+	if(!header.contains("writerversion"))
+		header["writerversion"] = DRAWPILE_VERSION;
+
+	return header;
+}
+
 bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 {
 	Q_ASSERT(file && file->isOpen());
@@ -79,13 +91,7 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 	file->write(MAGIC, 6);
 
 	// Metadata block
-	QJsonObject md = metadata;
-
-	if(!md.contains("version"))
-		md["version"] = protocol::ProtocolVersion::current().asString();
-
-	if(!md.contains("writerversion"))
-		md["writerversion"] = DRAWPILE_VERSION;
+	QJsonObject md = withDefaults(metadata);
 
 	QByteArray metadatabuf = QJsonDocument(md).toJson(QJsonDocument::Compact);
 
@@ -104,6 +110,20 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 		return false;
 
 	return true;
+}
+
+bool writeTextHeader(QIODevice *file, const QJsonObject &metadata)
+{
+	Q_ASSERT(file && file->isOpen());
+	QJsonObject md = withDefaults(metadata);
+	QMapIterator<QString,QVariant> i(md.toVariantMap());
+	while(i.hasNext()) {
+		i.next();
+		QByteArray line = QString("!%1=%2\n").arg(i.key(), i.value().toString()).toUtf8();
+		if(file->write(line) != line.length())
+			return false;
+	}
+	return file->write("\n", 1) == 1;
 }
 
 bool readRecordingMessage(QIODevice *file, QByteArray &buffer)

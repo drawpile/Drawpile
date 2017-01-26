@@ -51,6 +51,10 @@ QJsonObject readRecordingHeader(QIODevice *file);
 bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata);
 
 /**
+ * @brief Write the text mode recording header
+ */
+bool writeTextHeader(QIODevice *file, const QJsonObject &metadata);
+/**
  * @brief Read a single complete message from a file to the buffer
  *
  * The target buffer is resized to fit the message if necessary.

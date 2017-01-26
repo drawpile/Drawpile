@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,28 +16,32 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "config.h"
+
+#include "../shared/record/reader.h"
+#include "../shared/record/writer.h"
+
 #include <QCoreApplication>
 #include <QStringList>
 #include <QScopedPointer>
 #include <QRegularExpression>
 #include <QCommandLineParser>
 #include <QTextStream>
-
-#include "config.h"
-
-#include "../shared/record/reader.h"
+#include <QFile>
 
 using namespace recording;
 
 void printVersion()
 {
-	printf("dprec2txt " DRAWPILE_VERSION "\n");
-	printf("Protocol version: %d.%d\n", DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+	printf("dprectool " DRAWPILE_VERSION "\n");
+	printf("Protocol version: %s\n", qPrintable(protocol::ProtocolVersion::current().asString()));
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 }
 
-bool convertRecording(const QString &inputfilename, QTextStream &out)
+bool convertRecording(const QString &inputfilename, const QString &outputfilename, const QString &outputFormat)
 {
+	// Open input file
 	Reader reader(inputfilename);
 	Compatibility compat = reader.open();
 
@@ -46,8 +50,8 @@ bool convertRecording(const QString &inputfilename, QTextStream &out)
 		fprintf(
 			stderr,
 			"This recording is incompatible (format version %s). It was made with Drawpile version %s.\n",
-			reader.formatVersion().asString().toLocal8Bit().constData(),
-			reader.writerVersion().toLocal8Bit().constData()
+			qPrintable(reader.formatVersion().asString()),
+			qPrintable(reader.writerVersion())
 		);
 		return false;
 	case NOT_DPREC:
@@ -64,34 +68,67 @@ bool convertRecording(const QString &inputfilename, QTextStream &out)
 		break;
 	}
 
-	// Print header metadata
-	out << "# dprec2txt " DRAWPILE_VERSION ": " << inputfilename << '\n';
-	QMapIterator<QString,QVariant> header(reader.metadata().toVariantMap());
-	while(header.hasNext()) {
-		header.next();
-		out << '!' << header.key() << '=' << header.value().toString() << '\n';
+	// Open output file (stdout if no filename given)
+	QScopedPointer<Writer> writer;
+	if(outputfilename.isEmpty()) {
+		// No output filename given? Write to stdout
+		QFile *out = new QFile();
+		out->open(stdout, QFile::WriteOnly);
+		writer.reset(new Writer(out));
+		out->setParent(writer.data());
+
+		writer->setEncoding(Writer::Encoding::Text);
+
+	} else {
+		writer.reset(new Writer(outputfilename));
 	}
 
-	protocol::MessageType lastType = protocol::MSG_COMMAND;
+	// Output format override
+	if(outputFormat == "text")
+		writer->setEncoding(Writer::Encoding::Text);
+	else if(outputFormat == "binary")
+		writer->setEncoding(Writer::Encoding::Binary);
+	else if(!outputFormat.isEmpty()) {
+		fprintf(stderr, "Invalid output format: %s\n", qPrintable(outputFormat));
+		return false;
+	}
 
-	// Print messages
+	// Convert input to output
+	if(!writer->open()) {
+		fprintf(stderr, "Couldn't open %s: %s\n",
+			outputfilename.toLocal8Bit().constData(),
+			writer->errorString().toLocal8Bit().constData()
+			);
+		return false;
+	}
+	if(!writer->writeHeader()) {
+		fprintf(stderr, "Error while writing header: %s\n",
+			writer->errorString().toLocal8Bit().constData()
+			);
+		return false;
+	}
+
 	bool notEof = true;
 	do {
 		MessageRecord mr = reader.readNext();
 		switch(mr.status) {
 		case MessageRecord::OK:
 
-			if(mr.message->type() != lastType)
-				out << "\n";
-			lastType = mr.message->type();
-
-			out << mr.message->toString() << "\n";
-
+			if(!writer->writeMessage(*mr.message)) {
+				fprintf(stderr, "Error while writing message: %s\n",
+					writer->errorString().toLocal8Bit().constData()
+					);
+				return false;
+			}
 			delete mr.message;
 			break;
 
 		case MessageRecord::INVALID:
-			out << "# WARNING: Unrecognized message type " << uchar(mr.error.type) << " of length " << mr.error.len << " at offset 0x" << QString::number(reader.currentPosition(), 16) << "\n";
+			writer->writeComment(QStringLiteral("WARNING: Unrecognized message type %1 of length %2 at offset 0x%3")
+				.arg(int(mr.error.type))
+				.arg(mr.error.len)
+				.arg(reader.currentPosition())
+				);
 			break;
 
 		case MessageRecord::END_OF_RECORDING:
@@ -99,8 +136,6 @@ bool convertRecording(const QString &inputfilename, QTextStream &out)
 			break;
 		}
 	} while(notEof);
-
-	out << "\n";
 
 	return true;
 }
@@ -110,18 +145,26 @@ int main(int argc, char *argv[]) {
 
 	QCoreApplication::setOrganizationName("drawpile");
 	QCoreApplication::setOrganizationDomain("drawpile.net");
-	QCoreApplication::setApplicationName("dprec2txt");
+	QCoreApplication::setApplicationName("dprectool");
 	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
 
 	// Set up command line arguments
 	QCommandLineParser parser;
 
-	parser.setApplicationDescription("Convert Drawpile recordings to text format");
+	parser.setApplicationDescription("Convert Drawpile recordings between text and binary formats");
 	parser.addHelpOption();
 
 	// --version, -v
 	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
 	parser.addOption(versionOption);
+
+	// --out, -o
+	QCommandLineOption outOption(QStringList() << "o" << "out", "Output file", "output");
+	parser.addOption(outOption);
+
+	// --format, -f
+	QCommandLineOption formatOption(QStringList() << "f" << "format", "Output format (binary/text)", "format");
+	parser.addOption(formatOption);
 
 	// input file name
 	parser.addPositionalArgument("input", "recording file", "<input.dprec>");
@@ -140,8 +183,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	QTextStream out(stdout, QIODevice::WriteOnly);
-	if(!convertRecording(inputfiles.at(0), out))
+	if(!convertRecording(inputfiles.at(0), parser.value(outOption), parser.value(formatOption)))
 		return 1;
 
 	return 0;

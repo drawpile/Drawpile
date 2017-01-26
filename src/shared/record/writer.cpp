@@ -43,12 +43,15 @@ Writer::Writer(const QString &filename, QObject *parent)
 
 	if(ct != KCompressionDevice::None)
 		m_file = new KCompressionDevice(m_file, true, ct);
+
+	if(filename.contains(".dptxt", Qt::CaseInsensitive) && !filename.contains(".dprec", Qt::CaseInsensitive))
+		m_encoding = Encoding::Text;
 }
 
 
 Writer::Writer(QIODevice *file, bool autoclose, QObject *parent)
 	: QObject(parent), m_file(file),
-	m_autoclose(autoclose), m_minInterval(0), m_autoflush(nullptr)
+	m_autoclose(autoclose), m_minInterval(0), m_autoflush(nullptr), m_encoding(Encoding::Binary)
 {
 }
 
@@ -81,6 +84,12 @@ void Writer::setAutoflush()
 	m_autoflush->start(5000);
 }
 
+void Writer::setEncoding(Encoding e)
+{
+	Q_ASSERT(m_file->pos()==0);
+	m_encoding = e;
+}
+
 bool Writer::open()
 {
 	if(m_file->isOpen())
@@ -96,27 +105,75 @@ QString Writer::errorString() const
 
 bool Writer::writeHeader(const QJsonObject &customMetadata)
 {
-	return writeRecordingHeader(m_file, customMetadata);
+	if(m_encoding == Encoding::Binary)
+		return writeRecordingHeader(m_file, customMetadata);
+	else
+		return writeTextHeader(m_file, customMetadata);
 }
 
 void Writer::writeFromBuffer(const QByteArray &buffer)
 {
-	const int len = protocol::Message::sniffLength(buffer.constData());
-	Q_ASSERT(len <= buffer.length());
-	m_file->write(buffer.constData(), len);
+	if(m_encoding == Encoding::Binary) {
+		const int len = protocol::Message::sniffLength(buffer.constData());
+		Q_ASSERT(len <= buffer.length());
+		m_file->write(buffer.constData(), len);
+	} else {
+		protocol::Message *msg = protocol::Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.length(), true);
+		m_file->write(msg->toString().toUtf8());
+		m_file->write("\n", 1);
+	}
 }
 
-void Writer::writeMessage(const protocol::Message &msg)
+bool Writer::writeMessage(const protocol::Message &msg)
 {
 	Q_ASSERT(m_file->isOpen());
 
-	QVarLengthArray<char> buf(msg.length());
-	const int len = msg.serialize(buf.data());
-	Q_ASSERT(len == buf.length());
+	if(m_encoding == Encoding::Binary) {
+		QVarLengthArray<char> buf(msg.length());
+		const int len = msg.serialize(buf.data());
+		Q_ASSERT(len == buf.length());
+		if(m_file->write(buf.data(), len) != len)
+			return false;
 
-	m_file->write(buf.data(), len);
+	} else {
+		QByteArray line = msg.toString().toUtf8();
+		if(m_file->write(line) != line.length())
+			return false;
+		if(m_file->write("\n", 1) != 1)
+			return false;
+
+		// Write extra newlines after certain commands to give
+		// the file some visual structure
+		switch(msg.type()) {
+		case protocol::MSG_UNDOPOINT:
+			if(m_file->write("\n", 1) != 1)
+				return false;
+		default: break;
+		}
+	}
+
+	return true;
 }
 
+bool Writer::writeComment(const QString &comment)
+{
+	if(m_encoding != Encoding::Text)
+		return true;
+
+	QList<QByteArray> lines = comment.toUtf8().split('\n');
+	for(const QByteArray &line : lines) {
+		if(m_file->write("# ", 2) != 2)
+			return false;
+
+		if(m_file->write(line) != line.length())
+			return false;
+
+		if(m_file->write("\n", 1) != 1)
+			return false;
+	}
+
+	return true;
+}
 
 void Writer::recordMessage(const protocol::MessagePtr &msg)
 {

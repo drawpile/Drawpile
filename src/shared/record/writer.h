@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,12 +33,20 @@ class Writer : public QObject
 {
 	Q_OBJECT
 public:
+	enum class Encoding {
+		Binary,
+		Text
+	};
+
 	/**
 	 * @brief Open a writer that writes to the named file
+	 *
+	 * If the file ends with ".dptxt", the text encoding is used.
+	 *
 	 * @param filename
 	 * @param parent
 	 */
-	Writer(const QString &filename, QObject *parent=0);
+	Writer(const QString &filename, QObject *parent=nullptr);
 
 	/**
 	 * @brief Open a writer that writes to the given device
@@ -46,12 +54,17 @@ public:
 	 * @param autoclose if true, this object will take ownership of the file device
 	 * @param parent
 	 */
-	Writer(QIODevice *file, bool autoclose=false, QObject *parent=0);
-	Writer(const Writer&) = delete;
-	Writer &operator=(const Writer&) = delete;
+	Writer(QIODevice *file, bool autoclose=false, QObject *parent=nullptr);
 	~Writer();
 
 	QString errorString() const;
+
+	/**
+	 * @brief Select the recording encoding to use.
+	 *
+	 * This must be called before any write operation.
+	 */
+	void setEncoding(Encoding e);
 
 	//! Open the file for writing
 	bool open();
@@ -90,7 +103,21 @@ public:
 	 * @param buffer
 	 */
 	void writeFromBuffer(const QByteArray &buffer);
-	void writeMessage(const protocol::Message &msg);
+
+	/**
+	 * @brief Write a message
+	 * @return false on error
+	 */
+	bool writeMessage(const protocol::Message &msg);
+
+	/**
+	 * @brief Write a comment line
+	 *
+	 * If encoding is not Text, this does nothing.
+	 *
+	 * @return false on error
+	 */
+	bool writeComment(const QString &comment);
 
 public slots:
 	/**
@@ -108,6 +135,7 @@ private:
 	qint64 m_minInterval;
 	qint64 m_interval;
 	QTimer *m_autoflush;
+	Encoding m_encoding;
 };
 
 }
