@@ -10,6 +10,11 @@
  * Fixed chat message pinning
  * Session settings now have a dialog window
  * Added option to lock annotation creation and lock individual annotations from modification
+ * More server GUI features
+ * OSX: Fixed pinch gesture detection
+ * Revamped dptxt format
+ * Recordings can now be saved directly in dptxt format
+ * Merged dprec2txt and txt2dprec into dprectool 
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document
