@@ -20,7 +20,7 @@
 #define DP_NET_MESSAGE_H
 
 #include <Qt>
-#include <QHash>
+#include <QMap>
 #include <QString>
 
 namespace protocol {
@@ -79,7 +79,10 @@ enum MessageUndoState {
 	GONE   = 0x03  /* marked as undone, cannot be redone */
 };
 
-typedef QHash<QString,QString> Kwargs;
+// Note: both QHash and QMap work here, but we use QMap so the kwargs are
+// ordered consistently, which makes comparing messages by eye easier.
+typedef QMap<QString,QString> Kwargs;
+typedef QMapIterator<QString,QString> KwargsIterator;
 
 class Message {
 	friend class MessagePtr;

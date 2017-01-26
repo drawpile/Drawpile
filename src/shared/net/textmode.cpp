@@ -57,6 +57,9 @@ Parser::Result Parser::parseLine(const QString &line)
 {
 	switch(m_state) {
 	case ExpectCommand: {
+		if(line.isEmpty() || line.at(0) == '#')
+			return Result { Result::Skip, nullptr };
+
 		if(line.at(0) == '!') {
 			// Metadata line
 			int i = line.indexOf('=');

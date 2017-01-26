@@ -1,17 +1,20 @@
 # Normally canvas size should be set first, but
 # out of order initialization should be tolerated
+!version=dp:4.20.1
 
-newlayer 1 1 0 #ffffffff Background
+1 newlayer id=1 fill=#ffffffff title=Background
 
 # At this point the layer has zero size, so no drawing happens
-ctx 1 layer=1 color=#ff0000 opacity=1 size=1
-move 1 0 0; 100 100
-penup 1
+1 brush layer=1
+1 penmove 0 0
+1 penmove 100 100
+1 penup
 
 # Set canvas size now
-resize 1 0 100 100 0
+1 resize right=100 bottom=100
 
 # This drawing should work
-move 1 100 0; 0 100
-penup 1
+1 penmove 100 0
+1 penmove 0 100
+1 penup
 

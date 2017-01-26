@@ -76,9 +76,12 @@ int ToolChange::serializePayload(uchar *data) const
 Kwargs ToolChange::kwargs() const
 {
 	Kwargs kw;
+	QStringList mode;
+	if((m_mode & TOOL_MODE_SUBPIXEL)) mode << "soft";
+	if((m_mode & TOOL_MODE_INCREMENTAL)) mode << "inc";
 	kw["layer"] = text::idString(m_layer);
 	kw["blend"] = QString::number(m_blend);
-	kw["mode"] = QString::number(m_mode);
+	kw["mode"] = mode.join(',');
 	kw["spacing"] = QString::number(m_spacing);
 	kw["color"] = text::rgbString(m_color);
 	if(m_hard_h != m_hard_l) {
@@ -123,15 +126,15 @@ ToolChange *ToolChange::fromText(uint8_t ctx, const Kwargs &kwargs)
 	if(kwargs.contains("size")) {
 		sizeh = sizel = text::parseDecimal8(kwargs["size"]);
 	} else {
-		sizeh = kwargs["sizeh"].toInt();
-		sizel = kwargs["sizel"].toInt();
+		sizeh = kwargs.value("sizeh", "1").toInt();
+		sizel = kwargs.value("sizel", "1").toInt();
 	}
 
 	if(kwargs.contains("opacity")) {
 		opacityh = opacityl = text::parseDecimal8(kwargs["opacity"]);
 	} else {
-		opacityh = text::parseDecimal8(kwargs["opacityh"]);
-		opacityl = text::parseDecimal8(kwargs["opacityl"]);
+		opacityh = text::parseDecimal8(kwargs.value("opacityh", "100"));
+		opacityl = text::parseDecimal8(kwargs.value("opacityl", "100"));
 	}
 
 	if(kwargs.contains("smudge")) {
@@ -141,11 +144,14 @@ ToolChange *ToolChange::fromText(uint8_t ctx, const Kwargs &kwargs)
 		smudgel = text::parseDecimal8(kwargs["smudgel"]);
 	}
 
+	QStringList mode = kwargs["mode"].split(',');
+
 	return new ToolChange(
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
-		kwargs["blend"].toInt(),
-		kwargs["mode"].toInt(),
+		kwargs.value("blend", "1").toInt(),
+		(mode.contains("inc") ? TOOL_MODE_INCREMENTAL : 0) |
+		(mode.contains("soft") ? TOOL_MODE_SUBPIXEL : 0),
 		kwargs["spacing"].toInt(),
 		text::parseColor(kwargs["color"]),
 		hardh, hardl,

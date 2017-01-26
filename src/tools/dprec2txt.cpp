@@ -64,11 +64,13 @@ bool convertRecording(const QString &inputfilename, QTextStream &out)
 		break;
 	}
 
-	// Print some header comments
-	out << "# dprec2txt " DRAWPILE_VERSION ": " << inputfilename << "\n";
-	out << "# Recording made with Drawpile version: " << reader.writerVersion() << "\n";
-	out << "!version:" << reader.formatVersion().asString() << "\n";
-	out << "\n";
+	// Print header metadata
+	out << "# dprec2txt " DRAWPILE_VERSION ": " << inputfilename << '\n';
+	QMapIterator<QString,QVariant> header(reader.metadata().toVariantMap());
+	while(header.hasNext()) {
+		header.next();
+		out << '!' << header.key() << '=' << header.value().toString() << '\n';
+	}
 
 	protocol::MessageType lastType = protocol::MSG_COMMAND;
 

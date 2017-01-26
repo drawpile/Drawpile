@@ -129,7 +129,7 @@ QString Message::toString() const
 	// Add non-multiline keyword args
 	const QRegExp space("\\s");
 	bool hasMultiline = false;
-	QHashIterator<QString,QString> i(kw);
+	KwargsIterator i(kw);
 	while(i.hasNext()) {
 		i.next();
 		if(i.value().contains(space)) {
@@ -142,7 +142,7 @@ QString Message::toString() const
 	// Add multiline keyword args
 	if(hasMultiline) {
 		str += " {";
-		QHashIterator<QString,QString> i(kw);
+		KwargsIterator i(kw);
 		i.toFront();
 		do {
 			i.next();

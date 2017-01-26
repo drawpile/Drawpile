@@ -18,7 +18,6 @@
 */
 
 #include "loader.h"
-#include "textloader.h"
 #include "net/client.h"
 #include "net/commands.h"
 #include "ora/orareader.h"
@@ -74,17 +73,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			m_warning = text;
 		}
 		return reader.initCommands();
-	} else if(m_filename.endsWith(".dptxt", Qt::CaseInsensitive)) {
-		TextCommandLoader txt(filename());
 
-		if(!txt.load()) {
-			m_error = txt.errorMessage();
-			return QList<MessagePtr>();
-		}
-
-		m_warning = txt.warningMessage();
-
-		return txt.loadInitCommands();
 	} else {
 		// Load an image using Qt's image loader.
 		// If the image is animated, each frame is loaded as a layer

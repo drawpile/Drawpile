@@ -101,15 +101,19 @@ Kwargs PutImage::kwargs() const
 
 PutImage *PutImage::fromText(uint8_t ctx, const Kwargs &kwargs)
 {
+	QByteArray img = QByteArray::fromBase64(kwargs["img"].toUtf8());
+	if(img.isEmpty() || img.length()>MAX_LEN)
+		return nullptr;
+
 	return new PutImage(
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
-		kwargs["mode"].toInt(),
+		kwargs.value("mode", "1").toInt(),
 		kwargs["x"].toInt(),
 		kwargs["y"].toInt(),
 		kwargs["w"].toInt(),
 		kwargs["h"].toInt(),
-		QByteArray::fromBase64(kwargs["img"].toUtf8())
+		img
 		);
 }
 
@@ -167,7 +171,7 @@ FillRect *FillRect::fromText(uint8_t ctx, const Kwargs &kwargs)
 	return new FillRect(
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
-		kwargs["blend"].toInt(),
+		kwargs.value("blend", "1").toInt(),
 		kwargs["x"].toInt(),
 		kwargs["y"].toInt(),
 		kwargs["w"].toInt(),

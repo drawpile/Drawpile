@@ -1,30 +1,33 @@
-resize 1 0 200 200 0
+!version=dp:4.20.1
 
-newlayer 1 2 0 #ffff0000 Background
+1 resize right=200 bottom=200
 
-newlayer 1 1 0 #ff00ffff FillRect test
+1 newlayer id=2 fill=#ffff0000 title=Background
+1 newlayer id=1 fill=#ff00ffff {
+	title=FillRect test
+	}
 
-ctx 1 layer=1
+1 brush layer=1
 
 # Fill whole layer
-fillrect 1 1 0 0 400 400 #ffffffff
+1 fillrect layer=1 x=0 y=0 w=400 h=400 color=#ffffffff blend=255
 
 # Make some holes
-fillrect 1 1 10 10 10 10 #00000000
-fillrect 1 1 25 10 10 20 #00000000
-fillrect 1 1 40 10 10 30 #00000000
-fillrect 1 1 55 10 10 40 #00000000
-fillrect 1 1 70 10 10 50 #00000000
-fillrect 1 1 85 10 10 60 #00000000
+1 fillrect layer=1 x=10 y=10 w=10 h=10 blend=255
+1 fillrect layer=1 x=25 y=10 w=10 h=20 blend=255
+1 fillrect layer=1 x=40 y=10 w=10 h=30 blend=255
+1 fillrect layer=1 x=55 y=10 w=10 h=40 blend=255
+1 fillrect layer=1 x=70 y=10 w=10 h=50 blend=255
+1 fillrect layer=1 x=85 y=10 w=10 h=60 blend=255
 
 # Tile boundary aligned hole
-fillrect 1 1 128 64 64 64 #00000000
+1 fillrect layer=1 x=128 y=64 w=64 h=64 blend=255
 
 # Color blending
-fillrect 1 1 5 15 100 3 #3300ff00 src-over
-fillrect 1 1 5 20 100 3 #3300ff00 multiply
+1 fillrect layer=1 x=5 y=15 w=100 h=3 color=#3300ff00
+1 fillrect layer=1 x=5 y=20 w=100 h=3 color=#3300ff00 blend=2
 
 # Fill outside canvas
-fillrect 1 1 180 180 30 30 #00000000
+1 fillrect layer=1 x=180 y=180 w=30 h=30 color=#ff0000
+1 fillrect layer=1 x=400 y=400 w=100 h=100 color=#00ff00
 
-fillrect 1 1 400 400 100 100 #00000000

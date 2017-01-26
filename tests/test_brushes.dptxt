@@ -1,45 +1,72 @@
-resize 1 0 600 600 0
-newlayer 1 1 0 #ffaaffff Brush test
+!version=dp:4.20.1
 
-ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1
+1 resize right=600 bottom=600
+1 newlayer id=1 fill=#faaffff {
+	title=Brush test
+	}
+
 
 #
 # Test simple line drawing
 #
 
 # Test small brush sizes (hard edge)
-ctx 1 size=1
-move 1 10 12; 266 10
-penup 1
+1 brush layer=1 color=#000000 mode=inc spacing=35 hard=100 opacity=100 size=1
+1 penmove {
+	10 12
+	266 10
+	}
+1 penup
 
-ctx 1 size=2
-move 1 10 22; 266 20
-penup 1
+1 brush layer=1 color=#000000 mode=inc spacing=35 hard=100 opacity=100 size=2
+1 penmove {
+	10 22
+	266 20
+	}
+1 penup
 
-ctx 1 size=4
-move 1 10 32; 266 30
-penup 1
+1 brush layer=1 color=#000000 mode=inc spacing=35 hard=100 opacity=100 size=4
+1 penmove {
+	10 32
+	266 30
+}
+1 penup
 
-ctx 1 size=6
-move 1 10 42; 266 40
-penup 1
+1 brush layer=1 color=#000000 mode=inc spacing=35 hard=100 opacity=100 size=6
+1 penmove {
+	10 42
+	266 40
+}
+1 penup
 
 # Test small brush sizes (soft edge)
-ctx 1 hardedge=false size=1
-move 1 300 12; 556 10
-penup 1
+1 brush layer=1 color=#000000 mode=inc,soft spacing=35 hard=100 opacity=100 size=1
+1 penmove {
+	300 12
+	556 10
+	}
+1 penup
 
-ctx 1 size=2
-move 1 300 22; 556 20
-penup 1
+1 brush layer=1 color=#000000 mode=inc,soft spacing=35 hard=100 opacity=100 size=2
+1 penmove {
+	300 22
+	556 20
+	}
+1 penup
 
-ctx 1 size=4
-move 1 300 32; 556 30
-penup 1
+1 brush layer=1 color=#000000 mode=inc,soft spacing=35 hard=100 opacity=100 size=4
+1 penmove {
+	300 32
+	556 30
+	}
+1 penup
 
-ctx 1 size=6
-move 1 300 42; 556 40
-penup 1
+1 brush layer=1 color=#000000 mode=inc,soft spacing=35 hard=100 opacity=100 size=6
+1 penmove {
+	300 42
+	556 40
+	}
+1 penup
 
 #
 # Test pressure interpolation (hard edge)
@@ -82,34 +109,44 @@ penup 1
 #
 
 # Size
-ctx 1 hardedge=false color=#0 sizeh=40 sizel=1 hard=0.5
-move 1 30 320 1; 230 320 0
-penup 1
+1 ctx color=#000000 mode=soft sizeh=40 sizel=1 hard=50
+1 penmove {
+	30 320 100
+	230 320 0
+}
+1 penup
 
-move 1 260 320 0; 460 320 1
-penup 1
+1 penmove {
+	260 320 0
+	460 320 100
+}
+1 penup
 
 # Opacity
-ctx 1 size=40 opacityh=1 opacityl=0
-move 1 30 380 1; 230 380 0
-penup 1
+1 brush layer=1 mode=soft size=40 opacityh=100 opacityl=0
+1 penmove {
+	30 380 100
+	230 380 0
+}
+1 penup
 
-move 1 260 380 0; 460 380 1
-penup 1
+1 penmove {
+	260 380 0
+	460 380 100
+}
+1 penup
 
 # Hardness
-ctx 1 opacity=1 hardh=1 hardl=0
-move 1 30 440 1; 230 440 0
-penup 1
+1 brush layer=1 hardh=100 hardl=0
+1 penmove {
+	30 440 100
+	230 440 0
+}
+1 penup
 
-move 1 260 440 0; 460 440 1
-penup 1
-
-# Color
-ctx 1 hard=1 colorh=#0 colorl=#ffffff hard=0.5
-move 1 30 500 1; 230 500 0
-penup 1
-
-move 1 260 500 0; 460 500 1
-penup 1
+1 penmove {
+	260 440 0
+	 460 440 100
+}
+1 penup
 

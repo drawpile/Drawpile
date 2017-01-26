@@ -1,16 +1,22 @@
-resize 1 0 300 300 0
+!version=dp:4.20.1
 
-newlayer 1 1 0 #ffffffff Background
-newlayer 1 2 0 #000000ff One
+1 resize right=300 bottom=300
 
-ctx 1 layer=2
-move 1 10 10; 290 290
-penup 1
+1 newlayer id=1 fill=#ffffffff title=Background
+1 newlayer id=2 fill=#000000ff title=One
 
-newlayer 1 3 0 #000000ff Two
-ctx 1 layer=3
-move 1 290 10; 10 290
-penup 1
+1 brush layer=2
+1 penmove 10 10
+1 penmove 290 290
+1 penup
 
-newlayer 1 4 2 #00000000 copy insert Copy of One
+1 newlayer id=3 color=#000000ff title=Two
+1 brush layer=3
+1 penmove 290 10
+1 penmove 10 290
+1 penup
+
+1 newlayer id=4 source=2 flags=copy,insert {
+	title=Copy of One
+	}
 

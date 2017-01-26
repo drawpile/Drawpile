@@ -20,6 +20,7 @@
 #include "reader.h"
 #include "header.h"
 #include "../net/recording.h"
+#include "../net/textmode.h"
 
 #include "config.h"
 
@@ -31,15 +32,42 @@
 
 namespace recording {
 
+using protocol::text::Parser;
+
+struct Reader::Private {
+	Encoding encoding;
+	QString filename;
+	QIODevice *file;
+
+	QByteArray msgbuf;
+
+	QJsonObject metadata;
+
+	int current;
+	qint64 currentPos;
+	qint64 beginning;
+
+	bool autoclose;
+	bool eof;
+	bool isCompressed;
+};
+
 bool Reader::isRecordingExtension(const QString &filename)
 {
-	QRegularExpression re("\\.dprec(?:z|\\.(?:gz|bz2|xz))?$");
+	QRegularExpression re("\\.dp(?:rec|txt)(?:z|\\.(?:gz|bz2|xz))?$");
 	return re.match(filename).hasMatch();
 }
 
-Reader::Reader(const QString &filename, QObject *parent)
-	: QObject(parent), m_filename(filename), m_current(-1), m_currentPos(0), m_autoclose(true), m_eof(false), m_isHibernation(false)
+Reader::Reader(const QString &filename, Encoding encoding, QObject *parent)
+	: QObject(parent), d(new Private)
 {
+	d->encoding = encoding;
+	d->filename = filename;
+	d->current = -1;
+	d->currentPos = 0;
+	d->autoclose = true;
+	d->eof = false;
+
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
 	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))
 		ct = KCompressionDevice::GZip;
@@ -49,207 +77,383 @@ Reader::Reader(const QString &filename, QObject *parent)
 		ct = KCompressionDevice::Xz;
 
 	if(ct == KCompressionDevice::None) {
-		m_file = new QFile(filename);
-		m_isCompressed = false;
+		d->file = new QFile(filename);
+		d->isCompressed = false;
 	} else {
-		m_file = new KCompressionDevice(filename, ct);
-		m_isCompressed = true;
+		d->file = new KCompressionDevice(filename, ct);
+		d->isCompressed = true;
 	}
 }
 
-Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), m_filename(filename), m_file(file), m_current(-1), m_autoclose(autoclose), m_eof(false), m_isHibernation(false), m_isCompressed(false)
+Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, Encoding encoding, QObject *parent)
+	: QObject(parent)
 {
 	Q_ASSERT(file);
+	d->encoding = encoding;
+	d->filename = filename;
+	d->file = file;
+	d->current = -1;
+	d->autoclose = autoclose;
+	d->eof = false;
+	d->isCompressed = false;
 }
 
 Reader::~Reader()
 {
-	if(m_autoclose)
-		delete m_file;
+	if(d->autoclose)
+		delete d->file;
+	delete d;
+}
+
+bool Reader::isEof() const
+{
+	return d->eof;
+}
+
+bool Reader::isCompressed() const
+{
+	return d->isCompressed;
+}
+
+protocol::ProtocolVersion Reader::formatVersion() const
+{
+	return protocol::ProtocolVersion::fromString(d->metadata["version"].toString());
+}
+
+QJsonObject Reader::metadata() const
+{
+	return d->metadata;
+}
+
+Reader::Encoding Reader::encoding() const
+{
+	return d->encoding;
+}
+
+QString Reader::filename() const
+{
+	return d->filename;
+}
+
+int Reader::currentIndex() const
+{
+	return d->current;
+}
+
+qint64 Reader::currentPosition() const
+{
+	return d->currentPos;
+}
+
+static Reader::Encoding detectEncoding(QIODevice *dev)
+{
+	// First, see if the binary header is present
+	QJsonObject header = readRecordingHeader(dev);
+	if(!header.isEmpty()) {
+		// Header content read! This must be a binary recording
+		return Reader::Encoding::Binary;
+	}
+
+	dev->seek(0);
+
+	// Check if this looks like a text mode recording
+	dev->setTextModeEnabled(true);
+	Parser parser;
+	for(int i=0;i<100;++i) {
+		QByteArray rawLine = dev->readLine(1024);
+		if(rawLine.isEmpty()) {
+			// Ran out of stuff, certainly not a valid recording
+			break;
+		}
+
+		QString line = QString::fromUtf8(rawLine).trimmed();
+		Parser::Result res = parser.parseLine(line);
+		switch(res.status) {
+		case Parser::Result::Ok:
+		case Parser::Result::NeedMore:
+			// Got a valid command: this really looks like a valid recording
+			delete res.msg;
+			return Reader::Encoding::Text;
+			break;
+		case Parser::Result::Skip:
+			// Hmm. Inconclusive, unless a metadata variable was set
+			if(!parser.metadata().isEmpty())
+				return Reader::Encoding::Text;
+			break;
+		case Parser::Result::Error:
+			// Error encountered: most likely not a recording
+			return Reader::Encoding::Autodetect;
+		}
+	}
+	// No valid messages after 100 lines? Probably not a recording.
+	return Reader::Encoding::Autodetect;
 }
 
 Compatibility Reader::open()
 {
-	if(!m_file->isOpen()) {
-		if(!m_file->open(QFile::ReadOnly)) {
+	if(!d->file->isOpen()) {
+		if(!d->file->open(QFile::ReadOnly)) {
 			return CANNOT_READ;
 		}
 	}
 
-	// Read the header
-	m_metadata = readRecordingHeader(m_file);
+	if(d->encoding == Encoding::Autodetect) {
+		d->encoding = detectEncoding(d->file);
+		// Still couldn't figure out the encoding?
+		if(d->encoding == Encoding::Autodetect)
+			return NOT_DPREC;
 
-	if(m_metadata.isEmpty()) {
+		d->file->seek(0);
+	}
+
+	if(d->encoding == Encoding::Binary)
+		return readBinaryHeader();
+	else
+		return readTextHeader();
+}
+
+Compatibility Reader::readBinaryHeader() {
+	// Read the header
+	d->metadata = readRecordingHeader(d->file);
+
+	if(d->metadata.isEmpty()) {
 		return NOT_DPREC;
 	}
 
 	// Header completed!
-	m_beginning = m_file->pos();
+	d->beginning = d->file->pos();
 
 	// Check version numbers
-	m_version = protocol::ProtocolVersion::fromString(m_metadata["version"].toString());
+	const auto version = formatVersion();
 
 	// Best case is exact match.
-	const protocol::ProtocolVersion current = protocol::ProtocolVersion::current();
-	if(m_version == current)
+	const auto current = protocol::ProtocolVersion::current();
+
+	if(version == current)
 		return COMPATIBLE;
 
 	// Different namespace means this recording is meant for some other program
-	if(m_version.ns() != current.ns())
+	if(version.ns() != current.ns())
 		return NOT_DPREC;
 
 	// A recording made with a newer (major) version may contain unsupported commands.
-	if(current.major() < m_version.major())
+	if(current.major() < version.major())
 		return UNKNOWN_COMPATIBILITY;
 
 	// Newer minor version: expect rendering differences
-	if(current.minor() < m_version.minor())
+	if(current.minor() < version.minor())
 		return MINOR_INCOMPATIBILITY;
-
-#if 0
-#if DRAWPILE_PROTO_MAJOR_VERSION != 16 || DRAWPILE_PROTO_MINOR_VERSION != 1
-#error Update recording compatability check!
-#endif
-
-	// Old versions known to be compatible
-	switch(m_formatversion) {
-	case version32(15, 5): // fully compatible (with support code)
-	case version32(14, 5):
-	case version32(13, 5):
-	case version32(13, 4):
-	case version32(12, 4):
-		return COMPATIBLE;
-
-	case version32(11, 3): // supported, but expect minor rendering differences
-	case version32(11, 2):
-	case version32(10, 2):
-	case version32(9, 2):
-	case version32(8, 1):
-	case version32(7, 1):
-		return MINOR_INCOMPATIBILITY;
-	}
-#endif
 
 	// Other versions are not supported
 	return INCOMPATIBLE;
 }
 
+Compatibility Reader::readTextHeader()
+{
+	// Read the file until the first command is found
+	Parser parser;
+	bool done=false;
+	qint64 pos=0;
+	while(!done) {
+		QByteArray rawLine = d->file->readLine();
+		if(rawLine.isEmpty())
+			return NOT_DPREC;
+
+		QString line = QString::fromUtf8(rawLine).trimmed();
+		Parser::Result res = parser.parseLine(line);
+		switch(res.status) {
+		case Parser::Result::Skip:
+			// Comments or metadata. Remember this potential start of the first real message
+			pos = currentPosition();
+			break;
+
+		case Parser::Result::Error:
+			return NOT_DPREC;
+
+		case Parser::Result::NeedMore:
+		case Parser::Result::Ok:
+			// First message found, meaning the header section (if there was any) is over
+			delete res.msg;
+			done = true;
+			break;
+		}
+	}
+
+	// Go to the beginning of the first message
+	d->beginning = pos;
+	d->file->seek(pos);
+
+	// Convert header metadata to JSON format
+	protocol::KwargsIterator header(parser.metadata());
+	while(header.hasNext()) {
+		header.next();
+		bool ok;
+		int number = header.value().toInt(&ok);
+		if(ok)
+			d->metadata[header.key()] = number;
+		else if(header.value() == "true" || header.value() == "false")
+			d->metadata[header.key()] = header.value() == "true";
+		else
+			d->metadata[header.key()] = header.value();
+	}
+
+	// Check compatibility
+	const auto version = formatVersion();
+
+	if(!version.isValid()) {
+		// No version header given
+		return UNKNOWN_COMPATIBILITY;
+	}
+
+	// Best case is exact match.
+	const auto current = protocol::ProtocolVersion::current();
+
+	if(version == current)
+		return COMPATIBLE;
+
+	// Different namespace means this recording is meant for some other program
+	if(version.ns() != current.ns())
+		return NOT_DPREC;
+
+	// A recording made with a newer (major) version may contain unsupported commands.
+	if(current.major() < version.major())
+		return UNKNOWN_COMPATIBILITY;
+
+	// Newer minor version: expect rendering differences
+	if(current.minor() < version.minor())
+		return MINOR_INCOMPATIBILITY;
+
+	// Other versions are not supported
+	// TODO older versions may be fully supported in the text encoding
+	return INCOMPATIBLE;
+}
+
 QString Reader::errorString() const
 {
-	return m_file->errorString();
+	return d->file->errorString();
 }
 
 QString Reader::writerVersion() const
 {
-	return m_metadata["writerversion"].toString();
+	return d->metadata["writerversion"].toString();
 }
 
 qint64 Reader::filesize() const
 {
-	return m_file->size();
+	return d->file->size();
 }
 
 qint64 Reader::filePosition() const
 {
-	return m_file->pos();
+	return d->file->pos();
 }
 
 void Reader::close()
 {
-	Q_ASSERT(m_file->isOpen());
-	m_file->close();
+	Q_ASSERT(d->file->isOpen());
+	d->file->close();
 }
 
 void Reader::rewind()
 {
-	m_file->seek(m_beginning);
-	m_current = -1;
-	m_currentPos = -1;
-	m_eof = false;
+	d->file->seek(d->beginning);
+	d->current = -1;
+	d->currentPos = -1;
+	d->eof = false;
 }
 
 void Reader::seekTo(int pos, qint64 position)
 {
-	m_current = pos;
-	m_currentPos = position;
-	m_file->seek(position);
-	m_eof =false;
+	d->current = pos;
+	d->currentPos = position;
+	d->file->seek(position);
+	d->eof = false;
+}
+
+static protocol::Message *readTextMessage(QIODevice *file, bool *eof)
+{
+	Parser parser;
+	while(1) {
+		QByteArray rawLine = file->readLine();
+		if(rawLine.isEmpty()) {
+			*eof = true;
+			return nullptr;
+		}
+
+		Parser::Result res = parser.parseLine(QString::fromUtf8(rawLine).trimmed());
+		switch(res.status) {
+		case Parser::Result::Skip:
+		case Parser::Result::NeedMore:
+			break;
+		case Parser::Result::Error:
+			qWarning("Text mode recording error: %s", parser.errorString().toLocal8Bit().constData());
+			return nullptr;
+		case Parser::Result::Ok:
+			return res.msg;
+		}
+	}
 }
 
 bool Reader::readNextToBuffer(QByteArray &buffer)
 {
-	m_currentPos = filePosition();
+	Q_ASSERT(d->encoding != Encoding::Autodetect);
 
-	if(!readRecordingMessage(m_file, buffer)) {
-		m_eof = true;
-		return false;
+	d->currentPos = filePosition();
+
+	if(d->encoding == Encoding::Binary) {
+		if(!readRecordingMessage(d->file, buffer)) {
+			d->eof = true;
+			return false;
+		}
+
+	} else {
+		protocol::Message *msg = readTextMessage(d->file, &d->eof);
+		if(!msg)
+			return false;
+		if(buffer.length() < msg->length())
+			buffer.resize(msg->length());
+		msg->serialize(buffer.data());
+		delete msg;
 	}
 
-	++m_current;
+	++d->current;
 
 	return true;
 }
 
 MessageRecord Reader::readNext()
 {
+	Q_ASSERT(d->encoding != Encoding::Autodetect);
 	MessageRecord msg;
 
-	if(!readNextToBuffer(m_msgbuf))
-		return msg;
+	if(d->encoding == Encoding::Binary) {
+		if(!readNextToBuffer(d->msgbuf))
+			return msg;
 
-	protocol::Message *message;
-#if 0 // TODO
-	if(m_formatversion != version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION)) {
+		protocol::Message *message;
+		message = protocol::Message::deserialize((const uchar*)d->msgbuf.constData(), d->msgbuf.length(), true);
 
-
-		// see protocol changelog in doc/protocol.md
-		switch(_formatversion) {
-		case version32(15, 5):
-			message = compat::deserializeV15_5((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-
-		case version32(14, 5):
-		case version32(13, 5):
-			message = compat::deserializeV14((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-
-		case version32(12, 4):
-			message = compat::deserializeV12((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-
-		case version32(11, 3):
-		case version32(11, 2):
-			message = compat::deserializeV11((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-
-		case version32(10, 2):
-		case version32(9, 2):
-		case version32(8, 1):
-		case version32(7, 1):
-			message = compat::deserializeV10((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
-
-		default:
-			message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
-			break;
+		if(message) {
+			msg.status = MessageRecord::OK;
+			msg.message = message;
+		} else {
+			msg.status = MessageRecord::INVALID;
+			msg.error.len = protocol::Message::sniffLength(d->msgbuf.constData());
+			msg.error.type = protocol::MessageType(d->msgbuf.at(2));
 		}
 
-		qWarning("TODO: recording compatability mode not yet implemented!");
-		message = 0;
 	} else {
-		message = protocol::Message::deserialize((const uchar*)m_msgbuf.constData(), m_msgbuf.length(), true);
-	}
-#endif
-	message = protocol::Message::deserialize((const uchar*)m_msgbuf.constData(), m_msgbuf.length(), true);
-
-	if(message) {
-		msg.status = MessageRecord::OK;
-		msg.message = message;
-	} else {
-		msg.status = MessageRecord::INVALID;
-		msg.error.len = protocol::Message::sniffLength(m_msgbuf.constData());
-		msg.error.type = protocol::MessageType(m_msgbuf.at(2));
+		protocol::Message *message = readTextMessage(d->file, &d->eof);
+		if(!d->eof) {
+			if(message) {
+				msg.status = MessageRecord::OK;
+				msg.message = message;
+			} else {
+				msg.status = MessageRecord::INVALID;
+				msg.error.len = 0;
+				msg.error.type = protocol::MSG_COMMAND;
+			}
+		}
 	}
 
 	return msg;

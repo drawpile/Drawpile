@@ -43,7 +43,6 @@ set (
 	canvas/lasertrailmodel.cpp
 	canvas/retcon.cpp
 	canvas/loader.cpp
-	canvas/textloader.cpp
 	canvas/aclfilter.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp

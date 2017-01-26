@@ -1,38 +1,70 @@
-resize 1 0 600 600 0
-newlayer 1 1 0 #ffaaffff Brush test
+!version=dp:4.20.1
 
-ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1
+1 resize right=600 bottom=600
+1 newlayer id=1 fill=#ffaaffff {
+	title=Brush test
+}
 
-# Hard edge brush size change
-ctx 1 sizel=1 sizeh=20 hardedge=true
+1 brush layer=1 color=#000000 flags=2 spacing=35 hard=100 opacity=100 sizel=1 sizeh=20
 
-move 1 10 30 0; 200 30 1
-penup 1
+1 penmove {
+	10 30 0
+	200 30 100
+	}
+1 penup
 
-move 1 10 50 0; 200 60 1
-penup 1
+1 penmove {
+	10 50 0
+	200 60 100
+	}
+1 penup
 
-move 1 10 70 0; 200 100 1
-penup 1
+1 penmove {
+	10 70 0
+	200 100 100
+	}
+1 penup
 
-move 1 10 100 0; 200 140 1
-penup 1
-move 1 10 140 0; 200 300 1
-penup 1
+1 penmove {
+	10 100 0
+	200 140 100
+	}
+1 penup
+1 penmove {
+	10 140 0
+	200 300 100
+	}
+1 penup
 
 # Soft edge brush size change
-ctx 1 hardedge=false
+1 brush layer=1 color=#000000 flags=3 spacing=35 hard=100 opacity=100 sizel=1 sizeh=20
 
-move 1 300 30 0; 490 30 1
-penup 1
+1 penmove {
+	300 30 0
+	490 30 100
+}
+1 penup
 
-move 1 300 50 0; 490 60 1
-penup 1
+1 penmove {
+	300 50 0
+	490 60 100
+}
+1 penup
 
-move 1 300 70 0; 490 100 1
-penup 1
+1 penmove {
+	300 70 0
+	490 100 100
+}
+1 penup
 
-move 1 300 100 0; 490 140 1
-penup 1
-move 1 300 140 0; 490 300 1
-penup 1
+1 penmove {
+	300 100 0
+	490 140 100
+	}
+1 penup
+
+1 penmove {
+	300 140 0
+	490 300 100
+}
+1 penup

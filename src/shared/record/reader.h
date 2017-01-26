@@ -58,10 +58,21 @@ struct MessageRecord {
 	};
 };
 
+/**
+ * @brief Recording file reader
+ *
+ * Supports both binary and text encodings.
+ */
 class Reader : public QObject
 {
 	Q_OBJECT
 public:
+	enum class Encoding {
+		Autodetect,
+		Binary,
+		Text
+	};
+
 	/**
 	 * @brief Read from a file
 	 *
@@ -71,7 +82,7 @@ public:
 	 * @param filename
 	 * @param parent
 	 */
-	explicit Reader(const QString &filename, QObject *parent=0);
+	explicit Reader(const QString &filename, Encoding encoding=Encoding::Autodetect, QObject *parent=nullptr);
 
 	/**
 	 * @brief Read from an IO device
@@ -81,7 +92,7 @@ public:
 	 * @param autoclose if true, the Reader instance will take ownership of the file device
 	 * @param parent
 	 */
-	Reader(const QString &filename, QIODevice *file, bool autoclose=false, QObject *parent=0);
+	Reader(const QString &filename, QIODevice *file, bool autoclose=false, Encoding=Encoding::Autodetect, QObject *parent=nullptr);
 
 	~Reader();
 
@@ -93,43 +104,48 @@ public:
 	static bool isRecordingExtension(const QString &filename);
 
 	//! Name of the currently open file
-	QString filename() const { return m_filename; }
+	QString filename() const;
 
 	//! Size of the currently open file
 	qint64 filesize() const;
 
 	//! Index of the last read message
-	int currentIndex() const { return m_current; }
+	int currentIndex() const;
 
 	//! Position of the last read message in the file
-	qint64 currentPosition() const { return m_currentPos; }
+	qint64 currentPosition() const;
 
 	//! Position in the file (position of the next message to be read)
 	qint64 filePosition() const;
 
 	//! Did the last read hit the end of the file?
-	bool isEof() const { return m_eof; }
+	bool isEof() const;
 
 	//! Is this recording compressed?
-	bool isCompressed() const { return m_isCompressed; }
+	bool isCompressed() const;
 
 	//! Get the last error message
 	QString errorString() const;
 
 	//! Get the recording's protocol version
-	protocol::ProtocolVersion formatVersion() const { return m_version; }
+	protocol::ProtocolVersion formatVersion() const;
 
 	//! Get the version number of the program that made the recording
 	QString writerVersion() const;
 
 	//! Get header metadata
-	QJsonObject metadata() const { return m_metadata; }
+	QJsonObject metadata() const;
 
 	/**
 	 * @brief Open the file
 	 * @return compatibility level of the opened file
 	 */
 	Compatibility open();
+
+	/**
+	 * @brief Get the recording encoding mode
+	 */
+	Encoding encoding() const;
 
 	//! Close the file
 	void close();
@@ -141,6 +157,7 @@ public:
 	 * @brief Read the next message to the given buffer
 	 *
 	 * The buffer will be resized, if necesasry, to hold the entire message.
+	 * If this is a text mode recording, the message will be serialized in the buffer.
 	 *
 	 * @param buffer
 	 * @return false on error
@@ -164,19 +181,12 @@ public:
 	void seekTo(int pos, qint64 offset);
 
 private:
-	QString m_filename;
-	QIODevice *m_file;
-	QByteArray m_msgbuf;
-	QString m_writerversion;
-	protocol::ProtocolVersion m_version;
-	QJsonObject m_metadata;
-	int m_current;
-	qint64 m_currentPos;
-	qint64 m_beginning;
-	bool m_autoclose;
-	bool m_eof;
-	bool m_isHibernation;
-	bool m_isCompressed;
+	Compatibility readBinaryHeader();
+	Compatibility readTextHeader();
+
+	struct Private;
+	Private *d;
+
 };
 
 }

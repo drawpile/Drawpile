@@ -1,79 +1,141 @@
+!version=dp:4.20.1
+
 #
 # Sketching tool blend mode tests
 #
-resize 1 0 650 180 0
-newlayer 1 1 0 #ffffffff Background
-newlayer 1 2 0 #00000000 Sketch test
+1 resize right=650 bottom=180
+1 newlayer id=1 fill=#ffffffff title=Background
+1 newlayer id=2 {
+	title=Sketch test
+}
 
-ctx 1 layer=2 hardedge=false incremental=false spacing=35 hard=0.8 opacity=0.4 size=10
 
-undopoint 1
+1 undopoint
 
 ### Horizontal lines
-ctx 1 color=#000000
-move 1 10 20; 640 20
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10
+1 penmove {
+	10 20
+	640 20
+}
+1 penup
 
-ctx 1 color=#ff0000
-move 1 10 60; 640 60
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 color=#ff0000
+1 penmove {
+	10 60
+	640 60
+}
+1 penup
 
-ctx 1 color=#00ff00
-move 1 10 100; 640 100
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 color=#00ff00
+1 penmove {
+	10 100
+	640 100
+}
+1 penup
 
-ctx 1 color=#0000ff
-move 1 10 140; 640 140
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 color=#0000ff
+1 penmove {
+	10 140
+	640 140
+}
+1 penup
 
 ### Underpaint vertical lines
-undopoint 1
-ctx 1 blend=dst-over
+1 undopoint
 
-ctx 1 color=#000000
-move 1 20 10; 20 160
-penup 1
-move 1 190 10; 190 160
-penup 1
-move 1 360 10; 360 160
-penup 1
-move 1 530 10; 530 160
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 blend=11
+1 penmove {
+	20 10
+	20 160
+}
+1 penup
+1 penmove {
+	190 10
+	190 160
+}
+1 penup
+1 penmove {
+	360 10
+	360 160
+}
+1 penup
+1 penmove {
+	530 10
+	530 160
+}
+1 penup
 
-ctx 1 color=#ff0000
-move 1 50 10; 50 160
-penup 1
-move 1 220 10; 220 160
-penup 1
-move 1 390 10; 390 160
-penup 1
-move 1 560 10; 560 160
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 blend=11 color=#ff0000
+1 penmove {
+	50 10
+	50 160
+}
+1 penup
+1 penmove {
+	220 10
+	220 160
+}
+1 penup
+1 penmove {
+	390 10
+	390 160
+}
+1 penup
+1 penmove {
+	560 10
+	560 160
+}
+1 penup
 
-ctx 1 color=#00ff00
-move 1 80 10; 80 160
-penup 1
-move 1 250 10; 250 160
-penup 1
-move 1 420 10; 420 160
-penup 1
-move 1 590 10; 590 160
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 blend=11 color=#00ff00
+1 penmove {
+	80 10
+	80 160
+}
+1 penup
+1 penmove {
+	250 10
+	250 160
+}
+1 penup
+1 penmove {
+	420 10
+	420 160
+}
+1 penup
+1 penmove {
+	590 10
+	590 160
+}
+1 penup
 
-ctx 1 color=#0000ff
-move 1 110 10; 110 160
-penup 1
-move 1 280 10; 280 160
-penup 1
-move 1 450 10; 450 160
-penup 1
-move 1 620 10; 620 160
-penup 1
+1 brush layer=2 mode=soft spacing=35 hard=80 opacity=40 size=10 blend=11 color=#0000ff
+1 penmove {
+	110 10
+	110 160
+}
+1 penup
+1 penmove {
+	280 10
+	280 160
+}
+1 penup
+1 penmove {
+	450 10
+	450 160
+}
+1 penup
+1 penmove {
+	620 10
+	620 160
+}
+1 penup
 
 ### Color erase red, green and blue
 
-undopoint 1
-fillrect 1 2 180 0 110 180 #ffff0000 -dp-cerase
-fillrect 1 2 350 0 110 180 #ff00ff00 -dp-cerase
-fillrect 1 2 520 0 110 180 #ff0000ff -dp-cerase
+1 undopoint
+1 fillrect layer=2 x=180 y=0 w=110 h=180 color=#ffff0000 blend=12
+1 fillrect layer=2 x=350 y=0 w=110 h=180 color=#ff00ff00 blend=12
+1 fillrect layer=2 x=520 y=0 w=110 h=180 color=#ff0000ff blend=12
 

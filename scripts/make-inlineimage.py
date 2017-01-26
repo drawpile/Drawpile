@@ -2,20 +2,17 @@
 """
 A tool for generating inline images for Drawpile recording templates.
 
-This is needed when using txt2dprec. When opening text format files
-directly in Drawpile, external file references can be used.
-
 Example:
 1. First, generate the inline image: ./make-inline-image.py my_picture.png
 2. Copy&paste the output into your template file.
 3. Use with putimage:
 
-    inlineimage 64 64
-    ...
-    ==end==
+    ? putimage layer=? x=? y=? w=64 h=64 {
+        img=...
+    }
 
-    putimage 1 1 128 128 src-over -
-4. Generate your recording file: txt2dprec my_template.txt session.example.dptpl
+    (Replace the ?s with appropriate values)
+
 """
 
 from PIL import Image
@@ -30,7 +27,7 @@ class EncodeError(Exception):
     pass
 
 def encode_inline_image(img):
-    out = ['inlineimage %d %d' % (img.width, img.height)]
+    out = ['? putimage layer=? x=? y=? w=%d h=%d {' % (img.width, img.height)]
 
     img = img.convert(mode="RGBA")
 
@@ -42,9 +39,9 @@ def encode_inline_image(img):
 
     data = struct.pack('>I', len(imgbytes)) + data
 
-    out += textwrap.wrap(base64.b64encode(data).decode('ascii'), 70)
+    out += ['\timg=' + x for x in textwrap.wrap(base64.b64encode(data).decode('ascii'), 70)]
 
-    out.append('==end==')
+    out.append('}')
 
     return '\n'.join(out)
 
@@ -56,6 +53,7 @@ if __name__ == "__main__":
     img = Image.open(sys.argv[1])
 
     try:
+        # TODO split into multiple images if one doesn't fit into a message
         print (encode_inline_image(img))
     except EncodeError as e:
         print (e, file=sys.stderr)
