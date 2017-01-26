@@ -874,7 +874,7 @@ void MainWindow::open()
 {
 	// Get a list of supported formats
 	QString dpimages = "*.ora ";
-	QString dprecs = "*.dptxt *.dprec *.dprecz *.dprec.gz ";
+	QString dprecs = "*.dptxt *.dprec *.dprecz *.dprec.gz *.dptxtz *.dptxt.gz ";
 	QString formats;
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
@@ -1107,8 +1107,10 @@ void MainWindow::toggleRecording()
 	}
 
 	QString filter =
-			tr("Recordings (%1)").arg("*.dprec") + ";;" +
-			tr("Compressed Recordings (%1)").arg("*.dprecz") + ";;" +
+			tr("Binary Recordings (%1)").arg("*.dprec") + ";;" +
+			tr("Text Recordings (%1)").arg("*.dptxt") + ";;" +
+			tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + ";;" +
+			tr("Compressed Text Recordings (%1)").arg("*.dptxtz") + ";;" +
 			QApplication::tr("All Files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Record Session"), getLastPath(), filter);

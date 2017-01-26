@@ -34,7 +34,7 @@ Writer::Writer(const QString &filename, QObject *parent)
 	: Writer(new QFile(filename), true, parent)
 {
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
-	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive))
+	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive) || filename.endsWith(".dptxtz", Qt::CaseInsensitive))
 		ct = KCompressionDevice::GZip;
 	else if(filename.endsWith(".bz2", Qt::CaseInsensitive))
 		ct = KCompressionDevice::BZip2;
