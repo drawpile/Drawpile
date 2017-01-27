@@ -86,7 +86,7 @@ Reader::Reader(const QString &filename, Encoding encoding, QObject *parent)
 }
 
 Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, Encoding encoding, QObject *parent)
-	: QObject(parent)
+	: QObject(parent), d(new Private)
 {
 	Q_ASSERT(file);
 	d->encoding = encoding;
