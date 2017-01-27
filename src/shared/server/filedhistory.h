@@ -87,6 +87,7 @@ public:
 	void setMaxUsers(int max) override;
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
+	void joinUser(uint8_t id, const QString &name) override;
 
 	void terminate() override;
 	void cleanupBatches(int before) override;

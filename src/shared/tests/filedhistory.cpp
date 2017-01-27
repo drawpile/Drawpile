@@ -53,6 +53,8 @@ private slots:
 			fh->addAnnouncement(announcementUrl);
 			fh->addAnnouncement("http://example.com/2/");
 			fh->removeAnnouncement("http://example.com/2/");
+			fh->joinUser(1, "u1");
+			fh->joinUser(2, "u2");
 		}
 
 		{
@@ -78,6 +80,9 @@ private slots:
 			QStringList announcements = fh->announcements();
 			QCOMPARE(announcements.size(), 1);
 			QCOMPARE(announcements.at(0), announcementUrl);
+
+			QCOMPARE(fh->idQueue().getIdForName("u1"), uint8_t(1));
+			QCOMPARE(fh->idQueue().getIdForName("u2"), uint8_t(2));
 		}
 	}
 
@@ -273,6 +278,9 @@ private slots:
 			QCOMPARE(msgs.size(), 5);
 			QCOMPARE(msgs.last()->type(), protocol::MSG_USER_LEAVE);
 			QCOMPARE(msgs.last()->contextId(), uint8_t(1));
+
+			// Id Queue should have been updated by the leave events
+			QVERIFY(fh->idQueue().nextId() > 2);
 		}
 	}
 

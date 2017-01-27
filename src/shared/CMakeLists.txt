@@ -38,6 +38,7 @@ set (
 	server/opcommands.cpp
 	server/serverconfig.cpp
 	server/jsonapi.cpp
+	server/idqueue.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})

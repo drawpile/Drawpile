@@ -45,7 +45,6 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_history(history),
 	m_resetstreamsize(0),
 	m_publicListingClient(nullptr),
-	m_lastUserId(0),
 	m_lastEventTime(QDateTime::currentDateTime()),
 	m_closed(false),
 	m_historyLimitWarningSent(false)
@@ -137,28 +136,15 @@ void Session::switchState(State newstate)
 
 void Session::assignId(Client *user)
 {
-	int loops=0;
-	while(++loops<255) {
-		++m_lastUserId;
-		if(m_lastUserId>254)
-			m_lastUserId=1;
+	uint8_t id = m_history->idQueue().getIdForName(user->username());
 
-		bool isFree = true;
-		for(const Client *c : m_clients) {
-			if(c->id() == m_lastUserId) {
-				isFree = false;
-				break;
-			}
-		}
-
-		if(isFree) {
-			user->setId(m_lastUserId);
-			break;
-		}
-
+	int loops=256;
+	while(loops>0 && (id==0 || getClientById(id))) {
+		id = m_history->idQueue().nextId();
+		  --loops;
 	}
-	// shouldn't happen: we don't let users in if the session is full
-	Q_ASSERT(user->id() != 0);
+	Q_ASSERT(loops>0); // shouldn't happen, since we don't let new users in if the session is full
+	user->setId(id);
 }
 
 void Session::joinUser(Client *user, bool host)
@@ -204,6 +190,8 @@ void Session::joinUser(Client *user, bool host)
 	sendUpdatedBanlist();
 	sendUpdatedMuteList();
 
+	m_history->idQueue().setIdForName(user->id(), user->username());
+
 	logger::info() << user << "Joined session";
 	emit userConnected(this, user);
 }
@@ -227,6 +215,7 @@ void Session::removeUser(Client *user)
 	}
 
 	addToHistory(MessagePtr(new protocol::UserLeave(user->id())));
+	m_history->idQueue().reserveId(user->id()); // Try not to reuse the ID right away
 
 	ensureOperatorExists();
 

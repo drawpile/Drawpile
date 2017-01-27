@@ -20,4 +20,5 @@ AddUnitTest(filedhistory)
 AddUnitTest(sessionban)
 AddUnitTest(messagequeue)
 AddUnitTest(serverconfig)
+AddUnitTest(idqueue)
 

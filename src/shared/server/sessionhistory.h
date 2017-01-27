@@ -21,6 +21,7 @@
 
 #include "../net/message.h"
 #include "sessionban.h"
+#include "idqueue.h"
 
 #include <QObject>
 #include <QUuid>
@@ -102,6 +103,9 @@ public:
 
 	//! Set the persistent session flags
 	virtual void setFlags(Flags f) = 0;
+
+	//! Remember a user who joined
+	virtual void joinUser(uint8_t id, const QString &name);
 
 	/**
 	 * @brief Add a new message to the history
@@ -218,6 +222,15 @@ public:
 	 */
 	virtual QStringList announcements() const = 0;
 
+	/**
+	 * @brief Get the ID queue for this session history
+	 *
+	 * The ID queue is used to intelligently assign user IDs
+	 * so that user rejoining a session get the same ID if still available
+	 * and IDs are reused as little as possible.
+	 */
+	IdQueue &idQueue() { return m_idqueue; }
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history
@@ -238,6 +251,7 @@ protected:
 
 private:
 	QUuid m_id;
+	IdQueue m_idqueue;
 
 	uint m_sizeInBytes;
 	uint m_sizeLimit;

@@ -261,6 +261,16 @@ bool FiledHistory::load()
 		} else if(cmd == "UNANNOUNCE") {
 			m_announcements.removeAll(params);
 
+		} else if(cmd == "USER") {
+			const QList<QByteArray> args = params.split(' ');
+			if(args.length()!=2) {
+				logger::warning() << "Invalid USER entry:" << QString::fromUtf8(params);
+			} else {
+				int id = args.at(0).toInt();
+				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
+				idQueue().setIdForName(id, name);
+			}
+
 		} else {
 			logger::warning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
@@ -359,7 +369,10 @@ bool FiledHistory::scanBlocks()
 
 		switch(msgType) {
 		case protocol::MSG_USER_JOIN: users.insert(ctxId); break;
-		case protocol::MSG_USER_LEAVE: users.remove(ctxId); break;
+		case protocol::MSG_USER_LEAVE:
+			users.remove(ctxId);
+			idQueue().reserveId(ctxId);
+			break;
 		}
 	} while(!m_recording->atEnd());
 
@@ -371,6 +384,7 @@ bool FiledHistory::scanBlocks()
 		char buf[16];
 		msg.serialize(buf);
 		m_recording->write(buf, msg.length());
+		idQueue().reserveId(user);
 	}
 	return true;
 }
@@ -464,6 +478,17 @@ void FiledHistory::setFlags(Flags f)
 			fstr << "nsfm";
 		m_journal->write(QString("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
 	}
+}
+
+void FiledHistory::joinUser(uint8_t id, const QString &name)
+{
+	SessionHistory::joinUser(id, name);
+	m_journal->write(
+		"USER "
+		+ QByteArray::number(int(id))
+		+ " "
+		+ name.toUtf8().toPercentEncoding(QByteArray(), " ")
+		+ "\n");
 }
 
 std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) const

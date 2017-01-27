@@ -44,6 +44,11 @@ bool SessionHistory::removeBan(int id)
 	return false;
 }
 
+void SessionHistory::joinUser(uint8_t id, const QString &name)
+{
+	idQueue().setIdForName(id, name);
+}
+
 void SessionHistory::historyLoaded(uint size, int messageCount)
 {
 	Q_ASSERT(m_lastIndex==-1);

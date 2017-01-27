@@ -462,8 +462,6 @@ private:
 	QList<sessionlisting::Announcement> m_publicListings;
 	sessionlisting::AnnouncementApi *m_publicListingClient;
 
-	int m_lastUserId;
-
 	QDateTime m_lastEventTime;
 
 	bool m_closed;
