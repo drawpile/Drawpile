@@ -45,6 +45,11 @@ QWidget *ToolSettings::createUi(QWidget *parent)
 	return m_widget;
 }
 
+void ToolSettings::pushSettings()
+{
+	// Default implementation has no settings
+}
+
 ToolProperties ToolSettings::saveToolSettings()
 {
 	return ToolProperties(toolType());

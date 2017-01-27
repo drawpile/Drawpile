@@ -106,6 +106,9 @@ public:
 	//! Get the icon for this tool type
 	const QIcon getIcon(icon::Theme variant=icon::CURRENT) const { return icon::fromTheme(m_icon, variant); }
 
+	//! Push settings to the tool controller
+	virtual void pushSettings();
+
 	/**
 	 * @brief Save the settings of this tool
 	 * @return saved tool settings

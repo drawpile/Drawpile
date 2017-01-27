@@ -79,13 +79,13 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(slider, &QSlider::valueChanged, m_size, &QSpinBox::setValue);
 	connect(m_size, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
-	connect(slider, &QSlider::valueChanged, this, &ColorPickerSettings::updateTool);
-	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::updateTool);
+	connect(slider, &QSlider::valueChanged, this, &ColorPickerSettings::pushSettings);
+	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::pushSettings);
 
 	return widget;
 }
 
-void ColorPickerSettings::updateTool()
+void ColorPickerSettings::pushSettings()
 {
 	auto *tool = static_cast<ColorPicker*>(controller()->getTool(Tool::PICKER));
 	tool->setSize(m_size->value());

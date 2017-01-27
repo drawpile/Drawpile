@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,9 +19,6 @@
 
 #include "docks/toolsettingsdock.h"
 #include "docks/utils.h"
-#include "tools/toolcontroller.h"
-#include "widgets/toolslotbutton.h"
-#include "utils/icon.h"
 
 #include "toolwidgets/brushsettings.h"
 #include "toolwidgets/shapetoolsettings.h"
@@ -33,8 +30,6 @@
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
-#include <QFrame>
-#include <QButtonGroup>
 #include <QSettings>
 
 #include <ColorDialog>
@@ -43,45 +38,11 @@ namespace docks {
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	: QDockWidget(parent), m_settingspage{},
-	m_ctrl(ctrl), _currentQuickslot(0), _eraserOverride(0), _eraserActive(false)
+	m_ctrl(ctrl), m_eraserOverride(0), m_eraserActive(false)
 {
 	Q_ASSERT(ctrl);
 
-	// Initialize tool slots
-	_toolprops.reserve(QUICK_SLOTS);
-	for(int i=0;i<QUICK_SLOTS;++i)
-		_toolprops.append(tools::ToolsetProperties());
-
 	setStyleSheet(defaultDockStylesheet());
-
-	// Create quick toolchange slot buttons
-	// We use the buttons as the title bar for this dock.
-	// The widget has special event handling so it can be used
-	// to drag the dock like a normal titlebar
-	QWidget *tb = new QWidget(this);
-	auto *hlayout = new QHBoxLayout(tb);
-	hlayout->setContentsMargins(3, 3, 3, 0);
-	hlayout->setSpacing(0);
-	setTitleBarWidget(tb);
-
-	QButtonGroup *quickbuttons = new QButtonGroup(this);
-	quickbuttons->setExclusive(true);
-
-	for(int i=0;i<QUICK_SLOTS;++i) {
-		auto *b = new widgets::ToolSlotButton(tb);
-
-		b->setCheckable(true);
-		b->setText(QString::number(i+1));
-		b->setMinimumSize(40, 40);
-		b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-		b->setAutoRaise(true);
-
-		hlayout->addWidget(b);
-		quickbuttons->addButton(b, i);
-		_quickslot[i] = b;
-	}
-
-	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
 
 	// Create a widget stack
 	m_widgets = new QStackedWidget(this);
@@ -101,16 +62,16 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	addPage(new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl));
 	addPage(new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl));
 
-	_currenttool = getToolSettingsPage(tools::Tool::BRUSH);
+	m_currenttool = getToolSettingsPage(tools::Tool::BRUSH);
+	setWindowTitle(m_currenttool->getTitle());
 
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
 	// Create color changer dialogs
-	_fgdialog = new color_widgets::ColorDialog(this);
-	_fgdialog->setAlphaEnabled(false);
-	_fgdialog->setWindowTitle(tr("Foreground Color"));
-	connect(_fgdialog, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
+	m_colorDialog = new color_widgets::ColorDialog(this);
+	m_colorDialog->setAlphaEnabled(false);
+	connect(m_colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
 }
 
 ToolSettings::~ToolSettings()
@@ -132,33 +93,28 @@ void ToolSettings::readSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("tools");
-
-	int quickslot = qBound(0, cfg.value("slot", 0).toInt(), QUICK_SLOTS-1);
-
-	_toolprops.clear();
-
-	for(int i=0;i<QUICK_SLOTS;++i) {
-		cfg.beginGroup(QString("slot-%1").arg(i));
-		_toolprops << tools::ToolsetProperties::load(cfg);
+	cfg.beginGroup("toolset");
+	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
+		cfg.beginGroup(m_settingspage[i]->getName());
+		m_settingspage[i]->restoreToolSettings(tools::ToolProperties::load(cfg));
 		cfg.endGroup();
-		updateToolSlot(i, true);
 	}
-
-	selectToolSlot(quickslot);
+	cfg.endGroup();
+	m_color = cfg.value("color").value<QColor>();
+	setTool(tools::Tool::Type(cfg.value("tool").toInt()));
 }
 
 void ToolSettings::saveSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("tools");
+	cfg.setValue("tool", m_currenttool->toolType());
+	cfg.setValue("color", m_color);
 
-	cfg.setValue("slot", _currentQuickslot);
-
-	saveCurrentTool();
-
-	for(int i=0;i<_toolprops.size();++i) {
-		cfg.beginGroup(QString("slot-%1").arg(i));
-		_toolprops[i].save(cfg);
+	cfg.beginGroup("toolsset");
+	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
+		cfg.beginGroup(m_settingspage[i]->getName());
+		m_settingspage[i]->saveToolSettings().save(cfg);
 		cfg.endGroup();
 	}
 }
@@ -167,7 +123,10 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
 	Q_ASSERT(tool>=0 && tool < tools::Tool::_LASTTOOL);
 	Q_ASSERT(m_settingspage[tool] != nullptr);
-	return m_settingspage[tool];
+	if(tool>=0 && tool<tools::Tool::_LASTTOOL)
+		return m_settingspage[tool];
+	else
+		return nullptr;
 }
 
 /**
@@ -175,9 +134,7 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
  * @param tool tool identifier
  */
 void ToolSettings::setTool(tools::Tool::Type tool) {
-	// Save old tool settings, then switch to the new tool
-	_previousTool = currentTool();
-	saveCurrentTool();
+	m_previousTool = currentTool();
 	selectTool(tool);
 }
 
@@ -185,98 +142,68 @@ void ToolSettings::setToolAndProps(const tools::ToolProperties &tool)
 {
 	if(tool.toolType()<0)
 		return;
-	setTool(tools::Tool::Type(tool.toolType()));
-	_currenttool->restoreToolSettings(tool);
+	m_previousTool = currentTool();
+	selectTool(tools::Tool::Type(tool.toolType()), tool);
 }
 
 void ToolSettings::setPreviousTool()
 {
-	saveCurrentTool();
-	selectTool(_previousTool);
+	selectTool(m_previousTool);
 }
 
-void ToolSettings::selectTool(tools::Tool::Type tool)
+void ToolSettings::selectTool(tools::Tool::Type tool, const tools::ToolProperties &props)
 {
 	tools::ToolSettings *ts = getToolSettingsPage(tool);
 	if(!ts) {
-		qWarning("selectTool: invalid tool %d", tool);
+		qWarning("selectTool(%d): no such tool!", tool);
 		return;
 	}
 
-	_currenttool = ts;
+	m_currenttool = ts;
 
-	setWindowTitle(QStringLiteral("%1. %2").arg(currentToolSlot()+1).arg(_currenttool->getTitle()));
-	m_widgets->setCurrentWidget(_currenttool->getUi());
-	_currenttool->setForeground(foregroundColor());
-	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
-	_toolprops[_currentQuickslot].setCurrentTool(tool);
+	if(props.toolType() == tool)
+		m_currenttool->restoreToolSettings(props);
 
-	updateToolSlot(currentToolSlot(), true);
+	m_currenttool->setForeground(m_color);
+	m_currenttool->pushSettings();
+
+	setWindowTitle(m_currenttool->getTitle());
+	m_widgets->setCurrentWidget(m_currenttool->getUi());
+
 	emit toolChanged(tool);
-	emit sizeChanged(_currenttool->getSize());
+	emit sizeChanged(m_currenttool->getSize());
 	updateSubpixelMode();
 }
 
 tools::ToolProperties ToolSettings::getCurrentToolProperties() const
 {
-	return _currenttool->saveToolSettings();
+	return m_currenttool->saveToolSettings();
 }
 
 void ToolSettings::updateSubpixelMode()
 {
-	emit subpixelModeChanged(_currenttool->getSubpixelMode());
+	emit subpixelModeChanged(m_currenttool->getSubpixelMode());
 }
 
 tools::Tool::Type ToolSettings::currentTool() const
 {
-	return tools::Tool::Type(_toolprops[_currentQuickslot].currentTool());
-}
-
-void ToolSettings::setToolSlot(int i)
-{
-	Q_ASSERT(i>=0 && i<QUICK_SLOTS);
-	// Save old tool state, then switch to new slot (and tool)
-	_previousToolSlot = _currentQuickslot;
-	saveCurrentTool();
-	selectToolSlot(i);
-}
-
-void ToolSettings::setPreviousToolSlot()
-{
-	saveCurrentTool();
-	selectToolSlot(_previousToolSlot);
-}
-
-void ToolSettings::selectToolSlot(int i)
-{
-	_quickslot[i]->setChecked(true);
-	_currentQuickslot = i;
-
-	setForegroundColor(_toolprops[i].foregroundColor());
-	selectTool(tools::Tool::Type(_toolprops[i].currentTool()));
-}
-
-int ToolSettings::currentToolSlot() const
-{
-	return _currentQuickslot;
+	return tools::Tool::Type(m_currenttool->toolType());
 }
 
 QColor ToolSettings::foregroundColor() const
 {
-	return _foreground;
+	return m_color;
 }
 
 void ToolSettings::setForegroundColor(const QColor& color)
 {
-	if(color != _foreground) {
-		_foreground = color;
+	if(color != m_color) {
+		m_color = color;
 
-		_currenttool->setForeground(color);
-		_toolprops[_currentQuickslot].setForegroundColor(color);
-		updateToolSlot(_currentQuickslot, false);
+		m_currenttool->setForeground(color);
 
-		if(_fgdialog->isVisible())
-			_fgdialog->setColor(color);
+		if(m_colorDialog->isVisible())
+			m_colorDialog->setColor(color);
 
 		emit foregroundColorChanged(color);
 	}
@@ -284,57 +211,30 @@ void ToolSettings::setForegroundColor(const QColor& color)
 
 void ToolSettings::changeForegroundColor()
 {
-	_fgdialog->showColor(_foreground);
+	m_colorDialog->showColor(m_color);
 }
 
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 {
-	_currenttool->quickAdjust1(adjustment);
-}
-
-/**
- * @brief Update the tool slot button to match the stored tool settings
- * @param i
- */
-void ToolSettings::updateToolSlot(int i, bool typeChanged)
-{
-	int tool = _toolprops[i].currentTool();
-	tools::ToolSettings *ts = getToolSettingsPage(tools::Tool::Type(tool));
-	if(!ts)
-		ts = getToolSettingsPage(tools::Tool::PEN);
-
-
-	_quickslot[i]->setColors(_toolprops[i].foregroundColor(), _toolprops[i].backgroundColor());
-
-	if(typeChanged) {
-		_quickslot[i]->setIcons(ts->getIcon(icon::LIGHT), ts->getIcon(icon::DARK));
-		_quickslot[i]->setToolTip(QStringLiteral("#%1: %2").arg(i+1).arg(ts->getTitle()));
-	}
-}
-
-void ToolSettings::saveCurrentTool()
-{
-	Q_ASSERT(_toolprops.size() > currentToolSlot());
-	tools::ToolProperties tp = _currenttool->saveToolSettings();
-	_toolprops[currentToolSlot()].setTool(_currenttool->getName(), tp);
+	m_currenttool->quickAdjust1(adjustment);
 }
 
 void ToolSettings::eraserNear(bool near)
 {
-	if(near && !_eraserActive) {
-		_eraserOverride = currentTool();
+	if(near && !m_eraserActive) {
+		m_eraserOverride = currentTool();
 		setTool(tools::Tool::ERASER);
-		_eraserActive = true;
-	} else if(!near && _eraserActive) {
-		setTool(tools::Tool::Type(_eraserOverride));
-		_eraserActive = false;
+		m_eraserActive = true;
+	} else if(!near && m_eraserActive) {
+		setTool(tools::Tool::Type(m_eraserOverride));
+		m_eraserActive = false;
 	}
 }
 
 void ToolSettings::disableEraserOverride(tools::Tool::Type tool)
 {
-	if(_eraserOverride == tool)
-		_eraserOverride = tools::Tool::BRUSH; // select some tool that can't be disabled
+	if(m_eraserOverride == tool)
+		m_eraserOverride = tools::Tool::BRUSH; // select some tool that can't be disabled
 }
 
 }

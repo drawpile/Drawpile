@@ -74,40 +74,4 @@ ToolProperties ToolProperties::load(const QSettings &cfg)
 	return tp;
 }
 
-void ToolsetProperties::save(QSettings &cfg)
-{
-	// Save tool settings
-	QHashIterator<QString, ToolProperties> i(_tools);
-	while(i.hasNext()) {
-		i.next();
-		cfg.beginGroup(i.key());
-		i.value().save(cfg);
-		cfg.endGroup();
-	}
-
-	// Save common settings
-	cfg.setValue("foreground", _foreground.name());
-	cfg.setValue("background", _background.name());
-	cfg.setValue("tool", _currentTool);
-}
-
-ToolsetProperties ToolsetProperties::load(QSettings &cfg)
-{
-	ToolsetProperties tp;
-
-	// Load tool settings
-	for(const QString &group : cfg.childGroups()) {
-		cfg.beginGroup(group);
-		tp._tools[group] = ToolProperties::load(cfg);
-		cfg.endGroup();
-	}
-
-	// Load common settings
-	tp._foreground = QColor(cfg.value("foreground", "black").toString());
-	tp._background = QColor(cfg.value("background", "white").toString());
-	tp._currentTool = cfg.value("tool", 1).toInt();
-
-	return tp;
-}
-
 }

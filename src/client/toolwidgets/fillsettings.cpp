@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,15 +47,15 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(uiwidget);
 
 	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
-	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::updateTool);
-	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::updateTool);
-	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::updateTool);
-	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::updateTool);
+	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::pushSettings);
+	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::pushSettings);
+	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
+	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 
 	return uiwidget;
 }
 
-void FillSettings::updateTool()
+void FillSettings::pushSettings()
 {
 	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
 	tool->setTolerance(_ui->tolerance->value());
@@ -88,7 +88,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->expand->setValue(cfg.value("expand", 0).toInt());
 	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
 	_ui->fillunder->setChecked(cfg.value("underfill", true).toBool());
-	updateTool();
+	pushSettings();
 }
 
 void FillSettings::quickAdjust1(float adjustment)

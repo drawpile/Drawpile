@@ -39,14 +39,15 @@ public:
 
 	tools::Tool::Type toolType() const override;
 
+	void pushSettings() override;
 	void setForeground(const QColor& color) override;
 	void quickAdjust1(float adjustment) override;
 
 	int getSize() const override;
 	bool getSubpixelMode() const override;
 
-	virtual ToolProperties saveToolSettings() override;
-	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);

@@ -125,7 +125,6 @@ set (
 	widgets/chatwidget.cpp 
 	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
-	widgets/toolslotbutton.cpp
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp

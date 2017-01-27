@@ -814,15 +814,6 @@ bool MainWindow::event(QEvent *event)
 							break;
 						}
 					}
-
-					// Return from temporary tool slot change
-					for(const QAction *act : _toolslotactions->actions()) {
-						const QKeySequence &seq = act->shortcut();
-						if(seq.count()==1 && e->key() == seq[0]) {
-							_dock_toolsettings->setPreviousToolSlot();
-							break;
-						}
-					}
 				}
 				_tempToolSwitchShortcut->reset();
 			}
@@ -2390,29 +2381,8 @@ void MainWindow::setupActions()
 	QAction *assignPie = makeAction("assignpreset", nullptr, tr("Assign Tool To Preset Pie Menu"), QString(), QKeySequence("x"));
 	connect(assignPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::assignSelectedPreset);
 
-	//
-	// Quick tool change slots
-	//
-	_toolslotactions = new QActionGroup(this);
-	for(int i=0;i<docks::ToolSettings::QUICK_SLOTS;++i) {
-		QAction *q = new QAction(QString("Tool slot #%1").arg(i+1), this);
-		q->setAutoRepeat(false);
-		q->setObjectName(QString("quicktoolslot-%1").arg(i));
-		q->setShortcut(QKeySequence(QString::number(i+1)));
-		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		_toolslotactions->addAction(q);
-		addAction(q);
-	}
-	connect(_toolslotactions, &QActionGroup::triggered, [this](QAction *a) {
-		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
-		_toolChangeTime.start();
-	});
-
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
-		act->installEventFilter(_tempToolSwitchShortcut);
-	for(QAction *act : _toolslotactions->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
 }
 

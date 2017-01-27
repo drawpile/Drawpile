@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,10 +44,6 @@ namespace paintcore {
 	class Brush;
 }
 
-namespace widgets {
-	class ToolSlotButton;
-}
-
 namespace docks {
 
 /**
@@ -58,20 +54,13 @@ class ToolSettings : public QDockWidget
 {
 Q_OBJECT
 public:
-	//! Number of quick tool change slots
-	static const int QUICK_SLOTS = 5;
-
-	ToolSettings(tools::ToolController *ctrl, QWidget *parent=0);
-	ToolSettings(const ToolSettings& ts) = delete;
-	ToolSettings& operator=(const ToolSettings& ts) = delete;
+	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
 
 	~ToolSettings();
 
 	//! Get the current foreground color
 	QColor foregroundColor() const;
 
-	//! Get the currently selected tool slot
-	int currentToolSlot() const;
 
 	//! Get the currently selected tool
 	tools::Tool::Type currentTool() const;
@@ -100,12 +89,6 @@ public slots:
 
 	//! Select the tool previosly set with setTool
 	void setPreviousTool();
-
-	//! Set the currently active quick tool slot
-	void setToolSlot(int i);
-
-	//! Select the tool slot previously set with setToolSlot
-	void setPreviousToolSlot();
 
 	//! Set foreground color
 	void setForegroundColor(const QColor& color);
@@ -150,30 +133,21 @@ signals:
 
 private:
 	void addPage(tools::ToolSettings *page);
-
-	void updateToolSlot(int i, bool typeChanged);
-	void selectTool(tools::Tool::Type tool);
-	void selectToolSlot(int i);
-	void saveCurrentTool();
+	void selectTool(tools::Tool::Type tool, const tools::ToolProperties &props=tools::ToolProperties());
 
 	tools::ToolSettings *m_settingspage[tools::Tool::_LASTTOOL];
 
 	tools::ToolController *m_ctrl;
-	tools::ToolSettings *_currenttool;
+	tools::ToolSettings *m_currenttool;
 	QStackedWidget *m_widgets;
 
-	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
-	int _currentQuickslot;
-	int _eraserOverride;
-	bool _eraserActive;
+	int m_eraserOverride;
+	bool m_eraserActive;
 
-	QList<tools::ToolsetProperties> _toolprops;
+	tools::Tool::Type m_previousTool;
 
-	tools::Tool::Type _previousTool;
-	int _previousToolSlot;
-
-	QColor _foreground;
-	color_widgets::ColorDialog *_fgdialog;
+	QColor m_color;
+	color_widgets::ColorDialog *m_colorDialog;
 };
 
 }

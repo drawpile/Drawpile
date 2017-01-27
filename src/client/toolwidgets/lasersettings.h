@@ -44,8 +44,8 @@ public:
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 
-private slots:
-	void updateTool();
+public slots:
+	void pushSettings() override;
 
 signals:
 	void pointerTrackingToggled(bool);
