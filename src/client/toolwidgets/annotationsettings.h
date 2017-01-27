@@ -51,6 +51,7 @@ public:
 	 */
 	void setFocusAt(int cursorPos);
 
+	tools::Tool::Type toolType() const override { return tools::Tool::ANNOTATION; }
 	virtual void setForeground(const QColor &) override {}
 	virtual void quickAdjust1(float) override {}
 	virtual int getSize() const override { return 0; }

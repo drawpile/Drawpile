@@ -106,7 +106,7 @@ void ColorPickerSettings::quickAdjust1(float adjustment)
 
 ToolProperties ColorPickerSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("layerpick", m_layerpick->isChecked());
 	cfg.setValue("size", m_size->value());
 	return cfg;

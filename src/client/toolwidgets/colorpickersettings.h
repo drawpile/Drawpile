@@ -39,6 +39,8 @@ public:
 	ColorPickerSettings(const QString &name, const QString &title, ToolController *ctrl);
 	~ColorPickerSettings();
 
+	tools::Tool::Type toolType() const override { return tools::Tool::PICKER; }
+
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 
@@ -47,8 +49,6 @@ public:
 
 	virtual int getSize() const override;
 	virtual bool getSubpixelMode() const override { return false; }
-
-
 
 public slots:
 	void addColor(const QColor &color);

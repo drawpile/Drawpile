@@ -87,19 +87,19 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	m_widgets = new QStackedWidget(this);
 	setWidget(m_widgets);
 
-	addPage(tools::Tool::PEN, new tools::PenSettings("pen", tr("Pen"), m_ctrl));
-	addPage(tools::Tool::BRUSH, new tools::BrushSettings("brush", tr("Brush"), m_ctrl));
-	addPage(tools::Tool::SMUDGE, new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl));
-	addPage(tools::Tool::ERASER, new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl));
-	addPage(tools::Tool::PICKER, new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl));
-	addPage(tools::Tool::LINE, new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl));
-	addPage(tools::Tool::RECTANGLE, new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl));
-	addPage(tools::Tool::ELLIPSE, new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl));
-	addPage(tools::Tool::FLOODFILL, new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl));
-	addPage(tools::Tool::ANNOTATION, new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl));
-	addPage(tools::Tool::SELECTION, new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl));
-	addPage(tools::Tool::POLYGONSELECTION, new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl));
-	addPage(tools::Tool::LASERPOINTER, new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl));
+	addPage(new tools::PenSettings("pen", tr("Pen"), m_ctrl));
+	addPage(new tools::BrushSettings("brush", tr("Brush"), m_ctrl));
+	addPage(new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl));
+	addPage(new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl));
+	addPage(new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl));
+	addPage(new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl));
+	addPage(new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl));
+	addPage(new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl));
+	addPage(new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl));
+	addPage(new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl));
+	addPage(new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl));
+	addPage(new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl));
+	addPage(new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl));
 
 	_currenttool = getToolSettingsPage(tools::Tool::BRUSH);
 
@@ -119,12 +119,12 @@ ToolSettings::~ToolSettings()
 		delete m_settingspage[i];
 }
 
-void ToolSettings::addPage(tools::Tool::Type type, tools::ToolSettings *page)
+void ToolSettings::addPage(tools::ToolSettings *page)
 {
-	Q_ASSERT(type >= 0 && type < tools::Tool::_LASTTOOL);
-	Q_ASSERT(m_settingspage[type] == nullptr);
+	Q_ASSERT(page->toolType() >= 0 && page->toolType() < tools::Tool::_LASTTOOL);
+	Q_ASSERT(m_settingspage[page->toolType()] == nullptr);
 
-	m_settingspage[type] = page;
+	m_settingspage[page->toolType()] = page;
 	m_widgets->addWidget(page->createUi(this));
 }
 
@@ -207,6 +207,11 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	emit toolChanged(tool);
 	emit sizeChanged(_currenttool->getSize());
 	updateSubpixelMode();
+}
+
+tools::ToolProperties ToolSettings::getCurrentToolProperties() const
+{
+	return _currenttool->saveToolSettings();
 }
 
 void ToolSettings::updateSubpixelMode()

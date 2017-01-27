@@ -78,7 +78,7 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 
 ToolProperties LaserPointerSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("tracking", _ui->trackpointer->isChecked());
 	cfg.setValue("persistence", _ui->persistence->value());
 

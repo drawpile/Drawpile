@@ -66,7 +66,7 @@ void FillSettings::updateTool()
 
 ToolProperties FillSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("tolerance", _ui->tolerance->value());
 	cfg.setValue("expand", _ui->expand->value());
 	cfg.setValue("samplemerged", _ui->samplemerged->isChecked());

@@ -39,11 +39,13 @@ public:
 	PenSettings(QString name, QString title, ToolController *ctrl);
 	~PenSettings();
 
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment);
+	tools::Tool::Type toolType() const override { return tools::Tool::PEN; }
 
-	int getSize() const;
-	bool getSubpixelMode() const { return false; }
+	void setForeground(const QColor& color) override;
+	void quickAdjust1(float adjustment) override;
+
+	int getSize() const override;
+	bool getSubpixelMode() const override { return false; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -67,11 +69,13 @@ public:
 	EraserSettings(QString name, QString title, ToolController *ctrl);
 	~EraserSettings();
 
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment);
+	tools::Tool::Type toolType() const override { return tools::Tool::ERASER; }
 
-	int getSize() const;
-	bool getSubpixelMode() const;
+	void setForeground(const QColor& color) override;
+	void quickAdjust1(float adjustment) override;
+
+	int getSize() const override;
+	bool getSubpixelMode() const override;
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -93,11 +97,13 @@ public:
 	BrushSettings(QString name, QString title, ToolController *ctrl);
 	~BrushSettings();
 
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment);
+	tools::Tool::Type toolType() const override { return tools::Tool::BRUSH; }
 
-	int getSize() const;
-	bool getSubpixelMode() const { return true; }
+	void setForeground(const QColor& color) override;
+	void quickAdjust1(float adjustment) override;
+
+	int getSize() const override;
+	bool getSubpixelMode() const override { return true; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
@@ -119,11 +125,13 @@ public:
 	SmudgeSettings(QString name, QString title, ToolController *ctrl);
 	~SmudgeSettings();
 
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment);
+	tools::Tool::Type toolType() const override { return tools::Tool::SMUDGE; }
 
-	int getSize() const;
-	bool getSubpixelMode() const { return true; }
+	void setForeground(const QColor& color) override;
+	void quickAdjust1(float adjustment) override;
+
+	int getSize() const override;
+	bool getSubpixelMode() const override { return true; }
 
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,11 @@ namespace tools {
 class ToolProperties
 {
 public:
-	ToolProperties();
+	ToolProperties() : m_tool(-1) { }
+	ToolProperties(int tool) : m_tool(tool) { }
+
+	//! Get the type of the tool
+	int toolType() const { return m_tool; }
 
 	/**
 	 * @brief Set a value
@@ -85,7 +89,8 @@ public:
 	static ToolProperties load(const QSettings &cfg);
 
 private:
-	QHash<QString, QVariant> _props;
+	QVariantHash m_props;
+	int m_tool;
 };
 
 /**

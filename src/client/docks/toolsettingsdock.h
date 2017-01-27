@@ -79,6 +79,9 @@ public:
 	//! Get a tool settings page
 	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
 
+	//! Get the active tool's properties
+	tools::ToolProperties getCurrentToolProperties() const;
+
 	//! Load tool related settings
 	void readSettings();
 
@@ -143,7 +146,7 @@ signals:
 	void toolChanged(tools::Tool::Type tool);
 
 private:
-	void addPage(tools::Tool::Type type, tools::ToolSettings *page);
+	void addPage(tools::ToolSettings *page);
 
 	void updateToolSlot(int i, bool typeChanged);
 	void selectTool(tools::Tool::Type tool);

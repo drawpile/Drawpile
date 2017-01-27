@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ QWidget *ToolSettings::createUi(QWidget *parent)
 
 ToolProperties ToolSettings::saveToolSettings()
 {
-	return ToolProperties();
+	return ToolProperties(toolType());
 }
 
 void ToolSettings::restoreToolSettings(const ToolProperties &)

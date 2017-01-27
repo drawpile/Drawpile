@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include "core/brush.h"
 #include "utils/icon.h"
+#include "tools/tool.h"
 
 class QComboBox;
 
@@ -61,6 +62,9 @@ public:
 
 	//! Get the UI widget
 	QWidget *getUi() { return m_widget; }
+
+	//! Get the type of the tool
+	virtual tools::Tool::Type toolType() const = 0;
 
 	//! Set the foreground color
 	virtual void setForeground(const QColor& color) = 0;

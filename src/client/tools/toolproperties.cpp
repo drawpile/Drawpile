@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,24 +22,20 @@
 
 namespace tools {
 
-ToolProperties::ToolProperties()
-{
-}
-
 void ToolProperties::setValue(const QString &key, const QVariant &value)
 {
-	_props[key] = value;
+	m_props[key] = value;
 }
 
 QVariant ToolProperties::value(const QString &key, const QVariant &defaultValue) const
 {
-	return _props.value(key, defaultValue);
+	return m_props.value(key, defaultValue);
 }
 
 int ToolProperties::intValue(const QString &key, int defaultValue, int min, int max) const
 {
 	bool ok;
-	int v = _props.value(key, defaultValue).toInt(&ok);
+	int v = m_props.value(key, defaultValue).toInt(&ok);
 	if(!ok)
 		v = defaultValue;
 	return qBound(min, v, max);
@@ -47,14 +43,14 @@ int ToolProperties::intValue(const QString &key, int defaultValue, int min, int 
 
 bool ToolProperties::boolValue(const QString &key, bool defaultValue) const
 {
-	return _props.value(key, defaultValue).toBool();
+	return m_props.value(key, defaultValue).toBool();
 }
 
 void ToolProperties::save(QSettings &cfg) const
 {
 	Q_ASSERT(!cfg.group().isEmpty());
 
-	QHashIterator<QString, QVariant> i(_props);
+	QHashIterator<QString, QVariant> i(m_props);
 	while(i.hasNext()) {
 		i.next();
 		cfg.setValue(i.key(), i.value());
@@ -66,7 +62,7 @@ ToolProperties ToolProperties::load(const QSettings &cfg)
 	ToolProperties tp;
 
 	for(const QString &key : cfg.allKeys()) {
-		tp._props[key] = cfg.value(key);
+		tp.m_props[key] = cfg.value(key);
 	}
 	return tp;
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,116 +32,125 @@ using widgets::GroupedToolButton;
 namespace tools {
 
 SimpleSettings::SimpleSettings(const QString &name, const QString &title, const QString &icon, Type type, bool sp, ToolController *ctrl)
-	: ToolSettings(name, title, icon, ctrl), _ui(nullptr), _type(type), _subpixel(sp)
+	: ToolSettings(name, title, icon, ctrl), m_ui(nullptr), m_type(type), m_subpixel(sp)
 {
 }
 
 SimpleSettings::~SimpleSettings()
 {
-	delete _ui;
+	delete m_ui;
 }
+
+tools::Tool::Type SimpleSettings::toolType() const {
+	switch(m_type) {
+	case SimpleSettings::Line: return tools::Tool::LINE;
+	case SimpleSettings::Rectangle: return tools::Tool::RECTANGLE;
+	case SimpleSettings::Ellipse: break;
+	}
+	return tools::Tool::ELLIPSE;
+}
+
 
 QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	_ui = new Ui_SimpleSettings;
-	_ui->setupUi(widget);
+	m_ui = new Ui_SimpleSettings;
+	m_ui->setupUi(widget);
 
-	populateBlendmodeBox(_ui->blendmode, _ui->preview);
+	populateBlendmodeBox(m_ui->blendmode, m_ui->preview);
 
 	// Connect size change signal
-	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
-		_ui->brushhardness->setEnabled(!hard);
-		_ui->spinHardness->setEnabled(!hard);
+	parent->connect(m_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(m_ui->paintmodeHardedge, &QToolButton::toggled, [this](bool hard) {
+		m_ui->brushhardness->setEnabled(!hard);
+		m_ui->spinHardness->setEnabled(!hard);
 	});
 
 	// Set proper preview shape
-	if(_type==Line)
-		_ui->preview->setPreviewShape(BrushPreview::Line);
-	else if(_type==Rectangle)
-		_ui->preview->setPreviewShape(BrushPreview::Rectangle);
-	else if(_type==Ellipse)
-		_ui->preview->setPreviewShape(BrushPreview::Ellipse);
-
-	_ui->preview->setSubpixel(_subpixel);
-
-	if(!_subpixel) {
-		// Hard edge mode is always enabled for tools that do not support antialiasing
-		_ui->paintmodeHardedge->hide();
-		_ui->paintmodeSmoothedge->hide();
-	} else {
-		parent->connect(_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
+	switch(m_type) {
+	case Line: m_ui->preview->setPreviewShape(BrushPreview::Line); break;
+	case Rectangle: m_ui->preview->setPreviewShape(BrushPreview::Rectangle); break;
+	case Ellipse: m_ui->preview->setPreviewShape(BrushPreview::Ellipse); break;
 	}
 
-	parent->connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
-	parent->connect(_ui->preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
+	m_ui->preview->setSubpixel(m_subpixel);
+
+	if(!m_subpixel) {
+		// Hard edge mode is always enabled for tools that do not support antialiasing
+		m_ui->paintmodeHardedge->hide();
+		m_ui->paintmodeSmoothedge->hide();
+	} else {
+		parent->connect(m_ui->paintmodeHardedge, SIGNAL(toggled(bool)), parent, SLOT(updateSubpixelMode()));
+	}
+
+	parent->connect(m_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
+	parent->connect(m_ui->preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
 	return widget;
 }
 
 ToolProperties SimpleSettings::saveToolSettings()
 {
-	ToolProperties cfg;
-	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
-	cfg.setValue("size", _ui->brushsize->value());
-	cfg.setValue("opacity", _ui->brushopacity->value());
-	cfg.setValue("hardness", _ui->brushhardness->value());
-	cfg.setValue("spacing", _ui->brushspacing->value());
-	cfg.setValue("hardedge", _ui->paintmodeHardedge->isChecked());
-	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
+	ToolProperties cfg(toolType());
+	cfg.setValue("blendmode", m_ui->blendmode->currentIndex());
+	cfg.setValue("size", m_ui->brushsize->value());
+	cfg.setValue("opacity", m_ui->brushopacity->value());
+	cfg.setValue("hardness", m_ui->brushhardness->value());
+	cfg.setValue("spacing", m_ui->brushspacing->value());
+	cfg.setValue("hardedge", m_ui->paintmodeHardedge->isChecked());
+	cfg.setValue("incremental", m_ui->paintmodeIncremental->isChecked());
 	return cfg;
 }
 
 void SimpleSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
+	m_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
 
-	_ui->brushsize->setValue(cfg.intValue("size", 0));
-	_ui->preview->setSize(_ui->brushsize->value());
+	m_ui->brushsize->setValue(cfg.intValue("size", 0));
+	m_ui->preview->setSize(m_ui->brushsize->value());
 
-	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
-	_ui->preview->setOpacity(_ui->brushopacity->value());
+	m_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
+	m_ui->preview->setOpacity(m_ui->brushopacity->value());
 
-	_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
-	_ui->preview->setHardness(_ui->brushhardness->value());
+	m_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
+	m_ui->preview->setHardness(m_ui->brushhardness->value());
 
-	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
-	_ui->preview->setSpacing(_ui->brushspacing->value());
+	m_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
+	m_ui->preview->setSpacing(m_ui->brushspacing->value());
 
 	if(cfg.boolValue("hardedge", false))
-		_ui->paintmodeHardedge->setChecked(true);
+		m_ui->paintmodeHardedge->setChecked(true);
 	else
-		_ui->paintmodeSmoothedge->setChecked(true);
+		m_ui->paintmodeSmoothedge->setChecked(true);
 
 	if(cfg.boolValue("incremental", true))
-		_ui->paintmodeIncremental->setChecked(true);
+		m_ui->paintmodeIncremental->setChecked(true);
 	else
-		_ui->paintmodeIndirect->setChecked(true);
+		m_ui->paintmodeIndirect->setChecked(true);
 
-	_ui->preview->setIncremental(_ui->paintmodeIncremental->isChecked());
+	m_ui->preview->setIncremental(m_ui->paintmodeIncremental->isChecked());
 }
 
 void SimpleSettings::setForeground(const QColor& color)
 {
-	_ui->preview->setColor(color);
+	m_ui->preview->setColor(color);
 }
 
 void SimpleSettings::quickAdjust1(float adjustment)
 {
 	int adj = qRound(adjustment);
 	if(adj!=0)
-		_ui->brushsize->setValue(_ui->brushsize->value() + adj);
+		m_ui->brushsize->setValue(m_ui->brushsize->value() + adj);
 }
 
 int SimpleSettings::getSize() const
 {
-	return _ui->brushsize->value();
+	return m_ui->brushsize->value();
 }
 
 bool SimpleSettings::getSubpixelMode() const
 {
-	return !_ui->paintmodeHardedge->isChecked();
+	return !m_ui->paintmodeHardedge->isChecked();
 }
 
 }

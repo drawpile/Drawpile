@@ -34,6 +34,8 @@ public:
 	FillSettings(const QString &name, const QString &title, ToolController *ctrl);
 	~FillSettings();
 
+	tools::Tool::Type toolType() const override { return tools::Tool::FLOODFILL; }
+
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;
 

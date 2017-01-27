@@ -46,6 +46,8 @@ public:
 	 */
 	void setView(widgets::CanvasView *view) { m_view = view; }
 
+	tools::Tool::Type toolType() const override;
+
 	virtual void setForeground(const QColor&) override {}
 	virtual void quickAdjust1(float) override {}
 
@@ -66,6 +68,7 @@ private:
 
 	Ui_SelectionSettings *m_ui;
 	widgets::CanvasView *m_view;
+	bool m_freeform;
 };
 
 }

@@ -91,7 +91,7 @@ void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 
 ToolProperties PenSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
 	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
@@ -156,7 +156,7 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 
 ToolProperties EraserSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("hardness", _ui->brushhardness->value());
@@ -258,7 +258,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 ToolProperties BrushSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
 	cfg.setValue("incremental", _ui->paintmodeIncremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
@@ -351,7 +351,7 @@ QWidget *SmudgeSettings::createUiWidget(QWidget *parent)
 
 ToolProperties SmudgeSettings::saveToolSettings()
 {
-	ToolProperties cfg;
+	ToolProperties cfg(toolType());
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("hardness", _ui->brushhardness->value());

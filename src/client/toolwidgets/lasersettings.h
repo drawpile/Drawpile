@@ -33,8 +33,10 @@ public:
 
 	bool pointerTracking() const;
 
-	void setForeground(const QColor& color);
-	void quickAdjust1(float adjustment);
+	tools::Tool::Type toolType() const override { return tools::Tool::LASERPOINTER; }
+
+	void setForeground(const QColor& color) override;
+	void quickAdjust1(float adjustment) override;
 
 	virtual int getSize() const override { return 0; }
 	virtual bool getSubpixelMode() const override { return false; }
