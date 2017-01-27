@@ -41,6 +41,7 @@ namespace widgets {
 	class ChatBox;
 	class UserList;
 	class ViewStatus;
+	class PresetPie;
 }
 namespace docks {
 	class ToolSettings;
@@ -216,6 +217,7 @@ private:
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *_viewstatus;
 	QToolButton *_statusChatButton;
+	widgets::PresetPie *m_presetPie;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
@@ -228,7 +230,6 @@ private:
 	QActionGroup *m_admintools; // session operator actions
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *_drawingtools; // drawing tool selection
-	QActionGroup *_toolslotactions; // tool slot selection
 
 	int _lastToolBeforePaste; // Last selected tool before Paste was used
 

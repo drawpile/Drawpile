@@ -125,13 +125,13 @@ set (
 	widgets/chatwidget.cpp 
 	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
-	widgets/toolslotbutton.cpp
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
 	widgets/userlistwidget.cpp 
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
+	widgets/presetpie.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp 
 	docks/navigator.cpp 

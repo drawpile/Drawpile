@@ -93,54 +93,6 @@ private:
 	int m_tool;
 };
 
-/**
- * @brief Settings for the whole set of tools
- *
- * This contains:
- * - individual tool settings
- * - the currently selected tool
- * - foreground/background color shared by all tools within this set
- */
-class ToolsetProperties {
-public:
-	void setTool(const QString &toolname, const ToolProperties &props) { _tools[toolname] = props; }
-
-	ToolProperties &tool(const QString &toolname) { return _tools[toolname]; }
-	ToolProperties tool(const QString &toolname) const { return _tools[toolname]; }
-
-	void setForegroundColor(const QColor &color) { _foreground = color; }
-	void setBackgroundColor(const QColor &color) { _background = color; }
-
-	const QColor &foregroundColor() const { return _foreground; }
-	const QColor &backgroundColor() const { return _background; }
-
-	void setCurrentTool(int tool) { _currentTool = tool; }
-	int currentTool() const { return _currentTool; }
-
-	/**
-	 * @brief Load all tool settings
-	 *
-	 * Note. The settings file group should be set before calling this
-	 * @param cfg
-	 * @return
-	 */
-	static ToolsetProperties load(QSettings &cfg);
-
-	/**
-	 * @brief Save all tool settings
-	 *
-	 * Note. The settings file group should be set before calling this
-	 * @param cfg
-	 */
-	void save(QSettings &cfg);
-
-private:
-	QHash<QString, ToolProperties> _tools;
-	QColor _foreground;
-	QColor _background;
-	int _currentTool;
-};
-
 }
 
-#endif // TOOLPROPERTIES_H
+#endif

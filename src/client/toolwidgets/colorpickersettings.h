@@ -41,20 +41,18 @@ public:
 
 	tools::Tool::Type toolType() const override { return tools::Tool::PICKER; }
 
-	virtual ToolProperties saveToolSettings() override;
-	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	virtual void setForeground(const QColor &color) override { Q_UNUSED(color); }
-	virtual void quickAdjust1(float adjustment) override;
+	void setForeground(const QColor &color) override { Q_UNUSED(color); }
+	void quickAdjust1(float adjustment) override;
 
-	virtual int getSize() const override;
-	virtual bool getSubpixelMode() const override { return false; }
+	int getSize() const override;
+	bool getSubpixelMode() const override { return false; }
 
 public slots:
 	void addColor(const QColor &color);
-
-private slots:
-	void updateTool();
+	void pushSettings() override;
 
 signals:
 	void colorSelected(const QColor &color);

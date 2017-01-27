@@ -54,6 +54,7 @@ public:
 
 	static bool hasDefaultShortcut(const QString &name);
 	static QKeySequence getDefaultShortcut(const QString &name);
+	static QKeySequence getShorcut(const QString &name);
 
 	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
 private:

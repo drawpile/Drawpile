@@ -89,6 +89,12 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
+
+void SimpleSettings::pushSettings()
+{
+	controller()->setActiveBrush(m_ui->preview->brush());
+}
+
 ToolProperties SimpleSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());

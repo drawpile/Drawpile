@@ -47,8 +47,9 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override { return false; }
 
-	virtual ToolProperties saveToolSettings() override;
-	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+	void pushSettings() override;
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
@@ -77,6 +78,7 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override;
 
+	void pushSettings() override;
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 
@@ -105,6 +107,7 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override { return true; }
 
+	void pushSettings() override;
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 
@@ -133,6 +136,7 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override { return true; }
 
+	void pushSettings() override;
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 

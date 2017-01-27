@@ -85,12 +85,13 @@ PointVector sampleBlob(const QRectF &rect)
 	PointVector pv;
 
 	const float mid = rect.top() + rect.height()/2;
+	const float h = rect.height() * 0.8;
 
 	for(float a=0;a<M_PI;a+=0.1) {
 		float x = rect.left() + (a / M_PI * rect.width());
 		float y = pow(sin(a), 0.5)*0.7 + sin(a*3)*0.3;
 
-		pv << Point(x, mid-y*mid, 1);
+		pv << Point(x, mid-y*h, 1);
 	}
 	pv << Point(rect.right(), mid, 1);
 
@@ -98,7 +99,7 @@ PointVector sampleBlob(const QRectF &rect)
 		float x = rect.right() - (a / M_PI * rect.width());
 		float y = pow(sin(a), 0.5)*0.7 + sin(a*2.8)*0.2;
 
-		pv << Point(x, mid+y*mid, 1);
+		pv << Point(x, mid+y*h, 1);
 	}
 
 	pv << pv[0];

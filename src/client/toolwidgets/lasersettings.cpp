@@ -40,7 +40,7 @@ LaserPointerSettings::~LaserPointerSettings()
 	delete _ui;
 }
 
-void LaserPointerSettings::updateTool()
+void LaserPointerSettings::pushSettings()
 {
 	auto *tool = static_cast<LaserPointer*>(controller()->getTool(Tool::LASERPOINTER));
 	tool->setPersistence(_ui->persistence->value());
@@ -67,11 +67,11 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(widget);
 
 	connect(_ui->trackpointer, SIGNAL(clicked(bool)), this, SIGNAL(pointerTrackingToggled(bool)));
-	connect(_ui->persistence, &QSlider::valueChanged, this, &LaserPointerSettings::updateTool);
-	connect(_ui->color0, &QAbstractButton::toggled, this, &LaserPointerSettings::updateTool);
-	connect(_ui->color1, &QAbstractButton::toggled, this, &LaserPointerSettings::updateTool);
-	connect(_ui->color2, &QAbstractButton::toggled, this, &LaserPointerSettings::updateTool);
-	connect(_ui->color3, &QAbstractButton::toggled, this, &LaserPointerSettings::updateTool);
+	connect(_ui->persistence, &QSlider::valueChanged, this, &LaserPointerSettings::pushSettings);
+	connect(_ui->color0, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
+	connect(_ui->color1, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
+	connect(_ui->color2, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
+	connect(_ui->color3, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
 
 	return widget;
 }
@@ -116,7 +116,7 @@ bool LaserPointerSettings::pointerTracking() const
 void LaserPointerSettings::setForeground(const QColor &color)
 {
 	_ui->color0->setColor(color);
-	updateTool();
+	pushSettings();
 }
 
 void LaserPointerSettings::quickAdjust1(float adjustment)

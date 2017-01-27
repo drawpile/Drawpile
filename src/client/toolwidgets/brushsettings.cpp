@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -89,6 +89,11 @@ void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->preview->setSubpixel(false);
 }
 
+void PenSettings::pushSettings()
+{
+	controller()->setActiveBrush(_ui->preview->brush());
+}
+
 ToolProperties PenSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
@@ -152,6 +157,11 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	});
 
 	return widget;
+}
+
+void EraserSettings::pushSettings()
+{
+	controller()->setActiveBrush(_ui->preview->brush());
 }
 
 ToolProperties EraserSettings::saveToolSettings()
@@ -256,6 +266,11 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
+void BrushSettings::pushSettings()
+{
+	controller()->setActiveBrush(_ui->preview->brush());
+}
+
 ToolProperties BrushSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
@@ -347,6 +362,11 @@ QWidget *SmudgeSettings::createUiWidget(QWidget *parent)
 	_ui->preview->setSmudgeFrequency(2);
 
 	return widget;
+}
+
+void SmudgeSettings::pushSettings()
+{
+	controller()->setActiveBrush(_ui->preview->brush());
 }
 
 ToolProperties SmudgeSettings::saveToolSettings()
