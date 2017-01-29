@@ -18,9 +18,9 @@
 */
 
 #include "database.h"
-#include "../shared/util/logger.h"
 #include "../shared/util/passwordhash.h"
 #include "../shared/server/loginhandler.h" // for username validation
+#include "../shared/server/serverlog.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -37,6 +37,7 @@ namespace server {
 
 struct Database::Private {
 	QSqlDatabase db;
+	ServerLog *logger;
 };
 
 static bool initDatabase(QSqlDatabase db)
@@ -78,10 +79,12 @@ static bool initDatabase(QSqlDatabase db)
 Database::Database(QObject *parent)
 	: ServerConfig(parent), d(new Private)
 {
+	d->logger = new InMemoryLog; // TODO: DbLogger
 }
 
 Database::~Database()
 {
+	delete d->logger;
 	delete d;
 }
 
@@ -90,16 +93,16 @@ bool Database::openFile(const QString &path)
 	d->db = QSqlDatabase::addDatabase("QSQLITE");
 	d->db.setDatabaseName(path);
 	if(!d->db.open()) {
-		logger::warning() << "Unable to open database:" << path;
+		qCritical("Unable to open database: %s", qPrintable(path));
 		return false;
 	}
 
 	if(!initDatabase(d->db)) {
-		logger::warning() << "Database initialization failed:" << path;
+		qCritical("Database initialization failed: %s", qPrintable(path));
 		return false;
 	}
 
-	logger::info() << "Opened configuration database:" << path;
+	qDebug("Opened configuration database: %s", qPrintable(path));
 	return true;
 }
 
@@ -144,7 +147,7 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 		const QString serverUrl = q.value(0).toString();
 		const QRegularExpression re(serverUrl);
 		if(!re.isValid()) {
-			logger::warning() << "Invalid listingserver whitelist regular expression:" << serverUrl;
+			qWarning("Invalid listingserver whitelist regexp: %s", qPrintable(serverUrl));
 		} else {
 			if(re.match(urlStr).hasMatch())
 				return true;
@@ -244,6 +247,11 @@ bool Database::deleteBan(int entryId)
 	return q.numRowsAffected()>0;
 }
 
+ServerLog *Database::logger() const
+{
+	return d->logger;
+}
+
 RegisteredUser Database::getUserAccount(const QString &username, const QString &password) const
 {
 	QSqlQuery q(d->db);
@@ -322,7 +330,7 @@ QJsonObject Database::addAccount(const QString &username, const QString &passwor
 		if(q.next())
 			return userQueryToJson(q);
 	}
-	logger::error() << "Error adding user account:" << q.lastError().text();
+	qWarning("Error adding user account: %s", qPrintable(q.lastError().text()));
 	return QJsonObject();
 }
 
@@ -368,7 +376,7 @@ QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 	q.exec();
 	if(q.next())
 		return userQueryToJson(q);
-	logger::error() << "Error updating user account" << id << q.lastError().text();
+	qWarning("Error updating user account %d: %s", id, qPrintable(q.lastError().text()));
 	return QJsonObject();
 }
 

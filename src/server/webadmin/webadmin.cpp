@@ -21,7 +21,6 @@
 #include "qmhttp.h"
 #include "multiserver.h"
 
-#include "../shared/util/logger.h"
 #include "../shared/server/jsonapi.h"
 
 #include <QJsonObject>
@@ -38,7 +37,7 @@ void Webadmin::setBasicAuth(const QString &userpass)
 {
 	int sep = userpass.indexOf(':');
 	if(sep<1) {
-		logger::error() << "Invalid user:password pair for web admin:" << userpass;
+		qWarning("Invalid user:password parit for web admin: %s", qPrintable(userpass));
 	} else {
 		QString user = userpass.left(sep);
 		QString passwd = userpass.mid(sep+1);

@@ -54,23 +54,24 @@ int SessionBanList::addBan(const QString &username, const QHostAddress &ip, cons
 
 	m_banlist << SessionBan {
 		id,
-		username,
+		username.isEmpty() ? "anon" : username,
 		toIpv6(ip), // Always use IPv6 notation for consistency
 		bannedBy
 	};
 	return id;
 }
 
-bool SessionBanList::removeBan(int id)
+QString SessionBanList::removeBan(int id)
 {
 	QMutableListIterator<SessionBan> i(m_banlist);
 	while(i.hasNext()) {
-		if(i.next().id == id) {
+		SessionBan entry = i.next();
+		if(entry.id == id) {
 			i.remove();
-			return true;
+			return entry.username;
 		}
 	}
-	return false;
+	return QString();
 }
 
 bool SessionBanList::isBanned(const QHostAddress &address) const

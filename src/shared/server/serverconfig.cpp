@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016 Calle Laakkonen
+   Copyright (C) 2016-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,22 +31,6 @@ QString ServerConfig::getConfigString(ConfigKey key) const
 		return key.defaultValue;
 	}
 	return val;
-}
-
-QString ServerConfig::getConfigValue(const ConfigKey key, bool &found) const
-{
-	if(m_nonpersistent.count(key.index)==0) {
-		found = false;
-		return QString();
-	} else {
-		found = true;
-		return m_nonpersistent[key.index];
-	}
-}
-
-void ServerConfig::setConfigValue(ConfigKey key, const QString &value)
-{
-	m_nonpersistent[key.index] = value;
 }
 
 int ServerConfig::getConfigTime(ConfigKey key) const

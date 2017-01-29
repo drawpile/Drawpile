@@ -19,7 +19,7 @@
 
 #include "announcementapi.h"
 #include "networkaccess.h"
-#include "logger.h"
+#include "../server/serverlog.h"
 
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -29,6 +29,8 @@
 #include <QUrlQuery>
 
 namespace sessionlisting {
+
+using server::Log;
 
 static const char *PROP_APIURL = "APIURL";        // The base API URL of the request
 static const char *PROP_SESSION_ID = "SESSIONID"; // The ID of the session being announced or unlisted
@@ -55,7 +57,7 @@ AnnouncementApi::AnnouncementApi(QObject *parent)
 
 void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 {
-	logger::debug() << "getting API info from" << apiUrl.toString();
+	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message("Getting API info from " + apiUrl.toString()));
 
 	QNetworkRequest req(apiUrl);
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
@@ -87,7 +89,7 @@ void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol
 
 void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session)
 {
-	logger::debug() << "announcing" << session.id << "at" << apiUrl.toString();
+	emit logMessage(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announcing " + session.id + " at " + apiUrl.toString()));
 
 	// Construct the announcement
 	QJsonObject o;
@@ -120,7 +122,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 
 void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
 {
-	logger::debug() << "refreshing" << a.listingId << "at" << a.apiUrl.toString();
+	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Refreshing listing %1 at %2").arg(a.listingId).arg(a.apiUrl.toString())));
 
 	// Construct the announcement
 	QJsonObject o;
@@ -147,7 +149,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 
 void AnnouncementApi::unlistSession(const Announcement &a)
 {
-	logger::debug() << "unlisting" << a.listingId << "at" << a.apiUrl.toString();
+	emit logMessage(Log().about(Log::Level::Info, Log::Topic::PubList).message(QString("Unlisting announcement %1 at %2").arg(a.listingId).arg(a.apiUrl.toString())));
 
 	QUrl url = a.apiUrl;
 	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
@@ -175,10 +177,10 @@ void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::Hand
 		((this)->*(handlerFunc))(reply);
 
 	} catch(const ResponseError &e) {
-		logger::error() << "Announce API error:" << e.error;
+		emit logMessage(Log().about(Log::Level::Error, Log::Topic::PubList).message("Announcement API error: " + e.error));
 		emit error(reply->property(PROP_APIURL).toString(), "Session announcement: " + e.error);
 #ifndef NDEBUG
-		logger::error() << "Announcement API error:" << QString::fromUtf8(reply->readAll());
+		qDebug("Announcement API error: %s", reply->readAll().constData());
 #endif
 	}
 
@@ -199,7 +201,7 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 	a.updateKey = doc.object()["key"].toString();
 	a.listingId = doc.object()["id"].toInt();
 
-	logger::debug() << "Announced session. Got listing ID" << a.listingId;
+	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Announced session %2. Got listing ID %1").arg(a.listingId).arg(a.id)));
 
 	emit sessionAnnounced(a);
 

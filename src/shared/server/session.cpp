@@ -21,6 +21,7 @@
 #include "client.h"
 #include "serverconfig.h"
 #include "inmemoryhistory.h"
+#include "serverlog.h"
 
 #include "../net/control.h"
 #include "../net/meta.h"
@@ -69,7 +70,6 @@ QString Session::toLogString() const {
 
 void Session::switchState(State newstate)
 {
-	logger::debug() << this << "switch state to" << newstate << "from" << m_state;
 	if(newstate==Initialization) {
 		qFatal("Illegal state change to Initialization from %d", m_state);
 
@@ -192,7 +192,7 @@ void Session::joinUser(Client *user, bool host)
 
 	m_history->idQueue().setIdForName(user->id(), user->username());
 
-	logger::info() << user << "Joined session";
+	user->log(Log().about(Log::Level::Info, Log::Topic::Join).message("Joined session"));
 	emit userConnected(this, user);
 }
 
@@ -200,6 +200,8 @@ void Session::removeUser(Client *user)
 {
 	if(!m_clients.removeOne(user))
 		return;
+
+	user->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Left session"));
 
 	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
 	disconnect(m_history, &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
@@ -251,16 +253,16 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 {
 	Q_ASSERT(target);
 	if(m_history->addBan(target->username(), target->peerAddress(), bannedBy)) {
-		logger::info() << this << target->username() << "banned from session by" << bannedBy;
-		// TODO structured logging
+		target->log(Log().about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}
 }
 
 void Session::removeBan(int entryId, const QString &removedBy)
 {
-	if(m_history->removeBan(entryId)) {
-		logger::info() << this << "ban entry" << entryId << "removed by" << removedBy;
+	QString unbanned = m_history->removeBan(entryId);
+	if(!unbanned.isEmpty()) {
+		log(Log().about(Log::Level::Info, Log::Topic::Unban).message(unbanned + " unbanned by " + removedBy));
 		sendUpdatedBanlist();
 	}
 }
@@ -479,7 +481,7 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 	// Send a warning if approaching size limit.
 	// The clients should update their internal size limits and reset the session when necessary.
 	if(m_historyLimitWarning>0 && !m_historyLimitWarningSent && m_history->sizeInBytes() > m_historyLimitWarning) {
-		logger::debug() << this << "history limit warning threshold reached.";
+		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("History limit warning treshold reached."));
 
 		protocol::ServerReply warning;
 		warning.type = protocol::ServerReply::SIZELIMITWARNING;
@@ -513,12 +515,20 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 
 void Session::handleInitComplete(int ctxId)
 {
-	if(ctxId != m_initUser) {
-		logger::warning() << this << "User" << ctxId << "sent init-complete, but init user is" << m_initUser;
+	Client *c = getClientById(ctxId);
+	if(!c) {
+		// Shouldn't happen
+		c->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-complete").arg(ctxId)));
 		return;
 	}
 
-	logger::debug() << this << "init-complete by user" << ctxId;
+	if(ctxId != m_initUser) {
+		c->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("Sent init-complete, but init user is #%1").arg(m_initUser)));
+		return;
+	}
+
+	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-complete"));
+
 	switchState(Running);
 }
 
@@ -602,11 +612,11 @@ void Session::restartRecording()
 
 	// Start recording
 	QString filename = utils::makeFilenameUnique(m_recordingFile, ".dprec");
-	logger::info() << this << "Starting session recording" << filename;
+	qDebug("Starting session recording %s", qPrintable(filename));
 
 	m_recorder = new recording::Writer(filename, this);
 	if(!m_recorder->open()) {
-		logger::error() << this << "Couldn't write session recording to" << filename << m_recorder->errorString();
+		qWarning("Couldn't write session recording to %s: %s", qPrintable(filename), qPrintable(m_recorder->errorString()));
 		delete m_recorder;
 		m_recorder = nullptr;
 		return;
@@ -687,6 +697,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
 			this->messageAll(message, false);
 		});
+		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::logMessage, this, &Session::log);
 
 		QTimer *refreshTimer = new QTimer(this);
 		connect(refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
@@ -700,7 +711,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 void Session::makeAnnouncement(const QUrl &url)
 {
 	if(!url.isValid() || !m_config->isAllowedAnnouncementUrl(url)) {
-		logger::warning() << this << "Announcement API URL not allowed:" << url.toString();
+		log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Announcement API URL not allowed: " + url.toString()));
 		return;
 	}
 
@@ -726,8 +737,6 @@ void Session::makeAnnouncement(const QUrl &url)
 		sessionStartTime()
 	};
 
-	qDebug() << "announcing" << s.id;
-
 	publicListingClient()->announceSession(url, s);
 }
 
@@ -738,8 +747,6 @@ void Session::unlistAnnouncement(const QString &url, bool terminate, bool remove
 	while(i.hasNext()) {
 		const sessionlisting::Announcement &a = i.next();
 		if(a.apiUrl == url || url == QStringLiteral("*")) {
-			logger::debug() << this << "removed listing" << a.apiUrl.toString() << a.listingId;
-
 			if(!removeOnly)
 				publicListingClient()->unlistSession(a);
 
@@ -781,7 +788,7 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 	// Make sure there are no double announcements
 	for(const sessionlisting::Announcement &a : m_publicListings) {
 		if(a.apiUrl == announcement.apiUrl) {
-			logger::warning() << this << "double announcement at" << announcement.apiUrl.toString();
+			log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Double announcement at: " + announcement.apiUrl.toString()));
 			return;
 		}
 	}
@@ -873,6 +880,12 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 	}
 
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(getDescription(true))};
+}
+
+void Session::log(Log entry)
+{
+	entry.session(id());
+	m_config->logger()->logMessage(entry);
 }
 
 }

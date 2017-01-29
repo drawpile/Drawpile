@@ -21,11 +21,12 @@
 #include "session.h"
 #include "sessionhistory.h"
 #include "opcommands.h"
+#include "serverlog.h"
+#include "serverconfig.h"
 
 #include "../net/messagequeue.h"
 #include "../net/control.h"
 #include "../net/meta.h"
-#include "../util/logger.h"
 
 #include <QSslSocket>
 #include <QStringList>
@@ -34,10 +35,11 @@ namespace server {
 
 using protocol::MessagePtr;
 
-Client::Client(QTcpSocket *socket, QObject *parent)
+Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
 	: QObject(parent),
 	  m_session(nullptr),
 	  m_socket(socket),
+	  m_logger(logger),
 	  m_historyPosition(-1),
 	  m_id(0),
 	  m_isOperator(false),
@@ -45,6 +47,9 @@ Client::Client(QTcpSocket *socket, QObject *parent)
 	  m_isAuthenticated(false),
 	  m_isMuted(false)
 {
+	Q_ASSERT(socket);
+	Q_ASSERT(logger);
+
 	m_msgqueue = new protocol::MessageQueue(socket, this);
 
 	m_socket->setParent(this);
@@ -193,7 +198,9 @@ void Client::receiveMessages()
 			if(msg->type() == protocol::MSG_COMMAND)
 				emit loginMessage(msg);
 			else
-				logger::notice() << this << "Got non-login message (type=" << msg->type() << ") in login state";
+				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(
+					QString("Got non-login message (type=%1) in login state").arg(msg->type())
+					));
 
 		} else {
 			handleSessionMessage(msg);
@@ -203,14 +210,16 @@ void Client::receiveMessages()
 
 void Client::gotBadData(int len, int type)
 {
-	logger::notice() << this << "Received unknown message type #" << type << "of length" << len;
+	log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(
+		QString("Received unknown message type %1 of length %2").arg(type).arg(len)
+		));
 	m_socket->abort();
 }
 
 void Client::socketError(QAbstractSocket::SocketError error)
 {
 	if(error != QAbstractSocket::RemoteHostClosedError) {
-		logger::error() << this << "Socket error" << m_socket->errorString();
+		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Socket error: " + m_socket->errorString()));
 		m_socket->abort();
 	}
 }
@@ -236,7 +245,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	using namespace protocol;
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
-		logger::notice() << this << "Got server-to-user only command" << msg->type();
+		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
 		return;
 	case MSG_DISCONNECT:
 		// we don't do anything with disconnect notifications from the client
@@ -257,7 +266,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		}
 		case protocol::MSG_SESSION_OWNER: {
 			if(!isOperator()) {
-				logger::warning() << this << "tried to change session ownership";
+				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change session ownership"));
 				return;
 			}
 
@@ -290,14 +299,14 @@ void Client::handleSessionMessage(MessagePtr msg)
 void Client::disconnectKick(const QString &kickedBy)
 {
 	emit loggedOff(this);
-	logger::info() << this << "Kicked by" << kickedBy;
+	log(Log().about(Log::Level::Info, Log::Topic::Kick).message("Kicked by " + kickedBy));
 	m_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 
 void Client::disconnectError(const QString &message)
 {
 	emit loggedOff(this);
-	logger::info() << this << "Disconnecting due to error:" << message;
+	log(Log().about(Log::Level::Warn, Log::Topic::Leave).message("Disconnected due to error: " + message));
 	m_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
 }
 
@@ -340,6 +349,18 @@ void Client::startTls()
 	QSslSocket *socket = qobject_cast<QSslSocket*>(m_socket);
 	Q_ASSERT(socket);
 	socket->startServerEncryption();
+}
+
+void Client::log(Log entry) const
+{
+	if(!m_session) {
+		qWarning("BUG: Tried to use Client::log, but client is not yet in a session!");
+		return;
+	}
+	entry.user(m_id, m_socket->peerAddress(), m_username);
+	if(m_session)
+		entry.session(m_session->id());
+	m_logger->logMessage(entry);
 }
 
 }

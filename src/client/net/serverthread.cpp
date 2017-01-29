@@ -22,7 +22,6 @@
 #include "net/serverthread.h"
 
 #include "builtinserver.h"
-#include "../shared/util/logger.h"
 #include "../shared/net/protover.h"
 
 #include <QSettings>
@@ -104,15 +103,10 @@ bool ServerThread::isOnDefaultPort() const
 
 void ServerThread::run() {
 	server::BuiltinServer server;
-#ifdef NDEBUG
-	logger::setLogLevel(logger::LOG_WARNING);
-#else
-	logger::setLogLevel(logger::LOG_DEBUG);
-#endif
 
-	connect(&server, SIGNAL(serverStopped()), this, SLOT(quit()));
+	connect(&server, &server::BuiltinServer::serverStopped, this, &QThread::quit);
 
-	logger::info() << "Starting server";
+	qInfo("Starting server...");
 	if(!server.start(_port)) {
 		_port = 0;
 		_error = server.errorString();
@@ -132,7 +126,7 @@ void ServerThread::run() {
 	}
 #endif
 
-	logger::info() << "server thread exiting.";
+	qDebug("Server thread exiting.");
 	if(_deleteonexit)
 		deleteLater();
 }

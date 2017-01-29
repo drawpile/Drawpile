@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016 Calle Laakkonen
+   Copyright (C) 2016-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 class QHostAddress;
 
 namespace  server {
+
+class ServerLog;
 
 class ConfigKey {
 public:
@@ -135,6 +137,11 @@ public:
 	virtual RegisteredUser getUserAccount(const QString &username, const QString &password) const;
 
 	/**
+	 * @brief Get the configured logger instance
+	 */
+	virtual ServerLog *logger() const = 0;
+
+	/**
 	 * @brief Parse a time interval string (e.g. "1d" or "5h")
 	 * @param str
 	 * @return time in seconds or a negative value in case of error
@@ -158,11 +165,8 @@ protected:
 	 * @param found
 	 * @return
 	 */
-	virtual QString getConfigValue(const ConfigKey key, bool &found) const;
-	virtual void setConfigValue(const ConfigKey key, const QString &value);
-
-private:
-	QHash<int, QString> m_nonpersistent;
+	virtual QString getConfigValue(const ConfigKey key, bool &found) const = 0;
+	virtual void setConfigValue(const ConfigKey key, const QString &value) = 0;
 };
 
 }

@@ -22,9 +22,9 @@
 #include "session.h"
 #include "sessionserver.h"
 #include "serverconfig.h"
+#include "serverlog.h"
 
 #include "../net/control.h"
-#include "../util/logger.h"
 
 #include "config.h"
 
@@ -121,7 +121,7 @@ void LoginHandler::announceSessionEnd(const QString &id)
 void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 {
 	if(msg->type() != protocol::MSG_COMMAND) {
-		logger::error() << "login handler was passed a non-login message!";
+		m_client->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message("Login handler was passed a non-login message"));
 		return;
 	}
 
@@ -132,7 +132,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		if(cmd.cmd == "startTls") {
 			handleStarttls();
 		} else {
-			logger::notice() << m_client << "Didn't secure connection!";
+			m_client->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message("Client did not upgrade to TLS mode!"));
 			sendError("tlsRequired", "TLS required");
 		}
 
@@ -143,7 +143,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		} else if(cmd.cmd == "ident") {
 			handleIdentMessage(cmd);
 		} else {
-			logger::notice() << m_client << "Invalid login message";
+			m_client->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message("Invalid login command (while waiting for ident): " + cmd.cmd));
 			m_client->disconnectError("invalid message");
 		}
 	} else {
@@ -152,7 +152,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		} else if(cmd.cmd == "join") {
 			handleJoinMessage(cmd);
 		} else {
-			logger::notice() << m_client << "Got invalid login message";
+			m_client->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message("Invalid login command (while waiting for join/host): " + cmd.cmd));
 			m_client->disconnectError("invalid message");
 		}
 	}
@@ -387,7 +387,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << m_client->username() << "for" << session << "ignored because this is a debug build.";
+		m_client->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Username clash ignored because this is a debug build."));
 #endif
 	}
 

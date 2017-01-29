@@ -21,4 +21,5 @@ AddUnitTest(sessionban)
 AddUnitTest(messagequeue)
 AddUnitTest(serverconfig)
 AddUnitTest(idqueue)
+AddUnitTest(serverlog)
 

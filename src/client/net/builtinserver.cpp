@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2014 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,30 +17,28 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <QHostAddress>
-#include <QSettings>
-
 #include "builtinserver.h"
 
 #include "../shared/server/client.h"
 #include "../shared/server/loginhandler.h"
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
-#include "../shared/server/serverconfig.h"
+#include "../shared/server/inmemoryconfig.h"
 
-#include "../shared/util/logger.h"
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QHostAddress>
+#include <QSettings>
 
 namespace server {
 
 BuiltinServer::BuiltinServer(QObject *parent)
 	: QObject(parent),
-	  _server(0),
-	  _state(NOT_STARTED)
+	  m_server(nullptr),
+	  m_state(NOT_STARTED)
 {
 	// Fixed configuration
-	ServerConfig *servercfg = new ServerConfig(this);
+	ServerConfig *servercfg = new InMemoryConfig(this);
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
 
@@ -49,12 +47,12 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	servercfg->setConfigBool(config::PrivateUserList, cfg.value("privateUserList", false).toBool());
 	servercfg->setConfigInt(config::ClientTimeout, cfg.value("timeout", 60).toInt());
 
-	_sessions = new SessionServer(servercfg, this);
+	m_sessions = new SessionServer(servercfg, this);
 
-	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(stop()));
-	connect(_sessions, &SessionServer::userDisconnected, [this]() {
+	connect(m_sessions, &SessionServer::sessionEnded, this, &BuiltinServer::stop);
+	connect(m_sessions, &SessionServer::userDisconnected, [this]() {
 		// The server will be fully stopped after all users have disconnected
-		if(_state == STOPPING)
+		if(m_state == STOPPING)
 			stop();
 	});
 }
@@ -67,27 +65,27 @@ BuiltinServer::BuiltinServer(QObject *parent)
  * @param preferredPort the default port to listen on
  */
 bool BuiltinServer::start(quint16 preferredPort) {
-	Q_ASSERT(_state == NOT_STARTED);
-	_state = RUNNING;
-	_server = new QTcpServer(this);
+	Q_ASSERT(m_state == NOT_STARTED);
+	m_state = RUNNING;
+	m_server = new QTcpServer(this);
 
-	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+	connect(m_server, &QTcpServer::newConnection, this, &BuiltinServer::newClient);
 
-	bool ok = _server->listen(QHostAddress::Any, preferredPort);
+	bool ok = m_server->listen(QHostAddress::Any, preferredPort);
 
 	if(!ok)
-		ok = _server->listen(QHostAddress::Any, 0);
+		ok = m_server->listen(QHostAddress::Any, 0);
 
 	if(ok==false) {
-		_error = _server->errorString();
-		logger::error() << "Error starting server:" << _error;
-		delete _server;
-		_server = 0;
-		_state = NOT_STARTED;
+		m_error = m_server->errorString();
+		qCritical("Error starting server: %s", qPrintable(m_error));
+		delete m_server;
+		m_server = nullptr;
+		m_state = NOT_STARTED;
 		return false;
 	}
 
-	logger::info() << "Started listening on port" << port();
+	qInfo("Started listening on port %d", port());
 	return true;
 }
 
@@ -97,8 +95,8 @@ bool BuiltinServer::start(quint16 preferredPort) {
  */
 int BuiltinServer::port() const
 {
-	Q_ASSERT(_server);
-	return _server->serverPort();
+	Q_ASSERT(m_server);
+	return m_server->serverPort();
 }
 
 /**
@@ -106,29 +104,29 @@ int BuiltinServer::port() const
  */
 void BuiltinServer::newClient()
 {
-	QTcpSocket *socket = _server->nextPendingConnection();
+	QTcpSocket *socket = m_server->nextPendingConnection();
 
-	logger::info() << "Accepted new client from address" << socket->peerAddress();
+	qInfo("Accepted new client from address %s", qPrintable(socket->peerAddress().toString()));
 
-	_sessions->addClient(new Client(socket));
+	m_sessions->addClient(new Client(socket, m_sessions->config()->logger()));
 }
 
 /**
  * Disconnect all clients and stop listening.
  */
 void BuiltinServer::stop() {
-	if(_state == RUNNING) {
-		logger::debug() << "Stopping built-in server...";
-		_state = STOPPING;
+	if(m_state == RUNNING) {
+		qDebug("Stopping built-in server...");
+		m_state = STOPPING;
 
-		_server->close();
-		_sessions->stopAll();
+		m_server->close();
+		m_sessions->stopAll();
 	}
 
-	if(_state == STOPPING) {
-		if(_sessions->totalUsers() == 0) {
-			_state = STOPPED;
-			logger::debug() << "Built-in server stopped.";
+	if(m_state == STOPPING) {
+		if(m_sessions->totalUsers() == 0) {
+			m_state = STOPPED;
+			qDebug("Built-in server stopped.");
 			emit serverStopped();
 		}
 	}

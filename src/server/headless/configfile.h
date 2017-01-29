@@ -51,11 +51,14 @@ class ConfigFile : public ServerConfig
 	Q_OBJECT
 public:
 	explicit ConfigFile(const QString &path, QObject *parent=nullptr);
+	~ConfigFile();
 
 	bool isModified() const;
 
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
 	bool isAddressBanned(const QHostAddress &addr) const override;
+
+	ServerLog *logger() const override { return m_logger; }
 
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
@@ -65,6 +68,7 @@ private:
 	void reloadFile() const;
 
 	QString m_path;
+	ServerLog *m_logger;
 
 	// Cached settings:
 	mutable QHash<QString, QString> m_config;

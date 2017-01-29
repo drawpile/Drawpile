@@ -18,7 +18,6 @@
 */
 
 #include "qmhttp.h"
-#include "../shared/util/logger.h"
 
 #include <QList>
 #include <QPair>
@@ -125,8 +124,6 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 
 	// Create request context on first invocation
 	if(!*con_cls) {
-		logger::debug() << methodstr << url;
-
 		// Check if request method is supported
 		HttpRequest::Method method;
 		if(qstrcmp(methodstr, "GET")==0)
@@ -271,7 +268,7 @@ void MicroHttpd::setAcceptPolicy(const AcceptPolicy &ap)
 bool MicroHttpd::listen(quint16 port)
 {
 	Q_ASSERT(!_d->mhd);
-	logger::info() << "Starting microhttpd on port" << port;
+	qInfo("Starting microhttpd on port %d", port);
 
 	_d->mhd = MHD_start_daemon(MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY, port,
 			&access_policy, _d,
@@ -279,7 +276,7 @@ bool MicroHttpd::listen(quint16 port)
 			MHD_OPTION_NOTIFY_COMPLETED, request_completed, 0,
 			MHD_OPTION_END);
 	if(!_d->mhd) {
-		logger::error() << "error starting microhttpd!";
+		qWarning("Error starting microhttpd");
 		return false;
 	}
 	return true;
@@ -288,7 +285,7 @@ bool MicroHttpd::listen(quint16 port)
 void MicroHttpd::stop()
 {
 	if(_d->mhd) {
-		logger::info() << "stopping microhttpd";
+		qInfo("Stopping microhttpd");
 		MHD_stop_daemon(_d->mhd);
 		_d->mhd = 0;
 	}

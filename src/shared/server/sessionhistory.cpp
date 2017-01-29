@@ -35,13 +35,12 @@ bool SessionHistory::addBan(const QString &username, const QHostAddress &ip, con
 	return false;
 }
 
-bool SessionHistory::removeBan(int id)
+QString SessionHistory::removeBan(int id)
 {
-	if(m_banlist.removeBan(id)) {
+	QString unbanned = m_banlist.removeBan(id);
+	if(!unbanned.isEmpty())
 		historyRemoveBan(id);
-		return true;
-	}
-	return false;
+	return unbanned;
 }
 
 void SessionHistory::joinUser(uint8_t id, const QString &name)

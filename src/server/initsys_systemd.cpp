@@ -17,14 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "initsys.h"
+
 #include <systemd/sd-daemon.h>
 #include <sys/socket.h>
 #include <cstdio>
 
-#include "initsys.h"
-
 namespace initsys {
 
+#if 0
 namespace {
 void printSystemdLog(logger::LogLevel level, const QString &msg)
 {
@@ -40,10 +41,14 @@ void printSystemdLog(logger::LogLevel level, const QString &msg)
 	fprintf(stderr, "%s%s\n", prefix, msg.toLocal8Bit().constData());
 }
 }
+#endif
 
 void setInitSysLogger()
 {
+	// TODO reimplement this using Qt logging framework
+#if 0
 	logger::setLogPrinter(printSystemdLog);
+#endif
 }
 
 void notifyReady()

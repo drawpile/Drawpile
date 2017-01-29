@@ -22,9 +22,8 @@
 #include "initsys.h"
 #include "sslserver.h"
 #include "database.h"
+#include "../shared/server/inmemoryconfig.h"
 #include "configfile.h"
-
-#include "../shared/util/logger.h"
 
 #ifdef HAVE_WEBADMIN
 #include "webadmin/webadmin.h"
@@ -67,10 +66,6 @@ bool start() {
 	QCommandLineOption guiOption(QStringList() << "gui", "Run the graphical version.");
 	parser.addOption(guiOption);
 #endif
-
-	// --verbose, -V
-	QCommandLineOption verboseOption(QStringList() << "verbose" << "V", "Verbose mode");
-	parser.addOption(verboseOption);
 
 	// --port, -p <port>
 	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port", QString::number(DRAWPILE_PROTO_DEFAULT_PORT));
@@ -143,13 +138,13 @@ bool start() {
 	ServerConfig *serverconfig;
 	if(parser.isSet(dbFileOption)) {
 		if(parser.isSet(configFileOption)) {
-			logger::error() << "Configuration file and database are mutually exclusive options";
+			qCritical("Configuration file and database are mutually exclusive options");
 			return false;
 		}
 
 		auto *db = new Database;
 		if(!db->openFile(parser.value(dbFileOption))) {
-			logger::error() << "Couldn't open database file" << parser.value(dbFileOption);
+			qCritical("Couldn't open database file %s", qPrintable(parser.value(dbFileOption)));
 			delete db;
 			return false;
 		}
@@ -160,7 +155,7 @@ bool start() {
 
 	} else {
 		// No database or config file: just use the defaults
-		serverconfig = new ServerConfig;
+		serverconfig = new InMemoryConfig;
 	}
 
 	// Initialize the server
@@ -169,22 +164,12 @@ bool start() {
 
 	server->connect(server, SIGNAL(serverStopped()), QCoreApplication::instance(), SLOT(quit()));
 
-	if(parser.isSet(verboseOption)) {
-#ifdef NDEBUG
-		logger::setLogLevel(logger::LOG_INFO);
-#else
-		logger::setLogLevel(logger::LOG_DEBUG);
-#endif
-	} else {
-		logger::setLogLevel(logger::LOG_WARNING);
-	}
-
 	int port;
 	{
 		bool ok;
 		port = parser.value(portOption).toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
-			logger::error() << "Invalid port" << parser.value(portOption);
+			qCritical("Invalid port %s", qPrintable(parser.value(portOption)));
 			return false;
 		}
 	}
@@ -194,7 +179,7 @@ bool start() {
 		QString av = parser.value(listenOption);
 		if(!av.isEmpty()) {
 			if(!address.setAddress(av)) {
-				logger::error() << "Invalid listening address" << av;
+				qCritical("Invalid listening address %s", qPrintable(av));
 				return false;
 			}
 		}
@@ -228,7 +213,7 @@ bool start() {
 		if(!sessionDirPath.isEmpty()) {
 			QDir sessionDir { sessionDirPath };
 			if(!sessionDir.isReadable()) {
-				logger::error() << "Cannot open" << sessionDirPath;
+				qCritical("Cannot open %s", qPrintable(sessionDirPath));
 				return false;
 			} else {
 				server->setSessionDirectory(sessionDir);
@@ -254,7 +239,7 @@ bool start() {
 		QString access = parser.value(webadminAccessOption);
 		if(!access.isEmpty()) {
 			if(!webadmin->setAccessSubnet(access)) {
-				logger::error() << "invalid subnet:" << access;
+				qCritical("Invalid subnet %s", qPrintable(access));
 				return false;
 			}
 		}
@@ -285,7 +270,7 @@ bool start() {
 		} else {
 			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {
-				logger::error() << "Too many file descriptors received.";
+				qCritical("Too many file descriptors received");
 				return false;
 			}
 
@@ -296,7 +281,7 @@ bool start() {
 
 			// TODO start webadmin if two fds were passsed
 #ifdef HAVE_WEBADMIN
-			logger::error() << "webadmin socket activation not implemented";
+			qCritical("Webadmin socket activation not implemented");
 #endif
 		}
 	}

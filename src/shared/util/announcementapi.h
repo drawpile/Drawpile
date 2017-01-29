@@ -32,6 +32,10 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
+namespace server {
+	class Log;
+}
+
 namespace sessionlisting {
 
 struct ListServerInfo {
@@ -142,6 +146,9 @@ signals:
 
 	//! An error occurred
 	void error(const QString &apiUrl, const QString &errorString);
+
+	//! A log message
+	void logMessage(const server::Log &message);
 
 private:
 	typedef void (AnnouncementApi::*HandlerFunc)(QNetworkReply*);

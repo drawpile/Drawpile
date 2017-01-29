@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,53 +16,33 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef INMEMORYCONFIG_H
+#define INMEMORYCONFIG_H
 
-#ifndef DP_BUILTINSERVER_H
-#define DP_BUILTINSERVER_H
-
-#include <QObject>
-
-class QTcpServer;
+#include "serverconfig.h"
 
 namespace server {
 
-class SessionServer;
+class ServerLog;
 
-/**
- * The drawpile server.
- */
-class BuiltinServer : public QObject {
-Q_OBJECT
+class InMemoryConfig : public ServerConfig
+{
+	Q_OBJECT
 public:
-	explicit BuiltinServer(QObject *parent=nullptr);
+	explicit InMemoryConfig(QObject *parent=nullptr);
+	~InMemoryConfig();
 
-	bool start(quint16 preferredPort);
+	ServerLog *logger() const { return m_logger; }
 
-	int port() const;
-
-	const QString &errorString() const { return m_error; }
-
-public slots:
-	 //! Stop the server. All clients are disconnected.
-	void stop();
-
-private slots:
-	void newClient();
-
-signals:
-	void serverStopped();
+protected:
+	QString getConfigValue(const ConfigKey key, bool &found) const override;
+	void setConfigValue(const ConfigKey key, const QString &value) override;
 
 private:
-	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
-
-	QTcpServer *m_server;
-	SessionServer *m_sessions;
-	State m_state;
-
-	QString m_error;
+	QHash<int, QString> m_config;
+	ServerLog *m_logger;
 };
 
 }
 
 #endif
-

@@ -22,10 +22,10 @@
 #include "client.h"
 #include "loginhandler.h"
 #include "serverconfig.h"
+#include "serverlog.h"
 #include "inmemoryhistory.h"
 #include "filedhistory.h"
 
-#include "../util/logger.h"
 #include "../util/announcementapi.h"
 
 #include <QTimer>
@@ -57,7 +57,7 @@ void SessionServer::setSessionDir(const QDir &dir)
 		m_useFiledSessions = true;
 		loadNewSessions();
 	} else {
-		logger::warning() << dir.absolutePath() << "is not readable";
+		qWarning("%s is not readable", qPrintable(dir.absolutePath()));
 	}
 }
 
@@ -76,7 +76,7 @@ void SessionServer::loadNewSessions()
 			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
 			Session *session = new Session(fh, m_config, this);
 			initSession(session);
-			logger::info() << session << "loaded.";
+			session->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("Loaded from file."));
 		}
 	}
 }
@@ -108,8 +108,11 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 
 	initSession(session);
 
-	logger::debug() << session << "Session created by" << founder;
+	QString aka = idAlias.isEmpty() ? QString() : QStringLiteral(" (AKA %1)").arg(idAlias);
 
+	session->log(Log()
+		.about(Log::Level::Info, Log::Topic::Status)
+		.message("Session" + aka + " created by " + founder));
 	return session;
 }
 
@@ -195,7 +198,6 @@ void SessionServer::addClient(Client *client)
  */
 void SessionServer::moveFromLobby(Session *session, Client *client)
 {
-	logger::debug() << client << "moved from lobby to" << session;
 	Q_ASSERT(m_lobby.contains(client));
 	m_lobby.removeOne(client);
 
@@ -213,7 +215,7 @@ void SessionServer::moveFromLobby(Session *session, Client *client)
 void SessionServer::lobbyDisconnectedEvent(Client *client)
 {
 	if(m_lobby.removeOne(client)) {
-		logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
+		client->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Non-logged in client removed."));
 		disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
 		emit userDisconnected(totalUsers());
 	}
@@ -230,12 +232,12 @@ void SessionServer::userDisconnectedEvent(Session *session)
 {
 	bool delSession = false;
 	if(session->userCount()==0) {
-		logger::debug() << session << "Last user left";
+		session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Last user left."));
 
 		// A non-persistent session is deleted when the last user leaves
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
 		if(!session->isPersistent()) {
-			logger::info() << session << "Closing non-persistent session";
+			session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Closing non-persistent session."));
 			delSession = true;
 		}
 	}
@@ -258,7 +260,7 @@ void SessionServer::cleanupSessions()
 		for(Session *s : m_sessions) {
 			if(s->userCount()==0) {
 				if(s->lastEventTime().msecsTo(now) > expirationTime) {
-					logger::info() << s << "Idle session expired. Uptime was" << s->uptime();
+					s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
 					s->killSession();
 				}
 			}

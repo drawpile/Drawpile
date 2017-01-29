@@ -1,8 +1,9 @@
-#include "../server/serverconfig.h"
+#include "../server/inmemoryconfig.h"
 
 #include <QtTest/QtTest>
 
 using server::ServerConfig;
+using server::InMemoryConfig;
 using server::ConfigKey;
 
 class TestServerConfig : public QObject
@@ -11,7 +12,7 @@ class TestServerConfig : public QObject
 private slots:
 	void testStringKey()
 	{
-		ServerConfig cfg;
+		InMemoryConfig cfg;
 		const ConfigKey key(0, "test", "default", ConfigKey::STRING);
 		const QString value = "Test";
 
@@ -25,7 +26,7 @@ private slots:
 
 	void testTimeKey()
 	{
-		ServerConfig cfg;
+		InMemoryConfig cfg;
 		const ConfigKey key(0, "test", "0", ConfigKey::TIME);
 
 		bool ok = cfg.setConfigString(key, "1m");
@@ -54,7 +55,7 @@ private slots:
 
 	void testSizeKey()
 	{
-		ServerConfig cfg;
+		InMemoryConfig cfg;
 		const ConfigKey key(0, "test", "0", ConfigKey::SIZE);
 
 		bool ok = cfg.setConfigString(key, "1mb");
@@ -82,7 +83,7 @@ private slots:
 
 	void testIntKey()
 	{
-		ServerConfig cfg;
+		InMemoryConfig cfg;
 		const ConfigKey key(0, "test", "0", ConfigKey::INT);
 
 		bool ok = cfg.setConfigString(key, "123");
@@ -111,7 +112,7 @@ private slots:
 
 	void testBoolKey()
 	{
-		ServerConfig cfg;
+		InMemoryConfig cfg;
 		const ConfigKey key(0, "test", "0", ConfigKey::BOOL);
 
 		QFETCH(QString, str);

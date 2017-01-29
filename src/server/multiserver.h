@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QHostAddress>
 
-#include "../shared/util/logger.h"
 #include "../shared/server/jsonapi.h"
 
 class QTcpServer;

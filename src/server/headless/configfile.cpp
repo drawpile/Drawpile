@@ -18,7 +18,7 @@
 */
 
 #include "configfile.h"
-#include "../shared/util/logger.h"
+#include "../shared/server/serverlog.h"
 
 #include <QFileInfo>
 
@@ -26,8 +26,14 @@ namespace server {
 
 ConfigFile::ConfigFile(const QString &path, QObject *parent)
 	: ServerConfig(parent),
-	  m_path(path)
+	  m_path(path),
+	  m_logger(new InMemoryLog)
 {
+}
+
+ConfigFile::~ConfigFile()
+{
+	delete m_logger;
 }
 
 bool ConfigFile::isModified() const
@@ -43,7 +49,7 @@ void ConfigFile::reloadFile() const
 {
 	QFile f(m_path);
 	if(!f.open(QFile::ReadOnly | QFile::Text)) {
-		logger::error() << m_path << "Error:" << f.errorString();
+		qCritical("%s: Error %s", qPrintable(m_path), qPrintable(f.errorString()));
 		return;
 	}
 
@@ -70,14 +76,14 @@ void ConfigFile::reloadFile() const
 			else if(line.compare("[announcewhitelist]", Qt::CaseInsensitive)==0)
 				section = AWL;
 			else
-				logger::warning() << "Unknown configuration file section:" << line;
+				qWarning("Unknown configuration file section: %s", qPrintable(line));
 			continue;
 		}
 
 		if(section == CONFIG) {
 			int sep = line.indexOf('=');
 			if(sep<1) {
-				logger::warning() << "Invalid setting line:" << line;
+				qWarning("Invalid setting line: %s", qPrintable(line));
 				continue;
 			}
 
@@ -99,7 +105,7 @@ void ConfigFile::reloadFile() const
 
 			QHostAddress ipaddr(ip);
 			if(ipaddr.isNull()) {
-				logger::warning() << "Invalid IP address:" << ip;
+				qWarning("Invalid IP address: %s", qPrintable(ip));
 				continue;
 			}
 
@@ -108,7 +114,7 @@ void ConfigFile::reloadFile() const
 		} else if(section == AWL) {
 			QUrl url(line);
 			if(!url.isValid()) {
-				logger::warning() << "Invalid URL:" << line;
+				qWarning("Invalid URL: %s", qPrintable(line));
 				continue;
 			}
 
@@ -166,7 +172,7 @@ bool ConfigFile::isAllowedAnnouncementUrl(const QUrl &url) const
 void ConfigFile::setConfigValue(const ConfigKey key, const QString &value)
 {
 	Q_UNUSED(value);
-	logger::debug() << "configFile: not setting value for key" << key.name;
+	qDebug("not setting value for key %s", qPrintable(key.name));
 }
 
 }

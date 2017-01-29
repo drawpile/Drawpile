@@ -203,7 +203,7 @@ public:
 	/**
 	 * @brief removeBan Remove a banlist entry
 	 */
-	bool removeBan(int id);
+	QString removeBan(int id);
 
 	/**
 	 * @brief Public listing added

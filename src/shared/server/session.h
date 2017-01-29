@@ -28,7 +28,6 @@
 #include <QUuid>
 #include <QJsonObject>
 
-#include "../util/logger.h"
 #include "../util/announcementapi.h"
 #include "../net/message.h"
 #include "../net/protover.h"
@@ -400,6 +399,8 @@ public:
 	 * @return JSON API response content
 	 */
 	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
+	Q_SLOT void log(Log entry);
 
 signals:
 	//! A user just connected to the session

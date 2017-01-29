@@ -20,13 +20,13 @@
 #include "filedhistory.h"
 #include "../shared/util/passwordhash.h"
 #include "../shared/util/filename.h"
-#include "../shared/util/logger.h"
 #include "../shared/record/header.h"
 #include "../shared/net/meta.h"
 
 #include <QFile>
 #include <QJsonObject>
 #include <QVarLengthArray>
+#include <QDebug>
 
 namespace server {
 
@@ -99,13 +99,13 @@ FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
 	const QDir dir = QFileInfo(path).dir();
 	const QUuid id = filename;
 	if(id.isNull()) {
-		logger::error() << "History file name not a valid ID";
+		qWarning() << filename << "History file name not a valid ID";
 		return nullptr;
 	}
 
 	QFile *journal = new QFile(path);
 	if(!journal->open(QFile::ReadWrite)) {
-		logger::error() << path << journal->errorString();
+		qWarning() << path << journal->errorString();
 		delete journal;
 		return nullptr;
 	}
@@ -123,12 +123,12 @@ FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
 bool FiledHistory::create()
 {
 	if(m_journal->exists()) {
-		logger::error() << m_journal->fileName() << "already exists!";
+		qWarning() << m_journal->fileName() << "already exists!";
 		return false;
 	}
 
 	if(!m_journal->open(QFile::WriteOnly)) {
-		logger::error() << m_journal->fileName() << m_journal->errorString();
+		qWarning() << m_journal->fileName() << m_journal->errorString();
 		return false;
 	}
 
@@ -150,7 +150,7 @@ bool FiledHistory::initRecording()
 
 	m_recording = new QFile(m_dir.absoluteFilePath(filename), this);
 	if(!m_recording->open(QFile::ReadWrite)) {
-		logger::error() << filename << m_recording->errorString();
+		qWarning() << filename << m_recording->errorString();
 		return false;
 	}
 
@@ -205,13 +205,13 @@ bool FiledHistory::load()
 			if(m_alias.isEmpty())
 				m_alias = QString::fromUtf8(params);
 			else
-				logger::warning() << id().toString() << "alias set twice.";
+				qWarning() << id().toString() << "alias set twice.";
 
 		} else if(cmd == "FOUNDER") {
 			if(m_founder.isEmpty())
 				m_founder = QString::fromUtf8(params);
 			else
-				logger::warning() << id().toString() << "founder set twice.";
+				qWarning() << id().toString() << "founder set twice.";
 
 		} else if(cmd == "PASSWORD") {
 			m_password = params;
@@ -235,14 +235,14 @@ bool FiledHistory::load()
 				else if(f == "nsfm")
 					flags |= Nsfm;
 				else
-					logger::warning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
+					qWarning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
 			}
 			m_flags = flags;
 
 		} else if(cmd == "BAN") {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length() != 4) {
-				logger::warning() << id().toString() << "invalid ban entry:" << QString::fromUtf8(params);
+				qWarning() << id().toString() << "invalid ban entry:" << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
 				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
@@ -264,7 +264,7 @@ bool FiledHistory::load()
 		} else if(cmd == "USER") {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length()!=2) {
-				logger::warning() << "Invalid USER entry:" << QString::fromUtf8(params);
+				qWarning() << "Invalid USER entry:" << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
 				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
@@ -272,43 +272,43 @@ bool FiledHistory::load()
 			}
 
 		} else {
-			logger::warning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
+			qWarning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
 	} while(!m_journal->atEnd());
 
 	// The latest recording file must exist
 	if(recordingFile.isEmpty()) {
-		logger::error() << id().toString() << "content file not set!";
+		qWarning() << id().toString() << "content file not set!";
 		return false;
 	}
 
 	m_recording = new QFile(m_dir.absoluteFilePath(recordingFile), this);
 
 	if(!m_recording->exists()) {
-		logger::error() << recordingFile << "not found!";
+		qWarning() << recordingFile << "not found!";
 		return false;
 	}
 
 	if(!m_recording->open(QFile::ReadWrite)) {
-		logger::error() << recordingFile << m_recording->errorString();
+		qWarning() << recordingFile << m_recording->errorString();
 		return false;
 	}
 
 	// Recording must have a valid header
 	QJsonObject header = recording::readRecordingHeader(m_recording);
 	if(header.isEmpty()) {
-		logger::error() << recordingFile << "invalid header";
+		qWarning() << recordingFile << "invalid header";
 		return false;
 	}
 
 	m_version = protocol::ProtocolVersion::fromString(header["version"].toString());
 	if(!m_version.isValid()) {
-		logger::error() << recordingFile << "invalid protocol version";
+		qWarning() << recordingFile << "invalid protocol version";
 		return false;
 	}
 
 	if(m_version.server() != protocol::ProtocolVersion::current().server()) {
-		logger::error() << recordingFile << "incompatible server version";
+		qWarning() << recordingFile << "incompatible server version";
 		return false;
 	}
 
@@ -316,7 +316,7 @@ bool FiledHistory::load()
 
 	// Scan the recording file and build the index of blocks
 	if(!scanBlocks()) {
-		logger::error() << recordingFile << "error occurred during indexing";
+		qWarning() << recordingFile << "error occurred during indexing";
 		return false;
 	}
 
@@ -348,7 +348,7 @@ bool FiledHistory::scanBlocks()
 		if(msglen<0) {
 			// Truncated message encountered.
 			// Rewind back to the end of the previous message
-			logger::warning() << m_recording->fileName() << "Recording truncated at" << int(b.endOffset);
+			qWarning() << m_recording->fileName() << "Recording truncated at" << int(b.endOffset);
 			m_recording->seek(b.endOffset);
 			break;
 		}
@@ -510,18 +510,18 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 	if(b.messages.isEmpty() && b.count>0) {
 		// Load the block worth of messages to memory if not already loaded
 		const qint64 prevPos = m_recording->pos();
-		logger::debug() << m_recording->fileName() << "loading block" << i;
+		qDebug() << m_recording->fileName() << "loading block" << i;
 		m_recording->seek(b.startOffset);
 		QByteArray buffer;
 		for(int m=0;m<b.count;++m) {
 			if(!recording::readRecordingMessage(m_recording, buffer)) {
-				logger::error() << m_recording->fileName() << "read error!";
+				qWarning() << m_recording->fileName() << "read error!";
 				m_recording->close();
 				break;
 			}
 			protocol::Message *msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
 			if(!msg) {
-				logger::error() << m_recording->fileName() << "Invalid message in block" << i;
+				qWarning() << m_recording->fileName() << "Invalid message in block" << i;
 				m_recording->close();
 				break;
 			}
@@ -572,7 +572,7 @@ void FiledHistory::cleanupBatches(int before)
 		if(b.startIndex+b.count >= before)
 			break;
 		if(!b.messages.isEmpty()) {
-			logger::debug() << "releasing history block cache from" << b.startIndex << "to" << b.startIndex+b.count-1;
+			qDebug() << "releasing history block cache from" << b.startIndex << "to" << b.startIndex+b.count-1;
 			b.messages = QList<protocol::MessagePtr>();
 		}
 	}

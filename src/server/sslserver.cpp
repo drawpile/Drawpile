@@ -18,7 +18,6 @@
 */
 
 #include "sslserver.h"
-#include "../shared/util/logger.h"
 
 #include <QSslSocket>
 #include <QSslCipher>
@@ -31,29 +30,29 @@ SslServer::SslServer(const QString &certFile, const QString &keyFile, QObject *p
 	QTcpServer(parent)
 {
 	if(!QSslSocket::supportsSsl()) {
-		logger::error() << "SSL support not available!";
+		qWarning("SSL support not available!");
 		return;
 	}
 
 	QFile cert(certFile);
 	if(!cert.open(QFile::ReadOnly)) {
-		logger::error() << "Couldn't open certificate:" << cert.errorString();
+		qWarning("Couldn't open certificate: %s", qPrintable(cert.errorString()));
 		return;
 	}
 
 	QFile key(keyFile);
 	if(!key.open(QFile::ReadOnly)) {
-		logger::error() << "Couldn't open private key:" << key.errorString();
+		qWarning("Couldn't open private key: %s", qPrintable(key.errorString()));
 		return;
 	}
 
 	_cert = QSslCertificate(&cert);
 	if(_cert.isNull())
-		logger::error() << "Invalid certificate";
+		qWarning("Invalid certificate.");
 
 	_key = QSslKey(&key, QSsl::Rsa);
 	if(_key.isNull())
-		logger::error() << "Invalid private key";
+		qWarning("Invalid private key");
 }
 
 void SslServer::requireForwardSecrecy()
@@ -69,7 +68,7 @@ void SslServer::requireForwardSecrecy()
 	}
 
 	if(ciphers.isEmpty())
-		logger::warning() << "Forward secrecy not available!";
+		qWarning("Forward secrecy not available!");
 	else
 		QSslSocket::setDefaultCiphers(ciphers);
 }

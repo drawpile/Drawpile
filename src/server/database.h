@@ -41,6 +41,7 @@ public:
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
 	bool isAddressBanned(const QHostAddress &addr) const override;
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
+	ServerLog *logger() const override;
 
 	//! Get a JSON representation of the full banlist
 	QJsonArray getBanlist() const;

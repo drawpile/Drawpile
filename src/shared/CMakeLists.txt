@@ -21,7 +21,6 @@ set (
 	record/writer.cpp
 	record/reader.cpp
 	record/header.cpp
-	util/logger.cpp
 	util/passwordhash.cpp
 	util/filename.cpp
 	util/announcementapi.cpp
@@ -37,8 +36,10 @@ set (
 	server/loginhandler.cpp
 	server/opcommands.cpp
 	server/serverconfig.cpp
+	server/inmemoryconfig.cpp
 	server/jsonapi.cpp
 	server/idqueue.cpp
+	server/serverlog.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})

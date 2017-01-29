@@ -63,9 +63,9 @@ public:
 	/**
 	 * @brief Remove a ban entry
 	 * @param id the ID number of the ban entry
-	 * @return true if the entry was found and removed
+	 * @return username of the removed ban entry or an empty string if not found
 	 */
-	bool removeBan(int id);
+	QString removeBan(int id);
 
 	/**
 	 * @brief Check if the given IP address is on the ban list

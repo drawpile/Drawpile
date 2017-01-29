@@ -20,7 +20,7 @@
 #define INITSYS_H
 
 #include <QString>
-#include "../shared/util/logger.h"
+#include <QList>
 
 /**
  * Integration with the init system.

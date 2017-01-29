@@ -26,6 +26,7 @@
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
 #include "../shared/server/serverconfig.h"
+#include "../shared/server/serverlog.h"
 
 #include "../shared/util/announcementapi.h"
 
@@ -136,7 +137,7 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 
 	if(!m_server->listen(address, port)) {
 		emit serverStartError(m_server->errorString());
-		logger::error() << m_server->errorString();
+		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message(m_server->errorString()));
 		delete m_server;
 		m_server = nullptr;
 		m_state = STOPPED;
@@ -146,7 +147,8 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	m_port = m_server->serverPort();
 
 	emit serverStarted();
-	logger::info() << "Started listening on port" << port << "at address" << address.toString();
+	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
+		.message(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString())));
 	return true;
 }
 
@@ -163,7 +165,7 @@ bool MultiServer::startFd(int fd)
 		return false;
 
 	if(!m_server->setSocketDescriptor(fd)) {
-		logger::error() << "Couldn't set server socket descriptor!";
+		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message("Couldn't set server socket descriptor!"));
 		delete m_server;
 		m_server = nullptr;
 		m_state = STOPPED;
@@ -172,7 +174,9 @@ bool MultiServer::startFd(int fd)
 
 	m_port = m_server->serverPort();
 
-	logger::info() << "Started listening on passed socket";
+	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
+		.message(QString("Started listening on passed socket")));
+
 	return true;
 }
 
@@ -232,12 +236,16 @@ void MultiServer::newClient()
 {
 	QTcpSocket *socket = m_server->nextPendingConnection();
 
-	logger::info() << "Accepted new client from address" << socket->peerAddress();
+	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
+		.message(QString("Accepted new client from address " + socket->peerAddress().toString())));
 
-	auto *client = new Client(socket);
+	auto *client = new Client(socket, m_sessions->config()->logger());
 
 	if(m_config->isAddressBanned(socket->peerAddress())) {
-		logger::info() << "Kicking banned client from address" << socket->peerAddress() << "straight away";
+		client->log(Log().about(Log::Level::Warn, Log::Topic::Kick)
+			.user(0, socket->peerAddress(), QString())
+			.message("Kicking banned user straight away"));
+
 		client->disconnectKick("BANNED");
 
 	} else {
@@ -261,7 +269,9 @@ void MultiServer::printStatusUpdate()
 void MultiServer::tryAutoStop()
 {
 	if(m_state == RUNNING && m_autoStop && m_sessions->sessionCount() == 0 && m_sessions->totalUsers() == 0) {
-		logger::info() << "Autostopping due to lack of sessions";
+		m_sessions->config()->logger()->logMessage(Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message("Autostopping due to lack of sessions."));
 		stop();
 	}
 }
@@ -271,7 +281,12 @@ void MultiServer::tryAutoStop()
  */
 void MultiServer::stop() {
 	if(m_state == RUNNING) {
-		logger::info() << "Stopping server and kicking out" << m_sessions->totalUsers() << "users...";
+		m_sessions->config()->logger()->logMessage(Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QString("Stopping server and kicking out %1 users...")
+					 .arg(m_sessions->totalUsers())
+			));
+
 		m_state = STOPPING;
 		m_server->close();
 		m_port = 0;
@@ -284,7 +299,9 @@ void MultiServer::stop() {
 			m_state = STOPPED;
 			delete m_server;
 			m_server = nullptr;
-			logger::info() << "Server stopped.";
+			m_sessions->config()->logger()->logMessage(Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message("Server stopped."));
 			emit serverStopped();
 		}
 	}

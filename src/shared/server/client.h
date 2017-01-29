@@ -20,7 +20,6 @@
 #define DP_SERVER_CLIENT_H
 
 #include "../net/message.h"
-#include "../util/logger.h"
 #include "jsonapi.h"
 
 #include <QObject>
@@ -36,6 +35,8 @@ namespace protocol {
 namespace server {
 
 class Session;
+class Log;
+class ServerLog;
 
 /**
  * @brief Server client
@@ -49,7 +50,7 @@ class Client : public QObject
     Q_OBJECT
 
 public:
-	explicit Client(QTcpSocket *socket, QObject *parent=0);
+	Client(QTcpSocket *socket, ServerLog *logger, QObject *parent=nullptr);
 	~Client();
 
 	//! Get the user's IP address
@@ -215,6 +216,14 @@ public:
 	 */
 	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
+	/**
+	 * @brief Write a log entry
+	 *
+	 * The user and session fields are filled in automatically.
+	 * Note: this can only be used after the user has joined a session.
+	 */
+	void log(Log entry) const;
+
 signals:
 	/**
 	 * @brief Message received while not part of a session
@@ -245,6 +254,7 @@ private:
 
 	Session *m_session;
 	QTcpSocket *m_socket;
+	ServerLog *m_logger;
 
 	protocol::MessageQueue *m_msgqueue;
 	QList<protocol::MessagePtr> m_holdqueue;
