@@ -1,6 +1,7 @@
 #include "serverlog.h"
 
 #include <QMetaEnum>
+#include <QJsonObject>
 
 namespace server {
 
@@ -33,6 +34,29 @@ QString Log::toString(bool abridged) const
 	return msg;
 }
 
+QJsonObject Log::toJson(bool noPrivateData) const
+{
+	QJsonObject o;
+	o["timestamp"] = m_timestamp.toString(Qt::ISODate);
+	o["level"] = QMetaEnum::fromType<Log::Level>().valueToKey(int(m_level));
+	o["topic"] = QMetaEnum::fromType<Log::Topic>().valueToKey(int(m_topic));
+	if(!m_session.isNull())
+		o["session"] = m_session.toString();
+
+	if(!m_user.isEmpty()) {
+		if(noPrivateData) {
+			const int sep1 = m_user.indexOf(';');
+			const int sep2 = m_user.indexOf(';', sep1+1);
+			o["user"] = m_user.left(sep1) + m_user.mid(sep2);
+		} else {
+			o["user"] = m_user;
+		}
+	}
+
+	o["message"] = m_message;
+	return o;
+}
+
 void ServerLog::logMessage(const Log &entry)
 {
 	if(!m_silent) {
@@ -51,25 +75,36 @@ void InMemoryLog::setHistoryLimit(int limit)
 {
 	m_limit = limit;
 	if(limit>0 && limit<m_history.size())
-		m_history.erase(m_history.begin(), m_history.begin() + (m_history.size()-limit));
+		m_history.erase(m_history.begin() + limit, m_history.end());
 }
 
 void InMemoryLog::storeMessage(const Log &entry)
 {
-	if(m_limit>0 && m_history.size()+1 >= m_limit)
-		m_history.pop_front();
-	m_history << entry;
+	m_history.prepend(entry);
+	if(m_limit>0 && m_history.size() >= m_limit)
+		m_history.pop_back();
 }
 
-QList<Log> InMemoryLog::getLogEntries(const QUuid &session, int offset, int limit) const
+QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &after, int offset, int limit) const
 {
 	QList<Log> filtered;
-	const int end = limit>0 ? qMin(m_history.size(), offset+limit) : m_history.size();
 
-	for(int i=offset;i<end;++i) {
-		const Log &l = m_history.at(i);
-		if(session.isNull() || session == l.session())
+	for(const Log &l : m_history) {
+		if(after.isValid() && after.msecsTo(l.timestamp()) < 1000)
+			break;
+
+		if(!session.isNull() && session != l.session())
+			continue;
+
+		if(offset<=0) {
+			if(limit>0 && filtered.size() >= limit)
+				break;
+
 			filtered << l;
+
+		} else {
+			--offset;
+		}
 	}
 
 	return filtered;

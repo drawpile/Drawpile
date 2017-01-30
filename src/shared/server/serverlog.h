@@ -5,6 +5,8 @@
 #include <QUuid>
 #include <QHostAddress>
 
+class QJsonObject;
+
 namespace server {
 
 /**
@@ -67,6 +69,16 @@ public:
 	 */
 	QString toString(bool abridged=false) const;
 
+	/**
+	 * @brief Get the log message as a JSON object
+	 *
+	 * If noPrivateData is true, this may return a blank object if the whole
+	 * log entry contains information only the server administrator should see.
+	 *
+	 * @param noPrivateData if true, private data (user IP address) is omitted
+	 */
+	QJsonObject toJson(bool noPrivateData=false) const;
+
 private:
 	QDateTime m_timestamp;
 	QUuid m_session;
@@ -87,6 +99,7 @@ public:
 
 	ServerLogQuery &session(const QUuid &id) { m_session = id; return *this; }
 	ServerLogQuery &page(int page, int entriesPerPage) { m_offset = page*entriesPerPage; m_limit=entriesPerPage; return *this; }
+	ServerLogQuery &after(const QDateTime &ts) { m_after = ts; return *this; }
 
 	bool isFiltered() const { return !m_session.isNull() || m_offset>0 || m_limit>0; }
 	QList<Log> get() const;
@@ -96,6 +109,7 @@ private:
 	QUuid m_session;
 	int m_offset;
 	int m_limit;
+	QDateTime m_after;
 };
 
 /**
@@ -119,8 +133,13 @@ public:
 
 	/**
 	 * @brief Get all available log messages that match the given filters
+	 *
+	 * @param session get only log entries for this session
+	 * @param after get messages whose timestamp is greater than this
+	 * @param offset ignore first *offset* messages
+	 * @param limit return at most this many messages
 	 */
-	virtual QList<Log> getLogEntries(const QUuid &session, int offset, int limit) const = 0;
+	virtual QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, int offset, int limit) const = 0;
 
 	/**
 	 * @brief Return a query builder
@@ -136,7 +155,7 @@ private:
 };
 
 inline QList<Log> ServerLogQuery::get() const {
-	return m_log.getLogEntries(m_session, m_offset, m_limit);
+	return m_log.getLogEntries(m_session, m_after, m_offset, m_limit);
 }
 
 /**
@@ -148,7 +167,7 @@ public:
 	InMemoryLog() : m_limit(1000) { }
 	void setHistoryLimit(int limit);
 
-	QList<Log> getLogEntries(const QUuid &session, int offset, int limit) const override;
+	QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, int offset, int limit) const override;
 
 protected:
 	void storeMessage(const Log &entry) override;

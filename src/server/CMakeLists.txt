@@ -42,6 +42,8 @@ if(SERVERGUI)
 		gui/sessionlistmodel.cpp
 		gui/banlistmodel.cpp
 		gui/accountlistmodel.cpp
+		gui/serverlogmodel.cpp
+		gui/serverlogpage.cpp
 		)
 	add_definitions(-DHAVE_SERVERGUI)
 

@@ -323,6 +323,8 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		return banlistJsonApi(method, tail, request);
 	else if(head == "accounts")
 		return accountsJsonApi(method, tail, request);
+	else if(head == "log")
+		return logJsonApi(method, tail, request);
 
 	return JsonApiNotFound();
 }
@@ -489,6 +491,38 @@ JsonApiResult MultiServer::accountsJsonApi(JsonApiMethod method, const QStringLi
 
 	} else
 		return JsonApiBadMethod();
+}
+
+JsonApiResult MultiServer::logJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+	if(method != JsonApiMethod::Get)
+		return JsonApiBadMethod();
+
+	auto q = m_config->logger()->query();
+	q.page(request.value("page").toInt(), 100);
+
+	if(request.contains("session")) {
+		QUuid s = request.value("session").toString();
+		if(s.isNull())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Invalid session ID");
+		q.session(s);
+	}
+
+	if(request.contains("after")) {
+		QDateTime after = QDateTime::fromString(request.value("after").toString(), Qt::ISODate);
+		if(!after.isValid())
+			return JsonApiErrorResult(JsonApiResult::BadRequest, "Invalid timestamp");
+		q.after(after);
+	}
+
+	QJsonArray out;
+	for(const Log &log : q.get()) {
+		out.append(log.toJson());
+	}
+
+	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(out) };
 }
 
 }

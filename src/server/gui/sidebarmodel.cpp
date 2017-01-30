@@ -25,6 +25,7 @@
 #include "banlistpage.h"
 #include "sessionpage.h"
 #include "accountlistpage.h"
+#include "serverlogpage.h"
 
 #include <QDebug>
 #include <QBrush>
@@ -42,7 +43,8 @@ SidebarModel::SidebarModel(QObject *parent)
 		<< new SessionListPageFactory
 		<< new UserListPageFactory
 		<< new BanListPageFactory
-		<< new AccountListPageFactory;
+		<< new AccountListPageFactory
+		<< new ServerLogPageFactory;
 }
 
 SidebarModel::~SidebarModel()
