@@ -44,6 +44,7 @@ void ServerLogModel::addLogEntries(const QJsonArray &entries)
 
 	beginInsertRows(QModelIndex(), 0, entries.size()-1);
 	for(int i=entries.size()-1;i>=0;--i)
+	//for(int i=0;i<entries.size();++i)
 		m_log << entries[i].toObject();
 	endInsertRows();
 }
@@ -71,8 +72,8 @@ QVariant ServerLogModel::headerData(int section, Qt::Orientation orientation, in
 	case 0: return tr("Time");
 	case 1: return tr("Level");
 	case 2: return tr("Topic");
-	case 3: return tr("User");
-	case 4: return tr("Session");
+	case 3: return tr("Session");
+	case 4: return tr("User");
 	case 5: return tr("Message");
 	}
 
@@ -100,8 +101,8 @@ QVariant ServerLogModel::data(const QModelIndex &index, int role) const
 	case 0: return o["timestamp"].toString();
 	case 1: return o["level"].toString();
 	case 2: return o["topic"].toString();
-	case 3: return o["user"].toString();
-	case 4: return o["session"].toString();
+	case 3: return o["session"].toString();
+	case 4: return o["user"].toString();
 	case 5: return o["message"].toString();
 	}
 

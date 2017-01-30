@@ -11,6 +11,7 @@ set (
 	multiserver.cpp
 	sslserver.cpp
 	database.cpp
+	dblog.cpp
 	headless/headless.cpp
 	headless/configfile.cpp
 	)

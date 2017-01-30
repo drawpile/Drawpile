@@ -237,7 +237,8 @@ void MultiServer::newClient()
 	QTcpSocket *socket = m_server->nextPendingConnection();
 
 	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
-		.message(QString("Accepted new client from address " + socket->peerAddress().toString())));
+		.user(0, socket->peerAddress(), QString())
+		.message(QStringLiteral("New client connected")));
 
 	auto *client = new Client(socket, m_sessions->config()->logger());
 

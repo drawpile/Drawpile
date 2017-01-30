@@ -56,7 +56,7 @@ ServerLogPage::ServerLogPage(Server *server, QWidget *parent)
 	auto *layout = new QVBoxLayout;
 	setLayout(layout);
 
-	layout->addWidget(new SubheaderWidget(tr("IP bans"), 1));
+	layout->addWidget(new SubheaderWidget(tr("Server log"), 1));
 
 	d->view = new QTableView;
 	d->view->setModel(d->model);

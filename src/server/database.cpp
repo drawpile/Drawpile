@@ -18,6 +18,7 @@
 */
 
 #include "database.h"
+#include "dblog.h"
 #include "../shared/util/passwordhash.h"
 #include "../shared/server/loginhandler.h" // for username validation
 #include "../shared/server/serverlog.h"
@@ -79,7 +80,8 @@ static bool initDatabase(QSqlDatabase db)
 Database::Database(QObject *parent)
 	: ServerConfig(parent), d(new Private)
 {
-	d->logger = new InMemoryLog; // TODO: DbLogger
+	// Temporary logger until DB log is ready
+	d->logger = new InMemoryLog;
 }
 
 Database::~Database()
@@ -100,6 +102,15 @@ bool Database::openFile(const QString &path)
 	if(!initDatabase(d->db)) {
 		qCritical("Database initialization failed: %s", qPrintable(path));
 		return false;
+	}
+
+	DbLog *dblog = new DbLog(d->db);
+	if(!dblog->initDb()) {
+		qWarning("Couldn't initialize database log!");
+		delete dblog;
+	} else {
+		delete d->logger;
+		d->logger = dblog;
 	}
 
 	qDebug("Opened configuration database: %s", qPrintable(path));
