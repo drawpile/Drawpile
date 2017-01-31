@@ -344,23 +344,35 @@ bool Session::checkPassword(const QString &password) const
 	return passwordhash::check(password, m_history->passwordHash());
 }
 
-QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids)
+QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &changedBy)
 {
 	QList<uint8_t> truelist;
 	for(Client *c : m_clients) {
-		c->setOperator(ids.contains(c->id()) | c->isModerator());
+		bool op = ids.contains(c->id()) | c->isModerator();
+		if(op != c->isOperator()) {
+			c->setOperator(op);
+			if(op)
+				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
+			else
+				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+		}
 		if(c->isOperator())
 			truelist << c->id();
 	}
 	return truelist;
 }
 
-void Session::changeOpStatus(int id, bool op)
+void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 {
 	QList<uint8_t> ids;
 	for(Client *c : m_clients) {
-		if(c->id() == id)
+		if(c->id() == id && c->isOperator() != op) {
 			c->setOperator(op);
+			if(op)
+				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
+			else
+				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+		}
 
 		if(c->isOperator())
 			ids << c->id();
@@ -599,7 +611,7 @@ void Session::ensureOperatorExists()
 	}
 
 	if(!hasOp && !m_clients.isEmpty()) {
-		changeOpStatus(m_clients.first()->id(), true);
+		changeOpStatus(m_clients.first()->id(), true, "the server");
 	}
 }
 

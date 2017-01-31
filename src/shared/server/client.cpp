@@ -115,7 +115,7 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 		if(request.contains("op")) {
 			const bool op = request["op"].toBool();
 			if(m_isOperator != op && m_session) {
-				m_session->changeOpStatus(id(), op);
+				m_session->changeOpStatus(id(), op, "the server administrator");
 			}
 		}
 		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
@@ -272,7 +272,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 			QList<uint8_t> ids = msg.cast<protocol::SessionOwner>().ids();
 			ids.append(m_id);
-			ids = m_session->updateOwnership(ids);
+			ids = m_session->updateOwnership(ids, username());
 			msg.cast<protocol::SessionOwner>().setIds(ids);
 			break;
 		}

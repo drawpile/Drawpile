@@ -353,17 +353,22 @@ public:
 
 	/**
 	 * @brief Update session operator bits
+	 *
+	 * Generates log entries for each change
+	 *
 	 * @param ids lisf of new session operators
+	 * @param changedBy name of the user who issued the change command
 	 * @return sanitized list of actual session operators
 	 */
-	QList<uint8_t> updateOwnership(QList<uint8_t> ids);
+	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &chanedBy);
 
 	/**
 	 * @brief Grant or revoke OP status of a user
 	 * @param id user ID
 	 * @param op new status
+	 * @param changedBy name of the user who issued the command
 	 */
-	void changeOpStatus(int id, bool op);
+	void changeOpStatus(int id, bool op, const QString &changedBy);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
