@@ -43,16 +43,10 @@ struct LayerInfo {
 	int id;
 	QString title;
 
-	// Access controls
-	bool locked;
-	QList<uint8_t> exclusive;
-
 	// Rendering controls
 	uchar opacity;
 	bool hidden;
 	BlendMode::Mode blend;
-
-	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
 };
 
 /**

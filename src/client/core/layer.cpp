@@ -103,7 +103,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: m_owner(owner), m_info({id, title, false, QList<uint8_t>(), 255, false, BlendMode::MODE_NORMAL}),
+	: m_owner(owner), m_info({id, title, 255, false, BlendMode::MODE_NORMAL}),
 	  m_width(0), m_height(0), m_xtiles(0), m_ytiles(0)
 {
 	resize(0, size.width(), size.height(), 0);
@@ -114,7 +114,7 @@ Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& colo
 }
 
 Layer::Layer(LayerStack *owner, int id, const QSize &size)
-	: Layer(owner, id, "", Qt::transparent, size)
+	: Layer(owner, id, QString(), Qt::transparent, size)
 {
 	// sublayers are used for indirect drawing and previews
 }
