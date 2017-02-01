@@ -23,6 +23,7 @@
 #include "../net/protover.h"
 
 #include <QDateTime>
+#include <QSet>
 
 namespace server {
 
@@ -58,6 +59,10 @@ public:
 	void removeAnnouncement(const QString &) override { /* not persistent */ }
 	QStringList announcements() const override { return QStringList(); }
 
+	void setAuthenticatedOperator(const QString &username, bool op) override { if(op) m_ops.insert(username); else m_ops.remove(username); }
+	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
+
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
@@ -66,6 +71,7 @@ protected:
 
 private:
 	QList<protocol::MessagePtr> m_history;
+	QSet<QString> m_ops;
 	QString m_alias;
 	QString m_founder;
 	QString m_title;

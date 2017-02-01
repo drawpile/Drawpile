@@ -55,6 +55,9 @@ private slots:
 			fh->removeAnnouncement("http://example.com/2/");
 			fh->joinUser(1, "u1");
 			fh->joinUser(2, "u2");
+			fh->setAuthenticatedOperator("u1", true);
+			fh->setAuthenticatedOperator("u2", true);
+			fh->setAuthenticatedOperator("u1", false);
 		}
 
 		{
@@ -83,6 +86,10 @@ private slots:
 
 			QCOMPARE(fh->idQueue().getIdForName("u1"), uint8_t(1));
 			QCOMPARE(fh->idQueue().getIdForName("u2"), uint8_t(2));
+
+			QCOMPARE(fh->isAuthenticatedOperators(), true);
+			QCOMPARE(fh->isOperator("u1"), false);
+			QCOMPARE(fh->isOperator("u2"), true);
 		}
 	}
 

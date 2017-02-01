@@ -231,6 +231,24 @@ public:
 	 */
 	IdQueue &idQueue() { return m_idqueue; }
 
+	/**
+	 * @brief Set an authenticated user's operator status
+	 *
+	 * This is used to remember an authenticated user's status so it
+	 * can be automatically restored when they log in again.
+	 */
+	virtual void setAuthenticatedOperator(const QString &username, bool op) = 0;
+
+	/**
+	 * @brief Is the given name on the list of operators
+	 */
+	virtual bool isOperator(const QString &username) const = 0;
+
+	/**
+	 * @brief Are there any names on the list of authenticated operators?
+	 */
+	virtual bool isAuthenticatedOperators() const = 0;
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history

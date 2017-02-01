@@ -187,6 +187,9 @@ void Session::joinUser(Client *user, bool host)
 
 	addToHistory(user->joinMessage());
 
+	if(m_history->isOperator(user->username()))
+		changeOpStatus(user->id(), true, "the server");
+
 	ensureOperatorExists();
 
 	// Let new users know about the size limit too
@@ -368,6 +371,9 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
 			else
 				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+			if(c->isAuthenticated() && c->isModerator())
+				m_history->setAuthenticatedOperator(c->username(), op);
+
 		}
 		if(c->isOperator())
 			truelist << c->id();
@@ -385,6 +391,8 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
 			else
 				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+			if(c->isAuthenticated() && !c->isModerator())
+				m_history->setAuthenticatedOperator(c->username(), op);
 		}
 
 		if(c->isOperator())
@@ -615,6 +623,11 @@ void Session::messageAll(const QString &message, bool alert)
 
 void Session::ensureOperatorExists()
 {
+	// If there is a way to gain OP status without being explicitly granted,
+	// it's OK for the session to not have any operators for a while.
+	if(!m_history->opwordHash().isEmpty() || m_history->isAuthenticatedOperators())
+		return;
+
 	bool hasOp=false;
 	for(const Client *c : m_clients) {
 		if(c->isOperator()) {

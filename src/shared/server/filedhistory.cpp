@@ -271,6 +271,12 @@ bool FiledHistory::load()
 				idQueue().setIdForName(id, name);
 			}
 
+		} else if(cmd == "OP") {
+			m_ops.insert(QString::fromUtf8(params));
+
+		} else if(cmd == "DEOP") {
+			m_ops.remove(QString::fromUtf8(params));
+
 		} else {
 			qWarning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
@@ -607,6 +613,21 @@ void FiledHistory::removeAnnouncement(const QString &url)
 	if(m_announcements.contains(url)) {
 		m_announcements.removeAll(url);
 		m_journal->write(QString("UNANNOUNCE %1\n").arg(url).toUtf8());
+	}
+}
+
+void FiledHistory::setAuthenticatedOperator(const QString &username, bool op)
+{
+	if(op) {
+		if(!m_ops.contains(username)) {
+			m_ops.insert(username);
+			m_journal->write(QString("OP %1\n").arg(username).toUtf8());
+		}
+	} else {
+		if(m_ops.contains(username)) {
+			m_ops.remove(username);
+			m_journal->write(QString("DEOP %1\n").arg(username).toUtf8());
+		}
 	}
 }
 

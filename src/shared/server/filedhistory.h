@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <QVector>
+#include <QSet>
 
 namespace server {
 
@@ -97,6 +98,10 @@ public:
 	void removeAnnouncement(const QString &url) override;
 	QStringList announcements() const override { return m_announcements; }
 
+	void setAuthenticatedOperator(const QString &username, bool op) override;
+	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
+
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
@@ -134,6 +139,7 @@ private:
 	int m_maxUsers;
 	Flags m_flags;
 	QStringList m_announcements;
+	QSet<QString> m_ops;
 
 	QVector<Block> m_blocks;
 	bool m_archive;
