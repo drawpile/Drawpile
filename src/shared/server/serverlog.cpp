@@ -34,17 +34,17 @@ QString Log::toString(bool abridged) const
 	return msg;
 }
 
-QJsonObject Log::toJson(bool noPrivateData) const
+QJsonObject Log::toJson(JsonOptions options) const
 {
 	QJsonObject o;
 	o["timestamp"] = m_timestamp.toString(Qt::ISODate);
 	o["level"] = QMetaEnum::fromType<Log::Level>().valueToKey(int(m_level));
 	o["topic"] = QMetaEnum::fromType<Log::Topic>().valueToKey(int(m_topic));
-	if(!m_session.isNull())
+	if(!options.testFlag(NoSession) && !m_session.isNull())
 		o["session"] = m_session.toString();
 
 	if(!m_user.isEmpty()) {
-		if(noPrivateData) {
+		if(options.testFlag(NoPrivateData)) {
 			const int sep1 = m_user.indexOf(';');
 			const int sep2 = m_user.indexOf(';', sep1+1);
 			o["user"] = m_user.left(sep1) + m_user.mid(sep2);
@@ -85,7 +85,7 @@ void InMemoryLog::storeMessage(const Log &entry)
 		m_history.pop_back();
 }
 
-QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &after, int offset, int limit) const
+QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
 {
 	QList<Log> filtered;
 
@@ -94,6 +94,9 @@ QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &aft
 			break;
 
 		if(!session.isNull() && session != l.session())
+			continue;
+
+		if(l.level() > atleast)
 			continue;
 
 		if(offset<=0) {

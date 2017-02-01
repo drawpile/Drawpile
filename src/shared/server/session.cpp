@@ -61,11 +61,14 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 		makeAnnouncement(QUrl(announcement));
 }
 
-QString Session::toLogString() const {
-	if(idAlias().isEmpty())
-		return QStringLiteral("Session %1:").arg(id().toString());
-	else
-		return QStringLiteral("Session %1|%2:").arg(id().toString(), idAlias());
+static protocol::MessagePtr makeLogMessage(const Log &log)
+{
+	protocol::ServerReply sr {
+		protocol::ServerReply::LOG,
+		log.message(),
+		log.toJson(Log::NoPrivateData|Log::NoSession)
+	};
+	return protocol::MessagePtr(new protocol::Command(0, sr));
 }
 
 void Session::switchState(State newstate)
@@ -154,6 +157,16 @@ void Session::joinUser(Client *user, bool host)
 
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
 	connect(history(), &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
+
+	// Send session log history to the new client
+	{
+		QList<Log> log = m_config->logger()->query().session(id()).atleast(Log::Level::Info).get();
+		// Note: the query returns the log entries in latest first, but we send
+		// new entries to clients as they occur, so we reverse the list before sending it
+		for(int i=log.size()-1;i>=0;--i) {
+			user->sendDirectMessage(makeLogMessage(log.at(i)));
+		}
+	}
 
 	if(host) {
 		Q_ASSERT(m_state == Initialization);
@@ -898,6 +911,10 @@ void Session::log(Log entry)
 {
 	entry.session(id());
 	m_config->logger()->logMessage(entry);
+
+	if(entry.level() < Log::Level::Debug) {
+		directToAll(makeLogMessage(entry));
+	}
 }
 
 }

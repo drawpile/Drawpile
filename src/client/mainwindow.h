@@ -55,6 +55,7 @@ namespace dialogs {
 	class PlaybackDialog;
 	class HostDialog;
 	class SessionSettingsDialog;
+	class ServerLogDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -221,6 +222,7 @@ private:
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
+	dialogs::ServerLogDialog *m_serverLogDialog;
 
 	drawingboard::CanvasScene *_canvasscene;
 

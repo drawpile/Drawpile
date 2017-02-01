@@ -165,8 +165,6 @@ public:
 	 */
 	void setHistoryPosition(int newpos) { m_historyPosition = newpos; }
 
-	QString toLogString() const;
-
 	/**
 	 * @brief Does this client socket support SSL connections?
 	 *

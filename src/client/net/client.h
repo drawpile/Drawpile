@@ -166,6 +166,7 @@ signals:
 	void youWereKicked(const QString &kickedBy);
 
 	void serverMessage(const QString &message, bool isAlert);
+	void serverLog(const QString &message);
 
 	void bytesReceived(int);
 	void bytesSent(int);

@@ -44,7 +44,6 @@ void ServerLogModel::addLogEntries(const QJsonArray &entries)
 
 	beginInsertRows(QModelIndex(), 0, entries.size()-1);
 	for(int i=entries.size()-1;i>=0;--i)
-	//for(int i=0;i<entries.size();++i)
 		m_log << entries[i].toObject();
 	endInsertRows();
 }

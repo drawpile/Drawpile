@@ -68,6 +68,7 @@ Document::Document(QObject *parent)
 	m_toolctrl = new tools::ToolController(m_client, this);
 	m_banlist = new BanlistModel(this);
 	m_announcementlist = new QStringListModel(this);
+	m_serverLog = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
 	m_autosaveTimer->setSingleShot(true);
@@ -82,6 +83,7 @@ Document::Document(QObject *parent)
 	connect(m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
 	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
 	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
+	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 }
 
 Document::~Document()
@@ -678,4 +680,11 @@ void Document::removeEmptyAnnotations()
 			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
 		m_client->sendMessages(msgs);
 	}
+}
+
+void Document::addServerLogEntry(const QString &log)
+{
+	int i = m_serverLog->rowCount();
+	m_serverLog->insertRow(i);
+	m_serverLog->setData(m_serverLog->index(i), log);
 }

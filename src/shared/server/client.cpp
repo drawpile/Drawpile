@@ -73,13 +73,6 @@ protocol::MessagePtr Client::joinMessage() const
 	));
 }
 
-QString Client::toLogString() const {
-	if(m_session)
-		return QStringLiteral("#%1 [%2] %3@%4:").arg(QString::number(id()), peerAddress().toString(), username(), m_session->id().toString());
-	else
-		return QStringLiteral("[%1] %2@(lobby):").arg(peerAddress().toString(), username());
-}
-
 QJsonObject Client::description(bool includeSession) const
 {
 	QJsonObject u;
@@ -353,14 +346,11 @@ void Client::startTls()
 
 void Client::log(Log entry) const
 {
-	if(!m_session) {
-		qWarning("BUG: Tried to use Client::log, but client is not yet in a session!");
-		return;
-	}
 	entry.user(m_id, m_socket->peerAddress(), m_username);
 	if(m_session)
-		entry.session(m_session->id());
-	m_logger->logMessage(entry);
+		m_session->log(entry);
+	else
+		m_logger->logMessage(entry);
 }
 
 }

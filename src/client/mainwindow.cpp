@@ -115,6 +115,7 @@
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/resetdialog.h"
 #include "dialogs/sessionsettings.h"
+#include "dialogs/serverlogdialog.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -160,6 +161,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	});
 
 	m_sessionSettings = new dialogs::SessionSettingsDialog(m_doc, this);
+
+	m_serverLogDialog = new dialogs::ServerLogDialog(this);
+	m_serverLogDialog->setModel(m_doc->serverLog());
 
 	// The central widget consists of a custom status bar and a splitter
 	// which includes the chat box and the main view.
@@ -2235,6 +2239,7 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
+	QAction *serverlog = makeAction("viewserverlog", 0, tr("Event Log"), QString(), QKeySequence("F10"));
 	QAction *sessionSettings = makeAction("sessionsettings", 0, tr("Settings..."), QString(), QKeySequence("F11"));
 	sessionSettings->setMenuRole(QAction::NoRole); // Keep this item where it is on OSX
 	sessionSettings->setEnabled(false);
@@ -2253,6 +2258,7 @@ void MainWindow::setupActions()
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
 	connect(sessionSettings, &QAction::triggered, m_sessionSettings, &dialogs::SessionSettingsDialog::show);
+	connect(serverlog, &QAction::triggered, m_serverLogDialog, &dialogs::ServerLogDialog::show);
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 
@@ -2270,6 +2276,7 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(resetsession);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(gainop);
+	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);
 	sessionmenu->addAction(locksession);
 

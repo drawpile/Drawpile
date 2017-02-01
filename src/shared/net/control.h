@@ -50,6 +50,7 @@ struct ServerReply {
 		ALERT,   // urgen notification message
 		ERROR,   // error occurred
 		RESULT,  // comand result
+		LOG,     // server log message
 		SESSIONCONF, // session configuration update
 		SIZELIMITWARNING, // session history size nearing limit
 		RESET,   // session reset state

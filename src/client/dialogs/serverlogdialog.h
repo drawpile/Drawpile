@@ -16,32 +16,33 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef SERVERLOGDIALOG_H
+#define SERVERLOGDIALOG_H
 
-#ifndef DBLOG_H
-#define DBLOG_H
+#include <QDialog>
 
-#include "../shared/server/serverlog.h"
+class Ui_ServerLogDialog;
 
-#include <QSqlDatabase>
+class QSortFilterProxyModel;
+class QAbstractItemModel;
 
-namespace server {
+namespace dialogs {
 
-class DbLog : public ServerLog
+class ServerLogDialog : public QDialog
 {
+	Q_OBJECT
 public:
-	explicit DbLog(const QSqlDatabase &db);
+	ServerLogDialog(QWidget *parent=nullptr);
+	~ServerLogDialog();
 
-	bool initDb();
-
-	QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
-
-protected:
-	void storeMessage(const Log &entry) override;
+	void setModel(QAbstractItemModel *model);
 
 private:
-	QSqlDatabase m_db;
+	Ui_ServerLogDialog *m_ui;
+	QSortFilterProxyModel *m_proxy;
 };
 
 }
 
 #endif
+

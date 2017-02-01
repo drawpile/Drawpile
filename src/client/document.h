@@ -52,6 +52,7 @@ class Document : public QObject
 	Q_PROPERTY(canvas::CanvasModel* canvas READ canvas() NOTIFY canvasChanged)
 	Q_PROPERTY(BanlistModel* banlist READ banlist() CONSTANT)
 	Q_PROPERTY(QStringListModel* announcementList READ announcementList() CONSTANT)
+	Q_PROPERTY(QStringListModel* serverLog READ serverLog() CONSTANT)
 	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
 	Q_PROPERTY(bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
 	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
@@ -79,6 +80,7 @@ public:
 	net::Client *client() const { return m_client; }
 	BanlistModel *banlist() const { return m_banlist; }
 	QStringListModel *announcementList() const { return m_announcementlist; }
+	QStringListModel *serverLog() const { return m_serverLog; }
 
 	/**
 	 * @brief (Re)initialize the canvas
@@ -188,6 +190,8 @@ public slots:
 	void removeEmptyAnnotations();
 	void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
 
+	void addServerLogEntry(const QString &log);
+
 private slots:
 	void onServerLogin(bool join);
 	void onServerDisconnect();
@@ -223,6 +227,7 @@ private:
 	net::Client *m_client;
 	BanlistModel *m_banlist;
 	QStringListModel *m_announcementlist;
+	QStringListModel *m_serverLog;
 
 	recording::Writer *m_recorder;
 	bool m_autoRecordOnConnect;

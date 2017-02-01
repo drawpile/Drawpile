@@ -17,31 +17,35 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DBLOG_H
-#define DBLOG_H
+#include "serverlogdialog.h"
+#include "ui_serverlog.h"
 
-#include "../shared/server/serverlog.h"
+#include <QSortFilterProxyModel>
 
-#include <QSqlDatabase>
+namespace dialogs {
 
-namespace server {
-
-class DbLog : public ServerLog
+ServerLogDialog::ServerLogDialog(QWidget *parent)
+	: QDialog(parent)
 {
-public:
-	explicit DbLog(const QSqlDatabase &db);
+	m_ui = new Ui_ServerLogDialog;
+	m_ui->setupUi(this);
 
-	bool initDb();
+	m_proxy = new QSortFilterProxyModel(this);
+	m_ui->view->setModel(m_proxy);
 
-	QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
+	m_proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	connect(m_ui->filter, &QLineEdit::textChanged, m_proxy, &QSortFilterProxyModel::setFilterFixedString);
+}
 
-protected:
-	void storeMessage(const Log &entry) override;
+ServerLogDialog::~ServerLogDialog()
+{
+	delete m_ui;
+}
 
-private:
-	QSqlDatabase m_db;
-};
+void ServerLogDialog::setModel(QAbstractItemModel *model)
+{
+	m_proxy->setSourceModel(model);
+}
 
 }
 
-#endif

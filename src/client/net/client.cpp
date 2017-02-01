@@ -257,6 +257,15 @@ void Client::handleServerCommand(const protocol::Command &msg)
 	case ServerReply::RESULT:
 		emit serverMessage(reply.message, reply.type == ServerReply::ALERT);
 		break;
+	case ServerReply::LOG: {
+		QString time = QDateTime::fromString(reply.reply["timestamp"].toString(), Qt::ISODate).toLocalTime().toString(Qt::ISODate);
+		QString user = reply.reply["user"].toString();
+		QString msg = reply.message;
+		if(user.isEmpty())
+			emit serverLog(QStringLiteral("[%1] %2").arg(time, msg));
+		else
+			emit serverLog(QStringLiteral("[%1] %2: %3").arg(time, user, msg));
+		} break;
 	case ServerReply::SESSIONCONF:
 		emit sessionConfChange(reply.reply["config"].toObject());
 		break;

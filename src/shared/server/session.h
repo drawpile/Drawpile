@@ -324,8 +324,6 @@ public:
 	 */
 	void resetSession(int resetter);
 
-	QString toLogString() const;
-
 	/**
 	 * @brief Get all active announcements for this session
 	 */
@@ -405,6 +403,10 @@ public:
 	 */
 	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
+	/**
+	 * @brief Write a session related log entry.
+	 * The abridged version is also sent to all active memeers of the session.
+	 */
 	Q_SLOT void log(Log entry);
 
 signals:

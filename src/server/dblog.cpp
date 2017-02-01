@@ -40,7 +40,7 @@ bool DbLog::initDb()
 	);
 }
 
-QList<Log> DbLog::getLogEntries(const QUuid &session, const QDateTime &after, int offset, int limit) const
+QList<Log> DbLog::getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
 {
 	QString sql = "SELECT timestamp, session, user, level, topic, message FROM serverlog WHERE 1=1";
 	QVariantList params;
@@ -51,6 +51,11 @@ QList<Log> DbLog::getLogEntries(const QUuid &session, const QDateTime &after, in
 	if(after.isValid()) {
 		sql += " AND timestamp>=?";
 		params << after.addMSecs(1000).toString(Qt::ISODate);
+	}
+
+	if(atleast < Log::Level::Debug) {
+		sql += " AND level<=?";
+		params << int(atleast);
 	}
 
 	sql += " ORDER BY timestamp DESC, rowid DESC";

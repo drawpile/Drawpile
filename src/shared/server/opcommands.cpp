@@ -150,6 +150,9 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(kwargs["ban"].toBool()) {
 		client->session()->addBan(target, client->username());
+		client->session()->messageAll(target->username() + " banned by " + client->username(), false);
+	} else {
+		client->session()->messageAll(target->username() + " kicked by " + client->username(), false);
 	}
 
 	target->disconnectKick(client->username());

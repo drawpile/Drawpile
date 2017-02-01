@@ -63,6 +63,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ERROR;
 	else if(typestr == "result")
 		r.type = RESULT;
+	else if(typestr == "log")
+		r.type = LOG;
 	else if(typestr == "sessionconf")
 		r.type = SESSIONCONF;
 	else if(typestr == "sizelimit")
@@ -85,15 +87,16 @@ QJsonDocument ServerReply::toJson() const
 	QString typestr;
 	switch(type) {
 	case UNKNOWN: break;
-	case LOGIN: typestr="login"; break;
-	case MESSAGE: typestr="msg"; break;
-	case ALERT: typestr="alert"; break;
-	case ERROR: typestr="error"; break;
-	case RESULT: typestr="result"; break;
-	case SESSIONCONF: typestr="sessionconf"; break;
-	case SIZELIMITWARNING: typestr="sizelimit"; break;
-	case RESET: typestr="reset"; break;
-	case CATCHUP: typestr="catchup"; break;
+	case LOGIN: typestr=QStringLiteral("login"); break;
+	case MESSAGE: typestr=QStringLiteral("msg"); break;
+	case ALERT: typestr=QStringLiteral("alert"); break;
+	case ERROR: typestr=QStringLiteral("error"); break;
+	case RESULT: typestr=QStringLiteral("result"); break;
+	case LOG: typestr=QStringLiteral("log"); break;
+	case SESSIONCONF: typestr=QStringLiteral("sessionconf"); break;
+	case SIZELIMITWARNING: typestr=QStringLiteral("sizelimit"); break;
+	case RESET: typestr=QStringLiteral("reset"); break;
+	case CATCHUP: typestr=QStringLiteral("catchup"); break;
 	}
 	o["type"] = typestr;
 
