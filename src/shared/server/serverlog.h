@@ -50,6 +50,8 @@ public:
 		Unban,     // a ban was lifted
 		Op,        // user was granted OP
 		Deop,      // OP status was removed
+		Mute,      // User was muted
+		Unmute,    // User was unmuted
 		BadData,   // Received an invalid message from a client
 		RuleBreak, // User tried to use a command they're not allowed to
 		PubList,   // Session announcement

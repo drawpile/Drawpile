@@ -20,6 +20,7 @@
 #include "opcommands.h"
 #include "client.h"
 #include "session.h"
+#include "serverlog.h"
 #include "../net/control.h"
 #include "../net/meta.h"
 #include "../util/passwordhash.h"
@@ -214,8 +215,15 @@ void setMute(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	Client *c = _getClient(client->session(), args.at(0));
 
-	c->setMuted(args.at(1).toBool());
-	client->session()->sendUpdatedMuteList();
+	const bool m = args.at(1).toBool();
+	if(c->isMuted() != m) {
+		c->setMuted(m);
+		client->session()->sendUpdatedMuteList();
+		if(m)
+			c->log(Log().about(Log::Level::Info, Log::Topic::Mute).message("Muted by " + client->username()));
+		else
+			c->log(Log().about(Log::Level::Info, Log::Topic::Unmute).message("Unmuted by " + client->username()));
+	}
 }
 
 SrvCommandSet::SrvCommandSet()
