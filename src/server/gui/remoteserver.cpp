@@ -24,6 +24,7 @@
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QUrlQuery>
 
 namespace server{
 namespace gui {
@@ -46,27 +47,24 @@ void RemoteServer::makeApiRequest(const QString &requestId, JsonApiMethod method
 	QUrl requestUrl = m_baseurl;
 	requestUrl.setPath(urlPath);
 
+	if(method == JsonApiMethod::Get && !requestBody.isEmpty()) {
+		QUrlQuery query;
+		for(auto i=requestBody.begin();i!=requestBody.end();++i) {
+			query.addQueryItem(i.key(), i.value().toVariant().toString());
+		}
+		requestUrl.setQuery(query);
+	}
+
 	QNetworkRequest req(requestUrl);
 
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
 	QNetworkReply *reply=nullptr;
 	switch(method) {
-	case JsonApiMethod::Get:
-		if(!requestBody.isEmpty()) {
-			qFatal("TODO: implement query parameters");
-		}
-		reply = net->get(req);
-		break;
-	case JsonApiMethod::Create:
-		reply = net->post(req, QJsonDocument(requestBody).toJson());
-		break;
-	case JsonApiMethod::Update:
-		reply = net->put(req, QJsonDocument(requestBody).toJson());
-		break;
-	case JsonApiMethod::Delete:
-		reply = net->deleteResource(req);
-		break;
+	case JsonApiMethod::Get: reply = net->get(req); break;
+	case JsonApiMethod::Create: reply = net->post(req, QJsonDocument(requestBody).toJson()); break;
+	case JsonApiMethod::Update: reply = net->put(req, QJsonDocument(requestBody).toJson()); break;
+	case JsonApiMethod::Delete: reply = net->deleteResource(req); break;
 	}
 	Q_ASSERT(reply);
 
