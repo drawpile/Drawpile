@@ -44,13 +44,37 @@ QByteArray saltedSha1(const QString &password, const QByteArray &salt)
 	return h.result();
 }
 
+bool isValidHash(const QByteArray &hash)
+{
+	if(hash.startsWith("*"))
+		return true;
+
+	const int sep = hash.indexOf(';');
+	if(sep<0)
+		return false;
+
+	if(hash.startsWith("plain;")) {
+		return hash.length() > 6;
+
+	} else if(hash.startsWith("s+sha1")) {
+		// There should be two ; characters (three is right out)
+		const int sep2 = hash.indexOf(';', sep+1);
+		if(sep2<0)
+			return false;
+		const int sep3 = hash.indexOf(';', sep2+1);
+		return sep3 < 0;
+
+	} else
+		return false;
+}
+
 bool check(const QString &password, const QByteArray &hash)
 {
 	// Special case: no password set
 	if(password.isEmpty() && hash.isEmpty())
 		return true;
 
-	if(hash.isEmpty())
+	if(!isValidHash(hash))
 		return false;
 
 	QList<QByteArray> parts = hash.split(';');
@@ -59,10 +83,11 @@ bool check(const QString &password, const QByteArray &hash)
 		// disabled password
 		return false;
 
-	} else if(parts.at(0) == "s+sha1") {
-		if(parts.size() != 3)
-			return false;
+	} else if(parts.at(0) == "plain") {
+		QString pw = QString::fromUtf8(parts.at(1));
+		return password == pw;
 
+	} else if(parts.at(0) == "s+sha1") {
 		QByteArray hp = saltedSha1(password, QByteArray::fromHex(parts.at(1)));
 		return hp == QByteArray::fromHex(parts.at(2));
 	}
@@ -80,6 +105,7 @@ QByteArray hash(const QString &password, Algorithm algorithm)
 
 	// TODO support real password hashing algorithms, like PBKDF2
 	switch(algorithm) {
+	case PLAINTEXT: return ("plain;" + password).toUtf8();
 	case SALTED_SHA1: return "s+sha1;" + salt.toHex() + ";" + saltedSha1(password, salt).toHex();
 	}
 

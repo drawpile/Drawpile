@@ -1,5 +1,6 @@
 #include "../../shared/server/inmemoryconfig.h"
 #include "../database.h"
+#include "../headless/configfile.h"
 
 #include <QtTest/QtTest>
 
@@ -7,6 +8,7 @@ using server::ServerConfig;
 using server::InMemoryConfig;
 using server::Database;
 using server::ConfigKey;
+using server::ConfigFile;
 
 class TestServerConfig : public QObject
 {
@@ -151,6 +153,35 @@ private slots:
 		QCOMPARE(db.getConfigSize(sizeKey), 1024);
 		QCOMPARE(db.getConfigInt(intKey), 999);
 		QCOMPARE(db.getConfigBool(boolKey), true);
+	}
+
+	void testConfigFile()
+	{
+		ConfigFile cfg(":/test/test-config.cfg");
+
+		QCOMPARE(cfg.getConfigTime(server::config::ClientTimeout), 10*60);
+		QCOMPARE(cfg.getConfigSize(server::config::SessionSizeLimit), 99*1024*1024);
+
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.2")), false);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.1")), true);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("10.0.0.2")), true);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("11.0.0.2")), false);
+
+		QCOMPARE(cfg.isAllowedAnnouncementUrl(QUrl("https://example.com/api/listing/")), false);
+		QCOMPARE(cfg.isAllowedAnnouncementUrl(QUrl("https://drawpile.net/api/listing/")), true);
+
+		server::RegisteredUser u1 = cfg.getUserAccount("no", "asd");
+		QCOMPARE(u1.status, server::RegisteredUser::NotFound);
+
+		server::RegisteredUser u2 = cfg.getUserAccount("moderator", "asd");
+		QCOMPARE(u2.status, server::RegisteredUser::BadPass);
+
+		server::RegisteredUser u3 = cfg.getUserAccount("moderator", "passwd");
+		QCOMPARE(u3.status, server::RegisteredUser::Ok);
+		QCOMPARE(u3.flags, QStringList() << "MOD");
+
+		server::RegisteredUser u4 = cfg.getUserAccount("troll", "passwd");
+		QCOMPARE(u4.status, server::RegisteredUser::Banned);
 	}
 };
 

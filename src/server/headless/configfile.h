@@ -20,7 +20,7 @@
 #ifndef CONFIGFILE_H
 #define CONFIGFILE_H
 
-#include "../shared/server/serverconfig.h"
+#include "../../shared/server/serverconfig.h"
 
 #include <QDateTime>
 #include <QHostAddress>
@@ -44,6 +44,9 @@ namespace server {
  *     [announceWhiteList]
  *     https://drawpile.net/api/listing/
  *
+ *     [users]
+ *     username:plain;password:MOD
+ *
  * The default section is [config], so the header can be omitted.
  */
 class ConfigFile : public ServerConfig
@@ -57,6 +60,7 @@ public:
 
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
 	bool isAddressBanned(const QHostAddress &addr) const override;
+	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
 
 	ServerLog *logger() const override { return m_logger; }
 
@@ -70,8 +74,14 @@ private:
 	QString m_path;
 	ServerLog *m_logger;
 
+	struct User {
+		QByteArray password;
+		QStringList flags;
+	};
+
 	// Cached settings:
 	mutable QHash<QString, QString> m_config;
+	mutable QHash<QString, User> m_users;
 	mutable QList<QPair<QHostAddress, int>> m_banlist;
 	mutable QList<QUrl> m_announcewhitelist;
 	mutable QDateTime m_lastmod;

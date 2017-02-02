@@ -27,6 +27,7 @@ namespace server {
 namespace passwordhash {
 
 enum Algorithm {
+	PLAINTEXT,
 	SALTED_SHA1
 };
 
@@ -48,6 +49,11 @@ bool check(const QString &password, const QByteArray &hash);
  * @return
  */
 QByteArray hash(const QString &password, Algorithm algorithm=SALTED_SHA1);
+
+/**
+ * @brief Check if the given password hash is valid and uses a supported algorithm.
+ */
+bool isValidHash(const QByteArray &hash);
 
 }
 }

@@ -19,6 +19,7 @@
 
 #include "configfile.h"
 #include "../shared/server/serverlog.h"
+#include "../shared/util/passwordhash.h"
 
 #include <QFileInfo>
 
@@ -60,8 +61,9 @@ void ConfigFile::reloadFile() const
 	m_config.clear();
 	m_banlist.clear();
 	m_announcewhitelist.clear();
+	m_users.clear();
 
-	enum { CONFIG, BANLIST, AWL } section = CONFIG;
+	enum { CONFIG, BANLIST, AWL, USERS } section = CONFIG;
 
 	while(!in.atEnd()) {
 		QString line = in.readLine().trimmed();
@@ -75,6 +77,8 @@ void ConfigFile::reloadFile() const
 				section = BANLIST;
 			else if(line.compare("[announcewhitelist]", Qt::CaseInsensitive)==0)
 				section = AWL;
+			else if(line.compare("[users]", Qt::CaseInsensitive)==0)
+				section = USERS;
 			else
 				qWarning("Unknown configuration file section: %s", qPrintable(line));
 			continue;
@@ -119,6 +123,21 @@ void ConfigFile::reloadFile() const
 			}
 
 			m_announcewhitelist << url;
+
+		} else if(section == USERS) {
+			QStringList userline = line.split(':');
+			if(userline.length() != 3) {
+				qWarning("%s: line should have three parts: username:password:flags", qPrintable(line));
+				continue;
+			}
+
+			QByteArray hash = userline.at(1).toUtf8();
+			if(!passwordhash::isValidHash(hash)) {
+				qWarning("%s: invalid password hash", qPrintable(userline.at(1)));
+				continue;
+			}
+
+			m_users[userline.at(0)] = User { hash, userline.at(2).split(',') };
 		}
 	}
 }
@@ -167,6 +186,40 @@ bool ConfigFile::isAllowedAnnouncementUrl(const QUrl &url) const
 		return true;
 
 	return m_announcewhitelist.contains(url);
+}
+
+RegisteredUser ConfigFile::getUserAccount(const QString &username, const QString &password) const
+{
+	if(m_users.contains(username)) {
+		const User &u = m_users[username];
+		if(u.password.startsWith("*")) {
+			return RegisteredUser {
+				RegisteredUser::Banned,
+				username,
+				QStringList()
+			};
+
+		} else if(!passwordhash::check(password, u.password)) {
+			return RegisteredUser {
+				RegisteredUser::BadPass,
+				username,
+				QStringList()
+			};
+		} else {
+			return RegisteredUser {
+				RegisteredUser::Ok,
+				username,
+				u.flags
+			};
+		}
+
+	} else {
+		return RegisteredUser {
+			RegisteredUser::NotFound,
+			username,
+			QStringList()
+		};
+	}
 }
 
 void ConfigFile::setConfigValue(const ConfigKey key, const QString &value)
