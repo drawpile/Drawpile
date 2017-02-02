@@ -1,9 +1,11 @@
-#include "../server/inmemoryconfig.h"
+#include "../../shared/server/inmemoryconfig.h"
+#include "../database.h"
 
 #include <QtTest/QtTest>
 
 using server::ServerConfig;
 using server::InMemoryConfig;
+using server::Database;
 using server::ConfigKey;
 
 class TestServerConfig : public QObject
@@ -126,6 +128,29 @@ private slots:
 
 		cfg.setConfigBool(key, val);
 		QCOMPARE(cfg.getConfigString(key), QString(val ? "true" : "false"));
+	}
+
+	void testDatabase()
+	{
+		Database db;
+		QVERIFY(db.openFile(":memory:"));
+
+		const ConfigKey strKey = ConfigKey(0, "str", "", ConfigKey::STRING);
+		const ConfigKey timeKey = ConfigKey(1, "time", "0", ConfigKey::TIME);
+		const ConfigKey sizeKey = ConfigKey(2, "size", "0", ConfigKey::SIZE);
+		const ConfigKey intKey = ConfigKey(3, "int", "0", ConfigKey::INT);
+		const ConfigKey boolKey = ConfigKey(4, "bool", "0", ConfigKey::BOOL);
+		QVERIFY(db.setConfigString(strKey, "test"));
+		QVERIFY(db.setConfigString(timeKey, "1m"));
+		QVERIFY(db.setConfigString(sizeKey, "1kb"));
+		QVERIFY(db.setConfigString(intKey, "999"));
+		QVERIFY(db.setConfigString(boolKey, "true"));
+
+		QCOMPARE(db.getConfigString(strKey), QString("test"));
+		QCOMPARE(db.getConfigTime(timeKey), 60);
+		QCOMPARE(db.getConfigSize(sizeKey), 1024);
+		QCOMPARE(db.getConfigInt(intKey), 999);
+		QCOMPARE(db.getConfigBool(boolKey), true);
 	}
 };
 

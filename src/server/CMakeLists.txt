@@ -7,7 +7,6 @@ find_package( KF5Archive REQUIRED NO_MODULE )
 
 set (
 	SOURCES
-	main.cpp
 	multiserver.cpp
 	sslserver.cpp
 	database.cpp
@@ -75,13 +74,20 @@ else( MHD_FOUND )
 endif( MHD_FOUND )
 
 
-add_executable( ${SRVNAME} ${SOURCES} )
-target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
+add_library( "${SRVNAME}lib" ${SOURCES} )
+target_link_libraries( "${SRVNAME}lib"  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
 if(SERVERGUI)
-	target_link_libraries( ${SRVNAME}  Qt5::Widgets )
+	target_link_libraries( "${SRVNAME}lib"  Qt5::Widgets )
 endif()
+
+add_executable(${SRVNAME} main.cpp)
+target_link_libraries(${SRVNAME} "${SRVNAME}lib")
 
 if ( UNIX AND NOT APPLE )
 	install ( TARGETS ${SRVNAME} DESTINATION bin )
 endif ()
+
+if(TESTS)
+	add_subdirectory(tests)
+endif(TESTS)
 
