@@ -143,6 +143,21 @@ public:
 	Compatibility open();
 
 	/**
+	 * @brief Open the file in opaque reading mode
+	 *
+	 * In this mode, a binary file is either compatible or
+	 * incompatible with no partial compatibility modes.
+	 * All versions where the server version matches the
+	 * reader's are considered fully compatible.
+	 * OpaqueMessage class is used for all opaque message types.
+	 *
+	 * For text mode recordings, the version must match exactly, except
+	 * for the minor number.
+	 * Real message classes are returned for opaque messages.
+	 */
+	Compatibility openOpaque();
+
+	/**
 	 * @brief Get the recording encoding mode
 	 */
 	Encoding encoding() const;
@@ -181,6 +196,7 @@ public:
 	void seekTo(int pos, qint64 offset);
 
 private:
+	Compatibility open(bool opaque);
 	Compatibility readBinaryHeader();
 	Compatibility readTextHeader();
 

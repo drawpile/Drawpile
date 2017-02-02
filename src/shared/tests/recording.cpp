@@ -21,6 +21,14 @@ using namespace protocol;
 // Body contains one message: UserJoin(1, 0, "hello", "world")
 static const char *TEST_RECORDING = "44505245430000427b2274657374223a2254455354494e47222c2276657273696f6e223a2264703a342e32302e31222c2277726974657276657273696f6e223a22322e302e306232227d000c2001000568656c6c6f776f726c64";
 
+// A test recording with a version number of dp:4.10.0, containing a single NewLayer message.
+static const char *TEST_RECORDING_OLD = "44505245430000317b2276657273696f6e223a2264703a342e31302e30222c2277726974657276657273696f6e223a22322e302e306232227d00098201000100000000000000";
+
+static const char *TEST_TEXTMODE =
+	"!version=dp:4.20.1\n"
+	"!test=TESTING\n"
+	"1 join name=hello hash=world\n";
+
 class TestRecording: public QObject
 {
 	Q_OBJECT
@@ -76,11 +84,18 @@ private slots:
 		QCOMPARE(msgbuf, b.mid(8+mdlen));
 	}
 
+	void testReader_data() {
+		QTest::addColumn<QByteArray>("testRecording");
+		QTest::addColumn<int>("encoding");
+		QTest::newRow("bin") << QByteArray::fromHex(TEST_RECORDING) << int(Reader::Encoding::Binary);
+		QTest::newRow("text") << QByteArray(TEST_TEXTMODE) << int(Reader::Encoding::Text);
+	}
+
 	void testReader()
 	{
-		QByteArray testRecording = QByteArray::fromHex(TEST_RECORDING);
-		QBuffer buffer;
-		buffer.setBuffer(&testRecording);
+		QFETCH(QByteArray, testRecording);
+		QFETCH(int, encoding);
+		QBuffer buffer(&testRecording);
 		buffer.open(QBuffer::ReadOnly);
 
 		{
@@ -90,6 +105,8 @@ private slots:
 
 			Compatibility compat = reader.open();
 			QCOMPARE(compat, COMPATIBLE);
+
+			QCOMPARE(int(reader.encoding()), encoding);
 
 			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.20.1"));
 			QCOMPARE(reader.metadata()["test"].toString(), QString("TESTING"));
@@ -153,6 +170,64 @@ private slots:
 		QCOMPARE(buffer.pos(), buffer.size());
 
 		QVERIFY(skipRecordingMessage(&buffer)<0);
+	}
+
+	void testVersionMismatch()
+	{
+		QByteArray testRecording = QByteArray::fromHex(TEST_RECORDING_OLD);
+		QBuffer buffer(&testRecording);
+		buffer.open(QBuffer::ReadOnly);
+
+		Reader reader("test", &buffer, false);
+
+		Compatibility compat = reader.open();
+		QCOMPARE(compat, INCOMPATIBLE);
+	}
+
+	void testTextVersionMismatch_data() {
+		QByteArray data("1 join name=hello hash=world\n");
+		QTest::addColumn<QByteArray>("testRecording");
+		QTest::addColumn<bool>("compat");
+		QTest::newRow("ok") << "!version=" + protocol::ProtocolVersion::current().asString().toUtf8() + "\n" + data << true;
+		QTest::newRow("wrongMajor") << "!version=dp:4.10.0\n" + data << false;
+		QTest::newRow("wrongServer") << "!version=dp:3.20.0\n" + data << false;
+		QTest::newRow("wrongNs") << "!version=pd:4.20.0\n" + data << false;
+	}
+
+	void testTextVersionMismatch()
+	{
+		QFETCH(QByteArray, testRecording);
+		QFETCH(bool, compat);
+		QBuffer buffer(&testRecording);
+		buffer.open(QBuffer::ReadOnly);
+
+		// In opaque mode, version must match exactly (except for the minor number)
+		Reader reader("test", &buffer, false);
+		Compatibility c = reader.openOpaque();
+		int expectedCompat = compat ? int(COMPATIBLE) : int(INCOMPATIBLE);
+		QCOMPARE(int(c), expectedCompat);
+	}
+
+	void testOpaqueBinary()
+	{
+		QByteArray testRecording = QByteArray::fromHex(TEST_RECORDING_OLD);
+		QBuffer buffer(&testRecording);
+		buffer.open(QBuffer::ReadOnly);
+
+		Reader reader("test", &buffer, false);
+
+		// In opaque mode, any binary recording with a matching server number is compatible
+		Compatibility compat = reader.openOpaque();
+		QCOMPARE(compat, COMPATIBLE);
+
+		QCOMPARE(reader.formatVersion().asString(), QString("dp:4.10.0"));
+
+		// The actual message should be of type OpaqueMessage
+		MessageRecord mr = reader.readNext();
+		QCOMPARE(mr.status, MessageRecord::OK);
+		QVERIFY(mr.message);
+		QCOMPARE(mr.message->type(), protocol::MSG_LAYER_CREATE);
+		delete mr.message;
 	}
 };
 

@@ -50,6 +50,7 @@ struct Reader::Private {
 	bool autoclose;
 	bool eof;
 	bool isCompressed;
+	bool opaque;
 };
 
 bool Reader::isRecordingExtension(const QString &filename)
@@ -67,6 +68,7 @@ Reader::Reader(const QString &filename, Encoding encoding, QObject *parent)
 	d->currentPos = 0;
 	d->autoclose = true;
 	d->eof = false;
+	d->opaque = false;
 
 	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
 	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive) || filename.endsWith(".dptxtz", Qt::CaseInsensitive))
@@ -189,7 +191,18 @@ static Reader::Encoding detectEncoding(QIODevice *dev)
 	return Reader::Encoding::Autodetect;
 }
 
+
 Compatibility Reader::open()
+{
+	return open(false);
+}
+
+Compatibility Reader::openOpaque()
+{
+	return open(true);
+}
+
+Compatibility Reader::open(bool opaque)
 {
 	if(!d->file->isOpen()) {
 		if(!d->file->open(QFile::ReadOnly)) {
@@ -205,6 +218,8 @@ Compatibility Reader::open()
 
 		d->file->seek(0);
 	}
+
+	d->opaque = opaque;
 
 	if(d->encoding == Encoding::Binary)
 		return readBinaryHeader();
@@ -232,17 +247,24 @@ Compatibility Reader::readBinaryHeader() {
 	if(version == current)
 		return COMPATIBLE;
 
-	// Different namespace means this recording is meant for some other program
-	if(version.ns() != current.ns())
-		return NOT_DPREC;
+	if(d->opaque) {
+		// In opaque mode, it's enough that the server version matches
+		if(version.server() == current.server())
+			return COMPATIBLE;
 
-	// A recording made with a newer (major) version may contain unsupported commands.
-	if(current.major() < version.major())
-		return UNKNOWN_COMPATIBILITY;
+	} else {
+		// Different namespace means this recording is meant for some other program
+		if(version.ns() != current.ns())
+			return NOT_DPREC;
 
-	// Newer minor version: expect rendering differences
-	if(current.minor() < version.minor())
-		return MINOR_INCOMPATIBILITY;
+		// A recording made with a newer (major) version may contain unsupported commands.
+		if(current.major() < version.major())
+			return UNKNOWN_COMPATIBILITY;
+
+		// Newer minor version: expect rendering differences
+		if(current.minor() < version.minor())
+			return MINOR_INCOMPATIBILITY;
+	}
 
 	// Other versions are not supported
 	return INCOMPATIBLE;
@@ -264,7 +286,7 @@ Compatibility Reader::readTextHeader()
 		switch(res.status) {
 		case Parser::Result::Skip:
 			// Comments or metadata. Remember this potential start of the first real message
-			pos = currentPosition();
+			pos = filePosition();
 			break;
 
 		case Parser::Result::Error:
@@ -311,20 +333,28 @@ Compatibility Reader::readTextHeader()
 	if(version == current)
 		return COMPATIBLE;
 
-	// Different namespace means this recording is meant for some other program
-	if(version.ns() != current.ns())
-		return NOT_DPREC;
+	if(d->opaque) {
+		// In opaque mode, version must match exactly, except for the minor number
+		if(version.ns() == current.ns() && version.server() == current.server() && version.major() == current.major())
+			return COMPATIBLE;
 
-	// A recording made with a newer (major) version may contain unsupported commands.
-	if(current.major() < version.major())
-		return UNKNOWN_COMPATIBILITY;
+	} else {
+		// Different namespace means this recording is meant for some other program
+		if(version.ns() != current.ns())
+			return NOT_DPREC;
 
-	// Newer minor version: expect rendering differences
-	if(current.minor() < version.minor())
-		return MINOR_INCOMPATIBILITY;
+		// A recording made with a newer (major) version may contain unsupported commands.
+		if(current.major() < version.major())
+			return UNKNOWN_COMPATIBILITY;
+
+		// Newer minor version: expect rendering differences
+		if(current.minor() < version.minor())
+			return MINOR_INCOMPATIBILITY;
+
+		// TODO older versions may be fully supported in the text encoding
+	}
 
 	// Other versions are not supported
-	// TODO older versions may be fully supported in the text encoding
 	return INCOMPATIBLE;
 }
 
@@ -431,7 +461,7 @@ MessageRecord Reader::readNext()
 			return msg;
 
 		protocol::Message *message;
-		message = protocol::Message::deserialize((const uchar*)d->msgbuf.constData(), d->msgbuf.length(), true);
+		message = protocol::Message::deserialize((const uchar*)d->msgbuf.constData(), d->msgbuf.length(), !d->opaque);
 
 		if(message) {
 			msg.status = MessageRecord::OK;
@@ -443,11 +473,13 @@ MessageRecord Reader::readNext()
 		}
 
 	} else {
+		d->currentPos = filePosition();
 		protocol::Message *message = readTextMessage(d->file, &d->eof);
 		if(!d->eof) {
 			if(message) {
 				msg.status = MessageRecord::OK;
 				msg.message = message;
+				++d->current;
 			} else {
 				msg.status = MessageRecord::INVALID;
 				msg.error.len = 0;
