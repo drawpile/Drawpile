@@ -15,6 +15,12 @@
  * Revamped dptxt format
  * Recordings can now be saved directly in dptxt format
  * Merged dprec2txt and txt2dprec into dprectool 
+ * Replaced tool slots with a tool preset pie menu
+ * Server logs are now available via the admin API
+ * Session specific server logs can now be viewed in the client
+ * Operator status is now restored for authenticated users
+ * Server no longer auto-ops users if opword is set or authenticated ops are remembered.
+ * User accounts can now be configured in the settings file
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document
