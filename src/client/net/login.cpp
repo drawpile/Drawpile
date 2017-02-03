@@ -366,7 +366,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 
 			m_sessions->updateSession(session);
 
-			if(session.id == m_autoJoinId) {
+			if(!m_autoJoinId.isEmpty() && (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
 				joinSelectedSession(session.id, session.needPassword);
 			}

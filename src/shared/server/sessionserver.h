@@ -32,8 +32,10 @@ namespace sessionlisting {
 namespace server {
 
 class Session;
+class SessionHistory;
 class Client;
 class ServerConfig;
+class TemplateLoader;
 
 /**
  * @brief Session manager
@@ -49,6 +51,12 @@ public:
 	 * @param dir session directory
 	 */
 	void setSessionDir(const QDir &dir);
+
+	/**
+	 * @brief Set the template loader to use
+	 */
+	void setTemplateLoader(TemplateLoader *loader) { m_tpls = loader; }
+	const TemplateLoader *templateLoader() const { return m_tpls; }
 
 	/**
 	 * @brief Load new sessions from the directory
@@ -95,6 +103,13 @@ public:
 	Session *createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 
 	/**
+	 * @brief Create a new session by instantiating a template
+	 * @param idAlias template alis
+	 * @return nullptr if instantiation failed
+	 */
+	Session *createFromTemplate(const QString &idAlias);
+
+	/**
 	 * @brief Get descriptions of all sessions
 	 */
 	QJsonArray sessionDescriptions() const;
@@ -106,6 +121,11 @@ public:
 	 * @return session or null if not found
 	 */
 	Session *getSessionById(const QString &id) const;
+
+	/**
+	 * @brief Check if a session or template exists with this ID or alias
+	 */
+	bool isIdInUse(const QString &id) const;
 
 	/**
 	 * @brief Get the total number of connected users
@@ -188,9 +208,11 @@ private slots:
 	void cleanupSessions();
 
 private:
+	SessionHistory *initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 	void initSession(Session *session);
 
 	ServerConfig *m_config;
+	TemplateLoader *m_tpls;
 	QDir m_sessiondir;
 	bool m_useFiledSessions;
 

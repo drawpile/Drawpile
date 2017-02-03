@@ -49,6 +49,7 @@ public:
 	void setAnnounceLocalAddr(const QString &addr) { m_localAddress = addr; }
 	void setRecordingPath(const QString &path);
 	void setSessionDirectory(const QDir &dir);
+	void setTemplateDirectory(const QDir &dir);
 
 	QString announceLocalAddr() const { return m_localAddress; }
 

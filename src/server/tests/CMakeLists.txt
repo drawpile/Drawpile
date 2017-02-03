@@ -11,4 +11,5 @@ set(
 	)
 
 AddUnitTest(serverconfig)
+AddUnitTest(templates)
 

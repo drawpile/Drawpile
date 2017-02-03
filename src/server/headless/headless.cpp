@@ -126,6 +126,11 @@ bool start() {
 	QCommandLineOption sessionsOption(QStringList() << "sessions" << "s", "File backed sessions", "path");
 	parser.addOption(sessionsOption);
 
+	// --templates, -t <path>
+	QCommandLineOption templatesOption(QStringList() << "templates" << "t", "Session templates", "path");
+	parser.addOption(templatesOption);
+
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 
@@ -219,6 +224,15 @@ bool start() {
 				server->setSessionDirectory(sessionDir);
 			}
 		}
+	}
+
+	if(parser.isSet(templatesOption)) {
+		QDir dir(parser.value(templatesOption));
+		if(!dir.exists()) {
+			qCritical("%s: template directory does not exist!", qPrintable(dir.absolutePath()));
+			return false;
+		}
+		server->setTemplateDirectory(dir);
 	}
 
 #ifndef NDEBUG

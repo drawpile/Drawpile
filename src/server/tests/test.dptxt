@@ -1,0 +1,10 @@
+!version=dp:4.20.1
+!maxUserCount=1
+!founder=tester
+!password=qwerty123
+!title=Test
+!nsfm=false
+
+1 resize bottom=3000 right=3000
+1 newlayer id=0x0101 title=background
+

@@ -23,6 +23,7 @@
 #include "sessionserver.h"
 #include "serverconfig.h"
 #include "serverlog.h"
+#include "templateloader.h"
 
 #include "../net/control.h"
 
@@ -80,7 +81,24 @@ void LoginHandler::announceServerInfo()
 	greeting.message = "Welcome";
 	greeting.reply["title"] = m_server->config()->getConfigString(config::ServerTitle);
 	// TODO if message length exceeds maximum, split session list into multiple messages
-	greeting.reply["sessions"] = m_server->sessionDescriptions();
+	QJsonArray sessions = m_server->sessionDescriptions();
+	if(m_server->templateLoader()) {
+		// Add session templates to list, if not shadowed by live sessions
+		QJsonArray templates = m_server->templateLoader()->templateDescriptions();
+		QStringList aliases;
+		for(const QJsonValue &v : sessions) {
+			const QJsonObject o = v.toObject();
+			const QString alias = o.value("alias").toString();
+			if(!alias.isEmpty())
+				aliases << alias;
+		}
+		for(const QJsonValue &v : templates) {
+			if(!aliases.contains(v.toObject().value("alias").toString()))
+				sessions << v;
+		}
+	}
+	greeting.reply["sessions"] = sessions;
+
 	send(greeting);
 }
 
@@ -309,7 +327,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 			sendError("idInUse", "Invalid session alias");
 			return;
 		}
-		if(m_server->getSessionById(sessionAlias)) {
+		if(m_server->isIdInUse(sessionAlias)) {
 			sendError("idInUse", "This session alias is already in use");
 			return;
 		}
@@ -358,8 +376,16 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	Session *session = m_server->getSessionById(sessionId);
 	if(!session) {
-		sendError("notFound", "Session not found!");
-		return;
+		if(m_server->templateLoader() && m_server->templateLoader()->exists(sessionId)) {
+			session = m_server->createFromTemplate(sessionId);
+			if(!session) {
+				sendError("internalError", "An internal server error occurred.");
+				return;
+			}
+		} else {
+			sendError("notFound", "Session not found!");
+			return;
+		}
 	}
 
 	if(!m_client->isModerator()) {

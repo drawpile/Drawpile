@@ -30,6 +30,12 @@
 
 namespace dialogs {
 
+static const int PAGE_START = 0;
+static const int PAGE_AUTH = 1;
+static const int PAGE_SESSIONLIST = 2;
+static const int PAGE_CERTWARNING = 3;
+static const int PAGE_CATCHUP = 3;
+
 LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	QDialog(parent), m_mode(LABEL), m_login(login), m_ui(new Ui_LoginDialog)
 {
@@ -96,25 +102,25 @@ void LoginDialog::resetMode(Mode mode)
 
 	switch(mode) {
 	case LABEL:
-		m_ui->pages->setCurrentIndex(0);
+		m_ui->pages->setCurrentIndex(PAGE_START);
 		return;
 
 	case PASSWORD:
 	case LOGIN:
-		m_ui->pages->setCurrentIndex(1);
+		m_ui->pages->setCurrentIndex(PAGE_AUTH);
 		m_ui->username->setEnabled(mode == LOGIN);
 		break;
 
 	case SESSION:
-		m_ui->pages->setCurrentIndex(2);
+		m_ui->pages->setCurrentIndex(PAGE_SESSIONLIST);
 		break;
 
 	case CERT:
-		m_ui->pages->setCurrentIndex(3);
+		m_ui->pages->setCurrentIndex(PAGE_CERTWARNING);
 		break;
 
 	case CATCHUP:
-		m_ui->pages->setCurrentIndex(4);
+		m_ui->pages->setCurrentIndex(PAGE_CATCHUP);
 		break;
 	}
 
@@ -208,7 +214,7 @@ void LoginDialog::onButtonClick(QAbstractButton *btn)
 
 			const int row = m_ui->sessionlist->selectionModel()->selectedIndexes().at(0).row();
 			const net::LoginSession &s = static_cast<net::LoginSessionModel*>(m_ui->sessionlist->model())->sessionAt(row);
-			m_login->joinSelectedSession(s.id, s.needPassword);
+			m_login->joinSelectedSession(s.idOrAlias(), s.needPassword);
 			break; }
 		case CERT:
 			m_login->acceptServerCertificate();

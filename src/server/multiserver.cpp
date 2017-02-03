@@ -21,6 +21,7 @@
 #include "initsys.h"
 #include "sslserver.h"
 #include "database.h"
+#include "templatefiles.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -96,6 +97,14 @@ void MultiServer::setRecordingPath(const QString &path)
 void MultiServer::setSessionDirectory(const QDir &path)
 {
 	m_sessions->setSessionDir(path);
+}
+
+void MultiServer::setTemplateDirectory(const QDir &dir)
+{
+	const TemplateLoader *old = m_sessions->templateLoader();
+	TemplateFiles *loader = new TemplateFiles(dir, m_sessions);
+	m_sessions->setTemplateLoader(loader);
+	delete old;
 }
 
 bool MultiServer::createServer()

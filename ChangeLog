@@ -21,6 +21,7 @@
  * Operator status is now restored for authenticated users
  * Server no longer auto-ops users if opword is set or authenticated ops are remembered.
  * User accounts can now be configured in the settings file
+ * Reimplemented session template feature
 
 2017-01-09 Version 2.0.0 beta 2
  * Regression fix: set inital smoothing value for new document

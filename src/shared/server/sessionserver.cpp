@@ -25,6 +25,7 @@
 #include "serverlog.h"
 #include "inmemoryhistory.h"
 #include "filedhistory.h"
+#include "templateloader.h"
 
 #include "../util/announcementapi.h"
 
@@ -37,6 +38,7 @@ namespace server {
 SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
+	m_tpls(nullptr),
 	m_useFiledSessions(false),
 	m_mustSecure(false)
 {
@@ -91,20 +93,23 @@ QJsonArray SessionServer::sessionDescriptions() const
 	return descs;
 }
 
+SessionHistory *SessionServer::initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+{
+	if(m_useFiledSessions) {
+		FiledHistory *fh = FiledHistory::startNew(m_sessiondir, id, alias, protocolVersion, founder);
+		fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
+		return fh;
+	} else {
+		return new InMemoryHistory(id, alias, protocolVersion, founder);
+	}
+}
+
 Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
 	Q_ASSERT(!getSessionById(id.toString()));
 
-	SessionHistory *h;
-	if(m_useFiledSessions) {
-		FiledHistory *fh = FiledHistory::startNew(m_sessiondir, id, idAlias, protocolVersion, founder);
-		fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
-		h = fh;
-	} else {
-		h = new InMemoryHistory(id, idAlias, protocolVersion, founder);
-	}
-	Session *session = new Session(h, m_config, this);
+	Session *session = new Session(initHistory(id, idAlias, protocolVersion, founder), m_config, this);
 
 	initSession(session);
 
@@ -113,6 +118,35 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 	session->log(Log()
 		.about(Log::Level::Info, Log::Topic::Status)
 		.message("Session" + aka + " created by " + founder));
+
+	return session;
+}
+
+Session *SessionServer::createFromTemplate(const QString &idAlias)
+{
+	Q_ASSERT(templateLoader());
+
+	QJsonObject desc = templateLoader()->templateDescription(idAlias);
+	if(desc.isEmpty())
+		return nullptr;
+
+	SessionHistory *history = initHistory(
+		QUuid::createUuid(),
+		idAlias, 
+		protocol::ProtocolVersion::fromString(desc["protocol"].toString()),
+		desc["founder"].toString());
+
+	if(!templateLoader()->init(history)) {
+		delete history;
+		return nullptr;
+	}
+
+	Session *session = new Session(history, m_config, this);
+	initSession(session);
+	session->log(Log()
+		.about(Log::Level::Info, Log::Topic::Status)
+		.message(QStringLiteral("Session instantiated from template %1").arg(idAlias)));
+
 	return session;
 }
 
@@ -146,6 +180,27 @@ Session *SessionServer::getSessionById(const QString &id) const
 	}
 
 	return nullptr;
+}
+
+bool SessionServer::isIdInUse(const QString &id) const
+{
+	// Check live sessions
+	const QUuid uuid(id);
+	for(const Session *s : m_sessions) {
+		if(uuid.isNull()) {
+			if(s->idAlias() == id)
+				return true;
+		} else {
+			if(s->id() == uuid)
+				return true;
+		}
+	}
+
+	// Check templates
+	if(templateLoader() && templateLoader()->exists(id))
+		return true;
+
+	return false;
 }
 
 int SessionServer::totalUsers() const

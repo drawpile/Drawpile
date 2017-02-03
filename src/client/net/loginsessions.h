@@ -39,6 +39,8 @@ struct LoginSession {
 	bool closed;
 	bool incompatible;
 
+	QString idOrAlias() const { return alias.isEmpty() ? id : alias; }
+
 	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
 };
 
