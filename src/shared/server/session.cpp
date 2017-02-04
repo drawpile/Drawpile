@@ -920,8 +920,9 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(getDescription(true))};
 }
 
-void Session::log(Log entry)
+void Session::log(const Log &log)
 {
+	Log entry = log;
 	entry.session(id());
 	m_config->logger()->logMessage(entry);
 
@@ -931,3 +932,4 @@ void Session::log(Log entry)
 }
 
 }
+

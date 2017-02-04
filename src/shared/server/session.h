@@ -407,7 +407,7 @@ public:
 	 * @brief Write a session related log entry.
 	 * The abridged version is also sent to all active memeers of the session.
 	 */
-	Q_SLOT void log(Log entry);
+	Q_SLOT void log(const Log &entry);
 
 signals:
 	//! A user just connected to the session
