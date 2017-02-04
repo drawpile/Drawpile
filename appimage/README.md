@@ -3,11 +3,9 @@ Building AppImages with docker
 
 First, create the build environment image:
 
-    docker build -f Dockerfile -t drawpile .
+    docker build -f Dockerfile -t drawpile2 .
 
-Next, run the build scripts to build either the client and/or the server:
+Next, run the build script to build the client and server AppImages:
 
-    mkdir out
-    docker run -ti -v "$(pwd)/out:/out" drawpile bash /Build-client
-    docker run -ti -v "$(pwd)/out:/out" drawpile bash /Build-server
+	./build.sh
 

@@ -12,23 +12,22 @@ export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib:$LD_LIBRARY_PATH # Need
 export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$CMAKE_PATH:$PATH # Needed at compile time to find Qt and cmake
 
 SRCDIR=/Drawpile
-APPDIR=/Drawpile/Drawpile.AppDir
+WORKDIR=/work
+BUILDDIR=/build
+APPDIR=/Drawpile.AppDir
 APPIMGKIT=/AppImageKit-master
 
-# Refresh source code
-cd $SRCDIR
-git checkout master
-git pull
+# Copy source code to work dir and apply appimage specific patches
+mkdir -p $WORKDIR
+cp -r ${SRCDIR}/* $WORKDIR
+cd $WORKDIR
+git apply appimage/appimage.patch
 
-mkdir $APPDIR
-
-# Apply appimage specific patches
-git apply /appimage.patch
-
-# Build client
-mkdir build
-cd build
-cmake .. -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+# Build the client
+mkdir -p $BUILDDIR
+mkdir -p $APPDIR
+cd $BUILDDIR
+cmake3 $WORKDIR -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
 make install
 
