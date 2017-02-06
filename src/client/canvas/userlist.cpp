@@ -171,7 +171,7 @@ void UserListModel::clearUsers()
 User UserListModel::getUserById(int id) const
 {
 	// Try active users first
-	foreach(const User &u, m_users)
+	for(const User &u : m_users)
 		if(u.id == id)
 			return u;
 

@@ -105,7 +105,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 
 	QList<uint16_t> layers;
 	layers.reserve(count);
-	foreach(const LayerListItem &li, _items)
+	for(const LayerListItem &li : _items)
 		layers.append(li.id);
 
 	if(newIdx>oldIdx)

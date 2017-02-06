@@ -410,7 +410,7 @@ QString KisCubicCurve::toString() const
     if(d->data->points.count() < 1)
         return sCurve;
 
-    foreach(const QPointF & pair, d->data->points) {
+	for(const QPointF & pair : d->data->points) {
         sCurve += QString::number(pair.x());
         sCurve += ',';
         sCurve += QString::number(pair.y());
@@ -426,7 +426,7 @@ void KisCubicCurve::fromString(const QString& string)
 
     QList<QPointF> points;
 
-    foreach(const QString & pair, data) {
+	for(const QString & pair : data) {
         if (pair.indexOf(',') > -1) {
             QPointF p;
             p.rx() = qBound(0.0, pair.section(',', 0, 0).toDouble(), 1.0);

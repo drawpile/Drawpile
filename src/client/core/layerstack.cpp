@@ -83,7 +83,7 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 	if(left || top) {
 		// Update annotation positions
 		QPoint offset(left, top);
-		Q_FOREACH(const Annotation &a, m_annotations->getAnnotations()) {
+		for(const Annotation &a : m_annotations->getAnnotations()) {
 			m_annotations->reshapeAnnotation(a.id, a.rect.translated(offset));
 		}
 	}
@@ -188,8 +188,8 @@ void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
 	Q_ASSERT(neworder.size() == m_layers.size());
 	QList<Layer*> newstack;
 	newstack.reserve(m_layers.size());
-	foreach(int id, neworder) {
-		Layer *l = 0;
+	for(const int id : neworder) {
+		Layer *l = nullptr;
 		for(int i=0;i<m_layers.size();++i) {
 			if(m_layers.at(i)->id() == id) {
 				l=m_layers.takeAt(i);

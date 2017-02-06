@@ -93,14 +93,14 @@ void LayerAclMenu::userClicked(QAction *useraction)
 		bool enable = !useraction->isChecked();
 
 		_allusers->setEnabled(enable);
-		foreach(QAction *a, _users)
+		for(QAction *a : _users)
 			a->setEnabled(enable);
 
 	} else if(useraction == _allusers) {
 		// No user has exclusive access
 		exclusive.clear();
 		_allusers->setChecked(true);
-		foreach(QAction *a, _users)
+		for(QAction *a : _users)
 			a->setChecked(false);
 
 	} else {

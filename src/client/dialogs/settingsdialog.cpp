@@ -432,9 +432,10 @@ void SettingsDialog::removeCertificates()
 	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
 		QString path = item->data(Qt::UserRole+1).toString();
 		if(path.isEmpty()) {
-			foreach(const QSslCertificate &imported, _importCerts) {
-				if(imported.subjectInfo(QSslCertificate::CommonName).at(0) == item->text())
-					_importCerts.removeOne(imported);
+			QMutableListIterator<QSslCertificate> i(_importCerts);
+			while(i.hasNext()) {
+				if(i.next().subjectInfo(QSslCertificate::CommonName).at(0) == item->text())
+					i.remove();
 			}
 		} else {
 			_trustCerts.removeAll(path);

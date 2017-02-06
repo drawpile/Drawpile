@@ -101,7 +101,7 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	});
 
 	// Fill file format box
-	foreach(const QByteArray &fmt, QImageWriter::supportedImageFormats())
+	for(const QByteArray &fmt : QImageWriter::supportedImageFormats())
 		_ui->imageFormatChoice->addItem(fmt);
 	_ui->imageFormatChoice->setCurrentText("png");
 

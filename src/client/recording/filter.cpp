@@ -53,7 +53,7 @@ struct State {
 	QSet<int> users_seen;
 
 	~State() {
-		foreach(protocol::Message* msg, replacements.values())
+		for(protocol::Message* msg : replacements.values())
 			delete msg;
 	}
 };
@@ -219,9 +219,9 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 //! Remove all users who haven't done anything
 void filterLookyloos(State &state)
 {
-	foreach(int id, state.userjoins.keys()) {
+	for(const int id : state.userjoins.keys()) {
 		if(!state.users_seen.contains(id)) {
-			foreach(int idx, state.userjoins[id]) {
+			for(const int idx : state.userjoins[id]) {
 				mark_delete(state.index[idx]);
 			}
 		}

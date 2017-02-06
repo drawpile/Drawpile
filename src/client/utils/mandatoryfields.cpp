@@ -41,7 +41,7 @@ MandatoryFields::MandatoryFields(QWidget *parent, QWidget *button)
 //! Recursively collect mandatory fields
 void MandatoryFields::collectFields(QObject *parent)
 {
-	foreach(QObject *obj, parent->children()) {
+	for(QObject *obj : parent->children()) {
 		if(obj->property("mandatoryfield").isValid()) {
 			if(obj->inherits("QLineEdit")) {
 				connect(obj, SIGNAL(textChanged(QString)), this, SLOT(changed()));
@@ -59,7 +59,7 @@ void MandatoryFields::collectFields(QObject *parent)
 void MandatoryFields::changed()
 {
 	bool enable = true;
-	foreach(QObject *obj, widgets_) {
+	for(QObject *obj : widgets_) {
 		if(obj->inherits("QLineEdit")) {
 			if(static_cast<QLineEdit*>(obj)->text().isEmpty()) {
 				enable = false;

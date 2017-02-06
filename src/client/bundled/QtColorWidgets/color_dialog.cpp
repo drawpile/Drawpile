@@ -163,7 +163,7 @@ void ColorDialog::update_widgets()
 {
     bool blocked = signalsBlocked();
     blockSignals(true);
-    foreach(QWidget* w, findChildren<QWidget*>())
+	for(QWidget* w : findChildren<QWidget*>())
         w->blockSignals(true);
 
     QColor col = color();
@@ -212,7 +212,7 @@ void ColorDialog::update_widgets()
     p->ui.preview->setColor(col);
 
     blockSignals(blocked);
-    foreach(QWidget* w, findChildren<QWidget*>())
+	for(QWidget* w : findChildren<QWidget*>())
         w->blockSignals(false);
 
     emit colorChanged(col);

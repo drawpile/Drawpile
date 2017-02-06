@@ -126,7 +126,7 @@ void CanvasScene::onSelectionChanged(canvas::Selection *selection)
 void CanvasScene::showAnnotations(bool show)
 {
 	_showAnnotations = show;
-	foreach(QGraphicsItem *item, items()) {
+	for(QGraphicsItem *item : items()) {
 		if(item->type() == AnnotationItem::Type)
 			item->setVisible(show);
 	}
@@ -135,7 +135,7 @@ void CanvasScene::showAnnotations(bool show)
 void CanvasScene::showAnnotationBorders(bool hl)
 {
 	_showAnnotationBorders = hl;
-	foreach(QGraphicsItem *item, items()) {
+	for(QGraphicsItem *item : items()) {
 		if(item->type() == AnnotationItem::Type)
 			static_cast<AnnotationItem*>(item)->setShowBorder(hl);
 	}
@@ -158,19 +158,19 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 
 AnnotationItem *CanvasScene::getAnnotationItem(int id)
 {
-	foreach(QGraphicsItem *i, items()) {
+	for(QGraphicsItem *i : items()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *item = static_cast<AnnotationItem*>(i);
 			if(item->id() == id)
 				return item;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void CanvasScene::activeAnnotationChanged(int id)
 {
-	foreach(QGraphicsItem *i, items()) {
+	for(QGraphicsItem *i : items()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *item = static_cast<AnnotationItem*>(i);
 			item->setHighlight(item->id() == id);
@@ -227,7 +227,7 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 void CanvasScene::annotationsReset()
 {
 	// Clear out any old annotation items
-	Q_FOREACH(QGraphicsItem *item, items()) {
+	for(QGraphicsItem *item : items()) {
 		if(item->type() == AnnotationItem::Type) {
 			delete item;
 		}

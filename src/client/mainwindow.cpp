@@ -398,7 +398,8 @@ MainWindow::~MainWindow()
 	delete m_playbackDialog;
 
 	// Make sure all child dialogs are closed
-	foreach(QObject *obj, children()) {
+	QObjectList lst = children();
+	for(QObject *obj : lst) {
 		QDialog *child = qobject_cast<QDialog*>(obj);
 		delete child;
 	}
@@ -550,7 +551,7 @@ bool MainWindow::canReplace() const {
 void MainWindow::addRecentFile(const QString& file)
 {
 	RecentFiles::addFile(file);
-	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+	for(QWidget *widget : QApplication::topLevelWidgets()) {
 		MainWindow *win = qobject_cast<MainWindow*>(widget);
 		if(win)
 			RecentFiles::initMenu(win->_recent);
@@ -887,7 +888,7 @@ void MainWindow::open()
 	QString dpimages = "*.ora ";
 	QString dprecs = "*.dptxt *.dprec *.dprecz *.dprec.gz *.dptxtz *.dptxt.gz ";
 	QString formats;
-	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+	for(QByteArray format : QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
 	const QString filter =
@@ -1534,7 +1535,7 @@ void MainWindow::toggleFullscreen()
 		menuBar()->hide();
 		_viewStatusBar->hide();
 		_view->setFrameShape(QFrame::NoFrame);
-		foreach(QObject *child, children()) {
+		for(QObject *child : children()) {
 			if(child->inherits("QDockWidget")) {
 				QDockWidget *dw = qobject_cast<QDockWidget*>(child);
 				if(!dw->isFloating())
@@ -1646,7 +1647,7 @@ void MainWindow::pasteFile()
 {
 	// Get a list of supported formats
 	QString formats;
-	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+	for(QByteArray format : QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
 	const QString filter = tr("Images (%1)").arg(formats) + ";;" + QApplication::tr("All Files (*)");
@@ -1884,7 +1885,7 @@ void MainWindow::setupActions()
 	QMenu *toggledockmenu = new QMenu(this);
 
 	// Collect list of docks for dock menu
-	foreach(QObject *c, children()) {
+	for(QObject *c : children()) {
 		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
 		if(dw)
 			toggledockmenu->addAction(dw->toggleViewAction());

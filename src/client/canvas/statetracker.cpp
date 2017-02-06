@@ -577,7 +577,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		return;
 	}
 	
-	foreach(const protocol::PenPoint &pp, cmd.points()) {
+	for(const protocol::PenPoint &pp : cmd.points()) {
 		paintcore::Point p(pp.x / 4.0, pp.y / 4.0, pp.p/qreal(0xffff));
 		const int r = ctx.tool.brush.fsize(p.pressure())/2 + 1;
 
@@ -964,7 +964,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 
 	// Write layer model
 	out << quint8(d->layermodel.size());
-	foreach(const LayerListItem &layer, d->layermodel) {
+	for(const LayerListItem &layer : d->layermodel) {
 		// Write layer ID
 		out << qint32(layer.id);
 
