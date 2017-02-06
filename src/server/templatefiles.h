@@ -18,7 +18,7 @@
 */
 
 #ifndef DP_SERVER_TEMPLATEFILES_H
-#define DP_SERVER_TEMPLATESFILES_H
+#define DP_SERVER_TEMPLATEFILES_H
 
 #include "../shared/server/templateloader.h"
 
