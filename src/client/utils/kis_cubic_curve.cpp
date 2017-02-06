@@ -25,6 +25,8 @@
 #include <QSharedData>
 #include <QStringList>
 
+#include <algorithm>
+
 template <typename T>
 class KisTridiagonalSystem
 {
@@ -282,7 +284,7 @@ void KisCubicCurve::Data::invalidate()
 
 void KisCubicCurve::Data::keepSorted()
 {
-    qSort(points.begin(), points.end(), pointLessThan);
+	std::sort(points.begin(), points.end(), pointLessThan);
 }
 
 qreal KisCubicCurve::Data::value(qreal x)
