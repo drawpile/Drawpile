@@ -55,13 +55,13 @@ private slots:
 private:
 	void restoreSettings();
 
-	Ui_SettingsDialog *_ui;
+	Ui_SettingsDialog *m_ui;
 
-	QStringList _removeCerts;
-	QStringList _trustCerts;
-	QList<QSslCertificate> _importCerts;
-	CustomShortcutModel *_customShortcuts;
-	sessionlisting::ListServerModel *_listservers;
+	QStringList m_removeCerts;
+	QStringList m_trustCerts;
+	QList<QSslCertificate> m_importCerts;
+	CustomShortcutModel *m_customShortcuts;
+	sessionlisting::ListServerModel *m_listservers;
 };
 
 }

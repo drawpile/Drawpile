@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
+#include "config.h" // for default port
 #include "main.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
@@ -76,36 +76,36 @@ namespace dialogs {
 SettingsDialog::SettingsDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	_ui = new Ui_SettingsDialog;
-	_ui->setupUi(this);
+	m_ui = new Ui_SettingsDialog;
+	m_ui->setupUi(this);
 
-	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
+	connect(m_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
+		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), m_ui->ffmpegpath->text(),
 #ifdef Q_OS_WIN
 			tr("Executables (%1)").arg("*.exe") + ";;" +
 #endif
 			QApplication::tr("All files (*)")
 		);
 		if(!path.isEmpty())
-			_ui->ffmpegpath->setText(path);
+			m_ui->ffmpegpath->setText(path);
 	});
 
-	connect(_ui->pickRecordingFolder, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getExistingDirectory(this, tr("Recording folder"), _ui->recordingFolder->text());
+	connect(m_ui->pickRecordingFolder, &QToolButton::clicked, [this]() {
+		QString path = QFileDialog::getExistingDirectory(this, tr("Recording folder"), m_ui->recordingFolder->text());
 		if(!path.isEmpty())
-			_ui->recordingFolder->setText(path);
+			m_ui->recordingFolder->setText(path);
 	});
 
-	connect(_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
+	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
 		if(val>0)
-			_ui->volumeLabel->setText(QString::number(val) + "%");
+			m_ui->volumeLabel->setText(QString::number(val) + "%");
 		else
-			_ui->volumeLabel->setText(tr("off", "notifications sounds"));
+			m_ui->volumeLabel->setText(tr("off", "notifications sounds"));
 	});
 
 	// Get available languages
-	_ui->languageBox->addItem(tr("Default"), QString());
-	_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));
+	m_ui->languageBox->addItem(tr("Default"), QString());
+	m_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));
 
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
@@ -116,46 +116,46 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			QLocale locale(localename);
 			if(locale != localeC && !locales.contains(localename)) {
 				locales << localename;
-				_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
+				m_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
 			}
 		}
 	}
 
 	// Editable shortcuts
-	_customShortcuts = new CustomShortcutModel(this);
+	m_customShortcuts = new CustomShortcutModel(this);
 	auto filteredShortcuts = new QSortFilterProxyModel(this);
-	filteredShortcuts->setSourceModel(_customShortcuts);
-	connect(_ui->shortcutFilter, &QLineEdit::textChanged, filteredShortcuts, &QSortFilterProxyModel::setFilterFixedString);
+	filteredShortcuts->setSourceModel(m_customShortcuts);
+	connect(m_ui->shortcutFilter, &QLineEdit::textChanged, filteredShortcuts, &QSortFilterProxyModel::setFilterFixedString);
 	filteredShortcuts->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	_ui->shortcuts->setModel(filteredShortcuts);
-	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+	m_ui->shortcuts->setModel(filteredShortcuts);
+	m_ui->shortcuts->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	m_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	// QKeySequence editor delegate
 	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(this);
 	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
 	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
-	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
+	m_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
 
 	// Deselect item before saving. This causes the editor widget to close
 	// and commit the change.
-	connect(_ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
-		_ui->shortcuts->setCurrentIndex(QModelIndex());
+	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
+		m_ui->shortcuts->setCurrentIndex(QModelIndex());
 	});
 
 	// Known hosts list
-	connect(_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
-	connect(_ui->knownHostList, SIGNAL(itemSelectionChanged()), this, SLOT(certificateSelectionChanged()));
-	connect(_ui->trustKnownHosts, SIGNAL(clicked()), this, SLOT(markTrustedCertificates()));
-	connect(_ui->removeKnownHosts, SIGNAL(clicked()), this, SLOT(removeCertificates()));
-	connect(_ui->importTrustedButton, SIGNAL(clicked()), this, SLOT(importTrustedCertificate()));
+	connect(m_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
+	connect(m_ui->knownHostList, SIGNAL(itemSelectionChanged()), this, SLOT(certificateSelectionChanged()));
+	connect(m_ui->trustKnownHosts, SIGNAL(clicked()), this, SLOT(markTrustedCertificates()));
+	connect(m_ui->removeKnownHosts, SIGNAL(clicked()), this, SLOT(removeCertificates()));
+	connect(m_ui->importTrustedButton, SIGNAL(clicked()), this, SLOT(importTrustedCertificate()));
 
 	QStringList pemfilter; pemfilter << "*.pem";
 	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
 
 	for(const QString &filename : knownHostsDir.entryList(pemfilter, QDir::Files)) {
-		auto *i = new QListWidgetItem(filename.left(filename.length()-4), _ui->knownHostList);
+		auto *i = new QListWidgetItem(filename.left(filename.length()-4), m_ui->knownHostList);
 		i->setData(Qt::UserRole, false);
 		i->setData(Qt::UserRole+1, knownHostsDir.absoluteFilePath(filename));
 	}
@@ -163,31 +163,35 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
 	QIcon trustedIcon("builtin:trusted.svg");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
-		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), _ui->knownHostList);
+		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), m_ui->knownHostList);
 		i->setData(Qt::UserRole, true);
 		i->setData(Qt::UserRole+1, trustedHostsDir.absoluteFilePath(filename));
 	}
 
 	// Session listing server list
-	_listservers = new sessionlisting::ListServerModel(false, this);
-	_ui->listserverview->setModel(_listservers);
-	_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
+	m_listservers = new sessionlisting::ListServerModel(false, this);
+	m_ui->listserverview->setModel(m_listservers);
+	m_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 
-	connect(_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
-	connect(_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
+	connect(m_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
+	connect(m_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
 
 	// Load configuration
 	restoreSettings();
 
 	// Settings saving
-	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
-	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveCertTrustChanges()));
-	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(resetSettings()));
+	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::rememberSettings);
+	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::saveCertTrustChanges);
+	connect(m_ui->buttonBox->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &SettingsDialog::resetSettings);
+	connect(m_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(resetSettings()));
+
+	// Active first page
+	m_ui->pager->setCurrentRow(0);
 }
 
 SettingsDialog::~SettingsDialog()
 {
-	delete _ui;
+	delete m_ui;
 }
 
 void SettingsDialog::resetSettings()
@@ -209,79 +213,79 @@ void SettingsDialog::restoreSettings()
 	QSettings cfg;
 
 	cfg.beginGroup("notifications");
-	_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
-	_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
-	_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
-	_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
-	_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
+	m_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
+	m_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
+	m_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
+	m_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
+	m_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings");
 	{
 		QVariant langOverride = cfg.value("language", QString());
-		for(int i=1;i<_ui->languageBox->count();++i) {
-			if(_ui->languageBox->itemData(i) == langOverride) {
-				_ui->languageBox->setCurrentIndex(i);
+		for(int i=1;i<m_ui->languageBox->count();++i) {
+			if(m_ui->languageBox->itemData(i) == langOverride) {
+				m_ui->languageBox->setCurrentIndex(i);
 				break;
 			}
 		}
 	}
 
-	_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
+	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
-	_ui->serverlog->setCurrentIndex(cfg.value("serverlog", 1).toInt());
+	m_ui->serverlog->setCurrentIndex(cfg.value("serverlog", 1).toInt());
 
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
-	_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
-	_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
+	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
+	m_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
 #ifdef Q_OS_MAC
 	// Gesture scrolling is always enabled on Macs
-	_ui->touchscroll->setChecked(true);
-	_ui->touchscroll->setEnabled(false);
+	m_ui->touchscroll->setChecked(true);
+	m_ui->touchscroll->setEnabled(false);
 #else
-	_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
+	m_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
 #endif
-	_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
-	_ui->touchtwist->setChecked(cfg.value("touchtwist", true).toBool());
+	m_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
+	m_ui->touchtwist->setChecked(cfg.value("touchtwist", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
-	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
-	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
-	_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
-	_ui->recordingFolder->setText(utils::settings::recordingFolder());
+	m_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
+	m_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
+	m_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
+	m_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
-	_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
-	_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
-	_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
-	_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
+	m_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
+	m_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
+	m_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
+	m_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
-	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
-	_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
-	_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
-	_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
+	m_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
+	m_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
+	m_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
+	m_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 #ifdef HAVE_DNSSD
-	_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
+	m_ui->dnssd->setChecked(cfg.value("dnssd", true).toBool());
 #else
-	_ui->dnssd->setEnabled(false);
+	m_ui->dnssd->setEnabled(false);
 #endif
 #ifdef HAVE_UPNP
-	_ui->useupnp->setChecked(cfg.value("upnp", true).toBool());
+	m_ui->useupnp->setChecked(cfg.value("upnp", true).toBool());
 #else
-	_ui->useupnp->setEnabled(false);
+	m_ui->useupnp->setEnabled(false);
 #endif
-	_ui->privateUserList->setChecked(cfg.value("privateUserList", false).toBool());
+	m_ui->privateUserList->setChecked(cfg.value("privateUserList", false).toBool());
 	cfg.endGroup();
 
-	_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
+	m_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
 
-	_customShortcuts->loadShortcuts();
+	m_customShortcuts->loadShortcuts();
 }
 
 void SettingsDialog::rememberSettings()
@@ -289,59 +293,59 @@ void SettingsDialog::rememberSettings()
 	QSettings cfg;
 	// Remember notification settings
 	cfg.beginGroup("notifications");
-	cfg.setValue("volume", _ui->notificationVolume->value());
-	cfg.setValue("chat", _ui->notifChat->isChecked());
-	cfg.setValue("marker", _ui->notifMarker->isChecked());
-	cfg.setValue("login", _ui->notifLogin->isChecked());
-	cfg.setValue("lock", _ui->notifLock->isChecked());
+	cfg.setValue("volume", m_ui->notificationVolume->value());
+	cfg.setValue("chat", m_ui->notifChat->isChecked());
+	cfg.setValue("marker", m_ui->notifMarker->isChecked());
+	cfg.setValue("login", m_ui->notifLogin->isChecked());
+	cfg.setValue("lock", m_ui->notifLock->isChecked());
 	cfg.endGroup();
 
 	// Remember general settings
-	cfg.setValue("settings/language", _ui->languageBox->itemData(_ui->languageBox->currentIndex()));
-	cfg.setValue("settings/autosave", _ui->autosaveInterval->value() * 1000);
-	cfg.setValue("settings/serverlog", _ui->serverlog->currentIndex());
+	cfg.setValue("settings/language", m_ui->languageBox->itemData(m_ui->languageBox->currentIndex()));
+	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
+	cfg.setValue("settings/serverlog", m_ui->serverlog->currentIndex());
 
 	cfg.beginGroup("settings/input");
-	cfg.setValue("tabletevents", _ui->tabletSupport->isChecked());
-	cfg.setValue("tabletbugs", _ui->tabletBugWorkaround->isChecked());
-	cfg.setValue("touchscroll", _ui->touchscroll->isChecked());
-	cfg.setValue("touchpinch", _ui->touchpinch->isChecked());
-	cfg.setValue("touchtwist", _ui->touchtwist->isChecked());
+	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
+	cfg.setValue("tabletbugs", m_ui->tabletBugWorkaround->isChecked());
+	cfg.setValue("touchscroll", m_ui->touchscroll->isChecked());
+	cfg.setValue("touchpinch", m_ui->touchpinch->isChecked());
+	cfg.setValue("touchtwist", m_ui->touchtwist->isChecked());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
-	cfg.setValue("recordpause", _ui->recordpause->isChecked());
-	cfg.setValue("minimumpause", _ui->minimumpause->value());
-	FfmpegExporter::setFfmpegPath(_ui->ffmpegpath->text().trimmed());
-	cfg.setValue("folder", _ui->recordingFolder->text());
+	cfg.setValue("recordpause", m_ui->recordpause->isChecked());
+	cfg.setValue("minimumpause", m_ui->minimumpause->value());
+	FfmpegExporter::setFfmpegPath(m_ui->ffmpegpath->text().trimmed());
+	cfg.setValue("folder", m_ui->recordingFolder->text());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
-	cfg.setValue("onionskinsbelow", _ui->onionskinsBelow->value());
-	cfg.setValue("onionskinsabove", _ui->onionskinsAbove->value());
-	cfg.setValue("onionskintint", _ui->onionskinTint->isChecked());
-	cfg.setValue("backgroundlayer", _ui->backgroundlayer->isChecked());
+	cfg.setValue("onionskinsbelow", m_ui->onionskinsBelow->value());
+	cfg.setValue("onionskinsabove", m_ui->onionskinsAbove->value());
+	cfg.setValue("onionskintint", m_ui->onionskinTint->isChecked());
+	cfg.setValue("backgroundlayer", m_ui->backgroundlayer->isChecked());
 	cfg.endGroup();
 
 	// Remember server settings
 	cfg.beginGroup("settings/server");
-	if(_ui->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
+	if(m_ui->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
 		cfg.remove("port");
 	else
-		cfg.setValue("port", _ui->serverport->value());
+		cfg.setValue("port", m_ui->serverport->value());
 
-	cfg.setValue("historylimit", _ui->historylimit->value());
-	cfg.setValue("autoreset", _ui->lowspaceAutoreset->isChecked());
-	cfg.setValue("timeout", _ui->connTimeout->value());
-	cfg.setValue("dnssd", _ui->dnssd->isChecked());
-	cfg.setValue("upnp", _ui->useupnp->isChecked());
-	cfg.setValue("privateUserList", _ui->privateUserList->isChecked());
+	cfg.setValue("historylimit", m_ui->historylimit->value());
+	cfg.setValue("autoreset", m_ui->lowspaceAutoreset->isChecked());
+	cfg.setValue("timeout", m_ui->connTimeout->value());
+	cfg.setValue("dnssd", m_ui->dnssd->isChecked());
+	cfg.setValue("upnp", m_ui->useupnp->isChecked());
+	cfg.setValue("privateUserList", m_ui->privateUserList->isChecked());
 
 	cfg.endGroup();
 
-	_customShortcuts->saveShortcuts();
-	_listservers->saveServers();
-	cfg.setValue("listservers/nsfm", _ui->showNsfm->isChecked());
+	m_customShortcuts->saveShortcuts();
+	m_listservers->saveServers();
+	cfg.setValue("listservers/nsfm", m_ui->showNsfm->isChecked());
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
@@ -349,7 +353,7 @@ void SettingsDialog::rememberSettings()
 void SettingsDialog::saveCertTrustChanges()
 {
 	// Delete removed certificates
-	for(const QString &certfile : _removeCerts) {
+	for(const QString &certfile : m_removeCerts) {
 		QFile(certfile).remove();
 	}
 
@@ -357,13 +361,13 @@ void SettingsDialog::saveCertTrustChanges()
 	QDir trustedDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
 	trustedDir.mkpath(".");
 
-	for(const QString &certfile : _trustCerts) {
+	for(const QString &certfile : m_trustCerts) {
 		QString certname = certfile.mid(certfile.lastIndexOf('/')+1);
 		QFile(certfile).rename(trustedDir.absoluteFilePath(certname));
 	}
 
 	// Save imported certificates
-	for(const QSslCertificate &cert : _importCerts) {
+	for(const QSslCertificate &cert : m_importCerts) {
 		QString hostname = cert.subjectInfo(QSslCertificate::CommonName).at(0);
 
 		QFile f(trustedDir.absoluteFilePath(hostname + ".pem"));
@@ -397,10 +401,10 @@ void SettingsDialog::viewCertificate(QListWidgetItem *item)
 
 void SettingsDialog::certificateSelectionChanged()
 {
-	const QItemSelectionModel *sel = _ui->knownHostList->selectionModel();
+	const QItemSelectionModel *sel = m_ui->knownHostList->selectionModel();
 	if(sel->selectedIndexes().isEmpty()) {
-		_ui->trustKnownHosts->setEnabled(false);
-		_ui->removeKnownHosts->setEnabled(false);
+		m_ui->trustKnownHosts->setEnabled(false);
+		m_ui->removeKnownHosts->setEnabled(false);
 	} else {
 		bool cantrust = false;
 		for(const QModelIndex &idx : sel->selectedIndexes()) {
@@ -409,37 +413,37 @@ void SettingsDialog::certificateSelectionChanged()
 				break;
 			}
 		}
-		_ui->trustKnownHosts->setEnabled(cantrust);
-		_ui->removeKnownHosts->setEnabled(true);
+		m_ui->trustKnownHosts->setEnabled(cantrust);
+		m_ui->removeKnownHosts->setEnabled(true);
 	}
 }
 
 void SettingsDialog::markTrustedCertificates()
 {
 	QIcon trustedIcon("builtin:trusted.svg");
-	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
+	for(QListWidgetItem *item : m_ui->knownHostList->selectedItems()) {
 		if(!item->data(Qt::UserRole).toBool()) {
-			_trustCerts.append(item->data(Qt::UserRole+1).toString());
+			m_trustCerts.append(item->data(Qt::UserRole+1).toString());
 			item->setIcon(trustedIcon);
 			item->setData(Qt::UserRole, true);
 		}
 	}
-	_ui->trustKnownHosts->setEnabled(false);
+	m_ui->trustKnownHosts->setEnabled(false);
 }
 
 void SettingsDialog::removeCertificates()
 {
-	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
+	for(QListWidgetItem *item : m_ui->knownHostList->selectedItems()) {
 		QString path = item->data(Qt::UserRole+1).toString();
 		if(path.isEmpty()) {
-			QMutableListIterator<QSslCertificate> i(_importCerts);
+			QMutableListIterator<QSslCertificate> i(m_importCerts);
 			while(i.hasNext()) {
 				if(i.next().subjectInfo(QSslCertificate::CommonName).at(0) == item->text())
 					i.remove();
 			}
 		} else {
-			_trustCerts.removeAll(path);
-			_removeCerts.append(path);
+			m_trustCerts.removeAll(path);
+			m_removeCerts.append(path);
 		}
 
 		delete item;
@@ -467,10 +471,10 @@ void SettingsDialog::importTrustedCertificate()
 		return;
 	}
 
-	_importCerts.append(certs.at(0));
+	m_importCerts.append(certs.at(0));
 
 	QIcon trustedIcon("builtin:trusted.svg");
-	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
+	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), m_ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);
 }
@@ -496,16 +500,16 @@ void SettingsDialog::addListingServer()
 
 		connect(api, &sessionlisting::AnnouncementApi::serverInfo, [self, url, api](sessionlisting::ListServerInfo info) {
 			if(!self.isNull()) {
-				self->_listservers->addServer(info.name, url.toString(), info.description);
+				self->m_listservers->addServer(info.name, url.toString(), info.description);
 
 				if(info.faviconUrl == "drawpile") {
-					self->_listservers->setFavicon(url.toString(), QIcon("builtin:drawpile.png").pixmap(128, 128).toImage());
+					self->m_listservers->setFavicon(url.toString(), QIcon("builtin:drawpile.png").pixmap(128, 128).toImage());
 				} else {
 					QUrl favicon(info.faviconUrl);
 					if(favicon.isValid()) {
 						networkaccess::getImage(favicon, nullptr, [self, url](const QImage &image, const QString &) {
 							if(!self.isNull() && !image.isNull()) {
-								self->_listservers->setFavicon(url.toString(), image);
+								self->m_listservers->setFavicon(url.toString(), image);
 							}
 						});
 					}
@@ -520,9 +524,9 @@ void SettingsDialog::addListingServer()
 
 void SettingsDialog::removeListingServer()
 {
-	QModelIndex selection = _ui->listserverview->selectionModel()->currentIndex();
+	QModelIndex selection = m_ui->listserverview->selectionModel()->currentIndex();
 	if(selection.isValid()) {
-		_listservers->removeRow(selection.row());
+		m_listservers->removeRow(selection.row());
 	}
 }
 
