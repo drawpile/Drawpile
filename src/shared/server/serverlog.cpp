@@ -62,10 +62,10 @@ void ServerLog::logMessage(const Log &entry)
 	if(!m_silent) {
 		QMessageLogger logger;
 		switch(entry.level()) {
-		case Log::Level::Error: logger.critical(qPrintable(entry.toString())); break;
-		case Log::Level::Warn: logger.warning(qPrintable(entry.toString())); break;
-		case Log::Level::Info: logger.info(qPrintable(entry.toString())); break;
-		case Log::Level::Debug: logger.debug(qPrintable(entry.toString())); break;
+		case Log::Level::Error: logger.critical("%s", qPrintable(entry.toString())); break;
+		case Log::Level::Warn: logger.warning("%s", qPrintable(entry.toString())); break;
+		case Log::Level::Info: logger.info("%s", qPrintable(entry.toString())); break;
+		case Log::Level::Debug: logger.debug("%s", qPrintable(entry.toString())); break;
 		}
 	}
 	storeMessage(entry);
