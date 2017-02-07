@@ -92,6 +92,7 @@
 #include "net/serverthread.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
+#include "parentalcontrols/parentalcontrols.h"
 
 #include "tools/toolcontroller.h"
 #include "toolwidgets/colorpickersettings.h"
@@ -346,6 +347,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
 	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
+	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
@@ -1436,6 +1438,14 @@ void MainWindow::updateLockWidget()
 		_lockstatus->setToolTip(QString());
 	}
 	_view->setLocked(locked);
+}
+
+void MainWindow::onNsfmChanged(bool nsfm)
+{
+	if(nsfm && parentalcontrols::level() >= parentalcontrols::Level::Restricted) {
+		m_doc->client()->disconnectFromServer();
+		showErrorMessage(tr("Session blocked by parental controls"));
+	}
 }
 
 void MainWindow::onOperatorModeChange(bool op)

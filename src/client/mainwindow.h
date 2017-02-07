@@ -142,6 +142,7 @@ private slots:
 	void onServerConnected();
 	void onServerLogin();
 	void onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void onNsfmChanged(bool nsfm);
 
 	void updateLockWidget();
 	void setRecorderStatus(bool on);
