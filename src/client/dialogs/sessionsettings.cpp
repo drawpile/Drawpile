@@ -24,6 +24,7 @@
 #include "../shared/net/meta2.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/aclfilter.h"
+#include "parentalcontrols/parentalcontrols.h"
 
 #include "ui_sessionsettings.h"
 
@@ -242,6 +243,9 @@ void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
 void SessionSettingsDialog::sendSessionConf()
 {
 	if(!m_sessionconf.isEmpty()) {
+		if(m_sessionconf.contains("title") && parentalcontrols::isNsfmTitle(m_sessionconf["title"].toString()))
+			m_sessionconf["nsfm"] = true;
+
 		m_doc->sendSessionConf(m_sessionconf);
 		m_sessionconf = QJsonObject();
 	}

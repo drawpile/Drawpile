@@ -436,6 +436,9 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(!m_title.isEmpty())
 				conf.kwargs["title"] = m_title;
 
+			if(parentalcontrols::isNsfmTitle(m_title))
+				conf.kwargs["nsfm"] = true;
+
 			if(m_maxusers>0)
 				conf.kwargs["maxUserCount"] = m_maxusers;
 

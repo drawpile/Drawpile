@@ -45,7 +45,12 @@ QString defaultWordList()
 
 bool isNsfmTitle(const QString &title)
 {
-	QString wordlist = QSettings().value("pc/tagwords").toString();
+	QSettings cfg;
+	cfg.beginGroup("pc");
+	if(!cfg.value("autotag", true).toBool())
+		return false;
+
+	QString wordlist = cfg.value("tagwords").toString();
 	for(const QStringRef &word : wordlist.splitRef(QRegularExpression("[\\s,]"), QString::SkipEmptyParts)) {
 		if(title.contains(word, Qt::CaseInsensitive))
 			return true;

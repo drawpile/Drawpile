@@ -56,6 +56,9 @@ QString defaultWordList();
 
 /**
  * @brief Check if the given title contains any words on the NSFM list
+ *
+ * If the pc/autotag setting is set to false (default is true), this will
+ * always return false
  */
 bool isNsfmTitle(const QString &title);
 
