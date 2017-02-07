@@ -86,7 +86,7 @@ void initComplete(Client *client, const QJsonArray &args, const QJsonObject &kwa
 void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
-	client->session()->setSessionConfig(kwargs);
+	client->session()->setSessionConfig(kwargs, client);
 }
 
 void opWord(Client *client, const QJsonArray &args, const QJsonObject &kwargs)

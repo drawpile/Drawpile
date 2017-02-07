@@ -301,40 +301,40 @@ template<class F, class Ff> static void setFlag(F &flags, Ff f, bool set)
 		flags &= ~f;
 }
 
-void Session::setSessionConfig(const QJsonObject &conf)
+void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 {
-	bool changed = false;
+	QStringList changes;
 
 	if(conf.contains("closed")) {
 		m_closed = conf["closed"].toBool();
-		changed = true;
+		changes << (m_closed ? "closed" : "opened");
 	}
 
 	SessionHistory::Flags flags = m_history->flags();
-	const SessionHistory::Flags oldFlags = flags;
 
 	if(conf.contains("persistent")) {
 		setFlag(flags, SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
+		changes << (conf["persistent"].toBool() ? "made persistent" : "made nonpersistent");
 	}
 
 	if(conf.contains("title")) {
 		m_history->setTitle(conf["title"].toString().mid(0, 100));
-		changed = true;
+		changes << "changed title";
 	}
 
 	if(conf.contains("maxUserCount")) {
 		m_history->setMaxUsers(conf["maxUserCount"].toInt());
-		changed = true;
+		changes << "changed max. user count";
 	}
 
 	if(conf.contains("password")) {
 		m_history->setPassword(conf["password"].toString());
-		changed = true;
+		changes << "changed password";
 	}
 
 	if(conf.contains("opword")) {
 		m_history->setOpword(conf["opword"].toString());
-		changed = true;
+		changes << "changed opword";
 	}
 
 	// Note: this bit is only relayed by the server: it informs
@@ -342,17 +342,27 @@ void Session::setSessionConfig(const QJsonObject &conf)
 	// by default.
 	if(conf.contains("preserveChat")) {
 		setFlag(flags, SessionHistory::PreserveChat, conf["preserveChat"].toBool());
+		changes << (conf["preserveChat"].toBool() ? "preserve chat" : "don't preserve chat");
 	}
 
 	if(conf.contains("nsfm")) {
 		setFlag(flags, SessionHistory::Nsfm, conf["nsfm"].toBool());
+		changes << (conf["nsfm"].toBool() ? "tagged NSFM" : "removed NSFM tag");
 	}
 
 	m_history->setFlags(flags);
-	changed |= oldFlags != flags;
 
-	if(changed)
+	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();
+		QString logmsg = changes.join(", ");
+		logmsg[0] = logmsg[0].toUpper();
+
+		Log l = Log().about(Log::Level::Info, Log::Topic::Status).message(logmsg);
+		if(changedBy)
+			changedBy->log(l);
+		else
+			log(l);
+	}
 }
 
 bool Session::checkPassword(const QString &password) const
@@ -903,7 +913,7 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 	}
 
 	if(method == JsonApiMethod::Update) {
-		setSessionConfig(request);
+		setSessionConfig(request, nullptr);
 
 		if(request.contains("message"))
 			messageAll(request["message"].toString(), false);

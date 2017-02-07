@@ -177,7 +177,7 @@ public:
 	bool isPersistent() const { return m_history->flags().testFlag(SessionHistory::Persistent); }
 
 	//! Set session attributes
-	void setSessionConfig(const QJsonObject &conf);
+	void setSessionConfig(const QJsonObject &conf, Client *changedBy);
 
 	/**
 	 * @brief Add a new client to the session
