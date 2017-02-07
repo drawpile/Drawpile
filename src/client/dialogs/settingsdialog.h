@@ -52,8 +52,12 @@ private slots:
 	void addListingServer();
 	void removeListingServer();
 
+	void lockParentalControls();
+
 private:
 	void restoreSettings();
+	void setParentalControlsLocked(bool lock);
+	void rememberPcLevel();
 
 	Ui_SettingsDialog *m_ui;
 

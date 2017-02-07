@@ -29,12 +29,13 @@
 #include "utils/listserverdelegate.h"
 #include "utils/netfiles.h"
 #include "utils/settings.h"
+#include "parentalcontrols/parentalcontrols.h"
 #include "../shared/util/announcementapi.h"
+#include "../shared/util/passwordhash.h"
 
 #include "ui_settings.h"
 
 #include <QSettings>
-#include <QMessageBox>
 #include <QHeaderView>
 #include <QStyledItemDelegate>
 #include <QItemEditorFactory>
@@ -176,6 +177,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(m_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
 	connect(m_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
 
+	// Parental controls
+	connect(m_ui->nsfmLock, &QPushButton::clicked, this, &SettingsDialog::lockParentalControls);
+
 	// Load configuration
 	restoreSettings();
 
@@ -202,7 +206,16 @@ void SettingsDialog::resetSettings()
 				tr("Clear all settings?")
 				);
 	if(b==QMessageBox::Yes) {
-		QSettings().clear();
+		QSettings cfg;
+		const QVariant pclevel = cfg.value("pc/level");
+		const QVariant pclocked = cfg.value("pc/locked");
+		cfg.clear();
+
+		// Do not reset parental controls if locked
+		if(!pclocked.toByteArray().isEmpty() || parentalcontrols::isOSActive()) {
+			cfg.setValue("pc/level", pclevel);
+		}
+
 		restoreSettings();
 		rememberSettings();
 	}
@@ -232,8 +245,6 @@ void SettingsDialog::restoreSettings()
 	}
 
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
-
-	m_ui->serverlog->setCurrentIndex(cfg.value("serverlog", 1).toInt());
 
 	cfg.endGroup();
 
@@ -283,9 +294,30 @@ void SettingsDialog::restoreSettings()
 	m_ui->privateUserList->setChecked(cfg.value("privateUserList", false).toBool());
 	cfg.endGroup();
 
-	m_ui->showNsfm->setChecked(cfg.value("listservers/nsfm", false).toBool());
+	cfg.beginGroup("pc");
+	switch(parentalcontrols::level()) {
+	case parentalcontrols::Level::Unrestricted: m_ui->nsfmUnrestricted->setChecked(true); break;
+	case parentalcontrols::Level::NoList: m_ui->nsfmHide->setChecked(true); break;
+	case parentalcontrols::Level::NoJoin: m_ui->nsfmNoJoin->setChecked(true); break;
+	case parentalcontrols::Level::Restricted: m_ui->nsfmDisconnect->setChecked(true); break;
+	}
+	m_ui->nsfmWords->setPlainText(cfg.value("tagwords", parentalcontrols::defaultWordList()).toString());
+	m_ui->autotagNsfm->setChecked(cfg.value("autotag", true).toBool());
+	setParentalControlsLocked(parentalcontrols::isLocked());
+	if(parentalcontrols::isOSActive())
+		m_ui->nsfmLock->setEnabled(false);
+	cfg.endGroup();
 
 	m_customShortcuts->loadShortcuts();
+}
+
+void SettingsDialog::setParentalControlsLocked(bool lock)
+{
+	m_ui->nsfmUnrestricted->setDisabled(lock);
+	m_ui->nsfmHide->setDisabled(lock);
+	m_ui->nsfmNoJoin->setDisabled(lock);
+	m_ui->nsfmDisconnect->setDisabled(lock);
+	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
 }
 
 void SettingsDialog::rememberSettings()
@@ -303,7 +335,6 @@ void SettingsDialog::rememberSettings()
 	// Remember general settings
 	cfg.setValue("settings/language", m_ui->languageBox->itemData(m_ui->languageBox->currentIndex()));
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
-	cfg.setValue("settings/serverlog", m_ui->serverlog->currentIndex());
 
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
@@ -343,11 +374,31 @@ void SettingsDialog::rememberSettings()
 
 	cfg.endGroup();
 
+	// Remember parental control settings
+	cfg.beginGroup("pc");
+	cfg.setValue("autotag", m_ui->autotagNsfm->isChecked());
+	cfg.setValue("tagwords", m_ui->nsfmWords->toPlainText());
+	cfg.endGroup();
+
+	if(!parentalcontrols::isLocked())
+		rememberPcLevel();
+
 	m_customShortcuts->saveShortcuts();
 	m_listservers->saveServers();
-	cfg.setValue("listservers/nsfm", m_ui->showNsfm->isChecked());
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
+}
+
+void SettingsDialog::rememberPcLevel()
+{
+	parentalcontrols::Level level = parentalcontrols::Level::Unrestricted;
+	if(m_ui->nsfmHide->isChecked())
+		level = parentalcontrols::Level::NoList;
+	else if(m_ui->nsfmNoJoin->isChecked())
+		level = parentalcontrols::Level::NoJoin;
+	else if(m_ui->nsfmDisconnect->isChecked())
+		level = parentalcontrols::Level::Restricted;
+	QSettings().setValue("pc/level", int(level));
 }
 
 void SettingsDialog::saveCertTrustChanges()
@@ -528,6 +579,46 @@ void SettingsDialog::removeListingServer()
 	if(selection.isValid()) {
 		m_listservers->removeRow(selection.row());
 	}
+}
+
+void SettingsDialog::lockParentalControls()
+{
+	QSettings cfg;
+	cfg.beginGroup("pc");
+
+	QByteArray oldpass = cfg.value("locked").toByteArray();
+	bool locked = !oldpass.isEmpty();
+
+	QString title, prompt;
+	if(locked) {
+		title = tr("Unlock Parental Controls");
+		prompt = tr("Password");
+	} else {
+		title = tr("Lock Parental Controls");
+		prompt = tr("Set password");
+	}
+
+	QString pass = QInputDialog::getText(this, title, prompt, QLineEdit::Password);
+
+	if(!pass.isEmpty()) {
+		if(locked) {
+			if(server::passwordhash::check(pass, oldpass)) {
+				cfg.remove("locked");
+				locked = false;
+				m_ui->nsfmLock->setText(tr("Lock"));
+			} else {
+				QMessageBox::warning(this, tr("Unlock Parental Controls"), tr("Incorrect password"));
+				return;
+			}
+		} else {
+			cfg.setValue("locked", server::passwordhash::hash(pass));
+			locked = true;
+			rememberPcLevel();
+			m_ui->nsfmLock->setText(tr("Unlock"));
+		}
+	}
+
+	setParentalControlsLocked(locked);
 }
 
 }

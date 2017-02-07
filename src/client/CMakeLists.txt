@@ -145,11 +145,19 @@ set (
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp
+	parentalcontrols/parentalcontrols.cpp
 )
 
-IF ( APPLE )
-	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
-ENDIF ( APPLE )
+if(WIN32)
+	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_win.cpp)
+elseif(APPLE)
+	set(SOURCES ${SOURCES}
+		widgets/macmenu.cpp
+		parentalcontrols/parentalcontrols_dummy.cpp
+	)
+else()
+	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_dummy.cpp)
+endif()
 
 if(GIF_FOUND)
 	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
