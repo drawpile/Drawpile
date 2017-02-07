@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,13 +49,13 @@ private slots:
 	void stopNsfmFiltering();
 
 private:
-	Ui_SessionListingDialog *_ui;
-	sessionlisting::AnnouncementApi *_apiClient;
+	Ui_SessionListingDialog *m_ui;
+	sessionlisting::AnnouncementApi *m_apiClient;
 
-	QSortFilterProxyModel *_model;
-	sessionlisting::SessionListingModel * _sessions;
+	QSortFilterProxyModel *m_model;
+	sessionlisting::SessionListingModel *m_sessions;
 #ifdef HAVE_DNSSD
-	ServerDiscoveryModel *_localservers;
+	ServerDiscoveryModel *m_localServers;
 #endif
 };
 
