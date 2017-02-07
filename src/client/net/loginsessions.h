@@ -38,10 +38,11 @@ struct LoginSession {
 	bool persistent;
 	bool closed;
 	bool incompatible;
+	bool nsfm;
 
 	QString idOrAlias() const { return alias.isEmpty() ? id : alias; }
 
-	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
+	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false), nsfm(false) { }
 };
 
 /**
@@ -61,7 +62,8 @@ public:
 		PersistentRole,            // Is this a persistent session
 		ClosedRole,                // Is this session closed to new users
 		IncompatibleRole,          // Is the session meant for some other client version
-		JoinableRole               // Is this session joinable
+		JoinableRole,              // Is this session joinable
+		NsfmRole                   // Is this session tagged as Not Suitable For Minors
 	};
 
 	explicit LoginSessionModel(QObject *parent = 0);
@@ -72,12 +74,26 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	LoginSession sessionAt(int index) const { return m_sessions.at(index); }
+	LoginSession sessionAt(int index) const { return m_filtered.at(index); }
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);
 
+	void setHideNsfm(bool hide);
+	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
+
+	//! Get the ID of the first session
+	LoginSession getFirstSession() const { return m_sessions.isEmpty() ? LoginSession() : m_sessions.first(); }
+
+signals:
+	void filteredCountChanged();
+
 private:
+	void updateFiltered(const LoginSession &session);
+	void removeFiltered(const QString &id);
+
 	QList<LoginSession> m_sessions;
+	QList<LoginSession> m_filtered;
+	bool m_hideNsfm;
 };
 
 }

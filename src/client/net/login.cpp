@@ -21,6 +21,7 @@
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
 #include "commands.h"
+#include "parentalcontrols/parentalcontrols.h"
 
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
@@ -349,6 +350,8 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	}
 
 	if(msg.reply.contains("sessions")) {
+		const parentalcontrols::Level pclevel = parentalcontrols::level();
+
 		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
 			QJsonObject js = jsv.toObject();
 			LoginSession session;
@@ -363,12 +366,17 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 			session.userCount = js["userCount"].toInt();
 			session.founder = js["founder"].toString();
 			session.title = js["title"].toString();
+			session.nsfm = js["nsfm"].toBool();
 
 			m_sessions->updateSession(session);
 
 			if(!m_autoJoinId.isEmpty() && (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
-				joinSelectedSession(session.id, session.needPassword);
+
+				if(session.incompatible || (session.nsfm && pclevel >= parentalcontrols::Level::NoJoin))
+					m_autoJoinId = QString();
+				else
+					joinSelectedSession(session.id, session.needPassword);
 			}
 		}
 	}
@@ -382,18 +390,19 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	if(!m_multisession) {
 		// Single session mode: automatically join the (only) session
 
-		if(m_sessions->rowCount()==0) {
+		LoginSession session = m_sessions->getFirstSession();
+
+		if(session.id.isEmpty()) {
 			failLogin(tr("Session not yet started!"));
 
-		} else {
-			LoginSession session = m_sessions->sessionAt(0);
+		} else if(session.nsfm && parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
+			failLogin(tr("Blocked by parental controls"));
 
-			if(session.incompatible) {
+		} else if(session.incompatible) {
 				failLogin(tr("Session for a different Drawpile version in progress!"));
 
-			} else {
-				joinSelectedSession(session.id, session.needPassword);
-			}
+		} else {
+			joinSelectedSession(session.id, session.needPassword);
 		}
 	}
 }

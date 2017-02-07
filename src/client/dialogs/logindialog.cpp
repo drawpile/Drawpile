@@ -20,6 +20,7 @@
 #include "logindialog.h"
 #include "net/login.h"
 #include "net/loginsessions.h"
+#include "parentalcontrols/parentalcontrols.h"
 
 #include "utils/usernamevalidator.h"
 #include "utils/html.h"
@@ -27,6 +28,8 @@
 #include "ui_logindialog.h"
 
 #include <QPushButton>
+#include <QMessageBox>
+#include <QSettings>
 
 namespace dialogs {
 
@@ -62,6 +65,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(m_ui->password, &QLineEdit::textChanged, requireFields);
 
 	// Session list page
+	m_ui->nsfmSessionsLabel->setVisible(false);
+
 	connect(m_ui->sessionlist, &QTableView::doubleClicked, [this](const QModelIndex&) {
 		if(m_ui->buttonBox->button(QDialogButtonBox::Ok)->isEnabled())
 			m_ui->buttonBox->button(QDialogButtonBox::Ok)->click();
@@ -144,12 +149,38 @@ void LoginDialog::onLoginNeeded(const QString &prompt)
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 {
+	sessions->setHideNsfm(parentalcontrols::level() >= parentalcontrols::Level::NoList);
 	m_ui->sessionlist->setModel(sessions);
 
 	QHeaderView *header = m_ui->sessionlist->horizontalHeader();
 	header->setSectionResizeMode(1, QHeaderView::Stretch);
 	header->setSectionResizeMode(0, QHeaderView::Fixed);
 	header->resizeSection(0, 24);
+
+	auto updateNsfmLabel = [this, sessions]() {
+		const int filtered = sessions->filteredCount();
+		if(filtered>0) {
+			QString label = tr("%n age restricted session(s) hidden.", "", filtered);
+			if(!parentalcontrols::isLocked())
+				label = "<a href=\"#\">" + label  + "</a>";
+			m_ui->nsfmSessionsLabel->setText(label);
+		}
+		m_ui->nsfmSessionsLabel->setVisible(filtered>0);
+	};
+
+	updateNsfmLabel();
+	connect(sessions, &net::LoginSessionModel::filteredCountChanged, this, updateNsfmLabel);
+	if(!parentalcontrols::isLocked()) {
+		connect(m_ui->nsfmSessionsLabel, &QLabel::linkActivated, this, [this, sessions]() {
+			QMessageBox::StandardButton btn = QMessageBox::question(this, QString(), tr("Show age restricted sessions?"));
+
+			if(btn == QMessageBox::Yes) {
+				sessions->setHideNsfm(false);
+				m_ui->nsfmSessionsLabel->setVisible(false);
+				QSettings().setValue("pc/level", int(parentalcontrols::Level::Unrestricted));
+			}
+		});
+	}
 
 	connect(m_ui->sessionlist->selectionModel(), &QItemSelectionModel::selectionChanged, [this](const QItemSelection &sel) {
 		// Enable/disable OK button depending on the selection

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>345</width>
-    <height>208</height>
+    <width>435</width>
+    <height>238</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -21,7 +21,7 @@
    <item>
     <widget class="QStackedWidget" name="pages">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -124,6 +124,13 @@
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="nsfmSessionsLabel">
+         <property name="text">
+          <string notr="true">NSFM sessions hidden</string>
+         </property>
         </widget>
        </item>
       </layout>

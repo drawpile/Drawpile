@@ -26,7 +26,7 @@
 namespace net {
 
 LoginSessionModel::LoginSessionModel(QObject *parent) :
-	QAbstractTableModel(parent)
+	QAbstractTableModel(parent), m_hideNsfm(false)
 {
 }
 
@@ -34,7 +34,7 @@ int LoginSessionModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return m_sessions.size();
+	return m_filtered.size();
 }
 
 int LoginSessionModel::columnCount(const QModelIndex &parent) const
@@ -53,8 +53,10 @@ int LoginSessionModel::columnCount(const QModelIndex &parent) const
 
 QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 {
+	if(index.row()<0 || index.row() >= m_filtered.size())
+		return QVariant();
 
-	const LoginSession &ls = m_sessions.at(index.row());
+	const LoginSession &ls = m_filtered.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
@@ -92,6 +94,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ClosedRole: return ls.closed;
 		case IncompatibleRole: return ls.incompatible;
 		case JoinableRole: return !(ls.closed | ls.incompatible);
+		case NsfmRole: return ls.nsfm;
 		}
 	}
 
@@ -100,7 +103,10 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 {
-	const LoginSession &ls = m_sessions.at(index.row());
+	if(index.row()<0 || index.row() >= m_filtered.size())
+		return 0;
+
+	const LoginSession &ls = m_filtered.at(index.row());
 	if(ls.incompatible || ls.closed)
 		return Qt::NoItemFlags;
 	else
@@ -123,39 +129,82 @@ QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation,
 
 void LoginSessionModel::updateSession(const LoginSession &session)
 {
-	int oldIndex=-1;
+	// If the session is already listed, update it in place
 	for(int i=0;i<m_sessions.size();++i) {
 		if(m_sessions.at(i).id == session.id) {
-			oldIndex = i;
-			break;
+			m_sessions[i] = session;
+			if(session.nsfm && m_hideNsfm)
+				removeFiltered(session.id);
+			else
+				updateFiltered(session);
+			emit filteredCountChanged();
+			return;
 		}
 	}
 
-	if(oldIndex>=0) {
-		m_sessions[oldIndex] = session;
-		emit dataChanged(index(oldIndex, 0), index(oldIndex, columnCount()));
-	} else {
-		beginInsertRows(QModelIndex(), m_sessions.size(), m_sessions.size());
-		m_sessions.append(session);
-		endInsertRows();
+	// Add a new session to the end of the list
+	m_sessions << session;
+
+	if(!m_hideNsfm || !session.nsfm)
+		updateFiltered(session);
+	emit filteredCountChanged();
+}
+
+void LoginSessionModel::updateFiltered(const LoginSession &session)
+{
+	for(int i=0;i<m_filtered.size();++i) {
+		if(m_filtered.at(i).id == session.id) {
+			m_filtered[i] = session;
+			emit dataChanged(index(i, 0), index(i, columnCount()));
+			return;
+		}
+	}
+
+	beginInsertRows(QModelIndex(), m_filtered.size(), m_filtered.size());
+	m_filtered << session;
+	endInsertRows();
+}
+
+void LoginSessionModel::removeFiltered(const QString &id)
+{
+	for(int i=0;i<m_filtered.size();++i) {
+		if(m_filtered.at(i).id == id) {
+			beginRemoveRows(QModelIndex(), i, i);
+			m_filtered.removeAt(i);
+			endRemoveRows();
+			break;
+		}
 	}
 }
 
 void LoginSessionModel::removeSession(const QString &id)
 {
-	int idx=-1;
 	for(int i=0;i<m_sessions.size();++i) {
 		if(m_sessions.at(i).id == id) {
-			idx = i;
+			m_sessions.removeAt(i);
 			break;
 		}
 	}
-	if(idx<0) {
-		qWarning() << "removeSession: id" << id << "does not exist!";
-	} else {
-		beginRemoveRows(QModelIndex(), idx, idx);
-		m_sessions.removeAt(idx);
-		endRemoveRows();
+	removeFiltered(id);
+	emit filteredCountChanged();
+}
+
+void LoginSessionModel::setHideNsfm(bool hide)
+{
+	if(hide != m_hideNsfm) {
+		m_hideNsfm  = hide;
+		beginResetModel();
+		if(hide) {
+			m_filtered.clear();
+			for(const LoginSession &ls : m_sessions)
+				if(!ls.nsfm)
+					m_filtered << ls;
+
+		} else {
+			m_filtered = m_sessions;
+		}
+		endResetModel();
+		emit filteredCountChanged();
 	}
 }
 
