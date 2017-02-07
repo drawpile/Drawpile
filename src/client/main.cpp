@@ -45,7 +45,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
 	setOrganizationName("drawpile");
-	setOrganizationDomain("drawpile.sourceforge.net");
+	setOrganizationDomain("drawpile.net");
 	setApplicationName("drawpile");
 	setApplicationDisplayName("Drawpile");
 
