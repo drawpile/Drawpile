@@ -1,3 +1,7 @@
+2017-0?-?? Version 2.0.0 Release Candidate
+ * Various bug fixes
+ * Added parental controls feature (password protected option to limit access to sessions tagged as "not safe for minors")
+
 2017-02-04 Version 2.0.0 beta 3
  * Implemented file backed session history (enables session hibernation)
  * All session attributes can now be restored from file
