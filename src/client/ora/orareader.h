@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2014 Calle Laakkonen
+   Copyright (C) 2009-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,68 +23,40 @@
 
 #include <QString>
 #include <QList>
-#include <QApplication>
 
 class KArchive;
-class QDomElement;
-class QPoint;
 class QImage;
 
 namespace openraster {
 
-/**
- * An OpenRaster reader.
- */
-class Reader {
-	Q_DECLARE_TR_FUNCTIONS(openraster::Reader)
-	public:
-		enum Warning {
-			//! No warnings (i.e. Drawpile supports all features of the file)
-			NO_WARNINGS = 0,
-			//! The OpenRaster file uses unsupported app. specific extensions
-			ORA_EXTENDED = 0x01,
-			//! Nested layers are used
-			ORA_NESTED = 0x02
-		};
-		Q_DECLARE_FLAGS(Warnings, Warning)
+struct OraResult {
+	enum Warning {
+		//! No warnings (i.e. Drawpile supports all features of the file)
+		NO_WARNINGS = 0,
+		//! The OpenRaster file uses unsupported app. specific extensions
+		ORA_EXTENDED = 0x01,
+		//! Nested layers are used
+		ORA_NESTED = 0x02
+	};
+	Q_DECLARE_FLAGS(Warnings, Warning)
 
-		Reader();
-		Reader(const Reader&) = delete;
+	//! The commands to initialize a canvas
+	QList<protocol::MessagePtr> commands;
 
-		//! Load the OpenRaster thumbnail (if available)
-		static QImage loadThumbnail(const QString &filename);
+	//! Error message (empty if file was loaded succesfully)
+	QString error;
 
-		//! Load the image
-		bool load(const QString &filename);
+	//! Warning flags
+	Warnings warnings;
 
-		/**
-		 * @brief get the session initialization commands
-		 *
-		 * Note. The command list is only valid if load() has been called
-		 * beforehand and the return value was true.
-		 *
-		 * @return session initialization command list
-		 */
-		const QList<protocol::MessagePtr> &initCommands() const { return _commands; }
-
-		//! Get the error message
-		const QString& error() const { return _error; }
-
-		//! Get the warning flags
-		const Warnings warnings() const { return _warnings; }
-
-	private:
-		bool loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset);
-		void loadAnnotations(const QDomElement& annotations);
-
-		QString _error;
-		Warnings _warnings;
-		QList<protocol::MessagePtr> _commands;
-		int _layerid;
-		int _annotationid;
+	OraResult() : warnings(NO_WARNINGS) { }
+	OraResult(const QString &error) : error(error) { }
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Reader::Warnings)
+Q_DECLARE_OPERATORS_FOR_FLAGS(OraResult::Warnings)
+
+//! Load an OpenRaster image
+OraResult loadOpenRaster(const QString &filename);
 
 }
 

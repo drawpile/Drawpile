@@ -54,25 +54,24 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 {
 	if(m_filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Load OpenRaster image
-		using openraster::Reader;
 		// TODO identify by filetype magic?
-		Reader reader;
+		openraster::OraResult ora = openraster::loadOpenRaster(m_filename);
 
-		if(reader.load(m_filename) == false) {
-			m_error = reader.error();
+		if(!ora.error.isEmpty()) {
+			m_error = ora.error;
 			return QList<MessagePtr>();
 		}
 
-		if(reader.warnings() != Reader::NO_WARNINGS) {
+		if(ora.warnings != openraster::OraResult::NO_WARNINGS) {
 			QString text = QApplication::tr("Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
-			if((reader.warnings() & Reader::ORA_EXTENDED))
+			if((ora.warnings & openraster::OraResult::ORA_EXTENDED))
 				text += "\n- " + QApplication::tr("Application specific extensions are used");
-			if((reader.warnings() & Reader::ORA_NESTED))
+			if((ora.warnings & openraster::OraResult::ORA_NESTED))
 				text += "\n- " + QApplication::tr("Nested layers are not fully supported.");
 
 			m_warning = text;
 		}
-		return reader.initCommands();
+		return ora.commands;
 
 	} else {
 		// Load an image using Qt's image loader.

@@ -1,6 +1,5 @@
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
-find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
@@ -308,7 +307,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
+target_link_libraries(${CLIENTNAME} ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Concurrent Qt5::Multimedia Qt5::Svg)
 
 if(KF5DNSSD_FOUND) 
     add_definitions(-DHAVE_DNSSD) 

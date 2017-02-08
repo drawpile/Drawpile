@@ -20,6 +20,7 @@
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
 #include "ora/orareader.h"
+#include "ora/orawriter.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -29,10 +30,9 @@
 #include "utils/images.h"
 
 #include <QApplication>
-#include <QImageReader>
-#include <QDomDocument>
+#include <QImage>
+#include <QXmlStreamReader>
 #include <QDebug>
-#include <QScopedPointer>
 #include <QColor>
 #include <QFile>
 
@@ -43,249 +43,475 @@ using protocol::MessagePtr;
 namespace openraster {
 
 namespace {
-	static const QString DP_NAMESPACE = QStringLiteral("http://drawpile.net/");
-	// Included for compatibility with files saved by versions <1.0
-	static const QString DP_NAMESPACE_OLD = QStringLiteral("http://drawpile.sourceforge.net/");
+	struct Annotation {
+		QRect rect;
+		QColor bg;
+		QString valign;
+		QString content;
+	};
 
-	bool checkIsOraFile(KArchive &zip)
-	{
-		const QByteArray expected = "image/openraster";
-		QByteArray mimetype = utils::getArchiveFile(zip, "mimetype", expected.length());
+	struct Layer {
+		QString name;
+		QString src;
+		QPoint offset;
+		qreal opacity;
+		bool visibility;
+		bool locked;
+		QString compositeOp;
+	};
 
-		return mimetype == expected;
+	struct Canvas {
+		QString error;
+
+		QSize size;
+		QList<Layer> layers; // note: layer order in an ORA stack is topmost first
+		QList<Annotation> annotations;
+
+		bool nestedWarning;
+		bool extensionsWarning;
+
+		Canvas() : nestedWarning(false), extensionsWarning(false) { }
+	};
+}
+
+static bool checkIsOraFile(KArchive &zip)
+{
+	const QByteArray expected = "image/openraster";
+	QByteArray mimetype = utils::getArchiveFile(zip, "mimetype", expected.length());
+
+	return mimetype == expected;
+}
+
+static void skipElement(QXmlStreamReader &reader)
+{
+	int stack=1;
+	while(!reader.atEnd() && stack>0) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::StartElement: ++stack; break;
+			case QXmlStreamReader::EndElement: --stack; break;
+			default: break;
+		}
 	}
 }
 
-Reader::Reader()
-	: _error(QT_TR_NOOP("No error")), _warnings(NO_WARNINGS)
-{
+/**
+ * Check if the given list of attributes anything that isn't in the list of known keys
+ * @param attrs attributes to check
+ * @param names list of known names
+ * @return true if unknown attributes are present
+ */
+static bool hasUnknownAttributes(const char *element, const QXmlStreamAttributes &attrs, const char **names) {
+	for(const QXmlStreamAttribute &attr : attrs) {
+		const char **name = names;
+		bool found = false;
+		while(*name) {
+			if(attr.name() == *name) {
+				found = true;
+				break;
+			}
+			++name;
+		}
+		if(!found) {
+			qWarning() << "Unknown" << element << "attribute:" << attr.name();
+			return true;
+		}
+	}
+	return false;
 }
 
-QImage Reader::loadThumbnail(const QString &filename)
+static QString attrToString(const QStringRef &attr, const QString &def)
 {
-	QImage image;
+	return attr.isEmpty() ? def : attr.toString();
+}
 
-	KZip zip(filename);
-	if(zip.open(QIODevice::ReadOnly))
-		return image;
+static qreal attrToReal(const QStringRef &attr, double def)
+{
+	bool ok;
+	const qreal v = attr.toDouble(&ok);
+	return ok ? v : def;
+}
 
-	// Make sure this is an OpenRaster file
-	if(!checkIsOraFile(zip))
-		return image;
+static bool attrToBool(const QStringRef &attr, bool def, const char *trueVal)
+{
+	if(attr.isEmpty())
+		return def;
+	return attr == trueVal;
+}
 
-	// Load thumbnail
-	QByteArray imgdata = utils::getArchiveFile(zip, "Thumbnails/thumbnail.png");
-	if(imgdata.isNull())
-		return image;
+static QColor attrToColor(const QStringRef &attr, const QColor &def)
+{
+	if(attr.length() == 7 && attr.at(0) == '#')
+		return QColor::fromRgb(attr.mid(1).toUInt(0, 16));
+	else if(attr.length() == 9 && attr.at(0) == '#')
+		return QColor::fromRgba(attr.mid(1).toUInt(0, 16));
+	else
+		return def;
+}
 
-	image.loadFromData(imgdata, "png");
+//! Read a layer element
+static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoint &parentOffset)
+{
+	// Grab <layer> element attributes first
+	const QXmlStreamAttributes attrs = reader.attributes();
 
-	return image;
+	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", nullptr };
+
+	if(hasUnknownAttributes("layer", attrs, knownLayerAttributes))
+		canvas.extensionsWarning = true;
+
+	Layer layer {
+		attrToString(attrs.value("name"), QString()),
+		attrToString(attrs.value("src"), QString()),
+		parentOffset + QPoint(attrs.value("x").toInt(), attrs.value("y").toInt()),
+		qBound(0.0, attrToReal(attrs.value("opacity"), 1.0), 1.0),
+		attrToBool(attrs.value("visibility"), true, "visible"),
+		attrToBool(attrs.value("edit-locked"), false, "true"),
+		attrToString(attrs.value("composite-op"), QStringLiteral("src-over"))
+	};
+
+	canvas.layers << layer;
+
+	// <layer> has no subelements
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::Invalid:
+				canvas.error = reader.errorString();
+				return false;
+			case QXmlStreamReader::StartElement:
+				canvas.extensionsWarning = true;
+				qWarning() << "Encountered unexpected <layer> subelement:" << reader.name();
+				skipElement(reader);
+				break;
+			case QXmlStreamReader::EndElement:
+				return true;
+			default: break;
+		}
+	}
+	
+	canvas.error = "File ended unexpectedly";
+	return false;
+}
+
+//! Read a drawpile specific annotation element
+static bool readStackAnnotation(QXmlStreamReader &reader, Canvas &canvas)
+{
+	static const char *knownAttributes[] = {"x", "y", "w", "h", "valign", "bg", nullptr};
+	const QXmlStreamAttributes attrs = reader.attributes();
+	if(hasUnknownAttributes("annotation", attrs, knownAttributes))
+		canvas.extensionsWarning = true;
+
+	Annotation ann {
+		QRect(
+			attrs.value("x").toInt(),
+			attrs.value("y").toInt(),
+			attrs.value("w").toInt(),
+			attrs.value("h").toInt()
+			),
+		attrToColor(attrs.value("bg"), Qt::transparent),
+		attrToString(attrs.value("valign"), QString()),
+		QString()
+	};
+
+	// Process <annotation> subelements
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::Invalid:
+				canvas.error = reader.errorString();
+				return false;
+			case QXmlStreamReader::Characters:
+				ann.content += reader.text();
+				break;
+			case QXmlStreamReader::StartElement:
+				canvas.extensionsWarning = true;
+				qWarning() << "Encountered unknown <a> subelement:" << reader.name();
+				skipElement(reader);
+				break;
+			case QXmlStreamReader::EndElement:
+				canvas.annotations << ann;
+				return true;
+			default: break;
+		}
+	}
+
+	canvas.error = "File ended unexpectedly";
+	return false;
+}
+
+//! Read the drawpile specific <annotations> container element
+static bool readStackAnnotations(QXmlStreamReader &reader, Canvas &canvas)
+{
+	static const char *knownAttributes[] = {nullptr};
+	if(hasUnknownAttributes("annotations", reader.attributes(), knownAttributes))
+		canvas.extensionsWarning = true;
+
+	// Process <annotations> subelements
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::Invalid:
+				canvas.error = reader.errorString();
+				return false;
+			case QXmlStreamReader::StartElement:
+				if(reader.name() == "a" && reader.namespaceUri() == DP_NAMESPACE) {
+					if(!readStackAnnotation(reader, canvas))
+						return false;
+
+				} else {
+					canvas.extensionsWarning = true;
+					qWarning() << "Encountered unknown <annotations> subelement:" << reader.name();
+					skipElement(reader);
+				}
+				break;
+			case QXmlStreamReader::EndElement:
+				return true;
+			default: break;
+		}
+	}
+
+	canvas.error = "File ended unexpectedly";
+	return false;
+}
+
+
+//! Read a <stack> element (contain sub-stacks and layers)
+static bool readStackStack(QXmlStreamReader &reader, Canvas &canvas, const QPoint &parentOffset)
+{
+	// Grab <stack> element attributes first
+	const QXmlStreamAttributes attrs = reader.attributes();
+	const QPoint offset = parentOffset + QPoint(
+			attrs.value("x").toInt(),
+			attrs.value("y").toInt()
+			);
+
+	static const char *knownStackAttributes[] = {"x", "y", nullptr};
+
+	if(hasUnknownAttributes("stack", attrs, knownStackAttributes))
+		canvas.extensionsWarning = true;
+
+	// Process <stack> subelements
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::Invalid:
+				canvas.error = reader.errorString();
+				return false;
+			case QXmlStreamReader::StartElement:
+				if(reader.name() == "stack") {
+					canvas.nestedWarning = true;
+					if(!readStackStack(reader, canvas, offset))
+						return false;
+
+				} else if(reader.name() == "annotations" && reader.namespaceUri() == DP_NAMESPACE) {
+					if(!readStackAnnotations(reader, canvas))
+						return false;
+
+				} else if(reader.name() == "layer") {
+					if(!readStackLayer(reader, canvas, QPoint()))
+						return false;
+
+				} else {
+					canvas.extensionsWarning = true;
+					qWarning() << "Encountered unknown <stack> subelement:" << reader.name();
+					skipElement(reader);
+				}
+				break;
+			case QXmlStreamReader::EndElement:
+				return true;
+			default: break;
+		}
+	}
+
+	canvas.error = "File ended unexpectedly";
+	return false;
+}
+
+//! Read the stack.xml root <image> element
+static bool readStackImage(QXmlStreamReader &reader, Canvas &canvas)
+{
+	// Grab the <image> element attributes first
+	const QXmlStreamAttributes attrs = reader.attributes();
+	canvas.size = QSize(
+			attrs.value("w").toInt(),
+			attrs.value("h").toInt()
+			);
+
+	static const char *knownImageAttributes[] = {"w", "h", "version", nullptr};
+
+	if(hasUnknownAttributes("image", attrs, knownImageAttributes))
+		canvas.extensionsWarning = true;
+
+	// Process <image> subelements
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+			case QXmlStreamReader::Invalid:
+				canvas.error = reader.errorString();
+				return false;
+			case QXmlStreamReader::StartElement:
+				if(reader.name() == "stack") {
+					if(!readStackStack(reader, canvas, QPoint()))
+						return false;
+				} else {
+					canvas.extensionsWarning = true;
+					qWarning() << "Encountered unknown <stack> subelement:" << reader.name();
+					skipElement(reader);
+				}
+				break;
+			case QXmlStreamReader::EndElement:
+				return true;
+			default: break;
+
+		}
+	}
+
+	canvas.error = "File ended unexpectedly";
+	return false;
 }
 
 /**
- * If the load fails, you can get the (translateable) error message using \a error().
- * @return true on success
+ * Generate the initialization commands from the layer stack and layer content images.
  */
-bool Reader::load(const QString &filename)
+static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 {
+	if(canvas.size.isEmpty())
+		return QApplication::tr("Image has zero size!");
+
+	if(!utils::checkImageSize(canvas.size))
+		return QApplication::tr("Image is too big!");
+
+	if(canvas.layers.isEmpty())
+		return QApplication::tr("No layers found!");
+
+	OraResult result;
+	if(canvas.extensionsWarning)
+		result.warnings |= OraResult::ORA_EXTENDED;
+	if(canvas.nestedWarning)
+		result.warnings |= OraResult::ORA_NESTED;
+
+	const int ctxId = 1;
+
+	// Set canvas size
+	result.commands << MessagePtr(new protocol::CanvasResize(ctxId, 0, canvas.size.width(), canvas.size.height(), 0));
+
+	// Create layers
+	// Note: layers are stored topmost first in ORA, but we create them bottom-most first
+	int layerId = ctxId << 8;
+	for(auto i=canvas.layers.crbegin();i!=canvas.layers.crend();++i) {
+		const Layer &layer = *i;
+		QImage content;
+		{
+			QByteArray image = utils::getArchiveFile(zip, layer.src);
+			if(image.isNull() || !content.loadFromData(image)) {
+				return QApplication::tr("Couldn't load layer %1").arg(layer.src);
+			}
+		}
+
+		const QColor solidColor = utils::isSolidColorImage(content);
+
+		result.commands.append(MessagePtr(new protocol::LayerCreate(
+				ctxId,
+				++layerId,
+				0,
+				solidColor.isValid() ? solidColor.rgba() : 0,
+				0,
+				layer.name
+			)));
+
+		if(!solidColor.isValid())
+			result.commands << net::command::putQImage(
+					ctxId,
+					layerId,
+					layer.offset.x(),
+					layer.offset.y(),
+					content,
+					paintcore::BlendMode::MODE_REPLACE
+					);
+
+		bool exact_blendop;
+		int blendmode = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
+		if(!exact_blendop)
+			result.warnings |= OraResult::ORA_EXTENDED;
+
+		result.commands << MessagePtr(new protocol::LayerAttributes(
+			ctxId,
+			layerId,
+			qRound(255 * layer.opacity),
+			blendmode
+			));
+
+		if(layer.locked) {
+			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, QList<uint8_t>()));
+		}
+
+		if(!layer.visibility) {
+			result.commands << MessagePtr(new protocol::LayerVisibility(ctxId, layerId, false));
+		}
+	}
+
+	// Create annotations
+	int annotationId = ctxId << 8;
+	for(const Annotation &ann : canvas.annotations) {
+		result.commands.append(MessagePtr(new protocol::AnnotationCreate(
+			ctxId,
+			++annotationId,
+			ann.rect.x(),
+			ann.rect.y(),
+			ann.rect.width(),
+			ann.rect.height()
+		)));
+		result.commands.append(MessagePtr(new protocol::AnnotationEdit(
+			ctxId,
+			annotationId,
+			ann.bg.rgba(),
+			paintcore::Annotation::valignFromString(ann.valign),
+			0,
+			ann.content
+		)));
+	}
+
+	return result;
+}
+
+OraResult loadOpenRaster(const QString &filename)
+{
+	Canvas canvas;
 	QFile orafile(filename);
 	KZip zip(&orafile);
 
 	if(!zip.open(QIODevice::ReadOnly)) {
-		_error = orafile.errorString();
-		return false;
+		return orafile.errorString();
 	}
 
 	// Make sure this is an OpenRaster file
 	if(!checkIsOraFile(zip)) {
-		_error = tr("File is not an OpenRaster file");
-		return false;
+		return QApplication::tr("File is not an OpenRaster file");
 	}
 
-	// Read the stack
-	QDomDocument doc;
-	if(doc.setContent(utils::getArchiveFile(zip, "stack.xml"), true, &_error) == false)
-		return false;
+	// Read the layer stack definition
+	QXmlStreamReader reader(zip.directory()->file("stack.xml")->data());
 
-	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
-
-	// Get the size of the image
-	// These attributes are required by ORA standard.
-	QSize imagesize(
-			doc.documentElement().attribute("w").toInt(),
-			doc.documentElement().attribute("h").toInt()
-			);
-
-	if(imagesize.isEmpty()) {
-		_error = tr("Image has zero size!");
-		return false;
-	}
-
-	if(!utils::checkImageSize(imagesize)) {
-		_error = tr("Image is too big!");
-		return false;
-	}
-
-	// Initialize the layer stack now that we know the size
-	_commands.append(MessagePtr(new protocol::CanvasResize(1, 0, imagesize.width(), imagesize.height(), 0)));
-
-	_layerid = 0;
-	_annotationid = 0;
-	// Load the layer images
-	if(loadLayers(zip, stackroot, QPoint()) == false)
-		return false;
-
-	return true;
-}
-
-/**
- * Check that the node map doesn't contain any unknown elements
- * @param attrs node map to check
- * @param names list of known names
- * @return false if node map contains unknown elements
- */
-bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
-	bool ok=true;
-	for(int i=0;i<attrs.length();++i) {
-		QDomNode n = attrs.item(i);
-		const char **name = names;
-		bool found=false;
-		while(!found && *name!=0) {
-			found = n.nodeName() == *name;
-			++name;
-		}
-		if(!found) {
-			qWarning() << "Unknown attribute" << n.nodeName();
-			ok=false;
-		}
-	}
-	return ok;
-}
-
-bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
-{
-	// TODO are layer coordinates relative to stack coordinates?
-	// The spec, as of this writing, is not clear on this.
-	offset += QPoint(
-			stack.attribute("x", "0").toInt(),
-			stack.attribute("y", "0").toInt()
-			);
-
-	QDomNodeList nodes = stack.childNodes();
-	// Iterate backwards to get the layers in the right order (layers are always added to the top of the stack)
-	for(int n=nodes.count()-1;n>=0;--n) {
-		QDomElement e = nodes.at(n).toElement();
-		if(e.isNull())
-			continue;
-
-		if(e.tagName()=="layer") {
-			// Check for unknown attributes
-			const char *layerattrs[] = {
-					"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", 0
-			};
-			if(!isKnown(e.attributes(), layerattrs))
-				_warnings |= ORA_EXTENDED;
-
-			// Load content image from the file
-			const QString src = e.attribute("src");
-			QImage content;
-			{
-				QByteArray image = utils::getArchiveFile(zip, src);
-				if(image.isNull() || !content.loadFromData(image)) {
-					_error = tr("Couldn't load layer %1").arg(src);
-					return false;
-				}
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+		switch(tokentype) {
+		case QXmlStreamReader::Invalid:
+			return reader.errorString();
+		case QXmlStreamReader::StartElement:
+			if(reader.name() == "image") {
+				if(!readStackImage(reader, canvas))
+					return canvas.error;
+			} else {
+				return QStringLiteral("Unexpected root element: ") + reader.name().toString();
 			}
-
-			QColor solidColor = utils::isSolidColorImage(content);
-
-			// Create layer
-			QString name = e.attribute("name", tr("Unnamed layer"));
-			_commands.append(MessagePtr(new protocol::LayerCreate(
-				1,
-				++_layerid,
-				0,
-				solidColor.isValid() ? solidColor.rgba() : 0,
-				0,
-				name
-			)));
-
-			QPoint layerPos = offset + QPoint(
-				e.attribute("x", "0").toInt(),
-				e.attribute("y", "0").toInt()
-				);
-
-			if(!solidColor.isValid())
-				_commands.append(net::command::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, paintcore::BlendMode::MODE_REPLACE));
-
-			QString compositeOp = e.attribute("composite-op", "src-over");
-			bool exact_blendop;
-			int blendmode = paintcore::findBlendModeByName(compositeOp, &exact_blendop).id;
-			if(!exact_blendop)
-				_warnings |= ORA_EXTENDED;
-
-			_commands.append(MessagePtr(new protocol::LayerAttributes(
-				1,
-				_layerid,
-				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
-				blendmode
-			)));
-
-			if(e.attribute("edit-locked", "false") == "true") {
-				_commands.append(MessagePtr(new protocol::LayerACL(1, _layerid, true, QList<uint8_t>())));
-			}
-
-			if(e.attribute("visibility", "visible") != "visible") {
-				_commands.append(MessagePtr(new protocol::LayerVisibility(1, _layerid, false)));
-			}
-
-		} else if(e.tagName()=="stack") {
-			// Nested stacks are not fully supported
-			_warnings |= ORA_NESTED;
-			if(loadLayers(zip, e, offset)==false)
-				return false;
-		} else if((e.namespaceURI()==DP_NAMESPACE || e.namespaceURI()==DP_NAMESPACE_OLD) && e.localName()=="annotations") {
-			loadAnnotations(e);
-		} else if(e.namespaceURI()==DP_NAMESPACE) {
-			qWarning() << "Unhandled drawpile extension in stack:" << e.tagName();
-			_warnings |= ORA_EXTENDED;
-		} else if(e.prefix()=="") {
-			qWarning() << "Unhandled stack element:" << e.tagName();
-			_warnings |= ORA_EXTENDED;
+		default: break;
 		}
 	}
-	return true;
-}
 
-void Reader::loadAnnotations(const QDomElement& annotations)
-{
-	QDomNodeList nodes = annotations.childNodes();
-	for(int n=0;n<nodes.count();++n) {
-		QDomElement e = nodes.at(n).toElement();
-		if(e.isNull())
-			continue;
-		if(e.localName()=="a") {
-			_commands.append(MessagePtr(new protocol::AnnotationCreate(
-				0,
-				++_annotationid,
-				e.attribute("x").toInt(),
-				e.attribute("y").toInt(),
-				e.attribute("w").toInt(),
-				e.attribute("h").toInt()
-			)));
-			_commands.append(MessagePtr(new protocol::AnnotationEdit(
-				1,
-				_annotationid,
-				e.attribute("bg").mid(1).toUInt(0,16),
-				paintcore::Annotation::valignFromString(e.attribute("valign")),
-				0,
-				e.text()
-			)));
-		} else {
-			qWarning() << "unhandled annotations (DP ext.) element:" << e.tagName();
-		}
-	}
+	// Generate the commands to initialize session history
+	return makeInitCommands(zip, canvas);
 }
 
 }
+
