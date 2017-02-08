@@ -137,7 +137,7 @@ void Client::sendMessage(const protocol::MessagePtr &msg)
 {
 #ifndef NDEBUG
 	if(!msg->isControl() && msg->contextId()==0) {
-		qWarning("Context ID not set for message type %d", msg->type());
+		qWarning("Context ID not set for message type #%d (%s)", msg->type(), qPrintable(msg->messageName()));
 	}
 #endif
 
@@ -153,7 +153,7 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 	for(const protocol::MessagePtr &msg : msgs) {
 #ifndef NDEBUG
 		if(!msg->isControl() && msg->contextId()==0) {
-			qWarning("Context ID not set for message type %d", msg->type());
+			qWarning("Context ID not set for message type #%d (%s)", msg->type(), qPrintable(msg->messageName()));
 		}
 #endif
 		if(msg->isCommand())

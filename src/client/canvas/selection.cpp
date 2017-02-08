@@ -345,7 +345,7 @@ QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColo
 
 	if(!area.isEmpty() || !mask.isNull()) {
 		if(mask.isNull())
-			msgs << protocol::MessagePtr(new protocol::FillRect(0, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
+			msgs << protocol::MessagePtr(new protocol::FillRect(contextId, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
 		else
 			msgs << net::command::putQImage(contextId, layer, maskOffset.x(), maskOffset.y(), mask, mode);
 	}
