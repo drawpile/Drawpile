@@ -37,7 +37,7 @@ static const int PAGE_START = 0;
 static const int PAGE_AUTH = 1;
 static const int PAGE_SESSIONLIST = 2;
 static const int PAGE_CERTWARNING = 3;
-static const int PAGE_CATCHUP = 3;
+static const int PAGE_CATCHUP = 4;
 
 LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	QDialog(parent), m_mode(LABEL), m_login(login), m_ui(new Ui_LoginDialog)
