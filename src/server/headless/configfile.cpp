@@ -30,6 +30,12 @@ ConfigFile::ConfigFile(const QString &path, QObject *parent)
 	  m_path(path),
 	  m_logger(new InMemoryLog)
 {
+	// When the configuration file is compiled in as a qresource,
+	// lastModified() always returns a null datetime. We still
+	// want to read the configuration file once, though.
+	// That can be accomplished by setting the initial lastmod to some
+	// unlikely non-null datetime.
+	m_lastmod = QDateTime::fromMSecsSinceEpoch(1);
 }
 
 ConfigFile::~ConfigFile()
