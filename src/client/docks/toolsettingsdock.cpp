@@ -100,7 +100,7 @@ void ToolSettings::readSettings()
 		cfg.endGroup();
 	}
 	cfg.endGroup();
-	m_color = cfg.value("color").value<QColor>();
+	setForegroundColor(cfg.value("color").value<QColor>());
 	setTool(tools::Tool::Type(cfg.value("tool").toInt()));
 }
 
@@ -111,7 +111,7 @@ void ToolSettings::saveSettings()
 	cfg.setValue("tool", m_currenttool->toolType());
 	cfg.setValue("color", m_color);
 
-	cfg.beginGroup("toolsset");
+	cfg.beginGroup("toolset");
 	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
 		cfg.beginGroup(m_settingspage[i]->getName());
 		m_settingspage[i]->saveToolSettings().save(cfg);
