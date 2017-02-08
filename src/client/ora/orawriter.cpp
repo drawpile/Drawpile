@@ -22,14 +22,16 @@
 #include "core/layer.h"
 #include "core/blendmodes.h"
 
-#include <QDomDocument>
+#include <QXmlStreamWriter>
 #include <QBuffer>
 #include <QDebug>
 #include <KZip>
 
-namespace {
+namespace openraster {
 
-bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
+const QString DP_NAMESPACE = QStringLiteral("http://drawpile.net/");
+
+static bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
 {
 	QBuffer buf;
 	image.save(&buf, "PNG");
@@ -39,71 +41,80 @@ bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
 	return zip.writeFile(filename, buf.data());
 }
 
-bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
+static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStack *image)
 {
-	QDomDocument doc;
-	QDomElement root = doc.createElement("image");
-
-	// Note: Qt's createElementNS and friends are buggy and repeat
-	// the namespace declaration at every element. Instead,
-	// we declare the namespace and use prefixes manually.
-	root.setAttribute("xmlns:drawpile", "http://drawpile.net/");
-
-	doc.appendChild(root);
-
-	// Width and height are required attributes
-	root.setAttribute("w", image->width());
-	root.setAttribute("h", image->height());
-	root.setAttribute("version", "0.0.3");
-
-	QDomElement stack = doc.createElement("stack");
-	root.appendChild(stack);
+	writer.writeStartElement("stack");
 
 	// Add annotations
 	// This will probably be replaced with proper text element support
 	// once standardized.
 	if(!image->annotations()->isEmpty()) {
-		QDomElement annotationEls = doc.createElement("drawpile:annotations");
-		annotationEls.setPrefix("drawpile");
+		writer.writeStartElement(DP_NAMESPACE, "annotations");
+
 		for(const paintcore::Annotation &a : image->annotations()->getAnnotations()) {
-			QDomElement an = doc.createElement("drawpile:a");
-			an.setPrefix("drawpile");
+			writer.writeStartElement(DP_NAMESPACE, "a");
 
 			QRect ag = a.rect;
-			an.setAttribute("x", ag.x());
-			an.setAttribute("y", ag.y());
-			an.setAttribute("w", ag.width());
-			an.setAttribute("h", ag.height());
-			an.setAttribute("bg", QString("#%1").arg(uint(a.background.rgba()), 8, 16, QChar('0')));
-			an.setAttribute("valign", a.valignToString());
-			an.appendChild(doc.createCDATASection(a.text));
-			annotationEls.appendChild(an);
+			writer.writeAttribute("x", QString::number(ag.x()));
+			writer.writeAttribute("y", QString::number(ag.y()));
+			writer.writeAttribute("w", QString::number(ag.width()));
+			writer.writeAttribute("h", QString::number(ag.height()));
+			writer.writeAttribute("bg", QString("#%1").arg(uint(a.background.rgba()), 8, 16, QChar('0')));
+			writer.writeAttribute("valign", a.valignToString());
+			writer.writeCDATA(a.text);
+			writer.writeEndElement();
 		}
-		stack.appendChild(annotationEls);
+
+		writer.writeEndElement();
 	}
 
 	// Add layers (topmost layer goes first in ORA)
 	for(int i=image->layerCount()-1;i>=0;--i) {
 		const paintcore::Layer *l = image->getLayerByIndex(i);
 
-		QDomElement layer = doc.createElement("layer");
-		layer.setAttribute("src", QString("data/layer%1.png").arg(i));
-		layer.setAttribute("name", l->title());
-		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
+		writer.writeStartElement("layer");
+		writer.writeAttribute("src", QString("data/layer%1.png").arg(i));
+		writer.writeAttribute("name", l->title());
+		writer.writeAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
 		if(l->isHidden())
-			layer.setAttribute("visibility", "hidden");
+			writer.writeAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
-			layer.setAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
+			writer.writeAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
 
-		// TODO lock and selection
-		stack.appendChild(layer);
+		writer.writeEndElement();
 	}
 
-	zip.setCompression(KZip::DeflateCompression);
-	return zip.writeFile("stack.xml", doc.toByteArray());
+	writer.writeEndElement();
 }
 
-bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
+static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
+{
+	QBuffer buffer;
+	buffer.open(QBuffer::ReadWrite);
+
+	QXmlStreamWriter writer(&buffer);
+	writer.setAutoFormatting(true);
+
+	writer.writeStartDocument();
+
+	// Write root element
+	writer.writeStartElement("image");
+	writer.writeNamespace("http://drawpile.net", "drawpile");
+
+	writer.writeAttribute("w", QString::number(image->width()));
+	writer.writeAttribute("h", QString::number(image->height()));
+	writer.writeAttribute("version", "0.0.3");
+
+	// Write the main layer stack
+	writeStackStack(writer, image);
+
+	// Done.
+	writer.writeEndDocument();
+	zip.setCompression(KZip::DeflateCompression);
+	return zip.writeFile("stack.xml", buffer.data());
+}
+
+static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 {
 	const paintcore::Layer *l = layers->getLayerByIndex(index);
 	Q_ASSERT(l);
@@ -111,7 +122,7 @@ bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage());
 }
 
-bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
+static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 {
 	QImage img = layers->toFlatImage(false);
 
@@ -125,10 +136,6 @@ bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
 
 	return putPngInZip(zf, "Thumbnails/thumbnail.png", img);
 }
-
-}
-
-namespace openraster {
 
 bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 {

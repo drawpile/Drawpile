@@ -27,6 +27,8 @@ namespace paintcore {
 
 namespace openraster {
 
+extern const QString DP_NAMESPACE;
+
 bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image);
 
 }
