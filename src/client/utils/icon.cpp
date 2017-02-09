@@ -18,7 +18,7 @@
 */
 
 #include "icon.h"
-#include "main.h"
+#include "utils/settings.h"
 
 #include <QDir>
 #include <QPalette>
@@ -49,7 +49,7 @@ void selectThemeVariant()
 	builtinPaths << QStringLiteral(":/icons");
 
 	QStringList themePaths;
-	for(const QString &path : DrawpileApp::dataPaths()) {
+	for(const QString &path : utils::settings::dataPaths()) {
 		themePaths << path + themePath;
 	}
 

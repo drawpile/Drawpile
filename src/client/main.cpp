@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 
 #include "utils/icon.h"
+#include "utils/settings.h"
 #include "notifications.h"
 
 #ifdef Q_OS_MAC
@@ -32,7 +33,6 @@
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
-#include <QStandardPaths>
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDir>
@@ -148,19 +148,6 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
-QStringList DrawpileApp::dataPaths()
-{
-	QStringList datapaths;
-#ifndef Q_OS_MAC
-	datapaths << qApp->applicationDirPath();
-	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-#else
-	datapaths << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-	datapaths << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
-#endif
-	return datapaths;
-}
-
 void initTranslations(const QLocale &locale)
 {
 	QStringList preferredLangs = locale.uiLanguages();
@@ -188,7 +175,7 @@ void initTranslations(const QLocale &locale)
 	// Our translations
 	QTranslator *myTranslator = new QTranslator;
 
-	for(const QString &datapath : DrawpileApp::dataPaths()) {
+	for(const QString &datapath : utils::settings::dataPaths()) {
 		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
 			break;
 	}

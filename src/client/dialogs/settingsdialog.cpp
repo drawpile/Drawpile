@@ -110,7 +110,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
-	for(const QString &datapath : DrawpileApp::dataPaths()) {
+	for(const QString &datapath : utils::settings::dataPaths()) {
 		QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
 		for(const QString &file : files) {
 			QString localename = file.mid(9, file.length() - 3 - 9);

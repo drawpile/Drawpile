@@ -33,6 +33,11 @@ namespace settings {
  */
 QString recordingFolder();
 
+/**
+ * @brief Get a list of paths in which datafiles may reside
+ */
+QStringList dataPaths();
+
 }
 }
 

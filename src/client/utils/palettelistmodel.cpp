@@ -20,7 +20,7 @@
 #include "palettelistmodel.h"
 #include "palette.h"
 #include "icon.h"
-#include "main.h"
+#include "utils/settings.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -48,7 +48,7 @@ void PaletteListModel::loadPalettes()
 {
 	QList<Palette*> palettes;
 
-	QStringList datapaths = DrawpileApp::dataPaths();
+	QStringList datapaths = utils::settings::dataPaths();
 	QString writablepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 	QSet<QString> palettefiles;
 

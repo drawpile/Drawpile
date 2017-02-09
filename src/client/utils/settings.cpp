@@ -39,5 +39,18 @@ QString recordingFolder()
 	return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 }
 
+QStringList dataPaths()
+{
+	QStringList datapaths;
+#ifndef Q_OS_MAC
+	datapaths << qApp->applicationDirPath();
+	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+#else
+	datapaths << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+	datapaths << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
+#endif
+	return datapaths;
+}
+
 }
 }

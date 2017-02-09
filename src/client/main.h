@@ -32,8 +32,6 @@ public:
 
 	void openBlankDocument();
 
-	static QStringList dataPaths();
-
 signals:
 	void settingsChanged();
 	void eraserNear(bool near);
