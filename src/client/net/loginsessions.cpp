@@ -72,11 +72,17 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 	} else if(role == Qt::DecorationRole) {
 		if(index.column()==0) {
-			if(ls.closed)
+			if(ls.incompatible)
+				return icon::fromTheme("dontknow").pixmap(16, 16);
+			else if(ls.closed)
 				return icon::fromTheme("im-ban-user").pixmap(16, 16);
 			else if(ls.needPassword)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}
+
+	} else if(role == Qt::ForegroundRole) {
+		if(ls.nsfm)
+			return QColor(237, 21, 21);
 
 	} else if(role == Qt::ToolTipRole) {
 		if(ls.incompatible)

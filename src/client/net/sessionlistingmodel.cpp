@@ -71,9 +71,16 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		}
 	} else if(role == Qt::DecorationRole) {
 		if(index.column() == 0) {
-			if(s.password)
+			if(!s.protocol.isCurrent())
+				return icon::fromTheme("dontknow").pixmap(16, 16);
+			else if(s.password)
 				return icon::fromTheme("object-locked").pixmap(16, 16);
 		}
+
+	} else if(role == Qt::ForegroundRole) {
+		if(s.nsfm)
+			return QColor(237, 21, 21);
+
 	} else if(role == Qt::UserRole) {
 		// User Role is used for sorting keys
 		switch(index.column()) {
