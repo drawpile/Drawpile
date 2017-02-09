@@ -44,6 +44,8 @@
 				<string>dprec</string>
 				<string>dprecz</string>
 			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>${MACOSX_BUNDLE_ICON_FILE}</string>
 			<key>CFBundleTypeName</key>
