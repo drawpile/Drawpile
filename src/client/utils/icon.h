@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 
 namespace icon {
 
-enum Theme { CURRENT, LIGHT, DARK };
-
 //! Check if a dark theme icon should be used on a background of this color
 bool isDark(const QColor &color);
 
@@ -33,7 +31,9 @@ bool isDark(const QColor &color);
 void selectThemeVariant();
 
 //! Get an icon from the system theme, falling back to the bundled icon set
-QIcon fromTheme(const QString &name, Theme variant=CURRENT);
+inline QIcon fromTheme(const QString &name) {
+	return QIcon::fromTheme(name, QIcon(QStringLiteral("theme:") + name + QStringLiteral(".svg")));
+}
 
 }
 

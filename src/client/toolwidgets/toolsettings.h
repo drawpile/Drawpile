@@ -42,7 +42,7 @@ class ToolController;
 class ToolSettings {
 public:
 	ToolSettings(const QString &name, const QString &title, const QString &icon, ToolController *ctrl)
-		: m_ctrl(ctrl), m_name(name), m_title(title), m_icon(icon), m_widget(nullptr)
+		: m_ctrl(ctrl), m_name(name), m_title(title), m_icon(icon::fromTheme(icon)), m_widget(nullptr)
 	{
 		Q_ASSERT(ctrl);
 	}
@@ -104,7 +104,7 @@ public:
 	const QString& getTitle() const { return m_title; }
 
 	//! Get the icon for this tool type
-	const QIcon getIcon(icon::Theme variant=icon::CURRENT) const { return icon::fromTheme(m_icon, variant); }
+	const QIcon &getIcon() const { return m_icon; }
 
 	//! Push settings to the tool controller
 	virtual void pushSettings();
@@ -129,7 +129,7 @@ private:
 	ToolController *m_ctrl;
 	QString m_name;
 	QString m_title;
-	QString m_icon;
+	QIcon m_icon;
 	QWidget *m_widget;
 };
 

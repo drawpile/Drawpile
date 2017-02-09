@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 
 namespace icon {
 
-static Theme THEME_VARIANT = LIGHT;
-
 bool isDark(const QColor &c)
 {
 	const qreal luminance = c.redF() * 0.216 + c.greenF() * 0.7152 + c.redF() * 0.0722;
@@ -37,49 +35,28 @@ bool isDark(const QColor &c)
 
 void selectThemeVariant()
 {
-	const QString lightpath = QStringLiteral("/theme/light");
-	const QString darkpath = QStringLiteral("/theme/dark");
-	QString curpath;
-
 	QStringList builtinPaths;
+	QString themePath;
 
-	if(!isDark(QPalette().color(QPalette::Window))) {
-		THEME_VARIANT = LIGHT;
-		curpath = lightpath;
-		builtinPaths << QStringLiteral(":/icons/light");
-
-	} else {
-		THEME_VARIANT = DARK;
-		curpath = darkpath;
+	if(isDark(QPalette().color(QPalette::Window))) {
+		themePath = QStringLiteral("/theme/dark");
 		builtinPaths << QStringLiteral(":/icons/dark");
+	} else {
+		themePath = QStringLiteral("/theme/light");
+		builtinPaths << QStringLiteral(":/icons/light");
 	}
 
 	builtinPaths << QStringLiteral(":/icons");
 
-
-	QStringList themePaths, lightPaths, darkPaths;
+	QStringList themePaths;
 	for(const QString &path : DrawpileApp::dataPaths()) {
-		themePaths << path + curpath;
-		lightPaths << path + lightpath;
-		darkPaths << path + darkpath;
+		themePaths << path + themePath;
 	}
 
 	QDir::setSearchPaths("theme", themePaths);
-	QDir::setSearchPaths("themelight", lightPaths);
-	QDir::setSearchPaths("themedark", darkPaths);
 	QDir::setSearchPaths("builtin", builtinPaths);
 
 }
 
-QIcon fromTheme(const QString &name, Theme variant)
-{
-
-	if(variant==CURRENT || variant==THEME_VARIANT)
-		return QIcon::fromTheme(name, QIcon(QStringLiteral("theme:") + name + QStringLiteral(".svg")));
-
-	// Because QIcon::fromTheme doesn't support theme variants,
-	// we use bundled icons if current theme is not the selected variant
-	return QIcon((variant == LIGHT ? QStringLiteral("themelight:") : QStringLiteral("themedark:")) + name + QStringLiteral(".svg"));
 }
 
-}
