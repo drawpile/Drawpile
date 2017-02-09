@@ -129,7 +129,7 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	connect(_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
 
 	connect(_ui->redbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-	connect(_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(_ui->greenbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
 	connect(_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
 
 	//
