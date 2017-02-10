@@ -27,7 +27,14 @@
 #include "../shared/net/undo.h"
 #include "../shared/net/pen.h"
 
+#include <QPixmap>
+
 namespace tools {
+
+BrushBase::BrushBase(ToolController &owner, Type type, const char *cursor, const QPoint &cursorHotspot)
+	: Tool(owner, type, QCursor(QPixmap(QLatin1Literal(":/cursors/") + cursor), cursorHotspot.x(), cursorHotspot.y()))
+{
+}
 
 void BrushBase::begin(const paintcore::Point& point, float zoom)
 {

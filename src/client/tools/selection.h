@@ -27,7 +27,7 @@ namespace tools {
 //! Base class for selection tools
 class SelectionTool : public Tool {
 public:
-	SelectionTool(ToolController &owner, Type type, QCursor cursor=Qt::CrossCursor)
+	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type,  cursor) { }
 
 	void begin(const paintcore::Point& point, float zoom);

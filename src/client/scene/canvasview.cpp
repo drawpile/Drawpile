@@ -43,7 +43,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
-	_showoutline(true), _enablecrosshair(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
+	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_tabletmode(ENABLE_TABLET),
 	_lastPressure(0),
 	_stylusDown(false),
@@ -64,9 +64,6 @@ CanvasView::CanvasView(QWidget *parent)
 	setAcceptDrops(true);
 
 	setBackgroundBrush(QColor(100,100,100));
-
-	_crosshaircursor = QCursor(QPixmap(":/cursors/crosshair.png"), 15, 15);
-	viewport()->setCursor(_crosshaircursor);
 
 	// Get the color picker cursor
 	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
@@ -179,26 +176,10 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 
 void CanvasView::resetCursor()
 {
-	if(_locked) {
+	if(_locked)
 		viewport()->setCursor(Qt::ForbiddenCursor);
-
-	} else {
-		// The standard crosshair cursor is (in some themes) too
-		// thick for accurate work, so we use a custom 1px wide cursor.
-		// Crosshair is safe to hide, because it is only used with brush
-		// tools for which an outline cursor is also drawn.
-		if(m_toolcursor.shape() == Qt::CrossCursor) {
-			viewport()->setCursor(_enablecrosshair ? _crosshaircursor : QCursor(Qt::BlankCursor));
-		} else {
-			viewport()->setCursor(m_toolcursor);
-		}
-	}
-}
-
-void CanvasView::setCrosshair(bool enable)
-{
-	_enablecrosshair = enable;
-	resetCursor();
+	else
+		viewport()->setCursor(m_toolcursor);
 }
 
 void CanvasView::setPixelGrid(bool enable)
@@ -249,10 +230,10 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
 			painter->save();
-			QPen pen(Qt::white);
+			QPen pen(QColor(96, 191, 96));
 			pen.setCosmetic(true);
 			painter->setPen(pen);
-			painter->setCompositionMode(QPainter::CompositionMode_Difference);
+			painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 			painter->drawEllipse(outline);
 			painter->restore();
 		}

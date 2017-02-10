@@ -694,11 +694,6 @@ void MainWindow::readSettings(bool windowpos)
 	// Restore tool settings
 	_dock_toolsettings->readSettings();
 
-	// Restore cursor settings
-	bool brushcrosshair = cfg.value("tools/crosshair", false).toBool();
-	getAction("brushcrosshair")->setChecked(brushcrosshair);
-	_view->setCrosshair(brushcrosshair);
-
 	// Customize shortcuts
 	loadShortcuts();
 
@@ -725,7 +720,6 @@ void MainWindow::writeSettings()
 	cfg.setValue("thicklasers", getAction("thicklasers")->isChecked());
 	cfg.endGroup();
 	_dock_toolsettings->saveSettings();
-	cfg.setValue("tools/crosshair", getAction("brushcrosshair")->isChecked());
 }
 
 /**
@@ -2125,7 +2119,6 @@ void MainWindow::setupActions()
 	QAction *viewmirror = makeAction("viewmirror", "object-flip-horizontal", tr("Mirror"), QString(), QKeySequence("V"), true);
 	QAction *viewflip = makeAction("viewflip", "object-flip-vertical", tr("Flip"), QString(), QKeySequence("C"), true);
 
-	QAction *showcrosshair = makeAction("brushcrosshair", 0, tr("Show Crosshair C&ursor"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
 	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
@@ -2194,7 +2187,6 @@ void MainWindow::setupActions()
 	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
 
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
-	connect(showcrosshair, SIGNAL(triggered(bool)), _view, SLOT(setCrosshair(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvasscene, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), _canvasscene, SLOT(showUserLayers(bool)));
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
@@ -2235,7 +2227,6 @@ void MainWindow::setupActions()
 	userpointermenu->addAction(thicklasers);
 
 	viewmenu->addAction(showannotations);
-	viewmenu->addAction(showcrosshair);
 
 	viewmenu->addAction(showgrid);
 

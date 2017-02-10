@@ -129,7 +129,7 @@ void RectangleSelection::newSelectionMotion(const paintcore::Point& point, bool 
 }
 
 PolygonSelection::PolygonSelection(ToolController &owner)
-	: SelectionTool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 2))
+	: SelectionTool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 29))
 {
 }
 
