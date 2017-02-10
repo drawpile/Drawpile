@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,19 +25,16 @@
 namespace drawingboard {
 
 LaserTrailItem::LaserTrailItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent), _blink(false)
+	: QGraphicsItem(parent), m_blink(false)
 {
-	_pen1.setWidth(qApp->devicePixelRatio() * 3);
-	_pen2.setWidth(_pen1.width());
+	m_pen.setWidth(qApp->devicePixelRatio() * 3);
+	m_pen.setCapStyle(Qt::RoundCap);
+	m_pen.setCosmetic(true);
 }
 
 void LaserTrailItem::setColor(const QColor &color)
 {
-	_pen1.setCosmetic(true);
-	_pen1.setColor(color.lighter(110));
-
-	_pen2 = _pen1;
-	_pen2.setColor(color.lighter(90));
+	m_pen.setColor(color);
 }
 
 QRectF LaserTrailItem::boundingRect() const
@@ -82,14 +79,23 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	Q_UNUSED(widget);
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
-	painter->setPen(_blink ? _pen1 : _pen2);
+
+	if(m_blink) {
+		QPen pen = m_pen;
+		pen.setWidth(pen.width() + 1);
+		painter->setPen(pen);
+	} else {
+		painter->setPen(m_pen);
+	}
+
 	painter->drawPolyline(m_points.constData(), m_points.size());
+
 	painter->restore();
 }
 
 void LaserTrailItem::animationStep(float dt)
 {
-	_blink = !_blink;
+	m_blink = !m_blink;
 
 	if(m_visible) {
 		if(opacity() < 1.0)
