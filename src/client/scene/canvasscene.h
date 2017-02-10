@@ -89,9 +89,6 @@ public slots:
 	//! Show hide laser pointer trails
 	void showLaserTrails(bool show);
 
-	//! Make laser trails thicker
-	void setThickLaserTrails(bool thick);
-
 	void activeAnnotationChanged(int id);
 
 	//! Reveal the canvas item
@@ -146,7 +143,6 @@ private:
 	bool _showUserMarkers;
 	bool _showUserLayers;
 	bool _showLaserTrails;
-	bool _thickLaserTrails;
 };
 
 }

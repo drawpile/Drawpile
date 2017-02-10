@@ -37,7 +37,7 @@ namespace drawingboard {
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
-	  _showAnnotationBorders(false), _showAnnotations(true), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true), _thickLaserTrails(false)
+	  _showAnnotationBorders(false), _showAnnotations(true), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -249,7 +249,7 @@ void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 
 	for(int i=first;i<=last;++i) {
 		const QModelIndex l = m_model->laserTrails()->index(i);
-		LaserTrailItem *item = new LaserTrailItem(_thickLaserTrails);
+		LaserTrailItem *item = new LaserTrailItem;
 		addItem(item);
 		m_lasertrails[l.data(canvas::LaserTrailModel::InternalIdRole).toInt()] = item;
 		laserChanged(l, l, QVector<int>());
@@ -401,14 +401,6 @@ void CanvasScene::showLaserTrails(bool show)
 	_showLaserTrails = show;
 	for(LaserTrailItem *i : m_lasertrails)
 		i->hide();
-}
-
-void CanvasScene::setThickLaserTrails(bool thick)
-{
-	_thickLaserTrails = thick;
-	for(LaserTrailItem *l : m_lasertrails) {
-		l->setThick(thick);
-	}
 }
 
 }

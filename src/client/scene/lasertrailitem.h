@@ -27,9 +27,7 @@ namespace drawingboard {
 class LaserTrailItem : public QGraphicsItem
 {
 public:
-	LaserTrailItem(bool thick, QGraphicsItem *parent=0);
-
-	void setThick(bool thick);
+	LaserTrailItem(QGraphicsItem *parent=nullptr);
 
 	void animationStep(float dt);
 

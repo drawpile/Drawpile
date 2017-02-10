@@ -24,10 +24,11 @@
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(bool thick, QGraphicsItem *parent)
+LaserTrailItem::LaserTrailItem(QGraphicsItem *parent)
 	: QGraphicsItem(parent), _blink(false)
 {
-	setThick(thick);
+	_pen1.setWidth(qApp->devicePixelRatio() * 3);
+	_pen2.setWidth(_pen1.width());
 }
 
 void LaserTrailItem::setColor(const QColor &color)
@@ -37,12 +38,6 @@ void LaserTrailItem::setColor(const QColor &color)
 
 	_pen2 = _pen1;
 	_pen2.setColor(color.lighter(90));
-}
-
-void LaserTrailItem::setThick(bool thick)
-{
-	_pen1.setWidth(qApp->devicePixelRatio() * (thick ? 3 : 1));
-	_pen2.setWidth(_pen1.width());
 }
 
 QRectF LaserTrailItem::boundingRect() const
