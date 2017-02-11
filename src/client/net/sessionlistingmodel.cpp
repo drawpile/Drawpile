@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,10 +46,11 @@ int SessionListingModel::columnCount(const QModelIndex &parent) const
 
 	// Columns:
 	// 0 - title
-	// 1 - user count
-	// 2 - owner
-	// 3 - uptime
-	return 4;
+	// 1 - server
+	// 2 - user count
+	// 3 - owner
+	// 4 - uptime
+	return 5;
 }
 
 static QString ageString(const qint64 seconds)
@@ -65,12 +66,13 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
 		case 0: return s.title.isEmpty() ? tr("(untitled)") : s.title;
-		case 1: return QString::number(s.users);
-		case 2: return s.owner;
-		case 3: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
+		case 1: return s.host;
+		case 2: return QString::number(s.users);
+		case 3: return s.owner;
+		case 4: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
 		}
 	} else if(role == Qt::DecorationRole) {
-		if(index.column() == 0) {
+		if(index.column() == 1) {
 			if(!s.protocol.isCurrent())
 				return icon::fromTheme("dontknow").pixmap(16, 16);
 			else if(s.password)
@@ -85,9 +87,10 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		// User Role is used for sorting keys
 		switch(index.column()) {
 		case 0: return s.title;
-		case 1: return s.users;
-		case 2: return s.owner;
-		case 3: return s.started;
+		case 1: return s.host;
+		case 2: return s.users;
+		case 3: return s.owner;
+		case 4: return s.started;
 		}
 	} else if(role == Qt::UserRole+1) {
 		// User role+1 is used for the session URL
@@ -104,9 +107,10 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 
 	switch(section) {
 	case 0: return tr("Title");
-	case 1: return tr("Users");
-	case 2: return tr("Owner");
-	case 3: return tr("Age");
+	case 1: return tr("Server");
+	case 2: return tr("Users");
+	case 3: return tr("Owner");
+	case 4: return tr("Age");
 	}
 
 	return QVariant();

@@ -90,9 +90,9 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	m_ui->listing->setModel(m_model);
 	QHeaderView *header = m_ui->listing->horizontalHeader();
 	header->setSectionResizeMode(0, QHeaderView::Stretch);
-	header->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
 	QTimer *refreshTimer = new QTimer(this);
 	connect(refreshTimer, &QTimer::timeout, this, &SessionListingDialog::refreshListing);
