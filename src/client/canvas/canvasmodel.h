@@ -37,6 +37,7 @@ namespace protocol {
 	class MovePointer;
 	class Chat;
 	class Marker;
+	class DefaultLayer;
 }
 
 namespace canvas {
@@ -142,6 +143,7 @@ private:
 	void metaLaserTrail(const protocol::LaserTrail &msg);
 	void metaMovePointer(const protocol::MovePointer &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
+	void metaDefaultLayer(const protocol::DefaultLayer &msg);
 
 	AclFilter *m_aclfilter;
 	UserListModel *m_userlist;

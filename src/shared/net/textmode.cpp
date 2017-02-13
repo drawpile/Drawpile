@@ -189,6 +189,7 @@ Parser::Result Parser::parseLine(const QString &line)
 	else FROMTEXT("useracl", UserACL);
 	else FROMTEXT("layeracl", LayerACL);
 	else FROMTEXT("sessionacl", SessionACL);
+	else FROMTEXT("defaultlayer", DefaultLayer);
 	else FROMTEXT("resize", CanvasResize);
 	else FROMTEXT("newlayer", LayerCreate);
 	else FROMTEXT("layerattr", LayerAttributes);

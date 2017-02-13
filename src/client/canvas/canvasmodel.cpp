@@ -151,6 +151,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		case MSG_MARKER:
 			metaMarkerMessage(cmd.cast<Marker>());
 			break;
+		case MSG_LAYER_DEFAULT:
+			metaDefaultLayer(cmd.cast<DefaultLayer>());
+			break;
 		default:
 			qWarning("Unhandled meta message type %d", cmd->type());
 		}
@@ -400,6 +403,13 @@ void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
 		m_userlist->getUsername(msg.contextId()),
 		msg.text()
 	);
+}
+
+void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
+{
+	m_layerlist->setDefaultLayer(msg.id());
+	if(!m_statetracker->hasParticipated())
+		emit layerAutoselectRequest(msg.id());
 }
 
 

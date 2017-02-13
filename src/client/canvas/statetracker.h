@@ -35,6 +35,7 @@ namespace protocol {
 	class LayerRetitle;
 	class LayerOrder;
 	class LayerDelete;
+	class DefaultLayer;
 	class ToolChange;
 	class PenMove;
 	class PenUp;
@@ -218,6 +219,9 @@ public:
 	 */
 	bool isLayerLocked(int id) const;
 
+	//! Has the local user participated in the session yet?
+	bool hasParticipated() const { return m_hasParticipated; }
+
 	StateTracker &operator=(const StateTracker&) = delete;
 
 	/**
@@ -273,6 +277,7 @@ private:
 	void handleLayerTitle(const protocol::LayerRetitle &cmd);
 	void handleLayerOrder(const protocol::LayerOrder &cmd);
 	void handleLayerDelete(const protocol::LayerDelete &cmd);
+	void handleLayerDefault(const protocol::DefaultLayer &cmd);
 	
 	// Drawing related commands
 	void handleToolChange(const protocol::ToolChange &cmd);
@@ -309,7 +314,7 @@ private:
 
 	bool m_fullhistory;
 	bool _showallmarkers;
-	bool _hasParticipated;
+	bool m_hasParticipated;
 
 	QList<protocol::MessagePtr> m_msgqueue;
 	QTimer *m_queuetimer;

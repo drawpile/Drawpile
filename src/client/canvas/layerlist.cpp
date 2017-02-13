@@ -30,7 +30,7 @@
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_myId(1)
+	: QAbstractListModel(parent), m_defaultLayer(0), m_myId(1)
 {
 }
 	
@@ -38,19 +38,20 @@ int LayerListModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _items.size();
+	return m_items.size();
 }
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < _items.size()) {
-		const LayerListItem &item = _items.at(index.row());
+	if(index.isValid() && index.row() >= 0 && index.row() < m_items.size()) {
+		const LayerListItem &item = m_items.at(index.row());
 
 		switch(role) {
 		case Qt::DisplayRole: return QVariant::fromValue(item);
 		case TitleRole:
 		case Qt::EditRole: return item.title;
 		case IdRole: return item.id;
+		case IsDefaultRole: return item.id == m_defaultLayer;
 		}
 	}
 	return QVariant();
@@ -88,7 +89,7 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 	if(ldata && ldata->source() == this) {
 		// note: if row is -1, the item was dropped on the parent element, which in the
 		// case of the list view means the empty area below the items.
-		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? _items.count() : row);
+		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? m_items.count() : row);
 	} else {
 		// TODO support new layer drops
 		qWarning() << "External layer drag&drop not supported";
@@ -99,13 +100,13 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 {
 	// Need at least two layers for this to make sense
-	const int count = _items.count();
+	const int count = m_items.count();
 	if(count < 2)
 		return;
 
 	QList<uint16_t> layers;
 	layers.reserve(count);
-	for(const LayerListItem &li : _items)
+	for(const LayerListItem &li : m_items)
 		layers.append(li.id);
 
 	if(newIdx>oldIdx)
@@ -123,8 +124,8 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 
 int LayerListModel::indexOf(int id) const
 {
-	for(int i=0;i<_items.size();++i)
-		if(_items.at(i).id == id)
+	for(int i=0;i<m_items.size();++i)
+		if(m_items.at(i).id == id)
 			return i;
 	return -1;
 }
@@ -141,14 +142,14 @@ bool LayerListModel::isLayerLockedFor(int layerId, int contextId) const
 {
 	int i = indexOf(layerId);
 	if(i>=0)
-		return _items.at(i).isLockedFor(contextId);
+		return m_items.at(i).isLockedFor(contextId);
 	return false;
 }
 
 void LayerListModel::createLayer(int id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	_items.insert(index, LayerListItem(id, title));
+	m_items.insert(index, LayerListItem(id, title));
 	endInsertRows();
 }
 
@@ -159,14 +160,17 @@ void LayerListModel::deleteLayer(int id)
 		return;
 
 	beginRemoveRows(QModelIndex(), row, row);
-	_items.remove(row);
+	if(m_defaultLayer == id)
+		m_defaultLayer = 0;
+	m_items.remove(row);
 	endRemoveRows();
 }
 
 void LayerListModel::clear()
 {
-	beginRemoveRows(QModelIndex(), 0, _items.size());
-	_items.clear();
+	beginRemoveRows(QModelIndex(), 0, m_items.size());
+	m_items.clear();
+	m_defaultLayer = 0;
 	endRemoveRows();
 }
 
@@ -176,7 +180,7 @@ void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mo
 	if(row<0)
 		return;
 
-	LayerListItem &item = _items[row];
+	LayerListItem &item = m_items[row];
 	item.opacity = opacity;
 	item.blend = blend;
 	const QModelIndex qmi = index(row);
@@ -189,7 +193,7 @@ void LayerListModel::retitleLayer(int id, const QString &title)
 	if(row<0)
 		return;
 
-	LayerListItem &item = _items[row];
+	LayerListItem &item = m_items[row];
 	item.title = title;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
@@ -201,7 +205,7 @@ void LayerListModel::setLayerHidden(int id, bool hidden)
 	if(row<0)
 		return;
 
-	LayerListItem &item = _items[row];
+	LayerListItem &item = m_items[row];
 	item.hidden = hidden;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
@@ -213,7 +217,7 @@ void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusiv
 	if(row<0)
 		return;
 
-	LayerListItem &item = _items[row];
+	LayerListItem &item = m_items[row];
 	item.locked = locked;
 	item.exclusive = exclusive;
 	const QModelIndex qmi = index(row);
@@ -222,11 +226,11 @@ void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusiv
 
 void LayerListModel::unlockAll()
 {
-	for(int i=0;i<_items.count();++i) {
-		_items[i].locked = false;
-		_items[i].exclusive.clear();
+	for(int i=0;i<m_items.count();++i) {
+		m_items[i].locked = false;
+		m_items[i].exclusive.clear();
 	}
-	emit dataChanged(index(0), index(_items.count()));
+	emit dataChanged(index(0), index(m_items.count()));
 }
 
 void LayerListModel::reorderLayers(QList<uint16_t> neworder)
@@ -234,29 +238,43 @@ void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 	QVector<LayerListItem> newitems;
 	for(int j=neworder.size()-1;j>=0;--j) {
 		const uint16_t id=neworder[j];
-		for(int i=0;i<_items.size();++i) {
-			if(_items[i].id == id) {
-				newitems << _items[i];
+		for(int i=0;i<m_items.size();++i) {
+			if(m_items[i].id == id) {
+				newitems << m_items[i];
 				break;
 			}
 		}
 	}
-	_items = newitems;
-	emit dataChanged(index(0), index(_items.size()));
+	m_items = newitems;
+	emit dataChanged(index(0), index(m_items.size()));
 	emit layersReordered();
 }
 
 void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 {
 	beginResetModel();
-	_items = items;
+	m_items = items;
 	endResetModel();
+}
+
+void LayerListModel::setDefaultLayer(int id)
+{
+	const int oldIdx = indexOf(m_defaultLayer);
+	if(oldIdx >= 0) {
+		emit dataChanged(index(oldIdx), index(oldIdx), QVector<int>() << IsDefaultRole);
+	}
+
+	m_defaultLayer = id;
+	const int newIdx = indexOf(id);
+	if(newIdx >= 0) {
+		emit dataChanged(index(newIdx), index(newIdx), QVector<int>() << IsDefaultRole);
+	}
 }
 
 const paintcore::Layer *LayerListModel::getLayerData(int id) const
 {
-	if(_getlayerfn)
-		return _getlayerfn(id);
+	if(m_getlayerfn)
+		return m_getlayerfn(id);
 	return nullptr;
 }
 
@@ -286,7 +304,7 @@ int LayerListModel::getAvailableLayerId() const
 {
 	const int prefix = m_myId << 8;
 	QList<int> takenIds;
-	for(const LayerListItem &item : _items) {
+	for(const LayerListItem &item : m_items) {
 		if((item.id & 0xff00) == prefix)
 			takenIds.append(item.id);
 	}
@@ -317,7 +335,7 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 	// Find the biggest suffix in the layer stack
 	int suffix = 0;
-	for(const LayerListItem &l : _items) {
+	for(const LayerListItem &l : m_items) {
 		auto m = suffixNumRe.match(l.title);
 		if(m.hasMatch()) {
 			if(l.title.startsWith(basename)) {

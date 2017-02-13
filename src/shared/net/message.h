@@ -51,6 +51,7 @@ enum MessageType {
 	MSG_USER_ACL,
 	MSG_LAYER_ACL,
 	MSG_SESSION_ACL,
+	MSG_LAYER_DEFAULT,
 
 	// Command messages (opaque)
 	MSG_UNDOPOINT=128,

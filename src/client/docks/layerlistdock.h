@@ -45,7 +45,8 @@ class LayerList : public QDockWidget
 {
 Q_OBJECT
 public:
-	LayerList(QWidget *parent=0);
+	LayerList(QWidget *parent=nullptr);
+	~LayerList();
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
@@ -83,6 +84,7 @@ private slots:
 	void duplicateLayer();
 	void deleteOrMergeSelected();
 	void deleteSelected();
+	void setSelectedDefault();
 	void mergeSelected();
 	void renameSelected();
 	void opacityAdjusted();
@@ -105,30 +107,31 @@ private:
 
 	QModelIndex currentSelection() const;
 
+	Ui_LayerBox *m_ui;
 	canvas::CanvasModel *m_canvas;
 	int m_selectedId;
-	Ui_LayerBox *_ui;
-	bool _noupdate;
-	LayerAclMenu *_aclmenu;
-	QMenu *_layermenu;
+	bool m_noupdate;
+	LayerAclMenu *m_aclmenu;
+	QMenu *m_layermenu;
 
-	QAction *_addLayerAction;
-	QAction *_duplicateLayerAction;
-	QAction *_deleteLayerAction;
-	QAction *_showNumbersAction;
+	QAction *m_addLayerAction;
+	QAction *m_duplicateLayerAction;
+	QAction *m_deleteLayerAction;
+	QAction *m_showNumbersAction;
 
-	QMenu *_viewMode;
+	QMenu *m_viewMode;
 
-	QAction *_menuInsertAction;
-	QAction *_menuHideAction;
-	QAction *_menuDeleteAction;
-	QAction *_menuMergeAction;
-	QAction *_menuRenameAction;
+	QAction *m_menuInsertAction;
+	QAction *m_menuHideAction;
+	QAction *m_menuDeleteAction;
+	QAction *m_menuMergeAction;
+	QAction *m_menuRenameAction;
+	QAction *m_menuDefaultAction;
 
 	bool m_op;
 	bool m_lockctrl;
 	bool m_ownlayers;
-	QTimer *_opacityUpdateTimer;
+	QTimer *m_opacityUpdateTimer;
 };
 
 }

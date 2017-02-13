@@ -193,6 +193,38 @@ private:
 	uint16_t m_flags;
 };
 
+/**
+ * @brief Set the default layer
+ *
+ * The default layer is the one new users default to when logging in.
+ * If no default layer is set, the newest layer will be selected by default.
+ */
+class DefaultLayer : public Message {
+public:
+	DefaultLayer(uint8_t ctx, uint16_t id)
+		: Message(MSG_LAYER_DEFAULT, ctx),
+		m_id(id)
+		{}
+
+	static DefaultLayer *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static DefaultLayer *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	uint16_t id() const { return m_id; }
+
+	bool isOpCommand() const { return true; }
+
+	QString messageName() const override { return QStringLiteral("defaultlayer"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
+
+private:
+	uint16_t m_id;
+};
+
+
 }
 
 #endif

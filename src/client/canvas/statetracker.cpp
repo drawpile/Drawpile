@@ -161,7 +161,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		m_myId(myId),
 		m_fullhistory(true),
 		_showallmarkers(false),
-		_hasParticipated(false),
+		m_hasParticipated(false),
 		m_isQueued(false)
 {
 	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
@@ -189,7 +189,7 @@ void StateTracker::reset()
 	m_savepoints.clear();
 	m_history.resetTo(m_history.end());
 	m_fullhistory = true;
-	_hasParticipated = false;
+	m_hasParticipated = false;
 	_localfork.clear();
 	m_layerlist->clear();
 }
@@ -470,7 +470,10 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 			cmd.title()
 		);
 
-		if(cmd.contextId() == localId() || !_hasParticipated)
+		// Auto-select layers we create
+		// During the startup phase, autoselect new layers or if a default one is set,
+		// just the default one.
+		if(cmd.contextId() == localId() || (!m_hasParticipated && (cmd.id() == m_layerlist->defaultLayer() || !m_layerlist->defaultLayer())))
 			emit layerAutoselectRequest(cmd.id());
 	}
 }
@@ -711,7 +714,7 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 	// sent by us. In practice, however, an UndoPoint is always sent
 	// when making changes so it is enough to set the flag here.
 	if(cmd.contextId() == localId())
-		_hasParticipated = true;
+		m_hasParticipated = true;
 }
 
 void StateTracker::handleUndo(protocol::Undo &cmd)

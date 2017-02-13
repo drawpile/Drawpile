@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -245,6 +245,43 @@ SessionACL *SessionACL::fromText(uint8_t ctx, const Kwargs &kwargs)
 		(locks.contains("ownlayers") ? LOCK_OWNLAYERS : 0) |
 		(locks.contains("images") ? LOCK_IMAGES : 0) |
 		(locks.contains("annotations") ? LOCK_ANNOTATIONS : 0)
+		);
+}
+
+DefaultLayer *DefaultLayer::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len != 2)
+		return nullptr;
+	return new DefaultLayer(
+		ctx,
+		qFromBigEndian<quint16>(data)
+	);
+}
+
+int DefaultLayer::payloadLength() const
+{
+	return 2;
+}
+
+int DefaultLayer::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	qToBigEndian(m_id, ptr); ptr += 2;
+	return ptr - data;
+}
+
+Kwargs DefaultLayer::kwargs() const
+{
+	Kwargs kw;
+	kw["id"] = text::idString(m_id);
+	return kw;
+}
+
+DefaultLayer *DefaultLayer::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new DefaultLayer(
+		ctx,
+		text::parseIdString16(kwargs["id"])
 		);
 }
 

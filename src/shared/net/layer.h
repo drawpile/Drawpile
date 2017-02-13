@@ -313,9 +313,8 @@ public:
 	uint16_t id() const { return m_id; }
 	uint8_t merge() const { return m_merge; }
 
-	bool isUndoable() const { return true; }
-	
 	QString messageName() const override { return QStringLiteral("deletelayer"); }
+
 protected:
 	int payloadLength() const override;
 	int serializePayload(uchar *data) const override;
@@ -329,3 +328,4 @@ private:
 }
 
 #endif
+

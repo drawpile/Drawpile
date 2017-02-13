@@ -60,6 +60,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
 	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
 	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
+	case MSG_LAYER_DEFAULT: return DefaultLayer::deserialize(ctx, data, len);
 
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);

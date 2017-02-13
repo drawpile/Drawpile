@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2016 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,45 +45,55 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), _noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), m_noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
 {
-	_ui = new Ui_LayerBox;
+	m_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
 	setWidget(w);
-	_ui->setupUi(w);
+	m_ui->setupUi(w);
 
 	setStyleSheet(defaultDockStylesheet());
 
-	_ui->layerlist->setDragEnabled(true);
-	_ui->layerlist->viewport()->setAcceptDrops(true);
-	_ui->layerlist->setEnabled(false);
-	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_ui->layerlist->setDragEnabled(true);
+	m_ui->layerlist->viewport()->setAcceptDrops(true);
+	m_ui->layerlist->setEnabled(false);
+	m_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
 	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode))
-		_ui->blendmode->addItem(bm.second, bm.first);
+		m_ui->blendmode->addItem(bm.second, bm.first);
 
 	// Layer menu
-	_layermenu = new QMenu(this);
-	_menuInsertAction = _layermenu->addAction(tr("Insert layer"), this, SLOT(insertLayer()));
-	_layermenu->addSeparator();
-	_menuHideAction = _layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
-	_menuHideAction->setCheckable(true);
-	_menuRenameAction = _layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
-	_menuMergeAction = _layermenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
-	_menuDeleteAction = _layermenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
+
+	m_layermenu = new QMenu(this);
+	m_menuInsertAction = m_layermenu->addAction(tr("Insert layer"), this, &LayerList::insertLayer);
+
+	m_layermenu->addSeparator();
+
+	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, &LayerList::hideSelected);
+	m_menuHideAction->setCheckable(true);
+
+	QActionGroup *makeDefault = new QActionGroup(this);
+	makeDefault->setExclusive(true);
+	m_menuDefaultAction = m_layermenu->addAction(tr("Default"), this, &LayerList::setSelectedDefault);
+	m_menuDefaultAction->setCheckable(true);
+	m_menuDefaultAction->setActionGroup(makeDefault);
+
+	m_menuRenameAction = m_layermenu->addAction(tr("Rename"), this, &LayerList::renameSelected);
+	m_menuMergeAction = m_layermenu->addAction(tr("Merge down"), this, &LayerList::mergeSelected);
+	m_menuDeleteAction = m_layermenu->addAction(tr("Delete"), this, &LayerList::deleteSelected);
 
 	// Layer ACL menu
-	_aclmenu = new LayerAclMenu(this);
-	_ui->lockButton->setMenu(_aclmenu);
+	m_aclmenu = new LayerAclMenu(this);
+	m_ui->lockButton->setMenu(m_aclmenu);
 
-	connect(_ui->layerlist, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(layerContextMenu(QPoint)));
+	connect(m_ui->layerlist, &QListView::customContextMenuRequested, this, &LayerList::layerContextMenu);
 
 	// Layer edit menu (hamburger button)
 	QMenu *boxmenu = new QMenu(this);
-	_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
-	_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
-	_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
+	m_addLayerAction = boxmenu->addAction(tr("New"), this, &LayerList::addLayer);
+	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, &LayerList::duplicateLayer);
+	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, &LayerList::deleteOrMergeSelected);
 
 	QActionGroup *viewmodes = new QActionGroup(this);
 	viewmodes->setExclusive(true);
@@ -101,44 +111,49 @@ LayerList::LayerList(QWidget *parent)
 	viewOnionDown->setProperty("viewmode", 2);
 
 	boxmenu->addSeparator();
-	_viewMode = boxmenu->addMenu(QString()); // title is set later
-	_viewMode->addActions(viewmodes->actions());
+	m_viewMode = boxmenu->addMenu(QString()); // title is set later
+	m_viewMode->addActions(viewmodes->actions());
 
-	_showNumbersAction = boxmenu->addAction(tr("Show numbers"));
-	_showNumbersAction->setCheckable(true);
+	m_showNumbersAction = boxmenu->addAction(tr("Show numbers"));
+	m_showNumbersAction->setCheckable(true);
 
-	_ui->menuButton->setMenu(boxmenu);
+	m_ui->menuButton->setMenu(boxmenu);
 
-	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
-	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
-	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
-	connect(_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
-	connect(_showNumbersAction, &QAction::triggered, this, &LayerList::showLayerNumbers);
+	connect(m_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
+	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
+	connect(m_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
+	connect(m_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
+	connect(m_showNumbersAction, &QAction::triggered, this, &LayerList::showLayerNumbers);
 
 	selectionChanged(QItemSelection());
 
 	// The opacity update timer is used to limit the rate of layer
 	// update messages sent over the network when the user drags or scrolls
 	// on the opacity slider.
-	_opacityUpdateTimer = new QTimer(this);
-	_opacityUpdateTimer->setSingleShot(true);
-	connect(_opacityUpdateTimer, SIGNAL(timeout()), this, SLOT(sendOpacityUpdate()));
+	m_opacityUpdateTimer = new QTimer(this);
+	m_opacityUpdateTimer->setSingleShot(true);
+	connect(m_opacityUpdateTimer, &QTimer::timeout, this, &LayerList::sendOpacityUpdate);
+}
+
+LayerList::~LayerList()
+{
+	delete m_ui;
 }
 
 void LayerList::setCanvas(canvas::CanvasModel *canvas)
 {
 	m_canvas = canvas;
-	_ui->layerlist->setModel(canvas->layerlist());
+	m_ui->layerlist->setModel(canvas->layerlist());
 
 	LayerListDelegate *del = new LayerListDelegate(this);
 	connect(del, &LayerListDelegate::layerCommand, [this](protocol::MessagePtr msg) {
 		msg->setContextId(m_canvas->localUserId());
 		emit layerCommand(msg);
 	});
-	connect(del, SIGNAL(toggleVisibility(int,bool)), this, SLOT(setLayerVisibility(int, bool)));
-	_ui->layerlist->setItemDelegate(del);
+	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
+	m_ui->layerlist->setItemDelegate(del);
 
-	_aclmenu->setUserList(canvas->userlist());
+	m_aclmenu->setUserList(canvas->userlist());
 
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::onLayerDelete);
@@ -147,17 +162,17 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
 	connect(canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
-	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Restore settings
 	QSettings cfg;
-	_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
-	del->setShowNumbers(_showNumbersAction->isChecked());
+	m_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
+	del->setShowNumbers(m_showNumbersAction->isChecked());
 
 	// Init
-	_ui->layerlist->setEnabled(true);
-	_viewMode->actions()[0]->setChecked(true);
-	layerViewModeTriggered(_viewMode->actions()[0]);
+	m_ui->layerlist->setEnabled(true);
+	m_viewMode->actions()[0]->setChecked(true);
+	layerViewModeTriggered(m_viewMode->actions()[0]);
 	setControlsLocked(false);
 }
 
@@ -183,8 +198,8 @@ void LayerList::updateLockedControls()
 {
 	bool enabled = m_canvas && m_canvas->aclFilter()->canUseLayerControls(currentLayer());
 
-	_addLayerAction->setEnabled(m_canvas && m_canvas->aclFilter()->canCreateLayer());
-	_menuInsertAction->setEnabled(enabled);
+	m_addLayerAction->setEnabled(m_canvas && m_canvas->aclFilter()->canCreateLayer());
+	m_menuInsertAction->setEnabled(enabled);
 
 	// Rest of the controls need a selection to work.
 	// If there is a selection, but the layer is locked, the controls
@@ -194,33 +209,34 @@ void LayerList::updateLockedControls()
 	else
 		enabled = false;
 
-	_ui->lockButton->setEnabled(
+	m_ui->lockButton->setEnabled(
 		m_op ||
 		(m_canvas && !m_canvas->isOnline()) ||
 		(m_ownlayers && m_canvas && (currentLayer()>>8) == m_canvas->localUserId())
 	);
-	_duplicateLayerAction->setEnabled(enabled);
-	_deleteLayerAction->setEnabled(enabled);
-	_ui->opacity->setEnabled(enabled);
-	_ui->blendmode->setEnabled(enabled);
+	m_duplicateLayerAction->setEnabled(enabled);
+	m_deleteLayerAction->setEnabled(enabled);
+	m_ui->opacity->setEnabled(enabled);
+	m_ui->blendmode->setEnabled(enabled);
 
-	_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
-	_menuDeleteAction->setEnabled(enabled);
-	_menuMergeAction->setEnabled(enabled && canMergeCurrent());
-	_menuRenameAction->setEnabled(enabled);
+	m_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
+	m_menuDeleteAction->setEnabled(enabled);
+	m_menuMergeAction->setEnabled(enabled && canMergeCurrent());
+	m_menuRenameAction->setEnabled(enabled);
+	m_menuDefaultAction->setEnabled(enabled && m_canvas->isOnline());
 }
 
 void LayerList::layerContextMenu(const QPoint &pos)
 {
-	QModelIndex index = _ui->layerlist->indexAt(pos);
+	QModelIndex index = m_ui->layerlist->indexAt(pos);
 	if(index.isValid()) {
-		_layermenu->popup(_ui->layerlist->mapToGlobal(pos));
+		m_layermenu->popup(m_ui->layerlist->mapToGlobal(pos));
 	}
 }
 
 void LayerList::selectLayer(int id)
 {
-	_ui->layerlist->selectionModel()->select(m_canvas->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	m_ui->layerlist->selectionModel()->select(m_canvas->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
 void LayerList::selectAbove()
@@ -228,7 +244,7 @@ void LayerList::selectAbove()
 	QModelIndex current = currentSelection();
 	QModelIndex prev = current.sibling(current.row() - 1, 0);
 	if(prev.isValid())
-		_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+		m_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
 void LayerList::selectBelow()
@@ -236,22 +252,22 @@ void LayerList::selectBelow()
 	QModelIndex current = currentSelection();
 	QModelIndex prev = current.sibling(current.row() + 1, 0);
 	if(prev.isValid())
-		_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+		m_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 }
 
 void LayerList::opacityAdjusted()
 {
 	// Avoid infinite loop
-	if(_noupdate)
+	if(m_noupdate)
 		return;
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		float opacity = _ui->opacity->value() / 255.0;
+		float opacity = m_ui->opacity->value() / 255.0;
 
 		m_canvas->layerlist()->previewOpacityChange(layer.id, opacity);
-		_opacityUpdateTimer->start(100);
+		m_opacityUpdateTimer->start(100);
 	}
 }
 
@@ -260,20 +276,20 @@ void LayerList::sendOpacityUpdate()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, _ui->opacity->value(), int(layer.blend))));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, m_ui->opacity->value(), int(layer.blend))));
 	}
 }
 
 void LayerList::blendModeChanged()
 {
 	// Avoid infinite loop
-	if(_noupdate)
+	if(m_noupdate)
 		return;
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, layer.opacity*255, _ui->blendmode->currentData().toInt())));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, layer.opacity*255, m_ui->blendmode->currentData().toInt())));
 	}
 }
 
@@ -281,7 +297,7 @@ void LayerList::hideSelected()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid())
-		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, _menuHideAction->isChecked());
+		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, m_menuHideAction->isChecked());
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
@@ -302,17 +318,17 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 
 void LayerList::layerViewModeTriggered(QAction *action)
 {
-	_viewMode->setTitle(tr("Mode:") + " " + action->text());
+	m_viewMode->setTitle(tr("Mode:") + " " + action->text());
 	emit layerViewModeSelected(action->property("viewmode").toInt());
 }
 
 void LayerList::showLayerNumbers(bool show)
 {
-	LayerListDelegate *del = static_cast<LayerListDelegate*>(_ui->layerlist->itemDelegate());
+	LayerListDelegate *del = static_cast<LayerListDelegate*>(m_ui->layerlist->itemDelegate());
 	del->setShowNumbers(show);
 
 	QSettings cfg;
-	cfg.setValue("setting/layernumbers", _showNumbersAction->isChecked());
+	cfg.setValue("setting/layernumbers", m_showNumbersAction->isChecked());
 
 }
 
@@ -321,7 +337,7 @@ void LayerList::showLayerNumbers(bool show)
  */
 void LayerList::addLayer()
 {
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -341,7 +357,7 @@ void LayerList::insertLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -358,7 +374,7 @@ void LayerList::duplicateLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(_ui->layerlist->model());
+	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -427,6 +443,15 @@ void LayerList::deleteSelected()
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, false)));
 }
 
+void LayerList::setSelectedDefault()
+{
+	QModelIndex index = currentSelection();
+	if(!index.isValid())
+		return;
+
+	emit layerCommand(protocol::MessagePtr(new protocol::DefaultLayer(m_canvas->localUserId(), index.data(canvas::LayerListModel::IdRole).toInt())));
+}
+
 void LayerList::mergeSelected()
 {
 	QModelIndex index = currentSelection();
@@ -443,7 +468,7 @@ void LayerList::renameSelected()
 	if(!index.isValid())
 		return;
 
-	_ui->layerlist->edit(index);
+	m_ui->layerlist->edit(index);
 }
 
 /**
@@ -453,7 +478,7 @@ void LayerList::onLayerCreate(const QModelIndex&, int, int)
 {
 	// Automatically select the first layer
 	if(m_canvas->layerlist()->rowCount()==1)
-		_ui->layerlist->selectionModel()->select(_ui->layerlist->model()->index(0,0), QItemSelectionModel::SelectCurrent);
+		m_ui->layerlist->selectionModel()->select(m_ui->layerlist->model()->index(0,0), QItemSelectionModel::SelectCurrent);
 }
 
 /**
@@ -482,7 +507,7 @@ void LayerList::onLayerReorder()
 
 QModelIndex LayerList::currentSelection() const
 {
-	QModelIndexList sel = _ui->layerlist->selectionModel()->selectedIndexes();
+	QModelIndexList sel = m_ui->layerlist->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
 		return QModelIndex();
 	return sel.first();
@@ -498,7 +523,7 @@ bool LayerList::isCurrentLayerLocked() const
 	if(!m_canvas)
 		return false;
 
-	QModelIndexList idx = _ui->layerlist->selectionModel()->selectedIndexes();
+	QModelIndexList idx = m_ui->layerlist->selectionModel()->selectedIndexes();
 	if(!idx.isEmpty()) {
 		const canvas::LayerListItem &item = idx.at(0).data().value<canvas::LayerListItem>();
 		return item.hidden || item.isLockedFor(m_canvas->localUserId());
@@ -528,26 +553,27 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
-		_noupdate = true;
-		_menuHideAction->setChecked(layer.hidden);
-		_ui->opacity->setValue(layer.opacity * 255);
+		m_noupdate = true;
+		m_menuHideAction->setChecked(layer.hidden);
+		m_menuDefaultAction->setChecked(currentSelection().data(canvas::LayerListModel::IsDefaultRole).toBool());
+		m_ui->opacity->setValue(layer.opacity * 255);
 
-		int blendmode = _ui->blendmode->currentData().toInt();
+		int blendmode = m_ui->blendmode->currentData().toInt();
 		if(blendmode != layer.blend) {
-			for(int i=0;i<_ui->blendmode->count();++i) {
-				if(_ui->blendmode->itemData(i).toInt() == layer.blend) {
-				_ui->blendmode->setCurrentIndex(i);
+			for(int i=0;i<m_ui->blendmode->count();++i) {
+				if(m_ui->blendmode->itemData(i).toInt() == layer.blend) {
+				m_ui->blendmode->setCurrentIndex(i);
 				break;
 				}
 			}
 		}
 
-		_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
-		_aclmenu->setAcl(layer.locked, layer.exclusive);
+		m_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
+		m_aclmenu->setAcl(layer.locked, layer.exclusive);
 		updateLockedControls();
 		// TODO use change flags to detect if this really changed
 		emit activeLayerVisibilityChanged();
-		_noupdate = false;
+		m_noupdate = false;
 	}
 }
 

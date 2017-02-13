@@ -81,6 +81,7 @@ public:
 	enum LayerListRoles {
 		IdRole = Qt::UserRole + 1,
 		TitleRole,
+		IsDefaultRole,
 	};
 
 	LayerListModel(QObject *parent=0);
@@ -106,16 +107,23 @@ public:
 
 	bool isLayerLockedFor(int layerId, int contextId) const;
 	
-	QVector<LayerListItem> getLayers() const { return _items; }
+	QVector<LayerListItem> getLayers() const { return m_items; }
 	void setLayers(const QVector<LayerListItem> &items);
 
 	void previewOpacityChange(int id, float opacity);
 
-	void setLayerGetter(GetLayerFunction fn) { _getlayerfn = fn; }
+	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	const paintcore::Layer *getLayerData(int id) const;
 
 	int myId() const { return m_myId; }
 	void setMyId(int id) { m_myId = id; }
+
+	/**
+	 * @brief Get the default layer to select when logging in
+	 * Zero means no default.
+	 */
+	int defaultLayer() const { return m_defaultLayer; }
+	void setDefaultLayer(int id);
 
 	/**
 	 * @brief Find a free layer ID
@@ -147,8 +155,9 @@ private:
 
 	int indexOf(int id) const;
 	
-	QVector<LayerListItem> _items;
-	GetLayerFunction _getlayerfn;
+	QVector<LayerListItem> m_items;
+	GetLayerFunction m_getlayerfn;
+	int m_defaultLayer;
 	int m_myId;
 };
 

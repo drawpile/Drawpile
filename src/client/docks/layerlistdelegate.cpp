@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,6 +64,10 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		title = QString("%1 - %2").arg(index.model()->rowCount() - index.row() - 1).arg(layer.title);
 	else
 		title = layer.title;
+
+	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
+		opt.font.setUnderline(true);
+	}
 
 	drawDisplay(painter, opt, textrect, title);
 
