@@ -436,7 +436,7 @@ private slots:
 
 	void refreshAnnouncements();
 	void sessionAnnounced(const sessionlisting::Announcement &announcement);
-	void sessionAnnouncementError(const QString &apiUrl);
+	void sessionAnnouncementError(const QString &apiUrl, const QString &message);
 
 private:
 	sessionlisting::AnnouncementApi *publicListingClient();

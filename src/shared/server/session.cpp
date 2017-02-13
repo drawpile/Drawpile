@@ -743,6 +743,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
+			log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
 			this->messageAll(message, false);
 		});
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::logMessage, this, &Session::log);
@@ -841,14 +842,16 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 		}
 	}
 
+	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
 	m_history->addAnnouncement(announcement.apiUrl.toString());
 	m_publicListings << announcement;
 	sendUpdatedAnnouncementList();
 }
 
-void Session::sessionAnnouncementError(const QString &apiUrl)
+void Session::sessionAnnouncementError(const QString &apiUrl, const QString &error)
 {
 	// Remove listing on error
+	log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
 	unlistAnnouncement(apiUrl, true, true);
 }
 
