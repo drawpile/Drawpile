@@ -402,6 +402,7 @@ void FiledHistory::terminate()
 
 	if(m_archive) {
 		m_journal->rename(m_journal->fileName() + ".archived");
+		m_recording->rename(m_recording->fileName() + ".archived");
 	} else {
 		m_recording->remove();
 		m_journal->remove();
@@ -561,12 +562,20 @@ void FiledHistory::historyAdd(const protocol::MessagePtr &msg)
 
 void FiledHistory::historyReset(const QList<protocol::MessagePtr> &newHistory)
 {
-	m_recording->close();
-	if(!m_archive)
-		m_recording->remove();
-	delete m_recording;
+	QFile *oldRecording = m_recording;
+	oldRecording->close();
+
+	m_recording = nullptr;
 	m_blocks.clear();
 	initRecording();
+
+	// Remove old recording after the new one has been created so
+	// that the new file will not have the same name.
+	if(m_archive)
+		oldRecording->rename(oldRecording->fileName() + ".archived");
+	else
+		oldRecording->remove();
+	delete oldRecording;
 
 	for(const protocol::MessagePtr &msg : newHistory)
 		historyAdd(msg);
