@@ -20,6 +20,7 @@
 #include "announcementapi.h"
 #include "networkaccess.h"
 #include "../server/serverlog.h"
+#include "config.h" // for DRAWPILE_VERSION
 
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -34,6 +35,7 @@ using server::Log;
 
 static const char *PROP_APIURL = "APIURL";        // The base API URL of the request
 static const char *PROP_SESSION_ID = "SESSIONID"; // The ID of the session being announced or unlisted
+static const char *USER_AGENT = "DrawpileListingClient/" DRAWPILE_VERSION;
 
 class ResponseError {
 public:
@@ -60,6 +62,8 @@ void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message("Getting API info from " + apiUrl.toString()));
 
 	QNetworkRequest req(apiUrl);
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->setProperty(PROP_APIURL, apiUrl);
 	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleServerInfoResponse);} );
@@ -113,6 +117,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	url.setPath(slashcat(url.path(), "sessions/"));
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
 
 	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	reply->setProperty(PROP_APIURL, apiUrl);
@@ -140,6 +145,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
@@ -155,6 +161,7 @@ void AnnouncementApi::unlistSession(const Announcement &a)
 	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
 	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	QNetworkReply *reply = networkaccess::getInstance()->deleteResource(req);
