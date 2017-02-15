@@ -38,6 +38,8 @@ namespace recording {
 	class Writer;
 }
 
+class QTimer;
+
 namespace server {
 
 class Client;
@@ -469,6 +471,7 @@ private:
 
 	QList<sessionlisting::Announcement> m_publicListings;
 	sessionlisting::AnnouncementApi *m_publicListingClient;
+	QTimer *m_refreshTimer;
 
 	QDateTime m_lastEventTime;
 

@@ -46,6 +46,7 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_history(history),
 	m_resetstreamsize(0),
 	m_publicListingClient(nullptr),
+	m_refreshTimer(nullptr),
 	m_lastEventTime(QDateTime::currentDateTime()),
 	m_closed(false),
 	m_historyLimitWarningSent(false)
@@ -748,10 +749,10 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 		});
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::logMessage, this, &Session::log);
 
-		QTimer *refreshTimer = new QTimer(this);
-		connect(refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
-		refreshTimer->setInterval(1000 * 60 * 5);
-		refreshTimer->start(refreshTimer->interval());
+		m_refreshTimer = new QTimer(this);
+		m_refreshTimer->setSingleShot(true);
+		m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
+		connect(m_refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
 	}
 
 	return m_publicListingClient;
@@ -814,6 +815,7 @@ void Session::unlistAnnouncement(const QString &url, bool terminate, bool remove
 void Session::refreshAnnouncements()
 {
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
+	int timeout = 0;
 
 	for(const sessionlisting::Announcement &a : m_publicListings) {
 		m_publicListingClient->refreshSession(a, {
@@ -829,6 +831,11 @@ void Session::refreshAnnouncements()
 			founder(),
 			sessionStartTime()
 		});
+		timeout = qMax(timeout, a.refreshInterval);
+	}
+
+	if(timeout > 0) {
+		m_refreshTimer->start(timeout * 60 * 1000);
 	}
 }
 
@@ -846,6 +853,10 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 	m_history->addAnnouncement(announcement.apiUrl.toString());
 	m_publicListings << announcement;
 	sendUpdatedAnnouncementList();
+
+	int timeout = announcement.refreshInterval * 60 * 1000;
+	if(!m_refreshTimer->isActive() || m_refreshTimer->remainingTime() > timeout)
+		m_refreshTimer->start(timeout);
 }
 
 void Session::sessionAnnouncementError(const QString &apiUrl, const QString &error)

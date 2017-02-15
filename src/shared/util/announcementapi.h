@@ -66,6 +66,7 @@ struct Announcement {
 	QString id;
 	QString updateKey;
 	int listingId;
+	int refreshInterval;
 };
 
 /**

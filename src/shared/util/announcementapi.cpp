@@ -177,7 +177,7 @@ void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::Hand
 
 	try {
 		if(reply->error() != QNetworkReply::NoError)
-			throw ResponseError(reply->errorString());
+			throw ResponseError(QStringLiteral("Network error: ") + reply->errorString());
 
 		// TODO handle redirects
 
@@ -187,7 +187,7 @@ void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::Hand
 		emit logMessage(Log().about(Log::Level::Error, Log::Topic::PubList).message("Announcement API error: " + e.error));
 		emit error(reply->property(PROP_APIURL).toString(), "Session announcement: " + e.error);
 #ifndef NDEBUG
-		qDebug("Announcement API error: %s", reply->readAll().constData());
+		qDebug("Announcement API error: %s\n%s", qPrintable(e.error), reply->readAll().constData());
 #endif
 	}
 
@@ -207,6 +207,9 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 	a.id = reply->property(PROP_SESSION_ID).toString();
 	a.updateKey = doc.object()["key"].toString();
 	a.listingId = doc.object()["id"].toInt();
+	a.refreshInterval = qMax(2, doc.object()["expires"].toInt(6)) - 1;
+
+	qDebug("Announcement server %s refresh interval is %d minutes.", qPrintable(a.apiUrl.toString()), a.refreshInterval);
 
 	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Announced session %2. Got listing ID %1").arg(a.listingId).arg(a.id)));
 
