@@ -1996,9 +1996,9 @@ void MainWindow::setupActions()
 	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
 
 	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill selection"), QString(), QKeySequence(CTRL_KEY "+,"));
-	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
-	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color erase selection"), QString(), QKeySequence("Shift+Delete"));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill Selection"), QString(), QKeySequence(CTRL_KEY "+,"));
+	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor Selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
+	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color Erase Selection"), QString(), QKeySequence("Shift+Delete"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
@@ -2211,7 +2211,7 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
-	QMenu *userpointermenu = viewmenu->addMenu(tr("User &pointers"));
+	QMenu *userpointermenu = viewmenu->addMenu(tr("User Pointers"));
 	userpointermenu->addAction(showusermarkers);
 	userpointermenu->addAction(showuserlayers);
 	userpointermenu->addAction(showlasers);
@@ -2237,10 +2237,10 @@ void MainWindow::setupActions()
 	sessionSettings->setEnabled(false);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
-	QAction *gainop = makeAction("gainop", 0, tr("Become operator..."));
+	QAction *gainop = makeAction("gainop", 0, tr("Become Operator..."));
 	gainop->setEnabled(false);
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the Board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
+	QAction *locksession = makeAction("locksession", 0, tr("Lock Everything"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 
 	m_admintools->addAction(locksession);
 	m_admintools->addAction(resetsession);

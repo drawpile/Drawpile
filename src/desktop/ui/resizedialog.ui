@@ -45,7 +45,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>×</string>
+        <string notr="true">×</string>
        </property>
        <property name="buddy">
         <cstring>height</cstring>
@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item>
-    <widget class="ResizerWidget" name="resizer" native="true">
+    <widget class="ResizerWidget" name="resizer">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>

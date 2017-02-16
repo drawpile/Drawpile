@@ -1,5 +1,5 @@
 for ts in *.ts
 do
-lupdate .. -recursive -no-obsolete -ts "$ts"
+lupdate ../../client ../../desktop/ -recursive -no-obsolete -ts "$ts"
 done
 
