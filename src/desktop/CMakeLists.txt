@@ -166,7 +166,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"Drawpile client"
 		${WEBSITE}
-		"2006-2015 Calle Laakkonen"
+		"2006-2017 Calle Laakkonen"
 		${DRAWPILE_VERSION}
 		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico"
 	)
@@ -188,7 +188,7 @@ IF ( APPLE )
 	add_custom_target( appbundle ALL
 		COMMAND mkdir -p "${ResourcesDir}/i18n"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
-		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/*.qm" "${ResourcesDir}/i18n"
+		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../client/*.qm" "${ResourcesDir}/i18n"
 		COMMAND mkdir -p "${ResourcesDir}/palettes"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/palettes/*.gpl" "${ResourcesDir}/palettes"
 		COMMAND mkdir -p "${ResourcesDir}/sounds"
