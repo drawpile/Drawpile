@@ -49,7 +49,7 @@ int Index::findClosestSnapshot(unsigned int pos) const
 bool Index::writeIndex(QIODevice *out) const
 {
 	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_6);
+	ds.setVersion(QDataStream::Qt_5_5);
 
 	// Write index format version
 	ds << INDEX_VERSION;
@@ -75,7 +75,7 @@ bool Index::writeIndex(QIODevice *out) const
 bool Index::readIndex(QIODevice *out)
 {
 	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_6);
+	ds.setVersion(QDataStream::Qt_5_5);
 
 	// Read version
 	quint16 version;

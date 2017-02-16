@@ -68,9 +68,14 @@ TrayIcon::TrayIcon()
 	  m_needIconRefresh(true)
 {
 	QMenu *menu = new QMenu;
-	menu->addAction(tr("Show"), &MainWindow::showDefaultInstance);
-	menu->addAction(tr("Remote..."), this, &TrayIcon::openRemote);
-	menu->addAction(tr("Quit"), this, &TrayIcon::quitServer);
+	QAction *showAction = menu->addAction(tr("Show"));
+	QAction *remoteAction = menu->addAction(tr("Remote..."));
+	QAction *quitAction = menu->addAction(tr("Quit"));
+
+	// In Qt 5.6 and up we can just do addAction(title, &functor)
+	connect(showAction, &QAction::triggered, &MainWindow::showDefaultInstance);
+	connect(remoteAction, &QAction::triggered, this, &TrayIcon::openRemote);
+	connect(quitAction, &QAction::triggered, this, &TrayIcon::quitServer);
 
 	setContextMenu(menu);
 

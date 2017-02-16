@@ -66,22 +66,22 @@ LayerList::LayerList(QWidget *parent)
 	// Layer menu
 
 	m_layermenu = new QMenu(this);
-	m_menuInsertAction = m_layermenu->addAction(tr("Insert layer"), this, &LayerList::insertLayer);
+	m_menuInsertAction = m_layermenu->addAction(tr("Insert layer"), this, SLOT(insertLayer()));
 
 	m_layermenu->addSeparator();
 
-	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, &LayerList::hideSelected);
+	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
 	m_menuHideAction->setCheckable(true);
 
 	QActionGroup *makeDefault = new QActionGroup(this);
 	makeDefault->setExclusive(true);
-	m_menuDefaultAction = m_layermenu->addAction(tr("Default"), this, &LayerList::setSelectedDefault);
+	m_menuDefaultAction = m_layermenu->addAction(tr("Default"), this, SLOT(setSelectedDefault()));
 	m_menuDefaultAction->setCheckable(true);
 	m_menuDefaultAction->setActionGroup(makeDefault);
 
-	m_menuRenameAction = m_layermenu->addAction(tr("Rename"), this, &LayerList::renameSelected);
-	m_menuMergeAction = m_layermenu->addAction(tr("Merge down"), this, &LayerList::mergeSelected);
-	m_menuDeleteAction = m_layermenu->addAction(tr("Delete"), this, &LayerList::deleteSelected);
+	m_menuRenameAction = m_layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
+	m_menuMergeAction = m_layermenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
+	m_menuDeleteAction = m_layermenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -91,9 +91,9 @@ LayerList::LayerList(QWidget *parent)
 
 	// Layer edit menu (hamburger button)
 	QMenu *boxmenu = new QMenu(this);
-	m_addLayerAction = boxmenu->addAction(tr("New"), this, &LayerList::addLayer);
-	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, &LayerList::duplicateLayer);
-	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, &LayerList::deleteOrMergeSelected);
+	m_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
+	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer));
+	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected));
 
 	QActionGroup *viewmodes = new QActionGroup(this);
 	viewmodes->setExclusive(true);

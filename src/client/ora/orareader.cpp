@@ -399,8 +399,8 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 	// Create layers
 	// Note: layers are stored topmost first in ORA, but we create them bottom-most first
 	int layerId = ctxId << 8;
-	for(auto i=canvas.layers.crbegin();i!=canvas.layers.crend();++i) {
-		const Layer &layer = *i;
+	for(int i=canvas.layers.size()-1;i>=0;--i) {
+		const Layer &layer = canvas.layers[i];
 		QImage content;
 		{
 			QByteArray image = utils::getArchiveFile(zip, layer.src);
