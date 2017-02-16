@@ -209,9 +209,11 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		// Message stream contains (starts with) a snapshot: use it
 		snapshot = m_statetracker->getHistory().toList();
 
+		// Add default layer selection
+		if(m_layerlist->defaultLayer() > 0)
+			snapshot.prepend(protocol::MessagePtr(new protocol::DefaultLayer(m_statetracker->localId(), m_layerlist->defaultLayer())));
+
 		// Add layer ACL status
-		// This is for the initial session snapshot. For new snapshots the
-		// server will add the correct layer ACLs.
 		for(const LayerListItem &layer : m_layerlist->getLayers()) {
 			if(layer.isLockedFor(m_statetracker->localId()))
 				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));

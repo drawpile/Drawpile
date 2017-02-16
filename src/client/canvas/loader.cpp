@@ -22,6 +22,7 @@
 #include "net/commands.h"
 #include "ora/orareader.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/layerlist.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -124,6 +125,10 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Most important bit first: canvas initialization
 	const QSize imgsize = m_layers->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(m_contextId, 0, imgsize.width(), imgsize.height(), 0)));
+
+	// Preset default layer
+	if(m_session && m_session->layerlist()->defaultLayer()>0)
+		msgs.append(MessagePtr(new protocol::DefaultLayer(m_contextId, m_session->layerlist()->defaultLayer())));
 
 	// Create layers
 	for(int i=0;i<m_layers->layerCount();++i) {

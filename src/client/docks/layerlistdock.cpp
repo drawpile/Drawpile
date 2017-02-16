@@ -223,7 +223,7 @@ void LayerList::updateLockedControls()
 	m_menuDeleteAction->setEnabled(enabled);
 	m_menuMergeAction->setEnabled(enabled && canMergeCurrent());
 	m_menuRenameAction->setEnabled(enabled);
-	m_menuDefaultAction->setEnabled(enabled && m_canvas->isOnline());
+	m_menuDefaultAction->setEnabled(enabled);
 }
 
 void LayerList::layerContextMenu(const QPoint &pos)
