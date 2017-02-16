@@ -11,7 +11,7 @@
 .\" You should have received a copy of the GNU General Public License
 .\" along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 .
-.TH DRAWPILE-SRV 1 "2014" "drawpile-srv" "Drawpile standalone serverr"
+.TH DRAWPILE-SRV 1 "2017" "drawpile-srv" "Drawpile standalone server"
 .
 .SH NAME
 drawpile-srv \- Drawpile server
@@ -33,8 +33,8 @@ show help text
 .BR --version , \ -v
 prints program version number
 .TP
-.BR --verbose , \ -V
-print extra debugging information
+.BR --gui\ 
+run in graphical mode (used with GUI specific command line arguments)
 .TP
 .BR --port , \ -p\  port
 listen on the specified port instead of the default.
@@ -43,40 +43,16 @@ listen on the specified port instead of the default.
 bind to the specified address. If no listening address is specified,
 drawpile-srv will listen on all addresses.
 .TP
-.BR --history-limit\  size
-limit session history to given size (in megabytes.) Once size is exceeded,
-the session history will be replaced with a snapshot of the current canvas
-contents. Note: to avoid resetting the history too often, the size should be at
-least bigger than the typical image when saved as a PNG image.
+.BR --local-addr\  address
+local server hostname to use in session announcement
 .TP
 .BR --record , \ -r\  filename\ pattern
 record sessions to files. Placeholders in the filename pattern will be expanded
 to generate the actual filename. If a directory is given, a default filename pattern
 will be used. The placeholders %d (date), %t (time) and %i (session ID) are supported.
 .TP
-.BR --split-recording
-start a new recording at every snapshot. Usually, a history limit should be set too.
-.TP
-.BR --host-password\  password
-set the session hosting password. If set, this password must be entered to host a session.
-.TP
-.BR --sessions\  count
-set session limit. This is the maximum number of sessions that can be active at the same time.
-.TP
-.BR --title , \ -t\  title
-set server title. The title is shown in the session selector dialog. Linebreaks are supported and
-URLs will be turned into clickable links.
-.TP
-.BR --welcome-message\  message
-set a welcome (chat) message that is sent to users joining sessions on this server.
-.TP
-.BR --persistent , \ -P
-enable persistent sessions. Non-persistent sessions will be deleted immediately
-when the last user leaves.
-.TP
-.BR --expire\  time
-expire vacant sessions after the given time. Time can be given in seconds (3600),
-minutes (60m), hours (1h) or days (0.04d)
+.BR --sessions\  path
+where to store file backed sessions. If not specified, sessions are kept in memory.
 .TP
 .BR --ssl-cert\  cert.pem
 select SSL certificate file.
@@ -89,38 +65,23 @@ to enable SSL support.
 .BR --secure , \ -S
 strict security mode. When this flag is set, clients must use SSL to log in.
 .TP
-.BR --hibernation\  directory
-enable session hibernation. Persistent sessions will be saved to the given directory when the
-server is shut down. A hibernated session will be restored on demand when a user tries to join one.
+.BR --database\  path
+the configuration database to use
 .TP
-.BR --hibernate-all
-hibernate even non-persistent sessions on exit. A hibernated session behaves like a persistent session
-until it is woken up again.
+.BR --config , \ -c \  path
+the configuration file to use. Mutually exclusive with --database.
 .TP
-.BR --auto-hibernate
-hibernate persistent sessions upon expiration instead of deleting them. Use together with
-.B --expire
+.BR --templates , \ -t\  path
+where to look for session templates
 .TP
-.BR --userfile\  path
-set the user credential file to use. If set, users listed in the file must authenticate to log in.
+.BR --web-admin-port\  port  
+enable web admin API and listen on this port
 .TP
-.BR --announce-whitelist\  path
-set the session announcement server whitelist to use. If not set, all server URLs are allowed. The file is a text
-file with one regular expression that matches an URL per line. Lines beginning with '#' are comments.
+.BR --web-admin-auth\  username:password  
+enable HTTP BASIC Authentication on web admin API
 .TP
-.BR --announce-local-addr\  address
-set the address of this server to use when announcing sessions.
-.TP
-.BR --banlist\  path
-set the IP ban list file. The is a text file with one IP address per line. Lines beginning with '#' are comments.
-A subnet mask (e.g. "192.168.1.1/24") can be included.
-.TP
-.BR --no-guests
-all users must authenticate to log in. A userfile must have been set.
-.TP
-.BR --config , \ -c\  filename
-load configuration file. All parameters can also be set in the configuration file.
-Parameters set on the command line override those in the file.
+.BR --web-admin-access\  address/subnet|all 
+allow access to web admin API from hosts other than localhost
 
 .
 .SH SOCKET ACTIVATION
@@ -136,7 +97,8 @@ Written by Calle Laakkonen <laakkonenc@gmail.com>.
 .
 .SH COPYRIGHT
 .
-Copyright \(co 2013-2014 Calle Laakkonen <laakkonenc@gmail.com>
+Copyright \(co 2013-2017 Calle Laakkonen <laakkonenc@gmail.com>
 .br
 This is Free Software; this software is licensed under the GPL version 3, as published by the Free Software Foundation.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
