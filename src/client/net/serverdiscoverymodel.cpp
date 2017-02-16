@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QUrl>
 #include <QDebug>
 
@@ -54,7 +54,7 @@ int ServerDiscoveryModel::columnCount(const QModelIndex &parent) const
 static QString ageString(const qint64 seconds)
 {
 	const int minutes = seconds / 60;
-	return QApplication::tr("%1h %2m").arg(minutes/60).arg(minutes%60);
+	return QGuiApplication::tr("%1h %2m").arg(minutes/60).arg(minutes%60);
 }
 
 QVariant ServerDiscoveryModel::data(const QModelIndex &index, int role) const

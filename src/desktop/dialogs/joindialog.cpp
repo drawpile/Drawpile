@@ -19,8 +19,8 @@
 
 #include "joindialog.h"
 #include "sessionlistingdialog.h"
-#include "../utils/mandatoryfields.h"
-#include "../utils/usernamevalidator.h"
+#include "utils/mandatoryfields.h"
+#include "utils/usernamevalidator.h"
 
 #include "ui_joindialog.h"
 

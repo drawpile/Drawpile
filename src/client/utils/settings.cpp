@@ -19,10 +19,10 @@
 
 #include "settings.h"
 
-#include <QSettings>
+#include <QGuiApplication>
 #include <QStandardPaths>
+#include <QSettings>
 #include <QDir>
-#include <QApplication>
 
 namespace utils {
 namespace settings {

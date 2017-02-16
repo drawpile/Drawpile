@@ -18,7 +18,7 @@
 */
 
 #include "resetdialog.h"
-#include "../canvas/statetracker.h"
+#include "canvas/statetracker.h"
 #include "core/layerstack.h"
 
 #include "ui_resetsession.h"

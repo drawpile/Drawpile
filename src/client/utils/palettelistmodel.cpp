@@ -23,7 +23,6 @@
 #include "utils/settings.h"
 
 #include <QDebug>
-#include <QApplication>
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDir>

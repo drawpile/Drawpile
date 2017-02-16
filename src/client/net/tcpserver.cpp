@@ -28,7 +28,6 @@
 #include <QSslSocket>
 #include <QSslConfiguration>
 #include <QSettings>
-#include <QApplication>
 
 namespace net {
 

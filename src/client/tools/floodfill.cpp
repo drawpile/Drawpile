@@ -19,9 +19,7 @@
 
 #include "tools/toolcontroller.h"
 #include "tools/floodfill.h"
-#include "toolwidgets/toolsettings.h"
 
-#include "docks/toolsettingsdock.h"
 #include "core/floodfill.h"
 #include "canvas/canvasmodel.h"
 #include "net/client.h"
@@ -29,7 +27,8 @@
 
 #include "../shared/net/undo.h"
 
-#include <QApplication>
+#include <QGuiApplication>
+#include <QPixmap>
 
 namespace tools {
 
@@ -44,7 +43,7 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	Q_UNUSED(zoom);
 	QColor color = owner.activeBrush().color();
 
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 	paintcore::FillResult fill = paintcore::floodfill(
 		owner.model()->layerStack(),
@@ -58,7 +57,7 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	fill = paintcore::expandFill(fill, m_expansion, color);
 
 	if(fill.image.isNull()) {
-		QApplication::restoreOverrideCursor();
+		QGuiApplication::restoreOverrideCursor();
 		return;
 	}
 
@@ -83,7 +82,7 @@ void FloodFill::begin(const paintcore::Point &point, float zoom)
 	msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
 	owner.client()->sendMessages(msgs);
 
-	QApplication::restoreOverrideCursor();
+	QGuiApplication::restoreOverrideCursor();
 }
 
 void FloodFill::motion(const paintcore::Point &point, bool constrain, bool center)

@@ -26,7 +26,6 @@
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
 
-#include "notifications.h"
 #include "canvas/statetracker.h"
 #include "canvas/canvasmodel.h"
 
@@ -163,7 +162,8 @@ void PlaybackController::nextCommands(int stepCount)
 			if(m_play) {
 				if(msg->type() == protocol::MSG_MARKER && m_stopOnMarkers) {
 					setPlaying(false);
-					notification::playSound(notification::Event::MARKER);
+					// TODO move to client shell
+					//notification::playSound(notification::Event::MARKER);
 				} else {
 					if(stepCount==1)
 						m_timer->start(int(qMax(1.0, 33.0 / m_speedFactor) + 0.5));

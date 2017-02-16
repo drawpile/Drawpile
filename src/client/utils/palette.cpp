@@ -19,7 +19,6 @@
 
 #include "palette.h"
 
-#include <QApplication>
 #include <QDebug>
 #include <QVariant>
 #include <QColor>

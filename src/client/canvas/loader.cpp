@@ -33,7 +33,7 @@
 #include "../shared/net/image.h"
 
 #include <QDebug>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QImage>
 #include <QImageReader>
 
@@ -46,8 +46,8 @@ QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, _color.rgba(), 0, QApplication::tr("Background"))));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, 0, 0, QApplication::tr("Foreground"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, _color.rgba(), 0, QGuiApplication::tr("Background"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, 0, 0, QGuiApplication::tr("Foreground"))));
 	return msgs;
 }
 
@@ -64,11 +64,11 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 		}
 
 		if(ora.warnings != openraster::OraResult::NO_WARNINGS) {
-			QString text = QApplication::tr("Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
+			QString text = QGuiApplication::tr("Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
 			if((ora.warnings & openraster::OraResult::ORA_EXTENDED))
-				text += "\n- " + QApplication::tr("Application specific extensions are used");
+				text += "\n- " + QGuiApplication::tr("Application specific extensions are used");
 			if((ora.warnings & openraster::OraResult::ORA_NESTED))
-				text += "\n- " + QApplication::tr("Nested layers are not fully supported.");
+				text += "\n- " + QGuiApplication::tr("Nested layers are not fully supported.");
 
 			m_warning = text;
 		}

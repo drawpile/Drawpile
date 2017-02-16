@@ -29,7 +29,7 @@
 #include "utils/archive.h"
 #include "utils/images.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QImage>
 #include <QXmlStreamReader>
 #include <QDebug>
@@ -377,13 +377,13 @@ static bool readStackImage(QXmlStreamReader &reader, Canvas &canvas)
 static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 {
 	if(canvas.size.isEmpty())
-		return QApplication::tr("Image has zero size!");
+		return QGuiApplication::tr("Image has zero size!");
 
 	if(!utils::checkImageSize(canvas.size))
-		return QApplication::tr("Image is too big!");
+		return QGuiApplication::tr("Image is too big!");
 
 	if(canvas.layers.isEmpty())
-		return QApplication::tr("No layers found!");
+		return QGuiApplication::tr("No layers found!");
 
 	OraResult result;
 	if(canvas.extensionsWarning)
@@ -405,7 +405,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		{
 			QByteArray image = utils::getArchiveFile(zip, layer.src);
 			if(image.isNull() || !content.loadFromData(image)) {
-				return QApplication::tr("Couldn't load layer %1").arg(layer.src);
+				return QGuiApplication::tr("Couldn't load layer %1").arg(layer.src);
 			}
 		}
 
@@ -487,7 +487,7 @@ OraResult loadOpenRaster(const QString &filename)
 
 	// Make sure this is an OpenRaster file
 	if(!checkIsOraFile(zip)) {
-		return QApplication::tr("File is not an OpenRaster file");
+		return QGuiApplication::tr("File is not an OpenRaster file");
 	}
 
 	// Read the layer stack definition

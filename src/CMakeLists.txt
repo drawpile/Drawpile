@@ -4,6 +4,7 @@ add_subdirectory ( shared )
 
 if ( CLIENT )
         add_subdirectory ( client )
+        add_subdirectory ( desktop )
 endif ()
 
 if ( SERVER )

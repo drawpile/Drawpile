@@ -40,7 +40,7 @@
 #include "../shared/record/writer.h"
 #include "../shared/util/filename.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QSettings>
 #include <QTimer>
 #include <QDir>
@@ -367,9 +367,9 @@ void Document::autosaveNow()
 
 	Q_ASSERT(utils::isWritableFormat(currentFilename()));
 
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	bool saved = m_canvas->save(currentFilename());
-	QApplication::restoreOverrideCursor();
+	QGuiApplication::restoreOverrideCursor();
 
 	if(saved)
 		unmarkDirty();
@@ -410,7 +410,7 @@ bool Document::startRecording(const QString &filename, QString *error)
 
 	}
 
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	m_recorder->writeHeader();
 
 	QList<protocol::MessagePtr> snapshot = m_canvas->generateSnapshot(false);
@@ -425,7 +425,7 @@ bool Document::startRecording(const QString &filename, QString *error)
 
 	connect(m_client, &net::Client::messageReceived, m_recorder, &recording::Writer::recordMessage);
 
-	QApplication::restoreOverrideCursor();
+	QGuiApplication::restoreOverrideCursor();
 
 	emit recorderStateChanged(true);
 
@@ -620,7 +620,7 @@ void Document::copyFromLayer(int layer)
 	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
-	QApplication::clipboard()->setMimeData(data);
+	QGuiApplication::clipboard()->setMimeData(data);
 }
 
 void Document::copyVisible()

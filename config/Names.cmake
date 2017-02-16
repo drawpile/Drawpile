@@ -5,6 +5,7 @@ else ()
 endif ()
 
 set ( DPSHAREDLIB "drawpilenet" )
+set ( DPCLIENTLIB "drawpileclient" )
 
 set ( SRVNAME "${PROJECT_NAME}-srv" )
 set ( SRVLIB "lib${SRVNAME}" )

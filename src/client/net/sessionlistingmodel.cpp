@@ -21,7 +21,7 @@
 #include "utils/icon.h"
 #include "config.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QUrl>
 #include <QDebug>
 
@@ -56,7 +56,7 @@ int SessionListingModel::columnCount(const QModelIndex &parent) const
 static QString ageString(const qint64 seconds)
 {
 	const int minutes = seconds / 60;
-	return QApplication::tr("%1h %2m").arg(minutes/60).arg(minutes%60);
+	return QGuiApplication::tr("%1h %2m").arg(minutes/60).arg(minutes%60);
 }
 
 QVariant SessionListingModel::data(const QModelIndex &index, int role) const
