@@ -431,7 +431,7 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 		if(ip.isNull())
 			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid IP address required");
 		int subnet = request["subnet"].toInt();
-		QDateTime expiration = QDateTime::fromString(request["expiration"].toString(), "yyyy-MM-dd HH:mm:ss");
+		QDateTime expiration = QDateTime::fromString(request["expires"].toString(), "yyyy-MM-dd HH:mm:ss");
 		if(expiration.isNull())
 			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid expiration time required");
 		QString comment = request["comment"].toString();

@@ -125,7 +125,7 @@ void BanListPage::addNewBan()
 		QJsonObject body;
 		body["ip"] = ui.address->text();
 		body["subnet"] = ui.subnetmask->text().toInt();
-		body["expiration"] = ui.expiration->dateTime().toString("yyyy-MM-dd HH:mm:ss");
+		body["expires"] = ui.expiration->dateTime().toString("yyyy-MM-dd HH:mm:ss");
 		body["comment"] = ui.comment->toPlainText();
 		d->server->makeApiRequest(ADD_REQ_ID, JsonApiMethod::Create, QStringList() << "banlist", body);
 	});
