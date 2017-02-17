@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,17 +59,40 @@ public:
 
 	bool isAxisAlignedRectangle() const;
 
-	void setMovedFromCanvas(bool m) { m_movedFromCanvas = m; }
-	bool isMovedFromCanvas() const { return m_movedFromCanvas; }
+	void detachMove() { m_moveRegion = QPolygon(); }
+	bool isMovedFromCanvas() const { return !m_moveRegion.isEmpty(); }
 
 	QRect boundingRect() const { return m_shape.boundingRect().toRect(); }
 
-	QImage shapeMask(const QColor &color, QPoint *offset=nullptr) const;
+	QImage shapeMask(const QColor &color, QPoint *offset) const;
 
+	//! Set the image from pasting
 	void setPasteImage(const QImage &image);
+
+	/**
+	 * @brief Set the preview image for moving a layer region
+	 *
+	 * The current shape will be remembered.
+	 * @param image
+	 */
+	void setMoveImage(const QImage &image);
+
+	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
 
-	QList<protocol::MessagePtr> pasteToCanvas(uint8_t contextId, int layer) const;
+	/**
+	 * @brief Apply changes to the canvas.
+	 *
+	 * If this selection contains a moved piece (setMoveImage called) calling this method
+	 * will return the commands for a RegionMove.
+	 * If the image came from outside (clipboard,) a PutImage command set will be returned
+	 * instead.
+	 *
+	 * @param contextId user ID for the commands
+	 * @param layer target layer
+	 * @return set of commands
+	 */
+	QList<protocol::MessagePtr> pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
 	QList<protocol::MessagePtr> fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
 	int handleSize() const { return 10; }
@@ -86,6 +109,7 @@ signals:
 	void closed();
 
 private:
+	void setPasteOrMoveImage(const QImage &image);
 	void adjust(int dx1, int dy1, int dx2, int dy2);
 	void saveShape();
 
@@ -95,7 +119,7 @@ private:
 	QImage m_pasteImage;
 
 	bool m_closedPolygon;
-	bool m_movedFromCanvas;
+	QPolygon m_moveRegion;
 };
 
 }

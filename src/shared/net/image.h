@@ -183,16 +183,16 @@ public:
 	int32_t bh() const { return m_bh; }
 
 	int32_t x1() const { return m_x1; }
-	int32_t y1() const { return m_x1; }
+	int32_t y1() const { return m_y1; }
 
 	int32_t x2() const { return m_x2; }
-	int32_t y2() const { return m_x2; }
+	int32_t y2() const { return m_y2; }
 
 	int32_t x3() const { return m_x3; }
-	int32_t y3() const { return m_x3; }
+	int32_t y3() const { return m_y3; }
 
 	int32_t x4() const { return m_x4; }
-	int32_t y4() const { return m_x4; }
+	int32_t y4() const { return m_y4; }
 
 	QByteArray mask() const { return m_mask; }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "core/layer.h"
 #include "net/client.h"
 
 #include "tools/selection.h"
@@ -26,6 +27,9 @@
 
 #include <QPixmap>
 #include <QtMath>
+#include <QPolygonF>
+#include <QTransform>
+#include <QPainter>
 
 namespace tools {
 
@@ -42,8 +46,8 @@ void SelectionTool::begin(const paintcore::Point &point, float zoom)
 
 	if(m_handle == canvas::Selection::OUTSIDE) {
 		if(sel) {
-			owner.client()->sendMessages(sel->pasteToCanvas(owner.client()->myId(), owner.activeLayer()));
-			sel->setMovedFromCanvas(false);
+			owner.client()->sendMessages(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
+			sel->detachMove();
 		}
 
 		sel = new canvas::Selection;
@@ -65,11 +69,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		QPointF p = point - m_start;
 
 		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
-			// Automatically cut the layer when the selection is transformed
-			QImage img = owner.model()->selectionToImage(owner.activeLayer());
-			owner.client()->sendMessages(sel->fillCanvas(owner.client()->myId(), Qt::white, paintcore::BlendMode::MODE_ERASE, owner.activeLayer()));
-			sel->setPasteImage(img);
-			sel->setMovedFromCanvas(true);
+			startMove();
 		}
 
 		if(m_handle == canvas::Selection::TRANSLATE && center) {
@@ -99,6 +99,27 @@ void SelectionTool::end()
 	QRectF selrect = sel->boundingRect();
 	if(selrect.width() * selrect.height() <= 2)
 		owner.model()->setSelection(nullptr);
+}
+
+void SelectionTool::startMove()
+{
+	canvas::Selection *sel = owner.model()->selection();
+	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	if(sel && layer) {
+		// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
+		QPoint offset;
+		QImage eraseMask = sel->shapeMask(Qt::white, &offset);
+
+		// Copy layer content into move preview buffer.
+		QImage img = owner.model()->selectionToImage(owner.activeLayer());
+		sel->setMoveImage(img);
+
+		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
+		// to erase the selected region.
+		layer->removeSublayer(-1);
+		paintcore::Layer *tmplayer = layer->getSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
+		tmplayer->putImage(offset.x(), offset.y(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
+	}
 }
 
 RectangleSelection::RectangleSelection(ToolController &owner)
@@ -155,6 +176,55 @@ void PolygonSelection::end()
 	SelectionTool::end();
 }
 
+QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset)
+{
+	Q_ASSERT(!source.isNull());
+	Q_ASSERT(target.size() == 4);
 
+	const QRect bounds = target.boundingRect();
+	const QPolygonF srcPolygon({
+		QPointF(0, 0),
+		QPointF(source.width(), 0),
+		QPointF(source.width(), source.height()),
+		QPointF(0, source.height())
+	});
+
+	const QPolygon xTarget = target.translated(-bounds.topLeft());
+	QTransform transform;
+	if(!QTransform::quadToQuad(srcPolygon, xTarget, transform)) {
+		qWarning("Couldn't transform selection image!");
+		return QImage();
+	}
+
+	if(offset)
+		*offset = bounds.topLeft();
+
+	QImage out(bounds.size(), QImage::Format_ARGB32);
+	out.fill(0);
+	QPainter painter(&out);
+	painter.setRenderHint(QPainter::SmoothPixmapTransform);
+	painter.setTransform(transform);
+	painter.drawImage(0, 0, source);
+
+	return out;
 }
 
+QImage SelectionTool::shapeMask(const QColor &color, const QPolygon &selection, QPoint *offset, bool mono)
+{
+	const QRect b = selection.boundingRect();
+	const QPolygon p = selection.translated(-b.topLeft());
+
+	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32);
+	mask.fill(0);
+	QPainter painter(&mask);
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(color);
+	painter.drawPolygon(p);
+
+	if(offset)
+		*offset = b.topLeft();
+
+	return mask;
+}
+
+}

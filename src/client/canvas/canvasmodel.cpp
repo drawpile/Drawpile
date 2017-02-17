@@ -249,6 +249,8 @@ void CanvasModel::setLayerViewMode(int mode)
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
+		m_layerstack->removePreviews();
+
 		const bool hadSelection = m_selection != nullptr;
 
 		if(hadSelection && m_selection->parent() == this)

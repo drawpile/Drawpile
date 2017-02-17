@@ -155,6 +155,9 @@ public:
 	//! Clear the entire layer stack
 	void reset();
 
+	//! Remove all preview layers (ephemeral sublayers)
+	void removePreviews();
+
 signals:
 	//! Emitted when the visible layers are edited
 	void areaChanged(const QRect &area);

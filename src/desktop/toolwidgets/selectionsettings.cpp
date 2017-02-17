@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "scene/canvasview.h"
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
+#include "tools/selection.h"
 
 #include "ui_selectsettings.h"
 
@@ -124,15 +125,10 @@ void SelectionSettings::resetSize()
 void SelectionSettings::cutSelection()
 {
 	canvas::Selection *sel = controller()->model()->selection();
-	Q_ASSERT(sel);
-
 	const int layer = controller()->activeLayer();
-	if(sel->pasteImage().isNull() && !controller()->model()->stateTracker()->isLayerLocked(layer)) {
-		// Automatically cut the layer when the selection is transformed
-		QImage img = controller()->model()->selectionToImage(layer);
-		controller()->client()->sendMessages(sel->fillCanvas(controller()->client()->myId(), Qt::white, paintcore::BlendMode::MODE_ERASE, layer));
-		sel->setPasteImage(img);
-		sel->setMovedFromCanvas(true);
+
+	if(sel && sel->pasteImage().isNull() && !controller()->model()->stateTracker()->isLayerLocked(layer)) {
+		static_cast<tools::SelectionTool*>(controller()->getTool(Tool::SELECTION))->startMove();
 	}
 }
 

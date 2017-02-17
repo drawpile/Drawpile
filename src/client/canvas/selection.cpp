@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "selection.h"
 #include "net/commands.h"
+#include "../tools/selection.h" // for selection utilities
 
 #include "../shared/net/undo.h"
 #include "../shared/net/image.h"
@@ -28,7 +29,7 @@
 namespace canvas {
 
 Selection::Selection(QObject *parent)
-	: QObject(parent), m_closedPolygon(false), m_movedFromCanvas(false)
+	: QObject(parent), m_closedPolygon(false), m_moveRegion(false)
 {
 
 }
@@ -215,9 +216,9 @@ void Selection::closeShape()
 	}
 }
 
-bool Selection::isAxisAlignedRectangle() const
+static bool isAxisAlignedRectangle(const QPolygon &p)
 {
-	if(m_shape.size() != 4)
+	if(p.size() != 4)
 		return false;
 
 	// When we create a rectangular polygon (see above), the points
@@ -230,9 +231,6 @@ bool Selection::isAxisAlignedRectangle() const
 	// 0==1 and 2==3 (X plane) and 0==3 and 1==2 (Y plane)
 	// OR
 	// 0==3 and 1==2 (X plane) and 0==1 and 2==3 (Y plane)
-
-	QPolygon p = m_shape.toPolygon();
-
 	return
 		(
 			// case 1
@@ -249,26 +247,32 @@ bool Selection::isAxisAlignedRectangle() const
 		);
 }
 
+bool Selection::isAxisAlignedRectangle() const
+{
+	if(m_shape.size() != 4)
+		return false;
+
+	return canvas::isAxisAlignedRectangle(m_shape.toPolygon());
+}
+
 QImage Selection::shapeMask(const QColor &color, QPoint *offset) const
 {
-	const QRect b = boundingRect();
-	QPolygon p = m_shape.toPolygon();
-	p.translate(-b.topLeft());
-
-	QImage mask(b.size(), QImage::Format_ARGB32);
-	mask.fill(0);
-	QPainter painter(&mask);
-	painter.setPen(Qt::NoPen);
-	painter.setBrush(color);
-	painter.drawPolygon(p);
-
-	if(offset)
-		*offset = b.topLeft();
-
-	return mask;
+	return tools::SelectionTool::shapeMask(color, m_shape.toPolygon(), offset);
 }
 
 void Selection::setPasteImage(const QImage &image)
+{
+	m_moveRegion = QPolygon();
+	setPasteOrMoveImage(image);
+}
+
+void Selection::setMoveImage(const QImage &image)
+{
+	m_moveRegion = m_shape.toPolygon();
+	setPasteOrMoveImage(image);
+}
+
+void Selection::setPasteOrMoveImage(const QImage &image)
 {
 	const QRect selectionBounds = m_shape.boundingRect().toRect();
 	if(selectionBounds.size() != image.size() || !isAxisAlignedRectangle()) {
@@ -277,12 +281,10 @@ void Selection::setPasteImage(const QImage &image)
 	}
 
 	m_pasteImage = image;
-	m_movedFromCanvas = false;
-
 	emit pasteImageChanged(image);
 }
 
-QList<protocol::MessagePtr> Selection::pasteToCanvas(uint8_t contextId, int layer) const
+QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 {
 	QList<protocol::MessagePtr> msgs;
 
@@ -296,37 +298,38 @@ QList<protocol::MessagePtr> Selection::pasteToCanvas(uint8_t contextId, int laye
 		return msgs;
 	}
 
-	const QRect rect = boundingRect();
-
-	// Transform image to selection rectangle
-	QPolygonF src({
-		QPointF(0, 0),
-		QPointF(m_pasteImage.width(), 0),
-		QPointF(m_pasteImage.width(), m_pasteImage.height()),
-		QPointF(0, m_pasteImage.height())
-	});
-
-	QPolygonF target = m_shape.translated(-m_shape.boundingRect().topLeft());
-
-	QTransform transform;
-	if(!QTransform::quadToQuad(src, target, transform)) {
-		qWarning("Couldn't transform pasted image!");
-		return msgs;
-	}
-
-	// Paint transformed image
-	QImage image(rect.size(), QImage::Format_ARGB32);
-	image.fill(0);
-	{
-		QPainter imagep(&image);
-		imagep.setRenderHint(QPainter::SmoothPixmapTransform);
-		imagep.setTransform(transform);
-		imagep.drawImage(0, 0, m_pasteImage);
-	}
-
 	// Merge image
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << net::command::putQImage(contextId, layer, rect.x(), rect.y(), image, paintcore::BlendMode::MODE_NORMAL);
+
+	if(!m_moveRegion.isEmpty()) {
+		qDebug("Moving instead of pasting");
+		// Get source pixel mask
+		const QRect moveBounds = m_moveRegion.boundingRect();
+		QByteArray mask;
+		if(!canvas::isAxisAlignedRectangle(m_moveRegion)) {
+			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, nullptr, true);
+			mask = qCompress(QByteArray::fromRawData(reinterpret_cast<const char*>(maskimg.constBits()), maskimg.byteCount()));
+		}
+
+		// Send move command
+		QPolygon s = m_shape.toPolygon();
+		msgs << protocol::MessagePtr(new protocol::MoveRegion(contextId, layer,
+			moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(),
+			s[0].x(), s[0].y(),
+			s[1].x(), s[1].y(),
+			s[2].x(), s[2].y(),
+			s[3].x(), s[3].y(),
+			mask
+		));
+
+	} else {
+		QImage image;
+		QPoint offset;
+
+		image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
+
+		msgs << net::command::putQImage(contextId, layer, offset.x(), offset.y(), image, paintcore::BlendMode::MODE_NORMAL);
+	}
 	return msgs;
 }
 

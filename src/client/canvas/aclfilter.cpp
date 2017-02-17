@@ -204,6 +204,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 			return false;
 		break;
 	}
+	case MSG_REGION_MOVE: {
+		const uint16_t layer = static_cast<const MoveRegion&>(msg).layer();
+		return !isLayerLockedFor(layer, msg.contextId());
+	}
 
 	default: break;
 	}

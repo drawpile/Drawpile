@@ -47,6 +47,7 @@ namespace protocol {
 	class AnnotationReshape;
 	class AnnotationEdit;
 	class AnnotationDelete;
+	class MoveRegion;
 }
 
 namespace paintcore {
@@ -285,6 +286,7 @@ private:
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
 	void handleFillRect(const protocol::FillRect &cmd);
+	void handleMoveRegion(const protocol::MoveRegion &cmd);
 
 	// Undo/redo
 	void handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos);

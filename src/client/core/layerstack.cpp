@@ -58,6 +58,13 @@ void LayerStack::reset()
 	emit layersChanged(QList<LayerInfo>());
 }
 
+void LayerStack::removePreviews()
+{
+	for(Layer *l : m_layers) {
+		l->removePreviews();
+	}
+}
+
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
 	const QSize oldsize(_width, _height);

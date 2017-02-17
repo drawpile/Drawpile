@@ -583,18 +583,15 @@ void Document::selectAll()
 void Document::selectNone()
 {
 	if(m_canvas && m_canvas->selection()) {
-		m_client->sendMessages(m_canvas->selection()->pasteToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+		m_client->sendMessages(m_canvas->selection()->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
 		cancelSelection();
 	}
 }
 
 void Document::cancelSelection()
 {
-	if(m_canvas && m_canvas->selection()) {
-		if(!m_canvas->selection()->pasteImage().isNull() && m_canvas->selection()->isMovedFromCanvas())
-			m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, false)));
+	if(m_canvas)
 		m_canvas->setSelection(nullptr);
-	}
 }
 
 void Document::copyFromLayer(int layer)
@@ -635,8 +632,11 @@ void Document::copyLayer()
 
 void Document::cutLayer()
 {
-	copyFromLayer(m_toolctrl->activeLayer());
-	fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+	if(m_canvas) {
+		copyFromLayer(m_toolctrl->activeLayer());
+		fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+		m_canvas->setSelection(nullptr);
+	}
 }
 
 void Document::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
@@ -654,8 +654,8 @@ void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull()) {
-		m_client->sendMessages(sel->pasteToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
-		sel->setMovedFromCanvas(false);
+		m_client->sendMessages(sel->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+		sel->detachMove();
 	}
 }
 

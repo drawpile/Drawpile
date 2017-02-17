@@ -25,6 +25,7 @@
 #include "core/layer.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
+#include "tools/selection.h" // for selection transform utils
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
@@ -37,6 +38,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QSettings>
+#include <QPainter>
 
 namespace canvas {
 
@@ -397,8 +399,11 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_FILLRECT:
 			handleFillRect(msg.cast<FillRect>());
 			break;
+		case MSG_REGION_MOVE:
+			handleMoveRegion(msg.cast<MoveRegion>());
+			break;
 		default:
-			qWarning() << "Unhandled drawing command" << msg->type();
+			qWarning() << "Unhandled drawing command" << msg->type() << msg->messageName();
 			return;
 	}
 }
@@ -649,6 +654,85 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
 		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+}
+
+void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
+{
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
+	if(!layer) {
+		qWarning("moveRegion on non-existent layer %d", cmd.layer());
+		return;
+	}
+
+	if(cmd.contextId() == m_myId) {
+		// Moving the layer for real: make sure my preview is removed
+		layer->removeSublayer(-1);
+	}
+
+	const QRect bounds(cmd.bx(), cmd.by(), cmd.bw(), cmd.bh());
+
+	// Get mask bitmap
+	QImage mask;
+	if(!cmd.mask().isEmpty()) {
+		const int expectedLen = (cmd.bw()+31)/32 * 4 * cmd.bh(); // 1bpp lines padded to 32bit boundaries
+		QByteArray maskData = qUncompress(cmd.mask());
+		// Depending on how the image is padded, true length may be longer than minimum
+		if(maskData.length() != expectedLen) {
+			qWarning("Invalid moveRegion mask: Expected %d bytes, but got %d", expectedLen, maskData.length());
+			return;
+		}
+
+		mask = QImage(reinterpret_cast<const uchar*>(maskData.constData()), cmd.bw(), cmd.bh(), QImage::Format_Mono);
+		mask.setColor(0, 0);
+		mask.setColor(1, 0xffffffff);
+		mask = mask.convertToFormat(QImage::Format_ARGB32);
+	}
+
+	// Extract selected pixels
+	QImage selbuf = layer->toImage().copy(bounds); // TODO optimize
+
+	// Mask out unselected pixels (if necessary)
+	if(!mask.isNull()) {
+		QPainter mp(&selbuf);
+		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+		mp.drawImage(0, 0, mask);
+	}
+
+	// Transform selected pixels
+	const QPolygon target({
+		QPoint(cmd.x1(), cmd.y1()),
+		QPoint(cmd.x2(), cmd.y2()),
+		QPoint(cmd.x3(), cmd.y3()),
+		QPoint(cmd.x4(), cmd.y4())
+	});
+
+	QPoint offset;
+	QImage transformed;
+	if(target.boundingRect().size() == bounds.size() && target[0].x() < target[1].x()) {
+		// Just translation
+		transformed = selbuf;
+		offset = target[0];
+
+	} else {
+		transformed = tools::SelectionTool::transformSelectionImage(selbuf, target, &offset);
+		if(transformed.isNull()) {
+			qWarning("moveRegion: transformation failed (%d, %d -> %d, %d -> %d, %d -> %d, %d)!",
+				cmd.x1(), cmd.y1(), cmd.x2(), cmd.y2(), cmd.x3(), cmd.y3(), cmd.x4(), cmd.y4());
+			return;
+		}
+	}
+
+	// Erase selection mask and draw transformed image
+	if(mask.isNull()) {
+		layer->fillRect(bounds, Qt::transparent, paintcore::BlendMode::MODE_REPLACE);
+	} else {
+		layer->putImage(bounds.x(), bounds.y(), mask, paintcore::BlendMode::MODE_ERASE);
+	}
+
+	layer->putImage(offset.x(), offset.y(), transformed, paintcore::BlendMode::MODE_NORMAL);
+
+	if(_showallmarkers || cmd.contextId() != m_myId)
+		emit userMarkerMove(cmd.contextId(), target.boundingRect().center(), 0);
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)

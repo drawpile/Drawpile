@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -144,11 +144,29 @@ class Layer {
 		//! Draw a line using either drawHardLine or drawSoftLine
 		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state);
 
+		/**
+		 * @brief Get a sublayer
+		 *
+		 * Sublayers are used for indirect drawing and previews.
+		 * Positive IDs should correspond to context IDs: they are used for indirect
+		 * painting.
+		 * Negative IDs are local preview layers.
+		 *
+		 * @param id
+		 * @param blendmode
+		 * @param opacity
+		 * @return
+		 */
+		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
+
 		//! Merge a sublayer with this layer
 		void mergeSublayer(int id);
 
 		//! Remove a sublayer
 		void removeSublayer(int id);
+
+		//! Remove all preview (ephemeral) sublayers
+		void removePreviews();
 
 		//! Merge a layer
 		void merge(const Layer *layer, bool sublayers=false);
@@ -209,9 +227,6 @@ class Layer {
 		Layer(LayerStack *owner, int id, const QSize& size);
 
 		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
-
-		//! Get a sublayer
-		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
 
 		void directDab(const Brush &brush, const Point& point, StrokeState &state);
 		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);

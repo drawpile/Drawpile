@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
 #include "canvas/selection.h"
 #include "tool.h"
 
+class QImage;
+class QPolygon;
+
 namespace tools {
 
 //! Base class for selection tools
@@ -33,6 +36,12 @@ public:
 	void begin(const paintcore::Point& point, float zoom);
 	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
+
+	//! Start a layer region move operation
+	void startMove();
+
+	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
+	static QImage shapeMask(const QColor &color, const QPolygon &selection, QPoint *offset, bool mono=false);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;
