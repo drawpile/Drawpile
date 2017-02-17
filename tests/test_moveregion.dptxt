@@ -1,0 +1,20 @@
+!version=dp:4.20.1
+
+1 resize right=600 bottom=600
+1 newlayer id=1 fill=#ffffff title=Background
+1 newlayer id=2 {
+	title=Moveregion test
+	}
+
+1 brush layer=2 color=#000000 mode=inc spacing=35 hard=100 opacity=100 size=1
+
+# Draw test stroke
+1 penmove {
+	0 100
+	100 0
+	}
+1 penup
+
+# Move 100px to the right
+1 moveregion layer=2 bx=0 by=0 bw=100 bh=100 x1=100 y1=0 x2=200 y2=0 x3=200 y3=100 x4=100 y4=100
+

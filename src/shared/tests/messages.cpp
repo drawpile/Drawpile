@@ -59,6 +59,7 @@ private slots:
 		QTest::newRow("annotationreshape") << (Message*)new AnnotationReshape(28, 0x1122, -100, -100, 200, 200);
 		QTest::newRow("annotationedit") << (Message*)new AnnotationEdit(29, 0x1122, 0x12345678, 7, 0x0a, QByteArray("Test"));
 		QTest::newRow("annotationdelete") << (Message*)new AnnotationDelete(30, 0x1122);
+		QTest::newRow("moveregion") << (Message*)new MoveRegion(30, 0x1122, 0, 1, 2, 3, 10, 11, 20, 21, 30, 31, 40, 41, QByteArray("test"));
 
 		QTest::newRow("undo") << (Message*)new Undo(254, 1, false);
 		QTest::newRow("redo") << (Message*)new Undo(254, 1, true);
