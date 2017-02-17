@@ -92,8 +92,8 @@ LayerList::LayerList(QWidget *parent)
 	// Layer edit menu (hamburger button)
 	QMenu *boxmenu = new QMenu(this);
 	m_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
-	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer));
-	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected));
+	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
+	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
 
 	QActionGroup *viewmodes = new QActionGroup(this);
 	viewmodes->setExclusive(true);
