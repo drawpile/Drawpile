@@ -140,7 +140,7 @@ endif()
 if(LIBMINIUPNPC_FOUND)
 	target_link_libraries(${DPCLIENTLIB} ${LIBMINIUPNPC_LIBRARIES})
 	if ( WIN32 )
-		target_link_libraries (${CLIENTNAME} iphlpapi)
+		target_link_libraries (${DPCLIENTLIB} iphlpapi)
 	endif ( WIN32 )
 endif()
 
