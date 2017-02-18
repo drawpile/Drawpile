@@ -470,16 +470,20 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
-
-	// Protocol uses unsigned coordinates, so we don't need to support
-	// negative values here either.
-	Q_ASSERT(x>=0 && y>=0);
-	if(x<0 || y<0)
-		return;
 	
 	// Check if the image is completely outside the layer
-	if(x >= m_width || y >= m_height)
+	if(x >= m_width || y >= m_height || x+image.width() < 0 || y+image.height() < 0)
 		return;
+
+	// Crop image if x or y are negative
+	if(x<0 || y<0) {
+		const int xCrop = x<0 ? -x : 0;
+		const int yCrop = y<0 ? -y : 0;
+
+		image = image.copy(xCrop, yCrop, image.width()-xCrop, image.height()-yCrop);
+		x = qMax(0, x);
+		y = qMax(0, y);
+	}
 
 	const int x0 = Tile::roundDown(x);
 	const int y0 = Tile::roundDown(y);
