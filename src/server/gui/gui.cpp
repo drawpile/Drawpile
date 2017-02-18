@@ -24,6 +24,7 @@
 #include "database.h"
 #include "trayicon.h"
 #include "singleinstance.h"
+#include "authdialog.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -115,6 +116,8 @@ bool startRemote(const QString &address)
 		QMessageBox::critical(nullptr, QApplication::tr("Drawpile Server"), QApplication::tr("Invalid URL"));
 		return false;
 	}
+
+	AuthDialog::init();
 
 	RemoteServer *remote = new RemoteServer(url);
 
