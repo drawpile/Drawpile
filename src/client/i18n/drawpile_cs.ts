@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.0" language="cs_CZ">
 <context>
     <name>AnimationExporter</name>
     <message>
         <source>Export error</source>
-        <translation type="vanished">Chyba při vyvádění</translation>
+        <translation>Chyba při vyvádění</translation>
     </message>
     <message>
         <source>Exporting...</source>
-        <translation type="vanished">Vyvádí se...</translation>
+        <translation>Vyvádí se...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Zrušit</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -21,17 +21,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="73"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatel</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="74"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresa IP</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="75"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázáno</translation>
     </message>
 </context>
 <context>
@@ -206,47 +206,47 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="321"/>
         <source>Select Color</source>
-        <translation type="unfinished">Vybrat barvu</translation>
+        <translation>Vybrat barvu</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="322"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sytost</translation>
+        <translation>Sytost</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="323"/>
         <source>Hue</source>
-        <translation type="unfinished">Barevný odstín</translation>
+        <translation>Barevný odstín</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="324"/>
         <source>Hex</source>
-        <translation type="unfinished">Šestnáctkový (hexadecimální)</translation>
+        <translation>Šestnáctkový (hexadecimální)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="325"/>
         <source>Blue</source>
-        <translation type="unfinished">Modrá</translation>
+        <translation>Modrá</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="326"/>
         <source>Value</source>
-        <translation type="unfinished">Hodnota</translation>
+        <translation>Hodnota</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="327"/>
         <source>Green</source>
-        <translation type="unfinished">Zelená</translation>
+        <translation>Zelená</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="328"/>
         <source>Alpha</source>
-        <translation type="unfinished">Alfa</translation>
+        <translation>Alfa</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="329"/>
         <source>Red</source>
-        <translation type="unfinished">Červená</translation>
+        <translation>Červená</translation>
     </message>
 </context>
 <context>
@@ -386,7 +386,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="14"/>
         <source>Filter recording</source>
-        <translation>Záznam filtru</translation>
+        <translation>Filtrovat záznam</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="22"/>
@@ -459,7 +459,7 @@
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="106"/>
         <source>Loop range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozsah smyčky:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="139"/>
@@ -481,7 +481,7 @@
     </message>
     <message>
         <source>&amp;Title:</source>
-        <translation type="vanished">&amp;Název:</translation>
+        <translation>&amp;Název:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="46"/>
@@ -505,7 +505,7 @@
     </message>
     <message>
         <source>&amp;ID:</source>
-        <translation type="vanished">&amp;ID:</translation>
+        <translation>&amp;ID:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="128"/>
@@ -545,17 +545,17 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="36"/>
         <source>T&amp;itle:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Název:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="105"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Přezdívka ID:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="121"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished"></translation>
+        <translation>Volitelné uživatelsky přátelské ID pro sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="217"/>
@@ -564,7 +564,7 @@
     </message>
     <message>
         <source>Automatic</source>
-        <translation type="vanished">Automaticky</translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="152"/>
@@ -588,7 +588,7 @@
     </message>
     <message>
         <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
-        <translation type="vanished">Identifikátor k užití v adrese sezení (URL). Ponechejte prázdné, aby server vytvořil nějaký identifikátor</translation>
+        <translation>Identifikátor k užití v adrese sezení (URL). Ponechejte prázdné, aby server vytvořil nějaký identifikátor</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="197"/>
@@ -721,7 +721,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="31"/>
         <source>Logging in...</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlašuje se...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="78"/>
@@ -736,12 +736,12 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="143"/>
         <source>The certificate of this server has changed!</source>
-        <translation type="unfinished">Osvědčení tohoto serveru se změnilo!</translation>
+        <translation>Osvědčení tohoto serveru se změnilo!</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="167"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dohání se...</translation>
     </message>
 </context>
 <context>
@@ -881,7 +881,7 @@
     </message>
     <message>
         <source>Change session title</source>
-        <translation type="vanished">Změnit název sezení</translation>
+        <translation>Změnit název sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1380"/>
@@ -1032,17 +1032,17 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1999"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit výběr</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2000"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebarvit výběr</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2001"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat výběr podle barvy</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2050"/>
@@ -1092,16 +1092,16 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2214"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelská ukazovátka</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzamknout vše</translation>
     </message>
     <message>
         <source>Show Crosshair C&amp;ursor</source>
-        <translation type="vanished">Ukázat ukazovátko s nitkovým &amp;křížem</translation>
+        <translation>Ukázat ukazovátko s nitkovým &amp;křížem</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2117"/>
@@ -1120,7 +1120,7 @@
     </message>
     <message>
         <source>Thick Laser Trails</source>
-        <translation type="vanished">Roztáhnout laserové stopy</translation>
+        <translation>Roztáhnout laserové stopy</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2120"/>
@@ -1144,7 +1144,7 @@
     </message>
     <message>
         <source>User &amp;pointers</source>
-        <translation type="vanished">Uživatelská &amp;ukazovátka</translation>
+        <translation>Uživatelská &amp;ukazovátka</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2229"/>
@@ -1181,7 +1181,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2240"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Stát se operátorem...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
@@ -1190,11 +1190,11 @@
     </message>
     <message>
         <source>Allow only session operators to add and change layers</source>
-        <translation type="vanished">Povolit přidávání a měnění vrstev pouze obsluze sezení</translation>
+        <translation>Povolit přidávání a měnění vrstev pouze obsluze sezení</translation>
     </message>
     <message>
         <source>Prevent new users from joining the session</source>
-        <translation type="vanished">Zabránit novým uživatelům v připojení k sezení</translation>
+        <translation>Zabránit novým uživatelům v připojení k sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2263"/>
@@ -1224,7 +1224,7 @@
     </message>
     <message>
         <source>&amp;Swap Colors</source>
-        <translation type="vanished">&amp;Vyměnit barvy</translation>
+        <translation>&amp;Vyměnit barvy</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2317"/>
@@ -1254,12 +1254,12 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2377"/>
         <source>Show Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat nabídku pro přednastavení koláče</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2380"/>
         <source>Assign Tool To Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Přiřadit nástroj nabídce pro přednastavení koláče</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2397"/>
@@ -1289,7 +1289,7 @@
     </message>
     <message>
         <source>Compressed Recordings (%1)</source>
-        <translation type="vanished">Komprimované záznamy (%1)</translation>
+        <translation>Komprimované záznamy (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1119"/>
@@ -1308,7 +1308,7 @@
     </message>
     <message>
         <source>Session Title</source>
-        <translation type="vanished">Název sezení</translation>
+        <translation>Název sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1368"/>
@@ -1439,19 +1439,19 @@
     </message>
     <message>
         <source>Lo&amp;ck the Board</source>
-        <translation type="vanished">&amp;Uzamknout desku</translation>
+        <translation>&amp;Uzamknout desku</translation>
     </message>
     <message>
         <source>Lock Layer Controls</source>
-        <translation type="vanished">Uzamknout ovládání vrstvy</translation>
+        <translation>Uzamknout ovládání vrstvy</translation>
     </message>
     <message>
         <source>&amp;Deny Joins</source>
-        <translation type="vanished">&amp;Odmítnout připojení</translation>
+        <translation>&amp;Odmítnout připojení</translation>
     </message>
     <message>
         <source>Change &amp;Title...</source>
-        <translation type="vanished">Změ&amp;nit název...</translation>
+        <translation>Změ&amp;nit název...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2278"/>
@@ -1496,58 +1496,59 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="155"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedostatek místa na serveru</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="156"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveru dochází místo pro historii a sezení se příliš rozrostlo, takže bude automaticky nastaveno znovu! (Mez he %1 GB)
+Zjednodušte plátno a nastavte ručně, předtím než dojde místo.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1041"/>
         <source>Export error</source>
-        <translation type="unfinished">Chyba při vyvádění</translation>
+        <translation>Chyba při vyvádění</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1049"/>
         <source>Exporting...</source>
-        <translation type="unfinished">Vyvádí se...</translation>
+        <translation>Vyvádí se...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1113"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Binární záznamy (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1114"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Textové záznamy (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1115"/>
         <source>Compressed Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Komprimované binární záznamy (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1116"/>
         <source>Compressed Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Komprimované textové záznamy (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1272"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Stát se operátorem</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1273"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte heslo operátora</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1436"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení zablokováno rodičovskou kontrolou</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1998"/>
@@ -1556,30 +1557,30 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Fill selection</source>
-        <translation type="vanished">Vyplnit výběr</translation>
+        <translation>Vyplnit výběr</translation>
     </message>
     <message>
         <source>Recolor selection</source>
-        <translation type="vanished">Přebarvit výběr</translation>
+        <translation>Přebarvit výběr</translation>
     </message>
     <message>
         <source>Color erase selection</source>
-        <translation type="vanished">Smazat výběr podle barvy</translation>
+        <translation>Smazat výběr podle barvy</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2234"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam události</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2235"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2239"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nastavit znovu...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2282"/>
@@ -1822,20 +1823,20 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Max. pause:</source>
-        <translation type="vanished">Největší přestávka:</translation>
+        <translation>Největší přestávka:</translation>
     </message>
     <message>
         <source>s</source>
         <comment>seconds</comment>
-        <translation type="vanished">s</translation>
+        <translation>s</translation>
     </message>
     <message>
         <source>Stop on markers</source>
-        <translation type="vanished">Zastavit na značkách</translation>
+        <translation>Zastavit na značkách</translation>
     </message>
     <message>
         <source>Small player</source>
-        <translation type="vanished">Malý přehrávač</translation>
+        <translation>Malý přehrávač</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="14"/>
@@ -1845,7 +1846,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
         <source>Rewind stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetočit tah</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="255"/>
@@ -1854,27 +1855,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Filter...</source>
-        <translation type="vanished">Filtr...</translation>
+        <translation>Filtr...</translation>
     </message>
     <message>
         <source>Snapshots:</source>
-        <translation type="vanished">Snímky obrazovky:</translation>
+        <translation>Snímky obrazovky:</translation>
     </message>
     <message>
         <source>Previous snapshot</source>
-        <translation type="vanished">Předchozí snímek obrazovky</translation>
+        <translation>Předchozí snímek obrazovky</translation>
     </message>
     <message>
         <source>Next snapshot</source>
-        <translation type="vanished">Další snímek obrazovky</translation>
+        <translation>Další snímek obrazovky</translation>
     </message>
     <message>
         <source>Markers:</source>
-        <translation type="vanished">Značky:</translation>
+        <translation>Značky:</translation>
     </message>
     <message>
         <source>Mark</source>
-        <translation type="vanished">Označit</translation>
+        <translation>Označit</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="313"/>
@@ -1914,7 +1915,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="469"/>
         <source>Filter recording</source>
-        <translation type="unfinished">Záznam filtru</translation>
+        <translation>Filtrovat záznam</translation>
     </message>
 </context>
 <context>
@@ -1928,28 +1929,28 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Background</source>
-        <translation type="vanished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <source>Foreground</source>
-        <translation type="vanished">Popředí</translation>
+        <translation>Popředí</translation>
     </message>
     <message>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation type="vanished">Drawpile nepodporuje všechny vlastnosti použité v souboru OpenRaster. Uložení tohoto souboru může vést ke ztrátě dat.</translation>
+        <translation>Drawpile nepodporuje všechny vlastnosti použité v souboru OpenRaster. Uložení tohoto souboru může vést ke ztrátě dat.</translation>
     </message>
     <message>
         <source>Application specific extensions are used</source>
-        <translation type="vanished">Používají se rozšíření zvláštní pro program</translation>
+        <translation>Používají se rozšíření zvláštní pro program</translation>
     </message>
     <message>
         <source>Nested layers are not fully supported.</source>
-        <translation type="vanished">Vnořené vrstvy nejsou plně podporovány.</translation>
+        <translation>Vnořené vrstvy nejsou plně podporovány.</translation>
     </message>
     <message>
         <source>Partially supported OpenRaster</source>
-        <translation type="vanished">Částečně podporován OpenRaster</translation>
+        <translation>Částečně podporován OpenRaster</translation>
     </message>
     <message>
         <location filename="../../desktop/utils/netfiles.cpp" line="67"/>
@@ -1959,7 +1960,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="478"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Varování</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="889"/>
@@ -1971,17 +1972,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>%1h %2m</source>
-        <translation type="vanished">%1 h %2 m</translation>
+        <translation>%1 h %2 m</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="53"/>
         <source>Current</source>
-        <translation type="unfinished"></translation>
+        <translation>Nynější</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="57"/>
         <source>%1 s. ago</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 s před</translation>
     </message>
 </context>
 <context>
@@ -1989,59 +1990,59 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/loader.cpp" line="49"/>
         <source>Background</source>
-        <translation type="unfinished">Pozadí</translation>
+        <translation>Pozadí</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="50"/>
         <source>Foreground</source>
-        <translation type="unfinished">Popředí</translation>
+        <translation>Popředí</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="67"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation type="unfinished">Drawpile nepodporuje všechny vlastnosti použité v souboru OpenRaster. Uložení tohoto souboru může vést ke ztrátě dat.</translation>
+        <translation>Drawpile nepodporuje všechny vlastnosti použité v souboru OpenRaster. Uložení tohoto souboru může vést ke ztrátě dat.</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="69"/>
         <source>Application specific extensions are used</source>
-        <translation type="unfinished">Používají se rozšíření zvláštní pro program</translation>
+        <translation>Používají se účelová rozšíření programu</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="71"/>
         <source>Nested layers are not fully supported.</source>
-        <translation type="unfinished">Vnořené vrstvy nejsou plně podporovány.</translation>
+        <translation>Vnořené vrstvy nejsou plně podporovány.</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="57"/>
         <location filename="../net/sessionlistingmodel.cpp" line="59"/>
         <source>%1h %2m</source>
-        <translation type="unfinished">%1 h %2 m</translation>
+        <translation>%1 h %2 m</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="380"/>
         <source>Image has zero size!</source>
-        <translation type="unfinished">Obrázek má nulovou velikost!</translation>
+        <translation>Obrázek má nulovou velikost!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="383"/>
         <source>Image is too big!</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázek je příliš velký!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="386"/>
         <source>No layers found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenalezeny žádné vrstvy!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="408"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation type="unfinished">Nepodařilo se nahrát vrstvu %1</translation>
+        <translation>Nepodařilo se nahrát vrstvu %1</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="490"/>
         <source>File is not an OpenRaster file</source>
-        <translation type="unfinished">Soubor není souborem OpenRaster</translation>
+        <translation>Soubor není souborem OpenRaster</translation>
     </message>
 </context>
 <context>
@@ -2049,7 +2050,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/resetsession.ui" line="14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit sezení znovu</translation>
     </message>
 </context>
 <context>
@@ -2061,15 +2062,15 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Canvas size</source>
-        <translation type="vanished">Velikost plátna</translation>
+        <translation>Velikost plátna</translation>
     </message>
     <message>
         <source>&amp;Width:</source>
-        <translation type="vanished">Šíř&amp;ka:</translation>
+        <translation>Šíř&amp;ka:</translation>
     </message>
     <message>
         <source>&amp;Height:</source>
-        <translation type="vanished">&amp;Výška:</translation>
+        <translation>&amp;Výška:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/resizedialog.ui" line="96"/>
@@ -2078,26 +2079,26 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="vanished">Posun</translation>
+        <translation>Posun</translation>
     </message>
     <message>
         <source>&amp;X:</source>
-        <translation type="vanished">&amp;X:</translation>
+        <translation>&amp;X:</translation>
     </message>
     <message>
         <source>&amp;Y:</source>
-        <translation type="vanished">&amp;Y:</translation>
+        <translation>&amp;Y:</translation>
     </message>
     <message>
         <source>Center</source>
-        <translation type="vanished">Střed</translation>
+        <translation>Střed</translation>
     </message>
 </context>
 <context>
     <name>SelectSession</name>
     <message>
         <source>Select Session</source>
-        <translation type="vanished">Vybrat sezení</translation>
+        <translation>Vybrat sezení</translation>
     </message>
 </context>
 <context>
@@ -2151,12 +2152,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam události</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="20"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
 </context>
 <context>
@@ -2177,158 +2178,158 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="24"/>
         <source>Settings</source>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="30"/>
         <source>Session</source>
-        <translation type="unfinished">Sezení</translation>
+        <translation>Sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="36"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo operátora:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="66"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrnout rozhovor do historie sezení, aby jej mohli vidět i noví uživatelé</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="69"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachovat historii rozhovoru</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="76"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Neskončit sezení, když poslední uživatel odejde</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="79"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetrvávat bez uživatelů</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="86"/>
         <source>This session contains material not suitable for minors</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto sezení obsahuje materiál nevhodný pro nezletilé</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="89"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="102"/>
         <source>Locked features</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzamknuté funkce</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="108"/>
         <source>Only operators can paste images and use fill tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Jen operátoři mohou vkládat obrázky a používat vyplňovací nástroje</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="111"/>
         <source>Cut, paste &amp;&amp; fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyjmout, vložit a &amp;vyplnit</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="118"/>
         <source>Only operators can create new annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Jen operátoři mohou vytvářet nové poznámky</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="121"/>
         <source>New annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Nové poznámky</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="128"/>
         <source>Only operators can change layer attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Jen operátoři mohou měnit vlastnosti vrstev</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="131"/>
         <source>Layer controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovládání vrstev</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="138"/>
         <source>Allow normal users to create and edit their own layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit běžným uživatelům vytváření a upravování jejich vlastních vrstev</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="141"/>
         <source>Allow own layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolit vlastní vrstvy</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="164"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlášení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="170"/>
         <source>Password:</source>
-        <translation type="unfinished">Heslo:</translation>
+        <translation>Heslo:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="184"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nejvíce uživatelů:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="191"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolika uživatelům povolit vstup. Neovlivní již přihlášené uživatele</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="220"/>
         <source>Prevent new users from drawing until explicitly unlocked by an operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabránit novým uživatelům v kreslení, dokud je výslovně neodemče operátor</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="223"/>
         <source>Lock new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzamknout nové uživatele</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="230"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Blokovat nová přihlášení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="240"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Název:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="261"/>
         <source>Banned users</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázání uživatelé</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="292"/>
         <location filename="../../desktop/ui/sessionsettings.ui" line="333"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit vybrané</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="302"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="326"/>
         <source>Announce</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámit</translation>
     </message>
 </context>
 <context>
@@ -2376,7 +2377,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodičovská kontrola</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="80"/>
@@ -2426,37 +2427,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="744"/>
         <source>NSFM tag words:</source>
-        <translation type="unfinished"></translation>
+        <translation>Slova značek NSFM:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="754"/>
         <source>Automatically add NSFM tag based on title</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky přidat značku NSFM založenou na názvu</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="761"/>
         <source>NSFM sessions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení NSFM:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="768"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>Neomezeno</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="775"/>
         <source>Hide from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrýt ze seznamů</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="782"/>
         <source>Disallow joining</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedovolit připojení</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="789"/>
         <source>Disconnect when tagged as NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpojit při označení jako NSFM</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="107"/>
@@ -2490,7 +2491,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Timeout:</source>
-        <translation type="vanished">Časové omezení:</translation>
+        <translation>Časové omezení:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="184"/>
@@ -2575,7 +2576,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation type="vanished">Ukázat obsah označený jako Nevhodný pro nezletilé</translation>
+        <translation>Ukázat obsah označený jako Nevhodný pro nezletilé</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="724"/>
@@ -2590,7 +2591,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="535"/>
         <source>Connection timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Překročení času pro spojení:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
@@ -2605,12 +2606,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="572"/>
         <source>Never publish user list</source>
-        <translation type="unfinished"></translation>
+        <translation>Nikdy nezveřejnit seznam uživatelů</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="579"/>
         <source>Automatically reset when space is low</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky  nastavit znovu, když je málo místa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="672"/>
@@ -2734,29 +2735,29 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>TextSettings</name>
     <message>
         <source>Left align</source>
-        <translation type="vanished">Zarovnat vlevo</translation>
+        <translation>Zarovnat vlevo</translation>
     </message>
     <message>
         <source>Center</source>
-        <translation type="vanished">Zarovnat na střed</translation>
+        <translation>Zarovnat na střed</translation>
     </message>
     <message>
         <source>Justify</source>
-        <translation type="vanished">Zarovnat do bloku</translation>
+        <translation>Zarovnat do bloku</translation>
     </message>
     <message>
         <source>Right align</source>
-        <translation type="vanished">Zarovnat vpravo</translation>
+        <translation>Zarovnat vpravo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="68"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovné zarovnání</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="81"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislé zarovnání</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="113"/>
@@ -2791,7 +2792,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="233"/>
         <source>Annotation content</source>
-        <translation type="unfinished">Obsah poznámky</translation>
+        <translation>Obsah poznámky</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="242"/>
@@ -2816,30 +2817,30 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="266"/>
         <source>Protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Chráněno</translation>
     </message>
 </context>
 <context>
     <name>TinyPlayer</name>
     <message>
         <source>Previous marker</source>
-        <translation type="vanished">Předchozí značka</translation>
+        <translation>Předchozí značka</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="vanished">Přehrát</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation type="vanished">Krok</translation>
+        <translation>Krok</translation>
     </message>
     <message>
         <source>Skip stroke</source>
-        <translation type="vanished">Přeskočit tah</translation>
+        <translation>Přeskočit tah</translation>
     </message>
     <message>
         <source>Next marker</source>
-        <translation type="vanished">Další značka</translation>
+        <translation>Další značka</translation>
     </message>
 </context>
 <context>
@@ -2867,7 +2868,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="118"/>
         <source>Block selected user from chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Blokovat vybranému uživateli v rozhovoru</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="135"/>
@@ -2877,7 +2878,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="149"/>
         <source>Ban selected user</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat vybraného uživatele</translation>
     </message>
 </context>
 <context>
@@ -3067,11 +3068,11 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>WhatIsMyIp</name>
     <message>
         <source>IP lookup error</source>
-        <translation type="vanished">Chyba při hledání IP</translation>
+        <translation>Chyba při hledání IP</translation>
     </message>
     <message>
         <source>Received invalid data</source>
-        <translation type="vanished">Přijata neplatná adresa</translation>
+        <translation>Přijata neplatná adresa</translation>
     </message>
 </context>
 <context>
@@ -3079,12 +3080,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="190"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="202"/>
         <source>User #%1</source>
-        <translation type="unfinished">Uživatel #%1</translation>
+        <translation>Uživatel #%1</translation>
     </message>
 </context>
 <context>
@@ -3092,7 +3093,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.cpp" line="59"/>
         <source>Pick</source>
-        <translation type="unfinished">Zvolit</translation>
+        <translation>Zvolit</translation>
     </message>
 </context>
 <context>
@@ -3162,16 +3163,16 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/logindialog.cpp" line="163"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n věkem omezené sezení skryto.</numerusform>
+            <numerusform>%n věkem omezená sezení skryta.</numerusform>
+            <numerusform>%n věkem omezených sezení skryto.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="175"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat věkem omezená sezení?</translation>
     </message>
 </context>
 <context>
@@ -3204,32 +3205,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>dialogs::PlaybackDialog</name>
     <message>
         <source>Compressed recording</source>
-        <translation type="vanished">Komprimovaný záznam</translation>
+        <translation>Komprimovaný záznam</translation>
     </message>
     <message>
         <source>Marker text</source>
-        <translation type="vanished">Text značky</translation>
+        <translation>Text značky</translation>
     </message>
     <message>
         <source>Mark Position</source>
-        <translation type="vanished">Označit polohu</translation>
+        <translation>Označit polohu</translation>
     </message>
     <message>
         <source>Recording ended</source>
-        <translation type="vanished">Záznam skončen</translation>
+        <translation>Záznam skončen</translation>
     </message>
     <message>
         <source>%1 m. %2 s.</source>
-        <translation type="vanished">%1 m. %2 s.</translation>
+        <translation>%1 m. %2 s.</translation>
     </message>
     <message>
         <source>%1 s.</source>
-        <translation type="vanished">%1 s.</translation>
+        <translation>%1 s.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
         <source>Playback</source>
-        <translation type="unfinished">Přehrávání</translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="102"/>
@@ -3270,32 +3271,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="264"/>
         <source>Stop on markers</source>
-        <translation type="unfinished">Zastavit na značkách</translation>
+        <translation>Zastavit na značkách</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="273"/>
         <source>No indexed markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné zrejstříkované značky</translation>
     </message>
     <message>
         <source>Jump To</source>
-        <translation type="vanished">Skočit na</translation>
+        <translation>Skočit na</translation>
     </message>
     <message>
         <source>Cannot index compressed recordings.</source>
-        <translation type="vanished">Nelze zrejstříkovat komprimované záznamy.</translation>
+        <translation>Nelze zrejstříkovat komprimované záznamy.</translation>
     </message>
     <message>
         <source>Index not yet generated</source>
-        <translation type="vanished">Rejstřík ještě není vytvořen</translation>
+        <translation>Rejstřík ještě není vytvořen</translation>
     </message>
     <message>
         <source>Error loading index!</source>
-        <translation type="vanished">Chyba při nahrávání rejstříku!</translation>
+        <translation>Chyba při nahrávání rejstříku!</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="vanished">Chyba</translation>
+        <translation>Chyba</translation>
     </message>
 </context>
 <context>
@@ -3308,7 +3309,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="44"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Na střed</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
@@ -3325,7 +3326,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>dialogs::SelectSessionDialog</name>
     <message>
         <source>Join</source>
-        <translation type="vanished">Připojit se</translation>
+        <translation>Připojit se</translation>
     </message>
 </context>
 <context>
@@ -3333,16 +3334,16 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="70"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n věkem omezené sezení skryto.</numerusform>
+            <numerusform>%n věkem omezená sezení skryta.</numerusform>
+            <numerusform>%n věkem omezených sezení skryto.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="152"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat věkem omezená sezení?</translation>
     </message>
 </context>
 <context>
@@ -3351,51 +3352,51 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ano</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>Změnit</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ne</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>Přiřadit</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="296"/>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="317"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit nové heslo nebo ponechat prázdné k odstranění.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="298"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit heslo pro sezení.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="303"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo pro sezení</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="319"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit heslo pro získání postavení operátora.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="324"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo operátora</translation>
     </message>
 </context>
 <context>
@@ -3440,13 +3441,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="617"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>Odemknout</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknout</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="506"/>
@@ -3486,42 +3487,42 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="594"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Odemknout rodičovskou kontrolu</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="595"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="597"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknout rodičovskou kontrolu</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="598"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit heslo</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Incorrect password</source>
-        <translation type="unfinished"></translation>
+        <translation>Nesprávné heslo</translation>
     </message>
 </context>
 <context>
     <name>dialogs::TinyPlayer</name>
     <message>
         <source>Normal Player</source>
-        <translation type="vanished">Normální přehrávač</translation>
+        <translation>Normální přehrávač</translation>
     </message>
     <message>
         <source>Previous Snapshot</source>
-        <translation type="vanished">Předchozí snímek obrazovky</translation>
+        <translation>Předchozí snímek obrazovky</translation>
     </message>
     <message>
         <source>Next Snapshot</source>
-        <translation type="vanished">Další snímek obrazovky</translation>
+        <translation>Další snímek obrazovky</translation>
     </message>
 </context>
 <context>
@@ -3639,7 +3640,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
@@ -3773,11 +3774,11 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Foreground Color</source>
-        <translation type="vanished">Barva popředí</translation>
+        <translation>Barva popředí</translation>
     </message>
     <message>
         <source>Background Color</source>
-        <translation type="vanished">Barva pozadí</translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="56"/>
@@ -3809,7 +3810,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>net::Client</name>
     <message>
         <source>Server</source>
-        <translation type="vanished">Server</translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location filename="../net/client.cpp" line="230"/>
@@ -3827,7 +3828,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="97"/>
         <source>Your IP address is banned from this server</source>
-        <translation type="unfinished"></translation>
+        <translation>Vaše adresa IP je pro tento server zakázána</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="104"/>
@@ -3873,44 +3874,44 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="396"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení ještě nespuštěno!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="399"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokováno rodičovskou kontrolou</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="663"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>Server je plný!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="665"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>Hostování neschváleno</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="667"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Bylo vám zakázáno toto sezení!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="669"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>Přezdívka sezení je vyhrazena!</translation>
     </message>
     <message>
         <source>Password is needed to host a session</source>
-        <translation type="vanished">Pro hostování sezení je potřeba heslo</translation>
+        <translation>Pro hostování sezení je potřeba heslo</translation>
     </message>
     <message>
         <source>Enter hosting password</source>
-        <translation type="vanished">Zadejte heslo k hostingu</translation>
+        <translation>Zadejte heslo k hostingu</translation>
     </message>
     <message>
         <source>Session does not exist yet!</source>
-        <translation type="vanished">Sezení ještě neexistuje!</translation>
+        <translation>Sezení ještě neexistuje!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="402"/>
@@ -3919,7 +3920,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Session is password protected</source>
-        <translation type="vanished">Sezení je chráněno heslem</translation>
+        <translation>Sezení je chráněno heslem</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="487"/>
@@ -3939,11 +3940,11 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>The certificate of this server has changed!</source>
-        <translation type="vanished">Osvědčení tohoto serveru se změnilo!</translation>
+        <translation>Osvědčení tohoto serveru se změnilo!</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="vanished">Pokračovat</translation>
+        <translation>Pokračovat</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="644"/>
@@ -3968,7 +3969,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="659"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto uživatelské jméno bylo zamknuto</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="663"/>
@@ -3977,11 +3978,11 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>This username has been banned!</source>
-        <translation type="vanished">Toto uživatelské jméno bylo zakázáno!</translation>
+        <translation>Toto uživatelské jméno bylo zakázáno!</translation>
     </message>
     <message>
         <source>Session ID already in use!</source>
-        <translation type="vanished">Identifikátor sezení se již používá!</translation>
+        <translation>Identifikátor sezení se již používá!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="661"/>
@@ -3990,7 +3991,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Unknown error (%1)</source>
-        <translation type="vanished">Neznámá chyba (%1)</translation>
+        <translation>Neznámá chyba (%1)</translation>
     </message>
 </context>
 <context>
@@ -4033,30 +4034,30 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>net::UserListModel</name>
     <message>
         <source>User #%1</source>
-        <translation type="vanished">Uživatel #%1</translation>
+        <translation>Uživatel #%1</translation>
     </message>
 </context>
 <context>
     <name>openraster::Reader</name>
     <message>
         <source>No error</source>
-        <translation type="vanished">Žádná chyba</translation>
+        <translation>Žádná chyba</translation>
     </message>
     <message>
         <source>File is not an OpenRaster file</source>
-        <translation type="vanished">Soubor není souborem OpenRaster</translation>
+        <translation>Soubor není souborem OpenRaster</translation>
     </message>
     <message>
         <source>Image has zero size!</source>
-        <translation type="vanished">Obrázek má nulovou velikost!</translation>
+        <translation>Obrázek má nulovou velikost!</translation>
     </message>
     <message>
         <source>Couldn&apos;t load layer %1</source>
-        <translation type="vanished">Nepodařilo se nahrát vrstvu %1</translation>
+        <translation>Nepodařilo se nahrát vrstvu %1</translation>
     </message>
     <message>
         <source>Unnamed layer</source>
-        <translation type="vanished">Nepojmenovaná vrstva</translation>
+        <translation>Nepojmenovaná vrstva</translation>
     </message>
 </context>
 <context>
@@ -4140,27 +4141,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="382"/>
         <source>Cannot index compressed recordings.</source>
-        <translation type="unfinished">Nelze zrejstříkovat komprimované záznamy.</translation>
+        <translation>Nelze zrejstříkovat komprimované záznamy.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="388"/>
         <source>Index not yet generated</source>
-        <translation type="unfinished">Rejstřík ještě není vytvořen</translation>
+        <translation>Rejstřík ještě není vytvořen</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="395"/>
         <source>Error loading index!</source>
-        <translation type="unfinished">Chyba při nahrávání rejstříku!</translation>
+        <translation>Chyba při nahrávání rejstříku!</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="457"/>
         <source>%1 m. %2 s.</source>
-        <translation type="unfinished">%1 m. %2 s.</translation>
+        <translation>%1 m. %2 s.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="459"/>
         <source>%1 s.</source>
-        <translation type="unfinished">%1 s.</translation>
+        <translation>%1 s.</translation>
     </message>
 </context>
 <context>
@@ -4186,7 +4187,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="110"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="111"/>
@@ -4208,38 +4209,38 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>tools::AnnotationSettings</name>
     <message>
         <source>Annotation content</source>
-        <translation type="vanished">Obsah poznámky</translation>
+        <translation>Obsah poznámky</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlevo</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Na střed</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
         <source>Justify</source>
-        <translation type="unfinished">Zarovnat do bloku</translation>
+        <translation>Zarovnat do bloku</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Vpravo</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahoře</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
 </context>
 <context>
@@ -4247,7 +4248,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="55"/>
         <source>Size:</source>
-        <translation type="unfinished">Velikost:</translation>
+        <translation>Velikost:</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="71"/>
@@ -4264,7 +4265,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <source>Change Background Color</source>
-        <translation type="vanished">Změnit barvu pozadí</translation>
+        <translation>Změnit barvu pozadí</translation>
     </message>
 </context>
 <context>
@@ -4344,12 +4345,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="116"/>
         <source>Low space!</source>
-        <translation type="unfinished"></translation>
+        <translation>Málo místa!</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="117"/>
         <source>Server is almost out of space for session history! Reset the session to free some up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Server už skoro nemá žádné místo pro historii sezení! Nastavte sezení znovu, abyste nějaké uvolnil.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="143"/>
@@ -4466,7 +4467,9 @@ Hex: %5</translation>
         <location filename="../../desktop/widgets/presetpie.cpp" line="311"/>
         <source>Assign with %1
 or middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>Přiřaďte %1
+nebo klepněte prostředním
+tlačítkem myši</translation>
     </message>
 </context>
 <context>
