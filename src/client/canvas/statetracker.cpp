@@ -669,14 +669,29 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 		layer->removeSublayer(-1);
 	}
 
+	// Source region bounding rectangle
 	const QRect bounds(cmd.bx(), cmd.by(), cmd.bw(), cmd.bh());
+
+	// Target quad
+	const QPolygon target({
+		QPoint(cmd.x1(), cmd.y1()),
+		QPoint(cmd.x2(), cmd.y2()),
+		QPoint(cmd.x3(), cmd.y3()),
+		QPoint(cmd.x4(), cmd.y4())
+	});
+
+	// Sanity check: without a size limit, a user could create huge temporary images and potentially other clients
+	const int targetArea = target.boundingRect().size().width() * target.boundingRect().size().height();
+	if(targetArea > _image->width() * _image->height()) {
+		qWarning("moveRegion: cannot scale beyond image size");
+		return;
+	}
 
 	// Get mask bitmap
 	QImage mask;
 	if(!cmd.mask().isEmpty()) {
 		const int expectedLen = (cmd.bw()+31)/32 * 4 * cmd.bh(); // 1bpp lines padded to 32bit boundaries
 		QByteArray maskData = qUncompress(cmd.mask());
-		// Depending on how the image is padded, true length may be longer than minimum
 		if(maskData.length() != expectedLen) {
 			qWarning("Invalid moveRegion mask: Expected %d bytes, but got %d", expectedLen, maskData.length());
 			return;
@@ -699,12 +714,6 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 	}
 
 	// Transform selected pixels
-	const QPolygon target({
-		QPoint(cmd.x1(), cmd.y1()),
-		QPoint(cmd.x2(), cmd.y2()),
-		QPoint(cmd.x3(), cmd.y3()),
-		QPoint(cmd.x4(), cmd.y4())
-	});
 
 	QPoint offset;
 	QImage transformed;
