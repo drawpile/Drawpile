@@ -79,7 +79,7 @@ public:
 	Tool *getTool(Tool::Type type);
 
 public slots:
-	void startDrawing(const QPointF &point, qreal pressure);
+	void startDrawing(const QPointF &point, qreal pressure, float zoom);
 	void continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt);
 	void endDrawing();
 

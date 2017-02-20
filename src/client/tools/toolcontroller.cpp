@@ -160,7 +160,7 @@ void ToolController::setSmoothing(int smoothing)
 	}
 }
 
-void ToolController::startDrawing(const QPointF &point, qreal pressure)
+void ToolController::startDrawing(const QPointF &point, qreal pressure, float zoom)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -174,7 +174,7 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure)
 		m_smoother.addPoint(paintcore::Point(point, pressure));
 	}
 	// TODO handle hasSmoothPoint() == false
-	m_activeTool->begin(paintcore::Point(point, pressure), /*_zoom (TODO)*/ 1.0);
+	m_activeTool->begin(paintcore::Point(point, pressure), zoom);
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)

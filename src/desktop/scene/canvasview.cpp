@@ -314,7 +314,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 			// quick color pick mode
 			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		} else {
-			emit penDown(p, p.pressure());
+			emit penDown(p, p.pressure(), _zoom / 100.0);
 		}
 	}
 }
