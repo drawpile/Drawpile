@@ -983,7 +983,7 @@
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
         <translation>На сервере заканчивается место для истории и сессия слишком большая для автоматического сброса (Предел %1 MB)
-Упростите холст и сбросьте вручую до того как место закончится.</translation>
+Упростите холст и сбросьте вручную до того как место закончится.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1041"/>
@@ -1028,7 +1028,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1436"/>
         <source>Session blocked by parental controls</source>
-        <translation>Сесстия заблокирована родительским контролем</translation>
+        <translation>Сессия заблокирована родительским контролем</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1907"/>
@@ -1406,7 +1406,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2280"/>
         <source>A brush that picks up color from the layer</source>
-        <translation>Кисть. которая использует цвета со слоя</translation>
+        <translation>Кисть, которая использует цвета со слоя</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2281"/>
@@ -1541,7 +1541,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2337"/>
         <source>Drawing tools</source>
-        <translation>Интструменты рисования</translation>
+        <translation>Инструменты рисования</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2360"/>
@@ -2350,7 +2350,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
         <source>Announce with Zeroconf</source>
-        <translation>Опубликовть с помощью Zeroconf</translation>
+        <translation>Опубликовать с помощью Zeroconf</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="565"/>
@@ -2392,7 +2392,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="579"/>
         <source>Automatically reset when space is low</source>
-        <translation>Автоматическии сбрасывать, когда мало места</translation>
+        <translation>Автоматически сбрасывать, когда мало места</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="649"/>
@@ -3972,7 +3972,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="178"/>
         <source>A previously unvisited host</source>
-        <translation>Непосещаемый прежде хост</translation>
+        <translation>Впервые посещаемый хост</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="183"/>
