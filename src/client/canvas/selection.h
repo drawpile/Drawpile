@@ -119,7 +119,7 @@ private:
 	QImage m_pasteImage;
 
 	bool m_closedPolygon;
-	QPolygon m_moveRegion;
+	QPolygonF m_moveRegion;
 };
 
 }

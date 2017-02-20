@@ -29,7 +29,7 @@
 namespace canvas {
 
 Selection::Selection(QObject *parent)
-	: QObject(parent), m_closedPolygon(false), m_moveRegion(false)
+	: QObject(parent), m_closedPolygon(false)
 {
 
 }
@@ -262,13 +262,13 @@ QImage Selection::shapeMask(const QColor &color, QPoint *offset) const
 
 void Selection::setPasteImage(const QImage &image)
 {
-	m_moveRegion = QPolygon();
+	m_moveRegion = QPolygonF();
 	setPasteOrMoveImage(image);
 }
 
 void Selection::setMoveImage(const QImage &image)
 {
-	m_moveRegion = m_shape.toPolygon();
+	m_moveRegion = m_shape;
 	setPasteOrMoveImage(image);
 }
 
@@ -304,10 +304,11 @@ QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, in
 	if(!m_moveRegion.isEmpty()) {
 		qDebug("Moving instead of pasting");
 		// Get source pixel mask
-		const QRect moveBounds = m_moveRegion.boundingRect();
+		const QRect moveBounds = m_moveRegion.boundingRect().toRect();
+		const QPolygon moveRegion = m_moveRegion.toPolygon();
 		QByteArray mask;
-		if(!canvas::isAxisAlignedRectangle(m_moveRegion)) {
-			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, nullptr, true);
+		if(!canvas::isAxisAlignedRectangle(moveRegion)) {
+			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, moveRegion, nullptr, true);
 			mask = qCompress(QByteArray::fromRawData(reinterpret_cast<const char*>(maskimg.constBits()), maskimg.byteCount()));
 		}
 
