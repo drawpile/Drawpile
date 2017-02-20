@@ -2,36 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>AnimationExporter</name>
-    <message>
-        <source>Export error</source>
-        <translation type="vanished">Ошибка экспортирования</translation>
-    </message>
-    <message>
-        <source>Exporting...</source>
-        <translation type="vanished">Экспортирование...</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Отмена</translation>
-    </message>
-</context>
-<context>
     <name>BanlistModel</name>
     <message>
         <location filename="../net/banlistmodel.cpp" line="73"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="74"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>IP адрес</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="75"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>Кем забанен</translation>
     </message>
 </context>
 <context>
@@ -206,47 +191,47 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="321"/>
         <source>Select Color</source>
-        <translation type="unfinished">Выберите цвет</translation>
+        <translation>Выберите цвет</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="322"/>
         <source>Saturation</source>
-        <translation type="unfinished">Насыщенность</translation>
+        <translation>Насыщенность</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="323"/>
         <source>Hue</source>
-        <translation type="unfinished">Тон</translation>
+        <translation>Тон</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="324"/>
         <source>Hex</source>
-        <translation type="unfinished">Hex</translation>
+        <translation>Hex</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="325"/>
         <source>Blue</source>
-        <translation type="unfinished">Синий</translation>
+        <translation>Синий</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="326"/>
         <source>Value</source>
-        <translation type="unfinished">Значение</translation>
+        <translation>Значение</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="327"/>
         <source>Green</source>
-        <translation type="unfinished">Зелёный</translation>
+        <translation>Зелёный</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="328"/>
         <source>Alpha</source>
-        <translation type="unfinished">Альфа</translation>
+        <translation>Альфа</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="329"/>
         <source>Red</source>
-        <translation type="unfinished">Красный</translation>
+        <translation>Красный</translation>
     </message>
 </context>
 <context>
@@ -441,7 +426,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="118"/>
         <source>Squish strokes</source>
-        <translation>Сжать штрихи</translation>
+        <translation>Сжать мазки</translation>
     </message>
 </context>
 <context>
@@ -459,7 +444,7 @@
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="106"/>
         <source>Loop range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон цикла:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="139"/>
@@ -485,10 +470,6 @@
         <translation>Сессия</translation>
     </message>
     <message>
-        <source>&amp;Title:</source>
-        <translation type="vanished">&amp;Название:</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="46"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>Это название указано в заголовке приложения и в диалоге выбора сессии</translation>
@@ -509,41 +490,29 @@
         <translation>Опционально, если оставить пустым, пароль не понадобится, чтобы присоединиться к этой сессии.</translation>
     </message>
     <message>
-        <source>&amp;ID:</source>
-        <translation type="vanished">&amp;ID:</translation>
-    </message>
-    <message>
-        <source>The ID to use in a session URL. Leave blank to let the server generate an ID</source>
-        <translation type="vanished">ID для использования в URL сессии. Оставьте пустым, чтобы сервер сам сгенерировал ID</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation type="vanished">Автоматически</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="36"/>
         <source>T&amp;itle:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Название:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="105"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Псевдоним ID:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="121"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished"></translation>
+        <translation>Необязательное удобное имя для сессии</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="128"/>
         <source>Announce the session at a public list</source>
-        <translation>Анонсировать сессию в общедоступном списке</translation>
+        <translation>Опубликовать сессию в общедоступном списке</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="131"/>
         <source>Announce at:</source>
-        <translation>Анонсировать на:</translation>
+        <translation>Опубликовать на:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="152"/>
@@ -721,7 +690,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="31"/>
         <source>Logging in...</source>
-        <translation type="unfinished"></translation>
+        <translation>Вход...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="78"/>
@@ -736,12 +705,12 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="143"/>
         <source>The certificate of this server has changed!</source>
-        <translation type="unfinished">Сертификат этого сервера изменился!</translation>
+        <translation>Сертификат этого сервера изменился!</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="167"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Соединение...</translation>
     </message>
 </context>
 <context>
@@ -872,10 +841,6 @@
         <translation>Невозможно сохранить изображение</translation>
     </message>
     <message>
-        <source>Compressed Recordings (%1)</source>
-        <translation type="vanished">Сжатые записи (%1)</translation>
-    </message>
-    <message>
         <location filename="../../desktop/mainwindow.cpp" line="1119"/>
         <source>Record Session</source>
         <translation>Запись сессии</translation>
@@ -898,7 +863,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1245"/>
         <source>Really leave the session?</source>
-        <translation>Действительно покинуть сессию?</translation>
+        <translation>Покинуть сессию? Вы уверены?</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1251"/>
@@ -914,14 +879,6 @@
         <location filename="../../desktop/mainwindow.cpp" line="1262"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Ещё есть неотправленные данные! Пожалуйста, подождите пока передача завершится!</translation>
-    </message>
-    <message>
-        <source>Session Title</source>
-        <translation type="vanished">Название сессии</translation>
-    </message>
-    <message>
-        <source>Change session title</source>
-        <translation type="vanished">Изменить название сессии</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1368"/>
@@ -1019,58 +976,59 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="155"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>На сервере нет места</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="156"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>На сервере заканчивается место для истории и сессия слишком большая для автоматического сброса (Предел %1 MB)
+Упростите холст и сбросьте вручую до того как место закончится.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1041"/>
         <source>Export error</source>
-        <translation type="unfinished">Ошибка экспортирования</translation>
+        <translation>Ошибка экспортирования</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1049"/>
         <source>Exporting...</source>
-        <translation type="unfinished">Экспортирование...</translation>
+        <translation>Экспортирование...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1113"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Бинарные записи (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1114"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовые записи (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1115"/>
         <source>Compressed Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сжатые бинарные записи (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1116"/>
         <source>Compressed Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сжатые текстовые записи (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1272"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Стать оператором</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1273"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите пароль оператора</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1436"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Сесстия заблокирована родительским контролем</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1907"/>
@@ -1205,17 +1163,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1999"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Залить выделение</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2000"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Перекрасить выделение</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2001"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Стереть цвет в выделении</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2050"/>
@@ -1305,21 +1263,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2214"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Указатели пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2240"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стать оператором...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Crosshair C&amp;ursor</source>
-        <translation type="vanished">Показывать перекрестие &amp;курсора</translation>
+        <translation>Заблокировать всё</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2116"/>
@@ -1340,10 +1294,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/mainwindow.cpp" line="2119"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Показывать след &amp;лазера</translation>
-    </message>
-    <message>
-        <source>Thick Laser Trails</source>
-        <translation type="vanished">Толстый след лазера</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2120"/>
@@ -1369,10 +1319,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/mainwindow.cpp" line="2203"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
-    </message>
-    <message>
-        <source>User &amp;pointers</source>
-        <translation type="vanished">&amp;Указатели пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2229"/>
@@ -1409,46 +1355,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2234"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал событий</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2235"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2239"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lo&amp;ck the Board</source>
-        <translation type="vanished">За&amp;блокировать рабочую область</translation>
+        <translation>&amp;Сброс...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Запретить изменения в рабочей области</translation>
-    </message>
-    <message>
-        <source>Lock Layer Controls</source>
-        <translation type="vanished">Заблокировать управление слоями</translation>
-    </message>
-    <message>
-        <source>Allow only session operators to add and change layers</source>
-        <translation type="vanished">Разрешить только операторам сессии удалять и изменять слои</translation>
-    </message>
-    <message>
-        <source>&amp;Deny Joins</source>
-        <translation type="vanished">&amp;Отклонять соединения</translation>
-    </message>
-    <message>
-        <source>Prevent new users from joining the session</source>
-        <translation type="vanished">Запретить новым пользователям присоединяться к сессии</translation>
-    </message>
-    <message>
-        <source>Change &amp;Title...</source>
-        <translation type="vanished">&amp;Изменить название...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2263"/>
@@ -1464,7 +1386,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2278"/>
         <source>Draw with hard edged strokes</source>
-        <translation>Рисует штрихами с жёсткой гранью</translation>
+        <translation>Рисует мазками с жёсткой гранью</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2279"/>
@@ -1474,7 +1396,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2279"/>
         <source>Draw with smooth strokes</source>
-        <translation>Рисует гладкими штрихами</translation>
+        <translation>Рисует гладкими мазками</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2280"/>
@@ -1607,10 +1529,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Горячие клавиши</translation>
     </message>
     <message>
-        <source>&amp;Swap Colors</source>
-        <translation type="vanished">&amp;Поменять местами цвета</translation>
-    </message>
-    <message>
         <location filename="../../desktop/mainwindow.cpp" line="2317"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>У&amp;меньшить размер кисти</translation>
@@ -1660,18 +1578,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <source>Fill selection</source>
-        <translation type="vanished">Заполнить выделение</translation>
-    </message>
-    <message>
-        <source>Recolor selection</source>
-        <translation type="vanished">Перекрасить выделение</translation>
-    </message>
-    <message>
-        <source>Color erase selection</source>
-        <translation type="vanished">Обесцветить выделение</translation>
-    </message>
-    <message>
         <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>Select Layer Below</source>
         <translation>Выбрать слой ниже</translation>
@@ -1679,12 +1585,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2377"/>
         <source>Show Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать круговое меню пресетов</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2380"/>
         <source>Assign Tool To Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить инструмент в круговое меню</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2397"/>
@@ -1809,7 +1715,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
         <source>Rewind stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>В начало мазка</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="59"/>
@@ -1824,7 +1730,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="102"/>
         <source>Skip stroke</source>
-        <translation>Пропустить штрих</translation>
+        <translation>Пропустить мазок</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="190"/>
@@ -1832,50 +1738,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Скорость:</translation>
     </message>
     <message>
-        <source>Max. pause:</source>
-        <translation type="vanished">Макс. пауза:</translation>
-    </message>
-    <message>
-        <source>s</source>
-        <comment>seconds</comment>
-        <translation type="vanished">сек</translation>
-    </message>
-    <message>
-        <source>Stop on markers</source>
-        <translation type="vanished">Останавливаться на метках</translation>
-    </message>
-    <message>
-        <source>Small player</source>
-        <translation type="vanished">Маленький плеер</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/playback.ui" line="255"/>
         <source>Build Index</source>
         <translation>Проиндексировать</translation>
-    </message>
-    <message>
-        <source>Filter...</source>
-        <translation type="vanished">Фильтр...</translation>
-    </message>
-    <message>
-        <source>Snapshots:</source>
-        <translation type="vanished">Снимки:</translation>
-    </message>
-    <message>
-        <source>Previous snapshot</source>
-        <translation type="vanished">Предыдущий снимок</translation>
-    </message>
-    <message>
-        <source>Next snapshot</source>
-        <translation type="vanished">Следующий снимок</translation>
-    </message>
-    <message>
-        <source>Markers:</source>
-        <translation type="vanished">Метки:</translation>
-    </message>
-    <message>
-        <source>Mark</source>
-        <translation type="vanished">Метка</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="313"/>
@@ -1915,7 +1780,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="469"/>
         <source>Filter recording</source>
-        <translation type="unfinished">Отфильтровать запись</translation>
+        <translation>Отфильтровать запись</translation>
     </message>
 </context>
 <context>
@@ -1928,35 +1793,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Все файлы(*)</translation>
     </message>
     <message>
-        <source>Background</source>
-        <translation type="vanished">Фон</translation>
-    </message>
-    <message>
-        <source>Foreground</source>
-        <translation type="vanished">Передний план</translation>
-    </message>
-    <message>
-        <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
-</source>
-        <translation type="vanished">Drawpile поддерживает не все функции используемые в этом файле OpenRaster. Сохранение этого файла может привести к потери данных.
-</translation>
-    </message>
-    <message>
-        <source>Application specific extensions are used</source>
-        <translation type="vanished">Используются специфические расширения приложения</translation>
-    </message>
-    <message>
-        <source>Nested layers are not fully supported.</source>
-        <translation type="vanished">Вложенные слои поддерживаются не полностью.</translation>
-    </message>
-    <message>
-        <source>Partially supported OpenRaster</source>
-        <translation type="vanished">Частично поддерживаемый OpenRaster</translation>
-    </message>
-    <message>
         <location filename="../../desktop/mainwindow.cpp" line="478"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Предупреждение</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="889"/>
@@ -1967,10 +1806,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Все файлы(*)</translation>
     </message>
     <message>
-        <source>%1h %2m</source>
-        <translation type="vanished">%1ч %2мин</translation>
-    </message>
-    <message>
         <location filename="../../desktop/utils/netfiles.cpp" line="67"/>
         <source>Unexpected file format</source>
         <translation>Непредвиденный формат файла</translation>
@@ -1978,12 +1813,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="53"/>
         <source>Current</source>
-        <translation type="unfinished"></translation>
+        <translation>Сейчас</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="57"/>
         <source>%1 s. ago</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 сек. назад</translation>
     </message>
 </context>
 <context>
@@ -1991,60 +1826,60 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/loader.cpp" line="49"/>
         <source>Background</source>
-        <translation type="unfinished">Фон</translation>
+        <translation>Фон</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="50"/>
         <source>Foreground</source>
-        <translation type="unfinished">Передний план</translation>
+        <translation>Передний план</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="67"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation type="unfinished">Drawpile поддерживает не все функции используемые в этом файле OpenRaster. Сохранение этого файла может привести к потери данных.
+        <translation>Drawpile поддерживает не все функции используемые в этом файле OpenRaster. Сохранение этого файла может привести к потери данных.
 </translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="69"/>
         <source>Application specific extensions are used</source>
-        <translation type="unfinished">Используются специфические расширения приложения</translation>
+        <translation>Используются специфические расширения приложения</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="71"/>
         <source>Nested layers are not fully supported.</source>
-        <translation type="unfinished">Вложенные слои поддерживаются не полностью.</translation>
+        <translation>Вложенные слои поддерживаются не полностью.</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="57"/>
         <location filename="../net/sessionlistingmodel.cpp" line="59"/>
         <source>%1h %2m</source>
-        <translation type="unfinished">%1ч %2мин</translation>
+        <translation>%1ч %2мин</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="380"/>
         <source>Image has zero size!</source>
-        <translation type="unfinished">Изображение имеет нулевой размер!</translation>
+        <translation>Изображение имеет нулевой размер!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="383"/>
         <source>Image is too big!</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение слишком большое!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="386"/>
         <source>No layers found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Слои не найдены!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="408"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation type="unfinished">Невозможно загрузить слой %1</translation>
+        <translation>Невозможно загрузить слой %1</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="490"/>
         <source>File is not an OpenRaster file</source>
-        <translation type="unfinished">Файл не является файлом OpenRaster</translation>
+        <translation>Файл не является файлом OpenRaster</translation>
     </message>
 </context>
 <context>
@@ -2052,7 +1887,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/resetsession.ui" line="14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить сессию</translation>
     </message>
 </context>
 <context>
@@ -2063,44 +1898,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Изменить размер холста</translation>
     </message>
     <message>
-        <source>Canvas size</source>
-        <translation type="vanished">Размер холста</translation>
-    </message>
-    <message>
-        <source>&amp;Width:</source>
-        <translation type="vanished">&amp;Ширина:</translation>
-    </message>
-    <message>
-        <source>&amp;Height:</source>
-        <translation type="vanished">&amp;Высота:</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/resizedialog.ui" line="96"/>
         <source>Keep aspect ratio</source>
         <translation>Сохранить соотношение сторон</translation>
-    </message>
-    <message>
-        <source>Offset</source>
-        <translation type="vanished">Отступ</translation>
-    </message>
-    <message>
-        <source>&amp;X:</source>
-        <translation type="vanished">&amp;X:</translation>
-    </message>
-    <message>
-        <source>&amp;Y:</source>
-        <translation type="vanished">&amp;Y:</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">Центрировать</translation>
-    </message>
-</context>
-<context>
-    <name>SelectSession</name>
-    <message>
-        <source>Select Session</source>
-        <translation type="vanished">Выбрать сессию</translation>
     </message>
 </context>
 <context>
@@ -2154,12 +1954,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал событий</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="20"/>
         <source>Filter</source>
-        <translation type="unfinished">Фильтр</translation>
+        <translation>Фильтр</translation>
     </message>
 </context>
 <context>
@@ -2180,158 +1980,158 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки сессии</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="24"/>
         <source>Settings</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation>Настройки</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="30"/>
         <source>Session</source>
-        <translation type="unfinished">Сессия</translation>
+        <translation>Сессия</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="36"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль оператора:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="66"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить чат в историю сессии, чтобы новые пользователи тоже могли его видеть</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="69"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранять историю чата</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="76"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Не завершать сессию, когда её покидает последний пользователь</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="79"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>Существовать без пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="86"/>
         <source>This session contains material not suitable for minors</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта сессия содержит материалы не подходящие для несовершеннолетних</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="89"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>18+</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="102"/>
         <source>Locked features</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокированные функции</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="108"/>
         <source>Only operators can paste images and use fill tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Только оператор может вставлять изображения и использовать заливку</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="111"/>
         <source>Cut, paste &amp;&amp; fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать, вставить и залить</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="118"/>
         <source>Only operators can create new annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Только оператор может создавать новые аннотации</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="121"/>
         <source>New annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Новые аннотации</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="128"/>
         <source>Only operators can change layer attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>Только оператор может менять атрибуты слоя</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="131"/>
         <source>Layer controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление слоями</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="138"/>
         <source>Allow normal users to create and edit their own layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить обычным пользователям создавать и редактировать свои слои</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="141"/>
         <source>Allow own layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить свои слои</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="164"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторизация</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="170"/>
         <source>Password:</source>
-        <translation type="unfinished">Пароль:</translation>
+        <translation>Пароль:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="184"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимум пользователей:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="191"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>Допустимое количество пользователей. Не влияет на уже авторизованных пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="220"/>
         <source>Prevent new users from drawing until explicitly unlocked by an operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Новые пользователи не могут рисовать, пока не разрешит оператор</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="223"/>
         <source>Lock new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокировать новых пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="230"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить новые подключения</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="240"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Название:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="261"/>
         <source>Banned users</source>
-        <translation type="unfinished"></translation>
+        <translation>Забаненные пользователи</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="292"/>
         <location filename="../../desktop/ui/sessionsettings.ui" line="333"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенных</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="302"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Публикации</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="326"/>
         <source>Announce</source>
-        <translation type="unfinished"></translation>
+        <translation>Опубликовать</translation>
     </message>
 </context>
 <context>
@@ -2430,7 +2230,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Родительский контроль</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="269"/>
@@ -2490,37 +2290,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="744"/>
         <source>NSFM tag words:</source>
-        <translation type="unfinished"></translation>
+        <translation>18+ слова:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="754"/>
         <source>Automatically add NSFM tag based on title</source>
-        <translation type="unfinished"></translation>
+        <translation>Авто добавление тега 18+ исходя из названия</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="761"/>
         <source>NSFM sessions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сессии 18+:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="768"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>Без ограничений</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="775"/>
         <source>Hide from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрывать в списке</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="782"/>
         <source>Disallow joining</source>
-        <translation type="unfinished"></translation>
+        <translation>Не позволять присоединение</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="789"/>
         <source>Disconnect when tagged as NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>Разъединять, если сессия с тегом 18+</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
@@ -2548,13 +2348,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Мб</translation>
     </message>
     <message>
-        <source>Timeout:</source>
-        <translation type="vanished">Таймаут:</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
         <source>Announce with Zeroconf</source>
-        <translation>Анонсировать с помощью Zeroconf</translation>
+        <translation>Опубликовть с помощью Zeroconf</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="565"/>
@@ -2586,17 +2382,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="535"/>
         <source>Connection timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Таймаут соединения:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="572"/>
         <source>Never publish user list</source>
-        <translation type="unfinished"></translation>
+        <translation>Никогда не публиковать список пользователей</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="579"/>
         <source>Automatically reset when space is low</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическии сбрасывать, когда мало места</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="649"/>
@@ -2618,10 +2414,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/ui/settings.ui" line="48"/>
         <source>List Servers</source>
         <translation>Список серверов</translation>
-    </message>
-    <message>
-        <source>Show content tagged as &quot;Not Suitable For Minors&quot;</source>
-        <translation type="vanished">Показывать &quot;Неподходящие для несовершеннолетних&quot;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="724"/>
@@ -2738,30 +2530,14 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>TextSettings</name>
     <message>
-        <source>Left align</source>
-        <translation type="vanished">По левому краю</translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="vanished">По центру</translation>
-    </message>
-    <message>
-        <source>Justify</source>
-        <translation type="vanished">По ширине</translation>
-    </message>
-    <message>
-        <source>Right align</source>
-        <translation type="vanished">По правому краю</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/textsettings.ui" line="68"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивание по горизонтали</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="81"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Выравнивание по вертикали</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="113"/>
@@ -2796,7 +2572,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="233"/>
         <source>Annotation content</source>
-        <translation type="unfinished">Содержимое аннотации</translation>
+        <translation>Содержимое аннотации</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="242"/>
@@ -2821,30 +2597,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="266"/>
         <source>Protected</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TinyPlayer</name>
-    <message>
-        <source>Previous marker</source>
-        <translation type="vanished">Предыдущая метка</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation type="vanished">Воспроизвести</translation>
-    </message>
-    <message>
-        <source>Step</source>
-        <translation type="vanished">Шаг</translation>
-    </message>
-    <message>
-        <source>Skip stroke</source>
-        <translation type="vanished">Пропустить штрих</translation>
-    </message>
-    <message>
-        <source>Next marker</source>
-        <translation type="vanished">Следующая метка</translation>
+        <translation>Защищённая</translation>
     </message>
 </context>
 <context>
@@ -2872,7 +2625,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="118"/>
         <source>Block selected user from chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Забанить выбранного пользователя в чате</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="135"/>
@@ -2882,7 +2635,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="149"/>
         <source>Ban selected user</source>
-        <translation type="unfinished"></translation>
+        <translation>Забанить выбранного пользователя</translation>
     </message>
 </context>
 <context>
@@ -3072,27 +2825,16 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>WhatIsMyIp</name>
-    <message>
-        <source>IP lookup error</source>
-        <translation type="vanished">Ошибка поиска IP</translation>
-    </message>
-    <message>
-        <source>Received invalid data</source>
-        <translation type="vanished">Получены неверные данные</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
         <location filename="../canvas/userlist.cpp" line="190"/>
         <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="202"/>
         <source>User #%1</source>
-        <translation type="unfinished">Пользователь #%1</translation>
+        <translation>Пользователь #%1</translation>
     </message>
 </context>
 <context>
@@ -3100,7 +2842,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.cpp" line="59"/>
         <source>Pick</source>
-        <translation type="unfinished">Выбрать</translation>
+        <translation>Выбрать</translation>
     </message>
 </context>
 <context>
@@ -3170,8 +2912,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/logindialog.cpp" line="163"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Скрыто сессий с возрастным ограничением: %n.</numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3179,7 +2921,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="175"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать сессии с возрастным ограничением?</translation>
     </message>
 </context>
 <context>
@@ -3211,33 +2953,9 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <source>Compressed recording</source>
-        <translation type="vanished">Сжатая запись</translation>
-    </message>
-    <message>
-        <source>Mark Position</source>
-        <translation type="vanished">Позиция метки</translation>
-    </message>
-    <message>
-        <source>Marker text</source>
-        <translation type="vanished">Текст метки</translation>
-    </message>
-    <message>
-        <source>Recording ended</source>
-        <translation type="vanished">Запись закончилась</translation>
-    </message>
-    <message>
-        <source>%1 m. %2 s.</source>
-        <translation type="vanished">%1 мин. %2 сек.</translation>
-    </message>
-    <message>
-        <source>%1 s.</source>
-        <translation type="vanished">%1 сек.</translation>
-    </message>
-    <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
         <source>Playback</source>
-        <translation type="unfinished">Воспроизведение</translation>
+        <translation>Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="102"/>
@@ -3278,32 +2996,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="264"/>
         <source>Stop on markers</source>
-        <translation type="unfinished">Останавливаться на метках</translation>
+        <translation>Останавливаться на метках</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="273"/>
         <source>No indexed markers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot index compressed recordings.</source>
-        <translation type="vanished">Невозможно проиндексировать сжатые записи.</translation>
-    </message>
-    <message>
-        <source>Index not yet generated</source>
-        <translation type="vanished">Ещё не проиндексировано</translation>
-    </message>
-    <message>
-        <source>Error loading index!</source>
-        <translation type="vanished">Ошибка загрузки индекса!</translation>
-    </message>
-    <message>
-        <source>Jump To</source>
-        <translation type="vanished">Перейти к</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="vanished">Ошибка</translation>
+        <translation>Нет проиндексированных меток</translation>
     </message>
 </context>
 <context>
@@ -3316,7 +3014,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="44"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>По центру</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
@@ -3330,19 +3028,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::SelectSessionDialog</name>
-    <message>
-        <source>Join</source>
-        <translation type="vanished">Присоединиться</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::SessionListingDialog</name>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="70"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Скрыто сессий с возрастным ограничением: %n.</numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3350,7 +3041,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="152"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать сессии с возрастным ограничением?</translation>
     </message>
 </context>
 <context>
@@ -3359,51 +3050,51 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>да</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>изменить</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>нет</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>установить</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="296"/>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="317"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>Установите новый пароль или оставьте пустым, чтобы удалить.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="298"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Установите пароль для сессии.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="303"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль сессии</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="319"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Установите пароль для получения статуса оператора.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="324"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль оператора</translation>
     </message>
 </context>
 <context>
@@ -3448,13 +3139,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="617"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>Разблокировать</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокировать</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="506"/>
@@ -3494,42 +3185,27 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="594"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Разблокировать родительский контроль</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="595"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="597"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокировать родительский контроль</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="598"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить пароль</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Incorrect password</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::TinyPlayer</name>
-    <message>
-        <source>Normal Player</source>
-        <translation type="vanished">Нормальный плеер</translation>
-    </message>
-    <message>
-        <source>Previous Snapshot</source>
-        <translation type="vanished">Предыдущий снимок</translation>
-    </message>
-    <message>
-        <source>Next Snapshot</source>
-        <translation type="vanished">Следующий снимок</translation>
+        <translation>Неверный пароль</translation>
     </message>
 </context>
 <context>
@@ -3647,7 +3323,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
@@ -3805,21 +3481,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <source>Laser pointer</source>
         <translation>Лазерный указатель</translation>
     </message>
-    <message>
-        <source>Foreground Color</source>
-        <translation type="vanished">Основной цвет</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation type="vanished">Фоновый цвет</translation>
-    </message>
 </context>
 <context>
     <name>net::Client</name>
-    <message>
-        <source>Server</source>
-        <translation type="vanished">Сервер</translation>
-    </message>
     <message>
         <location filename="../net/client.cpp" line="230"/>
         <source>A server error occurred!</source>
@@ -3836,7 +3500,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="97"/>
         <source>Your IP address is banned from this server</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш IP адрес забанен на этом сервере</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="104"/>
@@ -3882,53 +3546,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="396"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>Сессия ещё не начата!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="399"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокировано родительским контролем</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="663"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер полон!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="665"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>Хостинг не авторизован</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="667"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы забанены в этой сессии!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="669"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password is needed to host a session</source>
-        <translation type="vanished">Требуется пароль, чтобы начать сессию</translation>
-    </message>
-    <message>
-        <source>Enter hosting password</source>
-        <translation type="vanished">Введите пароль хоста</translation>
-    </message>
-    <message>
-        <source>Session does not exist yet!</source>
-        <translation type="vanished">Сессия ещё не существует!</translation>
+        <translation>Псевдоним сессии зарезервирован!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="402"/>
         <source>Session for a different Drawpile version in progress!</source>
         <translation>Запущена сессия для другой версии Drawpile!</translation>
-    </message>
-    <message>
-        <source>Session is password protected</source>
-        <translation type="vanished">Сессия защищена паролем</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="487"/>
@@ -3945,14 +3593,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/login.cpp" line="586"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>Сертификат доверенного сервера изменился!</translation>
-    </message>
-    <message>
-        <source>The certificate of this server has changed!</source>
-        <translation type="vanished">Сертификат этого сервера изменился!</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation type="vanished">Продолжить</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="644"/>
@@ -3977,7 +3617,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="659"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Это имя заблокировано</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="661"/>
@@ -3988,18 +3628,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/login.cpp" line="663"/>
         <source>Session is closed!</source>
         <translation>Сессия закрыта!</translation>
-    </message>
-    <message>
-        <source>This username has been banned!</source>
-        <translation type="vanished">Это имя пользователя запрещено!</translation>
-    </message>
-    <message>
-        <source>Session ID already in use!</source>
-        <translation type="vanished">ID сессии уже занят!</translation>
-    </message>
-    <message>
-        <source>Unknown error (%1)</source>
-        <translation type="vanished">Неизвестная ошибка (%1)</translation>
     </message>
 </context>
 <context>
@@ -4036,36 +3664,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/tcpserver.cpp" line="110"/>
         <source>Received invalid data</source>
         <translation>Получены неверные данные</translation>
-    </message>
-</context>
-<context>
-    <name>net::UserListModel</name>
-    <message>
-        <source>User #%1</source>
-        <translation type="vanished">Пользователь #%1</translation>
-    </message>
-</context>
-<context>
-    <name>openraster::Reader</name>
-    <message>
-        <source>No error</source>
-        <translation type="vanished">Нет ошибок</translation>
-    </message>
-    <message>
-        <source>File is not an OpenRaster file</source>
-        <translation type="vanished">Файл не является файлом OpenRaster</translation>
-    </message>
-    <message>
-        <source>Image has zero size!</source>
-        <translation type="vanished">Изображение имеет нулевой размер!</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t load layer %1</source>
-        <translation type="vanished">Невозможно загрузить слой %1</translation>
-    </message>
-    <message>
-        <source>Unnamed layer</source>
-        <translation type="vanished">Неназванный слой</translation>
     </message>
 </context>
 <context>
@@ -4149,27 +3747,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="382"/>
         <source>Cannot index compressed recordings.</source>
-        <translation type="unfinished">Невозможно проиндексировать сжатые записи.</translation>
+        <translation>Невозможно проиндексировать сжатые записи.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="388"/>
         <source>Index not yet generated</source>
-        <translation type="unfinished">Ещё не проиндексировано</translation>
+        <translation>Ещё не проиндексировано</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="395"/>
         <source>Error loading index!</source>
-        <translation type="unfinished">Ошибка загрузки индекса!</translation>
+        <translation>Ошибка загрузки индекса!</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="457"/>
         <source>%1 m. %2 s.</source>
-        <translation type="unfinished">%1 мин. %2 сек.</translation>
+        <translation>%1 мин. %2 сек.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="459"/>
         <source>%1 s.</source>
-        <translation type="unfinished">%1 сек.</translation>
+        <translation>%1 сек.</translation>
     </message>
 </context>
 <context>
@@ -4195,7 +3793,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="110"/>
         <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="111"/>
@@ -4216,39 +3814,35 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <source>Annotation content</source>
-        <translation type="vanished">Содержимое аннотации</translation>
-    </message>
-    <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>По левому краю</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>По центру</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
         <source>Justify</source>
-        <translation type="unfinished">По ширине</translation>
+        <translation>По ширине</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>По правому краю</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>По верхнему краю</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>По нижнему краю</translation>
     </message>
 </context>
 <context>
@@ -4256,7 +3850,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="55"/>
         <source>Size:</source>
-        <translation type="unfinished">Размер:</translation>
+        <translation>Размер:</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="71"/>
@@ -4270,10 +3864,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/widgets/brushpreview.cpp" line="49"/>
         <source>Change Foreground Color</source>
         <translation>Изменить основной цвет</translation>
-    </message>
-    <message>
-        <source>Change Background Color</source>
-        <translation type="vanished">Изменить фоновый цвет</translation>
     </message>
 </context>
 <context>
@@ -4356,12 +3946,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="116"/>
         <source>Low space!</source>
-        <translation type="unfinished"></translation>
+        <translation>Мало места!</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="117"/>
         <source>Server is almost out of space for session history! Reset the session to free some up.</source>
-        <translation type="unfinished"></translation>
+        <translation>На сервере почти не осталось места для истории сессии! Сбросьте сессию, чтобы освободить немного.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="143"/>
@@ -4481,7 +4071,8 @@ Hex: %5</translation>
         <location filename="../../desktop/widgets/presetpie.cpp" line="311"/>
         <source>Assign with %1
 or middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить %1
+или СКМ</translation>
     </message>
 </context>
 <context>
