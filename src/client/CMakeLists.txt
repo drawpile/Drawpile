@@ -123,6 +123,7 @@ endif()
 
 add_library (
 	${DPCLIENTLIB}
+	STATIC
 	${SOURCES}
 	${QM_TRANSLATIONS}
 )
