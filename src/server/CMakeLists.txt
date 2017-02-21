@@ -76,7 +76,7 @@ else( MHD_FOUND )
 endif( MHD_FOUND )
 
 
-add_library( "${SRVNAME}lib" ${SOURCES} )
+add_library( "${SRVNAME}lib" STATIC ${SOURCES} )
 target_link_libraries( "${SRVNAME}lib"  ${DPSHAREDLIB} Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
 if(SERVERGUI)
 	target_link_libraries( "${SRVNAME}lib"  Qt5::Widgets )
