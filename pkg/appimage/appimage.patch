@@ -1,0 +1,12 @@
+diff --git a/src/client/utils/settings.cpp b/src/client/utils/settings.cpp
+index 380794fd..ccb75cc2 100644
+--- a/src/client/utils/settings.cpp
++++ b/src/client/utils/settings.cpp
+@@ -42,6 +42,7 @@ QString recordingFolder()
+ QStringList dataPaths()
+ {
+ 	QStringList datapaths;
++	datapaths << "share/drawpile/drawpile";
+ #ifndef Q_OS_MAC
+ 	datapaths << qApp->applicationDirPath();
+ 	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);

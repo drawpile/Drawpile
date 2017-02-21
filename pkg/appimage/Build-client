@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Build Drawpile server stable branch AppImage
+# Build Drawpile stable branch AppImage
 # Run inside a CentOS 6 docker image.
 # This script is partially based on https://github.com/probonopd/AppImages/blob/master/recipes/subsurface/Recipe
 
@@ -21,19 +21,16 @@ APPIMGKIT=/AppImageKit-master
 mkdir -p $WORKDIR
 cp -r ${SRCDIR}/* $WORKDIR
 cd $WORKDIR
-git apply appimage/appimage.patch
+git apply pkg/appimage/appimage.patch
 
-# Build server
+# Build the client
 mkdir -p $BUILDDIR
 mkdir -p $APPDIR
 cd $BUILDDIR
-cmake3 $WORKDIR -DSERVER=ON -DCLIENT=OFF -DSERVERGUI=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+cmake3 $WORKDIR -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
+make install
 
-# Install only the required server parts
-mkdir -p $APPDIR/usr/bin
-cp bin/drawpile-srv $APPDIR/usr/bin
-mkdir -p $APPDIR/usr/share/drawpile-srv
 
 # Construct AppDir bundle
 cd $APPDIR
@@ -43,10 +40,13 @@ chmod a+x AppRun
 
 
 # Copy libraries
-mkdir -p usr/lib
+mkdir -p usr/lib/qt5/plugins/platforms
 
-ldd usr/bin/drawpile-srv | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib/ || true
-#ldd usr/lib/qt5/plugins/platforms/libqxcb.so | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
+cp -r /usr/lib64/qt5/plugins/{audio,bearer,generic,iconengines,imageformats,platforminputcontexts,platformthemes} usr/lib/qt5/plugins
+cp /usr/lib64/qt5/plugins/platforms/libqxcb.so usr/lib/qt5/plugins/platforms
+
+ldd usr/bin/drawpile | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
+ldd usr/lib/qt5/plugins/platforms/libqxcb.so | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
 
 
 cd usr/ ; find . -type f -exec sed -i -e 's|/usr/lib|././/lib|g' {} \; ; cd ..
@@ -63,22 +63,20 @@ done
 
 
 # Copy desktop stuff
-cat <<END > drawpile-srv.desktop
-[Desktop Entry]
-Version=1.0
-Name=Drawpile Server
+cp $SRCDIR/desktop/drawpile.desktop .
 
-GenericName=Dedicated server for Drawpile
+ICONDIR=usr/share/icons/hicolor
+mkdir -p $ICONDIR/16x16/apps
+cp $SRCDIR/desktop/drawpile-16x16.png $ICONDIR/16x16/apps/drawpile.png
+mkdir -p $ICONDIR/32x32/apps
+cp $SRCDIR/desktop/drawpile-32x32.png $ICONDIR/32x32/apps/drawpile.png
+mkdir -p $ICONDIR/64x64/apps
+cp $SRCDIR/desktop/drawpile-64x64.png $ICONDIR/64x64/apps/drawpile.png
+mkdir -p $ICONDIR/128x128/apps
+cp $SRCDIR/desktop/drawpile-128x128.png $ICONDIR/128x128/apps/drawpile.png
+mkdir -p $ICONDIR/scalable/apps
+cp $SRCDIR/desktop/drawpile.svg $ICONDIR/scalable/apps/drawpile.svg
 
-Exec=drawpile-srv
-Type=Application
-Icon=drawpile
-Categories=Network;
-Terminal=true
-
-END
-
-cp $SRCDIR/desktop/drawpile-64x64.png drawpile.png
 
 # Build Appimage
 
