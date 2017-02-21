@@ -9,6 +9,8 @@ then
 	exit 1
 fi
 
+cd ..
+
 OUT="drawpile-$1.tar.gz"
 
 if [ -e "$OUT" ]
