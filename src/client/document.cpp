@@ -459,7 +459,7 @@ void Document::sendSessionAclChange(uint16_t flags, uint16_t mask)
 	Q_ASSERT(m_canvas);
 	uint16_t acl = m_canvas->aclFilter()->sessionAclFlags();
 	acl = (acl & ~mask) | flags;
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), flags)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), acl)));
 }
 
 void Document::sendLockSession(bool lock)
