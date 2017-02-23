@@ -22,6 +22,7 @@ set (
 	tools/selection.cpp
 	tools/shapetools.cpp
 	tools/floodfill.cpp
+	tools/strokesmoother.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp
@@ -47,7 +48,6 @@ set (
 	utils/archive.cpp
 	utils/palette.cpp
 	utils/palettelistmodel.cpp
-	utils/strokesmoother.cpp
 	utils/html.cpp
 	utils/usernamevalidator.cpp
 	utils/sessionidvalidator.cpp

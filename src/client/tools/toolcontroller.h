@@ -20,7 +20,7 @@
 #ifndef TOOLCONTROLLER_H
 #define TOOLCONTROLLER_H
 
-#include "utils/strokesmoother.h"
+#include "strokesmoother.h"
 #include "tool.h"
 #include "core/brush.h"
 
