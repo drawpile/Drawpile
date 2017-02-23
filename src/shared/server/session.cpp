@@ -562,7 +562,7 @@ void Session::handleInitComplete(int ctxId)
 	Client *c = getClientById(ctxId);
 	if(!c) {
 		// Shouldn't happen
-		c->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-complete").arg(ctxId)));
+		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-complete").arg(ctxId)));
 		return;
 	}
 
