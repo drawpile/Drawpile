@@ -193,6 +193,28 @@ private slots:
 		QCOMPARE(lf.isEmpty(), true);
 	}
 
+	void testFallBehind()
+	{
+		LocalFork lf;
+		lf.setFallbehind(10);
+
+		lf.addLocalMessage(msg("1 penmove 1 1"), AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1)));
+
+		protocol::MessagePtr recv = msg("2 penmove 100 100");
+		for(int i=0;i<9;++i) {
+			QCOMPARE(
+				lf.handleReceivedMessage(recv, AffectedArea(AffectedArea::ANNOTATION, 1)),
+				LocalFork::CONCURRENT
+			);
+		}
+
+		// Next one should go over the limit
+		QCOMPARE(
+			lf.handleReceivedMessage(recv, AffectedArea(AffectedArea::ANNOTATION, 1)),
+			LocalFork::ROLLBACK
+		);
+	}
+
 private:
 	MessagePtr msg(const QString &line)
 	{

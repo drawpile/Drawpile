@@ -168,12 +168,8 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 {
 	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
 
-	// Timer for periodically resetting the local fork to keep cruft from accumulating.
-	// This is to make sure an out-of-sync fork gets cleaned up even if the user doesn't
-	// draw anything in a while.
-	_localforkCleanupTimer = new QTimer(this);
-	_localforkCleanupTimer->setSingleShot(true);
-	connect(_localforkCleanupTimer, &QTimer::timeout, this, &StateTracker::resetLocalFork);
+	// Reset local fork if it falls behind too much
+	m_localfork.setFallbehind(100);
 
 	// Timer for processing drawing commands in short chunks to avoid entirely locking up the UI.
 	// In the future, canvas rendering should be done in a separate thread.
@@ -192,15 +188,15 @@ void StateTracker::reset()
 	m_history.resetTo(m_history.end());
 	m_fullhistory = true;
 	m_hasParticipated = false;
-	_localfork.clear();
+	m_localfork.clear();
 	m_layerlist->clear();
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
 {
 	// A fork is created at the end of the mainline history
-	if(_localfork.isEmpty()) {
-		_localfork.setOffset(m_history.end()-1);
+	if(m_localfork.isEmpty()) {
+		m_localfork.setOffset(m_history.end()-1);
 
 		// Since the presence of a local fork blocks savepoint creation,
 		// now is a good time to try to create one.
@@ -208,15 +204,13 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 			makeSavepoint(m_history.end()-1);
 	}
 
-	_localfork.addLocalMessage(msg, affectedArea(msg));
+	m_localfork.addLocalMessage(msg, affectedArea(msg));
 
 	// for the future: handle undo messages in the local fork too
 	if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT) {
 		int pos = m_history.end() - 1;
 		handleCommand(msg, false, pos);
 	}
-
-	_localforkCleanupTimer->start(60 * 1000);
 }
 
 void StateTracker::receiveQueuedCommand(protocol::MessagePtr msg)
@@ -266,7 +260,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		const uint oldlen = m_history.lengthInBytes();
 
 		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
-		m_history.cleanup(_localfork.isEmpty() ? m_history.end() : _localfork.offset());
+		m_history.cleanup(m_localfork.isEmpty() ? m_history.end() : m_localfork.offset());
 		qDebug() << "Released" << (oldlen-m_history.lengthInBytes()) / float(1024*1024) << "Mb.";
 		m_fullhistory = false;
 
@@ -285,8 +279,8 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			// Find the newest savepoint older or same age as the undo point
 
 			// If a local fork exists, we need a savepoint that precedes it in case we need to roll back.
-			if(!_localfork.isEmpty())
-				undopoint = qMin(undopoint, _localfork.offset());
+			if(!m_localfork.isEmpty())
+				undopoint = qMin(undopoint, m_localfork.offset());
 
 			int savepoint=0;
 			while(savepoint < m_savepoints.count()) {
@@ -307,7 +301,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 	// Add command to history and execute it
 	m_history.append(msg);
 
-	LocalFork::MessageAction lfa = _localfork.handleReceivedMessage(msg, affectedArea(msg));
+	LocalFork::MessageAction lfa = m_localfork.handleReceivedMessage(msg, affectedArea(msg));
 
 	// Undo messages are not handled locally (at the moment)
 	if(lfa == LocalFork::ALREADYDONE && (msg->type()==protocol::MSG_UNDO || msg->type()==protocol::MSG_UNDOPOINT))
@@ -319,17 +313,18 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		// first, find the newest savepoint that precedes the fork
 		int savepoint = m_savepoints.size()-1;
 		while(savepoint>=0) {
-			if(m_savepoints.at(savepoint)->streampointer <= _localfork.offset())
+			if(m_savepoints.at(savepoint)->streampointer <= m_localfork.offset())
 				break;
 			--savepoint;
 		}
 
 		if(savepoint<0) {
 			// should never happen
-			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
+			qWarning("No savepoint for rolling back local fork at %d!", m_localfork.offset());
+
 		} else {
 			const StateSavepoint &sp = m_savepoints.at(savepoint);
-			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_history.end(), _localfork.offset(), sp->streampointer);
+			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_history.end(), m_localfork.offset(), sp->streampointer);
 
 			revertSavepointAndReplay(sp);
 		}
@@ -414,8 +409,8 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 void StateTracker::endRemoteContexts()
 {
 	// Add local fork to the mainline history
-	QList<protocol::MessagePtr> localfork = _localfork.messages();
-	_localfork.clear();
+	QList<protocol::MessagePtr> localfork = m_localfork.messages();
+	m_localfork.clear();
 
 	for(protocol::MessagePtr m : localfork)
 		m_history.append(m);
@@ -778,8 +773,8 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 
 		// Release all state savepoints older then the oldest UndoPoint
 		if(upCount>=protocol::UNDO_DEPTH_LIMIT) {
-			if(!_localfork.isEmpty())
-				i = qMin(i, _localfork.offset() - 1);
+			if(!m_localfork.isEmpty())
+				i = qMin(i, m_localfork.offset() - 1);
 
 			QMutableListIterator<StateSavepoint> spi(m_savepoints);
 			spi.toBack();
@@ -934,7 +929,7 @@ void StateTracker::makeSavepoint(int pos)
 	// Don't make savepoints while a local fork exists, since
 	// there will be stuff on the canvas that is not yet in
 	// the mainline session history
-	if(!_localfork.isEmpty())
+	if(!m_localfork.isEmpty())
 		return;
 
 	// Check if sufficient time and actions has elapsed from previous savepoint
@@ -991,7 +986,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	// Note. At this point we could replay the localfork, but this tends to
 	// cause more trouble than its worth. Since we're receiving data, the data
 	// should be making the roundtrip any moment now anyway.
-	_localfork.clear();
+	m_localfork.clear();
 
 	emit retconned();
 }
@@ -1188,29 +1183,6 @@ bool StateTracker::isLayerLocked(int id) const
 
 	qWarning("isLayerLocked(%d): no such layer!", id);
 	return false;
-}
-
-void StateTracker::resetLocalFork()
-{
-	if(!_localfork.isEmpty()) {
-		int savepoint = m_savepoints.size()-1;
-		while(savepoint>0) {
-			if(m_savepoints.at(savepoint)->streampointer <= _localfork.offset())
-				break;
-			--savepoint;
-		}
-
-		if(savepoint<0) {
-			// should never happen
-			qFatal("No savepoint for rolling back local fork at %d!", _localfork.offset());
-		} else {
-			const StateSavepoint &sp = m_savepoints.at(savepoint);
-			qDebug("Resetting local fork and rolling back %d commands", m_history.end() - sp->streampointer);
-
-			_localfork.clear();
-			revertSavepointAndReplay(sp);
-		}
-	}
 }
 
 /**

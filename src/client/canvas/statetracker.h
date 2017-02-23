@@ -260,7 +260,6 @@ signals:
 
 public slots:
 	void previewLayerOpacity(int id, float opacity);
-	void resetLocalFork();
 
 private slots:
 	void processQueuedCommands();
@@ -311,8 +310,7 @@ private:
 	History m_history;
 	QList<StateSavepoint> m_savepoints;
 
-	LocalFork _localfork;
-	QTimer *_localforkCleanupTimer;
+	LocalFork m_localfork;
 
 	bool m_fullhistory;
 	bool _showallmarkers;

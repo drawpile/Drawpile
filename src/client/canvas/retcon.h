@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,17 +44,17 @@ public:
 		EVERYTHING // fallback
 	};
 
-	AffectedArea() : _domain(EVERYTHING), _layer(0), _bounds(QRect()) { }
+	AffectedArea() : m_domain(EVERYTHING), m_layer(0), m_bounds(QRect()) { }
 
 	AffectedArea(Domain domain, int layer, const QRect &bounds=QRect())
-		: _domain(domain), _layer(layer), _bounds(bounds) { }
+		: m_domain(domain), m_layer(layer), m_bounds(bounds) { }
 
 	bool isConcurrentWith(const AffectedArea &other) const;
 
 private:
-	Domain _domain;
-	int _layer;
-	QRect _bounds;
+	Domain m_domain;
+	int m_layer;
+	QRect m_bounds;
 };
 
 }
@@ -70,10 +70,24 @@ class LocalFork
 {
 public:
 	enum MessageAction {
-		CONCURRENT, // message was concurrent with local fork: OK to apply
+		CONCURRENT,  // message was concurrent with local fork: OK to apply
 		ALREADYDONE, // message was found at the tip of the local fork
-		ROLLBACK // message was not concurrent with the local fork: rollback is needed
+		ROLLBACK     // message was not concurrent with the local fork: rollback is needed
 	};
+
+	LocalFork() : m_offset(0), m_maxFallBehind(0), m_fallenBehind(0) { }
+
+	/**
+	 * @brief Set the maximum number of messages the local fork is allowed to fall behind the mainline history
+	 *
+	 * If set, the a ROLLBACK is forced once the local fork is behind the mainline branch tip by the given
+	 * number of messages.
+	 *
+	 * This can be used prevent stale messages from sticking around in the local fork forever,
+	 * blocking the creation of new state savepoints.
+	 * @param fb
+	 */
+	void setFallbehind(int fb) { m_maxFallBehind = fb; }
 
 	/**
 	 * @brief Add a message to the local fork
@@ -114,19 +128,19 @@ public:
 	 * @brief Get the fork offset
 	 * @return fork's position in the session history
 	 */
-	int offset() const { return _offset; }
+	int offset() const { return m_offset; }
 
 	/**
 	 * @brief Are there any messages in the local fork?
 	 * @return true if local for is empty
 	 */
-	bool isEmpty() const { return _messages.isEmpty(); }
+	bool isEmpty() const { return m_messages.isEmpty(); }
 
 	/**
 	 * @brief Get the messages in the local fork
 	 * @return
 	 */
-	QList<protocol::MessagePtr> messages() const { return _messages; }
+	QList<protocol::MessagePtr> messages() const { return m_messages; }
 
 	/**
 	 * @brief Empty the local fork
@@ -134,9 +148,11 @@ public:
 	void clear();
 
 private:
-	QList<protocol::MessagePtr> _messages;
-	QList<AffectedArea> _areas;
-	int _offset;
+	QList<protocol::MessagePtr> m_messages;
+	QList<AffectedArea> m_areas;
+	int m_offset;
+	int m_maxFallBehind;
+	int m_fallenBehind;
 };
 
 }
