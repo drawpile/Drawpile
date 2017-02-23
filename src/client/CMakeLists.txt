@@ -153,3 +153,7 @@ if( QM_TRANSLATIONS )
 	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
 endif( QM_TRANSLATIONS)
 
+if(TESTS)
+    add_subdirectory(tests)
+endif(TESTS)
+

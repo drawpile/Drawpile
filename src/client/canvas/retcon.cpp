@@ -71,9 +71,11 @@ LocalFork::MessageAction LocalFork::handleReceivedMessage(MessagePtr msg, const 
 			return ALREADYDONE;
 
 		} else {
-			// Unusual, but not an error. This can happen when the layer is locked while drawing
-			// or when an operator performs some function on behalf the user.
-			qWarning("local fork out of sync ([#%d] != [#%d]): discarding...", _messages.first()->type(), msg->type());
+			// Unusual, but not (necessarily) an error. This can happen when the layer is locked
+			// while drawing or when an operator performs some function on behalf the user.
+			qWarning("Local fork out of sync, discarding %d messages!", _messages.size());
+			qDebug("     Got: %s", qPrintable(msg->toString()));
+			qDebug("Expected: %s", qPrintable(_messages.first()->toString()));
 			clear();
 			return ROLLBACK;
 		}

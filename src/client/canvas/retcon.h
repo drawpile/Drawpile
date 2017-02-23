@@ -20,7 +20,7 @@
 #ifndef DP_RETCON_H
 #define DP_RETCON_H
 
-#include "../shared/net/message.h"
+#include "../../shared/net/message.h"
 
 #include <QRect>
 #include <QList>
@@ -43,6 +43,8 @@ public:
 		PIXELS, // layer content: bounding rectangles are checked
 		EVERYTHING // fallback
 	};
+
+	AffectedArea() : _domain(EVERYTHING), _layer(0), _bounds(QRect()) { }
 
 	AffectedArea(Domain domain, int layer, const QRect &bounds=QRect())
 		: _domain(domain), _layer(layer), _bounds(bounds) { }
