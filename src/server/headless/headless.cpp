@@ -75,8 +75,8 @@ bool start() {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
-	// --local-addr
-	QCommandLineOption localAddr("local-addr", "Local address for session announcement", "address");
+	// --local-host
+	QCommandLineOption localAddr("local-host", "This server's hostname for session announcement", "hostname");
 	parser.addOption(localAddr);
 
 	// --ssl-cert <certificate file>

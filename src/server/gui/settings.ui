@@ -114,7 +114,7 @@ border-radius: 3px;</string>
       <item row="2" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Local address:</string>
+         <string>Local hostname:</string>
         </property>
        </widget>
       </item>
