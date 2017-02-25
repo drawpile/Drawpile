@@ -211,7 +211,7 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("announcements")) {
 		QStringList alist;
 		for(const QJsonValue &v : config["announcements"].toArray()) {
-			alist << v.toString();
+			alist << v.toObject()["url"].toString();
 		}
 		m_announcementlist->setStringList(alist);
 	}

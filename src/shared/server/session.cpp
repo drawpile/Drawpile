@@ -465,7 +465,9 @@ void Session::sendUpdatedAnnouncementList()
 	msg.type = protocol::ServerReply::SESSIONCONF;
 	QJsonArray list;
 	for(const sessionlisting::Announcement &a : announcements()) {
-		list.append(a.apiUrl.toString());
+		QJsonObject o;
+		o["url"] = a.apiUrl.toString();
+		list.append(o);
 	}
 
 	QJsonObject conf;
