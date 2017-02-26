@@ -2,7 +2,7 @@
 
 set -e
 
-MXEROOT=/usr/src/mxe/usr/x86_64-w64-mingw32.shared
+MXEROOT=/usr/src/mxe/usr/i686-w64-mingw32.shared
 
 if [ ! -d "$MXEROOT" ]; then
 	echo "MXE directory not found! Make sure to run this script inside the build container."
@@ -29,7 +29,7 @@ cd $PKGNAME
 
 # Copy DLLs
 MBIN="$MXEROOT/bin"
-cp "$MBIN/libgcc_s_seh-1.dll" .
+cp "$MBIN/libgcc_s_sjlj-1.dll" .
 cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libbz2.dll" .

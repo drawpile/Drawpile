@@ -9,7 +9,7 @@ mkdir -p out
 
 cd ../..
 
-IMAGE="dpwin"
+IMAGE="dpwin32"
 SRCVOL="$(pwd):/Drawpile:ro"
 OUTVOL="$(pwd)/pkg/win/out:/out"
 
