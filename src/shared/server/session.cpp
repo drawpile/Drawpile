@@ -742,7 +742,6 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 {
 	if(!m_publicListingClient) {
 		m_publicListingClient = new sessionlisting::AnnouncementApi(this);
-		m_publicListingClient->setLocalAddress(m_config->getConfigString(config::LocalAddress));
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
 		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
@@ -776,8 +775,8 @@ void Session::makeAnnouncement(const QUrl &url)
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
 
 	const sessionlisting::Session s {
-		QString(),
-		0,
+		m_config->internalConfig().localHostname,
+		m_config->internalConfig().getAnnouncePort(),
 		aliasOrId(),
 		protocolVersion(),
 		title(),
@@ -821,10 +820,10 @@ void Session::refreshAnnouncements()
 
 	for(const sessionlisting::Announcement &a : m_publicListings) {
 		m_publicListingClient->refreshSession(a, {
-			QString(),
-			0,
-			QString(),
-			protocol::ProtocolVersion(),
+			QString(), // cannot change
+			0, // cannot change
+			QString(), // cannot change
+			protocol::ProtocolVersion(), // cannot change
 			title(),
 			userCount(),
 			hasPassword() || privateUserList ? QStringList() : userNames(),

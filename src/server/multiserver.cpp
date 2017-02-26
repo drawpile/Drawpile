@@ -109,8 +109,6 @@ void MultiServer::setTemplateDirectory(const QDir &dir)
 
 bool MultiServer::createServer()
 {
-	m_config->setConfigString(config::LocalAddress, m_localAddress);
-
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
 		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
 		if(!server->isValidCert()) {
@@ -154,6 +152,10 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	}
 
 	m_port = m_server->serverPort();
+
+	InternalConfig icfg = m_config->internalConfig();
+	icfg.realPort = m_port;
+	m_config->setInternalConfig(icfg);
 
 	emit serverStarted();
 	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)

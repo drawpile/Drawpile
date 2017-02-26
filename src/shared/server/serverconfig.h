@@ -63,10 +63,22 @@ namespace config {
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
 		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
 		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),             // Allow unauthenticated users
-		ArchiveMode(11, "archive", "false", ConfigKey::BOOL),                // Don't delete terminated session files
-		LocalAddress(12, "localAddress", "", ConfigKey::STRING)              // Server local address (used for session announcements)
+		ArchiveMode(11, "archive", "false", ConfigKey::BOOL)                 // Don't delete terminated session files
 		;
 }
+
+//! Settings that are not adjustable after the server has started
+struct InternalConfig {
+	QString localHostname; // Hostname of this server to use in session announcements
+	int realPort;          // The port the server is listening on
+	int announcePort;      // The port to use in session announcements
+
+	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
+
+	InternalConfig()
+		: realPort(27750), announcePort(0)
+	{ }
+};
 
 struct RegisteredUser {
 	enum Status {
@@ -93,6 +105,9 @@ class ServerConfig : public QObject
 	Q_OBJECT
 public:
 	explicit ServerConfig(QObject *parent=nullptr) : QObject(parent) {}
+
+	void setInternalConfig(const InternalConfig &cfg) { m_internalCfg = cfg; }
+	const InternalConfig &internalConfig() const { return m_internalCfg; }
 
 	// Get configuration values
 	QString getConfigString(ConfigKey key) const;
@@ -167,6 +182,9 @@ protected:
 	 */
 	virtual QString getConfigValue(const ConfigKey key, bool &found) const = 0;
 	virtual void setConfigValue(const ConfigKey key, const QString &value) = 0;
+
+private:
+	InternalConfig m_internalCfg;
 };
 
 }

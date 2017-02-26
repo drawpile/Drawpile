@@ -79,6 +79,10 @@ bool start() {
 	QCommandLineOption localAddr("local-host", "This server's hostname for session announcement", "hostname");
 	parser.addOption(localAddr);
 
+	// --announce-port <port>
+	QCommandLineOption announcePortOption(QStringList() << "announce-port", "Port number to announce (set if forwarding from different port)", "port");
+	parser.addOption(announcePortOption);
+
 	// --ssl-cert <certificate file>
 	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
 	parser.addOption(sslCertOption);
@@ -163,6 +167,21 @@ bool start() {
 		serverconfig = new InMemoryConfig;
 	}
 
+	// Set internal server config
+	InternalConfig icfg;
+	icfg.localHostname = parser.value(localAddr);
+
+	if(parser.isSet(announcePortOption)) {
+		bool ok;
+		icfg.announcePort = parser.value(announcePortOption).toInt(&ok);
+		if(!ok || icfg.announcePort>0xffff) {
+			qCritical("Invalid port %s", qPrintable(parser.value(announcePortOption)));
+			return false;
+		}
+	}
+
+	serverconfig->setInternalConfig(icfg);
+
 	// Initialize the server
 	server::MultiServer *server = new server::MultiServer(serverconfig);
 	serverconfig->setParent(server);
@@ -188,12 +207,6 @@ bool start() {
 				return false;
 			}
 		}
-	}
-
-	{
-		QString localAddress = parser.value(localAddr);
-		if(!localAddress.isEmpty())
-			server->setAnnounceLocalAddr(localAddress);
 	}
 
 	{

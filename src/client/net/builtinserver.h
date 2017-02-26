@@ -27,6 +27,7 @@ class QTcpServer;
 namespace server {
 
 class SessionServer;
+class ServerConfig;
 
 /**
  * The drawpile server.
@@ -56,6 +57,7 @@ private:
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	QTcpServer *m_server;
+	ServerConfig *m_config;
 	SessionServer *m_sessions;
 	State m_state;
 

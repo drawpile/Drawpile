@@ -79,24 +79,6 @@ public:
 	explicit AnnouncementApi(QObject *parent=nullptr);
 
 	/**
-	 * @brief Set the address of this server
-	 *
-	 * This can be used to set the canonical server address to use
-	 * when announcing a session. If not set, the listing server will use
-	 * the peer address of the announcing machine.
-	 *
-	 * @param addr canonical address of this server
-	 */
-	void setLocalAddress(const QString &addr) { m_localAddress = addr; }
-
-	/**
-	 * @brief Get the local address
-	 *
-	 * This will return an empty string if local address is not explicitly set
-	 */
-	QString localAddress() const { return m_localAddress; }
-
-	/**
 	 * @brief Query information about the API
 	 */
 	void getApiInfo(const QUrl &apiUrl);
@@ -160,8 +142,6 @@ private:
 	void handleRefreshResponse(QNetworkReply *reply);
 	void handleListingResponse(QNetworkReply *reply);
 	void handleServerInfoResponse(QNetworkReply *reply);
-
-	QString m_localAddress;
 };
 
 }

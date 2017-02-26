@@ -46,12 +46,9 @@ public:
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
-	void setAnnounceLocalAddr(const QString &addr) { m_localAddress = addr; }
 	void setRecordingPath(const QString &path);
 	void setSessionDirectory(const QDir &dir);
 	void setTemplateDirectory(const QDir &dir);
-
-	QString announceLocalAddr() const { return m_localAddress; }
 
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
@@ -69,6 +66,8 @@ public:
 	bool startFd(int fd);
 
 	SessionServer *sessionServer() { return m_sessions; }
+
+	ServerConfig *config() { return m_config; }
 
 public slots:
 	//! Start the server on the given port and listening address
@@ -129,7 +128,6 @@ private:
 	QString m_sslCertFile;
 	QString m_sslKeyFile;
 	QString m_recordingPath;
-	QString m_localAddress;
 };
 
 }

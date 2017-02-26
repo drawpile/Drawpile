@@ -38,16 +38,16 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	  m_state(NOT_STARTED)
 {
 	// Fixed configuration
-	ServerConfig *servercfg = new InMemoryConfig(this);
+	m_config = new InMemoryConfig(this);
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
 
-	servercfg->setConfigInt(config::SessionSizeLimit, cfg.value("historylimit", 0).toFloat() * 1024 * 1024);
-	servercfg->setConfigInt(config::SessionCountLimit, 1);
-	servercfg->setConfigBool(config::PrivateUserList, cfg.value("privateUserList", false).toBool());
-	servercfg->setConfigInt(config::ClientTimeout, cfg.value("timeout", 60).toInt());
+	m_config->setConfigInt(config::SessionSizeLimit, cfg.value("historylimit", 0).toFloat() * 1024 * 1024);
+	m_config->setConfigInt(config::SessionCountLimit, 1);
+	m_config->setConfigBool(config::PrivateUserList, cfg.value("privateUserList", false).toBool());
+	m_config->setConfigInt(config::ClientTimeout, cfg.value("timeout", 60).toInt());
 
-	m_sessions = new SessionServer(servercfg, this);
+	m_sessions = new SessionServer(m_config, this);
 
 	connect(m_sessions, &SessionServer::sessionEnded, this, &BuiltinServer::stop);
 	connect(m_sessions, &SessionServer::userDisconnected, [this]() {
@@ -84,6 +84,10 @@ bool BuiltinServer::start(quint16 preferredPort) {
 		m_state = NOT_STARTED;
 		return false;
 	}
+
+	InternalConfig icfg = m_config->internalConfig();
+	icfg.realPort = port();
+	m_config->setInternalConfig(icfg);
 
 	qInfo("Started listening on port %d", port());
 	return true;
