@@ -21,10 +21,9 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 SourceDir=Z:\OUTDIR\pkg
 OutputDir=Z:\OUTDIR
-OutputBaseFilename=drawpile-{#MyAppVersion}-setup
+OutputBaseFilename=drawpile-{#MyAppVersion}-setup-w32
 Compression=lzma
 SolidCompression=yes
-ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

@@ -11,7 +11,7 @@ mkdir out
 
 cd ../..
 
-IMAGE="${IMAGE:-dpwin8}"
+IMAGE="${IMAGE:-dpwin8_32}"
 SRCVOL="$(pwd):/Drawpile:ro"
 OUTVOL="$(pwd)/pkg/win/out:/out"
 

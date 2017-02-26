@@ -2,7 +2,7 @@
 
 set -e
 
-MXEROOT=/usr/src/mxe/usr/x86_64-w64-mingw32.shared
+MXEROOT=/usr/src/mxe/usr/i686-w64-mingw32.shared
 
 if [ ! -d "$MXEROOT" ]; then
 	echo "MXE directory not found! Make sure to run this script inside the build container."
@@ -30,7 +30,7 @@ cd $PKGNAME
 # Copy DLLs
 MBIN="$MXEROOT/bin"
 cp "$MBIN/libwinpthread-1.dll" .
-cp "$MBIN/libgcc_s_seh-1.dll" .
+cp "$MBIN/libgcc_s_sjlj-1.dll" .
 cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libbz2.dll" .
 cp "$MBIN/liblzma-5.dll" .
@@ -44,13 +44,12 @@ cp "$MBIN/libfreetype-6.dll" .
 cp "$MBIN/libglib-2.0-0.dll" .
 cp "$MBIN/libintl-8.dll" .
 cp "$MBIN/libiconv-2.dll" .
-cp "$MBIN/libcrypto-1_1-x64.dll" .
-cp "$MBIN/libssl-1_1-x64.dll" .
+cp "$MBIN/libcrypto-1_1.dll" .
+cp "$MBIN/libssl-1_1.dll" .
 cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5Archive.dll" .
-cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .
 
 QROOT="$MXEROOT/qt5"
