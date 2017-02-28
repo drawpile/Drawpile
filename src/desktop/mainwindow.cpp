@@ -266,7 +266,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create the tool preset pie menu
 	m_presetPie = new widgets::PresetPie(_view);
 	m_presetPie->hide();
-	m_presetPie->resize(448, 448);
+	m_presetPie->resize(300, 300);
 
 	connect(_view, &widgets::CanvasView::rightClicked, m_presetPie, &widgets::PresetPie::showAt);
 	connect(_dock_colors, &docks::ColorBox::colorChanged, m_presetPie, &widgets::PresetPie::setColor);

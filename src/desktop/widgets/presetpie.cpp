@@ -296,7 +296,7 @@ void PresetPie::redrawPreview()
 
 	// Draw non-brush type tool icons
 	for(int slice=0;slice<SLICES;++slice) {
-		const qreal r = d * 0.38;
+		const qreal r = d * 0.35;
 		const qreal a = qDegreesToRadians(slice * (360.0 / SLICES));
 		const QPointF point = QPointF(qCos(a), qSin(a)) * r + QPointF(d/2, d/2);
 		if(m_preset[slice].toolType()<0) {
@@ -306,6 +306,9 @@ void PresetPie::redrawPreview()
 
 			QKeySequence assignKey = CustomShortcutModel::getShorcut("assignpreset");
 
+			QFont f;
+			f.setPixelSize(10);
+			p.setFont(f);
 			p.drawText(rect,
 				Qt::AlignCenter|Qt::AlignHCenter,
 				tr("Assign with %1\nor middle click").arg(assignKey.toString(QKeySequence::NativeText))
