@@ -2,6 +2,7 @@
  * Server: Fixed setting of local hostname (when using a configuration file)
  * Server: Fixed setting of port number in announcement
  * Made tool pie menu smaller
+ * Show listing server error messages
 
 2017-02-25 Version 2.0.0 Release Candidate
  * Various bug fixes

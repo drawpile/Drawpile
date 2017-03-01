@@ -244,8 +244,15 @@ void AnnouncementApi::handleUnlistResponse(QNetworkReply *reply)
 
 void AnnouncementApi::handleRefreshResponse(QNetworkReply *reply)
 {
-	Q_UNUSED(reply);
-	// nothing interesting in this reply (except error code)
+	QJsonParseError error;
+	QByteArray body = reply->readAll();
+	QJsonDocument doc = QJsonDocument::fromJson(body, &error);
+	if(error.error != QJsonParseError::NoError)
+		throw ResponseError(QStringLiteral("Error parsing refresh response: %1").arg(error.errorString()));
+
+	QString msg = doc.object()["message"].toString();
+	if(!msg.isEmpty())
+		emit messageReceived(msg);
 }
 
 void AnnouncementApi::handleListingResponse(QNetworkReply *reply)
