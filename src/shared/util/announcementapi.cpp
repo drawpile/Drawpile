@@ -174,19 +174,35 @@ void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::Hand
 	Q_ASSERT(handlerFunc);
 
 	try {
-		if(reply->error() != QNetworkReply::NoError)
-			throw ResponseError(QStringLiteral("Network error: ") + reply->errorString());
+		if(reply->error() != QNetworkReply::NoError) {
+			const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+			if(statusCode == 422 || statusCode == 409) {
+				// Server says that the problem is at our end
+				QJsonParseError error;
+				QByteArray body = reply->readAll();
+				QJsonDocument doc = QJsonDocument::fromJson(body, &error);
+				if(error.error != QJsonParseError::NoError)
+					throw ResponseError(QStringLiteral("Http error 422 but response body was unparseable: %1").arg(error.errorString()));
 
-		// TODO handle redirects
+				const QString msg = doc.object()["message"].toString();
+				if(msg.isEmpty()) {
+					throw ResponseError(QStringLiteral("Http error 422 (no explanation given)"));
+				} else {
+					throw ResponseError(msg);
+				}
 
+			} else {
+				// Other errors
+				throw ResponseError(QStringLiteral("Network error: ") + reply->errorString());
+			}
+		}
+
+		// Server did not return an error: handle the response
 		((this)->*(handlerFunc))(reply);
 
 	} catch(const ResponseError &e) {
 		emit logMessage(Log().about(Log::Level::Error, Log::Topic::PubList).message("Announcement API error: " + e.error));
 		emit error(reply->property(PROP_APIURL).toString(), "Session announcement: " + e.error);
-#ifndef NDEBUG
-		qDebug("Announcement API error: %s\n%s", qPrintable(e.error), reply->readAll().constData());
-#endif
 	}
 
 	reply->deleteLater();

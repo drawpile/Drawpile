@@ -862,9 +862,11 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 
 void Session::sessionAnnouncementError(const QString &apiUrl, const QString &error)
 {
+
 	// Remove listing on error
 	log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
 	unlistAnnouncement(apiUrl, true, true);
+	this->messageAll(error, false);
 }
 
 void Session::historyCacheCleanup()
