@@ -378,10 +378,15 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 		bool op = ids.contains(c->id()) | c->isModerator();
 		if(op != c->isOperator()) {
 			c->setOperator(op);
-			if(op)
-				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
-			else
-				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+			if(op) {
+				const QString msg = "Made operator by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
+				messageAll(msg, false);
+			} else {
+				const QString msg = "Operator status revoked by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
+				messageAll(msg, false);
+			}
 			if(c->isAuthenticated() && c->isModerator())
 				m_history->setAuthenticatedOperator(c->username(), op);
 
@@ -398,10 +403,15 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 	for(Client *c : m_clients) {
 		if(c->id() == id && c->isOperator() != op) {
 			c->setOperator(op);
-			if(op)
-				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message("Made operator by " + changedBy));
-			else
-				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message("Operator status revoked by " + changedBy));
+			QString msg;
+			if(op) {
+				msg = "Made operator by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
+			} else {
+				msg = "Operator status revoked by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
+			}
+			messageAll(msg, false);
 			if(c->isAuthenticated() && !c->isModerator())
 				m_history->setAuthenticatedOperator(c->username(), op);
 		}
