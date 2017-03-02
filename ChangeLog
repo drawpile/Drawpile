@@ -5,6 +5,7 @@
  * Server: Restore op/deop chat notifications
  * Made tool pie menu smaller
  * Temporarily disabled pie menu popup with right mouse button
+ * Removed new brush cursors (will be made configurable in the next version)
 
 2017-02-25 Version 2.0.0 Release Candidate
  * Various bug fixes

@@ -1,8 +1,5 @@
 <RCC>
     <qresource prefix="/cursors">
-        <file>pen.png</file>
-        <file>brush.png</file>
-        <file>eraser.png</file>
         <file>arrow.png</file>
         <file>bucket.png</file>
         <file>colorpicker.png</file>

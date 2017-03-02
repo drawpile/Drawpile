@@ -27,7 +27,7 @@ namespace tools {
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(ToolController &owner, Type type, const char *cursor, const QPoint &cursorHotspot);
+		BrushBase(ToolController &owner, Type type);
 
 		void begin(const paintcore::Point& point, float zoom);
 		void motion(const paintcore::Point& point, bool constrain, bool center);
@@ -43,7 +43,7 @@ class BrushBase : public Tool
  */
 class Pen : public BrushBase {
 	public:
-		Pen(ToolController &owner) : BrushBase(owner, PEN, "pen.png", QPoint(1, 1)) {}
+		Pen(ToolController &owner) : BrushBase(owner, PEN) {}
 };
 
 /**
@@ -53,7 +53,7 @@ class Pen : public BrushBase {
  */
 class Brush : public BrushBase {
 	public:
-		Brush(ToolController &owner) : BrushBase(owner, BRUSH, "brush.png", QPoint(1, 30)) {}
+		Brush(ToolController &owner) : BrushBase(owner, BRUSH) {}
 };
 
 /**
@@ -63,7 +63,7 @@ class Brush : public BrushBase {
  */
 class Smudge : public BrushBase {
 public:
-	Smudge(ToolController &owner) : BrushBase(owner, SMUDGE, "brush.png", QPoint(1, 30)) { }
+	Smudge(ToolController &owner) : BrushBase(owner, SMUDGE) { }
 };
 
 /**
@@ -74,7 +74,7 @@ public:
  */
 class Eraser : public BrushBase {
 	public:
-		Eraser(ToolController &owner) : BrushBase(owner, ERASER, "eraser.png", QPoint(1, 1)) {}
+		Eraser(ToolController &owner) : BrushBase(owner, ERASER) {}
 };
 
 }

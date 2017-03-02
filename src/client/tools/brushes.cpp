@@ -31,8 +31,8 @@
 
 namespace tools {
 
-BrushBase::BrushBase(ToolController &owner, Type type, const char *cursor, const QPoint &cursorHotspot)
-	: Tool(owner, type, QCursor(QPixmap(QLatin1Literal(":/cursors/") + cursor), cursorHotspot.x(), cursorHotspot.y()))
+BrushBase::BrushBase(ToolController &owner, Type type)
+	: Tool(owner, type, Qt::CrossCursor)
 {
 }
 

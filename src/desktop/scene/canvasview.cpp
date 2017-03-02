@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,8 +65,18 @@ CanvasView::CanvasView(QWidget *parent)
 
 	setBackgroundBrush(QColor(100,100,100));
 
-	// Get the color picker cursor
-	_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
+	// Get the color picker cursor (used for the quick color picker mode)
+	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
+
+	// Generate the minimalistic dot cursor
+	{
+		QPixmap dot(8, 8);
+		dot.fill(Qt::transparent);
+		QPainter p(&dot);
+		p.setPen(Qt::white);
+		p.drawPoint(0, 0);
+		m_dotcursor = QCursor(dot, 0, 0);
+	}
 }
 
 void CanvasView::setTabletMode(TabletMode mode)
@@ -178,6 +188,8 @@ void CanvasView::resetCursor()
 {
 	if(_locked)
 		viewport()->setCursor(Qt::ForbiddenCursor);
+	else if(m_toolcursor.shape() == Qt::CrossCursor)
+		viewport()->setCursor(m_dotcursor);
 	else
 		viewport()->setCursor(m_toolcursor);
 }
@@ -513,7 +525,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 		QGraphicsView::keyPressEvent(event);
 
 		if(event->key() == Qt::Key_Control && !_dragbtndown)
-			viewport()->setCursor(_colorpickcursor);
+			viewport()->setCursor(m_colorpickcursor);
 
 	}
 }
