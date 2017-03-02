@@ -360,7 +360,9 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		startDrag(pos.x(), pos.y(), mode);
 
 	} else if(button == Qt::RightButton) {
-		emit rightClicked(pos.toPoint());
+		// Temporarily disabled due to user complaints about easily hitting the button by accident.
+		// Will be re-enabled in 2.0.1 with customization options.
+		//emit rightClicked(pos.toPoint());
 
 	} else if(button == Qt::LeftButton && _isdragging==DRAG_NOTRANSFORM) {
 		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
