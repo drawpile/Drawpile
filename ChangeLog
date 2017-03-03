@@ -3,6 +3,7 @@
  * Server: Fixed setting of port number in announcement
  * Server: Show listing server error messages
  * Server: Restore op/deop chat notifications
+ * Server: Fixed GUI mode tray icon
  * Made tool pie menu smaller
  * Temporarily disabled pie menu popup with right mouse button
  * Removed new brush cursors (will be made configurable in the next version)

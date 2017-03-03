@@ -22,7 +22,7 @@ if(SERVERGUI)
 	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui gui/settings.ui gui/authdialog.ui )
 	qt5_add_resources( QtResource gui/res/resources.qrc )
 
-	set(SOURCES ${SOURCES} ${UI_Headers} ${QtResource}
+	set(SOURCES ${SOURCES} ${UI_Headers}
 		gui/gui.cpp
 		gui/singleinstance.cpp
 		gui/trayicon.cpp
@@ -82,7 +82,7 @@ if(SERVERGUI)
 	target_link_libraries( "${SRVNAME}lib"  Qt5::Widgets )
 endif()
 
-add_executable(${SRVNAME} main.cpp)
+add_executable(${SRVNAME} main.cpp ${QtResource})
 target_link_libraries(${SRVNAME} "${SRVNAME}lib")
 
 if ( UNIX AND NOT APPLE )

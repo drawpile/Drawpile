@@ -106,6 +106,15 @@ bool startServer()
 	MainWindow::setDefaultInstanceServer(localServer);
 	MainWindow::showDefaultInstance();
 
+	// Quit when last window is closed, but not if the tray icon is visible
+	qApp->setQuitOnLastWindowClosed(false);
+#ifndef Q_OS_MAC
+	QObject::connect(qApp, &QApplication::lastWindowClosed, []() {
+		if(!TrayIcon::isTrayIconVisible())
+			qApp->quit();
+	});
+#endif
+
 	return true;
 }
 
@@ -158,10 +167,6 @@ bool start() {
 			return false;
 		}
 		QObject::connect(qApp, &QApplication::aboutToQuit, guard, &SingleInstance::deleteLater);
-
-#ifdef Q_OS_MAC
-		qApp->setQuitOnLastWindowClosed(false);
-#endif
 
 		return startServer();
 	}
