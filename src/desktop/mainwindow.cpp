@@ -1596,7 +1596,7 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 
 	// Remove selection when not using selection tool
 	if(tool != tools::Tool::SELECTION && tool != tools::Tool::POLYGONSELECTION)
-		m_doc->cancelSelection();
+		m_doc->selectNone();
 
 	// Deselect annotation when tool changed
 	if(tool != tools::Tool::ANNOTATION)
