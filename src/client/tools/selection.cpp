@@ -107,8 +107,8 @@ void SelectionTool::startMove()
 	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 	if(sel && layer) {
 		// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
-		QPoint offset;
-		QImage eraseMask = sel->shapeMask(Qt::white, &offset);
+		QRect maskBounds;
+		QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
 
 		// Copy layer content into move preview buffer.
 		QImage img = owner.model()->selectionToImage(owner.activeLayer());
@@ -118,7 +118,7 @@ void SelectionTool::startMove()
 		// to erase the selected region.
 		layer->removeSublayer(-1);
 		paintcore::Layer *tmplayer = layer->getSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
-		tmplayer->putImage(offset.x(), offset.y(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
+		tmplayer->putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
 	}
 }
 
@@ -209,10 +209,11 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	return out;
 }
 
-QImage SelectionTool::shapeMask(const QColor &color, const QPolygon &selection, QPoint *offset, bool mono)
+QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono)
 {
-	const QRect b = selection.boundingRect();
-	const QPolygon p = selection.translated(-b.topLeft());
+	const QRectF bf = selection.boundingRect();
+	const QRect b = bf.toRect();
+	const QPolygonF p = selection.translated(-bf.topLeft());
 
 	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32);
 	mask.fill(0);
@@ -221,8 +222,8 @@ QImage SelectionTool::shapeMask(const QColor &color, const QPolygon &selection, 
 	painter.setBrush(color);
 	painter.drawPolygon(p);
 
-	if(offset)
-		*offset = b.topLeft();
+	if(maskBounds)
+		*maskBounds = b;
 
 	return mask;
 }

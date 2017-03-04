@@ -255,9 +255,9 @@ bool Selection::isAxisAlignedRectangle() const
 	return canvas::isAxisAlignedRectangle(m_shape.toPolygon());
 }
 
-QImage Selection::shapeMask(const QColor &color, QPoint *offset) const
+QImage Selection::shapeMask(const QColor &color, QRect *maskBounds) const
 {
-	return tools::SelectionTool::shapeMask(color, m_shape.toPolygon(), offset);
+	return tools::SelectionTool::shapeMask(color, m_shape, maskBounds);
 }
 
 void Selection::setPasteImage(const QImage &image)
@@ -304,12 +304,14 @@ QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, in
 	if(!m_moveRegion.isEmpty()) {
 		qDebug("Moving instead of pasting");
 		// Get source pixel mask
-		const QRect moveBounds = m_moveRegion.boundingRect().toRect();
-		const QPolygon moveRegion = m_moveRegion.toPolygon();
+		QRect moveBounds;
 		QByteArray mask;
-		if(!canvas::isAxisAlignedRectangle(moveRegion)) {
-			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, moveRegion, nullptr, true);
+
+		if(!canvas::isAxisAlignedRectangle(m_moveRegion.toPolygon())) {
+			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds, true);
 			mask = qCompress(QByteArray::fromRawData(reinterpret_cast<const char*>(maskimg.constBits()), maskimg.byteCount()));
+		} else {
+			moveBounds = m_moveRegion.boundingRect().toRect();
 		}
 
 		// Send move command
@@ -338,12 +340,12 @@ QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColo
 {
 	QRect area;
 	QImage mask;
-	QPoint maskOffset;
+	QRect maskBounds;
 
 	if(isAxisAlignedRectangle())
 		area = boundingRect();
 	else
-		mask = shapeMask(color, &maskOffset);
+		mask = shapeMask(color, &maskBounds);
 
 	QList<protocol::MessagePtr> msgs;
 
@@ -351,7 +353,7 @@ QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColo
 		if(mask.isNull())
 			msgs << protocol::MessagePtr(new protocol::FillRect(contextId, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
 		else
-			msgs << net::command::putQImage(contextId, layer, maskOffset.x(), maskOffset.y(), mask, mode);
+			msgs << net::command::putQImage(contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
 	}
 
 	if(!msgs.isEmpty())

@@ -322,10 +322,10 @@ QImage CanvasModel::selectionToImage(int layerId) const
 			QPainter mp(&img);
 			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
 
-			QPoint offset;
-			const QImage mask = m_selection->shapeMask(Qt::white, &offset);
+			QRect maskBounds;
+			const QImage mask = m_selection->shapeMask(Qt::white, &maskBounds);
 
-			mp.drawImage(qMin(0, offset.x()), qMin(0, offset.y()), mask);
+			mp.drawImage(qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
 		}
 	}
 

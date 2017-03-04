@@ -41,7 +41,7 @@ public:
 	void startMove();
 
 	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
-	static QImage shapeMask(const QColor &color, const QPolygon &selection, QPoint *offset, bool mono=false);
+	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono=false);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;

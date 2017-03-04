@@ -64,7 +64,7 @@ public:
 
 	QRect boundingRect() const { return m_shape.boundingRect().toRect(); }
 
-	QImage shapeMask(const QColor &color, QPoint *offset) const;
+	QImage shapeMask(const QColor &color, QRect *maskBounds) const;
 
 	//! Set the image from pasting
 	void setPasteImage(const QImage &image);
