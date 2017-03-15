@@ -257,12 +257,21 @@ Compatibility Reader::readBinaryHeader() {
 		if(version.ns() != current.ns())
 			return NOT_DPREC;
 
+		// Backwards compatible mode:
+		// TODO
+
+		// Strict compatibility mode:
+
 		// A recording made with a newer (major) version may contain unsupported commands.
 		if(current.major() < version.major())
 			return UNKNOWN_COMPATIBILITY;
 
-		// Newer minor version: expect rendering differences
-		if(current.minor() < version.minor())
+		// Versions older than 20.x are known to be incompatible
+		if(version.major() < 20)
+			return INCOMPATIBLE;
+
+		// Different minor version: expect rendering differences
+		if(current.minor() != version.minor())
 			return MINOR_INCOMPATIBILITY;
 	}
 
@@ -343,15 +352,21 @@ Compatibility Reader::readTextHeader()
 		if(version.ns() != current.ns())
 			return NOT_DPREC;
 
+		// Backwards compatible mode:
+		// TODO
+
+		// Strict compatibilty mode:
 		// A recording made with a newer (major) version may contain unsupported commands.
 		if(current.major() < version.major())
 			return UNKNOWN_COMPATIBILITY;
 
-		// Newer minor version: expect rendering differences
-		if(current.minor() < version.minor())
-			return MINOR_INCOMPATIBILITY;
+		// Versions older than 20.x are known to be incompatible
+		if(version.major() < 20)
+			return INCOMPATIBLE;
 
-		// TODO older versions may be fully supported in the text encoding
+		// Different minor version: expect rendering differences
+		if(current.minor() != version.minor())
+			return MINOR_INCOMPATIBILITY;
 	}
 
 	// Other versions are not supported
