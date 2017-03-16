@@ -20,5 +20,6 @@
         <file>drawpile.png</file>
         <file>semi-trusted.svg</file>
         <file>trusted.svg</file>
+        <file>nsfm.svg</file>
     </qresource>
 </RCC>
