@@ -10,6 +10,8 @@
  * Fixed incorrect range in session alias validation ('z' and '9' characters were not accepted)
  * Fixed lasso selection tool (regression)
  * Switching tools now commits the floating selection instead of cancelling it
+ * Regression fix: previosly used color list
+ * NSFM icon for session lists
 
 2017-02-25 Version 2.0.0 Release Candidate
  * Various bug fixes
