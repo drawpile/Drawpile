@@ -23,6 +23,8 @@ PKGNAME="drawpile-$VERSION"
 
 cd /out/
 mkdir -p $PKGNAME
+rm -f pkg
+ln -s $PKGNAME pkg
 cd $PKGNAME
 
 # Copy DLLs
@@ -88,11 +90,11 @@ cp -r /Drawpile/desktop/sounds .
 cp -r /Drawpile/desktop/palettes .
 
 # Copy translations
-mkdir -p translations
+mkdir -p i18n
 for tr in cs de fi ja ru zh
 do
-	cp "$QROOT/translations/qt_$tr.qm" translations/ || true
-	cp "/Build/src/client/drawpile_$tr.qm" translations/
+	cp "$QROOT/translations/qt_$tr.qm" i18n/ || true
+	cp "/Build/src/client/drawpile_$tr.qm" i18n/
 done
 
 # Copy text files

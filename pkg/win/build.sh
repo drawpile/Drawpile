@@ -15,10 +15,14 @@ OUTVOL="$(pwd)/pkg/win/out:/out"
 
 if [ "$1" == "shell" ]; then
 	CMD="bash"
-elif [ "$1" == "pkg" ]; then
+elif [ "$1" == "pkg" ] || [ "$1" == "installer" ]; then
 	CMD="/Drawpile/pkg/win/make-pkg.sh"
-elif [ "$1" == "installer" ]; then
-	CMD="/Drawpile/pkg/win/make-installer.sh"
 fi
 
 docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL" $IMAGE $CMD
+
+if [ "$1" == "installer" ]; then
+	cd -
+	./make-innosetup.sh
+fi
+
