@@ -79,7 +79,7 @@ public:
 	 * The server protocol number is incremented when client/server compatibility breaks.
 	 * (i.e. changes are made to Transparent messages)
 	 */
-	int server() const { return m_server; }
+	int serverVersion() const { return m_server; }
 
 	/**
 	 * @brief Get the (client protocol) major version
@@ -87,7 +87,7 @@ public:
 	 * Major version is incremented when changes to clientside of the protocol are made.
 	 * (i.e. changes are made to Opaque messages)
 	 */
-	int major() const { return m_major; }
+	int majorVersion() const { return m_major; }
 
 	/**
 	 * @brief Get the (client protocol) minor version
@@ -96,7 +96,7 @@ public:
 	 * haven't changed. (E.g. brush rendering algorithm has changed, producing slightly
 	 * different results for the same settings.)
 	 */
-	int minor() const { return m_minor; }
+	int minorVersion() const { return m_minor; }
 
 	bool operator==(const ProtocolVersion &other) const {
 			return m_namespace==other.m_namespace && m_server==other.m_server &&

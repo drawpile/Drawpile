@@ -313,7 +313,7 @@ bool FiledHistory::load()
 		return false;
 	}
 
-	if(m_version.server() != protocol::ProtocolVersion::current().server()) {
+	if(m_version.serverVersion() != protocol::ProtocolVersion::current().serverVersion()) {
 		qWarning() << recordingFile << "incompatible server version";
 		return false;
 	}

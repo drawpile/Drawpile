@@ -249,7 +249,7 @@ Compatibility Reader::readBinaryHeader() {
 
 	if(d->opaque) {
 		// In opaque mode, it's enough that the server version matches
-		if(version.server() == current.server())
+		if(version.serverVersion() == current.serverVersion())
 			return COMPATIBLE;
 
 	} else {
@@ -263,15 +263,15 @@ Compatibility Reader::readBinaryHeader() {
 		// Strict compatibility mode:
 
 		// A recording made with a newer (major) version may contain unsupported commands.
-		if(current.major() < version.major())
+		if(current.majorVersion() < version.majorVersion())
 			return UNKNOWN_COMPATIBILITY;
 
 		// Versions older than 20.x are known to be incompatible
-		if(version.major() < 20)
+		if(version.majorVersion() < 20)
 			return INCOMPATIBLE;
 
 		// Different minor version: expect rendering differences
-		if(current.minor() != version.minor())
+		if(current.minorVersion() != version.minorVersion())
 			return MINOR_INCOMPATIBILITY;
 	}
 
@@ -344,7 +344,7 @@ Compatibility Reader::readTextHeader()
 
 	if(d->opaque) {
 		// In opaque mode, version must match exactly, except for the minor number
-		if(version.ns() == current.ns() && version.server() == current.server() && version.major() == current.major())
+		if(version.ns() == current.ns() && version.serverVersion() == current.serverVersion() && version.majorVersion() == current.majorVersion())
 			return COMPATIBLE;
 
 	} else {
@@ -357,15 +357,15 @@ Compatibility Reader::readTextHeader()
 
 		// Strict compatibilty mode:
 		// A recording made with a newer (major) version may contain unsupported commands.
-		if(current.major() < version.major())
+		if(current.majorVersion() < version.majorVersion())
 			return UNKNOWN_COMPATIBILITY;
 
 		// Versions older than 20.x are known to be incompatible
-		if(version.major() < 20)
+		if(version.majorVersion() < 20)
 			return INCOMPATIBLE;
 
 		// Different minor version: expect rendering differences
-		if(current.minor() != version.minor())
+		if(current.minorVersion() != version.minorVersion())
 			return MINOR_INCOMPATIBILITY;
 	}
 
