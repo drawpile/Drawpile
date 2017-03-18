@@ -30,6 +30,7 @@
 #include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QDateTime>
 
 namespace widgets {
 
@@ -68,6 +69,7 @@ ChatBox::ChatBox(QWidget *parent)
 
 	m_view->document()->setDefaultStyleSheet(
 		"p { margin: 5px 0; }"
+		".ts { color: #95a5a6 }"
 		".marker { color: #da4453 }"
 		".sysmsg { color: #fdbc4b }"
 		".announcement { color: #fcfcfc }"
@@ -121,10 +123,15 @@ void ChatBox::clear()
 	m_view->clear();
 }
 
+static QString timestamp()
+{
+	return "<span class=\"ts\">" + QDateTime::currentDateTime().toString("HH:mm:ss") + "</span>";
+}
+
 void ChatBox::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(id);
-	systemMessage(tr("<b>%1</b> joined the session").arg(name.toHtmlEscaped()));
+	systemMessage(tr("<b>%2</b> joined the session").arg(name.toHtmlEscaped()));
 	notification::playSound(notification::Event::LOGIN);
 }
 
@@ -162,13 +169,14 @@ void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &ms
 		}
 
 	} else if(chat.isAction()) {
-		m_view->append(QStringLiteral("<p class=\"chat action\"> * %1 %2</p>")
-			.arg(nick.toHtmlEscaped(), htmlutils::linkify(txt))
+		m_view->append(QStringLiteral("<p class=\"chat action\">%1 * %2 %3</p>")
+			.arg(timestamp(), nick.toHtmlEscaped(), htmlutils::linkify(txt))
 			);
 
 	} else {
-		m_view->append(QStringLiteral("<p><span class=\"nick %1\">&lt;%2&gt;</span> <span class=\"msg %3\">%4</span></p>")
+		m_view->append(QStringLiteral("<p>%1 <span class=\"nick %2\">&lt;%3&gt;</span> <span class=\"msg %4\">%5</span></p>")
 			.arg(
+				timestamp(),
 				chat.contextId() == m_myId ? QStringLiteral("me") : QString(),
 				nick.toHtmlEscaped(),
 				chat.isShout() ? QStringLiteral("announcement") : QString(),
@@ -184,7 +192,7 @@ void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &ms
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
 {
 	m_view->append(
-		"<p class=\"marker\"><span class=\"nick\">&lt;" +
+		"<p class=\"marker\">" + timestamp() + " <span class=\"nick\">&lt;" +
 		nick.toHtmlEscaped() +
 		"&gt;</span> <span class=\"msg\">" +
 		htmlutils::linkify(message.toHtmlEscaped()) +
@@ -198,7 +206,7 @@ void ChatBox::receiveMarker(const QString &nick, const QString &message)
 void ChatBox::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);
-	m_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
+	m_view->append("<p class=\"sysmsg\"> " + timestamp() + " *** " + message + " ***</p>");
 }
 
 void ChatBox::sendMessage(const QString &msg)
