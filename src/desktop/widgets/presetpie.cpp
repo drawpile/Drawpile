@@ -123,7 +123,7 @@ void PresetPie::paintEvent(QPaintEvent *)
 	// Highlight active slice
 	if(m_slice>=0) {
 		p.setBrush(QColor(255, 255, 255, 128));
-		p.drawPie(rect, (-m_slice-0.5)*(360/slices)*16, 16*360/slices);
+		p.drawPie(rect, (-(m_slice-SLICE_OFFSET)-0.5)*(360/slices)*16, 16*360/slices);
 	}
 }
 
@@ -143,7 +143,7 @@ int PresetPie::sliceAt(const QPoint &p)
 
 		int slice = a * slices / 360;
 		Q_ASSERT(slice>=0 && slice<SLICES);
-		return slice;
+		return (slice+SLICE_OFFSET) % SLICES;
 	}
 
 	return -1;
@@ -284,7 +284,7 @@ void PresetPie::redrawPreview()
 		case tools::Tool::LINE:
 		case tools::Tool::RECTANGLE:
 		case tools::Tool::ELLIPSE:
-			drawBrushPreview(m_preset[slice], slice * (360.0 / SLICES), layer);
+			drawBrushPreview(m_preset[slice], (slice-SLICE_OFFSET) * (360.0 / SLICES), layer);
 			break;
 		}
 	}
@@ -312,7 +312,7 @@ void PresetPie::redrawPreview()
 	// Draw non-brush type tool icons
 	for(int slice=0;slice<SLICES;++slice) {
 		const qreal r = d * 0.35;
-		const qreal a = qDegreesToRadians(slice * (360.0 / SLICES));
+		const qreal a = qDegreesToRadians((slice-SLICE_OFFSET) * (360.0 / SLICES));
 		const QPointF point = QPointF(qCos(a), qSin(a)) * r + QPointF(d/2, d/2);
 		if(m_preset[slice].toolType()<0) {
 			const qreal dr = d * 0.15;

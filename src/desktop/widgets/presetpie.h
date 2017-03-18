@@ -63,6 +63,9 @@ protected:
 	void resizeEvent(QResizeEvent *e) override;
 
 private:
+	// Rotate the slices so that slice 0 is at the top
+	static const int SLICE_OFFSET = 2;
+
 	void redrawPreview();
 	int sliceAt(const QPoint &p);
 
