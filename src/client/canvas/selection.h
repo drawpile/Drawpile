@@ -95,7 +95,7 @@ public:
 	QList<protocol::MessagePtr> pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
 	QList<protocol::MessagePtr> fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
-	int handleSize() const { return 10; }
+	int handleSize() const { return 20; }
 
 public slots:
 	void resetShape();

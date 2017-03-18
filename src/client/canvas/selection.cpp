@@ -115,7 +115,7 @@ Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
 {
 	const qreal H = handleSize() / zoom;
 
-	const QRectF R = m_shape.boundingRect();
+	const QRectF R = m_shape.boundingRect().adjusted(-H/2, -H/2, H/2, H/2);
 
 	if(!R.contains(point))
 		return OUTSIDE;
