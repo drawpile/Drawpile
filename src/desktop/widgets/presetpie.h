@@ -45,6 +45,9 @@ public slots:
 	void setColor(const QColor &c);
 	void assignSelectedPreset();
 
+	void assignPreset(int i);
+	bool selectPreset(int i);
+
 signals:
 	void colorChanged(const QColor &c);
 	void toolSelected(const tools::ToolProperties &tool);

@@ -2380,6 +2380,36 @@ void MainWindow::setupActions()
 	QAction *assignPie = makeAction("assignpreset", nullptr, tr("Assign Tool To Preset Pie Menu"), QString(), QKeySequence("x"));
 	connect(assignPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::assignSelectedPreset);
 
+	// Keyboard shortcuts for tool preset slices
+	QActionGroup *presetActions = new QActionGroup(this);
+	QActionGroup *setPresetActions = new QActionGroup(this);
+	for(int i=0;i<widgets::PresetPie::SLICES;++i) {
+		// Switch to preset action
+		QAction *q = new QAction(QString("Tool preset #%1").arg(i+1), this);
+		q->setObjectName(QString("toolpreset-%1").arg(i));
+		q->setShortcut(QKeySequence(QString::number(i+1)));
+		q->setProperty("toolslotidx", i);
+		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
+		presetActions->addAction(q);
+		addAction(q);
+
+		// Assign preset action
+		q = new QAction(QString("Set tool preset #%1").arg(i+1), this);
+		q->setObjectName(QString("settoolpreset-%1").arg(i));
+		q->setShortcut(QKeySequence(QString("Ctrl+%1").arg(i+1)));
+		q->setProperty("toolslotidx", i);
+		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
+		setPresetActions->addAction(q);
+		addAction(q);
+	}
+
+	connect(presetActions, &QActionGroup::triggered, [this](QAction *a) {
+		m_presetPie->selectPreset(a->property("toolslotidx").toInt());
+	});
+	connect(setPresetActions, &QActionGroup::triggered, [this](QAction *a) {
+		m_presetPie->assignPreset(a->property("toolslotidx").toInt());
+	});
+
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);

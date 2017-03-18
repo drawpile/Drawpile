@@ -163,11 +163,11 @@ void PresetPie::mouseReleaseEvent(QMouseEvent *e)
 	m_slice = sliceAt(e->pos());
 
 	if(m_slice>=0) {
+		Q_ASSERT(m_slice < SLICES);
 		if(e->button() == Qt::MiddleButton) {
 			emit presetRequest(m_slice);
 
-		} else if(m_preset[m_slice].toolType()>=0){
-			emit toolSelected(m_preset[m_slice]);
+		} else if(selectPreset(m_slice)) {
 			hide();
 		}
 	}
@@ -177,6 +177,21 @@ void PresetPie::assignSelectedPreset()
 {
 	if(isVisible() && m_slice>=0)
 		emit presetRequest(m_slice);
+}
+
+void PresetPie::assignPreset(int i)
+{
+	if(i >= 0 && i < SLICES)
+		emit presetRequest(i);
+}
+
+bool PresetPie::selectPreset(int i)
+{
+	if(i >= 0 && i < SLICES && m_preset[i].toolType() >= 0) {
+		emit toolSelected(m_preset[i]);
+		return true;
+	}
+	return false;
 }
 
 void PresetPie::leaveEvent(QEvent *e)

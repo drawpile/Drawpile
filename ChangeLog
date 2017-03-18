@@ -6,6 +6,8 @@
  * Server: Fixed GUI mode tray icon
  * Made tool pie menu smaller
  * Temporarily disabled pie menu popup with right mouse button
+ * Restored tool preset shortcuts (1-8)
+ * Added shortcuts for assigning tool presets (Ctrl+1-8)
  * Removed new brush cursors (will be made configurable in the next version)
  * Fixed incorrect range in session alias validation ('z' and '9' characters were not accepted)
  * Fixed lasso selection tool (regression)
