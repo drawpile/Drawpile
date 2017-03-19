@@ -188,7 +188,7 @@ void Session::joinUser(Client *user, bool host)
 
 	addToHistory(user->joinMessage());
 
-	if(m_history->isOperator(user->username()))
+	if(user->isOperator() || m_history->isOperator(user->username()))
 		changeOpStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
@@ -387,7 +387,7 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
 				messageAll(msg, false);
 			}
-			if(c->isAuthenticated() && c->isModerator())
+			if(c->isAuthenticated() && !c->isModerator())
 				m_history->setAuthenticatedOperator(c->username(), op);
 
 		}
