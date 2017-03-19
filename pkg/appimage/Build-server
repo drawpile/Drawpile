@@ -43,7 +43,8 @@ chmod a+x AppRun
 
 
 # Copy libraries
-mkdir -p usr/lib
+mkdir -p usr/lib/qt5/plugins
+cp -r /usr/lib64/qt5/plugins/sqldrivers usr/lib/qt5/plugins
 
 ldd usr/bin/drawpile-srv | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib/ || true
 #ldd usr/lib/qt5/plugins/platforms/libqxcb.so | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
