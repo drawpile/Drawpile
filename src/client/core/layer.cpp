@@ -873,10 +873,6 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 		blue = qMin(1.0, blue/alpha);
 	}
 
-	Q_ASSERT(red >= 0 && red <= 1);
-	Q_ASSERT(green >= 0 && green <= 1);
-	Q_ASSERT(blue >= 0 && blue <= 1);
-	Q_ASSERT(alpha >= 0 && alpha <= 1);
 	return QColor::fromRgbF(red, green, blue, alpha);
 }
 
