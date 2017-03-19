@@ -1202,6 +1202,7 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	case MSG_LAYER_CREATE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerCreate>().id());
 	case MSG_LAYER_ATTR: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerAttributes>().id());
 	case MSG_LAYER_RETITLE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerRetitle>().id());
+	case MSG_LAYER_VISIBILITY: return AffectedArea(AffectedArea::USERATTRS, 0);
 
 	case MSG_PUTIMAGE: {
 		const PutImage &m = msg.cast<PutImage>();
@@ -1252,11 +1253,16 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	case MSG_ANNOTATION_EDIT: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationEdit>().id());
 	case MSG_ANNOTATION_DELETE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationDelete>().id());
 
+	case MSG_REGION_MOVE: {
+		const MoveRegion &mr = msg.cast<MoveRegion>();
+		return AffectedArea(AffectedArea::PIXELS, mr.layer(), mr.sourceBounds().united(mr.targetBounds()));
+	}
+
 	case MSG_UNDOPOINT: return AffectedArea(AffectedArea::USERATTRS, 0);
 
 	default:
 #ifndef NDEBUG
-		qWarning("%s: affects EVERYTHING", qPrintable(msg->toString()));
+		qWarning("%s: affects EVERYTHING", qPrintable(msg->messageName()));
 #endif
 		return AffectedArea(AffectedArea::EVERYTHING, 0);
 	}

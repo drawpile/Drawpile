@@ -19,10 +19,11 @@
 #ifndef DP_NET_IMAGE_H
 #define DP_NET_IMAGE_H
 
+#include "message.h"
+
 #include <QByteArray>
 #include <QList>
-
-#include "message.h"
+#include <QRect>
 
 namespace protocol {
 
@@ -197,6 +198,15 @@ public:
 	QByteArray mask() const { return m_mask; }
 
 	QString messageName() const override { return QStringLiteral("moveregion"); }
+
+	QRect sourceBounds() const { return QRect(bx(), by(), bw(), bh()); }
+	QRect targetBounds() const {
+		const int left = qMin(qMin(x1(), x2()), qMin(x3(), x4()));
+		const int right = qMax(qMax(x1(), x2()), qMax(x3(), x4()));
+		const int top = qMin(qMin(y1(), y2()), qMin(y3(), y4()));
+		const int bottom = qMax(qMax(y1(), y2()), qMax(y3(), y4()));
+		return QRect(QPoint(left, top), QPoint(right, bottom));
+	}
 
 protected:
 	int payloadLength() const override;
