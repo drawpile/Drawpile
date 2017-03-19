@@ -422,6 +422,8 @@ bool Document::startRecording(const QString &filename, QString *error)
 	cfg.beginGroup("settings/recording");
 	if(cfg.value("recordpause", true).toBool())
 		m_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+	if(cfg.value("recordtimestamp", false).toBool())
+		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
 
 	connect(m_client, &net::Client::messageReceived, m_recorder, &recording::Writer::recordMessage);
 

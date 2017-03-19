@@ -267,6 +267,8 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/recording");
 	m_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
 	m_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
+	m_ui->recordtimestamp->setChecked(cfg.value("recordtimestamp", false).toBool());
+	m_ui->timestampInterval->setValue(cfg.value("timestampinterval", 15).toInt());
 	m_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
 	m_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
@@ -350,6 +352,8 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("settings/recording");
 	cfg.setValue("recordpause", m_ui->recordpause->isChecked());
 	cfg.setValue("minimumpause", m_ui->minimumpause->value());
+	cfg.setValue("recordtimestamp", m_ui->recordtimestamp->isChecked());
+	cfg.setValue("timestampinterval", m_ui->timestampInterval->value());
 	FfmpegExporter::setFfmpegPath(m_ui->ffmpegpath->text().trimmed());
 	cfg.setValue("folder", m_ui->recordingFolder->text());
 	cfg.endGroup();

@@ -51,7 +51,8 @@ Writer::Writer(const QString &filename, QObject *parent)
 
 Writer::Writer(QIODevice *file, bool autoclose, QObject *parent)
 	: QObject(parent), m_file(file),
-	m_autoclose(autoclose), m_minInterval(0), m_autoflush(nullptr), m_encoding(Encoding::Binary)
+	m_autoclose(autoclose), m_minInterval(0), m_timestampInterval(0), m_lastTimestamp(0),
+	m_autoflush(nullptr), m_encoding(Encoding::Binary)
 {
 }
 
@@ -65,6 +66,11 @@ void Writer::setMinimumInterval(int min)
 {
 	m_minInterval = min;
 	m_interval = QDateTime::currentMSecsSinceEpoch();
+}
+
+void Writer::setTimestampInterval(int interval)
+{
+	m_timestampInterval = interval;
 }
 
 void Writer::setAutoflush()
@@ -178,13 +184,22 @@ bool Writer::writeComment(const QString &comment)
 void Writer::recordMessage(const protocol::MessagePtr &msg)
 {
 	if(msg->isRecordable()) {
+		const qint64 now = QDateTime::currentMSecsSinceEpoch();
+
 		if(m_minInterval>0) {
-			const qint64 now = QDateTime::currentMSecsSinceEpoch();
 			const qint64 interval = now - m_interval;
 			if(interval >= m_minInterval) {
 				writeMessage(protocol::Interval(0, qMin(qint64(0xffff), interval)));
 			}
 			m_interval = now;
+		}
+
+		if(m_timestampInterval > 0) {
+			const qint64 interval = now - m_lastTimestamp;
+			if(interval >= m_timestampInterval) {
+				writeMessage(protocol::Marker(0, QDateTime::currentDateTime().toString()));
+				m_lastTimestamp = now;
+			}
 		}
 
 		writeMessage(*msg);

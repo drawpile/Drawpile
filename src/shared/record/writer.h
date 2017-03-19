@@ -85,6 +85,13 @@ public:
 	void setMinimumInterval(int min);
 
 	/**
+	 * @brief Set the interval between timestamp markers.
+	 * If set to zero, timestamps are not recorded.
+	 * @param interval in milliseconds (0 to disable)
+	 */
+	void setTimestampInterval(int interval);
+
+	/**
 	 * @brief Write recording header
 	 *
 	 * This should be called before writing the first message.
@@ -134,6 +141,8 @@ private:
 	bool m_autoclose;
 	qint64 m_minInterval;
 	qint64 m_interval;
+	qint64 m_timestampInterval;
+	qint64 m_lastTimestamp;
 	QTimer *m_autoflush;
 	Encoding m_encoding;
 };
