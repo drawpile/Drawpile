@@ -89,6 +89,7 @@ LocalFork::MessageAction LocalFork::handleReceivedMessage(MessagePtr msg, const 
 	// But first, check if the local fork has fallen too much behind
 	if(m_maxFallBehind>0) {
 		if(++m_fallenBehind >= m_maxFallBehind) {
+			qWarning("Fell behind %d >= %d", m_fallenBehind, m_maxFallBehind);
 			clear();
 			return ROLLBACK;
 		}

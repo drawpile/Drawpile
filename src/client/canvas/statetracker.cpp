@@ -169,7 +169,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
 
 	// Reset local fork if it falls behind too much
-	m_localfork.setFallbehind(100);
+	m_localfork.setFallbehind(10000);
 
 	// Timer for processing drawing commands in short chunks to avoid entirely locking up the UI.
 	// In the future, canvas rendering should be done in a separate thread.
@@ -1254,7 +1254,11 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 
 	case MSG_UNDOPOINT: return AffectedArea(AffectedArea::USERATTRS, 0);
 
-	default: return AffectedArea(AffectedArea::EVERYTHING, 0);
+	default:
+#ifndef NDEBUG
+		qWarning("%s: affects EVERYTHING", qPrintable(msg->toString()));
+#endif
+		return AffectedArea(AffectedArea::EVERYTHING, 0);
 	}
 }
 
