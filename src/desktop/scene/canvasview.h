@@ -144,6 +144,15 @@ class CanvasView : public QGraphicsView
 
 		void setToolCursor(const QCursor &cursor);
 
+		/**
+		 * @brief Set the cursor to use for brush tools
+		 * Styles:
+		 * 0. Dot
+		 * 1. Crosshair
+		 * 2. Arrow
+		 */
+		void setBrushCursorStyle(int style);
+
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
@@ -262,6 +271,7 @@ class CanvasView : public QGraphicsView
 		bool _touching, _touchRotating;
 		qreal _touchStartZoom, _touchStartRotate;
 		qreal _dpi;
+		int m_brushCursorStyle;
 };
 
 }

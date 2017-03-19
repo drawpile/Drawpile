@@ -649,6 +649,8 @@ void MainWindow::updateTabletSupportMode()
 		cfg.value("touchpinch", true).toBool(),
 		cfg.value("touchtwist", true).toBool()
 	);
+	cfg.endGroup();
+	_view->setBrushCursorStyle(cfg.value("settings/brushcursor").toInt());
 }
 
 /**

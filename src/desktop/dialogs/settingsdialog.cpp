@@ -246,6 +246,8 @@ void SettingsDialog::restoreSettings()
 
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
+	m_ui->brushCursorBox->setCurrentIndex(cfg.value("brushcursor").toInt());
+
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
@@ -333,8 +335,9 @@ void SettingsDialog::rememberSettings()
 	cfg.endGroup();
 
 	// Remember general settings
-	cfg.setValue("settings/language", m_ui->languageBox->itemData(m_ui->languageBox->currentIndex()));
+	cfg.setValue("settings/language", m_ui->languageBox->currentIndex());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
+	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
 
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());

@@ -25,6 +25,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Notifications</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Animation</string>
         </property>
        </item>
@@ -191,14 +196,57 @@
               </property>
              </widget>
             </item>
-            <item row="12" column="0">
+            <item row="12" column="1">
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="13" column="1">
+             <widget class="QComboBox" name="brushCursorBox">
+              <item>
+               <property name="text">
+                <string>Dot</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Crosshair</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Arrow</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="13" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>Brush cursor:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="page_2">
+           <layout class="QFormLayout" name="formLayout_6">
+            <item row="0" column="0">
              <widget class="QLabel" name="label_9">
               <property name="text">
                <string>Notification volume:</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1">
+            <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QSlider" name="notificationVolume">
@@ -231,31 +279,38 @@
               </item>
              </layout>
             </item>
-            <item row="16" column="1">
+            <item row="1" column="1">
              <widget class="QCheckBox" name="notifChat">
               <property name="text">
                <string>Chat</string>
               </property>
              </widget>
             </item>
-            <item row="17" column="1">
+            <item row="2" column="1">
              <widget class="QCheckBox" name="notifMarker">
               <property name="text">
                <string>Recording marker</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="1">
+            <item row="3" column="1">
              <widget class="QCheckBox" name="notifLogin">
               <property name="text">
                <string>User login and logout</string>
               </property>
              </widget>
             </item>
-            <item row="19" column="1">
+            <item row="4" column="1">
              <widget class="QCheckBox" name="notifLock">
               <property name="text">
                <string>Canvas lock</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>Notifications:</string>
               </property>
              </widget>
             </item>

@@ -52,7 +52,8 @@ CanvasView::CanvasView(QWidget *parent)
 	_hotBorderTop(false),
 	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
 	_touching(false), _touchRotating(false),
-	_dpi(96)
+	_dpi(96),
+	m_brushCursorStyle(0)
 {
 	viewport()->setAcceptDrops(true);
 #ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
@@ -178,6 +179,12 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
+void CanvasView::setBrushCursorStyle(int style)
+{
+	m_brushCursorStyle = style;
+	resetCursor();
+}
+
 void CanvasView::setToolCursor(const QCursor &cursor)
 {
 	m_toolcursor = cursor;
@@ -188,9 +195,15 @@ void CanvasView::resetCursor()
 {
 	if(_locked)
 		viewport()->setCursor(Qt::ForbiddenCursor);
-	else if(m_toolcursor.shape() == Qt::CrossCursor)
-		viewport()->setCursor(m_dotcursor);
-	else
+	else if(m_toolcursor.shape() == Qt::CrossCursor) {
+		switch(m_brushCursorStyle) {
+		case 0: viewport()->setCursor(m_dotcursor); break;
+		case 1: viewport()->setCursor(Qt::CrossCursor); break;
+		default: viewport()->setCursor(Qt::ArrowCursor); break;
+		}
+
+
+	} else
 		viewport()->setCursor(m_toolcursor);
 }
 
