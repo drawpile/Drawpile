@@ -74,9 +74,10 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 		}
 		m_ui->nsfmSessionsLabel->setVisible(filtered>0);
 	});
-	connect(m_apiClient, &sessionlisting::AnnouncementApi::error, [this](const QString &message) {
+	connect(m_apiClient, &sessionlisting::AnnouncementApi::error, [this](const QString &server, const QString &message) {
+		qWarning("Session list error: %s @ %s", qPrintable(message), qPrintable(server));
 		m_ui->liststack->setCurrentIndex(1);
-		m_ui->errormessage->setText(message);
+		m_ui->errormessage->setText(server + "\n" + message);
 	});
 
 	m_model = new QSortFilterProxyModel(this);
@@ -129,6 +130,7 @@ SessionListingDialog::~SessionListingDialog()
 void SessionListingDialog::refreshListing()
 {
 	QString urlstr = m_ui->listserver->itemData(m_ui->listserver->currentIndex()).toString();
+
 	if(urlstr == "local") {
 #ifdef HAVE_DNSSD
 		// Local server discovery mode (DNS-SD)
@@ -139,10 +141,16 @@ void SessionListingDialog::refreshListing()
 
 	} else {
 		// Session listing server mode
+		m_ui->liststack->setCurrentIndex(1);
+
 		QUrl url = urlstr;
 		if(url.isValid()) {
+			m_ui->errormessage->setText(tr("Loading..."));
 			m_model->setSourceModel(m_sessions);
 			m_apiClient->getSessionList(url, protocol::ProtocolVersion::current().asString(), QString(), true);
+
+		} else {
+			m_ui->errormessage->setText("Invalid list server URL");
 		}
 	}
 }

@@ -40,6 +40,8 @@ public:
 
 	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
 
+	void clear();
+
 public slots:
 	void setList(const QList<Session> sessions);
 	void setShowNsfm(bool nsfm);

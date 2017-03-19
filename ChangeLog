@@ -1,5 +1,6 @@
 2017-0?-?? Version 2.0.1
  * Configurable brush cursor
+ * Improved session announcement list fetching error messages
 
 2017-03-18 Version 2.0.0 Stable
  * Server: Fixed setting of local hostname (when using a configuration file)
