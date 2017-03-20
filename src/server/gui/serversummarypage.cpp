@@ -264,7 +264,7 @@ void ServerSummaryPage::saveSettings()
 		{config::AllowGuestHosts.name, d->allowGuestHosts->isChecked()},
 		{config::SessionSizeLimit.name, d->sessionSizeLimit->value() * 1024 * 1024},
 		{config::IdleTimeLimit.name, d->idleTimeout->value() * 60},
-		{config::SessionCountLimit.name, d->sessionSizeLimit->value()},
+		{config::SessionCountLimit.name, d->maxSessions->value()},
 		{config::EnablePersistence.name, d->persistence->isChecked()},
 		{config::ArchiveMode.name, d->archiveSessions->isChecked()},
 		{config::PrivateUserList.name, d->privateUserList->isChecked()}

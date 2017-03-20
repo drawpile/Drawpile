@@ -10,6 +10,7 @@
  * Show progress bar (in status bar) during session reset
  * Include username in "op granted/revoked" chat message
  * Fixed duplicate local messages when sending reset snapshot
+ * Server GUI: fixed max session count and session size limit changing
 
 2017-03-18 Version 2.0.0 Stable
  * Server: Fixed setting of local hostname (when using a configuration file)
