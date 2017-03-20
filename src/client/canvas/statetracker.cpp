@@ -188,6 +188,7 @@ void StateTracker::reset()
 	m_history.resetTo(m_history.end());
 	m_fullhistory = true;
 	m_hasParticipated = false;
+	m_msgqueue.clear();
 	m_localfork.clear();
 	m_layerlist->clear();
 }
@@ -511,9 +512,10 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 void StateTracker::previewLayerOpacity(int id, float opacity)
 {
 	paintcore::Layer *layer = _image->getLayer(id);
-	Q_ASSERT(layer);
-	if(!layer)
+	if(!layer) {
+		qWarning("previewLayerOpacity(%d): no such layer!", id);
 		return;
+	}
 	layer->setOpacity(opacity*255);
 }
 
@@ -948,6 +950,10 @@ void StateTracker::makeSavepoint(int pos)
 void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 {
 	// This function is called when jumping to a recorded savepoint
+	if(!savepoint) {
+		qWarning("resetToSavepoint() was called with a null savepoint!");
+		return;
+	}
 
 	m_history.resetTo(savepoint->streampointer);
 	m_savepoints.clear();
@@ -963,8 +969,14 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 {
 	// This function is called when reverting to an earlier state to undo
 	// an action.
-
-	Q_ASSERT(m_savepoints.contains(savepoint));
+	if(!savepoint) {
+		qWarning("revertSavepointAndReplay() was called with a null savepoint!");
+		return;
+	}
+	if(!m_savepoints.contains(savepoint)) {
+		qWarning("revertSavepointAndReplay() the given savepoint was not found!");
+		return;
+	}
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
