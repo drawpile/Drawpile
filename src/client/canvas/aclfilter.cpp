@@ -221,7 +221,7 @@ bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
 		return false;
 
 	const LayerAcl &l = m_layers[layerId];
-	return l.locked || l.exclusive.contains(userId);
+	return l.locked || (!l.exclusive.isEmpty() && !l.exclusive.contains(userId));
 }
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
