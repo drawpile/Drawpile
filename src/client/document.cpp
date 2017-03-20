@@ -486,7 +486,7 @@ bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int siz
 {
 	if(!savepoint) {
 		qInfo("Preparing session reset from current canvas content");
-		m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
+		m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas).loadInitCommands();
 	} else {
 		qInfo("Preparing session reset from a savepoint");
 		m_resetstate = savepoint.initCommands(m_client->myId());

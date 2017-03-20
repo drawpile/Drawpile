@@ -150,6 +150,10 @@ void LayerListModel::createLayer(int id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
 	m_items.insert(index, LayerListItem(id, title));
+	if(m_pendingAclChange.contains(id)) {
+		LayerAcl acl = m_pendingAclChange.take(id);
+		updateLayerAcl(id, acl.locked, acl.exclusive);
+	}
 	endInsertRows();
 }
 
@@ -170,6 +174,7 @@ void LayerListModel::clear()
 {
 	beginRemoveRows(QModelIndex(), 0, m_items.size());
 	m_items.clear();
+	m_pendingAclChange.clear();
 	m_defaultLayer = 0;
 	endRemoveRows();
 }
@@ -214,8 +219,10 @@ void LayerListModel::setLayerHidden(int id, bool hidden)
 void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
 {
 	int row = indexOf(id);
-	if(row<0)
+	if(row<0) {
+		m_pendingAclChange[id] = LayerAcl { locked, exclusive };
 		return;
+	}
 
 	LayerListItem &item = m_items[row];
 	item.locked = locked;

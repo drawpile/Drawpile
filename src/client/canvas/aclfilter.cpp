@@ -215,6 +215,13 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	return true;
 }
 
+AclFilter::LayerAcl AclFilter::layerAcl(int layerId) const
+{
+	if(!m_layers.contains(layerId))
+		return LayerAcl();
+	return m_layers[layerId];
+}
+
 bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
 {
 	if(!m_layers.contains(layerId))
@@ -312,6 +319,12 @@ uint16_t AclFilter::sessionAclFlags() const
 
 	if(m_ownLayers)
 		flags |= protocol::SessionACL::LOCK_OWNLAYERS;
+
+	if(m_imagesLocked)
+		flags |= protocol::SessionACL::LOCK_IMAGES;
+
+	if(m_lockAnnotationCreation)
+		flags |= protocol::SessionACL::LOCK_ANNOTATIONS;
 
 	return flags;
 }

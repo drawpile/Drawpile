@@ -5,6 +5,8 @@
  * Fixed constant canvas rollback when many people were drawing simultaneous
  * Fixed moderator accounts
  * Fixed layer exclusive access locking
+ * Fixed restoring of session & layer ACLs after reset
+ * Fixed setting cut&paste and annotation lock flags
 
 2017-03-18 Version 2.0.0 Stable
  * Server: Fixed setting of local hostname (when using a configuration file)

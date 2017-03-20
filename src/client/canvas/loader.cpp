@@ -23,6 +23,7 @@
 #include "ora/orareader.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/layerlist.h"
+#include "canvas/aclfilter.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -46,8 +47,8 @@ QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, _color.rgba(), 0, QGuiApplication::tr("Background"))));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 2, 0, 0, 0, QGuiApplication::tr("Foreground"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0101, 0, _color.rgba(), 0, QGuiApplication::tr("Background"))));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QGuiApplication::tr("Foreground"))));
 	return msgs;
 }
 
@@ -142,29 +143,26 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		if(!fill.isValid())
 			msgs.append(net::command::putQImage(m_contextId, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
 
-		if(m_session && m_session->stateTracker()->isLayerLocked(layer->id()))
-			msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), true, QList<uint8_t>())));
+		AclFilter::LayerAcl acl;
+		if(m_session)
+			acl = m_session->aclFilter()->layerAcl(layer->id());
+		if(acl.locked || !acl.exclusive.isEmpty())
+			msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, acl.exclusive)));
 	}
 
 	// Create annotations
 	for(const paintcore::Annotation &a : m_layers->annotations()->getAnnotations()) {
 		const QRect g = a.rect;
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(m_contextId, a.id, g.x(), g.y(), g.width(), g.height())));
-		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), 0, 0, a.text))));
+		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), a.flags(), 0, a.text))));
 	}
 
-	// User tool changes
+	// Session and user ACLs
 	if(m_session) {
-		QHashIterator<int, canvas::DrawingContext> iter(m_session->stateTracker()->drawingContexts());
-		while(iter.hasNext()) {
-			iter.next();
-
-			msgs.append(net::command::brushToToolChange(
-				iter.key(),
-				iter.value().tool.layer_id,
-				iter.value().tool.brush
-			));
-		}
+		// Note: Starting the reset process automatically sets the LOCK_SESSION flag. We don't want that after the reset.
+		msgs.append(MessagePtr(new protocol::SessionACL(m_contextId,
+						m_session->aclFilter()->sessionAclFlags() & ~protocol::SessionACL::LOCK_SESSION)));
+		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_session->aclFilter()->lockedUsers())));
 	}
 
 	return msgs;

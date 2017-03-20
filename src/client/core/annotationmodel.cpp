@@ -358,6 +358,13 @@ Annotation Annotation::fromDataStream(QDataStream &in)
 	return Annotation {id, text, rect, color, protect, valign};
 }
 
+uint8_t Annotation::flags() const {
+	return
+		(protect ? protocol::AnnotationEdit::FLAG_PROTECT : 0) |
+		valign
+		;
+}
+
 int Annotation::valignFromString(const QString &va)
 {
 	if(va == "center")

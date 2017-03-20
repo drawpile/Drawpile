@@ -35,6 +35,13 @@ class AclFilter : public QObject
 {
 	Q_OBJECT
 public:
+	struct LayerAcl {
+		bool locked;
+		QList<uint8_t> exclusive;
+		LayerAcl() : locked(false), exclusive(QList<uint8_t>()) {}
+		LayerAcl(bool locked, const QList<uint8_t> exclusive) : locked(locked), exclusive(exclusive) { }
+	};
+
 	explicit AclFilter(QObject *parent=nullptr);
 
 	//! Reset all access controls
@@ -86,6 +93,15 @@ public:
 
 	uint16_t sessionAclFlags() const;
 
+	/**
+	 * @brief Get the access controls for an individual layer
+	 * If the layer has not been configured, an unlocked set will be returned.
+	 */
+	LayerAcl layerAcl(int id) const;
+
+	//! Get the list of locked users
+	QList<uint8_t> lockedUsers() const { return m_userlocks; }
+
 signals:
 	void localOpChanged(bool op);
 	bool localLockChanged(bool lock);
@@ -100,13 +116,6 @@ signals:
 	void layerAclChange(int layerId, bool locked, const QList<uint8_t> &exclusive);
 
 private:
-	struct LayerAcl {
-		bool locked;
-		QList<uint8_t> exclusive;
-		LayerAcl() : locked(false), exclusive(QList<uint8_t>()) {}
-		LayerAcl(bool locked, const QList<uint8_t> exclusive) : locked(locked), exclusive(exclusive) { }
-	};
-
 	void setOperator(bool op);
 	void setSessionLock(bool lock);
 	void setUserLock(bool lock);

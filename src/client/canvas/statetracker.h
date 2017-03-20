@@ -103,6 +103,7 @@ struct DrawingContext {
 };
 
 class StateTracker;
+class CanvasModel;
 
 /**
  * @brief A snapshot of the statetracker state.
@@ -137,8 +138,11 @@ public:
 	 * @brief Generate a list of commands to initialize a session to this savepoint
 	 *
 	 * (Used when resetting a session to a prior state.)
+	 *
+	 * @param contextId context Id of the user resetting
+	 * @param canvas if set, ACL settings are got from here
 	 */
-	QList<protocol::MessagePtr> initCommands(uint8_t contextId) const;
+	QList<protocol::MessagePtr> initCommands(uint8_t contextId, CanvasModel *canvas=nullptr) const;
 
 private:
 	struct Data;

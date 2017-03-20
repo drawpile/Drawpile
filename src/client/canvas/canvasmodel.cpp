@@ -114,7 +114,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 
 	// Apply ACL filter
 	if(!m_aclfilter->filterMessage(*cmd)) {
-		qDebug("Filtered message %d from %d", cmd->type(), cmd->contextId());
+		qWarning("Filtered message %d from %d", cmd->type(), cmd->contextId());
 		return;
 	}
 

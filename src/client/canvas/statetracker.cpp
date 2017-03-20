@@ -118,14 +118,14 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 	return img;
 }
 
-QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId) const
+QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, CanvasModel *canvas) const
 {
 	if(!m_data)
 		return QList<protocol::MessagePtr>();
 
 	paintcore::LayerStack stack;
 	stack.restoreSavepoint(m_data->canvas);
-	SnapshotLoader loader(contextId, &stack);
+	SnapshotLoader loader(contextId, &stack, canvas);
 	return loader.loadInitCommands();
 }
 

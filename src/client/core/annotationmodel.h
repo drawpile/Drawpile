@@ -56,6 +56,9 @@ struct Annotation {
 	//! Get the ID of the user who created this annotation
 	uint8_t userId() const { return id>>8; }
 
+	//! Get the protocol flags for this annotation
+	uint8_t flags() const;
+
 	//! Get the name of the vertical-align setting
 	QString valignToString() const;
 

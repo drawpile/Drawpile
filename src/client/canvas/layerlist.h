@@ -154,6 +154,16 @@ private:
 	void handleMoveLayer(int idx, int afterIdx);
 
 	int indexOf(int id) const;
+
+	// Terrible hack: the layers are created and edited in the state tracker (which can run concurrently)
+	// but the ACL changes are updated immediately. So, we must save the ACLs for missing layers in case
+	// they're created afterwards
+	// TODO separate the AclFilter better and update the UI as changes are really applied, then get rid of this.
+	struct LayerAcl {
+		bool locked;
+		QList<uint8_t> exclusive;
+	};
+	QHash<uint16_t, LayerAcl> m_pendingAclChange;
 	
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
