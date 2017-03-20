@@ -111,6 +111,11 @@ void Session::switchState(State newstate)
 				resetcmd.message = "Session reset!";
 				directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
 
+				protocol::ServerReply catchup;
+				catchup.type = protocol::ServerReply::CATCHUP;
+				catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
+				directToAll(MessagePtr(new protocol::Command(0, catchup)));
+
 				m_historyLimitWarningSent = false;
 
 				sendUpdatedSessionProperties();
