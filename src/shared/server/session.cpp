@@ -383,15 +383,15 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 		bool op = ids.contains(c->id()) | c->isModerator();
 		if(op != c->isOperator()) {
 			c->setOperator(op);
+			QString msg;
 			if(op) {
-				const QString msg = "Made operator by " + changedBy;
+				msg = "Made operator by " + changedBy;
 				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
-				messageAll(msg, false);
 			} else {
-				const QString msg = "Operator status revoked by " + changedBy;
+				msg = "Operator status revoked by " + changedBy;
 				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
-				messageAll(msg, false);
 			}
+			messageAll(c->username() + " " + msg, false);
 			if(c->isAuthenticated() && !c->isModerator())
 				m_history->setAuthenticatedOperator(c->username(), op);
 
@@ -416,7 +416,7 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 				msg = "Operator status revoked by " + changedBy;
 				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
 			}
-			messageAll(msg, false);
+			messageAll(c->username() + " " + msg, false);
 			if(c->isAuthenticated() && !c->isModerator())
 				m_history->setAuthenticatedOperator(c->username(), op);
 		}
