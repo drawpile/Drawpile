@@ -172,6 +172,11 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 		emit sentColorChange(QColor::fromRgb(colorChange));
 }
 
+void Client::sendResetMessages(const QList<protocol::MessagePtr> &msgs)
+{
+	m_server->sendMessages(msgs);
+}
+
 void Client::handleMessage(const protocol::MessagePtr &msg)
 {
 	if(m_catchupTo>0) {

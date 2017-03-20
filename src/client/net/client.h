@@ -151,6 +151,9 @@ public slots:
 	void sendMessage(const protocol::MessagePtr &msg);
 	void sendMessages(const QList<protocol::MessagePtr> &msgs);
 
+	//! Send messages as part of a sessio reset/init
+	void sendResetMessages(const QList<protocol::MessagePtr> &msgs);
+
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandLocal(protocol::MessagePtr msg);
