@@ -1528,8 +1528,9 @@ void MainWindow::toggleFullscreen()
 {
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
 		// Save windowed mode state
-		_fullscreen_oldstate = saveState();
-		_fullscreen_oldgeometry = geometry();
+		m_fullscreenOldState = saveState();
+		m_fullscreenOldGeometry = geometry();
+		m_fullscreenOldMaximized = isMaximized();
 
 		// Hide everything except floating docks
 		menuBar()->hide();
@@ -1548,12 +1549,16 @@ void MainWindow::toggleFullscreen()
 
 	} else {
 		// Restore old state
-		showNormal();
+		if(m_fullscreenOldMaximized) {
+			showMaximized();
+		} else {
+			showNormal();
+			setGeometry(m_fullscreenOldGeometry);
+		}
 		menuBar()->show();
 		_viewStatusBar->show();
 		_view->setFrameShape(QFrame::StyledPanel);
-		setGeometry(_fullscreen_oldgeometry);
-		restoreState(_fullscreen_oldstate);
+		restoreState(m_fullscreenOldState);
 	}
 }
 

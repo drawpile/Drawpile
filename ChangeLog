@@ -1,3 +1,6 @@
+2017-0?-?? Version 2.0.2
+ * Fixed returning from fullscreen mode to maximized window
+
 2017-03-20 Version 2.0.1
  * Configurable brush cursor
  * Improved session announcement list fetching error messages

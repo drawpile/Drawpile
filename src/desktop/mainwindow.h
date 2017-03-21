@@ -237,8 +237,9 @@ private:
 	int _lastToolBeforePaste; // Last selected tool before Paste was used
 
 	// Remember window state to return from fullscreen mode
-	QByteArray _fullscreen_oldstate;
-	QRect _fullscreen_oldgeometry;
+	QByteArray m_fullscreenOldState;
+	QRect m_fullscreenOldGeometry;
+	bool m_fullscreenOldMaximized;
 
 	QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
 	ShortcutDetector *_tempToolSwitchShortcut;
