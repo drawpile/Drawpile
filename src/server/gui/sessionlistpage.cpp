@@ -33,6 +33,7 @@
 #include <QInputDialog>
 #include <QTableView>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QTimer>
 
 namespace server {
@@ -59,6 +60,15 @@ SessionListPage::SessionListPage(Server *server, QWidget *parent)
 	view->setSelectionBehavior(QTableView::SelectRows);
 
 	layout->addWidget(view);
+
+	auto *btnLayout = new QHBoxLayout;
+	layout->addLayout(btnLayout);
+
+	auto *msgAllBtn = new QPushButton(tr("Message all"));
+	btnLayout->addWidget(msgAllBtn);
+	btnLayout->addStretch(1);
+
+	connect(msgAllBtn, &QPushButton::clicked, this, &SessionListPage::sendMessageToAll);
 }
 
 SessionListPage::~SessionListPage()
@@ -66,5 +76,21 @@ SessionListPage::~SessionListPage()
 	delete d;
 }
 
+void SessionListPage::sendMessageToAll()
+{
+	QInputDialog *dlg = new QInputDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowModality(Qt::WindowModal);
+	dlg->setInputMode(QInputDialog::TextInput);
+	dlg->setLabelText(tr("Send message"));
+	connect(dlg, &QInputDialog::accepted, this, [dlg, this]() {
+			QJsonObject o;
+			o["message"] = dlg->textValue();
+			d->server->makeApiRequest(QString(), JsonApiMethod::Update, QStringList() << "sessions", o);
+	});
+	dlg->show();
+}
+
 }
 }
+

@@ -42,6 +42,9 @@ public:
 	explicit SessionListPage(Server *server, QWidget *parent=nullptr);
 	~SessionListPage();
 
+private slots:
+	void sendMessageToAll();
+
 private:
 	Private *d;
 };

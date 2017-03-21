@@ -1,6 +1,7 @@
 2017-0?-?? Version 2.0.2
  * Fixed returning from fullscreen mode to maximized window
  * Added contexts to lambda signal/slot connections (fixes server crash when terminating an announced session)
+ * Added "send to all sessions" server admin API endpoint and GUI button
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor

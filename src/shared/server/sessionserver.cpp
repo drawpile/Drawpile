@@ -340,6 +340,18 @@ JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStr
 	if(method == JsonApiMethod::Get) {
 		return {JsonApiResult::Ok, QJsonDocument(sessionDescriptions())};
 
+	} else if(method == JsonApiMethod::Update) {
+		const QString msg = request["message"].toString();
+		if(!msg.isEmpty())
+			messageAll(msg, false);
+
+		const QString alert = request["alert"].toString();
+		if(!alert.isEmpty())
+			messageAll(alert, true);
+
+		return {JsonApiResult::Ok, QJsonDocument(QJsonObject())};
+
+
 	} else {
 		return JsonApiBadMethod();
 	}
