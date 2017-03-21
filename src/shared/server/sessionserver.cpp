@@ -156,8 +156,8 @@ void SessionServer::initSession(Session *session)
 
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
-	connect(session, &Session::sessionAttributeChanged, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
-	connect(session, &Session::destroyed, [this, session]() {
+	connect(session, &Session::sessionAttributeChanged, this, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
+	connect(session, &Session::destroyed, this, [this, session]() {
 		m_sessions.removeOne(session);
 		emit sessionEnded(session->idString());
 	});

@@ -353,12 +353,12 @@ void PlaybackController::buildIndex()
 	m_indexbuilder->moveToThread(thread);
 
 	const qreal filesize = m_reader->filesize();
-	connect(m_indexbuilder.data(), &IndexBuilder::progress, [this, filesize](int progress) {
+	connect(m_indexbuilder.data(), &IndexBuilder::progress, this, [this, filesize](int progress) {
 		m_indexBuildProgress = progress / filesize;
 		emit indexBuildProgressed(m_indexBuildProgress);
 	});
 
-	connect(m_indexbuilder.data(), &IndexBuilder::done, [this](bool ok, const QString &error) {
+	connect(m_indexbuilder.data(), &IndexBuilder::done, this, [this](bool ok, const QString &error) {
 		if(!ok) {
 			m_indexBuildProgress = 0;
 			emit indexBuildProgressed(0);

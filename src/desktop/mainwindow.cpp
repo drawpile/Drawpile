@@ -148,7 +148,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 
-	connect(m_doc, &Document::autoResetTooLarge, [this](int maxSize) {
+	connect(m_doc, &Document::autoResetTooLarge, this, [this](int maxSize) {
 		m_doc->sendLockSession(true);
 		auto *msgbox = new QMessageBox(
 					QMessageBox::Warning,
@@ -273,7 +273,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_dock_toolsettings, &docks::ToolSettings::foregroundColorChanged, m_presetPie, &widgets::PresetPie::setColor);
 	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_colors, &docks::ColorBox::setColor);
 	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
-	connect(m_presetPie, &widgets::PresetPie::presetRequest, [this](int slice) {
+	connect(m_presetPie, &widgets::PresetPie::presetRequest, this, [this](int slice) {
 		m_presetPie->setToolPreset(slice, _dock_toolsettings->getCurrentToolProperties());
 	});
 	connect(m_presetPie, &widgets::PresetPie::toolSelected, _dock_toolsettings, &docks::ToolSettings::setToolAndProps);
@@ -416,7 +416,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
-	connect(canvas, &canvas::CanvasModel::chatMessageReceived, [this]() {
+	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(_splitter->sizes().at(1)==0)
 			_statusChatButton->show();
@@ -513,7 +513,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	connect(m_playbackDialog, &dialogs::PlaybackDialog::commandRead, m_doc->canvas(), &canvas::CanvasModel::handleCommand);
 
 	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
-	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, [this]() {
+	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this, [this]() {
 		m_playbackDialog = nullptr;
 		getAction("recordsession")->setEnabled(true);
 		setRecorderStatus(false);
@@ -1031,7 +1031,7 @@ void MainWindow::exportAnimation()
 	auto *dlg = new dialogs::VideoExportDialog(this);
 	dlg->showAnimationSettings(m_doc->canvas()->layerStack()->layerCount());
 
-	connect(dlg, &QDialog::finished, [dlg, this](int result) {
+	connect(dlg, &QDialog::finished, this, [dlg, this](int result) {
 		if(result == QDialog::Accepted) {
 			VideoExporter *vexp = dlg->getExporter();
 			if(vexp) {
@@ -1039,7 +1039,7 @@ void MainWindow::exportAnimation()
 				vexp->setParent(exporter);
 
 				connect(exporter, &AnimationExporter::done, exporter, &AnimationExporter::deleteLater);
-				connect(exporter, &AnimationExporter::error, [this](const QString &msg) {
+				connect(exporter, &AnimationExporter::error, this, [this](const QString &msg) {
 						QMessageBox::warning(this, tr("Export error"), msg);
 				});
 
@@ -1143,7 +1143,7 @@ void MainWindow::host()
 {
 	auto dlg = new dialogs::HostDialog(this);
 
-	connect(dlg, &dialogs::HostDialog::finished, [this, dlg](int i) {
+	connect(dlg, &dialogs::HostDialog::finished, this, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
 			dlg->rememberSettings();
 			hostSession(dlg);
@@ -1217,7 +1217,7 @@ void MainWindow::join(const QUrl &url)
 {
 	auto dlg = new dialogs::JoinDialog(url, this);
 
-	connect(dlg, &dialogs::JoinDialog::finished, [this, dlg](int i) {
+	connect(dlg, &dialogs::JoinDialog::finished, this, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
 			QUrl url = dlg->getUrl();
 
@@ -1254,7 +1254,7 @@ void MainWindow::leave()
 	leavebox->setDefaultButton(
 			leavebox->addButton(tr("Stay"), QMessageBox::NoRole)
 			);
-	connect(leavebox, &QMessageBox::finished, [this](int result) {
+	connect(leavebox, &QMessageBox::finished, this, [this](int result) {
 		if(result == 0)
 			m_doc->client()->disconnectFromServer();
 	});
@@ -1290,13 +1290,13 @@ void MainWindow::resetSession()
 		m_doc->sendLockSession(true);
 	}
 
-	connect(dlg, &dialogs::ResetDialog::accepted, [this, dlg]() {
+	connect(dlg, &dialogs::ResetDialog::accepted, this, [this, dlg]() {
 		// Send request for reset. No need to unlock the session,
 		// since the reset itself will do that for us.
 		m_doc->sendResetSession(dlg->selectedSavepoint());
 	});
 
-	connect(dlg, &dialogs::ResetDialog::rejected, [this, wasLocked]() {
+	connect(dlg, &dialogs::ResetDialog::rejected, this, [this, wasLocked]() {
 		// Reset cancelled: unlock the session (if locked by as)
 		if(!wasLocked)
 			m_doc->sendLockSession(false);
@@ -1388,7 +1388,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 
 			QUrl url = m_doc->client()->sessionUrl(true);
 
-			connect(joinbutton, &QAbstractButton::clicked, [this, url]() {
+			connect(joinbutton, &QAbstractButton::clicked, this, [this, url]() {
 				joinSession(url);
 			});
 
@@ -1768,7 +1768,7 @@ void MainWindow::resizeCanvas()
 	dlg->setPreviewImage(m_doc->canvas()->toImage().scaled(300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(dlg, &QDialog::accepted, [this, dlg]() {
+	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
 			m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
@@ -1970,7 +1970,7 @@ void MainWindow::setupActions()
 	filetools->addAction(save);
 	addToolBar(Qt::TopToolBarArea, filetools);
 
-	connect(_recent, &QMenu::triggered, [this](QAction *action) {
+	connect(_recent, &QMenu::triggered, this, [this](QAction *action) {
 		this->open(QUrl::fromLocalFile(action->property("filepath").toString()));
 	});
 
@@ -2035,24 +2035,24 @@ void MainWindow::setupActions()
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
 	connect(stamp, &QAction::triggered, m_doc, &Document::stamp);
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
-	connect(selectall, &QAction::triggered, [this]() {
+	connect(selectall, &QAction::triggered, this, [this]() {
 		getAction("toolselectrect")->trigger();
 		m_doc->selectAll();
 	});
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
-	connect(recolorarea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
-	connect(colorerasearea, &QAction::triggered, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
+	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
+	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
+	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(_dock_toolsettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
-	connect(expandup, &QAction::triggered, [this] { m_doc->sendResizeCanvas(64, 0 ,0, 0);});
-	connect(expandright, &QAction::triggered, [this] { m_doc->sendResizeCanvas(0, 64, 0, 0);});
-	connect(expanddown, &QAction::triggered, [this] { m_doc->sendResizeCanvas(0,0, 64, 0);});
-	connect(expandleft, &QAction::triggered, [this] { m_doc->sendResizeCanvas(0,0, 0, 64);});
+	connect(expandup, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(64, 0 ,0, 0);});
+	connect(expandright, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0, 64, 0, 0);});
+	connect(expanddown, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0,0, 64, 0);});
+	connect(expandleft, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0,0, 0, 64);});
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(undo);
@@ -2137,7 +2137,7 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(showFlipbook);
 
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
-		connect(windowHandle(), &QWindow::windowStateChanged, [fullscreen](Qt::WindowState state) {
+		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
 			// Update the mode tickmark on fulscreen state change.
 			// On Qt 5.3.0, this signal doesn't seem to get emitted on OSX when clicking
 			// on the toggle button in the titlebar. The state can be queried correctly though.
@@ -2149,7 +2149,7 @@ void MainWindow::setupActions()
 
 	connect(m_chatbox, &widgets::ChatBox::expanded, toggleChat, &QAction::setChecked);
 	connect(m_chatbox, &widgets::ChatBox::expanded, _statusChatButton, &QToolButton::hide);
-	connect(toggleChat, &QAction::triggered, [this](bool show) {
+	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		QList<int> sizes;
 		if(show) {
 			QVariant oldHeight = m_chatbox->property("oldheight");
@@ -2175,11 +2175,11 @@ void MainWindow::setupActions()
 
 	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
 	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
-	connect(zoomorig, &QAction::triggered, [this]() { _view->setZoom(100.0); });
-	connect(rotateorig, &QAction::triggered, [this]() { _view->setRotation(0); });
-	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
-	connect(rotate180, &QAction::triggered, [this]() { _view->setRotation(180); });
-	connect(rotate270, &QAction::triggered, [this]() { _view->setRotation(270); });
+	connect(zoomorig, &QAction::triggered, this, [this]() { _view->setZoom(100.0); });
+	connect(rotateorig, &QAction::triggered, this, [this]() { _view->setRotation(0); });
+	connect(rotate90, &QAction::triggered, this, [this]() { _view->setRotation(90); });
+	connect(rotate180, &QAction::triggered, this, [this]() { _view->setRotation(180); });
+	connect(rotate270, &QAction::triggered, this, [this]() { _view->setRotation(270); });
 	connect(viewflip, SIGNAL(triggered(bool)), _view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), _view, SLOT(setViewMirror(bool)));
 
@@ -2261,7 +2261,7 @@ void MainWindow::setupActions()
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 
-	connect(m_doc, &Document::sessionOpwordChanged, [gainop, this](bool hasOpword) {
+	connect(m_doc, &Document::sessionOpwordChanged, this, [gainop, this](bool hasOpword) {
 		gainop->setEnabled(hasOpword && !m_doc->canvas()->aclFilter()->isLocalUserOperator());
 	});
 
@@ -2330,8 +2330,8 @@ void MainWindow::setupActions()
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
-	connect(smallerbrush, &QAction::triggered, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
-	connect(biggerbrush, &QAction::triggered, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
+	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
+	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
@@ -2410,10 +2410,10 @@ void MainWindow::setupActions()
 		addAction(q);
 	}
 
-	connect(presetActions, &QActionGroup::triggered, [this](QAction *a) {
+	connect(presetActions, &QActionGroup::triggered, this, [this](QAction *a) {
 		m_presetPie->selectPreset(a->property("toolslotidx").toInt());
 	});
-	connect(setPresetActions, &QActionGroup::triggered, [this](QAction *a) {
+	connect(setPresetActions, &QActionGroup::triggered, this, [this](QAction *a) {
 		m_presetPie->assignPreset(a->property("toolslotidx").toInt());
 	});
 

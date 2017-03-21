@@ -49,7 +49,7 @@ TcpServer::TcpServer(QObject *parent) :
 
 	connect(m_socket, &QSslSocket::disconnected, this, &TcpServer::handleDisconnect);
 	connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpServer::handleSocketError);
-	connect(m_socket, &QSslSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
+	connect(m_socket, &QSslSocket::stateChanged, this, [this](QAbstractSocket::SocketState state) {
 		if(state==QAbstractSocket::ClosingState)
 			emit loggingOut();
 	});

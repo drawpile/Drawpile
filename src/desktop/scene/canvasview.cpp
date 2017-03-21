@@ -90,7 +90,7 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 	_scene = scene;
 	setScene(scene);
 
-	connect(_scene, &drawingboard::CanvasScene::canvasResized, [this](int xoff, int yoff, const QSize &oldsize) {
+	connect(_scene, &drawingboard::CanvasScene::canvasResized, this, [this](int xoff, int yoff, const QSize &oldsize) {
 		if(oldsize.isEmpty()) {
 			centerOn(_scene->sceneRect().center());
 		} else {

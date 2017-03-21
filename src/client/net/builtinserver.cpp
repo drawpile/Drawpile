@@ -50,7 +50,7 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	m_sessions = new SessionServer(m_config, this);
 
 	connect(m_sessions, &SessionServer::sessionEnded, this, &BuiltinServer::stop);
-	connect(m_sessions, &SessionServer::userDisconnected, [this]() {
+	connect(m_sessions, &SessionServer::userDisconnected, this, [this]() {
 		// The server will be fully stopped after all users have disconnected
 		if(m_state == STOPPING)
 			stop();

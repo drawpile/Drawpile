@@ -83,7 +83,7 @@ void WhatIsMyIp::discoverMyIp()
 
 	QNetworkReply *reply = networkaccess::get(QUrl("http://ipecho.net/plain"), QString());
 
-	connect(reply, &QNetworkReply::finished, [this, reply]() {
+	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
 		if(reply->error() != QNetworkReply::NoError) {
 			qWarning() << "ipecho.net error:" << reply->errorString();
 			emit ipLookupError(reply->errorString());

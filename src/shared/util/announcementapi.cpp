@@ -66,7 +66,7 @@ void AnnouncementApi::getApiInfo(const QUrl &apiUrl)
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->setProperty(PROP_APIURL, apiUrl);
-	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleServerInfoResponse);} );
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleServerInfoResponse);} );
 }
 
 void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title, bool nsfm)
@@ -88,7 +88,7 @@ void AnnouncementApi::getSessionList(const QUrl &apiUrl, const QString &protocol
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->setProperty(PROP_APIURL, apiUrl);
-	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleListingResponse);} );
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleListingResponse);} );
 }
 
 void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session)
@@ -120,7 +120,7 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	reply->setProperty(PROP_APIURL, apiUrl);
 	reply->setProperty(PROP_SESSION_ID, session.id);
-	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleAnnounceResponse);} );
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleAnnounceResponse);} );
 }
 
 void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
@@ -148,7 +148,7 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
 	reply->setProperty(PROP_APIURL, a.apiUrl);
-	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRefreshResponse);} );
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRefreshResponse);} );
 }
 
 void AnnouncementApi::unlistSession(const Announcement &a)
@@ -165,7 +165,7 @@ void AnnouncementApi::unlistSession(const Announcement &a)
 	QNetworkReply *reply = networkaccess::getInstance()->deleteResource(req);
 	reply->setProperty(PROP_APIURL, a.apiUrl);
 	reply->setProperty(PROP_SESSION_ID, a.id);
-	connect(reply, &QNetworkReply::finished, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleUnlistResponse);} );
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleUnlistResponse);} );
 }
 
 void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::HandlerFunc handlerFunc)

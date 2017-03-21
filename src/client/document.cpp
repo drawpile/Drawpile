@@ -102,7 +102,7 @@ void Document::initCanvas()
 
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
-	connect(m_client, &net::Client::sessionResetted, [this]() {
+	connect(m_client, &net::Client::sessionResetted, this, [this]() {
 		m_canvas->resetCanvas();
 		if(m_serverSpaceLow) {
 			// Session reset is the only thing that can free up history space
