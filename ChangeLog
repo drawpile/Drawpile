@@ -3,6 +3,7 @@
  * Added contexts to lambda signal/slot connections (fixes server crash when terminating an announced session)
  * Added "send to all sessions" server admin API endpoint and GUI button
  * Restored "lock dock positions" feature
+ * Messages received during reset while session history is full are now dropped (mitigates auto-reset loop of death)
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor

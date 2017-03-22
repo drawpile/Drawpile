@@ -283,8 +283,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 	// Rest of the messages are added to session history
 	if(m_session->initUserId() == m_id)
 		m_session->addToInitStream(msg);
-	else if(isHoldLocked())
-		m_holdqueue.append(msg);
+	else if(isHoldLocked()) {
+		if(!m_session->history()->isOutOfSpace())
+			m_holdqueue.append(msg);
+	}
 	else
 		m_session->addToHistory(msg);
 }

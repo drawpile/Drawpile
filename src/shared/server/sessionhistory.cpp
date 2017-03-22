@@ -57,12 +57,10 @@ void SessionHistory::historyLoaded(uint size, int messageCount)
 
 bool SessionHistory::addMessage(const protocol::MessagePtr &msg)
 {
-	m_sizeInBytes += msg->length();
-	if(m_sizeLimit>0 && m_sizeInBytes > m_sizeLimit) {
-		m_sizeInBytes -= msg->length();
+	if(isOutOfSpace())
 		return false;
-	}
 
+	m_sizeInBytes += msg->length();
 	++m_lastIndex;
 	historyAdd(msg);
 	emit newMessagesAvailable();

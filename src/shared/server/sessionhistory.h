@@ -112,7 +112,7 @@ public:
 	 *
 	 * The signal newMessagesAvailable() will be emitted.
 	 *
-	 * @return false if adding this message would put the history over the size limit
+	 * @return false if there was no space for this message
 	 */
 	bool addMessage(const protocol::MessagePtr &msg);
 
@@ -176,6 +176,11 @@ public:
 	 * representation.
 	 */
 	uint sizeInBytes() const { return m_sizeInBytes; }
+
+	/**
+	 * @brief Has the session ran out of space
+	 */
+	bool isOutOfSpace() const { return m_sizeLimit>0 && m_sizeInBytes >= m_sizeLimit; }
 
 	/**
 	 * @brief Get the index number of the first message in history
