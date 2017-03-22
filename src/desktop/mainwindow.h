@@ -167,6 +167,8 @@ private slots:
 
 	void hotBorderMenubar(bool show);
 
+	void setFreezeDocks(bool freeze);
+
 	void updateTitle();
 
 	void onCanvasChanged(canvas::CanvasModel *canvas);
