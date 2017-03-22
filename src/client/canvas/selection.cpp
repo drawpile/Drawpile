@@ -309,7 +309,7 @@ QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, in
 
 		if(!canvas::isAxisAlignedRectangle(m_moveRegion.toPolygon())) {
 			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds, true);
-			mask = qCompress(QByteArray::fromRawData(reinterpret_cast<const char*>(maskimg.constBits()), maskimg.byteCount()));
+			mask = qCompress(maskimg.constBits(), maskimg.byteCount());
 		} else {
 			moveBounds = m_moveRegion.boundingRect().toRect();
 		}

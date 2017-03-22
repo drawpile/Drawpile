@@ -216,7 +216,7 @@ QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection,
 	const QPolygonF p = selection.translated(-bf.topLeft());
 
 	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32);
-	mask.fill(0);
+	memset(mask.bits(), 0, mask.byteCount()); // note: apparently image.fill() does not set every byte for monochrome images
 	QPainter painter(&mask);
 	painter.setPen(Qt::NoPen);
 	painter.setBrush(color);
