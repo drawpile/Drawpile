@@ -18,8 +18,8 @@
 */
 #include <QPainter>
 #include <QImage>
-#include <QtConcurrent>
 #include <QDataStream>
+#include <QtMath>
 #include <cmath>
 
 #include "layerstack.h"
@@ -30,6 +30,7 @@
 #include "point.h"
 #include "blendmodes.h"
 #include "rasterop.h"
+#include "concurrent.h"
 
 namespace paintcore {
 
@@ -886,7 +887,7 @@ void Layer::merge(const Layer *layer, bool sublayers)
 	Q_ASSERT(layer->m_ytiles == m_ytiles);
 
 	// Gather a list of non-null tiles to merge
-	QVector<int> mergeidx;
+	QList<int> mergeidx;
 	mergeidx.reserve(m_tiles.size());
 	for(int i=0;i<m_tiles.size();++i) {
 		bool isnull = layer->m_tiles[i].isNull();
@@ -909,7 +910,7 @@ void Layer::merge(const Layer *layer, bool sublayers)
 	m_tiles.detach();
 
 	// Merge tiles
-	QtConcurrent::blockingMap(mergeidx, [this, layer, sublayers](int idx) {
+	concurrentForEach<int>(mergeidx, [this, layer, sublayers](int idx) {
 		if(sublayers) {
 			Tile t = layer->m_tiles[idx];
 

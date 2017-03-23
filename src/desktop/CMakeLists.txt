@@ -1,7 +1,6 @@
 #find_package(Qt5Core REQUIRED)
 #find_package(Qt5Network REQUIRED)
 find_package(Qt5Widgets REQUIRED)
-#find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)

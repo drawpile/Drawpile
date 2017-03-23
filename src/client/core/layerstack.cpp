@@ -20,13 +20,13 @@
 #include <QDebug>
 #include <QPainter>
 #include <QMimeData>
-#include <QtConcurrent>
 #include <QDataStream>
 
 #include "layer.h"
 #include "layerstack.h"
 #include "tile.h"
 #include "rasterop.h"
+#include "concurrent.h"
 
 namespace paintcore {
 
@@ -321,7 +321,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool
 
 	if(!updates.isEmpty()) {
 		// Flatten tiles
-		QtConcurrent::blockingMap(updates, [this](UpdateTile *t) {
+		concurrentForEach<UpdateTile*>(updates, [this](UpdateTile *t) {
 			// TODO: don't draw the checkerboard here: use a QML item instead to draw the background
 			Tile::fillChecker(t->data, QColor(128,128,128), Qt::white);
 			flattenTile(t->data, t->x, t->y);

@@ -52,7 +52,6 @@ cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5Archive.dll" .
 
 QROOT="$MXEROOT/qt5"
-cp "$QROOT/bin/Qt5Concurrent.dll" .
 cp "$QROOT/bin/Qt5Core.dll" .
 cp "$QROOT/bin/Qt5Gui.dll" .
 cp "$QROOT/bin/Qt5Multimedia.dll" .

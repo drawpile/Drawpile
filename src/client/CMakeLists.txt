@@ -1,7 +1,6 @@
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Network REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
 find_package(KF5Archive REQUIRED NO_MODULE)
@@ -128,7 +127,7 @@ add_library (
 	${QM_TRANSLATIONS}
 )
 
-target_link_libraries(${DPCLIENTLIB} ${DPSHAREDLIB} Qt5::Gui Qt5::Network Qt5::Concurrent)
+target_link_libraries(${DPCLIENTLIB} ${DPSHAREDLIB} Qt5::Gui Qt5::Network)
 
 if(KF5DNSSD_FOUND) 
 	target_link_libraries(${DPCLIENTLIB} KF5::DNSSD)
