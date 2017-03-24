@@ -423,6 +423,8 @@ bool Document::startRecording(const QString &filename, QString *error)
 
 	connect(m_client, &net::Client::messageReceived, m_recorder, &recording::Writer::recordMessage);
 
+	m_recorder->setAutoflush();
+
 	QGuiApplication::restoreOverrideCursor();
 
 	emit recorderStateChanged(true);
