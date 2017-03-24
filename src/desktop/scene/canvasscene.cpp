@@ -159,11 +159,9 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 AnnotationItem *CanvasScene::getAnnotationItem(int id)
 {
 	for(QGraphicsItem *i : items()) {
-		if(i->type() == AnnotationItem::Type) {
-			AnnotationItem *item = static_cast<AnnotationItem*>(i);
-			if(item->id() == id)
-				return item;
-		}
+		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem*>(i);
+		if(item && item->id() == id)
+			return item;
 	}
 	return nullptr;
 }
@@ -171,10 +169,9 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 void CanvasScene::activeAnnotationChanged(int id)
 {
 	for(QGraphicsItem *i : items()) {
-		if(i->type() == AnnotationItem::Type) {
-			AnnotationItem *item = static_cast<AnnotationItem*>(i);
+		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem*>(i);
+		if(item)
 			item->setHighlight(item->id() == id);
-		}
 	}
 }
 
@@ -182,7 +179,13 @@ void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
 		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		AnnotationItem *item = new AnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
+		const int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
+		if(getAnnotationItem(id)) {
+			qWarning("Annotation item already exists for ID %#x", id);
+			continue;
+		}
+
+		AnnotationItem *item = new AnnotationItem(id);
 		item->setShowBorder(showAnnotationBorders());
 		item->setVisible(_showAnnotations);
 		addItem(item);
@@ -198,6 +201,8 @@ void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
 		AnnotationItem *item = getAnnotationItem(id);
 		if(item)
 			delete item;
+		else
+			qWarning("Could not find annotation item %#x for deletion", id);
 	}
 
 }
@@ -208,8 +213,14 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 	const int ilast = last.row();
 	for(int i=ifirst;i<=ilast;++i) {
 		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		AnnotationItem *item = getAnnotationItem(a.data(paintcore::AnnotationModel::IdRole).toInt());
-		Q_ASSERT(item);
+		const int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
+		AnnotationItem *item = getAnnotationItem(id);
+
+		if(!item) {
+			qWarning("Could not find annotation item %#x for update", id);
+			continue;
+		}
+
 		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
 			item->setText(a.data(Qt::DisplayRole).toString());
 
@@ -249,9 +260,15 @@ void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 
 	for(int i=first;i<=last;++i) {
 		const QModelIndex l = m_model->laserTrails()->index(i);
-		LaserTrailItem *item = new LaserTrailItem;
-		addItem(item);
-		m_lasertrails[l.data(canvas::LaserTrailModel::InternalIdRole).toInt()] = item;
+		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
+		if(m_lasertrails.contains(id)) {
+			qWarning("Item for laser trail %d already exists!", id);
+			continue;
+		} else {
+			LaserTrailItem *item = new LaserTrailItem;
+			addItem(item);
+			m_lasertrails[id] = item;
+		}
 		laserChanged(l, l, QVector<int>());
 	}
 }
@@ -260,7 +277,7 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
 		const QModelIndex l = m_model->laserTrails()->index(i);
-		int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
+		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
 		delete m_lasertrails.take(id);
 	}
 
@@ -275,10 +292,10 @@ void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last
 	const int ilast = last.row();
 	for(int i=ifirst;i<=ilast;++i) {
 		const QModelIndex l = m_model->laserTrails()->index(i);
-		int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
+		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
 		if(!m_lasertrails.contains(id)) {
 			qWarning("Laser trail %d changed, but not yet created!", id);
-			return;
+			continue;
 		}
 		LaserTrailItem *item = m_lasertrails[id];
 		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::ColorRole))
@@ -317,12 +334,18 @@ void CanvasScene::userCursorAdded(const QModelIndex&, int first, int last)
 {
 	for(int i=first;i<=last;++i) {
 		const QModelIndex um = m_model->userCursors()->index(i);
-		int id = um.data(canvas::UserCursorModel::IdRole).toInt();
-		UserMarkerItem *item = new UserMarkerItem(id);
-		item->setShowSubtext(_showUserLayers);
-		item->hide();
-		addItem(item);
-		m_usermarkers[id] = item;
+		const int id = um.data(canvas::UserCursorModel::IdRole).toInt();
+
+		if(m_usermarkers.contains(id)) {
+			qWarning("User marker item %d already exists!", id);
+
+		} else {
+			UserMarkerItem *item = new UserMarkerItem(id);
+			item->setShowSubtext(_showUserLayers);
+			item->hide();
+			addItem(item);
+			m_usermarkers[id] = item;
+		}
 		userCursorChanged(um, um, QVector<int>());
 	}
 }

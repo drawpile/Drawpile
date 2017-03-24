@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,10 +27,13 @@ namespace drawingboard {
 class UserMarkerItem : public QGraphicsItem
 {
 public:
+	enum { Type= UserType + 12 };
+
 	UserMarkerItem(int id, QGraphicsItem *parent=0);
 
 	int id() const { return m_id; }
-	QRectF boundingRect() const;
+	QRectF boundingRect() const override;
+	int type() const override { return Type; }
 
 	void setColor(const QColor &color);
 	const QColor &color() const;
@@ -45,7 +48,7 @@ public:
 	bool fadeoutStep(float dt);
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
 
 private:
 	void updateFullText();
