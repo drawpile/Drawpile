@@ -487,7 +487,7 @@ void LayerList::onLayerCreate(const QModelIndex&, int, int)
 void LayerList::onLayerDelete(const QModelIndex &, int first, int last)
 {
 	const QModelIndex cursel = currentSelection();
-	int row = cursel.isValid() ? 0 : cursel.row();
+	int row = cursel.isValid() ? cursel.row() : 0;
 
 	// Automatically select neighbouring on deletion
 	if(row >= first && row <= last) {

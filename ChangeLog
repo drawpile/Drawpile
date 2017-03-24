@@ -4,6 +4,7 @@
  * Added "send to all sessions" server admin API endpoint and GUI button
  * Restored "lock dock positions" feature
  * Messages received during reset while session history is full are now dropped (mitigates auto-reset loop of death)
+ * Fixed layer selection after current layer is deleted
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor
