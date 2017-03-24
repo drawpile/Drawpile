@@ -136,18 +136,8 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 		return false;
 
 	setAutosave(false);
-
 	initCanvas();
-
-	// Set local history size limit. This must be at least as big as the initializer,
-	// otherwise a new snapshot will always have to be generated when hosting a session.
-	uint minsizelimit = 0;
-	for(protocol::MessagePtr msg : init)
-		minsizelimit += msg->length();
-	minsizelimit *= 2;
-
-	m_client->sendMessages(init);
-
+	m_client->sendResetMessages(init);
 	setCurrentFilename(loader.filename());
 	unmarkDirty();
 	return true;
