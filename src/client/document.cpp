@@ -215,6 +215,8 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 void Document::onServerHistoryLimitReceived(int maxSpace)
 {
+	Q_ASSERT(m_canvas);
+
 	if(!m_serverSpaceLow) {
 		m_serverSpaceLow = true;
 		emit serverSpaceLowChanged(true);
@@ -672,6 +674,11 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 
 void Document::removeEmptyAnnotations()
 {
+	if(!m_canvas) {
+		qWarning("removeEmptyAnnotations(): no canvas");
+		return;
+	}
+
 	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		QList<protocol::MessagePtr> msgs;

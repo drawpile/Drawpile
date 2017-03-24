@@ -61,6 +61,7 @@ void History::cleanup(int indexlimit)
 
 void History::resetTo(int newoffset)
 {
+	Q_ASSERT(newoffset >= 0);
 	m_offset = newoffset;
 	m_messages.clear();
 	m_bytes = 0;
