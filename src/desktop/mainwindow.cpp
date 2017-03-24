@@ -1206,7 +1206,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl());
-	login->setInitialState(m_doc->canvas()->generateSnapshot(false));
+	login->setInitialState(m_doc->canvas()->generateSnapshot(true));
 	(new dialogs::LoginDialog(login, this))->show();
 
 	m_doc->client()->connectToServer(login);

@@ -7,6 +7,7 @@
  * Fixed layer selection after current layer is deleted
  * Separated layer delete & merge menu items
  * Enabled canvas cache refresh optimization
+ * Always generate a fresh initial snapshot when hosting (fixes user ID related bugs when rehosting a short session)
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor
