@@ -84,6 +84,20 @@ Document::Document(QObject *parent)
 	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
 	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
 	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
+
+	connect(m_client, &net::Client::sessionResetted, this, [this]() {
+		Q_ASSERT(m_canvas);
+		if(!m_canvas) {
+			qWarning("sessionResetted: no canvas!");
+			return;
+		}
+		m_canvas->resetCanvas();
+		if(m_serverSpaceLow) {
+			// Session reset is the only thing that can free up history space
+			m_serverSpaceLow = false;
+			emit serverSpaceLowChanged(false);
+		}
+	});
 }
 
 Document::~Document()
@@ -102,14 +116,6 @@ void Document::initCanvas()
 
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
-	connect(m_client, &net::Client::sessionResetted, this, [this]() {
-		m_canvas->resetCanvas();
-		if(m_serverSpaceLow) {
-			// Session reset is the only thing that can free up history space
-			m_serverSpaceLow = false;
-			emit serverSpaceLowChanged(false);
-		}
-	});
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
 	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendMessage);
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
