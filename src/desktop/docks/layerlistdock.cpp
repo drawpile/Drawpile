@@ -80,8 +80,6 @@ LayerList::LayerList(QWidget *parent)
 	m_menuDefaultAction->setActionGroup(makeDefault);
 
 	m_menuRenameAction = m_layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
-	m_menuMergeAction = m_layermenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
-	m_menuDeleteAction = m_layermenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -93,7 +91,8 @@ LayerList::LayerList(QWidget *parent)
 	QMenu *boxmenu = new QMenu(this);
 	m_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
 	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
-	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteOrMergeSelected()));
+	m_mergeLayerAction = boxmenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
+	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
 
 	QActionGroup *viewmodes = new QActionGroup(this);
 	viewmodes->setExclusive(true);
@@ -216,12 +215,11 @@ void LayerList::updateLockedControls()
 	);
 	m_duplicateLayerAction->setEnabled(enabled);
 	m_deleteLayerAction->setEnabled(enabled);
+	m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	m_ui->opacity->setEnabled(enabled);
 	m_ui->blendmode->setEnabled(enabled);
 
 	m_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
-	m_menuDeleteAction->setEnabled(enabled);
-	m_menuMergeAction->setEnabled(enabled && canMergeCurrent());
 	m_menuRenameAction->setEnabled(enabled);
 	m_menuDefaultAction->setEnabled(enabled);
 }
@@ -393,44 +391,6 @@ bool LayerList::canMergeCurrent() const
 
 	return index.isValid() && below.isValid() &&
 		   !below.data().value<canvas::LayerListItem>().isLockedFor(m_canvas->localUserId());
-}
-
-void LayerList::deleteOrMergeSelected()
-{
-	QModelIndex index = currentSelection();
-	if(!index.isValid())
-		return;
-
-	canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-
-	QMessageBox box(QMessageBox::Question,
-		tr("Delete layer"),
-		tr("Really delete \"%1\"?").arg(layer.title),
-		QMessageBox::NoButton
-	);
-
-	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
-
-	// Offer the choice to merge down only if there is a layer
-	// below this one.
-	QPushButton *merge = 0;
-	if(canMergeCurrent()) {
-		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
-		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
-	}
-
-	QPushButton *cancel = box.addButton(tr("Cancel"), QMessageBox::RejectRole);
-
-	box.setDefaultButton(cancel);
-	box.exec();
-
-	QAbstractButton *choice = box.clickedButton();
-	if(choice != cancel) {
-		if(choice==merge)
-			mergeSelected();
-		else
-			deleteSelected();
-	}
 }
 
 void LayerList::deleteSelected()

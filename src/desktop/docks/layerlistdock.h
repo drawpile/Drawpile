@@ -82,7 +82,6 @@ private slots:
 	void addLayer();
 	void insertLayer();
 	void duplicateLayer();
-	void deleteOrMergeSelected();
 	void deleteSelected();
 	void setSelectedDefault();
 	void mergeSelected();
@@ -116,6 +115,7 @@ private:
 
 	QAction *m_addLayerAction;
 	QAction *m_duplicateLayerAction;
+	QAction *m_mergeLayerAction;
 	QAction *m_deleteLayerAction;
 	QAction *m_showNumbersAction;
 
@@ -123,8 +123,6 @@ private:
 
 	QAction *m_menuInsertAction;
 	QAction *m_menuHideAction;
-	QAction *m_menuDeleteAction;
-	QAction *m_menuMergeAction;
 	QAction *m_menuRenameAction;
 	QAction *m_menuDefaultAction;
 
