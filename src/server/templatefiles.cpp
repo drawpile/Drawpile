@@ -137,6 +137,8 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::Nsfm;
 	if(reader.metadata().value("persistent").toBool())
 		flags |= SessionHistory::Persistent;
+	if(reader.metadata().value("preserveChat").toBool())
+		flags |= SessionHistory::PreserveChat;
 	session->setFlags(flags);
 
 	// Set initial history

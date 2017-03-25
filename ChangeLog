@@ -9,7 +9,7 @@
  * Enabled canvas cache refresh optimization
  * Always generate a fresh initial snapshot when hosting (fixes user ID related bugs when rehosting a short session)
  * Session template password field now sets the password hash instead of the plaintext (consistent with everything else and matches documentation)
- * Implemented missing session template configurations: announcement, opword
+ * Implemented missing session template configurations: announcement, opword, preserveChat
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor
