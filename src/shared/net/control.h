@@ -53,6 +53,7 @@ struct ServerReply {
 		LOG,     // server log message
 		SESSIONCONF, // session configuration update
 		SIZELIMITWARNING, // session history size nearing limit
+		STATUS,  // Periodic status update
 		RESET,   // session reset state
 		CATCHUP  // number of messages queued for upload (use for progress bars)
 	} type;

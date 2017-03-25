@@ -25,6 +25,7 @@
 #include <QString>
 #include <QObject>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QUuid>
 #include <QJsonObject>
 
@@ -272,9 +273,9 @@ public:
 
 	/**
 	 * @brief Get the time of the last join/logout event
-	 * @return timestamp
+	 * @return milliseconds since last event
 	 */
-	const QDateTime &lastEventTime() const { return m_lastEventTime; }
+	qint64 lastEventTime() const { return m_lastEventTime.elapsed(); }
 
 	/**
 	 * @brief Get the session history
@@ -451,6 +452,7 @@ private:
 
 
 	void sendUpdatedSessionProperties();
+	void sendStatusUpdate();
 	void ensureOperatorExists();
 
 	void switchState(State newstate);
@@ -474,7 +476,8 @@ private:
 	sessionlisting::AnnouncementApi *m_publicListingClient;
 	QTimer *m_refreshTimer;
 
-	QDateTime m_lastEventTime;
+	QElapsedTimer m_lastEventTime;
+	QElapsedTimer m_lastStatusUpdate;
 
 	bool m_closed;
 	bool m_historyLimitWarningSent;

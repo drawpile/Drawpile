@@ -310,11 +310,9 @@ void SessionServer::cleanupSessions()
 	const int expirationTime = m_config->getConfigTime(config::IdleTimeLimit);
 
 	if(expirationTime>0) {
-		QDateTime now = QDateTime::currentDateTime();
-
 		for(Session *s : m_sessions) {
 			if(s->userCount()==0) {
-				if(s->lastEventTime().msecsTo(now) > expirationTime) {
+				if(s->lastEventTime() > expirationTime) {
 					s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
 					s->killSession();
 				}

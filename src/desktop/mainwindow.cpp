@@ -210,6 +210,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_statusChatButton->hide();
 	_viewStatusBar->addWidget(_statusChatButton);
 
+	// Statusbar session size label
+	QLabel *sessionHistorySize = new QLabel(this);
+	_viewStatusBar->addWidget(sessionHistorySize);
+
 #ifndef NDEBUG
 	// Debugging tool: show amount of memory consumed by tiles
 	{
@@ -315,6 +319,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
+	connect(m_doc->client(), &net::Client::serverStatusUpdate, sessionHistorySize, [sessionHistorySize](int size) {
+		sessionHistorySize->setText(QString("%1 MB").arg(size / float(1024*1024), 0, 'f', 2));
+	});
+
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
@@ -347,6 +355,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
 	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
+	connect(m_doc, &Document::serverDisconnected, sessionHistorySize, [sessionHistorySize]() {
+		sessionHistorySize->setText(QString());
+	});
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);

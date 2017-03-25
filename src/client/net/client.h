@@ -175,6 +175,7 @@ signals:
 	void bytesSent(int);
 	void lagMeasured(qint64);
 	void serverHistoryLimitReceived(int maxSpace);
+	void serverStatusUpdate(int historySize);
 
 	void sentColorChange(const QColor &color);
 

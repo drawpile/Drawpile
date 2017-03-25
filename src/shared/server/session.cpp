@@ -47,13 +47,15 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_resetstreamsize(0),
 	m_publicListingClient(nullptr),
 	m_refreshTimer(nullptr),
-	m_lastEventTime(QDateTime::currentDateTime()),
 	m_closed(false),
 	m_historyLimitWarningSent(false)
 {
 	m_history->setParent(this);
 	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
+
+	m_lastEventTime.start();
+	m_lastStatusUpdate.start();
 
 	if(history->sizeInBytes()>0) {
 		m_state = Running;
@@ -542,7 +544,7 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 	// Add message to recording
 	if(m_recorder)
 		m_recorder->recordMessage(msg);
-	m_lastEventTime = QDateTime::currentDateTime();
+	m_lastEventTime.start();
 
 	// Send a warning if approaching size limit.
 	// The clients should update their internal size limits and reset the session when necessary.
@@ -556,6 +558,15 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 
 		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
 		m_historyLimitWarningSent = true;
+	}
+
+	// Regular history size status updates
+	if(m_lastStatusUpdate.elapsed() > 10 * 1000) {
+		protocol::ServerReply status;
+		status.type = protocol::ServerReply::STATUS;
+		status.reply["size"] = int(m_history->sizeInBytes());
+		directToAll(protocol::MessagePtr(new protocol::Command(0, status)));
+		m_lastStatusUpdate.start();
 	}
 }
 

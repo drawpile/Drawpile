@@ -69,6 +69,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = SESSIONCONF;
 	else if(typestr == "sizelimit")
 		r.type = SIZELIMITWARNING;
+	else if(typestr == "status")
+		r.type = STATUS;
 	else if(typestr == "reset")
 		r.type = RESET;
 	else if(typestr == "catchup")
@@ -95,6 +97,7 @@ QJsonDocument ServerReply::toJson() const
 	case LOG: typestr=QStringLiteral("log"); break;
 	case SESSIONCONF: typestr=QStringLiteral("sessionconf"); break;
 	case SIZELIMITWARNING: typestr=QStringLiteral("sizelimit"); break;
+	case STATUS: typestr=QStringLiteral("status"); break;
 	case RESET: typestr=QStringLiteral("reset"); break;
 	case CATCHUP: typestr=QStringLiteral("catchup"); break;
 	}
