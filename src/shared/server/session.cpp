@@ -55,8 +55,13 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
 
-	if(history->sizeInBytes()>0)
+	if(history->sizeInBytes()>0) {
 		m_state = Running;
+
+		// Reset history to match current state
+		m_history->addMessage(protocol::MessagePtr(new protocol::SessionOwner(0, QList<uint8_t>())));
+		sendUpdatedSessionProperties();
+	}
 
 	for(const QString &announcement : m_history->announcements())
 		makeAnnouncement(QUrl(announcement));
