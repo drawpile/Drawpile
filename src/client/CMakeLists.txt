@@ -1,12 +1,6 @@
-find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
-find_package(Qt5Network REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
-find_package(KF5Archive REQUIRED NO_MODULE)
-find_package(KF5DNSSD NO_MODULE)
-find_package(GIF)
-find_package(Miniupnpc)
 
 set (
 	SOURCES

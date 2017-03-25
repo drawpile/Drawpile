@@ -1,9 +1,7 @@
 # src/server/CMakeLists.txt
 
-find_package( Qt5Network REQUIRED)
 find_package( Qt5Sql REQUIRED)
 find_package( Libmicrohttpd )
-find_package( KF5Archive REQUIRED NO_MODULE )
 
 set (
 	SOURCES
