@@ -55,9 +55,9 @@ public:
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
 
-	void addAnnouncement(const QString &) override { /* not persistent */ }
-	void removeAnnouncement(const QString &) override { /* not persistent */ }
-	QStringList announcements() const override { return QStringList(); }
+	void addAnnouncement(const QString &url) override { m_announcements.insert(url); }
+	void removeAnnouncement(const QString &url) override { m_announcements.remove(url); }
+	QStringList announcements() const override { return m_announcements.values(); }
 
 	void setAuthenticatedOperator(const QString &username, bool op) override { if(op) m_ops.insert(username); else m_ops.remove(username); }
 	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
@@ -72,6 +72,7 @@ protected:
 private:
 	QList<protocol::MessagePtr> m_history;
 	QSet<QString> m_ops;
+	QSet<QString> m_announcements;
 	QString m_alias;
 	QString m_founder;
 	QString m_title;

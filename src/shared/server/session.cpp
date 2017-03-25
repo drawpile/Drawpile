@@ -803,6 +803,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		sessionStartTime()
 	};
 
+	log(Log().about(Log::Level::Debug, Log::Topic::PubList).message("Announcing session at " + url.toString()));
 	publicListingClient()->announceSession(url, s);
 }
 

@@ -126,6 +126,11 @@ bool TemplateFiles::init(SessionHistory *session) const
 	session->setMaxUsers(reader.metadata().value("maxUserCount").toInt(25));
 	session->setPasswordHash(reader.metadata().value("password").toString().toUtf8());
 	session->setTitle(reader.metadata().value("title").toString());
+
+	if(reader.metadata().contains("announce")) {
+		session->addAnnouncement(reader.metadata()["announce"].toString());
+	}
+
 	SessionHistory::Flags flags;
 	if(reader.metadata().value("nsfm").toBool())
 		flags |= SessionHistory::Nsfm;
