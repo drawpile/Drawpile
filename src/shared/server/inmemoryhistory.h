@@ -44,9 +44,9 @@ public:
 	QString founderName() const override { return m_founder; }
 	protocol::ProtocolVersion protocolVersion() const { return m_version; }
 	QByteArray passwordHash() const override { return m_password; }
-	void setPassword(const QString &password) override;
+	void setPasswordHash(const QByteArray &password) override { m_password = password; }
 	QByteArray opwordHash() const override { return m_opword; }
-	void setOpword(const QString &opword) override;
+	void setOpwordHash(const QByteArray &opword) override { m_opword = opword; }
 	QDateTime startTime() const { return m_startTime; }
 	int maxUsers() const override { return m_maxUsers; }
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }

@@ -29,6 +29,7 @@
 #include <QJsonObject>
 
 #include "../util/announcementapi.h"
+#include "../util/passwordhash.h"
 #include "../net/message.h"
 #include "../net/protover.h"
 #include "sessionhistory.h"
@@ -130,7 +131,7 @@ public:
 	 * @brief Set the session password.
 	 * @param password
 	 */
-	void setPassword(const QString &password) { m_history->setPassword(password); }
+	void setPassword(const QString &password) { m_history->setPasswordHash(passwordhash::hash(password)); }
 
 	/**
 	 * @brief Check if the password is OK

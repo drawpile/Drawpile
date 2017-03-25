@@ -430,9 +430,9 @@ void FiledHistory::closeBlock()
 	};
 }
 
-void FiledHistory::setPassword(const QString &password)
+void FiledHistory::setPasswordHash(const QByteArray &password)
 {
-	m_password = passwordhash::hash(password);
+	m_password = password;
 
 	m_journal->write("PASSWORD ");
 	if(!m_password.isEmpty())
@@ -440,9 +440,9 @@ void FiledHistory::setPassword(const QString &password)
 	m_journal->write("\n");
 }
 
-void FiledHistory::setOpword(const QString &opword)
+void FiledHistory::setOpwordHash(const QByteArray &opword)
 {
-	m_opword = passwordhash::hash(opword);
+	m_opword = opword;
 
 	m_journal->write("OPWORD ");
 	if(!m_opword.isEmpty())

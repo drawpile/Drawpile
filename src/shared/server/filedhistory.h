@@ -83,8 +83,8 @@ public:
 	Flags flags() const override { return m_flags; }
 
 	QDateTime startTime() const;
-	void setPassword(const QString &password) override;
-	void setOpword(const QString &opword) override;
+	void setPasswordHash(const QByteArray &password) override;
+	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;

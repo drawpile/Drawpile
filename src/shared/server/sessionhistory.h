@@ -74,14 +74,14 @@ public:
 	 */
 	virtual QByteArray passwordHash() const = 0;
 
-	//! Set (or clear) this session's password
-	virtual void setPassword(const QString &password) = 0;
+	//! Set (or clear) this session's password hash
+	virtual void setPasswordHash(const QByteArray &passwordHash) = 0;
 
 	//! Get the operator password hash
 	virtual QByteArray opwordHash() const = 0;
 
 	//! Set (or clear) the operator password
-	virtual void setOpword(const QString &opword) = 0;
+	virtual void setOpwordHash(const QByteArray &opword) = 0;
 
 	//! Get the starting timestamp
 	virtual QDateTime startTime() const = 0;

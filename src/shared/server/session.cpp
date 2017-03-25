@@ -334,12 +334,12 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 
 	if(conf.contains("password")) {
-		m_history->setPassword(conf["password"].toString());
+		setPassword(conf["password"].toString());
 		changes << "changed password";
 	}
 
 	if(conf.contains("opword")) {
-		m_history->setOpword(conf["opword"].toString());
+		m_history->setOpwordHash(passwordhash::hash(conf["opword"].toString()));
 		changes << "changed opword";
 	}
 

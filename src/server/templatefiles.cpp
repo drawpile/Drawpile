@@ -124,7 +124,7 @@ bool TemplateFiles::init(SessionHistory *session) const
 	// Set session metadata
 	Q_ASSERT(protocol::ProtocolVersion::fromString(reader.metadata().value("version").toString()) == session->protocolVersion());
 	session->setMaxUsers(reader.metadata().value("maxUserCount").toInt(25));
-	session->setPassword(reader.metadata().value("password").toString());
+	session->setPasswordHash(reader.metadata().value("password").toString().toUtf8());
 	session->setTitle(reader.metadata().value("title").toString());
 	SessionHistory::Flags flags;
 	if(reader.metadata().value("nsfm").toBool())
