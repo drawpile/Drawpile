@@ -124,18 +124,12 @@ void NavigatorView::rescale()
 void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	Q_UNUSED(rect);
-	QPen pen(Qt::black);
+	QPen pen(QColor(96, 191, 96));
 	pen.setCosmetic(true);
 	pen.setWidth(2);
-	pen.setColor(Qt::white);
 	painter->setPen(pen);
+	painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 	painter->drawPolygon(_focusrect);
-
-	pen.setStyle(Qt::DotLine);
-	pen.setColor(Qt::black);
-	painter->setPen(pen);
-	painter->drawPolygon(_focusrect);
-
 }
 
 /**

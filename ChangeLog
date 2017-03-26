@@ -11,6 +11,7 @@
  * Session template password field now sets the password hash instead of the plaintext (consistent with everything else and matches documentation)
  * Implemented missing session template configurations: announcement, opword, preserveChat
  * Display session history size in the status bar (as reported by the server)
+ * Fixed lockup on reset when navigator was visible
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor
