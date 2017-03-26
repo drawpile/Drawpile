@@ -30,6 +30,7 @@
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
 #include "../shared/net/image.h"
 
@@ -130,6 +131,11 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Preset default layer
 	if(m_session && m_session->layerlist()->defaultLayer()>0)
 		msgs.append(MessagePtr(new protocol::DefaultLayer(m_contextId, m_session->layerlist()->defaultLayer())));
+
+	// Add pinned message (if any)
+	if(m_session && !m_session->pinnedMessage().isEmpty()) {
+		msgs.append(protocol::Chat::pin(m_contextId, m_session->pinnedMessage()));
+	}
 
 	// Create layers
 	for(int i=0;i<m_layers->layerCount();++i) {

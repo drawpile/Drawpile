@@ -122,10 +122,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		// Handle meta commands here
 		switch(cmd->type()) {
 		case MSG_CHAT:
-			emit chatMessageReceived(
-				m_userlist->getUsername(cmd.cast<protocol::Chat>().contextId()),
-				cmd
-				);
+			metaChatMessage(cmd);
 			break;
 		case MSG_USER_JOIN:
 			metaUserJoin(cmd.cast<UserJoin>());
@@ -155,7 +152,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			metaDefaultLayer(cmd.cast<DefaultLayer>());
 			break;
 		default:
-			qWarning("Unhandled meta message type %d", cmd->type());
+			qWarning("Unhandled meta message %s", qPrintable(cmd->messageName()));
 		}
 
 	} else if(cmd->isCommand()) {
@@ -387,6 +384,25 @@ void CanvasModel::metaUserLeave(const protocol::UserLeave &msg)
 	QString name = m_userlist->getUserById(msg.contextId()).name;
 	m_userlist->removeUser(msg.contextId());
 	emit userLeft(name);
+}
+
+void CanvasModel::metaChatMessage(protocol::MessagePtr msg)
+{
+	Q_ASSERT(msg->type() == protocol::MSG_CHAT);
+	const protocol::Chat &chat = msg.cast<protocol::Chat>();
+	if(chat.isPin()) {
+		QString pm = chat.message();
+		if(m_pinnedMessage != pm) {
+			if(pm == "-") // special value to remove a pinned message
+				pm = QString();
+			m_pinnedMessage = pm;
+			emit pinnedMessageChanged(pm);
+		}
+	}
+	emit chatMessageReceived(
+		m_userlist->getUsername(msg->contextId()),
+		msg
+		);
 }
 
 void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)

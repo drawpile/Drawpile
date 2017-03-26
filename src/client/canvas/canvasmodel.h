@@ -56,6 +56,7 @@ class CanvasModel : public QObject
 	Q_PROPERTY(Selection* selection READ selection WRITE setSelection NOTIFY selectionChanged)
 
 	Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+	Q_PROPERTY(QString pinnedMessage READ pinnedMessage NOTIFY pinnedMessageChanged)
 
 	Q_OBJECT
 
@@ -69,6 +70,8 @@ public:
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
+
+	QString pinnedMessage() const { return m_pinnedMessage; }
 
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
@@ -122,6 +125,7 @@ signals:
 	void selectionRemoved();
 
 	void titleChanged(QString title);
+	void pinnedMessageChanged(QString message);
 	void imageSizeChanged();
 
 	void colorPicked(const QColor &color);
@@ -140,6 +144,7 @@ private slots:
 private:
 	void metaUserJoin(const protocol::UserJoin &msg);
 	void metaUserLeave(const protocol::UserLeave &msg);
+	void metaChatMessage(protocol::MessagePtr msg);
 	void metaLaserTrail(const protocol::LaserTrail &msg);
 	void metaMovePointer(const protocol::MovePointer &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
@@ -156,6 +161,7 @@ private:
 	Selection *m_selection;
 
 	QString m_title;
+	QString m_pinnedMessage;
 
 	bool m_onlinemode;
 };
