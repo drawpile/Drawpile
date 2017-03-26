@@ -59,6 +59,9 @@ static QString ageString(const qint64 seconds)
 
 QVariant ServerDiscoveryModel::data(const QModelIndex &index, int role) const
 {
+	if(index.row()<0 || index.row()>=_servers.size())
+		return QVariant();
+
 	const DiscoveredServer &s = _servers.at(index.row());
 
 	if(role == Qt::DisplayRole) {
@@ -99,6 +102,9 @@ QVariant ServerDiscoveryModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags ServerDiscoveryModel::flags(const QModelIndex &index) const
 {
+	if(index.row()<0 || index.row()>=_servers.size())
+		return Qt::NoItemFlags;
+
 	const DiscoveredServer &s = _servers.at(index.row());
 	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);

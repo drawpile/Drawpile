@@ -233,15 +233,22 @@ void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusiv
 
 void LayerListModel::unlockAll()
 {
-	for(int i=0;i<m_items.count();++i) {
-		m_items[i].locked = false;
-		m_items[i].exclusive.clear();
+	if(!m_items.isEmpty()) {
+		for(int i=0;i<m_items.size();++i) {
+			m_items[i].locked = false;
+			m_items[i].exclusive.clear();
+		}
+		emit dataChanged(index(0), index(m_items.size()-1));
 	}
-	emit dataChanged(index(0), index(m_items.count()));
 }
 
 void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 {
+	if(neworder.isEmpty()) {
+		qWarning("reorderLayers(): empty layer list!");
+		return;
+	}
+
 	QVector<LayerListItem> newitems;
 	for(int j=neworder.size()-1;j>=0;--j) {
 		const uint16_t id=neworder[j];
@@ -253,7 +260,7 @@ void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 		}
 	}
 	m_items = newitems;
-	emit dataChanged(index(0), index(m_items.size()));
+	emit dataChanged(index(0), index(m_items.size()-1));
 	emit layersReordered();
 }
 

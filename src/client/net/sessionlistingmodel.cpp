@@ -61,6 +61,9 @@ static QString ageString(const qint64 seconds)
 
 QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 {
+	if(index.row() < 0 || index.row() >= m_filtered.size())
+		return QVariant();
+
 	const Session &s = m_filtered.at(index.row());
 
 	if(role == Qt::DisplayRole) {
@@ -116,6 +119,9 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 
 Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 {
+	if(index.row() < 0 || index.row() >= m_filtered.size())
+		return Qt::NoItemFlags;
+
 	const Session &s = m_filtered.at(index.row());
 	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);
@@ -151,6 +157,9 @@ void SessionListingModel::filterSessionList()
 
 QUrl SessionListingModel::sessionUrl(int index) const
 {
+	if(index<0 || index>=m_filtered.size())
+		return QUrl();
+
 	const Session &s = m_filtered.at(index);
 	QUrl url;
 	url.setScheme("drawpile");
