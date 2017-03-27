@@ -97,8 +97,16 @@ void SelectionTool::end()
 
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
-	if(selrect.width() * selrect.height() <= 2)
+	if(selrect.width() * selrect.height() <= 2) {
 		owner.model()->setSelection(nullptr);
+	} else {
+		// Remove selections completely outside the canvas
+		const QSize cs = owner.model()->layerStack()->size();
+		if(selrect.right() <= 0 || selrect.left() >= cs.width() ||
+				selrect.bottom() <= 0 || selrect.top() >= cs.height()) {
+			owner.model()->setSelection(nullptr);
+		}
+	}
 }
 
 void SelectionTool::startMove()
@@ -112,7 +120,7 @@ void SelectionTool::startMove()
 
 		// Copy layer content into move preview buffer.
 		QImage img = owner.model()->selectionToImage(owner.activeLayer());
-		sel->setMoveImage(img);
+		sel->setMoveImage(img, owner.model()->layerStack()->size());
 
 		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
 		// to erase the selected region.

@@ -266,9 +266,15 @@ void Selection::setPasteImage(const QImage &image)
 	setPasteOrMoveImage(image);
 }
 
-void Selection::setMoveImage(const QImage &image)
+void Selection::setMoveImage(const QImage &image, const QSize &canvasSize)
 {
 	m_moveRegion = m_shape;
+
+	for(QPointF &p : m_moveRegion) {
+		p.setX(qBound(0.0, p.x(), qreal(canvasSize.width())));
+		p.setY(qBound(0.0, p.y(), qreal(canvasSize.height())));
+	}
+
 	setPasteOrMoveImage(image);
 }
 

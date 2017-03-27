@@ -14,6 +14,7 @@
  * Fixed lockup on reset when navigator was visible
  * Restore pinned chat message on reset
  * Fixed "hide from self" layer menu item
+ * Fixed selection moving when selection is partially (or completely) outside the canvas
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor

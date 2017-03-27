@@ -74,8 +74,9 @@ public:
 	 *
 	 * The current shape will be remembered.
 	 * @param image
+	 * @param canvasSize the size of the canvas (selection rectangle is clipped to canvas bounds
 	 */
-	void setMoveImage(const QImage &image);
+	void setMoveImage(const QImage &image, const QSize &canvasSize);
 
 	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
