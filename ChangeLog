@@ -1,3 +1,6 @@
+2017-0?-?? Version 2.0.3
+ * Restored some tablet and smoother improvements from stable branch
+
 2017-03-27 Version 2.0.2
  * Fixed returning from fullscreen mode to maximized window
  * Added contexts to lambda signal/slot connections (fixes server crash when terminating an announced session)

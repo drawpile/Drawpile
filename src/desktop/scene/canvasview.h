@@ -228,7 +228,7 @@ class CanvasView : public QGraphicsView
 		int _dragx,_dragy;
 
 		//! Previous pointer location
-		paintcore::Point m_firstpoint;
+		paintcore::Point m_firstPoint;
 		paintcore::Point _prevpoint;
 		paintcore::Point _prevoutlinepoint;
 		qreal _pointerdistance;
@@ -267,6 +267,7 @@ class CanvasView : public QGraphicsView
 
 		bool _hotBorderTop;
 
+		bool m_isFirstPoint;
 		bool _enableTouchScroll, _enableTouchPinch, _enableTouchTwist;
 		bool _touching, _touchRotating;
 		qreal _touchStartZoom, _touchStartRotate;

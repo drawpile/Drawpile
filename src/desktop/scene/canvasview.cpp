@@ -49,7 +49,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_stylusDown(false),
 	_zoomWheelDelta(0),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
-	_hotBorderTop(false),
+	_hotBorderTop(false), m_isFirstPoint(false),
 	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
 	_touching(false), _touchRotating(false),
 	_dpi(96),
@@ -339,7 +339,13 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 			// quick color pick mode
 			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		} else {
-			emit penDown(p, p.pressure(), _zoom / 100.0);
+			// Start of a stroke. It is possible to get TabletPress and MousePress
+			// events in the wrong order (mouse event generated before the real tablet event)
+			// so the only thing we do here is remember the position of the starting point.
+			// The real tool begin action will be executed in onPenMove, or onPenUp
+			// in case of a single point dab.
+			m_firstPoint = p;
+			m_isFirstPoint = true;
 		}
 	}
 }
@@ -353,6 +359,11 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 			// quick color pick mode
 			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		} else {
+			if(m_isFirstPoint) {
+				m_isFirstPoint = false;
+				// Pressure value of the first point may not be valid
+				emit penDown(m_firstPoint, p.pressure(), _zoom / 100.0);
+			}
 			emit penMove(p, p.pressure(), shift, alt);
 		}
 	}
@@ -362,8 +373,11 @@ void CanvasView::onPenUp(bool right)
 {
 	Q_UNUSED(right);
 	if(!_locked) {
-		if(!_specialpenmode)
+		if(!_specialpenmode) {
+			if(m_isFirstPoint)
+				emit penDown(m_firstPoint, m_firstPoint.pressure(), _zoom / 100.0);
 			emit penUp();
+		}
 	}
 	_specialpenmode = false;
 }

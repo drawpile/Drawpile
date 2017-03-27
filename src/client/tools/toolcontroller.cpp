@@ -39,7 +39,9 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	: QObject(parent),
 	m_toolbox{},
 	m_client(client), m_model(nullptr),
-	m_activeTool(nullptr), m_smoothing(0)
+	m_activeTool(nullptr),
+	m_prevShift(false), m_prevAlt(false),
+	m_smoothing(0)
 {
 	Q_ASSERT(client);
 
@@ -196,6 +198,9 @@ void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool 
 	} else {
 		m_activeTool->motion(paintcore::Point(point, pressure), shift, alt);
 	}
+
+	m_prevShift = shift;
+	m_prevAlt = alt;
 }
 
 void ToolController::endDrawing()
@@ -205,6 +210,17 @@ void ToolController::endDrawing()
 	if(!m_model) {
 		qWarning("ToolController::endDrawing: no model set!");
 		return;
+	}
+
+	// Drain any remaining points from the smoothing buffer
+	if(m_smoothing>0 && m_activeTool->allowSmoothing()) {
+		if(m_smoother.hasSmoothPoint())
+			m_smoother.removePoint();
+		while(m_smoother.hasSmoothPoint()) {
+			m_activeTool->motion(m_smoother.smoothPoint(),
+				m_prevShift, m_prevAlt);
+			m_smoother.removePoint();
+		}
 	}
 
 	m_activeTool->end();

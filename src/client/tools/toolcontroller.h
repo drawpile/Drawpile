@@ -107,6 +107,7 @@ private:
 	Tool *m_activeTool;
 	int m_activeLayer;
 	int m_activeAnnotation;
+	bool m_prevShift, m_prevAlt;
 
 	int m_smoothing;
 	StrokeSmoother m_smoother;
