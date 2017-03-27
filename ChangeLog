@@ -13,6 +13,7 @@
  * Display session history size in the status bar (as reported by the server)
  * Fixed lockup on reset when navigator was visible
  * Restore pinned chat message on reset
+ * Fixed "hide from self" layer menu item
 
 2017-03-20 Version 2.0.1
  * Configurable brush cursor

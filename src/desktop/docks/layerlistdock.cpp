@@ -295,7 +295,7 @@ void LayerList::hideSelected()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid())
-		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, m_menuHideAction->isChecked());
+		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, !m_menuHideAction->isChecked());
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
