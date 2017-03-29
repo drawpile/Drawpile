@@ -912,17 +912,17 @@ void Layer::merge(const Layer *layer, bool sublayers)
 	// Merge tiles
 	concurrentForEach<int>(mergeidx, [this, layer, sublayers](int idx) {
 		if(sublayers) {
-			Tile t = layer->m_tiles[idx];
+			Tile t = layer->m_tiles.at(idx);
 
-			for(Layer *sl : layer->m_sublayers) {
+			for(const Layer *sl : layer->m_sublayers) {
 				if(sl->isVisible()) {
-					t.merge(sl->m_tiles[idx], sl->opacity(), sl->blendmode());
+					t.merge(sl->m_tiles.at(idx), sl->opacity(), sl->blendmode());
 				}
 			}
 			m_tiles[idx].merge(t, layer->opacity(), layer->blendmode());
 
 		} else {
-			m_tiles[idx].merge(layer->m_tiles[idx], layer->opacity(), layer->blendmode());
+			m_tiles[idx].merge(layer->m_tiles.at(idx), layer->opacity(), layer->blendmode());
 		}
 	});
 
