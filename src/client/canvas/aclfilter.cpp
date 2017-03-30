@@ -164,6 +164,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		// Otherwise, session operator privileges are required.
 		if(isLayerControlLocked() && !isOpUser && !(isOwnLayers() && layerCreator(layerId) == msg.contextId()))
 			return false;
+
+		if(msg.type() == MSG_LAYER_DELETE) {
+			m_layers.remove(layerId);
+		}
 		break;
 	}
 
