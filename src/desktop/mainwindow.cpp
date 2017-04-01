@@ -78,7 +78,6 @@
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
 #include "widgets/userlistwidget.h"
-#include "widgets/presetpie.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/navigator.h"
@@ -266,21 +265,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
 
 	connect(_dock_toolsettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
-	
-	// Create the tool preset pie menu
-	m_presetPie = new widgets::PresetPie(_view);
-	m_presetPie->hide();
-	m_presetPie->resize(300, 300);
-
-	connect(_view, &widgets::CanvasView::rightClicked, m_presetPie, &widgets::PresetPie::showAt);
-	connect(_dock_colors, &docks::ColorBox::colorChanged, m_presetPie, &widgets::PresetPie::setColor);
-	connect(_dock_toolsettings, &docks::ToolSettings::foregroundColorChanged, m_presetPie, &widgets::PresetPie::setColor);
-	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_colors, &docks::ColorBox::setColor);
-	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
-	connect(m_presetPie, &widgets::PresetPie::presetRequest, this, [this](int slice) {
-		m_presetPie->setToolPreset(slice, _dock_toolsettings->getCurrentToolProperties());
-	});
-	connect(m_presetPie, &widgets::PresetPie::toolSelected, _dock_toolsettings, &docks::ToolSettings::setToolAndProps);
 
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
@@ -2415,45 +2399,6 @@ void MainWindow::setupActions()
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
-
-	//
-	// Tool preset pie menu
-	//
-	QAction *showPie = makeAction("showpiemenu", nullptr, tr("Show Preset Pie Menu"), QString(), QKeySequence("z"));
-	connect(showPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::showAtCursor);
-
-	QAction *assignPie = makeAction("assignpreset", nullptr, tr("Assign Tool To Preset Pie Menu"), QString(), QKeySequence("x"));
-	connect(assignPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::assignSelectedPreset);
-
-	// Keyboard shortcuts for tool preset slices
-	QActionGroup *presetActions = new QActionGroup(this);
-	QActionGroup *setPresetActions = new QActionGroup(this);
-	for(int i=0;i<widgets::PresetPie::SLICES;++i) {
-		// Switch to preset action
-		QAction *q = new QAction(QString("Tool preset #%1").arg(i+1), this);
-		q->setObjectName(QString("toolpreset-%1").arg(i));
-		q->setShortcut(QKeySequence(QString::number(i+1)));
-		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		presetActions->addAction(q);
-		addAction(q);
-
-		// Assign preset action
-		q = new QAction(QString("Set tool preset #%1").arg(i+1), this);
-		q->setObjectName(QString("settoolpreset-%1").arg(i));
-		q->setShortcut(QKeySequence(QString("Ctrl+%1").arg(i+1)));
-		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		setPresetActions->addAction(q);
-		addAction(q);
-	}
-
-	connect(presetActions, &QActionGroup::triggered, this, [this](QAction *a) {
-		m_presetPie->selectPreset(a->property("toolslotidx").toInt());
-	});
-	connect(setPresetActions, &QActionGroup::triggered, this, [this](QAction *a) {
-		m_presetPie->assignPreset(a->property("toolslotidx").toInt());
-	});
 
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())

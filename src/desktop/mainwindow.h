@@ -41,7 +41,6 @@ namespace widgets {
 	class ChatBox;
 	class UserList;
 	class ViewStatus;
-	class PresetPie;
 }
 namespace docks {
 	class ToolSettings;
@@ -221,7 +220,6 @@ private:
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *_viewstatus;
 	QToolButton *_statusChatButton;
-	widgets::PresetPie *m_presetPie;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
