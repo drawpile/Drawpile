@@ -351,6 +351,7 @@ public:
 	//! Get the session state
 	State state() const { return m_state; }
 
+	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
 
 	/**

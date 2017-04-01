@@ -590,6 +590,34 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 	}
 }
 
+void Session::handleInitBegin(int ctxId)
+{
+	qWarning("init-begin(%d), streamsize=%d", ctxId, m_resetstream.size());
+	Client *c = getClientById(ctxId);
+	if(!c) {
+		// Shouldn't happen
+		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-begin").arg(ctxId)));
+		return;
+	}
+
+	if(ctxId != m_initUser) {
+		c->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("Sent init-begin, but init user is #%1").arg(m_initUser)));
+		return;
+	}
+
+	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-begin"));
+
+	// It's possible that regular non-reset commands were still in the upload buffer
+	// when the client started sending the reset snapshot. The init-begin indicates
+	// the start of the true reset snapshot, so we can clear out the buffer here.
+	// For backward-compatibility, sending the init-begin command is optional.
+	if(m_resetstreamsize>0) {
+		c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message(QStringLiteral("%1 extra messages cleared by init-begin").arg(m_resetstream.size())));
+		m_resetstream.clear();
+		m_resetstreamsize = 0;
+	}
+}
+
 void Session::handleInitComplete(int ctxId)
 {
 	Client *c = getClientById(ctxId);

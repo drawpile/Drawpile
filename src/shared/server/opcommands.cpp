@@ -76,6 +76,13 @@ struct SrvCommandSet {
 
 const SrvCommandSet COMMANDS;
 
+void initBegin(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+	client->session()->handleInitBegin(client->id());
+}
+
 void initComplete(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
@@ -232,6 +239,7 @@ void setMute(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 SrvCommandSet::SrvCommandSet()
 {
 	commands
+		<< SrvCommand("init-begin", initBegin)
 		<< SrvCommand("init-complete", initComplete)
 		<< SrvCommand("sessionconf", sessionConf)
 		<< SrvCommand("kick-user", kickUser)

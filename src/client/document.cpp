@@ -540,6 +540,9 @@ void Document::snapshotNeeded()
 			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
 		}
 
+		if(!m_client->isLocalServer())
+			m_client->sendMessage(net::command::serverCommand("init-begin"));
+
 		m_client->sendResetMessages(m_resetstate);
 
 		if(!m_client->isLocalServer())
