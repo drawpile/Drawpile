@@ -32,8 +32,8 @@
 
 namespace tools {
 
-ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title, ToolController *ctrl)
-	:  QObject(), ToolSettings(name, title, "color-picker", ctrl)
+ColorPickerSettings::ColorPickerSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent)
 {
 	m_palette.setColumns(8);
 }

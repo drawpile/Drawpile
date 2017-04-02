@@ -310,7 +310,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
-	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::POLYGONSELECTION))->setView(_view);
 
 	connect(_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
@@ -810,7 +809,17 @@ bool MainWindow::event(QEvent *event)
 							break;
 						}
 					}
+
+					// Return from temporary tool slot change
+					for(const QAction *act : m_brushSlots->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count()==1 && e->key() == seq[0]) {
+							_dock_toolsettings->setPreviousToolSlot();
+							break;
+						}
+					}
 				}
+
 				_tempToolSwitchShortcut->reset();
 			}
 		}
@@ -1503,7 +1512,6 @@ void MainWindow::setShowAnnotations(bool show)
 	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::Tool::ANNOTATION);
 	}
 }
 
@@ -1515,7 +1523,6 @@ void MainWindow::setShowLaserTrails(bool show)
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::Tool::LASERPOINTER);
 	}
 }
 
@@ -2304,10 +2311,7 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
-	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
-	QAction *smudgetool = makeAction("toolsmudge", "draw-watercolor", tr("&Watercolor"), tr("A brush that picks up color from the layer"), QKeySequence("W"), true);
-	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
+	QAction *freehandtool = makeAction("toolbrush", "draw-brush", tr("Freehand"), tr("Freehand brush tool"), QKeySequence("B"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
@@ -2322,10 +2326,7 @@ void MainWindow::setupActions()
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
 
-	_drawingtools->addAction(pentool);
-	_drawingtools->addAction(brushtool);
-	_drawingtools->addAction(smudgetool);
-	_drawingtools->addAction(erasertool);
+	_drawingtools->addAction(freehandtool);
 	_drawingtools->addAction(linetool);
 	_drawingtools->addAction(recttool);
 	_drawingtools->addAction(ellipsetool);
@@ -2343,6 +2344,8 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
+	QAction *erasertoggle = makeAction("erasertoggle", 0, tr("Eraser Mode"), QString(), QKeySequence("E"));
+	QAction *brushsettings = makeAction("brushsettings", 0, tr("Brush Settings"), QString(), QKeySequence("Ctrl+B"));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
@@ -2352,11 +2355,15 @@ void MainWindow::setupActions()
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
+	connect(erasertoggle, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::toggleEraserMode);
+	connect(brushsettings, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::showAdvancedSettings);
 	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
+	toolshortcuts->addAction(erasertoggle);
+	toolshortcuts->addAction(brushsettings);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addSeparator();
@@ -2400,8 +2407,29 @@ void MainWindow::setupActions()
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 
+	// Brush slot shortcuts
+
+	m_brushSlots = new QActionGroup(this);
+	for(int i=0;i<5;++i) {
+		QAction *q = new QAction(QString("Brush slot #%1").arg(i+1), this);
+		q->setAutoRepeat(false);
+		q->setObjectName(QString("quicktoolslot-%1").arg(i));
+		q->setShortcut(QKeySequence(QString::number(i+1)));
+		q->setProperty("toolslotidx", i);
+		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
+		m_brushSlots->addAction(q);
+		addAction(q);
+	}
+	connect(m_brushSlots, &QActionGroup::triggered, this, [this](QAction *a) {
+		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
+		_toolChangeTime.start();
+	});
+
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
+		act->installEventFilter(_tempToolSwitchShortcut);
+
+	for(QAction *act : m_brushSlots->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
 }
 

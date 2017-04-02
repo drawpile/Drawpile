@@ -25,15 +25,15 @@ class Ui_LaserSettings;
 
 namespace tools {
 
-class LaserPointerSettings : public QObject, public ToolSettings {
+class LaserPointerSettings : public ToolSettings {
 	Q_OBJECT
 public:
-	LaserPointerSettings(const QString &name, const QString &title, ToolController *ctrl);
+	LaserPointerSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~LaserPointerSettings();
 
-	bool pointerTracking() const;
+	QString toolType() const override { return QStringLiteral("laser"); }
 
-	tools::Tool::Type toolType() const override { return tools::Tool::LASERPOINTER; }
+	bool pointerTracking() const;
 
 	void setForeground(const QColor& color) override;
 	void quickAdjust1(float adjustment) override;

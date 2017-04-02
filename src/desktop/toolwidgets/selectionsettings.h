@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,11 +33,13 @@ namespace tools {
  * Unlike most tool settings widgets, this one also includes buttons to trigger
  * various actions on the active selection (e.g. flip/mirror.)
  */
-class SelectionSettings : public QObject, public ToolSettings {
+class SelectionSettings : public ToolSettings {
 	Q_OBJECT
 public:
-	SelectionSettings(const QString &name, const QString &title, bool freeform, ToolController *ctrl);
+	SelectionSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~SelectionSettings();
+
+	QString toolType() const override { return QStringLiteral("selection"); }
 
 	/**
 	 * @brief Set the view widget
@@ -46,13 +48,11 @@ public:
 	 */
 	void setView(widgets::CanvasView *view) { m_view = view; }
 
-	tools::Tool::Type toolType() const override;
+	void setForeground(const QColor&) override {}
+	void quickAdjust1(float) override {}
 
-	virtual void setForeground(const QColor&) override {}
-	virtual void quickAdjust1(float) override {}
-
-	virtual int getSize() const override { return 0; }
-	virtual bool getSubpixelMode() const override { return false; }
+	int getSize() const override { return 0; }
+	bool getSubpixelMode() const override { return false; }
 
 private slots:
 	void flipSelection();
@@ -61,14 +61,13 @@ private slots:
 	void resetSize();
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent);
+	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
 	void cutSelection();
 
 	Ui_SelectionSettings *m_ui;
 	widgets::CanvasView *m_view;
-	bool m_freeform;
 };
 
 }

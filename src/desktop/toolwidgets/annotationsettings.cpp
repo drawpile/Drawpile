@@ -47,8 +47,8 @@ namespace tools {
 static const char *HALIGN_PROP = "HALIGN";
 static const char *VALIGN_PROP = "VALIGN";
 
-AnnotationSettings::AnnotationSettings(QString name, QString title, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, "draw-text", ctrl), _ui(nullptr), m_selectionId(0), m_noupdate(false)
+AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent), _ui(nullptr), m_selectionId(0), m_noupdate(false)
 {
 }
 

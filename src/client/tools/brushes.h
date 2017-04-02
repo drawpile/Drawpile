@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,58 +23,17 @@
 
 namespace tools {
 
-//! Base class for brush type tools
-class BrushBase : public Tool
+//! Freehand brush tool
+class Freehand : public Tool
 {
 	public:
-		BrushBase(ToolController &owner, Type type);
+		Freehand(ToolController &owner);
 
 		void begin(const paintcore::Point& point, float zoom);
 		void motion(const paintcore::Point& point, bool constrain, bool center);
 		void end();
 
 		bool allowSmoothing() const { return true; }
-};
-
-/**
- * \brief Pen tool
- *
- * The pen tool draws non-antialiased strokes and full hardness.
- */
-class Pen : public BrushBase {
-	public:
-		Pen(ToolController &owner) : BrushBase(owner, PEN) {}
-};
-
-/**
- * \brief Regular brush tool
- *
- * The normal brush draws antialised strokes.
- */
-class Brush : public BrushBase {
-	public:
-		Brush(ToolController &owner) : BrushBase(owner, BRUSH) {}
-};
-
-/**
- * \brief Smudge brush tool
- *
- * Smudge brush works like a normal brush, but it also picks up color from the layer
- */
-class Smudge : public BrushBase {
-public:
-	Smudge(ToolController &owner) : BrushBase(owner, SMUDGE) { }
-};
-
-/**
- * \brief Eraser tool
- *
- * The eraser too draws only using the eraser blending mode.
- * Eraser can draw either antialiased soft strokes or hard strokes.
- */
-class Eraser : public BrushBase {
-	public:
-		Eraser(ToolController &owner) : BrushBase(owner, ERASER) {}
 };
 
 }

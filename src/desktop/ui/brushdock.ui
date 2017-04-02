@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BrushDock</class>
+ <widget class="QWidget" name="BrushDock">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>325</width>
+    <height>368</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="GroupedToolButton" name="slot1">
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="slot2">
+       <property name="text">
+        <string notr="true">2</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="slot3">
+       <property name="text">
+        <string notr="true">3</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="slot4">
+       <property name="text">
+        <string notr="true">4</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="slot5">
+       <property name="text">
+        <string notr="true">5</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="erasermode">
+       <property name="toolTip">
+        <string>Eraser mode</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-eraser">
+         <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="blendmode">
+       <property name="toolTip">
+        <string>Blending mode</string>
+       </property>
+       <property name="text">
+        <string notr="true">Blend</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="BrushPreview" name="preview">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>128</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="horizontalSpacing">
+      <number>3</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSlider" name="brushopacity">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="brushsize">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="spinBox">
+       <property name="suffix">
+        <string>px</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QSpinBox" name="spinBox_2">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Opacity:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="GroupedToolButton" name="brushsettings">
+       <property name="toolTip">
+        <string>Brush settings</string>
+       </property>
+       <property name="icon">
+        <iconset theme="configure-shortcuts">
+         <normaloff>theme:configure-shortcuts.svg</normaloff>theme:configure-shortcuts.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="presetAdd">
+       <property name="toolTip">
+        <string>Add a new brush preset</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="presetSave">
+       <property name="toolTip">
+        <string>Overwrite selected preset</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-save">
+         <normaloff>theme:document-save.svg</normaloff>theme:document-save.svg</iconset>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="presetDelete">
+       <property name="toolTip">
+        <string>Delete selected preset</string>
+       </property>
+       <property name="icon">
+        <iconset theme="edit-delete">
+         <normaloff>theme:edit-delete.svg</normaloff>theme:edit-delete.svg</iconset>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupRight</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QListView" name="brushPaletteView">
+     <property name="flow">
+      <enum>QListView::LeftToRight</enum>
+     </property>
+     <property name="isWrapping" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="resizeMode">
+      <enum>QListView::Adjust</enum>
+     </property>
+     <property name="viewMode">
+      <enum>QListView::ListMode</enum>
+     </property>
+     <property name="uniformItemSizes">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BrushPreview</class>
+   <extends>QFrame</extends>
+   <header>widgets/brushpreview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>brushsize</tabstop>
+  <tabstop>brushopacity</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>brushsize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushsize</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushopacity</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushopacity</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>172</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

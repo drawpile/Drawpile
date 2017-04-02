@@ -45,10 +45,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 {
 	Q_ASSERT(client);
 
-	registerTool(new Pen(*this));
-	registerTool(new Brush(*this));
-	registerTool(new Smudge(*this));
-	registerTool(new Eraser(*this));
+	registerTool(new Freehand(*this));
 	registerTool(new ColorPicker(*this));
 	registerTool(new Line(*this));
 	registerTool(new Rectangle(*this));
@@ -59,7 +56,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new RectangleSelection(*this));
 	registerTool(new PolygonSelection(*this));
 
-	m_activeTool = m_toolbox[Tool::PEN];
+	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;
 	m_activeAnnotation = 0;
 }

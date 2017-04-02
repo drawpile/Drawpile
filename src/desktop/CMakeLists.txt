@@ -12,7 +12,6 @@ set (
 	notifications.cpp
 	toolwidgets/toolsettings.cpp
 	toolwidgets/brushsettings.cpp
-	toolwidgets/shapetoolsettings.cpp
 	toolwidgets/colorpickersettings.cpp
 	toolwidgets/selectionsettings.cpp
 	toolwidgets/annotationsettings.cpp
@@ -91,16 +90,13 @@ endif()
 
 set (
 	UIs
+	ui/brushdock.ui
 	ui/brushsettings.ui
-	ui/simplesettings.ui
-	ui/smudgesettings.ui
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
 	ui/settings.ui
 	ui/textsettings.ui
-	ui/pensettings.ui
-	ui/erasersettings.ui
 	ui/selectsettings.ui
 	ui/fillsettings.ui
 	ui/lasersettings.ui

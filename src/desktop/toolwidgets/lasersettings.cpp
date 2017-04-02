@@ -30,8 +30,8 @@ using widgets::ColorButton;
 
 namespace tools {
 
-LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, "cursor-arrow", ctrl), _ui(nullptr)
+LaserPointerSettings::LaserPointerSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent), _ui(nullptr)
 {
 }
 

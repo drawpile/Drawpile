@@ -33,13 +33,13 @@ namespace tools {
 /**
  * @brief Color picker history
  */
-class ColorPickerSettings : public QObject, public ToolSettings {
+class ColorPickerSettings : public ToolSettings {
 Q_OBJECT
 public:
-	ColorPickerSettings(const QString &name, const QString &title, ToolController *ctrl);
+	ColorPickerSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~ColorPickerSettings();
 
-	tools::Tool::Type toolType() const override { return tools::Tool::PICKER; }
+	QString toolType() const override { return QStringLiteral("picker"); }
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

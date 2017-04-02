@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@
 
 namespace tools {
 
-BrushBase::BrushBase(ToolController &owner, Type type)
-	: Tool(owner, type, Qt::CrossCursor)
+Freehand::Freehand(ToolController &owner)
+	: Tool(owner, FREEHAND, Qt::CrossCursor)
 {
 }
 
-void BrushBase::begin(const paintcore::Point& point, float zoom)
+void Freehand::begin(const paintcore::Point& point, float zoom)
 {
 	Q_UNUSED(zoom);
 
@@ -50,7 +50,7 @@ void BrushBase::begin(const paintcore::Point& point, float zoom)
 	owner.client()->sendMessages(msgs);
 }
 
-void BrushBase::motion(const paintcore::Point& point, bool constrain, bool center)
+void Freehand::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
@@ -60,7 +60,7 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
 }
 
-void BrushBase::end()
+void Freehand::end()
 {
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(owner.client()->myId())));
 }

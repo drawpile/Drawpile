@@ -6,87 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>245</width>
-    <height>298</height>
+    <width>358</width>
+    <height>350</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Brush Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
    </property>
-   <property name="leftMargin">
-    <number>3</number>
-   </property>
-   <property name="topMargin">
-    <number>3</number>
-   </property>
-   <property name="rightMargin">
-    <number>3</number>
-   </property>
-   <property name="bottomMargin">
-    <number>3</number>
-   </property>
    <item>
-    <widget class="BrushPreview" name="preview">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>128</height>
-      </size>
+    <widget class="QLineEdit" name="brushLabel">
+     <property name="placeholderText">
+      <string>Brush label</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="topMargin">
-      <number>3</number>
-     </property>
      <item>
-      <widget class="QComboBox" name="blendmode">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>3</width>
-         <height>15</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="GroupedToolButton" name="paintmodeIndirect">
+      <widget class="GroupedToolButton" name="hardedgeMode">
        <property name="toolTip">
-        <string>Indirect drawing</string>
+        <string>Hard edged brush</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>builtin:paintmode-indirect.svg</normaloff>builtin:paintmode-indirect.svg</iconset>
+        <iconset theme="draw-freehand">
+         <normaloff>theme:draw-freehand.svg</normaloff>theme:draw-freehand.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -100,13 +50,33 @@
       </widget>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="paintmodeIncremental">
+      <widget class="GroupedToolButton" name="softedgeMode">
        <property name="toolTip">
-        <string>Incremental drawing</string>
+        <string>Soft brush</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="watercolorMode">
+       <property name="toolTip">
+        <string>Watercolor</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-watercolor">
+         <normaloff>theme:draw-watercolor.svg</normaloff>theme:draw-watercolor.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -122,81 +92,11 @@
     </layout>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="horizontalSpacing">
-      <number>3</number>
-     </property>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0">
      <property name="verticalSpacing">
       <number>0</number>
      </property>
-     <item row="4" column="1" colspan="2">
-      <layout class="QGridLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <property name="spacing">
-        <number>3</number>
-       </property>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="pressureopacity">
-         <property name="text">
-          <string>Opacity</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="pressuresize">
-         <property name="text">
-          <string>Size</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="pressurehardness">
-         <property name="text">
-          <string>Hardness</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Size:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="brushsize">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Opacity:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
+     <item row="4" column="2" colspan="2">
       <widget class="QSlider" name="brushopacity">
        <property name="minimum">
         <number>1</number>
@@ -209,22 +109,38 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="6" column="0" rowspan="2">
+      <widget class="QLabel" name="hardnessLabel">
        <property name="text">
         <string>Hardness:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_4">
+     <item row="11" column="0" colspan="5">
+      <spacer name="colorpickupSeparator">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="0" rowspan="2">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Spacing:</string>
+        <string>Size:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QSlider" name="brushhardness">
+     <item row="3" column="2" colspan="2">
+      <widget class="QSlider" name="brushopacity0">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -236,59 +152,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="brushspacing">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="3" column="0" rowspan="2">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Opacity:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="spinBox">
-       <property name="suffix">
-        <string>px</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QSpinBox" name="spinBox_2">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="spinBox_3">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
+     <item row="14" column="4">
       <widget class="QSpinBox" name="spinBox_4">
        <property name="suffix">
         <string notr="true">%</string>
@@ -301,24 +172,381 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Pressure:</string>
+     <item row="9" column="2" colspan="2">
+      <widget class="QSlider" name="brushsmudging0">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
+     </item>
+     <item row="1" column="2" colspan="2">
+      <widget class="QSlider" name="brushsize">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="5">
+      <spacer name="smudgingSeparator">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="6" column="2" colspan="2">
+      <widget class="QSlider" name="brushhardness0">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2" colspan="2">
+      <widget class="QSlider" name="brushsmudging">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1" rowspan="2">
+      <widget class="QToolButton" name="hardnessPressure">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="input-tablet">
+         <normaloff>theme:input-tablet.svg</normaloff>theme:input-tablet.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="4" rowspan="2">
+      <widget class="QSpinBox" name="smudgingBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2" colspan="2">
+      <widget class="QSlider" name="brushhardness">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="4" rowspan="2">
+      <widget class="QSpinBox" name="hardnessBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Spacing:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="modeLabel">
+       <property name="text">
+        <string>Mode:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="5">
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="9" column="0" rowspan="2">
+      <widget class="QLabel" name="smudgingLabel">
+       <property name="text">
+        <string>Smudging:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="5">
+      <spacer name="hardnessSeparator">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="14" column="2" colspan="2">
+      <widget class="QSlider" name="brushspacing">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>50</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="2" colspan="2">
+      <widget class="QSlider" name="colorpickup">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" colspan="2">
+      <widget class="QSlider" name="brushsize0">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" rowspan="2">
+      <widget class="QToolButton" name="opacityPressure">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="input-tablet">
+         <normaloff>theme:input-tablet.svg</normaloff>theme:input-tablet.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4" rowspan="2">
+      <widget class="QSpinBox" name="spinBox_2">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" rowspan="2">
+      <widget class="QToolButton" name="sizePressure">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="input-tablet">
+         <normaloff>theme:input-tablet.svg</normaloff>theme:input-tablet.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="5">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="colorpickupLabel">
+       <property name="text">
+        <string>Color pickup:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="4">
+      <widget class="QSpinBox" name="colorpickupBox">
+       <property name="prefix">
+        <string>1/</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="2" colspan="3">
+      <widget class="QCheckBox" name="modeIncremental">
+       <property name="text">
+        <string>Direct to layer</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4" rowspan="2">
+      <widget class="QSpinBox" name="spinBox">
+       <property name="suffix">
+        <string>px</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1" rowspan="2">
+      <widget class="QToolButton" name="smudgingPressure">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="input-tablet">
+         <normaloff>theme:input-tablet.svg</normaloff>theme:input-tablet.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0" colspan="5">
+      <spacer name="verticalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
    <item>
-    <spacer>
+    <spacer name="verticalSpacer_5">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>166</width>
-       <height>16</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
@@ -327,158 +555,18 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BrushPreview</class>
-   <extends>QFrame</extends>
-   <header>widgets/brushpreview.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>GroupedToolButton</class>
    <extends>QToolButton</extends>
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>blendmode</tabstop>
-  <tabstop>paintmodeIncremental</tabstop>
   <tabstop>brushsize</tabstop>
-  <tabstop>brushopacity</tabstop>
   <tabstop>brushhardness</tabstop>
   <tabstop>brushspacing</tabstop>
-  <tabstop>pressuresize</tabstop>
-  <tabstop>pressureopacity</tabstop>
-  <tabstop>pressurehardness</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>pressuresize</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setSizePressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>68</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>60</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressureopacity</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setOpacityPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>195</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>27</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pressurehardness</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setHardnessPressure(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>274</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>43</x>
-     <y>26</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>paintmodeIncremental</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setIncremental(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>195</x>
-     <y>95</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>149</x>
-     <y>38</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushsize</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setSize(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>107</x>
-     <y>119</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>71</x>
-     <y>17</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushopacity</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setOpacity(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>107</x>
-     <y>138</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>90</x>
-     <y>38</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacing</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setSpacing(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>125</x>
-     <y>197</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>108</x>
-     <y>54</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushhardness</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setHardness(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>157</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>123</x>
-     <y>30</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>brushsize</sender>
    <signal>valueChanged(int)</signal>
@@ -486,12 +574,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>116</y>
+     <x>271</x>
+     <y>83</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>115</y>
+     <x>350</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -502,12 +590,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>150</x>
-     <y>104</y>
+     <x>350</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
-     <x>104</x>
-     <y>110</y>
+     <x>271</x>
+     <y>83</y>
     </hint>
    </hints>
   </connection>
@@ -518,12 +606,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>135</y>
+     <x>271</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel">
-     <x>158</x>
-     <y>145</y>
+     <x>350</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -534,11 +622,11 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>161</x>
-     <y>133</y>
+     <x>350</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel">
-     <x>114</x>
+     <x>271</x>
      <y>133</y>
     </hint>
    </hints>
@@ -546,32 +634,32 @@
   <connection>
    <sender>brushhardness</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_3</receiver>
+   <receiver>hardnessBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>103</x>
-     <y>161</y>
+     <x>271</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
-     <x>147</x>
-     <y>170</y>
+     <x>350</x>
+     <y>177</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_3</sender>
+   <sender>hardnessBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>brushhardness</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>158</y>
+     <x>350</x>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
-     <x>107</x>
-     <y>169</y>
+     <x>271</x>
+     <y>183</y>
     </hint>
    </hints>
   </connection>
@@ -582,12 +670,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>186</y>
+     <x>271</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>194</y>
+     <x>350</x>
+     <y>309</y>
     </hint>
    </hints>
   </connection>
@@ -598,12 +686,140 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>185</y>
+     <x>350</x>
+     <y>309</y>
     </hint>
     <hint type="destinationlabel">
-     <x>102</x>
-     <y>191</y>
+     <x>271</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sizePressure</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>brushsize0</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>269</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>opacityPressure</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>brushopacity0</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hardnessPressure</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>brushhardness0</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>177</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smudgingPressure</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>brushsmudging0</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushsmudging</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smudgingBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>233</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smudgingBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushsmudging</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorpickup</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorpickupBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorpickupBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorpickup</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>271</x>
+     <y>267</y>
     </hint>
    </hints>
   </connection>
