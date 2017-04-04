@@ -30,38 +30,54 @@
 
 #include <QSslSocket>
 #include <QStringList>
+#include <QPointer>
 
 namespace server {
 
 using protocol::MessagePtr;
 
+struct Client::Private {
+	QPointer<Session> session;
+	QTcpSocket *socket;
+	ServerLog *logger;
+
+	protocol::MessageQueue *msgqueue;
+	QList<MessagePtr> holdqueue;
+	int historyPosition;
+
+	int id;
+	QString username;
+
+	bool isOperator;
+	bool isModerator;
+	bool isAuthenticated;
+	bool isMuted;
+
+	Private(QTcpSocket *socket, ServerLog *logger)
+		: socket(socket), logger(logger), msgqueue(nullptr),
+		historyPosition(-1), id(0),
+		isOperator(false), isModerator(false), isAuthenticated(false), isMuted(false)
+	{
+		Q_ASSERT(socket);
+		Q_ASSERT(logger);
+	}
+};
+
 Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
-	: QObject(parent),
-	  m_session(nullptr),
-	  m_socket(socket),
-	  m_logger(logger),
-	  m_historyPosition(-1),
-	  m_id(0),
-	  m_isOperator(false),
-	  m_isModerator(false),
-	  m_isAuthenticated(false),
-	  m_isMuted(false)
+	: QObject(parent), d(new Private(socket, logger))
 {
-	Q_ASSERT(socket);
-	Q_ASSERT(logger);
+	d->msgqueue = new protocol::MessageQueue(socket, this);
+	d->socket->setParent(this);
 
-	m_msgqueue = new protocol::MessageQueue(socket, this);
-
-	m_socket->setParent(this);
-
-	connect(m_socket, &QAbstractSocket::disconnected, this, &Client::socketDisconnect);
-	connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
-	connect(m_msgqueue, &protocol::MessageQueue::messageAvailable, this, &Client::receiveMessages);
-	connect(m_msgqueue, &protocol::MessageQueue::badData, this, &Client::gotBadData);
+	connect(d->socket, &QAbstractSocket::disconnected, this, &Client::socketDisconnect);
+	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
+	connect(d->msgqueue, &protocol::MessageQueue::messageAvailable, this, &Client::receiveMessages);
+	connect(d->msgqueue, &protocol::MessageQueue::badData, this, &Client::gotBadData);
 }
 
 Client::~Client()
 {
+	delete d;
 }
 
 protocol::MessagePtr Client::joinMessage() const
@@ -84,8 +100,8 @@ QJsonObject Client::description(bool includeSession) const
 	u["muted"] = isMuted();
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
-	if(includeSession && m_session)
-		u["session"] = m_session->idString();
+	if(includeSession && d->session)
+		u["session"] = d->session->idString();
 	return u;
 }
 
@@ -107,8 +123,8 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 
 		if(request.contains("op")) {
 			const bool op = request["op"].toBool();
-			if(m_isOperator != op && m_session) {
-				m_session->changeOpStatus(id(), op, "the server administrator");
+			if(d->isOperator != op && d->session) {
+				d->session->changeOpStatus(id(), op, "the server administrator");
 			}
 		}
 		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
@@ -123,29 +139,107 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 
 void Client::setSession(Session *session)
 {
-	Q_ASSERT(session);
-	m_session = session;
-	m_historyPosition = -1;
+	d->session = session;
+	d->historyPosition = -1;
 
 	// Enqueue the next batch (if available) when upload queue is empty
-	connect(m_msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
+	if(session)
+		connect(d->msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
+	else
+		disconnect(d->msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
+}
+
+Session *Client::session()
+{
+	return d->session.data();
+}
+
+void Client::setId(int id)
+{
+	Q_ASSERT(d->id==0 && id != 0); // ID is only assigned ance
+	d->id = id;
+}
+
+int Client::id() const
+{
+	return d->id;
+}
+
+void Client::setUsername(const QString &username)
+{
+	d->username = username;
+}
+
+const QString &Client::username() const
+{
+	return d->username;
+}
+
+void Client::setOperator(bool op)
+{
+	d->isOperator = op;
+}
+
+bool Client::isOperator() const
+{
+	return d->isOperator || d->isModerator;
+}
+
+void Client::setModerator(bool mod)
+{
+	d->isModerator = mod;
+}
+
+bool Client::isModerator() const
+{
+	return d->isModerator;
+}
+
+void Client::setAuthenticated(bool auth)
+{
+	d->isAuthenticated = auth;
+}
+
+bool Client::isAuthenticated() const
+{
+	return d->isAuthenticated;
+}
+
+void Client::setMuted(bool m)
+{
+	d->isMuted = m;
+}
+
+bool Client::isMuted() const
+{
+	return d->isMuted;
+}
+
+int Client::historyPosition() const
+{
+	return d->historyPosition;
+}
+
+void Client::setHistoryPosition(int newpos)
+{
+	d->historyPosition = newpos;
 }
 
 void Client::setConnectionTimeout(int timeout)
 {
-	m_msgqueue->setIdleTimeout(timeout);
+	d->msgqueue->setIdleTimeout(timeout);
 }
 
 #ifndef NDEBUG
 void Client::setRandomLag(uint lag)
 {
-	m_msgqueue->setRandomLag(lag);
+	d->msgqueue->setRandomLag(lag);
 }
 #endif
 
 QHostAddress Client::peerAddress() const
 {
-	return m_socket->peerAddress();
+	return d->socket->peerAddress();
 }
 
 void Client::sendNextHistoryBatch()
@@ -153,21 +247,21 @@ void Client::sendNextHistoryBatch()
 	// Only enqueue messages for uploading when upload queue is empty
 	// and session is in a normal running state.
 	// (We'll get another messagesAvailable signal when ready)
-	if(m_session == nullptr || m_msgqueue->isUploading() || m_session->state() != Session::Running)
+	if(d->session == nullptr || d->msgqueue->isUploading() || d->session->state() != Session::Running)
 		return;
 
-	m_session->historyCacheCleanup();
+	d->session->historyCacheCleanup();
 
 	QList<protocol::MessagePtr> batch;
 	int batchLast;
-	std::tie(batch, batchLast) = m_session->history()->getBatch(m_historyPosition);
-	m_historyPosition = batchLast;
-	m_msgqueue->send(batch);
+	std::tie(batch, batchLast) = d->session->history()->getBatch(d->historyPosition);
+	d->historyPosition = batchLast;
+	d->msgqueue->send(batch);
 }
 
 void Client::sendDirectMessage(protocol::MessagePtr msg)
 {
-	m_msgqueue->send(msg);
+	d->msgqueue->send(msg);
 }
 
 void Client::sendSystemChat(const QString &message)
@@ -178,15 +272,15 @@ void Client::sendSystemChat(const QString &message)
 		QJsonObject()
 	};
 
-	m_msgqueue->send(MessagePtr(new protocol::Command(0, msg.toJson())));
+	d->msgqueue->send(MessagePtr(new protocol::Command(0, msg.toJson())));
 }
 
 void Client::receiveMessages()
 {
-	while(m_msgqueue->isPending()) {
-		MessagePtr msg = m_msgqueue->getPending();
+	while(d->msgqueue->isPending()) {
+		MessagePtr msg = d->msgqueue->getPending();
 
-		if(m_session == nullptr) {
+		if(d->session == nullptr) {
 			// No session? We must be in the login phase
 			if(msg->type() == protocol::MSG_COMMAND)
 				emit loginMessage(msg);
@@ -206,14 +300,14 @@ void Client::gotBadData(int len, int type)
 	log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(
 		QString("Received unknown message type %1 of length %2").arg(type).arg(len)
 		));
-	m_socket->abort();
+	d->socket->abort();
 }
 
 void Client::socketError(QAbstractSocket::SocketError error)
 {
 	if(error != QAbstractSocket::RemoteHostClosedError) {
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Socket error: " + m_socket->errorString()));
-		m_socket->abort();
+		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Socket error: " + d->socket->errorString()));
+		d->socket->abort();
 	}
 }
 
@@ -233,6 +327,8 @@ void Client::socketDisconnect()
  */
 void Client::handleSessionMessage(MessagePtr msg)
 {
+	Q_ASSERT(d->session);
+
 	// Filter away server-to-client-only messages
 	switch(msg->type()) {
 	using namespace protocol;
@@ -247,8 +343,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 	}
 
 	// Enforce origin context ID (except when uploading a snapshot)
-	if(m_session->initUserId() != m_id)
-		msg->setContextId(m_id);
+	if(d->session->initUserId() != d->id)
+		msg->setContextId(d->id);
 
 	// Some meta commands affect the server too
 	switch(msg->type()) {
@@ -264,8 +360,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 			}
 
 			QList<uint8_t> ids = msg.cast<protocol::SessionOwner>().ids();
-			ids.append(m_id);
-			ids = m_session->updateOwnership(ids, username());
+			ids.append(d->id);
+			ids = d->session->updateOwnership(ids, username());
 			msg.cast<protocol::SessionOwner>().setIds(ids);
 			break;
 		}
@@ -273,7 +369,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 			if(isMuted())
 				return;
 			if(msg.cast<protocol::Chat>().isBypass()) {
-				m_session->directToAll(msg);
+				d->session->directToAll(msg);
 				return;
 			}
 		}
@@ -281,78 +377,79 @@ void Client::handleSessionMessage(MessagePtr msg)
 	}
 
 	// Rest of the messages are added to session history
-	if(m_session->initUserId() == m_id)
-		m_session->addToInitStream(msg);
+	if(d->session->initUserId() == d->id)
+		d->session->addToInitStream(msg);
 	else if(isHoldLocked()) {
-		if(!m_session->history()->isOutOfSpace())
-			m_holdqueue.append(msg);
+		if(!d->session->history()->isOutOfSpace())
+			d->holdqueue.append(msg);
 	}
 	else
-		m_session->addToHistory(msg);
+		d->session->addToHistory(msg);
 }
 
 void Client::disconnectKick(const QString &kickedBy)
 {
 	emit loggedOff(this);
 	log(Log().about(Log::Level::Info, Log::Topic::Kick).message("Kicked by " + kickedBy));
-	m_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
+	d->msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 
 void Client::disconnectError(const QString &message)
 {
 	emit loggedOff(this);
 	log(Log().about(Log::Level::Warn, Log::Topic::Leave).message("Disconnected due to error: " + message));
-	m_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
+	d->msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
 }
 
 void Client::disconnectShutdown()
 {
 	emit loggedOff(this);
-	m_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
+	d->msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
 }
 
 bool Client::isHoldLocked() const
 {
-	Q_ASSERT(m_session);
+	Q_ASSERT(d->session);
 
-	return m_session->state() != Session::Running;
+	return d->session->state() != Session::Running;
 }
 
 void Client::enqueueHeldCommands()
 {
-	if(isHoldLocked())
+	if(!d->session || isHoldLocked())
 		return;
 
-	for(MessagePtr msg : m_holdqueue)
-		m_session->addToHistory(msg);
-	m_holdqueue.clear();
+	for(MessagePtr msg : d->holdqueue)
+		d->session->addToHistory(msg);
+	d->holdqueue.clear();
 }
 
 bool Client::hasSslSupport() const
 {
-	return m_socket->inherits("QSslSocket");
+	return d->socket->inherits("QSslSocket");
 }
 
 bool Client::isSecure() const
 {
-	QSslSocket *socket = qobject_cast<QSslSocket*>(m_socket);
+	QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket);
 	return socket && socket->isEncrypted();
 }
 
 void Client::startTls()
 {
-	QSslSocket *socket = qobject_cast<QSslSocket*>(m_socket);
+	QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket);
 	Q_ASSERT(socket);
 	socket->startServerEncryption();
 }
 
 void Client::log(Log entry) const
 {
-	entry.user(m_id, m_socket->peerAddress(), m_username);
-	if(m_session)
-		m_session->log(entry);
+	entry.user(d->id, d->socket->peerAddress(), d->username);
+	if(d->session)
+		d->session->log(entry);
 	else
-		m_logger->logMessage(entry);
+		d->logger->logMessage(entry);
 }
 
 }
+

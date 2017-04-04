@@ -27,11 +27,6 @@
 
 class QHostAddress;
 
-namespace protocol {
-	class MessageQueue;
-	class Command;
-}
-
 namespace server {
 
 class Session;
@@ -61,7 +56,7 @@ public:
 	 * @param session
 	 */
 	void setSession(Session *session);
-	Session *session() { return m_session; }
+	Session *session();
 
 	/**
 	 * @brief Get the context ID of the client
@@ -72,41 +67,41 @@ public:
 	 * itself when hosting a new session
 	 * @return client ID
 	 */
-	int id() const { return m_id; }
-	void setId(int id) { m_id = id; }
+	int id() const;
+	void setId(int id);
 
 	/**
 	 * @brief Get the user name of this client
 	 * @return user name
 	 */
-	const QString &username() const { return m_username; }
-	void setUsername(const QString &username) { m_username = username; }
+	const QString &username() const;
+	void setUsername(const QString &username);
 
 	/**
 	 * @brief Does this user have session operator privileges?
 	 * @return
 	 */
-	bool isOperator() const { return m_isOperator || m_isModerator; }
-	void setOperator(bool op) { m_isOperator = op; }
+	bool isOperator() const;
+	void setOperator(bool op);
 
 	/**
 	 * @brief Is this user a moderator?
 	 * Moderators can access any session, always have OP status and cannot be kicked by other users.
 	 */
-	bool isModerator() const { return m_isModerator; }
-	void setModerator(bool mod) { m_isModerator = mod; }
+	bool isModerator() const;
+	void setModerator(bool mod);
 
 	/**
 	 * @brief Has this user been authenticated?
 	 */
-	bool isAuthenticated() const { return m_isAuthenticated; }
-	void setAuthenticated(bool auth) { m_isAuthenticated = auth; }
+	bool isAuthenticated() const;
+	void setAuthenticated(bool auth);
 
 	/**
 	 * @brief Has this user been blocked from sending chat messages?
 	 */
-	bool isMuted() const { return m_isMuted; }
-	void setMuted(bool m) { m_isMuted = m; }
+	bool isMuted() const;
+	void setMuted(bool m);
 
 	/**
 	 * @brief Set connection idle timeout
@@ -155,7 +150,7 @@ public:
 	 * The returned index in the index of the last history message that
 	 * is (or was) in the client's upload queue.
 	 */
-	int historyPosition() const { return m_historyPosition; }
+	int historyPosition() const;
 
 	/**
 	 * @brief Manually change the history position.
@@ -163,7 +158,7 @@ public:
 	 * Only time this needs to be done is during the session initialization
 	 * phase when the hosting user must skip the history they themselves uploaded.
 	 */
-	void setHistoryPosition(int newpos) { m_historyPosition = newpos; }
+	void setHistoryPosition(int newpos);
 
 	/**
 	 * @brief Does this client socket support SSL connections?
@@ -250,23 +245,11 @@ private:
 	void handleSessionMessage(protocol::MessagePtr msg);
 	bool isHoldLocked() const;
 
-	Session *m_session;
-	QTcpSocket *m_socket;
-	ServerLog *m_logger;
-
-	protocol::MessageQueue *m_msgqueue;
-	QList<protocol::MessagePtr> m_holdqueue;
-	int m_historyPosition;
-
-	int m_id;
-	QString m_username;
-
-	bool m_isOperator;
-	bool m_isModerator;
-	bool m_isAuthenticated;
-	bool m_isMuted;
+	struct Private;
+	Private *d;
 };
 
 }
 
 #endif
+

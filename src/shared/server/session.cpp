@@ -230,7 +230,9 @@ void Session::removeUser(Client *user)
 	if(!m_clients.removeOne(user))
 		return;
 
+	Q_ASSERT(user->session() == this);
 	user->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Left session"));
+	user->setSession(nullptr);
 
 	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
 	disconnect(m_history, &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
@@ -662,8 +664,10 @@ void Session::killSession(bool terminate)
 	unlistAnnouncement("*", false);
 	stopRecording();
 
-	for(Client *c : m_clients)
+	for(Client *c : m_clients) {
 		c->disconnectShutdown();
+		c->setSession(nullptr);
+	}
 	m_clients.clear();
 
 	if(terminate)

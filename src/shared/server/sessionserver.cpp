@@ -216,11 +216,8 @@ void SessionServer::stopAll()
 	for(Client *c : m_lobby)
 		c->disconnectShutdown();
 
-	auto sessions = m_sessions;
-	sessions.detach();
-	for(Session *s : sessions) {
+	for(Session *s : m_sessions)
 		s->killSession(false);
-	}
 }
 
 void SessionServer::messageAll(const QString &message, bool alert)
