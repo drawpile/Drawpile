@@ -3,6 +3,7 @@
  * Fixed (concurrency related) crash bug in layer merging
  * Properly clear ACLs for deleted layers
  * Properly demarcate reset snapshot (fixes possible mixing of non-reset and reset messages that can make the canvas initialization undoable)
+ * Fixed missing template sessions in join dialog
 
 2017-03-27 Version 2.0.2
  * Fixed returning from fullscreen mode to maximized window

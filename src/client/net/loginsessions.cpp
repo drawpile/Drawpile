@@ -136,10 +136,10 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 {
 	// If the session is already listed, update it in place
 	for(int i=0;i<m_sessions.size();++i) {
-		if(m_sessions.at(i).id == session.id) {
+		if(m_sessions.at(i).isIdOrAlias(session.idOrAlias())) {
 			m_sessions[i] = session;
 			if(session.nsfm && m_hideNsfm)
-				removeFiltered(session.id);
+				removeFiltered(session.idOrAlias());
 			else
 				updateFiltered(session);
 			emit filteredCountChanged();
@@ -158,7 +158,7 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 void LoginSessionModel::updateFiltered(const LoginSession &session)
 {
 	for(int i=0;i<m_filtered.size();++i) {
-		if(m_filtered.at(i).id == session.id) {
+		if(m_filtered.at(i).isIdOrAlias(session.idOrAlias())) {
 			m_filtered[i] = session;
 			emit dataChanged(index(i, 0), index(i, columnCount()));
 			return;
@@ -173,7 +173,7 @@ void LoginSessionModel::updateFiltered(const LoginSession &session)
 void LoginSessionModel::removeFiltered(const QString &id)
 {
 	for(int i=0;i<m_filtered.size();++i) {
-		if(m_filtered.at(i).id == id) {
+		if(m_filtered.at(i).isIdOrAlias(id)) {
 			beginRemoveRows(QModelIndex(), i, i);
 			m_filtered.removeAt(i);
 			endRemoveRows();
@@ -185,7 +185,7 @@ void LoginSessionModel::removeFiltered(const QString &id)
 void LoginSessionModel::removeSession(const QString &id)
 {
 	for(int i=0;i<m_sessions.size();++i) {
-		if(m_sessions.at(i).id == id) {
+		if(m_sessions.at(i).isIdOrAlias(id)) {
 			m_sessions.removeAt(i);
 			break;
 		}

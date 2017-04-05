@@ -41,6 +41,10 @@ struct LoginSession {
 	bool nsfm;
 
 	QString idOrAlias() const { return alias.isEmpty() ? id : alias; }
+	inline bool isIdOrAlias(const QString &idOrAlias) const {
+		Q_ASSERT(!idOrAlias.isEmpty());
+		return id == idOrAlias || alias == idOrAlias;
+	}
 
 	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false), nsfm(false) { }
 };
