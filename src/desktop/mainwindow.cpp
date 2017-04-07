@@ -494,6 +494,7 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 	_currentdoctools->setEnabled(true);
 	m_docadmintools->setEnabled(true);
 	setDrawingToolsEnabled(true);
+	getAction("hostsession")->setEnabled(true);
 
 	return this;
 }
@@ -1154,6 +1155,11 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
+	if(!m_doc->canvas()) {
+		qWarning("No canvas!");
+		return;
+	}
+
 	auto dlg = new dialogs::HostDialog(this);
 
 	connect(dlg, &dialogs::HostDialog::finished, this, [this, dlg](int i) {
@@ -1364,7 +1370,7 @@ void MainWindow::onServerConnected()
  */
 void MainWindow::onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
 {
-	getAction("hostsession")->setEnabled(true);
+	getAction("hostsession")->setEnabled(m_doc->canvas() != nullptr);
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
 	m_admintools->setEnabled(false);
