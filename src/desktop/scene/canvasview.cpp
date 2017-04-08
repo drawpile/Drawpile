@@ -399,11 +399,16 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		startDrag(pos.x(), pos.y(), mode);
 
 	} else if(button == Qt::RightButton) {
-		// Temporarily disabled due to user complaints about easily hitting the button by accident.
-		// Will be re-enabled in 2.0.1 with customization options.
+		// Currently unused
 		//emit rightClicked(pos.toPoint());
 
 	} else if(button == Qt::LeftButton && _isdragging==DRAG_NOTRANSFORM) {
+
+		if(_stylusDown) {
+			// Work around missing modifier keys in QTabletEvent
+			modifiers = QApplication::queryKeyboardModifiers();
+		}
+
 		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		_pointerdistance = 0;
 		_pointervelocity = 0;
@@ -452,6 +457,11 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 					_hotBorderTop = true;
 				}
 			}
+		}
+
+		if(_stylusDown) {
+			// Work around missing modifier keys in QTabletEvent
+			modifiers = QApplication::queryKeyboardModifiers();
 		}
 
 		paintcore::Point point = mapToScene(pos, pressure);
