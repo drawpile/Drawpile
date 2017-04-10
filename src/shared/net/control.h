@@ -84,6 +84,9 @@ public:
 	//! Convenience function: make an ERROR type reply message
 	static MessagePtr error(const QString &message);
 
+	//! Check is message payload is too big to be sent
+	bool isOversize() const { return m_msg.length() > 0xffff; }
+
 	QJsonDocument doc() const;
 	ServerCommand cmd() const { return ServerCommand::fromJson(doc()); }
 	ServerReply reply() const { return ServerReply::fromJson(doc()); }

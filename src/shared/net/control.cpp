@@ -123,13 +123,14 @@ Command *Command::deserialize(uint8_t ctxid, const uchar *data, uint len)
 
 int Command::serializePayload(uchar *data) const
 {
-	memcpy(data, m_msg.constData(), m_msg.length());
-	return m_msg.length();
+	const int len = payloadLength();
+	memcpy(data, m_msg.constData(), len);
+	return len;
 }
 
 int Command::payloadLength() const
 {
-	return m_msg.length();
+	return qMin(0xffff, m_msg.length());
 }
 
 QJsonDocument Command::doc() const
