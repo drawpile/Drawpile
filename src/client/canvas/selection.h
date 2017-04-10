@@ -43,13 +43,21 @@ class Selection : public QObject
 public:
 	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 
-	explicit Selection(QObject *parent = 0);
+	explicit Selection(QObject *parent=nullptr);
 
+	//! Get the selection shape polygon
 	QPolygonF shape() const { return m_shape; }
-	void setShape(const QPolygonF &shape);
-	Q_INVOKABLE void setShapeRect(const QRect &rect);
 
+	//! Set the selection shape polygon. The shape is not closed.
+	void setShape(const QPolygonF &shape);
+
+	//! Set the selection shape from a rectangle. The shape is closed.
+	void setShapeRect(const QRect &rect);
+
+	//! Add a point to the selection polygon. The shape must be open
 	void addPointToShape(const QPointF &point);
+
+	//! Close the selection
 	void closeShape();
 
 	bool isClosed() const { return m_closedPolygon; }
@@ -59,7 +67,10 @@ public:
 
 	bool isAxisAlignedRectangle() const;
 
+	//! Forget that the selection buffer came from the canvas (will be treated as a pasted image)
 	void detachMove() { m_moveRegion = QPolygon(); }
+
+	//! Did the selection buffer come from the canvas? (as opposed to an external pasted image)
 	bool isMovedFromCanvas() const { return !m_moveRegion.isEmpty(); }
 
 	QRect boundingRect() const { return m_shape.boundingRect().toRect(); }
@@ -99,7 +110,9 @@ public:
 	int handleSize() const { return 20; }
 
 public slots:
+	//! Restore the original shape (but not the position)
 	void resetShape();
+
 	void translate(const QPoint &offset);
 	void scale(qreal x, qreal y);
 	void rotate(float angle);

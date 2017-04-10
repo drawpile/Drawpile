@@ -66,8 +66,10 @@ void Selection::setShapeRect(const QRect &rect)
 		QPointF(rect.left() + rect.width(), rect.top() + rect.height()),
 		QPointF(rect.left(), rect.top() + rect.height())
 	}));
+	saveShape();
 	m_closedPolygon = true;
 }
+
 
 void Selection::translate(const QPoint &offset)
 {
@@ -187,12 +189,16 @@ void Selection::adjust(int dx1, int dy1, int dx2, int dy2)
 	const qreal sx = (bounds.width() - dx1 + dx2) / bounds.width();
 	const qreal sy = (bounds.height() - dy1 + dy2) / bounds.height();
 
+	QPolygonF newShape = m_shape;
 	for(int i=0;i<m_shape.size();++i) {
-		m_shape[i] = QPointF(
+		newShape[i] = QPointF(
 			bounds.x() + (m_shape[i].x() - bounds.x()) * sx + dx1,
 			bounds.y() + (m_shape[i].y() - bounds.y()) * sy + dy1
 		);
+		if(isnan(newShape[i].x()) || isnan(newShape[i].y()))
+			return;
 	}
+	m_shape = newShape;
 	emit shapeChanged(m_shape);
 }
 
