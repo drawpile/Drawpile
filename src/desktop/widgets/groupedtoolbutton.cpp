@@ -99,8 +99,25 @@ void GroupedToolButton::paintEvent(QPaintEvent* event)
 		painter.drawLine(x, y1, x, y2);
 	}
 
+	const bool showDropdownArrow = menu() != nullptr && !text().isEmpty();
+
+	QRect textRect = opt.rect;
+	QRect arrowRect;
+
+	if(showDropdownArrow) {
+		arrowRect = QRect(textRect.right() - 20, textRect.y(), 20, textRect.height());
+		textRect.setWidth(textRect.width() - arrowRect.width());
+	}
+
 	// Text
+	opt.rect = textRect;
 	painter.drawControl(QStyle::CE_ToolButtonLabel, opt);
+
+	// Dropdown arrow
+	if(showDropdownArrow) {
+		opt.rect = arrowRect;
+		painter.drawPrimitive(QStyle::PE_IndicatorArrowDown, opt);
+	}
 }
 
 #ifndef DESIGNER_PLUGIN
