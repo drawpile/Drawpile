@@ -80,7 +80,6 @@ void LoginHandler::announceServerInfo()
 	greeting.type = protocol::ServerReply::LOGIN;
 	greeting.message = "Welcome";
 	greeting.reply["title"] = m_server->config()->getConfigString(config::ServerTitle);
-	// TODO if message length exceeds maximum, split session list into multiple messages
 	QJsonArray sessions = m_server->sessionDescriptions();
 	if(m_server->templateLoader()) {
 		// Add session templates to list, if not shadowed by live sessions
@@ -99,7 +98,27 @@ void LoginHandler::announceServerInfo()
 	}
 	greeting.reply["sessions"] = sessions;
 
-	send(greeting);
+	if(!send(greeting)) {
+		// Reply was too long to fit in the message envelope!
+		// Split the reply into separte announcements and send it in pieces
+		protocol::ServerReply piece;
+		piece.type = greeting.type;
+		piece.message = greeting.message;
+		piece.reply["title"] = greeting.reply["title"];
+
+		if(!greeting.reply["title"].toString().isEmpty()) {
+			send(piece);
+		}
+
+		for(const QJsonValue &session : sessions) {
+			QJsonArray a;
+			a << session;
+			piece.reply["sessions"] = a;
+			send(piece);
+			// Include the title as part of the first message, but not the later ones
+			piece.reply.remove("title");
+		}
+	}
 }
 
 void LoginHandler::announceSession(const QJsonObject &session)
@@ -460,10 +479,17 @@ void LoginHandler::handleStarttls()
 	m_state = WAIT_FOR_IDENT;
 }
 
-void LoginHandler::send(const protocol::ServerReply &cmd)
+bool LoginHandler::send(const protocol::ServerReply &cmd)
 {
-	if(!m_complete)
-		m_client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
+	if(!m_complete) {
+		protocol::MessagePtr msg(new protocol::Command(0, cmd));
+		if(msg.cast<protocol::Command>().isOversize()) {
+			qWarning("Oversize login message %s", qPrintable(cmd.message));
+			return false;
+		}
+		m_client->sendDirectMessage(msg);
+	}
+	return true;
 }
 
 void LoginHandler::sendError(const QString &code, const QString &message)

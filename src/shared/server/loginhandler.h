@@ -108,7 +108,7 @@ private:
 	void handleJoinMessage(const protocol::ServerCommand &cmd);
 	void handleStarttls();
 	void guestLogin(const QString &username);
-	void send(const protocol::ServerReply &cmd);
+	bool send(const protocol::ServerReply &cmd);
 	void sendError(const QString &code, const QString &message);
 
 	Client *m_client;
