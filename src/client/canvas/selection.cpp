@@ -25,6 +25,7 @@
 #include "../shared/net/image.h"
 
 #include <QPainter>
+#include <cmath>
 
 namespace canvas {
 
@@ -195,7 +196,7 @@ void Selection::adjust(int dx1, int dy1, int dx2, int dy2)
 			bounds.x() + (m_shape[i].x() - bounds.x()) * sx + dx1,
 			bounds.y() + (m_shape[i].y() - bounds.y()) * sy + dy1
 		);
-		if(isnan(newShape[i].x()) || isnan(newShape[i].y()))
+		if(std::isnan(newShape[i].x()) || std::isnan(newShape[i].y()))
 			return;
 	}
 	m_shape = newShape;

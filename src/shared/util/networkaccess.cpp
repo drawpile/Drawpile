@@ -24,6 +24,7 @@
 #include <QMutexLocker>
 #include <QHash>
 #include <QThread>
+#include <QDebug>
 
 namespace networkaccess {
 
