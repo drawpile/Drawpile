@@ -44,6 +44,7 @@ namespace widgets {
 }
 namespace docks {
 	class ToolSettings;
+	class BrushPalette;
 	class InputSettings;
 	class LayerList;
 	class PaletteBox;
@@ -205,6 +206,7 @@ private:
 	QSplitter *_splitter;
 
 	docks::ToolSettings *_dock_toolsettings;
+	docks::BrushPalette *m_dockBrushPalette;
 	docks::InputSettings *_dock_input;
 	docks::LayerList *_dock_layers;
 	docks::ColorBox *_dock_colors;

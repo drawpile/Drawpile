@@ -55,7 +55,8 @@ set (
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
 	docks/utils.cpp
-	docks/toolsettingsdock.cpp 
+	docks/toolsettingsdock.cpp
+	docks/brushpalettedock.cpp
 	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/layerlistdock.cpp
@@ -91,7 +92,7 @@ endif()
 set (
 	UIs
 	ui/brushdock.ui
-	ui/brushsettings.ui
+	ui/brushpalette.ui
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui

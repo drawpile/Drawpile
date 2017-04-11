@@ -29,7 +29,6 @@ using widgets::BrushPreview;
 using widgets::GroupedToolButton;
 
 #include "ui_brushdock.h"
-#include "ui_brushsettings.h"
 
 #include <QMenu>
 #include <QKeyEvent>
@@ -139,11 +138,9 @@ static const int BRUSH_COUNT = 5;
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
-	Ui_BrushSettings advUi;
 
 	QMenu *blendModes, *eraseModes;
 	BrushSettings *basicSettings;
-	AdvancedBrushSettings *advancedSettings;
 	BrushPresetModel *presets;
 
 	ToolProperties brushProps[BRUSH_COUNT];
@@ -216,13 +213,38 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(d->ui.preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
-	// Internal updtes
+	// Internal updates
 	connect(d->blendModes, &QMenu::triggered, this, &BrushSettings::selectBlendMode);
 	connect(d->eraseModes, &QMenu::triggered, this, &BrushSettings::selectBlendMode);
+	connect(d->ui.erasermode, &QToolButton::toggled, this, &BrushSettings::setEraserMode);
+
+	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
+	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
+	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 
 	connect(d->ui.brushsize, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushsize0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.sizePressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
 	connect(d->ui.brushopacity, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.erasermode, &QToolButton::toggled, this, &BrushSettings::setEraserMode);
+	connect(d->ui.brushopacity0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.opacityPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
+	connect(d->ui.brushhardness, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushhardness0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.hardnessPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
+	connect(d->ui.brushsmudging, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushsmudging0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.smudgingPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
+	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushspacing, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.modeIndirect, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons
 	connect(d->ui.slot1, &QToolButton::clicked, this, [this]() { selectBrushSlot(0); });
@@ -231,55 +253,18 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.slot4, &QToolButton::clicked, this, [this]() { selectBrushSlot(3); });
 	connect(d->ui.slot5, &QToolButton::clicked, this, [this]() { selectBrushSlot(4); });
 
-	// Advanced settings
-	d->advancedSettings = new AdvancedBrushSettings(this, widget);
-	d->advancedSettings->setVisible(false);
-	connect(d->ui.brushsettings, &QToolButton::clicked, this, &BrushSettings::showAdvancedSettings);
-
-	// Brush presets
-	d->ui.brushPaletteView->setModel(d->presets);
-	d->ui.brushPaletteView->setDragEnabled(true);
-	d->ui.brushPaletteView->viewport()->setAcceptDrops(true);
-	connect(d->ui.brushPaletteView, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {
-		QVariant v = index.data(BrushPresetModel::ToolPropertiesRole);
-		if(v.isNull()) {
-			qWarning("Brush preset was null!");
-			return;
-		}
-		// Load preset
-		ToolProperties tp = ToolProperties::fromVariant(v.toHash());
-		d->currentBrush() = tp;
-		updateUi();
-		if(d->advancedSettings->isVisible())
-			d->advancedSettings->updateUi();
-	});
-
-	connect(d->ui.presetAdd, &QAbstractButton::clicked, this, [this]() {
-		d->presets->addBrush(d->currentBrush());
-	});
-	connect(d->ui.presetSave, &QAbstractButton::clicked, this, [this]() {
-		auto sel = d->ui.brushPaletteView->selectionModel()->selectedIndexes();
-		if(sel.isEmpty()) {
-			qWarning("Cannot save brush preset: no selection!");
-			return;
-		}
-		d->presets->setData(sel.first(), d->currentBrush().asVariant(), BrushPresetModel::ToolPropertiesRole);
-	});
-	connect(d->ui.presetDelete, &QAbstractButton::clicked, this, [this]() {
-		auto sel = d->ui.brushPaletteView->selectionModel()->selectedIndexes();
-		if(sel.isEmpty()) {
-			qWarning("No brush preset selection to delete!");
-			return;
-		}
-		d->presets->removeRow(sel.first().row());
-	});
-
 	return widget;
 }
 
-void BrushSettings::showAdvancedSettings()
+void BrushSettings::setCurrentBrushSettings(const ToolProperties &brushProps)
 {
-	d->advancedSettings->showAt(d->ui.preview->mapToGlobal(QPoint(d->ui.preview->width()/2, d->ui.preview->height())));
+	d->currentBrush() = brushProps;
+	updateUi();
+}
+
+ToolProperties BrushSettings::getCurrentBrushSettings() const
+{
+	return d->currentBrush();
 }
 
 int BrushSettings::currentBrushSlot() const
@@ -302,8 +287,6 @@ void BrushSettings::selectBrushSlot(int i)
 
 	d->current = i;
 	updateUi();
-	if(d->advancedSettings->isVisible())
-		d->advancedSettings->updateUi();
 }
 
 bool BrushSettings::eraserMode() const
@@ -339,9 +322,42 @@ void BrushSettings::updateUi()
 	const ToolProperties &brush = d->currentBrush();
 	const ToolProperties &tool = d->currentTool();
 
+	// Select brush type
+	const int brushMode = brush.intValue(brushprop::BRUSHMODE, 0);
+	switch(brushMode) {
+	case 1: d->ui.softedgeMode->setChecked(true); break;
+	case 2: d->ui.watercolorMode->setChecked(true); break;
+	case 0:
+	default: d->ui.hardedgeMode->setChecked(true); break;
+	}
+
+	// Hide certain features based on the brush type
+	d->ui.brushhardness->setVisible(brushMode != 0);
+	d->ui.brushhardness0->setVisible(brushMode != 0  && brush.boolValue(brushprop::HARD_PRESSURE, false));
+	d->ui.hardnessPressure->setVisible(brushMode != 0);
+	d->ui.hardnessLabel->setVisible(brushMode != 0);
+	d->ui.hardnessBox->setVisible(brushMode != 0);
+	d->ui.hardnessSeparator->changeSize(10, brushMode != 0 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
+
+	d->ui.brushsmudging->setVisible(brushMode == 2);
+	d->ui.brushsmudging0->setVisible(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
+	d->ui.smudgingPressure->setVisible(brushMode == 2);
+	d->ui.smudgingLabel->setVisible(brushMode == 2);
+	d->ui.smudgingBox->setVisible(brushMode == 2);
+	d->ui.smudgingSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
+
+	d->ui.colorpickup->setVisible(brushMode == 2);
+	d->ui.colorpickupLabel->setVisible(brushMode == 2);
+	d->ui.colorpickupBox->setVisible(brushMode == 2);
+	d->ui.colorpickupSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
+
+	d->ui.modeIncremental->setEnabled(brushMode != 2);
+	d->ui.modeIndirect->setEnabled(brushMode != 2);
+
 	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
 	d->ui.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
 
+	// Show correct blending mode
 	int blendmode;
 	if(tool.boolValue(toolprop::USE_ERASEMODE, false)) {
 		d->ui.blendmode->setMenu(d->eraseModes);
@@ -354,8 +370,30 @@ void BrushSettings::updateUi()
 	}
 	d->ui.blendmode->setText(QApplication::tr(paintcore::findBlendMode(blendmode).name));
 
-	if(d->advancedSettings->isVisible())
-		d->advancedSettings->updateUi();
+	// Set values
+	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
+	d->ui.brushsize0->setValue(brush.intValue(brushprop::SIZE2, 1));
+	d->ui.sizePressure->setChecked(brush.boolValue(brushprop::SIZE_PRESSURE, false));
+
+	d->ui.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
+	d->ui.brushopacity0->setValue(brush.intValue(brushprop::OPACITY2, 100));
+	d->ui.opacityPressure->setChecked(brush.boolValue(brushprop::OPACITY_PRESSURE, false));
+
+	d->ui.brushhardness->setValue(brush.intValue(brushprop::HARD, 100));
+	d->ui.brushhardness0->setValue(brush.intValue(brushprop::HARD2, 100));
+	d->ui.hardnessPressure->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
+
+	d->ui.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 100));
+	d->ui.brushsmudging0->setValue(brush.intValue(brushprop::SMUDGE2, 100));
+	d->ui.smudgingPressure->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
+
+	d->ui.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 1, 0));
+
+	d->ui.brushspacing->setValue(brush.intValue(brushprop::SPACING, 10));
+	if(brush.boolValue(brushprop::INCREMENTAL, true))
+		d->ui.modeIncremental->setChecked(true);
+	else
+		d->ui.modeIndirect->setChecked(true);
 
 	d->updateInProgress = false;
 	d->updateBrush();
@@ -369,11 +407,33 @@ void BrushSettings::updateFromUi()
 	// Copy changes from the UI to the brush properties object,
 	// then update the brush
 	ToolProperties &brush = d->currentBrush();
-	brush.setValue(brushprop::SIZE, d->ui.brushsize->value());
-	brush.setValue(brushprop::OPACITY, d->ui.brushopacity->value());
 
-	if(d->advancedSettings->isVisible())
-		d->advancedSettings->updateUi();
+	if(d->ui.hardedgeMode->isChecked())
+		brush.setValue(brushprop::BRUSHMODE, 0);
+	else if(d->ui.softedgeMode->isChecked())
+		brush.setValue(brushprop::BRUSHMODE, 1);
+	else
+		brush.setValue(brushprop::BRUSHMODE, 2);
+
+	brush.setValue(brushprop::SIZE, d->ui.brushsize->value());
+	brush.setValue(brushprop::SIZE2, d->ui.brushsize0->value());
+	brush.setValue(brushprop::SIZE_PRESSURE, d->ui.sizePressure->isChecked());
+
+	brush.setValue(brushprop::OPACITY, d->ui.brushopacity->value());
+	brush.setValue(brushprop::OPACITY2, d->ui.brushopacity0->value());
+	brush.setValue(brushprop::OPACITY_PRESSURE, d->ui.opacityPressure->isChecked());
+
+	brush.setValue(brushprop::HARD, d->ui.brushhardness->value());
+	brush.setValue(brushprop::HARD2, d->ui.brushhardness0->value());
+	brush.setValue(brushprop::HARD_PRESSURE, d->ui.hardnessPressure->isChecked());
+
+	brush.setValue(brushprop::SMUDGE, d->ui.brushsmudging->value());
+	brush.setValue(brushprop::SMUDGE2, d->ui.brushsmudging0->value());
+	brush.setValue(brushprop::SMUDGE_PRESSURE, d->ui.smudgingPressure->isChecked());
+
+	brush.setValue(brushprop::RESMUDGE, d->ui.colorpickup->value());
+	brush.setValue(brushprop::SPACING, d->ui.brushspacing->value());
+	brush.setValue(brushprop::INCREMENTAL, d->ui.modeIncremental->isChecked());
 
 	d->updateBrush();
 }
@@ -434,167 +494,6 @@ void BrushSettings::quickAdjust1(float adjustment)
 int BrushSettings::getSize() const
 {
 	return d->ui.brushsize->value();
-}
-
-
-///// ADVANCED BRUSH SETTINGS CLASS //////
-
-AdvancedBrushSettings::AdvancedBrushSettings(BrushSettings *brushSettings, QWidget *parent)
-	: QWidget(parent, Qt::Tool), d(brushSettings->d)
-{
-	d->advUi.setupUi(this);
-
-	auto updateBrushMode = [this]() {
-		updateFromUi();
-		updateUi();
-	};
-
-	connect(d->advUi.hardedgeMode, &QToolButton::clicked, this, updateBrushMode);
-	connect(d->advUi.softedgeMode, &QToolButton::clicked, this, updateBrushMode);
-	connect(d->advUi.watercolorMode, &QToolButton::clicked, this, updateBrushMode);
-
-	connect(d->advUi.brushLabel, &QLineEdit::textEdited, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushsize, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushsize0, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.sizePressure, &QCheckBox::toggled, this, &AdvancedBrushSettings::updateFromUi);
-
-	connect(d->advUi.brushopacity, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushopacity0, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.opacityPressure, &QCheckBox::toggled, this, &AdvancedBrushSettings::updateFromUi);
-
-	connect(d->advUi.brushhardness, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushhardness0, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.hardnessPressure, &QCheckBox::toggled, this, &AdvancedBrushSettings::updateFromUi);
-
-	connect(d->advUi.brushsmudging, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushsmudging0, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.smudgingPressure, &QCheckBox::toggled, this, &AdvancedBrushSettings::updateFromUi);
-
-	connect(d->advUi.colorpickup, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.brushspacing, &QSlider::valueChanged, this, &AdvancedBrushSettings::updateFromUi);
-	connect(d->advUi.modeIncremental, &QCheckBox::clicked, this, &AdvancedBrushSettings::updateFromUi);
-
-}
-
-void AdvancedBrushSettings::showAt(const QPoint &point)
-{
-	updateUi();
-	show();
-	move(point.x() - width()/2, point.y());
-	updateUi();
-}
-
-void AdvancedBrushSettings::keyPressEvent(QKeyEvent *e)
-{
-	if(e->matches(QKeySequence::Cancel)) {
-		hide();
-	} else {
-		QWidget::keyPressEvent(e);
-	}
-}
-
-void AdvancedBrushSettings::updateUi()
-{
-	if(d->updateInProgress)
-		return;
-
-	d->updateInProgress = true;
-	const ToolProperties &brush = d->currentBrush();
-	const int brushMode = brush.intValue(brushprop::BRUSHMODE, 0);
-	switch(brushMode) {
-	case 1: d->advUi.softedgeMode->setChecked(true); break;
-	case 2: d->advUi.watercolorMode->setChecked(true); break;
-	case 0:
-	default: d->advUi.hardedgeMode->setChecked(true); break;
-	}
-
-	d->advUi.brushLabel->setText(brush.value(brushprop::LABEL).toString());
-
-	// Hide certain features based on the mode
-	d->advUi.brushhardness->setVisible(brushMode != 0);
-	d->advUi.brushhardness0->setVisible(brushMode != 0  && brush.boolValue(brushprop::HARD_PRESSURE, false));
-	d->advUi.hardnessPressure->setVisible(brushMode != 0);
-	d->advUi.hardnessLabel->setVisible(brushMode != 0);
-	d->advUi.hardnessBox->setVisible(brushMode != 0);
-	d->advUi.hardnessSeparator->changeSize(10, brushMode != 0 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
-
-	d->advUi.brushsmudging->setVisible(brushMode == 2);
-	d->advUi.brushsmudging0->setVisible(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
-	d->advUi.smudgingPressure->setVisible(brushMode == 2);
-	d->advUi.smudgingLabel->setVisible(brushMode == 2);
-	d->advUi.smudgingBox->setVisible(brushMode == 2);
-	d->advUi.smudgingSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
-
-	d->advUi.colorpickup->setVisible(brushMode == 2);
-	d->advUi.colorpickupLabel->setVisible(brushMode == 2);
-	d->advUi.colorpickupBox->setVisible(brushMode == 2);
-	d->advUi.colorpickupSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
-
-	d->advUi.modeLabel->setVisible(brushMode != 2);
-	d->advUi.modeIncremental->setVisible(brushMode != 2);
-
-	// Set values
-	d->advUi.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
-	d->advUi.brushsize0->setValue(brush.intValue(brushprop::SIZE2, 1));
-	d->advUi.sizePressure->setChecked(brush.boolValue(brushprop::SIZE_PRESSURE, false));
-
-	d->advUi.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
-	d->advUi.brushopacity0->setValue(brush.intValue(brushprop::OPACITY2, 100));
-	d->advUi.opacityPressure->setChecked(brush.boolValue(brushprop::OPACITY_PRESSURE, false));
-
-	d->advUi.brushhardness->setValue(brush.intValue(brushprop::HARD, 100));
-	d->advUi.brushhardness0->setValue(brush.intValue(brushprop::HARD2, 100));
-	d->advUi.hardnessPressure->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
-
-	d->advUi.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 100));
-	d->advUi.brushsmudging0->setValue(brush.intValue(brushprop::SMUDGE2, 100));
-	d->advUi.smudgingPressure->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
-
-	d->advUi.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 1, 0));
-
-	d->advUi.brushspacing->setValue(brush.intValue(brushprop::SPACING, 10));
-	d->advUi.modeIncremental->setChecked(brush.boolValue(brushprop::INCREMENTAL, true));
-
-	d->updateInProgress = false;
-}
-
-void AdvancedBrushSettings::updateFromUi()
-{
-	if(d->updateInProgress)
-		return;
-
-	ToolProperties &brush = d->currentBrush();
-
-	brush.setValue(brushprop::LABEL, d->advUi.brushLabel->text());
-
-	if(d->advUi.hardedgeMode->isChecked())
-		brush.setValue(brushprop::BRUSHMODE, 0);
-	else if(d->advUi.softedgeMode->isChecked())
-		brush.setValue(brushprop::BRUSHMODE, 1);
-	else
-		brush.setValue(brushprop::BRUSHMODE, 2);
-
-	brush.setValue(brushprop::SIZE, d->advUi.brushsize->value());
-	brush.setValue(brushprop::SIZE2, d->advUi.brushsize0->value());
-	brush.setValue(brushprop::SIZE_PRESSURE, d->advUi.sizePressure->isChecked());
-
-	brush.setValue(brushprop::OPACITY, d->advUi.brushopacity->value());
-	brush.setValue(brushprop::OPACITY2, d->advUi.brushopacity0->value());
-	brush.setValue(brushprop::OPACITY_PRESSURE, d->advUi.opacityPressure->isChecked());
-
-	brush.setValue(brushprop::HARD, d->advUi.brushhardness->value());
-	brush.setValue(brushprop::HARD2, d->advUi.brushhardness0->value());
-	brush.setValue(brushprop::HARD_PRESSURE, d->advUi.hardnessPressure->isChecked());
-
-	brush.setValue(brushprop::SMUDGE, d->advUi.brushsmudging->value());
-	brush.setValue(brushprop::SMUDGE2, d->advUi.brushsmudging0->value());
-	brush.setValue(brushprop::SMUDGE_PRESSURE, d->advUi.smudgingPressure->isChecked());
-
-	brush.setValue(brushprop::RESMUDGE, d->advUi.colorpickup->value());
-	brush.setValue(brushprop::SPACING, d->advUi.brushspacing->value());
-	brush.setValue(brushprop::INCREMENTAL, d->advUi.modeIncremental->isChecked());
-
-	d->basicSettings->updateUi();
 }
 
 //// BRUSH PRESET PALETTE MODEL ////

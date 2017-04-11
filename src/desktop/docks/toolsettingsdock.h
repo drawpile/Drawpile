@@ -69,9 +69,6 @@ public slots:
 	//! Toggle current tool's eraser mode (if it has one)
 	void toggleEraserMode();
 
-	//! Pop up the current tool's advanced settings (if it has any)
-	void showAdvancedSettings();
-
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 

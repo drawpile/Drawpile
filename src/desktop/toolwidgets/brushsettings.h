@@ -53,13 +53,15 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
+	void setCurrentBrushSettings(const ToolProperties &brushProps);
+	ToolProperties getCurrentBrushSettings() const;
+
 	int currentBrushSlot() const;
 	bool eraserMode() const;
 
 public slots:
 	void selectBrushSlot(int i);
 	void setEraserMode(bool erase);
-	void showAdvancedSettings();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
@@ -72,29 +74,6 @@ private slots:
 private:
 	struct Private;
 	Private *d;
-};
-
-/**
- * @brief Extended brush settings (pops up from the brush settings dock)
- */
-class AdvancedBrushSettings : public QWidget {
-	Q_OBJECT
-	friend class BrushSettings;
-public:
-	AdvancedBrushSettings(BrushSettings *brushSettings, QWidget *parent);
-
-	void showAt(const QPoint &point);
-
-protected:
-	void keyPressEvent(QKeyEvent *event) override;
-
-private slots:
-	void updateFromUi();
-
-private:
-	void updateUi();
-
-	BrushSettings::Private *d;
 };
 
 class BrushPresetModel : public QAbstractListModel {

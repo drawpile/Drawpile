@@ -265,14 +265,6 @@ void ToolSettings::eraserNear(bool near)
 	}
 }
 
-void ToolSettings::showAdvancedSettings()
-{
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
-	if(bs) {
-		bs->showAdvancedSettings();
-	}
-}
-
 void ToolSettings::setPreviousTool()
 {
 	selectTool(d->previousTool);

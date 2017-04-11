@@ -80,6 +80,7 @@
 #include "widgets/userlistwidget.h"
 
 #include "docks/toolsettingsdock.h"
+#include "docks/brushpalettedock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
@@ -2345,7 +2346,6 @@ void MainWindow::setupActions()
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
 	QAction *erasertoggle = makeAction("erasertoggle", 0, tr("Eraser Mode"), QString(), QKeySequence("E"));
-	QAction *brushsettings = makeAction("brushsettings", 0, tr("Brush Settings"), QString(), QKeySequence("Ctrl+B"));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
@@ -2356,14 +2356,12 @@ void MainWindow::setupActions()
 	biggerbrush->setAutoRepeat(true);
 
 	connect(erasertoggle, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::toggleEraserMode);
-	connect(brushsettings, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::showAdvancedSettings);
 	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
 	toolshortcuts->addAction(erasertoggle);
-	toolshortcuts->addAction(brushsettings);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addSeparator();
@@ -2440,6 +2438,14 @@ void MainWindow::createDocks()
 	_dock_toolsettings->setObjectName("ToolSettings");
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
+
+	// Create brush palette
+	m_dockBrushPalette = new docks::BrushPalette(this);
+	m_dockBrushPalette->setObjectName("BrushPalette");
+	m_dockBrushPalette->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockBrushPalette);
+
+	m_dockBrushPalette->connectBrushSettings(_dock_toolsettings->getToolSettingsPage(tools::Tool::FREEHAND));
 
 	// Create color box
 	_dock_colors = new docks::ColorBox(tr("Color"), this);
