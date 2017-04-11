@@ -7,13 +7,11 @@
 
 set -e
 set -x
-
-export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib:$LD_LIBRARY_PATH
-export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$CMAKE_PATH:$PATH
+. /opt/rh/devtoolset-3/enable
 
 # Non-repo deps: ECM (needed to build KF5 libs)
 cd /
-wget -O ecm.tar.xz http://download.kde.org/stable/frameworks/5.29/extra-cmake-modules-5.29.0.tar.xz
+wget -O ecm.tar.xz http://download.kde.org/stable/frameworks/5.33/extra-cmake-modules-5.33.0.tar.xz
 tar xfJ ecm.tar.xz
 cd extra-cmake-modules*/
 cmake3 . -DCMAKE_INSTALL_PREFIX=/usr
@@ -21,7 +19,7 @@ make install
 
 # Non-repo deps: Get and build KArchive
 cd /
-wget -O karchive.tar.xz http://download.kde.org/stable/frameworks/5.29/karchive-5.29.0.tar.xz
+wget -O karchive.tar.xz http://download.kde.org/stable/frameworks/5.33/karchive-5.33.0.tar.xz
 tar xfJ karchive.tar.xz
 cd karchive*/
 mkdir build

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+set -x
+. /opt/rh/devtoolset-3/enable
+
+
+# Build Qt
+cd /opt
+tar xfJ qt.tar.xz
+cd qt-everywhere-opensource-src-5.7.1
+yes | ./configure -opensource -prefix /usr -libdir /usr/lib64 -archdatadir /usr/lib64/qt5 -datadir /usr/share/qt5 -headerdir /usr/include/qt5 -xkb-config-root /usr/share/X11/xkb -openssl-linked -skip qt3d -skip qtcanvas3d -skip qtcharts -skip qtwebengine -skip qtwebview -skip gamepad -skip qtscxml -skip qtdeclarative -no-compile-examples
+
+gmake
+gmake install
+
+cd ..
+rm -rf qt-everywhere-opensource-src-5.7.1
+

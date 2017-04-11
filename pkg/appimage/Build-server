@@ -7,9 +7,7 @@
 set -e
 set -x
 
-
-export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib:$LD_LIBRARY_PATH # Needed for bundling the libraries into AppDir below
-export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$CMAKE_PATH:$PATH # Needed at compile time to find Qt and cmake
+. /opt/rh/devtoolset-3/enable
 
 SRCDIR=/Drawpile
 WORKDIR=/work
@@ -44,11 +42,12 @@ chmod a+x AppRun
 
 # Copy libraries
 mkdir -p usr/lib/qt5/plugins
+cd usr
+ln -s lib lib64
+cd ..
 cp -r /usr/lib64/qt5/plugins/sqldrivers usr/lib/qt5/plugins
 
 ldd usr/bin/drawpile-srv | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib/ || true
-#ldd usr/lib/qt5/plugins/platforms/libqxcb.so | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
-
 
 cd usr/ ; find . -type f -exec sed -i -e 's|/usr/lib|././/lib|g' {} \; ; cd ..
 
@@ -79,7 +78,7 @@ Terminal=true
 
 END
 
-cp $SRCDIR/desktop/drawpile-64x64.png drawpile.png
+cp $SRCDIR/desktop/drawpile-48x48.png $APPDIR/drawpile.png
 
 # Build Appimage
 

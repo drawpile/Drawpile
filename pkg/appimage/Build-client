@@ -7,9 +7,7 @@
 set -e
 set -x
 
-
-export LD_LIBRARY_PATH=/opt/rh/devtoolset-2/root/usr/lib:$LD_LIBRARY_PATH # Needed for bundling the libraries into AppDir below
-export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$CMAKE_PATH:$PATH # Needed at compile time to find Qt and cmake
+. /opt/rh/devtoolset-3/enable
 
 SRCDIR=/Drawpile
 WORKDIR=/work
@@ -41,8 +39,11 @@ chmod a+x AppRun
 
 # Copy libraries
 mkdir -p usr/lib/qt5/plugins/platforms
+cd usr
+ln -s lib lib64
+cd ..
 
-cp -r /usr/lib64/qt5/plugins/{audio,bearer,generic,iconengines,imageformats,platforminputcontexts,platformthemes} usr/lib/qt5/plugins
+cp -r /usr/lib64/qt5/plugins/{audio,generic,iconengines,imageformats} usr/lib/qt5/plugins
 cp /usr/lib64/qt5/plugins/platforms/libqxcb.so usr/lib/qt5/plugins/platforms
 
 ldd usr/bin/drawpile | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
@@ -70,12 +71,15 @@ mkdir -p $ICONDIR/16x16/apps
 cp $SRCDIR/desktop/drawpile-16x16.png $ICONDIR/16x16/apps/drawpile.png
 mkdir -p $ICONDIR/32x32/apps
 cp $SRCDIR/desktop/drawpile-32x32.png $ICONDIR/32x32/apps/drawpile.png
+mkdir -p $ICONDIR/48x48/apps
+cp $SRCDIR/desktop/drawpile-48x48.png $ICONDIR/48x48/apps/drawpile.png
 mkdir -p $ICONDIR/64x64/apps
 cp $SRCDIR/desktop/drawpile-64x64.png $ICONDIR/64x64/apps/drawpile.png
 mkdir -p $ICONDIR/128x128/apps
 cp $SRCDIR/desktop/drawpile-128x128.png $ICONDIR/128x128/apps/drawpile.png
 mkdir -p $ICONDIR/scalable/apps
 cp $SRCDIR/desktop/drawpile.svg $ICONDIR/scalable/apps/drawpile.svg
+cp $SRCDIR/desktop/drawpile.svg $APPDIR
 
 
 # Build Appimage
