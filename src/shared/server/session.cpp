@@ -260,8 +260,13 @@ void SessionState::setPasswordHash(const QByteArray &passwordhash)
 
 void SessionState::setTitle(const QString &title)
 {
-	if(_title != title) {
-		_title = title;
+	QString sanitized;
+	for(QChar c : title) {
+		if(c != '\n')
+			sanitized += c;
+	}
+	if(_title != sanitized) {
+		_title = sanitized;
 		emit sessionAttributeChanged(this);
 	}
 }
