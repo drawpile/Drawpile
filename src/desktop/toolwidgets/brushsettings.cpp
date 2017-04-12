@@ -110,7 +110,7 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 		else
 			b.setSmudge2(b.smudge1());
 
-		b.setResmudge(bp.intValue(brushprop::RESMUDGE, 1, 0, 255));
+		b.setResmudge(bp.intValue(brushprop::RESMUDGE, 3, 0, 255));
 
 		// Watercolor mode requires incremental drawing
 		b.setIncremental(true);
@@ -383,11 +383,11 @@ void BrushSettings::updateUi()
 	d->ui.brushhardness0->setValue(brush.intValue(brushprop::HARD2, 100));
 	d->ui.hardnessPressure->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
 
-	d->ui.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 100));
-	d->ui.brushsmudging0->setValue(brush.intValue(brushprop::SMUDGE2, 100));
+	d->ui.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 50));
+	d->ui.brushsmudging0->setValue(brush.intValue(brushprop::SMUDGE2, 0));
 	d->ui.smudgingPressure->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
 
-	d->ui.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 1, 0));
+	d->ui.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 3, 0, 255));
 
 	d->ui.brushspacing->setValue(brush.intValue(brushprop::SPACING, 10));
 	if(brush.boolValue(brushprop::INCREMENTAL, true))

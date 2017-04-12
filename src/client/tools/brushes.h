@@ -26,14 +26,14 @@ namespace tools {
 //! Freehand brush tool
 class Freehand : public Tool
 {
-	public:
-		Freehand(ToolController &owner);
+public:
+	Freehand(ToolController &owner);
 
-		void begin(const paintcore::Point& point, float zoom);
-		void motion(const paintcore::Point& point, bool constrain, bool center);
-		void end();
+	void begin(const paintcore::Point& point, float zoom) override;
+	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void end() override;
 
-		bool allowSmoothing() const { return true; }
+	bool allowSmoothing() const override { return true; }
 };
 
 }

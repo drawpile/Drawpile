@@ -76,6 +76,10 @@ BrushPalette::BrushPalette(QWidget *parent)
 			return;
 		}
 		d->presets->addBrush(d->brushSettings->getCurrentBrushSettings());
+		d->ui.brushPaletteView->selectionModel()->select(
+			d->presets->index(d->presets->rowCount()-1, 0),
+			QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current
+		);
 	});
 
 	connect(d->ui.presetSave, &QAbstractButton::clicked, this, [this]() {
@@ -102,6 +106,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 			return;
 		}
 		d->presets->removeRow(sel.first().row());
+		d->ui.brushPaletteView->selectionModel()->clear();
 	});
 }
 
