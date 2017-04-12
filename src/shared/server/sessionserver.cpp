@@ -304,15 +304,13 @@ void SessionServer::userDisconnectedEvent(Session *session)
 
 void SessionServer::cleanupSessions()
 {
-	const int expirationTime = m_config->getConfigTime(config::IdleTimeLimit);
+	const qint64 expirationTime = m_config->getConfigTime(config::IdleTimeLimit) * 1000;
 
 	if(expirationTime>0) {
 		for(Session *s : m_sessions) {
-			if(s->userCount()==0) {
-				if(s->lastEventTime() > expirationTime) {
-					s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
-					s->killSession();
-				}
+			if(s->lastEventTime() > expirationTime) {
+				s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
+				s->killSession();
 			}
 		}
 	}
