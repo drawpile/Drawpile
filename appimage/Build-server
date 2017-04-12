@@ -24,7 +24,7 @@ mkdir $APPDIR
 # Build server
 mkdir build
 cd build
-cmake .. -DSERVER=ON -DCLIENT=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+cmake3 .. -DSERVER=ON -DCLIENT=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
 
 # Install only the required server parts

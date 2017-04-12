@@ -27,7 +27,7 @@ git apply /appimage.patch
 # Build client
 mkdir build
 cd build
-cmake .. -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+cmake3 .. -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
 make install
 
