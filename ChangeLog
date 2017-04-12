@@ -6,6 +6,11 @@
  * Fixed missing template sessions in join dialog
  * Host action is now disabled when there is no canvas
  * Fixed missing modifier keys (ctrl/alt) with tablet stylus
+ * Fixed potential buffer overflow in Command message serialization
+ * Fixed server crash when queueing a large number of messages for upload
+ * Fixed infinite loop when squishing selections
+ * New AppImage build script (fixes UTF-8 related JSON parse error. Most visible when logging to a server with a non-ASCII username)
+ * Fixed session timeout
 
 2017-03-27 Version 2.0.2
  * Fixed returning from fullscreen mode to maximized window
