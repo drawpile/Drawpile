@@ -2346,6 +2346,7 @@ void MainWindow::setupActions()
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
 	QAction *erasertoggle = makeAction("erasertoggle", 0, tr("Eraser Mode"), QString(), QKeySequence("E"));
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap Last Colors"), QString(), QKeySequence("X"));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
@@ -2356,12 +2357,14 @@ void MainWindow::setupActions()
 	biggerbrush->setAutoRepeat(true);
 
 	connect(erasertoggle, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::toggleEraserMode);
+	connect(swapcolors, &QAction::triggered, _dock_colors, &docks::ColorBox::swapLastUsedColors);
 	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
 	toolshortcuts->addAction(erasertoggle);
+	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addSeparator();
