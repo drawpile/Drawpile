@@ -815,7 +815,7 @@ bool MainWindow::event(QEvent *event)
 					for(const QAction *act : m_brushSlots->actions()) {
 						const QKeySequence &seq = act->shortcut();
 						if(seq.count()==1 && e->key() == seq[0]) {
-							_dock_toolsettings->setPreviousToolSlot();
+							_dock_toolsettings->setPreviousTool();
 							break;
 						}
 					}

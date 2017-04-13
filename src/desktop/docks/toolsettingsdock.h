@@ -72,11 +72,8 @@ public slots:
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 
-	//! Select the tool previosly set with setTool
+	//! Select the tool previosly set with setTool or setToolSlot
 	void setPreviousTool();
-
-	//! Return to the previously set tool slot
-	void setPreviousToolSlot();
 
 	//! Set foreground color
 	void setForegroundColor(const QColor& color);

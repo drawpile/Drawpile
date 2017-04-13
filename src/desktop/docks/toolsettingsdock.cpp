@@ -70,6 +70,7 @@ struct ToolSettings::Private {
 		  colorDialog(nullptr),
 		  currentTool(tools::Tool::FREEHAND),
 		  previousTool(tools::Tool::FREEHAND),
+		  previousToolSlot(0),
 		  color(Qt::black),
 		  switchedWithStylusEraser(false)
 	{
@@ -216,6 +217,8 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 void ToolSettings::setTool(tools::Tool::Type tool) {
 	if(tool != d->currentTool) {
 		d->previousTool = d->currentTool;
+		tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+		d->previousToolSlot = bs ? bs->currentBrushSlot() : 0;
 		selectTool(tool);
 	}
 }
@@ -225,8 +228,12 @@ void ToolSettings::setToolSlot(int idx)
 	// Currently, brush tool is the only tool with tool slots
 	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
 	if(bs) {
+		d->previousTool = d->currentTool;
 		d->previousToolSlot = bs->currentBrushSlot();
 		bs->selectBrushSlot(idx);
+	} else {
+		setTool(tools::Tool::FREEHAND);
+		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->selectBrushSlot(idx);
 	}
 }
 
@@ -270,11 +277,9 @@ void ToolSettings::eraserNear(bool near)
 void ToolSettings::setPreviousTool()
 {
 	selectTool(d->previousTool);
-}
-
-void ToolSettings::setPreviousToolSlot()
-{
-	setToolSlot(d->previousToolSlot);
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(bs)
+		bs->selectBrushSlot(d->previousToolSlot);
 }
 
 void ToolSettings::selectTool(tools::Tool::Type tool)
