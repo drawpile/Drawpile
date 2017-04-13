@@ -63,6 +63,9 @@ public slots:
 	void selectBrushSlot(int i);
 	void setEraserMode(bool erase);
 
+signals:
+	void colorChanged(const QColor &color);
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 

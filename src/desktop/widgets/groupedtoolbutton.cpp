@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
+   Copyright (C) 2015-2017 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -56,6 +56,12 @@ void GroupedToolButton::setGroupPosition(GroupedToolButton::GroupPosition groupP
 	mGroupPosition = groupPosition;
 }
 
+void GroupedToolButton::setColorSwatch(const QColor &c)
+{
+	m_colorSwatch = c;
+	update();
+}
+
 void GroupedToolButton::paintEvent(QPaintEvent* event)
 {
 	if (mGroupPosition == NotGrouped) {
@@ -65,6 +71,15 @@ void GroupedToolButton::paintEvent(QPaintEvent* event)
 	QStylePainter painter(this);
 	QStyleOptionToolButton opt;
 	initStyleOption(&opt);
+
+	// Color swatch (if set)
+	if(m_colorSwatch.isValid()) {
+		const int swatchH = 5;
+		const QRect swatchRect = QRect(opt.rect.x(), opt.rect.bottom()-swatchH, opt.rect.width(), swatchH);
+		painter.fillRect(swatchRect, m_colorSwatch);
+		opt.rect.setHeight(opt.rect.height() - swatchH);
+	}
+
 	QStyleOptionToolButton panelOpt = opt;
 
 	// Panel

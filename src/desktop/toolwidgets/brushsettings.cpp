@@ -158,6 +158,10 @@ struct BrushSettings::Private {
 		return toolProps[current];
 	}
 
+	inline QColor currentColor() {
+		return currentTool().value(toolprop::COLOR, QColor(Qt::black)).value<QColor>();
+	}
+
 	Private()
 		: current(0), updateInProgress(false)
 	{
@@ -181,6 +185,21 @@ struct BrushSettings::Private {
 		paintcore::Brush b = brushFromProps(currentBrush(), currentTool());
 
 		ui.preview->setBrush(b);
+	}
+
+	GroupedToolButton *brushSlotButton(int i)
+	{
+		Q_ASSERT(i>=0 && i < BRUSH_COUNT);
+		switch(i) {
+		case 0: return ui.slot1;
+		case 1: return ui.slot2;
+		case 2: return ui.slot3;
+		case 3: return ui.slot4;
+		case 4: return ui.slot5;
+		default:
+			qFatal("brushSlotButton(%d): no such button", i);
+			return nullptr;
+		}
 	}
 };
 
@@ -247,11 +266,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.modeIndirect, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons
-	connect(d->ui.slot1, &QToolButton::clicked, this, [this]() { selectBrushSlot(0); });
-	connect(d->ui.slot2, &QToolButton::clicked, this, [this]() { selectBrushSlot(1); });
-	connect(d->ui.slot3, &QToolButton::clicked, this, [this]() { selectBrushSlot(2); });
-	connect(d->ui.slot4, &QToolButton::clicked, this, [this]() { selectBrushSlot(3); });
-	connect(d->ui.slot5, &QToolButton::clicked, this, [this]() { selectBrushSlot(4); });
+	for(int i=0;i<BRUSH_COUNT;++i) {
+		connect(d->brushSlotButton(i), &QToolButton::clicked, this, [this, i]() { selectBrushSlot(i); });
+	}
 
 	return widget;
 }
@@ -277,16 +294,12 @@ void BrushSettings::selectBrushSlot(int i)
 		qWarning("selectBrushSlot(%d): invalid slot index!", i);
 		return;
 	}
-	switch(i) {
-	case 0: d->ui.slot1->setChecked(true); break;
-	case 1: d->ui.slot2->setChecked(true); break;
-	case 2: d->ui.slot3->setChecked(true); break;
-	case 3: d->ui.slot4->setChecked(true); break;
-	case 4: d->ui.slot5->setChecked(true); break;
-	}
+	d->brushSlotButton(i)->setChecked(true);
 
 	d->current = i;
 	updateUi();
+
+	emit colorChanged(d->currentColor());
 }
 
 bool BrushSettings::eraserMode() const
@@ -456,14 +469,15 @@ ToolProperties BrushSettings::saveToolSettings()
 
 void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
+	d->current = qBound(0, cfg.value("active", 0).toInt(), BRUSH_COUNT-1);
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		QVariantHash brush = cfg.value(QString("brush%1").arg(i)).toHash();
 		QVariantHash tool = cfg.value(QString("tool%1").arg(i)).toHash();
 
 		d->brushProps[i] = ToolProperties::fromVariant(brush);
 		d->toolProps[i] = ToolProperties::fromVariant(tool);
+		d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::COLOR, QColor(Qt::black)).value<QColor>());
 	}
-	d->current = qBound(0, cfg.value("active", 0).toInt(), BRUSH_COUNT-1);
 	updateUi();
 }
 
@@ -480,8 +494,11 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	d->currentTool().setValue(toolprop::COLOR, color);
-	d->ui.preview->setColor(color);
+	if(color != d->currentColor()) {
+		d->currentTool().setValue(toolprop::COLOR, color);
+		d->brushSlotButton(d->current)->setColorSwatch(color);
+		d->ui.preview->setColor(color);
+	}
 }
 
 void BrushSettings::quickAdjust1(float adjustment)

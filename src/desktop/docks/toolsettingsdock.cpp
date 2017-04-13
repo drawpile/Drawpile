@@ -152,6 +152,8 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 
 	setWindowTitle(d->pages[d->currentTool].title);
 
+	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
+			this, &ToolSettings::setForegroundColor);
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
