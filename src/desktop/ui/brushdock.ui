@@ -228,7 +228,7 @@
         <item>
          <widget class="GroupedToolButton" name="hardedgeMode">
           <property name="toolTip">
-           <string>Hard edged brush</string>
+           <string>Pen</string>
           </property>
           <property name="icon">
            <iconset theme="draw-freehand">
@@ -240,15 +240,12 @@
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
-          </property>
          </widget>
         </item>
         <item>
          <widget class="GroupedToolButton" name="softedgeMode">
           <property name="toolTip">
-           <string>Soft brush</string>
+           <string>Brush</string>
           </property>
           <property name="icon">
            <iconset theme="draw-brush">
