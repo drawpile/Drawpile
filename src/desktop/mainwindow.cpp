@@ -2143,6 +2143,9 @@ void MainWindow::setupActions()
 	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
 	QAction *rotateorig = makeAction("rotatezero", "transform-rotate", tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *rotatecw = makeAction("rotatecw", 0, tr("Rotate Clockwise"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Period));
+	QAction *rotateccw = makeAction("rotateccw", 0, tr("Rotate Counterclockwise°"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Comma));
+
 	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
@@ -2207,6 +2210,8 @@ void MainWindow::setupActions()
 	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
 	connect(zoomorig, &QAction::triggered, this, [this]() { _view->setZoom(100.0); });
 	connect(rotateorig, &QAction::triggered, this, [this]() { _view->setRotation(0); });
+	connect(rotatecw, &QAction::triggered, this, [this]() { _view->setRotation(_view->rotation() + 5); });
+	connect(rotateccw, &QAction::triggered, this, [this]() { _view->setRotation(_view->rotation() - 5); });
 	connect(rotate90, &QAction::triggered, this, [this]() { _view->setRotation(90); });
 	connect(rotate180, &QAction::triggered, this, [this]() { _view->setRotation(180); });
 	connect(rotate270, &QAction::triggered, this, [this]() { _view->setRotation(270); });
@@ -2239,6 +2244,8 @@ void MainWindow::setupActions()
 
 	QMenu *rotatemenu = viewmenu->addMenu(tr("Rotation"));
 	rotatemenu->addAction(rotateorig);
+	rotatemenu->addAction(rotatecw);
+	rotatemenu->addAction(rotateccw);
 	rotatemenu->addAction(rotate90);
 	rotatemenu->addAction(rotate180);
 	rotatemenu->addAction(rotate270);
