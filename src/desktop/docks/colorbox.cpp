@@ -141,9 +141,9 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	//
 	// Last used colors
 	//
-	_lastused = new Palette(this);
-	_lastused->setWriteProtected(true);
-	_ui->lastused->setPalette(_lastused);
+	m_lastused = new Palette(this);
+	m_lastused->setWriteProtected(true);
+	_ui->lastused->setPalette(m_lastused);
 	_ui->lastused->setEnableScrolling(false);
 	_ui->lastused->setMaxRows(1);
 
@@ -300,24 +300,34 @@ void ColorBox::updateFromHsvSpinbox()
 
 void ColorBox::addLastUsedColor(const QColor &color)
 {
-	if(_lastused->count()>0 && _lastused->color(0).color.rgb() == color.rgb())
+	if(m_lastused->count()>0 && m_lastused->color(0).color.rgb() == color.rgb())
 		return;
 
-	_lastused->setWriteProtected(false);
-	_lastused->insertColor(0, color);
-	if(_lastused->count() > 24)
-		_lastused->removeColor(24);
-	_lastused->setWriteProtected(true);
+	m_lastused->setWriteProtected(false);
+
+	// Move color to the front of the palette
+	m_lastused->insertColor(0, color);
+	for(int i=1;i<m_lastused->count();++i) {
+		if(m_lastused->color(i).color.rgb() == color.rgb()) {
+			m_lastused->removeColor(i);
+			break;
+		}
+	}
+
+	// Limit maximum number of remembered colors
+	if(m_lastused->count() > 24)
+		m_lastused->removeColor(24);
+	m_lastused->setWriteProtected(true);
 }
 
 void ColorBox::swapLastUsedColors()
 {
-	if(_lastused->count()<2)
+	if(m_lastused->count()<2)
 		return;
-	const QColor c1 = _lastused->color(0).color;
-	const QColor c2 = _lastused->color(1).color;
-	_lastused->setColor(0, c2);
-	_lastused->setColor(1, c1);
+	const QColor c1 = m_lastused->color(0).color;
+	const QColor c2 = m_lastused->color(1).color;
+	m_lastused->setColor(0, c2);
+	m_lastused->setColor(1, c1);
 	setColor(c2);
 	emit colorChanged(c2);
 }
