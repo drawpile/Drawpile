@@ -143,6 +143,11 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	//
 	m_lastused = new Palette(this);
 	m_lastused->setWriteProtected(true);
+
+	m_lastusedAlt = new Palette(this);
+	m_lastusedAlt->setWriteProtected(true);
+	m_lastusedAlt->appendColor(Qt::white);
+
 	_ui->lastused->setPalette(m_lastused);
 	_ui->lastused->setEnableScrolling(false);
 	_ui->lastused->setMaxRows(1);
@@ -322,14 +327,18 @@ void ColorBox::addLastUsedColor(const QColor &color)
 
 void ColorBox::swapLastUsedColors()
 {
-	if(m_lastused->count()<2)
-		return;
-	const QColor c1 = m_lastused->color(0).color;
-	const QColor c2 = m_lastused->color(1).color;
-	m_lastused->setColor(0, c2);
-	m_lastused->setColor(1, c1);
-	setColor(c2);
-	emit colorChanged(c2);
+	// Swap last-used palettes
+	Palette *swap = m_lastused;
+	m_lastused = m_lastusedAlt;
+	m_lastusedAlt = swap;
+	_ui->lastused->setPalette(m_lastused);
+
+	// Select last used color
+	if(m_lastused->count()>0) {
+		QColor c = m_lastused->color(0).color;
+		setColor(c);
+		emit colorChanged(c);
+	}
 }
 
 }

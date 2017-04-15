@@ -56,6 +56,7 @@ private slots:
 private:
 	Ui_ColorBox *_ui;
 	Palette *m_lastused;
+	Palette *m_lastusedAlt;
 
 	QAction *_deletePalette;
 	QAction *_writeprotectPalette;
