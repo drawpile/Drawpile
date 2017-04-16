@@ -41,10 +41,10 @@ namespace widgets {
 	class ChatBox;
 	class UserList;
 	class ViewStatus;
-	class PresetPie;
 }
 namespace docks {
 	class ToolSettings;
+	class BrushPalette;
 	class InputSettings;
 	class LayerList;
 	class PaletteBox;
@@ -206,6 +206,7 @@ private:
 	QSplitter *_splitter;
 
 	docks::ToolSettings *_dock_toolsettings;
+	docks::BrushPalette *m_dockBrushPalette;
 	docks::InputSettings *_dock_input;
 	docks::LayerList *_dock_layers;
 	docks::ColorBox *_dock_colors;
@@ -221,7 +222,6 @@ private:
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *_viewstatus;
 	QToolButton *_statusChatButton;
-	widgets::PresetPie *m_presetPie;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
@@ -235,6 +235,7 @@ private:
 	QActionGroup *m_admintools; // session operator actions
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *_drawingtools; // drawing tool selection
+	QActionGroup *m_brushSlots; // tool slot shortcuts
 
 	int _lastToolBeforePaste; // Last selected tool before Paste was used
 

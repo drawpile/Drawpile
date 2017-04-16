@@ -52,7 +52,7 @@ void ToolSettings::pushSettings()
 
 ToolProperties ToolSettings::saveToolSettings()
 {
-	return ToolProperties(toolType());
+	return ToolProperties();
 }
 
 void ToolSettings::restoreToolSettings(const ToolProperties &)

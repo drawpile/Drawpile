@@ -12,7 +12,6 @@ set (
 	notifications.cpp
 	toolwidgets/toolsettings.cpp
 	toolwidgets/brushsettings.cpp
-	toolwidgets/shapetoolsettings.cpp
 	toolwidgets/colorpickersettings.cpp
 	toolwidgets/selectionsettings.cpp
 	toolwidgets/annotationsettings.cpp
@@ -55,9 +54,9 @@ set (
 	widgets/userlistwidget.cpp 
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
-	widgets/presetpie.cpp
 	docks/utils.cpp
-	docks/toolsettingsdock.cpp 
+	docks/toolsettingsdock.cpp
+	docks/brushpalettedock.cpp
 	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/layerlistdock.cpp
@@ -92,16 +91,13 @@ endif()
 
 set (
 	UIs
-	ui/brushsettings.ui
-	ui/simplesettings.ui
-	ui/smudgesettings.ui
+	ui/brushdock.ui
+	ui/brushpalette.ui
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
 	ui/settings.ui
 	ui/textsettings.ui
-	ui/pensettings.ui
-	ui/erasersettings.ui
 	ui/selectsettings.ui
 	ui/fillsettings.ui
 	ui/lasersettings.ui

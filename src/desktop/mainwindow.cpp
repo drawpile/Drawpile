@@ -78,9 +78,9 @@
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
 #include "widgets/userlistwidget.h"
-#include "widgets/presetpie.h"
 
 #include "docks/toolsettingsdock.h"
+#include "docks/brushpalettedock.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
@@ -266,21 +266,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_viewstatus, SIGNAL(angleChanged(qreal)), _view, SLOT(setRotation(qreal)));
 
 	connect(_dock_toolsettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
-	
-	// Create the tool preset pie menu
-	m_presetPie = new widgets::PresetPie(_view);
-	m_presetPie->hide();
-	m_presetPie->resize(300, 300);
-
-	connect(_view, &widgets::CanvasView::rightClicked, m_presetPie, &widgets::PresetPie::showAt);
-	connect(_dock_colors, &docks::ColorBox::colorChanged, m_presetPie, &widgets::PresetPie::setColor);
-	connect(_dock_toolsettings, &docks::ToolSettings::foregroundColorChanged, m_presetPie, &widgets::PresetPie::setColor);
-	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_colors, &docks::ColorBox::setColor);
-	connect(m_presetPie, &widgets::PresetPie::colorChanged, _dock_toolsettings, &docks::ToolSettings::setForegroundColor);
-	connect(m_presetPie, &widgets::PresetPie::presetRequest, this, [this](int slice) {
-		m_presetPie->setToolPreset(slice, _dock_toolsettings->getCurrentToolProperties());
-	});
-	connect(m_presetPie, &widgets::PresetPie::toolSelected, _dock_toolsettings, &docks::ToolSettings::setToolAndProps);
 
 	// Create the chatbox and user list
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
@@ -326,7 +311,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(_view);
-	static_cast<tools::SelectionSettings*>(_dock_toolsettings->getToolSettingsPage(tools::Tool::POLYGONSELECTION))->setView(_view);
 
 	connect(_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(_dock_layers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
@@ -826,7 +810,17 @@ bool MainWindow::event(QEvent *event)
 							break;
 						}
 					}
+
+					// Return from temporary tool slot change
+					for(const QAction *act : m_brushSlots->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count()==1 && e->key() == seq[0]) {
+							_dock_toolsettings->setPreviousTool();
+							break;
+						}
+					}
 				}
+
 				_tempToolSwitchShortcut->reset();
 			}
 		}
@@ -1519,7 +1513,6 @@ void MainWindow::setShowAnnotations(bool show)
 	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::Tool::ANNOTATION);
 	}
 }
 
@@ -1531,7 +1524,6 @@ void MainWindow::setShowLaserTrails(bool show)
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
-		_dock_toolsettings->disableEraserOverride(tools::Tool::LASERPOINTER);
 	}
 }
 
@@ -2151,6 +2143,9 @@ void MainWindow::setupActions()
 	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
 	QAction *rotateorig = makeAction("rotatezero", "transform-rotate", tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *rotatecw = makeAction("rotatecw", 0, tr("Rotate Clockwise"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Period));
+	QAction *rotateccw = makeAction("rotateccw", 0, tr("Rotate Counterclockwise°"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Comma));
+
 	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
@@ -2215,6 +2210,8 @@ void MainWindow::setupActions()
 	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
 	connect(zoomorig, &QAction::triggered, this, [this]() { _view->setZoom(100.0); });
 	connect(rotateorig, &QAction::triggered, this, [this]() { _view->setRotation(0); });
+	connect(rotatecw, &QAction::triggered, this, [this]() { _view->setRotation(_view->rotation() + 5); });
+	connect(rotateccw, &QAction::triggered, this, [this]() { _view->setRotation(_view->rotation() - 5); });
 	connect(rotate90, &QAction::triggered, this, [this]() { _view->setRotation(90); });
 	connect(rotate180, &QAction::triggered, this, [this]() { _view->setRotation(180); });
 	connect(rotate270, &QAction::triggered, this, [this]() { _view->setRotation(270); });
@@ -2247,6 +2244,8 @@ void MainWindow::setupActions()
 
 	QMenu *rotatemenu = viewmenu->addMenu(tr("Rotation"));
 	rotatemenu->addAction(rotateorig);
+	rotatemenu->addAction(rotatecw);
+	rotatemenu->addAction(rotateccw);
 	rotatemenu->addAction(rotate90);
 	rotatemenu->addAction(rotate180);
 	rotatemenu->addAction(rotate270);
@@ -2320,10 +2319,7 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
-	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
-	QAction *smudgetool = makeAction("toolsmudge", "draw-watercolor", tr("&Watercolor"), tr("A brush that picks up color from the layer"), QKeySequence("W"), true);
-	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
+	QAction *freehandtool = makeAction("toolbrush", "draw-brush", tr("Freehand"), tr("Freehand brush tool"), QKeySequence("B"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
@@ -2338,10 +2334,7 @@ void MainWindow::setupActions()
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
 
-	_drawingtools->addAction(pentool);
-	_drawingtools->addAction(brushtool);
-	_drawingtools->addAction(smudgetool);
-	_drawingtools->addAction(erasertool);
+	_drawingtools->addAction(freehandtool);
 	_drawingtools->addAction(linetool);
 	_drawingtools->addAction(recttool);
 	_drawingtools->addAction(ellipsetool);
@@ -2359,6 +2352,8 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
+	QAction *erasertoggle = makeAction("erasertoggle", 0, tr("Eraser Mode"), QString(), QKeySequence("E"));
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap Last Colors"), QString(), QKeySequence("X"));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
 
@@ -2368,11 +2363,15 @@ void MainWindow::setupActions()
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
 
+	connect(erasertoggle, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::toggleEraserMode);
+	connect(swapcolors, &QAction::triggered, _dock_colors, &docks::ColorBox::swapLastUsedColors);
 	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
+	toolshortcuts->addAction(erasertoggle);
+	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addSeparator();
@@ -2416,47 +2415,29 @@ void MainWindow::setupActions()
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 
-	//
-	// Tool preset pie menu
-	//
-	QAction *showPie = makeAction("showpiemenu", nullptr, tr("Show Preset Pie Menu"), QString(), QKeySequence("z"));
-	connect(showPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::showAtCursor);
+	// Brush slot shortcuts
 
-	QAction *assignPie = makeAction("assignpreset", nullptr, tr("Assign Tool To Preset Pie Menu"), QString(), QKeySequence("x"));
-	connect(assignPie, &QAction::triggered, m_presetPie, &widgets::PresetPie::assignSelectedPreset);
-
-	// Keyboard shortcuts for tool preset slices
-	QActionGroup *presetActions = new QActionGroup(this);
-	QActionGroup *setPresetActions = new QActionGroup(this);
-	for(int i=0;i<widgets::PresetPie::SLICES;++i) {
-		// Switch to preset action
-		QAction *q = new QAction(QString("Tool preset #%1").arg(i+1), this);
-		q->setObjectName(QString("toolpreset-%1").arg(i));
+	m_brushSlots = new QActionGroup(this);
+	for(int i=0;i<5;++i) {
+		QAction *q = new QAction(QString("Brush slot #%1").arg(i+1), this);
+		q->setAutoRepeat(false);
+		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
 		q->setProperty("toolslotidx", i);
 		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		presetActions->addAction(q);
-		addAction(q);
-
-		// Assign preset action
-		q = new QAction(QString("Set tool preset #%1").arg(i+1), this);
-		q->setObjectName(QString("settoolpreset-%1").arg(i));
-		q->setShortcut(QKeySequence(QString("Ctrl+%1").arg(i+1)));
-		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
-		setPresetActions->addAction(q);
+		m_brushSlots->addAction(q);
 		addAction(q);
 	}
-
-	connect(presetActions, &QActionGroup::triggered, this, [this](QAction *a) {
-		m_presetPie->selectPreset(a->property("toolslotidx").toInt());
-	});
-	connect(setPresetActions, &QActionGroup::triggered, this, [this](QAction *a) {
-		m_presetPie->assignPreset(a->property("toolslotidx").toInt());
+	connect(m_brushSlots, &QActionGroup::triggered, this, [this](QAction *a) {
+		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
+		_toolChangeTime.start();
 	});
 
 	// Add temporary tool change shortcut detector
 	for(QAction *act : _drawingtools->actions())
+		act->installEventFilter(_tempToolSwitchShortcut);
+
+	for(QAction *act : m_brushSlots->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
 }
 
@@ -2467,6 +2448,14 @@ void MainWindow::createDocks()
 	_dock_toolsettings->setObjectName("ToolSettings");
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
+
+	// Create brush palette
+	m_dockBrushPalette = new docks::BrushPalette(this);
+	m_dockBrushPalette->setObjectName("BrushPalette");
+	m_dockBrushPalette->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockBrushPalette);
+
+	m_dockBrushPalette->connectBrushSettings(_dock_toolsettings->getToolSettingsPage(tools::Tool::FREEHAND));
 
 	// Create color box
 	_dock_colors = new docks::ColorBox(tr("Color"), this);

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
+   Copyright (C) 2015-2017 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,6 +35,10 @@ namespace widgets {
  * bar:
  *
  * ( button1 | button2 )
+ *
+ * New Drawpile specific features:
+ *  - Dropdown arrow if a menu (and text) is attached
+ *  - Color swatch mode
  */
 class PLUGIN_EXPORT GroupedToolButton : public QToolButton
 {
@@ -55,11 +59,15 @@ public:
 	GroupPosition groupPosition() const { return mGroupPosition; }
 	void setGroupPosition(GroupPosition groupPosition);
 
+	void setColorSwatch(const QColor &color);
+	QColor colorSwatch() const { return m_colorSwatch; }
+
 protected:
 	virtual void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
 
 private:
 	GroupPosition mGroupPosition;
+	QColor m_colorSwatch;
 };
 
 #ifndef DESIGNER_PLUGIN

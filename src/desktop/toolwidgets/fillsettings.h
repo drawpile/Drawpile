@@ -28,13 +28,13 @@ namespace tools {
 /**
  * @brief Settings for the flood fill tool
  */
-class FillSettings : public QObject, public ToolSettings {
+class FillSettings : public ToolSettings {
 	Q_OBJECT
 public:
-	FillSettings(const QString &name, const QString &title, ToolController *ctrl);
+	FillSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~FillSettings();
 
-	tools::Tool::Type toolType() const override { return tools::Tool::FLOODFILL; }
+	QString toolType() const override { return QStringLiteral("fill"); }
 
 	void quickAdjust1(float adjustment) override;
 	void setForeground(const QColor &color) override;

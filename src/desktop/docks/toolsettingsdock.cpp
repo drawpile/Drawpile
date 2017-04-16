@@ -21,72 +21,151 @@
 #include "docks/utils.h"
 
 #include "toolwidgets/brushsettings.h"
-#include "toolwidgets/shapetoolsettings.h"
 #include "toolwidgets/colorpickersettings.h"
 #include "toolwidgets/selectionsettings.h"
 #include "toolwidgets/annotationsettings.h"
 #include "toolwidgets/fillsettings.h"
 #include "toolwidgets/lasersettings.h"
 
-#include <QStackedWidget>
-#include <QVBoxLayout>
-#include <QSettings>
+#include "tools/toolproperties.h"
 
 #include <ColorDialog>
 
+#include <QStackedWidget>
+#include <QApplication>
+#include <QSettings>
+
 namespace docks {
 
-ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: QDockWidget(parent), m_settingspage{},
-	m_ctrl(ctrl), m_eraserOverride(0), m_eraserActive(false)
-{
-	Q_ASSERT(ctrl);
+struct ToolPage {
+	// Note: multiple different tools (e.g. Freehand and Line) can share the same settings
+	QSharedPointer<tools::ToolSettings> settings;
+	QString name;
+	QString title;
+};
 
+struct ToolSettings::Private {
+	ToolPage pages[tools::Tool::_LASTTOOL];
+	QVector<QSharedPointer<tools::ToolSettings>> toolSettings;
+	tools::ToolController *ctrl;
+
+	QStackedWidget *widgetStack;
+	color_widgets::ColorDialog *colorDialog;
+
+	tools::Tool::Type currentTool;
+	tools::Tool::Type previousTool;
+	int previousToolSlot;
+	QColor color;
+
+	bool switchedWithStylusEraser;
+
+	tools::ToolSettings *currentSettings() {
+		Q_ASSERT(currentTool>=0 && currentTool <= tools::Tool::_LASTTOOL);
+		return pages[currentTool].settings.data();
+	}
+
+	Private(tools::ToolController *ctrl)
+		: ctrl(ctrl),
+		  widgetStack(nullptr),
+		  colorDialog(nullptr),
+		  currentTool(tools::Tool::FREEHAND),
+		  previousTool(tools::Tool::FREEHAND),
+		  previousToolSlot(0),
+		  color(Qt::black),
+		  switchedWithStylusEraser(false)
+	{
+		Q_ASSERT(ctrl);
+
+		// Create tool pages
+		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
+		auto sel = QSharedPointer<tools::ToolSettings>(new tools::SelectionSettings(ctrl));
+		pages[tools::Tool::FREEHAND] = {
+				brush,
+				"freehand",
+				QApplication::tr("Freehand")
+			};
+		pages[tools::Tool::LINE] = {
+				brush,
+				"line",
+				QApplication::tr("Line")
+			};
+		pages[tools::Tool::RECTANGLE] = {
+				brush,
+				"rectangle",
+				QApplication::tr("Rectangle")
+			};
+		pages[tools::Tool::ELLIPSE] = {
+				brush,
+				"ellipse",
+				QApplication::tr("Ellipse")
+			};
+		pages[tools::Tool::FLOODFILL] = {
+				QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
+				"fill",
+				QApplication::tr("Flood Fill")
+			};
+		pages[tools::Tool::ANNOTATION] = {
+				QSharedPointer<tools::ToolSettings>(new tools::AnnotationSettings(ctrl)),
+				"annotation",
+				QApplication::tr("Annotation")
+			};
+		pages[tools::Tool::PICKER] = {
+				QSharedPointer<tools::ToolSettings>(new tools::ColorPickerSettings(ctrl)),
+				"picker",
+				QApplication::tr("Color Picker")
+			};
+		pages[tools::Tool::LASERPOINTER] = {
+				QSharedPointer<tools::ToolSettings>(new tools::LaserPointerSettings(ctrl)),
+				"laser",
+				QApplication::tr("Laser Pointer")
+			};
+		pages[tools::Tool::SELECTION] = {
+				sel,
+				"selection",
+				QApplication::tr("Selection (Rectangular)")
+			};
+		pages[tools::Tool::POLYGONSELECTION] = {
+				sel,
+				"selection",
+				QApplication::tr("Selection (Free-Form)")
+			};
+
+		for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
+			if(!toolSettings.contains(pages[i].settings))
+				toolSettings << pages[i].settings;
+		}
+	}
+};
+
+ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
+	: QDockWidget(parent), d(new Private(ctrl))
+{
 	setStyleSheet(defaultDockStylesheet());
 
 	// Create a widget stack
-	m_widgets = new QStackedWidget(this);
-	setWidget(m_widgets);
+	d->widgetStack = new QStackedWidget(this);
+	setWidget(d->widgetStack);
 
-	addPage(new tools::PenSettings("pen", tr("Pen"), m_ctrl));
-	addPage(new tools::BrushSettings("brush", tr("Brush"), m_ctrl));
-	addPage(new tools::SmudgeSettings("smudge", tr("Watercolor"), m_ctrl));
-	addPage(new tools::EraserSettings("eraser", tr("Eraser"), m_ctrl));
-	addPage(new tools::ColorPickerSettings("picker", tr("Color Picker"), m_ctrl));
-	addPage(new tools::SimpleSettings("line", tr("Line"), "draw-line", tools::SimpleSettings::Line, true, m_ctrl));
-	addPage(new tools::SimpleSettings("rectangle", tr("Rectangle"), "draw-rectangle", tools::SimpleSettings::Rectangle, false, m_ctrl));
-	addPage(new tools::SimpleSettings("ellipse", tr("Ellipse"), "draw-ellipse", tools::SimpleSettings::Ellipse, true, m_ctrl));
-	addPage(new tools::FillSettings("fill", tr("Flood Fill"), m_ctrl));
-	addPage(new tools::AnnotationSettings("annotation", tr("Annotation"), m_ctrl));
-	addPage(new tools::SelectionSettings("selection", tr("Selection (Rectangular)"), false, m_ctrl));
-	addPage(new tools::SelectionSettings("polygonselection", tr("Selection (Free-Form)"), true, m_ctrl));
-	addPage(new tools::LaserPointerSettings("laser", tr("Laser pointer"), m_ctrl));
+	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
+		if(!d->pages[i].settings->getUi())
+			d->widgetStack->addWidget(d->pages[i].settings->createUi(this));
+	}
 
-	m_currenttool = getToolSettingsPage(tools::Tool::BRUSH);
-	setWindowTitle(m_currenttool->getTitle());
+	setWindowTitle(d->pages[d->currentTool].title);
 
+	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
+			this, &ToolSettings::setForegroundColor);
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
-	// Create color changer dialogs
-	m_colorDialog = new color_widgets::ColorDialog(this);
-	m_colorDialog->setAlphaEnabled(false);
-	connect(m_colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
+	d->colorDialog = new color_widgets::ColorDialog(this);
+	d->colorDialog->setAlphaEnabled(false);
+	connect(d->colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
 }
 
 ToolSettings::~ToolSettings()
 {
-	for(unsigned int i=0;i<(sizeof(m_settingspage) / sizeof(*m_settingspage));++i)
-		delete m_settingspage[i];
-}
-
-void ToolSettings::addPage(tools::ToolSettings *page)
-{
-	Q_ASSERT(page->toolType() >= 0 && page->toolType() < tools::Tool::_LASTTOOL);
-	Q_ASSERT(m_settingspage[page->toolType()] == nullptr);
-
-	m_settingspage[page->toolType()] = page;
-	m_widgets->addWidget(page->createUi(this));
+	delete d;
 }
 
 void ToolSettings::readSettings()
@@ -94,37 +173,39 @@ void ToolSettings::readSettings()
 	QSettings cfg;
 	cfg.beginGroup("tools");
 	cfg.beginGroup("toolset");
-	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
-		cfg.beginGroup(m_settingspage[i]->getName());
-		m_settingspage[i]->restoreToolSettings(tools::ToolProperties::load(cfg));
+	for(auto ts : d->toolSettings) {
+		cfg.beginGroup(ts->toolType());
+		ts->restoreToolSettings(tools::ToolProperties::load(cfg));
 		cfg.endGroup();
 	}
 	cfg.endGroup();
 	setForegroundColor(cfg.value("color").value<QColor>());
-	setTool(tools::Tool::Type(cfg.value("tool").toInt()));
+	selectTool(tools::Tool::Type(cfg.value("tool").toInt()));
 }
 
 void ToolSettings::saveSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("tools");
-	cfg.setValue("tool", m_currenttool->toolType());
-	cfg.setValue("color", m_color);
+	cfg.setValue("tool", d->currentTool);
+	cfg.setValue("color", d->color);
 
 	cfg.beginGroup("toolset");
-	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
-		cfg.beginGroup(m_settingspage[i]->getName());
-		m_settingspage[i]->saveToolSettings().save(cfg);
-		cfg.endGroup();
+	for(auto ts : d->toolSettings) {
+		tools::ToolProperties props = ts->saveToolSettings();
+		if(!props.isEmpty()) {
+			cfg.beginGroup(ts->toolType());
+			props.save(cfg);
+			cfg.endGroup();
+		}
 	}
 }
 
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
 	Q_ASSERT(tool>=0 && tool < tools::Tool::_LASTTOOL);
-	Q_ASSERT(m_settingspage[tool] != nullptr);
 	if(tool>=0 && tool<tools::Tool::_LASTTOOL)
-		return m_settingspage[tool];
+		return d->pages[tool].settings.data();
 	else
 		return nullptr;
 }
@@ -134,76 +215,124 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
  * @param tool tool identifier
  */
 void ToolSettings::setTool(tools::Tool::Type tool) {
-	m_previousTool = currentTool();
-	selectTool(tool);
+	if(tool != d->currentTool) {
+		d->previousTool = d->currentTool;
+		tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+		d->previousToolSlot = bs ? bs->currentBrushSlot() : 0;
+		selectTool(tool);
+	}
 }
 
-void ToolSettings::setToolAndProps(const tools::ToolProperties &tool)
+void ToolSettings::setToolSlot(int idx)
 {
-	if(tool.toolType()<0)
+	// Currently, brush tool is the only tool with tool slots
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(bs) {
+		d->previousTool = d->currentTool;
+		d->previousToolSlot = bs->currentBrushSlot();
+		bs->selectBrushSlot(idx);
+	} else {
+		setTool(tools::Tool::FREEHAND);
+		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->selectBrushSlot(idx);
+	}
+}
+
+void ToolSettings::toggleEraserMode()
+{
+	// Currently, brush tool is the only tool with eraser mode
+	// When eraser mode is activated when some other tool is selected,
+	// switch to freehand tool.
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(bs) {
+		bool inEraseMode = bs->eraserMode();
+		bs->setEraserMode(!inEraseMode);
+	} else {
+		setTool(tools::Tool::FREEHAND);
+		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->setEraserMode(true);
+	}
+}
+
+void ToolSettings::eraserNear(bool near)
+{
+	// Auto-switch to eraser mode only when using a brush tool, since
+	// other tools don't currently have eraser modes.
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(!bs)
 		return;
-	m_previousTool = currentTool();
-	selectTool(tools::Tool::Type(tool.toolType()), tool);
+
+	if(near) {
+		// Eraser was just brought near: switch to erase mode if not already
+		d->switchedWithStylusEraser = !bs->eraserMode();
+		if(!bs->eraserMode())
+			bs->setEraserMode(true);
+	} else {
+		// Eraser taken away: switch back
+		if(d->switchedWithStylusEraser) {
+			d->switchedWithStylusEraser = false;
+			bs->setEraserMode(false);
+		}
+	}
 }
 
 void ToolSettings::setPreviousTool()
 {
-	selectTool(m_previousTool);
+	selectTool(d->previousTool);
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(bs)
+		bs->selectBrushSlot(d->previousToolSlot);
 }
 
-void ToolSettings::selectTool(tools::Tool::Type tool, const tools::ToolProperties &props)
+void ToolSettings::selectTool(tools::Tool::Type tool)
 {
-	tools::ToolSettings *ts = getToolSettingsPage(tool);
-	if(!ts) {
+	if(tool<0 || tool >= tools::Tool::_LASTTOOL) {
 		qWarning("selectTool(%d): no such tool!", tool);
+		tool = tools::Tool::FREEHAND;
+	}
+
+	tools::ToolSettings *ts = d->pages[tool].settings.data();
+	if(!ts) {
+		qWarning("selectTool(%d): tool settings not created!", tool);
 		return;
 	}
 
-	m_currenttool = ts;
+	d->currentTool = tool;
+	ts->setActiveTool(tool);
 
-	if(props.toolType() == tool)
-		m_currenttool->restoreToolSettings(props);
+	ts->setForeground(d->color);
+	ts->pushSettings();
 
-	m_currenttool->setForeground(m_color);
-	m_currenttool->pushSettings();
-
-	setWindowTitle(m_currenttool->getTitle());
-	m_widgets->setCurrentWidget(m_currenttool->getUi());
+	setWindowTitle(d->pages[tool].title);
+	d->widgetStack->setCurrentWidget(ts->getUi());
 
 	emit toolChanged(tool);
-	emit sizeChanged(m_currenttool->getSize());
+	emit sizeChanged(ts->getSize());
 	updateSubpixelMode();
-}
-
-tools::ToolProperties ToolSettings::getCurrentToolProperties() const
-{
-	return m_currenttool->saveToolSettings();
 }
 
 void ToolSettings::updateSubpixelMode()
 {
-	emit subpixelModeChanged(m_currenttool->getSubpixelMode());
+	emit subpixelModeChanged(d->currentSettings()->getSubpixelMode());
 }
 
 tools::Tool::Type ToolSettings::currentTool() const
 {
-	return tools::Tool::Type(m_currenttool->toolType());
+	return d->currentTool;
 }
 
 QColor ToolSettings::foregroundColor() const
 {
-	return m_color;
+	return d->color;
 }
 
 void ToolSettings::setForegroundColor(const QColor& color)
 {
-	if(color != m_color) {
-		m_color = color;
+	if(color != d->color) {
+		d->color = color;
 
-		m_currenttool->setForeground(color);
+		d->currentSettings()->setForeground(color);
 
-		if(m_colorDialog->isVisible())
-			m_colorDialog->setColor(color);
+		if(d->colorDialog->isVisible())
+			d->colorDialog->setColor(color);
 
 		emit foregroundColorChanged(color);
 	}
@@ -211,30 +340,12 @@ void ToolSettings::setForegroundColor(const QColor& color)
 
 void ToolSettings::changeForegroundColor()
 {
-	m_colorDialog->showColor(m_color);
+	d->colorDialog->showColor(d->color);
 }
 
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 {
-	m_currenttool->quickAdjust1(adjustment);
-}
-
-void ToolSettings::eraserNear(bool near)
-{
-	if(near && !m_eraserActive) {
-		m_eraserOverride = currentTool();
-		setTool(tools::Tool::ERASER);
-		m_eraserActive = true;
-	} else if(!near && m_eraserActive) {
-		setTool(tools::Tool::Type(m_eraserOverride));
-		m_eraserActive = false;
-	}
-}
-
-void ToolSettings::disableEraserOverride(tools::Tool::Type tool)
-{
-	if(m_eraserOverride == tool)
-		m_eraserOverride = tools::Tool::BRUSH; // select some tool that can't be disabled
+	d->currentSettings()->quickAdjust1(adjustment);
 }
 
 }

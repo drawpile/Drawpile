@@ -20,28 +20,15 @@
 #define TOOLSETTINGSDOCK_H
 
 #include "tools/tool.h"
-#include "tools/toolproperties.h"
 
 #include <QDockWidget>
 
 class QStackedWidget;
 
-namespace color_widgets {
-	class ColorDialog;
-}
 
 namespace tools {
 	class ToolSettings;
 	class ToolController;
-	class AnnotationSettings;
-	class ColorPickerSettings;
-	class LaserPointerSettings;
-	class FillSettings;
-	class SelectionSettings;
-}
-
-namespace paintcore {
-	class Brush;
 }
 
 namespace docks {
@@ -55,21 +42,16 @@ class ToolSettings : public QDockWidget
 Q_OBJECT
 public:
 	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
-
 	~ToolSettings();
 
 	//! Get the current foreground color
 	QColor foregroundColor() const;
-
 
 	//! Get the currently selected tool
 	tools::Tool::Type currentTool() const;
 
 	//! Get a tool settings page
 	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
-
-	//! Get the active tool's properties
-	tools::ToolProperties getCurrentToolProperties() const;
 
 	//! Load tool related settings
 	void readSettings();
@@ -78,16 +60,19 @@ public:
 	void saveSettings();
 
 public slots:
-	//! Set the tool for which settings are shown
+	//! Set the active tool
 	void setTool(tools::Tool::Type tool);
 
-	//! Select a tool and set its properties too
-	void setToolAndProps(const tools::ToolProperties &tool);
+	//! Select the active tool slot (for those tools that have them)
+	void setToolSlot(int idx);
+
+	//! Toggle current tool's eraser mode (if it has one)
+	void toggleEraserMode();
 
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 
-	//! Select the tool previosly set with setTool
+	//! Select the tool previosly set with setTool or setToolSlot
 	void setPreviousTool();
 
 	//! Set foreground color
@@ -98,22 +83,6 @@ public slots:
 
 	//! Switch tool when eraser is brought near the tablet
 	void eraserNear(bool near);
-
-	/**
-	 * @brief Change the eraser override tool if it matches the given
-	 *
-	 * This is used to prevent a disabled tool from being reselected
-	 * after the tablet eraser is lifted.
-	 *
-	 * The chain of events is:
-	 * 1. User selects a tool that can be disabled (annotation or laser pointer)
-	 * 2. User places the tablet eraser near the tablet surface, triggering eraser override tool
-	 * 3. User disables annotations/lasers
-	 * 4. User lifts the eraser, causing the previous tool (which is now disabled) to be reselected.
-	 *
-	 * @param tool the tool to disable
-	 */
-	void disableEraserOverride(tools::Tool::Type tool);
 
 	//! Query current tool's subpixel mode and emit subpixelModeChanged
 	void updateSubpixelMode();
@@ -132,22 +101,10 @@ signals:
 	void toolChanged(tools::Tool::Type tool);
 
 private:
-	void addPage(tools::ToolSettings *page);
-	void selectTool(tools::Tool::Type tool, const tools::ToolProperties &props=tools::ToolProperties());
+	void selectTool(tools::Tool::Type tool);
 
-	tools::ToolSettings *m_settingspage[tools::Tool::_LASTTOOL];
-
-	tools::ToolController *m_ctrl;
-	tools::ToolSettings *m_currenttool;
-	QStackedWidget *m_widgets;
-
-	int m_eraserOverride;
-	bool m_eraserActive;
-
-	tools::Tool::Type m_previousTool;
-
-	QColor m_color;
-	color_widgets::ColorDialog *m_colorDialog;
+	struct Private;
+	Private *d;
 };
 
 }

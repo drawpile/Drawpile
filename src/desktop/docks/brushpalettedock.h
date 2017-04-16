@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,24 +16,37 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_BRUSHES_H
-#define TOOLS_BRUSHES_H
+#ifndef BRUSHPALETTEDOCK_H
+#define BRUSHPALETTEDOCK_H
 
-#include "tool.h"
+#include "tools/tool.h"
+
+#include <QDockWidget>
 
 namespace tools {
+	class ToolProperties;
+	class ToolSettings;
+}
 
-//! Freehand brush tool
-class Freehand : public Tool
+namespace docks {
+
+/**
+ * @brief A brush palette dock
+ * 
+ * This dock displays a list of brush presets to choose from.
+ */
+class BrushPalette : public QDockWidget
 {
+Q_OBJECT
 public:
-	Freehand(ToolController &owner);
+	BrushPalette(QWidget *parent=nullptr);
+	~BrushPalette();
 
-	void begin(const paintcore::Point& point, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
-	void end() override;
+	void connectBrushSettings(tools::ToolSettings *toolSettings);
 
-	bool allowSmoothing() const override { return true; }
+private:
+	struct Private;
+	Private *d;
 };
 
 }

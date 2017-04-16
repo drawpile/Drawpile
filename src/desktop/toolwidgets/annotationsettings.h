@@ -33,11 +33,13 @@ namespace tools {
  * The annotation tool is special because it is used to manipulate
  * annotation objects rather than pixel data.
  */
-class AnnotationSettings : public QObject, public ToolSettings {
+class AnnotationSettings : public ToolSettings {
 Q_OBJECT
 public:
-	AnnotationSettings(QString name, QString title, ToolController *ctrl);
+	AnnotationSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~AnnotationSettings();
+
+	QString toolType() const override { return QStringLiteral("annotation"); }
 
 	/**
 	 * @brief Get the ID of the currently selected annotation
@@ -51,11 +53,10 @@ public:
 	 */
 	void setFocusAt(int cursorPos);
 
-	tools::Tool::Type toolType() const override { return tools::Tool::ANNOTATION; }
-	virtual void setForeground(const QColor &) override {}
-	virtual void quickAdjust1(float) override {}
-	virtual int getSize() const override { return 0; }
-	virtual bool getSubpixelMode() const { return false; }
+	void setForeground(const QColor &) override {}
+	void quickAdjust1(float) override {}
+	int getSize() const override { return 0; }
+	bool getSubpixelMode() const { return false; }
 
 public slots:
 	//! Set the currently selected annotation item
@@ -79,7 +80,7 @@ private slots:
 	void updateFontIfUniform();
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent);
+	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);

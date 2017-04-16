@@ -58,16 +58,12 @@ void ToolProperties::save(QSettings &cfg) const
 		i.next();
 		cfg.setValue(i.key(), i.value());
 	}
-	cfg.setValue("tooltype", m_tool);
+	cfg.setValue("tooltype", m_type);
 }
 
 ToolProperties ToolProperties::load(const QSettings &cfg)
 {
-	bool ok;
-	ToolProperties tp(cfg.value("tooltype", -1).toInt(&ok));
-	if(!ok)
-		tp.m_tool = -1;
-
+	ToolProperties tp(cfg.value("tooltype").toString());
 	for(const QString &key : cfg.allKeys()) {
 		tp.m_props[key] = cfg.value(key);
 	}

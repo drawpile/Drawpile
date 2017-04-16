@@ -39,10 +39,11 @@ class ToolController;
  * displayed in a dock window and a uniform way of getting a brush
  * configured by the user.
  */
-class ToolSettings {
+class ToolSettings : public QObject {
+	Q_OBJECT
 public:
-	ToolSettings(const QString &name, const QString &title, const QString &icon, ToolController *ctrl)
-		: m_ctrl(ctrl), m_name(name), m_title(title), m_icon(icon::fromTheme(icon)), m_widget(nullptr)
+	ToolSettings(ToolController *ctrl, QObject *parent)
+		: QObject(parent), m_ctrl(ctrl), m_widget(nullptr)
 	{
 		Q_ASSERT(ctrl);
 	}
@@ -63,8 +64,20 @@ public:
 	//! Get the UI widget
 	QWidget *getUi() { return m_widget; }
 
-	//! Get the type of the tool
-	virtual tools::Tool::Type toolType() const = 0;
+	/**
+	 * @brief Get the type of tool these settings are meant for.
+	 *
+	 * (Some tools, like freehand and line, share the same type)
+	 */
+	virtual QString toolType() const = 0;
+
+	/**
+	 * @brief Select the currently active tool
+	 *
+	 * Some tool settings pages support multiple tools
+	 * and can adapt their features based on the selection.
+	 */
+	virtual void setActiveTool(tools::Tool::Type tool) { Q_UNUSED(tool); }
 
 	//! Set the foreground color
 	virtual void setForeground(const QColor& color) = 0;
@@ -89,23 +102,6 @@ public:
 	 */
 	virtual bool getSubpixelMode() const = 0;
 
-	/**
-	 * @brief Get the internal name of this tool
-	 * The internal name is used when settings are stored to a
-	 * configuration file
-	 * @return internal tool name
-	 */
-	const QString& getName() const { return m_name; }
-
-	/**
-	 * @brief Get the user facing name of this tool
-	 * @return visible tool name
-	 */
-	const QString& getTitle() const { return m_title; }
-
-	//! Get the icon for this tool type
-	const QIcon &getIcon() const { return m_icon; }
-
 	//! Push settings to the tool controller
 	virtual void pushSettings();
 
@@ -127,9 +123,6 @@ protected:
 
 private:
 	ToolController *m_ctrl;
-	QString m_name;
-	QString m_title;
-	QIcon m_icon;
 	QWidget *m_widget;
 };
 

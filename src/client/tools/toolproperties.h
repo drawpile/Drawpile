@@ -33,11 +33,17 @@ namespace tools {
 class ToolProperties
 {
 public:
-	ToolProperties() : m_tool(-1) { }
-	ToolProperties(int tool) : m_tool(tool) { }
+	ToolProperties() { }
+	ToolProperties(const QString &type)
+		: m_type(type) { }
 
-	//! Get the type of the tool
-	int toolType() const { return m_tool; }
+	/**
+	 * @brief Get the type of the tool
+	 *
+	 * E.g. Freehand and Line tools are both "brush" type tools,
+	 * as they share their settings.
+	 */
+	QString toolType() const { return m_type; }
 
 	/**
 	 * @brief Set a value
@@ -71,6 +77,9 @@ public:
 	 */
 	bool boolValue(const QString &key, bool defaultValue) const;
 
+	//! Are there any stored properties?
+	bool isEmpty() const { return m_props.isEmpty(); }
+
 	/**
 	 * @brief Save tool properties
 	 *
@@ -88,11 +97,22 @@ public:
 	 */
 	static ToolProperties load(const QSettings &cfg);
 
+	QVariantHash asVariant() const { return m_props; }
+
+	static ToolProperties fromVariant(const QVariantHash &h, const QString &type=QString())
+	{
+		ToolProperties tp(type);
+		tp.m_props = h;
+		return tp;
+	}
+
 private:
 	QVariantHash m_props;
-	int m_tool;
+	QString m_type;
 };
 
 }
+
+Q_DECLARE_METATYPE(tools::ToolProperties)
 
 #endif

@@ -30,8 +30,8 @@ using widgets::BrushPreview;
 
 namespace tools {
 
-FillSettings::FillSettings(const QString &name, const QString &title, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, "fill-color", ctrl), _ui(nullptr)
+FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent), _ui(nullptr)
 {
 }
 

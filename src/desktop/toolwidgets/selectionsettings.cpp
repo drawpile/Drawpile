@@ -31,8 +31,8 @@
 
 namespace tools {
 
-SelectionSettings::SelectionSettings(const QString &name, const QString &title, bool freeform, ToolController *ctrl)
-	: QObject(), ToolSettings(name, title, freeform ? "edit-select-lasso" : "select-rectangular", ctrl), m_ui(nullptr), m_freeform(freeform)
+SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent), m_ui(nullptr)
 {
 }
 
@@ -41,13 +41,6 @@ SelectionSettings::~SelectionSettings()
 	delete m_ui;
 }
 
-tools::Tool::Type SelectionSettings::toolType() const
-{
-	if(m_freeform)
-		return tools::Tool::POLYGONSELECTION;
-	else
-		return tools::Tool::SELECTION;
-}
 
 QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 {
