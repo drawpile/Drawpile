@@ -18,9 +18,12 @@
 */
 
 #include "banlistmodel.h"
+
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
+
+namespace net {
 
 BanlistModel::BanlistModel(QObject *parent)
 	: QAbstractTableModel(parent)
@@ -99,4 +102,6 @@ void BanlistModel::updateBans(const QJsonArray &banlist)
 		};
 	}
 	endResetModel();
+}
+
 }

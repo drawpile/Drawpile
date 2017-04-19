@@ -23,6 +23,8 @@
 
 class QJsonArray;
 
+namespace net {
+
 struct BanlistEntry {
 	int id;
 	QString username;
@@ -56,5 +58,7 @@ public:
 private:
 	QList<BanlistEntry> m_banlist;
 };
+
+}
 
 #endif // BANLISTMODEL_H

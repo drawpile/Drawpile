@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,36 +21,41 @@
 #include "sessionlistingdialog.h"
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
+#include "utils/listservermodel.h"
+#include "../shared/util/announcementapi.h"
 
 #include "ui_joindialog.h"
 
 #include <QPushButton>
 #include <QSettings>
 #include <QUrl>
+#include <QTimer>
 
 namespace dialogs {
 
 JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
-	: QDialog(parent)
+	: QDialog(parent), m_announcementApi(nullptr)
 {
-	_ui = new Ui_JoinDialog;
-	_ui->setupUi(this);
-	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
-	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	QPushButton *findBtn = _ui->buttons->addButton(tr("Find..."), QDialogButtonBox::ActionRole);
+	m_ui = new Ui_JoinDialog;
+	m_ui->setupUi(this);
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	QPushButton *findBtn = m_ui->buttons->addButton(tr("Find..."), QDialogButtonBox::ActionRole);
 
-	_ui->username->setValidator(new UsernameValidator(this));
+	m_ui->username->setValidator(new UsernameValidator(this));
 
 	// Set defaults
 	QSettings cfg;
 	cfg.beginGroup("history");
-	_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
-	_ui->username->setText(cfg.value("username").toString());
+	m_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
+	m_ui->username->setText(cfg.value("username").toString());
 
 	if(!url.isEmpty())
-		_ui->address->setCurrentText(url.toString());
+		m_ui->address->setCurrentText(url.toString());
 
-	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
+	connect(m_ui->address, &QComboBox::editTextChanged, this, &JoinDialog::addressChanged);
+
+	new MandatoryFields(this, m_ui->buttons->button(QDialogButtonBox::Ok));
 
 	connect(findBtn, &QPushButton::clicked, this, &JoinDialog::showListingDialog);
 }
@@ -69,6 +74,71 @@ static QString cleanAddress(const QString &addr)
 	return addr;
 }
 
+static bool isRoomcode(const QString &str) {
+	// Roomcodes are always exactly 5 letters long
+	if(str.length() != 5)
+		return false;
+
+	// And consist of characters in range A-Z
+	for(int i=0;i<str.length();++i)
+		if(str.at(i) < 'A' || str.at(i) > 'Z')
+			return false;
+
+	return true;
+}
+
+void JoinDialog::addressChanged(const QString &addr)
+{
+	if(isRoomcode(addr)) {
+		// A room code was just entered. Trigger session URL query
+		m_roomcode = addr;
+		m_ui->address->setEditText(QString());
+		m_ui->address->lineEdit()->setPlaceholderText(tr("Searching..."));
+		m_ui->address->lineEdit()->setReadOnly(true);
+		sessionlisting::ListServerModel servermodel(false);
+		for(const sessionlisting::ListServer &s : servermodel.servers()) {
+			m_roomcodeServers << s.url;
+		}
+		resolveRoomcode();
+	}
+}
+
+void JoinDialog::resolveRoomcode()
+{
+	if(m_roomcodeServers.isEmpty()) {
+		// Tried all the servers and didn't find the code
+		qDebug("Join code %s not found!", qPrintable(m_roomcode));
+
+		m_ui->address->lineEdit()->setPlaceholderText(tr("Room code not found!"));
+		QTimer::singleShot(1500, this, [this]() {
+			m_ui->address->setEditText(QString());
+			m_ui->address->lineEdit()->setReadOnly(false);
+			m_ui->address->lineEdit()->setPlaceholderText(QString());
+			m_ui->address->setFocus();
+		});
+
+	} else {
+		QUrl listServer = m_roomcodeServers.takeFirst();
+		qDebug("Querying join code %s at server: %s", qPrintable(m_roomcode), qPrintable(listServer.toString()));
+		if(!m_announcementApi) {
+			m_announcementApi = new sessionlisting::AnnouncementApi(this);
+			connect(m_announcementApi, &sessionlisting::AnnouncementApi::error, this, &JoinDialog::resolveRoomcode);
+			connect(m_announcementApi, &sessionlisting::AnnouncementApi::sessionFound, this, [this](const sessionlisting::Session &s) {
+				QString url = "drawpile://" + s.host;
+				if(s.port != 27750)
+					url += QString(":%1").arg(s.port);
+				url += '/';
+				url += s.id;
+				m_ui->address->lineEdit()->setReadOnly(false);
+				m_ui->address->lineEdit()->setPlaceholderText(QString());
+				m_ui->address->setEditText(url);
+				m_ui->address->setEnabled(true);
+			});
+		}
+		m_announcementApi->queryRoomcode(listServer, m_roomcode);
+	}
+}
+
 void JoinDialog::rememberSettings() const
 {
 	QSettings cfg;
@@ -76,33 +146,33 @@ void JoinDialog::rememberSettings() const
 	cfg.setValue("username", getUserName());
 	QStringList hosts;
 	// Move current item to the top of the list
-	const QString current = _ui->address->currentText();
-	int curindex = _ui->address->findText(current);
+	const QString current = m_ui->address->currentText();
+	int curindex = m_ui->address->findText(current);
 	if(curindex>=0)
-		_ui->address->removeItem(curindex);
+		m_ui->address->removeItem(curindex);
 	hosts << cleanAddress(current);
-	for(int i=0;i<_ui->address->count();++i) {
-		if(!_ui->address->itemText(i).isEmpty())
-			hosts << _ui->address->itemText(i);
+	for(int i=0;i<m_ui->address->count();++i) {
+		if(!m_ui->address->itemText(i).isEmpty())
+			hosts << m_ui->address->itemText(i);
 	}
 	cfg.setValue("recenthosts", hosts);
 }
 
 JoinDialog::~JoinDialog()
 {
-	delete _ui;
+	delete m_ui;
 }
 
 QString JoinDialog::getAddress() const {
-	return _ui->address->currentText().trimmed();
+	return m_ui->address->currentText().trimmed();
 }
 
 QString JoinDialog::getUserName() const {
-	return _ui->username->text().trimmed();
+	return m_ui->username->text().trimmed();
 }
 
 bool JoinDialog::recordSession() const {
-	return _ui->recordSession->isChecked();
+	return m_ui->recordSession->isChecked();
 }
 
 QUrl JoinDialog::getUrl() const
@@ -125,7 +195,7 @@ QUrl JoinDialog::getUrl() const
 
 void JoinDialog::setUrl(const QUrl &url)
 {
-	_ui->address->setCurrentText(url.toString());
+	m_ui->address->setCurrentText(url.toString());
 }
 
 void JoinDialog::showListingDialog()

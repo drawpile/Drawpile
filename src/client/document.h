@@ -35,10 +35,13 @@ namespace canvas {
 	class SessionLoader;
 	class StateSavepoint;
 }
-namespace net { class Client; }
+namespace net {
+	class Client;
+	class BanlistModel;
+	class AnnouncementListModel;
+}
 namespace recording { class Writer; }
 namespace tools { class ToolController; }
-class BanlistModel;
 
 /**
  * @brief An active document and its associated data, including the network connection
@@ -50,8 +53,8 @@ class BanlistModel;
 class Document : public QObject
 {
 	Q_PROPERTY(canvas::CanvasModel* canvas READ canvas() NOTIFY canvasChanged)
-	Q_PROPERTY(BanlistModel* banlist READ banlist() CONSTANT)
-	Q_PROPERTY(QStringListModel* announcementList READ announcementList() CONSTANT)
+	Q_PROPERTY(net::BanlistModel* banlist READ banlist() CONSTANT)
+	Q_PROPERTY(net::AnnouncementListModel* announcementList READ announcementList() CONSTANT)
 	Q_PROPERTY(QStringListModel* serverLog READ serverLog() CONSTANT)
 	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
 	Q_PROPERTY(bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
@@ -68,6 +71,8 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
+	Q_PROPERTY(QString roomcode READ roomcode NOTIFY sessionRoomcodeChanged)
+
 	Q_OBJECT
 public:
 	explicit Document(QObject *parent = 0);
@@ -78,8 +83,8 @@ public:
 	canvas::CanvasModel *canvas() const { return m_canvas; }
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
 	net::Client *client() const { return m_client; }
-	BanlistModel *banlist() const { return m_banlist; }
-	QStringListModel *announcementList() const { return m_announcementlist; }
+	net::BanlistModel *banlist() const { return m_banlist; }
+	net::AnnouncementListModel *announcementList() const { return m_announcementlist; }
 	QStringListModel *serverLog() const { return m_serverLog; }
 
 	/**
@@ -132,6 +137,8 @@ public:
 	bool isSessionNsfm() const { return m_sessionNsfm; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 
+	QString roomcode() const { return m_roomcode; }
+
 	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
 
 signals:
@@ -155,6 +162,7 @@ signals:
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
 	void sessionMaxUserCountChanged(int count);
+	void sessionRoomcodeChanged(const QString &code);
 	void serverSpaceLowChanged(bool isLow);
 	void autoResetTooLarge(int maxSize);
 
@@ -170,7 +178,7 @@ public slots:
 	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
-	void sendAnnounce(const QString &url);
+	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
 
 	// Tool related functions
@@ -213,6 +221,7 @@ private:
 	void setSessionOpword(bool ow);
 	void setSessionMaxUserCount(int count);
 	void setSessionNsfm(bool nsfm);
+	void setRoomcode(const QString &roomcode);
 
 	void copyFromLayer(int layer);
 
@@ -225,8 +234,8 @@ private:
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;
 	net::Client *m_client;
-	BanlistModel *m_banlist;
-	QStringListModel *m_announcementlist;
+	net::BanlistModel *m_banlist;
+	net::AnnouncementListModel *m_announcementlist;
 	QStringListModel *m_serverLog;
 
 	recording::Writer *m_recorder;
@@ -236,6 +245,8 @@ private:
 	bool m_autosave;
 	bool m_canAutosave;
 	QTimer *m_autosaveTimer;
+
+	QString m_roomcode;
 
 	bool m_sessionPersistent;
 	bool m_sessionClosed;

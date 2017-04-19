@@ -42,7 +42,7 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), _sentbytes(0), _recvbytes(0), _lag(0)
+	: QWidget(parent), m_state(NotConnected), _sentbytes(0), _recvbytes(0), _lag(0)
 {
 	setMinimumHeight(16+2);
 
@@ -60,30 +60,30 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->addWidget(m_download);
 
 	// Host address label
-	_label = new QLabel(tr("not connected"), this);
-	_label->setTextInteractionFlags(
+	m_label = new QLabel(this);
+	m_label->setTextInteractionFlags(
 			Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard
 			);
-	_label->setCursor(Qt::IBeamCursor);
-	_label->setContextMenuPolicy(Qt::ActionsContextMenu);
-	layout->addWidget(_label);
+	m_label->setCursor(Qt::IBeamCursor);
+	m_label->setContextMenuPolicy(Qt::ActionsContextMenu);
+	layout->addWidget(m_label);
 
 	// Action to copy address to clipboard
 	_copyaction = new QAction(tr("Copy address to clipboard"), this);
 	_copyaction->setEnabled(false);
-	_label->addAction(_copyaction);
+	m_label->addAction(_copyaction);
 	connect(_copyaction,SIGNAL(triggered()),this,SLOT(copyAddress()));
 
 	// Action to copy the full session URL to clipboard
 	_urlaction = new QAction(tr("Copy session URL to clipboard"), this);
 	_urlaction->setEnabled(false);
-	_label->addAction(_urlaction);
+	m_label->addAction(_urlaction);
 	connect(_urlaction, SIGNAL(triggered()), this, SLOT(copyUrl()));
 
 	// Discover local IP address
 	_discoverIp = new QAction(tr("Get externally visible IP address"), this);
 	_discoverIp->setVisible(false);
-	_label->addAction(_discoverIp);
+	m_label->addAction(_discoverIp);
 	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
 	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
 
@@ -94,10 +94,10 @@ NetStatus::NetStatus(QWidget *parent)
 	// Show network statistics
 	QAction *sep = new QAction(this);
 	sep->setSeparator(true);
-	_label->addAction(sep);
+	m_label->addAction(sep);
 
 	QAction *showNetStats = new QAction(tr("Statistics"), this);
-	_label->addAction(showNetStats);
+	m_label->addAction(showNetStats);
 	connect(showNetStats, SIGNAL(triggered()), this, SLOT(showNetStats()));
 
 	// Security level icon
@@ -129,6 +129,8 @@ NetStatus::NetStatus(QWidget *parent)
 	popupPalette.setColor(QPalette::ToolTipBase, Qt::black);
 	popupPalette.setColor(QPalette::ToolTipText, Qt::white);
 	m_popup->setPalette(popupPalette);
+
+	updateLabel();
 }
 
 /**
@@ -138,11 +140,12 @@ NetStatus::NetStatus(QWidget *parent)
  */
 void NetStatus::connectingToHost(const QString& address, int port)
 {
-	_address = address;
-	_port = port;
-	_label->setText(tr("Connecting to %1...").arg(fullAddress()));
+	m_address = address;
+	m_port = port;
+	m_state = Connecting;
 	_copyaction->setEnabled(true);
-	message(_label->text());
+	updateLabel();
+	message(m_label->text());
 
 	// Enable "discover IP" item for local host
 	bool isLocal = WhatIsMyIp::isMyPrivateAddress(address);
@@ -159,12 +162,19 @@ void NetStatus::connectingToHost(const QString& address, int port)
 
 void NetStatus::loggedIn(const QUrl &sessionUrl)
 {
-	_sessionUrl = sessionUrl;
+	m_sessionUrl = sessionUrl;
 	_urlaction->setEnabled(true);
-	_label->setText(tr("Host: %1").arg(fullAddress()));
+	m_state = LoggedIn;
+	updateLabel();
 	message(tr("Logged in!"));
 	if(_netstats)
 		_netstats->setCurrentLag(_lag);
+}
+
+void NetStatus::setRoomcode(const QString &roomcode)
+{
+	m_roomcode = roomcode;
+	updateLabel();
 }
 
 void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate)
@@ -207,8 +217,9 @@ void NetStatus::setLowSpaceAlert(bool lowSpace)
 
 void NetStatus::hostDisconnecting()
 {
-	_label->setText(tr("Logging out..."));
-	message(tr("Logging out..."));
+	m_state = Disconnecting;
+	updateLabel();
+	message(m_label->text());
 }
 
 /**
@@ -217,8 +228,10 @@ void NetStatus::hostDisconnecting()
  */
 void NetStatus::hostDisconnected()
 {
-	_address = QString();
-	_label->setText(tr("not connected"));
+	m_address = QString();
+	m_roomcode = QString();
+	m_state = NotConnected;
+	updateLabel();
 
 	_urlaction->setEnabled(false);
 	_copyaction->setEnabled(false);
@@ -295,7 +308,7 @@ void NetStatus::copyAddress()
 
 void NetStatus::copyUrl()
 {
-	QString url = _sessionUrl.toString();
+	QString url = m_sessionUrl.toString();
 	QApplication::clipboard()->setText(url);
 	QApplication::clipboard()->setText(url, QClipboard::Selection);
 }
@@ -313,14 +326,14 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 		_discoverIp->setEnabled(false);
 
 		// TODO handle IPv6 style addresses
-		int portsep = _address.lastIndexOf(':');
+		int portsep = m_address.lastIndexOf(':');
 		QString port;
 		if(portsep>0)
-			port = _address.mid(portsep);
+			port = m_address.mid(portsep);
 
-		_address = ip;
-		_sessionUrl.setHost(ip);
-		_label->setText(tr("Host: %1").arg(fullAddress()));
+		m_address = ip;
+		m_sessionUrl.setHost(ip);
+		updateLabel();
 
 		if(WhatIsMyIp::isCGNAddress(ip))
 			showCGNAlert();
@@ -330,10 +343,10 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 QString NetStatus::fullAddress() const
 {
 	QString addr;
-	if(_port>0)
-		addr = QString("%1:%2").arg(_address).arg(_port);
+	if(m_port>0)
+		addr = QString("%1:%2").arg(m_address).arg(m_port);
 	else
-		addr = _address;
+		addr = m_address;
 
 	return addr;
 }
@@ -357,7 +370,7 @@ void NetStatus::kicked(const QString& user)
 void NetStatus::message(const QString &msg)
 {
 	m_popup->showMessage(
-				mapToGlobal(_label->pos() + QPoint(_label->width()/2, 2)),
+				mapToGlobal(m_label->pos() + QPoint(m_label->width()/2, 2)),
 				msg);
 	emit statusMessage(msg);
 }
@@ -368,9 +381,26 @@ void NetStatus::alertMessage(const QString &msg, bool alert)
 		message(msg);
 }
 
+void NetStatus::updateLabel()
+{
+	QString txt;
+	switch(m_state) {
+	case NotConnected: txt = tr("not connected"); break;
+	case Connecting: txt = tr("Connecting to %1...").arg(fullAddress()); break;
+	case LoggedIn:
+		if(m_roomcode.isEmpty())
+			txt = tr("Host: %1").arg(fullAddress());
+		else
+			txt = tr("Room: %1").arg(m_roomcode);
+		break;
+	case Disconnecting: txt = tr("Logging out..."); break;
+	}
+	m_label->setText(txt);
+}
+
 void NetStatus::showCertificate()
 {
-	dialogs::CertificateView *certdlg = new dialogs::CertificateView(_address, m_certificate, parentWidget());
+	dialogs::CertificateView *certdlg = new dialogs::CertificateView(m_address, m_certificate, parentWidget());
 	certdlg->setAttribute(Qt::WA_DeleteOnClose);
 	certdlg->show();
 }
@@ -384,7 +414,7 @@ void NetStatus::showNetStats()
 
 		_netstats->setRecvBytes(_recvbytes);
 		_netstats->setSentBytes(_sentbytes);
-		if(!_address.isEmpty())
+		if(!m_address.isEmpty())
 			_netstats->setCurrentLag(_lag);
 	}
 	_netstats->show();

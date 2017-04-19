@@ -37,6 +37,7 @@ set (
 	net/builtinserver.cpp
 	net/sessionlistingmodel.cpp
 	net/banlistmodel.cpp
+	net/announcementlist.cpp
 	net/commands.cpp
 	utils/archive.cpp
 	utils/palette.cpp

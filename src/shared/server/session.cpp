@@ -66,7 +66,7 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	}
 
 	for(const QString &announcement : m_history->announcements())
-		makeAnnouncement(QUrl(announcement));
+		makeAnnouncement(QUrl(announcement), false);
 }
 
 static protocol::MessagePtr makeLogMessage(const Log &log)
@@ -491,6 +491,8 @@ void Session::sendUpdatedAnnouncementList()
 	for(const sessionlisting::Announcement &a : announcements()) {
 		QJsonObject o;
 		o["url"] = a.apiUrl.toString();
+		o["roomcode"] = a.roomcode;
+		o["private"] = a.isPrivate;
 		list.append(o);
 	}
 
@@ -822,7 +824,7 @@ sessionlisting::AnnouncementApi *Session::publicListingClient()
 	return m_publicListingClient;
 }
 
-void Session::makeAnnouncement(const QUrl &url)
+void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 {
 	if(!url.isValid() || !m_config->isAllowedAnnouncementUrl(url)) {
 		log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Announcement API URL not allowed: " + url.toString()));
@@ -830,9 +832,18 @@ void Session::makeAnnouncement(const QUrl &url)
 	}
 
 	// Don't announce twice at the same server
-	for(const sessionlisting::Announcement &a : m_publicListings) {
-		if(a.apiUrl == url)
+	for(sessionlisting::Announcement &a : m_publicListings) {
+		if(a.apiUrl == url) {
+			// Refresh announcement if privacy type was changed
+			if(a.isPrivate != privateListing) {
+				a.isPrivate = privateListing;
+				sendUpdatedAnnouncementList();
+				Q_ASSERT(m_refreshTimer);
+				if(m_refreshTimer)
+					m_refreshTimer->start(0);
+			}
 			return;
+		}
 	}
 
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
@@ -847,6 +858,7 @@ void Session::makeAnnouncement(const QUrl &url)
 		(hasPassword() || privateUserList) ? QStringList() : userNames(),
 		hasPassword(),
 		isNsfm(),
+		privateListing ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
 		founder(),
 		sessionStartTime()
 	};
@@ -893,6 +905,7 @@ void Session::refreshAnnouncements()
 			hasPassword() || privateUserList ? QStringList() : userNames(),
 			hasPassword(),
 			isNsfm(),
+			a.isPrivate ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
 			founder(),
 			sessionStartTime()
 		});
@@ -915,7 +928,8 @@ void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
 	}
 
 	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
-	m_history->addAnnouncement(announcement.apiUrl.toString());
+	if(!announcement.isPrivate)
+		m_history->addAnnouncement(announcement.apiUrl.toString());
 	m_publicListings << announcement;
 	sendUpdatedAnnouncementList();
 

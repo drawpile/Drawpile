@@ -174,9 +174,13 @@ MessagePtr kick(int target, bool ban)
 	return serverCommand("kick-user", QJsonArray() << target, kwargs);
 }
 
-MessagePtr announce(const QString &url)
+MessagePtr announce(const QString &url, bool privateMode)
 {
-	return serverCommand("announce-session", QJsonArray() << url);
+	QJsonObject kwargs;
+	if(privateMode)
+		kwargs["private"] = true;
+
+	return serverCommand("announce-session", QJsonArray() << url, kwargs);
 }
 
 MessagePtr unannounce(const QString &url)

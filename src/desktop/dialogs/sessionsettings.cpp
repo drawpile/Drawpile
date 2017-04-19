@@ -20,6 +20,7 @@
 #include "sessionsettings.h"
 #include "utils/listservermodel.h"
 #include "net/banlistmodel.h"
+#include "net/announcementlist.h"
 #include "document.h"
 #include "../shared/net/meta2.h"
 #include "canvas/canvasmodel.h"
@@ -36,51 +37,6 @@
 #include <QInputDialog>
 
 namespace dialogs {
-
-/**
- * @brief A proxy model that makes public listing server URL list nicer
- *
- * If the listing server is known, replace the URL with its name and icon
- */
-class ListingProxyModel : public QIdentityProxyModel {
-public:
-	ListingProxyModel(QObject *parent=nullptr)
-		: QIdentityProxyModel(parent)
-	{
-		sessionlisting::ListServerModel servermodel(false);
-		for(const sessionlisting::ListServer &s : servermodel.servers()) {
-			m_servers[s.url] = QPair<QIcon,QString>(s.icon, s.name);
-		}
-	}
-
-	QVariant data(const QModelIndex &proxyIndex, int role) const override
-	{
-		QVariant data = QAbstractProxyModel::data(proxyIndex, role);
-		if(role == Qt::DisplayRole && data.isValid()) {
-			QString url = data.toString();
-			if(m_servers.contains(url))
-				return m_servers[url].second;
-
-		} else if(role == Qt::DecorationRole) {
-			QString url = QAbstractProxyModel::data(proxyIndex, Qt::DisplayRole).toString();
-			if(m_servers.contains(url))
-				return m_servers[url].first;
-		} else if(role == Qt::UserRole) {
-			return QAbstractProxyModel::data(proxyIndex, Qt::DisplayRole);
-		}
-
-		return data;
-	}
-
-	Qt::ItemFlags flags(const QModelIndex &index) const override
-	{
-		if(index.isValid())
-			return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-		return 0;
-	}
-
-	QHash<QString,QPair<QIcon,QString>> m_servers;
-};
 
 SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	: QDialog(parent), m_ui(new Ui_SessionSettingsDialog), m_doc(doc),
@@ -138,29 +94,39 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	});
 
 	// Set up announcements tab
-	ListingProxyModel *listingProxy = new ListingProxyModel(this);
-	listingProxy->setSourceModel(doc->announcementList());
-	m_ui->announcementListView->setModel(listingProxy);
+	m_ui->announcementTableView->setModel(doc->announcementList());
+	QHeaderView *announcementHeader = m_ui->announcementTableView->horizontalHeader();
+	announcementHeader->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	QMenu *addAnnouncementMenu = new QMenu(this);
+	QMenu *addPrivateAnnouncementMenu = new QMenu(this);
 
-	QHashIterator<QString,QPair<QIcon,QString>> i(listingProxy->m_servers);
+	QHashIterator<QString,QPair<QIcon,QString>> i(doc->announcementList()->knownServers());
 	while(i.hasNext()) {
 		auto item = i.next();
 		QAction *a = addAnnouncementMenu->addAction(item.value().first, item.value().second);
 		a->setProperty("API_URL", item.key());
+
+		QAction *a2 = addPrivateAnnouncementMenu->addAction(item.value().first, item.value().second);
+		a2->setProperty("API_URL", item.key());
 	}
 
 	m_ui->addAnnouncement->setMenu(addAnnouncementMenu);
+	m_ui->addPrivateAnnouncement->setMenu(addPrivateAnnouncementMenu);
 
 	connect(addAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
-		QString apiUrl = a->property("API_URL").toString();
-		qDebug() << "Requesting announcement:" << apiUrl;
-		m_doc->sendAnnounce(apiUrl);
+		const QString apiUrl = a->property("API_URL").toString();
+		qDebug() << "Requesting pbulic announcement:" << apiUrl;
+		m_doc->sendAnnounce(apiUrl, false);
+	});
+	connect(addPrivateAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
+		const QString apiUrl = a->property("API_URL").toString();
+		qDebug() << "Requesting private announcement:" << apiUrl;
+		m_doc->sendAnnounce(apiUrl, true);
 	});
 
 	connect(m_ui->removeAnnouncement, &QPushButton::clicked, [this]() {
-		auto sel = m_ui->announcementListView->selectionModel()->selection();
+		auto sel = m_ui->announcementTableView->selectionModel()->selection();
 		QString apiUrl;
 		if(!sel.isEmpty())
 			apiUrl = sel.first().indexes().first().data(Qt::UserRole).toString();

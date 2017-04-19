@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@
 #include <QDialog>
 
 class Ui_JoinDialog;
+
+namespace sessionlisting {
+	class AnnouncementApi;
+}
 
 namespace dialogs {
 
@@ -50,9 +54,14 @@ public:
 private slots:
 	void showListingDialog();
 	void setUrl(const QUrl &url);
+	void addressChanged(const QString &addr);
+	void resolveRoomcode();
 
 private:
-	Ui_JoinDialog *_ui;
+	Ui_JoinDialog *m_ui;
+	sessionlisting::AnnouncementApi *m_announcementApi;
+	QStringList m_roomcodeServers;
+	QString m_roomcode;
 };
 
 }

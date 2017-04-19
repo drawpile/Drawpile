@@ -1,3 +1,6 @@
+2014-0?-?? Version 2.0.4
+ * Added support for room codes and private listings
+
 2017-04-17 Version 2.0.3
  * Restored some tablet and smoother improvements from stable branch
  * Fixed (concurrency related) crash bug in layer merging

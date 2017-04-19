@@ -73,6 +73,9 @@ public:
 	//! Get the announcement server URL (empty if not selected)
 	QString getAnnouncementUrl() const;
 
+	//! Make a private (room code only) announcement instead of a public one?
+	bool getAnnouncmentPrivate() const;
+
 private:
 	Ui_HostDialog *_ui;
 };

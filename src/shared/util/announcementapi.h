@@ -45,6 +45,12 @@ struct ListServerInfo {
 	QString faviconUrl;
 };
 
+enum class PrivateMode {
+	Undefined, // undefined, defaults to public
+	Public,
+	Private
+};
+
 struct Session {
 	QString host;
 	int port;
@@ -55,6 +61,7 @@ struct Session {
 	QStringList usernames;
 	bool password;
 	bool nsfm;
+	PrivateMode isPrivate;
 	QString owner;
 	QDateTime started;
 };
@@ -65,8 +72,10 @@ struct Announcement {
 	QUrl apiUrl;
 	QString id;
 	QString updateKey;
+	QString roomcode;
 	int listingId;
 	int refreshInterval;
+	bool isPrivate;
 };
 
 /**
@@ -111,6 +120,17 @@ public:
 	 */
 	void unlistSession(const Announcement &a);
 
+	/**
+	 * @brief Query session info for a room code
+	 *
+	 * If the room code is found, sessionFound signal is emitted.
+	 * Otherwise, the error signal is emitted.
+	 *
+	 * @param apiUrl
+	 * @param roomcode
+	 */
+	void queryRoomcode(const QUrl &apiUrl, const QString &roomcode);
+
 signals:
 	//! Server info reply received
 	void serverInfo(const ListServerInfo &info);
@@ -127,6 +147,9 @@ signals:
 	//! Session was unlisted succesfully
 	void unlisted(const QString &apiUrl, const QString &sessionId);
 
+	//! Session for a roomcode was found (only host, port and id fields are filled)
+	void sessionFound(const Session &session);
+
 	//! An error occurred
 	void error(const QString &apiUrl, const QString &errorString);
 
@@ -142,6 +165,7 @@ private:
 	void handleRefreshResponse(QNetworkReply *reply);
 	void handleListingResponse(QNetworkReply *reply);
 	void handleServerInfoResponse(QNetworkReply *reply);
+	void handleRoomcodeResponse(QNetworkReply *reply);
 };
 
 }

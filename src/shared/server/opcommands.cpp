@@ -185,7 +185,6 @@ void killSession(Client *client, const QJsonArray &args, const QJsonObject &kwar
 
 void announceSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	Q_UNUSED(kwargs);
 	if(args.size()!=1)
 		throw CmdError("Expected one argument: API URL");
 
@@ -193,7 +192,7 @@ void announceSession(Client *client, const QJsonArray &args, const QJsonObject &
 	if(!apiUrl.isValid())
 		throw CmdError("Invalid API URL");
 
-	client->session()->makeAnnouncement(apiUrl);
+	client->session()->makeAnnouncement(apiUrl, kwargs["private"].toBool());
 }
 
 void unlistSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)

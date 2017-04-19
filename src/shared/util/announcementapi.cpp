@@ -109,6 +109,8 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
+	if(session.isPrivate == PrivateMode::Private)
+		o["private"] = true;
 
 	// Send request
 	QUrl url = apiUrl;
@@ -136,6 +138,8 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
+	if(session.isPrivate != PrivateMode::Undefined)
+		o["private"] = session.isPrivate == PrivateMode::Private;
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -166,6 +170,19 @@ void AnnouncementApi::unlistSession(const Announcement &a)
 	reply->setProperty(PROP_APIURL, a.apiUrl);
 	reply->setProperty(PROP_SESSION_ID, a.id);
 	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleUnlistResponse);} );
+}
+
+void AnnouncementApi::queryRoomcode(const QUrl &apiUrl, const QString &roomcode)
+{
+	QUrl url = apiUrl;
+	url.setPath(slashcat(url.path(), QStringLiteral("join/") + roomcode));
+
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+
+	QNetworkReply *reply = networkaccess::getInstance()->get(req);
+	reply->setProperty(PROP_APIURL, apiUrl);
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRoomcodeResponse);} );
 }
 
 void AnnouncementApi::handleResponse(QNetworkReply *reply, AnnouncementApi::HandlerFunc handlerFunc)
@@ -219,9 +236,12 @@ void AnnouncementApi::handleAnnounceResponse(QNetworkReply *reply)
 	Announcement a;
 	a.apiUrl = reply->property(PROP_APIURL).toUrl();
 	a.id = reply->property(PROP_SESSION_ID).toString();
-	a.updateKey = doc.object()["key"].toString();
-	a.listingId = doc.object()["id"].toInt();
-	a.refreshInterval = qMax(2, doc.object()["expires"].toInt(6)) - 1;
+	const QJsonObject obj = doc.object();
+	a.roomcode = obj["roomcode"].toString();
+	a.updateKey = obj["key"].toString();
+	a.listingId = obj["id"].toInt();
+	a.refreshInterval = qMax(2, obj["expires"].toInt(6)) - 1;
+	a.isPrivate = obj["private"].toBool();
 
 	qDebug("Announcement server %s refresh interval is %d minutes.", qPrintable(a.apiUrl.toString()), a.refreshInterval);
 
@@ -286,12 +306,43 @@ void AnnouncementApi::handleListingResponse(QNetworkReply *reply)
 			obj["usernames"].toVariant().toStringList(),
 			obj["password"].toBool(),
 			obj["nsfm"].toBool(),
+			PrivateMode::Public, // a listed session cannot be private by definition
 			obj["owner"].toString(),
 			started
 		};
 	}
 
 	emit sessionListReceived(sessions);
+}
+
+void AnnouncementApi::handleRoomcodeResponse(QNetworkReply *reply)
+{
+	QJsonParseError error;
+	QByteArray body = reply->readAll();
+	QJsonDocument doc = QJsonDocument::fromJson(body, &error);
+	if(error.error != QJsonParseError::NoError)
+		throw ResponseError(QStringLiteral("Error parsing roomcode response: %1").arg(error.errorString()));
+
+	if(!doc.isObject())
+		throw ResponseError(QStringLiteral("Expected session info object!"));
+
+	const QJsonObject obj = doc.object();
+	const Session session {
+		obj["host"].toString(),
+		obj["port"].toInt(),
+		obj["id"].toString(),
+		protocol::ProtocolVersion::current(),
+		QString(),
+		0,
+		QStringList(),
+		false,
+		false,
+		PrivateMode::Undefined,
+		QString(),
+		QDateTime()
+	};
+
+	emit sessionFound(session);
 }
 
 void AnnouncementApi::handleServerInfoResponse(QNetworkReply *reply)

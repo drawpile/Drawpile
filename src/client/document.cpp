@@ -22,6 +22,7 @@
 #include "net/client.h"
 #include "net/commands.h"
 #include "net/banlistmodel.h"
+#include "net/announcementlist.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
@@ -66,8 +67,8 @@ Document::Document(QObject *parent)
 	// Initialize
 	m_client = new net::Client(this);
 	m_toolctrl = new tools::ToolController(m_client, this);
-	m_banlist = new BanlistModel(this);
-	m_announcementlist = new QStringListModel(this);
+	m_banlist = new net::BanlistModel(this);
+	m_announcementlist = new net::AnnouncementListModel(this);
 	m_serverLog = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
@@ -168,7 +169,7 @@ void Document::onServerDisconnect()
 		m_canvas->setTitle(QString());
 	}
 	m_banlist->clear();
-	m_announcementlist->setStringList(QStringList());
+	m_announcementlist->clear();
 	setSessionOpword(false);
 }
 
@@ -205,11 +206,20 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 		m_canvas->userlist()->updateMuteList(config["muted"].toArray());
 
 	if(config.contains("announcements")) {
-		QStringList alist;
+		m_announcementlist->clear();
+		QString jc;
 		for(const QJsonValue &v : config["announcements"].toArray()) {
-			alist << v.toObject()["url"].toString();
+			const QJsonObject o = v.toObject();
+			const net::Announcement a {
+				o["url"].toString(),
+				o["roomcode"].toString(),
+				o["private"].toBool()
+			};
+			m_announcementlist->addAnnouncement(a);
+			if(!a.roomcode.isEmpty())
+				jc = a.roomcode;
 		}
-		m_announcementlist->setStringList(alist);
+		setRoomcode(jc);
 	}
 }
 
@@ -287,6 +297,14 @@ void Document::setSessionNsfm(bool nsfm)
 	if(m_sessionNsfm != nsfm) {
 		m_sessionNsfm = nsfm;
 		emit sessionNsfmChanged(nsfm);
+	}
+}
+
+void Document::setRoomcode(const QString &roomcode)
+{
+	if(m_roomcode != roomcode) {
+		m_roomcode = roomcode;
+		emit sessionRoomcodeChanged(roomcode);
 	}
 }
 
@@ -521,9 +539,9 @@ void Document::sendUnban(int entryId)
 	m_client->sendMessage(net::command::unban(entryId));
 }
 
-void Document::sendAnnounce(const QString &url)
+void Document::sendAnnounce(const QString &url, bool privateMode)
 {
-	m_client->sendMessage(net::command::announce(url));
+	m_client->sendMessage(net::command::announce(url, privateMode));
 }
 
 void Document::sendUnannounce(const QString &url)

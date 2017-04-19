@@ -173,4 +173,9 @@ QString HostDialog::getAnnouncementUrl() const
 	return QString();
 }
 
+bool HostDialog::getAnnouncmentPrivate() const
+{
+	return _ui->listPrivate->isChecked();
+}
+
 }

@@ -349,6 +349,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_doc, &Document::serverSpaceLowChanged, m_netstatus, &widgets::NetStatus::setLowSpaceAlert);
+	connect(m_doc, &Document::sessionRoomcodeChanged, m_netstatus, &widgets::NetStatus::setRoomcode);
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
@@ -1217,7 +1218,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setLayerControlLock(dlg->getLayerControlLock());
 	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
-	login->setAnnounceUrl(dlg->getAnnouncementUrl());
+	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	login->setInitialState(m_doc->canvas()->generateSnapshot(true));
 	(new dialogs::LoginDialog(login, this))->show();
 

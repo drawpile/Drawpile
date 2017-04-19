@@ -73,7 +73,7 @@ protocol::MessagePtr mute(int target, bool mute);
 /**
  * @brief Announce this session at the given listing server
  */
-protocol::MessagePtr announce(const QString &url);
+protocol::MessagePtr announce(const QString &url, bool privateMode);
 
 /**
  * @brief Retract announcement at the given listing server

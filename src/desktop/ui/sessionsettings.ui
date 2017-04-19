@@ -303,7 +303,17 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QListView" name="announcementListView"/>
+        <widget class="QTableView" name="announcementTableView">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -321,9 +331,22 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="addPrivateAnnouncement">
+           <property name="text">
+            <string>Private listing</string>
+           </property>
+           <property name="icon">
+            <iconset theme="list-add"/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="addAnnouncement">
            <property name="text">
-            <string>Announce</string>
+            <string>Public listing</string>
+           </property>
+           <property name="icon">
+            <iconset theme="list-add"/>
            </property>
           </widget>
          </item>
@@ -331,6 +354,9 @@
           <widget class="QPushButton" name="removeAnnouncement">
            <property name="text">
             <string>Remove selected</string>
+           </property>
+           <property name="icon">
+            <iconset theme="list-remove"/>
            </property>
           </widget>
          </item>

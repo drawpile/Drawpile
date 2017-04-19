@@ -462,7 +462,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
 			if(!m_announceUrl.isEmpty())
-				m_server->sendMessage(command::announce(m_announceUrl));
+				m_server->sendMessage(command::announce(m_announceUrl, m_announcePrivate));
 
 			// Upload initial session content
 			m_server->sendMessages(m_initialState);

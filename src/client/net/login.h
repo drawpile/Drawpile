@@ -140,7 +140,7 @@ public:
 	/**
 	 * @brief Set session announcement URL
 	 */
-	void setAnnounceUrl(const QString &url) { Q_ASSERT(m_mode==HOST); m_announceUrl = url; }
+	void setAnnounceUrl(const QString &url, bool privateMode) { Q_ASSERT(m_mode==HOST); m_announceUrl = url; m_announcePrivate = privateMode; }
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -331,6 +331,7 @@ private:
 	bool m_layerctrllock;
 	bool m_requestPersistent;
 	bool m_preserveChat;
+	bool m_announcePrivate;
 	QString m_announceUrl;
 	QList<protocol::MessagePtr> m_initialState;
 

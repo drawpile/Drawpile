@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>409</width>
-    <height>366</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>T&amp;itle:</string>
+          <string>&amp;Title:</string>
          </property>
          <property name="buddy">
           <cstring>sessiontitle</cstring>
@@ -102,7 +102,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>ID alias:</string>
+          <string>ID a&amp;lias:</string>
          </property>
          <property name="buddy">
           <cstring>idAlias</cstring>
@@ -119,29 +119,6 @@
          </property>
          <property name="toolTip">
           <string>An optional user friendly ID for the session</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="announce">
-         <property name="toolTip">
-          <string>Announce the session at a public list</string>
-         </property>
-         <property name="text">
-          <string>Announce at:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="listingserver">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
          </property>
         </widget>
        </item>
@@ -213,11 +190,8 @@
        </item>
        <item row="5" column="1">
         <widget class="QCheckBox" name="persistentSession">
-         <property name="toolTip">
-          <string>A persistent session can be joined even after all users have left</string>
-         </property>
          <property name="text">
-          <string>Persistent session</string>
+          <string>Persist without users</string>
          </property>
         </widget>
        </item>
@@ -230,6 +204,68 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Listing</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="announce">
+        <property name="toolTip">
+         <string>Announce the session at a public list</string>
+        </property>
+        <property name="text">
+         <string>List at:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="listingserver">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="listPublic">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Public</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QRadioButton" name="listPrivate">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Private (room code onl&amp;y)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -313,8 +349,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>330</y>
+     <x>264</x>
+     <y>485</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -329,8 +365,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>330</y>
+     <x>332</x>
+     <y>485</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -345,12 +381,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>290</y>
+     <x>97</x>
+     <y>434</y>
     </hint>
     <hint type="destinationlabel">
-     <x>371</x>
-     <y>291</y>
+     <x>394</x>
+     <y>439</y>
     </hint>
    </hints>
   </connection>
@@ -361,12 +397,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>203</y>
+     <x>57</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
-     <x>211</x>
-     <y>213</y>
+     <x>128</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>announce</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listPublic</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>116</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>announce</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listPrivate</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>245</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>303</y>
     </hint>
    </hints>
   </connection>

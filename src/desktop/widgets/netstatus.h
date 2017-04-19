@@ -57,6 +57,8 @@ public slots:
 	void hostDisconnecting();
 	void hostDisconnected();
 
+	void setRoomcode(const QString &roomcode);
+
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
@@ -98,17 +100,21 @@ private slots:
 private:
 	void showCGNAlert();
 	void message(const QString &msg);
+	void updateLabel();
+
+	enum { NotConnected, Connecting, LoggedIn, Disconnecting } m_state;
 
 	QString fullAddress() const;
 
 	QPointer<dialogs::NetStats> _netstats;
 	QProgressBar *m_download;
 
-	QLabel *_label, *_security, *m_lowspace;
+	QLabel *m_label, *_security, *m_lowspace;
 	PopupMessage *m_popup;
-	QString _address;
-	int _port;
-	QUrl _sessionUrl;
+	QString m_address;
+	QString m_roomcode;
+	int m_port;
+	QUrl m_sessionUrl;
 
 	QAction *_copyaction;
 	QAction *_urlaction;
