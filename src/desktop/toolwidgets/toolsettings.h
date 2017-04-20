@@ -126,14 +126,6 @@ private:
 	QWidget *m_widget;
 };
 
-/**
- * \brief Add the available brush blending modes to a dropdown box
- *
- * This function also connects the combobox's change event to the brush preview
- * widget's setBlendingMode function.
- */
-void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview);
-
 }
 
 #endif

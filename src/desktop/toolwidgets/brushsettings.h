@@ -65,12 +65,13 @@ public slots:
 
 signals:
 	void colorChanged(const QColor &color);
+	void eraseModeChanged(bool erase);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private slots:
-	void selectBlendMode(QAction *modeSelectionAction);
+	void selectBlendMode(int);
 	void updateUi();
 	void updateFromUi();
 

@@ -64,7 +64,7 @@ struct ToolSettings::Private {
 		return pages[currentTool].settings.data();
 	}
 
-	Private(tools::ToolController *ctrl)
+	Private(tools::ToolController *ctrl, ToolSettings *dock)
 		: ctrl(ctrl),
 		  widgetStack(nullptr),
 		  colorDialog(nullptr),
@@ -79,6 +79,9 @@ struct ToolSettings::Private {
 		// Create tool pages
 		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
 		auto sel = QSharedPointer<tools::ToolSettings>(new tools::SelectionSettings(ctrl));
+
+		connect(static_cast<tools::BrushSettings*>(brush.data()), &tools::BrushSettings::eraseModeChanged, dock, &ToolSettings::eraserModeChanged);
+
 		pages[tools::Tool::FREEHAND] = {
 				brush,
 				"freehand",
@@ -138,7 +141,7 @@ struct ToolSettings::Private {
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: QDockWidget(parent), d(new Private(ctrl))
+	: QDockWidget(parent), d(new Private(ctrl, this))
 {
 	setStyleSheet(defaultDockStylesheet());
 

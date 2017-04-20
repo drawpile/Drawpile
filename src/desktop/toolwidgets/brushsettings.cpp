@@ -30,11 +30,11 @@ using widgets::GroupedToolButton;
 
 #include "ui_brushdock.h"
 
-#include <QMenu>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QMimeData>
 #include <QSettings>
+#include <QStandardItemModel>
 
 namespace tools {
 
@@ -135,7 +135,7 @@ static const int BRUSH_COUNT = 5;
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
 
-	QMenu *blendModes, *eraseModes;
+	QStandardItemModel *blendModes, *eraseModes;
 	BrushSettings *basicSettings;
 	BrushPresetModel *presets;
 
@@ -158,21 +158,24 @@ struct BrushSettings::Private {
 		return currentTool().value(toolprop::COLOR, QColor(Qt::black)).value<QColor>();
 	}
 
-	Private()
+	Private(BrushSettings *b)
 		: current(0), updateInProgress(false)
 	{
-		blendModes = new QMenu;
+		blendModes = new QStandardItemModel(0, 1, b);
 		for(const auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
-			QAction *a = blendModes->addAction(bm.second);
-			a->setProperty("blendmode", QVariant(bm.first));
+			auto item = new QStandardItem(bm.second);
+			item->setData(bm.first, Qt::UserRole);
+			blendModes->appendRow(item);
 		}
 
-		eraseModes = new QMenu;
-		QAction *e1 = eraseModes->addAction(QApplication::tr("Erase"));
-		e1->setProperty("blendmode", QVariant(paintcore::BlendMode::MODE_ERASE));
+		eraseModes = new QStandardItemModel(0, 1, b);
+		auto erase1 = new QStandardItem(QApplication::tr("Erase"));
+		erase1->setData(QVariant(paintcore::BlendMode::MODE_ERASE), Qt::UserRole);
+		eraseModes->appendRow(erase1);
 
-		QAction *e2 = eraseModes->addAction(QApplication::tr("Color erase"));
-		e2->setProperty("blendmode", QVariant(paintcore::BlendMode::MODE_COLORERASE));
+		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
+		erase2->setData(QVariant(paintcore::BlendMode::MODE_COLORERASE), Qt::UserRole);
+		eraseModes->appendRow(erase2);
 	}
 
 	void updateBrush()
@@ -200,7 +203,7 @@ struct BrushSettings::Private {
 };
 
 BrushSettings::BrushSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), d(new Private)
+	: ToolSettings(ctrl, parent), d(new Private(this))
 {
 	d->basicSettings = this;
 	d->presets = BrushPresetModel::getSharedInstance();
@@ -229,9 +232,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
 	// Internal updates
-	connect(d->blendModes, &QMenu::triggered, this, &BrushSettings::selectBlendMode);
-	connect(d->eraseModes, &QMenu::triggered, this, &BrushSettings::selectBlendMode);
-	connect(d->ui.erasermode, &QToolButton::toggled, this, &BrushSettings::setEraserMode);
+	connect(d->ui.blendmode, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &BrushSettings::selectBlendMode);
 
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
@@ -305,14 +306,14 @@ void BrushSettings::setEraserMode(bool erase)
 	updateUi();
 }
 
-void BrushSettings::selectBlendMode(QAction *modeSelectionAction)
+void BrushSettings::selectBlendMode(int modeIndex)
 {
 	QString prop;
 	if(d->currentTool().boolValue(toolprop::USE_ERASEMODE, false))
 		prop = toolprop::ERASEMODE;
 	else
 		prop = toolprop::BLENDMODE;
-	d->currentTool().setValue(prop, modeSelectionAction->property("blendmode"));
+	d->currentTool().setValue(prop, d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	updateUi();
 }
 
@@ -359,16 +360,21 @@ void BrushSettings::updateUi()
 
 	// Show correct blending mode
 	int blendmode;
-	if(tool.boolValue(toolprop::USE_ERASEMODE, false)) {
-		d->ui.blendmode->setMenu(d->eraseModes);
-		d->ui.erasermode->setChecked(true);
+	const bool erasemode = tool.boolValue(toolprop::USE_ERASEMODE, false);
+	if(erasemode) {
+		d->ui.blendmode->setModel(d->eraseModes);
 		blendmode = tool.intValue(toolprop::ERASEMODE, paintcore::BlendMode::MODE_ERASE);
 	} else {
-		d->ui.blendmode->setMenu(d->blendModes);
-		d->ui.erasermode->setChecked(false);
+		d->ui.blendmode->setModel(d->blendModes);
 		blendmode = tool.intValue(toolprop::BLENDMODE, paintcore::BlendMode::MODE_NORMAL);
 	}
-	d->ui.blendmode->setText(QApplication::tr(paintcore::findBlendMode(blendmode).name));
+	for(int i=0;i<d->ui.blendmode->model()->rowCount();++i) {
+		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == blendmode) {
+			d->ui.blendmode->setCurrentIndex(i);
+			break;
+		}
+	}
+	emit eraseModeChanged(erasemode);
 
 	// Set values
 	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));

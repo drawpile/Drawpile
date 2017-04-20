@@ -94,6 +94,9 @@ signals:
 	//! This signal is emitted when tool subpixel drawing mode is changed
 	void subpixelModeChanged(bool subpixel);
 
+	//! Brush eraser mode changed
+	void eraserModeChanged(bool erase);
+
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);
 

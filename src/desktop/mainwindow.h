@@ -234,7 +234,7 @@ private:
 	QActionGroup *_currentdoctools; // actions relating to the currently open document
 	QActionGroup *m_admintools; // session operator actions
 	QActionGroup *m_docadmintools; // current document related operator actions
-	QActionGroup *_drawingtools; // drawing tool selection
+	QActionGroup *m_drawingtools; // drawing tool selection
 	QActionGroup *m_brushSlots; // tool slot shortcuts
 
 	int _lastToolBeforePaste; // Last selected tool before Paste was used

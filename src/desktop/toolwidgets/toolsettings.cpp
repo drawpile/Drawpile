@@ -20,23 +20,8 @@
 #include "toolsettings.h"
 #include "tools/toolproperties.h"
 #include "tools/toolcontroller.h"
-#include "widgets/brushpreview.h"
-
-#include "core/blendmodes.h"
-
-#include <QComboBox>
 
 namespace tools {
-
-void populateBlendmodeBox(QComboBox *box, widgets::BrushPreview *preview) {
-	for(const auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode))
-		box->addItem(bm.second, bm.first);
-
-	preview->setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
-	box->connect(box, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [box,preview](int) {
-		preview->setBlendingMode(paintcore::BlendMode::Mode(box->currentData().toInt()));
-	});
-}
 
 QWidget *ToolSettings::createUi(QWidget *parent)
 {

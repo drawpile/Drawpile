@@ -148,39 +148,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="GroupedToolButton" name="erasermode">
-       <property name="toolTip">
-        <string>Eraser mode</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-eraser">
-         <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>GroupedToolButton::GroupLeft</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="GroupedToolButton" name="blendmode">
-       <property name="toolTip">
-        <string>Blending mode</string>
-       </property>
-       <property name="text">
-        <string notr="true">Blend</string>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-       <property name="groupPosition">
-        <enum>GroupedToolButton::GroupRight</enum>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -286,6 +253,19 @@
       </widget>
      </item>
      <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QWidget" name="modeContainer" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="spacing">
@@ -304,17 +284,7 @@
          <number>0</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         <widget class="QComboBox" name="blendmode"/>
         </item>
         <item>
          <widget class="GroupedToolButton" name="modeIncremental">

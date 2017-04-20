@@ -587,7 +587,7 @@ void MainWindow::updateTitle()
 
 void MainWindow::setDrawingToolsEnabled(bool enable)
 {
-	_drawingtools->setEnabled(enable && m_doc->canvas());
+	m_drawingtools->setEnabled(enable && m_doc->canvas());
 }
 
 /**
@@ -805,7 +805,7 @@ bool MainWindow::event(QEvent *event)
 			if(!e->isAutoRepeat()) {
 				if(_tempToolSwitchShortcut->isShortcutSent()) {
 					// Return from temporary tool change
-					for(const QAction *act : _drawingtools->actions()) {
+					for(const QAction *act : m_drawingtools->actions()) {
 						const QKeySequence &seq = act->shortcut();
 						if(seq.count()==1 && e->key() == seq[0]) {
 							_dock_toolsettings->setPreviousTool();
@@ -1603,7 +1603,7 @@ void MainWindow::setFreezeDocks(bool freeze)
 void MainWindow::selectTool(QAction *tool)
 {
 	// Note. Actions must be in the same order in the enum and the group
-	int idx = _drawingtools->actions().indexOf(tool);
+	int idx = m_drawingtools->actions().indexOf(tool);
 	Q_ASSERT(idx>=0);
 	if(idx<0)
 		return;
@@ -1619,7 +1619,7 @@ void MainWindow::selectTool(QAction *tool)
  */
 void MainWindow::toolChanged(tools::Tool::Type tool)
 {
-	QAction *toolaction = _drawingtools->actions().at(int(tool));
+	QAction *toolaction = m_drawingtools->actions().at(int(tool));
 	toolaction->setChecked(true);
 
 	// When using the annotation tool, highlight all text boxes
@@ -1644,7 +1644,7 @@ void MainWindow::selectionRemoved()
 	if(_lastToolBeforePaste>=0) {
 		// Selection was just removed and we had just pasted an image
 		// so restore the previously used tool
-		QAction *toolaction = _drawingtools->actions().at(_lastToolBeforePaste);
+		QAction *toolaction = m_drawingtools->actions().at(_lastToolBeforePaste);
 		toolaction->trigger();
 	}
 }
@@ -1910,8 +1910,8 @@ void MainWindow::setupActions()
 	m_docadmintools->setExclusive(false);
 	m_docadmintools->setEnabled(false);
 
-	_drawingtools = new QActionGroup(this);
-	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	m_drawingtools = new QActionGroup(this);
+	connect(m_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	QMenu *toggletoolbarmenu = new QMenu(this);
 	QMenu *toggledockmenu = new QMenu(this);
@@ -2321,6 +2321,7 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
+	QAction *erasertoggle = makeAction("erasertoggle", "draw-eraser", tr("Eraser mode"), QString(), QKeySequence("E"), true);
 	QAction *freehandtool = makeAction("toolbrush", "draw-brush", tr("Freehand"), tr("Freehand brush tool"), QKeySequence("B"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
@@ -2336,25 +2337,25 @@ void MainWindow::setupActions()
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
 
-	_drawingtools->addAction(freehandtool);
-	_drawingtools->addAction(linetool);
-	_drawingtools->addAction(recttool);
-	_drawingtools->addAction(ellipsetool);
-	_drawingtools->addAction(filltool);
-	_drawingtools->addAction(annotationtool);
-	_drawingtools->addAction(pickertool);
-	_drawingtools->addAction(lasertool);
-	_drawingtools->addAction(selectiontool);
-	_drawingtools->addAction(lassotool);
+	m_drawingtools->addAction(freehandtool);
+	m_drawingtools->addAction(linetool);
+	m_drawingtools->addAction(recttool);
+	m_drawingtools->addAction(ellipsetool);
+	m_drawingtools->addAction(filltool);
+	m_drawingtools->addAction(annotationtool);
+	m_drawingtools->addAction(pickertool);
+	m_drawingtools->addAction(lasertool);
+	m_drawingtools->addAction(selectiontool);
+	m_drawingtools->addAction(lassotool);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
-	toolsmenu->addActions(_drawingtools->actions());
+	toolsmenu->addActions(m_drawingtools->actions());
 	toolsmenu->addAction(markertool);
 	toolsmenu->addSeparator();
+	toolsmenu->addAction(erasertoggle);
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *erasertoggle = makeAction("erasertoggle", 0, tr("Eraser Mode"), QString(), QKeySequence("E"));
 	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap Last Colors"), QString(), QKeySequence("X"));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
@@ -2366,13 +2367,13 @@ void MainWindow::setupActions()
 	biggerbrush->setAutoRepeat(true);
 
 	connect(erasertoggle, &QAction::triggered, _dock_toolsettings, &docks::ToolSettings::toggleEraserMode);
+	connect(_dock_toolsettings, &docks::ToolSettings::eraserModeChanged, erasertoggle, &QAction::setChecked);
 	connect(swapcolors, &QAction::triggered, _dock_colors, &docks::ColorBox::swapLastUsedColors);
 	connect(smallerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { _dock_toolsettings->quickAdjustCurrent1(1); });
 	connect(layerUpAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, _dock_layers, &docks::LayerList::selectBelow);
 
-	toolshortcuts->addAction(erasertoggle);
 	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
@@ -2384,8 +2385,12 @@ void MainWindow::setupActions()
 	drawtools->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
-	// Add a separator before color picker to separate brushes from non-destructive tools
-	for(QAction *dt : _drawingtools->actions()) {
+	// Eraser tool toggle in its own group
+	drawtools->addAction(erasertoggle);
+	drawtools->addSeparator();
+
+	for(QAction *dt : m_drawingtools->actions()) {
+		// Add a separator before color picker to separate brushes from non-destructive tools
 		if(dt == pickertool)
 			drawtools->addSeparator();
 		drawtools->addAction(dt);
@@ -2436,7 +2441,7 @@ void MainWindow::setupActions()
 	});
 
 	// Add temporary tool change shortcut detector
-	for(QAction *act : _drawingtools->actions())
+	for(QAction *act : m_drawingtools->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
 
 	for(QAction *act : m_brushSlots->actions())
