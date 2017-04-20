@@ -1,5 +1,6 @@
 2014-0?-?? Version 2.0.4
  * Added support for room codes and private listings
+ * Reverted pressure controls back to checkboxes
 
 2017-04-17 Version 2.0.3
  * Restored some tablet and smoother improvements from stable branch

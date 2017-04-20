@@ -43,16 +43,12 @@ namespace brushprop {
 	static const QString
 		LABEL = QStringLiteral("label"),
 		SIZE = QStringLiteral("size"),
-		SIZE2 = QStringLiteral("size2"),
 		SIZE_PRESSURE = QStringLiteral("sizep"),
 		OPACITY = QStringLiteral("opacity"),
-		OPACITY2 = QStringLiteral("opacity2"),
 		OPACITY_PRESSURE = QStringLiteral("opacityp"),
 		HARD = QStringLiteral("hard"),
-		HARD2 = QStringLiteral("hard2"),
 		HARD_PRESSURE = QStringLiteral("hardp"),
 		SMUDGE = QStringLiteral("smudge"),
-		SMUDGE2 = QStringLiteral("smudge2"),
 		SMUDGE_PRESSURE = QStringLiteral("smudgep"),
 		RESMUDGE = QStringLiteral("resmudge"),
 		SPACING = QStringLiteral("spacing"),
@@ -78,13 +74,13 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	paintcore::Brush b;
 	b.setSize(bp.intValue(brushprop::SIZE, 1, 1, 255));
 	if(bp.boolValue(brushprop::SIZE_PRESSURE, false))
-		b.setSize2(bp.intValue(brushprop::SIZE2, 1, 1, 255));
+		b.setSize2(1);
 	else
 		b.setSize2(b.size1());
 
 	b.setOpacity(bp.intValue(brushprop::OPACITY, 100, 1, 100) / 100.0);
 	if(bp.boolValue(brushprop::OPACITY_PRESSURE, false))
-		b.setOpacity2(bp.intValue(brushprop::OPACITY2, 100, 1, 100) / 100.0);
+		b.setOpacity2(0);
 	else
 		b.setOpacity2(b.opacity1());
 
@@ -97,7 +93,7 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	} else {
 		b.setHardness(bp.intValue(brushprop::HARD, 100, 1, 100) / 100.0);
 		if(bp.boolValue(brushprop::HARD_PRESSURE, false))
-			b.setHardness2(bp.intValue(brushprop::HARD2, 100, 1, 100) / 100.0);
+			b.setHardness2(0);
 		else
 			b.setHardness2(b.hardness1());
 		b.setSubpixel(true);
@@ -106,7 +102,7 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	if(brushMode == 2) {
 		b.setSmudge(bp.intValue(brushprop::SMUDGE, 0, 0, 100) / 100.0);
 		if(bp.boolValue(brushprop::SMUDGE_PRESSURE, false))
-			b.setSmudge2(bp.intValue(brushprop::SMUDGE, 0, 0, 100) / 100.0);
+			b.setSmudge2(0);
 		else
 			b.setSmudge2(b.smudge1());
 
@@ -245,20 +241,16 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 
 	connect(d->ui.brushsize, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushsize0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.sizePressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.brushopacity, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushopacity0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.opacityPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureOpacity, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.brushhardness, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushhardness0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.hardnessPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureHardness, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.brushsmudging, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushsmudging0, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.smudgingPressure, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureSmudging, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacing, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
@@ -346,23 +338,18 @@ void BrushSettings::updateUi()
 
 	// Hide certain features based on the brush type
 	d->ui.brushhardness->setVisible(brushMode != 0);
-	d->ui.brushhardness0->setVisible(brushMode != 0  && brush.boolValue(brushprop::HARD_PRESSURE, false));
-	d->ui.hardnessPressure->setVisible(brushMode != 0);
+	d->ui.pressureHardness->setVisible(brushMode != 0);
 	d->ui.hardnessLabel->setVisible(brushMode != 0);
 	d->ui.hardnessBox->setVisible(brushMode != 0);
-	d->ui.hardnessSeparator->changeSize(10, brushMode != 0 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
 
 	d->ui.brushsmudging->setVisible(brushMode == 2);
-	d->ui.brushsmudging0->setVisible(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
-	d->ui.smudgingPressure->setVisible(brushMode == 2);
+	d->ui.pressureSmudging->setVisible(brushMode == 2);
 	d->ui.smudgingLabel->setVisible(brushMode == 2);
 	d->ui.smudgingBox->setVisible(brushMode == 2);
-	d->ui.smudgingSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
 
 	d->ui.colorpickup->setVisible(brushMode == 2);
 	d->ui.colorpickupLabel->setVisible(brushMode == 2);
 	d->ui.colorpickupBox->setVisible(brushMode == 2);
-	d->ui.colorpickupSeparator->changeSize(10, brushMode == 2 ? 10 : 0, QSizePolicy::Ignored, QSizePolicy::Fixed);
 
 	d->ui.modeIncremental->setEnabled(brushMode != 2);
 	d->ui.modeIndirect->setEnabled(brushMode != 2);
@@ -385,20 +372,16 @@ void BrushSettings::updateUi()
 
 	// Set values
 	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
-	d->ui.brushsize0->setValue(brush.intValue(brushprop::SIZE2, 1));
-	d->ui.sizePressure->setChecked(brush.boolValue(brushprop::SIZE_PRESSURE, false));
+	d->ui.pressureSize->setChecked(brush.boolValue(brushprop::SIZE_PRESSURE, false));
 
 	d->ui.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
-	d->ui.brushopacity0->setValue(brush.intValue(brushprop::OPACITY2, 100));
-	d->ui.opacityPressure->setChecked(brush.boolValue(brushprop::OPACITY_PRESSURE, false));
+	d->ui.pressureOpacity->setChecked(brush.boolValue(brushprop::OPACITY_PRESSURE, false));
 
 	d->ui.brushhardness->setValue(brush.intValue(brushprop::HARD, 100));
-	d->ui.brushhardness0->setValue(brush.intValue(brushprop::HARD2, 100));
-	d->ui.hardnessPressure->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
+	d->ui.pressureHardness->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
 
 	d->ui.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 50));
-	d->ui.brushsmudging0->setValue(brush.intValue(brushprop::SMUDGE2, 0));
-	d->ui.smudgingPressure->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
+	d->ui.pressureSmudging->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
 
 	d->ui.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 3, 0, 255));
 
@@ -429,20 +412,16 @@ void BrushSettings::updateFromUi()
 		brush.setValue(brushprop::BRUSHMODE, 2);
 
 	brush.setValue(brushprop::SIZE, d->ui.brushsize->value());
-	brush.setValue(brushprop::SIZE2, d->ui.brushsize0->value());
-	brush.setValue(brushprop::SIZE_PRESSURE, d->ui.sizePressure->isChecked());
+	brush.setValue(brushprop::SIZE_PRESSURE, d->ui.pressureSize->isChecked());
 
 	brush.setValue(brushprop::OPACITY, d->ui.brushopacity->value());
-	brush.setValue(brushprop::OPACITY2, d->ui.brushopacity0->value());
-	brush.setValue(brushprop::OPACITY_PRESSURE, d->ui.opacityPressure->isChecked());
+	brush.setValue(brushprop::OPACITY_PRESSURE, d->ui.pressureOpacity->isChecked());
 
 	brush.setValue(brushprop::HARD, d->ui.brushhardness->value());
-	brush.setValue(brushprop::HARD2, d->ui.brushhardness0->value());
-	brush.setValue(brushprop::HARD_PRESSURE, d->ui.hardnessPressure->isChecked());
+	brush.setValue(brushprop::HARD_PRESSURE, d->ui.pressureHardness->isChecked());
 
 	brush.setValue(brushprop::SMUDGE, d->ui.brushsmudging->value());
-	brush.setValue(brushprop::SMUDGE2, d->ui.brushsmudging0->value());
-	brush.setValue(brushprop::SMUDGE_PRESSURE, d->ui.smudgingPressure->isChecked());
+	brush.setValue(brushprop::SMUDGE_PRESSURE, d->ui.pressureSmudging->isChecked());
 
 	brush.setValue(brushprop::RESMUDGE, d->ui.colorpickup->value());
 	brush.setValue(brushprop::SPACING, d->ui.brushspacing->value());
@@ -731,7 +710,7 @@ void BrushPresetModel::makeDefaultBrushes()
 	// Generate a few pixel brushes
 	tp.setValue(brushprop::BRUSHMODE, 0);
 	tp.setValue(brushprop::SPACING, 15);
-	tp.setValue(brushprop::SIZE2, 0);
+	tp.setValue(brushprop::SIZE, 0);
 	tp.setValue(brushprop::SIZE_PRESSURE, true);
 	for(int i=0;i<3;++i) {
 		tp.setValue(brushprop::SIZE, i*8);
