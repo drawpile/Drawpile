@@ -92,6 +92,34 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		emit operatorListChanged(m_ops);
 		break;
 
+	case MSG_USER_LEAVE: {
+		// User left: remove locks
+		if(m_ops.removeAll(msg.contextId())) {
+			emit operatorListChanged(m_ops);
+		}
+
+		if(m_userlocks.removeAll(msg.contextId())>0)
+			emit userLocksChanged(m_userlocks);
+
+		m_userLayers.remove(msg.contextId());
+
+		QMutableHashIterator<int,LayerAcl> i(m_layers);
+		while(i.hasNext()) {
+			i.next();
+			if(i.value().exclusive.removeAll(msg.contextId())>0) {
+				emit layerAclChange(i.key(), i.value().locked, i.value().exclusive);
+			}
+		}
+
+		// Refresh UI
+		if(msg.contextId() == m_myId) {
+			m_isOperator = false;
+			emit localOpChanged(false);
+			m_localUserLocked = false;
+			emit localLockChanged(isLocked());
+		}
+		break; }
+
 	case MSG_SESSION_OWNER:
 		updateSessionOwnership(static_cast<const SessionOwner&>(msg));
 		return true;
