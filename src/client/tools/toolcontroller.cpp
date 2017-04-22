@@ -25,6 +25,7 @@
 #include "laser.h"
 #include "selection.h"
 #include "shapetools.h"
+#include "beziertool.h"
 #include "floodfill.h"
 
 #include "core/point.h"
@@ -50,6 +51,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new Line(*this));
 	registerTool(new Rectangle(*this));
 	registerTool(new Ellipse(*this));
+	registerTool(new BezierTool(*this));
 	registerTool(new FloodFill(*this));
 	registerTool(new Annotation(*this));
 	registerTool(new LaserPointer(*this));
@@ -85,6 +87,7 @@ Tool *ToolController::getTool(Tool::Type type)
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
+		m_activeTool->cancel();
 		m_activeTool = getTool(tool);
 		emit activeToolChanged(tool);
 		emit toolCursorChanged(activeToolCursor());
@@ -159,7 +162,7 @@ void ToolController::setSmoothing(int smoothing)
 	}
 }
 
-void ToolController::startDrawing(const QPointF &point, qreal pressure, float zoom)
+void ToolController::startDrawing(const QPointF &point, qreal pressure, bool right, float zoom)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -173,7 +176,7 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, float zo
 		m_smoother.addPoint(paintcore::Point(point, pressure));
 	}
 	// TODO handle hasSmoothPoint() == false
-	m_activeTool->begin(paintcore::Point(point, pressure), zoom);
+	m_activeTool->begin(paintcore::Point(point, pressure), right, zoom);
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)
@@ -200,6 +203,15 @@ void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool 
 	m_prevAlt = alt;
 }
 
+void ToolController::hoverDrawing(const QPointF &point)
+{
+	Q_ASSERT(m_activeTool);
+	if(!m_model)
+		return;
+
+	m_activeTool->hover(point);
+}
+
 void ToolController::endDrawing()
 {
 	Q_ASSERT(m_activeTool);
@@ -221,6 +233,19 @@ void ToolController::endDrawing()
 	}
 
 	m_activeTool->end();
+}
+
+void ToolController::abortDrawing()
+{
+	Q_ASSERT(m_activeTool);
+
+	if(!m_model) {
+		qWarning("ToolController::endDrawing: no model set!");
+		return;
+	}
+
+	m_smoother.reset();
+	m_activeTool->cancel();
 }
 
 }

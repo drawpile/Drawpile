@@ -95,8 +95,9 @@ class CanvasView : public QGraphicsView
 		//! Pointer was just brought to the top of the widget border
 		void hotBorder(bool hot);
 
-		void penDown(const QPointF &point, qreal pressure, float zoom);
+		void penDown(const QPointF &point, qreal pressure, bool right, float zoom);
 		void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
+		void penHover(const QPointF &point);
 		void penUp();
 		void quickAdjust(qreal value);
 
@@ -235,6 +236,7 @@ class CanvasView : public QGraphicsView
 		qreal _pointervelocity;
 		bool _prevshift;
 		bool _prevalt;
+		bool m_firstPointRight;
 
 		qreal _gestureStartZoom;
 		qreal _gestureStartAngle;

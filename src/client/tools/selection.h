@@ -33,9 +33,9 @@ public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type,  cursor) { }
 
-	void begin(const paintcore::Point& point, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
+	void begin(const paintcore::Point& point, bool right, float zoom) override;
+	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void end() override;
 
 	//! Start a layer region move operation
 	void startMove();

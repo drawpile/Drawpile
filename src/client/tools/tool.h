@@ -41,7 +41,7 @@ class ToolController;
 class Tool
 {
 public:
-	enum Type {FREEHAND, LINE, RECTANGLE, ELLIPSE, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION, _LASTTOOL};
+	enum Type {FREEHAND, LINE, RECTANGLE, ELLIPSE, BEZIER, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION, _LASTTOOL};
 
 	Tool(ToolController &owner, Type type, const QCursor &cursor)
 		: owner(owner), m_type(type), m_cursor(cursor)
@@ -57,7 +57,7 @@ public:
 	 * @param right is the right mouse/pen button pressed instead of the left one
 	 * @param zoom the current view zoom factor
 	 */
-	virtual void begin(const paintcore::Point& point, float zoom) = 0;
+	virtual void begin(const paintcore::Point& point, bool right, float zoom) = 0;
 
 	/**
 	 * @brief Continue a stroke
@@ -67,8 +67,17 @@ public:
 	 */
 	virtual void motion(const paintcore::Point& point, bool constrain, bool center) = 0;
 
+	/**
+	 * @brief Tool hovering over the canvas
+	 * @param point tool position
+	 */
+	virtual void hover(const QPointF &point) { Q_UNUSED(point); }
+
 	//! End stroke
 	virtual void end() = 0;
+
+	//! End and cancel the current stroke (if any)
+	virtual void cancel() { }
 
 	//! Does this tool allow stroke smoothing to be used?
 	virtual bool allowSmoothing() const { return false; }

@@ -38,9 +38,10 @@ FloodFill::FloodFill(ToolController &owner)
 {
 }
 
-void FloodFill::begin(const paintcore::Point &point, float zoom)
+void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(right);
 	QColor color = owner.activeBrush().color();
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));

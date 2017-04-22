@@ -41,8 +41,10 @@ Annotation::Annotation(ToolController &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const paintcore::Point& point, float zoom)
+void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 {
+	Q_UNUSED(right);
+
 	const paintcore::Annotation *selection = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
 	m_p1 = point;
 	m_p2 = point;

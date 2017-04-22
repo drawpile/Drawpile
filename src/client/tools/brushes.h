@@ -29,7 +29,7 @@ class Freehand : public Tool
 public:
 	Freehand(ToolController &owner);
 
-	void begin(const paintcore::Point& point, float zoom) override;
+	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
 	void end() override;
 

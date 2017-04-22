@@ -14,6 +14,7 @@ set (
 	tools/laser.cpp
 	tools/selection.cpp
 	tools/shapetools.cpp
+	tools/beziertool.cpp
 	tools/floodfill.cpp
 	tools/strokesmoother.cpp
 	canvas/statetracker.cpp

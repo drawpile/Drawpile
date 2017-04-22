@@ -102,6 +102,11 @@ struct ToolSettings::Private {
 				"ellipse",
 				QApplication::tr("Ellipse")
 			};
+		pages[tools::Tool::BEZIER] = {
+				brush,
+				"bezier",
+				QApplication::tr("Bezier Curve")
+			};
 		pages[tools::Tool::FLOODFILL] = {
 				QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
 				"fill",

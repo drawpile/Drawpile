@@ -17,10 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "shapes.h"
+
 #include <Qt>
 #include <QtMath>
-
-#include "shapes.h"
+#include <algorithm>
 
 namespace paintcore{
 namespace shapes {
@@ -55,6 +56,34 @@ PointVector ellipse(const QRectF &rect)
 		pv << Point(cx + a*qCos(t), cy + b*qSin(t), 1.0);
 	}
 	pv << Point(cx+a, cy, 1);
+	return pv;
+}
+
+static Point _cubicBezierPoint(const QPointF p[4], float t)
+{
+	const float t1 = 1-t;
+	const float Ax = t1*p[0].x() + t*p[1].x();
+	const float Ay = t1*p[0].y() + t*p[1].y();
+	const float Bx = t1*p[1].x() + t*p[2].x();
+	const float By = t1*p[1].y() + t*p[2].y();
+	const float Cx = t1*p[2].x() + t*p[3].x();
+	const float Cy = t1*p[2].y() + t*p[3].y();
+
+	const float Dx = t1*Ax + t*Bx;
+	const float Dy = t1*Ay + t*By;
+	const float Ex = t1*Bx + t*Cx;
+	const float Ey = t1*By + t*Cy;
+
+	return Point(t1*Dx + t*Ex, t1*Dy + t*Ey, 1);;
+}
+
+PointVector cubicBezierCurve(const QPointF p[4])
+{
+	PointVector pv;
+	// TODO smart step size selection
+	for(float t=0;t<1;t+=0.05) {
+		pv << _cubicBezierPoint(p, t);
+	}
 	return pv;
 }
 

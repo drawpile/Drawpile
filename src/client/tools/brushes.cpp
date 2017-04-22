@@ -36,9 +36,10 @@ Freehand::Freehand(ToolController &owner)
 {
 }
 
-void Freehand::begin(const paintcore::Point& point, float zoom)
+void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(right);
 
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));

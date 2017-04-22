@@ -79,9 +79,11 @@ public:
 	Tool *getTool(Tool::Type type);
 
 public slots:
-	void startDrawing(const QPointF &point, qreal pressure, float zoom);
+	void startDrawing(const QPointF &point, qreal pressure, bool right, float zoom);
 	void continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt);
+	void hoverDrawing(const QPointF &point);
 	void endDrawing();
+	void abortDrawing();
 
 signals:
 	void activeToolChanged(Tool::Type type);

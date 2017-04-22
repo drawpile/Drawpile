@@ -35,9 +35,9 @@ class Annotation : public Tool {
 public:
 	Annotation(ToolController &owner);
 
-	void begin(const paintcore::Point& point, float zoom);
-	void motion(const paintcore::Point& point, bool constrain, bool center);
-	void end();
+	void begin(const paintcore::Point& point, bool right, float zoom) override;
+	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void end() override;
 
 private:
 	static const int PREVIEW_ID = 0x010000;

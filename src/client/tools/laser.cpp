@@ -34,9 +34,11 @@ LaserPointer::LaserPointer(ToolController &owner)
 	m_persistence(1)
 {}
 
-void LaserPointer::begin(const paintcore::Point &point, float zoom)
+void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(right);
+
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(),
 		owner.activeBrush().color().rgb(),

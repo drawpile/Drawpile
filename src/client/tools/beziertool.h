@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,34 +16,43 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_FLOODFILL_H
-#define TOOLS_FLOODFILL_H
+#ifndef TOOLS_BEZIER_H
+#define TOOLS_BEZIER_H
 
 #include "tool.h"
+#include "core/brush.h"
 
 namespace tools {
 
-class FloodFill : public Tool
-{
+/**
+ * \brief A bezier curve tool
+ */
+class BezierTool : public Tool {
 public:
-	FloodFill(ToolController &owner);
+	BezierTool(ToolController &owner);
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void hover(const QPointF& point) override;
 	void end() override;
-
-	void setTolerance(int tolerance) { m_tolerance = tolerance; }
-	void setExpansion(int expansion) { m_expansion = expansion; }
-	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
-	void setUnderFill(bool uf) { m_underFill = uf; }
+	void cancel() override;
 
 private:
-	int m_tolerance;
-	int m_expansion;
-	bool m_sampleMerged;
-	bool m_underFill;
+	void updatePreview();
+	paintcore::PointVector calculateBezierCurve() const;
+
+	struct ControlPoint {
+		QPointF point;
+		QPointF cp; // second control point, relative to the main point
+	};
+
+	paintcore::Brush m_previewBrush;
+	QVector<ControlPoint> m_points;
+	QPointF m_beginPoint;
+	bool m_rightButton;
 };
 
 }
 
 #endif
+

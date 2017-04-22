@@ -2,6 +2,7 @@
  * Added support for room codes and private listings
  * Reverted pressure controls back to checkboxes
  * Moved eraser mode toggle action to toolbar
+ * Added bezier curve tool
 
 2017-04-17 Version 2.0.3
  * Restored some tablet and smoother improvements from stable branch

@@ -346,6 +346,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 			// in case of a single point dab.
 			m_firstPoint = p;
 			m_isFirstPoint = true;
+			m_firstPointRight = right;
 		}
 	}
 }
@@ -362,7 +363,7 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 			if(m_isFirstPoint) {
 				m_isFirstPoint = false;
 				// Pressure value of the first point may not be valid
-				emit penDown(m_firstPoint, p.pressure(), _zoom / 100.0);
+				emit penDown(m_firstPoint, p.pressure(), m_firstPointRight, _zoom / 100.0);
 			}
 			emit penMove(p, p.pressure(), shift, alt);
 		}
@@ -375,7 +376,7 @@ void CanvasView::onPenUp(bool right)
 	if(!_locked) {
 		if(!_specialpenmode) {
 			if(m_isFirstPoint)
-				emit penDown(m_firstPoint, m_firstPoint.pressure(), _zoom / 100.0);
+				emit penDown(m_firstPoint, m_firstPoint.pressure(), m_firstPointRight, _zoom / 100.0);
 			emit penUp();
 		}
 	}
@@ -398,11 +399,7 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 
 		startDrag(pos.x(), pos.y(), mode);
 
-	} else if(button == Qt::RightButton) {
-		// Currently unused
-		//emit rightClicked(pos.toPoint());
-
-	} else if(button == Qt::LeftButton && _isdragging==DRAG_NOTRANSFORM) {
+	} else if((button == Qt::LeftButton || button == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
 
 		if(_stylusDown) {
 			// Work around missing modifier keys in QTabletEvent
@@ -473,8 +470,10 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 				point.setPressure(mapPressure(pressure, isStylus));
 				onPenMove(point, buttons.testFlag(Qt::RightButton), modifiers.testFlag(Qt::ShiftModifier), modifiers.testFlag(Qt::AltModifier));
 
-			} else if(_pointertracking && _scene->hasImage()) {
-				emit pointerMoved(point);
+			} else {
+				emit penHover(point);
+				if(_pointertracking && _scene->hasImage())
+					emit pointerMoved(point);
 			}
 			_prevpoint = point;
 		}

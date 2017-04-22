@@ -325,6 +325,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_view, &widgets::CanvasView::penDown, m_doc->toolCtrl(), &tools::ToolController::startDrawing);
 	connect(_view, &widgets::CanvasView::penMove, m_doc->toolCtrl(), &tools::ToolController::continueDrawing);
+	connect(_view, &widgets::CanvasView::penHover, m_doc->toolCtrl(), &tools::ToolController::hoverDrawing);
 	connect(_view, &widgets::CanvasView::penUp, m_doc->toolCtrl(), &tools::ToolController::endDrawing);
 	connect(_view, &widgets::CanvasView::quickAdjust, _dock_toolsettings, &docks::ToolSettings::quickAdjustCurrent1);
 
@@ -2326,6 +2327,7 @@ void MainWindow::setupActions()
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
+	QAction *beziertool = makeAction("toolbezier", "draw-bezier-curves", tr("Bezier Curve"), tr("Draw bezier curves"), QKeySequence("Ctrl+B"), true);
 	QAction *filltool = makeAction("toolfill", "fill-color", tr("&Flood Fill"), tr("Fill areas"), QKeySequence("F"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 
@@ -2341,6 +2343,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(linetool);
 	m_drawingtools->addAction(recttool);
 	m_drawingtools->addAction(ellipsetool);
+	m_drawingtools->addAction(beziertool);
 	m_drawingtools->addAction(filltool);
 	m_drawingtools->addAction(annotationtool);
 	m_drawingtools->addAction(pickertool);

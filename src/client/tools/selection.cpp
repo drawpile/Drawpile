@@ -33,8 +33,10 @@
 
 namespace tools {
 
-void SelectionTool::begin(const paintcore::Point &point, float zoom)
+void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
+	Q_UNUSED(right);
+
 	canvas::Selection *sel = owner.model()->selection();
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);

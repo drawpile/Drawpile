@@ -36,9 +36,10 @@
 
 namespace tools {
 
-void ShapeTool::begin(const paintcore::Point& point, float zoom)
+void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(right);
 
 	m_start = point;
 	m_p1 = point;
