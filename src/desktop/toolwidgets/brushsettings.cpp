@@ -130,7 +130,8 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	return b;
 }
 
-static const int BRUSH_COUNT = 5;
+static const int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
+static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
@@ -142,6 +143,7 @@ struct BrushSettings::Private {
 	ToolProperties brushProps[BRUSH_COUNT];
 	ToolProperties toolProps[BRUSH_COUNT];
 	int current;
+	int previousNonEraser;
 
 	bool updateInProgress;
 
@@ -159,7 +161,7 @@ struct BrushSettings::Private {
 	}
 
 	Private(BrushSettings *b)
-		: current(0), updateInProgress(false)
+		: current(0), previousNonEraser(0), updateInProgress(false)
 	{
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
@@ -195,6 +197,7 @@ struct BrushSettings::Private {
 		case 2: return ui.slot3;
 		case 3: return ui.slot4;
 		case 4: return ui.slot5;
+		case 5: return ui.slotEraser;
 		default:
 			qFatal("brushSlotButton(%d): no such button", i);
 			return nullptr;
@@ -233,6 +236,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	// Internal updates
 	connect(d->ui.blendmode, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &BrushSettings::selectBlendMode);
+	connect(d->ui.modeEraser, &QToolButton::clicked, this, &BrushSettings::setEraserMode);
 
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
@@ -287,23 +291,50 @@ void BrushSettings::selectBrushSlot(int i)
 		qWarning("selectBrushSlot(%d): invalid slot index!", i);
 		return;
 	}
-	d->brushSlotButton(i)->setChecked(true);
+	const int previousSlot = d->current;
 
+	d->brushSlotButton(i)->setChecked(true);
 	d->current = i;
 	updateUi();
 
 	emit colorChanged(d->currentColor());
+
+	if((previousSlot==ERASER_SLOT) != (i==ERASER_SLOT))
+		emit eraseModeChanged(i==ERASER_SLOT);
 }
 
-bool BrushSettings::eraserMode() const
+void BrushSettings::toggleEraserMode()
 {
-	return d->currentTool().boolValue(toolprop::USE_ERASEMODE, false);
+	if(d->current != ERASER_SLOT) {
+		// Eraser mode is fixed in dedicated eraser slot
+		d->currentTool().setValue(toolprop::USE_ERASEMODE, !d->currentTool().boolValue(toolprop::USE_ERASEMODE, false));
+		updateUi();
+	}
 }
 
 void BrushSettings::setEraserMode(bool erase)
 {
 	d->currentTool().setValue(toolprop::USE_ERASEMODE, erase);
 	updateUi();
+}
+
+void BrushSettings::selectEraserSlot(bool eraser)
+{
+	if(eraser) {
+		if(!isCurrentEraserSlot()) {
+			d->previousNonEraser = d->current;
+			selectBrushSlot(ERASER_SLOT);
+		}
+	} else {
+		if(isCurrentEraserSlot()) {
+			selectBrushSlot(d->previousNonEraser);
+		}
+	}
+}
+
+bool BrushSettings::isCurrentEraserSlot() const
+{
+	return d->current == ERASER_SLOT;
 }
 
 void BrushSettings::selectBlendMode(int modeIndex)
@@ -368,13 +399,15 @@ void BrushSettings::updateUi()
 		d->ui.blendmode->setModel(d->blendModes);
 		blendmode = tool.intValue(toolprop::BLENDMODE, paintcore::BlendMode::MODE_NORMAL);
 	}
+	d->ui.modeEraser->setChecked(erasemode);
+	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
+
 	for(int i=0;i<d->ui.blendmode->model()->rowCount();++i) {
 		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == blendmode) {
 			d->ui.blendmode->setCurrentIndex(i);
 			break;
 		}
 	}
-	emit eraseModeChanged(erasemode);
 
 	// Set values
 	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
@@ -433,6 +466,11 @@ void BrushSettings::updateFromUi()
 	brush.setValue(brushprop::SPACING, d->ui.brushspacing->value());
 	brush.setValue(brushprop::INCREMENTAL, d->ui.modeIncremental->isChecked());
 
+	if(d->current == ERASER_SLOT)
+		d->currentTool().setValue(toolprop::USE_ERASEMODE, true);
+	else
+		d->currentTool().setValue(toolprop::USE_ERASEMODE, d->ui.modeEraser->isChecked());
+
 	d->updateBrush();
 }
 
@@ -455,6 +493,7 @@ ToolProperties BrushSettings::saveToolSettings()
 void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	d->current = qBound(0, cfg.value("active", 0).toInt(), BRUSH_COUNT-1);
+	d->previousNonEraser = d->current;
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		QVariantHash brush = cfg.value(QString("brush%1").arg(i)).toHash();
 		QVariantHash tool = cfg.value(QString("tool%1").arg(i)).toHash();
@@ -463,6 +502,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		d->toolProps[i] = ToolProperties::fromVariant(tool);
 		d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::COLOR, QColor(Qt::black)).value<QColor>());
 	}
+	d->toolProps[ERASER_SLOT].setValue(toolprop::USE_ERASEMODE, true);
+
 	updateUi();
 }
 

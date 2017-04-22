@@ -247,16 +247,23 @@ void ToolSettings::setToolSlot(int idx)
 
 void ToolSettings::toggleEraserMode()
 {
+	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	if(bs) {
+		bs->toggleEraserMode();
+	}
+}
+
+void ToolSettings::toggleEraserBrush()
+{
 	// Currently, brush tool is the only tool with eraser mode
 	// When eraser mode is activated when some other tool is selected,
 	// switch to freehand tool.
 	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
 	if(bs) {
-		bool inEraseMode = bs->eraserMode();
-		bs->setEraserMode(!inEraseMode);
+		bs->selectEraserSlot(!bs->isCurrentEraserSlot());
 	} else {
 		setTool(tools::Tool::FREEHAND);
-		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->setEraserMode(true);
+		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->selectEraserSlot(true);
 	}
 }
 
@@ -270,14 +277,14 @@ void ToolSettings::eraserNear(bool near)
 
 	if(near) {
 		// Eraser was just brought near: switch to erase mode if not already
-		d->switchedWithStylusEraser = !bs->eraserMode();
-		if(!bs->eraserMode())
-			bs->setEraserMode(true);
+		d->switchedWithStylusEraser = !bs->isCurrentEraserSlot();
+		if(!bs->isCurrentEraserSlot())
+			bs->selectEraserSlot(true);
 	} else {
 		// Eraser taken away: switch back
 		if(d->switchedWithStylusEraser) {
 			d->switchedWithStylusEraser = false;
-			bs->setEraserMode(false);
+			bs->selectEraserSlot(false);
 		}
 	}
 }

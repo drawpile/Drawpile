@@ -1,6 +1,8 @@
 2014-0?-?? Version 2.0.4
  * Added support for room codes and private listings
  * Reverted pressure controls back to checkboxes
+ * Added dedicated slot for eraser brush. The 'E' shortcut now switches to/from this brush slot
+ * Added 'Ctrl+E' shortcut to toggle the current brush's eraser mode
  * Moved eraser mode toggle action to toolbar
  * Added bezier curve tool
 

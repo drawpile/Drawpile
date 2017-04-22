@@ -57,11 +57,12 @@ public:
 	ToolProperties getCurrentBrushSettings() const;
 
 	int currentBrushSlot() const;
-	bool eraserMode() const;
+	bool isCurrentEraserSlot() const;
 
 public slots:
 	void selectBrushSlot(int i);
-	void setEraserMode(bool erase);
+	void selectEraserSlot(bool eraser);
+	void toggleEraserMode();
 
 signals:
 	void colorChanged(const QColor &color);
@@ -72,6 +73,7 @@ protected:
 
 private slots:
 	void selectBlendMode(int);
+	void setEraserMode(bool erase);
 	void updateUi();
 	void updateFromUi();
 
