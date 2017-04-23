@@ -48,6 +48,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::pushSettings);
+	connect(_ui->sizelimit, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::pushSettings);
 	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
@@ -60,6 +61,7 @@ void FillSettings::pushSettings()
 	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
 	tool->setTolerance(_ui->tolerance->value());
 	tool->setExpansion(_ui->expand->value());
+	tool->setSizeLimit(_ui->sizelimit->value() * _ui->sizelimit->value() * 10 * 10);
 	tool->setSampleMerged(_ui->samplemerged->isChecked());
 	tool->setUnderFill(_ui->fillunder->isChecked());
 }
@@ -86,6 +88,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->tolerance->setValue(cfg.value("tolerance", 0).toInt());
 	_ui->expand->setValue(cfg.value("expand", 0).toInt());
+	_ui->sizelimit->setValue(cfg.value("sizelimit", 50).toDouble());
 	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
 	_ui->fillunder->setChecked(cfg.value("underfill", true).toBool());
 	pushSettings();

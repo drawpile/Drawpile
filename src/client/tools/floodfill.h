@@ -34,12 +34,14 @@ public:
 
 	void setTolerance(int tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
+	void setSizeLimit(unsigned int limit) { m_sizelimit = qMax(100u, limit); }
 	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
 	void setUnderFill(bool uf) { m_underFill = uf; }
 
 private:
 	int m_tolerance;
 	int m_expansion;
+	unsigned int m_sizelimit;
 	bool m_sampleMerged;
 	bool m_underFill;
 };

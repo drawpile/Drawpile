@@ -31,14 +31,16 @@ namespace {
 
 class Floodfill {
 public:
-	Floodfill(const LayerStack *image, int sourceLayer, bool merge, const QColor &color, int colorTolerance) :
+	Floodfill(const LayerStack *image, int sourceLayer, bool merge, const QColor &color, int colorTolerance, unsigned int sizelimit) :
 		source(image),
 		scratch(0, 0, QString(), Qt::transparent, image->size()),
 		fill(0, 0, QString(), Qt::transparent, image->size()),
 		layer(sourceLayer),
 		merge(merge),
 		fillColor(color.rgba()),
-		tolerance(colorTolerance)
+		tolerance(colorTolerance),
+		filledSize(0),
+		sizelimit(sizelimit)
 	{ }
 
 	Tile &scratchTile(int x, int y)
@@ -129,7 +131,7 @@ public:
 
 		const int w1 = scratch.width()-1;
 
-		while(!stack.isEmpty()) {
+		while(!stack.isEmpty() && filledSize < sizelimit) {
 			QPoint p = stack.pop();
 
 			const int x = p.x();
@@ -143,6 +145,7 @@ public:
 
 			while(y < scratch.height() && isOldColorAt(x, y)) {
 				setPixel(x, y);
+				++filledSize;
 
 				if(!spanLeft && x>0 && isOldColorAt(x-1, y)) {
 					stack.push(QPoint(x-1, y));
@@ -168,6 +171,7 @@ public:
 		FillResult res;
 		res.image = fill.toCroppedImage(&res.x, &res.y);
 		res.layerSeedColor = layerSeedColor;
+		res.oversize = filledSize >= sizelimit;
 		return res;
 	}
 
@@ -197,6 +201,10 @@ private:
 
 	// Color matching tolerance
 	int tolerance;
+
+	// Maximum number of pixels to fill
+	unsigned int filledSize;
+	unsigned int sizelimit;
 };
 
 /**
@@ -236,12 +244,12 @@ QRect findOpaqueBoundingRect(const QImage &image)
 
 }
 
-FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge)
+FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge, unsigned int sizelimit)
 {
 	Q_ASSERT(image);
 	Q_ASSERT(tolerance>=0);
 
-	Floodfill fill(image, layer, merge, color, tolerance);
+	Floodfill fill(image, layer, merge, color, tolerance, sizelimit);
 
 	if(point.x() >=0 && point.x() < image->width() && point.y()>=0 && point.y() < image->height())
 		fill.start(point);

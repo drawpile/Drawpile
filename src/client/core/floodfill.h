@@ -38,6 +38,9 @@ struct FillResult {
 
 	//! The pixel value of the point on the target layer where the fill started
 	QRgb layerSeedColor;
+
+	//! Was the fill aborted due to size limit being reaced?
+	bool oversize;
 };
 
 /**
@@ -49,9 +52,10 @@ struct FillResult {
  * @param tolerance color matching tolerance
  * @param layer the active layer
  * @param merge if true, use merged pixel values from all layers
+ * @param sizelimit maximum number of pixels to color (aborts fill if exceeded)
  * @return fill bitmap
  */
-FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge);
+FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor &color, int tolerance, int layer, bool merge, unsigned int sizelimit);
 
 /**
  * @brief Take a previous flood fill result and expand the filled area

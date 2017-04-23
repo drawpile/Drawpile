@@ -197,7 +197,7 @@ void BrushPreview::updatePreview()
 	layer->mergeSublayer(0);
 
 	if(_shape == FloodFill) {
-		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), m_color, _fillTolerance, 0, false);
+		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), m_color, _fillTolerance, 0, false, 360000);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, m_color);
 		layer->putImage(fr.x, fr.y, fr.image, _underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL);

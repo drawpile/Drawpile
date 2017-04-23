@@ -34,7 +34,7 @@ namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29)),
-	m_tolerance(1), m_expansion(0), m_sampleMerged(true), m_underFill(true)
+	m_tolerance(1), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true)
 {
 }
 
@@ -52,36 +52,43 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		color,
 		m_tolerance,
 		owner.activeLayer(),
-		m_sampleMerged
+		m_sampleMerged,
+		m_sizelimit
 	);
 
-	fill = paintcore::expandFill(fill, m_expansion, color);
+	if(!fill.oversize)
+		fill = paintcore::expandFill(fill, m_expansion, color);
 
 	if(fill.image.isNull()) {
 		QGuiApplication::restoreOverrideCursor();
 		return;
 	}
 
-	// If the target area is transparent, use the BEHIND compositing mode.
-	// This results in nice smooth blending with soft outlines, when the
-	// outline has different color than the fill.
-	paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
-	if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
-		mode = paintcore::BlendMode::MODE_BEHIND;
+	if(fill.oversize) {
+		// Oversized fill: don't draw
 
-	// Flood fill is implemented using PutImage rather than a native command.
-	// This has the following advantages:
-	// - backward and forward compatibility: changes in the algorithm can be made freely
-	// - tolerates out-of-sync canvases (shouldn't normally happen, but...)
-	// - bugs don't crash/freeze other clients
-	//
-	// The disadvantage is increased bandwith consumption. However, this is not as bad
-	// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
-	// consist of large solid areas, meaning they should compress ridiculously well.
-	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
-	msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
-	owner.client()->sendMessages(msgs);
+	} else {
+		// If the target area is transparent, use the BEHIND compositing mode.
+		// This results in nice smooth blending with soft outlines, when the
+		// outline has different color than the fill.
+		paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
+		if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
+			mode = paintcore::BlendMode::MODE_BEHIND;
+
+		// Flood fill is implemented using PutImage rather than a native command.
+		// This has the following advantages:
+		// - backward and forward compatibility: changes in the algorithm can be made freely
+		// - tolerates out-of-sync canvases (shouldn't normally happen, but...)
+		// - bugs don't crash/freeze other clients
+		//
+		// The disadvantage is increased bandwith consumption. However, this is not as bad
+		// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
+		// consist of large solid areas, meaning they should compress ridiculously well.
+		QList<protocol::MessagePtr> msgs;
+		msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
+		msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
+		owner.client()->sendMessages(msgs);
+	}
 
 	QGuiApplication::restoreOverrideCursor();
 }
