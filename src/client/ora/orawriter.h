@@ -29,7 +29,15 @@ namespace openraster {
 
 extern const QString DP_NAMESPACE;
 
-bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image);
+/**
+ * @brief Save the layer stack as an OpenRaster file
+ *
+ * @param filename target file path
+ * @param image layer stack to save
+ * @param errorMessage if not null, error message is put here
+ * @return false on error
+ */
+bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image, QString *errorMessage=nullptr);
 
 }
 

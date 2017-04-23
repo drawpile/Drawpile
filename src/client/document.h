@@ -110,9 +110,10 @@ public:
 	 * Saving sets the current filename and marks the document as not dirty
 	 *
 	 * @param filename the file to save to
+	 * @param errorMessage if not null, error message is stored here
 	 * @return true on success
 	 */
-	bool saveCanvas(const QString &filename);
+	bool saveCanvas(const QString &filename, QString *errorMessage);
 
 	void setAutosave(bool autosave);
 	bool isAutosave() const { return m_autosave; }

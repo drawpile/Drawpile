@@ -31,14 +31,19 @@ namespace openraster {
 
 const QString DP_NAMESPACE = QStringLiteral("http://drawpile.net/");
 
-static bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
+static bool putPngInZip(KZip &zip, const QString &filename, const QImage &image, QString *errorMessage)
 {
 	QBuffer buf;
 	image.save(&buf, "PNG");
 
 	// PNG is already compressed, so no use attempting to recompress
 	zip.setCompression(KZip::NoCompression);
-	return zip.writeFile(filename, buf.data());
+	if(!zip.writeFile(filename, buf.data())) {
+		if(errorMessage)
+			*errorMessage = zip.errorString();
+		return false;
+	}
+	return true;
 }
 
 static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStack *image)
@@ -87,7 +92,7 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 	writer.writeEndElement();
 }
 
-static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
+static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, QString *errorMessage)
 {
 	QBuffer buffer;
 	buffer.open(QBuffer::ReadWrite);
@@ -111,56 +116,75 @@ static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 	// Done.
 	writer.writeEndDocument();
 	zip.setCompression(KZip::DeflateCompression);
-	return zip.writeFile("stack.xml", buffer.data());
+	if(!zip.writeFile("stack.xml", buffer.data())) {
+		if(errorMessage)
+			*errorMessage = zip.errorString();
+		return false;
+	}
+	return true;
 }
 
-static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
+static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index, QString *errorMessage)
 {
 	const paintcore::Layer *l = layers->getLayerByIndex(index);
 	Q_ASSERT(l);
 
-	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage());
+	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage(), errorMessage);
 }
 
-static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers)
+static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers, QString *errorMessage)
 {
 	QImage img = layers->toFlatImage(false);
 
 	// Flattened full size version for image viewers
-	if(!putPngInZip(zf, "mergedimage.png", img))
+	if(!putPngInZip(zf, "mergedimage.png", img, errorMessage))
 		return false;
 
 	// Thumbnail for browsers and such
 	if(img.width() > 256 || img.height() > 256)
 		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-	return putPngInZip(zf, "Thumbnails/thumbnail.png", img);
+	return putPngInZip(zf, "Thumbnails/thumbnail.png", img, errorMessage);
 }
 
-bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
+bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image, QString *errorMessage)
 {
 	KZip zf(filename);
-	if(!zf.open(QIODevice::WriteOnly))
+	if(!zf.open(QIODevice::WriteOnly)) {
+		if(errorMessage)
+			*errorMessage = zf.errorString();
 		return false;
+	}
 
 	// The first entry of an OpenRaster file must be a
 	// (uncompressed) file named "mimetype".
 	zf.setCompression(KZip::NoCompression);
-	if(!zf.writeFile("mimetype", QByteArray("image/openraster")))
+	if(!zf.writeFile("mimetype", QByteArray("image/openraster"))) {
+		if(errorMessage)
+			*errorMessage = zf.errorString();
 		return false;
+	}
 
 	// The stack XML contains the image structure
 	// definition.
-	writeStackXml(zf, image);
+	if(!writeStackXml(zf, image, errorMessage))
+		return false;
 
 	// Each layer is written as an individual PNG image
-	for(int i=image->layerCount()-1;i>=0;--i)
-		writeLayer(zf, image, i);
+	for(int i=image->layerCount()-1;i>=0;--i) {
+		if(!writeLayer(zf, image, i, errorMessage))
+			return false;
+	}
 
 	// Ready to use images for viewers
-	writePreviewImages(zf, image);
+	writePreviewImages(zf, image, errorMessage);
 
-	return zf.close();
+	if(!zf.close()) {
+		if(errorMessage)
+			*errorMessage = zf.errorString();
+		return false;
+	}
+	return true;
 }
 
 }

@@ -964,11 +964,12 @@ bool MainWindow::save()
 
 	// Overwrite current file
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	bool saved = m_doc->saveCanvas(filename);
+	QString errorMessage;
+	const bool saved = m_doc->saveCanvas(filename, &errorMessage);
 	QApplication::restoreOverrideCursor();
 
 	if(!saved) {
-		showErrorMessage(tr("Couldn't save image"));
+		showErrorMessage(tr("Couldn't save image"), errorMessage);
 		return false;
 	}
 
@@ -1021,11 +1022,12 @@ bool MainWindow::saveas()
 
 		// Save the image
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		bool saved = m_doc->saveCanvas(file);
+		QString errorMessage;
+		const bool saved = m_doc->saveCanvas(file, &errorMessage);
 		QApplication::restoreOverrideCursor();
 
 		if(!saved) {
-			showErrorMessage(tr("Couldn't save image"));
+			showErrorMessage(tr("Couldn't save image"), errorMessage);
 			return false;
 		} else {
 			setWindowModified(false);

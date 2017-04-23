@@ -384,18 +384,19 @@ void Document::autosaveNow()
 	Q_ASSERT(utils::isWritableFormat(currentFilename()));
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	bool saved = m_canvas->save(currentFilename());
+	QString errorMessage;
+	const bool saved = m_canvas->save(currentFilename(), &errorMessage);
 	QGuiApplication::restoreOverrideCursor();
 
 	if(saved)
 		unmarkDirty();
 	else
-		qWarning("Error autosaving");
+		qWarning("Error autosaving: %s", qPrintable(errorMessage));
 }
 
-bool Document::saveCanvas(const QString &filename)
+bool Document::saveCanvas(const QString &filename, QString *errorMessage)
 {
-	if(m_canvas->save(filename)) {
+	if(m_canvas->save(filename, errorMessage)) {
 		setCurrentFilename(filename);
 		unmarkDirty();
 		return true;

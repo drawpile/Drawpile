@@ -38,6 +38,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
+#include <QImageWriter>
 
 namespace canvas {
 
@@ -182,15 +183,21 @@ bool CanvasModel::needsOpenRaster() const
 	return m_layerstack->layerCount() > 1 || !m_layerstack->annotations()->isEmpty();
 }
 
-bool CanvasModel::save(const QString &filename) const
+bool CanvasModel::save(const QString &filename, QString *errorMessage) const
 {
 	if(filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(filename, m_layerstack);
+		return openraster::saveOpenRaster(filename, m_layerstack, errorMessage);
 
 	} else {
 		// Regular image formats: flatten the image first.
-		return toImage().save(filename);
+		QImageWriter writer(filename);
+		if(!writer.write(toImage())) {
+			if(errorMessage)
+				*errorMessage = writer.errorString();
+			return false;
+		}
+		return true;
 	}
 }
 

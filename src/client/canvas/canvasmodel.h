@@ -78,7 +78,7 @@ public:
 
 	bool needsOpenRaster() const;
 	QImage toImage() const;
-	bool save(const QString &filename) const;
+	bool save(const QString &filename, QString *errorMessage) const;
 
 	QList<protocol::MessagePtr> generateSnapshot(bool forceNew) const;
 
