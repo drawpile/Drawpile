@@ -27,7 +27,7 @@ namespace tools {
 class Freehand : public Tool
 {
 public:
-	Freehand(ToolController &owner);
+	Freehand(ToolController &owner, bool isEraser);
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;

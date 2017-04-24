@@ -134,9 +134,10 @@
         </item>
         <item>
          <widget class="GroupedToolButton" name="slotEraser">
-          <property name="text">
-           <string notr="true">E</string>
-          </property>
+           <property name="icon">
+            <iconset theme="draw-eraser">
+              <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
+           </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -278,7 +279,7 @@
        </property>
        <property name="icon">
         <iconset theme="draw-eraser">
-         <normaloff>.</normaloff>.</iconset>
+          <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

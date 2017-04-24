@@ -69,9 +69,6 @@ public slots:
 	//! Toggle current tool's eraser mode (if it has one)
 	void toggleEraserMode();
 
-	//! Switch to/from dedicated eraser brush
-	void toggleEraserBrush();
-
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 
@@ -96,9 +93,6 @@ signals:
 
 	//! This signal is emitted when tool subpixel drawing mode is changed
 	void subpixelModeChanged(bool subpixel);
-
-	//! Brush eraser mode changed
-	void eraserModeChanged(bool erase);
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);

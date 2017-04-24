@@ -80,12 +80,15 @@ struct ToolSettings::Private {
 		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
 		auto sel = QSharedPointer<tools::ToolSettings>(new tools::SelectionSettings(ctrl));
 
-		connect(static_cast<tools::BrushSettings*>(brush.data()), &tools::BrushSettings::eraseModeChanged, dock, &ToolSettings::eraserModeChanged);
-
 		pages[tools::Tool::FREEHAND] = {
 				brush,
 				"freehand",
 				QApplication::tr("Freehand")
+			};
+		pages[tools::Tool::ERASER] = {
+				brush,
+				"eraser",
+				QApplication::tr("Eraser")
 			};
 		pages[tools::Tool::LINE] = {
 				brush,
@@ -250,20 +253,6 @@ void ToolSettings::toggleEraserMode()
 	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
 	if(bs) {
 		bs->toggleEraserMode();
-	}
-}
-
-void ToolSettings::toggleEraserBrush()
-{
-	// Currently, brush tool is the only tool with eraser mode
-	// When eraser mode is activated when some other tool is selected,
-	// switch to freehand tool.
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
-	if(bs) {
-		bs->selectEraserSlot(!bs->isCurrentEraserSlot());
-	} else {
-		setTool(tools::Tool::FREEHAND);
-		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->selectEraserSlot(true);
 	}
 }
 

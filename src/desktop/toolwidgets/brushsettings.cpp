@@ -222,13 +222,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
 
-	QFontMetrics fm(d->ui.blendmode->font());
-	int maxWidth = 0;
-	for(const auto bm : paintcore::getBlendModeNames(0)) {
-		maxWidth = qMax(maxWidth, fm.width(bm.second));
-	}
-	d->ui.blendmode->setFixedWidth(maxWidth + 20);
-
 	// Outside communication
 	connect(d->ui.brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
@@ -515,6 +508,17 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(BrushPreview::Rectangle); break;
 	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(BrushPreview::Ellipse); break;
 	default: d->ui.preview->setPreviewShape(BrushPreview::Stroke); break;
+	}
+
+	if(tool == tools::Tool::ERASER) {
+		selectEraserSlot(true);
+		for(int i=0;i<BRUSH_COUNT-1;++i)
+			d->brushSlotButton(i)->setEnabled(false);
+	} else {
+		for(int i=0;i<BRUSH_COUNT-1;++i)
+			d->brushSlotButton(i)->setEnabled(true);
+
+		selectEraserSlot(false);
 	}
 }
 

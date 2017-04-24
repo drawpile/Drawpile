@@ -46,7 +46,8 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 {
 	Q_ASSERT(client);
 
-	registerTool(new Freehand(*this));
+	registerTool(new Freehand(*this, false));
+	registerTool(new Freehand(*this, true)); // eraser is a specialized freehand tool
 	registerTool(new ColorPicker(*this));
 	registerTool(new Line(*this));
 	registerTool(new Rectangle(*this));

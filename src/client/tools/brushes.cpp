@@ -31,8 +31,8 @@
 
 namespace tools {
 
-Freehand::Freehand(ToolController &owner)
-	: Tool(owner, FREEHAND, Qt::CrossCursor)
+Freehand::Freehand(ToolController &owner, bool isEraser)
+	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor)
 {
 }
 

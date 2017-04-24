@@ -1,9 +1,9 @@
 2014-0?-?? Version 2.0.4
  * Added support for room codes and private listings
  * Reverted pressure controls back to checkboxes
- * Added dedicated slot for eraser brush. The 'E' shortcut now switches to/from this brush slot
+ * Added dedicated eraser brush slot
+ * Restored eraser as a separate tool (uses only the eraser slot)
  * Added 'Ctrl+E' shortcut to toggle the current brush's eraser mode
- * Moved eraser mode toggle action to toolbar
  * Added bezier curve tool
  * Fixed stale op and lock bits left over from previous user with the same ID (fixes OP status being out of sync with server after logging back in)
  * Flood fill size can now be limited to protect against accidental canvas fills
