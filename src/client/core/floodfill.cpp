@@ -110,8 +110,21 @@ public:
 	void start(const QPoint &startPoint)
 	{
 		oldColor = colorAt(startPoint.x(), startPoint.y());
-		if(isSameColor(oldColor, fillColor))
-			return;
+		if(qAlpha(fillColor) == 0) {
+			// Transparent fill: assign fill color to some other color
+			// than the starting point, unless it's transparent
+			if(qAlpha(oldColor) == 0)
+				return;
+
+			if(qRed(oldColor) == 0)
+				fillColor = QColor(Qt::white).rgba();
+			else
+				fillColor = QColor(Qt::black).rgba();
+
+		} else {
+			if(isSameColor(oldColor, fillColor))
+				return;
+		}
 
 		// Get the original layer seed color (even in merged mode)
 		{

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29)),
-	m_tolerance(1), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true)
+	m_tolerance(1), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true),
+	m_eraseMode(false)
 {
 }
 
@@ -49,7 +50,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	paintcore::FillResult fill = paintcore::floodfill(
 		owner.model()->layerStack(),
 		QPoint(point.x(), point.y()),
-		color,
+		m_eraseMode ? QColor() : color,
 		m_tolerance,
 		owner.activeLayer(),
 		m_sampleMerged,
@@ -72,7 +73,10 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		// This results in nice smooth blending with soft outlines, when the
 		// outline has different color than the fill.
 		paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
-		if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
+
+		if(m_eraseMode)
+			mode = paintcore::BlendMode::MODE_ERASE;
+		else if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
 			mode = paintcore::BlendMode::MODE_BEHIND;
 
 		// Flood fill is implemented using PutImage rather than a native command.

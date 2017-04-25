@@ -7,6 +7,7 @@
  * Added bezier curve tool
  * Fixed stale op and lock bits left over from previous user with the same ID (fixes OP status being out of sync with server after logging back in)
  * Flood fill size can now be limited to protect against accidental canvas fills
+ * Added erase mode to flood fill tool
 
 2017-04-17 Version 2.0.3
  * Restored some tablet and smoother improvements from stable branch

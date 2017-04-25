@@ -62,7 +62,7 @@ public:
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
-	void toggleEraserMode();
+	void toggleEraserMode() override;
 
 signals:
 	void colorChanged(const QColor &color);

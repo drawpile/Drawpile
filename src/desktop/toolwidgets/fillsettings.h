@@ -47,6 +47,7 @@ public:
 
 public slots:
 	void pushSettings() override;
+	void toggleEraserMode() override;
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);

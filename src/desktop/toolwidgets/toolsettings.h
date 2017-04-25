@@ -117,6 +117,10 @@ public:
 	 */
 	virtual void restoreToolSettings(const ToolProperties &);
 
+public slots:
+	//! Toggle tool eraser mode (if it has one)
+	virtual void toggleEraserMode() { }
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;	
 	ToolController *controller() { return m_ctrl; }

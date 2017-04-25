@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ public:
 	void setSizeLimit(unsigned int limit) { m_sizelimit = qMax(100u, limit); }
 	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
 	void setUnderFill(bool uf) { m_underFill = uf; }
+	void setEraseMode(bool erase) { m_eraseMode = erase; }
 
 private:
 	int m_tolerance;
@@ -44,6 +45,7 @@ private:
 	unsigned int m_sizelimit;
 	bool m_sampleMerged;
 	bool m_underFill;
+	bool m_eraseMode;
 };
 
 }

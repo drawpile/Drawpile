@@ -52,18 +52,31 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::pushSettings);
 	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
-
+	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
+	connect(_ui->erasermode, &QAbstractButton::toggled, this, [this](bool erase) {
+			_ui->preview->setPreviewShape(erase ? BrushPreview::FloodErase : BrushPreview::FloodFill);
+			_ui->fillunder->setEnabled(!erase);
+			_ui->samplemerged->setEnabled(!erase);
+			_ui->preview->setTransparentBackground(!erase);
+	});
 	return uiwidget;
 }
 
 void FillSettings::pushSettings()
 {
+	const bool erase = _ui->erasermode->isChecked();
 	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
 	tool->setTolerance(_ui->tolerance->value());
 	tool->setExpansion(_ui->expand->value());
 	tool->setSizeLimit(_ui->sizelimit->value() * _ui->sizelimit->value() * 10 * 10);
-	tool->setSampleMerged(_ui->samplemerged->isChecked());
+	tool->setSampleMerged(erase ? false : _ui->samplemerged->isChecked());
 	tool->setUnderFill(_ui->fillunder->isChecked());
+	tool->setEraseMode(erase);
+}
+
+void FillSettings::toggleEraserMode()
+{
+	_ui->erasermode->toggle();
 }
 
 ToolProperties FillSettings::saveToolSettings()
@@ -73,6 +86,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue("expand", _ui->expand->value());
 	cfg.setValue("samplemerged", _ui->samplemerged->isChecked());
 	cfg.setValue("underfill", _ui->fillunder->isChecked());
+	cfg.setValue("erasermode", _ui->erasermode->isChecked());
 	return cfg;
 }
 
@@ -91,6 +105,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	_ui->sizelimit->setValue(cfg.value("sizelimit", 50).toDouble());
 	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
 	_ui->fillunder->setChecked(cfg.value("underfill", true).toBool());
+	_ui->erasermode->setChecked(cfg.value("erasermode", false).toBool());
 	pushSettings();
 }
 

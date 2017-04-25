@@ -48,7 +48,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_PROPERTY(bool transparentBackground READ isTransparentBackground WRITE setTransparentBackground)
 	Q_ENUMS(PreviewShape)
 	public:
-		enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill};
+		enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill, FloodErase};
 
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 		~BrushPreview();

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ struct FillResult {
 
 /**
  * @brief Perform a flood fill on the image
+ *
+ * If the fill color is transparent, either black or white will be used, depending on the color at the starting point.
  *
  * @param image the image on which to perform the fill
  * @param point fill seed point

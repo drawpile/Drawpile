@@ -250,10 +250,7 @@ void ToolSettings::setToolSlot(int idx)
 
 void ToolSettings::toggleEraserMode()
 {
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
-	if(bs) {
-		bs->toggleEraserMode();
-	}
+	d->currentSettings()->toggleEraserMode();
 }
 
 void ToolSettings::eraserNear(bool near)

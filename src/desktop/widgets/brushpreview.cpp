@@ -166,7 +166,8 @@ void BrushPreview::updatePreview()
 		break;
 	case Rectangle: pointvector = paintcore::shapes::rectangle(previewRect); break;
 	case Ellipse: pointvector = paintcore::shapes::ellipse(previewRect); break;
-	case FloodFill: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
+	case FloodFill:
+	case FloodErase: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
 	}
 
 	QColor bgcolor = m_bg;
@@ -196,11 +197,12 @@ void BrushPreview::updatePreview()
 
 	layer->mergeSublayer(0);
 
-	if(_shape == FloodFill) {
-		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), m_color, _fillTolerance, 0, false, 360000);
+	if(_shape == FloodFill || _shape == FloodErase) {
+		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), _shape == FloodFill ? m_color : QColor(), _fillTolerance, 0, false, 360000);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, m_color);
-		layer->putImage(fr.x, fr.y, fr.image, _underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL);
+		if(!fr.image.isNull())
+			layer->putImage(fr.x, fr.y, fr.image, _shape == FloodFill ? (_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
 	}
 
 	m_needupdate=false;
