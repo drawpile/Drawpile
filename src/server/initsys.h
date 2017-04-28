@@ -33,12 +33,6 @@
 namespace initsys {
 
 /**
- * @brief Set log printing function
- *
- */
-void setInitSysLogger();
-
-/**
  * @brief Send the "server ready" notification
  */
 void notifyReady();

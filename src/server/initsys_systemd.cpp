@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,32 +25,6 @@
 
 namespace initsys {
 
-#if 0
-namespace {
-void printSystemdLog(logger::LogLevel level, const QString &msg)
-{
-	const char *prefix;
-	switch(level) {
-	case logger::LOG_ERROR: prefix = SD_ERR; break;
-	case logger::LOG_WARNING: prefix = SD_WARNING; break;
-	case logger::LOG_NOTICE: prefix = SD_NOTICE; break;
-	case logger::LOG_DEBUG: prefix = SD_DEBUG; break;
-	default: prefix = SD_INFO; break;
-	}
-
-	fprintf(stderr, "%s%s\n", prefix, msg.toLocal8Bit().constData());
-}
-}
-#endif
-
-void setInitSysLogger()
-{
-	// TODO reimplement this using Qt logging framework
-#if 0
-	logger::setLogPrinter(printSystemdLog);
-#endif
-}
-
 void notifyReady()
 {
 	sd_notify(0, "READY=1");
@@ -69,7 +43,7 @@ QList<int> getListenFds()
 	for(int i=0;i<n;++i) {
 		int fd = SD_LISTEN_FDS_START + i;
 		if(sd_is_socket_inet(fd, AF_UNSPEC, SOCK_STREAM, 1, 0) < 0) {
-			logger::error() << "Socket" << i << " is not listening inet socket!";
+			qCritical("Socket %d is not a listening inet socket!", i);
 		} else {
 			fds.append(fd);
 		}

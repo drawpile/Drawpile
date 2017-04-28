@@ -83,8 +83,6 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationName("drawpile-srv");
 	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
 
-	initsys::setInitSysLogger();
-
 	// Start the server
 	if(useGui) {
 #ifdef HAVE_SERVERGUI

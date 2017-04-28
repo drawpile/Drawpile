@@ -23,11 +23,6 @@
 
 namespace initsys {
 
-void setInitSysLogger()
-{
-	// dummy
-}
-
 void notifyReady()
 {
 	// dummy
