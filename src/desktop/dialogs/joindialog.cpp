@@ -151,7 +151,7 @@ void JoinDialog::rememberSettings() const
 	if(curindex>=0)
 		m_ui->address->removeItem(curindex);
 	hosts << cleanAddress(current);
-	for(int i=0;i<m_ui->address->count();++i) {
+	for(int i=0;i<qMin(8, m_ui->address->count());++i) {
 		if(!m_ui->address->itemText(i).isEmpty())
 			hosts << m_ui->address->itemText(i);
 	}
