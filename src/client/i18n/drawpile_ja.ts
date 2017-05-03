@@ -21,12 +21,12 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="73"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="74"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>IP アドレス</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="75"/>
@@ -206,47 +206,47 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="321"/>
         <source>Select Color</source>
-        <translation type="unfinished">色を選択</translation>
+        <translation>色を選択</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="322"/>
         <source>Saturation</source>
-        <translation type="unfinished">彩度</translation>
+        <translation>彩度</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="323"/>
         <source>Hue</source>
-        <translation type="unfinished">色相</translation>
+        <translation>色相</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="324"/>
         <source>Hex</source>
-        <translation type="unfinished">16 進数</translation>
+        <translation>16 進数</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="325"/>
         <source>Blue</source>
-        <translation type="unfinished">青</translation>
+        <translation>青</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="326"/>
         <source>Value</source>
-        <translation type="unfinished">明度</translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="327"/>
         <source>Green</source>
-        <translation type="unfinished">緑</translation>
+        <translation>緑</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="328"/>
         <source>Alpha</source>
-        <translation type="unfinished">アルファ</translation>
+        <translation>アルファ</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="329"/>
         <source>Red</source>
-        <translation type="unfinished">赤</translation>
+        <translation>赤</translation>
     </message>
 </context>
 <context>
@@ -545,7 +545,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="36"/>
         <source>T&amp;itle:</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトル(&amp;I):</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="105"/>
@@ -721,7 +721,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="31"/>
         <source>Logging in...</source>
-        <translation type="unfinished"></translation>
+        <translation>ログイン中...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="78"/>
@@ -736,7 +736,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="143"/>
         <source>The certificate of this server has changed!</source>
-        <translation type="unfinished">このサーバーの証明書が更新されました！</translation>
+        <translation>このサーバーの証明書が変更されています！</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="167"/>
@@ -1030,17 +1030,17 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1999"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を塗りつぶす</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2000"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を色替え</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2001"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2050"/>
@@ -1090,12 +1090,12 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2214"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーポインター</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてをロック</translation>
     </message>
     <message>
         <source>Show Crosshair C&amp;ursor</source>
@@ -1104,12 +1104,12 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2117"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2118"/>
         <source>Show User &amp;Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーレイヤーを表示(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2119"/>
@@ -1175,7 +1175,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2240"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者になる...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
@@ -1248,12 +1248,12 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2377"/>
         <source>Show Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットパイメニューを表示</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2380"/>
         <source>Assign Tool To Preset Pie Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセットパイメニューにツールを割り当て</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2397"/>
@@ -1501,12 +1501,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1041"/>
         <source>Export error</source>
-        <translation type="unfinished">エクスポートエラー</translation>
+        <translation>エクスポートエラー</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1049"/>
         <source>Exporting...</source>
-        <translation type="unfinished">エクスポート中...</translation>
+        <translation>エクスポート中...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1113"/>
@@ -1531,12 +1531,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1272"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者になる</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1273"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者パスワードを入力</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1436"/>
@@ -1563,17 +1563,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2234"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>イベントログ</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2235"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>設定...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2239"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
+        <translation>リセット(&amp;R)...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2282"/>
@@ -1839,7 +1839,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
         <source>Rewind stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>ストロークを巻き戻し</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="255"/>
@@ -1908,7 +1908,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="469"/>
         <source>Filter recording</source>
-        <translation type="unfinished">セッション記録をフィルタリング</translation>
+        <translation>セッション記録をフィルタリング</translation>
     </message>
 </context>
 <context>
@@ -1949,12 +1949,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/utils/netfiles.cpp" line="67"/>
         <source>Unexpected file format</source>
-        <translation type="unfinished"></translation>
+        <translation>対応していないファイル形式です</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="478"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="889"/>
@@ -1976,7 +1976,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="57"/>
         <source>%1 s. ago</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 秒前</translation>
     </message>
 </context>
 <context>
@@ -1984,60 +1984,60 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/loader.cpp" line="49"/>
         <source>Background</source>
-        <translation type="unfinished">背景</translation>
+        <translation>背景</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="50"/>
         <source>Foreground</source>
-        <translation type="unfinished">前景</translation>
+        <translation>前景</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="67"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation type="unfinished">Drawpile はこの OpenRaster ファイルで使用されている機能を一部サポートしていません。保存時にデータの損失が発生する場合があります。
+        <translation>Drawpile はこの OpenRaster ファイルで使用されている機能を一部サポートしていません。保存時にデータの損失が発生する場合があります。
 </translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="69"/>
         <source>Application specific extensions are used</source>
-        <translation type="unfinished">アプリケーション固有の拡張機能が使用されています</translation>
+        <translation>アプリケーション固有の拡張機能が使用されています</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="71"/>
         <source>Nested layers are not fully supported.</source>
-        <translation type="unfinished">入れ子レイヤーは完全にサポートされていません。</translation>
+        <translation>入れ子レイヤーは完全にサポートされていません。</translation>
     </message>
     <message>
         <location filename="../net/serverdiscoverymodel.cpp" line="57"/>
         <location filename="../net/sessionlistingmodel.cpp" line="59"/>
         <source>%1h %2m</source>
-        <translation type="unfinished">%1 時間 %2 分</translation>
+        <translation>%1 時間 %2 分</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="380"/>
         <source>Image has zero size!</source>
-        <translation type="unfinished">画像のサイズにゼロが指定されています！</translation>
+        <translation>画像のサイズにゼロが指定されています！</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="383"/>
         <source>Image is too big!</source>
-        <translation type="unfinished"></translation>
+        <translation>画像が大きすぎます！</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="386"/>
         <source>No layers found!</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーが見つかりません！</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="408"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation type="unfinished">レイヤー %1 を読み込めませんでした</translation>
+        <translation>レイヤー %1 を読み込めませんでした</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="490"/>
         <source>File is not an OpenRaster file</source>
-        <translation type="unfinished">このファイルは OpenRaster ファイルではありません</translation>
+        <translation>このファイルは OpenRaster ファイルではありません</translation>
     </message>
 </context>
 <context>
@@ -2045,7 +2045,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/resetsession.ui" line="14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションをリセット</translation>
     </message>
 </context>
 <context>
@@ -2147,12 +2147,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>イベントログ</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="20"/>
         <source>Filter</source>
-        <translation type="unfinished">フィルタ</translation>
+        <translation>フィルタ</translation>
     </message>
 </context>
 <context>
@@ -2173,22 +2173,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの設定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="24"/>
         <source>Settings</source>
-        <translation type="unfinished">設定</translation>
+        <translation>設定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="30"/>
         <source>Session</source>
-        <translation type="unfinished">セッション</translation>
+        <translation>セッション</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="36"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者パスワード:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="66"/>
@@ -2198,7 +2198,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="69"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>チャット履歴を保存</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="76"/>
@@ -2208,7 +2208,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="79"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーがいなくても保持する</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="86"/>
@@ -2223,37 +2223,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="102"/>
         <source>Locked features</source>
-        <translation type="unfinished"></translation>
+        <translation>制限する機能</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="108"/>
         <source>Only operators can paste images and use fill tools</source>
-        <translation type="unfinished"></translation>
+        <translation>画像の切り貼りと塗りつぶしを管理者だけに制限します</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="111"/>
         <source>Cut, paste &amp;&amp; fill</source>
-        <translation type="unfinished"></translation>
+        <translation>切り取り・貼り付け・塗りつぶし</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="118"/>
         <source>Only operators can create new annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>新しい注釈の作成を管理者だけに制限します</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="121"/>
         <source>New annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>注釈の追加</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="128"/>
         <source>Only operators can change layer attributes</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー属性の変更を管理者だけに制限します</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="131"/>
         <source>Layer controls</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー操作</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="138"/>
@@ -2268,17 +2268,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="164"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>ログイン</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="170"/>
         <source>Password:</source>
-        <translation type="unfinished">パスワード:</translation>
+        <translation>パスワード:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="184"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大ユーザー数:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="191"/>
@@ -2288,38 +2288,38 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="220"/>
         <source>Prevent new users from drawing until explicitly unlocked by an operator</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいユーザーは、管理者が許可するまでキャンバスに書き込みできなくなります</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="223"/>
         <source>Lock new users</source>
-        <translation type="unfinished"></translation>
+        <translation>新規ユーザーの描画を制限</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="230"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>新規ログインをブロック</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="240"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトル:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="261"/>
         <source>Banned users</source>
-        <translation type="unfinished"></translation>
+        <translation>BAN したユーザー</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="292"/>
         <location filename="../../desktop/ui/sessionsettings.ui" line="333"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したユーザーをリストから消す</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="302"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>告知</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="326"/>
@@ -2372,7 +2372,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>ペアレンタルコントロール</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="80"/>
@@ -2422,32 +2422,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="754"/>
         <source>Automatically add NSFM tag based on title</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトルに基づいて NSFM タグを自動的に追加</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="761"/>
         <source>NSFM sessions:</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM セッション:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="768"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>制限なし</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="775"/>
         <source>Hide from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>一覧に表示しない</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="782"/>
         <source>Disallow joining</source>
-        <translation type="unfinished"></translation>
+        <translation>接続を禁止</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="789"/>
         <source>Disconnect when tagged as NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM タグが付加されたら切断する</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="107"/>
@@ -2586,7 +2586,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="535"/>
         <source>Connection timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>接続タイムアウト:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
@@ -2747,12 +2747,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="68"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>水平方向の整列</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="81"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直方向の整列</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="113"/>
@@ -2787,7 +2787,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="233"/>
         <source>Annotation content</source>
-        <translation type="unfinished">注釈の内容を入力</translation>
+        <translation>注釈を入力</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="242"/>
@@ -2863,17 +2863,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="118"/>
         <source>Block selected user from chat</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したユーザーのチャット参加をブロック</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="135"/>
         <source>Kick selected user</source>
-        <translation>選択したユーザーをキック</translation>
+        <translation>選択したユーザーを切断</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/userbox.ui" line="149"/>
         <source>Ban selected user</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したユーザーを BAN</translation>
     </message>
 </context>
 <context>
@@ -3075,12 +3075,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="190"/>
         <source>Server</source>
-        <translation type="unfinished">サーバー</translation>
+        <translation>サーバー</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="202"/>
         <source>User #%1</source>
-        <translation type="unfinished">ユーザー #%1</translation>
+        <translation>ユーザー #%1</translation>
     </message>
 </context>
 <context>
@@ -3088,7 +3088,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.cpp" line="59"/>
         <source>Pick</source>
-        <translation type="unfinished">抽出</translation>
+        <translation>抽出</translation>
     </message>
 </context>
 <context>
@@ -3158,14 +3158,14 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/logindialog.cpp" line="163"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n 個の年齢制限付きセッションが非表示になっています。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="175"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished">年齢制限付きセッションを表示しますか？</translation>
+        <translation>年齢制限付きセッションを表示しますか？</translation>
     </message>
 </context>
 <context>
@@ -3223,7 +3223,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
         <source>Playback</source>
-        <translation type="unfinished">再生</translation>
+        <translation>再生</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="102"/>
@@ -3264,7 +3264,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="264"/>
         <source>Stop on markers</source>
-        <translation type="unfinished">マーカーで停止</translation>
+        <translation>マーカーで停止</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="273"/>
@@ -3302,7 +3302,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="44"/>
         <source>Center</source>
-        <translation type="unfinished">中心</translation>
+        <translation>中心</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
@@ -3343,25 +3343,25 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>はい</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>変更</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>いいえ</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>割り当て</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="296"/>
@@ -3377,7 +3377,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="303"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションパスワード</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="319"/>
@@ -3387,7 +3387,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="324"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者パスワード</translation>
     </message>
 </context>
 <context>
@@ -3432,13 +3432,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="617"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>ロックを解除</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="506"/>
@@ -3478,22 +3478,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="594"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>ペアレンタルコントロールのロックを解除</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="595"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワード</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="597"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>ペアレンタルコントロールをロック</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="598"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを設定</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
@@ -3631,7 +3631,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Default</source>
-        <translation type="unfinished">デフォルト</translation>
+        <translation>デフォルト</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
@@ -4120,7 +4120,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/indexbuilder.cpp" line="85"/>
         <source>Error writing file</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル書き込み中のエラーです</translation>
     </message>
 </context>
 <context>
@@ -4128,27 +4128,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="382"/>
         <source>Cannot index compressed recordings.</source>
-        <translation type="unfinished">圧縮されたセッション記録をインデクシングできません。</translation>
+        <translation>圧縮されたセッション記録をインデクシングできません。</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="388"/>
         <source>Index not yet generated</source>
-        <translation type="unfinished">インデックスはまだ生成されていません</translation>
+        <translation>インデックスはまだ生成されていません</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="395"/>
         <source>Error loading index!</source>
-        <translation type="unfinished">インデックスの読み込み中のエラー！</translation>
+        <translation>インデックス読み込み中のエラーです！</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="457"/>
         <source>%1 m. %2 s.</source>
-        <translation type="unfinished">%1 分 %2 秒</translation>
+        <translation>%1 分 %2 秒</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="459"/>
         <source>%1 s.</source>
-        <translation type="unfinished">%1 秒</translation>
+        <translation>%1 秒</translation>
     </message>
 </context>
 <context>
@@ -4174,7 +4174,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="110"/>
         <source>Server</source>
-        <translation type="unfinished">サーバー</translation>
+        <translation>サーバー</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="111"/>
@@ -4201,33 +4201,33 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
         <source>Center</source>
-        <translation type="unfinished">中心</translation>
+        <translation>中心</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
         <source>Justify</source>
-        <translation type="unfinished">均等割り当て</translation>
+        <translation>均等割り当て</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>上</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>下</translation>
     </message>
 </context>
 <context>
