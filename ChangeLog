@@ -1,6 +1,7 @@
 2017-0?-?? Version 2.0.5
  * Fixed building with systemd integration enabled
  * The number of remembered host addresses is now limited
+ * Added tablet test dialog
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings

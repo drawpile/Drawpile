@@ -117,6 +117,7 @@
 #include "dialogs/resetdialog.h"
 #include "dialogs/sessionsettings.h"
 #include "dialogs/serverlogdialog.h"
+#include "dialogs/tablettester.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -2416,15 +2417,32 @@ void MainWindow::setupActions()
 	// Help menu
 	//
 	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), WEBSITE);
+	QAction *tablettester = makeAction("tablettester", 0, tr("Tablet Tester"));
 	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); aboutqt->setMenuRole(QAction::AboutQtRole);
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(tablettester, &QAction::triggered, []() {
+		dialogs::TabletTestDialog *ttd=nullptr;
+		// Check if dialog is already open
+		for(QWidget *toplevel : qApp->topLevelWidgets()) {
+			ttd = qobject_cast<dialogs::TabletTestDialog*>(toplevel);
+			if(ttd)
+				break;
+		}
+		if(!ttd) {
+			ttd = new dialogs::TabletTestDialog;
+			ttd->setAttribute(Qt::WA_DeleteOnClose);
+		}
+		ttd->show();
+		ttd->raise();
+	});
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
+	helpmenu->addAction(tablettester);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);

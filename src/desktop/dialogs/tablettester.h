@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,29 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef TABLETTESTDIALOG_H
+#define TABLETTESTDIALOG_H
 
-#include "collection.h"
-#include "colorbutton_plugin.h"
-#include "brushpreview_plugin.h"
-#include "groupedtoolbutton_plugin.h"
-#include "filmstrip_plugin.h"
-#include "resizer_plugin.h"
-#include "tablettester_plugin.h"
+#include <QDialog>
 
-DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
-	QObject(parent)
+class Ui_TabletTest;
+
+namespace dialogs {
+
+class TabletTestDialog : public QDialog
 {
-    widgets
-		<< new ColorButtonPlugin(this)
-		<< new BrushPreviewPlugin(this)
-		<< new GroupedToolButtonPlugin(this)
-		<< new FilmstripPlugin(this)
-		<< new ResizerPlugin(this)
-		<< new TabletTesterPlugin(this)
-		;
+	Q_OBJECT
+public:
+	TabletTestDialog(QWidget *parent=nullptr);
+	~TabletTestDialog();
+
+private:
+	Ui_TabletTest *m_ui;
+
+};
+
 }
 
-QList<QDesignerCustomWidgetInterface *> DrawpileWidgetCollection::customWidgets() const
-{
-    return widgets;
-}
+#endif
+

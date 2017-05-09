@@ -40,6 +40,7 @@ set (
 	dialogs/resetdialog.cpp
 	dialogs/sessionsettings.cpp
 	dialogs/serverlogdialog.cpp
+	dialogs/tablettester.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -54,6 +55,7 @@ set (
 	widgets/userlistwidget.cpp 
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
+	widgets/tablettest.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
@@ -117,6 +119,7 @@ set (
 	ui/resetsession.ui
 	ui/sessionsettings.ui
 	ui/serverlog.ui
+	ui/tablettest.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found

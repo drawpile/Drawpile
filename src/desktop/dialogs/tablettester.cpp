@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,28 +17,36 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "collection.h"
-#include "colorbutton_plugin.h"
-#include "brushpreview_plugin.h"
-#include "groupedtoolbutton_plugin.h"
-#include "filmstrip_plugin.h"
-#include "resizer_plugin.h"
-#include "tablettester_plugin.h"
+#include "tablettester.h"
+#include "widgets/tablettest.h"
+using widgets::TabletTester; // work around missing namespace in UIC generated code
+#include "ui_tablettest.h"
 
-DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
-	QObject(parent)
+#include "../main.h"
+
+namespace dialogs {
+
+TabletTestDialog::TabletTestDialog( QWidget *parent) :
+	QDialog(parent)
 {
-    widgets
-		<< new ColorButtonPlugin(this)
-		<< new BrushPreviewPlugin(this)
-		<< new GroupedToolButtonPlugin(this)
-		<< new FilmstripPlugin(this)
-		<< new ResizerPlugin(this)
-		<< new TabletTesterPlugin(this)
-		;
+	m_ui = new Ui_TabletTest;
+	m_ui->setupUi(this);
+
+	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::eraserNear, this, [this](bool near) {
+		QString msg;
+		if(near)
+			msg = QStringLiteral("Eraser brought near");
+		else
+			msg = QStringLiteral("Eraser taken away");
+
+		m_ui->logView->appendPlainText(msg);
+	});
 }
 
-QList<QDesignerCustomWidgetInterface *> DrawpileWidgetCollection::customWidgets() const
+TabletTestDialog::~TabletTestDialog()
 {
-    return widgets;
+	delete m_ui;
 }
+
+}
+
