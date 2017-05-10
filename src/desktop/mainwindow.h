@@ -175,7 +175,6 @@ private slots:
 
 protected:
 	void closeEvent(QCloseEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
 	bool event(QEvent *event);
 
 private:

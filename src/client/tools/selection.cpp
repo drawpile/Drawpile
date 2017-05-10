@@ -111,6 +111,26 @@ void SelectionTool::end()
 	}
 }
 
+void SelectionTool::finishMultipart()
+{
+	canvas::Selection *sel = owner.model()->selection();
+	if(sel && !sel->pasteImage().isNull()) {
+		owner.client()->sendMessages(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
+		owner.model()->setSelection(nullptr);
+
+	}
+}
+
+void SelectionTool::cancelMultipart()
+{
+	owner.model()->setSelection(nullptr);
+}
+
+bool SelectionTool::isMultipart() const
+{
+	return owner.model()->selection() != nullptr;
+}
+
 void SelectionTool::startMove()
 {
 	canvas::Selection *sel = owner.model()->selection();

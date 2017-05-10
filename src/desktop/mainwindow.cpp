@@ -782,15 +782,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	exit();
 }
 
-void MainWindow::keyReleaseEvent(QKeyEvent *event)
-{
-	QMainWindow::keyReleaseEvent(event);
-
-	if(event->key() == Qt::Key_Escape) {
-		m_doc->cancelSelection();
-	}
-}
-
 bool MainWindow::event(QEvent *event)
 {
 	if(event->type() == QEvent::StatusTip) {
@@ -2476,6 +2467,10 @@ void MainWindow::setupActions()
 	QAction *finishStrokeShortcut = makeAction("finishstroke", 0, tr("Finish action"), QString(), QKeySequence(Qt::Key_Return));
 	connect(finishStrokeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::finishMultipartDrawing);
+
+	QAction *escapeShortcut = makeAction("cancelaction", 0, tr("Cancel action"), QString(), QKeySequence(Qt::Key_Escape));
+	connect(escapeShortcut, &QAction::triggered,
+			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 }
 
 void MainWindow::createDocks()

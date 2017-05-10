@@ -37,6 +37,10 @@ public:
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
 	void end() override;
 
+	void finishMultipart() override;
+	void cancelMultipart() override;
+	bool isMultipart() const override;
+
 	//! Start a layer region move operation
 	void startMove();
 
