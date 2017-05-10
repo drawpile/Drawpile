@@ -55,7 +55,7 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 			m_beginPoint = point;
 
 		} else {
-			cancel();
+			cancelMultipart();
 		}
 
 	} else {
@@ -107,7 +107,15 @@ void BezierTool::end()
 		return;
 
 	const int s = m_points.size();
-	if(s > 1 && Point::intSame(m_points.last().cp, QPointF())) {
+	m_points << ControlPoint { m_points.last().point, QPointF() };
+	if(s > 1 && Point::intSame(m_points.at(s-1).cp, QPointF()))
+		finishMultipart();
+}
+
+void BezierTool::finishMultipart()
+{
+	if(m_points.size() > 2) {
+		m_points.pop_back();
 		const uint8_t contextId = owner.client()->myId();
 
 		QList<protocol::MessagePtr> msgs;
@@ -116,15 +124,12 @@ void BezierTool::end()
 		msgs << net::command::penMove(contextId, calculateBezierCurve());
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 		owner.client()->sendMessages(msgs);
-
-		cancel();
-
-	} else {
-		m_points << ControlPoint { m_points.last().point, QPointF() };
 	}
+
+	cancelMultipart();
 }
 
-void BezierTool::cancel()
+void BezierTool::cancelMultipart()
 {
 	m_points.clear();
 	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());

@@ -76,8 +76,14 @@ public:
 	//! End stroke
 	virtual void end() = 0;
 
-	//! End and cancel the current stroke (if any)
-	virtual void cancel() { }
+	//! Finish and commit a multipart stroke
+	virtual void finishMultipart() { }
+
+	//! Cancel the current multipart stroke (if any)
+	virtual void cancelMultipart() { }
+
+	//! Is there a multipart stroke in progress at the moment?
+	virtual bool isMultipart() const { return false; }
 
 	//! Does this tool allow stroke smoothing to be used?
 	virtual bool allowSmoothing() const { return false; }

@@ -35,7 +35,9 @@ public:
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
 	void hover(const QPointF& point) override;
 	void end() override;
-	void cancel() override;
+	void finishMultipart() override;
+	void cancelMultipart() override;
+	bool isMultipart() const override { return !m_points.isEmpty(); }
 
 private:
 	void updatePreview();

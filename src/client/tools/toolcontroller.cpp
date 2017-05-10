@@ -88,7 +88,7 @@ Tool *ToolController::getTool(Tool::Type type)
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
-		m_activeTool->cancel();
+		m_activeTool->cancelMultipart();
 		m_activeTool = getTool(tool);
 		emit activeToolChanged(tool);
 		emit toolCursorChanged(activeToolCursor());
@@ -236,17 +236,30 @@ void ToolController::endDrawing()
 	m_activeTool->end();
 }
 
-void ToolController::abortDrawing()
+void ToolController::finishMultipartDrawing()
 {
 	Q_ASSERT(m_activeTool);
 
 	if(!m_model) {
-		qWarning("ToolController::endDrawing: no model set!");
+		qWarning("ToolController::finishMultipartDrawing: no model set!");
 		return;
 	}
 
 	m_smoother.reset();
-	m_activeTool->cancel();
+	m_activeTool->finishMultipart();
+}
+
+void ToolController::cancelMultipartDrawing()
+{
+	Q_ASSERT(m_activeTool);
+
+	if(!m_model) {
+		qWarning("ToolController::cancelMultipartDrawing: no model set!");
+		return;
+	}
+
+	m_smoother.reset();
+	m_activeTool->cancelMultipart();
 }
 
 }

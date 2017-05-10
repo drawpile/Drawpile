@@ -83,7 +83,8 @@ public slots:
 	void continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt);
 	void hoverDrawing(const QPointF &point);
 	void endDrawing();
-	void abortDrawing();
+	void finishMultipartDrawing();
+	void cancelMultipartDrawing();
 
 signals:
 	void activeToolChanged(Tool::Type type);

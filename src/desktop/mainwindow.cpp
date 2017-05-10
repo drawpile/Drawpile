@@ -2471,6 +2471,11 @@ void MainWindow::setupActions()
 
 	for(QAction *act : m_brushSlots->actions())
 		act->installEventFilter(_tempToolSwitchShortcut);
+
+	// Other shortcuts
+	QAction *finishStrokeShortcut = makeAction("finishstroke", 0, tr("Finish action"), QString(), QKeySequence(Qt::Key_Return));
+	connect(finishStrokeShortcut, &QAction::triggered,
+			m_doc->toolCtrl(), &tools::ToolController::finishMultipartDrawing);
 }
 
 void MainWindow::createDocks()
