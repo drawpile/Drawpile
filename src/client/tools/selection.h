@@ -39,6 +39,7 @@ public:
 
 	void finishMultipart() override;
 	void cancelMultipart() override;
+	void undoMultipart() override;
 	bool isMultipart() const override;
 
 	//! Start a layer region move operation

@@ -579,11 +579,8 @@ void Document::undo()
 	if(!m_canvas)
 		return;
 
-	if(m_canvas->selection()) {
-		cancelSelection();
-	} else {
+	if(!m_toolctrl->undoMultipartDrawing())
 		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, false)));
-	}
 }
 
 void Document::redo()
@@ -591,7 +588,9 @@ void Document::redo()
 	if(!m_canvas)
 		return;
 
-	m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, true)));
+	// Cannot redo while a multipart drawing action is in progress
+	if(!m_toolctrl->isMultipartDrawing())
+		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, true)));
 }
 
 void Document::selectAll()

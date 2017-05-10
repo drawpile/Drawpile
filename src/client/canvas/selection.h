@@ -109,9 +109,15 @@ public:
 
 	int handleSize() const { return 20; }
 
+	//! Has the selection been moved or transformed?
+	bool isTransformed() const;
+
 public slots:
 	//! Restore the original shape (but not the position)
 	void resetShape();
+
+	//! Restore the original shape and position
+	void reset();
 
 	void translate(const QPoint &offset);
 	void scale(qreal x, qreal y);
@@ -129,6 +135,7 @@ private:
 
 	QPolygonF m_shape;
 	QPolygonF m_originalShape;
+	QPointF m_originalCenter;
 
 	QImage m_pasteImage;
 

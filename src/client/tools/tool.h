@@ -82,6 +82,9 @@ public:
 	//! Cancel the current multipart stroke (if any)
 	virtual void cancelMultipart() { }
 
+	//! Undo the latest step of a multipart stroke. Undoing the first part should cancel the stroke
+	virtual void undoMultipart() { }
+
 	//! Is there a multipart stroke in progress at the moment?
 	virtual bool isMultipart() const { return false; }
 

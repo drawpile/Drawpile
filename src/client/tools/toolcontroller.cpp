@@ -236,6 +236,29 @@ void ToolController::endDrawing()
 	m_activeTool->end();
 }
 
+bool ToolController::undoMultipartDrawing()
+{
+	Q_ASSERT(m_activeTool);
+
+	if(!m_model) {
+		qWarning("ToolController::undoMultipartDrawing: no model set!");
+		return false;
+	}
+
+	if(!m_activeTool->isMultipart())
+		return false;
+
+	m_activeTool->undoMultipart();
+	return true;
+}
+
+bool ToolController::isMultipartDrawing() const
+{
+	Q_ASSERT(m_activeTool);
+
+	return m_activeTool->isMultipart();
+}
+
 void ToolController::finishMultipartDrawing()
 {
 	Q_ASSERT(m_activeTool);

@@ -37,10 +37,20 @@ Selection::Selection(QObject *parent)
 
 void Selection::saveShape()
 {
-	const QPointF center = m_shape.boundingRect().center();
-	m_originalShape.clear();
-	for(const QPointF &p : m_shape)
-		m_originalShape << p - center;
+	m_originalCenter = m_shape.boundingRect().center();
+	m_originalShape = m_shape;
+}
+
+
+bool Selection::isTransformed() const
+{
+	return m_shape != m_originalShape;
+}
+
+void Selection::reset()
+{
+	m_shape = m_originalShape;
+	emit shapeChanged(m_shape);
 }
 
 void Selection::resetShape()
@@ -48,7 +58,7 @@ void Selection::resetShape()
 	const QPointF center = m_shape.boundingRect().center();
 	m_shape.clear();
 	for(const QPointF &p : m_originalShape)
-		m_shape << p + center;
+		m_shape << p + center - m_originalCenter;
 
 	emit shapeChanged(m_shape);
 }

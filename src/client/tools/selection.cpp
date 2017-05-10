@@ -126,6 +126,18 @@ void SelectionTool::cancelMultipart()
 	owner.model()->setSelection(nullptr);
 }
 
+
+void SelectionTool::undoMultipart()
+{
+	canvas::Selection *sel = owner.model()->selection();
+	if(sel) {
+		if(sel->isTransformed())
+			sel->reset();
+		else
+			cancelMultipart();
+	}
+}
+
 bool SelectionTool::isMultipart() const
 {
 	return owner.model()->selection() != nullptr;

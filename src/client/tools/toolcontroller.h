@@ -78,12 +78,36 @@ public:
 
 	Tool *getTool(Tool::Type type);
 
+	//! Is there a multipart drawing operation in progress?
+	bool isMultipartDrawing() const;
+
 public slots:
+	//! Start a new stroke
 	void startDrawing(const QPointF &point, qreal pressure, bool right, float zoom);
+
+	//! Continue a stroke
 	void continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt);
+
+	//! Stylus hover (not yet drawing)
 	void hoverDrawing(const QPointF &point);
+
+	//! End a stroke
 	void endDrawing();
+
+	/**
+	 * @brief Undo the latest part of a multipart drawing
+	 *
+	 * Multipart drawings are not committed until finishMultipartDrawing is
+	 * called, so undoing is a local per-tool operation.
+	 *
+	 * @return false if there was nothing to undo
+	 */
+	bool undoMultipartDrawing();
+
+	//! Commit the current multipart drawing (if any)
 	void finishMultipartDrawing();
+
+	//! Cancel the current multipart drawing (if any)
 	void cancelMultipartDrawing();
 
 signals:

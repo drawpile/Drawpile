@@ -37,6 +37,7 @@ public:
 	void end() override;
 	void finishMultipart() override;
 	void cancelMultipart() override;
+	void undoMultipart() override;
 	bool isMultipart() const override { return !m_points.isEmpty(); }
 
 private:

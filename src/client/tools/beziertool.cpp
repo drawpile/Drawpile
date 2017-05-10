@@ -49,7 +49,7 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 	m_rightButton = right;
 
 	if(right) {
-		if(m_points.size()>1) {
+		if(m_points.size()>=1) {
 			m_points.pop_back();
 			m_points.last().point = point;
 			m_beginPoint = point;
@@ -135,6 +135,17 @@ void BezierTool::cancelMultipart()
 	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 	if(layer)
 		layer->removeSublayer(-1);
+}
+
+void BezierTool::undoMultipart()
+{
+	if(!m_points.isEmpty()) {
+		m_points.pop_back();
+		if(m_points.size() <= 1)
+			cancelMultipart();
+		else
+			updatePreview();
+	}
 }
 
 PointVector BezierTool::calculateBezierCurve() const

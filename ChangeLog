@@ -2,6 +2,8 @@
  * Fixed building with systemd integration enabled
  * The number of remembered host addresses is now limited
  * Added tablet test dialog
+ * Support Enter and Esc keys when drawing Bezier curves
+ * Selection undo now first undos selection transformation
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
