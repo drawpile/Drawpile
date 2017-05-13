@@ -178,6 +178,9 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 	}
 	// TODO handle hasSmoothPoint() == false
 	m_activeTool->begin(paintcore::Point(point, pressure), right, zoom);
+
+	if(!m_activeTool->isMultipart())
+		m_model->stateTracker()->setLocalDrawingInProgress(true);
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)
@@ -234,6 +237,7 @@ void ToolController::endDrawing()
 	}
 
 	m_activeTool->end();
+	m_model->stateTracker()->setLocalDrawingInProgress(false);
 }
 
 bool ToolController::undoMultipartDrawing()

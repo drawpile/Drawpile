@@ -163,6 +163,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		m_myId(myId),
 		m_fullhistory(true),
 		_showallmarkers(false),
+		m_localPenDown(false),
 		m_hasParticipated(false),
 		m_isQueued(false)
 {
@@ -188,6 +189,7 @@ void StateTracker::reset()
 	m_history.resetTo(m_history.end());
 	m_fullhistory = true;
 	m_hasParticipated = false;
+	m_localPenDown = false;
 	m_msgqueue.clear();
 	m_localfork.clear();
 	m_layerlist->clear();
@@ -326,6 +328,12 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		} else {
 			const StateSavepoint &sp = m_savepoints.at(savepoint);
 			qDebug("inconsistency at %d (local fork at %d). Rolling back to %d", m_history.end(), m_localfork.offset(), sp->streampointer);
+
+			// Avoid rollback churn by clearing the local fork, but not if
+			// local drawing is in progress. If we clear the fork then,
+			// we trigger a self-conflict feedback loop until the stroke finishes.
+			if(!m_localPenDown)
+				m_localfork.clear();
 
 			revertSavepointAndReplay(sp);
 		}
@@ -995,12 +1003,16 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 		++pos;
 	}
 
-	// Note. At this point we could replay the localfork, but this tends to
-	// cause more trouble than its worth. Since we're receiving data, the data
-	// should be making the roundtrip any moment now anyway.
-	m_localfork.clear();
-
-	emit retconned();
+	// Replay the local fork
+	if(!m_localfork.isEmpty()) {
+		Q_ASSERT(m_localfork.offset() >= savepoint->streampointer);
+		m_localfork.setOffset(pos-1);
+		const QList<protocol::MessagePtr> local = m_localfork.messages();
+		for(const protocol::MessagePtr &msg : local) {
+			if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT)
+				handleCommand(msg, true, pos);
+		}
+	}
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)

@@ -254,8 +254,6 @@ signals:
 	void myAnnotationCreated(int id);
 	void layerAutoselectRequest(int);
 
-	void retconned();
-
 	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
 	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);
@@ -264,6 +262,18 @@ signals:
 
 public slots:
 	void previewLayerOpacity(int id, float opacity);
+
+	/**
+	 * @brief Set the "local user is currently drawing!" hint
+	 *
+	 * This affects the way the retcon local fork is handled: when
+	 * local drawing is in progress, the local fork is not discarded
+	 * on conflict (with other users) to avoid self-conflict feedback loop.
+	 *
+	 * Not setting this flag doesn't break anything, but may cause
+	 * unnecessary rollbacks if a conflict occurs during local drawing.
+	 */
+	void setLocalDrawingInProgress(bool pendown) { m_localPenDown = pendown; }
 
 private slots:
 	void processQueuedCommands();
@@ -319,6 +329,7 @@ private:
 	bool m_fullhistory;
 	bool _showallmarkers;
 	bool m_hasParticipated;
+	bool m_localPenDown;
 
 	QList<protocol::MessagePtr> m_msgqueue;
 	QTimer *m_queuetimer;
