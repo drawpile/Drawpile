@@ -41,6 +41,8 @@ struct FillResult {
 
 	//! Was the fill aborted due to size limit being reaced?
 	bool oversize;
+
+	FillResult() : x(0), y(0), layerSeedColor(0), oversize(false) { }
 };
 
 /**

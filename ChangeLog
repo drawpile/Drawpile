@@ -5,6 +5,7 @@
  * Support Enter and Esc keys when drawing Bezier curves
  * Selection undo now first undos selection transformation
  * Improved retcon behavior. (Don't reset local fork on every conflict to avoid self-conflict loop)
+ * Fixed flood fill expansion (regression fix)
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
