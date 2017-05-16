@@ -163,8 +163,8 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		m_myId(myId),
 		m_fullhistory(true),
 		_showallmarkers(false),
-		m_localPenDown(false),
 		m_hasParticipated(false),
+		m_localPenDown(false),
 		m_isQueued(false)
 {
 	connect(m_layerlist, &LayerListModel::layerOpacityPreview, this, &StateTracker::previewLayerOpacity);
@@ -256,6 +256,8 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		const auto &ci = msg.cast<protocol::ClientInternal>();
 		if(ci.internalType() == protocol::ClientInternal::Type::Catchup)
 			emit catchupProgress(ci.value());
+		else if(ci.internalType() == protocol::ClientInternal::Type::SequencePoint)
+			emit sequencePoint(ci.value());
 		return;
 	}
 

@@ -57,7 +57,6 @@ public slots:
 	void done(int r);
 
 signals:
-	void commandRead(protocol::MessagePtr msg);
 	void playbackToggled(bool play);
 
 protected:

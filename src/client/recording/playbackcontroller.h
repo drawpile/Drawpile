@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QScopedPointer>
+#include <QElapsedTimer>
 
 class QTimer;
 class QStringList;
@@ -44,8 +45,6 @@ class IndexBuilder;
 /**
  * @brief The playback controller is responsible for the state of the recording playback
  *
- * This View is implemented in QML.
- * Note: part of the logic (relating to the opening of new dialogs) is still in PlaybackDialog.
  */
 class PlaybackController : public QObject
 {
@@ -101,7 +100,6 @@ public:
 	QImage getIndexThumbnail(int idx) const;
 
 signals:
-	void commandRead(protocol::MessagePtr msg);
 	void speedFactorChanged(qreal value);
 	void progressChanged(qint64 progress);
 	void indexPositionChanged(int pos);
@@ -112,6 +110,7 @@ signals:
 	void canSaveFrameChanged(bool);
 	void autosaveChanged();
 	void exportedFrame();
+	void markerEncountered(const QString &text);
 
 	void exportStarted();
 	void exportEnded();
@@ -145,11 +144,14 @@ private slots:
 	void exporterError(const QString &message);
 	void exporterFinished();
 
+	void onSequencePoint(int);
+
 private:
 	void nextCommands(int stepCount);
 	void jumpToSnapshot(int idx);
 	void updateIndexPosition();
 	bool waitForExporter();
+	void expectSequencePoint(int interval);
 
 	QString indexFileName() const;
 
@@ -160,7 +162,8 @@ private:
 
 	canvas::CanvasModel *m_canvas;
 
-	QTimer *m_timer;
+	QTimer *m_autoplayTimer;
+	QElapsedTimer m_sequenceTimer;
 
 	bool m_play;
 	bool m_exporterReady;

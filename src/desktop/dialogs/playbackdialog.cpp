@@ -71,7 +71,6 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 	m_ctrl = new PlaybackController(canvas, reader, this);
 
 	connect(m_ctrl, &PlaybackController::playbackToggled, this, &PlaybackDialog::playbackToggled);
-	connect(m_ctrl, &PlaybackController::commandRead, this, &PlaybackDialog::commandRead);
 
 	connect(m_ui->play, &QAbstractButton::clicked, m_ctrl, &PlaybackController::setPlaying);
 	connect(m_ctrl, &PlaybackController::playbackToggled, m_ui->play, &QAbstractButton::setChecked);

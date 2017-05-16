@@ -510,8 +510,6 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
 	m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(m_playbackDialog, &dialogs::PlaybackDialog::commandRead, m_doc->canvas(), &canvas::CanvasModel::handleCommand);
-
 	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
 	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this, [this]() {
 		m_playbackDialog = nullptr;

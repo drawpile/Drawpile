@@ -259,6 +259,7 @@ signals:
 	void userMarkerHide(int id);
 
 	void catchupProgress(int percent);
+	void sequencePoint(int);
 
 public slots:
 	void previewLayerOpacity(int id, float opacity);

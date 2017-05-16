@@ -31,7 +31,8 @@ namespace protocol {
 class ClientInternal : public Message {
 public:
 	enum class Type {
-		Catchup // caught up to n% of promised messages
+		Catchup,      // caught up to n% of promised messages
+		SequencePoint // message sequence point
 	};
 
 	/**
@@ -41,6 +42,15 @@ public:
      * This is used to update a download progress bar.
 	 */
 	static MessagePtr makeCatchup(int n) { return MessagePtr(new ClientInternal(Type::Catchup, n)); }
+
+	/**
+	 * @brief Make a sequence point message
+	 *
+	 * This message triggers the emission of a sequencePoint(int) signal from the state tracker when it's
+	 * reached. It's used by the recording playback controller to synchronize the UI with the
+	 * real playback state.
+	 */
+	static MessagePtr makeSequencePoint(int interval) { return MessagePtr(new ClientInternal(Type::SequencePoint, interval)); }
 
 	Type internalType() const { return m_type; }
 	int value() const { return m_value; }
