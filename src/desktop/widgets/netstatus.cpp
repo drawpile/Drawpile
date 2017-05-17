@@ -50,6 +50,8 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(4);
 
+	m_hideServer = QSettings().value("settings/hideServerIp", false).toBool();
+
 	// Download progress bar
 	m_download = new QProgressBar(this);
 	m_download->setMaximumWidth(120);
@@ -90,6 +92,18 @@ NetStatus::NetStatus(QWidget *parent)
 #ifdef HAVE_UPNP
 	connect(net::UPnPClient::instance(), SIGNAL(externalIp(QString)), this, SLOT(externalIpDiscovered(QString)));
 #endif
+
+	// Option to hide the server address
+	// (useful when livestreaming)
+	QAction *hideServerAction = new QAction(tr("Hide address"), this);
+	hideServerAction->setCheckable(true);
+	hideServerAction->setChecked(m_hideServer);
+	connect(hideServerAction, &QAction::triggered, this, [this](bool hide) {
+		QSettings().setValue("settings/hideServerIp", hide);
+		m_hideServer = hide;
+		updateLabel();
+	});
+	m_label->addAction(hideServerAction);
 
 	// Show network statistics
 	QAction *sep = new QAction(this);
@@ -386,9 +400,16 @@ void NetStatus::updateLabel()
 	QString txt;
 	switch(m_state) {
 	case NotConnected: txt = tr("not connected"); break;
-	case Connecting: txt = tr("Connecting to %1...").arg(fullAddress()); break;
+	case Connecting:
+		if(m_hideServer)
+			txt = tr("Connecting...");
+		else
+			txt = tr("Connecting to %1...").arg(fullAddress());
+		break;
 	case LoggedIn:
-		if(m_roomcode.isEmpty())
+		if(m_hideServer)
+			txt = tr("Connected");
+		else if(m_roomcode.isEmpty())
 			txt = tr("Host: %1").arg(fullAddress());
 		else
 			txt = tr("Room: %1").arg(m_roomcode);

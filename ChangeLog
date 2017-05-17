@@ -7,6 +7,7 @@
  * Improved retcon behavior. (Don't reset local fork on every conflict to avoid self-conflict loop)
  * Fixed flood fill expansion (regression fix)
  * Fixed concurrency problem in recording playback
+ * Added option to hide the host address in the status bar
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings

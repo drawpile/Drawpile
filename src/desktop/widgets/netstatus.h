@@ -116,6 +116,8 @@ private:
 	int m_port;
 	QUrl m_sessionUrl;
 
+	bool m_hideServer;
+
 	QAction *_copyaction;
 	QAction *_urlaction;
 	QAction *_discoverIp;
