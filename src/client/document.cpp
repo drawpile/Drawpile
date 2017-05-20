@@ -33,6 +33,7 @@
 #include "utils/images.h"
 
 #include "../shared/net/control.h"
+#include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/layer.h"
@@ -237,6 +238,9 @@ void Document::onServerHistoryLimitReceived(int maxSpace)
 	{
 		// We're the "prime operator", meaning it's our responsibility
 		// to handle the autoreset
+		sendLockSession(true);
+		m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+
 		if(!sendResetSession(canvas::StateSavepoint(), maxSpace)) {
 			emit autoResetTooLarge(maxSpace);
 		}
