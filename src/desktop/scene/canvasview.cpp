@@ -385,6 +385,11 @@ void CanvasView::onPenUp(bool right)
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
+	if(_stylusDown) {
+		// Work around missing modifier keys in QTabletEvent
+		modifiers = QApplication::queryKeyboardModifiers();
+	}
+
 	if(button == Qt::MidButton || _dragbtndown) {
 		ViewTransform mode;
 		if(_dragbtndown == DRAG_NOTRANSFORM) {

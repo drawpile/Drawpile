@@ -9,6 +9,7 @@
  * Fixed concurrency problem in recording playback
  * Added option to hide the host address in the status bar
  * Canvas is now locked on autoreset and a notification chat message is sent
+ * Fixed zooming with ctrl+tablet stylus motion
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
