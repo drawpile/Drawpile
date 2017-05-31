@@ -337,7 +337,7 @@ void SettingsDialog::rememberSettings()
 	cfg.endGroup();
 
 	// Remember general settings
-	cfg.setValue("settings/language", m_ui->languageBox->currentIndex());
+	cfg.setValue("settings/language", m_ui->languageBox->currentData());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
 
