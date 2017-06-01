@@ -11,6 +11,7 @@
  * Canvas is now locked on autoreset and a notification chat message is sent
  * Fixed zooming with ctrl+tablet stylus motion
  * Fixed language changing
+ * All admin HTTP queries are now logged
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
