@@ -321,6 +321,7 @@ private:
 
 	QString _title;
 	int m_myId;
+	int m_myLastLayer;
 
 	History m_history;
 	QList<StateSavepoint> m_savepoints;

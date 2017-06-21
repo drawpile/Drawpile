@@ -12,6 +12,7 @@
  * Fixed zooming with ctrl+tablet stylus motion
  * Fixed language changing
  * All admin HTTP queries are now logged
+ * Layer selection is now restored after session reset
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings

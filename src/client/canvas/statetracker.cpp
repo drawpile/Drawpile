@@ -161,6 +161,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		_image(image),
 		m_layerlist(layerlist),
 		m_myId(myId),
+		m_myLastLayer(-1),
 		m_fullhistory(true),
 		_showallmarkers(false),
 		m_hasParticipated(false),
@@ -193,6 +194,7 @@ void StateTracker::reset()
 	m_msgqueue.clear();
 	m_localfork.clear();
 	m_layerlist->clear();
+	m_myLastLayer = _contexts[m_myId].tool.layer_id;
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)
@@ -436,6 +438,8 @@ void StateTracker::endRemoteContexts()
 				receiveQueuedCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
 		}
 	}
+
+	m_myLastLayer = -1;
 }
 
 /**
@@ -483,9 +487,25 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 
 		// Auto-select layers we create
 		// During the startup phase, autoselect new layers or if a default one is set,
-		// just the default one.
-		if(cmd.contextId() == localId() || (!m_hasParticipated && (cmd.id() == m_layerlist->defaultLayer() || !m_layerlist->defaultLayer())))
+		// just the default one. If there is a remembered layer selection, it takes precedence
+		// over others.
+		if(
+				// Autoselect layers created by me
+				(m_hasParticipated && cmd.contextId() == localId()) ||
+				// If this user has not yet drawn anything...
+				(!m_hasParticipated && (
+					// ... and if there is no remembered layer...
+					((m_myLastLayer <= 0) && ( // ...select default layer or if not selected, any new layer
+						cmd.id() == m_layerlist->defaultLayer() ||
+						!m_layerlist->defaultLayer()
+					)) ||
+					// ... and if there is a remembered layer, select only that one
+					(m_myLastLayer>0 && cmd.id() == m_myLastLayer)
+				))
+		   )
+		{
 			emit layerAutoselectRequest(cmd.id());
+		}
 	}
 }
 
