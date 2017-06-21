@@ -1603,8 +1603,11 @@ void MainWindow::selectTool(QAction *tool)
 	if(idx<0)
 		return;
 
-	if(_dock_toolsettings->currentTool() == idx ) {
-		_dock_toolsettings->setPreviousTool();
+	if(_dock_toolsettings->currentTool() == idx) {
+		if(QSettings().value("settings/tooltoggle", true).toBool())
+			_dock_toolsettings->setPreviousTool();
+		_tempToolSwitchShortcut->reset();
+
 	} else {
 		_dock_toolsettings->setTool(tools::Tool::Type(idx));
 		_toolChangeTime.start();
