@@ -2067,7 +2067,9 @@ void MainWindow::setupActions()
 	connect(stamp, &QAction::triggered, m_doc, &Document::stamp);
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(selectall, &QAction::triggered, this, [this]() {
-		getAction("toolselectrect")->trigger();
+		QAction *selectRect = getAction("toolselectrect");
+		if(!selectRect->isChecked())
+			selectRect->trigger();
 		m_doc->selectAll();
 	});
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);

@@ -13,6 +13,7 @@
  * Fixed language changing
  * All admin HTTP queries are now logged
  * Layer selection is now restored after session reset
+ * Fixed tool selection when "select all" command was used and the rectangular selection tool was already selected
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
