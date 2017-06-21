@@ -1211,7 +1211,6 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setMaxUsers(dlg->getUserLimit());
 	login->setAllowDrawing(dlg->getAllowDrawing());
 	login->setLayerControlLock(dlg->getLayerControlLock());
-	login->setPersistentSessions(dlg->getPersistentMode());
 	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	login->setInitialState(m_doc->canvas()->generateSnapshot(true));

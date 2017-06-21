@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,9 +60,6 @@ public:
 
 	//! Should layer controls be locked by default
 	bool getLayerControlLock() const;
-
-	//! Should the session be persistent
-	bool getPersistentMode() const;
 
 	//! Should chat history be preserved in the session
 	bool getPreserveChat() const;

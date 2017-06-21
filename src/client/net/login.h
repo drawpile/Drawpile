@@ -116,16 +116,6 @@ public:
 	void setLayerControlLock(bool layerlock) { Q_ASSERT(m_mode==HOST); m_layerctrllock = layerlock; }
 
 	/**
-	 * @brief Set whether the session should be persistent
-	 *
-	 * Only for host mode. Whether this option actually gets set depends on whether the server
-	 * supports persistent sessions.
-	 *
-	 * @param persistent
-	 */
-	void setPersistentSessions(bool persistent) { Q_ASSERT(m_mode==HOST); m_requestPersistent = persistent; }
-
-	/**
 	 * @brief Set whether chat history should be preserved in the session
 	 */
 	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
@@ -329,7 +319,6 @@ private:
 	int m_maxusers;
 	bool m_allowdrawing;
 	bool m_layerctrllock;
-	bool m_requestPersistent;
 	bool m_preserveChat;
 	bool m_announcePrivate;
 	QString m_announceUrl;

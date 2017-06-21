@@ -442,9 +442,6 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(m_maxusers>0)
 				conf.kwargs["maxUserCount"] = m_maxusers;
 
-			if(m_requestPersistent)
-				conf.kwargs["persistent"] = true;
-
 			if(m_preserveChat)
 				conf.kwargs["preserveChat"] = true;
 

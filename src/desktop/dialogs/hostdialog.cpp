@@ -57,7 +57,6 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 
 	// Settings tab defaults
-	_ui->persistentSession->setChecked(cfg.value("persistentsession", false).toBool());
 	_ui->preservechat->setChecked(cfg.value("preservechat", false).toBool());
 	_ui->userlimit->setValue(cfg.value("userlimit", 20).toInt());
 	_ui->allowdrawing->setChecked(cfg.value("allowdrawing", true).toBool());
@@ -102,7 +101,6 @@ void HostDialog::rememberSettings() const
 	cfg.setValue("hostremote", _ui->useremote->isChecked());
 
 	// Remember settings tab values
-	cfg.setValue("persistentsession", _ui->persistentSession->isChecked());
 	cfg.setValue("preservechat", _ui->preservechat->isChecked());
 	cfg.setValue("userlimit", _ui->userlimit->value());
 	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
@@ -149,11 +147,6 @@ bool HostDialog::getAllowDrawing() const
 bool HostDialog::getLayerControlLock() const
 {
 	return _ui->layerctrllock->isChecked();
-}
-
-bool HostDialog::getPersistentMode() const
-{
-	return _ui->persistentSession->isChecked();
 }
 
 QString HostDialog::getSessionAlias() const

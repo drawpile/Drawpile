@@ -189,13 +189,6 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QCheckBox" name="persistentSession">
-         <property name="text">
-          <string>Persist without users</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
         <widget class="QCheckBox" name="preservechat">
          <property name="text">
           <string>Preserve chat</string>
