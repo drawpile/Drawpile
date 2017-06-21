@@ -73,6 +73,7 @@
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
 #include "utils/settings.h"
+#include "utils/logging.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -2411,6 +2412,7 @@ void MainWindow::setupActions()
 	//
 	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), WEBSITE);
 	QAction *tablettester = makeAction("tablettester", 0, tr("Tablet Tester"));
+	QAction *showlogfile = makeAction("showlogfile", 0, tr("Log File"));
 	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); aboutqt->setMenuRole(QAction::AboutQtRole);
 
@@ -2433,9 +2435,14 @@ void MainWindow::setupActions()
 		ttd->raise();
 	});
 
+	connect(showlogfile, &QAction::triggered, []() {
+		QDesktopServices::openUrl(QUrl::fromLocalFile(utils::logFilePath()));
+	});
+
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
 	helpmenu->addAction(tablettester);
+	helpmenu->addAction(showlogfile);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);

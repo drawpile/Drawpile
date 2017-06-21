@@ -54,6 +54,7 @@ set (
 	utils/listservermodel.cpp
 	utils/settings.cpp
 	utils/icon.cpp
+	utils/logging.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp

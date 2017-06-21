@@ -24,6 +24,7 @@
 
 #include "utils/icon.h"
 #include "utils/settings.h"
+#include "utils/logging.h"
 #include "notifications.h"
 
 #ifdef Q_OS_MAC
@@ -189,6 +190,8 @@ void initTranslations(const QLocale &locale)
 int main(int argc, char *argv[]) {
 	// Initialize application
 	DrawpileApp app(argc,argv);
+
+	utils::initLogging();
 
 	icon::selectThemeVariant();
 

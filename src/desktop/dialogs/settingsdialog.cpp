@@ -244,6 +244,7 @@ void SettingsDialog::restoreSettings()
 		}
 	}
 
+	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
 	m_ui->brushCursorBox->setCurrentIndex(cfg.value("brushcursor").toInt());
@@ -339,6 +340,7 @@ void SettingsDialog::rememberSettings()
 
 	// Remember general settings
 	cfg.setValue("settings/language", m_ui->languageBox->currentData());
+	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
