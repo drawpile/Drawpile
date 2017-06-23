@@ -93,6 +93,7 @@ struct ServerSummaryPage::Private {
 		idleTimeout->setSuffix(" min");
 		idleTimeout->setSingleStep(1);
 		idleTimeout->setSpecialValueText(tr("unlimited"));
+		idleTimeout->setMaximum(7 * 24 * 60);
 
 		persistence->setText(ServerSummaryPage::tr("Allow sessions to persist without users"));
 		privateUserList->setText(ServerSummaryPage::tr("Do not include user list is session announcement"));
@@ -203,7 +204,8 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 
 ServerSummaryPage::~ServerSummaryPage()
 {
-	saveSettings();
+	if(d->saveTimer->isActive())
+		saveSettings();
 	delete d;
 }
 
