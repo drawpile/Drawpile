@@ -1,7 +1,7 @@
 !version=dp:4.20.1
 !maxUserCount=1
 !founder=tester
-!password=qwerty123
+!password=plain;qwerty123
 !title=Test
 !nsfm=false
 
