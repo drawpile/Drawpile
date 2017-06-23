@@ -59,7 +59,7 @@ void logToFile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
 
 QByteArray logFilePath()
 {
-	return (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+	return (QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) +
 			("/drawpile-" DRAWPILE_VERSION "-") + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log")
 			.toLocal8Bit();
 }
