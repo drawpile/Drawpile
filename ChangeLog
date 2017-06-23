@@ -16,6 +16,8 @@
  * Fixed tool selection when "select all" command was used and the rectangular selection tool was already selected
  * Added option to disable tool toggling shortcut
  * Removed "persistent session" option from the host dialog (can still be set via session settings dialog.)
+ * Added a log file for debug messages
+ * Fixed bug in server GUI that could reset server settings
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
