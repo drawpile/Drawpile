@@ -41,8 +41,8 @@ private slots:
 		{
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
 			QVERIFY(fh.get());
-			fh->setPassword(password);
-			fh->setOpword(opword);
+			fh->setPasswordHash(passwordhash::hash(password));
+			fh->setOpwordHash(passwordhash::hash(opword));
 			fh->setMaxUsers(200);
 			fh->setMaxUsers(maxUsers); // this should replace the previously set value
 			fh->setTitle(title);
