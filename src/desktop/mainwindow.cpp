@@ -819,6 +819,18 @@ bool MainWindow::event(QEvent *event)
 
 				_tempToolSwitchShortcut->reset();
 			}
+
+		} else if(event->type() == QEvent::ShortcutOverride) {
+			// QLineEdit doesn't seem to override the Return key shortcut,
+			// so we have to do it ourself.
+			const QKeyEvent *e = static_cast<QKeyEvent*>(event);
+			if(e->key() == Qt::Key_Return) {
+				QWidget *focus = QApplication::focusWidget();
+				if(focus && focus->inherits("QLineEdit")) {
+					event->accept();
+					return true;
+				}
+			}
 		}
 
 		return QMainWindow::event(event);
