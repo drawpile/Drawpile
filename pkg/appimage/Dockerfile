@@ -8,7 +8,7 @@ RUN yum -y install libxcb libxcb-devel libXrender libXrender-devel xcb-util-wm x
 RUN yum -y install centos-release-scl-rh
 RUN yum -y install devtoolset-3-gcc devtoolset-3-gcc-c++
 
-RUN wget http://download.qt.io/archive/qt/5.7/5.7.1/single/qt-everywhere-opensource-src-5.7.1.tar.xz -O /opt/qt.tar.xz
+RUN wget http://download.qt.io/archive/qt/5.6/5.6.2/single/qt-everywhere-opensource-src-5.6.2.tar.xz -O /opt/qt.tar.xz
 
 ADD Build-qt /
 RUN bash -ex Build-qt

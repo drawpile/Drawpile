@@ -18,6 +18,7 @@
  * Removed "persistent session" option from the host dialog (can still be set via session settings dialog.)
  * Added a log file for debug messages
  * Fixed bug in server GUI that could reset server settings
+ * Downgraded AppImage Qt version to 5.6 (Tablet hover events are broken in Qt 5.7 and above)
 
 2017-05-25 Version 2.0.4
  * Added support for room codes and private listings
