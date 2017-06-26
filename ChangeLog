@@ -1,4 +1,4 @@
-2017-0?-?? Version 2.0.5
+2017-06-26 Version 2.0.5
  * Fixed building with systemd integration enabled
  * The number of remembered host addresses is now limited
  * Added tablet test dialog
@@ -20,7 +20,7 @@
  * Fixed bug in server GUI that could reset server settings
  * Downgraded AppImage Qt version to 5.6 (Tablet hover events are broken in Qt 5.7 and above)
 
-2017-05-25 Version 2.0.4
+2017-04-25 Version 2.0.4
  * Added support for room codes and private listings
  * Reverted pressure controls back to checkboxes
  * Added dedicated eraser brush slot
