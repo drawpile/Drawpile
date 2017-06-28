@@ -78,10 +78,17 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 			// We use the center constraint during translation to rotate the selection
 			const QPointF center = sel->boundingRect().center();
 
-			double a0 = qAtan2(m_start.y() - center.y(), m_start.x() - center.x());
-			double a1 = qAtan2(point.y() - center.y(), point.x() - center.x());
+			if(constrain) {
+				// center+constrain mode: shear
+				sel->shear(p.x() / 100.0, p.y() / 100.0);
 
-			sel->rotate(a1-a0);
+			} else {
+				// just the center: rotate
+				double a0 = qAtan2(m_start.y() - center.y(), m_start.x() - center.x());
+				double a1 = qAtan2(point.y() - center.y(), point.x() - center.x());
+
+				sel->rotate(a1-a0);
+			}
 
 		} else {
 			sel->adjustGeometry(m_handle, p.toPoint(), constrain);

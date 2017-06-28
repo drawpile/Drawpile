@@ -124,6 +124,24 @@ void Selection::rotate(float angle)
 	emit shapeChanged(m_shape);
 }
 
+void Selection::shear(float sh, float sv)
+{
+	if(qAbs(sh) < 0.0001 && qAbs(sv) < 0.0001)
+		return;
+
+	const QPointF origin = m_shape.boundingRect().center();
+	QTransform t;
+	t.translate(origin.x(), origin.y());
+	t.shear(sh, sv);
+
+	for(int i=0;i<m_shape.size();++i) {
+		QPointF p = m_shape[i] - origin;
+		m_shape[i] = t.map(p);
+	}
+
+	emit shapeChanged(m_shape);
+}
+
 Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
 {
 	const qreal H = handleSize() / zoom;

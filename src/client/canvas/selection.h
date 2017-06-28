@@ -122,6 +122,7 @@ public slots:
 	void translate(const QPoint &offset);
 	void scale(qreal x, qreal y);
 	void rotate(float angle);
+	void shear(float sh, float sv);
 
 signals:
 	void shapeChanged(const QPolygonF &shape);
