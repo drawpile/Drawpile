@@ -150,7 +150,12 @@ void TcpServer::loginSuccess()
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 
-	emit loggedIn(m_loginstate->sessionId(), m_loginstate->userId(), m_loginstate->mode() == LoginHandler::JOIN);
+	emit loggedIn(
+		m_loginstate->sessionId(),
+		m_loginstate->userId(),
+		m_loginstate->mode() == LoginHandler::JOIN,
+		m_loginstate->hasUserFlag("MOD")
+		);
 
 	m_loginstate->deleteLater();
 	m_loginstate = nullptr;

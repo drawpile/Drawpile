@@ -106,6 +106,14 @@ public:
 	bool isLoggedIn() const { return m_server->isLoggedIn(); }
 
 	/**
+	 * @brief Is this user a moderator?
+	 *
+	 * Moderator status is a feature of the user account and cannot change during
+	 * the connection.
+	 */
+	bool isModerator() const { return m_moderator; }
+
+	/**
 	 * @brief Get connection security level
 	 */
 	Server::Security securityLevel() const { return m_server->securityLevel(); }
@@ -181,7 +189,7 @@ signals:
 
 private slots:
 	void handleMessage(const protocol::MessagePtr &msg);
-	void handleConnect(const QString &sessionId, int userid, bool join);
+	void handleConnect(const QString &sessionId, int userid, bool join, bool moderator);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
@@ -196,6 +204,7 @@ private:
 	int m_myId;
 	bool m_isloopback;
 	bool m_recordedChat;
+	bool m_moderator;
 
 	int m_catchupTo;
 	int m_caughtUp;

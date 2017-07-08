@@ -198,6 +198,11 @@ MessagePtr mute(int userId, bool mute)
 	return serverCommand("mute", QJsonArray() << userId << mute);
 }
 
+MessagePtr terminateSession()
+{
+	return serverCommand("kill-session");
+}
+
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
 	QList<protocol::MessagePtr> list;

@@ -44,6 +44,7 @@ Client::Client(QObject *parent)
 	m_loopback = new LoopbackServer(this);
 	m_server = m_loopback;
 	m_isloopback = true;
+	m_moderator = false;
 
 	connect(m_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
 }
@@ -106,10 +107,11 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, int userid, bool join)
+void Client::handleConnect(const QString &sessionId, int userid, bool join, bool moderator)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
+	m_moderator = moderator;
 
 	emit serverLoggedin(join);
 }
@@ -122,6 +124,7 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	m_server->deleteLater();
 	m_server = m_loopback;
 	m_isloopback = true;
+	m_moderator = false;
 }
 
 bool Client::isLocalServer() const

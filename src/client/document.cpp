@@ -554,6 +554,11 @@ void Document::sendUnannounce(const QString &url)
 	m_client->sendMessage(net::command::unannounce(url));
 }
 
+void Document::sendTerminateSession()
+{
+	m_client->sendMessage(net::command::terminateSession());
+}
+
 void Document::snapshotNeeded()
 {
 	// (We) requested a session reset and the server is now ready for it.

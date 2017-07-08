@@ -292,7 +292,8 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 	}
 
 	//bool isGuest = msg.reply["guest"].toBool();
-	QJsonArray flags = msg.reply["flags"].toArray();
+	for(const QJsonValue f : msg.reply["flags"].toArray())
+		m_userFlags << f.toString().toUpper();
 
 	if(m_mode == HOST) {
 		m_state = EXPECT_SESSIONLIST_TO_HOST;
@@ -690,6 +691,11 @@ QString LoginHandler::sessionId() const {
 		return m_sessionAlias;
 
 	return m_loggedInSessionId;
+}
+
+bool LoginHandler::hasUserFlag(const QString &flag) const
+{
+	return m_userFlags.contains(flag.toUpper());
 }
 
 }

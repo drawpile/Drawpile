@@ -116,6 +116,7 @@ public slots:
 	static void showSettings();
 	void tryToGainOp();
 	void resetSession();
+	void terminateSession();
 
 	void host();
 	void join(const QUrl &defaultUrl=QUrl());
@@ -232,6 +233,7 @@ private:
 
 	QActionGroup *_currentdoctools; // actions relating to the currently open document
 	QActionGroup *m_admintools; // session operator actions
+	QActionGroup *m_modtools; // session moderator tools
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *m_drawingtools; // drawing tool selection
 	QActionGroup *m_brushSlots; // tool slot shortcuts

@@ -181,6 +181,7 @@ public slots:
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
+	void sendTerminateSession();
 
 	// Tool related functions
 	void undo();

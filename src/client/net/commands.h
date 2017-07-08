@@ -81,6 +81,11 @@ protocol::MessagePtr announce(const QString &url, bool privateMode);
 protocol::MessagePtr unannounce(const QString &url);
 
 /**
+ * @brief Moderator command: terminate this session
+ */
+protocol::MessagePtr terminateSession();
+
+/**
  * @brief Generate one or more PutImage command from a QImage
  *
  * Due to the 64k payload length limit, a large image may not fit inside

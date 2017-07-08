@@ -1305,6 +1305,7 @@ void MainWindow::resetSession()
 {
 	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
 	dlg->setWindowModality(Qt::WindowModal);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	// Automatically lock the session while we are preparing to reset
 	bool wasLocked = m_doc->canvas()->aclFilter()->isSessionLocked();
@@ -1322,6 +1323,27 @@ void MainWindow::resetSession()
 		// Reset cancelled: unlock the session (if locked by as)
 		if(!wasLocked)
 			m_doc->sendLockSession(false);
+	});
+
+	dlg->show();
+}
+
+void MainWindow::terminateSession()
+{
+	auto dlg = new QMessageBox(
+		QMessageBox::Question,
+		tr("Terminate session"),
+		tr("Really terminate this session?"),
+		QMessageBox::Ok|QMessageBox::Cancel,
+		this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setDefaultButton(QMessageBox::Cancel);
+	dlg->button(QMessageBox::Ok)->setText(tr("Terminate"));
+	dlg->setWindowModality(Qt::WindowModal);
+
+	connect(dlg, &QMessageBox::finished, this, [this](int res) {
+		if(res == QMessageBox::Ok)
+			m_doc->sendTerminateSession();
 	});
 
 	dlg->show();
@@ -1377,6 +1399,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
 	m_admintools->setEnabled(false);
+	m_modtools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
 	m_sessionSettings->close();
 
@@ -1434,6 +1457,7 @@ void MainWindow::onServerLogin()
 	_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
 	setDrawingToolsEnabled(true);
+	m_modtools->setEnabled(m_doc->client()->isModerator());
 }
 
 void MainWindow::updateLockWidget()
@@ -1920,6 +1944,9 @@ void MainWindow::setupActions()
 	m_admintools = new QActionGroup(this);
 	m_admintools->setExclusive(false);
 
+	m_modtools = new QActionGroup(this);
+	m_modtools->setEnabled(false);
+
 	m_docadmintools = new QActionGroup(this);
 	m_docadmintools->setExclusive(false);
 	m_docadmintools->setEnabled(false);
@@ -2299,6 +2326,8 @@ void MainWindow::setupActions()
 	sessionSettings->setEnabled(false);
 
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
+	QAction *terminatesession = makeAction("terminatesession", 0, tr("Terminate"));
+
 	QAction *gainop = makeAction("gainop", 0, tr("Become Operator..."));
 	gainop->setEnabled(false);
 
@@ -2306,6 +2335,7 @@ void MainWindow::setupActions()
 
 	m_admintools->addAction(locksession);
 	m_admintools->addAction(resetsession);
+	m_modtools->addAction(terminatesession);
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
@@ -2321,13 +2351,18 @@ void MainWindow::setupActions()
 	});
 
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);
+	connect(terminatesession, &QAction::triggered, this, &MainWindow::terminateSession);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);
 	sessionmenu->addAction(join);
 	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(resetsession);
+
+	QMenu *modmenu = sessionmenu->addMenu(tr("Moderation"));
+	modmenu->addAction(resetsession);
+	modmenu->addAction(terminatesession);
+
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(gainop);
 	sessionmenu->addAction(serverlog);

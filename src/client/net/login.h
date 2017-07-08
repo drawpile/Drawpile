@@ -175,6 +175,16 @@ public:
 	 */
 	bool supportsPersistence() const { return m_canPersist; }
 
+	/**
+	 * @brief Check if the user has the given flag
+	 *
+	 * This is only valid after the user has identified succesfully
+	 *
+	 * @param flag
+	 * @return
+	 */
+	bool hasUserFlag(const QString &flag) const;
+
 public slots:
 	void serverDisconnected();
 
@@ -344,6 +354,9 @@ private:
 	bool m_canPersist;
 	bool m_mustAuth;
 	bool m_needUserPassword;
+
+	// User flags
+	QStringList m_userFlags;
 };
 
 }
