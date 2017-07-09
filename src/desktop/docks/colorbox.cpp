@@ -39,7 +39,7 @@ using namespace color_widgets;
 namespace docks {
 
 ColorBox::ColorBox(const QString& title, QWidget *parent)
-	: QDockWidget(title, parent), _ui(new Ui_ColorBox), _updating(false)
+	: QDockWidget(title, parent), _ui(new Ui_ColorBox), m_lastUsedColorChanged(false), _updating(false)
 {
 	QWidget *w = new QWidget(this);
 	w->resize(167, 95);
@@ -262,6 +262,7 @@ void ColorBox::setColor(const QColor& color)
 
 	_ui->colorwheel->setColor(color);
 	_updating = false;
+	changeLastUsedColor(color);
 }
 
 void ColorBox::updateFromRgbSliders()
@@ -303,8 +304,24 @@ void ColorBox::updateFromHsvSpinbox()
 	}
 }
 
+void ColorBox::changeLastUsedColor(const QColor &color)
+{
+	if(m_lastused->count()==0 || !m_lastUsedColorChanged) {
+		addLastUsedColor(color);
+		m_lastUsedColorChanged = true;
+		return;
+	}
+
+	m_lastUsedColorChanged = true;
+	m_lastused->setWriteProtected(false);
+	m_lastused->setColor(0, color);
+	m_lastused->setWriteProtected(true);
+}
+
 void ColorBox::addLastUsedColor(const QColor &color)
 {
+	m_lastUsedColorChanged = false;
+
 	if(m_lastused->count()>0 && m_lastused->color(0).color.rgb() == color.rgb())
 		return;
 
@@ -329,6 +346,7 @@ void ColorBox::swapLastUsedColors()
 {
 	// Swap last-used palettes
 	Palette *swap = m_lastused;
+	const bool lastUsedChanged = m_lastUsedColorChanged;
 	m_lastused = m_lastusedAlt;
 	m_lastusedAlt = swap;
 	_ui->lastused->setPalette(m_lastused);
@@ -339,6 +357,7 @@ void ColorBox::swapLastUsedColors()
 		setColor(c);
 		emit colorChanged(c);
 	}
+	m_lastUsedColorChanged = lastUsedChanged;
 }
 
 }
