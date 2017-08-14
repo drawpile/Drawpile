@@ -66,6 +66,9 @@ void LoginHandler::startLoginProcess()
 	if(!m_server->config()->getConfigBool(config::AllowGuests))
 		flags << "NOGUEST";
 
+	// TODO implement reporting backend
+	//flags << "REPORT";
+
 	greeting.reply["flags"] = flags;
 
 	// Start by telling who we are
@@ -188,6 +191,8 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 			handleHostMessage(cmd);
 		} else if(cmd.cmd == "join") {
 			handleJoinMessage(cmd);
+		} else if(cmd.cmd == "report") {
+			handleAbuseReport(cmd);
 		} else {
 			m_client->log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message("Invalid login command (while waiting for join/host): " + cmd.cmd));
 			m_client->disconnectError("invalid message");
@@ -454,6 +459,12 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	session->joinUser(m_client, false);
 
 	deleteLater();
+}
+
+void LoginHandler::handleAbuseReport(const protocol::ServerCommand &cmd)
+{
+	// TODO
+	qWarning("Received abuse report regarding session %s: %s", qPrintable(cmd.kwargs["session"].toString()), qPrintable(cmd.kwargs["reason"].toString()));
 }
 
 void LoginHandler::handleStarttls()

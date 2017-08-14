@@ -43,6 +43,7 @@ public:
 	Security securityLevel() const override { return NO_SECURITY; }
 	QSslCertificate hostCertificate() const override { return QSslCertificate(); }
 	bool supportsPersistence() const override { return false; }
+	bool supportsAbuseReports() const override { return false; }
 
 };
 

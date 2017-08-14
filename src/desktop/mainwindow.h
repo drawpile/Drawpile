@@ -114,6 +114,7 @@ public slots:
 	void showFlipbook();
 
 	static void showSettings();
+	void reportAbuse();
 	void tryToGainOp();
 	void resetSession();
 	void terminateSession();

@@ -24,6 +24,7 @@ set (
 	scene/selectionitem.cpp
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
+	dialogs/abusereport.cpp
 	dialogs/certificateview.cpp
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
@@ -120,6 +121,7 @@ set (
 	ui/sessionsettings.ui
 	ui/serverlog.ui
 	ui/tablettest.ui
+	ui/abusereport.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found

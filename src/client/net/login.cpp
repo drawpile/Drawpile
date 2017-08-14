@@ -70,6 +70,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_multisession(false),
 	  m_tls(false),
 	  m_canPersist(false),
+	  m_canReport(false),
 	  m_needUserPassword(false)
 {
 	m_sessions = new LoginSessionModel(this);
@@ -172,6 +173,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	m_mustAuth = false;
 	m_needUserPassword = false;
 	m_canPersist = false;
+	m_canReport = false;
 
 	for(const QJsonValue &flag : flags) {
 		if(flag == "MULTI") {
@@ -184,6 +186,8 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 			m_canPersist = true;
 		} else if(flag == "NOGUEST") {
 			m_mustAuth = true;
+		} else if(flag == "REPORT") {
+			m_canReport = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
@@ -502,6 +506,15 @@ void LoginHandler::sendJoinCommand()
 
 	send(cmd);
 	m_state = EXPECT_LOGIN_OK;
+}
+
+void LoginHandler::reportSession(const QString &id, const QString &reason)
+{
+	protocol::ServerCommand cmd;
+	cmd.cmd = "report";
+	cmd.kwargs["session"] = id;
+	cmd.kwargs["reason"] = reason;
+	send(cmd);
 }
 
 void LoginHandler::startTls()

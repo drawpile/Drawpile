@@ -57,6 +57,7 @@ private slots:
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
+	void onReportClicked();
 
 private:
 	enum Mode {
@@ -73,6 +74,7 @@ private:
 	Mode m_mode;
 	net::LoginHandler *m_login;
 	Ui_LoginDialog *m_ui;
+	QAbstractButton *m_reportButton;
 	QMetaObject::Connection m_loginDestructConnection;
 };
 

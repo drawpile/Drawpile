@@ -56,6 +56,7 @@ public:
 	QSslCertificate hostCertificate() const override;
 
 	bool supportsPersistence() const override { return m_supportsPersistence; }
+	bool supportsAbuseReports() const override { return m_supportsAbuseReports; }
 
 	QUrl url() const { return m_url; }
 
@@ -88,6 +89,7 @@ private:
 	Security m_securityLevel;
 	bool m_localDisconnect;
 	bool m_supportsPersistence;
+	bool m_supportsAbuseReports;
 };
 
 }

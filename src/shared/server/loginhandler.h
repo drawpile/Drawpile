@@ -106,6 +106,7 @@ private:
 	void handleIdentMessage(const protocol::ServerCommand &cmd);
 	void handleHostMessage(const protocol::ServerCommand &cmd);
 	void handleJoinMessage(const protocol::ServerCommand &cmd);
+	void handleAbuseReport(const protocol::ServerCommand &cmd);
 	void handleStarttls();
 	void guestLogin(const QString &username);
 	bool send(const protocol::ServerReply &cmd);

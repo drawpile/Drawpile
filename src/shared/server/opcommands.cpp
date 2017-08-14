@@ -235,6 +235,17 @@ void setMute(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	}
 }
 
+void reportAbuse(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+
+	const int user = kwargs["user"].toInt();
+	const QString reason = kwargs["reason"].toString();
+
+	// TODO implement reporting backend
+	qWarning("%s: Received abuse report about user %d: %s", qPrintable(client->session()->id().toString()), user, qPrintable(reason));
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands
@@ -252,6 +263,8 @@ SrvCommandSet::SrvCommandSet()
 
 		<< SrvCommand("remove-ban", removeBan)
 		<< SrvCommand("mute", setMute)
+
+		<< SrvCommand("report", reportAbuse, SrvCommand::NONOP)
 	;
 }
 

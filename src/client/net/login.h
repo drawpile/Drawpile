@@ -176,6 +176,11 @@ public:
 	bool supportsPersistence() const { return m_canPersist; }
 
 	/**
+	 * @brief Can the server receive abuse reports?
+	 */
+	bool supportsAbuseReports() const { return m_canReport; }
+
+	/**
 	 * @brief Check if the user has the given flag
 	 *
 	 * This is only valid after the user has identified succesfully
@@ -231,6 +236,13 @@ public slots:
 	 * Call this if a user clicks on "Cancel".
 	 */
 	void cancelLogin();
+
+	/**
+	 * @brief Send an abuse report about a session
+	 * @param id ID of the session being reported
+	 * @param reason message to moderators
+	 */
+	void reportSession(const QString &id, const QString &reason);
 
 signals:
 	/**
@@ -352,6 +364,7 @@ private:
 	bool m_multisession;
 	bool m_tls;
 	bool m_canPersist;
+	bool m_canReport;
 	bool m_mustAuth;
 	bool m_needUserPassword;
 

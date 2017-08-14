@@ -64,6 +64,7 @@
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
 #include "canvas/statetracker.h"
+#include "canvas/userlist.h"
 
 #include "utils/recentfiles.h"
 #include "../shared/util/whatismyip.h"
@@ -119,6 +120,7 @@
 #include "dialogs/sessionsettings.h"
 #include "dialogs/serverlogdialog.h"
 #include "dialogs/tablettester.h"
+#include "dialogs/abusereport.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -1289,6 +1291,28 @@ void MainWindow::leave()
 	leavebox->show();
 }
 
+void MainWindow::reportAbuse()
+{
+	dialogs::AbuseReportDialog *dlg = new dialogs::AbuseReportDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+	dlg->setSessionInfo(QString(), QString(), m_doc->sessionTitle());
+
+	const canvas::UserListModel *userlist = m_doc->canvas()->userlist();
+	const int usercount = userlist->rowCount();
+	for(int i=0;i<usercount;++i) {
+		const canvas::User &u = userlist->data(userlist->index(i)).value<canvas::User>();
+		if(u.id != m_doc->canvas()->localUserId())
+			dlg->addUser(u.id, u.name);
+	}
+
+	connect(dlg, &dialogs::AbuseReportDialog::accepted, this, [this, dlg]() {
+		m_doc->sendAbuseReport(dlg->userId(), dlg->message());
+	});
+
+	dlg->show();
+}
+
 void MainWindow::tryToGainOp()
 {
 	QString opword = QInputDialog::getText(
@@ -1398,6 +1422,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("hostsession")->setEnabled(m_doc->canvas() != nullptr);
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
+	getAction("reportabuse")->setEnabled(false);
 	m_admintools->setEnabled(false);
 	m_modtools->setEnabled(false);
 	m_docadmintools->setEnabled(true);
@@ -1458,6 +1483,7 @@ void MainWindow::onServerLogin()
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());
+	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
 }
 
 void MainWindow::updateLockWidget()
@@ -2328,6 +2354,9 @@ void MainWindow::setupActions()
 	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
 	QAction *terminatesession = makeAction("terminatesession", 0, tr("Terminate"));
 
+	QAction *reportabuse = makeAction("reportabuse", 0, tr("Report..."));
+	reportabuse->setEnabled(false);
+
 	QAction *gainop = makeAction("gainop", 0, tr("Become Operator..."));
 	gainop->setEnabled(false);
 
@@ -2343,6 +2372,7 @@ void MainWindow::setupActions()
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
 	connect(sessionSettings, &QAction::triggered, m_sessionSettings, &dialogs::SessionSettingsDialog::show);
 	connect(serverlog, &QAction::triggered, m_serverLogDialog, &dialogs::ServerLogDialog::show);
+	connect(reportabuse, &QAction::triggered, this, &MainWindow::reportAbuse);
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 
@@ -2363,6 +2393,7 @@ void MainWindow::setupActions()
 	modmenu->addAction(resetsession);
 	modmenu->addAction(terminatesession);
 
+	sessionmenu->addAction(reportabuse);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(gainop);
 	sessionmenu->addAction(serverlog);

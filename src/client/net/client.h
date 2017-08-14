@@ -131,6 +131,11 @@ public:
 	bool serverSuppotsPersistence() const { return m_server->supportsPersistence(); }
 
 	/**
+	 * @brief Can the server receive abuse reports?
+	 */
+	bool serverSupportsReports() const { return m_server->supportsAbuseReports(); }
+
+	/**
 	 * @brief Get the number of bytes waiting to be sent
 	 * @return upload queue length
 	 */

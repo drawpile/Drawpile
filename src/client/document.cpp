@@ -559,6 +559,15 @@ void Document::sendTerminateSession()
 	m_client->sendMessage(net::command::terminateSession());
 }
 
+void Document::sendAbuseReport(int userId, const QString &message)
+{
+	QJsonObject kwargs;
+	if(userId > 0 && userId < 256)
+		kwargs["user"] = userId;
+	kwargs["reason"] = message;
+	m_client->sendMessage(net::command::serverCommand("report", QJsonArray(), kwargs));
+}
+
 void Document::snapshotNeeded()
 {
 	// (We) requested a session reset and the server is now ready for it.

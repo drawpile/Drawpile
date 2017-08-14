@@ -83,6 +83,7 @@ public:
 	 * @brief Does the server support persistent sessions?
 	 */
 	virtual bool supportsPersistence() const = 0;
+	virtual bool supportsAbuseReports() const = 0;
 
 signals:
 	void messageReceived(protocol::MessagePtr message);

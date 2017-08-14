@@ -18,6 +18,7 @@
 */
 
 #include "logindialog.h"
+#include "abusereport.h"
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "parentalcontrols/parentalcontrols.h"
@@ -71,6 +72,10 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 		if(m_ui->buttonBox->button(QDialogButtonBox::Ok)->isEnabled())
 			m_ui->buttonBox->button(QDialogButtonBox::Ok)->click();
 	});
+
+	m_reportButton = m_ui->buttonBox->addButton(tr("Report..."), QDialogButtonBox::ActionRole);
+	m_reportButton->setEnabled(false); // needs a selected session to be enabled
+	connect(m_reportButton, &QAbstractButton::clicked, this, &LoginDialog::onReportClicked);
 
 	// Login process
 	connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &LoginDialog::onButtonClick);
@@ -131,6 +136,7 @@ void LoginDialog::resetMode(Mode mode)
 
 	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(mode == CERT || mode == CATCHUP);
 	m_ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+	m_reportButton->setVisible(mode == SESSION);
 }
 
 void LoginDialog::onPasswordNeeded(const QString &prompt)
@@ -192,6 +198,7 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 			ok = sel.indexes().at(0).data(net::LoginSessionModel::JoinableRole).toBool();
 
 		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ok);
+		m_reportButton->setEnabled(!sel.indexes().isEmpty() && m_login->supportsAbuseReports());
 	});
 
 	resetMode(SESSION);
@@ -256,9 +263,31 @@ void LoginDialog::onButtonClick(QAbstractButton *btn)
 			break;
 		}
 
-	} else {
+	} else if(b == QDialogButtonBox::Cancel) {
 		reject();
 	}
+}
+
+void LoginDialog::onReportClicked()
+{
+	if(m_ui->sessionlist->selectionModel()->selectedIndexes().isEmpty()) {
+		qWarning("Cannot open report dialog: no session selected!");
+		return;
+	}
+
+	const int selectedRow = m_ui->sessionlist->selectionModel()->selectedIndexes().at(0).row();
+	const net::LoginSession &session = static_cast<net::LoginSessionModel*>(m_ui->sessionlist->model())->sessionAt(selectedRow);
+
+	AbuseReportDialog *reportDlg = new AbuseReportDialog(this);
+	reportDlg->setAttribute(Qt::WA_DeleteOnClose);
+
+	reportDlg->setSessionInfo(session.id, session.alias, session.title);
+
+	connect(reportDlg, &AbuseReportDialog::accepted, this, [this, session, reportDlg]() {
+		m_login->reportSession(session.id, reportDlg->message());
+	});
+
+	reportDlg->show();
 }
 
 void LoginDialog::catchupProgress(int value)

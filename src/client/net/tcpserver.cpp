@@ -149,6 +149,7 @@ void TcpServer::loginSuccess()
 	qDebug() << "logged in to session" << m_loginstate->sessionId() << ". Got user id" << m_loginstate->userId();
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
+	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
 
 	emit loggedIn(
 		m_loginstate->sessionId(),

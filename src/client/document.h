@@ -182,6 +182,7 @@ public slots:
 	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
 	void sendTerminateSession();
+	void sendAbuseReport(int userId, const QString &message);
 
 	// Tool related functions
 	void undo();
