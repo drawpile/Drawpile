@@ -55,7 +55,7 @@ public:
 	Type internalType() const { return m_type; }
 	int value() const { return m_value; }
 
-	QString messageName() const { return QStringLiteral("_internal_"); }
+	QString messageName() const override { return QStringLiteral("_internal_"); }
 
 protected:
     int payloadLength() const override { return 0; }

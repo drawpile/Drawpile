@@ -100,7 +100,7 @@ public:
 	static UserACL *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static UserACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	bool isOpCommand() const { return true; }
+	bool isOpCommand() const override { return true; }
 
 	QList<uint8_t> ids() const { return m_ids; }
 
@@ -171,7 +171,7 @@ public:
 	static SessionACL *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static SessionACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	bool isOpCommand() const { return true; }
+	bool isOpCommand() const override { return true; }
 
 	uint16_t flags() const { return m_flags; }
 
@@ -211,7 +211,7 @@ public:
 
 	uint16_t id() const { return m_id; }
 
-	bool isOpCommand() const { return true; }
+	bool isOpCommand() const override { return true; }
 
 	QString messageName() const override { return QStringLiteral("defaultlayer"); }
 

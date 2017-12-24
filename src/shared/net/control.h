@@ -139,8 +139,8 @@ public:
 	QString messageName() const override { return QStringLiteral("disconnect"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
 	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
@@ -168,8 +168,8 @@ public:
 	QString messageName() const override { return m_isPong ? QStringLiteral("pong") : QStringLiteral("ping"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
 	Kwargs kwargs() const override { return Kwargs(); }
 
 private:

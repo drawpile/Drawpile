@@ -51,7 +51,7 @@ signals:
 	void pointerTrackingToggled(bool);
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent);
+	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
 	Ui_LaserSettings * _ui;

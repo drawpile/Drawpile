@@ -75,14 +75,14 @@ public:
 
 	QString idAlias() const override { return m_alias; }
 	QString founderName() const override { return m_founder; }
-	protocol::ProtocolVersion protocolVersion() const { return m_version; }
+	protocol::ProtocolVersion protocolVersion() const override { return m_version; }
 	QByteArray passwordHash() const override { return m_password; }
 	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
 	Flags flags() const override { return m_flags; }
 
-	QDateTime startTime() const;
+	QDateTime startTime() const override;
 	void setPasswordHash(const QByteArray &password) override;
 	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;
@@ -105,8 +105,8 @@ public:
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
-	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy);
-	void historyRemoveBan(int id);
+	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy) override;
+	void historyRemoveBan(int id) override;
 
 private:
 	FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent);

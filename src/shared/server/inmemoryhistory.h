@@ -42,12 +42,12 @@ public:
 
 	QString idAlias() const override { return m_alias; }
 	QString founderName() const override { return m_founder; }
-	protocol::ProtocolVersion protocolVersion() const { return m_version; }
+	protocol::ProtocolVersion protocolVersion() const override { return m_version; }
 	QByteArray passwordHash() const override { return m_password; }
 	void setPasswordHash(const QByteArray &password) override { m_password = password; }
 	QByteArray opwordHash() const override { return m_opword; }
 	void setOpwordHash(const QByteArray &opword) override { m_opword = opword; }
-	QDateTime startTime() const { return m_startTime; }
+	QDateTime startTime() const override { return m_startTime; }
 	int maxUsers() const override { return m_maxUsers; }
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }
 	QString title() const override { return m_title; }

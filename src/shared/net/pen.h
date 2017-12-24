@@ -92,7 +92,7 @@ public:
 	// the last time it was sent. If the ToolChange is undoable,
 	// the effective tool may be different than what the client thinks.
 	// To keep things simple, we just don't undo ToolChanges.
-	bool isUndoable() const { return false; }
+	bool isUndoable() const override { return false; }
 
 	QString messageName() const override { return QStringLiteral("brush"); }
 

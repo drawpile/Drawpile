@@ -58,7 +58,7 @@ signals:
 	void colorSelected(const QColor &color);
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent);
+	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
 	Palette m_palette;

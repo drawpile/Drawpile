@@ -70,9 +70,9 @@ public:
 	QString messageName() const override { return QStringLiteral("putimage"); }
 
 protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool payloadEquals(const Message &m) const;
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
 	Kwargs kwargs() const override;
 
 private:

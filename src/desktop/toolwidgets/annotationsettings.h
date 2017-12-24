@@ -56,7 +56,7 @@ public:
 	void setForeground(const QColor &) override {}
 	void quickAdjust1(float) override {}
 	int getSize() const override { return 0; }
-	bool getSubpixelMode() const { return false; }
+	bool getSubpixelMode() const override { return false; }
 
 public slots:
 	//! Set the currently selected annotation item

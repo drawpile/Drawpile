@@ -309,9 +309,9 @@ public:
 	}
 
 protected:
-	int payloadLength() const { return 0; }
-	int serializePayload(uchar *data) const { Q_UNUSED(data); return 0; }
-	bool payloadEquals(const Message &m) const { Q_UNUSED(m); return true; }
+	int payloadLength() const override { return 0; }
+	int serializePayload(uchar *data) const override { Q_UNUSED(data); return 0; }
+	bool payloadEquals(const Message &m) const override { Q_UNUSED(m); return true; }
 	Kwargs kwargs() const override { return Kwargs(); }
 };
 

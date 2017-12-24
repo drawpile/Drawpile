@@ -32,7 +32,7 @@ public:
 	explicit InMemoryConfig(QObject *parent=nullptr);
 	~InMemoryConfig();
 
-	ServerLog *logger() const { return m_logger; }
+	ServerLog *logger() const override { return m_logger; }
 
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
