@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,6 +98,10 @@ void LocalServer::startServer()
 
 	InternalConfig icfg = m_server->config()->internalConfig();
 	icfg.localHostname = cfg.value("local-address").toString();
+#ifdef HAVE_LIBSODIUM
+	icfg.extAuthUrl = cfg.value("extauth").toString();
+#endif
+
 	m_server->config()->setInternalConfig(icfg);
 
 	if(cfg.value("session-storage").toString() == "file") {

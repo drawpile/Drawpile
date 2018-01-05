@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
 #include "../shared/net/meta2.h"
+#include "../shared/util/networkaccess.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -35,6 +36,8 @@
 #include <QDir>
 #include <QFile>
 #include <QHostAddress>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 #define DEBUG_LOGIN
 
@@ -134,7 +137,9 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	switch(m_state) {
 	case EXPECT_HELLO: expectHello(msg); break;
 	case EXPECT_STARTTLS: expectStartTls(msg); break;
-	case WAIT_FOR_LOGIN_PASSWORD: expectNothing(msg); break;
+	case WAIT_FOR_LOGIN_PASSWORD:
+	case WAIT_FOR_EXTAUTH:
+		expectNothing(msg); break;
 	case EXPECT_IDENTIFIED: expectIdentified(msg); break;
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
 	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
@@ -280,12 +285,79 @@ void LoginHandler::sendIdentity()
 	send(cmd);
 }
 
+void LoginHandler::requestExtAuth(const QString &username, const QString &password)
+{
+	// Construct request body
+	QJsonObject o;
+	o["username"] = username;
+	o["password"] = password;
+	if(!m_extAuthGroup.isEmpty())
+		o["group"] = m_extAuthGroup;
+	o["nonce"] = m_extAuthNonce;
+
+	// Send request
+	QNetworkRequest req(m_extAuthUrl);
+	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
+	connect(reply, &QNetworkReply::finished, this, [reply, this]() {
+		reply->deleteLater();
+
+		if(reply->error() != QNetworkReply::NoError) {
+			failLogin(tr("Auth server error: %1").arg(reply->errorString()));
+			return;
+		}
+		QJsonParseError error;
+		const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll(), &error);
+		if(error.error != QJsonParseError::NoError) {
+			failLogin(tr("Auth server error: %1").arg(error.errorString()));
+			return;
+		}
+
+		const QJsonObject obj = doc.object();
+		const QString status = obj["status"].toString();
+		if(status == "auth") {
+			protocol::ServerCommand cmd;
+			cmd.cmd = "ident";
+			cmd.args.append(m_address.userName());
+			cmd.kwargs["extauth"] = obj["token"];
+
+			m_state = EXPECT_IDENTIFIED;
+			send(cmd);
+
+		} else if(status == "badpass") {
+			failLogin(tr("Incorrect password"));
+			// TODO allow another attempt
+
+		} else {
+			failLogin(tr("Unexpected ext-auth response: %s").arg(status));
+		}
+
+		emit extAuthComplete(status == "auth");
+	});
+}
+
 void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 {
 	if(msg.reply["state"] == "needPassword") {
 		// Looks like guest logins are not possible
 		m_needUserPassword = true;
 		prepareToSendIdentity();
+		return;
+	}
+
+	if(msg.reply["state"] == "needExtAuth") {
+		// External authentication needed for this username
+		m_state = WAIT_FOR_EXTAUTH;
+		m_extAuthUrl = msg.reply["extauthurl"].toString();
+		if(!m_extAuthUrl.isValid()) {
+			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));
+			return;
+		}
+		m_extAuthGroup = msg.reply["group"].toString();
+		m_extAuthNonce = msg.reply["nonce"].toString();
+
+		emit extAuthNeeded(m_extAuthUrl);
 		return;
 	}
 

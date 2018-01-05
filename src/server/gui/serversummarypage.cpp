@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,6 +63,12 @@ struct ServerSummaryPage::Private {
 	QCheckBox *privateUserList;
 	QCheckBox *archiveSessions;
 
+	QCheckBox *useExtAuth;
+	QLineEdit *extAuthKey;
+	QLineEdit *extAuthGroup;
+	QCheckBox *extAuthFallback;
+	QCheckBox *extAuthMod;
+
 	QPushButton *startStopButton;
 	QJsonObject lastUpdate;
 	QTimer *saveTimer;
@@ -80,7 +86,12 @@ struct ServerSummaryPage::Private {
 		  maxSessions(new QSpinBox),
 		  persistence(new QCheckBox),
 		  privateUserList(new QCheckBox),
-		  archiveSessions(new QCheckBox)
+		  archiveSessions(new QCheckBox),
+		  useExtAuth(new QCheckBox),
+		  extAuthKey(new QLineEdit),
+		  extAuthGroup(new QLineEdit),
+		  extAuthFallback(new QCheckBox),
+		  extAuthMod(new QCheckBox)
 	{
 		clientTimeout->setSuffix(" min");
 		clientTimeout->setSingleStep(0.5);
@@ -98,6 +109,10 @@ struct ServerSummaryPage::Private {
 		persistence->setText(ServerSummaryPage::tr("Allow sessions to persist without users"));
 		privateUserList->setText(ServerSummaryPage::tr("Do not include user list is session announcement"));
 		archiveSessions->setText(ServerSummaryPage::tr("Archive terminated sessions"));
+
+		useExtAuth->setText(ServerSummaryPage::tr("Enable"));
+		extAuthFallback->setText(ServerSummaryPage::tr("Permit guest logins when ext-auth server is unreachable"));
+		extAuthMod->setText(ServerSummaryPage::tr("Allow ext-auth moderators"));
 	}
 };
 
@@ -119,6 +134,8 @@ static void addWidgets(struct ServerSummaryPage::Private *d, QGridLayout *layout
 		value->connect(value, SIGNAL(valueChanged(QString)), d->saveTimer, SLOT(start()));
 	else if(value->inherits("QAbstractButton"))
 		value->connect(value, SIGNAL(clicked(bool)), d->saveTimer, SLOT(start()));
+	else if(value->inherits("QLineEdit"))
+		value->connect(value, SIGNAL(textEdited(QString)), d->saveTimer, SLOT(start()));
 }
 
 static void addLabels(QGridLayout *layout, int row, const QString labelText, QLabel *value)
@@ -191,6 +208,14 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	addWidgets(d, layout, row++, QString(), d->archiveSessions);
 	addWidgets(d, layout, row++, QString(), d->privateUserList);
 
+	layout->addItem(new QSpacerItem(1,10), row++, 0);
+
+	addWidgets(d, layout, row++, tr("External authentication"), d->useExtAuth);
+	addWidgets(d, layout, row++, tr("Validation key"), d->extAuthKey);
+	addWidgets(d, layout, row++, tr("User group"), d->extAuthGroup, true);
+	addWidgets(d, layout, row++, QString(), d->extAuthFallback);
+	addWidgets(d, layout, row++, QString(), d->extAuthMod);
+
 	layout->addItem(new QSpacerItem(1,1, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
 
 	if(d->server->isLocal()) {
@@ -256,6 +281,18 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->persistence->setChecked(o[config::EnablePersistence.name].toBool());
 	d->archiveSessions->setChecked(o[config::ArchiveMode.name].toBool());
 	d->privateUserList->setChecked(o[config::PrivateUserList.name].toBool());
+
+	d->useExtAuth->setChecked(o[config::UseExtAuth.name].toBool());
+	d->extAuthKey->setText(o[config::ExtAuthKey.name].toString());
+	d->extAuthGroup->setText(o[config::ExtAuthGroup.name].toString());
+	d->extAuthFallback->setChecked(o[config::ExtAuthFallback.name].toBool());
+	d->extAuthMod->setChecked(o[config::ExtAuthMod.name].toBool());
+	const bool supportsExtAuth = o.contains(config::UseExtAuth.name);
+	d->useExtAuth->setEnabled(supportsExtAuth);
+	d->extAuthGroup->setEnabled(supportsExtAuth);
+	d->extAuthFallback->setEnabled(supportsExtAuth);
+	d->extAuthMod->setEnabled(supportsExtAuth);
+
 }
 
 void ServerSummaryPage::saveSettings()
@@ -269,7 +306,12 @@ void ServerSummaryPage::saveSettings()
 		{config::SessionCountLimit.name, d->maxSessions->value()},
 		{config::EnablePersistence.name, d->persistence->isChecked()},
 		{config::ArchiveMode.name, d->archiveSessions->isChecked()},
-		{config::PrivateUserList.name, d->privateUserList->isChecked()}
+		{config::PrivateUserList.name, d->privateUserList->isChecked()},
+		{config::UseExtAuth.name, d->useExtAuth->isChecked()},
+		{config::ExtAuthKey.name, d->extAuthKey->text()},
+		{config::ExtAuthGroup.name, d->extAuthGroup->text()},
+		{config::ExtAuthFallback.name, d->extAuthFallback->isChecked()},
+		{config::ExtAuthMod.name, d->extAuthMod->isChecked()}
 	};
 
 	QJsonObject update;
@@ -325,6 +367,12 @@ void ServerSummaryPage::showSettingsDialog()
 	ui.port->setValue(cfg.value("port", 27750).toInt());
 	ui.localAddress->setText(cfg.value("local-address").toString());
 
+#ifdef HAVE_LIBSODIUM
+	ui.extAuthUrl->setText(cfg.value("extauth").toString());
+#else
+	ui.extAuthUrl->setEnabled(false);
+#endif
+
 	if(cfg.value("use-ssl", false).toBool()) {
 		if(cfg.value("force-ssl", false).toBool())
 			ui.tlsRequired->setChecked(true);
@@ -343,6 +391,7 @@ void ServerSummaryPage::showSettingsDialog()
 		cfg.setValue("session-storage", ui.storageFile->isChecked() ? "file" : "memory");
 		cfg.setValue("port", ui.port->value());
 		cfg.setValue("local-address", ui.localAddress->text());
+		cfg.setValue("extauth", ui.extAuthUrl->text());
 		cfg.setValue("use-ssl", !ui.tlsOff->isChecked());
 		cfg.setValue("force-ssl", ui.tlsRequired->isChecked());
 		cfg.setValue("sslcert", ui.certFile->text());

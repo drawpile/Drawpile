@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 
 	connect(login, &net::LoginHandler::passwordNeeded, this, &LoginDialog::onPasswordNeeded);
 	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
+	connect(login, &net::LoginHandler::extAuthNeeded, this, &LoginDialog::onExtAuthNeeded);
+	connect(login, &net::LoginHandler::extAuthComplete, this, &LoginDialog::onExtAuthComplete);
 	connect(login, &net::LoginHandler::sessionChoiceNeeded, this, &LoginDialog::onSessionChoiceNeeded);
 	connect(login, &net::LoginHandler::certificateCheckNeeded, this, &LoginDialog::onCertificateCheckNeeded);
 	connect(login, &net::LoginHandler::serverTitleChanged, this, &LoginDialog::onServerTitleChanged);
@@ -117,8 +119,17 @@ void LoginDialog::resetMode(Mode mode)
 
 	case PASSWORD:
 	case LOGIN:
+	case EXTAUTH:
 		m_ui->pages->setCurrentIndex(PAGE_AUTH);
-		m_ui->username->setEnabled(mode == LOGIN);
+		m_ui->username->setEnabled(mode != PASSWORD);
+		if(mode == EXTAUTH)
+			m_ui->intro->setStyleSheet(QStringLiteral(
+				"background: #3498db;"
+				"color: #fcfcfc;"
+				"padding: 16px"
+				));
+		else
+			m_ui->intro->setStyleSheet(QString());
 		break;
 
 	case SESSION:
@@ -151,6 +162,19 @@ void LoginDialog::onLoginNeeded(const QString &prompt)
 	m_ui->intro->setText(prompt);
 	m_ui->password->setText(QString());
 	resetMode(LOGIN);
+}
+
+void LoginDialog::onExtAuthNeeded(const QUrl &url)
+{
+	m_ui->intro->setText(tr("Log in with %1 credentials").arg("<i>" + url.host() + "</i>"));
+	m_ui->password->setText(QString());
+
+	resetMode(EXTAUTH);
+}
+
+void LoginDialog::onExtAuthComplete(bool success)
+{
+	resetMode();
 }
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
@@ -246,6 +270,12 @@ void LoginDialog::onButtonClick(QAbstractButton *btn)
 		case LOGIN:
 			m_login->selectIdentity(m_ui->username->text(), m_ui->password->text());
 			resetMode();
+			break;
+		case EXTAUTH:
+			m_login->requestExtAuth(m_ui->username->text(), m_ui->password->text());
+			m_ui->username->setEnabled(false);
+			m_ui->password->setEnabled(false);
+			m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 			break;
 		case SESSION: {
 			Q_ASSERT(!m_ui->sessionlist->selectionModel()->selectedIndexes().isEmpty());

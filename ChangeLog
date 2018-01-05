@@ -1,7 +1,8 @@
-2017-0?-?? Version 2.0.6
+2018-0?-?? Version 2.0.6
  * Added selection shear mode
  * Added terminate session action (moderator command)
  * Changing color now immediately updates the color history
+ * Implemented support for external authentication
 
 2017-06-26 Version 2.0.5.1
  * Fixed shortcut conflict that blocked the use of the Enter key

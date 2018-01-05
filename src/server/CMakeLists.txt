@@ -2,6 +2,7 @@
 
 find_package( Qt5Sql REQUIRED)
 find_package( Libmicrohttpd )
+find_package(Sodium)
 
 set (
 	SOURCES
@@ -72,6 +73,11 @@ if( MHD_FOUND )
 else( MHD_FOUND )
 	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
 endif( MHD_FOUND )
+
+# Enable ext-auth if libsodium is available
+if( Sodium_FOUND )
+    add_definitions(-DHAVE_LIBSODIUM)
+endif( Sodium_FOUND )
 
 
 add_library( "${SRVNAME}lib" STATIC ${SOURCES} )

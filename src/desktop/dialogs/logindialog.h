@@ -54,6 +54,8 @@ private slots:
 
 	void onPasswordNeeded(const QString &prompt);
 	void onLoginNeeded(const QString &prompt);
+	void onExtAuthNeeded(const QUrl &url);
+	void onExtAuthComplete(bool success);
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
@@ -64,6 +66,7 @@ private:
 		LABEL,    // Show "logging in..." label
 		PASSWORD, // Ask for just the password
 		LOGIN,    // Ask for username and password
+		EXTAUTH,  // Ask for ExtAuth credentials
 		SESSION,  // Select sesssion
 		CERT,     // Inspect a certificate
 		CATCHUP   // "Catching up..." page with progress bar

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -134,6 +134,11 @@ bool start() {
 	QCommandLineOption templatesOption(QStringList() << "templates" << "t", "Session templates", "path");
 	parser.addOption(templatesOption);
 
+	// --extauth <url>
+#ifdef HAVE_LIBSODIUM
+	QCommandLineOption extAuthOption(QStringList() << "extauth", "Extauth server URL", "url");
+	parser.addOption(extAuthOption);
+#endif
 
 	// Parse
 	parser.process(*QCoreApplication::instance());
@@ -170,6 +175,9 @@ bool start() {
 	// Set internal server config
 	InternalConfig icfg;
 	icfg.localHostname = parser.value(localAddr);
+#ifdef HAVE_LIBSODIUM
+	icfg.extAuthUrl = parser.value(extAuthOption);
+#endif
 
 	if(parser.isSet(announcePortOption)) {
 		bool ok;

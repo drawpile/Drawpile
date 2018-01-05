@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016-2017 Calle Laakkonen
+   Copyright (C) 2016-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 #include <QHash>
+#include <QUrl>
 
 class QHostAddress;
 
@@ -63,7 +64,12 @@ namespace config {
 		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
 		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
 		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),             // Allow unauthenticated users
-		ArchiveMode(11, "archive", "false", ConfigKey::BOOL)                 // Don't delete terminated session files
+		ArchiveMode(11, "archive", "false", ConfigKey::BOOL),                // Don't delete terminated session files
+		UseExtAuth(12, "extauth", "false", ConfigKey::BOOL),                 // Enable external authentication
+		ExtAuthKey(13, "extauthkey", "", ConfigKey::STRING),                 // ExtAuth signature verification key
+		ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),             // ExtAuth user group (leave blank for default set)
+		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
+		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL)                // Respect ext-auth user's "MOD" flag
 		;
 }
 
@@ -72,6 +78,7 @@ struct InternalConfig {
 	QString localHostname; // Hostname of this server to use in session announcements
 	int realPort;          // The port the server is listening on
 	int announcePort;      // The port to use in session announcements
+	QUrl extAuthUrl;    // URL of the external authentication server
 
 	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
 

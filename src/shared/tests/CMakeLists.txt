@@ -1,4 +1,5 @@
 find_package(Qt5Test REQUIRED)
+find_package(Sodium)
 #find_package(Qt5Network REQUIRED)
 #find_package(KF5Archive REQUIRED NO_MODULE)
 
@@ -21,4 +22,8 @@ AddUnitTest(sessionban)
 AddUnitTest(messagequeue)
 AddUnitTest(idqueue)
 AddUnitTest(serverlog)
+
+if(Sodium_FOUND)
+	AddUnitTest(authtoken)
+endif()
 

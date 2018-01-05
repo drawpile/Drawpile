@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -215,6 +215,18 @@ public slots:
 	void selectIdentity(const QString &username, const QString &password);
 
 	/**
+	 * @brief Log in using an extauth token
+	 *
+	 * This is the extauth path equivalent to selectIdentity()
+	 * A HTTP POST request will be made to the extauth URL with
+	 * the given username and password. If authentication is successful,
+	 * login will proceed with the returned token.
+	 *
+	 * @param
+	 */
+	void requestExtAuth(const QString &username, const QString &password);
+
+	/**
 	 * @brief Join the session with the given ID
 	 *
 	 * Call this to join the session the user selected after
@@ -270,6 +282,24 @@ signals:
 	void loginNeeded(const QString &prompt);
 
 	/**
+	 * @brief External authentication is needed
+	 *
+	 * This is similar to loginNeeded(), except an auth server at the given URL
+	 * should be used to perform the authentication.
+	 *
+	 * Proceed by calling requestExtUath(username, password) or cancelLogin()
+	 *
+	 * @param url ext auth server URL
+	 */
+	void extAuthNeeded(const QUrl &url);
+
+	/**
+	 * @brief External authentication request completed
+	 * @param success did the request complete successfully?
+	 */
+	void extAuthComplete(bool success);
+
+	/**
 	 * @brief User must select which session to join
 	 *
 	 * Call joinSelectedSession(id, needPassword) or cancelLogin()
@@ -304,6 +334,7 @@ private:
 		EXPECT_HELLO,
 		EXPECT_STARTTLS,
 		WAIT_FOR_LOGIN_PASSWORD,
+		WAIT_FOR_EXTAUTH,
 		EXPECT_IDENTIFIED,
 		EXPECT_SESSIONLIST_TO_JOIN,
 		EXPECT_SESSIONLIST_TO_HOST,
@@ -349,6 +380,10 @@ private:
 	// Settings for joining
 	QString m_joinPassword;
 	QString m_autoJoinId;
+
+	QUrl m_extAuthUrl;
+	QString m_extAuthGroup;
+	QString m_extAuthNonce;
 
 	// Process state
 	TcpServer *m_server;
