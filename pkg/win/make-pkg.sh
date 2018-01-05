@@ -35,7 +35,7 @@ cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libbz2.dll" .
 cp "$MBIN/liblzma-5.dll" .
 cp "$MBIN/zlib1.dll" .
-cp "$MBIN/libpcre16-0.dll" .
+cp "$MBIN/libpcre2-16-0.dll" .
 cp "$MBIN/libpcre-1.dll" .
 cp "$MBIN/libharfbuzz-0.dll" .
 cp "$MBIN/libpng16-16.dll" .
@@ -50,6 +50,7 @@ cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5Archive.dll" .
+cp "$MBIN/libsodium-23.dll" .
 
 QROOT="$MXEROOT/qt5"
 cp "$QROOT/bin/Qt5Core.dll" .
