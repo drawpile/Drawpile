@@ -234,7 +234,9 @@ void LayerList::layerContextMenu(const QPoint &pos)
 
 void LayerList::selectLayer(int id)
 {
-	m_ui->layerlist->selectionModel()->select(m_canvas->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	const QModelIndex i = m_canvas->layerlist()->layerIndex(id);
+	m_ui->layerlist->selectionModel()->select(i, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	m_ui->layerlist->scrollTo(i);
 }
 
 void LayerList::selectAbove()
