@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,48 +32,50 @@
 namespace dialogs {
 
 Flipbook::Flipbook(QWidget *parent)
-	: QDialog(parent), _ui(new Ui_Flipbook), _layers(nullptr)
+	: QDialog(parent), m_ui(new Ui_Flipbook), m_layers(nullptr)
 {
-	_ui->setupUi(this);
+	m_ui->setupUi(this);
 
-	_timer = new QTimer(this);
+	m_timer = new QTimer(this);
 
-	connect(_ui->useBgLayer, &QCheckBox::toggled, [this](bool usebg) {
+	connect(m_ui->useBgLayer, &QCheckBox::toggled, [this](bool usebg) {
 		const int min = usebg ? 2 : 1;
-		_ui->loopStart->setMinimum(min);
-		_ui->loopEnd->setMinimum(min);
+		m_ui->loopStart->setMinimum(min);
+		m_ui->loopEnd->setMinimum(min);
 		updateRange();
 		resetFrameCache();
 		loadFrame();
 	});
 
-	connect(_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
-	connect(_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
-	connect(_ui->layerIndex, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
-	connect(_ui->loopStart, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(_ui->loopEnd, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(_ui->fps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
-	connect(_timer, &QTimer::timeout, _ui->layerIndex, &QSpinBox::stepUp);
+	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
+	connect(m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
+	connect(m_ui->layerIndex, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
+	connect(m_ui->loopStart, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
+	connect(m_ui->loopEnd, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
+	connect(m_ui->fps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
+	connect(m_timer, &QTimer::timeout, m_ui->layerIndex, &QSpinBox::stepUp);
+	connect(m_ui->view, &FlipbookView::cropped, this, &Flipbook::setCrop);
+	connect(m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
 
-	_ui->playButton->setFocus();
+	m_ui->playButton->setFocus();
 
 	// Load default settings
 	QSettings cfg;
 	cfg.beginGroup("flipbook");
 
-	_ui->fps->setValue(cfg.value("fps", 15).toInt());
-	_ui->useBgLayer->setChecked(cfg.value("bglayer", true).toBool());
+	m_ui->fps->setValue(cfg.value("fps", 15).toInt());
+	m_ui->useBgLayer->setChecked(cfg.value("bglayer", true).toBool());
 
 	QRect geom = cfg.value("window", QRect()).toRect();
 	if(geom.isValid()) {
 		setGeometry(geom);
 	}
 
-	_ui->loopStart->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
-	_ui->loopEnd->setMinimum(_ui->useBgLayer->isChecked() ? 2 : 1);
+	m_ui->loopStart->setMinimum(m_ui->useBgLayer->isChecked() ? 2 : 1);
+	m_ui->loopEnd->setMinimum(m_ui->useBgLayer->isChecked() ? 2 : 1);
 
 	// Autoplay
-	_ui->playButton->click();
+	m_ui->playButton->click();
 }
 
 Flipbook::~Flipbook()
@@ -82,73 +84,114 @@ Flipbook::~Flipbook()
 	QSettings cfg;
 	cfg.beginGroup("flipbook");
 
-	cfg.setValue("fps", _ui->fps->value());
-	cfg.setValue("bglayer", _ui->useBgLayer->isChecked());
+	cfg.setValue("fps", m_ui->fps->value());
+	cfg.setValue("bglayer", m_ui->useBgLayer->isChecked());
 	cfg.setValue("window", geometry());
+	cfg.setValue("crop", m_crop);
 
-	delete _ui;
+	delete m_ui;
 }
 
 void Flipbook::updateRange()
 {
-	_ui->layerIndex->setMinimum(_ui->loopStart->value());
-	_ui->layerIndex->setMaximum(_ui->loopEnd->value());
+	m_ui->layerIndex->setMinimum(m_ui->loopStart->value());
+	m_ui->layerIndex->setMaximum(m_ui->loopEnd->value());
 }
 
 void Flipbook::rewind()
 {
-	_ui->layerIndex->setValue(_ui->layerIndex->minimum());
+	m_ui->layerIndex->setValue(m_ui->layerIndex->minimum());
 }
 
 void Flipbook::playPause()
 {
-	if(_timer->isActive()) {
-		_timer->stop();
-		_ui->playButton->setIcon(icon::fromTheme("media-playback-start"));
+	if(m_timer->isActive()) {
+		m_timer->stop();
+		m_ui->playButton->setIcon(icon::fromTheme("media-playback-start"));
 
 	} else {
-		_timer->start(1000 / _ui->fps->value());
-		_ui->playButton->setIcon(icon::fromTheme("media-playback-pause"));
+		m_timer->start(1000 / m_ui->fps->value());
+		m_ui->playButton->setIcon(icon::fromTheme("media-playback-pause"));
 	}
 }
 
 void Flipbook::updateFps(int newFps)
 {
-	if(_timer->isActive()) {
-		_timer->setInterval(1000 / newFps);
+	if(m_timer->isActive()) {
+		m_timer->setInterval(1000 / newFps);
 	}
 }
 
 void Flipbook::setLayers(paintcore::LayerStack *layers)
 {
 	Q_ASSERT(layers);
-	_layers = layers;
-	const int max = _layers->layerCount();
-	_ui->loopStart->setMaximum(max);
-	_ui->loopEnd->setMaximum(max);
-	_ui->layerIndex->setMaximum(max);
-	_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
-	_ui->loopEnd->setValue(max);
+	m_layers = layers;
+	const int max = m_layers->layerCount();
+	m_ui->loopStart->setMaximum(max);
+	m_ui->loopEnd->setMaximum(max);
+	m_ui->layerIndex->setMaximum(max);
+	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
+	m_ui->loopEnd->setValue(max);
+
+	m_crop = QRect(QPoint(), m_layers->size());
+
+	const QRect crop = QSettings().value("flipbook/crop").toRect();
+	if(m_crop.contains(crop, true)) {
+		m_crop = crop;
+		m_ui->zoomButton->setEnabled(true);
+	} else {
+		m_ui->zoomButton->setEnabled(false);
+	}
 
 	resetFrameCache();
 	loadFrame();
 }
 
+void Flipbook::setCrop(const QRectF &rect)
+{
+	const int w = m_crop.width();
+	const int h = m_crop.height();
+
+	if(rect.width()*w<=5 || rect.height()*h<=5) {
+		m_crop = QRect(QPoint(), m_layers->size());
+		m_ui->zoomButton->setEnabled(false);
+	} else {
+		m_crop = QRect(
+			m_crop.x() + rect.x()*w,
+			m_crop.y() + rect.y()*h,
+			rect.width()*w,
+			rect.height()*h
+		);
+		m_ui->zoomButton->setEnabled(true);
+	}
+
+	resetFrameCache();
+	loadFrame();
+}
+
+void Flipbook::resetCrop()
+{
+	setCrop(QRectF());
+}
+
 void Flipbook::resetFrameCache()
 {
-	_frames.clear();
-	if(_layers) {
-		for(int i=0;i<_layers->layerCount();++i)
-			_frames.append(QPixmap());
+	m_frames.clear();
+	if(m_layers) {
+		for(int i=0;i<m_layers->layerCount();++i)
+			m_frames.append(QPixmap());
 	}
 }
 
 void Flipbook::loadFrame()
 {
-	const int f = _ui->layerIndex->value() - 1;
-	if(_layers && f < _frames.size()) {
-		if(_frames.at(f).isNull()) {
-			QImage img = _layers->flatLayerImage(f, _ui->useBgLayer->isChecked(), QColor(0,0,0,0));
+	const int f = m_ui->layerIndex->value() - 1;
+	if(m_layers && f < m_frames.size()) {
+		if(m_frames.at(f).isNull()) {
+			QImage img = m_layers->flatLayerImage(f, m_ui->useBgLayer->isChecked(), QColor(0,0,0,0));
+
+			if(!m_crop.isEmpty())
+				img = img.copy(m_crop);
 
 			// Scale down the image if it is too big
 			QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
@@ -157,12 +200,12 @@ void Flipbook::loadFrame()
 				img = img.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 			}
 
-			_frames[f] = QPixmap::fromImage(img);
+			m_frames[f] = QPixmap::fromImage(img);
 		}
 
-		_ui->pixmap->setPixmap(_frames.at(f));
+		m_ui->view->setPixmap(m_frames.at(f));
 	} else
-		_ui->pixmap->setPixmap(QPixmap());
+		m_ui->view->setPixmap(QPixmap());
 }
 
 }

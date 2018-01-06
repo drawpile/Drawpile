@@ -3,6 +3,7 @@
  * Added terminate session action (moderator command)
  * Changing color now immediately updates the color history
  * Implemented support for external authentication
+ * Flipbook can now be cropped
 
 2017-06-26 Version 2.0.5.1
  * Fixed shortcut conflict that blocked the use of the Enter key

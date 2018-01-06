@@ -57,6 +57,7 @@ set (
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
+	widgets/flipbookview.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp

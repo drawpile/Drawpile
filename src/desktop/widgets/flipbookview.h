@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,53 +16,40 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef FLIPBOOKVIEW_H
+#define FLIPBOOKVIEW_H
 
-#ifndef FLIPBOOK_H
-#define FLIPBOOK_H
+#include <QWidget>
 
-#include <QDialog>
-#include <QList>
-#include <QPixmap>
+class QRubberBand;
 
-class Ui_Flipbook;
-
-class QTimer;
-
-namespace paintcore {
-	class LayerStack;
-}
-
-namespace dialogs {
-
-class Flipbook : public QDialog
+class FlipbookView : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit Flipbook(QWidget *parent=nullptr);
-	~Flipbook();
+	explicit FlipbookView(QWidget *parent = nullptr);
 
-	void setLayers(paintcore::LayerStack *layers);
+public slots:
+	void setPixmap(const QPixmap &pixmap);
+	void startCrop();
 
-private slots:
-	void loadFrame();
-	void playPause();
-	void rewind();
-	void updateFps(int newFps);
-	void updateRange();
-	void setCrop(const QRectF &rect);
-	void resetCrop();
+signals:
+	/**
+	 * @brief Crop region selected
+	 * @param rect normalized selection region (values in range [0.0..1.0])
+	 */
+	void cropped(const QRectF &rect);
+
+protected:
+	void paintEvent(QPaintEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-	void resetFrameCache();
-
-	Ui_Flipbook *m_ui;
-
-	paintcore::LayerStack *m_layers;
-	QList<QPixmap> m_frames;
-	QTimer *m_timer;
-	QRect m_crop;
+	QPixmap m_pixmap;
+	QRubberBand *m_rubberband;
+	QPoint m_cropStart;
 };
 
-}
-
-#endif // FLIPBOOK_H
+#endif // FLIPBOOKVIEW_H
