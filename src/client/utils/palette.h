@@ -77,6 +77,9 @@ public:
 	//! Save palette to its original file (filename must be set)
 	bool save();
 
+	//! Save the palette to an external file
+	bool exportPalette(const QString &filename, QString *errorString=nullptr);
+
 	//! Delete the palette file (if it exists)
 	bool deleteFile();
 

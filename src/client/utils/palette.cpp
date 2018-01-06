@@ -127,6 +127,11 @@ bool Palette::save(const QString& filename)
 		}
 	}
 
+	return exportPalette(filename);
+}
+
+bool Palette::exportPalette(const QString &filename, QString *errorString)
+{
 	QFile data(filename);
 	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
 		QTextStream out(&data);
@@ -140,6 +145,8 @@ bool Palette::save(const QString& filename)
 		return true;
 
 	} else {
+		if(errorString)
+			*errorString = data.errorString();
 		qWarning() << filename << data.errorString();
 		return false;
 	}

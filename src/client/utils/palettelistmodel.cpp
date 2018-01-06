@@ -154,6 +154,14 @@ Palette *PaletteListModel::getPalette(int index)
 	return nullptr;
 }
 
+int PaletteListModel::findPalette(const QString &name) const
+{
+	for(int i=0;i<_palettes.size();++i)
+		if(_palettes.at(i)->name() == name)
+			return i;
+	return -1;
+}
+
 void PaletteListModel::addNewPalette()
 {
 	QString name;

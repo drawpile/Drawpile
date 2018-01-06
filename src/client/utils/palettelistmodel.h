@@ -51,6 +51,8 @@ public:
 
 	Palette *getPalette(int index);
 
+	int findPalette(const QString &name) const;
+
 	//! Create a new palette and append it to the list
 	void addNewPalette();
 

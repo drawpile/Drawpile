@@ -48,6 +48,8 @@ private slots:
 	void copyPalette();
 	void deletePalette();
 	void toggleWriteProtect();
+	void exportPalette();
+	void importPalette();
 
 	void updateFromRgbSliders();
 	void updateFromRgbSpinbox();
@@ -59,8 +61,10 @@ private:
 	Palette *m_lastused;
 	Palette *m_lastusedAlt;
 
-	QAction *_deletePalette;
-	QAction *_writeprotectPalette;
+	QAction *m_deletePalette;
+	QAction *m_writeprotectPalette;
+	QAction *m_exportPalette;
+	QAction *m_importPalette;
 	bool m_lastUsedColorChanged;
 	bool _updating;
 
