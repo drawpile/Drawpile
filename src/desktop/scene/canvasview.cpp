@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
+	: QGraphicsView(parent), _pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
 	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_tabletmode(ENABLE_TABLET),
@@ -250,7 +250,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
-	if(_showoutline && _outlinesize>0 && !_specialpenmode && !_locked) {
+	if(_showoutline && _outlinesize>0 && !m_specialpenmode && !_locked) {
 		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2, _outlinesize/2),
 					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
@@ -335,9 +335,13 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	Q_UNUSED(right);
 	if(_scene->hasImage() && !_locked) {
-		if(_specialpenmode) {
-			// quick color pick mode
-			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+		if(m_specialpenmode) {
+			// quick color or layer pick mode
+			if(m_specialpenmode == LAYERPICK)
+				_scene->model()->pickLayer(p.x(), p.y());
+			else
+				_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+
 		} else {
 			// Start of a stroke. It is possible to get TabletPress and MousePress
 			// events in the wrong order (mouse event generated before the real tablet event)
@@ -356,9 +360,13 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 	Q_UNUSED(right);
 
 	if(_scene->hasImage() && !_locked) {
-		if(_specialpenmode) {
+		if(m_specialpenmode) {
 			// quick color pick mode
-			_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+			if(m_specialpenmode == LAYERPICK)
+				_scene->model()->pickLayer(p.x(), p.y());
+			else
+				_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+
 		} else {
 			if(m_isFirstPoint) {
 				m_isFirstPoint = false;
@@ -374,13 +382,13 @@ void CanvasView::onPenUp(bool right)
 {
 	Q_UNUSED(right);
 	if(!_locked) {
-		if(!_specialpenmode) {
+		if(!m_specialpenmode) {
 			if(m_isFirstPoint)
 				emit penDown(m_firstPoint, m_firstPoint.pressure(), m_firstPointRight, _zoom / 100.0);
 			emit penUp();
 		}
 	}
-	_specialpenmode = false;
+	m_specialpenmode = NOSPECIALPENMODE;
 }
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
@@ -415,7 +423,7 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		_pointerdistance = 0;
 		_pointervelocity = 0;
 		_prevpoint = mapToScene(pos, pressure);
-		_specialpenmode = modifiers.testFlag(Qt::ControlModifier);
+		m_specialpenmode = modifiers.testFlag(Qt::ControlModifier) ? (modifiers.testFlag(Qt::ShiftModifier) ? LAYERPICK : COLORPICK) : NOSPECIALPENMODE;
 		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus)), button == Qt::RightButton);
 	}
 }

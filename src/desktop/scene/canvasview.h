@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@ class CanvasView : public QGraphicsView
 		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} _pendown;
 
 		//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
-		bool _specialpenmode;
+		enum { NOSPECIALPENMODE, COLORPICK, LAYERPICK} m_specialpenmode;
 
 		//! Is the view being dragged
 		ViewTransform _isdragging;

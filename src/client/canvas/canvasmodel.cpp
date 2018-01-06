@@ -227,6 +227,14 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 	return snapshot;
 }
 
+void CanvasModel::pickLayer(int x, int y)
+{
+	const paintcore::Layer *l = m_layerstack->layerAt(x, y);
+	if(l) {
+		emit layerAutoselectRequest(l->id());
+	}
+}
+
 void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 {
 	QColor color;

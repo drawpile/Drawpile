@@ -352,6 +352,24 @@ Tile LayerStack::getFlatTile(int x, int y) const
 	return t;
 }
 
+const Layer *LayerStack::layerAt(int x, int y) const
+{
+	for(int i=m_layers.size()-1;i>=0;--i) {
+		const Layer * l = m_layers.at(i);
+		if(l->isVisible()) {
+			if(qAlpha(l->pixelAt(x,y)) > 0)
+				return l;
+
+			// Check sublayers too
+			for(const Layer *sl : l->sublayers()) {
+				if(sl->isVisible() && qAlpha(sl->pixelAt(x, y)) > 0)
+					return l;
+			}
+		}
+	}
+	return nullptr;
+}
+
 QColor LayerStack::colorAt(int x, int y, int dia) const
 {
 	if(m_layers.isEmpty())

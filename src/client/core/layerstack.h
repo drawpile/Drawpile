@@ -102,6 +102,9 @@ public:
 	//! Paint all changed tiles in the given area
 	void paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean=true);
 
+	//! Return the topmost visible layer with a color at the point
+	const Layer *layerAt(int x, int y) const;
+
 	//! Get the merged color value at the point
 	QColor colorAt(int x, int y, int dia=0) const;
 
