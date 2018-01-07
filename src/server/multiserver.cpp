@@ -49,6 +49,7 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	m_port(0)
 {
 	m_sessions = new SessionServer(config, this);
+	m_started = QDateTime::currentDateTimeUtc();
 
 	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
 	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
@@ -327,6 +328,8 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 
 	if(head == "server")
 		return serverJsonApi(method, tail, request);
+	else if(head == "status")
+		return statusJsonApi(method, tail, request);
 	else if(head == "sessions")
 		return m_sessions->callSessionJsonApi(method, tail, request);
 	else if(head == "users")
@@ -398,6 +401,33 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 	for(int i=0;i<settingCount;++i) {
 		result[settings[i].name] = QJsonValue::fromVariant(m_config->getConfigVariant(settings[i]));
 	}
+
+	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
+}
+
+/**
+ * @brief Read only view of server status
+ *
+ * @param method
+ * @param path
+ * @param request
+ * @return
+ */
+JsonApiResult MultiServer::statusJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Q_UNUSED(request);
+
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method != JsonApiMethod::Get)
+		return JsonApiBadMethod();
+
+	QJsonObject result;
+	result["started"] = m_started.toString("yyyy-MM-dd HH:mm:ss");
+	result["sessions"] = m_sessions->sessionCount();
+	result["maxSessions"] = m_config->getConfigInt(config::SessionCountLimit);
+	result["users"] = m_sessions->totalUsers();
 
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
 }

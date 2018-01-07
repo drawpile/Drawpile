@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QHostAddress>
-
+#include <QDateTime>
 #include "../shared/server/jsonapi.h"
 
 class QTcpServer;
@@ -110,6 +110,7 @@ private:
 	bool createServer();
 
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult statusJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult accountsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult logJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
@@ -128,6 +129,8 @@ private:
 	QString m_sslCertFile;
 	QString m_sslKeyFile;
 	QString m_recordingPath;
+
+	QDateTime m_started;
 };
 
 }
