@@ -1028,7 +1028,7 @@ QJsonObject Session::getDescription(bool full) const
 	if(m_config->getConfigBool(config::EnablePersistence))
 		o["persistent"] = isPersistent();
 	o["nsfm"] = isNsfm();
-	o["startTime"] = sessionStartTime().toString();
+	o["startTime"] = sessionStartTime().toUTC().toString(Qt::ISODate);
 	o["size"] = int(m_history->sizeInBytes());
 
 	if(full) {
