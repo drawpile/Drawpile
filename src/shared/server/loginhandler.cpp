@@ -69,9 +69,8 @@ void LoginHandler::startLoginProcess()
 	}
 	if(!m_server->config()->getConfigBool(config::AllowGuests))
 		flags << "NOGUEST";
-
-	// TODO implement reporting backend
-	//flags << "REPORT";
+	if(m_server->config()->internalConfig().reportUrl.isValid())
+		flags << "REPORT";
 
 	greeting.reply["flags"] = flags;
 
@@ -628,8 +627,10 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 void LoginHandler::handleAbuseReport(const protocol::ServerCommand &cmd)
 {
-	// TODO
-	qWarning("Received abuse report regarding session %s: %s", qPrintable(cmd.kwargs["session"].toString()), qPrintable(cmd.kwargs["reason"].toString()));
+	Session *s = m_server->getSessionById(cmd.kwargs["session"].toString());
+	if(s) {
+		s->sendAbuseReport(m_client, 0, cmd.kwargs["reason"].toString());
+	}
 }
 
 void LoginHandler::handleStarttls()

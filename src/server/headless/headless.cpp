@@ -140,6 +140,10 @@ bool start() {
 	parser.addOption(extAuthOption);
 #endif
 
+	// --report-url <url>
+	QCommandLineOption reportUrlOption(QStringList() << "report-url", "Abuse report handler URL", "url");
+	parser.addOption(reportUrlOption);
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 
@@ -178,6 +182,7 @@ bool start() {
 #ifdef HAVE_LIBSODIUM
 	icfg.extAuthUrl = parser.value(extAuthOption);
 #endif
+	icfg.reportUrl = parser.value(reportUrlOption);
 
 	if(parser.isSet(announcePortOption)) {
 		bool ok;

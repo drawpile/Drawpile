@@ -242,8 +242,7 @@ void reportAbuse(Client *client, const QJsonArray &args, const QJsonObject &kwar
 	const int user = kwargs["user"].toInt();
 	const QString reason = kwargs["reason"].toString();
 
-	// TODO implement reporting backend
-	qWarning("%s: Received abuse report about user %d: %s", qPrintable(client->session()->id().toString()), user, qPrintable(reason));
+	client->session()->sendAbuseReport(client, user, reason);
 }
 
 SrvCommandSet::SrvCommandSet()

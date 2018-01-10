@@ -69,7 +69,8 @@ namespace config {
 		ExtAuthKey(13, "extauthkey", "", ConfigKey::STRING),                 // ExtAuth signature verification key
 		ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),             // ExtAuth user group (leave blank for default set)
 		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
-		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL)                // Respect ext-auth user's "MOD" flag
+		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
+		ReportToken(17, "reporttoken", "", ConfigKey::STRING)                // Abuse report backend server authorization token
 		;
 }
 
@@ -78,7 +79,8 @@ struct InternalConfig {
 	QString localHostname; // Hostname of this server to use in session announcements
 	int realPort;          // The port the server is listening on
 	int announcePort;      // The port to use in session announcements
-	QUrl extAuthUrl;    // URL of the external authentication server
+	QUrl extAuthUrl;       // URL of the external authentication server
+	QUrl reportUrl;        // Abuse report handler backend URL
 
 	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
 

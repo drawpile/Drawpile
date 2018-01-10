@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -385,6 +385,17 @@ public:
 
 	//! Release caches that can be released
 	void historyCacheCleanup();
+
+	/**
+	 * @brief Send an abuse report
+	 *
+	 * A reporting backend server must have been configured.
+	 *
+	 * @param reporter the user who is making the report
+	 * @param aboutUser the ID of the user this report is about (if 0, the report is about the session in general)
+	 * @param message freeform message entered by the reporter
+	 */
+	void sendAbuseReport(const Client *reporter, int aboutUser, const QString &message);
 
 	/**
 	 * @brief Get a JSON object describing the session

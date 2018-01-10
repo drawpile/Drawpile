@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,10 +28,13 @@
 #include "../record/writer.h"
 #include "../util/filename.h"
 #include "../util/passwordhash.h"
+#include "../util/networkaccess.h"
 
 #include "config.h"
 
 #include <QTimer>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 namespace server {
 
@@ -954,6 +957,58 @@ void Session::historyCacheCleanup()
 		minIdx = qMin(c->historyPosition(), minIdx);
 	}
 	m_history->cleanupBatches(minIdx);
+}
+
+void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QString &message)
+{
+	Q_ASSERT(reporter);
+
+	reporter->log(Log().about(Log::Level::Info, Log::Topic::Status).message(QString("Abuse report about user %1 received: %2").arg(aboutUser).arg(message)));
+
+	const QUrl url = m_config->internalConfig().reportUrl;
+	if(!url.isValid()) {
+		// This shouldn't happen normally. If the URL is not configured,
+		// the server does not advertise the capability to receive reports.
+		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Cannot send abuse report: server URL not configured!"));
+		return;
+	}
+
+	QJsonObject o;
+	o["session"] = idString();
+	o["sessionTitle"] = title();
+	o["user"] = reporter->username();
+	o["auth"] = reporter->isAuthenticated();
+	o["ip"] = reporter->peerAddress().toString();
+	if(aboutUser>0)
+		o["perp"] = aboutUser;
+
+	o["message"] = message;
+	o["offset"] = int(m_history->sizeInBytes());
+	QJsonArray users;
+	for(const Client *c : m_clients) {
+		QJsonObject u;
+		u["name"] = c->username();
+		u["auth"] = c->isAuthenticated();
+		u["op"] = c->isOperator();
+		u["ip"] = c->peerAddress().toString();
+		u["id"] = c->id();
+		users.append(u);
+	}
+	o["users"] = users;
+
+	const QString authToken = m_config->getConfigString(config::ReportToken);
+
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	if(!authToken.isEmpty())
+		req.setRawHeader("Authorization", "Token " + authToken.toUtf8());
+	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
+	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+		if(reply->error() != QNetworkReply::NoError) {
+			log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Unable to send abuse report: " + reply->errorString()));
+		}
+	});
+	connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 }
 
 QJsonObject Session::getDescription(bool full) const
