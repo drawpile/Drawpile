@@ -29,6 +29,7 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QCheckBox>
@@ -52,6 +53,7 @@ struct ServerSummaryPage::Private {
 		*port
 		;
 
+	QLineEdit *serverTitle;
 	QDoubleSpinBox *clientTimeout;
 	QCheckBox *allowGuests;
 	QCheckBox *allowGuestHosts;
@@ -78,6 +80,7 @@ struct ServerSummaryPage::Private {
 		  status(new QLabel),
 		  address(new QLabel),
 		  port(new QLabel),
+		  serverTitle(new QLineEdit),
 		  clientTimeout(new QDoubleSpinBox),
 		  allowGuests(new QCheckBox),
 		  allowGuestHosts(new QCheckBox),
@@ -195,6 +198,8 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	// Serverwide settings that are adjustable via the API
 	layout->addWidget(new SubheaderWidget(tr("Settings"), 2), row++, 0, 1,	2);
 
+	addWidgets(d, layout, row++, tr("Server Title"), d->serverTitle);
+
 	addWidgets(d, layout, row++, tr("Connection timeout"), d->clientTimeout, true);
 	addWidgets(d, layout, row++, QString(), d->allowGuests);
 	addWidgets(d, layout, row++, QString(), d->allowGuestHosts);
@@ -271,6 +276,7 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 
 	d->lastUpdate = o;
 
+	d->serverTitle->setText(o[config::ServerTitle.name].toString());
 	d->clientTimeout->setValue(o[config::ClientTimeout.name].toDouble() / 60);
 	d->allowGuests->setChecked(o[config::AllowGuests.name].toBool());
 	d->allowGuestHosts->setChecked(o[config::AllowGuestHosts.name].toBool());
@@ -298,6 +304,7 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 void ServerSummaryPage::saveSettings()
 {
 	QJsonObject o {
+		{config::ServerTitle.name, d->serverTitle->text()},
 		{config::ClientTimeout.name, int(d->clientTimeout->value() * 60)},
 		{config::AllowGuests.name, d->allowGuests->isChecked()},
 		{config::AllowGuestHosts.name, d->allowGuestHosts->isChecked()},
