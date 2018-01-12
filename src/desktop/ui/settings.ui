@@ -116,7 +116,7 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="8" column="1">
              <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -132,35 +132,35 @@
               </property>
              </spacer>
             </item>
-            <item row="8" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_12">
               <property name="text">
                <string>Touch:</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="9" column="1">
              <widget class="QCheckBox" name="touchscroll">
               <property name="text">
                <string>Scroll with finger</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="10" column="1">
              <widget class="QCheckBox" name="touchpinch">
               <property name="text">
                <string>Pinch to zoom</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="11" column="1">
              <widget class="QCheckBox" name="touchtwist">
               <property name="text">
                <string>Twist to rotate</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="1">
+            <item row="12" column="1">
              <spacer name="verticalSpacer_3">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -176,14 +176,14 @@
               </property>
              </spacer>
             </item>
-            <item row="13" column="0">
+            <item row="14" column="0">
              <widget class="QLabel" name="label_11">
               <property name="text">
                <string>Autosave interval:</string>
               </property>
              </widget>
             </item>
-            <item row="13" column="1">
+            <item row="14" column="1">
              <widget class="QSpinBox" name="autosaveInterval">
               <property name="suffix">
                <string> s</string>
@@ -196,7 +196,7 @@
               </property>
              </widget>
             </item>
-            <item row="14" column="1">
+            <item row="15" column="1">
              <spacer name="verticalSpacer_9">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -209,7 +209,7 @@
               </property>
              </spacer>
             </item>
-            <item row="15" column="1">
+            <item row="16" column="1">
              <widget class="QComboBox" name="brushCursorBox">
               <item>
                <property name="text">
@@ -228,14 +228,14 @@
               </item>
              </widget>
             </item>
-            <item row="15" column="0">
+            <item row="16" column="0">
              <widget class="QLabel" name="label_16">
               <property name="text">
                <string>Brush cursor:</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="1">
+            <item row="17" column="1">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -248,14 +248,14 @@
               </property>
              </spacer>
             </item>
-            <item row="17" column="0">
+            <item row="18" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
                <string>Tools:</string>
               </property>
              </widget>
             </item>
-            <item row="17" column="1">
+            <item row="18" column="1">
              <widget class="QCheckBox" name="toolToggleShortcut">
               <property name="text">
                <string>Shortcut toggles last selection</string>
@@ -288,6 +288,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="7" column="1">
+             <widget class="QCheckBox" name="tabletEraser">
+              <property name="text">
+               <string>Detect eraser tip</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

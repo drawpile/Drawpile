@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -380,9 +380,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	updateLockWidget();
 	setRecorderStatus(false);
 
-	// Handle eraser event
-	connect(qApp, SIGNAL(eraserNear(bool)), _dock_toolsettings, SLOT(eraserNear(bool)));
-
 #ifdef Q_OS_MAC
 	MacMenu::instance()->addWindow(this);
 #endif
@@ -631,8 +628,9 @@ void MainWindow::updateTabletSupportMode()
 	QSettings cfg;
 	cfg.beginGroup("settings/input");
 
-	bool enable = cfg.value("tabletevents", true).toBool();
-	bool bugs = cfg.value("tabletbugs", false).toBool();
+	const bool enable = cfg.value("tabletevents", true).toBool();
+	const bool bugs = cfg.value("tabletbugs", false).toBool();
+	const bool eraser = cfg.value("tableteraser", true).toBool();
 
 	widgets::CanvasView::TabletMode mode;
 	if(!enable)
@@ -643,6 +641,12 @@ void MainWindow::updateTabletSupportMode()
 		mode = widgets::CanvasView::ENABLE_TABLET;
 
 	_view->setTabletMode(mode);
+
+	// Handle eraser event
+	if(eraser)
+		connect(qApp, SIGNAL(eraserNear(bool)), _dock_toolsettings, SLOT(eraserNear(bool)), Qt::UniqueConnection);
+	else
+		disconnect(qApp, SIGNAL(eraserNear(bool)), _dock_toolsettings, SLOT(eraserNear(bool)));
 
 	// not really tablet related, but close enough
 	_view->setTouchGestures(

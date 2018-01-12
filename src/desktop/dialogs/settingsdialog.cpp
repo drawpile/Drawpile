@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -255,6 +255,7 @@ void SettingsDialog::restoreSettings()
 	cfg.beginGroup("settings/input");
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
+	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
 #ifdef Q_OS_MAC
 	// Gesture scrolling is always enabled on Macs
 	m_ui->touchscroll->setChecked(true);
@@ -348,6 +349,7 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("settings/input");
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tabletbugs", m_ui->tabletBugWorkaround->isChecked());
+	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
 	cfg.setValue("touchscroll", m_ui->touchscroll->isChecked());
 	cfg.setValue("touchpinch", m_ui->touchpinch->isChecked());
 	cfg.setValue("touchtwist", m_ui->touchtwist->isChecked());
