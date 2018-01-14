@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		fprintf(stderr, "Input file is not a Drawpile recording!\n");
 		return false;
 	case CANNOT_READ:
-		fprintf(stderr, "Unable to read input file: %s\n", reader.errorString().toLocal8Bit().constData());
+		fprintf(stderr, "Unable to read input file: %s\n", qPrintable(reader.errorString()));
 		return false;
 
 	case COMPATIBLE:
@@ -96,14 +96,14 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 	// Convert input to output
 	if(!writer->open()) {
 		fprintf(stderr, "Couldn't open %s: %s\n",
-			outputfilename.toLocal8Bit().constData(),
-			writer->errorString().toLocal8Bit().constData()
+			qPrintable(outputfilename),
+			qPrintable(writer->errorString())
 			);
 		return false;
 	}
 	if(!writer->writeHeader()) {
 		fprintf(stderr, "Error while writing header: %s\n",
-			writer->errorString().toLocal8Bit().constData()
+			qPrintable(writer->errorString())
 			);
 		return false;
 	}
@@ -116,7 +116,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 
 			if(!writer->writeMessage(*mr.message)) {
 				fprintf(stderr, "Error while writing message: %s\n",
-					writer->errorString().toLocal8Bit().constData()
+					qPrintable(writer->errorString())
 					);
 				return false;
 			}
@@ -137,6 +137,43 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		}
 	} while(notEof);
 
+	return true;
+}
+
+/**
+ * Print the version number of this recording. The output can be parsed easily in a shell script.
+ * Output format: <compatibility flag> <protocol version> <client version string>
+ * Example: C dp:4.20.1 2.0.5
+ * Compatability flag is one of:
+ *   - C: fully compatible with this dprectool/drawpile-cmd version
+ *   - M: minor incompatibility (might render differently)
+ *   - U: unknown compatibility (made with a newer version: some features may be missing)
+ *   - I: known to be incompatible
+ */
+bool printRecordingVersion(const QString &inputFilename)
+{
+	Reader reader(inputFilename);
+	const Compatibility compat = reader.open();
+
+	char compatflag = '?';
+	switch(compat) {
+		case COMPATIBLE: compatflag = 'C'; break;
+		case MINOR_INCOMPATIBILITY: compatflag = 'M'; break;
+		case UNKNOWN_COMPATIBILITY: compatflag = 'U'; break;
+		case INCOMPATIBLE: compatflag = 'I'; break;
+		case NOT_DPREC:
+			fprintf(stderr, "Not a drawpile recording!\n");
+			return false;
+		case CANNOT_READ:
+			fprintf(stderr, "Cannot read file: %s", qPrintable(reader.errorString()));
+			return false;
+	}
+
+	printf("%c %s %s\n",
+		compatflag,
+		qPrintable(reader.formatVersion().asString()),
+		reader.writerVersion().isEmpty() ? "(no writer version)" : qPrintable(reader.writerVersion())
+		);
 	return true;
 }
 
@@ -163,7 +200,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(outOption);
 
 	// --format, -f
-	QCommandLineOption formatOption(QStringList() << "f" << "format", "Output format (binary/text)", "format");
+	QCommandLineOption formatOption(QStringList() << "f" << "format", "Output format (binary/text/version)", "format");
 	parser.addOption(formatOption);
 
 	// input file name
@@ -177,10 +214,15 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	QStringList inputfiles = parser.positionalArguments();
+	const QStringList inputfiles = parser.positionalArguments();
 	if(inputfiles.isEmpty()) {
 		parser.showHelp(1);
 		return 1;
+	}
+
+	const QString format = parser.value(formatOption);
+	if(format == "version") {
+		return !printRecordingVersion(inputfiles.at(0));
 	}
 
 	if(!convertRecording(inputfiles.at(0), parser.value(outOption), parser.value(formatOption)))
