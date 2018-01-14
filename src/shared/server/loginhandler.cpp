@@ -36,6 +36,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#ifndef Q_FALLTHROUGH // not present in Qt 5.6
+#define Q_FALLTHROUGH() (void)0
+#endif
+
 namespace server {
 
 LoginHandler::LoginHandler(Client *client, SessionServer *server) :
