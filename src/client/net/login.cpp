@@ -453,7 +453,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 				if(session.incompatible || (session.nsfm && pclevel >= parentalcontrols::Level::NoJoin))
 					m_autoJoinId = QString();
 				else
-					joinSelectedSession(session.id, session.needPassword);
+					joinSelectedSession(m_autoJoinId, session.needPassword);
 			}
 		}
 	}

@@ -11,6 +11,7 @@
  * Added "server title" field to server GUI
  * Added option to disable tablet eraser detection
  * Added drawpile-cmd tool
+ * Fixed joining a template session by URL
 
 2017-06-26 Version 2.0.5.1
  * Fixed shortcut conflict that blocked the use of the Enter key
