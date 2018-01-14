@@ -21,6 +21,7 @@
 
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
+#include "../client/canvas/aclfilter.h"
 
 #include <QCoreApplication>
 #include <QStringList>
@@ -39,7 +40,7 @@ void printVersion()
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 }
 
-bool convertRecording(const QString &inputfilename, const QString &outputfilename, const QString &outputFormat)
+bool convertRecording(const QString &inputfilename, const QString &outputfilename, const QString &outputFormat, bool doAclFiltering)
 {
 	// Open input file
 	Reader reader(inputfilename);
@@ -93,7 +94,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		return false;
 	}
 
-	// Convert input to output
+	// Open output file
 	if(!writer->open()) {
 		fprintf(stderr, "Couldn't open %s: %s\n",
 			qPrintable(outputfilename),
@@ -108,20 +109,31 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		return false;
 	}
 
+	// Prepare filters
+	canvas::AclFilter aclFilter;
+	aclFilter.reset(1, false);
+
+	// Convert and/or filter recording
 	bool notEof = true;
 	do {
 		MessageRecord mr = reader.readNext();
 		switch(mr.status) {
-		case MessageRecord::OK:
+		case MessageRecord::OK: {
+			protocol::MessagePtr msg(mr.message);
 
-			if(!writer->writeMessage(*mr.message)) {
-				fprintf(stderr, "Error while writing message: %s\n",
-					qPrintable(writer->errorString())
-					);
-				return false;
+			if(doAclFiltering && !aclFilter.filterMessage(*msg)) {
+				writer->writeComment(QStringLiteral("BLOCKED: ") + msg->toString());
+
+			} else {
+				if(!writer->writeMessage(*msg)) {
+					fprintf(stderr, "Error while writing message: %s\n",
+						qPrintable(writer->errorString())
+						);
+					return false;
+				}
 			}
-			delete mr.message;
 			break;
+			}
 
 		case MessageRecord::INVALID:
 			writer->writeComment(QStringLiteral("WARNING: Unrecognized message type %1 of length %2 at offset 0x%3")
@@ -203,6 +215,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption formatOption(QStringList() << "f" << "format", "Output format (binary/text/version)", "format");
 	parser.addOption(formatOption);
 
+	// --acl, -A
+	QCommandLineOption aclOption(QStringList() << "A" << "acl", "Perform ACL filtering");
+	parser.addOption(aclOption);
+
 	// input file name
 	parser.addPositionalArgument("input", "recording file", "<input.dprec>");
 
@@ -225,7 +241,12 @@ int main(int argc, char *argv[]) {
 		return !printRecordingVersion(inputfiles.at(0));
 	}
 
-	if(!convertRecording(inputfiles.at(0), parser.value(outOption), parser.value(formatOption)))
+	if(!convertRecording(
+		inputfiles.at(0),
+		parser.value(outOption),
+		parser.value(formatOption),
+		parser.isSet(aclOption)
+		))
 		return 1;
 
 	return 0;

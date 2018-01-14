@@ -1,6 +1,7 @@
 set (
 	DPRECTOOL_SOURCES
 	dprectool.cpp
+	../client/canvas/aclfilter.cpp
 	)
 
 add_executable( dprectool ${DPRECTOOL_SOURCES} )
