@@ -284,6 +284,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	chatsplitter->setStretchFactor(1, 1);
 	_splitter->addWidget(chatsplitter);
 
+	{
+		// Nice initial division between canvas and chat
+		const int h = height();
+		_splitter->setSizes(QList<int>() << (h * 2 / 3) << (h / 3));
+	}
+
 	// Create canvas scene
 	_canvasscene = new drawingboard::CanvasScene(this);
 	_canvasscene->setBackgroundBrush(
