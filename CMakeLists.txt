@@ -60,7 +60,10 @@ endif ( PKGCONFIG_FOUND )
 
 ### Cmake policies
 
-cmake_policy(SET CMP0071 OLD) # Don't run automoc and autouic on generated files (ui_*.h, qrc_*.cpp)
+if(POLICY CMP0071)
+	# Don't run automoc and autouic on generated files (ui_*.h, qrc_*.cpp)
+	cmake_policy(SET CMP0071 OLD)
+endif()
 
 ### General compiler flags
 
