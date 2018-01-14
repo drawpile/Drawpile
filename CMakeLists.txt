@@ -58,6 +58,10 @@ if ( PKGCONFIG_FOUND )
 	endif ()
 endif ( PKGCONFIG_FOUND )
 
+### Cmake policies
+
+cmake_policy(SET CMP0071 OLD) # Don't run automoc and autouic on generated files (ui_*.h, qrc_*.cpp)
+
 ### General compiler flags
 
 ### Compiler-specific C++ 11 activation ###

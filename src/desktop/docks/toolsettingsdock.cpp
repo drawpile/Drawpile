@@ -64,7 +64,7 @@ struct ToolSettings::Private {
 		return pages[currentTool].settings.data();
 	}
 
-	Private(tools::ToolController *ctrl, ToolSettings *dock)
+	Private(tools::ToolController *ctrl)
 		: ctrl(ctrl),
 		  widgetStack(nullptr),
 		  colorDialog(nullptr),
@@ -149,7 +149,7 @@ struct ToolSettings::Private {
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: QDockWidget(parent), d(new Private(ctrl, this))
+	: QDockWidget(parent), d(new Private(ctrl))
 {
 	setStyleSheet(defaultDockStylesheet());
 

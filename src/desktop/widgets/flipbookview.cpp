@@ -77,6 +77,7 @@ void FlipbookView::mouseMoveEvent(QMouseEvent *event)
 
 void FlipbookView::mouseReleaseEvent(QMouseEvent *event)
 {
+	Q_UNUSED(event);
 	if(m_rubberband && m_rubberband->isVisible()) {
 		m_rubberband->hide();
 		const int x0 = width()/2 - m_pixmap.width() / 2;
