@@ -106,18 +106,21 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 			mark_delete(state.index.last());
 			return;
 		}
+		break;
 
 	case MSG_MOVEPOINTER:
 		if(filter.removeLasers()) {
 			mark_delete(state.index.last());
 			return;
 		}
+		break;
 
 	case MSG_MARKER:
 		if(filter.removeMarkers()) {
 			mark_delete(state.index.last());
 			return;
 		}
+		break;
 
 	default: break;
 	}
