@@ -96,6 +96,9 @@ public:
 
 	bool isSameColor(QRgb c1, QRgb c2) {
 		// TODO better color distance function
+		c1 = qPremultiply(c1);
+		c2 = qPremultiply(c2);
+
 		int r = (c1 & 0xff) - (signed int)(c2 & 0xff);
 		int g = (c1>>8 & 0xff) - (signed int)(c2>>8 & 0xff);
 		int b = (c1>>16 & 0xff) - (signed int)(c2>>16 & 0xff);
