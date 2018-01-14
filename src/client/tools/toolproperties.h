@@ -37,6 +37,23 @@ public:
 	ToolProperties(const QString &type)
 		: m_type(type) { }
 
+	struct IntValue {
+		QString key;
+		int defaultValue;
+		int min;
+		int max;
+	};
+
+	struct BoolValue {
+		QString key;
+		bool defaultValue;
+	};
+
+	struct VariantValue {
+		QString key;
+		QVariant defaultValue;
+	};
+
 	/**
 	 * @brief Get the type of the tool
 	 *
@@ -51,6 +68,7 @@ public:
 	 * @param value
 	 */
 	void setValue(const QString &key, const QVariant &value);
+	template<typename ValueType> void setValue(const ValueType &key, const QVariant &value) { setValue(key.key, value); }
 
 	/**
 	 * @brief Get a value
@@ -59,6 +77,7 @@ public:
 	 * @return
 	 */
 	QVariant value(const QString &key, const QVariant &defaultValue=QVariant()) const;
+	QVariant value(const VariantValue &key) const { return value(key.key, key.defaultValue); }
 
 	/**
 	 * @brief Get an integer value within the given bounds
@@ -68,6 +87,7 @@ public:
 	 * @return
 	 */
 	int intValue(const QString &key, int defaultValue, int min=0, int max=9999) const;
+	int intValue(const IntValue &key) const { return intValue(key.key, key.defaultValue, key.min, key.max); }
 
 	/**
 	 * @brief Get a boolean value
@@ -76,6 +96,7 @@ public:
 	 * @return
 	 */
 	bool boolValue(const QString &key, bool defaultValue) const;
+	bool boolValue(const BoolValue &key) const { return boolValue(key.key, key.defaultValue); }
 
 	//! Are there any stored properties?
 	bool isEmpty() const { return m_props.isEmpty(); }

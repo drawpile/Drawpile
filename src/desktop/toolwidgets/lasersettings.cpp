@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,16 @@ using widgets::ColorButton;
 #include "ui_lasersettings.h"
 
 namespace tools {
+
+namespace props {
+	static const ToolProperties::IntValue
+		persistence { QStringLiteral("persistence"), 1, 1, 15 },
+		color { QStringLiteral("color"), 0, 0, 3}
+		;
+	static const ToolProperties::BoolValue
+		tracking { QStringLiteral("tracking"), true }
+		;
+}
 
 LaserPointerSettings::LaserPointerSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent), _ui(nullptr)
@@ -79,8 +89,8 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 ToolProperties LaserPointerSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue("tracking", _ui->trackpointer->isChecked());
-	cfg.setValue("persistence", _ui->persistence->value());
+	cfg.setValue(props::tracking, _ui->trackpointer->isChecked());
+	cfg.setValue(props::persistence, _ui->persistence->value());
 
 	int color=0;
 
@@ -90,17 +100,17 @@ ToolProperties LaserPointerSettings::saveToolSettings()
 		color=2;
 	else if(_ui->color3->isChecked())
 		color=3;
-	cfg.setValue("color", color);
+	cfg.setValue(props::color, color);
 
 	return cfg;
 }
 
 void LaserPointerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->trackpointer->setChecked(cfg.boolValue("tracking", true));
-	_ui->persistence->setValue(cfg.intValue("persistence", 1));
+	_ui->trackpointer->setChecked(cfg.boolValue(props::tracking));
+	_ui->persistence->setValue(cfg.intValue(props::persistence));
 
-	switch(cfg.intValue("color", 0, 0, 3)) {
+	switch(cfg.intValue(props::color)) {
 	case 0: _ui->color0->setChecked(true); break;
 	case 1: _ui->color1->setChecked(true); break;
 	case 2: _ui->color2->setChecked(true); break;

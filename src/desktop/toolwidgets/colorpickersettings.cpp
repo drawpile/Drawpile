@@ -32,6 +32,15 @@
 
 namespace tools {
 
+namespace props {
+	static const ToolProperties::BoolValue
+		layerPick { QStringLiteral("layerpick"), false }
+		;
+	static const ToolProperties::IntValue
+		size { QStringLiteral("size"), 1, 0, 255 }
+		;
+}
+
 ColorPickerSettings::ColorPickerSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
 {
@@ -107,15 +116,15 @@ void ColorPickerSettings::quickAdjust1(float adjustment)
 ToolProperties ColorPickerSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue("layerpick", m_layerpick->isChecked());
-	cfg.setValue("size", m_size->value());
+	cfg.setValue(props::layerPick, m_layerpick->isChecked());
+	cfg.setValue(props::size, m_size->value());
 	return cfg;
 }
 
 void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	m_layerpick->setChecked(cfg.boolValue("layerpick", false));
-	m_size->setValue(cfg.intValue("size", 1));
+	m_layerpick->setChecked(cfg.boolValue(props::layerPick));
+	m_size->setValue(cfg.intValue(props::size));
 }
 
 void ColorPickerSettings::addColor(const QColor &color)

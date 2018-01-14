@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,46 +40,55 @@ namespace tools {
 
 namespace brushprop {
 	// Brush properties
+	static const ToolProperties::IntValue
+		size = {QStringLiteral("size"), 10, 1, 255},
+		opacity = {QStringLiteral("opacity"), 100, 1, 100},
+		hard = {QStringLiteral("hard"), 100, 1, 100},
+		smudge = {QStringLiteral("smudge"), 0, 0, 100},
+		resmudge = {QStringLiteral("resmudge"), 3, 0, 255},
+		spacing = {QStringLiteral("spacing"), 10, 0, 100},
+		brushmode = {QStringLiteral("brushmode"), 0, 0, 2} /* 0: hard edge, 1: soft edge, 2: watercolor */
+		;
+	static const ToolProperties::BoolValue
+		sizePressure = {QStringLiteral("sizep"), true},
+		opacityPressure = {QStringLiteral("opacityp"), false},
+		hardPressure = {QStringLiteral("hardp"), false},
+		smudgePressure = {QStringLiteral("smudgep"), false},
+		incremental = {QStringLiteral("incremental"), true}
+		;
+
 	static const QString
-		LABEL = QStringLiteral("label"),
-		SIZE = QStringLiteral("size"),
-		SIZE_PRESSURE = QStringLiteral("sizep"),
-		OPACITY = QStringLiteral("opacity"),
-		OPACITY_PRESSURE = QStringLiteral("opacityp"),
-		HARD = QStringLiteral("hard"),
-		HARD_PRESSURE = QStringLiteral("hardp"),
-		SMUDGE = QStringLiteral("smudge"),
-		SMUDGE_PRESSURE = QStringLiteral("smudgep"),
-		RESMUDGE = QStringLiteral("resmudge"),
-		SPACING = QStringLiteral("spacing"),
-		INCREMENTAL = QStringLiteral("incremental"),
-		BRUSHMODE = QStringLiteral("brushmode") /* 0: hard edge, 1: soft edge, 2: watercolor */
+		LABEL = QStringLiteral("label")
 		;
 }
 
 namespace toolprop {
 	// Tool properties
-	static const QString
-		COLOR = QStringLiteral("color"),
-		BLENDMODE = QStringLiteral("blendmode"),
-		ERASEMODE = QStringLiteral("erasemode"),
-		USE_ERASEMODE = QStringLiteral("use_erasemode")
+	static const ToolProperties::VariantValue
+		color = {QStringLiteral("color"), QColor(Qt::black)}
+		;
+	static const ToolProperties::IntValue
+		blendmode = {QStringLiteral("blendmode"), paintcore::BlendMode::MODE_NORMAL, 0, 255},
+		erasemode = {QStringLiteral("erasemode"), paintcore::BlendMode::MODE_ERASE, 0, 255}
+		;
+	static const ToolProperties::BoolValue
+		useEraseMode = {QStringLiteral("use_erasemode"), false}
 		;
 }
 
 static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
 {
-	const int brushMode = bp.intValue(brushprop::BRUSHMODE, 0);
+	const int brushMode = bp.intValue(brushprop::brushmode);
 
 	paintcore::Brush b;
-	b.setSize(bp.intValue(brushprop::SIZE, 1, 1, 255));
-	if(bp.boolValue(brushprop::SIZE_PRESSURE, false))
+	b.setSize(bp.intValue(brushprop::size));
+	if(bp.boolValue(brushprop::sizePressure))
 		b.setSize2(1);
 	else
 		b.setSize2(b.size1());
 
-	b.setOpacity(bp.intValue(brushprop::OPACITY, 100, 1, 100) / 100.0);
-	if(bp.boolValue(brushprop::OPACITY_PRESSURE, false))
+	b.setOpacity(bp.intValue(brushprop::opacity) / 100.0);
+	if(bp.boolValue(brushprop::opacityPressure))
 		b.setOpacity2(0);
 	else
 		b.setOpacity2(b.opacity1());
@@ -91,8 +100,8 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 		b.setSubpixel(false);
 
 	} else {
-		b.setHardness(bp.intValue(brushprop::HARD, 100, 1, 100) / 100.0);
-		if(bp.boolValue(brushprop::HARD_PRESSURE, false))
+		b.setHardness(bp.intValue(brushprop::hard) / 100.0);
+		if(bp.boolValue(brushprop::hardPressure))
 			b.setHardness2(0);
 		else
 			b.setHardness2(b.hardness1());
@@ -100,13 +109,13 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	}
 
 	if(brushMode == 2) {
-		b.setSmudge(bp.intValue(brushprop::SMUDGE, 0, 0, 100) / 100.0);
-		if(bp.boolValue(brushprop::SMUDGE_PRESSURE, false))
+		b.setSmudge(bp.intValue(brushprop::smudge) / 100.0);
+		if(bp.boolValue(brushprop::smudgePressure))
 			b.setSmudge2(0);
 		else
 			b.setSmudge2(b.smudge1());
 
-		b.setResmudge(bp.intValue(brushprop::RESMUDGE, 3, 0, 255));
+		b.setResmudge(bp.intValue(brushprop::resmudge));
 
 		// Watercolor mode requires incremental drawing
 		b.setIncremental(true);
@@ -115,18 +124,16 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 		b.setSmudge(0);
 		b.setSmudge2(0);
 		b.setResmudge(0);
-		b.setIncremental(bp.boolValue(brushprop::INCREMENTAL, true));
+		b.setIncremental(bp.boolValue(brushprop::incremental));
 	}
 
-	b.setSpacing(bp.intValue(brushprop::SPACING, 10, 0, 100));
+	b.setSpacing(bp.intValue(brushprop::spacing));
 
-	b.setColor(tp.value(toolprop::COLOR, QColor(Qt::black)).value<QColor>());
+	b.setColor(tp.value(toolprop::color).value<QColor>());
 
-	if(tp.boolValue(toolprop::USE_ERASEMODE, false)) {
-		b.setBlendingMode(paintcore::BlendMode::Mode(tp.intValue(toolprop::ERASEMODE, paintcore::BlendMode::MODE_ERASE)));
-	} else {
-		b.setBlendingMode(paintcore::BlendMode::Mode(tp.intValue(toolprop::BLENDMODE, paintcore::BlendMode::MODE_NORMAL)));
-	}
+	const int blendingMode = tp.intValue(tp.boolValue(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
+	b.setBlendingMode(paintcore::BlendMode::Mode(blendingMode));
+
 	return b;
 }
 
@@ -157,7 +164,7 @@ struct BrushSettings::Private {
 	}
 
 	inline QColor currentColor() {
-		return currentTool().value(toolprop::COLOR, QColor(Qt::black)).value<QColor>();
+		return currentTool().value(toolprop::color).value<QColor>();
 	}
 
 	Private(BrushSettings *b)
@@ -300,14 +307,14 @@ void BrushSettings::toggleEraserMode()
 {
 	if(d->current != ERASER_SLOT) {
 		// Eraser mode is fixed in dedicated eraser slot
-		d->currentTool().setValue(toolprop::USE_ERASEMODE, !d->currentTool().boolValue(toolprop::USE_ERASEMODE, false));
+		d->currentTool().setValue(toolprop::useEraseMode, !d->currentTool().boolValue(toolprop::useEraseMode));
 		updateUi();
 	}
 }
 
 void BrushSettings::setEraserMode(bool erase)
 {
-	d->currentTool().setValue(toolprop::USE_ERASEMODE, erase);
+	d->currentTool().setValue(toolprop::useEraseMode, erase);
 	updateUi();
 }
 
@@ -333,10 +340,10 @@ bool BrushSettings::isCurrentEraserSlot() const
 void BrushSettings::selectBlendMode(int modeIndex)
 {
 	QString prop;
-	if(d->currentTool().boolValue(toolprop::USE_ERASEMODE, false))
-		prop = toolprop::ERASEMODE;
+	if(d->currentTool().boolValue(toolprop::useEraseMode))
+		prop = toolprop::erasemode.key;
 	else
-		prop = toolprop::BLENDMODE;
+		prop = toolprop::blendmode.key;
 	d->currentTool().setValue(prop, d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	updateUi();
 }
@@ -353,7 +360,7 @@ void BrushSettings::updateUi()
 	const ToolProperties &tool = d->currentTool();
 
 	// Select brush type
-	const int brushMode = brush.intValue(brushprop::BRUSHMODE, 0);
+	const int brushMode = brush.intValue(brushprop::brushmode);
 	switch(brushMode) {
 	case 1: d->ui.softedgeMode->setChecked(true); break;
 	case 2: d->ui.watercolorMode->setChecked(true); break;
@@ -379,18 +386,18 @@ void BrushSettings::updateUi()
 	d->ui.modeIncremental->setEnabled(brushMode != 2);
 	d->ui.modeIndirect->setEnabled(brushMode != 2);
 
-	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
-	d->ui.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
+	d->ui.brushsize->setValue(brush.intValue(brushprop::size));
+	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
 
 	// Show correct blending mode
 	int blendmode;
-	const bool erasemode = tool.boolValue(toolprop::USE_ERASEMODE, false);
+	const bool erasemode = tool.boolValue(toolprop::useEraseMode);
 	if(erasemode) {
 		d->ui.blendmode->setModel(d->eraseModes);
-		blendmode = tool.intValue(toolprop::ERASEMODE, paintcore::BlendMode::MODE_ERASE);
+		blendmode = tool.intValue(toolprop::erasemode);
 	} else {
 		d->ui.blendmode->setModel(d->blendModes);
-		blendmode = tool.intValue(toolprop::BLENDMODE, paintcore::BlendMode::MODE_NORMAL);
+		blendmode = tool.intValue(toolprop::blendmode);
 	}
 	d->ui.modeEraser->setChecked(erasemode);
 	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
@@ -403,22 +410,22 @@ void BrushSettings::updateUi()
 	}
 
 	// Set values
-	d->ui.brushsize->setValue(brush.intValue(brushprop::SIZE, 1));
-	d->ui.pressureSize->setChecked(brush.boolValue(brushprop::SIZE_PRESSURE, false));
+	d->ui.brushsize->setValue(brush.intValue(brushprop::size));
+	d->ui.pressureSize->setChecked(brush.boolValue(brushprop::sizePressure));
 
-	d->ui.brushopacity->setValue(brush.intValue(brushprop::OPACITY, 100));
-	d->ui.pressureOpacity->setChecked(brush.boolValue(brushprop::OPACITY_PRESSURE, false));
+	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
+	d->ui.pressureOpacity->setChecked(brush.boolValue(brushprop::opacityPressure));
 
-	d->ui.brushhardness->setValue(brush.intValue(brushprop::HARD, 100));
-	d->ui.pressureHardness->setChecked(brushMode != 0 && brush.boolValue(brushprop::HARD_PRESSURE, false));
+	d->ui.brushhardness->setValue(brush.intValue(brushprop::hard));
+	d->ui.pressureHardness->setChecked(brushMode != 0 && brush.boolValue(brushprop::hardPressure));
 
-	d->ui.brushsmudging->setValue(brush.intValue(brushprop::SMUDGE, 50));
-	d->ui.pressureSmudging->setChecked(brushMode == 2 && brush.boolValue(brushprop::SMUDGE_PRESSURE, false));
+	d->ui.brushsmudging->setValue(brush.intValue(brushprop::smudge));
+	d->ui.pressureSmudging->setChecked(brushMode == 2 && brush.boolValue(brushprop::smudgePressure));
 
-	d->ui.colorpickup->setValue(brush.intValue(brushprop::RESMUDGE, 3, 0, 255));
+	d->ui.colorpickup->setValue(brush.intValue(brushprop::resmudge));
 
-	d->ui.brushspacing->setValue(brush.intValue(brushprop::SPACING, 10));
-	if(brush.boolValue(brushprop::INCREMENTAL, true))
+	d->ui.brushspacing->setValue(brush.intValue(brushprop::spacing));
+	if(brush.boolValue(brushprop::incremental))
 		d->ui.modeIncremental->setChecked(true);
 	else
 		d->ui.modeIndirect->setChecked(true);
@@ -437,32 +444,32 @@ void BrushSettings::updateFromUi()
 	ToolProperties &brush = d->currentBrush();
 
 	if(d->ui.hardedgeMode->isChecked())
-		brush.setValue(brushprop::BRUSHMODE, 0);
+		brush.setValue(brushprop::brushmode, 0);
 	else if(d->ui.softedgeMode->isChecked())
-		brush.setValue(brushprop::BRUSHMODE, 1);
+		brush.setValue(brushprop::brushmode, 1);
 	else
-		brush.setValue(brushprop::BRUSHMODE, 2);
+		brush.setValue(brushprop::brushmode, 2);
 
-	brush.setValue(brushprop::SIZE, d->ui.brushsize->value());
-	brush.setValue(brushprop::SIZE_PRESSURE, d->ui.pressureSize->isChecked());
+	brush.setValue(brushprop::size, d->ui.brushsize->value());
+	brush.setValue(brushprop::sizePressure, d->ui.pressureSize->isChecked());
 
-	brush.setValue(brushprop::OPACITY, d->ui.brushopacity->value());
-	brush.setValue(brushprop::OPACITY_PRESSURE, d->ui.pressureOpacity->isChecked());
+	brush.setValue(brushprop::opacity, d->ui.brushopacity->value());
+	brush.setValue(brushprop::opacityPressure, d->ui.pressureOpacity->isChecked());
 
-	brush.setValue(brushprop::HARD, d->ui.brushhardness->value());
-	brush.setValue(brushprop::HARD_PRESSURE, d->ui.pressureHardness->isChecked());
+	brush.setValue(brushprop::hard, d->ui.brushhardness->value());
+	brush.setValue(brushprop::hardPressure, d->ui.pressureHardness->isChecked());
 
-	brush.setValue(brushprop::SMUDGE, d->ui.brushsmudging->value());
-	brush.setValue(brushprop::SMUDGE_PRESSURE, d->ui.pressureSmudging->isChecked());
+	brush.setValue(brushprop::smudge, d->ui.brushsmudging->value());
+	brush.setValue(brushprop::smudgePressure, d->ui.pressureSmudging->isChecked());
 
-	brush.setValue(brushprop::RESMUDGE, d->ui.colorpickup->value());
-	brush.setValue(brushprop::SPACING, d->ui.brushspacing->value());
-	brush.setValue(brushprop::INCREMENTAL, d->ui.modeIncremental->isChecked());
+	brush.setValue(brushprop::resmudge, d->ui.colorpickup->value());
+	brush.setValue(brushprop::spacing, d->ui.brushspacing->value());
+	brush.setValue(brushprop::incremental, d->ui.modeIncremental->isChecked());
 
 	if(d->current == ERASER_SLOT)
-		d->currentTool().setValue(toolprop::USE_ERASEMODE, true);
+		d->currentTool().setValue(toolprop::useEraseMode, true);
 	else
-		d->currentTool().setValue(toolprop::USE_ERASEMODE, d->ui.modeEraser->isChecked());
+		d->currentTool().setValue(toolprop::useEraseMode, d->ui.modeEraser->isChecked());
 
 	d->updateBrush();
 }
@@ -493,9 +500,9 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 		d->brushProps[i] = ToolProperties::fromVariant(brush);
 		d->toolProps[i] = ToolProperties::fromVariant(tool);
-		d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::COLOR, QColor(Qt::black)).value<QColor>());
+		d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::color).value<QColor>());
 	}
-	d->toolProps[ERASER_SLOT].setValue(toolprop::USE_ERASEMODE, true);
+	d->toolProps[ERASER_SLOT].setValue(toolprop::useEraseMode, true);
 
 	updateUi();
 }
@@ -525,7 +532,7 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 void BrushSettings::setForeground(const QColor& color)
 {
 	if(color != d->currentColor()) {
-		d->currentTool().setValue(toolprop::COLOR, color);
+		d->currentTool().setValue(toolprop::color, color);
 		d->brushSlotButton(d->current)->setColorSwatch(color);
 		d->ui.preview->setColor(color);
 	}
@@ -562,7 +569,7 @@ struct BrushPresetModel::Private {
 			const int maskdia = stamp.mask.diameter();
 			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
 
-			const QRgb color = (presets[idx].intValue(brushprop::BRUSHMODE, 0)==2) ? 0x001d99f3 : 0;
+			const QRgb color = (presets[idx].intValue(brushprop::brushmode)==2) ? 0x001d99f3 : 0;
 
 			if(maskdia > BRUSH_ICON_SIZE) {
 				// Clip to fit
@@ -759,29 +766,29 @@ void BrushPresetModel::makeDefaultBrushes()
 	ToolProperties tp;
 
 	// Generate a few pixel brushes
-	tp.setValue(brushprop::BRUSHMODE, 0);
-	tp.setValue(brushprop::SPACING, 15);
-	tp.setValue(brushprop::SIZE, 0);
-	tp.setValue(brushprop::SIZE_PRESSURE, true);
+	tp.setValue(brushprop::brushmode, 0);
+	tp.setValue(brushprop::spacing, 15);
+	tp.setValue(brushprop::size, 0);
+	tp.setValue(brushprop::sizePressure, true);
 	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::SIZE, i*8);
+		tp.setValue(brushprop::size, i*8);
 		brushes << tp;
 	}
 
 	// Generate a few soft brushes
-	tp.setValue(brushprop::BRUSHMODE, 1);
-	tp.setValue(brushprop::HARD, 80);
+	tp.setValue(brushprop::brushmode, 1);
+	tp.setValue(brushprop::hard, 80);
 	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::SIZE, i*8);
+		tp.setValue(brushprop::size, i*8);
 		brushes << tp;
 	}
 
 	// Generate a few watercolor brushes
-	tp.setValue(brushprop::BRUSHMODE, 2);
-	tp.setValue(brushprop::SMUDGE, 25);
-	tp.setValue(brushprop::RESMUDGE, 6);
+	tp.setValue(brushprop::brushmode, 2);
+	tp.setValue(brushprop::smudge, 25);
+	tp.setValue(brushprop::resmudge, 6);
 	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::SIZE, i*8);
+		tp.setValue(brushprop::size, i*8);
 		brushes << tp;
 	}
 

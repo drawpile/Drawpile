@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,21 @@ using widgets::BrushPreview;
 #include "ui_fillsettings.h"
 
 namespace tools {
+
+namespace props {
+	static const ToolProperties::IntValue
+		tolerance { QStringLiteral("tolerance"), 0, 0, 100 },
+		expand { QStringLiteral("expand"), 0, 0, 100 }
+		;
+	static const ToolProperties::VariantValue
+		sizelimit { QStringLiteral("sizelimit"), 50.0 }
+		;
+	static const ToolProperties::BoolValue
+		samplemerged { QStringLiteral("samplemerged"), true },
+		underfill { QStringLiteral("underfill"), true },
+		erasermode { QStringLiteral("erasermode"), false }
+		;
+}
 
 FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent), _ui(nullptr)
@@ -82,11 +97,11 @@ void FillSettings::toggleEraserMode()
 ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue("tolerance", _ui->tolerance->value());
-	cfg.setValue("expand", _ui->expand->value());
-	cfg.setValue("samplemerged", _ui->samplemerged->isChecked());
-	cfg.setValue("underfill", _ui->fillunder->isChecked());
-	cfg.setValue("erasermode", _ui->erasermode->isChecked());
+	cfg.setValue(props::tolerance, _ui->tolerance->value());
+	cfg.setValue(props::expand, _ui->expand->value());
+	cfg.setValue(props::samplemerged, _ui->samplemerged->isChecked());
+	cfg.setValue(props::underfill, _ui->fillunder->isChecked());
+	cfg.setValue(props::erasermode, _ui->erasermode->isChecked());
 	return cfg;
 }
 
@@ -100,12 +115,12 @@ void FillSettings::setForeground(const QColor &color)
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->tolerance->setValue(cfg.value("tolerance", 0).toInt());
-	_ui->expand->setValue(cfg.value("expand", 0).toInt());
-	_ui->sizelimit->setValue(cfg.value("sizelimit", 50).toDouble());
-	_ui->samplemerged->setChecked(cfg.value("samplemerged", true).toBool());
-	_ui->fillunder->setChecked(cfg.value("underfill", true).toBool());
-	_ui->erasermode->setChecked(cfg.value("erasermode", false).toBool());
+	_ui->tolerance->setValue(cfg.intValue(props::tolerance));
+	_ui->expand->setValue(cfg.intValue(props::expand));
+	_ui->sizelimit->setValue(cfg.value(props::sizelimit).toDouble());
+	_ui->samplemerged->setChecked(cfg.boolValue(props::samplemerged));
+	_ui->fillunder->setChecked(cfg.boolValue(props::underfill));
+	_ui->erasermode->setChecked(cfg.boolValue(props::erasermode));
 	pushSettings();
 }
 
