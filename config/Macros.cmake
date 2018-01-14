@@ -8,6 +8,8 @@ macro ( strip_exe target )
 	if ( STRIP_CMD )
 		if ( WIN32 )
 			set ( target_file "${target}.exe" )
+		elseif ( APPLE )
+			set ( target_file "${target}.app/Contents/MacOS/${target}" )
 		else ( )
 			set ( target_file "${target}" )
 		endif ( )
@@ -15,7 +17,7 @@ macro ( strip_exe target )
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
-			COMMAND ${STRIP_CMD} -s "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
+			COMMAND ${STRIP_CMD} "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
 		)
 	endif ( )
 endmacro ( )

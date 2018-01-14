@@ -223,10 +223,6 @@ set_target_properties (
 install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
-	if (APPLE)
-		strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
-	else ()
-		strip_exe ( ${CLIENTNAME} )
-	endif()
+	strip_exe ( ${CLIENTNAME} )
 endif ( )
 
