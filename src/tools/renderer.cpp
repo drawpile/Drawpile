@@ -28,14 +28,54 @@
 
 #include <QImageWriter>
 #include <QElapsedTimer>
+#include <QPainter>
 
-bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack &layers, int index)
+struct ExportState {
+	QSize lastSize;
+	int index;
+};
+
+QImage resizeImage(const QImage &img, const QSize &maxSize, bool fixedSize)
 {
+	if(fixedSize && img.size() != maxSize) {
+		const QSize scaledSize = img.size().scaled(maxSize, Qt::KeepAspectRatio);
+		QImage scaled(maxSize, QImage::Format_ARGB32_Premultiplied);
+		scaled.fill(Qt::black);
+
+		QPainter painter(&scaled);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform);
+		painter.drawImage(
+			QRect(
+				QPoint((maxSize.width() - scaledSize.width()) / 2, (maxSize.height() - scaledSize.height()) / 2),
+				scaledSize
+			),
+			img
+			);
+		return scaled;
+
+	} else if (img.width() > maxSize.width() || img.height() > maxSize.height()) {
+		return img.scaled(maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	} else {
+		return img;
+	}
+}
+
+bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack &layers, ExportState &state)
+{
+	if(layers.size().isEmpty()) {
+		// The layer stack has no size until the first resize command.
+		// Trying to export before it is not a fatal error.
+		if(settings.verbose)
+			fprintf(stderr, "[I] Image is empty, not saving anything.\n");
+		return true;
+	}
+
 	QString filename = settings.outputFilePattern;
 
 	// Perform pattern subsitutions:
 	// :idx: <-- image index number
-	filename.replace(":idx:", QString::number(index));
+	filename.replace(":idx:", QString::number(state.index));
 
 	if(settings.verbose)
 		fprintf(stderr, "[I] Writing %s...\n", qPrintable(filename));
@@ -44,17 +84,28 @@ bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack 
 	bool ok;
 	if(filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact
+		// ORAs are not resized.
 		ok = openraster::saveOpenRaster(filename, &layers, &error);
 
 	} else {
+		QImage flat = layers.toFlatImage(settings.mergeAnnotations);
+
+		if(settings.fixedSize && state.lastSize.isEmpty())
+			state.lastSize = flat.size();
+
+		if(!state.lastSize.isEmpty())
+			flat = resizeImage(flat, state.lastSize, settings.fixedSize);
+
 		QImageWriter writer(filename);
-		ok = writer.write(layers.toFlatImage(settings.mergeAnnotations));
+		ok = writer.write(flat);
 		if(!ok)
 			error = writer.errorString();
 	}
 
 	if(!ok)
 		fprintf(stderr, "[E] %s: %s\n", qPrintable(filename), qPrintable(error));
+
+	++state.index;
 
 	return ok;
 }
@@ -98,9 +149,14 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 	QElapsedTimer renderTime;
 	qint64 totalRenderTime = 0;
 
-	// Read and execute commands
-	int imageIndex = 1;
+	// Prepare image exporter
+	ExportState exportState {
+		settings.maxSize,
+		1
+	};
 	int exportCounter = 0;
+
+	// Read and execute commands
 	recording::MessageRecord record;
 	do {
 		const qint64 offset = reader.filePosition();
@@ -139,7 +195,7 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 
 				if(exportCounter >= settings.exportEveryN) {
 					exportCounter = 0;
-					if(!saveImage(settings, image, imageIndex++))
+					if(!saveImage(settings, image, exportState))
 						return false;
 				}
 			}
@@ -157,7 +213,7 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 	fprintf(stderr, "[I] Total render time: %s\n", qPrintable(prettyDuration(totalRenderTime)));
 
 	// Save the final result
-	if(!saveImage(settings, image, imageIndex++))
+	if(!saveImage(settings, image, exportState))
 		return false;
 
 	return true;

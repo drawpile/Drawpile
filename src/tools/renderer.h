@@ -21,6 +21,7 @@
 #define DPCMD_RENDERER_H
 
 #include <QString>
+#include <QSize>
 
 enum class ExportEvery {
 	Message,
@@ -33,6 +34,9 @@ struct DrawpileCmdSettings {
 	int exportEveryN;
 	ExportEvery exportEveryMode;
 
+	QSize maxSize;
+
+	bool fixedSize;
 	bool mergeAnnotations;
 	bool verbose;
 	bool acl;

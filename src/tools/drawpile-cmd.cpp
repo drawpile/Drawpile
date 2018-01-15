@@ -81,6 +81,14 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption aclOption(QStringList() << "A" << "acl", "Perform ACL filtering");
 	parser.addOption(aclOption);
 
+	// --maxsize, -s
+	QCommandLineOption maxSizeOption(QStringList() << "s" << "maxsize", "Maximum exported image dimensions", "size");
+	parser.addOption(maxSizeOption);
+
+	// --fixedsize, -S
+	QCommandLineOption fixedSizeOption(QStringList() << "S" << "fixedsize", "Make all images the same size (maxsize if set)");
+	parser.addOption(fixedSizeOption);
+
 	// Parse
 	parser.process(app);
 
@@ -114,6 +122,21 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	QSize maxSize;
+	if(parser.isSet(maxSizeOption)) {
+		QRegularExpression re("^(\\d+)[xX0](\\d+)$");
+		auto m = re.match(parser.value(maxSizeOption));
+		if(!m.hasMatch()) {
+			fprintf(stderr, "Size must be given in format WIDTHxHEIGHT\n");
+			return 1;
+		}
+		maxSize = QSize(m.captured(1).toInt(), m.captured(2).toInt());
+		if(maxSize.isEmpty()) {
+			fprintf(stderr, "Size must not be zero\n");
+			return 1;
+		}
+	}
+
 	const QFileInfo inputfile = inputfiles.at(0);
 	QString outputFilePattern = parser.value(outOption);
 	if(outputFilePattern.isEmpty()) {
@@ -129,6 +152,8 @@ int main(int argc, char *argv[]) {
 		outputFilePattern,
 		exportEvery,
 		exportEveryMode,
+		maxSize,
+		parser.isSet(fixedSizeOption),
 		parser.isSet(mergeAnnotationsOption),
 		parser.isSet(verboseOption),
 		parser.isSet(aclOption)
