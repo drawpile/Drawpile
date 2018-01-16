@@ -46,7 +46,7 @@ static bool putPngInZip(KZip &zip, const QString &filename, const QImage &image,
 	return true;
 }
 
-static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStack *image)
+static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStack *image, const QVector<QPoint> &layerOffsets)
 {
 	writer.writeStartElement("stack");
 
@@ -81,6 +81,8 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 		writer.writeAttribute("src", QString("data/layer%1.png").arg(i));
 		writer.writeAttribute("name", l->title());
 		writer.writeAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
+		writer.writeAttribute("x", QString::number(layerOffsets.at(i).x()));
+		writer.writeAttribute("y", QString::number(layerOffsets.at(i).y()));
 		if(l->isHidden())
 			writer.writeAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
@@ -92,7 +94,7 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 	writer.writeEndElement();
 }
 
-static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, QString *errorMessage)
+static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const QVector<QPoint> &layerOffsets, QString *errorMessage)
 {
 	QBuffer buffer;
 	buffer.open(QBuffer::ReadWrite);
@@ -111,7 +113,7 @@ static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, QString
 	writer.writeAttribute("version", "0.0.3");
 
 	// Write the main layer stack
-	writeStackStack(writer, image);
+	writeStackStack(writer, image, layerOffsets);
 
 	// Done.
 	writer.writeEndDocument();
@@ -124,12 +126,20 @@ static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, QString
 	return true;
 }
 
-static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index, QString *errorMessage)
+static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index, QPoint &offset, QString *errorMessage)
 {
 	const paintcore::Layer *l = layers->getLayerByIndex(index);
 	Q_ASSERT(l);
 
-	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage(), errorMessage);
+	QImage image = l->toCroppedImage(&offset.rx(), &offset.ry());
+	if(image.isNull()) {
+		// OpenRaster currently does not specify a way to store blank
+		// layers without a data file, so we just create a small dummy image
+		image = QImage(64, 64, QImage::Format_ARGB32_Premultiplied);
+		image.fill(0);
+		offset = QPoint();
+	}
+	return putPngInZip(zf, QString("data/layer%1.png").arg(index), image, errorMessage);
 }
 
 static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers, QString *errorMessage)
@@ -165,16 +175,17 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image,
 		return false;
 	}
 
-	// The stack XML contains the image structure
-	// definition.
-	if(!writeStackXml(zf, image, errorMessage))
-		return false;
-
 	// Each layer is written as an individual PNG image
+	QVector<QPoint> layerOffsets(image->layerCount());
 	for(int i=image->layerCount()-1;i>=0;--i) {
-		if(!writeLayer(zf, image, i, errorMessage))
+		if(!writeLayer(zf, image, i, layerOffsets[i], errorMessage))
 			return false;
 	}
+
+	// The stack XML contains the image structure
+	// definition.
+	if(!writeStackXml(zf, image, layerOffsets, errorMessage))
+		return false;
 
 	// Ready to use images for viewers
 	writePreviewImages(zf, image, errorMessage);
