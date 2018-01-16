@@ -120,8 +120,9 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 	// sublayers are used for indirect drawing and previews
 }
 
-Layer::Layer(const Layer &layer)
-	: m_owner(layer.m_owner), m_info(layer.m_info),
+Layer::Layer(const Layer &layer, LayerStack *newOwner)
+	: m_owner(newOwner ? newOwner : layer.m_owner),
+	  m_info(layer.m_info),
 	  m_width(layer.m_width), m_height(layer.m_height),
 	  m_xtiles(layer.m_xtiles), m_ytiles(layer.m_ytiles),
 	  m_tiles(layer.m_tiles)

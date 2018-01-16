@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,10 +31,27 @@
 namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), _width(0), _height(0), _viewmode(NORMAL), _viewlayeridx(0),
-	  _onionskinsBelow(4), _onionskinsAbove(4), _onionskinTint(true), _viewBackgroundLayer(true)
+	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
+	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(true)
 {
 	m_annotations = new AnnotationModel(this);
+}
+
+LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
+	: QObject(parent),
+	  m_width(orig->m_width),
+	  m_height(orig->m_height),
+	  m_xtiles(orig->m_xtiles),
+	  m_ytiles(orig->m_ytiles),
+	  m_viewmode(orig->m_viewmode),
+	  m_viewlayeridx(orig->m_viewlayeridx),
+	  m_onionskinsBelow(orig->m_onionskinsBelow),
+	  m_onionskinTint(orig->m_onionskinTint),
+	  m_viewBackgroundLayer(orig->m_viewBackgroundLayer)
+{
+	m_annotations = orig->m_annotations->clone(this);
+	for(const Layer *l : orig->m_layers)
+		m_layers << new Layer(*l, this);
 }
 
 LayerStack::~LayerStack()
@@ -45,11 +62,11 @@ LayerStack::~LayerStack()
 
 void LayerStack::reset()
 {
-	const QSize oldsize(_width, _height);
-	_width = 0;
-	_height = 0;
-	_xtiles = 0;
-	_ytiles = 0;
+	const QSize oldsize(m_width, m_height);
+	m_width = 0;
+	m_height = 0;
+	m_xtiles = 0;
+	m_ytiles = 0;
 	for(Layer *l : m_layers)
 		delete l;
 	m_layers.clear();
@@ -67,22 +84,22 @@ void LayerStack::removePreviews()
 
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
-	const QSize oldsize(_width, _height);
+	const QSize oldsize(m_width, m_height);
 
 	int newtop = -top;
 	int newleft = -left;
-	int newright = _width + right;
-	int newbottom = _height + bottom;
+	int newright = m_width + right;
+	int newbottom = m_height + bottom;
 	if(newtop >= newbottom || newleft >= newright) {
 		qWarning() << "Invalid resize: borders reversed";
 		return;
 	}
-	_width = newright - newleft;
-	_height = newbottom - newtop;
+	m_width = newright - newleft;
+	m_height = newbottom - newtop;
 
-	_xtiles = Tile::roundTiles(_width);
-	_ytiles = Tile::roundTiles(_height);
-	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
+	m_xtiles = Tile::roundTiles(m_width);
+	m_ytiles = Tile::roundTiles(m_height);
+	m_dirtytiles = QBitArray(m_xtiles*m_ytiles, true);
 
 	for(Layer *l : m_layers)
 		l->resize(top, right, bottom, left);
@@ -109,7 +126,7 @@ void LayerStack::resize(int top, int right, int bottom, int left)
  */
 Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool insert, bool copy, const QString &name)
 {
-	if(_width<=0 || _height<=0) {
+	if(m_width<=0 || m_height<=0) {
 		// We tolerate this, but in normal operation the canvas size should be
 		// set before creating any layers.
 		qWarning("Layer created before canvas size was set!");
@@ -144,7 +161,7 @@ Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool ins
 		nl->setId(id);
 
 	} else {
-		nl = new Layer(this, id, name, color, QSize(_width, _height));
+		nl = new Layer(this, id, name, color, size());
 	}
 
 	// Insert the new layer in the appropriate spot
@@ -293,28 +310,28 @@ struct UpdateTile {
  */
 void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean)
 {
-	if(_width<=0 || _height<=0)
+	if(m_width<=0 || m_height<=0)
 		return;
 
 	// Affected tile range
-	const int tx0 = qBound(0, rect.left() / Tile::SIZE, _xtiles-1);
-	const int tx1 = qBound(tx0, rect.right() / Tile::SIZE, _xtiles-1);
-	const int ty0 = qBound(0, rect.top() / Tile::SIZE, _ytiles-1);
-	const int ty1 = qBound(ty0, rect.bottom() / Tile::SIZE, _ytiles-1);
+	const int tx0 = qBound(0, rect.left() / Tile::SIZE, m_xtiles-1);
+	const int tx1 = qBound(tx0, rect.right() / Tile::SIZE, m_xtiles-1);
+	const int ty0 = qBound(0, rect.top() / Tile::SIZE, m_ytiles-1);
+	const int ty1 = qBound(ty0, rect.bottom() / Tile::SIZE, m_ytiles-1);
 
 	// Gather list of tiles in need of updating
 	QList<UpdateTile*> updates;
 
 	for(int ty=ty0;ty<=ty1;++ty) {
-		const int y = ty*_xtiles;
+		const int y = ty*m_xtiles;
 		for(int tx=tx0;tx<=tx1;++tx) {
 			const int i = y+tx;
-			if(_dirtytiles.testBit(i)) {
+			if(m_dirtytiles.testBit(i)) {
 				updates.append(new UpdateTile(tx, ty));
 
 				// TODO this conditional is for transitioning to QtQuick. Remove once old view is removed.
 				if(clean)
-					_dirtytiles.clearBit(i);
+					m_dirtytiles.clearBit(i);
 			}
 		}
 	}
@@ -375,7 +392,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 	if(m_layers.isEmpty())
 		return QColor();
 
-	if(x<0 || y<0 || x>=_width || y>=_height)
+	if(x<0 || y<0 || x>=m_width || y>=m_height)
 		return QColor();
 
 	if(dia<=1) {
@@ -391,7 +408,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 		const int y1 = (y-r) / Tile::SIZE;
 		const int y2 = (y+r) / Tile::SIZE;
 
-		Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
+		Layer flat(nullptr, 0, QString(), Qt::transparent, size());
 
 		for(int tx=x1;tx<=x2;++tx) {
 			for(int ty=y1;ty<=y2;++ty) {
@@ -405,7 +422,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 
 QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
-	Layer flat(nullptr, 0, QString(), Qt::transparent, QSize(_width, _height));
+	Layer flat(nullptr, 0, QString(), Qt::transparent, size());
 
 	for(const Layer *l : m_layers) {
 		if(l->isVisible())
@@ -432,7 +449,7 @@ QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &b
 	if(useBgLayer)
 		flat.reset(new Layer(*m_layers.at(0)));
 	else
-		flat.reset(new Layer(nullptr, 0, QString(), background, QSize(_width, _height)));
+		flat.reset(new Layer(nullptr, 0, QString(), background, size()));
 
 	flat->merge(m_layers.at(layerIdx), false);
 
@@ -484,56 +501,56 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 
 void LayerStack::markDirty(const QRect &area)
 {
-	if(m_layers.isEmpty() || _width<=0 || _height<=0)
+	if(m_layers.isEmpty() || m_width<=0 || m_height<=0)
 		return;
-	const int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
-	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1) + 1;
-	int ty0 = qBound(0, area.top() / Tile::SIZE, _ytiles-1);
-	const int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, _ytiles-1);
+	const int tx0 = qBound(0, area.left() / Tile::SIZE, m_xtiles-1);
+	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, m_xtiles-1) + 1;
+	int ty0 = qBound(0, area.top() / Tile::SIZE, m_ytiles-1);
+	const int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, m_ytiles-1);
 	
 	for(;ty0<=ty1;++ty0) {
-		_dirtytiles.fill(true, ty0*_xtiles + tx0, ty0*_xtiles + tx1);
+		m_dirtytiles.fill(true, ty0*m_xtiles + tx0, ty0*m_xtiles + tx1);
 	}
-	_dirtyrect |= area;
+	m_dirtyrect |= area;
 }
 
 void LayerStack::markDirty()
 {
-	if(m_layers.isEmpty() || _width<=0 || _height<=0)
+	if(m_layers.isEmpty() || m_width<=0 || m_height<=0)
 		return;
-	_dirtytiles.fill(true);
+	m_dirtytiles.fill(true);
 
-	_dirtyrect = QRect(0, 0, _width, _height);
+	m_dirtyrect = QRect(0, 0, m_width, m_height);
 	notifyAreaChanged();
 }
 
 void LayerStack::markDirty(int x, int y)
 {
-	Q_ASSERT(x>=0 && x < _xtiles);
-	Q_ASSERT(y>=0 && y < _ytiles);
+	Q_ASSERT(x>=0 && x < m_xtiles);
+	Q_ASSERT(y>=0 && y < m_ytiles);
 
-	_dirtytiles.setBit(y*_xtiles + x);
+	m_dirtytiles.setBit(y*m_xtiles + x);
 
-	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::markDirty(int index)
 {
-	Q_ASSERT(index>=0 && index < _dirtytiles.size());
+	Q_ASSERT(index>=0 && index < m_dirtytiles.size());
 
-	_dirtytiles.setBit(index);
+	m_dirtytiles.setBit(index);
 
-	const int y = index / _xtiles;
-	const int x = index % _xtiles;
+	const int y = index / m_xtiles;
+	const int x = index % m_xtiles;
 
-	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
 void LayerStack::notifyAreaChanged()
 {
-	if(!_dirtyrect.isEmpty()) {
-		emit areaChanged(_dirtyrect);
-		_dirtyrect = QRect();
+	if(!m_dirtyrect.isEmpty()) {
+		emit areaChanged(m_dirtyrect);
+		m_dirtyrect = QRect();
 	}
 }
 
@@ -551,8 +568,8 @@ void LayerStack::notifyLayerInfoChange(const Layer *layer)
 
 void LayerStack::setViewMode(ViewMode mode)
 {
-	if(mode != _viewmode) {
-		_viewmode = mode;
+	if(mode != m_viewmode) {
+		m_viewmode = mode;
 		markDirty();
 	}
 }
@@ -561,8 +578,8 @@ void LayerStack::setViewLayer(int id)
 {
 	for(int i=0;i<m_layers.size();++i) {
 		if(m_layers.at(i)->id() == id) {
-			_viewlayeridx = i;
-			if(_viewmode != NORMAL)
+			m_viewlayeridx = i;
+			if(m_viewmode != NORMAL)
 				markDirty();
 			break;
 		}
@@ -571,18 +588,18 @@ void LayerStack::setViewLayer(int id)
 
 void LayerStack::setOnionskinMode(int below, int above, bool tint)
 {
-	_onionskinsBelow = below;
-	_onionskinsAbove = above;
-	_onionskinTint = tint;
+	m_onionskinsBelow = below;
+	m_onionskinsAbove = above;
+	m_onionskinTint = tint;
 
-	if(_viewmode==ONIONSKIN)
+	if(m_viewmode==ONIONSKIN)
 		markDirty();
 }
 
 void LayerStack::setViewBackgroundLayer(bool usebg)
 {
-	_viewBackgroundLayer = usebg;
-	if(_viewmode != NORMAL)
+	m_viewBackgroundLayer = usebg;
+	if(m_viewmode != NORMAL)
 		markDirty();
 }
 
@@ -591,16 +608,16 @@ int LayerStack::layerOpacity(int idx) const
 	Q_ASSERT(idx>=0 && idx < m_layers.size());
 	int o = m_layers.at(idx)->opacity();
 
-	if(_viewBackgroundLayer && idx==0)
+	if(m_viewBackgroundLayer && idx==0)
 		return o;
 
 	if(viewMode()==ONIONSKIN) {
-		const int d = _viewlayeridx - idx;
+		const int d = m_viewlayeridx - idx;
 		qreal rd;
-		if(d<0 && d>=-_onionskinsAbove)
-			rd = -d/qreal(_onionskinsAbove+1);
-		else if(d>=0 && d <=_onionskinsBelow)
-			rd = d/qreal(_onionskinsBelow+1);
+		if(d<0 && d>=-m_onionskinsAbove)
+			rd = -d/qreal(m_onionskinsAbove+1);
+		else if(d>=0 && d <=m_onionskinsBelow)
+			rd = d/qreal(m_onionskinsBelow+1);
 		else
 			return 0;
 
@@ -612,13 +629,13 @@ int LayerStack::layerOpacity(int idx) const
 
 quint32 LayerStack::layerTint(int idx) const
 {
-	if(_onionskinTint && viewMode() == ONIONSKIN) {
-		if(idx==0 && _viewBackgroundLayer)
+	if(m_onionskinTint && viewMode() == ONIONSKIN) {
+		if(idx==0 && m_viewBackgroundLayer)
 			return 0;
 
-		if(idx < _viewlayeridx)
+		if(idx < m_viewlayeridx)
 			return 0x80ff3333;
-		else if(idx > _viewlayeridx)
+		else if(idx > m_viewlayeridx)
 			return 0x803333ff;
 	}
 
@@ -631,11 +648,11 @@ bool LayerStack::isVisible(int idx) const
 	if(!m_layers.at(idx)->isVisible())
 		return false;
 
-	if(idx==0 && _viewBackgroundLayer)
+	if(idx==0 && m_viewBackgroundLayer)
 		return true;
 	switch(viewMode()) {
 	case NORMAL: break;
-	case SOLO: return idx == _viewlayeridx;
+	case SOLO: return idx == m_viewlayeridx;
 	case ONIONSKIN: return layerOpacity(idx) > 0;
 	}
 
@@ -658,31 +675,32 @@ Savepoint *LayerStack::makeSavepoint()
 
 	sp->annotations = m_annotations->getAnnotations();
 
-	sp->width = _width;
-	sp->height = _height;
+	sp->width = m_width;
+	sp->height = m_height;
 
 	return sp;
 }
 
 void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 {
-	const QSize oldsize(_width, _height);
-	if(_width != savepoint->width || _height != savepoint->height) {
+	const QSize oldsize(m_width, m_height);
+	if(m_width != savepoint->width || m_height != savepoint->height) {
 		// Restore canvas size if it was different in the savepoint
-		_width = savepoint->width;
-		_height = savepoint->height;
-		_xtiles = Tile::roundTiles(_width);
-		_ytiles = Tile::roundTiles(_height);
-		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
+		m_width = savepoint->width;
+		m_height = savepoint->height;
+		m_xtiles = Tile::roundTiles(m_width);
+		m_ytiles = Tile::roundTiles(m_height);
+		m_dirtytiles = QBitArray(m_xtiles*m_ytiles, true);
 		emit resized(0, 0, oldsize);
+
 	} else {
 		// Mark changed tiles as changed. Usually savepoints are quite close together
 		// so most tiles will remain unchanged
 		if(savepoint->layers.size() != m_layers.size()) {
 			// Layers added or deleted, just refresh everything
 			// (force refresh even if layer stack is empty)
-			_dirtytiles.fill(true);
-			_dirtyrect = QRect(0, 0, _width, _height);
+			m_dirtytiles.fill(true);
+			m_dirtyrect = QRect(0, 0, m_width, m_height);
 
 		} else {
 			// Layer count has not changed, compare layer contents
@@ -694,7 +712,7 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 					markDirty();
 					break;
 				}
-				for(int i=0;i<_xtiles*_ytiles;++i) {
+				for(int i=0;i<m_xtiles*m_ytiles;++i) {
 					// Note: An identity comparison works here, because the tiles
 					// utilize copy-on-write semantics. Unchanged tiles will share
 					// data pointers between savepoints.

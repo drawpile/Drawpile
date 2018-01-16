@@ -62,7 +62,7 @@ class Layer {
 		Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size);
 
 		//! Construct a copy of this layer
-		Layer(const Layer &layer);
+		Layer(const Layer &layer, LayerStack *newOwner=nullptr);
 
 		~Layer();
 

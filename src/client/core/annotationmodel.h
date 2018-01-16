@@ -1,7 +1,7 @@
 /*
   Drawpile - a collaborative drawing program.
 
-  Copyright (C) 2015-2017 Calle Laakkonen
+  Copyright (C) 2015-2018 Calle Laakkonen
 
   Drawpile is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -83,6 +83,8 @@ public:
 
 	explicit AnnotationModel(QObject *parent=nullptr);
 
+	AnnotationModel *clone(QObject *newParent=nullptr) const { return new AnnotationModel(this, newParent); }
+
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 
@@ -112,6 +114,8 @@ public:
 	void clear();
 
 private:
+	AnnotationModel(const AnnotationModel *orig, QObject *newParent);
+
 	int findById(int id) const;
 
 	QList<Annotation> m_annotations;

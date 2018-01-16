@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,8 +50,11 @@ public:
 		ONIONSKIN // show view layer + few layers below it with decreasing opacity
 	};
 
-	LayerStack(QObject *parent=0);
+	LayerStack(QObject *parent=nullptr);
 	~LayerStack();
+
+	//! Return a copy of this LayerStack
+	LayerStack *clone(QObject *newParent=nullptr) const { return new LayerStack(this, newParent); }
 
 	//! Adjust layer stack size
 	void resize(int top, int right, int bottom, int left);
@@ -91,13 +94,13 @@ public:
 	int indexOf(int id) const;
 
 	//! Get the width of the layer stack
-	int width() const { return _width; }
+	int width() const { return m_width; }
 
 	//! Get the height of the layer stack
-	int height() const { return _height; }
+	int height() const { return m_height; }
 
 	//! Get the width and height of the layer stack
-	QSize size() const { return QSize(_width, _height); }
+	QSize size() const { return QSize(m_width, m_height); }
 
 	//! Paint all changed tiles in the given area
 	void paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean=true);
@@ -144,7 +147,7 @@ public:
 	//! Set layer view mode
 	void setViewMode(ViewMode mode);
 
-	ViewMode viewMode() const { return _viewmode; }
+	ViewMode viewMode() const { return m_viewmode; }
 
 	//! Set the selected layer (used by view modes other than NORMAL)
 	void setViewLayer(int id);
@@ -181,6 +184,8 @@ signals:
 	void layersChanged(const QList<LayerInfo> &layers);
 
 private:
+	LayerStack(const LayerStack *orig, QObject *parent);
+
 	void flattenTile(quint32 *data, int xindex, int yindex) const;
 
 	bool isVisible(int idx) const;
@@ -189,19 +194,19 @@ private:
 
 	QList<LayerInfo> layerInfos() const;
 
-	int _width, _height;
-	int _xtiles, _ytiles;
+	int m_width, m_height;
+	int m_xtiles, m_ytiles;
 	QList<Layer*> m_layers;
 	AnnotationModel *m_annotations;
 
-	QBitArray _dirtytiles;
-	QRect _dirtyrect;
+	QBitArray m_dirtytiles;
+	QRect m_dirtyrect;
 
-	ViewMode _viewmode;
-	int _viewlayeridx;
-	int _onionskinsBelow, _onionskinsAbove;
-	bool _onionskinTint;
-	bool _viewBackgroundLayer;
+	ViewMode m_viewmode;
+	int m_viewlayeridx;
+	int m_onionskinsBelow, m_onionskinsAbove;
+	bool m_onionskinTint;
+	bool m_viewBackgroundLayer;
 };
 
 /// Layer stack savepoint for undo use

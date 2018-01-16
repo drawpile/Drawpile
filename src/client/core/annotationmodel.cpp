@@ -1,7 +1,7 @@
 /*
   Drawpile - a collaborative drawing program.
 
-  Copyright (C) 2015-2017 Calle Laakkonen
+  Copyright (C) 2015-2018 Calle Laakkonen
 
   Drawpile is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,13 +22,18 @@
 #include <QTextDocument>
 #include <QPainter>
 #include <QImage>
-#include <QSet> // for old-style change notifications
 
 namespace paintcore {
 
 AnnotationModel::AnnotationModel(QObject *parent)
 	: QAbstractListModel(parent)
 {
+}
+
+AnnotationModel::AnnotationModel(const AnnotationModel *orig, QObject *newParent)
+	: QAbstractListModel(newParent)
+{
+	m_annotations = orig->m_annotations;
 }
 
 int AnnotationModel::rowCount(const QModelIndex &parent) const
