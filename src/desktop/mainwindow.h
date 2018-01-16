@@ -108,8 +108,8 @@ public slots:
 	void showNew();
 	void open();
 	void open(const QUrl &url);
-	bool save();
-	bool saveas();
+	void save();
+	void saveas();
 	void exportAnimation();
 	void showFlipbook();
 
@@ -174,6 +174,8 @@ private slots:
 	void updateTitle();
 
 	void onCanvasChanged(canvas::CanvasModel *canvas);
+	void onCanvasSaveStarted();
+	void onCanvasSaved(const QString &errorMessage);
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -217,7 +219,7 @@ private:
 
 	widgets::CanvasView *_view;
 
-	QStatusBar *_viewStatusBar;
+	QStatusBar *m_viewStatusBar;
 	QLabel *_lockstatus;
 	QLabel *_recorderstatus;
 	widgets::NetStatus *m_netstatus;
@@ -250,6 +252,7 @@ private:
 	ShortcutDetector *_tempToolSwitchShortcut;
 
 	Document *m_doc;
+	bool m_exitAfterSave;
 };
 
 #endif

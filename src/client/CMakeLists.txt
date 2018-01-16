@@ -28,6 +28,7 @@ set (
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
 	canvas/history.cpp
+	canvas/canvassaverrunnable.cpp
 	net/client.cpp
 	net/server.cpp
 	net/loopbackserver.cpp

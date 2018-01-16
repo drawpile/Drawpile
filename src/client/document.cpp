@@ -28,6 +28,7 @@
 #include "canvas/aclfilter.h"
 #include "canvas/loader.h"
 #include "canvas/userlist.h"
+#include "canvas/canvassaverrunnable.h"
 #include "tools/toolcontroller.h"
 #include "utils/settings.h"
 #include "utils/images.h"
@@ -47,6 +48,7 @@
 #include <QTimer>
 #include <QDir>
 #include <QClipboard>
+#include <QThreadPool>
 
 Document::Document(QObject *parent)
 	: QObject(parent),
@@ -56,6 +58,7 @@ Document::Document(QObject *parent)
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
+	  m_saveInProgress(false),
 	  m_sessionPersistent(false),
 	  m_sessionClosed(false),
 	  m_sessionPreserveChat(false),
@@ -315,7 +318,7 @@ void Document::setRoomcode(const QString &roomcode)
 void Document::setAutosave(bool autosave)
 {
 	if(autosave && !canAutosave()) {
-		qWarning("Can't' to autosave");
+		qWarning("Can't autosave");
 		return;
 	}
 
@@ -335,7 +338,7 @@ void Document::setCurrentFilename(const QString &filename)
 		m_currentFilename = filename;
 		emit currentFilenameChanged(filename);
 
-		bool couldAutosave = m_canAutosave;
+		const bool couldAutosave = m_canAutosave;
 		m_canAutosave = utils::isWritableFormat(m_currentFilename);
 		if(couldAutosave != m_canAutosave)
 			emit canAutosaveChanged(m_canAutosave);
@@ -375,38 +378,47 @@ QString Document::sessionTitle() const
 void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
-		int autosaveInterval = qMax(0, QSettings().value("settings/autosave", 5000).toInt());
+		const int autosaveInterval = qMax(0, QSettings().value("settings/autosave", 5000).toInt());
 		m_autosaveTimer->start(autosaveInterval);
 	}
 }
 
 void Document::autosaveNow()
 {
-	if(!isDirty() || !isAutosave())
+	if(!isDirty() || !isAutosave() || m_saveInProgress)
 		return;
 
 	Q_ASSERT(utils::isWritableFormat(currentFilename()));
 
-	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	QString errorMessage;
-	const bool saved = m_canvas->save(currentFilename(), &errorMessage);
-	QGuiApplication::restoreOverrideCursor();
-
-	if(saved)
-		unmarkDirty();
-	else
-		qWarning("Error autosaving: %s", qPrintable(errorMessage));
+	saveCanvas();
 }
 
-bool Document::saveCanvas(const QString &filename, QString *errorMessage)
+void Document::saveCanvas(const QString &filename)
 {
-	if(m_canvas->save(filename, errorMessage)) {
-		setCurrentFilename(filename);
-		unmarkDirty();
-		return true;
-	}
+	setCurrentFilename(filename);
+	saveCanvas();
+}
 
-	return false;
+void Document::saveCanvas()
+{
+	Q_ASSERT(!m_saveInProgress);
+	m_saveInProgress = true;
+
+	auto *saver = new canvas::CanvasSaverRunnable(m_canvas, m_currentFilename);
+	unmarkDirty();
+	connect(saver, &canvas::CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
+	emit canvasSaveStarted();
+	QThreadPool::globalInstance()->start(saver);
+}
+
+void Document::onCanvasSaved(const QString &errorMessage)
+{
+	m_saveInProgress = false;
+
+	if(!errorMessage.isEmpty())
+		markDirty();
+
+	emit canvasSaved(errorMessage);
 }
 
 bool Document::startRecording(const QString &filename, QString *error)

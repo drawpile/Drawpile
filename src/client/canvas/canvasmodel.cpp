@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
-#include <QImageWriter>
 
 namespace canvas {
 
@@ -181,24 +180,6 @@ QImage CanvasModel::toImage() const
 bool CanvasModel::needsOpenRaster() const
 {
 	return m_layerstack->layerCount() > 1 || !m_layerstack->annotations()->isEmpty();
-}
-
-bool CanvasModel::save(const QString &filename, QString *errorMessage) const
-{
-	if(filename.endsWith(".ora", Qt::CaseInsensitive)) {
-		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(filename, m_layerstack, errorMessage);
-
-	} else {
-		// Regular image formats: flatten the image first.
-		QImageWriter writer(filename);
-		if(!writer.write(toImage())) {
-			if(errorMessage)
-				*errorMessage = writer.errorString();
-			return false;
-		}
-		return true;
-	}
 }
 
 QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const

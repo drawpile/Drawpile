@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,6 @@ public:
 
 	bool needsOpenRaster() const;
 	QImage toImage() const;
-	bool save(const QString &filename, QString *errorMessage) const;
 
 	QList<protocol::MessagePtr> generateSnapshot(bool forceNew) const;
 

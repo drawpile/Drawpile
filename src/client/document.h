@@ -107,13 +107,14 @@ public:
 	/**
 	 * @brief Save the canvas content
 	 *
-	 * Saving sets the current filename and marks the document as not dirty
+	 * Saving is done in a background thread. The signal `canvasSaved`
+	 * is emitted when saving completes.
 	 *
 	 * @param filename the file to save to
 	 * @param errorMessage if not null, error message is stored here
-	 * @return true on success
 	 */
-	bool saveCanvas(const QString &filename, QString *errorMessage);
+	void saveCanvas(const QString &filename);
+	bool isSaveInProgress() const { return m_saveInProgress; }
 
 	void setAutosave(bool autosave);
 	bool isAutosave() const { return m_autosave; }
@@ -169,6 +170,9 @@ signals:
 
 	void catchupProgress(int perent);
 
+	void canvasSaveStarted();
+	void canvasSaved(const QString &errorMessage);
+
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
@@ -215,7 +219,10 @@ private slots:
 	void unmarkDirty();
 
 	void autosaveNow();
+	void onCanvasSaved(const QString &errorMessage);
+
 private:
+	void saveCanvas();
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
@@ -247,6 +254,7 @@ private:
 	bool m_dirty;
 	bool m_autosave;
 	bool m_canAutosave;
+	bool m_saveInProgress;
 	QTimer *m_autosaveTimer;
 
 	QString m_roomcode;

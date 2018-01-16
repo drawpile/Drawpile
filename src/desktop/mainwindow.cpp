@@ -141,12 +141,15 @@ void setLastPath(const QString &lastpath) {
 
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), m_playbackDialog(nullptr),
-	  _canvasscene(0), _lastToolBeforePaste(-1)
+	  _canvasscene(nullptr), _lastToolBeforePaste(-1),
+	  m_exitAfterSave(false)
 {
 	// The document (initially empty)
 	m_doc = new Document(this);
 
 	connect(m_doc, &Document::canvasChanged, this, &MainWindow::onCanvasChanged);
+	connect(m_doc, &Document::canvasSaveStarted, this, &MainWindow::onCanvasSaveStarted);
+	connect(m_doc, &Document::canvasSaved, this, &MainWindow::onCanvasSaved);
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
@@ -193,9 +196,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	mainwinlayout->addWidget(_splitter);
 
 	// Create custom status bar
-	_viewStatusBar = new QStatusBar;
-	_viewStatusBar->setSizeGripEnabled(false);
-	mainwinlayout->addWidget(_viewStatusBar);
+	m_viewStatusBar = new QStatusBar;
+	m_viewStatusBar->setSizeGripEnabled(false);
+	mainwinlayout->addWidget(m_viewStatusBar);
 
 	// Create status indicator widgets
 	_viewstatus = new widgets::ViewStatus(this);
@@ -212,11 +215,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_statusChatButton->setAutoRaise(true);
 	_statusChatButton->setIcon(QIcon("builtin:chat.svg"));
 	_statusChatButton->hide();
-	_viewStatusBar->addWidget(_statusChatButton);
+	m_viewStatusBar->addWidget(_statusChatButton);
 
 	// Statusbar session size label
 	QLabel *sessionHistorySize = new QLabel(this);
-	_viewStatusBar->addWidget(sessionHistorySize);
+	m_viewStatusBar->addWidget(sessionHistorySize);
 
 #ifndef NDEBUG
 	// Debugging tool: show amount of memory consumed by tiles
@@ -228,14 +231,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		});
 		tilememtimer->setInterval(1000);
 		tilememtimer->start(1000);
-		_viewStatusBar->addPermanentWidget(tilemem);
+		m_viewStatusBar->addPermanentWidget(tilemem);
 	}
 #endif
 
-	_viewStatusBar->addPermanentWidget(_viewstatus);
-	_viewStatusBar->addPermanentWidget(m_netstatus);
-	_viewStatusBar->addPermanentWidget(_recorderstatus);
-	_viewStatusBar->addPermanentWidget(_lockstatus);
+	m_viewStatusBar->addPermanentWidget(_viewstatus);
+	m_viewStatusBar->addPermanentWidget(m_netstatus);
+	m_viewStatusBar->addPermanentWidget(_recorderstatus);
+	m_viewStatusBar->addPermanentWidget(_lockstatus);
 
 	int SPLITTER_WIDGET_IDX = 0;
 
@@ -739,6 +742,13 @@ void MainWindow::writeSettings()
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	if(m_doc->isSaveInProgress()) {
+		// Don't quit while save is in progress
+		m_exitAfterSave = true;
+		event->ignore();
+		return;
+	}
+
 	if(canReplace() == false) {
 
 		// First confirm disconnection
@@ -780,8 +790,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			box.exec();
 			bool cancel = false;
 			// Save and exit, or cancel exit if couldn't save.
-			if(box.clickedButton() == savebtn)
-				cancel = !save();
+			if(box.clickedButton() == savebtn) {
+				cancel = true;
+				m_exitAfterSave = true;
+				save();
+			}
 
 			// Cancel exit
 			if(box.clickedButton() == cancelbtn || cancel) {
@@ -796,7 +809,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::event(QEvent *event)
 {
 	if(event->type() == QEvent::StatusTip) {
-		_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
+		m_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
 		return true;
 	} else {
 		// Monitor key-up events to switch back from temporary tools/tool slots.
@@ -963,42 +976,37 @@ bool MainWindow::confirmFlatten(QString& file) const
 /**
  * If no file name has been selected, \a saveas is called.
  */
-bool MainWindow::save()
+void MainWindow::save()
 {
 	QString filename = m_doc->currentFilename();
 
-	if(filename.isEmpty())
-		return saveas();
+	if(filename.isEmpty()) {
+		saveas();
+		return;
+	}
 
-	if(!utils::isWritableFormat(filename))
-		return saveas();
+	if(!utils::isWritableFormat(filename)) {
+		saveas();
+		return;
+	}
 
 	if(!filename.endsWith("ora", Qt::CaseInsensitive) && m_doc->canvas()->needsOpenRaster()) {
 		// Note: the user may decide to save an ORA file instead, in which case the name is changed
 		if(confirmFlatten(filename)==false)
-			return false;
+			return;
 	}
 
 	// Overwrite current file
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	QString errorMessage;
-	const bool saved = m_doc->saveCanvas(filename, &errorMessage);
-	QApplication::restoreOverrideCursor();
-
-	if(!saved) {
-		showErrorMessage(tr("Couldn't save image"), errorMessage);
-		return false;
-	}
+	m_doc->saveCanvas(filename);
 
 	addRecentFile(filename);
-	return true;
 }
 
 /**
  * A standard file dialog is used to get the name of the file to save.
  * If no suffix is the suffix from the current filter is used.
  */
-bool MainWindow::saveas()
+void MainWindow::saveas()
 {
 	QString selfilter;
 	QStringList filter;
@@ -1034,26 +1042,44 @@ bool MainWindow::saveas()
 		// Confirm format choice if saving would result in flattening layers
 		if(m_doc->canvas()->needsOpenRaster() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
 			if(confirmFlatten(file)==false)
-				return false;
+				return;
 		}
 
 		// Save the image
-		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		QString errorMessage;
-		const bool saved = m_doc->saveCanvas(file, &errorMessage);
-		QApplication::restoreOverrideCursor();
-
-		if(!saved) {
-			showErrorMessage(tr("Couldn't save image"), errorMessage);
-			return false;
-		} else {
-			setWindowModified(false);
-			updateTitle();
-			addRecentFile(file);
-			return true;
-		}
+		m_doc->saveCanvas(file);
+		addRecentFile(file);
 	}
-	return false;
+}
+
+void MainWindow::onCanvasSaveStarted()
+{
+	QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+	getAction("savedocument")->setEnabled(false);
+	getAction("savedocumentas")->setEnabled(false);
+	m_viewStatusBar->showMessage(tr("Saving..."));
+
+}
+
+void MainWindow::onCanvasSaved(const QString &errorMessage)
+{
+	QApplication::restoreOverrideCursor();
+	getAction("savedocument")->setEnabled(true);
+	getAction("savedocumentas")->setEnabled(true);
+
+	setWindowModified(m_doc->isDirty());
+	updateTitle();
+
+	if(!errorMessage.isEmpty())
+		showErrorMessage(tr("Couldn't save image"), errorMessage);
+	else
+		m_viewStatusBar->showMessage(tr("Image saved"), 1000);
+
+	// Cancel exit if canvas is modified while it was being saved
+	if(m_doc->isDirty())
+		m_exitAfterSave = false;
+
+	if(m_exitAfterSave)
+		close();
 }
 
 void MainWindow::exportAnimation()
@@ -1614,7 +1640,7 @@ void MainWindow::toggleFullscreen()
 
 		// Hide everything except floating docks
 		menuBar()->hide();
-		_viewStatusBar->hide();
+		m_viewStatusBar->hide();
 		_view->setFrameShape(QFrame::NoFrame);
 		for(QObject *child : children()) {
 			if(child->inherits("QDockWidget")) {
@@ -1636,7 +1662,7 @@ void MainWindow::toggleFullscreen()
 			setGeometry(m_fullscreenOldGeometry);
 		}
 		menuBar()->show();
-		_viewStatusBar->show();
+		m_viewStatusBar->show();
 		_view->setFrameShape(QFrame::StyledPanel);
 		restoreState(m_fullscreenOldState);
 	}
