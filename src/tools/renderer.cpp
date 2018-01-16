@@ -147,7 +147,9 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 
 	// Benchmarking
 	QElapsedTimer renderTime;
+	QElapsedTimer saveTime;
 	qint64 totalRenderTime = 0;
+	qint64 totalSaveTime = 0;
 
 	// Prepare image exporter
 	ExportState exportState {
@@ -195,8 +197,10 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 
 				if(exportCounter >= settings.exportEveryN) {
 					exportCounter = 0;
+					saveTime.start();
 					if(!saveImage(settings, image, exportState))
 						return false;
+					totalSaveTime += saveTime.nsecsElapsed();
 				}
 			}
 
@@ -213,8 +217,12 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 	fprintf(stderr, "[I] Total render time: %s\n", qPrintable(prettyDuration(totalRenderTime)));
 
 	// Save the final result
+	saveTime.start();
 	if(!saveImage(settings, image, exportState))
 		return false;
+	totalSaveTime += saveTime.nsecsElapsed();
+
+	fprintf(stderr, "[I] Total saving time: %s\n", qPrintable(prettyDuration(totalSaveTime)));
 
 	return true;
 }
