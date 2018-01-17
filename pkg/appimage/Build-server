@@ -15,17 +15,11 @@ BUILDDIR=/build
 APPDIR=/Drawpile.AppDir
 APPIMGKIT=/AppImageKit-master
 
-# Copy source code to work dir and apply appimage specific patches
-mkdir -p $WORKDIR
-cp -r ${SRCDIR}/* $WORKDIR
-cd $WORKDIR
-git apply pkg/appimage/appimage.patch
-
 # Build server
 mkdir -p $BUILDDIR
 mkdir -p $APPDIR
 cd $BUILDDIR
-cmake3 $WORKDIR -DSERVER=ON -DCLIENT=OFF -DSERVERGUI=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+cmake3 $SRCDIR -DSERVER=ON -DCLIENT=OFF -DSERVERGUI=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
 
 # Install only the required server parts
@@ -52,7 +46,7 @@ ldd usr/bin/drawpile-srv | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '
 cd usr/ ; find . -type f -exec sed -i -e 's|/usr/lib|././/lib|g' {} \; ; cd ..
 
 # Remove blacklisted libs
-BLACKLISTED_FILES=$(wget -q https://github.com/probonopd/AppImages/raw/master/excludelist -O - | sed '/^\s*$/d' | sed '/^#.*$/d')
+BLACKLISTED_FILES=$(sed '/^\s*$/d' $SRCDIR/pkg/appimage/excludelist | sed '/^#.*$/d')
 for FILE in $BLACKLISTED_FILES ; do
 	FOUND=$(find . -type f -name "${FILE}" 2>/dev/null)
 	if [ ! -z "$FOUND" ] ; then

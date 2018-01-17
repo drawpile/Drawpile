@@ -19,7 +19,7 @@ APPIMGKIT=/AppImageKit-master
 mkdir -p $WORKDIR
 cp -r ${SRCDIR}/* $WORKDIR
 cd $WORKDIR
-git apply pkg/appimage/appimage.patch
+git apply pkg/appimage/appimage-client.patch
 
 # Build the client
 mkdir -p $BUILDDIR
@@ -53,7 +53,7 @@ ldd usr/lib/qt5/plugins/platforms/libqxcb.so | grep "=>" | awk '{print $3}' | xa
 cd usr/ ; find . -type f -exec sed -i -e 's|/usr/lib|././/lib|g' {} \; ; cd ..
 
 # Remove blacklisted libs
-BLACKLISTED_FILES=$(wget -q https://github.com/probonopd/AppImages/raw/master/excludelist -O - | sed '/^\s*$/d' | sed '/^#.*$/d')
+BLACKLISTED_FILES=$(sed '/^\s*$/d' $SRCDIR/pkg/appimage/excludelist | sed '/^#.*$/d')
 for FILE in $BLACKLISTED_FILES ; do
 	FOUND=$(find . -type f -name "${FILE}" 2>/dev/null)
 	if [ ! -z "$FOUND" ] ; then
