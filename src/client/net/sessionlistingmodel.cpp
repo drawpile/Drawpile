@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 namespace sessionlisting {
 
 SessionListingModel::SessionListingModel(QObject *parent)
-	: QAbstractTableModel(parent), m_nsfm(false)
+	: QAbstractTableModel(parent), m_nsfmCount(0), m_nsfm(false), m_showPassworded(true)
 {
 }
 
@@ -144,12 +144,24 @@ void SessionListingModel::setShowNsfm(bool nsfm)
 	}
 }
 
+void SessionListingModel::setShowPassworded(bool show)
+{
+	if(m_showPassworded != show) {
+		m_showPassworded = show;
+		if(!m_sessions.isEmpty())
+			filterSessionList();
+	}
+}
+
 void SessionListingModel::filterSessionList()
 {
 	beginResetModel();
 	m_filtered.clear();
+	m_nsfmCount = 0;
 	for(const sessionlisting::Session &s : m_sessions) {
-		if(!s.nsfm || m_nsfm)
+		if(s.nsfm)
+			++m_nsfmCount;
+		if((!s.nsfm || m_nsfm) && (!s.password || m_showPassworded))
 			m_filtered << s;
 	}
 	endResetModel();

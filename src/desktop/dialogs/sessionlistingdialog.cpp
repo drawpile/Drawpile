@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	m_sessions = new sessionlisting::SessionListingModel(this);
 	m_sessions->setShowNsfm(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
 
+	connect(m_ui->showPassworded, &QCheckBox::toggled, m_sessions, &sessionlisting::SessionListingModel::setShowPassworded);
+
 #ifdef HAVE_DNSSD
 	m_localServers = new ServerDiscoveryModel(this);
 #endif
@@ -65,7 +67,7 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	connect(m_apiClient, &sessionlisting::AnnouncementApi::sessionListReceived, [this](QList<sessionlisting::Session> list) {
 		m_ui->liststack->setCurrentIndex(0);
 		m_sessions->setList(list);
-		int filtered = m_sessions->filteredCount();
+		const int filtered = m_sessions->showNsfm() ? 0 : m_sessions->nsfmCount();
 		if(filtered>0) {
 			QString label = tr("%n age restricted session(s) hidden.", "", filtered);
 			if(!parentalcontrols::isLocked())

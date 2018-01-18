@@ -94,6 +94,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="showPassworded">
+     <property name="text">
+      <string>Show password protected sessions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="nsfmSessionsLabel">
      <property name="text">
       <string notr="true">(age restricted session notice)</string>

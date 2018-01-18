@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 
 namespace sessionlisting {
 
+/**
+ * @brief List of sessions received from a listing server
+ */
 class SessionListingModel : public QAbstractTableModel
 {
 	Q_OBJECT
@@ -38,13 +41,17 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
+	int nsfmCount() const { return m_nsfmCount; }
+
+	bool showNsfm() const { return m_nsfm; }
+	bool showPassworded() const { return m_showPassworded; }
 
 	void clear();
 
 public slots:
 	void setList(const QList<Session> sessions);
 	void setShowNsfm(bool nsfm);
+	void setShowPassworded(bool show);
 
 private:
 	void filterSessionList();
@@ -52,7 +59,9 @@ private:
 
 	QList<Session> m_filtered;
 	QList<Session> m_sessions;
+	int m_nsfmCount;
 	bool m_nsfm;
+	bool m_showPassworded;
 };
 
 }
