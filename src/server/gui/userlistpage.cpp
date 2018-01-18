@@ -92,7 +92,7 @@ void UserListPage::handleResponse(const QString &requestId, const JsonApiResult 
 	if(requestId != REQ_ID)
 		return;
 
-	d->userlist->setUserList(result.body.array());
+	d->userlist->setList(result.body.array());
 }
 
 }

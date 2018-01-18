@@ -78,6 +78,14 @@ Get detailed information about a session: `GET /sessions/:id/`
                 "mod": true/false (is a moderator),
                 "tls": true/false (is using a secure connection)
             }, ...
+        ],
+        "listing": [
+            {
+                "id": listing entry ID number,
+                "url": "listing server URL",
+                "roomcode": "room code",
+                "private": true/false
+            }, ...
         ]
     }
 

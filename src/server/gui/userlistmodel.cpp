@@ -25,69 +25,20 @@ namespace server {
 namespace gui {
 
 UserListModel::UserListModel(QObject *parent)
-	: QAbstractTableModel(parent)
+	: JsonListModel(
+	{
+		{"session", tr("Session")},
+		{"id", tr("ID")},
+		{"name", tr("Name")},
+		{"address", tr("Features")},
+		{"features", tr("Features")}
+	}, parent)
 {
 }
 
-void UserListModel::setUserList(const QJsonArray &users)
+QVariant UserListModel::getData(const QString &key, const QJsonObject &u) const
 {
-	beginResetModel();
-	m_users = users;
-	endResetModel();
-}
-
-int UserListModel::columnCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return 5;
-}
-
-QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	if(orientation != Qt::Horizontal)
-		return QVariant();
-
-	if(role != Qt::DisplayRole)
-		return QVariant();
-
-	switch(section) {
-	case 0: return tr("Session");
-	case 1: return tr("ID");
-	case 2: return tr("Name");
-	case 3: return tr("Address");
-	case 4: return tr("Features");
-	}
-
-	return QVariant();
-}
-
-int UserListModel::rowCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return m_users.size();
-}
-
-QVariant UserListModel::data(const QModelIndex &index, int role) const
-{
-	if(!index.isValid() || index.row()<0 || index.row()>=m_users.size())
-		return QVariant();
-
-	if(role == Qt::UserRole)
-		return m_users.at(index.row()).toObject()["id"].toInt();
-
-	if(role != Qt::DisplayRole)
-		return QVariant();
-
-	QJsonObject u = m_users.at(index.row()).toObject();
-
-	switch(index.column()) {
-	case 0: return u["session"].toString();
-	case 1: return u["id"].toInt();
-	case 2: return u["name"].toString();
-	case 3: return u["ip"].toString();
-	case 4: {
+	if(key == "features") {
 		QStringList f;
 		if(u["op"].toBool())
 			f << "OP";
@@ -98,10 +49,10 @@ QVariant UserListModel::data(const QModelIndex &index, int role) const
 		if(u["secure"].toBool())
 			f << "TLS";
 		return f.join(", ");
-	}
-	}
 
-	return QVariant();
+	} else {
+		return u[key];
+	}
 }
 
 }

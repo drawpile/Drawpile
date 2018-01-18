@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,32 +20,22 @@
 #ifndef ACCOUNTLISTMODEL_H
 #define ACCOUNTLISTMODEL_H
 
-#include <QAbstractTableModel>
-#include <QJsonArray>
+#include "jsonlistmodel.h"
 
 namespace server {
 namespace gui {
 
-class AccountListModel : public QAbstractTableModel
+class AccountListModel : public JsonListModel
 {
 	Q_OBJECT
 public:
 	explicit AccountListModel(QObject *parent=nullptr);
 
-	void setAccountList(const QJsonArray &accounts);
 	void addAccount(const QJsonObject &entry);
 	void updateAccount(const QJsonObject &entry);
 	void removeAccount(int id);
 
-	QJsonObject accountAt(int row) const;
-
-	int rowCount(const QModelIndex &parent) const override;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
-private:
-	QJsonArray m_accountlist;
 };
 
 }

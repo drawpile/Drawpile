@@ -20,27 +20,18 @@
 #ifndef USERLISTMODEL_H
 #define USERLISTMODEL_H
 
-#include <QAbstractTableModel>
-#include <QJsonArray>
-
+#include "jsonlistmodel.h"
 namespace server {
 namespace gui {
 
-class UserListModel : public QAbstractTableModel
+class UserListModel : public JsonListModel
 {
 	Q_OBJECT
 public:
 	explicit UserListModel(QObject *parent=nullptr);
 
-	void setUserList(const QJsonArray &users);
-
-	int rowCount(const QModelIndex &parent) const override;
-	int columnCount(const QModelIndex &parent) const override;
-	QVariant data(const QModelIndex &index, int role) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
-private:
-	QJsonArray m_users;
+protected:
+	QVariant getData(const QString &key, const QJsonObject &obj) const override;
 };
 
 }

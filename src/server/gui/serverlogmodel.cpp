@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,21 +19,27 @@
 
 #include "serverlogmodel.h"
 
-#include <QJsonArray>
 #include <QDebug>
 
 namespace server {
 namespace gui {
 
 ServerLogModel::ServerLogModel(QObject *parent)
-	: QAbstractTableModel(parent)
+	: JsonListModel({
+		{"timestamp", tr("Time")},
+		{"level", tr("Level")},
+		{"topic", tr("Topic")},
+		{"session", tr("Session")},
+		{"user", tr("User")},
+		{"message", tr("Message")},
+	}, parent)
 {
 }
 
 void ServerLogModel::addLogEntry(const QJsonObject &entry)
 {
 	beginInsertRows(QModelIndex(), 0, 0);
-	m_log << entry;
+	m_list << entry;
 	endInsertRows();
 }
 
@@ -44,68 +50,27 @@ void ServerLogModel::addLogEntries(const QJsonArray &entries)
 
 	beginInsertRows(QModelIndex(), 0, entries.size()-1);
 	for(int i=entries.size()-1;i>=0;--i)
-		m_log << entries[i].toObject();
+		m_list << entries[i].toObject();
 	endInsertRows();
 }
 
 QString ServerLogModel::lastTimestamp() const
 {
-	if(m_log.isEmpty())
+	if(m_list.isEmpty())
 		return QString();
-	return m_log.last().value("timestamp").toString();
-}
-
-int ServerLogModel::columnCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return 6;
-}
-
-QVariant ServerLogModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	if(orientation != Qt::Horizontal || role != Qt::DisplayRole)
-		return QVariant();
-
-	switch(section) {
-	case 0: return tr("Time");
-	case 1: return tr("Level");
-	case 2: return tr("Topic");
-	case 3: return tr("Session");
-	case 4: return tr("User");
-	case 5: return tr("Message");
-	}
-
-	return QVariant();
-}
-
-int ServerLogModel::rowCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return m_log.size();
+	return m_list.last().toObject().value("timestamp").toString();
 }
 
 QVariant ServerLogModel::data(const QModelIndex &index, int role) const
 {
-	if(!index.isValid() || index.row()<0 || index.row()>=m_log.size())
+	if(!index.isValid() || index.row()<0 || index.row()>=m_list.size())
 		return QVariant();
 
 	if(role != Qt::DisplayRole)
 		return QVariant();
 
-	const QJsonObject &o = m_log.at(m_log.size() - index.row() - 1);
-
-	switch(index.column()) {
-	case 0: return o["timestamp"].toString();
-	case 1: return o["level"].toString();
-	case 2: return o["topic"].toString();
-	case 3: return o["session"].toString();
-	case 4: return o["user"].toString();
-	case 5: return o["message"].toString();
-	}
-
-	return QVariant();
+	const QJsonObject &o = m_list.at(m_list.size() - index.row() - 1).toObject();
+	return o.value(m_columns[index.column()].key).toVariant();
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,29 +20,19 @@
 #ifndef SESSIONLISTMODEL_H
 #define SESSIONLISTMODEL_H
 
-#include <QAbstractTableModel>
-#include <QJsonArray>
+#include "jsonlistmodel.h"
 
 namespace server {
 namespace gui {
 
-class SessionListModel : public QAbstractTableModel
+class SessionListModel : public JsonListModel
 {
 	Q_OBJECT
 public:
 	explicit SessionListModel(QObject *parent=nullptr);
 
-	void setSessionList(const QJsonArray &sessions);
-
-	int rowCount(const QModelIndex &parent) const override;
-	int columnCount(const QModelIndex &parent) const override;
-	QVariant data(const QModelIndex &index, int role) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
-	const QJsonArray &sessionList() const { return m_sessions; }
-
-private:
-	QJsonArray m_sessions;
+protected:
+	QVariant getData(const QString &key, const QJsonObject &obj) const override;
 };
 
 }

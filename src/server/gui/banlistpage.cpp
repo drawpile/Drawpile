@@ -95,7 +95,7 @@ void BanListPage::handleResponse(const QString &requestId, const JsonApiResult &
 {
 	if(requestId == REQ_ID) {
 		if(result.status == JsonApiResult::Ok)
-			d->model->setBanList(result.body.array());
+			d->model->setList(result.body.array());
 
 	} else if(requestId == ADD_REQ_ID) {
 		if(result.status == JsonApiResult::BadRequest)

@@ -39,6 +39,7 @@ if(SERVERGUI)
 		gui/accountlistpage.cpp
 		gui/sessionpage.cpp
 		gui/subheaderwidget.cpp
+		gui/jsonlistmodel.cpp
 		gui/userlistmodel.cpp
 		gui/sessionlistmodel.cpp
 		gui/banlistmodel.cpp

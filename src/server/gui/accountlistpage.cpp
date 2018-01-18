@@ -101,7 +101,7 @@ void AccountListPage::handleResponse(const QString &requestId, const JsonApiResu
 {
 	if(requestId == REQ_ID) {
 		if(result.status == JsonApiResult::Ok)
-			d->model->setAccountList(result.body.array());
+			d->model->setList(result.body.array());
 
 	} else if(requestId == ADD_REQ_ID) {
 		if(result.status == JsonApiResult::BadRequest)
@@ -160,7 +160,7 @@ void AccountListPage::editSelectedAccount()
 	Ui_AccountDialog ui;
 	ui.setupUi(dlg);
 
-	const QJsonObject account = static_cast<const AccountListModel*>(d->view->model())->accountAt(sel.at(0).row());
+	const QJsonObject account = static_cast<const AccountListModel*>(d->view->model())->objectAt(sel.at(0).row());
 
 	ui.username->setText(account["username"].toString());
 	ui.locked->setChecked(account["locked"].toBool());

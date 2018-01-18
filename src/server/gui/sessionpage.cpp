@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,6 +50,9 @@ struct SessionPage::Private {
 
 	UserListModel *userlist;
 	QTableView *userview;
+
+	JsonListModel *announcementlist;
+	QTableView *announcementview;
 
 	QTimer *saveTimer, *refreshTimer;
 	QJsonObject lastUpdate;
@@ -109,6 +112,14 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	d->id = id;
 	d->refreshReqId = "refresh-" + id;
 	d->userlist = new UserListModel(this);
+
+	d->announcementlist = new JsonListModel({
+			{"id", tr("ID")},
+			{"url", tr("URL")},
+			{"roomcode", tr("Room code")},
+			{"private", tr("Private")},
+		}, this
+	);
 
 	d->saveTimer = new QTimer(this);
 	d->saveTimer->setSingleShot(true);
@@ -193,6 +204,28 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 		auto *messageBtn = new QPushButton(tr("Send message"));
 		connect(messageBtn, &QPushButton::clicked, this, &SessionPage::sendUserMessage);
 		buttons->addWidget(messageBtn);
+
+		buttons->addStretch(1);
+		layout->addLayout(buttons);
+	}
+
+	{
+		layout->addWidget(new SubheaderWidget(tr("Listings"), 2));
+
+		d->announcementview = new QTableView;
+		d->announcementview->setModel(d->announcementlist);
+		d->announcementview->setSelectionMode(QTableView::SingleSelection);
+		d->announcementview->setSelectionBehavior(QTableView::SelectRows);
+
+		layout->addWidget(d->announcementview);
+	}
+
+	{
+		auto *buttons = new QHBoxLayout;
+
+		auto *removeBtn = new QPushButton(tr("Remove"));
+		connect(removeBtn, &QPushButton::clicked, this, &SessionPage::removeAnnouncement);
+		buttons->addWidget(removeBtn);
 
 		buttons->addStretch(1);
 		layout->addLayout(buttons);
@@ -284,6 +317,16 @@ void SessionPage::kickUser()
 	const int id = selectedUser();
 	if(id>0) {
 		d->server->makeApiRequest("kickuser", JsonApiMethod::Delete, QStringList() << "sessions" << d->id << QString::number(id), QJsonObject());
+		refreshPage();
+	}
+}
+
+void SessionPage::removeAnnouncement()
+{
+	const int id = selectedAnnouncement();
+	if(id>0) {
+		d->server->makeApiRequest("removeannouncement", JsonApiMethod::Delete, QStringList() << "sessions" << d->id << "listing" << QString::number(id), QJsonObject());
+		refreshPage();
 	}
 }
 
@@ -301,7 +344,7 @@ void SessionPage::sendUserMessage()
 	connect(dlg, &QInputDialog::accepted, [dlg, id, this]() {
 		QJsonObject o;
 		o["message"] = dlg->textValue();
-		d->server->makeApiRequest("kickuser", JsonApiMethod::Update, QStringList() << "sessions" << d->id << QString::number(id), o);
+		d->server->makeApiRequest("msguser", JsonApiMethod::Update, QStringList() << "sessions" << d->id << QString::number(id), o);
 	});
 	dlg->show();
 
@@ -310,6 +353,15 @@ void SessionPage::sendUserMessage()
 int SessionPage::selectedUser() const
 {
 	const QModelIndexList sel = d->userview->selectionModel()->selectedIndexes();
+	if(sel.isEmpty())
+		return 0;
+
+	return sel.at(0).data(Qt::UserRole).toInt();
+}
+
+int SessionPage::selectedAnnouncement() const
+{
+	const QModelIndexList sel = d->announcementview->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
 		return 0;
 
@@ -384,7 +436,8 @@ void SessionPage::handleResponse(const QString &requestId, const JsonApiResult &
 
 	d->nsfm->setChecked(o["nsfm"].toBool());
 
-	d->userlist->setUserList(o["users"].toArray());
+	d->userlist->setList(o["users"].toArray());
+	d->announcementlist->setList(o["listings"].toArray());
 }
 
 }

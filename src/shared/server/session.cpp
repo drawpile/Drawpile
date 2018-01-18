@@ -1013,23 +1013,25 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 
 QJsonObject Session::getDescription(bool full) const
 {
-	QJsonObject o;
 	// The basic description contains just the information
 	// needed for the login session listing
-	o["id"] = idString();
-	o["alias"] = idAlias();
-	o["protocol"] = protocolVersion().asString();
-	o["userCount"] = userCount();
-	o["maxUserCount"] = maxUsers();
-	o["founder"] = founder();
-	o["title"] = title();
-	o["hasPassword"] = hasPassword();
-	o["closed"] = isClosed();
+	QJsonObject o {
+		{"id", idString()},
+		{"alias", idAlias()},
+		{"protocol", protocolVersion().asString()},
+		{"userCount", userCount()},
+		{"maxUserCount", maxUsers()},
+		{"founder", founder()},
+		{"title", title()},
+		{"hasPassword", hasPassword()},
+		{"closed", isClosed()},
+		{"nsfm", isNsfm()},
+		{"startTime", sessionStartTime().toUTC().toString(Qt::ISODate)},
+		{"size", int(m_history->sizeInBytes())}
+	};
+
 	if(m_config->getConfigBool(config::EnablePersistence))
 		o["persistent"] = isPersistent();
-	o["nsfm"] = isNsfm();
-	o["startTime"] = sessionStartTime().toUTC().toString(Qt::ISODate);
-	o["size"] = int(m_history->sizeInBytes());
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
@@ -1040,6 +1042,17 @@ QJsonObject Session::getDescription(bool full) const
 			users << user->description(false);
 		}
 		o["users"] = users;
+
+		QJsonArray listings;
+		for(const sessionlisting::Announcement &a : m_publicListings) {
+			listings << QJsonObject {
+				{"id", a.listingId},
+				{"url", a.apiUrl.toString()},
+				{"roomcode", a.roomcode},
+				{"private", a.isPrivate}
+			};
+		}
+		o["listings"] = listings;
 	}
 
 	return o;
@@ -1051,6 +1064,9 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 		QString head;
 		QStringList tail;
 		std::tie(head, tail) = popApiPath(path);
+
+		if(head == "listing")
+			return callListingsJsonApi(method, tail, request);
 
 		int userId = head.toInt();
 		if(userId>0) {
@@ -1072,12 +1088,31 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 
 	} else if(method == JsonApiMethod::Delete) {
 		killSession();
-		QJsonObject o;
-		o["status"] = "ok";
-		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
+		return JsonApiResult{ JsonApiResult::Ok, QJsonDocument(QJsonObject{ { "status", "ok "} }) };
 	}
 
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(getDescription(true))};
+}
+
+JsonApiResult Session::callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Q_UNUSED(request);
+	if(path.length() != 1)
+		return JsonApiNotFound();
+	const int id = path.at(0).toInt();
+
+	for(const sessionlisting::Announcement &a : m_publicListings) {
+		if(a.listingId == id) {
+			if(method == JsonApiMethod::Delete) {
+				unlistAnnouncement(a.apiUrl.toString());
+				return JsonApiResult{ JsonApiResult::Ok, QJsonDocument(QJsonObject{ { "status", "ok "} }) };
+
+			} else {
+				return JsonApiBadMethod();
+			}
+		}
+	}
+	return JsonApiNotFound();
 }
 
 void Session::log(const Log &log)

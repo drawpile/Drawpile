@@ -47,7 +47,7 @@ void Server::onApiResponse(const QString &requestId, const JsonApiResult &result
 
 	if(requestId == REFRESH_REQID) {
 		QJsonArray sessions = result.body.array();
-		m_sessions->setSessionList(sessions);
+		m_sessions->setList(sessions);
 		emit sessionListRefreshed(sessions);
 	} else {
 		emit apiResponse(requestId, result);

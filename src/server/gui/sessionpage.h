@@ -46,12 +46,14 @@ private slots:
 	void changeTitle();
 	void sendMessage();
 	void kickUser();
+	void removeAnnouncement();
 	void sendUserMessage();
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
 	void refreshPage();
 	int selectedUser() const;
+	int selectedAnnouncement() const;
 
 	Private *d;
 };

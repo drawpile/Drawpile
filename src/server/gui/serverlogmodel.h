@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,14 +20,12 @@
 #ifndef SERVERLOGMODEL_H
 #define SERVERLOGMODEL_H
 
-#include <QAbstractTableModel>
-#include <QJsonObject>
-#include <QList>
+#include "jsonlistmodel.h"
 
 namespace server {
 namespace gui {
 
-class ServerLogModel : public QAbstractTableModel
+class ServerLogModel : public JsonListModel
 {
 	Q_OBJECT
 public:
@@ -39,13 +37,8 @@ public:
 	void addLogEntry(const QJsonObject &entry);
 	void addLogEntries(const QJsonArray &entries);
 
-	int rowCount(const QModelIndex &parent) const override;
-	int columnCount(const QModelIndex &parent) const override;
 	QVariant data(const QModelIndex &index, int role) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-private:
-	QList<QJsonObject> m_log;
 };
 
 }

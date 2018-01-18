@@ -470,6 +470,8 @@ private:
 
 	void switchState(State newstate);
 
+	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
 	ServerConfig *m_config;
 
 	State m_state;
