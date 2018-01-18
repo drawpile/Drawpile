@@ -243,11 +243,7 @@ void Session::removeUser(Client *user)
 	if(user->id() == m_initUser && m_state == Reset) {
 		// Whoops, the resetter left before the job was done!
 		// We simply cancel the reset in that case and go on
-		m_initUser = -1;
-		m_resetstream.clear();
-		m_resetstreamsize = 0;
-		switchState(Running);
-		messageAll("Session reset cancelled.", true);
+		abortReset();
 	}
 
 	addToHistory(MessagePtr(new protocol::UserLeave(user->id())));
@@ -263,6 +259,15 @@ void Session::removeUser(Client *user)
 	historyCacheCleanup();
 
 	emit userDisconnected(this);
+}
+
+void Session::abortReset()
+{
+	m_initUser = -1;
+	m_resetstream.clear();
+	m_resetstreamsize = 0;
+	switchState(Running);
+	messageAll("Session reset cancelled.", true);
 }
 
 Client *Session::getClientById(int id)
@@ -394,6 +399,9 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 	for(Client *c : m_clients) {
 		bool op = ids.contains(c->id()) | c->isModerator();
 		if(op != c->isOperator()) {
+			if(!op && c->id() == m_initUser && m_state == Reset)
+				abortReset();
+
 			c->setOperator(op);
 			QString msg;
 			if(op) {
@@ -417,8 +425,13 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 {
 	QList<uint8_t> ids;
+
 	for(Client *c : m_clients) {
 		if(c->id() == id && c->isOperator() != op) {
+
+			if(!op && c->id() == m_initUser && m_state == Reset)
+				abortReset();
+
 			c->setOperator(op);
 			QString msg;
 			if(op) {

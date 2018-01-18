@@ -16,6 +16,7 @@
  * Optimized OpenRaster file saving
  * Canvas saving is now done in the background
  * Added option to hide password protected sessions from the join dialog
+ * Bugfix: abort reset if resetting user is deopped
 
 2017-06-26 Version 2.0.5.1
  * Fixed shortcut conflict that blocked the use of the Enter key

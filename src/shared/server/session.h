@@ -462,7 +462,7 @@ private:
 
 	void restartRecording();
 	void stopRecording();
-
+	void abortReset();
 
 	void sendUpdatedSessionProperties();
 	void sendStatusUpdate();
