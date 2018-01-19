@@ -354,6 +354,7 @@ public:
 
 	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
+	void handleInitCancel(int ctxId);
 
 	/**
 	 * @brief Update session operator bits

@@ -90,6 +90,13 @@ void initComplete(Client *client, const QJsonArray &args, const QJsonObject &kwa
 	client->session()->handleInitComplete(client->id());
 }
 
+void initCancel(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+	client->session()->handleInitCancel(client->id());
+}
+
 void sessionConf(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
@@ -250,6 +257,7 @@ SrvCommandSet::SrvCommandSet()
 	commands
 		<< SrvCommand("init-begin", initBegin)
 		<< SrvCommand("init-complete", initComplete)
+		<< SrvCommand("init-cancel", initCancel)
 		<< SrvCommand("sessionconf", sessionConf)
 		<< SrvCommand("kick-user", kickUser)
 		<< SrvCommand("gain-op", opWord, SrvCommand::NONOP)

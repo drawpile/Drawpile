@@ -180,7 +180,7 @@ public slots:
 	void sendSessionAclChange(uint16_t flags, uint16_t mask);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
-	bool sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit=0);
+	void sendResetSession(const canvas::StateSavepoint &savepoint);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
@@ -268,6 +268,7 @@ private:
 	bool m_serverSpaceLow;
 
 	int m_sessionMaxUserCount;
+	int m_sessionHistoryMaxSize;
 };
 
 #endif // DOCUMENT_H

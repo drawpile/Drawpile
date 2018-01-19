@@ -195,6 +195,9 @@ void StateTracker::reset()
 	m_localfork.clear();
 	m_layerlist->clear();
 	m_myLastLayer = _contexts[m_myId].tool.layer_id;
+
+	// Make sure there is always a savepoint in the history
+	makeSavepoint(m_history.end()-1);
 }
 
 void StateTracker::localCommand(protocol::MessagePtr msg)

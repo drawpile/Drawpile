@@ -66,7 +66,8 @@ Document::Document(QObject *parent)
 	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
 	  m_serverSpaceLow(false),
-	  m_sessionMaxUserCount(0)
+	  m_sessionMaxUserCount(0),
+	  m_sessionHistoryMaxSize(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -97,6 +98,7 @@ Document::Document(QObject *parent)
 			return;
 		}
 		m_canvas->resetCanvas();
+		m_resetstate.clear();
 		if(m_serverSpaceLow) {
 			// Session reset is the only thing that can free up history space
 			m_serverSpaceLow = false;
@@ -162,6 +164,7 @@ void Document::onServerLogin(bool join)
 	}
 
 	m_serverSpaceLow = false;
+	m_sessionHistoryMaxSize = 0;
 	emit serverSpaceLowChanged(false);
 	emit serverLoggedIn(join);
 }
@@ -236,6 +239,8 @@ void Document::onServerHistoryLimitReceived(int maxSpace)
 		emit serverSpaceLowChanged(true);
 	}
 
+	m_sessionHistoryMaxSize = maxSpace;
+
 	if(m_client->myId() == m_canvas->userlist()->getPrimeOp() &&
 		QSettings().value("settings/server/autoreset", true).toBool())
 	{
@@ -244,9 +249,7 @@ void Document::onServerHistoryLimitReceived(int maxSpace)
 		sendLockSession(true);
 		m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
 
-		if(!sendResetSession(canvas::StateSavepoint(), maxSpace)) {
-			emit autoResetTooLarge(maxSpace);
-		}
+		sendResetSession(canvas::StateSavepoint());
 	}
 }
 
@@ -514,33 +517,20 @@ void Document::sendOpword(const QString &opword)
  * @brief Generate a reset snapshot and send a reset request
  *
  * @param savepoint the savepoint from which to generate. Use a null savepoint to generate from the current state
- * @param sizelimit if larger than zero, the snapshot must not exceed this size
  * @return true on success
  */
-bool Document::sendResetSession(const canvas::StateSavepoint &savepoint, int sizelimit)
+void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
 {
 	if(!savepoint) {
-		qInfo("Preparing session reset from current canvas content");
-		m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas).loadInitCommands();
+		qInfo("Sending session reset request. Reset snapshot will be prepared when ready.");
+		m_resetstate.clear();
+
 	} else {
 		qInfo("Preparing session reset from a savepoint");
 		m_resetstate = savepoint.initCommands(m_client->myId());
 	}
 
-	if(sizelimit>0) {
-		int resetsize = 0;
-		for(protocol::MessagePtr msg : m_resetstate)
-			resetsize += msg->length();
-
-		if(resetsize > sizelimit) {
-			qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", resetsize, sizelimit);
-			m_resetstate.clear();
-			return false;
-		}
-	}
-
 	m_client->sendMessage(net::command::serverCommand("reset-session"));
-	return true;
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
@@ -585,22 +575,39 @@ void Document::snapshotNeeded()
 	// (We) requested a session reset and the server is now ready for it.
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
-			qWarning("Session reset snapshot requested, but we have not prepared it! Generating one now...");
+			qInfo("Generating snapshot for session reset...");
+			if(m_canvas->layerStack()->size().isEmpty()) {
+				qWarning("Canvas has no size! Cannot generate reset snapshot!");
+				m_client->sendMessage(net::command::serverCommand("init-cancel"));
+				return;
+			}
 			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
 		}
 
-		if(!m_client->isLocalServer())
-			m_client->sendMessage(net::command::serverCommand("init-begin"));
+		// Size limit check. The server will kick us if we send an oversized reset.
+		if(m_sessionHistoryMaxSize>0) {
+			int resetsize = 0;
+			for(protocol::MessagePtr msg : m_resetstate)
+				resetsize += msg->length();
 
+			if(resetsize > m_sessionHistoryMaxSize) {
+				qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", resetsize, m_sessionHistoryMaxSize);
+				emit autoResetTooLarge(m_sessionHistoryMaxSize);
+				m_resetstate.clear();
+				m_client->sendMessage(net::command::serverCommand("init-cancel"));
+				return;
+			}
+		}
+
+		m_client->sendMessage(net::command::serverCommand("init-begin"));
 		m_client->sendResetMessages(m_resetstate);
-
-		if(!m_client->isLocalServer())
-			m_client->sendMessage(net::command::serverCommand("init-complete"));
+		m_client->sendMessage(net::command::serverCommand("init-complete"));
 
 		m_resetstate = QList<protocol::MessagePtr>();
 
 	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
+		m_client->sendMessage(net::command::serverCommand("init-cancel"));
 	}
 }
 
