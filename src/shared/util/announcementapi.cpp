@@ -125,11 +125,8 @@ void AnnouncementApi::announceSession(const QUrl &apiUrl, const Session &session
 	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleAnnounceResponse);} );
 }
 
-void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
+static QJsonObject sessionUpdateObject(const Session &session)
 {
-	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Refreshing listing %1 at %2").arg(a.listingId).arg(a.apiUrl.toString())));
-
-	// Construct the announcement
 	QJsonObject o;
 
 	o["title"] = session.title;
@@ -140,6 +137,16 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	o["nsfm"] = session.nsfm;
 	if(session.isPrivate != PrivateMode::Undefined)
 		o["private"] = session.isPrivate == PrivateMode::Private;
+
+	return o;
+}
+
+void AnnouncementApi::refreshSession(const Announcement &a, const Session &session)
+{
+	emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Refreshing listing %1 at %2").arg(a.listingId).arg(a.apiUrl.toString())));
+
+	// Construct the announcement
+	QJsonObject o = sessionUpdateObject(session);
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -153,6 +160,39 @@ void AnnouncementApi::refreshSession(const Announcement &a, const Session &sessi
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
 	reply->setProperty(PROP_APIURL, a.apiUrl);
 	connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleRefreshResponse);} );
+}
+
+
+void AnnouncementApi::batchRefresh(const QList<QPair<Announcement, Session>> &sessions)
+{
+	QHash<QUrl, QJsonObject> updates;
+
+	// Generate updates
+	for(auto pair : sessions) {
+		QJsonObject update = sessionUpdateObject(pair.second);
+		update["updatekey"] = pair.first.updateKey;
+		updates[pair.first.apiUrl][QString::number(pair.first.listingId)] = update;
+	}
+
+	// Send requests
+	QHashIterator<QUrl, QJsonObject> i(updates);
+	while(i.hasNext()) {
+		i.next();
+		emit logMessage(Log().about(Log::Level::Debug, Log::Topic::PubList).message(QString("Refreshing %1 listings at %2").arg(i.value().size()).arg(i.key().toString())));
+
+		const QJsonObject o = i.value();
+
+		QUrl url = i.key();
+		url.setPath(slashcat(url.path(), QStringLiteral("sessions/")));
+
+		QNetworkRequest req(url);
+		req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+		req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+
+		QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
+		reply->setProperty(PROP_APIURL, i.key());
+		connect(reply, &QNetworkReply::finished, this, [reply, this]() { handleResponse(reply, &AnnouncementApi::handleBatchRefreshResponse);} );
+	}
 }
 
 void AnnouncementApi::unlistSession(const Announcement &a)
@@ -273,6 +313,30 @@ void AnnouncementApi::handleRefreshResponse(QNetworkReply *reply)
 	QString msg = doc.object()["message"].toString();
 	if(!msg.isEmpty())
 		emit messageReceived(msg);
+}
+
+void AnnouncementApi::handleBatchRefreshResponse(QNetworkReply *reply)
+{
+	QJsonParseError error;
+	const QByteArray body = reply->readAll();
+	const QJsonDocument doc = QJsonDocument::fromJson(body, &error);
+	if(error.error != QJsonParseError::NoError)
+		throw ResponseError(QStringLiteral("Error parsing refresh response: %1").arg(error.errorString()));
+
+	const QJsonObject o = doc.object();
+	const QJsonObject responses = o["responses"].toObject();
+
+	QList<int> oklist, errorlist;
+
+	for(auto i = responses.begin();i!=responses.end();++i) {
+		const int id = i.key().toInt();
+		if(i.value().toString() == "ok")
+			oklist << id;
+		else
+			errorlist << id;
+	}
+
+	emit batchRefreshed(oklist, errorlist);
 }
 
 void AnnouncementApi::handleListingResponse(QNetworkReply *reply)

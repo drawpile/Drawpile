@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -91,20 +91,7 @@ Document::Document(QObject *parent)
 	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
 	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 
-	connect(m_client, &net::Client::sessionResetted, this, [this]() {
-		Q_ASSERT(m_canvas);
-		if(!m_canvas) {
-			qWarning("sessionResetted: no canvas!");
-			return;
-		}
-		m_canvas->resetCanvas();
-		m_resetstate.clear();
-		if(m_serverSpaceLow) {
-			// Session reset is the only thing that can free up history space
-			m_serverSpaceLow = false;
-			emit serverSpaceLowChanged(false);
-		}
-	});
+	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
 }
 
 Document::~Document()
@@ -133,6 +120,33 @@ void Document::initCanvas()
 	emit canvasChanged(m_canvas);
 
 	setCurrentFilename(QString());
+}
+
+void Document::onSessionResetted()
+{
+	Q_ASSERT(m_canvas);
+	if(!m_canvas) {
+		qWarning("sessionResetted: no canvas!");
+		return;
+	}
+	m_canvas->resetCanvas();
+	m_resetstate.clear();
+	if(m_serverSpaceLow) {
+		// Session reset is the only thing that can free up history space
+		m_serverSpaceLow = false;
+		emit serverSpaceLowChanged(false);
+	}
+
+	if(isRecording()) {
+		// Resetting establishes a new initial state for the canvas, therefore
+		// recording must also be restarted.
+		const QString newRecordingFile = utils::makeFilenameUnique(m_originalRecordingFilename, ".dprec");
+		m_recorder->close();
+		delete m_recorder;
+		m_recorder = nullptr;
+		emit recorderStateChanged(false);
+		startRecording(newRecordingFile, QList<protocol::MessagePtr>(), nullptr);
+	}
 }
 
 bool Document::loadCanvas(canvas::SessionLoader &loader)
@@ -426,18 +440,27 @@ void Document::onCanvasSaved(const QString &errorMessage)
 
 bool Document::startRecording(const QString &filename, QString *error)
 {
+	// Set file suffix if missing
+	m_originalRecordingFilename = filename;
+	const QFileInfo info(filename);
+	if(info.suffix().isEmpty())
+		m_originalRecordingFilename += ".dprec";
+
+	return startRecording(
+		m_originalRecordingFilename,
+		m_canvas->generateSnapshot(false),
+		error
+	);
+}
+
+bool Document::startRecording(const QString &filename, const QList<protocol::MessagePtr> &initialState, QString *error)
+{
 	Q_ASSERT(!isRecording());
 
-	// Set file suffix if missing
-	QString file = filename;
-	const QFileInfo info(file);
-	if(info.suffix().isEmpty())
-		file += ".dprec";
-
-	// Start the recorder
-	m_recorder = new recording::Writer(file, this);
+	m_recorder = new recording::Writer(filename, this);
 
 	if(!m_recorder->open()) {
+		qWarning("Couldn't start recording: %s", qPrintable(m_recorder->errorString()));
 		if(error)
 			*error = m_recorder->errorString();
 		delete m_recorder;
@@ -446,11 +469,9 @@ bool Document::startRecording(const QString &filename, QString *error)
 
 	}
 
-	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	m_recorder->writeHeader();
 
-	QList<protocol::MessagePtr> snapshot = m_canvas->generateSnapshot(false);
-	for(const protocol::MessagePtr ptr : snapshot) {
+	for(const protocol::MessagePtr ptr : initialState) {
 		m_recorder->recordMessage(ptr);
 	}
 
@@ -464,11 +485,7 @@ bool Document::startRecording(const QString &filename, QString *error)
 	connect(m_client, &net::Client::messageReceived, m_recorder, &recording::Writer::recordMessage);
 
 	m_recorder->setAutoflush();
-
-	QGuiApplication::restoreOverrideCursor();
-
 	emit recorderStateChanged(true);
-
 	return true;
 }
 

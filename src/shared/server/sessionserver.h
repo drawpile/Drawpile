@@ -206,6 +206,8 @@ private slots:
 	void lobbyDisconnectedEvent(Client *client);
 	void userDisconnectedEvent(Session *session);
 	void cleanupSessions();
+	void doBatchUpdates();
+	void onBatchUpdated(const QList<int> ok, const QList<int> errors);
 
 private:
 	SessionHistory *initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
@@ -215,11 +217,12 @@ private:
 	TemplateLoader *m_tpls;
 	QDir m_sessiondir;
 	bool m_useFiledSessions;
+	bool m_mustSecure;
 
 	QList<Session*> m_sessions;
 	QList<Client*> m_lobby;
 
-	bool m_mustSecure;
+	sessionlisting::AnnouncementApi *m_batchUpdateClient;
 
 #ifndef NDEBUG
 	uint m_randomlag;
