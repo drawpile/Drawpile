@@ -49,7 +49,7 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 	m_rightButton = right;
 
 	if(right) {
-		if(m_points.size()>=1) {
+		if(m_points.size()>2) {
 			m_points.pop_back();
 			m_points.last().point = point;
 			m_beginPoint = point;
