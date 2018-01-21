@@ -43,7 +43,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(2),
-	_showoutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
+	m_showoutline(true), m_subpixeloutline(true), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
 	_tabletmode(ENABLE_TABLET),
 	_lastPressure(0),
 	_stylusDown(false),
@@ -220,7 +220,7 @@ void CanvasView::setOutlineSize(int size)
 {
 	float updatesize = _outlinesize;
 	_outlinesize = size<=0 ? 0 : qMax(2, size);
-	if(_showoutline) {
+	if(m_showoutline) {
 		if(_outlinesize>updatesize)
 			updatesize = _outlinesize;
 		QList<QRectF> rect;
@@ -233,7 +233,7 @@ void CanvasView::setOutlineSize(int size)
 
 void CanvasView::setOutlineSubpixelMode(bool subpixel)
 {
-	_subpixeloutline = subpixel;
+	m_subpixeloutline = subpixel;
 }
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
@@ -250,7 +250,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
-	if(_showoutline && _outlinesize>0 && !m_specialpenmode && !_locked) {
+	if(m_showoutline && _outlinesize>0 && !m_specialpenmode && !_locked) {
 		const QRectF outline(_prevoutlinepoint-QPointF(_outlinesize/2, _outlinesize/2),
 					QSizeF(_outlinesize, _outlinesize));
 		if(rect.intersects(outline)) {
@@ -268,7 +268,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 void CanvasView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
-	_showoutline = true;
+	m_showoutline = true;
 
 	// Give focus to this widget on mouseover. This is so that
 	// using spacebar for dragging works rightaway. Avoid stealing
@@ -286,7 +286,7 @@ void CanvasView::enterEvent(QEvent *event)
 void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
-	_showoutline = false;
+	m_showoutline = false;
 	updateOutline();
 }
 
@@ -804,11 +804,11 @@ float CanvasView::mapPressure(float pressure, bool stylus)
 }
 
 void CanvasView::updateOutline(paintcore::Point point) {
-	if(!_subpixeloutline) {
+	if(!m_subpixeloutline) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);
 	}
-	if(_showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
+	if(m_showoutline && !_locked && !point.roughlySame(_prevoutlinepoint)) {
 		QList<QRectF> rect;
 		const float oR = _outlinesize / 2;
 		rect.append(QRectF(
@@ -872,7 +872,7 @@ void CanvasView::startDrag(int x,int y, ViewTransform mode)
 	_dragx = x;
 	_dragy = y;
 	_isdragging = mode;
-	_showoutline = false;
+	m_showoutline = false;
 	updateOutline();
 }
 
@@ -923,7 +923,7 @@ void CanvasView::stopDrag()
 	else
 		resetCursor();
 	_isdragging = DRAG_NOTRANSFORM;
-	_showoutline = true;
+	m_showoutline = true;
 }
 
 /**

@@ -242,7 +242,7 @@ class CanvasView : public QGraphicsView
 		qreal _gestureStartAngle;
 
 		float _outlinesize;
-		bool _showoutline, _subpixeloutline;
+		bool m_showoutline, m_subpixeloutline;
 		QCursor m_dotcursor, m_colorpickcursor;
 		QCursor m_toolcursor;
 

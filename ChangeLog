@@ -24,6 +24,7 @@
  * Windows installer fix: audio.dll was put into a wrong directory
  * Recording is now automatically restarted on session reset
  * Fixed crash when cancelling bezier curve drawing with a right click
+ * Regression fix: snap brush outline to pixel boundaries when using hard edged brush
 
 2017-06-26 Version 2.0.5.1
  * Fixed shortcut conflict that blocked the use of the Enter key

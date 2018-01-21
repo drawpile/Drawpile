@@ -84,9 +84,6 @@ public slots:
 	//! Switch tool when eraser is brought near the tablet
 	void eraserNear(bool near);
 
-	//! Query current tool's subpixel mode and emit subpixelModeChanged
-	void updateSubpixelMode();
-
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);

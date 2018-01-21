@@ -47,7 +47,7 @@ public:
 	void quickAdjust1(float adjustment) override;
 
 	int getSize() const override;
-	bool getSubpixelMode() const override { return true; }
+	bool getSubpixelMode() const override;
 
 	void pushSettings() override;
 	ToolProperties saveToolSettings() override;
@@ -67,6 +67,7 @@ public slots:
 signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
+	void subpixelModeChanged(bool subpixel);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

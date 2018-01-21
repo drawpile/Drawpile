@@ -166,6 +166,8 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 
 	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
 			this, &ToolSettings::setForegroundColor);
+	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::subpixelModeChanged,
+			this, &ToolSettings::subpixelModeChanged);
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
@@ -307,11 +309,6 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 
 	emit toolChanged(tool);
 	emit sizeChanged(ts->getSize());
-	updateSubpixelMode();
-}
-
-void ToolSettings::updateSubpixelMode()
-{
 	emit subpixelModeChanged(d->currentSettings()->getSubpixelMode());
 }
 

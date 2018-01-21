@@ -368,6 +368,8 @@ void BrushSettings::updateUi()
 	default: d->ui.hardedgeMode->setChecked(true); break;
 	}
 
+	emit subpixelModeChanged(getSubpixelMode());
+
 	// Hide certain features based on the brush type
 	d->ui.brushhardness->setVisible(brushMode != 0);
 	d->ui.pressureHardness->setVisible(brushMode != 0);
@@ -548,6 +550,11 @@ void BrushSettings::quickAdjust1(float adjustment)
 int BrushSettings::getSize() const
 {
 	return d->ui.brushsize->value();
+}
+
+bool BrushSettings::getSubpixelMode() const
+{
+	return d->currentBrush().intValue(brushprop::brushmode) != 0;
 }
 
 //// BRUSH PRESET PALETTE MODEL ////
