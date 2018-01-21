@@ -47,12 +47,6 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
 
-	m_batchUpdateClient = new sessionlisting::AnnouncementApi(this);
-	QTimer *batchUpdateTimer = new QTimer(this);
-	batchUpdateTimer->setTimerType(Qt::VeryCoarseTimer);
-	cleanupTimer->setInterval(5 * 60 * 1000);
-	connect(batchUpdateTimer, &QTimer::timeout, this, &SessionServer::doBatchUpdates);
-
 #ifndef NDEBUG
 	m_randomlag = 0;
 #endif
@@ -318,47 +312,6 @@ void SessionServer::cleanupSessions()
 				s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
 				s->killSession();
 			}
-		}
-	}
-}
-
-void SessionServer::doBatchUpdates()
-{
-	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
-
-	// Gather a list of updates
-	QList<QPair<sessionlisting::Announcement, sessionlisting::Session>> updates;
-
-	for(const Session *s : m_sessions) {
-		sessionlisting::Session info {
-			QString(), // cannot change
-			0, // cannot change
-			QString(), // cannot change
-			protocol::ProtocolVersion(), // cannot change
-			s->title(),
-			s->userCount(),
-			s->hasPassword() || privateUserList ? QStringList() : s->userNames(),
-			s->hasPassword(),
-			s->isNsfm(),
-			sessionlisting::PrivateMode::Undefined,
-			s->founder(),
-			s->sessionStartTime()
-		};
-		for(const auto a : s->announcements()) {
-			updates.append({a, info});
-		}
-	}
-
-	// Perform batch updates
-	if(!updates.isEmpty())
-		m_batchUpdateClient->batchRefresh(updates);
-}
-
-void SessionServer::onBatchUpdated(const QList<int> ok, const QList<int> errors)
-{
-	for(int id : errors) {
-		for(Session *s : m_sessions) {
-
 		}
 	}
 }

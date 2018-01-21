@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2017 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class Document : public QObject
 
 	Q_OBJECT
 public:
-	explicit Document(QObject *parent=nullptr);
+	explicit Document(QObject *parent = 0);
 	~Document();
 
 	QString title() const;
@@ -210,7 +210,6 @@ public slots:
 private slots:
 	void onServerLogin(bool join);
 	void onServerDisconnect();
-	void onSessionResetted();
 
 	void onSessionConfChanged(const QJsonObject &config);
 	void onServerHistoryLimitReceived(int maxSpace);
@@ -224,7 +223,6 @@ private slots:
 
 private:
 	void saveCanvas();
-	bool startRecording(const QString &filename, const QList<protocol::MessagePtr> &initialState, QString *error);
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
@@ -251,7 +249,6 @@ private:
 	QStringListModel *m_serverLog;
 
 	recording::Writer *m_recorder;
-	QString m_originalRecordingFilename;
 	bool m_autoRecordOnConnect;
 
 	bool m_dirty;

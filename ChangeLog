@@ -21,7 +21,6 @@
  * Session reset snapshot is now generated only on demand
  * Session reset is now cancelled if a snapshot cannot be generated
  * Bugfix: fixed loss of canvas if user was drawing while reset occurred
- * Recording is now automatically restarted on session reset
  * Windows installer fix: audio.dll was put into a wrong directory
 
 2017-06-26 Version 2.0.5.1

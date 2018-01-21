@@ -116,13 +116,6 @@ public:
 	void refreshSession(const Announcement &a, const Session &session);
 
 	/**
-	 * @brief Refresh multiple sessions
-	 * @param apiUrl
-	 * @param sessions
-	 */
-	void batchRefresh(const QList<QPair<Announcement, Session>> &sessions);
-
-	/**
 	 * @brief Unlist the session previously announced with announceSession
 	 */
 	void unlistSession(const Announcement &a);
@@ -154,9 +147,6 @@ signals:
 	//! Session was unlisted succesfully
 	void unlisted(const QString &apiUrl, const QString &sessionId);
 
-	//! A batch of sessions were just refreshed
-	void batchRefreshed(const QList<int> okIds, const QList<int> failedIds);
-
 	//! Session for a roomcode was found (only host, port and id fields are filled)
 	void sessionFound(const Session &session);
 
@@ -173,7 +163,6 @@ private:
 	void handleAnnounceResponse(QNetworkReply *reply);
 	void handleUnlistResponse(QNetworkReply *reply);
 	void handleRefreshResponse(QNetworkReply *reply);
-	void handleBatchRefreshResponse(QNetworkReply *reply);
 	void handleListingResponse(QNetworkReply *reply);
 	void handleServerInfoResponse(QNetworkReply *reply);
 	void handleRoomcodeResponse(QNetworkReply *reply);
