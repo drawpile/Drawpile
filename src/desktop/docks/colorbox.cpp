@@ -373,6 +373,12 @@ void ColorBox::addLastUsedColor(const QColor &color)
 
 	m_lastused->setWriteProtected(false);
 
+	// The first color may have been changed into a duplicate of the next one
+	if(m_lastused->count() > 1) {
+		if(m_lastused->color(0).color.rgb() == m_lastused->color(1).color.rgb())
+			m_lastused->removeColor(0);
+	}
+
 	// Move color to the front of the palette
 	m_lastused->insertColor(0, color);
 	for(int i=1;i<m_lastused->count();++i) {
