@@ -29,8 +29,11 @@ class FlipbookView : public QWidget
 public:
 	explicit FlipbookView(QWidget *parent = nullptr);
 
+	bool isUpscaling() const { return m_upscale; }
+
 public slots:
 	void setPixmap(const QPixmap &pixmap);
+	void setUpscaling(bool upscale);
 	void startCrop();
 
 signals:
@@ -50,6 +53,8 @@ private:
 	QPixmap m_pixmap;
 	QRubberBand *m_rubberband;
 	QPoint m_cropStart;
+	QRect m_targetRect;
+	bool m_upscale;
 };
 
 #endif // FLIPBOOKVIEW_H

@@ -24,7 +24,7 @@
 #include <QRubberBand>
 
 FlipbookView::FlipbookView(QWidget *parent)
-	: QWidget(parent), m_rubberband(nullptr)
+	: QWidget(parent), m_rubberband(nullptr), m_upscale(true)
 {
 	setCursor(Qt::CrossCursor);
 }
@@ -37,6 +37,12 @@ void FlipbookView::startCrop()
 void FlipbookView::setPixmap(const QPixmap &pixmap)
 {
 	m_pixmap = pixmap;
+	update();
+}
+
+void FlipbookView::setUpscaling(bool upscale)
+{
+	m_upscale = upscale;
 	update();
 }
 
@@ -53,7 +59,23 @@ void FlipbookView::paintEvent(QPaintEvent *event)
 	painter.fillRect(QRect(0, 0, w, h), QColor(35, 38, 41));
 
 	if(!m_pixmap.isNull()) {
-		painter.drawPixmap(w/2 - m_pixmap.width()/2, h/2 - m_pixmap.height()/2, m_pixmap);
+		QSize targetSize = m_pixmap.size();
+		if(m_pixmap.width() > w || m_pixmap.height() > h) {
+			// Downscale
+			targetSize = m_pixmap.size().scaled(w,h, Qt::KeepAspectRatio);
+			painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+		} else if(m_upscale) {
+			// Image is smaller than the view: upscale (if requested)
+			const int availableSize = qMin(w - m_pixmap.width(), h - m_pixmap.height());
+			const int minDim = qMin(m_pixmap.width(), m_pixmap.height());
+			const int multiplier = (availableSize + availableSize/2) / minDim;
+			if(multiplier > 1)
+				targetSize *= multiplier;
+		}
+
+		m_targetRect = { QPoint(w/2 - targetSize.width()/2, h/2 - targetSize.height()/2), targetSize };
+		painter.drawPixmap(m_targetRect, m_pixmap, QRect(QPoint(), m_pixmap.size()));
 	}
 }
 
@@ -80,12 +102,11 @@ void FlipbookView::mouseReleaseEvent(QMouseEvent *event)
 	Q_UNUSED(event);
 	if(m_rubberband && m_rubberband->isVisible()) {
 		m_rubberband->hide();
-		const int x0 = width()/2 - m_pixmap.width() / 2;
-		const int y0 = height()/2 - m_pixmap.height()/2;
-		const qreal w = m_pixmap.width();
-		const qreal h = m_pixmap.height();
-		const QRect bounds(x0, y0, w, h);
-		const QRect g = m_rubberband->geometry().intersected(bounds);
+		const int x0 = m_targetRect.x();
+		const int y0 = m_targetRect.y();
+		const qreal w = m_targetRect.width();
+		const qreal h = m_targetRect.height();
+		const QRect g = m_rubberband->geometry().intersected(m_targetRect);
 
 		emit cropped(QRectF(
 			(g.x() - x0) / w,
