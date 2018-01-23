@@ -64,6 +64,9 @@ cp "$QROOT/bin/Qt5Sql.dll" .
 mkdir -p platforms
 cp "$QROOT/plugins/platforms/qwindows.dll" platforms/
 
+mkdir -p styles
+cp "$QROOT/plugins/styles/qwindowsvistastyle.dll" styles/
+
 mkdir -p audio
 cp "$QROOT/plugins/audio/qtaudio_windows.dll" audio/
 

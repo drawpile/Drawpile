@@ -47,7 +47,8 @@ Source: "i18n\*.qm"; DestDir: "{app}\i18n"; Flags: ignoreversion
 Source: "iconengines\*.dll"; DestDir: "{app}\iconengines"; Flags: ignoreversion
 Source: "imageformats\*.dll"; DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "palettes\*.gpl"; DestDir: "{app}\palettes"; Flags: ignoreversion
-Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "platforms\*.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "styles\*.dll"; DestDir: "{app}\styles"; Flags: ignoreversion
 Source: "sounds\*.*"; DestDir: "{app}\sounds"; Flags: ignoreversion
 Source: "sqldrivers\*.dll"; DestDir: "{app}\sqldrivers"; Flags: ignoreversion
 Source: "theme\*"; DestDir: "{app}\theme"; Flags: ignoreversion recursesubdirs
