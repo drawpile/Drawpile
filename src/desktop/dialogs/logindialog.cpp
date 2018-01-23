@@ -122,6 +122,7 @@ void LoginDialog::resetMode(Mode mode)
 	case EXTAUTH:
 		m_ui->pages->setCurrentIndex(PAGE_AUTH);
 		m_ui->username->setEnabled(mode != PASSWORD);
+		m_ui->password->setEnabled(true);
 		if(mode == EXTAUTH)
 			m_ui->intro->setStyleSheet(QStringLiteral(
 				"background: #3498db;"
