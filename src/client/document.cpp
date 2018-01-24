@@ -742,7 +742,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection()) {
+	if(m_canvas->selection() && !m_canvas->stateTracker()->isLayerLocked(m_toolctrl->activeLayer())) {
 		m_client->sendMessages(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }

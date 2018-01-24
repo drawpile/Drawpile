@@ -3,6 +3,7 @@
  * Windows specific: added missing style plugin
  * Fixed flipbook downscaling (regession)
  * Flipbook now upscales small images
+ * Bugfix: rectangle fill or image pasting worked (locally) on locked layers
 
 2018-01-22 Version 2.0.6
  * Added selection shear mode

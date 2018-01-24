@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2016 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -269,6 +269,13 @@ void ToolController::finishMultipartDrawing()
 
 	if(!m_model) {
 		qWarning("ToolController::finishMultipartDrawing: no model set!");
+		return;
+	}
+
+	if(m_model->stateTracker()->isLayerLocked(m_activeLayer)) {
+		// It is possible for the active layer to become locked
+		// before the user has finished multipart drawing.
+		qWarning("Cannot finish multipart drawing: active layer is locked!");
 		return;
 	}
 
