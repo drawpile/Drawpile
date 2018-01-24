@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,6 +55,8 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 		sel = new canvas::Selection;
 		initSelection(sel);
 		owner.model()->setSelection(sel);
+	} else {
+		sel->beginAdjustment(m_handle);
 	}
 }
 
@@ -68,7 +70,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		QPointF p = point - m_start;
+		const QPointF p = point - m_start;
 
 		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
 			startMove();
@@ -80,21 +82,19 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 
 			if(constrain) {
 				// center+constrain mode: shear
-				sel->shear(p.x() / 100.0, p.y() / 100.0);
+				sel->adjustShear(p.x() / 100.0, p.y() / 100.0);
 
 			} else {
 				// just the center: rotate
 				double a0 = qAtan2(m_start.y() - center.y(), m_start.x() - center.x());
 				double a1 = qAtan2(point.y() - center.y(), point.x() - center.x());
 
-				sel->rotate(a1-a0);
+				sel->adjustRotation(a1-a0);
 			}
 
 		} else {
-			sel->adjustGeometry(m_handle, p.toPoint(), constrain);
+			sel->adjustGeometry(p.toPoint(), constrain);
 		}
-
-		m_start = point;
 	}
 }
 

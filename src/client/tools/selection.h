@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,12 @@ class QPolygon;
 
 namespace tools {
 
-//! Base class for selection tools
+/**
+ * @brief Base class for selection tool
+ *
+ * These are used for selecting regions for copying & pasting, as well
+ * as filling regions with solid color.
+ */
 class SelectionTool : public Tool {
 public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
@@ -56,11 +61,7 @@ protected:
 	canvas::Selection::Handle m_handle;
 };
 
-/**
- * @brief Selection tool
- *
- * This is used for selecting regions for copying & pasting.
- */
+
 class RectangleSelection : public SelectionTool {
 public:
 	RectangleSelection(ToolController &owner);
@@ -69,6 +70,7 @@ protected:
 	void initSelection(canvas::Selection *selection);
 	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
 };
+
 
 class PolygonSelection : public SelectionTool {
 public:

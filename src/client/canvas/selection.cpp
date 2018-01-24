@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ void Selection::resetShape()
 void Selection::setShape(const QPolygonF &shape)
 {
 	m_shape = shape;
+	beginAdjustment(OUTSIDE);
 	emit shapeChanged(shape);
 }
 
@@ -106,42 +107,6 @@ void Selection::scale(qreal x, qreal y)
 	emit shapeChanged(m_shape);
 }
 
-void Selection::rotate(float angle)
-{
-	if(qAbs(angle) < 0.0001)
-		return;
-
-	const QPointF origin = m_shape.boundingRect().center();
-	QTransform t;
-	t.translate(origin.x(), origin.y());
-	t.rotateRadians(angle);
-
-	for(int i=0;i<m_shape.size();++i) {
-		QPointF p = m_shape[i] - origin;
-		m_shape[i] = t.map(p);
-	}
-
-	emit shapeChanged(m_shape);
-}
-
-void Selection::shear(float sh, float sv)
-{
-	if(qAbs(sh) < 0.0001 && qAbs(sv) < 0.0001)
-		return;
-
-	const QPointF origin = m_shape.boundingRect().center();
-	QTransform t;
-	t.translate(origin.x(), origin.y());
-	t.shear(sh, sv);
-
-	for(int i=0;i<m_shape.size();++i) {
-		QPointF p = m_shape[i] - origin;
-		m_shape[i] = t.map(p);
-	}
-
-	emit shapeChanged(m_shape);
-}
-
 Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
 {
 	const qreal H = handleSize() / zoom;
@@ -173,63 +138,116 @@ Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
 	return TRANSLATE;
 }
 
+void Selection::beginAdjustment(Handle handle)
+{
+	m_adjustmentHandle = handle;
+	m_preAdjustmentShape = m_shape;
+}
 
-void Selection::adjustGeometry(Handle handle, const QPoint &delta, bool keepAspect)
+void Selection::adjustGeometry(const QPoint &delta, bool keepAspect)
 {
 	if(keepAspect) {
 		const int dxy = (qAbs(delta.x()) > qAbs(delta.y())) ? delta.x() : delta.y();
-		const int dxy2 = (qAbs(delta.x()) > qAbs(-delta.y())) ? delta.x() : -delta.y();
-		switch(handle) {
+
+		const QRectF bounds = m_preAdjustmentShape.boundingRect();
+		const qreal aspect = bounds.width() / bounds.height();
+		const int dx = dxy * aspect;
+		const int dy = dxy;
+
+		switch(m_adjustmentHandle) {
 		case OUTSIDE: return;
-		case TRANSLATE: m_shape.translate(delta); break;
+		case TRANSLATE: m_shape = m_preAdjustmentShape.translated(delta); break;
 
-		case RS_TOPLEFT: adjust(dxy, dxy, 0, 0); break;
-		case RS_TOPRIGHT: adjust(0, -dxy2, dxy2, 0); break;
-		case RS_BOTTOMRIGHT: adjust(0, 0, dxy, dxy); break;
-		case RS_BOTTOMLEFT: adjust(dxy2, 0, 0, -dxy2); break;
+		case RS_TOPLEFT: adjustScale(dx, dy, 0, 0); break;
+		case RS_TOPRIGHT: adjustScale(0, -dx, dy, 0); break;
+		case RS_BOTTOMRIGHT: adjustScale(0, 0, dx, dy); break;
+		case RS_BOTTOMLEFT: adjustScale(dx, 0, 0, -dy); break;
 
-		case RS_TOP: adjust(delta.y(), delta.y(), -delta.y(), -delta.y()); break;
-		case RS_RIGHT: adjust(-delta.x(), -delta.x(), delta.x(), delta.x()); break;
-		case RS_BOTTOM: adjust(-delta.y(), -delta.y(), delta.y(), delta.y()); break;
-		case RS_LEFT: adjust(delta.x(), delta.x(), -delta.x(), -delta.x()); break;
+		case RS_TOP:
+		case RS_LEFT: adjustScale(dx, dy, -dx, -dy); break;
+		case RS_RIGHT:
+		case RS_BOTTOM: adjustScale(-dx, -dy, dx, dy); break;
 		}
 	} else {
-		switch(handle) {
+		switch(m_adjustmentHandle) {
 		case OUTSIDE: return;
-		case TRANSLATE: m_shape.translate(delta); break;
-		case RS_TOPLEFT: adjust(delta.x(), delta.y(), 0, 0); break;
-		case RS_TOPRIGHT: adjust(0, delta.y(), delta.x(), 0); break;
-		case RS_BOTTOMRIGHT: adjust(0, 0, delta.x(), delta.y()); break;
-		case RS_BOTTOMLEFT: adjust(delta.x(), 0, 0, delta.y()); break;
-		case RS_TOP: adjust(0, delta.y(), 0, 0); break;
-		case RS_RIGHT: adjust(0, 0, delta.x(), 0); break;
-		case RS_BOTTOM: adjust(0, 0, 0, delta.y()); break;
-		case RS_LEFT: adjust(delta.x(), 0, 0, 0); break;
+		case TRANSLATE: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case RS_TOPLEFT: adjustScale(delta.x(), delta.y(), 0, 0); break;
+		case RS_TOPRIGHT: adjustScale(0, delta.y(), delta.x(), 0); break;
+		case RS_BOTTOMRIGHT: adjustScale(0, 0, delta.x(), delta.y()); break;
+		case RS_BOTTOMLEFT: adjustScale(delta.x(), 0, 0, delta.y()); break;
+		case RS_TOP: adjustScale(0, delta.y(), 0, 0); break;
+		case RS_RIGHT: adjustScale(0, 0, delta.x(), 0); break;
+		case RS_BOTTOM: adjustScale(0, 0, 0, delta.y()); break;
+		case RS_LEFT: adjustScale(delta.x(), 0, 0, 0); break;
 		}
 	}
 
 	emit shapeChanged(m_shape);
 }
 
-void Selection::adjust(int dx1, int dy1, int dx2, int dy2)
+void Selection::adjustScale(int dx1, int dy1, int dx2, int dy2)
 {
-	const QRectF bounds = m_shape.boundingRect();
+	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
+
+	const QRectF bounds = m_preAdjustmentShape.boundingRect();
 
 	const qreal sx = (bounds.width() - dx1 + dx2) / bounds.width();
 	const qreal sy = (bounds.height() - dy1 + dy2) / bounds.height();
 
-	QPolygonF newShape = m_shape;
-	for(int i=0;i<m_shape.size();++i) {
-		newShape[i] = QPointF(
-			bounds.x() + (m_shape[i].x() - bounds.x()) * sx + dx1,
-			bounds.y() + (m_shape[i].y() - bounds.y()) * sy + dy1
+	for(int i=0;i<m_preAdjustmentShape.size();++i) {
+		m_shape[i] = QPointF(
+			bounds.x() + (m_preAdjustmentShape[i].x() - bounds.x()) * sx + dx1,
+			bounds.y() + (m_preAdjustmentShape[i].y() - bounds.y()) * sy + dy1
 		);
-		if(std::isnan(newShape[i].x()) || std::isnan(newShape[i].y()))
+		if(std::isnan(m_shape[i].x()) || std::isnan(m_shape[i].y())) {
+			qWarning("Selection shape[%d] is Not a Number!", i);
+			m_shape = m_preAdjustmentShape;
 			return;
+		}
 	}
-	m_shape = newShape;
+}
+
+void Selection::adjustRotation(float angle)
+{
+	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
+
+	if(qAbs(angle) < 0.0001)
+		return;
+
+	const QPointF origin = m_preAdjustmentShape.boundingRect().center();
+	QTransform t;
+	t.translate(origin.x(), origin.y());
+	t.rotateRadians(angle);
+
+	for(int i=0;i<m_shape.size();++i) {
+		const QPointF p = m_preAdjustmentShape[i] - origin;
+		m_shape[i] = t.map(p);
+	}
+
 	emit shapeChanged(m_shape);
 }
+
+void Selection::adjustShear(float sh, float sv)
+{
+	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
+
+	if(qAbs(sh) < 0.0001 && qAbs(sv) < 0.0001)
+		return;
+
+	const QPointF origin = m_preAdjustmentShape.boundingRect().center();
+	QTransform t;
+	t.translate(origin.x(), origin.y());
+	t.shear(sh, sv);
+
+	for(int i=0;i<m_shape.size();++i) {
+		const QPointF p = m_preAdjustmentShape[i] - origin;
+		m_shape[i] = t.map(p);
+	}
+
+	emit shapeChanged(m_shape);
+}
+
 
 void Selection::addPointToShape(const QPointF &point)
 {
