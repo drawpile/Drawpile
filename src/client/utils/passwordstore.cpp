@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QStandardItemModel>
 
 PasswordStore::PasswordStore()
 	: PasswordStore(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "passwords.json").absoluteFilePath())
@@ -161,3 +162,37 @@ bool PasswordStore::forgetPassword(const QString &server, const QString &usernam
 	return entries.remove(username.toLower()) > 0;
 }
 
+void passwordMapToStandardItem(QStandardItem *parent, const PasswordStore::PasswordMap &map, int type)
+{
+	for(auto i=map.constBegin();i!=map.constEnd();++i) {
+		const PasswordStore::PasswordEntries entries = i.value();
+		if(!entries.isEmpty()) {
+			QStandardItem *serverItem = new QStandardItem(i.key());
+
+			for(auto j=entries.constBegin();j!=entries.constEnd();++j) {
+				QStandardItem *passwordItem = new QStandardItem(j.key());
+				passwordItem->setData(i.key(), Qt::UserRole + 1);
+				passwordItem->setData(j.key(), Qt::UserRole + 2);
+				passwordItem->setData(type, Qt::UserRole + 3);
+				serverItem->appendRow(passwordItem);
+			}
+
+			parent->appendRow(serverItem);
+		}
+	}
+}
+
+QStandardItemModel *PasswordStore::toStandardItemModel(QObject *parent) const
+{
+	QStandardItemModel *model = new QStandardItemModel(parent);
+
+	QStandardItem *server = new QStandardItem(QObject::tr("Servers"));
+	passwordMapToStandardItem(server, m_serverPasswords, int(Type::Server));
+	model->appendRow(server);
+
+	QStandardItem *extauth = new QStandardItem(QObject::tr("Websites"));
+	passwordMapToStandardItem(server, m_extauthPasswords, int(Type::Extauth));
+	model->appendRow(extauth);
+
+	return model;
+}

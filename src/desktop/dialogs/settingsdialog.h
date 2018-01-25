@@ -54,6 +54,8 @@ private slots:
 
 	void lockParentalControls();
 
+	void removeStoredPassword();
+
 private:
 	void restoreSettings();
 	void setParentalControlsLocked(bool lock);

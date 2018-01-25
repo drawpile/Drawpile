@@ -6,6 +6,7 @@
  * Bugfix: logging in with ext-auth would disable the field for session password entry
  * Bugfix: rectangle fill or image pasting worked (locally) on locked layers
  * Improved selection scaling behavior. Aspect ratio maintaining mode now works, as does flipping and mirroring
+ * The client can now remember server and ext-auth passwords
 
 2018-01-22 Version 2.0.6
  * Added selection shear mode

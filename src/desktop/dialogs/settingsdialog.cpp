@@ -29,6 +29,7 @@
 #include "utils/listserverdelegate.h"
 #include "utils/netfiles.h"
 #include "utils/settings.h"
+#include "utils/passwordstore.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../shared/util/announcementapi.h"
 #include "../shared/util/passwordhash.h"
@@ -48,6 +49,7 @@
 #include <QSslCertificate>
 #include <QSortFilterProxyModel>
 #include <QPointer>
+#include <QStandardItemModel>
 
 #include <QDebug>
 
@@ -179,6 +181,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// Parental controls
 	connect(m_ui->nsfmLock, &QPushButton::clicked, this, &SettingsDialog::lockParentalControls);
+
+	// Stored password list
+	PasswordStore passwords;
+	passwords.load();
+
+	m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
+	m_ui->passwordListView->expandAll();
+
+	connect(m_ui->passwordListRemove, &QPushButton::clicked, this, &SettingsDialog::removeStoredPassword);
 
 	// Load configuration
 	restoreSettings();
@@ -632,6 +643,25 @@ void SettingsDialog::lockParentalControls()
 	}
 
 	setParentalControlsLocked(locked);
+}
+
+void SettingsDialog::removeStoredPassword()
+{
+	const QModelIndex &idx = m_ui->passwordListView->currentIndex();
+	if(idx.isValid()) {
+		const QString server = idx.data(Qt::UserRole+1).toString();
+		const QString username = idx.data(Qt::UserRole+2).toString();
+		const PasswordStore::Type type = PasswordStore::Type(idx.data(Qt::UserRole+3).toInt());
+
+		PasswordStore passwords;
+		passwords.load();
+
+		if(passwords.forgetPassword(server, username, type)) {
+			passwords.save();
+			delete m_ui->passwordListView->model();
+			m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
+		}
+	}
 }
 
 }

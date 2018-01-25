@@ -24,6 +24,8 @@
 #include <QHash>
 
 class QJsonDocument;
+class QStandardItemModel;
+class QObject;
 
 /**
  * @brief User password storage for server and ext-auth logins.
@@ -95,6 +97,13 @@ public:
 	 * @brief Get the content of the password store in JSON format
 	 */
 	QJsonDocument toJsonDocument() const;
+
+	/**
+	 * @brief Get the list of stored passwords as a tree model.
+	 *
+	 * The actual passwords are not included.
+	 */
+	QStandardItemModel *toStandardItemModel(QObject *parent=nullptr) const;
 
 private:
 	PasswordMap m_serverPasswords;
