@@ -50,14 +50,17 @@ SessionListingDialog::SessionListingDialog(QWidget *parent)
 	QPushButton *ok = m_ui->buttonBox->button(QDialogButtonBox::Ok);
 	ok->setEnabled(false);
 
+	QSettings settings;
+
 	m_ui->listserver->setModel(new sessionlisting::ListServerModel(true, this));
-	m_ui->listserver->setCurrentIndex(QSettings().value("history/listingserverlast", 0).toInt());
+	m_ui->listserver->setCurrentIndex(settings.value("history/listingserverlast", 0).toInt());
 	connect(m_ui->listserver, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &SessionListingDialog::refreshListing);
 
 	m_sessions = new sessionlisting::SessionListingModel(this);
 	m_sessions->setShowNsfm(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
 
 	connect(m_ui->showPassworded, &QCheckBox::toggled, m_sessions, &sessionlisting::SessionListingModel::setShowPassworded);
+	m_ui->showPassworded->setChecked(settings.value("history/showpasswordedlistings", true).toBool());
 
 #ifdef HAVE_DNSSD
 	m_localServers = new ServerDiscoveryModel(this);
@@ -126,6 +129,7 @@ SessionListingDialog::~SessionListingDialog()
 {
 	QSettings cfg;
 	cfg.setValue("history/listingserverlast", m_ui->listserver->currentIndex());
+	cfg.setValue("history/showpasswordedlistings", m_ui->showPassworded->isChecked());
 	delete m_ui;
 }
 

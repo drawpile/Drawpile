@@ -7,6 +7,7 @@
  * Bugfix: rectangle fill or image pasting worked (locally) on locked layers
  * Improved selection scaling behavior. Aspect ratio maintaining mode now works, as does flipping and mirroring
  * The client can now remember server and ext-auth passwords
+ * The state of the "show password protected sessions" checkbox is now remembered
 
 2018-01-22 Version 2.0.6
  * Added selection shear mode
