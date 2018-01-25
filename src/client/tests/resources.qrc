@@ -1,0 +1,6 @@
+<RCC>
+	<qresource prefix="/test">
+		<file>passwordlist.json</file>
+	</qresource>
+</RCC>
+

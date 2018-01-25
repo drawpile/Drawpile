@@ -300,6 +300,16 @@ signals:
 	void extAuthComplete(bool success);
 
 	/**
+	 * @brief Username and password (unless in guest mode) OK.
+	 */
+	void loginOk();
+
+	/**
+	 * @brief Server user account password was wrong
+	 */
+	void badLoginPassword();
+
+	/**
 	 * @brief User must select which session to join
 	 *
 	 * Call joinSelectedSession(id, needPassword) or cancelLogin()

@@ -24,6 +24,7 @@
 #include "parentalcontrols/parentalcontrols.h"
 
 #include "utils/usernamevalidator.h"
+#include "utils/passwordstore.h"
 #include "utils/html.h"
 
 #include "ui_logindialog.h"
@@ -31,6 +32,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTimer>
 
 namespace dialogs {
 
@@ -52,6 +54,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	// Login page
 	m_ui->username->setText(login->url().userName());
 	m_ui->username->setValidator(new UsernameValidator(this));
+	m_ui->badPasswordLabel->setVisible(false);
 
 	auto requireFields = [this]() {
 		// Enable Continue button when required fields are not empty
@@ -86,6 +89,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(login, &net::LoginHandler::passwordNeeded, this, &LoginDialog::onPasswordNeeded);
 	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
 	connect(login, &net::LoginHandler::extAuthNeeded, this, &LoginDialog::onExtAuthNeeded);
+	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
+	connect(login, &net::LoginHandler::badLoginPassword, this, &LoginDialog::onBadLoginPassword);
 	connect(login, &net::LoginHandler::extAuthComplete, this, &LoginDialog::onExtAuthComplete);
 	connect(login, &net::LoginHandler::sessionChoiceNeeded, this, &LoginDialog::onSessionChoiceNeeded);
 	connect(login, &net::LoginHandler::certificateCheckNeeded, this, &LoginDialog::onCertificateCheckNeeded);
@@ -123,6 +128,7 @@ void LoginDialog::resetMode(Mode mode)
 		m_ui->pages->setCurrentIndex(PAGE_AUTH);
 		m_ui->username->setEnabled(mode != PASSWORD);
 		m_ui->password->setEnabled(true);
+		m_ui->rememberPassword->setVisible(mode == EXTAUTH || mode == LOGIN);
 		if(mode == EXTAUTH)
 			m_ui->intro->setStyleSheet(QStringLiteral(
 				"background: #3498db;"
@@ -163,19 +169,83 @@ void LoginDialog::onLoginNeeded(const QString &prompt)
 	m_ui->intro->setText(prompt);
 	m_ui->password->setText(QString());
 	resetMode(LOGIN);
+
+	PasswordStore ps;
+	ps.load();
+	m_ui->password->setText(ps.getPassword(m_login->url().host(), m_ui->username->text().toLower(), PasswordStore::Type::Server));
+
+	if(!m_ui->password->text().isEmpty()) {
+		// Autologin with remembered password
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->click();
+	}
 }
 
 void LoginDialog::onExtAuthNeeded(const QUrl &url)
 {
 	m_ui->intro->setText(tr("Log in with %1 credentials").arg("<i>" + url.host() + "</i>"));
-	m_ui->password->setText(QString());
+	if(url.scheme() != "https")
+		m_ui->intro->setText(m_ui->intro->text() + " (INSECURE CONNECTION!)");
+
+	m_ui->rememberPassword->setChecked(false);
+	m_extauthurl = url;
 
 	resetMode(EXTAUTH);
+
+	PasswordStore ps;
+	ps.load();
+	m_ui->password->setText(ps.getPassword(url.host(), m_ui->username->text().toLower(), PasswordStore::Type::Extauth));
+
+	if(!m_ui->password->text().isEmpty()) {
+		// Autologin with remembered password
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->click();
+	}
 }
 
 void LoginDialog::onExtAuthComplete(bool success)
 {
-	resetMode();
+
+	if(success) {
+		if(m_ui->rememberPassword->isChecked()) {
+			PasswordStore ps;
+
+			ps.load();
+			ps.setPassword(m_extauthurl.host(), m_ui->username->text(), PasswordStore::Type::Extauth, m_ui->password->text());
+			ps.save();
+		}
+		resetMode();
+
+	} else {
+		resetMode(EXTAUTH);
+		m_ui->password->setText(QString());
+
+		PasswordStore ps;
+		ps.load();
+		if(ps.forgetPassword(m_extauthurl.host(), m_ui->username->text(), PasswordStore::Type::Extauth))
+			ps.save();
+
+		m_ui->badPasswordLabel->show();
+		QTimer::singleShot(2000, m_ui->badPasswordLabel, &QLabel::hide);
+		m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	}
+}
+
+void LoginDialog::onLoginOk()
+{
+	if(m_ui->rememberPassword->isChecked()) {
+		PasswordStore ps;
+
+		ps.load();
+		ps.setPassword(m_login->url().host(), m_ui->username->text(), PasswordStore::Type::Server, m_ui->password->text());
+		ps.save();
+	}
+}
+
+void LoginDialog::onBadLoginPassword()
+{
+	PasswordStore ps;
+	ps.load();
+	if(ps.forgetPassword(m_login->url().host(), m_ui->username->text(), PasswordStore::Type::Server))
+		ps.save();
 }
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)

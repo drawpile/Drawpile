@@ -56,6 +56,7 @@ set (
 	utils/settings.cpp
 	utils/icon.cpp
 	utils/logging.cpp
+	utils/passwordstore.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp

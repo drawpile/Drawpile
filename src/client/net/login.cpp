@@ -325,15 +325,16 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 			m_state = EXPECT_IDENTIFIED;
 			send(cmd);
 
+			emit extAuthComplete(true);
+
 		} else if(status == "badpass") {
-			failLogin(tr("Incorrect password"));
-			// TODO allow another attempt
+			qWarning("Incorrect ext-auth password");
+
+			emit extAuthComplete(false);
 
 		} else {
 			failLogin(tr("Unexpected ext-auth response: %s").arg(status));
 		}
-
-		emit extAuthComplete(status == "auth");
 	});
 }
 
@@ -366,6 +367,8 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 		failLogin(tr("Invalid state"));
 		return;
 	}
+
+	emit loginOk();
 
 	//bool isGuest = msg.reply["guest"].toBool();
 	for(const QJsonValue f : msg.reply["flags"].toArray())
@@ -734,9 +737,10 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	QString error;
 	if(code == "notFound")
 		error = tr("Session not found!");
-	else if(code == "badPassword")
+	else if(code == "badPassword") {
 		error = tr("Incorrect password!");
-	else if(code == "badUsername")
+		emit badLoginPassword();
+	} else if(code == "badUsername")
 		error = tr("Invalid username!");
 	else if(code == "bannedName")
 		error = tr("This username has been locked");

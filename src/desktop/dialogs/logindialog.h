@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define LOGINDIALOG_H
 
 #include <QDialog>
+#include <QUrl>
 
 class Ui_LoginDialog;
 class QAbstractButton;
@@ -56,6 +57,8 @@ private slots:
 	void onLoginNeeded(const QString &prompt);
 	void onExtAuthNeeded(const QUrl &url);
 	void onExtAuthComplete(bool success);
+	void onLoginOk();
+	void onBadLoginPassword();
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
@@ -75,6 +78,7 @@ private:
 	void resetMode(Mode mode=LABEL);
 
 	Mode m_mode;
+	QUrl m_extauthurl;
 	net::LoginHandler *m_login;
 	Ui_LoginDialog *m_ui;
 	QAbstractButton *m_reportButton;
