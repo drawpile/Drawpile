@@ -28,7 +28,7 @@
 #include <QStandardItemModel>
 
 PasswordStore::PasswordStore()
-	: PasswordStore(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "passwords.json").absoluteFilePath())
+	: PasswordStore(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation), "passwords.json").absoluteFilePath())
 {
 }
 
