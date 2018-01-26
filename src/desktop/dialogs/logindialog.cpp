@@ -234,7 +234,7 @@ void LoginDialog::onExtAuthComplete(bool success)
 
 void LoginDialog::onLoginOk()
 {
-	if(m_ui->rememberPassword->isChecked()) {
+	if(m_ui->rememberPassword->isChecked() && !m_extauthurl.isValid()) {
 		PasswordStore ps;
 
 		ps.load();
