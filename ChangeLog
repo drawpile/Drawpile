@@ -1,4 +1,4 @@
-2018-0?-?? Version 2.0.7
+2018-01-26 Version 2.0.7
  * Fixed duplicate colors in color history palette
  * Windows specific: added missing style plugin
  * Fixed flipbook downscaling (regession)
