@@ -191,7 +191,7 @@ QStandardItemModel *PasswordStore::toStandardItemModel(QObject *parent) const
 	model->appendRow(server);
 
 	QStandardItem *extauth = new QStandardItem(QObject::tr("Websites"));
-	passwordMapToStandardItem(server, m_extauthPasswords, int(Type::Extauth));
+	passwordMapToStandardItem(extauth, m_extauthPasswords, int(Type::Extauth));
 	model->appendRow(extauth);
 
 	return model;
