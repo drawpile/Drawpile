@@ -657,9 +657,13 @@ void SettingsDialog::removeStoredPassword()
 		passwords.load();
 
 		if(passwords.forgetPassword(server, username, type)) {
-			passwords.save();
-			delete m_ui->passwordListView->model();
-			m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
+			QString error;
+			if(!passwords.save(&error)) {
+				m_ui->passwordListMessage->setText(error);
+			} else {
+				delete m_ui->passwordListView->model();
+				m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
+			}
 		}
 	}
 }

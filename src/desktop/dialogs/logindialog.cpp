@@ -210,7 +210,10 @@ void LoginDialog::onExtAuthComplete(bool success)
 
 			ps.load();
 			ps.setPassword(m_extauthurl.host(), m_ui->username->text(), PasswordStore::Type::Extauth, m_ui->password->text());
-			ps.save();
+			QString err;
+			ps.save(&err);
+			if(!err.isEmpty())
+				qWarning("Error writing password file: %s", qPrintable(err));
 		}
 		resetMode();
 

@@ -923,6 +923,13 @@
           <widget class="QWidget" name="passwordPage">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
+             <widget class="QLabel" name="passwordListMessage">
+              <property name="text">
+               <string>Note: passwords are not encrypted.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QTreeView" name="passwordListView">
               <attribute name="headerVisible">
                <bool>false</bool>
