@@ -2,6 +2,7 @@
  * Fixed password remembering on Windows (now uses the same local appdata directory as other settings)
  * Fixed saved extauth passwords appearing under the server section in the settings dialog
  * Fixed that a server password would also get saved for extauth
+ * Server: added support for SSL certificate chains and certificate auto-reloading
 
 2018-01-26 Version 2.0.7
  * Fixed duplicate colors in color history palette

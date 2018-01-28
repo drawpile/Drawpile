@@ -118,7 +118,9 @@ bool SslServer::isValidCert() const
 
 void SslServer::incomingConnection(qintptr handle)
 {
-	if(!(reloadCertChain() && reloadKey())) {
+	reloadCertChain();
+	reloadKey();
+	if(!isValidCert()) {
 		qWarning("SSL not available for new connection!");
 		QTcpServer::incomingConnection(handle);
 		return;
