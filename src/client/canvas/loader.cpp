@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -149,11 +149,14 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		if(!fill.isValid())
 			msgs.append(net::command::putQImage(m_contextId, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
 
-		AclFilter::LayerAcl acl;
-		if(m_session)
-			acl = m_session->aclFilter()->layerAcl(layer->id());
-		if(acl.locked || !acl.exclusive.isEmpty())
-			msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, acl.exclusive)));
+		// Set extra layer info (if present)
+		for(int j=0;j<m_layerlist.size();++j) {
+			if(m_layerlist[j].id == layer->id()) {
+				const LayerListItem &info = m_layerlist[j];
+				if(info.locked || !info.exclusive.isEmpty())
+					msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), info.locked, info.exclusive)));
+			}
+		}
 	}
 
 	// Create annotations

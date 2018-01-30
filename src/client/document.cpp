@@ -544,7 +544,7 @@ void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
 
 	} else {
 		qInfo("Preparing session reset from a savepoint");
-		m_resetstate = savepoint.initCommands(m_client->myId());
+		m_resetstate = savepoint.initCommands(m_client->myId(), m_canvas);
 	}
 
 	m_client->sendMessage(net::command::serverCommand("reset-session"));
@@ -598,7 +598,7 @@ void Document::snapshotNeeded()
 				m_client->sendMessage(net::command::serverCommand("init-cancel"));
 				return;
 			}
-			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack()).loadInitCommands();
+			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas->layerlist()->getLayers(), m_canvas).loadInitCommands();
 		}
 
 		// Size limit check. The server will kick us if we send an oversized reset.

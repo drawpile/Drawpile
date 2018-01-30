@@ -188,7 +188,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 
 	if(!m_statetracker->hasFullHistory() || forceNew) {
 		// Generate snapshot
-		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, this).loadInitCommands();
+		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_layerlist->getLayers(), this).loadInitCommands();
 
 	} else {
 		// Message stream contains (starts with) a snapshot: use it

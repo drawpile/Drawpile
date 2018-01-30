@@ -125,7 +125,7 @@ QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, Canv
 
 	paintcore::LayerStack stack;
 	stack.restoreSavepoint(m_data->canvas);
-	SnapshotLoader loader(contextId, &stack, canvas);
+	SnapshotLoader loader(contextId, &stack, m_data->layermodel, canvas);
 	return loader.loadInitCommands();
 }
 

@@ -142,7 +142,7 @@ public:
 	 * @param contextId context Id of the user resetting
 	 * @param canvas if set, ACL settings are got from here
 	 */
-	QList<protocol::MessagePtr> initCommands(uint8_t contextId, CanvasModel *canvas=nullptr) const;
+	QList<protocol::MessagePtr> initCommands(uint8_t contextId, CanvasModel *canvas) const;
 
 private:
 	struct Data;
