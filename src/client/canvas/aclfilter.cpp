@@ -85,8 +85,11 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_USER_JOIN:
 		// Set our own default lock. We can't set the user list item's properties
 		// here, since it hasn't been created yet.
-		if(msg.contextId() == m_myId && isLockedByDefault())
-			setUserLock(true);
+		if(isLockedByDefault()) {
+			if(msg.contextId() == m_myId)
+				setUserLock(true);
+			m_userlocks << msg.contextId();
+		}
 
 		// Make sure the user's OP status bits are up to date
 		emit operatorListChanged(m_ops);
