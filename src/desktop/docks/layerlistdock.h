@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ signals:
 
 private slots:
 	void onLayerCreate(const QModelIndex &parent, int first, int last);
+	void beforeLayerDelete();
 	void onLayerDelete(const QModelIndex &parent, int first, int last);
 	void onLayerReorder();
 
@@ -109,6 +110,7 @@ private:
 	Ui_LayerBox *m_ui;
 	canvas::CanvasModel *m_canvas;
 	int m_selectedId;
+	int m_lastSelectedRow;
 	bool m_noupdate;
 	LayerAclMenu *m_aclmenu;
 	QMenu *m_layermenu;

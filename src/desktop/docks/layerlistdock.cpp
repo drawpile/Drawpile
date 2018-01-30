@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -155,7 +155,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	m_aclmenu->setUserList(canvas->userlist());
 
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
-	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::onLayerDelete);
+	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::beforeLayerDelete);
+	connect(canvas->layerlist(), &canvas::LayerListModel::rowsRemoved, this, &LayerList::onLayerDelete);
 	connect(canvas->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
@@ -235,6 +236,7 @@ void LayerList::layerContextMenu(const QPoint &pos)
 void LayerList::selectLayer(int id)
 {
 	const QModelIndex i = m_canvas->layerlist()->layerIndex(id);
+
 	m_ui->layerlist->selectionModel()->select(i, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 	m_ui->layerlist->scrollTo(i);
 }
@@ -441,22 +443,28 @@ void LayerList::onLayerCreate(const QModelIndex&, int, int)
 	// Automatically select the first layer
 	if(m_canvas->layerlist()->rowCount()==1)
 		m_ui->layerlist->selectionModel()->select(m_ui->layerlist->model()->index(0,0), QItemSelectionModel::SelectCurrent);
+	else // remind ourselves of the current selection
+		emit layerSelected(m_selectedId);
 }
 
+void LayerList::beforeLayerDelete()
+{
+	const QModelIndex cursel = currentSelection();
+	m_lastSelectedRow = cursel.isValid() ? cursel.row() : 0;
+}
 /**
  * @brief Respond to layer deletion
  */
 void LayerList::onLayerDelete(const QModelIndex &, int first, int last)
 {
-	const QModelIndex cursel = currentSelection();
-	int row = cursel.isValid() ? cursel.row() : 0;
+	int row = m_lastSelectedRow;
+
+	if(m_canvas->layerlist()->rowCount() == 0)
+		return;
 
 	// Automatically select neighbouring on deletion
 	if(row >= first && row <= last) {
-		if(first==0)
-			row=last+1;
-		else
-			row = first-1;
+		row = qBound(0, row, m_canvas->layerlist()->rowCount()-1);
 		selectLayer(m_canvas->layerlist()->index(row).data(canvas::LayerListModel::IdRole).toInt());
 	}
 }
@@ -485,9 +493,9 @@ bool LayerList::isCurrentLayerLocked() const
 	if(!m_canvas)
 		return false;
 
-	QModelIndexList idx = m_ui->layerlist->selectionModel()->selectedIndexes();
-	if(!idx.isEmpty()) {
-		const canvas::LayerListItem &item = idx.at(0).data().value<canvas::LayerListItem>();
+	QModelIndex idx = currentSelection();
+	if(idx.isValid()) {
+		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
 		return item.hidden || item.isLockedFor(m_canvas->localUserId());
 	}
 	return false;
