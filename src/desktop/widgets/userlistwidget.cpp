@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -187,7 +187,8 @@ UserListDelegate::UserListDelegate(QObject *parent)
 	: QItemDelegate(parent),
 	  m_lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
 	  m_opicon(icon::fromTheme("irc-operator").pixmap(16, 16)),
-	  m_muteicon(icon::fromTheme("irc-unvoice").pixmap(16, 16))
+	  m_muteicon(icon::fromTheme("irc-unvoice").pixmap(16, 16)),
+	  m_authicon(icon::fromTheme("im-user").pixmap(16, 16))
 {
 }
 
@@ -206,22 +207,24 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	const QSize locksize = m_lockicon.size();
 	{
 		QFontMetrics fm(opt.font);
-		QString authmsg = QStringLiteral("☆");
-		if(user.isAuth)
-			drawDisplay(painter, opt, textrect, authmsg);
-
-		textrect.moveLeft(textrect.left() + fm.width(authmsg) + 2);
-
-		QString modmsg = QStringLiteral("[MOD]");
-
-		opt.font.setBold(true);
-		if(user.isMod)
+		if(user.isMod) {
+			const QString modmsg = QStringLiteral("MOD");
+			opt.font.setBold(true);
 			drawDisplay(painter, opt, textrect, modmsg);
-		else if(user.isOperator)
-			painter->drawPixmap(QRect(textrect.topLeft(), m_opicon.size()), m_opicon);
+			opt.font.setBold(false);
+			textrect.moveLeft(textrect.left() + qMax(m_opicon.width()*2, fm.width(modmsg)) + 2);
 
-		textrect.moveLeft(textrect.left() + fm.width(modmsg) + 7);
-		opt.font.setBold(false);
+		} else {
+			if(user.isAuth)
+				painter->drawPixmap(QRect(textrect.topLeft(), m_authicon.size()), m_authicon);
+
+			textrect.moveLeft(textrect.left() + m_authicon.width() + 2);
+
+			if(user.isOperator)
+				painter->drawPixmap(QRect(textrect.topLeft(), m_opicon.size()), m_opicon);
+
+			textrect.moveLeft(textrect.left() + m_opicon.width() + 2);
+		}
 	}
 
 	if(user.isLocal)
