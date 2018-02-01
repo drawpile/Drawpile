@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,12 @@ public:
 	 * @param port HTTP server port
 	 */
 	bool listen(quint16 port);
-	//void listenFd(int socket);
+
+	/**
+	 * Start listening on the given socket
+	 * @param socket file descriptor
+	 */
+	bool listenFd(int socket);
 	
 	void stop();
 

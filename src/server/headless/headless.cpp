@@ -301,15 +301,15 @@ bool start() {
 				return false;
 
 #ifdef HAVE_WEBADMIN
-		if(webadminPort>0) {
-			webadmin->setSessions(server);
-			webadmin->start(webadminPort);
-		}
+			if(webadminPort>0) {
+				webadmin->setSessions(server);
+				webadmin->start(webadminPort);
+			}
 #endif
 
 		} else {
 			// listening socket passed to us by the init system
-			if(listenfds.size() != 1) {
+			if(listenfds.size() > 2) {
 				qCritical("Too many file descriptors received");
 				return false;
 			}
@@ -319,10 +319,14 @@ bool start() {
 			if(!server->startFd(listenfds[0]))
 				return false;
 
-			// TODO start webadmin if two fds were passsed
+			if(listenfds.size()>1) {
 #ifdef HAVE_WEBADMIN
-			qCritical("Webadmin socket activation not implemented");
+				webadmin->setSessions(server);
+				webadmin->startFd(listenfds[1]);
+#else
+				qCritical("Web admin socket passed, but web admin support not built in!");
 #endif
+			}
 		}
 	}
 

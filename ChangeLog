@@ -4,6 +4,7 @@
  * Fixed that a server password would also get saved for extauth
  * Server: added support for SSL certificate chains and certificate auto-reloading
  * Fixed reset removing permission settings
+ * Server: web admin API can now be used with socket activation
 
 2018-01-26 Version 2.0.7
  * Fixed duplicate colors in color history palette

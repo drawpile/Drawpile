@@ -4,6 +4,8 @@ After=network.target
 
 [Socket]
 ListenStream=27750
+# Adding a second port activates the web admin API:
+ListenStream=27780
 
 [Install]
 WantedBy=sockets.target

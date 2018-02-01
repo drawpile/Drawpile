@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -291,6 +291,24 @@ bool MicroHttpd::listen(quint16 port)
 			&access_policy, _d,
 			&request_handler, _d,
 			MHD_OPTION_NOTIFY_COMPLETED, request_completed, 0,
+			MHD_OPTION_END);
+	if(!_d->mhd) {
+		qWarning("Error starting microhttpd");
+		return false;
+	}
+	return true;
+}
+
+bool MicroHttpd::listenFd(int fd)
+{
+	Q_ASSERT(!_d->mhd);
+	qInfo("Starting microhttpd on pre-opened socket");
+
+	_d->mhd = MHD_start_daemon(MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY, 0,
+			&access_policy, _d,
+			&request_handler, _d,
+			MHD_OPTION_NOTIFY_COMPLETED, request_completed, 0,
+			MHD_OPTION_LISTEN_SOCKET, fd,
 			MHD_OPTION_END);
 	if(!_d->mhd) {
 		qWarning("Error starting microhttpd");

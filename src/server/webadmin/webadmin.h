@@ -60,6 +60,7 @@ public:
 	 *
 	 */
 	void start(quint16 port);
+	void startFd(int fd);
 
 private:
 	MicroHttpd *m_server;
