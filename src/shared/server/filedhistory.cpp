@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -241,14 +241,15 @@ bool FiledHistory::load()
 
 		} else if(cmd == "BAN") {
 			const QList<QByteArray> args = params.split(' ');
-			if(args.length() != 4) {
+			if(args.length() != 5) {
 				qWarning() << id().toString() << "invalid ban entry:" << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
 				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
 				QHostAddress ip { QString::fromUtf8(args.at(2)) };
-				QString bannedBy { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(3))) };
-				m_banlist.addBan(name, ip, bannedBy, id);
+				QString extAuthId { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(3))) };
+				QString bannedBy { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(4))) };
+				m_banlist.addBan(name, ip, extAuthId, bannedBy, id);
 			}
 
 		} else if(cmd == "UNBAN") {
@@ -593,13 +594,14 @@ void FiledHistory::cleanupBatches(int before)
 	}
 }
 
-void FiledHistory::historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy)
+void FiledHistory::historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy)
 {
 	const QByteArray include = " ";
 	QByteArray entry = "BAN " +
 			QByteArray::number(id) + " " +
 			username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
 			ip.toString().toUtf8() + " " +
+			extAuthId.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
 			bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
 	m_journal->write(entry);
 }

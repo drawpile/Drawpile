@@ -25,11 +25,11 @@ SessionHistory::SessionHistory(const QUuid &id, QObject *parent)
 {
 }
 
-bool SessionHistory::addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy)
+bool SessionHistory::addBan(const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy)
 {
-	const int id = m_banlist.addBan(username, ip, bannedBy);
+	const int id = m_banlist.addBan(username, ip, extAuthId, bannedBy);
 	if(id>0) {
-		historyAddBan(id, username, ip, bannedBy);
+		historyAddBan(id, username, ip, extAuthId, bannedBy);
 		return true;
 	}
 	return false;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -76,6 +76,16 @@ public:
 	 */
 	const QString &username() const;
 	void setUsername(const QString &username);
+
+	/**
+	 * @brief Get the ext-auth server's ID for this user
+	 *
+	 * The ext-auth ID is set only if this user logged in via ext-auth,
+	 * and the server provided an ID. The ID is only unique within the
+	 * same ext-auth server.
+	 */
+	const QString &extAuthId() const;
+	void setExtAuthId(const QString &id);
 
 	/**
 	 * @brief Does this user have session operator privileges?

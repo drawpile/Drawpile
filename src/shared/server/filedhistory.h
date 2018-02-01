@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ public:
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
 	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
-	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy) override;
+	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
 private:

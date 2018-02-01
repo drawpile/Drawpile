@@ -259,9 +259,11 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 
 				// Token is valid: log in as an authenticated user
 				const QJsonObject ea = extAuthToken.payload();
+				const QJsonValue uid = ea["uid"];
 
 				authLoginOk(
 					ea["username"].toString(),
+					uid.isDouble() ? QString::number(uid.toInt()) : uid.toString(),
 					ea["flags"].toArray(),
 					m_server->config()->getConfigBool(config::ExtAuthMod)
 					);
@@ -315,14 +317,15 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 
 	case RegisteredUser::Ok:
 		// Yay, username and password were valid!
-		authLoginOk(username, QJsonArray::fromStringList(userAccount.flags), true);
+		authLoginOk(username, QString(), QJsonArray::fromStringList(userAccount.flags), true);
 		break;
 	}
 }
 
-void LoginHandler::authLoginOk(const QString &username, const QJsonArray &flags, bool allowMod)
+void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, bool allowMod)
 {
 	m_client->setUsername(username);
+	m_client->setExtAuthId(extAuthId);
 
 	protocol::ServerReply identReply;
 	identReply.type = protocol::ServerReply::RESULT;
@@ -582,7 +585,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		if(session->banlist().isBanned(m_client->peerAddress())) {
+		if(session->banlist().isBanned(m_client->peerAddress(), m_client->extAuthId())) {
 			sendError("banned", "You have been banned from this session");
 			return;
 		}

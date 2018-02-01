@@ -203,7 +203,7 @@ public:
 	/**
 	 * @brief Add a new banlist entry
 	 */
-	bool addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy);
+	bool addBan(const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy);
 
 	/**
 	 * @brief removeBan Remove a banlist entry
@@ -266,7 +266,7 @@ signals:
 protected:
 	virtual void historyAdd(const protocol::MessagePtr &msg) = 0;
 	virtual void historyReset(const QList<protocol::MessagePtr> &newHistory) = 0;
-	virtual void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &bannedBy) = 0;
+	virtual void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);
 

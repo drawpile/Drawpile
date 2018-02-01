@@ -110,7 +110,7 @@ private:
 	void handleStarttls();
 	void requestExtAuth();
 	void guestLogin(const QString &username);
-	void authLoginOk(const QString &username, const QJsonArray &flags, bool allowMod);
+	void authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, bool allowMod);
 	bool send(const protocol::ServerReply &cmd);
 	void sendError(const QString &code, const QString &message);
 	void extAuthGuestLogin(const QString &username);

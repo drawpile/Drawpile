@@ -291,7 +291,7 @@ Client *Session::getClientByUsername(const QString &username)
 void Session::addBan(const Client *target, const QString &bannedBy)
 {
 	Q_ASSERT(target);
-	if(m_history->addBan(target->username(), target->peerAddress(), bannedBy)) {
+	if(m_history->addBan(target->username(), target->peerAddress(), target->extAuthId(), bannedBy)) {
 		target->log(Log().about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}

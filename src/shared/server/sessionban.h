@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ namespace server {
 struct SessionBan {
 	int id;
 	QString username;
+	QString extAuthId;
 	QHostAddress ip;
 	QString bannedBy;
 };
@@ -54,11 +55,12 @@ public:
 	 * If the address already exists in the ban list, this does nothing.
 	 * @param username the username of the user being banned
 	 * @param ip IP address to be banned
+	 * @param extAuthId the ext-auth user id (if any)
 	 * @param bannedBy name of the user who did the banning
 	 * @param id explicitly specified ID
 	 * @return id of newly added ban entry or 0 if not added
 	 */
-	int addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy, int id=0);
+	int addBan(const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy, int id=0);
 
 	/**
 	 * @brief Remove a ban entry
@@ -68,9 +70,12 @@ public:
 	QString removeBan(int id);
 
 	/**
-	 * @brief Check if the given IP address is on the ban list
+	 * @brief Check if the given IP address or extAuthId is on the ban list
+	 *
+	 * @param address the IP address to check (if not null)
+	 * @param extAuthId the user ID to check (if not empty)
 	 */
-	bool isBanned(const QHostAddress &address) const;
+	bool isBanned(const QHostAddress &address, const QString &extAuthId) const;
 
 	/**
 	 * @brief Get a JSON representation of the ban list

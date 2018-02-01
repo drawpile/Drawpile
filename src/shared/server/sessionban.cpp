@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ static QHostAddress toIpv6(const QHostAddress &ip) {
 	return ip;
 }
 
-int SessionBanList::addBan(const QString &username, const QHostAddress &ip, const QString &bannedBy, int id)
+int SessionBanList::addBan(const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy, int id)
 {
-	if(ip.isNull() || ip.isLoopback() || isBanned(ip))
+	if(ip.isNull() || ip.isLoopback() || isBanned(ip, extAuthId))
 		return 0;
 
 	if(id>0) {
@@ -55,6 +55,7 @@ int SessionBanList::addBan(const QString &username, const QHostAddress &ip, cons
 	m_banlist << SessionBan {
 		id,
 		username.isEmpty() ? "anon" : username,
+		extAuthId,
 		toIpv6(ip), // Always use IPv6 notation for consistency
 		bannedBy
 	};
@@ -74,13 +75,22 @@ QString SessionBanList::removeBan(int id)
 	return QString();
 }
 
-bool SessionBanList::isBanned(const QHostAddress &address) const
+bool SessionBanList::isBanned(const QHostAddress &address, const QString &extAuthId) const
 {
-	const QHostAddress ip = toIpv6(address);
-	for(const SessionBan &b : m_banlist) {
-		if(b.ip == ip)
-			return true;
+	if(!address.isNull()) {
+		const QHostAddress ip = toIpv6(address);
+		for(const SessionBan &b : m_banlist) {
+			if(b.ip == ip)
+				return true;
+		}
 	}
+	if(!extAuthId.isEmpty()) {
+		for(const SessionBan &b : m_banlist) {
+			if(b.extAuthId == extAuthId)
+				return true;
+		}
+	}
+
 	return false;
 }
 
@@ -92,8 +102,10 @@ QJsonArray SessionBanList::toJson(bool showIp) const
 		o["id"] = b.id;
 		o["username"] = b.username;
 		o["bannedBy"] = b.bannedBy;
-		if(showIp)
+		if(showIp) {
 			o["ip"] = b.ip.toString();
+			o["extauthid"] = b.extAuthId;
+		}
 		list.append(o);
 	}
 	return list;
