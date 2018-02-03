@@ -165,6 +165,12 @@ public:
 	void setClosed(bool closed);
 
 	/**
+	 * @brief Is the session open to authenticated users only?
+	 */
+	bool isAuthOnly() const { return m_authOnly; }
+	void setAuthOnly(bool authOnly);
+
+	/**
 	 * @brief Get the maximum number of users allowed in the session
 	 *
 	 * This setting only affects new joins. Old users are not removed,
@@ -496,6 +502,7 @@ private:
 	QElapsedTimer m_lastStatusUpdate;
 
 	bool m_closed;
+	bool m_authOnly;
 	bool m_historyLimitWarningSent;
 };
 

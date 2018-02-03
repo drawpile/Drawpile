@@ -51,6 +51,7 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_publicListingClient(nullptr),
 	m_refreshTimer(nullptr),
 	m_closed(false),
+	m_authOnly(false),
 	m_historyLimitWarningSent(false)
 {
 	m_history->setParent(this);
@@ -314,6 +315,14 @@ void Session::setClosed(bool closed)
 	}
 }
 
+void Session::setAuthOnly(bool authOnly)
+{
+	if(m_authOnly != authOnly) {
+		m_authOnly = authOnly;
+		sendUpdatedSessionProperties();
+	}
+}
+
 // In Qt 5.7 we can just use Flags.setFlag(flag, true/false);
 // Remove this once we can drop support for older Qt versions
 template<class F, class Ff> static void setFlag(F &flags, Ff f, bool set)
@@ -331,6 +340,16 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	if(conf.contains("closed")) {
 		m_closed = conf["closed"].toBool();
 		changes << (m_closed ? "closed" : "opened");
+	}
+
+	if(conf.contains("authOnly")) {
+		const bool authOnly = conf["authOnly"].toBool();
+		// The authOnly flag can only be set by an authenticated user.
+		// Otherwise it would be possible for users to accidentally lock themselves out.
+		if(!authOnly || !changedBy || changedBy->isAuthenticated()) {
+			m_authOnly = authOnly;
+			changes << (authOnly ? "blocked guest logins" : "permitted guest logins");
+		}
 	}
 
 	SessionHistory::Flags flags = m_history->flags();
@@ -459,6 +478,7 @@ void Session::sendUpdatedSessionProperties()
 	props.type = protocol::ServerReply::SESSIONCONF;
 	QJsonObject	conf;
 	conf["closed"] = m_closed; // this refers specifically to the closed flag, not the general status
+	conf["authOnly"] = m_authOnly;
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
 	conf["maxUserCount"] = m_history->maxUsers();
@@ -1056,6 +1076,7 @@ QJsonObject Session::getDescription(bool full) const
 		{"title", title()},
 		{"hasPassword", hasPassword()},
 		{"closed", isClosed()},
+		{"authOnly", isAuthOnly()},
 		{"nsfm", isNsfm()},
 		{"startTime", sessionStartTime().toUTC().toString(Qt::ISODate)},
 		{"size", int(m_history->sizeInBytes())}

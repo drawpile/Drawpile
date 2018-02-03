@@ -1517,6 +1517,7 @@ void MainWindow::onServerLogin()
 	m_chatbox->setLocalUserId(m_doc->client()->myId());
 	_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
+	m_sessionSettings->setAuthenticated(m_doc->client()->isAuthenticated());
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());

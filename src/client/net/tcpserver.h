@@ -61,7 +61,7 @@ public:
 	QUrl url() const { return m_url; }
 
 signals:
-	void loggedIn(const QString &sessionId, int userid, bool join, bool moderator);
+	void loggedIn(const QString &sessionId, int userid, bool join, bool auth, bool moderator);
 	void loggingOut();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ Client::Client(QObject *parent)
 	m_server = m_loopback;
 	m_isloopback = true;
 	m_moderator = false;
+	m_isAuthenticated = false;
 
 	connect(m_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
 }
@@ -107,11 +108,12 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, int userid, bool join, bool moderator)
+void Client::handleConnect(const QString &sessionId, int userid, bool join, bool auth, bool moderator)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
 	m_moderator = moderator;
+	m_isAuthenticated = auth;
 
 	emit serverLoggedin(join);
 }

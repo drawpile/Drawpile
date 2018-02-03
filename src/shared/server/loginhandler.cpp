@@ -593,6 +593,10 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 			sendError("closed", "This session is closed");
 			return;
 		}
+		if(session->isAuthOnly() && !m_client->isAuthenticated()) {
+			sendError("authOnly", "This session does not allow guest logins");
+			return;
+		}
 
 		if(!session->checkPassword(cmd.kwargs.value("password").toString())) {
 			sendError("badPassword", "Incorrect password");

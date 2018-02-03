@@ -61,6 +61,7 @@ Document::Document(QObject *parent)
 	  m_saveInProgress(false),
 	  m_sessionPersistent(false),
 	  m_sessionClosed(false),
+	  m_sessionAuthOnly(false),
 	  m_sessionPreserveChat(false),
 	  m_sessionPasswordProtected(false),
 	  m_sessionOpword(false),
@@ -202,6 +203,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("closed"))
 		setSessionClosed(config["closed"].toBool());
 
+	if(config.contains("authOnly"))
+		setSessionAuthOnly(config["authOnly"].toBool());
+
 	if(config.contains("title"))
 		m_canvas->setTitle(config["title"].toString());
 
@@ -280,6 +284,14 @@ void Document::setSessionClosed(bool closed)
 	if(m_sessionClosed != closed) {
 		m_sessionClosed = closed;
 		emit sessionClosedChanged(closed);
+	}
+}
+
+void Document::setSessionAuthOnly(bool authOnly)
+{
+	if(m_sessionAuthOnly != authOnly) {
+		m_sessionAuthOnly = authOnly;
+		emit sessionAuthOnlyChanged(authOnly);
 	}
 }
 

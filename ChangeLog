@@ -7,6 +7,7 @@
  * Server: web admin API can now be used with socket activation
  * Server: support 'uid' extauth token field
  * Better auth user and mod icons
+ * Added a new session option to allow only authenticated users to join (requires server version 2.0.8) 
 
 2018-01-26 Version 2.0.7
  * Fixed duplicate colors in color history palette

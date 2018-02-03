@@ -74,7 +74,8 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_tls(false),
 	  m_canPersist(false),
 	  m_canReport(false),
-	  m_needUserPassword(false)
+	  m_needUserPassword(false),
+	  m_isGuest(true)
 {
 	m_sessions = new LoginSessionModel(this);
 
@@ -370,7 +371,7 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 
 	emit loginOk();
 
-	//bool isGuest = msg.reply["guest"].toBool();
+	m_isGuest = msg.reply["guest"].toBool();
 	for(const QJsonValue f : msg.reply["flags"].toArray())
 		m_userFlags << f.toString().toUpper();
 
@@ -441,7 +442,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 			session.incompatible = !protoVer.isCurrent();
 			session.needPassword = js["hasPassword"].toBool();
-			session.closed = js["closed"].toBool();
+			session.closed = js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest);
 			session.persistent = js["persistent"].toBool();
 			session.userCount = js["userCount"].toInt();
 			session.founder = js["founder"].toString();

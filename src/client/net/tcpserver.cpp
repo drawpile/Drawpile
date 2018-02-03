@@ -155,6 +155,7 @@ void TcpServer::loginSuccess()
 		m_loginstate->sessionId(),
 		m_loginstate->userId(),
 		m_loginstate->mode() == LoginHandler::JOIN,
+		m_loginstate->isAuthenticated(),
 		m_loginstate->hasUserFlag("MOD")
 		);
 

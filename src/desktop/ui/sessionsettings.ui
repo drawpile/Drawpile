@@ -201,7 +201,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="6" column="1">
            <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -214,7 +214,30 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="denyJoins">
+            <property name="text">
+             <string>Block new logins</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
            <widget class="QCheckBox" name="lockNewUsers">
             <property name="toolTip">
              <string>Prevent new users from drawing until explicitly unlocked by an operator</string>
@@ -224,10 +247,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="denyJoins">
+          <item row="4" column="0" colspan="2">
+           <widget class="QCheckBox" name="authOnly">
             <property name="text">
-             <string>Block new logins</string>
+             <string>No guest logins</string>
             </property>
            </widget>
           </item>
@@ -336,7 +359,8 @@
             <string>Private listing</string>
            </property>
            <property name="icon">
-            <iconset theme="list-add"/>
+            <iconset theme="list-add">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -346,7 +370,8 @@
             <string>Public listing</string>
            </property>
            <property name="icon">
-            <iconset theme="list-add"/>
+            <iconset theme="list-add">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -356,7 +381,8 @@
             <string>Remove selected</string>
            </property>
            <property name="icon">
-            <iconset theme="list-remove"/>
+            <iconset theme="list-remove">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>

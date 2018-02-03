@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,9 @@ public:
 	//! Is persistence available at all on this server?
 	void setPersistenceEnabled(bool);
 
+	//! Is the local user authenticated/not a guest?
+	void setAuthenticated(bool);
+
 signals:
 	void requestAnnouncement(const QString &apiUrl);
 	void requestUnlisting(const QString &apiUrl);
@@ -55,6 +58,7 @@ private slots:
 
 	void maxUsersChanged();
 	void denyJoinsChanged(bool);
+	void authOnlyChanged(bool);
 	void lockNewUsersChanged(bool);
 
 	void lockImagesChanged(bool);
@@ -83,6 +87,7 @@ private:
 	QJsonObject m_sessionconf;
 	uint16_t m_aclFlags, m_aclMask;
 	bool m_op;
+	bool m_isAuth;
 	bool m_canPersist;
 };
 

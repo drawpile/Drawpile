@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_ui->title, &QLineEdit::textEdited, this, &SessionSettingsDialog::titleChanged);
 	connect(m_ui->maxUsers, &QSpinBox::editingFinished, this, &SessionSettingsDialog::maxUsersChanged);
 	connect(m_ui->denyJoins, &QCheckBox::clicked, this, &SessionSettingsDialog::denyJoinsChanged);
+	connect(m_ui->authOnly, &QCheckBox::clicked, this, &SessionSettingsDialog::authOnlyChanged);
 	connect(m_ui->lockNewUsers, &QCheckBox::clicked, this, &SessionSettingsDialog::lockNewUsersChanged);
 	connect(m_ui->lockImages, &QCheckBox::clicked, this, &SessionSettingsDialog::lockImagesChanged);
 	connect(m_ui->lockAnnotations, &QCheckBox::clicked, this, &SessionSettingsDialog::lockAnnotationsChanged);
@@ -72,6 +73,10 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_doc, &Document::sessionPreserveChatChanged, m_ui->preserveChat, &QCheckBox::setChecked);
 	connect(m_doc, &Document::sessionPersistentChanged, m_ui->persistent, &QCheckBox::setChecked);
 	connect(m_doc, &Document::sessionClosedChanged, m_ui->denyJoins, &QCheckBox::setChecked);
+	connect(m_doc, &Document::sessionAuthOnlyChanged, this, [this](bool authOnly) {
+		m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
+		m_ui->authOnly->setChecked(authOnly);
+	});
 	connect(m_doc, &Document::sessionPasswordChanged, [this](bool hasPassword) {
 		m_ui->sessionPassword->setProperty("haspass", hasPassword);
 		updatePasswordLabel(m_ui->sessionPassword);
@@ -148,6 +153,11 @@ void SessionSettingsDialog::setPersistenceEnabled(bool enable)
 	m_canPersist = enable;
 }
 
+void SessionSettingsDialog::setAuthenticated(bool auth)
+{
+	m_isAuth = auth;
+}
+
 void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	if(!canvas)
@@ -186,6 +196,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
 		w[i]->setEnabled(op);
 	m_ui->persistent->setEnabled(m_canPersist && op);
+	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
 }
@@ -245,6 +256,12 @@ void SessionSettingsDialog::changeSessionAcl(uint16_t flag, bool set)
 void SessionSettingsDialog::titleChanged(const QString &title) { changeSesionConf("title", title); }
 void SessionSettingsDialog::maxUsersChanged() { changeSesionConf("maxUserCount", m_ui->maxUsers->value()); }
 void SessionSettingsDialog::denyJoinsChanged(bool set) { changeSesionConf("closed", set); }
+void SessionSettingsDialog::authOnlyChanged(bool set)
+{
+	changeSesionConf("authOnly", set);
+	if(!set && !m_isAuth)
+		m_ui->authOnly->setEnabled(false);
+}
 void SessionSettingsDialog::lockNewUsersChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_DEFAULT, set); }
 void SessionSettingsDialog::lockImagesChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_IMAGES, set); }
 void SessionSettingsDialog::lockAnnotationsChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_ANNOTATIONS, set); }

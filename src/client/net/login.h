@@ -190,6 +190,11 @@ public:
 	 */
 	bool hasUserFlag(const QString &flag) const;
 
+	/**
+	 * @brief Did the user authenticate succesfully?
+	 */
+	bool isAuthenticated() const { return !m_isGuest; }
+
 public slots:
 	void serverDisconnected();
 
@@ -415,6 +420,7 @@ private:
 
 	// User flags
 	QStringList m_userFlags;
+	bool m_isGuest;
 };
 
 }
