@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define CHATWIDGET_H
 
 #include <QWidget>
+#include <QHash>
 
 class QTextBrowser;
 class ChatLineEdit;
@@ -54,23 +55,23 @@ public slots:
 	void setPreserveMode(bool preservechat);
 
 	//! Display a received message
-	void receiveMessage(const QString& nick, const protocol::MessagePtr &msg);
+	void receiveMessage(const protocol::MessagePtr &msg);
 
 	//! Display a received marker
-	void receiveMarker(const QString &nick, const QString &message);
+	void receiveMarker(int id, const QString &message);
 
 	//! Display a system message
 	void systemMessage(const QString& message, bool isAlert=false);
 
 	void userJoined(int id, const QString &name);
-	void userParted(const QString &name);
+	void userParted(int id);
 	void kicked(const QString &kickedBy);
 
 	//! Empty the chat box
 	void clear();
 
-	//! Set the ID of the local user
-	void setLocalUserId(int myId) { m_myId = myId; }
+	//! Initialize the chat box for a new server
+	void loggedIn(int myId);
 
 private slots:
 	void sendMessage(const QString &msg);
@@ -86,6 +87,8 @@ private:
 	QTextBrowser *m_view;
 	ChatLineEdit *m_myline;
 	QLabel *m_pinned;
+	QHash<int, QString> m_usernames;
+	QString username(int id) const;
 	bool m_wasCollapsed;
 	bool m_preserveChat;
 	int m_myId;

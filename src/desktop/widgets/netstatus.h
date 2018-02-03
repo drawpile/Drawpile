@@ -77,7 +77,7 @@ public slots:
 	void hideDownloadProgress();
 
 	void join(int id, const QString& user);
-	void leave(const QString& user);
+	void leave(int id, const QString& user);
 
 	//! This user was kicked off the session
 	void kicked(const QString& user);

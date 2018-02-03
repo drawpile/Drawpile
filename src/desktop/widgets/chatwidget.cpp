@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -113,6 +113,12 @@ void ChatBox::setPreserveMode(bool preservechat)
 	);
 }
 
+void ChatBox::loggedIn(int myId)
+{
+	m_myId = myId;
+	m_usernames.clear();
+}
+
 void ChatBox::focusInput()
 {
 	m_myline->setFocus();
@@ -130,15 +136,30 @@ static QString timestamp()
 
 void ChatBox::userJoined(int id, const QString &name)
 {
-	Q_UNUSED(id);
+	const QString escapedName = name.toHtmlEscaped();
+	// The server resends UserJoin messages during session reset.
+	// We don't need to see the join messages again.
+	if(m_usernames.contains(id) && m_usernames[id] == escapedName)
+		return;
+
+	m_usernames[id] = escapedName;
 	systemMessage(tr("<b>%2</b> joined the session").arg(name.toHtmlEscaped()));
 	notification::playSound(notification::Event::LOGIN);
 }
 
-void ChatBox::userParted(const QString &name)
+QString ChatBox::username(int id) const
 {
-	systemMessage(tr("<b>%1</b> left the session").arg(name.toHtmlEscaped()));
+	if(m_usernames.contains(id))
+		return m_usernames[id];
+	else
+		return QStringLiteral("User #%1").arg(id);
+}
+
+void ChatBox::userParted(int id)
+{
+	systemMessage(tr("<b>%1</b> left the session").arg(username(id)));
 	notification::playSound(notification::Event::LOGOUT);
+	m_usernames.remove(id);
 }
 
 void ChatBox::kicked(const QString &kickedBy)
@@ -146,7 +167,7 @@ void ChatBox::kicked(const QString &kickedBy)
 	systemMessage(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
 }
 
-void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &msg)
+void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 {
 	if(msg->type() != protocol::MSG_CHAT) {
 		qWarning("ChatBox::receiveMessage: message type (%d) is not MSG_CHAT!", msg->type());
@@ -170,7 +191,7 @@ void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &ms
 
 	} else if(chat.isAction()) {
 		m_view->append(QStringLiteral("<p class=\"chat action\">%1 * %2 %3</p>")
-			.arg(timestamp(), nick.toHtmlEscaped(), htmlutils::linkify(txt))
+			.arg(timestamp(), username(msg->contextId()), htmlutils::linkify(txt))
 			);
 
 	} else {
@@ -178,7 +199,7 @@ void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &ms
 			.arg(
 				timestamp(),
 				chat.contextId() == m_myId ? QStringLiteral("me") : QString(),
-				nick.toHtmlEscaped(),
+				username(msg->contextId()),
 				chat.isShout() ? QStringLiteral("announcement") : QString(),
 				htmlutils::linkify(txt)
 			));
@@ -189,11 +210,11 @@ void ChatBox::receiveMessage(const QString &nick, const protocol::MessagePtr &ms
 
 }
 
-void ChatBox::receiveMarker(const QString &nick, const QString &message)
+void ChatBox::receiveMarker(int id, const QString &message)
 {
 	m_view->append(
 		"<p class=\"marker\">" + timestamp() + " <span class=\"nick\">&lt;" +
-		nick.toHtmlEscaped() +
+		username(id) +
 		"&gt;</span> <span class=\"msg\">" +
 		htmlutils::linkify(message.toHtmlEscaped()) +
 		"</span></p>"

@@ -377,9 +377,9 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 
 void CanvasModel::metaUserLeave(const protocol::UserLeave &msg)
 {
-	QString name = m_userlist->getUserById(msg.contextId()).name;
+	const QString name = m_userlist->getUserById(msg.contextId()).name;
 	m_userlist->removeUser(msg.contextId());
-	emit userLeft(name);
+	emit userLeft(msg.contextId(), name);
 }
 
 void CanvasModel::metaChatMessage(protocol::MessagePtr msg)
@@ -395,10 +395,7 @@ void CanvasModel::metaChatMessage(protocol::MessagePtr msg)
 			emit pinnedMessageChanged(pm);
 		}
 	}
-	emit chatMessageReceived(
-		m_userlist->getUsername(msg->contextId()),
-		msg
-		);
+	emit chatMessageReceived(msg);
 }
 
 void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
@@ -415,10 +412,7 @@ void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 
 void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
 {
-	emit markerMessageReceived(
-		m_userlist->getUsername(msg.contextId()),
-		msg.text()
-	);
+	emit markerMessageReceived(msg.contextId(), msg.text());
 }
 
 void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)

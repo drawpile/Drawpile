@@ -130,11 +130,11 @@ signals:
 
 	void colorPicked(const QColor &color);
 
-	void chatMessageReceived(const QString &nick, const protocol::MessagePtr &msg);
-	void markerMessageReceived(const QString &user, const QString &message);
+	void chatMessageReceived(const protocol::MessagePtr &msg);
+	void markerMessageReceived(int id, const QString &message);
 
 	void userJoined(int id, const QString &name);
-	void userLeft(const QString &name);
+	void userLeft(int id, const QString &name);
 
 	void canvasLocked(bool locked);
 

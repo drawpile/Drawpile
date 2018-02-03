@@ -1514,7 +1514,7 @@ void MainWindow::onServerLogin()
 {
 	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
-	m_chatbox->setLocalUserId(m_doc->client()->myId());
+	m_chatbox->loggedIn(m_doc->client()->myId());
 	_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
 	m_sessionSettings->setAuthenticated(m_doc->client()->isAuthenticated());

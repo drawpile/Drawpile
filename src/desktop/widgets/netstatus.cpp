@@ -371,8 +371,9 @@ void NetStatus::join(int id, const QString& user)
 	message(tr("<b>%1</b> joined").arg(user.toHtmlEscaped()));
 }
 
-void NetStatus::leave(const QString& user)
+void NetStatus::leave(int id, const QString& user)
 {
+	Q_UNUSED(id);
 	message(tr("<b>%1</b> left").arg(user.toHtmlEscaped()));
 }
 
