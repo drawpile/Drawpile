@@ -9,6 +9,7 @@
  * Better auth user and mod icons
  * Added a new session option to allow only authenticated users to join (requires server version 2.0.8) 
  * Chatbox no longer shows "user joined" messages for users already in the session
+ * Platform input method context plugins are now included in the AppImage
 
 2018-01-26 Version 2.0.7
  * Fixed duplicate colors in color history palette

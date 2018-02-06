@@ -43,7 +43,7 @@ cd usr
 ln -s lib lib64
 cd ..
 
-cp -r /usr/lib64/qt5/plugins/{audio,generic,iconengines,imageformats} usr/lib/qt5/plugins
+cp -r /usr/lib64/qt5/plugins/{audio,generic,iconengines,imageformats,platforminputcontexts} usr/lib/qt5/plugins
 cp /usr/lib64/qt5/plugins/platforms/libqxcb.so usr/lib/qt5/plugins/platforms
 
 ldd usr/bin/drawpile | grep "=>" | awk '{print $3}' | xargs -I '{}' cp -vL '{}' ./usr/lib || true
