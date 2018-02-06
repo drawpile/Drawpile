@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -89,7 +89,17 @@ bool DrawpileApp::event(QEvent *e) {
 		openUrl(fe->url());
 
 		return true;
+
 	}
+#ifdef Q_OS_MACOS
+	else if(e->type() == QEvent::ApplicationStateChange) {
+		QApplicationStateChangeEvent *ae = static_cast<QApplicationStateChangeEvent*>(e);
+		if(ae->applicationState() == Qt::ApplicationActive && topLevelWindows().isEmpty()) {
+			// Open a new window when application is activated and there are no windows.
+			openBlankDocument();
+		}
+	}
+#endif
 
 	return QApplication::event(e);
 }
