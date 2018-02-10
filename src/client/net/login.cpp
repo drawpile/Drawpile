@@ -353,7 +353,13 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 		m_state = WAIT_FOR_EXTAUTH;
 		m_extAuthUrl = msg.reply["extauthurl"].toString();
 		if(!m_extAuthUrl.isValid()) {
+			qWarning("Invalid ext-auth URL: %s", qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));
+			return;
+		}
+		if(m_extAuthUrl.scheme() != "http" && m_extAuthUrl.scheme() != "https") {
+			qWarning("Unsupported ext-auth URL: %s", qPrintable(msg.reply["extauthurl"].toString()));
+			failLogin(tr("Unsupported ext-auth URL scheme"));
 			return;
 		}
 		m_extAuthGroup = msg.reply["group"].toString();
