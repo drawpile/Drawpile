@@ -1920,7 +1920,7 @@ void MainWindow::about()
 			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(DRAWPILE_VERSION) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
-			"<p>Copyright © 2006-2017 Calle Laakkonen</p>"
+			"<p>Copyright © 2006-2018 Calle Laakkonen</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as " 

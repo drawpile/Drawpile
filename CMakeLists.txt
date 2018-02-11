@@ -7,8 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 ### generic info
-set ( WEBSITE "http://drawpile.net/" )
-set ( DRAWPILE_VERSION "2.0.7" )
+set ( WEBSITE "https://drawpile.net/" )
+set ( DRAWPILE_VERSION "2.0.8" )
 
 ### protocol versions
 # see doc/protocol.md for protocol version history
