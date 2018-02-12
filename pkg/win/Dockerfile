@@ -10,6 +10,9 @@ RUN make -j$(nproc)
 RUN make download-qt5
 RUN make download-miniupnpc download-giflib download-libsodium
 
+# Patch Qt
+ADD qtbase-2-no-tabletevent.patch /usr/src/mxe/src/
+
 # Build MXE dependencies
 RUN make -j$(nproc) qt5 miniupnpc giflib libsodium
 
