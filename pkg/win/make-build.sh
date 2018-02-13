@@ -11,6 +11,6 @@ fi
 
 mkdir -p /Build
 cd /Build
-$CMAKE /Drawpile -DTOOLS=on
+$CMAKE /Drawpile -DTOOLS=on -DWINDOWSINK=on
 make -j5
 

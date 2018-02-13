@@ -7,3 +7,11 @@ Color picker widgets. The bundled version is used only if the library is not fou
 
 Homepage: https://github.com/mbasaglia/Qt-Color-Widgets
 
+kis_tablet
+-----------
+
+Windows Ink support code copied from Krita.
+
+Krita repository commit ID: b0dbfeb13c368ce262a2e959fd1ffa0bca32f099 (12/2017)
+Path in repository: /libs/ui/input/wintab/
+

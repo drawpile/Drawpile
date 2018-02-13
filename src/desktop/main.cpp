@@ -31,6 +31,10 @@
 #include "widgets/macmenu.h"
 #endif
 
+#if defined(Q_OS_WIN) && defined(WINDOWSINK)
+#include "bundled/kis_tablet/kis_tablet_support_win8.h"
+#endif
+
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
@@ -212,6 +216,22 @@ int main(int argc, char *argv[]) {
 
 	// Global menu bar that is shown when no windows are open
 	MacMenu::instance();
+#endif
+
+#if defined(Q_OS_WIN) && defined(WINDOWSINK)
+	{
+		// Enable Windows Ink tablet event handler
+		// This was taken directly from Krita
+		KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
+		if (penFilter->init()) {
+			app.installNativeEventFilter(penFilter);
+			qDebug("Using Win8 Pointer Input for tablet support");
+
+		} else {
+			qWarning("No Win8 Pointer Input available");
+			delete penFilter;
+		}
+	}
 #endif
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());

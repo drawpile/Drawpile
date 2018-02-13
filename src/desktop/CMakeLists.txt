@@ -77,6 +77,10 @@ IF ( APPLE )
 	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
 ENDIF ( APPLE )
 
+IF(WIN32 AND WINDOWSINK)
+	set ( SOURCES ${SOURCES} bundled/kis_tablet/kis_tablet_support_win8.cpp )
+ENDIF()
+
 if(GIF_FOUND)
 	add_definitions(-DHAVE_GIFLIB)
 endif()
