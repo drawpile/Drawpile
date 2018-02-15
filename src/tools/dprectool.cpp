@@ -122,7 +122,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 			protocol::MessagePtr msg(mr.message);
 
 			if(doAclFiltering && !aclFilter.filterMessage(*msg)) {
-				writer->writeComment(QStringLiteral("BLOCKED: ") + msg->toString());
+				writer->writeMessage(*msg->asFiltered());
 
 			} else {
 				if(!writer->writeMessage(*msg)) {

@@ -101,6 +101,28 @@ private slots:
 		}
 	}
 
+	void testFilteredWrapping()
+	{
+		MessagePtr original = MessagePtr(new CanvasResize(1, 2, 3, 4, 5));
+		MessagePtr filtered = original->asFiltered();
+
+		// Serializing filtered messages should work
+		QByteArray serialized(filtered->length(), 0);
+		const int written = filtered->serialize(serialized.data());
+		QCOMPARE(written, filtered->length());
+
+		// As should deserializing
+		Message *deserialized = Message::deserialize(reinterpret_cast<const uchar*>(serialized.data()), serialized.length(), true);
+		QVERIFY(deserialized);
+		QCOMPARE(deserialized->type(), MSG_FILTERED);
+
+		// The wrapped message should stay intact through the process
+		// (assuming payload length is less than 65535)
+		Message *unwrapped = static_cast<Filtered*>(deserialized)->decodeWrapped();
+		QVERIFY(unwrapped);
+		QVERIFY(unwrapped->equals(*original));
+	}
+
 	void testLayerOrderSanitation_data()
 	{
 		QTest::addColumn<IdList>("reorder");

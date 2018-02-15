@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ enum MessageType {
 	MSG_LAYER_ACL,
 	MSG_SESSION_ACL,
 	MSG_LAYER_DEFAULT,
+	MSG_FILTERED,
 
 	// Command messages (opaque)
 	MSG_UNDOPOINT=128,
@@ -85,6 +86,8 @@ enum MessageUndoState {
 // ordered consistently, which makes comparing messages by eye easier.
 typedef QMap<QString,QString> Kwargs;
 typedef QMapIterator<QString,QString> KwargsIterator;
+
+class MessagePtr;
 
 class Message {
 	friend class MessagePtr;
@@ -250,6 +253,16 @@ public:
 
 	//! Get the name of this message
 	virtual QString messageName() const = 0;
+
+	/**
+	 * @brief Get a copy of this message wrapped in a Filtered message
+	 *
+	 * This is used when a message is filtered away, but we want to preserve
+	 * the message for debugging reasons.
+	 *
+	 * @return a new Filtered instance
+	 */
+	MessagePtr asFiltered() const;
 
 protected:
 	/**

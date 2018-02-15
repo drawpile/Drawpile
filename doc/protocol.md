@@ -99,6 +99,10 @@ Protocol stability promises:
  * New server features may be added at any time, but they should not break older clients,
    nor should a missing feature break newer clients.
 
+### Protocol dp:4.20.1 (2.0.9)
+
+ * Added `Filtered` message type. Fully backward compatible.
+
 ### Protocol dp:4.20.1 (2.0.0)
 
  * Protocol major revision 4. Lots of changes!

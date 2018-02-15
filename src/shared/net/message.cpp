@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "control.h"
 #include "meta.h"
 #include "opaque.h"
+#include "recording.h"
 
 #include <QObject>
 #include <QtEndian>
@@ -161,4 +162,17 @@ QString Message::toString() const
 	return str;
 }
 
+MessagePtr Message::asFiltered() const
+{
+	Q_ASSERT(type() != MSG_FILTERED); // no nested wrappings please
+	int len = 1 + payloadLength();
+	uchar *payload = new uchar[len];
+
+	payload[0] = type();
+	serializePayload(payload+1);
+
+	return MessagePtr(new Filtered(contextId(), payload, qMin(len, 0xffff)));
 }
+
+}
+

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 #include <QTimer>
 
 #include <KCompressionDevice>
+
+#include <memory>
 
 namespace recording {
 
@@ -142,6 +144,24 @@ bool Writer::writeMessage(const protocol::Message &msg)
 			return false;
 
 	} else {
+		if(msg.type() == protocol::MSG_FILTERED) {
+			// Special case: Filtered messages are
+			// written as comments in the text format.
+			const protocol::Filtered &fm = static_cast<const protocol::Filtered&>(msg);
+			std::unique_ptr<protocol::Message> wrapped { fm.decodeWrapped() };
+			QString comment;
+			if(wrapped) {
+				comment = QStringLiteral("FILTERED: ") + wrapped->toString();
+
+			} else {
+				comment = QStringLiteral("FILTERED: undecodable message type #%1 of length %2")
+					.arg(fm.wrappedType())
+					.arg(fm.wrappedPayloadLength());
+			}
+
+			return writeComment(comment);
+		}
+
 		QByteArray line = msg.toString().toUtf8();
 		if(m_file->write(line) != line.length())
 			return false;

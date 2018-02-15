@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
 	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
 	case MSG_LAYER_DEFAULT: return DefaultLayer::deserialize(ctx, data, len);
+	case MSG_FILTERED: return Filtered::deserialize(ctx, data, len);
 
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);

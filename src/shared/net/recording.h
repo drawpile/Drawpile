@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,6 +79,63 @@ protected:
 
 private:
 	QByteArray m_text;
+};
+
+/**
+ * @brief A message that has been filtered away (by the ACL filter)
+ *
+ * Filtered messages are retained in recordings, since they contain
+ * valuable debugging information. They are ignored by the client.
+ * When written in Text mode, they are written as comments.
+ */
+class Filtered : public Message
+{
+public:
+	Filtered(uint8_t ctx, uchar *payload, int payloadLen);
+	~Filtered();
+
+	static Message *deserialize(uint8_t ctx, const uchar *data, uint len);
+	// Note: this type has no fromText function since it is serialized as a comment
+
+	/**
+	 * @brief Decode the wrapped message.
+	 *
+	 * Note: it is possible that the wrapped message is invalid. One additional byte
+	 * is required to store the type of the wrapped message. If the original payload
+	 * length was 65535 bytes, the last byte will be truncated.
+	 *
+	 * @return Message or nullptr if data is invalid
+	 */
+	Message *decodeWrapped() const;
+
+	/**
+	 * @brief Get the type of the wrapped message
+	 *
+	 * Note: if there is no wrapped message, this returns 0 (MSG_COMMAND).
+	 * Command messages should never be filtered anyway, so this is not
+	 * a problem.
+	 */
+	MessageType wrappedType() const { return m_length > 0 ? MessageType(m_payload[0]) : MSG_COMMAND; }
+
+	/**
+	 * @brief Get the length of the wrapped message payload
+	 *
+	 * This does not include the extra byte that indicates the type
+	 * of the message.
+	 */
+	int wrappedPayloadLength() const { return m_length-1; }
+
+	QString messageName() const override { return QStringLiteral("filtered"); }
+
+protected:
+	int payloadLength() const override { return m_length; }
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override { return Kwargs(); }
+	bool payloadEquals(const Message &m) const override;
+
+private:
+	uchar *m_payload;
+	int m_length;
 };
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QtEndian>
-
 #include "recording.h"
+#include "opaque.h"
+
+#include <QtEndian>
+#include <cstring>
 
 namespace protocol {
 
@@ -89,4 +91,49 @@ Marker *Marker::fromText(uint8_t ctx, const Kwargs &kwargs)
 		);
 }
 
+
+Filtered::Filtered(uint8_t ctx, uchar *payload, int payloadLen)
+	: Message(MSG_FILTERED, ctx), m_payload(payload), m_length(payloadLen)
+{ }
+
+Filtered::~Filtered()
+{
+	delete []m_payload;
 }
+
+Message *Filtered::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len<1 || len > 0xffff)
+		return nullptr;
+
+	uchar *payload = new uchar[len];
+	memcpy(payload, data, len);
+
+	return new Filtered(ctx, payload, len);
+}
+
+Message *Filtered::decodeWrapped() const
+{
+	// Note: technically non-opaque messages could be wrapped as well,
+	// but in practice they never are. Non-opaque messages are filtered
+	// by the server, so there is never need to filter them on the client side.
+	return OpaqueMessage::decode(wrappedType(), contextId(), m_payload+1, wrappedPayloadLength());
+}
+
+int Filtered::serializePayload(uchar *data) const
+{
+	memcpy(data, m_payload, m_length);
+	return m_length;
+}
+
+bool Filtered::payloadEquals(const Message &m) const
+{
+        const Filtered &fm = static_cast<const Filtered&>(m);
+        if(m_length != fm.m_length)
+                return false;
+
+        return memcmp(m_payload, fm.m_payload, m_length) == 0;
+}
+
+}
+
