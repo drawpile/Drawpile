@@ -507,7 +507,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	m_doc->initCanvas();
 
-	m_doc->canvas()->stateTracker()->setShowAllUserMarkers(true);
+	m_doc->canvas()->startPlayback();
 
 	_currentdoctools->setEnabled(true);
 	m_docadmintools->setEnabled(true);

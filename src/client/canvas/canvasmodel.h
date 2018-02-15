@@ -20,8 +20,6 @@
 #ifndef CANVASMODEL_H
 #define CANVASMODEL_H
 
-#include <QObject>
-
 #include "../shared/net/message.h"
 
 // note: we must include these so the datatypes get registered properly for use in QML
@@ -29,6 +27,10 @@
 #include "lasertrailmodel.h"
 #include "selection.h"
 #include "core/layerstack.h"
+#include "../shared/record/writer.h"
+
+#include <QObject>
+#include <QPointer>
 
 namespace protocol {
 	class UserJoin;
@@ -90,6 +92,7 @@ public:
 
 	void connectedToServer(int myUserId);
 	void disconnectedFromServer();
+	void startPlayback();
 	void endPlayback();
 
 	AclFilter *aclFilter() const { return m_aclfilter; }
@@ -101,7 +104,12 @@ public:
 	 *
 	 * This mainly affects how certain access controls are checked.
 	 */
-	bool isOnline() const { return m_onlinemode; }
+	bool isOnline() const { return m_mode == Mode::Online; }
+
+	/**
+	 * @brief Set the Writer to use for recording
+	 */
+	void setRecorder(recording::Writer *writer) { m_recorder = writer; }
 
 public slots:
 	//! Handle a meta/command message received from the server
@@ -160,10 +168,12 @@ private:
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;
 
+	QPointer<recording::Writer> m_recorder;
+
 	QString m_title;
 	QString m_pinnedMessage;
 
-	bool m_onlinemode;
+	enum class Mode { Offline, Online, Playback } m_mode;
 };
 
 }

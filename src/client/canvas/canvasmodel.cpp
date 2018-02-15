@@ -42,7 +42,7 @@
 namespace canvas {
 
 CanvasModel::CanvasModel(int localUserId, QObject *parent)
-	: QObject(parent), m_selection(nullptr), m_onlinemode(false)
+	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline)
 {
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
@@ -81,24 +81,34 @@ int CanvasModel::localUserId() const
 
 void CanvasModel::connectedToServer(int myUserId)
 {
+	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
 	m_layerlist->unlockAll();
 	m_statetracker->setLocalId(myUserId);
 	m_aclfilter->reset(myUserId, false);
-	m_onlinemode = true;
+	m_mode = Mode::Online;
 }
 
 void CanvasModel::disconnectedFromServer()
 {
+	Q_ASSERT(m_mode == Mode::Online);
 	m_statetracker->endRemoteContexts();
 	m_userlist->clearUsers();
 	m_layerlist->unlockAll();
 	m_aclfilter->reset(m_statetracker->localId(), true);
-	m_onlinemode = false;
+	m_mode = Mode::Offline;
+}
+
+void CanvasModel::startPlayback()
+{
+	Q_ASSERT(m_mode == Mode::Offline);
+	m_mode = Mode::Playback;
+	m_statetracker->setShowAllUserMarkers(true);
 }
 
 void CanvasModel::endPlayback()
 {
+	Q_ASSERT(m_mode == Mode::Playback);
 	m_statetracker->setShowAllUserMarkers(false);
 	m_statetracker->endPlayback();
 }
@@ -113,9 +123,14 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 	}
 
 	// Apply ACL filter
-	if(!m_aclfilter->filterMessage(*cmd)) {
+	if(m_mode != Mode::Playback && !m_aclfilter->filterMessage(*cmd)) {
 		qWarning("Filtered %s message from %d", qPrintable(cmd->messageName()), cmd->contextId());
+		if(m_recorder)
+			m_recorder->recordMessage(cmd->asFiltered());
 		return;
+
+	} else if(m_recorder) {
+		m_recorder->recordMessage(cmd);
 	}
 
 	if(cmd->isMeta()) {
@@ -137,7 +152,8 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			// Handled by the ACL filter
 			break;
 		case MSG_INTERVAL:
-			/* intervals are used only when playing back recordings */
+		case MSG_FILTERED:
+			// recording playback related messages
 			break;
 		case MSG_LASERTRAIL:
 			metaLaserTrail(cmd.cast<protocol::LaserTrail>());

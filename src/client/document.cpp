@@ -494,7 +494,7 @@ bool Document::startRecording(const QString &filename, const QList<protocol::Mes
 	if(cfg.value("recordtimestamp", false).toBool())
 		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
 
-	connect(m_client, &net::Client::messageReceived, m_recorder, &recording::Writer::recordMessage);
+	m_canvas->setRecorder(m_recorder);
 
 	m_recorder->setAutoflush();
 	emit recorderStateChanged(true);
