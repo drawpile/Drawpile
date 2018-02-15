@@ -1,5 +1,6 @@
 2018-0?-?? Version 2.0.9
  * Minor recording format change: recordings are now prefiltered
+ * Fixed random duplicate frames in exported animations
 
 2018-02-11 Version 2.0.8
  * Fixed password remembering on Windows (now uses the same local appdata directory as other settings)
