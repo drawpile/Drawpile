@@ -77,15 +77,12 @@ IF ( APPLE )
 	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
 ENDIF ( APPLE )
 
-IF(WIN32)
-	# Modified version of Qt's wintab code
-	# Note: requires a patched Qt build.
-	set ( SOURCES ${SOURCES} bundled/kis_tablet/kis_tablet_support_win.cpp )
-
-	IF(WINDOWSINK)
-		set ( SOURCES ${SOURCES} bundled/kis_tablet/kis_tablet_support_win8.cpp )
-	ENDIF(WINDOWSINK)
-ENDIF(WIN32)
+IF(WIN32 AND WINTAB)
+	set (SOURCES ${SOURCES}
+		bundled/kis_tablet/kis_tablet_support_win8.cpp
+		bundled/kis_tablet/kis_tablet_support_win.cpp
+	)
+ENDIF()
 
 if(GIF_FOUND)
 	add_definitions(-DHAVE_GIFLIB)

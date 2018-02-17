@@ -31,8 +31,9 @@
 #include "widgets/macmenu.h"
 #endif
 
-#if defined(Q_OS_WIN) && defined(WINDOWSINK)
+#if defined(Q_OS_WIN) && defined(WINTAB)
 #include "bundled/kis_tablet/kis_tablet_support_win8.h"
+#include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
 #include <QSettings>
@@ -218,18 +219,31 @@ int main(int argc, char *argv[]) {
 	MacMenu::instance();
 #endif
 
-#if defined(Q_OS_WIN) && defined(WINDOWSINK)
+#if defined(Q_OS_WIN) && defined(WINTAB)
 	{
+		bool useWindowsInk = false;
 		// Enable Windows Ink tablet event handler
 		// This was taken directly from Krita
-		KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
-		if (penFilter->init()) {
-			app.installNativeEventFilter(penFilter);
-			qDebug("Using Win8 Pointer Input for tablet support");
+		if(QSettings().value("settings/input/windowsink", true).toBool()) {
+			KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
+			if (penFilter->init()) {
+				app.installNativeEventFilter(penFilter);
+				useWindowsInk = true;
+				qDebug("Using Win8 Pointer Input for tablet support");
 
+			} else {
+				qWarning("No Win8 Pointer Input available");
+				delete penFilter;
+			}
 		} else {
-			qWarning("No Win8 Pointer Input available");
-			delete penFilter;
+			qDebug("Win8 Pointer Input disabled");
+		}
+
+		if(!useWindowsInk) {
+			// Enable modified Wintab support
+			// This too was taken from Krita
+			qDebug("Enabling custom Wintab support");
+			KisTabletSupportWin::init();
 		}
 	}
 #endif
