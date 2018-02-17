@@ -20,35 +20,28 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define UNICODE
 
 #include "kis_tablet_support_win_p.h"
 
-#include <input/kis_tablet_event.h>
 #include "kis_tablet_support_win.h"
 // #include "kis_tablet_support.h"
 
-#include <kis_debug.h>
+#include "debug.h"
+
 #include <QApplication>
 #include <QGuiApplication>
 #include <QDesktopWidget>
 
-#include <qpa/qwindowsysteminterface.h>
-#include <qpa/qplatformscreen.h>
-#include <private/qguiapplication_p.h>
-
 #include <QScreen>
 #include <QWidget>
 #include <QLibrary>
+#include <QPointer>
+#include <QTabletEvent>
+#include <QDebug>
+
 #include <cmath>
 #define Q_PI M_PI
-
-#include <input/kis_extended_modifiers_mapper.h>
-#include <input/kis_tablet_debugger.h>
-
-// For "inline tool switches"
-#include <KoToolManager.h>
-#include <KoInputDevice.h>
-#include "kis_screen_size_choice_dialog.h"
 
 
 // NOTE: we stub out qwindowcontext.cpp::347 to disable Qt's own tablet support.
@@ -152,13 +145,6 @@ static inline bool isMouseEventType(QEvent::Type t)
             t == QEvent::MouseButtonRelease);
 }
 
-static QPoint mousePosition()
-{
-    POINT p;
-    GetCursorPos(&p);
-    return QPoint(p.x, p.y);
-}
-
 QWindowsWinTab32DLL QWindowsTabletSupport::m_winTab32DLL;
 
 void KisTabletSupportWin::init()
@@ -172,7 +158,7 @@ void KisTabletSupportWin::init()
 
     // Refresh tablet context after tablet rotated, screen added, etc.
     QObject::connect(qApp->primaryScreen(), &QScreen::geometryChanged,
-                     [=](const QRect & geometry){
+                     [=](const QRect & ){
                          delete QTAB;
                          QTAB = QWindowsTabletSupport::create();
                      });
@@ -317,8 +303,7 @@ struct DefaultButtonsConverter
 
                     const Qt::KeyboardModifiers keyboardModifiers = QApplication::queryKeyboardModifiers();
 
-                    if (KisTabletDebugger::instance()->shouldEatDriverShortcuts() ||
-                        keyboardModifiers == Qt::NoModifier) {
+                    if (keyboardModifiers == Qt::NoModifier) {
 
                         *button = Qt::NoButton;
                         *buttons = Qt::NoButton;
@@ -594,7 +579,7 @@ static inline QTabletEvent::TabletDevice deviceType(const UINT cursorType)
         break;
     }
     return QTabletEvent::NoDevice;
-};
+}
 
 static inline QTabletEvent::PointerType pointerType(unsigned pkCursor)
 {
@@ -632,10 +617,6 @@ QWindowsTabletDeviceData QWindowsTabletSupport::tabletInit(const quint64 uniqueI
     /* get the current context for its device variable. */
     QWindowsTabletSupport::m_winTab32DLL.wTGet(m_context, &lc);
 
-    if (KisTabletDebugger::instance()->initializationDebugEnabled()) {
-        printContext(lc);
-    }
-
     /* get the size of the pressure axis. */
     QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES + lc.lcDevice, DVC_NPRESSURE, &axis);
     result.minPressure = int(axis.axMin);
@@ -661,36 +642,9 @@ QWindowsTabletDeviceData QWindowsTabletSupport::tabletInit(const quint64 uniqueI
     qDebug() << ppVar(qtDesktopRect);
     qDebug() << ppVar(wintabDesktopRect);
 
-    // Show screen choice dialog
-    if (!dialogOpen) {
-        KisScreenSizeChoiceDialog dlg(0,
-                                      wintabDesktopRect,
-                                      qtDesktopRect);
-
-        KisExtendedModifiersMapper mapper;
-        KisExtendedModifiersMapper::ExtendedModifiers modifiers =
-            mapper.queryExtendedModifiers();
-
-        if (modifiers.contains(Qt::Key_Shift) ||
-            (!dlg.canUseDefaultSettings() &&
-             qtDesktopRect != wintabDesktopRect)) {
-
-            dialogOpen = true;
-            dlg.exec();
-        }
-
-        result.virtualDesktopArea = dlg.screenRect();
-        dialogOpen = false;
-    } else {
-        // This branch should've been explicitly prevented.
-        KIS_SAFE_ASSERT_RECOVER_NOOP(!dialogOpen);
-        warnTablet << "Trying to init a WinTab device while screen resolution dialog is active, this should not happen!";
-        warnTablet << "Tablet coordinates could be wrong as a result.";
-        result.virtualDesktopArea = qtDesktopRect;
-    }
-
+	result.virtualDesktopArea = wintabDesktopRect;
     return result;
-};
+}
 
 
 
@@ -782,7 +736,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
 
         bool buttonPressed = btnChange && btnNew > btnOld;
         bool buttonReleased = btnChange && btnNew < btnOld;
-        bool anyButtonsStillPressed = btnNew;
+        //bool anyButtonsStillPressed = btnNew;
         Qt::MouseButton button = Qt::NoButton;
         Qt::MouseButtons buttons;
 
