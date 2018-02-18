@@ -125,7 +125,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Hide Windows specific stuff on other platforms
-#if !defined(Q_OS_WIN) || !defined(WINTAB)
+#if !defined(Q_OS_WIN) || !defined(KIS_TABLET)
 	m_ui->formLayout_2->removeRow(m_ui->windowsink);
 #endif
 
@@ -269,7 +269,7 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
-#if defined(Q_OS_WIN) && defined(WINTAB)
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
 #endif
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
@@ -366,7 +366,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 
 	cfg.beginGroup("settings/input");
-#if defined(Q_OS_WIN) && defined(WINTAB)
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	cfg.setValue("windowsink", m_ui->windowsink->isChecked());
 #endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());

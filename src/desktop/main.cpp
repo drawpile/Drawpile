@@ -31,7 +31,7 @@
 #include "widgets/macmenu.h"
 #endif
 
-#if defined(Q_OS_WIN) && defined(WINTAB)
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 	MacMenu::instance();
 #endif
 
-#if defined(Q_OS_WIN) && defined(WINTAB)
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	{
 		bool useWindowsInk = false;
 		// Enable Windows Ink tablet event handler

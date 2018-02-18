@@ -11,6 +11,6 @@ fi
 
 mkdir -p /Build
 cd /Build
-$CMAKE /Drawpile -DTOOLS=on -DWINTAB=on
+$CMAKE /Drawpile -DTOOLS=on -DKIS_TABLET=on
 make -j5
 
