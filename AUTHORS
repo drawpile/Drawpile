@@ -18,7 +18,5 @@ Contributors:
 * SHF Charlie (Chinese translation)
 
 The project also includes GPL licensed code from:
- * Krita (curve editing widget and pixel blending functions)
+ * Krita (curve editing widget, pixel blending functions and tablet support code)
 
-Icons from Tango Desktop project and others are used.
-See src/client/ui/icons/LICENSE.txt for a comprehensive list.

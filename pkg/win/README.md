@@ -16,3 +16,8 @@ Alternatively, you can run just
 
 to build a ZIP package.
 
+The patch file `qtbase-2-no-tabletevent.patch' added before Qt is compiled.
+This patch disables Qt's own tablet event handling so it can be replaced
+at the application level. The custom tablet handling code is enabled by
+passing `KIS_TABLET=on` to cmake.
+

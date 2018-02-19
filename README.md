@@ -58,6 +58,7 @@ The configuration step supports some options:
 * `CMAKE_BUILD_TYPE=debug`: enable debugging features
 * `INITSYS=""`: select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 * `TESTS=on`: build unit tests (run test suite with `make test`)
+* `KIS_TABLET=on`: enable Wintab and Windows Ink support code (taken from Krita.) Requires a patched Qt version.
 
 Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug`
 
