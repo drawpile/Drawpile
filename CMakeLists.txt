@@ -28,6 +28,7 @@ option ( TOOLS "Compile extra tools" OFF )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )
 option ( TESTS "Build unit tests" OFF )
+option ( KIS_TABLET "Enable customized Windows tablet support code" OFF )
 
 if (NOT CMAKE_BUILD_TYPE)
 	message(STATUS "No build type selected, default to Release")

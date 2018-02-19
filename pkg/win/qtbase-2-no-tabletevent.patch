@@ -1,0 +1,17 @@
+--- qtbase-everywhere-src-5.10.0/src/plugins/platforms/windows/qwindowscontext.cpp.original     2018-02-13 16:47:23.743112396 +0000
++++ qtbase-everywhere-src-5.10.0/src/plugins/platforms/windows/qwindowscontext.cpp      2018-02-13 16:47:45.710027931 +0000
+@@ -47,9 +47,10 @@
+ #include "qwindowsmenu.h"
+ #include "qwindowsmime.h"
+ #include "qwindowsinputcontext.h"
+-#if QT_CONFIG(tabletevent)
+-#  include "qwindowstabletsupport.h"
+-#endif
++
++#undef QT_FEATURE_tabletevent
++#define QT_FEATURE_tabletevent -1
++
+ #include "qwindowstheme.h"
+ #include <private/qguiapplication_p.h>
+ #ifndef QT_NO_ACCESSIBILITY
+

@@ -3,7 +3,7 @@ Building Windows package with docker
 
 First, create the build environment image:
 
-    docker build -f Dockerfile -t dpwin .
+    docker build -f Dockerfile -t dpwin8 .
 
 Next, run the build script to build the installer
 

@@ -124,6 +124,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		}
 	}
 
+	// Hide Windows specific stuff on other platforms
+#if !defined(Q_OS_WIN) || !defined(KIS_TABLET)
+	m_ui->formLayout_2->removeRow(m_ui->windowsink);
+#endif
+
 	// Editable shortcuts
 	m_customShortcuts = new CustomShortcutModel(this);
 	auto filteredShortcuts = new QSortFilterProxyModel(this);
@@ -264,6 +269,9 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
+#endif
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
@@ -358,6 +366,9 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 
 	cfg.beginGroup("settings/input");
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+	cfg.setValue("windowsink", m_ui->windowsink->isChecked());
+#endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tabletbugs", m_ui->tabletBugWorkaround->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
