@@ -31,9 +31,16 @@
 #include "widgets/macmenu.h"
 #endif
 
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#ifdef KIS_TABLET
+
+#if defined(Q_OS_WIN)
 #include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
+#else
+#include "bundled/kis_tablet/kis_xi2_event_filter.h"
+#include <QX11Info>
+#endif
+
 #endif
 
 #include <QSettings>
@@ -219,7 +226,8 @@ int main(int argc, char *argv[]) {
 	MacMenu::instance();
 #endif
 
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#ifdef KIS_TABLET
+#ifdef Q_OS_WIN
 	{
 		bool useWindowsInk = false;
 		// Enable Windows Ink tablet event handler
@@ -246,6 +254,16 @@ int main(int argc, char *argv[]) {
 			KisTabletSupportWin::init();
 		}
 	}
+#else
+	if(QX11Info::isPlatformX11()) {
+		// Qt's X11 tablet event handling is broken in different ways
+		// in pretty much every Qt5 version, so we use this Krita's
+		// modified event filter
+		qInfo("Enabling custom XInput2 tablet event filter");
+		app.installNativeEventFilter(kis_tablet::KisXi2EventFilter::instance());
+	}
+#endif
+
 #endif
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());

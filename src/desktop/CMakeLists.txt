@@ -77,12 +77,28 @@ IF ( APPLE )
 	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
 ENDIF ( APPLE )
 
-IF(WIN32 AND KIS_TABLET)
-	set (SOURCES ${SOURCES}
-		bundled/kis_tablet/kis_tablet_support_win8.cpp
-		bundled/kis_tablet/kis_tablet_support_win.cpp
-	)
-ENDIF()
+IF(KIS_TABLET)
+	if(WIN32)
+		set (SOURCES ${SOURCES}
+			bundled/kis_tablet/kis_tablet_support_win8.cpp
+			bundled/kis_tablet/kis_tablet_support_win.cpp
+		)
+	elseif (NOT APPLE)
+		set (SOURCES ${SOURCES}
+			bundled/kis_tablet/kis_xi2_event_filter.cpp
+			bundled/kis_tablet/qxcbconnection.cpp
+			bundled/kis_tablet/qxcbconnection_xi2.cpp
+		)
+		find_package(ECM 5.19 REQUIRED NOMODULE)
+		set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+
+		find_package(X11 REQUIRED COMPONENTS Xinput)
+		find_package(XCB REQUIRED COMPONENTS XCB)
+		find_package(Qt5X11Extras REQUIRED)
+
+		set (EXTRALIBS Qt5::X11Extras ${X11_Xinput_LIB} ${XCB_LIBRARIES} ${X11_LIBRARIES} )
+	endif()
+ENDIF(KIS_TABLET)
 
 if(GIF_FOUND)
 	add_definitions(-DHAVE_GIFLIB)
@@ -214,7 +230,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPCLIENTLIB} Qt5::Widgets Qt5::Multimedia Qt5::Svg)
+target_link_libraries(${CLIENTNAME} ${DPCLIENTLIB} Qt5::Widgets Qt5::Multimedia Qt5::Svg ${EXTRALIBS})
 
 if(QTCOLORWIDGETS_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORWIDGETS_LIBRARIES})

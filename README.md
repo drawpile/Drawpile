@@ -58,9 +58,15 @@ The configuration step supports some options:
 * `CMAKE_BUILD_TYPE=debug`: enable debugging features
 * `INITSYS=""`: select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 * `TESTS=on`: build unit tests (run test suite with `make test`)
-* `KIS_TABLET=on`: enable Wintab and Windows Ink support code (taken from Krita.) Requires a patched Qt version.
+* `KIS_TABLET=on`: enable improved graphics tablet support (taken from Krita)
 
-Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug`
+Notes about `KIS_TABLET`:
+
+ * On Windows, it enables Windows Ink and improved Wintab support. A patched version of Qt should be used. See `pkg/win` for the patch.
+ * On Linux (or any platform with an X server,) it enables a modified XInput2 event handler.
+ * On macOS it does nothing and shouldn't be used.
+
+Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug -DKIS_TABLET=on`
 
 For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
 
