@@ -126,7 +126,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// Hide Windows specific stuff on other platforms
 #if !defined(Q_OS_WIN) || !defined(KIS_TABLET)
-	m_ui->formLayout_2->removeRow(m_ui->windowsink);
+	// Can't use this until we no longer support Qt versions older than 5.8:
+	//m_ui->formLayout_2->removeRow(m_ui->windowsink);
+	m_ui->formLayout_2->removeWidget(m_ui->windowsink);
+	m_ui->windowsink->hide();
 #endif
 
 	// Editable shortcuts
