@@ -1,26 +1,26 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-    Copyright (C) 2014 Calle Laakkonen
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
+ * \file gradient_slider.hpp
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ * \copyright Copyright (C) 2017 caryoscelus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #ifndef GRADIENT_SLIDER_HPP
 #define GRADIENT_SLIDER_HPP
 
@@ -32,7 +32,7 @@
 namespace color_widgets {
 
 /**
- * \brief A slider that mover on top of a gradient
+ * \brief A slider that moves on top of a gradient
  */
 class QCP_EXPORT GradientSlider : public QSlider
 {
@@ -98,7 +98,11 @@ public:
     QColor lastColor() const;
     
 protected:
-    void paintEvent(QPaintEvent *ev);
+    void paintEvent(QPaintEvent *ev) override;
+
+	void mousePressEvent(QMouseEvent *ev) override;
+	void mouseMoveEvent(QMouseEvent *ev) override;
+	void mouseReleaseEvent(QMouseEvent *ev) override;
 
 private:
     class Private;

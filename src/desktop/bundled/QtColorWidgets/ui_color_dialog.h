@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'color_dialog.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.0
+** Created by: Qt User Interface Compiler version 5.10.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -102,7 +102,7 @@ public:
 
         preview = new color_widgets::ColorPreview(ColorDialog);
         preview->setObjectName(QStringLiteral("preview"));
-        preview->setProperty("display_mode", QVariant(color_widgets::ColorPreview::SplitColor));
+        preview->setProperty("display_mode", QVariant::fromValue(color_widgets::ColorPreview::SplitColor));
 
         verticalLayout->addWidget(preview);
 
@@ -318,15 +318,15 @@ public:
 
     void retranslateUi(QDialog *ColorDialog)
     {
-        ColorDialog->setWindowTitle(QApplication::translate("ColorDialog", "Select Color", 0));
-        label_7->setText(QApplication::translate("ColorDialog", "Saturation", 0));
-        label_6->setText(QApplication::translate("ColorDialog", "Hue", 0));
-        label_8->setText(QApplication::translate("ColorDialog", "Hex", 0));
-        label_3->setText(QApplication::translate("ColorDialog", "Blue", 0));
-        label_5->setText(QApplication::translate("ColorDialog", "Value", 0));
-        label_2->setText(QApplication::translate("ColorDialog", "Green", 0));
-        label_alpha->setText(QApplication::translate("ColorDialog", "Alpha", 0));
-        label->setText(QApplication::translate("ColorDialog", "Red", 0));
+        ColorDialog->setWindowTitle(QApplication::translate("ColorDialog", "Select Color", nullptr));
+        label_7->setText(QApplication::translate("ColorDialog", "Saturation", nullptr));
+        label_6->setText(QApplication::translate("ColorDialog", "Hue", nullptr));
+        label_8->setText(QApplication::translate("ColorDialog", "Hex", nullptr));
+        label_3->setText(QApplication::translate("ColorDialog", "Blue", nullptr));
+        label_5->setText(QApplication::translate("ColorDialog", "Value", nullptr));
+        label_2->setText(QApplication::translate("ColorDialog", "Green", nullptr));
+        label_alpha->setText(QApplication::translate("ColorDialog", "Alpha", nullptr));
+        label->setText(QApplication::translate("ColorDialog", "Red", nullptr));
     } // retranslateUi
 
 };

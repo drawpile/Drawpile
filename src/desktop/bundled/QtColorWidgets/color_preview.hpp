@@ -1,26 +1,25 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-    Copyright (C) 2014 Calle Laakkonen
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #ifndef COLOR_PREVIEW_HPP
 #define COLOR_PREVIEW_HPP
 
@@ -49,6 +48,7 @@ public:
         SplitAlpha, ///< Show both solid and transparent side by side
         SplitColor  ///< Show current and comparison colors side by side
     };
+    Q_ENUMS(DisplayMode)
 
     explicit ColorPreview(QWidget *parent = 0);
     ~ColorPreview();
@@ -75,14 +75,14 @@ public:
 
     void paint(QPainter &painter, QRect rect) const;
     
-public slots:
+public Q_SLOTS:
     /// Set current color
     void setColor(const QColor &c);
 
     /// Set the comparison color
     void setComparisonColor(const QColor &c);
 
-signals:
+Q_SIGNALS:
     /// Emitted when the user clicks on the widget
     void clicked();
 
@@ -101,5 +101,6 @@ private:
 };
 
 } // namespace color_widgets
+Q_DECLARE_METATYPE(color_widgets::ColorPreview::DisplayMode)
 
 #endif // COLOR_PREVIEW_HPP

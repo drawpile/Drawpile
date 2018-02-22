@@ -1,27 +1,26 @@
 /**
-
-@author Calle Laakkonen
-
-@section License
-
-    Copyright (C) 2014 Calle Laakkonen
-    Copyright (C) 2015 Mattia Basaglia
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2017 caryoscelus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "hue_slider.hpp"
 
 namespace color_widgets {
@@ -41,7 +40,8 @@ public:
     {
         w->setRange(0, 359);
         connect(w, &QSlider::valueChanged, [this]{
-            emit w->colorHueChanged(percent());
+            Q_EMIT w->colorHueChanged(w->colorHue());
+            Q_EMIT w->colorChanged(w->color());
         });
         updateGradient();
     }
@@ -54,11 +54,6 @@ public:
         for ( int i = 0; i <= n_colors; ++i )
             colors.append(QGradientStop(i/n_colors, QColor::fromHsvF(i/n_colors, saturation, value)));
         w->setColors(colors);
-    }
-
-    qreal percent()
-    {
-        return qreal(w->value() - w->minimum()) / (w->maximum() - w->minimum());
     }
 };
 
@@ -112,7 +107,7 @@ void HueSlider::setColorAlpha(qreal alpha)
 
 QColor HueSlider::color() const
 {
-    return QColor::fromHsvF(p->percent(), p->saturation, p->value, p->alpha);
+    return QColor::fromHsvF(colorHue(), p->saturation, p->value, p->alpha);
 }
 
 void HueSlider::setColor(const QColor& color)
@@ -131,11 +126,19 @@ void HueSlider::setFullColor(const QColor& color)
 
 qreal HueSlider::colorHue() const
 {
-    return p->percent();
+    if (maximum() == minimum())
+        return 0;
+    auto hue = qreal(value() - minimum()) / (maximum() - minimum());
+    if (orientation() == Qt::Vertical)
+        hue = 1 - hue;
+    return hue;
 }
 
 void HueSlider::setColorHue(qreal colorHue)
 {
+    // TODO: consider supporting invertedAppearance?
+    if (orientation() == Qt::Vertical)
+        colorHue = 1 - colorHue;
     setValue(minimum()+colorHue*(maximum()-minimum()));
 }
 

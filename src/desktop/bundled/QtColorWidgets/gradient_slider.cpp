@@ -1,32 +1,32 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-    Copyright (C) 2014 Calle Laakkonen
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ * \file gradient_slider.cpp
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ * \copyright Copyright (C) 2017 caryoscelus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "gradient_slider.hpp"
 
 #include <QPainter>
 #include <QStyleOptionSlider>
 #include <QLinearGradient>
+#include <QMouseEvent>
 
 static void loadResource()
 {
@@ -50,23 +50,114 @@ public:
         back(Qt::darkGray, Qt::DiagCrossPattern)
     {
         loadResource();
-        back.setTexture(QPixmap(QLatin1String(":/color_widgets/alphaback.png")));
+        back.setTexture(QPixmap(QStringLiteral(":/color_widgets/alphaback.png")));
         gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
+        gradient.setSpread(QGradient::RepeatSpread);
     }
+
+	void mouse_event(QMouseEvent *ev, GradientSlider* owner, bool allow_jumps)
+	{
+		QStyleOptionSlider opt;
+		owner->initStyleOption(&opt);
+		QRect slider_rect = owner->style()->subControlRect(
+			QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, owner
+		);
+
+		if ( !allow_jumps && slider_rect.contains(ev->pos()) )
+			return;
+
+		QPoint center = slider_rect.center() - slider_rect.topLeft();
+		QPoint point = ev->pos() - center;
+
+		QRect groove_rect = owner->style()->subControlRect(
+			QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, owner
+		);
+
+		int slider_length;
+		int slider_min;
+		int slider_max;
+		int pos;
+
+		if (owner->orientation() == Qt::Horizontal) {
+			slider_length = slider_rect.width();
+			slider_min = groove_rect.x();
+			slider_max = groove_rect.right() - slider_length + 1;
+			pos = point.x();
+		} else {
+			slider_length = slider_rect.height();
+			slider_min = groove_rect.y();
+			slider_max = groove_rect.bottom() - slider_length + 1;
+			pos = point.y();
+		}
+		owner->setSliderPosition(
+			QStyle::sliderValueFromPosition(
+				owner->minimum(),
+				owner->maximum(),
+				pos - slider_min,
+				slider_max - slider_min,
+				opt.upsideDown
+			)
+		);
+	}
 
 };
 
 GradientSlider::GradientSlider(QWidget *parent) :
-    QSlider(Qt::Horizontal, parent), p(new Private)
+    GradientSlider(Qt::Horizontal, parent)
 {}
 
 GradientSlider::GradientSlider(Qt::Orientation orientation, QWidget *parent) :
     QSlider(orientation, parent), p(new Private)
-{}
+{
+    setTickPosition(NoTicks);
+}
 
 GradientSlider::~GradientSlider()
 {
-	delete p;
+    delete p;
+}
+
+void GradientSlider::mousePressEvent(QMouseEvent *ev)
+{
+	if ( ev->button() == Qt::LeftButton )
+	{
+		ev->accept();
+		setSliderDown(true);
+		p->mouse_event(ev, this, false);
+		update();
+	}
+	else
+	{
+		QSlider::mousePressEvent(ev);
+	}
+}
+
+void GradientSlider::mouseMoveEvent(QMouseEvent *ev)
+{
+	if ( ev->buttons() & Qt::LeftButton )
+	{
+		ev->accept();
+		p->mouse_event(ev, this, true);
+		update();
+	}
+	else
+	{
+		QSlider::mouseMoveEvent(ev);
+	}
+}
+
+void GradientSlider::mouseReleaseEvent(QMouseEvent *ev)
+{
+	if ( ev->button() == Qt::LeftButton )
+	{
+		ev->accept();
+		setSliderDown(false);
+		update();
+	}
+	else
+	{
+		QSlider::mousePressEvent(ev);
+	}
 }
 
 QBrush GradientSlider::background() const
@@ -167,10 +258,12 @@ void GradientSlider::paintEvent(QPaintEvent *)
     QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
     painter.setClipRect(r);
 
+    qreal gradient_direction = invertedAppearance() ? -1 : 1;
+
     if(orientation() == Qt::Horizontal)
-        p->gradient.setFinalStop(1, 0);
+        p->gradient.setFinalStop(gradient_direction, 0);
     else
-        p->gradient.setFinalStop(0, 1);
+        p->gradient.setFinalStop(0, -gradient_direction);
 
     painter.setPen(Qt::NoPen);
     painter.setBrush(p->back);
@@ -181,6 +274,7 @@ void GradientSlider::paintEvent(QPaintEvent *)
     painter.setClipping(false);
     QStyleOptionSlider opt_slider;
     initStyleOption(&opt_slider);
+    opt_slider.tickPosition = TicksBothSides;
     opt_slider.state &= ~QStyle::State_HasFocus;
     opt_slider.subControls = QStyle::SC_SliderHandle;
     if (isSliderDown())

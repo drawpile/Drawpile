@@ -1,26 +1,25 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2017 caryoscelus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "color_wheel.hpp"
 
 #include <cmath>
@@ -44,28 +43,58 @@ static const ColorWheel::DisplayFlags hard_default_flags = ColorWheel::SHAPE_TRI
 static ColorWheel::DisplayFlags default_flags = hard_default_flags;
 static const double selector_radius = 6;
 
+struct RingEditor
+{
+    double hue_diff;
+    bool editable;
+    int symmetric_to;
+    int opposite_to;
+    RingEditor(double hue_diff, bool editable, int symmetric_to=-1, int opposite_to=-1) :
+        hue_diff(hue_diff),
+        editable(editable),
+        symmetric_to(symmetric_to),
+        opposite_to(opposite_to)
+    {
+    }
+};
+
+/**
+ * Puts a double into [0; 1) range
+ */
+inline double normalize(double angle)
+{
+    return angle - std::floor(angle);
+}
+
 class ColorWheel::Private
 {
 private:
     ColorWheel * const w;
 
 public:
-
     qreal hue, sat, val;
+    bool backgroundIsDark;
     unsigned int wheel_width;
     MouseStatus mouse_status;
     QPixmap hue_ring;
     QImage inner_selector;
+    std::vector<uint32_t> inner_selector_buffer;
     DisplayFlags display_flags;
     QColor (*color_from)(qreal,qreal,qreal,qreal);
     QColor (*rainbow_from_hue)(qreal);
+    int max_size = 128;
+    std::vector<RingEditor> ring_editors;
+    int current_ring_editor = -1;
 
     Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
         wheel_width(20), mouse_status(Nothing),
         display_flags(FLAGS_DEFAULT),
         color_from(&QColor::fromHsvF), rainbow_from_hue(&detail::rainbow_hsv)
-    { }
+    {
+        qreal backgroundValue = widget->palette().background().color().valueF();
+        backgroundIsDark = backgroundValue < 0.5;
+    }
 
     /// Calculate outer wheel radius from idget center
     qreal outer_radius() const
@@ -103,18 +132,35 @@ public:
         return QLineF (w->geometry().width()/2, w->geometry().height()/2, p.x(), p.y());
     }
 
+    /**
+     * Ensures the internal image buffer is the correct size
+     * and that the QImage is associated to it
+     */
+    void init_buffer(QSize size)
+    {
+        auto linear_size = size.width() * size.height();
+        if ( inner_selector_buffer.size() == linear_size )
+            return;
+        inner_selector_buffer.resize(linear_size);
+        inner_selector = QImage(
+            reinterpret_cast<uchar*>(inner_selector_buffer.data()),
+            size.width(),
+            size.height(),
+            QImage::Format_RGB32
+        );
+    }
+
     void render_square()
     {
-        int sz = square_size();
-        inner_selector = QImage(sz, sz, QImage::Format_RGB32);
+        int width = qMin<int>(square_size(), max_size);
+        init_buffer(QSize(width, width));
 
-
-        for(int i = 0; i < sz; ++i)
+        for ( int y = 0; y < width; ++y )
         {
-            for(int j = 0;j < sz; ++j)
+            for ( int x = 0; x < width; ++x )
             {
-                inner_selector.setPixel( i, j,
-                        color_from(hue,double(i)/sz,double(j)/sz,1).rgb());
+                QRgb color = color_from(hue,double(x)/width,double(y)/width,1).rgb();
+                inner_selector_buffer[width * y + x] = color;
             }
         }
     }
@@ -125,21 +171,25 @@ public:
      */
     void render_triangle()
     {
-        qreal side = triangle_side();
-        qreal height = triangle_height();
-        qreal ycenter = side/2;
-        inner_selector = QImage(height, side, QImage::Format_RGB32);
+        QSizeF size = selector_size();
+        if ( size.height() > max_size )
+            size *= max_size / size.height();
 
-        for (int x = 0; x < inner_selector.width(); x++ )
+        qreal ycenter = size.height()/2;
+
+        QSize isize = size.toSize();
+        init_buffer(isize);
+
+        for (int x = 0; x < isize.width(); x++ )
         {
-            qreal pval = x / height;
-            qreal slice_h = side * pval;
-            for (int y = 0; y < inner_selector.height(); y++ )
+            qreal pval = x / size.height();
+            qreal slice_h = size.height() * pval;
+            for (int y = 0; y < isize.height(); y++ )
             {
                 qreal ymin = ycenter-slice_h/2;
                 qreal psat = qBound(0.0,(y-ymin)/slice_h,1.0);
-
-                inner_selector.setPixel(x,y,color_from(hue,psat,pval,1).rgb());
+                QRgb color = color_from(hue,psat,pval,1).rgb();
+                inner_selector_buffer[isize.width() * y + x] = color;
             }
         }
     }
@@ -159,6 +209,16 @@ public:
         if ( display_flags & SHAPE_TRIANGLE )
                 return QPointF(-inner_radius(),-triangle_side()/2);
         return QPointF(-square_size()/2,-square_size()/2);
+    }
+
+    /**
+     * \brief Size of the selector when rendered to the screen
+     */
+    QSizeF selector_size()
+    {
+        if ( display_flags & SHAPE_TRIANGLE )
+                return QSizeF(triangle_height(), triangle_side());
+        return QSizeF(square_size(), square_size());
     }
 
 
@@ -232,6 +292,23 @@ public:
             val = detail::color_lumaF(c);
         }
     }
+
+    void draw_ring_editor(double editor_hue, QPainter& painter, QColor color) {
+        painter.setPen(QPen(color,3));
+        painter.setBrush(Qt::NoBrush);
+        QLineF ray(0, 0, outer_radius(), 0);
+        ray.setAngle(editor_hue*360);
+        QPointF h1 = ray.p2();
+        ray.setLength(inner_radius());
+        QPointF h2 = ray.p2();
+        painter.drawLine(h1,h2);
+    }
+
+    /// Apply harmony changes
+    void apply_harmonies() {
+        Q_EMIT w->harmonyChanged();
+        w->update();
+    }
 };
 
 ColorWheel::ColorWheel(QWidget *parent) :
@@ -239,6 +316,7 @@ ColorWheel::ColorWheel(QWidget *parent) :
 {
     setDisplayFlags(FLAGS_DEFAULT);
     setAcceptDrops(true);
+    connect(this, SIGNAL(colorChanged(QColor)), this, SIGNAL(harmonyChanged()));
 }
 
 ColorWheel::~ColorWheel()
@@ -249,6 +327,23 @@ ColorWheel::~ColorWheel()
 QColor ColorWheel::color() const
 {
     return p->color_from(p->hue, p->sat, p->val, 1);
+}
+
+QList<QColor> ColorWheel::harmonyColors() const
+{
+    QList<QColor> result;
+    result.push_back(color());
+    for (auto const& harmony : p->ring_editors)
+    {
+        auto hue = normalize(p->hue+harmony.hue_diff);
+        result.push_back(p->color_from(hue, p->sat, p->val, 1));
+    }
+    return result;
+}
+
+unsigned int ColorWheel::harmonyCount() const
+{
+    return 1 + p->ring_editors.size();
 }
 
 QSize ColorWheel::sizeHint() const
@@ -298,14 +393,15 @@ void ColorWheel::paintEvent(QPaintEvent * )
     painter.drawPixmap(-p->outer_radius(), -p->outer_radius(), p->hue_ring);
 
     // hue selector
-    painter.setPen(QPen(Qt::black,3));
-    painter.setBrush(Qt::NoBrush);
-    QLineF ray(0, 0, p->outer_radius(), 0);
-    ray.setAngle(p->hue*360);
-    QPointF h1 = ray.p2();
-    ray.setLength(p->inner_radius());
-    QPointF h2 = ray.p2();
-    painter.drawLine(h1,h2);
+    p->draw_ring_editor(p->hue, painter, Qt::black);
+
+    for (auto const& editor : p->ring_editors)
+    {
+        auto hue = p->hue+editor.hue_diff;
+        // TODO: better color for uneditable indicator
+        auto color = editor.editable ? Qt::white : Qt::gray;
+        p->draw_ring_editor(hue, painter, color);
+    }
 
     // lum-sat square
     if(p->inner_selector.isNull())
@@ -337,11 +433,21 @@ void ColorWheel::paintEvent(QPaintEvent * )
         painter.setClipPath(clip);
     }
 
-    painter.drawImage(0,0,p->inner_selector);
+    painter.drawImage(QRectF(QPointF(0, 0), p->selector_size()), p->inner_selector);
     painter.setClipping(false);
 
     // lum-sat selector
-    painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
+    // we define the color of the selecto based on the background color of the widget
+    // in order to improve to contrast
+    if (p->backgroundIsDark)
+    {
+        bool isWhite = (p->val < 0.65 || p->sat > 0.43);
+        painter.setPen(QPen(isWhite ? Qt::white : Qt::black, 3));
+    }
+    else
+    {
+        painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
+    }
     painter.setBrush(Qt::NoBrush);
     painter.drawEllipse(selector_position, selector_radius, selector_radius);
 
@@ -351,12 +457,32 @@ void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
 {
     if (p->mouse_status == DragCircle )
     {
-        p->hue = p->line_to_point(ev->pos()).angle()/360.0;
-        p->render_inner_selector();
+        auto hue = p->line_to_point(ev->pos()).angle()/360.0;
+        if (p->current_ring_editor == -1)
+        {
+            p->hue = hue;
+            p->render_inner_selector();
 
-        emit colorSelected(color());
-        emit colorChanged(color());
-        update();
+            Q_EMIT colorSelected(color());
+            Q_EMIT colorChanged(color());
+            update();
+        }
+        else
+        {
+            auto& editor = p->ring_editors[p->current_ring_editor];
+            editor.hue_diff = normalize(hue - p->hue);
+            if (editor.symmetric_to != -1)
+            {
+                auto& symmetric = p->ring_editors[editor.symmetric_to];
+                symmetric.hue_diff = normalize(p->hue - hue);
+            }
+            else if (editor.opposite_to != -1)
+            {
+                auto& opposite = p->ring_editors[editor.opposite_to];
+                opposite.hue_diff = normalize(editor.hue_diff-0.5);
+            }
+            p->apply_harmonies();
+        }
     }
     else if(p->mouse_status == DragSquare)
     {
@@ -387,8 +513,8 @@ void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
                 p->sat = qBound(0.0, (pt.y()-ymin)/slice_h, 1.0);
         }
 
-        emit colorSelected(color());
-        emit colorChanged(color());
+        Q_EMIT colorSelected(color());
+        Q_EMIT colorChanged(color());
         update();
     }
 }
@@ -402,7 +528,24 @@ void ColorWheel::mousePressEvent(QMouseEvent *ev)
         if ( ray.length() <= p->inner_radius() )
             p->mouse_status = DragSquare;
         else if ( ray.length() <= p->outer_radius() )
+        {
             p->mouse_status = DragCircle;
+            auto hue_diff = normalize(ray.angle()/360 - p->hue);
+            auto i = 0;
+            for (auto const& editor : p->ring_editors)
+            {
+                const double eps = 1.0/64;
+                if (editor.editable &&
+                    editor.hue_diff <= hue_diff + eps &&
+                    editor.hue_diff >= hue_diff - eps)
+                {
+                    p->current_ring_editor = i;
+                    // no need to update color..
+                    return;
+                }
+                ++i;
+            }
+        }
 
         // Update the color
         mouseMoveEvent(ev);
@@ -413,6 +556,7 @@ void ColorWheel::mouseReleaseEvent(QMouseEvent *ev)
 {
     mouseMoveEvent(ev);
     p->mouse_status = Nothing;
+    p->current_ring_editor = -1;
 }
 
 void ColorWheel::resizeEvent(QResizeEvent *)
@@ -428,7 +572,7 @@ void ColorWheel::setColor(QColor c)
     if (!qFuzzyCompare(oldh+1, p->hue+1))
         p->render_inner_selector();
     update();
-    emit colorChanged(c);
+    Q_EMIT colorChanged(c);
 }
 
 void ColorWheel::setHue(qreal h)
@@ -493,7 +637,7 @@ void ColorWheel::setDisplayFlags(DisplayFlags flags)
     p->display_flags = flags;
     p->render_inner_selector();
     update();
-    emit displayFlagsChanged(flags);
+    Q_EMIT displayFlagsChanged(flags);
 }
 
 ColorWheel::DisplayFlags ColorWheel::displayFlags(DisplayFlags mask) const
@@ -545,6 +689,45 @@ void ColorWheel::dropEvent(QDropEvent* event)
             event->accept();
         }
     }
+}
+
+void ColorWheel::clearHarmonies()
+{
+    p->ring_editors.clear();
+    p->current_ring_editor = -1;
+    p->apply_harmonies();
+}
+
+unsigned ColorWheel::addHarmony(double hue_diff, bool editable)
+{
+    auto count = p->ring_editors.size();
+    p->ring_editors.emplace_back(normalize(hue_diff), editable, -1, -1);
+    p->apply_harmonies();
+    return count;
+}
+
+unsigned ColorWheel::addSymmetricHarmony(unsigned relative_to)
+{
+    auto count = p->ring_editors.size();
+    if (relative_to >= count)
+        throw std::out_of_range("incorrect call to addSymmetricHarmony: harmony number out of range");
+    auto& relative = p->ring_editors[relative_to];
+    relative.symmetric_to = count;
+    p->ring_editors.emplace_back(normalize(-relative.hue_diff), relative.editable, relative_to, -1);
+    p->apply_harmonies();
+    return count;
+}
+
+unsigned ColorWheel::addOppositeHarmony(unsigned relative_to)
+{
+    auto count = p->ring_editors.size();
+    if (relative_to >= count)
+        throw std::out_of_range("incorrect call to addOppositeHarmony: harmony number out of range");
+    auto& relative = p->ring_editors[relative_to];
+    relative.opposite_to = count;
+    p->ring_editors.emplace_back(normalize(0.5+relative.hue_diff), relative.editable, -1, relative_to);
+    p->apply_harmonies();
+    return count;
 }
 
 } //  namespace color_widgets

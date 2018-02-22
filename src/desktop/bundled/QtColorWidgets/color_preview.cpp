@@ -1,27 +1,25 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-    Copyright (C) 2014 Calle Laakkonen
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "color_preview.hpp"
 
 #include <QStylePainter>
@@ -47,7 +45,7 @@ public:
 ColorPreview::ColorPreview(QWidget *parent) :
     QWidget(parent), p(new Private)
 {
-    p->back.setTexture(QPixmap(QLatin1String(":/color_widgets/alphaback.png")));
+    p->back.setTexture(QPixmap(QStringLiteral(":/color_widgets/alphaback.png")));
 }
 
 ColorPreview::~ColorPreview()
@@ -96,17 +94,17 @@ void ColorPreview::paint(QPainter &painter, QRect rect) const
 {
     QColor c1, c2;
     switch(p->display_mode) {
-    case NoAlpha:
+    case DisplayMode::NoAlpha:
         c1 = c2 = p->col.rgb();
         break;
-    case AllAlpha:
+    case DisplayMode::AllAlpha:
         c1 = c2 = p->col;
         break;
-    case SplitAlpha:
+    case DisplayMode::SplitAlpha:
         c1 = p->col.rgb();
         c2 = p->col;
         break;
-    case SplitColor:
+    case DisplayMode::SplitColor:
         c1 = p->comparison;
         c2 = p->col;
         break;
@@ -134,7 +132,7 @@ void ColorPreview::setColor(const QColor &c)
 {
     p->col = c;
     update();
-    emit colorChanged(c);
+    Q_EMIT colorChanged(c);
 }
 
 void ColorPreview::setComparisonColor(const QColor &c)
@@ -158,7 +156,7 @@ void ColorPreview::resizeEvent(QResizeEvent *)
 void ColorPreview::mouseReleaseEvent(QMouseEvent * ev)
 {
     if ( QRect(QPoint(0,0),size()).contains(ev->pos()) )
-        emit clicked();
+        Q_EMIT clicked();
 }
 
 void ColorPreview::mouseMoveEvent(QMouseEvent *ev)

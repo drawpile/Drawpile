@@ -1,25 +1,25 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2017 caryoscelus
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #ifndef COLOR_WHEEL_HPP
 #define COLOR_WHEEL_HPP
 
@@ -77,7 +77,13 @@ public:
     /// Get current color
     QColor color() const;
 
-	QSize sizeHint() const override;
+    /// Get all harmony colors (including main)
+    QList<QColor> harmonyColors() const;
+
+    /// Get number of harmony colors (including main)
+    unsigned int harmonyCount() const;
+
+    virtual QSize sizeHint() const Q_DECL_OVERRIDE;
 
     /// Get current hue in the range [0-1]
     qreal hue() const;
@@ -110,7 +116,34 @@ public:
      */
     void setDisplayFlag(DisplayFlags flag, DisplayFlags mask);
 
-public slots:
+    /// Clear harmony color scheme
+    void clearHarmonies();
+
+    /**
+     * @brief Add harmony color
+     * @param hue_diff     Initial hue difference (in [0-1) range)
+     * @param editable     Whether this harmony should be editable
+     * @returns Index of newly added harmony
+     */
+    unsigned addHarmony(double hue_diff, bool editable);
+
+    /**
+     * @brief Add symmetric harmony color
+     * @param relative_to  Index of other harmony that should be symmetric relative to main hue
+     * @returns Index of newly added harmony
+     * Editability is inherited from symmetric editor
+     */
+    unsigned addSymmetricHarmony(unsigned relative_to);
+
+    /**
+     * @brief Add opposite harmony color
+     * @param relative_to  Index of other harmony that should be opposite to this
+     * @returns Index of newly added harmony
+     * Editability is inherited from opposite editor
+     */
+    unsigned addOppositeHarmony(unsigned relative_to);
+
+public Q_SLOTS:
 
     /// Set current color
     void setColor(QColor c);
@@ -136,7 +169,7 @@ public slots:
      */
     void setDisplayFlags(ColorWheel::DisplayFlags flags);
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
      */
@@ -148,6 +181,11 @@ signals:
     void colorSelected(QColor);
 
     void displayFlagsChanged(ColorWheel::DisplayFlags flags);
+
+    /**
+     * Emitted when harmony settings or harmony colors are changed (including due to main hue change)
+     */
+    void harmonyChanged();
 
 protected:
     void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;

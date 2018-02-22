@@ -1,27 +1,25 @@
 /**
-
-@author Mattia Basaglia
-
-@section License
-
-    Copyright (C) 2013-2015 Mattia Basaglia
-    Copyright (C) 2014 Calle Laakkonen
-
-    This software is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Color Widgets.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
+ * \file
+ *
+ * \author Mattia Basaglia
+ *
+ * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2014 Calle Laakkonen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "color_dialog.hpp"
 #include "ui_color_dialog.h"
 
@@ -30,9 +28,8 @@
 #include <QDesktopWidget>
 #include <QMimeData>
 #include <QPushButton>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QScreen>
-#endif
+
 namespace color_widgets {
 
 class ColorDialog::Private
@@ -57,11 +54,11 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
 
     // Add "pick color" button
     QPushButton *pickButton = p->ui.buttonBox->addButton(tr("Pick"), QDialogButtonBox::ActionRole);
-    pickButton->setIcon(QIcon::fromTheme("color-picker"));
+    pickButton->setIcon(QIcon::fromTheme(QStringLiteral("color-picker")));
 
     setButtonMode(OkApplyCancel);
 
-    connect(p->ui.wheel,SIGNAL(displayFlagsChanged(ColorWheel::DisplayFlags)),SIGNAL(wheelFlagsChanged(ColorWheel::DisplayFlags)));
+    connect(p->ui.wheel,&ColorWheel::displayFlagsChanged,this, &ColorDialog::wheelFlagsChanged);
 }
 
 QSize ColorDialog::sizeHint() const
@@ -133,7 +130,7 @@ void ColorDialog::setAlphaEnabled(bool a)
         p->ui.slide_alpha->setVisible(a);
         p->ui.spin_alpha->setVisible(a);
 
-        emit alphaEnabledChanged(a);
+        Q_EMIT alphaEnabledChanged(a);
     }
 }
 
@@ -163,7 +160,7 @@ void ColorDialog::update_widgets()
 {
     bool blocked = signalsBlocked();
     blockSignals(true);
-	for(QWidget* w : findChildren<QWidget*>())
+    Q_FOREACH(QWidget* w, findChildren<QWidget*>())
         w->blockSignals(true);
 
     QColor col = color();
@@ -212,10 +209,10 @@ void ColorDialog::update_widgets()
     p->ui.preview->setColor(col);
 
     blockSignals(blocked);
-	for(QWidget* w : findChildren<QWidget*>())
+    Q_FOREACH(QWidget* w, findChildren<QWidget*>())
         w->blockSignals(false);
 
-    emit colorChanged(col);
+    Q_EMIT colorChanged(col);
 }
 
 void ColorDialog::set_hsv()
@@ -267,7 +264,7 @@ void ColorDialog::on_buttonBox_clicked(QAbstractButton *btn)
     case QDialogButtonBox::ApplyRole:
         // Explicitly select the color
         p->ui.preview->setComparisonColor(color());
-        emit colorSelected(color());
+        Q_EMIT colorSelected(color());
         break;
 
     case QDialogButtonBox::ActionRole:
@@ -313,16 +310,11 @@ void ColorDialog::dropEvent(QDropEvent *event)
 
 static QColor get_screen_color(const QPoint &global_pos)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-    WId id = QApplication::desktop()->winId();
-    QImage img = QPixmap::grabWindow(id, global_pos.x(), global_pos.y(), 1, 1).toImage();
-#else
     int screenNum = QApplication::desktop()->screenNumber(global_pos);
     QScreen *screen = QApplication::screens().at(screenNum);
 
     WId wid = QApplication::desktop()->winId();
     QImage img = screen->grabWindow(wid, global_pos.x(), global_pos.y(), 1, 1).toImage();
-#endif
 
     return img.pixel(0,0);
 }

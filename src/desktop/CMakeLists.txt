@@ -162,6 +162,7 @@ else()
 		bundled/QtColorWidgets/hue_slider.cpp
 		bundled/QtColorWidgets/color_line_edit.cpp
 		bundled/QtColorWidgets/color_utils.cpp
+		bundled/QtColorWidgets/color_names.cpp
 	)
 	qt5_add_resources( QtResource bundled/QtColorWidgets/color_widgets.qrc )
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets")
