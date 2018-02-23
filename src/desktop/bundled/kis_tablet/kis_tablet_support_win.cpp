@@ -768,6 +768,16 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
             w = w->window();
         }
 
+        // Get Mouse Position and compare to tablet info
+        const QPoint mouseLocation = QCursor::pos();
+
+        // Positions should be almost the same if we are in absolute
+        // mode. If they are not, use the mouse location.
+        if ((mouseLocation - globalPos).manhattanLength() > m_absoluteRange) {
+            globalPos = mouseLocation;
+            globalPosF = globalPos;
+        }
+
 
         const QPoint localPos = w->mapFromGlobal(globalPos);
         const QPointF delta = globalPosF - globalPos;
