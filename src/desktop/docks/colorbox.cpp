@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -380,11 +380,11 @@ void ColorBox::swapLastUsedColors()
 	_ui->lastused->setPalette(m_lastused);
 
 	// Select last used color
-	if(m_lastused->count()>0) {
-		QColor c = m_lastused->color(0).color;
-		setColor(c);
-		emit colorChanged(c);
-	}
+	const QColor altColor = m_altColor;
+	m_altColor = _ui->colorwheel->color();
+
+	setColor(altColor);
+	emit colorChanged(altColor);
 }
 
 }
