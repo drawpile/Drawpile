@@ -34,7 +34,6 @@ public:
 
 public slots:
 	void setColor(const QColor& color);
-	void changeLastUsedColor(const QColor &color);
 	void addLastUsedColor(const QColor &color);
 	void swapLastUsedColors();
 
@@ -65,7 +64,6 @@ private:
 	QAction *m_writeprotectPalette;
 	QAction *m_exportPalette;
 	QAction *m_importPalette;
-	bool m_lastUsedColorChanged;
 	bool _updating;
 
 };
