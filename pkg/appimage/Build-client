@@ -25,7 +25,7 @@ git apply pkg/appimage/appimage-client.patch
 mkdir -p $BUILDDIR
 mkdir -p $APPDIR
 cd $BUILDDIR
-cmake3 $WORKDIR -DSERVER=OFF -DINSTALL_DOC=OFF -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
+cmake3 $WORKDIR -DSERVER=OFF -DINSTALL_DOC=OFF -DKIS_TABLET=ON -DCMAKE_INSTALL_PREFIX=$APPDIR/usr
 make -j5
 make install
 
