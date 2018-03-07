@@ -27,6 +27,7 @@
 #include <QJsonObject>
 #include <QVarLengthArray>
 #include <QDebug>
+#include <QTimerEvent>
 
 namespace server {
 
@@ -46,17 +47,14 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, con
 	  m_archive(false)
 {
 	Q_ASSERT(journal);
+
+	// Flush the recording file periodically
+	startTimer(1000 * 30, Qt::VeryCoarseTimer);
 }
 
 FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, QObject *parent)
-	: SessionHistory(id, parent),
-	  m_dir(dir),
-	  m_journal(journal),
-	  m_recording(nullptr),
-	  m_maxUsers(0),
-	  m_flags(0)
+	: FiledHistory(dir, journal, id, QString(), protocol::ProtocolVersion(), QString(), parent)
 {
-	Q_ASSERT(journal);
 }
 
 FiledHistory::~FiledHistory()
@@ -628,6 +626,12 @@ void FiledHistory::historyRemoveBan(int id)
 {
 	m_journal->write(QByteArray("UNBAN ") + QByteArray::number(id) + "\n");
 	m_journal->flush();
+}
+
+void FiledHistory::timerEvent(QTimerEvent *event)
+{
+	if(m_recording)
+		m_recording->flush();
 }
 
 void FiledHistory::addAnnouncement(const QString &url)

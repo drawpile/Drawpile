@@ -108,6 +108,8 @@ protected:
 	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
+	void timerEvent(QTimerEvent *event) override;
+
 private:
 	FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent);
 	FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, QObject *parent);
