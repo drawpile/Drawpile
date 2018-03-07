@@ -330,6 +330,14 @@ bool FiledHistory::load()
 
 	historyLoaded(m_blocks.last().endOffset-startOffset, m_blocks.last().startIndex+m_blocks.last().count);
 
+	// If a loaded session is empty, the server expects the first joining client
+	// to supply the initial content, while the client is expecting to join
+	// an existing session.
+	if(sizeInBytes() == 0) {
+		qWarning() << recordingFile << "empty session!";
+		return false;
+	}
+
 	return true;
 }
 
