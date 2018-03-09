@@ -126,6 +126,11 @@ void LayerStack::resize(int top, int right, int bottom, int left)
  */
 Layer *LayerStack::createLayer(int id, int source, const QColor &color, bool insert, bool copy, const QString &name)
 {
+	if(getLayer(id)) {
+		qWarning("Layer #%d already exists!", id);
+		return nullptr;
+	}
+
 	if(m_width<=0 || m_height<=0) {
 		// We tolerate this, but in normal operation the canvas size should be
 		// set before creating any layers.

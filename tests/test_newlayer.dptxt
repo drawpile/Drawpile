@@ -10,3 +10,8 @@
 1 newlayer id=1 source=0 color=#ffffffff flags=insert title=Background
 1 newlayer id=5 source=1 color=#00000000 flags=insert title=One
 
+# A command that tries to add duplicate layer IDs should be ignored
+1 newlayer id=3 color=#00000000 {
+	title=Two (Dupe)
+}
+

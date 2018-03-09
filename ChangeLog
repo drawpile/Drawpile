@@ -3,6 +3,7 @@
  * Server: blank session files are no longer loaded
  * Windows: wintab relative pen mode hack must now be explicitly enabled
  * Removed tablet bug workaround mode (with the improved tablet support, the workaround mode causes more problems than it fixes)
+ * Bugfix: newlayer command now refuses to create a layer with a duplicate ID
 
 2018-02-25 Version 2.0.9
  * Minor recording format change: recordings are now prefiltered
