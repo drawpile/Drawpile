@@ -125,6 +125,10 @@
 #include "export/animation.h"
 #include "export/videoexporter.h"
 
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#include "bundled/kis_tablet/kis_tablet_support_win.h"
+#endif
+
 namespace {
 
 QString getLastPath() {
@@ -650,6 +654,10 @@ void MainWindow::updateTabletSupportMode()
 		mode = widgets::CanvasView::ENABLE_TABLET;
 
 	_view->setTabletMode(mode);
+
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+	KisTabletSupportWin::enableRelativePenModeHack(cfg.value("relativepenhack", false).toBool());
+#endif
 
 	// Handle eraser event
 	if(eraser)

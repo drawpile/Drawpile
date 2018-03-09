@@ -164,6 +164,12 @@ void KisTabletSupportWin::init()
                      });
 }
 
+void KisTabletSupportWin::enableRelativePenModeHack(bool enable)
+{
+	if(QTAB)
+		QTAB->setAbsoluteRange(enable ? 20 : 0);
+}
+
 
 // Derived from qwidgetwindow.
 //
@@ -446,7 +452,7 @@ bool QWindowsWinTab32DLL::init()
 QWindowsTabletSupport::QWindowsTabletSupport(HWND window, HCTX context)
     : m_window(window)
     , m_context(context)
-    , m_absoluteRange(20)
+    , m_absoluteRange(-1)
     , m_tiltSupport(false)
     , m_currentDevice(-1)
 {
@@ -773,7 +779,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
 
         // Positions should be almost the same if we are in absolute
         // mode. If they are not, use the mouse location.
-        if ((mouseLocation - globalPos).manhattanLength() > m_absoluteRange) {
+        if (m_absoluteRange >= 0 && (mouseLocation - globalPos).manhattanLength() > m_absoluteRange) {
             globalPos = mouseLocation;
             globalPosF = globalPos;
         }
