@@ -628,7 +628,7 @@ void FiledHistory::historyRemoveBan(int id)
 	m_journal->flush();
 }
 
-void FiledHistory::timerEvent(QTimerEvent *event)
+void FiledHistory::timerEvent(QTimerEvent *)
 {
 	if(m_recording)
 		m_recording->flush();
