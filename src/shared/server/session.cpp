@@ -415,11 +415,19 @@ bool Session::checkPassword(const QString &password) const
 QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &changedBy)
 {
 	QList<uint8_t> truelist;
+	Client *kickResetter = nullptr;
 	for(Client *c : m_clients) {
-		bool op = ids.contains(c->id()) | c->isModerator();
+		const bool op = ids.contains(c->id()) | c->isModerator();
 		if(op != c->isOperator()) {
-			if(!op && c->id() == m_initUser && m_state == Reset)
-				abortReset();
+			if(!op && c->id() == m_initUser && m_state == Reset) {
+				// OP status removed mid-reset! The user probably has at least part
+				// of the reset image still queued for upload, which will messs up
+				// the session once we're out of reset mode. Kicking the client
+				// is the easiest workaround.
+				// TODO for 2.1: send a cancel command to the client and ignore
+				// all further input until ack is received.
+				kickResetter = c;
+			}
 
 			c->setOperator(op);
 			QString msg;
@@ -438,18 +446,25 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 		if(c->isOperator())
 			truelist << c->id();
 	}
+
+	if(kickResetter)
+		kickResetter->disconnectError("De-opped while resetting");
+
 	return truelist;
 }
 
 void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 {
 	QList<uint8_t> ids;
+	Client *kickResetter = nullptr;
 
 	for(Client *c : m_clients) {
 		if(c->id() == id && c->isOperator() != op) {
 
-			if(!op && c->id() == m_initUser && m_state == Reset)
-				abortReset();
+			if(!op && c->id() == m_initUser && m_state == Reset) {
+				// See above for explanation
+				kickResetter = c;
+			}
 
 			c->setOperator(op);
 			QString msg;
@@ -470,6 +485,9 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 	}
 
 	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+
+	if(kickResetter)
+		kickResetter->disconnectError("De-opped while resetting");
 }
 
 void Session::sendUpdatedSessionProperties()
