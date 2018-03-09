@@ -94,179 +94,6 @@
             <item row="2" column="1">
              <widget class="QComboBox" name="languageBox"/>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Tablet:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QCheckBox" name="tabletSupport">
-              <property name="text">
-               <string>Enable pressure sensitivity</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QCheckBox" name="tabletBugWorkaround">
-              <property name="toolTip">
-               <string>Checking this may fix jaggy line and offset bugs on some tablets</string>
-              </property>
-              <property name="text">
-               <string>Enable bug workarounds</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="1">
-             <spacer name="verticalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>5</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>Touch:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="1">
-             <widget class="QCheckBox" name="touchscroll">
-              <property name="text">
-               <string>Scroll with finger</string>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="1">
-             <widget class="QCheckBox" name="touchpinch">
-              <property name="text">
-               <string>Pinch to zoom</string>
-              </property>
-             </widget>
-            </item>
-            <item row="13" column="1">
-             <widget class="QCheckBox" name="touchtwist">
-              <property name="text">
-               <string>Twist to rotate</string>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="1">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>5</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="16" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Autosave interval:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="16" column="1">
-             <widget class="QSpinBox" name="autosaveInterval">
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>300</number>
-              </property>
-             </widget>
-            </item>
-            <item row="17" column="1">
-             <spacer name="verticalSpacer_9">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>5</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="18" column="1">
-             <widget class="QComboBox" name="brushCursorBox">
-              <item>
-               <property name="text">
-                <string>Dot</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Crosshair</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Arrow</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="18" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="text">
-               <string>Brush cursor:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="19" column="1">
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>5</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="20" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Tools:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="20" column="1">
-             <widget class="QCheckBox" name="toolToggleShortcut">
-              <property name="text">
-               <string>Shortcut toggles last selection</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_17">
               <property name="text">
@@ -294,10 +121,20 @@
               </property>
              </spacer>
             </item>
-            <item row="9" column="1">
-             <widget class="QCheckBox" name="tabletEraser">
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Detect eraser tip</string>
+               <string>Tablet:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="tabletSupport">
+              <property name="text">
+               <string>Enable pressure sensitivity</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -312,6 +149,159 @@
              <widget class="QCheckBox" name="relativePenModeHack">
               <property name="text">
                <string>Enable relative pen mode hack (Wintab only)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QCheckBox" name="tabletEraser">
+              <property name="text">
+               <string>Detect eraser tip</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Touch:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <widget class="QCheckBox" name="touchscroll">
+              <property name="text">
+               <string>Scroll with finger</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="QCheckBox" name="touchpinch">
+              <property name="text">
+               <string>Pinch to zoom</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QCheckBox" name="touchtwist">
+              <property name="text">
+               <string>Twist to rotate</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="1">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="15" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Autosave interval:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="1">
+             <widget class="QSpinBox" name="autosaveInterval">
+              <property name="suffix">
+               <string> s</string>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>300</number>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="1">
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="17" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>Brush cursor:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="1">
+             <widget class="QComboBox" name="brushCursorBox">
+              <item>
+               <property name="text">
+                <string>Dot</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Crosshair</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Arrow</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="18" column="1">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="19" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Tools:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="1">
+             <widget class="QCheckBox" name="toolToggleShortcut">
+              <property name="text">
+               <string>Shortcut toggles last selection</string>
               </property>
              </widget>
             </item>

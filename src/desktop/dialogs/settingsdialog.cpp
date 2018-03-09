@@ -281,7 +281,6 @@ void SettingsDialog::restoreSettings()
 	m_ui->relativePenModeHack->setChecked(cfg.value("relativepenhack", false).toBool());
 #endif
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
-	m_ui->tabletBugWorkaround->setChecked(cfg.value("tabletbugs", false).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
 #ifdef Q_OS_MAC
 	// Gesture scrolling is always enabled on Macs
@@ -379,7 +378,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("relativepenhack", m_ui->relativePenModeHack->isChecked());
 #endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
-	cfg.setValue("tabletbugs", m_ui->tabletBugWorkaround->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
 	cfg.setValue("touchscroll", m_ui->touchscroll->isChecked());
 	cfg.setValue("touchpinch", m_ui->touchpinch->isChecked());

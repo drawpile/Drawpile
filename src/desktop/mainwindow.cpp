@@ -642,18 +642,12 @@ void MainWindow::updateTabletSupportMode()
 	cfg.beginGroup("settings/input");
 
 	const bool enable = cfg.value("tabletevents", true).toBool();
-	const bool bugs = cfg.value("tabletbugs", false).toBool();
 	const bool eraser = cfg.value("tableteraser", true).toBool();
 
-	widgets::CanvasView::TabletMode mode;
-	if(!enable)
-		mode = widgets::CanvasView::DISABLE_TABLET;
-	else if(bugs)
-		mode = widgets::CanvasView::HYBRID_TABLET;
-	else
-		mode = widgets::CanvasView::ENABLE_TABLET;
-
-	_view->setTabletMode(mode);
+	_view->setTabletMode(enable
+		? widgets::CanvasView::ENABLE_TABLET
+		: widgets::CanvasView::DISABLE_TABLET
+	);
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	KisTabletSupportWin::enableRelativePenModeHack(cfg.value("relativepenhack", false).toBool());
