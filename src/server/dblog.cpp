@@ -106,4 +106,17 @@ void DbLog::storeMessage(const Log &entry)
 	q.exec();
 }
 
+int DbLog::purgeLogs(int olderThanDays)
+{
+	if(olderThanDays<=0)
+		return 0;
+
+	QSqlQuery q(m_db);
+	q.prepare("DELETE FROM serverlog WHERE timestamp < DATE('now', ?)");
+	q.bindValue(0, QStringLiteral("-%1 days").arg(olderThanDays));
+	if(!q.exec())
+		qWarning("Couldn't purge log entries: %s", qPrintable(q.lastError().databaseText()));
+	return q.numRowsAffected();
+}
+
 }

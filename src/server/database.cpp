@@ -33,6 +33,7 @@
 #include <QHostAddress>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTimer>
 
 namespace server {
 
@@ -82,6 +83,14 @@ Database::Database(QObject *parent)
 {
 	// Temporary logger until DB log is ready
 	d->logger = new InMemoryLog;
+
+	// Periodic task scheduler
+	QTimer *dailyTimer = new QTimer(this);
+	dailyTimer->setTimerType(Qt::VeryCoarseTimer);
+	dailyTimer->setSingleShot(false);
+	dailyTimer->setInterval(24 * 60 * 60 * 1000);
+	connect(dailyTimer, &QTimer::timeout, this, &Database::dailyTasks);
+	dailyTimer->start();
 }
 
 Database::~Database()
@@ -114,6 +123,10 @@ bool Database::openFile(const QString &path)
 	}
 
 	qDebug("Opened configuration database: %s", qPrintable(path));
+
+	// Purge old log entries on startup
+	dailyTasks();
+
 	return true;
 }
 
@@ -398,6 +411,17 @@ bool Database::deleteAccount(int userId)
 	q.bindValue(0, userId);
 	q.exec();
 	return q.numRowsAffected()>0;
+}
+
+void Database::dailyTasks()
+{
+	// Purge old Database log entries
+	DbLog *dblog = dynamic_cast<DbLog*>(d->logger);
+	if(dblog) {
+		const int purged = dblog->purgeLogs(getConfigInt(config::LogPurgeDays));
+		if(purged > 0)
+			qInfo("Purged %d old log entries", purged);
+	}
 }
 
 }

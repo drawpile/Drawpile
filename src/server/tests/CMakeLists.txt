@@ -12,4 +12,5 @@ set(
 
 AddUnitTest(serverconfig)
 AddUnitTest(templates)
+AddUnitTest(dblog)
 

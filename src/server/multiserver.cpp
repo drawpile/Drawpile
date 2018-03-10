@@ -378,14 +378,15 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::AnnounceWhiteList,
 		config::PrivateUserList,
 		config::AllowGuestHosts,
-		config::AllowGuests
+		config::AllowGuests,
 #ifdef HAVE_LIBSODIUM
-		,config::UseExtAuth,
+		config::UseExtAuth,
 		config::ExtAuthKey,
 		config::ExtAuthGroup,
 		config::ExtAuthFallback,
-		config::ExtAuthMod
+		config::ExtAuthMod,
 #endif
+		config::LogPurgeDays
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

@@ -5,6 +5,7 @@
  * Removed tablet bug workaround mode (with the improved tablet support, the workaround mode causes more problems than it fixes)
  * Bugfix: newlayer command now refuses to create a layer with a duplicate ID
  * Bug workaround: a deopped resetting user is now automatically kicked to prevent reset image from mixing with the normal session content.
+ * Server: added option to automatically purge old DB log messages
 
 2018-02-25 Version 2.0.9
  * Minor recording format change: recordings are now prefiltered

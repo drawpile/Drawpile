@@ -54,6 +54,9 @@ public:
 	QJsonObject updateAccount(int id, const QJsonObject &update);
 	bool deleteAccount(int id);
 
+private slots:
+	void dailyTasks();
+
 protected:
 	QString getConfigValue(const ConfigKey key, bool &found) const override;
 	void setConfigValue(ConfigKey key, const QString &value) override;

@@ -70,7 +70,8 @@ namespace config {
 		ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),             // ExtAuth user group (leave blank for default set)
 		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
 		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
-		ReportToken(17, "reporttoken", "", ConfigKey::STRING)                // Abuse report backend server authorization token
+		ReportToken(17, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
+		LogPurgeDays(18, "logpurgedays", "0", ConfigKey::INT)                // Automatically purge log entries older than this many days (DB log only)
 		;
 }
 

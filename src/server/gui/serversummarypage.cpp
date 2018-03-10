@@ -64,6 +64,7 @@ struct ServerSummaryPage::Private {
 	QCheckBox *persistence;
 	QCheckBox *privateUserList;
 	QCheckBox *archiveSessions;
+	QSpinBox *logPurge;
 
 	QCheckBox *useExtAuth;
 	QLineEdit *extAuthKey;
@@ -90,6 +91,7 @@ struct ServerSummaryPage::Private {
 		  persistence(new QCheckBox),
 		  privateUserList(new QCheckBox),
 		  archiveSessions(new QCheckBox),
+		  logPurge(new QSpinBox),
 		  useExtAuth(new QCheckBox),
 		  extAuthKey(new QLineEdit),
 		  extAuthGroup(new QLineEdit),
@@ -108,6 +110,12 @@ struct ServerSummaryPage::Private {
 		idleTimeout->setSingleStep(1);
 		idleTimeout->setSpecialValueText(tr("unlimited"));
 		idleTimeout->setMaximum(7 * 24 * 60);
+
+		logPurge->setMinimum(0);
+		logPurge->setMaximum(365*10);
+		logPurge->setPrefix("purge older than ");
+		logPurge->setSuffix(tr(" days"));
+		logPurge->setSpecialValueText("keep all");
 
 		persistence->setText(ServerSummaryPage::tr("Allow sessions to persist without users"));
 		privateUserList->setText(ServerSummaryPage::tr("Do not include user list is session announcement"));
@@ -203,6 +211,7 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	addWidgets(d, layout, row++, tr("Connection timeout"), d->clientTimeout, true);
 	addWidgets(d, layout, row++, QString(), d->allowGuests);
 	addWidgets(d, layout, row++, QString(), d->allowGuestHosts);
+	addWidgets(d, layout, row++, tr("Server log"), d->logPurge, true);
 
 	layout->addItem(new QSpacerItem(1,10), row++, 0);
 
@@ -284,6 +293,7 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->sessionSizeLimit->setValue(o[config::SessionSizeLimit.name].toDouble() / (1024*1024));
 	d->idleTimeout->setValue(o[config::IdleTimeLimit.name].toDouble() / 60);
 	d->maxSessions->setValue(o[config::SessionCountLimit.name].toInt());
+	d->logPurge->setValue(o[config::LogPurgeDays.name].toInt());
 	d->persistence->setChecked(o[config::EnablePersistence.name].toBool());
 	d->archiveSessions->setChecked(o[config::ArchiveMode.name].toBool());
 	d->privateUserList->setChecked(o[config::PrivateUserList.name].toBool());
@@ -311,6 +321,7 @@ void ServerSummaryPage::saveSettings()
 		{config::SessionSizeLimit.name, d->sessionSizeLimit->value() * 1024 * 1024},
 		{config::IdleTimeLimit.name, d->idleTimeout->value() * 60},
 		{config::SessionCountLimit.name, d->maxSessions->value()},
+		{config::LogPurgeDays.name, d->logPurge->value()},
 		{config::EnablePersistence.name, d->persistence->isChecked()},
 		{config::ArchiveMode.name, d->archiveSessions->isChecked()},
 		{config::PrivateUserList.name, d->privateUserList->isChecked()},

@@ -35,6 +35,13 @@ public:
 
 	QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
 
+	/**
+	 * @brief Delete all log entries older than the given number of days
+	 * @param olderThanDays
+	 * @return number of entries deleted
+	 */
+	int purgeLogs(int olderThanDays);
+
 protected:
 	void storeMessage(const Log &entry) override;
 
