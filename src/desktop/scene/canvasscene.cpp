@@ -60,6 +60,7 @@ CanvasScene::~CanvasScene()
 void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
 	delete m_image;
+	onSelectionChanged(nullptr);
 
 	m_model = model;
 
