@@ -60,6 +60,9 @@ private slots:
 			fh->setAuthenticatedOperator("u1", true);
 			fh->setAuthenticatedOperator("u2", true);
 			fh->setAuthenticatedOperator("u1", false);
+
+			// The history file must have some content before it can be loaded
+			fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test"))));
 		}
 
 		{
