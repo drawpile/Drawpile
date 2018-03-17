@@ -1,4 +1,4 @@
-2018-03-?? Version 2.0.10
+2018-03-17 Version 2.0.10
  * Server: history files are now flushed periodically to better protect against dataloss in case of abrupt server termination
  * Server: blank session files are no longer loaded
  * Windows: wintab relative pen mode hack must now be explicitly enabled
