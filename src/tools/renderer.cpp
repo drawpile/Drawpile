@@ -118,7 +118,7 @@ QString prettyDuration(qint64 duration)
 	const double secs = msecs / 1000;
 	if(secs<60)
 		return QStringLiteral("%1 s").arg(secs, 0, 'f', 2);
-	return QStringLiteral("%1 m %2s").arg(secs/60, 0, 'f', 0).arg(secs - (60*int(secs)), 0, 'f', 2);
+	return QStringLiteral("%1 m %2s").arg(secs/60, 0, 'f', 0).arg(fmod(secs, 60), 0, 'f', 2);
 }
 
 bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
@@ -148,8 +148,10 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 	// Benchmarking
 	QElapsedTimer renderTime;
 	QElapsedTimer saveTime;
+	QElapsedTimer totalTime;
 	qint64 totalRenderTime = 0;
 	qint64 totalSaveTime = 0;
+	totalTime.start();
 
 	// Prepare image exporter
 	ExportState exportState {
@@ -214,7 +216,8 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 		}
 	} while(record.status != recording::MessageRecord::END_OF_RECORDING);
 
-	fprintf(stderr, "[I] Total render time: %s\n", qPrintable(prettyDuration(totalRenderTime)));
+	fprintf(stderr, "[I] Total processing time: %s\n", qPrintable(prettyDuration(totalTime.nsecsElapsed())));
+	fprintf(stderr, "[I] Cumulative render time: %s\n", qPrintable(prettyDuration(totalRenderTime)));
 
 	// Save the final result
 	saveTime.start();
@@ -222,7 +225,7 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 		return false;
 	totalSaveTime += saveTime.nsecsElapsed();
 
-	fprintf(stderr, "[I] Total saving time: %s\n", qPrintable(prettyDuration(totalSaveTime)));
+	fprintf(stderr, "[I] Cumulative saving time: %s\n", qPrintable(prettyDuration(totalSaveTime)));
 
 	return true;
 }
