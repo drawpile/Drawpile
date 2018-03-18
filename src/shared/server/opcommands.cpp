@@ -114,14 +114,7 @@ void opWord(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 		throw CmdError("No opword set");
 
 	if(passwordhash::check(args.at(0).toString(), opwordHash)) {
-		client->setOperator(true);
-
-		QList<uint8_t> ids;
-		for(const Client *c : client->session()->clients())
-			if(c->isOperator())
-				ids << c->id();
-
-		client->session()->addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+		client->session()->changeOpStatus(client->id(), true, "password");
 
 	} else {
 		throw CmdError("Incorrect password");
