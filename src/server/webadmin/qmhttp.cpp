@@ -343,6 +343,11 @@ void MicroHttpd::setBasicAuth(const QString &realm, const QString &username, con
 	_d->baPass = password;
 }
 
+QString MicroHttpd::version()
+{
+	return QString::fromUtf8(MHD_get_version());
+}
+
 HttpResponse HttpResponse::HtmlResponse(const QString &html)
 {
 	HttpResponse r(200, html.toUtf8());

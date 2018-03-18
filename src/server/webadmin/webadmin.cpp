@@ -135,4 +135,10 @@ void Webadmin::startFd(int fd)
 	m_server->listenFd(fd);
 }
 
+QString Webadmin::version()
+{
+	return MicroHttpd::version();
 }
+
+}
+

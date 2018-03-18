@@ -62,6 +62,11 @@ public:
 	void start(quint16 port);
 	void startFd(int fd);
 
+	/**
+	 * @brief Get libmicrohttpd's version number
+	 */
+	static QString version();
+
 private:
 	MicroHttpd *m_server;
 };

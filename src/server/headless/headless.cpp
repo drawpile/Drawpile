@@ -48,6 +48,11 @@ void printVersion()
 	printf("Protocol version: %d.%d\n", DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 	printf("SSL library version: %s (%lu)\n", QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(), QSslSocket::sslLibraryVersionNumber());
+#ifdef HAVE_WEBADMIN
+	printf("Libmicrohttpd version: %s\n", qPrintable(Webadmin::version()));
+#else
+	printf("Libmicrohttpd version: N/A\n");
+#endif
 }
 
 bool start() {

@@ -18,6 +18,15 @@ cd libsodium*/
 make
 make install
 
+# Libmicrohttpd repo version is ancient
+cd /
+wget -O libmicrohttpd.tar.gz https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-0.9.59.tar.gz
+tar xfz libmicrohttpd.tar.gz
+cd libmicrohttpd*/
+./configure --prefix=/usr --without-gnutls
+make
+make install
+
 # Note: KDE Frameworks 5.36 is the last one that supports Qt 5.6
 # Non-repo deps: ECM (needed to build KF5 libs)
 cd /

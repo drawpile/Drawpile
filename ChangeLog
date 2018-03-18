@@ -1,5 +1,6 @@
 2018-??-?? Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature
+ * Server AppImage: updated libmicrohttpd to version 0.9.59
 
 2018-03-17 Version 2.0.10
  * Server: history files are now flushed periodically to better protect against dataloss in case of abrupt server termination

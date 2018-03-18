@@ -79,6 +79,9 @@ public:
 	//! Set server-wide basic authentication
 	void setBasicAuth(const QString &realm, const QString &username, const QString &password);
 
+	//! Get libmicrohttpd version
+	static QString version();
+
 private:
 	Private *_d;
 };
