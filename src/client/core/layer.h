@@ -169,7 +169,7 @@ class Layer {
 		void removePreviews();
 
 		//! Merge a layer
-		void merge(const Layer *layer, bool sublayers=false);
+		void merge(const Layer *layer);
 
 		//! Optimize layer memory usage
 		void optimize();

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -879,30 +879,21 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 }
 
 /**
- * @param layer the layer that will be merged to this
- * @param sublayers merge sublayers as well
+ * @brief Merge another layer to this layer
+ *
+ * Both layer must be the same size
+ *
+ * @param layer the source layer
  */
-void Layer::merge(const Layer *layer, bool sublayers)
+void Layer::merge(const Layer *layer)
 {
 	Q_ASSERT(layer->m_xtiles == m_xtiles);
 	Q_ASSERT(layer->m_ytiles == m_ytiles);
 
-	// Gather a list of non-null tiles to merge
+	// Gather a list of non-null source tiles to merge
 	QList<int> mergeidx;
-	mergeidx.reserve(m_tiles.size());
 	for(int i=0;i<m_tiles.size();++i) {
-		bool isnull = layer->m_tiles[i].isNull();
-
-		if(isnull && sublayers) {
-			for(Layer *sl : m_sublayers) {
-				if(sl->m_tiles[i].isNull()) {
-					isnull = false;
-					break;
-				}
-			}
-		}
-
-		if(!isnull)
+		if(!layer->m_tiles.at(i).isNull())
 			mergeidx.append(i);
 	}
 
@@ -911,20 +902,8 @@ void Layer::merge(const Layer *layer, bool sublayers)
 	m_tiles.detach();
 
 	// Merge tiles
-	concurrentForEach<int>(mergeidx, [this, layer, sublayers](int idx) {
-		if(sublayers) {
-			Tile t = layer->m_tiles.at(idx);
-
-			for(const Layer *sl : layer->m_sublayers) {
-				if(sl->isVisible()) {
-					t.merge(sl->m_tiles.at(idx), sl->opacity(), sl->blendmode());
-				}
-			}
-			m_tiles[idx].merge(t, layer->opacity(), layer->blendmode());
-
-		} else {
-			m_tiles[idx].merge(layer->m_tiles.at(idx), layer->opacity(), layer->blendmode());
-		}
+	concurrentForEach<int>(mergeidx, [this, layer](int idx) {
+		m_tiles[idx].merge(layer->m_tiles.at(idx), layer->opacity(), layer->blendmode());
 	});
 
 	// Merging a layer does not cause an immediate visual change, so we don't

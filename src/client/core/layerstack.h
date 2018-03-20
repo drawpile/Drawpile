@@ -115,7 +115,7 @@ public:
 	QImage toFlatImage(bool includeAnnotations) const;
 
 	//! Return a single layer composited with the given background
-	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background);
+	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background) const;
 
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;

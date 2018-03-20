@@ -427,14 +427,17 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 
 QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
-	Layer flat(nullptr, 0, QString(), Qt::transparent, size());
+	if(m_layers.isEmpty())
+		return QImage();
 
-	for(const Layer *l : m_layers) {
-		if(l->isVisible())
-			flat.merge(l, true);
+	QScopedPointer<Layer> flat { new Layer(*m_layers.at(0)) };
+
+	for(int i=1;i<m_layers.size();++i) {
+		if(m_layers.at(i)->isVisible())
+			flat->merge(m_layers.at(i));
 	}
 
-	QImage image = flat.toImage();
+	QImage image = flat->toImage();
 
 	if(includeAnnotations) {
 		QPainter painter(&image);
@@ -445,7 +448,7 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	return image;
 }
 
-QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background)
+QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background) const
 {
 	Q_ASSERT(layerIdx>=0 && layerIdx < m_layers.size());
 
@@ -456,7 +459,7 @@ QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &b
 	else
 		flat.reset(new Layer(nullptr, 0, QString(), background, size()));
 
-	flat->merge(m_layers.at(layerIdx), false);
+	flat->merge(m_layers.at(layerIdx));
 
 	return flat->toImage();
 }
