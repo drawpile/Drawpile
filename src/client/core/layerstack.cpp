@@ -369,7 +369,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool
 
 Tile LayerStack::getFlatTile(int x, int y) const
 {
-	Tile t(Qt::transparent);
+	Tile t;
 	flattenTile(t.data(), x, y);
 	return t;
 }
@@ -483,8 +483,8 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 					if(sl->isVisible()) {
 						const Tile &subtile = sl->tile(xindex, yindex);
 						if(!subtile.isNull()) {
-							compositePixels(sl->blendmode(), ldata, subtile.data(),
-									Tile::SIZE*Tile::SIZE, sl->opacity());
+							compositePixels(sl->blendmode(), ldata, subtile.constData(),
+									Tile::LENGTH, sl->opacity());
 						}
 					}
 				}
@@ -498,8 +498,8 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 
 			} else if(!tile.isNull()) {
 				// No sublayers or tint, just this tile as it is
-				compositePixels(l->blendmode(), data, tile.data(),
-						Tile::SIZE*Tile::SIZE, layerOpacity(layeridx));
+				compositePixels(l->blendmode(), data, tile.constData(),
+						Tile::LENGTH, layerOpacity(layeridx));
 			}
 		}
 

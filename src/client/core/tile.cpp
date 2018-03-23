@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2016 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
 namespace paintcore {
 
 Tile::Tile(const QColor& color)
-	: _data(new TileData)
+	: m_data(new TileData)
 {
-	quint32 *ptr = _data->data;
+	quint32 *ptr = m_data->pixels;
 	quint32 col = color.rgba();
-	for(int i=0;i<SIZE*SIZE;++i)
+	for(int i=0;i<LENGTH;++i)
 		*(ptr++) = col;
 }
 
@@ -44,7 +44,7 @@ Tile::Tile(const QColor& color)
  * @param yoff source image offset
  */
 Tile::Tile(const QImage& image, int xoff, int yoff)
-	: _data(new TileData)
+	: m_data(new TileData)
 {
 	Q_ASSERT(xoff>=0 && xoff < image.width());
 	Q_ASSERT(yoff>=0 && yoff < image.height());
@@ -53,8 +53,9 @@ Tile::Tile(const QImage& image, int xoff, int yoff)
 	const int w = xoff + SIZE > image.width() ? image.width() - xoff : SIZE;
 	const int h = yoff + SIZE > image.height() ? image.height() - yoff : SIZE;
 
-	uchar *ptr = reinterpret_cast<uchar*>(_data->data);
-	memset(ptr, 0, BYTES);
+	uchar *ptr = reinterpret_cast<uchar*>(m_data->pixels);
+	if(w < SIZE || h < SIZE)
+		memset(ptr, 0, BYTES);
 
 	const uchar *src = image.scanLine(yoff) + xoff*4;
 	for(int y=0;y<h;++y) {
@@ -86,7 +87,7 @@ void Tile::copyTo(quint32 *data) const
 	if(isNull())
 		memset(data, 0, BYTES);
 	else
-		memcpy(data, _data->data, BYTES);
+		memcpy(data, constData(), BYTES);
 }
 
 void Tile::copyToImage(QImage& image, int x, int y) const {
@@ -100,7 +101,7 @@ void Tile::copyToImage(QImage& image, int x, int y) const {
 			targ += image.bytesPerLine();
 		}
 	} else {
-		const quint32 *ptr = _data->data;
+		const quint32 *ptr = constData();
 		for(int y=0;y<h;++y) {
 			memcpy(targ, ptr, w);
 			targ += image.bytesPerLine();
@@ -122,7 +123,7 @@ void Tile::composite(BlendMode::Mode mode, const uchar *values, const QColor& co
 {
 	Q_ASSERT(x>=0 && x<SIZE && y>=0 && y<SIZE);
 	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
-	compositeMask(mode, getOrCreateData() + y * SIZE + x,
+	compositeMask(mode, data() + y * SIZE + x,
 			color.rgba(), values, w, h, skip, SIZE-w);
 }
 
@@ -152,7 +153,7 @@ std::array<quint32, 5> Tile::weightedAverage(const uchar *weights, int x, int y,
 		return {{weightsum, 0, 0, 0, 0}};
 
 	} else {
-		return sampleMask(_data->data + y * SIZE + x, weights,
+		return sampleMask(constData() + y * SIZE + x, weights,
 			w, h, skip, SIZE-w);
 	}
 }
@@ -165,7 +166,7 @@ std::array<quint32, 5> Tile::weightedAverage(const uchar *weights, int x, int y,
 void Tile::merge(const Tile &tile, uchar opacity, BlendMode::Mode blend)
 {
 	if(!tile.isNull())
-		compositePixels(blend, getOrCreateData(), tile.data(), SIZE*SIZE, opacity);
+		compositePixels(blend, data(), tile.constData(), SIZE*SIZE, opacity);
 }
 
 /**
@@ -176,7 +177,7 @@ bool Tile::isBlank() const
 	if(isNull())
 		return true;
 
-	const quint32 *pixel = _data->data;
+	const quint32 *pixel = constData();
 	const quint32 *end = pixel + LENGTH;
 	while(pixel<end) {
 		if(qAlpha(*pixel))
@@ -192,20 +193,22 @@ QColor Tile::solidColor() const
 	if(isBlank())
 		return Qt::transparent;
 
-	const quint32 c = _data->data[0];
-	for(int i=1;i<LENGTH;++i)
-		if(_data->data[i] != c)
+	const quint32 *ptr = constData();
+	const quint32 c = *ptr; ++ptr;
+	for(int i=1;i<LENGTH;++i,++ptr) {
+		if(*ptr != c)
 			return QColor();
+	}
 
 	return QColor::fromRgba(c);
 }
 
-quint32 *Tile::getOrCreateData() {
-	if(!_data) {
-		_data = new TileData;
-		memset(_data->data, 0, BYTES);
+quint32 *Tile::data() {
+	if(!m_data) {
+		m_data = new TileData;
+		memset(m_data->pixels, 0, BYTES);
 	}
-	return _data->data;
+	return m_data->pixels;
 }
 
 QDataStream &operator<<(QDataStream &ds, const Tile &t)
@@ -215,7 +218,7 @@ QDataStream &operator<<(QDataStream &ds, const Tile &t)
 		ds << quint8(1) << solid.rgba();
 	} else {
 		ds << quint8(0);
-		ds.writeRawData(reinterpret_cast<const char*>(t.data()), Tile::BYTES);
+		ds.writeRawData(reinterpret_cast<const char*>(t.constData()), Tile::BYTES);
 	}
 	return ds;
 }
@@ -232,7 +235,7 @@ QDataStream &operator>>(QDataStream &ds, Tile &t)
 		else
 			t = Tile(QColor::fromRgba(color));
 	} else {
-		ds.readRawData(reinterpret_cast<char*>(t.getOrCreateData()), Tile::BYTES);
+		ds.readRawData(reinterpret_cast<char*>(t.data()), Tile::BYTES);
 	}
 	return ds;
 }
@@ -240,7 +243,7 @@ QDataStream &operator>>(QDataStream &ds, Tile &t)
 #ifndef NDEBUG
 QAtomicInt TileData::_count;
 TileData::TileData() { _count.fetchAndAddOrdered(1); }
-TileData::TileData(const TileData &td) : QSharedData() { memcpy(data, td.data, sizeof data); _count.fetchAndAddOrdered(1); }
+TileData::TileData(const TileData &td) : QSharedData() { memcpy(pixels, td.pixels, sizeof pixels); _count.fetchAndAddOrdered(1); }
 TileData::~TileData() { _count.fetchAndAddOrdered(-1); }
 #endif
 

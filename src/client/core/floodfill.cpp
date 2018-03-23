@@ -80,7 +80,7 @@ public:
 
 		const Tile &t = scratchTile(tx, ty);
 
-		return t.data()[y*Tile::SIZE + x];
+		return t.constData()[y*Tile::SIZE + x];
 	}
 
 	void setPixel(int x, int y) {

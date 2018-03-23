@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2016 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ namespace paintcore {
 
 /// Shared tile data
 struct TileData : public QSharedData {
-	quint32 data[64*64];
+	quint32 pixels[64*64];
 
 #ifndef NDEBUG // Debug tool for measuring memory usage
 	TileData();
@@ -45,7 +45,7 @@ struct TileData : public QSharedData {
 	~TileData();
 
 	static int globalCount() { return _count.load() ; }
-	static float megabytesUsed() { return globalCount() * sizeof data / float(1024*1024); }
+	static float megabytesUsed() { return globalCount() * sizeof(pixels) / float(1024*1024); }
 private:
 	static QAtomicInt _count;
 #endif
@@ -71,7 +71,7 @@ class Tile {
 		 * @param i coordinate
 		 * @return i rounded up to nearest multiple of SIZE
 		 */
-		static int roundUp(int i) {
+		static constexpr int roundUp(int i) {
 			return (i + SIZE-1)/SIZE*SIZE;
 		}
 		
@@ -80,7 +80,7 @@ class Tile {
 		 * @param i coordinate
 		 * @return i rounded down to nearest multiple of SIZE
 		 */
-		static int roundDown(int i) {
+		static constexpr int roundDown(int i) {
 			return (i/SIZE) * SIZE;
 		}
 
@@ -89,15 +89,16 @@ class Tile {
 		 * @param i
 		 * @return
 		 */
-		static int roundTiles(int i) {
-			if(i<0)
-				return (i - SIZE + 1) / SIZE;
-			else
-				return (i + SIZE - 1) / SIZE;
+		static constexpr int roundTiles(int i) {
+			return i<0 ?
+				((i - SIZE + 1) / SIZE)
+				:
+				((i + SIZE - 1) / SIZE)
+				;
 		}
 
 		//! Construct a null tile
-		Tile() : _data(0) { }
+		Tile() : m_data(nullptr) { }
 
 		//! Construct a tile filled with the given color
 		explicit Tile(const QColor& color);
@@ -109,8 +110,8 @@ class Tile {
 		quint32 pixel(int x, int y) const {
 			Q_ASSERT(x>=0 && x<SIZE);
 			Q_ASSERT(y>=0 && y<SIZE);
-			if(_data)
-				return *(_data->data + y * SIZE + x);
+			if(m_data)
+				return m_data->pixels[y * SIZE + x];
 			return 0;
 		}
 
@@ -126,11 +127,11 @@ class Tile {
 		//! Copy the contents of this tile onto the given spot on an image
 		void copyToImage(QImage& image, int x, int y) const;
 
-		//! Get read access to the raw pixel data
-		const quint32 *data() const { Q_ASSERT( _data); return _data->data; }
+		//! Get read access to the raw pixel data (tile must not be a null tile)
+		const quint32 *constData() const { Q_ASSERT(m_data); return m_data->pixels; }
 
 		//! Get read/write access to the raw pixel data
-		quint32 *data() { Q_ASSERT(_data); return _data->data; }
+		quint32 *data();
 
 		//! Copy the contents of this tile
 		void copyTo(quint32 *data) const;
@@ -138,11 +139,11 @@ class Tile {
 		/**
 		 * @brief is this a null tile?
 		 *
-		 * Null tiles have no pixel data and should be considered
-		 * to be completely transparent.
+		 * Aside from constData(), null tiles behave exactly like
+		 * blank tiles.
 		 * @return true if there is no pixel data
 		 */
-		bool isNull() const { return !_data; }
+		bool isNull() const { return !m_data; }
 
 		//! Check if this tile is completely transparent
 		bool isBlank() const;
@@ -165,14 +166,12 @@ class Tile {
 		 * @param other
 		 * @return true if tiles share data pointers
 		 */
-		bool operator==(const Tile &other) const { return _data == other._data; }
-		bool operator!=(const Tile &other) const { return !(*this == other); }
+		bool operator==(const Tile &other) const { return m_data == other.m_data; }
+		bool operator!=(const Tile &other) const { return m_data != other.m_data; }
 		friend QDataStream &operator>>(QDataStream&, Tile&);
 
 	private:
-		quint32 *getOrCreateData();
-
-		QSharedDataPointer<TileData> _data;
+		QSharedDataPointer<TileData> m_data;
 };
 
 QDataStream &operator<<(QDataStream&, const Tile&);
