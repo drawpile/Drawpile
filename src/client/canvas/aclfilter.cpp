@@ -25,6 +25,7 @@
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/undo.h"
 
 namespace canvas {
 
@@ -76,10 +77,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	// User list is empty in local mode
 	const bool isOpUser = m_ops.contains(msg.contextId());
 
-	// First: check if this is an operator-only command
-	if(msg.contextId()!=0 && msg.isOpCommand() && !isOpUser)
-		return false;
-
 	// Special commands that affect access controls
 	switch(msg.type()) {
 	case MSG_USER_JOIN:
@@ -124,8 +121,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		break; }
 
 	case MSG_SESSION_OWNER:
+		// This command is validated by the server
 		updateSessionOwnership(static_cast<const SessionOwner&>(msg));
 		return true;
+
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
 		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId())) {
@@ -140,6 +139,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return false;
 	}
 	case MSG_SESSION_ACL: {
+		if(!isOpUser)
+			return false;
+
 		const auto &lmsg = static_cast<const SessionACL&>(msg);
 
 		setSessionLock(lmsg.isSessionLocked());
@@ -152,6 +154,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	}
 
 	case MSG_USER_ACL: {
+		if(!isOpUser)
+			return false;
+
 		const auto &lmsg = static_cast<const UserACL&>(msg);
 		m_userlocks = lmsg.ids();
 		emit userLocksChanged(lmsg.ids());
@@ -161,10 +166,14 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_TOOLCHANGE:
 		m_userLayers[msg.contextId()] = static_cast<const ToolChange&>(msg).layer();
 		return true;
+
+	case MSG_LAYER_DEFAULT:
+		return isOpUser;
+
 	default: break;
 	}
 
-	// General action filtering when user is locked
+	// Session and user specific locks apply to all Command type messages
 	if(msg.isCommand() && (m_sessionLocked || m_userlocks.contains(msg.contextId())))
 		return false;
 
@@ -175,6 +184,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		if(static_cast<const protocol::Chat&>(msg).isPin() && !isOpUser)
 			return false;
 		break;
+
+	case MSG_CANVAS_RESIZE:
+		return isOpUser;
 
 	case MSG_LAYER_CREATE:
 	case MSG_LAYER_ATTR:
@@ -243,6 +255,12 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		const uint16_t layer = static_cast<const MoveRegion&>(msg).layer();
 		return !isLayerLockedFor(layer, msg.contextId());
 	}
+
+	case MSG_UNDO:
+		// Only operators can override Undos.
+		if(!isOpUser && static_cast<const Undo&>(msg).overrideId()>0)
+			return false;
+		break;
 
 	default: break;
 	}

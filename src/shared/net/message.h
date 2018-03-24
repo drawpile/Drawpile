@@ -168,12 +168,6 @@ public:
 	void setContextId(uint8_t userid) { m_contextid = userid; }
 
 	/**
-	 * @brief Does this command need operator privileges to issue?
-	 * @return true if user must be session operator to send this
-	 */
-	virtual bool isOpCommand() const { return false; }
-
-	/**
 	 * @brief Is this message type undoable?
 	 *
 	 * By default, all Command messages are undoable.

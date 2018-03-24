@@ -102,8 +102,6 @@ public:
 	static SessionOwner *deserialize(uint8_t ctx, const uchar *data, int buflen);
 	static SessionOwner *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	bool isOpCommand() const override { return true; }
-
 	QList<uint8_t> ids() const { return m_ids; }
 	void setIds(const QList<uint8_t> ids) { m_ids = ids; }
 

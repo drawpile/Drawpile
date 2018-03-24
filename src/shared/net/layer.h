@@ -52,8 +52,6 @@ public:
 	int32_t bottom() const { return m_bottom; }
 	int32_t left() const { return m_left; }
 
-	bool isOpCommand() const override { return true; }
-
 	QString messageName() const override { return QStringLiteral("resize"); }
 
 protected:

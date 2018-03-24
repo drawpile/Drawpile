@@ -72,12 +72,6 @@ public:
 	 */
 	bool isRedo() const { return m_redo; }
 
-	/**
-	 * @brief Undo command requires operator privileges if the override field is set
-	 * @return true if override field is set
-	 */
-	bool isOpCommand() const override { return m_override!=0; }
-
 	QString messageName() const override { return m_redo ? QStringLiteral("redo") : QStringLiteral("undo"); }
 
 protected:
