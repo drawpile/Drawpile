@@ -80,6 +80,12 @@ public:
 		return *this;
 	}
 
+	ActionBuilder &property(const char *name, const QVariant &value)
+	{
+		m_action->setProperty(name, value);
+		return *this;
+	}
+
 private:
 	QAction *m_action;
 };

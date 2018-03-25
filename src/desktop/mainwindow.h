@@ -207,50 +207,50 @@ private:
 	void createDocks();
 	void setupActions();
 
-	QSplitter *_splitter;
+	QSplitter *m_splitter;
 
-	docks::ToolSettings *_dock_toolsettings;
+	docks::ToolSettings *m_dockToolSettings;
 	docks::BrushPalette *m_dockBrushPalette;
-	docks::InputSettings *_dock_input;
-	docks::LayerList *_dock_layers;
-	docks::ColorBox *_dock_colors;
+	docks::InputSettings *m_dockInput;
+	docks::LayerList *m_dockLayers;
+	docks::ColorBox *m_dockColors;
+	docks::Navigator *m_dockNavigator;
 	widgets::ChatBox *m_chatbox;
-	widgets::UserList *_userlist;
-	docks::Navigator *_dock_navigator;
+	widgets::UserList *m_userlist;
 
-	widgets::CanvasView *_view;
+	widgets::CanvasView *m_view;
 
 	QStatusBar *m_viewStatusBar;
-	QLabel *_lockstatus;
-	QLabel *_recorderstatus;
+	QLabel *m_lockstatus;
+	QLabel *m_recorderstatus;
 	widgets::NetStatus *m_netstatus;
-	widgets::ViewStatus *_viewstatus;
-	QToolButton *_statusChatButton;
+	widgets::ViewStatus *m_viewstatus;
+	QToolButton *m_statusChatButton;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 
-	drawingboard::CanvasScene *_canvasscene;
+	drawingboard::CanvasScene *m_canvasscene;
 
-	QMenu *_recent;
+	QMenu *m_recentMenu;
 
-	QActionGroup *_currentdoctools; // actions relating to the currently open document
+	QActionGroup *m_currentdoctools; // actions relating to the currently open document
 	QActionGroup *m_admintools; // session operator actions
 	QActionGroup *m_modtools; // session moderator tools
 	QActionGroup *m_docadmintools; // current document related operator actions
 	QActionGroup *m_drawingtools; // drawing tool selection
 	QActionGroup *m_brushSlots; // tool slot shortcuts
 
-	int _lastToolBeforePaste; // Last selected tool before Paste was used
+	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 
 	// Remember window state to return from fullscreen mode
 	QByteArray m_fullscreenOldState;
 	QRect m_fullscreenOldGeometry;
 	bool m_fullscreenOldMaximized;
 
-	QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
-	ShortcutDetector *_tempToolSwitchShortcut;
+	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
+	ShortcutDetector *m_tempToolSwitchShortcut;
 
 	Document *m_doc;
 	bool m_exitAfterSave;

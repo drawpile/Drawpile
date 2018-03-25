@@ -142,25 +142,24 @@ Navigator::Navigator(QWidget *parent)
 
 	setStyleSheet(defaultDockStylesheet());
 
-	_view = new NavigatorView(this);
-	setWidget(_view);
+	m_view = new NavigatorView(this);
+	setWidget(m_view);
 
-	connect(_view, SIGNAL(focusMoved(const QPoint&)),
-			this, SIGNAL(focusMoved(const QPoint&)));
-
-	connect(_view, SIGNAL(wheelZoom(int)), this, SIGNAL(wheelZoom(int)));
+	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
+	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
 }
 
 void Navigator::setScene(QGraphicsScene *scene)
 {
-	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _view, SLOT(rescale()));
-	_view->setScene(scene);
-	_view->rescale();
+	connect(scene, &QGraphicsScene::sceneRectChanged, m_view, &NavigatorView::rescale);
+	//connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _view, SLOT(rescale()));
+	m_view->setScene(scene);
+	m_view->rescale();
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)
 {
-	_view->setViewFocus(rect);
+	m_view->setViewFocus(rect);
 }
 
 }

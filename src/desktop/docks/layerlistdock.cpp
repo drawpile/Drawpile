@@ -94,35 +94,11 @@ LayerList::LayerList(QWidget *parent)
 	m_mergeLayerAction = boxmenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
 	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
 
-	QActionGroup *viewmodes = new QActionGroup(this);
-	viewmodes->setExclusive(true);
-
-	QAction *viewNormal = viewmodes->addAction(tr("Normal"));
-	viewNormal->setCheckable(true);
-	viewNormal->setProperty("viewmode", 0);
-
-	QAction *viewSolo = viewmodes->addAction(tr("Solo"));
-	viewSolo->setCheckable(true);
-	viewSolo->setProperty("viewmode", 1);
-
-	QAction *viewOnionDown = viewmodes->addAction(tr("Onionskin"));
-	viewOnionDown->setCheckable(true);
-	viewOnionDown->setProperty("viewmode", 2);
-
-	boxmenu->addSeparator();
-	m_viewMode = boxmenu->addMenu(QString()); // title is set later
-	m_viewMode->addActions(viewmodes->actions());
-
-	m_showNumbersAction = boxmenu->addAction(tr("Show numbers"));
-	m_showNumbersAction->setCheckable(true);
-
 	m_ui->menuButton->setMenu(boxmenu);
 
 	connect(m_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(m_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
-	connect(m_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(layerViewModeTriggered(QAction*)));
-	connect(m_showNumbersAction, &QAction::triggered, this, &LayerList::showLayerNumbers);
 
 	selectionChanged(QItemSelection());
 
@@ -132,6 +108,15 @@ LayerList::LayerList(QWidget *parent)
 	m_opacityUpdateTimer = new QTimer(this);
 	m_opacityUpdateTimer->setSingleShot(true);
 	connect(m_opacityUpdateTimer, &QTimer::timeout, this, &LayerList::sendOpacityUpdate);
+
+	// Custom layer list item delegate
+	LayerListDelegate *del = new LayerListDelegate(this);
+	connect(del, &LayerListDelegate::layerCommand, [this](protocol::MessagePtr msg) {
+		msg->setContextId(m_canvas->localUserId());
+		emit layerCommand(msg);
+	});
+	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
+	m_ui->layerlist->setItemDelegate(del);
 }
 
 LayerList::~LayerList()
@@ -144,35 +129,20 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	m_canvas = canvas;
 	m_ui->layerlist->setModel(canvas->layerlist());
 
-	LayerListDelegate *del = new LayerListDelegate(this);
-	connect(del, &LayerListDelegate::layerCommand, [this](protocol::MessagePtr msg) {
-		msg->setContextId(m_canvas->localUserId());
-		emit layerCommand(msg);
-	});
-	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
-	m_ui->layerlist->setItemDelegate(del);
-
 	m_aclmenu->setUserList(canvas->userlist());
 
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::beforeLayerDelete);
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsRemoved, this, &LayerList::onLayerDelete);
-	connect(canvas->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
-	connect(canvas->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
+	connect(canvas->layerlist(), &canvas::LayerListModel::layersReordered, this, &LayerList::onLayerReorder);
+	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
 	connect(canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
 	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
-	// Restore settings
-	QSettings cfg;
-	m_showNumbersAction->setChecked(cfg.value("setting/layernumbers", false).toBool());
-	del->setShowNumbers(m_showNumbersAction->isChecked());
-
 	// Init
 	m_ui->layerlist->setEnabled(true);
-	m_viewMode->actions()[0]->setChecked(true);
-	layerViewModeTriggered(m_viewMode->actions()[0]);
 	setControlsLocked(false);
 }
 
@@ -318,20 +288,11 @@ void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 	}
 }
 
-void LayerList::layerViewModeTriggered(QAction *action)
-{
-	m_viewMode->setTitle(tr("Mode:") + " " + action->text());
-	emit layerViewModeSelected(action->property("viewmode").toInt());
-}
-
 void LayerList::showLayerNumbers(bool show)
 {
-	LayerListDelegate *del = static_cast<LayerListDelegate*>(m_ui->layerlist->itemDelegate());
+	LayerListDelegate *del = qobject_cast<LayerListDelegate*>(m_ui->layerlist->itemDelegate());
+	Q_ASSERT(del);
 	del->setShowNumbers(show);
-
-	QSettings cfg;
-	cfg.setValue("setting/layernumbers", m_showNumbersAction->isChecked());
-
 }
 
 /**
@@ -339,7 +300,8 @@ void LayerList::showLayerNumbers(bool show)
  */
 void LayerList::addLayer()
 {
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -359,7 +321,8 @@ void LayerList::insertLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)
@@ -376,7 +339,8 @@ void LayerList::duplicateLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = static_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
 	if(id==0)

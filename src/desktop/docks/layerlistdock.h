@@ -61,6 +61,7 @@ public:
 
 public slots:
 	void selectLayer(int id);
+	void showLayerNumbers(bool show);
 
 	void selectAbove();
 	void selectBelow();
@@ -69,8 +70,6 @@ signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
 	void activeLayerVisibilityChanged();
-
-	void layerViewModeSelected(int mode);
 
 	void layerCommand(protocol::MessagePtr msg);
 
@@ -92,8 +91,6 @@ private slots:
 	void hideSelected();
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
-	void layerViewModeTriggered(QAction *act);
-	void showLayerNumbers(bool show);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -119,9 +116,6 @@ private:
 	QAction *m_duplicateLayerAction;
 	QAction *m_mergeLayerAction;
 	QAction *m_deleteLayerAction;
-	QAction *m_showNumbersAction;
-
-	QMenu *m_viewMode;
 
 	QAction *m_menuInsertAction;
 	QAction *m_menuHideAction;

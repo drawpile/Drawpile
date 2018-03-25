@@ -74,7 +74,7 @@ signals:
 	void wheelZoom(int steps);
 	
 private:
-	NavigatorView *_view;
+	NavigatorView *m_view;
 };
 
 }
