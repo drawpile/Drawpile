@@ -75,6 +75,7 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/settings.h"
 #include "utils/logging.h"
+#include "utils/actionbuilder.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -1951,47 +1952,28 @@ void MainWindow::homepage()
  * All created actions are added to a list that is used in the
  * settings dialog to edit the shortcuts.
  *
- * @param name (internal) name of the action. If null, no name is set. If no name is set, the shortcut cannot be customized.
- * @param icon name of the icon file to use. If 0, no icon is set.
+ * @param name (internal) name of the action.
  * @param text action text
- * @param tip status bar tip
- * @param shortcut default shortcut
- * @param checkable is this a checkable action
  */
-QAction *MainWindow::makeAction(const char *name, const char *icon, const QString& text, const QString& tip, const QKeySequence& shortcut, bool checkable)
+ActionBuilder MainWindow::makeAction(const char *name, const QString& text)
 {
-	QAction *act;
-	QIcon qicon;
-	if(icon)
-		qicon = icon::fromTheme(icon);
-	act = new QAction(qicon, text, this);
-	if(name)
-		act->setObjectName(name);
-	if(shortcut.isEmpty()==false)
-		act->setShortcut(shortcut);
-
-	act->setCheckable(checkable);
-
+	Q_ASSERT(name);
+	QAction *act = new QAction(text, this);
+	act->setObjectName(name);
 	act->setAutoRepeat(false);
-
-	if(tip.isEmpty()==false)
-		act->setStatusTip(tip);
-
-	if(name!=0 && name[0]!='\0')
-		CustomShortcutModel::registerCustomizableAction(act->objectName(), act->text().remove('&'), shortcut);
 
 	// Add this action to the mainwindow so its shortcut can be used
 	// even when the menu/toolbar is not visible
 	addAction(act);
 
-	return act;
+	return ActionBuilder(act);
 }
 
 QAction *MainWindow::getAction(const QString &name)
 {
 	QAction *a = findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
 	if(!a)
-		qFatal("%s: no such action", name.toLocal8Bit().constData());
+		qFatal("%s: no such action", qPrintable(name));
 	Q_ASSERT(a);
 	return a;
 }
@@ -2030,27 +2012,25 @@ void MainWindow::setupActions()
 	}
 
 	toggledockmenu->addSeparator();
-	QAction *freezeDocks = makeAction("freezedocks", nullptr, tr("Lock in place"), QString(), QKeySequence(), true);
+	QAction *freezeDocks = makeAction("freezedocks", tr("Lock in place")).checkable();
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
 	//
 	// File menu and toolbar
 	//
-	QAction *newdocument = makeAction("newdocument", "document-new", tr("&New"), QString(), QKeySequence::New);
-	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), QString(), QKeySequence::Open);
+	QAction *newdocument = makeAction("newdocument", tr("&New")).icon("document-new").shortcut(QKeySequence::New);
+	QAction *open = makeAction("opendocument", tr("&Open...")).icon("document-open").shortcut(QKeySequence::Open);
 #ifdef Q_OS_MAC
-	QAction *closefile = makeAction("closedocument", 0, tr("Close"), QString(), QKeySequence::Close);
+	QAction *closefile = makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
-	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), QString(), QKeySequence::SaveAs);
-	QAction *autosave = makeAction("autosave", 0, tr("Autosave"), QString(), QKeySequence(), true);
-	autosave->setEnabled(false);
-	QAction *exportAnimation = makeAction("exportanim", 0, tr("&Animation..."));
+	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
+	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
+	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
+	QAction *exportAnimation = makeAction("exportanim", tr("&Animation..."));
 
-	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
-	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
-	quit->setMenuRole(QAction::QuitRole);
+	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
+	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
 #ifdef Q_OS_MAC
 	_currentdoctools->addAction(closefile);
@@ -2115,35 +2095,37 @@ void MainWindow::setupActions()
 	//
 	// Edit menu
 	//
-	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), QString(), QKeySequence::Undo);
-	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
-	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy Visible"), tr("Copy selected area to the clipboard"), QKeySequence("Shift+Ctrl+C"));
-	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &Layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
-	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t Layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
-	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
-	QAction *stamp = makeAction("stamp", 0, tr("&Stamp"), QString(), QKeySequence("Ctrl+T"));
+	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(QKeySequence::Undo);
+	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(QKeySequence::Redo);
+	QAction *copy = makeAction("copyvisible", tr("&Copy Visible")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
+	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
+	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
+	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
+	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
 
-	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &From File..."));
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete Empty Annotations"));
-	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze Canvas..."));
-	QAction *preferences = makeAction(0, 0, tr("Prefere&nces")); preferences->setMenuRole(QAction::PreferencesRole);
+	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
+	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
+	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
+	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
 
-	QAction *selectall = makeAction("selectall", 0, tr("Select &All"), QString(), QKeySequence::SelectAll);
+	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
+	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
 #if (defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
-	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence("Shift+Ctrl+A"));
+		.shortcut("Shift+Ctrl+A")
 #else
-	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
+		.shortcut(QKeySequence::Deselect)
 #endif
+	;
 
-	QAction *expandup = makeAction("expandup", 0, tr("Expand &Up"), "", QKeySequence(CTRL_KEY "+J"));
-	QAction *expanddown = makeAction("expanddown", 0, tr("Expand &Down"), "", QKeySequence(CTRL_KEY "+K"));
-	QAction *expandleft = makeAction("expandleft", 0, tr("Expand &Left"), "", QKeySequence(CTRL_KEY "+H"));
-	QAction *expandright = makeAction("expandright", 0, tr("Expand &Right"), "", QKeySequence(CTRL_KEY "+L"));
+	QAction *expandup = makeAction("expandup", tr("Expand &Up")).shortcut(CTRL_KEY "+J");
+	QAction *expanddown = makeAction("expanddown", tr("Expand &Down")).shortcut(CTRL_KEY "+K");
+	QAction *expandleft = makeAction("expandleft", tr("Expand &Left")).shortcut(CTRL_KEY "+H");
+	QAction *expandright = makeAction("expandright", tr("Expand &Right")).shortcut(CTRL_KEY "+L");
 
-	QAction *cleararea = makeAction("cleararea", 0, tr("Delete"), QString(), QKeySequence("Delete"));
-	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill Selection"), QString(), QKeySequence(CTRL_KEY "+,"));
-	QAction *recolorarea = makeAction("recolorarea", 0, tr("Recolor Selection"), QString(), QKeySequence(CTRL_KEY "+Shift+,"));
-	QAction *colorerasearea = makeAction("colorerasearea", 0, tr("Color Erase Selection"), QString(), QKeySequence("Shift+Delete"));
+	QAction *cleararea = makeAction("cleararea", tr("Delete")).shortcut("Delete");
+	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection")).shortcut(CTRL_KEY "+,");
+	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection")).shortcut(CTRL_KEY "+Shift+,");
+	QAction *colorerasearea = makeAction("colorerasearea", tr("Color Erase Selection")).shortcut("Shift+Delete");
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
@@ -2245,37 +2227,31 @@ void MainWindow::setupActions()
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
 
-	QAction *toggleChat = makeAction("togglechat", 0, tr("Chat"), QString(), QKeySequence("Alt+C"), true);
+	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
 
-	QAction *showFlipbook = makeAction("showflipbook", 0, tr("Flipbook"), tr("Show animation preview window"), QKeySequence("Ctrl+F"));
+	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
 
-	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &In"), QString(), QKeySequence::ZoomIn);
-	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &Out"), QString(), QKeySequence::ZoomOut);
-	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal Size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", "transform-rotate", tr("&Reset Rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
-	QAction *rotatecw = makeAction("rotatecw", 0, tr("Rotate Clockwise"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Period));
-	QAction *rotateccw = makeAction("rotateccw", 0, tr("Rotate Counterclockwise°"), QString(), QKeySequence(Qt::SHIFT + Qt::Key_Comma));
+	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
+	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
+	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Clockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Period));
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Counterclockwise°")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Comma));
 
-	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
-	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
-	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
+	QAction *rotate90 = makeAction("rotate90", tr("Rotate to 90°"));
+	QAction *rotate180 = makeAction("rotate180", tr("Rotate to 180°"));
+	QAction *rotate270 = makeAction("rotate270", tr("Rotate to 270°"));
 
-	QAction *viewmirror = makeAction("viewmirror", "object-flip-horizontal", tr("Mirror"), QString(), QKeySequence("V"), true);
-	QAction *viewflip = makeAction("viewflip", "object-flip-vertical", tr("Flip"), QString(), QKeySequence("C"), true);
+	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
+	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
 
-	QAction *showannotations = makeAction("showannotations", 0, tr("Show &Annotations"), QString(), QKeySequence(), true);
-	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show User &Pointers"), QString(), QKeySequence(), true);
-	QAction *showuserlayers = makeAction("showuserlayers", 0, tr("Show User &Layers"), QString(), QKeySequence(), true);
-	QAction *showlasers = makeAction("showlasers", 0, tr("Show La&ser Trails"), QString(), QKeySequence(), true);
-	QAction *showgrid = makeAction("showgrid", 0, tr("Show Pixel &Grid"), QString(), QKeySequence(), true);
-	toggleChat->setChecked(true);
-	showannotations->setChecked(true);
-	showusermarkers->setChecked(true);
-	showuserlayers->setChecked(true);
-	showlasers->setChecked(true);
-	showgrid->setChecked(true);
+	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked();
+	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked();
+	QAction *showuserlayers = makeAction("showuserlayers", tr("Show User &Layers")).checked();
+	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked();
+	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked();
 
-	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full Screen"), QString(), QKeySequence::FullScreen, true);
+	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
 
 	_currentdoctools->addAction(showFlipbook);
 
@@ -2314,10 +2290,10 @@ void MainWindow::setupActions()
 		_splitter->setSizes(sizes);
 	});
 
-	connect(showFlipbook, SIGNAL(triggered()), this, SLOT(showFlipbook()));
+	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
-	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
-	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
+	connect(zoomin, &QAction::triggered, _view, &widgets::CanvasView::zoomin);
+	connect(zoomout, &QAction::triggered, _view, &widgets::CanvasView::zoomout);
 	connect(zoomorig, &QAction::triggered, this, [this]() { _view->setZoom(100.0); });
 	connect(rotateorig, &QAction::triggered, this, [this]() { _view->setRotation(0); });
 	connect(rotatecw, &QAction::triggered, this, [this]() { _view->setRotation(_view->rotation() + 5); });
@@ -2328,7 +2304,7 @@ void MainWindow::setupActions()
 	connect(viewflip, SIGNAL(triggered(bool)), _view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), _view, SLOT(setViewMirror(bool)));
 
-	connect(fullscreen, SIGNAL(triggered()), this, SLOT(toggleFullscreen()));
+	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvasscene, SLOT(showUserMarkers(bool)));
@@ -2380,26 +2356,21 @@ void MainWindow::setupActions()
 	//
 	// Session menu
 	//
-	QAction *host = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
-	QAction *join = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
-	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
-	logout->setEnabled(false);
+	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others"));
+	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
+	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
 
-	QAction *serverlog = makeAction("viewserverlog", 0, tr("Event Log"), QString(), QKeySequence("F10"));
-	QAction *sessionSettings = makeAction("sessionsettings", 0, tr("Settings..."), QString(), QKeySequence("F11"));
-	sessionSettings->setMenuRole(QAction::NoRole); // Keep this item where it is on OSX
-	sessionSettings->setEnabled(false);
+	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).shortcut("F10");
+	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).shortcut("F11").menuRole(QAction::NoRole).disabled();
 
-	QAction *resetsession = makeAction("resetsession", 0, tr("&Reset..."));
-	QAction *terminatesession = makeAction("terminatesession", 0, tr("Terminate"));
+	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
+	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
 
-	QAction *reportabuse = makeAction("reportabuse", 0, tr("Report..."));
-	reportabuse->setEnabled(false);
+	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
 
-	QAction *gainop = makeAction("gainop", 0, tr("Become Operator..."));
-	gainop->setEnabled(false);
+	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lock Everything"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
+	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the drawing board")).shortcut("F12").checkable();
 
 	m_admintools->addAction(locksession);
 	m_admintools->addAction(resetsession);
@@ -2442,22 +2413,22 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *freehandtool = makeAction("toolbrush", "draw-brush", tr("Freehand"), tr("Freehand brush tool"), QKeySequence("B"), true);
-	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("Eraser"), tr("Freehand eraser brush"), QKeySequence("E"), true);
-	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
-	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
-	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
-	QAction *beziertool = makeAction("toolbezier", "draw-bezier-curves", tr("Bezier Curve"), tr("Draw bezier curves"), QKeySequence("Ctrl+B"), true);
-	QAction *filltool = makeAction("toolfill", "fill-color", tr("&Flood Fill"), tr("Fill areas"), QKeySequence("F"), true);
-	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
+	QAction *freehandtool = makeAction("toolbrush", tr("Freehand")).icon("draw-brush").statusTip(tr("Freehand brush tool")).shortcut("B").checkable();
+	QAction *erasertool = makeAction("tooleraser", tr("Eraser")).icon("draw-eraser").statusTip(tr("Freehand eraser brush")).shortcut("E").checkable();
+	QAction *linetool = makeAction("toolline", tr("&Line")).icon("draw-line").statusTip(tr("Draw straight lines")).shortcut("U").checkable();
+	QAction *recttool = makeAction("toolrect", tr("&Rectangle")).icon("draw-rectangle").statusTip(tr("Draw unfilled squares and rectangles")).shortcut("R").checkable();
+	QAction *ellipsetool = makeAction("toolellipse", tr("&Ellipse")).icon("draw-ellipse").statusTip(tr("Draw unfilled circles and ellipses")).shortcut("O").checkable();
+	QAction *beziertool = makeAction("toolbezier", tr("Bezier Curve")).icon("draw-bezier-curves").statusTip(tr("Draw bezier curves")).shortcut("Ctrl+B").checkable();
+	QAction *filltool = makeAction("toolfill", tr("&Flood Fill")).icon("fill-color").statusTip(tr("Fill areas")).shortcut("F").checkable();
+	QAction *annotationtool = makeAction("tooltext", tr("&Annotation")).icon("draw-text").statusTip(tr("Add text to the picture")).shortcut("A").checked();
 
-	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color Picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
-	QAction *lasertool = makeAction("toollaser", "cursor-arrow", tr("&Laser Pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
-	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select (Rectangular)"), tr("Select area for copying"), QKeySequence("S"), true);
-	QAction *lassotool = makeAction("toolselectpolygon", "edit-select-lasso", tr("&Select (Free-Form)"), tr("Select a free-form area for copying"), QKeySequence("D"), true);
-	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
+	QAction *pickertool = makeAction("toolpicker", tr("&Color Picker")).icon("color-picker").statusTip(tr("Pick colors from the image")).shortcut("I").checkable();
+	QAction *lasertool = makeAction("toollaser", tr("&Laser Pointer")).icon("cursor-arrow").statusTip(tr("Point out things on the canvas")).shortcut("L").checkable();
+	QAction *selectiontool = makeAction("toolselectrect", tr("&Select (Rectangular)")).icon("select-rectangular").statusTip(tr("Select area for copying")).shortcut("S").checkable();
+	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
+	QAction *markertool = makeAction("toolmarker", tr("&Mark")).icon("flag-red").statusTip(tr("Leave a marker to find this spot on the recording")).shortcut("Ctrl+M");
 
-	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
+	connect(markertool, &QAction::triggered, this, &MainWindow::markSpotForRecording);
 
 	m_drawingtools->addAction(freehandtool);
 	m_drawingtools->addAction(erasertool);
@@ -2478,13 +2449,13 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *currentEraseMode = makeAction("currenterasemode", 0, tr("Toggle eraser mode"), QString(), QKeySequence("Ctrl+E"));
-	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap Last Colors"), QString(), QKeySequence("X"));
-	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease Brush Size"), QString(), Qt::Key_BracketLeft);
-	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase Brush Size"), QString(), Qt::Key_BracketRight);
+	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle eraser mode")).shortcut("Ctrl+E");
+	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
+	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft);
+	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight);
 
-	QAction *layerUpAct = makeAction("layer-up", nullptr, tr("Select Layer Above"), QString(), QKeySequence("Shift+X"));
-	QAction *layerDownAct = makeAction("layer-down", nullptr, tr("Select Layer Below"), QString(), QKeySequence("Shift+Z"));
+	QAction *layerUpAct = makeAction("layer-up", tr("Select Layer Above")).shortcut("Shift+X");
+	QAction *layerDownAct = makeAction("layer-down", tr("Select Layer Below")).shortcut("Shift+Z");
 
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
@@ -2527,11 +2498,11 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), WEBSITE);
-	QAction *tablettester = makeAction("tablettester", 0, tr("Tablet Tester"));
-	QAction *showlogfile = makeAction("showlogfile", 0, tr("Log File"));
-	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile")); about->setMenuRole(QAction::AboutRole);
-	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt")); aboutqt->setMenuRole(QAction::AboutQtRole);
+	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(WEBSITE);
+	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester"));
+	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
+	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);
+	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole);
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
@@ -2590,11 +2561,11 @@ void MainWindow::setupActions()
 		act->installEventFilter(_tempToolSwitchShortcut);
 
 	// Other shortcuts
-	QAction *finishStrokeShortcut = makeAction("finishstroke", 0, tr("Finish action"), QString(), QKeySequence(Qt::Key_Return));
+	QAction *finishStrokeShortcut = makeAction("finishstroke", tr("Finish action")).shortcut(Qt::Key_Return);
 	connect(finishStrokeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::finishMultipartDrawing);
 
-	QAction *escapeShortcut = makeAction("cancelaction", 0, tr("Cancel action"), QString(), QKeySequence(Qt::Key_Escape));
+	QAction *escapeShortcut = makeAction("cancelaction", tr("Cancel action")).shortcut(Qt::Key_Escape);
 	connect(escapeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 }

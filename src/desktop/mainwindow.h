@@ -34,6 +34,7 @@ class QTimer;
 class QToolButton;
 
 class Document;
+class ActionBuilder;
 
 namespace widgets {
 	class CanvasView;
@@ -185,7 +186,7 @@ private:
 	//! Confirm saving of image in a format that doesn't support all required features
 	bool confirmFlatten(QString& file) const;
 
-	QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence(), bool checkable=false);
+	ActionBuilder makeAction(const char *name, const QString &text);
 	QAction *getAction(const QString &name);
 
 	//! Load customized shortcuts
