@@ -99,6 +99,10 @@ Protocol stability promises:
  * New server features may be added at any time, but they should not break older clients,
    nor should a missing feature break newer clients.
 
+### Protocol dp:4.21.2 (2.1.0)
+
+ * Changed PutImage pixel format to ARGB32_Premultiplied
+
 ### Protocol dp:4.20.1 (2.0.9)
 
  * Added `Filtered` message type. Fully backward compatible.
