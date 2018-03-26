@@ -34,7 +34,7 @@ namespace {
 // Check if the given image consists entirely of fully transparent pixels
 bool isEmptyImage(const QImage &image)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 	int len = image.width() * image.height();
 	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
 	while(len--) {
@@ -94,7 +94,7 @@ void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, c
 
 bool isOpaque(const QImage &image)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 	int len = image.width() * image.height();
 	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
 	while(len--) {
@@ -110,7 +110,7 @@ bool isOpaque(const QImage &image)
 // are expensive, so we want to split the image into as few pieces as possible.
 void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mode, bool skipempty, QList<protocol::MessagePtr> &list)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 
 	if(skipempty && isEmptyImage(image))
 		return;
@@ -222,7 +222,7 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 		y += yoffset;
 	}
 
-	image = image.convertToFormat(QImage::Format_ARGB32);
+	image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
 	// Optimization: if image is completely opaque, REPLACE mode is equivalent to NORMAL,
 	// except potentially more efficient when split at tile boundaries

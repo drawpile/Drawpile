@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,12 +45,6 @@ inline uint UINT8_MULT(uint a, uint b)
 {
     uint c = a * b + 0x80u;
     return ((c >> 8) + c) >> 8;
-}
-
-inline uint UINT8_DIVIDE(uint a, uint b)
-{
-    uint c = (a * 255u + (b / 2u)) / b;
-    return c;
 }
 
 inline uint blend_blend(uchar base, uchar blend) {
@@ -107,35 +101,24 @@ void doAlphaMaskBlend(quint32 *base, quint32 color, const uchar *mask,
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x,++mask) {
-			// Special case: mask pixel is completely transparent
 			if(*mask==0) {
+				// Special case: mask pixel is completely transparent
 				dest += 4;
 			}
-			// Special case: mask pixel is completely opaque
 			else if(*mask==255) {
+				// Special case: mask pixel is completely opaque
 				*dest = src[0]; ++dest;
 				*dest = src[1]; ++dest;
 				*dest = src[2]; ++dest;
 				*dest = 255; ++dest;
 			}
-			// The usual case: blending required
 			else {
-				if(dest[3]==0) {
-					// Special case: target is completely transparent, we can overwrite it.
-					*dest = src[0]; ++dest;
-					*dest = src[1]; ++dest;
-					*dest = src[2]; ++dest;
-					*dest = *mask; ++dest;
-				} else {
-					// Normal case: blend colors and alpha
-					const uchar a = *mask;
-					const uchar a2 = UINT8_MULT(dest[3], 255-a);
-					const uchar a_out = a+a2;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = a_out; ++dest;
-				}
+				// The usual case: blending required
+				const uint srca1 = 255 - *mask;
+				*dest = UINT8_MULT(src[0], *mask) + UINT8_MULT(*dest, srca1); ++dest;
+				*dest = UINT8_MULT(src[1], *mask) + UINT8_MULT(*dest, srca1); ++dest;
+				*dest = UINT8_MULT(src[2], *mask) + UINT8_MULT(*dest, srca1); ++dest;
+				*dest = *mask +	UINT8_MULT(*dest, srca1); ++dest;
 			}
 		}
 		dest += baseskip;
@@ -151,28 +134,17 @@ void doAlphaMaskUnder(quint32 *base, quint32 color, const uchar *mask,
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x,++mask) {
-			// Special case: transparent mask pixel or opaque destination pixel
-			if(*mask==0 || dest[3]==255) {
+			if((*mask==0) | (dest[3]==255)) {
+				// Special case: transparent mask pixel or opaque destination pixel
 				dest += 4;
 			}
-			// The usual case: blending required
 			else {
-				if(dest[3]==0) {
-					// Special case: target is completely transparent, we can overwrite it.
-					*dest = src[0]; ++dest;
-					*dest = src[1]; ++dest;
-					*dest = src[2]; ++dest;
-					*dest = *mask; ++dest;
-				} else {
-					// Normal case: blend colors and alpha
-					const uchar a = UINT8_MULT(255-dest[3], *mask);
-					const uchar a2 = dest[3];
-					const uchar a_out = a+a2;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = UINT8_DIVIDE(UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest), a_out); ++dest;
-					*dest = a_out; ++dest;
-				}
+				// The usual case: blending required
+				const uint a = UINT8_MULT(255-dest[3], *mask);
+				*dest = UINT8_MULT(src[0], a) + *dest; ++dest;
+				*dest = UINT8_MULT(src[1], a) + *dest; ++dest;
+				*dest = UINT8_MULT(src[2], a) + *dest; ++dest;
+				*dest = *dest + a; ++dest;
 			}
 		}
 		dest += baseskip;
@@ -258,12 +230,20 @@ void color_erase_helper(fRGBA *src, const fRGBA *color)
 void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
 {
 	baseskip *= 4;
-	uchar *dest = reinterpret_cast<uchar*>(base) + 3;
+	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x) {
-			*dest = qMax(0, *dest - *mask);
-
-			dest += 4;
+			if((*mask==0) | (dest[3]==0)) {
+				// Special case: fully transparent mask or destination
+				dest += 4;
+			}
+			else {
+				const uint a = 255 - *mask;
+				*dest = UINT8_MULT(*dest, a); ++dest;
+				*dest = UINT8_MULT(*dest, a); ++dest;
+				*dest = UINT8_MULT(*dest, a); ++dest;
+				*dest = UINT8_MULT(*dest, a); ++dest;
+			}
 			++mask;
 		}
 		dest += baseskip;
@@ -278,10 +258,10 @@ void doMaskColorErase(quint32 *base, quint32 color, const uchar *mask, int w, in
 
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x) {
-			fRGBA src = *base;
+			fRGBA src = qUnpremultiply(*base);
 			col.a = UINT8_MULT(col_a, *mask) / 255.0;
 			color_erase_helper(&src, &col);
-			*base = src.toPixel();
+			*base = qPremultiply(src.toPixel());
 			++mask;
 			++base;
 		}
@@ -298,10 +278,10 @@ void doMaskCopy(quint32 *base, quint32 color, const uchar *mask, int w, int h, i
 	const uchar *src = reinterpret_cast<const uchar*>(&color);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x) {
-			*(dest++) = UINT8_MULT(*(src+0), *mask);
-			*(dest++) = UINT8_MULT(*(src+1), *mask);
-			*(dest++) = UINT8_MULT(*(src+2), *mask);
-			*(dest++) = UINT8_MULT(*(src+3), *mask);
+			*(dest++) = UINT8_MULT(src[0], *mask);
+			*(dest++) = UINT8_MULT(src[1], *mask);
+			*(dest++) = UINT8_MULT(src[2], *mask);
+			*(dest++) = UINT8_MULT(src[3], *mask);
 			++mask;
 		}
 		dest += baseskip;
@@ -316,36 +296,23 @@ template<BlendOp BO>
 void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
-	baseskip *= 4;
 	const uchar *src = reinterpret_cast<const uchar*>(&color);
-	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x,++mask) {
-			// Special case: mask pixel is completely transparent
-			if(*mask==0) {
-				dest += 4;
-			}
-			// Special case: mask pixel is completely opaque
-			else if(*mask==255) {
-				*dest = BO(*dest, src[0]); ++dest;
-				*dest = BO(*dest, src[1]); ++dest;
-				*dest = BO(*dest, src[2]); ++dest;
-				++dest;
-			}
-			// The usual case: blending required
-			else {
-				if(dest[3]>0) {
-					*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
-					*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
-					*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
-					++dest;
-				} else {
-					// No need to do anything if destination pixel is fully transparent
-					dest += 4;
-				}
+			if((*mask==0) | (*base == 0)) {
+				// Special case: mask pixel or destination is completely transparent
+				++base;
+
+			} else {
+				quint32 dest = qUnpremultiply(*reinterpret_cast<QRgb*>(base));
+				uchar *d = reinterpret_cast<uchar*>(&dest);
+				d[0] = UINT8_BLEND(BO(d[0], src[0]), d[0], *mask);
+				d[1] = UINT8_BLEND(BO(d[1], src[1]), d[1], *mask);
+				d[2] = UINT8_BLEND(BO(d[2], src[2]), d[2], *mask);
+				*(base++) = qPremultiply(dest);
 			}
 		}
-		dest += baseskip;
+		base += baseskip;
 		mask += maskskip;
 	}
 }
@@ -361,10 +328,9 @@ std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int 
 			const uchar a = pix[3];
 			result[0] += m;
 
-			// premultiply colors to avoid darkening transparent areas
-			result[1] += UINT8_MULT(UINT8_MULT(pix[2], a), m); // red
-			result[2] += UINT8_MULT(UINT8_MULT(pix[1], a), m); // green
-			result[3] += UINT8_MULT(UINT8_MULT(pix[0], a), m); // blue
+			result[1] += UINT8_MULT(pix[2], m); // red
+			result[2] += UINT8_MULT(pix[1], m); // green
+			result[3] += UINT8_MULT(pix[0], m); // blue
 			result[4] += UINT8_MULT(a, m); // alpha
 			pix += 4;
 		}
@@ -381,17 +347,15 @@ void doPixelAlphaBlend(quint32 *destination, const quint32 *source, uchar opacit
 	const uchar *src = reinterpret_cast<const uchar*>(source);
 
 	while(len--) {
-		const uchar a = UINT8_MULT(src[3], opacity);
-		const uchar a2 = UINT8_MULT(dest[3], 255-a);
-		const uchar a_out = a+a2;
-		if(a_out==0) {
-			src+=4;
-			dest+=4;
+		const uint asrc = 255 - UINT8_MULT(src[3], opacity);
+		if(asrc==255) {
+			src += 4;
+			dest += 4;
 		} else {
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = a_out; ++dest,++src;
+			*dest = UINT8_MULT(*src, opacity) + UINT8_MULT(*dest, asrc); ++dest, ++src;
+			*dest = UINT8_MULT(*src, opacity) + UINT8_MULT(*dest, asrc); ++dest, ++src;
+			*dest = UINT8_MULT(*src, opacity) + UINT8_MULT(*dest, asrc); ++dest, ++src;
+			*dest = UINT8_MULT(*src, opacity) + UINT8_MULT(*dest, asrc); ++dest, ++src;
 		}
 	}
 }
@@ -402,30 +366,33 @@ void doPixelAlphaUnder(quint32 *destination, const quint32 *source, uchar opacit
 	const uchar *src = reinterpret_cast<const uchar*>(source);
 
 	while(len--) {
-		const uchar a2 = dest[3];
-		const uchar a = UINT8_MULT(255-a2, UINT8_MULT(src[3], opacity));
-		const uchar a_out = a+a2;
-		if(a_out==0) {
-			src+=4;
-			dest+=4;
-		} else {
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
-			*dest = a_out; ++dest,++src;
+		if((src[3]==0) | (dest[3]==255)) {
+			// Special case: transparent source pixel or opaque destination pixel
+			dest += 4;
 		}
+		else {
+			// The usual case: blending required
+			const uint a = UINT8_MULT(255-dest[3], UINT8_MULT(src[3], opacity));
+			*dest = UINT8_MULT(src[0], a) + *dest; ++dest;
+			*dest = UINT8_MULT(src[1], a) + *dest; ++dest;
+			*dest = UINT8_MULT(src[2], a) + *dest; ++dest;
+			*dest = *dest + a; ++dest;
+		}
+		src += 4;
 	}
 }
 
 // Specialized pixel composition: erase alpha channel
 void doPixelErase(quint32 *destination, const quint32 *source, uchar opacity, int len)
 {
-	uchar *dest = reinterpret_cast<uchar*>(destination) + 3;
-	const uchar *src = reinterpret_cast<const uchar*>(source) + 3;
+	uchar *dest = reinterpret_cast<uchar*>(destination);
+	const uchar *src = reinterpret_cast<const uchar*>(source)+3;
 	while(len--) {
-		uchar a = qMax(0, *dest - int(UINT8_MULT(*src, opacity)));
-		*dest = a;
-		dest += 4;
+		const uint a = 255 - UINT8_MULT(*src, opacity);
+		*dest = UINT8_MULT(*dest, a); ++dest;
+		*dest = UINT8_MULT(*dest, a); ++dest;
+		*dest = UINT8_MULT(*dest, a); ++dest;
+		*dest = UINT8_MULT(*dest, a); ++dest;
 		src += 4;
 	}
 }
@@ -435,11 +402,11 @@ void doPixelColorErase(quint32 *destination, const quint32 *source, uchar opacit
 	const qreal o = opacity / 255.0;
 
 	while(len--) {
-		fRGBA d = *destination;
-		fRGBA s = *source;
+		fRGBA d = qUnpremultiply(*destination);
+		fRGBA s = qUnpremultiply(*source);
 		s.a *= o;
 		color_erase_helper(&d, &s);
-		*destination = d.toPixel();
+		*destination = qPremultiply(d.toPixel());
 		++destination;
 		++source;
 	}
@@ -447,39 +414,40 @@ void doPixelColorErase(quint32 *destination, const quint32 *source, uchar opacit
 
 void tintPixels(quint32 *pixels, int len, quint32 tint)
 {
-	const quint8 *t = reinterpret_cast<quint8*>(&tint);
-	quint8 *c = reinterpret_cast<quint8*>(pixels);
+	const uchar *t = reinterpret_cast<uchar*>(&tint);
 
-	const quint8 a0 = t[3];
-	const quint8 a1 = 255 - a0;
+	const uint a0 = t[3];
+	const uint a1 = 255 - a0;
 
-	while(--len>=0) {
-		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[0]); ++c;
-		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[1]); ++c;
-		*c = UINT8_MULT(a1, *c) + UINT8_MULT(a0, t[2]); ++c;
-		++c;
+	while(len--) {
+		quint32 c = qUnpremultiply(*pixels);
+		uchar *cc = reinterpret_cast<uchar*>(&c);
+		cc[0] = UINT8_MULT(a1, cc[0]) + UINT8_MULT(a0, t[0]);
+		cc[1] = UINT8_MULT(a1, cc[1]) + UINT8_MULT(a0, t[1]);
+		cc[2] = UINT8_MULT(a1, cc[2]) + UINT8_MULT(a0, t[2]);
+		*(pixels++) = qPremultiply(c);
 	}
 }
 
 template<BlendOp BO>
-void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, int len)
+void doPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len)
 {
 	const uchar *src = reinterpret_cast<const uchar*>(source);
-	uchar *dest = reinterpret_cast<uchar*>(destination);
 	while(len--) {
-		// Special case: source or destination pixel is completely transparent
-		if(src[3]==0 || dest[3]==0) {
-			dest += 4;
-		}
-		// The usual case: blending required
-		else {
+		if((src[3]!=0) & (*base!=0)) {
+			// Blend only of neither source nor destination pixels are fully transparent
+			quint32 dest = qUnpremultiply(*reinterpret_cast<QRgb*>(base));
+			uchar *d = reinterpret_cast<uchar*>(&dest);
+
 			const uchar a = UINT8_MULT(src[3], alpha);
-			const uchar a2 = UINT8_MULT(a, dest[3]);
-			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, a2); ++dest;
-			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, a2); ++dest;
-			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, a2); ++dest;
-			++dest;
+			const uchar a2 = UINT8_MULT(a, d[3]);
+
+			d[0] = UINT8_BLEND(BO(d[0], src[0]), d[0], a2);
+			d[1] = UINT8_BLEND(BO(d[1], src[1]), d[1], a2);
+			d[2] = UINT8_BLEND(BO(d[2], src[2]), d[2], a2);
+			*base = qPremultiply(dest);
 		}
+		++base;
 		src += 4;
 	}
 }
@@ -507,6 +475,8 @@ void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uch
 
 void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
+	Q_ASSERT(len>=0);
+
 	switch(mode) {
 	case BlendMode::MODE_ERASE: doPixelErase(base, over, opacity, len); break;
 	case BlendMode::MODE_NORMAL: doPixelAlphaBlend(base, over, opacity, len); break;

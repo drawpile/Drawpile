@@ -359,7 +359,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool
 				ut->y*Tile::SIZE,
 				QImage(reinterpret_cast<const uchar*>(ut->data),
 					Tile::SIZE, Tile::SIZE,
-					QImage::Format_ARGB32
+					QImage::Format_ARGB32_Premultiplied
 				)
 			);
 			delete ut;
@@ -379,12 +379,12 @@ const Layer *LayerStack::layerAt(int x, int y) const
 	for(int i=m_layers.size()-1;i>=0;--i) {
 		const Layer * l = m_layers.at(i);
 		if(l->isVisible()) {
-			if(qAlpha(l->pixelAt(x,y)) > 0)
+			if(l->pixelAt(x,y) > 0)
 				return l;
 
 			// Check sublayers too
 			for(const Layer *sl : l->sublayers()) {
-				if(sl->isVisible() && qAlpha(sl->pixelAt(x, y)) > 0)
+				if(sl->isVisible() && sl->pixelAt(x, y) > 0)
 					return l;
 			}
 		}

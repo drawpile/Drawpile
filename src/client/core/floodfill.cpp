@@ -96,9 +96,6 @@ public:
 
 	bool isSameColor(QRgb c1, QRgb c2) {
 		// TODO better color distance function
-		c1 = qPremultiply(c1);
-		c2 = qPremultiply(c2);
-
 		int r = (c1 & 0xff) - (signed int)(c2 & 0xff);
 		int g = (c1>>8 & 0xff) - (signed int)(c2>>8 & 0xff);
 		int b = (c1>>16 & 0xff) - (signed int)(c2>>16 & 0xff);
@@ -278,7 +275,7 @@ FillResult expandFill(const FillResult &input, int expansion, const QColor &colo
 	if(input.image.isNull() || expansion<1)
 		return input;
 
-	Q_ASSERT(input.image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(input.image.format() == QImage::Format_ARGB32_Premultiplied);
 
 	FillResult out;
 

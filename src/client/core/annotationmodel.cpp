@@ -239,7 +239,7 @@ void Annotation::paint(QPainter *painter, const QRectF &paintrect) const
 
 QImage Annotation::toImage() const
 {
-	QImage img(rect.size(), QImage::Format_ARGB32);
+	QImage img(rect.size(), QImage::Format_ARGB32_Premultiplied);
 	img.fill(0);
 	QPainter painter(&img);
 	paint(&painter, QRectF(0, 0, rect.width(), rect.height()));

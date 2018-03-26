@@ -80,9 +80,9 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 
 QColor isSolidColorImage(const QImage &image)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
-	if(image.format() != QImage::Format_ARGB32) {
-		qWarning("isSolidColorImage: not an ARGB32 image!");
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
+	if(image.format() != QImage::Format_ARGB32_Premultiplied) {
+		qWarning("isSolidColorImage: not a premultiplied ARGB32 image!");
 		return QColor();
 	}
 

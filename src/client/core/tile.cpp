@@ -48,7 +48,7 @@ Tile::Tile(const QImage& image, int xoff, int yoff)
 {
 	Q_ASSERT(xoff>=0 && xoff < image.width());
 	Q_ASSERT(yoff>=0 && yoff < image.height());
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 
 	const int w = xoff + SIZE > image.width() ? image.width() - xoff : SIZE;
 	const int h = yoff + SIZE > image.height() ? image.height() - yoff : SIZE;
@@ -180,7 +180,8 @@ bool Tile::isBlank() const
 	const quint32 *pixel = constData();
 	const quint32 *end = pixel + LENGTH;
 	while(pixel<end) {
-		if(qAlpha(*pixel))
+		// Note: colors are premultiplied so alpha=0 => rgb=0
+		if(*pixel)
 			return false;
 		++pixel;
 	}
@@ -189,18 +190,19 @@ bool Tile::isBlank() const
 
 QColor Tile::solidColor() const
 {
-	// Special case check for transparent tiles: look only at the alpha channel
-	if(isBlank())
+	if(isNull())
 		return Qt::transparent;
 
-	const quint32 *ptr = constData();
-	const quint32 c = *ptr; ++ptr;
-	for(int i=1;i<LENGTH;++i,++ptr) {
-		if(*ptr != c)
+	const quint32 *pixel = constData();
+	const quint32 *end = pixel + LENGTH;
+	const quint32 first = *(pixel++);
+	while(pixel<end) {
+		if(*pixel != first)
 			return QColor();
+		++pixel;
 	}
 
-	return QColor::fromRgba(c);
+	return QColor::fromRgba(qUnpremultiply(first));
 }
 
 quint32 *Tile::data() {

@@ -665,7 +665,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 		qWarning() << "Invalid putImage: Expected" << expectedLen << "bytes, but got" << data.length();
 		return;
 	}
-	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
+	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32_Premultiplied);
 	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
@@ -730,7 +730,7 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 		mask = QImage(reinterpret_cast<const uchar*>(maskData.constData()), cmd.bw(), cmd.bh(), QImage::Format_Mono);
 		mask.setColor(0, 0);
 		mask.setColor(1, 0xffffffff);
-		mask = mask.convertToFormat(QImage::Format_ARGB32);
+		mask = mask.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 	}
 
 	// Extract selected pixels

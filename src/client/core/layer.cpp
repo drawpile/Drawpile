@@ -91,7 +91,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
 		}
 	}
 
-	return QColor::fromRgba(color);
+	return QColor::fromRgba(qUnpremultiply(color));
 }
 
 }
@@ -256,7 +256,7 @@ void Layer::setTitle(const QString& title)
 }
 
 QImage Layer::toImage() const {
-	QImage image(m_width, m_height, QImage::Format_ARGB32);
+	QImage image(m_width, m_height, QImage::Format_ARGB32_Premultiplied);
 	int i=0;
 	for(int y=0;y<m_ytiles;++y) {
 		for(int x=0;x<m_xtiles;++x,++i)
@@ -293,7 +293,7 @@ QImage Layer::toCroppedImage(int *xOffset, int *yOffset) const
 	}
 
 	// Copy tiles to image
-	QImage image((right-left+1)*Tile::SIZE, (bottom-top+1)*Tile::SIZE, QImage::Format_ARGB32);
+	QImage image((right-left+1)*Tile::SIZE, (bottom-top+1)*Tile::SIZE, QImage::Format_ARGB32_Premultiplied);
 	for(int y=top;y<=bottom;++y) {
 		for(int x=left;x<=right;++x) {
 			m_tiles.at(y*m_xtiles+x).copyToImage(image, (x-left)*Tile::SIZE, (y-top)*Tile::SIZE);
@@ -320,11 +320,12 @@ QColor Layer::colorAt(int x, int y, int dia) const
 		return QColor();
 
 	if(dia<=1) {
-		quint32 c = pixelAt(x, y);
-		if(qAlpha(c)==0)
+		const quint32 c = pixelAt(x, y);
+		if(c==0)
 			return QColor();
 
-		return QColor::fromRgb(c);
+		return QColor::fromRgb(qUnpremultiply(c));
+
 	} else {
 		Brush b(dia, 0.9);
 		BrushStamp bs = makeGimpStyleBrushStamp(b, Point(x, y, 1));
@@ -405,7 +406,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 		image = original;
 
 	} else {
-		image = QImage(w, h, QImage::Format_ARGB32);
+		image = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
 		QPainter painter(&image);
 
 		if(mode == BlendMode::MODE_REPLACE) {
@@ -471,7 +472,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
  */
 void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 	
 	// Check if the image is completely outside the layer
 	if(x >= m_width || y >= m_height || x+image.width() < 0 || y+image.height() < 0)

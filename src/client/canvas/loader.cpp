@@ -97,7 +97,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
 			}
 
-			image = image.convertToFormat(QImage::Format_ARGB32);
+			image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, 0, 0, QStringLiteral("Layer %1").arg(layerId)));
 			msgs << net::command::putQImage(1, layerId, 0, 0, image, paintcore::BlendMode::MODE_REPLACE);
 			++layerId;
@@ -111,7 +111,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
 
-	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
+	QImage image = _image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, 0, 0, "Background")));

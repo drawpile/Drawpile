@@ -106,7 +106,7 @@ class Tile {
 		//! Construct a tile from an image
 		Tile(const QImage& image, int xoff, int yoff);
 
-		//! Get a pixel value from this tile
+		//! Get a pixel value from this tile.
 		quint32 pixel(int x, int y) const {
 			Q_ASSERT(x>=0 && x<SIZE);
 			Q_ASSERT(y>=0 && y<SIZE);
