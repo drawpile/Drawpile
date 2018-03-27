@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,72 +35,11 @@ namespace {
 bool isEmptyImage(const QImage &image)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
-	int len = image.width() * image.height();
 	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
-	while(len--) {
-		if(qAlpha(*pixels) != 0)
+	const quint32 *end = pixels + image.width()*image.height();
+	while(pixels<end) {
+		if(*(pixels++))
 			return false;
-		++pixels;
-	}
-	return true;
-}
-
-// Split image into tile boundary aligned PutImages.
-// These can be applied very efficiently when mode is MODE_REPLACE
-void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, paintcore::BlendMode::Mode mode, bool skipempty, QList<protocol::MessagePtr> &list)
-{
-	static const int TILE = 64;
-
-	const int x2=x+image.width();
-	const int y2=y+image.height();
-
-	int ty=y;
-	int sy=0;
-	while(ty<y2) {
-		const int nextY = qMin(((ty + TILE) / TILE) * TILE, y2);
-		int tx=x;
-		int sx=0;
-		while(tx<x2) {
-			const int nextX = qMin(((tx + TILE) / TILE) * TILE, x2);
-
-			const QImage i = image.copy(sx, sy, nextX-tx, nextY-ty);
-
-			if(!skipempty || !isEmptyImage(i)) {
-				const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(i.bits()), i.byteCount());
-
-				QByteArray compressed = qCompress(data);
-				Q_ASSERT(compressed.length() <= protocol::PutImage::MAX_LEN);
-
-				list.append(protocol::MessagePtr(new protocol::PutImage(
-					ctxid,
-					layer,
-					mode,
-					tx,
-					ty,
-					i.width(),
-					i.height(),
-					compressed
-				)));
-			}
-
-			sx += nextX-tx;
-			tx = nextX;
-		}
-
-		sy += nextY - ty;
-		ty = nextY;
-	}
-}
-
-bool isOpaque(const QImage &image)
-{
-	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
-	int len = image.width() * image.height();
-	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
-	while(len--) {
-		if(qAlpha(*pixels) != 255)
-			return false;
-		++pixels;
 	}
 	return true;
 }
@@ -223,20 +162,7 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 	}
 
 	image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-
-	// Optimization: if image is completely opaque, REPLACE mode is equivalent to NORMAL,
-	// except potentially more efficient when split at tile boundaries
-	if(mode == paintcore::BlendMode::MODE_NORMAL && isOpaque(image)) {
-		mode = paintcore::BlendMode::MODE_REPLACE;
-		skipempty = false;
-	}
-
-	// Split image into pieces small enough to fit in a message
-	if(mode == paintcore::BlendMode::MODE_REPLACE) {
-		splitImageAtTileBoundaries(ctxid, layer, x, y, image, mode, skipempty, list);
-	} else {
-		splitImage(ctxid, layer, x, y, image, mode, skipempty, list);
-	}
+	splitImage(ctxid, layer, x, y, image, mode, skipempty, list);
 
 #ifndef NDEBUG
 	if(list.isEmpty()) {

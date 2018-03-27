@@ -30,9 +30,16 @@ Tile::Tile(const QColor& color)
 	: m_data(new TileData)
 {
 	quint32 *ptr = m_data->pixels;
-	quint32 col = color.rgba();
+	quint32 col = qPremultiply(color.rgba());
 	for(int i=0;i<LENGTH;++i)
 		*(ptr++) = col;
+}
+
+Tile::Tile(const QByteArray &data)
+	: m_data(new TileData)
+{
+	Q_ASSERT(data.length() == BYTES);
+	memcpy(m_data->pixels, data.constData(), BYTES);
 }
 
 /**
@@ -211,6 +218,27 @@ quint32 *Tile::data() {
 		memset(m_data->pixels, 0, BYTES);
 	}
 	return m_data->pixels;
+}
+
+bool Tile::equals(const Tile &other) const
+{
+	// Check if the tiles are both the same or both blank
+	if(*this == other || (isNull() && other.isBlank()) || (other.isNull() && isBlank()))
+		return true;
+
+	// If both are not blank, either being null means they can't be the same
+	if(isNull() || other.isNull())
+		return false;
+
+	// Both are not null: check content
+	const quint32 *d1 = m_data->pixels;
+	const quint32 *d2 = other.m_data->pixels;
+	for(int i=0;i<LENGTH;++i) {
+		if(*(d1++) != *(d2++))
+			return false;
+	}
+
+	return true;
 }
 
 QDataStream &operator<<(QDataStream &ds, const Tile &t)

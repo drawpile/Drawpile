@@ -413,6 +413,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_REGION_MOVE:
 			handleMoveRegion(msg.cast<MoveRegion>());
 			break;
+		case MSG_PUTTILE:
+			handlePutTile(msg.cast<PutTile>());
+			break;
 		default:
 			qWarning() << "Unhandled drawing command" << msg->type() << msg->messageName();
 			return;
@@ -670,6 +673,31 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
 		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+}
+
+void StateTracker::handlePutTile(const protocol::PutTile &cmd)
+{
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
+	if(!layer) {
+		qWarning() << "putTile on non-existent layer" << cmd.layer();
+		return;
+	}
+
+	paintcore::Tile t;
+	if(cmd.isSolidColor()) {
+		t = paintcore::Tile(QColor::fromRgba(cmd.color()));
+
+	} else {
+		QByteArray data = qUncompress(cmd.image());
+		if(data.length() != paintcore::Tile::BYTES) {
+			qWarning() << "Invalid putTile: Expected" << paintcore::Tile::BYTES << "bytes, but got" << data.length();
+			return;
+		}
+
+		t = paintcore::Tile(data);
+	}
+
+	layer->putTile(cmd.column(), cmd.row(), cmd.repeat(), t);
 }
 
 void StateTracker::handleFillRect(const protocol::FillRect &cmd)
@@ -1256,6 +1284,13 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	case MSG_PUTIMAGE: {
 		const PutImage &m = msg.cast<PutImage>();
 		return AffectedArea(AffectedArea::PIXELS, m.layer(), QRect(m.x(), m.y(), m.width(), m.height()));
+	}
+	case MSG_PUTTILE: {
+		const PutTile &m = msg.cast<PutTile>();
+		return AffectedArea(AffectedArea::PIXELS, m.layer(), QRect(
+			m.column() * paintcore::Tile::SIZE,
+			m.row() * paintcore::Tile::SIZE,
+			paintcore::Tile::SIZE, paintcore::Tile::SIZE));
 	}
 	case MSG_TOOLCHANGE: return AffectedArea(AffectedArea::USERATTRS, 0);
 	case MSG_PEN_MOVE: {

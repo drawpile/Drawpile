@@ -113,14 +113,14 @@ private:
 
 class QImageCanvasLoader : public SessionLoader {
 public:
-	QImageCanvasLoader(const QImage &image) : _image(image) {}
+	QImageCanvasLoader(const QImage &image) : m_image(image) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return QString(); }
 	QString errorMessage() const { return QString(); }
 
 private:
-	QImage _image;
+	QImage m_image;
 };
 
 /**

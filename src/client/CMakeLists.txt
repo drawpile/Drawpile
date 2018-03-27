@@ -67,6 +67,7 @@ set (
 	core/rasterop.cpp
 	core/shapes.cpp
 	core/floodfill.cpp
+	core/tilevector.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

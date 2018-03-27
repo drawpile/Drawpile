@@ -63,7 +63,7 @@ QImage resizeImage(const QImage &img, const QSize &maxSize, bool fixedSize)
 
 bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack &layers, ExportState &state)
 {
-	if(layers.size().isEmpty()) {
+	if(layers.size().isEmpty() || layers.layerCount()==0) {
 		// The layer stack has no size until the first resize command.
 		// Trying to export before it is not a fatal error.
 		if(settings.verbose)

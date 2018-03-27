@@ -103,6 +103,9 @@ class Tile {
 		//! Construct a tile filled with the given color
 		explicit Tile(const QColor& color);
 
+		//! Construct a tile from raw data
+		explicit Tile(const QByteArray &data);
+
 		//! Construct a tile from an image
 		Tile(const QImage& image, int xoff, int yoff);
 
@@ -157,6 +160,11 @@ class Tile {
 
 		//! Fill a tile sized memory buffer with a checker pattern
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
+
+		/**
+		 * @brief Check if these two tiles have identical content
+		 */
+		bool equals(const Tile &t) const;
 
 		/**
 		 * @brief Return true if the two tiles point to the same data

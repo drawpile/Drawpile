@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,11 +35,7 @@ namespace protocol {
  *
  * All brush/layer blending modes are supported.
  *
- * The image data is DEFLATEd 32bit non-premultiplied ARGB data.
- *
- * The contextId doesn't affect the way the bitmap is
- * drawn, but it is needed to identify the user so PutImages
- * can be undone/redone.
+ * The image data is DEFLATEd 32bit premultiplied ARGB data.
  *
  * Note that since the message length is fairly limited, a
  * large image may have to be divided into multiple PutImage
@@ -82,6 +78,71 @@ private:
 	uint32_t m_y;
 	uint32_t m_w;
 	uint32_t m_h;
+	QByteArray m_image;
+};
+
+/**
+ * @brief Set the content of a tile
+ *
+ * Unlike PutImage, this replaces an entire tile directly without any blending.
+ * This command is typically used during canvas initialization to set the initial content.
+ */
+class PutTile : public Message {
+public:
+	/**
+	 * @brief Construct a solid color PutTile
+	 * @param ctx context ID
+	 * @param layer target layer
+	 * @param col tile column
+	 * @param row tile row
+	 * @param repeat put this many extra tiles
+	 * @param color tile fill color ARGB (unpremultiplied)
+	 */
+	PutTile(uint8_t ctx, uint16_t layer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color);
+
+	/**
+	 * @brief Construct a PutTile
+	 * @param ctx context ID
+	 * @param layer target layer
+	 * @param col tile column
+	 * @param row tile row
+	 * @param repeat put this many extra tiles
+	 * @param image tile content. Uncompressed length must be 64x64x4
+	 */
+	PutTile(uint8_t ctx, uint16_t layer, uint16_t col, uint16_t row, uint16_t repeat, const QByteArray &image)
+	: Message(MSG_PUTTILE, ctx), m_layer(layer), m_col(col), m_row(row), m_repeat(repeat), m_image(image)
+	{
+		// Note: an uncompressed tile is only 16KB, so this should never be
+		// anywhere near this long
+		Q_ASSERT(image.length() <= 0xffff - 8);
+		Q_ASSERT(image.length() >= 4);
+	}
+
+	static PutTile *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static PutTile *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	uint16_t layer() const { return m_layer; }
+	uint16_t column() const { return m_col; }
+	uint16_t row() const { return m_row; }
+	uint16_t repeat() const { return m_repeat; }
+	uint32_t color() const;
+	const QByteArray &image() const { return m_image; }
+
+	bool isSolidColor() const { return m_image.length() == 4; }
+
+	QString messageName() const override { return QStringLiteral("puttile"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override;
+
+private:
+	uint16_t m_layer;
+	uint16_t m_col;
+	uint16_t m_row;
+	uint16_t m_repeat;
 	QByteArray m_image;
 };
 

@@ -40,6 +40,7 @@ namespace protocol {
 	class PenMove;
 	class PenUp;
 	class PutImage;
+	class PutTile;
 	class FillRect;
 	class UndoPoint;
 	class Undo;
@@ -299,6 +300,7 @@ private:
 	void handlePenMove(const protocol::PenMove &cmd);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
+	void handlePutTile(const protocol::PutTile &cmd);
 	void handleFillRect(const protocol::FillRect &cmd);
 	void handleMoveRegion(const protocol::MoveRegion &cmd);
 

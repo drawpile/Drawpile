@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -93,9 +93,6 @@ protocol::MessagePtr terminateSession();
  * small enough pieces.
  *
  * If the target coordinates are less than zero, the image is automatically cropped
- *
- * If mode is MODE_REPLACE and the image is large, it is split at tile boundaries (where possible)
- * to generate efficient PutImage commands.
  *
  * Note: when using MODE_REPLACE, the skipempty parameter should be set to false, except when you know
  * the layer is blank.

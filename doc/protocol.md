@@ -102,6 +102,7 @@ Protocol stability promises:
 ### Protocol dp:4.21.2 (2.1.0)
 
  * Changed PutImage pixel format to ARGB32_Premultiplied
+ * Added PutTile command
 
 ### Protocol dp:4.20.1 (2.0.9)
 

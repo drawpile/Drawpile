@@ -186,6 +186,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		break;
 
 	case MSG_CANVAS_RESIZE:
+	case MSG_PUTTILE:
 		return isOpUser;
 
 	case MSG_LAYER_CREATE:

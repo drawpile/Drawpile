@@ -511,6 +511,23 @@ void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 	}
 }
 
+void Layer::putTile(int col, int row, int repeat, const Tile &tile)
+{
+	if(col<0 || col >= m_xtiles || row<0 || row >= m_ytiles)
+		return;
+
+	int i=row*m_xtiles+col;
+	const int end = qMin(i+repeat, m_tiles.size()-1);
+	for(;i<=end;++i) {
+		m_tiles[i] = tile;
+		if(m_owner && isVisible())
+			m_owner->markDirty(i);
+	}
+
+	if(m_owner && isVisible())
+		m_owner->notifyAreaChanged();
+}
+
 void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mode blendmode)
 {
 	const QRect canvas(0, 0, m_width, m_height);

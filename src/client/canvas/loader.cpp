@@ -19,7 +19,6 @@
 
 #include "loader.h"
 #include "net/client.h"
-#include "net/commands.h"
 #include "ora/orareader.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/layerlist.h"
@@ -27,6 +26,7 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "core/tilevector.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -97,9 +97,10 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
 			}
 
-			image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, 0, 0, QStringLiteral("Layer %1").arg(layerId)));
-			msgs << net::command::putQImage(1, layerId, 0, 0, image, paintcore::BlendMode::MODE_REPLACE);
+			msgs << paintcore::LayerTileSet::fromImage(
+				image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+				).toInitCommands(1, layerId, QStringLiteral("Layer %1").arg(layerId));
+
 			++layerId;
 		}
 
@@ -111,11 +112,11 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
 
-	QImage image = _image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+	msgs << MessagePtr(new protocol::CanvasResize(1, 0, m_image.size().width(), m_image.size().height(), 0));
 
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, 0, 0, "Background")));
-	msgs.append(net::command::putQImage(1, 1, 0, 0, image, paintcore::BlendMode::MODE_REPLACE));
+	msgs << paintcore::LayerTileSet::fromImage(
+		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+		).toInitCommands(1, 1, QStringLiteral("Layer 1"));
 
 	return msgs;
 }
@@ -141,13 +142,8 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	for(int i=0;i<m_layers->layerCount();++i) {
 		const paintcore::Layer *layer = m_layers->getLayerByIndex(i);
 
-		const QColor fill = layer->isSolidColor();
-
-		msgs.append(MessagePtr(new protocol::LayerCreate(m_contextId, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
-		msgs.append(MessagePtr(new protocol::LayerAttributes(m_contextId, layer->id(), layer->opacity(), 1)));
-
-		if(!fill.isValid())
-			msgs.append(net::command::putQImage(m_contextId, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
+		msgs << paintcore::LayerTileSet::fromLayer(*layer)
+			.toInitCommands(m_contextId, layer->id(), layer->title());
 
 		// Set extra layer info (if present)
 		for(int j=0;j<m_layerlist.size();++j) {

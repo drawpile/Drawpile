@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2017 Calle Laakkonen
+   Copyright (C) 2009-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
+#include "core/tilevector.h"
 #include "ora/orareader.h"
 #include "ora/orawriter.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/meta2.h"
-#include "net/commands.h"
 #include "utils/archive.h"
 #include "utils/images.h"
 
@@ -409,26 +409,9 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			}
 		}
 
-		const QColor solidColor = utils::isSolidColorImage(content);
-
-		result.commands.append(MessagePtr(new protocol::LayerCreate(
-				ctxId,
-				++layerId,
-				0,
-				solidColor.isValid() ? solidColor.rgba() : 0,
-				0,
-				layer.name
-			)));
-
-		if(!solidColor.isValid())
-			result.commands << net::command::putQImage(
-					ctxId,
-					layerId,
-					layer.offset.x(),
-					layer.offset.y(),
-					content,
-					paintcore::BlendMode::MODE_REPLACE
-					);
+		result.commands << paintcore::LayerTileSet::fromImage(
+			content.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+			).toInitCommands(ctxId, ++layerId, layer.name);
 
 		bool exact_blendop;
 		int blendmode = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;

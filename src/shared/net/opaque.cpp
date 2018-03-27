@@ -82,6 +82,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_UNDO: return Undo::deserialize(ctx, data, len);
 	case MSG_FILLRECT: return FillRect::deserialize(ctx, data, len);
 	case MSG_REGION_MOVE: return MoveRegion::deserialize(ctx, data, len);
+	case MSG_PUTTILE: return PutTile::deserialize(ctx, data, len);
 	default:
 		qWarning("Unhandled opaque message type: %d", type);
 		return nullptr;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 class QImage;
 class QSize;
 class QDataStream;
+class QRect;
 
 namespace paintcore {
 
@@ -135,6 +136,9 @@ class Layer {
 		//! Draw an image onto the layer
 		void putImage(int x, int y, QImage image, BlendMode::Mode mode);
 
+		//! Set a tile
+		void putTile(int col, int row, int repeat, const Tile &tile);
+
 		//! Fill a rectangle
 		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
 
@@ -221,6 +225,9 @@ class Layer {
 
 		void toDatastream(QDataStream &out) const;
 		static Layer *fromDatastream(LayerStack *owner, QDataStream &in);
+
+		//! Get this layer's tile vector
+		const QVector<Tile> tiles() const { return m_tiles; }
 
 	private:
 		//! Construct a sublayer
