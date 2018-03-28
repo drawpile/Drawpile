@@ -18,6 +18,7 @@
 */
 
 #include "config.h"
+#include "stats.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
@@ -219,6 +220,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption aclOption(QStringList() << "A" << "acl", "Perform ACL filtering");
 	parser.addOption(aclOption);
 
+	// --msg-freq
+	QCommandLineOption msgFreqOption(QStringList() << "msg-freq", "Print message frequency table");
+	parser.addOption(msgFreqOption);
+
 	// input file name
 	parser.addPositionalArgument("input", "recording file", "<input.dprec>");
 
@@ -239,6 +244,10 @@ int main(int argc, char *argv[]) {
 	const QString format = parser.value(formatOption);
 	if(format == "version") {
 		return !printRecordingVersion(inputfiles.at(0));
+	}
+
+	if(parser.isSet(msgFreqOption)) {
+		return printMessageFrequency(inputfiles.at(0)) ? 0 : 1;
 	}
 
 	if(!convertRecording(

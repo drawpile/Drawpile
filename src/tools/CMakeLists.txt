@@ -1,6 +1,7 @@
 set (
 	DPRECTOOL_SOURCES
 	dprectool.cpp
+	stats.cpp
 	../client/canvas/aclfilter.cpp
 	)
 
