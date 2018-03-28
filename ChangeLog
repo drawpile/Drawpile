@@ -1,5 +1,6 @@
 2018-??-?? Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA
+ * Added PutTile command and optimized layer initialization
  * dprectool: added --msg-freq option
 
 2018-??-?? Version 2.0.11
