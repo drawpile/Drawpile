@@ -756,6 +756,58 @@ void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to,
 	state.distance = distance;
 }
 
+void Layer::putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode)
+{
+	const int top=bs.top, left=bs.left;
+	const int dia = bs.mask.diameter();
+	const int bottom = qMin(top + dia, m_height);
+	const int right = qMin(left + dia, m_width);
+
+	if(left+dia<=0 || top+dia<=0 || left>=m_width || top>=m_height)
+		return;
+
+	// Composite the brush mask onto the layer
+	const uchar *values = bs.mask.data();
+
+	// A single dab can (and often does) span multiple tiles.
+	int y = top<0?0:top;
+	int yb = top<0?-top:0; // y in relation to brush origin
+	const int x0 = left<0?0:left;
+	const int xb0 = left<0?-left:0;
+	while(y<bottom) {
+		const int yindex = y / Tile::SIZE;
+		const int yt = y - yindex * Tile::SIZE;
+		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
+		int x = x0;
+		int xb = xb0; // x in relation to brush origin
+		while(x<right) {
+			const int xindex = x / Tile::SIZE;
+			const int xt = x - xindex * Tile::SIZE;
+			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
+			const int i = m_xtiles * yindex + xindex;
+			m_tiles[i].composite(
+					blendmode,
+					values + yb * dia + xb,
+					color,
+					xt, yt,
+					wb, hb,
+					dia-wb
+					);
+
+			x = (xindex+1) * Tile::SIZE;
+			xb = xb + wb;
+		}
+		y = (yindex+1) * Tile::SIZE;
+		yb = yb + hb;
+	}
+
+	if(m_owner && isVisible()) {
+		m_owner->markDirty(QRect(left, top, right-left, bottom-top));
+		// TODO call this after the whole dab sequence has been painted
+		m_owner->notifyAreaChanged();
+	}
+}
+
 /**
  * Apply a single dab of the brush to the layer
  * @param brush brush to use
@@ -828,11 +880,13 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 
 	if(m_owner && isVisible())
 		m_owner->markDirty(QRect(left, top, right-left, bottom-top));
-
 }
 
 /**
  * @brief Get a weighted average of the layer's color, using the given brush mask as the weight
+ *
+ * TODO simplify this. Does not need to use a brush stamp.
+ *
  * @param stamp
  * @return color average
  */

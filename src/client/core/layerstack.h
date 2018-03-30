@@ -164,6 +164,9 @@ public:
 	//! Remove all preview layers (ephemeral sublayers)
 	void removePreviews();
 
+	//! Merge all sublayers with the given ID
+	void mergeSublayers(int id);
+
 signals:
 	//! Emitted when the visible layers are edited
 	void areaChanged(const QRect &area);

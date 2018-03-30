@@ -18,6 +18,7 @@
 */
 
 #include "core/brush.h"
+#include "canvas/canvasmodel.h"
 #include "net/client.h"
 #include "net/commands.h"
 
@@ -41,6 +42,12 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
 
+	m_brush.setBrush(owner.activeBrush());
+	m_brush.setLayer(owner.activeLayer());
+	m_brush.setContextId(owner.client()->myId());
+
+	m_brush.strokeTo(point, nullptr);
+
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
 
@@ -49,6 +56,7 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	v[0] = net::command::pointToProtocol(point);
 	msgs << protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v));
 	owner.client()->sendMessages(msgs);
+
 }
 
 void Freehand::motion(const paintcore::Point& point, bool constrain, bool center)
@@ -59,11 +67,20 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	protocol::PenPointVector v(1);
 	v[0] = net::command::pointToProtocol(point);
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
+
+	const paintcore::Layer *srcLayer = nullptr;
+	if(owner.activeBrush().smudge1()>0)
+		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+
+	m_brush.strokeTo(point, srcLayer);
+	owner.client()->sendMessages(m_brush.takeDabs());
 }
 
 void Freehand::end()
 {
+	owner.client()->sendMessages(m_brush.takeDabs());
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(owner.client()->myId())));
+	m_brush.endStroke();
 }
 
 }

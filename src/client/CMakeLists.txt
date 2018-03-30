@@ -68,6 +68,8 @@ set (
 	core/shapes.cpp
 	core/floodfill.cpp
 	core/tilevector.cpp
+	brushes/classicbrushstate.cpp
+	brushes/classicbrushpainter.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

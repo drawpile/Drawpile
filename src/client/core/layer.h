@@ -139,6 +139,9 @@ class Layer {
 		//! Set a tile
 		void putTile(int col, int row, int repeat, const Tile &tile);
 
+		//! Dab a brush
+		void putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode);
+
 		//! Fill a rectangle
 		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
 

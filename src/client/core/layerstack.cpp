@@ -82,6 +82,13 @@ void LayerStack::removePreviews()
 	}
 }
 
+void LayerStack::mergeSublayers(int id)
+{
+	for(Layer *l : m_layers) {
+		l->mergeSublayer(id);
+	}
+}
+
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
 	const QSize oldsize(m_width, m_height);

@@ -23,11 +23,13 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "brushes/classicbrushpainter.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
 #include "tools/selection.h" // for selection transform utils
 
 #include "../shared/net/pen.h"
+#include "../shared/net/brushes.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
@@ -378,10 +380,13 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 			handleLayerDelete(msg.cast<LayerDelete>());
 			break;
 		case MSG_TOOLCHANGE:
-			handleToolChange(msg.cast<ToolChange>());
+			//handleToolChange(msg.cast<ToolChange>());
 			break;
 		case MSG_PEN_MOVE:
-			handlePenMove(msg.cast<PenMove>());
+			//handlePenMove(msg.cast<PenMove>());
+			break;
+		case MSG_DRAWDABS_CLASSIC:
+			handleDrawDabsClassic(msg.cast<DrawDabsClassic>());
 			break;
 		case MSG_PEN_UP:
 			handlePenUp(msg.cast<PenUp>());
@@ -639,17 +644,17 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		emit userMarkerMove(cmd.contextId(), ctx.lastpoint, 0);
 }
 
+void StateTracker::handleDrawDabsClassic(const protocol::DrawDabsClassic &cmd)
+{
+	brushes::drawClassicBrushDabs(cmd, _image);
+}
+
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
-	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-	if(!layer) {
-		qWarning() << "penUp by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
-		return;
-	}
 
 	// This ends an indirect stroke. In incremental mode, this does nothing.
-	layer->mergeSublayer(cmd.contextId());
+	_image->mergeSublayers(cmd.contextId());
 
 	ctx.pendown = false;
 	emit userMarkerHide(cmd.contextId());

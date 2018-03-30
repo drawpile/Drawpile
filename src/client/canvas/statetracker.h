@@ -39,6 +39,7 @@ namespace protocol {
 	class ToolChange;
 	class PenMove;
 	class PenUp;
+	class DrawDabsClassic;
 	class PutImage;
 	class PutTile;
 	class FillRect;
@@ -298,6 +299,7 @@ private:
 	// Drawing related commands
 	void handleToolChange(const protocol::ToolChange &cmd);
 	void handlePenMove(const protocol::PenMove &cmd);
+	void handleDrawDabsClassic(const protocol::DrawDabsClassic &cmd);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
 	void handlePutTile(const protocol::PutTile &cmd);

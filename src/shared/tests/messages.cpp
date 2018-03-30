@@ -7,6 +7,7 @@
 #include "../net/image.h"
 #include "../net/undo.h"
 #include "../net/pen.h"
+#include "../net/brushes.h"
 #include "../net/textmode.h"
 
 #include <QtTest/QtTest>
@@ -60,6 +61,8 @@ private slots:
 		QTest::newRow("annotationedit") << (Message*)new AnnotationEdit(29, 0x1122, 0x12345678, 7, 0x0a, QByteArray("Test"));
 		QTest::newRow("annotationdelete") << (Message*)new AnnotationDelete(30, 0x1122);
 		QTest::newRow("moveregion") << (Message*)new MoveRegion(30, 0x1122, 0, 1, 2, 3, 10, 11, 20, 21, 30, 31, 40, 41, QByteArray("test"));
+
+		QTest::newRow("classicdabs") << (Message*)new DrawDabsClassic(31, 0x1122, 100, -100, 0xff223344, 0x10, ClassicBrushDabVector() << ClassicBrushDab {1, 2, 3, 4, 5} << ClassicBrushDab {10, 20, 30, 40, 50});
 
 		QTest::newRow("undo") << (Message*)new Undo(254, 1, false);
 		QTest::newRow("redo") << (Message*)new Undo(254, 1, true);

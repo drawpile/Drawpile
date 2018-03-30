@@ -8,6 +8,7 @@ set (
 	net/annotation.cpp
 	net/layer.cpp
 	net/pen.cpp
+	net/brushes.cpp
 	net/image.cpp
 	net/annotation.cpp
 	net/control.cpp
