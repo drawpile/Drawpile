@@ -319,7 +319,7 @@ QColor Layer::colorAt(int x, int y, int dia) const
 	if(x<0 || y<0 || x>=m_width || y>=m_height)
 		return QColor();
 
-	if(dia<=1) {
+	if(dia<2) {
 		const quint32 c = pixelAt(x, y);
 		if(c==0)
 			return QColor();
@@ -327,9 +327,7 @@ QColor Layer::colorAt(int x, int y, int dia) const
 		return QColor::fromRgb(qUnpremultiply(c));
 
 	} else {
-		Brush b(dia, 0.9);
-		BrushStamp bs = makeGimpStyleBrushStamp(b, Point(x, y, 1));
-		return getDabColor(bs);
+		return getDabColor(makeColorSamplingStamp(dia/2, QPoint(x,y)));
 	}
 }
 
@@ -884,8 +882,6 @@ void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state
 
 /**
  * @brief Get a weighted average of the layer's color, using the given brush mask as the weight
- *
- * TODO simplify this. Does not need to use a brush stamp.
  *
  * @param stamp
  * @return color average

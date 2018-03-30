@@ -121,7 +121,7 @@ static paintcore::BrushStamp makeMask(qreal r, qreal hardness, qreal opacity)
 		}
 	}
 
-	return paintcore::BrushStamp(stampOffset, stampOffset, paintcore::BrushMask(diameter, data));
+	return paintcore::BrushStamp { stampOffset, stampOffset, paintcore::BrushMask(diameter, data) };
 }
 
 static paintcore::BrushStamp makeHighresMask(qreal r, qreal hardness, qreal opacity)
@@ -169,7 +169,7 @@ static paintcore::BrushStamp makeHighresMask(qreal r, qreal hardness, qreal opac
 		}
 	}
 
-	return paintcore::BrushStamp(stampOffset, stampOffset, paintcore::BrushMask(diameter, data));
+	return paintcore::BrushStamp { stampOffset, stampOffset, paintcore::BrushMask(diameter, data) };
 }
 
 static paintcore::BrushMask offsetMask(const paintcore::BrushMask &mask, float xfrac, float yfrac)
