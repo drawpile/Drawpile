@@ -70,6 +70,8 @@ set (
 	core/tilevector.cpp
 	brushes/classicbrushstate.cpp
 	brushes/classicbrushpainter.cpp
+	brushes/pixelbrushstate.cpp
+	brushes/pixelbrushpainter.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

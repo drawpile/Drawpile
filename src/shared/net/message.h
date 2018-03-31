@@ -75,6 +75,9 @@ enum MessageType {
 	MSG_REGION_MOVE,
 	MSG_PUTTILE,
 	MSG_DRAWDABS_CLASSIC,
+	MSG_DRAWDABS_PIXEL,
+	MSG_DRAWDABS_RESERVED1, // reserved for future use (mypaint style?)
+	MSG_DRAWDABS_RESERVED2, // reserved for future use (custom mask?)
 	MSG_UNDO=255,
 };
 

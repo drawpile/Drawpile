@@ -24,6 +24,7 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "brushes/classicbrushpainter.h"
+#include "brushes/pixelbrushpainter.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
 #include "tools/selection.h" // for selection transform utils
@@ -388,6 +389,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_DRAWDABS_CLASSIC:
 			handleDrawDabsClassic(msg.cast<DrawDabsClassic>());
 			break;
+		case MSG_DRAWDABS_PIXEL:
+			handleDrawDabsPixel(msg.cast<DrawDabsPixel>());
+			break;
 		case MSG_PEN_UP:
 			handlePenUp(msg.cast<PenUp>());
 			break;
@@ -647,6 +651,11 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 void StateTracker::handleDrawDabsClassic(const protocol::DrawDabsClassic &cmd)
 {
 	brushes::drawClassicBrushDabs(cmd, _image);
+}
+
+void StateTracker::handleDrawDabsPixel(const protocol::DrawDabsPixel &cmd)
+{
+	brushes::drawPixelBrushDabs(cmd, _image);
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)

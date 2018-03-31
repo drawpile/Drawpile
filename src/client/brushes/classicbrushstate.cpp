@@ -140,7 +140,7 @@ void ClassicBrushState::addDab(const paintcore::Point &point, quint32 color)
 	m_lastDab->dabs() << protocol::ClassicBrushDab {
 		static_cast<decltype(protocol::ClassicBrushDab::x)>(x - m_lastDabX),
 		static_cast<decltype(protocol::ClassicBrushDab::y)>(y - m_lastDabY),
-		static_cast<decltype(protocol::ClassicBrushDab::radius)>(m_brush.fsize(point.pressure()) * 256),
+		static_cast<decltype(protocol::ClassicBrushDab::size)>(m_brush.fsize(point.pressure()) * 256),
 		static_cast<decltype(protocol::ClassicBrushDab::hardness)>(m_brush.hardness(point.pressure()) * 255),
 		static_cast<decltype(protocol::ClassicBrushDab::opacity)>(m_brush.opacity(point.pressure()) * 255)
 	};

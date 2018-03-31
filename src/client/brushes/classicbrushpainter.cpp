@@ -21,7 +21,6 @@
 #include "core/brushmask.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "classicbrushstate.h"
 
 #include <QCache>
 
@@ -262,6 +261,8 @@ static paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal
 
 void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::LayerStack *layers)
 {
+	Q_ASSERT(layers);
+
 	if(dabs.dabs().isEmpty()) {
 		qWarning("drawDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
 		return;
@@ -287,7 +288,7 @@ void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Laye
 		const int nextY = lastY + d.y;
 		const paintcore::BrushStamp bs = makeGimpStyleBrushStamp(
 			QPointF(nextX/4.0, nextY/4.0),
-			d.radius/256.0,
+			d.size/256.0,
 			d.hardness/255.0,
 			d.opacity/255.0
 		);

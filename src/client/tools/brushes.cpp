@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,11 +42,19 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
 
-	m_brush.setBrush(owner.activeBrush());
-	m_brush.setLayer(owner.activeLayer());
-	m_brush.setContextId(owner.client()->myId());
+	if(owner.activeBrush().subpixel()) {
+		m_classicbrush.setBrush(owner.activeBrush());
+		m_classicbrush.setLayer(owner.activeLayer());
+		m_classicbrush.setContextId(owner.client()->myId());
 
-	m_brush.strokeTo(point, nullptr);
+		m_classicbrush.strokeTo(point, nullptr);
+	} else {
+		m_pixelbrush.setBrush(owner.activeBrush());
+		m_pixelbrush.setLayer(owner.activeLayer());
+		m_pixelbrush.setContextId(owner.client()->myId());
+
+		m_pixelbrush.strokeTo(point);
+	}
 
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
@@ -68,19 +76,32 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	v[0] = net::command::pointToProtocol(point);
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
 
-	const paintcore::Layer *srcLayer = nullptr;
-	if(owner.activeBrush().smudge1()>0)
-		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	if(owner.activeBrush().subpixel()) {
+		const paintcore::Layer *srcLayer = nullptr;
+		if(owner.activeBrush().smudge1()>0)
+			srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 
-	m_brush.strokeTo(point, srcLayer);
-	owner.client()->sendMessages(m_brush.takeDabs());
+		m_classicbrush.strokeTo(point, srcLayer);
+		owner.client()->sendMessages(m_classicbrush.takeDabs());
+
+	} else {
+		m_pixelbrush.strokeTo(point);
+		owner.client()->sendMessages(m_pixelbrush.takeDabs());
+	}
 }
 
 void Freehand::end()
 {
-	owner.client()->sendMessages(m_brush.takeDabs());
+	if(owner.activeBrush().subpixel()) {
+		owner.client()->sendMessages(m_classicbrush.takeDabs());
+		m_classicbrush.endStroke();
+
+	} else {
+		owner.client()->sendMessages(m_pixelbrush.takeDabs());
+		m_pixelbrush.endStroke();
+	}
+
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(owner.client()->myId())));
-	m_brush.endStroke();
 }
 
 }
