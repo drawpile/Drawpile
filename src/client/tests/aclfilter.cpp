@@ -39,7 +39,7 @@ private slots:
 		// Op-only commands
 		QTest::newRow("0 owner") << true; // server can send this one too
 		QTest::newRow("1 owner") << true;
-		QTest::newRow("2 owner") << false;
+		QTest::newRow("2 owner") << true; // this is validated on the server side; client trusts everything
 		QTest::newRow("1 useracl") << true;
 		QTest::newRow("2 useracl") << false;
 		QTest::newRow("1 layeracl") << true;
@@ -120,8 +120,6 @@ private slots:
 		AclFilter acl;
 		acl.reset(1, false);
 
-		// No local ops: only server can send owner change message
-		QCOMPARE(acl.filterMessage(*msg("1 owner users=2")), false);
 		QCOMPARE(acl.filterMessage(*msg("0 owner users=1")), true);
 
 		// User 1 is now OP: can add more ops (but not deop self)
