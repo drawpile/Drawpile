@@ -84,7 +84,7 @@ public:
 	}
 
 	static DrawDabsClassic *deserialize(uint8_t ctx, const uchar *data, uint len);
-	static DrawDabsClassic *fromText(uint8_t ctx, const Kwargs &kwargs);
+	static DrawDabsClassic *fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs);
 
 	uint16_t layer() const { return m_layer; }
 	int32_t originX() const { return m_x; }
@@ -140,7 +140,7 @@ public:
 	}
 
 	static DrawDabsPixel *deserialize(uint8_t ctx, const uchar *data, uint len);
-	static DrawDabsPixel *fromText(uint8_t ctx, const Kwargs &kwargs);
+	static DrawDabsPixel *fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs);
 
 	uint16_t layer() const { return m_layer; }
 	int32_t originX() const { return m_x; }

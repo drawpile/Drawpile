@@ -88,10 +88,10 @@ int DrawDabsClassic::serializePayload(uchar *data) const
 
 QString ClassicBrushDab::toString() const
 {
-	return QStringLiteral("%1 %1 %3 %4 %5")
+	return QStringLiteral("%1 %2 %3 %4 %5")
 		.arg(x / 4.0, 0, 'f', 1)
 		.arg(y / 4.0, 0, 'f', 1)
-		.arg(size / 256.0, 0, 'f', 2)
+		.arg(size)
 		.arg(int(hardness))
 		.arg(int(opacity))
 		;
@@ -99,19 +99,49 @@ QString ClassicBrushDab::toString() const
 
 QString DrawDabsClassic::toString() const
 {
-	QString s = QString::number(contextId()) + " classicdabs ";
-	if(m_dabs.size()==1) {
-		s += m_dabs.at(0).toString();
+	QString s = QStringLiteral("%1 classicdabs layer=%2 x=%3 y=%4 color=%5 mode=%6 {\n\t")
+		.arg(contextId())
+		.arg(text::idString(m_layer))
+		.arg(m_x / 4.0, 0, 'f', 1)
+		.arg(m_y / 4.0, 0, 'f', 1)
+		.arg(text::argbString(m_color))
+		.arg(int(m_mode))
+		;
 
-	} else {
-		s += "{\n\t";
-		for(const ClassicBrushDab &p : m_dabs) {
-			s += p.toString();
-			s += "\n\t";
-		}
-		s += "}";
+	for(const ClassicBrushDab &p : m_dabs) {
+		s += p.toString();
+		s += "\n\t";
 	}
+	s += "}";
 	return s;
+}
+
+DrawDabsClassic *DrawDabsClassic::fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs)
+{
+	if(dabs.size() % 5 != 0)
+		return nullptr;
+
+	ClassicBrushDabVector dabvector;
+	dabvector.reserve(dabs.size() / 5);
+	for(int i=0;i<dabs.size();i+=5) {
+		dabvector << ClassicBrushDab {
+			int8_t(dabs.at(i+0).toFloat() * 4),
+			int8_t(dabs.at(i+1).toFloat() * 4),
+			uint16_t(dabs.at(i+2).toInt()),
+			uint8_t(dabs.at(i+3).toInt()),
+			uint8_t(dabs.at(i+4).toInt())
+		};
+	}
+
+	return new DrawDabsClassic(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs.value("x").toFloat() * 4,
+		kwargs.value("y").toFloat() * 4,
+		text::parseColor(kwargs["color"]),
+		kwargs.value("mode", "1").toInt(),
+		dabvector
+	);
 }
 
 
@@ -177,9 +207,9 @@ int DrawDabsPixel::serializePayload(uchar *data) const
 
 QString PixelBrushDab::toString() const
 {
-	return QStringLiteral("%1 %1 %3 %4 %5")
-		.arg(x)
-		.arg(y)
+	return QStringLiteral("%1 %2 %3 %4")
+		.arg(int(x))
+		.arg(int(y))
 		.arg(int(size))
 		.arg(int(opacity))
 		;
@@ -187,19 +217,48 @@ QString PixelBrushDab::toString() const
 
 QString DrawDabsPixel::toString() const
 {
-	QString s = QString::number(contextId()) + " pixeldabs ";
-	if(m_dabs.size()==1) {
-		s += m_dabs.at(0).toString();
+	QString s = QStringLiteral("%1 pixeldabs layer=%2 x=%3 y=%4 color=%5 mode=%6 {\n\t")
+		.arg(contextId())
+		.arg(text::idString(m_layer))
+		.arg(m_x)
+		.arg(m_y)
+		.arg(text::argbString(m_color))
+		.arg(int(m_mode))
+		;
 
-	} else {
-		s += "{\n\t";
-		for(const PixelBrushDab &p : m_dabs) {
-			s += p.toString();
-			s += "\n\t";
-		}
-		s += "}";
+	for(const PixelBrushDab &p : m_dabs) {
+		s += p.toString();
+		s += "\n\t";
 	}
+	s += "}";
 	return s;
+}
+
+DrawDabsPixel *DrawDabsPixel::fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs)
+{
+	if(dabs.size() % 4 != 0)
+		return nullptr;
+
+	PixelBrushDabVector dabvector;
+	dabvector.reserve(dabs.size() / 4);
+	for(int i=0;i<dabs.size();i+=4) {
+		dabvector << PixelBrushDab {
+			int8_t(dabs.at(i+0).toInt()),
+			int8_t(dabs.at(i+1).toInt()),
+			uint8_t(dabs.at(i+2).toInt()),
+			uint8_t(dabs.at(i+3).toInt())
+		};
+	}
+
+	return new DrawDabsPixel(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs.value("x").toInt(),
+		kwargs.value("y").toInt(),
+		text::parseColor(kwargs["color"]),
+		kwargs.value("mode", "1").toInt(),
+		dabvector
+	);
 }
 
 }

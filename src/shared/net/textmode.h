@@ -21,6 +21,7 @@
 
 #include "message.h"
 #include "pen.h"
+#include "brushes.h"
 
 namespace protocol {
 namespace text {
@@ -50,7 +51,8 @@ private:
 	enum {
 		ExpectCommand,
 		ExpectKwargLine,
-		ExpectPenMovePoint
+		ExpectPenMovePoint,
+		ExpectDab,
 	} m_state;
 
 	Kwargs m_metadata;
@@ -58,6 +60,7 @@ private:
 	QString m_cmd;
 	Kwargs m_kwargs;
 	PenPointVector m_points;
+	QStringList m_dabs;
 	int m_ctx;
 };
 

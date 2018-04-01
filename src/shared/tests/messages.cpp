@@ -63,6 +63,7 @@ private slots:
 		QTest::newRow("moveregion") << (Message*)new MoveRegion(30, 0x1122, 0, 1, 2, 3, 10, 11, 20, 21, 30, 31, 40, 41, QByteArray("test"));
 
 		QTest::newRow("classicdabs") << (Message*)new DrawDabsClassic(31, 0x1122, 100, -100, 0xff223344, 0x10, ClassicBrushDabVector() << ClassicBrushDab {1, 2, 3, 4, 5} << ClassicBrushDab {10, 20, 30, 40, 50});
+		QTest::newRow("pixeldabs") << (Message*)new DrawDabsPixel(32, 0x1122, 100, -100, 0xff223344, 0x10, PixelBrushDabVector() << PixelBrushDab {1, 2, 3, 4} << PixelBrushDab {10, 20, 30, 40});
 
 		QTest::newRow("undo") << (Message*)new Undo(254, 1, false);
 		QTest::newRow("redo") << (Message*)new Undo(254, 1, true);

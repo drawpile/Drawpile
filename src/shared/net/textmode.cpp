@@ -92,6 +92,7 @@ Parser::Result Parser::parseLine(const QString &line)
 		m_cmd = tokens[1];
 		m_kwargs = Kwargs();
 		m_points = PenPointVector();
+		m_dabs = QStringList();
 
 		// Check if this is a multiline message
 		bool multiline = false;
@@ -111,7 +112,6 @@ Parser::Result Parser::parseLine(const QString &line)
 					return Result { Result::Error, nullptr };
 				}
 			}
-
 		} else {
 			// Extract named arguments
 			for(int i=2;i<tokens.size();++i) {
@@ -127,6 +127,8 @@ Parser::Result Parser::parseLine(const QString &line)
 		if(multiline) {
 			if(m_cmd == "penmove")
 				m_state = ExpectPenMovePoint;
+			else if(m_cmd == "classicdabs" || m_cmd == "pixeldabs")
+				m_state = ExpectDab;
 			else
 				m_state = ExpectKwargLine;
 
@@ -169,6 +171,13 @@ Parser::Result Parser::parseLine(const QString &line)
 		}
 		return { Result::NeedMore, nullptr };
 	}
+	case ExpectDab: {
+		// Extract dab points
+		if(line=="}")
+			break;
+		m_dabs << line.split(' ');
+		return { Result::NeedMore, nullptr };
+	}
 	}
 
 	// Message finished!
@@ -178,6 +187,8 @@ Parser::Result Parser::parseLine(const QString &line)
 
 #define FROMTEXT(name, Cls) if(m_cmd==name) msg = Cls::fromText(m_ctx, m_kwargs)
 	if(m_cmd=="penmove") msg = new PenMove(m_ctx, m_points);
+	else if(m_cmd=="classicdabs") msg = DrawDabsClassic::fromText(m_ctx, m_kwargs, m_dabs);
+	else if(m_cmd=="pixeldabs") msg = DrawDabsPixel::fromText(m_ctx, m_kwargs, m_dabs);
 	else FROMTEXT("join", UserJoin);
 	else FROMTEXT("leave", UserLeave);
 	else FROMTEXT("owner", SessionOwner);
