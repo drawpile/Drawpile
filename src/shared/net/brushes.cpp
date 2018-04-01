@@ -21,6 +21,7 @@
 #include "textmode.h"
 
 #include <QtEndian>
+#include <QRect>
 
 namespace protocol {
 
@@ -144,6 +145,24 @@ DrawDabsClassic *DrawDabsClassic::fromText(uint8_t ctx, const Kwargs &kwargs, co
 	);
 }
 
+QRect DrawDabsClassic::bounds() const
+{
+	int x = m_x, y = m_y;
+	int minX = x, maxX = x;
+	int minY = y, maxY = y;
+	for(const auto dab : m_dabs) {
+		const int r = dab.size/(256*2)*4+1;
+		x += dab.x;
+		y += dab.y;
+
+		minX = qMin(minX, x - r);
+		minY = qMin(minY, y - r);
+		maxX = qMax(maxX, x + r);
+		maxY = qMax(maxY, y + r);
+	}
+	return QRect(minX/4, minY/4, (maxX-minX)/4, (maxY-minY)/4);
+}
+
 
 DrawDabsPixel *DrawDabsPixel::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
@@ -259,6 +278,24 @@ DrawDabsPixel *DrawDabsPixel::fromText(uint8_t ctx, const Kwargs &kwargs, const 
 		kwargs.value("mode", "1").toInt(),
 		dabvector
 	);
+}
+
+QRect DrawDabsPixel::bounds() const
+{
+	int x = m_x, y = m_y;
+	int minX = x, maxX = x;
+	int minY = y, maxY = y;
+	for(const auto dab : m_dabs) {
+		const int r = dab.size/2+1;
+		x += dab.x;
+		y += dab.y;
+
+		minX = qMin(minX, x - r);
+		minY = qMin(minY, y - r);
+		maxX = qMax(maxX, x + r);
+		maxY = qMax(maxY, y + r);
+	}
+	return QRect(minX, minY, maxX-minX, maxY-minY);
 }
 
 }

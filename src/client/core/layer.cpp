@@ -123,6 +123,7 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 Layer::Layer(const Layer &layer, LayerStack *newOwner)
 	: m_owner(newOwner ? newOwner : layer.m_owner),
 	  m_info(layer.m_info),
+	  m_changeBounds(layer.m_changeBounds),
 	  m_width(layer.m_width), m_height(layer.m_height),
 	  m_xtiles(layer.m_xtiles), m_ytiles(layer.m_ytiles),
 	  m_tiles(layer.m_tiles)
@@ -1030,6 +1031,7 @@ Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 				sl->m_info.opacity = opacity;
 				sl->m_info.blend = blendmode;
 				sl->m_info.hidden = false;
+				sl->m_changeBounds = QRect();
 			}
 			return sl;
 		}

@@ -89,6 +89,16 @@ void LayerStack::mergeSublayers(int id)
 	}
 }
 
+QPair<int,QRect> LayerStack::findChangeBounds(int contextId)
+{
+	for(const Layer *l : m_layers) {
+		const QRect r = l->changeBounds(contextId);
+		if(!r.isNull())
+			return QPair<int,QRect>(l->id(), r);
+	}
+	return QPair<int,QRect>(0, QRect());
+}
+
 void LayerStack::resize(int top, int right, int bottom, int left)
 {
 	const QSize oldsize(m_width, m_height);

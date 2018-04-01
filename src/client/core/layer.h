@@ -16,17 +16,17 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LAYER_H
-#define LAYER_H
-
-#include <QColor>
+#ifndef PAINTCORE_LAYER_H
+#define PAINTCORE_LAYER_H
 
 #include "tile.h"
+
+#include <QColor>
+#include <QRect>
 
 class QImage;
 class QSize;
 class QDataStream;
-class QRect;
 
 namespace paintcore {
 
@@ -232,6 +232,29 @@ class Layer {
 		//! Get this layer's tile vector
 		const QVector<Tile> tiles() const { return m_tiles; }
 
+		/**
+		 * @brief Add the given rectangle to this layer's change bounds
+		 *
+		 * The change bounds is a cached bounding rectangle of changes made
+		 * to a private layer.
+		 *
+		 * @param b
+		 */
+		void updateChangeBounds(const QRect &b) { m_changeBounds |= b; }
+
+		/**
+		 * @brief Get the layer's change bounds
+		 */
+		QRect changeBounds() const { return m_changeBounds; }
+
+		QRect changeBounds(int contextId) const {
+			for(const Layer *l : m_sublayers) {
+				if(l->id() == contextId && l->isVisible())
+					return l->changeBounds();
+			}
+			return QRect();
+		}
+
 	private:
 		//! Construct a sublayer
 		Layer(LayerStack *owner, int id, const QSize& size);
@@ -246,7 +269,9 @@ class Layer {
 
 		LayerStack *m_owner;
 		LayerInfo m_info;
-	
+
+		QRect m_changeBounds;
+
 		int m_width;
 		int m_height;
 		int m_xtiles;

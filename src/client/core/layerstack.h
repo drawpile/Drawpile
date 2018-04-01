@@ -167,6 +167,13 @@ public:
 	//! Merge all sublayers with the given ID
 	void mergeSublayers(int id);
 
+	/**
+	 * @brief Find a layer with a sublayer with the given ID and return its change bounds
+	 * @param contextid
+	 * @return Layer ID, Change bounds pair
+	 */
+	QPair<int,QRect> findChangeBounds(int contextid);
+
 signals:
 	//! Emitted when the visible layers are edited
 	void areaChanged(const QRect &area);

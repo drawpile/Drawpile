@@ -24,6 +24,8 @@
 #include <cstdint>
 #include <QVector>
 
+class QRect;
+
 namespace protocol {
 	struct ClassicBrushDab {
 		int8_t x; // coordinates are relative to previous dab
@@ -98,6 +100,8 @@ public:
 	QString toString() const override;
 	QString messageName() const override { return QStringLiteral("classicdabs"); }
 
+	QRect bounds() const;
+
 protected:
 	int payloadLength() const override;
 	int serializePayload(uchar *data) const override;
@@ -153,6 +157,8 @@ public:
 
 	QString toString() const override;
 	QString messageName() const override { return QStringLiteral("pixeldabs"); }
+
+	QRect bounds() const;
 
 protected:
 	int payloadLength() const override;

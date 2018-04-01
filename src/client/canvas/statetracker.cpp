@@ -1319,7 +1319,26 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 		bounds.adjust(-r, -r, r, r);
 		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, bounds);
 	}
+	case MSG_DRAWDABS_CLASSIC: {
+		const DrawDabsClassic &dd = msg.cast<DrawDabsClassic>();
+
+		// Indirect drawing mode: check bounds in PenUp
+		if((dd.color() & 0xff000000))
+			return AffectedArea(AffectedArea::USERATTRS, 0);
+
+		return AffectedArea(AffectedArea::PIXELS, dd.layer(), dd.bounds());
+	}
+	case MSG_DRAWDABS_PIXEL: {
+		const DrawDabsPixel &dd = msg.cast<DrawDabsPixel>();
+
+		// Indirect drawing mode: check bounds in PenUp
+		if((dd.color() & 0xff000000))
+			return AffectedArea(AffectedArea::USERATTRS, 0);
+
+		return AffectedArea(AffectedArea::PIXELS, dd.layer(), dd.bounds());
+	}
 	case MSG_PEN_UP: {
+#if 0
 		const DrawingContext &ctx = _contexts.value(msg->contextId());
 		if(ctx.tool.brush.incremental())
 			return AffectedArea(AffectedArea::USERATTRS, 0);
@@ -1327,6 +1346,12 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 		// Non-incremental brushes get composited only at pen-up.
 		// We need the bounding rectangle of the entire stroke.
 		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, ctx.boundingRect);
+#endif
+		QPair<int,QRect> bounds = _image->findChangeBounds(msg->contextId());
+		if(bounds.first)
+			return AffectedArea(AffectedArea::PIXELS, bounds.first, bounds.second);
+		else
+			return AffectedArea(AffectedArea::USERATTRS, 0);
 	}
 	case MSG_FILLRECT: {
 		const FillRect &fr = msg.cast<FillRect>();
