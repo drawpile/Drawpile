@@ -23,7 +23,7 @@
 #include "net/commands.h"
 
 #include "tools/toolcontroller.h"
-#include "tools/brushes.h"
+#include "tools/freehand.h"
 
 #include "../shared/net/undo.h"
 #include "../shared/net/pen.h"

@@ -16,8 +16,8 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_BRUSHES_H
-#define TOOLS_BRUSHES_H
+#ifndef TOOLS_FREEHAND_H
+#define TOOLS_FREEHAND_H
 
 #include "tool.h"
 #include "brushes/classicbrushstate.h"

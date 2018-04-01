@@ -9,7 +9,7 @@ set (
 	tools/toolproperties.cpp
 	tools/utils.cpp
 	tools/annotation.cpp
-	tools/brushes.cpp
+	tools/freehand.cpp
 	tools/colorpicker.cpp
 	tools/laser.cpp
 	tools/selection.cpp

@@ -20,7 +20,7 @@
 #include "toolcontroller.h"
 
 #include "annotation.h"
-#include "brushes.h"
+#include "freehand.h"
 #include "colorpicker.h"
 #include "laser.h"
 #include "selection.h"
