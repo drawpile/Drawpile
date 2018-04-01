@@ -20,8 +20,7 @@
 #define TOOLS_FREEHAND_H
 
 #include "tool.h"
-#include "brushes/classicbrushstate.h"
-#include "brushes/pixelbrushstate.h"
+#include "brushes/brushengine.h"
 
 namespace tools {
 
@@ -38,8 +37,7 @@ public:
 	bool allowSmoothing() const override { return true; }
 
 private:
-	brushes::ClassicBrushState m_classicbrush;
-	brushes::PixelBrushState m_pixelbrush;
+	brushes::BrushEngine m_brushengine;
 };
 
 }

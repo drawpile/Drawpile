@@ -300,8 +300,6 @@ private:
 	// Drawing related commands
 	void handleToolChange(const protocol::ToolChange &cmd);
 	void handlePenMove(const protocol::PenMove &cmd);
-	void handleDrawDabsClassic(const protocol::DrawDabsClassic &cmd);
-	void handleDrawDabsPixel(const protocol::DrawDabsPixel &cmd);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
 	void handlePutTile(const protocol::PutTile &cmd);

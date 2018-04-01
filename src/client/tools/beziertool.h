@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ private:
 		QPointF cp; // second control point, relative to the main point
 	};
 
-	paintcore::Brush m_previewBrush;
 	QVector<ControlPoint> m_points;
 	QPointF m_beginPoint;
 	bool m_rightButton;

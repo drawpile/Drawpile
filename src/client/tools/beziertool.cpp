@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/shapes.h"
+#include "brushes/brushengine.h"
+#include "brushes/brushpainter.h"
 #include "net/client.h"
 #include "net/commands.h"
 
@@ -60,10 +62,6 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 
 	} else {
 		if(m_points.isEmpty()) {
-			m_previewBrush = owner.activeBrush();
-			m_previewBrush.setSmudge(0);
-			m_previewBrush.setSmudge2(0);
-			m_previewBrush.setSpacing(qMin(m_previewBrush.spacing(), 30));
 			m_points << ControlPoint { point, QPointF() };
 		}
 
@@ -121,7 +119,20 @@ void BezierTool::finishMultipart()
 		QList<protocol::MessagePtr> msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 		msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
-		msgs << net::command::penMove(contextId, calculateBezierCurve());
+
+		const auto pv = calculateBezierCurve();
+		msgs << net::command::penMove(contextId, pv);
+
+		const paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+
+		brushes::BrushEngine brushengine;
+		brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+		for(const Point &p : pv)
+			brushengine.strokeTo(p, layer);
+		brushengine.endStroke();
+
+		msgs << brushengine.takeDabs();
+
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 		owner.client()->sendMessages(msgs);
 	}
@@ -181,15 +192,22 @@ void BezierTool::updatePreview()
 		return;
 	}
 
-	paintcore::StrokeState ss;
+	const PointVector pv = calculateBezierCurve();
+	if(pv.size()<=1)
+		return;
+
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(0, 0, owner.activeBrush());
+
+	for(int i=0;i<pv.size();++i)
+		brushengine.strokeTo(pv.at(i), layer);
+	brushengine.endStroke();
+
 	layer->removeSublayer(-1);
 
-	PointVector pv = calculateBezierCurve();
-
-	layer->dab(-1, m_previewBrush, pv[0], ss);
-
-	for(int i=1;i<pv.size();++i)
-		layer->drawLine(-1, m_previewBrush, pv[i-1], pv[i], ss);
+	const auto dabs = brushengine.takeDabs();
+	for(int i=0;i<dabs.size();++i)
+		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
 }
 
 }

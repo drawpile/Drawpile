@@ -16,24 +16,33 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BRUSHES_CLASSICBRUSHPAINTER_H
-#define BRUSHES_CLASSICBRUSHPAINTER_H
 
-namespace paintcore {
-	class Layer;
-}
+#include "brushengine.h"
 
-namespace protocol {
-	class DrawDabsClassic;
-}
+#include "classicbrushstate.h"
+#include "pixelbrushstate.h"
 
 namespace brushes {
 
-/**
- * Draw brush drabs on the canvas
- */
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer=0);
-
+BrushEngine::BrushEngine()
+{
 }
 
-#endif
+void BrushEngine::setBrush(int contextId, int layerId, const paintcore::Brush &brush)
+{
+	// Select brush engine to use
+	if(brush.subpixel()) {
+		m_activeEngine = &m_classic;
+		m_classic.setBrush(brush);
+		m_classic.setContextId(contextId);
+		m_classic.setLayer(layerId);
+
+	} else {
+		m_activeEngine = &m_pixel;
+		m_pixel.setBrush(brush);
+		m_pixel.setContextId(contextId);
+		m_pixel.setLayer(layerId);
+	}
+}
+
+}

@@ -20,7 +20,7 @@
 #define BRUSHES_PIXELBRUSHPAINTER_H
 
 namespace paintcore {
-	class LayerStack;
+	class Layer;
 }
 
 namespace protocol {
@@ -32,7 +32,7 @@ namespace brushes {
 /**
  * Draw brush drabs on the canvas
  */
-void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::LayerStack *layers);
+void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::Layer *layer, int sublayer=0);
 
 }
 

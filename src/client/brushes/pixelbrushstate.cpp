@@ -56,7 +56,7 @@ void PixelBrushState::setBrush(const paintcore::Brush &brush)
 		qWarning("Brush changed mid-stroke!");
 }
 
-void PixelBrushState::strokeTo(const paintcore::Point &to)
+void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Layer *)
 {
 	if(m_pendown) {
 		// Stroke in progress: draw a line

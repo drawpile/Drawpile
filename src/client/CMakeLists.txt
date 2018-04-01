@@ -68,6 +68,8 @@ set (
 	core/shapes.cpp
 	core/floodfill.cpp
 	core/tilevector.cpp
+	brushes/brushengine.cpp
+	brushes/brushpainter.cpp
 	brushes/classicbrushstate.cpp
 	brushes/classicbrushpainter.cpp
 	brushes/pixelbrushstate.cpp

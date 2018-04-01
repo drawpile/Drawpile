@@ -16,23 +16,42 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BRUSHES_CLASSICBRUSHPAINTER_H
-#define BRUSHES_CLASSICBRUSHPAINTER_H
 
-namespace paintcore {
-	class Layer;
-}
+#ifndef BRUSHES_BRUSHPAINTER_H
+#define BRUSHES_BRUSHPAINTER_H
 
 namespace protocol {
-	class DrawDabsClassic;
+	class Message;
+}
+
+namespace paintcore {
+	class LayerStack;
+	class Layer;
 }
 
 namespace brushes {
 
 /**
- * Draw brush drabs on the canvas
+ * @brief Draw brush dabs onto the canvas
+ *
+ * The layer is selected automatically
+ *
+ * @param msg brush dab message
+ * @param layers layer stack
  */
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer=0);
+void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers);
+
+/**
+ * @brief Draw brush dabs onto a specific layer
+ *
+ * Typically, you should call drawBrushDabs instead. However, this function
+ * must be called directly when you're drawing onto a preview sublayer.
+ *
+ * @param msg brush dab message
+ * @param layer the layer to draw onto
+ * @param sublayer sublayer override
+ */
+void drawBrushDabsDirect(const protocol::Message &msg, paintcore::Layer *layer, int sublayer=0);
 
 }
 

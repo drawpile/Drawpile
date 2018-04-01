@@ -23,8 +23,7 @@
 #include "core/brush.h"
 #include "core/point.h"
 #include "../shared/net/brushes.h"
-
-#include <QPointer>
+#include "brushstate.h"
 
 namespace paintcore {
 	class LayerStack;
@@ -40,7 +39,7 @@ namespace brushes {
  * This class keeps track of a brush stroke's state and generates
  * DrawDabs commands.
  */
-class ClassicBrushState {
+class ClassicBrushState : public BrushState {
 public:
 	ClassicBrushState();
 
@@ -65,12 +64,12 @@ public:
 	 * @brief Start or continue a stroke
 	 * @param sourceLayer layer to pick up color from (when smudging)
 	 */
-	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer);
+	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override;
 
 	/**
 	 * @brief End the active stroke
 	 */
-	void endStroke();
+	void endStroke() override;
 
 	/**
 	 * @brief Take the current DrawDab commands
@@ -80,7 +79,7 @@ public:
 	 *
 	 * @return list of DrawDab commands generated so far
 	 */
-	QList<protocol::MessagePtr> takeDabs() {
+	QList<protocol::MessagePtr> takeDabs() override {
 		auto dabs = m_dabs;
 		m_dabs = QList<protocol::MessagePtr>();
 		m_lastDab = nullptr;

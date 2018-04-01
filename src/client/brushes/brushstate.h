@@ -16,23 +16,46 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BRUSHES_CLASSICBRUSHPAINTER_H
-#define BRUSHES_CLASSICBRUSHPAINTER_H
+
+#ifndef DP_BRUSHSTATE_H
+#define DP_BRUSHSTATE_H
+
+#include "../shared/net/message.h"
 
 namespace paintcore {
+	class Point;
 	class Layer;
-}
-
-namespace protocol {
-	class DrawDabsClassic;
 }
 
 namespace brushes {
 
 /**
- * Draw brush drabs on the canvas
+ * @brief An abstract base class for brush engines
  */
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer=0);
+class BrushState {
+public:
+	virtual ~BrushState() { }
+
+	/**
+	 * @brief Start or continue a stroke
+	 * @param sourceLayer layer to pick up color from (when smudging.) May be nullptr
+	 */
+	virtual void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) = 0;
+
+	/**
+	 * @brief End the active stroke
+	 */
+	virtual void endStroke() = 0;
+
+	/**
+	 * @brief Take the list of DrawDab* commands accumulated so far.
+	 *
+	 * This clears the dab buffer but does not end the stroke.
+	 *
+	 * @return
+	 */
+	virtual QList<protocol::MessagePtr> takeDabs() = 0;
+};
 
 }
 

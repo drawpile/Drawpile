@@ -42,19 +42,8 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
 
-	if(owner.activeBrush().subpixel()) {
-		m_classicbrush.setBrush(owner.activeBrush());
-		m_classicbrush.setLayer(owner.activeLayer());
-		m_classicbrush.setContextId(owner.client()->myId());
-
-		m_classicbrush.strokeTo(point, nullptr);
-	} else {
-		m_pixelbrush.setBrush(owner.activeBrush());
-		m_pixelbrush.setLayer(owner.activeLayer());
-		m_pixelbrush.setContextId(owner.client()->myId());
-
-		m_pixelbrush.strokeTo(point);
-	}
+	m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+	m_brushengine.strokeTo(point, nullptr);
 
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
@@ -76,32 +65,20 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	v[0] = net::command::pointToProtocol(point);
 	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
 
-	if(owner.activeBrush().subpixel()) {
-		const paintcore::Layer *srcLayer = nullptr;
-		if(owner.activeBrush().smudge1()>0)
-			srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	const paintcore::Layer *srcLayer = nullptr;
+	if(owner.activeBrush().smudge1()>0)
+		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 
-		m_classicbrush.strokeTo(point, srcLayer);
-		owner.client()->sendMessages(m_classicbrush.takeDabs());
-
-	} else {
-		m_pixelbrush.strokeTo(point);
-		owner.client()->sendMessages(m_pixelbrush.takeDabs());
-	}
+	m_brushengine.strokeTo(point, srcLayer);
+	owner.client()->sendMessages(m_brushengine.takeDabs());
 }
 
 void Freehand::end()
 {
-	if(owner.activeBrush().subpixel()) {
-		owner.client()->sendMessages(m_classicbrush.takeDabs());
-		m_classicbrush.endStroke();
-
-	} else {
-		owner.client()->sendMessages(m_pixelbrush.takeDabs());
-		m_pixelbrush.endStroke();
-	}
-
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenUp(owner.client()->myId())));
+	m_brushengine.endStroke();
+	QList<protocol::MessagePtr> msgs = m_brushengine.takeDabs();
+	msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));
+	owner.client()->sendMessages(msgs);
 }
 
 }

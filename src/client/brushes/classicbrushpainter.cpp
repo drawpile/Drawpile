@@ -19,7 +19,6 @@
 
 #include "../shared/net/brushes.h"
 #include "core/brushmask.h"
-#include "core/layerstack.h"
 #include "core/layer.h"
 
 #include <QCache>
@@ -259,25 +258,24 @@ static paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal
 	return s;
 }
 
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::LayerStack *layers)
+void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer)
 {
-	Q_ASSERT(layers);
+	Q_ASSERT(layer);
 
 	if(dabs.dabs().isEmpty()) {
 		qWarning("drawDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
-		return;
-	}
-	paintcore::Layer *layer = layers->getLayer(dabs.layer());
-	if(!layer) {
-		qWarning("drawDabs(ctx=%d, layer=%d): layer does not exist!", dabs.contextId(), dabs.layer());
 		return;
 	}
 
 	auto blendmode = paintcore::BlendMode::Mode(dabs.mode());
 	const QColor color = QColor::fromRgba(dabs.color());
 
-	if(color.alpha()>0) {
-		layer = layer->getSubLayer(dabs.contextId(), blendmode, color.alpha());
+	if(sublayer==0 && color.alpha()>0)
+		sublayer = dabs.contextId();
+
+	if(sublayer != 0) {
+		layer = layer->getSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
+		layer->updateChangeBounds(dabs.bounds());
 		blendmode = paintcore::BlendMode::MODE_NORMAL;
 	}
 
