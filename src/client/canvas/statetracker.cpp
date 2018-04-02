@@ -444,7 +444,7 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	paintcore::Layer *layer = _image->createLayer(
-		cmd.id(),
+		cmd.layer(),
 		cmd.source(),
 		QColor::fromRgba(cmd.fill()),
 		(cmd.flags() & protocol::LayerCreate::FLAG_INSERT),
@@ -456,7 +456,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 		// Note: layers are listed bottom-first in the stack,
 		// but topmost first in the view
 		m_layerlist->createLayer(
-			cmd.id(),
+			cmd.layer(),
 			_image->layerCount() - _image->indexOf(layer->id()) - 1,
 			cmd.title()
 		);
@@ -489,15 +489,15 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 {
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer attributes for non-existent layer" << cmd.id();
+		qWarning() << "received layer attributes for non-existent layer" << cmd.layer();
 		return;
 	}
 	
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+	m_layerlist->changeLayer(layer->id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
@@ -507,14 +507,14 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 	if(cmd.contextId() != localId())
 		return;
 
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer visibility for non-existent layer" << cmd.id();
+		qWarning() << "received layer visibility for non-existent layer" << cmd.layer();
 		return;
 	}
 
 	layer->setHidden(!cmd.visible());
-	m_layerlist->setLayerHidden(cmd.id(), !cmd.visible());
+	m_layerlist->setLayerHidden(layer->id(), !cmd.visible());
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -529,14 +529,14 @@ void StateTracker::previewLayerOpacity(int id, float opacity)
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 {
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer title for non-existent layer" << cmd.id();
+		qWarning() << "received layer title for non-existent layer" << cmd.layer();
 		return;
 	}
 
 	layer->setTitle(cmd.title());
-	m_layerlist->retitleLayer(cmd.id(), cmd.title());
+	m_layerlist->retitleLayer(layer->id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
@@ -561,9 +561,9 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 {
 	if(cmd.merge())
-		_image->mergeLayerDown(cmd.id());
-	_image->deleteLayer(cmd.id());
-	m_layerlist->deleteLayer(cmd.id());
+		_image->mergeLayerDown(cmd.layer());
+	_image->deleteLayer(cmd.layer());
+	m_layerlist->deleteLayer(cmd.layer());
 }
 
 void StateTracker::handleDrawDabs(const protocol::Message &cmd)
@@ -1144,9 +1144,10 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 
 	switch(msg->type()) {
 	using namespace protocol;
-	case MSG_LAYER_CREATE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerCreate>().id());
-	case MSG_LAYER_ATTR: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerAttributes>().id());
-	case MSG_LAYER_RETITLE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerRetitle>().id());
+	case MSG_LAYER_CREATE:
+	case MSG_LAYER_ATTR:
+	case MSG_LAYER_RETITLE:
+		return AffectedArea(AffectedArea::LAYERATTRS, msg->layer());
 	case MSG_LAYER_VISIBILITY: return AffectedArea(AffectedArea::USERATTRS, 0);
 
 	case MSG_PUTIMAGE: {
@@ -1191,10 +1192,11 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 		return AffectedArea(AffectedArea::PIXELS, fr.layer(), QRect(fr.x(), fr.y(), fr.width(), fr.height()));
 	}
 
-	case MSG_ANNOTATION_CREATE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationCreate>().id());
-	case MSG_ANNOTATION_RESHAPE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationReshape>().id());
-	case MSG_ANNOTATION_EDIT: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationEdit>().id());
-	case MSG_ANNOTATION_DELETE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationDelete>().id());
+	case MSG_ANNOTATION_CREATE:
+	case MSG_ANNOTATION_RESHAPE:
+	case MSG_ANNOTATION_EDIT:
+	case MSG_ANNOTATION_DELETE:
+		return AffectedArea(AffectedArea::ANNOTATION, msg->layer());
 
 	case MSG_REGION_MOVE: {
 		const MoveRegion &mr = msg.cast<MoveRegion>();

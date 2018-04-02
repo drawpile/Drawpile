@@ -173,6 +173,18 @@ public:
 	void setContextId(uint8_t userid) { m_contextid = userid; }
 
 	/**
+	 * @brief Get the ID of the layer this command affects
+	 *
+	 * For commands that do not affect any particular layer, 0 should
+	 * be returned.
+	 *
+	 * Annotation editing commands can return the annotation ID here.
+	 *
+	 * @return layer (or equivalent) ID or 0 if not applicable
+	 */
+	virtual uint16_t layer() const { return 0; }
+
+	/**
 	 * @brief Is this message type undoable?
 	 *
 	 * By default, all Command messages are undoable.

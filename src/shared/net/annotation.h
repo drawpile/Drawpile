@@ -51,6 +51,9 @@ public:
 	 */
 	uint16_t id() const { return m_id; }
 
+	//! Alias for id()
+	uint16_t layer() const override { return m_id; }
+
 	int32_t x() const { return m_x; }
 	int32_t y() const { return m_y; }
 	uint16_t w() const { return m_w; }

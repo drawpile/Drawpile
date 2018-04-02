@@ -131,9 +131,7 @@ public:
 	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	// Note: this is an operator only command, depending on the target layer and whether OWNLAYERS mode is set.
-
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t locked() const { return m_locked; }
 	const QList<uint8_t> exclusive() const { return m_exclusive; }
 
@@ -205,7 +203,7 @@ public:
 	static DefaultLayer *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static DefaultLayer *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 
 	QString messageName() const override { return QStringLiteral("defaultlayer"); }
 

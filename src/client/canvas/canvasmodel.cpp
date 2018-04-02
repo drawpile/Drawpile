@@ -433,9 +433,9 @@ void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
 
 void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
 {
-	m_layerlist->setDefaultLayer(msg.id());
+	m_layerlist->setDefaultLayer(msg.layer());
 	if(!m_statetracker->hasParticipated())
-		emit layerAutoselectRequest(msg.id());
+		emit layerAutoselectRequest(msg.layer());
 }
 
 
