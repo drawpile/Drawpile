@@ -135,6 +135,24 @@ public:
 	//! Emit areaChanged if anything has been marked as dirty
 	void notifyAreaChanged();
 
+	/**
+	 * @brief Start a sequence of operations
+	 *
+	 * notifyAreaChanged is suppressed until endSequence is called.
+	 *
+	 * Note: you should typically use the LayerStackWriteSequence wrapper class
+	 * instead of calling this directly.
+	 */
+	void beginWriteSequence();
+
+	/**
+	 * @brief End of a sequence of operations on this
+	 */
+	void endWriteSequence();
+
+	//! Is a write sequence underway?
+	bool isWriteSequence() const { return m_writeSequence; }
+
 	//! Emit a layer info change notification
 	void notifyLayerInfoChange(const Layer *layer);
 
@@ -220,6 +238,7 @@ private:
 	int m_onionskinsBelow, m_onionskinsAbove;
 	bool m_onionskinTint;
 	bool m_viewBackgroundLayer;
+	bool m_writeSequence;
 };
 
 /// Layer stack savepoint for undo use
@@ -236,6 +255,30 @@ private:
 	QList<Layer*> layers;
 	QList<Annotation> annotations;
 	int width, height;
+};
+
+/**
+ * @brief A RAII wrapper that automatically calls begin and endWriteSequence
+ */
+class LayerStackWriteSequence {
+public:
+	explicit LayerStackWriteSequence(LayerStack *layerstack)
+		: m_layerstack(layerstack)
+	{
+		Q_ASSERT(m_layerstack);
+		m_layerstack->beginWriteSequence();
+	}
+
+	~LayerStackWriteSequence()
+	{
+		m_layerstack->endWriteSequence();
+	}
+
+	LayerStack *operator *() { return m_layerstack; }
+	LayerStack *operator ->() { return m_layerstack; }
+
+private:
+	LayerStack *m_layerstack;
 };
 
 }

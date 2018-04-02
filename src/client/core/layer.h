@@ -91,7 +91,12 @@ class Layer {
 		//! Get the layer as an image with excess transparency cropped away
 		QImage toCroppedImage(int *xOffset, int *yOffset) const;
 
-		//! Adjust layer size
+		/**
+		 * @brief Adjust layer size
+		 *
+		 * Note: Unless you're working with a free layer, you should not call
+		 * this yourself. Instead, use the layerstack's resize function.
+		 */
 		void resize(int top, int right, int bottom, int left);
 
 		//! Get the color at the specified coordinates

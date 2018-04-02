@@ -588,7 +588,8 @@ void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color(), layername);
 #endif
 
-	brushes::drawBrushDabs(cmd, _image);
+	paintcore::LayerStackWriteSequence layers(_image);
+	brushes::drawBrushDabs(cmd, *layers);
 
 	if(_showallmarkers || cmd.contextId() != localId())
 		emit userMarkerMove(cmd.contextId(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint(), 0);

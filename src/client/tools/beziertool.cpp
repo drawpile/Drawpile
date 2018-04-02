@@ -181,7 +181,8 @@ PointVector BezierTool::calculateBezierCurve() const
 
 void BezierTool::updatePreview()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	paintcore::LayerStackWriteSequence layers(owner.model()->layerStack());
+	paintcore::Layer *layer = layers->getLayer(owner.activeLayer());
 	if(!layer) {
 		qWarning("BezierTool::updatePreview: no active layer!");
 		return;

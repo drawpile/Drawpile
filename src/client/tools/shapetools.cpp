@@ -88,7 +88,8 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+	paintcore::LayerStackWriteSequence layers(owner.model()->layerStack());
+	paintcore::Layer *layer = layers->getLayer(owner.activeLayer());
 	if(!layer) {
 		qWarning("ShapeTool::updatePreview: no active layer!");
 		return;

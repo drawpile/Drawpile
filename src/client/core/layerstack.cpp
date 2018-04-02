@@ -32,7 +32,8 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
-	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(true)
+	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(true),
+	  m_writeSequence(false)
 {
 	m_annotations = new AnnotationModel(this);
 }
@@ -47,7 +48,8 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_viewlayeridx(orig->m_viewlayeridx),
 	  m_onionskinsBelow(orig->m_onionskinsBelow),
 	  m_onionskinTint(orig->m_onionskinTint),
-	  m_viewBackgroundLayer(orig->m_viewBackgroundLayer)
+	  m_viewBackgroundLayer(orig->m_viewBackgroundLayer),
+	  m_writeSequence(false)
 {
 	m_annotations = orig->m_annotations->clone(this);
 	for(const Layer *l : orig->m_layers)
@@ -580,10 +582,23 @@ void LayerStack::markDirty(int index)
 
 void LayerStack::notifyAreaChanged()
 {
-	if(!m_dirtyrect.isEmpty()) {
+	if(!m_writeSequence && !m_dirtyrect.isEmpty()) {
 		emit areaChanged(m_dirtyrect);
 		m_dirtyrect = QRect();
 	}
+}
+
+void LayerStack::beginWriteSequence()
+{
+	Q_ASSERT(!m_writeSequence);
+	m_writeSequence = true;
+}
+
+void LayerStack::endWriteSequence()
+{
+	Q_ASSERT(m_writeSequence);
+	m_writeSequence = false;
+	notifyAreaChanged();
 }
 
 void LayerStack::notifyLayerInfoChange(const Layer *layer)

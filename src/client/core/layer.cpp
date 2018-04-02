@@ -627,7 +627,6 @@ void Layer::putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::
 
 	if(m_owner && isVisible()) {
 		m_owner->markDirty(QRect(left, top, right-left, bottom-top));
-		// TODO call this after the whole dab sequence has been painted
 		m_owner->notifyAreaChanged();
 	}
 }
