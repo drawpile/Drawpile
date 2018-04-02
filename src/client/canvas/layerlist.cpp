@@ -104,6 +104,12 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	if(count < 2)
 		return;
 
+	if(oldIdx<0 || oldIdx >= count || newIdx<0 || newIdx >= count) {
+		// This can happen when a layer is deleted while someone is drag&dropping it
+		qWarning("Whoops, can't move layer from %d to %d because it was just deleted!", oldIdx, newIdx);
+		return;
+	}
+
 	QList<uint16_t> layers;
 	layers.reserve(count);
 	for(const LayerListItem &li : m_items)
