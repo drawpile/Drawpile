@@ -21,7 +21,7 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
+#include "brushes/shapes.h"
 #include "brushes/brushpainter.h"
 #include "net/client.h"
 #include "net/commands.h"
@@ -147,7 +147,7 @@ Rectangle::Rectangle(ToolController &owner)
 
 paintcore::PointVector Rectangle::pointVector() const
 {
-	return paintcore::shapes::rectangle(rect());
+	return brushes::shapes::rectangle(rect());
 }
 
 Ellipse::Ellipse(ToolController &owner)
@@ -157,7 +157,7 @@ Ellipse::Ellipse(ToolController &owner)
 
 paintcore::PointVector Ellipse::pointVector() const
 {
-	return paintcore::shapes::ellipse(rect());
+	return brushes::shapes::ellipse(rect());
 }
 
 }

@@ -21,8 +21,8 @@
 #include "core/point.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
 #include "core/floodfill.h"
+#include "brushes/shapes.h"
 #include "brushes/brushengine.h"
 #include "brushes/brushpainter.h"
 #include "brushpreview.h"
@@ -160,16 +160,16 @@ void BrushPreview::updatePreview()
 	paintcore::PointVector pointvector;
 
 	switch(_shape) {
-	case Stroke: pointvector = paintcore::shapes::sampleStroke(previewRect); break;
+	case Stroke: pointvector = brushes::shapes::sampleStroke(previewRect); break;
 	case Line:
 		pointvector
 			<< paintcore::Point(previewRect.left(), previewRect.top(), 1.0)
 			<< paintcore::Point(previewRect.right(), previewRect.bottom(), 1.0);
 		break;
-	case Rectangle: pointvector = paintcore::shapes::rectangle(previewRect); break;
-	case Ellipse: pointvector = paintcore::shapes::ellipse(previewRect); break;
+	case Rectangle: pointvector = brushes::shapes::rectangle(previewRect); break;
+	case Ellipse: pointvector = brushes::shapes::ellipse(previewRect); break;
 	case FloodFill:
-	case FloodErase: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
+	case FloodErase: pointvector = brushes::shapes::sampleBlob(previewRect); break;
 	}
 
 	QColor bgcolor = m_bg;

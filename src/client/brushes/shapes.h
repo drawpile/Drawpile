@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,23 +17,24 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DP_PAINTCORE_SHAPES_H
-#define DP_PAINTCORE_SHAPES_H
+#ifndef DP_BRUSHES_SHAPES_H
+#define DP_BRUSHES_SHAPES_H
+
+#include "core/point.h"
 
 #include <QRectF>
-#include "point.h"
 
-namespace paintcore {
+namespace brushes {
 namespace shapes {
 
-PointVector rectangle(const QRectF &rect);
-PointVector ellipse(const QRectF &rect);
+paintcore::PointVector rectangle(const QRectF &rect);
+paintcore::PointVector ellipse(const QRectF &rect);
 
-PointVector cubicBezierCurve(const QPointF p[4]);
+paintcore::PointVector cubicBezierCurve(const QPointF p[4]);
 
 // These are used for brush previews
-PointVector sampleStroke(const QRectF &rect);
-PointVector sampleBlob(const QRectF &rect);
+paintcore::PointVector sampleStroke(const QRectF &rect);
+paintcore::PointVector sampleBlob(const QRectF &rect);
 
 }
 }

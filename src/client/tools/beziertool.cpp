@@ -21,7 +21,7 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
+#include "brushes/shapes.h"
 #include "brushes/brushengine.h"
 #include "brushes/brushpainter.h"
 #include "net/client.h"
@@ -172,7 +172,7 @@ PointVector BezierTool::calculateBezierCurve() const
 			m_points[i].point
 		};
 
-		pv << paintcore::shapes::cubicBezierCurve(points);
+		pv << brushes::shapes::cubicBezierCurve(points);
 	}
 
 	return pv;
