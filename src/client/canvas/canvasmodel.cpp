@@ -65,9 +65,10 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 		return m_layerstack->getLayer(id);
 	});
 
+	m_usercursors->setLayerList(m_layerlist);
+
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 
-	connect(m_statetracker, &StateTracker::userMarkerAttribs, m_usercursors, &UserCursorModel::setCursorAttributes);
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
@@ -422,7 +423,7 @@ void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
 	QPoint p(msg.x() / 4.0, msg.y() / 4.0);
-	m_usercursors->setCursorPosition(msg.contextId(), p);
+	m_usercursors->setCursorPosition(msg.contextId(), 0, p);
 	m_lasers->addPoint(msg.contextId(), p);
 }
 

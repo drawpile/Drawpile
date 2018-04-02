@@ -577,22 +577,11 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 
 void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 {
-#if 0 // TODO
-	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-	QString layername;
-	if(layer)
-		layername = layer->title();
-	else
-		layername = QStringLiteral("???");
-
-	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color(), layername);
-#endif
-
 	paintcore::LayerStackWriteSequence layers(_image);
 	brushes::drawBrushDabs(cmd, *layers);
 
 	if(_showallmarkers || cmd.contextId() != localId())
-		emit userMarkerMove(cmd.contextId(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint(), 0);
+		emit userMarkerMove(cmd.contextId(), cmd.layer(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint());
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
@@ -619,7 +608,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2));
 }
 
 void StateTracker::handlePutTile(const protocol::PutTile &cmd)
@@ -658,7 +647,7 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), paintcore::BlendMode::Mode(cmd.blend()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2));
 }
 
 void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
@@ -746,7 +735,7 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 	layer->putImage(offset.x(), offset.y(), transformed, paintcore::BlendMode::MODE_NORMAL);
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), target.boundingRect().center(), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), target.boundingRect().center());
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)
