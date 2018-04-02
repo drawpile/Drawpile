@@ -1078,6 +1078,21 @@ void Layer::mergeSublayer(int id)
 	}
 }
 
+void Layer::mergeAllSublayers()
+{
+	for(Layer *sl : m_sublayers) {
+		if(sl->id() > 0) {
+			if(!sl->isHidden()) {
+				merge(sl);
+				// Set hidden flag directly to avoid markDirty call.
+				// The merge should cause no visual change.
+				sl->m_info.hidden = true;
+			}
+			return;
+		}
+	}
+}
+
 /**
  * @brief This is used to remove temporary sublayers
  *

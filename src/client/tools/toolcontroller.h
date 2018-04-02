@@ -119,6 +119,8 @@ signals:
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
 
+	void colorUsed(const QColor &color);
+
 private slots:
 	void onAnnotationRowDelete(const QModelIndex&, int first, int last);
 

@@ -361,6 +361,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
+	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
 
 	connect(m_dockInput, &docks::InputSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
 	m_doc->toolCtrl()->setSmoothing(m_dockInput->getSmoothing());
@@ -376,10 +377,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION)), &tools::AnnotationSettings::setSelectionId);
-
-	// Client command receive signals
-
-	connect(m_doc->client(), SIGNAL(sentColorChange(QColor)), m_dockColors, SLOT(addLastUsedColor(QColor)));
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);

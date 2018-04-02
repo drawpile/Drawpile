@@ -89,6 +89,13 @@ void LayerStack::mergeSublayers(int id)
 	}
 }
 
+void LayerStack::mergeAllSublayers()
+{
+	for(Layer *l : m_layers) {
+		l->mergeAllSublayers();
+	}
+}
+
 QPair<int,QRect> LayerStack::findChangeBounds(int contextId)
 {
 	for(const Layer *l : m_layers) {

@@ -18,6 +18,7 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/statetracker.h"
 #include "core/layer.h"
 #include "net/client.h"
 

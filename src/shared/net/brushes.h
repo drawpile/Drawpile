@@ -174,7 +174,19 @@ private:
 	uint8_t m_mode;
 };
 
+/**
+ * @brief Pen up command
+ *
+ * The pen up signals the end of the stroke. In indirect drawing mode, it causes
+ * the stroke to be committed to the current layer.
+ */
+class PenUp : public ZeroLengthMessage<PenUp> {
+public:
+	PenUp(uint8_t ctx) : ZeroLengthMessage(MSG_PEN_UP, ctx) {}
+
+	QString messageName() const override { return QStringLiteral("penup"); }
+};
+
 }
 
 #endif
-

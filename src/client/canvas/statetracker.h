@@ -62,49 +62,6 @@ class QTimer;
 
 namespace canvas {
 
-struct ToolContext {
-	ToolContext() : layer_id(-1) {}
-	ToolContext(int layer, const paintcore::Brush &b) : layer_id(layer), brush(b) { }
-
-	int layer_id;
-	paintcore::Brush brush;
-
-	void updateFromToolchange(const protocol::ToolChange &cmd);
-
-	bool operator==(const ToolContext &other) const {
-		return layer_id == other.layer_id && brush == other.brush;
-	}
-	bool operator!=(const ToolContext &other) const {
-		return layer_id != other.layer_id || brush != other.brush;
-	}
-};
-
-/**
- * \brief User state
- * 
- * The drawing context captures the state needed by a single user for drawing.
- */
-struct DrawingContext {
-	DrawingContext() : pendown(false) {}
-	
-	//! Currently selected tool
-	ToolContext tool;
-	
-	//! Last pen-move point
-	paintcore::Point lastpoint;
-	
-	//! Is the stroke currently in progress?
-	bool pendown;
-	
-	//! State of the current stroke
-	paintcore::StrokeState stroke;
-
-	//! Bounding rectangle of current/last stroke
-	// This is used to determine if strokes (potentially)
-	// intersect and a canvas rollback/replay is needed.
-	QRect boundingRect;
-};
-
 class StateTracker;
 class CanvasModel;
 
@@ -189,8 +146,6 @@ public:
 
 	bool hasFullHistory() const { return m_fullhistory; }
 	const History &getHistory() const { return m_history; }
-
-	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
 
 	/**
 	 * @brief Set if all user markers (own included) should be shown
@@ -298,8 +253,7 @@ private:
 	void handleLayerDefault(const protocol::DefaultLayer &cmd);
 	
 	// Drawing related commands
-	void handleToolChange(const protocol::ToolChange &cmd);
-	void handlePenMove(const protocol::PenMove &cmd);
+	void handleDrawDabs(const protocol::Message &msg);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
 	void handlePutTile(const protocol::PutTile &cmd);
@@ -317,8 +271,6 @@ private:
 	void handleAnnotationReshape(const protocol::AnnotationReshape &cmd);
 	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
 	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
-
-	QHash<int, DrawingContext> _contexts;
 
 	paintcore::LayerStack *_image;
 	LayerListModel *m_layerlist;

@@ -169,6 +169,9 @@ class Layer {
 		//! Merge a sublayer with this layer
 		void mergeSublayer(int id);
 
+		//! Merge all sublayers with positive IDs
+		void mergeAllSublayers();
+
 		//! Remove a sublayer
 		void removeSublayer(int id);
 

@@ -21,7 +21,6 @@
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
-#include "../shared/net/pen.h"
 #include "../shared/net/brushes.h"
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
@@ -46,7 +45,6 @@ void AclFilter::reset(int myId, bool localMode)
 	m_imagesLocked = false;
 	m_ownLayers = false;
 	m_lockAnnotationCreation = false;
-	m_userLayers.clear();
 
 	m_lockDefault = false;
 
@@ -101,8 +99,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 		if(m_userlocks.removeAll(msg.contextId())>0)
 			emit userLocksChanged(m_userlocks);
-
-		m_userLayers.remove(msg.contextId());
 
 		QMutableHashIterator<int,LayerAcl> i(m_layers);
 		while(i.hasNext()) {
@@ -164,9 +160,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		setUserLock(lmsg.ids().contains(m_myId));
 		return true;
 	}
-	case MSG_TOOLCHANGE:
-		m_userLayers[msg.contextId()] = static_cast<const ToolChange&>(msg).layer();
-		return true;
 
 	case MSG_LAYER_DEFAULT:
 		return isOpUser;
@@ -222,9 +215,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
 	case MSG_FILLRECT:
 		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId()));
-
-	case MSG_PEN_MOVE:
-		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
 
 	case MSG_DRAWDABS_CLASSIC:
 		return !isLayerLockedFor(static_cast<const protocol::DrawDabsClassic&>(msg).layer(), msg.contextId());

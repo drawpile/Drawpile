@@ -130,7 +130,6 @@ private:
 	bool isLayerLockedFor(int layerId, uint8_t userId) const;
 
 	QHash<int,LayerAcl> m_layers;
-	QHash<int, int> m_userLayers; // Users' selected layers for brush operations
 
 	int m_myId;
 

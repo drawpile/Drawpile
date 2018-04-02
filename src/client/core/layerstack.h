@@ -167,6 +167,9 @@ public:
 	//! Merge all sublayers with the given ID
 	void mergeSublayers(int id);
 
+	//! Merge all sublayers with positive IDs
+	void mergeAllSublayers();
+
 	/**
 	 * @brief Find a layer with a sublayer with the given ID and return its change bounds
 	 * @param contextid

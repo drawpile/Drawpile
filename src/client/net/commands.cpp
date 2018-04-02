@@ -22,7 +22,6 @@
 
 #include "../shared/net/control.h"
 #include "../shared/net/image.h"
-#include "../shared/net/pen.h"
 
 #include <QImage>
 
@@ -177,84 +176,6 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 	}
 #endif
 	return list;
-}
-
-protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush)
-{
-	uint8_t mode = brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0;
-	mode |= brush.incremental() ? protocol::TOOL_MODE_INCREMENTAL : 0;
-
-	return protocol::MessagePtr(new protocol::ToolChange(
-		userid,
-		layer,
-		brush.blendingMode(),
-		mode,
-		brush.spacing(),
-		brush.color().rgba(),
-		brush.hardness1() * 255,
-		brush.hardness2() * 255,
-		brush.size1(),
-		brush.size2(),
-		brush.opacity1() * 255,
-		brush.opacity2() * 255,
-		brush.smudge1() * 255,
-		brush.smudge2() * 255,
-		brush.resmudge()
-	));
-}
-
-
-/**
- * Convert a dpcore::Point to network format. The
- * reverse operation for this is in statetracker.cpp
- * @param p
- * @return
- */
-protocol::PenPoint pointToProtocol(const paintcore::Point &point)
-{
-	int32_t x = point.x() * 4.0;
-	int32_t y = point.y() * 4.0;
-	uint16_t p = point.pressure() * 0xffff;
-
-	return protocol::PenPoint(x, y, p);
-}
-
-/**
- * Convert a dpcore::Point to network format. The
- * reverse operation for this is in statetracker.cpp
- * @param p
- * @return
- */
-protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
-{
-	protocol::PenPointVector ppvec;
-	ppvec.reserve(points.size());
-	for(const paintcore::Point &p : points)
-		ppvec.append(pointToProtocol(p));
-
-	return ppvec;
-}
-
-QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points)
-{
-	const int batches = points.size() / protocol::PenMove::MAX_POINTS + 1;
-	QList<protocol::MessagePtr> msgs;
-	msgs.reserve(batches);
-
-	int i=0;
-	for(int batch=0;batch<batches;++batch) {
-		const int j=qMin(points.size(), (i+1)*protocol::PenMove::MAX_POINTS);
-		protocol::PenPointVector ppvec;
-		ppvec.reserve(j-i);
-		while(i<j) {
-			ppvec.append(pointToProtocol(points[i]));
-			++i;
-		}
-		msgs << protocol::MessagePtr(new protocol::PenMove(ctxid, ppvec));
-
-	}
-
-	return msgs;
 }
 
 }

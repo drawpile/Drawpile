@@ -29,7 +29,6 @@
 #include "../shared/net/control.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
-#include "../shared/net/pen.h" // for sentColorChange
 
 #include <QDebug>
 
@@ -77,8 +76,6 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
-
-	m_lastToolCtx = canvas::ToolContext();
 
 	m_catchupTo = 0;
 	m_caughtUp = 0;
@@ -151,14 +148,11 @@ void Client::sendMessage(const protocol::MessagePtr &msg)
 	if(msg->isCommand())
 		emit drawingCommandLocal(msg);
 
-	if(msg->type() == protocol::MSG_TOOLCHANGE)
-		emit sentColorChange(QColor::fromRgb(msg.cast<const protocol::ToolChange&>().color()));
 	m_server->sendMessage(msg);
 }
 
 void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 {
-	uint32_t colorChange = 0;
 	for(const protocol::MessagePtr &msg : msgs) {
 #ifndef NDEBUG
 		if(!msg->isControl() && msg->contextId()==0) {
@@ -167,14 +161,8 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 #endif
 		if(msg->isCommand())
 			emit drawingCommandLocal(msg);
-
-		if(msg->type() == protocol::MSG_TOOLCHANGE)
-			colorChange = msg.cast<const protocol::ToolChange&>().color();
 	}
 	m_server->sendMessages(msgs);
-
-	if(colorChange)
-		emit sentColorChange(QColor::fromRgb(colorChange));
 }
 
 void Client::sendResetMessages(const QList<protocol::MessagePtr> &msgs)

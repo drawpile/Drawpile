@@ -26,7 +26,6 @@
 #include "tools/freehand.h"
 
 #include "../shared/net/undo.h"
-#include "../shared/net/pen.h"
 
 #include <QPixmap>
 
@@ -45,25 +44,13 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
 	m_brushengine.strokeTo(point, nullptr);
 
-	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
-
-	msgs << net::command::brushToToolChange(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
-	protocol::PenPointVector v(1);
-	v[0] = net::command::pointToProtocol(point);
-	msgs << protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v));
-	owner.client()->sendMessages(msgs);
-
+	owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
 }
 
 void Freehand::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-
-	protocol::PenPointVector v(1);
-	v[0] = net::command::pointToProtocol(point);
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::PenMove(owner.client()->myId(), v)));
 
 	const paintcore::Layer *srcLayer = nullptr;
 	if(owner.activeBrush().smudge1()>0)

@@ -30,7 +30,6 @@
 #include "tools/toolcontroller.h"
 #include "tools/beziertool.h"
 
-#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 
 #include <QPixmap>
@@ -114,25 +113,21 @@ void BezierTool::finishMultipart()
 {
 	if(m_points.size() > 2) {
 		m_points.pop_back();
-		const uint8_t contextId = owner.client()->myId();
-
-		QList<protocol::MessagePtr> msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-		msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
-
-		const auto pv = calculateBezierCurve();
-		msgs << net::command::penMove(contextId, pv);
 
 		const paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 
 		brushes::BrushEngine brushengine;
 		brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+
+		const auto pv = calculateBezierCurve();
 		for(const Point &p : pv)
 			brushengine.strokeTo(p, layer);
 		brushengine.endStroke();
 
+		const uint8_t contextId = owner.client()->myId();
+		QList<protocol::MessagePtr> msgs;
+		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 		msgs << brushengine.takeDabs();
-
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 		owner.client()->sendMessages(msgs);
 	}

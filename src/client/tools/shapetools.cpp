@@ -30,7 +30,6 @@
 #include "tools/shapetools.h"
 #include "tools/utils.h"
 
-#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 
 #include <QPixmap>
@@ -41,8 +40,6 @@ void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
-
-	//m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
 
 	m_start = point;
 	m_p1 = point;
@@ -74,21 +71,17 @@ void ShapeTool::end()
 	}
 
 	const uint8_t contextId = owner.client()->myId();
-
-	QList<protocol::MessagePtr> msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
-	const auto pv = pointVector();
-	msgs << net::command::penMove(contextId, pv);
-
 	brushes::BrushEngine brushengine;
 	brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+
+	const auto pv = pointVector();
 	for(int i=0;i<pv.size();++i)
 		brushengine.strokeTo(pv.at(i), layer);
 	brushengine.endStroke();
 
+	QList<protocol::MessagePtr> msgs;
+	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 	msgs << brushengine.takeDabs();
-
 	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 	owner.client()->sendMessages(msgs);
 }
