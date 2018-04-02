@@ -145,6 +145,17 @@ DrawDabsClassic *DrawDabsClassic::fromText(uint8_t ctx, const Kwargs &kwargs, co
 	);
 }
 
+QPoint DrawDabsClassic::lastPoint() const
+{
+	int x = m_x;
+	int y = m_y;
+	for(const auto dab : m_dabs) {
+		x += dab.x;
+		y += dab.y;
+	}
+	return QPoint(x/4, y/4);
+}
+
 QRect DrawDabsClassic::bounds() const
 {
 	int x = m_x, y = m_y;
@@ -278,6 +289,17 @@ DrawDabsPixel *DrawDabsPixel::fromText(uint8_t ctx, const Kwargs &kwargs, const 
 		kwargs.value("mode", "1").toInt(),
 		dabvector
 	);
+}
+
+QPoint DrawDabsPixel::lastPoint() const
+{
+	int x = m_x;
+	int y = m_y;
+	for(const auto dab : m_dabs) {
+		x += dab.x;
+		y += dab.y;
+	}
+	return QPoint(x, y);
 }
 
 QRect DrawDabsPixel::bounds() const

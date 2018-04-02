@@ -97,7 +97,7 @@ void UserCursorModel::setCursorAttributes(int id, const QColor &color, const QSt
 	emit dataChanged(index, index, QVector<int>() << LayerRole << ColorRole);
 }
 
-void UserCursorModel::setCursorPosition(int id, const QPointF &pos)
+void UserCursorModel::setCursorPosition(int id, const QPoint &pos)
 {
 	QModelIndex index;
 	UserCursor *uc = getOrCreate(id, index);
@@ -143,7 +143,7 @@ UserCursor *UserCursorModel::getOrCreate(int id, QModelIndex &idx)
 	}
 
 	beginInsertRows(QModelIndex(), m_cursors.size(), m_cursors.size());
-	m_cursors.append(UserCursor { id, false, QDateTime::currentMSecsSinceEpoch(), QPointF(), QStringLiteral("#%1").arg(id), QString(), QColor(Qt::black)});
+	m_cursors.append(UserCursor { id, false, QDateTime::currentMSecsSinceEpoch(), QPoint(), QStringLiteral("#%1").arg(id), QString(), QColor(Qt::black)});
 	endInsertRows();
 
 	idx = index(m_cursors.size()-1);

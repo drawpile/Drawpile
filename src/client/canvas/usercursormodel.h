@@ -32,7 +32,7 @@ struct UserCursor {
 	bool visible;
 	qint64 lastMoved;
 
-	QPointF pos;
+	QPoint pos;
 	QString name;
 	QString layer;
 	QColor color;
@@ -63,7 +63,7 @@ public:
 public slots:
 	void setCursorName(int id, const QString &name);
 	void setCursorAttributes(int id, const QColor &color, const QString &layer);
-	void setCursorPosition(int id, const QPointF &pos);
+	void setCursorPosition(int id, const QPoint &pos);
 	void hideCursor(int id);
 
 	void clear();

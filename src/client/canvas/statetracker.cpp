@@ -581,10 +581,8 @@ void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 
 	brushes::drawBrushDabs(cmd, _image);
 
-#if 0 // TODO
 	if(_showallmarkers || cmd.contextId() != localId())
-		emit userMarkerMove(cmd.contextId(), ctx.lastpoint, 0);
-#endif
+		emit userMarkerMove(cmd.contextId(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint(), 0);
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
@@ -611,7 +609,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
 }
 
 void StateTracker::handlePutTile(const protocol::PutTile &cmd)
@@ -650,7 +648,7 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), paintcore::BlendMode::Mode(cmd.blend()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
 }
 
 void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
@@ -1162,20 +1160,12 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 			paintcore::Tile::SIZE, paintcore::Tile::SIZE));
 	}
 
-	case MSG_DRAWDABS_CLASSIC: {
-		const DrawDabsClassic &dd = msg.cast<DrawDabsClassic>();
-
-		// Indirect drawing mode: check bounds in PenUp
-		if((dd.color() & 0xff000000))
-			return AffectedArea(AffectedArea::USERATTRS, 0);
-
-		return AffectedArea(AffectedArea::PIXELS, dd.layer(), dd.bounds());
-	}
+	case MSG_DRAWDABS_CLASSIC:
 	case MSG_DRAWDABS_PIXEL: {
-		const DrawDabsPixel &dd = msg.cast<DrawDabsPixel>();
+		const DrawDabs &dd = msg.cast<DrawDabs>();
 
 		// Indirect drawing mode: check bounds in PenUp
-		if((dd.color() & 0xff000000))
+		if(dd.isIndirect())
 			return AffectedArea(AffectedArea::USERATTRS, 0);
 
 		return AffectedArea(AffectedArea::PIXELS, dd.layer(), dd.bounds());

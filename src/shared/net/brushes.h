@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <QVector>
+#include <QRect>
 
 class QRect;
 
@@ -60,10 +61,29 @@ typedef QVector<ClassicBrushDab> ClassicBrushDabVector;
 typedef QVector<PixelBrushDab> PixelBrushDabVector;
 
 /**
+ * @brief Abstract base class for DrawDabs* messages
+ */
+class DrawDabs : public Message {
+public:
+	DrawDabs(MessageType type, uint8_t context)
+		: Message(type, context)
+	{ }
+
+	//! Should these dabs be composited in indirect mode?
+	virtual bool isIndirect() const = 0;
+
+	//! Get the last coordinates of the last point in the dab vector
+	virtual QPoint lastPoint() const = 0;
+
+	//! Get the bounding rectangle of the dab vector
+	virtual QRect bounds() const = 0;
+};
+
+/**
  * @brief Draw Classic Brush Dabs
  *
  */
-class DrawDabsClassic : public Message {
+class DrawDabsClassic : public DrawDabs {
 public:
 	static const int MAX_DABS = (0xffff - 15) / ClassicBrushDab::LENGTH;
 
@@ -75,7 +95,7 @@ public:
 		uint8_t blend,
 		const ClassicBrushDabVector &dabs=ClassicBrushDabVector()
 		)
-		: Message(MSG_DRAWDABS_CLASSIC, ctx),
+		: DrawDabs(MSG_DRAWDABS_CLASSIC, ctx),
 		m_dabs(dabs),
 		m_x(originX), m_y(originY),
 		m_color(color),
@@ -94,13 +114,16 @@ public:
 	uint32_t color() const { return m_color; } // If the alpha channel is set, the dabs are composited indirectly
 	uint8_t mode() const { return m_mode; }
 
+	bool isIndirect() const override { return (m_color & 0xff000000) > 0; }
+
 	const ClassicBrushDabVector &dabs() const { return m_dabs; }
 	ClassicBrushDabVector &dabs() { return m_dabs; }
 
 	QString toString() const override;
 	QString messageName() const override { return QStringLiteral("classicdabs"); }
 
-	QRect bounds() const;
+	QPoint lastPoint() const override;
+	QRect bounds() const override;
 
 protected:
 	int payloadLength() const override;
@@ -121,7 +144,7 @@ private:
  * @brief Draw Pixel Brush Dabs
  *
  */
-class DrawDabsPixel : public Message {
+class DrawDabsPixel : public DrawDabs {
 public:
 	static const int MAX_DABS = (0xffff - 15) / PixelBrushDab::LENGTH;
 
@@ -133,7 +156,7 @@ public:
 		uint8_t blend,
 		const PixelBrushDabVector &dabs=PixelBrushDabVector()
 		)
-		: Message(MSG_DRAWDABS_PIXEL, ctx),
+		: DrawDabs(MSG_DRAWDABS_PIXEL, ctx),
 		m_dabs(dabs),
 		m_x(originX), m_y(originY),
 		m_color(color),
@@ -152,13 +175,16 @@ public:
 	uint32_t color() const { return m_color; } // If the alpha channel is set, the dabs are composited indirectly
 	uint8_t mode() const { return m_mode; }
 
+	bool isIndirect() const override { return (m_color & 0xff000000) > 0; }
+
 	const PixelBrushDabVector &dabs() const { return m_dabs; }
 	PixelBrushDabVector &dabs() { return m_dabs; }
 
 	QString toString() const override;
 	QString messageName() const override { return QStringLiteral("pixeldabs"); }
 
-	QRect bounds() const;
+	QPoint lastPoint() const override;
+	QRect bounds() const override;
 
 protected:
 	int payloadLength() const override;

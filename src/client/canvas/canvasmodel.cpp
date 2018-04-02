@@ -421,7 +421,7 @@ void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
-	QPointF p(msg.x() / 4.0, msg.y() / 4.0);
+	QPoint p(msg.x() / 4.0, msg.y() / 4.0);
 	m_usercursors->setCursorPosition(msg.contextId(), p);
 	m_lasers->addPoint(msg.contextId(), p);
 }

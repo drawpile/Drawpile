@@ -213,7 +213,7 @@ signals:
 	void layerAutoselectRequest(int);
 
 	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
-	void userMarkerMove(int id, const QPointF &point, int trail);
+	void userMarkerMove(int id, const QPoint &point, int trail);
 	void userMarkerHide(int id);
 
 	void catchupProgress(int percent);
