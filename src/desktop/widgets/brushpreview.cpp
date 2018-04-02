@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "core/layer.h"
 #include "core/shapes.h"
 #include "core/floodfill.h"
+#include "brushes/brushengine.h"
+#include "brushes/brushpainter.h"
 #include "brushpreview.h"
 
 #include <QPaintEvent>
@@ -175,11 +177,11 @@ void BrushPreview::updatePreview()
 	paintcore::Brush brush = m_brush;
 	// Special handling for some blending modes
 	// TODO this could be implemented in some less ad-hoc way
-	if(brush.blendingMode() == 11) {
+	if(brush.blendingMode() == paintcore::BlendMode::MODE_BEHIND) {
 		// "behind" mode needs a transparent layer for anything to show up
 		brush.setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 
-	} else if(brush.blendingMode() == 12) {
+	} else if(brush.blendingMode() == paintcore::BlendMode::MODE_COLORERASE) {
 		// Color-erase mode: use fg color as background
 		bgcolor = m_color;
 	}
@@ -189,13 +191,20 @@ void BrushPreview::updatePreview()
 	}
 
 	paintcore::Layer *layer = m_preview->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor, paintcore::BlendMode::MODE_REPLACE);
+	layer->putTile(0, 0, 99999, isTransparentBackground() ? paintcore::Tile() : paintcore::Tile(bgcolor));
 
-	paintcore::StrokeState ss(brush);
-	for(int i=1;i<pointvector.size();++i)
-		layer->drawLine(0, brush, pointvector[i-1], pointvector[i], ss);
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(1, 1, brush);
 
-	layer->mergeSublayer(0);
+	for(int i=0;i<pointvector.size();++i)
+		brushengine.strokeTo(pointvector[i], layer);
+	brushengine.endStroke();
+
+	const auto dabs = brushengine.takeDabs();
+	for(int i=0;i<dabs.size();++i)
+		brushes::drawBrushDabsDirect(*dabs.at(i), layer);
+
+	layer->mergeSublayer(1);
 
 	if(_shape == FloodFill || _shape == FloodErase) {
 		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), _shape == FloodFill ? m_color : QColor(), _fillTolerance, 0, false, 360000);
