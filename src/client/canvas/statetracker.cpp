@@ -175,9 +175,6 @@ void StateTracker::reset()
 	m_msgqueue.clear();
 	m_localfork.clear();
 	m_layerlist->clear();
-#if 0 // TODO
-	m_myLastLayer = _contexts[m_myId].tool.layer_id;
-#endif
 
 	// Make sure there is always a savepoint in the history
 	makeSavepoint(m_history.end()-1);
@@ -196,6 +193,20 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	}
 
 	m_localfork.addLocalMessage(msg, affectedArea(msg));
+
+	// Remember last used layer
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_DRAWDABS_CLASSIC:
+	case MSG_DRAWDABS_PIXEL:
+	case MSG_LAYER_CREATE:
+	case MSG_PUTIMAGE:
+	case MSG_FILLRECT:
+	case MSG_REGION_MOVE:
+		m_myLastLayer = msg->layer();
+		break;
+	default: break;
+	}
 
 	// for the future: handle undo messages in the local fork too
 	if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT) {
@@ -465,7 +476,6 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 		// During the startup phase, autoselect new layers or if a default one is set,
 		// just the default one. If there is a remembered layer selection, it takes precedence
 		// over others.
-#if 0 // TODO
 		if(
 				// Autoselect layers created by me
 				(m_hasParticipated && cmd.contextId() == localId()) ||
@@ -473,17 +483,16 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 				(!m_hasParticipated && (
 					// ... and if there is no remembered layer...
 					((m_myLastLayer <= 0) && ( // ...select default layer or if not selected, any new layer
-						cmd.id() == m_layerlist->defaultLayer() ||
+						layer->id() == m_layerlist->defaultLayer() ||
 						!m_layerlist->defaultLayer()
 					)) ||
 					// ... and if there is a remembered layer, select only that one
-					(m_myLastLayer>0 && cmd.id() == m_myLastLayer)
+					(m_myLastLayer>0 && layer->id() == m_myLastLayer)
 				))
 		   )
 		{
-			emit layerAutoselectRequest(cmd.id());
+			emit layerAutoselectRequest(layer->id());
 		}
-#endif
 	}
 }
 
