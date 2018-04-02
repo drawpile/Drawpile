@@ -22,6 +22,7 @@
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
 #include "../shared/net/pen.h"
+#include "../shared/net/brushes.h"
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -224,6 +225,11 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_PEN_MOVE:
 		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
+
+	case MSG_DRAWDABS_CLASSIC:
+		return !isLayerLockedFor(static_cast<const protocol::DrawDabsClassic&>(msg).layer(), msg.contextId());
+	case MSG_DRAWDABS_PIXEL:
+		return !isLayerLockedFor(static_cast<const protocol::DrawDabsPixel&>(msg).layer(), msg.contextId());
 
 	case MSG_ANNOTATION_CREATE: {
 		const uint16_t annotationId = static_cast<const AnnotationCreate&>(msg).id();
