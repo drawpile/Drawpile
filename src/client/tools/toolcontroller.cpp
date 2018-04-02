@@ -126,7 +126,7 @@ void ToolController::setActiveLayer(int id)
 	}
 }
 
-void ToolController::setActiveBrush(const paintcore::Brush &b)
+void ToolController::setActiveBrush(const brushes::ClassicBrush &b)
 {
 	m_activebrush = b;
 	emit activeBrushChanged(b);

@@ -16,21 +16,20 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QPainter>
-#include <QImage>
-#include <QDataStream>
-#include <QtMath>
-#include <cmath>
 
 #include "layerstack.h"
 #include "layer.h"
 #include "tile.h"
-#include "brush.h"
 #include "brushmask.h"
 #include "point.h"
 #include "blendmodes.h"
 #include "rasterop.h"
 #include "concurrent.h"
+
+#include <QPainter>
+#include <QImage>
+#include <QDataStream>
+#include <cmath>
 
 namespace paintcore {
 
@@ -581,180 +580,6 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, BlendMode::Mod
 	}
 }
 
-void Layer::dab(int contextId, const Brush &brush, const Point &point, StrokeState &state)
-{
-	Brush effective_brush = brush;
-	Layer *l = this;
-
-	if(!brush.incremental()) {
-		// Indirect brush: use a sublayer
-		l = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
-
-		effective_brush.setOpacity(1.0);
-		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
-
-	} else if(contextId<0) {
-		// Special case: negative context IDs are temporary overlay strokes
-		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
-	}
-
-	Point p = point;
-	if(!effective_brush.subpixel()) {
-		p.setX(qFloor(p.x()));
-		p.setY(qFloor(p.y()));
-	}
-
-	l->directDab(effective_brush, p, state);
-
-	if(m_owner)
-		m_owner->notifyAreaChanged();
-}
-
-/**
- * Draw a line using either drawSoftLine or drawHardLine, depending on
- * the subpixel hint of the brush.
- * @param context drawing context id (needed for indirect drawing)
- */
-void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state)
-{
-	Brush effective_brush = brush;
-	Layer *l = this;
-
-	if(!brush.incremental()) {
-		// Indirect brush: use a sublayer
-		l = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
-
-		effective_brush.setOpacity(1.0);
-		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
-
-	} else if(contextId<0) {
-		// Special case: negative context IDs are temporary overlay strokes
-		l = getSubLayer(contextId, brush.blendingMode(), 255);
-		effective_brush.setBlendingMode(BlendMode::MODE_NORMAL);
-	}
-
-	if(effective_brush.subpixel())
-		l->drawSoftLine(effective_brush, from, to, state);
-	else
-		l->drawHardLine(effective_brush, from, to, state);
-
-	if(m_owner)
-		m_owner->notifyAreaChanged();
-}
-
-/**
- * This function is optimized for drawing with subpixel precision.
- * @param brush brush to draw the line with
- * @param from starting point
- * @param to ending point
- * @param distance distance from previous dab.
- */
-void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, StrokeState &state)
-{
-	qreal dx = to.x() - from.x();
-	qreal dy = to.y() - from.y();
-	const qreal dist = hypot(dx, dy);
-	dx = dx / dist;
-	dy = dy / dist;
-	const qreal dp = (to.pressure() - from.pressure()) / dist;
-
-	const qreal spacing0 = qMax(1.0, brush.spacingDist(from.pressure()));
-	qreal i;
-	if(state.distance>=spacing0)
-		i = 0;
-	else if(state.distance==0)
-		i = spacing0;
-	else
-		i = state.distance;
-
-	Point p(from.x() + dx*i, from.y() + dy*i, qBound(0.0, from.pressure() + dp*i, 1.0));
-
-	while(i<=dist) {
-		const qreal spacing = qMax(1.0, brush.spacingDist(p.pressure()));
-		directDab(brush, p, state);
-		p.rx() += dx * spacing;
-		p.ry() += dy * spacing;
-		p.setPressure(qBound(0.0, p.pressure() + dp * spacing, 1.0));
-		i += spacing;
-	}
-	state.distance = i-dist;
-}
-
-/**
- * This line drawing function is optimized for drawing with no subpixel
- * precision.
- * The last point is not drawn, so successive lines can be drawn blotches.
- */
-void Layer::drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state) {
-	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
-
-	int x0 = qFloor(from.x());
-	int y0 = qFloor(from.y());
-	qreal p = from.pressure();
-	int x1 = qFloor(to.x());
-	int y1 = qFloor(to.y());
-	int dy = y1 - y0;
-	int dx = x1 - x0;
-	int stepx, stepy;
-
-	if (dy < 0) {
-		dy = -dy;
-		stepy = -1;
-	} else {
-		stepy = 1;
-	}
-	if (dx < 0) {
-		dx = -dx;
-		stepx = -1;
-	} else {
-		stepx = 1;
-	}
-
-	dy *= 2;
-	dx *= 2;
-
-	qreal distance = state.distance;
-
-	if (dx > dy) {
-		int fraction = dy - (dx >> 1);
-		while (x0 != x1) {
-			const qreal spacing = brush.spacingDist(p);
-			if (fraction >= 0) {
-				y0 += stepy;
-				fraction -= dx;
-			}
-			x0 += stepx;
-			fraction += dy;
-			if(++distance >= spacing) {
-				directDab(brush, Point(x0, y0, p), state);
-				distance = 0;
-			}
-			p += dp;
-		}
-	} else {
-		int fraction = dx - (dy >> 1);
-		while (y0 != y1) {
-			const qreal spacing = brush.spacingDist(p);
-			if (fraction >= 0) {
-				x0 += stepx;
-				fraction -= dy;
-			}
-			y0 += stepy;
-			fraction += dx;
-			if(++distance >= spacing) {
-				directDab(brush, Point(x0, y0, p), state);
-				distance = 0;
-			}
-			p += dp;
-		}
-	}
-
-	state.distance = distance;
-}
-
 void Layer::putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode)
 {
 	const int top=bs.top, left=bs.left;
@@ -805,80 +630,6 @@ void Layer::putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::
 		// TODO call this after the whole dab sequence has been painted
 		m_owner->notifyAreaChanged();
 	}
-}
-
-/**
- * Apply a single dab of the brush to the layer
- * @param brush brush to use
- * @param point where to dab. May be outside the image.
- * @param sampleSmudgeColor if true (and smudging is enabled for the brush), sample the layer color before applying dab
- * @param state stroke state (used for the smudge color)
- */
-void Layer::directDab(const Brush &brush, const Point& point, StrokeState &state)
-{
-	// Render the brush
-	const BrushStamp bs = makeGimpStyleBrushStamp(brush, point);
-	const int top=bs.top, left=bs.left;
-	const int dia = bs.mask.diameter();
-	const int bottom = qMin(top + dia, m_height);
-	const int right = qMin(left + dia, m_width);
-
-	if(left+dia<=0 || top+dia<=0 || left>=m_width || top>=m_height)
-		return;
-
-	const qreal smudge = brush.smudge(point.pressure());
-
-	if(++state.smudgeDistance > brush.resmudge() && smudge>0) {
-		const QColor sampled = getDabColor(bs);
-
-		const qreal a = sampled.alphaF() * smudge;
-
-		state.smudgeColor = QColor::fromRgbF(
-			state.smudgeColor.redF() * (1-a) + sampled.redF() * a,
-			state.smudgeColor.greenF() * (1-a) + sampled.greenF() * a,
-			state.smudgeColor.blueF() * (1-a) + sampled.blueF() * a
-		);
-		state.smudgeDistance = 0;
-	}
-
-	// Composite the brush mask onto the layer
-	const uchar *values = bs.mask.data();
-	QColor color = smudge > 0 ? state.smudgeColor : brush.color();
-
-	// A single dab can (and often does) span multiple tiles.
-	int y = top<0?0:top;
-	int yb = top<0?-top:0; // y in relation to brush origin
-	const int x0 = left<0?0:left;
-	const int xb0 = left<0?-left:0;
-	while(y<bottom) {
-		const int yindex = y / Tile::SIZE;
-		const int yt = y - yindex * Tile::SIZE;
-		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
-		int x = x0;
-		int xb = xb0; // x in relation to brush origin
-		while(x<right) {
-			const int xindex = x / Tile::SIZE;
-			const int xt = x - xindex * Tile::SIZE;
-			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
-			const int i = m_xtiles * yindex + xindex;
-			m_tiles[i].composite(
-					brush.blendingMode(),
-					values + yb * dia + xb,
-					color,
-					xt, yt,
-					wb, hb,
-					dia-wb
-					);
-
-			x = (xindex+1) * Tile::SIZE;
-			xb = xb + wb;
-		}
-		y = (yindex+1) * Tile::SIZE;
-		yb = yb + hb;
-	}
-
-	if(m_owner && isVisible())
-		m_owner->markDirty(QRect(left, top, right-left, bottom-top));
 }
 
 /**
@@ -1009,19 +760,10 @@ void Layer::makeBlank()
 		m_owner->markDirty();
 }
 
-/**
- * @brief Get or create a new sublayer
- *
- * Sublayers are temporary layers used for indirect drawing.
- *
- * Negative IDs are used for ephemeral preview layers.
- *
- * @param id sublayer ID (unique to parent layer only)
- * @param opacity layer opacity (set when creating the layer)
- * @return sublayer
- */
 Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 {
+	Q_ASSERT(id != 0);
+
 	// See if the sublayer exists already
 	for(Layer *sl : m_sublayers)
 		if(sl->id() == id) {
@@ -1128,24 +870,6 @@ void Layer::markOpaqueDirty(bool forceVisible)
 			m_owner->markDirty(i);
 	}
 	m_owner->notifyAreaChanged();
-}
-
-QColor Layer::isSolidColor() const
-{
-	if(m_width==0 || m_height==0)
-		return QColor();
-
-	const QColor c = m_tiles.at(0).solidColor();
-	if(!c.isValid())
-		return QColor();
-
-	for(int i=1;i<m_tiles.size();++i) {
-		const QColor c2 = m_tiles.at(i).solidColor();
-		if(c2 != c)
-			return QColor();
-	}
-
-	return c;
 }
 
 void Layer::toDatastream(QDataStream &out) const

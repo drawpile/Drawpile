@@ -19,7 +19,6 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
-#include "core/brush.h"
 #include "utils/icon.h"
 #include "tools/tool.h"
 

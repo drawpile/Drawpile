@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "core/brush.h"
 #include "canvas/canvasmodel.h"
 #include "net/client.h"
 #include "net/commands.h"
@@ -26,8 +25,6 @@
 #include "tools/freehand.h"
 
 #include "../shared/net/undo.h"
-
-#include <QPixmap>
 
 namespace tools {
 

@@ -61,7 +61,6 @@ set (
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp
-	core/brush.cpp
 	core/brushmask.cpp
 	core/blendmodes.cpp
 	core/rasterop.cpp

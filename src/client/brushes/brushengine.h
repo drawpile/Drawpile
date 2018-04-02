@@ -23,7 +23,6 @@
 #include "brushstate.h"
 #include "classicbrushstate.h"
 #include "pixelbrushstate.h"
-#include "core/brush.h"
 #include "../shared/net/message.h"
 
 namespace brushes {
@@ -36,7 +35,7 @@ class BrushEngine : public BrushState
 public:
 	BrushEngine();
 
-	void setBrush(int contextId, int layerId, const paintcore::Brush &brush);
+	void setBrush(int contextId, int layerId, const ClassicBrush &brush);
 
 	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override { m_activeEngine->strokeTo(p, sourceLayer); }
 	void endStroke() override { m_activeEngine->endStroke(); }

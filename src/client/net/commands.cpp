@@ -18,7 +18,6 @@
 */
 
 #include "commands.h"
-#include "core/brush.h"
 
 #include "../shared/net/control.h"
 #include "../shared/net/image.h"

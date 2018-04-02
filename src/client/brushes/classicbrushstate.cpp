@@ -31,7 +31,7 @@ ClassicBrushState::ClassicBrushState()
 {
 }
 
-void ClassicBrushState::setBrush(const paintcore::Brush &brush)
+void ClassicBrushState::setBrush(const ClassicBrush &brush)
 {
 	m_brush = brush;
 
@@ -82,7 +82,7 @@ void ClassicBrushState::strokeTo(const paintcore::Point &to, const paintcore::La
 			const qreal smudge = m_brush.smudge(p.pressure());
 
 			if(++m_smudgeDistance > m_brush.resmudge() && smudge>0 && sourceLayer) {
-				const QColor sampled = sourceLayer->colorAt(p.x(), p.y(), qRound(m_brush.fsize(p.pressure())));
+				const QColor sampled = sourceLayer->colorAt(p.x(), p.y(), qRound(m_brush.size(p.pressure())));
 
 				const qreal a = sampled.alphaF() * smudge;
 
@@ -140,7 +140,7 @@ void ClassicBrushState::addDab(const paintcore::Point &point, quint32 color)
 	m_lastDab->dabs() << protocol::ClassicBrushDab {
 		static_cast<decltype(protocol::ClassicBrushDab::x)>(x - m_lastDabX),
 		static_cast<decltype(protocol::ClassicBrushDab::y)>(y - m_lastDabY),
-		static_cast<decltype(protocol::ClassicBrushDab::size)>(m_brush.fsize(point.pressure()) * 256),
+		static_cast<decltype(protocol::ClassicBrushDab::size)>(m_brush.size(point.pressure()) * 256),
 		static_cast<decltype(protocol::ClassicBrushDab::hardness)>(m_brush.hardness(point.pressure()) * 255),
 		static_cast<decltype(protocol::ClassicBrushDab::opacity)>(m_brush.opacity(point.pressure()) * 255)
 	};

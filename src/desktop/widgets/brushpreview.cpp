@@ -174,7 +174,7 @@ void BrushPreview::updatePreview()
 
 	QColor bgcolor = m_bg;
 
-	paintcore::Brush brush = m_brush;
+	brushes::ClassicBrush brush = m_brush;
 	// Special handling for some blending modes
 	// TODO this could be implemented in some less ad-hoc way
 	if(brush.blendingMode() == paintcore::BlendMode::MODE_BEHIND) {
@@ -220,7 +220,7 @@ void BrushPreview::updatePreview()
 /**
  * @param brush brush to set
  */
-void BrushPreview::setBrush(const paintcore::Brush& brush)
+void BrushPreview::setBrush(const brushes::ClassicBrush& brush)
 {
 	m_brush = brush;
 	notifyBrushChange();

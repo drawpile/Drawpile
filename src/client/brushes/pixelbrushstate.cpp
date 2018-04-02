@@ -33,7 +33,7 @@ PixelBrushState::PixelBrushState()
 {
 }
 
-void PixelBrushState::setBrush(const paintcore::Brush &brush)
+void PixelBrushState::setBrush(const ClassicBrush &brush)
 {
 	m_brush = brush;
 
@@ -158,7 +158,7 @@ void PixelBrushState::addDab(int x, int y, qreal pressure)
 	m_lastDab->dabs() << protocol::PixelBrushDab {
 		static_cast<decltype(protocol::PixelBrushDab::x)>(x - m_lastDabX),
 		static_cast<decltype(protocol::PixelBrushDab::y)>(y - m_lastDabY),
-		static_cast<decltype(protocol::PixelBrushDab::size)>(m_brush.fsize(pressure)),
+		static_cast<decltype(protocol::PixelBrushDab::size)>(m_brush.size(pressure)),
 		static_cast<decltype(protocol::PixelBrushDab::opacity)>(m_brush.opacity(pressure) * 255)
 	};
 

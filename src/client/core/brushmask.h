@@ -19,9 +19,7 @@
 #ifndef PAINTCORE_BRUSHMASK_H
 #define PAINTCORE_BRUSHMASK_H
 
-#include "brush.h"
-#include "point.h"
-
+#include <QPoint>
 #include <QVector>
 
 namespace paintcore {
@@ -62,8 +60,6 @@ struct BrushStamp {
 
 //! Make a brush stamp for area color picking
 BrushStamp makeColorSamplingStamp(int radius, const QPoint &point);
-
-BrushStamp makeGimpStyleBrushStamp(const Brush &brush, const Point &point);
 
 }
 

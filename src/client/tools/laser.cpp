@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "core/brush.h"
 #include "net/client.h"
 
 #include "tools/toolcontroller.h"

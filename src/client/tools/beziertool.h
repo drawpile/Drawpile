@@ -20,7 +20,6 @@
 #define TOOLS_BEZIER_H
 
 #include "tool.h"
-#include "core/brush.h"
 
 namespace tools {
 

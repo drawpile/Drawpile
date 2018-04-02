@@ -21,7 +21,7 @@
 
 #include <QFrame>
 
-#include "core/brush.h"
+#include "brushes/brush.h"
 #include "core/blendmodes.h"
 
 class QMenu;
@@ -60,7 +60,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return _shape; }
 
 		//! Get the displayed brush
-		const paintcore::Brush &brush() const { return m_brush; }
+		const brushes::ClassicBrush &brush() const { return m_brush; }
 
 		bool isTransparentBackground() const { return _tranparentbg; }
 
@@ -69,7 +69,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		/**
 		 * @param brush brush to set
 		 */
-		void setBrush(const paintcore::Brush& brush);
+		void setBrush(const brushes::ClassicBrush& brush);
 
 		//! Set preview brush size
 		void setSize(int size);
@@ -130,7 +130,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 	signals:
 		void requestColorChange();
-		void brushChanged(const paintcore::Brush&);
+		void brushChanged(const brushes::ClassicBrush&);
 
 	protected:
 		void paintEvent(QPaintEvent *event);
@@ -144,7 +144,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updatePreview();
 		void updateBackground();
 
-		paintcore::Brush m_brush;
+		brushes::ClassicBrush m_brush;
 
 		paintcore::LayerStack *m_preview;
 		QPixmap m_previewCache;

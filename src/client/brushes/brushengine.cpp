@@ -28,7 +28,7 @@ BrushEngine::BrushEngine()
 {
 }
 
-void BrushEngine::setBrush(int contextId, int layerId, const paintcore::Brush &brush)
+void BrushEngine::setBrush(int contextId, int layerId, const ClassicBrush &brush)
 {
 	// Select brush engine to use
 	if(brush.subpixel()) {

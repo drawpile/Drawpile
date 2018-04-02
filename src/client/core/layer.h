@@ -145,12 +145,6 @@ class Layer {
 		//! Fill a rectangle
 		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
 
-		//! Dab the layer with a brush
-		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
-
-		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state);
-
 		/**
 		 * @brief Get a sublayer
 		 *
@@ -158,6 +152,10 @@ class Layer {
 		 * Positive IDs should correspond to context IDs: they are used for indirect
 		 * painting.
 		 * Negative IDs are local preview layers.
+		 *
+		 * ID 0 should not be used.
+		 *
+		 * The blendmode and opacity are set only when the layer is created.
 		 *
 		 * @param id
 		 * @param blendmode
@@ -216,12 +214,6 @@ class Layer {
 		void markOpaqueDirty(bool forceVisible=false);
 
 		/**
-		 * @brief Is the whole layer filled with the same color?
-		 * @return invalid color if there is more than one color on this canvas
-		 */
-		QColor isSolidColor() const;
-
-		/**
 		 * @brief Get the non-pixeldata related properties
 		 */
 		const LayerInfo &info() const { return m_info; }
@@ -250,6 +242,10 @@ class Layer {
 		 */
 		QRect changeBounds() const { return m_changeBounds; }
 
+		/**
+		 * @brief Get the change bounds of a sublayer
+		 * @param contextId sublayer ID
+		 */
 		QRect changeBounds(int contextId) const {
 			for(const Layer *l : m_sublayers) {
 				if(l->id() == contextId && l->isVisible())
@@ -263,10 +259,6 @@ class Layer {
 		Layer(LayerStack *owner, int id, const QSize& size);
 
 		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
-
-		void directDab(const Brush &brush, const Point& point, StrokeState &state);
-		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
-		void drawSoftLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
 
 		QColor getDabColor(const BrushStamp &stamp) const;
 

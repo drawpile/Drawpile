@@ -19,8 +19,13 @@
 #ifndef BRUSHES_CLASSICBRUSHPAINTER_H
 #define BRUSHES_CLASSICBRUSHPAINTER_H
 
+#include <Qt>
+
+class QPointF;
+
 namespace paintcore {
 	class Layer;
+	class BrushStamp;
 }
 
 namespace protocol {
@@ -33,6 +38,8 @@ namespace brushes {
  * Draw brush drabs on the canvas
  */
 void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer=0);
+
+paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius, qreal hardness, qreal opacity);
 
 }
 

@@ -19,13 +19,11 @@
 #ifndef DP_STATETRACKER_H
 #define DP_STATETRACKER_H
 
-#include <QObject>
-#include <QHash>
-
 #include "retcon.h"
 #include "history.h"
-#include "core/brush.h"
 #include "core/point.h"
+
+#include <QObject>
 
 namespace protocol {
 	class CanvasResize;

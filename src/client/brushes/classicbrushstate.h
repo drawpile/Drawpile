@@ -19,11 +19,10 @@
 #ifndef BRUSHES_BRUSHSTATE_H
 #define BRUSHES_BRUSHSTATE_H
 
-//#include "brush.h"
-#include "core/brush.h"
+#include "brush.h"
+#include "brushstate.h"
 #include "core/point.h"
 #include "../shared/net/brushes.h"
-#include "brushstate.h"
 
 namespace paintcore {
 	class LayerStack;
@@ -52,7 +51,7 @@ public:
 	/**
 	 * @brief Set the brush parameters
 	 */
-	void setBrush(const paintcore::Brush &brush);
+	void setBrush(const brushes::ClassicBrush &brush);
 
 	/**
 	 * @brief Set the target layer
@@ -89,7 +88,7 @@ public:
 private:
 	void addDab(const paintcore::Point &point, quint32 color);
 
-	paintcore::Brush m_brush;  // the current brush
+	ClassicBrush m_brush;      // the current brush
 	int m_contextId;           // user context ID
 	int m_layerId;             // target layer ID
 	qreal m_length;            // current length of active brush stroke

@@ -225,7 +225,7 @@ static paintcore::BrushMask offsetMask(const paintcore::BrushMask &mask, float x
 
 }
 
-static paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius, qreal hardness, qreal opacity)
+paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius, qreal hardness, qreal opacity)
 {
 	paintcore::BrushStamp s;
 	if(radius < 8) // optimization: don't bother with a high resolution mask for large brushes

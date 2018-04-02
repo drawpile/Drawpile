@@ -65,7 +65,7 @@ void LaserPointerSettings::pushSettings()
 	else if(_ui->color3->isChecked())
 		c = _ui->color3->color();
 
-	paintcore::Brush b;
+	brushes::ClassicBrush b;
 	b.setColor(c);
 	controller()->setActiveBrush(b);
 }
