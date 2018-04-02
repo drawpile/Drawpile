@@ -6,7 +6,6 @@
 #include "../net/layer.h"
 #include "../net/image.h"
 #include "../net/undo.h"
-#include "../net/pen.h"
 #include "../net/brushes.h"
 #include "../net/textmode.h"
 
@@ -53,8 +52,6 @@ private slots:
 		QTest::newRow("layervisibility") << (Message*)new LayerVisibility(21, 0x1122, 1);
 		QTest::newRow("putimage") << (Message*)new PutImage(22, 0x1122, 0x10, 100, 200, 300, 400, QByteArray("Test"));
 		QTest::newRow("fillrect") << (Message*)new FillRect(23, 0x1122, 0x10, 3, 200, 300, 400, 0x11223344);
-		QTest::newRow("toolchange") << (Message*)new ToolChange(24, 0x1122, 1, 2, 3, 0xffbbccdd, 10, 11, 20, 21, 30, 31, 40, 41, 60);
-		QTest::newRow("penmove") << (Message*)new PenMove(25, PenPointVector() << PenPoint {-10, 10, 0x00ff} << PenPoint { -100, 100, 0xff00 });
 		QTest::newRow("penup") << (Message*)new PenUp(26);
 		QTest::newRow("annotationcreate") << (Message*)new AnnotationCreate(27, 0x1122, -100, -100, 200, 200);
 		QTest::newRow("annotationreshape") << (Message*)new AnnotationReshape(28, 0x1122, -100, -100, 200, 200);
