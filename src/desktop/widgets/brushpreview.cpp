@@ -16,8 +16,10 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QDebug>
 
+#include "brushpreview.h"
+
+#ifndef DESIGNER_PLUGIN
 #include "core/point.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -25,7 +27,7 @@
 #include "brushes/shapes.h"
 #include "brushes/brushengine.h"
 #include "brushes/brushpainter.h"
-#include "brushpreview.h"
+#endif
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -52,7 +54,9 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 }
 
 BrushPreview::~BrushPreview() {
+#ifndef DESIGNER_PLUGIN
 	delete m_preview;
+#endif
 }
 
 void BrushPreview::notifyBrushChange()
@@ -128,6 +132,7 @@ void BrushPreview::changeEvent(QEvent *event)
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
+#ifndef DESIGNER_PLUGIN
 	if(m_needupdate)
 		updatePreview();
 
@@ -138,10 +143,12 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 
 	QPainter painter(this);
 	painter.drawPixmap(event->rect(), m_previewCache, event->rect());
+#endif
 }
 
 void BrushPreview::updatePreview()
 {
+#ifndef DESIGNER_PLUGIN
 	if(!m_preview) {
 		m_preview = new paintcore::LayerStack;
 		QSize size = contentsRect().size();
@@ -215,6 +222,7 @@ void BrushPreview::updatePreview()
 	}
 
 	m_needupdate=false;
+#endif
 }
 
 /**
