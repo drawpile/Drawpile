@@ -83,6 +83,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_PUTTILE: return PutTile::deserialize(ctx, data, len);
 	case MSG_DRAWDABS_CLASSIC: return DrawDabsClassic::deserialize(ctx, data, len);
 	case MSG_DRAWDABS_PIXEL: return DrawDabsPixel::deserialize(ctx, data, len);
+	case MSG_CANVAS_BACKGROUND: return CanvasBackground::deserialize(ctx, data, len);
 	default:
 		qWarning("Unhandled opaque message type: %d", type);
 		return nullptr;

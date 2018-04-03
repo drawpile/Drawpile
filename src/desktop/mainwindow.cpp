@@ -42,6 +42,9 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
+#include <ColorDialog>
+
+
 #ifndef NDEBUG
 #include "core/tile.h"
 #endif
@@ -90,7 +93,6 @@
 #include "docks/inputsettingsdock.h"
 
 #include "net/client.h"
-#include "net/commands.h"
 #include "net/login.h"
 #include "net/serverthread.h"
 #include "canvas/layerlist.h"
@@ -1932,6 +1934,20 @@ void MainWindow::resizeCanvas()
 	dlg->show();
 }
 
+void MainWindow::changeCanvasBackground()
+{
+	if(!m_doc->canvas()) {
+		qWarning("changeCanvasBackground: no canvas!");
+		return;
+	}
+	auto *dlg = new color_widgets::ColorDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setColor(m_doc->canvas()->layerStack()->background().solidColor());
+
+	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
+	dlg->show();
+}
+
 void MainWindow::markSpotForRecording()
 {
 	bool ok;
@@ -2133,6 +2149,7 @@ void MainWindow::setupActions()
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
+	QAction *canvasBackground = makeAction("canvas-background", tr("Set Background"));
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
@@ -2169,6 +2186,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(selectnone);
 
 	m_docadmintools->addAction(resize);
+	m_docadmintools->addAction(canvasBackground);
 	m_docadmintools->addAction(expandup);
 	m_docadmintools->addAction(expanddown);
 	m_docadmintools->addAction(expandleft);
@@ -2195,6 +2213,7 @@ void MainWindow::setupActions()
 	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
 	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
+	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
@@ -2225,6 +2244,7 @@ void MainWindow::setupActions()
 	expandmenu->addAction(expanddown);
 	expandmenu->addAction(expandleft);
 	expandmenu->addAction(expandright);
+	editmenu->addAction(canvasBackground);
 
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);

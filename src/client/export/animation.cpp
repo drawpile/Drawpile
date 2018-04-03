@@ -45,7 +45,7 @@ void AnimationExporter::saveNextFrame()
 		m_exporter->finish();
 
 	} else {
-		QImage image = m_layers->flatLayerImage(m_currentFrame - 1, m_useBgLayer, m_bgColor);
+		QImage image = m_layers->flatLayerImage(m_currentFrame - 1, m_useBgLayer);
 
 		m_exporter->saveFrame(image, 1);
 		m_currentFrame++;

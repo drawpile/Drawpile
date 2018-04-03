@@ -64,7 +64,7 @@ Flipbook::Flipbook(QWidget *parent)
 	cfg.beginGroup("flipbook");
 
 	m_ui->fps->setValue(cfg.value("fps", 15).toInt());
-	m_ui->useBgLayer->setChecked(cfg.value("bglayer", true).toBool());
+	m_ui->useBgLayer->setChecked(cfg.value("bglayer", false).toBool());
 
 	QRect geom = cfg.value("window", QRect()).toRect();
 	if(geom.isValid()) {
@@ -188,7 +188,7 @@ void Flipbook::loadFrame()
 	const int f = m_ui->layerIndex->value() - 1;
 	if(m_layers && f < m_frames.size()) {
 		if(m_frames.at(f).isNull()) {
-			QImage img = m_layers->flatLayerImage(f, m_ui->useBgLayer->isChecked(), QColor(0,0,0,0));
+			QImage img = m_layers->flatLayerImage(f, m_ui->useBgLayer->isChecked());
 
 			if(!m_crop.isEmpty())
 				img = img.copy(m_crop);

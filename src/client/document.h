@@ -189,6 +189,7 @@ public slots:
 	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
 	void sendTerminateSession();
+	void sendCanvasBackground(const QColor &color);
 	void sendAbuseReport(int userId, const QString &message);
 
 	// Tool related functions

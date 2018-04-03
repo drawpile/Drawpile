@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -408,6 +408,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_PUTTILE:
 			handlePutTile(msg.cast<PutTile>());
 			break;
+		case MSG_CANVAS_BACKGROUND:
+			handleCanvasBackground(msg.cast<CanvasBackground>());
+			break;
 		default:
 			qWarning() << "Unhandled drawing command" << msg->type() << msg->messageName();
 			return;
@@ -450,6 +453,24 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos
 
 	// Generate the initial savepoint, just in case
 	makeSavepoint(pos);
+}
+
+void StateTracker::handleCanvasBackground(const protocol::CanvasBackground &cmd)
+{
+	paintcore::Tile t;
+	if(cmd.isSolidColor()) {
+		t = paintcore::Tile(QColor::fromRgba(cmd.color()));
+
+	} else {
+		QByteArray data = qUncompress(cmd.image());
+		if(data.length() != paintcore::Tile::BYTES) {
+			qWarning() << "Invalid canvas background: Expected" << paintcore::Tile::BYTES << "bytes, but got" << data.length();
+			return;
+		}
+
+		t = paintcore::Tile(data);
+	}
+	_image->setBackground(t);
 }
 
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
@@ -1193,6 +1214,8 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	}
 
 	case MSG_UNDOPOINT: return AffectedArea(AffectedArea::USERATTRS, 0);
+
+	case MSG_CANVAS_BACKGROUND: return AffectedArea(AffectedArea::PIXELS, -1, QRect(0, 0, 1, 1));
 
 	default:
 #ifndef NDEBUG

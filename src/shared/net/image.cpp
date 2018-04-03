@@ -220,6 +220,70 @@ PutTile *PutTile::fromText(uint8_t ctx, const Kwargs &kwargs)
 		);
 }
 
+CanvasBackground::CanvasBackground(uint8_t ctx, uint32_t color)
+	: CanvasBackground(ctx, colorByteArray(color))
+{
+}
+
+CanvasBackground *CanvasBackground::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len < 4)
+		return nullptr;
+
+	return new CanvasBackground(
+		ctx,
+		QByteArray((const char*)data, len)
+	);
+}
+
+int CanvasBackground::payloadLength() const
+{
+	return m_image.length();
+}
+
+int CanvasBackground::serializePayload(uchar *data) const
+{
+	memcpy(data, m_image.constData(), m_image.length());
+	return m_image.length();
+}
+
+uint32_t CanvasBackground::color() const
+{
+	Q_ASSERT(m_image.length()==4);
+	return qFromBigEndian<quint32>(m_image.constData());
+}
+
+bool CanvasBackground::payloadEquals(const Message &m) const
+{
+	const CanvasBackground &p = static_cast<const CanvasBackground&>(m);
+	return m_image == p.m_image;
+}
+
+Kwargs CanvasBackground::kwargs() const
+{
+	Kwargs kw;
+	if(isSolidColor())
+		kw["color"] = text::argbString(color());
+	else
+		kw["img"] = splitToColumns(m_image.toBase64(), 70);
+
+	return kw;
+}
+
+CanvasBackground *CanvasBackground::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QByteArray img;
+	if(kwargs.contains("color")) {
+		img = colorByteArray(text::parseColor(kwargs["color"]));
+
+	} else {
+		img = QByteArray::fromBase64(kwargs["img"].toUtf8());
+		if(img.length()<=4)
+			return nullptr;
+	}
+
+	return new CanvasBackground(ctx, img);
+}
 
 FillRect *FillRect::deserialize(uint8_t ctx, const uchar *data, uint len)
 {

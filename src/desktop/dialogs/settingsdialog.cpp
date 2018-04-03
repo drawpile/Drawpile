@@ -306,7 +306,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
 	m_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
 	m_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
-	m_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
+	m_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", false).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");

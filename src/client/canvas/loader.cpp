@@ -45,12 +45,11 @@ using protocol::MessagePtr;
 
 QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
-	QList<MessagePtr> msgs;
-
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0101, 0, _color.rgba(), 0, QGuiApplication::tr("Background"))));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QGuiApplication::tr("Foreground"))));
-	return msgs;
+	return QList<MessagePtr>()
+		<< MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0))
+		<< MessagePtr(new protocol::CanvasBackground(1, _color.rgba()))
+		<< MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QStringLiteral("Layer 1")))
+		;
 }
 
 QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
@@ -128,6 +127,15 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Most important bit first: canvas initialization
 	const QSize imgsize = m_layers->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(m_contextId, 0, imgsize.width(), imgsize.height(), 0)));
+
+	const QColor solidBgColor = m_layers->background().solidColor();
+	if(solidBgColor.isValid())
+		msgs.append(MessagePtr(new protocol::CanvasBackground(m_contextId, solidBgColor.rgba())));
+	else
+		msgs.append(MessagePtr(new protocol::CanvasBackground(
+			m_contextId,
+			qCompress(reinterpret_cast<const uchar*>(m_layers->background().constData()), paintcore::Tile::BYTES)
+			)));
 
 	// Preset default layer
 	if(m_session && m_session->layerlist()->defaultLayer()>0)

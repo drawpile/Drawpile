@@ -32,10 +32,11 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
-	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(true),
+	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(false),
 	  m_writeSequence(false)
 {
 	m_annotations = new AnnotationModel(this);
+	Tile::fillChecker(m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
 }
 
 LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
@@ -52,6 +53,8 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_writeSequence(false)
 {
 	m_annotations = orig->m_annotations->clone(this);
+	m_backgroundTile = orig->m_backgroundTile;
+	m_paintBackgroundTile = orig->m_paintBackgroundTile;
 	for(const Layer *l : orig->m_layers)
 		m_layers << new Layer(*l, this);
 }
@@ -73,6 +76,10 @@ void LayerStack::reset()
 		delete l;
 	m_layers.clear();
 	m_annotations->clear();
+
+	m_backgroundTile = Tile();
+	Tile::fillChecker(m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
+
 	emit resized(0, 0, oldsize);
 	emit layersChanged(QList<LayerInfo>());
 }
@@ -139,6 +146,38 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 	}
 
 	emit resized(left, top, oldsize);
+}
+
+void LayerStack::setBackground(const Tile &tile)
+{
+	if(tile.equals(m_backgroundTile))
+		return;
+
+	m_backgroundTile = tile;
+
+	// Check if background tile has any transparent pixels
+	bool isTransparent = tile.isNull();
+	if(!tile.isNull()) {
+		const quint32 *ptr = tile.constData();
+		for(int i=0;i<Tile::LENGTH;++i,++ptr) {
+			if(qAlpha(*ptr) < 255) {
+				isTransparent = true;
+				break;
+			}
+		}
+	}
+
+	// If background tile is (at least partially) transparent, composite it with
+	// the checkerboard pattern. (TODO: draw background in the view widget)
+	if(isTransparent) {
+		Tile::fillChecker(m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
+		m_paintBackgroundTile.merge(m_backgroundTile, 255, BlendMode::MODE_NORMAL);
+	} else {
+		m_paintBackgroundTile = m_backgroundTile;
+	}
+
+	markDirty();
+	notifyAreaChanged();
 }
 
 /**
@@ -370,8 +409,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool
 	if(!updates.isEmpty()) {
 		// Flatten tiles
 		concurrentForEach<UpdateTile*>(updates, [this](UpdateTile *t) {
-			// TODO: don't draw the checkerboard here: use a QML item instead to draw the background
-			Tile::fillChecker(t->data, QColor(128,128,128), Qt::white);
+			m_paintBackgroundTile.copyTo(t->data);
 			flattenTile(t->data, t->x, t->y);
 		});
 
@@ -395,7 +433,7 @@ void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool
 
 Tile LayerStack::getFlatTile(int x, int y) const
 {
-	Tile t;
+	Tile t = m_backgroundTile;
 	flattenTile(t.data(), x, y);
 	return t;
 }
@@ -440,6 +478,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 		const int y2 = (y+r) / Tile::SIZE;
 
 		Layer flat(nullptr, 0, QString(), Qt::transparent, size());
+		flat.putTile(0, 0, 9999*9999, m_backgroundTile);
 
 		for(int tx=x1;tx<=x2;++tx) {
 			for(int ty=y1;ty<=y2;++ty) {
@@ -456,14 +495,15 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	if(m_layers.isEmpty())
 		return QImage();
 
-	QScopedPointer<Layer> flat { new Layer(*m_layers.at(0)) };
+	Layer flat(nullptr, 0, QString(), Qt::transparent, size());
+	flat.putTile(0, 0, 9999*9999, m_backgroundTile);
 
-	for(int i=1;i<m_layers.size();++i) {
+	for(int i=0;i<m_layers.size();++i) {
 		if(m_layers.at(i)->isVisible())
-			flat->merge(m_layers.at(i));
+			flat.merge(m_layers.at(i));
 	}
 
-	QImage image = flat->toImage();
+	QImage image = flat.toImage();
 
 	if(includeAnnotations) {
 		QPainter painter(&image);
@@ -474,20 +514,15 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	return image;
 }
 
-QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background) const
+QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer) const
 {
 	Q_ASSERT(layerIdx>=0 && layerIdx < m_layers.size());
 
-	QScopedPointer<Layer> flat;
+	Layer flat(nullptr, 0, QString(), Qt::transparent, size());
+	flat.putTile(0, 0, 9999*9999, m_backgroundTile);
+	flat.merge(m_layers.at(layerIdx));
 
-	if(useBgLayer)
-		flat.reset(new Layer(*m_layers.at(0)));
-	else
-		flat.reset(new Layer(nullptr, 0, QString(), background, size()));
-
-	flat->merge(m_layers.at(layerIdx));
-
-	return flat->toImage();
+	return flat.toImage();
 }
 
 // Flatten a single tile
@@ -550,8 +585,6 @@ void LayerStack::markDirty(const QRect &area)
 
 void LayerStack::markDirty()
 {
-	if(m_layers.isEmpty() || m_width<=0 || m_height<=0)
-		return;
 	m_dirtytiles.fill(true);
 
 	m_dirtyrect = QRect(0, 0, m_width, m_height);
@@ -721,6 +754,7 @@ Savepoint *LayerStack::makeSavepoint()
 	}
 
 	sp->annotations = m_annotations->getAnnotations();
+	sp->background = m_backgroundTile;
 
 	sp->width = m_width;
 	sp->height = m_height;
@@ -776,6 +810,9 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 	for(const Layer *l : savepoint->layers)
 		m_layers.append(new Layer(*l));
 
+	// Restore background
+	setBackground(savepoint->background);
+
 	// Restore annotations
 	m_annotations->setAnnotations(savepoint->annotations);
 
@@ -803,6 +840,9 @@ void Savepoint::toDatastream(QDataStream &out) const
 		layer->toDatastream(out);
 	}
 
+	// Write background
+	out << background;
+
 	// Write annotations
 	out << quint16(annotations.size());
 	for(const Annotation &annotation : annotations) {
@@ -824,6 +864,8 @@ Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
 	while(layers--) {
 		sp->layers.append(Layer::fromDatastream(owner, in));
 	}
+
+	in >> sp->background;
 
 	quint16 annotations;
 	in >> annotations;

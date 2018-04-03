@@ -27,6 +27,7 @@
 
 namespace protocol {
 	class CanvasResize;
+	class CanvasBackground;
 	class LayerCreate;
 	class LayerAttributes;
 	class LayerVisibility;
@@ -241,6 +242,7 @@ private:
 
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd, int pos);
+	void handleCanvasBackground(const protocol::CanvasBackground &cmd);
 	void handleLayerCreate(const protocol::LayerCreate &cmd);
 	void handleLayerAttributes(const protocol::LayerAttributes &cmd);
 	void handleLayerVisibility(const protocol::LayerVisibility &cmd);

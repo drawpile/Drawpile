@@ -591,6 +591,12 @@ void Document::sendTerminateSession()
 	m_client->sendMessage(net::command::terminateSession());
 }
 
+void Document::sendCanvasBackground(const QColor &color)
+{
+	m_client->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(m_client->myId())));
+	m_client->sendMessage(net::command::setCanvasBackground(m_client->myId(), color));
+}
+
 void Document::sendAbuseReport(int userId, const QString &message)
 {
 	QJsonObject kwargs;
