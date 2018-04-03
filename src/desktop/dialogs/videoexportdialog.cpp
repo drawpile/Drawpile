@@ -108,13 +108,6 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	if(FfmpegExporter::isFfmpegAvailable())
 		_ui->noFfmpegWarning->setHidden(true);
 
-	// Animation settings
-	connect(_ui->animBg, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int idx) {
-		_ui->animBgColor->setVisible(idx==2);
-		if(idx==1 && _ui->animFirstLayer->value()==1)
-			_ui->animFirstLayer->setValue(2);
-	});
-
 	// Load settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
@@ -122,10 +115,6 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
 	_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
 	_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
-	_ui->animBgColor->setColor(cfg.value("bgcolor", QColor(255,255,255)).value<QColor>());
-	_ui->animBg->setCurrentIndex(cfg.value("animbg", 1).toInt());
-
-	_ui->animBgColor->setVisible(_ui->animBg->currentIndex()==2);
 
 	_ui->ditheringMethod->setCurrentIndex(cfg.value("dithering", 0).toInt());
 	_ui->optimizeGif->setChecked(cfg.value("optimizegif", true).toBool());
@@ -147,8 +136,6 @@ VideoExportDialog::~VideoExportDialog()
 	cfg.setValue("frameheight", _ui->frameheight->value());
 	cfg.setValue("sizeChoice", _ui->sizeChoice->currentIndex());
 	cfg.setValue("lastpath", _lastpath);
-	cfg.setValue("bgcolor", _ui->animBgColor->color());
-	cfg.setValue("animbg", _ui->animBg->currentIndex());
 	cfg.setValue("dithering", _ui->ditheringMethod->currentIndex());
 	cfg.setValue("optimizegif", _ui->optimizeGif->isChecked());
 
@@ -162,8 +149,6 @@ void VideoExportDialog::showAnimationSettings(int layercount)
 	_ui->animFirstLayer->setValue(1);
 	_ui->animLastLayer->setValue(layercount);
 	_ui->animOpts->setVisible(true);
-	if(_ui->animBg->currentIndex()==1 && _ui->animFirstLayer->value()==1)
-		_ui->animFirstLayer->setValue(2);
 }
 
 void VideoExportDialog::selectContainerFormat(const QString &fmt)
@@ -306,18 +291,6 @@ int VideoExportDialog::getFirstLayer() const {
 
 int VideoExportDialog::getLastLayer() const {
 	return qMax(_ui->animFirstLayer->value(), _ui->animLastLayer->value());
-}
-
-bool VideoExportDialog::useBackgroundLayer() const
-{
-	return _ui->animBg->currentIndex() == 1;
-}
-
-QColor VideoExportDialog::animationBackground() const
-{
-	if(_ui->animBg->currentIndex()==0)
-		return QColor(0, 0, 0, 0);
-	return _ui->animBgColor->color();
 }
 
 }

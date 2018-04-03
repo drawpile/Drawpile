@@ -32,7 +32,7 @@ namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
-	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_viewBackgroundLayer(false),
+	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true),
 	  m_writeSequence(false)
 {
 	m_annotations = new AnnotationModel(this);
@@ -49,7 +49,6 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_viewlayeridx(orig->m_viewlayeridx),
 	  m_onionskinsBelow(orig->m_onionskinsBelow),
 	  m_onionskinTint(orig->m_onionskinTint),
-	  m_viewBackgroundLayer(orig->m_viewBackgroundLayer),
 	  m_writeSequence(false)
 {
 	m_annotations = orig->m_annotations->clone(this);
@@ -514,7 +513,7 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	return image;
 }
 
-QImage LayerStack::flatLayerImage(int layerIdx, bool useBgLayer) const
+QImage LayerStack::flatLayerImage(int layerIdx) const
 {
 	Q_ASSERT(layerIdx>=0 && layerIdx < m_layers.size());
 
@@ -676,20 +675,10 @@ void LayerStack::setOnionskinMode(int below, int above, bool tint)
 		markDirty();
 }
 
-void LayerStack::setViewBackgroundLayer(bool usebg)
-{
-	m_viewBackgroundLayer = usebg;
-	if(m_viewmode != NORMAL)
-		markDirty();
-}
-
 int LayerStack::layerOpacity(int idx) const
 {
 	Q_ASSERT(idx>=0 && idx < m_layers.size());
 	int o = m_layers.at(idx)->opacity();
-
-	if(m_viewBackgroundLayer && idx==0)
-		return o;
 
 	if(viewMode()==ONIONSKIN) {
 		const int d = m_viewlayeridx - idx;
@@ -710,9 +699,6 @@ int LayerStack::layerOpacity(int idx) const
 quint32 LayerStack::layerTint(int idx) const
 {
 	if(m_onionskinTint && viewMode() == ONIONSKIN) {
-		if(idx==0 && m_viewBackgroundLayer)
-			return 0;
-
 		if(idx < m_viewlayeridx)
 			return 0x80ff3333;
 		else if(idx > m_viewlayeridx)
@@ -728,8 +714,6 @@ bool LayerStack::isVisible(int idx) const
 	if(!m_layers.at(idx)->isVisible())
 		return false;
 
-	if(idx==0 && m_viewBackgroundLayer)
-		return true;
 	switch(viewMode()) {
 	case NORMAL: break;
 	case SOLO: return idx == m_viewlayeridx;

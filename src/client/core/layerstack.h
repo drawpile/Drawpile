@@ -121,8 +121,8 @@ public:
 	//! Return a flattened image of the layer stack
 	QImage toFlatImage(bool includeAnnotations) const;
 
-	//! Return a single layer, optionally merged with the bottom layer
-	QImage flatLayerImage(int layerIdx, bool useBgLayer) const;
+	//! Return a single layer merged with the background
+	QImage flatLayerImage(int layerIdxr) const;
 
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;
@@ -179,9 +179,6 @@ public:
 
 	//! Set onionskin view mode parameters
 	void setOnionskinMode(int below, int above, bool tint);
-
-	//! Show background layer (bottom-most layer) in special view modes
-	void setViewBackgroundLayer(bool usebg);
 
 	//! Clear the entire layer stack
 	void reset();
@@ -246,7 +243,6 @@ private:
 	int m_viewlayeridx;
 	int m_onionskinsBelow, m_onionskinsAbove;
 	bool m_onionskinTint;
-	bool m_viewBackgroundLayer;
 	bool m_writeSequence;
 };
 

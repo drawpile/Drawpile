@@ -85,39 +85,6 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Background:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QComboBox" name="animBg">
-          <item>
-           <property name="text">
-            <string>Transparent</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Bottom layer</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Solid color</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="ColorButton" name="animBgColor"/>
-        </item>
-       </layout>
-      </item>
      </layout>
     </widget>
    </item>
@@ -562,13 +529,6 @@ color: red;</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ColorButton</class>
-   <extends>QToolButton</extends>
-   <header>widgets/colorbutton.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

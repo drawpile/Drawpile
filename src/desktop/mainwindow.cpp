@@ -1130,8 +1130,6 @@ void MainWindow::exportAnimation()
 
 				exporter->setStartFrame(dlg->getFirstLayer());
 				exporter->setEndFrame(dlg->getLastLayer());
-				exporter->setUseBgLayer(dlg->useBackgroundLayer());
-				exporter->setBackground(dlg->animationBackground());
 
 				auto *pdlg = new QProgressDialog(tr("Exporting..."), tr("Cancel"), 1, dlg->getLastLayer(), this);
 				pdlg->setWindowModality(Qt::WindowModal);

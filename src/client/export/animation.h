@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016 Calle Laakkonen
+   Copyright (C) 2016-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,8 +44,6 @@ public:
 			m_currentFrame = f;
 	}
 	void setEndFrame(int f) { m_endFrame = f; }
-	void setUseBgLayer(bool usebg) { m_useBgLayer = usebg; }
-	void setBackground(const QColor &color) { m_bgColor = color; }
 
 signals:
 	void error(const QString &message);
@@ -60,9 +58,6 @@ private:
 	VideoExporter *m_exporter;
 
 	int m_startFrame, m_endFrame;
-	bool m_useBgLayer;
-	QColor m_bgColor;
-
 	int m_currentFrame;
 };
 

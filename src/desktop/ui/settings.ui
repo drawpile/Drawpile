@@ -388,6 +388,16 @@
           </widget>
           <widget class="QWidget" name="stackedWidgetPage2">
            <layout class="QFormLayout" name="formLayout_3">
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="recordpause">
+              <property name="text">
+               <string>Record pauses</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
@@ -426,6 +436,13 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="recordtimestamp">
+              <property name="text">
+               <string>Add timestamp markers</string>
+              </property>
+             </widget>
             </item>
             <item row="3" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -466,6 +483,13 @@
               </item>
              </layout>
             </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Ffmpeg path:</string>
+              </property>
+             </widget>
+            </item>
             <item row="5" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
@@ -484,6 +508,13 @@
               </item>
              </layout>
             </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Default folder:</string>
+              </property>
+             </widget>
+            </item>
             <item row="7" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
@@ -501,6 +532,13 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Onionskin layers:</string>
+              </property>
+             </widget>
             </item>
             <item row="9" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -540,54 +578,6 @@
              <widget class="QCheckBox" name="onionskinTint">
               <property name="text">
                <string>Tint layers</string>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="1">
-             <widget class="QCheckBox" name="backgroundlayer">
-              <property name="toolTip">
-               <string>Treat the bottom-most layer as the frame background</string>
-              </property>
-              <property name="text">
-               <string>Use background layer</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="recordpause">
-              <property name="text">
-               <string>Record pauses</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="recordtimestamp">
-              <property name="text">
-               <string>Add timestamp markers</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Ffmpeg path:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>Default folder:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Onionskin layers:</string>
               </property>
              </widget>
             </item>

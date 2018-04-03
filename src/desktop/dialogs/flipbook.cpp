@@ -38,15 +38,6 @@ Flipbook::Flipbook(QWidget *parent)
 
 	m_timer = new QTimer(this);
 
-	connect(m_ui->useBgLayer, &QCheckBox::toggled, [this](bool usebg) {
-		const int min = usebg ? 2 : 1;
-		m_ui->loopStart->setMinimum(min);
-		m_ui->loopEnd->setMinimum(min);
-		updateRange();
-		resetFrameCache();
-		loadFrame();
-	});
-
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
 	connect(m_ui->layerIndex, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
@@ -57,6 +48,8 @@ Flipbook::Flipbook(QWidget *parent)
 	connect(m_ui->view, &FlipbookView::cropped, this, &Flipbook::setCrop);
 	connect(m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
 
+	updateRange();
+
 	m_ui->playButton->setFocus();
 
 	// Load default settings
@@ -64,15 +57,11 @@ Flipbook::Flipbook(QWidget *parent)
 	cfg.beginGroup("flipbook");
 
 	m_ui->fps->setValue(cfg.value("fps", 15).toInt());
-	m_ui->useBgLayer->setChecked(cfg.value("bglayer", false).toBool());
 
 	QRect geom = cfg.value("window", QRect()).toRect();
 	if(geom.isValid()) {
 		setGeometry(geom);
 	}
-
-	m_ui->loopStart->setMinimum(m_ui->useBgLayer->isChecked() ? 2 : 1);
-	m_ui->loopEnd->setMinimum(m_ui->useBgLayer->isChecked() ? 2 : 1);
 
 	// Autoplay
 	m_ui->playButton->click();
@@ -85,7 +74,6 @@ Flipbook::~Flipbook()
 	cfg.beginGroup("flipbook");
 
 	cfg.setValue("fps", m_ui->fps->value());
-	cfg.setValue("bglayer", m_ui->useBgLayer->isChecked());
 	cfg.setValue("window", geometry());
 	cfg.setValue("crop", m_crop);
 
@@ -188,7 +176,7 @@ void Flipbook::loadFrame()
 	const int f = m_ui->layerIndex->value() - 1;
 	if(m_layers && f < m_frames.size()) {
 		if(m_frames.at(f).isNull()) {
-			QImage img = m_layers->flatLayerImage(f, m_ui->useBgLayer->isChecked());
+			QImage img = m_layers->flatLayerImage(f);
 
 			if(!m_crop.isEmpty())
 				img = img.copy(m_crop);
