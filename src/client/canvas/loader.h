@@ -103,7 +103,7 @@ public:
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return m_filename; }
 	QString errorMessage() const { return m_error; }
-	QString warningMessage() const { return m_error; }
+	QString warningMessage() const { return m_warning; }
 
 private:
 	QString m_filename;

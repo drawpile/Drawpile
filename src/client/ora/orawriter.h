@@ -28,6 +28,7 @@ namespace paintcore {
 namespace openraster {
 
 extern const QString DP_NAMESPACE;
+extern const QString MYPAINT_NAMESPACE;
 
 /**
  * @brief Save the layer stack as an OpenRaster file

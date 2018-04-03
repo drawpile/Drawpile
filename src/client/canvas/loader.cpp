@@ -69,7 +69,9 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			if((ora.warnings & openraster::OraResult::ORA_EXTENDED))
 				text += "\n- " + QGuiApplication::tr("Application specific extensions are used");
 			if((ora.warnings & openraster::OraResult::ORA_NESTED))
-				text += "\n- " + QGuiApplication::tr("Nested layers are not fully supported.");
+				text += "\n- " + QGuiApplication::tr("Nested layers are not fully supported");
+			if((ora.warnings & openraster::OraResult::UNSUPPORTED_BACKGROUND_TILE))
+				text += "\n- " + QGuiApplication::tr("Unsupported background tile size");
 
 			m_warning = text;
 		}
