@@ -103,6 +103,8 @@ Protocol stability promises:
 
  * Changed PutImage pixel format to ARGB32_Premultiplied
  * Added PutTile command
+ * Removed ToolChange and PenMove commands
+ * Added DrawDabsClassic and DrawDabsPixel commands
 
 ### Protocol dp:4.20.1 (2.0.9)
 
