@@ -25,7 +25,7 @@ class QPointF;
 
 namespace paintcore {
 	class Layer;
-	class BrushStamp;
+	struct BrushStamp;
 }
 
 namespace protocol {

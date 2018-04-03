@@ -27,7 +27,7 @@
 namespace paintcore {
 	class LayerStack;
 	class Layer;
-	class BrushStamp;
+	struct BrushStamp;
 }
 
 namespace brushes {
