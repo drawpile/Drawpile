@@ -6,7 +6,7 @@
 #include "../net/layer.h"
 #include "../net/image.h"
 #include "../net/undo.h"
-#include "../net/pen.h"
+#include "../net/brushes.h"
 #include "../net/textmode.h"
 
 #include <QtTest/QtTest>
@@ -52,14 +52,15 @@ private slots:
 		QTest::newRow("layervisibility") << (Message*)new LayerVisibility(21, 0x1122, 1);
 		QTest::newRow("putimage") << (Message*)new PutImage(22, 0x1122, 0x10, 100, 200, 300, 400, QByteArray("Test"));
 		QTest::newRow("fillrect") << (Message*)new FillRect(23, 0x1122, 0x10, 3, 200, 300, 400, 0x11223344);
-		QTest::newRow("toolchange") << (Message*)new ToolChange(24, 0x1122, 1, 2, 3, 0xffbbccdd, 10, 11, 20, 21, 30, 31, 40, 41, 60);
-		QTest::newRow("penmove") << (Message*)new PenMove(25, PenPointVector() << PenPoint {-10, 10, 0x00ff} << PenPoint { -100, 100, 0xff00 });
 		QTest::newRow("penup") << (Message*)new PenUp(26);
 		QTest::newRow("annotationcreate") << (Message*)new AnnotationCreate(27, 0x1122, -100, -100, 200, 200);
 		QTest::newRow("annotationreshape") << (Message*)new AnnotationReshape(28, 0x1122, -100, -100, 200, 200);
 		QTest::newRow("annotationedit") << (Message*)new AnnotationEdit(29, 0x1122, 0x12345678, 7, 0x0a, QByteArray("Test"));
 		QTest::newRow("annotationdelete") << (Message*)new AnnotationDelete(30, 0x1122);
 		QTest::newRow("moveregion") << (Message*)new MoveRegion(30, 0x1122, 0, 1, 2, 3, 10, 11, 20, 21, 30, 31, 40, 41, QByteArray("test"));
+
+		QTest::newRow("classicdabs") << (Message*)new DrawDabsClassic(31, 0x1122, 100, -100, 0xff223344, 0x10, ClassicBrushDabVector() << ClassicBrushDab {1, 2, 3, 4, 5} << ClassicBrushDab {10, 20, 30, 40, 50});
+		QTest::newRow("pixeldabs") << (Message*)new DrawDabsPixel(32, 0x1122, 100, -100, 0xff223344, 0x10, PixelBrushDabVector() << PixelBrushDab {1, 2, 3, 4} << PixelBrushDab {10, 20, 30, 40});
 
 		QTest::newRow("undo") << (Message*)new Undo(254, 1, false);
 		QTest::newRow("redo") << (Message*)new Undo(254, 1, true);

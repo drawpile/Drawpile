@@ -58,8 +58,6 @@ private slots:
 		QTest::newRow("2 undopoint") << true;
 		QTest::newRow("2 putimage img=000") << true;
 		QTest::newRow("2 fillrect") << true;
-		QTest::newRow("2 brush") << true;
-		QTest::newRow("2 penmove 1 1") << true;
 		QTest::newRow("2 penup") << true;
 		QTest::newRow("2 moveregion") << true;
 

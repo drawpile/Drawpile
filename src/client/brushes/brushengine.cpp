@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,25 +17,32 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DP_PAINTCORE_SHAPES_H
-#define DP_PAINTCORE_SHAPES_H
+#include "brushengine.h"
 
-#include <QRectF>
-#include "point.h"
+#include "classicbrushstate.h"
+#include "pixelbrushstate.h"
 
-namespace paintcore {
-namespace shapes {
+namespace brushes {
 
-PointVector rectangle(const QRectF &rect);
-PointVector ellipse(const QRectF &rect);
-
-PointVector cubicBezierCurve(const QPointF p[4]);
-
-// These are used for brush previews
-PointVector sampleStroke(const QRectF &rect);
-PointVector sampleBlob(const QRectF &rect);
-
-}
+BrushEngine::BrushEngine()
+{
 }
 
-#endif
+void BrushEngine::setBrush(int contextId, int layerId, const ClassicBrush &brush)
+{
+	// Select brush engine to use
+	if(brush.subpixel()) {
+		m_activeEngine = &m_classic;
+		m_classic.setBrush(brush);
+		m_classic.setContextId(contextId);
+		m_classic.setLayer(layerId);
+
+	} else {
+		m_activeEngine = &m_pixel;
+		m_pixel.setBrush(brush);
+		m_pixel.setContextId(contextId);
+		m_pixel.setLayer(layerId);
+	}
+}
+
+}

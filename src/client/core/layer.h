@@ -16,17 +16,17 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LAYER_H
-#define LAYER_H
-
-#include <QColor>
+#ifndef PAINTCORE_LAYER_H
+#define PAINTCORE_LAYER_H
 
 #include "tile.h"
+
+#include <QColor>
+#include <QRect>
 
 class QImage;
 class QSize;
 class QDataStream;
-class QRect;
 
 namespace paintcore {
 
@@ -91,7 +91,12 @@ class Layer {
 		//! Get the layer as an image with excess transparency cropped away
 		QImage toCroppedImage(int *xOffset, int *yOffset) const;
 
-		//! Adjust layer size
+		/**
+		 * @brief Adjust layer size
+		 *
+		 * Note: Unless you're working with a free layer, you should not call
+		 * this yourself. Instead, use the layerstack's resize function.
+		 */
 		void resize(int top, int right, int bottom, int left);
 
 		//! Get the color at the specified coordinates
@@ -139,14 +144,11 @@ class Layer {
 		//! Set a tile
 		void putTile(int col, int row, int repeat, const Tile &tile);
 
+		//! Dab a brush
+		void putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode);
+
 		//! Fill a rectangle
 		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
-
-		//! Dab the layer with a brush
-		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
-
-		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state);
 
 		/**
 		 * @brief Get a sublayer
@@ -155,6 +157,10 @@ class Layer {
 		 * Positive IDs should correspond to context IDs: they are used for indirect
 		 * painting.
 		 * Negative IDs are local preview layers.
+		 *
+		 * ID 0 should not be used.
+		 *
+		 * The blendmode and opacity are set only when the layer is created.
 		 *
 		 * @param id
 		 * @param blendmode
@@ -165,6 +171,9 @@ class Layer {
 
 		//! Merge a sublayer with this layer
 		void mergeSublayer(int id);
+
+		//! Merge all sublayers with positive IDs
+		void mergeAllSublayers();
 
 		//! Remove a sublayer
 		void removeSublayer(int id);
@@ -210,12 +219,6 @@ class Layer {
 		void markOpaqueDirty(bool forceVisible=false);
 
 		/**
-		 * @brief Is the whole layer filled with the same color?
-		 * @return invalid color if there is more than one color on this canvas
-		 */
-		QColor isSolidColor() const;
-
-		/**
 		 * @brief Get the non-pixeldata related properties
 		 */
 		const LayerInfo &info() const { return m_info; }
@@ -229,21 +232,46 @@ class Layer {
 		//! Get this layer's tile vector
 		const QVector<Tile> tiles() const { return m_tiles; }
 
+		/**
+		 * @brief Add the given rectangle to this layer's change bounds
+		 *
+		 * The change bounds is a cached bounding rectangle of changes made
+		 * to a private layer.
+		 *
+		 * @param b
+		 */
+		void updateChangeBounds(const QRect &b) { m_changeBounds |= b; }
+
+		/**
+		 * @brief Get the layer's change bounds
+		 */
+		QRect changeBounds() const { return m_changeBounds; }
+
+		/**
+		 * @brief Get the change bounds of a sublayer
+		 * @param contextId sublayer ID
+		 */
+		QRect changeBounds(int contextId) const {
+			for(const Layer *l : m_sublayers) {
+				if(l->id() == contextId && l->isVisible())
+					return l->changeBounds();
+			}
+			return QRect();
+		}
+
 	private:
 		//! Construct a sublayer
 		Layer(LayerStack *owner, int id, const QSize& size);
 
 		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
 
-		void directDab(const Brush &brush, const Point& point, StrokeState &state);
-		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
-		void drawSoftLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
-
 		QColor getDabColor(const BrushStamp &stamp) const;
 
 		LayerStack *m_owner;
 		LayerInfo m_info;
-	
+
+		QRect m_changeBounds;
+
 		int m_width;
 		int m_height;
 		int m_xtiles;

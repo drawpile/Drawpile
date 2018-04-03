@@ -21,7 +21,7 @@
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
-#include "../shared/net/pen.h"
+#include "../shared/net/brushes.h"
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -45,7 +45,6 @@ void AclFilter::reset(int myId, bool localMode)
 	m_imagesLocked = false;
 	m_ownLayers = false;
 	m_lockAnnotationCreation = false;
-	m_userLayers.clear();
 
 	m_lockDefault = false;
 
@@ -101,8 +100,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		if(m_userlocks.removeAll(msg.contextId())>0)
 			emit userLocksChanged(m_userlocks);
 
-		m_userLayers.remove(msg.contextId());
-
 		QMutableHashIterator<int,LayerAcl> i(m_layers);
 		while(i.hasNext()) {
 			i.next();
@@ -127,9 +124,9 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_LAYER_ACL: {
 		const auto &lmsg = static_cast<const LayerACL&>(msg);
-		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.id()) == msg.contextId())) {
-			m_layers[lmsg.id()] = LayerAcl(lmsg.locked(), lmsg.exclusive());
-			emit layerAclChange(lmsg.id(), lmsg.locked(), lmsg.exclusive());
+		if(isOpUser || (isOwnLayers() && layerCreator(lmsg.layer()) == msg.contextId())) {
+			m_layers[lmsg.layer()] = LayerAcl(lmsg.locked(), lmsg.exclusive());
+			emit layerAclChange(lmsg.layer(), lmsg.locked(), lmsg.exclusive());
 
 			// Emit this to refresh the UI in case our selected layer was (un)locked.
 			// (We don't actually know which layer is selected in the UI here.)
@@ -163,9 +160,6 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		setUserLock(lmsg.ids().contains(m_myId));
 		return true;
 	}
-	case MSG_TOOLCHANGE:
-		m_userLayers[msg.contextId()] = static_cast<const ToolChange&>(msg).layer();
-		return true;
 
 	case MSG_LAYER_DEFAULT:
 		return isOpUser;
@@ -193,16 +187,13 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_LAYER_ATTR:
 	case MSG_LAYER_RETITLE:
 	case MSG_LAYER_DELETE: {
-		uint16_t layerId=0;
+		const uint16_t layerId=msg.layer();
 		if(msg.type() == MSG_LAYER_CREATE) {
-			layerId = static_cast<const protocol::LayerCreate&>(msg).id();
 			if(!isOpUser && (layerId>>8) != msg.contextId()) {
 				qWarning("non-op user %d tried to create layer with context id %d", msg.contextId(), (layerId>>8));
 				return false;
 			}
-		} else if(msg.type() == MSG_LAYER_ATTR) layerId = static_cast<const protocol::LayerAttributes&>(msg).id();
-		else if(msg.type() == MSG_LAYER_RETITLE) layerId = static_cast<const protocol::LayerRetitle&>(msg).id();
-		else if(msg.type() == MSG_LAYER_DELETE) layerId = static_cast<const protocol::LayerDelete&>(msg).id();
+		}
 
 		// In OwnLayer mode, users may create, delete and adjust their own layers.
 		// Otherwise, session operator privileges are required.
@@ -214,27 +205,27 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		}
 		break;
 	}
-
 	case MSG_LAYER_ORDER:
 		return isOpUser || !isLayerControlLocked();
+
 	case MSG_PUTIMAGE:
-		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const PutImage&>(msg).layer(), msg.contextId()));
 	case MSG_FILLRECT:
-		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(static_cast<const FillRect&>(msg).layer(), msg.contextId()));
+		return !((isImagesLocked() && !isOpUser) || isLayerLockedFor(msg.layer(), msg.contextId()));
 
-	case MSG_PEN_MOVE:
-		return !isLayerLockedFor(m_userLayers[msg.contextId()], msg.contextId());
+	case MSG_DRAWDABS_CLASSIC:
+	case MSG_DRAWDABS_PIXEL:
+	case MSG_REGION_MOVE:
+		return !isLayerLockedFor(msg.layer(), msg.contextId());
 
-	case MSG_ANNOTATION_CREATE: {
-		const uint16_t annotationId = static_cast<const AnnotationCreate&>(msg).id();
-		if(!isOpUser && (annotationId>>8) != msg.contextId()) {
-			qWarning("non-op user %d tried to create annotation with context id %d", msg.contextId(), (annotationId>>8));
-			return false;
-		}
+	case MSG_ANNOTATION_CREATE:
 		if(m_lockAnnotationCreation && !isOpUser)
 			return false;
+
+		if(!isOpUser && (msg.layer()>>8) != msg.contextId()) {
+			qWarning("non-op user %d tried to create annotation with context id %d", msg.contextId(), (msg.layer()>>8));
+			return false;
+		}
 		break;
-	}
 	case MSG_ANNOTATION_EDIT: {
 		const protocol::AnnotationEdit &ae = static_cast<const AnnotationEdit&>(msg);
 		if(m_protectedAnnotations.contains(ae.id()) && !isOpUser && (ae.id()>>8)!=msg.contextId())
@@ -247,14 +238,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	}
 	case MSG_ANNOTATION_DELETE:
 	case MSG_ANNOTATION_RESHAPE: {
-		uint16_t id = msg.type() == MSG_ANNOTATION_DELETE ? static_cast<const AnnotationDelete&>(msg).id() : static_cast<const AnnotationReshape&>(msg).id();
+		const uint16_t id = msg.layer();
 		if(m_protectedAnnotations.contains(id) && !isOpUser && (id>>8)!=msg.contextId())
 			return false;
 		break;
-	}
-	case MSG_REGION_MOVE: {
-		const uint16_t layer = static_cast<const MoveRegion&>(msg).layer();
-		return !isLayerLockedFor(layer, msg.contextId());
 	}
 
 	case MSG_UNDO:

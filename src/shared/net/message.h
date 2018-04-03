@@ -65,8 +65,8 @@ enum MessageType {
 	MSG_LAYER_VISIBILITY,
 	MSG_PUTIMAGE,
 	MSG_FILLRECT,
-	MSG_TOOLCHANGE,
-	MSG_PEN_MOVE,
+	MSG_TOOLCHANGE_REMOVED, // replaced by drawdabs*
+	MSG_PEN_MOVE_REMOVED,   // replaced by drawdabs*
 	MSG_PEN_UP,
 	MSG_ANNOTATION_CREATE,
 	MSG_ANNOTATION_RESHAPE,
@@ -74,6 +74,10 @@ enum MessageType {
 	MSG_ANNOTATION_DELETE,
 	MSG_REGION_MOVE,
 	MSG_PUTTILE,
+	MSG_DRAWDABS_CLASSIC,
+	MSG_DRAWDABS_PIXEL,
+	MSG_DRAWDABS_RESERVED1, // reserved for future use (mypaint style?)
+	MSG_DRAWDABS_RESERVED2, // reserved for future use (custom mask?)
 	MSG_UNDO=255,
 };
 
@@ -167,6 +171,18 @@ public:
 	 * @param userid the new user id
 	 */
 	void setContextId(uint8_t userid) { m_contextid = userid; }
+
+	/**
+	 * @brief Get the ID of the layer this command affects
+	 *
+	 * For commands that do not affect any particular layer, 0 should
+	 * be returned.
+	 *
+	 * Annotation editing commands can return the annotation ID here.
+	 *
+	 * @return layer (or equivalent) ID or 0 if not applicable
+	 */
+	virtual uint16_t layer() const { return 0; }
 
 	/**
 	 * @brief Is this message type undoable?

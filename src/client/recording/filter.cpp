@@ -24,7 +24,6 @@
 
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
-#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
@@ -263,37 +262,9 @@ void filterAdjacentUndoPoints(State &state)
 	}
 }
 
-//! Remove extraneous tool change messages
-void filterExtraToolChanges(State &state)
-{
-	FilterIndex prev;
-	prev.type = 0;
-
-	for(int i=state.index.size()-1;i>0;--i) {
-		FilterIndex &fi = state.index[i];
-
-		if(isDeleted(fi))
-			continue;
-
-		// ignroe meta messages
-		if(fi.type < 128)
-			continue;
-
-		if(fi.type == protocol::MSG_UNDOPOINT)
-			continue;
-
-		if(fi.type == protocol::MSG_TOOLCHANGE && prev.type == protocol::MSG_TOOLCHANGE) {
-			if(fi.ctxid == prev.ctxid) {
-				mark_delete(fi);
-			}
-		}
-
-		prev = fi;
-	}
-}
-
 void squishStrokes(State &state, Reader &recording)
 {
+#if 0 // TODO this needs to be reimplemented for DrawDabs*
 	QHash<int,int> strokes; // ctxId -> current stroke mapping
 
 	for(int i=0;i<state.index.size();++i) {
@@ -337,6 +308,7 @@ void squishStrokes(State &state, Reader &recording)
 			strokes.remove(fi.ctxid);
 		}
 	}
+#endif
 }
 
 void doFilterRecording(Filter &filter, State &state, Reader &recording)
@@ -360,7 +332,6 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 	if(filter.squishStrokes())
 		squishStrokes(state, recording);
 
-	filterExtraToolChanges(state);
 	filterAdjacentUndoPoints(state);
 }
 

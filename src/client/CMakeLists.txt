@@ -9,7 +9,7 @@ set (
 	tools/toolproperties.cpp
 	tools/utils.cpp
 	tools/annotation.cpp
-	tools/brushes.cpp
+	tools/freehand.cpp
 	tools/colorpicker.cpp
 	tools/laser.cpp
 	tools/selection.cpp
@@ -61,13 +61,18 @@ set (
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp
-	core/brush.cpp
 	core/brushmask.cpp
 	core/blendmodes.cpp
 	core/rasterop.cpp
-	core/shapes.cpp
 	core/floodfill.cpp
 	core/tilevector.cpp
+	brushes/brushengine.cpp
+	brushes/brushpainter.cpp
+	brushes/classicbrushstate.cpp
+	brushes/classicbrushpainter.cpp
+	brushes/pixelbrushstate.cpp
+	brushes/pixelbrushpainter.cpp
+	brushes/shapes.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

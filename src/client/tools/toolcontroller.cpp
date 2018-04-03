@@ -20,7 +20,7 @@
 #include "toolcontroller.h"
 
 #include "annotation.h"
-#include "brushes.h"
+#include "freehand.h"
 #include "colorpicker.h"
 #include "laser.h"
 #include "selection.h"
@@ -126,7 +126,7 @@ void ToolController::setActiveLayer(int id)
 	}
 }
 
-void ToolController::setActiveBrush(const paintcore::Brush &b)
+void ToolController::setActiveBrush(const brushes::ClassicBrush &b)
 {
 	m_activebrush = b;
 	emit activeBrushChanged(b);
@@ -181,6 +181,8 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 
 	if(!m_activeTool->isMultipart())
 		m_model->stateTracker()->setLocalDrawingInProgress(true);
+
+	emit colorUsed(m_activebrush.color());
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)

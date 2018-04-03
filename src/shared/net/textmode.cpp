@@ -21,7 +21,7 @@
 
 #include "meta.h"
 #include "meta2.h"
-#include "pen.h"
+#include "brushes.h"
 #include "annotation.h"
 #include "layer.h"
 #include "image.h"
@@ -30,28 +30,6 @@
 
 namespace protocol {
 namespace text {
-
-static PenPoint parsePenPoint(const QStringList &tokens, bool *ok)
-{
-	if(tokens.length() < 2 || tokens.length() > 3) {
-		*ok = false;
-		return PenPoint(0, 0, 0);
-	}
-
-	float x = tokens[0].toFloat(ok);
-	if(!ok)
-		return PenPoint(0, 0, 0);
-	float y = tokens[1].toFloat(ok);
-	if(!ok)
-		return PenPoint(0, 0, 0);
-	float p=1;
-	if(tokens.length()==3) {
-		p = tokens[2].toFloat(ok) / 100.0;
-		if(!ok)
-			return PenPoint(0, 0, 0);
-	}
-	return PenPoint(qRound(x*4), qRound(y*4), qRound(p*0xffff));
-}
 
 Parser::Result Parser::parseLine(const QString &line)
 {
@@ -91,7 +69,7 @@ Parser::Result Parser::parseLine(const QString &line)
 		// Get message name
 		m_cmd = tokens[1];
 		m_kwargs = Kwargs();
-		m_points = PenPointVector();
+		m_dabs = QStringList();
 
 		// Check if this is a multiline message
 		bool multiline = false;
@@ -100,33 +78,19 @@ Parser::Result Parser::parseLine(const QString &line)
 			multiline = true;
 		}
 
-		if(m_cmd == "penmove") {
-			// Extract Pen Point (special case for penmove message)
-			// If this is a multiline penpoint, the first point can be in the body part
-			if(!multiline || tokens.size()>2) {
-				bool ok;
-				m_points << parsePenPoint(tokens.mid(2), &ok);
-				if(!ok) {
-					m_error = "Invalid pen point: " + tokens.mid(2).join(' ');
-					return Result { Result::Error, nullptr };
-				}
+		// Extract named arguments
+		for(int i=2;i<tokens.size();++i) {
+			int j = tokens[i].indexOf('=');
+			if(j<0) {
+				m_error = "No value in keyword argument: " + tokens[i];
+				return Result { Result::Error, nullptr };
 			}
-
-		} else {
-			// Extract named arguments
-			for(int i=2;i<tokens.size();++i) {
-				int j = tokens[i].indexOf('=');
-				if(j<0) {
-					m_error = "No value in keyword argument: " + tokens[i];
-					return Result { Result::Error, nullptr };
-				}
-				m_kwargs[tokens[i].left(j)] = tokens[i].mid(j+1);
-			}
+			m_kwargs[tokens[i].left(j)] = tokens[i].mid(j+1);
 		}
 
 		if(multiline) {
-			if(m_cmd == "penmove")
-				m_state = ExpectPenMovePoint;
+			if(m_cmd.endsWith("dabs"))
+				m_state = ExpectDab;
 			else
 				m_state = ExpectKwargLine;
 
@@ -156,17 +120,11 @@ Parser::Result Parser::parseLine(const QString &line)
 		return { Result::NeedMore, nullptr };
 	}
 
-	case ExpectPenMovePoint: {
-		// Extract pen point
+	case ExpectDab: {
+		// Extract dab points
 		if(line=="}")
 			break;
-		QStringList tokens = line.split(' ');
-		bool ok;
-		m_points << parsePenPoint(tokens, &ok);
-		if(!ok) {
-			m_error = "Invalid pen point: " + tokens.join(' ');
-			return Result { Result::Error, nullptr };
-		}
+		m_dabs << line.split(' ');
 		return { Result::NeedMore, nullptr };
 	}
 	}
@@ -177,7 +135,8 @@ Parser::Result Parser::parseLine(const QString &line)
 	Message *msg=nullptr;
 
 #define FROMTEXT(name, Cls) if(m_cmd==name) msg = Cls::fromText(m_ctx, m_kwargs)
-	if(m_cmd=="penmove") msg = new PenMove(m_ctx, m_points);
+	if(m_cmd=="classicdabs") msg = DrawDabsClassic::fromText(m_ctx, m_kwargs, m_dabs);
+	else if(m_cmd=="pixeldabs") msg = DrawDabsPixel::fromText(m_ctx, m_kwargs, m_dabs);
 	else FROMTEXT("join", UserJoin);
 	else FROMTEXT("leave", UserLeave);
 	else FROMTEXT("owner", SessionOwner);
@@ -199,7 +158,6 @@ Parser::Result Parser::parseLine(const QString &line)
 	else FROMTEXT("layervisibility", LayerVisibility);
 	else FROMTEXT("putimage", PutImage);
 	else FROMTEXT("fillrect", FillRect);
-	else FROMTEXT("brush", ToolChange);
 	else FROMTEXT("penup", PenUp);
 	else FROMTEXT("newannotation", AnnotationCreate);
 	else FROMTEXT("reshapeannotation", AnnotationReshape);

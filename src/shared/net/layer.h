@@ -102,7 +102,7 @@ public:
 	static LayerCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerCreate *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint16_t source() const { return m_source; }
 	uint32_t fill() const { return m_fill; }
 	uint8_t flags() const { return m_flags; }
@@ -115,7 +115,7 @@ public:
 	 * created in single-user mode can use any ID.
 	 * This means layer IDs of the initial snapshot need not be validated.
 	 */
-	bool isValidId() const { return (id()>>8) == contextId(); }
+	bool isValidId() const { return (m_id>>8) == contextId(); }
 
 	QString messageName() const override { return QStringLiteral("newlayer"); }
 
@@ -148,7 +148,7 @@ public:
 	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerAttributes *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t opacity() const { return m_opacity; }
 	uint8_t blend() const { return m_blend; }
 
@@ -186,7 +186,7 @@ public:
 	static LayerVisibility *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerVisibility *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t visible() const { return m_visible; }
 
 	QString messageName() const override { return QStringLiteral("layervisibility"); }
@@ -219,7 +219,7 @@ public:
 	static LayerRetitle *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerRetitle *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	QString title() const { return QString::fromUtf8(m_title); }
 
 	QString messageName() const override { return QStringLiteral("retitlelayer"); }
@@ -308,7 +308,7 @@ public:
 	static LayerDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerDelete *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t merge() const { return m_merge; }
 
 	QString messageName() const override { return QStringLiteral("deletelayer"); }

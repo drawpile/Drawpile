@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@
 #include "core/blendmodes.h"
 #include "net/server.h"
 #include "../shared/net/message.h"
-#include "canvas/statetracker.h" // for ToolContext
 
 #include <QObject>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QSslCertificate>
+
+class QJsonObject;
+class QJsonArray;
 
 namespace paintcore {
 	class Point;
@@ -195,8 +195,6 @@ signals:
 	void serverHistoryLimitReceived(int maxSpace);
 	void serverStatusUpdate(int historySize);
 
-	void sentColorChange(const QColor &color);
-
 private slots:
 	void handleMessage(const protocol::MessagePtr &msg);
 	void handleConnect(const QString &sessionId, int userid, bool join, bool auth, bool moderator);
@@ -220,8 +218,6 @@ private:
 	int m_catchupTo;
 	int m_caughtUp;
 	int m_catchupProgress;
-
-	canvas::ToolContext m_lastToolCtx;
 };
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,10 @@
 #include "core/point.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
 #include "core/floodfill.h"
+#include "brushes/shapes.h"
+#include "brushes/brushengine.h"
+#include "brushes/brushpainter.h"
 #include "brushpreview.h"
 
 #include <QPaintEvent>
@@ -158,28 +160,28 @@ void BrushPreview::updatePreview()
 	paintcore::PointVector pointvector;
 
 	switch(_shape) {
-	case Stroke: pointvector = paintcore::shapes::sampleStroke(previewRect); break;
+	case Stroke: pointvector = brushes::shapes::sampleStroke(previewRect); break;
 	case Line:
 		pointvector
 			<< paintcore::Point(previewRect.left(), previewRect.top(), 1.0)
 			<< paintcore::Point(previewRect.right(), previewRect.bottom(), 1.0);
 		break;
-	case Rectangle: pointvector = paintcore::shapes::rectangle(previewRect); break;
-	case Ellipse: pointvector = paintcore::shapes::ellipse(previewRect); break;
+	case Rectangle: pointvector = brushes::shapes::rectangle(previewRect); break;
+	case Ellipse: pointvector = brushes::shapes::ellipse(previewRect); break;
 	case FloodFill:
-	case FloodErase: pointvector = paintcore::shapes::sampleBlob(previewRect); break;
+	case FloodErase: pointvector = brushes::shapes::sampleBlob(previewRect); break;
 	}
 
 	QColor bgcolor = m_bg;
 
-	paintcore::Brush brush = m_brush;
+	brushes::ClassicBrush brush = m_brush;
 	// Special handling for some blending modes
 	// TODO this could be implemented in some less ad-hoc way
-	if(brush.blendingMode() == 11) {
+	if(brush.blendingMode() == paintcore::BlendMode::MODE_BEHIND) {
 		// "behind" mode needs a transparent layer for anything to show up
 		brush.setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
 
-	} else if(brush.blendingMode() == 12) {
+	} else if(brush.blendingMode() == paintcore::BlendMode::MODE_COLORERASE) {
 		// Color-erase mode: use fg color as background
 		bgcolor = m_color;
 	}
@@ -189,13 +191,20 @@ void BrushPreview::updatePreview()
 	}
 
 	paintcore::Layer *layer = m_preview->getLayerByIndex(0);
-	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), isTransparentBackground() ? QColor(Qt::transparent) : bgcolor, paintcore::BlendMode::MODE_REPLACE);
+	layer->putTile(0, 0, 99999, isTransparentBackground() ? paintcore::Tile() : paintcore::Tile(bgcolor));
 
-	paintcore::StrokeState ss(brush);
-	for(int i=1;i<pointvector.size();++i)
-		layer->drawLine(0, brush, pointvector[i-1], pointvector[i], ss);
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(1, 1, brush);
 
-	layer->mergeSublayer(0);
+	for(int i=0;i<pointvector.size();++i)
+		brushengine.strokeTo(pointvector[i], layer);
+	brushengine.endStroke();
+
+	const auto dabs = brushengine.takeDabs();
+	for(int i=0;i<dabs.size();++i)
+		brushes::drawBrushDabsDirect(*dabs.at(i), layer);
+
+	layer->mergeSublayer(1);
 
 	if(_shape == FloodFill || _shape == FloodErase) {
 		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), _shape == FloodFill ? m_color : QColor(), _fillTolerance, 0, false, 360000);
@@ -211,7 +220,7 @@ void BrushPreview::updatePreview()
 /**
  * @param brush brush to set
  */
-void BrushPreview::setBrush(const paintcore::Brush& brush)
+void BrushPreview::setBrush(const brushes::ClassicBrush& brush)
 {
 	m_brush = brush;
 	notifyBrushChange();

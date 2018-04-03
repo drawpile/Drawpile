@@ -99,16 +99,6 @@ protocol::MessagePtr terminateSession();
  */
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
 
-//! Generate a tool change message
-protocol::MessagePtr brushToToolChange(int ctxid, int layer, const paintcore::Brush &brush);
-
-//! Convert a paintcore point to protocol format
-protocol::PenPoint pointToProtocol(const paintcore::Point &p);
-
-//! Generate penMove(s) for multiple points.
-QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points);
-
-
 }
 }
 #endif

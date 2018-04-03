@@ -23,11 +23,12 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "brushes/brushpainter.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
 #include "tools/selection.h" // for selection transform utils
 
-#include "../shared/net/pen.h"
+#include "../shared/net/brushes.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
@@ -51,7 +52,6 @@ struct StateSavepoint::Data {
 	qint64 timestamp;
 	int streampointer;
 	paintcore::Savepoint *canvas;
-	QHash<int, DrawingContext> ctxstate;
 	QVector<LayerListItem> layermodel;
 
 private:
@@ -129,25 +129,6 @@ QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, Canv
 	return loader.loadInitCommands();
 }
 
-void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
-{
-	layer_id = cmd.layer();
-	brush.setBlendingMode(paintcore::BlendMode::Mode(cmd.blend()));
-	brush.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
-	brush.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
-	brush.setSpacing(cmd.spacing());
-	brush.setSize(qMax(1, (int)cmd.size_h()));
-	brush.setSize2(qMax(1, (int)cmd.size_l()));
-	brush.setHardness(cmd.hard_h() / 255.0);
-	brush.setHardness2(cmd.hard_l() / 255.0);
-	brush.setOpacity(cmd.opacity_h() / 255.0);
-	brush.setOpacity2(cmd.opacity_l() / 255.0);
-	brush.setColor(cmd.color());
-	brush.setSmudge(cmd.smudge_h() / 255.0);
-	brush.setSmudge2(cmd.smudge_l() / 255.0);
-	brush.setResmudge(cmd.resmudge());
-}
-
 /**
  * @brief Construct a state tracker instance
  *
@@ -194,7 +175,6 @@ void StateTracker::reset()
 	m_msgqueue.clear();
 	m_localfork.clear();
 	m_layerlist->clear();
-	m_myLastLayer = _contexts[m_myId].tool.layer_id;
 
 	// Make sure there is always a savepoint in the history
 	makeSavepoint(m_history.end()-1);
@@ -213,6 +193,20 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	}
 
 	m_localfork.addLocalMessage(msg, affectedArea(msg));
+
+	// Remember last used layer
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_DRAWDABS_CLASSIC:
+	case MSG_DRAWDABS_PIXEL:
+	case MSG_LAYER_CREATE:
+	case MSG_PUTIMAGE:
+	case MSG_FILLRECT:
+	case MSG_REGION_MOVE:
+		m_myLastLayer = msg->layer();
+		break;
+	default: break;
+	}
 
 	// for the future: handle undo messages in the local fork too
 	if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT) {
@@ -377,11 +371,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_LAYER_DELETE:
 			handleLayerDelete(msg.cast<LayerDelete>());
 			break;
-		case MSG_TOOLCHANGE:
-			handleToolChange(msg.cast<ToolChange>());
-			break;
-		case MSG_PEN_MOVE:
-			handlePenMove(msg.cast<PenMove>());
+		case MSG_DRAWDABS_CLASSIC:
+		case MSG_DRAWDABS_PIXEL:
+			handleDrawDabs(*msg);
 			break;
 		case MSG_PEN_UP:
 			handlePenUp(msg.cast<PenUp>());
@@ -434,16 +426,10 @@ void StateTracker::endRemoteContexts()
 	for(protocol::MessagePtr m : localfork)
 		m_history.append(m);
 
-	// End drawing contexts
-	QHashIterator<int, DrawingContext> iter(_contexts);
-	while(iter.hasNext()) {
-		iter.next();
-		if(iter.key() != localId()) {
-			// Simulate pen-up
-			if(iter.value().pendown)
-				receiveQueuedCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
-		}
-	}
+	// Make sure there are no lingering indirect strokes
+	// TODO this should probably be done with an InternalMsg,
+	// in case there is still stuff in the queue
+	_image->mergeAllSublayers();
 
 	m_myLastLayer = -1;
 }
@@ -453,12 +439,7 @@ void StateTracker::endRemoteContexts()
  */
 void StateTracker::endPlayback()
 {
-	QHashIterator<int, DrawingContext> iter(_contexts);
-	while(iter.hasNext()) {
-		iter.next();
-		if(iter.value().pendown)
-			receiveQueuedCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
-	}
+	_image->mergeAllSublayers();
 }
 
 
@@ -474,7 +455,7 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	paintcore::Layer *layer = _image->createLayer(
-		cmd.id(),
+		cmd.layer(),
 		cmd.source(),
 		QColor::fromRgba(cmd.fill()),
 		(cmd.flags() & protocol::LayerCreate::FLAG_INSERT),
@@ -486,7 +467,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 		// Note: layers are listed bottom-first in the stack,
 		// but topmost first in the view
 		m_layerlist->createLayer(
-			cmd.id(),
+			cmd.layer(),
 			_image->layerCount() - _image->indexOf(layer->id()) - 1,
 			cmd.title()
 		);
@@ -502,30 +483,30 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 				(!m_hasParticipated && (
 					// ... and if there is no remembered layer...
 					((m_myLastLayer <= 0) && ( // ...select default layer or if not selected, any new layer
-						cmd.id() == m_layerlist->defaultLayer() ||
+						layer->id() == m_layerlist->defaultLayer() ||
 						!m_layerlist->defaultLayer()
 					)) ||
 					// ... and if there is a remembered layer, select only that one
-					(m_myLastLayer>0 && cmd.id() == m_myLastLayer)
+					(m_myLastLayer>0 && layer->id() == m_myLastLayer)
 				))
 		   )
 		{
-			emit layerAutoselectRequest(cmd.id());
+			emit layerAutoselectRequest(layer->id());
 		}
 	}
 }
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 {
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer attributes for non-existent layer" << cmd.id();
+		qWarning() << "received layer attributes for non-existent layer" << cmd.layer();
 		return;
 	}
 	
 	layer->setOpacity(cmd.opacity());
 	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	m_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+	m_layerlist->changeLayer(layer->id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 }
 
 void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
@@ -535,14 +516,14 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 	if(cmd.contextId() != localId())
 		return;
 
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer visibility for non-existent layer" << cmd.id();
+		qWarning() << "received layer visibility for non-existent layer" << cmd.layer();
 		return;
 	}
 
 	layer->setHidden(!cmd.visible());
-	m_layerlist->setLayerHidden(cmd.id(), !cmd.visible());
+	m_layerlist->setLayerHidden(layer->id(), !cmd.visible());
 }
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
@@ -557,14 +538,14 @@ void StateTracker::previewLayerOpacity(int id, float opacity)
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 {
-	paintcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
-		qWarning() << "received layer title for non-existent layer" << cmd.id();
+		qWarning() << "received layer title for non-existent layer" << cmd.layer();
 		return;
 	}
 
 	layer->setTitle(cmd.title());
-	m_layerlist->retitleLayer(cmd.id(), cmd.title());
+	m_layerlist->retitleLayer(layer->id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
@@ -589,69 +570,24 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 {
 	if(cmd.merge())
-		_image->mergeLayerDown(cmd.id());
-	_image->deleteLayer(cmd.id());
-	m_layerlist->deleteLayer(cmd.id());
+		_image->mergeLayerDown(cmd.layer());
+	_image->deleteLayer(cmd.layer());
+	m_layerlist->deleteLayer(cmd.layer());
 }
 
-void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
+void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 {
-	DrawingContext &ctx = _contexts[cmd.contextId()];
-	ctx.tool.updateFromToolchange(cmd);
-
-	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-	QString layername;
-	if(layer)
-		layername = layer->title();
-	else
-		layername = QStringLiteral("???");
-
-	emit userMarkerAttribs(cmd.contextId(), ctx.tool.brush.color(), layername);
-}
-
-void StateTracker::handlePenMove(const protocol::PenMove &cmd)
-{
-	DrawingContext &ctx = _contexts[cmd.contextId()];
-	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-	if(!layer) {
-		qWarning() << "penMove by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
-		return;
-	}
-	
-	for(const protocol::PenPoint &pp : cmd.points()) {
-		paintcore::Point p(pp.x / 4.0, pp.y / 4.0, pp.p/qreal(0xffff));
-		const int r = ctx.tool.brush.fsize(p.pressure())/2 + 1;
-
-		if(ctx.pendown) {
-			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.stroke);
-			ctx.boundingRect |= QRect(p.x() - r, p.y() - r, r*2, r*2);
-
-		} else {
-			ctx.pendown = true;
-			ctx.stroke = paintcore::StrokeState(ctx.tool.brush);
-			ctx.boundingRect = QRect(p.x() - r, p.y() - r, r*2, r*2);
-			layer->dab(cmd.contextId(), ctx.tool.brush, p, ctx.stroke);
-		}
-		ctx.lastpoint = p;
-	}
+	paintcore::LayerStackWriteSequence layers(_image);
+	brushes::drawBrushDabs(cmd, *layers);
 
 	if(_showallmarkers || cmd.contextId() != localId())
-		emit userMarkerMove(cmd.contextId(), ctx.lastpoint, 0);
+		emit userMarkerMove(cmd.contextId(), cmd.layer(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint());
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
-	DrawingContext &ctx = _contexts[cmd.contextId()];
-	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-	if(!layer) {
-		qWarning() << "penUp by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
-		return;
-	}
-
 	// This ends an indirect stroke. In incremental mode, this does nothing.
-	layer->mergeSublayer(cmd.contextId());
-
-	ctx.pendown = false;
+	_image->mergeSublayers(cmd.contextId());
 	emit userMarkerHide(cmd.contextId());
 }
 
@@ -672,7 +608,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	layer->putImage(cmd.x(), cmd.y(), img, paintcore::BlendMode::Mode(cmd.blendmode()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2));
 }
 
 void StateTracker::handlePutTile(const protocol::PutTile &cmd)
@@ -711,7 +647,7 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), paintcore::BlendMode::Mode(cmd.blend()));
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), QPointF(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), QPoint(cmd.x() + cmd.width()/2, cmd.y()+cmd.height()/2));
 }
 
 void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
@@ -799,7 +735,7 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 	layer->putImage(offset.x(), offset.y(), transformed, paintcore::BlendMode::MODE_NORMAL);
 
 	if(_showallmarkers || cmd.contextId() != m_myId)
-		emit userMarkerMove(cmd.contextId(), target.boundingRect().center(), 0);
+		emit userMarkerMove(cmd.contextId(), layer->id(), target.boundingRect().center());
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)
@@ -977,7 +913,6 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
 	savepoint->streampointer = pos<0 ? m_history.end() : pos;
 	savepoint->canvas = _image->makeSavepoint();
-	savepoint->ctxstate = _contexts;
 	savepoint->layermodel = m_layerlist->getLayers();
 
 	return savepoint;
@@ -1020,7 +955,6 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	m_savepoints.clear();
 
 	_image->restoreSavepoint(savepoint->canvas);
-	_contexts = savepoint->ctxstate;
 	m_layerlist->setLayers(savepoint->layermodel);
 
 	m_savepoints.append(savepoint);
@@ -1040,7 +974,6 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	}
 
 	_image->restoreSavepoint(savepoint->canvas);
-	_contexts = savepoint->ctxstate;
 	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints
@@ -1104,32 +1037,6 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 	// Write stream pointer
 	out << quint32(d->streampointer);
 
-	// Write drawing contexts
-	out << quint8(d->ctxstate.size());
-	for(const quint8 ctxid : d->ctxstate.keys()) {
-		const DrawingContext &ctx = d->ctxstate[ctxid];
-
-		// write context ID
-		out << ctxid;
-
-		// write tool context
-		protocol::MessagePtr tc = net::command::brushToToolChange(ctxid, ctx.tool.layer_id, ctx.tool.brush);
-		QByteArray tcb(tc->length(), '\0');
-		tc->serialize(tcb.data());
-		out.writeBytes(tcb.data(), tcb.length());
-
-		// write last point
-		out << ctx.lastpoint.x();
-		out << ctx.lastpoint.y();
-		out << ctx.lastpoint.pressure();
-
-		// write pendown bit
-		out << ctx.pendown;
-
-		// write stroke state
-		out << ctx.stroke.distance << ctx.stroke.smudgeDistance << ctx.stroke.smudgeColor;
-	}
-
 	// Write layer model
 	out << quint8(d->layermodel.size());
 	for(const LayerListItem &layer : d->layermodel) {
@@ -1162,48 +1069,6 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 	quint32 sptr;
 	in >> sptr;
 	d->streampointer = sptr;
-
-	// Read drawing contexts
-	quint8 contexts;
-	in >> contexts;
-	while(contexts--) {
-		DrawingContext ctx;
-
-		// Read context id
-		quint8 ctxid;
-		in >> ctxid;
-
-		// Read tool context
-		char *msgbuf;
-		unsigned int msglen;
-		in.readBytes(msgbuf, msglen);
-
-		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf, msglen, true);
-		delete [] msgbuf;
-		if(!tc) {
-			qWarning() << "invalid tool change message in snapshot!";
-			return StateSavepoint();
-		}
-		ctx.tool.updateFromToolchange(static_cast<const protocol::ToolChange&>(*tc));
-		delete tc;
-
-		// Read last point
-		qreal lpx, lpy, lpp;
-		in >> lpx >> lpy >> lpp;
-		ctx.lastpoint = paintcore::Point(lpx, lpy, lpp);
-
-		// Read pendown bit
-		in >> ctx.pendown;
-
-		// Read stroke state
-		in >> ctx.stroke.distance >> ctx.stroke.smudgeDistance >> ctx.stroke.smudgeColor;
-
-		// Note: ctx.bounds is used only for retconning during online drawing
-		// so we don't need to restore it here, since saved snapshots are currently
-		// used only for session playback.
-
-		d->ctxstate[ctxid] = ctx;
-	}
 
 	// Read layer list
 	quint8 layercount;
@@ -1276,9 +1141,10 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 
 	switch(msg->type()) {
 	using namespace protocol;
-	case MSG_LAYER_CREATE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerCreate>().id());
-	case MSG_LAYER_ATTR: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerAttributes>().id());
-	case MSG_LAYER_RETITLE: return AffectedArea(AffectedArea::LAYERATTRS, msg.cast<LayerRetitle>().id());
+	case MSG_LAYER_CREATE:
+	case MSG_LAYER_ATTR:
+	case MSG_LAYER_RETITLE:
+		return AffectedArea(AffectedArea::LAYERATTRS, msg->layer());
 	case MSG_LAYER_VISIBILITY: return AffectedArea(AffectedArea::USERATTRS, 0);
 
 	case MSG_PUTIMAGE: {
@@ -1292,50 +1158,34 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 			m.row() * paintcore::Tile::SIZE,
 			paintcore::Tile::SIZE, paintcore::Tile::SIZE));
 	}
-	case MSG_TOOLCHANGE: return AffectedArea(AffectedArea::USERATTRS, 0);
-	case MSG_PEN_MOVE: {
-		const DrawingContext &ctx = _contexts.value(msg->contextId());
 
-		// Non-incremental brush draws on a private layer: we must check ordering in PenUp
-		if(!ctx.tool.brush.incremental())
+	case MSG_DRAWDABS_CLASSIC:
+	case MSG_DRAWDABS_PIXEL: {
+		const DrawDabs &dd = msg.cast<DrawDabs>();
+
+		// Indirect drawing mode: check bounds in PenUp
+		if(dd.isIndirect())
 			return AffectedArea(AffectedArea::USERATTRS, 0);
 
-		const PenMove &m = msg.cast<PenMove>();
-
-		// Find the bounding rectangle of the received piece of the stroke.
-		QRect bounds;
-
-		if(ctx.pendown)
-			bounds  = QRect(ctx.lastpoint.toPoint(), QSize(1,1));
-		else
-			bounds = QRect(m.points().first().x/4, m.points().first().y/4, 1, 1);
-
-		for(const PenPoint &pp : m.points()) {
-			bounds |= QRect(pp.x/4, pp.y/4, 1, 1);
-		}
-
-		const int r = qMax(ctx.tool.brush.size1(), ctx.tool.brush.size2()) / 2 + 1;
-		bounds.adjust(-r, -r, r, r);
-		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, bounds);
+		return AffectedArea(AffectedArea::PIXELS, dd.layer(), dd.bounds());
 	}
 	case MSG_PEN_UP: {
-		const DrawingContext &ctx = _contexts.value(msg->contextId());
-		if(ctx.tool.brush.incremental())
+		QPair<int,QRect> bounds = _image->findChangeBounds(msg->contextId());
+		if(bounds.first)
+			return AffectedArea(AffectedArea::PIXELS, bounds.first, bounds.second);
+		else
 			return AffectedArea(AffectedArea::USERATTRS, 0);
-
-		// Non-incremental brushes get composited only at pen-up.
-		// We need the bounding rectangle of the entire stroke.
-		return AffectedArea(AffectedArea::PIXELS, ctx.tool.layer_id, ctx.boundingRect);
 	}
 	case MSG_FILLRECT: {
 		const FillRect &fr = msg.cast<FillRect>();
 		return AffectedArea(AffectedArea::PIXELS, fr.layer(), QRect(fr.x(), fr.y(), fr.width(), fr.height()));
 	}
 
-	case MSG_ANNOTATION_CREATE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationCreate>().id());
-	case MSG_ANNOTATION_RESHAPE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationReshape>().id());
-	case MSG_ANNOTATION_EDIT: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationEdit>().id());
-	case MSG_ANNOTATION_DELETE: return AffectedArea(AffectedArea::ANNOTATION, msg.cast<AnnotationDelete>().id());
+	case MSG_ANNOTATION_CREATE:
+	case MSG_ANNOTATION_RESHAPE:
+	case MSG_ANNOTATION_EDIT:
+	case MSG_ANNOTATION_DELETE:
+		return AffectedArea(AffectedArea::ANNOTATION, msg->layer());
 
 	case MSG_REGION_MOVE: {
 		const MoveRegion &mr = msg.cast<MoveRegion>();

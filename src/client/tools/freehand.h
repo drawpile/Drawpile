@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2018 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,41 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_BEZIER_H
-#define TOOLS_BEZIER_H
+#ifndef TOOLS_FREEHAND_H
+#define TOOLS_FREEHAND_H
 
 #include "tool.h"
+#include "brushes/brushengine.h"
 
 namespace tools {
 
-/**
- * \brief A bezier curve tool
- */
-class BezierTool : public Tool {
+//! Freehand brush tool
+class Freehand : public Tool
+{
 public:
-	BezierTool(ToolController &owner);
+	Freehand(ToolController &owner, bool isEraser);
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
-	void hover(const QPointF& point) override;
 	void end() override;
-	void finishMultipart() override;
-	void cancelMultipart() override;
-	void undoMultipart() override;
-	bool isMultipart() const override { return !m_points.isEmpty(); }
+
+	bool allowSmoothing() const override { return true; }
 
 private:
-	void updatePreview();
-	paintcore::PointVector calculateBezierCurve() const;
-
-	struct ControlPoint {
-		QPointF point;
-		QPointF cp; // second control point, relative to the main point
-	};
-
-	QVector<ControlPoint> m_points;
-	QPointF m_beginPoint;
-	bool m_rightButton;
+	brushes::BrushEngine m_brushengine;
 };
 
 }

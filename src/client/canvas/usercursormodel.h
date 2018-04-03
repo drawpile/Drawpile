@@ -27,12 +27,15 @@
 
 namespace canvas {
 
+class LayerListModel;
+
 struct UserCursor {
 	int id;
 	bool visible;
 	qint64 lastMoved;
+	int layerId;
 
-	QPointF pos;
+	QPoint pos;
 	QString name;
 	QString layer;
 	QColor color;
@@ -53,6 +56,13 @@ public:
 
 	explicit UserCursorModel(QObject *parent=nullptr);
 
+	/**
+	 * @brief Set the layer list model.
+	 *
+	 * Layer names are read from here
+	 */
+	void setLayerList(LayerListModel *layers) { m_layerlist = layers; }
+
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 
@@ -62,8 +72,8 @@ public:
 
 public slots:
 	void setCursorName(int id, const QString &name);
-	void setCursorAttributes(int id, const QColor &color, const QString &layer);
-	void setCursorPosition(int id, const QPointF &pos);
+	void setCursorColor(int id, const QColor &color);
+	void setCursorPosition(int id, int layerId, const QPoint &pos);
 	void hideCursor(int id);
 
 	void clear();
@@ -75,6 +85,7 @@ private:
 	UserCursor *getOrCreate(int id, QModelIndex &index);
 
 	QList<UserCursor> m_cursors;
+	LayerListModel *m_layerlist;
 	int m_timerId;
 };
 

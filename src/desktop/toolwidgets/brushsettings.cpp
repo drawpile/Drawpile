@@ -21,6 +21,8 @@
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "core/brushmask.h"
+#include "brushes/brush.h"
+#include "brushes/classicbrushpainter.h"
 
 // Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
 #include "widgets/groupedtoolbutton.h"
@@ -76,11 +78,11 @@ namespace toolprop {
 		;
 }
 
-static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
+static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
 {
 	const int brushMode = bp.intValue(brushprop::brushmode);
 
-	paintcore::Brush b;
+	brushes::ClassicBrush b;
 	b.setSize(bp.intValue(brushprop::size));
 	if(bp.boolValue(brushprop::sizePressure))
 		b.setSize2(1);
@@ -190,7 +192,7 @@ struct BrushSettings::Private {
 	void updateBrush()
 	{
 		// Update brush object from current properties
-		paintcore::Brush b = brushFromProps(currentBrush(), currentTool());
+		brushes::ClassicBrush b = brushFromProps(currentBrush(), currentTool());
 
 		ui.preview->setBrush(b);
 	}
@@ -571,8 +573,8 @@ struct BrushPresetModel::Private {
 
 		if(iconcache.at(idx).isNull()) {
 
-			const paintcore::Brush brush = brushFromProps(presets[idx], ToolProperties());
-			const paintcore::BrushStamp stamp = paintcore::makeGimpStyleBrushStamp(brush, paintcore::Point(0, 0, 1));
+			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties());
+			const paintcore::BrushStamp stamp = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1());
 			const int maskdia = stamp.mask.diameter();
 			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
 

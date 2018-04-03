@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,27 +16,27 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLS_BRUSHES_H
-#define TOOLS_BRUSHES_H
 
-#include "tool.h"
+#ifndef DP_BRUSHES_SHAPES_H
+#define DP_BRUSHES_SHAPES_H
 
-namespace tools {
+#include "core/point.h"
 
-//! Freehand brush tool
-class Freehand : public Tool
-{
-public:
-	Freehand(ToolController &owner, bool isEraser);
+#include <QRectF>
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
-	void end() override;
+namespace brushes {
+namespace shapes {
 
-	bool allowSmoothing() const override { return true; }
-};
+paintcore::PointVector rectangle(const QRectF &rect);
+paintcore::PointVector ellipse(const QRectF &rect);
 
+paintcore::PointVector cubicBezierCurve(const QPointF p[4]);
+
+// These are used for brush previews
+paintcore::PointVector sampleStroke(const QRectF &rect);
+paintcore::PointVector sampleBlob(const QRectF &rect);
+
+}
 }
 
 #endif
-

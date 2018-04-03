@@ -23,7 +23,7 @@
 #include "image.h"
 #include "layer.h"
 #include "meta2.h"
-#include "pen.h"
+#include "brushes.h"
 #include "undo.h"
 #include "recording.h"
 
@@ -71,8 +71,6 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_LAYER_DELETE: return LayerDelete::deserialize(ctx, data, len);
 	case MSG_LAYER_VISIBILITY: return LayerVisibility::deserialize(ctx, data, len);
 	case MSG_PUTIMAGE: return PutImage::deserialize(ctx, data, len);
-	case MSG_TOOLCHANGE: return ToolChange::deserialize(ctx, data, len);
-	case MSG_PEN_MOVE: return PenMove::deserialize(ctx, data, len);
 	case MSG_PEN_UP: return PenUp::deserialize(ctx, data, len);
 	case MSG_ANNOTATION_CREATE: return AnnotationCreate::deserialize(ctx, data, len);
 	case MSG_ANNOTATION_RESHAPE: return AnnotationReshape::deserialize(ctx, data, len);
@@ -83,6 +81,8 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_FILLRECT: return FillRect::deserialize(ctx, data, len);
 	case MSG_REGION_MOVE: return MoveRegion::deserialize(ctx, data, len);
 	case MSG_PUTTILE: return PutTile::deserialize(ctx, data, len);
+	case MSG_DRAWDABS_CLASSIC: return DrawDabsClassic::deserialize(ctx, data, len);
+	case MSG_DRAWDABS_PIXEL: return DrawDabsPixel::deserialize(ctx, data, len);
 	default:
 		qWarning("Unhandled opaque message type: %d", type);
 		return nullptr;

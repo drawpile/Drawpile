@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,12 +19,14 @@
 
 #include "shapes.h"
 
-#include <Qt>
-#include <QtMath>
+#include <cmath>
 #include <algorithm>
 
-namespace paintcore{
+namespace brushes {
 namespace shapes {
+
+using paintcore::Point;
+using paintcore::PointVector;
 
 PointVector rectangle(const QRectF &rect)
 {
@@ -53,7 +55,7 @@ PointVector ellipse(const QRectF &rect)
 
 	// TODO smart step size selection
 	for(qreal t=0;t<2*M_PI;t+=M_PI/20) {
-		pv << Point(cx + a*qCos(t), cy + b*qSin(t), 1.0);
+		pv << Point(cx + a*cos(t), cy + b*sin(t), 1.0);
 	}
 	pv << Point(cx+a, cy, 1);
 	return pv;
@@ -102,7 +104,7 @@ PointVector sampleStroke(const QRectF &rect)
 
 		const qreal fx = x/qreal(strokew);
 		const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
-		const qreal y = qSin(phase) * strokeh;
+		const qreal y = sin(phase) * strokeh;
 		pointvector << Point(rect.left()+x, offy+y, pressure);
 	}
 	return pointvector;
