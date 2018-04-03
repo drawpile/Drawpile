@@ -87,6 +87,28 @@ int DrawDabsClassic::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
+bool DrawDabsClassic::payloadEquals(const Message &m) const
+{
+	const auto &o = static_cast<const DrawDabsClassic&>(m);
+	if(m_dabs.size() != o.m_dabs.size())
+		return false;
+
+	if(
+			m_x != o.m_x ||
+			m_y != o.m_y ||
+			m_color != o.m_color ||
+			m_layer != o.m_layer ||
+			m_mode != o.m_mode
+			)
+		return false;
+
+	for(int i=0;i<m_dabs.size();++i)
+		if(m_dabs.at(i) != o.m_dabs.at(i))
+			return false;
+	return true;
+}
+
+
 QString ClassicBrushDab::toString() const
 {
 	return QStringLiteral("%1 %2 %3 %4 %5")
@@ -233,6 +255,27 @@ int DrawDabsPixel::serializePayload(uchar *data) const
 	}
 
 	return ptr-data;
+}
+
+bool DrawDabsPixel::payloadEquals(const Message &m) const
+{
+	const auto &o = static_cast<const DrawDabsPixel&>(m);
+	if(m_dabs.size() != o.m_dabs.size())
+		return false;
+
+	if(
+			m_x != o.m_x ||
+			m_y != o.m_y ||
+			m_color != o.m_color ||
+			m_layer != o.m_layer ||
+			m_mode != o.m_mode
+			)
+		return false;
+
+	for(int i=0;i<m_dabs.size();++i)
+		if(m_dabs.at(i) != o.m_dabs.at(i))
+			return false;
+	return true;
 }
 
 QString PixelBrushDab::toString() const

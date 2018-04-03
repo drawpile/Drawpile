@@ -21,7 +21,6 @@
 
 #include "message.h"
 
-#include <cstdint>
 #include <QVector>
 #include <QRect>
 
@@ -38,10 +37,14 @@ namespace protocol {
 		static const int MAX_XY_DELTA = INT8_MAX;
 		static const int LENGTH = 6;
 		QString toString() const;
+
+		bool operator!=(const ClassicBrushDab &o) const {
+			return x != o.x || y != o.y || size != o.size || hardness != o.hardness || opacity != o.opacity;
+		}
 	};
 
 	struct PixelBrushDab {
-		int8_t x; // coordinates are relative to the previous db
+		int8_t x; // coordinates are relative to the previous dab
 		int8_t y; // (or origin if this is the first dab)
 		uint8_t size;
 		uint8_t opacity;
@@ -49,6 +52,10 @@ namespace protocol {
 		static const int MAX_XY_DELTA = INT8_MAX;
 		static const int LENGTH = 4;
 		QString toString() const;
+
+		bool operator!=(const PixelBrushDab &o) const {
+			return x != o.x || y != o.y || size != o.size || opacity != o.opacity;
+		}
 	};
 }
 
@@ -109,11 +116,13 @@ public:
 	static DrawDabsClassic *fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs);
 
 	uint16_t layer() const override { return m_layer; }
-	int32_t originX() const { return m_x; }
-	int32_t originY() const { return m_y; }
-	uint32_t color() const { return m_color; } // If the alpha channel is set, the dabs are composited indirectly
+	int32_t originX() const { return m_x; } // Classic dab coordinates have subpixel precision.
+	int32_t originY() const { return m_y; } // They are converted to integers by multiplying by 4
+	uint32_t color() const { return m_color; }
 	uint8_t mode() const { return m_mode; }
 
+	// If the color's alpha channel is nonzero, that value is used
+	// as the opacity of the entire stroke.
 	bool isIndirect() const override { return (m_color & 0xff000000) > 0; }
 
 	const ClassicBrushDabVector &dabs() const { return m_dabs; }
@@ -128,7 +137,7 @@ public:
 protected:
 	int payloadLength() const override;
 	int serializePayload(uchar *data) const override;
-	//bool payloadEquals(const Message &m) const override;
+	bool payloadEquals(const Message &m) const override;
 	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
@@ -175,6 +184,8 @@ public:
 	uint32_t color() const { return m_color; } // If the alpha channel is set, the dabs are composited indirectly
 	uint8_t mode() const { return m_mode; }
 
+	// If the color's alpha channel is nonzero, that value is used
+	// as the opacity of the entire stroke.
 	bool isIndirect() const override { return (m_color & 0xff000000) > 0; }
 
 	const PixelBrushDabVector &dabs() const { return m_dabs; }
@@ -189,7 +200,7 @@ public:
 protected:
 	int payloadLength() const override;
 	int serializePayload(uchar *data) const override;
-	//bool payloadEquals(const Message &m) const override;
+	bool payloadEquals(const Message &m) const override;
 	Kwargs kwargs() const override { return Kwargs(); }
 
 private:
@@ -203,8 +214,8 @@ private:
 /**
  * @brief Pen up command
  *
- * The pen up signals the end of the stroke. In indirect drawing mode, it causes
- * the stroke to be committed to the current layer.
+ * The pen up command signals the end of a stroke. In indirect drawing mode, it causes
+ * indirect dabs (by this user) to be merged to their parent layers.
  */
 class PenUp : public ZeroLengthMessage<PenUp> {
 public:
