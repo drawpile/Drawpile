@@ -147,6 +147,54 @@ private:
 };
 
 /**
+ * @brief Set the canvas background
+ *
+ */
+class CanvasBackground : public Message {
+public:
+	/**
+	 * @brief Construct a solid color background
+	 * @param ctx context ID
+	 * @param color background color ARGB (unpremultiplied)
+	 */
+	CanvasBackground(uint8_t ctx, uint32_t color);
+
+	/**
+	 * @brief Construct a pattern background
+	 * @param ctx context ID
+	 * @param image tile content. Uncompressed length must be 64x64x4
+	 */
+	CanvasBackground(uint8_t ctx, const QByteArray &image)
+	: Message(MSG_CANVAS_BACKGROUND, ctx), m_image(image)
+	{
+		// Note: an uncompressed tile is only 16KB, so this should never be
+		// anywhere near this long
+		Q_ASSERT(image.length() <= 0xffff - 8);
+		Q_ASSERT(image.length() >= 4);
+	}
+
+	static CanvasBackground *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static CanvasBackground *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	uint32_t color() const;
+	const QByteArray &image() const { return m_image; }
+
+	bool isSolidColor() const { return m_image.length() == 4; }
+
+	QString messageName() const override { return QStringLiteral("background"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override;
+
+private:
+	QByteArray m_image;
+};
+
+
+/**
  * @brief Fill a rectangle with solid color
  *
  * All brush blending modes are supported

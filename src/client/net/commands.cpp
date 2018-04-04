@@ -177,5 +177,10 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 	return list;
 }
 
+protocol::MessagePtr setCanvasBackground(int ctx, const QColor &color)
+{
+	return protocol::MessagePtr(new protocol::CanvasBackground(ctx, color.rgba()));
+}
+
 }
 }

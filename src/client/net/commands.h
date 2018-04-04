@@ -35,6 +35,7 @@ namespace paintcore {
 }
 
 class QImage;
+class QColor;
 
 namespace net {
 
@@ -98,6 +99,9 @@ protocol::MessagePtr terminateSession();
  * the layer is blank.
  */
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
+
+//! Set the canvas background
+protocol::MessagePtr setCanvasBackground(int ctxid, const QColor &color);
 
 }
 }

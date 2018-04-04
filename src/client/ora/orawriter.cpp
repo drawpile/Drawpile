@@ -30,6 +30,7 @@
 namespace openraster {
 
 const QString DP_NAMESPACE = QStringLiteral("http://drawpile.net/");
+const QString MYPAINT_NAMESPACE = QStringLiteral("http://mypaint.org/ns/openraster");
 
 static bool putPngInZip(KZip &zip, const QString &filename, const QImage &image, QString *errorMessage)
 {
@@ -91,6 +92,19 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 		writer.writeEndElement();
 	}
 
+	// Write a MyPaint compatible background layer
+	if(!image->background().isBlank()) {
+		writer.writeStartElement("layer");
+		writer.writeAttribute("src", "data/background.png");
+		writer.writeAttribute("name", "background");
+		writer.writeAttribute("opacity", "1.0");
+		writer.writeAttribute("x", "0");
+		writer.writeAttribute("y", "0");
+		writer.writeAttribute(MYPAINT_NAMESPACE, "background-tile", "data/background-tile.png");
+
+		writer.writeEndElement();
+	}
+
 	writer.writeEndElement();
 }
 
@@ -106,7 +120,8 @@ static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const Q
 
 	// Write root element
 	writer.writeStartElement("image");
-	writer.writeNamespace("http://drawpile.net", "drawpile");
+	writer.writeNamespace(DP_NAMESPACE, "drawpile");
+	writer.writeNamespace(MYPAINT_NAMESPACE, "mypaint");
 
 	writer.writeAttribute("w", QString::number(image->width()));
 	writer.writeAttribute("h", QString::number(image->height()));
@@ -140,6 +155,23 @@ static bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index,
 		offset = QPoint();
 	}
 	return putPngInZip(zf, QString("data/layer%1.png").arg(index), image, errorMessage);
+}
+
+static bool writeBackground(KZip &zf, const paintcore::LayerStack *layers, QString *errorMessage)
+{
+	if(layers->background().isBlank())
+		return true;
+
+	// A full size background layer
+	paintcore::Layer bg(nullptr, 0, QString(), Qt::transparent, layers->size());
+	bg.putTile(0, 0, 9999*9999, layers->background());
+	if(!putPngInZip(zf, "data/background.png", bg.toImage(), errorMessage))
+		return false;
+
+	// Background tile
+	QImage bgtile(paintcore::Tile::SIZE, paintcore::Tile::SIZE, QImage::Format_ARGB32_Premultiplied);
+	layers->background().copyTo(reinterpret_cast<quint32*>(bgtile.bits()));
+	return putPngInZip(zf, "data/background-tile.png", bgtile, errorMessage);
 }
 
 static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers, QString *errorMessage)
@@ -181,6 +213,9 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image,
 		if(!writeLayer(zf, image, i, layerOffsets[i], errorMessage))
 			return false;
 	}
+
+	if(!writeBackground(zf, image, errorMessage))
+		return false;
 
 	// The stack XML contains the image structure
 	// definition.

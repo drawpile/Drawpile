@@ -3,6 +3,7 @@
  * Added PutTile command and optimized layer initialization
  * dprectool: added --msg-freq option
  * Protocol change: replaced ToolChange and PenMove with DrawDabs commands
+ * Replaced "background layer" concept with a tiled canvas background. (Mostly compatible with MyPaint)
 
 2018-??-?? Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature

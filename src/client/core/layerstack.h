@@ -19,6 +19,9 @@
 #ifndef LAYERSTACK_H
 #define LAYERSTACK_H
 
+#include "annotationmodel.h"
+#include "tile.h"
+
 #include <cstdint>
 
 #include <QObject>
@@ -27,8 +30,6 @@
 #include <QBitArray>
 
 class QDataStream;
-
-#include "annotationmodel.h"
 
 namespace paintcore {
 
@@ -58,6 +59,12 @@ public:
 
 	//! Adjust layer stack size
 	void resize(int top, int right, int bottom, int left);
+
+	//! Set the background tile
+	void setBackground(const Tile &tile);
+
+	//! Get the background tile
+	Tile background() const { return m_backgroundTile; }
 
 	//! Create a new layer
 	Layer *createLayer(int id, int source, const QColor &color, bool insert, bool copy, const QString &name);
@@ -114,8 +121,8 @@ public:
 	//! Return a flattened image of the layer stack
 	QImage toFlatImage(bool includeAnnotations) const;
 
-	//! Return a single layer composited with the given background
-	QImage flatLayerImage(int layerIdx, bool useBgLayer, const QColor &background) const;
+	//! Return a single layer merged with the background
+	QImage flatLayerImage(int layerIdxr) const;
 
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;
@@ -173,9 +180,6 @@ public:
 	//! Set onionskin view mode parameters
 	void setOnionskinMode(int below, int above, bool tint);
 
-	//! Show background layer (bottom-most layer) in special view modes
-	void setViewBackgroundLayer(bool usebg);
-
 	//! Clear the entire layer stack
 	void reset();
 
@@ -229,6 +233,8 @@ private:
 	int m_xtiles, m_ytiles;
 	QList<Layer*> m_layers;
 	AnnotationModel *m_annotations;
+	Tile m_backgroundTile;
+	Tile m_paintBackgroundTile;
 
 	QBitArray m_dirtytiles;
 	QRect m_dirtyrect;
@@ -237,7 +243,6 @@ private:
 	int m_viewlayeridx;
 	int m_onionskinsBelow, m_onionskinsAbove;
 	bool m_onionskinTint;
-	bool m_viewBackgroundLayer;
 	bool m_writeSequence;
 };
 
@@ -254,6 +259,7 @@ private:
 	Savepoint() {}
 	QList<Layer*> layers;
 	QList<Annotation> annotations;
+	Tile background;
 	int width, height;
 };
 

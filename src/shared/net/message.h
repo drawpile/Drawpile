@@ -78,6 +78,7 @@ enum MessageType {
 	MSG_DRAWDABS_PIXEL,
 	MSG_DRAWDABS_RESERVED1, // reserved for future use (mypaint style?)
 	MSG_DRAWDABS_RESERVED2, // reserved for future use (custom mask?)
+	MSG_CANVAS_BACKGROUND,
 	MSG_UNDO=255,
 };
 

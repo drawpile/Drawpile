@@ -286,7 +286,6 @@ void CanvasModel::updateLayerViewOptions()
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
 	);
-	m_layerstack->setViewBackgroundLayer(cfg.value("backgroundlayer", true).toBool());
 }
 
 /**
