@@ -23,6 +23,7 @@
 
 #include <QWidget>
 #include <QItemDelegate>
+#include <QItemSelection>
 
 class Ui_UserBox;
 
