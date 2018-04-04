@@ -369,16 +369,16 @@ void doPixelAlphaUnder(quint32 *destination, const quint32 *source, uchar opacit
 		if((src[3]==0) | (dest[3]==255)) {
 			// Special case: transparent source pixel or opaque destination pixel
 			dest += 4;
+			src += 4;
 		}
 		else {
 			// The usual case: blending required
-			const uint a = UINT8_MULT(255-dest[3], UINT8_MULT(src[3], opacity));
-			*dest = UINT8_MULT(src[0], a) + *dest; ++dest;
-			*dest = UINT8_MULT(src[1], a) + *dest; ++dest;
-			*dest = UINT8_MULT(src[2], a) + *dest; ++dest;
-			*dest = *dest + a; ++dest;
+			const uint asrc = UINT8_MULT(255 - dest[3], UINT8_MULT(src[3], opacity));
+			*dest = UINT8_MULT(*src, asrc) + (*dest); ++dest, ++src;
+			*dest = UINT8_MULT(*src, asrc) + (*dest); ++dest, ++src;
+			*dest = UINT8_MULT(*src, asrc) + (*dest); ++dest, ++src;
+			*dest = UINT8_MULT(*src, asrc) + (*dest); ++dest, ++src;
 		}
-		src += 4;
 	}
 }
 
