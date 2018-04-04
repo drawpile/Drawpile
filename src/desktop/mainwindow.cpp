@@ -474,7 +474,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::userJoined, m_chatbox, &widgets::ChatBox::userJoined);
 	connect(canvas, &canvas::CanvasModel::userLeft, m_chatbox, &widgets::ChatBox::userParted);
 
-	getAction("layerviewnormal")->setChecked(true); // reset layer view mode when new canvas is loaded
+	updateLayerViewMode();
 
 	m_dockLayers->setCanvas(canvas);
 	m_userlist->setCanvas(canvas);
@@ -694,6 +694,24 @@ void MainWindow::updateTabletSupportMode()
 	);
 	cfg.endGroup();
 	m_view->setBrushCursorStyle(cfg.value("settings/brushcursor").toInt());
+}
+
+void MainWindow::updateLayerViewMode()
+{
+	if(!m_doc->canvas())
+		return;
+
+	const bool solo = getAction("layerviewsolo")->isChecked();
+	const bool onionskin = getAction("layerviewonionskin")->isChecked();
+
+	paintcore::LayerStack::ViewMode mode = 	paintcore::LayerStack::NORMAL;
+
+	if(solo)
+		mode = paintcore::LayerStack::SOLO;
+	else if(onionskin)
+		mode = paintcore::LayerStack::ONIONSKIN;
+
+	m_doc->canvas()->layerStack()->setViewMode(mode);
 }
 
 /**
@@ -2401,28 +2419,22 @@ void MainWindow::setupActions()
 	//
 	// Layers menu
 	//
-	QActionGroup *layerViewModes = new QActionGroup(this);
-	layerViewModes->setExclusive(true);
-	layerViewModes->addAction(makeAction("layerviewnormal", tr("Normal")).property("viewmode", 0).shortcut("Shift+Ctrl+N").checked());
-	layerViewModes->addAction(makeAction("layerviewsolo", tr("Solo")).property("viewmode", 1).shortcut("Shift+Ctrl+S").checkable());
-	layerViewModes->addAction(makeAction("layerviewnonionskin", tr("Onionskin")).property("viewmode", 2).shortcut("Shift+Ctrl+O").checkable());
-
+	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
+	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).checkable();
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable();
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
 
-	connect(layerViewModes, &QActionGroup::triggered, this, [this](QAction *a) {
-		if(m_canvasscene->model())
-			m_canvasscene->model()->setLayerViewMode(a->property("viewmode").toInt());
-	});
+	connect(layerSolo, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
+	connect(layerOnionskin, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
 	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
 
 	QMenu *layerMenu = menuBar()->addMenu(tr("&Layers"));
-	QMenu *layerViewModeMenu = layerMenu->addMenu(tr("View Mode"));
-	layerViewModeMenu->addActions(layerViewModes->actions());
+	layerMenu->addAction(layerSolo);
+	layerMenu->addAction(layerOnionskin);
 	layerMenu->addAction(layerNumbers);
 
 	layerMenu->addSeparator();

@@ -153,6 +153,8 @@ private slots:
 	void updateShortcuts();
 	void updateTabletSupportMode();
 
+	void updateLayerViewMode();
+
 	void paste();
 	void pasteFile();
 	void pasteFile(const QUrl &url);
