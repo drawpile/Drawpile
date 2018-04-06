@@ -53,7 +53,7 @@ set (
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
-	widgets/userlistwidget.cpp 
+	widgets/useritemdelegate.cpp
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
@@ -129,7 +129,6 @@ set (
 	ui/fillsettings.ui
 	ui/lasersettings.ui
 	ui/layerbox.ui
-	ui/userbox.ui
 	ui/newdialog.ui
 	ui/resizedialog.ui
 	ui/videoexport.ui

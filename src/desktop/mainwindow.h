@@ -32,6 +32,7 @@ class QLabel;
 class QSplitter;
 class QTimer;
 class QToolButton;
+class QListView;
 
 class Document;
 class ActionBuilder;
@@ -40,7 +41,7 @@ namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
-	class UserList;
+	class UserItemDelegate;
 	class ViewStatus;
 }
 namespace docks {
@@ -219,7 +220,8 @@ private:
 	docks::ColorBox *m_dockColors;
 	docks::Navigator *m_dockNavigator;
 	widgets::ChatBox *m_chatbox;
-	widgets::UserList *m_userlist;
+	QListView *m_userlistview;
+	widgets::UserItemDelegate *m_useritemdelegate;
 
 	widgets::CanvasView *m_view;
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QJsonArray>
+#include <QPixmap>
 
 namespace canvas {
 
@@ -35,8 +36,19 @@ UserListModel::UserListModel(QObject *parent)
 QVariant UserListModel::data(const QModelIndex& index, int role) const
 {
 	if(index.isValid() && index.row() >= 0 && index.row() < m_users.size()) {
-		if(role == Qt::DisplayRole)
-			return QVariant::fromValue(m_users.at(index.row()));
+		const User &u = m_users.at(index.row());
+		switch(role) {
+			case IdRole: return u.id;
+			case Qt::DisplayRole:
+			case NameRole: return u.name;
+			case Qt::DecorationRole:
+			case AvatarRole: return QPixmap(); // TODO
+			case IsOpRole: return u.isOperator;
+			case IsModRole: return u.isMod;
+			case IsAuthRole: return u.isAuth;
+			case IsLockedRole: return u.isLocked;
+			case IsMutedRole: return u.isMuted;
+		}
 	}
 
 	return QVariant();
@@ -202,8 +214,22 @@ QString UserListModel::getUsername(int id) const
 	return tr("User #%1").arg(id);
 }
 
+// Add or remove a user ID
+static QList<uint8_t> &updateUserIdList(QList<uint8_t> &list, uint8_t id, bool add)
+{
+	if(add) {
+		if(!list.contains(id))
+			list.append(id);
+	} else {
+		list.removeAll(id);
+	}
+	return list;
+}
+
 protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
 {
+	Q_ASSERT(userId>0 && userId<255);
+
 	QList<uint8_t> ids = lockList();
 	if(lock) {
 		if(!ids.contains(userId))
@@ -220,11 +246,12 @@ protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bo
 	Q_ASSERT(userId>0 && userId<255);
 
 	QList<uint8_t> ops = operatorList();
-
-	if(op)
-		ops.append(userId);
-	else
+	if(op) {
+		if(!ops.contains(userId))
+			ops.append(userId);
+	} else {
 		ops.removeOne(userId);
+	}
 
 	return protocol::MessagePtr(new protocol::SessionOwner(localId, ops));
 }

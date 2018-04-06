@@ -41,6 +41,7 @@
 #include <QWindow>
 #include <QVBoxLayout>
 #include <QTimer>
+#include <QListView>
 
 #include <ColorDialog>
 
@@ -83,7 +84,7 @@
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
 #include "widgets/chatwidget.h"
-#include "widgets/userlistwidget.h"
+#include "widgets/useritemdelegate.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/brushpalettedock.h"
@@ -156,7 +157,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_dockColors(nullptr),
 	  m_dockNavigator(nullptr),
 	  m_chatbox(nullptr),
-	  m_userlist(nullptr),
+	  m_useritemdelegate(nullptr),
 	  m_view(nullptr),
 	  m_viewStatusBar(nullptr),
 	  m_lockstatus(nullptr),
@@ -259,8 +260,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_chatbox = new widgets::ChatBox(this);
 	chatsplitter->addWidget(m_chatbox);
 
-	m_userlist = new widgets::UserList(this);
-	chatsplitter->addWidget(m_userlist);
+	m_userlistview = new QListView(this);
+	m_userlistview->setSelectionMode(QListView::NoSelection);
+	m_useritemdelegate = new widgets::UserItemDelegate(this);
+	m_userlistview->setItemDelegate(m_useritemdelegate);
+	chatsplitter->addWidget(m_userlistview);
 
 	chatsplitter->setStretchFactor(0, 5);
 	chatsplitter->setStretchFactor(1, 1);
@@ -358,7 +362,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
-	connect(m_userlist, &widgets::UserList::opCommand, m_doc->client(), &net::Client::sendMessage);
+	connect(m_useritemdelegate, &widgets::UserItemDelegate::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections
@@ -477,7 +481,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	updateLayerViewMode();
 
 	m_dockLayers->setCanvas(canvas);
-	m_userlist->setCanvas(canvas);
+	m_userlistview->setModel(canvas->userlist());
+	m_useritemdelegate->setCanvas(canvas);
+
 
 	m_currentdoctools->setEnabled(true);
 }
