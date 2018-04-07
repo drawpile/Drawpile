@@ -174,25 +174,30 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 	if(event->type() == QEvent::MouseButtonPress && m_canvas && m_canvas->aclFilter()->isLocalUserOperator()) {
 		const QMouseEvent *e = static_cast<const QMouseEvent*>(event);
 
-		if(e->button() == Qt::LeftButton && e->x() > option.rect.right() - MARGIN - BUTTON_WIDTH) {
-			m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
-
-			m_opAction->setChecked(index.data(canvas::UserListModel::IsOpRole).toBool());
-			m_trustAction->setChecked(index.data(canvas::UserListModel::IsTrustedRole).toBool());
-			m_lockAction->setChecked(index.data(canvas::UserListModel::IsLockedRole).toBool());
-			m_muteAction->setChecked(index.data(canvas::UserListModel::IsMutedRole).toBool());
-
-			// Can't deop or kick self or moderators
-			const bool enabled = m_menuId != m_canvas->localUserId() && !index.data(canvas::UserListModel::IsModRole).toBool();
-			m_opAction->setEnabled(enabled);
-			m_kickAction->setEnabled(enabled);
-			m_banAction->setEnabled(enabled);
-
-			m_userMenu->popup(option.widget->mapToGlobal(e->pos()));
+		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && e->x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
+			showContextMenu(index, e->globalPos());
 			return true;
 		}
 	}
 	return false;
+}
+
+void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &pos)
+{
+	m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
+
+	m_opAction->setChecked(index.data(canvas::UserListModel::IsOpRole).toBool());
+	m_trustAction->setChecked(index.data(canvas::UserListModel::IsTrustedRole).toBool());
+	m_lockAction->setChecked(index.data(canvas::UserListModel::IsLockedRole).toBool());
+	m_muteAction->setChecked(index.data(canvas::UserListModel::IsMutedRole).toBool());
+
+	// Can't deop or kick self or moderators
+	const bool enabled = m_menuId != m_canvas->localUserId() && !index.data(canvas::UserListModel::IsModRole).toBool();
+	m_opAction->setEnabled(enabled);
+	m_kickAction->setEnabled(enabled);
+	m_banAction->setEnabled(enabled);
+
+	m_userMenu->popup(pos);
 }
 
 void UserItemDelegate::toggleOpMode(bool op)

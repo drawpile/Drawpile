@@ -40,6 +40,8 @@ private slots:
 	void banUser();
 
 private:
+	void showContextMenu(const QModelIndex &index, const QPoint &pos);
+
 	QMenu *m_userMenu;
 	canvas::CanvasModel *m_canvas;
 
