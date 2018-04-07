@@ -106,6 +106,7 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 	case MSG_USER_LEAVE: return UserLeave::deserialize(ctx, data, len);
 	case MSG_SESSION_OWNER: return SessionOwner::deserialize(ctx, data, len);
 	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
+	case MSG_TRUSTED_USERS: return TrustedUsers::deserialize(ctx, data, len);
 
 	// Opaque messages
 	default:

@@ -101,11 +101,16 @@ void Session::switchState(State newstate)
 
 			// Add list of currently logged in users to reset snapshot
 			QList<uint8_t> owners;
+			QList<uint8_t> trusted;
 			for(const Client *c : m_clients) {
 				m_resetstream.prepend(c->joinMessage());
 				if(c->isOperator())
 					owners << c->id();
+				if(c->isTrusted())
+					trusted << c->id();
 			}
+			if(!trusted.isEmpty())
+				m_resetstream.prepend(protocol::MessagePtr(new protocol::TrustedUsers(0, trusted)));
 			m_resetstream.prepend(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
 
 			// Send reset snapshot
@@ -206,6 +211,9 @@ void Session::joinUser(Client *user, bool host)
 
 	if(user->isOperator() || m_history->isOperator(user->username()))
 		changeOpStatus(user->id(), true, "the server");
+
+	if(m_history->isTrusted(user->username()))
+		changeTrustedStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
 
@@ -488,6 +496,60 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 
 	if(kickResetter)
 		kickResetter->disconnectError("De-opped while resetting");
+}
+
+QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy)
+{
+	QList<uint8_t> truelist;
+	for(Client *c : m_clients) {
+		const bool trusted = ids.contains(c->id());
+		if(trusted != c->isTrusted()) {
+			c->setTrusted(trusted);
+			QString msg;
+			if(trusted) {
+				msg = "Trusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
+			} else {
+				msg = "Untrusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
+			}
+			messageAll(c->username() + " " + msg, false);
+			if(c->isAuthenticated())
+				m_history->setAuthenticatedTrust(c->username(), trusted);
+
+		}
+		if(c->isTrusted())
+			truelist << c->id();
+	}
+
+	return truelist;
+}
+
+void Session::changeTrustedStatus(int id, bool trusted, const QString &changedBy)
+{
+	QList<uint8_t> ids;
+
+	for(Client *c : m_clients) {
+		if(c->id() == id && c->isTrusted() != trusted) {
+			c->setTrusted(trusted);
+			QString msg;
+			if(trusted) {
+				msg = "Trusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
+			} else {
+				msg = "Untrusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
+			}
+			messageAll(c->username() + " " + msg, false);
+			if(c->isAuthenticated())
+				m_history->setAuthenticatedTrust(c->username(), trusted);
+		}
+
+		if(c->isTrusted())
+			ids << c->id();
+	}
+
+	addToHistory(protocol::MessagePtr(new protocol::TrustedUsers(0, ids)));
 }
 
 void Session::sendUpdatedSessionProperties()

@@ -51,13 +51,14 @@ struct Client::Private {
 
 	bool isOperator;
 	bool isModerator;
+	bool isTrusted;
 	bool isAuthenticated;
 	bool isMuted;
 
 	Private(QTcpSocket *socket, ServerLog *logger)
 		: socket(socket), logger(logger), msgqueue(nullptr),
 		historyPosition(-1), id(0),
-		isOperator(false), isModerator(false), isAuthenticated(false), isMuted(false)
+		isOperator(false), isModerator(false), isTrusted(false), isAuthenticated(false), isMuted(false)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);
@@ -204,6 +205,16 @@ void Client::setModerator(bool mod)
 bool Client::isModerator() const
 {
 	return d->isModerator;
+}
+
+bool Client::isTrusted() const
+{
+	return d->isTrusted;
+}
+
+void Client::setTrusted(bool trusted)
+{
+	d->isTrusted = trusted;
 }
 
 void Client::setAuthenticated(bool auth)
@@ -383,7 +394,19 @@ void Client::handleSessionMessage(MessagePtr msg)
 				d->session->directToAll(msg);
 				return;
 			}
+			break;
 		}
+		case protocol::MSG_TRUSTED_USERS: {
+			if(!isOperator()) {
+				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));
+				return;
+			}
+
+			QList<uint8_t> ids = msg.cast<protocol::TrustedUsers>().ids();
+			ids = d->session->updateTrustedUsers(ids, username());
+			msg.cast<protocol::TrustedUsers>().setIds(ids);
+			break;
+	}
 		default: break;
 	}
 

@@ -50,6 +50,7 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_aclfilter = new AclFilter(this);
 
 	connect(m_aclfilter, &AclFilter::operatorListChanged, m_userlist, &UserListModel::updateOperators);
+	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 	connect(m_aclfilter, &AclFilter::layerAclChange, m_layerlist, &LayerListModel::updateLayerAcl);
 
@@ -147,6 +148,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			metaUserLeave(cmd.cast<UserLeave>());
 			break;
 		case MSG_SESSION_OWNER:
+		case MSG_TRUSTED_USERS:
 		case MSG_USER_ACL:
 		case MSG_SESSION_ACL:
 		case MSG_LAYER_ACL:

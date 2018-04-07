@@ -102,6 +102,15 @@ public:
 	void setModerator(bool mod);
 
 	/**
+	 * @brief Is this a trusted user?
+	 *
+	 * The trust flag is granted by session operators. It's effects are purely clientside,
+	 * but the server is aware of it so it can remember it for authenticated users.
+	 */
+	bool isTrusted() const;
+	void setTrusted(bool trusted);
+
+	/**
 	 * @brief Has this user been authenticated?
 	 */
 	bool isAuthenticated() const;

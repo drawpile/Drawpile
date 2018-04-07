@@ -60,7 +60,9 @@ public:
 	QStringList announcements() const override { return m_announcements.values(); }
 
 	void setAuthenticatedOperator(const QString &username, bool op) override { if(op) m_ops.insert(username); else m_ops.remove(username); }
+	void setAuthenticatedTrust(const QString &username, bool trusted) override { if(trusted) m_trusted.insert(username); else m_trusted.remove(username); }
 	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isTrusted(const QString &username) const override { return m_trusted.contains(username); }
 	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
 
 protected:
@@ -72,6 +74,7 @@ protected:
 private:
 	QList<protocol::MessagePtr> m_history;
 	QSet<QString> m_ops;
+	QSet<QString> m_trusted;
 	QSet<QString> m_announcements;
 	QString m_alias;
 	QString m_founder;

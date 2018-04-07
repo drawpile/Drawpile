@@ -141,6 +141,7 @@ Parser::Result Parser::parseLine(const QString &line)
 	else FROMTEXT("leave", UserLeave);
 	else FROMTEXT("owner", SessionOwner);
 	else FROMTEXT("chat", Chat);
+	else FROMTEXT("trusted", TrustedUsers);
 	else FROMTEXT("interval", Interval);
 	else FROMTEXT("marker", Marker);
 	else FROMTEXT("laser", LaserTrail);

@@ -42,6 +42,7 @@ enum MessageType {
 	MSG_USER_LEAVE,
 	MSG_SESSION_OWNER,
 	MSG_CHAT,
+	MSG_TRUSTED_USERS,
 
 	// Meta messages (opaque)
 	MSG_INTERVAL=64,

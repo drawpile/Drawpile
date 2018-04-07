@@ -99,7 +99,9 @@ public:
 	QStringList announcements() const override { return m_announcements; }
 
 	void setAuthenticatedOperator(const QString &username, bool op) override;
+	void setAuthenticatedTrust(const QString &username, bool trusted) override;
 	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isTrusted(const QString &username) const override { return m_trusted.contains(username); }
 	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
 
 protected:
@@ -142,6 +144,7 @@ private:
 	Flags m_flags;
 	QStringList m_announcements;
 	QSet<QString> m_ops;
+	QSet<QString> m_trusted;
 
 	QVector<Block> m_blocks;
 	bool m_archive;

@@ -34,13 +34,14 @@ namespace canvas {
 struct User {
 	User() : User(0, QString(), false, false, false) {}
 	User(int id_, const QString &name_, bool local, bool auth, bool mod)
-		: id(id_), name(name_), isLocal(local), isOperator(false), isMod(mod), isAuth(auth), isLocked(false), isMuted(false)
+		: id(id_), name(name_), isLocal(local), isOperator(false), isTrusted(false), isMod(mod), isAuth(auth), isLocked(false), isMuted(false)
 	{}
 
 	int id;
 	QString name;
 	bool isLocal;
 	bool isOperator;
+	bool isTrusted;
 	bool isMod;
 	bool isAuth;
 	bool isLocked;
@@ -58,6 +59,7 @@ public:
 		NameRole,
 		AvatarRole,
 		IsOpRole,
+		IsTrustedRole,
 		IsModRole,
 		IsAuthRole,
 		IsLockedRole,
@@ -97,6 +99,9 @@ public:
 	//! Get a list of users who are locked
 	QList<uint8_t> lockList() const;
 
+	//! Get a list of trusted users
+	QList<uint8_t> trustedList() const;
+
 	//! Get the ID of the operator with the lowest ID number
 	// TODO replace this by serverside auto-resetter selection
 	int getPrimeOp() const;
@@ -119,8 +124,18 @@ public:
 	 */
 	protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
 
+	/**
+	 * @brief Get the command for granting or revoking trusted status
+	 * @param localId
+	 * @param userId
+	 * @param trusted
+	 * @return
+	 */
+	protocol::MessagePtr getTrustUserCommand(int localId, int userId, bool op) const;
+
 public slots:
 	void updateOperators(const QList<uint8_t> operatorIds);
+	void updateTrustedUsers(const QList<uint8_t> trustedIds);
 	void updateLocks(const QList<uint8_t> lockedUserIds);
 	void updateMuteList(const QJsonArray &mutedUserIds);
 

@@ -117,6 +117,40 @@ private:
 };
 
 /**
+ * @brief List of trusted users
+ *
+ * This message sets the list of user who have been tagged as trusted,
+ * but who are not operators. The meaning of "trusted" is a purely
+ * clientside concept, but the server is aware of it so it can remember
+ * the trusted status for returning authenticated users. (The same way
+ * OP status is remembered.)
+ * This command can be sent by operators or by the server (ctx=0).
+ *
+ * The server sanitizes the ID list so, when distributed to other users,
+ * it does not contain any duplicates or non-existing users.
+ */
+class TrustedUsers : public Message {
+public:
+	TrustedUsers(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_TRUSTED_USERS, ctx), m_ids(ids) { }
+
+	static TrustedUsers *deserialize(uint8_t ctx, const uchar *data, int buflen);
+	static TrustedUsers *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	QList<uint8_t> ids() const { return m_ids; }
+	void setIds(const QList<uint8_t> ids) { m_ids = ids; }
+
+	QString messageName() const override { return "trusted"; }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
+
+private:
+	QList<uint8_t> m_ids;
+};
+
+/**
  * @brief A chat message
  *
  * Chat message sent by the server with the context ID 0 are server messages.

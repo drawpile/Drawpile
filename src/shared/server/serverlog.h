@@ -52,6 +52,8 @@ public:
 		Deop,      // OP status was removed
 		Mute,      // User was muted
 		Unmute,    // User was unmuted
+		Trust,     // User was tagged as trusted
+		Untrust,   // User's trusted tag was removed
 		BadData,   // Received an invalid message from a client
 		RuleBreak, // User tried to use a command they're not allowed to
 		PubList,   // Session announcement

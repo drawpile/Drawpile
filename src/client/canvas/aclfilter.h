@@ -27,6 +27,7 @@
 namespace protocol {
 	class Message;
 	class SessionOwner;
+	class TrustedUsers;
 }
 
 namespace canvas {
@@ -113,6 +114,7 @@ signals:
 
 	void userLocksChanged(const QList<uint8_t> lockedUsers);
 	void operatorListChanged(const QList<uint8_t> opUsers);
+	void trustedUserListChanged(const QList<uint8_t> trustedUsers);
 	void layerAclChange(int layerId, bool locked, const QList<uint8_t> &exclusive);
 
 private:
@@ -126,6 +128,7 @@ private:
 	void setAnnotationCreationLock(bool lock);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
+	void updateTrustedUserList(const protocol::TrustedUsers &msg);
 
 	bool isLayerLockedFor(int layerId, uint8_t userId) const;
 
@@ -143,6 +146,7 @@ private:
 	bool m_lockAnnotationCreation;
 
 	QList<uint8_t> m_ops;
+	QList<uint8_t> m_trusted;
 	QList<uint8_t> m_userlocks;
 	QSet<uint16_t> m_protectedAnnotations;
 };

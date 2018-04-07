@@ -44,6 +44,7 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			case Qt::DecorationRole:
 			case AvatarRole: return QPixmap(); // TODO
 			case IsOpRole: return u.isOperator;
+			case IsTrustedRole: return u.isTrusted;
 			case IsModRole: return u.isMod;
 			case IsAuthRole: return u.isAuth;
 			case IsLockedRole: return u.isLocked;
@@ -100,6 +101,20 @@ void UserListModel::updateOperators(const QList<uint8_t> ids)
 	}
 }
 
+void UserListModel::updateTrustedUsers(const QList<uint8_t> trustedIds)
+{
+	for(int i=0;i<m_users.size();++i) {
+		User &u = m_users[i];
+
+		const bool trusted = trustedIds.contains(u.id);
+		if(trusted != u.isTrusted) {
+			u.isTrusted = trusted;
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+		}
+	}
+}
+
 void UserListModel::updateLocks(const QList<uint8_t> ids)
 {
 	for(int i=0;i<m_users.size();++i) {
@@ -145,6 +160,16 @@ QList<uint8_t> UserListModel::lockList() const
 			locks << m_users.at(i).id;
 	}
 	return locks;
+}
+
+QList<uint8_t> UserListModel::trustedList() const
+{
+	QList<uint8_t> ids;
+	for(int i=0;i<m_users.size();++i) {
+		if(m_users.at(i).isTrusted)
+			ids << m_users.at(i).id;
+	}
+	return ids;
 }
 
 int UserListModel::getPrimeOp() const
@@ -254,6 +279,21 @@ protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bo
 	}
 
 	return protocol::MessagePtr(new protocol::SessionOwner(localId, ops));
+}
+
+protocol::MessagePtr UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
+{
+	Q_ASSERT(userId>0 && userId<255);
+
+	QList<uint8_t> trusted = trustedList();
+	if(trust) {
+		if(!trusted.contains(userId))
+			trusted.append(userId);
+	} else {
+		trusted.removeOne(userId);
+	}
+
+	return protocol::MessagePtr(new protocol::TrustedUsers(localId, trusted));
 }
 
 }

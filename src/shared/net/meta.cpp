@@ -128,6 +128,45 @@ SessionOwner *SessionOwner::fromText(uint8_t ctx, const Kwargs &kwargs)
 	return new SessionOwner(ctx, text::parseIdListString8(kwargs["users"]));
 }
 
+
+TrustedUsers *TrustedUsers::deserialize(uint8_t ctx, const uchar *data, int len)
+{
+	if(len>255)
+		return nullptr;
+
+	QList<uint8_t> ids;
+	ids.reserve(len);
+	for(int i=0;i<len;++i)
+		ids.append(data[i]);
+
+	return new TrustedUsers(ctx, ids);
+}
+
+int TrustedUsers::serializePayload(uchar *data) const
+{
+	for(int i=0;i<m_ids.size();++i)
+		data[i] = m_ids[i];
+	return m_ids.size();
+}
+
+int TrustedUsers::payloadLength() const
+{
+	return m_ids.size();
+}
+
+Kwargs TrustedUsers::kwargs() const
+{
+	Kwargs kw;
+	if(!m_ids.isEmpty())
+		kw["users"] = text::idListString(m_ids);
+	return kw;
+}
+
+TrustedUsers *TrustedUsers::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new TrustedUsers(ctx, text::parseIdListString8(kwargs["users"]));
+}
+
 Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<3)

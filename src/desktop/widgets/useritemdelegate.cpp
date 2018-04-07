@@ -23,8 +23,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 {
 	m_userMenu = new QMenu;
 	m_opAction = m_userMenu->addAction(tr("Operator"));
-	// TODO Trusted
-	//m_trustAction = m_userMenu->addAction(tr("Trusted"));
+	m_trustAction = m_userMenu->addAction(tr("Trusted"));
 
 	m_userMenu->addSeparator();
 	m_lockAction = m_userMenu->addAction(tr("Lock"));
@@ -35,11 +34,12 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_banAction = m_userMenu->addAction(tr("Kick && Ban"));
 
 	m_opAction->setCheckable(true);
-	//m_trustAction->setCheckable(true);
+	m_trustAction->setCheckable(true);
 	m_lockAction->setCheckable(true);
 	m_muteAction->setCheckable(true);
 
 	connect(m_opAction, &QAction::triggered, this, &UserItemDelegate::toggleOpMode);
+	connect(m_trustAction, &QAction::triggered, this, &UserItemDelegate::toggleTrusted);
 	connect(m_lockAction, &QAction::triggered, this, &UserItemDelegate::toggleLock);
 	connect(m_muteAction, &QAction::triggered, this, &UserItemDelegate::toggleMute);
 	connect(m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
@@ -120,8 +120,8 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	} else {
 		if(index.data(canvas::UserListModel::IsOpRole).toBool())
 			flags = tr("Operator");
-		//else if(index.data(canvas::UserListModel::IsTrusted).toBool())
-		//	flags = tr("Trusted");
+		else if(index.data(canvas::UserListModel::IsTrustedRole).toBool())
+			flags = tr("Trusted");
 
 		if(index.data(canvas::UserListModel::IsAuthRole).toBool()) {
 			if(!flags.isEmpty())
@@ -178,6 +178,7 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 			m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
 
 			m_opAction->setChecked(index.data(canvas::UserListModel::IsOpRole).toBool());
+			m_trustAction->setChecked(index.data(canvas::UserListModel::IsTrustedRole).toBool());
 			m_lockAction->setChecked(index.data(canvas::UserListModel::IsLockedRole).toBool());
 			m_muteAction->setChecked(index.data(canvas::UserListModel::IsMutedRole).toBool());
 
@@ -197,6 +198,11 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 void UserItemDelegate::toggleOpMode(bool op)
 {
 	emit opCommand(m_canvas->userlist()->getOpUserCommand(m_canvas->localUserId(), m_menuId, op));
+}
+
+void UserItemDelegate::toggleTrusted(bool trust)
+{
+	emit opCommand(m_canvas->userlist()->getTrustUserCommand(m_canvas->localUserId(), m_menuId, trust));
 }
 
 void UserItemDelegate::toggleLock(bool op)

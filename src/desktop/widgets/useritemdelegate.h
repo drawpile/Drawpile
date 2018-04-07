@@ -33,6 +33,7 @@ signals:
 
 private slots:
 	void toggleOpMode(bool op);
+	void toggleTrusted(bool trust);
 	void toggleLock(bool lock);
 	void toggleMute(bool mute);
 	void kickUser();
@@ -46,7 +47,7 @@ private:
 	QPixmap m_muteIcon;
 
 	QAction *m_opAction;
-	//QAction *m_trustAction;
+	QAction *m_trustAction;
 	QAction *m_lockAction;
 	QAction *m_muteAction;
 	QAction *m_kickAction;

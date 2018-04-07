@@ -49,6 +49,7 @@ void AclFilter::reset(int myId, bool localMode)
 	m_lockDefault = false;
 
 	m_ops.clear();
+	m_ops.clear();
 	m_userlocks.clear();
 	m_protectedAnnotations.clear();
 
@@ -93,9 +94,11 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_USER_LEAVE: {
 		// User left: remove locks
-		if(m_ops.removeAll(msg.contextId())) {
+		if(m_ops.removeAll(msg.contextId()))
 			emit operatorListChanged(m_ops);
-		}
+
+		if(m_trusted.removeAll(msg.contextId()))
+			emit trustedUserListChanged(m_trusted);
 
 		if(m_userlocks.removeAll(msg.contextId())>0)
 			emit userLocksChanged(m_userlocks);
@@ -120,6 +123,11 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 	case MSG_SESSION_OWNER:
 		// This command is validated by the server
 		updateSessionOwnership(static_cast<const SessionOwner&>(msg));
+		return true;
+
+	case MSG_TRUSTED_USERS:
+		// this command is validated by the server
+		updateTrustedUserList(static_cast<const TrustedUsers&>(msg));
 		return true;
 
 	case MSG_LAYER_ACL: {
@@ -281,6 +289,12 @@ void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)
 
 	emit operatorListChanged(m_ops);
 	setOperator(m_ops.contains(m_myId));
+}
+
+void AclFilter::updateTrustedUserList(const protocol::TrustedUsers &msg)
+{
+	m_trusted = msg.ids();
+	emit trustedUserListChanged(m_trusted);
 }
 
 void AclFilter::setOperator(bool op)

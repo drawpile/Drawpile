@@ -277,6 +277,12 @@ bool FiledHistory::load()
 		} else if(cmd == "DEOP") {
 			m_ops.remove(QString::fromUtf8(params));
 
+		} else if(cmd == "TRUST") {
+			m_trusted.insert(QString::fromUtf8(params));
+
+		} else if(cmd == "UNTRUST") {
+			m_trusted.remove(QString::fromUtf8(params));
+
 		} else {
 			qWarning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
@@ -664,6 +670,23 @@ void FiledHistory::setAuthenticatedOperator(const QString &username, bool op)
 		if(m_ops.contains(username)) {
 			m_ops.remove(username);
 			m_journal->write(QString("DEOP %1\n").arg(username).toUtf8());
+			m_journal->flush();
+		}
+	}
+}
+
+void FiledHistory::setAuthenticatedTrust(const QString &username, bool trusted)
+{
+	if(trusted) {
+		if(!m_trusted.contains(username)) {
+			m_trusted.insert(username);
+			m_journal->write(QString("TRUST %1\n").arg(username).toUtf8());
+			m_journal->flush();
+		}
+	} else {
+		if(m_trusted.contains(username)) {
+			m_trusted.remove(username);
+			m_journal->write(QString("UNTRUST %1\n").arg(username).toUtf8());
 			m_journal->flush();
 		}
 	}
