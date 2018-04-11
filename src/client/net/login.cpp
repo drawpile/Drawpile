@@ -25,7 +25,6 @@
 
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
-#include "../shared/net/meta2.h"
 #include "../shared/util/networkaccess.h"
 
 #include <QDebug>
@@ -66,9 +65,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	: QObject(parent),
 	  m_mode(mode),
 	  m_address(url),
-	  m_maxusers(0),
-	  m_allowdrawing(true),
-	  m_layerctrllock(true),
 	  m_state(EXPECT_HELLO),
 	  m_multisession(false),
 	  m_tls(false),
@@ -526,24 +522,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(parentalcontrols::isNsfmTitle(m_title))
 				conf.kwargs["nsfm"] = true;
 
-			if(m_maxusers>0)
-				conf.kwargs["maxUserCount"] = m_maxusers;
-
-			if(m_preserveChat)
-				conf.kwargs["preserveChat"] = true;
-
 			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
-
-			uint16_t lockflags = 0;
-
-			if(!m_allowdrawing)
-				lockflags |= protocol::SessionACL::LOCK_DEFAULT;
-
-			if(m_layerctrllock)
-				lockflags |= protocol::SessionACL::LOCK_LAYERCTRL;
-
-			if(lockflags)
-				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
 			if(!m_announceUrl.isEmpty())
 				m_server->sendMessage(command::announce(m_announceUrl, m_announcePrivate));

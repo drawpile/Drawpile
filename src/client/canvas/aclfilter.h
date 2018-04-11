@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,9 +20,12 @@
 #ifndef ACLFILTER_H
 #define ACLFILTER_H
 
+#include "features.h"
+
 #include <QObject>
 #include <QHash>
 #include <QSet>
+#include <bitset>
 
 namespace protocol {
 	class Message;
@@ -32,15 +35,40 @@ namespace protocol {
 
 namespace canvas {
 
+class UserSet {
+public:
+	UserSet() = default;
+
+	bool contains(uint8_t id) const { return m_users[id]; }
+	void set(uint8_t id) { m_users[id] = true; }
+	bool unset(uint8_t id) { bool wasSet = m_users[id]; m_users[id] = false; return wasSet; }
+	void reset() { m_users.reset(); }
+
+	void setFromList(const QList<uint8_t> ids) {
+		m_users.reset();
+		for(int i=0;i<ids.size();++i)
+			m_users[ids[i]] = true;
+	}
+
+	QList<uint8_t> toList() const {
+		QList<uint8_t> lst;
+		for(int i=0;i<256;++i)
+			if(m_users[i])
+				lst << i;
+		return lst;
+	}
+
+private:
+	std::bitset<256> m_users;
+};
+
 class AclFilter : public QObject
 {
 	Q_OBJECT
 public:
 	struct LayerAcl {
-		bool locked;
-		QList<uint8_t> exclusive;
-		LayerAcl() : locked(false), exclusive(QList<uint8_t>()) {}
-		LayerAcl(bool locked, const QList<uint8_t> exclusive) : locked(locked), exclusive(exclusive) { }
+		bool locked;              // layer is locked for all users
+		QList<uint8_t> exclusive; // if not empty, only these users can draw on this layer
 	};
 
 	explicit AclFilter(QObject *parent=nullptr);
@@ -58,41 +86,26 @@ public:
 	 */
 	bool filterMessage(const protocol::Message &msg);
 
+	//! Does the local user have operator privileges?
 	bool isLocalUserOperator() const { return m_isOperator; }
+
+	//! Is there a general session lock in place?
 	bool isSessionLocked() const { return m_sessionLocked; }
+
+	//! Has the local user been locked individually?
 	bool isLocalUserLocked() const { return m_localUserLocked; }
+
+	//! Is the local user locked for any reason?
 	bool isLocked() const { return m_sessionLocked | m_localUserLocked; }
-	bool isLockedByDefault() const { return m_lockDefault; }
-	bool isAnnotationCreationLocked() const { return m_lockAnnotationCreation; }
 
-	//! Can the local user access this layer's controls?
-	bool canUseLayerControls(int layerId) const;
+	//! Can the local user use this feature?
+	bool canUseFeature(Feature f) const { return localUserTier() <= featureTier(f); }
 
-	//! Can the local user create new layers?
-	bool canCreateLayer() const;
+	//! Get the local user's feature access tier
+	Tier localUserTier() const { return userTier(m_myId); }
 
-	//! Are layer controls limited to session operators
-	bool isLayerControlLocked() const { return m_layerCtrlLocked; }
-
-	/**
-	 * @brief Are users allowed to control layers they've created themselves?
-	 *
-	 * When layer controls are locked, this allows users to adjust their own
-	 * layer properties, but not anyone elses.
-	 * This also allows users to set the access controls for their own layers.
-	 */
-	bool isOwnLayers() const { return m_ownLayers; }
-
-	/**
-	 * @brief Are image commands (PutImage, FillRect) locked?
-	 *
-	 * When image commands are locked, commands that can be used to
-	 * upload arbitrary pixel data or affect large areas at once are
-	 * limited to session operators.
-	 */
-	bool isImagesLocked() const { return m_imagesLocked; }
-
-	uint16_t sessionAclFlags() const;
+	//! Get the given feature's access tier
+	Tier featureTier(Feature f) const { Q_ASSERT(int(f)>=0 && int(f) < FeatureCount); return m_featureTiers[int(f)]; }
 
 	/**
 	 * @brief Get the access controls for an individual layer
@@ -101,54 +114,60 @@ public:
 	LayerAcl layerAcl(int id) const;
 
 	//! Get the list of locked users
-	QList<uint8_t> lockedUsers() const { return m_userlocks; }
+	QList<uint8_t> lockedUsers() const { return m_userlocks.toList(); }
 
 signals:
 	void localOpChanged(bool op);
 	bool localLockChanged(bool lock);
-	bool layerControlLockChanged(bool lock);
-	void ownLayersChanged(bool own);
-	void imageCmdLockChanged(bool lock);
-	void lockByDefaultChanged(bool lock);
-	void annotationCreationLockChanged(bool lock);
 
 	void userLocksChanged(const QList<uint8_t> lockedUsers);
 	void operatorListChanged(const QList<uint8_t> opUsers);
 	void trustedUserListChanged(const QList<uint8_t> trustedUsers);
 	void layerAclChange(int layerId, bool locked, const QList<uint8_t> &exclusive);
 
+	//! The local user's access to a feature just changed
+	void featureAccessChanged(Feature feature, bool canUse);
+
+	//! A feature's access tier was changed
+	void featureTierChanged(Feature feature, Tier tier);
+
 private:
 	void setOperator(bool op);
+	void setTrusted(bool trusted);
 	void setSessionLock(bool lock);
 	void setUserLock(bool lock);
-	void setLayerControlLock(bool lock);
-	void setOwnLayers(bool own);
-	void setLockImages(bool lock);
 	void setLockByDefault(bool lock);
-	void setAnnotationCreationLock(bool lock);
+	void setFeature(Feature feature, Tier tier);
 
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 	void updateTrustedUserList(const protocol::TrustedUsers &msg);
 
 	bool isLayerLockedFor(int layerId, uint8_t userId) const;
 
-	QHash<int,LayerAcl> m_layers;
+	Tier userTier(int id) const {
+		if(m_ops.contains(id))
+			return Tier::Op;
+		if(m_trusted.contains(id))
+			return Tier::Trusted;
+		if(m_auth.contains(id))
+			return Tier::Auth;
+		return Tier::Guest;
+	}
 
-	int m_myId;
+	int m_myId;             // the ID of the local user
 
-	bool m_isOperator;
-	bool m_sessionLocked;
-	bool m_localUserLocked;
-	bool m_layerCtrlLocked;
-	bool m_imagesLocked;
-	bool m_ownLayers;
-	bool m_lockDefault;
-	bool m_lockAnnotationCreation;
+	bool m_isOperator;      // is the local user an operator?
+	bool m_isTrusted;       // does the local user have trusted status?
+	bool m_sessionLocked;   // is the session locked?
+	bool m_localUserLocked; // is the local user locked individually?
 
-	QList<uint8_t> m_ops;
-	QList<uint8_t> m_trusted;
-	QList<uint8_t> m_userlocks;
-	QSet<uint16_t> m_protectedAnnotations;
+	QHash<int,LayerAcl> m_layers;          // layer access controls
+	UserSet m_ops;                         // list of operators
+	UserSet m_trusted;                     // list of trusted users
+	UserSet m_auth;                        // list of registered users
+	UserSet m_userlocks;                   // list of individually locked users
+	QSet<uint16_t> m_protectedAnnotations; // list of protected annotations
+	Tier m_featureTiers[FeatureCount];     // feature access tiers
 };
 
 }

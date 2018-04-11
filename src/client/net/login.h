@@ -89,39 +89,6 @@ public:
 	void setTitle(const QString &title) { Q_ASSERT(m_mode==HOST); m_title=title; }
 
 	/**
-	 * @brief Set the maximum number of users the session will accept
-	 *
-	 * Only for host mode.
-	 *
-	 * @param maxusers
-	 */
-	void setMaxUsers(int maxusers) { Q_ASSERT(m_mode==HOST); m_maxusers = maxusers; }
-
-	/**
-	 * @brief Set whether new users should be locked by default
-	 *
-	 * Only for host mode.
-	 *
-	 * @param allowdrawing
-	 */
-	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(m_mode==HOST); m_allowdrawing = allowdrawing; }
-
-	/**
-	 * @brief Set whether layer controls should be locked to operators only by default
-	 *
-	 * Only for host mode.
-	 *
-	 * @param layerlock
-	 */
-	void setLayerControlLock(bool layerlock) { Q_ASSERT(m_mode==HOST); m_layerctrllock = layerlock; }
-
-	/**
-	 * @brief Set whether chat history should be preserved in the session
-	 */
-	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
-	bool isPreservedChat() const { return m_preserveChat; }
-
-	/**
 	 * @brief Set the initial session content to upload to the server
 	 * @param msgs
 	 */
@@ -384,10 +351,6 @@ private:
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;
-	int m_maxusers;
-	bool m_allowdrawing;
-	bool m_layerctrllock;
-	bool m_preserveChat;
 	bool m_announcePrivate;
 	QString m_announceUrl;
 	QList<protocol::MessagePtr> m_initialState;

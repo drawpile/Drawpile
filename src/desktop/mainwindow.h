@@ -24,6 +24,7 @@
 #include <QUrl>
 
 #include "tools/tool.h"
+#include "canvas/features.h"
 
 class QActionGroup;
 class QMessageBox;
@@ -141,7 +142,7 @@ private slots:
 	void toggleRecording();
 
 	void onOperatorModeChange(bool op);
-	void onImageCmdLockChange(bool lock);
+	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
 
 	void onServerConnected();
 	void onServerLogin();
@@ -240,12 +241,15 @@ private:
 
 	QMenu *m_recentMenu;
 
-	QActionGroup *m_currentdoctools; // actions relating to the currently open document
-	QActionGroup *m_admintools; // session operator actions
-	QActionGroup *m_modtools; // session moderator tools
-	QActionGroup *m_docadmintools; // current document related operator actions
-	QActionGroup *m_drawingtools; // drawing tool selection
-	QActionGroup *m_brushSlots; // tool slot shortcuts
+	QActionGroup *m_currentdoctools; // general tools that require no special permissions
+	QActionGroup *m_admintools;      // session operator actions
+	QActionGroup *m_modtools;        // session moderator tools
+	QActionGroup *m_canvasbgtools;   // tools related to canvas background feature
+	QActionGroup *m_resizetools;     // tools related to canvas resizing feature
+	QActionGroup *m_putimagetools;   // Cut&Paste related tools
+	QActionGroup *m_undotools;       // undo&redo related tools
+	QActionGroup *m_drawingtools;    // drawing tool selection
+	QActionGroup *m_brushSlots;      // tool slot shortcuts
 
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 

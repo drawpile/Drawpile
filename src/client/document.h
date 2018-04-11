@@ -21,6 +21,7 @@
 #define DRAWPILE_DOCUMENT_H
 
 #include "core/blendmodes.h"
+#include "canvas/features.h"
 #include "../shared/net/message.h" // TODO hide this
 
 #include <QObject>
@@ -180,7 +181,7 @@ public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendSessionConf(const QJsonObject &sessionconf);
-	void sendSessionAclChange(uint16_t flags, uint16_t mask);
+	void sendFeatureAccessLevelChange(const uint8_t[canvas::FeatureCount]);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
 	void sendResetSession(const canvas::StateSavepoint &savepoint);

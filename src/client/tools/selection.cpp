@@ -38,7 +38,7 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::Selection *sel = m_allowTransform ? owner.model()->selection() : nullptr;
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);
 	else

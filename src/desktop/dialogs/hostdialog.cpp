@@ -49,21 +49,16 @@ HostDialog::HostDialog(QWidget *parent)
 	// Session tab defaults
 	QSettings cfg;
 	cfg.beginGroup("history");
-	_ui->username->setText(cfg.value("username").toString());
+
 	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
+	_ui->idAlias->setText(cfg.value("idalias").toString());
 
 	_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
 	_ui->announce->setChecked(cfg.value("announce", false).toBool());
 	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 
-	// Settings tab defaults
-	_ui->preservechat->setChecked(cfg.value("preservechat", false).toBool());
-	_ui->userlimit->setValue(cfg.value("userlimit", 20).toInt());
-	_ui->allowdrawing->setChecked(cfg.value("allowdrawing", true).toBool());
-	_ui->layerctrllock->setChecked(cfg.value("layerctrllock", true).toBool());
-	_ui->idAlias->setText(cfg.value("idalias").toString());
-
 	// Server box defaults
+	_ui->username->setText(cfg.value("username").toString());
 	if(cfg.value("hostremote", false).toBool())
 		_ui->useremote->setChecked(true);
 	_ui->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
@@ -101,10 +96,6 @@ void HostDialog::rememberSettings() const
 	cfg.setValue("hostremote", _ui->useremote->isChecked());
 
 	// Remember settings tab values
-	cfg.setValue("preservechat", _ui->preservechat->isChecked());
-	cfg.setValue("userlimit", _ui->userlimit->value());
-	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
-	cfg.setValue("layerctrllock", _ui->layerctrllock->isChecked());
 	cfg.setValue("idalias", _ui->idAlias->text());
 
 }
@@ -129,34 +120,14 @@ QString HostDialog::getTitle() const
 	return _ui->sessiontitle->text();
 }
 
-int HostDialog::getUserLimit() const
-{
-	return _ui->userlimit->value();
-}
-
 QString HostDialog::getPassword() const
 {
 	return _ui->sessionpassword->text();
 }
 
-bool HostDialog::getAllowDrawing() const
-{
-	return _ui->allowdrawing->isChecked();
-}
-
-bool HostDialog::getLayerControlLock() const
-{
-	return _ui->layerctrllock->isChecked();
-}
-
 QString HostDialog::getSessionAlias() const
 {
 	return _ui->idAlias->text();
-}
-
-bool HostDialog::getPreserveChat() const
-{
-	return _ui->preservechat->isChecked();
 }
 
 QString HostDialog::getAnnouncementUrl() const

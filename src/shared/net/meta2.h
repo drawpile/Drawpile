@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -121,6 +121,9 @@ private:
  *
  * When the OWNLAYERS mode is set, any user can use this to change the ACLs on layers they themselves
  * have created (identified by the ID prefix.)
+ *
+ * Using layer ID 0 sets or clears a general canvaswide lock. The exclusive user list is not
+ * used in this case.
  */
 class LayerACL : public Message {
 public:
@@ -149,42 +152,35 @@ private:
 };
 
 /**
- * @brief Change session wide access control settings
+ * @brief Change feature access levels
  *
  * This is an opaque meta command.
  */
-class SessionACL : public Message {
+class FeatureAccessLevels : public Message {
 public:
-	static const uint16_t LOCK_SESSION = 0x01;   // General session-wide lock (locks even operators)
-	static const uint16_t LOCK_DEFAULT = 0x02;   // New users will be locked by default (lock applied when the JOIN message is received)
-	static const uint16_t LOCK_LAYERCTRL = 0x04; // Layer controls are limited to session operators
-	static const uint16_t LOCK_OWNLAYERS = 0x08; // Users can only delete/adjust their own layers. (May set layer ACLs too)
-	static const uint16_t LOCK_IMAGES = 0x10;    // PutImage and FillRect commands (and features that use them) are limited to session operators
-	static const uint16_t LOCK_ANNOTATIONS = 0x20; // Only operators can create new annotations
+	static const int FEATURES = 9; // Number of configurable features
 
-	SessionACL(uint8_t ctx, uint16_t flags) : Message(MSG_SESSION_ACL, ctx), m_flags(flags) {}
+	FeatureAccessLevels(uint8_t ctx, const uint8_t *featureTiers)
+		: Message(MSG_FEATURE_LEVELS, ctx)
+	{
+		for(int i=0;i<FEATURES;++i)
+			m_featureTiers[i] = featureTiers[i];
+	}
 
-	static SessionACL *deserialize(uint8_t ctx, const uchar *data, uint len);
-	static SessionACL *fromText(uint8_t ctx, const Kwargs &kwargs);
+	static FeatureAccessLevels *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static FeatureAccessLevels *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t flags() const { return m_flags; }
+	uint8_t featureTier(int featureIdx) const { Q_ASSERT(featureIdx>=0 && featureIdx<FEATURES); return m_featureTiers[featureIdx]; }
 
-	bool isSessionLocked() const { return m_flags & LOCK_SESSION; }
-	bool isLockedByDefault() const { return m_flags & LOCK_DEFAULT; }
-	bool isLayerControlLocked() const { return m_flags & LOCK_LAYERCTRL; }
-	bool isOwnLayers() const { return m_flags & LOCK_OWNLAYERS; }
-	bool isImagesLocked() const { return m_flags & LOCK_IMAGES; }
-	bool isAnnotationCreationLocked() const { return m_flags & LOCK_ANNOTATIONS; }
-
-	QString messageName() const override { return QStringLiteral("sessionacl"); }
+	QString messageName() const override { return QStringLiteral("featureaccess"); }
 
 protected:
-	int payloadLength() const override;
+	int payloadLength() const override { return FEATURES; }
 	int serializePayload(uchar *data) const override;
 	Kwargs kwargs() const override;
 
 private:
-	uint16_t m_flags;
+	uint8_t m_featureTiers[FEATURES];
 };
 
 /**

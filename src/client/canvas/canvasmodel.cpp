@@ -150,7 +150,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		case MSG_SESSION_OWNER:
 		case MSG_TRUSTED_USERS:
 		case MSG_USER_ACL:
-		case MSG_SESSION_ACL:
+		case MSG_FEATURE_LEVELS:
 		case MSG_LAYER_ACL:
 			// Handled by the ACL filter
 			break;
@@ -384,8 +384,6 @@ void CanvasModel::resetCanvas()
 void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 {
 	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator());
-	if(m_aclfilter->isLockedByDefault())
-		u.isLocked = true;
 
 	m_userlist->addUser(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());

@@ -52,18 +52,6 @@ public:
 	//! Get session password
 	QString getPassword() const;
 
-	//! Get max. user count
-	int getUserLimit() const;
-
-	//! Should users be allowed to draw by default
-	bool getAllowDrawing() const;
-
-	//! Should layer controls be locked by default
-	bool getLayerControlLock() const;
-
-	//! Should chat history be preserved in the session
-	bool getPreserveChat() const;
-
 	//! Get the desired session alias
 	QString getSessionAlias() const;
 

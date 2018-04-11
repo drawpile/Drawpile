@@ -173,7 +173,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_currentdoctools(nullptr),
 	  m_admintools(nullptr),
 	  m_modtools(nullptr),
-	  m_docadmintools(nullptr),
+	  m_canvasbgtools(nullptr),
+	  m_resizetools(nullptr),
+	  m_putimagetools(nullptr),
+	  m_undotools(nullptr),
 	  m_drawingtools(nullptr),
 	  m_brushSlots(nullptr),
 	  m_lastToolBeforePaste(-1),
@@ -456,7 +459,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
-	connect(canvas->aclFilter(), &canvas::AclFilter::imageCmdLockChanged, this, &MainWindow::onImageCmdLockChange);
+	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
@@ -484,8 +487,12 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_userlistview->setModel(canvas->userlist());
 	m_useritemdelegate->setCanvas(canvas);
 
-
+	// Make sure the UI matches the default feature access level
 	m_currentdoctools->setEnabled(true);
+	setDrawingToolsEnabled(true);
+	for(int i=0;i<canvas::FeatureCount;++i) {
+		onFeatureAccessChange(canvas::Feature(i), m_doc->canvas()->aclFilter()->canUseFeature(canvas::Feature(i)));
+	}
 }
 
 /**
@@ -525,9 +532,6 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 
 	QApplication::restoreOverrideCursor();
 
-	m_currentdoctools->setEnabled(true);
-	m_docadmintools->setEnabled(true);
-	setDrawingToolsEnabled(true);
 	getAction("hostsession")->setEnabled(true);
 
 	return this;
@@ -545,10 +549,6 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	m_doc->initCanvas();
 
 	m_doc->canvas()->startPlayback();
-
-	m_currentdoctools->setEnabled(true);
-	m_docadmintools->setEnabled(true);
-	setDrawingToolsEnabled(true);
 
 	QFileInfo fileinfo(reader->filename());
 
@@ -1310,10 +1310,6 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setSessionAlias(dlg->getSessionAlias());
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
-	login->setMaxUsers(dlg->getUserLimit());
-	login->setAllowDrawing(dlg->getAllowDrawing());
-	login->setLayerControlLock(dlg->getLayerControlLock());
-	login->setPreserveChat(dlg->getPreserveChat());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	login->setInitialState(m_doc->canvas()->generateSnapshot(true));
 	(new dialogs::LoginDialog(login, this))->show();
@@ -1512,7 +1508,6 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("reportabuse")->setEnabled(false);
 	m_admintools->setEnabled(false);
 	m_modtools->setEnabled(false);
-	m_docadmintools->setEnabled(true);
 	m_sessionSettings->close();
 
 	// Re-enable UI
@@ -1602,23 +1597,30 @@ void MainWindow::onNsfmChanged(bool nsfm)
 void MainWindow::onOperatorModeChange(bool op)
 {
 	m_admintools->setEnabled(op);
-	m_docadmintools->setEnabled(op);
-	m_dockLayers->setOperatorMode(op);
-	onImageCmdLockChange(m_doc->canvas()->aclFilter()->isImagesLocked());
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
 }
 
-void MainWindow::onImageCmdLockChange(bool lock)
+void MainWindow::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 {
-	const bool e = !lock || m_doc->canvas()->aclFilter()->isLocalUserOperator();
-
-	static const char *IMAGE_ACTIONS[] = {
-		"cutlayer", "paste", "pastefile", "stamp",
-		"cleararea", "fillfgarea", "recolorarea", "colorerasearea",
-		"toolfill"
-	};
-	for(const char *a : IMAGE_ACTIONS)
-		getAction(a)->setEnabled(e);
+	switch(feature) {
+	case canvas::Feature::PutImage:
+		m_putimagetools->setEnabled(canUse);
+		getAction("toolfill")->setEnabled(canUse);
+		break;
+	case canvas::Feature::Resize:
+		m_resizetools->setEnabled(canUse);
+		break;
+	case canvas::Feature::Background:
+		m_canvasbgtools->setEnabled(canUse);
+		break;
+	case canvas::Feature::Laser:
+		getAction("toollaser")->setEnabled(canUse);
+		break;
+	case canvas::Feature::Undo:
+		m_undotools->setEnabled(canUse);
+		break;
+	default: break;
+	}
 }
 
 /**
@@ -2059,9 +2061,17 @@ void MainWindow::setupActions()
 	m_modtools = new QActionGroup(this);
 	m_modtools->setEnabled(false);
 
-	m_docadmintools = new QActionGroup(this);
-	m_docadmintools->setExclusive(false);
-	m_docadmintools->setEnabled(false);
+	m_canvasbgtools = new QActionGroup(this);
+	m_canvasbgtools->setEnabled(false);
+
+	m_resizetools = new QActionGroup(this);
+	m_resizetools->setEnabled(false);
+
+	m_putimagetools = new QActionGroup(this);
+	m_putimagetools->setEnabled(false);
+
+	m_undotools = new QActionGroup(this);
+	m_undotools->setEnabled(false);
 
 	m_drawingtools = new QActionGroup(this);
 	connect(m_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
@@ -2193,26 +2203,30 @@ void MainWindow::setupActions()
 	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection")).shortcut(CTRL_KEY "+Shift+,");
 	QAction *colorerasearea = makeAction("colorerasearea", tr("Color Erase Selection")).shortcut("Shift+Delete");
 
-	m_currentdoctools->addAction(undo);
-	m_currentdoctools->addAction(redo);
 	m_currentdoctools->addAction(copy);
 	m_currentdoctools->addAction(copylayer);
-	m_currentdoctools->addAction(cutlayer);
-	m_currentdoctools->addAction(stamp);
 	m_currentdoctools->addAction(deleteAnnotations);
-	m_currentdoctools->addAction(cleararea);
-	m_currentdoctools->addAction(fillfgarea);
-	m_currentdoctools->addAction(recolorarea);
-	m_currentdoctools->addAction(colorerasearea);
 	m_currentdoctools->addAction(selectall);
 	m_currentdoctools->addAction(selectnone);
 
-	m_docadmintools->addAction(resize);
-	m_docadmintools->addAction(canvasBackground);
-	m_docadmintools->addAction(expandup);
-	m_docadmintools->addAction(expanddown);
-	m_docadmintools->addAction(expandleft);
-	m_docadmintools->addAction(expandright);
+	m_undotools->addAction(undo);
+	m_undotools->addAction(redo);
+
+	m_putimagetools->addAction(cutlayer);
+	m_putimagetools->addAction(paste);
+	m_putimagetools->addAction(pastefile);
+	m_putimagetools->addAction(stamp);
+	m_putimagetools->addAction(cleararea);
+	m_putimagetools->addAction(fillfgarea);
+	m_putimagetools->addAction(recolorarea);
+	m_putimagetools->addAction(colorerasearea);
+
+	m_canvasbgtools->addAction(canvasBackground);
+	m_resizetools->addAction(resize);
+	m_resizetools->addAction(expandup);
+	m_resizetools->addAction(expanddown);
+	m_resizetools->addAction(expandleft);
+	m_resizetools->addAction(expandright);
 
 	connect(undo, &QAction::triggered, m_doc, &Document::undo);
 	connect(redo, &QAction::triggered, m_doc, &Document::redo);

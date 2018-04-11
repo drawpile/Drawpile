@@ -33,6 +33,7 @@
 #include "core/annotationmodel.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/statetracker.h"
+#include "canvas/aclfilter.h"
 
 namespace tools {
 
@@ -139,6 +140,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 
 		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
 		connect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+		connect(m_model->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
 
 		emit modelChanged(model);
 	}
@@ -150,6 +152,14 @@ void ToolController::onAnnotationRowDelete(const QModelIndex&, int first, int la
 		const QModelIndex &a = m_model->layerStack()->annotations()->index(i);
 		if(a.data(paintcore::AnnotationModel::IdRole).toInt() == activeAnnotation())
 			setActiveAnnotation(0);
+	}
+}
+
+void ToolController::onFeatureAccessChange(canvas::Feature feature, bool canUse)
+{
+	if(feature == canvas::Feature::RegionMove) {
+		static_cast<SelectionTool*>(getTool(Tool::SELECTION))->setTransformEnabled(canUse);
+		static_cast<SelectionTool*>(getTool(Tool::POLYGONSELECTION))->setTransformEnabled(canUse);
 	}
 }
 

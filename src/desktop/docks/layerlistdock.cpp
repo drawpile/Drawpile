@@ -45,7 +45,7 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), m_noupdate(false), m_op(false), m_lockctrl(false), m_ownlayers(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), m_noupdate(false)
 {
 	m_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -137,53 +137,40 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->layerlist(), &canvas::LayerListModel::layersReordered, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-	connect(canvas->aclFilter(), &canvas::AclFilter::layerControlLockChanged, this, &LayerList::setControlsLocked);
-	connect(canvas->aclFilter(), &canvas::AclFilter::ownLayersChanged, this, &LayerList::setOwnLayers);
+	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
 	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Init
 	m_ui->layerlist->setEnabled(true);
-	setControlsLocked(false);
-}
-
-void LayerList::setOperatorMode(bool op)
-{
-	m_op = op;
 	updateLockedControls();
 }
 
-void LayerList::setControlsLocked(bool locked)
+void LayerList::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 {
-	m_lockctrl = locked;
-	updateLockedControls();
-}
-
-void LayerList::setOwnLayers(bool own)
-{
-	m_ownlayers = own;
-	updateLockedControls();
+	Q_UNUSED(canUse);
+	switch(feature) {
+		case canvas::Feature::EditLayers:
+		case canvas::Feature::OwnLayers:
+			updateLockedControls();
+		default: break;
+	}
 }
 
 void LayerList::updateLockedControls()
 {
-	bool enabled = m_canvas && m_canvas->aclFilter()->canUseLayerControls(currentLayer());
+	// The basic permissions
+	const bool canEdit = m_canvas && m_canvas->aclFilter()->canUseFeature(canvas::Feature::EditLayers);
+	const bool ownLayers = m_canvas && m_canvas->aclFilter()->canUseFeature(canvas::Feature::OwnLayers);
 
-	m_addLayerAction->setEnabled(m_canvas && m_canvas->aclFilter()->canCreateLayer());
-	m_menuInsertAction->setEnabled(enabled);
+	// Layer creation actions work as long as we have an editing permission
+	const bool canAdd = canEdit | ownLayers;
+	m_addLayerAction->setEnabled(canAdd);
+	m_menuInsertAction->setEnabled(canAdd);
 
 	// Rest of the controls need a selection to work.
-	// If there is a selection, but the layer is locked, the controls
-	// are locked for non-operators.
-	if(m_selectedId)
-		enabled = enabled & (m_op | !isCurrentLayerLocked());
-	else
-		enabled = false;
+	const bool enabled = currentLayer() && (canEdit || (ownLayers && (currentLayer()>>8) == m_canvas->localUserId()));
 
-	m_ui->lockButton->setEnabled(
-		m_op ||
-		(m_canvas && !m_canvas->isOnline()) ||
-		(m_ownlayers && m_canvas && (currentLayer()>>8) == m_canvas->localUserId())
-	);
+	m_ui->lockButton->setEnabled(enabled || (m_canvas && !m_canvas->isOnline())); // layer lock is available in offline mode
 	m_duplicateLayerAction->setEnabled(enabled);
 	m_deleteLayerAction->setEnabled(enabled);
 	m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
@@ -445,11 +432,6 @@ QModelIndex LayerList::currentSelection() const
 	if(sel.isEmpty())
 		return QModelIndex();
 	return sel.first();
-}
-
-int LayerList::currentLayer()
-{
-	return m_selectedId;
 }
 
 bool LayerList::isCurrentLayerLocked() const

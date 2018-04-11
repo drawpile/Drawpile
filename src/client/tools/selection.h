@@ -36,7 +36,7 @@ namespace tools {
 class SelectionTool : public Tool {
 public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type,  cursor) { }
+		: Tool(owner, type,  cursor), m_allowTransform(true) { }
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
@@ -50,6 +50,9 @@ public:
 	//! Start a layer region move operation
 	void startMove();
 
+	//! Allow selection moving and resizing
+	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
+
 	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
 	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono=false);
 
@@ -59,6 +62,9 @@ protected:
 
 	QPointF m_start, m_p1;
 	canvas::Selection::Handle m_handle;
+
+private:
+	bool m_allowTransform;
 };
 
 

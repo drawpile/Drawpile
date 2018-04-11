@@ -19,6 +19,8 @@
 #ifndef LAYERLISTDOCK_H
 #define LAYERLISTDOCK_H
 
+#include "canvas/features.h"
+
 #include <QDockWidget>
 
 class QModelIndex;
@@ -51,13 +53,9 @@ public:
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! Get the ID of the currently selected layer
-	int currentLayer();
+	int currentLayer() const { return m_selectedId; }
 
 	bool isCurrentLayerLocked() const;
-
-	void setOperatorMode(bool op);
-	void setControlsLocked(bool locked);
-	void setOwnLayers(bool own);
 
 public slots:
 	void selectLayer(int id);
@@ -78,6 +76,8 @@ private slots:
 	void beforeLayerDelete();
 	void onLayerDelete(const QModelIndex &parent, int first, int last);
 	void onLayerReorder();
+	
+	void onFeatureAccessChange(canvas::Feature feature, bool canuse);
 
 	void addLayer();
 	void insertLayer();
@@ -122,9 +122,6 @@ private:
 	QAction *m_menuRenameAction;
 	QAction *m_menuDefaultAction;
 
-	bool m_op;
-	bool m_lockctrl;
-	bool m_ownlayers;
 	QTimer *m_opacityUpdateTimer;
 };
 

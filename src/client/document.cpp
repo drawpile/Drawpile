@@ -524,18 +524,15 @@ void Document::sendSessionConf(const QJsonObject &sessionconf)
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendSessionAclChange(uint16_t flags, uint16_t mask)
+void Document::sendFeatureAccessLevelChange(const uint8_t tiers[canvas::FeatureCount])
 {
-	Q_ASSERT(m_canvas);
-	uint16_t acl = m_canvas->aclFilter()->sessionAclFlags();
-	acl = (acl & ~mask) | flags;
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), acl)));
+	static_assert(canvas::FeatureCount == protocol::FeatureAccessLevels::FEATURES, "Feature tier count mismatch");
+	m_client->sendMessage(protocol::MessagePtr(new protocol::FeatureAccessLevels(m_client->myId(), tiers)));
 }
 
 void Document::sendLockSession(bool lock)
 {
-	const uint16_t flag = protocol::SessionACL::LOCK_SESSION;
-	sendSessionAclChange(lock ? flag : 0, flag);
+	m_client->sendMessage(protocol::MessagePtr(new protocol::LayerACL(m_client->myId(), 0, lock, QList<uint8_t>())));
 }
 
 void Document::sendOpword(const QString &opword)

@@ -59,7 +59,7 @@ Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data,
 	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
 	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
 	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
-	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
+	case MSG_FEATURE_LEVELS: return FeatureAccessLevels::deserialize(ctx, data, len);
 	case MSG_LAYER_DEFAULT: return DefaultLayer::deserialize(ctx, data, len);
 	case MSG_FILTERED: return Filtered::deserialize(ctx, data, len);
 

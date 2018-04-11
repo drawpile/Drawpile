@@ -23,6 +23,7 @@
 #include "strokesmoother.h"
 #include "tool.h"
 #include "brushes/brush.h"
+#include "canvas/features.h"
 
 #include <QObject>
 
@@ -122,6 +123,7 @@ signals:
 
 private slots:
 	void onAnnotationRowDelete(const QModelIndex&, int first, int last);
+	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
 
 private:
 	void registerTool(Tool *tool);

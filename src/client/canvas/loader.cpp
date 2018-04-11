@@ -174,9 +174,11 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 
 	// Session and user ACLs
 	if(m_session) {
-		// Note: Starting the reset process automatically sets the LOCK_SESSION flag. We don't want that after the reset.
-		msgs.append(MessagePtr(new protocol::SessionACL(m_contextId,
-						m_session->aclFilter()->sessionAclFlags() & ~protocol::SessionACL::LOCK_SESSION)));
+		uint8_t features[canvas::FeatureCount];
+		for(int i=0;i<canvas::FeatureCount;++i)
+			features[i] = uint8_t(m_session->aclFilter()->featureTier(Feature(i)));
+
+		msgs.append(MessagePtr(new protocol::FeatureAccessLevels(m_contextId, features)));
 		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_session->aclFilter()->lockedUsers())));
 	}
 

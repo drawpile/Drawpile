@@ -61,7 +61,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 	} else {
 		// No annotation, start creating a new one
 
-		if(owner.model()->aclFilter()->isAnnotationCreationLocked() && !owner.model()->aclFilter()->isLocalUserOperator()) {
+		if(!owner.model()->aclFilter()->canUseFeature(canvas::Feature::CreateAnnotation)) {
 			m_handle = paintcore::Annotation::OUTSIDE;
 			return;
 		}

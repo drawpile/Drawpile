@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -198,54 +198,59 @@ LayerACL *LayerACL::fromText(uint8_t ctx, const Kwargs &kwargs)
 		);
 }
 
-SessionACL *SessionACL::deserialize(uint8_t ctx, const uchar *data, uint len)
+FeatureAccessLevels *FeatureAccessLevels::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len != 2)
+	if(len != FEATURES)
 		return nullptr;
-	uint16_t flags = qFromBigEndian<quint16>(data+0);
 
-	return new SessionACL(ctx, flags);
+	return new FeatureAccessLevels(ctx, data);
 }
 
-int SessionACL::payloadLength() const
+int FeatureAccessLevels::serializePayload(uchar *data) const
 {
-	return 2;
+	memcpy(data, m_featureTiers, FEATURES);
+	return FEATURES;
 }
 
-int SessionACL::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	qToBigEndian(m_flags, ptr); ptr += 2;
-	return ptr-data;
-}
+static const char *FEATURE_NAMES[FeatureAccessLevels::FEATURES] = {
+	"putimage",
+	"regionmove",
+	"resize",
+	"background",
+	"editlayers",
+	"ownlayers",
+	"createannotation",
+	"laser",
+	"undo"
+};
 
-Kwargs SessionACL::kwargs() const
+static const char *TIER_NAMES[4] = {
+	"op", "trusted", "auth", "guest"
+};
+
+Kwargs FeatureAccessLevels::kwargs() const
 {
-	QStringList locks;
-	if(isSessionLocked()) locks << "session";
-	if(isLockedByDefault()) locks << "default";
-	if(isLayerControlLocked()) locks << "layerctrl";
-	if(isOwnLayers()) locks << "ownlayers";
-	if(isImagesLocked()) locks << "images";
-	if(isAnnotationCreationLocked()) locks << "annotations";
 	Kwargs kw;
-	kw["locks"] = locks.join(',');
+	for(int i=0;i<FEATURES;++i) {
+		kw[FEATURE_NAMES[i]] = TIER_NAMES[qBound(0, int(m_featureTiers[i]), 4)];
+	}
 	return kw;
 }
 
-SessionACL *SessionACL::fromText(uint8_t ctx, const Kwargs &kwargs)
+FeatureAccessLevels *FeatureAccessLevels::fromText(uint8_t ctx, const Kwargs &kwargs)
 {
-	QStringList locks = kwargs["locks"].split(',');
+	uint8_t features[FEATURES] = {0};
+	for(int i=0;i<FEATURES;++i) {
+		const QString tier = kwargs[FEATURE_NAMES[i]];
+		for(int j=0;j<4;++j) {
+			if(tier == TIER_NAMES[j]) {
+				features[i] = j;
+				break;
+			}
+		}
+	}
 
-	return new SessionACL(
-		ctx,
-		(locks.contains("session") ? LOCK_SESSION : 0) |
-		(locks.contains("default") ? LOCK_DEFAULT : 0) |
-		(locks.contains("layerctrl") ? LOCK_LAYERCTRL : 0) |
-		(locks.contains("ownlayers") ? LOCK_OWNLAYERS : 0) |
-		(locks.contains("images") ? LOCK_IMAGES : 0) |
-		(locks.contains("annotations") ? LOCK_ANNOTATIONS : 0)
-		);
+	return new FeatureAccessLevels(ctx, features);
 }
 
 DefaultLayer *DefaultLayer::deserialize(uint8_t ctx, const uchar *data, uint len)

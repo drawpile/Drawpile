@@ -31,7 +31,6 @@
 
 #include <QDebug>
 #include <QStringListModel>
-#include <QIdentityProxyModel>
 #include <QMenu>
 #include <QTimer>
 #include <QInputDialog>
@@ -40,10 +39,12 @@ namespace dialogs {
 
 SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	: QDialog(parent), m_ui(new Ui_SessionSettingsDialog), m_doc(doc),
-	  m_aclFlags(0), m_aclMask(0), m_canPersist(false)
+	  m_featureTiersChanged(false), m_canPersist(false)
 {
 	Q_ASSERT(doc);
 	m_ui->setupUi(this);
+
+	initPermissionComboBoxes();
 
 	connect(m_doc, &Document::canvasChanged, this, &SessionSettingsDialog::onCanvasChanged);
 
@@ -57,11 +58,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_ui->maxUsers, &QSpinBox::editingFinished, this, &SessionSettingsDialog::maxUsersChanged);
 	connect(m_ui->denyJoins, &QCheckBox::clicked, this, &SessionSettingsDialog::denyJoinsChanged);
 	connect(m_ui->authOnly, &QCheckBox::clicked, this, &SessionSettingsDialog::authOnlyChanged);
-	connect(m_ui->lockNewUsers, &QCheckBox::clicked, this, &SessionSettingsDialog::lockNewUsersChanged);
-	connect(m_ui->lockImages, &QCheckBox::clicked, this, &SessionSettingsDialog::lockImagesChanged);
-	connect(m_ui->lockAnnotations, &QCheckBox::clicked, this, &SessionSettingsDialog::lockAnnotationsChanged);
-	connect(m_ui->lockLayerCtrl, &QCheckBox::clicked, this, &SessionSettingsDialog::lockLayerCtrlChanged);
-	connect(m_ui->ownLayers, &QCheckBox::clicked, this, &SessionSettingsDialog::ownLayersChanged);
 	connect(m_ui->preserveChat, &QCheckBox::clicked, this, &SessionSettingsDialog::keepChatChanged);
 	connect(m_ui->persistent, &QCheckBox::clicked, this, &SessionSettingsDialog::persistenceChanged);
 	connect(m_ui->nsfm, &QCheckBox::clicked, this, &SessionSettingsDialog::nsfmChanged);
@@ -165,12 +161,11 @@ void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	canvas::AclFilter *acl = canvas->aclFilter();
 
-	connect(acl, &canvas::AclFilter::layerControlLockChanged, m_ui->lockLayerCtrl, &QCheckBox::setChecked);
-	connect(acl, &canvas::AclFilter::ownLayersChanged, m_ui->ownLayers, &QCheckBox::setChecked);
-	connect(acl, &canvas::AclFilter::imageCmdLockChanged, m_ui->lockImages, &QCheckBox::setChecked);
-	connect(acl, &canvas::AclFilter::lockByDefaultChanged, m_ui->lockNewUsers, &QCheckBox::setChecked);
-	connect(acl, &canvas::AclFilter::annotationCreationLockChanged, m_ui->lockAnnotations, &QCheckBox::setChecked);
 	connect(acl, &canvas::AclFilter::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
+	connect(acl, &canvas::AclFilter::featureTierChanged, this, &SessionSettingsDialog::onFeatureTierChanged);
+
+	for(int i=0;i<canvas::FeatureCount;++i)
+		onFeatureTierChanged(canvas::Feature(i), acl->featureTier(canvas::Feature(i)));
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
@@ -179,11 +174,6 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		m_ui->title,
 		m_ui->maxUsers,
 		m_ui->denyJoins,
-		m_ui->lockNewUsers,
-		m_ui->lockImages,
-		m_ui->lockAnnotations,
-		m_ui->lockLayerCtrl,
-		m_ui->ownLayers,
 		m_ui->preserveChat,
 		m_ui->nsfm,
 		m_ui->sessionPassword,
@@ -195,10 +185,62 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_op = op;
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
 		w[i]->setEnabled(op);
+
+	for(int i=0;i<canvas::FeatureCount;++i)
+		featureBox(canvas::Feature(i))->setEnabled(op);
+
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
+}
+
+QComboBox *SessionSettingsDialog::featureBox(canvas::Feature f)
+{
+	switch(f) {
+	using canvas::Feature;
+	case Feature::PutImage: return m_ui->permPutImage;
+	case Feature::RegionMove: return m_ui->permRegionMove;
+	case Feature::Resize: return m_ui->permResize;
+	case Feature::Background: return m_ui->permBackground;
+	case Feature::EditLayers: return m_ui->permEditLayers;
+	case Feature::OwnLayers: return m_ui->permOwnLayers;
+	case Feature::CreateAnnotation: return m_ui->permCreateAnnotation;
+	case Feature::Laser: return m_ui->permLaser;
+	case Feature::Undo: return m_ui->permUndo;
+	}
+	Q_ASSERT_X(false, "featureBox", "unhandled case");
+	return nullptr;
+}
+void SessionSettingsDialog::onFeatureTierChanged(canvas::Feature feature, canvas::Tier tier)
+{
+	featureBox(feature)->setCurrentIndex(int(tier));
+}
+
+void SessionSettingsDialog::initPermissionComboBoxes()
+{
+	// Note: these must match the canvas::Tier enum
+	const QString items[] = {
+		tr("Operators"),
+		tr("Trusted"),
+		tr("Registered"),
+		tr("Everyone")
+	};
+
+	for(uint i=0;i<canvas::FeatureCount;++i) {
+		QComboBox *box = featureBox(canvas::Feature(i));
+		for(uint j=0;j<sizeof(items)/sizeof(QString);++j)
+			box->addItem(items[j]);
+
+		box->setProperty("featureIdx", i);
+		connect(box, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &SessionSettingsDialog::permissionChanged);
+	}
+}
+
+void SessionSettingsDialog::permissionChanged()
+{
+	m_featureTiersChanged = true;
+	m_saveTimer->start();
 }
 
 void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
@@ -227,10 +269,13 @@ void SessionSettingsDialog::sendSessionConf()
 		m_sessionconf = QJsonObject();
 	}
 
-	if(m_aclMask | m_aclFlags) {
-		m_doc->sendSessionAclChange(m_aclFlags, m_aclMask);
-		m_aclFlags = 0;
-		m_aclMask = 0;
+	if(m_featureTiersChanged) {
+		uint8_t tiers[canvas::FeatureCount];
+		for(int i=0;i<canvas::FeatureCount;++i)
+			tiers[i] = featureBox(canvas::Feature(i))->currentIndex();
+
+		m_doc->sendFeatureAccessLevelChange(tiers);
+		m_featureTiersChanged = false;
 	}
 }
 
@@ -245,14 +290,6 @@ void SessionSettingsDialog::changeSesionConf(const QString &key, const QJsonValu
 	}
 }
 
-void SessionSettingsDialog::changeSessionAcl(uint16_t flag, bool set)
-{
-	m_aclMask |= flag;
-	if(set)
-		m_aclFlags |= flag;
-	m_saveTimer->start();
-}
-
 void SessionSettingsDialog::titleChanged(const QString &title) { changeSesionConf("title", title); }
 void SessionSettingsDialog::maxUsersChanged() { changeSesionConf("maxUserCount", m_ui->maxUsers->value()); }
 void SessionSettingsDialog::denyJoinsChanged(bool set) { changeSesionConf("closed", set); }
@@ -262,11 +299,6 @@ void SessionSettingsDialog::authOnlyChanged(bool set)
 	if(!set && !m_isAuth)
 		m_ui->authOnly->setEnabled(false);
 }
-void SessionSettingsDialog::lockNewUsersChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_DEFAULT, set); }
-void SessionSettingsDialog::lockImagesChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_IMAGES, set); }
-void SessionSettingsDialog::lockAnnotationsChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_ANNOTATIONS, set); }
-void SessionSettingsDialog::lockLayerCtrlChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_LAYERCTRL, set); }
-void SessionSettingsDialog::ownLayersChanged(bool set) { changeSessionAcl(protocol::SessionACL::LOCK_OWNLAYERS, set); }
 
 void SessionSettingsDialog::keepChatChanged(bool set) { changeSesionConf("preserveChat", set); }
 void SessionSettingsDialog::persistenceChanged(bool set) { changeSesionConf("persistent", set); }
