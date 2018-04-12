@@ -44,8 +44,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 
-	const int myId = static_cast<const canvas::LayerListModel*>(index.model())->myId();
-	if(layer.isLockedFor(myId))
+	if(index.data(canvas::LayerListModel::IsLockedRole).toBool())
 		opt.state &= ~QStyle::State_Enabled;
 
 	drawBackground(painter, option, index);

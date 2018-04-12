@@ -20,6 +20,7 @@
 #include "layerlist.h"
 #include "core/layer.h"
 #include "../shared/net/layer.h"
+#include "aclfilter.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -30,7 +31,7 @@
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_defaultLayer(0), m_myId(1)
+	: QAbstractListModel(parent), m_aclfilter(nullptr), m_defaultLayer(0), m_myId(1)
 {
 }
 	
@@ -52,6 +53,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		case Qt::EditRole: return item.title;
 		case IdRole: return item.id;
 		case IsDefaultRole: return item.id == m_defaultLayer;
+		case IsLockedRole: return m_aclfilter && m_aclfilter->isLayerLocked(item.id);
 		}
 	}
 	return QVariant();
@@ -144,22 +146,10 @@ QModelIndex LayerListModel::layerIndex(int id)
 	return QModelIndex();
 }
 
-bool LayerListModel::isLayerLockedFor(int layerId, int contextId) const
-{
-	int i = indexOf(layerId);
-	if(i>=0)
-		return m_items.at(i).isLockedFor(contextId);
-	return false;
-}
-
 void LayerListModel::createLayer(int id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem(id, title));
-	if(m_pendingAclChange.contains(id)) {
-		LayerAcl acl = m_pendingAclChange.take(id);
-		updateLayerAcl(id, acl.locked, acl.exclusive);
-	}
+	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false });
 	endInsertRows();
 }
 
@@ -180,7 +170,6 @@ void LayerListModel::clear()
 {
 	beginRemoveRows(QModelIndex(), 0, m_items.size());
 	m_items.clear();
-	m_pendingAclChange.clear();
 	m_defaultLayer = 0;
 	endRemoveRows();
 }
@@ -220,32 +209,6 @@ void LayerListModel::setLayerHidden(int id, bool hidden)
 	item.hidden = hidden;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
-{
-	int row = indexOf(id);
-	if(row<0) {
-		m_pendingAclChange[id] = LayerAcl { locked, exclusive };
-		return;
-	}
-
-	LayerListItem &item = m_items[row];
-	item.locked = locked;
-	item.exclusive = exclusive;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::unlockAll()
-{
-	if(!m_items.isEmpty()) {
-		for(int i=0;i<m_items.size();++i) {
-			m_items[i].locked = false;
-			m_items[i].exclusive.clear();
-		}
-		emit dataChanged(index(0), index(m_items.size()-1));
-	}
 }
 
 void LayerListModel::reorderLayers(QList<uint16_t> neworder)

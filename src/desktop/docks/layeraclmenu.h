@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 #ifndef LAYERACLMENU_H
 #define LAYERACLMENU_H
 
+#include "canvas/features.h"
+
 #include <QMenu>
-#include <QList>
 
 namespace canvas {
 	class UserListModel;
@@ -32,10 +33,10 @@ class LayerAclMenu : public QMenu
 {
     Q_OBJECT
 public:
-	explicit LayerAclMenu(QWidget *parent = 0);
+	explicit LayerAclMenu(QWidget *parent=nullptr);
 
 	void setUserList(canvas::UserListModel *model);
-	void setAcl(bool lock, const QList<uint8_t> acl);
+	void setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> acl);
 
 signals:
 	/**
@@ -47,7 +48,7 @@ signals:
 	 * @param lock general layer lock
 	 * @param ids list of user IDs.
 	 */
-	void layerAclChange(bool lock, QList<uint8_t> ids);
+	void layerAclChange(bool lock, canvas::Tier tier, QList<uint8_t> ids);
 
 private slots:
 	void userClicked(QAction *useraction);
@@ -59,9 +60,9 @@ private:
 	void addUser(int index);
 
 	canvas::UserListModel *m_model;
-	QAction *_lock;
-	QAction *_allusers;
-	QList<QAction*> _users;
+	QAction *m_lock;
+	QActionGroup *m_tiers;
+	QActionGroup *m_users;
 };
 
 }

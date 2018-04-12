@@ -172,19 +172,42 @@ int LayerACL::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	qToBigEndian(m_id, ptr); ptr += 2;
-	*(ptr++) = m_locked;
+	*(ptr++) = m_flags;
 	for(uint8_t e : m_exclusive)
 		*(ptr++) = e;
 	return ptr-data;
+}
+
+static const char *TIER_NAMES[4] = {
+	"op", "trusted", "auth", "guest"
+};
+
+static int tierFromName(const QString &name)
+{
+	for(int i=0;i<4;++i)
+		if(name == TIER_NAMES[i])
+			return i;
+	return 0;
+}
+
+static const char *tierName(int tier)
+{
+	return TIER_NAMES[qBound(0, tier, 3)];
 }
 
 Kwargs LayerACL::kwargs() const
 {
 	Kwargs kw;
 	kw["id"] = text::idString(m_id);
-	kw["locked"] = m_locked ? "true" : "false";
-	if(!m_exclusive.isEmpty())
-		kw["exclusive"] = text::idListString(m_exclusive);
+	kw["locked"] = locked() ? "true" : "false";
+
+
+	if(m_id > 0) {
+		kw["tier"] = tierName(tier());
+		if(!m_exclusive.isEmpty())
+			kw["exclusive"] = text::idListString(m_exclusive);
+	}
+
 	return kw;
 }
 
@@ -194,6 +217,7 @@ LayerACL *LayerACL::fromText(uint8_t ctx, const Kwargs &kwargs)
 		ctx,
 		text::parseIdString16(kwargs["id"]),
 		kwargs["locked"] == "true",
+		tierFromName(kwargs["tier"]),
 		text::parseIdListString8(kwargs["exclusive"])
 		);
 }
@@ -224,30 +248,21 @@ static const char *FEATURE_NAMES[FeatureAccessLevels::FEATURES] = {
 	"undo"
 };
 
-static const char *TIER_NAMES[4] = {
-	"op", "trusted", "auth", "guest"
-};
-
 Kwargs FeatureAccessLevels::kwargs() const
 {
 	Kwargs kw;
 	for(int i=0;i<FEATURES;++i) {
-		kw[FEATURE_NAMES[i]] = TIER_NAMES[qBound(0, int(m_featureTiers[i]), 4)];
+		if(m_featureTiers[i] > 0)
+			kw[FEATURE_NAMES[i]] = tierName(m_featureTiers[i]);
 	}
 	return kw;
 }
 
 FeatureAccessLevels *FeatureAccessLevels::fromText(uint8_t ctx, const Kwargs &kwargs)
 {
-	uint8_t features[FEATURES] = {0};
+	uint8_t features[FEATURES];
 	for(int i=0;i<FEATURES;++i) {
-		const QString tier = kwargs[FEATURE_NAMES[i]];
-		for(int j=0;j<4;++j) {
-			if(tier == TIER_NAMES[j]) {
-				features[i] = j;
-				break;
-			}
-		}
+		features[i] = tierFromName(kwargs[FEATURE_NAMES[i]]);
 	}
 
 	return new FeatureAccessLevels(ctx, features);

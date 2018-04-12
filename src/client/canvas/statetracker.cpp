@@ -125,7 +125,7 @@ QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, Canv
 
 	paintcore::LayerStack stack;
 	stack.restoreSavepoint(m_data->canvas);
-	SnapshotLoader loader(contextId, &stack, m_data->layermodel, canvas);
+	SnapshotLoader loader(contextId, &stack, canvas);
 	return loader.loadInitCommands();
 }
 
@@ -1070,10 +1070,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		// Write layer opacity and flags
 		out << layer.opacity;
 		out << quint8(layer.blend);
-		out << layer.hidden << layer.locked;
-
-		// Write layer ACL
-		out << layer.exclusive;
+		out << layer.hidden;
 	}
 
 	// Write layer stack
@@ -1113,21 +1110,12 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		bool hidden;
 		in >> hidden;
 
-		bool locked;
-		in >> locked;
-
-		// Read layer ACL
-		QList<uint8_t> acls;
-		in >> acls;
-
 		sp->layermodel.append(LayerListItem {
 			layerid,
 			title,
 			opacity,
 			paintcore::BlendMode::Mode(blend),
-			hidden,
-			locked,
-			acls
+			hidden
 		});
 	}
 
@@ -1135,17 +1123,6 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
 
 	return sp;
-}
-
-bool StateTracker::isLayerLocked(int id) const
-{
-	for(const LayerListItem &l : m_layerlist->getLayers()) {
-		if(l.id == id)
-			return l.isLockedFor(localId());
-	}
-
-	qWarning("isLayerLocked(%d): no such layer!", id);
-	return false;
 }
 
 /**

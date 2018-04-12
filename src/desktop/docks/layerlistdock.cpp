@@ -98,7 +98,7 @@ LayerList::LayerList(QWidget *parent)
 
 	connect(m_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
-	connect(m_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
+	connect(m_aclmenu, &LayerAclMenu::layerAclChange, this, &LayerList::changeLayerAcl);
 
 	selectionChanged(QItemSelection());
 
@@ -138,6 +138,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
+	connect(canvas->aclFilter(), &canvas::AclFilter::layerAclChanged, this, &LayerList::lockStatusChanged);
 	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Init
@@ -168,7 +169,7 @@ void LayerList::updateLockedControls()
 	m_menuInsertAction->setEnabled(canAdd);
 
 	// Rest of the controls need a selection to work.
-	const bool enabled = currentLayer() && (canEdit || (ownLayers && (currentLayer()>>8) == m_canvas->localUserId()));
+	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_ui->lockButton->setEnabled(enabled || (m_canvas && !m_canvas->isOnline())); // layer lock is available in offline mode
 	m_duplicateLayerAction->setEnabled(enabled);
@@ -264,14 +265,18 @@ void LayerList::setLayerVisibility(int layerId, bool visible)
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerVisibility(m_canvas->localUserId(), layerId, visible)));
 }
 
-void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
+void LayerList::changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive)
 {
-	QModelIndex index = currentSelection();
+	const QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		layer.locked = lock;
-		layer.exclusive = exclusive;
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(m_canvas->localUserId(), layer.id, layer.locked, layer.exclusive)));
+		const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(
+			m_canvas->localUserId(),
+			layerId,
+			lock,
+			int(tier),
+			exclusive
+		)));
 	}
 }
 
@@ -345,7 +350,8 @@ bool LayerList::canMergeCurrent() const
 	const QModelIndex below = index.sibling(index.row()+1, 0);
 
 	return index.isValid() && below.isValid() &&
-		   !below.data().value<canvas::LayerListItem>().isLockedFor(m_canvas->localUserId());
+		   !m_canvas->aclFilter()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
+			;
 }
 
 void LayerList::deleteSelected()
@@ -442,7 +448,7 @@ bool LayerList::isCurrentLayerLocked() const
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
 		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
-		return item.hidden || item.isLockedFor(m_canvas->localUserId());
+		return item.hidden || m_canvas->aclFilter()->isLayerLocked(item.id);
 	}
 	return false;
 }
@@ -453,8 +459,8 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 
 	if(on) {
 		QModelIndex cs = currentSelection();
-		dataChanged(cs,cs);
 		m_selectedId = cs.data(canvas::LayerListModel::IdRole).toInt();
+		dataChanged(cs,cs);
 	} else {
 		m_selectedId = 0;
 	}
@@ -466,6 +472,7 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 
 void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
+	// Refresh UI when seleceted layer's data changes
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
@@ -484,12 +491,21 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 			}
 		}
 
-		m_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
-		m_aclmenu->setAcl(layer.locked, layer.exclusive);
+		lockStatusChanged(layer.id);
 		updateLockedControls();
+
 		// TODO use change flags to detect if this really changed
 		emit activeLayerVisibilityChanged();
 		m_noupdate = false;
+	}
+}
+
+void LayerList::lockStatusChanged(int layerId)
+{
+	if(m_selectedId == layerId) {
+		const canvas::AclFilter::LayerAcl acl = m_canvas->aclFilter()->layerAcl(layerId);
+		m_ui->lockButton->setChecked(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty());
+		m_aclmenu->setAcl(acl.locked, acl.tier, acl.exclusive);
 	}
 }
 

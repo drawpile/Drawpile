@@ -52,7 +52,6 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::operatorListChanged, m_userlist, &UserListModel::updateOperators);
 	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
-	connect(m_aclfilter, &AclFilter::layerAclChange, m_layerlist, &LayerListModel::updateLayerAcl);
 
 	m_layerstack = new paintcore::LayerStack(this);
 	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
@@ -62,6 +61,7 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_aclfilter->reset(localUserId, true);
 
 	m_layerlist->setMyId(localUserId);
+	m_layerlist->setAclFilter(m_aclfilter);
 	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
 		return m_layerstack->getLayer(id);
 	});
@@ -85,7 +85,6 @@ void CanvasModel::connectedToServer(int myUserId)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
-	m_layerlist->unlockAll();
 	m_statetracker->setLocalId(myUserId);
 	m_aclfilter->reset(myUserId, false);
 	m_mode = Mode::Online;
@@ -96,7 +95,6 @@ void CanvasModel::disconnectedFromServer()
 	Q_ASSERT(m_mode == Mode::Online);
 	m_statetracker->endRemoteContexts();
 	m_userlist->clearUsers();
-	m_layerlist->unlockAll();
 	m_aclfilter->reset(m_statetracker->localId(), true);
 	m_mode = Mode::Offline;
 }
@@ -207,7 +205,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 
 	if(!m_statetracker->hasFullHistory() || forceNew) {
 		// Generate snapshot
-		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_layerlist->getLayers(), this).loadInitCommands();
+		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, this).loadInitCommands();
 
 	} else {
 		// Message stream contains (starts with) a snapshot: use it
@@ -217,10 +215,12 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		if(m_layerlist->defaultLayer() > 0)
 			snapshot.prepend(protocol::MessagePtr(new protocol::DefaultLayer(m_statetracker->localId(), m_layerlist->defaultLayer())));
 
-		// Add layer ACL status
-		for(const LayerListItem &layer : m_layerlist->getLayers()) {
-			if(layer.isLockedFor(m_statetracker->localId()))
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));
+		// Add layer ACLs
+		for(int i=0;i<m_layerstack->layerCount();++i) {
+			const int layerId = m_layerstack->getLayerByIndex(i)->id();
+			const canvas::AclFilter::LayerAcl acl = aclFilter()->layerAcl(layerId);
+			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
+				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layerId, acl.locked, int(acl.tier), acl.exclusive));
 		}
 	}
 
@@ -375,7 +375,6 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
-	m_layerlist->unlockAll();
 	m_layerstack->reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);

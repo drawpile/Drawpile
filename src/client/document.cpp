@@ -532,7 +532,7 @@ void Document::sendFeatureAccessLevelChange(const uint8_t tiers[canvas::FeatureC
 
 void Document::sendLockSession(bool lock)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::LayerACL(m_client->myId(), 0, lock, QList<uint8_t>())));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::LayerACL(m_client->myId(), 0, lock, 0, QList<uint8_t>())));
 }
 
 void Document::sendOpword(const QString &opword)
@@ -614,7 +614,7 @@ void Document::snapshotNeeded()
 				m_client->sendMessage(net::command::serverCommand("init-cancel"));
 				return;
 			}
-			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas->layerlist()->getLayers(), m_canvas).loadInitCommands();
+			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas).loadInitCommands();
 		}
 
 		// Size limit check. The server will kick us if we send an oversized reset.
@@ -758,7 +758,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection() && !m_canvas->stateTracker()->isLayerLocked(m_toolctrl->activeLayer())) {
+	if(m_canvas->selection() && !m_canvas->aclFilter()->isLayerLocked(m_toolctrl->activeLayer())) {
 		m_client->sendMessages(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }

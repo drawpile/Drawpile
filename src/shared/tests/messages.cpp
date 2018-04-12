@@ -39,8 +39,8 @@ private slots:
 		QTest::newRow("movepointer") << (Message*)new MovePointer(10, 0x11223344, 0x55667788);
 		QTest::newRow("marker") << (Message*)new Marker(11, QString("Test"));
 		QTest::newRow("useracl") << (Message*)new UserACL(12, QList<uint8_t>() << 1 << 2 << 4);
-		QTest::newRow("layeracl") << (Message*)new LayerACL(13, 0x1122, 0x01, QList<uint8_t>() << 1 << 2 << 4);
-		QTest::newRow("sessionacl") << (Message*)new SessionACL(14, 63);
+		QTest::newRow("layeracl") << (Message*)new LayerACL(13, 0x1122, 0x01, 0x02, QList<uint8_t>() << 3 << 4 << 5);
+		QTest::newRow("featureaccess") << (Message*)new FeatureAccessLevels(14, (const uint8_t*)"\0\1\2\3\0\1\2\3\0");
 		QTest::newRow("defaultlayer") << (Message*)new DefaultLayer(14, 0x1401);
 
 		QTest::newRow("undopoint") << (Message*)new UndoPoint(15);

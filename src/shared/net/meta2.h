@@ -122,20 +122,21 @@ private:
  * When the OWNLAYERS mode is set, any user can use this to change the ACLs on layers they themselves
  * have created (identified by the ID prefix.)
  *
- * Using layer ID 0 sets or clears a general canvaswide lock. The exclusive user list is not
+ * Using layer ID 0 sets or clears a general canvaswide lock. The tier and exclusive user list is not
  * used in this case.
  */
 class LayerACL : public Message {
 public:
-	LayerACL(uint8_t ctx, uint16_t id, uint8_t locked, const QList<uint8_t> &exclusive)
-		: Message(MSG_LAYER_ACL, ctx), m_id(id), m_locked(locked), m_exclusive(exclusive)
+	LayerACL(uint8_t ctx, uint16_t id, bool locked, uint8_t tier, const QList<uint8_t> &exclusive)
+		: LayerACL(ctx, id, (locked?0x80:0) | (tier&0x07), exclusive)
 	{}
 
 	static LayerACL *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerACL *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint16_t layer() const override { return m_id; }
-	uint8_t locked() const { return m_locked; }
+	bool locked() const { return m_flags & 0x80; }
+	uint8_t tier() const { return m_flags & 0x07;}
 	const QList<uint8_t> exclusive() const { return m_exclusive; }
 
 	QString messageName() const override { return QStringLiteral("layeracl"); }
@@ -146,8 +147,12 @@ protected:
 	Kwargs kwargs() const override;
 
 private:
+	LayerACL(uint8_t ctx, uint16_t id, uint8_t flags, const QList<uint8_t> &exclusive)
+		: Message(MSG_LAYER_ACL, ctx), m_id(id), m_flags(flags), m_exclusive(exclusive)
+	{}
+
 	uint16_t m_id;
-	uint8_t m_locked;
+	uint8_t m_flags;
 	QList<uint8_t> m_exclusive;
 };
 

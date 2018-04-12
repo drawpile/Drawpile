@@ -52,9 +52,6 @@ public:
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
-	//! Get the ID of the currently selected layer
-	int currentLayer() const { return m_selectedId; }
-
 	bool isCurrentLayerLocked() const;
 
 public slots:
@@ -90,9 +87,10 @@ private slots:
 	void blendModeChanged();
 	void hideSelected();
 	void setLayerVisibility(int layerId, bool visible);
-	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
+	void changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
+	void lockStatusChanged(int layerId);
 	void selectionChanged(const QItemSelection &selected);
 	void layerContextMenu(const QPoint &pos);
 

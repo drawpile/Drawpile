@@ -20,6 +20,7 @@
 #define DP_NET_LAYERLIST_H
 
 #include "core/blendmodes.h"
+#include "features.h"
 
 #include <QAbstractListModel>
 #include <QMimeData>
@@ -37,12 +38,9 @@ namespace paintcore {
 
 namespace canvas {
 
-struct LayerListItem {
-	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(paintcore::BlendMode::MODE_NORMAL), hidden(false), locked(false) {}
-	LayerListItem(int id_, const QString &title_, float opacity_=1.0, paintcore::BlendMode::Mode blend_=paintcore::BlendMode::MODE_NORMAL, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
-		: id(id_), title(title_), opacity(opacity_), blend(blend_), hidden(hidden_), locked(locked_), exclusive(exclusive_)
-		{}
+class AclFilter;
 
+struct LayerListItem {
 	//! Layer ID
 	int id;
 	
@@ -57,14 +55,6 @@ struct LayerListItem {
 
 	//! Layer hidden flag (local only)
 	bool hidden;
-
-	//! General layer lock
-	bool locked;
-
-	//! Exclusive access to these users
-	QList<uint8_t> exclusive;
-
-	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
 };
 
 }
@@ -82,9 +72,10 @@ public:
 		IdRole = Qt::UserRole + 1,
 		TitleRole,
 		IsDefaultRole,
+		IsLockedRole
 	};
 
-	LayerListModel(QObject *parent=0);
+	LayerListModel(QObject *parent=nullptr);
 	
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -103,9 +94,6 @@ public:
 	void retitleLayer(int id, const QString &title);
 	void setLayerHidden(int id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);
-	void unlockAll();
-
-	bool isLayerLockedFor(int layerId, int contextId) const;
 	
 	QVector<LayerListItem> getLayers() const { return m_items; }
 	void setLayers(const QVector<LayerListItem> &items);
@@ -113,6 +101,7 @@ public:
 	void previewOpacityChange(int id, float opacity);
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
+	void setAclFilter(AclFilter *filter) { m_aclfilter = filter; }
 	const paintcore::Layer *getLayerData(int id) const;
 
 	int myId() const { return m_myId; }
@@ -138,9 +127,6 @@ public:
 	 */
 	QString getAvailableLayerName(QString basename) const;
 
-public slots:
-	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
-
 signals:
 	void layersReordered();
 
@@ -155,18 +141,9 @@ private:
 
 	int indexOf(int id) const;
 
-	// Terrible hack: the layers are created and edited in the state tracker (which can run concurrently)
-	// but the ACL changes are updated immediately. So, we must save the ACLs for missing layers in case
-	// they're created afterwards
-	// TODO separate the AclFilter better and update the UI as changes are really applied, then get rid of this.
-	struct LayerAcl {
-		bool locked;
-		QList<uint8_t> exclusive;
-	};
-	QHash<uint16_t, LayerAcl> m_pendingAclChange;
-	
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
+	AclFilter *m_aclfilter;
 	int m_defaultLayer;
 	int m_myId;
 };

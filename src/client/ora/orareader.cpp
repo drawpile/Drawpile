@@ -22,6 +22,7 @@
 #include "core/tilevector.h"
 #include "ora/orareader.h"
 #include "ora/orawriter.h"
+#include "canvas/features.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
@@ -466,7 +467,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			));
 
 		if(layer.locked) {
-			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, QList<uint8_t>()));
+			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, int(canvas::Tier::Guest), QList<uint8_t>()));
 		}
 
 		if(!layer.visibility) {

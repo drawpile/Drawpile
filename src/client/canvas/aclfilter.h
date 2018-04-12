@@ -68,6 +68,7 @@ class AclFilter : public QObject
 public:
 	struct LayerAcl {
 		bool locked;              // layer is locked for all users
+		Tier tier;                // layer access tier (if not exclusive)
 		QList<uint8_t> exclusive; // if not empty, only these users can draw on this layer
 	};
 
@@ -98,6 +99,11 @@ public:
 	//! Is the local user locked for any reason?
 	bool isLocked() const { return m_sessionLocked | m_localUserLocked; }
 
+	//! Check if the local user can draw on the given layer
+	bool isLayerLocked(int layerId) const {
+		return isLocked() || isLayerLockedFor(layerId, m_myId, userTier(m_myId));
+	}
+
 	//! Can the local user use this feature?
 	bool canUseFeature(Feature f) const { return localUserTier() <= featureTier(f); }
 
@@ -118,12 +124,12 @@ public:
 
 signals:
 	void localOpChanged(bool op);
-	bool localLockChanged(bool lock);
+	void localLockChanged(bool lock);
+	void layerAclChanged(int id);
 
 	void userLocksChanged(const QList<uint8_t> lockedUsers);
 	void operatorListChanged(const QList<uint8_t> opUsers);
 	void trustedUserListChanged(const QList<uint8_t> trustedUsers);
-	void layerAclChange(int layerId, bool locked, const QList<uint8_t> &exclusive);
 
 	//! The local user's access to a feature just changed
 	void featureAccessChanged(Feature feature, bool canUse);
@@ -142,7 +148,7 @@ private:
 	void updateSessionOwnership(const protocol::SessionOwner &msg);
 	void updateTrustedUserList(const protocol::TrustedUsers &msg);
 
-	bool isLayerLockedFor(int layerId, uint8_t userId) const;
+	bool isLayerLockedFor(int layerId, uint8_t userId, Tier userTier) const;
 
 	Tier userTier(int id) const {
 		if(m_ops.contains(id))

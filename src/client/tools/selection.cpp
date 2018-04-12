@@ -18,7 +18,7 @@
 */
 
 #include "canvas/canvasmodel.h"
-#include "canvas/statetracker.h"
+#include "canvas/aclfilter.h"
 #include "core/layer.h"
 #include "net/client.h"
 
@@ -73,7 +73,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 	} else {
 		const QPointF p = point - m_start;
 
-		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
+		if(sel->pasteImage().isNull() && !owner.model()->aclFilter()->isLayerLocked(owner.activeLayer())) {
 			startMove();
 		}
 

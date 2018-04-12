@@ -59,7 +59,7 @@ void AclFilter::reset(int myId, bool localMode)
 	setFeature(      Feature::RegionMove, Tier::Guest);
 	setFeature(          Feature::Resize, Tier::Op);
 	setFeature(      Feature::Background, Tier::Op);
-	setFeature(      Feature::EditLayers, Tier::Guest);
+	setFeature(      Feature::EditLayers, Tier::Op);
 	setFeature(       Feature::OwnLayers, Tier::Guest);
 	setFeature(Feature::CreateAnnotation, Tier::Guest);
 	setFeature(           Feature::Laser, Tier::Guest);
@@ -102,9 +102,8 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		QMutableHashIterator<int,LayerAcl> i(m_layers);
 		while(i.hasNext()) {
 			i.next();
-			if(i.value().exclusive.removeAll(msg.contextId())>0) {
-				emit layerAclChange(i.key(), i.value().locked, i.value().exclusive);
-			}
+			if(i.value().exclusive.removeAll(msg.contextId())>0)
+				emit layerAclChanged(i.key());
 		}
 
 		// Refresh UI
@@ -141,12 +140,14 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 				return true;
 			}
 
-			m_layers[lmsg.layer()] = LayerAcl { lmsg.locked(), lmsg.exclusive() };
-			emit layerAclChange(lmsg.layer(), lmsg.locked(), lmsg.exclusive());
+			const Tier tier = Tier(qBound(0, int(lmsg.tier()), TierCount));
+			m_layers[lmsg.layer()] = LayerAcl { lmsg.locked(), tier, lmsg.exclusive() };
 
 			// Emit this to refresh the UI in case our selected layer was (un)locked.
 			// (We don't actually know which layer is selected in the UI here.)
 			emit localLockChanged(isLocked());
+			emit layerAclChanged(lmsg.layer());
+
 			return true;
 		}
 		return false;
@@ -205,7 +206,7 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		// EDITLAYERS feature gives permission to edit all layers
 		// OWNLAYERS feature gives permission to edit layers created by this user
 		if(
-			(createdBy != msg.contextId() && tier > featureTier(Feature::EditLayers)) &&
+			(createdBy != msg.contextId() && tier > featureTier(Feature::EditLayers)) ||
 			(createdBy == msg.contextId() && tier > featureTier(Feature::OwnLayers))
 		  )
 			return false;
@@ -219,14 +220,14 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 
 	case MSG_PUTIMAGE:
 	case MSG_FILLRECT:
-		return tier <= featureTier(Feature::PutImage) && !isLayerLockedFor(msg.layer(), msg.contextId());
+		return tier <= featureTier(Feature::PutImage) && !isLayerLockedFor(msg.layer(), msg.contextId(), tier);
 
 	case MSG_DRAWDABS_CLASSIC:
 	case MSG_DRAWDABS_PIXEL:
-		return !isLayerLockedFor(msg.layer(), msg.contextId());
+		return !isLayerLockedFor(msg.layer(), msg.contextId(), tier);
 
 	case MSG_REGION_MOVE:
-		return tier <= featureTier(Feature::RegionMove) && !isLayerLockedFor(msg.layer(), msg.contextId());
+		return tier <= featureTier(Feature::RegionMove) && !isLayerLockedFor(msg.layer(), msg.contextId(), tier);
 
 	case MSG_ANNOTATION_CREATE:
 		if(tier > featureTier(Feature::CreateAnnotation))
@@ -273,17 +274,27 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 AclFilter::LayerAcl AclFilter::layerAcl(int layerId) const
 {
 	if(!m_layers.contains(layerId))
-		return LayerAcl();
+		return LayerAcl { false, Tier::Guest, QList<uint8_t>() };
+
 	return m_layers[layerId];
 }
 
-bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId) const
+bool AclFilter::isLayerLockedFor(int layerId, uint8_t userId, Tier userTier) const
 {
 	if(!m_layers.contains(layerId))
 		return false;
 
 	const LayerAcl &l = m_layers[layerId];
-	return l.locked || (!l.exclusive.isEmpty() && !l.exclusive.contains(userId));
+	// Locking a layer locks it for everyone
+	if(l.locked)
+		return true;
+
+	// If the layer has not been configured for exclusive user access,
+	// permit access by user tier
+	if(l.exclusive.isEmpty())
+		return l.tier < userTier;
+	else
+		return !l.exclusive.contains(userId);
 }
 
 void AclFilter::updateSessionOwnership(const protocol::SessionOwner &msg)

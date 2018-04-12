@@ -155,13 +155,11 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		msgs << paintcore::LayerTileSet::fromLayer(*layer)
 			.toInitCommands(m_contextId, layer->id(), layer->title());
 
-		// Set extra layer info (if present)
-		for(int j=0;j<m_layerlist.size();++j) {
-			if(m_layerlist[j].id == layer->id()) {
-				const LayerListItem &info = m_layerlist[j];
-				if(info.locked || !info.exclusive.isEmpty())
-					msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), info.locked, info.exclusive)));
-			}
+		// Set layer ACLs (if found)
+		if(m_session) {
+			const canvas::AclFilter::LayerAcl acl = m_session->aclFilter()->layerAcl(layer->id());
+			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
+				msgs << MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, int(acl.tier), acl.exclusive));
 		}
 	}
 

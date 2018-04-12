@@ -10,7 +10,7 @@ class TestAclFilter : public QObject
 {
 	Q_OBJECT
 private slots:
-	// Test the default filterint of commands
+	// Test the default filtering of commands
 	void testFilterInitialStateLocal_data()
 	{
 		QTest::addColumn<bool>("allowed");
@@ -20,15 +20,15 @@ private slots:
 		QTest::newRow("2 newlayer id=0x0101") << false; // Non-ops must obey ID prefixing rules
 		QTest::newRow("2 newlayer id=0x0201") << true;
 		QTest::newRow("1 layerattr") << true;
-		QTest::newRow("2 layerattr") << true;
+		QTest::newRow("2 layerattr") << false;
 		QTest::newRow("1 layervisibility") << true;
 		QTest::newRow("2 layervisibility") << true;
 		QTest::newRow("1 retitlelayer") << true;
-		QTest::newRow("2 retitlelayer") << true;
+		QTest::newRow("2 retitlelayer") << false;
 		QTest::newRow("1 layerorder") << true;
-		QTest::newRow("2 layerorder") << true;
+		QTest::newRow("2 layerorder") << false;
 		QTest::newRow("1 deletelayer") << true;
-		QTest::newRow("2 deletelayer") << true;
+		QTest::newRow("2 deletelayer") << false;
 
 		// Regular undo is usable by all, but override needs Op
 		QTest::newRow("1 undo") << true;
@@ -44,8 +44,8 @@ private slots:
 		QTest::newRow("2 useracl") << false;
 		QTest::newRow("1 layeracl") << true;
 		QTest::newRow("2 layeracl") << false;
-		QTest::newRow("1 sessionacl") << true;
-		QTest::newRow("2 sessionacl") << false;
+		QTest::newRow("1 featureaccess") << true;
+		QTest::newRow("2 featureaccess") << false;
 		QTest::newRow("1 defaultlayer") << true;
 		QTest::newRow("2 defaultlayer") << false;
 		QTest::newRow("1 resize") << true;
@@ -89,20 +89,13 @@ private slots:
 		AclFilter acl;
 		acl.reset(1, true);
 
-		QVERIFY(!acl.isOwnLayers());
-		QVERIFY(!acl.isLayerControlLocked());
-
 		// Non-op: Can't create layers when layerctrl lock is set
-		QCOMPARE(acl.filterMessage(*msg("1 sessionacl locks=layerctrl")), true);
+		QCOMPARE(acl.filterMessage(*msg("1 featureaccess editlayers=op")), true);
 		QCOMPARE(acl.filterMessage(*msg("2 newlayer id=0x0201")), false);
-		QVERIFY(!acl.isOwnLayers());
-		QVERIFY(acl.isLayerControlLocked());
 
 		// Can create layers when ownlayers is set
-		QCOMPARE(acl.filterMessage(*msg("1 sessionacl locks=layerctrl,ownlayers")), true);
+		QCOMPARE(acl.filterMessage(*msg("1 featureaccess editlayers=op ownlayers=guest")), true);
 		QCOMPARE(acl.filterMessage(*msg("2 newlayer id=0x0201")), true);
-		QVERIFY(acl.isOwnLayers());
-		QVERIFY(acl.isLayerControlLocked());
 
 		// But can only edit one's own layers
 		QCOMPARE(acl.filterMessage(*msg("2 layerattr id=0x0201")), true);
@@ -120,9 +113,9 @@ private slots:
 
 		QCOMPARE(acl.filterMessage(*msg("0 owner users=1")), true);
 
-		// User 1 is now OP: can add more ops (but not deop self)
+		// User 1 is now OP: can add more ops
 		QCOMPARE(acl.isLocalUserOperator(), true);
-		QCOMPARE(acl.filterMessage(*msg("1 owner users=2")), true);
+		QCOMPARE(acl.filterMessage(*msg("1 owner users=1,2")), true);
 		QCOMPARE(acl.isLocalUserOperator(), true);
 
 		// Other ops can be deopeed, though
