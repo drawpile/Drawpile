@@ -382,7 +382,7 @@ void CanvasModel::resetCanvas()
 
 void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 {
-	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator());
+	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator(), msg.isBot());
 
 	m_userlist->addUser(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());

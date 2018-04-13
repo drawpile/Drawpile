@@ -40,6 +40,7 @@ class UserJoin : public Message {
 public:
 	static const uint8_t FLAG_AUTH = 0x01; // authenticated user (not a guest)
 	static const uint8_t FLAG_MOD = 0x02;  // user is a moderator
+	static const uint8_t FLAG_BOT = 0x04;  // user is a bot
 
 	UserJoin(uint8_t ctx, uint8_t flags, const QByteArray &name, const QByteArray &hash) : Message(MSG_USER_JOIN, ctx), m_name(name), m_hash(hash), m_flags(flags) { Q_ASSERT(name.length()>0 && name.length()<256); }
 	UserJoin(uint8_t ctx, uint8_t flags, const QString &name, const QByteArray &hash=QByteArray()) : UserJoin(ctx, flags, name.toUtf8(), hash) {}
@@ -55,6 +56,7 @@ public:
 
 	bool isModerator() const { return m_flags & FLAG_MOD; }
 	bool isAuthenticated() const { return m_flags & FLAG_AUTH; }
+	bool isBot() const { return m_flags & FLAG_BOT; }
 
 	QString messageName() const override { return QStringLiteral("join"); }
 

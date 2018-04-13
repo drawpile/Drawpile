@@ -47,6 +47,7 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			case IsTrustedRole: return u.isTrusted;
 			case IsModRole: return u.isMod;
 			case IsAuthRole: return u.isAuth;
+			case IsBotRole: return u.isBot;
 			case IsLockedRole: return u.isLocked;
 			case IsMutedRole: return u.isMuted;
 		}
@@ -73,6 +74,7 @@ void UserListModel::addUser(const User &user)
 			u.isLocal = user.isLocal;
 			u.isAuth = user.isAuth;
 			u.isMod = user.isMod;
+			u.isBot = user.isBot;
 			u.isMuted = user.isMuted;
 
 			QModelIndex idx = index(i);

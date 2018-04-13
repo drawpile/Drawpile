@@ -32,9 +32,9 @@ namespace canvas {
  * @brief Information about a user
  */
 struct User {
-	User() : User(0, QString(), false, false, false) {}
-	User(int id_, const QString &name_, bool local, bool auth, bool mod)
-		: id(id_), name(name_), isLocal(local), isOperator(false), isTrusted(false), isMod(mod), isAuth(auth), isLocked(false), isMuted(false)
+	User() : User(0, QString(), false, false, false, false) {}
+	User(int id_, const QString &name_, bool local, bool auth, bool mod, bool bot)
+		: id(id_), name(name_), isLocal(local), isOperator(false), isTrusted(false), isMod(mod), isBot(bot), isAuth(auth), isLocked(false), isMuted(false)
 	{}
 
 	int id;
@@ -43,6 +43,7 @@ struct User {
 	bool isOperator;
 	bool isTrusted;
 	bool isMod;
+	bool isBot;
 	bool isAuth;
 	bool isLocked;
 	bool isMuted;
@@ -62,6 +63,7 @@ public:
 		IsTrustedRole,
 		IsModRole,
 		IsAuthRole,
+		IsBotRole,
 		IsLockedRole,
 		IsMutedRole
 	};

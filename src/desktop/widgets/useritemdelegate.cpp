@@ -123,7 +123,12 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		else if(index.data(canvas::UserListModel::IsTrustedRole).toBool())
 			flags = tr("Trusted");
 
-		if(index.data(canvas::UserListModel::IsAuthRole).toBool()) {
+		if(index.data(canvas::UserListModel::IsBotRole).toBool()) {
+			if(!flags.isEmpty())
+				flags += " | ";
+			flags += tr("Bot");
+
+		} else if(index.data(canvas::UserListModel::IsAuthRole).toBool()) {
 			if(!flags.isEmpty())
 				flags += " | ";
 			flags += tr("Registered");
