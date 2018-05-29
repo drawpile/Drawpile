@@ -1142,7 +1142,7 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 		if(userId>0) {
 			Client *c = getClientById(userId);
 			if(c)
-				c->callJsonApi(method, tail, request);
+				return c->callJsonApi(method, tail, request);
 		}
 
 		return JsonApiNotFound();
