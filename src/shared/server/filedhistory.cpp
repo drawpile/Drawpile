@@ -221,6 +221,9 @@ bool FiledHistory::load()
 		} else if(cmd == "MAXUSERS") {
 			m_maxUsers = qBound(1, params.toInt(), 254);
 
+		} else if(cmd == "AUTORESET") {
+			m_autoResetThreshold = params.toUInt();
+
 		} else if(cmd == "TITLE") {
 			m_title = params;
 
@@ -479,6 +482,16 @@ void FiledHistory::setMaxUsers(int max)
 	if(newMax != m_maxUsers) {
 		m_maxUsers = newMax;
 		m_journal->write(QString("MAXUSERS %1\n").arg(newMax).toUtf8());
+		m_journal->flush();
+	}
+}
+
+void FiledHistory::setAutoResetThreshold(uint limit)
+{
+	const uint newLimit = qMin(uint(sizeLimit() * 0.7), limit);
+	if(newLimit != m_autoResetThreshold) {
+		m_autoResetThreshold = newLimit;
+		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
 		m_journal->flush();
 	}
 }

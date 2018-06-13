@@ -278,8 +278,10 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		emit sessionConfChange(reply.reply["config"].toObject());
 		break;
 	case ServerReply::SIZELIMITWARNING:
-		qWarning() << "Session history size warning:" << reply.reply["maxSize"].toInt() - reply.reply["size"].toInt() << "bytes of space left!";
-		emit serverHistoryLimitReceived(reply.reply["maxSize"].toInt());
+		// No longer used since 2.1.0. Replaced by RESETREQUEST
+		break;
+	case ServerReply::RESETREQUEST:
+		emit autoresetRequested(reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
 		break;
 	case ServerReply::STATUS:
 		emit serverStatusUpdate(reply.reply["size"].toInt());

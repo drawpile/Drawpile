@@ -67,9 +67,10 @@ Document::Document(QObject *parent)
 	  m_sessionPasswordProtected(false),
 	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
-	  m_serverSpaceLow(false),
 	  m_sessionMaxUserCount(0),
-	  m_sessionHistoryMaxSize(0)
+	  m_sessionHistoryMaxSize(0),
+	  m_sessionResetThreshold(0),
+	  m_baseResetThreshold(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -90,7 +91,7 @@ Document::Document(QObject *parent)
 
 	connect(m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
 	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
-	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
+	connect(m_client, &net::Client::autoresetRequested, this, &Document::onAutoresetRequested);
 	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 
 	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
@@ -133,11 +134,6 @@ void Document::onSessionResetted()
 	}
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
-	if(m_serverSpaceLow) {
-		// Session reset is the only thing that can free up history space
-		m_serverSpaceLow = false;
-		emit serverSpaceLowChanged(false);
-	}
 
 	if(isRecording()) {
 		// Resetting establishes a new initial state for the canvas, therefore
@@ -179,9 +175,8 @@ void Document::onServerLogin(bool join)
 		startRecording(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
 	}
 
-	m_serverSpaceLow = false;
 	m_sessionHistoryMaxSize = 0;
-	emit serverSpaceLowChanged(false);
+	m_baseResetThreshold = 0;
 	emit serverLoggedIn(join);
 }
 
@@ -225,6 +220,12 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
 
+	if(config.contains("resetThreshold"))
+		setSessionResetThreshold(config["resetThreshold"].toInt());
+
+	if(config.contains("resetThresholdBase"))
+		setBaseResetThreshold(config["resetThresholdBase"].toInt());
+
 	if(config.contains("banlist"))
 		m_banlist->updateBans(config["banlist"].toArray());
 
@@ -249,26 +250,26 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	}
 }
 
-void Document::onServerHistoryLimitReceived(int maxSpace)
+void Document::onAutoresetRequested(int maxSize, bool query)
 {
 	Q_ASSERT(m_canvas);
 
-	if(!m_serverSpaceLow) {
-		m_serverSpaceLow = true;
-		emit serverSpaceLowChanged(true);
-	}
+	qInfo("Server requested autoreset (query=%d)", query);
 
-	m_sessionHistoryMaxSize = maxSpace;
+	m_sessionHistoryMaxSize = maxSize;
 
-	if(m_client->myId() == m_canvas->userlist()->getPrimeOp() &&
-		QSettings().value("settings/server/autoreset", true).toBool())
-	{
-		// We're the "prime operator", meaning it's our responsibility
-		// to handle the autoreset
-		sendLockSession(true);
-		m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+	if(QSettings().value("settings/server/autoreset", true).toBool()) {
+		if(query) {
+			// This is just a query: send back an affirmative response
+			m_client->sendMessage(net::command::serverCommand("ready-to-autoreset"));
 
-		sendResetSession(canvas::StateSavepoint());
+		} else {
+			// Autoreset on request
+			sendLockSession(true);
+			m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+
+			sendResetSession(canvas::StateSavepoint());
+		}
 	}
 }
 
@@ -301,6 +302,23 @@ void Document::setSessionMaxUserCount(int count)
 	if(m_sessionMaxUserCount != count) {
 		m_sessionMaxUserCount = count;
 		emit sessionMaxUserCountChanged(count);
+	}
+}
+
+void Document::setSessionResetThreshold(int threshold)
+{
+	// Note: always emit TresholdChanged, since the server may cap the value
+	// if a low hard size limit is in place. This ensures the settings dialog
+	// value is always up to date.
+	m_sessionResetThreshold = threshold;
+	emit sessionResetThresholdChanged(threshold / double(1024*1024));
+}
+
+void Document::setBaseResetThreshold(int threshold)
+{
+	if(m_baseResetThreshold != threshold) {
+		m_baseResetThreshold = threshold;
+		emit baseResetThresholdChanged(threshold);
 	}
 }
 

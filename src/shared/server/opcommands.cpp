@@ -76,6 +76,13 @@ struct SrvCommandSet {
 
 const SrvCommandSet COMMANDS;
 
+void readyToAutoReset(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+	client->session()->readyToAutoReset(client->id());
+}
+
 void initBegin(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
@@ -248,6 +255,7 @@ void reportAbuse(Client *client, const QJsonArray &args, const QJsonObject &kwar
 SrvCommandSet::SrvCommandSet()
 {
 	commands
+		<< SrvCommand("ready-to-autoreset", readyToAutoReset)
 		<< SrvCommand("init-begin", initBegin)
 		<< SrvCommand("init-complete", initComplete)
 		<< SrvCommand("init-cancel", initCancel)

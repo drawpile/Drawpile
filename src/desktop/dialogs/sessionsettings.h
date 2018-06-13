@@ -67,6 +67,7 @@ private slots:
 
 	void permissionChanged();
 
+	void autoresetThresholdChanged();
 	void keepChatChanged(bool);
 	void persistenceChanged(bool);
 	void nsfmChanged(bool);

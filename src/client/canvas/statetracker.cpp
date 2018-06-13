@@ -249,7 +249,7 @@ void StateTracker::processQueuedCommands()
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
-	static const uint HISTORY_SIZE_LIMIT = 10 * 1024*1024;
+	static const uint HISTORY_SIZE_LIMIT = 60 * 1024*1024;
 
 	if(msg->type() == protocol::MSG_INTERNAL) {
 		const auto &ci = msg.cast<protocol::ClientInternal>();

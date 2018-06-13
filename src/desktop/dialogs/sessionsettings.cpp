@@ -58,6 +58,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_ui->maxUsers, &QSpinBox::editingFinished, this, &SessionSettingsDialog::maxUsersChanged);
 	connect(m_ui->denyJoins, &QCheckBox::clicked, this, &SessionSettingsDialog::denyJoinsChanged);
 	connect(m_ui->authOnly, &QCheckBox::clicked, this, &SessionSettingsDialog::authOnlyChanged);
+	connect(m_ui->autoresetThreshold, &QDoubleSpinBox::editingFinished, this, &SessionSettingsDialog::autoresetThresholdChanged);
 	connect(m_ui->preserveChat, &QCheckBox::clicked, this, &SessionSettingsDialog::keepChatChanged);
 	connect(m_ui->persistent, &QCheckBox::clicked, this, &SessionSettingsDialog::persistenceChanged);
 	connect(m_ui->nsfm, &QCheckBox::clicked, this, &SessionSettingsDialog::nsfmChanged);
@@ -73,16 +74,21 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
 		m_ui->authOnly->setChecked(authOnly);
 	});
-	connect(m_doc, &Document::sessionPasswordChanged, [this](bool hasPassword) {
+	connect(m_doc, &Document::sessionPasswordChanged, this, [this](bool hasPassword) {
 		m_ui->sessionPassword->setProperty("haspass", hasPassword);
 		updatePasswordLabel(m_ui->sessionPassword);
 	});
-	connect(m_doc, &Document::sessionOpwordChanged, [this](bool hasPassword) {
+	connect(m_doc, &Document::sessionOpwordChanged, this, [this](bool hasPassword) {
 		m_ui->opword->setProperty("haspass", hasPassword);
 		updatePasswordLabel(m_ui->opword);
 	});
 	connect(m_doc, &Document::sessionNsfmChanged, m_ui->nsfm, &QCheckBox::setChecked);
 	connect(m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers, &QSpinBox::setValue);
+	connect(m_doc, &Document::sessionResetThresholdChanged, m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
+	connect(m_doc, &Document::baseResetThresholdChanged, this, [this](int threshold) {
+		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'g', 1));
+	});
+
 
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());
@@ -300,6 +306,7 @@ void SessionSettingsDialog::authOnlyChanged(bool set)
 		m_ui->authOnly->setEnabled(false);
 }
 
+void SessionSettingsDialog::autoresetThresholdChanged() { changeSesionConf("resetThreshold", int(m_ui->autoresetThreshold->value()* 1024 * 1024)); }
 void SessionSettingsDialog::keepChatChanged(bool set) { changeSesionConf("preserveChat", set); }
 void SessionSettingsDialog::persistenceChanged(bool set) { changeSesionConf("persistent", set); }
 void SessionSettingsDialog::nsfmChanged(bool set) { changeSesionConf("nsfm", set); }

@@ -192,7 +192,7 @@ signals:
 	void bytesReceived(int);
 	void bytesSent(int);
 	void lagMeasured(qint64);
-	void serverHistoryLimitReceived(int maxSpace);
+	void autoresetRequested(int maxSize, bool query);
 	void serverStatusUpdate(int historySize);
 
 private slots:

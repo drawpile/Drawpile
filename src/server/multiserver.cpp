@@ -369,6 +369,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 	const ConfigKey settings[] = {
 		config::ClientTimeout,
 		config::SessionSizeLimit,
+		config::AutoresetThreshold,
 		config::SessionCountLimit,
 		config::EnablePersistence,
 		config::ArchiveMode,

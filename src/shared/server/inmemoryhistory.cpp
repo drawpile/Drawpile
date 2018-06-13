@@ -29,6 +29,7 @@ InMemoryHistory::InMemoryHistory(const QUuid &id, const QString &alias, const pr
 	  m_version(version),
 	  m_startTime(QDateTime::currentDateTime()),
 	  m_maxUsers(254),
+	  m_autoReset(0),
 	  m_flags(0)
 {
 }

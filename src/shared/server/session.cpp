@@ -52,11 +52,11 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_refreshTimer(nullptr),
 	m_closed(false),
 	m_authOnly(false),
-	m_historyLimitWarningSent(false)
+	m_autoResetRequestStatus(AutoResetState::NotSent)
 {
 	m_history->setParent(this);
 	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
-	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
+	m_history->setAutoResetThreshold(config->getConfigSize(config::AutoresetThreshold));
 
 	m_lastEventTime.start();
 	m_lastStatusUpdate.start();
@@ -132,7 +132,7 @@ void Session::switchState(State newstate)
 				catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
 				directToAll(MessagePtr(new protocol::Command(0, catchup)));
 
-				m_historyLimitWarningSent = false;
+				m_autoResetRequestStatus = AutoResetState::NotSent;
 
 				sendUpdatedSessionProperties();
 			}
@@ -216,15 +216,6 @@ void Session::joinUser(Client *user, bool host)
 		changeTrustedStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
-
-	// Let new users know about the size limit too
-	if(m_historyLimitWarning > 0 && m_history->sizeInBytes() > m_historyLimitWarning) {
-		protocol::ServerReply warning;
-		warning.type = protocol::ServerReply::SIZELIMITWARNING;
-		warning.reply["size"] = int(m_history->sizeInBytes());
-		warning.reply["maxSize"] = int(m_historyLimitWarning);
-		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
-	}
 
 	// Make sure everyone is up to date
 	sendUpdatedAnnouncementList();
@@ -375,6 +366,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	if(conf.contains("maxUserCount")) {
 		m_history->setMaxUsers(conf["maxUserCount"].toInt());
 		changes << "changed max. user count";
+	}
+
+	if(conf.contains("resetThreshold")) {
+		m_history->setAutoResetThreshold(conf["resetThreshold"].toInt());
+		changes << "changed autoreset threshold";
 	}
 
 	if(conf.contains("password")) {
@@ -562,6 +558,8 @@ void Session::sendUpdatedSessionProperties()
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
 	conf["maxUserCount"] = m_history->maxUsers();
+	conf["resetThreshold"] = int(m_history->autoResetThreshold());
+	conf["resetThresholdBase"] = int(m_history->autoResetThresholdBase());
 	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
 	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
 	conf["hasPassword"] = hasPassword();
@@ -666,18 +664,42 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		m_recorder->recordMessage(msg);
 	m_lastEventTime.start();
 
-	// Send a warning if approaching size limit.
-	// The clients should update their internal size limits and reset the session when necessary.
-	if(m_historyLimitWarning>0 && !m_historyLimitWarningSent && m_history->sizeInBytes() > m_historyLimitWarning) {
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("History limit warning treshold reached."));
+	// Request auto-reset when threshold is crossed.
+	const uint autoResetThreshold = m_history->effectiveAutoResetThreshold();
+	if(autoResetThreshold>0 && m_autoResetRequestStatus == AutoResetState::NotSent && m_history->sizeInBytes() > autoResetThreshold) {
+		log(Log().about(Log::Level::Info, Log::Topic::Status).message(
+			QString("Autoreset threshold (%1, effectively %2 MB) reached.")
+				.arg(m_history->autoResetThreshold()/(1024.0*1024.0), 0, 'g', 1)
+				.arg(autoResetThreshold/(1024.0*1024.0), 0, 'g', 1)
+		));
 
+		// Legacy alert for Drawpile 2.0.x versions
 		protocol::ServerReply warning;
 		warning.type = protocol::ServerReply::SIZELIMITWARNING;
 		warning.reply["size"] = int(m_history->sizeInBytes());
-		warning.reply["maxSize"] = int(m_historyLimitWarning);
+		warning.reply["maxSize"] = int(autoResetThreshold);
 
 		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
-		m_historyLimitWarningSent = true;
+
+		// New style for Drawpile 2.1.0 and newer
+		// Autoreset request: send an autoreset query to each logged in user.
+		// The user that responds first gets to perform the reset.
+		protocol::ServerReply resetRequest;
+		resetRequest.type = protocol::ServerReply::RESETREQUEST;
+		resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
+		resetRequest.reply["query"] = true;
+		protocol::MessagePtr reqMsg { new protocol::Command(0, resetRequest )};
+
+		// The request is sent only to clients that are fully caught up.
+		// Otherwise, a freshly joined client could end up rolling back
+		// the canvas to an earlier state.
+		const int uptodateThreshold = m_history->lastIndex() - 1;
+		for(Client *c : m_clients) {
+			if(c->isOperator() && c->historyPosition() >= uptodateThreshold)
+				c->sendDirectMessage(reqMsg);
+		}
+
+		m_autoResetRequestStatus = AutoResetState::Queried;
 	}
 
 	// Regular history size status updates
@@ -708,6 +730,39 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 				resetter->disconnectError("History limit exceeded");
 		}
 	}
+}
+
+void Session::readyToAutoReset(int ctxId)
+{
+	Client *c = getClientById(ctxId);
+	if(!c) {
+		// Shouldn't happen
+		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent ready-to-autoreset").arg(ctxId)));
+		return;
+	}
+
+	if(!c->isOperator()) {
+		// Unlikely to happen normally, but possible if connection is
+		// really slow and user is deopped at just the right moment
+		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("User %1 is not an operator, but sent ready-to-autoreset").arg(ctxId)));
+		return;
+	}
+
+	if(m_autoResetRequestStatus != AutoResetState::Queried) {
+		// Only the first response in handled
+		log(Log().about(Log::Level::Debug, Log::Topic::Status).message(QString("User %1 was late to respond to an autoreset request").arg(ctxId)));
+		return;
+	}
+
+	log(Log().about(Log::Level::Info, Log::Topic::Status).message(QString("User %1 responded to autoreset request first").arg(ctxId)));
+
+	protocol::ServerReply resetRequest;
+	resetRequest.type = protocol::ServerReply::RESETREQUEST;
+	resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
+	resetRequest.reply["query"] = false;
+	c->sendDirectMessage(protocol::MessagePtr { new protocol::Command(0, resetRequest )});
+
+	m_autoResetRequestStatus = AutoResetState::Requested;
 }
 
 void Session::handleInitBegin(int ctxId)
@@ -1168,6 +1223,7 @@ QJsonObject Session::getDescription(bool full) const
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
 		o["maxSize"] = int(m_history->sizeLimit());
+		o["resetThreshold"] = int(m_history->autoResetThreshold());
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {

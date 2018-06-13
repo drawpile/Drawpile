@@ -21,7 +21,8 @@
 namespace server {
 
 SessionHistory::SessionHistory(const QUuid &id, QObject *parent)
-	: QObject(parent), m_id(id), m_sizeInBytes(0), m_sizeLimit(0), m_firstIndex(0), m_lastIndex(-1)
+	: QObject(parent), m_id(id), m_sizeInBytes(0), m_sizeLimit(0), m_autoResetBaseSize(0),
+	  m_firstIndex(0), m_lastIndex(-1)
 {
 }
 
@@ -53,6 +54,7 @@ void SessionHistory::historyLoaded(uint size, int messageCount)
 	Q_ASSERT(m_lastIndex==-1);
 	m_sizeInBytes = size;
 	m_lastIndex = messageCount - 1;
+	m_autoResetBaseSize = size;
 }
 
 bool SessionHistory::addMessage(const protocol::MessagePtr &msg)
@@ -79,9 +81,20 @@ bool SessionHistory::reset(const QList<protocol::MessagePtr> &newHistory)
 	m_sizeInBytes = newSize;
 	m_firstIndex = m_lastIndex + 1;
 	m_lastIndex += newHistory.size();
+	m_autoResetBaseSize = newSize;
 	historyReset(newHistory);
 	emit newMessagesAvailable();
 	return true;
+}
+
+uint SessionHistory::effectiveAutoResetThreshold() const
+{
+	const uint t = autoResetThreshold();
+	// Zero means autoreset is not enabled
+	if(t>0)
+		return m_autoResetBaseSize + t;
+	else
+		return 0;
 }
 
 }

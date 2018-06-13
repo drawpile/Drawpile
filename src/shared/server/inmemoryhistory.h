@@ -54,6 +54,8 @@ public:
 	void setTitle(const QString &title) override { m_title = title; }
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
+	void setAutoResetThreshold(uint limit) override { m_autoReset = qMin(uint(sizeLimit() * 0.7), limit); }
+	uint autoResetThreshold() const override { return m_autoReset; }
 
 	void addAnnouncement(const QString &url) override { m_announcements.insert(url); }
 	void removeAnnouncement(const QString &url) override { m_announcements.remove(url); }
@@ -84,6 +86,7 @@ private:
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;
+	uint m_autoReset;
 	Flags m_flags;
 };
 

@@ -63,7 +63,6 @@ class Document : public QObject
 	Q_PROPERTY(QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
 	Q_PROPERTY(QString currentFilename READ currentFilename() NOTIFY currentFilenameChanged)
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
-	Q_PROPERTY(bool serverSpaceLow READ isServerSpaceLow NOTIFY serverSpaceLowChanged)
 
 	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY sessionPersistentChanged)
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
@@ -73,6 +72,8 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
+	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY sessionResetThresholdChanged)
+	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY baseResetThresholdChanged)
 	Q_PROPERTY(QString roomcode READ roomcode NOTIFY sessionRoomcodeChanged)
 
 	Q_OBJECT
@@ -131,7 +132,6 @@ public:
 	void stopRecording();
 
 	bool isDirty() const { return m_dirty; }
-	bool isServerSpaceLow() const { return m_serverSpaceLow; }
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
@@ -141,6 +141,8 @@ public:
 	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
+	double sessionResetThreshold() const { return m_sessionResetThreshold/double(1024*1024); }
+	double baseResetThreshold() const { return m_baseResetThreshold/double(1024*1024); }
 
 	QString roomcode() const { return m_roomcode; }
 
@@ -169,7 +171,8 @@ signals:
 	void sessionNsfmChanged(bool nsfm);
 	void sessionMaxUserCountChanged(int count);
 	void sessionRoomcodeChanged(const QString &code);
-	void serverSpaceLowChanged(bool isLow);
+	void sessionResetThresholdChanged(double threshold);
+	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 
 	void catchupProgress(int perent);
@@ -218,7 +221,7 @@ private slots:
 	void onSessionResetted();
 
 	void onSessionConfChanged(const QJsonObject &config);
-	void onServerHistoryLimitReceived(int maxSpace);
+	void onAutoresetRequested(int maxSize, bool query);
 
 	void snapshotNeeded();
 	void markDirty();
@@ -238,6 +241,8 @@ private:
 	void setSessionPasswordProtected(bool pp);
 	void setSessionOpword(bool ow);
 	void setSessionMaxUserCount(int count);
+	void setSessionResetThreshold(int threshold);
+	void setBaseResetThreshold(int threshold);
 	void setSessionNsfm(bool nsfm);
 	void setRoomcode(const QString &roomcode);
 
@@ -275,10 +280,11 @@ private:
 	bool m_sessionPasswordProtected;
 	bool m_sessionOpword;
 	bool m_sessionNsfm;
-	bool m_serverSpaceLow;
 
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;
+	int m_sessionResetThreshold;
+	int m_baseResetThreshold;
 };
 
 #endif // DOCUMENT_H

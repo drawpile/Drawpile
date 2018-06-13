@@ -107,6 +107,18 @@ public:
 	//! Remember a user who joined
 	virtual void joinUser(uint8_t id, const QString &name);
 
+	//! Set the history size threshold for requesting autoreset
+	virtual void setAutoResetThreshold(uint limit) = 0;
+
+	//! Get the history autoreset request threshold
+	virtual uint autoResetThreshold() const = 0;
+
+	//! Get the final autoreset threshold that includes the reset image base size
+	uint effectiveAutoResetThreshold() const;
+
+	//! Get the reset image base size
+	uint autoResetThresholdBase() const { return m_autoResetBaseSize; }
+
 	/**
 	 * @brief Add a new message to the history
 	 *
@@ -154,9 +166,11 @@ public:
 	virtual void terminate() = 0;
 
 	/**
-	 * @brief Set the size limit for the history.
+	 * @brief Set the hard size limit for the history.
 	 *
 	 * The size limit is checked when new messages are added to the session.
+	 *
+	 * See also the autoreset threshold.
 	 *
 	 * @param limit maximum size in bytes or 0 for no limit
 	 */
@@ -291,6 +305,7 @@ private:
 
 	uint m_sizeInBytes;
 	uint m_sizeLimit;
+	uint m_autoResetBaseSize;
 	int m_firstIndex;
 	int m_lastIndex;
 };

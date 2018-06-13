@@ -358,6 +358,7 @@ public:
 	//! Get the session state
 	State state() const { return m_state; }
 
+	void readyToAutoReset(int ctxId);
 	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
 	void handleInitCancel(int ctxId);
@@ -510,7 +511,6 @@ private:
 	SessionHistory *m_history;
 	QList<protocol::MessagePtr> m_resetstream;
 	uint m_resetstreamsize;
-	uint m_historyLimitWarning;
 
 	QList<sessionlisting::Announcement> m_publicListings;
 	sessionlisting::AnnouncementApi *m_publicListingClient;
@@ -521,7 +521,7 @@ private:
 
 	bool m_closed;
 	bool m_authOnly;
-	bool m_historyLimitWarningSent;
+	enum class AutoResetState { NotSent, Queried, Requested} m_autoResetRequestStatus;
 };
 
 }

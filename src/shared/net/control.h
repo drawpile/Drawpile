@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,10 +52,11 @@ struct ServerReply {
 		RESULT,  // comand result
 		LOG,     // server log message
 		SESSIONCONF, // session configuration update
-		SIZELIMITWARNING, // session history size nearing limit
+		SIZELIMITWARNING, // session history size nearing limit (deprecated)
 		STATUS,  // Periodic status update
 		RESET,   // session reset state
-		CATCHUP  // number of messages queued for upload (use for progress bars)
+		CATCHUP,  // number of messages queued for upload (use for progress bars)
+		RESETREQUEST // request client to perform a reset
 	} type;
 	QString message;
 	QJsonObject reply;
