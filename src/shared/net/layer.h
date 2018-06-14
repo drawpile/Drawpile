@@ -137,18 +137,22 @@ private:
  *
  * If the current layer or layer controls in general are locked, this command
  * requires session operator privileges.
+ *
+ * Specifying a sublayer requires session operator privileges. Currently, it is used
+ * only when sublayers are needed at canvas initialization.
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t opacity, uint8_t blend)
+	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t sublayer, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR, ctx), m_id(id),
-		m_opacity(opacity), m_blend(blend)
+		m_sublayer(sublayer), m_opacity(opacity), m_blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerAttributes *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint16_t layer() const override { return m_id; }
+	uint8_t sublayer() const { return m_sublayer; }
 	uint8_t opacity() const { return m_opacity; }
 	uint8_t blend() const { return m_blend; }
 
@@ -161,6 +165,7 @@ protected:
 
 private:
 	uint16_t m_id;
+	uint8_t m_sublayer;
 	uint8_t m_opacity;
 	uint8_t m_blend;
 };

@@ -102,10 +102,10 @@ QList<protocol::MessagePtr> LayerTileSet::toInitCommands(int contextId, int laye
 	for(const TileRun &t : tiles) {
 		Q_ASSERT(t.len>0);
 		if(t.color.isValid()) {
-			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, t.col, t.row, t.len-1, t.color.rgba()));
+			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, 0, t.col, t.row, t.len-1, t.color.rgba()));
 		} else {
 			Q_ASSERT(!t.tile.isNull());
-			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, t.col, t.row, t.len-1,
+			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, 0, t.col, t.row, t.len-1,
 				qCompress(reinterpret_cast<const uchar*>(t.tile.constData()), paintcore::Tile::BYTES)
 				));
 		}

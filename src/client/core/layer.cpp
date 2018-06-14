@@ -509,10 +509,17 @@ void Layer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 	}
 }
 
-void Layer::putTile(int col, int row, int repeat, const Tile &tile)
+void Layer::putTile(int col, int row, int repeat, const Tile &tile, int sublayer)
 {
 	if(col<0 || col >= m_xtiles || row<0 || row >= m_ytiles)
 		return;
+
+	if(sublayer != 0) {
+		// LayerAttributes command can be used to set the sublayer's blendmode
+		// and opacity before calling putTile, if necessary.
+		getSubLayer(sublayer, BlendMode::MODE_NORMAL, 255)->putTile(col, row, repeat, tile, 0);
+		return;
+	}
 
 	int i=row*m_xtiles+col;
 	const int end = qMin(i+repeat, m_tiles.size()-1);

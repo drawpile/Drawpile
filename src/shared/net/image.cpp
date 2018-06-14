@@ -126,35 +126,37 @@ static QByteArray colorByteArray(quint32 c)
 	return ba;
 }
 
-PutTile::PutTile(uint8_t ctx, uint16_t layer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color)
-	: PutTile(ctx, layer, col, row, repeat, colorByteArray(color))
+PutTile::PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color)
+	: PutTile(ctx, layer, sublayer, col, row, repeat, colorByteArray(color))
 {
 }
 
 PutTile *PutTile::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len < 12)
+	if(len < 13)
 		return nullptr;
 
 	return new PutTile(
 		ctx,
 		qFromBigEndian<quint16>(data+0),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		QByteArray((const char*)data+8, len-8)
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		QByteArray((const char*)data+9, len-9)
 	);
 }
 
 int PutTile::payloadLength() const
 {
-	return 8 + m_image.length();
+	return 9 + m_image.length();
 }
 
 int PutTile::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	qToBigEndian(m_layer, ptr); ptr += 2;
+	*(ptr++) = m_sublayer;
 	qToBigEndian(m_col, ptr); ptr += 2;
 	qToBigEndian(m_row, ptr); ptr += 2;
 	qToBigEndian(m_repeat, ptr); ptr += 2;
@@ -176,6 +178,7 @@ bool PutTile::payloadEquals(const Message &m) const
 	const PutTile &p = static_cast<const PutTile&>(m);
 	return
 		layer() == p.layer() &&
+		sublayer() == p.sublayer() &&
 		column() == p.column() &&
 		row() == p.row() &&
 		repeat() == p.repeat() &&
@@ -186,6 +189,8 @@ Kwargs PutTile::kwargs() const
 {
 	Kwargs kw;
 	kw["layer"] = text::idString(m_layer);
+	if(m_sublayer>0)
+		kw["sublayer"] = QString::number(m_sublayer);
 	kw["row"] = QString::number(m_row);
 	kw["col"] = QString::number(m_col);
 	if(m_repeat>0)
@@ -213,8 +218,9 @@ PutTile *PutTile::fromText(uint8_t ctx, const Kwargs &kwargs)
 	return new PutTile(
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
-		kwargs["row"].toInt(),
+		kwargs["sublayer"].toInt(),
 		kwargs["col"].toInt(),
+		kwargs["row"].toInt(),
 		kwargs["repeat"].toInt(),
 		img
 		);

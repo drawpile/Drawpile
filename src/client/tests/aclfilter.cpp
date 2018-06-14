@@ -40,6 +40,8 @@ private slots:
 		QTest::newRow("0 owner") << true; // server can send this one too
 		QTest::newRow("1 owner") << true;
 		QTest::newRow("2 owner") << true; // this is validated on the server side; client trusts everything
+		QTest::newRow("1 layerattr sublayer=1") << true;
+		QTest::newRow("2 layerattr sublayer=1") << false;
 		QTest::newRow("1 useracl") << true;
 		QTest::newRow("2 useracl") << false;
 		QTest::newRow("1 layeracl") << true;
@@ -98,8 +100,9 @@ private slots:
 		QCOMPARE(acl.filterMessage(*msg("2 newlayer id=0x0201")), true);
 
 		// But can only edit one's own layers
-		QCOMPARE(acl.filterMessage(*msg("2 layerattr id=0x0201")), true);
-		QCOMPARE(acl.filterMessage(*msg("2 layerattr id=0x0101")), false);
+		QCOMPARE(acl.filterMessage(*msg("2 layerattr layer=0x0201 sublayer=2")), false); // except sublayers
+		QCOMPARE(acl.filterMessage(*msg("2 layerattr layer=0x0201")), true);
+		QCOMPARE(acl.filterMessage(*msg("2 layerattr layer=0x0101")), false);
 		QCOMPARE(acl.filterMessage(*msg("2 retitlelayer id=0x0201")), true);
 		QCOMPARE(acl.filterMessage(*msg("2 retitlelayer id=0x0101")), false);
 		QCOMPARE(acl.filterMessage(*msg("2 deletelayer id=0x0201")), true);

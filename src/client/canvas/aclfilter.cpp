@@ -27,6 +27,10 @@
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
 
+#ifndef Q_FALLTHROUGH // not present in Qt 5.6
+#define Q_FALLTHROUGH() (void)0
+#endif
+
 namespace canvas {
 
 AclFilter::AclFilter(QObject *parent)
@@ -200,6 +204,12 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		return tier <= featureTier(Feature::EditLayers) || tier <= featureTier(Feature::OwnLayers);
 	}
 	case MSG_LAYER_ATTR:
+		if(static_cast<const protocol::LayerAttributes&>(msg).sublayer()>0 && tier > Tier::Op) {
+			// Direct sublayer editing is used only by operators during session init
+			return false;
+		}
+		Q_FALLTHROUGH();
+
 	case MSG_LAYER_RETITLE:
 	case MSG_LAYER_DELETE: {
 		const uint8_t createdBy = layerCreator(msg.layer());

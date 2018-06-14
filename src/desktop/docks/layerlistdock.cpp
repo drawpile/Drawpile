@@ -236,7 +236,7 @@ void LayerList::sendOpacityUpdate()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, m_ui->opacity->value(), int(layer.blend))));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, 0, m_ui->opacity->value(), int(layer.blend))));
 	}
 }
 
@@ -249,7 +249,7 @@ void LayerList::blendModeChanged()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, layer.opacity*255, m_ui->blendmode->currentData().toInt())));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, 0, layer.opacity*255, m_ui->blendmode->currentData().toInt())));
 	}
 }
 

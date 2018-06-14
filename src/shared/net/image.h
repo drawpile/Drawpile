@@ -86,6 +86,9 @@ private:
  *
  * Unlike PutImage, this replaces an entire tile directly without any blending.
  * This command is typically used during canvas initialization to set the initial content.
+ *
+ * PutTiles can be targeted at sublayers as well. This is used when generating a reset image
+ * with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
  */
 class PutTile : public Message {
 public:
@@ -93,24 +96,26 @@ public:
 	 * @brief Construct a solid color PutTile
 	 * @param ctx context ID
 	 * @param layer target layer
+	 * @param sublayer sublayer (0 means no sublayer)
 	 * @param col tile column
 	 * @param row tile row
 	 * @param repeat put this many extra tiles
 	 * @param color tile fill color ARGB (unpremultiplied)
 	 */
-	PutTile(uint8_t ctx, uint16_t layer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color);
+	PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color);
 
 	/**
 	 * @brief Construct a PutTile
 	 * @param ctx context ID
 	 * @param layer target layer
+	 * @param sublayer sublayer (0 means no sublayer)
 	 * @param col tile column
 	 * @param row tile row
 	 * @param repeat put this many extra tiles
 	 * @param image tile content. Uncompressed length must be 64x64x4
 	 */
-	PutTile(uint8_t ctx, uint16_t layer, uint16_t col, uint16_t row, uint16_t repeat, const QByteArray &image)
-	: Message(MSG_PUTTILE, ctx), m_layer(layer), m_col(col), m_row(row), m_repeat(repeat), m_image(image)
+	PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, const QByteArray &image)
+	: Message(MSG_PUTTILE, ctx), m_layer(layer), m_col(col), m_row(row), m_repeat(repeat), m_sublayer(sublayer), m_image(image)
 	{
 		// Note: an uncompressed tile is only 16KB, so this should never be
 		// anywhere near this long
@@ -122,6 +127,7 @@ public:
 	static PutTile *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	uint16_t layer() const override { return m_layer; }
+	uint8_t sublayer() const { return m_sublayer; }
 	uint16_t column() const { return m_col; }
 	uint16_t row() const { return m_row; }
 	uint16_t repeat() const { return m_repeat; }
@@ -143,6 +149,7 @@ private:
 	uint16_t m_col;
 	uint16_t m_row;
 	uint16_t m_repeat;
+	uint8_t m_sublayer;
 	QByteArray m_image;
 };
 

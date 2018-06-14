@@ -110,6 +110,7 @@ Protocol stability promises:
  * General session lock is now applied with the LayerACL command by using layer ID 0
  * Removed "lock new users by default" feature
  * Replaced SessionACL message with FeatureAccessLevels message
+ * Added sublayer field to LayerAttributes command
 
 ### Protocol dp:4.20.1 (2.0.9)
 

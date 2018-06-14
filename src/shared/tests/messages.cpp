@@ -46,11 +46,12 @@ private slots:
 		QTest::newRow("undopoint") << (Message*)new UndoPoint(15);
 		QTest::newRow("canvasresize") << (Message*)new CanvasResize(16, -0xfff, 0xaaa, -0xbbb, 0xccc);
 		QTest::newRow("layercreate") << (Message*)new LayerCreate(17, 0xaabb, 0xccdd, 0x11223344, 0x01, QString("Test layer"));
-		QTest::newRow("layerattributes") << (Message*)new LayerAttributes(18, 0xaabb, 0xcc, 0x10);
+		QTest::newRow("layerattributes") << (Message*)new LayerAttributes(18, 0xaabb, 0xcc, 0xdd, 0x10);
 		QTest::newRow("layerretitle") << (Message*)new LayerRetitle(19, 0xaabb, QString("Test"));
 		QTest::newRow("layerorder") << (Message*)new LayerOrder(20, QList<uint16_t>() << 0x1122 << 0x3344 << 0x4455);
 		QTest::newRow("layervisibility") << (Message*)new LayerVisibility(21, 0x1122, 1);
 		QTest::newRow("putimage") << (Message*)new PutImage(22, 0x1122, 0x10, 100, 200, 300, 400, QByteArray("Test"));
+		QTest::newRow("puttile") << (Message*)new PutTile(22, 0x1122, 0x10, 1, 2, 3, 0xaabbccdd);
 		QTest::newRow("fillrect") << (Message*)new FillRect(23, 0x1122, 0x10, 3, 200, 300, 400, 0x11223344);
 		QTest::newRow("penup") << (Message*)new PenUp(26);
 		QTest::newRow("annotationcreate") << (Message*)new AnnotationCreate(27, 0x1122, -100, -100, 200, 200);

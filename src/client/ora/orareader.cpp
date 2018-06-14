@@ -462,6 +462,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		result.commands << MessagePtr(new protocol::LayerAttributes(
 			ctxId,
 			layerId,
+			0,
 			qRound(255 * layer.opacity),
 			blendmode
 			));

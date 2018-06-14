@@ -142,7 +142,7 @@ class Layer {
 		void putImage(int x, int y, QImage image, BlendMode::Mode mode);
 
 		//! Set a tile
-		void putTile(int col, int row, int repeat, const Tile &tile);
+		void putTile(int col, int row, int repeat, const Tile &tile, int sublayer=0);
 
 		//! Dab a brush
 		void putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode);

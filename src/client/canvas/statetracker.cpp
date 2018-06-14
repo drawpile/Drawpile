@@ -524,10 +524,20 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 		qWarning() << "received layer attributes for non-existent layer" << cmd.layer();
 		return;
 	}
-	
-	layer->setOpacity(cmd.opacity());
-	layer->setBlend(paintcore::BlendMode::Mode(cmd.blend()));
-	m_layerlist->changeLayer(layer->id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+
+	const auto bm = paintcore::BlendMode::Mode(cmd.blend());
+
+	if(cmd.sublayer()>0) {
+		paintcore::Layer *sl = layer->getSubLayer(cmd.sublayer(), bm, cmd.opacity());
+		// getSubLayer does not touch the attributes if the sublayer already exists
+		sl->setBlend(bm);
+		sl->setOpacity(cmd.opacity());
+
+	} else {
+		layer->setBlend(bm);
+		layer->setOpacity(cmd.opacity());
+		m_layerlist->changeLayer(layer->id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+	}
 }
 
 void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
@@ -654,7 +664,7 @@ void StateTracker::handlePutTile(const protocol::PutTile &cmd)
 		t = paintcore::Tile(data);
 	}
 
-	layer->putTile(cmd.column(), cmd.row(), cmd.repeat(), t);
+	layer->putTile(cmd.column(), cmd.row(), cmd.repeat(), t, cmd.sublayer());
 }
 
 void StateTracker::handleFillRect(const protocol::FillRect &cmd)
