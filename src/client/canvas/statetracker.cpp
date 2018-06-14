@@ -941,10 +941,6 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 
 void StateTracker::makeSavepoint(int pos)
 {
-	// Make sure there is something in the message stream buffer
-	if(m_history.end() <= m_history.offset())
-		return;
-
 	// Don't make savepoints while a local fork exists, since
 	// there will be stuff on the canvas that is not yet in
 	// the mainline session history
