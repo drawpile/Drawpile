@@ -2485,12 +2485,11 @@ void MainWindow::setupActions()
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).shortcut("F10");
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).shortcut("F11").menuRole(QAction::NoRole).disabled();
 
+	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
 
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
-
-	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the drawing board")).shortcut("F12").checkable();
 
@@ -2522,12 +2521,12 @@ void MainWindow::setupActions()
 	sessionmenu->addSeparator();
 
 	QMenu *modmenu = sessionmenu->addMenu(tr("Moderation"));
+	modmenu->addAction(gainop);
 	modmenu->addAction(resetsession);
 	modmenu->addAction(terminatesession);
 
 	sessionmenu->addAction(reportabuse);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(gainop);
 	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);
 	sessionmenu->addAction(locksession);
