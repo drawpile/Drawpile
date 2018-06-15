@@ -45,7 +45,8 @@ using widgets::GroupedToolButton;
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), m_noupdate(false)
+	: QDockWidget(tr("Layers"), parent), m_canvas(nullptr), m_selectedId(0), m_noupdate(false),
+	m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr), m_mergeLayerAction(nullptr), m_deleteLayerAction(nullptr)
 {
 	m_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -86,15 +87,6 @@ LayerList::LayerList(QWidget *parent)
 	m_ui->lockButton->setMenu(m_aclmenu);
 
 	connect(m_ui->layerlist, &QListView::customContextMenuRequested, this, &LayerList::layerContextMenu);
-
-	// Layer edit menu (hamburger button)
-	QMenu *boxmenu = new QMenu(this);
-	m_addLayerAction = boxmenu->addAction(tr("New"), this, SLOT(addLayer()));
-	m_duplicateLayerAction = boxmenu->addAction(tr("Duplicate"), this, SLOT(duplicateLayer()));
-	m_mergeLayerAction = boxmenu->addAction(tr("Merge down"), this, SLOT(mergeSelected()));
-	m_deleteLayerAction = boxmenu->addAction(tr("Delete"), this, SLOT(deleteSelected()));
-
-	m_ui->menuButton->setMenu(boxmenu);
 
 	connect(m_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
@@ -146,6 +138,25 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	updateLockedControls();
 }
 
+void LayerList::setLayerEditActions(QAction *add, QAction *duplicate, QAction *merge, QAction *del)
+{
+	Q_ASSERT(add);
+	Q_ASSERT(duplicate);
+	Q_ASSERT(merge);
+	Q_ASSERT(del);
+	m_addLayerAction = add;
+	m_duplicateLayerAction = duplicate;
+	m_mergeLayerAction = merge;
+	m_deleteLayerAction = del;
+
+	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
+	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
+	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
+	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
+
+	updateLockedControls();
+}
+
 void LayerList::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 {
 	Q_UNUSED(canUse);
@@ -165,16 +176,21 @@ void LayerList::updateLockedControls()
 
 	// Layer creation actions work as long as we have an editing permission
 	const bool canAdd = canEdit | ownLayers;
-	m_addLayerAction->setEnabled(canAdd);
-	m_menuInsertAction->setEnabled(canAdd);
+	const bool hasEditActions = m_addLayerAction != nullptr;
+	if(hasEditActions) {
+		m_addLayerAction->setEnabled(canAdd);
+		m_menuInsertAction->setEnabled(canAdd);
+	}
 
 	// Rest of the controls need a selection to work.
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_ui->lockButton->setEnabled(enabled || (m_canvas && !m_canvas->isOnline())); // layer lock is available in offline mode
-	m_duplicateLayerAction->setEnabled(enabled);
-	m_deleteLayerAction->setEnabled(enabled);
-	m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
+	if(hasEditActions) {
+		m_duplicateLayerAction->setEnabled(enabled);
+		m_deleteLayerAction->setEnabled(enabled);
+		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
+	}
 	m_ui->opacity->setEnabled(enabled);
 	m_ui->blendmode->setEnabled(enabled);
 

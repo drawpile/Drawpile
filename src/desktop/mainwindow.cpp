@@ -2180,7 +2180,7 @@ void MainWindow::setupActions()
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
-	QAction *canvasBackground = makeAction("canvas-background", tr("Set Background"));
+	QAction *canvasBackground = makeAction("canvas-background", tr("Set Background..."));
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
@@ -2436,8 +2436,15 @@ void MainWindow::setupActions()
 	viewmenu->addAction(fullscreen);
 
 	//
-	// Layers menu
+	// Layer menu
 	//
+	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert");
+	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer"));
+	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below"));
+	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer"));
+
+	m_dockLayers->setLayerEditActions(layerAdd, layerDupe, layerMerge, layerDelete);
+
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).checkable();
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable();
@@ -2451,7 +2458,13 @@ void MainWindow::setupActions()
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
 
-	QMenu *layerMenu = menuBar()->addMenu(tr("&Layers"));
+	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
+	layerMenu->addAction(layerAdd);
+	layerMenu->addAction(layerDupe);
+	layerMenu->addAction(layerMerge);
+	layerMenu->addAction(layerDelete);
+
+	layerMenu->addSeparator();
 	layerMenu->addAction(layerSolo);
 	layerMenu->addAction(layerOnionskin);
 	layerMenu->addAction(layerNumbers);

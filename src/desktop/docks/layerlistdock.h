@@ -52,6 +52,9 @@ public:
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
+	//! These actions are shown in a menu outside this dock
+	void setLayerEditActions(QAction *add, QAction *duplicate, QAction *merge, QAction *del);
+
 	bool isCurrentLayerLocked() const;
 
 public slots:
