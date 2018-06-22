@@ -31,7 +31,7 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="75"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>被以下禁止访问：</translation>
     </message>
 </context>
 <context>
@@ -449,7 +449,7 @@
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="14"/>
         <source>Flipbook</source>
-        <translation>图层翻页GIF</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="86"/>
@@ -501,7 +501,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="95"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>可选，如果不填写，加入房间将不需要密码</translation>
+        <translation>可选，如果不填写，加入房间将不需要密码。</translation>
     </message>
     <message>
         <source>&amp;ID:</source>
@@ -510,7 +510,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="128"/>
         <source>Announce the session at a public list</source>
-        <translation>在公开列表中广播</translation>
+        <translation>列于公开列表</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="131"/>
@@ -644,7 +644,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="17"/>
         <source>Join a Session</source>
-        <translation>加入连接</translation>
+        <translation>加入房间</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="28"/>
@@ -659,7 +659,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="91"/>
         <source>Record session</source>
-        <translation>录制连接内容</translation>
+        <translation>录制房间内容</translation>
     </message>
 </context>
 <context>
@@ -791,7 +791,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="734"/>
         <source>You are still connected to a drawing session.</source>
-        <translation>您还有未退出的连接</translation>
+        <translation>您还有未退出的房间</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="738"/>
@@ -860,7 +860,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1245"/>
         <source>Really leave the session?</source>
-        <translation>确认断开连接？</translation>
+        <translation>确认离开房间？</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1251"/>
@@ -884,7 +884,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1380"/>
         <source>Would you like to join the session instead?</source>
-        <translation>要改为加入连接吗？</translation>
+        <translation>要改为加入房间吗？</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1382"/>
@@ -1080,22 +1080,22 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2113"/>
         <source>Mirror</source>
-        <translation>镜像翻转</translation>
+        <translation>水平翻转</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2114"/>
         <source>Flip</source>
-        <translation>纵向翻转</translation>
+        <translation>垂直翻转</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2214"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>用户光标</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定全部</translation>
     </message>
     <message>
         <source>Show Crosshair C&amp;ursor</source>
@@ -1174,7 +1174,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2231"/>
         <source>Leave this drawing session</source>
-        <translation>退出这个绘图连接</translation>
+        <translation>退出这个绘图房间</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2240"/>
@@ -1292,7 +1292,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1119"/>
         <source>Record Session</source>
-        <translation>录制连接</translation>
+        <translation>录制房间</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1092"/>
@@ -1302,7 +1302,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1184"/>
         <source>Host Session</source>
-        <translation>创建连接</translation>
+        <translation>创建房间</translation>
     </message>
     <message>
         <source>Session Title</source>
@@ -2119,12 +2119,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>事件日志</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="20"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选</translation>
     </message>
 </context>
 <context>
@@ -2132,7 +2132,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionlisting.ui" line="14"/>
         <source>Public sessions</source>
-        <translation>公有连接</translation>
+        <translation>公开房间</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionlisting.ui" line="25"/>
@@ -2424,12 +2424,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="107"/>
         <source>Checking this may fix jaggy line and offset bugs on some tablets</source>
-        <translation type="unfinished">Checking this may fix jaggy line and offset bugs on some tablets</translation>
+        <translatorcomment>勾选此项也许会修复锯齿线和数位板错误</translatorcomment>
+        <translation>Checking this may fix jaggy line and offset bugs on some tablets</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="110"/>
         <source>Enable bug workarounds</source>
-        <translation type="unfinished">Enable bug workarounds</translation>
+        <translation>启用bug解决方法</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="269"/>
@@ -2504,7 +2505,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="461"/>
         <source>Onionskin layers:</source>
-        <translation type="unfinished">覆盖层蓝图显示:</translation>
+        <translation>半透明薄纸图层范围:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="468"/>
@@ -2722,12 +2723,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="68"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>水平对齐</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="81"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直对齐</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="113"/>
@@ -2762,7 +2763,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="233"/>
         <source>Annotation content</source>
-        <translation type="unfinished">注释内容</translation>
+        <translation>注释内容</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="242"/>
@@ -2787,7 +2788,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="266"/>
         <source>Protected</source>
-        <translation type="unfinished"></translation>
+        <translation>保护注释内容</translation>
     </message>
 </context>
 <context>
@@ -3009,7 +3010,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="542"/>
         <source>Optimize frame difference</source>
-        <translation type="unfinished">优化帧差分</translation>
+        <translation type="unfinished">优化帧间不同</translation>
     </message>
 </context>
 <context>
@@ -3085,7 +3086,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/hostdialog.cpp" line="44"/>
         <source>Host</source>
-        <translation>主机</translation>
+        <translation>创建房间</translation>
     </message>
 </context>
 <context>
@@ -3168,12 +3169,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
         <source>Playback</source>
-        <translation type="unfinished">回放</translation>
+        <translation>回放</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="102"/>
         <source>Video error</source>
-        <translation type="unfinished">视频错误</translation>
+        <translation>视频错误</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
@@ -3209,12 +3210,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="264"/>
         <source>Stop on markers</source>
-        <translation type="unfinished">停止标记</translation>
+        <translation>在标记处停止</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="273"/>
         <source>No indexed markers</source>
-        <translation type="unfinished"></translation>
+        <translation>没有已索引的标记</translation>
     </message>
     <message>
         <source>Cannot index compressed recordings.</source>
@@ -3268,14 +3269,14 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message numerus="yes">
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="70"/>
         <source>%n age restricted session(s) hidden.</source>
-        <translation type="unfinished">
-            <numerusform>%n age restricted session(s) hidden.</numerusform>
+        <translation>
+            <numerusform>%n 个有年龄限制的房间被隐藏.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionlistingdialog.cpp" line="152"/>
         <source>Show age restricted sessions?</source>
-        <translation type="unfinished">Show age restricted sessions?</translation>
+        <translation>显示有年龄限制的房间吗?</translation>
     </message>
 </context>
 <context>
@@ -3284,51 +3285,51 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>修改</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>否</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="238"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">赋值</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="296"/>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="317"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>设置新密码，若为空则取消密码.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="298"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>为房间设置密码.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="303"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>房间密码</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="319"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>设置获取管理员权限的密码.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="324"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>管理员密码</translation>
     </message>
 </context>
 <context>
@@ -3373,13 +3374,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="617"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="320"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="506"/>
@@ -3408,38 +3409,38 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="539"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="548"/>
         <source>Add public listing server</source>
-        <translation>新加清单服务器</translation>
+        <translation>新加公开列出的服务器</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="539"/>
         <source>Invalid URL!</source>
-        <translation>URL无效</translation>
+        <translation>URL无效！</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="594"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>解锁家长控制</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="595"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="597"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定家长控制</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="598"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>设置密码</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="610"/>
         <source>Incorrect password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码不正确</translation>
     </message>
 </context>
 <context>
@@ -3557,7 +3558,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Default</source>
-        <translation type="unfinished">默认</translation>
+        <translation>默认</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
@@ -3600,7 +3601,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="109"/>
         <source>Onionskin</source>
-        <translation>覆盖层蓝图显示</translation>
+        <translation>半透明薄纸</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="117"/>
@@ -3631,7 +3632,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="419"/>
         <source>Press merge down to merge the layer with the first visible layer below instead of deleting.</source>
-        <translation>向下合并将合并最近可见图层</translation>
+        <translation>向下合并下一个可见图层.</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="422"/>
@@ -3644,7 +3645,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/navigator.cpp" line="145"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation>导航</translation>
     </message>
 </context>
 <context>
@@ -3745,7 +3746,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="97"/>
         <source>Your IP address is banned from this server</source>
-        <translation type="unfinished"></translation>
+        <translation>你的IP被服务器禁止访问</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="104"/>
@@ -3771,12 +3772,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="203"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation>信任主机安全模式已启动</translation>
+        <translation>安全模式没有在信任的主机上启动！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="208"/>
         <source>This is a secure secure server, but secure connection support is not available!</source>
-        <translation>安全连接无法建立</translation>
+        <translation>这是一个安全的主机，但无法建立安全连接！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="248"/>
@@ -3791,32 +3792,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="396"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>房间会话还没有开始！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="399"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>被家长控制禁止</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="663"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器已满！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="665"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>主机未被授权</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="667"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>你已经被禁止访问该房间！</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="669"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">房间别名已保留！</translation>
     </message>
     <message>
         <source>Password is needed to host a session</source>
@@ -4058,27 +4059,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="382"/>
         <source>Cannot index compressed recordings.</source>
-        <translation type="unfinished">无法压缩录像</translation>
+        <translation>无法索引压缩的录像.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="388"/>
         <source>Index not yet generated</source>
-        <translation type="unfinished">未生成索引</translation>
+        <translation>未生成索引</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="395"/>
         <source>Error loading index!</source>
-        <translation type="unfinished">索引打开失败</translation>
+        <translation>载入索引失败！</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="457"/>
         <source>%1 m. %2 s.</source>
-        <translation type="unfinished">%1 分 %2 秒</translation>
+        <translation>%1 分 %2 秒.</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="459"/>
         <source>%1 s.</source>
-        <translation type="unfinished">%1 秒</translation>
+        <translation>%1 秒.</translation>
     </message>
 </context>
 <context>
@@ -4131,33 +4132,33 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>靠左</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>居中</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
         <source>Justify</source>
-        <translation type="unfinished">平均</translation>
+        <translation>两端对齐</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>靠右</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>靠上</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>靠下</translation>
     </message>
 </context>
 <context>
@@ -4262,12 +4263,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="116"/>
         <source>Low space!</source>
-        <translation type="unfinished"></translation>
+        <translation>空间不足！</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="117"/>
         <source>Server is almost out of space for session history! Reset the session to free some up.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器空间即将用尽！重置房间以释放空间</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="143"/>
@@ -4384,7 +4385,8 @@ Hex: %5</translation>
         <location filename="../../desktop/widgets/presetpie.cpp" line="311"/>
         <source>Assign with %1
 or middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 %1 或点击
+鼠标中键赋值</translation>
     </message>
 </context>
 <context>
