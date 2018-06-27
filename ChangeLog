@@ -6,6 +6,7 @@
  * Replaced "background layer" concept with a tiled canvas background. (Mostly compatible with MyPaint)
  * Redesigned user list box
  * Autoreset threshold is now adjustable and includes reset image as base size
+ * Individual layers can now be censored
 
 2018-??-?? Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature

@@ -75,8 +75,8 @@ Tile::Tile(const QImage& image, int xoff, int yoff)
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 {
 	const int HALF = SIZE/2;
-	quint32 d = dark.rgba();
-	quint32 l = light.rgba();
+	const quint32 d = qPremultiply(dark.rgba());
+	const quint32 l = qPremultiply(light.rgba());
 	quint32 *q1 = data, *q2 = data+HALF, *q3 = data + SIZE*HALF, *q4 = data + SIZE*(HALF)+HALF;
 	for(int y=0;y<HALF;++y) {
 		for(int x=0;x<HALF;++x) {
@@ -87,6 +87,23 @@ void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 		}
 		q1 += HALF; q2 += HALF; q3 += HALF; q4 += HALF;
 	}
+}
+
+Tile Tile::CensorBlock(const QColor &dark, const QColor &light)
+{
+	Tile t;
+	quint32 *pixels = t.data();
+	const quint32 colors[] {
+		qPremultiply(dark.rgba()),
+		qPremultiply(light.rgba())
+	};
+	const int stripe = 16; // must be a divisor of SIZE for the blocks to be tilable
+	for(int y=0;y<SIZE;++y) {
+		for(int x=0;x<SIZE;++x, ++pixels) {
+			*pixels = colors[((x+y) / stripe) % 2];
+		}
+	}
+	return t;
 }
 
 void Tile::copyTo(quint32 *data) const

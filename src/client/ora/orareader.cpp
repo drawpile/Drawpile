@@ -60,6 +60,7 @@ namespace {
 		qreal opacity;
 		bool visibility;
 		bool locked;
+		bool censored;
 		QString compositeOp;
 	};
 
@@ -158,7 +159,7 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 	// Grab <layer> element attributes first
 	const QXmlStreamAttributes attrs = reader.attributes();
 
-	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", "background-tile", nullptr };
+	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", "background-tile", "censored", nullptr };
 
 	if(hasUnknownAttributes("layer", attrs, knownLayerAttributes))
 		canvas.extensionsWarning = true;
@@ -171,6 +172,7 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 		qBound(0.0, attrToReal(attrs.value("opacity"), 1.0), 1.0),
 		attrToBool(attrs.value("visibility"), true, "visible"),
 		attrToBool(attrs.value("edit-locked"), false, "true"),
+		attrToBool(attrs.value(DP_NAMESPACE, "censored"), false, "true"),
 		attrToString(attrs.value("composite-op"), QStringLiteral("src-over"))
 	};
 
@@ -463,6 +465,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			ctxId,
 			layerId,
 			0,
+			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
 			qRound(255 * layer.opacity),
 			blendmode
 			));

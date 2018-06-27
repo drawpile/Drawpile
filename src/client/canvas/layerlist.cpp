@@ -149,7 +149,7 @@ QModelIndex LayerListModel::layerIndex(int id)
 void LayerListModel::createLayer(int id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false });
+	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false });
 	endInsertRows();
 }
 
@@ -174,7 +174,7 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend)
+void LayerListModel::changeLayer(int id, bool censored, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -183,6 +183,7 @@ void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mo
 	LayerListItem &item = m_items[row];
 	item.opacity = opacity;
 	item.blend = blend;
+	item.censored = censored;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }

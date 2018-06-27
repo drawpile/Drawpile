@@ -91,6 +91,7 @@ LayerList::LayerList(QWidget *parent)
 	connect(m_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(m_aclmenu, &LayerAclMenu::layerAclChange, this, &LayerList::changeLayerAcl);
+	connect(m_aclmenu, &LayerAclMenu::layerCensoredChange, this, &LayerList::censorSelected);
 
 	selectionChanged(QItemSelection());
 
@@ -252,7 +253,14 @@ void LayerList::sendOpacityUpdate()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, 0, m_ui->opacity->value(), int(layer.blend))));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+			m_canvas->localUserId(),
+			layer.id,
+			0,
+			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+			m_ui->opacity->value(),
+			int(layer.blend)
+		)));
 	}
 }
 
@@ -265,9 +273,33 @@ void LayerList::blendModeChanged()
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(m_canvas->localUserId(), layer.id, 0, layer.opacity*255, m_ui->blendmode->currentData().toInt())));
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+			m_canvas->localUserId(),
+			layer.id,
+			0,
+			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+			layer.opacity*255,
+			m_ui->blendmode->currentData().toInt()
+		)));
 	}
 }
+
+void LayerList::censorSelected(bool censor)
+{
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
+		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+			m_canvas->localUserId(),
+			layer.id,
+			0,
+			censor ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+			layer.opacity*255,
+			int(layer.blend)
+		)));
+	}
+}
+
 
 void LayerList::hideSelected()
 {
@@ -464,7 +496,9 @@ bool LayerList::isCurrentLayerLocked() const
 	QModelIndex idx = currentSelection();
 	if(idx.isValid()) {
 		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
-		return item.hidden || m_canvas->aclFilter()->isLayerLocked(item.id);
+		return item.hidden
+			|| m_canvas->aclFilter()->isLayerLocked(item.id)
+			|| (m_canvas->layerStack()->isCensored() && item.censored);
 	}
 	return false;
 }
@@ -494,6 +528,7 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
 		m_noupdate = true;
 		m_menuHideAction->setChecked(layer.hidden);
+		m_aclmenu->setCensored(layer.censored);
 		m_menuDefaultAction->setChecked(currentSelection().data(canvas::LayerListModel::IsDefaultRole).toBool());
 		m_ui->opacity->setValue(layer.opacity * 255);
 

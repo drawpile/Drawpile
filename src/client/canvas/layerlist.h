@@ -55,6 +55,9 @@ struct LayerListItem {
 
 	//! Layer hidden flag (local only)
 	bool hidden;
+
+	//! Layer is flagged for censoring
+	bool censored;
 };
 
 }
@@ -90,7 +93,7 @@ public:
 	void clear();
 	void createLayer(int id, int index, const QString &title);
 	void deleteLayer(int id);
-	void changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend);
+	void changeLayer(int id, bool censored, float opacity, paintcore::BlendMode::Mode blend);
 	void retitleLayer(int id, const QString &title);
 	void setLayerHidden(int id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);

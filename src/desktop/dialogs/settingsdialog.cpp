@@ -335,6 +335,7 @@ void SettingsDialog::restoreSettings()
 	}
 	m_ui->nsfmWords->setPlainText(cfg.value("tagwords", parentalcontrols::defaultWordList()).toString());
 	m_ui->autotagNsfm->setChecked(cfg.value("autotag", true).toBool());
+	m_ui->noUncensoring->setChecked(cfg.value("noUncensoring", false).toBool());
 	setParentalControlsLocked(parentalcontrols::isLocked());
 	if(parentalcontrols::isOSActive())
 		m_ui->nsfmLock->setEnabled(false);
@@ -349,6 +350,7 @@ void SettingsDialog::setParentalControlsLocked(bool lock)
 	m_ui->nsfmHide->setDisabled(lock);
 	m_ui->nsfmNoJoin->setDisabled(lock);
 	m_ui->nsfmDisconnect->setDisabled(lock);
+	m_ui->noUncensoring->setDisabled(lock);
 	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
 }
 
@@ -418,6 +420,7 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("pc");
 	cfg.setValue("autotag", m_ui->autotagNsfm->isChecked());
 	cfg.setValue("tagwords", m_ui->nsfmWords->toPlainText());
+	cfg.setValue("noUncensoring", m_ui->noUncensoring->isChecked());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

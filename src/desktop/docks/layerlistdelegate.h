@@ -55,10 +55,11 @@ signals:
 	void layerCommand(protocol::MessagePtr msg);
 
 private:
-	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;
+	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const;
 
-	QPixmap m_visibleicon;
-	QPixmap m_hiddenicon;
+	QPixmap m_visibleIcon;
+	QPixmap m_censoredIcon;
+	QPixmap m_hiddenIcon;
 
 	bool m_showNumbers;
 };

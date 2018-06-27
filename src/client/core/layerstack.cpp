@@ -30,9 +30,11 @@
 
 namespace paintcore {
 
+static const Tile CENSORED_TILE = Tile::CensorBlock(QColor("#232629"), QColor("#eff0f1"));
+
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
-	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true),
+	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_onionskinTint(true), m_censorLayers(false),
 	  m_writeSequence(false)
 {
 	m_annotations = new AnnotationModel(this);
@@ -49,6 +51,7 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_viewlayeridx(orig->m_viewlayeridx),
 	  m_onionskinsBelow(orig->m_onionskinsBelow),
 	  m_onionskinTint(orig->m_onionskinTint),
+	  m_censorLayers(orig->m_censorLayers),
 	  m_writeSequence(false)
 {
 	m_annotations = orig->m_annotations->clone(this);
@@ -534,7 +537,13 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 			const Tile &tile = l->tile(xindex, yindex);
 			const quint32 tint = layerTint(layeridx);
 
-			if(l->sublayers().count() || tint!=0) {
+			if(m_censorLayers && l->isCensored()) {
+				// This layer must be censored
+				if(!tile.isNull())
+					compositePixels(l->blendmode(), data, CENSORED_TILE.constData(),
+							Tile::LENGTH, layerOpacity(layeridx));
+
+			} else if(l->sublayers().count() || tint!=0) {
 				// Sublayers (or tint) present, composite them first
 				quint32 ldata[Tile::SIZE*Tile::SIZE];
 				tile.copyTo(ldata);
@@ -673,6 +682,16 @@ void LayerStack::setOnionskinMode(int below, int above, bool tint)
 
 	if(m_viewmode==ONIONSKIN)
 		markDirty();
+}
+
+void LayerStack::setCensorship(bool censor)
+{
+	if(m_censorLayers != censor) {
+		m_censorLayers = censor;
+		// We could check if this really need to be called, but this
+		// flag is changed very infrequently
+		markDirty();
+	}
 }
 
 int LayerStack::layerOpacity(int idx) const

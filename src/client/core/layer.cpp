@@ -103,7 +103,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: m_owner(owner), m_info({id, title, 255, false, BlendMode::MODE_NORMAL}),
+	: m_owner(owner), m_info({id, title, 255, false, false, BlendMode::MODE_NORMAL}),
 	  m_width(0), m_height(0), m_xtiles(0), m_ytiles(0)
 {
 	resize(0, size.width(), size.height(), 0);
@@ -350,9 +350,10 @@ void Layer::setOpacity(int opacity)
 	Q_ASSERT(opacity>=0 && opacity<256);
 	if(m_info.opacity != opacity) {
 		m_info.opacity = opacity;
-		markOpaqueDirty(true);
-		if(m_owner)
+		if(m_owner) {
+			markOpaqueDirty(true);
 			m_owner->notifyLayerInfoChange(this);
+		}
 	}
 }
 
@@ -360,9 +361,21 @@ void Layer::setBlend(BlendMode::Mode blend)
 {
 	if(m_info.blend != blend) {
 		m_info.blend = blend;
-		markOpaqueDirty();
-		if(m_owner)
+		if(m_owner) {
+			markOpaqueDirty();
 			m_owner->notifyLayerInfoChange(this);
+		}
+	}
+}
+
+void Layer::setCensored(bool censor)
+{
+	if(m_info.censored != censor) {
+		m_info.censored = censor;
+		if(m_owner) {
+			markOpaqueDirty(true);
+			m_owner->notifyLayerInfoChange(this);
+		}
 	}
 }
 

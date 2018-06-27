@@ -653,6 +653,15 @@ void MainWindow::loadShortcuts()
 				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
 		}
 	}
+
+	// Update enabled status of certain actions
+	QAction *uncensorAction = getAction("layerviewuncensor");
+	const bool canUncensor = !parentalcontrols::isLayerUncensoringBlocked();
+	uncensorAction->setEnabled(canUncensor);
+	if(!canUncensor) {
+		uncensorAction->setChecked(false);
+		updateLayerViewMode();
+	}
 }
 
 /**
@@ -708,6 +717,7 @@ void MainWindow::updateLayerViewMode()
 
 	const bool solo = getAction("layerviewsolo")->isChecked();
 	const bool onionskin = getAction("layerviewonionskin")->isChecked();
+	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
 	paintcore::LayerStack::ViewMode mode = 	paintcore::LayerStack::NORMAL;
 
@@ -717,6 +727,8 @@ void MainWindow::updateLayerViewMode()
 		mode = paintcore::LayerStack::ONIONSKIN;
 
 	m_doc->canvas()->layerStack()->setViewMode(mode);
+	m_doc->canvas()->layerStack()->setCensorship(censor);
+	updateLockWidget();
 }
 
 /**
@@ -752,7 +764,7 @@ void MainWindow::readSettings(bool windowpos)
 	// Restore view settings
 	getAction("showgrid")->setChecked(cfg.value("showgrid", true).toBool());
 	getAction("layernumbers")->setChecked(cfg.value("layernumbers", false).toBool());
-
+	getAction("layerviewuncensor")->setChecked(cfg.value("layerviewuncensor", false).toBool());
 	cfg.endGroup();
 
 	// Restore tool settings
@@ -783,6 +795,7 @@ void MainWindow::writeSettings()
 
 	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
 	cfg.setValue("layernumbers", getAction("layernumbers")->isChecked());
+	cfg.setValue("layerviewuncensor", getAction("layerviewuncensor")->isChecked());
 	cfg.endGroup();
 	m_dockToolSettings->saveSettings();
 }
@@ -2448,12 +2461,14 @@ void MainWindow::setupActions()
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).checkable();
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable();
+	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable();
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
 
 	connect(layerSolo, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
 	connect(layerOnionskin, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
+	connect(layerUncensor, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
 	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
@@ -2468,6 +2483,7 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerSolo);
 	layerMenu->addAction(layerOnionskin);
 	layerMenu->addAction(layerNumbers);
+	layerMenu->addAction(layerUncensor);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);

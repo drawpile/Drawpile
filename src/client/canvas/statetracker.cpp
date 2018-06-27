@@ -536,7 +536,8 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	} else {
 		layer->setBlend(bm);
 		layer->setOpacity(cmd.opacity());
-		m_layerlist->changeLayer(layer->id(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
+		layer->setCensored(cmd.isCensored());
+		m_layerlist->changeLayer(layer->id(), cmd.isCensored(), cmd.opacity() / 255.0, paintcore::BlendMode::Mode(cmd.blend()));
 	}
 }
 
@@ -1077,6 +1078,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 		out << layer.opacity;
 		out << quint8(layer.blend);
 		out << layer.hidden;
+		out << layer.censored;
 	}
 
 	// Write layer stack
@@ -1116,12 +1118,16 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 		bool hidden;
 		in >> hidden;
 
+		bool censored;
+		in >> censored;
+
 		sp->layermodel.append(LayerListItem {
 			layerid,
 			title,
 			opacity,
 			paintcore::BlendMode::Mode(blend),
-			hidden
+			hidden,
+			censored
 		});
 	}
 

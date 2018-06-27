@@ -19,6 +19,9 @@
 
 #include "docks/layeraclmenu.h"
 #include "canvas/userlist.h"
+#include "parentalcontrols/parentalcontrols.h"
+
+#include <QApplication>
 
 namespace docks {
 
@@ -36,6 +39,9 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 	m_lock = addAction(tr("Lock this layer"));
 	m_lock->setCheckable(true);
 
+	m_censored = addAction(tr("Censor"));
+	m_censored->setCheckable(true);
+
 	addSection(tr("Access tier:"));
 	m_tiers = new QActionGroup(this);
 	addTier(m_tiers, tr("Operators"), canvas::Tier::Op);
@@ -50,6 +56,14 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 	m_users->setExclusive(false);
 
 	connect(this, &LayerAclMenu::triggered, this, &LayerAclMenu::userClicked);
+
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(refreshParentalControls()));
+	refreshParentalControls();
+}
+
+void LayerAclMenu::refreshParentalControls()
+{
+	m_censored->setEnabled(!parentalcontrols::isLayerUncensoringBlocked());
 }
 
 void LayerAclMenu::setUserList(canvas::UserListModel *model)
@@ -121,6 +135,11 @@ void LayerAclMenu::userClicked(QAction *useraction)
 		m_tiers->setEnabled(enable && exclusive.isEmpty());
 		m_users->setEnabled(enable);
 
+	} else if(useraction == m_censored) {
+		// Just toggle the censored flag, no other ACL changes
+		emit layerCensoredChange(m_censored->isChecked());
+		return;
+
 	} else {
 		// User exclusive access bit or tier changed.
 		m_tiers->setEnabled(exclusive.isEmpty());
@@ -147,6 +166,11 @@ void LayerAclMenu::setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> exc
 	for(QAction *u : m_users->actions()) {
 		u->setChecked(exclusive.contains(u->property("userId").toInt()));
 	}
+}
+
+void LayerAclMenu::setCensored(bool censor)
+{
+	m_censored->setChecked(censor);
 }
 
 }

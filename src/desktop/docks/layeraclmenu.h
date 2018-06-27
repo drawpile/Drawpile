@@ -37,6 +37,7 @@ public:
 
 	void setUserList(canvas::UserListModel *model);
 	void setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> acl);
+	void setCensored(bool censor);
 
 signals:
 	/**
@@ -50,17 +51,24 @@ signals:
 	 */
 	void layerAclChange(bool lock, canvas::Tier tier, QList<uint8_t> ids);
 
+	/**
+	 * @brief The censored checkbox was toggled
+	 */
+	void layerCensoredChange(bool censor);
+
 private slots:
 	void userClicked(QAction *useraction);
 	void rowsInserted(const QModelIndex &parent, int start, int end);
 	void rowsMoved(const QModelIndex&, int, int, const QModelIndex&, int);
 	void rowsRemoved(const QModelIndex &parent, int start, int end);
+	void refreshParentalControls();
 
 private:
 	void addUser(int index);
 
 	canvas::UserListModel *m_model;
 	QAction *m_lock;
+	QAction *m_censored;
 	QActionGroup *m_tiers;
 	QActionGroup *m_users;
 };

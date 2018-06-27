@@ -89,6 +89,7 @@ private slots:
 	void opacityAdjusted();
 	void blendModeChanged();
 	void hideSelected();
+	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive);
 

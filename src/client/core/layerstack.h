@@ -180,6 +180,12 @@ public:
 	//! Set onionskin view mode parameters
 	void setOnionskinMode(int below, int above, bool tint);
 
+	//! Enable/disable censoring of layers
+	void setCensorship(bool censor);
+
+	//! Are layers tagged for censoring actually censored?
+	bool isCensored() const { return m_censorLayers; }
+
 	//! Clear the entire layer stack
 	void reset();
 
@@ -243,6 +249,7 @@ private:
 	int m_viewlayeridx;
 	int m_onionskinsBelow, m_onionskinsAbove;
 	bool m_onionskinTint;
+	bool m_censorLayers;
 	bool m_writeSequence;
 };
 

@@ -47,6 +47,7 @@ struct LayerInfo {
 	// Rendering controls
 	uchar opacity;
 	bool hidden;
+	bool censored;
 	BlendMode::Mode blend;
 };
 
@@ -134,6 +135,12 @@ class Layer {
 
 		//! Hide this layer
 		void setHidden(bool hide);
+
+		//! Is this layer flagged for censoring
+		bool isCensored() const { return m_info.censored; }
+
+		//! Censor this layer
+		void setCensored(bool censor);
 
 		//! Empty this layer
 		void makeBlank();

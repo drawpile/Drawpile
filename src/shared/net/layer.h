@@ -143,9 +143,11 @@ private:
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t sublayer, uint8_t opacity, uint8_t blend)
+	static const uint8_t FLAG_CENSOR = 0x01; // censored layer
+
+	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR, ctx), m_id(id),
-		m_sublayer(sublayer), m_opacity(opacity), m_blend(blend)
+		m_sublayer(sublayer), m_flags(flags), m_opacity(opacity), m_blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
@@ -153,8 +155,11 @@ public:
 
 	uint16_t layer() const override { return m_id; }
 	uint8_t sublayer() const { return m_sublayer; }
+	uint8_t flags() const { return m_flags; }
 	uint8_t opacity() const { return m_opacity; }
 	uint8_t blend() const { return m_blend; }
+
+	bool isCensored() const { return m_flags & FLAG_CENSOR; }
 
 	QString messageName() const override { return QStringLiteral("layerattr"); }
 
@@ -166,6 +171,7 @@ protected:
 private:
 	uint16_t m_id;
 	uint8_t m_sublayer;
+	uint8_t m_flags;
 	uint8_t m_opacity;
 	uint8_t m_blend;
 };
