@@ -104,6 +104,7 @@ public:
 
 	void setBlendingMode(paintcore::BlendMode::Mode mode) { m_blend = mode; }
 	paintcore::BlendMode::Mode blendingMode() const { return m_blend; }
+	bool isEraser() const { return m_blend == paintcore::BlendMode::MODE_ERASE; }
 
 	qreal size(qreal pressure) const { return lerp(size1(), size2(), pressure); }
 	qreal hardness(qreal pressure) const { return lerp(hardness1(), hardness2(), pressure); }

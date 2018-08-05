@@ -192,7 +192,8 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 	if(!m_activeTool->isMultipart())
 		m_model->stateTracker()->setLocalDrawingInProgress(true);
 
-	emit colorUsed(m_activebrush.color());
+	if(!m_activebrush.isEraser())
+		emit colorUsed(m_activebrush.color());
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)
