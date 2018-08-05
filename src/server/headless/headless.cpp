@@ -288,7 +288,11 @@ bool start() {
 				return false;
 			}
 		}
+#ifdef Q_OS_UNIX
+	server->connect(UnixSignals::instance(), SIGNAL(sigUsr1()), webadmin, SLOT(restart()));
+#endif
 	}
+
 #endif
 
 	// Catch signals

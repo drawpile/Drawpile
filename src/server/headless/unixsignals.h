@@ -35,6 +35,7 @@ public:
 signals:
 	void sigInt();
 	void sigTerm();
+	void sigUsr1();
 
 protected:
 	void connectNotify(const QMetaMethod &signal);

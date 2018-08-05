@@ -322,7 +322,7 @@ void MicroHttpd::stop()
 	if(_d->mhd) {
 		qInfo("Stopping microhttpd");
 		MHD_stop_daemon(_d->mhd);
-		_d->mhd = 0;
+		_d->mhd = nullptr;
 	}
 }
 

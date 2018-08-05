@@ -5,6 +5,7 @@
  * Fixed unsetting shortcuts which have a default value
  * Changed default "session settings" shortcut to F9, to avoid collision with the default (Windows) fullscreen shortcut F11
  * A nicer set of presets for the brush palette
+ * Sending USR1 signal to drawpile-srv now restarts the internal web-admin server
 
 2018-03-17 Version 2.0.10
  * Server: history files are now flushed periodically to better protect against dataloss in case of abrupt server termination

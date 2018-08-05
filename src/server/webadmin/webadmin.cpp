@@ -29,7 +29,7 @@
 namespace server {
 
 Webadmin::Webadmin(QObject *parent)
-	: QObject(parent), m_server(new MicroHttpd(this))
+	: QObject(parent), m_server(new MicroHttpd(this)), m_mode(NOTSTARTED)
 {
 }
 
@@ -127,12 +127,30 @@ bool Webadmin::setAccessSubnet(const QString &access)
 
 void Webadmin::start(quint16 port)
 {
+	m_port = port;
+	m_mode = PORT;
 	m_server->listen(port);
 }
 
 void Webadmin::startFd(int fd)
 {
+	m_port = fd;
+	m_mode = FD;
 	m_server->listenFd(fd);
+}
+
+void Webadmin::restart()
+{
+	if(m_mode == NOTSTARTED)
+		return;
+
+	qInfo("Restarting web-admin server");
+
+	m_server->stop();
+	if(m_mode == PORT)
+		m_server->listen(m_port);
+	else
+		m_server->listenFd(m_port);
 }
 
 QString Webadmin::version()
