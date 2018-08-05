@@ -7,6 +7,7 @@
  * Redesigned user list box
  * Autoreset threshold is now adjustable and includes reset image as base size
  * Individual layers can now be censored
+ * Sending USR1 signal to drawpile-srv now restarts the internal web-admin server
 
 2018-??-?? Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature
