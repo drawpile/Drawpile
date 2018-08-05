@@ -2386,7 +2386,7 @@ void MainWindow::setupActions()
 	logout->setEnabled(false);
 
 	QAction *serverlog = makeAction("viewserverlog", 0, tr("Event Log"), QString(), QKeySequence("F10"));
-	QAction *sessionSettings = makeAction("sessionsettings", 0, tr("Settings..."), QString(), QKeySequence("F11"));
+	QAction *sessionSettings = makeAction("sessionsettings", nullptr, tr("Settings..."), QString(), QKeySequence("F9"));
 	sessionSettings->setMenuRole(QAction::NoRole); // Keep this item where it is on OSX
 	sessionSettings->setEnabled(false);
 
@@ -2435,8 +2435,8 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(reportabuse);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(gainop);
-	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);
+	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(locksession);
 
 	//
