@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class CustomShortcutModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
-	explicit CustomShortcutModel(QObject *parent=0);
+	explicit CustomShortcutModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -59,9 +59,9 @@ public:
 	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
 private:
 
-	QList<CustomShortcut> _shortcuts;
+	QList<CustomShortcut> m_shortcuts;
 
-	static QMap<QString, CustomShortcut> _customizableActions;
+	static QMap<QString, CustomShortcut> m_customizableActions;
 };
 
 #endif // CUSTOMSHORTCUTMODEL_H
