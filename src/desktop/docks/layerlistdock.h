@@ -120,6 +120,7 @@ private:
 	QAction *m_deleteLayerAction;
 
 	QAction *m_menuInsertAction;
+	QAction *m_menuSeparator;
 	QAction *m_menuHideAction;
 	QAction *m_menuRenameAction;
 	QAction *m_menuDefaultAction;

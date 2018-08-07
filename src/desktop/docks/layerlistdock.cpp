@@ -69,7 +69,7 @@ LayerList::LayerList(QWidget *parent)
 	m_layermenu = new QMenu(this);
 	m_menuInsertAction = m_layermenu->addAction(tr("Insert layer"), this, SLOT(insertLayer()));
 
-	m_layermenu->addSeparator();
+	m_menuSeparator = m_layermenu->addSeparator();
 
 	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
 	m_menuHideAction->setCheckable(true);
@@ -154,6 +154,11 @@ void LayerList::setLayerEditActions(QAction *add, QAction *duplicate, QAction *m
 	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
+
+	// Insert some actions to the context menu too
+	m_layermenu->insertAction(m_menuSeparator, duplicate);
+	m_layermenu->insertAction(m_menuSeparator, del);
+	m_layermenu->insertAction(m_menuSeparator, merge);
 
 	updateLockedControls();
 }
