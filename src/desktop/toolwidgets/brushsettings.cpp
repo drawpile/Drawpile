@@ -50,7 +50,7 @@ namespace brushprop {
 		brushmode = {QStringLiteral("brushmode"), 0, 0, 2} /* 0: hard edge, 1: soft edge, 2: watercolor */
 		;
 	static const ToolProperties::BoolValue
-		sizePressure = {QStringLiteral("sizep"), true},
+		sizePressure = {QStringLiteral("sizep"), false},
 		opacityPressure = {QStringLiteral("opacityp"), false},
 		hardPressure = {QStringLiteral("hardp"), false},
 		smudgePressure = {QStringLiteral("smudgep"), false},
@@ -772,30 +772,74 @@ void BrushPresetModel::makeDefaultBrushes()
 	QList<ToolProperties> brushes;
 	ToolProperties tp;
 
-	// Generate a few pixel brushes
-	tp.setValue(brushprop::brushmode, 0);
-	tp.setValue(brushprop::spacing, 15);
-	tp.setValue(brushprop::size, 0);
-	tp.setValue(brushprop::sizePressure, true);
-	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::size, i*8);
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 0);
+		tp.setValue(brushprop::size, 16);
+		tp.setValue(brushprop::opacity, 100);
+		tp.setValue(brushprop::spacing, 15);
+		tp.setValue(brushprop::sizePressure, true);
 		brushes << tp;
 	}
-
-	// Generate a few soft brushes
-	tp.setValue(brushprop::brushmode, 1);
-	tp.setValue(brushprop::hard, 80);
-	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::size, i*8);
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::size, 10);
+		tp.setValue(brushprop::opacity, 100);
+		tp.setValue(brushprop::hard, 80);
+		tp.setValue(brushprop::spacing, 15);
+		tp.setValue(brushprop::sizePressure, true);
+		tp.setValue(brushprop::opacityPressure, true);
 		brushes << tp;
 	}
-
-	// Generate a few watercolor brushes
-	tp.setValue(brushprop::brushmode, 2);
-	tp.setValue(brushprop::smudge, 25);
-	tp.setValue(brushprop::resmudge, 6);
-	for(int i=0;i<3;++i) {
-		tp.setValue(brushprop::size, i*8);
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::size, 30);
+		tp.setValue(brushprop::opacity, 34);
+		tp.setValue(brushprop::hard, 100);
+		tp.setValue(brushprop::spacing, 18);
+		brushes << tp;
+	}
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 0);
+		tp.setValue(brushprop::incremental, false);
+		tp.setValue(brushprop::size, 32);
+		tp.setValue(brushprop::opacity, 65);
+		tp.setValue(brushprop::spacing, 15);
+		brushes << tp;
+	}
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 0);
+		tp.setValue(brushprop::incremental, false);
+		tp.setValue(brushprop::size, 70);
+		tp.setValue(brushprop::opacity, 42);
+		tp.setValue(brushprop::spacing, 15);
+		tp.setValue(brushprop::opacityPressure, true);
+		brushes << tp;
+	}
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::size, 113);
+		tp.setValue(brushprop::opacity, 60);
+		tp.setValue(brushprop::hard, 1);
+		tp.setValue(brushprop::spacing, 19);
+		tp.setValue(brushprop::opacityPressure, true);
+		brushes << tp;
+	}
+	{
+		ToolProperties tp;
+		tp.setValue(brushprop::brushmode, 2);
+		tp.setValue(brushprop::size, 43);
+		tp.setValue(brushprop::opacity, 30);
+		tp.setValue(brushprop::hard, 100);
+		tp.setValue(brushprop::spacing, 25);
+		tp.setValue(brushprop::smudge, 100);
+		tp.setValue(brushprop::resmudge, 1);
+		tp.setValue(brushprop::opacityPressure, true);
 		brushes << tp;
 	}
 
