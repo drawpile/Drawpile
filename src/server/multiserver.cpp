@@ -29,8 +29,6 @@
 #include "../shared/server/serverconfig.h"
 #include "../shared/server/serverlog.h"
 
-#include "../shared/util/announcementapi.h"
-
 #include <QTcpSocket>
 #include <QFileInfo>
 #include <QDateTime>

@@ -48,8 +48,6 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_recorder(nullptr),
 	m_history(history),
 	m_resetstreamsize(0),
-	m_publicListingClient(nullptr),
-	m_refreshTimer(nullptr),
 	m_closed(false),
 	m_authOnly(false),
 	m_autoResetRequestStatus(AutoResetState::NotSent)
@@ -68,6 +66,12 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 		m_history->addMessage(protocol::MessagePtr(new protocol::SessionOwner(0, QList<uint8_t>())));
 		sendUpdatedSessionProperties();
 	}
+
+	// Session announcements
+	m_refreshTimer = new QTimer(this);
+	m_refreshTimer->setSingleShot(true);
+	m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
+	connect(m_refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
 
 	for(const QString &announcement : m_history->announcements())
 		makeAnnouncement(QUrl(announcement), false);
@@ -602,7 +606,7 @@ void Session::sendUpdatedAnnouncementList()
 	protocol::ServerReply msg;
 	msg.type = protocol::ServerReply::SESSIONCONF;
 	QJsonArray list;
-	for(const sessionlisting::Announcement &a : announcements()) {
+	for(const sessionlisting2::Announcement &a : announcements()) {
 		QJsonObject o;
 		o["url"] = a.apiUrl.toString();
 		o["roomcode"] = a.roomcode;
@@ -992,27 +996,6 @@ QStringList Session::userNames() const
 	return lst;
 }
 
-sessionlisting::AnnouncementApi *Session::publicListingClient()
-{
-	if(!m_publicListingClient) {
-		m_publicListingClient = new sessionlisting::AnnouncementApi(this);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
-			log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
-			this->messageAll(message, false);
-		});
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::logMessage, this, &Session::log);
-
-		m_refreshTimer = new QTimer(this);
-		m_refreshTimer->setSingleShot(true);
-		m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
-		connect(m_refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
-	}
-
-	return m_publicListingClient;
-}
-
 void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 {
 	if(!url.isValid() || !m_config->isAllowedAnnouncementUrl(url)) {
@@ -1021,7 +1004,7 @@ void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 	}
 
 	// Don't announce twice at the same server
-	for(sessionlisting::Announcement &a : m_publicListings) {
+	for(sessionlisting2::Announcement &a : m_publicListings) {
 		if(a.apiUrl == url) {
 			// Refresh announcement if privacy type was changed
 			if(a.isPrivate != privateListing) {
@@ -1037,7 +1020,7 @@ void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
 
-	const sessionlisting::Session s {
+	const sessionlisting2::Session s {
 		m_config->internalConfig().localHostname,
 		m_config->internalConfig().getAnnouncePort(),
 		aliasOrId(),
@@ -1047,24 +1030,70 @@ void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 		(hasPassword() || privateUserList) ? QStringList() : userNames(),
 		hasPassword(),
 		isNsfm(),
-		privateListing ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
+		privateListing ? sessionlisting2::PrivacyMode::Private : sessionlisting2::PrivacyMode::Public,
 		founder(),
 		sessionStartTime()
 	};
 
-	log(Log().about(Log::Level::Debug, Log::Topic::PubList).message("Announcing session at " + url.toString()));
-	publicListingClient()->announceSession(url, s);
+	const QString apiUrl = url.toString();
+	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announcing session at at " + apiUrl));
+	auto *response = sessionlisting2::announceSession(url, s);
+
+	connect(response, &sessionlisting2::AnnouncementApiResponse::finished, this, [apiUrl, response, this](const QVariant &result, const QString &message, const QString &error) {
+		response->deleteLater();
+		if(!error.isEmpty()) {
+			log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement failed: " + error));
+			messageAll(error, false);
+			return;
+		}
+
+		if(!message.isEmpty()) {
+			log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
+			messageAll(message, false);
+		}
+
+		const sessionlisting2::Announcement announcement = result.value<sessionlisting2::Announcement>();
+
+		// Make sure there are no double announcements
+		for(const sessionlisting2::Announcement &a : m_publicListings) {
+			if(a.apiUrl == announcement.apiUrl) {
+				log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Double announcement at: " + announcement.apiUrl.toString()));
+				return;
+			}
+		}
+
+		log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
+		if(!announcement.isPrivate)
+			m_history->addAnnouncement(announcement.apiUrl.toString());
+		m_publicListings << announcement;
+		sendUpdatedAnnouncementList();
+
+		int timeout = announcement.refreshInterval * 60 * 1000;
+		if(!m_refreshTimer->isActive() || m_refreshTimer->remainingTime() > timeout)
+			m_refreshTimer->start(timeout);
+	});
 }
 
 void Session::unlistAnnouncement(const QString &url, bool terminate, bool removeOnly)
 {
-	QMutableListIterator<sessionlisting::Announcement> i = m_publicListings;
+	QMutableListIterator<sessionlisting2::Announcement> i = m_publicListings;
 	bool changed = false;
 	while(i.hasNext()) {
-		const sessionlisting::Announcement &a = i.next();
+		const sessionlisting2::Announcement &a = i.next();
 		if(a.apiUrl == url || url == QStringLiteral("*")) {
-			if(!removeOnly)
-				publicListingClient()->unlistSession(a);
+			if(!removeOnly) {
+				log(Log().about(Log::Level::Info, Log::Topic::PubList).message(QStringLiteral("Unlisting announcement at ") + url));
+
+				auto *response = sessionlisting2::unlistSession(a);
+				connect(response, &sessionlisting2::AnnouncementApiResponse::finished, this, [response, this](const QVariant &result, const QString &message, const QString &error) {
+					Q_UNUSED(result);
+					Q_UNUSED(message);
+					response->deleteLater();
+					if(!error.isEmpty()) {
+						log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Session unlisting failed"));
+					}
+				});
+			}
 
 			if(terminate)
 				m_history->removeAnnouncement(a.apiUrl.toString());
@@ -1083,8 +1112,8 @@ void Session::refreshAnnouncements()
 	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
 	int timeout = 0;
 
-	for(const sessionlisting::Announcement &a : m_publicListings) {
-		m_publicListingClient->refreshSession(a, {
+	for(const sessionlisting2::Announcement &a : m_publicListings) {
+		auto *response = sessionlisting2::refreshSession(a, {
 			QString(), // cannot change
 			0, // cannot change
 			QString(), // cannot change
@@ -1094,46 +1123,35 @@ void Session::refreshAnnouncements()
 			hasPassword() || privateUserList ? QStringList() : userNames(),
 			hasPassword(),
 			isNsfm(),
-			a.isPrivate ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
+			a.isPrivate ? sessionlisting2::PrivacyMode::Private : sessionlisting2::PrivacyMode::Public,
 			founder(),
 			sessionStartTime()
 		});
 		timeout = qMax(timeout, a.refreshInterval);
+
+		const QString apiUrl = a.apiUrl.toString();
+
+		connect(response, &sessionlisting2::AnnouncementApiResponse::finished, [this, response, apiUrl](const QVariant &result, const QString &message, const QString &error) {
+			Q_UNUSED(result);
+
+			if(!message.isEmpty()) {
+				log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
+				this->messageAll(message, false);
+			}
+
+			response->deleteLater();
+			if(!error.isEmpty()) {
+				// Remove listing on error
+				log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
+				unlistAnnouncement(apiUrl, true, true);
+				this->messageAll(error, false);
+			}
+		});
 	}
 
 	if(timeout > 0) {
 		m_refreshTimer->start(timeout * 60 * 1000);
 	}
-}
-
-void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
-{
-	// Make sure there are no double announcements
-	for(const sessionlisting::Announcement &a : m_publicListings) {
-		if(a.apiUrl == announcement.apiUrl) {
-			log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Double announcement at: " + announcement.apiUrl.toString()));
-			return;
-		}
-	}
-
-	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
-	if(!announcement.isPrivate)
-		m_history->addAnnouncement(announcement.apiUrl.toString());
-	m_publicListings << announcement;
-	sendUpdatedAnnouncementList();
-
-	int timeout = announcement.refreshInterval * 60 * 1000;
-	if(!m_refreshTimer->isActive() || m_refreshTimer->remainingTime() > timeout)
-		m_refreshTimer->start(timeout);
-}
-
-void Session::sessionAnnouncementError(const QString &apiUrl, const QString &error)
-{
-
-	// Remove listing on error
-	log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
-	unlistAnnouncement(apiUrl, true, true);
-	this->messageAll(error, false);
 }
 
 void Session::historyCacheCleanup()
@@ -1232,7 +1250,7 @@ QJsonObject Session::getDescription(bool full) const
 		o["users"] = users;
 
 		QJsonArray listings;
-		for(const sessionlisting::Announcement &a : m_publicListings) {
+		for(const sessionlisting2::Announcement &a : m_publicListings) {
 			listings << QJsonObject {
 				{"id", a.listingId},
 				{"url", a.apiUrl.toString()},
@@ -1289,7 +1307,7 @@ JsonApiResult Session::callListingsJsonApi(JsonApiMethod method, const QStringLi
 		return JsonApiNotFound();
 	const int id = path.at(0).toInt();
 
-	for(const sessionlisting::Announcement &a : m_publicListings) {
+	for(const sessionlisting2::Announcement &a : m_publicListings) {
 		if(a.listingId == id) {
 			if(method == JsonApiMethod::Delete) {
 				unlistAnnouncement(a.apiUrl.toString());

@@ -27,8 +27,6 @@
 #include "filedhistory.h"
 #include "templateloader.h"
 
-#include "../util/announcementapi.h"
-
 #include <QTimer>
 #include <QJsonArray>
 #include <QJsonDocument>

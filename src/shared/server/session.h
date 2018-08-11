@@ -29,7 +29,7 @@
 #include <QUuid>
 #include <QJsonObject>
 
-#include "../util/announcementapi.h"
+#include "../util/announcementapi2.h"
 #include "../util/passwordhash.h"
 #include "../net/message.h"
 #include "../net/protover.h"
@@ -46,6 +46,7 @@ namespace server {
 
 class Client;
 class ServerConfig;
+class Log;
 
 /**
  * The serverside session state.
@@ -60,7 +61,7 @@ public:
 		Shutdown
 	};
 
-	Session(SessionHistory *history, ServerConfig *config, QObject *parent=0);
+	Session(SessionHistory *history, ServerConfig *config, QObject *parent=nullptr);
 
 	const ServerConfig *config() const { return m_config; }
 
@@ -337,7 +338,7 @@ public:
 	/**
 	 * @brief Get all active announcements for this session
 	 */
-	QList<sessionlisting::Announcement> announcements() const { return m_publicListings; }
+	QList<sessionlisting2::Announcement> announcements() const { return m_publicListings; }
 
 	/**
 	 * @brief Generate a request for session announcement
@@ -478,12 +479,8 @@ private slots:
 	void removeUser(Client *user);
 
 	void refreshAnnouncements();
-	void sessionAnnounced(const sessionlisting::Announcement &announcement);
-	void sessionAnnouncementError(const QString &apiUrl, const QString &message);
 
 private:
-	sessionlisting::AnnouncementApi *publicListingClient();
-
 	void cleanupCommandStream();
 
 	void restartRecording();
@@ -512,8 +509,7 @@ private:
 	QList<protocol::MessagePtr> m_resetstream;
 	uint m_resetstreamsize;
 
-	QList<sessionlisting::Announcement> m_publicListings;
-	sessionlisting::AnnouncementApi *m_publicListingClient;
+	QList<sessionlisting2::Announcement> m_publicListings;
 	QTimer *m_refreshTimer;
 
 	QElapsedTimer m_lastEventTime;

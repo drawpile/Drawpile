@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ class QString;
 class QUrl;
 class QImage;
 class QFile;
+class QObject;
 
 namespace widgets {
 	class NetStatus;
@@ -42,9 +43,10 @@ namespace networkaccess {
  *
  * @param url
  * @param expectType
+ * @param context object which must exist for callback to be called
  * @param callback
  */
-void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void(QFile &file, const QString &errorMsg)> callback);
+void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, const QObject *context, std::function<void(QFile &file, const QString &errorMsg)> callback);
 
 /**
  * @brief A convenience wrapepr aaround get() that expects an image in response
@@ -53,9 +55,10 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
  *
  * @param url the URL to fetch
  * @param netstatus the status widget whose progress meter to update
+ * @param context object which must exist for callback to be called
  * @param callback the callback to call with the returned image or error message
  */
-void getImage(const QUrl &url, widgets::NetStatus *netstatus, std::function<void(const QImage &image, const QString &errorMsg)> callback);
+void getImage(const QUrl &url, widgets::NetStatus *netstatus, const QObject *context, std::function<void(const QImage &image, const QString &errorMsg)> callback);
 
 }
 

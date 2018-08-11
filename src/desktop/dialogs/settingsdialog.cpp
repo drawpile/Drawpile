@@ -31,7 +31,7 @@
 #include "utils/settings.h"
 #include "utils/passwordstore.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "../shared/util/announcementapi.h"
+#include "../shared/util/announcementapi2.h"
 #include "../shared/util/passwordhash.h"
 
 #include "ui_settings.h"
@@ -576,44 +576,49 @@ void SettingsDialog::importTrustedCertificate()
 void SettingsDialog::addListingServer()
 {
 	QString urlstr = QInputDialog::getText(this, tr("Add public listing server"), "URL");
-	if(!urlstr.isEmpty()) {
-		QUrl url(urlstr);
-		if(!url.isValid()) {
-			QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
+	if(urlstr.isEmpty())
+		return;
+
+	QUrl url(urlstr);
+	if(!url.isValid()) {
+		QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
+		return;
+	}
+
+	auto *response = sessionlisting2::getApiInfo(url);
+	connect(response, &sessionlisting2::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
+		response->deleteLater();
+		if(!error.isEmpty()) {
+			QMessageBox::warning(this, tr("Add public listing server"), error);
 			return;
 		}
 
-		auto *api = new sessionlisting::AnnouncementApi;
+		const auto info = result.value<sessionlisting2::ListServerInfo>();
+		const QString apiUrl = response->apiUrl().toString();
 
-		QPointer<SettingsDialog> self(this);
+		m_listservers->addServer(
+			info.name,
+			apiUrl,
+			info.description
+			);
 
-		connect(api, &sessionlisting::AnnouncementApi::error, [self, api](QString error) {
-			QMessageBox::warning(self, tr("Add public listing server"), error);
-			api->deleteLater();
-		});
+		if(info.faviconUrl == "drawpile") {
+			m_listservers->setFavicon(
+				apiUrl,
+				QIcon("builtin:drawpile.png").pixmap(128, 128).toImage()
+				);
 
-		connect(api, &sessionlisting::AnnouncementApi::serverInfo, [self, url, api](sessionlisting::ListServerInfo info) {
-			if(!self.isNull()) {
-				self->m_listservers->addServer(info.name, url.toString(), info.description);
-
-				if(info.faviconUrl == "drawpile") {
-					self->m_listservers->setFavicon(url.toString(), QIcon("builtin:drawpile.png").pixmap(128, 128).toImage());
-				} else {
-					QUrl favicon(info.faviconUrl);
-					if(favicon.isValid()) {
-						networkaccess::getImage(favicon, nullptr, [self, url](const QImage &image, const QString &) {
-							if(!self.isNull() && !image.isNull()) {
-								self->m_listservers->setFavicon(url.toString(), image);
-							}
-						});
+		} else {
+			const QUrl favicon(info.faviconUrl);
+			if(favicon.isValid()) {
+				networkaccess::getImage(favicon, nullptr, this, [this, apiUrl](const QImage &image, const QString &) {
+					if(!image.isNull()) {
+						m_listservers->setFavicon(apiUrl, image);
 					}
-				}
+				});
 			}
-			api->deleteLater();
-		});
-
-		api->getApiInfo(url);
-	}
+		}
+	});
 }
 
 void SettingsDialog::removeListingServer()

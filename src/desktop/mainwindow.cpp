@@ -967,7 +967,7 @@ void MainWindow::open(const QUrl& url)
 				addRecentFile(file);
 		}
 	} else {
-		networkaccess::getFile(url, QString(), m_netstatus, [this](const QFile &file, const QString &error) {
+		networkaccess::getFile(url, QString(), m_netstatus, this, [this](const QFile &file, const QString &error) {
 			if(error.isEmpty()) {
 				open(QUrl::fromLocalFile(file.fileName()));
 			} else {
@@ -1874,7 +1874,7 @@ void MainWindow::pasteFile(const QUrl &url)
 
 		pasteImage(img);
 	} else {
-		networkaccess::getImage(url, m_netstatus, [this](const QImage &image, const QString &error) {
+		networkaccess::getImage(url, m_netstatus, this, [this](const QImage &image, const QString &error) {
 			if(image.isNull())
 				showErrorMessage(error);
 			else
@@ -1918,7 +1918,7 @@ void MainWindow::dropUrl(const QUrl &url)
 		}
 
 	} else {
-		networkaccess::getFile(url, "", m_netstatus, [this](const QFile &file, const QString &error) {
+		networkaccess::getFile(url, QString(), m_netstatus, this, [this](const QFile &file, const QString &error) {
 			if(error.isEmpty())
 				dropUrl(QUrl::fromLocalFile(file.fileName()));
 			else
