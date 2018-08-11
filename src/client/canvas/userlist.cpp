@@ -42,7 +42,7 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			case Qt::DisplayRole:
 			case NameRole: return u.name;
 			case Qt::DecorationRole:
-			case AvatarRole: return QPixmap(); // TODO
+			case AvatarRole: return u.avatar;
 			case IsOpRole: return u.isOperator;
 			case IsTrustedRole: return u.isTrusted;
 			case IsModRole: return u.isMod;
@@ -71,6 +71,7 @@ void UserListModel::addUser(const User &user)
 		if(u.id == user.id) {
 			qWarning() << "replacing user" << u.id << u.name << "with" << user.name;
 			u.name = user.name;
+			u.avatar = user.avatar;
 			u.isLocal = user.isLocal;
 			u.isAuth = user.isAuth;
 			u.isMod = user.isMod;
@@ -239,18 +240,6 @@ QString UserListModel::getUsername(int id) const
 
 	// Not found
 	return tr("User #%1").arg(id);
-}
-
-// Add or remove a user ID
-static QList<uint8_t> &updateUserIdList(QList<uint8_t> &list, uint8_t id, bool add)
-{
-	if(add) {
-		if(!list.contains(id))
-			list.append(id);
-	} else {
-		list.removeAll(id);
-	}
-	return list;
 }
 
 protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, bool lock) const

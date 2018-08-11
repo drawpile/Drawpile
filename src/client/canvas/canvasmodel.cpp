@@ -30,6 +30,7 @@
 #include "core/annotationmodel.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
+#include "utils/identicon.h"
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -381,7 +382,19 @@ void CanvasModel::resetCanvas()
 
 void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 {
-	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator(), msg.isBot());
+	const User u {
+		msg.contextId(),
+		msg.name(),
+		QPixmap::fromImage(make_identicon(msg.name())),
+		msg.contextId() == m_statetracker->localId(),
+		false,
+		false,
+		msg.isModerator(),
+		msg.isBot(),
+		msg.isAuthenticated(),
+		false,
+		false
+	};
 
 	m_userlist->addUser(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());

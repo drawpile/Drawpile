@@ -21,6 +21,7 @@
 
 #include <QAbstractListModel>
 #include <QList>
+#include <QPixmap>
 
 class QJsonArray;
 
@@ -32,13 +33,9 @@ namespace canvas {
  * @brief Information about a user
  */
 struct User {
-	User() : User(0, QString(), false, false, false, false) {}
-	User(int id_, const QString &name_, bool local, bool auth, bool mod, bool bot)
-		: id(id_), name(name_), isLocal(local), isOperator(false), isTrusted(false), isMod(mod), isBot(bot), isAuth(auth), isLocked(false), isMuted(false)
-	{}
-
 	int id;
 	QString name;
+	QPixmap avatar;
 	bool isLocal;
 	bool isOperator;
 	bool isTrusted;

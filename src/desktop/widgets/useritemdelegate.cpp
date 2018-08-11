@@ -68,16 +68,17 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	painter->fillRect(option.rect, option.backgroundBrush);
 	painter->setRenderHint(QPainter::Antialiasing);
 
-	// Draw avatar (placeholder)
+	// Draw avatar
 	const QRect avatarRect(
 		option.rect.x() + MARGIN,
 		option.rect.y() + MARGIN,
 		AVATAR_SIZE,
 		AVATAR_SIZE
 		);
-	painter->setBrush(QColor("#eeefefff"));
-	painter->setPen(Qt::NoPen);
-	painter->drawEllipse(avatarRect);
+	painter->drawPixmap(
+		avatarRect,
+		index.data(canvas::UserListModel::AvatarRole).value<QPixmap>()
+		);
 
 	// Draw status overlay	
 	const bool isLocked = index.data(canvas::UserListModel::IsLockedRole).toBool();
