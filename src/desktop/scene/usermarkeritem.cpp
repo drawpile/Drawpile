@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,14 +29,15 @@ namespace drawingboard {
 
 
 namespace {
-static const float ARROW = 10;
+static const int ARROW = 10;
 
 }
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_id(id), _fadeout(0), m_showSubtext(false)
+	: QGraphicsItem(parent),
+	  m_id(id), m_fadeout(0), m_showSubtext(false)
 {
 	setFlag(ItemIgnoresTransformations);
-	_bgbrush.setStyle(Qt::SolidPattern);
+	m_bgbrush.setStyle(Qt::SolidPattern);
 	QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
 	shadow->setOffset(0);
 	shadow->setBlurRadius(10);
@@ -46,36 +47,42 @@ UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 
 void UserMarkerItem::setColor(const QColor &color)
 {
-	_bgbrush.setColor(color);
+	m_bgbrush.setColor(color);
 
 	if ((color.red() * 30) + (color.green() * 59) + (color.blue() * 11) > 12800)
-		_textpen = QPen(Qt::black);
+		m_textpen = QPen(Qt::black);
 	else
-		_textpen = QPen(Qt::white);
+		m_textpen = QPen(Qt::white);
 
 	update();
 }
 
 const QColor &UserMarkerItem::color() const
 {
-	return _bgbrush.color();
+	return m_bgbrush.color();
 }
 
 void UserMarkerItem::setText(const QString &text)
 {
-	if(_text1 != text) {
-		_text1 = text;
+	if(m_text1 != text) {
+		m_text1 = text;
 		updateFullText();
 	}
 }
 
 void UserMarkerItem::setSubtext(const QString &text)
 {
-	if(_text2 != text) {
-		_text2 = text;
+	if(m_text2 != text) {
+		m_text2 = text;
 		if(m_showSubtext)
 			updateFullText();
 	}
+}
+
+void UserMarkerItem::setAvatar(const QPixmap &avatar)
+{
+	m_avatar = avatar;
+	updateFullText();
 }
 
 void UserMarkerItem::setShowSubtext(bool show)
@@ -86,50 +93,64 @@ void UserMarkerItem::setShowSubtext(bool show)
 	}
 }
 
+void UserMarkerItem::setShowAvatar(bool show) {
+	if(m_showAvatar != show) {
+		m_showAvatar = show;
+		updateFullText();
+	}
+}
+
 void UserMarkerItem::updateFullText()
 {
 	prepareGeometryChange();
 
-	if(_text2.isEmpty() || !m_showSubtext)
-		_fulltext = _text1;
+	if(m_text2.isEmpty() || !m_showSubtext)
+		m_fulltext = m_text1;
 	else
-		_fulltext = _text1 + "\n[" + _text2 + ']';
+		m_fulltext = QStringLiteral("%1\n[%2]").arg(m_text1, m_text2);
 
-	// Make a new bubble for the text
-	QRect textrect = qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, _fulltext);
+	// Make a new bubble for the text and avatar
+	const QRect textrect = qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
 
-	const float round = 3;
-	const float padding = 5;
-	const float width = qMax((ARROW+round)*2, textrect.width() + 2*padding);
-	const float rad = width / 2.0;
-	const float height = textrect.height() + ARROW + 2 * padding;
+	const qreal round = 3;
+	const qreal padding = 5;
+	const qreal width = qMax((ARROW+round)*2, textrect.width() + 2*padding);
+	const qreal rad = width / 2.0;
+	const qreal avatarHeight = (!m_avatar.isNull() && m_showAvatar) ? m_avatar.height() + padding : 0;
+	const qreal height = textrect.height() + avatarHeight + ARROW + 2 * padding;
 
-	_bounds = QRectF(-rad, -height, width, height);
+	m_bounds = QRectF(-rad, -height, width, height);
 
-	_textrect = _bounds.adjusted(padding, padding, -padding, -padding);
+	m_avatarRect = QRectF(
+		m_bounds.width()/2 + m_bounds.left() - m_avatar.width() / 2,
+		m_bounds.top() + padding,
+		m_avatar.width(),
+		m_avatar.height()
+		);
+	m_textRect = m_bounds.adjusted(padding, padding + avatarHeight, -padding, -padding);
 
-	_bubble = QPainterPath(QPointF(0, 0));
+	m_bubble = QPainterPath(QPointF(0, 0));
 
-	_bubble.lineTo(-ARROW, -ARROW);
-	_bubble.lineTo(-rad+round, -ARROW);
+	m_bubble.lineTo(-ARROW, -ARROW);
+	m_bubble.lineTo(-rad+round, -ARROW);
 
-	_bubble.quadTo(-rad, -ARROW, -rad, -ARROW-round);
-	_bubble.lineTo(-rad, -height+round);
-	_bubble.quadTo(-rad, -height, -rad+round, -height);
+	m_bubble.quadTo(-rad, -ARROW, -rad, -ARROW-round);
+	m_bubble.lineTo(-rad, -height+round);
+	m_bubble.quadTo(-rad, -height, -rad+round, -height);
 
-	_bubble.lineTo(rad-round, -height);
-	_bubble.quadTo(rad, -height, rad, -height+round);
-	_bubble.lineTo(rad, -ARROW-round);
+	m_bubble.lineTo(rad-round, -height);
+	m_bubble.quadTo(rad, -height, rad, -height+round);
+	m_bubble.lineTo(rad, -ARROW-round);
 
-	_bubble.quadTo(rad, -ARROW, rad-round, -ARROW);
-	_bubble.lineTo(ARROW, -ARROW);
+	m_bubble.quadTo(rad, -ARROW, rad-round, -ARROW);
+	m_bubble.lineTo(ARROW, -ARROW);
 
-	_bubble.closeSubpath();
+	m_bubble.closeSubpath();
 }
 
 QRectF UserMarkerItem::boundingRect() const
 {
-	return _bounds;
+	return m_bounds;
 }
 
 void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -137,35 +158,38 @@ void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setPen(Qt::NoPen);
 
-	painter->setBrush(_bgbrush);
-	painter->drawPath(_bubble);
+	painter->setBrush(m_bgbrush);
+	painter->drawPath(m_bubble);
 
 	painter->setFont(qApp->font());
-	painter->setPen(_textpen);
-	painter->drawText(_textrect, Qt::AlignHCenter|Qt::AlignTop, _fulltext);
+	painter->setPen(m_textpen);
+	painter->drawText(m_textRect, Qt::AlignHCenter|Qt::AlignTop, m_fulltext);
+
+	if(!m_avatar.isNull() && m_showAvatar)
+		painter->drawPixmap(m_avatarRect.topLeft(), m_avatar);
 }
 
 void UserMarkerItem::fadein()
 {
-	_fadeout = 0;
+	m_fadeout = 0;
 	setOpacity(1);
 	show();
 }
 
 void UserMarkerItem::fadeout()
 {
-	_fadeout = 1.0;
+	m_fadeout = 1.0;
 }
 
-bool UserMarkerItem::fadeoutStep(float dt)
+bool UserMarkerItem::fadeoutStep(double dt)
 {
-	if(_fadeout>0) {
-		_fadeout -= dt;
-		if(_fadeout <= 0.0) {
+	if(m_fadeout>0) {
+		m_fadeout -= dt;
+		if(m_fadeout <= 0.0) {
 			hide();
 			return true;
-		} else if(_fadeout < 1.0)
-			setOpacity(_fadeout);
+		} else if(m_fadeout < 1.0)
+			setOpacity(m_fadeout);
 	}
 	return false;
 }

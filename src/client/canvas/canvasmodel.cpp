@@ -398,6 +398,7 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 
 	m_userlist->addUser(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());
+	m_usercursors->setCursorAvatar(msg.contextId(), u.avatar);
 
 	emit userJoined(msg.contextId(), msg.name());
 }

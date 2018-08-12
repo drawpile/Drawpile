@@ -53,6 +53,7 @@ QVariant UserCursorModel::data(const QModelIndex &index, int role) const
 		const UserCursor &uc = m_cursors.at(index.row());
 	switch(role) {
 		case Qt::DisplayRole: return uc.name;
+		case Qt::DecorationRole: return uc.avatar;
 		case IdRole: return uc.id;
 		case PositionRole: return uc.pos;
 		case LayerRole: return uc.layer;
@@ -68,6 +69,7 @@ QHash<int, QByteArray> UserCursorModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "display";
+	roles[Qt::DecorationRole] = "decoration";
 	roles[IdRole] = "id";
 	roles[PositionRole] = "pos";
 	roles[LayerRole] = "layer";
@@ -85,6 +87,16 @@ void UserCursorModel::setCursorName(int id, const QString &name)
 	uc->name = name;
 
 	emit dataChanged(index, index, QVector<int>() << Qt::DisplayRole);
+}
+
+void UserCursorModel::setCursorAvatar(int id, const QPixmap &avatar)
+{
+	QModelIndex index;
+	UserCursor *uc = getOrCreate(id, index);
+
+	uc->avatar = avatar;
+
+	emit dataChanged(index, index, QVector<int>() << Qt::DecorationRole);
 }
 
 void UserCursorModel::setCursorColor(int id, const QColor &color)
@@ -155,7 +167,17 @@ UserCursor *UserCursorModel::getOrCreate(int id, QModelIndex &idx)
 	}
 
 	beginInsertRows(QModelIndex(), m_cursors.size(), m_cursors.size());
-	m_cursors.append(UserCursor { id, false, QDateTime::currentMSecsSinceEpoch(), 0, QPoint(), QStringLiteral("#%1").arg(id), QString(), QColor(Qt::black)});
+	m_cursors.append(UserCursor {
+		id,
+		false,
+		QDateTime::currentMSecsSinceEpoch(),
+		0,
+		QPoint(),
+		QStringLiteral("#%1").arg(id),
+		QString(),
+		QColor(Qt::black),
+		QPixmap()
+	});
 	endInsertRows();
 
 	idx = index(m_cursors.size()-1);

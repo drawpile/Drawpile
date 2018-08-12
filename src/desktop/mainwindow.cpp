@@ -2342,7 +2342,8 @@ void MainWindow::setupActions()
 
 	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked();
 	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked();
-	QAction *showuserlayers = makeAction("showuserlayers", tr("Show User &Layers")).checked();
+	QAction *showuserlayers = makeAction("showuserlayers", tr("Show Layers")).checked();
+	QAction *showuseravatars = makeAction("showuseravatars", tr("Show Avatars")).checked();
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked();
 
@@ -2404,6 +2405,7 @@ void MainWindow::setupActions()
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), m_canvasscene, SLOT(showUserMarkers(bool)));
 	connect(showuserlayers, SIGNAL(triggered(bool)), m_canvasscene, SLOT(showUserLayers(bool)));
+	connect(showuseravatars, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserAvatars);
 	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
@@ -2439,6 +2441,7 @@ void MainWindow::setupActions()
 	QMenu *userpointermenu = viewmenu->addMenu(tr("User Pointers"));
 	userpointermenu->addAction(showusermarkers);
 	userpointermenu->addAction(showuserlayers);
+	userpointermenu->addAction(showuseravatars);
 	userpointermenu->addAction(showlasers);
 
 	viewmenu->addAction(showannotations);

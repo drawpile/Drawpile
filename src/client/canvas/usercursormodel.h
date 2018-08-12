@@ -24,6 +24,7 @@
 #include <QColor>
 #include <QPointF>
 #include <QList>
+#include <QPixmap>
 
 namespace canvas {
 
@@ -39,6 +40,7 @@ struct UserCursor {
 	QString name;
 	QString layer;
 	QColor color;
+	QPixmap avatar;
 };
 
 class UserCursorModel : public QAbstractListModel
@@ -47,6 +49,7 @@ class UserCursorModel : public QAbstractListModel
 public:
 	enum UserCursorRoles {
 		// DisplayRole is used to get the name
+		// DecorationRole is used to get the avatar
 		IdRole = Qt::UserRole + 10,
 		PositionRole,
 		LayerRole,
@@ -74,6 +77,7 @@ public slots:
 	void setCursorName(int id, const QString &name);
 	void setCursorColor(int id, const QColor &color);
 	void setCursorPosition(int id, int layerId, const QPoint &pos);
+	void setCursorAvatar(int id, const QPixmap &avatar);
 	void hideCursor(int id);
 
 	void clear();

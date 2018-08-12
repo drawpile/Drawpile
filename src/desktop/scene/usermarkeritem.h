@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,15 +21,18 @@
 
 #include <QGraphicsObject>
 #include <QPainterPath>
+#include <QPixmap>
+#include <QBrush>
+#include <QPen>
 
 namespace drawingboard {
 
 class UserMarkerItem : public QGraphicsItem
 {
 public:
-	enum { Type= UserType + 12 };
+	enum { Type = UserType + 12 };
 
-	UserMarkerItem(int id, QGraphicsItem *parent=0);
+	UserMarkerItem(int id, QGraphicsItem *parent=nullptr);
 
 	int id() const { return m_id; }
 	QRectF boundingRect() const override;
@@ -42,10 +45,13 @@ public:
 	void setSubtext(const QString &text);
 	void setShowSubtext(bool show);
 
+	void setAvatar(const QPixmap &avatar);
+	void setShowAvatar(bool show);
+
 	void fadein();
 	void fadeout();
 
-	bool fadeoutStep(float dt);
+	bool fadeoutStep(double dt);
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
@@ -54,16 +60,20 @@ private:
 	void updateFullText();
 	int m_id;
 
-	QRectF _bounds;
-	QBrush _bgbrush;
-	QPen _textpen;
-	QPainterPath _bubble;
-	QRectF _textrect;
-	float _fadeout;
+	QRectF m_bounds;
+	QBrush m_bgbrush;
+	QPen m_textpen;
+	QPainterPath m_bubble;
+	QRectF m_textRect;
+	QRectF m_avatarRect;
+	double m_fadeout;
 
-	QString _text1, _text2;
-	QString _fulltext;
+	QString m_text1, m_text2;
+	QString m_fulltext;
+	QPixmap m_avatar;
+
 	bool m_showSubtext;
+	bool m_showAvatar;
 };
 
 }
