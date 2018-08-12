@@ -2342,8 +2342,9 @@ void MainWindow::setupActions()
 
 	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked();
 	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked();
-	QAction *showuserlayers = makeAction("showuserlayers", tr("Show Layers")).checked();
-	QAction *showuseravatars = makeAction("showuseravatars", tr("Show Avatars")).checked();
+	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).checked();
+	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).checked();
+	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).checked();
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked();
 
@@ -2402,11 +2403,12 @@ void MainWindow::setupActions()
 
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 
-	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
-	connect(showusermarkers, SIGNAL(triggered(bool)), m_canvasscene, SLOT(showUserMarkers(bool)));
-	connect(showuserlayers, SIGNAL(triggered(bool)), m_canvasscene, SLOT(showUserLayers(bool)));
+	connect(showannotations, &QAction::triggered, this, &MainWindow::setShowAnnotations);
+	connect(showusermarkers, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserMarkers);
+	connect(showusernames, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserNames);
+	connect(showuserlayers, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserLayers);
 	connect(showuseravatars, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserAvatars);
-	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
+	connect(showlasers, &QAction::triggered, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
 	m_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
@@ -2440,9 +2442,12 @@ void MainWindow::setupActions()
 
 	QMenu *userpointermenu = viewmenu->addMenu(tr("User Pointers"));
 	userpointermenu->addAction(showusermarkers);
+	userpointermenu->addAction(showlasers);
+	userpointermenu->addSeparator();
+	userpointermenu->addAction(showusernames);
 	userpointermenu->addAction(showuserlayers);
 	userpointermenu->addAction(showuseravatars);
-	userpointermenu->addAction(showlasers);
+
 
 	viewmenu->addAction(showannotations);
 

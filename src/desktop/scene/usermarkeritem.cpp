@@ -34,7 +34,7 @@ static const int ARROW = 10;
 }
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 	: QGraphicsItem(parent),
-	  m_id(id), m_fadeout(0), m_showSubtext(false)
+	  m_id(id), m_fadeout(0), m_showText(true), m_showSubtext(false), m_showAvatar(true)
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);
@@ -66,7 +66,8 @@ void UserMarkerItem::setText(const QString &text)
 {
 	if(m_text1 != text) {
 		m_text1 = text;
-		updateFullText();
+		if(m_showText)
+			updateFullText();
 	}
 }
 
@@ -82,7 +83,16 @@ void UserMarkerItem::setSubtext(const QString &text)
 void UserMarkerItem::setAvatar(const QPixmap &avatar)
 {
 	m_avatar = avatar;
-	updateFullText();
+	if(m_showAvatar)
+		updateFullText();
+}
+
+void UserMarkerItem::setShowText(bool show)
+{
+	if(m_showText != show) {
+		m_showText = show;
+		updateFullText();
+	}
 }
 
 void UserMarkerItem::setShowSubtext(bool show)
@@ -104,19 +114,24 @@ void UserMarkerItem::updateFullText()
 {
 	prepareGeometryChange();
 
-	if(m_text2.isEmpty() || !m_showSubtext)
-		m_fulltext = m_text1;
-	else
-		m_fulltext = QStringLiteral("%1\n[%2]").arg(m_text1, m_text2);
+	m_fulltext = m_showText ? m_text1 : QString();
+
+	if(m_showSubtext && !m_text2.isEmpty()) {
+		if(!m_fulltext.isEmpty())
+			m_fulltext += QStringLiteral("\n[");
+		m_fulltext += m_text2;
+		m_fulltext += ']';
+	}
 
 	// Make a new bubble for the text and avatar
-	const QRect textrect = qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
+	const QRect textrect = m_fulltext.isEmpty() ? QRect() : qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
+	const bool showAvatar = m_showAvatar && !m_avatar.isNull();
 
 	const qreal round = 3;
 	const qreal padding = 5;
-	const qreal width = qMax((ARROW+round)*2, textrect.width() + 2*padding);
+	const qreal width = qMax(qMax((ARROW+round)*2, textrect.width() + 2*padding), showAvatar ? m_avatar.width() + 2*padding : 0);
 	const qreal rad = width / 2.0;
-	const qreal avatarHeight = (!m_avatar.isNull() && m_showAvatar) ? m_avatar.height() + padding : 0;
+	const qreal avatarHeight = showAvatar ? m_avatar.height() + (textrect.height()>0 ? padding : 0) : 0;
 	const qreal height = textrect.height() + avatarHeight + ARROW + 2 * padding;
 
 	m_bounds = QRectF(-rad, -height, width, height);

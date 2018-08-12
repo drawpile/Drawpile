@@ -42,6 +42,8 @@ public:
 	const QColor &color() const;
 
 	void setText(const QString &text);
+	void setShowText(bool show);
+
 	void setSubtext(const QString &text);
 	void setShowSubtext(bool show);
 
@@ -72,6 +74,7 @@ private:
 	QString m_fulltext;
 	QPixmap m_avatar;
 
+	bool m_showText;
 	bool m_showSubtext;
 	bool m_showAvatar;
 };

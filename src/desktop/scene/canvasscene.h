@@ -83,6 +83,9 @@ public slots:
 	//! Show/hide remote cursor markers
 	void showUserMarkers(bool show);
 
+	//! Show user names in cursor markers
+	void showUserNames(bool show);
+
 	//! Show layer selection in cursor marker
 	void showUserLayers(bool show);
 
@@ -144,6 +147,7 @@ private:
 	bool _showAnnotationBorders;
 	bool _showAnnotations;
 	bool m_showUserMarkers;
+	bool m_showUserNames;
 	bool m_showUserLayers;
 	bool m_showUserAvatars;
 	bool m_showLaserTrails;

@@ -38,7 +38,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
 	  _showAnnotationBorders(false), _showAnnotations(true),
-	  m_showUserMarkers(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
+	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(false), m_showUserAvatars(true), m_showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -343,6 +343,7 @@ void CanvasScene::userCursorAdded(const QModelIndex&, int first, int last)
 
 		} else {
 			UserMarkerItem *item = new UserMarkerItem(id);
+			item->setShowText(m_showUserNames);
 			item->setShowSubtext(m_showUserLayers);
 			item->setShowAvatar(m_showUserAvatars);
 			item->hide();
@@ -413,6 +414,15 @@ void CanvasScene::showUserMarkers(bool show)
 				item->hide();
 			}
 		}
+	}
+}
+
+void CanvasScene::showUserNames(bool show)
+{
+	if(m_showUserNames != show) {
+		m_showUserNames = show;
+		for(UserMarkerItem *item : m_usermarkers)
+			item->setShowText(show);
 	}
 }
 
