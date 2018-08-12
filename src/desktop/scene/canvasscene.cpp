@@ -257,7 +257,8 @@ void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 		return;
 
 	// Don't add new lasers when canvas is hidden
-	if(!m_image->isVisible())
+	// or when laser trails are disabled
+	if(!m_image->isVisible() || !m_showLaserTrails)
 		return;
 
 	for(int i=first;i<=last;++i) {
@@ -287,7 +288,7 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 
 void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
-	if(!m_image || !m_image->isVisible())
+	if(!m_image || !m_image->isVisible() || !m_showLaserTrails)
 		return;
 
 	const int ifirst = first.row();

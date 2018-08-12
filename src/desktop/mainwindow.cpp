@@ -759,12 +759,15 @@ void MainWindow::readSettings(bool windowpos)
 	if(cfg.contains("viewstate")) {
 		m_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
-	getAction("freezedocks")->setChecked(cfg.value("freezedocks", false).toBool());
 
-	// Restore view settings
-	getAction("showgrid")->setChecked(cfg.value("showgrid", true).toBool());
-	getAction("layernumbers")->setChecked(cfg.value("layernumbers", false).toBool());
-	getAction("layerviewuncensor")->setChecked(cfg.value("layerviewuncensor", false).toBool());
+	// Restore remembered actions
+	cfg.beginGroup("actions");
+	for(QAction *act : actions()) {
+		if(act->isCheckable() && act->property("remembered").toBool()) {
+			act->setChecked(cfg.value(act->objectName(), act->property("defaultValue")).toBool());
+		}
+	}
+	cfg.endGroup();
 	cfg.endGroup();
 
 	// Restore tool settings
@@ -791,12 +794,16 @@ void MainWindow::writeSettings()
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", m_splitter->saveState());
-	cfg.setValue("freezedocks", getAction("freezedocks")->isChecked());
 
-	cfg.setValue("showgrid", getAction("showgrid")->isChecked());
-	cfg.setValue("layernumbers", getAction("layernumbers")->isChecked());
-	cfg.setValue("layerviewuncensor", getAction("layerviewuncensor")->isChecked());
+	// Save all remembered actions
+	cfg.beginGroup("actions");
+	for(const QAction *act : actions()) {
+		if(act->isCheckable() && act->property("remembered").toBool())
+			cfg.setValue(act->objectName(), act->isChecked());
+	}
 	cfg.endGroup();
+	cfg.endGroup();
+
 	m_dockToolSettings->saveSettings();
 }
 
@@ -1626,7 +1633,7 @@ void MainWindow::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 		m_canvasbgtools->setEnabled(canUse);
 		break;
 	case canvas::Feature::Laser:
-		getAction("toollaser")->setEnabled(canUse);
+		getAction("toollaser")->setEnabled(canUse && getAction("showlasers")->isChecked());
 		break;
 	case canvas::Feature::Undo:
 		m_undotools->setEnabled(canUse);
@@ -2099,7 +2106,7 @@ void MainWindow::setupActions()
 	}
 
 	toggledockmenu->addSeparator();
-	QAction *freezeDocks = makeAction("freezedocks", tr("Lock in place")).checkable();
+	QAction *freezeDocks = makeAction("freezedocks", tr("Lock in place")).checkable().remembered();
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
@@ -2340,13 +2347,13 @@ void MainWindow::setupActions()
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
 
-	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked();
-	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked();
-	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).checked();
-	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).checked();
-	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).checked();
-	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked();
-	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked();
+	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked().remembered();
+	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked().remembered();
+	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).checked().remembered();
+	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).checked().remembered();
+	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).checked().remembered();
+	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked().remembered();
+	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked().remembered();
 
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
 
@@ -2403,12 +2410,12 @@ void MainWindow::setupActions()
 
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 
-	connect(showannotations, &QAction::triggered, this, &MainWindow::setShowAnnotations);
-	connect(showusermarkers, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserMarkers);
-	connect(showusernames, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserNames);
-	connect(showuserlayers, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserLayers);
-	connect(showuseravatars, &QAction::triggered, m_canvasscene, &drawingboard::CanvasScene::showUserAvatars);
-	connect(showlasers, &QAction::triggered, this, &MainWindow::setShowLaserTrails);
+	connect(showannotations, &QAction::toggled, this, &MainWindow::setShowAnnotations);
+	connect(showusermarkers, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserMarkers);
+	connect(showusernames, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserNames);
+	connect(showuserlayers, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserLayers);
+	connect(showuseravatars, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserAvatars);
+	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
 	m_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
@@ -2468,15 +2475,15 @@ void MainWindow::setupActions()
 
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).checkable();
-	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable();
-	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable();
+	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable().remembered();
+	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
 
-	connect(layerSolo, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
-	connect(layerOnionskin, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
-	connect(layerUncensor, &QAction::triggered, this, &MainWindow::updateLayerViewMode);
+	connect(layerSolo, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
+	connect(layerOnionskin, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
+	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);

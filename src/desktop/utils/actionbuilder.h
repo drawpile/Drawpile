@@ -22,6 +22,7 @@
 
 #include <QAction>
 #include "utils/icon.h"
+#include "utils/customshortcutmodel.h"
 
 /**
  * @brief A helper class for configuring QActions
@@ -31,7 +32,12 @@ class ActionBuilder
 public:
 	explicit ActionBuilder(QAction *action) : m_action(action) { Q_ASSERT(m_action); }
 
-	operator QAction*() { return m_action; }
+	operator QAction*() {
+		// If an action is tagged as "remembered", it should be checkable as well
+		Q_ASSERT(m_action->isCheckable() || !m_action->property("remembered").toBool());
+
+		return m_action;
+	}
 
 	ActionBuilder &icon(const QString &name)
 	{
@@ -59,6 +65,7 @@ public:
 	{
 		m_action->setCheckable(true);
 		m_action->setChecked(true);
+		m_action->setProperty("defaultValue", true);
 		return *this;
 	}
 
@@ -83,6 +90,15 @@ public:
 	ActionBuilder &property(const char *name, const QVariant &value)
 	{
 		m_action->setProperty(name, value);
+		return *this;
+	}
+
+	ActionBuilder &remembered()
+	{
+		// Tag this (checkable) action so that its state will be
+		// saved and loaded.
+		Q_ASSERT(!m_action->objectName().isEmpty());
+		m_action->setProperty("remembered", true);
 		return *this;
 	}
 
