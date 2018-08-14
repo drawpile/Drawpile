@@ -35,6 +35,7 @@ Server specific dependencies (you can also take a look at [Docker build](server/
 
 * libsystemd (optional: systemd socket activation support)
 * libmicrohttpd (optional: HTTP admin API)
+* libsodium (optional: ext-auth support)
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
