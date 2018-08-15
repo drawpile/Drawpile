@@ -313,11 +313,11 @@ void JoinDialog::rememberSettings() const
 
 	QStringList hosts;
 	// Move current item to the top of the list
-	const QString current = m_ui->address->currentText();
+	const QString current = cleanAddress(m_ui->address->currentText());
 	int curindex = m_ui->address->findText(current);
 	if(curindex>=0)
 		m_ui->address->removeItem(curindex);
-	hosts << cleanAddress(current);
+	hosts << current;
 	for(int i=0;i<qMin(8, m_ui->address->count());++i) {
 		if(!m_ui->address->itemText(i).isEmpty())
 			hosts << m_ui->address->itemText(i);
