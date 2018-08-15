@@ -24,8 +24,6 @@
 #include <QAbstractTableModel>
 #include <QUrl>
 
-namespace sessionlisting {
-
 /**
  * @brief List of sessions received from a listing server
  */
@@ -49,7 +47,7 @@ public:
 	void clear();
 
 public slots:
-	void setList(const QList<Session> sessions);
+	void setList(const QList<sessionlisting::Session> sessions);
 	void setShowNsfm(bool nsfm);
 	void setShowPassworded(bool show);
 
@@ -57,13 +55,12 @@ private:
 	void filterSessionList();
 	QUrl sessionUrl(int index) const;
 
-	QList<Session> m_filtered;
-	QList<Session> m_sessions;
+	QList<sessionlisting::Session> m_filtered;
+	QList<sessionlisting::Session> m_sessions;
 	int m_nsfmCount;
 	bool m_nsfm;
 	bool m_showPassworded;
 };
 
-}
-
 #endif // SESSIONLISTINGMODEL_H
+

@@ -25,7 +25,6 @@ set (
 	util/passwordhash.cpp
 	util/filename.cpp
 	util/announcementapi.cpp
-	util/announcementapi2.cpp
 	util/whatismyip.cpp
 	util/networkaccess.cpp
 	server/client.cpp

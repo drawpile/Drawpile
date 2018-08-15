@@ -36,7 +36,6 @@ set (
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
 	dialogs/netstats.cpp
-	dialogs/sessionlistingdialog.cpp
 	dialogs/flipbook.cpp
 	dialogs/resetdialog.cpp
 	dialogs/sessionsettings.cpp
@@ -58,6 +57,7 @@ set (
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
 	widgets/flipbookview.cpp
+	widgets/spinner.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
@@ -137,7 +137,6 @@ set (
 	ui/logindialog.ui
 	ui/colorbox.ui
 	ui/netstats.ui
-	ui/sessionlisting.ui
 	ui/flipbook.ui
 	ui/playback.ui
 	ui/resetsession.ui

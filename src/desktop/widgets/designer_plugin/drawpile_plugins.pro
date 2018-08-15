@@ -17,7 +17,8 @@ HEADERS += collection.h \
 	../filmstrip.h filmstrip_plugin.h \
 	../resizerwidget.h resizer_plugin.h \
 	../brushpreview.h brushpreview_plugin.h \
-	../tablettest.h tablettester_plugin.h
+	../tablettest.h tablettester_plugin.h \
+	../spinner.h spinner_plugin.h
 
 SOURCES += collection.cpp \
 	../colorbutton.cpp colorbutton_plugin.cpp \
@@ -25,5 +26,6 @@ SOURCES += collection.cpp \
 	../filmstrip.cpp filmstrip_plugin.cpp \
 	../resizerwidget.cpp resizer_plugin.cpp \
 	../brushpreview.cpp brushpreview_plugin.cpp \
-	../tablettest.cpp tablettester_plugin.cpp
+	../tablettest.cpp tablettester_plugin.cpp \
+	../spinner.cpp spinner_plugin.cpp
 

@@ -36,7 +36,7 @@ class ListServerModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
-	explicit ListServerModel(bool showlocal, QObject *parent=nullptr);
+	ListServerModel(bool showlocal, bool showBlank, QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -59,6 +59,7 @@ public:
 private:
 	QList<ListServer> m_servers;
 	bool m_showlocal;
+	bool m_showBlank;
 };
 
 }

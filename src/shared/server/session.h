@@ -29,7 +29,7 @@
 #include <QUuid>
 #include <QJsonObject>
 
-#include "../util/announcementapi2.h"
+#include "../util/announcementapi.h"
 #include "../util/passwordhash.h"
 #include "../net/message.h"
 #include "../net/protover.h"
@@ -338,7 +338,7 @@ public:
 	/**
 	 * @brief Get all active announcements for this session
 	 */
-	QList<sessionlisting2::Announcement> announcements() const { return m_publicListings; }
+	QList<sessionlisting::Announcement> announcements() const { return m_publicListings; }
 
 	/**
 	 * @brief Generate a request for session announcement
@@ -509,7 +509,7 @@ private:
 	QList<protocol::MessagePtr> m_resetstream;
 	uint m_resetstreamsize;
 
-	QList<sessionlisting2::Announcement> m_publicListings;
+	QList<sessionlisting::Announcement> m_publicListings;
 	QTimer *m_refreshTimer;
 
 	QElapsedTimer m_lastEventTime;

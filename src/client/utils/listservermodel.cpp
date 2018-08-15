@@ -31,8 +31,8 @@
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(bool showlocal, QObject *parent)
-	: QAbstractListModel(parent), m_showlocal(showlocal)
+ListServerModel::ListServerModel(bool showlocal, bool showBlank, QObject *parent)
+	: QAbstractListModel(parent), m_showlocal(showlocal), m_showBlank(showBlank)
 {
 	loadServers();
 }
@@ -190,6 +190,16 @@ void ListServerModel::loadServers()
 		});
 	}
 #endif
+
+	if(m_showBlank) {
+		m_servers << ListServer {
+			QIcon(),
+			QString(),
+			QStringLiteral("-"),
+			QString(),
+			QString()
+		};
+	}
 
 	endResetModel();
 }

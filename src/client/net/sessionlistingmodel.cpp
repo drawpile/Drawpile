@@ -25,10 +25,10 @@
 #include <QUrl>
 #include <QDebug>
 
-namespace sessionlisting {
+using sessionlisting::Session;
 
 SessionListingModel::SessionListingModel(QObject *parent)
-	: QAbstractTableModel(parent), m_nsfmCount(0), m_nsfm(false), m_showPassworded(true)
+	: QAbstractTableModel(parent), m_nsfmCount(0), m_nsfm(false), m_showPassworded(false)
 {
 }
 
@@ -81,7 +81,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			else if(s.password)
 				return icon::fromTheme("object-locked");
 			else if(s.nsfm)
-				return QIcon("builtin:nsfm.svg");
+				return QIcon("builtin:censored.svg");
 		}
 
 	} else if(role == Qt::UserRole) {
@@ -129,7 +129,7 @@ Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 		return Qt::NoItemFlags;
 }
 
-void SessionListingModel::setList(const QList<sessionlisting::Session> sessions)
+void SessionListingModel::setList(const QList<Session> sessions)
 {
 	m_sessions = sessions;
 	filterSessionList();
@@ -158,7 +158,7 @@ void SessionListingModel::filterSessionList()
 	beginResetModel();
 	m_filtered.clear();
 	m_nsfmCount = 0;
-	for(const sessionlisting::Session &s : m_sessions) {
+	for(const Session &s : m_sessions) {
 		if(s.nsfm)
 			++m_nsfmCount;
 		if((!s.nsfm || m_nsfm) && (!s.password || m_showPassworded))
@@ -182,4 +182,3 @@ QUrl SessionListingModel::sessionUrl(int index) const
 	return url;
 }
 
-}

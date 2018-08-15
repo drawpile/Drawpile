@@ -31,7 +31,7 @@
 #include "utils/settings.h"
 #include "utils/passwordstore.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "../shared/util/announcementapi2.h"
+#include "../shared/util/announcementapi.h"
 #include "../shared/util/passwordhash.h"
 
 #include "ui_settings.h"
@@ -184,7 +184,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Session listing server list
-	m_listservers = new sessionlisting::ListServerModel(false, this);
+	m_listservers = new sessionlisting::ListServerModel(false, false, this);
 	m_ui->listserverview->setModel(m_listservers);
 	m_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 
@@ -585,15 +585,15 @@ void SettingsDialog::addListingServer()
 		return;
 	}
 
-	auto *response = sessionlisting2::getApiInfo(url);
-	connect(response, &sessionlisting2::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
+	auto *response = sessionlisting::getApiInfo(url);
+	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
 		response->deleteLater();
 		if(!error.isEmpty()) {
 			QMessageBox::warning(this, tr("Add public listing server"), error);
 			return;
 		}
 
-		const auto info = result.value<sessionlisting2::ListServerInfo>();
+		const auto info = result.value<sessionlisting::ListServerInfo>();
 		const QString apiUrl = response->apiUrl().toString();
 
 		m_listservers->addServer(
