@@ -40,12 +40,6 @@ public:
 	//! Get the host address
 	QString getAddress() const;
 
-	//! Get the username
-	QString getUserName() const;
-
-	//! Should the session be recorded from the beginning
-	bool recordSession() const;
-
 	//! Get the join parameters encoded as an URL
 	QUrl getUrl() const;
 

@@ -43,7 +43,6 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->setupUi(this);
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	_ui->username->setValidator(new UsernameValidator(this));
 	_ui->idAlias->setValidator(new SessionIdAliasValidator(this));
 
 	// Session tab defaults
@@ -58,7 +57,6 @@ HostDialog::HostDialog(QWidget *parent)
 	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 
 	// Server box defaults
-	_ui->username->setText(cfg.value("username").toString());
 	if(cfg.value("hostremote", false).toBool())
 		_ui->useremote->setChecked(true);
 	_ui->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
@@ -76,7 +74,6 @@ void HostDialog::rememberSettings() const
 	QSettings cfg;
 	cfg.beginGroup("history");
 
-	cfg.setValue("username", getUserName());
 	cfg.setValue("sessiontitle", getTitle());
 	cfg.setValue("announce", _ui->announce->isChecked());
 	cfg.setValue("listingserver", _ui->listingserver->currentIndex());
@@ -108,11 +105,6 @@ QString HostDialog::getRemoteAddress() const
 bool HostDialog::useRemoteAddress() const
 {
 	return _ui->useremote->isChecked();
-}
-
-QString HostDialog::getUserName() const
-{
-	return _ui->username->text();
 }
 
 QString HostDialog::getTitle() const

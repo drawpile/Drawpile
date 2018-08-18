@@ -1298,7 +1298,6 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		showErrorMessage(tr("Invalid address"));
 		return;
 	}
-	address.setUserName(dlg->getUserName());
 
 	// Start server if hosting locally
 	if(useremote==false) {
@@ -1348,7 +1347,8 @@ void MainWindow::join(const QUrl &url)
 
 			dlg->rememberSettings();
 
-			joinSession(url, dlg->recordSession());
+			// TOOD set recordSession somewhere. Settings dialog?
+			joinSession(url, false);
 		}
 		dlg->deleteLater();
 	});

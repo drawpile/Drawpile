@@ -232,7 +232,7 @@ void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 	}
 }
 
-void LoginHandler::gotPassword(const QString &password)
+void LoginHandler::sendSessionPassword(const QString &password)
 {
 	if(m_state == WAIT_FOR_JOIN_PASSWORD) {
 		m_joinPassword = password;
@@ -240,13 +240,16 @@ void LoginHandler::gotPassword(const QString &password)
 
 	} else {
 		// shouldn't happen...
-		qWarning("gotPassword() in invalid state (%d)", m_state);
+		qWarning("sendSessionPassword() in invalid state (%d)", m_state);
 	}
 }
 
 void LoginHandler::prepareToSendIdentity()
 {
-	if(m_mustAuth || m_needUserPassword) {
+	if(m_address.userName().isEmpty()) {
+		emit usernameNeeded();
+
+	} else if(m_mustAuth || m_needUserPassword) {
 		m_state = WAIT_FOR_LOGIN_PASSWORD;
 
 		QString prompt;
@@ -437,19 +440,21 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 
 		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
 			QJsonObject js = jsv.toObject();
-			LoginSession session;
 
-			session.id = js["id"].toString();
-			session.alias = js["alias"].toString();
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
-			session.incompatible = !protoVer.isCurrent();
-			session.needPassword = js["hasPassword"].toBool();
-			session.closed = js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest);
-			session.persistent = js["persistent"].toBool();
-			session.userCount = js["userCount"].toInt();
-			session.founder = js["founder"].toString();
-			session.title = js["title"].toString();
-			session.nsfm = js["nsfm"].toBool();
+
+			const LoginSession session {
+				js["id"].toString(),
+				js["alias"].toString(),
+				js["title"].toString(),
+				js["founder"].toString(),
+				js["userCount"].toInt(),
+				js["hasPassword"].toBool(),
+				js["persistent"].toBool(),
+				js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest),
+				!protoVer.isCurrent(),
+				js["nsfm"].toBool()
+			};
 
 			m_sessions->updateSession(session);
 
@@ -547,7 +552,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
 	m_selectedId = id;
 	if(needPassword) {
-		emit passwordNeeded(tr("Enter session password"));
+		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 
 	} else {

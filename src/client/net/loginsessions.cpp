@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 namespace net {
 
 LoginSessionModel::LoginSessionModel(QObject *parent) :
-	QAbstractTableModel(parent), m_hideNsfm(false)
+	QAbstractTableModel(parent), m_showNsfm(true)
 {
 }
 
@@ -109,7 +109,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 {
 	if(index.row()<0 || index.row() >= m_filtered.size())
-		return 0;
+		return Qt::NoItemFlags;
 
 	const LoginSession &ls = m_filtered.at(index.row());
 	if(ls.incompatible || ls.closed)
@@ -138,7 +138,7 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 	for(int i=0;i<m_sessions.size();++i) {
 		if(m_sessions.at(i).isIdOrAlias(session.idOrAlias())) {
 			m_sessions[i] = session;
-			if(session.nsfm && m_hideNsfm)
+			if(session.nsfm && !m_showNsfm)
 				removeFiltered(session.idOrAlias());
 			else
 				updateFiltered(session);
@@ -150,7 +150,7 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 	// Add a new session to the end of the list
 	m_sessions << session;
 
-	if(!m_hideNsfm || !session.nsfm)
+	if(m_showNsfm || !session.nsfm)
 		updateFiltered(session);
 	emit filteredCountChanged();
 }
@@ -194,19 +194,19 @@ void LoginSessionModel::removeSession(const QString &id)
 	emit filteredCountChanged();
 }
 
-void LoginSessionModel::setHideNsfm(bool hide)
+void LoginSessionModel::setShowNsfm(bool show)
 {
-	if(hide != m_hideNsfm) {
-		m_hideNsfm  = hide;
+	if(show != m_showNsfm) {
+		m_showNsfm  = show;
 		beginResetModel();
-		if(hide) {
+		if(show) {
+			m_filtered = m_sessions;
+		} else {
 			m_filtered.clear();
 			for(const LoginSession &ls : m_sessions)
 				if(!ls.nsfm)
 					m_filtered << ls;
 
-		} else {
-			m_filtered = m_sessions;
 		}
 		endResetModel();
 		emit filteredCountChanged();

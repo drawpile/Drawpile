@@ -92,7 +92,6 @@ void CanvasModel::connectedToServer(int myUserId)
 
 void CanvasModel::disconnectedFromServer()
 {
-	Q_ASSERT(m_mode == Mode::Online);
 	m_statetracker->endRemoteContexts();
 	m_userlist->clearUsers();
 	m_aclfilter->reset(m_statetracker->localId(), true);

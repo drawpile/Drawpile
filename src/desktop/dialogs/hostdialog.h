@@ -43,9 +43,6 @@ public:
 	//! Host on a remote server?
 	bool useRemoteAddress() const;
 
-	//! Get the username
-	QString getUserName() const;
-
 	//! Get session title
 	QString getTitle() const;
 

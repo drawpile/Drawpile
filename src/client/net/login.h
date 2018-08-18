@@ -168,12 +168,12 @@ public slots:
 	/**
 	 * @brief Send password
 	 *
-	 * Call this in response to the needPassword signal after
+	 * Call this in response to the needSessionPassword signal after
 	 * the user has entered their password.
 	 *
 	 * @param password
 	 */
-	void gotPassword(const QString &password);
+	void sendSessionPassword(const QString &password);
 
 	/**
 	 * @brief Send identity
@@ -230,15 +230,24 @@ public slots:
 
 signals:
 	/**
+	 * @brief The user must enter a username to proceed
+	 *
+	 * This is emitted if no username was set in the URL.
+	 *
+	 * Proceed by calling selectIdentity(username, QString())
+	 * (omit password at this point to attempt a guest login)
+	 */
+	void usernameNeeded();
+
+	/**
 	 * @brief The user must enter a password to proceed
 	 *
-	 * This is emitted when a session is password protected.
+	 * This is emitted when attempting to join a session that is password protected.
 	 * After the user has made a decision, call either
-	 * gotPassword(password) to proceed or cancelLogin() to exit.
+	 * sendSessionPassword(password) to proceed or cancelLogin() to exit.
 	 *
-	 * @param prompt prompt text
 	 */
-	void passwordNeeded(const QString &prompt);
+	void sessionPasswordNeeded();
 
 	/**
 	 * @brief Login details are needeed to proceed

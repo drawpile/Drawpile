@@ -62,7 +62,6 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	if(!url.isEmpty())
 		m_ui->address->setCurrentText(url.toString());
 
-	m_ui->username->setValidator(new UsernameValidator(this));
 	connect(m_ui->address, &QComboBox::editTextChanged, this, &JoinDialog::addressChanged);
 
 	// Session listing
@@ -196,9 +195,13 @@ void JoinDialog::refreshListing()
 	if(!showList) {
 		// Hide listing and collapse dialog
 		m_ui->liststack->hide();
-		QTimer::singleShot(0, this, [this]() {
+		if(isVisible())
+			QTimer::singleShot(0, this, [this]() {
+				resize(width(), 0);
+				});
+		else
 			resize(width(), 0);
-		});
+
 		return;
 	}
 
@@ -293,7 +296,6 @@ void JoinDialog::restoreSettings()
 	QSettings cfg;
 	cfg.beginGroup("history");
 	m_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
-	m_ui->username->setText(cfg.value("username").toString());
 
 	m_ui->listserver->setCurrentIndex(cfg.value("listingserverlast", 0).toInt());
 
@@ -309,7 +311,6 @@ void JoinDialog::rememberSettings() const
 {
 	QSettings cfg;
 	cfg.beginGroup("history");
-	cfg.setValue("username", getUserName());
 
 	QStringList hosts;
 	// Move current item to the top of the list
@@ -329,28 +330,17 @@ QString JoinDialog::getAddress() const {
 	return m_ui->address->currentText().trimmed();
 }
 
-QString JoinDialog::getUserName() const {
-	return m_ui->username->text().trimmed();
-}
-
-bool JoinDialog::recordSession() const {
-	return m_ui->recordSession->isChecked();
-}
-
 QUrl JoinDialog::getUrl() const
 {
 	const QString address = getAddress();
-	const QString username = getUserName();
 
 	QString scheme;
 	if(!address.startsWith("drawpile://"))
 		scheme = "drawpile://";
 
-	QUrl url = QUrl(scheme + address, QUrl::TolerantMode);
-	if(!url.isValid() || url.host().isEmpty() || username.isEmpty())
+	const QUrl url = QUrl(scheme + address, QUrl::TolerantMode);
+	if(!url.isValid() || url.host().isEmpty())
 		return QUrl();
-
-	url.setUserName(username);
 
 	return url;
 }

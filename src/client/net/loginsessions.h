@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,9 +30,10 @@ namespace net {
 struct LoginSession {
 	QString id;
 	QString alias;
-	int userCount;
 	QString title;
 	QString founder;
+
+	int userCount;
 
 	bool needPassword;
 	bool persistent;
@@ -45,8 +46,6 @@ struct LoginSession {
 		Q_ASSERT(!idOrAlias.isEmpty());
 		return id == idOrAlias || alias == idOrAlias;
 	}
-
-	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false), nsfm(false) { }
 };
 
 /**
@@ -70,7 +69,7 @@ public:
 		NsfmRole                   // Is this session tagged as Not Suitable For Minors
 	};
 
-	explicit LoginSessionModel(QObject *parent = 0);
+	explicit LoginSessionModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -82,7 +81,7 @@ public:
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);
 
-	void setHideNsfm(bool hide);
+	void setShowNsfm(bool show);
 	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
 
 	//! Get the ID of the first session
@@ -97,7 +96,7 @@ private:
 
 	QList<LoginSession> m_sessions;
 	QList<LoginSession> m_filtered;
-	bool m_hideNsfm;
+	bool m_showNsfm;
 };
 
 }

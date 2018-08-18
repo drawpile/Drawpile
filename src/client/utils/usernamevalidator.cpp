@@ -25,6 +25,11 @@ UsernameValidator::UsernameValidator(QObject *parent) :
 {
 }
 
+bool UsernameValidator::isValid(const QString &username)
+{
+	return server::LoginHandler::validateUsername(username);
+}
+
 QValidator::State UsernameValidator::validate(QString &input, int &pos) const
 {
 	Q_UNUSED(pos);
@@ -32,7 +37,7 @@ QValidator::State UsernameValidator::validate(QString &input, int &pos) const
 	if(input.isEmpty())
 		return Intermediate;
 
-	if(server::LoginHandler::validateUsername(input))
+	if(isValid(input))
 		return Acceptable;
 
 	return Invalid;

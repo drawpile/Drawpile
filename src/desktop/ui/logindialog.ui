@@ -6,15 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>238</height>
+    <width>439</width>
+    <height>283</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Login</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="servertitle">
+    <widget class="QLabel" name="serverTitle">
      <property name="text">
-      <string notr="true">SERVER TITLE</string>
+      <string notr="true">&lt;i&gt;Connecting...&lt;/i&gt;</string>
      </property>
     </widget>
    </item>
@@ -23,90 +26,91 @@
      <property name="currentIndex">
       <number>1</number>
      </property>
-     <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="loadingPage">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Logging in...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+        <widget class="Spinner" name="loadingSpinner"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2">
-      <layout class="QFormLayout" name="formLayout_2">
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="intro">
-         <property name="text">
-          <string notr="true">(Server does not allow guest logins)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <spacer name="introspacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_2">
+     <widget class="QWidget" name="usernamePage">
+      <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
          <property name="text">
           <string>Username:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="username">
-         <property name="mandatoryfield" stdset="0">
-          <bool>true</bool>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="username"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="loginPage">
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="userPasswordPrompt">
+         <property name="text">
+          <string notr="true">(Password Prompt)</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Username:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="usernameLabel">
+         <property name="text">
+          <string notr="true">name</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Password:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="3" column="1">
         <widget class="QLineEdit" name="password">
          <property name="echoMode">
           <enum>QLineEdit::Password</enum>
          </property>
          <property name="mandatoryfield" stdset="0">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QCheckBox" name="rememberPassword">
-         <property name="text">
-          <string>Remember my password</string>
          </property>
         </widget>
        </item>
@@ -118,17 +122,71 @@
          <property name="text">
           <string>Incorrect password.</string>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="rememberPassword">
+         <property name="text">
+          <string>Remember my password</string>
          </property>
         </widget>
        </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QWidget" name="listingPage">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QTableView" name="sessionlist">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="filter">
+           <property name="placeholderText">
+            <string>Filter</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="showNsfw">
+           <property name="toolTip">
+            <string>Show NSFW sessions</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>builtin:censored.svg</normaloff>builtin:censored.svg</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableView" name="sessionList">
          <property name="selectionMode">
           <enum>QAbstractItemView::SingleSelection</enum>
          </property>
@@ -146,52 +204,80 @@
          </attribute>
         </widget>
        </item>
-       <item>
-        <widget class="QLabel" name="nsfmSessionsLabel">
-         <property name="text">
-          <string notr="true">NSFM sessions hidden</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_4">
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QLabel" name="certwarning">
-         <property name="text">
-          <string>The certificate of this server has changed!</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
+     <widget class="QWidget" name="sessionPasswordPage">
+      <layout class="QFormLayout" name="formLayout_3">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Password:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="sessionPassword">
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>This session is password protected</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_5">
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+     <widget class="QWidget" name="catchupPage">
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Catching up...</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="catchupProgress">
+        <widget class="QProgressBar" name="progressBar">
          <property name="value">
-          <number>0</number>
+          <number>24</number>
          </property>
          <property name="textVisible">
           <bool>false</bool>
@@ -206,10 +292,84 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>43</height>
+           <height>58</height>
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="certChangedPage">
+      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+       <item row="1" column="1">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="viewOldCert">
+         <property name="text">
+          <string>View old</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="viewNewCert">
+         <property name="text">
+          <string>View new</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="2">
+        <widget class="QCheckBox" name="replaceCert">
+         <property name="text">
+          <string>Replace pinned certificate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QLabel" name="errorMessage">
+         <property name="text">
+          <string notr="true">Server SSL certificate has changed!</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" rowspan="4">
+        <widget class="QLabel" name="warningIcon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string notr="true">ERROR</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -224,6 +384,30 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Spinner</class>
+   <extends>QWidget</extends>
+   <header>widgets/spinner.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>LoginDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>218</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

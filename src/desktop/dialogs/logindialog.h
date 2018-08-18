@@ -20,10 +20,10 @@
 #define LOGINDIALOG_H
 
 #include <QDialog>
-#include <QUrl>
 
 class Ui_LoginDialog;
-class QAbstractButton;
+
+class QUrl;
 class QSslCertificate;
 
 namespace net {
@@ -37,13 +37,12 @@ namespace dialogs {
  * @brief The dialog that is shown during the login process
  *
  * This dialog handles all the user interaction needed while logging in.
- * (Quite often, no interaction is needed at all.)
  */
 class LoginDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit LoginDialog(net::LoginHandler *login, QWidget *parent = 0);
+	explicit LoginDialog(net::LoginHandler *login, QWidget *parent=nullptr);
 	~LoginDialog();
 
 public slots:
@@ -51,38 +50,28 @@ public slots:
 	void onLoginDone(bool join);
 
 private slots:
-	void onButtonClick(QAbstractButton*);
+	void onOkClicked();
+	void onReportClicked();
 
-	void onPasswordNeeded(const QString &prompt);
+	void updateOkButtonEnabled();
+
+	void showOldCert();
+	void showNewCert();
+
+	void onUsernameNeeded();
 	void onLoginNeeded(const QString &prompt);
 	void onExtAuthNeeded(const QUrl &url);
 	void onExtAuthComplete(bool success);
+	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
+	void onSessionPasswordNeeded();
 	void onLoginOk();
 	void onBadLoginPassword();
-	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
-	void onReportClicked();
 
 private:
-	enum Mode {
-		LABEL,    // Show "logging in..." label
-		PASSWORD, // Ask for just the password
-		LOGIN,    // Ask for username and password
-		EXTAUTH,  // Ask for ExtAuth credentials
-		SESSION,  // Select sesssion
-		CERT,     // Inspect a certificate
-		CATCHUP   // "Catching up..." page with progress bar
-	};
-
-	void resetMode(Mode mode=LABEL);
-
-	Mode m_mode;
-	QUrl m_extauthurl;
-	net::LoginHandler *m_login;
-	Ui_LoginDialog *m_ui;
-	QAbstractButton *m_reportButton;
-	QMetaObject::Connection m_loginDestructConnection;
+	struct Private;
+	Private *d;
 };
 
 }
