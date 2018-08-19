@@ -21,6 +21,7 @@
 #include "main.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
+#include "dialogs/avatarimport.h"
 #include "export/ffmpegexporter.h" // for setting ffmpeg path
 #include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
@@ -30,6 +31,7 @@
 #include "utils/netfiles.h"
 #include "utils/settings.h"
 #include "utils/passwordstore.h"
+#include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../shared/util/announcementapi.h"
 #include "../shared/util/passwordhash.h"
@@ -50,6 +52,7 @@
 #include <QSortFilterProxyModel>
 #include <QPointer>
 #include <QStandardItemModel>
+#include <QImageReader>
 
 #include <QDebug>
 
@@ -203,6 +206,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(m_ui->passwordListRemove, &QPushButton::clicked, this, &SettingsDialog::removeStoredPassword);
 
+	// Avatar list
+	m_avatars = new AvatarListModel(this);
+	m_ui->avatarList->setModel(m_avatars);
+
+	connect(m_ui->addAvatar, &QPushButton::clicked, this, &SettingsDialog::addAvatar);
+	connect(m_ui->deleteAvatar, &QPushButton::clicked, this, &SettingsDialog::removeSelectedAvatar);
+
 	// Load configuration
 	restoreSettings();
 
@@ -342,6 +352,7 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	m_customShortcuts->loadShortcuts();
+	m_avatars->loadAvatars();
 }
 
 void SettingsDialog::setParentalControlsLocked(bool lock)
@@ -428,6 +439,7 @@ void SettingsDialog::rememberSettings()
 
 	m_customShortcuts->saveShortcuts();
 	m_listservers->saveServers();
+	m_avatars->commit();
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
@@ -671,7 +683,7 @@ void SettingsDialog::lockParentalControls()
 
 void SettingsDialog::removeStoredPassword()
 {
-	const QModelIndex &idx = m_ui->passwordListView->currentIndex();
+	const QModelIndex idx = m_ui->passwordListView->currentIndex();
 	if(idx.isValid()) {
 		const QString server = idx.data(Qt::UserRole+1).toString();
 		const QString username = idx.data(Qt::UserRole+2).toString();
@@ -690,6 +702,56 @@ void SettingsDialog::removeStoredPassword()
 			}
 		}
 	}
+}
+
+void SettingsDialog::addAvatar()
+{
+	QString formats;
+	for(QByteArray format : QImageReader::supportedImageFormats()) {
+		formats += "*." + format + " ";
+	}
+
+	QString path = QFileDialog::getOpenFileName(this, tr("Import Avatar"), QString(),
+		tr("Images (%1)").arg(formats) + ";;" +
+		QApplication::tr("All files (*)")
+	);
+
+	if(path.isEmpty())
+		return;
+
+	const QImage picture(path);
+	if(picture.isNull()) {
+		QMessageBox::warning(this, tr("Import Avatar"), tr("Couldn't read image"));
+		return;
+	}
+
+	if(picture.width() < 42 || picture.height() < 42) {
+		QMessageBox::warning(this, tr("Import Avatar"), tr("Picture is too small"));
+		return;
+	}
+
+	const QFileInfo fi(path);
+
+	if(picture.width() != picture.height()) {
+		// Not square format: needs cropping
+		auto *dlg = new dialogs::AvatarImport(picture, this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		connect(dlg, &QDialog::accepted, this, [this, fi, dlg]() {
+			m_avatars->addAvatar(fi.baseName(), QPixmap::fromImage(dlg->croppedAvatar().scaled(42, 42, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+		});
+
+		dlg->show();
+
+	} else {
+		m_avatars->addAvatar(fi.baseName(), QPixmap::fromImage(picture.scaled(42, 42, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+	}
+}
+
+void SettingsDialog::removeSelectedAvatar()
+{
+	const QModelIndex idx = m_ui->avatarList->currentIndex();
+	if(idx.isValid())
+		m_avatars->removeRow(idx.row());
 }
 
 }

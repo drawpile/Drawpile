@@ -63,6 +63,11 @@
          <string>Passwords</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Avatars</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -77,7 +82,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>9</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -874,7 +879,7 @@
             <item row="5" column="1">
              <widget class="QRadioButton" name="nsfmHide">
               <property name="text">
-               <string>Hide from &amp;listings</string>
+               <string>Hide fro&amp;m listings</string>
               </property>
              </widget>
             </item>
@@ -956,6 +961,48 @@
                <widget class="QPushButton" name="passwordListRemove">
                 <property name="text">
                  <string>Remove</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="page_3">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QListView" name="avatarList">
+              <property name="viewMode">
+               <enum>QListView::IconMode</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="addAvatar">
+                <property name="text">
+                 <string>Add...</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="deleteAvatar">
+                <property name="text">
+                 <string>Delete</string>
                 </property>
                </widget>
               </item>

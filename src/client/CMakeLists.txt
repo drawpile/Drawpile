@@ -58,6 +58,7 @@ set (
 	utils/logging.cpp
 	utils/passwordstore.cpp
 	utils/identicon.cpp
+	utils/avatarlistmodel.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp

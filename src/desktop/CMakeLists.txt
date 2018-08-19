@@ -41,6 +41,7 @@ set (
 	dialogs/sessionsettings.cpp
 	dialogs/serverlogdialog.cpp
 	dialogs/tablettester.cpp
+	dialogs/avatarimport.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -144,6 +145,7 @@ set (
 	ui/serverlog.ui
 	ui/tablettest.ui
 	ui/abusereport.ui
+	ui/avatarimport.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found
