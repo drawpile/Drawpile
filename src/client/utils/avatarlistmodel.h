@@ -26,6 +26,10 @@
 class AvatarListModel : public QAbstractListModel
 {
 public:
+	enum AvatarListRoles {
+		Namerole = Qt::UserRole + 1,
+	};
+
 	AvatarListModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -36,8 +40,13 @@ public:
 
 	bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
+	void setShowNames(bool show);
+
+	//! Find avatar by name
+	QModelIndex getAvatar(const QString &name) const;
+
 	//! Reload avatar list and clear all uncommitted changes
-	void loadAvatars();
+	void loadAvatars(bool includeBlank=false);
 
 	//! Add a new avatar
 	void addAvatar(const QString &name, const QPixmap &icon);
@@ -54,6 +63,7 @@ private:
 
 	QVector<Avatar> m_avatars;
 	QStringList m_deletions;
+	bool m_showNames;
 };
 
 #endif

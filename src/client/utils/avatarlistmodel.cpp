@@ -26,6 +26,13 @@ AvatarListModel::AvatarListModel(QObject *parent)
 {
 }
 
+void AvatarListModel::setShowNames(bool show)
+{
+	beginResetModel();
+	m_showNames = show;
+	endResetModel();
+}
+
 int AvatarListModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
@@ -41,8 +48,9 @@ QVariant AvatarListModel::data(const QModelIndex &index, int role) const
 	const Avatar &a = m_avatars.at(index.row());
 
 	switch(role) {
-	case Qt::DisplayRole: return a.name;
+	case Qt::DisplayRole: return m_showNames || a.icon.isNull() ? a.name : QVariant();
 	case Qt::DecorationRole: return a.icon;
+	case Namerole: return a.name;
 	}
 
 	return QVariant();
@@ -94,6 +102,16 @@ bool AvatarListModel::removeRows(int row, int count, const QModelIndex &parent)
 	return true;
 }
 
+QModelIndex AvatarListModel::getAvatar(const QString &name) const
+{
+	for(int i=0;i<m_avatars.size();++i) {
+		if(m_avatars.at(i).name == name)
+			return index(i);
+	}
+
+	return QModelIndex();
+}
+
 void AvatarListModel::addAvatar(const QString &name, const QPixmap &icon)
 {
 	// TODO sort alphabetically?
@@ -106,23 +124,30 @@ void AvatarListModel::addAvatar(const QString &name, const QPixmap &icon)
 	endInsertRows();
 }
 
-void AvatarListModel::loadAvatars()
+void AvatarListModel::loadAvatars(bool includeBlank)
 {
 	QVector<Avatar> avatars;
 
-	QDir dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-	if(!dir.cd("avatars"))
-		return;
-
-	const QStringList files = dir.entryList(QStringList() << "*.png", QDir::Files|QDir::Readable);
-
-	for(const QString &filename : files) {
-		const QString name = filename.left(filename.lastIndexOf('.'));
+	if(includeBlank) {
 		avatars << Avatar {
-			QPixmap(dir.filePath(filename), "PNG"),
-			name,
-			name
+			QPixmap("builtin:no-avatar.svg"),
+			QString(),
+			QString()
 		};
+	}
+
+	QDir dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+	if(dir.cd("avatars")) {
+		const QStringList files = dir.entryList(QStringList() << "*.png", QDir::Files|QDir::Readable);
+
+		for(const QString &filename : files) {
+			const QString name = filename.left(filename.lastIndexOf('.'));
+			avatars << Avatar {
+				QPixmap(dir.filePath(filename), "PNG"),
+				name,
+				name
+			};
+		}
 	}
 
 	beginResetModel();
@@ -151,7 +176,7 @@ bool AvatarListModel::commit()
 		if(a.name != a.originalName) {
 			if(a.originalName.isEmpty()) {
 				// Newly added avatar
-				if(!a.icon.save(dir.filePath(a.name + ".png"), "PNG")) {
+				if(!a.icon.isNull() && !a.icon.save(dir.filePath(a.name + ".png"), "PNG")) {
 					qWarning("Couldn't save %s.png", qPrintable(a.name));
 				}
 

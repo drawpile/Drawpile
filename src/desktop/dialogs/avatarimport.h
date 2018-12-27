@@ -21,10 +21,12 @@
 #define AVATARIMPORT_H
 
 #include <QDialog>
+#include <QPointer>
 
 class Ui_AvatarImport;
 
 class QImage;
+class AvatarListModel;
 
 namespace dialogs {
 
@@ -35,7 +37,12 @@ public:
 	AvatarImport(const QImage &source, QWidget *parent=nullptr);
 	~AvatarImport();
 
+	// Size of the final avatar image
+	static const int Size = 42;
+
 	QImage croppedAvatar() const;
+
+	static void importAvatar(AvatarListModel *avatarList, QPointer<QWidget> parentWindow=QPointer<QWidget>());
 
 private:
 	Ui_AvatarImport *m_ui;

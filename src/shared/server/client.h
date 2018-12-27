@@ -78,6 +78,15 @@ public:
 	void setUsername(const QString &username);
 
 	/**
+	 * @brief Get this user's avatar.
+	 *
+	 * The avatar should be a PNG image.
+	 * @return
+	 */
+	const QByteArray &avatar() const;
+	void setAvatar(const QByteArray &avatar);
+
+	/**
 	 * @brief Get the ext-auth server's ID for this user
 	 *
 	 * The ext-auth ID is set only if this user logged in via ext-auth,

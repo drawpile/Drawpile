@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QByteArray>
 
 namespace protocol {
 	struct ServerCommand;

@@ -32,9 +32,6 @@ namespace protocol {
  * This message is sent only be the server. It associates a username
  * with a context ID.
  *
- * The identityHash is not yet used, but is present for forward compatibility.
- * In the future, it will contain a hash made with some secret info (e.g. tripcode or salted IP address)
- * to allow guest users to prove their identity to other users.
  */
 class UserJoin : public Message {
 public:
@@ -42,15 +39,15 @@ public:
 	static const uint8_t FLAG_MOD = 0x02;  // user is a moderator
 	static const uint8_t FLAG_BOT = 0x04;  // user is a bot
 
-	UserJoin(uint8_t ctx, uint8_t flags, const QByteArray &name, const QByteArray &hash) : Message(MSG_USER_JOIN, ctx), m_name(name), m_hash(hash), m_flags(flags) { Q_ASSERT(name.length()>0 && name.length()<256); }
-	UserJoin(uint8_t ctx, uint8_t flags, const QString &name, const QByteArray &hash=QByteArray()) : UserJoin(ctx, flags, name.toUtf8(), hash) {}
+	UserJoin(uint8_t ctx, uint8_t flags, const QByteArray &name, const QByteArray &avatar) : Message(MSG_USER_JOIN, ctx), m_name(name), m_avatar(avatar), m_flags(flags) { Q_ASSERT(name.length()>0 && name.length()<256); }
+	UserJoin(uint8_t ctx, uint8_t flags, const QString &name, const QByteArray &avatar=QByteArray()) : UserJoin(ctx, flags, name.toUtf8(), avatar) {}
 
 	static UserJoin *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static UserJoin *fromText(uint8_t ctx, const Kwargs &kwargs);
 
 	QString name() const { return QString::fromUtf8(m_name); }
 
-	QByteArray identityHash() const { return m_hash; }
+	QByteArray avatar() const { return m_avatar; }
 
 	uint8_t flags() const { return m_flags; }
 
@@ -67,7 +64,7 @@ protected:
 
 private:
 	QByteArray m_name;
-	QByteArray m_hash;
+	QByteArray m_avatar;
 	uint8_t m_flags;
 };
 

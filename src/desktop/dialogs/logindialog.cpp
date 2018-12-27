@@ -23,10 +23,13 @@
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "parentalcontrols/parentalcontrols.h"
+#include "dialogs/avatarimport.h"
 
+#include "utils/avatarlistmodel.h"
 #include "utils/usernamevalidator.h"
 #include "utils/passwordstore.h"
 #include "utils/html.h"
+#include "utils/icon.h"
 
 #include "widgets/spinner.h"
 using widgets::Spinner;
@@ -38,6 +41,8 @@ using widgets::Spinner;
 #include <QSettings>
 #include <QTimer>
 #include <QStyle>
+#include <QItemSelectionModel>
+#include <QAction>
 
 namespace dialogs {
 
@@ -55,6 +60,7 @@ struct LoginDialog::Private {
 	Mode mode;
 
 	net::LoginHandler *loginHandler;
+	AvatarListModel *avatars;
 	Ui_LoginDialog *ui;
 
 	QPushButton *okButton;
@@ -75,11 +81,34 @@ struct LoginDialog::Private {
 
 		ui->serverTitle->setVisible(false);
 
-		// Identity page
+		// Identity & authentication page
 		ui->username->setValidator(new UsernameValidator(dlg));
+		avatars = new AvatarListModel(dlg);
+		avatars->setShowNames(false);
+		avatars->loadAvatars(true);
+		ui->avatarList->setModel(avatars);
 
-		// Authentication page
-		ui->badPasswordLabel->setVisible(false);
+		ui->usernameIcon->setText(QString());
+		ui->usernameIcon->setPixmap(icon::fromTheme("im-user").pixmap(22, 22));
+
+		ui->passwordIcon->setText(QString());
+		ui->passwordIcon->setPixmap(icon::fromTheme("object-locked").pixmap(22, 22));
+
+		QAction *addAvatarAction = new QAction(LoginDialog::tr("Add..."), dlg);
+		connect(addAvatarAction, &QAction::triggered, dlg, &LoginDialog::onAddAvatar);
+		ui->avatarList->addAction(addAvatarAction);
+
+		ui->avatarList->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+		connect(avatars, &AvatarListModel::rowsInserted, ui->avatarList, [this](const QModelIndex&, int first) {
+			// autoselect newly added avatar
+			const QModelIndex idx = avatars->index(first);
+			ui->avatarList->selectionModel()->select(
+				idx,
+				QItemSelectionModel::Clear|QItemSelectionModel::SelectCurrent
+			);
+			ui->avatarList->scrollTo(idx);
+		});
 
 		// Session list page
 		QObject::connect(ui->sessionList, &QTableView::doubleClicked, [this](const QModelIndex&) {
@@ -115,7 +144,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 {
 	mode = newMode;
 
-	ui->pages->setCurrentIndex(int(mode));
+	QWidget *page = nullptr;
 
 	okButton->setVisible(true);
 	reportButton->setVisible(false);
@@ -123,26 +152,48 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	switch(mode) {
 	case Mode::loading:
 		okButton->setVisible(false);
+		ui->loginPromptLabel->setText(loginHandler->url().host());
+		page = ui->loadingPage;
 		break;
 	case Mode::identity:
+		ui->avatarList->setEnabled(true);
+		ui->username->setEnabled(true);
 		ui->username->setFocus();
+		ui->password->setVisible(false);
+		ui->passwordIcon->setVisible(false);
+		ui->badPasswordLabel->setVisible(false);
+		ui->rememberPassword->setVisible(false);
+		page = ui->authPage;
 		break;
 	case Mode::authenticate:
-		ui->password->setFocus();
+		ui->avatarList->setEnabled(false);
+		ui->username->setEnabled(false);
+		ui->password->setVisible(true);
+		ui->passwordIcon->setVisible(true);
 		ui->badPasswordLabel->setVisible(false);
+		ui->rememberPassword->setVisible(true);
+		ui->password->setFocus();
+		page = ui->authPage;
 		break;
 	case Mode::sessionlist:
 		reportButton->setVisible(true);
+		page = ui->listingPage;
 		break;
 	case Mode::sessionpassword:
 		ui->sessionPassword->setFocus();
+		page = ui->sessionPasswordPage;
 		break;
 	case Mode::catchup:
 		ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(LoginDialog::tr("Close"));
+		page = ui->catchupPage;
 		break;
 	case Mode::certChanged:
+		page = ui->certChangedPage;
 		break;
 	}
+
+	Q_ASSERT(page);
+	ui->pages->setCurrentWidget(page);
 }
 
 LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
@@ -150,6 +201,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 {
 	setWindowModality(Qt::WindowModal);
 	setWindowTitle(login->url().host());
+
+	connect(d->ui->avatarList->selectionModel(), &QItemSelectionModel::currentChanged, this, &LoginDialog::onAvatarChanged);
 
 	connect(d->ui->username, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
 	connect(d->ui->password, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
@@ -216,6 +269,22 @@ void LoginDialog::updateOkButtonEnabled()
 	d->okButton->setEnabled(enabled);
 }
 
+void LoginDialog::onAvatarChanged(const QModelIndex& index)
+{
+	if(!index.isValid())
+		return;
+
+	// Avatars have associated default usernames
+	const QString name = index.data(AvatarListModel::Namerole).toString();
+	if(!name.isEmpty())
+		d->ui->username->setText(name);
+}
+
+void LoginDialog::onAddAvatar()
+{
+	AvatarImport::importAvatar(d->avatars, this);
+}
+
 void LoginDialog::showOldCert()
 {
 	auto dlg = new CertificateView(d->loginHandler->url().host(), d->oldCert);
@@ -234,6 +303,7 @@ void LoginDialog::onUsernameNeeded()
 {
 	QSettings cfg;
 	d->ui->username->setText(cfg.value("history/username").toString());
+	d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(cfg.value("history/avatar").toString()));
 	d->resetMode(Mode::identity);
 	updateOkButtonEnabled();
 }
@@ -242,15 +312,19 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 {
 	const bool extauth = extauthurl.isValid();
 
-	ui->userPasswordPrompt->setText(prompt);
+	ui->loginPromptLabel->setText(prompt);
 	if(extauth)
-		ui->userPasswordPrompt->setStyleSheet(QStringLiteral(
+		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
 			"background: #3498db;"
 			"color: #fcfcfc;"
 			"padding: 16px"
 			));
 	else
-		ui->userPasswordPrompt->setStyleSheet(QString());
+		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
+			"background: #fdbc4b;"
+			"color: #31363b;"
+			"padding: 16px"
+			));
 
 	resetMode(Mode::authenticate);
 
@@ -401,7 +475,15 @@ void LoginDialog::onOkClicked()
 		break;
 	case Mode::identity: {
 		QSettings cfg;
+		const QModelIndexList avatarSelection = d->ui->avatarList->selectionModel()->selectedIndexes();
+		const QString avatar = avatarSelection.isEmpty() ? QString() : avatarSelection.first().data(AvatarListModel::Namerole).toString();
 		cfg.setValue("history/username", d->ui->username->text());
+		cfg.setValue("history/avatar", avatar);
+		d->avatars->commit(); // save avatar if one was added
+
+		if(!avatar.isEmpty())
+			d->loginHandler->selectAvatar(avatarSelection.first().data(Qt::DecorationRole).value<QPixmap>().toImage());
+
 		d->loginHandler->selectIdentity(d->ui->username->text(), QString());
 		break; }
 	case Mode::authenticate:

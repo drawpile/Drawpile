@@ -48,6 +48,7 @@ struct Client::Private {
 	int id;
 	QString username;
 	QString extAuthId;
+	QByteArray avatar;
 
 	bool isOperator;
 	bool isModerator;
@@ -87,7 +88,8 @@ protocol::MessagePtr Client::joinMessage() const
 	return protocol::MessagePtr(new protocol::UserJoin(
 			id(),
 			(isAuthenticated() ? protocol::UserJoin::FLAG_AUTH : 0) | (isModerator() ? protocol::UserJoin::FLAG_MOD : 0),
-			username()
+			username(),
+			avatar()
 	));
 }
 
@@ -175,6 +177,16 @@ void Client::setUsername(const QString &username)
 const QString &Client::username() const
 {
 	return d->username;
+}
+
+void Client::setAvatar(const QByteArray &avatar)
+{
+	d->avatar = avatar;
+}
+
+const QByteArray &Client::avatar() const
+{
+	return d->avatar;
 }
 
 const QString &Client::extAuthId() const

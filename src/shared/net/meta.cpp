@@ -33,13 +33,13 @@ UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
 	const uint8_t flags = data[0];
 	const uint nameLen = data[1];
 
-	// Name must be at least one character long, but hash is optional
+	// Name must be at least one character long, but avatar is optional
 	if(nameLen==0 || nameLen+2 > len)
 		return nullptr;
 
 	const QByteArray name = QByteArray((const char*)data+2, nameLen);
-	const QByteArray hash = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
-	return new UserJoin(ctx, flags, name, hash);
+	const QByteArray avatar = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
+	return new UserJoin(ctx, flags, name, avatar);
 }
 
 int UserJoin::serializePayload(uchar *data) const
@@ -49,23 +49,23 @@ int UserJoin::serializePayload(uchar *data) const
 	*(ptr++) = m_name.length();
 	memcpy(ptr, m_name.constData(), m_name.length());
 	ptr += m_name.length();
-	memcpy(ptr, m_hash.constData(), m_hash.length());
-	ptr += m_hash.length();
+	memcpy(ptr, m_avatar.constData(), m_avatar.length());
+	ptr += m_avatar.length();
 
 	return ptr - data;
 }
 
 int UserJoin::payloadLength() const
 {
-	return 1 + 1 + m_name.length() + m_hash.length();
+	return 1 + 1 + m_name.length() + m_avatar.length();
 }
 
 Kwargs UserJoin::kwargs() const
 {
 	Kwargs kw;
 	kw["name"] = name();
-	if(!m_hash.isEmpty())
-		kw["hash"] = QString::fromUtf8(m_hash);
+	if(!m_avatar.isEmpty())
+		kw["avatar"] = QString::fromUtf8(m_avatar);
 	QStringList flags;
 	if(isModerator())
 		flags << "mod";
@@ -85,7 +85,7 @@ UserJoin *UserJoin::fromText(uint8_t ctx, const Kwargs &kwargs)
 		(flags.contains("mod") ? FLAG_MOD : 0) |
 		(flags.contains("auth") ? FLAG_AUTH : 0),
 		kwargs["name"],
-		kwargs["hash"].toUtf8()
+		kwargs["avatar"].toUtf8()
 		);
 }
 

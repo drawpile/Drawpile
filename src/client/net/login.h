@@ -27,6 +27,9 @@
 #include <QPointer>
 #include <QSslError>
 #include <QFileInfo>
+#include <QByteArray>
+
+class QImage;
 
 namespace protocol {
 	struct ServerCommand;
@@ -174,6 +177,15 @@ public slots:
 	 * @param password
 	 */
 	void sendSessionPassword(const QString &password);
+
+	/**
+	 * @brief Select the avatar to use
+	 *
+	 * Call this BEFORE calling selectIdentity for the first time.
+	 *
+	 * @param avatar
+	 */
+	void selectAvatar(const QImage &avatar);
 
 	/**
 	 * @brief Send identity
@@ -354,6 +366,7 @@ private:
 
 	Mode m_mode;
 	QUrl m_address;
+	QByteArray m_avatar;
 
 	// Settings for hosting
 	int m_userid;

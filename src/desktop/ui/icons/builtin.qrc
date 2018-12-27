@@ -12,6 +12,7 @@
         <file>dark/paintmode-incremental.svg</file>
         <file>dark/paintmode-indirect.svg</file>
 
+		<file>no-avatar.svg</file>
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>

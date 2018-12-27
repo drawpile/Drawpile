@@ -18,11 +18,16 @@
 */
 
 #include "avatarimport.h"
+#include "utils/avatarlistmodel.h"
 
 #include "widgets/resizerwidget.h"
 using widgets::ResizerWidget;
 
 #include "ui_avatarimport.h"
+
+#include <QImageReader>
+#include <QFileDialog>
+#include <QMessageBox>
 
 namespace dialogs {
 
@@ -60,6 +65,50 @@ QImage AvatarImport::croppedAvatar() const
 		size.width(),
 		size.height()
 	);
+}
+
+void AvatarImport::importAvatar(AvatarListModel *avatarList, QPointer<QWidget> parentWindow)
+{
+	QString formats;
+	for(QByteArray format : QImageReader::supportedImageFormats()) {
+		formats += "*." + format + " ";
+	}
+
+	QString path = QFileDialog::getOpenFileName(parentWindow, tr("Import Avatar"), QString(),
+		tr("Images (%1)").arg(formats) + ";;" +
+		QApplication::tr("All files (*)")
+	);
+
+	if(path.isEmpty())
+		return;
+
+	const QImage picture(path);
+	if(picture.isNull()) {
+		QMessageBox::warning(parentWindow, tr("Import Avatar"), tr("Couldn't read image"));
+		return;
+	}
+
+	if(picture.width() < Size || picture.height() < Size) {
+		QMessageBox::warning(parentWindow, tr("Import Avatar"), tr("Picture is too small"));
+		return;
+	}
+
+	const QFileInfo fi(path);
+
+	if(picture.width() != picture.height()) {
+		// Not square format: needs cropping
+		auto *dlg = new dialogs::AvatarImport(picture, parentWindow);
+		dlg->setModal(true);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		connect(dlg, &QDialog::accepted, avatarList, [parentWindow, fi, dlg, avatarList]() {
+			avatarList->addAvatar(fi.baseName(), QPixmap::fromImage(dlg->croppedAvatar().scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+		});
+
+		dlg->show();
+
+	} else {
+		avatarList->addAvatar(fi.baseName(), QPixmap::fromImage(picture.scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+	}
 }
 
 }

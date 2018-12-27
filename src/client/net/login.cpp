@@ -37,6 +37,8 @@
 #include <QHostAddress>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QImage>
+#include <QBuffer>
 
 #define DEBUG_LOGIN
 
@@ -265,6 +267,16 @@ void LoginHandler::prepareToSendIdentity()
 	}
 }
 
+void LoginHandler::selectAvatar(const QImage &avatar)
+{
+	QBuffer a;
+	avatar.save(&a, "PNG");
+
+	// TODO size check
+
+	m_avatar = a.buffer().toBase64();
+}
+
 void LoginHandler::selectIdentity(const QString &username, const QString &password)
 {
 	m_address.setUserName(username);
@@ -280,6 +292,12 @@ void LoginHandler::sendIdentity()
 
 	if(!m_address.password().isEmpty())
 		cmd.args.append(m_address.password());
+
+	if(!m_avatar.isEmpty()) {
+		cmd.kwargs["avatar"] = QString::fromUtf8(m_avatar);
+		// avatar needs only be sent once
+		m_avatar = QByteArray();
+	}
 
 	m_state = EXPECT_IDENTIFIED;
 	send(cmd);
