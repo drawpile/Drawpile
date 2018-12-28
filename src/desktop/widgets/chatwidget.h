@@ -27,6 +27,7 @@ class ChatLineEdit;
 class QLabel;
 
 namespace protocol { class MessagePtr; }
+namespace canvas { class UserListModel; }
 
 namespace widgets {
 
@@ -37,12 +38,14 @@ namespace widgets {
  */
 class ChatBox: public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-	explicit ChatBox(QWidget *parent=0);
+	explicit ChatBox(QWidget *parent=nullptr);
 
 	//! Focus the text input widget
 	void focusInput();
+
+	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
 
 public slots:
 	/**
@@ -73,6 +76,8 @@ public slots:
 	//! Initialize the chat box for a new server
 	void loggedIn(int myId);
 
+	void scrollToEnd();
+
 private slots:
 	void sendMessage(const QString &msg);
 
@@ -87,11 +92,23 @@ private:
 	QTextBrowser *m_view;
 	ChatLineEdit *m_myline;
 	QLabel *m_pinned;
-	QHash<int, QString> m_usernames;
-	QString username(int id) const;
+
+	QList<int> m_announcedUsers;
+	canvas::UserListModel *m_userlist;
+
 	bool m_wasCollapsed;
 	bool m_preserveChat;
 	int m_myId;
+
+	int m_lastAppendedId;
+	qint64 m_lastMessageTs;
+
+	void appendSeparator();
+	void appendMessage(int userId, const QString &message, bool shout);
+	void appendToLastMessage(const QString &message);
+	void appendAction(int userId, const QString &message);
+	void appendNotification(const QString &message);
+	QString usernameSpan(int userId);
 };
 
 }

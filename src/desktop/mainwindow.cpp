@@ -484,6 +484,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	m_dockLayers->setCanvas(canvas);
 	m_userlistview->setModel(canvas->userlist());
+	m_chatbox->setUserList(canvas->userlist());
 	m_useritemdelegate->setCanvas(canvas);
 
 	// Make sure the UI matches the default feature access level
