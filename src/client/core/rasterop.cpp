@@ -254,14 +254,15 @@ void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, i
 void doMaskColorErase(quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip)
 {
 	fRGBA col = color;
-	uchar col_a = qAlpha(color);
 
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x) {
-			fRGBA src = qUnpremultiply(*base);
-			col.a = UINT8_MULT(col_a, *mask) / 255.0;
-			color_erase_helper(&src, &col);
-			*base = qPremultiply(src.toPixel());
+			if(*mask>0) {
+				fRGBA src = qUnpremultiply(*base);
+				col.a = *mask / 255.0;
+				color_erase_helper(&src, &col);
+				*base = qPremultiply(src.toPixel());
+			}
 			++mask;
 			++base;
 		}
