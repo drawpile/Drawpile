@@ -199,7 +199,7 @@ struct BrushSettings::Private {
 
 	GroupedToolButton *brushSlotButton(int i)
 	{
-		Q_ASSERT(i>=0 && i < BRUSH_COUNT);
+		static_assert (BRUSH_COUNT == 6, "update brushSlottButton");
 		switch(i) {
 		case 0: return ui.slot1;
 		case 1: return ui.slot2;
@@ -207,9 +207,7 @@ struct BrushSettings::Private {
 		case 3: return ui.slot4;
 		case 4: return ui.slot5;
 		case 5: return ui.slotEraser;
-		default:
-			qFatal("brushSlotButton(%d): no such button", i);
-			return nullptr;
+		default: qFatal("brushSlotButton(%d): no such button", i);
 		}
 	}
 };
