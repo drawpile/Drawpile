@@ -195,6 +195,7 @@ struct BrushSettings::Private {
 		brushes::ClassicBrush b = brushFromProps(currentBrush(), currentTool());
 
 		ui.preview->setBrush(b);
+		ui.preview->setColor(currentColor());
 	}
 
 	GroupedToolButton *brushSlotButton(int i)
