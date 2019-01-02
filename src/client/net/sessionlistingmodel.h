@@ -19,7 +19,7 @@
 #ifndef SESSIONLISTINGMODEL_H
 #define SESSIONLISTINGMODEL_H
 
-#include "../shared/util/announcementapi.h"
+#include "../../shared/util/announcementapi.h"
 
 #include <QAbstractTableModel>
 #include <QUrl>
@@ -31,6 +31,13 @@ class SessionListingModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
+	enum SessionListingRoles {
+		SortKeyRole = Qt::UserRole,
+		UrlRole,
+		IsPasswordedRole,
+		IsNsfwRole
+	};
+
 	SessionListingModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -39,28 +46,14 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	int nsfmCount() const { return m_nsfmCount; }
-
-	bool showNsfm() const { return m_nsfm; }
-	bool showPassworded() const { return m_showPassworded; }
-
-	void clear();
+	//int nsfmCount() const { return m_nsfmCount; }
 
 public slots:
 	void setList(const QList<sessionlisting::Session> sessions);
-	void setShowNsfm(bool nsfm);
-	void setShowPassworded(bool show);
 
 private:
-	void filterSessionList();
-	QUrl sessionUrl(int index) const;
-
-	QList<sessionlisting::Session> m_filtered;
 	QList<sessionlisting::Session> m_sessions;
-	int m_nsfmCount;
-	bool m_nsfm;
-	bool m_showPassworded;
 };
 
-#endif // SESSIONLISTINGMODEL_H
+#endif
 

@@ -28,7 +28,7 @@
 #include <KDNSSD/DNSSD/ServiceBrowser>
 
 ServerDiscoveryModel::ServerDiscoveryModel(QObject *parent)
-	: QAbstractTableModel(parent), _browser(nullptr)
+	: QAbstractTableModel(parent), m_browser(nullptr)
 {
 }
 
@@ -36,7 +36,7 @@ int ServerDiscoveryModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _servers.size();
+	return m_servers.size();
 }
 
 int ServerDiscoveryModel::columnCount(const QModelIndex &parent) const
@@ -59,10 +59,10 @@ static QString ageString(const qint64 seconds)
 
 QVariant ServerDiscoveryModel::data(const QModelIndex &index, int role) const
 {
-	if(index.row()<0 || index.row()>=_servers.size())
+	if(index.row()<0 || index.row()>=m_servers.size())
 		return QVariant();
 
-	const DiscoveredServer &s = _servers.at(index.row());
+	const DiscoveredServer &s = m_servers.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
@@ -71,15 +71,14 @@ QVariant ServerDiscoveryModel::data(const QModelIndex &index, int role) const
 		case 2: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
 		}
 
-	} else if(role == Qt::UserRole) {
-		// User Role is used for sorting keys
+	} else if(role == SortKeyRole) {
 		switch(index.column()) {
 		case 0: return s.title;
 		case 1: return s.name;
 		case 2: return s.started;
 		}
-	} else if(role == Qt::UserRole+1) {
-		// Use Role+1 is used for the server/session URL
+
+	} else if(role == UrlRole) {
 		return s.url;
 	}
 
@@ -102,10 +101,10 @@ QVariant ServerDiscoveryModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags ServerDiscoveryModel::flags(const QModelIndex &index) const
 {
-	if(index.row()<0 || index.row()>=_servers.size())
+	if(index.row()<0 || index.row()>=m_servers.size())
 		return Qt::NoItemFlags;
 
-	const DiscoveredServer &s = _servers.at(index.row());
+	const DiscoveredServer &s = m_servers.at(index.row());
 	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);
 	else
@@ -114,14 +113,14 @@ Qt::ItemFlags ServerDiscoveryModel::flags(const QModelIndex &index) const
 
 void ServerDiscoveryModel::discover()
 {
-	if(!_browser) {
-		_browser = new KDNSSD::ServiceBrowser("_drawpile._tcp", true, "local");
-		_browser->setParent(this);
+	if(!m_browser) {
+		m_browser = new KDNSSD::ServiceBrowser("_drawpile._tcp", true, "local");
+		m_browser->setParent(this);
 
-		connect(_browser, &KDNSSD::ServiceBrowser::serviceAdded, this, &ServerDiscoveryModel::addService);
-		connect(_browser, &KDNSSD::ServiceBrowser::serviceRemoved, this, &ServerDiscoveryModel::removeService);
+		connect(m_browser, &KDNSSD::ServiceBrowser::serviceAdded, this, &ServerDiscoveryModel::addService);
+		connect(m_browser, &KDNSSD::ServiceBrowser::serviceRemoved, this, &ServerDiscoveryModel::removeService);
 
-		_browser->startBrowse();
+		m_browser->startBrowse();
 	}
 }
 
@@ -145,17 +144,17 @@ void ServerDiscoveryModel::addService(KDNSSD::RemoteService::Ptr service)
 		started
 	};
 
-	beginInsertRows(QModelIndex(), _servers.size(), _servers.size());
-	_servers.append(s);
+	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
+	m_servers.append(s);
 	endInsertRows();
 }
 
 void ServerDiscoveryModel::removeService(KDNSSD::RemoteService::Ptr service)
 {
-	for(int i=0;i<_servers.size();++i) {
-		if(_servers.at(i).name == service->serviceName()) {
+	for(int i=0;i<m_servers.size();++i) {
+		if(m_servers.at(i).name == service->serviceName()) {
 			beginRemoveRows(QModelIndex(), i, i);
-			_servers.removeAt(i);
+			m_servers.removeAt(i);
 			endRemoveRows();
 			return;
 		}

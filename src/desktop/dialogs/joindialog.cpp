@@ -23,6 +23,7 @@
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
 #include "utils/listservermodel.h"
+#include "utils/sessionfilterproxymodel.h"
 #include "../shared/util/announcementapi.h"
 #include "parentalcontrols/parentalcontrols.h"
 
@@ -35,7 +36,6 @@ using widgets::Spinner;
 
 #include "ui_joindialog.h"
 
-#include <QSortFilterProxyModel>
 #include <QPushButton>
 #include <QSettings>
 #include <QTimer>
@@ -71,23 +71,25 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->listserver->setModel(new sessionlisting::ListServerModel(true, true, this));
 
 	m_sessions = new SessionListingModel(this);
-	connect(m_ui->filterLocked, &QAbstractButton::toggled,
-			m_sessions, &SessionListingModel::setShowPassworded);
-	connect(m_ui->filterNsfw, &QAbstractButton::toggled,
-			m_sessions, &SessionListingModel::setShowNsfm);
-
 #ifdef HAVE_DNSSD
 	m_localServers = new ServerDiscoveryModel(this);
 #endif
 
-	m_filteredSessions = new QSortFilterProxyModel(this);
+	m_filteredSessions = new SessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);
 	m_filteredSessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	m_filteredSessions->setFilterKeyColumn(-1);
 	m_filteredSessions->setSortRole(Qt::UserRole);
 
+	m_filteredSessions->setShowNsfw(false);
+	m_filteredSessions->setShowPassworded(false);
+
+	connect(m_ui->filterLocked, &QAbstractButton::toggled,
+			m_filteredSessions, &SessionFilterProxyModel::setShowPassworded);
+	connect(m_ui->filterNsfw, &QAbstractButton::toggled,
+			m_filteredSessions, &SessionFilterProxyModel::setShowNsfw);
 	connect(m_ui->filter, &QLineEdit::textChanged,
-			m_filteredSessions, &QSortFilterProxyModel::setFilterFixedString);
+			m_filteredSessions, &SessionFilterProxyModel::setFilterFixedString);
 
 	m_ui->listing->setModel(m_filteredSessions);
 	QHeaderView *header = m_ui->listing->horizontalHeader();
@@ -106,7 +108,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	connect(m_ui->listing, &QTableView::clicked, this, [this](const QModelIndex &index) {
 		// Set the server URL when clicking on an item
 		if((index.flags() & Qt::ItemIsEnabled))
-			m_ui->address->setCurrentText(index.data(Qt::UserRole+1).value<QUrl>().toString());
+			m_ui->address->setCurrentText(index.data(SessionListingModel::UrlRole).value<QUrl>().toString());
 	});
 
 	connect(m_ui->listing, &QTableView::doubleClicked, [this](const QModelIndex &index) {
@@ -214,6 +216,9 @@ void JoinDialog::refreshListing()
 		m_filteredSessions->setSourceModel(m_localServers);
 		m_ui->liststack->setCurrentIndex(LIST_PAGE_LISTING);
 		m_localServers->discover();
+#else
+		// Shouldn't happen
+		setListingError("DNS-SD support not compiled in");
 #endif
 
 	} else {

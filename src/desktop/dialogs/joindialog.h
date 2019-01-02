@@ -25,8 +25,7 @@ class Ui_JoinDialog;
 
 class ServerDiscoveryModel;
 class SessionListingModel;
-
-class QSortFilterProxyModel;
+class SessionFilterProxyModel;
 
 namespace dialogs {
 
@@ -58,7 +57,7 @@ private:
 	void setListingError(const QString &message);
 
 	Ui_JoinDialog *m_ui;
-	QSortFilterProxyModel *m_filteredSessions;
+	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
 	ServerDiscoveryModel *m_localServers;
 };

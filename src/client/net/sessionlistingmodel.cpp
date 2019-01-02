@@ -28,7 +28,7 @@
 using sessionlisting::Session;
 
 SessionListingModel::SessionListingModel(QObject *parent)
-	: QAbstractTableModel(parent), m_nsfmCount(0), m_nsfm(false), m_showPassworded(false)
+	: QAbstractTableModel(parent)
 {
 }
 
@@ -36,7 +36,7 @@ int SessionListingModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return m_filtered.size();
+	return m_sessions.size();
 }
 
 int SessionListingModel::columnCount(const QModelIndex &parent) const
@@ -59,12 +59,23 @@ static QString ageString(const qint64 seconds)
 	return QGuiApplication::tr("%1h %2m").arg(minutes/60).arg(minutes%60);
 }
 
+static QUrl sessionUrl(const Session &s)
+{
+	QUrl url;
+	url.setScheme("drawpile");
+	url.setHost(s.host);
+	if(s.port != DRAWPILE_PROTO_DEFAULT_PORT)
+		url.setPort(s.port);
+	url.setPath("/" + s.id);
+	return url;
+}
+
 QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 {
-	if(index.row() < 0 || index.row() >= m_filtered.size())
+	if(index.row() < 0 || index.row() >= m_sessions.size())
 		return QVariant();
 
-	const Session &s = m_filtered.at(index.row());
+	const Session &s = m_sessions.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
@@ -74,6 +85,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case 3: return s.owner;
 		case 4: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
 		}
+
 	} else if(role == Qt::DecorationRole) {
 		if(index.column() == 0) {
 			if(!s.protocol.isCurrent())
@@ -84,7 +96,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 				return QIcon("builtin:censored.svg");
 		}
 
-	} else if(role == Qt::UserRole) {
+	} else if(role == SortKeyRole) {
 		// User Role is used for sorting keys
 		switch(index.column()) {
 		case 0: return s.title;
@@ -93,9 +105,14 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case 3: return s.owner;
 		case 4: return s.started;
 		}
-	} else if(role == Qt::UserRole+1) {
-		// User role+1 is used for the session URL
-		return sessionUrl(index.row());
+
+	} else {
+		// Direct data access roles
+		switch(role) {
+		case UrlRole: return sessionUrl(s);
+		case IsPasswordedRole: return s.password;
+		case IsNsfwRole: return s.nsfm;
+		}
 	}
 
 	return QVariant();
@@ -119,10 +136,10 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 
 Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 {
-	if(index.row() < 0 || index.row() >= m_filtered.size())
+	if(index.row() < 0 || index.row() >= m_sessions.size())
 		return Qt::NoItemFlags;
 
-	const Session &s = m_filtered.at(index.row());
+	const Session &s = m_sessions.at(index.row());
 	if(s.protocol.isCurrent())
 		return QAbstractTableModel::flags(index);
 	else
@@ -131,54 +148,8 @@ Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 
 void SessionListingModel::setList(const QList<Session> sessions)
 {
-	m_sessions = sessions;
-	filterSessionList();
-}
-
-void SessionListingModel::setShowNsfm(bool nsfm)
-{
-	if(m_nsfm != nsfm) {
-		m_nsfm = nsfm;
-		if(!m_sessions.isEmpty())
-			filterSessionList();
-	}
-}
-
-void SessionListingModel::setShowPassworded(bool show)
-{
-	if(m_showPassworded != show) {
-		m_showPassworded = show;
-		if(!m_sessions.isEmpty())
-			filterSessionList();
-	}
-}
-
-void SessionListingModel::filterSessionList()
-{
 	beginResetModel();
-	m_filtered.clear();
-	m_nsfmCount = 0;
-	for(const Session &s : m_sessions) {
-		if(s.nsfm)
-			++m_nsfmCount;
-		if((!s.nsfm || m_nsfm) && (!s.password || m_showPassworded))
-			m_filtered << s;
-	}
+	m_sessions = sessions;
 	endResetModel();
-}
-
-QUrl SessionListingModel::sessionUrl(int index) const
-{
-	if(index<0 || index>=m_filtered.size())
-		return QUrl();
-
-	const Session &s = m_filtered.at(index);
-	QUrl url;
-	url.setScheme("drawpile");
-	url.setHost(s.host);
-	if(s.port != DRAWPILE_PROTO_DEFAULT_PORT)
-		url.setPort(s.port);
-	url.setPath("/" + s.id);
-	return url;
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define LOGINSESSIONS_H
 
 #include <QAbstractTableModel>
+#include <QVector>
 
 namespace net {
 
@@ -56,8 +57,10 @@ class LoginSessionModel : public QAbstractTableModel
 	Q_OBJECT
 public:
 	enum LoginSessionRoles {
-		IdRole = Qt::UserRole + 1, // Session ID
+		SortKeyRole = Qt::UserRole,
+		IdRole,                    // Session ID
 		IdAliasRole,               // ID alias
+		AliasOrIdRole,             // Alias or session ID
 		UserCountRole,             // Number of logged in users
 		TitleRole,                 // Session title
 		FounderRole,               // Name of session founder
@@ -77,26 +80,13 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	LoginSession sessionAt(int index) const { return m_filtered.at(index); }
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);
 
-	void setShowNsfm(bool show);
-	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
-
-	//! Get the ID of the first session
 	LoginSession getFirstSession() const { return m_sessions.isEmpty() ? LoginSession() : m_sessions.first(); }
 
-signals:
-	void filteredCountChanged();
-
 private:
-	void updateFiltered(const LoginSession &session);
-	void removeFiltered(const QString &id);
-
-	QList<LoginSession> m_sessions;
-	QList<LoginSession> m_filtered;
-	bool m_showNsfm;
+	QVector<LoginSession> m_sessions;
 };
 
 }

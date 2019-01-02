@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "dialogs/avatarimport.h"
 
 #include "utils/avatarlistmodel.h"
+#include "utils/sessionfilterproxymodel.h"
 #include "utils/usernamevalidator.h"
 #include "utils/passwordstore.h"
 #include "utils/html.h"
@@ -61,6 +62,7 @@ struct LoginDialog::Private {
 
 	net::LoginHandler *loginHandler;
 	AvatarListModel *avatars;
+	SessionFilterProxyModel *sessions;
 	Ui_LoginDialog *ui;
 
 	QPushButton *okButton;
@@ -117,6 +119,20 @@ struct LoginDialog::Private {
 		});
 
 		ui->showNsfw->setEnabled(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
+		sessions = new SessionFilterProxyModel(dlg);
+        sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
+        sessions->setFilterKeyColumn(-1);
+        sessions->setSortRole(Qt::UserRole);
+		sessions->setShowNsfw(false);
+
+		connect(ui->showNsfw, &QAbstractButton::toggled, [this](bool show) {
+			QSettings().setValue("history/filternsfw", show);
+			sessions->setShowNsfw(show);
+		});
+        connect(ui->filter, &QLineEdit::textChanged,
+                        sessions, &SessionFilterProxyModel::setFilterFixedString);
+
+		ui->sessionList->setModel(sessions);
 
 		// Cert changed page
 		ui->warningIcon->setText(QString());
@@ -409,14 +425,7 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 	if(d->ui->showNsfw->isEnabled())
 		d->ui->showNsfw->setChecked(QSettings().value("history/filternsfw").toBool());
 
-	sessions->setShowNsfm(d->ui->showNsfw->isChecked());
-	connect(d->ui->showNsfw, &QAbstractButton::toggled, sessions, &net::LoginSessionModel::setShowNsfm);
-	connect(d->ui->showNsfw, &QAbstractButton::toggled, [](bool show) {
-		QSettings cfg;
-		cfg.setValue("history/filternsfw", show);
-	});
-
-	d->ui->sessionList->setModel(sessions);
+	d->sessions->setSourceModel(sessions);
 
 	QHeaderView *header = d->ui->sessionList->horizontalHeader();
 	header->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -495,9 +504,11 @@ void LoginDialog::onOkClicked()
 		break;
 	case Mode::sessionlist: {
 		Q_ASSERT(!d->ui->sessionList->selectionModel()->selectedIndexes().isEmpty());
-		const int row = d->ui->sessionList->selectionModel()->selectedIndexes().at(0).row();
-		const net::LoginSession &s = static_cast<net::LoginSessionModel*>(d->ui->sessionList->model())->sessionAt(row);
-		d->loginHandler->joinSelectedSession(s.idOrAlias(), s.needPassword);
+		const QModelIndex i = d->ui->sessionList->selectionModel()->selectedIndexes().first();
+		d->loginHandler->joinSelectedSession(
+			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
+			i.data(net::LoginSessionModel::NeedPasswordRole).toBool()
+		);
 		break;
 		}
 	case Mode::sessionpassword:
@@ -516,16 +527,19 @@ void LoginDialog::onReportClicked()
 		return;
 	}
 
-	const int selectedRow = d->ui->sessionList->selectionModel()->selectedIndexes().at(0).row();
-	const net::LoginSession &session = static_cast<net::LoginSessionModel*>(d->ui->sessionList->model())->sessionAt(selectedRow);
+	const QModelIndex idx = d->ui->sessionList->selectionModel()->selectedIndexes().first();
 
 	AbuseReportDialog *reportDlg = new AbuseReportDialog(this);
 	reportDlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	reportDlg->setSessionInfo(session.id, session.alias, session.title);
+	const QString sessionId = idx.data(net::LoginSessionModel::IdRole).toString();
+	const QString sessionAlias = idx.data(net::LoginSessionModel::IdAliasRole).toString();
+	const QString sessionTitle = idx.data(net::LoginSessionModel::TitleRole).toString();
 
-	connect(reportDlg, &AbuseReportDialog::accepted, this, [this, session, reportDlg]() {
-		d->loginHandler->reportSession(session.id, reportDlg->message());
+	reportDlg->setSessionInfo(sessionId, sessionAlias, sessionTitle);
+
+	connect(reportDlg, &AbuseReportDialog::accepted, this, [this, sessionId, reportDlg]() {
+		d->loginHandler->reportSession(sessionId, reportDlg->message());
 	});
 
 	reportDlg->show();
