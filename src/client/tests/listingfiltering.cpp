@@ -52,6 +52,7 @@ private slots:
 		listmodel.updateSession(loginsession("test6", false, false));
 
 		SessionFilterProxyModel filtered;
+		filtered.setFilterKeyColumn(-1);
 		filtered.setSourceModel(&listmodel);
 
 		QCOMPARE(listmodel.rowCount(), 6);
