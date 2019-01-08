@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-class QLabel;
+class QComboBox;
 class QSlider;
 class QToolButton;
 
@@ -29,12 +29,11 @@ namespace widgets {
 
 class ViewStatus : public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-	ViewStatus(QWidget *parent=0);
+	ViewStatus(QWidget *parent=nullptr);
 
-	void setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal);
-	void setRotationActions(QAction *resetRotation);
+	void setZoomActions(QAction *zoomOriginal);
 	void setFlipActions(QAction *flip, QAction *mirror);
 
 public slots:
@@ -42,20 +41,15 @@ public slots:
 
 signals:
 	void zoomChanged(qreal newZoom);
-	void angleChanged(qreal newAngle);
 
 private slots:
-	void rotateLeft();
-	void rotateRight();
+	void zoomBoxChanged(const QString &text);
 
 private:
-	void addZoomShortcut(int zoomLevel);
-	void addAngleShortcut(int angle);
-
-	QSlider *_zoomSlider, *_angleSlider;
-	QLabel *_zoom, *_angle;
-	QToolButton *_zoomIn, *_zoomOut, *_zoomOriginal, *_resetRotation;
-	QToolButton *_viewFlip, *_viewMirror;
+	QSlider *m_zoomSlider;
+	QComboBox *m_zoomBox;
+	QToolButton *m_zoomReset;
+	QToolButton *m_viewFlip, *m_viewMirror;
 };
 
 }

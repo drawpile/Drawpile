@@ -146,6 +146,7 @@ set (
 	ui/tablettest.ui
 	ui/abusereport.ui
 	ui/avatarimport.ui
+	ui/navigator.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found

@@ -332,13 +332,15 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(m_view, &widgets::CanvasView::urlDropped, this, &MainWindow::dropUrl);
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_viewstatus, &widgets::ViewStatus::setTransformation);
+	connect(m_view, &widgets::CanvasView::viewTransformed, m_dockNavigator, &docks::Navigator::setViewTransformation);
 
 #ifndef Q_OS_MAC // OSX provides this feature itself
 	connect(m_view, &widgets::CanvasView::hotBorder, this, &MainWindow::hotBorderMenubar);
 #endif
 
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
-	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
+	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
+	connect(m_dockNavigator, &docks::Navigator::angleChanged, m_view, &widgets::CanvasView::setRotation);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 
@@ -2338,8 +2340,8 @@ void MainWindow::setupActions()
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
 	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Clockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Period));
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Counterclockwise°")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Comma));
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Period)).icon("object-rotate-right");
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Comma)).icon("object-rotate-left");
 
 	QAction *rotate90 = makeAction("rotate90", tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", tr("Rotate to 180°"));
@@ -2419,9 +2421,9 @@ void MainWindow::setupActions()
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
-	m_viewstatus->setZoomActions(zoomin, zoomout, zoomorig);
-	m_viewstatus->setRotationActions(rotateorig);
+	m_viewstatus->setZoomActions(zoomorig);
 	m_viewstatus->setFlipActions(viewflip, viewmirror);
+	m_dockNavigator->setFlipActions(viewflip, viewmirror);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
