@@ -33,7 +33,6 @@ class ViewStatus : public QWidget
 public:
 	ViewStatus(QWidget *parent=nullptr);
 
-	void setZoomActions(QAction *zoomOriginal);
 	void setFlipActions(QAction *flip, QAction *mirror);
 
 public slots:
@@ -46,9 +45,7 @@ private slots:
 	void zoomBoxChanged(const QString &text);
 
 private:
-	QSlider *m_zoomSlider;
 	QComboBox *m_zoomBox;
-	QToolButton *m_zoomReset;
 	QToolButton *m_viewFlip, *m_viewMirror;
 };
 

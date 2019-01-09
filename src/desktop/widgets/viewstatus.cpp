@@ -46,7 +46,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setSpacing(0);
 
 	// View flipping
-	layout->addSpacing(10);
 	m_viewFlip = new QToolButton(this);
 	m_viewFlip->setAutoRaise(true);
 
@@ -57,30 +56,18 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addWidget(m_viewMirror);
 
 	// Zoom level
-	m_zoomReset = new QToolButton(this);
-	m_zoomReset->setAutoRaise(true);
-
-	m_zoomSlider = new QSlider(Qt::Horizontal, this);
-	m_zoomSlider->setMaximumWidth(120);
-	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(50);
-	m_zoomSlider->setMaximum(1600);
-	m_zoomSlider->setPageStep(50);
-	m_zoomSlider->setValue(100);
-	connect(m_zoomSlider, &QSlider::valueChanged, this, &ViewStatus::zoomChanged);
-
+	layout->addSpacing(10);
 	m_zoomBox = new QComboBox(this);
 	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().width("9999.9%--"));
 	m_zoomBox->setFrame(false);
 	m_zoomBox->setEditable(true);
+	m_zoomBox->setToolTip(tr("Zoom"));
 
 	auto zoomBoxPalette = m_zoomBox->palette();
 	zoomBoxPalette.setColor(QPalette::Base, zoomBoxPalette.color(QPalette::Window));
 	m_zoomBox->setPalette(zoomBoxPalette);
 
 	layout->addWidget(m_zoomBox);
-	layout->addWidget(m_zoomSlider);
-	layout->addWidget(m_zoomReset);
 
 	m_zoomBox->addItem(QStringLiteral("50%"));
 	m_zoomBox->addItem(QStringLiteral("100%"));
@@ -99,11 +86,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
 }
 
-void ViewStatus::setZoomActions(QAction *reset)
-{
-	m_zoomReset->setDefaultAction(reset);
-}
-
 void ViewStatus::setFlipActions(QAction *flip, QAction *mirror)
 {
 	m_viewFlip->setDefaultAction(flip);
@@ -114,12 +96,9 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
 	Q_UNUSED(angle);
 	const int intZoom = qRound(zoom);
-	if(intZoom != m_zoomSlider->value()) {
-		const int cursorPos = m_zoomBox->lineEdit()->cursorPosition();
-		m_zoomSlider->setValue(intZoom);
-		m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
-		m_zoomBox->lineEdit()->setCursorPosition(cursorPos);
-	}
+	const int cursorPos = m_zoomBox->lineEdit()->cursorPosition();
+	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
+	m_zoomBox->lineEdit()->setCursorPosition(cursorPos);
 }
 
 void ViewStatus::zoomBoxChanged(const QString &text)

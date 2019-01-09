@@ -2421,7 +2421,6 @@ void MainWindow::setupActions()
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
-	m_viewstatus->setZoomActions(zoomorig);
 	m_viewstatus->setFlipActions(viewflip, viewmirror);
 	m_dockNavigator->setFlipActions(viewflip, viewmirror);
 
