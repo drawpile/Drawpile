@@ -27,6 +27,7 @@
 #include "shapetools.h"
 #include "beziertool.h"
 #include "floodfill.h"
+#include "zoom.h"
 
 #include "core/point.h"
 #include "core/layerstack.h"
@@ -59,6 +60,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new LaserPointer(*this));
 	registerTool(new RectangleSelection(*this));
 	registerTool(new PolygonSelection(*this));
+	registerTool(new ZoomTool(*this));
 
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;

@@ -120,6 +120,35 @@ void CanvasView::zoomout()
 	zoomSteps(-1);
 }
 
+void CanvasView::zoomTo(const QRect &rect, int steps)
+{
+	centerOn(rect.center());
+
+	if(rect.width() < 15 || rect.height() < 15 || steps < 0) {
+		zoomSteps(steps);
+
+	} else {
+		const auto viewRect = mapFromScene(rect).boundingRect();
+		const qreal xScale = qreal(viewport()->width()) / viewRect.width();
+		const qreal yScale = qreal(viewport()->height()) / viewRect.height();
+		setZoom(_zoom * qMin(xScale, yScale));
+	}
+}
+
+void CanvasView::zoomToFit()
+{
+	if(!_scene || !_scene->hasImage())
+		return;
+
+	const QRect r { 0, 0, _scene->model()->layerStack()->width(), _scene->model()->layerStack()->height() };
+
+	const qreal xScale = qreal(viewport()->width()) / r.width();
+	const qreal yScale = qreal(viewport()->height()) / r.height();
+
+	centerOn(r.center());
+	setZoom(qMin(xScale, yScale) * 100);
+}
+
 /**
  * You should use this function instead of calling scale() directly
  * to keep track of the zoom factor.

@@ -105,6 +105,7 @@
 #include "toolwidgets/selectionsettings.h"
 #include "toolwidgets/annotationsettings.h"
 #include "toolwidgets/lasersettings.h"
+#include "toolwidgets/zoomsettings.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/annotation.h"
@@ -320,6 +321,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(static_cast<tools::LaserPointerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::LASERPOINTER)), &tools::LaserPointerSettings::pointerTrackingToggled,
 		m_view, &widgets::CanvasView::setPointerTracking);
+	connect(static_cast<tools::ZoomSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ZOOM)), &tools::ZoomSettings::resetZoom,
+		this, [this]() { m_view->setZoom(100.0); });
+	connect(static_cast<tools::ZoomSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ZOOM)), &tools::ZoomSettings::fitToWindow,
+		m_view, &widgets::CanvasView::zoomToFit);
 
 	connect(m_dockInput, &docks::InputSettings::pressureMappingChanged, m_view, &widgets::CanvasView::setPressureMapping);
 
@@ -373,6 +378,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
+	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
 
 	connect(m_dockInput, &docks::InputSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
 	m_doc->toolCtrl()->setSmoothing(m_dockInput->getSmoothing());
@@ -2580,6 +2586,7 @@ void MainWindow::setupActions()
 	QAction *lasertool = makeAction("toollaser", tr("&Laser Pointer")).icon("cursor-arrow").statusTip(tr("Point out things on the canvas")).shortcut("L").checkable();
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select (Rectangular)")).icon("select-rectangular").statusTip(tr("Select area for copying")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
+	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("zoom-in").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *markertool = makeAction("toolmarker", tr("&Mark")).icon("flag-red").statusTip(tr("Leave a marker to find this spot on the recording")).shortcut("Ctrl+M");
 
 	connect(markertool, &QAction::triggered, this, &MainWindow::markSpotForRecording);
@@ -2596,6 +2603,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(lasertool);
 	m_drawingtools->addAction(selectiontool);
 	m_drawingtools->addAction(lassotool);
+	m_drawingtools->addAction(zoomtool);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());

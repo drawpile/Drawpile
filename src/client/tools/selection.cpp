@@ -105,6 +105,9 @@ void SelectionTool::end()
 	if(!sel)
 		return;
 
+	// The shape must be closed after the end of the selection operation
+	owner.model()->selection()->closeShape();
+
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
 	if(selrect.width() * selrect.height() <= 2) {
@@ -216,14 +219,6 @@ void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool co
 
 	Q_ASSERT(owner.model()->selection());
 	owner.model()->selection()->addPointToShape(point);
-}
-
-void PolygonSelection::end()
-{
-	if(owner.model()->selection())
-		owner.model()->selection()->closeShape();
-
-	SelectionTool::end();
 }
 
 QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset)

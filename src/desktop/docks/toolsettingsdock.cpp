@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "toolwidgets/annotationsettings.h"
 #include "toolwidgets/fillsettings.h"
 #include "toolwidgets/lasersettings.h"
+#include "toolwidgets/zoomsettings.h"
 
 #include "tools/toolproperties.h"
 
@@ -139,6 +140,11 @@ struct ToolSettings::Private {
 				sel,
 				"selection",
 				QApplication::tr("Selection (Free-Form)")
+			};
+		pages[tools::Tool::ZOOM] = {
+			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
+			"zoom",
+			QApplication::tr("Zoom")
 			};
 
 		for(int i=0;i<tools::Tool::_LASTTOOL;++i) {

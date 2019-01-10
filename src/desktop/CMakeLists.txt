@@ -17,6 +17,7 @@ set (
 	toolwidgets/annotationsettings.cpp
 	toolwidgets/fillsettings.cpp
 	toolwidgets/lasersettings.cpp
+	toolwidgets/zoomsettings.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp

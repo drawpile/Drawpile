@@ -143,6 +143,13 @@ class CanvasView : public QGraphicsView
 		//! Decrease zoom factor
 		void zoomout();
 
+		//! Zoom the view it's filled by the given rectangle
+		//! If the rectangle is very small, or steps are negative, just zoom by that many steps
+		void zoomTo(const QRect &rect, int steps);
+
+		//! Zoom to fit the view
+		void zoomToFit();
+
 		void setToolCursor(const QCursor &cursor);
 
 		/**

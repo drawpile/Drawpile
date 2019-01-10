@@ -120,6 +120,7 @@ signals:
 	void smoothingChanged(int smoothing);
 
 	void colorUsed(const QColor &color);
+	void zoomRequested(const QRect &rect, int steps);
 
 private slots:
 	void onAnnotationRowDelete(const QModelIndex&, int first, int last);

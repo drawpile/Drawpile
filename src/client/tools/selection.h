@@ -82,8 +82,6 @@ class PolygonSelection : public SelectionTool {
 public:
 	PolygonSelection(ToolController &owner);
 
-	void end();
-
 protected:
 	void initSelection(canvas::Selection *selection);
 	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);

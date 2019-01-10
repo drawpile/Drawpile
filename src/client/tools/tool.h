@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,13 @@ class ToolController;
 class Tool
 {
 public:
-	enum Type {FREEHAND, ERASER, LINE, RECTANGLE, ELLIPSE, BEZIER, FLOODFILL, ANNOTATION, PICKER, LASERPOINTER, SELECTION, POLYGONSELECTION, _LASTTOOL};
+	enum Type {
+		FREEHAND, ERASER, LINE, RECTANGLE, ELLIPSE, BEZIER,
+		FLOODFILL, ANNOTATION,
+		PICKER, LASERPOINTER,
+		SELECTION, POLYGONSELECTION,
+		ZOOM,
+		_LASTTOOL};
 
 	Tool(ToolController &owner, Type type, const QCursor &cursor)
 		: owner(owner), m_type(type), m_cursor(cursor)
