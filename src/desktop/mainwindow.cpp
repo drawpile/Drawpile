@@ -331,6 +331,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #endif
 
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
+	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
 	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 	connect(m_dockNavigator, &docks::Navigator::angleChanged, m_view, &widgets::CanvasView::setRotation);
 
@@ -2382,9 +2383,11 @@ void MainWindow::setupActions()
 	viewtools->addAction(zoomin);
 	viewtools->addAction(zoomout);
 	viewtools->addAction(zoomorig);
+	viewtools->addSeparator();
 	viewtools->addAction(rotatecw);
 	viewtools->addAction(rotateccw);
 	viewtools->addAction(rotateorig);
+	viewtools->addSeparator();
 	viewtools->addAction(viewmirror);
 	viewtools->addAction(viewflip);
 	viewtools->addSeparator();

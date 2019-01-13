@@ -36,12 +36,15 @@ public slots:
 
 signals:
 	void zoomChanged(qreal newZoom);
+	void angleChanged(qreal newAngle);
 
 private slots:
 	void zoomBoxChanged(const QString &text);
+	void angleBoxChanged(const QString &text);
 
 private:
 	QComboBox *m_zoomBox;
+	QComboBox *m_angleBox;
 };
 
 }

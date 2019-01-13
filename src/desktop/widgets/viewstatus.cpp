@@ -36,6 +36,34 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(0);
 
+	// Canvas rotation
+	m_angleBox = new QComboBox(this);
+	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().width("9999-O--"));
+	m_angleBox->setFrame(false);
+	m_angleBox->setEditable(true);
+	m_angleBox->setToolTip(tr("Canvas Rotation"));
+
+	auto boxPalette = m_angleBox->palette();
+	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
+	m_angleBox->setPalette(boxPalette);
+
+	layout->addWidget(m_angleBox);
+
+	m_angleBox->addItem(QStringLiteral("-90°"));
+	m_angleBox->addItem(QStringLiteral("-45°"));
+	m_angleBox->addItem(QStringLiteral("0°"));
+	m_angleBox->addItem(QStringLiteral("45°"));
+	m_angleBox->addItem(QStringLiteral("90°"));
+	m_angleBox->setEditText(QStringLiteral("0°"));
+
+	m_angleBox->lineEdit()->setValidator(
+		new QRegularExpressionValidator(
+			QRegularExpression("-?[0-9]{0,3}°?"),
+			this
+		)
+	);
+	connect(m_angleBox, &QComboBox::editTextChanged, this, &ViewStatus::angleBoxChanged);
+
 	// Zoom level
 	m_zoomBox = new QComboBox(this);
 	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().width("9999.9%--"));
@@ -43,9 +71,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomBox->setEditable(true);
 	m_zoomBox->setToolTip(tr("Zoom"));
 
-	auto zoomBoxPalette = m_zoomBox->palette();
-	zoomBoxPalette.setColor(QPalette::Base, zoomBoxPalette.color(QPalette::Window));
-	m_zoomBox->setPalette(zoomBoxPalette);
+	m_zoomBox->setPalette(boxPalette);
 
 	layout->addWidget(m_zoomBox);
 
@@ -68,11 +94,17 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
-	Q_UNUSED(angle);
 	const int intZoom = qRound(zoom);
-	const int cursorPos = m_zoomBox->lineEdit()->cursorPosition();
+	const int zoomCursorPos = m_zoomBox->lineEdit()->cursorPosition();
 	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
-	m_zoomBox->lineEdit()->setCursorPosition(cursorPos);
+	m_zoomBox->lineEdit()->setCursorPosition(zoomCursorPos);
+
+	const int intAngle = qRound(angle);
+	const int angleCursorPos = m_angleBox->lineEdit()->cursorPosition();
+	m_angleBox->setEditText(QString::number(intAngle) + QChar(0x00b0));
+	m_angleBox->lineEdit()->setCursorPosition(angleCursorPos);
+
+
 }
 
 void ViewStatus::zoomBoxChanged(const QString &text)
@@ -86,5 +118,15 @@ void ViewStatus::zoomBoxChanged(const QString &text)
 		emit zoomChanged(number);
 }
 
+void ViewStatus::angleBoxChanged(const QString &text)
+{
+	const int suffix = text.indexOf(0x00b0);
+	const QStringRef num = suffix>0 ? text.leftRef(suffix) : &text;
+
+	bool ok;
+	const int number = num.toInt(&ok);
+	if(ok)
+		emit angleChanged(number);
 }
 
+}
