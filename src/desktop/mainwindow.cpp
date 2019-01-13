@@ -164,7 +164,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_lockstatus(nullptr),
 	  m_netstatus(nullptr),
 	  m_viewstatus(nullptr),
-	  m_statusChatButton(nullptr),
 	  m_playbackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
@@ -216,14 +215,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_netstatus = new widgets::NetStatus(this);
 	m_lockstatus = new QLabel(this);
 	m_lockstatus->setFixedSize(QSize(16, 16));
-
-	// Statusbar chat button: this is normally hidden and only shown
-	// when there are unread chat messages.
-	m_statusChatButton = new QToolButton(this);
-	m_statusChatButton->setAutoRaise(true);
-	m_statusChatButton->setIcon(QIcon("builtin:chat.svg"));
-	m_statusChatButton->hide();
-	m_viewStatusBar->addWidget(m_statusChatButton);
 
 	// Statusbar session size label
 	QLabel *sessionHistorySize = new QLabel(this);
@@ -468,7 +459,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(m_splitter->sizes().at(1)==0)
-			m_statusChatButton->show();
+			getAction("togglechat")->setIcon(QIcon("builtin:chat-alert.svg"));
 	});
 
 	connect(canvas, &canvas::CanvasModel::markerMessageReceived, m_chatbox, &widgets::ChatBox::receiveMarker);
@@ -2355,7 +2346,7 @@ void MainWindow::setupActions()
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
 
-	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
+	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").icon("builtin:chat.svg").checked();
 
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
 
@@ -2396,6 +2387,8 @@ void MainWindow::setupActions()
 	viewtools->addAction(rotateorig);
 	viewtools->addAction(viewmirror);
 	viewtools->addAction(viewflip);
+	viewtools->addSeparator();
+	viewtools->addAction(toggleChat);
 	addToolBar(Qt::TopToolBarArea, viewtools);
 
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
@@ -2407,10 +2400,13 @@ void MainWindow::setupActions()
 		});
 	}
 
-	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
+	connect(m_chatbox, &widgets::ChatBox::expanded, this, [this](bool expanded) {
+		QAction *a = getAction("togglechat");
+		a->setChecked(expanded);
+		if(expanded)
+			a->setIcon(QIcon("builtin:chat.svg"));
+	});
 
-	connect(m_chatbox, &widgets::ChatBox::expanded, toggleChat, &QAction::setChecked);
-	connect(m_chatbox, &widgets::ChatBox::expanded, m_statusChatButton, &QToolButton::hide);
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		QList<int> sizes;
 		if(show) {

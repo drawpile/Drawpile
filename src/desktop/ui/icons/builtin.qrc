@@ -1,12 +1,14 @@
 <RCC>
     <qresource prefix="/icons">
         <file>light/chat.svg</file>
+        <file>light/chat-alert.svg</file>
         <file>light/paintmode-hardedge.svg</file>
         <file>light/paintmode-smoothedge.svg</file>
         <file>light/paintmode-incremental.svg</file>
         <file>light/paintmode-indirect.svg</file>
 
         <file>dark/chat.svg</file>
+        <file>dark/chat-alert.svg</file>
         <file>dark/paintmode-hardedge.svg</file>
         <file>dark/paintmode-smoothedge.svg</file>
         <file>dark/paintmode-incremental.svg</file>
