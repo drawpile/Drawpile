@@ -21,42 +21,22 @@
 
 #include <QComboBox>
 #include <QLineEdit>
-#include <QSlider>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QHBoxLayout>
-#include <QAction>
-#include <QToolButton>
 
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
 	: QWidget(parent)
 {
-#ifdef Q_OS_MAC
-	setStyleSheet(QStringLiteral(
-		"QToolButton { border: none }"
-		"QToolButton:checked, QToolButton:pressed { background: #c0c0c0 }"
-	));
-#endif
 	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
 
 	layout->setMargin(1);
 	layout->setSpacing(0);
 
-	// View flipping
-	m_viewFlip = new QToolButton(this);
-	m_viewFlip->setAutoRaise(true);
-
-	m_viewMirror = new QToolButton(this);
-	m_viewMirror->setAutoRaise(true);
-
-	layout->addWidget(m_viewFlip);
-	layout->addWidget(m_viewMirror);
-
 	// Zoom level
-	layout->addSpacing(10);
 	m_zoomBox = new QComboBox(this);
 	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().width("9999.9%--"));
 	m_zoomBox->setFrame(false);
@@ -84,12 +64,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 		)
 	);
 	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
-}
-
-void ViewStatus::setFlipActions(QAction *flip, QAction *mirror)
-{
-	m_viewFlip->setDefaultAction(flip);
-	m_viewMirror->setDefaultAction(mirror);
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)

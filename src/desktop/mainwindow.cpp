@@ -2368,6 +2368,19 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 
+	QToolBar *viewtools = new QToolBar(tr("View Tools"));
+	viewtools->setObjectName("viewtoolsbar");
+	toggletoolbarmenu->addAction(viewtools->toggleViewAction());
+	viewtools->addAction(zoomin);
+	viewtools->addAction(zoomout);
+	viewtools->addAction(zoomorig);
+	viewtools->addAction(rotatecw);
+	viewtools->addAction(rotateccw);
+	viewtools->addAction(rotateorig);
+	viewtools->addAction(viewmirror);
+	viewtools->addAction(viewflip);
+	addToolBar(Qt::TopToolBarArea, viewtools);
+
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
 			// Update the mode tickmark on fulscreen state change.
@@ -2427,7 +2440,6 @@ void MainWindow::setupActions()
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
-	m_viewstatus->setFlipActions(viewflip, viewmirror);
 	m_dockNavigator->setFlipActions(viewflip, viewmirror);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
