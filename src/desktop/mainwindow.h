@@ -228,7 +228,6 @@ private:
 
 	QStatusBar *m_viewStatusBar;
 	QLabel *m_lockstatus;
-	QLabel *m_recorderstatus;
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *m_viewstatus;
 	QToolButton *m_statusChatButton;

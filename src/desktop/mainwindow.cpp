@@ -162,7 +162,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_view(nullptr),
 	  m_viewStatusBar(nullptr),
 	  m_lockstatus(nullptr),
-	  m_recorderstatus(nullptr),
 	  m_netstatus(nullptr),
 	  m_viewstatus(nullptr),
 	  m_statusChatButton(nullptr),
@@ -215,8 +214,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_viewstatus = new widgets::ViewStatus(this);
 
 	m_netstatus = new widgets::NetStatus(this);
-	m_recorderstatus = new QLabel(this);
-	m_recorderstatus->hide();
 	m_lockstatus = new QLabel(this);
 	m_lockstatus->setFixedSize(QSize(16, 16));
 
@@ -248,7 +245,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	m_viewStatusBar->addPermanentWidget(m_viewstatus);
 	m_viewStatusBar->addPermanentWidget(m_netstatus);
-	m_viewStatusBar->addPermanentWidget(m_recorderstatus);
 	m_viewStatusBar->addPermanentWidget(m_lockstatus);
 
 	int SPLITTER_WIDGET_IDX = 0;
@@ -567,7 +563,6 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
 	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this, [this]() {
 		m_playbackDialog = nullptr;
-		getAction("recordsession")->setEnabled(true);
 		setRecorderStatus(false);
 		m_doc->canvas()->endPlayback();
 	});
@@ -575,7 +570,6 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	m_playbackDialog->show();
 	m_playbackDialog->centerOnParent();
 
-	getAction("recordsession")->setEnabled(false);
 	setRecorderStatus(false);
 
 	return this;
@@ -1231,27 +1225,22 @@ void MainWindow::showFlipbook()
 
 void MainWindow::setRecorderStatus(bool on)
 {
+	QAction *recordAction = getAction("recordsession");
+
 	if(m_playbackDialog) {
 		if(m_playbackDialog->isPlaying()) {
-			m_recorderstatus->setPixmap(icon::fromTheme("media-playback-start").pixmap(16, 16));
-			m_recorderstatus->setToolTip("Playing back recording");
+			recordAction->setIcon(icon::fromTheme("media-playback-pause"));
+			recordAction->setText(tr("Pause"));
 		} else {
-			m_recorderstatus->setPixmap(icon::fromTheme("media-playback-pause").pixmap(16, 16));
-			m_recorderstatus->setToolTip("Playback paused");
+			recordAction->setIcon(icon::fromTheme("media-playback-start"));
+			recordAction->setText(tr("Play"));
 		}
-		m_recorderstatus->show();
+
 	} else {
-		QAction *recordAction = getAction("recordsession");
 		if(on) {
-			QIcon icon = icon::fromTheme("media-record");
-			m_recorderstatus->setPixmap(icon.pixmap(16, 16));
-			m_recorderstatus->setToolTip("Recording session");
-			m_recorderstatus->show();
 			recordAction->setText(tr("Stop Recording"));
 			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
 		} else {
-
-			m_recorderstatus->hide();
 			recordAction->setText(tr("Record..."));
 			recordAction->setIcon(icon::fromTheme("media-record"));
 		}
@@ -1262,6 +1251,12 @@ void MainWindow::setRecorderStatus(bool on)
 
 void MainWindow::toggleRecording()
 {
+	if(m_playbackDialog) {
+		// If the playback dialog is visible, this action works as the play/pause button
+		m_playbackDialog->setPlaying(!m_playbackDialog->isPlaying());
+		return;
+	}
+
 	if(m_doc->isRecording()) {
 		m_doc->stopRecording();
 		return;
@@ -2174,7 +2169,7 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
 	connect(exportAnimation, SIGNAL(triggered()), this, SLOT(exportAnimation()));
-	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
+	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
@@ -2210,6 +2205,7 @@ void MainWindow::setupActions()
 	filetools->addAction(newdocument);
 	filetools->addAction(open);
 	filetools->addAction(save);
+	filetools->addAction(record);
 	addToolBar(Qt::TopToolBarArea, filetools);
 
 	connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {

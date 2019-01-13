@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -187,6 +187,11 @@ void PlaybackDialog::centerOnParent()
 bool PlaybackDialog::isPlaying() const
 {
 	return m_ctrl->isPlaying();
+}
+
+void PlaybackDialog::setPlaying(bool playing)
+{
+	m_ctrl->setPlaying(playing);
 }
 
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 #ifndef PLAYBACKDIALOG_H
 #define PLAYBACKDIALOG_H
 
+#include "../shared/net/message.h"
+
 #include <QDialog>
 #include <QPointer>
-
-#include "../shared/net/message.h"
 
 namespace recording {
 	class Reader;
@@ -44,14 +44,15 @@ class PlaybackDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent = 0);
+	explicit PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent=nullptr);
 	~PlaybackDialog();
 
-	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=0);
+	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=nullptr);
 
 	void centerOnParent();
 
 	bool isPlaying() const;
+	void setPlaying(bool playing);
 
 public slots:
 	void done(int r);
