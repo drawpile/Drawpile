@@ -103,7 +103,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 			);
 		return false;
 	}
-	if(!writer->writeHeader()) {
+	if(!writer->writeHeader(reader.metadata())) {
 		fprintf(stderr, "Error while writing header: %s\n",
 			qPrintable(writer->errorString())
 			);
