@@ -19,6 +19,7 @@
  * Removed sliders from status bar
  * Added zoom tool
  * Added zoom/rotation/flip toolbar
+ * Show keyboard shortcuts in toolbar tooltips
 
 2018-??-?? Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature

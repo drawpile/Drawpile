@@ -652,6 +652,8 @@ void MainWindow::loadShortcuts()
 	QSettings cfg;
 	cfg.beginGroup("settings/shortcuts");
 
+	const QRegularExpression shortcutAmpersand { "&([^&])" };
+
 	QList<QAction*> actions = findChildren<QAction*>();
 	for(QAction *a : actions) {
 		const QString &name = a->objectName();
@@ -660,6 +662,25 @@ void MainWindow::loadShortcuts()
 				a->setShortcut(cfg.value(name).value<QKeySequence>());
 			else if(CustomShortcutModel::hasDefaultShortcut(name))
 				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
+
+			// If an action has a shortcut, show it in the tooltip
+			if(a->shortcut().isEmpty()) {
+				a->setToolTip(QString());
+
+			} else {
+				QString text = a->text();
+				text.replace(shortcutAmpersand, QStringLiteral("\\1"));
+
+				// In languages with non-latin alphabets, it's a common
+				// convention to add a keyboard shortcut like this:
+				// English: &File
+				// Japanese: ファイル(&F)
+				const int i = text.lastIndexOf('(');
+				if(i>0)
+					text.truncate(i);
+
+				a->setToolTip(QStringLiteral("%1 (%2)").arg(text, a->shortcut().toString()));
+			}
 		}
 	}
 
