@@ -45,6 +45,8 @@ private slots:
 
 		QTest::newRow("undopoint") << (Message*)new UndoPoint(15);
 		QTest::newRow("canvasresize") << (Message*)new CanvasResize(16, -0xfff, 0xaaa, -0xbbb, 0xccc);
+		QTest::newRow("background(color)") << (Message*)new CanvasBackground(17, 0x00ff0000);
+		QTest::newRow("background(img)") << (Message*)new CanvasBackground(17, QByteArray(64*64*4, '\xff'));
 		QTest::newRow("layercreate") << (Message*)new LayerCreate(17, 0xaabb, 0xccdd, 0x11223344, 0x01, QString("Test layer"));
 		QTest::newRow("layerattributes") << (Message*)new LayerAttributes(18, 0xaabb, 0xcc, LayerAttributes::FLAG_CENSOR, 0x10, 0x22);
 		QTest::newRow("layerretitle") << (Message*)new LayerRetitle(19, 0xaabb, QString("Test"));

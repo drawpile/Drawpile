@@ -134,7 +134,7 @@ Parser::Result Parser::parseLine(const QString &line)
 
 	Message *msg=nullptr;
 
-#define FROMTEXT(name, Cls) if(m_cmd==name) msg = Cls::fromText(m_ctx, m_kwargs)
+#define FROMTEXT(name, Cls) if(m_cmd==name) msg = Cls::fromText(uint8_t(m_ctx), m_kwargs)
 	if(m_cmd=="classicdabs") msg = DrawDabsClassic::fromText(m_ctx, m_kwargs, m_dabs);
 	else if(m_cmd=="pixeldabs") msg = DrawDabsPixel::fromText(m_ctx, m_kwargs, m_dabs);
 	else FROMTEXT("join", UserJoin);
@@ -151,6 +151,7 @@ Parser::Result Parser::parseLine(const QString &line)
 	else FROMTEXT("featureaccess", FeatureAccessLevels);
 	else FROMTEXT("defaultlayer", DefaultLayer);
 	else FROMTEXT("resize", CanvasResize);
+	else FROMTEXT("background", CanvasBackground);
 	else FROMTEXT("newlayer", LayerCreate);
 	else FROMTEXT("layerattr", LayerAttributes);
 	else FROMTEXT("retitlelayer", LayerRetitle);
