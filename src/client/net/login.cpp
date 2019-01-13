@@ -568,6 +568,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
+	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
 	if(needPassword) {
 		emit sessionPasswordNeeded();

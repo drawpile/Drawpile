@@ -91,6 +91,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case IdRole: return ls.id;
 		case IdAliasRole: return ls.alias;
+		case AliasOrIdRole: return ls.idOrAlias();
 		case UserCountRole: return ls.userCount;
 		case TitleRole: return ls.title;
 		case FounderRole: return ls.founder;
