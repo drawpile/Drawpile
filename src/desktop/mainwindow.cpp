@@ -2577,7 +2577,6 @@ void MainWindow::setupActions()
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
-
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
 
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the drawing board")).shortcut("F12").checkable();
@@ -2613,8 +2612,8 @@ void MainWindow::setupActions()
 	modmenu->addAction(gainop);
 	modmenu->addAction(resetsession);
 	modmenu->addAction(terminatesession);
+	modmenu->addAction(reportabuse);
 
-	sessionmenu->addAction(reportabuse);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);
