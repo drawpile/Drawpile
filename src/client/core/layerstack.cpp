@@ -306,7 +306,7 @@ void LayerStack::reorderLayers(const QList<uint16_t> &neworder)
  */
 void LayerStack::mergeLayerDown(int id) {
 	const Layer *top;
-	Layer *btm=0;
+	Layer *btm=nullptr;
 	for(int i=0;i<m_layers.size();++i) {
 		if(m_layers[i]->id() == id) {
 			top = m_layers[i];
@@ -315,10 +315,10 @@ void LayerStack::mergeLayerDown(int id) {
 			break;
 		}
 	}
-	if(btm==0)
-		qWarning() << "Tried to merge bottom-most layer";
-	else
+	if(btm)
 		btm->merge(top);
+	else
+		qWarning() << "Tried to merge bottom-most layer";
 }
 
 Layer *LayerStack::getLayerByIndex(int index)
@@ -339,7 +339,7 @@ Layer *LayerStack::getLayer(int id)
 	for(Layer *l : m_layers)
 		if(l->id() == id)
 			return l;
-	return 0;
+	return nullptr;
 }
 
 const Layer *LayerStack::getLayer(int id) const

@@ -98,7 +98,7 @@ void ToolController::setActiveTool(Tool::Type tool)
 	}
 }
 
-void ToolController::setActiveAnnotation(int id)
+void ToolController::setActiveAnnotation(uint16_t id)
 {
 	if(m_activeAnnotation != id) {
 		m_activeAnnotation = id;
@@ -118,7 +118,7 @@ QCursor ToolController::activeToolCursor() const
 	return m_activeTool->cursor();
 }
 
-void ToolController::setActiveLayer(int id)
+void ToolController::setActiveLayer(uint16_t id)
 {
 	if(m_activeLayer != id) {
 		m_activeLayer = id;

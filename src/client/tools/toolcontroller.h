@@ -43,8 +43,8 @@ class ToolController : public QObject
 {
 	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor() NOTIFY toolCursorChanged)
 	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
-	Q_PROPERTY(int activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
-	Q_PROPERTY(int activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
+	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
+	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
 	Q_PROPERTY(brushes::ClassicBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
 	Q_PROPERTY(canvas::CanvasModel* model READ model WRITE setModel NOTIFY modelChanged)
 
@@ -58,11 +58,11 @@ public:
 
 	QCursor activeToolCursor() const;
 
-	void setActiveLayer(int id);
-	int activeLayer() const { return m_activeLayer; }
+	void setActiveLayer(uint16_t id);
+	uint16_t activeLayer() const { return m_activeLayer; }
 
-	void setActiveAnnotation(int id);
-	int activeAnnotation() const { return m_activeAnnotation; }
+	void setActiveAnnotation(uint16_t id);
+	uint16_t activeAnnotation() const { return m_activeAnnotation; }
 
 	void setActiveBrush(const brushes::ClassicBrush &b);
 	const brushes::ClassicBrush &activeBrush() const { return m_activebrush; }
@@ -114,7 +114,7 @@ signals:
 	void activeToolChanged(Tool::Type type);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
-	void activeAnnotationChanged(int annotationId);
+	void activeAnnotationChanged(uint16_t annotationId);
 	void activeBrushChanged(const brushes::ClassicBrush&);
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
@@ -136,8 +136,8 @@ private:
 
 	brushes::ClassicBrush m_activebrush;
 	Tool *m_activeTool;
-	int m_activeLayer;
-	int m_activeAnnotation;
+	uint16_t m_activeLayer;
+	uint16_t m_activeAnnotation;
 	bool m_prevShift, m_prevAlt;
 
 	int m_smoothing;

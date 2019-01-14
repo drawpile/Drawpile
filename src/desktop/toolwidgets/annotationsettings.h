@@ -45,7 +45,7 @@ public:
 	 * @brief Get the ID of the currently selected annotation
 	 * @return ID or 0 if none selected
 	 */
-	int selected() const { return m_selectionId; }
+	uint16_t selected() const { return m_selectionId; }
 
 	/**
 	 * @brief Focus content editing box and set cursor position
@@ -60,7 +60,7 @@ public:
 
 public slots:
 	//! Set the currently selected annotation item
-	void setSelectionId(int id);
+	void setSelectionId(uint16_t id);
 
 	//! Focus the content editing box
 	void setFocus();
@@ -88,7 +88,7 @@ private:
 
 	Ui_TextSettings *_ui;
 
-	int m_selectionId;
+	uint16_t m_selectionId;
 
 	bool m_noupdate;
 	QTimer *m_updatetimer;

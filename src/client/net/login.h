@@ -63,7 +63,7 @@ public:
 	 *
 	 * @param userid
 	 */
-	void setUserId(int userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
+	void setUserId(uint8_t userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
 
 	/**
 	 * @brief Set desired session ID alias
@@ -130,7 +130,7 @@ public:
 	 * @brief get the user ID assigned by the server
 	 * @return user id
 	 */
-	int userId() const { return m_userid; }
+	uint8_t userId() const { return m_userid; }
 
 	/**
 	 * @brief get the ID of the session.
@@ -369,7 +369,7 @@ private:
 	QByteArray m_avatar;
 
 	// Settings for hosting
-	int m_userid;
+	uint8_t m_userid;
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;

@@ -456,8 +456,8 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	if(msg.reply.contains("sessions")) {
 		const parentalcontrols::Level pclevel = parentalcontrols::level();
 
-		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
-			QJsonObject js = jsv.toObject();
+		for(const auto jsv : msg.reply["sessions"].toArray()) {
+			const QJsonObject js = jsv.toObject();
 
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 
@@ -531,7 +531,15 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
 		m_loggedInSessionId = msg.reply["join"].toObject()["id"].toString();
-		m_userid = msg.reply["join"].toObject()["user"].toInt();
+		const int userid = msg.reply["join"].toObject()["user"].toInt();
+
+		if(userid < 1 || userid > 254) {
+			qWarning() << "Login error. User ID" << userid << "out of supported range.";
+			failLogin(tr("Incompatible server"));
+			return;
+		}
+
+		m_userid = uint8_t(userid);
 		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings

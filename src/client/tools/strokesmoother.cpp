@@ -74,7 +74,7 @@ paintcore::Point StrokeSmoother::smoothPoint() const
 	// A simple unweighted sliding-average smoother
 	paintcore::Point p = at(0);
 
-	float pressure = p.pressure();
+	qreal pressure = p.pressure();
 	for(int i=1;i<_points.size();++i) {
 		paintcore::Point pi = at(i);
 		p.rx() += pi.x();
@@ -82,7 +82,7 @@ paintcore::Point StrokeSmoother::smoothPoint() const
 		pressure += pi.pressure();
 	}
 
-	const float c = _points.size();
+	const qreal c = _points.size();
 	p.rx() /= c;
 	p.ry() /= c;
 	p.setPressure(pressure / c);

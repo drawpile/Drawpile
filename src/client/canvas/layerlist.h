@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,10 @@ class AclFilter;
 
 struct LayerListItem {
 	//! Layer ID
-	int id;
+	// Note: normally, layer ID range is from 0 to 0xffff, but internal
+	// layers use values outside that range. However, internal layers are not
+	// shown in the layer list.
+	uint16_t id;
 	
 	//! Layer title
 	QString title;
@@ -88,34 +91,34 @@ public:
 	QMimeData *mimeData(const QModelIndexList& indexes) const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 
-	QModelIndex layerIndex(int id);
+	QModelIndex layerIndex(uint16_t id);
 	
 	void clear();
-	void createLayer(int id, int index, const QString &title);
-	void deleteLayer(int id);
-	void changeLayer(int id, bool censored, float opacity, paintcore::BlendMode::Mode blend);
-	void retitleLayer(int id, const QString &title);
-	void setLayerHidden(int id, bool hidden);
+	void createLayer(uint16_t id, int index, const QString &title);
+	void deleteLayer(uint16_t id);
+	void changeLayer(uint16_t id, bool censored, float opacity, paintcore::BlendMode::Mode blend);
+	void retitleLayer(uint16_t id, const QString &title);
+	void setLayerHidden(uint16_t id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);
 	
 	QVector<LayerListItem> getLayers() const { return m_items; }
 	void setLayers(const QVector<LayerListItem> &items);
 
-	void previewOpacityChange(int id, float opacity);
+	void previewOpacityChange(uint16_t id, float opacity);
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	void setAclFilter(AclFilter *filter) { m_aclfilter = filter; }
-	const paintcore::Layer *getLayerData(int id) const;
+	const paintcore::Layer *getLayerData(uint16_t id) const;
 
-	int myId() const { return m_myId; }
-	void setMyId(int id) { m_myId = id; }
+	uint8_t myId() const { return m_myId; }
+	void setMyId(uint8_t id) { m_myId = id; }
 
 	/**
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
 	 */
-	int defaultLayer() const { return m_defaultLayer; }
-	void setDefaultLayer(int id);
+	uint16_t defaultLayer() const { return m_defaultLayer; }
+	void setDefaultLayer(uint16_t id);
 
 	/**
 	 * @brief Find a free layer ID
@@ -142,13 +145,13 @@ signals:
 private:
 	void handleMoveLayer(int idx, int afterIdx);
 
-	int indexOf(int id) const;
+	int indexOf(uint16_t id) const;
 
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
 	AclFilter *m_aclfilter;
-	int m_defaultLayer;
-	int m_myId;
+	uint16_t m_defaultLayer;
+	uint8_t m_myId;
 };
 
 /**
@@ -159,11 +162,12 @@ class LayerMimeData : public QMimeData
 {
 Q_OBJECT
 public:
-	LayerMimeData(const LayerListModel *source, int id) : QMimeData(), _source(source), _id(id) {}
+	LayerMimeData(const LayerListModel *source, uint16_t id)
+		: QMimeData(), m_source(source), m_id(id) {}
 
-	const LayerListModel *source() const { return _source; }
+	const LayerListModel *source() const { return m_source; }
 
-	int layerId() const { return _id; }
+	uint16_t layerId() const { return m_id; }
 
 	QStringList formats() const;
 
@@ -171,8 +175,8 @@ protected:
 	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
 
 private:
-	const LayerListModel *_source;
-	int _id;
+	const LayerListModel *m_source;
+	uint16_t m_id;
 };
 
 }

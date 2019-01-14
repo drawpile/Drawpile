@@ -43,7 +43,7 @@
 
 namespace canvas {
 
-CanvasModel::CanvasModel(int localUserId, QObject *parent)
+CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline)
 {
 	m_layerlist = new LayerListModel(this);
@@ -78,12 +78,12 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
 }
 
-int CanvasModel::localUserId() const
+uint8_t CanvasModel::localUserId() const
 {
 	return m_statetracker->localId();
 }
 
-void CanvasModel::connectedToServer(int myUserId)
+void CanvasModel::connectedToServer(uint8_t myUserId)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
@@ -219,9 +219,11 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		// Add layer ACLs
 		for(int i=0;i<m_layerstack->layerCount();++i) {
 			const int layerId = m_layerstack->getLayerByIndex(i)->id();
+			Q_ASSERT(layerId > 0 && layerId <= 0xffff); // toplevel layers should have IDs in protocol range
+
 			const canvas::AclFilter::LayerAcl acl = aclFilter()->layerAcl(layerId);
 			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layerId, acl.locked, int(acl.tier), acl.exclusive));
+				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), uint16_t(layerId), acl.locked, uint8_t(acl.tier), acl.exclusive));
 		}
 	}
 
@@ -297,17 +299,17 @@ void CanvasModel::updateLayerViewOptions()
  * Find an annotation ID (for this user) that is currently not in use.
  * @return available ID or 0 if none found
  */
-int CanvasModel::getAvailableAnnotationId() const
+uint16_t CanvasModel::getAvailableAnnotationId() const
 {
-	const int prefix = m_statetracker->localId() << 8;
-	QList<int> takenIds;
+	const uint16_t prefix = uint16_t(m_statetracker->localId() << 8);
+	QList<uint16_t> takenIds;
 	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
 		if((a.id & 0xff00) == prefix)
 				takenIds << a.id;
 	}
 
-	for(int i=0;i<256;++i) {
-		int id = prefix | i;
+	for(uint16_t i=0;i<256;++i) {
+		uint16_t id = prefix | i;
 		if(!takenIds.contains(id))
 			return id;
 	}
@@ -449,7 +451,7 @@ void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
-	QPoint p(msg.x() / 4.0, msg.y() / 4.0);
+	QPoint p(int(msg.x() / 4.0), int(msg.y() / 4.0));
 	m_usercursors->setCursorPosition(msg.contextId(), 0, p);
 	m_lasers->addPoint(msg.contextId(), p);
 }

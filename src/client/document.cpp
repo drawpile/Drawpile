@@ -236,7 +236,7 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("announcements")) {
 		m_announcementlist->clear();
 		QString jc;
-		for(const QJsonValue &v : config["announcements"].toArray()) {
+		for(auto v : config["announcements"].toArray()) {
 			const QJsonObject o = v.toObject();
 			const net::Announcement a {
 				o["url"].toString(),
@@ -510,7 +510,7 @@ bool Document::startRecording(const QString &filename, const QList<protocol::Mes
 	QSettings cfg;
 	cfg.beginGroup("settings/recording");
 	if(cfg.value("recordpause", true).toBool())
-		m_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+		m_recorder->setMinimumInterval(int(1000 * cfg.value("minimumpause", 0.5).toFloat()));
 	if(cfg.value("recordtimestamp", false).toBool())
 		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
 
@@ -581,7 +581,7 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), point.x() * 4, point.y() * 4)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), int32_t(point.x() * 4), int32_t(point.y() * 4))));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
@@ -835,11 +835,11 @@ void Document::removeEmptyAnnotations()
 		return;
 	}
 
-	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
+	QList<uint16_t> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		QList<protocol::MessagePtr> msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
-		for(int id : ids)
+		for(auto id : ids)
 			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
 		m_client->sendMessages(msgs);
 	}

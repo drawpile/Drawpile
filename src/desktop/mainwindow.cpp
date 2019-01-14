@@ -523,7 +523,7 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 	}
 
 	if(!loader.warningMessage().isEmpty()) {
-		QMessageBox::warning(0, QApplication::tr("Warning"), loader.warningMessage());
+		QMessageBox::warning(nullptr, QApplication::tr("Warning"), loader.warningMessage());
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -1977,7 +1977,7 @@ void MainWindow::clearOrDelete()
 	// that instead of clearing out the canvas.
 	QAction *annotationtool = getAction("tooltext");
 	if(annotationtool->isChecked()) {
-		const int a = static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
+		const uint16_t a = static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
 		if(a>0) {
 			QList<protocol::MessagePtr> msgs;
 			msgs << protocol::MessagePtr(new protocol::UndoPoint(m_doc->client()->myId()));
@@ -2037,11 +2037,11 @@ void MainWindow::markSpotForRecording()
 
 void MainWindow::about()
 {
-	QMessageBox::about(0, tr("About Drawpile"),
+	QMessageBox::about(nullptr, tr("About Drawpile"),
 			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(DRAWPILE_VERSION) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
-			"<p>Copyright © 2006-2018 Calle Laakkonen</p>"
+			"<p>Copyright © 2006-2019 Calle Laakkonen</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as " 

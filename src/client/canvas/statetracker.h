@@ -129,7 +129,7 @@ class LayerListModel;
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, uint8_t myId, QObject *parent=nullptr);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
@@ -156,12 +156,12 @@ public:
 	 * @brief Get the local user's ID
 	 * @return
 	 */
-	int localId() const { return m_myId; }
+	uint8_t localId() const { return m_myId; }
 
 	/**
 	 * @brief Set the local user's ID
 	 */
-	void setLocalId(int id) { m_myId = id; }
+	void setLocalId(uint8_t id) { m_myId = id; }
 
 	/**
 	 * @brief Get the paint canvas
@@ -263,7 +263,7 @@ private:
 	LayerListModel *m_layerlist;
 
 	QString _title;
-	int m_myId;
+	uint8_t m_myId;
 	int m_myLastLayer;
 
 	History m_history;

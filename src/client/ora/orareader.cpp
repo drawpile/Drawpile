@@ -146,9 +146,9 @@ static bool attrToBool(const QStringRef &attr, bool def, const char *trueVal)
 static QColor attrToColor(const QStringRef &attr, const QColor &def)
 {
 	if(attr.length() == 7 && attr.at(0) == '#')
-		return QColor::fromRgb(attr.mid(1).toUInt(0, 16));
+		return QColor::fromRgb(attr.mid(1).toUInt(nullptr, 16));
 	else if(attr.length() == 9 && attr.at(0) == '#')
-		return QColor::fromRgba(attr.mid(1).toUInt(0, 16));
+		return QColor::fromRgba(attr.mid(1).toUInt(nullptr, 16));
 	else
 		return def;
 }
@@ -397,14 +397,14 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 	if(canvas.nestedWarning)
 		result.warnings |= OraResult::ORA_NESTED;
 
-	const int ctxId = 1;
+	const uint8_t ctxId = 1;
 
 	// Set canvas size
 	result.commands << MessagePtr(new protocol::CanvasResize(ctxId, 0, canvas.size.width(), canvas.size.height(), 0));
 
 	// Create layers
 	// Note: layers are stored topmost first in ORA, but we create them bottom-most first
-	int layerId = ctxId << 8;
+	uint16_t layerId = uint16_t(ctxId << 8);
 	for(int i=canvas.layers.size()-1;i>=0;--i) {
 		const Layer &layer = canvas.layers[i];
 
@@ -466,7 +466,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			layerId,
 			0,
 			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
-			qRound(255 * layer.opacity),
+			uint8_t(qRound(255 * layer.opacity)),
 			blendmode
 			));
 
@@ -480,7 +480,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 	}
 
 	// Create annotations
-	int annotationId = ctxId << 8;
+	uint16_t annotationId = uint16_t(ctxId << 8);
 	for(const Annotation &ann : canvas.annotations) {
 		result.commands.append(MessagePtr(new protocol::AnnotationCreate(
 			ctxId,
@@ -533,7 +533,9 @@ OraResult loadOpenRaster(const QString &filename)
 			} else {
 				return QStringLiteral("Unexpected root element: ") + reader.name().toString();
 			}
-		default: break;
+			break;
+		default:
+			break;
 		}
 	}
 

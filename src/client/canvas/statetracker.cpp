@@ -44,18 +44,18 @@
 namespace canvas {
 
 struct StateSavepoint::Data {
-	Data() : timestamp(0), streampointer(-1), canvas(0), _refcount(1) {}
+	Data() : timestamp(0), canvas(nullptr), streampointer(-1), m_refcount(1) {}
 	Data(const Data &) = delete;
 	Data &operator=(const Data&) = delete;
 	~Data() { delete canvas; }
 
 	qint64 timestamp;
-	int streampointer;
 	paintcore::Savepoint *canvas;
 	QVector<LayerListItem> layermodel;
+	int streampointer;
 
 private:
-	int _refcount;
+	int m_refcount;
 	friend class StateSavepoint;
 };
 
@@ -63,22 +63,22 @@ StateSavepoint::StateSavepoint(const StateSavepoint &sp)
 	: m_data(sp.m_data)
 {
 	if(m_data)
-		++m_data->_refcount;
+		++m_data->m_refcount;
 }
 
 StateSavepoint &StateSavepoint::operator =(const StateSavepoint &sp)
 {
 	if(m_data) {
 		if(sp.m_data != m_data) {
-			Q_ASSERT(m_data->_refcount>0);
-			if(--m_data->_refcount == 0)
+			Q_ASSERT(m_data->m_refcount>0);
+			if(--m_data->m_refcount == 0)
 				delete m_data;
 			m_data = sp.m_data;
-			++m_data->_refcount;
+			++m_data->m_refcount;
 		}
 	} else {
 		m_data = sp.m_data;
-		++m_data->_refcount;
+		++m_data->m_refcount;
 	}
 	return *this;
 }
@@ -86,8 +86,8 @@ StateSavepoint &StateSavepoint::operator =(const StateSavepoint &sp)
 StateSavepoint::~StateSavepoint()
 {
 	if(m_data) {
-		Q_ASSERT(m_data->_refcount>0);
-		if(--m_data->_refcount == 0)
+		Q_ASSERT(m_data->m_refcount>0);
+		if(--m_data->m_refcount == 0)
 			delete m_data;
 	}
 }
@@ -137,7 +137,7 @@ QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, Canv
  * @param myId ID of the local user
  * @param parent
  */
-StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent)
+StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, uint8_t myId, QObject *parent)
 	: QObject(parent),
 		_image(image),
 		m_layerlist(layerlist),
@@ -1069,7 +1069,7 @@ void StateSavepoint::toDatastream(QDataStream &out) const
 	out << quint8(d->layermodel.size());
 	for(const LayerListItem &layer : d->layermodel) {
 		// Write layer ID
-		out << qint32(layer.id);
+		out << layer.id;
 
 		// Write layer title
 		out << layer.title;
@@ -1101,7 +1101,7 @@ StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *own
 	in >> layercount;
 	while(layercount--) {
 		// Read layer ID
-		qint32 layerid;
+		quint16 layerid;
 		in >> layerid;
 
 		// Read layer title

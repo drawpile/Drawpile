@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_myId, layers)));
 }
 
-int LayerListModel::indexOf(int id) const
+int LayerListModel::indexOf(uint16_t id) const
 {
 	for(int i=0;i<m_items.size();++i)
 		if(m_items.at(i).id == id)
@@ -138,7 +138,7 @@ int LayerListModel::indexOf(int id) const
 	return -1;
 }
 
-QModelIndex LayerListModel::layerIndex(int id)
+QModelIndex LayerListModel::layerIndex(uint16_t id)
 {
 	int i = indexOf(id);
 	if(i>=0)
@@ -146,14 +146,14 @@ QModelIndex LayerListModel::layerIndex(int id)
 	return QModelIndex();
 }
 
-void LayerListModel::createLayer(int id, int index, const QString &title)
+void LayerListModel::createLayer(uint16_t id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
 	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false });
 	endInsertRows();
 }
 
-void LayerListModel::deleteLayer(int id)
+void LayerListModel::deleteLayer(uint16_t id)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -174,7 +174,7 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, bool censored, float opacity, paintcore::BlendMode::Mode blend)
+void LayerListModel::changeLayer(uint16_t id, bool censored, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -188,7 +188,7 @@ void LayerListModel::changeLayer(int id, bool censored, float opacity, paintcore
 	emit dataChanged(qmi, qmi);
 }
 
-void LayerListModel::retitleLayer(int id, const QString &title)
+void LayerListModel::retitleLayer(uint16_t id, const QString &title)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -200,7 +200,7 @@ void LayerListModel::retitleLayer(int id, const QString &title)
 	emit dataChanged(qmi, qmi);
 }
 
-void LayerListModel::setLayerHidden(int id, bool hidden)
+void LayerListModel::setLayerHidden(uint16_t id, bool hidden)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -241,7 +241,7 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 	endResetModel();
 }
 
-void LayerListModel::setDefaultLayer(int id)
+void LayerListModel::setDefaultLayer(uint16_t id)
 {
 	const int oldIdx = indexOf(m_defaultLayer);
 	if(oldIdx >= 0) {
@@ -255,14 +255,14 @@ void LayerListModel::setDefaultLayer(int id)
 	}
 }
 
-const paintcore::Layer *LayerListModel::getLayerData(int id) const
+const paintcore::Layer *LayerListModel::getLayerData(uint16_t id) const
 {
 	if(m_getlayerfn)
 		return m_getlayerfn(id);
 	return nullptr;
 }
 
-void LayerListModel::previewOpacityChange(int id, float opacity)
+void LayerListModel::previewOpacityChange(uint16_t id, float opacity)
 {
 	emit layerOpacityPreview(id, opacity);
 }
@@ -276,9 +276,9 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 {
 	Q_UNUSED(mimeType);
 	if(type==QVariant::Image) {
-		const paintcore::Layer *layer = _source->getLayerData(_id);
+		const paintcore::Layer *layer = m_source->getLayerData(m_id);
 		if(layer)
-			return layer->toCroppedImage(0, 0);
+			return layer->toCroppedImage(nullptr, nullptr);
 	}
 
 	return QVariant();

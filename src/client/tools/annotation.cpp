@@ -135,7 +135,7 @@ void Annotation::end()
 		// Delete our preview annotation first
 		owner.model()->layerStack()->annotations()->deleteAnnotation(PREVIEW_ID);
 
-		int newId = owner.model()->getAvailableAnnotationId();
+		uint16_t newId = owner.model()->getAvailableAnnotationId();
 
 		if(newId==0) {
 			qWarning("We ran out of annotation IDs!");

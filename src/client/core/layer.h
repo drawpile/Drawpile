@@ -41,6 +41,8 @@ struct StrokeState;
  */
 struct LayerInfo {
 	// Identification
+	// Note: In the protocol, layer IDs are 16bit, but for internal (ephemeral) layers,
+	// we use IDs outside that range.
 	int id;
 	QString title;
 
