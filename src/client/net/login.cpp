@@ -111,7 +111,7 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	const protocol::ServerReply msg = message.cast<protocol::Command>().reply();
 
 #ifdef DEBUG_LOGIN
-	qDebug() << "login <--" << msg.reply;
+	qInfo() << "login <--" << msg.reply;
 #endif
 
 	// Overall, the login process is:
@@ -776,10 +776,29 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 	m_server->loginFailure(message, errorcode);
 }
 
+#ifdef DEBUG_LOGIN
+static QJsonObject redactPassword(QJsonObject cmd)
+{
+	if(cmd["cmd"] == "ident") {
+		QJsonArray args = cmd["args"].toArray();
+		if(args.size() > 1)
+			cmd["args"] = QJsonArray { args[0], "*" };
+	}
+
+	QJsonObject kwargs = cmd["kwargs"].toObject();
+	if(kwargs.contains("password")) {
+		kwargs["password"] = "*";
+		cmd["kwargs"] = kwargs;
+	}
+
+	return cmd;
+}
+#endif
+
 void LoginHandler::send(const protocol::ServerCommand &cmd)
 {
 #ifdef DEBUG_LOGIN
-	qDebug() << "login -->" << cmd.toJson();
+	qInfo() << "login -->" << redactPassword(cmd.toJson().object());
 #endif
 	m_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }
