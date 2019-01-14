@@ -1,33 +1,27 @@
-FROM ubuntu:18.04
-RUN apt-get update \
- && apt-get install \
-    wget \
-    cmake \
-    make \
-    qtbase5-dev \
-    libkf5archive-dev \
-    g++ \
-    qtm \
-    qtmultimedia5-dev \
-    libqt5svg5-dev \
-    libgif-dev \
-    libkf5dnssd-dev \
-    libmicrohttpd-dev \
-    libsodium-dev \
-    -y \
- && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+## Common base
+FROM alpine:3.8 as common
+RUN apk add --no-cache qt5-qtbase qt5-qtbase-sqlite libmicrohttpd libbz2 libsodium
 
-ARG VERSION=master
-RUN git clone --branch $VERSION --single-branch --depth 1 https://github.com/drawpile/Drawpile.git \
- && cd Drawpile \
- && mkdir build \
- && cd build \
- && cmake .. -DCLIENT=off -DSERVERGUI=off \
- && make \
- && make install
+## Build container
+FROM common as builder
+RUN apk add qt5-qtbase-dev libmicrohttpd-dev libsodium-dev cmake make g++
+WORKDIR /build/
 
-RUN cd / && rm -rf /Drawpile
-RUN useradd -m drawpile
+COPY build-deps.sh /build/
+RUN sh build-deps.sh
+
+ARG version=master
+RUN wget https://github.com/drawpile/Drawpile/archive/${version}.zip -O /build/drawpile.zip
+COPY build.sh /build/
+RUN sh build.sh
+
+## Final deployment image
+FROM common
+COPY --from=builder /build/drawpile-srv /bin
+COPY --from=builder /build/karchive*/build/bin/libKF5* /usr/lib/
+RUN adduser -D drawpile
+
+EXPOSE 27750
 USER drawpile
-EXPOSE 8080
-ENTRYPOINT ["drawpile-srv", "--listen", "0.0.0.0", "--port", "8080"]
+ENTRYPOINT ["/bin/drawpile-srv"]
+

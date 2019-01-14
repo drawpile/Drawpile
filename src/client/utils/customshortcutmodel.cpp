@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-QMap<QString, CustomShortcut> CustomShortcutModel::_customizableActions;
+QMap<QString, CustomShortcut> CustomShortcutModel::m_customizableActions;
 
 CustomShortcutModel::CustomShortcutModel(QObject *parent)
 	: QAbstractTableModel(parent)
@@ -34,7 +34,7 @@ int CustomShortcutModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _shortcuts.size();
+	return m_shortcuts.size();
 }
 
 int CustomShortcutModel::columnCount(const QModelIndex &parent) const
@@ -51,7 +51,7 @@ int CustomShortcutModel::columnCount(const QModelIndex &parent) const
 
 QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 {
-	const CustomShortcut &cs = _shortcuts.at(index.row());
+	const CustomShortcut &cs = m_shortcuts.at(index.row());
 
 	if(role == Qt::DisplayRole || role == Qt::EditRole) {
 		switch(index.column()) {
@@ -67,7 +67,7 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 	if(role == Qt::EditRole && index.column()==1) {
-		CustomShortcut &cs = _shortcuts[index.row()];
+		CustomShortcut &cs = m_shortcuts[index.row()];
 		cs.currentShortcut = value.value<QKeySequence>();
 		return true;
 	}
@@ -99,16 +99,16 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 void CustomShortcutModel::loadShortcuts()
 {
 	QList<CustomShortcut> actions;
-	actions.reserve(_customizableActions.size());
+	actions.reserve(m_customizableActions.size());
 
 	QSettings cfg;
 	cfg.beginGroup("settings/shortcuts");
 
-	for(CustomShortcut a : _customizableActions) {
+	for(CustomShortcut a : m_customizableActions) {
 		Q_ASSERT(!a.name.isEmpty());
 		if(cfg.contains(a.name))
 			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
-		if(a.currentShortcut.isEmpty())
+		else
 			a.currentShortcut = a.defaultShortcut;
 
 		actions.append(a);
@@ -119,7 +119,7 @@ void CustomShortcutModel::loadShortcuts()
 	);
 
 	beginResetModel();
-	_shortcuts = actions;
+	m_shortcuts = actions;
 	endResetModel();
 }
 
@@ -130,28 +130,28 @@ void CustomShortcutModel::saveShortcuts()
 	cfg.beginGroup("settings/shortcuts");
 	cfg.remove("");
 
-	for(const CustomShortcut &cs : _shortcuts) {
-		if(!cs.currentShortcut.isEmpty() && cs.currentShortcut != cs.defaultShortcut)
+	for(const CustomShortcut &cs : m_shortcuts) {
+		if(cs.currentShortcut != cs.defaultShortcut)
 			cfg.setValue(cs.name, cs.currentShortcut);
 	}
 }
 
 void CustomShortcutModel::registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut)
 {
-	if(_customizableActions.contains(name))
+	if(m_customizableActions.contains(name))
 		return;
 
-	_customizableActions[name] = CustomShortcut(name, title, defaultShortcut);
+	m_customizableActions[name] = CustomShortcut(name, title, defaultShortcut);
 }
 
 bool CustomShortcutModel::hasDefaultShortcut(const QString &name)
 {
-	return _customizableActions.contains(name);
+	return m_customizableActions.contains(name);
 }
 
 QKeySequence CustomShortcutModel::getDefaultShortcut(const QString &name)
 {
-	return _customizableActions[name].defaultShortcut;
+	return m_customizableActions[name].defaultShortcut;
 }
 
 QKeySequence CustomShortcutModel::getShorcut(const QString &name)
@@ -160,8 +160,8 @@ QKeySequence CustomShortcutModel::getShorcut(const QString &name)
 	cfg.beginGroup("settings/shortcuts");
 	if(cfg.contains(name))
 		return cfg.value(name).value<QKeySequence>();
-	else if(_customizableActions.contains(name))
-		return _customizableActions[name].defaultShortcut;
+	else if(m_customizableActions.contains(name))
+		return m_customizableActions[name].defaultShortcut;
 	else
 		return QKeySequence();
 }

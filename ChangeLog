@@ -23,10 +23,14 @@
  * Replaced recording status icon with toolbar button
  * Replaced "new chat message" status icon with toolbar button (red dot indicates new message)
 
-2018-??-?? Version 2.0.11
+2018-08-14 Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature
  * Server AppImage: updated libmicrohttpd to version 0.9.59
  * Fixed crash caused by dragging&dropping a layer that was deleted during the drag operation
+ * Fixed unsetting shortcuts which have a default value
+ * Changed default "session settings" shortcut to F9, to avoid collision with the default (Windows) fullscreen shortcut F11
+ * A nicer set of presets for the brush palette
+ * Sending USR1 signal to drawpile-srv now restarts the internal web-admin server
 
 2018-03-17 Version 2.0.10
  * Server: history files are now flushed periodically to better protect against dataloss in case of abrupt server termination

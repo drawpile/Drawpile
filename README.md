@@ -31,10 +31,11 @@ Client specific dependencies:
 * GIFLIB (optional: animated GIF export)
 * MiniUPnP (optional: automatic port forwarding setup)
 
-Server specific dependencies:
+Server specific dependencies (you can also take a look at [Docker build](server/docker/Dockerfile) script):
 
 * libsystemd (optional: systemd socket activation support)
 * libmicrohttpd (optional: HTTP admin API)
+* libsodium (optional: ext-auth support)
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.

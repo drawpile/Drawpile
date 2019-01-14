@@ -153,7 +153,6 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 
 	m_lastusedAlt = new Palette(this);
 	m_lastusedAlt->setWriteProtected(true);
-	m_lastusedAlt->appendColor(Qt::white);
 
 	_ui->lastused->setPalette(m_lastused);
 	_ui->lastused->setEnableScrolling(false);
