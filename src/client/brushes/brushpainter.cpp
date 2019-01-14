@@ -30,19 +30,9 @@ void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers)
 {
 	Q_ASSERT(layers);
 
-	int layerId=0;
-	if(msg.type() == protocol::MSG_DRAWDABS_CLASSIC)
-		layerId = static_cast<const protocol::DrawDabsClassic&>(msg).layer();
-	else if(msg.type() == protocol::MSG_DRAWDABS_PIXEL)
-		layerId = static_cast<const protocol::DrawDabsPixel&>(msg).layer();
-	else {
-		qWarning("Unhandled dab type: %s", qPrintable(msg.messageName()));
-		return;
-	}
-
-	paintcore::Layer *layer = layers->getLayer(layerId);
+	paintcore::Layer *layer = layers->getLayer(msg.layer());
 	if(!layer) {
-		qWarning("drawBrushDabs(ctx=%d, layer=%d): no such layer", msg.contextId(), layerId);
+		qWarning("drawBrushDabs(ctx=%d, layer=%d): no such layer", msg.contextId(), msg.layer());
 		return;
 	}
 
@@ -62,12 +52,16 @@ void drawBrushDabsDirect(const protocol::Message &msg, paintcore::Layer *layer, 
 {
 	Q_ASSERT(layer);
 
-	if(msg.type() == protocol::MSG_DRAWDABS_CLASSIC)
+	switch(msg.type()) {
+	case protocol::MSG_DRAWDABS_CLASSIC:
 		drawClassicBrushDabs(static_cast<const protocol::DrawDabsClassic&>(msg), layer, sublayer);
-	else if(msg.type() == protocol::MSG_DRAWDABS_PIXEL)
+		break;
+	case protocol::MSG_DRAWDABS_PIXEL:
 		drawPixelBrushDabs(static_cast<const protocol::DrawDabsPixel&>(msg), layer, sublayer);
-	else
+		break;
+	default:
 		qWarning("Unhandled dab type: %s", qPrintable(msg.messageName()));
+	}
 }
 
 }
