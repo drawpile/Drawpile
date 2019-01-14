@@ -173,9 +173,8 @@ void JoinDialog::addressChanged(const QString &addr)
 		m_ui->address->lineEdit()->setPlaceholderText(tr("Searching..."));
 		m_ui->address->lineEdit()->setReadOnly(true);
 
-		sessionlisting::ListServerModel servermodel(false, false);
 		QStringList servers;
-		for(const sessionlisting::ListServer &s : servermodel.servers()) {
+		for(const auto &s : sessionlisting::ListServerModel::listServers()) {
 			servers << s.url;
 		}
 		resolveRoomcode(addr, servers);

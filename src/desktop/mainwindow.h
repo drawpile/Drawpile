@@ -114,6 +114,7 @@ public slots:
 	void save();
 	void saveas();
 	void exportAnimation();
+	void exportTemplate();
 	void showFlipbook();
 
 	static void showSettings();

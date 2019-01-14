@@ -48,16 +48,17 @@ public:
 	//!  Set the favicon for the server with the given URL
 	void setFavicon(const QString &url, const QImage &icon);
 
+	//! Get all configured list servers
+	static QVector<ListServer> listServers();
+
 	//! Load server list from the settings file
 	void loadServers();
 
 	//! Save (modified) server list. This replaces the existing list
 	void saveServers() const;
 
-	QList<ListServer> servers() const { return m_servers; }
-
 private:
-	QList<ListServer> m_servers;
+	QVector<ListServer> m_servers;
 	bool m_showlocal;
 	bool m_showBlank;
 };

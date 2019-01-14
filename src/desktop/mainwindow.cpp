@@ -1207,6 +1207,24 @@ void MainWindow::exportAnimation()
 	dlg->show();
 }
 
+void MainWindow::exportTemplate()
+{
+	const QString filter =
+			tr("Binary Recordings (%1)").arg("*.dprec") + ";;" +
+			tr("Text Recordings (%1)").arg("*.dptxt") + ";;" +
+			tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + ";;" +
+			tr("Compressed Text Recordings (%1)").arg("*.dptxtz") + ";;" +
+			QApplication::tr("All Files (*)");
+	QString file = QFileDialog::getSaveFileName(this,
+			tr("Export Session Template"), getLastPath(), filter);
+
+	if(!file.isEmpty()) {
+		QString error;
+		if(!m_doc->saveAsRecording(file, QJsonObject(), &error))
+			showErrorMessage(error);
+	}
+}
+
 void MainWindow::showFlipbook()
 {
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
@@ -2138,7 +2156,8 @@ void MainWindow::setupActions()
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
-	QAction *exportAnimation = makeAction("exportanim", tr("&Animation..."));
+	QAction *exportAnimation = makeAction("exportanim", tr("&Animation...")).statusTip(tr("Export layers as animation frames"));
+	QAction *exportTemplate = makeAction("exporttpl", tr("Session Template...")).statusTip(tr("Export current session as a template recording for use with the dedicated server"));
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
@@ -2149,6 +2168,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
 	m_currentdoctools->addAction(exportAnimation);
+	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(record);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
@@ -2160,7 +2180,8 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
 	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
-	connect(exportAnimation, SIGNAL(triggered()), this, SLOT(exportAnimation()));
+	connect(exportAnimation, &QAction::triggered, this, &MainWindow::exportAnimation);
+	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
@@ -2186,6 +2207,7 @@ void MainWindow::setupActions()
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(icon::fromTheme("document-export"));
 	exportMenu->addAction(exportAnimation);
+	exportMenu->addAction(exportTemplate);
 	filemenu->addAction(record);
 	filemenu->addSeparator();
 

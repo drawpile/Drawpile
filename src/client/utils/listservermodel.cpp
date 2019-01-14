@@ -128,10 +128,9 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	}
 }
 
-void ListServerModel::loadServers()
+QVector<ListServer> ListServerModel::listServers()
 {
-	beginResetModel();
-	m_servers.clear();
+	QVector<ListServer> list;
 
 	QSettings cfg;
 	const QString iconPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/favicons/";
@@ -151,13 +150,13 @@ void ListServerModel::loadServers()
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 
-		m_servers << ls;
+		list << ls;
 	}
 	cfg.endArray();
 
 	// Add the default drawpile.net server if there is nothing else
-	if(m_servers.isEmpty()) {
-		m_servers << ListServer {
+	if(list.isEmpty()) {
+		list << ListServer {
 			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
@@ -171,12 +170,20 @@ void ListServerModel::loadServers()
 	// Use HTTPS for drawpile.net listing if possible. It would be better to
 	// just always use HTTPS, but SSL support is not always available (on Windows,
 	// since OpenSSL is not part of the base system.)
+	// TODO is this true anymore?
 	if(QSslSocket::supportsSsl()) {
-		for(ListServer &ls : m_servers) {
+		for(ListServer &ls : list) {
 			if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
 				ls.url = QStringLiteral("https://drawpile.net/api/listing/");
 		}
 	}
+	return list;
+}
+
+void ListServerModel::loadServers()
+{
+	beginResetModel();
+	m_servers = listServers();
 
 #ifdef HAVE_DNSSD
 	// Add an entry for local server discovery

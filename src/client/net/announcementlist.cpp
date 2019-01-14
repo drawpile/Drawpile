@@ -31,8 +31,8 @@ AnnouncementListModel::AnnouncementListModel(QObject *parent)
 void AnnouncementListModel::refreshKnownServers()
 {
 	// Get list of known servers (url -> {icon, name})
-	sessionlisting::ListServerModel servermodel(false, false);
-	for(const sessionlisting::ListServer &s : servermodel.servers()) {
+	const auto servers = sessionlisting::ListServerModel::listServers();
+	for(const auto &s : servers) {
 		m_knownServers[s.url] = QPair<QIcon,QString>(s.icon, s.name);
 	}
 }

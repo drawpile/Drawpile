@@ -30,6 +30,7 @@
 class QString;
 class QTimer;
 class QJsonValue;
+class QJsonObject;
 
 namespace canvas {
 	class CanvasModel;
@@ -130,6 +131,8 @@ public:
 	bool isRecording() const { return m_recorder != nullptr; }
 	bool startRecording(const QString &filename, QString *error=nullptr);
 	void stopRecording();
+
+	bool saveAsRecording(const QString &filename, QJsonObject header, QString *error=nullptr) const;
 
 	bool isDirty() const { return m_dirty; }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include "canvas/loader.h"
 #include "canvas/userlist.h"
 #include "canvas/canvassaverrunnable.h"
+#include "canvas/loader.h"
 #include "tools/toolcontroller.h"
 #include "utils/settings.h"
 #include "utils/images.h"
@@ -502,7 +503,7 @@ bool Document::startRecording(const QString &filename, const QList<protocol::Mes
 
 	m_recorder->writeHeader();
 
-	for(const protocol::MessagePtr ptr : initialState) {
+	for(const protocol::MessagePtr &ptr : initialState) {
 		m_recorder->recordMessage(ptr);
 	}
 
@@ -530,6 +531,52 @@ void Document::stopRecording()
 	m_recorder = nullptr;
 
 	emit recorderStateChanged(false);
+}
+
+bool Document::saveAsRecording(const QString &filename, QJsonObject header, QString *error) const
+{
+	recording::Writer writer(filename);
+
+	if(!writer.open()) {
+		qWarning("Couldn't open writer: %s", qPrintable(writer.errorString()));
+		if(error)
+			*error = writer.errorString();
+		return false;
+	}
+
+	const int initialUserId = 1;
+
+	if(!header.contains("maxUserCount") && sessionMaxUserCount() > 1)
+		header["maxUserCount"] = sessionMaxUserCount();
+
+	if(!header.contains("founder"))
+		header["founder"] = m_canvas->userlist()->getUsername(m_canvas->localUserId());
+
+	if(!header.contains("title") && !sessionTitle().isEmpty())
+		header["title"] = sessionTitle();
+
+	if(!header.contains("nsfm") && isSessionNsfm())
+		header["nsfm"] = true;
+
+	if(!header.contains("persistent") && isSessionPersistent())
+		header["persistent"] = true;
+
+	if(!header.contains("preserveChat") && isSessionPreserveChat())
+		header["preserveChat"] = true;
+
+	writer.writeHeader(header);
+
+	// This recording will probably be used as a session template, so we need to
+	// set the session owner as well
+	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
+
+	auto snapshot = canvas::SnapshotLoader(initialUserId, m_canvas->layerStack(), m_canvas).loadInitCommands();
+	for(const protocol::MessagePtr &ptr : snapshot) {
+		writer.writeMessage(*ptr);
+	}
+
+	writer.close();
+	return true;
 }
 
 void Document::sendPointerMove(const QPointF &point)
