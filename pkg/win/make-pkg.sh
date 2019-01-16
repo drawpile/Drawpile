@@ -29,6 +29,7 @@ cd $PKGNAME
 
 # Copy DLLs
 MBIN="$MXEROOT/bin"
+cp "$MBIN/libwinpthread-1.dll" .
 cp "$MBIN/libgcc_s_seh-1.dll" .
 cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libstdc++-6.dll" .
@@ -44,8 +45,8 @@ cp "$MBIN/libfreetype-6.dll" .
 cp "$MBIN/libglib-2.0-0.dll" .
 cp "$MBIN/libintl-8.dll" .
 cp "$MBIN/libiconv-2.dll" .
-cp "$MBIN/libeay32.dll" .
-cp "$MBIN/ssleay32.dll" .
+cp "$MBIN/libcrypto-1_1-x64.dll" .
+cp "$MBIN/libssl-1_1-x64.dll" .
 cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
