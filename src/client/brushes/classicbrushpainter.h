@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 class QPointF;
 
 namespace paintcore {
-	class Layer;
+	class EditableLayer;
 	struct BrushStamp;
 }
 
@@ -37,7 +37,7 @@ namespace brushes {
 /**
  * Draw brush drabs on the canvas
  */
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer=0);
+void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::EditableLayer layer, int sublayer=0);
 
 paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius, qreal hardness, qreal opacity);
 

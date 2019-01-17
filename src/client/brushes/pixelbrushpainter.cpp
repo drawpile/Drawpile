@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,10 +46,8 @@ static paintcore::BrushMask makePixelBrushMask(int diameter, uchar opacity)
 	return paintcore::BrushMask(diameter, data);
 }
 
-void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::Layer *layer, int sublayer)
+void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer)
 {
-	Q_ASSERT(layer);
-
 	if(dabs.dabs().isEmpty()) {
 		qWarning("drawPixelBrushDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
 		return;
@@ -62,8 +60,8 @@ void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::Layer *l
 		sublayer = dabs.contextId();
 
 	if(sublayer != 0) {
-		layer = layer->getSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
-		layer->updateChangeBounds(dabs.bounds());
+		layer = layer.getEditableSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
+		layer.updateChangeBounds(dabs.bounds());
 		blendmode = paintcore::BlendMode::MODE_NORMAL;
 	}
 
@@ -84,7 +82,7 @@ void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::Layer *l
 		}
 
 		const int offset = d.size/2;
-		layer->putBrushStamp(
+		layer.putBrushStamp(
 			paintcore::BrushStamp { nextX-offset, nextY-offset, mask },
 			color,
 			blendmode

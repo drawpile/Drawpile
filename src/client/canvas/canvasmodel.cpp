@@ -64,7 +64,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 
 	m_layerlist->setMyId(localUserId);
 	m_layerlist->setAclFilter(m_aclfilter);
-	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
+	m_layerlist->setLayerGetter([this](int id)->const paintcore::Layer* {
 		return m_layerstack->getLayer(id);
 	});
 
@@ -257,14 +257,14 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::setLayerViewMode(int mode)
 {
-	m_layerstack->setViewMode(paintcore::LayerStack::ViewMode(mode));
+	m_layerstack->editor().setViewMode(paintcore::LayerStack::ViewMode(mode));
 	updateLayerViewOptions();
 }
 
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
-		m_layerstack->removePreviews();
+		m_layerstack->editor().removePreviews();
 
 		const bool hadSelection = m_selection != nullptr;
 
@@ -286,7 +286,7 @@ void CanvasModel::updateLayerViewOptions()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/animation");
-	m_layerstack->setOnionskinMode(
+	m_layerstack->editor().setOnionskinMode(
 		cfg.value("onionskinsbelow", 4).toInt(),
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
@@ -321,7 +321,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 {
 	QImage img;
 
-	paintcore::Layer *layer = m_layerstack->getLayer(layerId);
+	const paintcore::Layer *layer = m_layerstack->getLayer(layerId);
 	if(layer)
 		img = layer->toImage();
 	else
@@ -378,7 +378,7 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
-	m_layerstack->reset();
+	m_layerstack->editor().reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);
 }

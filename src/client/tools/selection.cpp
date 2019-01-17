@@ -157,8 +157,10 @@ bool SelectionTool::isMultipart() const
 void SelectionTool::startMove()
 {
 	canvas::Selection *sel = owner.model()->selection();
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(sel && layer) {
+	auto layers = owner.model()->layerStack()->editor();
+
+	paintcore::EditableLayer layer = layers.getEditableLayer(owner.activeLayer());
+	if(sel && !layer.isNull()) {
 		// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
 		QRect maskBounds;
 		QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
@@ -169,9 +171,9 @@ void SelectionTool::startMove()
 
 		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
 		// to erase the selected region.
-		layer->removeSublayer(-1);
-		paintcore::Layer *tmplayer = layer->getSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
-		tmplayer->putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
+		layer.removeSublayer(-1);
+		auto tmplayer = layer.getEditableSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
+		tmplayer.putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
 	}
 }
 

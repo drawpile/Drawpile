@@ -65,9 +65,11 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::end()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(layer) {
-		layer->removeSublayer(-1);
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+
+	if(!layer.isNull()) {
+		layer.removeSublayer(-1);
 	}
 
 	const uint8_t contextId = owner.client()->myId();
@@ -76,7 +78,7 @@ void ShapeTool::end()
 
 	const auto pv = pointVector();
 	for(int i=0;i<pv.size();++i)
-		brushengine.strokeTo(pv.at(i), layer);
+		brushengine.strokeTo(pv.at(i), layer.layer());
 	brushengine.endStroke();
 
 	QList<protocol::MessagePtr> msgs;
@@ -88,9 +90,9 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	paintcore::LayerStackWriteSequence layers(owner.model()->layerStack());
-	paintcore::Layer *layer = layers->getLayer(owner.activeLayer());
-	if(!layer) {
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+	if(layer.isNull()) {
 		qWarning("ShapeTool::updatePreview: no active layer!");
 		return;
 	}
@@ -102,10 +104,10 @@ void ShapeTool::updatePreview()
 	brushengine.setBrush(0, 0, owner.activeBrush());
 
 	for(int i=0;i<pv.size();++i)
-		brushengine.strokeTo(pv.at(i), layer);
+		brushengine.strokeTo(pv.at(i), layer.layer());
 	brushengine.endStroke();
 
-	layer->removeSublayer(-1);
+	layer.removeSublayer(-1);
 
 	const auto dabs = brushengine.takeDabs();
 	for(int i=0;i<dabs.size();++i)

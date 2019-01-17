@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,16 +22,15 @@
 #include "pixelbrushpainter.h"
 
 #include "core/layerstack.h"
+#include "core/layer.h"
 #include "../shared/net/brushes.h"
 
 namespace brushes {
 
-void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers)
+void drawBrushDabs(const protocol::Message &msg, paintcore::EditableLayerStack &layers)
 {
-	Q_ASSERT(layers);
-
-	paintcore::Layer *layer = layers->getLayer(msg.layer());
-	if(!layer) {
+	auto layer = layers.getEditableLayer(msg.layer());
+	if(layer.isNull()) {
 		qWarning("drawBrushDabs(ctx=%d, layer=%d): no such layer", msg.contextId(), msg.layer());
 		return;
 	}
@@ -48,9 +47,9 @@ void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers)
  * @param msg brush dab message
  * @param layer the layer to draw onto
  */
-void drawBrushDabsDirect(const protocol::Message &msg, paintcore::Layer *layer, int sublayer)
+void drawBrushDabsDirect(const protocol::Message &msg, paintcore::EditableLayer layer, int sublayer)
 {
-	Q_ASSERT(layer);
+	Q_ASSERT(!layer.isNull());
 
 	switch(msg.type()) {
 	case protocol::MSG_DRAWDABS_CLASSIC:
@@ -65,3 +64,4 @@ void drawBrushDabsDirect(const protocol::Message &msg, paintcore::Layer *layer, 
 }
 
 }
+

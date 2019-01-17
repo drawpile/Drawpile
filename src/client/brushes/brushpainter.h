@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ namespace protocol {
 }
 
 namespace paintcore {
-	class LayerStack;
-	class Layer;
+	class EditableLayerStack;
+	class EditableLayer;
 }
 
 namespace brushes {
@@ -39,7 +39,7 @@ namespace brushes {
  * @param msg brush dab message
  * @param layers layer stack
  */
-void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers);
+void drawBrushDabs(const protocol::Message &msg, paintcore::EditableLayerStack &layers);
 
 /**
  * @brief Draw brush dabs onto a specific layer
@@ -51,7 +51,7 @@ void drawBrushDabs(const protocol::Message &msg, paintcore::LayerStack *layers);
  * @param layer the layer to draw onto
  * @param sublayer sublayer override
  */
-void drawBrushDabsDirect(const protocol::Message &msg, paintcore::Layer *layer, int sublayer=0);
+void drawBrushDabsDirect(const protocol::Message &msg, paintcore::EditableLayer layer, int sublayer=0);
 
 }
 

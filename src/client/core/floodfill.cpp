@@ -33,8 +33,8 @@ class Floodfill {
 public:
 	Floodfill(const LayerStack *image, int sourceLayer, bool merge, const QColor &color, int colorTolerance, unsigned int sizelimit) :
 		source(image),
-		scratch(0, 0, QString(), Qt::transparent, image->size()),
-		fill(0, 0, QString(), Qt::transparent, image->size()),
+		scratch(0, QString(), Qt::transparent, image->size()),
+		fill(0, QString(), Qt::transparent, image->size()),
 		layer(sourceLayer),
 		merge(merge),
 		fillColor(color.rgba()),
@@ -45,7 +45,7 @@ public:
 
 	Tile &scratchTile(int x, int y)
 	{
-		Tile &t = scratch.rtile(x, y);
+		Tile &t = EditableLayer(&scratch, nullptr).rtile(x, y);
 		if(t.isNull()) {
 			if(merge) {
 				t = source->getFlatTile(x, y);
@@ -64,7 +64,7 @@ public:
 	}
 
 	Tile &fillTile(int x, int y) {
-		Tile &t = fill.rtile(x, y);
+		Tile &t = EditableLayer(&fill, nullptr).rtile(x, y);
 		if(t.isNull())
 			t = Tile(Qt::transparent);
 

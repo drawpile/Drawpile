@@ -75,7 +75,7 @@ bool IndexLoader::open()
 	return true;
 }
 
-canvas::StateSavepoint IndexLoader::loadSavepoint(int idx, canvas::StateTracker *owner)
+canvas::StateSavepoint IndexLoader::loadSavepoint(int idx)
 {
 	Q_ASSERT(idx>=0 && idx<m_index.size());
 	if(idx<0 || idx>=m_index.size())
@@ -95,7 +95,7 @@ canvas::StateSavepoint IndexLoader::loadSavepoint(int idx, canvas::StateTracker 
 	snapshotbuffer.open(QBuffer::ReadOnly);
 	QDataStream ds(&snapshotbuffer);
 
-	return canvas::StateSavepoint::fromDatastream(ds, owner);
+	return canvas::StateSavepoint::fromDatastream(ds);
 }
 
 QImage IndexLoader::loadThumbnail(int idx)

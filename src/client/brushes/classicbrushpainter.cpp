@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -258,10 +258,8 @@ paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius
 	return s;
 }
 
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Layer *layer, int sublayer)
+void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::EditableLayer layer, int sublayer)
 {
-	Q_ASSERT(layer);
-
 	if(dabs.dabs().isEmpty()) {
 		qWarning("drawDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
 		return;
@@ -274,8 +272,8 @@ void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Laye
 		sublayer = dabs.contextId();
 
 	if(sublayer != 0) {
-		layer = layer->getSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
-		layer->updateChangeBounds(dabs.bounds());
+		layer = layer.getEditableSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
+		layer.updateChangeBounds(dabs.bounds());
 		blendmode = paintcore::BlendMode::MODE_NORMAL;
 	}
 
@@ -290,7 +288,7 @@ void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::Laye
 			d.hardness/255.0,
 			d.opacity/255.0
 		);
-		layer->putBrushStamp(bs, color, blendmode);
+		layer.putBrushStamp(bs, color, blendmode);
 		lastX = nextX;
 		lastY = nextY;
 	}

@@ -149,13 +149,18 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 void BrushPreview::updatePreview()
 {
 #ifndef DESIGNER_PLUGIN
-	if(!m_preview) {
+	if(!m_preview)
 		m_preview = new paintcore::LayerStack;
-		QSize size = contentsRect().size();
-		m_preview->resize(0, size.width(), size.height(), 0);
-		m_preview->createLayer(0, 0, QColor(0,0,0), false, false, QString());
+
+	auto layerstack = m_preview->editor();
+
+	if(m_preview->width() == 0) {
+		const QSize size = contentsRect().size();
+		layerstack.resize(0, size.width(), size.height(), 0);
+		layerstack.createLayer(0, 0, QColor(0,0,0), false, false, QString());
+
 	} else if(m_preview->width() != contentsRect().width() || m_preview->height() != contentsRect().height()) {
-		m_preview->resize(0, contentsRect().width() - m_preview->width(), contentsRect().height() - m_preview->height(), 0);
+		layerstack.resize(0, contentsRect().width() - m_preview->width(), contentsRect().height() - m_preview->height(), 0);
 	}
 
 	QRectF previewRect(
@@ -197,28 +202,28 @@ void BrushPreview::updatePreview()
 		brush.setColor(bgcolor);
 	}
 
-	paintcore::Layer *layer = m_preview->getLayerByIndex(0);
-	layer->putTile(0, 0, 99999, isTransparentBackground() ? paintcore::Tile() : paintcore::Tile(bgcolor));
+	auto layer = layerstack.getEditableLayerByIndex(0);
+	layer.putTile(0, 0, 99999, isTransparentBackground() ? paintcore::Tile() : paintcore::Tile(bgcolor));
 
 	brushes::BrushEngine brushengine;
 	brushengine.setBrush(1, 1, brush);
 
 	for(int i=0;i<pointvector.size();++i)
-		brushengine.strokeTo(pointvector[i], layer);
+		brushengine.strokeTo(pointvector[i], layer.layer());
 	brushengine.endStroke();
 
 	const auto dabs = brushengine.takeDabs();
 	for(int i=0;i<dabs.size();++i)
 		brushes::drawBrushDabsDirect(*dabs.at(i), layer);
 
-	layer->mergeSublayer(1);
+	layer.mergeSublayer(1);
 
 	if(_shape == FloodFill || _shape == FloodErase) {
 		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), _shape == FloodFill ? m_color : QColor(), _fillTolerance, 0, false, 360000);
 		if(_fillExpansion>0)
 			fr = paintcore::expandFill(fr, _fillExpansion, m_color);
 		if(!fr.image.isNull())
-			layer->putImage(fr.x, fr.y, fr.image, _shape == FloodFill ? (_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
+			layer.putImage(fr.x, fr.y, fr.image, _shape == FloodFill ? (_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
 	}
 
 	m_needupdate=false;

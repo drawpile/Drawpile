@@ -78,7 +78,7 @@ public:
 	~StateSavepoint();
 
 	void toDatastream(QDataStream &ds) const;
-	static StateSavepoint fromDatastream(QDataStream &ds, StateTracker *owner);
+	static StateSavepoint fromDatastream(QDataStream &ds);
 
 	bool operator!() const { return !m_data; }
 	bool operator==(const StateSavepoint &sp) const { return m_data == sp.m_data; }
@@ -167,7 +167,7 @@ public:
 	 * @brief Get the paint canvas
 	 * @return
 	 */
-	paintcore::LayerStack *image() const { return _image; }
+	paintcore::LayerStack *image() const { return m_layerstack; }
 
 	//! Has the local user participated in the session yet?
 	bool hasParticipated() const { return m_hasParticipated; }
@@ -259,7 +259,7 @@ private:
 	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
 	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
 
-	paintcore::LayerStack *_image;
+	paintcore::LayerStack *m_layerstack;
 	LayerListModel *m_layerlist;
 
 	QString _title;

@@ -298,7 +298,7 @@ void PlaybackController::jumpToSnapshot(int idx)
 	Q_ASSERT(m_indexloader);
 
 	StopEntry se = m_indexloader->index().entry(idx);
-	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->stateTracker());
+	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx);
 
 	if(!savepoint) {
 		qWarning("error loading savepoint");
