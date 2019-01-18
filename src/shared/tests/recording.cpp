@@ -117,22 +117,21 @@ private slots:
 			const qint64 firstPosition = reader.filePosition();
 
 			// There should be exactly one message in the test recording
-			MessageRecord mr = reader.readNext();
+			const MessageRecord mr1 = reader.readNext();
 
-			QCOMPARE(mr.status, MessageRecord::OK);
+			QCOMPARE(mr1.status, MessageRecord::OK);
 
 			MessagePtr testMsg(new UserJoin(1, 0, QByteArray("hello"), QByteArray("world")));
-			MessagePtr readMsg(mr.message);
 
-			QVERIFY(readMsg.equals(testMsg));
+			QVERIFY(mr1.message.equals(testMsg));
 
 			// current* returns the index and position of the last read message
 			QCOMPARE(reader.currentIndex(), 0);
 			QCOMPARE(reader.currentPosition(), firstPosition);
 
 			// Next message should be EOF
-			mr = reader.readNext();
-			QCOMPARE(mr.status, MessageRecord::END_OF_RECORDING);
+			const MessageRecord mr2 = reader.readNext();
+			QCOMPARE(mr2.status, MessageRecord::END_OF_RECORDING);
 			QVERIFY(reader.isEof());
 
 			// Rewinding should take us back to the beginning
@@ -140,10 +139,9 @@ private slots:
 			QCOMPARE(reader.currentIndex(), -1);
 			QCOMPARE(reader.filePosition(), firstPosition);
 
-			mr = reader.readNext();
-			QCOMPARE(mr.status, MessageRecord::OK);
-			MessagePtr readMsg2(mr.message);
-			QVERIFY(readMsg.equals(readMsg2));
+			const MessageRecord mr3 = reader.readNext();
+			QCOMPARE(mr3.status, MessageRecord::OK);
+			QVERIFY(mr1.message.equals(mr3.message));
 		}
 
 		// Autoclose is not enabled
@@ -226,9 +224,8 @@ private slots:
 		// The actual message should be of type OpaqueMessage
 		MessageRecord mr = reader.readNext();
 		QCOMPARE(mr.status, MessageRecord::OK);
-		QVERIFY(mr.message);
+		QVERIFY(!mr.message.isNull());
 		QCOMPARE(mr.message->type(), protocol::MSG_LAYER_CREATE);
-		delete mr.message;
 	}
 };
 

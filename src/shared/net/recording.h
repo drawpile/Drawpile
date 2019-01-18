@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 #ifndef DP_NET_RECORDING_H
 #define DP_NET_RECORDING_H
 
+#include "message.h"
+
 #include <QByteArray>
 #include <QString>
-
-#include "message.h"
 
 namespace protocol {
 
@@ -94,7 +94,7 @@ public:
 	Filtered(uint8_t ctx, uchar *payload, int payloadLen);
 	~Filtered();
 
-	static Message *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static NullableMessageRef deserialize(uint8_t ctx, const uchar *data, uint len);
 	// Note: this type has no fromText function since it is serialized as a comment
 
 	/**
@@ -106,7 +106,7 @@ public:
 	 *
 	 * @return Message or nullptr if data is invalid
 	 */
-	Message *decodeWrapped() const;
+	NullableMessageRef decodeWrapped() const;
 
 	/**
 	 * @brief Get the type of the wrapped message

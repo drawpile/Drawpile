@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,13 +118,11 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 		qint64 offset = reader.filePosition();
 		record = reader.readNext();
 		if(record.status == MessageRecord::OK) {
-			protocol::MessagePtr msg(record.message);
-
-			if(msg->isCommand())
-				statetracker.receiveCommand(msg);
+			if(record.message->isCommand())
+				statetracker.receiveCommand(protocol::MessagePtr::fromNullable(record.message));
 
 			// Add a stop for each UndoPoint and Marker
-			if(msg->type() == protocol::MSG_UNDOPOINT || msg->type() == protocol::MSG_MARKER) {
+			if(record.message->type() == protocol::MSG_UNDOPOINT || record.message->type() == protocol::MSG_MARKER) {
 				StopEntry stop { quint32(reader.currentIndex()), offset, 0 };
 				++snapshotStops;
 
@@ -133,7 +131,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 				// - Must be separated by at least SNAPSHOT_INTERVAL_MS milliseconds of CPU time.
 				if(snapshotCount==0 ||
 						(
-						 	(timer.hasExpired(SNAPSHOT_INTERVAL_MS) || msg->type() == protocol::MSG_MARKER)
+							(timer.hasExpired(SNAPSHOT_INTERVAL_MS) || record.message->type() == protocol::MSG_MARKER)
 							&& snapshotStops>=SNAPSHOT_MIN_STOPS
 						)
 						) {
@@ -159,10 +157,10 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 				m_index.m_stops.append(stop);
 
 				// Add marker entry if message was a MARKER
-				if(msg->type() == protocol::MSG_MARKER) {
+				if(record.message->type() == protocol::MSG_MARKER) {
 					m_index.m_markers.append(MarkerEntry {
 						quint32(m_index.size())-1,
-						msg.cast<protocol::Marker>().text()
+						record.message.cast<protocol::Marker>().text()
 						});
 				}
 			}
@@ -183,7 +181,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 			}
 
 		} else if(record.status == MessageRecord::INVALID) {
-			qWarning() << "invalid message type" << record.error.type << "at index" << reader.currentIndex() << " and offset" << offset;
+			qWarning() << "invalid message type" << record.invalid_type << "at index" << reader.currentIndex() << " and offset" << offset;
 		}
 	} while(record.status != MessageRecord::END_OF_RECORDING);
 

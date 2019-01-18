@@ -266,10 +266,10 @@ private:
 			r = p.parseLine(lines.at(i++));
 		} while(r.status==text::Parser::Result::NeedMore);
 
-		if(r.status != text::Parser::Result::Ok || !r.msg)
+		if(r.status != text::Parser::Result::Ok || r.msg.isNull())
 			qFatal("invalid message: %s", qPrintable(line));
 
-		return MessagePtr(r.msg);
+		return MessagePtr::fromNullable(r.msg);
 	}
 };
 

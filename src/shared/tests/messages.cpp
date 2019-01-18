@@ -81,8 +81,8 @@ private slots:
 		QByteArray buffer(msg->length(), 0);
 		QCOMPARE(msg->serialize(buffer.data()), msg->length());
 
-		Message *msg2 = Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.size(), true);
-		QVERIFY(msg2);
+		NullableMessageRef msg2 = Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.size(), true);
+		QVERIFY(!msg2.isNull());
 
 		QVERIFY(msg->equals(*msg2));
 
@@ -99,9 +99,8 @@ private slots:
 					QFAIL(parser.errorString().toLocal8Bit().constData());
 			};
 			QCOMPARE(r.status, text::Parser::Result::Ok);
-			QVERIFY(r.msg);
+			QVERIFY(!r.msg.isNull());
 			QVERIFY(msg->equals(*r.msg));
-			delete r.msg;
 		}
 	}
 
@@ -116,14 +115,14 @@ private slots:
 		QCOMPARE(written, filtered->length());
 
 		// As should deserializing
-		Message *deserialized = Message::deserialize(reinterpret_cast<const uchar*>(serialized.data()), serialized.length(), true);
-		QVERIFY(deserialized);
+		NullableMessageRef deserialized = Message::deserialize(reinterpret_cast<const uchar*>(serialized.data()), serialized.length(), true);
+		QVERIFY(!deserialized.isNull());
 		QCOMPARE(deserialized->type(), MSG_FILTERED);
 
 		// The wrapped message should stay intact through the process
 		// (assuming payload length is less than 65535)
-		Message *unwrapped = static_cast<Filtered*>(deserialized)->decodeWrapped();
-		QVERIFY(unwrapped);
+		NullableMessageRef unwrapped = deserialized.cast<Filtered>().decodeWrapped();
+		QVERIFY(!unwrapped.isNull());
 		QVERIFY(unwrapped->equals(*original));
 	}
 

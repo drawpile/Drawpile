@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -206,13 +206,11 @@ void MessageQueue::readData() {
 		int len;
 		while(m_recvbytes >= Message::HEADER_LEN && m_recvbytes >= (len=Message::sniffLength(m_recvbuffer))) {
 			// Whole message received!
-			Message *message = Message::deserialize((const uchar*)m_recvbuffer, m_recvbytes, m_decodeOpaque);
-			if(!message) {
+			NullableMessageRef msg = Message::deserialize((const uchar*)m_recvbuffer, m_recvbytes, m_decodeOpaque);
+			if(msg.isNull()) {
 				emit badData(len, (unsigned char)m_recvbuffer[2], (unsigned char)m_recvbuffer[3]);
 
 			} else {
-				MessagePtr msg(message);
-
 				 if(msg->type() == MSG_PING) {
 					// Special handling for Ping messages
 					bool isPong = msg.cast<Ping>().isPong();
@@ -231,7 +229,7 @@ void MessageQueue::readData() {
 					}
 
 				} else {
-					m_inbox.enqueue(msg);
+					m_inbox.enqueue(MessagePtr::fromNullable(msg));
 					gotmessage = true;
 				}
 			}

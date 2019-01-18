@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ bool Message::payloadEquals(const Message &m) const
 	return b1 == b2;
 }
 
-Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
+NullableMessageRef Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 {
 	// All valid messages have the fixed length header
 	if(buflen<HEADER_LEN)
@@ -94,19 +94,23 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 
 	data += HEADER_LEN;
 
+	Message *msg = nullptr;
+
 	switch(type) {
 	// Control messages
-	case MSG_COMMAND: return Command::deserialize(ctx, data, len);
-	case MSG_DISCONNECT: return Disconnect::deserialize(ctx, data, len);
-	case MSG_PING: return Ping::deserialize(ctx, data, len);
-	case MSG_INTERNAL: { qWarning("Tried to deserialize MSG_INTERVAL"); return nullptr; }
+	case MSG_COMMAND: msg = Command::deserialize(ctx, data, len); break;
+	case MSG_DISCONNECT: msg = Disconnect::deserialize(ctx, data, len); break;
+	case MSG_PING: msg = Ping::deserialize(ctx, data, len); break;
+	case MSG_INTERNAL:
+	   qWarning("Tried to deserialize MSG_INTERVAL");
+	   return NullableMessageRef();
 
 	// Transparent meta messages
-	case MSG_USER_JOIN: return UserJoin::deserialize(ctx, data, len);
-	case MSG_USER_LEAVE: return UserLeave::deserialize(ctx, data, len);
-	case MSG_SESSION_OWNER: return SessionOwner::deserialize(ctx, data, len);
-	case MSG_CHAT: return Chat::deserialize(ctx, data, len);
-	case MSG_TRUSTED_USERS: return TrustedUsers::deserialize(ctx, data, len);
+	case MSG_USER_JOIN: msg = UserJoin::deserialize(ctx, data, len); break;
+	case MSG_USER_LEAVE: msg = UserLeave::deserialize(ctx, data, len); break;
+	case MSG_SESSION_OWNER: msg = SessionOwner::deserialize(ctx, data, len); break;
+	case MSG_CHAT: msg = Chat::deserialize(ctx, data, len); break;
+	case MSG_TRUSTED_USERS: msg = TrustedUsers::deserialize(ctx, data, len); break;
 
 	// Opaque messages
 	default:
@@ -114,13 +118,13 @@ Message *Message::deserialize(const uchar *data, int buflen, bool decodeOpaque)
 			if(decodeOpaque)
 				return OpaqueMessage::decode(type, ctx, data, len);
 			else
-				return new OpaqueMessage(type, ctx, data, len);
+				msg = new OpaqueMessage(type, ctx, data, len);
 		}
 	}
 
-	// Unknown message type!
-	qWarning("Unhandled message type %d", type);
-	return nullptr;
+	if(!msg)
+		qWarning("Unhandled message type %d", type);
+	return NullableMessageRef(msg);
 }
 
 QString Message::toString() const

@@ -131,9 +131,9 @@ private:
 	{
 		text::Parser p;
 		text::Parser::Result r = p.parseLine(line);
-		if(r.status != text::Parser::Result::Ok || !r.msg)
+		if(r.status != text::Parser::Result::Ok || r.msg.isNull())
 			qFatal("invalid message: %s", qPrintable(line));
-		return MessagePtr(r.msg);
+		return protocol::MessagePtr::fromNullable(r.msg);
 	}
 };
 

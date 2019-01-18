@@ -318,12 +318,11 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 		if(msg.status == MessageRecord::END_OF_RECORDING)
 			break;
 		if(msg.status == MessageRecord::INVALID) {
-			qWarning() << "skipping invalid message type" << msg.error.type;
+			qWarning() << "skipping invalid message type" << msg.invalid_type;
 			continue;
 		}
 
-		protocol::MessagePtr msgp(msg.message);
-		filterMessage(filter, state, msgp, recording.currentPosition());
+		filterMessage(filter, state, protocol::MessagePtr::fromNullable(msg.message), recording.currentPosition());
 	}
 
 	if(filter.removeLookyloos())

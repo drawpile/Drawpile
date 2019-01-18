@@ -561,13 +561,13 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 				m_recording->close();
 				break;
 			}
-			protocol::Message *msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
-			if(!msg) {
+			protocol::NullableMessageRef msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
+			if(msg.isNull()) {
 				qWarning() << m_recording->fileName() << "Invalid message in block" << i;
 				m_recording->close();
 				break;
 			}
-			const_cast<Block&>(b).messages << protocol::MessagePtr(msg);
+			const_cast<Block&>(b).messages << protocol::MessagePtr::fromNullable(msg);
 		}
 
 		m_recording->seek(prevPos);

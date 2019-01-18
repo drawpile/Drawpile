@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ Filtered::~Filtered()
 	delete []m_payload;
 }
 
-Message *Filtered::deserialize(uint8_t ctx, const uchar *data, uint len)
+NullableMessageRef Filtered::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<1 || len > 0xffff)
 		return nullptr;
@@ -109,10 +109,10 @@ Message *Filtered::deserialize(uint8_t ctx, const uchar *data, uint len)
 	uchar *payload = new uchar[len];
 	memcpy(payload, data, len);
 
-	return new Filtered(ctx, payload, len);
+	return NullableMessageRef(new Filtered(ctx, payload, len));
 }
 
-Message *Filtered::decodeWrapped() const
+NullableMessageRef Filtered::decodeWrapped() const
 {
 	// Note: technically non-opaque messages could be wrapped as well,
 	// but in practice they never are. Non-opaque messages are filtered

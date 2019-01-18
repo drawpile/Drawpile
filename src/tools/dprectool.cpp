@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -120,13 +120,11 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		MessageRecord mr = reader.readNext();
 		switch(mr.status) {
 		case MessageRecord::OK: {
-			protocol::MessagePtr msg(mr.message);
-
-			if(doAclFiltering && !aclFilter.filterMessage(*msg)) {
-				writer->writeMessage(*msg->asFiltered());
+			if(doAclFiltering && !aclFilter.filterMessage(*mr.message)) {
+				writer->writeMessage(*mr.message->asFiltered());
 
 			} else {
-				if(!writer->writeMessage(*msg)) {
+				if(!writer->writeMessage(*mr.message)) {
 					fprintf(stderr, "Error while writing message: %s\n",
 						qPrintable(writer->errorString())
 						);
@@ -138,8 +136,8 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 
 		case MessageRecord::INVALID:
 			writer->writeComment(QStringLiteral("WARNING: Unrecognized message type %1 of length %2 at offset 0x%3")
-				.arg(int(mr.error.type))
-				.arg(mr.error.len)
+				.arg(int(mr.invalid_type))
+				.arg(mr.invalid_len)
 				.arg(reader.currentPosition())
 				);
 			break;

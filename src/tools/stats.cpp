@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,16 +72,15 @@ bool printMessageFrequency(const QString &filename)
 			totalCount++;
 			mc.totalLength += mr.message->length();
 			totalLength += mr.message->length();
-			delete mr.message;
 			break;
 			}
 		case MessageRecord::INVALID: {
-			MessageCount &mc = counts[mr.error.type];
+			MessageCount &mc = counts[mr.invalid_type];
 			invalidCount++;
 			mc.count++;
 			totalCount++;
-			mc.totalLength += mr.error.len;
-			totalLength += mr.error.len;
+			mc.totalLength += mr.invalid_len;
+			totalLength += mr.invalid_len;
 			break;
 		}
 		case MessageRecord::END_OF_RECORDING:
