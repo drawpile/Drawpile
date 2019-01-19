@@ -61,7 +61,7 @@ struct State {
 
 	// Replacement messages for specific indices
 	// (currently used just for squishing)
-	QHash<quint32, protocol::NullableMessageRef> replacements;
+	QHash<int, protocol::NullableMessageRef> replacements;
 
 	// List of users who have participated in the session somehow
 	// (other than just loggin in/out)
@@ -89,7 +89,7 @@ static void filterMessage(const FilterOptions &options, State &state, protocol::
 {
 	// Put this message in the index
 	state.index.append(FilterIndex {
-		msg->type(),
+		uchar(msg->type()),
 		msg->contextId(),
 		msg->isUndoable() ? UNDOABLE : uchar(0),
 		offset
@@ -415,7 +415,7 @@ bool filterRecording(const QString &input, const QString &outputfile, const Filt
 
 	QByteArray buffer;
 	while(reader.readNextToBuffer(buffer)) {
-		const unsigned int pos = reader.currentIndex();
+		const int pos = reader.currentIndex();
 
 		// Copy (or replace) original message, unless marked for deletion
 		if(!isDeleted(state.index[pos])) {
