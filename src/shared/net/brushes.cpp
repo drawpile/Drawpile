@@ -427,10 +427,10 @@ bool DrawDabsPixel::extend(const DrawDabs &dabs)
 		lastY += dab.y;
 	}
 
-	auto dab = ddc.dabs().first();
+	auto dab = ddp.dabs().first();
 
-	const int offsetX = ddc.originX() - lastX + dab.x;
-	const int offsetY = ddc.originY() - lastY + dab.y;
+	const int offsetX = ddp.originX() - lastX + dab.x;
+	const int offsetY = ddp.originY() - lastY + dab.y;
 
 	if(qAbs(offsetX) > ClassicBrushDab::MAX_XY_DELTA ||
 		qAbs(offsetY) > ClassicBrushDab::MAX_XY_DELTA)
@@ -442,8 +442,8 @@ bool DrawDabsPixel::extend(const DrawDabs &dabs)
 	dab.y = offsetY;
 	m_dabs << dab;
 
-	for(int i=1;i<ddc.dabs().size();++i)
-		m_dabs << ddc.dabs().at(i);
+	for(int i=1;i<ddp.dabs().size();++i)
+		m_dabs << ddp.dabs().at(i);
 
 	return true;
 }
