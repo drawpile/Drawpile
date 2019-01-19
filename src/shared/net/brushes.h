@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -84,6 +84,20 @@ public:
 
 	//! Get the bounding rectangle of the dab vector
 	virtual QRect bounds() const = 0;
+
+	/**
+	 * @brief Append the given dab message's dabs to this message's dab vector.
+	 *
+	 * If the extension is not possible, this function returns false and
+	 * does not modify the current dab vector.
+	 *
+	 * Possible reasons why extension may fail:
+	 * - given DrawDabs instance is of the wrong type
+	 * - common properties are not the same
+	 * - summed dab array length would be too long
+	 * - distance between lastPoint() and dab.originXY is greater than MAX_XY_DELTA
+	 */
+	virtual bool extend(const DrawDabs &dab) = 0;
 };
 
 /**
@@ -133,6 +147,7 @@ public:
 
 	QPoint lastPoint() const override;
 	QRect bounds() const override;
+	bool extend(const DrawDabs &dab) override;
 
 protected:
 	int payloadLength() const override;
@@ -196,6 +211,7 @@ public:
 
 	QPoint lastPoint() const override;
 	QRect bounds() const override;
+	bool extend(const DrawDabs &dab) override;
 
 protected:
 	int payloadLength() const override;

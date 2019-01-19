@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -196,6 +196,48 @@ QRect DrawDabsClassic::bounds() const
 	return QRect(minX/4, minY/4, (maxX-minX)/4, (maxY-minY)/4);
 }
 
+bool DrawDabsClassic::extend(const DrawDabs &dabs)
+{
+	if(dabs.type() != MSG_DRAWDABS_CLASSIC)
+		return false;
+	const auto ddc = static_cast<const DrawDabsClassic&>(dabs);
+
+	if(m_color != ddc.m_color ||
+		m_layer != ddc.m_layer ||
+		m_mode != ddc.m_mode)
+		return false;
+
+	const int newLength = ddc.dabs().length() + m_dabs.length();
+	if(newLength > MAX_DABS)
+		return false;
+
+	int lastX = m_x;
+	int lastY = m_y;
+	for(const auto dab : m_dabs) {
+		lastX += dab.x;
+		lastY += dab.y;
+	}
+
+	auto dab = ddc.dabs().first();
+
+	const int offsetX = ddc.originX() - lastX + dab.x;
+	const int offsetY = ddc.originY() - lastY + dab.y;
+
+	if(qAbs(offsetX) > ClassicBrushDab::MAX_XY_DELTA ||
+		qAbs(offsetY) > ClassicBrushDab::MAX_XY_DELTA)
+		return false;
+
+	m_dabs.reserve(newLength);
+
+	dab.x = offsetX;
+	dab.y = offsetY;
+	m_dabs << dab;
+
+	for(int i=1;i<ddc.dabs().size();++i)
+		m_dabs << ddc.dabs().at(i);
+
+	return true;
+}
 
 DrawDabsPixel *DrawDabsPixel::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
@@ -361,6 +403,49 @@ QRect DrawDabsPixel::bounds() const
 		maxY = qMax(maxY, y + r);
 	}
 	return QRect(minX, minY, maxX-minX, maxY-minY);
+}
+
+bool DrawDabsPixel::extend(const DrawDabs &dabs)
+{
+	if(dabs.type() != MSG_DRAWDABS_PIXEL)
+		return false;
+	const auto ddp = static_cast<const DrawDabsPixel&>(dabs);
+
+	if(m_color != ddp.m_color ||
+		m_layer != ddp.m_layer ||
+		m_mode != ddp.m_mode)
+		return false;
+
+	const int newLength = ddp.dabs().length() + m_dabs.length();
+	if(newLength > MAX_DABS)
+		return false;
+
+	int lastX = m_x;
+	int lastY = m_y;
+	for(const auto dab : m_dabs) {
+		lastX += dab.x;
+		lastY += dab.y;
+	}
+
+	auto dab = ddc.dabs().first();
+
+	const int offsetX = ddc.originX() - lastX + dab.x;
+	const int offsetY = ddc.originY() - lastY + dab.y;
+
+	if(qAbs(offsetX) > ClassicBrushDab::MAX_XY_DELTA ||
+		qAbs(offsetY) > ClassicBrushDab::MAX_XY_DELTA)
+		return false;
+
+	m_dabs.reserve(newLength);
+
+	dab.x = offsetX;
+	dab.y = offsetY;
+	m_dabs << dab;
+
+	for(int i=1;i<ddc.dabs().size();++i)
+		m_dabs << ddc.dabs().at(i);
+
+	return true;
 }
 
 }

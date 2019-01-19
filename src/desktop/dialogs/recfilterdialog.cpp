@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,19 +62,21 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 		outfile.append(".dprec");
 
 	// Set filtering options
-	recording::Filter filter;
+	const recording::FilterOptions filter {
+		_ui->removeUndos->isChecked(),
+		_ui->removeChat->isChecked(),
+		_ui->removeLookyloos->isChecked(),
+		_ui->removeDelays->isChecked(),
+		_ui->removeLasers->isChecked(),
+		_ui->removeMarkers->isChecked(),
+		_ui->squishStrokes->isChecked()
+	};
 
-	filter.setExpungeUndos(_ui->removeUndos->isChecked());
-	filter.setRemoveChat(_ui->removeChat->isChecked());
-	filter.setRemoveLookyloos(_ui->removeLookyloos->isChecked());
-	filter.setRemoveDelays(_ui->removeDelays->isChecked());
-	filter.setRemoveLasers(_ui->removeLasers->isChecked());
-	filter.setRemoveMarkers(_ui->removeMarkers->isChecked());
-	filter.setSquishStrokes(_ui->squishStrokes->isChecked());
 
 	// Perform filtering
-	if(!filter.filterRecording(recordingFile, outfile)) {
-		QMessageBox::warning(this, tr("Error"), filter.errorString());
+	QString error;
+	if(!recording::filterRecording(recordingFile, outfile, filter, &error)) {
+		QMessageBox::warning(this, tr("Error"), error);
 		return QString();
 	}
 
