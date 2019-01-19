@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -234,6 +234,23 @@ private:
 	QByteArray m_msg;
 };
 
+/**
+ * @brief Soft reset point marker
+ *
+ * This message marks the point in the session history where soft reset occurs.
+ * Soft resetting is not actually implemented yet; this is here for forward compatiblity.
+ *
+ * All users should truncate their own session history when receiving this message,
+ * since undos cannot cross the reset boundary.
+ *
+ * The current client implementation handles the history truncation part. This is
+ * enough to be compatible with future clients capable of initiating soft reset.
+ */
+class SoftResetPoint : public ZeroLengthMessage<SoftResetPoint> {
+public:
+	explicit SoftResetPoint(uint8_t ctx) : ZeroLengthMessage(MSG_SOFTRESET, ctx) { }
+	QString messageName() const override { return QStringLiteral("softreset"); }
+};
 
 }
 

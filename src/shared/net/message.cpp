@@ -111,6 +111,7 @@ NullableMessageRef Message::deserialize(const uchar *data, int buflen, bool deco
 	case MSG_SESSION_OWNER: msg = SessionOwner::deserialize(ctx, data, len); break;
 	case MSG_CHAT: msg = Chat::deserialize(ctx, data, len); break;
 	case MSG_TRUSTED_USERS: msg = TrustedUsers::deserialize(ctx, data, len); break;
+	case MSG_SOFTRESET: msg = SoftResetPoint::deserialize(ctx, data, len); break;
 
 	// Opaque messages
 	default:

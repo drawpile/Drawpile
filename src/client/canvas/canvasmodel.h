@@ -157,6 +157,7 @@ private:
 	void metaMovePointer(const protocol::MovePointer &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
 	void metaDefaultLayer(const protocol::DefaultLayer &msg);
+	void metaSoftReset(uint8_t resetterId);
 
 	AclFilter *m_aclfilter;
 	UserListModel *m_userlist;

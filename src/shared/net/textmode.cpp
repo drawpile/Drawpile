@@ -168,6 +168,7 @@ Parser::Result Parser::parseLine(const QString &line)
 	else FROMTEXT("moveregion", MoveRegion);
 	else FROMTEXT("undopoint", UndoPoint);
 	else FROMTEXT("puttile", PutTile);
+	else FROMTEXT("softreset", SoftResetPoint);
 	else if(m_cmd=="undo") msg = Undo::fromText(m_ctx, m_kwargs, false);
 	else if(m_cmd=="redo") msg = Undo::fromText(m_ctx, m_kwargs, true);
 	else {

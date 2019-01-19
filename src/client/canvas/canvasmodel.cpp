@@ -31,6 +31,7 @@
 #include "core/layer.h"
 #include "ora/orawriter.h"
 #include "utils/identicon.h"
+#include "net/internalmsg.h"
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -168,6 +169,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			break;
 		case MSG_LAYER_DEFAULT:
 			metaDefaultLayer(cmd.cast<DefaultLayer>());
+			break;
+		case MSG_SOFTRESET:
+			metaSoftReset(cmd->contextId());
 			break;
 		default:
 			qWarning("Unhandled meta message %s", qPrintable(cmd->messageName()));
@@ -468,5 +472,13 @@ void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
 		emit layerAutoselectRequest(msg.layer());
 }
 
+void CanvasModel::metaSoftReset(uint8_t resetterId)
+{
+	// Soft reset not fully implemented yet: this client can't initiate soft resets (yet)
+	if(resetterId == localUserId())
+		qWarning("Got soft SoftResetPoint(%d), but that's us!", resetterId);
+
+	m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeTruncatePoint());
+}
 
 }

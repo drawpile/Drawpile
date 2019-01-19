@@ -43,6 +43,7 @@ enum MessageType {
 	MSG_SESSION_OWNER,
 	MSG_CHAT,
 	MSG_TRUSTED_USERS,
+	MSG_SOFTRESET,
 
 	// Meta messages (opaque)
 	MSG_INTERVAL=64,

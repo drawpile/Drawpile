@@ -32,6 +32,7 @@ private slots:
 		QTest::newRow("userjoin(no hash)") << (Message*)new UserJoin(4, 0x03, QString("Test"), QByteArray());
 		QTest::newRow("userleave") << (Message*)new UserLeave(5);
 		QTest::newRow("sessionowner") << (Message*)new SessionOwner(6, QList<uint8_t>() << 1 << 2 << 5);
+		QTest::newRow("softreset") << (Message*)new SoftResetPoint(60);
 		QTest::newRow("chat") << (Message*)new Chat(7, 0x01, 0x04, QByteArray("Test"));
 
 		QTest::newRow("interval") << (Message*)new Interval(8, 0x1020);

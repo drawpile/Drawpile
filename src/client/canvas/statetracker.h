@@ -252,6 +252,7 @@ private:
 	void handleUndo(protocol::Undo &cmd);
 	void makeSavepoint(int pos);
 	void revertSavepointAndReplay(const StateSavepoint savepoint);
+	void handleTruncateHistory();
 
 	// Annotation related commands
 	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);

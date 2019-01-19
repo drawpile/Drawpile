@@ -368,6 +368,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	using namespace protocol;
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
+	case MSG_SOFTRESET:
 		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
 		return;
 	case MSG_DISCONNECT:

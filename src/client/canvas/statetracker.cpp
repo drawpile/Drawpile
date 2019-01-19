@@ -257,6 +257,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			emit catchupProgress(ci.value());
 		else if(ci.internalType() == protocol::ClientInternal::Type::SequencePoint)
 			emit sequencePoint(ci.value());
+		else if(ci.internalType() == protocol::ClientInternal::Type::TruncateHistory)
+			handleTruncateHistory();
+
 		return;
 	}
 
@@ -1053,6 +1056,25 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 				handleCommand(msg, true, pos);
 		}
 	}
+}
+
+void StateTracker::handleTruncateHistory()
+{
+	int pos = m_history.end()-1;
+	int upCount = 0;
+
+	qWarning("Truncating undo history at %d", pos);
+	while(m_history.isValidIndex(pos) && upCount <= protocol::UNDO_DEPTH_LIMIT) {
+		protocol::MessagePtr msg = m_history.at(pos);
+
+		if(msg->type() == protocol::MSG_UNDOPOINT) {
+			++upCount;
+			msg->setUndoState(protocol::GONE);
+		}
+
+		--pos;
+	}
+	qWarning("Marked %d UPs", upCount);
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
