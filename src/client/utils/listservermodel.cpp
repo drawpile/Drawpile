@@ -29,6 +29,10 @@
 #include <QSettings>
 #include <QSslSocket>
 
+#ifdef HAVE_DNSSD
+#include <KDNSSD/DNSSD/ServiceBrowser>
+#endif
+
 namespace sessionlisting {
 
 ListServerModel::ListServerModel(bool showlocal, bool showBlank, QObject *parent)
@@ -187,7 +191,7 @@ void ListServerModel::loadServers()
 
 #ifdef HAVE_DNSSD
 	// Add an entry for local server discovery
-	if(m_showlocal) {
+	if(m_showlocal && KDNSSD::ServiceBrowser::isAvailable() == KDNSSD::ServiceBrowser::Working) {
 		m_servers.prepend(ListServer {
 			QIcon(),
 			QString(),
