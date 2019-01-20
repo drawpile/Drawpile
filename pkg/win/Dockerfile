@@ -21,9 +21,9 @@ ADD qtbase-2-no-tabletevent.patch /usr/src/mxe/src/
 RUN make -j$(nproc) qt5 miniupnpc giflib libsodium
 
 # Add our own deps
-ADD extra-cmake-modules.mk karchive.mk /usr/src/mxe/src/
-RUN make download-karchive download-extra-cmake-modules
+ADD extra-cmake-modules.mk karchive.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
+RUN make download-karchive download-extra-cmake-modules download-dnssd_shim download-kdnssd
 
 # Build our dependencies
-RUN make extra-cmake-modules karchive
+RUN make extra-cmake-modules karchive kdnssd
 

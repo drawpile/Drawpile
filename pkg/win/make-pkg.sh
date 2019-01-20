@@ -51,6 +51,7 @@ cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5Archive.dll" .
+cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .
 
 QROOT="$MXEROOT/qt5"
