@@ -68,7 +68,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)
 		m_ui->filterNsfw->setEnabled(false);
 
-	m_ui->listserver->setModel(new sessionlisting::ListServerModel(true, true, this));
+	m_ui->listserver->setModel(new sessionlisting::ListServerModel(sessionlisting::ListServerModel::ShowLocal | sessionlisting::ListServerModel::ShowBlank, this));
 
 	m_sessions = new SessionListingModel(this);
 #ifdef HAVE_DNSSD

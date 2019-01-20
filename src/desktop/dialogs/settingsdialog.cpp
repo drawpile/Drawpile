@@ -185,7 +185,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Session listing server list
-	m_listservers = new sessionlisting::ListServerModel(false, false, this);
+	m_listservers = new sessionlisting::ListServerModel(this);
 	m_ui->listserverview->setModel(m_listservers);
 	m_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 

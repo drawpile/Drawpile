@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(bool showlocal, bool showBlank, QObject *parent)
-	: QAbstractListModel(parent), m_showlocal(showlocal), m_showBlank(showBlank)
+ListServerModel::ListServerModel(Options options, QObject *parent)
+	: QAbstractListModel(parent), m_options(options)
 {
 	loadServers();
 }
@@ -191,7 +191,7 @@ void ListServerModel::loadServers()
 
 #ifdef HAVE_DNSSD
 	// Add an entry for local server discovery
-	if(m_showlocal && KDNSSD::ServiceBrowser::isAvailable() == KDNSSD::ServiceBrowser::Working) {
+	if(m_options.testFlag(ShowLocal) && KDNSSD::ServiceBrowser::isAvailable() == KDNSSD::ServiceBrowser::Working) {
 		m_servers.prepend(ListServer {
 			QIcon(),
 			QString(),
@@ -202,7 +202,7 @@ void ListServerModel::loadServers()
 	}
 #endif
 
-	if(m_showBlank) {
+	if(m_options.testFlag(ShowBlank)) {
 		m_servers << ListServer {
 			QIcon(),
 			QString(),
