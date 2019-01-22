@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::sizeChanged, m_view, &widgets::CanvasView::setOutlineSize);
-	connect(m_dockToolSettings, &docks::ToolSettings::subpixelModeChanged, m_view, &widgets::CanvasView::setOutlineSubpixelMode);
+	connect(m_dockToolSettings, &docks::ToolSettings::subpixelModeChanged, m_view, &widgets::CanvasView::setOutlineMode);
 	connect(m_view, &widgets::CanvasView::colorDropped, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(m_view, &widgets::CanvasView::urlDropped, this, &MainWindow::dropUrl);

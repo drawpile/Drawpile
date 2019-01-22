@@ -83,9 +83,10 @@ NullableMessageRef OpaqueMessage::decode(MessageType type, uint8_t ctx, const uc
 	case MSG_FILLRECT: msg = FillRect::deserialize(ctx, data, len); break;
 	case MSG_REGION_MOVE: msg = MoveRegion::deserialize(ctx, data, len); break;
 	case MSG_PUTTILE: msg = PutTile::deserialize(ctx, data, len); break;
-	case MSG_DRAWDABS_CLASSIC: msg = DrawDabsClassic::deserialize(ctx, data, len); break;
-	case MSG_DRAWDABS_PIXEL: msg = DrawDabsPixel::deserialize(ctx, data, len); break;
 	case MSG_CANVAS_BACKGROUND: msg = CanvasBackground::deserialize(ctx, data, len); break;
+	case MSG_DRAWDABS_CLASSIC: msg = DrawDabsClassic::deserialize(ctx, data, len); break;
+	case MSG_DRAWDABS_PIXEL: msg = DrawDabsPixel::deserialize(DabShape::Round, ctx, data, len); break;
+	case MSG_DRAWDABS_PIXEL_SQUARE: msg = DrawDabsPixel::deserialize(DabShape::Square, ctx, data, len); break;
 	default: qWarning("Unhandled opaque message type: %d", type);
 	}
 

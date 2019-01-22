@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ signals:
 	void sizeChanged(int size);
 
 	//! This signal is emitted when tool subpixel drawing mode is changed
-	void subpixelModeChanged(bool subpixel);
+	void subpixelModeChanged(bool subpixel, bool square);
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);

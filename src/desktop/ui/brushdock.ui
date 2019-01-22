@@ -134,10 +134,10 @@
         </item>
         <item>
          <widget class="GroupedToolButton" name="slotEraser">
-           <property name="icon">
-            <iconset theme="draw-eraser">
-              <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
-           </property>
+          <property name="icon">
+           <iconset theme="draw-eraser">
+            <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -212,11 +212,11 @@
         <item>
          <widget class="GroupedToolButton" name="hardedgeMode">
           <property name="toolTip">
-           <string>Pen</string>
+           <string>Pixel brush</string>
           </property>
           <property name="icon">
-           <iconset theme="draw-freehand">
-            <normaloff>theme:draw-freehand.svg</normaloff>theme:draw-freehand.svg</iconset>
+           <iconset>
+            <normaloff>builtin:pixel-round.svg</normaloff>builtin:pixel-round.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -230,13 +230,33 @@
          </widget>
         </item>
         <item>
+         <widget class="GroupedToolButton" name="squareMode">
+          <property name="toolTip">
+           <string>Square pixel brush</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="groupPosition">
+           <enum>GroupedToolButton::GroupCenter</enum>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>builtin:square.svg</normaloff>builtin:square.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="GroupedToolButton" name="softedgeMode">
           <property name="toolTip">
            <string>Brush</string>
           </property>
           <property name="icon">
-           <iconset theme="draw-brush">
-            <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+           <iconset>
+            <normaloff>builtin:round.svg</normaloff>builtin:round.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -279,7 +299,7 @@
        </property>
        <property name="icon">
         <iconset theme="draw-eraser">
-          <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
+         <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -300,67 +320,20 @@
       </spacer>
      </item>
      <item>
-      <widget class="QWidget" name="modeContainer" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QComboBox" name="blendmode"/>
-        </item>
-        <item>
-         <widget class="GroupedToolButton" name="modeIncremental">
-          <property name="toolTip">
-           <string>Direct drawing mode</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="GroupedToolButton" name="modeIndirect">
-          <property name="toolTip">
-           <string>Indirect drawing mode</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>builtin:paintmode-indirect.svg</normaloff>builtin:paintmode-indirect.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>GroupedToolButton::GroupRight</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <widget class="QComboBox" name="blendmode"/>
+     </item>
+     <item>
+      <widget class="GroupedToolButton" name="modeIncremental">
+       <property name="toolTip">
+        <string>Direct drawing mode</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>

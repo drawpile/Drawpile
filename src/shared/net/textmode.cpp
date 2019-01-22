@@ -136,7 +136,8 @@ Parser::Result Parser::parseLine(const QString &line)
 
 #define FROMTEXT(name, Cls) if(m_cmd==name) msg = Cls::fromText(uint8_t(m_ctx), m_kwargs)
 	if(m_cmd=="classicdabs") msg = DrawDabsClassic::fromText(m_ctx, m_kwargs, m_dabs);
-	else if(m_cmd=="pixeldabs") msg = DrawDabsPixel::fromText(m_ctx, m_kwargs, m_dabs);
+	else if(m_cmd=="pixeldabs") msg = DrawDabsPixel::fromText(DabShape::Round, m_ctx, m_kwargs, m_dabs);
+	else if(m_cmd=="squarepixeldabs") msg = DrawDabsPixel::fromText(DabShape::Square, m_ctx, m_kwargs, m_dabs);
 	else FROMTEXT("join", UserJoin);
 	else FROMTEXT("leave", UserLeave);
 	else FROMTEXT("owner", SessionOwner);

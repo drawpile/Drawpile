@@ -23,6 +23,7 @@
  * Replaced recording status icon with toolbar button
  * Replaced "new chat message" status icon with toolbar button (red dot indicates new message)
  * Added template export feature
+ * Added square pixel brush
 
 2018-08-14 Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature

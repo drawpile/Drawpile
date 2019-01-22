@@ -199,6 +199,7 @@ void StateTracker::localCommand(protocol::MessagePtr msg)
 	using namespace protocol;
 	case MSG_DRAWDABS_CLASSIC:
 	case MSG_DRAWDABS_PIXEL:
+	case MSG_DRAWDABS_PIXEL_SQUARE:
 	case MSG_LAYER_CREATE:
 	case MSG_PUTIMAGE:
 	case MSG_FILLRECT:
@@ -376,6 +377,7 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 			break;
 		case MSG_DRAWDABS_CLASSIC:
 		case MSG_DRAWDABS_PIXEL:
+		case MSG_DRAWDABS_PIXEL_SQUARE:
 			handleDrawDabs(*msg);
 			break;
 		case MSG_PEN_UP:
@@ -1218,7 +1220,8 @@ AffectedArea StateTracker::affectedArea(protocol::MessagePtr msg) const
 	}
 
 	case MSG_DRAWDABS_CLASSIC:
-	case MSG_DRAWDABS_PIXEL: {
+	case MSG_DRAWDABS_PIXEL:
+	case MSG_DRAWDABS_PIXEL_SQUARE: {
 		const DrawDabs &dd = msg.cast<DrawDabs>();
 
 		// Indirect drawing mode: check bounds in PenUp

@@ -56,6 +56,7 @@ void drawBrushDabsDirect(const protocol::Message &msg, paintcore::EditableLayer 
 		drawClassicBrushDabs(static_cast<const protocol::DrawDabsClassic&>(msg), layer, sublayer);
 		break;
 	case protocol::MSG_DRAWDABS_PIXEL:
+	case protocol::MSG_DRAWDABS_PIXEL_SQUARE:
 		drawPixelBrushDabs(static_cast<const protocol::DrawDabsPixel&>(msg), layer, sublayer);
 		break;
 	default:

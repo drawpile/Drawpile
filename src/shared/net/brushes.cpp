@@ -122,8 +122,9 @@ QString ClassicBrushDab::toString() const
 
 QString DrawDabsClassic::toString() const
 {
-	QString s = QStringLiteral("%1 classicdabs layer=%2 x=%3 y=%4 color=%5 mode=%6 {\n\t")
+	QString s = QStringLiteral("%1 %2 layer=%3 x=%4 y=%5 color=%6 mode=%7 {\n\t")
 		.arg(contextId())
+		.arg(messageName())
 		.arg(text::idString(m_layer))
 		.arg(m_x / 4.0, 0, 'f', 1)
 		.arg(m_y / 4.0, 0, 'f', 1)
@@ -198,7 +199,7 @@ QRect DrawDabsClassic::bounds() const
 
 bool DrawDabsClassic::extend(const DrawDabs &dabs)
 {
-	if(dabs.type() != MSG_DRAWDABS_CLASSIC)
+	if(dabs.type() != type())
 		return false;
 	const auto ddc = static_cast<const DrawDabsClassic&>(dabs);
 
@@ -239,7 +240,7 @@ bool DrawDabsClassic::extend(const DrawDabs &dabs)
 	return true;
 }
 
-DrawDabsPixel *DrawDabsPixel::deserialize(uint8_t ctx, const uchar *data, uint len)
+DrawDabsPixel *DrawDabsPixel::deserialize(DabShape shape, uint8_t ctx, const uchar *data, uint len)
 {
 	if(len < 15)
 		return nullptr;
@@ -249,6 +250,7 @@ DrawDabsPixel *DrawDabsPixel::deserialize(uint8_t ctx, const uchar *data, uint l
 		return nullptr;
 
 	DrawDabsPixel *d = new DrawDabsPixel(
+		shape,
 		ctx,
 		qFromBigEndian<quint16>(data+0),
 		qFromBigEndian<qint32>(data+2),
@@ -332,8 +334,9 @@ QString PixelBrushDab::toString() const
 
 QString DrawDabsPixel::toString() const
 {
-	QString s = QStringLiteral("%1 pixeldabs layer=%2 x=%3 y=%4 color=%5 mode=%6 {\n\t")
+	QString s = QStringLiteral("%1 %2 layer=%3 x=%4 y=%5 color=%6 mode=%7 {\n\t")
 		.arg(contextId())
+		.arg(messageName())
 		.arg(text::idString(m_layer))
 		.arg(m_x)
 		.arg(m_y)
@@ -349,7 +352,7 @@ QString DrawDabsPixel::toString() const
 	return s;
 }
 
-DrawDabsPixel *DrawDabsPixel::fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs)
+DrawDabsPixel *DrawDabsPixel::fromText(DabShape shape, uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs)
 {
 	if(dabs.size() % 4 != 0)
 		return nullptr;
@@ -366,6 +369,7 @@ DrawDabsPixel *DrawDabsPixel::fromText(uint8_t ctx, const Kwargs &kwargs, const 
 	}
 
 	return new DrawDabsPixel(
+		shape,
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
 		kwargs.value("x").toInt(),
@@ -407,7 +411,7 @@ QRect DrawDabsPixel::bounds() const
 
 bool DrawDabsPixel::extend(const DrawDabs &dabs)
 {
-	if(dabs.type() != MSG_DRAWDABS_PIXEL)
+	if(dabs.type() != type())
 		return false;
 	const auto ddp = static_cast<const DrawDabsPixel&>(dabs);
 

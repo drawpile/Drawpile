@@ -281,7 +281,10 @@ static void filterAdjacentUndoPoints(State &state)
 
 static inline bool isDabMessage(uchar msgtype) {
 	return msgtype == protocol::MSG_DRAWDABS_CLASSIC ||
-		msgtype == protocol::MSG_DRAWDABS_PIXEL;
+		msgtype == protocol::MSG_DRAWDABS_PIXEL ||
+		msgtype == protocol::MSG_DRAWDABS_PIXEL_SQUARE
+		;
+
 }
 
 static bool squishStrokes(State &state, Reader &recording, QString *errorMessage)

@@ -67,6 +67,11 @@ namespace protocol {
 typedef QVector<ClassicBrushDab> ClassicBrushDabVector;
 typedef QVector<PixelBrushDab> PixelBrushDabVector;
 
+enum class DabShape {
+	Round,
+	Square
+};
+
 /**
  * @brief Abstract base class for DrawDabs* messages
  */
@@ -173,6 +178,7 @@ public:
 	static const int MAX_DABS = (0xffff - 15) / PixelBrushDab::LENGTH;
 
 	DrawDabsPixel(
+		DabShape shape,
 		uint8_t ctx,
 		uint16_t layer,
 		int32_t originX, int32_t originY,
@@ -180,7 +186,7 @@ public:
 		uint8_t blend,
 		const PixelBrushDabVector &dabs=PixelBrushDabVector()
 		)
-		: DrawDabs(MSG_DRAWDABS_PIXEL, ctx),
+		: DrawDabs(shape == DabShape::Square ? MSG_DRAWDABS_PIXEL_SQUARE : MSG_DRAWDABS_PIXEL, ctx),
 		m_dabs(dabs),
 		m_x(originX), m_y(originY),
 		m_color(color),
@@ -190,14 +196,15 @@ public:
 		Q_ASSERT(dabs.size() <= MAX_DABS);
 	}
 
-	static DrawDabsPixel *deserialize(uint8_t ctx, const uchar *data, uint len);
-	static DrawDabsPixel *fromText(uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs);
+	static DrawDabsPixel *deserialize(DabShape shape, uint8_t ctx, const uchar *data, uint len);
+	static DrawDabsPixel *fromText(DabShape shape, uint8_t ctx, const Kwargs &kwargs, const QStringList &dabs);
 
 	uint16_t layer() const override { return m_layer; }
 	int32_t originX() const { return m_x; }
 	int32_t originY() const { return m_y; }
 	uint32_t color() const { return m_color; } // If the alpha channel is set, the dabs are composited indirectly
 	uint8_t mode() const { return m_mode; }
+	bool isSquare() const { return type() == MSG_DRAWDABS_PIXEL_SQUARE; }
 
 	// If the color's alpha channel is nonzero, that value is used
 	// as the opacity of the entire stroke.
@@ -207,7 +214,7 @@ public:
 	PixelBrushDabVector &dabs() { return m_dabs; }
 
 	QString toString() const override;
-	QString messageName() const override { return QStringLiteral("pixeldabs"); }
+	QString messageName() const override { return isSquare() ? QStringLiteral("squarepixeldabs") : QStringLiteral("pixeldabs"); }
 
 	QPoint lastPoint() const override;
 	QRect bounds() const override;

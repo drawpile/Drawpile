@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -143,6 +143,7 @@ void PixelBrushState::addDab(int x, int y, qreal pressure)
 			|| m_lastDab->dabs().size() >= protocol::DrawDabsPixel::MAX_DABS
 	) {
 		m_lastDab = new protocol::DrawDabsPixel(
+			m_brush.isSquare() ? protocol::DabShape::Square : protocol::DabShape::Round,
 			m_contextId,
 			m_layerId,
 			x,

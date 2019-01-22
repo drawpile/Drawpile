@@ -315,7 +315,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 
 	emit toolChanged(tool);
 	emit sizeChanged(ts->getSize());
-	emit subpixelModeChanged(d->currentSettings()->getSubpixelMode());
+	emit subpixelModeChanged(d->currentSettings()->getSubpixelMode(), d->currentSettings()->isSquare());
 }
 
 tools::Tool::Type ToolSettings::currentTool() const
