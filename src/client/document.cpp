@@ -56,7 +56,6 @@ Document::Document(QObject *parent)
 	: QObject(parent),
 	  m_canvas(nullptr),
 	  m_recorder(nullptr),
-	  m_autoRecordOnConnect(false),
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
@@ -172,8 +171,9 @@ void Document::onServerLogin(bool join)
 
 	m_canvas->connectedToServer(m_client->myId());
 
-	if(m_autoRecordOnConnect) {
-		startRecording(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
+	if(!m_recordOnConnect.isEmpty()) {
+		startRecording(m_recordOnConnect);
+		m_recordOnConnect = QString();
 	}
 
 	m_sessionHistoryMaxSize = 0;

@@ -47,6 +47,9 @@ bool isWritableFormat(const QString &filename);
 //! Get a whitelisted set of writable image formats
 QList<QPair<QString,QByteArray>> writableImageFormats();
 
+//! Get a list of recording formats for use in a file dialog
+QString recordingFormatFilter(bool allFiles=true);
+
 QColor isSolidColorImage(const QImage &image);
 
 }

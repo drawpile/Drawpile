@@ -98,7 +98,7 @@ public:
 	void hostSession(dialogs::HostDialog *dlg);
 
 	//! Connect to a host and join a session if full URL is provided.
-	void joinSession(const QUrl& url, bool autoRecord=false);
+	void joinSession(const QUrl& url, const QString &autoRecordFilename=QString());
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;

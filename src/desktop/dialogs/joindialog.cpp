@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "utils/usernamevalidator.h"
 #include "utils/listservermodel.h"
 #include "utils/sessionfilterproxymodel.h"
+#include "utils/images.h"
 #include "../shared/util/announcementapi.h"
 #include "parentalcontrols/parentalcontrols.h"
 
@@ -41,6 +42,7 @@ using widgets::Spinner;
 #include <QTimer>
 #include <QUrl>
 #include <QDebug>
+#include <QFileDialog>
 
 namespace dialogs {
 
@@ -63,6 +65,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 		m_ui->address->setCurrentText(url.toString());
 
 	connect(m_ui->address, &QComboBox::editTextChanged, this, &JoinDialog::addressChanged);
+	connect(m_ui->autoRecord, &QAbstractButton::clicked, this, &JoinDialog::recordingToggled);
 
 	// Session listing
 	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)
@@ -179,6 +182,25 @@ void JoinDialog::addressChanged(const QString &addr)
 		}
 		resolveRoomcode(addr, servers);
 	}
+}
+
+void JoinDialog::recordingToggled(bool checked)
+{
+	if(checked) {
+		m_recordingFilename = QFileDialog::getSaveFileName(
+			this,
+			tr("Record"),
+			m_recordingFilename,
+			utils::recordingFormatFilter()
+		);
+		if(m_recordingFilename.isEmpty())
+			m_ui->autoRecord->setChecked(false);
+	}
+}
+
+QString JoinDialog::autoRecordFilename() const
+{
+	return m_ui->autoRecord->isChecked() ? m_recordingFilename : QString();
 }
 
 void JoinDialog::refreshListing()

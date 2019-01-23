@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QImageWriter>
 #include <QImage>
 #include <QColor>
+#include <QGuiApplication>
 
 namespace utils {
 
@@ -76,6 +77,22 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 			formats.append(QPair<QString,QByteArray>("JPEG2000", fmt));
 	}
 	return formats;
+}
+
+QString recordingFormatFilter(bool allFiles)
+{
+	const QString sep = QStringLiteral(";;");
+
+	QString filter =
+		QGuiApplication::tr("Binary Recordings (%1)").arg("*.dprec") + sep +
+		QGuiApplication::tr("Text Recordings (%1)").arg("*.dptxt") + sep +
+		QGuiApplication::tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + sep +
+		QGuiApplication::tr("Compressed Text Recordings (%1)").arg("*.dptxtz");
+
+	if(allFiles)
+		filter = filter + sep + QGuiApplication::tr("All Files (*)");
+
+	return filter;
 }
 
 QColor isSolidColorImage(const QImage &image)

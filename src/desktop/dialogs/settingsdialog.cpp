@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -92,12 +92,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		);
 		if(!path.isEmpty())
 			m_ui->ffmpegpath->setText(path);
-	});
-
-	connect(m_ui->pickRecordingFolder, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getExistingDirectory(this, tr("Recording folder"), m_ui->recordingFolder->text());
-		if(!path.isEmpty())
-			m_ui->recordingFolder->setText(path);
 	});
 
 	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
@@ -307,7 +301,6 @@ void SettingsDialog::restoreSettings()
 	m_ui->recordtimestamp->setChecked(cfg.value("recordtimestamp", false).toBool());
 	m_ui->timestampInterval->setValue(cfg.value("timestampinterval", 15).toInt());
 	m_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
-	m_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
@@ -400,7 +393,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("recordtimestamp", m_ui->recordtimestamp->isChecked());
 	cfg.setValue("timestampinterval", m_ui->timestampInterval->value());
 	FfmpegExporter::setFfmpegPath(m_ui->ffmpegpath->text().trimmed());
-	cfg.setValue("folder", m_ui->recordingFolder->text());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");

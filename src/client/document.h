@@ -149,7 +149,7 @@ public:
 
 	QString roomcode() const { return m_roomcode; }
 
-	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
+	void setRecordOnConnect(const QString &filename) { m_recordOnConnect = filename; }
 
 signals:
 	//! Connection opened, but not yet logged in
@@ -266,7 +266,7 @@ private:
 
 	recording::Writer *m_recorder;
 	QString m_originalRecordingFilename;
-	bool m_autoRecordOnConnect;
+	QString m_recordOnConnect;
 
 	bool m_dirty;
 	bool m_autosave;

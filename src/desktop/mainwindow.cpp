@@ -1210,14 +1210,8 @@ void MainWindow::exportAnimation()
 
 void MainWindow::exportTemplate()
 {
-	const QString filter =
-			tr("Binary Recordings (%1)").arg("*.dprec") + ";;" +
-			tr("Text Recordings (%1)").arg("*.dptxt") + ";;" +
-			tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + ";;" +
-			tr("Compressed Text Recordings (%1)").arg("*.dptxtz") + ";;" +
-			QApplication::tr("All Files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Export Session Template"), getLastPath(), filter);
+			tr("Export Session Template"), getLastPath(), utils::recordingFormatFilter());
 
 	if(!file.isEmpty()) {
 		QString error;
@@ -1273,14 +1267,8 @@ void MainWindow::toggleRecording()
 		return;
 	}
 
-	QString filter =
-			tr("Binary Recordings (%1)").arg("*.dprec") + ";;" +
-			tr("Text Recordings (%1)").arg("*.dptxt") + ";;" +
-			tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + ";;" +
-			tr("Compressed Text Recordings (%1)").arg("*.dptxtz") + ";;" +
-			QApplication::tr("All Files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Record Session"), getLastPath(), filter);
+			tr("Record Session"), getLastPath(), utils::recordingFormatFilter());
 
 	if(!file.isEmpty()) {
 		QString error;
@@ -1391,7 +1379,7 @@ void MainWindow::join(const QUrl &url)
 			dlg->rememberSettings();
 
 			// TOOD set recordSession somewhere. Settings dialog?
-			joinSession(url, false);
+			joinSession(url, dlg->autoRecordFilename());
 		}
 		dlg->deleteLater();
 	});
@@ -1514,12 +1502,12 @@ void MainWindow::terminateSession()
 /**
  * @param url URL
  */
-void MainWindow::joinSession(const QUrl& url, bool autoRecord)
+void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 {
 	if(!canReplace()) {
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
-		win->joinSession(url, autoRecord);
+		win->joinSession(url, autoRecordFile);
 		return;
 	}
 
@@ -1533,7 +1521,7 @@ void MainWindow::joinSession(const QUrl& url, bool autoRecord)
 	connect(dlg, &dialogs::LoginDialog::destroyed, m_canvasscene, &drawingboard::CanvasScene::showCanvas);
 
 	dlg->show();
-	m_doc->setAutoRecordOnConnect(autoRecord);
+	m_doc->setRecordOnConnect(autoRecordFile);
 	m_doc->client()->connectToServer(login);
 }
 

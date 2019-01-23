@@ -27,18 +27,6 @@
 namespace utils {
 namespace settings {
 
-QString recordingFolder()
-{
-	QString path = QSettings().value("settings/recording/folder").toString();
-	if(!path.isEmpty()) {
-		QDir dir(path);
-		if(dir.exists())
-			return path;
-	}
-
-	return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-}
-
 QStringList dataPaths()
 {
 	QStringList datapaths;

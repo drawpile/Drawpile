@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@ public:
 	//! Get the join parameters encoded as an URL
 	QUrl getUrl() const;
 
+	//! Get the selected recording filename (empty if not selected)
+	QString autoRecordFilename() const;
+
 	//! Restore settings from configuration file
 	void restoreSettings();
 
@@ -51,6 +54,7 @@ public:
 private slots:
 	void addressChanged(const QString &addr);
 	void refreshListing();
+	void recordingToggled(bool checked);
 
 private:
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
@@ -60,6 +64,8 @@ private:
 	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
 	ServerDiscoveryModel *m_localServers;
+
+	QString m_recordingFilename;
 };
 
 }
