@@ -109,14 +109,7 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 		m_ui->timeLabel->setText(m_ctrl->currentExportTime());
 	});
 
-	connect(m_ctrl, &PlaybackController::canSaveFrameChanged, [this](bool e) {
-		m_ui->play->setEnabled(e);
-		m_ui->skipBackward->setEnabled(e && m_ctrl->hasIndex());
-		m_ui->skipForward->setEnabled(e);
-		m_ui->stepForward->setEnabled(e);
-		m_ui->markers->setEnabled(e);
-		m_ui->saveFrame->setEnabled(e);
-	});
+	connect(m_ctrl, &PlaybackController::canSaveFrameChanged, m_ui->saveFrame, &QPushButton::setEnabled);
 
 	// Connections for non-indexed recordings. These will be changed when/if the index is loaded
 	m_ui->filmStrip->setLength(reader->filesize());
