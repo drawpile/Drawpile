@@ -1,3 +1,21 @@
+/*
+   Drawpile - a collaborative drawing program.
+
+   Copyright (C) 2018-2019 Calle Laakkonen
+
+   Drawpile is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Drawpile is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "useritemdelegate.h"
 #include "canvas/userlist.h"
 #include "canvas/canvasmodel.h"
@@ -21,17 +39,25 @@ static const int BUTTON_WIDTH = 16;
 UserItemDelegate::UserItemDelegate(QObject *parent)
 	: QAbstractItemDelegate(parent), m_canvas(nullptr)
 {
+	// Operator menu
+	m_opMenu = new QMenu;
+	m_opAction = m_opMenu->addAction(tr("Operator"));
+	m_trustAction = m_opMenu->addAction(tr("Trusted"));
+
+	m_opMenu->addSeparator();
+	m_lockAction = m_opMenu->addAction(tr("Lock"));
+	m_muteAction = m_opMenu->addAction(tr("Mute"));
+
+	m_opMenu->addSeparator();
+	m_kickAction = m_opMenu->addAction(tr("Kick"));
+	m_banAction = m_opMenu->addAction(tr("Kick && Ban"));
+
+	m_opMenu->addSeparator();
+	m_chatAction = m_opMenu->addAction(tr("Private Message"));
+
+	// User menu (a subset of operator menu)
 	m_userMenu = new QMenu;
-	m_opAction = m_userMenu->addAction(tr("Operator"));
-	m_trustAction = m_userMenu->addAction(tr("Trusted"));
-
-	m_userMenu->addSeparator();
-	m_lockAction = m_userMenu->addAction(tr("Lock"));
-	m_muteAction = m_userMenu->addAction(tr("Mute"));
-
-	m_userMenu->addSeparator();
-	m_kickAction = m_userMenu->addAction(tr("Kick"));
-	m_banAction = m_userMenu->addAction(tr("Kick && Ban"));
+	m_userMenu->addAction(m_chatAction);
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);
@@ -44,6 +70,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(m_muteAction, &QAction::triggered, this, &UserItemDelegate::toggleMute);
 	connect(m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
 	connect(m_banAction, &QAction::triggered, this, &UserItemDelegate::banUser);
+	connect(m_chatAction, &QAction::triggered, this, &UserItemDelegate::pmUser);
 
 	m_lockIcon = icon::fromTheme("object-locked").pixmap(16, 16);
 	m_muteIcon = icon::fromTheme("irc-unvoice").pixmap(16, 16);
@@ -51,6 +78,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 
 UserItemDelegate::~UserItemDelegate()
 {
+	delete m_opMenu;
 	delete m_userMenu;
 }
 
@@ -144,30 +172,27 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	}
 
 	// Draw the context menu buttons
-	// The context menu contains commands for operators only
-	if(m_canvas && m_canvas->aclFilter()->isLocalUserOperator()) {
-		const QRect buttonRect(
-			option.rect.right() - BUTTON_WIDTH - MARGIN,
-			option.rect.top() + MARGIN,
-			BUTTON_WIDTH,
-			option.rect.height() - 2*MARGIN
-			);
+	const QRect buttonRect(
+		option.rect.right() - BUTTON_WIDTH - MARGIN,
+		option.rect.top() + MARGIN,
+		BUTTON_WIDTH,
+		option.rect.height() - 2*MARGIN
+		);
 
-		painter->setPen(Qt::NoPen);
-		//if((option.state & QStyle::State_MouseOver))
-			painter->setBrush(option.palette.color(QPalette::WindowText));
-		//else
-			//painter->setBrush(option.palette.color(QPalette::AlternateBase));
+	painter->setPen(Qt::NoPen);
+	//if((option.state & QStyle::State_MouseOver))
+		painter->setBrush(option.palette.color(QPalette::WindowText));
+	//else
+		//painter->setBrush(option.palette.color(QPalette::AlternateBase));
 
-		const int buttonSize = buttonRect.height()/7;
-		for(int i=0;i<3;++i) {
-			painter->drawEllipse(QRect(
-				buttonRect.x() + (buttonRect.width()-buttonSize)/2,
-				buttonRect.y() + (1+i*2) * buttonSize,
-				buttonSize,
-				buttonSize
-			));
-		}
+	const int buttonSize = buttonRect.height()/7;
+	for(int i=0;i<3;++i) {
+		painter->drawEllipse(QRect(
+			buttonRect.x() + (buttonRect.width()-buttonSize)/2,
+			buttonRect.y() + (1+i*2) * buttonSize,
+			buttonSize,
+			buttonSize
+		));
 	}
 
 	painter->restore();
@@ -177,11 +202,18 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 {
 	Q_UNUSED(model);
 
-	if(event->type() == QEvent::MouseButtonPress && m_canvas && m_canvas->aclFilter()->isLocalUserOperator()) {
+	if(event->type() == QEvent::MouseButtonPress && m_canvas) {
 		const QMouseEvent *e = static_cast<const QMouseEvent*>(event);
 
 		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && e->x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
 			showContextMenu(index, e->globalPos());
+			return true;
+		}
+	}
+	else if(event->type() == QEvent::MouseButtonDblClick && m_canvas) {
+		const int userId = index.data(canvas::UserListModel::IdRole).toInt();
+		if(userId>0 && userId != m_canvas->localUserId()) {
+			emit requestPrivateChat(userId);
 			return true;
 		}
 	}
@@ -203,7 +235,13 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 	m_kickAction->setEnabled(enabled);
 	m_banAction->setEnabled(enabled);
 
-	m_userMenu->popup(pos);
+	// Can't chat with self
+	m_chatAction->setEnabled(m_menuId != m_canvas->localUserId());
+
+	if(m_canvas->aclFilter()->isLocalUserOperator())
+		m_opMenu->popup(pos);
+	else
+		m_userMenu->popup(pos);
 }
 
 void UserItemDelegate::toggleOpMode(bool op)
@@ -234,6 +272,11 @@ void UserItemDelegate::kickUser()
 void UserItemDelegate::banUser()
 {
 	emit opCommand(net::command::kick(m_menuId, true));
+}
+
+void UserItemDelegate::pmUser()
+{
+	emit requestPrivateChat(m_menuId);
 }
 
 }

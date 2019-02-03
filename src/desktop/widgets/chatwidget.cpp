@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,75 +34,150 @@
 #include <QDateTime>
 #include <QTextBlock>
 #include <QScrollBar>
+#include <QTabBar>
+#include <QIcon>
 
 namespace widgets {
 
+struct Chat {
+	QTextDocument *doc;
+	int lastAppendedId = 0;
+	qint64 lastMessageTs = 0;
+	int scrollPosition = 0;
+
+	Chat() : doc(nullptr) { }
+	explicit Chat(QObject *parent)
+		: doc(new QTextDocument(parent))
+	{
+		doc->setDefaultStyleSheet(
+			".sep { background: #4d4d4d }"
+			".notification { background: #232629 }"
+			".message, .notification {"
+				"color: #eff0f1;"
+				"margin: 6px 0 6px 0"
+			"}"
+			".shout { background: #34292c }"
+			".shout .tab { background: #da4453 }"
+			".action { font-style: italic }"
+			".username { font-weight: bold }"
+			".trusted { color: #27ae60 }"
+			".registered { color: #16a085 }"
+			".op { color: #f47750 }"
+			".mod { color: #ed1515 }"
+			".timestamp { color #4d4d4d }"
+			"a:link { color: #1d99f3 }"
+		);
+	}
+
+	void appendSeparator(QTextCursor &cursor);
+	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout);
+	void appendAction(const QString &usernameSpan, const QString &message);
+	void appendNotification(const QString &message);
+};
+
+struct ChatBox::Private {
+	Private(ChatBox *parent) : chatbox(parent) { }
+
+	ChatBox * const chatbox;
+	QTextBrowser *view = nullptr;
+	ChatLineEdit *myline = nullptr;
+	QLabel *pinned = nullptr;
+	QTabBar *tabs = nullptr;
+
+	QList<int> announcedUsers;
+	canvas::UserListModel *userlist = nullptr;
+	QHash<int, Chat> chats;
+
+	int myId = 0;
+	int currentChat = 0;
+
+	bool wasCollapsed = false;
+	bool preserveChat = true;
+
+	QString usernameSpan(int userId);
+
+	void scrollToEnd(int ifCurrentId) {
+		if(ifCurrentId == tabs->tabData(tabs->currentIndex()).toInt())
+			view->verticalScrollBar()->setValue(view->verticalScrollBar()->maximum());
+	}
+
+	inline Chat &publicChat()
+	{
+		Q_ASSERT(chats.contains(0));
+		return chats[0];
+	}
+
+	bool ensurePrivateChatExists(int userId, QObject *parent);
+
+	void updatePreserveModeUi();
+};
+
 ChatBox::ChatBox(QWidget *parent)
-	: QWidget(parent),
-	  m_userlist(nullptr),
-	  m_wasCollapsed(false),
-	  m_preserveChat(false),
-	  m_myId(1),
-	  m_lastAppendedId(0),
-	  m_lastMessageTs(0)
+	: QWidget(parent), d(new Private(this))
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	layout->setSpacing(0);
 	layout->setMargin(0);
 
-	m_pinned = new QLabel(this);
-	m_pinned->setVisible(false);
-	m_pinned->setOpenExternalLinks(true);
-	m_pinned->setStyleSheet(QStringLiteral(
+	d->tabs = new QTabBar(this);
+	d->tabs->addTab(QString());
+	d->tabs->setTabIcon(0, QIcon("builtin:chat.svg"));
+	d->tabs->setAutoHide(true);
+	d->tabs->setDocumentMode(true);
+	d->tabs->setTabsClosable(true);
+	d->tabs->setMovable(true);
+	d->tabs->setTabData(0, 0); // context id 0 is used for the public chat
+
+	// The public chat cannot be closed
+	if(d->tabs->tabButton(0, QTabBar::LeftSide)) {
+		d->tabs->tabButton(0, QTabBar::LeftSide)->deleteLater();
+		d->tabs->setTabButton(0, QTabBar::LeftSide, nullptr);
+	}
+	if(d->tabs->tabButton(0, QTabBar::RightSide)) {
+		d->tabs->tabButton(0, QTabBar::RightSide)->deleteLater();
+		d->tabs->setTabButton(0, QTabBar::RightSide, nullptr);
+	}
+
+	connect(d->tabs, &QTabBar::currentChanged, this, &ChatBox::chatTabSelected);
+	connect(d->tabs, &QTabBar::tabCloseRequested, this, &ChatBox::chatTabClosed);
+	layout->addWidget(d->tabs, 0);
+
+	d->pinned = new QLabel(this);
+	d->pinned->setVisible(false);
+	d->pinned->setOpenExternalLinks(true);
+	d->pinned->setStyleSheet(QStringLiteral(
 		"background: #232629;"
 		"border-bottom: 1px solid #2980b9;"
 		"color: #eff0f1;"
 		"padding: 3px;"
 		));
-	layout->addWidget(m_pinned, 0);
+	layout->addWidget(d->pinned, 0);
 
-	m_view = new QTextBrowser(this);
-	m_view->setOpenExternalLinks(true);
+	d->view = new QTextBrowser(this);
+	d->view->setOpenExternalLinks(true);
 
-	layout->addWidget(m_view, 1);
+	layout->addWidget(d->view, 1);
 
-	m_myline = new ChatLineEdit(this);
-	layout->addWidget(m_myline);
+	d->myline = new ChatLineEdit(this);
+	layout->addWidget(d->myline);
 
 	setLayout(layout);
 
-	connect(m_myline, &ChatLineEdit::returnPressed, this, &ChatBox::sendMessage);
+	connect(d->myline, &ChatLineEdit::returnPressed, this, &ChatBox::sendMessage);
 
-	m_view->document()->setDefaultStyleSheet(
-		".sep { background: #4d4d4d }"
-		".notification { background: #232629 }"
-		".message, .notification {"
-			"color: #eff0f1;"
-			"margin: 6px 0 6px 0"
-		"}"
-		".shout { background: #34292c }"
-		".shout .tab { background: #da4453 }"
-		".action { font-style: italic }"
-		".username { font-weight: bold }"
-		".trusted { color: #27ae60 }"
-		".registered { color: #16a085 }"
-		".op { color: #f47750 }"
-		".mod { color: #ed1515 }"
-		".timestamp { color #4d4d4d }"
-		"a:link { color: #1d99f3 }"
-	);
+	d->chats[0] = Chat(this);
+	d->view->setDocument(d->chats[0].doc);
 
 	setPreserveMode(false);
 }
 
-void ChatBox::setPreserveMode(bool preservechat)
+void ChatBox::Private::updatePreserveModeUi()
 {
+	const bool preserve = preserveChat && currentChat == 0;
+
 	QString placeholder, color;
-
-	m_preserveChat = preservechat;
-
-	if(preservechat) {
+	if(preserve) {
 		placeholder = tr("Chat (recorded)...");
 		color = "#da4453";
 	} else {
@@ -111,8 +186,12 @@ void ChatBox::setPreserveMode(bool preservechat)
 	}
 
 	// Set placeholder text and window style based on the mode
-	m_myline->setPlaceholderText(placeholder);
-	setStyleSheet(QStringLiteral(
+	myline->setPlaceholderText(placeholder);
+
+	chatbox->setStyleSheet(QStringLiteral(
+#ifdef Q_OS_OSX // QTBUG-61092 (close button not visible on macOS)
+		"QTabBar::close-button{ background-position: center; background-image: url(\"builtin:dock-close.svg\"); }"
+#endif
 		"QTextEdit, QLineEdit {"
 			"background-color: #313438;"
 			"border: none;"
@@ -124,29 +203,41 @@ void ChatBox::setPreserveMode(bool preservechat)
 		"}"
 		).arg(color)
 	);
+
+}
+void ChatBox::setPreserveMode(bool preservechat)
+{
+	d->preserveChat = preservechat;
+	d->updatePreserveModeUi();
 }
 
 void ChatBox::loggedIn(int myId)
 {
-	m_myId = myId;
-	m_announcedUsers.clear();
+	d->myId = myId;
+	d->announcedUsers.clear();
 }
 
 void ChatBox::focusInput()
 {
-	m_myline->setFocus();
+	d->myline->setFocus();
+}
+
+void ChatBox::setUserList(canvas::UserListModel *userlist)
+{
+	 d->userlist = userlist;
 }
 
 void ChatBox::clear()
 {
-	m_view->clear();
-	m_lastAppendedId = 0;
+	Chat &chat = d->chats[d->currentChat];
+	chat.doc->clear();
+	chat.lastAppendedId = 0;
 
 	// Re-add avatars
-	if(m_userlist) {
-		for(int i=0;i<m_userlist->rowCount();++i) {
-			const QModelIndex idx = m_userlist->index(i);
-			m_view->document()->addResource(
+	if(d->userlist) {
+		for(int i=0;i<d->userlist->rowCount();++i) {
+			const QModelIndex idx = d->userlist->index(i);
+			chat.doc->addResource(
 				QTextDocument::ImageResource,
 				QUrl(QStringLiteral("avatar://%1").arg(idx.data(canvas::UserListModel::IdRole).toInt())),
 				idx.data(canvas::UserListModel::AvatarRole)
@@ -154,9 +245,49 @@ void ChatBox::clear()
 		}
 	}
 }
-void ChatBox::scrollToEnd()
+
+bool ChatBox::Private::ensurePrivateChatExists(int userId, QObject *parent)
 {
-	m_view->verticalScrollBar()->setValue(m_view->verticalScrollBar()->maximum());
+	if(userId < 1 || userId > 255) {
+		qWarning("ChatBox::openPrivateChat(%d): Invalid user ID", userId);
+		return false;
+	}
+	if(userId == myId) {
+		qWarning("ChatBox::openPrivateChat(%d): this is me...", userId);
+		return false;
+	}
+
+	if(!chats.contains(userId)) {
+		chats[userId] = Chat(parent);
+		const int newTab = tabs->addTab(userlist->getUsername(userId));
+		tabs->setTabData(newTab, userId);
+
+		chats[userId].doc->addResource(
+			QTextDocument::ImageResource,
+			QUrl(QStringLiteral("avatar://%1").arg(userId)),
+			userlist->getUserById(userId).avatar
+		);
+		chats[userId].doc->addResource(
+			QTextDocument::ImageResource,
+			QUrl(QStringLiteral("avatar://%1").arg(myId)),
+			userlist->getUserById(myId).avatar
+		);
+	}
+
+	return true;
+}
+
+void ChatBox::openPrivateChat(int userId)
+{
+	if(!d->ensurePrivateChatExists(userId, this))
+		return;
+
+	for(int i=d->tabs->count()-1;i>=0;--i) {
+		if(d->tabs->tabData(i).toInt() == userId) {
+			d->tabs->setCurrentIndex(i);
+			break;
+		}
+	}
 }
 
 static QString timestamp()
@@ -166,9 +297,9 @@ static QString timestamp()
 	);
 }
 
-QString ChatBox::usernameSpan(int userId)
+QString ChatBox::Private::usernameSpan(int userId)
 {
-	const canvas::User user = m_userlist ? m_userlist->getUserById(userId) : canvas::User();
+	const canvas::User user = userlist ? userlist->getUserById(userId) : canvas::User();
 
 	QString userclass;
 	if(user.isMod)
@@ -186,26 +317,34 @@ QString ChatBox::usernameSpan(int userId)
 	);
 }
 
-void ChatBox::appendSeparator()
+void Chat::appendSeparator(QTextCursor &cursor)
 {
-	m_view->append(QStringLiteral(
+	cursor.insertHtml(QStringLiteral(
 		"<table height=1 width=\"100%\" class=sep><tr><td></td></tr></table>"
-	));
+		));
 }
 
-void ChatBox::appendMessage(int userId, const QString &message, bool shout)
+void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout)
 {
+	QTextCursor cursor(doc);
+	cursor.movePosition(QTextCursor::End);
+
 	const qint64 ts = QDateTime::currentMSecsSinceEpoch();
 
 	if(shout) {
-		m_lastAppendedId = -2;
+		lastAppendedId = -2;
 
-	} else if(m_lastAppendedId != userId) {
-		appendSeparator();
-		m_lastAppendedId = userId;
+	} else if(lastAppendedId != userId) {
+		appendSeparator(cursor);
+		lastAppendedId = userId;
 
-	} else if(ts - m_lastMessageTs < 60000) {
-		appendToLastMessage(message);
+	} else if(ts - lastMessageTs < 60000) {
+		QTextBlock b = doc->lastBlock().previous();
+		cursor.setPosition(b.position() + b.length() - 1);
+
+		cursor.insertHtml(QStringLiteral("<br>"));
+		cursor.insertHtml(message);
+
 		return;
 	}
 
@@ -213,7 +352,7 @@ void ChatBox::appendMessage(int userId, const QString &message, bool shout)
 	// http://doc.qt.io/qt-5/richtext-html-subset.html
 	// Embedding a whole browser engine just to render the chat widget would
 	// be excessive.
-	m_view->append(QStringLiteral(
+	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=\"message%1\">"
 		"<tr>"
 			"<td width=3 rowspan=2 class=tab></td>"
@@ -228,36 +367,25 @@ void ChatBox::appendMessage(int userId, const QString &message, bool shout)
 		).arg(
 			shout ? QStringLiteral(" shout") : QString(),
 			QString::number(userId),
-			usernameSpan(userId),
+			usernameSpan,
 			timestamp(),
 			htmlutils::newlineToBr(message)
 		)
 	);
-	m_lastMessageTs = ts;
-	scrollToEnd();
+	lastMessageTs = ts;
 }
 
-void ChatBox::appendToLastMessage(const QString &message)
+void Chat::appendAction(const QString &usernameSpan, const QString &message)
 {
-	QTextCursor cursor(m_view->document());
+	QTextCursor cursor(doc);
+	cursor.movePosition(QTextCursor::End);
 
-	QTextBlock b = m_view->document()->lastBlock().previous();
-
-	cursor.setPosition(b.position() + b.length() - 1);
-
-	cursor.insertHtml(QStringLiteral("<br>"));
-	cursor.insertHtml(message);
-	scrollToEnd();
-}
-
-void ChatBox::appendAction(int userId, const QString &message)
-{
-	if(m_lastAppendedId != -1) {
-		appendSeparator();
-		m_lastAppendedId = -1;
+	if(lastAppendedId != -1) {
+		appendSeparator(cursor);
+		lastAppendedId = -1;
 	}
 
-	m_view->append(QStringLiteral(
+	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=message>"
 		"<tr>"
 			"<td><span class=action>%1 %2</span></td>"
@@ -265,22 +393,24 @@ void ChatBox::appendAction(int userId, const QString &message)
 		"</tr>"
 		"</table>"
 		).arg(
-			usernameSpan(userId),
+			usernameSpan,
 			message,
 			timestamp()
 		)
 	);
-	scrollToEnd();
 }
 
-void ChatBox::appendNotification(const QString &message)
+void Chat::appendNotification(const QString &message)
 {
-	if(m_lastAppendedId != 0) {
-		appendSeparator();
-		m_lastAppendedId = 0;
+	QTextCursor cursor(doc);
+	cursor.movePosition(QTextCursor::End);
+
+	if(lastAppendedId != 0) {
+		appendSeparator(cursor);
+		lastAppendedId = 0;
 	}
 
-	m_view->append(QStringLiteral(
+	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=notification><tr>"
 			"<td>%1</td>"
 			"<td align=right class=timestamp>%2</td>"
@@ -290,94 +420,161 @@ void ChatBox::appendNotification(const QString &message)
 			timestamp()
 		)
 	);
-	scrollToEnd();
 }
 
 void ChatBox::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(name);
 
-	if(m_userlist) {
-		m_view->document()->addResource(
+	if(d->userlist) {
+		d->chats[0].doc->addResource(
 			QTextDocument::ImageResource,
 			QUrl(QStringLiteral("avatar://%1").arg(id)),
-			m_userlist->getUserById(id).avatar
+			d->userlist->getUserById(id).avatar
 		);
+		if(d->chats.contains(id)) {
+			d->chats[id].doc->addResource(
+				QTextDocument::ImageResource,
+				QUrl(QStringLiteral("avatar://%1").arg(id)),
+				d->userlist->getUserById(id).avatar
+			);
+		}
+
 	} else {
 		qWarning("User #%d logged in, but userlist object not assigned to ChatWidget!", id);
 	}
 
 	// The server resends UserJoin messages during session reset.
 	// We don't need to see the join messages again.
-	if(m_announcedUsers.contains(id))
+	if(d->announcedUsers.contains(id))
 		return;
 
-	m_announcedUsers << id;
-	appendNotification(tr("%1 joined the session").arg(usernameSpan(id)));
+	d->announcedUsers << id;
+	const QString msg = tr("%1 joined the session").arg(d->usernameSpan(id));
+	d->publicChat().appendNotification(msg);
+	d->scrollToEnd(0);
+
+	if(d->chats.contains(id)) {
+		d->chats[id].appendNotification(msg);
+		d->scrollToEnd(id);
+	}
+
 	notification::playSound(notification::Event::LOGIN);
 }
 
 void ChatBox::userParted(int id)
 {
-	appendNotification(tr("%1 left the session").arg(usernameSpan(id)));
+	QString msg = tr("%1 left the session").arg(d->usernameSpan(id));
+	d->publicChat().appendNotification(msg);
+	d->scrollToEnd(0);
+
+	if(d->chats.contains(id)) {
+		d->chats[id].appendNotification(msg);
+		d->scrollToEnd(id);
+	}
+
+	d->announcedUsers.removeAll(id);
+
 	notification::playSound(notification::Event::LOGOUT);
-	m_announcedUsers.removeAll(id);
 }
 
 void ChatBox::kicked(const QString &kickedBy)
 {
-	appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
+	d->publicChat().appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
+	d->scrollToEnd(0);
 }
 
 void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 {
-	if(msg->type() != protocol::MSG_CHAT) {
-		qWarning("ChatBox::receiveMessage: message type (%d) is not MSG_CHAT!", msg->type());
+	int chatId = 0;
+
+	if(msg->type() == protocol::MSG_CHAT) {
+		const protocol::Chat &chat = msg.cast<protocol::Chat>();
+		const QString safetext = chat.message().toHtmlEscaped();
+
+		if(chat.isPin()) {
+			if(safetext == "-") {
+				// note: the protocol doesn't allow empty chat messages,
+				// which is why we have to use a special value like this
+				// to clear the pinning.
+				d->pinned->setVisible(false);
+				d->pinned->setText(QString());
+			} else {
+				d->pinned->setText(htmlutils::linkify(safetext, QStringLiteral("style=\"color:#3daae9\"")));
+				d->pinned->setVisible(true);
+			}
+
+		} else if(chat.isAction()) {
+			d->publicChat().appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+
+		} else {
+			d->publicChat().appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
+		}
+
+	} else if(msg->type() == protocol::MSG_PRIVATE_CHAT) {
+		const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
+		const QString safetext = chat.message().toHtmlEscaped();
+
+		if(chat.target() != d->myId && chat.contextId() != d->myId) {
+			qWarning("ChatBox::recivePrivateMessage: message was targeted to user %d, but our ID is %d", chat.target(), d->myId);
+			return;
+		}
+
+		// The server echoes back the messages we send
+		chatId = chat.target() == d->myId ? chat.contextId() : chat.target();
+
+		if(!d->ensurePrivateChatExists(chatId, this))
+			return;
+
+		Chat &c = d->chats[chatId];
+
+		if(chat.isAction()) {
+			c.appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+
+		} else {
+			c.appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
+		}
+
+	} else {
+		qWarning("ChatBox::receiveMessage: got wrong message type %s!", qPrintable(msg->messageName()));
 		return;
 	}
 
-	const protocol::Chat &chat = msg.cast<protocol::Chat>();
-	const QString safetext = chat.message().toHtmlEscaped();
-
-	if(chat.isPin()) {
-		if(safetext == "-") {
-			// note: the protocol doesn't allow empty chat messages,
-			// which is why we have to use a special value like this
-			// to clear the pinning.
-			m_pinned->setVisible(false);
-			m_pinned->setText(QString());
-		} else {
-			m_pinned->setText(htmlutils::linkify(safetext, QStringLiteral("style=\"color:#3daae9\"")));
-			m_pinned->setVisible(true);
+	if(chatId != d->currentChat) {
+		for(int i=0;i<d->tabs->count();++i) {
+			if(d->tabs->tabData(i).toInt() == chatId) {
+				if(chatId == 0)
+					d->tabs->setTabIcon(i, QIcon("builtin:chat-alert.svg"));
+				else
+					d->tabs->setTabTextColor(i, QColor(218, 68, 83));
+				break;
+			}
 		}
-
-	} else if(chat.isAction()) {
-		appendAction(msg->contextId(), htmlutils::linkify(safetext));
-
-	} else {
-		appendMessage(msg->contextId(), htmlutils::linkify(safetext), chat.isShout());
 	}
 
-	if(!m_myline->hasFocus())
+	if(!d->myline->hasFocus() || chatId != d->currentChat)
 		notification::playSound(notification::Event::CHAT);
-
+	d->scrollToEnd(chatId);
 }
 
 void ChatBox::receiveMarker(int id, const QString &message)
 {
-	appendNotification(QStringLiteral(
+	d->publicChat().appendNotification(QStringLiteral(
 		"<img src=\"theme:flag-red.svg\"> %1: %2"
 		).arg(
-			usernameSpan(id),
+			d->usernameSpan(id),
 			htmlutils::linkify(message.toHtmlEscaped())
 		)
 	);
+
+	d->scrollToEnd(0);
 }
 
 void ChatBox::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);
-	appendNotification(message.toHtmlEscaped());
+	d->publicChat().appendNotification(message.toHtmlEscaped());
+	d->scrollToEnd(0);
 }
 
 void ChatBox::sendMessage(const QString &msg)
@@ -396,29 +593,36 @@ void ChatBox::sendMessage(const QString &msg)
 			clear();
 			return;
 
-		} else if(cmd.at(0)=='!') {
-			emit message(protocol::Chat::announce(m_myId, msg.mid(2)));
+		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
+			emit message(protocol::Chat::announce(d->myId, msg.mid(2)));
 			return;
 
 		} else if(cmd == "me") {
-			if(!params.isEmpty())
-				emit message(protocol::Chat::action(m_myId, params, !m_preserveChat));
+			if(!params.isEmpty()) {
+				if(d->currentChat == 0)
+					emit message(protocol::Chat::action(d->myId, params, !d->preserveChat));
+				else
+					emit message(protocol::PrivateChat::action(d->myId, d->currentChat, params));
+			}
 			return;
 
-		} else if(cmd == "pin") {
+		} else if(cmd == "pin" && d->currentChat == 0) {
 			if(!params.isEmpty())
-				emit message(protocol::Chat::pin(m_myId, params));
+				emit message(protocol::Chat::pin(d->myId, params));
 			return;
 
-		} else if(cmd == "unpin") {
-			emit message(protocol::Chat::pin(m_myId, QStringLiteral("-")));
+		} else if(cmd == "unpin" && d->currentChat == 0) {
+			emit message(protocol::Chat::pin(d->myId, QStringLiteral("-")));
 			return;
 
 		} else if(cmd == "roll") {
 			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6") : params);
-			if(result.number>0)
-				emit message(protocol::Chat::action(m_myId, "rolls " + result.toString(), !m_preserveChat));
-			else
+			if(result.number>0) {
+				if(d->currentChat == 0)
+					emit message(protocol::Chat::action(d->myId, "rolls " + result.toString(), !d->preserveChat));
+				else
+					emit message(protocol::PrivateChat::action(d->myId, d->currentChat, "rolls " + result.toString()));
+			} else
 				systemMessage(tr("Invalid dice roll description"));
 			return;
 
@@ -440,18 +644,54 @@ void ChatBox::sendMessage(const QString &msg)
 	}
 
 	// A normal chat message
-	emit message(protocol::Chat::regular(m_myId, msg, !m_preserveChat));
+	if(d->currentChat == 0)
+		emit message(protocol::Chat::regular(d->myId, msg, !d->preserveChat));
+	else
+		emit message(protocol::PrivateChat::regular(d->myId, d->currentChat, msg));
+}
+
+void ChatBox::chatTabSelected(int index)
+{
+	d->chats[d->currentChat].scrollPosition = d->view->verticalScrollBar()->value();
+
+	const int id = d->tabs->tabData(index).toInt();
+	Q_ASSERT(d->chats.contains(id));
+	d->view->setDocument(d->chats[id].doc);
+	d->view->verticalScrollBar()->setValue(d->chats[id].scrollPosition);
+
+	if(id == 0)
+		d->tabs->setTabIcon(index, QIcon("builtin:chat.svg"));
+	else
+		d->tabs->setTabTextColor(index, QColor());
+
+	d->currentChat = d->tabs->tabData(index).toInt();
+	d->updatePreserveModeUi();
+}
+
+void ChatBox::chatTabClosed(int index)
+{
+	const int id = d->tabs->tabData(index).toInt();
+	Q_ASSERT(d->chats.contains(id));
+	if(id == 0) {
+		// Can't close the public chat
+		return;
+	}
+
+	d->tabs->removeTab(index);
+
+	delete d->chats[id].doc;
+	d->chats.remove(id);
 }
 
 void ChatBox::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
 	if(event->size().height() == 0) {
-		if(!m_wasCollapsed)
+		if(!d->wasCollapsed)
 			emit expanded(false);
-		m_wasCollapsed = true;
-	} else if(m_wasCollapsed) {
-		m_wasCollapsed = false;
+		d->wasCollapsed = true;
+	} else if(d->wasCollapsed) {
+		d->wasCollapsed = false;
 		emit expanded(true);
 	}
 }

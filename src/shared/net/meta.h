@@ -235,6 +235,55 @@ private:
 };
 
 /**
+ * @brief A private chat message
+ *
+ * Note. This message type was added in protocol 4.21.2 (v. 2.1.0). For backward compatiblity,
+ * the server will not send any private messages from itself; it will only relay them from
+ * other users.
+ *
+ * Private messages always bypass the session history.
+ */
+class PrivateChat : public Message {
+public:
+	// Opaque flags: the server doesn't know anything about these
+	static const uint8_t FLAG_ACTION = 0x02; // this is an "action message" (like /me in IRC)
+
+	PrivateChat(uint8_t ctx, uint8_t target, uint8_t oflags, const QByteArray &msg) : Message(MSG_PRIVATE_CHAT, ctx), m_target(target), m_oflags(oflags), m_msg(msg) {}
+	PrivateChat(uint8_t ctx, uint8_t target, uint8_t oflags, const QString &msg) : PrivateChat(ctx, target, oflags, msg.toUtf8()) {}
+
+	//! Construct a regular chat message
+	static MessagePtr regular(uint8_t ctx, uint8_t target, const QString &message) { return MessagePtr(new PrivateChat(ctx, target, 0, message.toUtf8())); }
+
+	//! Construct an action type message
+	static MessagePtr action(uint8_t ctx, uint8_t target, const QString &message) { return MessagePtr(new Chat(ctx, target, FLAG_ACTION, message.toUtf8())); }
+
+	static PrivateChat *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static PrivateChat *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	//! Recipient ID
+	uint8_t target() const { return m_target; }
+
+	uint8_t opaqueFlags() const { return m_oflags; }
+
+	QString message() const { return QString::fromUtf8(m_msg); }
+
+	//! Is this an action message? (client side only)
+	bool isAction() const { return m_oflags & FLAG_ACTION; }
+
+	QString messageName() const override { return QStringLiteral("pm"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	Kwargs kwargs() const override;
+
+private:
+	uint8_t m_target;
+	uint8_t m_oflags;
+	QByteArray m_msg;
+};
+
+/**
  * @brief Soft reset point marker
  *
  * This message marks the point in the session history where soft reset occurs.

@@ -361,6 +361,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	connect(m_useritemdelegate, &widgets::UserItemDelegate::opCommand, m_doc->client(), &net::Client::sendMessage);
+	connect(m_useritemdelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatbox, &widgets::ChatBox::openPrivateChat);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,6 @@
 #define CHATWIDGET_H
 
 #include <QWidget>
-#include <QHash>
-
-class QTextBrowser;
-class ChatLineEdit;
-class QLabel;
 
 namespace protocol { class MessagePtr; }
 namespace canvas { class UserListModel; }
@@ -45,7 +40,7 @@ public:
 	//! Focus the text input widget
 	void focusInput();
 
-	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
+	void setUserList(canvas::UserListModel *userlist);
 
 public slots:
 	/**
@@ -76,10 +71,13 @@ public slots:
 	//! Initialize the chat box for a new server
 	void loggedIn(int myId);
 
-	void scrollToEnd();
+	//! Open a private chat view with this user
+	void openPrivateChat(int userId);
 
 private slots:
 	void sendMessage(const QString &msg);
+	void chatTabSelected(int index);
+	void chatTabClosed(int index);
 
 signals:
 	void message(const protocol::MessagePtr &msg);
@@ -89,26 +87,8 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
-	QTextBrowser *m_view;
-	ChatLineEdit *m_myline;
-	QLabel *m_pinned;
-
-	QList<int> m_announcedUsers;
-	canvas::UserListModel *m_userlist;
-
-	bool m_wasCollapsed;
-	bool m_preserveChat;
-	int m_myId;
-
-	int m_lastAppendedId;
-	qint64 m_lastMessageTs;
-
-	void appendSeparator();
-	void appendMessage(int userId, const QString &message, bool shout);
-	void appendToLastMessage(const QString &message);
-	void appendAction(int userId, const QString &message);
-	void appendNotification(const QString &message);
-	QString usernameSpan(int userId);
+	struct Private;
+	Private *d;
 };
 
 }

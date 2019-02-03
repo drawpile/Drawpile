@@ -409,6 +409,17 @@ void Client::handleSessionMessage(MessagePtr msg)
 			}
 			break;
 		}
+		case protocol::MSG_PRIVATE_CHAT: {
+			const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
+			if(chat.target()>0) {
+				Client *c = d->session->getClientById(chat.target());
+				if(c) {
+					this->sendDirectMessage(msg);
+					c->sendDirectMessage(msg);
+				}
+			}
+			return;
+		}
 		case protocol::MSG_TRUSTED_USERS: {
 			if(!isOperator()) {
 				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));

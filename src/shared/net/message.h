@@ -44,6 +44,7 @@ enum MessageType {
 	MSG_CHAT,
 	MSG_TRUSTED_USERS,
 	MSG_SOFTRESET,
+	MSG_PRIVATE_CHAT,
 
 	// Meta messages (opaque)
 	MSG_INTERVAL=64,

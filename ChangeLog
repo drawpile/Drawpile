@@ -25,6 +25,7 @@
  * Added template export feature
  * Added square pixel brush
  * Replaced Ffmpeg video export with native WebM export
+ * Added private messaging feature
 
 2018-08-14 Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature

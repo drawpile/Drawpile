@@ -112,6 +112,7 @@ Protocol stability promises:
  * Replaced SessionACL message with FeatureAccessLevels message
  * Added sublayer field to LayerAttributes command
  * Added flags field and "censored" flag to LayerAttributes command
+ * Added PrivateChat transparent meta message
 
 ### Protocol dp:4.20.1 (2.0.9)
 

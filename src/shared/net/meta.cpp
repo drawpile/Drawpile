@@ -220,5 +220,47 @@ Chat *Chat::fromText(uint8_t ctx, const Kwargs &kwargs)
 		);
 }
 
+PrivateChat *PrivateChat::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len<3)
+		return nullptr;
+	return new PrivateChat(ctx, *(data+0), *(data+1), QByteArray((const char*)data+2, len-2));
+}
+
+int PrivateChat::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = target();
+	*(ptr++) = opaqueFlags();
+	memcpy(ptr, m_msg.constData(), m_msg.length());
+	ptr += m_msg.length();
+	return ptr - data;
+}
+
+int PrivateChat::payloadLength() const
+{
+	return 2 + m_msg.length();
+}
+
+Kwargs PrivateChat::kwargs() const
+{
+	Kwargs kw;
+	kw["target"] = QString::number(target());
+	kw["message"] = message();
+	if(isAction()) kw["flags"] = "action";
+	return kw;
+}
+
+PrivateChat *PrivateChat::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+	return new PrivateChat(
+		ctx,
+		kwargs["target"].toInt(),
+		(flags.contains("action") ? FLAG_ACTION : 0),
+		kwargs["message"]
+		);
+}
+
 }
 

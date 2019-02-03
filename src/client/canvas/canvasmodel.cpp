@@ -141,6 +141,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		case MSG_CHAT:
 			metaChatMessage(cmd);
 			break;
+		case MSG_PRIVATE_CHAT:
+			emit chatMessageReceived(cmd);
+			break;
 		case MSG_USER_JOIN:
 			metaUserJoin(cmd.cast<UserJoin>());
 			break;
