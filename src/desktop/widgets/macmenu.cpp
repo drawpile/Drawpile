@@ -169,8 +169,7 @@ void MacMenu::joinSession()
 			dlg->rememberSettings();
 
 			MainWindow *mw = new MainWindow;
-			// TODO set recordSession somewhere. Settings dialog?
-			mw->joinSession(url, false);
+			mw->joinSession(url, dlg->autoRecordFilename());
 		}
 		dlg->deleteLater();
 	});
