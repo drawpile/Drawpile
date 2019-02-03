@@ -2,6 +2,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)
+find_package(Vpx)
 
 include_directories("../client")
 
@@ -116,6 +117,10 @@ endif()
 
 if(KF5DNSSD_FOUND) 
 	add_definitions(-DHAVE_DNSSD)
+endif()
+
+if(LIBVPX_FOUND)
+	add_definitions(-DHAVE_WEBM)
 endif()
 
 set (

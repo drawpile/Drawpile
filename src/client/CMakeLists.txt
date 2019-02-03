@@ -1,6 +1,7 @@
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
+find_package(Vpx)
 
 set (
 	SOURCES
@@ -87,9 +88,10 @@ set (
 	export/animation.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
-	export/ffmpegexporter.cpp
 	parentalcontrols/parentalcontrols.cpp
 )
+
+include_directories(bundled)
 
 if(WIN32)
 	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_win.cpp)
@@ -115,6 +117,16 @@ if(KF5DNSSD_FOUND)
 	)
 	add_definitions(-DHAVE_DNSSD)
 endif()
+
+if(LIBVPX_FOUND)
+	set(
+		SOURCES ${SOURCES}
+		bundled/mkvmuxer/mkvmuxer.cc
+		bundled/mkvmuxer/mkvmuxerutil.cc
+		export/webmexporter.cpp
+		export/webmencoder.cpp
+	)
+endif(LIBVPX_FOUND)
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
@@ -152,6 +164,10 @@ if(LIBMINIUPNPC_FOUND)
 		target_link_libraries (${DPCLIENTLIB} iphlpapi)
 	endif ( WIN32 )
 endif()
+
+if(LIBVPX_FOUND)
+	target_link_libraries(${DPCLIENTLIB} ${LIBVPX_LIBRARIES})
+endif(LIBVPX_FOUND)
 
 if ( WIN32 )
 	target_link_libraries (${DPCLIENTLIB} ws2_32)

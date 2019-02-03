@@ -488,39 +488,14 @@
               </item>
              </layout>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Ffmpeg path:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLineEdit" name="ffmpegpath"/>
-              </item>
-              <item>
-               <widget class="QToolButton" name="pickFfmpeg">
-                <property name="icon">
-                 <iconset theme="document-open">
-                  <normaloff>theme:document-open.svg</normaloff>theme:document-open.svg</iconset>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="8" column="0">
+            <item row="7" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
                <string>Onionskin layers:</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="7" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
                <widget class="QSpinBox" name="onionskinsBelow">
@@ -554,7 +529,7 @@
               </item>
              </layout>
             </item>
-            <item row="9" column="1">
+            <item row="8" column="1">
              <widget class="QCheckBox" name="onionskinTint">
               <property name="text">
                <string>Tint layers</string>

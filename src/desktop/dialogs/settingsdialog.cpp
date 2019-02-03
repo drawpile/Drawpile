@@ -22,7 +22,6 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
-#include "export/ffmpegexporter.h" // for setting ffmpeg path
 #include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
 #include "utils/customshortcutmodel.h"
@@ -82,17 +81,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
 	m_ui = new Ui_SettingsDialog;
 	m_ui->setupUi(this);
-
-	connect(m_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), m_ui->ffmpegpath->text(),
-#ifdef Q_OS_WIN
-			tr("Executables (%1)").arg("*.exe") + ";;" +
-#endif
-			QApplication::tr("All files (*)")
-		);
-		if(!path.isEmpty())
-			m_ui->ffmpegpath->setText(path);
-	});
 
 	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
 		if(val>0)
@@ -300,7 +288,6 @@ void SettingsDialog::restoreSettings()
 	m_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
 	m_ui->recordtimestamp->setChecked(cfg.value("recordtimestamp", false).toBool());
 	m_ui->timestampInterval->setValue(cfg.value("timestampinterval", 15).toInt());
-	m_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
@@ -392,7 +379,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("minimumpause", m_ui->minimumpause->value());
 	cfg.setValue("recordtimestamp", m_ui->recordtimestamp->isChecked());
 	cfg.setValue("timestampinterval", m_ui->timestampInterval->value());
-	FfmpegExporter::setFfmpegPath(m_ui->ffmpegpath->text().trimmed());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");

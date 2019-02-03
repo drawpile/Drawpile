@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 #include "videoexportdialog.h"
 #include "export/imageseriesexporter.h"
-#include "export/ffmpegexporter.h"
+#include "export/webmexporter.h"
 #include "export/gifexporter.h"
 
 #include "widgets/colorbutton.h"
@@ -68,6 +68,16 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	}
 #endif
 
+#ifndef HAVE_WEBM
+	// Disable webm format choice if libvpx was not linked
+	{
+		QStandardItemModel *model = qobject_cast<QStandardItemModel*>(_ui->exportFormatChoice->model());
+		Q_ASSERT(model);
+		QStandardItem *item = model->item(1);
+		item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+	}
+#endif
+
 	QStandardItemModel *sizes = new QStandardItemModel(this);
 	sizes->appendRow(sizeItem(tr("Original"), QVariant(false)));
 	sizes->appendRow(sizeItem(tr("Custom:"), QVariant(true)));
@@ -89,24 +99,10 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 		_ui->sizeXlabel->setVisible(e);
 	});
 
-	connect(_ui->videoFormat, SIGNAL(activated(QString)), this, SLOT(selectContainerFormat(QString)));
-
-	connect(_ui->pickSoundtrack, &QToolButton::clicked, [this]() {
-		QString file = QFileDialog::getOpenFileName(this, tr("Select soundtrack"), _lastpath,
-			tr("Sound files (%1)").arg("*.wav *.mp3 *.aac *.ogg *.flac") + ";;" +
-			QApplication::tr("All files (*)")
-		);
-		if(!file.isEmpty())
-			_ui->soundtrack->setText(file);
-	});
-
 	// Fill file format box
 	for(const QByteArray &fmt : QImageWriter::supportedImageFormats())
 		_ui->imageFormatChoice->addItem(fmt);
 	_ui->imageFormatChoice->setCurrentText("png");
-
-	if(FfmpegExporter::isFfmpegAvailable())
-		_ui->noFfmpegWarning->setHidden(true);
 
 	// Load settings
 	QSettings cfg;
@@ -151,19 +147,6 @@ void VideoExportDialog::showAnimationSettings(int layercount)
 	_ui->animOpts->setVisible(true);
 }
 
-void VideoExportDialog::selectContainerFormat(const QString &fmt)
-{
-	if(fmt == "WebM") {
-		_ui->videoCodec->setCurrentText("VP8");
-		_ui->audioCodec->setCurrentText("Vorbis");
-		_ui->videoCodec->setEnabled(false);
-		_ui->audioCodec->setEnabled(false);
-	} else {
-		_ui->videoCodec->setEnabled(true);
-		_ui->audioCodec->setEnabled(true);
-	}
-}
-
 VideoExporter *VideoExportDialog::getExporter()
 {
 	if(result() != QDialog::Accepted)
@@ -173,7 +156,7 @@ VideoExporter *VideoExportDialog::getExporter()
 	VideoExporter *ve = 0;
 	switch(_ui->exportFormatChoice->currentIndex()) {
 	case 0: ve = getImageSeriesExporter(); break;
-	case 1: ve = getFfmpegExporter(); break;
+	case 1: ve = getWebmExporter(); break;
 	case 2: ve = getGifExporter(); break;
 	}
 
@@ -218,42 +201,27 @@ VideoExporter *VideoExportDialog::getImageSeriesExporter()
 	return exporter;
 }
 
-VideoExporter *VideoExportDialog::getFfmpegExporter()
+VideoExporter *VideoExportDialog::getWebmExporter()
 {
-	// Select output file name. Constrain file extension based on selected type
-	const QString format = _ui->videoFormat->currentText();
-	QString formatext;
-	if(format == "AVI")
-		formatext = ".avi";
-	else if(format == "Matroska")
-		formatext = ".mkv";
-	else if(format == "WebM")
-		formatext = ".webm";
-	else {
-		qWarning() << "Unhandled video format:" << format;
-		Q_ASSERT(false);
-		formatext = ".*";
-	}
-
-	QString outfile = QFileDialog::getSaveFileName(this, tr("Export video"), _lastpath, tr("%1 files (*%2)").arg(format).arg(formatext));
+#ifdef HAVE_WEBM
+	QString outfile = QFileDialog::getSaveFileName(this, tr("Export video"), _lastpath, tr("%1 files (*%2)").arg("WebM").arg("*.webm"));
 	if(outfile.isEmpty())
-		return 0;
+		return nullptr;
 
-	if(!outfile.endsWith(formatext, Qt::CaseInsensitive))
-		outfile.append(formatext);
+	if(!outfile.endsWith(".webm", Qt::CaseInsensitive))
+		outfile.append(".webm");
 
 	_lastpath = QFileInfo(outfile).dir().absolutePath();
 
 	// Set exporter settings
-	FfmpegExporter *exporter = new FfmpegExporter;
+	WebmExporter *exporter = new WebmExporter;
 	exporter->setFilename(outfile);
-	exporter->setSoundtrack(_ui->soundtrack->text());
-	exporter->setFormat(_ui->videoFormat->currentText());
-	exporter->setVideoCodec(_ui->videoCodec->currentText());
-	exporter->setAudioCodec(_ui->audioCodec->currentIndex() ? _ui->audioCodec->currentText() : QString());
-	exporter->setQuality(_ui->videoquality->currentIndex());
 
 	return exporter;
+#else
+	qWarning("Trying to export a WebM without libvpx!");
+	return nullptr;
+#endif
 }
 
 VideoExporter *VideoExportDialog::getGifExporter()

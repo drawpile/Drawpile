@@ -52,12 +52,9 @@ public:
 	//! Get the ending layer (animation)
 	int getLastLayer() const;
 
-private slots:
-	void selectContainerFormat(const QString &fmt);
-
 private:
 	VideoExporter *getImageSeriesExporter();
-	VideoExporter *getFfmpegExporter();
+	VideoExporter *getWebmExporter();
 	VideoExporter *getGifExporter();
 
 	Ui_VideoExport *_ui;

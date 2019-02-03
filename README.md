@@ -30,6 +30,7 @@ Client specific dependencies:
 * KF5 KDNSSD (optional: local server discovery with Zeroconf)
 * GIFLIB (optional: animated GIF export)
 * MiniUPnP (optional: automatic port forwarding setup)
+* LibVPX (optional: WebM video export)
 
 Server specific dependencies (you can also take a look at [Docker build](server/docker/Dockerfile) script):
 
