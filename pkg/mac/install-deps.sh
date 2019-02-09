@@ -2,20 +2,90 @@
 
 set -e
 
+### VERSIONS TO DOWNLOAD
 GIFLIB_URL=https://sourceforge.net/projects/giflib/files/giflib-5.1.4.tar.gz/download
 MINIUPNPC_URL=http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.1.tar.gz
-LIBSODIUM_URL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.17.tar.gz
+LIBVPX_URL=https://github.com/webmproject/libvpx/archive/v1.8.0.zip
 ECM_URL=https://download.kde.org/stable/frameworks/5.54/extra-cmake-modules-5.54.0.tar.xz
 KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.54/karchive-5.54.0.tar.xz
 KDNSSD_URL=https://download.kde.org/stable/frameworks/5.54/kdnssd-5.54.0.tar.xz
 
+### Build flags
+export CFLAGS=-mmacosx-version-min=10.7
+export CXXFLAGS=-mmacosx-version-min=10.7
+
+### GENERIC FUNCTIONS
+function download_package() {
+	URL="$1"
+	OUT="$2"
+
+	if [ -f "$OUT" ]
+	then
+		echo "$OUT already downloaded. Skipping..."
+	else
+		curl -L "$URL" -o "$OUT"
+	fi
+}
+
+function install_package() {
+	if [ -d $1-* ]; then
+		echo "Build directory for $1 already exists. Skipping..."
+		return
+	fi
+	if [ -f "$1.zip" ]; then
+		unzip -q "$1.zip"
+	elif [ -f "$1.tar.gz" ]; then
+		tar xfz "$1.tar.gz"
+	elif [ -f "$1.tar.xz" ]; then
+		tar xfJ "$1.tar.xz"
+	else
+		echo "BUG: Unhandled package archive format $1"
+		exit 1
+	fi
+	pushd $1-*
+	build_$2
+	popd
+}
+
+### PACKAGE SPECIFIC BUILD SCRIPTS
+function build_autoconf() {
+	./configure "--prefix=$QTPATH"
+	make
+	make install
+}
+
+function build_autoconf_libvpx() {
+	./configure "--prefix=$QTPATH" --disable-vp8 --disable-vp9-decoder
+	make
+	make install
+}
+
+function build_justmakeinstall() {
+	INSTALLPREFIX="$QTPATH" make install
+}
+
+function build_cmake() {
+	mkdir build
+	cd build
+	cmake .. "-DCMAKE_PREFIX_PATH=$QTPATH" "-DCMAKE_INSTALL_PREFIX=$QTPATH"
+	make
+	make install
+}
+
+### MAIN SCRIPT STARTS HERE
 if [ -z "$QTPATH" ]
 then
 	echo "QTPATH environment variable not set"
 	exit 1
 fi
 
-echo "Dependencies will be downloaded to $(pwd)/deps and installed to QTPATH."
+if [ ! -d "$QTPATH" ]
+then
+	echo "$QTPATH is not a directory!"
+	exit 1
+fi
+
+echo "Dependencies will be downloaded to $(pwd)/deps and installed to $QTPATH."
 echo "Write 'ok' to continue"
 
 read confirmation
@@ -26,56 +96,25 @@ then
 	exit 0
 fi
 
-#mkdir deps
+mkdir -p deps
 cd deps
 
 # Download dependencies
-curl -L "$GIFLIB_URL" -o giflib.tar.gz
-curl -L "$MINIUPNPC_URL" -o miniupnpc.tar.gz
-curl -L "$LIBSODIUM_URL" -o libsodium.tar.gz
-curl -L "$ECM_URL" -o ecm.tar.xz
-curl -L "$KARCHIVE_URL" -o karchive.tar.xz
-curl -L "$KDNSSD_URL" -o kdnssd.tar.xz
+download_package "$GIFLIB_URL" giflib.tar.gz
+download_package "$MINIUPNPC_URL" miniupnpc.tar.gz
+download_package "$LIBVPX_URL" libvpx.zip
+download_package "$ECM_URL" extra-cmake-modules.tar.xz
+download_package "$KARCHIVE_URL" karchive.tar.xz
+download_package "$KDNSSD_URL" kdnssd.tar.xz
 
-# Install extra-cmake-modules
-tar xf ecm.tar.xz
-cd extra-cmake-modules*
-cmake "-DCMAKE_INSTALL_PREFIX=$QTPATH"
-make
-make install
-cd ..
+# Make sure we have the right versions (and they haven't been tampered with)
+shasum -a 256 -c ../deps.sha256
 
-# Install karchive
-tar xf karchive.tar.xz
-cd karchive-*
-mkdir build
-cd build
-cmake .. "-DCMAKE_PREFIX_PATH=$QTPATH" "-DCMAKE_INSTALL_PREFIX=$QTPATH"
-make
-make install
-cd ../..
-
-# Install KDNSSD
-tar xf kdnssd.tar.xz
-cd kdnssd-*
-mkdir build
-cd build
-cmake .. "-DCMAKE_PREFIX_PATH=$QTPATH" "-DCMAKE_INSTALL_PREFIX=$QTPATH"
-make
-make install
-cd ../..
-
-# Install GIFLIB
-tar xf giflib.tar.gz
-cd giflib-*
-./configure "--prefix=$QTPATH"
-make
-make install
-cd ..
-
-# Install miniupnpc
-tar xf miniupnpc.tar.gz
-cd miniupnpc-*
-INSTALLPREFIX="$QTPATH" make install
-
+# Build and install
+install_package giflib autoconf
+install_package miniupnpc justmakeinstall
+install_package libvpx autoconf_libvpx
+install_package extra-cmake-modules cmake
+install_package karchive cmake
+install_package kdnssd cmake
 
