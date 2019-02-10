@@ -19,6 +19,7 @@
 using docks::NavigatorView;
 #include "ui_navigator.h"
 #include "docks/utils.h"
+#include "scene/canvasscene.h"
 
 #include <QMouseEvent>
 #include <QWindow>
@@ -109,7 +110,7 @@ void NavigatorView::rescale()
 {
 	resetTransform();
 
-	const qreal padding = 300; // ignore scene padding
+	const qreal padding = drawingboard::CanvasScene::MARGIN; // ignore scene padding
 	const QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
 
 	const qreal x = qreal(width()) / ss.width();

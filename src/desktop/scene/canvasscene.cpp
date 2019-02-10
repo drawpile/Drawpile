@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -149,12 +149,7 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 		return;
 	QRectF bounds = m_image->boundingRect();
 
-	// Include some empty space around the canvas to make working
-	// near the borders easier.
-	const float wPadding = 300;
-	const float hPadding = 300;
-
-	setSceneRect(bounds.adjusted(-wPadding, -hPadding, wPadding, hPadding));
+	setSceneRect(bounds.adjusted(-MARGIN, -MARGIN, MARGIN, MARGIN));
 	emit canvasResized(xoffset, yoffset, oldsize);
 }
 

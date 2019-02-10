@@ -59,6 +59,9 @@ class CanvasScene : public QGraphicsScene
 	Q_OBJECT
 
 public:
+	//! Margin around the image to make working near corners easier
+	static const int MARGIN = 900;
+
 	CanvasScene(QObject *parent);
 	~CanvasScene();
 
