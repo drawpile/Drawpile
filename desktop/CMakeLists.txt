@@ -20,7 +20,7 @@ endif()
 
 if( XDGMENU )
 	install(CODE "
-		execute_process(COMMAND ${XDGMENU} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile.desktop)
+		execute_process(COMMAND ${XDGMENU} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.desktop)
 	")
 endif()
 
@@ -36,5 +36,5 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/palettes" DESTINATION "${DATADIR}
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${DATADIR}")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/theme" DESTINATION "${DATADIR}")
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/drawpile.appdata.xml" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/appdata/")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.appdata.xml" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo/")
 

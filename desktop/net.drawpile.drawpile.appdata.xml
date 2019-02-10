@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="desktop">
-	<id>drawpile.desktop</id>
+	<id>net.drawpile.drawpile</id>
+	<launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>GPL-3.0+</project_license>
+	<developer_name>Calle Laakkonen</developer_name>
+	<name>Drawpile</name>
+	<summary>Collaborative Drawing</summary>
 	<description>
 		<p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
 		<p>Feature highlights:</p>
@@ -16,16 +20,18 @@
 			<li>Discover drawing sessions via global announcement feature or locally with Zeroconf</li>
 		</ul>
 	</description>
-	<url type="homepage">http://drawpile.net/</url>
+	<url type="homepage">https://drawpile.net/</url>
 	<url type="bugtracker">https://github.com/callaa/Drawpile/issues</url>
 	<screenshots>
 		<screenshot type="default">
-			<image>http://drawpile.net/static/screenshots/screenshot2.png</image>
+			<image>https://drawpile.net/media/d/images/screenshot2.png</image>
 		</screenshot>
 	</screenshots>
+	<categories>
+		<category>Graphics</category>
+	</categories>
 	<provides>
 		<binary>drawpile</binary>
 	</provides>
-	<developer_name>Calle Laakkonen</developer_name>
 </component>
 

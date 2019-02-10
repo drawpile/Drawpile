@@ -8,6 +8,6 @@ MimeType=image/openraster;image/png;image/jpeg;application/x-drawpile-recording;
 Type=Application
 Icon=drawpile
 StartupNotify=true
-Categories=Graphics;Network;RasterGraphics;
+Categories=Graphics;
 Terminal=false
 
