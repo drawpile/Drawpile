@@ -362,7 +362,7 @@
      <item row="4" column="2">
       <widget class="QSpinBox" name="colorpickupBox">
        <property name="prefix">
-        <string>1/</string>
+        <string notr="true">1/</string>
        </property>
        <property name="minimum">
         <number>1</number>

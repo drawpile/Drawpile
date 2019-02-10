@@ -20,7 +20,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Session </string>
+      <string>Session</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
