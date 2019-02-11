@@ -1311,7 +1311,7 @@ void MainWindow::host()
 
 void MainWindow::hostSession(dialogs::HostDialog *dlg)
 {
-	const bool useremote = dlg->useRemoteAddress();
+	const bool useremote = !dlg->getRemoteAddress().isEmpty();
 	QUrl address;
 
 	if(useremote) {

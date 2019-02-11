@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,25 +23,21 @@
 
 class Ui_HostDialog;
 
-class SessionLoader;
-
 namespace dialogs {
 
 class HostDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit HostDialog(QWidget *parent=0);
+	explicit HostDialog(QWidget *parent=nullptr);
 	~HostDialog();
 
 	//! Store settings in configuration file
 	void rememberSettings() const;
 
 	//! Get the remote host address
+	//! Returns an empty string if remote address is not used
 	QString getRemoteAddress() const;
-
-	//! Host on a remote server?
-	bool useRemoteAddress() const;
 
 	//! Get session title
 	QString getTitle() const;
@@ -59,7 +55,7 @@ public:
 	bool getAnnouncmentPrivate() const;
 
 private:
-	Ui_HostDialog *_ui;
+	Ui_HostDialog *m_ui;
 };
 
 }

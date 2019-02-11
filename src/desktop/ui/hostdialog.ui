@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>315</width>
-    <height>445</height>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -147,7 +147,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Pri&amp;vate (room code only)</string>
+         <string>Private (room code onl&amp;y)</string>
         </property>
        </widget>
       </item>
@@ -215,6 +215,9 @@
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::InsertAtTop</enum>
+        </property>
+        <property name="mandatoryfield" stdset="0">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
