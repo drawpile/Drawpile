@@ -48,9 +48,7 @@ static paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity)
 
 static paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity)
 {
-	QVector<uchar> data(square(diameter), 0);
-	memset(data.data(), opacity, data.size());
-	return paintcore::BrushMask(diameter, data);
+	return paintcore::BrushMask(diameter, QVector<uchar>(square(diameter), opacity));
 }
 
 void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer)
