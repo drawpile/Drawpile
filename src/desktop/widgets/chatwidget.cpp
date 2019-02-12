@@ -188,10 +188,11 @@ void ChatBox::Private::updatePreserveModeUi()
 	// Set placeholder text and window style based on the mode
 	myline->setPlaceholderText(placeholder);
 
-	chatbox->setStyleSheet(QStringLiteral(
+	chatbox->setStyleSheet(
 #ifdef Q_OS_OSX // QTBUG-61092 (close button not visible on macOS)
-		"QTabBar::close-button{ background-position: center; background-image: url(\"builtin:dock-close.svg\"); }"
+		QStringLiteral("QTabBar::close-button{ background-position: center; background-image: url(\"builtin:dock-close.svg\"); }") +
 #endif
+		QStringLiteral(
 		"QTextEdit, QLineEdit {"
 			"background-color: #313438;"
 			"border: none;"
