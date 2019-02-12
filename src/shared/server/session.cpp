@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -400,6 +400,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << (conf["nsfm"].toBool() ? "tagged NSFM" : "removed NSFM tag");
 	}
 
+	if(conf.contains("deputies")) {
+		setFlag(flags, SessionHistory::Deputies, conf["deputies"].toBool());
+		changes << (conf["deputies"].toBool() ? "enabled deputies" : "disabled deputies");
+	}
+
 	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
@@ -566,6 +571,7 @@ void Session::sendUpdatedSessionProperties()
 	conf["resetThresholdBase"] = int(m_history->autoResetThresholdBase());
 	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
 	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
+	conf["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
 	conf["hasPassword"] = hasPassword();
 	conf["hasOpword"] = hasOpword();
 	props.reply["config"] = conf;
@@ -1242,6 +1248,7 @@ QJsonObject Session::getDescription(bool full) const
 		// Full descriptions includes detailed info for server admins.
 		o["maxSize"] = int(m_history->sizeLimit());
 		o["resetThreshold"] = int(m_history->autoResetThreshold());
+		o["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {

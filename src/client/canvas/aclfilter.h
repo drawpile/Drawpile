@@ -90,6 +90,9 @@ public:
 	//! Does the local user have operator privileges?
 	bool isLocalUserOperator() const { return m_isOperator; }
 
+	//! Has the local user been tagged as trusted?
+	bool isLocalUserTrusted() const { return m_isTrusted; }
+
 	//! Is there a general session lock in place?
 	bool isSessionLocked() const { return m_sessionLocked; }
 

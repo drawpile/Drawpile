@@ -270,12 +270,18 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="permCreateAnnotation"/>
+       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>General Layer Editing:</string>
          </property>
         </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="permEditLayers"/>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_9">
@@ -284,12 +290,18 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="permOwnLayers"/>
+       </item>
        <item row="6" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Canvas Resizing:</string>
          </property>
         </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="permResize"/>
        </item>
        <item row="7" column="0">
         <widget class="QLabel" name="label_11">
@@ -298,12 +310,18 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="1">
+        <widget class="QComboBox" name="permBackground"/>
+       </item>
        <item row="8" column="0">
         <widget class="QLabel" name="label_12">
          <property name="text">
           <string>Laser Pointer</string>
          </property>
         </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="permLaser"/>
        </item>
        <item row="9" column="0">
         <widget class="QLabel" name="label_13">
@@ -312,26 +330,29 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="permCreateAnnotation"/>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="permEditLayers"/>
-       </item>
-       <item row="5" column="1">
-        <widget class="QComboBox" name="permOwnLayers"/>
-       </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="permResize"/>
-       </item>
-       <item row="7" column="1">
-        <widget class="QComboBox" name="permBackground"/>
-       </item>
-       <item row="8" column="1">
-        <widget class="QComboBox" name="permLaser"/>
-       </item>
        <item row="9" column="1">
         <widget class="QComboBox" name="permUndo"/>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Kick &amp; Ban:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QComboBox" name="deputies">
+         <item>
+          <property name="text">
+           <string>Operators</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Trusted</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>

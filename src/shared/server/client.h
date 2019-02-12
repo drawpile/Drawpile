@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,6 +102,13 @@ public:
 	 */
 	bool isOperator() const;
 	void setOperator(bool op);
+
+	/**
+	 * @brief Is this user a deputy (but not an operator)
+	 *
+	 * Deputies have more limited permissions than operators.
+	 */
+	bool isDeputy() const;
 
 	/**
 	 * @brief Is this user a moderator?

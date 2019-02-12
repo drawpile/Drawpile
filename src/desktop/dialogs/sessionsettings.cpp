@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2018 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_ui->preserveChat, &QCheckBox::clicked, this, &SessionSettingsDialog::keepChatChanged);
 	connect(m_ui->persistent, &QCheckBox::clicked, this, &SessionSettingsDialog::persistenceChanged);
 	connect(m_ui->nsfm, &QCheckBox::clicked, this, &SessionSettingsDialog::nsfmChanged);
+	connect(m_ui->deputies, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &SessionSettingsDialog::deputiesChanged);
 
 	connect(m_ui->sessionPassword, &QLabel::linkActivated, this, &SessionSettingsDialog::changePassword);
 	connect(m_ui->opword, &QLabel::linkActivated, this, &SessionSettingsDialog::changeOpword);
@@ -83,6 +84,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		updatePasswordLabel(m_ui->opword);
 	});
 	connect(m_doc, &Document::sessionNsfmChanged, m_ui->nsfm, &QCheckBox::setChecked);
+	connect(m_doc, &Document::sessionDeputiesChanged, this, [this](bool deputies) { m_ui->deputies->setCurrentIndex(deputies ? 1 : 0); });
 	connect(m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers, &QSpinBox::setValue);
 	connect(m_doc, &Document::sessionResetThresholdChanged, m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
 	connect(m_doc, &Document::baseResetThresholdChanged, this, [this](int threshold) {
@@ -182,6 +184,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		m_ui->denyJoins,
 		m_ui->preserveChat,
 		m_ui->nsfm,
+		m_ui->deputies,
 		m_ui->sessionPassword,
 		m_ui->opword,
 		m_ui->addAnnouncement,
@@ -310,6 +313,7 @@ void SessionSettingsDialog::autoresetThresholdChanged() { changeSesionConf("rese
 void SessionSettingsDialog::keepChatChanged(bool set) { changeSesionConf("preserveChat", set); }
 void SessionSettingsDialog::persistenceChanged(bool set) { changeSesionConf("persistent", set); }
 void SessionSettingsDialog::nsfmChanged(bool set) { changeSesionConf("nsfm", set); }
+void SessionSettingsDialog::deputiesChanged(int idx) { changeSesionConf("deputies", idx>0); }
 
 void SessionSettingsDialog::changePassword()
 {

@@ -22,6 +22,7 @@
 #include "canvas/aclfilter.h"
 #include "utils/icon.h"
 #include "net/commands.h"
+#include "document.h"
 
 #include <QPainter>
 #include <QModelIndex>
@@ -37,27 +38,23 @@ static const int STATUS_OVERLAY_SIZE = 16;
 static const int BUTTON_WIDTH = 16;
 
 UserItemDelegate::UserItemDelegate(QObject *parent)
-	: QAbstractItemDelegate(parent), m_canvas(nullptr)
+	: QAbstractItemDelegate(parent), m_doc(nullptr)
 {
 	// Operator menu
-	m_opMenu = new QMenu;
-	m_opAction = m_opMenu->addAction(tr("Operator"));
-	m_trustAction = m_opMenu->addAction(tr("Trusted"));
-
-	m_opMenu->addSeparator();
-	m_lockAction = m_opMenu->addAction(tr("Lock"));
-	m_muteAction = m_opMenu->addAction(tr("Mute"));
-
-	m_opMenu->addSeparator();
-	m_kickAction = m_opMenu->addAction(tr("Kick"));
-	m_banAction = m_opMenu->addAction(tr("Kick && Ban"));
-
-	m_opMenu->addSeparator();
-	m_chatAction = m_opMenu->addAction(tr("Private Message"));
-
-	// User menu (a subset of operator menu)
 	m_userMenu = new QMenu;
-	m_userMenu->addAction(m_chatAction);
+	m_opAction = m_userMenu->addAction(tr("Operator"));
+	m_trustAction = m_userMenu->addAction(tr("Trusted"));
+
+	m_userMenu->addSeparator();
+	m_lockAction = m_userMenu->addAction(tr("Lock"));
+	m_muteAction = m_userMenu->addAction(tr("Mute"));
+
+	m_userMenu->addSeparator();
+	m_kickAction = m_userMenu->addAction(tr("Kick"));
+	m_banAction = m_userMenu->addAction(tr("Kick && Ban"));
+
+	m_userMenu->addSeparator();
+	m_chatAction = m_userMenu->addAction(tr("Private Message"));
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);
@@ -78,7 +75,6 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 
 UserItemDelegate::~UserItemDelegate()
 {
-	delete m_opMenu;
 	delete m_userMenu;
 }
 
@@ -202,7 +198,7 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 {
 	Q_UNUSED(model);
 
-	if(event->type() == QEvent::MouseButtonPress && m_canvas) {
+	if(event->type() == QEvent::MouseButtonPress && m_doc) {
 		const QMouseEvent *e = static_cast<const QMouseEvent*>(event);
 
 		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && e->x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
@@ -210,9 +206,9 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 			return true;
 		}
 	}
-	else if(event->type() == QEvent::MouseButtonDblClick && m_canvas) {
+	else if(event->type() == QEvent::MouseButtonDblClick && m_doc) {
 		const int userId = index.data(canvas::UserListModel::IdRole).toInt();
-		if(userId>0 && userId != m_canvas->localUserId()) {
+		if(userId>0 && userId != m_doc->canvas()->localUserId()) {
 			emit requestPrivateChat(userId);
 			return true;
 		}
@@ -224,39 +220,56 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 {
 	m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
 
+	const bool amOp = m_doc->canvas()->aclFilter()->isLocalUserOperator();
+	const bool amDeputy = m_doc->canvas()->aclFilter()->isLocalUserTrusted() && m_doc->isSessionDeputies();
+	const bool isSelf = m_menuId == m_doc->canvas()->localUserId();
+	const bool isMod = index.data(canvas::UserListModel::IsModRole).toBool();
+
 	m_opAction->setChecked(index.data(canvas::UserListModel::IsOpRole).toBool());
 	m_trustAction->setChecked(index.data(canvas::UserListModel::IsTrustedRole).toBool());
 	m_lockAction->setChecked(index.data(canvas::UserListModel::IsLockedRole).toBool());
 	m_muteAction->setChecked(index.data(canvas::UserListModel::IsMutedRole).toBool());
 
-	// Can't deop or kick self or moderators
-	const bool enabled = m_menuId != m_canvas->localUserId() && !index.data(canvas::UserListModel::IsModRole).toBool();
-	m_opAction->setEnabled(enabled);
-	m_kickAction->setEnabled(enabled);
-	m_banAction->setEnabled(enabled);
+	// Can't deop self or moderators
+	m_opAction->setEnabled(amOp && !isSelf && !isMod);
+
+	m_trustAction->setEnabled(amOp);
+	m_lockAction->setEnabled(amOp);
+	m_muteAction->setEnabled(amOp);
+
+	// Deputies can only kick non-trusted users
+	// No-one can kick themselves or moderators
+	const bool canKick = !isSelf && !isMod &&
+		(
+			amOp ||
+			(amDeputy && !(
+				index.data(canvas::UserListModel::IsOpRole).toBool() ||
+				index.data(canvas::UserListModel::IsTrustedRole).toBool()
+				)
+			)
+		);
+	m_kickAction->setEnabled(canKick);
+	m_banAction->setEnabled(canKick);
 
 	// Can't chat with self
-	m_chatAction->setEnabled(m_menuId != m_canvas->localUserId());
+	m_chatAction->setEnabled(!isSelf);
 
-	if(m_canvas->aclFilter()->isLocalUserOperator())
-		m_opMenu->popup(pos);
-	else
-		m_userMenu->popup(pos);
+	m_userMenu->popup(pos);
 }
 
 void UserItemDelegate::toggleOpMode(bool op)
 {
-	emit opCommand(m_canvas->userlist()->getOpUserCommand(m_canvas->localUserId(), m_menuId, op));
+	emit opCommand(m_doc->canvas()->userlist()->getOpUserCommand(m_doc->canvas()->localUserId(), m_menuId, op));
 }
 
 void UserItemDelegate::toggleTrusted(bool trust)
 {
-	emit opCommand(m_canvas->userlist()->getTrustUserCommand(m_canvas->localUserId(), m_menuId, trust));
+	emit opCommand(m_doc->canvas()->userlist()->getTrustUserCommand(m_doc->canvas()->localUserId(), m_menuId, trust));
 }
 
 void UserItemDelegate::toggleLock(bool op)
 {
-	emit opCommand(m_canvas->userlist()->getLockUserCommand(m_canvas->localUserId(), m_menuId, op));
+	emit opCommand(m_doc->canvas()->userlist()->getLockUserCommand(m_doc->canvas()->localUserId(), m_menuId, op));
 }
 
 void UserItemDelegate::toggleMute(bool mute)

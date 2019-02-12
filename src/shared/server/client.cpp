@@ -209,6 +209,11 @@ bool Client::isOperator() const
 	return d->isOperator || d->isModerator;
 }
 
+bool Client::isDeputy() const
+{
+	return !isOperator() && isTrusted() && d->session && d->session->isDeputies();
+}
+
 void Client::setModerator(bool mod)
 {
 	d->isModerator = mod;
@@ -447,8 +452,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 void Client::disconnectKick(const QString &kickedBy)
 {
-	emit loggedOff(this);
 	log(Log().about(Log::Level::Info, Log::Topic::Kick).message("Kicked by " + kickedBy));
+	emit loggedOff(this);
 	d->msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 

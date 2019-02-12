@@ -67,6 +67,7 @@ Document::Document(QObject *parent)
 	  m_sessionPasswordProtected(false),
 	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
+	  m_sessionDeputies(false),
 	  m_sessionMaxUserCount(0),
 	  m_sessionHistoryMaxSize(0),
 	  m_sessionResetThreshold(0),
@@ -218,6 +219,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("nsfm"))
 		setSessionNsfm(config["nsfm"].toBool());
 
+	if(config.contains("deputies"))
+		setSessionDeputies(config["deputies"].toBool());
+
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
 
@@ -353,6 +357,14 @@ void Document::setSessionNsfm(bool nsfm)
 	if(m_sessionNsfm != nsfm) {
 		m_sessionNsfm = nsfm;
 		emit sessionNsfmChanged(nsfm);
+	}
+}
+
+void Document::setSessionDeputies(bool deputies)
+{
+	if(m_sessionDeputies != deputies) {
+		m_sessionDeputies = deputies;
+		emit sessionDeputiesChanged(deputies);
 	}
 }
 
@@ -557,6 +569,9 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 	if(!header.contains("nsfm") && isSessionNsfm())
 		header["nsfm"] = true;
+
+	if(!header.contains("deputies") && isSessionDeputies())
+		header["deputies"] = true;
 
 	if(!header.contains("persistent") && isSessionPersistent())
 		header["persistent"] = true;

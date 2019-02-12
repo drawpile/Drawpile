@@ -45,7 +45,8 @@ public:
 	enum Flag {
 		Persistent = 0x01,
 		PreserveChat = 0x02,
-		Nsfm = 0x04
+		Nsfm = 0x04,
+		Deputies = 0x08
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 

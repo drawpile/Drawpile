@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
 	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
+	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY sessionDeputiesChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
 	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY sessionResetThresholdChanged)
 	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY baseResetThresholdChanged)
@@ -143,6 +144,7 @@ public:
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
 	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
+	bool isSessionDeputies() const { return m_sessionDeputies; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 	double sessionResetThreshold() const { return m_sessionResetThreshold/double(1024*1024); }
 	double baseResetThreshold() const { return m_baseResetThreshold/double(1024*1024); }
@@ -172,6 +174,7 @@ signals:
 	void sessionPasswordChanged(bool passwordProtected);
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
+	void sessionDeputiesChanged(bool deputies);
 	void sessionMaxUserCountChanged(int count);
 	void sessionRoomcodeChanged(const QString &code);
 	void sessionResetThresholdChanged(double threshold);
@@ -247,6 +250,7 @@ private:
 	void setSessionResetThreshold(int threshold);
 	void setBaseResetThreshold(int threshold);
 	void setSessionNsfm(bool nsfm);
+	void setSessionDeputies(bool deputies);
 	void setRoomcode(const QString &roomcode);
 
 	void copyFromLayer(int layer);
@@ -283,6 +287,7 @@ private:
 	bool m_sessionPasswordProtected;
 	bool m_sessionOpword;
 	bool m_sessionNsfm;
+	bool m_sessionDeputies;
 
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;

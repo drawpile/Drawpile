@@ -23,9 +23,7 @@
 
 class QMenu;
 
-namespace canvas {
-    class CanvasModel;
-}
+class Document;
 
 namespace protocol {
     class MessagePtr;
@@ -44,7 +42,7 @@ public:
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
-	void setCanvas(canvas::CanvasModel *canvas) { m_canvas = canvas; }
+	void setDocument(Document *doc) { m_doc = doc; }
 
 signals:
 	void opCommand(protocol::MessagePtr msg);
@@ -62,10 +60,9 @@ private slots:
 private:
 	void showContextMenu(const QModelIndex &index, const QPoint &pos);
 
-	QMenu *m_opMenu;
 	QMenu *m_userMenu;
 
-	canvas::CanvasModel *m_canvas;
+	Document *m_doc;
 
 	QPixmap m_lockIcon;
 	QPixmap m_muteIcon;

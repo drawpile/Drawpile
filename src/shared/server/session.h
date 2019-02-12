@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -110,6 +110,13 @@ public:
 	 * @brief Is this an age-restricted session?
 	 */
 	bool isNsfm() const { return m_history->flags().testFlag(SessionHistory::Nsfm); }
+
+	/**
+	 * @brief Are trusted users deputized?
+	 *
+	 * If true, trusted users are granted limited access to kick/ban commands.
+	 */
+	bool isDeputies() const { return m_history->flags().testFlag(SessionHistory::Deputies); }
 
 	/**
 	 * @brief Set the name of the recording file to create

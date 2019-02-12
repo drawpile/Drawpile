@@ -119,10 +119,10 @@ private:
  * @brief List of trusted users
  *
  * This message sets the list of user who have been tagged as trusted,
- * but who are not operators. The meaning of "trusted" is a purely
- * clientside concept, but the server is aware of it so it can remember
- * the trusted status for returning authenticated users. (The same way
- * OP status is remembered.)
+ * but who are not operators. The meaning of "trusted" is a mostly
+ * clientside concept, but the session can be configured to allow trusted
+ * users access to some operator commands. (Deputies)
+ *
  * This command can be sent by operators or by the server (ctx=0).
  *
  * The server sanitizes the ID list so, when distributed to other users,
