@@ -69,6 +69,7 @@ private:
 	QPixmap m_lockIcon;
 	QPixmap m_muteIcon;
 
+	QAction *m_menuTitle;
 	QAction *m_opAction;
 	QAction *m_trustAction;
 	QAction *m_lockAction;

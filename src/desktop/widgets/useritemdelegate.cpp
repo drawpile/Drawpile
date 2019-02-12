@@ -42,6 +42,8 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	: QAbstractItemDelegate(parent), m_doc(nullptr)
 {
 	m_userMenu = new QMenu;
+	m_menuTitle = m_userMenu->addSection("User");
+
 	m_opAction = m_userMenu->addAction(tr("Operator"));
 	m_trustAction = m_userMenu->addAction(tr("Trusted"));
 
@@ -225,6 +227,8 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &pos)
 {
 	m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
+
+	m_menuTitle->setText(index.data(canvas::UserListModel::NameRole).toString());
 
 	const bool amOp = m_doc->canvas()->aclFilter()->isLocalUserOperator();
 	const bool amDeputy = m_doc->canvas()->aclFilter()->isLocalUserTrusted() && m_doc->isSessionDeputies();
