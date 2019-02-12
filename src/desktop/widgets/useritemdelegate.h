@@ -56,6 +56,8 @@ private slots:
 	void kickUser();
 	void banUser();
 	void pmUser();
+	void undoByUser();
+	void redoByUser();
 
 private:
 	void showContextMenu(const QModelIndex &index, const QPoint &pos);
@@ -74,6 +76,8 @@ private:
 	QAction *m_kickAction;
 	QAction *m_banAction;
 	QAction *m_chatAction;
+	QAction *m_undoAction;
+	QAction *m_redoAction;
 
 	int m_menuId;
 };

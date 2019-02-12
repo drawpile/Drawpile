@@ -23,6 +23,7 @@
 #include "utils/icon.h"
 #include "net/commands.h"
 #include "document.h"
+#include "../shared/net/undo.h"
 
 #include <QPainter>
 #include <QModelIndex>
@@ -40,7 +41,6 @@ static const int BUTTON_WIDTH = 16;
 UserItemDelegate::UserItemDelegate(QObject *parent)
 	: QAbstractItemDelegate(parent), m_doc(nullptr)
 {
-	// Operator menu
 	m_userMenu = new QMenu;
 	m_opAction = m_userMenu->addAction(tr("Operator"));
 	m_trustAction = m_userMenu->addAction(tr("Trusted"));
@@ -48,6 +48,10 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_userMenu->addSeparator();
 	m_lockAction = m_userMenu->addAction(tr("Lock"));
 	m_muteAction = m_userMenu->addAction(tr("Mute"));
+
+	m_userMenu->addSeparator();
+	m_undoAction = m_userMenu->addAction(tr("Undo"));
+	m_redoAction = m_userMenu->addAction(tr("Redo"));
 
 	m_userMenu->addSeparator();
 	m_kickAction = m_userMenu->addAction(tr("Kick"));
@@ -68,6 +72,8 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
 	connect(m_banAction, &QAction::triggered, this, &UserItemDelegate::banUser);
 	connect(m_chatAction, &QAction::triggered, this, &UserItemDelegate::pmUser);
+	connect(m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
+	connect(m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
 
 	m_lockIcon = icon::fromTheme("object-locked").pixmap(16, 16);
 	m_muteIcon = icon::fromTheme("irc-unvoice").pixmap(16, 16);
@@ -236,6 +242,8 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 	m_trustAction->setEnabled(amOp);
 	m_lockAction->setEnabled(amOp);
 	m_muteAction->setEnabled(amOp);
+	m_undoAction->setEnabled(amOp);
+	m_redoAction->setEnabled(amOp);
 
 	// Deputies can only kick non-trusted users
 	// No-one can kick themselves or moderators
@@ -290,6 +298,16 @@ void UserItemDelegate::banUser()
 void UserItemDelegate::pmUser()
 {
 	emit requestPrivateChat(m_menuId);
+}
+
+void UserItemDelegate::undoByUser()
+{
+	emit opCommand(protocol::MessagePtr(new protocol::Undo(m_doc->canvas()->localUserId(), m_menuId, false)));
+}
+
+void UserItemDelegate::redoByUser()
+{
+	emit opCommand(protocol::MessagePtr(new protocol::Undo(m_doc->canvas()->localUserId(), m_menuId, true)));
 }
 
 }
