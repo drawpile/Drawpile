@@ -1,5 +1,5 @@
 ## Common base
-FROM alpine:3.8 as common
+FROM alpine:3.9 as common
 RUN apk add --no-cache qt5-qtbase qt5-qtbase-sqlite libmicrohttpd libbz2 libsodium
 
 ## Build container
