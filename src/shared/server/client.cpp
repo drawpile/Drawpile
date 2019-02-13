@@ -48,16 +48,18 @@ struct Client::Private {
 	int id;
 	QString username;
 	QString extAuthId;
+	QByteArray avatar;
 
 	bool isOperator;
 	bool isModerator;
+	bool isTrusted;
 	bool isAuthenticated;
 	bool isMuted;
 
 	Private(QTcpSocket *socket, ServerLog *logger)
 		: socket(socket), logger(logger), msgqueue(nullptr),
 		historyPosition(-1), id(0),
-		isOperator(false), isModerator(false), isAuthenticated(false), isMuted(false)
+		isOperator(false), isModerator(false), isTrusted(false), isAuthenticated(false), isMuted(false)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);
@@ -86,7 +88,8 @@ protocol::MessagePtr Client::joinMessage() const
 	return protocol::MessagePtr(new protocol::UserJoin(
 			id(),
 			(isAuthenticated() ? protocol::UserJoin::FLAG_AUTH : 0) | (isModerator() ? protocol::UserJoin::FLAG_MOD : 0),
-			username()
+			username(),
+			avatar()
 	));
 }
 
@@ -176,6 +179,16 @@ const QString &Client::username() const
 	return d->username;
 }
 
+void Client::setAvatar(const QByteArray &avatar)
+{
+	d->avatar = avatar;
+}
+
+const QByteArray &Client::avatar() const
+{
+	return d->avatar;
+}
+
 const QString &Client::extAuthId() const
 {
 	return d->extAuthId;
@@ -196,6 +209,11 @@ bool Client::isOperator() const
 	return d->isOperator || d->isModerator;
 }
 
+bool Client::isDeputy() const
+{
+	return !isOperator() && isTrusted() && d->session && d->session->isDeputies();
+}
+
 void Client::setModerator(bool mod)
 {
 	d->isModerator = mod;
@@ -204,6 +222,16 @@ void Client::setModerator(bool mod)
 bool Client::isModerator() const
 {
 	return d->isModerator;
+}
+
+bool Client::isTrusted() const
+{
+	return d->isTrusted;
+}
+
+void Client::setTrusted(bool trusted)
+{
+	d->isTrusted = trusted;
 }
 
 void Client::setAuthenticated(bool auth)
@@ -345,6 +373,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	using namespace protocol;
 	case MSG_USER_JOIN:
 	case MSG_USER_LEAVE:
+	case MSG_SOFTRESET:
 		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
 		return;
 	case MSG_DISCONNECT:
@@ -383,7 +412,30 @@ void Client::handleSessionMessage(MessagePtr msg)
 				d->session->directToAll(msg);
 				return;
 			}
+			break;
 		}
+		case protocol::MSG_PRIVATE_CHAT: {
+			const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
+			if(chat.target()>0) {
+				Client *c = d->session->getClientById(chat.target());
+				if(c) {
+					this->sendDirectMessage(msg);
+					c->sendDirectMessage(msg);
+				}
+			}
+			return;
+		}
+		case protocol::MSG_TRUSTED_USERS: {
+			if(!isOperator()) {
+				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));
+				return;
+			}
+
+			QList<uint8_t> ids = msg.cast<protocol::TrustedUsers>().ids();
+			ids = d->session->updateTrustedUsers(ids, username());
+			msg.cast<protocol::TrustedUsers>().setIds(ids);
+			break;
+	}
 		default: break;
 	}
 
@@ -400,8 +452,8 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 void Client::disconnectKick(const QString &kickedBy)
 {
-	emit loggedOff(this);
 	log(Log().about(Log::Level::Info, Log::Topic::Kick).message("Kicked by " + kickedBy));
+	emit loggedOff(this);
 	d->msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 

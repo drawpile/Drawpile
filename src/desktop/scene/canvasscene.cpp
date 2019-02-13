@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,8 @@ namespace drawingboard {
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
-	  _showAnnotationBorders(false), _showAnnotations(true), _showUserMarkers(true), _showUserLayers(true), _showLaserTrails(true)
+	  _showAnnotationBorders(false), _showAnnotations(true),
+	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(false), m_showUserAvatars(true), m_showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -148,12 +149,7 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 		return;
 	QRectF bounds = m_image->boundingRect();
 
-	// Include some empty space around the canvas to make working
-	// near the borders easier.
-	const float wPadding = 300;
-	const float hPadding = 300;
-
-	setSceneRect(bounds.adjusted(-wPadding, -hPadding, wPadding, hPadding));
+	setSceneRect(bounds.adjusted(-MARGIN, -MARGIN, MARGIN, MARGIN));
 	emit canvasResized(xoffset, yoffset, oldsize);
 }
 
@@ -256,7 +252,8 @@ void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 		return;
 
 	// Don't add new lasers when canvas is hidden
-	if(!m_image->isVisible())
+	// or when laser trails are disabled
+	if(!m_image->isVisible() || !m_showLaserTrails)
 		return;
 
 	for(int i=first;i<=last;++i) {
@@ -286,7 +283,7 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 
 void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
-	if(!m_image || !m_image->isVisible())
+	if(!m_image || !m_image->isVisible() || !m_showLaserTrails)
 		return;
 
 	const int ifirst = first.row();
@@ -318,7 +315,7 @@ void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last
  */
 void CanvasScene::advanceUsermarkerAnimation()
 {
-	const float STEP = 0.2; // time delta in seconds
+	const double STEP = 0.2; // time delta in seconds
 
 	for(LaserTrailItem *lt : m_lasertrails)
 		lt->animationStep(STEP);
@@ -342,7 +339,9 @@ void CanvasScene::userCursorAdded(const QModelIndex&, int first, int last)
 
 		} else {
 			UserMarkerItem *item = new UserMarkerItem(id);
-			item->setShowSubtext(_showUserLayers);
+			item->setShowText(m_showUserNames);
+			item->setShowSubtext(m_showUserLayers);
+			item->setShowAvatar(m_showUserAvatars);
 			item->hide();
 			addItem(item);
 			m_usermarkers[id] = item;
@@ -375,6 +374,9 @@ void CanvasScene::userCursorChanged(const QModelIndex &first, const QModelIndex 
 		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::PositionRole))
 			item->setPos(um.data(canvas::UserCursorModel::PositionRole).toPointF());
 
+		if(changed.isEmpty() || changed.contains(Qt::DecorationRole))
+			item->setAvatar(um.data(Qt::DecorationRole).value<QPixmap>());
+
 		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
 			item->setText(um.data(Qt::DisplayRole).toString());
 
@@ -385,7 +387,7 @@ void CanvasScene::userCursorChanged(const QModelIndex &first, const QModelIndex 
 			item->setColor(um.data(canvas::UserCursorModel::ColorRole).value<QColor>());
 
 		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::VisibleRole)) {
-			if(_showUserMarkers) {
+			if(m_showUserMarkers) {
 				bool v = um.data(canvas::UserCursorModel::VisibleRole).toBool();
 				if(v)
 					item->fadein();
@@ -398,8 +400,8 @@ void CanvasScene::userCursorChanged(const QModelIndex &first, const QModelIndex 
 
 void CanvasScene::showUserMarkers(bool show)
 {
-	if(_showUserMarkers != show) {
-		_showUserMarkers = show;
+	if(m_showUserMarkers != show) {
+		m_showUserMarkers = show;
 		for(UserMarkerItem *item : m_usermarkers) {
 			if(show) {
 				if(m_model->userCursors()->indexForId(item->id()).data(canvas::UserCursorModel::VisibleRole).toBool())
@@ -411,18 +413,36 @@ void CanvasScene::showUserMarkers(bool show)
 	}
 }
 
+void CanvasScene::showUserNames(bool show)
+{
+	if(m_showUserNames != show) {
+		m_showUserNames = show;
+		for(UserMarkerItem *item : m_usermarkers)
+			item->setShowText(show);
+	}
+}
+
 void CanvasScene::showUserLayers(bool show)
 {
-	if(_showUserLayers != show) {
-		_showUserLayers = show;
+	if(m_showUserLayers != show) {
+		m_showUserLayers = show;
 		for(UserMarkerItem *item : m_usermarkers)
 			item->setShowSubtext(show);
 	}
 }
 
+void CanvasScene::showUserAvatars(bool show)
+{
+	if(m_showUserAvatars != show) {
+		m_showUserAvatars = show;
+		for(UserMarkerItem *item : m_usermarkers)
+			item->setShowAvatar(show);
+	}
+}
+
 void CanvasScene::showLaserTrails(bool show)
 {
-	_showLaserTrails = show;
+	m_showLaserTrails = show;
 	for(LaserTrailItem *i : m_lasertrails)
 		i->hide();
 }

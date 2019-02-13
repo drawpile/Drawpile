@@ -2,6 +2,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)
+find_package(Vpx)
 
 include_directories("../client")
 
@@ -17,6 +18,7 @@ set (
 	toolwidgets/annotationsettings.cpp
 	toolwidgets/fillsettings.cpp
 	toolwidgets/lasersettings.cpp
+	toolwidgets/zoomsettings.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp
@@ -36,12 +38,12 @@ set (
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
 	dialogs/netstats.cpp
-	dialogs/sessionlistingdialog.cpp
 	dialogs/flipbook.cpp
 	dialogs/resetdialog.cpp
 	dialogs/sessionsettings.cpp
 	dialogs/serverlogdialog.cpp
 	dialogs/tablettester.cpp
+	dialogs/avatarimport.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -53,11 +55,12 @@ set (
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
-	widgets/userlistwidget.cpp 
+	widgets/useritemdelegate.cpp
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
 	widgets/flipbookview.cpp
+	widgets/spinner.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
@@ -116,6 +119,10 @@ if(KF5DNSSD_FOUND)
 	add_definitions(-DHAVE_DNSSD)
 endif()
 
+if(LIBVPX_FOUND)
+	add_definitions(-DHAVE_WEBM)
+endif()
+
 set (
 	UIs
 	ui/brushdock.ui
@@ -129,7 +136,6 @@ set (
 	ui/fillsettings.ui
 	ui/lasersettings.ui
 	ui/layerbox.ui
-	ui/userbox.ui
 	ui/newdialog.ui
 	ui/resizedialog.ui
 	ui/videoexport.ui
@@ -138,7 +144,6 @@ set (
 	ui/logindialog.ui
 	ui/colorbox.ui
 	ui/netstats.ui
-	ui/sessionlisting.ui
 	ui/flipbook.ui
 	ui/playback.ui
 	ui/resetsession.ui
@@ -146,6 +151,8 @@ set (
 	ui/serverlog.ui
 	ui/tablettest.ui
 	ui/abusereport.ui
+	ui/avatarimport.ui
+	ui/navigator.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found

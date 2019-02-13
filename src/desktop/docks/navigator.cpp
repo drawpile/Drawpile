@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008-2014 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2019 Calle Laakkonen, 2007 M.K.A.
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
 */
 
 #include "navigator.h"
+using docks::NavigatorView;
+#include "ui_navigator.h"
 #include "docks/utils.h"
+#include "scene/canvasscene.h"
 
 #include <QMouseEvent>
 #include <QWindow>
@@ -24,7 +27,7 @@
 namespace docks {
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QGraphicsView(parent), _zoomWheelDelta(0), _dragging(false)
+	: QGraphicsView(parent), m_zoomWheelDelta(0), m_dragging(false)
 {
 	viewport()->setMouseTracking(true);
 	setInteractive(false);
@@ -53,7 +56,7 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
 	emit focusMoved(mapToScene(event->pos()).toPoint());
-	_dragging = true;
+	m_dragging = true;
 }
 
 /**
@@ -61,7 +64,7 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
  */
 void NavigatorView::mouseMoveEvent(QMouseEvent *event)
 {
-	if (_dragging)
+	if(m_dragging)
 		emit focusMoved(mapToScene(event->pos()).toPoint());
 }
 
@@ -71,15 +74,15 @@ void NavigatorView::mouseMoveEvent(QMouseEvent *event)
 void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 {
 	Q_UNUSED(event);
-	_dragging = false;
+	m_dragging = false;
 }
 
 void NavigatorView::wheelEvent(QWheelEvent *event)
 {
 	// Use scroll wheel for zooming
-	_zoomWheelDelta += event->angleDelta().y();
-	int steps=_zoomWheelDelta / 120;
-	_zoomWheelDelta -= steps * 120;
+	m_zoomWheelDelta += event->angleDelta().y();
+	const int steps = m_zoomWheelDelta / 120;
+	m_zoomWheelDelta -= steps * 120;
 
 	if(steps != 0) {
 		emit wheelZoom(steps);
@@ -92,12 +95,10 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
  */
 void NavigatorView::setViewFocus(const QPolygonF& rect)
 {
-	QRegion up;
-
-	up |= mapFromScene(rect).boundingRect().adjusted(-1,-1,1,1);
-	up |= mapFromScene(_focusrect).boundingRect().adjusted(-1,-1,1,1);
+	QRegion up = mapFromScene(rect).boundingRect().adjusted(-1,-1,1,1);
+	up |= mapFromScene(m_focusRect).boundingRect().adjusted(-1,-1,1,1);
 	
-	_focusrect = rect;
+	m_focusRect = rect;
 	
 	viewport()->update(up);
 }
@@ -109,12 +110,12 @@ void NavigatorView::rescale()
 {
 	resetTransform();
 
-	const qreal padding = 300; // ignore scene padding
-	QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
+	const qreal padding = drawingboard::CanvasScene::MARGIN; // ignore scene padding
+	const QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
 
-	qreal x = qreal(width()) / ss.width();
-	qreal y = qreal(height()-5) / ss.height();
-	qreal min = qMin(x, y);
+	const qreal x = qreal(width()) / ss.width();
+	const qreal y = qreal(height()-5) / ss.height();
+	const qreal min = qMin(x, y);
 
 	scale(min, min);
 	centerOn(scene()->sceneRect().center());
@@ -129,38 +130,57 @@ void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 	pen.setWidth(2);
 	painter->setPen(pen);
 	painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
-	painter->drawPolygon(_focusrect);
+	painter->drawPolygon(m_focusRect);
 }
 
 /**
  * Construct the navigator dock widget.
  */
 Navigator::Navigator(QWidget *parent)
-	: QDockWidget(tr("Navigator"), parent)
+	: QDockWidget(tr("Navigator"), parent), m_ui(new Ui_Navigator)
 {
 	setObjectName("navigatordock");
-
 	setStyleSheet(defaultDockStylesheet());
 
-	_view = new NavigatorView(this);
-	setWidget(_view);
+	auto w = new QWidget(this);
+	m_ui->setupUi(w);
+	setWidget(w);
 
-	connect(_view, SIGNAL(focusMoved(const QPoint&)),
-			this, SIGNAL(focusMoved(const QPoint&)));
+	connect(m_ui->view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
+	connect(m_ui->view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
+	connect(m_ui->zoomBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::zoomChanged);
+	connect(m_ui->rotationBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::angleChanged);
+	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
+	connect(m_ui->rotateReset, &QToolButton::clicked, this, [this]() { emit angleChanged(0); });
+}
 
-	connect(_view, SIGNAL(wheelZoom(int)), this, SIGNAL(wheelZoom(int)));
+Navigator::~Navigator()
+{
+	delete m_ui;
+}
+
+void Navigator::setFlipActions(QAction *flip, QAction *mirror)
+{
+	m_ui->flip->setDefaultAction(flip);
+	m_ui->mirror->setDefaultAction(mirror);
 }
 
 void Navigator::setScene(QGraphicsScene *scene)
 {
-	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _view, SLOT(rescale()));
-	_view->setScene(scene);
-	_view->rescale();
+	connect(scene, &QGraphicsScene::sceneRectChanged, m_ui->view, &NavigatorView::rescale);
+	m_ui->view->setScene(scene);
+	m_ui->view->rescale();
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)
 {
-	_view->setViewFocus(rect);
+	m_ui->view->setViewFocus(rect);
+}
+
+void Navigator::setViewTransformation(qreal zoom, qreal angle)
+{
+	m_ui->zoomBox->setValue(zoom);
+	m_ui->rotationBox->setValue(angle);
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -125,8 +125,9 @@ void Writer::writeFromBuffer(const QByteArray &buffer)
 		const int len = protocol::Message::sniffLength(buffer.constData());
 		Q_ASSERT(len <= buffer.length());
 		m_file->write(buffer.constData(), len);
+
 	} else {
-		protocol::Message *msg = protocol::Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.length(), true);
+		protocol::NullableMessageRef msg = protocol::Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.length(), true);
 		m_file->write(msg->toString().toUtf8());
 		m_file->write("\n", 1);
 	}
@@ -148,15 +149,16 @@ bool Writer::writeMessage(const protocol::Message &msg)
 			// Special case: Filtered messages are
 			// written as comments in the text format.
 			const protocol::Filtered &fm = static_cast<const protocol::Filtered&>(msg);
-			std::unique_ptr<protocol::Message> wrapped { fm.decodeWrapped() };
-			QString comment;
-			if(wrapped) {
-				comment = QStringLiteral("FILTERED: ") + wrapped->toString();
+			auto wrapped = fm.decodeWrapped();
 
-			} else {
+			QString comment;
+			if(wrapped.isNull()) {
 				comment = QStringLiteral("FILTERED: undecodable message type #%1 of length %2")
 					.arg(fm.wrappedType())
 					.arg(fm.wrappedPayloadLength());
+
+			} else {
+				comment = QStringLiteral("FILTERED: ") + wrapped->toString();
 			}
 
 			return writeComment(comment);

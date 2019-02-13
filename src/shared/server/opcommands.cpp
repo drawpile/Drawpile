@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,9 +48,10 @@ typedef void (*SrvCommandFn)(Client *, const QJsonArray &, const QJsonObject &);
 class SrvCommand {
 public:
 	enum Mode {
-		NONOP, // usable by all
-		OP,    // needs OP privileges
-		MOD    // needs MOD privileges
+		NONOP,  // usable by all
+		DEPUTY, // needs at least deputy privileges
+		OP,     // needs operator privileges
+		MOD     // needs moderator privileges
 	};
 
 	SrvCommand(const QString &name, SrvCommandFn fn, Mode mode=OP)
@@ -75,6 +76,13 @@ struct SrvCommandSet {
 };
 
 const SrvCommandSet COMMANDS;
+
+void readyToAutoReset(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	Q_UNUSED(kwargs);
+	client->session()->readyToAutoReset(client->id());
+}
 
 void initBegin(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
@@ -154,6 +162,11 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(target->isModerator())
 		throw CmdError("cannot kick moderators");
+
+	if(client->isDeputy()) {
+		if(target->isOperator() || target->isTrusted())
+			throw CmdError("cannot kick trusted users");
+	}
 
 	if(kwargs["ban"].toBool()) {
 		client->session()->addBan(target, client->username());
@@ -248,11 +261,12 @@ void reportAbuse(Client *client, const QJsonArray &args, const QJsonObject &kwar
 SrvCommandSet::SrvCommandSet()
 {
 	commands
+		<< SrvCommand("ready-to-autoreset", readyToAutoReset)
 		<< SrvCommand("init-begin", initBegin)
 		<< SrvCommand("init-complete", initComplete)
 		<< SrvCommand("init-cancel", initCancel)
 		<< SrvCommand("sessionconf", sessionConf)
-		<< SrvCommand("kick-user", kickUser)
+		<< SrvCommand("kick-user", kickUser, SrvCommand::DEPUTY)
 		<< SrvCommand("gain-op", opWord, SrvCommand::NONOP)
 
 		<< SrvCommand("reset-session", resetSession)
@@ -280,6 +294,10 @@ void handleClientServerCommand(Client *client, const QString &command, const QJs
 			}
 			else if(c.mode() == SrvCommand::OP && !client->isOperator()) {
 				client->sendDirectMessage(protocol::Command::error("Not a session owner"));
+				return;
+			}
+			else if(c.mode() == SrvCommand::DEPUTY && !client->isOperator() && !client->isDeputy()) {
+				client->sendDirectMessage(protocol::Command::error("Not a session owner or a deputy"));
 				return;
 			}
 

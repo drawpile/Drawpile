@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ namespace server {
 
 class Client;
 class ServerConfig;
+class Log;
 
 /**
  * The serverside session state.
@@ -60,7 +61,7 @@ public:
 		Shutdown
 	};
 
-	Session(SessionHistory *history, ServerConfig *config, QObject *parent=0);
+	Session(SessionHistory *history, ServerConfig *config, QObject *parent=nullptr);
 
 	const ServerConfig *config() const { return m_config; }
 
@@ -109,6 +110,13 @@ public:
 	 * @brief Is this an age-restricted session?
 	 */
 	bool isNsfm() const { return m_history->flags().testFlag(SessionHistory::Nsfm); }
+
+	/**
+	 * @brief Are trusted users deputized?
+	 *
+	 * If true, trusted users are granted limited access to kick/ban commands.
+	 */
+	bool isDeputies() const { return m_history->flags().testFlag(SessionHistory::Deputies); }
 
 	/**
 	 * @brief Set the name of the recording file to create
@@ -358,6 +366,7 @@ public:
 	//! Get the session state
 	State state() const { return m_state; }
 
+	void readyToAutoReset(int ctxId);
 	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
 	void handleInitCancel(int ctxId);
@@ -367,11 +376,21 @@ public:
 	 *
 	 * Generates log entries for each change
 	 *
-	 * @param ids lisf of new session operators
+	 * @param ids new list of session operators
 	 * @param changedBy name of the user who issued the change command
 	 * @return sanitized list of actual session operators
 	 */
-	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &chanedBy);
+	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &changedBy);
+
+	/**
+	 * @brief Update the list of trusted users
+	 *
+	 * Generates log entries for each change
+	 * @param ids new list of trusted users
+	 * @param changedBy name of the user who issued the change command
+	 * @return sanitized list of actual trusted users
+	 */
+	QList<uint8_t> updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy);
 
 	/**
 	 * @brief Grant or revoke OP status of a user
@@ -380,6 +399,14 @@ public:
 	 * @param changedBy name of the user who issued the command
 	 */
 	void changeOpStatus(int id, bool op, const QString &changedBy);
+
+	/**
+	 * @brief Grant or revoke trusted status of a user
+	 * @param id user ID
+	 * @param trusted new status
+	 * @param changedBy name of the user who issued the command
+	 */
+	void changeTrustedStatus(int id, bool trusted, const QString &changedBy);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
@@ -459,12 +486,8 @@ private slots:
 	void removeUser(Client *user);
 
 	void refreshAnnouncements();
-	void sessionAnnounced(const sessionlisting::Announcement &announcement);
-	void sessionAnnouncementError(const QString &apiUrl, const QString &message);
 
 private:
-	sessionlisting::AnnouncementApi *publicListingClient();
-
 	void cleanupCommandStream();
 
 	void restartRecording();
@@ -492,10 +515,8 @@ private:
 	SessionHistory *m_history;
 	QList<protocol::MessagePtr> m_resetstream;
 	uint m_resetstreamsize;
-	uint m_historyLimitWarning;
 
 	QList<sessionlisting::Announcement> m_publicListings;
-	sessionlisting::AnnouncementApi *m_publicListingClient;
 	QTimer *m_refreshTimer;
 
 	QElapsedTimer m_lastEventTime;
@@ -503,7 +524,7 @@ private:
 
 	bool m_closed;
 	bool m_authOnly;
-	bool m_historyLimitWarningSent;
+	enum class AutoResetState { NotSent, Queried, Requested} m_autoResetRequestStatus;
 };
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "usercursormodel.h"
+#include "layerlist.h"
 
 #include <QDateTime>
 #include <QTimerEvent>
@@ -26,7 +27,7 @@
 namespace canvas {
 
 UserCursorModel::UserCursorModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: QAbstractListModel(parent), m_layerlist(nullptr)
 {
 	m_timerId = startTimer(1000, Qt::VeryCoarseTimer);
 }
@@ -52,6 +53,7 @@ QVariant UserCursorModel::data(const QModelIndex &index, int role) const
 		const UserCursor &uc = m_cursors.at(index.row());
 	switch(role) {
 		case Qt::DisplayRole: return uc.name;
+		case Qt::DecorationRole: return uc.avatar;
 		case IdRole: return uc.id;
 		case PositionRole: return uc.pos;
 		case LayerRole: return uc.layer;
@@ -67,6 +69,7 @@ QHash<int, QByteArray> UserCursorModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
 	roles[Qt::DisplayRole] = "display";
+	roles[Qt::DecorationRole] = "decoration";
 	roles[IdRole] = "id";
 	roles[PositionRole] = "pos";
 	roles[LayerRole] = "layer";
@@ -86,18 +89,27 @@ void UserCursorModel::setCursorName(int id, const QString &name)
 	emit dataChanged(index, index, QVector<int>() << Qt::DisplayRole);
 }
 
-void UserCursorModel::setCursorAttributes(int id, const QColor &color, const QString &layer)
+void UserCursorModel::setCursorAvatar(int id, const QPixmap &avatar)
+{
+	QModelIndex index;
+	UserCursor *uc = getOrCreate(id, index);
+
+	uc->avatar = avatar;
+
+	emit dataChanged(index, index, QVector<int>() << Qt::DecorationRole);
+}
+
+void UserCursorModel::setCursorColor(int id, const QColor &color)
 {
 	QModelIndex index;
 	UserCursor *uc = getOrCreate(id, index);
 
 	uc->color = color;
-	uc->layer = layer;
 
-	emit dataChanged(index, index, QVector<int>() << LayerRole << ColorRole);
+	emit dataChanged(index, index, QVector<int>() << ColorRole);
 }
 
-void UserCursorModel::setCursorPosition(int id, const QPointF &pos)
+void UserCursorModel::setCursorPosition(int id, int layerId, const QPoint &pos)
 {
 	QModelIndex index;
 	UserCursor *uc = getOrCreate(id, index);
@@ -109,6 +121,18 @@ void UserCursorModel::setCursorPosition(int id, const QPointF &pos)
 	if(!uc->visible) {
 		uc->visible = true;
 		roles << VisibleRole;
+	}
+
+	if(layerId>0 && layerId != uc->layerId) {
+		uc->layerId = layerId;
+		QString layerName = QStringLiteral("???");
+		if(m_layerlist) {
+			QVariant ln = m_layerlist->layerIndex(layerId).data(LayerListModel::TitleRole);
+			if(!ln.isNull())
+				layerName = ln.toString();
+		}
+		uc->layer = layerName;
+		roles << LayerRole;
 	}
 
 	emit dataChanged(index, index, roles);
@@ -143,7 +167,17 @@ UserCursor *UserCursorModel::getOrCreate(int id, QModelIndex &idx)
 	}
 
 	beginInsertRows(QModelIndex(), m_cursors.size(), m_cursors.size());
-	m_cursors.append(UserCursor { id, false, QDateTime::currentMSecsSinceEpoch(), QPointF(), QStringLiteral("#%1").arg(id), QString(), QColor(Qt::black)});
+	m_cursors.append(UserCursor {
+		id,
+		false,
+		QDateTime::currentMSecsSinceEpoch(),
+		0,
+		QPoint(),
+		QStringLiteral("#%1").arg(id),
+		QString(),
+		QColor(Qt::black),
+		QPixmap()
+	});
 	endInsertRows();
 
 	idx = index(m_cursors.size()-1);

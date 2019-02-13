@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,60 +20,57 @@
 #include "dialogs/hostdialog.h"
 
 #include "utils/mandatoryfields.h"
-#include "utils/usernamevalidator.h"
 #include "utils/sessionidvalidator.h"
 #include "utils/images.h"
 #include "utils/listservermodel.h"
 
-#include <QPushButton>
-#include <QFileDialog>
-#include <QImageReader>
-#include <QSettings>
-#include <QMessageBox>
-#include <QSettings>
-
 #include "ui_hostdialog.h"
+
+#include <QPushButton>
+#include <QSettings>
 
 namespace dialogs {
 
 HostDialog::HostDialog(QWidget *parent)
-	: QDialog(parent)
+	: QDialog(parent), m_ui(new Ui_HostDialog)
 {
-	_ui = new Ui_HostDialog;
-	_ui->setupUi(this);
-	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
-	_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	_ui->username->setValidator(new UsernameValidator(this));
-	_ui->idAlias->setValidator(new SessionIdAliasValidator(this));
+	m_ui->setupUi(this);
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	m_ui->idAlias->setValidator(new SessionIdAliasValidator(this));
 
-	// Session tab defaults
+	auto mandatoryfields = new MandatoryFields(this, m_ui->buttons->button(QDialogButtonBox::Ok));
+	connect(m_ui->useremote, &QCheckBox::toggled,
+		[this, mandatoryfields](bool checked) {
+			m_ui->remotehost->setProperty("mandatoryfield", checked);
+			mandatoryfields->update();
+		}
+	);
+
 	QSettings cfg;
 	cfg.beginGroup("history");
-	_ui->username->setText(cfg.value("username").toString());
-	_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
 
-	_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
-	_ui->announce->setChecked(cfg.value("announce", false).toBool());
-	_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
+	m_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
+	m_ui->idAlias->setText(cfg.value("idalias").toString());
 
-	// Settings tab defaults
-	_ui->preservechat->setChecked(cfg.value("preservechat", false).toBool());
-	_ui->userlimit->setValue(cfg.value("userlimit", 20).toInt());
-	_ui->allowdrawing->setChecked(cfg.value("allowdrawing", true).toBool());
-	_ui->layerctrllock->setChecked(cfg.value("layerctrllock", true).toBool());
-	_ui->idAlias->setText(cfg.value("idalias").toString());
+	m_ui->listingserver->setModel(new sessionlisting::ListServerModel(this));
+	m_ui->announce->setChecked(cfg.value("announce", false).toBool());
+	m_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
 
-	// Server box defaults
 	if(cfg.value("hostremote", false).toBool())
-		_ui->useremote->setChecked(true);
-	_ui->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
+		m_ui->useremote->setChecked(true);
 
-	new MandatoryFields(this, _ui->buttons->button(QDialogButtonBox::Ok));
+	const QStringList recentRemoteHosts = cfg.value("recentremotehosts").toStringList();
+	if(recentRemoteHosts.isEmpty())
+		m_ui->remotehost->setCurrentText("drawpile.net");
+	else
+		m_ui->remotehost->insertItems(0, recentRemoteHosts);
+
 }
 
 HostDialog::~HostDialog()
 {
-	delete _ui;
+	delete m_ui;
 }
 
 void HostDialog::rememberSettings() const
@@ -81,94 +78,66 @@ void HostDialog::rememberSettings() const
 	QSettings cfg;
 	cfg.beginGroup("history");
 
-	cfg.setValue("username", getUserName());
 	cfg.setValue("sessiontitle", getTitle());
-	cfg.setValue("announce", _ui->announce->isChecked());
-	cfg.setValue("listingserver", _ui->listingserver->currentIndex());
+	cfg.setValue("announce", m_ui->announce->isChecked());
+	cfg.setValue("listingserver", m_ui->listingserver->currentIndex());
 
 	// Move current address to the top of the list
-	QStringList hosts;
-	const QString current = _ui->remotehost->currentText();
-	int curind = _ui->remotehost->findText(current);
-	if(curind!=-1)
-		_ui->remotehost->removeItem(curind);
-	hosts << current;
-	for(int i=0;i<_ui->remotehost->count();++i)
-			hosts << _ui->remotehost->itemText(i);
-	_ui->remotehost->setCurrentText(current);
+	const QString current = m_ui->remotehost->currentText();
+	if(!current.isEmpty() && m_ui->useremote->isChecked()) {
+		const int curIdx = m_ui->remotehost->findText(current);
+		if(curIdx!=-1)
+			m_ui->remotehost->removeItem(curIdx);
 
-	cfg.setValue("recentremotehosts", hosts);
-	cfg.setValue("hostremote", _ui->useremote->isChecked());
+		QStringList hosts;
+		hosts << current;
+
+		for(int i=0;i<m_ui->remotehost->count();++i)
+				hosts << m_ui->remotehost->itemText(i);
+		m_ui->remotehost->setCurrentText(current);
+
+		cfg.setValue("recentremotehosts", hosts);
+	}
+
+	cfg.setValue("hostremote", m_ui->useremote->isChecked());
 
 	// Remember settings tab values
-	cfg.setValue("preservechat", _ui->preservechat->isChecked());
-	cfg.setValue("userlimit", _ui->userlimit->value());
-	cfg.setValue("allowdrawing", _ui->allowdrawing->isChecked());
-	cfg.setValue("layerctrllock", _ui->layerctrllock->isChecked());
-	cfg.setValue("idalias", _ui->idAlias->text());
+	cfg.setValue("idalias", m_ui->idAlias->text());
 
 }
 
 QString HostDialog::getRemoteAddress() const
 {
-	return _ui->remotehost->currentText();
-}
-
-bool HostDialog::useRemoteAddress() const
-{
-	return _ui->useremote->isChecked();
-}
-
-QString HostDialog::getUserName() const
-{
-	return _ui->username->text();
+	if(m_ui->useremote->isChecked())
+		return m_ui->remotehost->currentText();
+	return QString();
 }
 
 QString HostDialog::getTitle() const
 {
-	return _ui->sessiontitle->text();
-}
-
-int HostDialog::getUserLimit() const
-{
-	return _ui->userlimit->value();
+	return m_ui->sessiontitle->text();
 }
 
 QString HostDialog::getPassword() const
 {
-	return _ui->sessionpassword->text();
-}
-
-bool HostDialog::getAllowDrawing() const
-{
-	return _ui->allowdrawing->isChecked();
-}
-
-bool HostDialog::getLayerControlLock() const
-{
-	return _ui->layerctrllock->isChecked();
+	return m_ui->sessionpassword->text();
 }
 
 QString HostDialog::getSessionAlias() const
 {
-	return _ui->idAlias->text();
-}
-
-bool HostDialog::getPreserveChat() const
-{
-	return _ui->preservechat->isChecked();
+	return m_ui->idAlias->text();
 }
 
 QString HostDialog::getAnnouncementUrl() const
 {
-	if(_ui->announce->isChecked())
-		return _ui->listingserver->currentData().toString();
+	if(m_ui->announce->isChecked())
+		return m_ui->listingserver->currentData().toString();
 	return QString();
 }
 
 bool HostDialog::getAnnouncmentPrivate() const
 {
-	return _ui->listPrivate->isChecked();
+	return m_ui->listPrivate->isChecked();
 }
 
 }

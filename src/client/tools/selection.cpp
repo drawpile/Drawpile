@@ -18,6 +18,7 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/aclfilter.h"
 #include "core/layer.h"
 #include "net/client.h"
 
@@ -37,7 +38,7 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::Selection *sel = m_allowTransform ? owner.model()->selection() : nullptr;
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);
 	else
@@ -72,7 +73,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 	} else {
 		const QPointF p = point - m_start;
 
-		if(sel->pasteImage().isNull() && !owner.model()->stateTracker()->isLayerLocked(owner.activeLayer())) {
+		if(sel->pasteImage().isNull() && !owner.model()->aclFilter()->isLayerLocked(owner.activeLayer())) {
 			startMove();
 		}
 
@@ -103,6 +104,9 @@ void SelectionTool::end()
 	canvas::Selection *sel = owner.model()->selection();
 	if(!sel)
 		return;
+
+	// The shape must be closed after the end of the selection operation
+	owner.model()->selection()->closeShape();
 
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
@@ -153,8 +157,10 @@ bool SelectionTool::isMultipart() const
 void SelectionTool::startMove()
 {
 	canvas::Selection *sel = owner.model()->selection();
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(sel && layer) {
+	auto layers = owner.model()->layerStack()->editor();
+
+	paintcore::EditableLayer layer = layers.getEditableLayer(owner.activeLayer());
+	if(sel && !layer.isNull()) {
 		// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
 		QRect maskBounds;
 		QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
@@ -165,9 +171,9 @@ void SelectionTool::startMove()
 
 		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
 		// to erase the selected region.
-		layer->removeSublayer(-1);
-		paintcore::Layer *tmplayer = layer->getSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
-		tmplayer->putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
+		layer.removeSublayer(-1);
+		auto tmplayer = layer.getEditableSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
+		tmplayer.putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
 	}
 }
 
@@ -217,14 +223,6 @@ void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool co
 	owner.model()->selection()->addPointToShape(point);
 }
 
-void PolygonSelection::end()
-{
-	if(owner.model()->selection())
-		owner.model()->selection()->closeShape();
-
-	SelectionTool::end();
-}
-
 QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset)
 {
 	Q_ASSERT(!source.isNull());
@@ -248,7 +246,7 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	if(offset)
 		*offset = bounds.topLeft();
 
-	QImage out(bounds.size(), QImage::Format_ARGB32);
+	QImage out(bounds.size(), QImage::Format_ARGB32_Premultiplied);
 	out.fill(0);
 	QPainter painter(&out);
 	painter.setRenderHint(QPainter::SmoothPixmapTransform);
@@ -264,7 +262,7 @@ QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection,
 	const QRect b = bf.toRect();
 	const QPolygonF p = selection.translated(-bf.topLeft());
 
-	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32);
+	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32_Premultiplied);
 	memset(mask.bits(), 0, mask.byteCount()); // note: apparently image.fill() does not set every byte for monochrome images
 	QPainter painter(&mask);
 	painter.setPen(Qt::NoPen);

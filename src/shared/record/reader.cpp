@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -174,7 +174,6 @@ static Reader::Encoding detectEncoding(QIODevice *dev)
 		case Parser::Result::Ok:
 		case Parser::Result::NeedMore:
 			// Got a valid command: this really looks like a valid recording
-			delete res.msg;
 			return Reader::Encoding::Text;
 			break;
 		case Parser::Result::Skip:
@@ -304,7 +303,6 @@ Compatibility Reader::readTextHeader()
 		case Parser::Result::NeedMore:
 		case Parser::Result::Ok:
 			// First message found, meaning the header section (if there was any) is over
-			delete res.msg;
 			done = true;
 			break;
 		}
@@ -415,7 +413,7 @@ void Reader::seekTo(int pos, qint64 position)
 	d->eof = false;
 }
 
-static protocol::Message *readTextMessage(QIODevice *file, bool *eof)
+static protocol::NullableMessageRef readTextMessage(QIODevice *file, bool *eof)
 {
 	Parser parser;
 	while(1) {
@@ -452,13 +450,12 @@ bool Reader::readNextToBuffer(QByteArray &buffer)
 		}
 
 	} else {
-		protocol::Message *msg = readTextMessage(d->file, &d->eof);
-		if(!msg)
+		protocol::NullableMessageRef msg = readTextMessage(d->file, &d->eof);
+		if(msg.isNull())
 			return false;
 		if(buffer.length() < msg->length())
 			buffer.resize(msg->length());
 		msg->serialize(buffer.data());
-		delete msg;
 	}
 
 	++d->current;
@@ -469,41 +466,36 @@ bool Reader::readNextToBuffer(QByteArray &buffer)
 MessageRecord Reader::readNext()
 {
 	Q_ASSERT(d->encoding != Encoding::Autodetect);
-	MessageRecord msg;
 
 	if(d->encoding == Encoding::Binary) {
 		if(!readNextToBuffer(d->msgbuf))
-			return msg;
+			return MessageRecord::Eor();
 
-		protocol::Message *message;
+		protocol::NullableMessageRef message;
 		message = protocol::Message::deserialize((const uchar*)d->msgbuf.constData(), d->msgbuf.length(), !d->opaque);
 
-		if(message) {
-			msg.status = MessageRecord::OK;
-			msg.message = message;
-		} else {
-			msg.status = MessageRecord::INVALID;
-			msg.error.len = protocol::Message::sniffLength(d->msgbuf.constData());
-			msg.error.type = protocol::MessageType(d->msgbuf.at(2));
-		}
+		if(message.isNull())
+			return MessageRecord::Invalid(
+				protocol::Message::sniffLength(d->msgbuf.constData()),
+				protocol::MessageType(d->msgbuf.at(2))
+			);
+		else
+			return MessageRecord::Ok(message);
 
 	} else {
 		d->currentPos = filePosition();
-		protocol::Message *message = readTextMessage(d->file, &d->eof);
+		protocol::NullableMessageRef message = readTextMessage(d->file, &d->eof);
 		if(!d->eof) {
-			if(message) {
-				msg.status = MessageRecord::OK;
-				msg.message = message;
-				++d->current;
-			} else {
-				msg.status = MessageRecord::INVALID;
-				msg.error.len = 0;
-				msg.error.type = protocol::MSG_COMMAND;
-			}
+			if(message.isNull())
+				return MessageRecord::Invalid(0, protocol::MSG_COMMAND);
+
+			++d->current;
+			return MessageRecord::Ok(message);
 		}
 	}
 
-	return msg;
+	return MessageRecord::Eor();
 }
 
 }
+

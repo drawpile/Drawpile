@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,6 +78,15 @@ public:
 	void setUsername(const QString &username);
 
 	/**
+	 * @brief Get this user's avatar.
+	 *
+	 * The avatar should be a PNG image.
+	 * @return
+	 */
+	const QByteArray &avatar() const;
+	void setAvatar(const QByteArray &avatar);
+
+	/**
 	 * @brief Get the ext-auth server's ID for this user
 	 *
 	 * The ext-auth ID is set only if this user logged in via ext-auth,
@@ -95,11 +104,27 @@ public:
 	void setOperator(bool op);
 
 	/**
+	 * @brief Is this user a deputy (but not an operator)
+	 *
+	 * Deputies have more limited permissions than operators.
+	 */
+	bool isDeputy() const;
+
+	/**
 	 * @brief Is this user a moderator?
 	 * Moderators can access any session, always have OP status and cannot be kicked by other users.
 	 */
 	bool isModerator() const;
 	void setModerator(bool mod);
+
+	/**
+	 * @brief Is this a trusted user?
+	 *
+	 * The trust flag is granted by session operators. It's effects are purely clientside,
+	 * but the server is aware of it so it can remember it for authenticated users.
+	 */
+	bool isTrusted() const;
+	void setTrusted(bool trusted);
 
 	/**
 	 * @brief Has this user been authenticated?

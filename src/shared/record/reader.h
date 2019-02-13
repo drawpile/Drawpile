@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,17 +45,18 @@ enum Compatibility {
 };
 
 struct MessageRecord {
-	MessageRecord() : status(END_OF_RECORDING), message(0) {}
+	static MessageRecord Ok(protocol::NullableMessageRef msg) { return MessageRecord { OK, msg, 0, protocol::MSG_COMMAND }; }
+	static MessageRecord Invalid(int len, protocol::MessageType type) { return MessageRecord { INVALID, nullptr, len, type }; }
+	static MessageRecord Eor() { return MessageRecord { END_OF_RECORDING, nullptr, 0, protocol::MSG_COMMAND }; }
 
 	enum { OK, INVALID, END_OF_RECORDING } status;
-	struct MessageRecordError {
-		int len;
-		protocol::MessageType type;
-	};
-	union {
-		protocol::Message *message;
-		MessageRecordError error;
-	};
+
+	// The message (if status is OK)
+	protocol::NullableMessageRef message;
+
+	// These are set if status is INVALID
+	int invalid_len;
+	protocol::MessageType invalid_type;
 };
 
 /**

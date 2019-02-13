@@ -273,7 +273,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 	cursor.mergeCharFormat(fmt);
 }
 
-void AnnotationSettings::setSelectionId(int id)
+void AnnotationSettings::setSelectionId(uint16_t id)
 {
 	m_noupdate = true;
 	setUiEnabled(id>0);

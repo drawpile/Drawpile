@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,10 +28,11 @@
 #include <QTemporaryFile>
 #include <QDir>
 #include <QImageReader>
+#include <QSharedPointer>
 
 namespace networkaccess {
 
-void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, std::function<void (QFile &, const QString &)> callback)
+void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *netstatus, const QObject *context, std::function<void (QFile &, const QString &)> callback)
 {
 	QString fileExt = ".tmp";
 	QString filename = url.path();
@@ -39,10 +40,9 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
 	if(fileExtIndex>0)
 		fileExt = filename.mid(fileExtIndex);
 
-	QTemporaryFile *tempfile = new QTemporaryFile(QDir::tempPath() + QStringLiteral("/drawpile_XXXXXX-download") + fileExt);
+	QSharedPointer<QTemporaryFile> tempfile { new QTemporaryFile(QDir::tempPath() + QStringLiteral("/drawpile_XXXXXX-download") + fileExt) };
 	if(!tempfile->open()) {
 		callback(*tempfile, tempfile->errorString());
-		delete tempfile;
 		return;
 	}
 
@@ -57,7 +57,7 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
 		tempfile->write(reply->readAll());
 	});
 
-	reply->connect(reply, &QNetworkReply::finished, [reply, expectType, callback, tempfile]() {
+	reply->connect(reply, &QNetworkReply::finished, context, [reply, expectType, callback, tempfile]() {
 		QString errormsg;
 
 		if(reply->error()) {
@@ -73,15 +73,14 @@ void getFile(const QUrl &url, const QString &expectType, widgets::NetStatus *net
 
 		tempfile->seek(0);
 		callback(*tempfile, errormsg);
-		delete tempfile;
 		reply->deleteLater();
 	});
 
 }
 
-void getImage(const QUrl &url, widgets::NetStatus *netstatus, std::function<void (const QImage &, const QString &)> callback)
+void getImage(const QUrl &url, widgets::NetStatus *netstatus, const QObject *context, std::function<void (const QImage &, const QString &)> callback)
 {
-	getFile(url, "image/", netstatus, [callback](QFile &file, const QString &error) {
+	getFile(url, "image/", netstatus, context, [callback](QFile &file, const QString &error) {
 		if(!error.isEmpty()) {
 			callback(QImage(), error);
 		} else {

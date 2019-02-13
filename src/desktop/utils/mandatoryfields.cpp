@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 */
 #include "mandatoryfields.h"
 
-#include <QAbstractButton>
 #include <QLineEdit>
 #include <QComboBox>
 #include <QVariant>
@@ -28,14 +27,15 @@
  * When constructed, all mandatory fields are searched recursively from
  * the parent object.
  * @param parent parent object of the mandatory fields
- * @param button button to disable when a field is blank
+ * @param okButton button to disable when a field is blank
  */
-MandatoryFields::MandatoryFields(QWidget *parent, QWidget *button)
-	: QObject(parent), button_(button)
+MandatoryFields::MandatoryFields(QWidget *parent, QWidget *okButton)
+	: QObject(parent), m_okButton(okButton)
 {
+	Q_ASSERT(parent);
+	Q_ASSERT(okButton);
 	collectFields(parent);
-	// Collect a list of mandatory input fields
-	changed();
+	update();
 }
 
 //! Recursively collect mandatory fields
@@ -44,22 +44,25 @@ void MandatoryFields::collectFields(QObject *parent)
 	for(QObject *obj : parent->children()) {
 		if(obj->property("mandatoryfield").isValid()) {
 			if(obj->inherits("QLineEdit")) {
-				connect(obj, SIGNAL(textChanged(QString)), this, SLOT(changed()));
+				connect(obj, SIGNAL(textChanged(QString)), this, SLOT(update()));
 			} else if(obj->inherits("QComboBox")) {
-				connect(obj, SIGNAL(editTextChanged(QString)), this, SLOT(changed()));
+				connect(obj, SIGNAL(editTextChanged(QString)), this, SLOT(update()));
 			} else {
 				qWarning() << "unhandled mandatory field" << obj->metaObject()->className();
 			}
-			widgets_.append(obj);
+			m_widgets.append(obj);
 		}
 		collectFields(obj);
 	}
 }
 
-void MandatoryFields::changed()
+void MandatoryFields::update()
 {
 	bool enable = true;
-	for(QObject *obj : widgets_) {
+	for(QObject *obj : m_widgets) {
+		if(!obj->property("mandatoryfield").toBool())
+			continue;
+
 		if(obj->inherits("QLineEdit")) {
 			if(static_cast<QLineEdit*>(obj)->text().isEmpty()) {
 				enable = false;
@@ -72,6 +75,6 @@ void MandatoryFields::changed()
 			}
 		}
 	}
-	button_->setEnabled(enable);
+	m_okButton->setEnabled(enable);
 }
 

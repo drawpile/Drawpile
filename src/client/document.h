@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define DRAWPILE_DOCUMENT_H
 
 #include "core/blendmodes.h"
+#include "canvas/features.h"
 #include "../shared/net/message.h" // TODO hide this
 
 #include <QObject>
@@ -29,6 +30,7 @@
 class QString;
 class QTimer;
 class QJsonValue;
+class QJsonObject;
 
 namespace canvas {
 	class CanvasModel;
@@ -62,7 +64,6 @@ class Document : public QObject
 	Q_PROPERTY(QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
 	Q_PROPERTY(QString currentFilename READ currentFilename() NOTIFY currentFilenameChanged)
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
-	Q_PROPERTY(bool serverSpaceLow READ isServerSpaceLow NOTIFY serverSpaceLowChanged)
 
 	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY sessionPersistentChanged)
 	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
@@ -71,7 +72,10 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
 	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
+	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY sessionDeputiesChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
+	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY sessionResetThresholdChanged)
+	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY baseResetThresholdChanged)
 	Q_PROPERTY(QString roomcode READ roomcode NOTIFY sessionRoomcodeChanged)
 
 	Q_OBJECT
@@ -129,8 +133,9 @@ public:
 	bool startRecording(const QString &filename, QString *error=nullptr);
 	void stopRecording();
 
+	bool saveAsRecording(const QString &filename, QJsonObject header, QString *error=nullptr) const;
+
 	bool isDirty() const { return m_dirty; }
-	bool isServerSpaceLow() const { return m_serverSpaceLow; }
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
@@ -139,11 +144,14 @@ public:
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
 	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
+	bool isSessionDeputies() const { return m_sessionDeputies; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
+	double sessionResetThreshold() const { return m_sessionResetThreshold/double(1024*1024); }
+	double baseResetThreshold() const { return m_baseResetThreshold/double(1024*1024); }
 
 	QString roomcode() const { return m_roomcode; }
 
-	void setAutoRecordOnConnect(bool autorec) { m_autoRecordOnConnect = autorec; }
+	void setRecordOnConnect(const QString &filename) { m_recordOnConnect = filename; }
 
 signals:
 	//! Connection opened, but not yet logged in
@@ -166,9 +174,11 @@ signals:
 	void sessionPasswordChanged(bool passwordProtected);
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
+	void sessionDeputiesChanged(bool deputies);
 	void sessionMaxUserCountChanged(int count);
 	void sessionRoomcodeChanged(const QString &code);
-	void serverSpaceLowChanged(bool isLow);
+	void sessionResetThresholdChanged(double threshold);
+	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 
 	void catchupProgress(int perent);
@@ -180,7 +190,7 @@ public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendSessionConf(const QJsonObject &sessionconf);
-	void sendSessionAclChange(uint16_t flags, uint16_t mask);
+	void sendFeatureAccessLevelChange(const uint8_t[canvas::FeatureCount]);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
 	void sendResetSession(const canvas::StateSavepoint &savepoint);
@@ -189,6 +199,7 @@ public slots:
 	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
 	void sendTerminateSession();
+	void sendCanvasBackground(const QColor &color);
 	void sendAbuseReport(int userId, const QString &message);
 
 	// Tool related functions
@@ -216,7 +227,7 @@ private slots:
 	void onSessionResetted();
 
 	void onSessionConfChanged(const QJsonObject &config);
-	void onServerHistoryLimitReceived(int maxSpace);
+	void onAutoresetRequested(int maxSize, bool query);
 
 	void snapshotNeeded();
 	void markDirty();
@@ -236,7 +247,10 @@ private:
 	void setSessionPasswordProtected(bool pp);
 	void setSessionOpword(bool ow);
 	void setSessionMaxUserCount(int count);
+	void setSessionResetThreshold(int threshold);
+	void setBaseResetThreshold(int threshold);
 	void setSessionNsfm(bool nsfm);
+	void setSessionDeputies(bool deputies);
 	void setRoomcode(const QString &roomcode);
 
 	void copyFromLayer(int layer);
@@ -256,7 +270,7 @@ private:
 
 	recording::Writer *m_recorder;
 	QString m_originalRecordingFilename;
-	bool m_autoRecordOnConnect;
+	QString m_recordOnConnect;
 
 	bool m_dirty;
 	bool m_autosave;
@@ -273,10 +287,12 @@ private:
 	bool m_sessionPasswordProtected;
 	bool m_sessionOpword;
 	bool m_sessionNsfm;
-	bool m_serverSpaceLow;
+	bool m_sessionDeputies;
 
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;
+	int m_sessionResetThreshold;
+	int m_baseResetThreshold;
 };
 
 #endif // DOCUMENT_H

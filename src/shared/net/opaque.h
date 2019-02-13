@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ public:
 	OpaqueMessage(const OpaqueMessage &m) = delete;
 	OpaqueMessage &operator=(const OpaqueMessage &m) = delete;
 
-	static Message *decode(MessageType type, uint8_t ctx, const uchar *data, uint len);
+	static NullableMessageRef decode(MessageType type, uint8_t ctx, const uchar *data, uint len);
 
 	/**
 	 * @brief Decode this message
 	 * @return Message or nullptr if data is invalid
 	 */
-	Message *decode() const;
+	NullableMessageRef decode() const;
 
 	QString messageName() const override { return QStringLiteral("_opaque"); }
 

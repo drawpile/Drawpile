@@ -1,24 +1,53 @@
 #!/bin/bash
-echo "NOTE: Run this script while inside of the root Drawpile directory"
-echo "ANOTHER NOTE: This script is meant to be run after building drawpile, so do it after :)"
-echo "Otherwise the universe might explode into popcorn..."
 
-sleep 2
+set -e
 
-DRAWPILE="$(pwd)"
+if [ "${QTDIR+}" == "" ]; then
+	QTDIR="$HOME/Qt/5.9.7/clang_64"
+fi
+
+VERSION=$(grep DRAWPILE_VERSION ../../CMakeLists.txt | cut -d \" -f 2)
+TITLE="Drawpile $VERSION"
+
+if [ ! -d "$QTDIR" ]; then
+	echo "$QTDIR not found!"
+	exit 1
+fi
+
+if [ "$(which appdmg)" == "" ]; then
+	echo "Appdmg not found!"
+	echo "Run npm install -g appdmg"
+	exit 1
+fi
+
+if [ -d build ]; then
+	echo "Old build directory exists!"
+	echo "Run 'rm -rf build' and try again."
+	exit 1
+fi
+
+# Build
+mkdir build
+pushd build
+cmake ../../../ \
+	"-DCMAKE_PREFIX_PATH=$QTDIR" \
+	-DSERVER=OFF \
+	-DCMAKE_BUILD_TYPE=Release
+make
 
 # Remove version string from the binary
-cd "$DRAWPILE"/build/bin/Drawpile.app/Contents/MacOS
+pushd bin
+pushd Drawpile.app/Contents/MacOS
 BINFILE="$(readlink -n Drawpile)"
 rm Drawpile
 mv "$BINFILE" Drawpile
+popd
+
+# Bundle frameworks
+"$QTDIR/bin/macdeployqt" Drawpile.app
+popd
+popd
 
 # Package the app in a dmg archive
-APPDMG="$(command -v appdmg)"
-if [ "$APPDMG" = "/usr/local/bin/appdmg" ]; then
-    "$APPDMG" "$DRAWPILE"/pkg/Mac/spec.json "$DRAWPILE"/build/bin/Drawpile.dmg
-else
-    echo "Ya done goofed, you don't have appdmg installed!; (or maybe it's not in your path, in which case sorry...)"
-fi
+appdmg spec.json build/bin/Drawpile.dmg
 
-echo "The Drawpile.dmg archive is in the build directory"

@@ -24,6 +24,7 @@
 #include <QUrl>
 
 #include "tools/tool.h"
+#include "canvas/features.h"
 
 class QActionGroup;
 class QMessageBox;
@@ -32,14 +33,16 @@ class QLabel;
 class QSplitter;
 class QTimer;
 class QToolButton;
+class QListView;
 
 class Document;
+class ActionBuilder;
 
 namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
-	class UserList;
+	class UserItemDelegate;
 	class ViewStatus;
 }
 namespace docks {
@@ -95,7 +98,7 @@ public:
 	void hostSession(dialogs::HostDialog *dlg);
 
 	//! Connect to a host and join a session if full URL is provided.
-	void joinSession(const QUrl& url, bool autoRecord=false);
+	void joinSession(const QUrl& url, const QString &autoRecordFilename=QString());
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
@@ -111,6 +114,7 @@ public slots:
 	void save();
 	void saveas();
 	void exportAnimation();
+	void exportTemplate();
 	void showFlipbook();
 
 	static void showSettings();
@@ -139,7 +143,7 @@ private slots:
 	void toggleRecording();
 
 	void onOperatorModeChange(bool op);
-	void onImageCmdLockChange(bool lock);
+	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
 
 	void onServerConnected();
 	void onServerLogin();
@@ -152,6 +156,8 @@ private slots:
 	void updateShortcuts();
 	void updateTabletSupportMode();
 
+	void updateLayerViewMode();
+
 	void paste();
 	void pasteFile();
 	void pasteFile(const QUrl &url);
@@ -161,6 +167,7 @@ private slots:
 	void clearOrDelete();
 
 	void resizeCanvas();
+	void changeCanvasBackground();
 	void markSpotForRecording();
 
 	void toolChanged(tools::Tool::Type tool);
@@ -185,7 +192,7 @@ private:
 	//! Confirm saving of image in a format that doesn't support all required features
 	bool confirmFlatten(QString& file) const;
 
-	QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence(), bool checkable=false);
+	ActionBuilder makeAction(const char *name, const QString &text);
 	QAction *getAction(const QString &name);
 
 	//! Load customized shortcuts
@@ -206,50 +213,52 @@ private:
 	void createDocks();
 	void setupActions();
 
-	QSplitter *_splitter;
+	QSplitter *m_splitter;
 
-	docks::ToolSettings *_dock_toolsettings;
+	docks::ToolSettings *m_dockToolSettings;
 	docks::BrushPalette *m_dockBrushPalette;
-	docks::InputSettings *_dock_input;
-	docks::LayerList *_dock_layers;
-	docks::ColorBox *_dock_colors;
+	docks::InputSettings *m_dockInput;
+	docks::LayerList *m_dockLayers;
+	docks::ColorBox *m_dockColors;
+	docks::Navigator *m_dockNavigator;
 	widgets::ChatBox *m_chatbox;
-	widgets::UserList *_userlist;
-	docks::Navigator *_dock_navigator;
+	QListView *m_userlistview;
+	widgets::UserItemDelegate *m_useritemdelegate;
 
-	widgets::CanvasView *_view;
+	widgets::CanvasView *m_view;
 
 	QStatusBar *m_viewStatusBar;
-	QLabel *_lockstatus;
-	QLabel *_recorderstatus;
+	QLabel *m_lockstatus;
 	widgets::NetStatus *m_netstatus;
-	widgets::ViewStatus *_viewstatus;
-	QToolButton *_statusChatButton;
+	widgets::ViewStatus *m_viewstatus;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 
-	drawingboard::CanvasScene *_canvasscene;
+	drawingboard::CanvasScene *m_canvasscene;
 
-	QMenu *_recent;
+	QMenu *m_recentMenu;
 
-	QActionGroup *_currentdoctools; // actions relating to the currently open document
-	QActionGroup *m_admintools; // session operator actions
-	QActionGroup *m_modtools; // session moderator tools
-	QActionGroup *m_docadmintools; // current document related operator actions
-	QActionGroup *m_drawingtools; // drawing tool selection
-	QActionGroup *m_brushSlots; // tool slot shortcuts
+	QActionGroup *m_currentdoctools; // general tools that require no special permissions
+	QActionGroup *m_admintools;      // session operator actions
+	QActionGroup *m_modtools;        // session moderator tools
+	QActionGroup *m_canvasbgtools;   // tools related to canvas background feature
+	QActionGroup *m_resizetools;     // tools related to canvas resizing feature
+	QActionGroup *m_putimagetools;   // Cut&Paste related tools
+	QActionGroup *m_undotools;       // undo&redo related tools
+	QActionGroup *m_drawingtools;    // drawing tool selection
+	QActionGroup *m_brushSlots;      // tool slot shortcuts
 
-	int _lastToolBeforePaste; // Last selected tool before Paste was used
+	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 
 	// Remember window state to return from fullscreen mode
 	QByteArray m_fullscreenOldState;
 	QRect m_fullscreenOldGeometry;
 	bool m_fullscreenOldMaximized;
 
-	QElapsedTimer _toolChangeTime; // how long the user has held down the tool change button
-	ShortcutDetector *_tempToolSwitchShortcut;
+	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
+	ShortcutDetector *m_tempToolSwitchShortcut;
 
 	Document *m_doc;
 	bool m_exitAfterSave;

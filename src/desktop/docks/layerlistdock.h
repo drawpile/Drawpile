@@ -19,6 +19,8 @@
 #ifndef LAYERLISTDOCK_H
 #define LAYERLISTDOCK_H
 
+#include "canvas/features.h"
+
 #include <QDockWidget>
 
 class QModelIndex;
@@ -50,17 +52,14 @@ public:
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
-	//! Get the ID of the currently selected layer
-	int currentLayer();
+	//! These actions are shown in a menu outside this dock
+	void setLayerEditActions(QAction *add, QAction *duplicate, QAction *merge, QAction *del);
 
 	bool isCurrentLayerLocked() const;
 
-	void setOperatorMode(bool op);
-	void setControlsLocked(bool locked);
-	void setOwnLayers(bool own);
-
 public slots:
 	void selectLayer(int id);
+	void showLayerNumbers(bool show);
 
 	void selectAbove();
 	void selectBelow();
@@ -70,8 +69,6 @@ signals:
 	void layerSelected(int id);
 	void activeLayerVisibilityChanged();
 
-	void layerViewModeSelected(int mode);
-
 	void layerCommand(protocol::MessagePtr msg);
 
 private slots:
@@ -79,6 +76,8 @@ private slots:
 	void beforeLayerDelete();
 	void onLayerDelete(const QModelIndex &parent, int first, int last);
 	void onLayerReorder();
+	
+	void onFeatureAccessChange(canvas::Feature feature, bool canuse);
 
 	void addLayer();
 	void insertLayer();
@@ -90,12 +89,12 @@ private slots:
 	void opacityAdjusted();
 	void blendModeChanged();
 	void hideSelected();
+	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
-	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
-	void layerViewModeTriggered(QAction *act);
-	void showLayerNumbers(bool show);
+	void changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
+	void lockStatusChanged(int layerId);
 	void selectionChanged(const QItemSelection &selected);
 	void layerContextMenu(const QPoint &pos);
 
@@ -119,18 +118,13 @@ private:
 	QAction *m_duplicateLayerAction;
 	QAction *m_mergeLayerAction;
 	QAction *m_deleteLayerAction;
-	QAction *m_showNumbersAction;
-
-	QMenu *m_viewMode;
 
 	QAction *m_menuInsertAction;
+	QAction *m_menuSeparator;
 	QAction *m_menuHideAction;
 	QAction *m_menuRenameAction;
 	QAction *m_menuDefaultAction;
 
-	bool m_op;
-	bool m_lockctrl;
-	bool m_ownlayers;
 	QTimer *m_opacityUpdateTimer;
 };
 

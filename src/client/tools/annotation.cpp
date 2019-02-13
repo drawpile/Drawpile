@@ -61,7 +61,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 	} else {
 		// No annotation, start creating a new one
 
-		if(owner.model()->aclFilter()->isAnnotationCreationLocked() && !owner.model()->aclFilter()->isLocalUserOperator()) {
+		if(!owner.model()->aclFilter()->canUseFeature(canvas::Feature::CreateAnnotation)) {
 			m_handle = paintcore::Annotation::OUTSIDE;
 			return;
 		}
@@ -135,7 +135,7 @@ void Annotation::end()
 		// Delete our preview annotation first
 		owner.model()->layerStack()->annotations()->deleteAnnotation(PREVIEW_ID);
 
-		int newId = owner.model()->getAvailableAnnotationId();
+		uint16_t newId = owner.model()->getAvailableAnnotationId();
 
 		if(newId==0) {
 			qWarning("We ran out of annotation IDs!");

@@ -14,4 +14,5 @@ AddUnitTest(html)
 AddUnitTest(retcon)
 AddUnitTest(aclfilter)
 AddUnitTest(passwordstore)
+AddUnitTest(listingfiltering)
 

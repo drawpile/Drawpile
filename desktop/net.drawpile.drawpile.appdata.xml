@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop">
+	<id>net.drawpile.drawpile</id>
+	<launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>GPL-3.0+</project_license>
+	<developer_name>Calle Laakkonen</developer_name>
+	<name>Drawpile</name>
+	<summary>Collaborative Drawing</summary>
+	<description>
+		<p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
+		<p>Feature highlights:</p>
+		<ul>
+			<li>Access to layers can be limited on a per user basis</li>
+			<li>Built-in chat</li>
+			<li>Works with pressure sensitive graphics tablets</li>
+			<li>Supports OpenRaster file format</li>
+			<li>Drawing sessions can be recorded, played back and exported as videos</li>
+			<li>Basic animation features, such as onionskinning and a flipbook</li>
+			<li>Discover drawing sessions via global announcement feature or locally with Zeroconf</li>
+		</ul>
+	</description>
+	<url type="homepage">https://drawpile.net/</url>
+	<url type="bugtracker">https://github.com/callaa/Drawpile/issues</url>
+	<screenshots>
+		<screenshot type="default">
+			<image>https://drawpile.net/media/d/images/screenshot2.png</image>
+		</screenshot>
+	</screenshots>
+	<categories>
+		<category>Graphics</category>
+	</categories>
+	<provides>
+		<binary>drawpile</binary>
+	</provides>
+</component>
+

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "main.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
-#include "export/ffmpegexporter.h" // for setting ffmpeg path
+#include "dialogs/avatarimport.h"
 #include "widgets/keysequenceedit.h"
 #include "utils/icon.h"
 #include "utils/customshortcutmodel.h"
@@ -30,6 +30,7 @@
 #include "utils/netfiles.h"
 #include "utils/settings.h"
 #include "utils/passwordstore.h"
+#include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../shared/util/announcementapi.h"
 #include "../shared/util/passwordhash.h"
@@ -48,7 +49,6 @@
 #include <QStandardPaths>
 #include <QSslCertificate>
 #include <QSortFilterProxyModel>
-#include <QPointer>
 #include <QStandardItemModel>
 
 #include <QDebug>
@@ -81,23 +81,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
 	m_ui = new Ui_SettingsDialog;
 	m_ui->setupUi(this);
-
-	connect(m_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), m_ui->ffmpegpath->text(),
-#ifdef Q_OS_WIN
-			tr("Executables (%1)").arg("*.exe") + ";;" +
-#endif
-			QApplication::tr("All files (*)")
-		);
-		if(!path.isEmpty())
-			m_ui->ffmpegpath->setText(path);
-	});
-
-	connect(m_ui->pickRecordingFolder, &QToolButton::clicked, [this]() {
-		QString path = QFileDialog::getExistingDirectory(this, tr("Recording folder"), m_ui->recordingFolder->text());
-		if(!path.isEmpty())
-			m_ui->recordingFolder->setText(path);
-	});
 
 	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
 		if(val>0)
@@ -184,7 +167,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Session listing server list
-	m_listservers = new sessionlisting::ListServerModel(false, this);
+	m_listservers = new sessionlisting::ListServerModel(this);
 	m_ui->listserverview->setModel(m_listservers);
 	m_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 
@@ -202,6 +185,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_ui->passwordListView->expandAll();
 
 	connect(m_ui->passwordListRemove, &QPushButton::clicked, this, &SettingsDialog::removeStoredPassword);
+
+	// Avatar list
+	m_avatars = new AvatarListModel(this);
+	m_ui->avatarList->setModel(m_avatars);
+
+	connect(m_ui->addAvatar, &QPushButton::clicked, this, &SettingsDialog::addAvatar);
+	connect(m_ui->deleteAvatar, &QPushButton::clicked, this, &SettingsDialog::removeSelectedAvatar);
 
 	// Load configuration
 	restoreSettings();
@@ -298,15 +288,12 @@ void SettingsDialog::restoreSettings()
 	m_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
 	m_ui->recordtimestamp->setChecked(cfg.value("recordtimestamp", false).toBool());
 	m_ui->timestampInterval->setValue(cfg.value("timestampinterval", 15).toInt());
-	m_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
-	m_ui->recordingFolder->setText(utils::settings::recordingFolder());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
 	m_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
 	m_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
 	m_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
-	m_ui->backgroundlayer->setChecked(cfg.value("backgroundlayer", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
@@ -336,12 +323,14 @@ void SettingsDialog::restoreSettings()
 	}
 	m_ui->nsfmWords->setPlainText(cfg.value("tagwords", parentalcontrols::defaultWordList()).toString());
 	m_ui->autotagNsfm->setChecked(cfg.value("autotag", true).toBool());
+	m_ui->noUncensoring->setChecked(cfg.value("noUncensoring", false).toBool());
 	setParentalControlsLocked(parentalcontrols::isLocked());
 	if(parentalcontrols::isOSActive())
 		m_ui->nsfmLock->setEnabled(false);
 	cfg.endGroup();
 
 	m_customShortcuts->loadShortcuts();
+	m_avatars->loadAvatars();
 }
 
 void SettingsDialog::setParentalControlsLocked(bool lock)
@@ -350,6 +339,7 @@ void SettingsDialog::setParentalControlsLocked(bool lock)
 	m_ui->nsfmHide->setDisabled(lock);
 	m_ui->nsfmNoJoin->setDisabled(lock);
 	m_ui->nsfmDisconnect->setDisabled(lock);
+	m_ui->noUncensoring->setDisabled(lock);
 	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
 }
 
@@ -389,15 +379,12 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("minimumpause", m_ui->minimumpause->value());
 	cfg.setValue("recordtimestamp", m_ui->recordtimestamp->isChecked());
 	cfg.setValue("timestampinterval", m_ui->timestampInterval->value());
-	FfmpegExporter::setFfmpegPath(m_ui->ffmpegpath->text().trimmed());
-	cfg.setValue("folder", m_ui->recordingFolder->text());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/animation");
 	cfg.setValue("onionskinsbelow", m_ui->onionskinsBelow->value());
 	cfg.setValue("onionskinsabove", m_ui->onionskinsAbove->value());
 	cfg.setValue("onionskintint", m_ui->onionskinTint->isChecked());
-	cfg.setValue("backgroundlayer", m_ui->backgroundlayer->isChecked());
 	cfg.endGroup();
 
 	// Remember server settings
@@ -420,6 +407,7 @@ void SettingsDialog::rememberSettings()
 	cfg.beginGroup("pc");
 	cfg.setValue("autotag", m_ui->autotagNsfm->isChecked());
 	cfg.setValue("tagwords", m_ui->nsfmWords->toPlainText());
+	cfg.setValue("noUncensoring", m_ui->noUncensoring->isChecked());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())
@@ -427,6 +415,7 @@ void SettingsDialog::rememberSettings()
 
 	m_customShortcuts->saveShortcuts();
 	m_listservers->saveServers();
+	m_avatars->commit();
 
 	static_cast<DrawpileApp*>(qApp)->notifySettingsChanged();
 }
@@ -575,44 +564,49 @@ void SettingsDialog::importTrustedCertificate()
 void SettingsDialog::addListingServer()
 {
 	QString urlstr = QInputDialog::getText(this, tr("Add public listing server"), "URL");
-	if(!urlstr.isEmpty()) {
-		QUrl url(urlstr);
-		if(!url.isValid()) {
-			QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
+	if(urlstr.isEmpty())
+		return;
+
+	QUrl url(urlstr);
+	if(!url.isValid()) {
+		QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
+		return;
+	}
+
+	auto *response = sessionlisting::getApiInfo(url);
+	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
+		response->deleteLater();
+		if(!error.isEmpty()) {
+			QMessageBox::warning(this, tr("Add public listing server"), error);
 			return;
 		}
 
-		auto *api = new sessionlisting::AnnouncementApi;
+		const auto info = result.value<sessionlisting::ListServerInfo>();
+		const QString apiUrl = response->apiUrl().toString();
 
-		QPointer<SettingsDialog> self(this);
+		m_listservers->addServer(
+			info.name,
+			apiUrl,
+			info.description
+			);
 
-		connect(api, &sessionlisting::AnnouncementApi::error, [self, api](QString error) {
-			QMessageBox::warning(self, tr("Add public listing server"), error);
-			api->deleteLater();
-		});
+		if(info.faviconUrl == "drawpile") {
+			m_listservers->setFavicon(
+				apiUrl,
+				QIcon("builtin:drawpile.png").pixmap(128, 128).toImage()
+				);
 
-		connect(api, &sessionlisting::AnnouncementApi::serverInfo, [self, url, api](sessionlisting::ListServerInfo info) {
-			if(!self.isNull()) {
-				self->m_listservers->addServer(info.name, url.toString(), info.description);
-
-				if(info.faviconUrl == "drawpile") {
-					self->m_listservers->setFavicon(url.toString(), QIcon("builtin:drawpile.png").pixmap(128, 128).toImage());
-				} else {
-					QUrl favicon(info.faviconUrl);
-					if(favicon.isValid()) {
-						networkaccess::getImage(favicon, nullptr, [self, url](const QImage &image, const QString &) {
-							if(!self.isNull() && !image.isNull()) {
-								self->m_listservers->setFavicon(url.toString(), image);
-							}
-						});
+		} else {
+			const QUrl favicon(info.faviconUrl);
+			if(favicon.isValid()) {
+				networkaccess::getImage(favicon, nullptr, this, [this, apiUrl](const QImage &image, const QString &) {
+					if(!image.isNull()) {
+						m_listservers->setFavicon(apiUrl, image);
 					}
-				}
+				});
 			}
-			api->deleteLater();
-		});
-
-		api->getApiInfo(url);
-	}
+		}
+	});
 }
 
 void SettingsDialog::removeListingServer()
@@ -665,7 +659,7 @@ void SettingsDialog::lockParentalControls()
 
 void SettingsDialog::removeStoredPassword()
 {
-	const QModelIndex &idx = m_ui->passwordListView->currentIndex();
+	const QModelIndex idx = m_ui->passwordListView->currentIndex();
 	if(idx.isValid()) {
 		const QString server = idx.data(Qt::UserRole+1).toString();
 		const QString username = idx.data(Qt::UserRole+2).toString();
@@ -684,6 +678,18 @@ void SettingsDialog::removeStoredPassword()
 			}
 		}
 	}
+}
+
+void SettingsDialog::addAvatar()
+{
+	AvatarImport::importAvatar(m_avatars, this);
+}
+
+void SettingsDialog::removeSelectedAvatar()
+{
+	const QModelIndex idx = m_ui->avatarList->currentIndex();
+	if(idx.isValid())
+		m_avatars->removeRow(idx.row());
 }
 
 }

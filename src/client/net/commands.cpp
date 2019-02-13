@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
 */
 
 #include "commands.h"
-#include "core/brush.h"
 
 #include "../shared/net/control.h"
 #include "../shared/net/image.h"
-#include "../shared/net/pen.h"
 
 #include <QImage>
 
@@ -34,73 +32,12 @@ namespace {
 // Check if the given image consists entirely of fully transparent pixels
 bool isEmptyImage(const QImage &image)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
-	int len = image.width() * image.height();
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
-	while(len--) {
-		if(qAlpha(*pixels) != 0)
+	const quint32 *end = pixels + image.width()*image.height();
+	while(pixels<end) {
+		if(*(pixels++))
 			return false;
-		++pixels;
-	}
-	return true;
-}
-
-// Split image into tile boundary aligned PutImages.
-// These can be applied very efficiently when mode is MODE_REPLACE
-void splitImageAtTileBoundaries(const int ctxid, const int layer, const int x, const int y, const QImage &image, paintcore::BlendMode::Mode mode, bool skipempty, QList<protocol::MessagePtr> &list)
-{
-	static const int TILE = 64;
-
-	const int x2=x+image.width();
-	const int y2=y+image.height();
-
-	int ty=y;
-	int sy=0;
-	while(ty<y2) {
-		const int nextY = qMin(((ty + TILE) / TILE) * TILE, y2);
-		int tx=x;
-		int sx=0;
-		while(tx<x2) {
-			const int nextX = qMin(((tx + TILE) / TILE) * TILE, x2);
-
-			const QImage i = image.copy(sx, sy, nextX-tx, nextY-ty);
-
-			if(!skipempty || !isEmptyImage(i)) {
-				const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(i.bits()), i.byteCount());
-
-				QByteArray compressed = qCompress(data);
-				Q_ASSERT(compressed.length() <= protocol::PutImage::MAX_LEN);
-
-				list.append(protocol::MessagePtr(new protocol::PutImage(
-					ctxid,
-					layer,
-					mode,
-					tx,
-					ty,
-					i.width(),
-					i.height(),
-					compressed
-				)));
-			}
-
-			sx += nextX-tx;
-			tx = nextX;
-		}
-
-		sy += nextY - ty;
-		ty = nextY;
-	}
-}
-
-bool isOpaque(const QImage &image)
-{
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
-	int len = image.width() * image.height();
-	const quint32 *pixels = reinterpret_cast<const quint32*>(image.bits());
-	while(len--) {
-		if(qAlpha(*pixels) != 255)
-			return false;
-		++pixels;
 	}
 	return true;
 }
@@ -108,9 +45,9 @@ bool isOpaque(const QImage &image)
 // Recursively split image into small enough pieces.
 // When mode is anything else than MODE_REPLACE, PutImage calls
 // are expensive, so we want to split the image into as few pieces as possible.
-void splitImage(int ctxid, int layer, int x, int y, const QImage &image, int mode, bool skipempty, QList<protocol::MessagePtr> &list)
+void splitImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode, bool skipempty, QList<protocol::MessagePtr> &list)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 
 	if(skipempty && isEmptyImage(image))
 		return;
@@ -203,7 +140,7 @@ MessagePtr terminateSession()
 	return serverCommand("kill-session");
 }
 
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
+QList<protocol::MessagePtr> putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
 	QList<protocol::MessagePtr> list;
 
@@ -222,21 +159,8 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 		y += yoffset;
 	}
 
-	image = image.convertToFormat(QImage::Format_ARGB32);
-
-	// Optimization: if image is completely opaque, REPLACE mode is equivalent to NORMAL,
-	// except potentially more efficient when split at tile boundaries
-	if(mode == paintcore::BlendMode::MODE_NORMAL && isOpaque(image)) {
-		mode = paintcore::BlendMode::MODE_REPLACE;
-		skipempty = false;
-	}
-
-	// Split image into pieces small enough to fit in a message
-	if(mode == paintcore::BlendMode::MODE_REPLACE) {
-		splitImageAtTileBoundaries(ctxid, layer, x, y, image, mode, skipempty, list);
-	} else {
-		splitImage(ctxid, layer, x, y, image, mode, skipempty, list);
-	}
+	image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+	splitImage(ctxid, layer, x, y, image, mode, skipempty, list);
 
 #ifndef NDEBUG
 	if(list.isEmpty()) {
@@ -253,82 +177,9 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage
 	return list;
 }
 
-protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush)
+protocol::MessagePtr setCanvasBackground(uint8_t ctx, const QColor &color)
 {
-	uint8_t mode = brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0;
-	mode |= brush.incremental() ? protocol::TOOL_MODE_INCREMENTAL : 0;
-
-	return protocol::MessagePtr(new protocol::ToolChange(
-		userid,
-		layer,
-		brush.blendingMode(),
-		mode,
-		brush.spacing(),
-		brush.color().rgba(),
-		brush.hardness1() * 255,
-		brush.hardness2() * 255,
-		brush.size1(),
-		brush.size2(),
-		brush.opacity1() * 255,
-		brush.opacity2() * 255,
-		brush.smudge1() * 255,
-		brush.smudge2() * 255,
-		brush.resmudge()
-	));
-}
-
-
-/**
- * Convert a dpcore::Point to network format. The
- * reverse operation for this is in statetracker.cpp
- * @param p
- * @return
- */
-protocol::PenPoint pointToProtocol(const paintcore::Point &point)
-{
-	int32_t x = point.x() * 4.0;
-	int32_t y = point.y() * 4.0;
-	uint16_t p = point.pressure() * 0xffff;
-
-	return protocol::PenPoint(x, y, p);
-}
-
-/**
- * Convert a dpcore::Point to network format. The
- * reverse operation for this is in statetracker.cpp
- * @param p
- * @return
- */
-protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
-{
-	protocol::PenPointVector ppvec;
-	ppvec.reserve(points.size());
-	for(const paintcore::Point &p : points)
-		ppvec.append(pointToProtocol(p));
-
-	return ppvec;
-}
-
-QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points)
-{
-	const int batches = points.size() / protocol::PenMove::MAX_POINTS + 1;
-	QList<protocol::MessagePtr> msgs;
-	msgs.reserve(batches);
-
-	int i=0;
-	for(int batch=0;batch<batches;++batch) {
-		const int j=qMin(points.size(), (i+1)*protocol::PenMove::MAX_POINTS);
-		protocol::PenPointVector ppvec;
-		ppvec.reserve(j-i);
-		while(i<j) {
-			ppvec.append(pointToProtocol(points[i]));
-			++i;
-		}
-		msgs << protocol::MessagePtr(new protocol::PenMove(ctxid, ppvec));
-
-	}
-
-	return msgs;
+	return protocol::MessagePtr(new protocol::CanvasBackground(ctx, color.rgba()));
 }
 
 }

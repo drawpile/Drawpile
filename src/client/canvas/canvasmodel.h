@@ -63,7 +63,7 @@ class CanvasModel : public QObject
 	Q_OBJECT
 
 public:
-	explicit CanvasModel(int localUserId, QObject *parent = 0);
+	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
 
 	paintcore::LayerStack *layerStack() const { return m_layerstack; }
 	StateTracker *stateTracker() const { return m_statetracker; }
@@ -83,14 +83,14 @@ public:
 
 	QList<protocol::MessagePtr> generateSnapshot(bool forceNew) const;
 
-	int localUserId() const;
+	uint8_t localUserId() const;
 
-	int getAvailableAnnotationId() const;
+	uint16_t getAvailableAnnotationId() const;
 
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(int myUserId);
+	void connectedToServer(uint8_t myUserId);
 	void disconnectedFromServer();
 	void startPlayback();
 	void endPlayback();
@@ -157,6 +157,7 @@ private:
 	void metaMovePointer(const protocol::MovePointer &msg);
 	void metaMarkerMessage(const protocol::Marker &msg);
 	void metaDefaultLayer(const protocol::DefaultLayer &msg);
+	void metaSoftReset(uint8_t resetterId);
 
 	AclFilter *m_aclfilter;
 	UserListModel *m_userlist;

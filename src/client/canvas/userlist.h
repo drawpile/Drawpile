@@ -21,6 +21,7 @@
 
 #include <QAbstractListModel>
 #include <QList>
+#include <QPixmap>
 
 class QJsonArray;
 
@@ -32,16 +33,14 @@ namespace canvas {
  * @brief Information about a user
  */
 struct User {
-	User() : User(0, QString(), false, false, false) {}
-	User(int id_, const QString &name_, bool local, bool auth, bool mod)
-		: id(id_), name(name_), isLocal(local), isOperator(false), isMod(mod), isAuth(auth), isLocked(false), isMuted(false)
-	{}
-
 	int id;
 	QString name;
+	QPixmap avatar;
 	bool isLocal;
 	bool isOperator;
+	bool isTrusted;
 	bool isMod;
+	bool isBot;
 	bool isAuth;
 	bool isLocked;
 	bool isMuted;
@@ -52,69 +51,96 @@ struct User {
  */
 class UserListModel : public QAbstractListModel {
 	Q_OBJECT
-	public:
-		UserListModel(QObject *parent=0);
+public:
+	enum UserListRoles {
+		IdRole = Qt::UserRole + 1,
+		NameRole,
+		AvatarRole,
+		IsOpRole,
+		IsTrustedRole,
+		IsModRole,
+		IsAuthRole,
+		IsBotRole,
+		IsLockedRole,
+		IsMutedRole
+	};
 
-		QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const;
-		int rowCount(const QModelIndex& parent=QModelIndex()) const;
+	UserListModel(QObject *parent=nullptr);
 
-		void addUser(const User &user);
-		void removeUser(int id);
-		void clearUsers();
+	QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const;
+	int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
-		/**
-		 * @brief Get user info by ID
-		 *
-		 * This will return info about past users as well.
-		 * @param id user id
-		 * @return
-		 */
-		User getUserById(int id) const;
+	void addUser(const User &user);
+	void removeUser(int id);
+	void clearUsers();
 
-		/**
-		 * @brief Get the name of the user with the given context ID
-		 *
-		 * If no such user exists, "User #X" is returned, where X is the ID number.
-		 * @param id
-		 * @return user name
-		 */
-		QString getUsername(int id) const;
+	/**
+	 * @brief Get user info by ID
+	 *
+	 * This will return info about past users as well.
+	 * @param id user id
+	 * @return
+	 */
+	User getUserById(int id) const;
 
-		//! Get a list of users with operator privileges
-		QList<uint8_t> operatorList() const;
+	/**
+	 * @brief Get the name of the user with the given context ID
+	 *
+	 * If no such user exists, "User #X" is returned, where X is the ID number.
+	 * @param id
+	 * @return user name
+	 */
+	QString getUsername(int id) const;
 
-		//! Get a list of users who are locked
-		QList<uint8_t> lockList() const;
+	//! Get a list of users with operator privileges
+	QList<uint8_t> operatorList() const;
 
-		//! Get the ID of the operator with the lowest ID number
-		int getPrimeOp() const;
+	//! Get a list of users who are locked
+	QList<uint8_t> lockList() const;
 
-		/**
-		 * @brief Get the command for (un)locking a single user
-		 * @param localId
-		 * @param userId
-		 * @param lock
-		 * @return
-		 */
-		protocol::MessagePtr getLockUserCommand(int localId, int userId, bool lock) const;
+	//! Get a list of trusted users
+	QList<uint8_t> trustedList() const;
 
-		/**
-		 * @brief Get the command for granting or revoking operator privileges
-		 * @param localId
-		 * @param userId
-		 * @param op
-		 * @return
-		 */
-		protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
+	//! Get the ID of the operator with the lowest ID number
+	// TODO replace this by serverside auto-resetter selection
+	int getPrimeOp() const;
 
-	public slots:
-		void updateOperators(const QList<uint8_t> operatorIds);
-		void updateLocks(const QList<uint8_t> lockedUserIds);
-		void updateMuteList(const QJsonArray &mutedUserIds);
+	/**
+	 * @brief Get the command for (un)locking a single user
+	 * @param localId
+	 * @param userId
+	 * @param lock
+	 * @return
+	 */
+	protocol::MessagePtr getLockUserCommand(int localId, int userId, bool lock) const;
 
-	private:
-		QVector<User> m_users;
-		QHash<int,User> m_pastUsers;
+	/**
+	 * @brief Get the command for granting or revoking operator privileges
+	 * @param localId
+	 * @param userId
+	 * @param op
+	 * @return
+	 */
+	protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
+
+	/**
+	 * @brief Get the command for granting or revoking trusted status
+	 * @param localId
+	 * @param userId
+	 * @param trusted
+	 * @return
+	 */
+	protocol::MessagePtr getTrustUserCommand(int localId, int userId, bool op) const;
+
+public slots:
+	void updateOperators(const QList<uint8_t> operatorIds);
+	void updateTrustedUsers(const QList<uint8_t> trustedIds);
+	void updateLocks(const QList<uint8_t> lockedUserIds);
+	void updateMuteList(const QJsonArray &mutedUserIds);
+
+private:
+	QVector<User> m_users;
+	QHash<int,User> m_pastUsers;
 };
 
 }

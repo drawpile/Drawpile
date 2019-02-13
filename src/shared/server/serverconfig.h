@@ -54,7 +54,7 @@ public:
 namespace config {
 	static const ConfigKey
 		ClientTimeout(0, "clientTimeout", "60", ConfigKey::TIME),            // Connection ping timeout for clients
-		SessionSizeLimit(1, "sessionSizeLimit", "15mb", ConfigKey::SIZE),    // Session history size limit in bytes (int)
+		SessionSizeLimit(1, "sessionSizeLimit", "99mb", ConfigKey::SIZE),    // Session history size limit in bytes
 		SessionCountLimit(2, "sessionCountLimit", "25", ConfigKey::INT),     // Maximum number of active sessions (int)
 		EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),       // Enable session persistence (bool)
 		AllowGuestHosts(4, "allowGuestHosts", "true", ConfigKey::BOOL),      // Allow guests (or users without the HOST flag) to host sessions
@@ -71,7 +71,8 @@ namespace config {
 		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
 		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
 		ReportToken(17, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
-		LogPurgeDays(18, "logpurgedays", "0", ConfigKey::INT)                // Automatically purge log entries older than this many days (DB log only)
+		LogPurgeDays(18, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
+		AutoresetThreshold(19, "autoResetThreshold", "15mb", ConfigKey::SIZE) // Default autoreset threshold in bytes
 		;
 }
 

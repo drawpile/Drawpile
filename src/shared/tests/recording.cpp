@@ -17,17 +17,17 @@ using namespace protocol;
 
 // Hex encoded test recording.
 // Header contains one extra key: "test": "TESTING"
-// Protocol version is "dp:4.20.1"
+// Protocol version is "dp:4.21.2"
 // Body contains one message: UserJoin(1, 0, "hello", "world")
-static const char *TEST_RECORDING = "44505245430000427b2274657374223a2254455354494e47222c2276657273696f6e223a2264703a342e32302e31222c2277726974657276657273696f6e223a22322e302e306232227d000c2001000568656c6c6f776f726c64";
+static const char *TEST_RECORDING = "44505245430000427b2274657374223a2254455354494e47222c2276657273696f6e223a2264703a342e32312e32222c2277726974657276657273696f6e223a22322e302e306232227d000c2001000568656c6c6f776f726c64";
 
 // A test recording with a version number of dp:4.10.0, containing a single NewLayer message.
 static const char *TEST_RECORDING_OLD = "44505245430000317b2276657273696f6e223a2264703a342e31302e30222c2277726974657276657273696f6e223a22322e302e306232227d00098201000100000000000000";
 
 static const char *TEST_TEXTMODE =
-	"!version=dp:4.20.1\n"
+	"!version=dp:4.21.2\n"
 	"!test=TESTING\n"
-	"1 join name=hello hash=world\n";
+	"1 join name=hello avatar=world\n";
 
 class TestRecording: public QObject
 {
@@ -104,11 +104,12 @@ private slots:
 			QCOMPARE(reader.isCompressed(), false);
 
 			Compatibility compat = reader.open();
+			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.21.2"));
 			QCOMPARE(compat, COMPATIBLE);
 
 			QCOMPARE(int(reader.encoding()), encoding);
 
-			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.20.1"));
+			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.21.2"));
 			QCOMPARE(reader.metadata()["test"].toString(), QString("TESTING"));
 
 			// No message read yet
@@ -116,22 +117,21 @@ private slots:
 			const qint64 firstPosition = reader.filePosition();
 
 			// There should be exactly one message in the test recording
-			MessageRecord mr = reader.readNext();
+			const MessageRecord mr1 = reader.readNext();
 
-			QCOMPARE(mr.status, MessageRecord::OK);
+			QCOMPARE(mr1.status, MessageRecord::OK);
 
 			MessagePtr testMsg(new UserJoin(1, 0, QByteArray("hello"), QByteArray("world")));
-			MessagePtr readMsg(mr.message);
 
-			QVERIFY(readMsg.equals(testMsg));
+			QVERIFY(mr1.message.equals(testMsg));
 
 			// current* returns the index and position of the last read message
 			QCOMPARE(reader.currentIndex(), 0);
 			QCOMPARE(reader.currentPosition(), firstPosition);
 
 			// Next message should be EOF
-			mr = reader.readNext();
-			QCOMPARE(mr.status, MessageRecord::END_OF_RECORDING);
+			const MessageRecord mr2 = reader.readNext();
+			QCOMPARE(mr2.status, MessageRecord::END_OF_RECORDING);
 			QVERIFY(reader.isEof());
 
 			// Rewinding should take us back to the beginning
@@ -139,10 +139,9 @@ private slots:
 			QCOMPARE(reader.currentIndex(), -1);
 			QCOMPARE(reader.filePosition(), firstPosition);
 
-			mr = reader.readNext();
-			QCOMPARE(mr.status, MessageRecord::OK);
-			MessagePtr readMsg2(mr.message);
-			QVERIFY(readMsg.equals(readMsg2));
+			const MessageRecord mr3 = reader.readNext();
+			QCOMPARE(mr3.status, MessageRecord::OK);
+			QVERIFY(mr1.message.equals(mr3.message));
 		}
 
 		// Autoclose is not enabled
@@ -225,9 +224,8 @@ private slots:
 		// The actual message should be of type OpaqueMessage
 		MessageRecord mr = reader.readNext();
 		QCOMPARE(mr.status, MessageRecord::OK);
-		QVERIFY(mr.message);
+		QVERIFY(!mr.message.isNull());
 		QCOMPARE(mr.message->type(), protocol::MSG_LAYER_CREATE);
-		delete mr.message;
 	}
 };
 

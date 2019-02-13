@@ -24,6 +24,7 @@
 #include "filmstrip_plugin.h"
 #include "resizer_plugin.h"
 #include "tablettester_plugin.h"
+#include "spinner_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)
@@ -35,6 +36,7 @@ DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 		<< new FilmstripPlugin(this)
 		<< new ResizerPlugin(this)
 		<< new TabletTesterPlugin(this)
+		<< new SpinnerPlugin(this)
 		;
 }
 

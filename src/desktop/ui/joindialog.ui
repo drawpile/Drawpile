@@ -9,31 +9,205 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>144</height>
+    <width>462</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Join a Session</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-     </property>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Ser&amp;ver:</string>
-       </property>
-       <property name="buddy">
-        <cstring>address</cstring>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QComboBox" name="listserver">
+       <property name="toolTip">
+        <string>Listing server</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item>
+      <widget class="QLineEdit" name="filter">
+       <property name="placeholderText">
+        <string>Filter</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="filterLocked">
+       <property name="toolTip">
+        <string>Show password protected sessions</string>
+       </property>
+       <property name="icon">
+        <iconset theme="object-locked">
+         <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="filterNsfw">
+       <property name="toolTip">
+        <string>Show NSFW sessions</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>builtin:censored.svg</normaloff>builtin:censored.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="liststack">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="page_3">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="Spinner" name="loadingSpinner"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTableView" name="listing">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>160</height>
+          </size>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>63</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="listingError">
+         <property name="styleSheet">
+          <string notr="true">background: #ed1515;
+color: #fcfcfc;
+padding: 5px;</string>
+         </property>
+         <property name="text">
+          <string notr="true">ERROR</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>63</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Enter a host address, session URL or room code to join a session:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
       <widget class="QComboBox" name="address">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="editable">
         <bool>true</bool>
        </property>
@@ -48,54 +222,17 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>&amp;Username:</string>
-       </property>
-       <property name="buddy">
-        <cstring>username</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,3">
-       <item>
-        <widget class="QLineEdit" name="username">
-         <property name="maxLength">
-          <number>22</number>
-         </property>
-         <property name="mandatoryfield" stdset="0">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="recordSession">
-       <property name="text">
+     <item>
+      <widget class="QToolButton" name="autoRecord">
+       <property name="toolTip">
         <string>Record session</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Enter a host address, session URL or room code to join a session.</string>
+       <property name="icon">
+        <iconset theme="media-record">
+         <normaloff>theme:media-record.svg</normaloff>theme:media-record.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -113,9 +250,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Spinner</class>
+   <extends>QWidget</extends>
+   <header>widgets/spinner.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>address</tabstop>
-  <tabstop>username</tabstop>
   <tabstop>buttons</tabstop>
  </tabstops>
  <resources/>
@@ -127,8 +270,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>254</x>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -143,8 +286,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>322</x>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

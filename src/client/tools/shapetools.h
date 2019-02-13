@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define TOOLS_SHAPETOOLS_H
 
 #include "tool.h"
-#include "core/brush.h"
+#include "brushes/brushengine.h"
 
 namespace tools {
 
@@ -41,9 +41,6 @@ protected:
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
 	QPointF m_start, m_p1, m_p2;
-
-private:
-	paintcore::Brush m_brush;
 };
 
 /**

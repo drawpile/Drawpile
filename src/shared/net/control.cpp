@@ -73,6 +73,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = STATUS;
 	else if(typestr == "reset")
 		r.type = RESET;
+	else if(typestr == "autoreset")
+		r.type = RESETREQUEST;
 	else if(typestr == "catchup")
 		r.type = CATCHUP;
 	else
@@ -100,6 +102,7 @@ QJsonDocument ServerReply::toJson() const
 	case STATUS: typestr=QStringLiteral("status"); break;
 	case RESET: typestr=QStringLiteral("reset"); break;
 	case CATCHUP: typestr=QStringLiteral("catchup"); break;
+	case RESETREQUEST: typestr=QStringLiteral("autoreset"); break;
 	}
 	o["type"] = typestr;
 

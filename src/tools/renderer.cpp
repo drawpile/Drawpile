@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ QImage resizeImage(const QImage &img, const QSize &maxSize, bool fixedSize)
 
 bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack &layers, ExportState &state)
 {
-	if(layers.size().isEmpty()) {
+	if(layers.size().isEmpty() || layers.layerCount()==0) {
 		// The layer stack has no size until the first resize command.
 		// Trying to export before it is not a fatal error.
 		if(settings.verbose)
@@ -167,21 +167,19 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 		record = reader.readNext();
 
 		if(record.status == recording::MessageRecord::OK) {
-			protocol::MessagePtr msg(record.message);
-
-			if(settings.acl && !aclfilter.filterMessage(*msg)) {
+			if(settings.acl && !aclfilter.filterMessage(*record.message)) {
 				if(settings.verbose)
 					fprintf(stderr, "[A] Filtered message %s from %d (idx %d @ %llx)",
-						qPrintable(msg->messageName()),
-						msg->contextId(),
+						qPrintable(record.message->messageName()),
+						record.message->contextId(),
 						reader.currentIndex(),
 						offset
 						);
 			}
 
-			if(msg->isCommand()) {
+			if(record.message->isCommand()) {
 				renderTime.start();
-				statetracker.receiveCommand(msg);
+				statetracker.receiveCommand(protocol::MessagePtr::fromNullable(record.message));
 				totalRenderTime += renderTime.nsecsElapsed();
 			}
 
@@ -192,7 +190,7 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 					++exportCounter;
 					break;
 				case ExportEvery::Sequence:
-					if(msg->type() == protocol::MSG_UNDOPOINT)
+					if(record.message->type() == protocol::MSG_UNDOPOINT)
 						++exportCounter;
 					break;
 				}
@@ -208,7 +206,7 @@ bool renderDrawpileRecording(const DrawpileCmdSettings &settings)
 
 		} else if(record.status == recording::MessageRecord::INVALID) {
 			fprintf(stderr, "[E] Invalid message type %d at index %d, offset 0x%llx",
-					record.error.type,
+					record.invalid_type,
 					reader.currentIndex(),
 					offset
 				   );

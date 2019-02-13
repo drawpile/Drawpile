@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -139,6 +139,8 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::Persistent;
 	if(reader.metadata().value("preserveChat").toBool())
 		flags |= SessionHistory::PreserveChat;
+	if(reader.metadata().value("deputies").toBool())
+		flags |= SessionHistory::Deputies;
 	session->setFlags(flags);
 
 	// Set initial history
@@ -147,10 +149,10 @@ bool TemplateFiles::init(SessionHistory *session) const
 		recording::MessageRecord r = reader.readNext();
 		switch(r.status) {
 		case recording::MessageRecord::OK:
-			session->addMessage(protocol::MessagePtr(r.message));
+			session->addMessage(protocol::MessagePtr::fromNullable(r.message));
 			break;
 		case recording::MessageRecord::INVALID:
-			qWarning("%s: Invalid message (type %d, len %d) in template!", qPrintable(session->idAlias()), r.error.type, r.error.len);
+			qWarning("%s: Invalid message (type %d, len %d) in template!", qPrintable(session->idAlias()), r.invalid_type, r.invalid_len);
 			break;
 		case recording::MessageRecord::END_OF_RECORDING:
 			keepReading = false;

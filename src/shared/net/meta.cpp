@@ -33,13 +33,13 @@ UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
 	const uint8_t flags = data[0];
 	const uint nameLen = data[1];
 
-	// Name must be at least one character long, but hash is optional
+	// Name must be at least one character long, but avatar is optional
 	if(nameLen==0 || nameLen+2 > len)
 		return nullptr;
 
 	const QByteArray name = QByteArray((const char*)data+2, nameLen);
-	const QByteArray hash = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
-	return new UserJoin(ctx, flags, name, hash);
+	const QByteArray avatar = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
+	return new UserJoin(ctx, flags, name, avatar);
 }
 
 int UserJoin::serializePayload(uchar *data) const
@@ -49,23 +49,23 @@ int UserJoin::serializePayload(uchar *data) const
 	*(ptr++) = m_name.length();
 	memcpy(ptr, m_name.constData(), m_name.length());
 	ptr += m_name.length();
-	memcpy(ptr, m_hash.constData(), m_hash.length());
-	ptr += m_hash.length();
+	memcpy(ptr, m_avatar.constData(), m_avatar.length());
+	ptr += m_avatar.length();
 
 	return ptr - data;
 }
 
 int UserJoin::payloadLength() const
 {
-	return 1 + 1 + m_name.length() + m_hash.length();
+	return 1 + 1 + m_name.length() + m_avatar.length();
 }
 
 Kwargs UserJoin::kwargs() const
 {
 	Kwargs kw;
 	kw["name"] = name();
-	if(!m_hash.isEmpty())
-		kw["hash"] = QString::fromUtf8(m_hash);
+	if(!m_avatar.isEmpty())
+		kw["avatar"] = QString::fromUtf8(m_avatar);
 	QStringList flags;
 	if(isModerator())
 		flags << "mod";
@@ -85,7 +85,7 @@ UserJoin *UserJoin::fromText(uint8_t ctx, const Kwargs &kwargs)
 		(flags.contains("mod") ? FLAG_MOD : 0) |
 		(flags.contains("auth") ? FLAG_AUTH : 0),
 		kwargs["name"],
-		kwargs["hash"].toUtf8()
+		kwargs["avatar"].toUtf8()
 		);
 }
 
@@ -126,6 +126,45 @@ Kwargs SessionOwner::kwargs() const
 SessionOwner *SessionOwner::fromText(uint8_t ctx, const Kwargs &kwargs)
 {
 	return new SessionOwner(ctx, text::parseIdListString8(kwargs["users"]));
+}
+
+
+TrustedUsers *TrustedUsers::deserialize(uint8_t ctx, const uchar *data, int len)
+{
+	if(len>255)
+		return nullptr;
+
+	QList<uint8_t> ids;
+	ids.reserve(len);
+	for(int i=0;i<len;++i)
+		ids.append(data[i]);
+
+	return new TrustedUsers(ctx, ids);
+}
+
+int TrustedUsers::serializePayload(uchar *data) const
+{
+	for(int i=0;i<m_ids.size();++i)
+		data[i] = m_ids[i];
+	return m_ids.size();
+}
+
+int TrustedUsers::payloadLength() const
+{
+	return m_ids.size();
+}
+
+Kwargs TrustedUsers::kwargs() const
+{
+	Kwargs kw;
+	if(!m_ids.isEmpty())
+		kw["users"] = text::idListString(m_ids);
+	return kw;
+}
+
+TrustedUsers *TrustedUsers::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	return new TrustedUsers(ctx, text::parseIdListString8(kwargs["users"]));
 }
 
 Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
@@ -177,6 +216,48 @@ Chat *Chat::fromText(uint8_t ctx, const Kwargs &kwargs)
 		(flags.contains("shout") ? FLAG_SHOUT : 0) |
 		(flags.contains("action") ? FLAG_ACTION : 0) |
 		(flags.contains("pin") ? FLAG_PIN : 0),
+		kwargs["message"]
+		);
+}
+
+PrivateChat *PrivateChat::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len<3)
+		return nullptr;
+	return new PrivateChat(ctx, *(data+0), *(data+1), QByteArray((const char*)data+2, len-2));
+}
+
+int PrivateChat::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = target();
+	*(ptr++) = opaqueFlags();
+	memcpy(ptr, m_msg.constData(), m_msg.length());
+	ptr += m_msg.length();
+	return ptr - data;
+}
+
+int PrivateChat::payloadLength() const
+{
+	return 2 + m_msg.length();
+}
+
+Kwargs PrivateChat::kwargs() const
+{
+	Kwargs kw;
+	kw["target"] = QString::number(target());
+	kw["message"] = message();
+	if(isAction()) kw["flags"] = "action";
+	return kw;
+}
+
+PrivateChat *PrivateChat::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QStringList flags = kwargs["flags"].split(',');
+	return new PrivateChat(
+		ctx,
+		kwargs["target"].toInt(),
+		(flags.contains("action") ? FLAG_ACTION : 0),
 		kwargs["message"]
 		);
 }

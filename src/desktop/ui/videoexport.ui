@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>539</height>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Video</string>
+         <string>WebM video</string>
         </property>
        </item>
        <item>
@@ -82,39 +82,6 @@
            <number>1</number>
           </property>
          </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Background:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QComboBox" name="animBg">
-          <item>
-           <property name="text">
-            <string>Transparent</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Bottom layer</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Solid color</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="ColorButton" name="animBgColor"/>
         </item>
        </layout>
       </item>
@@ -343,170 +310,7 @@
          </layout>
         </widget>
         <widget class="QWidget" name="page_2">
-         <layout class="QFormLayout" name="formLayout_3">
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QLineEdit" name="soundtrack"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="pickSoundtrack">
-              <property name="icon">
-               <iconset theme="document-open">
-                <normaloff>theme:document-open.svg</normaloff>theme:document-open.svg</iconset>
-              </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Format:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QComboBox" name="videoFormat">
-              <property name="toolTip">
-               <string>Container format</string>
-              </property>
-              <item>
-               <property name="text">
-                <string notr="true">AVI</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">Matroska</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">WebM</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string notr="true">:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="videoCodec">
-              <property name="toolTip">
-               <string>Video codec</string>
-              </property>
-              <item>
-               <property name="text">
-                <string notr="true">H.264</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">VP8</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">Theora</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="audioCodec">
-              <property name="toolTip">
-               <string>Audio codec</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Original</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">MP3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">AAC</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string notr="true">Vorbis</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Quality:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="videoquality">
-            <property name="currentIndex">
-             <number>1</number>
-            </property>
-            <item>
-             <property name="text">
-              <string>Low</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Normal</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Good</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Very good</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Soundtrack:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="noFfmpegWarning">
-            <property name="styleSheet">
-             <string notr="true">font-weight: bold;
-color: red;</string>
-            </property>
-            <property name="text">
-             <string>Error: Ffmpeg executable not found!</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QFormLayout" name="formLayout_3"/>
         </widget>
         <widget class="QWidget" name="page_3">
          <layout class="QFormLayout" name="formLayout_5">
@@ -562,13 +366,6 @@ color: red;</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ColorButton</class>
-   <extends>QToolButton</extends>
-   <header>widgets/colorbutton.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

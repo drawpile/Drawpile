@@ -52,18 +52,9 @@ public:
 	//! Get the ending layer (animation)
 	int getLastLayer() const;
 
-	//! Should the bottom layer be used as the animation background?
-	bool useBackgroundLayer() const;
-
-	//! Animation background color (when not using the bottom layer)
-	QColor animationBackground() const;
-
-private slots:
-	void selectContainerFormat(const QString &fmt);
-
 private:
 	VideoExporter *getImageSeriesExporter();
-	VideoExporter *getFfmpegExporter();
+	VideoExporter *getWebmExporter();
 	VideoExporter *getGifExporter();
 
 	Ui_VideoExport *_ui;

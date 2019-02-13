@@ -25,7 +25,6 @@
 
 #include "../shared/net/protover.h"
 #include "../shared/net/control.h"
-#include "../shared/net/meta2.h"
 #include "../shared/util/networkaccess.h"
 
 #include <QDebug>
@@ -38,6 +37,8 @@
 #include <QHostAddress>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QImage>
+#include <QBuffer>
 
 #define DEBUG_LOGIN
 
@@ -66,9 +67,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	: QObject(parent),
 	  m_mode(mode),
 	  m_address(url),
-	  m_maxusers(0),
-	  m_allowdrawing(true),
-	  m_layerctrllock(true),
 	  m_state(EXPECT_HELLO),
 	  m_multisession(false),
 	  m_tls(false),
@@ -113,7 +111,7 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	const protocol::ServerReply msg = message.cast<protocol::Command>().reply();
 
 #ifdef DEBUG_LOGIN
-	qDebug() << "login <--" << msg.reply;
+	qInfo() << "login <--" << msg.reply;
 #endif
 
 	// Overall, the login process is:
@@ -236,7 +234,7 @@ void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 	}
 }
 
-void LoginHandler::gotPassword(const QString &password)
+void LoginHandler::sendSessionPassword(const QString &password)
 {
 	if(m_state == WAIT_FOR_JOIN_PASSWORD) {
 		m_joinPassword = password;
@@ -244,13 +242,16 @@ void LoginHandler::gotPassword(const QString &password)
 
 	} else {
 		// shouldn't happen...
-		qWarning("gotPassword() in invalid state (%d)", m_state);
+		qWarning("sendSessionPassword() in invalid state (%d)", m_state);
 	}
 }
 
 void LoginHandler::prepareToSendIdentity()
 {
-	if(m_mustAuth || m_needUserPassword) {
+	if(m_address.userName().isEmpty()) {
+		emit usernameNeeded();
+
+	} else if(m_mustAuth || m_needUserPassword) {
 		m_state = WAIT_FOR_LOGIN_PASSWORD;
 
 		QString prompt;
@@ -264,6 +265,16 @@ void LoginHandler::prepareToSendIdentity()
 	} else {
 		sendIdentity();
 	}
+}
+
+void LoginHandler::selectAvatar(const QImage &avatar)
+{
+	QBuffer a;
+	avatar.save(&a, "PNG");
+
+	// TODO size check
+
+	m_avatar = a.buffer().toBase64();
 }
 
 void LoginHandler::selectIdentity(const QString &username, const QString &password)
@@ -281,6 +292,12 @@ void LoginHandler::sendIdentity()
 
 	if(!m_address.password().isEmpty())
 		cmd.args.append(m_address.password());
+
+	if(!m_avatar.isEmpty()) {
+		cmd.kwargs["avatar"] = QString::fromUtf8(m_avatar);
+		// avatar needs only be sent once
+		m_avatar = QByteArray();
+	}
 
 	m_state = EXPECT_IDENTIFIED;
 	send(cmd);
@@ -439,21 +456,23 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	if(msg.reply.contains("sessions")) {
 		const parentalcontrols::Level pclevel = parentalcontrols::level();
 
-		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
-			QJsonObject js = jsv.toObject();
-			LoginSession session;
+		for(const auto jsv : msg.reply["sessions"].toArray()) {
+			const QJsonObject js = jsv.toObject();
 
-			session.id = js["id"].toString();
-			session.alias = js["alias"].toString();
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
-			session.incompatible = !protoVer.isCurrent();
-			session.needPassword = js["hasPassword"].toBool();
-			session.closed = js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest);
-			session.persistent = js["persistent"].toBool();
-			session.userCount = js["userCount"].toInt();
-			session.founder = js["founder"].toString();
-			session.title = js["title"].toString();
-			session.nsfm = js["nsfm"].toBool();
+
+			const LoginSession session {
+				js["id"].toString(),
+				js["alias"].toString(),
+				js["title"].toString(),
+				js["founder"].toString(),
+				js["userCount"].toInt(),
+				js["hasPassword"].toBool(),
+				js["persistent"].toBool(),
+				js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest),
+				!protoVer.isCurrent(),
+				js["nsfm"].toBool()
+			};
 
 			m_sessions->updateSession(session);
 
@@ -512,7 +531,15 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
 		m_loggedInSessionId = msg.reply["join"].toObject()["id"].toString();
-		m_userid = msg.reply["join"].toObject()["user"].toInt();
+		const int userid = msg.reply["join"].toObject()["user"].toInt();
+
+		if(userid < 1 || userid > 254) {
+			qWarning() << "Login error. User ID" << userid << "out of supported range.";
+			failLogin(tr("Incompatible server"));
+			return;
+		}
+
+		m_userid = uint8_t(userid);
 		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings
@@ -526,24 +553,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 			if(parentalcontrols::isNsfmTitle(m_title))
 				conf.kwargs["nsfm"] = true;
 
-			if(m_maxusers>0)
-				conf.kwargs["maxUserCount"] = m_maxusers;
-
-			if(m_preserveChat)
-				conf.kwargs["preserveChat"] = true;
-
 			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
-
-			uint16_t lockflags = 0;
-
-			if(!m_allowdrawing)
-				lockflags |= protocol::SessionACL::LOCK_DEFAULT;
-
-			if(m_layerctrllock)
-				lockflags |= protocol::SessionACL::LOCK_LAYERCTRL;
-
-			if(lockflags)
-				m_server->sendMessage(protocol::MessagePtr(new protocol::SessionACL(userId(), lockflags)));
 
 			if(!m_announceUrl.isEmpty())
 				m_server->sendMessage(command::announce(m_announceUrl, m_announcePrivate));
@@ -566,9 +576,10 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
+	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
 	if(needPassword) {
-		emit passwordNeeded(tr("Enter session password"));
+		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 
 	} else {
@@ -773,10 +784,29 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 	m_server->loginFailure(message, errorcode);
 }
 
+#ifdef DEBUG_LOGIN
+static QJsonObject redactPassword(QJsonObject cmd)
+{
+	if(cmd["cmd"] == "ident") {
+		QJsonArray args = cmd["args"].toArray();
+		if(args.size() > 1)
+			cmd["args"] = QJsonArray { args[0], "*" };
+	}
+
+	QJsonObject kwargs = cmd["kwargs"].toObject();
+	if(kwargs.contains("password")) {
+		kwargs["password"] = "*";
+		cmd["kwargs"] = kwargs;
+	}
+
+	return cmd;
+}
+#endif
+
 void LoginHandler::send(const protocol::ServerCommand &cmd)
 {
 #ifdef DEBUG_LOGIN
-	qDebug() << "login -->" << cmd.toJson();
+	qInfo() << "login -->" << redactPassword(cmd.toJson().object());
 #endif
 	m_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
 }

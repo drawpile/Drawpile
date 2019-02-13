@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,18 +30,18 @@ class QWidget;
  */
 class MandatoryFields : public QObject {
 	Q_OBJECT
-	public:
-		//! Construct the mandatory field monitor
-		MandatoryFields(QWidget *parent, QWidget *button);
+public:
+	MandatoryFields(QWidget *parent, QWidget *okButton);
 
-	private slots:
-		void changed();
+public slots:
+	//! Check each registered widget and update the OK button state
+	void update();
 
-	private:
-		void collectFields(QObject *parent);
+private:
+	void collectFields(QObject *parent);
 
-		QList<QObject*> widgets_;
-		QWidget *button_;
+	QList<QObject*> m_widgets;
+	QWidget *m_okButton;
 };
 
 #endif

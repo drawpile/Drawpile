@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,11 +35,7 @@ namespace protocol {
  *
  * All brush/layer blending modes are supported.
  *
- * The image data is DEFLATEd 32bit non-premultiplied ARGB data.
- *
- * The contextId doesn't affect the way the bitmap is
- * drawn, but it is needed to identify the user so PutImages
- * can be undone/redone.
+ * The image data is DEFLATEd 32bit premultiplied ARGB data.
  *
  * Note that since the message length is fairly limited, a
  * large image may have to be divided into multiple PutImage
@@ -59,7 +55,7 @@ public:
 	static PutImage *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static PutImage *fromText(uint8_t ctx, const Kwargs &kwargs);
 	
-	uint16_t layer() const { return m_layer; }
+	uint16_t layer() const override { return m_layer; }
 	uint8_t blendmode() const { return m_mode; }
 	uint32_t x() const { return m_x; }
 	uint32_t y() const { return m_y; }
@@ -86,6 +82,126 @@ private:
 };
 
 /**
+ * @brief Set the content of a tile
+ *
+ * Unlike PutImage, this replaces an entire tile directly without any blending.
+ * This command is typically used during canvas initialization to set the initial content.
+ *
+ * PutTiles can be targeted at sublayers as well. This is used when generating a reset image
+ * with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
+ */
+class PutTile : public Message {
+public:
+	/**
+	 * @brief Construct a solid color PutTile
+	 * @param ctx context ID
+	 * @param layer target layer
+	 * @param sublayer sublayer (0 means no sublayer)
+	 * @param col tile column
+	 * @param row tile row
+	 * @param repeat put this many extra tiles
+	 * @param color tile fill color ARGB (unpremultiplied)
+	 */
+	PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color);
+
+	/**
+	 * @brief Construct a PutTile
+	 * @param ctx context ID
+	 * @param layer target layer
+	 * @param sublayer sublayer (0 means no sublayer)
+	 * @param col tile column
+	 * @param row tile row
+	 * @param repeat put this many extra tiles
+	 * @param image tile content. Uncompressed length must be 64x64x4
+	 */
+	PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, const QByteArray &image)
+	: Message(MSG_PUTTILE, ctx), m_layer(layer), m_col(col), m_row(row), m_repeat(repeat), m_sublayer(sublayer), m_image(image)
+	{
+		// Note: an uncompressed tile is only 16KB, so this should never be
+		// anywhere near this long
+		Q_ASSERT(image.length() <= 0xffff - 8);
+		Q_ASSERT(image.length() >= 4);
+	}
+
+	static PutTile *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static PutTile *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	uint16_t layer() const override { return m_layer; }
+	uint8_t sublayer() const { return m_sublayer; }
+	uint16_t column() const { return m_col; }
+	uint16_t row() const { return m_row; }
+	uint16_t repeat() const { return m_repeat; }
+	uint32_t color() const;
+	const QByteArray &image() const { return m_image; }
+
+	bool isSolidColor() const { return m_image.length() == 4; }
+
+	QString messageName() const override { return QStringLiteral("puttile"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override;
+
+private:
+	uint16_t m_layer;
+	uint16_t m_col;
+	uint16_t m_row;
+	uint16_t m_repeat;
+	uint8_t m_sublayer;
+	QByteArray m_image;
+};
+
+/**
+ * @brief Set the canvas background
+ *
+ */
+class CanvasBackground : public Message {
+public:
+	/**
+	 * @brief Construct a solid color background
+	 * @param ctx context ID
+	 * @param color background color ARGB (unpremultiplied)
+	 */
+	CanvasBackground(uint8_t ctx, uint32_t color);
+
+	/**
+	 * @brief Construct a pattern background
+	 * @param ctx context ID
+	 * @param image tile content. Uncompressed length must be 64x64x4
+	 */
+	CanvasBackground(uint8_t ctx, const QByteArray &image)
+	: Message(MSG_CANVAS_BACKGROUND, ctx), m_image(image)
+	{
+		// Note: an uncompressed tile is only 16KB, so this should never be
+		// anywhere near this long
+		Q_ASSERT(image.length() <= 0xffff - 8);
+		Q_ASSERT(image.length() >= 4);
+	}
+
+	static CanvasBackground *deserialize(uint8_t ctx, const uchar *data, uint len);
+	static CanvasBackground *fromText(uint8_t ctx, const Kwargs &kwargs);
+
+	uint32_t color() const;
+	const QByteArray &image() const { return m_image; }
+
+	bool isSolidColor() const { return m_image.length() == 4; }
+
+	QString messageName() const override { return QStringLiteral("background"); }
+
+protected:
+	int payloadLength() const override;
+	int serializePayload(uchar *data) const override;
+	bool payloadEquals(const Message &m) const override;
+	Kwargs kwargs() const override;
+
+private:
+	QByteArray m_image;
+};
+
+
+/**
  * @brief Fill a rectangle with solid color
  *
  * All brush blending modes are supported
@@ -100,7 +216,7 @@ public:
 	static FillRect *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static FillRect *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t layer() const { return m_layer; }
+	uint16_t layer() const override { return m_layer; }
 	uint8_t blend() const { return m_blend; }
 	uint32_t x() const { return m_x; }
 	uint32_t y() const { return m_y; }
@@ -177,7 +293,7 @@ public:
 	static MoveRegion *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static MoveRegion *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t layer() const { return m_layer; }
+	uint16_t layer() const override { return m_layer; }
 	int32_t bx() const { return m_bx; }
 	int32_t by() const { return m_by; }
 	int32_t bw() const { return m_bw; }

@@ -43,6 +43,11 @@ class ServerDiscoveryModel : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
+	enum ServerDiscoveryRoles {
+		SortKeyRole = Qt::UserRole,
+		UrlRole // important that this number is the same as in SessionListingModel
+	};
+
 	ServerDiscoveryModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -51,8 +56,6 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	//QUrl sessionUrl(int index) const;
-
 	void discover();
 
 private slots:
@@ -60,9 +63,9 @@ private slots:
 	void removeService(KDNSSD::RemoteService::Ptr service);
 
 private:
-	QList<DiscoveredServer> _servers;
+	QVector<DiscoveredServer> m_servers;
 
-	KDNSSD::ServiceBrowser *_browser;
+	KDNSSD::ServiceBrowser *m_browser;
 };
 
 #endif

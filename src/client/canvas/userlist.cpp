@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QJsonArray>
+#include <QPixmap>
 
 namespace canvas {
 
@@ -35,8 +36,21 @@ UserListModel::UserListModel(QObject *parent)
 QVariant UserListModel::data(const QModelIndex& index, int role) const
 {
 	if(index.isValid() && index.row() >= 0 && index.row() < m_users.size()) {
-		if(role == Qt::DisplayRole)
-			return QVariant::fromValue(m_users.at(index.row()));
+		const User &u = m_users.at(index.row());
+		switch(role) {
+			case IdRole: return u.id;
+			case Qt::DisplayRole:
+			case NameRole: return u.name;
+			case Qt::DecorationRole:
+			case AvatarRole: return u.avatar;
+			case IsOpRole: return u.isOperator;
+			case IsTrustedRole: return u.isTrusted;
+			case IsModRole: return u.isMod;
+			case IsAuthRole: return u.isAuth;
+			case IsBotRole: return u.isBot;
+			case IsLockedRole: return u.isLocked;
+			case IsMutedRole: return u.isMuted;
+		}
 	}
 
 	return QVariant();
@@ -57,9 +71,11 @@ void UserListModel::addUser(const User &user)
 		if(u.id == user.id) {
 			qWarning() << "replacing user" << u.id << u.name << "with" << user.name;
 			u.name = user.name;
+			u.avatar = user.avatar;
 			u.isLocal = user.isLocal;
 			u.isAuth = user.isAuth;
 			u.isMod = user.isMod;
+			u.isBot = user.isBot;
 			u.isMuted = user.isMuted;
 
 			QModelIndex idx = index(i);
@@ -82,6 +98,20 @@ void UserListModel::updateOperators(const QList<uint8_t> ids)
 		const bool op = ids.contains(u.id);
 		if(op != u.isOperator) {
 			u.isOperator = op;
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+		}
+	}
+}
+
+void UserListModel::updateTrustedUsers(const QList<uint8_t> trustedIds)
+{
+	for(int i=0;i<m_users.size();++i) {
+		User &u = m_users[i];
+
+		const bool trusted = trustedIds.contains(u.id);
+		if(trusted != u.isTrusted) {
+			u.isTrusted = trusted;
 			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx);
 		}
@@ -133,6 +163,16 @@ QList<uint8_t> UserListModel::lockList() const
 			locks << m_users.at(i).id;
 	}
 	return locks;
+}
+
+QList<uint8_t> UserListModel::trustedList() const
+{
+	QList<uint8_t> ids;
+	for(int i=0;i<m_users.size();++i) {
+		if(m_users.at(i).isTrusted)
+			ids << m_users.at(i).id;
+	}
+	return ids;
 }
 
 int UserListModel::getPrimeOp() const
@@ -204,6 +244,8 @@ QString UserListModel::getUsername(int id) const
 
 protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
 {
+	Q_ASSERT(userId>0 && userId<255);
+
 	QList<uint8_t> ids = lockList();
 	if(lock) {
 		if(!ids.contains(userId))
@@ -220,13 +262,29 @@ protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bo
 	Q_ASSERT(userId>0 && userId<255);
 
 	QList<uint8_t> ops = operatorList();
-
-	if(op)
-		ops.append(userId);
-	else
+	if(op) {
+		if(!ops.contains(userId))
+			ops.append(userId);
+	} else {
 		ops.removeOne(userId);
+	}
 
 	return protocol::MessagePtr(new protocol::SessionOwner(localId, ops));
+}
+
+protocol::MessagePtr UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
+{
+	Q_ASSERT(userId>0 && userId<255);
+
+	QList<uint8_t> trusted = trustedList();
+	if(trust) {
+		if(!trusted.contains(userId))
+			trusted.append(userId);
+	} else {
+		trusted.removeOne(userId);
+	}
+
+	return protocol::MessagePtr(new protocol::TrustedUsers(localId, trusted));
 }
 
 }

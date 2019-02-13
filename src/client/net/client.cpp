@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "../shared/net/control.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
-#include "../shared/net/pen.h" // for sentColorChange
 
 #include <QDebug>
 
@@ -78,8 +77,6 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
 
-	m_lastToolCtx = canvas::ToolContext();
-
 	m_catchupTo = 0;
 	m_caughtUp = 0;
 	m_catchupProgress = 0;
@@ -108,7 +105,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, int userid, bool join, bool auth, bool moderator)
+void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
@@ -151,14 +148,11 @@ void Client::sendMessage(const protocol::MessagePtr &msg)
 	if(msg->isCommand())
 		emit drawingCommandLocal(msg);
 
-	if(msg->type() == protocol::MSG_TOOLCHANGE)
-		emit sentColorChange(QColor::fromRgb(msg.cast<const protocol::ToolChange&>().color()));
 	m_server->sendMessage(msg);
 }
 
 void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 {
-	uint32_t colorChange = 0;
 	for(const protocol::MessagePtr &msg : msgs) {
 #ifndef NDEBUG
 		if(!msg->isControl() && msg->contextId()==0) {
@@ -167,14 +161,8 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 #endif
 		if(msg->isCommand())
 			emit drawingCommandLocal(msg);
-
-		if(msg->type() == protocol::MSG_TOOLCHANGE)
-			colorChange = msg.cast<const protocol::ToolChange&>().color();
 	}
 	m_server->sendMessages(msgs);
-
-	if(colorChange)
-		emit sentColorChange(QColor::fromRgb(colorChange));
 }
 
 void Client::sendResetMessages(const QList<protocol::MessagePtr> &msgs)
@@ -290,8 +278,10 @@ void Client::handleServerCommand(const protocol::Command &msg)
 		emit sessionConfChange(reply.reply["config"].toObject());
 		break;
 	case ServerReply::SIZELIMITWARNING:
-		qWarning() << "Session history size warning:" << reply.reply["maxSize"].toInt() - reply.reply["size"].toInt() << "bytes of space left!";
-		emit serverHistoryLimitReceived(reply.reply["maxSize"].toInt());
+		// No longer used since 2.1.0. Replaced by RESETREQUEST
+		break;
+	case ServerReply::RESETREQUEST:
+		emit autoresetRequested(reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
 		break;
 	case ServerReply::STATUS:
 		emit serverStatusUpdate(reply.reply["size"].toInt());

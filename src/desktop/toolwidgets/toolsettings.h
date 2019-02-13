@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
-#include "core/brush.h"
 #include "utils/icon.h"
 #include "tools/tool.h"
 
@@ -99,8 +98,19 @@ public:
 
 	/**
 	 * @brief Is this tool in subpixel precision mode
+	 *
+	 * This affects how the brush outline should be drawn.
+	 * At integer resolution, the outline should snap to
+	 * pixel edges.
 	 */
 	virtual bool getSubpixelMode() const = 0;
+
+	/**
+	 * @brief Does the tool need a square brush outline
+	 *
+	 * Default outline (if used) is circular.
+	 */
+	virtual bool isSquare() const { return false; }
 
 	//! Push settings to the tool controller
 	virtual void pushSettings();

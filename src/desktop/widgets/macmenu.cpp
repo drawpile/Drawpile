@@ -156,7 +156,7 @@ void MacMenu::openRecent(QAction *action)
 void MacMenu::joinSession()
 {
 	auto dlg = new dialogs::JoinDialog(QUrl());
-	connect(dlg, &dialogs::JoinDialog::finished, [this, dlg](int i) {
+	connect(dlg, &dialogs::JoinDialog::finished, [dlg](int i) {
 		if(i==QDialog::Accepted) {
 			QUrl url = dlg->getUrl();
 
@@ -169,7 +169,7 @@ void MacMenu::joinSession()
 			dlg->rememberSettings();
 
 			MainWindow *mw = new MainWindow;
-			mw->joinSession(url, dlg->recordSession());
+			mw->joinSession(url, dlg->autoRecordFilename());
 		}
 		dlg->deleteLater();
 	});

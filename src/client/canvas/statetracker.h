@@ -19,16 +19,15 @@
 #ifndef DP_STATETRACKER_H
 #define DP_STATETRACKER_H
 
-#include <QObject>
-#include <QHash>
-
 #include "retcon.h"
 #include "history.h"
-#include "core/brush.h"
 #include "core/point.h"
+
+#include <QObject>
 
 namespace protocol {
 	class CanvasResize;
+	class CanvasBackground;
 	class LayerCreate;
 	class LayerAttributes;
 	class LayerVisibility;
@@ -39,7 +38,10 @@ namespace protocol {
 	class ToolChange;
 	class PenMove;
 	class PenUp;
+	class DrawDabsClassic;
+	class DrawDabsPixel;
 	class PutImage;
+	class PutTile;
 	class FillRect;
 	class UndoPoint;
 	class Undo;
@@ -59,49 +61,6 @@ class QTimer;
 
 namespace canvas {
 
-struct ToolContext {
-	ToolContext() : layer_id(-1) {}
-	ToolContext(int layer, const paintcore::Brush &b) : layer_id(layer), brush(b) { }
-
-	int layer_id;
-	paintcore::Brush brush;
-
-	void updateFromToolchange(const protocol::ToolChange &cmd);
-
-	bool operator==(const ToolContext &other) const {
-		return layer_id == other.layer_id && brush == other.brush;
-	}
-	bool operator!=(const ToolContext &other) const {
-		return layer_id != other.layer_id || brush != other.brush;
-	}
-};
-
-/**
- * \brief User state
- * 
- * The drawing context captures the state needed by a single user for drawing.
- */
-struct DrawingContext {
-	DrawingContext() : pendown(false) {}
-	
-	//! Currently selected tool
-	ToolContext tool;
-	
-	//! Last pen-move point
-	paintcore::Point lastpoint;
-	
-	//! Is the stroke currently in progress?
-	bool pendown;
-	
-	//! State of the current stroke
-	paintcore::StrokeState stroke;
-
-	//! Bounding rectangle of current/last stroke
-	// This is used to determine if strokes (potentially)
-	// intersect and a canvas rollback/replay is needed.
-	QRect boundingRect;
-};
-
 class StateTracker;
 class CanvasModel;
 
@@ -119,7 +78,7 @@ public:
 	~StateSavepoint();
 
 	void toDatastream(QDataStream &ds) const;
-	static StateSavepoint fromDatastream(QDataStream &ds, StateTracker *owner);
+	static StateSavepoint fromDatastream(QDataStream &ds);
 
 	bool operator!() const { return !m_data; }
 	bool operator==(const StateSavepoint &sp) const { return m_data == sp.m_data; }
@@ -170,7 +129,7 @@ class LayerListModel;
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, int myId, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, LayerListModel *layerlist, uint8_t myId, QObject *parent=nullptr);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
@@ -187,8 +146,6 @@ public:
 	bool hasFullHistory() const { return m_fullhistory; }
 	const History &getHistory() const { return m_history; }
 
-	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
-
 	/**
 	 * @brief Set if all user markers (own included) should be shown
 	 * @param showall
@@ -199,30 +156,18 @@ public:
 	 * @brief Get the local user's ID
 	 * @return
 	 */
-	int localId() const { return m_myId; }
+	uint8_t localId() const { return m_myId; }
 
 	/**
 	 * @brief Set the local user's ID
 	 */
-	void setLocalId(int id) { m_myId = id; }
+	void setLocalId(uint8_t id) { m_myId = id; }
 
 	/**
 	 * @brief Get the paint canvas
 	 * @return
 	 */
-	paintcore::LayerStack *image() const { return _image; }
-
-	/**
-	 * @brief Check if the given layer is locked.
-	 *
-	 * Note. This information should only be used for the UI and not
-	 * for filtering events! Any command sent by the server should be
-	 * executed, even if we think the target layer is locked!
-	 *
-	 * @param id layer ID
-	 * @return true if the layer is locked
-	 */
-	bool isLayerLocked(int id) const;
+	paintcore::LayerStack *image() const { return m_layerstack; }
 
 	//! Has the local user participated in the session yet?
 	bool hasParticipated() const { return m_hasParticipated; }
@@ -254,8 +199,7 @@ signals:
 	void myAnnotationCreated(int id);
 	void layerAutoselectRequest(int);
 
-	void userMarkerAttribs(int id, const QColor &color, const QString &layer);
-	void userMarkerMove(int id, const QPointF &point, int trail);
+	void userMarkerMove(int id, int layerId, const QPoint &point);
 	void userMarkerHide(int id);
 
 	void catchupProgress(int percent);
@@ -286,6 +230,7 @@ private:
 
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd, int pos);
+	void handleCanvasBackground(const protocol::CanvasBackground &cmd);
 	void handleLayerCreate(const protocol::LayerCreate &cmd);
 	void handleLayerAttributes(const protocol::LayerAttributes &cmd);
 	void handleLayerVisibility(const protocol::LayerVisibility &cmd);
@@ -295,10 +240,10 @@ private:
 	void handleLayerDefault(const protocol::DefaultLayer &cmd);
 	
 	// Drawing related commands
-	void handleToolChange(const protocol::ToolChange &cmd);
-	void handlePenMove(const protocol::PenMove &cmd);
+	void handleDrawDabs(const protocol::Message &msg);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
+	void handlePutTile(const protocol::PutTile &cmd);
 	void handleFillRect(const protocol::FillRect &cmd);
 	void handleMoveRegion(const protocol::MoveRegion &cmd);
 
@@ -307,6 +252,7 @@ private:
 	void handleUndo(protocol::Undo &cmd);
 	void makeSavepoint(int pos);
 	void revertSavepointAndReplay(const StateSavepoint savepoint);
+	void handleTruncateHistory();
 
 	// Annotation related commands
 	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
@@ -314,13 +260,11 @@ private:
 	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
 	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
 
-	QHash<int, DrawingContext> _contexts;
-
-	paintcore::LayerStack *_image;
+	paintcore::LayerStack *m_layerstack;
 	LayerListModel *m_layerlist;
 
 	QString _title;
-	int m_myId;
+	uint8_t m_myId;
 	int m_myLastLayer;
 
 	History m_history;

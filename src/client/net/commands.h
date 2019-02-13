@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace paintcore {
 }
 
 class QImage;
+class QColor;
 
 namespace net {
 
@@ -94,23 +95,13 @@ protocol::MessagePtr terminateSession();
  *
  * If the target coordinates are less than zero, the image is automatically cropped
  *
- * If mode is MODE_REPLACE and the image is large, it is split at tile boundaries (where possible)
- * to generate efficient PutImage commands.
- *
  * Note: when using MODE_REPLACE, the skipempty parameter should be set to false, except when you know
  * the layer is blank.
  */
-QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
+QList<protocol::MessagePtr> putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
 
-//! Generate a tool change message
-protocol::MessagePtr brushToToolChange(int ctxid, int layer, const paintcore::Brush &brush);
-
-//! Convert a paintcore point to protocol format
-protocol::PenPoint pointToProtocol(const paintcore::Point &p);
-
-//! Generate penMove(s) for multiple points.
-QList<protocol::MessagePtr> penMove(int ctxid, const paintcore::PointVector &points);
-
+//! Set the canvas background
+protocol::MessagePtr setCanvasBackground(uint8_t ctxid, const QColor &color);
 
 }
 }

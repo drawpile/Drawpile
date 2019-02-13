@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "core/brushmask.h"
+#include "brushes/brush.h"
+#include "brushes/classicbrushpainter.h"
 
 // Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
 #include "widgets/groupedtoolbutton.h"
@@ -47,7 +49,7 @@ namespace brushprop {
 		smudge = {QStringLiteral("smudge"), 0, 0, 100},
 		resmudge = {QStringLiteral("resmudge"), 3, 0, 255},
 		spacing = {QStringLiteral("spacing"), 10, 0, 100},
-		brushmode = {QStringLiteral("brushmode"), 0, 0, 2} /* 0: hard edge, 1: soft edge, 2: watercolor */
+		brushmode = {QStringLiteral("brushmode"), 0, 0, 3} /* 0: hard edge, 1: square, 2: soft edge, 3: watercolor */
 		;
 	static const ToolProperties::BoolValue
 		sizePressure = {QStringLiteral("sizep"), false},
@@ -76,11 +78,11 @@ namespace toolprop {
 		;
 }
 
-static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
+static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
 {
 	const int brushMode = bp.intValue(brushprop::brushmode);
 
-	paintcore::Brush b;
+	brushes::ClassicBrush b;
 	b.setSize(bp.intValue(brushprop::size));
 	if(bp.boolValue(brushprop::sizePressure))
 		b.setSize2(1);
@@ -93,7 +95,7 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 	else
 		b.setOpacity2(b.opacity1());
 
-	if(brushMode == 0) {
+	if(brushMode <= 1) {
 		// Hard edge mode: hardness at full and no antialiasing
 		b.setHardness(1);
 		b.setHardness2(1);
@@ -108,7 +110,7 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 		b.setSubpixel(true);
 	}
 
-	if(brushMode == 2) {
+	if(brushMode == 3) {
 		b.setSmudge(bp.intValue(brushprop::smudge) / 100.0);
 		if(bp.boolValue(brushprop::smudgePressure))
 			b.setSmudge2(0);
@@ -133,6 +135,8 @@ static paintcore::Brush brushFromProps(const ToolProperties &bp, const ToolPrope
 
 	const int blendingMode = tp.intValue(tp.boolValue(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
 	b.setBlendingMode(paintcore::BlendMode::Mode(blendingMode));
+
+	b.setSquare(brushMode == 1);
 
 	return b;
 }
@@ -190,14 +194,15 @@ struct BrushSettings::Private {
 	void updateBrush()
 	{
 		// Update brush object from current properties
-		paintcore::Brush b = brushFromProps(currentBrush(), currentTool());
+		brushes::ClassicBrush b = brushFromProps(currentBrush(), currentTool());
 
 		ui.preview->setBrush(b);
+		ui.preview->setColor(currentColor());
 	}
 
 	GroupedToolButton *brushSlotButton(int i)
 	{
-		Q_ASSERT(i>=0 && i < BRUSH_COUNT);
+		static_assert (BRUSH_COUNT == 6, "update brushSlottButton");
 		switch(i) {
 		case 0: return ui.slot1;
 		case 1: return ui.slot2;
@@ -205,9 +210,7 @@ struct BrushSettings::Private {
 		case 3: return ui.slot4;
 		case 4: return ui.slot5;
 		case 5: return ui.slotEraser;
-		default:
-			qFatal("brushSlotButton(%d): no such button", i);
-			return nullptr;
+		default: qFatal("brushSlotButton(%d): no such button", i);
 		}
 	}
 };
@@ -240,6 +243,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
+	connect(d->ui.squareMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.squareMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
@@ -260,7 +265,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacing, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
-	connect(d->ui.modeIndirect, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons
 	for(int i=0;i<BRUSH_COUNT;++i) {
@@ -362,31 +366,31 @@ void BrushSettings::updateUi()
 	// Select brush type
 	const int brushMode = brush.intValue(brushprop::brushmode);
 	switch(brushMode) {
-	case 1: d->ui.softedgeMode->setChecked(true); break;
-	case 2: d->ui.watercolorMode->setChecked(true); break;
+	case 1: d->ui.squareMode->setChecked(true); break;
+	case 2: d->ui.softedgeMode->setChecked(true); break;
+	case 3: d->ui.watercolorMode->setChecked(true); break;
 	case 0:
 	default: d->ui.hardedgeMode->setChecked(true); break;
 	}
 
-	emit subpixelModeChanged(getSubpixelMode());
+	emit subpixelModeChanged(getSubpixelMode(), isSquare());
 
 	// Hide certain features based on the brush type
-	d->ui.brushhardness->setVisible(brushMode != 0);
-	d->ui.pressureHardness->setVisible(brushMode != 0);
-	d->ui.hardnessLabel->setVisible(brushMode != 0);
-	d->ui.hardnessBox->setVisible(brushMode != 0);
+	d->ui.brushhardness->setVisible(brushMode > 1);
+	d->ui.pressureHardness->setVisible(brushMode > 1);
+	d->ui.hardnessLabel->setVisible(brushMode > 1);
+	d->ui.hardnessBox->setVisible(brushMode > 1);
 
-	d->ui.brushsmudging->setVisible(brushMode == 2);
-	d->ui.pressureSmudging->setVisible(brushMode == 2);
-	d->ui.smudgingLabel->setVisible(brushMode == 2);
-	d->ui.smudgingBox->setVisible(brushMode == 2);
+	d->ui.brushsmudging->setVisible(brushMode == 3);
+	d->ui.pressureSmudging->setVisible(brushMode == 3);
+	d->ui.smudgingLabel->setVisible(brushMode == 3);
+	d->ui.smudgingBox->setVisible(brushMode == 3);
 
-	d->ui.colorpickup->setVisible(brushMode == 2);
-	d->ui.colorpickupLabel->setVisible(brushMode == 2);
-	d->ui.colorpickupBox->setVisible(brushMode == 2);
+	d->ui.colorpickup->setVisible(brushMode == 3);
+	d->ui.colorpickupLabel->setVisible(brushMode == 3);
+	d->ui.colorpickupBox->setVisible(brushMode == 3);
 
-	d->ui.modeIncremental->setEnabled(brushMode != 2);
-	d->ui.modeIndirect->setEnabled(brushMode != 2);
+	d->ui.modeIncremental->setEnabled(brushMode != 3);
 
 	d->ui.brushsize->setValue(brush.intValue(brushprop::size));
 	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
@@ -419,18 +423,15 @@ void BrushSettings::updateUi()
 	d->ui.pressureOpacity->setChecked(brush.boolValue(brushprop::opacityPressure));
 
 	d->ui.brushhardness->setValue(brush.intValue(brushprop::hard));
-	d->ui.pressureHardness->setChecked(brushMode != 0 && brush.boolValue(brushprop::hardPressure));
+	d->ui.pressureHardness->setChecked(brushMode > 1 && brush.boolValue(brushprop::hardPressure));
 
 	d->ui.brushsmudging->setValue(brush.intValue(brushprop::smudge));
-	d->ui.pressureSmudging->setChecked(brushMode == 2 && brush.boolValue(brushprop::smudgePressure));
+	d->ui.pressureSmudging->setChecked(brushMode == 3 && brush.boolValue(brushprop::smudgePressure));
 
 	d->ui.colorpickup->setValue(brush.intValue(brushprop::resmudge));
 
 	d->ui.brushspacing->setValue(brush.intValue(brushprop::spacing));
-	if(brush.boolValue(brushprop::incremental))
-		d->ui.modeIncremental->setChecked(true);
-	else
-		d->ui.modeIndirect->setChecked(true);
+	d->ui.modeIncremental->setChecked(brush.boolValue(brushprop::incremental));
 
 	d->updateInProgress = false;
 	d->updateBrush();
@@ -447,10 +448,12 @@ void BrushSettings::updateFromUi()
 
 	if(d->ui.hardedgeMode->isChecked())
 		brush.setValue(brushprop::brushmode, 0);
-	else if(d->ui.softedgeMode->isChecked())
+	else if(d->ui.squareMode->isChecked())
 		brush.setValue(brushprop::brushmode, 1);
-	else
+	else if(d->ui.softedgeMode->isChecked())
 		brush.setValue(brushprop::brushmode, 2);
+	else
+		brush.setValue(brushprop::brushmode, 3);
 
 	brush.setValue(brushprop::size, d->ui.brushsize->value());
 	brush.setValue(brushprop::sizePressure, d->ui.pressureSize->isChecked());
@@ -554,7 +557,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().intValue(brushprop::brushmode) != 0;
+	return d->currentBrush().intValue(brushprop::brushmode) > 1;
+}
+
+bool BrushSettings::isSquare() const
+{
+	return d->currentBrush().intValue(brushprop::brushmode) == 1;
 }
 
 //// BRUSH PRESET PALETTE MODEL ////
@@ -571,8 +579,8 @@ struct BrushPresetModel::Private {
 
 		if(iconcache.at(idx).isNull()) {
 
-			const paintcore::Brush brush = brushFromProps(presets[idx], ToolProperties());
-			const paintcore::BrushStamp stamp = paintcore::makeGimpStyleBrushStamp(brush, paintcore::Point(0, 0, 1));
+			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties());
+			const paintcore::BrushStamp stamp = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1());
 			const int maskdia = stamp.mask.diameter();
 			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
 

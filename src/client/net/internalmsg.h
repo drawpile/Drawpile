@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,15 +31,16 @@ namespace protocol {
 class ClientInternal : public Message {
 public:
 	enum class Type {
-		Catchup,      // caught up to n% of promised messages
-		SequencePoint // message sequence point
+		Catchup,         // caught up to n% of promised messages
+		SequencePoint,   // message sequence point
+		TruncateHistory  // truncate undo history
 	};
 
 	/**
 	 * @brief Make a "caught up to n%" message
-     *
-     * The catchup message causes the StateTracker to emit a caughtUpTo(int) signal.
-     * This is used to update a download progress bar.
+	 *
+	 * The catchup message causes the StateTracker to emit a caughtUpTo(int) signal.
+	 * This is used to update a download progress bar.
 	 */
 	static MessagePtr makeCatchup(int n) { return MessagePtr(new ClientInternal(Type::Catchup, n)); }
 
@@ -52,13 +53,20 @@ public:
 	 */
 	static MessagePtr makeSequencePoint(int interval) { return MessagePtr(new ClientInternal(Type::SequencePoint, interval)); }
 
+	/**
+	 * @brief Make a truncate history command
+	 *
+	 * This is used by SoftReset to prevent undos across reset boundary.
+	 */
+	static MessagePtr makeTruncatePoint() { return MessagePtr(new ClientInternal(Type::TruncateHistory, 0)); }
+
 	Type internalType() const { return m_type; }
 	int value() const { return m_value; }
 
 	QString messageName() const override { return QStringLiteral("_internal_"); }
 
 protected:
-    int payloadLength() const override { return 0; }
+	int payloadLength() const override { return 0; }
 	int serializePayload(uchar*) const override { qWarning("Tried to serialize MSG_INTERNAL"); return 0; }
 	bool payloadEquals(const Message &m) const override {
 		const ClientInternal &mm = static_cast<const ClientInternal&>(m);

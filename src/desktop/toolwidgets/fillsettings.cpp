@@ -108,7 +108,7 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::setForeground(const QColor &color)
 {
 	_ui->preview->setColor(color);
-	paintcore::Brush b;
+	brushes::ClassicBrush b;
 	b.setColor(color);
 	controller()->setActiveBrush(b);
 }

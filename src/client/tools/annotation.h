@@ -40,8 +40,8 @@ public:
 	void end() override;
 
 private:
-	static const int PREVIEW_ID = 0x010000;
-	int m_selectedId;
+	static const uint16_t PREVIEW_ID = 0xffff;
+	uint16_t m_selectedId;
 	bool m_isNew;
 
 	QPointF m_p1, m_p2;

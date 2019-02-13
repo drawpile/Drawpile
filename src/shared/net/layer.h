@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,8 +51,6 @@ public:
 	int32_t right() const { return m_right; }
 	int32_t bottom() const { return m_bottom; }
 	int32_t left() const { return m_left; }
-
-	bool isOpCommand() const override { return true; }
 
 	QString messageName() const override { return QStringLiteral("resize"); }
 
@@ -104,7 +102,7 @@ public:
 	static LayerCreate *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerCreate *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint16_t source() const { return m_source; }
 	uint32_t fill() const { return m_fill; }
 	uint8_t flags() const { return m_flags; }
@@ -117,7 +115,7 @@ public:
 	 * created in single-user mode can use any ID.
 	 * This means layer IDs of the initial snapshot need not be validated.
 	 */
-	bool isValidId() const { return (id()>>8) == contextId(); }
+	bool isValidId() const { return (m_id>>8) == contextId(); }
 
 	QString messageName() const override { return QStringLiteral("newlayer"); }
 
@@ -139,20 +137,29 @@ private:
  *
  * If the current layer or layer controls in general are locked, this command
  * requires session operator privileges.
+ *
+ * Specifying a sublayer requires session operator privileges. Currently, it is used
+ * only when sublayers are needed at canvas initialization.
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t opacity, uint8_t blend)
+	static const uint8_t FLAG_CENSOR = 0x01; // censored layer
+
+	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR, ctx), m_id(id),
-		m_opacity(opacity), m_blend(blend)
+		m_sublayer(sublayer), m_flags(flags), m_opacity(opacity), m_blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerAttributes *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
+	uint8_t sublayer() const { return m_sublayer; }
+	uint8_t flags() const { return m_flags; }
 	uint8_t opacity() const { return m_opacity; }
 	uint8_t blend() const { return m_blend; }
+
+	bool isCensored() const { return m_flags & FLAG_CENSOR; }
 
 	QString messageName() const override { return QStringLiteral("layerattr"); }
 
@@ -163,6 +170,8 @@ protected:
 
 private:
 	uint16_t m_id;
+	uint8_t m_sublayer;
+	uint8_t m_flags;
 	uint8_t m_opacity;
 	uint8_t m_blend;
 };
@@ -188,7 +197,7 @@ public:
 	static LayerVisibility *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerVisibility *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t visible() const { return m_visible; }
 
 	QString messageName() const override { return QStringLiteral("layervisibility"); }
@@ -221,7 +230,7 @@ public:
 	static LayerRetitle *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerRetitle *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	QString title() const { return QString::fromUtf8(m_title); }
 
 	QString messageName() const override { return QStringLiteral("retitlelayer"); }
@@ -310,7 +319,7 @@ public:
 	static LayerDelete *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerDelete *fromText(uint8_t ctx, const Kwargs &kwargs);
 
-	uint16_t id() const { return m_id; }
+	uint16_t layer() const override { return m_id; }
 	uint8_t merge() const { return m_merge; }
 
 	QString messageName() const override { return QStringLiteral("deletelayer"); }

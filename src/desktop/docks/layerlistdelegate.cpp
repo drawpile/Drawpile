@@ -31,8 +31,9 @@ namespace docks {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  m_visibleicon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
-	  m_hiddenicon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
+	  m_visibleIcon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
+	  m_censoredIcon(QIcon(":/icons/censored.svg").pixmap(16, 16)),
+	  m_hiddenIcon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
 	  m_showNumbers(false)
 {
 }
@@ -44,8 +45,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 
-	const int myId = static_cast<const canvas::LayerListModel*>(index.model())->myId();
-	if(layer.isLockedFor(myId))
+	if(index.data(canvas::LayerListModel::IsLockedRole).toBool())
 		opt.state &= ~QStyle::State_Enabled;
 
 	drawBackground(painter, option, index);
@@ -54,7 +54,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
-	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden);
+	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden, layer.censored);
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
@@ -94,7 +94,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = m_visibleicon.size();
+	const QSize iconsize = m_visibleIcon.size();
 	QFontMetrics fm(option.font);
 	int minheight = qMax(fm.height() * 3 / 2, iconsize.height()) + 2;
 	if(size.height() < minheight)
@@ -119,16 +119,17 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, cons
 	}
 }
 
-void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const
+void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const
 {
-	int x = rect.left() + rect.width() / 2 - 8;
-	int y = rect.top() + rect.height() / 2 - 8;
+	const int x = rect.left() + rect.width() / 2 - 8;
+	const int y = rect.top() + rect.height() / 2 - 8;
 	if(hidden) {
-		painter->drawPixmap(x, y, m_hiddenicon);
+		painter->drawPixmap(x, y, m_hiddenIcon);
+
 	} else {
 		painter->save();
 		painter->setOpacity(value);
-		painter->drawPixmap(x, y, m_visibleicon);
+		painter->drawPixmap(x, y, censored ? m_censoredIcon : m_visibleIcon);
 		painter->restore();
 	}
 }

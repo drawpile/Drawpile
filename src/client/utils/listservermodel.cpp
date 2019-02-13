@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,10 +29,14 @@
 #include <QSettings>
 #include <QSslSocket>
 
+#ifdef HAVE_DNSSD
+#include <KDNSSD/DNSSD/ServiceBrowser>
+#endif
+
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(bool showlocal, QObject *parent)
-	: QAbstractListModel(parent), m_showlocal(showlocal)
+ListServerModel::ListServerModel(Options options, QObject *parent)
+	: QAbstractListModel(parent), m_options(options)
 {
 	loadServers();
 }
@@ -128,10 +132,9 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	}
 }
 
-void ListServerModel::loadServers()
+QVector<ListServer> ListServerModel::listServers()
 {
-	beginResetModel();
-	m_servers.clear();
+	QVector<ListServer> list;
 
 	QSettings cfg;
 	const QString iconPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/favicons/";
@@ -151,13 +154,13 @@ void ListServerModel::loadServers()
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 
-		m_servers << ls;
+		list << ls;
 	}
 	cfg.endArray();
 
 	// Add the default drawpile.net server if there is nothing else
-	if(m_servers.isEmpty()) {
-		m_servers << ListServer {
+	if(list.isEmpty()) {
+		list << ListServer {
 			QIcon("builtin:drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
@@ -171,16 +174,24 @@ void ListServerModel::loadServers()
 	// Use HTTPS for drawpile.net listing if possible. It would be better to
 	// just always use HTTPS, but SSL support is not always available (on Windows,
 	// since OpenSSL is not part of the base system.)
+	// TODO is this true anymore?
 	if(QSslSocket::supportsSsl()) {
-		for(ListServer &ls : m_servers) {
+		for(ListServer &ls : list) {
 			if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
 				ls.url = QStringLiteral("https://drawpile.net/api/listing/");
 		}
 	}
+	return list;
+}
+
+void ListServerModel::loadServers()
+{
+	beginResetModel();
+	m_servers = listServers();
 
 #ifdef HAVE_DNSSD
 	// Add an entry for local server discovery
-	if(m_showlocal) {
+	if(m_options.testFlag(ShowLocal) && KDNSSD::ServiceBrowser::isAvailable() == KDNSSD::ServiceBrowser::Working) {
 		m_servers.prepend(ListServer {
 			QIcon(),
 			QString(),
@@ -190,6 +201,16 @@ void ListServerModel::loadServers()
 		});
 	}
 #endif
+
+	if(m_options.testFlag(ShowBlank)) {
+		m_servers << ListServer {
+			QIcon(),
+			QString(),
+			QStringLiteral("-"),
+			QString(),
+			QString()
+		};
+	}
 
 	endResetModel();
 }

@@ -115,25 +115,16 @@ NetStatus::NetStatus(QWidget *parent)
 	connect(showNetStats, SIGNAL(triggered()), this, SLOT(showNetStats()));
 
 	// Security level icon
-	_security = new QLabel(QString(), this);
-	_security->setFixedSize(QSize(16, 16));
-	_security->hide();
-	layout->addWidget(_security);
+	m_security = new QLabel(QString(), this);
+	m_security->setFixedSize(QSize(16, 16));
+	m_security->hide();
+	layout->addWidget(m_security);
 
-	_security->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_security->setContextMenuPolicy(Qt::ActionsContextMenu);
 
 	QAction *showcert = new QAction(tr("Show certificate"), this);
-	_security->addAction(showcert);
+	m_security->addAction(showcert);
 	connect(showcert, SIGNAL(triggered()), this, SLOT(showCertificate()));
-
-	// Low space alert
-	m_lowspace = new QLabel(tr("Low space!"), this);
-	m_lowspace->setToolTip(tr("Server is almost out of space for session history! Reset the session to free some up."));
-	QPalette lowSpacePalette = m_lowspace->palette();
-	lowSpacePalette.setColor(QPalette::WindowText, Qt::red);
-	m_lowspace->setPalette(lowSpacePalette);
-	m_lowspace->setVisible(false);
-	layout->addWidget(m_lowspace);
 
 	// Popup label
 	m_popup = new PopupMessage(this);
@@ -214,19 +205,14 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	}
 
 	if(iconname.isEmpty()) {
-		_security->hide();
+		m_security->hide();
 	} else {
-		_security->setPixmap(QIcon("builtin:" + iconname + ".svg").pixmap(16, 16));
-		_security->setToolTip(tooltip);
-		_security->show();
+		m_security->setPixmap(QIcon("builtin:" + iconname + ".svg").pixmap(16, 16));
+		m_security->setToolTip(tooltip);
+		m_security->show();
 	}
 
 	m_certificate = certificate;
-}
-
-void NetStatus::setLowSpaceAlert(bool lowSpace)
-{
-	m_lowspace->setVisible(lowSpace);
 }
 
 void NetStatus::hostDisconnecting()
@@ -253,7 +239,6 @@ void NetStatus::hostDisconnected()
 
 	message(tr("Disconnected"));
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
-	setLowSpaceAlert(false);
 
 	if(_netstats)
 		_netstats->setDisconnected();

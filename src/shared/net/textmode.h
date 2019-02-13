@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #define DP_NET_TEXTMODE_H
 
 #include "message.h"
-#include "pen.h"
 
 namespace protocol {
 namespace text {
@@ -37,7 +36,7 @@ public:
 			Error,
 			NeedMore
 		} status;
-		Message *msg;
+		NullableMessageRef msg;
 	};
 
 	Result parseLine(const QString &line);
@@ -46,18 +45,19 @@ public:
 	Kwargs metadata() const { return m_metadata; }
 
 	Parser() : m_state(ExpectCommand), m_ctx(0) { }
+
 private:
 	enum {
 		ExpectCommand,
 		ExpectKwargLine,
-		ExpectPenMovePoint
+		ExpectDab,
 	} m_state;
 
 	Kwargs m_metadata;
 	QString m_error;
 	QString m_cmd;
 	Kwargs m_kwargs;
-	PenPointVector m_points;
+	QStringList m_dabs;
 	int m_ctx;
 };
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "config.h"
+#include "stats.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
@@ -102,7 +103,7 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 			);
 		return false;
 	}
-	if(!writer->writeHeader()) {
+	if(!writer->writeHeader(reader.metadata())) {
 		fprintf(stderr, "Error while writing header: %s\n",
 			qPrintable(writer->errorString())
 			);
@@ -119,13 +120,11 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 		MessageRecord mr = reader.readNext();
 		switch(mr.status) {
 		case MessageRecord::OK: {
-			protocol::MessagePtr msg(mr.message);
-
-			if(doAclFiltering && !aclFilter.filterMessage(*msg)) {
-				writer->writeMessage(*msg->asFiltered());
+			if(doAclFiltering && !aclFilter.filterMessage(*mr.message)) {
+				writer->writeMessage(*mr.message->asFiltered());
 
 			} else {
-				if(!writer->writeMessage(*msg)) {
+				if(!writer->writeMessage(*mr.message)) {
 					fprintf(stderr, "Error while writing message: %s\n",
 						qPrintable(writer->errorString())
 						);
@@ -137,8 +136,8 @@ bool convertRecording(const QString &inputfilename, const QString &outputfilenam
 
 		case MessageRecord::INVALID:
 			writer->writeComment(QStringLiteral("WARNING: Unrecognized message type %1 of length %2 at offset 0x%3")
-				.arg(int(mr.error.type))
-				.arg(mr.error.len)
+				.arg(int(mr.invalid_type))
+				.arg(mr.invalid_len)
 				.arg(reader.currentPosition())
 				);
 			break;
@@ -219,6 +218,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption aclOption(QStringList() << "A" << "acl", "Perform ACL filtering");
 	parser.addOption(aclOption);
 
+	// --msg-freq
+	QCommandLineOption msgFreqOption(QStringList() << "msg-freq", "Print message frequency table");
+	parser.addOption(msgFreqOption);
+
 	// input file name
 	parser.addPositionalArgument("input", "recording file", "<input.dprec>");
 
@@ -239,6 +242,10 @@ int main(int argc, char *argv[]) {
 	const QString format = parser.value(formatOption);
 	if(format == "version") {
 		return !printRecordingVersion(inputfiles.at(0));
+	}
+
+	if(parser.isSet(msgFreqOption)) {
+		return printMessageFrequency(inputfiles.at(0)) ? 0 : 1;
 	}
 
 	if(!convertRecording(

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2017 Calle Laakkonen
+   Copyright (C) 2009-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,13 +19,15 @@
 
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
+#include "core/tilevector.h"
 #include "ora/orareader.h"
 #include "ora/orawriter.h"
+#include "canvas/features.h"
 
 #include "../shared/net/layer.h"
+#include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/meta2.h"
-#include "net/commands.h"
 #include "utils/archive.h"
 #include "utils/images.h"
 
@@ -53,10 +55,12 @@ namespace {
 	struct Layer {
 		QString name;
 		QString src;
+		QString bgtile;
 		QPoint offset;
 		qreal opacity;
 		bool visibility;
 		bool locked;
+		bool censored;
 		QString compositeOp;
 	};
 
@@ -142,9 +146,9 @@ static bool attrToBool(const QStringRef &attr, bool def, const char *trueVal)
 static QColor attrToColor(const QStringRef &attr, const QColor &def)
 {
 	if(attr.length() == 7 && attr.at(0) == '#')
-		return QColor::fromRgb(attr.mid(1).toUInt(0, 16));
+		return QColor::fromRgb(attr.mid(1).toUInt(nullptr, 16));
 	else if(attr.length() == 9 && attr.at(0) == '#')
-		return QColor::fromRgba(attr.mid(1).toUInt(0, 16));
+		return QColor::fromRgba(attr.mid(1).toUInt(nullptr, 16));
 	else
 		return def;
 }
@@ -155,7 +159,7 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 	// Grab <layer> element attributes first
 	const QXmlStreamAttributes attrs = reader.attributes();
 
-	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", nullptr };
+	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", "background-tile", "censored", nullptr };
 
 	if(hasUnknownAttributes("layer", attrs, knownLayerAttributes))
 		canvas.extensionsWarning = true;
@@ -163,10 +167,12 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 	Layer layer {
 		attrToString(attrs.value("name"), QString()),
 		attrToString(attrs.value("src"), QString()),
+		attrToString(attrs.value(MYPAINT_NAMESPACE, "background-tile"), QString()),
 		parentOffset + QPoint(attrs.value("x").toInt(), attrs.value("y").toInt()),
 		qBound(0.0, attrToReal(attrs.value("opacity"), 1.0), 1.0),
 		attrToBool(attrs.value("visibility"), true, "visible"),
 		attrToBool(attrs.value("edit-locked"), false, "true"),
+		attrToBool(attrs.value(DP_NAMESPACE, "censored"), false, "true"),
 		attrToString(attrs.value("composite-op"), QStringLiteral("src-over"))
 	};
 
@@ -391,16 +397,53 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 	if(canvas.nestedWarning)
 		result.warnings |= OraResult::ORA_NESTED;
 
-	const int ctxId = 1;
+	const uint8_t ctxId = 1;
 
 	// Set canvas size
 	result.commands << MessagePtr(new protocol::CanvasResize(ctxId, 0, canvas.size.width(), canvas.size.height(), 0));
 
 	// Create layers
 	// Note: layers are stored topmost first in ORA, but we create them bottom-most first
-	int layerId = ctxId << 8;
+	uint16_t layerId = uint16_t(ctxId << 8);
 	for(int i=canvas.layers.size()-1;i>=0;--i) {
 		const Layer &layer = canvas.layers[i];
+
+		if(!layer.bgtile.isEmpty() && i==canvas.layers.size()-1) {
+			// Bottom-most layer with a background tile: try to make this a canvas background
+			// Note that we only support 64x64 background, while MyPaint supports larger backgrounds as well
+			QByteArray bg = utils::getArchiveFile(zip, layer.bgtile);
+			QImage bgimage;
+			if(bg.isNull() || !bgimage.loadFromData(bg)) {
+				result.warnings |= OraResult::UNSUPPORTED_BACKGROUND_TILE;
+				qWarning("Couldn't load background tile!");
+
+			} else if(bgimage.size() != QSize(paintcore::Tile::SIZE, paintcore::Tile::SIZE)) {
+				result.warnings |= OraResult::UNSUPPORTED_BACKGROUND_TILE;
+				qWarning("Background tile (%dx%d) size not supported!", bgimage.width(), bgimage.height());
+
+			} else {
+				// Cool, we have a background tile
+				bgimage = bgimage.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+				const quint32 *data = reinterpret_cast<const quint32*>(bgimage.constBits());
+				bool isSolidColor = true;
+				quint32 color = *(data++);
+				for(int i=1;i<paintcore::Tile::LENGTH;++i) {
+					if(*(data++) != color) {
+						isSolidColor = false;
+						break;
+					}
+				}
+
+				if(isSolidColor)
+					result.commands << MessagePtr(new protocol::CanvasBackground(ctxId, color));
+				else
+					result.commands << MessagePtr(new protocol::CanvasBackground(ctxId, qCompress(bgimage.constBits(), paintcore::Tile::BYTES)));
+
+				continue;
+			}
+		}
+
 		QImage content;
 		{
 			QByteArray image = utils::getArchiveFile(zip, layer.src);
@@ -409,26 +452,9 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			}
 		}
 
-		const QColor solidColor = utils::isSolidColorImage(content);
-
-		result.commands.append(MessagePtr(new protocol::LayerCreate(
-				ctxId,
-				++layerId,
-				0,
-				solidColor.isValid() ? solidColor.rgba() : 0,
-				0,
-				layer.name
-			)));
-
-		if(!solidColor.isValid())
-			result.commands << net::command::putQImage(
-					ctxId,
-					layerId,
-					layer.offset.x(),
-					layer.offset.y(),
-					content,
-					paintcore::BlendMode::MODE_REPLACE
-					);
+		result.commands << paintcore::LayerTileSet::fromImage(
+			content.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+			).toInitCommands(ctxId, ++layerId, layer.name);
 
 		bool exact_blendop;
 		int blendmode = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
@@ -438,12 +464,14 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		result.commands << MessagePtr(new protocol::LayerAttributes(
 			ctxId,
 			layerId,
-			qRound(255 * layer.opacity),
+			0,
+			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+			uint8_t(qRound(255 * layer.opacity)),
 			blendmode
 			));
 
 		if(layer.locked) {
-			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, QList<uint8_t>()));
+			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, int(canvas::Tier::Guest), QList<uint8_t>()));
 		}
 
 		if(!layer.visibility) {
@@ -452,7 +480,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 	}
 
 	// Create annotations
-	int annotationId = ctxId << 8;
+	uint16_t annotationId = uint16_t(ctxId << 8);
 	for(const Annotation &ann : canvas.annotations) {
 		result.commands.append(MessagePtr(new protocol::AnnotationCreate(
 			ctxId,
@@ -505,7 +533,9 @@ OraResult loadOpenRaster(const QString &filename)
 			} else {
 				return QStringLiteral("Unexpected root element: ") + reader.name().toString();
 			}
-		default: break;
+			break;
+		default:
+			break;
 		}
 	}
 

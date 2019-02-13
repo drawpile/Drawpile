@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,183 +18,115 @@
 */
 
 #include "viewstatus.h"
-#include "utils/icon.h"
 
-#include <QLabel>
-#include <QSlider>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QHBoxLayout>
-#include <QAction>
-#include <QToolButton>
 
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
 	: QWidget(parent)
 {
-#ifdef Q_OS_MAC
-	setStyleSheet(QStringLiteral(
-		"QToolButton { border: none }"
-		"QToolButton:checked, QToolButton:pressed { background: #c0c0c0 }"
-	));
-#endif
 	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
 
 	layout->setMargin(1);
 	layout->setSpacing(0);
 
-	// View flipping
-	layout->addSpacing(10);
-	_viewFlip = new QToolButton(this);
-	_viewFlip->setAutoRaise(true);
+	// Canvas rotation
+	m_angleBox = new QComboBox(this);
+	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().width("9999-O--"));
+	m_angleBox->setFrame(false);
+	m_angleBox->setEditable(true);
+	m_angleBox->setToolTip(tr("Canvas Rotation"));
 
-	_viewMirror = new QToolButton(this);
-	_viewMirror->setAutoRaise(true);
+	auto boxPalette = m_angleBox->palette();
+	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
+	m_angleBox->setPalette(boxPalette);
 
-	layout->addWidget(_viewFlip);
-	layout->addWidget(_viewMirror);
+	layout->addWidget(m_angleBox);
 
-	// Rotation angle
-	layout->addSpacing(10);
-	_resetRotation = new QToolButton(this);
-	_resetRotation->setAutoRaise(true);
+	m_angleBox->addItem(QStringLiteral("-90°"));
+	m_angleBox->addItem(QStringLiteral("-45°"));
+	m_angleBox->addItem(QStringLiteral("0°"));
+	m_angleBox->addItem(QStringLiteral("45°"));
+	m_angleBox->addItem(QStringLiteral("90°"));
+	m_angleBox->setEditText(QStringLiteral("0°"));
 
-	auto *rotateLeft = new QToolButton(this);
-	rotateLeft->setAutoRaise(true);
-	rotateLeft->setIcon(icon::fromTheme("object-rotate-left"));
-	connect(rotateLeft, &QToolButton::clicked, this, &ViewStatus::rotateLeft);
-
-	auto *rotateRight = new QToolButton(this);
-	rotateRight->setAutoRaise(true);
-	rotateRight->setIcon(icon::fromTheme("object-rotate-right"));
-	connect(rotateRight, &QToolButton::clicked, this, &ViewStatus::rotateRight);
-
-	_angle = new QLabel(QString::fromUtf8("0°"));
-	_angle->setFixedWidth(_angle->fontMetrics().width("9999.9"));
-	_angle->setContextMenuPolicy(Qt::ActionsContextMenu);
-
-	_angleSlider = new QSlider(Qt::Horizontal, this);
-	_angleSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-	_angleSlider->setMinimum(-360);
-	_angleSlider->setMaximum(360);
-	_angleSlider->setPageStep(45);
-	_angleSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
-	connect(_angleSlider, &QSlider::valueChanged, [this](int val) { emit angleChanged(val); });
-
-	_angleSlider->setToolTip(tr("Drag the view while holding ctrl-space to rotate"));
-
-	layout->addWidget(_resetRotation);
-	layout->addWidget(rotateLeft);
-	layout->addWidget(_angleSlider);
-	layout->addWidget(rotateRight);
-	layout->addWidget(_angle);
-
-	addAngleShortcut(-180);
-	addAngleShortcut(-135);
-	addAngleShortcut(-90);
-	addAngleShortcut(-45);
-	addAngleShortcut(0);
-	addAngleShortcut(45);
-	addAngleShortcut(90);
-	addAngleShortcut(135);
-	addAngleShortcut(180);
+	m_angleBox->lineEdit()->setValidator(
+		new QRegularExpressionValidator(
+			QRegularExpression("-?[0-9]{0,3}°?"),
+			this
+		)
+	);
+	connect(m_angleBox, &QComboBox::editTextChanged, this, &ViewStatus::angleBoxChanged);
 
 	// Zoom level
-	_zoomIn = new QToolButton(this);
-	_zoomIn->setAutoRaise(true);
-	_zoomOut = new QToolButton(this);
-	_zoomOut->setAutoRaise(true);
-	_zoomOriginal = new QToolButton(this);
-	_zoomOriginal->setAutoRaise(true);
+	m_zoomBox = new QComboBox(this);
+	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().width("9999.9%--"));
+	m_zoomBox->setFrame(false);
+	m_zoomBox->setEditable(true);
+	m_zoomBox->setToolTip(tr("Zoom"));
 
+	m_zoomBox->setPalette(boxPalette);
 
-	_zoomSlider = new QSlider(Qt::Horizontal, this);
-	_zoomSlider->setMaximumWidth(120);
-	_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-	_zoomSlider->setMinimum(50);
-	_zoomSlider->setMaximum(1600);
-	_zoomSlider->setPageStep(50);
-	_zoomSlider->setValue(100);
-	_zoomSlider->setContextMenuPolicy(Qt::ActionsContextMenu);
-	connect(_zoomSlider, &QSlider::valueChanged, [this](int val) { emit zoomChanged(val); });
+	layout->addWidget(m_zoomBox);
 
-	_zoom = new QLabel("100%", this);
-	_zoom->setFixedWidth(_zoom->fontMetrics().width("9999.9%"));
-	_zoom->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_zoomBox->addItem(QStringLiteral("50%"));
+	m_zoomBox->addItem(QStringLiteral("100%"));
+	m_zoomBox->addItem(QStringLiteral("200%"));
+	m_zoomBox->addItem(QStringLiteral("400%"));
+	m_zoomBox->addItem(QStringLiteral("800%"));
+	m_zoomBox->addItem(QStringLiteral("1600%"));
+	m_zoomBox->setEditText(QStringLiteral("100%"));
 
-	layout->addWidget(_zoomOriginal);
-	layout->addWidget(_zoomOut);
-	layout->addWidget(_zoomSlider);
-	layout->addWidget(_zoomIn);
-	layout->addWidget(_zoom);
-
-	addZoomShortcut(50);
-	addZoomShortcut(100);
-	addZoomShortcut(200);
-	addZoomShortcut(400);
-}
-
-void ViewStatus::setZoomActions(QAction *zoomIn, QAction *zoomOut, QAction *zoomOriginal)
-{
-	_zoomIn->setDefaultAction(zoomIn);
-	_zoomOut->setDefaultAction(zoomOut);
-	_zoomOriginal->setDefaultAction(zoomOriginal);
-}
-
-void ViewStatus::setRotationActions(QAction *resetRotation)
-{
-	_resetRotation->setDefaultAction(resetRotation);
-	// Currently there are no external actions for rotation buttons
-}
-
-void ViewStatus::setFlipActions(QAction *flip, QAction *mirror)
-{
-	_viewFlip->setDefaultAction(flip);
-	_viewMirror->setDefaultAction(mirror);
-}
-
-void ViewStatus::addZoomShortcut(int zoomLevel)
-{
-	QAction *a = new QAction(QString("%1%").arg(zoomLevel), this);
-	_zoom->addAction(a);
-	_zoomSlider->addAction(a);
-	connect(a, &QAction::triggered, [this, zoomLevel]() {
-		emit zoomChanged(zoomLevel);
-	});
-}
-
-void ViewStatus::addAngleShortcut(int angle)
-{
-	QAction *a = new QAction(QString("%1°").arg(angle), this);
-	_angle->addAction(a);
-	_angleSlider->addAction(a);
-	connect(a, &QAction::triggered, [this, angle]() {
-		emit angleChanged(angle);
-	});
+	m_zoomBox->lineEdit()->setValidator(
+		new QRegularExpressionValidator(
+			QRegularExpression("[0-9]{0,4}%?"),
+			this
+		)
+	);
+	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
-	_zoomSlider->setValue(zoom);
-	_angleSlider->setValue(angle);
-	_zoom->setText(QString::number(zoom, 'f', 0) + "%");
-	_angle->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
+	const int intZoom = qRound(zoom);
+	const int zoomCursorPos = m_zoomBox->lineEdit()->cursorPosition();
+	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
+	m_zoomBox->lineEdit()->setCursorPosition(zoomCursorPos);
+
+	const int intAngle = qRound(angle);
+	const int angleCursorPos = m_angleBox->lineEdit()->cursorPosition();
+	m_angleBox->setEditText(QString::number(intAngle) + QChar(0x00b0));
+	m_angleBox->lineEdit()->setCursorPosition(angleCursorPos);
+
+
 }
 
-void ViewStatus::rotateLeft()
+void ViewStatus::zoomBoxChanged(const QString &text)
 {
-	int a = _angleSlider->value() - 10;
-	if(a < _angleSlider->minimum())
-		a = _angleSlider->maximum() - 10;
-	_angleSlider->setValue(a);
+	const int suffix = text.indexOf('%');
+	const QStringRef num = suffix>0 ? text.leftRef(suffix) : &text;
+
+	bool ok;
+	const int number = num.toInt(&ok);
+	if(ok && number>= 1 && number < 10000)
+		emit zoomChanged(number);
 }
 
-void ViewStatus::rotateRight()
+void ViewStatus::angleBoxChanged(const QString &text)
 {
-	int a = _angleSlider->value() + 10;
-	if(a > _angleSlider->maximum())
-		a = _angleSlider->minimum() + 10;
-	_angleSlider->setValue(a);
+	const int suffix = text.indexOf(0x00b0);
+	const QStringRef num = suffix>0 ? text.leftRef(suffix) : &text;
+
+	bool ok;
+	const int number = num.toInt(&ok);
+	if(ok)
+		emit angleChanged(number);
 }
 
 }

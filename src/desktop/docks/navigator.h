@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008-2014 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2019 Calle Laakkonen, 2007 M.K.A.
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,18 +21,19 @@
 #include <QDockWidget>
 #include <QGraphicsView>
 
+class Ui_Navigator;
+
 namespace docks {
 
 //! Navigator graphics view
-class NavigatorView
-	: public QGraphicsView
+class NavigatorView : public QGraphicsView
 {
 	Q_OBJECT
 public:
 	NavigatorView(QWidget *parent);
 
 	void setViewFocus(const QPolygonF& rect);
-	
+
 public slots:
 	void rescale();
 
@@ -49,32 +50,40 @@ protected:
 	void wheelEvent(QWheelEvent *event);
 
 private:
-	QPolygonF _focusrect;
-	int _zoomWheelDelta;
-	bool _dragging;
+	QPolygonF m_focusRect;
+	int m_zoomWheelDelta;
+	bool m_dragging;
 };
 
 //! Navigator dock widget
-class Navigator
-	: public QDockWidget
+class Navigator : public QDockWidget
 {
 	Q_OBJECT
 public:
 	Navigator(QWidget *parent);
-	
+	~Navigator();
+
 	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
+
+	// Set the actions for the buttons
+	void setFlipActions(QAction *flip, QAction *mirror);
 
 public slots:
 	//! Move the view focus rectangle
 	void setViewFocus(const QPolygonF& rect);
 
+	//! Set the current angle and zoom
+	void setViewTransformation(qreal zoom, qreal angle);
+
 signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
+	void angleChanged(qreal newAngle);
+	void zoomChanged(qreal newZoom);
 	
 private:
-	NavigatorView *_view;
+	Ui_Navigator *m_ui;
 };
 
 }

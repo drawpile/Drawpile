@@ -19,7 +19,6 @@
 
 #include "loader.h"
 #include "net/client.h"
-#include "net/commands.h"
 #include "ora/orareader.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/layerlist.h"
@@ -27,6 +26,7 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "core/tilevector.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -45,12 +45,11 @@ using protocol::MessagePtr;
 
 QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
-	QList<MessagePtr> msgs;
-
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0101, 0, _color.rgba(), 0, QGuiApplication::tr("Background"))));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QGuiApplication::tr("Foreground"))));
-	return msgs;
+	return QList<MessagePtr>()
+		<< MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0))
+		<< MessagePtr(new protocol::CanvasBackground(1, _color.rgba()))
+		<< MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QStringLiteral("Layer 1")))
+		;
 }
 
 QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
@@ -70,7 +69,9 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			if((ora.warnings & openraster::OraResult::ORA_EXTENDED))
 				text += "\n- " + QGuiApplication::tr("Application specific extensions are used");
 			if((ora.warnings & openraster::OraResult::ORA_NESTED))
-				text += "\n- " + QGuiApplication::tr("Nested layers are not fully supported.");
+				text += "\n- " + QGuiApplication::tr("Nested layers are not fully supported");
+			if((ora.warnings & openraster::OraResult::UNSUPPORTED_BACKGROUND_TILE))
+				text += "\n- " + QGuiApplication::tr("Unsupported background tile size");
 
 			m_warning = text;
 		}
@@ -97,9 +98,10 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
 			}
 
-			image = image.convertToFormat(QImage::Format_ARGB32);
-			msgs << MessagePtr(new protocol::LayerCreate(1, layerId, 0, 0, 0, QStringLiteral("Layer %1").arg(layerId)));
-			msgs << net::command::putQImage(1, layerId, 0, 0, image, paintcore::BlendMode::MODE_REPLACE);
+			msgs << paintcore::LayerTileSet::fromImage(
+				image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+				).toInitCommands(1, layerId, QStringLiteral("Layer %1").arg(layerId));
+
 			++layerId;
 		}
 
@@ -111,11 +113,11 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
 
-	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
+	msgs << MessagePtr(new protocol::CanvasResize(1, 0, m_image.size().width(), m_image.size().height(), 0));
 
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, 0, 0, "Background")));
-	msgs.append(net::command::putQImage(1, 1, 0, 0, image, paintcore::BlendMode::MODE_REPLACE));
+	msgs << paintcore::LayerTileSet::fromImage(
+		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+		).toInitCommands(1, 1, QStringLiteral("Layer 1"));
 
 	return msgs;
 }
@@ -127,6 +129,15 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Most important bit first: canvas initialization
 	const QSize imgsize = m_layers->size();
 	msgs.append(MessagePtr(new protocol::CanvasResize(m_contextId, 0, imgsize.width(), imgsize.height(), 0)));
+
+	const QColor solidBgColor = m_layers->background().solidColor();
+	if(solidBgColor.isValid())
+		msgs.append(MessagePtr(new protocol::CanvasBackground(m_contextId, solidBgColor.rgba())));
+	else
+		msgs.append(MessagePtr(new protocol::CanvasBackground(
+			m_contextId,
+			qCompress(reinterpret_cast<const uchar*>(m_layers->background().constData()), paintcore::Tile::BYTES)
+			)));
 
 	// Preset default layer
 	if(m_session && m_session->layerlist()->defaultLayer()>0)
@@ -141,21 +152,14 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	for(int i=0;i<m_layers->layerCount();++i) {
 		const paintcore::Layer *layer = m_layers->getLayerByIndex(i);
 
-		const QColor fill = layer->isSolidColor();
+		msgs << paintcore::LayerTileSet::fromLayer(*layer)
+			.toInitCommands(m_contextId, layer->id(), layer->title());
 
-		msgs.append(MessagePtr(new protocol::LayerCreate(m_contextId, layer->id(), 0, fill.isValid() ? fill.rgba() : 0, 0, layer->title())));
-		msgs.append(MessagePtr(new protocol::LayerAttributes(m_contextId, layer->id(), layer->opacity(), 1)));
-
-		if(!fill.isValid())
-			msgs.append(net::command::putQImage(m_contextId, layer->id(), 0, 0, layer->toImage(), paintcore::BlendMode::MODE_REPLACE));
-
-		// Set extra layer info (if present)
-		for(int j=0;j<m_layerlist.size();++j) {
-			if(m_layerlist[j].id == layer->id()) {
-				const LayerListItem &info = m_layerlist[j];
-				if(info.locked || !info.exclusive.isEmpty())
-					msgs.append(MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), info.locked, info.exclusive)));
-			}
+		// Set layer ACLs (if found)
+		if(m_session) {
+			const canvas::AclFilter::LayerAcl acl = m_session->aclFilter()->layerAcl(layer->id());
+			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
+				msgs << MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, int(acl.tier), acl.exclusive));
 		}
 	}
 
@@ -168,9 +172,11 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 
 	// Session and user ACLs
 	if(m_session) {
-		// Note: Starting the reset process automatically sets the LOCK_SESSION flag. We don't want that after the reset.
-		msgs.append(MessagePtr(new protocol::SessionACL(m_contextId,
-						m_session->aclFilter()->sessionAclFlags() & ~protocol::SessionACL::LOCK_SESSION)));
+		uint8_t features[canvas::FeatureCount];
+		for(int i=0;i<canvas::FeatureCount;++i)
+			features[i] = uint8_t(m_session->aclFilter()->featureTier(Feature(i)));
+
+		msgs.append(MessagePtr(new protocol::FeatureAccessLevels(m_contextId, features)));
 		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_session->aclFilter()->lockedUsers())));
 	}
 

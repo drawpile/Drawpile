@@ -80,6 +80,7 @@ public:
 	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
+	uint autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
 	QDateTime startTime() const override;
@@ -88,6 +89,7 @@ public:
 	void setMaxUsers(int max) override;
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
+	void setAutoResetThreshold(uint limit) override;
 	void joinUser(uint8_t id, const QString &name) override;
 
 	void terminate() override;
@@ -99,7 +101,9 @@ public:
 	QStringList announcements() const override { return m_announcements; }
 
 	void setAuthenticatedOperator(const QString &username, bool op) override;
+	void setAuthenticatedTrust(const QString &username, bool trusted) override;
 	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isTrusted(const QString &username) const override { return m_trusted.contains(username); }
 	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
 
 protected:
@@ -139,9 +143,11 @@ private:
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;
+	uint m_autoResetThreshold;
 	Flags m_flags;
 	QStringList m_announcements;
 	QSet<QString> m_ops;
+	QSet<QString> m_trusted;
 
 	QVector<Block> m_blocks;
 	bool m_archive;

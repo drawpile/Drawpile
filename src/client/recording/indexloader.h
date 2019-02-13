@@ -46,7 +46,7 @@ public:
 
 	int thumbnailsAvailable() const { return m_thumbnailcount; }
 
-	canvas::StateSavepoint loadSavepoint(int idx, canvas::StateTracker *owner);
+	canvas::StateSavepoint loadSavepoint(int idx);
 	QImage loadThumbnail(int idx);
 
 private:

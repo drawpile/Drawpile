@@ -22,14 +22,14 @@
 
 #include "strokesmoother.h"
 #include "tool.h"
-#include "core/brush.h"
+#include "brushes/brush.h"
+#include "canvas/features.h"
 
 #include <QObject>
 
 class QCursor;
 
 namespace canvas { class CanvasModel; }
-namespace paintcore { class Brush; }
 namespace net { class Client; }
 
 namespace tools {
@@ -43,9 +43,9 @@ class ToolController : public QObject
 {
 	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor() NOTIFY toolCursorChanged)
 	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
-	Q_PROPERTY(int activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
-	Q_PROPERTY(int activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
-	Q_PROPERTY(paintcore::Brush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
+	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
+	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
+	Q_PROPERTY(brushes::ClassicBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
 	Q_PROPERTY(canvas::CanvasModel* model READ model WRITE setModel NOTIFY modelChanged)
 
 	Q_OBJECT
@@ -58,14 +58,14 @@ public:
 
 	QCursor activeToolCursor() const;
 
-	void setActiveLayer(int id);
-	int activeLayer() const { return m_activeLayer; }
+	void setActiveLayer(uint16_t id);
+	uint16_t activeLayer() const { return m_activeLayer; }
 
-	void setActiveAnnotation(int id);
-	int activeAnnotation() const { return m_activeAnnotation; }
+	void setActiveAnnotation(uint16_t id);
+	uint16_t activeAnnotation() const { return m_activeAnnotation; }
 
-	void setActiveBrush(const paintcore::Brush &b);
-	const paintcore::Brush &activeBrush() const { return m_activebrush; }
+	void setActiveBrush(const brushes::ClassicBrush &b);
+	const brushes::ClassicBrush &activeBrush() const { return m_activebrush; }
 
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
@@ -114,13 +114,17 @@ signals:
 	void activeToolChanged(Tool::Type type);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
-	void activeAnnotationChanged(int annotationId);
-	void activeBrushChanged(const paintcore::Brush&);
+	void activeAnnotationChanged(uint16_t annotationId);
+	void activeBrushChanged(const brushes::ClassicBrush&);
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
 
+	void colorUsed(const QColor &color);
+	void zoomRequested(const QRect &rect, int steps);
+
 private slots:
 	void onAnnotationRowDelete(const QModelIndex&, int first, int last);
+	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
 
 private:
 	void registerTool(Tool *tool);
@@ -130,10 +134,10 @@ private:
 
 	canvas::CanvasModel *m_model;
 
-	paintcore::Brush m_activebrush;
+	brushes::ClassicBrush m_activebrush;
 	Tool *m_activeTool;
-	int m_activeLayer;
-	int m_activeAnnotation;
+	uint16_t m_activeLayer;
+	uint16_t m_activeAnnotation;
 	bool m_prevShift, m_prevAlt;
 
 	int m_smoothing;

@@ -144,19 +144,21 @@ LayerCreate *LayerCreate::fromText(uint8_t ctx, const Kwargs &kwargs)
 
 LayerAttributes *LayerAttributes::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
-	if(len!=4)
-		return 0;
+	if(len!=6)
+		return nullptr;
 	return new LayerAttributes(
 		ctx,
 		qFromBigEndian<quint16>(data+0),
 		*(data+2),
-		*(data+3)
+		*(data+3),
+		*(data+4),
+		*(data+5)
 	);
 }
 
 int LayerAttributes::payloadLength() const
 {
-	return 4;
+	return 6;
 }
 
 
@@ -164,6 +166,8 @@ int LayerAttributes::serializePayload(uchar *data) const
 {
 	uchar *ptr=data;
 	qToBigEndian(m_id, ptr); ptr += 2;
+	*(ptr++) = m_sublayer;
+	*(ptr++) = m_flags;
 	*(ptr++) = m_opacity;
 	*(ptr++) = m_blend;
 	return ptr-data;
@@ -172,17 +176,29 @@ int LayerAttributes::serializePayload(uchar *data) const
 Kwargs LayerAttributes::kwargs() const
 {
 	Kwargs kw;
-	kw["id"] = text::idString(m_id);
+	kw["layer"] = text::idString(m_id);
+	if(m_sublayer>0)
+		kw["sublayer"] = QString::number(m_sublayer);
 	kw["opacity"] = text::decimal(m_opacity);
 	kw["blend"] = QString::number(m_blend);
+
+	QStringList flags;
+	if((m_flags&FLAG_CENSOR))
+		flags << "censor";
+	if(!flags.isEmpty())
+		kw["flags"] = flags.join(',');
+
 	return kw;
 }
 
 LayerAttributes *LayerAttributes::fromText(uint8_t ctx, const Kwargs &kwargs)
 {
+	QStringList flags = kwargs["flags"].split(',');
 	return new LayerAttributes(
 		ctx,
-		text::parseIdString16(kwargs["id"]),
+		text::parseIdString16(kwargs["layer"]),
+		kwargs["sublayer"].toInt(),
+		flags.contains("censor") ? FLAG_CENSOR : 0,
 		text::parseDecimal8(kwargs["opacity"]),
 		kwargs["blend"].toInt()
 		);

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,14 +21,15 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
+#include "brushes/shapes.h"
+#include "brushes/brushengine.h"
+#include "brushes/brushpainter.h"
 #include "net/client.h"
 #include "net/commands.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/beziertool.h"
 
-#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 
 #include <QPixmap>
@@ -60,10 +61,6 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 
 	} else {
 		if(m_points.isEmpty()) {
-			m_previewBrush = owner.activeBrush();
-			m_previewBrush.setSmudge(0);
-			m_previewBrush.setSmudge2(0);
-			m_previewBrush.setSpacing(qMin(m_previewBrush.spacing(), 30));
 			m_points << ControlPoint { point, QPointF() };
 		}
 
@@ -116,12 +113,21 @@ void BezierTool::finishMultipart()
 {
 	if(m_points.size() > 2) {
 		m_points.pop_back();
-		const uint8_t contextId = owner.client()->myId();
 
+		const paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+
+		brushes::BrushEngine brushengine;
+		brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+
+		const auto pv = calculateBezierCurve();
+		for(const Point &p : pv)
+			brushengine.strokeTo(p, layer);
+		brushengine.endStroke();
+
+		const uint8_t contextId = owner.client()->myId();
 		QList<protocol::MessagePtr> msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-		msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
-		msgs << net::command::penMove(contextId, calculateBezierCurve());
+		msgs << brushengine.takeDabs();
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 		owner.client()->sendMessages(msgs);
 	}
@@ -132,9 +138,10 @@ void BezierTool::finishMultipart()
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(layer)
-		layer->removeSublayer(-1);
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+	if(!layer.isNull())
+		layer.removeSublayer(-1);
 }
 
 void BezierTool::undoMultipart()
@@ -166,7 +173,7 @@ PointVector BezierTool::calculateBezierCurve() const
 			m_points[i].point
 		};
 
-		pv << paintcore::shapes::cubicBezierCurve(points);
+		pv << brushes::shapes::cubicBezierCurve(points);
 	}
 
 	return pv;
@@ -175,21 +182,29 @@ PointVector BezierTool::calculateBezierCurve() const
 
 void BezierTool::updatePreview()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(!layer) {
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+	if(layer.isNull()) {
 		qWarning("BezierTool::updatePreview: no active layer!");
 		return;
 	}
 
-	paintcore::StrokeState ss;
-	layer->removeSublayer(-1);
+	const PointVector pv = calculateBezierCurve();
+	if(pv.size()<=1)
+		return;
 
-	PointVector pv = calculateBezierCurve();
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(0, 0, owner.activeBrush());
 
-	layer->dab(-1, m_previewBrush, pv[0], ss);
+	for(int i=0;i<pv.size();++i)
+		brushengine.strokeTo(pv.at(i), layer.layer());
+	brushengine.endStroke();
 
-	for(int i=1;i<pv.size();++i)
-		layer->drawLine(-1, m_previewBrush, pv[i-1], pv[i], ss);
+	layer.removeSublayer(-1);
+
+	const auto dabs = brushengine.takeDabs();
+	for(int i=0;i<dabs.size();++i)
+		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
 }
 
 }

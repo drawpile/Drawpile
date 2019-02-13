@@ -224,7 +224,7 @@ void ColorBox::exportPalette()
 		this,
 		tr("Export palette"),
 		QString(),
-		tr("GIM palette (%1)").arg("*.gpl")
+		tr("GIMP palette (%1)").arg("*.gpl")
 	);
 
 	if(!filename.isEmpty()) {

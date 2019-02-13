@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2018 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,12 +20,16 @@
 #ifndef SESSIONSETTINGSDIALOG_H
 #define SESSIONSETTINGSDIALOG_H
 
+#include "canvas/features.h"
+
 #include <QDialog>
 #include <QJsonObject>
 
 class QStringListModel;
 class QTimer;
 class QLabel;
+class QComboBox;
+
 class Ui_SessionSettingsDialog;
 class Document;
 
@@ -53,39 +57,41 @@ signals:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel*);
 	void onOperatorModeChanged(bool op);
+	void onFeatureTierChanged(canvas::Feature feature, canvas::Tier tier);
 
 	void titleChanged(const QString &newTitle);
 
 	void maxUsersChanged();
 	void denyJoinsChanged(bool);
 	void authOnlyChanged(bool);
-	void lockNewUsersChanged(bool);
 
-	void lockImagesChanged(bool);
-	void lockAnnotationsChanged(bool);
-	void lockLayerCtrlChanged(bool);
-	void ownLayersChanged(bool);
+	void permissionChanged();
 
+	void autoresetThresholdChanged();
 	void keepChatChanged(bool);
 	void persistenceChanged(bool);
 	void nsfmChanged(bool);
+	void deputiesChanged(int);
 
 	void changePassword();
 	void changeOpword();
 
 	void changeSesionConf(const QString &key, const QJsonValue &value, bool now=false);
-	void changeSessionAcl(uint16_t flag, bool set);
 	void sendSessionConf();
 
 	void updatePasswordLabel(QLabel *label);
 
 private:
+	void initPermissionComboBoxes();
+	QComboBox *featureBox(canvas::Feature f);
+
 	Ui_SessionSettingsDialog *m_ui;
 	Document *m_doc;
 	QTimer *m_saveTimer;
 
 	QJsonObject m_sessionconf;
-	uint16_t m_aclFlags, m_aclMask;
+	bool m_featureTiersChanged;
+
 	bool m_op;
 	bool m_isAuth;
 	bool m_canPersist;

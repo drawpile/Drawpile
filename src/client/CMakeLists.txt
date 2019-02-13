@@ -1,6 +1,7 @@
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
+find_package(Vpx)
 
 set (
 	SOURCES
@@ -9,7 +10,7 @@ set (
 	tools/toolproperties.cpp
 	tools/utils.cpp
 	tools/annotation.cpp
-	tools/brushes.cpp
+	tools/freehand.cpp
 	tools/colorpicker.cpp
 	tools/laser.cpp
 	tools/selection.cpp
@@ -17,6 +18,7 @@ set (
 	tools/beziertool.cpp
 	tools/floodfill.cpp
 	tools/strokesmoother.cpp
+	tools/zoom.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp
@@ -57,16 +59,25 @@ set (
 	utils/icon.cpp
 	utils/logging.cpp
 	utils/passwordstore.cpp
+	utils/identicon.cpp
+	utils/avatarlistmodel.cpp
+	utils/sessionfilterproxymodel.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp
-	core/brush.cpp
 	core/brushmask.cpp
 	core/blendmodes.cpp
 	core/rasterop.cpp
-	core/shapes.cpp
 	core/floodfill.cpp
+	core/tilevector.cpp
+	brushes/brushengine.cpp
+	brushes/brushpainter.cpp
+	brushes/classicbrushstate.cpp
+	brushes/classicbrushpainter.cpp
+	brushes/pixelbrushstate.cpp
+	brushes/pixelbrushpainter.cpp
+	brushes/shapes.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp
@@ -77,9 +88,10 @@ set (
 	export/animation.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
-	export/ffmpegexporter.cpp
 	parentalcontrols/parentalcontrols.cpp
 )
+
+include_directories(bundled)
 
 if(WIN32)
 	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_win.cpp)
@@ -105,6 +117,16 @@ if(KF5DNSSD_FOUND)
 	)
 	add_definitions(-DHAVE_DNSSD)
 endif()
+
+if(LIBVPX_FOUND)
+	set(
+		SOURCES ${SOURCES}
+		bundled/mkvmuxer/mkvmuxer.cc
+		bundled/mkvmuxer/mkvmuxerutil.cc
+		export/webmexporter.cpp
+		export/webmencoder.cpp
+	)
+endif(LIBVPX_FOUND)
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
@@ -142,6 +164,10 @@ if(LIBMINIUPNPC_FOUND)
 		target_link_libraries (${DPCLIENTLIB} iphlpapi)
 	endif ( WIN32 )
 endif()
+
+if(LIBVPX_FOUND)
+	target_link_libraries(${DPCLIENTLIB} ${LIBVPX_LIBRARIES})
+endif(LIBVPX_FOUND)
 
 if ( WIN32 )
 	target_link_libraries (${DPCLIENTLIB} ws2_32)

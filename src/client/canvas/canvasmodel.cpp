@@ -30,6 +30,8 @@
 #include "core/annotationmodel.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
+#include "utils/identicon.h"
+#include "net/internalmsg.h"
 
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
@@ -38,10 +40,11 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
+#include <QBuffer>
 
 namespace canvas {
 
-CanvasModel::CanvasModel(int localUserId, QObject *parent)
+CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline)
 {
 	m_layerlist = new LayerListModel(this);
@@ -50,8 +53,8 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_aclfilter = new AclFilter(this);
 
 	connect(m_aclfilter, &AclFilter::operatorListChanged, m_userlist, &UserListModel::updateOperators);
+	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
-	connect(m_aclfilter, &AclFilter::layerAclChange, m_layerlist, &LayerListModel::updateLayerAcl);
 
 	m_layerstack = new paintcore::LayerStack(this);
 	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
@@ -61,29 +64,30 @@ CanvasModel::CanvasModel(int localUserId, QObject *parent)
 	m_aclfilter->reset(localUserId, true);
 
 	m_layerlist->setMyId(localUserId);
-	m_layerlist->setLayerGetter([this](int id)->paintcore::Layer* {
+	m_layerlist->setAclFilter(m_aclfilter);
+	m_layerlist->setLayerGetter([this](int id)->const paintcore::Layer* {
 		return m_layerstack->getLayer(id);
 	});
 
+	m_usercursors->setLayerList(m_layerlist);
+
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 
-	connect(m_statetracker, &StateTracker::userMarkerAttribs, m_usercursors, &UserCursorModel::setCursorAttributes);
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
 }
 
-int CanvasModel::localUserId() const
+uint8_t CanvasModel::localUserId() const
 {
 	return m_statetracker->localId();
 }
 
-void CanvasModel::connectedToServer(int myUserId)
+void CanvasModel::connectedToServer(uint8_t myUserId)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
-	m_layerlist->unlockAll();
 	m_statetracker->setLocalId(myUserId);
 	m_aclfilter->reset(myUserId, false);
 	m_mode = Mode::Online;
@@ -91,10 +95,8 @@ void CanvasModel::connectedToServer(int myUserId)
 
 void CanvasModel::disconnectedFromServer()
 {
-	Q_ASSERT(m_mode == Mode::Online);
 	m_statetracker->endRemoteContexts();
 	m_userlist->clearUsers();
-	m_layerlist->unlockAll();
 	m_aclfilter->reset(m_statetracker->localId(), true);
 	m_mode = Mode::Offline;
 }
@@ -139,6 +141,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		case MSG_CHAT:
 			metaChatMessage(cmd);
 			break;
+		case MSG_PRIVATE_CHAT:
+			emit chatMessageReceived(cmd);
+			break;
 		case MSG_USER_JOIN:
 			metaUserJoin(cmd.cast<UserJoin>());
 			break;
@@ -146,8 +151,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			metaUserLeave(cmd.cast<UserLeave>());
 			break;
 		case MSG_SESSION_OWNER:
+		case MSG_TRUSTED_USERS:
 		case MSG_USER_ACL:
-		case MSG_SESSION_ACL:
+		case MSG_FEATURE_LEVELS:
 		case MSG_LAYER_ACL:
 			// Handled by the ACL filter
 			break;
@@ -166,6 +172,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 			break;
 		case MSG_LAYER_DEFAULT:
 			metaDefaultLayer(cmd.cast<DefaultLayer>());
+			break;
+		case MSG_SOFTRESET:
+			metaSoftReset(cmd->contextId());
 			break;
 		default:
 			qWarning("Unhandled meta message %s", qPrintable(cmd->messageName()));
@@ -204,7 +213,7 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 
 	if(!m_statetracker->hasFullHistory() || forceNew) {
 		// Generate snapshot
-		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_layerlist->getLayers(), this).loadInitCommands();
+		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, this).loadInitCommands();
 
 	} else {
 		// Message stream contains (starts with) a snapshot: use it
@@ -214,10 +223,14 @@ QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
 		if(m_layerlist->defaultLayer() > 0)
 			snapshot.prepend(protocol::MessagePtr(new protocol::DefaultLayer(m_statetracker->localId(), m_layerlist->defaultLayer())));
 
-		// Add layer ACL status
-		for(const LayerListItem &layer : m_layerlist->getLayers()) {
-			if(layer.isLockedFor(m_statetracker->localId()))
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), layer.id, true, QList<uint8_t>()));
+		// Add layer ACLs
+		for(int i=0;i<m_layerstack->layerCount();++i) {
+			const int layerId = m_layerstack->getLayerByIndex(i)->id();
+			Q_ASSERT(layerId > 0 && layerId <= 0xffff); // toplevel layers should have IDs in protocol range
+
+			const canvas::AclFilter::LayerAcl acl = aclFilter()->layerAcl(layerId);
+			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
+				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), uint16_t(layerId), acl.locked, uint8_t(acl.tier), acl.exclusive));
 		}
 	}
 
@@ -251,14 +264,14 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::setLayerViewMode(int mode)
 {
-	m_layerstack->setViewMode(paintcore::LayerStack::ViewMode(mode));
+	m_layerstack->editor().setViewMode(paintcore::LayerStack::ViewMode(mode));
 	updateLayerViewOptions();
 }
 
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
-		m_layerstack->removePreviews();
+		m_layerstack->editor().removePreviews();
 
 		const bool hadSelection = m_selection != nullptr;
 
@@ -280,12 +293,11 @@ void CanvasModel::updateLayerViewOptions()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/animation");
-	m_layerstack->setOnionskinMode(
+	m_layerstack->editor().setOnionskinMode(
 		cfg.value("onionskinsbelow", 4).toInt(),
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
 	);
-	m_layerstack->setViewBackgroundLayer(cfg.value("backgroundlayer", true).toBool());
 }
 
 /**
@@ -294,17 +306,17 @@ void CanvasModel::updateLayerViewOptions()
  * Find an annotation ID (for this user) that is currently not in use.
  * @return available ID or 0 if none found
  */
-int CanvasModel::getAvailableAnnotationId() const
+uint16_t CanvasModel::getAvailableAnnotationId() const
 {
-	const int prefix = m_statetracker->localId() << 8;
-	QList<int> takenIds;
+	const uint16_t prefix = uint16_t(m_statetracker->localId() << 8);
+	QList<uint16_t> takenIds;
 	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
 		if((a.id & 0xff00) == prefix)
 				takenIds << a.id;
 	}
 
-	for(int i=0;i<256;++i) {
-		int id = prefix | i;
+	for(uint16_t i=0;i<256;++i) {
+		uint16_t id = prefix | i;
 		if(!takenIds.contains(id))
 			return id;
 	}
@@ -316,7 +328,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 {
 	QImage img;
 
-	paintcore::Layer *layer = m_layerstack->getLayer(layerId);
+	const paintcore::Layer *layer = m_layerstack->getLayer(layerId);
 	if(layer)
 		img = layer->toImage();
 	else
@@ -373,20 +385,45 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
-	m_layerlist->unlockAll();
-	m_layerstack->reset();
+	m_layerstack->editor().reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);
 }
 
 void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 {
-	User u(msg.contextId(), msg.name(), msg.contextId() == m_statetracker->localId(), msg.isAuthenticated(), msg.isModerator());
-	if(m_aclfilter->isLockedByDefault())
-		u.isLocked = true;
+	QImage avatar;
+	if(!msg.avatar().isEmpty()) {
+		QByteArray avatarData = msg.avatar();
+		QBuffer buf(&avatarData);
+		if(!avatar.load(&buf, "PNG"))
+			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(msg.name()), msg.contextId());
+
+		// Rescale avatar if its the wrong size
+		if(avatar.width() != 42 || avatar.height() != 42) {
+			avatar = avatar.scaled(42, 42);
+		}
+	}
+	if(avatar.isNull())
+		avatar = make_identicon(msg.name());
+
+	const User u {
+		msg.contextId(),
+		msg.name(),
+		QPixmap::fromImage(avatar),
+		msg.contextId() == m_statetracker->localId(),
+		false,
+		false,
+		msg.isModerator(),
+		msg.isBot(),
+		msg.isAuthenticated(),
+		false,
+		false
+	};
 
 	m_userlist->addUser(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());
+	m_usercursors->setCursorAvatar(msg.contextId(), u.avatar);
 
 	emit userJoined(msg.contextId(), msg.name());
 }
@@ -421,8 +458,8 @@ void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
-	QPointF p(msg.x() / 4.0, msg.y() / 4.0);
-	m_usercursors->setCursorPosition(msg.contextId(), p);
+	QPoint p(int(msg.x() / 4.0), int(msg.y() / 4.0));
+	m_usercursors->setCursorPosition(msg.contextId(), 0, p);
 	m_lasers->addPoint(msg.contextId(), p);
 }
 
@@ -433,10 +470,18 @@ void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
 
 void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
 {
-	m_layerlist->setDefaultLayer(msg.id());
+	m_layerlist->setDefaultLayer(msg.layer());
 	if(!m_statetracker->hasParticipated())
-		emit layerAutoselectRequest(msg.id());
+		emit layerAutoselectRequest(msg.layer());
 }
 
+void CanvasModel::metaSoftReset(uint8_t resetterId)
+{
+	// Soft reset not fully implemented yet: this client can't initiate soft resets (yet)
+	if(resetterId == localUserId())
+		qWarning("Got soft SoftResetPoint(%d), but that's us!", resetterId);
+
+	m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeTruncatePoint());
+}
 
 }

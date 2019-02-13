@@ -59,6 +59,9 @@ class CanvasScene : public QGraphicsScene
 	Q_OBJECT
 
 public:
+	//! Margin around the image to make working near corners easier
+	static const int MARGIN = 900;
+
 	CanvasScene(QObject *parent);
 	~CanvasScene();
 
@@ -83,8 +86,14 @@ public slots:
 	//! Show/hide remote cursor markers
 	void showUserMarkers(bool show);
 
+	//! Show user names in cursor markers
+	void showUserNames(bool show);
+
 	//! Show layer selection in cursor marker
 	void showUserLayers(bool show);
+
+	//! Show avatars in cursor marker
+	void showUserAvatars(bool show);
 
 	//! Show hide laser pointer trails
 	void showLaserTrails(bool show);
@@ -140,9 +149,11 @@ private:
 
 	bool _showAnnotationBorders;
 	bool _showAnnotations;
-	bool _showUserMarkers;
-	bool _showUserLayers;
-	bool _showLaserTrails;
+	bool m_showUserMarkers;
+	bool m_showUserNames;
+	bool m_showUserLayers;
+	bool m_showUserAvatars;
+	bool m_showLaserTrails;
 };
 
 }

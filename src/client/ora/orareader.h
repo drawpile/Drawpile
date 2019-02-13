@@ -36,7 +36,9 @@ struct OraResult {
 		//! The OpenRaster file uses unsupported app. specific extensions
 		ORA_EXTENDED = 0x01,
 		//! Nested layers are used
-		ORA_NESTED = 0x02
+		ORA_NESTED = 0x02,
+		//! Unsupported background tile size or format
+		UNSUPPORTED_BACKGROUND_TILE = 0x04
 	};
 	Q_DECLARE_FLAGS(Warnings, Warning)
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -139,12 +139,10 @@ void PlaybackController::nextCommands(int stepCount)
 
 		switch(next.status) {
 		case MessageRecord::OK: {
-			protocol::MessagePtr msg(next.message);
-
-			if(msg->type() == protocol::MSG_INTERVAL) {
+			if(next.message->type() == protocol::MSG_INTERVAL) {
 				if(m_play) {
 					// Autoplay mode: pause for the given interval
-					expectSequencePoint(msg.cast<protocol::Interval>().milliseconds() / m_speedFactor);
+					expectSequencePoint(next.message.cast<protocol::Interval>().milliseconds() / m_speedFactor);
 					return;
 
 				} else {
@@ -153,18 +151,18 @@ void PlaybackController::nextCommands(int stepCount)
 				}
 
 			} else {
-				if(msg->type() == protocol::MSG_MARKER) {
-					emit markerEncountered(msg.cast<protocol::Marker>().text());
+				if(next.message->type() == protocol::MSG_MARKER) {
+					emit markerEncountered(next.message.cast<protocol::Marker>().text());
 					if(m_stopOnMarkers)
 						setPlaying(false);
 				}
 
-				m_canvas->handleCommand(msg);
+				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
 			}
 			break;
 		}
 		case MessageRecord::INVALID:
-			qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
+			qWarning("Unrecognized command %d of length %d", next.invalid_type, next.invalid_len);
 			break;
 		case MessageRecord::END_OF_RECORDING:
 			emit endOfFileReached();
@@ -212,17 +210,15 @@ void PlaybackController::nextSequence()
 		MessageRecord next = m_reader->readNext();
 		switch(next.status) {
 		case MessageRecord::OK:
-			if(next.message->type() == protocol::MSG_INTERVAL) {
-				// skip intervals
-				delete next.message;
-			} else {
-				m_canvas->handleCommand(protocol::MessagePtr(next.message));
+			// skip intervals
+			if(next.message->type() != protocol::MSG_INTERVAL) {
+				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
 				if(next.message->type() == protocol::MSG_UNDOPOINT)
 					loop = false;
 			}
 			break;
 		case MessageRecord::INVALID:
-			qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
+			qWarning("Unrecognized command %d of length %d", next.invalid_type, next.invalid_len);
 			break;
 		case MessageRecord::END_OF_RECORDING:
 			emit endOfFileReached();
@@ -274,15 +270,13 @@ void PlaybackController::jumpTo(int pos)
 		MessageRecord next = m_reader->readNext();
 		switch(next.status) {
 		case MessageRecord::OK:
-			if(next.message->type() == protocol::MSG_INTERVAL) {
-				// skip intervals
-				delete next.message;
-			} else {
-				m_canvas->handleCommand(protocol::MessagePtr(next.message));
+			// skip intervals
+			if(next.message->type() != protocol::MSG_INTERVAL) {
+				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
 			}
 			break;
 		case MessageRecord::INVALID:
-			qWarning("Unrecognized command %d of length %d", next.error.type, next.error.len);
+			qWarning("Unrecognized command %d of length %d", next.invalid_type, next.invalid_len);
 			break;
 		case MessageRecord::END_OF_RECORDING:
 			emit endOfFileReached();
@@ -298,7 +292,7 @@ void PlaybackController::jumpToSnapshot(int idx)
 	Q_ASSERT(m_indexloader);
 
 	StopEntry se = m_indexloader->index().entry(idx);
-	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx, m_canvas->stateTracker());
+	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx);
 
 	if(!savepoint) {
 		qWarning("error loading savepoint");

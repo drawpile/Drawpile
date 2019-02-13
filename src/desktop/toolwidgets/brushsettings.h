@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ public:
 
 	int getSize() const override;
 	bool getSubpixelMode() const override;
+	bool isSquare() const override;
 
 	void pushSettings() override;
 	ToolProperties saveToolSettings() override;
@@ -67,7 +68,7 @@ public slots:
 signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
-	void subpixelModeChanged(bool subpixel);
+	void subpixelModeChanged(bool subpixel, bool square);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,74 +19,23 @@
 #ifndef REC_FILTER_H
 #define REC_FILTER_H
 
-namespace protocol {
-	class MessagePtr;
-	class Message;
-}
-
-class QFileDevice;
+class QString;
 
 namespace recording {
 
 class Reader;
 
-class Filter
-{
-public:
-	Filter();
-
-	//! Filter: expunge undone actions
-	void setExpungeUndos(bool expunge) { _expunge_undos = expunge; }
-	bool expungeUndos() const { return _expunge_undos; }
-
-	//! Filter: remove chat messages
-	void setRemoveChat(bool removechat) { _remove_chat = removechat; }
-	bool removeChat() const { return _remove_chat; }
-
-	//! Filter: remove users who do not do anything
-	void setRemoveLookyloos(bool remove) { _remove_lookyloos = remove; }
-	bool removeLookyloos() const { return _remove_lookyloos; }
-
-	//! Filter: remove delays
-	void setRemoveDelays(bool remove) { _remove_delays = remove; }
-	bool removeDelays() const { return _remove_delays; }
-
-	//! Filter: remove laser pointer trails
-	void setRemoveLasers(bool remove) { _remove_lasers = remove; }
-	bool removeLasers() const { return _remove_lasers; }
-
-	//! Filter: remove markers
-	void setRemoveMarkers(bool remove) { _remove_markers = remove; }
-	bool removeMarkers() const { return _remove_markers; }
-
-	//! Filter: merge all PenMoves of the stroke to an single message
-	void setSquishStrokes(bool squish) { _squish_strokes = squish; }
-	bool squishStrokes() const { return _squish_strokes; }
-
-	//! Get the error message
-	const QString &errorString() const { return _errormsg; }
-
-	/**
-	 * @brief Perform filtering.
-	 *
-	 * If filtering fails, use errorMessage() to get the reason why.
-	 *
-	 * @return true on success
-	 */
-	bool filterRecording(const QString &inputfile, const QString &outputfile);
-
-
-private:
-	QString _errormsg;
-
-	bool _expunge_undos;
-	bool _remove_chat;
-	bool _remove_lookyloos;
-	bool _remove_delays;
-	bool _remove_lasers;
-	bool _remove_markers;
-	bool _squish_strokes;
+struct FilterOptions {
+	bool removeUndone;    // remove undone actions
+	bool removeChat;      // remove chat messages
+	bool removeLookyLoos; // remove users who didn't do anything
+	bool removeDelays;    // Remove Interval messages
+	bool removeLasers;    // Remove laser pointer usage
+	bool removeMarkers;   // Remove Marker messages
+	bool squishStrokes;   // Squish adjacent Draw*Dabs messages
 };
+
+bool filterRecording(const QString &inputFile, const QString &outputFile, const FilterOptions &options, QString *errorMessage=nullptr);
 
 }
 

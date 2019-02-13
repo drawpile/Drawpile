@@ -69,6 +69,12 @@ bool isNsfmTitle(const QString &title);
  */
 Level level();
 
+/**
+ * @brief Is the uncensoring of layers blocked?
+ *
+ * Note: this also means the user can't censor any layers.
+ */
+bool isLayerUncensoringBlocked();
 
 }
 

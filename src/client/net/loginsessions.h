@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define LOGINSESSIONS_H
 
 #include <QAbstractTableModel>
+#include <QVector>
 
 namespace net {
 
@@ -30,9 +31,10 @@ namespace net {
 struct LoginSession {
 	QString id;
 	QString alias;
-	int userCount;
 	QString title;
 	QString founder;
+
+	int userCount;
 
 	bool needPassword;
 	bool persistent;
@@ -45,8 +47,6 @@ struct LoginSession {
 		Q_ASSERT(!idOrAlias.isEmpty());
 		return id == idOrAlias || alias == idOrAlias;
 	}
-
-	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false), nsfm(false) { }
 };
 
 /**
@@ -57,8 +57,10 @@ class LoginSessionModel : public QAbstractTableModel
 	Q_OBJECT
 public:
 	enum LoginSessionRoles {
-		IdRole = Qt::UserRole + 1, // Session ID
+		SortKeyRole = Qt::UserRole,
+		IdRole,                    // Session ID
 		IdAliasRole,               // ID alias
+		AliasOrIdRole,             // Alias or session ID
 		UserCountRole,             // Number of logged in users
 		TitleRole,                 // Session title
 		FounderRole,               // Name of session founder
@@ -70,7 +72,7 @@ public:
 		NsfmRole                   // Is this session tagged as Not Suitable For Minors
 	};
 
-	explicit LoginSessionModel(QObject *parent = 0);
+	explicit LoginSessionModel(QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -78,26 +80,13 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	LoginSession sessionAt(int index) const { return m_filtered.at(index); }
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);
 
-	void setHideNsfm(bool hide);
-	int filteredCount() const { return m_sessions.size() - m_filtered.size(); }
-
-	//! Get the ID of the first session
 	LoginSession getFirstSession() const { return m_sessions.isEmpty() ? LoginSession() : m_sessions.first(); }
 
-signals:
-	void filteredCountChanged();
-
 private:
-	void updateFiltered(const LoginSession &session);
-	void removeFiltered(const QString &id);
-
-	QList<LoginSession> m_sessions;
-	QList<LoginSession> m_filtered;
-	bool m_hideNsfm;
+	QVector<LoginSession> m_sessions;
 };
 
 }

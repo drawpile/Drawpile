@@ -221,6 +221,9 @@ bool FiledHistory::load()
 		} else if(cmd == "MAXUSERS") {
 			m_maxUsers = qBound(1, params.toInt(), 254);
 
+		} else if(cmd == "AUTORESET") {
+			m_autoResetThreshold = params.toUInt();
+
 		} else if(cmd == "TITLE") {
 			m_title = params;
 
@@ -233,6 +236,8 @@ bool FiledHistory::load()
 					flags |= PreserveChat;
 				else if(f == "nsfm")
 					flags |= Nsfm;
+				else if(f == "deputies")
+					flags |= Deputies;
 				else
 					qWarning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
 			}
@@ -276,6 +281,12 @@ bool FiledHistory::load()
 
 		} else if(cmd == "DEOP") {
 			m_ops.remove(QString::fromUtf8(params));
+
+		} else if(cmd == "TRUST") {
+			m_trusted.insert(QString::fromUtf8(params));
+
+		} else if(cmd == "UNTRUST") {
+			m_trusted.remove(QString::fromUtf8(params));
 
 		} else {
 			qWarning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
@@ -477,6 +488,16 @@ void FiledHistory::setMaxUsers(int max)
 	}
 }
 
+void FiledHistory::setAutoResetThreshold(uint limit)
+{
+	const uint newLimit = qMin(uint(sizeLimit() * 0.7), limit);
+	if(newLimit != m_autoResetThreshold) {
+		m_autoResetThreshold = newLimit;
+		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
+		m_journal->flush();
+	}
+}
+
 void FiledHistory::setTitle(const QString &title)
 {
 	if(title != m_title) {
@@ -497,6 +518,8 @@ void FiledHistory::setFlags(Flags f)
 			fstr << "preserveChat";
 		if(f.testFlag(Nsfm))
 			fstr << "nsfm";
+		if(f.testFlag(Deputies))
+			fstr << "deputies";
 		m_journal->write(QString("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
 		m_journal->flush();
 	}
@@ -542,13 +565,13 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 				m_recording->close();
 				break;
 			}
-			protocol::Message *msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
-			if(!msg) {
+			protocol::NullableMessageRef msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
+			if(msg.isNull()) {
 				qWarning() << m_recording->fileName() << "Invalid message in block" << i;
 				m_recording->close();
 				break;
 			}
-			const_cast<Block&>(b).messages << protocol::MessagePtr(msg);
+			const_cast<Block&>(b).messages << protocol::MessagePtr::fromNullable(msg);
 		}
 
 		m_recording->seek(prevPos);
@@ -664,6 +687,23 @@ void FiledHistory::setAuthenticatedOperator(const QString &username, bool op)
 		if(m_ops.contains(username)) {
 			m_ops.remove(username);
 			m_journal->write(QString("DEOP %1\n").arg(username).toUtf8());
+			m_journal->flush();
+		}
+	}
+}
+
+void FiledHistory::setAuthenticatedTrust(const QString &username, bool trusted)
+{
+	if(trusted) {
+		if(!m_trusted.contains(username)) {
+			m_trusted.insert(username);
+			m_journal->write(QString("TRUST %1\n").arg(username).toUtf8());
+			m_journal->flush();
+		}
+	} else {
+		if(m_trusted.contains(username)) {
+			m_trusted.remove(username);
+			m_journal->write(QString("UNTRUST %1\n").arg(username).toUtf8());
 			m_journal->flush();
 		}
 	}

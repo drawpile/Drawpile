@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@ enum MessageType {
 	MSG_USER_LEAVE,
 	MSG_SESSION_OWNER,
 	MSG_CHAT,
+	MSG_TRUSTED_USERS,
+	MSG_SOFTRESET,
+	MSG_PRIVATE_CHAT,
 
 	// Meta messages (opaque)
 	MSG_INTERVAL=64,
@@ -50,7 +53,7 @@ enum MessageType {
 	MSG_MARKER,
 	MSG_USER_ACL,
 	MSG_LAYER_ACL,
-	MSG_SESSION_ACL,
+	MSG_FEATURE_LEVELS,
 	MSG_LAYER_DEFAULT,
 	MSG_FILTERED,
 
@@ -65,14 +68,19 @@ enum MessageType {
 	MSG_LAYER_VISIBILITY,
 	MSG_PUTIMAGE,
 	MSG_FILLRECT,
-	MSG_TOOLCHANGE,
-	MSG_PEN_MOVE,
+	MSG_TOOLCHANGE_REMOVED, // replaced by drawdabs*
+	MSG_PEN_MOVE_REMOVED,   // replaced by drawdabs*
 	MSG_PEN_UP,
 	MSG_ANNOTATION_CREATE,
 	MSG_ANNOTATION_RESHAPE,
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
 	MSG_REGION_MOVE,
+	MSG_PUTTILE,
+	MSG_CANVAS_BACKGROUND,
+	MSG_DRAWDABS_CLASSIC,
+	MSG_DRAWDABS_PIXEL,
+	MSG_DRAWDABS_PIXEL_SQUARE,
 	MSG_UNDO=255,
 };
 
@@ -88,14 +96,16 @@ typedef QMap<QString,QString> Kwargs;
 typedef QMapIterator<QString,QString> KwargsIterator;
 
 class MessagePtr;
+class NullableMessageRef;
 
 class Message {
 	friend class MessagePtr;
+	friend class NullableMessageRef;
 public:
 	//! Length of the fixed message header
 	static const int HEADER_LEN = 4;
 
-	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), _refcount(0), m_contextid(ctx) {}
+	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), m_refcount(0), m_contextid(ctx) {}
 	virtual ~Message() {}
 	
 	/**
@@ -168,10 +178,16 @@ public:
 	void setContextId(uint8_t userid) { m_contextid = userid; }
 
 	/**
-	 * @brief Does this command need operator privileges to issue?
-	 * @return true if user must be session operator to send this
+	 * @brief Get the ID of the layer this command affects
+	 *
+	 * For commands that do not affect any particular layer, 0 should
+	 * be returned.
+	 *
+	 * Annotation editing commands can return the annotation ID here.
+	 *
+	 * @return layer (or equivalent) ID or 0 if not applicable
 	 */
-	virtual bool isOpCommand() const { return false; }
+	virtual uint16_t layer() const { return 0; }
 
 	/**
 	 * @brief Is this message type undoable?
@@ -237,7 +253,7 @@ public:
 	 * @param decodeOpaque automatically decode opaque messages rather than returning OpaqueMessage
 	 * @return message or 0 if type is unknown
 	 */
-	static Message *deserialize(const uchar *data, int buflen, bool decodeOpaque);
+	static NullableMessageRef deserialize(const uchar *data, int buflen, bool decodeOpaque);
 
 	/**
 	 * @brief Check if this message has the same content as the other one
@@ -299,7 +315,7 @@ protected:
 private:
 	const MessageType m_type;
 	MessageUndoState _undone;
-	int _refcount;
+	int m_refcount;
 	uint8_t m_contextid;
 };
 
@@ -346,47 +362,146 @@ public:
 	 * @param msg
 	 */
 	explicit MessagePtr(Message *msg)
-		: _ptr(msg)
+		: d(msg)
 	{
-		Q_ASSERT(_ptr);
-		Q_ASSERT(_ptr->_refcount==0);
-		++_ptr->_refcount;
+		Q_ASSERT(d);
+		Q_ASSERT(d->m_refcount==0);
+		++d->m_refcount;
 	}
 
-	MessagePtr(const MessagePtr &ptr) : _ptr(ptr._ptr) { ++_ptr->_refcount; }
+	MessagePtr(const MessagePtr &ptr) : d(ptr.d) { ++d->m_refcount; }
+
+	static MessagePtr fromNullable(const NullableMessageRef &ref) { return MessagePtr(ref); }
 
 	~MessagePtr()
 	{
-		Q_ASSERT(_ptr->_refcount>0);
-		if(--_ptr->_refcount == 0)
-			delete _ptr;
+		Q_ASSERT(d->m_refcount>0);
+		if(--d->m_refcount == 0)
+			delete d;
 	}
 
 	MessagePtr &operator=(const MessagePtr &msg)
 	{
-		if(msg._ptr != _ptr) {
-			Q_ASSERT(_ptr->_refcount>0);
-			if(--_ptr->_refcount == 0)
-				delete _ptr;
-			_ptr = msg._ptr;
-			++_ptr->_refcount;
+		if(msg.d != d) {
+			Q_ASSERT(d->m_refcount>0);
+			if(--d->m_refcount == 0)
+				delete d;
+			d = msg.d;
+			++d->m_refcount;
 		}
 		return *this;
 	}
 
-	Message &operator*() const { return *_ptr; }
-	Message *operator ->() const { return _ptr; }
+	Message &operator*() const { return *d; }
+	Message *operator->() const { return d; }
 
-	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*_ptr); }
+	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*d); }
 
-	bool equals(const MessagePtr &m) const { return _ptr->equals(*m); }
+	inline bool equals(const MessagePtr &m) const { return d->equals(*m); }
+	inline bool equals(const NullableMessageRef &m) const;
 
 private:
-	Message *_ptr;
+	inline MessagePtr(const NullableMessageRef &ref);
+
+	Message *d;
 };
+
+/**
+* @brief A nullable reference counting pointer for Messages
+*
+* This object is the length of a normal pointer so it can be used
+* efficiently with QList.
+*
+* @todo Maybe rename MessagePtr to MessageRef and this to MessagePtr?
+*/
+class NullableMessageRef {
+public:
+	NullableMessageRef() : d(nullptr) { }
+	NullableMessageRef(std::nullptr_t np) : d(np) { }
+
+	/**
+	 * @brief Take ownership of the given raw Message pointer.
+	 *
+	 * The message will be deleted when reference count falls to zero.
+	 * @param msg
+	 */
+	explicit NullableMessageRef(Message *msg)
+		: d(msg)
+	{
+		if(d) {
+			Q_ASSERT(d->m_refcount==0);
+			++d->m_refcount;
+		}
+	}
+
+	NullableMessageRef(const MessagePtr &ptr) : d(&(*ptr)) { ++d->m_refcount; }
+	NullableMessageRef(const NullableMessageRef &ptr) : d(ptr.d) { if(d) ++d->m_refcount; }
+
+	~NullableMessageRef()
+	{
+		if(d) {
+			Q_ASSERT(d->m_refcount>0);
+			if(--d->m_refcount == 0)
+				delete d;
+		}
+	}
+
+	NullableMessageRef &operator=(const NullableMessageRef &msg)
+	{
+		if(msg.d != d) {
+			if(d) {
+				Q_ASSERT(d->m_refcount>0);
+				if(--d->m_refcount == 0)
+					delete d;
+			}
+			d = msg.d;
+			if(d)
+				++d->m_refcount;
+		}
+		return *this;
+	}
+
+	NullableMessageRef &operator=(const MessagePtr &msg)
+	{
+		if(&(*msg) != d) {
+			if(d) {
+				Q_ASSERT(d->m_refcount>0);
+				if(--d->m_refcount == 0)
+					delete d;
+			}
+			d = &(*msg);
+			++d->m_refcount;
+		}
+		return *this;
+	}
+
+	inline bool isNull() const { return !d; }
+
+	Message &operator*() const { Q_ASSERT(d); return *d; }
+	Message *operator->() const { Q_ASSERT(d); return d; }
+
+	template<class msgtype> msgtype &cast() const { Q_ASSERT(d); return static_cast<msgtype&>(*d); }
+
+	inline bool equals(const MessagePtr &m) const { return d && d->equals(*m); }
+	inline bool equals(const NullableMessageRef &m) const { return d && m.d && d->equals(*m); }
+
+private:
+	Message *d;
+};
+
+MessagePtr::MessagePtr(const NullableMessageRef &ref)
+	: d(&(*ref))
+{
+	if(!d)
+		qFatal("MessagePtr::fromNullable(nullptr) called!");
+	++d->m_refcount;
+}
+
+bool MessagePtr::equals(const NullableMessageRef &m) const { return !m.isNull() && d->equals(*m); }
 
 }
 
 Q_DECLARE_TYPEINFO(protocol::MessagePtr, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(protocol::NullableMessageRef, Q_MOVABLE_TYPE);
 
 #endif

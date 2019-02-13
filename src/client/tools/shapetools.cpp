@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2015 Calle Laakkonen
+   Copyright (C) 2006-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "core/shapes.h"
+#include "brushes/shapes.h"
+#include "brushes/brushpainter.h"
 #include "net/client.h"
 #include "net/commands.h"
 
@@ -29,7 +30,6 @@
 #include "tools/shapetools.h"
 #include "tools/utils.h"
 
-#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 
 #include <QPixmap>
@@ -44,7 +44,6 @@ void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
 	m_start = point;
 	m_p1 = point;
 	m_p2 = point;
-	m_brush = owner.activeBrush();
 
 	updatePreview();
 }
@@ -66,36 +65,53 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::end()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(layer) {
-		layer->removeSublayer(-1);
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+
+	if(!layer.isNull()) {
+		layer.removeSublayer(-1);
 	}
-	
+
 	const uint8_t contextId = owner.client()->myId();
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+
+	const auto pv = pointVector();
+	for(int i=0;i<pv.size();++i)
+		brushengine.strokeTo(pv.at(i), layer.layer());
+	brushengine.endStroke();
 
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << net::command::brushToToolChange(contextId, owner.activeLayer(), owner.activeBrush());
-	msgs << net::command::penMove(contextId, pointVector());
+	msgs << brushengine.takeDabs();
 	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 	owner.client()->sendMessages(msgs);
 }
 
 void ShapeTool::updatePreview()
 {
-	paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-	if(layer) {
-		paintcore::StrokeState ss;
-		layer->removeSublayer(-1);
-
-		const paintcore::PointVector pv = pointVector();
-		Q_ASSERT(pv.size()>1);
-
-		layer->dab(-1, m_brush, pv[0], ss);
-
-		for(int i=1;i<pv.size();++i)
-			layer->drawLine(-1, m_brush, pv[i-1], pv[i], ss);
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+	if(layer.isNull()) {
+		qWarning("ShapeTool::updatePreview: no active layer!");
+		return;
 	}
+
+	const paintcore::PointVector pv = pointVector();
+	Q_ASSERT(pv.size()>1);
+
+	brushes::BrushEngine brushengine;
+	brushengine.setBrush(0, 0, owner.activeBrush());
+
+	for(int i=0;i<pv.size();++i)
+		brushengine.strokeTo(pv.at(i), layer.layer());
+	brushengine.endStroke();
+
+	layer.removeSublayer(-1);
+
+	const auto dabs = brushengine.takeDabs();
+	for(int i=0;i<dabs.size();++i)
+		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
 }
 
 Line::Line(ToolController &owner)
@@ -133,7 +149,7 @@ Rectangle::Rectangle(ToolController &owner)
 
 paintcore::PointVector Rectangle::pointVector() const
 {
-	return paintcore::shapes::rectangle(rect());
+	return brushes::shapes::rectangle(rect());
 }
 
 Ellipse::Ellipse(ToolController &owner)
@@ -143,7 +159,7 @@ Ellipse::Ellipse(ToolController &owner)
 
 paintcore::PointVector Ellipse::pointVector() const
 {
-	return paintcore::shapes::ellipse(rect());
+	return brushes::shapes::ellipse(rect());
 }
 
 }

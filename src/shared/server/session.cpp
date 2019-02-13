@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,15 +48,13 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 	m_recorder(nullptr),
 	m_history(history),
 	m_resetstreamsize(0),
-	m_publicListingClient(nullptr),
-	m_refreshTimer(nullptr),
 	m_closed(false),
 	m_authOnly(false),
-	m_historyLimitWarningSent(false)
+	m_autoResetRequestStatus(AutoResetState::NotSent)
 {
 	m_history->setParent(this);
 	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
-	m_historyLimitWarning = m_history->sizeLimit() * 0.7;
+	m_history->setAutoResetThreshold(config->getConfigSize(config::AutoresetThreshold));
 
 	m_lastEventTime.start();
 	m_lastStatusUpdate.start();
@@ -68,6 +66,12 @@ Session::Session(SessionHistory *history, ServerConfig *config, QObject *parent)
 		m_history->addMessage(protocol::MessagePtr(new protocol::SessionOwner(0, QList<uint8_t>())));
 		sendUpdatedSessionProperties();
 	}
+
+	// Session announcements
+	m_refreshTimer = new QTimer(this);
+	m_refreshTimer->setSingleShot(true);
+	m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
+	connect(m_refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
 
 	for(const QString &announcement : m_history->announcements())
 		makeAnnouncement(QUrl(announcement), false);
@@ -101,11 +105,16 @@ void Session::switchState(State newstate)
 
 			// Add list of currently logged in users to reset snapshot
 			QList<uint8_t> owners;
+			QList<uint8_t> trusted;
 			for(const Client *c : m_clients) {
 				m_resetstream.prepend(c->joinMessage());
 				if(c->isOperator())
 					owners << c->id();
+				if(c->isTrusted())
+					trusted << c->id();
 			}
+			if(!trusted.isEmpty())
+				m_resetstream.prepend(protocol::MessagePtr(new protocol::TrustedUsers(0, trusted)));
 			m_resetstream.prepend(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
 
 			// Send reset snapshot
@@ -127,7 +136,7 @@ void Session::switchState(State newstate)
 				catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
 				directToAll(MessagePtr(new protocol::Command(0, catchup)));
 
-				m_historyLimitWarningSent = false;
+				m_autoResetRequestStatus = AutoResetState::NotSent;
 
 				sendUpdatedSessionProperties();
 			}
@@ -207,16 +216,10 @@ void Session::joinUser(Client *user, bool host)
 	if(user->isOperator() || m_history->isOperator(user->username()))
 		changeOpStatus(user->id(), true, "the server");
 
-	ensureOperatorExists();
+	if(m_history->isTrusted(user->username()))
+		changeTrustedStatus(user->id(), true, "the server");
 
-	// Let new users know about the size limit too
-	if(m_historyLimitWarning > 0 && m_history->sizeInBytes() > m_historyLimitWarning) {
-		protocol::ServerReply warning;
-		warning.type = protocol::ServerReply::SIZELIMITWARNING;
-		warning.reply["size"] = int(m_history->sizeInBytes());
-		warning.reply["maxSize"] = int(m_historyLimitWarning);
-		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, warning)));
-	}
+	ensureOperatorExists();
 
 	// Make sure everyone is up to date
 	sendUpdatedAnnouncementList();
@@ -369,6 +372,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << "changed max. user count";
 	}
 
+	if(conf.contains("resetThreshold")) {
+		m_history->setAutoResetThreshold(conf["resetThreshold"].toInt());
+		changes << "changed autoreset threshold";
+	}
+
 	if(conf.contains("password")) {
 		setPassword(conf["password"].toString());
 		changes << "changed password";
@@ -390,6 +398,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	if(conf.contains("nsfm")) {
 		setFlag(flags, SessionHistory::Nsfm, conf["nsfm"].toBool());
 		changes << (conf["nsfm"].toBool() ? "tagged NSFM" : "removed NSFM tag");
+	}
+
+	if(conf.contains("deputies")) {
+		setFlag(flags, SessionHistory::Deputies, conf["deputies"].toBool());
+		changes << (conf["deputies"].toBool() ? "enabled deputies" : "disabled deputies");
 	}
 
 	m_history->setFlags(flags);
@@ -490,6 +503,60 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 		kickResetter->disconnectError("De-opped while resetting");
 }
 
+QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy)
+{
+	QList<uint8_t> truelist;
+	for(Client *c : m_clients) {
+		const bool trusted = ids.contains(c->id());
+		if(trusted != c->isTrusted()) {
+			c->setTrusted(trusted);
+			QString msg;
+			if(trusted) {
+				msg = "Trusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
+			} else {
+				msg = "Untrusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
+			}
+			messageAll(c->username() + " " + msg, false);
+			if(c->isAuthenticated())
+				m_history->setAuthenticatedTrust(c->username(), trusted);
+
+		}
+		if(c->isTrusted())
+			truelist << c->id();
+	}
+
+	return truelist;
+}
+
+void Session::changeTrustedStatus(int id, bool trusted, const QString &changedBy)
+{
+	QList<uint8_t> ids;
+
+	for(Client *c : m_clients) {
+		if(c->id() == id && c->isTrusted() != trusted) {
+			c->setTrusted(trusted);
+			QString msg;
+			if(trusted) {
+				msg = "Trusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
+			} else {
+				msg = "Untrusted by " + changedBy;
+				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
+			}
+			messageAll(c->username() + " " + msg, false);
+			if(c->isAuthenticated())
+				m_history->setAuthenticatedTrust(c->username(), trusted);
+		}
+
+		if(c->isTrusted())
+			ids << c->id();
+	}
+
+	addToHistory(protocol::MessagePtr(new protocol::TrustedUsers(0, ids)));
+}
+
 void Session::sendUpdatedSessionProperties()
 {
 	protocol::ServerReply props;
@@ -500,8 +567,11 @@ void Session::sendUpdatedSessionProperties()
 	conf["persistent"] = isPersistent();
 	conf["title"] = title();
 	conf["maxUserCount"] = m_history->maxUsers();
+	conf["resetThreshold"] = int(m_history->autoResetThreshold());
+	conf["resetThresholdBase"] = int(m_history->autoResetThresholdBase());
 	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
 	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
+	conf["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
 	conf["hasPassword"] = hasPassword();
 	conf["hasOpword"] = hasOpword();
 	props.reply["config"] = conf;
@@ -604,18 +674,42 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		m_recorder->recordMessage(msg);
 	m_lastEventTime.start();
 
-	// Send a warning if approaching size limit.
-	// The clients should update their internal size limits and reset the session when necessary.
-	if(m_historyLimitWarning>0 && !m_historyLimitWarningSent && m_history->sizeInBytes() > m_historyLimitWarning) {
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("History limit warning treshold reached."));
+	// Request auto-reset when threshold is crossed.
+	const uint autoResetThreshold = m_history->effectiveAutoResetThreshold();
+	if(autoResetThreshold>0 && m_autoResetRequestStatus == AutoResetState::NotSent && m_history->sizeInBytes() > autoResetThreshold) {
+		log(Log().about(Log::Level::Info, Log::Topic::Status).message(
+			QString("Autoreset threshold (%1, effectively %2 MB) reached.")
+				.arg(m_history->autoResetThreshold()/(1024.0*1024.0), 0, 'g', 1)
+				.arg(autoResetThreshold/(1024.0*1024.0), 0, 'g', 1)
+		));
 
+		// Legacy alert for Drawpile 2.0.x versions
 		protocol::ServerReply warning;
 		warning.type = protocol::ServerReply::SIZELIMITWARNING;
 		warning.reply["size"] = int(m_history->sizeInBytes());
-		warning.reply["maxSize"] = int(m_historyLimitWarning);
+		warning.reply["maxSize"] = int(autoResetThreshold);
 
 		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
-		m_historyLimitWarningSent = true;
+
+		// New style for Drawpile 2.1.0 and newer
+		// Autoreset request: send an autoreset query to each logged in user.
+		// The user that responds first gets to perform the reset.
+		protocol::ServerReply resetRequest;
+		resetRequest.type = protocol::ServerReply::RESETREQUEST;
+		resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
+		resetRequest.reply["query"] = true;
+		protocol::MessagePtr reqMsg { new protocol::Command(0, resetRequest )};
+
+		// The request is sent only to clients that are fully caught up.
+		// Otherwise, a freshly joined client could end up rolling back
+		// the canvas to an earlier state.
+		const int uptodateThreshold = m_history->lastIndex() - 1;
+		for(Client *c : m_clients) {
+			if(c->isOperator() && c->historyPosition() >= uptodateThreshold)
+				c->sendDirectMessage(reqMsg);
+		}
+
+		m_autoResetRequestStatus = AutoResetState::Queried;
 	}
 
 	// Regular history size status updates
@@ -646,6 +740,39 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 				resetter->disconnectError("History limit exceeded");
 		}
 	}
+}
+
+void Session::readyToAutoReset(int ctxId)
+{
+	Client *c = getClientById(ctxId);
+	if(!c) {
+		// Shouldn't happen
+		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent ready-to-autoreset").arg(ctxId)));
+		return;
+	}
+
+	if(!c->isOperator()) {
+		// Unlikely to happen normally, but possible if connection is
+		// really slow and user is deopped at just the right moment
+		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("User %1 is not an operator, but sent ready-to-autoreset").arg(ctxId)));
+		return;
+	}
+
+	if(m_autoResetRequestStatus != AutoResetState::Queried) {
+		// Only the first response in handled
+		log(Log().about(Log::Level::Debug, Log::Topic::Status).message(QString("User %1 was late to respond to an autoreset request").arg(ctxId)));
+		return;
+	}
+
+	log(Log().about(Log::Level::Info, Log::Topic::Status).message(QString("User %1 responded to autoreset request first").arg(ctxId)));
+
+	protocol::ServerReply resetRequest;
+	resetRequest.type = protocol::ServerReply::RESETREQUEST;
+	resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
+	resetRequest.reply["query"] = false;
+	c->sendDirectMessage(protocol::MessagePtr { new protocol::Command(0, resetRequest )});
+
+	m_autoResetRequestStatus = AutoResetState::Requested;
 }
 
 void Session::handleInitBegin(int ctxId)
@@ -875,27 +1002,6 @@ QStringList Session::userNames() const
 	return lst;
 }
 
-sessionlisting::AnnouncementApi *Session::publicListingClient()
-{
-	if(!m_publicListingClient) {
-		m_publicListingClient = new sessionlisting::AnnouncementApi(this);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::sessionAnnounced, this, &Session::sessionAnnounced);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::error, this, &Session::sessionAnnouncementError);
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::messageReceived, this, [this](const QString &message) {
-			log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
-			this->messageAll(message, false);
-		});
-		connect(m_publicListingClient, &sessionlisting::AnnouncementApi::logMessage, this, &Session::log);
-
-		m_refreshTimer = new QTimer(this);
-		m_refreshTimer->setSingleShot(true);
-		m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
-		connect(m_refreshTimer, &QTimer::timeout, this, &Session::refreshAnnouncements);
-	}
-
-	return m_publicListingClient;
-}
-
 void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 {
 	if(!url.isValid() || !m_config->isAllowedAnnouncementUrl(url)) {
@@ -930,13 +1036,48 @@ void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 		(hasPassword() || privateUserList) ? QStringList() : userNames(),
 		hasPassword(),
 		isNsfm(),
-		privateListing ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
+		privateListing ? sessionlisting::PrivacyMode::Private : sessionlisting::PrivacyMode::Public,
 		founder(),
 		sessionStartTime()
 	};
 
-	log(Log().about(Log::Level::Debug, Log::Topic::PubList).message("Announcing session at " + url.toString()));
-	publicListingClient()->announceSession(url, s);
+	const QString apiUrl = url.toString();
+	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announcing session at at " + apiUrl));
+	auto *response = sessionlisting::announceSession(url, s);
+
+	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [apiUrl, response, this](const QVariant &result, const QString &message, const QString &error) {
+		response->deleteLater();
+		if(!error.isEmpty()) {
+			log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement failed: " + error));
+			messageAll(error, false);
+			return;
+		}
+
+		if(!message.isEmpty()) {
+			log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
+			messageAll(message, false);
+		}
+
+		const sessionlisting::Announcement announcement = result.value<sessionlisting::Announcement>();
+
+		// Make sure there are no double announcements
+		for(const sessionlisting::Announcement &a : m_publicListings) {
+			if(a.apiUrl == announcement.apiUrl) {
+				log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Double announcement at: " + announcement.apiUrl.toString()));
+				return;
+			}
+		}
+
+		log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
+		if(!announcement.isPrivate)
+			m_history->addAnnouncement(announcement.apiUrl.toString());
+		m_publicListings << announcement;
+		sendUpdatedAnnouncementList();
+
+		int timeout = announcement.refreshInterval * 60 * 1000;
+		if(!m_refreshTimer->isActive() || m_refreshTimer->remainingTime() > timeout)
+			m_refreshTimer->start(timeout);
+	});
 }
 
 void Session::unlistAnnouncement(const QString &url, bool terminate, bool removeOnly)
@@ -946,8 +1087,19 @@ void Session::unlistAnnouncement(const QString &url, bool terminate, bool remove
 	while(i.hasNext()) {
 		const sessionlisting::Announcement &a = i.next();
 		if(a.apiUrl == url || url == QStringLiteral("*")) {
-			if(!removeOnly)
-				publicListingClient()->unlistSession(a);
+			if(!removeOnly) {
+				log(Log().about(Log::Level::Info, Log::Topic::PubList).message(QStringLiteral("Unlisting announcement at ") + url));
+
+				auto *response = sessionlisting::unlistSession(a);
+				connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [response, this](const QVariant &result, const QString &message, const QString &error) {
+					Q_UNUSED(result);
+					Q_UNUSED(message);
+					response->deleteLater();
+					if(!error.isEmpty()) {
+						log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Session unlisting failed"));
+					}
+				});
+			}
 
 			if(terminate)
 				m_history->removeAnnouncement(a.apiUrl.toString());
@@ -967,7 +1119,7 @@ void Session::refreshAnnouncements()
 	int timeout = 0;
 
 	for(const sessionlisting::Announcement &a : m_publicListings) {
-		m_publicListingClient->refreshSession(a, {
+		auto *response = sessionlisting::refreshSession(a, {
 			QString(), // cannot change
 			0, // cannot change
 			QString(), // cannot change
@@ -977,46 +1129,35 @@ void Session::refreshAnnouncements()
 			hasPassword() || privateUserList ? QStringList() : userNames(),
 			hasPassword(),
 			isNsfm(),
-			a.isPrivate ? sessionlisting::PrivateMode::Private : sessionlisting::PrivateMode::Public,
+			a.isPrivate ? sessionlisting::PrivacyMode::Private : sessionlisting::PrivacyMode::Public,
 			founder(),
 			sessionStartTime()
 		});
 		timeout = qMax(timeout, a.refreshInterval);
+
+		const QString apiUrl = a.apiUrl.toString();
+
+		connect(response, &sessionlisting::AnnouncementApiResponse::finished, [this, response, apiUrl](const QVariant &result, const QString &message, const QString &error) {
+			Q_UNUSED(result);
+
+			if(!message.isEmpty()) {
+				log(Log().about(Log::Level::Info, Log::Topic::PubList).message(message));
+				this->messageAll(message, false);
+			}
+
+			response->deleteLater();
+			if(!error.isEmpty()) {
+				// Remove listing on error
+				log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
+				unlistAnnouncement(apiUrl, true, true);
+				this->messageAll(error, false);
+			}
+		});
 	}
 
 	if(timeout > 0) {
 		m_refreshTimer->start(timeout * 60 * 1000);
 	}
-}
-
-void Session::sessionAnnounced(const sessionlisting::Announcement &announcement)
-{
-	// Make sure there are no double announcements
-	for(const sessionlisting::Announcement &a : m_publicListings) {
-		if(a.apiUrl == announcement.apiUrl) {
-			log(Log().about(Log::Level::Warn, Log::Topic::PubList).message("Double announcement at: " + announcement.apiUrl.toString()));
-			return;
-		}
-	}
-
-	log(Log().about(Log::Level::Info, Log::Topic::PubList).message("Announced at: " + announcement.apiUrl.toString()));
-	if(!announcement.isPrivate)
-		m_history->addAnnouncement(announcement.apiUrl.toString());
-	m_publicListings << announcement;
-	sendUpdatedAnnouncementList();
-
-	int timeout = announcement.refreshInterval * 60 * 1000;
-	if(!m_refreshTimer->isActive() || m_refreshTimer->remainingTime() > timeout)
-		m_refreshTimer->start(timeout);
-}
-
-void Session::sessionAnnouncementError(const QString &apiUrl, const QString &error)
-{
-
-	// Remove listing on error
-	log(Log().about(Log::Level::Warn, Log::Topic::PubList).message(apiUrl + ": announcement error: " + error));
-	unlistAnnouncement(apiUrl, true, true);
-	this->messageAll(error, false);
 }
 
 void Session::historyCacheCleanup()
@@ -1106,6 +1247,8 @@ QJsonObject Session::getDescription(bool full) const
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
 		o["maxSize"] = int(m_history->sizeLimit());
+		o["resetThreshold"] = int(m_history->autoResetThreshold());
+		o["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {

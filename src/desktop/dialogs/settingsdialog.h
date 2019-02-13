@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 class Ui_SettingsDialog;
 class QListWidgetItem;
 class CustomShortcutModel;
+class AvatarListModel;
 
 namespace sessionlisting { class ListServerModel; }
 
@@ -35,7 +36,7 @@ class SettingsDialog : public QDialog
 {
 Q_OBJECT
 public:
-	SettingsDialog(QWidget *parent=0);
+	SettingsDialog(QWidget *parent=nullptr);
 	~SettingsDialog();
 
 private slots:
@@ -56,6 +57,9 @@ private slots:
 
 	void removeStoredPassword();
 
+	void addAvatar();
+	void removeSelectedAvatar();
+
 private:
 	void restoreSettings();
 	void setParentalControlsLocked(bool lock);
@@ -68,6 +72,7 @@ private:
 	QList<QSslCertificate> m_importCerts;
 	CustomShortcutModel *m_customShortcuts;
 	sessionlisting::ListServerModel *m_listservers;
+	AvatarListModel *m_avatars;
 };
 
 }

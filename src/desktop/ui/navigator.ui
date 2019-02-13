@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Navigator</class>
+ <widget class="QWidget" name="Navigator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>360</width>
+    <height>273</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Navigator</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <item row="1" column="6">
+    <widget class="QSpinBox" name="rotationBox">
+     <property name="suffix">
+      <string notr="true">°</string>
+     </property>
+     <property name="minimum">
+      <number>-360</number>
+     </property>
+     <property name="maximum">
+      <number>360</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QToolButton" name="flip">
+     <property name="toolTip">
+      <string>Flip canvas</string>
+     </property>
+     <property name="icon">
+      <iconset theme="object-flip-vertical">
+       <normaloff>theme:object-flip-vertical.svg</normaloff>theme:object-flip-vertical.svg</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="8">
+    <widget class="NavigatorView" name="view">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QSlider" name="rotation">
+     <property name="toolTip">
+      <string>Canvas can be rotated by dragging while holding Ctrl+Space</string>
+     </property>
+     <property name="minimum">
+      <number>-180</number>
+     </property>
+     <property name="maximum">
+      <number>180</number>
+     </property>
+     <property name="pageStep">
+      <number>45</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+     <property name="tickInterval">
+      <number>45</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QToolButton" name="zoomReset">
+     <property name="toolTip">
+      <string>Reset Zoom</string>
+     </property>
+     <property name="icon">
+      <iconset theme="zoom-original">
+       <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5">
+    <widget class="QSlider" name="zoom">
+     <property name="minimum">
+      <number>50</number>
+     </property>
+     <property name="maximum">
+      <number>1600</number>
+     </property>
+     <property name="pageStep">
+      <number>50</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QToolButton" name="mirror">
+     <property name="toolTip">
+      <string>Mirror canvas</string>
+     </property>
+     <property name="icon">
+      <iconset theme="object-flip-horizontal">
+       <normaloff>theme:object-flip-horizontal.svg</normaloff>theme:object-flip-horizontal.svg</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QToolButton" name="rotateReset">
+     <property name="toolTip">
+      <string>Reset Rotation</string>
+     </property>
+     <property name="icon">
+      <iconset theme="transform-rotate">
+       <normaloff>theme:transform-rotate.svg</normaloff>theme:transform-rotate.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="6">
+    <widget class="QSpinBox" name="zoomBox">
+     <property name="suffix">
+      <string notr="true">%</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>9999</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NavigatorView</class>
+   <extends>QGraphicsView</extends>
+   <header>docks/navigator.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>rotation</tabstop>
+  <tabstop>zoom</tabstop>
+  <tabstop>rotateReset</tabstop>
+  <tabstop>zoomReset</tabstop>
+  <tabstop>flip</tabstop>
+  <tabstop>mirror</tabstop>
+  <tabstop>view</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>rotation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>rotationBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>219</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>308</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoom</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoomBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoom</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>209</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotationBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>rotation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

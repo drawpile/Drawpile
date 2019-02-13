@@ -26,14 +26,6 @@ namespace utils {
 namespace settings {
 
 /**
- * @brief Get the path where to put recordings
- *
- * Return the value of settings/recording/folder
- * or a built-in default if it does not exist
- */
-QString recordingFolder();
-
-/**
  * @brief Get a list of paths in which datafiles may reside
  */
 QStringList dataPaths();

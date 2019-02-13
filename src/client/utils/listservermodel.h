@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,15 @@ class ListServerModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
-	explicit ListServerModel(bool showlocal, QObject *parent=nullptr);
+	enum Option {
+		NoOptions = 0,
+		ShowLocal = 0x01, // show "Nearby" option (if KDNSSD is built in)
+		ShowBlank = 0x02, // show a blank option (used to select no listing server)
+	};
+	Q_DECLARE_FLAGS(Options, Option)
+
+	explicit ListServerModel(Options options, QObject *parent=nullptr);
+	explicit ListServerModel(QObject *parent=nullptr) : ListServerModel(NoOptions, parent) {}
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -48,18 +56,21 @@ public:
 	//!  Set the favicon for the server with the given URL
 	void setFavicon(const QString &url, const QImage &icon);
 
+	//! Get all configured list servers
+	static QVector<ListServer> listServers();
+
 	//! Load server list from the settings file
 	void loadServers();
 
 	//! Save (modified) server list. This replaces the existing list
 	void saveServers() const;
 
-	QList<ListServer> servers() const { return m_servers; }
-
 private:
-	QList<ListServer> m_servers;
-	bool m_showlocal;
+	QVector<ListServer> m_servers;
+	Options m_options;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ListServerModel::Options)
 
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,12 +16,14 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LAYER_H
-#define LAYER_H
-
-#include <QColor>
+#ifndef PAINTCORE_LAYER_H
+#define PAINTCORE_LAYER_H
 
 #include "tile.h"
+
+#include <QVector>
+#include <QColor>
+#include <QRect>
 
 class QImage;
 class QSize;
@@ -40,12 +42,15 @@ struct StrokeState;
  */
 struct LayerInfo {
 	// Identification
+	// Note: In the protocol, layer IDs are 16bit, but for internal (ephemeral) layers,
+	// we use IDs outside that range.
 	int id;
 	QString title;
 
 	// Rendering controls
 	uchar opacity;
 	bool hidden;
+	bool censored;
 	BlendMode::Mode blend;
 };
 
@@ -55,195 +60,266 @@ struct LayerInfo {
  * A layer is made up of multiple tiles.
  * Although images of arbitrary size can be created, the true layer size is
  * always a multiple of Tile::SIZE.
+ *
+ * Layer editing functions are provided via the EditableLayer wrapper class.
+ * However, you should typically not instantiate this class yourself. Instead,
+ * use the LayerStackWriteSequence class.
+ *
+ * Exceptions: when you're dealing with free layers (not part of any LayerStack)
  */
 class Layer {
-	public:
-		//! Construct a layer filled with solid color
-		Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size);
+	friend class EditableLayer;
+public:
+	//! Construct a layer filled with solid color
+	Layer(int id, const QString& title, const QColor& color, const QSize& size);
 
-		//! Construct a copy of this layer
-		Layer(const Layer &layer, LayerStack *newOwner=nullptr);
+	//! Construct a copy of this layer
+	Layer(const Layer &layer);
+	~Layer();
 
-		~Layer();
+	//! Get the layer width in pixels
+	int width() const { return m_width; }
 
-		//! Get the layer width in pixels
-		int width() const { return m_width; }
+	//! Get the layer height in pixels
+	int height() const { return m_height; }
 
-		//! Get the layer height in pixels
-		int height() const { return m_height; }
+	//! Get the layer ID
+	int id() const { return m_info.id; }
 
-		//! Get the layer ID
-		int id() const { return m_info.id; }
+	//! Get the layer name
+	const QString& title() const { return m_info.title; }
 
-		//! Change layer ID
-		void setId(int id) { m_info.id = id; }
+	//! Get the layer as an image
+	QImage toImage() const;
 
-		//! Get the layer name
-		const QString& title() const { return m_info.title; }
+	//! Get the layer as an image with excess transparency cropped away
+	QImage toCroppedImage(int *xOffset, int *yOffset) const;
 
-		//! Set the layer name
-		void setTitle(const QString& title);
+	//! Get the color at the specified coordinates
+	QColor colorAt(int x, int y, int dia=0) const;
 
-		//! Get the layer as an image
-		QImage toImage() const;
+	//! Get the raw pixel value at the specified coordinates
+	QRgb pixelAt(int x, int y) const;
 
-		//! Get the layer as an image with excess transparency cropped away
-		QImage toCroppedImage(int *xOffset, int *yOffset) const;
+	//! Get layer opacity
+	int opacity() const { return m_info.opacity; }
 
-		//! Adjust layer size
-		void resize(int top, int right, int bottom, int left);
+	//! Get the effective layer opacity (0 if hidden)
+	int effectiveOpacity() const { return isHidden() ? 0 : m_info.opacity; }
 
-		//! Get the color at the specified coordinates
-		QColor colorAt(int x, int y, int dia=0) const;
+	/**
+	 * @brief Get the layer blending mode
+	 * @return blending mode number
+	 */
+	BlendMode::Mode blendmode() const { return m_info.blend; }
 
-		//! Get the raw pixel value at the specified coordinates
-		QRgb pixelAt(int x, int y) const;
+	/**
+	 * @brief Is this layer hidden?
+	 * Hiding a layer is slightly different than setting its opacity
+	 * to zero, although the end result is the same. The hidden status
+	 * is purely local: setting it will not hide the layer for other
+	 * users.
+	 */
+	bool isHidden() const { return m_info.hidden; }
 
-		//! Get layer opacity
-		int opacity() const { return m_info.opacity; }
+	//! Is this layer flagged for censoring
+	bool isCensored() const { return m_info.censored; }
 
-		//! Get the effective layer opacity (0 if hidden)
-		int effectiveOpacity() const { return isHidden() ? 0 : m_info.opacity; }
+	/**
+	 * @brief Get a sublayer
+	 *
+	 * Sublayers are used for indirect drawing and previews.
+	 * Positive IDs should correspond to context IDs: they are used for indirect
+	 * painting.
+	 * Negative IDs are local preview layers.
+	 *
+	 * ID 0 should not be used.
+	 *
+	 * The blendmode and opacity are set only when the layer is created.
+	 *
+	 * @param id
+	 * @param blendmode
+	 * @param opacity
+	 * @return
+	 */
+	Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
 
-		//! Set layer opacity
-		void setOpacity(int opacity);
+	//! Get a tile
+	const Tile &tile(int x, int y) const {
+		Q_ASSERT(x>=0 && x<m_xtiles);
+		Q_ASSERT(y>=0 && y<m_ytiles);
+		return m_tiles[y*m_xtiles+x];
+	}
 
-		//! Set layer blending mode
-		void setBlend(BlendMode::Mode blend);
+	//! Get a tile
+	const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<m_xtiles*m_ytiles); return m_tiles[index]; }
 
-		/**
-		 * @brief Get the layer blending mode
-		 * @return blending mode number
-		 */
-		BlendMode::Mode blendmode() const { return m_info.blend; }
+	//! Get the sublayers
+	const QList<Layer*> &sublayers() const { return m_sublayers; }
 
-		/**
-		 * @brief Is this layer hidden?
-		 * Hiding a layer is slightly different than setting its opacity
-		 * to zero, although the end result is the same. The hidden status
-		 * is purely local: setting it will not hide the layer for other
-		 * users.
-		 */
-		bool isHidden() const { return m_info.hidden; }
+	/**
+	 * @brief Is this layer visible
+	 * A layer is visible when its opacity is greater than zero AND
+	 * it is not explicitly hidden.
+	 * @return true if layer is visible
+	 */
+	bool isVisible() const { return m_info.opacity > 0 && !m_info.hidden; }
 
-		//! Hide this layer
-		void setHidden(bool hide);
+	/**
+	 * @brief Get the non-pixeldata related properties
+	 */
+	const LayerInfo &info() const { return m_info; }
 
-		//! Empty this layer
-		void makeBlank();
+	// Disable assignment operator
+	Layer& operator=(const Layer&) = delete;
 
-		//! Draw an image onto the layer
-		void putImage(int x, int y, QImage image, BlendMode::Mode mode);
+	void toDatastream(QDataStream &out) const;
+	static Layer *fromDatastream(QDataStream &in);
 
-		//! Fill a rectangle
-		void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
+	//! Get this layer's tile vector
+	const QVector<Tile> tiles() const { return m_tiles; }
 
-		//! Dab the layer with a brush
-		void dab(int contextId, const Brush& brush, const Point& point, StrokeState &state);
+	/**
+	 * @brief Get the layer's change bounds
+	 */
+	QRect changeBounds() const { return m_changeBounds; }
 
-		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, StrokeState &state);
-
-		/**
-		 * @brief Get a sublayer
-		 *
-		 * Sublayers are used for indirect drawing and previews.
-		 * Positive IDs should correspond to context IDs: they are used for indirect
-		 * painting.
-		 * Negative IDs are local preview layers.
-		 *
-		 * @param id
-		 * @param blendmode
-		 * @param opacity
-		 * @return
-		 */
-		Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
-
-		//! Merge a sublayer with this layer
-		void mergeSublayer(int id);
-
-		//! Remove a sublayer
-		void removeSublayer(int id);
-
-		//! Remove all preview (ephemeral) sublayers
-		void removePreviews();
-
-		//! Merge a layer
-		void merge(const Layer *layer, bool sublayers=false);
-
-		//! Optimize layer memory usage
-		void optimize();
-
-		//! Get a tile
-		const Tile &tile(int x, int y) const {
-			Q_ASSERT(x>=0 && x<m_xtiles);
-			Q_ASSERT(y>=0 && y<m_ytiles);
-			return m_tiles[y*m_xtiles+x];
+	/**
+	 * @brief Get the change bounds of a sublayer
+	 * @param contextId sublayer ID
+	 */
+	QRect changeBounds(int contextId) const {
+		for(const Layer *l : m_sublayers) {
+			if(l->id() == contextId && l->isVisible())
+				return l->changeBounds();
 		}
+		return QRect();
+	}
 
-		//! Get an editable reference to a tile
-		Tile &rtile(int x, int y) {
-			Q_ASSERT(x>=0 && x<m_xtiles);
-			Q_ASSERT(y>=0 && y<m_ytiles);
-			return m_tiles[y*m_xtiles+x];
-		}
+	//! Optimize layer memory usage
+	void optimize();
 
-		//! Get a tile
-		const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<m_xtiles*m_ytiles); return m_tiles[index]; }
+private:
+	//! Construct a sublayer
+	Layer(int id, const QSize& size);
+	Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
+	QColor getDabColor(const BrushStamp &stamp) const;
 
-		//! Get the sublayers
-		const QList<Layer*> &sublayers() const { return m_sublayers; }
+	Tile &rtile(int x, int y) {
+		Q_ASSERT(x>=0 && x<m_xtiles);
+		Q_ASSERT(y>=0 && y<m_ytiles);
+		return m_tiles[y*m_xtiles+x];
+	}
 
-		/**
-		 * @brief Is this layer visible
-		 * A layer is visible when its opacity is greater than zero AND
-		 * it is not explicitly hidden.
-		 * @return true if layer is visible
-		 */
-		bool isVisible() const { return m_info.opacity > 0 && !m_info.hidden; }
 
-		//! Mark non-empty tiles as dirty
-		void markOpaqueDirty(bool forceVisible=false);
+	LayerInfo m_info;
+	QRect m_changeBounds;
 
-		/**
-		 * @brief Is the whole layer filled with the same color?
-		 * @return invalid color if there is more than one color on this canvas
-		 */
-		QColor isSolidColor() const;
+	QVector<Tile> m_tiles;
+	QList<Layer*> m_sublayers;
 
-		/**
-		 * @brief Get the non-pixeldata related properties
-		 */
-		const LayerInfo &info() const { return m_info; }
+	int m_width;
+	int m_height;
+	int m_xtiles;
+	int m_ytiles;
+};
 
-		// Disable assignment operator
-		Layer& operator=(const Layer&) = delete;
+/**
+ * A wrapper for Layer that provides editing functions.
+ *
+ * Unless you're working with free layers (layers not belonging to any
+ * LayerStack), you should use the stack's getEditableLayer function to
+ * get an editable reference to a layer.
+ */
+class EditableLayer {
+public:
+	EditableLayer() : d(nullptr), owner(nullptr) { }
+	EditableLayer(Layer *layer, LayerStack *owner) : d(layer), owner(owner) { Q_ASSERT(layer); }
 
-		void toDatastream(QDataStream &out) const;
-		static Layer *fromDatastream(LayerStack *owner, QDataStream &in);
+	//! Is this a null layer?
+	bool isNull() const { return !d;}
 
-	private:
-		//! Construct a sublayer
-		Layer(LayerStack *owner, int id, const QSize& size);
+	//! Get the underlying layer (read-only)
+	const Layer *layer() const { return d; }
 
-		Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
+	//! Change layer ID
+	void setId(int id) { d->m_info.id = id; }
 
-		void directDab(const Brush &brush, const Point& point, StrokeState &state);
-		void drawHardLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
-		void drawSoftLine(const Brush &brush, const Point& from, const Point& to, StrokeState &state);
+	//! Set the layer name
+	void setTitle(const QString& title) { d->m_info.title = title; }
 
-		QColor getDabColor(const BrushStamp &stamp) const;
+	//! Set layer opacity
+	void setOpacity(int opacity);
 
-		LayerStack *m_owner;
-		LayerInfo m_info;
-	
-		int m_width;
-		int m_height;
-		int m_xtiles;
-		int m_ytiles;
-		QVector<Tile> m_tiles;
+	//! Set layer blending mode
+	void setBlend(BlendMode::Mode blend);
 
-		QList<Layer*> m_sublayers;
+	//! Hide this layer
+	void setHidden(bool hide);
+
+	//! Censor this layer
+	void setCensored(bool censor);
+
+	//! Empty this layer
+	void makeBlank();
+
+	//! Draw an image onto the layer
+	void putImage(int x, int y, QImage image, BlendMode::Mode mode);
+
+	//! Set a tile
+	void putTile(int col, int row, int repeat, const Tile &tile, int sublayer=0);
+
+	//! Dab a brush
+	void putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode);
+
+	//! Fill a rectangle
+	void fillRect(const QRect &rect, const QColor &color, BlendMode::Mode blendmode);
+
+	//! Get a reference to a tile
+	Tile &rtile(int x, int y) { Q_ASSERT(d); return d->rtile(x, y); }
+
+	//! Merge a sublayer with this layer
+	void mergeSublayer(int id);
+
+	//! Merge all sublayers with positive IDs
+	void mergeAllSublayers();
+
+	//! Remove a sublayer
+	void removeSublayer(int id);
+
+	//! Remove all preview (ephemeral) sublayers
+	void removePreviews();
+
+	//! Merge a layer
+	void merge(const Layer *layer);
+
+	/**
+	 * @brief Add the given rectangle to this layer's change bounds
+	 *
+	 * The change bounds is a cached bounding rectangle of changes made
+	 * to a private layer.
+	 *
+	 * @param b
+	 */
+	void updateChangeBounds(const QRect &b) { Q_ASSERT(d); d->m_changeBounds |= b; }
+
+	EditableLayer getEditableSubLayer(int id, BlendMode::Mode blendmode, uchar opacity) { return EditableLayer(d->getSubLayer(id, blendmode, opacity), owner); }
+
+    const Layer *operator ->() const { return d; }
+
+	/**
+	 * @brief Adjust layer size
+	 *
+	 * Note: Unless you're working with a free layer, you should not call
+	 * this yourself. Instead, use EditableLayerStack's resize function.
+	 */
+	void resize(int top, int right, int bottom, int left);
+
+	void markOpaqueDirty(bool forceVisible=false);
+
+private:
+	Layer *d;
+	LayerStack *owner;
 };
 
 }

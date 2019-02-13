@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@
 #include "net/banlistmodel.h"
 #include "net/announcementlist.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/statetracker.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 #include "canvas/loader.h"
 #include "canvas/userlist.h"
 #include "canvas/canvassaverrunnable.h"
+#include "canvas/loader.h"
 #include "tools/toolcontroller.h"
 #include "utils/settings.h"
 #include "utils/images.h"
@@ -54,7 +56,6 @@ Document::Document(QObject *parent)
 	: QObject(parent),
 	  m_canvas(nullptr),
 	  m_recorder(nullptr),
-	  m_autoRecordOnConnect(false),
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
@@ -66,9 +67,11 @@ Document::Document(QObject *parent)
 	  m_sessionPasswordProtected(false),
 	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
-	  m_serverSpaceLow(false),
+	  m_sessionDeputies(false),
 	  m_sessionMaxUserCount(0),
-	  m_sessionHistoryMaxSize(0)
+	  m_sessionHistoryMaxSize(0),
+	  m_sessionResetThreshold(0),
+	  m_baseResetThreshold(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -89,7 +92,7 @@ Document::Document(QObject *parent)
 
 	connect(m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
 	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
-	connect(m_client, &net::Client::serverHistoryLimitReceived, this, &Document::onServerHistoryLimitReceived);
+	connect(m_client, &net::Client::autoresetRequested, this, &Document::onAutoresetRequested);
 	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 
 	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
@@ -132,11 +135,6 @@ void Document::onSessionResetted()
 	}
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
-	if(m_serverSpaceLow) {
-		// Session reset is the only thing that can free up history space
-		m_serverSpaceLow = false;
-		emit serverSpaceLowChanged(false);
-	}
 
 	if(isRecording()) {
 		// Resetting establishes a new initial state for the canvas, therefore
@@ -174,13 +172,13 @@ void Document::onServerLogin(bool join)
 
 	m_canvas->connectedToServer(m_client->myId());
 
-	if(m_autoRecordOnConnect) {
-		startRecording(utils::uniqueFilename(utils::settings::recordingFolder(), "session-" + m_client->sessionId(), "dprec"));
+	if(!m_recordOnConnect.isEmpty()) {
+		startRecording(m_recordOnConnect);
+		m_recordOnConnect = QString();
 	}
 
-	m_serverSpaceLow = false;
 	m_sessionHistoryMaxSize = 0;
-	emit serverSpaceLowChanged(false);
+	m_baseResetThreshold = 0;
 	emit serverLoggedIn(join);
 }
 
@@ -221,8 +219,17 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("nsfm"))
 		setSessionNsfm(config["nsfm"].toBool());
 
+	if(config.contains("deputies"))
+		setSessionDeputies(config["deputies"].toBool());
+
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
+
+	if(config.contains("resetThreshold"))
+		setSessionResetThreshold(config["resetThreshold"].toInt());
+
+	if(config.contains("resetThresholdBase"))
+		setBaseResetThreshold(config["resetThresholdBase"].toInt());
 
 	if(config.contains("banlist"))
 		m_banlist->updateBans(config["banlist"].toArray());
@@ -233,7 +240,7 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("announcements")) {
 		m_announcementlist->clear();
 		QString jc;
-		for(const QJsonValue &v : config["announcements"].toArray()) {
+		for(auto v : config["announcements"].toArray()) {
 			const QJsonObject o = v.toObject();
 			const net::Announcement a {
 				o["url"].toString(),
@@ -248,26 +255,26 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	}
 }
 
-void Document::onServerHistoryLimitReceived(int maxSpace)
+void Document::onAutoresetRequested(int maxSize, bool query)
 {
 	Q_ASSERT(m_canvas);
 
-	if(!m_serverSpaceLow) {
-		m_serverSpaceLow = true;
-		emit serverSpaceLowChanged(true);
-	}
+	qInfo("Server requested autoreset (query=%d)", query);
 
-	m_sessionHistoryMaxSize = maxSpace;
+	m_sessionHistoryMaxSize = maxSize;
 
-	if(m_client->myId() == m_canvas->userlist()->getPrimeOp() &&
-		QSettings().value("settings/server/autoreset", true).toBool())
-	{
-		// We're the "prime operator", meaning it's our responsibility
-		// to handle the autoreset
-		sendLockSession(true);
-		m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+	if(QSettings().value("settings/server/autoreset", true).toBool()) {
+		if(query) {
+			// This is just a query: send back an affirmative response
+			m_client->sendMessage(net::command::serverCommand("ready-to-autoreset"));
 
-		sendResetSession(canvas::StateSavepoint());
+		} else {
+			// Autoreset on request
+			sendLockSession(true);
+			m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+
+			sendResetSession(canvas::StateSavepoint());
+		}
 	}
 }
 
@@ -303,6 +310,23 @@ void Document::setSessionMaxUserCount(int count)
 	}
 }
 
+void Document::setSessionResetThreshold(int threshold)
+{
+	// Note: always emit TresholdChanged, since the server may cap the value
+	// if a low hard size limit is in place. This ensures the settings dialog
+	// value is always up to date.
+	m_sessionResetThreshold = threshold;
+	emit sessionResetThresholdChanged(threshold / double(1024*1024));
+}
+
+void Document::setBaseResetThreshold(int threshold)
+{
+	if(m_baseResetThreshold != threshold) {
+		m_baseResetThreshold = threshold;
+		emit baseResetThresholdChanged(threshold);
+	}
+}
+
 void Document::setSessionPreserveChat(bool pc)
 {
 	if(m_sessionPreserveChat != pc) {
@@ -333,6 +357,14 @@ void Document::setSessionNsfm(bool nsfm)
 	if(m_sessionNsfm != nsfm) {
 		m_sessionNsfm = nsfm;
 		emit sessionNsfmChanged(nsfm);
+	}
+}
+
+void Document::setSessionDeputies(bool deputies)
+{
+	if(m_sessionDeputies != deputies) {
+		m_sessionDeputies = deputies;
+		emit sessionDeputiesChanged(deputies);
 	}
 }
 
@@ -483,14 +515,14 @@ bool Document::startRecording(const QString &filename, const QList<protocol::Mes
 
 	m_recorder->writeHeader();
 
-	for(const protocol::MessagePtr ptr : initialState) {
+	for(const protocol::MessagePtr &ptr : initialState) {
 		m_recorder->recordMessage(ptr);
 	}
 
 	QSettings cfg;
 	cfg.beginGroup("settings/recording");
 	if(cfg.value("recordpause", true).toBool())
-		m_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+		m_recorder->setMinimumInterval(int(1000 * cfg.value("minimumpause", 0.5).toFloat()));
 	if(cfg.value("recordtimestamp", false).toBool())
 		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
 
@@ -513,9 +545,58 @@ void Document::stopRecording()
 	emit recorderStateChanged(false);
 }
 
+bool Document::saveAsRecording(const QString &filename, QJsonObject header, QString *error) const
+{
+	recording::Writer writer(filename);
+
+	if(!writer.open()) {
+		qWarning("Couldn't open writer: %s", qPrintable(writer.errorString()));
+		if(error)
+			*error = writer.errorString();
+		return false;
+	}
+
+	const int initialUserId = 1;
+
+	if(!header.contains("maxUserCount") && sessionMaxUserCount() > 1)
+		header["maxUserCount"] = sessionMaxUserCount();
+
+	if(!header.contains("founder"))
+		header["founder"] = m_canvas->userlist()->getUsername(m_canvas->localUserId());
+
+	if(!header.contains("title") && !sessionTitle().isEmpty())
+		header["title"] = sessionTitle();
+
+	if(!header.contains("nsfm") && isSessionNsfm())
+		header["nsfm"] = true;
+
+	if(!header.contains("deputies") && isSessionDeputies())
+		header["deputies"] = true;
+
+	if(!header.contains("persistent") && isSessionPersistent())
+		header["persistent"] = true;
+
+	if(!header.contains("preserveChat") && isSessionPreserveChat())
+		header["preserveChat"] = true;
+
+	writer.writeHeader(header);
+
+	// This recording will probably be used as a session template, so we need to
+	// set the session owner as well
+	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
+
+	auto snapshot = canvas::SnapshotLoader(initialUserId, m_canvas->layerStack(), m_canvas).loadInitCommands();
+	for(const protocol::MessagePtr &ptr : snapshot) {
+		writer.writeMessage(*ptr);
+	}
+
+	writer.close();
+	return true;
+}
+
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), point.x() * 4, point.y() * 4)));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), int32_t(point.x() * 4), int32_t(point.y() * 4))));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
@@ -523,18 +604,15 @@ void Document::sendSessionConf(const QJsonObject &sessionconf)
 	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendSessionAclChange(uint16_t flags, uint16_t mask)
+void Document::sendFeatureAccessLevelChange(const uint8_t tiers[canvas::FeatureCount])
 {
-	Q_ASSERT(m_canvas);
-	uint16_t acl = m_canvas->aclFilter()->sessionAclFlags();
-	acl = (acl & ~mask) | flags;
-	m_client->sendMessage(protocol::MessagePtr(new protocol::SessionACL(m_client->myId(), acl)));
+	static_assert(canvas::FeatureCount == protocol::FeatureAccessLevels::FEATURES, "Feature tier count mismatch");
+	m_client->sendMessage(protocol::MessagePtr(new protocol::FeatureAccessLevels(m_client->myId(), tiers)));
 }
 
 void Document::sendLockSession(bool lock)
 {
-	const uint16_t flag = protocol::SessionACL::LOCK_SESSION;
-	sendSessionAclChange(lock ? flag : 0, flag);
+	m_client->sendMessage(protocol::MessagePtr(new protocol::LayerACL(m_client->myId(), 0, lock, 0, QList<uint8_t>())));
 }
 
 void Document::sendOpword(const QString &opword)
@@ -590,6 +668,12 @@ void Document::sendTerminateSession()
 	m_client->sendMessage(net::command::terminateSession());
 }
 
+void Document::sendCanvasBackground(const QColor &color)
+{
+	m_client->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(m_client->myId())));
+	m_client->sendMessage(net::command::setCanvasBackground(m_client->myId(), color));
+}
+
 void Document::sendAbuseReport(int userId, const QString &message)
 {
 	QJsonObject kwargs;
@@ -610,7 +694,7 @@ void Document::snapshotNeeded()
 				m_client->sendMessage(net::command::serverCommand("init-cancel"));
 				return;
 			}
-			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas->layerlist()->getLayers(), m_canvas).loadInitCommands();
+			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas).loadInitCommands();
 		}
 
 		// Size limit check. The server will kick us if we send an oversized reset.
@@ -754,7 +838,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection() && !m_canvas->stateTracker()->isLayerLocked(m_toolctrl->activeLayer())) {
+	if(m_canvas->selection() && !m_canvas->aclFilter()->isLayerLocked(m_toolctrl->activeLayer())) {
 		m_client->sendMessages(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }
@@ -766,11 +850,11 @@ void Document::removeEmptyAnnotations()
 		return;
 	}
 
-	QList<int> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
+	QList<uint16_t> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		QList<protocol::MessagePtr> msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
-		for(int id : ids)
+		for(auto id : ids)
 			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
 		m_client->sendMessages(msgs);
 	}

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "layerlist.h"
 #include "core/layer.h"
 #include "../shared/net/layer.h"
+#include "aclfilter.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -30,7 +31,7 @@
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_defaultLayer(0), m_myId(1)
+	: QAbstractListModel(parent), m_aclfilter(nullptr), m_defaultLayer(0), m_myId(1)
 {
 }
 	
@@ -52,6 +53,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		case Qt::EditRole: return item.title;
 		case IdRole: return item.id;
 		case IsDefaultRole: return item.id == m_defaultLayer;
+		case IsLockedRole: return m_aclfilter && m_aclfilter->isLayerLocked(item.id);
 		}
 	}
 	return QVariant();
@@ -128,7 +130,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_myId, layers)));
 }
 
-int LayerListModel::indexOf(int id) const
+int LayerListModel::indexOf(uint16_t id) const
 {
 	for(int i=0;i<m_items.size();++i)
 		if(m_items.at(i).id == id)
@@ -136,7 +138,7 @@ int LayerListModel::indexOf(int id) const
 	return -1;
 }
 
-QModelIndex LayerListModel::layerIndex(int id)
+QModelIndex LayerListModel::layerIndex(uint16_t id)
 {
 	int i = indexOf(id);
 	if(i>=0)
@@ -144,26 +146,14 @@ QModelIndex LayerListModel::layerIndex(int id)
 	return QModelIndex();
 }
 
-bool LayerListModel::isLayerLockedFor(int layerId, int contextId) const
-{
-	int i = indexOf(layerId);
-	if(i>=0)
-		return m_items.at(i).isLockedFor(contextId);
-	return false;
-}
-
-void LayerListModel::createLayer(int id, int index, const QString &title)
+void LayerListModel::createLayer(uint16_t id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem(id, title));
-	if(m_pendingAclChange.contains(id)) {
-		LayerAcl acl = m_pendingAclChange.take(id);
-		updateLayerAcl(id, acl.locked, acl.exclusive);
-	}
+	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false });
 	endInsertRows();
 }
 
-void LayerListModel::deleteLayer(int id)
+void LayerListModel::deleteLayer(uint16_t id)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -180,12 +170,11 @@ void LayerListModel::clear()
 {
 	beginRemoveRows(QModelIndex(), 0, m_items.size());
 	m_items.clear();
-	m_pendingAclChange.clear();
 	m_defaultLayer = 0;
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend)
+void LayerListModel::changeLayer(uint16_t id, bool censored, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -194,11 +183,12 @@ void LayerListModel::changeLayer(int id, float opacity, paintcore::BlendMode::Mo
 	LayerListItem &item = m_items[row];
 	item.opacity = opacity;
 	item.blend = blend;
+	item.censored = censored;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }
 
-void LayerListModel::retitleLayer(int id, const QString &title)
+void LayerListModel::retitleLayer(uint16_t id, const QString &title)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -210,7 +200,7 @@ void LayerListModel::retitleLayer(int id, const QString &title)
 	emit dataChanged(qmi, qmi);
 }
 
-void LayerListModel::setLayerHidden(int id, bool hidden)
+void LayerListModel::setLayerHidden(uint16_t id, bool hidden)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -220,32 +210,6 @@ void LayerListModel::setLayerHidden(int id, bool hidden)
 	item.hidden = hidden;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
-{
-	int row = indexOf(id);
-	if(row<0) {
-		m_pendingAclChange[id] = LayerAcl { locked, exclusive };
-		return;
-	}
-
-	LayerListItem &item = m_items[row];
-	item.locked = locked;
-	item.exclusive = exclusive;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::unlockAll()
-{
-	if(!m_items.isEmpty()) {
-		for(int i=0;i<m_items.size();++i) {
-			m_items[i].locked = false;
-			m_items[i].exclusive.clear();
-		}
-		emit dataChanged(index(0), index(m_items.size()-1));
-	}
 }
 
 void LayerListModel::reorderLayers(QList<uint16_t> neworder)
@@ -277,7 +241,7 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 	endResetModel();
 }
 
-void LayerListModel::setDefaultLayer(int id)
+void LayerListModel::setDefaultLayer(uint16_t id)
 {
 	const int oldIdx = indexOf(m_defaultLayer);
 	if(oldIdx >= 0) {
@@ -291,14 +255,14 @@ void LayerListModel::setDefaultLayer(int id)
 	}
 }
 
-const paintcore::Layer *LayerListModel::getLayerData(int id) const
+const paintcore::Layer *LayerListModel::getLayerData(uint16_t id) const
 {
 	if(m_getlayerfn)
 		return m_getlayerfn(id);
 	return nullptr;
 }
 
-void LayerListModel::previewOpacityChange(int id, float opacity)
+void LayerListModel::previewOpacityChange(uint16_t id, float opacity)
 {
 	emit layerOpacityPreview(id, opacity);
 }
@@ -312,9 +276,9 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 {
 	Q_UNUSED(mimeType);
 	if(type==QVariant::Image) {
-		const paintcore::Layer *layer = _source->getLayerData(_id);
+		const paintcore::Layer *layer = m_source->getLayerData(m_id);
 		if(layer)
-			return layer->toCroppedImage(0, 0);
+			return layer->toCroppedImage(nullptr, nullptr);
 	}
 
 	return QVariant();

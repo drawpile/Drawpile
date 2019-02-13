@@ -1,3 +1,32 @@
+2019-02-13 Version 2.1.0
+ * Changed internal pixel format to premultiplied 32 bit RGBA
+ * Added PutTile command and optimized layer initialization
+ * dprectool: added --msg-freq option
+ * Protocol change: replaced ToolChange and PenMove with DrawDabs commands
+ * Replaced "background layer" concept with a tiled canvas background. (Mostly compatible with MyPaint)
+ * Redesigned user list box and chat panel
+ * Autoreset threshold is now adjustable and includes reset image as base size
+ * Individual layers can now be censored
+ * Merged "Find sessions" dialog into the "Join" dialog
+ * Simplified "Host" dialog
+ * Redesigned "Login" dialog
+ * Moved layer hamburger menu to the main menu bar (and expanded it)
+ * Added support for user avatars
+ * Added controls for flipping, rotating and zooming to the navigator dock
+ * New user level: Trusted users
+ * Added tiered feature access controls (guest/registered/trusted/operator)
+ * Added zoom and rotation controls to navigator
+ * Removed sliders from status bar
+ * Added zoom tool
+ * Added zoom/rotation/flip toolbar
+ * Show keyboard shortcuts in toolbar tooltips
+ * Replaced recording status icon with toolbar button
+ * Replaced "new chat message" status icon with toolbar button (red dot indicates new message)
+ * Added template export feature
+ * Added square pixel brush
+ * Replaced Ffmpeg video export with native WebM export
+ * Added private messaging feature
+
 2018-08-14 Version 2.0.11
  * Server: fixed OP status auto-restoration for users who used the "become operator" feature
  * Server AppImage: updated libmicrohttpd to version 0.9.59

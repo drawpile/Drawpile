@@ -98,23 +98,6 @@
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
        </property>
-       <property name="groupPosition">
-        <enum>GroupedToolButton::GroupLeft</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="GroupedToolButton" name="menuButton">
-       <property name="icon">
-        <iconset theme="application-menu">
-         <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-       <property name="groupPosition">
-        <enum>GroupedToolButton::GroupRight</enum>
-       </property>
       </widget>
      </item>
     </layout>
@@ -138,8 +121,8 @@
  <tabstops>
   <tabstop>blendmode</tabstop>
   <tabstop>lockButton</tabstop>
-  <tabstop>menuButton</tabstop>
   <tabstop>layerlist</tabstop>
  </tabstops>
+ <resources/>
  <connections/>
 </ui>

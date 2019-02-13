@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "image.h"
 #include "layer.h"
 #include "meta2.h"
-#include "pen.h"
+#include "brushes.h"
 #include "undo.h"
 #include "recording.h"
 
@@ -48,47 +48,52 @@ OpaqueMessage::~OpaqueMessage()
 	delete []m_payload;
 }
 
-Message *OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data, uint len)
+NullableMessageRef OpaqueMessage::decode(MessageType type, uint8_t ctx, const uchar *data, uint len)
 {
 	Q_ASSERT(type>=64);
 
+	Message *msg = nullptr;
+
 	switch(type) {
-	case MSG_INTERVAL: return Interval::deserialize(ctx, data, len);
-	case MSG_LASERTRAIL: return LaserTrail::deserialize(ctx, data, len);
-	case MSG_MOVEPOINTER: return MovePointer::deserialize(ctx, data, len);
-	case MSG_MARKER: return Marker::deserialize(ctx, data, len);
-	case MSG_USER_ACL: return UserACL::deserialize(ctx, data, len);
-	case MSG_LAYER_ACL: return LayerACL::deserialize(ctx, data, len);
-	case MSG_SESSION_ACL: return SessionACL::deserialize(ctx, data, len);
-	case MSG_LAYER_DEFAULT: return DefaultLayer::deserialize(ctx, data, len);
+	case MSG_INTERVAL: msg = Interval::deserialize(ctx, data, len); break;
+	case MSG_LASERTRAIL: msg = LaserTrail::deserialize(ctx, data, len); break;
+	case MSG_MOVEPOINTER: msg = MovePointer::deserialize(ctx, data, len); break;
+	case MSG_MARKER: msg = Marker::deserialize(ctx, data, len); break;
+	case MSG_USER_ACL: msg = UserACL::deserialize(ctx, data, len); break;
+	case MSG_LAYER_ACL: msg = LayerACL::deserialize(ctx, data, len); break;
+	case MSG_FEATURE_LEVELS: msg = FeatureAccessLevels::deserialize(ctx, data, len); break;
+	case MSG_LAYER_DEFAULT: msg = DefaultLayer::deserialize(ctx, data, len); break;
 	case MSG_FILTERED: return Filtered::deserialize(ctx, data, len);
 
-	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(ctx, data, len);
-	case MSG_LAYER_CREATE: return LayerCreate::deserialize(ctx, data, len);
-	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(ctx, data, len);
-	case MSG_LAYER_RETITLE: return LayerRetitle::deserialize(ctx, data, len);
-	case MSG_LAYER_ORDER: return LayerOrder::deserialize(ctx, data, len);
-	case MSG_LAYER_DELETE: return LayerDelete::deserialize(ctx, data, len);
-	case MSG_LAYER_VISIBILITY: return LayerVisibility::deserialize(ctx, data, len);
-	case MSG_PUTIMAGE: return PutImage::deserialize(ctx, data, len);
-	case MSG_TOOLCHANGE: return ToolChange::deserialize(ctx, data, len);
-	case MSG_PEN_MOVE: return PenMove::deserialize(ctx, data, len);
-	case MSG_PEN_UP: return PenUp::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_CREATE: return AnnotationCreate::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_RESHAPE: return AnnotationReshape::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_EDIT: return AnnotationEdit::deserialize(ctx, data, len);
-	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(ctx, data, len);
-	case MSG_UNDOPOINT: return UndoPoint::deserialize(ctx, data, len);
-	case MSG_UNDO: return Undo::deserialize(ctx, data, len);
-	case MSG_FILLRECT: return FillRect::deserialize(ctx, data, len);
-	case MSG_REGION_MOVE: return MoveRegion::deserialize(ctx, data, len);
-	default:
-		qWarning("Unhandled opaque message type: %d", type);
-		return nullptr;
+	case MSG_CANVAS_RESIZE: msg = CanvasResize::deserialize(ctx, data, len); break;
+	case MSG_LAYER_CREATE: msg = LayerCreate::deserialize(ctx, data, len); break;
+	case MSG_LAYER_ATTR: msg = LayerAttributes::deserialize(ctx, data, len); break;
+	case MSG_LAYER_RETITLE: msg = LayerRetitle::deserialize(ctx, data, len); break;
+	case MSG_LAYER_ORDER: msg = LayerOrder::deserialize(ctx, data, len); break;
+	case MSG_LAYER_DELETE: msg = LayerDelete::deserialize(ctx, data, len); break;
+	case MSG_LAYER_VISIBILITY: msg = LayerVisibility::deserialize(ctx, data, len); break;
+	case MSG_PUTIMAGE: msg = PutImage::deserialize(ctx, data, len); break;
+	case MSG_PEN_UP: msg = PenUp::deserialize(ctx, data, len); break;
+	case MSG_ANNOTATION_CREATE: msg = AnnotationCreate::deserialize(ctx, data, len); break;
+	case MSG_ANNOTATION_RESHAPE: msg = AnnotationReshape::deserialize(ctx, data, len); break;
+	case MSG_ANNOTATION_EDIT: msg = AnnotationEdit::deserialize(ctx, data, len); break;
+	case MSG_ANNOTATION_DELETE: msg = AnnotationDelete::deserialize(ctx, data, len); break;
+	case MSG_UNDOPOINT: msg = UndoPoint::deserialize(ctx, data, len); break;
+	case MSG_UNDO: msg = Undo::deserialize(ctx, data, len); break;
+	case MSG_FILLRECT: msg = FillRect::deserialize(ctx, data, len); break;
+	case MSG_REGION_MOVE: msg = MoveRegion::deserialize(ctx, data, len); break;
+	case MSG_PUTTILE: msg = PutTile::deserialize(ctx, data, len); break;
+	case MSG_CANVAS_BACKGROUND: msg = CanvasBackground::deserialize(ctx, data, len); break;
+	case MSG_DRAWDABS_CLASSIC: msg = DrawDabsClassic::deserialize(ctx, data, len); break;
+	case MSG_DRAWDABS_PIXEL: msg = DrawDabsPixel::deserialize(DabShape::Round, ctx, data, len); break;
+	case MSG_DRAWDABS_PIXEL_SQUARE: msg = DrawDabsPixel::deserialize(DabShape::Square, ctx, data, len); break;
+	default: qWarning("Unhandled opaque message type: %d", type);
 	}
+
+	return NullableMessageRef(msg);
 }
 
-Message *OpaqueMessage::decode() const
+NullableMessageRef OpaqueMessage::decode() const
 {
 	return decode(type(), contextId(), m_payload, m_length);
 }

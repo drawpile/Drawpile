@@ -25,7 +25,6 @@
 #include <QImage>
 
 #include "../shared/net/message.h"
-#include "layerlist.h"
 
 namespace paintcore {
 	class LayerStack;
@@ -103,7 +102,7 @@ public:
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return m_filename; }
 	QString errorMessage() const { return m_error; }
-	QString warningMessage() const { return m_error; }
+	QString warningMessage() const { return m_warning; }
 
 private:
 	QString m_filename;
@@ -113,14 +112,14 @@ private:
 
 class QImageCanvasLoader : public SessionLoader {
 public:
-	QImageCanvasLoader(const QImage &image) : _image(image) {}
+	QImageCanvasLoader(const QImage &image) : m_image(image) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return QString(); }
 	QString errorMessage() const { return QString(); }
 
 private:
-	QImage _image;
+	QImage m_image;
 };
 
 /**
@@ -135,11 +134,10 @@ public:
 	 *
 	 * @param context ID resetting user ID
 	 * @param layers the layer stack (required)
-	 * @param layerlist layer list info model. Used for layer ACLs. (optional)
-	 * @param session the current canvas. Used for general session ACLs and such. (optional)
+	 * @param session the current canvas. Used for session ACLs and such. (optional)
 	 */
-	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const QVector<LayerListItem> &layerlist, const canvas::CanvasModel *session)
-		: m_layers(layers), m_layerlist(layerlist), m_session(session), m_contextId(contextId) {}
+	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const canvas::CanvasModel *session)
+		: m_layers(layers), m_session(session), m_contextId(contextId) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return QString(); }
@@ -147,7 +145,6 @@ public:
 
 private:
 	const paintcore::LayerStack *m_layers;
-	const QVector<LayerListItem> m_layerlist;
 	const CanvasModel *m_session;
 	uint8_t m_contextId;
 };

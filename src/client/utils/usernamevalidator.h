@@ -29,6 +29,8 @@ public:
 	explicit UsernameValidator(QObject *parent = 0);
 
 	State validate(QString &input, int &pos) const;
+
+	static bool isValid(const QString &username);
 };
 
 #endif // USERNAMEVALIDATOR_H

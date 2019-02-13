@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2015 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,22 +19,51 @@
 
 #include "docks/layeraclmenu.h"
 #include "canvas/userlist.h"
+#include "parentalcontrols/parentalcontrols.h"
+
+#include <QApplication>
 
 namespace docks {
+
+static void addTier(QActionGroup *group, const QString &title, canvas::Tier tier)
+{
+	QAction *a = group->addAction(title);
+	a->setProperty("userTier", int(tier));
+	a->setCheckable(true);
+	a->setChecked(true);
+}
 
 LayerAclMenu::LayerAclMenu(QWidget *parent) :
     QMenu(parent)
 {
-	_lock = addAction(tr("Lock this layer"));
-	_lock->setCheckable(true);
+	m_lock = addAction(tr("Lock this layer"));
+	m_lock->setCheckable(true);
+
+	m_censored = addAction(tr("Censor"));
+	m_censored->setCheckable(true);
+
+	addSection(tr("Access tier:"));
+	m_tiers = new QActionGroup(this);
+	addTier(m_tiers, tr("Operators"), canvas::Tier::Op);
+	addTier(m_tiers, tr("Trusted"), canvas::Tier::Trusted);
+	addTier(m_tiers, tr("Registered"), canvas::Tier::Auth);
+	addTier(m_tiers, tr("Everyone"), canvas::Tier::Guest);
+	static_assert(canvas::TierCount == 4, "update LayerAclMenu tiers!");
+	addActions(m_tiers->actions());
 
 	addSection(tr("Exclusive access:"));
+	m_users = new QActionGroup(this);
+	m_users->setExclusive(false);
 
-	_allusers = addAction(tr("Everyone can draw"));
-	_allusers->setCheckable(true);
-	_allusers->setChecked(true);
+	connect(this, &LayerAclMenu::triggered, this, &LayerAclMenu::userClicked);
 
-	connect(this, SIGNAL(triggered(QAction*)), this, SLOT(userClicked(QAction*)));
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(refreshParentalControls()));
+	refreshParentalControls();
+}
+
+void LayerAclMenu::refreshParentalControls()
+{
+	m_censored->setEnabled(!parentalcontrols::isLayerUncensoringBlocked());
 }
 
 void LayerAclMenu::setUserList(canvas::UserListModel *model)
@@ -43,25 +72,26 @@ void LayerAclMenu::setUserList(canvas::UserListModel *model)
 	for(int i=0;i<model->rowCount();++i)
 		addUser(i);
 
-	connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
-	connect(model, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)), this, SLOT(rowsMoved(QModelIndex,int,int,QModelIndex,int)));
-	connect(model, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int)));
+	connect(model, &canvas::UserListModel::rowsInserted, this, &LayerAclMenu::rowsInserted);
+	connect(model, &canvas::UserListModel::rowsMoved, this, &LayerAclMenu::rowsMoved);
+	connect(model, &canvas::UserListModel::rowsRemoved, this, &LayerAclMenu::rowsRemoved);
 }
 
 void LayerAclMenu::addUser(int index)
 {
-	const canvas::User &user = m_model->data(m_model->index(index)).value<canvas::User>();
-	QAction *userAction = new QAction(user.name, this);
+	const QModelIndex uidx = m_model->index(index);
+
+	QAction *userAction = m_users->addAction(uidx.data(canvas::UserListModel::NameRole).toString());
 	userAction->setCheckable(true);
-	userAction->setProperty("userid", user.id);
-	_users.append(userAction);
+	userAction->setProperty("userId", uidx.data(canvas::UserListModel::IdRole).toInt());
+
 	addAction(userAction);
 }
 
 void LayerAclMenu::rowsInserted(const QModelIndex &parent, int start, int end)
 {
 	Q_UNUSED(parent);
-	Q_ASSERT(start == _users.count()); // new users are always added to the end of the list
+	Q_ASSERT(start == m_users->actions().size()); // new users are always added to the end of the list
 	for(;start<=end;++start)
 		addUser(start);
 }
@@ -75,8 +105,9 @@ void LayerAclMenu::rowsMoved(const QModelIndex&, int, int, const QModelIndex&, i
 void LayerAclMenu::rowsRemoved(const QModelIndex &parent, int start, int end)
 {
 	Q_UNUSED(parent);
+	Q_ASSERT(end < m_users->actions().size());
 	for(int i=start;i<=end;++i) {
-		removeAction(_users.takeAt(start));
+		delete m_users->actions()[start];
 	}
 }
 
@@ -84,57 +115,63 @@ void LayerAclMenu::userClicked(QAction *useraction)
 {
 	// Get exclusive user access list
 	QList<uint8_t> exclusive;
-	for(const QAction *a : _users) {
+	for(const QAction *a : m_users->actions()) {
 		if(a->isChecked())
-			exclusive.append(a->property("userid").toInt());
+			exclusive.append(a->property("userId").toInt());
 	}
 
-	if(useraction == _lock) {
-		bool enable = !useraction->isChecked();
+	// Get selected tier
+	canvas::Tier tier = canvas::Tier::Guest;
+	for(const QAction *a : m_tiers->actions()) {
+		if(a->isChecked()) {
+			tier = canvas::Tier(a->property("userTier").toInt());
+			break;
+		}
+	}
 
-		_allusers->setEnabled(enable);
-		for(QAction *a : _users)
-			a->setEnabled(enable);
+	if(useraction == m_lock) {
+		// Lock out all other controls when general layer lock is on
+		const bool enable = !useraction->isChecked();
+		m_tiers->setEnabled(enable && exclusive.isEmpty());
+		m_users->setEnabled(enable);
 
-	} else if(useraction == _allusers) {
-		// No user has exclusive access
-		exclusive.clear();
-		_allusers->setChecked(true);
-		for(QAction *a : _users)
-			a->setChecked(false);
+	} else if(useraction == m_censored) {
+		// Just toggle the censored flag, no other ACL changes
+		emit layerCensoredChange(m_censored->isChecked());
+		return;
 
 	} else {
-		// User exclusive access bit changed.
-		_allusers->setChecked(exclusive.isEmpty());
+		// User exclusive access bit or tier changed.
+		m_tiers->setEnabled(exclusive.isEmpty());
 	}
 
 	// Send ACL update message
-	emit layerAclChange(_lock->isChecked(), exclusive);
+	emit layerAclChange(m_lock->isChecked(), tier, exclusive);
 }
 
-void LayerAclMenu::setAcl(bool lock, const QList<uint8_t> acl)
+void LayerAclMenu::setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> exclusive)
 {
-	_lock->setChecked(lock);
+	m_lock->setChecked(lock);
 
-	_allusers->setEnabled(!lock);
+	m_users->setEnabled(!lock);
+	m_tiers->setEnabled(!lock && exclusive.isEmpty());
 
-	for(QAction *u : _users) {
-		u->setChecked(false);
-		u->setEnabled(!lock);
-	}
-
-	_allusers->setChecked(acl.isEmpty());
-	if(!acl.isEmpty()) {
-		for(uint8_t id : acl) {
-			const QVariant qvid = id;
-			for(QAction *u : _users) {
-				if(u->property("userid") == qvid) {
-					u->setChecked(true);
-					break;
-				}
-			}
+	for(QAction *t : m_tiers->actions()) {
+		if(t->property("userTier").toInt() == int(tier)) {
+			t->setChecked(true);
+			break;
 		}
 	}
+
+	for(QAction *u : m_users->actions()) {
+		u->setChecked(exclusive.contains(u->property("userId").toInt()));
+	}
+}
+
+void LayerAclMenu::setCensored(bool censor)
+{
+	m_censored->setChecked(censor);
 }
 
 }
+

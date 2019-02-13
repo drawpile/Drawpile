@@ -54,13 +54,17 @@ public:
 	void setTitle(const QString &title) override { m_title = title; }
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
+	void setAutoResetThreshold(uint limit) override { m_autoReset = qMin(uint(sizeLimit() * 0.7), limit); }
+	uint autoResetThreshold() const override { return m_autoReset; }
 
 	void addAnnouncement(const QString &url) override { m_announcements.insert(url); }
 	void removeAnnouncement(const QString &url) override { m_announcements.remove(url); }
 	QStringList announcements() const override { return m_announcements.values(); }
 
 	void setAuthenticatedOperator(const QString &username, bool op) override { if(op) m_ops.insert(username); else m_ops.remove(username); }
+	void setAuthenticatedTrust(const QString &username, bool trusted) override { if(trusted) m_trusted.insert(username); else m_trusted.remove(username); }
 	bool isOperator(const QString &username) const override { return m_ops.contains(username); }
+	bool isTrusted(const QString &username) const override { return m_trusted.contains(username); }
 	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
 
 protected:
@@ -72,6 +76,7 @@ protected:
 private:
 	QList<protocol::MessagePtr> m_history;
 	QSet<QString> m_ops;
+	QSet<QString> m_trusted;
 	QSet<QString> m_announcements;
 	QString m_alias;
 	QString m_founder;
@@ -81,6 +86,7 @@ private:
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;
+	uint m_autoReset;
 	Flags m_flags;
 };
 

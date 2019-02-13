@@ -59,6 +59,7 @@ struct ServerSummaryPage::Private {
 	QCheckBox *allowGuestHosts;
 
 	QDoubleSpinBox *sessionSizeLimit;
+	QDoubleSpinBox *autoresetTreshold;
 	QDoubleSpinBox *idleTimeout;
 	QSpinBox *maxSessions;
 	QCheckBox *persistence;
@@ -86,6 +87,7 @@ struct ServerSummaryPage::Private {
 		  allowGuests(new QCheckBox),
 		  allowGuestHosts(new QCheckBox),
 		  sessionSizeLimit(new QDoubleSpinBox),
+		  autoresetTreshold(new QDoubleSpinBox),
 		  idleTimeout(new QDoubleSpinBox),
 		  maxSessions(new QSpinBox),
 		  persistence(new QCheckBox),
@@ -106,6 +108,8 @@ struct ServerSummaryPage::Private {
 
 		sessionSizeLimit->setSuffix(" MB");
 		sessionSizeLimit->setSpecialValueText(tr("unlimited"));
+		autoresetTreshold->setSuffix(" MB");
+		autoresetTreshold->setSpecialValueText(tr("none"));
 		idleTimeout->setSuffix(" min");
 		idleTimeout->setSingleStep(1);
 		idleTimeout->setSpecialValueText(tr("unlimited"));
@@ -216,6 +220,7 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	layout->addItem(new QSpacerItem(1,10), row++, 0);
 
 	addWidgets(d, layout, row++, tr("Session size limit"), d->sessionSizeLimit, true);
+	addWidgets(d, layout, row++, tr("Default autoreset threshold"), d->autoresetTreshold, true);
 	addWidgets(d, layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
 	addWidgets(d, layout, row++, tr("Maximum sessions"), d->maxSessions, true);
 	addWidgets(d, layout, row++, QString(), d->persistence);
@@ -291,6 +296,7 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->allowGuestHosts->setChecked(o[config::AllowGuestHosts.name].toBool());
 
 	d->sessionSizeLimit->setValue(o[config::SessionSizeLimit.name].toDouble() / (1024*1024));
+	d->autoresetTreshold->setValue(o[config::AutoresetThreshold.name].toDouble() / (1024*1024));
 	d->idleTimeout->setValue(o[config::IdleTimeLimit.name].toDouble() / 60);
 	d->maxSessions->setValue(o[config::SessionCountLimit.name].toInt());
 	d->logPurge->setValue(o[config::LogPurgeDays.name].toInt());
@@ -319,6 +325,7 @@ void ServerSummaryPage::saveSettings()
 		{config::AllowGuests.name, d->allowGuests->isChecked()},
 		{config::AllowGuestHosts.name, d->allowGuestHosts->isChecked()},
 		{config::SessionSizeLimit.name, d->sessionSizeLimit->value() * 1024 * 1024},
+		{config::AutoresetThreshold.name, d->autoresetTreshold->value() * 1024 * 1024},
 		{config::IdleTimeLimit.name, d->idleTimeout->value() * 60},
 		{config::SessionCountLimit.name, d->maxSessions->value()},
 		{config::LogPurgeDays.name, d->logPurge->value()},

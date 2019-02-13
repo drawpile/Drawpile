@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -117,6 +117,178 @@ PutImage *PutImage::fromText(uint8_t ctx, const Kwargs &kwargs)
 		kwargs["h"].toInt(),
 		img
 		);
+}
+
+static QByteArray colorByteArray(quint32 c)
+{
+	QByteArray ba(4, 0);
+	qToBigEndian(c, ba.data());
+	return ba;
+}
+
+PutTile::PutTile(uint8_t ctx, uint16_t layer, uint8_t sublayer, uint16_t col, uint16_t row, uint16_t repeat, uint32_t color)
+	: PutTile(ctx, layer, sublayer, col, row, repeat, colorByteArray(color))
+{
+}
+
+PutTile *PutTile::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len < 13)
+		return nullptr;
+
+	return new PutTile(
+		ctx,
+		qFromBigEndian<quint16>(data+0),
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		QByteArray((const char*)data+9, len-9)
+	);
+}
+
+int PutTile::payloadLength() const
+{
+	return 9 + m_image.length();
+}
+
+int PutTile::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	qToBigEndian(m_layer, ptr); ptr += 2;
+	*(ptr++) = m_sublayer;
+	qToBigEndian(m_col, ptr); ptr += 2;
+	qToBigEndian(m_row, ptr); ptr += 2;
+	qToBigEndian(m_repeat, ptr); ptr += 2;
+
+	memcpy(ptr, m_image.constData(), m_image.length());
+	ptr += m_image.length();
+
+	return ptr-data;
+}
+
+uint32_t PutTile::color() const
+{
+	Q_ASSERT(m_image.length()==4);
+	return qFromBigEndian<quint32>(m_image.constData());
+}
+
+bool PutTile::payloadEquals(const Message &m) const
+{
+	const PutTile &p = static_cast<const PutTile&>(m);
+	return
+		layer() == p.layer() &&
+		sublayer() == p.sublayer() &&
+		column() == p.column() &&
+		row() == p.row() &&
+		repeat() == p.repeat() &&
+		image() == p.image();
+}
+
+Kwargs PutTile::kwargs() const
+{
+	Kwargs kw;
+	kw["layer"] = text::idString(m_layer);
+	if(m_sublayer>0)
+		kw["sublayer"] = QString::number(m_sublayer);
+	kw["row"] = QString::number(m_row);
+	kw["col"] = QString::number(m_col);
+	if(m_repeat>0)
+		kw["repeat"] = QString::number(m_repeat);
+	if(isSolidColor())
+		kw["color"] = text::argbString(color());
+	else
+		kw["img"] = splitToColumns(m_image.toBase64(), 70);
+
+	return kw;
+}
+
+PutTile *PutTile::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QByteArray img;
+	if(kwargs.contains("color")) {
+		img = colorByteArray(text::parseColor(kwargs["color"]));
+
+	} else {
+		img = QByteArray::fromBase64(kwargs["img"].toUtf8());
+		if(img.length()<=4)
+			return nullptr;
+	}
+
+	return new PutTile(
+		ctx,
+		text::parseIdString16(kwargs["layer"]),
+		kwargs["sublayer"].toInt(),
+		kwargs["col"].toInt(),
+		kwargs["row"].toInt(),
+		kwargs["repeat"].toInt(),
+		img
+		);
+}
+
+CanvasBackground::CanvasBackground(uint8_t ctx, uint32_t color)
+	: CanvasBackground(ctx, colorByteArray(color))
+{
+}
+
+CanvasBackground *CanvasBackground::deserialize(uint8_t ctx, const uchar *data, uint len)
+{
+	if(len < 4)
+		return nullptr;
+
+	return new CanvasBackground(
+		ctx,
+		QByteArray((const char*)data, len)
+	);
+}
+
+int CanvasBackground::payloadLength() const
+{
+	return m_image.length();
+}
+
+int CanvasBackground::serializePayload(uchar *data) const
+{
+	memcpy(data, m_image.constData(), m_image.length());
+	return m_image.length();
+}
+
+uint32_t CanvasBackground::color() const
+{
+	Q_ASSERT(m_image.length()==4);
+	return qFromBigEndian<quint32>(m_image.constData());
+}
+
+bool CanvasBackground::payloadEquals(const Message &m) const
+{
+	const CanvasBackground &p = static_cast<const CanvasBackground&>(m);
+	return m_image == p.m_image;
+}
+
+Kwargs CanvasBackground::kwargs() const
+{
+	Kwargs kw;
+	if(isSolidColor())
+		kw["color"] = text::argbString(color());
+	else
+		kw["img"] = splitToColumns(m_image.toBase64(), 70);
+
+	return kw;
+}
+
+CanvasBackground *CanvasBackground::fromText(uint8_t ctx, const Kwargs &kwargs)
+{
+	QByteArray img;
+	if(kwargs.contains("color")) {
+		img = colorByteArray(text::parseColor(kwargs["color"]));
+
+	} else {
+		img = QByteArray::fromBase64(kwargs["img"].toUtf8());
+		if(img.length()<=4)
+			return nullptr;
+	}
+
+	return new CanvasBackground(ctx, img);
 }
 
 FillRect *FillRect::deserialize(uint8_t ctx, const uchar *data, uint len)

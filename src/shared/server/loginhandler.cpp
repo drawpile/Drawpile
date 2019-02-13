@@ -231,6 +231,11 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 		return;
 	}
 
+	if(cmd.kwargs.contains("avatar")) {
+		// TODO validate
+		m_client->setAvatar(QByteArray::fromBase64(cmd.kwargs["avatar"].toString().toUtf8()));
+	}
+
 	switch(userAccount.status) {
 	case RegisteredUser::NotFound: {
 		// Account not found in internal user list. Allow guest login (if enabled)

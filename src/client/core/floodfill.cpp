@@ -33,8 +33,8 @@ class Floodfill {
 public:
 	Floodfill(const LayerStack *image, int sourceLayer, bool merge, const QColor &color, int colorTolerance, unsigned int sizelimit) :
 		source(image),
-		scratch(0, 0, QString(), Qt::transparent, image->size()),
-		fill(0, 0, QString(), Qt::transparent, image->size()),
+		scratch(0, QString(), Qt::transparent, image->size()),
+		fill(0, QString(), Qt::transparent, image->size()),
 		layer(sourceLayer),
 		merge(merge),
 		fillColor(color.rgba()),
@@ -45,7 +45,7 @@ public:
 
 	Tile &scratchTile(int x, int y)
 	{
-		Tile &t = scratch.rtile(x, y);
+		Tile &t = EditableLayer(&scratch, nullptr).rtile(x, y);
 		if(t.isNull()) {
 			if(merge) {
 				t = source->getFlatTile(x, y);
@@ -64,7 +64,7 @@ public:
 	}
 
 	Tile &fillTile(int x, int y) {
-		Tile &t = fill.rtile(x, y);
+		Tile &t = EditableLayer(&fill, nullptr).rtile(x, y);
 		if(t.isNull())
 			t = Tile(Qt::transparent);
 
@@ -80,7 +80,7 @@ public:
 
 		const Tile &t = scratchTile(tx, ty);
 
-		return t.data()[y*Tile::SIZE + x];
+		return t.constData()[y*Tile::SIZE + x];
 	}
 
 	void setPixel(int x, int y) {
@@ -96,9 +96,6 @@ public:
 
 	bool isSameColor(QRgb c1, QRgb c2) {
 		// TODO better color distance function
-		c1 = qPremultiply(c1);
-		c2 = qPremultiply(c2);
-
 		int r = (c1 & 0xff) - (signed int)(c2 & 0xff);
 		int g = (c1>>8 & 0xff) - (signed int)(c2>>8 & 0xff);
 		int b = (c1>>16 & 0xff) - (signed int)(c2>>16 & 0xff);
@@ -278,7 +275,7 @@ FillResult expandFill(const FillResult &input, int expansion, const QColor &colo
 	if(input.image.isNull() || expansion<1)
 		return input;
 
-	Q_ASSERT(input.image.format() == QImage::Format_ARGB32);
+	Q_ASSERT(input.image.format() == QImage::Format_ARGB32_Premultiplied);
 
 	FillResult out;
 

@@ -1,5 +1,6 @@
 #include "../canvas/retcon.h"
 #include "../../shared/net/textmode.h"
+#include "../../shared/net/brushes.h"
 
 #include <QtTest/QtTest>
 
@@ -86,15 +87,30 @@ private slots:
 	void testConcurrent()
 	{
 		LocalFork lf;
+		MessagePtr localMsg1 = msg("1 classicdabs layer=0x0101 x=10 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 5 512 255 255\n}");
+
+		MessagePtr localMsg2 = msg("1 classicdabs layer=0x0101 x=20 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 0 512 255 255\n}");
+
+		MessagePtr remoteMsg1 = msg("2 classicdabs layer=0x0101 x=100 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 5 512 255 255\n}");
+
+		MessagePtr remoteMsg2 = msg("2 classicdabs layer=0x0101 x=120 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 0 512 255 255\n}");
 
 		// First, we'll add our own local messages
 		lf.addLocalMessage(
-			msg("1 penmove 1 1"),
-			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1))
+			localMsg1,
+			AffectedArea(AffectedArea::PIXELS, 1, localMsg1.cast<DrawDabsClassic>().bounds())
 			);
 		lf.addLocalMessage(
-			msg("1 penmove 10 10"),
-			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,10,10))
+			localMsg2,
+			AffectedArea(AffectedArea::PIXELS, 1, localMsg2.cast<DrawDabsClassic>().bounds())
 			);
 
 		// Then, we'll "receive" messages from the server
@@ -102,30 +118,30 @@ private slots:
 
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("2 penmove 100 100"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(100,100,1,1))
+				remoteMsg1,
+				AffectedArea(AffectedArea::PIXELS, 1, remoteMsg1.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::CONCURRENT
 		);
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("2 penmove 90 90"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(90,90,10,10))
+				remoteMsg2,
+				AffectedArea(AffectedArea::PIXELS, 1, remoteMsg2.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::CONCURRENT
 		);
 		// Our own messages after making the roundtrip
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("1 penmove 1 1"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1))
+				localMsg1,
+				AffectedArea(AffectedArea::PIXELS, 1, localMsg1.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::ALREADYDONE
 		);
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("1 penmove 10 10"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,10,10))
+				localMsg2,
+				AffectedArea(AffectedArea::PIXELS, 1, localMsg2.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::ALREADYDONE
 		);
@@ -134,15 +150,30 @@ private slots:
 	void testConflict()
 	{
 		LocalFork lf;
+		MessagePtr localMsg1 = msg("1 classicdabs layer=0x0101 x=10 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 5 512 255 255\n}");
+
+		MessagePtr localMsg2 = msg("1 classicdabs layer=0x0101 x=20 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n"
+			"5 0 512 255 255\n}");
+
+		MessagePtr remoteMsg1 = msg("2 classicdabs layer=0x0101 x=200 y=10 color=#00ffffff mode=1 {\n"
+			"2 0 512 255 255\n"
+			"5 5 512 255 255\n}");
+
+		MessagePtr remoteMsg2 = msg("2 classicdabs layer=0x0101 x=20 y=10 color=#00ffffff mode=1 {\n"
+			"2 0 512 255 255\n"
+			"5 0 512 255 255\n}");
 
 		// First, we'll add our own local messages
 		lf.addLocalMessage(
-			msg("1 penmove 1 1"),
-			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1))
+			localMsg1,
+			AffectedArea(AffectedArea::PIXELS, 1, localMsg1.cast<DrawDabsClassic>().bounds())
 			);
 		lf.addLocalMessage(
-			msg("1 penmove 10 10"),
-			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,10,10))
+			localMsg2,
+			AffectedArea(AffectedArea::PIXELS, 1, localMsg2.cast<DrawDabsClassic>().bounds())
 			);
 
 		// Then, we'll "receive" messages from the server
@@ -150,15 +181,15 @@ private slots:
 		// trigger a conflict
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("2 penmove 100 100"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(100,100,1,1))
+				remoteMsg1,
+				AffectedArea(AffectedArea::PIXELS, 1, remoteMsg1.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::CONCURRENT
 		);
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("2 penmove 5 50"),
-				AffectedArea(AffectedArea::PIXELS, 1, QRect(5,5,100,100))
+				remoteMsg2,
+				AffectedArea(AffectedArea::PIXELS, 1, remoteMsg2.cast<DrawDabsClassic>().bounds())
 			),
 			LocalFork::ROLLBACK
 		);
@@ -168,13 +199,22 @@ private slots:
 	{
 		LocalFork lf;
 
+		MessagePtr msg1 = msg("1 classicdabs layer=0x0101 x=10 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n}");
+
+		MessagePtr msg2 = msg("1 classicdabs layer=0x0101 x=20 y=10 color=#00ffffff mode=1 {\n"
+			"0 0 512 255 255\n}");
+
+		MessagePtr msg3 = msg("1 classicdabs layer=0x0101 x=22 y=10 color=#00ffffff mode=1 {\n"
+			"2 0 512 255 255\n}");
+
 		// First, we'll add our own local messages
 		lf.addLocalMessage(
-			msg("1 penmove 1 1"),
+			msg1,
 			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1))
 			);
 		lf.addLocalMessage(
-			msg("1 penmove 10 10"),
+			msg2,
 			AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,10,10))
 			);
 
@@ -183,7 +223,7 @@ private slots:
 		// Then, we'll "receive" something unexpected!
 		QCOMPARE(
 			lf.handleReceivedMessage(
-				msg("1 penmove 100 100"),
+				msg3,
 				AffectedArea(AffectedArea::PIXELS, 1, QRect(100,100,1,1))
 			),
 			LocalFork::ROLLBACK
@@ -198,9 +238,9 @@ private slots:
 		LocalFork lf;
 		lf.setFallbehind(10);
 
-		lf.addLocalMessage(msg("1 penmove 1 1"), AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1)));
+		lf.addLocalMessage(msg("1 penup"), AffectedArea(AffectedArea::PIXELS, 1, QRect(1,1,1,1)));
 
-		protocol::MessagePtr recv = msg("2 penmove 100 100");
+		protocol::MessagePtr recv = msg("2 penup");
 		for(int i=0;i<9;++i) {
 			QCOMPARE(
 				lf.handleReceivedMessage(recv, AffectedArea(AffectedArea::ANNOTATION, 1)),
@@ -219,10 +259,17 @@ private:
 	MessagePtr msg(const QString &line)
 	{
 		text::Parser p;
-		text::Parser::Result r = p.parseLine(line);
-		if(r.status != text::Parser::Result::Ok || !r.msg)
+		QStringList lines = line.split('\n');
+		text::Parser::Result r;
+		int i=0;
+		do {
+			r = p.parseLine(lines.at(i++));
+		} while(r.status==text::Parser::Result::NeedMore);
+
+		if(r.status != text::Parser::Result::Ok || r.msg.isNull())
 			qFatal("invalid message: %s", qPrintable(line));
-		return MessagePtr(r.msg);
+
+		return MessagePtr::fromNullable(r.msg);
 	}
 };
 

@@ -109,8 +109,8 @@ class CanvasView : public QGraphicsView
 		//! Set the size of the brush preview outline
 		void setOutlineSize(int size);
 
-		//! Enable subpixel precision for brush preview outline
-		void setOutlineSubpixelMode(bool subpixel);
+		//! Set subpixel precision mode and shape for brush preview outline
+		void setOutlineMode(bool subpixel, bool square);
 
 		//! Enable or disable pixel grid (shown only at high zoom levels)
 		void setPixelGrid(bool enable);
@@ -142,6 +142,13 @@ class CanvasView : public QGraphicsView
 
 		//! Decrease zoom factor
 		void zoomout();
+
+		//! Zoom the view it's filled by the given rectangle
+		//! If the rectangle is very small, or steps are negative, just zoom by that many steps
+		void zoomTo(const QRect &rect, int steps);
+
+		//! Zoom to fit the view
+		void zoomToFit();
 
 		void setToolCursor(const QCursor &cursor);
 
@@ -241,8 +248,8 @@ class CanvasView : public QGraphicsView
 		qreal _gestureStartZoom;
 		qreal _gestureStartAngle;
 
-		float _outlinesize;
-		bool m_showoutline, m_subpixeloutline;
+		int m_outlineSize;
+		bool m_showoutline, m_subpixeloutline, m_squareoutline;
 		QCursor m_dotcursor, m_colorpickcursor;
 		QCursor m_toolcursor;
 

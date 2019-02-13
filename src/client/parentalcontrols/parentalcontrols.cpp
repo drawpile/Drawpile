@@ -38,6 +38,11 @@ bool isLocked()
 	return isOSActive() || !QSettings().value("pc/locked").toByteArray().isEmpty();
 }
 
+bool isLayerUncensoringBlocked()
+{
+	return isOSActive() || QSettings().value("pc/noUncensoring").toBool();
+}
+
 QString defaultWordList()
 {
 	return QStringLiteral("NSFM, NSFW, R18, R-18, K18, 18+");

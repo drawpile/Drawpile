@@ -81,7 +81,7 @@ void WhatIsMyIp::discoverMyIp()
 		return;
 	m_querying = true;
 
-	QNetworkReply *reply = networkaccess::get(QUrl("http://ipecho.net/plain"), QString());
+	QNetworkReply *reply = networkaccess::get(QUrl("https://ipecho.net/plain"), QString());
 
 	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
 		if(reply->error() != QNetworkReply::NoError) {

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define DP_NET_LAYERLIST_H
 
 #include "core/blendmodes.h"
+#include "features.h"
 
 #include <QAbstractListModel>
 #include <QMimeData>
@@ -37,14 +38,14 @@ namespace paintcore {
 
 namespace canvas {
 
-struct LayerListItem {
-	LayerListItem() : id(0), title(QString()), opacity(1.0), blend(paintcore::BlendMode::MODE_NORMAL), hidden(false), locked(false) {}
-	LayerListItem(int id_, const QString &title_, float opacity_=1.0, paintcore::BlendMode::Mode blend_=paintcore::BlendMode::MODE_NORMAL, bool hidden_=false, bool locked_=false, const QList<uint8_t> &exclusive_=QList<uint8_t>())
-		: id(id_), title(title_), opacity(opacity_), blend(blend_), hidden(hidden_), locked(locked_), exclusive(exclusive_)
-		{}
+class AclFilter;
 
+struct LayerListItem {
 	//! Layer ID
-	int id;
+	// Note: normally, layer ID range is from 0 to 0xffff, but internal
+	// layers use values outside that range. However, internal layers are not
+	// shown in the layer list.
+	uint16_t id;
 	
 	//! Layer title
 	QString title;
@@ -58,13 +59,8 @@ struct LayerListItem {
 	//! Layer hidden flag (local only)
 	bool hidden;
 
-	//! General layer lock
-	bool locked;
-
-	//! Exclusive access to these users
-	QList<uint8_t> exclusive;
-
-	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
+	//! Layer is flagged for censoring
+	bool censored;
 };
 
 }
@@ -82,9 +78,10 @@ public:
 		IdRole = Qt::UserRole + 1,
 		TitleRole,
 		IsDefaultRole,
+		IsLockedRole
 	};
 
-	LayerListModel(QObject *parent=0);
+	LayerListModel(QObject *parent=nullptr);
 	
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -94,36 +91,34 @@ public:
 	QMimeData *mimeData(const QModelIndexList& indexes) const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 
-	QModelIndex layerIndex(int id);
+	QModelIndex layerIndex(uint16_t id);
 	
 	void clear();
-	void createLayer(int id, int index, const QString &title);
-	void deleteLayer(int id);
-	void changeLayer(int id, float opacity, paintcore::BlendMode::Mode blend);
-	void retitleLayer(int id, const QString &title);
-	void setLayerHidden(int id, bool hidden);
+	void createLayer(uint16_t id, int index, const QString &title);
+	void deleteLayer(uint16_t id);
+	void changeLayer(uint16_t id, bool censored, float opacity, paintcore::BlendMode::Mode blend);
+	void retitleLayer(uint16_t id, const QString &title);
+	void setLayerHidden(uint16_t id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);
-	void unlockAll();
-
-	bool isLayerLockedFor(int layerId, int contextId) const;
 	
 	QVector<LayerListItem> getLayers() const { return m_items; }
 	void setLayers(const QVector<LayerListItem> &items);
 
-	void previewOpacityChange(int id, float opacity);
+	void previewOpacityChange(uint16_t id, float opacity);
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
-	const paintcore::Layer *getLayerData(int id) const;
+	void setAclFilter(AclFilter *filter) { m_aclfilter = filter; }
+	const paintcore::Layer *getLayerData(uint16_t id) const;
 
-	int myId() const { return m_myId; }
-	void setMyId(int id) { m_myId = id; }
+	uint8_t myId() const { return m_myId; }
+	void setMyId(uint8_t id) { m_myId = id; }
 
 	/**
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
 	 */
-	int defaultLayer() const { return m_defaultLayer; }
-	void setDefaultLayer(int id);
+	uint16_t defaultLayer() const { return m_defaultLayer; }
+	void setDefaultLayer(uint16_t id);
 
 	/**
 	 * @brief Find a free layer ID
@@ -138,9 +133,6 @@ public:
 	 */
 	QString getAvailableLayerName(QString basename) const;
 
-public slots:
-	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
-
 signals:
 	void layersReordered();
 
@@ -153,22 +145,13 @@ signals:
 private:
 	void handleMoveLayer(int idx, int afterIdx);
 
-	int indexOf(int id) const;
+	int indexOf(uint16_t id) const;
 
-	// Terrible hack: the layers are created and edited in the state tracker (which can run concurrently)
-	// but the ACL changes are updated immediately. So, we must save the ACLs for missing layers in case
-	// they're created afterwards
-	// TODO separate the AclFilter better and update the UI as changes are really applied, then get rid of this.
-	struct LayerAcl {
-		bool locked;
-		QList<uint8_t> exclusive;
-	};
-	QHash<uint16_t, LayerAcl> m_pendingAclChange;
-	
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
-	int m_defaultLayer;
-	int m_myId;
+	AclFilter *m_aclfilter;
+	uint16_t m_defaultLayer;
+	uint8_t m_myId;
 };
 
 /**
@@ -179,11 +162,12 @@ class LayerMimeData : public QMimeData
 {
 Q_OBJECT
 public:
-	LayerMimeData(const LayerListModel *source, int id) : QMimeData(), _source(source), _id(id) {}
+	LayerMimeData(const LayerListModel *source, uint16_t id)
+		: QMimeData(), m_source(source), m_id(id) {}
 
-	const LayerListModel *source() const { return _source; }
+	const LayerListModel *source() const { return m_source; }
 
-	int layerId() const { return _id; }
+	uint16_t layerId() const { return m_id; }
 
 	QStringList formats() const;
 
@@ -191,8 +175,8 @@ protected:
 	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
 
 private:
-	const LayerListModel *_source;
-	int _id;
+	const LayerListModel *m_source;
+	uint16_t m_id;
 };
 
 }

@@ -27,6 +27,9 @@
 #include <QPointer>
 #include <QSslError>
 #include <QFileInfo>
+#include <QByteArray>
+
+class QImage;
 
 namespace protocol {
 	struct ServerCommand;
@@ -60,7 +63,7 @@ public:
 	 *
 	 * @param userid
 	 */
-	void setUserId(int userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
+	void setUserId(uint8_t userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
 
 	/**
 	 * @brief Set desired session ID alias
@@ -87,39 +90,6 @@ public:
 	 * @param title
 	 */
 	void setTitle(const QString &title) { Q_ASSERT(m_mode==HOST); m_title=title; }
-
-	/**
-	 * @brief Set the maximum number of users the session will accept
-	 *
-	 * Only for host mode.
-	 *
-	 * @param maxusers
-	 */
-	void setMaxUsers(int maxusers) { Q_ASSERT(m_mode==HOST); m_maxusers = maxusers; }
-
-	/**
-	 * @brief Set whether new users should be locked by default
-	 *
-	 * Only for host mode.
-	 *
-	 * @param allowdrawing
-	 */
-	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(m_mode==HOST); m_allowdrawing = allowdrawing; }
-
-	/**
-	 * @brief Set whether layer controls should be locked to operators only by default
-	 *
-	 * Only for host mode.
-	 *
-	 * @param layerlock
-	 */
-	void setLayerControlLock(bool layerlock) { Q_ASSERT(m_mode==HOST); m_layerctrllock = layerlock; }
-
-	/**
-	 * @brief Set whether chat history should be preserved in the session
-	 */
-	void setPreserveChat(bool preserve) { Q_ASSERT(m_mode==HOST); m_preserveChat = preserve; }
-	bool isPreservedChat() const { return m_preserveChat; }
 
 	/**
 	 * @brief Set the initial session content to upload to the server
@@ -160,7 +130,7 @@ public:
 	 * @brief get the user ID assigned by the server
 	 * @return user id
 	 */
-	int userId() const { return m_userid; }
+	uint8_t userId() const { return m_userid; }
 
 	/**
 	 * @brief get the ID of the session.
@@ -201,12 +171,21 @@ public slots:
 	/**
 	 * @brief Send password
 	 *
-	 * Call this in response to the needPassword signal after
+	 * Call this in response to the needSessionPassword signal after
 	 * the user has entered their password.
 	 *
 	 * @param password
 	 */
-	void gotPassword(const QString &password);
+	void sendSessionPassword(const QString &password);
+
+	/**
+	 * @brief Select the avatar to use
+	 *
+	 * Call this BEFORE calling selectIdentity for the first time.
+	 *
+	 * @param avatar
+	 */
+	void selectAvatar(const QImage &avatar);
 
 	/**
 	 * @brief Send identity
@@ -263,15 +242,24 @@ public slots:
 
 signals:
 	/**
+	 * @brief The user must enter a username to proceed
+	 *
+	 * This is emitted if no username was set in the URL.
+	 *
+	 * Proceed by calling selectIdentity(username, QString())
+	 * (omit password at this point to attempt a guest login)
+	 */
+	void usernameNeeded();
+
+	/**
 	 * @brief The user must enter a password to proceed
 	 *
-	 * This is emitted when a session is password protected.
+	 * This is emitted when attempting to join a session that is password protected.
 	 * After the user has made a decision, call either
-	 * gotPassword(password) to proceed or cancelLogin() to exit.
+	 * sendSessionPassword(password) to proceed or cancelLogin() to exit.
 	 *
-	 * @param prompt prompt text
 	 */
-	void passwordNeeded(const QString &prompt);
+	void sessionPasswordNeeded();
 
 	/**
 	 * @brief Login details are needeed to proceed
@@ -378,16 +366,13 @@ private:
 
 	Mode m_mode;
 	QUrl m_address;
+	QByteArray m_avatar;
 
 	// Settings for hosting
-	int m_userid;
+	uint8_t m_userid;
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;
-	int m_maxusers;
-	bool m_allowdrawing;
-	bool m_layerctrllock;
-	bool m_preserveChat;
 	bool m_announcePrivate;
 	QString m_announceUrl;
 	QList<protocol::MessagePtr> m_initialState;

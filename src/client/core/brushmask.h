@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2014 Calle Laakkonen
+   Copyright (C) 2013-2018 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,9 +19,7 @@
 #ifndef PAINTCORE_BRUSHMASK_H
 #define PAINTCORE_BRUSHMASK_H
 
-#include "brush.h"
-#include "point.h"
-
+#include <QPoint>
 #include <QVector>
 
 namespace paintcore {
@@ -29,15 +27,15 @@ namespace paintcore {
 class BrushMask
 {
 public:
-	BrushMask() : _diameter(0) {}
-	BrushMask(int dia, const QVector<uchar> data) : _diameter(dia), _data(data) {}
+	BrushMask() : m_diameter(0) {}
+	BrushMask(int dia, const QVector<uchar> data) : m_diameter(dia), m_data(data) {}
 
 	/**
 	 * @brief Get the brush mask diameter.
 	 *
 	 * @return
 	 */
-	int diameter() const { return _diameter; }
+	int diameter() const { return m_diameter; }
 
 	/**
 	 * @brief Get brush mask data
@@ -47,23 +45,21 @@ public:
 	 * @return data
 	 * @pre diameter() > 0
 	 */
-	const uchar *data() const { return _data.data(); }
+	const uchar *data() const { return m_data.data(); }
 
 private:
-	int _diameter;
-	QVector<uchar> _data;
+	int m_diameter;
+	QVector<uchar> m_data;
 };
 
 struct BrushStamp {
 	int left;
 	int top;
 	BrushMask mask;
-
-	BrushStamp() : left(0), top(0) { }
-	BrushStamp(int x, int y, const BrushMask &m) : left(x), top(y), mask(m) { }
 };
 
-BrushStamp makeGimpStyleBrushStamp(const Brush &brush, const Point &point);
+//! Make a brush stamp for area color picking
+BrushStamp makeColorSamplingStamp(int radius, const QPoint &point);
 
 }
 
