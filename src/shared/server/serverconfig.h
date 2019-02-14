@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016-2018 Calle Laakkonen
+   Copyright (C) 2016-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,7 +72,9 @@ namespace config {
 		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
 		ReportToken(17, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
 		LogPurgeDays(18, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
-		AutoresetThreshold(19, "autoResetThreshold", "15mb", ConfigKey::SIZE) // Default autoreset threshold in bytes
+		AutoresetThreshold(19, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
+		AllowCustomAvatars(20, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
+		ExtAuthAvatars(21, "extAuthAvatars", "true", ConfigKey::BOOL)          // Use avatars received from ext-auth server (unless a custom avatar has been set)
 		;
 }
 

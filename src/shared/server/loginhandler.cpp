@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,6 +75,8 @@ void LoginHandler::startLoginProcess()
 		flags << "NOGUEST";
 	if(m_server->config()->internalConfig().reportUrl.isValid())
 		flags << "REPORT";
+	if(m_server->config()->getConfigBool(config::AllowCustomAvatars))
+		flags << "AVATAR";
 
 	greeting.reply["flags"] = flags;
 
@@ -231,7 +233,7 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 		return;
 	}
 
-	if(cmd.kwargs.contains("avatar")) {
+	if(cmd.kwargs.contains("avatar") && m_server->config()->getConfigBool(config::AllowCustomAvatars)) {
 		// TODO validate
 		m_client->setAvatar(QByteArray::fromBase64(cmd.kwargs["avatar"].toString().toUtf8()));
 	}
@@ -266,10 +268,15 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 				const QJsonObject ea = extAuthToken.payload();
 				const QJsonValue uid = ea["uid"];
 
+				QByteArray avatar;
+				if(m_server->config()->getConfigBool(config::ExtAuthAvatars))
+					avatar = extAuthToken.avatar();
+
 				authLoginOk(
 					ea["username"].toString(),
 					uid.isDouble() ? QString::number(uid.toInt()) : uid.toString(),
 					ea["flags"].toArray(),
+					avatar,
 					m_server->config()->getConfigBool(config::ExtAuthMod)
 					);
 
@@ -322,12 +329,12 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 
 	case RegisteredUser::Ok:
 		// Yay, username and password were valid!
-		authLoginOk(username, QString(), QJsonArray::fromStringList(userAccount.flags), true);
+		authLoginOk(username, QString(), QJsonArray::fromStringList(userAccount.flags), QByteArray(), true);
 		break;
 	}
 }
 
-void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, bool allowMod)
+void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, const QByteArray &avatar, bool allowMod)
 {
 	m_client->setUsername(username);
 	m_client->setExtAuthId(extAuthId);
@@ -342,6 +349,8 @@ void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId
 
 	m_client->setAuthenticated(true);
 	m_client->setModerator(flags.contains("MOD") && allowMod);
+	if(!avatar.isEmpty())
+		m_client->setAvatar(avatar);
 	m_hostPrivilege = flags.contains("HOST");
 	m_state = WAIT_FOR_LOGIN;
 
@@ -439,6 +448,7 @@ void LoginHandler::requestExtAuth()
 	identReply.reply["extauthurl"] = m_server->config()->internalConfig().extAuthUrl.toString();
 	identReply.reply["nonce"] = QString::number(m_extauth_nonce, 16);
 	identReply.reply["group"] = m_server->config()->getConfigString(config::ExtAuthGroup);
+	identReply.reply["avatar"] = m_client->avatar().isEmpty() && m_server->config()->getConfigBool(config::ExtAuthAvatars);
 
 	send(identReply);
 #else

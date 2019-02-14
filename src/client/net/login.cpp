@@ -73,6 +73,8 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_canPersist(false),
 	  m_canReport(false),
 	  m_needUserPassword(false),
+	  m_supportsCustomAvatars(false),
+	  m_supportsExtAuthAvatars(false),
 	  m_isGuest(true)
 {
 	m_sessions = new LoginSessionModel(this);
@@ -192,6 +194,8 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 			m_mustAuth = true;
 		} else if(flag == "REPORT") {
 			m_canReport = true;
+		} else if(flag == "AVATAR") {
+			m_supportsCustomAvatars = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
@@ -249,7 +253,7 @@ void LoginHandler::sendSessionPassword(const QString &password)
 void LoginHandler::prepareToSendIdentity()
 {
 	if(m_address.userName().isEmpty()) {
-		emit usernameNeeded();
+		emit usernameNeeded(m_supportsCustomAvatars);
 
 	} else if(m_mustAuth || m_needUserPassword) {
 		m_state = WAIT_FOR_LOGIN_PASSWORD;
@@ -312,6 +316,8 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 	if(!m_extAuthGroup.isEmpty())
 		o["group"] = m_extAuthGroup;
 	o["nonce"] = m_extAuthNonce;
+	if(m_supportsExtAuthAvatars)
+		o["avatar"] = true;
 
 	// Send request
 	QNetworkRequest req(m_extAuthUrl);
@@ -369,6 +375,8 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 		// External authentication needed for this username
 		m_state = WAIT_FOR_EXTAUTH;
 		m_extAuthUrl = msg.reply["extauthurl"].toString();
+		m_supportsExtAuthAvatars = msg.reply["avatar"].toBool();
+
 		if(!m_extAuthUrl.isValid()) {
 			qWarning("Invalid ext-auth URL: %s", qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));

@@ -248,8 +248,10 @@ signals:
 	 *
 	 * Proceed by calling selectIdentity(username, QString())
 	 * (omit password at this point to attempt a guest login)
+	 *
+	 * @param canSelectCustomAvatar is true if the server has announced that it accepts custom avatars
 	 */
-	void usernameNeeded();
+	void usernameNeeded(bool canSelectCustomAvatar);
 
 	/**
 	 * @brief The user must enter a password to proceed
@@ -402,6 +404,8 @@ private:
 	bool m_canReport;
 	bool m_mustAuth;
 	bool m_needUserPassword;
+	bool m_supportsCustomAvatars;
+	bool m_supportsExtAuthAvatars;
 
 	// User flags
 	QStringList m_userFlags;

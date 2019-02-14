@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,20 +36,28 @@ AuthToken::AuthToken(const QByteArray &data)
 	: m_version(0)
 {
 	QList<QByteArray> components = data.split('.');
-	if(components.size() == 3) {
-		bool ok;
-		m_version = components.at(0).toInt(&ok);
-		if(ok) {
-			m_payload = components.at(1);
-			m_signature = QByteArray::fromBase64(components.at(2));
-		}
+	if(components.size() < 1)
+		return;
+
+	bool ok;
+	m_version = components.at(0).toInt(&ok);
+	if(!ok)
+		return;
+
+	if(m_version == 1 && components.size() == 3) {
+		m_payload = components.at(1);
+		m_signature = QByteArray::fromBase64(components.at(2));
+	} else if(m_version == 2 && components.size() == 4) {
+		m_payload = components.at(1);
+		m_avatar = components.at(2);
+		m_signature = QByteArray::fromBase64(components.at(3));
 	}
 }
 
 bool AuthToken::isValid() const
 {
 	return
-		m_version == 1 &&
+		(m_version == 1 || m_version == 2) &&
 		!m_payload.isEmpty() &&
 		m_signature.length() == crypto_sign_BYTES
 		;
@@ -68,7 +76,12 @@ bool AuthToken::checkSignature(const QByteArray &pubkey) const
 		return false;
 	}
 
-	const QByteArray msg = QByteArray::number(m_version) + "." + m_payload;
+	QByteArray msg = QByteArray::number(m_version) + "." + m_payload;
+
+	if(m_version == 2) {
+		msg += ".";
+		msg += m_avatar;
+	}
 
 	const int ret = crypto_sign_ed25519_verify_detached(
 		reinterpret_cast<const unsigned char*>(m_signature.constData()),

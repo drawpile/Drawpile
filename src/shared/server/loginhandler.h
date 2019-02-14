@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ private:
 	void handleStarttls();
 	void requestExtAuth();
 	void guestLogin(const QString &username);
-	void authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, bool allowMod);
+	void authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, const QByteArray &avatar, bool allowMod);
 	bool send(const protocol::ServerReply &cmd);
 	void sendError(const QString &code, const QString &message);
 	void extAuthGuestLogin(const QString &username);

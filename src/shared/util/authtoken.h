@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,12 +29,19 @@ namespace server {
 /**
  * @brief External signed authentication token verifier
  *
- * The auth token format is based on Json Web Tokens.
- * The format is: <version>.<payload>.<signature>.
+ * The auth token format is inspired by Json Web Tokens.
  *
- * Version is the token format version number. Current version is 1.
+ * The v1 format is: 1.<payload>.<signature>
+ *
+ * The v2 format is: 2.<payload>.<avatar>.<signature>
+ *
+ * Version is the token format version number. Current versions are 1 and 2.
+ * Version 2 is used when the avatar image is present.
+ *
  * Payload is a base64 encoded JSON object.
- * Signature is a base64 encoded Ed25519 signature of the version and payload
+ * The avatar part, if present, is a base64 encoded image file.
+ *
+ * Signature is a base64 encoded Ed25519 signature of the everything up to (but not including) the final dot.
  */
 class AuthToken {
 public:
@@ -76,6 +83,13 @@ public:
 	QJsonObject payload() const;
 
 	/**
+	 * @brief Get the avatar
+	 *
+	 * A blank bytearray is returned if no avatar was provided.
+	 */
+	QByteArray avatar() const { return QByteArray::fromBase64(m_avatar); }
+
+	/**
 	 * @brief Generate a random number used to identify a login request
 	 * @return a random 64 bit integer
 	 */
@@ -84,6 +98,7 @@ public:
 private:
 	int m_version;
 	QByteArray m_payload;
+	QByteArray m_avatar;
 	QByteArray m_signature;
 };
 

@@ -384,8 +384,10 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthGroup,
 		config::ExtAuthFallback,
 		config::ExtAuthMod,
+		config::ExtAuthAvatars,
 #endif
-		config::LogPurgeDays
+		config::LogPurgeDays,
+		config::AllowCustomAvatars
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
