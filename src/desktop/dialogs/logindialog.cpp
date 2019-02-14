@@ -200,6 +200,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		page = ui->sessionPasswordPage;
 		break;
 	case Mode::catchup:
+		okButton->setVisible(false);
 		ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(LoginDialog::tr("Close"));
 		page = ui->catchupPage;
 		break;
@@ -433,6 +434,7 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 	header->resizeSection(0, 24);
 
 	d->resetMode(Mode::sessionlist);
+	updateOkButtonEnabled();
 }
 
 void LoginDialog::onSessionPasswordNeeded()
@@ -503,7 +505,11 @@ void LoginDialog::onOkClicked()
 		}
 		break;
 	case Mode::sessionlist: {
-		Q_ASSERT(!d->ui->sessionList->selectionModel()->selectedIndexes().isEmpty());
+		if(d->ui->sessionList->selectionModel()->selectedIndexes().isEmpty()) {
+			qWarning("Ok clicked but no session selected!");
+			return;
+		}
+
 		const QModelIndex i = d->ui->sessionList->selectionModel()->selectedIndexes().first();
 		d->loginHandler->joinSelectedSession(
 			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),

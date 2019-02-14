@@ -1,3 +1,6 @@
+2019-02-?? Version 2.1.1
+ * Fixed OK button related bugs in the login dialog
+
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA
  * Added PutTile command and optimized layer initialization
