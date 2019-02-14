@@ -204,7 +204,10 @@ QImage CanvasModel::toImage() const
 
 bool CanvasModel::needsOpenRaster() const
 {
-	return m_layerstack->layerCount() > 1 || !m_layerstack->annotations()->isEmpty();
+	return m_layerstack->layerCount() > 1 ||
+		!m_layerstack->annotations()->isEmpty() ||
+		!m_layerstack->background().isBlank()
+		;
 }
 
 QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
