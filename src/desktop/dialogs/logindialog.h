@@ -60,7 +60,7 @@ private slots:
 	void showOldCert();
 	void showNewCert();
 
-	void onUsernameNeeded();
+	void onUsernameNeeded(bool canSelectAvatar);
 	void onLoginNeeded(const QString &prompt);
 	void onExtAuthNeeded(const QUrl &url);
 	void onExtAuthComplete(bool success);

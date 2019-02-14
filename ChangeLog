@@ -2,6 +2,7 @@
  * Fixed OK button related bugs in the login dialog
  * Added support for ext-auth avatars
  * Added server configuration option for disabling avatars
+ * Avatar selection box is now only shown if avatars have been configured and server supports custom avatars
 
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA

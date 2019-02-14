@@ -316,11 +316,18 @@ void LoginDialog::showNewCert()
 	dlg->show();
 }
 
-void LoginDialog::onUsernameNeeded()
+void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 {
 	QSettings cfg;
 	d->ui->username->setText(cfg.value("history/username").toString());
-	d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(cfg.value("history/avatar").toString()));
+
+	if(canSelectAvatar && d->avatars->rowCount() > 1) {
+		d->ui->avatarList->show();
+		d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(cfg.value("history/avatar").toString()));
+	} else {
+		d->ui->avatarList->hide();
+	}
+
 	d->resetMode(Mode::identity);
 	updateOkButtonEnabled();
 }
