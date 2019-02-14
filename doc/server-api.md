@@ -18,23 +18,35 @@ Returns a list of server settings:
 
     {
         "clientTimeout": "client connection timeout (e.g. 60s)",
-        "sessionSizeLimit": "maximum session size (e.g. 5MB)",
+        "sessionSizeLimit": "maximum session size (e.g. 50MB)",
         "sessionCountLimit": maximum number of active sessions,
-        "enablePersistence": true/false (enable persistent sessions),
-        "archiveMode": true/false (archive file backed sessions instead of deleting them),
+        "persistence": true/false (enable persistent sessions),
+        "allowGuestHosts": true/false (allow users without the HOST privilege to host sessions),
         "idleTimeLimit": "delete session after it has idled for this long (e.g. 1h, set to 0 to disable)",
         "serverTitle": "title to be shown in the login box",
         "welcomeMessage": "welcome chat message sent to new users",
         "announceWhiteList": true/false (use announcement server whitelist),
         "privateUserList": true/false (if true, user list is never included in announcements),
-        "allowGuestHosts": true/false (allow users without the HOST privilege to host sessions),
         "allowGuests": true/false (allow unauthenticated logins),
+        "archiveMode": true/false (archive file backed sessions instead of deleting them),
+        "extauth": true/false (enable external authentication. Auth server URL must have been set via command line parameter)
+        "extauthkey": "key string" (ext-auth server public key),
+        "extauthgroup": "group id" (user group id. Leave blank to use default group),
+        "extauthfallback": true/false (fall back to guest logins if ext-auth server is not reachable),
+        "extauthmod": true/false (respect ext-auth user's MOD flag),
+        "reporttoken": "" (authorization token for abuse report server),
+        "logpurgedays": n (if set to a value larger than zero, log entries older than this many days are automatically purged),
+        "autoResetThreshold": "size (e.g. 10MB)" (session size at which autoreset request is sent. Should be less than sessionSizeLimit. Can be overridden per-session),
+        "customAvatars": true/false (allow use of custom avatars. Custom avatars override ext-auth avatars.),
+        "extAuthAvatars": true/false (allow use of ext-auth avatars.)
     }
 
 To change any of these settings, send a `PUT` request. Settings not
 included in the request are not changed.
 
 Implementation: `serverJsonApi @ src/server/multiserver.cpp`
+
+See also `src/srver/serverconfig.h` for the most up to date list of supported settings.
 
 
 ## Sessions
