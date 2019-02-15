@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2018 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,7 +54,12 @@ public:
 	void setTitle(const QString &title) override { m_title = title; }
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
-	void setAutoResetThreshold(uint limit) override { m_autoReset = qMin(uint(sizeLimit() * 0.7), limit); }
+	void setAutoResetThreshold(uint limit) override {
+		if(sizeLimit() == 0)
+			m_autoReset = limit;
+		else
+			m_autoReset = qMin(uint(sizeLimit() * 0.9), limit);
+	}
 	uint autoResetThreshold() const override { return m_autoReset; }
 
 	void addAnnouncement(const QString &url) override { m_announcements.insert(url); }

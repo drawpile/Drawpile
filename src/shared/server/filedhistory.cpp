@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2018 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -490,7 +490,7 @@ void FiledHistory::setMaxUsers(int max)
 
 void FiledHistory::setAutoResetThreshold(uint limit)
 {
-	const uint newLimit = qMin(uint(sizeLimit() * 0.7), limit);
+	const uint newLimit = sizeLimit() == 0 ? limit : qMin(uint(sizeLimit() * 0.9), limit);
 	if(newLimit != m_autoResetThreshold) {
 		m_autoResetThreshold = newLimit;
 		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
