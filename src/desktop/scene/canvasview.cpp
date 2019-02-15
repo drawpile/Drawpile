@@ -245,16 +245,17 @@ void CanvasView::setPixelGrid(bool enable)
 /**
  * @param radius circle radius
  */
-void CanvasView::setOutlineSize(int size)
+void CanvasView::setOutlineSize(int newSize)
 {
-	m_outlineSize = size;
-	if(m_showoutline && size>0) {
+	if(m_showoutline && (m_outlineSize>0 || newSize>0)) {
+		const int maxSize = qMax(m_outlineSize, newSize);
 		QList<QRectF> rect;
-		rect.append(QRectF(_prevoutlinepoint.x() - size/2.0f - 0.5f,
-					_prevoutlinepoint.y() - size/2.0f - 0.5f,
-					size + 1, size + 1));
+		rect.append(QRectF(_prevoutlinepoint.x() - maxSize/2.0f - 0.5f,
+					_prevoutlinepoint.y() - maxSize/2.0f - 0.5f,
+					maxSize + 1, maxSize + 1));
 		updateScene(rect);
 	}
+	m_outlineSize = newSize;
 }
 
 void CanvasView::setOutlineMode(bool subpixel, bool square)
