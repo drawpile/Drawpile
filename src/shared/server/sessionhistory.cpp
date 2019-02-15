@@ -89,12 +89,14 @@ bool SessionHistory::reset(const QList<protocol::MessagePtr> &newHistory)
 
 uint SessionHistory::effectiveAutoResetThreshold() const
 {
-	const uint t = autoResetThreshold();
+	uint t = autoResetThreshold();
 	// Zero means autoreset is not enabled
-	if(t>0)
-		return m_autoResetBaseSize + t;
-	else
-		return 0;
+	if(t>0) {
+		t += m_autoResetBaseSize;
+		if(m_sizeLimit>0)
+			t = qMin(t, uint(m_sizeLimit * 0.9));
+	}
+	return t;
 }
 
 }
