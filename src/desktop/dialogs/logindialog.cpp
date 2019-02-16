@@ -287,7 +287,11 @@ void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 
 	if(canSelectAvatar && d->avatars->rowCount() > 1) {
 		d->ui->avatarList->show();
-		d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(cfg.value("history/avatar").toString()));
+		const QString avatar = cfg.value("history/avatar").toString();
+		if(avatar.isEmpty())
+			d->ui->avatarList->setCurrentIndex(0);
+		else
+			d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(avatar).row());
 	} else {
 		d->ui->avatarList->hide();
 	}
@@ -456,15 +460,15 @@ void LoginDialog::onOkClicked()
 		qWarning("OK button click in wrong mode!");
 		break;
 	case Mode::identity: {
-		QSettings cfg;
-		const QModelIndexList avatarSelection = d->ui->avatarList->selectionModel()->selectedIndexes();
-		const QString avatar = avatarSelection.isEmpty() ? QString() : avatarSelection.first().data(AvatarListModel::FilenameRole).toString();
-		cfg.setValue("history/username", d->ui->username->text());
-		cfg.setValue("history/avatar", avatar);
-		d->avatars->commit(); // save avatar if one was added
+		const QPixmap avatar = d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
+		const QString avatarFile = avatar.isNull() ? QString() : d->ui->avatarList->currentData(AvatarListModel::FilenameRole).toString();
 
-		if(!avatar.isEmpty())
-			d->loginHandler->selectAvatar(avatarSelection.first().data(Qt::DecorationRole).value<QPixmap>().toImage());
+		QSettings cfg;
+		cfg.setValue("history/username", d->ui->username->text());
+		cfg.setValue("history/avatar", avatarFile);
+
+		if(!avatar.isNull())
+			d->loginHandler->selectAvatar(avatar.toImage());
 
 		d->loginHandler->selectIdentity(d->ui->username->text(), QString());
 		break; }

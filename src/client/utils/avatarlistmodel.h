@@ -55,7 +55,6 @@ private:
 	struct Avatar {
 		QPixmap icon;
 		QString filename;
-		bool added;
 	};
 
 	QVector<Avatar> m_avatars;

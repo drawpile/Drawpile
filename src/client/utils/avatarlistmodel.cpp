@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ QVariant AvatarListModel::data(const QModelIndex &index, int role) const
 	const Avatar &a = m_avatars.at(index.row());
 
 	switch(role) {
+	case Qt::DisplayRole: return a.icon.isNull() ? a.filename : QString();
 	case Qt::DecorationRole: return a.icon;
 	case FilenameRole: return a.filename;
 	}
@@ -89,8 +90,7 @@ void AvatarListModel::addAvatar(const QPixmap &icon)
 	beginInsertRows(QModelIndex(), m_avatars.size(), m_avatars.size());
 	m_avatars << Avatar {
 		icon,
-		QString(),
-		true
+		QString()
 	};
 	endInsertRows();
 }
@@ -101,9 +101,8 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 
 	if(includeBlank) {
 		avatars << Avatar {
-			QPixmap("builtin:no-avatar.svg"),
-			QString(),
-			false
+			QPixmap(),
+			tr("No avatar")
 		};
 	}
 
@@ -114,8 +113,7 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 		for(const QString &filename : files) {
 			avatars << Avatar {
 				QPixmap(dir.filePath(filename), "PNG"),
-				filename,
-				false
+				filename
 			};
 		}
 	}
@@ -143,7 +141,7 @@ bool AvatarListModel::commit()
 
 	// Save newly added avatars
 	for(Avatar &a : m_avatars) {
-		if(a.added) {
+		if(!a.icon.isNull() && a.filename.isEmpty()) {
 			Q_ASSERT(!a.icon.isNull());
 
 			QBuffer buf;
@@ -155,16 +153,16 @@ bool AvatarListModel::commit()
 			QCryptographicHash hash(QCryptographicHash::Md5);
 			hash.addData(&buf);
 
-			a.filename = QString::fromUtf8(hash.result().toHex() + ".png");
-			QFile f { dir.filePath(a.filename) };
+			const QString filename = QString::fromUtf8(hash.result().toHex() + ".png");
+			QFile f { dir.filePath(filename) };
 			if(!f.open(QFile::WriteOnly)) {
-				qWarning("Couldn't save %s.png", qPrintable(f.fileName()));
+				qWarning("Couldn't save %s", qPrintable(filename));
 				return false;
 			}
 			f.write(buf.data());
 			f.close();
 
-			a.added = false;
+			a.filename = filename;
 		}
 	}
 	return true;
