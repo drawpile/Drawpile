@@ -10,6 +10,7 @@
  * Save censored layer flag in OpenRaster files
  * Fixed ORA file loading (2.1.0 regression)
  * Add copy merged action (copy visible selection excluding background)
+ * Fixed window autoraising when notification balloon was shown (Windows specific bug)
 
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA

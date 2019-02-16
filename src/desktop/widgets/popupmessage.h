@@ -59,6 +59,7 @@ private:
 	QPainterPath m_bubble;
 	QTimer *m_timer;
 	QTextDocument *m_doc;
+	QWidget *m_parentWidget;
 };
 
 }

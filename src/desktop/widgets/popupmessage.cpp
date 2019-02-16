@@ -30,12 +30,16 @@
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(parent, Qt::ToolTip), m_arrowoffset(0), m_timer(new QTimer(this)), m_doc(new QTextDocument(this))
+	: QWidget(nullptr, Qt::ToolTip), m_arrowoffset(0), m_timer(new QTimer(this)), m_doc(new QTextDocument(this)), m_parentWidget(parent)
 {
 	m_timer->setSingleShot(true);
 	m_timer->setInterval(2500);
 
 	connect(m_timer, &QTimer::timeout, this, &PopupMessage::hide);
+
+	// If this widget has a real parent, showing it will raise the parent window
+	// (on Windows,) which is undesirable.
+	connect(m_parentWidget, &QWidget::destroyed, this, &PopupMessage::deleteLater);
 }
 
 void PopupMessage::setMessage(const QString &message)
@@ -79,7 +83,7 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 	resize(m_doc->size().toSize() + QSize(PADDING*2, PADDING*2 + ARROW_H));
 
 	QRect rect(point - QPoint(width() - width()/6,height()), size());
-	const QRect screen = qApp->desktop()->availableGeometry(parentWidget());
+	const QRect screen = qApp->desktop()->availableGeometry(m_parentWidget);
 
 	// Make sure the popup fits horizontally
 	if(rect.x() + rect.width() > screen.x() + screen.width()) {
