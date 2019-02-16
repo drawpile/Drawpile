@@ -76,6 +76,8 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
+
+	updateLayerViewOptions();
 }
 
 uint8_t CanvasModel::localUserId() const
