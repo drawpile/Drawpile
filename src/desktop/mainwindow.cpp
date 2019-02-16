@@ -184,8 +184,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
-	setUnifiedTitleAndToolBarOnMac(true);
-
 	// The document (initially empty)
 	m_doc = new Document(this);
 
