@@ -20,17 +20,12 @@
 
 #include <QStandardPaths>
 #include <QDir>
+#include <QBuffer>
+#include <QCryptographicHash>
 
 AvatarListModel::AvatarListModel(QObject *parent)
 	: QAbstractListModel(parent)
 {
-}
-
-void AvatarListModel::setShowNames(bool show)
-{
-	beginResetModel();
-	m_showNames = show;
-	endResetModel();
 }
 
 int AvatarListModel::rowCount(const QModelIndex &parent) const
@@ -48,9 +43,8 @@ QVariant AvatarListModel::data(const QModelIndex &index, int role) const
 	const Avatar &a = m_avatars.at(index.row());
 
 	switch(role) {
-	case Qt::DisplayRole: return m_showNames || a.icon.isNull() ? a.name : QVariant();
 	case Qt::DecorationRole: return a.icon;
-	case Namerole: return a.name;
+	case FilenameRole: return a.filename;
 	}
 
 	return QVariant();
@@ -60,31 +54,9 @@ Qt::ItemFlags AvatarListModel::flags(const QModelIndex &index) const
 {
 	Qt::ItemFlags f = Qt::NoItemFlags;
 	if(index.isValid() && index.row() >= 0 && index.row() < m_avatars.size()) {
-		f = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+		f = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 	}
 	return f;
-}
-
-bool AvatarListModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-	if(role!=Qt::EditRole || !index.isValid() || index.row() < 0 || index.row() >= m_avatars.size())
-		return false;
-
-	const QString newName = value.toString();
-
-	// Name must be unique and non-empty
-	if(newName.isEmpty())
-		return false;
-
-	for(const Avatar &a : m_avatars) {
-		if(a.name == newName)
-			return false;
-	}
-
-	m_avatars[index.row()].name = newName;
-
-	emit dataChanged(index, index);
-	return true;
 }
 
 bool AvatarListModel::removeRows(int row, int count, const QModelIndex &parent)
@@ -94,32 +66,31 @@ bool AvatarListModel::removeRows(int row, int count, const QModelIndex &parent)
 
 	beginRemoveRows(QModelIndex(), row, row+count-1);
 	while(count--) {
-		if(!m_avatars[row].originalName.isEmpty())
-			m_deletions << m_avatars[row].originalName;
+		if(!m_avatars[row].filename.isEmpty())
+			m_deletions << m_avatars[row].filename;
 		m_avatars.remove(row);
 	}
 	endRemoveRows();
 	return true;
 }
 
-QModelIndex AvatarListModel::getAvatar(const QString &name) const
+QModelIndex AvatarListModel::getAvatar(const QString &filename) const
 {
 	for(int i=0;i<m_avatars.size();++i) {
-		if(m_avatars.at(i).name == name)
+		if(m_avatars.at(i).filename == filename)
 			return index(i);
 	}
 
 	return QModelIndex();
 }
 
-void AvatarListModel::addAvatar(const QString &name, const QPixmap &icon)
+void AvatarListModel::addAvatar(const QPixmap &icon)
 {
-	// TODO sort alphabetically?
 	beginInsertRows(QModelIndex(), m_avatars.size(), m_avatars.size());
 	m_avatars << Avatar {
 		icon,
-		name,
-		QString() // No original name since file hasn't been saved yet
+		QString(),
+		true
 	};
 	endInsertRows();
 }
@@ -132,7 +103,7 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 		avatars << Avatar {
 			QPixmap("builtin:no-avatar.svg"),
 			QString(),
-			QString()
+			false
 		};
 	}
 
@@ -141,11 +112,10 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 		const QStringList files = dir.entryList(QStringList() << "*.png", QDir::Files|QDir::Readable);
 
 		for(const QString &filename : files) {
-			const QString name = filename.left(filename.lastIndexOf('.'));
 			avatars << Avatar {
 				QPixmap(dir.filePath(filename), "PNG"),
-				name,
-				name
+				filename,
+				false
 			};
 		}
 	}
@@ -166,49 +136,36 @@ bool AvatarListModel::commit()
 	}
 
 	// Commit deletions
-	for(const QString &name : m_deletions) {
-		dir.remove(name + ".png");
+	for(const QString &filename : m_deletions) {
+		dir.remove(filename);
 	}
+	m_deletions.clear();
 
-	// Rename avatars and save new ones
-	QStringList renames;
-	for(const Avatar &a : m_avatars) {
-		if(a.name != a.originalName) {
-			if(a.originalName.isEmpty()) {
-				// Newly added avatar
-				if(!a.icon.isNull() && !a.icon.save(dir.filePath(a.name + ".png"), "PNG")) {
-					qWarning("Couldn't save %s.png", qPrintable(a.name));
-				}
+	// Save newly added avatars
+	for(Avatar &a : m_avatars) {
+		if(a.added) {
+			Q_ASSERT(!a.icon.isNull());
 
-			} else {
-				// Rename avatar
-				const QString newName = a.name + ".png";
-				if(dir.exists(newName)) {
-					// Uh oh, we have swapped filenames.
-					// Rename this in two passes.
-					if(!dir.rename(a.originalName + ".png", QString("_rename%1").arg(renames.size()))) {
-						qWarning("Renaming %s failed (first pass)!", qPrintable(a.originalName));
-						return false;
-					}
-					renames << newName;
+			QBuffer buf;
+			buf.open(QBuffer::ReadWrite);
 
-				} else {
-					if(!dir.rename(a.originalName + ".png", newName)) {
-						qWarning("Renaming %s failed!", qPrintable(a.originalName));
-						return false;
-					}
-				}
+			a.icon.save(&buf, "PNG");
+			buf.seek(0);
+
+			QCryptographicHash hash(QCryptographicHash::Md5);
+			hash.addData(&buf);
+
+			a.filename = QString::fromUtf8(hash.result().toHex() + ".png");
+			QFile f { dir.filePath(a.filename) };
+			if(!f.open(QFile::WriteOnly)) {
+				qWarning("Couldn't save %s.png", qPrintable(f.fileName()));
+				return false;
 			}
+			f.write(buf.data());
+			f.close();
+
+			a.added = false;
 		}
 	}
-
-	// Second pass renames
-	for(int i=0;i<renames.size();++i) {
-		if(!dir.rename(QString("_rename%1").arg(i), renames.at(i))) {
-			qWarning("Renaming _rename%d failed!", i);
-			return false;
-		}
-	}
-
 	return true;
 }

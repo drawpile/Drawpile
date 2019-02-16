@@ -93,21 +93,19 @@ void AvatarImport::importAvatar(AvatarListModel *avatarList, QPointer<QWidget> p
 		return;
 	}
 
-	const QFileInfo fi(path);
-
 	if(picture.width() != picture.height()) {
 		// Not square format: needs cropping
 		auto *dlg = new dialogs::AvatarImport(picture, parentWindow);
 		dlg->setModal(true);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		connect(dlg, &QDialog::accepted, avatarList, [parentWindow, fi, dlg, avatarList]() {
-			avatarList->addAvatar(fi.baseName(), QPixmap::fromImage(dlg->croppedAvatar().scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+		connect(dlg, &QDialog::accepted, avatarList, [parentWindow, dlg, avatarList]() {
+			avatarList->addAvatar(QPixmap::fromImage(dlg->croppedAvatar().scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
 		});
 
 		dlg->show();
 
 	} else {
-		avatarList->addAvatar(fi.baseName(), QPixmap::fromImage(picture.scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+		avatarList->addAvatar(QPixmap::fromImage(picture.scaled(Size, Size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
 	}
 }
 

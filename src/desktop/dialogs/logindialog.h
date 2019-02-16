@@ -50,8 +50,6 @@ public slots:
 	void onLoginDone(bool join);
 
 private slots:
-	void onAvatarChanged(const QModelIndex&);
-	void onAddAvatar();
 	void onOkClicked();
 	void onReportClicked();
 

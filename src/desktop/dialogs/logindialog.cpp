@@ -23,7 +23,6 @@
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "dialogs/avatarimport.h"
 
 #include "utils/avatarlistmodel.h"
 #include "utils/sessionfilterproxymodel.h"
@@ -86,7 +85,6 @@ struct LoginDialog::Private {
 		// Identity & authentication page
 		ui->username->setValidator(new UsernameValidator(dlg));
 		avatars = new AvatarListModel(dlg);
-		avatars->setShowNames(false);
 		avatars->loadAvatars(true);
 		ui->avatarList->setModel(avatars);
 
@@ -95,22 +93,6 @@ struct LoginDialog::Private {
 
 		ui->passwordIcon->setText(QString());
 		ui->passwordIcon->setPixmap(icon::fromTheme("object-locked").pixmap(22, 22));
-
-		QAction *addAvatarAction = new QAction(LoginDialog::tr("Add..."), dlg);
-		connect(addAvatarAction, &QAction::triggered, dlg, &LoginDialog::onAddAvatar);
-		ui->avatarList->addAction(addAvatarAction);
-
-		ui->avatarList->setContextMenuPolicy(Qt::ActionsContextMenu);
-
-		connect(avatars, &AvatarListModel::rowsInserted, ui->avatarList, [this](const QModelIndex&, int first) {
-			// autoselect newly added avatar
-			const QModelIndex idx = avatars->index(first);
-			ui->avatarList->selectionModel()->select(
-				idx,
-				QItemSelectionModel::Clear|QItemSelectionModel::SelectCurrent
-			);
-			ui->avatarList->scrollTo(idx);
-		});
 
 		// Session list page
 		QObject::connect(ui->sessionList, &QTableView::doubleClicked, [this](const QModelIndex&) {
@@ -219,8 +201,6 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	setWindowModality(Qt::WindowModal);
 	setWindowTitle(login->url().host());
 
-	connect(d->ui->avatarList->selectionModel(), &QItemSelectionModel::currentChanged, this, &LoginDialog::onAvatarChanged);
-
 	connect(d->ui->username, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
 	connect(d->ui->password, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
 	connect(d->ui->sessionPassword, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
@@ -284,22 +264,6 @@ void LoginDialog::updateOkButtonEnabled()
 	}
 
 	d->okButton->setEnabled(enabled);
-}
-
-void LoginDialog::onAvatarChanged(const QModelIndex& index)
-{
-	if(!index.isValid())
-		return;
-
-	// Avatars have associated default usernames
-	const QString name = index.data(AvatarListModel::Namerole).toString();
-	if(!name.isEmpty())
-		d->ui->username->setText(name);
-}
-
-void LoginDialog::onAddAvatar()
-{
-	AvatarImport::importAvatar(d->avatars, this);
 }
 
 void LoginDialog::showOldCert()
@@ -494,7 +458,7 @@ void LoginDialog::onOkClicked()
 	case Mode::identity: {
 		QSettings cfg;
 		const QModelIndexList avatarSelection = d->ui->avatarList->selectionModel()->selectedIndexes();
-		const QString avatar = avatarSelection.isEmpty() ? QString() : avatarSelection.first().data(AvatarListModel::Namerole).toString();
+		const QString avatar = avatarSelection.isEmpty() ? QString() : avatarSelection.first().data(AvatarListModel::FilenameRole).toString();
 		cfg.setValue("history/username", d->ui->username->text());
 		cfg.setValue("history/avatar", avatar);
 		d->avatars->commit(); // save avatar if one was added
