@@ -464,7 +464,9 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		info.opacity = qRound(255 * layer.opacity);
 
 		result.commands << paintcore::LayerTileSet::fromImage(
-			content.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+			content.convertToFormat(QImage::Format_ARGB32_Premultiplied),
+			canvas.size,
+			layer.offset
 			).toInitCommands(ctxId, info);
 
 		if(layer.locked) {

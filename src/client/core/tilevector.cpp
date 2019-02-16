@@ -81,8 +81,13 @@ LayerTileSet LayerTileSet::fromLayer(const Layer &layer)
 
 LayerTileSet LayerTileSet::fromImage(const QImage &image)
 {
-	Layer l(0, QString(), Qt::transparent, image.size());
-	EditableLayer(&l, nullptr).putImage(0, 0, image, paintcore::BlendMode::MODE_REPLACE);
+	return fromImage(image, image.size(), QPoint());
+}
+
+LayerTileSet LayerTileSet::fromImage(const QImage &image, const QSize &layerSize, const QPoint &offset)
+{
+	Layer l(0, QString(), Qt::transparent, layerSize);
+	EditableLayer(&l, nullptr).putImage(offset.x(), offset.y(), image, paintcore::BlendMode::MODE_REPLACE);
 	return fromLayer(l);
 }
 

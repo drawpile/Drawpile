@@ -26,6 +26,9 @@
 #include <QVector>
 #include <QColor>
 
+class QSize;
+class QPoint;
+
 namespace paintcore {
 
 class Layer;
@@ -57,6 +60,7 @@ struct LayerTileSet {
 	 */
 	static LayerTileSet fromLayer(const Layer &layer);
 	static LayerTileSet fromImage(const QImage &image);
+	static LayerTileSet fromImage(const QImage &image, const QSize &layerSize, const QPoint &offset);
 
 	/**
 	 * @brief Generate a set of commands to create a layer from this tileset

@@ -8,6 +8,7 @@
  * Fixed autoreset sometimes failing to work
  * Fixed missing layer attributes in reset
  * Save censored layer flag in OpenRaster files
+ * Fixed ORA file loading (2.1.0 regression)
 
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA
