@@ -6,6 +6,7 @@
  * Fixed mouse droppings when switching to a smaller brush
  * Fixed setting autoreset threshold when session size is unlimited
  * Fixed autoreset sometimes failing to work
+ * Fixed missing layer attributes in reset
 
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA

@@ -20,6 +20,7 @@
 #include "core/blendmodes.h"
 #include "core/annotationmodel.h"
 #include "core/tilevector.h"
+#include "core/layer.h"
 #include "ora/orareader.h"
 #include "ora/orawriter.h"
 #include "canvas/features.h"
@@ -452,23 +453,19 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			}
 		}
 
-		result.commands << paintcore::LayerTileSet::fromImage(
-			content.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-			).toInitCommands(ctxId, ++layerId, layer.name);
+		paintcore::LayerInfo info {++layerId, layer.name };
 
 		bool exact_blendop;
-		int blendmode = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
+		info.blend = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
 		if(!exact_blendop)
 			result.warnings |= OraResult::ORA_EXTENDED;
 
-		result.commands << MessagePtr(new protocol::LayerAttributes(
-			ctxId,
-			layerId,
-			0,
-			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
-			uint8_t(qRound(255 * layer.opacity)),
-			blendmode
-			));
+		info.censored = layer.censored;
+		info.opacity = qRound(255 * layer.opacity);
+
+		result.commands << paintcore::LayerTileSet::fromImage(
+			content.convertToFormat(QImage::Format_ARGB32_Premultiplied)
+			).toInitCommands(ctxId, info);
 
 		if(layer.locked) {
 			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, int(canvas::Tier::Guest), QList<uint8_t>()));

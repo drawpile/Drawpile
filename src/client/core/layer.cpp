@@ -103,7 +103,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(int id, const QString& title, const QColor& color, const QSize& size)
-	: m_info({id, title, 255, false, false, BlendMode::MODE_NORMAL}),
+	: m_info({id, title}),
 	  m_width(size.width()),
 	  m_height(size.height()),
 	  m_xtiles(Tile::roundTiles(size.width())),

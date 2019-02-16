@@ -86,26 +86,35 @@ LayerTileSet LayerTileSet::fromImage(const QImage &image)
 	return fromLayer(l);
 }
 
-QList<protocol::MessagePtr> LayerTileSet::toInitCommands(int contextId, int layerId, const QString &layerTitle)
+QList<protocol::MessagePtr> LayerTileSet::toInitCommands(int contextId, const LayerInfo &info)
 {
 	QList<protocol::MessagePtr> msgs;
 
 	msgs << protocol::MessagePtr(new protocol::LayerCreate(
 		contextId,
-		layerId,
+		info.id,
 		0,
 		background.rgba(),
 		0,
-		layerTitle
+		info.title
+	));
+
+	msgs << protocol::MessagePtr(new protocol::LayerAttributes(
+		contextId,
+		info.id,
+		0,
+		info.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+		info.opacity,
+		info.blend
 	));
 
 	for(const TileRun &t : tiles) {
 		Q_ASSERT(t.len>0);
 		if(t.color.isValid()) {
-			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, 0, t.col, t.row, t.len-1, t.color.rgba()));
+			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, info.id, 0, t.col, t.row, t.len-1, t.color.rgba()));
 		} else {
 			Q_ASSERT(!t.tile.isNull());
-			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, layerId, 0, t.col, t.row, t.len-1,
+			msgs << protocol::MessagePtr(new protocol::PutTile(contextId, info.id, 0, t.col, t.row, t.len-1,
 				qCompress(reinterpret_cast<const uchar*>(t.tile.constData()), paintcore::Tile::BYTES)
 				));
 		}

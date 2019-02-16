@@ -48,10 +48,13 @@ struct LayerInfo {
 	QString title;
 
 	// Rendering controls
-	uchar opacity;
-	bool hidden;
-	bool censored;
-	BlendMode::Mode blend;
+	uchar opacity = 255;
+	bool hidden = false;
+	bool censored = false;
+	BlendMode::Mode blend = BlendMode::MODE_NORMAL;
+
+	LayerInfo() = default;
+	LayerInfo(int id, const QString &title) : id(id), title(title) { }
 };
 
 /**

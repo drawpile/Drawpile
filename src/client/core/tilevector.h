@@ -29,6 +29,7 @@
 namespace paintcore {
 
 class Layer;
+struct LayerInfo;
 
 /**
  * @brief One or more tile to be placed on a layer
@@ -62,10 +63,9 @@ struct LayerTileSet {
 	 *
 	 * @param context ID context ID to use for the commands
 	 * @param layerId ID for the new layer
-	 * @param title Title for the new layer
-	 * @return layer creation commands
+	 * @param info layer attributes
 	 */
-	QList<protocol::MessagePtr> toInitCommands(int contextId, int layerId, const QString &layerTitle);
+	QList<protocol::MessagePtr> toInitCommands(int contextId, const LayerInfo &info);
 };
 
 }

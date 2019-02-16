@@ -100,7 +100,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 
 			msgs << paintcore::LayerTileSet::fromImage(
 				image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-				).toInitCommands(1, layerId, QStringLiteral("Layer %1").arg(layerId));
+				).toInitCommands(1, paintcore::LayerInfo(layerId, QStringLiteral("Layer %1").arg(layerId)));
 
 			++layerId;
 		}
@@ -117,7 +117,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 
 	msgs << paintcore::LayerTileSet::fromImage(
 		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-		).toInitCommands(1, 1, QStringLiteral("Layer 1"));
+		).toInitCommands(1, paintcore::LayerInfo(1, QStringLiteral("Layer 1")));
 
 	return msgs;
 }
@@ -153,7 +153,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 		const paintcore::Layer *layer = m_layers->getLayerByIndex(i);
 
 		msgs << paintcore::LayerTileSet::fromLayer(*layer)
-			.toInitCommands(m_contextId, layer->id(), layer->title());
+			.toInitCommands(m_contextId, layer->info());
 
 		// Set layer ACLs (if found)
 		if(m_session) {
