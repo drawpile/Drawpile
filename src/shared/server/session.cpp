@@ -692,7 +692,7 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
 
 		// New style for Drawpile 2.1.0 and newer
-		// Autoreset request: send an autoreset query to each logged in user.
+		// Autoreset request: send an autoreset query to each logged in operator.
 		// The user that responds first gets to perform the reset.
 		protocol::ServerReply resetRequest;
 		resetRequest.type = protocol::ServerReply::RESETREQUEST;
@@ -700,12 +700,8 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		resetRequest.reply["query"] = true;
 		protocol::MessagePtr reqMsg { new protocol::Command(0, resetRequest )};
 
-		// The request is sent only to clients that are fully caught up.
-		// Otherwise, a freshly joined client could end up rolling back
-		// the canvas to an earlier state.
-		const int uptodateThreshold = m_history->lastIndex() - 1;
 		for(Client *c : m_clients) {
-			if(c->isOperator() && c->historyPosition() >= uptodateThreshold)
+			if(c->isOperator())
 				c->sendDirectMessage(reqMsg);
 		}
 

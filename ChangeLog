@@ -5,6 +5,7 @@
  * Avatar selection box is now only shown if avatars have been configured and server supports custom avatars
  * Fixed mouse droppings when switching to a smaller brush
  * Fixed setting autoreset threshold when session size is unlimited
+ * Fixed autoreset sometimes failing to work
 
 2019-02-13 Version 2.1.0
  * Changed internal pixel format to premultiplied 32 bit RGBA
