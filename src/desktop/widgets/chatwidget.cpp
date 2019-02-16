@@ -54,7 +54,7 @@ struct Chat {
 			".notification { background: #232629 }"
 			".message, .notification {"
 				"color: #eff0f1;"
-				"margin: 6px 0 6px 0"
+				"margin: 2px 0 2px 0"
 			"}"
 			".shout { background: #34292c }"
 			".shout .tab { background: #da4453 }"
@@ -65,13 +65,13 @@ struct Chat {
 			".op { color: #f47750 }"
 			".mod { color: #ed1515 }"
 			".timestamp { color #4d4d4d }"
+			".padright { padding-right: 6px }"
 			"a:link { color: #1d99f3 }"
 		);
 	}
 
-	void appendSeparator(QTextCursor &cursor);
 	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout);
-	void appendAction(const QString &usernameSpan, const QString &message);
+	void appendAction(int userId, const QString &usernameSpan, const QString &message);
 	void appendNotification(const QString &message);
 };
 
@@ -318,13 +318,6 @@ QString ChatBox::Private::usernameSpan(int userId)
 	);
 }
 
-void Chat::appendSeparator(QTextCursor &cursor)
-{
-	cursor.insertHtml(QStringLiteral(
-		"<table height=1 width=\"100%\" class=sep><tr><td></td></tr></table>"
-		));
-}
-
 void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout)
 {
 	QTextCursor cursor(doc);
@@ -336,11 +329,10 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		lastAppendedId = -2;
 
 	} else if(lastAppendedId != userId) {
-		appendSeparator(cursor);
 		lastAppendedId = userId;
 
 	} else if(ts - lastMessageTs < 60000) {
-		QTextBlock b = doc->lastBlock().previous();
+		QTextBlock b = doc->lastBlock().previous().previous();
 		cursor.setPosition(b.position() + b.length() - 1);
 
 		cursor.insertHtml(QStringLiteral("<br>"));
@@ -356,44 +348,42 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=\"message%1\">"
 		"<tr>"
-			"<td width=3 rowspan=2 class=tab></td>"
-			"<td width=50 rowspan=2><img src=\"avatar://%2\"></td>"
-			"<td>%3</td>"
-			"<td class=timestamp align=right>%4</td>"
-		"</tr>"
-		"<tr>"
-			"<td colspan=2>%5</td>"
+			"<td width=3 class=tab></td>"
+			"<td width=20><img src=\"avatar://%2\" width=16 height=16></td>"
+			"<td width=1 class=padright><nobr>%3:</nobr></td>"
+			"<td>%4</td>"
+			"<td class=timestamp align=right>%5</td>"
 		"</tr>"
 		"</table>"
 		).arg(
 			shout ? QStringLiteral(" shout") : QString(),
 			QString::number(userId),
 			usernameSpan,
-			timestamp(),
-			htmlutils::newlineToBr(message)
+			htmlutils::newlineToBr(message),
+			timestamp()
 		)
 	);
 	lastMessageTs = ts;
 }
 
-void Chat::appendAction(const QString &usernameSpan, const QString &message)
+void Chat::appendAction(int userId, const QString &usernameSpan, const QString &message)
 {
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
 
-	if(lastAppendedId != -1) {
-		appendSeparator(cursor);
-		lastAppendedId = -1;
-	}
+	lastAppendedId = -1;
 
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=message>"
 		"<tr>"
-			"<td><span class=action>%1 %2</span></td>"
-			"<td class=timestamp align=right>%3</td>"
+			"<td width=3 class=tab></td>"
+			"<td width=20><img src=\"avatar://%1\" width=16 height=16></td>"
+			"<td><span class=action>%2 %3</span></td>"
+			"<td class=timestamp align=right>%4</td>"
 		"</tr>"
 		"</table>"
 		).arg(
+			QString::number(userId),
 			usernameSpan,
 			message,
 			timestamp()
@@ -406,10 +396,7 @@ void Chat::appendNotification(const QString &message)
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
 
-	if(lastAppendedId != 0) {
-		appendSeparator(cursor);
-		lastAppendedId = 0;
-	}
+	lastAppendedId = 0;
 
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=notification><tr>"
@@ -506,7 +493,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 			}
 
 		} else if(chat.isAction()) {
-			d->publicChat().appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+			d->publicChat().appendAction(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
 
 		} else {
 			d->publicChat().appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
@@ -530,7 +517,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 		Chat &c = d->chats[chatId];
 
 		if(chat.isAction()) {
-			c.appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+			c.appendAction(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
 
 		} else {
 			c.appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
