@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2017 Calle Laakkonen
+   Copyright (C) 2009-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -88,6 +88,8 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 			writer.writeAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
 			writer.writeAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
+		if(l->info().censored)
+			writer.writeAttribute(DP_NAMESPACE, "censored", "true");
 
 		writer.writeEndElement();
 	}
