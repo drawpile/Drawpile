@@ -211,6 +211,7 @@ public slots:
 	void cancelSelection();
 
 	void copyVisible();
+	void copyMerged();
 	void copyLayer();
 	void cutLayer();
 	void pasteImage(const QImage &image, const QPoint &point, bool forcePoint); // Note: selection tool should be activated before calling this

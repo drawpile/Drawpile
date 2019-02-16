@@ -798,6 +798,12 @@ void Document::copyVisible()
 	copyFromLayer(0);
 }
 
+void Document::copyMerged()
+{
+	copyFromLayer(-1);
+}
+
+
 void Document::copyLayer()
 {
 	copyFromLayer(m_toolctrl->activeLayer());

@@ -2222,6 +2222,7 @@ void MainWindow::setupActions()
 	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(QKeySequence::Undo);
 	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", tr("&Copy Visible")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
+	QAction *copyMerged = makeAction("copymerged", tr("Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
 	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
@@ -2280,6 +2281,7 @@ void MainWindow::setupActions()
 	connect(undo, &QAction::triggered, m_doc, &Document::undo);
 	connect(redo, &QAction::triggered, m_doc, &Document::redo);
 	connect(copy, &QAction::triggered, m_doc, &Document::copyVisible);
+	connect(copyMerged, &QAction::triggered, m_doc, &Document::copyMerged);
 	connect(copylayer, &QAction::triggered, m_doc, &Document::copyLayer);
 	connect(cutlayer, &QAction::triggered, m_doc, &Document::cutLayer);
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
@@ -2313,6 +2315,7 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(cutlayer);
 	editmenu->addAction(copy);
+	editmenu->addAction(copyMerged);
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);

@@ -169,7 +169,7 @@ void IndexBuilder::generateIndex(KZip &zip, Reader &reader)
 			if(thumbnailCount==0 || thumbnailActions >= THUMBNAIL_INTERVAL) {
 				thumbnailActions = 0;
 
-				QImage thumb = image.toFlatImage(false).scaled(171, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				QImage thumb = image.toFlatImage(false, true).scaled(171, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				QBuffer buf;
 				buf.open(QBuffer::ReadWrite);
 				thumb.save(&buf, "PNG");

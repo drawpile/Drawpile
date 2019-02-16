@@ -111,7 +111,7 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 
 	paintcore::LayerStack stack;
 	stack.editor().restoreSavepoint(m_data->canvas);
-	QImage img = stack.toFlatImage(true);
+	QImage img = stack.toFlatImage(true, true);
 	if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 		img = img.scaled(maxSize, Qt::KeepAspectRatio);
 	}

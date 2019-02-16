@@ -196,10 +196,10 @@ void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 	emit canvasModified();
 }
 
-QImage CanvasModel::toImage() const
+QImage CanvasModel::toImage(bool withBackground) const
 {
 	// TODO include annotations or not?
-	return m_layerstack->toFlatImage(false);
+	return m_layerstack->toFlatImage(false, withBackground);
 }
 
 bool CanvasModel::needsOpenRaster() const
@@ -335,7 +335,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 	if(layer)
 		img = layer->toImage();
 	else
-		img = toImage();
+		img = toImage(layerId==0);
 
 
 	if(m_selection) {

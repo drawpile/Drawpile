@@ -98,7 +98,7 @@ public:
 	QColor colorAt(int x, int y, int dia=0) const;
 
 	//! Return a flattened image of the layer stack
-	QImage toFlatImage(bool includeAnnotations) const;
+	QImage toFlatImage(bool includeAnnotations, bool includeBackground) const;
 
 	//! Return a single layer merged with the background
 	QImage flatLayerImage(int layerIdxr) const;

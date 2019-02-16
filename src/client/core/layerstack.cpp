@@ -235,7 +235,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 	}
 }
 
-QImage LayerStack::toFlatImage(bool includeAnnotations) const
+QImage LayerStack::toFlatImage(bool includeAnnotations, bool includeBackground) const
 {
 	if(m_layers.isEmpty())
 		return QImage();
@@ -243,7 +243,8 @@ QImage LayerStack::toFlatImage(bool includeAnnotations) const
 	Layer flat(0, QString(), Qt::transparent, size());
 	EditableLayer ef(&flat, nullptr);
 
-	ef.putTile(0, 0, 9999*9999, m_backgroundTile);
+	if(includeBackground)
+		ef.putTile(0, 0, 9999*9999, m_backgroundTile);
 
 	for(int i=0;i<m_layers.size();++i) {
 		if(m_layers.at(i)->isVisible())
