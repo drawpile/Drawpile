@@ -88,7 +88,7 @@ bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack 
 		ok = openraster::saveOpenRaster(filename, &layers, &error);
 
 	} else {
-		QImage flat = layers.toFlatImage(settings.mergeAnnotations);
+		QImage flat = layers.toFlatImage(settings.mergeAnnotations, true);
 
 		if(settings.fixedSize && state.lastSize.isEmpty())
 			state.lastSize = flat.size();
