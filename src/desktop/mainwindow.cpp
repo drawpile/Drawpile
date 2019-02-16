@@ -2523,7 +2523,7 @@ void MainWindow::setupActions()
 	m_dockLayers->setLayerEditActions(layerAdd, layerDupe, layerMerge, layerDelete);
 
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
-	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).checkable();
+	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).shortcut("Shift+Ctrl+O").checkable();
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable().remembered();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 
