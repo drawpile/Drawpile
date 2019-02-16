@@ -40,7 +40,6 @@
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
-#include <QBuffer>
 
 namespace canvas {
 
@@ -398,13 +397,12 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 	QImage avatar;
 	if(!msg.avatar().isEmpty()) {
 		QByteArray avatarData = msg.avatar();
-		QBuffer buf(&avatarData);
-		if(!avatar.load(&buf, "PNG"))
+		if(!avatar.loadFromData(avatarData))
 			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(msg.name()), msg.contextId());
 
 		// Rescale avatar if its the wrong size
-		if(avatar.width() != 42 || avatar.height() != 42) {
-			avatar = avatar.scaled(42, 42);
+		if(avatar.width() > 32 || avatar.height() > 32) {
+			avatar = avatar.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		}
 	}
 	if(avatar.isNull())

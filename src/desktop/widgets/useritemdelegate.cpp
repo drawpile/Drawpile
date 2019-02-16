@@ -34,7 +34,7 @@ namespace widgets {
 
 static const int MARGIN = 4;
 static const int PADDING = 8;
-static const int AVATAR_SIZE = 42;
+static const int AVATAR_SIZE = 32;
 static const int STATUS_OVERLAY_SIZE = 16;
 static const int BUTTON_WIDTH = 16;
 
@@ -138,7 +138,7 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		option.rect.height() - MARGIN*2
 		);
 	QFont font = option.font;
-	font.setPixelSize(22);
+	font.setPixelSize(20);
 	font.setWeight(QFont::Light);
 	painter->setPen(option.palette.text().color());
 	painter->setFont(font);
