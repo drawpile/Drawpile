@@ -88,6 +88,23 @@ struct LoginDialog::Private {
 		avatars->loadAvatars(true);
 		ui->avatarList->setModel(avatars);
 
+#ifdef Q_OS_OSX
+		// The avatar selection combobox looks terrible on macOS
+		// With this style, it looks slightly less terrible.
+		ui->avatarList->setStyleSheet(
+			"QComboBox {"
+				"border: none;"
+				"background: transparent;"
+			"}"
+			"QComboBox:hover {"
+				"border: 1px dotted black;"
+			"}"
+			"QComboBox::drop-down {"
+				"background: transparent;"
+			"}"
+		);
+#endif
+
 		ui->usernameIcon->setText(QString());
 		ui->usernameIcon->setPixmap(icon::fromTheme("im-user").pixmap(22, 22));
 
