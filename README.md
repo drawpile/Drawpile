@@ -22,6 +22,7 @@ Some feature highlights:
 
 Common dependencies:
  * Qt 5.5 or newer (QtGui not required for headless server)
+ * KF5 Extra CMake Modules
  * [KF5 KArchive]
 
 Client specific dependencies:

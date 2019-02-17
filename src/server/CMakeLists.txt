@@ -91,7 +91,7 @@ add_executable(${SRVNAME} main.cpp ${QtResource})
 target_link_libraries(${SRVNAME} "${SRVNAME}lib")
 
 if ( UNIX AND NOT APPLE )
-	install ( TARGETS ${SRVNAME} DESTINATION bin )
+	install ( TARGETS ${SRVNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
 endif ()
 
 if(TESTS)

@@ -19,6 +19,7 @@ add_executable( drawpile-cmd ${DPCMDTOOL_SOURCES} )
 target_link_libraries( drawpile-cmd ${DPSHAREDLIB} ${DPCLIENTLIB} Qt5::Core)
 
 if ( UNIX AND NOT APPLE )
-	install ( TARGETS dprectool DESTINATION bin )
+	install ( TARGETS dprectool DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
+	install ( TARGETS drawpile-cmd DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
 endif ()
 

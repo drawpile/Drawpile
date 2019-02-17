@@ -2,7 +2,9 @@ cmake_minimum_required( VERSION 2.8.12 )
 
 project ( drawpile C CXX )
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config")
+find_package(ECM REQUIRED NOMODULE)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/config" ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
@@ -19,6 +21,8 @@ set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
 
 ###
 include ( "config/Names.cmake" )
+
+include(KDEInstallDirs)
 
 ### options ###
 option ( CLIENT "Compile client" ON )

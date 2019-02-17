@@ -92,8 +92,6 @@ IF(KIS_TABLET)
 			bundled/kis_tablet/qxcbconnection.cpp
 			bundled/kis_tablet/qxcbconnection_xi2.cpp
 		)
-		find_package(ECM 5.19 REQUIRED NOMODULE)
-		set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 		find_package(X11 REQUIRED COMPONENTS Xinput)
 		find_package(XCB REQUIRED COMPONENTS XCB)
@@ -105,10 +103,6 @@ ENDIF(KIS_TABLET)
 
 if(GIF_FOUND)
 	add_definitions(-DHAVE_GIFLIB)
-endif()
-
-if(LIBMINIUPNPC_FOUND)
-	add_definitions(-DHAVE_UPNP)
 endif()
 
 if(LIBMINIUPNPC_FOUND)
@@ -251,7 +245,7 @@ set_target_properties (
 	PROJECT_LABEL drawpile-client
 )
 
-install ( TARGETS ${CLIENTNAME} DESTINATION bin )
+install ( TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	strip_exe ( ${CLIENTNAME} )

@@ -1,40 +1,30 @@
-find_program(XDGICON xdg-icon-resource)
-find_program(XDGMENU xdg-desktop-menu)
-find_program(XDGMIME xdg-mime)
+include(ECMInstallIcons)
 
-if( XDGICON )
-	install(CODE "
-		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-16x16.png --size 16 drawpile)
-		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-32x32.png --size 32 drawpile)
-		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-64x64.png --size 64 drawpile)
-		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-128x128.png --size 128 drawpile)
-		execute_process(COMMAND ${XDGICON} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-256x256.png --size 256 drawpile)
+ecm_install_icons(ICONS
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/16-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/32-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/48-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/64-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/128-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/256-apps-drawpile.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/apps/sc-apps-drawpile.svg"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/16-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/32-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/48-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/64-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/128-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/256-mimetypes-application-x-drawpile-recording.png"
+	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/sc-mimetypes-application-x-drawpile-recording.svg"
+	DESTINATION "${KDE_INSTALL_ICONDIR}" THEME hicolor)
 
-		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-16x16.png --size 16 application-x-drawpile-recording)
-		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-32x32.png --size 32 application-x-drawpile-recording)
-		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-64x64.png --size 64 application-x-drawpile-recording)
-		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-128x128.png --size 128 application-x-drawpile-recording)
-		execute_process(COMMAND ${XDGICON} install --context mimetypes ${CMAKE_CURRENT_SOURCE_DIR}/drawpile-256x256.png --size 256 application-x-drawpile-recording)
-	")
-endif()
+install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.desktop" DESTINATION "${XDG_APPS_INSTALL_DIR}")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.appdata.xml" DESTINATION "${KDE_INSTALL_METAINFODIR}")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/x-drawpile.xml" DESTINATION "${XDG_MIME_INSTALL_DIR}")
 
-if( XDGMENU )
-	install(CODE "
-		execute_process(COMMAND ${XDGMENU} install --novendor ${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.desktop)
-	")
-endif()
+set(DPDATADIR "${DATA_INSTALL_DIR}/drawpile/drawpile")
 
-if( XDGMIME )
-	install(CODE "
-		execute_process(COMMAND ${XDGMIME} install ${CMAKE_CURRENT_SOURCE_DIR}/x-drawpile.xml)
-	")
-endif()
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/palettes" DESTINATION "${DPDATADIR}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${DPDATADIR}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/theme" DESTINATION "${DPDATADIR}")
 
-set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile")
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/palettes" DESTINATION "${DATADIR}")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${DATADIR}")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/theme" DESTINATION "${DATADIR}")
-
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.appdata.xml" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo/")
 
