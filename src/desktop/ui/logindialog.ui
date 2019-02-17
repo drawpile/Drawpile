@@ -29,7 +29,14 @@
      <widget class="QWidget" name="loadingPage">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="Spinner" name="loadingSpinner"/>
+        <widget class="Spinner" name="loadingSpinner">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>64</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
