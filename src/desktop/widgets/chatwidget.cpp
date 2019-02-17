@@ -182,7 +182,7 @@ void ChatBox::Private::updatePreserveModeUi()
 		color = "#da4453";
 	} else {
 		placeholder = tr("Chat...");
-		color = "#4d4d4d";
+		color = "#1d99f3";
 	}
 
 	// Set placeholder text and window style based on the mode
