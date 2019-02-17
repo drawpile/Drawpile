@@ -28,7 +28,7 @@
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
-	: QWidget(parent)
+	: QWidget(parent), m_updating(false)
 {
 	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
@@ -94,6 +94,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
+	m_updating = true;
 	const int intZoom = qRound(zoom);
 	const int zoomCursorPos = m_zoomBox->lineEdit()->cursorPosition();
 	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
@@ -103,12 +104,14 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 	const int angleCursorPos = m_angleBox->lineEdit()->cursorPosition();
 	m_angleBox->setEditText(QString::number(intAngle) + QChar(0x00b0));
 	m_angleBox->lineEdit()->setCursorPosition(angleCursorPos);
-
-
+	m_updating = false;
 }
 
 void ViewStatus::zoomBoxChanged(const QString &text)
 {
+	if(m_updating)
+		return;
+
 	const int suffix = text.indexOf('%');
 	const QStringRef num = suffix>0 ? text.leftRef(suffix) : &text;
 
@@ -120,6 +123,9 @@ void ViewStatus::zoomBoxChanged(const QString &text)
 
 void ViewStatus::angleBoxChanged(const QString &text)
 {
+	if(m_updating)
+		return;
+
 	const int suffix = text.indexOf(0x00b0);
 	const QStringRef num = suffix>0 ? text.leftRef(suffix) : &text;
 

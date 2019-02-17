@@ -45,6 +45,7 @@ private slots:
 private:
 	QComboBox *m_zoomBox;
 	QComboBox *m_angleBox;
+	bool m_updating;
 };
 
 }
