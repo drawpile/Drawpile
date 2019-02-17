@@ -2,9 +2,9 @@ FROM dockcross/windows-x64
 
 WORKDIR /usr/src/mxe
 
-# Get specific MXE version that is known to work (2019-01-10)
-# Provides Qt 5.12.0
-RUN git fetch && git checkout 62329b26b94cf1eeb37a24f73228eda2078e44ea
+# Get the latest MXE version that provides Qt 5.11
+# KIS_TABLET code doesn not work correctly with Qt 5.12
+RUN git fetch && git checkout 730aeba502031f64c119959fded5bab471e5f5e5
 
 # Custom MXE settings
 ADD settings.mk /usr/src/mxe/
@@ -16,6 +16,9 @@ RUN make download-miniupnpc download-giflib download-libsodium download-libvpx
 
 # Patch Qt
 ADD qtbase-2-no-tabletevent.patch /usr/src/mxe/src/
+
+# Customized MXE dependencies
+ADD libvpx.mk /usr/src/mxe/src/
 
 # Build MXE dependencies
 RUN make -j$(nproc) qt5 miniupnpc giflib libsodium libvpx

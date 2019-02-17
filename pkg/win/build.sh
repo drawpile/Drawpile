@@ -9,7 +9,7 @@ mkdir -p out
 
 cd ../..
 
-IMAGE="dpwin8"
+IMAGE="${IMAGE:-dpwin8}"
 SRCVOL="$(pwd):/Drawpile:ro"
 OUTVOL="$(pwd)/pkg/win/out:/out"
 
@@ -18,6 +18,8 @@ if [ "$1" == "shell" ]; then
 elif [ "$1" == "pkg" ] || [ "$1" == "installer" ]; then
 	CMD="/Drawpile/pkg/win/make-pkg.sh"
 fi
+
+echo "Running $CMD in $IMAGE"
 
 docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL" $IMAGE $CMD
 
