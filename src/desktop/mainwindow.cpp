@@ -256,7 +256,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	chatsplitter->addWidget(m_userlistview);
 
 	chatsplitter->setStretchFactor(0, 5);
-	chatsplitter->setStretchFactor(1, 2);
+	chatsplitter->setStretchFactor(1, 1);
 	m_splitter->addWidget(chatsplitter);
 
 	{
