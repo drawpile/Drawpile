@@ -26,10 +26,29 @@
 #include <QToolButton>
 #include <QList>
 #include <QDateTime>
+#include <QPainter>
 
 namespace dialogs {
 
 static const QSize THUMBNAIL_SIZE { 256, 256 };
+
+static void drawCheckerBackground(QImage &image)
+{
+	const int TS = 16;
+	const QBrush checker[] = {
+		QColor(128,128,128),
+		QColor(Qt::white)
+	};
+	QPainter painter(&image);
+	painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+	for(int y=0;y<image.height();y+=TS) {
+		for(int x=0;x<image.width();x+=TS*2) {
+			const int z = (y/TS+x) % 2 == 0;
+			painter.fillRect(x, y, TS, TS, checker[z]);
+			painter.fillRect(x+TS, y, TS, TS, checker[1-z]);
+		}
+	}
+}
 
 struct ResetDialog::Private
 {
@@ -65,8 +84,15 @@ struct ResetDialog::Private
 
 		while(thumbnails.size() <= -selection)
 			thumbnails.append(QPixmap());
-		if(thumbnails.at(-selection).isNull())
-			thumbnails[-selection] = QPixmap::fromImage(savepoints[qMin(savepoints.size() - 1, savepoints.size() + selection)].thumbnail(THUMBNAIL_SIZE));
+		if(thumbnails.at(-selection).isNull()) {
+			QImage thumb = savepoints[qMin(savepoints.size() - 1, savepoints.size() + selection)].thumbnail(THUMBNAIL_SIZE);
+			if(thumb.isNull()) {
+				thumb = QImage(32, 32, QImage::Format_ARGB32_Premultiplied);
+				thumb.fill(0);
+			};
+			drawCheckerBackground(thumb);
+			thumbnails[-selection] = QPixmap::fromImage(thumb);
+		}
 
 		ui->preview->setPixmap(thumbnails.at(-selection));
 	}
@@ -82,6 +108,8 @@ ResetDialog::ResetDialog(const canvas::StateTracker *state, QWidget *parent)
 	QImage currentImage = state->image()->toFlatImage(true, true);
 	if(currentImage.width() > THUMBNAIL_SIZE.width() || currentImage.height() > THUMBNAIL_SIZE.height())
 		currentImage = currentImage.scaled(THUMBNAIL_SIZE, Qt::KeepAspectRatio);
+	drawCheckerBackground(currentImage);
+
 	d->thumbnails.append(QPixmap::fromImage(currentImage));
 
 	d->updateSelectionTitle();
