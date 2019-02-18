@@ -262,6 +262,9 @@ FillResult floodfill(const LayerStack *image, const QPoint &point, const QColor 
 	Q_ASSERT(image);
 	Q_ASSERT(tolerance>=0);
 
+	if(!image->getLayer(layer))
+		return FillResult();
+
 	Floodfill fill(image, layer, merge, color, tolerance, sizelimit);
 
 	if(point.x() >=0 && point.x() < image->width() && point.y()>=0 && point.y() < image->height())
