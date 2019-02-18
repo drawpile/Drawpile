@@ -1,6 +1,7 @@
 2019-0?-?? Version 2.1.2
  * Increased brush dab max spacing limit to 150%
  * Fixed crash when using flood fill on an canvas without any layers
+ * Fixed crash when trying to reset after resetting to the very beginning of the history
 
 2019-02-17 Version 2.1.1
  * Fixed OK button related bugs in the login dialog

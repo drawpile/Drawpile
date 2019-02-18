@@ -48,6 +48,8 @@ struct ResetDialog::Private
 
 	void updateSelectionTitle()
 	{
+		Q_ASSERT(!savepoints.isEmpty());
+
 		QString title;
 		if(selection == 0) {
 			title = QApplication::tr("Current");
@@ -64,7 +66,7 @@ struct ResetDialog::Private
 		while(thumbnails.size() <= -selection)
 			thumbnails.append(QPixmap());
 		if(thumbnails.at(-selection).isNull())
-			thumbnails[-selection] = QPixmap::fromImage(savepoints[savepoints.size() + selection].thumbnail(THUMBNAIL_SIZE));
+			thumbnails[-selection] = QPixmap::fromImage(savepoints[qMin(savepoints.size() - 1, savepoints.size() + selection)].thumbnail(THUMBNAIL_SIZE));
 
 		ui->preview->setPixmap(thumbnails.at(-selection));
 	}
