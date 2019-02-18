@@ -91,7 +91,7 @@ public:
 	qreal smudge1() const { return m_smudge1; }
 	qreal smudge2() const { return m_smudge2; }
 
-	void setSpacing(int spacing) { Q_ASSERT(spacing >= 0 && spacing <= 100); m_spacing = spacing; }
+	void setSpacing(int spacing) { Q_ASSERT(spacing > 0); m_spacing = spacing; }
 	int spacing() const { return m_spacing; }
 
 	//! Set smudge colir resampling frequency (0 resamples on every dab)

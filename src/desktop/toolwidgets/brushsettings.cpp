@@ -48,7 +48,7 @@ namespace brushprop {
 		hard = {QStringLiteral("hard"), 100, 1, 100},
 		smudge = {QStringLiteral("smudge"), 0, 0, 100},
 		resmudge = {QStringLiteral("resmudge"), 3, 0, 255},
-		spacing = {QStringLiteral("spacing"), 10, 0, 100},
+		spacing = {QStringLiteral("spacing"), 10, 1, 150},
 		brushmode = {QStringLiteral("brushmode"), 0, 0, 3} /* 0: hard edge, 1: square, 2: soft edge, 3: watercolor */
 		;
 	static const ToolProperties::BoolValue
