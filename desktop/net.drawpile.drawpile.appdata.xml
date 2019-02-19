@@ -9,19 +9,11 @@
 	<summary>Collaborative Drawing</summary>
 	<description>
 		<p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
-		<p>Feature highlights:</p>
-		<ul>
-			<li>Access to layers can be limited on a per user basis</li>
-			<li>Built-in chat</li>
-			<li>Works with pressure sensitive graphics tablets</li>
-			<li>Supports OpenRaster file format</li>
-			<li>Drawing sessions can be recorded, played back and exported as videos</li>
-			<li>Basic animation features, such as onionskinning and a flipbook</li>
-			<li>Discover drawing sessions via global announcement feature or locally with Zeroconf</li>
-		</ul>
+		<p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
 	</description>
 	<url type="homepage">https://drawpile.net/</url>
-	<url type="bugtracker">https://github.com/callaa/Drawpile/issues</url>
+	<url type="help">https://drawpile.net/help/</url>
+	<url type="bugtracker">https://github.com/drawpile/Drawpile/issues</url>
 	<screenshots>
 		<screenshot type="default">
 			<image>https://drawpile.net/media/d/images/screenshot2.png</image>
@@ -30,8 +22,22 @@
 	<categories>
 		<category>Graphics</category>
 	</categories>
+	<releases>
+		<release version="2.1.1" date="2019-02-17">
+			<url>https://drawpile.net/news/release-2.1.1/</url>
+		</release>
+		<release version="2.1.0" date="2019-02-13">
+			<url>https://drawpile.net/news/release-2.1.0/</url>
+		</release>
+	</releases>
 	<provides>
 		<binary>drawpile</binary>
+		<id>net.drawpile.drawpile.desktop</id>
 	</provides>
+	<content_rating type="oars-1.0">
+		<content_attribute id="social-chat">intense</content_attribute>
+		<content_attribute id="social-audio">intense</content_attribute>
+	</content_rating>
+
 </component>
 
