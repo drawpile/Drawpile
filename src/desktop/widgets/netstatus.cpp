@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "widgets/popupmessage.h"
 #include "dialogs/certificateview.h"
 #include "dialogs/netstats.h"
+#include "utils/icon.h"
 #include "../shared/util/whatismyip.h"
 
 #ifdef HAVE_UPNP
@@ -189,17 +190,17 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	switch(level) {
 	case net::Server::NO_SECURITY: break;
 	case net::Server::NEW_HOST:
-		iconname = "semi-trusted";
+		iconname = "security-medium";
 		tooltip = tr("A previously unvisited host");
 		break;
 
 	case net::Server::KNOWN_HOST:
-		iconname = "semi-trusted";
+		iconname = "security-medium";
 		tooltip = tr("Host certificate has not changed since the last visit");
 		break;
 
 	case net::Server::TRUSTED_HOST:
-		iconname = "trusted";
+		iconname = "security-high";
 		tooltip = tr("This is a trusted host");
 		break;
 	}
@@ -207,7 +208,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	if(iconname.isEmpty()) {
 		m_security->hide();
 	} else {
-		m_security->setPixmap(QIcon("builtin:" + iconname + ".svg").pixmap(16, 16));
+		m_security->setPixmap(icon::fromTheme(iconname).pixmap(16, 16));
 		m_security->setToolTip(tooltip);
 		m_security->show();
 	}

@@ -729,8 +729,8 @@
                  <string>Mark as trusted</string>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normaloff>builtin:trusted.svg</normaloff>builtin:trusted.svg</iconset>
+                  <iconset theme="security-high">
+                   <normaloff>theme:security-high.svg</normaloff>theme:security-high.svg</iconset>
                 </property>
                </widget>
               </item>

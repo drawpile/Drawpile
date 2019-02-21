@@ -23,8 +23,6 @@
         <file>dock-close.svg</file>
         <file>dock-detach.svg</file>
         <file>drawpile.png</file>
-        <file>semi-trusted.svg</file>
-        <file>trusted.svg</file>
         <file>censored.svg</file>
     </qresource>
 </RCC>
