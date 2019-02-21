@@ -6,7 +6,6 @@
         <file>light/square.svg</file>
         <file>light/round.svg</file>
         <file>light/paintmode-incremental.svg</file>
-        <file>light/paintmode-indirect.svg</file>
 
         <file>dark/chat.svg</file>
         <file>dark/chat-alert.svg</file>
@@ -14,9 +13,7 @@
         <file>dark/round.svg</file>
         <file>dark/square.svg</file>
         <file>dark/paintmode-incremental.svg</file>
-        <file>dark/paintmode-indirect.svg</file>
 
-        <file>no-avatar.svg</file>
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>
