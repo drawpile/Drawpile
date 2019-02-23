@@ -19,6 +19,7 @@
 
 #include "flipbook.h"
 #include "core/layerstack.h"
+#include "core/layer.h"
 #include "utils/icon.h"
 
 #include "ui_flipbook.h"
@@ -175,6 +176,16 @@ void Flipbook::loadFrame()
 {
 	const int f = m_ui->layerIndex->value() - 1;
 	if(m_layers && f < m_frames.size()) {
+
+		if(m_layers->getLayerByIndex(f)->isFixed()) {
+			int next;
+			do {
+				next = (f + 1) % m_frames.size();
+			} while(next != f && m_layers->getLayerByIndex(next)->isFixed());
+			m_ui->layerIndex->setValue(next + 1);
+			return;
+		}
+
 		if(m_frames.at(f).isNull()) {
 			QImage img = m_layers->flatLayerImage(f);
 

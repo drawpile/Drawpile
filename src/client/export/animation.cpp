@@ -44,12 +44,17 @@ void AnimationExporter::saveNextFrame()
 		m_exporter->finish();
 
 	} else {
-		QImage image = m_layers->flatLayerImage(m_currentFrame - 1);
+		// Fixed layers are static backgrounds and are not exported as frames
+		if(m_layers->getLayerByIndex(m_currentFrame - 1)->isFixed()) {
+			m_currentFrame++;
+			saveNextFrame();
 
-		m_exporter->saveFrame(image, 1);
-		m_currentFrame++;
-
-		emit progress(m_currentFrame);
+		} else {
+			const QImage image = m_layers->flatLayerImage(m_currentFrame - 1);
+			m_exporter->saveFrame(image, 1);
+			m_currentFrame++;
+			emit progress(m_currentFrame);
+		}
 	}
 }
 
