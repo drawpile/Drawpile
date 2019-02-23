@@ -157,6 +157,7 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 
 	setAutosave(false);
 	initCanvas();
+	m_canvas->layerStack()->setDpi(loader.dotsPerInch());
 	m_client->sendResetMessages(init);
 	setCurrentFilename(loader.filename());
 	unmarkDirty();

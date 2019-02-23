@@ -51,6 +51,9 @@ struct OraResult {
 	//! Warning flags
 	Warnings warnings;
 
+	//! Image resolution info (presently not used internally by Drawpile)
+	int dpiX, dpiY;
+
 	OraResult() : warnings(NO_WARNINGS) { }
 	OraResult(const QString &error) : error(error) { }
 };

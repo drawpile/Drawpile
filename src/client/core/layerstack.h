@@ -128,6 +128,22 @@ public:
 	bool isCensored() const { return m_censorLayers; }
 
 	/**
+	 * @brief Set the canvas resolution (dots per inch)
+	 *
+	 * This information is not used internally by Drawpile, but it
+	 * can be saved in files to be used by other programs.
+	 */
+	void setDpi(int x, int y) { m_dpix = x; m_dpiy = y; }
+	void setDpi(QPair<int,int> dpi) { m_dpix = dpi.first; m_dpiy = dpi.second; }
+
+	/**
+	 * @brief Get the canvas resolution
+	 *
+	 * If either component is zero, the default DPI should be assumed.
+	 */
+	QPair<int,int> dotsPerInch() const { return QPair<int,int>(m_dpix, m_dpiy); }
+
+	/**
 	 * @brief Find a layer with a sublayer with the given ID and return its change bounds
 	 * @param contextid
 	 * @return Layer ID, Change bounds pair
@@ -159,6 +175,7 @@ private:
 
 	int m_width, m_height;
 	int m_xtiles, m_ytiles;
+	int m_dpix, m_dpiy;
 	QList<Layer*> m_layers;
 	AnnotationModel *m_annotations;
 	Tile m_backgroundTile;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 
 			m_warning = text;
 		}
+		m_dpi = QPair<int,int>(ora.dpiX, ora.dpiY);
 		return ora.commands;
 
 	} else {
@@ -95,6 +96,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			}
 
 			if(layerId==1) {
+				m_dpi = QPair<int,int>(int(image.dotsPerMeterX() * 0.0254), int(image.dotsPerMeterY() * 0.0254));
 				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
 			}
 
@@ -181,6 +183,11 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	}
 
 	return msgs;
+}
+
+QPair<int,int> SnapshotLoader::dotsPerInch() const
+{
+	return m_layers->dotsPerInch();
 }
 
 }

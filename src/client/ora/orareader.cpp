@@ -72,6 +72,8 @@ namespace {
 		QList<Layer> layers; // note: layer order in an ORA stack is topmost first
 		QList<Annotation> annotations;
 
+		int xres, yres;
+
 		bool nestedWarning;
 		bool extensionsWarning;
 
@@ -345,7 +347,12 @@ static bool readStackImage(QXmlStreamReader &reader, Canvas &canvas)
 			attrs.value("h").toInt()
 			);
 
-	static const char *knownImageAttributes[] = {"w", "h", "version", nullptr};
+	if(!attrs.value("xres").isEmpty()) {
+		canvas.xres = attrs.value("xres").toInt();
+		canvas.yres = attrs.value("yres").toInt();
+	}
+
+	static const char *knownImageAttributes[] = {"w", "h", "xres", "yres", "version", nullptr};
 
 	if(hasUnknownAttributes("image", attrs, knownImageAttributes))
 		canvas.extensionsWarning = true;
@@ -397,6 +404,9 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		result.warnings |= OraResult::ORA_EXTENDED;
 	if(canvas.nestedWarning)
 		result.warnings |= OraResult::ORA_NESTED;
+
+	result.dpiX = canvas.xres;
+	result.dpiY = canvas.yres;
 
 	const uint8_t ctxId = 1;
 

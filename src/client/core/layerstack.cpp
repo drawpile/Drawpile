@@ -32,7 +32,7 @@ namespace paintcore {
 static const Tile CENSORED_TILE = Tile::CensorBlock(QColor("#232629"), QColor("#eff0f1"));
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), m_width(0), m_height(0), m_viewmode(NORMAL), m_viewlayeridx(0),
+	: QObject(parent), m_width(0), m_height(0), m_dpix(0), m_dpiy(0), m_viewmode(NORMAL), m_viewlayeridx(0),
 	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_openEditors(0), m_onionskinTint(true), m_censorLayers(false)
 {
 	m_annotations = new AnnotationModel(this);
@@ -45,6 +45,8 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_height(orig->m_height),
 	  m_xtiles(orig->m_xtiles),
 	  m_ytiles(orig->m_ytiles),
+	  m_dpix(orig->m_dpix),
+	  m_dpiy(orig->m_dpiy),
 	  m_viewmode(orig->m_viewmode),
 	  m_viewlayeridx(orig->m_viewlayeridx),
 	  m_onionskinsBelow(orig->m_onionskinsBelow),
@@ -259,6 +261,10 @@ QImage LayerStack::toFlatImage(bool includeAnnotations, bool includeBackground) 
 			a.paint(&painter);
 	}
 
+	if(m_dpix > 0 && m_dpiy > 0) {
+		image.setDotsPerMeterX(int(m_dpix / 0.0254));
+		image.setDotsPerMeterY(int(m_dpiy / 0.0254));
+	}
 	return image;
 }
 
@@ -272,7 +278,13 @@ QImage LayerStack::flatLayerImage(int layerIdx) const
 	ef.putTile(0, 0, 9999*9999, m_backgroundTile);
 	ef.merge(m_layers.at(layerIdx));
 
-	return ef->toImage();
+	QImage image = ef->toImage();
+	if(m_dpix > 0 && m_dpiy > 0) {
+		image.setDotsPerMeterX(int(m_dpix / 0.0254));
+		image.setDotsPerMeterY(int(m_dpiy / 0.0254));
+	}
+
+	return image;
 }
 
 // Flatten a single tile

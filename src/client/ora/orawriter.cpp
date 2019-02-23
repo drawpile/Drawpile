@@ -129,6 +129,12 @@ static bool writeStackXml(KZip &zip, const paintcore::LayerStack *image, const Q
 	writer.writeAttribute("h", QString::number(image->height()));
 	writer.writeAttribute("version", "0.0.3");
 
+	const auto dpi = image->dotsPerInch();
+	if(dpi.first > 0 && dpi.second > 0) {
+		writer.writeAttribute("xres", QString::number(dpi.first));
+		writer.writeAttribute("yres", QString::number(dpi.second));
+	}
+
 	// Write the main layer stack
 	writeStackStack(writer, image, layerOffsets);
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,6 +79,20 @@ public:
 	 * @return filename or empty string
 	 */
 	virtual QString filename() const = 0;
+
+	/**
+	 * @brief Get the canvas resolution
+	 *
+	 * Note. This should be called after calling loadInitCommands, to ensure the
+	 * value has been loaded.
+	 *
+	 * This is not currently used internally, except for passing through opening
+	 * and saving files that record this information. If we do start using it at some
+	 * point, this function should be removed and a SetDPI command added to the protocol.
+	 *
+	 * @return
+	 */
+	virtual QPair<int,int> dotsPerInch() const { return QPair<int,int>(0, 0); }
 };
 
 class BlankCanvasLoader : public SessionLoader {
@@ -99,24 +113,32 @@ class ImageCanvasLoader : public SessionLoader {
 public:
 	ImageCanvasLoader(const QString &filename) : m_filename(filename) {}
 	
-	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return m_filename; }
-	QString errorMessage() const { return m_error; }
-	QString warningMessage() const { return m_warning; }
+	QList<protocol::MessagePtr> loadInitCommands() override;
+	QString filename() const override { return m_filename; }
+	QString errorMessage() const override { return m_error; }
+	QString warningMessage() const override { return m_warning; }
+	QPair<int,int> dotsPerInch() const override { return m_dpi; }
 
 private:
 	QString m_filename;
 	QString m_error;
 	QString m_warning;
+	QPair<int,int> m_dpi;
 };
 
 class QImageCanvasLoader : public SessionLoader {
 public:
 	QImageCanvasLoader(const QImage &image) : m_image(image) {}
 
-	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return QString(); }
-	QString errorMessage() const { return QString(); }
+	QList<protocol::MessagePtr> loadInitCommands() override;
+	QString filename() const override { return QString(); }
+	QString errorMessage() const override { return QString(); }
+	QPair<int,int> dotsPerInch() const override {
+		return QPair<int,int>(
+			int(m_image.dotsPerMeterX() * 0.0254),
+			int(m_image.dotsPerMeterY() * 0.0254)
+		);
+	}
 
 private:
 	QImage m_image;
@@ -139,9 +161,10 @@ public:
 	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const canvas::CanvasModel *session)
 		: m_layers(layers), m_session(session), m_contextId(contextId) {}
 
-	QList<protocol::MessagePtr> loadInitCommands();
-	QString filename() const { return QString(); }
-	QString errorMessage() const { return QString(); }
+	QList<protocol::MessagePtr> loadInitCommands() override;
+	QString filename() const override { return QString(); }
+	QString errorMessage() const override { return QString(); }
+	QPair<int,int> dotsPerInch() const override;
 
 private:
 	const paintcore::LayerStack *m_layers;
