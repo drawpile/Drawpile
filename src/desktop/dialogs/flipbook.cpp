@@ -178,9 +178,9 @@ void Flipbook::loadFrame()
 	if(m_layers && f < m_frames.size()) {
 
 		if(m_layers->getLayerByIndex(f)->isFixed()) {
-			int next;
+			int next = f;
 			do {
-				next = (f + 1) % m_frames.size();
+				next = (next + 1) % m_frames.size();
 			} while(next != f && m_layers->getLayerByIndex(next)->isFixed());
 			m_ui->layerIndex->setValue(next + 1);
 			return;
