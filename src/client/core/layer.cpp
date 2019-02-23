@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -637,6 +637,15 @@ void EditableLayer::setCensored(bool censor)
 	Q_ASSERT(d);
 	if(d->m_info.censored != censor) {
 		d->m_info.censored = censor;
+		markOpaqueDirty(true);
+	}
+}
+
+void EditableLayer::setFixed(bool fixed)
+{
+	Q_ASSERT(d);
+	if(d->m_info.fixed != fixed) {
+		d->m_info.fixed = fixed;
 		markOpaqueDirty(true);
 	}
 }

@@ -3,7 +3,8 @@
  * Fixed crash when using flood fill on an canvas without any layers
  * Fixed crash when trying to reset after resetting to the very beginning of the history
  * Clicking on the layer show/hide glyph no longer selects the layer
- ' OpenRaster: the xres and yres values are now preserved
+ * OpenRaster: the xres and yres values are now preserved
+ * Implemented fixed layers (a generalization of the old background layer feature)
 
 2019-02-17 Version 2.1.1
  * Fixed OK button related bugs in the login dialog

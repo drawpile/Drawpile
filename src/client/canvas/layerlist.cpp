@@ -54,6 +54,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		case IdRole: return item.id;
 		case IsDefaultRole: return item.id == m_defaultLayer;
 		case IsLockedRole: return m_aclfilter && m_aclfilter->isLayerLocked(item.id);
+		case IsFixedRole: return item.fixed;
 		}
 	}
 	return QVariant();
@@ -149,7 +150,7 @@ QModelIndex LayerListModel::layerIndex(uint16_t id)
 void LayerListModel::createLayer(uint16_t id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false });
+	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false, false });
 	endInsertRows();
 }
 
@@ -174,7 +175,7 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(uint16_t id, bool censored, float opacity, paintcore::BlendMode::Mode blend)
+void LayerListModel::changeLayer(uint16_t id, bool censored, bool fixed, float opacity, paintcore::BlendMode::Mode blend)
 {
 	int row = indexOf(id);
 	if(row<0)
@@ -184,6 +185,7 @@ void LayerListModel::changeLayer(uint16_t id, bool censored, float opacity, pain
 	item.opacity = opacity;
 	item.blend = blend;
 	item.censored = censored;
+	item.fixed = fixed;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }
@@ -332,4 +334,11 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 	return QString("%2 %1").arg(suffix+1).arg(basename);
 }
 
+uint8_t LayerListItem::attributeFlags() const
+{
+	return (censored ? protocol::LayerAttributes::FLAG_CENSOR : 0) |
+	       (fixed ? protocol::LayerAttributes::FLAG_FIXED : 0);
 }
+
+}
+

@@ -249,7 +249,7 @@ QImage LayerStack::toFlatImage(bool includeAnnotations, bool includeBackground) 
 		ef.putTile(0, 0, 9999*9999, m_backgroundTile);
 
 	for(int i=0;i<m_layers.size();++i) {
-		if(m_layers.at(i)->isVisible())
+		if(m_layers.at(i)->isVisible() && (includeBackground || !m_layers.at(i)->isFixed()))
 			ef.merge(m_layers.at(i));
 	}
 
@@ -276,7 +276,11 @@ QImage LayerStack::flatLayerImage(int layerIdx) const
 	EditableLayer ef(&flat, nullptr);
 
 	ef.putTile(0, 0, 9999*9999, m_backgroundTile);
-	ef.merge(m_layers.at(layerIdx));
+
+	for(int i=0;i<m_layers.size();++i) {
+		if(i == layerIdx || m_layers.at(i)->isFixed())
+			ef.merge(m_layers.at(i));
+	}
 
 	QImage image = ef->toImage();
 	if(m_dpix > 0 && m_dpiy > 0) {
@@ -399,7 +403,8 @@ int LayerStack::layerOpacity(int idx) const
 	Q_ASSERT(idx>=0 && idx < m_layers.size());
 	int o = m_layers.at(idx)->opacity();
 
-	if(viewMode()==ONIONSKIN) {
+	if(viewMode()==ONIONSKIN && !m_layers.at(idx)->isFixed()) {
+
 		const int d = m_viewlayeridx - idx;
 		qreal rd;
 		if(d<0 && d>=-m_onionskinsAbove)
@@ -417,7 +422,7 @@ int LayerStack::layerOpacity(int idx) const
 
 quint32 LayerStack::layerTint(int idx) const
 {
-	if(m_onionskinTint && viewMode() == ONIONSKIN) {
+	if(m_onionskinTint && viewMode() == ONIONSKIN && !m_layers.at(idx)->isFixed()) {
 		if(idx < m_viewlayeridx)
 			return 0x80ff3333;
 		else if(idx > m_viewlayeridx)
@@ -435,7 +440,7 @@ bool LayerStack::isVisible(int idx) const
 
 	switch(viewMode()) {
 	case NORMAL: break;
-	case SOLO: return idx == m_viewlayeridx;
+	case SOLO: return idx == m_viewlayeridx || m_layers.at(idx)->isFixed();
 	case ONIONSKIN: return layerOpacity(idx) > 0;
 	}
 

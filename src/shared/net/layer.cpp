@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -183,8 +183,10 @@ Kwargs LayerAttributes::kwargs() const
 	kw["blend"] = QString::number(m_blend);
 
 	QStringList flags;
-	if((m_flags&FLAG_CENSOR))
+	if(isCensored())
 		flags << "censor";
+	if(isFixed())
+		flags << "fixed";
 	if(!flags.isEmpty())
 		kw["flags"] = flags.join(',');
 
@@ -198,7 +200,8 @@ LayerAttributes *LayerAttributes::fromText(uint8_t ctx, const Kwargs &kwargs)
 		ctx,
 		text::parseIdString16(kwargs["layer"]),
 		kwargs["sublayer"].toInt(),
-		flags.contains("censor") ? FLAG_CENSOR : 0,
+		(flags.contains("censor") ? FLAG_CENSOR : 0) |
+		(flags.contains("fixed") ? FLAG_FIXED : 0),
 		text::parseDecimal8(kwargs["opacity"]),
 		kwargs["blend"].toInt()
 		);

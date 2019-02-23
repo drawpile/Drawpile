@@ -51,6 +51,7 @@ struct LayerInfo {
 	uchar opacity = 255;
 	bool hidden = false;
 	bool censored = false;
+	bool fixed = false;
 	BlendMode::Mode blend = BlendMode::MODE_NORMAL;
 
 	LayerInfo() = default;
@@ -127,6 +128,9 @@ public:
 
 	//! Is this layer flagged for censoring
 	bool isCensored() const { return m_info.censored; }
+
+	//! Is this a fixed background/foreground layer
+	bool isFixed() const { return m_info.fixed; }
 
 	/**
 	 * @brief Get a sublayer
@@ -262,6 +266,9 @@ public:
 
 	//! Censor this layer
 	void setCensored(bool censor);
+
+	//! Make this a fixed layer
+	void setFixed(bool fixed);
 
 	//! Empty this layer
 	void makeBlank();

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2015 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ private:
 	QPixmap m_visibleIcon;
 	QPixmap m_censoredIcon;
 	QPixmap m_hiddenIcon;
+	QPixmap m_fixedIcon;
 
 	bool m_showNumbers;
 };

@@ -99,6 +99,9 @@ Protocol stability promises:
  * New server features may be added at any time, but they should not break older clients,
    nor should a missing feature break newer clients.
 
+### Protocol dp:4.21.2 (2.1.2)
+ * Added FIXED flag to LayerAttributes. (Minor protocol stability promise break, but 2.1.1 is still a beta version)
+
 ### Protocol dp:4.21.2 (2.1.0)
 
  * Changed PutImage pixel format to ARGB32_Premultiplied

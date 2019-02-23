@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ private:
 class LayerAttributes : public Message {
 public:
 	static const uint8_t FLAG_CENSOR = 0x01; // censored layer
+	static const uint8_t FLAG_FIXED  = 0x02; // fixed background/foreground layer (drawn even in solo modo)
 
 	LayerAttributes(uint8_t ctx, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR, ctx), m_id(id),
@@ -160,6 +161,7 @@ public:
 	uint8_t blend() const { return m_blend; }
 
 	bool isCensored() const { return m_flags & FLAG_CENSOR; }
+	bool isFixed() const { return m_flags & FLAG_FIXED; }
 
 	QString messageName() const override { return QStringLiteral("layerattr"); }
 

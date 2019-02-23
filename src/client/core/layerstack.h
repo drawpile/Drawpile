@@ -97,11 +97,24 @@ public:
 	//! Get the merged color value at the point
 	QColor colorAt(int x, int y, int dia=0) const;
 
-	//! Return a flattened image of the layer stack
+	/**
+	 * @brief Return a flattened image of the layer stack
+	 *
+	 * Note: if includeBackground is false, layers marked as *fixed* will not
+	 * be included in the flattened image.
+	 *
+	 * @param includeAnnotations merge annotations onto the final image
+	 * @param includeBackground include canvas background and fixed layers
+	 */
 	QImage toFlatImage(bool includeAnnotations, bool includeBackground) const;
 
-	//! Return a single layer merged with the background
-	QImage flatLayerImage(int layerIdxr) const;
+	/**
+	 * @brief Return a single layer merged with the background
+	 *
+	 * Note: fixed layers are also considered background and will be included as well,
+	 * even those above the target index
+	 */
+	QImage flatLayerImage(int layerIdx) const;
 
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;

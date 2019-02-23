@@ -90,6 +90,8 @@ static void writeStackStack(QXmlStreamWriter &writer, const paintcore::LayerStac
 			writer.writeAttribute("composite-op", "svg:" + paintcore::findBlendMode(l->blendmode()).svgname);
 		if(l->info().censored)
 			writer.writeAttribute(DP_NAMESPACE, "censored", "true");
+		if(l->info().fixed)
+			writer.writeAttribute(DP_NAMESPACE, "fixed", "true");
 
 		writer.writeEndElement();
 	}

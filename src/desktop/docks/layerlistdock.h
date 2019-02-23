@@ -90,6 +90,7 @@ private slots:
 	void blendModeChanged();
 	void hideSelected();
 	void censorSelected(bool censor);
+	void setSelectedFixed(bool fixed);
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive);
 
@@ -124,6 +125,7 @@ private:
 	QAction *m_menuHideAction;
 	QAction *m_menuRenameAction;
 	QAction *m_menuDefaultAction;
+	QAction *m_menuFixedAction;
 
 	QTimer *m_opacityUpdateTimer;
 };

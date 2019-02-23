@@ -27,7 +27,7 @@ class QIODevice;
 namespace recording {
 
 //! Index format version
-static const quint16 INDEX_VERSION = 0x0005;
+static const quint16 INDEX_VERSION = 0x0006;
 
 struct StopEntry {
 	static const quint8 HAS_SNAPSHOT = 0x01;

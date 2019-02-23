@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -108,7 +108,8 @@ QList<protocol::MessagePtr> LayerTileSet::toInitCommands(int contextId, const La
 		contextId,
 		info.id,
 		0,
-		info.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+		(info.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0) |
+		(info.fixed ? protocol::LayerAttributes::FLAG_FIXED : 0),
 		info.opacity,
 		info.blend
 	));

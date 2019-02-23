@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2018 Calle Laakkonen
+   Copyright (C) 2009-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ namespace {
 		bool visibility;
 		bool locked;
 		bool censored;
+		bool fixed;
 		QString compositeOp;
 	};
 
@@ -162,7 +163,7 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 	// Grab <layer> element attributes first
 	const QXmlStreamAttributes attrs = reader.attributes();
 
-	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", "background-tile", "censored", nullptr };
+	static const char *knownLayerAttributes[] = {"x", "y", "name", "src", "opacity", "visibility", "composite-op", "selected", "edit-locked", "background-tile", "censored", "fixed", nullptr };
 
 	if(hasUnknownAttributes("layer", attrs, knownLayerAttributes))
 		canvas.extensionsWarning = true;
@@ -176,6 +177,7 @@ static bool readStackLayer(QXmlStreamReader &reader, Canvas &canvas, const QPoin
 		attrToBool(attrs.value("visibility"), true, "visible"),
 		attrToBool(attrs.value("edit-locked"), false, "true"),
 		attrToBool(attrs.value(DP_NAMESPACE, "censored"), false, "true"),
+		attrToBool(attrs.value(DP_NAMESPACE, "fixed"), false, "true"),
 		attrToString(attrs.value("composite-op"), QStringLiteral("src-over"))
 	};
 
@@ -471,6 +473,7 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			result.warnings |= OraResult::ORA_EXTENDED;
 
 		info.censored = layer.censored;
+		info.fixed = layer.fixed;
 		info.opacity = qRound(255 * layer.opacity);
 
 		result.commands << paintcore::LayerTileSet::fromImage(

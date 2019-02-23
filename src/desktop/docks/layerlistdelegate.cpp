@@ -34,6 +34,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	  m_visibleIcon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
 	  m_censoredIcon(QIcon(":/icons/censored.svg").pixmap(16, 16)),
 	  m_hiddenIcon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
+	  m_fixedIcon(icon::fromTheme("window-pin").pixmap(16, 16)),
 	  m_showNumbers(false)
 {
 }
@@ -70,6 +71,15 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	}
 
 	drawDisplay(painter, opt, textrect, title);
+
+	// Draw fixed icon
+	if(layer.fixed) {
+		painter->drawPixmap(
+			opt.rect.right() - m_fixedIcon.width(),
+			opt.rect.top() + opt.rect.height()/2 - m_fixedIcon.height()/2,
+			m_fixedIcon
+		);
+	}
 
 	painter->restore();
 }

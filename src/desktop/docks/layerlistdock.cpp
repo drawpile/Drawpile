@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "docks/layeraclmenu.h"
 #include "docks/utils.h"
 #include "core/blendmodes.h"
+#include "utils/changeflags.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/meta2.h"
@@ -73,6 +74,9 @@ LayerList::LayerList(QWidget *parent)
 
 	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
 	m_menuHideAction->setCheckable(true);
+
+	m_menuFixedAction = m_layermenu->addAction(tr("Fixed"), this, SLOT(setSelectedFixed(bool)));
+	m_menuFixedAction->setCheckable(true);
 
 	QActionGroup *makeDefault = new QActionGroup(this);
 	makeDefault->setExclusive(true);
@@ -203,6 +207,7 @@ void LayerList::updateLockedControls()
 	m_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
 	m_menuRenameAction->setEnabled(enabled);
 	m_menuDefaultAction->setEnabled(enabled);
+	m_menuFixedAction->setEnabled(enabled);
 }
 
 void LayerList::layerContextMenu(const QPoint &pos)
@@ -253,19 +258,30 @@ void LayerList::opacityAdjusted()
 	}
 }
 
+static protocol::MessagePtr updateLayerAttributesMessage(uint8_t contextId, const canvas::LayerListItem &layer, ChangeFlags<uint8_t> flagChanges, int opacity, int blend)
+{
+	return protocol::MessagePtr(new protocol::LayerAttributes(
+		contextId,
+		layer.id,
+		0,
+		flagChanges.update(layer.attributeFlags()),
+		opacity>=0 ? opacity : layer.opacity*255,
+		blend >= 0 ? blend : int(layer.blend)
+	));
+}
+
 void LayerList::sendOpacityUpdate()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+		emit layerCommand(updateLayerAttributesMessage(
 			m_canvas->localUserId(),
-			layer.id,
-			0,
-			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
+			index.data().value<canvas::LayerListItem>(),
+			ChangeFlags<uint8_t>{},
 			m_ui->opacity->value(),
-			int(layer.blend)
-		)));
+			-1
+		));
 	}
 }
 
@@ -277,15 +293,13 @@ void LayerList::blendModeChanged()
 
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+		emit layerCommand(updateLayerAttributesMessage(
 			m_canvas->localUserId(),
-			layer.id,
-			0,
-			layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0,
-			layer.opacity*255,
+			index.data().value<canvas::LayerListItem>(),
+			ChangeFlags<uint8_t>{},
+			-1,
 			m_ui->blendmode->currentData().toInt()
-		)));
+		));
 	}
 }
 
@@ -293,18 +307,29 @@ void LayerList::censorSelected(bool censor)
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerAttributes(
+		emit layerCommand(updateLayerAttributesMessage(
 			m_canvas->localUserId(),
-			layer.id,
-			0,
-			censor ? protocol::LayerAttributes::FLAG_CENSOR : 0,
-			layer.opacity*255,
-			int(layer.blend)
-		)));
+			index.data().value<canvas::LayerListItem>(),
+			ChangeFlags<uint8_t>().set(protocol::LayerAttributes::FLAG_CENSOR, censor),
+			-1,
+			-1
+		));
 	}
 }
 
+void LayerList::setSelectedFixed(bool fixed)
+{
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		emit layerCommand(updateLayerAttributesMessage(
+			m_canvas->localUserId(),
+			index.data().value<canvas::LayerListItem>(),
+			ChangeFlags<uint8_t>().set(protocol::LayerAttributes::FLAG_FIXED, fixed),
+			-1,
+			-1
+		));
+	}
+}
 
 void LayerList::hideSelected()
 {
@@ -535,6 +560,7 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		m_menuHideAction->setChecked(layer.hidden);
 		m_aclmenu->setCensored(layer.censored);
 		m_menuDefaultAction->setChecked(currentSelection().data(canvas::LayerListModel::IsDefaultRole).toBool());
+		m_menuFixedAction->setChecked(layer.fixed);
 		m_ui->opacity->setValue(layer.opacity * 255);
 
 		int blendmode = m_ui->blendmode->currentData().toInt();
