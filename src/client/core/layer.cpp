@@ -734,7 +734,7 @@ void EditableLayer::fillRect(const QRect &rectangle, const QColor &color, BlendM
 {
 	const QRect canvas(0, 0, d->m_width, d->m_height);
 
-	if(rectangle.contains(canvas) && blendmode==BlendMode::MODE_REPLACE) {
+	if(rectangle.contains(canvas) && (blendmode==BlendMode::MODE_REPLACE || (blendmode==BlendMode::MODE_NORMAL && color.alpha() == 255))) {
 		// Special case: overwrite whole layer
 		d->m_tiles.fill(Tile(color));
 
