@@ -27,12 +27,12 @@
 #include <QObject>
 #include <QList>
 #include <QImage>
-#include <QBitArray>
 
 class QDataStream;
 
 namespace paintcore {
 
+class LayerStackObserver;
 class Layer;
 class EditableLayer;
 class EditableLayerStack;
@@ -47,6 +47,7 @@ class LayerStack : public QObject {
 	Q_PROPERTY(AnnotationModel* annotations READ annotations CONSTANT)
 	Q_OBJECT
 	friend class EditableLayerStack;
+	friend class LayerStackObserver;
 public:
 	enum ViewMode {
 		NORMAL,   // show all layers normally
@@ -119,18 +120,6 @@ public:
 	//! Get a merged tile
 	Tile getFlatTile(int x, int y) const;
 
-	//! Mark the tiles under the area dirty
-	void markDirty(const QRect &area);
-
-	//! Mark all tiles as dirty
-	void markDirty();
-
-	//! Mark the tile at the given index as dirty
-	void markDirty(int x, int y);
-
-	//! Mark the tile at the given index as dirty
-	void markDirty(int index);
-
 	//! Create a new savepoint
 	Savepoint *makeSavepoint();
 
@@ -163,14 +152,14 @@ public:
 	 */
 	QPair<int,QRect> findChangeBounds(int contextid);
 
+	//! Get a list of layer stack observers
+	const QList<LayerStackObserver*> observers() const { return m_observers; }
+
 	//! Start a layer stack editing sequence
 	inline EditableLayerStack editor();
 
 signals:
-	//! Emitted when the visible layers are edited
-	void areaChanged(const QRect &area);
-
-	//! Layer width/height changed
+	//! Canvas width/height changed
 	void resized(int xoffset, int yoffset, const QSize &oldsize);
 
 private:
@@ -186,21 +175,22 @@ private:
 	int layerOpacity(int idx) const;
 	quint32 layerTint(int idx) const;
 
+	QList<LayerStackObserver*> m_observers;
+
 	int m_width, m_height;
 	int m_xtiles, m_ytiles;
 	int m_dpix, m_dpiy;
+
 	QList<Layer*> m_layers;
 	AnnotationModel *m_annotations;
-	Tile m_backgroundTile;
-	Tile m_paintBackgroundTile;
 
-	QBitArray m_dirtytiles;
-	QRect m_dirtyrect;
+	Tile m_backgroundTile;
 
 	ViewMode m_viewmode;
 	int m_viewlayeridx;
 	int m_onionskinsBelow, m_onionskinsAbove;
 	int m_openEditors;
+
 	bool m_onionskinTint;
 	bool m_censorLayers;
 };

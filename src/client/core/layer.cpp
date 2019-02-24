@@ -18,6 +18,7 @@
 */
 
 #include "layerstack.h"
+#include "layerstackobserver.h"
 #include "layer.h"
 #include "tile.h"
 #include "brushmask.h"
@@ -30,6 +31,8 @@
 #include <QImage>
 #include <QDataStream>
 #include <cmath>
+
+#define OBSERVERS(notification) for(auto *observer : owner->observers()) observer->notification
 
 namespace paintcore {
 
@@ -703,9 +706,9 @@ void EditableLayer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 			d->rtile(tx, ty) = imageLayer.tile(tx-tx0, ty-ty0);
 		}
 	}
-	
+
 	if(owner && d->isVisible())
-		owner->markDirty(QRect(x, y, image.width(), image.height()));
+		OBSERVERS(markDirty(QRect(x, y, image.width(), image.height())));
 }
 
 void EditableLayer::putTile(int col, int row, int repeat, const Tile &tile, int sublayer)
@@ -726,7 +729,7 @@ void EditableLayer::putTile(int col, int row, int repeat, const Tile &tile, int 
 	for(;i<=end;++i) {
 		d->m_tiles[i] = tile;
 		if(owner && d->isVisible())
-			owner->markDirty(i);
+			OBSERVERS(markDirty(i));
 	}
 }
 
@@ -779,7 +782,7 @@ void EditableLayer::fillRect(const QRect &rectangle, const QColor &color, BlendM
 	}
 
 	if(owner && d->isVisible())
-		owner->markDirty(rectangle);
+		OBSERVERS(markDirty(rectangle));
 }
 
 void EditableLayer::putBrushStamp(const BrushStamp &bs, const QColor &color, BlendMode::Mode blendmode)
@@ -829,7 +832,7 @@ void EditableLayer::putBrushStamp(const BrushStamp &bs, const QColor &color, Ble
 	}
 
 	if(owner && d->isVisible())
-		owner->markDirty(QRect(left, top, right-left, bottom-top));
+		OBSERVERS(markDirty(QRect(left, top, right-left, bottom-top)));
 }
 
 /**
@@ -872,7 +875,7 @@ void EditableLayer::makeBlank()
 	d->m_tiles.fill(Tile());
 
 	if(owner && d->isVisible())
-		owner->markDirty();
+		OBSERVERS(markDirty());
 }
 
 /**
@@ -946,7 +949,7 @@ void EditableLayer::markOpaqueDirty(bool forceVisible)
 
 	for(int i=0;i<d->m_tiles.size();++i) {
 		if(!d->m_tiles.at(i).isNull())
-			owner->markDirty(i);
+			OBSERVERS(markDirty(i));
 	}
 }
 

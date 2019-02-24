@@ -28,6 +28,7 @@ class QMenu;
 
 namespace paintcore {
 	class LayerStack;
+	class LayerStackPixmapCacheObserver;
 }
 
 #ifndef DESIGNER_PLUGIN
@@ -147,7 +148,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		brushes::ClassicBrush m_brush;
 
 		paintcore::LayerStack *m_preview;
-		QPixmap m_previewCache;
+		paintcore::LayerStackPixmapCacheObserver *m_previewCache;
 
 		bool _sizepressure;
 		bool _opacitypressure;

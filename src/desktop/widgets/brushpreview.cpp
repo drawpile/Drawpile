@@ -22,6 +22,7 @@
 #ifndef DESIGNER_PLUGIN
 #include "core/point.h"
 #include "core/layerstack.h"
+#include "core/layerstackpixmapcacheobserver.h"
 #include "core/layer.h"
 #include "core/floodfill.h"
 #include "brushes/shapes.h"
@@ -39,7 +40,8 @@ namespace widgets {
 #endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), m_preview(nullptr), _sizepressure(false),
+	: QFrame(parent,f), m_preview(nullptr), m_previewCache(nullptr),
+	_sizepressure(false),
 	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
 	m_color(Qt::black), m_bg(Qt::white),
 	m_hardedge(false),
@@ -136,21 +138,19 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	if(m_needupdate)
 		updatePreview();
 
-	if((m_previewCache.isNull() || m_previewCache.size() != m_preview->size()) && m_preview->size().isValid())
-		m_previewCache = QPixmap(m_preview->size());
-
-	m_preview->paintChangedTiles(event->rect(), &m_previewCache);
-
 	QPainter painter(this);
-	painter.drawPixmap(event->rect(), m_previewCache, event->rect());
+	painter.drawPixmap(event->rect(), m_previewCache->getPixmap(event->rect()), event->rect());
 #endif
 }
 
 void BrushPreview::updatePreview()
 {
 #ifndef DESIGNER_PLUGIN
-	if(!m_preview)
+	if(!m_preview) {
 		m_preview = new paintcore::LayerStack;
+		m_previewCache = new paintcore::LayerStackPixmapCacheObserver(this);
+		m_previewCache->attachToLayerStack(m_preview);
+	}
 
 	auto layerstack = m_preview->editor();
 

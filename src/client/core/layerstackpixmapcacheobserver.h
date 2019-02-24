@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,38 +16,35 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DP_CANVASITEM_H
-#define DP_CANVASITEM_H
+#ifndef LAYERSTACKPIXMAPCACHEOBSERVER_H
+#define LAYERSTACKPIXMAPCACHEOBSERVER_H
 
-#include <QGraphicsObject>
+#include "layerstackobserver.h"
+
+#include <QObject>
+#include <QPixmap>
 
 namespace paintcore {
-	class LayerStackPixmapCacheObserver;
-}
 
-namespace drawingboard {
-
-/**
- * @brief A graphics item that draws a LayerStack
- */
-class CanvasItem : public QGraphicsObject
+class LayerStackPixmapCacheObserver : public QObject, public LayerStackObserver
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-	//! Construct an empty board
-	CanvasItem(paintcore::LayerStackPixmapCacheObserver *observer, QGraphicsItem *parent=nullptr);
+	explicit LayerStackPixmapCacheObserver(QObject *parent=nullptr);
 
-	QRectF boundingRect() const override;
+	/**
+	 * @brief Get a reference to the underlying cache pixmap while makign sure at least the given area has been refreshed
+	 * @param refreshArea
+	 * @return
+	 */
+	const QPixmap &getPixmap(const QRect &refreshArea);
 
-private slots:
-	void refreshImage(const QRect &area);
-	void canvasResize();
-
-protected:
-	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
+signals:
+	void areaChanged(const QRect &area) override;
+	void resized(int xoffset, int yoffset, const QSize &oldSize) override;
 
 private:
-	paintcore::LayerStackPixmapCacheObserver *m_image;
+	QPixmap m_cache;
 };
 
 }

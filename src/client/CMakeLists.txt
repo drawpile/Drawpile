@@ -66,6 +66,8 @@ set (
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp
+	core/layerstackobserver.cpp
+	core/layerstackpixmapcacheobserver.cpp
 	core/brushmask.cpp
 	core/blendmodes.cpp
 	core/rasterop.cpp

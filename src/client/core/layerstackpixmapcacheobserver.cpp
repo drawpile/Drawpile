@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,40 +16,32 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DP_CANVASITEM_H
-#define DP_CANVASITEM_H
 
-#include <QGraphicsObject>
+#include "layerstackpixmapcacheobserver.h"
+#include "layerstack.h"
 
 namespace paintcore {
-	class LayerStackPixmapCacheObserver;
-}
 
-namespace drawingboard {
-
-/**
- * @brief A graphics item that draws a LayerStack
- */
-class CanvasItem : public QGraphicsObject
+LayerStackPixmapCacheObserver::LayerStackPixmapCacheObserver(QObject *parent)
+	: QObject(parent), LayerStackObserver()
 {
-Q_OBJECT
-public:
-	//! Construct an empty board
-	CanvasItem(paintcore::LayerStackPixmapCacheObserver *observer, QGraphicsItem *parent=nullptr);
-
-	QRectF boundingRect() const override;
-
-private slots:
-	void refreshImage(const QRect &area);
-	void canvasResize();
-
-protected:
-	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
-
-private:
-	paintcore::LayerStackPixmapCacheObserver *m_image;
-};
-
 }
 
-#endif
+const QPixmap &LayerStackPixmapCacheObserver::getPixmap(const QRect &refreshArea)
+{
+	if(!layerStack())
+		return m_cache;
+
+	const QSize size = layerStack()->size();
+
+	if((m_cache.isNull() || m_cache.size() != size) && size.isValid()) {
+		m_cache = QPixmap(size);
+		m_cache.fill();
+	}
+
+	paintChangedTiles(refreshArea & m_cache.rect(), &m_cache);
+
+	return m_cache;
+}
+
+}

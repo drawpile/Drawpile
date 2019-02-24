@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
-
 #include "canvasitem.h"
 
+#include "core/layerstackpixmapcacheobserver.h"
 #include "core/layerstack.h"
+
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
 
 namespace drawingboard {
 
@@ -30,11 +31,11 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-CanvasItem::CanvasItem(paintcore::LayerStack *layerstack, QGraphicsItem *parent)
+CanvasItem::CanvasItem(paintcore::LayerStackPixmapCacheObserver *layerstack, QGraphicsItem *parent)
 	: QGraphicsObject(parent), m_image(layerstack)
 {
-	connect(m_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
-	connect(m_image, SIGNAL(resized(int, int, QSize)), this, SLOT(canvasResize()));
+	connect(m_image, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &CanvasItem::refreshImage);
+	connect(m_image, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasItem::canvasResize);
 	setFlag(ItemUsesExtendedStyleOption);
 }
 
@@ -43,30 +44,23 @@ void CanvasItem::refreshImage(const QRect &area)
 	update(area.adjusted(-2, -2, 2, 2));
 }
 
+void CanvasItem::canvasResize()
+{
+	prepareGeometryChange();
+}
+
 QRectF CanvasItem::boundingRect() const
 {
-	return QRectF(0,0, m_image->width(), m_image->height());
+	if(m_image->layerStack())
+		return QRectF(0,0, m_image->layerStack()->width(), m_image->layerStack()->height());
+	return QRectF();
 }
 
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
-	if((_cache.isNull() || _cache.size() != m_image->size()) && m_image->size().isValid()) {
-		_cache = QPixmap(m_image->size());
-		_cache.fill();
-	}
-
-	QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
-	exposed &= _cache.rect();
-
-	m_image->paintChangedTiles(exposed, &_cache, true);
-
-	painter->drawPixmap(exposed, _cache, exposed);
-}
-
-void CanvasItem::canvasResize()
-{
-	prepareGeometryChange();
+	const QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
+	painter->drawPixmap(exposed, m_image->getPixmap(exposed), exposed);
 }
 
 }

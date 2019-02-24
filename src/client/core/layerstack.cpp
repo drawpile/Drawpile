@@ -19,6 +19,7 @@
 
 #include "layer.h"
 #include "layerstack.h"
+#include "layerstackobserver.h"
 #include "tile.h"
 #include "rasterop.h"
 #include "concurrent.h"
@@ -32,11 +33,10 @@ namespace paintcore {
 static const Tile CENSORED_TILE = Tile::CensorBlock(QColor("#232629"), QColor("#eff0f1"));
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), m_width(0), m_height(0), m_dpix(0), m_dpiy(0), m_viewmode(NORMAL), m_viewlayeridx(0),
+	: QObject(parent), m_width(0), m_height(0), m_xtiles(0), m_ytiles(0), m_dpix(0), m_dpiy(0), m_viewmode(NORMAL), m_viewlayeridx(0),
 	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_openEditors(0), m_onionskinTint(true), m_censorLayers(false)
 {
 	m_annotations = new AnnotationModel(this);
-	Tile::fillChecker(m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
 }
 
 LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
@@ -56,13 +56,15 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 {
 	m_annotations = orig->m_annotations->clone(this);
 	m_backgroundTile = orig->m_backgroundTile;
-	m_paintBackgroundTile = orig->m_paintBackgroundTile;
 	for(const Layer *l : orig->m_layers)
 		m_layers << new Layer(*l);
 }
 
 LayerStack::~LayerStack()
 {
+	for(LayerStackObserver *observer : m_observers)
+		observer->detachFromLayerStack();
+
 	for(Layer *l : m_layers)
 		delete l;
 }
@@ -103,77 +105,6 @@ int LayerStack::indexOf(int id) const
 		if(m_layers.at(i)->id() == id)
 			return i;
 	return -1;
-}
-
-namespace {
-
-struct UpdateTile {
-	UpdateTile() : x(-1), y(-1) {}
-	UpdateTile(int x_, int y_) : x(x_), y(y_) {}
-
-	int x, y;
-	quint32 data[Tile::LENGTH];
-};
-
-}
-
-/**
- * The dirty flag for each painted tile will be cleared.
- *
- * @param rect area of the image to limit repainting to (rounded upwards to tile boundaries)
- * @param target device to paint onto
- */
-void LayerStack::paintChangedTiles(const QRect& rect, QPaintDevice *target, bool clean)
-{
-	if(m_width<=0 || m_height<=0)
-		return;
-
-	// Affected tile range
-	const int tx0 = qBound(0, rect.left() / Tile::SIZE, m_xtiles-1);
-	const int tx1 = qBound(tx0, rect.right() / Tile::SIZE, m_xtiles-1);
-	const int ty0 = qBound(0, rect.top() / Tile::SIZE, m_ytiles-1);
-	const int ty1 = qBound(ty0, rect.bottom() / Tile::SIZE, m_ytiles-1);
-
-	// Gather list of tiles in need of updating
-	QList<UpdateTile*> updates;
-
-	for(int ty=ty0;ty<=ty1;++ty) {
-		const int y = ty*m_xtiles;
-		for(int tx=tx0;tx<=tx1;++tx) {
-			const int i = y+tx;
-			if(m_dirtytiles.testBit(i)) {
-				updates.append(new UpdateTile(tx, ty));
-
-				// TODO this conditional is for transitioning to QtQuick. Remove once old view is removed.
-				if(clean)
-					m_dirtytiles.clearBit(i);
-			}
-		}
-	}
-
-	if(!updates.isEmpty()) {
-		// Flatten tiles
-		concurrentForEach<UpdateTile*>(updates, [this](UpdateTile *t) {
-			m_paintBackgroundTile.copyTo(t->data);
-			flattenTile(t->data, t->x, t->y);
-		});
-
-		// Paint flattened tiles
-		QPainter painter(target);
-		painter.setCompositionMode(QPainter::CompositionMode_Source);
-		while(!updates.isEmpty()) {
-			UpdateTile *ut = updates.takeLast();
-			painter.drawImage(
-				ut->x*Tile::SIZE,
-				ut->y*Tile::SIZE,
-				QImage(reinterpret_cast<const uchar*>(ut->data),
-					Tile::SIZE, Tile::SIZE,
-					QImage::Format_ARGB32_Premultiplied
-				)
-			);
-			delete ut;
-		}
-	}
 }
 
 Tile LayerStack::getFlatTile(int x, int y) const
@@ -340,49 +271,6 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 	}
 }
 
-void LayerStack::markDirty(const QRect &area)
-{
-	if(m_layers.isEmpty() || m_width<=0 || m_height<=0)
-		return;
-	const int tx0 = qBound(0, area.left() / Tile::SIZE, m_xtiles-1);
-	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, m_xtiles-1) + 1;
-	int ty0 = qBound(0, area.top() / Tile::SIZE, m_ytiles-1);
-	const int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, m_ytiles-1);
-	
-	for(;ty0<=ty1;++ty0) {
-		m_dirtytiles.fill(true, ty0*m_xtiles + tx0, ty0*m_xtiles + tx1);
-	}
-	m_dirtyrect |= area;
-}
-
-void LayerStack::markDirty()
-{
-	m_dirtytiles.fill(true);
-	m_dirtyrect = QRect(0, 0, m_width, m_height);
-}
-
-void LayerStack::markDirty(int x, int y)
-{
-	Q_ASSERT(x>=0 && x < m_xtiles);
-	Q_ASSERT(y>=0 && y < m_ytiles);
-
-	m_dirtytiles.setBit(y*m_xtiles + x);
-
-	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
-}
-
-void LayerStack::markDirty(int index)
-{
-	Q_ASSERT(index>=0 && index < m_dirtytiles.size());
-
-	m_dirtytiles.setBit(index);
-
-	const int y = index / m_xtiles;
-	const int x = index % m_xtiles;
-
-	m_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
-}
-
 void LayerStack::beginWriteSequence()
 {
 	++m_openEditors;
@@ -392,9 +280,9 @@ void LayerStack::endWriteSequence()
 {
 	--m_openEditors;
 	Q_ASSERT(m_openEditors>=0);
-	if(m_openEditors == 0 && !m_dirtyrect.isEmpty()) {
-		emit areaChanged(m_dirtyrect);
-		m_dirtyrect = QRect();
+	if(m_openEditors == 0) {
+		for(auto observer : m_observers)
+			observer->canvasWriteSequenceDone();
 	}
 }
 
@@ -479,7 +367,8 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 		d->m_height = savepoint->height;
 		d->m_xtiles = Tile::roundTiles(savepoint->width);
 		d->m_ytiles = Tile::roundTiles(savepoint->height);
-		d->m_dirtytiles = QBitArray(d->m_xtiles*d->m_ytiles, true);
+		for(auto observer : d->m_observers)
+			observer->canvasResized(0, 0, oldsize);
 		emit d->resized(0, 0, oldsize);
 
 	} else {
@@ -488,8 +377,8 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 		if(savepoint->layers.size() != d->m_layers.size()) {
 			// Layers added or deleted, just refresh everything
 			// (force refresh even if layer stack is empty)
-			d->m_dirtytiles.fill(true);
-			d->m_dirtyrect = QRect(0, 0, d->m_width, d->m_height);
+			for(auto observer : d->m_observers)
+				observer->markDirty();
 
 		} else {
 			// Layer count has not changed, compare layer contents
@@ -498,15 +387,18 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 				const Layer *l1 = savepoint->layers.at(l);
 				if(l0->effectiveOpacity() != l1->effectiveOpacity()) {
 					// Layer opacity has changed, refresh everything
-					d->markDirty();
+					for(auto observer : d->m_observers)
+						observer->markDirty();
 					break;
 				}
 				for(int i=0;i<d->m_xtiles*d->m_ytiles;++i) {
 					// Note: An identity comparison works here, because the tiles
 					// utilize copy-on-write semantics. Unchanged tiles will share
 					// data pointers between savepoints.
-					if(l0->tile(i) != l1->tile(i))
-						d->markDirty(i);
+					if(l0->tile(i) != l1->tile(i)) {
+						for(auto observer : d->m_observers)
+							observer->markDirty(i);
+					}
 				}
 			}
 		}
@@ -589,7 +481,6 @@ void EditableLayerStack::resize(int top, int right, int bottom, int left)
 
 	d->m_xtiles = Tile::roundTiles(d->m_width);
 	d->m_ytiles = Tile::roundTiles(d->m_height);
-	d->m_dirtytiles = QBitArray(d->m_xtiles*d->m_ytiles, true);
 
 	for(Layer *l : d->m_layers)
 		EditableLayer(l, d).resize(top, right, bottom, left);
@@ -602,6 +493,9 @@ void EditableLayerStack::resize(int top, int right, int bottom, int left)
 		}
 	}
 
+	for(auto observer : d->m_observers)
+		observer->canvasResized(left, top, oldsize);
+
 	emit d->resized(left, top, oldsize);
 }
 
@@ -612,28 +506,8 @@ void EditableLayerStack::setBackground(const Tile &tile)
 
 	d->m_backgroundTile = tile;
 
-	// Check if background tile has any transparent pixels
-	bool isTransparent = tile.isNull();
-	if(!tile.isNull()) {
-		const quint32 *ptr = tile.constData();
-		for(int i=0;i<Tile::LENGTH;++i,++ptr) {
-			if(qAlpha(*ptr) < 255) {
-				isTransparent = true;
-				break;
-			}
-		}
-	}
-
-	// If background tile is (at least partially) transparent, composite it with
-	// the checkerboard pattern. (TODO: draw background in the view widget)
-	if(isTransparent) {
-		Tile::fillChecker(d->m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
-		d->m_paintBackgroundTile.merge(d->m_backgroundTile, 255, BlendMode::MODE_NORMAL);
-	} else {
-		d->m_paintBackgroundTile = d->m_backgroundTile;
-	}
-
-	d->markDirty();
+	for(auto observer : d->m_observers)
+		observer->canvasBackgroundChanged(tile);
 }
 
 /**
@@ -703,10 +577,13 @@ EditableLayer EditableLayerStack::createLayer(int id, int source, const QColor &
 	// Dirty regions must be marked after the layer is in the stack
 	EditableLayer editable(nl, d);
 
-	if(copy)
+	if(copy) {
 		editable.markOpaqueDirty();
-	else if(color.alpha()>0)
-		d->markDirty();
+
+	} else if(color.alpha()>0) {
+		for(auto observer : d->m_observers)
+			observer->markDirty();
+	}
 
 	return editable;
 }
@@ -749,7 +626,8 @@ void EditableLayerStack::reorderLayers(const QList<uint16_t> &neworder)
 		newstack.append(l);
 	}
 	d->m_layers = newstack;
-	d->markDirty();
+	for(auto observer : d->m_observers)
+		observer->markDirty();
 }
 
 /**
@@ -798,7 +676,11 @@ void EditableLayerStack::reset()
 	d->m_annotations->clear();
 
 	d->m_backgroundTile = Tile();
-	Tile::fillChecker(d->m_paintBackgroundTile.data(), QColor(128,128,128), Qt::white);
+
+	for(auto *observer : d->m_observers) {
+		observer->canvasResized(0, 0, oldsize);
+		observer->canvasBackgroundChanged(Tile());
+	}
 
 	emit d->resized(0, 0, oldsize);
 }
@@ -828,7 +710,8 @@ void EditableLayerStack::setViewMode(LayerStack::ViewMode mode)
 {
 	if(mode != d->m_viewmode) {
 		d->m_viewmode = mode;
-		d->markDirty();
+		for(auto observer : d->m_observers)
+			observer->markDirty();
 	}
 }
 
@@ -837,8 +720,10 @@ void EditableLayerStack::setViewLayer(int id)
 	for(int i=0;i<d->m_layers.size();++i) {
 		if(d->m_layers.at(i)->id() == id) {
 			d->m_viewlayeridx = i;
-			if(d->m_viewmode != LayerStack::NORMAL)
-				d->markDirty();
+			if(d->m_viewmode != LayerStack::NORMAL) {
+				for(auto observer : d->m_observers)
+					observer->markDirty();
+			}
 			break;
 		}
 	}
@@ -850,8 +735,10 @@ void EditableLayerStack::setOnionskinMode(int below, int above, bool tint)
 	d->m_onionskinsAbove = above;
 	d->m_onionskinTint = tint;
 
-	if(d->m_viewmode == LayerStack::ONIONSKIN)
-		d->markDirty();
+	if(d->m_viewmode == LayerStack::ONIONSKIN) {
+		for(auto observer : d->m_observers)
+			observer->markDirty();
+	}
 }
 
 void EditableLayerStack::setCensorship(bool censor)
@@ -860,7 +747,8 @@ void EditableLayerStack::setCensorship(bool censor)
 		d->m_censorLayers = censor;
 		// We could check if this really needs to be called, but this
 		// flag is changed very infrequently
-		d->markDirty();
+		for(auto observer : d->m_observers)
+			observer->markDirty();
 	}
 }
 

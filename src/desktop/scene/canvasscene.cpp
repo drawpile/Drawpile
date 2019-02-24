@@ -29,18 +29,24 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/statetracker.h"
+#include "core/layerstackpixmapcacheobserver.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
+	: QGraphicsScene(parent), m_canvasItem(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
 	  _showAnnotationBorders(false), _showAnnotations(true),
 	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
 {
+	m_layerstackObserver = new paintcore::LayerStackPixmapCacheObserver(this);
+	m_canvasItem = new CanvasItem(m_layerstackObserver);
+
 	setItemIndexMethod(NoIndex);
+
+	addItem(m_canvasItem);
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
 	_animTickTimer = new QTimer(this);
@@ -51,7 +57,7 @@ CanvasScene::CanvasScene(QObject *parent)
 
 CanvasScene::~CanvasScene()
 {
-	delete m_image;
+	delete m_canvasItem;
 }
 
 /**
@@ -60,14 +66,12 @@ CanvasScene::~CanvasScene()
  */
 void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
-	delete m_image;
 	onSelectionChanged(nullptr);
 
 	m_model = model;
+	m_layerstackObserver->attachToLayerStack(m_model->layerStack());
 
-	m_image = new CanvasItem(m_model->layerStack());
-
-	connect(m_model->layerStack(), &paintcore::LayerStack::resized, this, &CanvasScene::handleCanvasResize);
+	connect(m_layerstackObserver, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasScene::handleCanvasResize);
 
 	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
 	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
@@ -87,8 +91,6 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
-	addItem(m_image);
-
 	annotationsReset();
 
 	for(UserMarkerItem *i : m_usermarkers)
@@ -102,14 +104,14 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 void CanvasScene::showCanvas()
 {
-	if(m_image)
-		m_image->setVisible(true);
+	if(m_canvasItem)
+		m_canvasItem->setVisible(true);
 }
 
 void CanvasScene::hideCanvas()
 {
-	if(m_image)
-		m_image->setVisible(false);
+	if(m_canvasItem)
+		m_canvasItem->setVisible(false);
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
@@ -145,9 +147,9 @@ void CanvasScene::showAnnotationBorders(bool hl)
 
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 {
-	if(!m_image)
+	if(!m_canvasItem)
 		return;
-	QRectF bounds = m_image->boundingRect();
+	QRectF bounds = m_canvasItem->boundingRect();
 
 	setSceneRect(bounds.adjusted(-MARGIN, -MARGIN, MARGIN, MARGIN));
 	emit canvasResized(xoffset, yoffset, oldsize);
@@ -248,12 +250,12 @@ void CanvasScene::annotationsReset()
 
 void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
 {
-	if(!m_image)
+	if(!m_canvasItem)
 		return;
 
 	// Don't add new lasers when canvas is hidden
 	// or when laser trails are disabled
-	if(!m_image->isVisible() || !m_showLaserTrails)
+	if(!m_canvasItem->isVisible() || !m_showLaserTrails)
 		return;
 
 	for(int i=first;i<=last;++i) {
@@ -283,7 +285,7 @@ void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
 
 void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
-	if(!m_image || !m_image->isVisible() || !m_showLaserTrails)
+	if(!m_canvasItem || !m_canvasItem->isVisible() || !m_showLaserTrails)
 		return;
 
 	const int ifirst = first.row();
