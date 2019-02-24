@@ -175,7 +175,7 @@ void Flipbook::resetFrameCache()
 void Flipbook::loadFrame()
 {
 	const int f = m_ui->layerIndex->value() - 1;
-	if(m_layers && f < m_frames.size()) {
+	if(m_layers && f>=0 && f < m_frames.size()) {
 
 		if(m_layers->getLayerByIndex(f)->isFixed()) {
 			int next = f;
