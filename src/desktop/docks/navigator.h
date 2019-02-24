@@ -76,6 +76,10 @@ public slots:
 	//! Set the current angle and zoom
 	void setViewTransformation(qreal zoom, qreal angle);
 
+private slots:
+	void updateZoom(int value);
+	void updateAngle(int value);
+
 signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
@@ -84,6 +88,7 @@ signals:
 	
 private:
 	Ui_Navigator *m_ui;
+	bool m_updating;
 };
 
 }

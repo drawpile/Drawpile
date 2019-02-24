@@ -137,7 +137,7 @@ void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
  * Construct the navigator dock widget.
  */
 Navigator::Navigator(QWidget *parent)
-	: QDockWidget(tr("Navigator"), parent), m_ui(new Ui_Navigator)
+	: QDockWidget(tr("Navigator"), parent), m_ui(new Ui_Navigator), m_updating(false)
 {
 	setObjectName("navigatordock");
 	setStyleSheet(defaultDockStylesheet());
@@ -148,8 +148,8 @@ Navigator::Navigator(QWidget *parent)
 
 	connect(m_ui->view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_ui->view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_ui->zoomBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::zoomChanged);
-	connect(m_ui->rotationBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::angleChanged);
+	connect(m_ui->zoomBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::updateZoom);
+	connect(m_ui->rotationBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::updateAngle);
 	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
 	connect(m_ui->rotateReset, &QToolButton::clicked, this, [this]() { emit angleChanged(0); });
 }
@@ -177,10 +177,24 @@ void Navigator::setViewFocus(const QPolygonF& rect)
 	m_ui->view->setViewFocus(rect);
 }
 
+void Navigator::updateZoom(int value)
+{
+	if(!m_updating)
+		emit zoomChanged(value);
+}
+
+void Navigator::updateAngle(int value)
+{
+	if(!m_updating)
+		emit angleChanged(value);
+}
+
 void Navigator::setViewTransformation(qreal zoom, qreal angle)
 {
+	m_updating = true;
 	m_ui->zoomBox->setValue(zoom);
 	m_ui->rotationBox->setValue(angle);
+	m_updating = false;
 }
 
 }
