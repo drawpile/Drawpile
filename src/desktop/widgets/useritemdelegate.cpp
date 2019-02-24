@@ -138,7 +138,7 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		option.rect.height() - MARGIN*2
 		);
 	QFont font = option.font;
-	font.setPixelSize(20);
+	font.setPixelSize(16);
 	font.setWeight(QFont::Light);
 	painter->setPen(option.palette.text().color());
 	painter->setFont(font);
