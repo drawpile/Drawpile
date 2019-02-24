@@ -35,6 +35,9 @@ AnimationExporter::AnimationExporter(paintcore::LayerStack *layers, VideoExporte
 
 void AnimationExporter::start()
 {
+	m_startFrame = qMax(1, m_startFrame);
+	m_endFrame = qMin(m_endFrame, m_layers->layerCount());
+	m_currentFrame = m_startFrame;
 	m_exporter->start();
 }
 
