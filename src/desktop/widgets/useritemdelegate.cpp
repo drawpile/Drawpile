@@ -142,7 +142,11 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	font.setWeight(QFont::Light);
 	painter->setPen(option.palette.text().color());
 	painter->setFont(font);
-	painter->drawText(usernameRect, index.data(canvas::UserListModel::NameRole).toString());
+	painter->drawText(
+		usernameRect,
+		Qt::AlignLeft | Qt::AlignTop,
+		index.data(canvas::UserListModel::NameRole).toString()
+	);
 
 	// Draw user flags
 	QString flags;
