@@ -6,6 +6,7 @@
  * OpenRaster: the xres and yres values are now preserved
  * Implemented fixed layers (a generalization of the old background layer feature)
  * Added Vietnamese translation
+ * Fixed canvas not appearing immediately when login dialog was closed
 
 2019-02-17 Version 2.1.1
  * Fixed OK button related bugs in the login dialog

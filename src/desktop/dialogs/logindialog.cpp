@@ -216,6 +216,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	QDialog(parent), d(new Private(login, this))
 {
 	setWindowModality(Qt::WindowModal);
+	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowTitle(login->url().host());
 
 	connect(d->ui->username, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
