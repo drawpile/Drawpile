@@ -234,6 +234,10 @@
           <property name="toolTip">
            <string>Square pixel brush</string>
           </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>builtin:square.svg</normaloff>builtin:square.svg</iconset>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
@@ -242,10 +246,6 @@
           </property>
           <property name="groupPosition">
            <enum>GroupedToolButton::GroupCenter</enum>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>builtin:square.svg</normaloff>builtin:square.svg</iconset>
           </property>
          </widget>
         </item>
@@ -373,7 +373,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSlider" name="brushsize">
+      <widget class="QSlider" name="brushsizeSlider">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -386,7 +386,7 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QSpinBox" name="spinBox">
+      <widget class="QSpinBox" name="brushsizeBox">
        <property name="suffix">
         <string>px</string>
        </property>
@@ -394,7 +394,10 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>128</number>
+        <number>255</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
        </property>
       </widget>
      </item>
@@ -519,12 +522,12 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QSlider" name="brushspacing">
+      <widget class="QSlider" name="brushspacingSlider">
        <property name="minimum">
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>150</number>
+        <number>50</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -532,7 +535,7 @@
       </widget>
      </item>
      <item row="5" column="2">
-      <widget class="QSpinBox" name="spinBox_4">
+      <widget class="QSpinBox" name="brushspacingBox">
        <property name="suffix">
         <string notr="true">%</string>
        </property>
@@ -540,7 +543,10 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>150</number>
+        <number>999</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
        </property>
       </widget>
      </item>
@@ -616,9 +622,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>brushsize</sender>
+   <sender>brushsizeSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox</receiver>
+   <receiver>brushsizeBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -632,9 +638,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox</sender>
+   <sender>brushsizeBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>brushsize</receiver>
+   <receiver>brushsizeSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -776,9 +782,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>brushspacing</sender>
+   <sender>brushspacingSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_4</receiver>
+   <receiver>brushspacingBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -792,9 +798,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_4</sender>
+   <sender>brushspacingBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>brushspacing</receiver>
+   <receiver>brushspacingSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -48,7 +48,7 @@ namespace brushprop {
 		hard = {QStringLiteral("hard"), 100, 1, 100},
 		smudge = {QStringLiteral("smudge"), 0, 0, 100},
 		resmudge = {QStringLiteral("resmudge"), 3, 0, 255},
-		spacing = {QStringLiteral("spacing"), 10, 1, 150},
+		spacing = {QStringLiteral("spacing"), 10, 1, 999},
 		brushmode = {QStringLiteral("brushmode"), 0, 0, 3} /* 0: hard edge, 1: square, 2: soft edge, 3: watercolor */
 		;
 	static const ToolProperties::BoolValue
@@ -233,7 +233,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.setupUi(widget);
 
 	// Outside communication
-	connect(d->ui.brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	connect(d->ui.brushsizeBox, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(d->ui.preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
@@ -250,7 +250,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 
-	connect(d->ui.brushsize, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushsizeBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.brushopacity, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
@@ -263,7 +263,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.pressureSmudging, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushspacing, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushspacingBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons
@@ -392,8 +392,8 @@ void BrushSettings::updateUi()
 
 	d->ui.modeIncremental->setEnabled(brushMode != 3);
 
-	d->ui.brushsize->setValue(brush.intValue(brushprop::size));
-	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
+	//d->ui.brushsizeBox->setValue(brush.intValue(brushprop::size));
+	//d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
 
 	// Show correct blending mode
 	int blendmode;
@@ -416,7 +416,7 @@ void BrushSettings::updateUi()
 	}
 
 	// Set values
-	d->ui.brushsize->setValue(brush.intValue(brushprop::size));
+	d->ui.brushsizeBox->setValue(brush.intValue(brushprop::size));
 	d->ui.pressureSize->setChecked(brush.boolValue(brushprop::sizePressure));
 
 	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
@@ -430,7 +430,7 @@ void BrushSettings::updateUi()
 
 	d->ui.colorpickup->setValue(brush.intValue(brushprop::resmudge));
 
-	d->ui.brushspacing->setValue(brush.intValue(brushprop::spacing));
+	d->ui.brushspacingBox->setValue(brush.intValue(brushprop::spacing));
 	d->ui.modeIncremental->setChecked(brush.boolValue(brushprop::incremental));
 
 	d->updateInProgress = false;
@@ -455,7 +455,7 @@ void BrushSettings::updateFromUi()
 	else
 		brush.setValue(brushprop::brushmode, 3);
 
-	brush.setValue(brushprop::size, d->ui.brushsize->value());
+	brush.setValue(brushprop::size, d->ui.brushsizeBox->value());
 	brush.setValue(brushprop::sizePressure, d->ui.pressureSize->isChecked());
 
 	brush.setValue(brushprop::opacity, d->ui.brushopacity->value());
@@ -468,7 +468,7 @@ void BrushSettings::updateFromUi()
 	brush.setValue(brushprop::smudgePressure, d->ui.pressureSmudging->isChecked());
 
 	brush.setValue(brushprop::resmudge, d->ui.colorpickup->value());
-	brush.setValue(brushprop::spacing, d->ui.brushspacing->value());
+	brush.setValue(brushprop::spacing, d->ui.brushspacingBox->value());
 	brush.setValue(brushprop::incremental, d->ui.modeIncremental->isChecked());
 
 	if(d->current == ERASER_SLOT)
@@ -547,12 +547,12 @@ void BrushSettings::quickAdjust1(float adjustment)
 {
 	int adj = qRound(adjustment);
 	if(adj!=0)
-		d->ui.brushsize->setValue(d->ui.brushsize->value() + adj);
+		d->ui.brushsizeBox->setValue(d->ui.brushsizeBox->value() + adj);
 }
 
 int BrushSettings::getSize() const
 {
-	return d->ui.brushsize->value();
+	return d->ui.brushsizeBox->value();
 }
 
 bool BrushSettings::getSubpixelMode() const
