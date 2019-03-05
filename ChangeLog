@@ -7,6 +7,7 @@
  * Implemented fixed layers (a generalization of the old background layer feature)
  * Added Vietnamese translation
  * Fixed canvas not appearing immediately when login dialog was closed
+ * Fixed chat username line breaking
 
 2019-02-17 Version 2.1.1
  * Fixed OK button related bugs in the login dialog
