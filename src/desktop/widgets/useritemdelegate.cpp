@@ -123,6 +123,7 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 			);
 
 		painter->setBrush(option.palette.color(QPalette::AlternateBase));
+		painter->setPen(QPen(option.palette.color(QPalette::Base), 2));
 		painter->drawEllipse(statusOverlayRect.adjusted(-2, -2, 2, 2));
 		if(isLocked)
 			painter->drawPixmap(statusOverlayRect, m_lockIcon);
