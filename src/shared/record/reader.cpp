@@ -265,8 +265,8 @@ Compatibility Reader::readBinaryHeader() {
 		if(current.majorVersion() < version.majorVersion())
 			return UNKNOWN_COMPATIBILITY;
 
-		// Versions older than 20.x are known to be incompatible
-		if(version.majorVersion() < 20)
+		// Versions older than 21.x are known to be incompatible
+		if(version.majorVersion() < 21)
 			return INCOMPATIBLE;
 
 		// Different minor version: expect rendering differences
