@@ -163,12 +163,12 @@ private:
 		return Tier::Guest;
 	}
 
-	int m_myId;             // the ID of the local user
+	int m_myId = 1;                 // the ID of the local user
 
-	bool m_isOperator;      // is the local user an operator?
-	bool m_isTrusted;       // does the local user have trusted status?
-	bool m_sessionLocked;   // is the session locked?
-	bool m_localUserLocked; // is the local user locked individually?
+	bool m_isOperator = false;      // is the local user an operator?
+	bool m_isTrusted = false;       // does the local user have trusted status?
+	bool m_sessionLocked = false;   // is the session locked?
+	bool m_localUserLocked = false; // is the local user locked individually?
 
 	QHash<int,LayerAcl> m_layers;          // layer access controls
 	UserSet m_ops;                         // list of operators
@@ -176,7 +176,7 @@ private:
 	UserSet m_auth;                        // list of registered users
 	UserSet m_userlocks;                   // list of individually locked users
 	QSet<uint16_t> m_protectedAnnotations; // list of protected annotations
-	Tier m_featureTiers[FeatureCount];     // feature access tiers
+	Tier m_featureTiers[FeatureCount] = {Tier::Guest}; // feature access tiers
 };
 
 }
