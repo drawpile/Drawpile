@@ -8,6 +8,7 @@
  * Added Vietnamese translation
  * Fixed canvas not appearing immediately when login dialog was closed
  * Fixed chat username line breaking
+ * Fixed Recolor (and other modes) in non-incremental mode
 
 2019-02-17 Version 2.1.1
  * Fixed OK button related bugs in the login dialog

@@ -433,23 +433,25 @@ void tintPixels(quint32 *pixels, int len, quint32 tint)
 template<BlendOp BO>
 void doPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len)
 {
-	const uchar *src = reinterpret_cast<const uchar*>(source);
 	while(len--) {
-		if((src[3]!=0) & (*base!=0)) {
-			// Blend only of neither source nor destination pixels are fully transparent
+		if(*source & *base) {
+			// Blend only if neither source nor destination pixels are fully transparent
 			quint32 dest = qUnpremultiply(*reinterpret_cast<QRgb*>(base));
-			uchar *d = reinterpret_cast<uchar*>(&dest);
+			const quint32 src = qUnpremultiply(*reinterpret_cast<const QRgb*>(source));
 
-			const uchar a = UINT8_MULT(src[3], alpha);
-			const uchar a2 = UINT8_MULT(a, d[3]);
+			auto *d = reinterpret_cast<uchar*>(&dest);
+			auto *s = reinterpret_cast<const uchar*>(&src);
 
-			d[0] = UINT8_BLEND(BO(d[0], src[0]), d[0], a2);
-			d[1] = UINT8_BLEND(BO(d[1], src[1]), d[1], a2);
-			d[2] = UINT8_BLEND(BO(d[2], src[2]), d[2], a2);
+			const uchar a = UINT8_MULT(s[3], alpha);
+
+			d[0] = UINT8_BLEND(BO(d[0], s[0]), d[0], a);
+			d[1] = UINT8_BLEND(BO(d[1], s[1]), d[1], a);
+			d[2] = UINT8_BLEND(BO(d[2], s[2]), d[2], a);
+
 			*base = qPremultiply(dest);
 		}
 		++base;
-		src += 4;
+		++source;
 	}
 }
 
