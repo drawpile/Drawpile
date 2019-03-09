@@ -1,4 +1,4 @@
-2019-0?-?? Version 2.1.2
+2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)
  * Fixed crash when using flood fill on an canvas without any layers
  * Fixed crash when trying to reset after resetting to the very beginning of the history
