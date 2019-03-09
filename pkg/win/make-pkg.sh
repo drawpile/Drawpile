@@ -95,7 +95,7 @@ cp -r /Drawpile/desktop/palettes .
 
 # Copy translations
 mkdir -p i18n
-for tr in cs de fi ja ru zh
+for tr in cs de fi ja ru zh vi
 do
 	cp "$QROOT/translations/qt_$tr.qm" i18n/ || true
 	cp "/Build/src/client/drawpile_$tr.qm" i18n/
