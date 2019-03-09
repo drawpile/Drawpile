@@ -49,5 +49,5 @@ popd
 popd
 
 # Package the app in a dmg archive
-appdmg spec.json build/bin/Drawpile.dmg
+appdmg spec.json "build/bin/Drawpile $VERSION.dmg"
 
