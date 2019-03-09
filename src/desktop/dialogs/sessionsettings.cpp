@@ -62,7 +62,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_ui->preserveChat, &QCheckBox::clicked, this, &SessionSettingsDialog::keepChatChanged);
 	connect(m_ui->persistent, &QCheckBox::clicked, this, &SessionSettingsDialog::persistenceChanged);
 	connect(m_ui->nsfm, &QCheckBox::clicked, this, &SessionSettingsDialog::nsfmChanged);
-	connect(m_ui->deputies, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &SessionSettingsDialog::deputiesChanged);
+	connect(m_ui->deputies, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SessionSettingsDialog::deputiesChanged);
 
 	connect(m_ui->sessionPassword, &QLabel::linkActivated, this, &SessionSettingsDialog::changePassword);
 	connect(m_ui->opword, &QLabel::linkActivated, this, &SessionSettingsDialog::changeOpword);
@@ -242,7 +242,7 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 			box->addItem(items[j]);
 
 		box->setProperty("featureIdx", i);
-		connect(box, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &SessionSettingsDialog::permissionChanged);
+		connect(box, QOverload<int>::of(&QComboBox::activated), this, &SessionSettingsDialog::permissionChanged);
 	}
 }
 

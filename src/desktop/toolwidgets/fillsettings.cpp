@@ -63,7 +63,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::pushSettings);
-	connect(_ui->sizelimit, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::pushSettings);
 	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);

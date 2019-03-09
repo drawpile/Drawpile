@@ -148,8 +148,8 @@ Navigator::Navigator(QWidget *parent)
 
 	connect(m_ui->view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_ui->view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_ui->zoomBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::updateZoom);
-	connect(m_ui->rotationBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Navigator::updateAngle);
+	connect(m_ui->zoomBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &Navigator::updateZoom);
+	connect(m_ui->rotationBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &Navigator::updateAngle);
 	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
 	connect(m_ui->rotateReset, &QToolButton::clicked, this, [this]() { emit angleChanged(0); });
 }

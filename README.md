@@ -21,7 +21,7 @@ Some feature highlights:
 ## Building with cmake
 
 Common dependencies:
- * Qt 5.5 or newer (QtGui not required for headless server)
+ * Qt 5.9 or newer (QtGui not required for headless server)
  * KF5 Extra CMake Modules
  * [KF5 KArchive]
 

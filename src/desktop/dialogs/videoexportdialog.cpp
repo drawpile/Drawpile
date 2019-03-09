@@ -90,7 +90,7 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	// make sure currentIndexChanged gets called if saved setting was something other than Custom
 	_ui->sizeChoice->setCurrentIndex(1);
 
-	connect(_ui->sizeChoice, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this]() {
+	connect(_ui->sizeChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), [this]() {
 		QVariant isCustom = _ui->sizeChoice->currentData(Qt::UserRole);
 		bool e = isCustom.type() == QVariant::Bool && isCustom.toBool();
 

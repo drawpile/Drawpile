@@ -124,7 +124,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	restoreSettings();
 
-	connect(m_ui->listserver, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+	connect(m_ui->listserver, QOverload<int>::of(&QComboBox::currentIndexChanged),
 			this, &JoinDialog::refreshListing);
 	refreshListing();
 }

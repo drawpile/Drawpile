@@ -621,7 +621,7 @@ void LoginHandler::reportSession(const QString &id, const QString &reason)
 void LoginHandler::startTls()
 {
 	connect(m_server->m_socket, &QSslSocket::encrypted, this, &LoginHandler::tlsStarted);
-	connect(m_server->m_socket, static_cast<void(QSslSocket::*)(const QList<QSslError>&)>(&QSslSocket::sslErrors), this, &LoginHandler::tlsError);
+	connect(m_server->m_socket, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, &LoginHandler::tlsError);
 
 	m_tls = false;
 	m_server->m_socket->startClientEncryption();

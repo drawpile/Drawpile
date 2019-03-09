@@ -326,16 +326,6 @@ void Session::setAuthOnly(bool authOnly)
 	}
 }
 
-// In Qt 5.7 we can just use Flags.setFlag(flag, true/false);
-// Remove this once we can drop support for older Qt versions
-template<class F, class Ff> static void setFlag(F &flags, Ff f, bool set)
-{
-	if(set)
-		flags |= f;
-	else
-		flags &= ~f;
-}
-
 void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 {
 	QStringList changes;
@@ -358,7 +348,7 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	SessionHistory::Flags flags = m_history->flags();
 
 	if(conf.contains("persistent")) {
-		setFlag(flags, SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
+		flags.setFlag(SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
 		changes << (conf["persistent"].toBool() ? "made persistent" : "made nonpersistent");
 	}
 
@@ -391,17 +381,17 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	// the client whether to send preserved/recorded chat messages
 	// by default.
 	if(conf.contains("preserveChat")) {
-		setFlag(flags, SessionHistory::PreserveChat, conf["preserveChat"].toBool());
+		flags.setFlag(SessionHistory::PreserveChat, conf["preserveChat"].toBool());
 		changes << (conf["preserveChat"].toBool() ? "preserve chat" : "don't preserve chat");
 	}
 
 	if(conf.contains("nsfm")) {
-		setFlag(flags, SessionHistory::Nsfm, conf["nsfm"].toBool());
+		flags.setFlag(SessionHistory::Nsfm, conf["nsfm"].toBool());
 		changes << (conf["nsfm"].toBool() ? "tagged NSFM" : "removed NSFM tag");
 	}
 
 	if(conf.contains("deputies")) {
-		setFlag(flags, SessionHistory::Deputies, conf["deputies"].toBool());
+		flags.setFlag(SessionHistory::Deputies, conf["deputies"].toBool());
 		changes << (conf["deputies"].toBool() ? "enabled deputies" : "disabled deputies");
 	}
 

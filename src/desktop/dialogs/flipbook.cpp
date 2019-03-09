@@ -41,10 +41,10 @@ Flipbook::Flipbook(QWidget *parent)
 
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
-	connect(m_ui->layerIndex, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
-	connect(m_ui->loopStart, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(m_ui->loopEnd, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(m_ui->fps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
+	connect(m_ui->layerIndex, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
+	connect(m_ui->loopStart, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
+	connect(m_ui->loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
+	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
 	connect(m_timer, &QTimer::timeout, m_ui->layerIndex, &QSpinBox::stepUp);
 	connect(m_ui->view, &FlipbookView::cropped, this, &Flipbook::setCrop);
 	connect(m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);

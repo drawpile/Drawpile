@@ -238,7 +238,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
 	// Internal updates
-	connect(d->ui.blendmode, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &BrushSettings::selectBlendMode);
+	connect(d->ui.blendmode, QOverload<int>::of(&QComboBox::activated), this, &BrushSettings::selectBlendMode);
 	connect(d->ui.modeEraser, &QToolButton::clicked, this, &BrushSettings::setEraserMode);
 
 	connect(d->ui.hardedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
@@ -250,7 +250,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 
-	connect(d->ui.brushsizeBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.brushopacity, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
@@ -263,7 +263,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.pressureSmudging, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
-	connect(d->ui.brushspacingBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons

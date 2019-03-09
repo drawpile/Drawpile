@@ -27,10 +27,6 @@
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
 
-#ifndef Q_FALLTHROUGH // not present in Qt 5.6
-#define Q_FALLTHROUGH() (void)0
-#endif
-
 namespace canvas {
 
 AclFilter::AclFilter(QObject *parent)

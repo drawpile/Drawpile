@@ -47,8 +47,8 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 	m_ui->width->setValue(m_oldsize.width());
 	m_ui->height->setValue(m_oldsize.height());
 
-	connect(m_ui->width, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ResizeDialog::widthChanged);
-	connect(m_ui->height, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &ResizeDialog::heightChanged);
+	connect(m_ui->width, QOverload<int>::of(&QSpinBox::valueChanged), this, &ResizeDialog::widthChanged);
+	connect(m_ui->height, QOverload<int>::of(&QSpinBox::valueChanged), this, &ResizeDialog::heightChanged);
 	connect(m_ui->keepaspect, &QCheckBox::toggled, this, &ResizeDialog::toggleAspectRatio);
 
 	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &ResizerWidget::center);
