@@ -2433,7 +2433,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="329"/>
         <source>Undo &amp; Redo:</source>
-        <translation>撤销和返回:</translation>
+        <translation>撤销和重做:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="339"/>
@@ -2542,12 +2542,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="105"/>
         <source>Logging:</source>
-        <translation>登录:</translation>
+        <translation>记录:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="112"/>
         <source>Write log file</source>
-        <translation>Write log file</translation>
+        <translation>写入日志文件</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="132"/>
@@ -2602,7 +2602,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="309"/>
         <source>Shortcut toggles last selection</source>
-        <translation>Shortcut toggles last selection</translation>
+        <translation>快捷键立即触发切换回上一次选择</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="320"/>
@@ -3344,7 +3344,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="345"/>
         <source>Set a password for gaining operator status.</source>
-        <translation>设置换取管理员权限的密码.</translation>
+        <translation>设置获取管理员权限的密码.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="350"/>
