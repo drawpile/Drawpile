@@ -396,9 +396,6 @@
        <property name="maximum">
         <number>255</number>
        </property>
-       <property name="singleStep">
-        <number>5</number>
-       </property>
       </widget>
      </item>
      <item row="2" column="2">
@@ -544,9 +541,6 @@
        </property>
        <property name="maximum">
         <number>999</number>
-       </property>
-       <property name="singleStep">
-        <number>10</number>
        </property>
       </widget>
      </item>
