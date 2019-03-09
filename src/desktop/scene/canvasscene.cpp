@@ -38,7 +38,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), m_image(nullptr), m_model(nullptr),
 	  m_selection(nullptr),
 	  _showAnnotationBorders(false), _showAnnotations(true),
-	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(false), m_showUserAvatars(true), m_showLaserTrails(true)
+	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
