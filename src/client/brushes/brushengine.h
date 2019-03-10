@@ -37,9 +37,9 @@ public:
 
 	void setBrush(int contextId, int layerId, const ClassicBrush &brush);
 
-	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override { m_activeEngine->strokeTo(p, sourceLayer); }
-	void endStroke() override { m_activeEngine->endStroke(); }
-	QList<protocol::MessagePtr> takeDabs() override { return m_activeEngine->takeDabs(); }
+	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override { Q_ASSERT(m_activeEngine); m_activeEngine->strokeTo(p, sourceLayer); }
+	void endStroke() override { Q_ASSERT(m_activeEngine); m_activeEngine->endStroke(); }
+	QList<protocol::MessagePtr> takeDabs() override { Q_ASSERT(m_activeEngine); return m_activeEngine->takeDabs(); }
 
 private:
 	BrushState *m_activeEngine;

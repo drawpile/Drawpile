@@ -100,10 +100,11 @@ void BezierTool::hover(const QPointF &point)
 
 void BezierTool::end()
 {
-	if(m_rightButton)
+	const int s = m_points.size();
+
+	if(m_rightButton || s==0)
 		return;
 
-	const int s = m_points.size();
 	m_points << ControlPoint { m_points.last().point, QPointF() };
 	if(s > 1 && Point::intSame(m_points.at(s-1).cp, QPointF()))
 		finishMultipart();

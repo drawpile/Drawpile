@@ -40,16 +40,21 @@ void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
+	Q_ASSERT(!m_drawing);
 
 	m_start = point;
 	m_p1 = point;
 	m_p2 = point;
+	m_drawing = true;
 
 	updatePreview();
 }
 
 void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool center)
 {
+	if(!m_drawing)
+		return;
+
 	if(constrain)
 		m_p2 = constraints::square(m_start, point);
 	else
@@ -63,8 +68,25 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 	updatePreview();
 }
 
+void ShapeTool::cancelMultipart()
+{
+	auto layers = owner.model()->layerStack()->editor();
+	auto layer = layers.getEditableLayer(owner.activeLayer());
+
+	if(!layer.isNull()) {
+		layer.removeSublayer(-1);
+	}
+
+	m_drawing = false;
+}
+
 void ShapeTool::end()
 {
+	if(!m_drawing)
+		return;
+
+	m_drawing = false;
+
 	auto layers = owner.model()->layerStack()->editor();
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 

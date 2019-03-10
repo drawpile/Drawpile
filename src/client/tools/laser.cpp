@@ -30,13 +30,16 @@ namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0)),
-	m_persistence(1)
+	m_persistence(1), m_drawing(false)
 {}
 
 void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
+	Q_ASSERT(!m_drawing);
+
+	m_drawing = true;
 
 	QList<protocol::MessagePtr> msgs;
 	msgs << protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(),
@@ -52,12 +55,16 @@ void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool ce
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4)));
+	if(m_drawing)
+		owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4)));
 }
 
 void LaserPointer::end()
 {
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(), 0, 0)));
+	if(m_drawing) {
+		m_drawing = false;
+		owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(), 0, 0)));
+	}
 }
 
 }

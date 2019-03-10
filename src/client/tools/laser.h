@@ -37,6 +37,7 @@ public:
 
 private:
 	int m_persistence;
+	bool m_drawing;
 };
 
 }

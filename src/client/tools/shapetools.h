@@ -29,11 +29,12 @@ namespace tools {
  */
 class ShapeTool : public Tool {
 public:
-	ShapeTool(ToolController &owner, Type type, QCursor cursor) : Tool(owner, type, cursor) {}
+	ShapeTool(ToolController &owner, Type type, QCursor cursor) : Tool(owner, type, cursor), m_drawing(false) {}
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
 	void end() override;
+	void cancelMultipart() override;
 
 protected:
 	virtual paintcore::PointVector pointVector() const = 0;
@@ -41,6 +42,9 @@ protected:
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
 	QPointF m_start, m_p1, m_p2;
+
+private:
+	bool m_drawing;
 };
 
 /**

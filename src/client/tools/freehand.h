@@ -38,6 +38,7 @@ public:
 
 private:
 	brushes::BrushEngine m_brushengine;
+	bool m_drawing;
 };
 
 }

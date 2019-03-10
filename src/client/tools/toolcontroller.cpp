@@ -92,6 +92,8 @@ void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
 		m_activeTool->cancelMultipart();
+		endDrawing();
+
 		m_activeTool = getTool(tool);
 		emit activeToolChanged(tool);
 		emit toolCursorChanged(activeToolCursor());

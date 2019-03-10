@@ -1,5 +1,6 @@
 2019-0?-?? Version 2.1.3
  * Fixed showing layers in user markers
+ * Fixed crash when changing tools mid-stroke
 
 2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)

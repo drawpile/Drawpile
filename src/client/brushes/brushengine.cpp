@@ -25,6 +25,7 @@
 namespace brushes {
 
 BrushEngine::BrushEngine()
+	: m_activeEngine(nullptr)
 {
 }
 

@@ -63,10 +63,8 @@ void ZoomTool::motion(const paintcore::Point &point, bool constrain, bool center
 void ZoomTool::end()
 {
 	auto sel = owner.model()->selection();
-	if(!sel) {
-		qWarning("ZoomTool::end(): no selection!");
+	if(!sel)
 		return;
-	}
 
 	const int steps = 3;
 

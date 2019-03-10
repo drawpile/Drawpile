@@ -29,7 +29,7 @@
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
-	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor)
+	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor), m_drawing(false)
 {
 }
 
@@ -37,7 +37,9 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
+	Q_ASSERT(!m_drawing);
 
+	m_drawing = true;
 	m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
 	m_brushengine.strokeTo(point, nullptr);
 
@@ -48,6 +50,8 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	if(!m_drawing)
+		return;
 
 	const paintcore::Layer *srcLayer = nullptr;
 	if(owner.activeBrush().smudge1()>0)
@@ -59,10 +63,13 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 
 void Freehand::end()
 {
-	m_brushengine.endStroke();
-	QList<protocol::MessagePtr> msgs = m_brushengine.takeDabs();
-	msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));
-	owner.client()->sendMessages(msgs);
+	if(m_drawing) {
+		m_drawing = false;
+		m_brushengine.endStroke();
+		QList<protocol::MessagePtr> msgs = m_brushengine.takeDabs();
+		msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));
+		owner.client()->sendMessages(msgs);
+	}
 }
 
 }
