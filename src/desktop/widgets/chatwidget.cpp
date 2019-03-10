@@ -26,7 +26,6 @@
 #include "../shared/net/meta.h"
 #include "canvas/userlist.h"
 
-#include <QDebug>
 #include <QResizeEvent>
 #include <QTextBrowser>
 #include <QVBoxLayout>
@@ -36,6 +35,10 @@
 #include <QScrollBar>
 #include <QTabBar>
 #include <QIcon>
+#include <QMenu>
+#include <QSettings>
+
+#include <memory>
 
 namespace widgets {
 
@@ -54,7 +57,7 @@ struct Chat {
 			".notification { background: #232629 }"
 			".message, .notification {"
 				"color: #eff0f1;"
-				"margin: 2px 0 2px 0"
+				"margin: 1px 0 1px 0"
 			"}"
 			".shout { background: #34292c }"
 			".shout .tab { background: #da4453 }"
@@ -64,14 +67,15 @@ struct Chat {
 			".registered { color: #16a085 }"
 			".op { color: #f47750 }"
 			".mod { color: #ed1515 }"
-			".timestamp { color #4d4d4d }"
-			".padright { padding-right: 6px }"
+			".timestamp { color: #8d8d8d }"
 			"a:link { color: #1d99f3 }"
 		);
 	}
 
+	void appendSeparator(QTextCursor &cursor);
 	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout);
-	void appendAction(int userId, const QString &usernameSpan, const QString &message);
+	void appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout);
+	void appendAction(const QString &usernameSpan, const QString &message);
 	void appendNotification(const QString &message);
 };
 
@@ -93,6 +97,7 @@ struct ChatBox::Private {
 
 	bool wasCollapsed = false;
 	bool preserveChat = true;
+	bool compactMode = false;
 
 	QString usernameSpan(int userId);
 
@@ -157,6 +162,9 @@ ChatBox::ChatBox(QWidget *parent)
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
 
+	d->view->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(d->view, &QTextBrowser::customContextMenuRequested, this, &ChatBox::showChatContextMenu);
+
 	layout->addWidget(d->view, 1);
 
 	d->myline = new ChatLineEdit(this);
@@ -170,6 +178,8 @@ ChatBox::ChatBox(QWidget *parent)
 	d->view->setDocument(d->chats[0].doc);
 
 	setPreserveMode(false);
+
+	d->compactMode = QSettings().value("history/compactchat").toBool();
 }
 
 void ChatBox::Private::updatePreserveModeUi()
@@ -318,6 +328,40 @@ QString ChatBox::Private::usernameSpan(int userId)
 	);
 }
 
+void Chat::appendSeparator(QTextCursor &cursor)
+{
+	cursor.insertHtml(QStringLiteral(
+		"<table height=1 width=\"100%\" class=sep><tr><td></td></tr></table>"
+		));
+}
+
+void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout)
+{
+	Q_UNUSED(userId);
+
+	lastAppendedId = -1;
+
+	QTextCursor cursor(doc);
+
+	cursor.movePosition(QTextCursor::End);
+
+	cursor.insertHtml(QStringLiteral(
+		"<table width=\"100%\" class=\"message%1\">"
+		"<tr>"
+			"<td width=3 class=tab></td>"
+			"<td>%2: %3</td>"
+			"<td class=timestamp align=right>%4</td>"
+		"</tr>"
+		"</table>"
+		).arg(
+			shout ? QStringLiteral(" shout") : QString(),
+			usernameSpan,
+			message,
+			timestamp()
+		)
+	);
+}
+
 void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout)
 {
 	QTextCursor cursor(doc);
@@ -329,10 +373,11 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		lastAppendedId = -2;
 
 	} else if(lastAppendedId != userId) {
+		appendSeparator(cursor);
 		lastAppendedId = userId;
 
 	} else if(ts - lastMessageTs < 60000) {
-		QTextBlock b = doc->lastBlock().previous().previous();
+		QTextBlock b = doc->lastBlock().previous();
 		cursor.setPosition(b.position() + b.length() - 1);
 
 		cursor.insertHtml(QStringLiteral("<br>"));
@@ -348,42 +393,44 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=\"message%1\">"
 		"<tr>"
-			"<td width=3 class=tab></td>"
-			"<td width=20><img src=\"avatar://%2\" width=16 height=16></td>"
-			"<td class=padright><nobr>%3:</nobr></td>"
-			"<td width=99%>%4</td>"
-			"<td class=timestamp align=right>%5</td>"
+			"<td width=3 rowspan=2 class=tab></td>"
+			"<td width=40 rowspan=2><img src=\"avatar://%2\"></td>"
+			"<td>%3</td>"
+			"<td class=timestamp align=right>%4</td>"
+		"</tr>"
+		"<tr>"
+			"<td colspan=2>%5</td>"
 		"</tr>"
 		"</table>"
 		).arg(
 			shout ? QStringLiteral(" shout") : QString(),
 			QString::number(userId),
 			usernameSpan,
-			htmlutils::newlineToBr(message),
-			timestamp()
+			timestamp(),
+			htmlutils::newlineToBr(message)
 		)
 	);
 	lastMessageTs = ts;
 }
 
-void Chat::appendAction(int userId, const QString &usernameSpan, const QString &message)
+void Chat::appendAction(const QString &usernameSpan, const QString &message)
 {
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
 
-	lastAppendedId = -1;
-
+	if(lastAppendedId != -1) {
+		appendSeparator(cursor);
+		lastAppendedId = -1;
+	}
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=message>"
 		"<tr>"
 			"<td width=3 class=tab></td>"
-			"<td width=20><img src=\"avatar://%1\" width=16 height=16></td>"
-			"<td><span class=action>%2 %3</span></td>"
-			"<td class=timestamp align=right>%4</td>"
+			"<td><span class=action>%1 %2</span></td>"
+			"<td class=timestamp align=right>%3</td>"
 		"</tr>"
 		"</table>"
 		).arg(
-			QString::number(userId),
 			usernameSpan,
 			message,
 			timestamp()
@@ -396,10 +443,14 @@ void Chat::appendNotification(const QString &message)
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
 
-	lastAppendedId = 0;
+	if(lastAppendedId != 0) {
+		appendSeparator(cursor);
+		lastAppendedId = 0;
+	}
 
 	cursor.insertHtml(QStringLiteral(
 		"<table width=\"100%\" class=notification><tr>"
+			"<td width=3 class=tab></td>"
 			"<td>%1</td>"
 			"<td align=right class=timestamp>%2</td>"
 		"</tr></table>"
@@ -493,10 +544,13 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 			}
 
 		} else if(chat.isAction()) {
-			d->publicChat().appendAction(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+			d->publicChat().appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
 
 		} else {
-			d->publicChat().appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
+			if(d->compactMode)
+				d->publicChat().appendMessageCompact(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
+			else
+				d->publicChat().appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
 		}
 
 	} else if(msg->type() == protocol::MSG_PRIVATE_CHAT) {
@@ -517,10 +571,13 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 		Chat &c = d->chats[chatId];
 
 		if(chat.isAction()) {
-			c.appendAction(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+			c.appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
 
 		} else {
-			c.appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
+			if(d->compactMode)
+				c.appendMessageCompact(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
+			else
+				c.appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
 		}
 
 	} else {
@@ -582,7 +639,8 @@ void ChatBox::sendMessage(const QString &msg)
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			emit message(protocol::Chat::announce(d->myId, msg.mid(2)));
+			if(msg.length() > 2)
+				emit message(protocol::Chat::announce(d->myId, msg.mid(2)));
 			return;
 
 		} else if(cmd == "me") {
@@ -669,6 +727,27 @@ void ChatBox::chatTabClosed(int index)
 
 	delete d->chats[id].doc;
 	d->chats.remove(id);
+}
+
+void ChatBox::showChatContextMenu(const QPoint &pos)
+{
+	auto menu = std::unique_ptr<QMenu>(d->view->createStandardContextMenu());
+
+	menu->addSeparator();
+
+	menu->addAction(tr("Clear"), this, &ChatBox::clear);
+
+	auto compact = menu->addAction(tr("Compact mode"), this, &ChatBox::setCompactMode);
+	compact->setCheckable(true);
+	compact->setChecked(d->compactMode);
+
+	menu->exec(d->view->mapToGlobal(pos));
+}
+
+void ChatBox::setCompactMode(bool compact)
+{
+	d->compactMode = compact;
+	QSettings().setValue("history/compactchat", compact);
 }
 
 void ChatBox::resizeEvent(QResizeEvent *event)

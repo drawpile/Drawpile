@@ -78,6 +78,8 @@ private slots:
 	void sendMessage(const QString &msg);
 	void chatTabSelected(int index);
 	void chatTabClosed(int index);
+	void showChatContextMenu(const QPoint &pos);
+	void setCompactMode(bool compact);
 
 signals:
 	void message(const protocol::MessagePtr &msg);
