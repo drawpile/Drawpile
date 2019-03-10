@@ -29,19 +29,6 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="1" column="6">
-    <widget class="QSpinBox" name="rotationBox">
-     <property name="suffix">
-      <string notr="true">°</string>
-     </property>
-     <property name="minimum">
-      <number>-360</number>
-     </property>
-     <property name="maximum">
-      <number>360</number>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QToolButton" name="flip">
      <property name="toolTip">
@@ -56,14 +43,40 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="8">
-    <widget class="NavigatorView" name="view">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+   <item row="1" column="1" rowspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
+   <item row="2" column="4">
+    <widget class="QSpinBox" name="zoomBox">
+     <property name="suffix">
+      <string notr="true">%</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>9999</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QSpinBox" name="rotationBox">
+     <property name="suffix">
+      <string notr="true">°</string>
+     </property>
+     <property name="minimum">
+      <number>-360</number>
+     </property>
+     <property name="maximum">
+      <number>360</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
     <widget class="QSlider" name="rotation">
      <property name="toolTip">
       <string>Canvas can be rotated by dragging while holding Ctrl+Space</string>
@@ -88,18 +101,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QToolButton" name="zoomReset">
-     <property name="toolTip">
-      <string>Reset Zoom</string>
-     </property>
-     <property name="icon">
-      <iconset theme="zoom-original">
-       <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="5">
+   <item row="2" column="3">
     <widget class="QSlider" name="zoom">
      <property name="minimum">
       <number>50</number>
@@ -132,10 +134,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" rowspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="2" column="2">
+    <widget class="QToolButton" name="zoomReset">
+     <property name="toolTip">
+      <string>Reset Zoom</string>
+     </property>
+     <property name="icon">
+      <iconset theme="zoom-original">
+       <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
      </property>
     </widget>
    </item>
@@ -150,26 +156,17 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="6">
-    <widget class="QSpinBox" name="zoomBox">
-     <property name="suffix">
-      <string notr="true">%</string>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>9999</number>
-     </property>
-    </widget>
+   <item row="0" column="0" colspan="5">
+    <widget class="NavigatorView" name="view" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>NavigatorView</class>
-   <extends>QGraphicsView</extends>
+   <extends>QWidget</extends>
    <header>docks/navigator.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -179,7 +176,6 @@
   <tabstop>zoomReset</tabstop>
   <tabstop>flip</tabstop>
   <tabstop>mirror</tabstop>
-  <tabstop>view</tabstop>
  </tabstops>
  <resources/>
  <connections>

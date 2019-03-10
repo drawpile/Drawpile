@@ -39,6 +39,9 @@ public:
 	 */
 	const QPixmap &getPixmap(const QRect &refreshArea);
 
+	//! Get a reference to the underlying cache pixmap while making sure the whole pixmap is refreshed
+	const QPixmap &getPixmap();
+
 signals:
 	void areaChanged(const QRect &area) override;
 	void resized(int xoffset, int yoffset, const QSize &oldSize) override;

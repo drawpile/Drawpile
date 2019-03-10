@@ -78,6 +78,8 @@ public:
 
 	canvas::CanvasModel *model() const { return m_model; }
 
+	paintcore::LayerStackPixmapCacheObserver *layerStackObserver() { return m_layerstackObserver; }
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);

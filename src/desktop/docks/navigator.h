@@ -19,40 +19,53 @@
 #define Navigator_H
 
 #include <QDockWidget>
-#include <QGraphicsView>
 
 class Ui_Navigator;
 
+namespace paintcore {
+	class LayerStackPixmapCacheObserver;
+}
+
+namespace drawingboard {
+	class CanvasScene;
+}
+
 namespace docks {
 
-//! Navigator graphics view
-class NavigatorView : public QGraphicsView
+class NavigatorView : public QWidget
 {
 	Q_OBJECT
 public:
 	NavigatorView(QWidget *parent);
 
-	void setViewFocus(const QPolygonF& rect);
+	void setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer);
 
-public slots:
-	void rescale();
+	void setViewFocus(const QPolygonF& rect);
 
 signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
 	
 protected:
-	void drawForeground(QPainter *painter, const QRectF& rect);
+	void paintEvent(QPaintEvent *event);
 	void resizeEvent(QResizeEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
 	void wheelEvent(QWheelEvent *event);
 
+private slots:
+	void onChange();
+	void refreshCache();
+
 private:
+	paintcore::LayerStackPixmapCacheObserver *m_observer;
+	QPixmap m_cache;
+	QSize m_cachedSize;
+
+	QTimer *m_refreshTimer;
+
 	QPolygonF m_focusRect;
 	int m_zoomWheelDelta;
-	bool m_dragging;
 };
 
 //! Navigator dock widget
@@ -64,7 +77,7 @@ public:
 	~Navigator();
 
 	//! Set associated graphics scene
-	void setScene(QGraphicsScene *scene);
+	void setScene(drawingboard::CanvasScene *scene);
 
 	// Set the actions for the buttons
 	void setFlipActions(QAction *flip, QAction *mirror);

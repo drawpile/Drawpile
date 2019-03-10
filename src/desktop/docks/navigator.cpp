@@ -21,33 +21,38 @@ using docks::NavigatorView;
 #include "docks/utils.h"
 #include "scene/canvasscene.h"
 
+#include "core/layerstackpixmapcacheobserver.h"
+#include "core/layerstack.h"
+
 #include <QMouseEvent>
-#include <QWindow>
+#include <QTimer>
+#include <QPainter>
+#include <QDebug>
 
 namespace docks {
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QGraphicsView(parent), m_zoomWheelDelta(0), m_dragging(false)
+	: QWidget(parent), m_observer(nullptr), m_zoomWheelDelta(0)
 {
-	viewport()->setMouseTracking(true);
-	setInteractive(false);
+	m_refreshTimer = new QTimer(this);
+	m_refreshTimer->setSingleShot(true);
+	m_refreshTimer->setInterval(500);
+	connect(m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
+}
 
-	setResizeAnchor(QGraphicsView::AnchorViewCenter);
-	setAlignment(Qt::AlignCenter);
-	
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	
-	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
-
-	setBackgroundBrush(QColor(100, 100, 100));
+void NavigatorView::setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer)
+{
+	m_observer = observer;
+	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &NavigatorView::onChange);
+	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &NavigatorView::onChange);
+	refreshCache();
 }
 
 
 void NavigatorView::resizeEvent(QResizeEvent *event)
 {
-	QGraphicsView::resizeEvent(event);
-	rescale();
+	QWidget::resizeEvent(event);
+	onChange();
 }
 
 /**
@@ -55,8 +60,16 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
  */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
-	emit focusMoved(mapToScene(event->pos()).toPoint());
-	m_dragging = true;
+	if(m_cache.isNull())
+		return;
+
+	const QPoint p = event->pos();
+	const qreal scale = height() / qreal(m_observer->layerStack()->height());
+
+	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+	const QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
+
+	emit focusMoved((p - offset) / scale);
 }
 
 /**
@@ -64,17 +77,7 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
  */
 void NavigatorView::mouseMoveEvent(QMouseEvent *event)
 {
-	if(m_dragging)
-		emit focusMoved(mapToScene(event->pos()).toPoint());
-}
-
-/**
- * Stop dragging the view focus
- */
-void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
-{
-	Q_UNUSED(event);
-	m_dragging = false;
+	mousePressEvent(event);
 }
 
 void NavigatorView::wheelEvent(QWheelEvent *event)
@@ -95,42 +98,72 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
  */
 void NavigatorView::setViewFocus(const QPolygonF& rect)
 {
-	QRegion up = mapFromScene(rect).boundingRect().adjusted(-1,-1,1,1);
-	up |= mapFromScene(m_focusRect).boundingRect().adjusted(-1,-1,1,1);
-	
 	m_focusRect = rect;
-	
-	viewport()->update(up);
+	update();
 }
 
-/**
- * Reset the navigator view scale
- */
-void NavigatorView::rescale()
+
+void NavigatorView::onChange()
 {
-	resetTransform();
-
-	const qreal padding = drawingboard::CanvasScene::MARGIN; // ignore scene padding
-	const QRectF ss = scene()->sceneRect().adjusted(padding, padding, -padding, -padding);
-
-	const qreal x = qreal(width()) / ss.width();
-	const qreal y = qreal(height()-5) / ss.height();
-	const qreal min = qMin(x, y);
-
-	scale(min, min);
-	centerOn(scene()->sceneRect().center());
-	viewport()->update();
+	if(!m_refreshTimer->isActive())
+		m_refreshTimer->start();
 }
 
-void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
+void NavigatorView::refreshCache()
 {
-	Q_UNUSED(rect);
+	if(!m_observer->layerStack())
+		return;
+
+	const QSize size = this->size();
+	if(size != m_cachedSize) {
+		m_cachedSize = size;
+		const QSize pixmapSize = m_observer->layerStack()->size().scaled(size, Qt::KeepAspectRatio);
+		m_cache = QPixmap(pixmapSize);
+	}
+
+	QPainter painter(&m_cache);
+	painter.drawPixmap(m_cache.rect(), m_observer->getPixmap());
+
+	update();
+}
+
+void NavigatorView::paintEvent(QPaintEvent *)
+{
+	QPainter painter(this);
+	painter.fillRect(rect(), QColor(100,100,100));
+
+	// Draw downscaled canvas
+	if(m_cache.isNull())
+		return;
+	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+	const QRect canvasRect {
+		width()/2 - s.width()/2,
+		height()/2 - s.height()/2,
+		s.width(),
+		s.height()
+	};
+	painter.drawPixmap(canvasRect, m_cache);
+
+	// Draw main viewport rectangle
 	QPen pen(QColor(96, 191, 96));
 	pen.setCosmetic(true);
 	pen.setWidth(2);
-	painter->setPen(pen);
-	painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
-	painter->drawPolygon(m_focusRect);
+	painter.setPen(pen);
+	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+
+	const qreal scale = height() / qreal(m_observer->layerStack()->height());
+	painter.translate(canvasRect.topLeft());
+	painter.scale(scale, scale);
+	painter.drawPolygon(m_focusRect);
+
+	// Draw a short line to indicate the righthand side
+	if(qAbs(m_focusRect[0].y() - m_focusRect[1].y()) >= 1.0 || m_focusRect[0].x() > m_focusRect[1].x()) {
+		const QLineF right { m_focusRect[1], m_focusRect[2] };
+		const QLineF unitVector = right.unitVector().translated(-right.p1());
+		QLineF normal = unitVector.normalVector().translated(right.center());
+		normal.setLength(10 / scale);
+		painter.drawLine(normal);
+	}
 }
 
 /**
@@ -165,11 +198,9 @@ void Navigator::setFlipActions(QAction *flip, QAction *mirror)
 	m_ui->mirror->setDefaultAction(mirror);
 }
 
-void Navigator::setScene(QGraphicsScene *scene)
+void Navigator::setScene(drawingboard::CanvasScene *scene)
 {
-	connect(scene, &QGraphicsScene::sceneRectChanged, m_ui->view, &NavigatorView::rescale);
-	m_ui->view->setScene(scene);
-	m_ui->view->rescale();
+	m_ui->view->setLayerStackObserver(scene->layerStackObserver());
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)

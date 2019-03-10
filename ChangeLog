@@ -1,6 +1,9 @@
 2019-0?-?? Version 2.1.3
  * Fixed showing layers in user markers
  * Fixed crash when changing tools mid-stroke
+ * User cursors and other decorations are no longer shown in the navigator
+ * Navigator is refreshed only at 500ms intervals to reduce CPU load
+ * When the canvas is rotated, the righthand side of the viewport is now indicated in the navigator
 
 2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)

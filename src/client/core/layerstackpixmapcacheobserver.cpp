@@ -27,6 +27,14 @@ LayerStackPixmapCacheObserver::LayerStackPixmapCacheObserver(QObject *parent)
 {
 }
 
+const QPixmap &LayerStackPixmapCacheObserver::getPixmap()
+{
+	if(!layerStack())
+		return m_cache;
+
+	return getPixmap(QRect(QPoint(), layerStack()->size()));
+}
+
 const QPixmap &LayerStackPixmapCacheObserver::getPixmap(const QRect &refreshArea)
 {
 	if(!layerStack())
