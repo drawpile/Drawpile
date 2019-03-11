@@ -33,7 +33,6 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QToolButton>
-#include <QImageReader>
 #include <QImageWriter>
 #include <QSplitter>
 #include <QClipboard>
@@ -1006,22 +1005,12 @@ void MainWindow::open(const QUrl& url)
  */
 void MainWindow::open()
 {
-	// Get a list of supported formats
-	QString dpimages = "*.ora ";
-	QString dprecs = "*.dptxt *.dprec *.dprecz *.dprec.gz *.dptxtz *.dptxt.gz ";
-	QString formats;
-	for(QByteArray format : QImageReader::supportedImageFormats()) {
-		formats += "*." + format + " ";
-	}
-	const QString filter =
-			tr("All Supported Files (%1)").arg(dpimages + dprecs + formats) + ";;" +
-			tr("Images (%1)").arg(dpimages + formats) + ";;" +
-			tr("Recordings (%1)").arg(dprecs) + ";;" +
-			QApplication::tr("All Files (*)");
-
-	// Get the file name to open
-	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(this,
-			tr("Open Image"), getLastPath(), filter));
+	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(
+		this,
+		tr("Open Image"),
+		getLastPath(),
+		utils::fileFormatFilter(utils::FileFormatOption::OpenEverything)
+	));
 
 	// Open the file if it was selected
 	if(file.isValid()) {
@@ -1097,17 +1086,14 @@ void MainWindow::save()
 void MainWindow::saveas()
 {
 	QString selfilter;
-	QStringList filter;
 
-	// Get a list of all supported formats
-	for(const QPair<QString,QByteArray> &format : utils::writableImageFormats()) {
-		filter << format.first + " (*." + format.second + ")";
-	}
-	filter << QApplication::tr("All Files (*)");
+	QString file = QFileDialog::getSaveFileName(
+			this,
+			tr("Save Image"),
+			getLastPath(),
+			utils::fileFormatFilter(utils::FileFormatOption::SaveImages),
+			&selfilter);
 
-	// Get the file name
-	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save Image"), getLastPath(), filter.join(";;"), &selfilter);
 	if(file.isEmpty()==false) {
 
 		// Set file suffix if missing
@@ -1209,8 +1195,12 @@ void MainWindow::exportAnimation()
 
 void MainWindow::exportTemplate()
 {
-	QString file = QFileDialog::getSaveFileName(this,
-			tr("Export Session Template"), getLastPath(), utils::recordingFormatFilter());
+	QString file = QFileDialog::getSaveFileName(
+		this,
+		tr("Export Session Template"),
+		getLastPath(),
+		utils::fileFormatFilter(utils::FileFormatOption::SaveRecordings)
+	);
 
 	if(!file.isEmpty()) {
 		QString error;
@@ -1266,8 +1256,12 @@ void MainWindow::toggleRecording()
 		return;
 	}
 
-	QString file = QFileDialog::getSaveFileName(this,
-			tr("Record Session"), getLastPath(), utils::recordingFormatFilter());
+	QString file = QFileDialog::getSaveFileName(
+		this,
+		tr("Record Session"),
+		getLastPath(),
+		utils::fileFormatFilter(utils::FileFormatOption::SaveRecordings)
+	);
 
 	if(!file.isEmpty()) {
 		QString error;
@@ -1873,18 +1867,14 @@ void MainWindow::paste()
 
 void MainWindow::pasteFile()
 {
-	// Get a list of supported formats
-	QString formats;
-	for(QByteArray format : QImageReader::supportedImageFormats()) {
-		formats += "*." + format + " ";
-	}
-	const QString filter = tr("Images (%1)").arg(formats) + ";;" + QApplication::tr("All Files (*)");
+	const QString file = QFileDialog::getOpenFileName(
+		this,
+		tr("Paste Image"),
+		getLastPath(),
+		// note: Only Qt's native image formats are supported at the moment
+		utils::fileFormatFilter(utils::FileFormatOption::OpenImages | utils::FileFormatOption::QtImagesOnly)
+	);
 
-	// Get the file name to open
-	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Paste Image"), getLastPath(), filter);
-
-	// Open the file if it was selected
 	if(file.isEmpty()==false) {
 		const QFileInfo info(file);
 		setLastPath(info.absolutePath());

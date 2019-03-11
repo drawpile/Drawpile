@@ -20,6 +20,7 @@
 #include "images.h"
 
 #include <QSize>
+#include <QImageReader>
 #include <QImageWriter>
 #include <QImage>
 #include <QColor>
@@ -50,19 +51,24 @@ bool isWritableFormat(const QString &filename)
 	const int dot = filename.lastIndexOf('.');
 	if(dot<0)
 		return false;
-	const QByteArray suffix = filename.mid(dot+1).toUtf8();
+	const QByteArray suffix = filename.mid(dot+1).toLower().toLatin1();
 
-	for(const QPair<QString,QByteArray> &fmt : writableImageFormats()) {
-		if(fmt.second == suffix)
+	// Formats we support
+	if(suffix == "ora")
+		return true;
+
+	// All formats supported by Qt
+	for(const QByteArray &fmt : QImageWriter::supportedImageFormats()) {
+		if(suffix == fmt)
 			return true;
 	}
 
 	return false;
 }
 
-QList<QPair<QString,QByteArray>> writableImageFormats()
+QVector<QPair<QString,QByteArray>> writableImageFormats()
 {
-	QList<QPair<QString,QByteArray>> formats;
+	QVector<QPair<QString,QByteArray>> formats;
 
 	// We support ORA ourselves
 	formats.append(QPair<QString,QByteArray>("OpenRaster", "ora"));
@@ -79,20 +85,62 @@ QList<QPair<QString,QByteArray>> writableImageFormats()
 	return formats;
 }
 
-QString recordingFormatFilter(bool allFiles)
+QString fileFormatFilter(FileFormatOptions formats)
 {
-	const QString sep = QStringLiteral(";;");
+	QStringList filter;
+	QString readImages, recordings;
 
-	QString filter =
-		QGuiApplication::tr("Binary Recordings (%1)").arg("*.dprec") + sep +
-		QGuiApplication::tr("Text Recordings (%1)").arg("*.dptxt") + sep +
-		QGuiApplication::tr("Compressed Binary Recordings (%1)").arg("*.dprecz") + sep +
-		QGuiApplication::tr("Compressed Text Recordings (%1)").arg("*.dptxtz");
+	if(formats.testFlag(FileFormatOption::Images)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			// List all image formats for saving
+			for(const auto &format : utils::writableImageFormats()) {
+				filter << QStringLiteral("%1 (*.%2)").arg(format.first, QString::fromLatin1(format.second));
+			}
 
-	if(allFiles)
-		filter = filter + sep + QGuiApplication::tr("All Files (*)");
+		} else {
+			// A single Images filter for loading
+			if(!formats.testFlag(FileFormatOption::QtImagesOnly))
+				readImages = "*.ora ";
 
-	return filter;
+			for(QByteArray format : QImageReader::supportedImageFormats()) {
+				readImages += "*." + format + " ";
+			}
+
+			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
+		}
+	}
+
+	if(formats.testFlag(FileFormatOption::Recordings)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			// Recording formats individually for saving
+			filter
+				<< QGuiApplication::tr("Binary Recordings (%1)").arg("*.dprec")
+				<< QGuiApplication::tr("Text Recordings (%1)").arg("*.dptxt")
+				<< QGuiApplication::tr("Compressed Binary Recordings (%1)").arg("*.dprecz")
+				<< QGuiApplication::tr("Compressed Text Recordings (%1)").arg("*.dptxtz")
+				;
+
+		} else {
+			// A single Recordings filter for loading
+			recordings = "*.dprec *.dptxt *.dprecz *.dptxtz *.dprec.gz *.dptxt.gz";
+			filter
+				<< QGuiApplication::tr("Recordings (%1)").arg(recordings)
+				;
+		}
+	}
+
+	if(!readImages.isEmpty() && !recordings.isEmpty()) {
+		filter.prepend(
+			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + recordings)
+		);
+	}
+
+	// An all files filter when requested
+	if(formats.testFlag(FileFormatOption::AllFiles)) {
+		filter << QGuiApplication::tr("All Files (*)");
+	}
+
+	return filter.join(";;");
 }
 
 QColor isSolidColorImage(const QImage &image)

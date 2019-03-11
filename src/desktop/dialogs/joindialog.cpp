@@ -191,7 +191,7 @@ void JoinDialog::recordingToggled(bool checked)
 			this,
 			tr("Record"),
 			m_recordingFilename,
-			utils::recordingFormatFilter()
+			utils::fileFormatFilter(utils::FileFormatOption::SaveRecordings)
 		);
 		if(m_recordingFilename.isEmpty())
 			m_ui->autoRecord->setChecked(false);
