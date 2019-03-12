@@ -21,7 +21,7 @@ fi
 
 echo "Running $CMD in $IMAGE"
 
-docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL" $IMAGE $CMD
+docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL" -u $UID $IMAGE $CMD
 
 if [ "$1" == "installer" ]; then
 	cd -
