@@ -45,7 +45,7 @@ public:
 
 	Tile &scratchTile(int x, int y)
 	{
-		Tile &t = EditableLayer(&scratch, nullptr).rtile(x, y);
+		Tile &t = EditableLayer(&scratch, nullptr, 0).rtile(x, y);
 		if(t.isNull()) {
 			if(merge) {
 				t = source->getFlatTile(x, y);
@@ -64,7 +64,7 @@ public:
 	}
 
 	Tile &fillTile(int x, int y) {
-		Tile &t = EditableLayer(&fill, nullptr).rtile(x, y);
+		Tile &t = EditableLayer(&fill, nullptr, 0).rtile(x, y);
 		if(t.isNull())
 			t = Tile(Qt::transparent);
 

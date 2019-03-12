@@ -98,6 +98,9 @@ public:
 	//! Get the merged color value at the point
 	QColor colorAt(int x, int y, int dia=0) const;
 
+	//! Get the "last edited by" tag of the topmost visible tile
+	int tileLastEditedBy(int tx, int ty) const;
+
 	/**
 	 * @brief Return a flattened image of the layer stack
 	 *
@@ -156,7 +159,7 @@ public:
 	const QList<LayerStackObserver*> observers() const { return m_observers; }
 
 	//! Start a layer stack editing sequence
-	inline EditableLayerStack editor();
+	inline EditableLayerStack editor(int contextId);
 
 signals:
 	//! Canvas width/height changed
@@ -218,8 +221,8 @@ private:
  */
 class EditableLayerStack {
 public:
-	explicit EditableLayerStack(LayerStack *layerstack)
-		: d(layerstack)
+	explicit EditableLayerStack(LayerStack *layerstack, int contextId)
+		: d(layerstack), contextId(contextId)
 	{
 		Q_ASSERT(d);
 		d->beginWriteSequence();
@@ -296,9 +299,10 @@ public:
 
 private:
 	LayerStack *d;
+	int contextId;
 };
 
-EditableLayerStack LayerStack::editor() { return EditableLayerStack(this); }
+EditableLayerStack LayerStack::editor(int contextId) { return EditableLayerStack(this, contextId); }
 
 }
 

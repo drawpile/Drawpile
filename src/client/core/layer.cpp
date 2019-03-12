@@ -240,8 +240,9 @@ QRgb Layer::pixelAt(int x, int y) const
  * @param ypos target image position
  * @param original the image to pad
  * @param mode compositing mode
+ * @param contextId the ID to assign as the "last edited by" tag
  */
-Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, BlendMode::Mode mode) const
+Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, BlendMode::Mode mode, int contextId) const
 {
 	const int x0 = Tile::roundDown(xpos);
 	const int x1 = qMin(m_width, Tile::roundUp(xpos+original.width()));
@@ -292,7 +293,7 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 	// Copy image pixels to image layer
 	for(int y=0;y<h;y+=Tile::SIZE) {
 		for(int x=0;x<w;x+=Tile::SIZE) {
-			imglayer.rtile(x/Tile::SIZE, y/Tile::SIZE) = Tile(image, x, y);
+			imglayer.rtile(x/Tile::SIZE, y/Tile::SIZE) = Tile(image, x, y, contextId);
 		}
 	}
 
@@ -305,12 +306,13 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 	for(int y=0;y<h;y+=Tile::SIZE) {
 		for(int x=0;x<w;x+=Tile::SIZE) {
 			scratch.rtile(x/Tile::SIZE, y/Tile::SIZE) = tile((x+x0)/Tile::SIZE, (y+y0)/Tile::SIZE);
+			scratch.rtile(x/Tile::SIZE, y/Tile::SIZE).setLastEditedBy(contextId);
 		}
 	}
 
 	// Merge image using standard layer compositing ops
-	EditableLayer(&imglayer, nullptr).setBlend(mode);
-	EditableLayer(&scratch, nullptr).merge(&imglayer);
+	EditableLayer(&imglayer, nullptr, 0).setBlend(mode);
+	EditableLayer(&scratch, nullptr, 0).merge(&imglayer);
 
 	return scratch;
 }
@@ -515,7 +517,7 @@ void EditableLayer::resize(int top, int right, int bottom, int left)
 
 	// Resize sublayers
 	for(Layer *sl : d->m_sublayers)
-		EditableLayer(sl, nullptr).resize(top, right, bottom, left);
+		EditableLayer(sl, nullptr, contextId).resize(top, right, bottom, left);
 
 	// Calculate new size
 	int width = left + d->m_width + right;
@@ -693,7 +695,7 @@ void EditableLayer::putImage(int x, int y, QImage image, BlendMode::Mode mode)
 	const int x0 = Tile::roundDown(x);
 	const int y0 = Tile::roundDown(y);
 	
-	Layer imageLayer = d->padImageToTileBoundary(x, y, image, mode);
+	const Layer imageLayer = d->padImageToTileBoundary(x, y, image, mode, contextId);
 
 	// Replace this layer's tiles with the scratch tiles
 	const int tx0 = x0 / Tile::SIZE;
@@ -774,6 +776,7 @@ void EditableLayer::fillRect(const QRect &rectangle, const QColor &color, BlendM
 				int h = qMin((ty+1)*size, bottom) - ty*size - top;
 
 				Tile &t = d->m_tiles[ty*d->m_xtiles+tx];
+				t.setLastEditedBy(contextId);
 
 				if(!t.isNull() || canIncrOpacity)
 					t.composite(blendmode, mask, color, left, top, w, h, 0);
@@ -823,6 +826,7 @@ void EditableLayer::putBrushStamp(const BrushStamp &bs, const QColor &color, Ble
 					wb, hb,
 					dia-wb
 					);
+			d->m_tiles[i].setLastEditedBy(contextId);
 
 			x = (xindex+1) * Tile::SIZE;
 			xb = xb + wb;
@@ -863,6 +867,7 @@ void EditableLayer::merge(const Layer *layer)
 	// Merge tiles
 	concurrentForEach<int>(mergeidx, [this, layer](int idx) {
 		d->m_tiles[idx].merge(layer->m_tiles.at(idx), layer->opacity(), layer->blendmode());
+		d->m_tiles[idx].setLastEditedBy(contextId);
 	});
 
 	// Merging a layer does not cause an immediate visual change, so we don't
@@ -927,7 +932,7 @@ void EditableLayer::removeSublayer(int id)
 	Q_ASSERT(d);
 	for(Layer *sl : d->m_sublayers) {
 		if(sl->id() == id) {
-			EditableLayer(sl, owner).setHidden(true);
+			EditableLayer(sl, owner, contextId).setHidden(true);
 			return;
 		}
 	}
@@ -938,7 +943,7 @@ void EditableLayer::removePreviews()
 	Q_ASSERT(d);
 	for(Layer *sl : d->m_sublayers) {
 		if(sl->id() < 0)
-			EditableLayer(sl, owner).setHidden(true);
+			EditableLayer(sl, owner, contextId).setHidden(true);
 	}
 }
 

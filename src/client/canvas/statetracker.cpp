@@ -110,7 +110,7 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 		return QImage();
 
 	paintcore::LayerStack stack;
-	stack.editor().restoreSavepoint(m_data->canvas);
+	stack.editor(0).restoreSavepoint(m_data->canvas);
 	QImage img = stack.toFlatImage(true, true);
 	if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 		img = img.scaled(maxSize, Qt::KeepAspectRatio);
@@ -124,7 +124,7 @@ QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, Canv
 		return QList<protocol::MessagePtr>();
 
 	paintcore::LayerStack stack;
-	stack.editor().restoreSavepoint(m_data->canvas);
+	stack.editor(0).restoreSavepoint(m_data->canvas);
 	SnapshotLoader loader(contextId, &stack, canvas);
 	return loader.loadInitCommands();
 }
@@ -437,7 +437,7 @@ void StateTracker::endRemoteContexts()
 	// Make sure there are no lingering indirect strokes
 	// TODO this should probably be done with an InternalMsg,
 	// in case there is still stuff in the queue
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(0);
 	layers.mergeAllSublayers();
 
 	m_myLastLayer = -1;
@@ -448,7 +448,7 @@ void StateTracker::endRemoteContexts()
  */
 void StateTracker::endPlayback()
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(0);
 	layers.mergeAllSublayers();
 }
 
@@ -457,7 +457,7 @@ void StateTracker::endPlayback()
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos)
 {
 	{
-		auto layers = m_layerstack->editor();
+		auto layers = m_layerstack->editor(cmd.contextId());
 		layers.resize(cmd.top(), cmd.right(), cmd.bottom(), cmd.left());
 	}
 
@@ -480,12 +480,13 @@ void StateTracker::handleCanvasBackground(const protocol::CanvasBackground &cmd)
 
 		t = paintcore::Tile(data);
 	}
-	m_layerstack->editor().setBackground(t);
+	t.setLastEditedBy(cmd.contextId());
+	m_layerstack->editor(cmd.contextId()).setBackground(t);
 }
 
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 
 	auto layer = layers.createLayer(
 		cmd.layer(),
@@ -534,7 +535,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("Received layer attributes for non-existent layer #%d", cmd.layer());
@@ -565,7 +566,7 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 	if(cmd.contextId() != localId())
 		return;
 
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("Received layer visibility for non-existent layer #%d", cmd.layer());
@@ -578,7 +579,7 @@ void StateTracker::handleLayerVisibility(const protocol::LayerVisibility &cmd)
 
 void StateTracker::previewLayerOpacity(int id, float opacity)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(0);
 	auto layer = layers.getEditableLayer(id);
 
 	if(layer.isNull()) {
@@ -590,7 +591,7 @@ void StateTracker::previewLayerOpacity(int id, float opacity)
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 
 	if(layer.isNull()) {
@@ -604,7 +605,7 @@ void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 
 	QList<uint16_t> currentOrder;
 	for(int i=0;i<layers->layerCount();++i)
@@ -625,7 +626,7 @@ void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 
 	if(cmd.merge())
 		layers.mergeLayerDown(cmd.layer());
@@ -635,7 +636,7 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 
 void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 
 	brushes::drawBrushDabs(cmd, layers);
 
@@ -646,13 +647,13 @@ void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
 	// This ends an indirect stroke. In incremental mode, this does nothing.
-	 m_layerstack->editor().mergeSublayers(cmd.contextId());
+	 m_layerstack->editor(cmd.contextId()).mergeSublayers(cmd.contextId());
 	emit userMarkerHide(cmd.contextId());
 }
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("PutImage on non-existent layer #%d", cmd.layer());
@@ -674,7 +675,7 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 
 void StateTracker::handlePutTile(const protocol::PutTile &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("PutTile on non-existent layer #%d", cmd.layer());
@@ -683,7 +684,7 @@ void StateTracker::handlePutTile(const protocol::PutTile &cmd)
 
 	paintcore::Tile t;
 	if(cmd.isSolidColor()) {
-		t = paintcore::Tile(QColor::fromRgba(cmd.color()));
+		t = paintcore::Tile(QColor::fromRgba(cmd.color()), cmd.contextId());
 
 	} else {
 		QByteArray data = qUncompress(cmd.image());
@@ -692,7 +693,7 @@ void StateTracker::handlePutTile(const protocol::PutTile &cmd)
 			return;
 		}
 
-		t = paintcore::Tile(data);
+		t = paintcore::Tile(data, cmd.contextId());
 	}
 
 	layer.putTile(cmd.column(), cmd.row(), cmd.repeat(), t, cmd.sublayer());
@@ -700,7 +701,7 @@ void StateTracker::handlePutTile(const protocol::PutTile &cmd)
 
 void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("FillRect on non-existent layer #%d", cmd.layer());
@@ -715,7 +716,7 @@ void StateTracker::handleFillRect(const protocol::FillRect &cmd)
 
 void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 {
-	auto layers = m_layerstack->editor();
+	auto layers = m_layerstack->editor(cmd.contextId());
 	auto layer = layers.getEditableLayer(cmd.layer());
 	if(layer.isNull()) {
 		qWarning("MoveRegion on non-existent layer #%d", cmd.layer());
@@ -1014,7 +1015,7 @@ void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 	m_history.resetTo(savepoint->streampointer);
 	m_savepoints.clear();
 
-	m_layerstack->editor().restoreSavepoint(savepoint->canvas);
+	m_layerstack->editor(0).restoreSavepoint(savepoint->canvas);
 	m_layerlist->setLayers(savepoint->layermodel);
 
 	m_savepoints.append(savepoint);
@@ -1033,7 +1034,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 		return;
 	}
 
-	m_layerstack->editor().restoreSavepoint(savepoint->canvas);
+	m_layerstack->editor(0).restoreSavepoint(savepoint->canvas);
 	m_layerlist->setLayers(savepoint->layermodel);
 
 	// Reverting a savepoint destroys all newer savepoints

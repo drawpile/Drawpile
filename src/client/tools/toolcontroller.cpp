@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ void ToolController::setActiveLayer(uint16_t id)
 	if(m_activeLayer != id) {
 		m_activeLayer = id;
 		if(m_model) {
-			auto layers = m_model->layerStack()->editor();
+			auto layers = m_model->layerStack()->editor(0);
 			layers.setViewLayer(id);
 		}
 

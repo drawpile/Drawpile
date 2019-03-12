@@ -154,7 +154,7 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 		const int y2 = (y+r) / Tile::SIZE;
 
 		Layer flat(0, QString(), Qt::transparent, size());
-		EditableLayer ef(&flat, nullptr);
+		EditableLayer ef(&flat, nullptr, 0);
 
 		ef.putTile(0, 0, 9999*9999, m_backgroundTile);
 
@@ -168,13 +168,29 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 	}
 }
 
+int LayerStack::tileLastEditedBy(int tx, int ty) const
+{
+	if(tx < 0 || ty < 0 || tx >= m_xtiles || ty >= m_ytiles)
+		return 0;
+
+	for(int i=m_layers.size()-1;i>=0;--i) {
+		if(isVisible(i)) {
+			const Tile &t = m_layers.at(i)->tile(tx, ty);
+			if(!t.isNull())
+				return t.lastEditedBy();
+		}
+	}
+
+	return 0;
+}
+
 QImage LayerStack::toFlatImage(bool includeAnnotations, bool includeBackground) const
 {
 	if(m_layers.isEmpty())
 		return QImage();
 
 	Layer flat(0, QString(), Qt::transparent, size());
-	EditableLayer ef(&flat, nullptr);
+	EditableLayer ef(&flat, nullptr, 0);
 
 	if(includeBackground)
 		ef.putTile(0, 0, 9999*9999, m_backgroundTile);
@@ -204,7 +220,7 @@ QImage LayerStack::flatLayerImage(int layerIdx) const
 	Q_ASSERT(layerIdx>=0 && layerIdx < m_layers.size());
 
 	Layer flat(0, QString(), Qt::transparent, size());
-	EditableLayer ef(&flat, nullptr);
+	EditableLayer ef(&flat, nullptr, 0);
 
 	ef.putTile(0, 0, 9999*9999, m_backgroundTile);
 
@@ -483,7 +499,7 @@ void EditableLayerStack::resize(int top, int right, int bottom, int left)
 	d->m_ytiles = Tile::roundTiles(d->m_height);
 
 	for(Layer *l : d->m_layers)
-		EditableLayer(l, d).resize(top, right, bottom, left);
+		EditableLayer(l, d, contextId).resize(top, right, bottom, left);
 
 	if(left || top) {
 		// Update annotation positions
@@ -557,7 +573,7 @@ EditableLayer EditableLayerStack::createLayer(int id, int source, const QColor &
 		}
 
 		nl = new Layer(*d->m_layers.at(sourceIdx));
-		EditableLayer enl(nl, nullptr);
+		EditableLayer enl(nl, nullptr, 0);
 		enl.setTitle(name);
 		enl.setId(id);
 
@@ -575,7 +591,7 @@ EditableLayer EditableLayerStack::createLayer(int id, int source, const QColor &
 	d->m_layers.insert(pos, nl);
 
 	// Dirty regions must be marked after the layer is in the stack
-	EditableLayer editable(nl, d);
+	EditableLayer editable(nl, d, 0);
 
 	if(copy) {
 		editable.markOpaqueDirty();
@@ -596,7 +612,7 @@ bool EditableLayerStack::deleteLayer(int id)
 {
 	for(int i=0;i<d->m_layers.size();++i) {
 		if(d->m_layers.at(i)->id() == id) {
-			EditableLayer(d->m_layers.at(i), d).markOpaqueDirty();
+			EditableLayer(d->m_layers.at(i), d, contextId).markOpaqueDirty();
 			delete d->m_layers.takeAt(i);
 
 			return true;
@@ -645,21 +661,21 @@ void EditableLayerStack::mergeLayerDown(int id) {
 		}
 	}
 	if(btm)
-		EditableLayer(btm, d).merge(top);
+		EditableLayer(btm, d, contextId).merge(top);
 	else
 		qWarning("Tried to merge bottom-most layer");
 }
 
 EditableLayer EditableLayerStack::getEditableLayerByIndex(int index)
 {
-	return EditableLayer(d->m_layers[index], d);
+	return EditableLayer(d->m_layers[index], d, contextId);
 }
 
 EditableLayer EditableLayerStack::getEditableLayer(int id)
 {
 	for(Layer *l : d->m_layers)
 		if(l->id() == id)
-			return EditableLayer(l, d);
+			return EditableLayer(l, d, contextId);
 	return EditableLayer();
 }
 
@@ -688,21 +704,21 @@ void EditableLayerStack::reset()
 void EditableLayerStack::removePreviews()
 {
 	for(Layer *l : d->m_layers) {
-		EditableLayer(l, d).removePreviews();
+		EditableLayer(l, d, contextId).removePreviews();
 	}
 }
 
 void EditableLayerStack::mergeSublayers(int id)
 {
 	for(Layer *l : d->m_layers) {
-		EditableLayer(l, d).mergeSublayer(id);
+		EditableLayer(l, d, contextId).mergeSublayer(id);
 	}
 }
 
 void EditableLayerStack::mergeAllSublayers()
 {
 	for(Layer *l : d->m_layers) {
-		EditableLayer(l, d).mergeAllSublayers();
+		EditableLayer(l, d, contextId).mergeAllSublayers();
 	}
 }
 

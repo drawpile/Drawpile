@@ -139,7 +139,7 @@ void BezierTool::finishMultipart()
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-	auto layers = owner.model()->layerStack()->editor();
+	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(!layer.isNull())
 		layer.removeSublayer(-1);
@@ -183,7 +183,7 @@ PointVector BezierTool::calculateBezierCurve() const
 
 void BezierTool::updatePreview()
 {
-	auto layers = owner.model()->layerStack()->editor();
+	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(layer.isNull()) {
 		qWarning("BezierTool::updatePreview: no active layer!");

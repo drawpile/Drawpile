@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::cancelMultipart()
 {
-	auto layers = owner.model()->layerStack()->editor();
+	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 
 	if(!layer.isNull()) {
@@ -87,14 +87,15 @@ void ShapeTool::end()
 
 	m_drawing = false;
 
-	auto layers = owner.model()->layerStack()->editor();
+	const uint8_t contextId = owner.client()->myId();
+
+	auto layers = owner.model()->layerStack()->editor(contextId);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 
 	if(!layer.isNull()) {
 		layer.removeSublayer(-1);
 	}
 
-	const uint8_t contextId = owner.client()->myId();
 	brushes::BrushEngine brushengine;
 	brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
 
@@ -112,7 +113,7 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	auto layers = owner.model()->layerStack()->editor();
+	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(layer.isNull()) {
 		qWarning("ShapeTool::updatePreview: no active layer!");

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,8 @@ namespace paintcore {
 
 /// Shared tile data
 struct TileData : public QSharedData {
-	quint32 pixels[64*64];
+	quint32 pixels[64*64]; // the pixel data
+	int lastEditedBy;     // ID of the user who last edited this tile
 
 #ifndef NDEBUG // Debug tool for measuring memory usage
 	TileData();
@@ -101,13 +102,13 @@ class Tile {
 		Tile() : m_data(nullptr) { }
 
 		//! Construct a tile filled with the given color
-		explicit Tile(const QColor& color);
+		explicit Tile(const QColor& color, int lastEditedBy=0);
 
 		//! Construct a tile from raw data
-		explicit Tile(const QByteArray &data);
+		explicit Tile(const QByteArray &data, int lastEditedBy=0);
 
 		//! Construct a tile from an image
-		Tile(const QImage& image, int xoff, int yoff);
+		Tile(const QImage& image, int xoff, int yoff, int lastEditedBy=0);
 
 		//! Get a pixel value from this tile.
 		quint32 pixel(int x, int y) const {
@@ -117,6 +118,12 @@ class Tile {
 				return m_data->pixels[y * SIZE + x];
 			return 0;
 		}
+
+		//! Get the ID of the user who last edited this tile
+		int lastEditedBy() const { return m_data ? m_data->lastEditedBy : 0; }
+
+		//! Set the last edited by tag
+		void setLastEditedBy(int id);
 
 		//! Composite values multiplied by color onto this tile
 		void composite(BlendMode::Mode mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip);

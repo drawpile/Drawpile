@@ -209,7 +209,7 @@ public:
 private:
 	//! Construct a sublayer
 	Layer(int id, const QSize& size);
-	Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode) const;
+	Layer padImageToTileBoundary(int leftpad, int toppad, const QImage &original, BlendMode::Mode mode, int contextId) const;
 	QColor getDabColor(const BrushStamp &stamp) const;
 
 	Tile &rtile(int x, int y) {
@@ -241,7 +241,9 @@ private:
 class EditableLayer {
 public:
 	EditableLayer() : d(nullptr), owner(nullptr) { }
-	EditableLayer(Layer *layer, LayerStack *owner) : d(layer), owner(owner) { Q_ASSERT(layer); }
+	EditableLayer(Layer *layer, LayerStack *owner, int contextId)
+		: d(layer), owner(owner), contextId(contextId)
+	{ Q_ASSERT(layer); }
 
 	//! Is this a null layer?
 	bool isNull() const { return !d;}
@@ -313,7 +315,7 @@ public:
 	 */
 	void updateChangeBounds(const QRect &b) { Q_ASSERT(d); d->m_changeBounds |= b; }
 
-	EditableLayer getEditableSubLayer(int id, BlendMode::Mode blendmode, uchar opacity) { return EditableLayer(d->getSubLayer(id, blendmode, opacity), owner); }
+	EditableLayer getEditableSubLayer(int id, BlendMode::Mode blendmode, uchar opacity) { return EditableLayer(d->getSubLayer(id, blendmode, opacity), owner, contextId); }
 
     const Layer *operator ->() const { return d; }
 
@@ -330,6 +332,7 @@ public:
 private:
 	Layer *d;
 	LayerStack *owner;
+	int contextId;
 };
 
 }

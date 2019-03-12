@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -268,14 +268,14 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::setLayerViewMode(int mode)
 {
-	m_layerstack->editor().setViewMode(paintcore::LayerStack::ViewMode(mode));
+	m_layerstack->editor(0).setViewMode(paintcore::LayerStack::ViewMode(mode));
 	updateLayerViewOptions();
 }
 
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
-		m_layerstack->editor().removePreviews();
+		m_layerstack->editor(0).removePreviews();
 
 		const bool hadSelection = m_selection != nullptr;
 
@@ -297,7 +297,7 @@ void CanvasModel::updateLayerViewOptions()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/animation");
-	m_layerstack->editor().setOnionskinMode(
+	m_layerstack->editor(0).setOnionskinMode(
 		cfg.value("onionskinsbelow", 4).toInt(),
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
@@ -389,7 +389,7 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
-	m_layerstack->editor().reset();
+	m_layerstack->editor(0).reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);
 }

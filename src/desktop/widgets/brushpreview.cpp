@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ void BrushPreview::updatePreview()
 		m_previewCache->attachToLayerStack(m_preview);
 	}
 
-	auto layerstack = m_preview->editor();
+	auto layerstack = m_preview->editor(0);
 
 	if(m_preview->width() == 0) {
 		const QSize size = contentsRect().size();

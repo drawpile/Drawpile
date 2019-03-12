@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ bool SelectionTool::isMultipart() const
 void SelectionTool::startMove()
 {
 	canvas::Selection *sel = owner.model()->selection();
-	auto layers = owner.model()->layerStack()->editor();
+	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
 
 	paintcore::EditableLayer layer = layers.getEditableLayer(owner.activeLayer());
 	if(sel && !layer.isNull()) {

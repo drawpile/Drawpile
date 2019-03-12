@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,29 +17,30 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-#include <QImage>
-#include <QPainter>
-
 #include "tile.h"
 #include "rasterop.h"
 
+#include <QImage>
+#include <QPainter>
+
 namespace paintcore {
 
-Tile::Tile(const QColor& color)
+Tile::Tile(const QColor& color, int lastEditedBy)
 	: m_data(new TileData)
 {
 	quint32 *ptr = m_data->pixels;
 	quint32 col = qPremultiply(color.rgba());
 	for(int i=0;i<LENGTH;++i)
 		*(ptr++) = col;
+	m_data->lastEditedBy = lastEditedBy;
 }
 
-Tile::Tile(const QByteArray &data)
+Tile::Tile(const QByteArray &data, int lastEditedBy)
 	: m_data(new TileData)
 {
 	Q_ASSERT(data.length() == BYTES);
 	memcpy(m_data->pixels, data.constData(), BYTES);
+	m_data->lastEditedBy = lastEditedBy;
 }
 
 /**
@@ -50,7 +51,7 @@ Tile::Tile(const QByteArray &data)
  * @param xoff source image offset
  * @param yoff source image offset
  */
-Tile::Tile(const QImage& image, int xoff, int yoff)
+Tile::Tile(const QImage& image, int xoff, int yoff, int lastEditedBy)
 	: m_data(new TileData)
 {
 	Q_ASSERT(xoff>=0 && xoff < image.width());
@@ -70,6 +71,7 @@ Tile::Tile(const QImage& image, int xoff, int yoff)
 		ptr += SIZE*4;
 		src += image.bytesPerLine();
 	}
+	m_data->lastEditedBy = lastEditedBy;
 }
 
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
@@ -229,10 +231,20 @@ QColor Tile::solidColor() const
 	return QColor::fromRgba(qUnpremultiply(first));
 }
 
+void Tile::setLastEditedBy(int id)
+{
+	if(!m_data) {
+		m_data = new TileData;
+		memset(m_data->pixels, 0, BYTES);
+	}
+	m_data->lastEditedBy = id;
+}
+
 quint32 *Tile::data() {
 	if(!m_data) {
 		m_data = new TileData;
 		memset(m_data->pixels, 0, BYTES);
+		m_data->lastEditedBy = 0;
 	}
 	return m_data->pixels;
 }

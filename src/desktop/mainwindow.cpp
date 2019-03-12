@@ -740,7 +740,7 @@ void MainWindow::updateLayerViewMode()
 	else if(onionskin)
 		mode = paintcore::LayerStack::ONIONSKIN;
 
-	auto layers = m_doc->canvas()->layerStack()->editor();
+	auto layers = m_doc->canvas()->layerStack()->editor(0);
 	layers.setViewMode(mode);
 	layers.setCensorship(censor);
 	updateLockWidget();

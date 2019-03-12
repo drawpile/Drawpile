@@ -174,7 +174,7 @@ static bool writeBackground(KZip &zf, const paintcore::LayerStack *layers, QStri
 
 	// A full size background layer
 	paintcore::Layer bg(0, QString(), Qt::transparent, layers->size());
-	paintcore::EditableLayer(&bg, nullptr).putTile(0, 0, 9999*9999, layers->background());
+	paintcore::EditableLayer(&bg, nullptr, 0).putTile(0, 0, 9999*9999, layers->background());
 	if(!putPngInZip(zf, "data/background.png", bg.toImage(), errorMessage))
 		return false;
 
