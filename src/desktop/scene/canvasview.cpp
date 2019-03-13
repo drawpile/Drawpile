@@ -41,7 +41,7 @@
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), _pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), _isdragging(DRAG_NOTRANSFORM),
+	: QGraphicsView(parent), m_pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), m_outlineSize(2),
 	m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false), _zoom(100), _rotate(0), _flip(false), _mirror(false),
 	_scene(nullptr),
@@ -372,14 +372,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 				_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 
 		} else {
-			// Start of a stroke. It is possible to get TabletPress and MousePress
-			// events in the wrong order (mouse event generated before the real tablet event)
-			// so the only thing we do here is remember the position of the starting point.
-			// The real tool begin action will be executed in onPenMove, or onPenUp
-			// in case of a single point dab.
-			m_firstPoint = p;
-			m_isFirstPoint = true;
-			m_firstPointRight = right;
+			emit penDown(p, p.pressure(), right, _zoom / 100.0);
 		}
 	}
 }
@@ -397,11 +390,6 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bo
 				_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 
 		} else {
-			if(m_isFirstPoint) {
-				m_isFirstPoint = false;
-				// Pressure value of the first point may not be valid
-				emit penDown(m_firstPoint, p.pressure(), m_firstPointRight, _zoom / 100.0);
-			}
 			emit penMove(p, p.pressure(), shift, alt);
 		}
 	}
@@ -412,8 +400,6 @@ void CanvasView::onPenUp(bool right)
 	Q_UNUSED(right);
 	if(!_locked) {
 		if(!m_specialpenmode) {
-			if(m_isFirstPoint)
-				emit penDown(m_firstPoint, m_firstPoint.pressure(), m_firstPointRight, _zoom / 100.0);
 			emit penUp();
 		}
 	}
@@ -422,6 +408,9 @@ void CanvasView::onPenUp(bool right)
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
+	if(m_pendown != NOTDOWN)
+		return;
+
 	if(button == Qt::MidButton || _dragbtndown) {
 		ViewTransform mode;
 		if(_dragbtndown == DRAG_NOTRANSFORM) {
@@ -437,7 +426,7 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		startDrag(pos.x(), pos.y(), mode);
 
 	} else if((button == Qt::LeftButton || button == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
-		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
+		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		_pointerdistance = 0;
 		_pointervelocity = 0;
 		_prevpoint = mapToScene(pos, pressure);
@@ -449,10 +438,6 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
-	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(_pendown != NOTDOWN)
-		return;
-
 	if(_touching)
 		return;
 
@@ -473,7 +458,7 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 	} else {
 		// Hot border detection. This is used to show the menu bar in fullscreen mode
 		// when the pointer is brought to the top of the screen.
-		if(!_pendown) {
+		if(!m_pendown) {
 			if(_hotBorderTop) {
 				if(pos.y() > 30) {
 					emit hotBorder(false);
@@ -490,7 +475,7 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 		paintcore::Point point = mapToScene(pos, pressure);
 		updateOutline(point);
 		if(!_prevpoint.intSame(point)) {
-			if(_pendown) {
+			if(m_pendown) {
 				_pointervelocity = point.distance(_prevpoint);
 				_pointerdistance += _pointervelocity;
 				point.setPressure(mapPressure(pressure, isStylus));
@@ -510,11 +495,11 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(_pendown == TABLETDOWN)
+	if(m_pendown == TABLETDOWN)
 		return;
 	if(_touching)
 		return;
-	if(_pendown && event->buttons() == Qt::NoButton) {
+	if(m_pendown && event->buttons() == Qt::NoButton) {
 		// In case we missed a mouse release
 		mouseReleaseEvent(event);
 		return;
@@ -535,9 +520,9 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 	if(_isdragging) {
 		stopDrag();
 
-	} else if(_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && _pendown == MOUSEDOWN)) {
+	} else if(m_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && m_pendown == MOUSEDOWN)) {
 		onPenUp(button == Qt::RightButton);
-		_pendown = NOTDOWN;
+		m_pendown = NOTDOWN;
 	}
 }
 
@@ -839,7 +824,7 @@ void CanvasView::updateOutline()
 void CanvasView::doQuickAdjust1(float delta)
 {
 	// Brush attribute adjustment is allowed only when stroke is not in progress
-	if(_pendown == NOTDOWN)
+	if(m_pendown == NOTDOWN)
 		emit quickAdjust(delta);
 }
 

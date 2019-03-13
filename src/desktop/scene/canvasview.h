@@ -69,7 +69,7 @@ class CanvasView : public QGraphicsView
 		void setTouchGestures(bool scroll, bool pinch, bool twist);
 
 		//! Is drawing in progress at the moment?
-		bool isPenDown() const { return _pendown != NOTDOWN; }
+		bool isPenDown() const { return m_pendown != NOTDOWN; }
 
 		//! Is this point (scene coordinates) inside the viewport?
 		bool isPointVisible(const QPointF &point) const;
@@ -223,7 +223,7 @@ class CanvasView : public QGraphicsView
 		 * - MOUSEDOWN mouse is down
 		 * - TABLETDOWN tablet stylus is down
 		 */
-		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} _pendown;
+		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} m_pendown;
 
 		//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
 		enum { NOSPECIALPENMODE, COLORPICK, LAYERPICK} m_specialpenmode;
@@ -234,7 +234,6 @@ class CanvasView : public QGraphicsView
 		int _dragx,_dragy;
 
 		//! Previous pointer location
-		paintcore::Point m_firstPoint;
 		paintcore::Point _prevpoint;
 		paintcore::Point _prevoutlinepoint;
 		qreal _pointerdistance;

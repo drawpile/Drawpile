@@ -190,11 +190,7 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 		return;
 	}
 
-	if(m_smoothing>0 && m_activeTool->allowSmoothing()) {
-		m_smoother.reset();
-		m_smoother.addPoint(paintcore::Point(point, pressure));
-	}
-	// TODO handle hasSmoothPoint() == false
+	m_smoother.reset();
 	m_activeTool->begin(paintcore::Point(point, pressure), right, zoom);
 
 	if(!m_activeTool->isMultipart())

@@ -40,10 +40,13 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	Q_ASSERT(!m_drawing);
 
 	m_drawing = true;
+	m_firstPoint = true;
 	m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
-	m_brushengine.strokeTo(point, nullptr);
 
-	owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
+	// The pressure value of the first point is unreliable
+	// because it is (or was?) possible to get a synthetic MousePress event
+	// before the StylusPress event.
+	m_start = point;
 }
 
 void Freehand::motion(const paintcore::Point& point, bool constrain, bool center)
@@ -57,6 +60,12 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	if(owner.activeBrush().smudge1()>0)
 		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
 
+	if(m_firstPoint) {
+		m_firstPoint = false;
+		m_brushengine.strokeTo(paintcore::Point(m_start, qMin(m_start.pressure(), point.pressure())), srcLayer);
+		owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
+	}
+
 	m_brushengine.strokeTo(point, srcLayer);
 	owner.client()->sendMessages(m_brushengine.takeDabs());
 }
@@ -65,6 +74,13 @@ void Freehand::end()
 {
 	if(m_drawing) {
 		m_drawing = false;
+
+		if(m_firstPoint) {
+			m_firstPoint = false;
+			m_brushengine.strokeTo(m_start, nullptr);
+			owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
+		}
+
 		m_brushengine.endStroke();
 		QList<protocol::MessagePtr> msgs = m_brushengine.takeDabs();
 		msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));

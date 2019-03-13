@@ -39,6 +39,8 @@ public:
 private:
 	brushes::BrushEngine m_brushengine;
 	bool m_drawing;
+	bool m_firstPoint;
+	paintcore::Point m_start;
 };
 
 }
