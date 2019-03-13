@@ -44,8 +44,6 @@ class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
 	public:
-		enum TabletMode { DISABLE_TABLET, ENABLE_TABLET, HYBRID_TABLET }; // hybrid mode combines tablet and mouse events to work around QTabletEvent bugs
-
 		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
@@ -65,7 +63,7 @@ class CanvasView : public QGraphicsView
 		QPoint viewCenterPoint() const;
 
 		//! Enable/disable tablet event handling
-		void setTabletMode(TabletMode mode);
+		void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 
 		//! Enable/disable touch gestures
 		void setTouchGestures(bool scroll, bool pinch, bool twist);
@@ -263,13 +261,9 @@ class CanvasView : public QGraphicsView
 		// Input settings
 		PressureMapping m_pressuremapping;
 
-		TabletMode _tabletmode;
-
-		qreal _lastPressure; // these two are used only with hybrid tablet mode
-		bool _stylusDown;
-
 		int _zoomWheelDelta;
 
+		bool m_enableTablet;
 		bool _locked;
 		bool _pointertracking;
 		bool _pixelgrid;

@@ -43,11 +43,10 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), m_outlineSize(2),
-	m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false), _zoom(100), _rotate(0), _flip(false), _mirror(false), _scene(0),
-	_tabletmode(ENABLE_TABLET),
-	_lastPressure(0),
-	_stylusDown(false),
+	m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false), _zoom(100), _rotate(0), _flip(false), _mirror(false),
+	_scene(nullptr),
 	_zoomWheelDelta(0),
+	m_enableTablet(true),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
 	_hotBorderTop(false), m_isFirstPoint(false),
 	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
@@ -78,11 +77,6 @@ CanvasView::CanvasView(QWidget *parent)
 		p.drawPoint(0, 0);
 		m_dotcursor = QCursor(dot, 0, 0);
 	}
-}
-
-void CanvasView::setTabletMode(TabletMode mode)
-{
-	_tabletmode = mode;
 }
 
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
@@ -428,11 +422,6 @@ void CanvasView::onPenUp(bool right)
 
 void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
-	if(_stylusDown) {
-		// Work around missing modifier keys in QTabletEvent
-		modifiers = QApplication::queryKeyboardModifiers();
-	}
-
 	if(button == Qt::MidButton || _dragbtndown) {
 		ViewTransform mode;
 		if(_dragbtndown == DRAG_NOTRANSFORM) {
@@ -448,12 +437,6 @@ void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButt
 		startDrag(pos.x(), pos.y(), mode);
 
 	} else if((button == Qt::LeftButton || button == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
-
-		if(_stylusDown) {
-			// Work around missing modifier keys in QTabletEvent
-			modifiers = QApplication::queryKeyboardModifiers();
-		}
-
 		_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		_pointerdistance = 0;
 		_pointervelocity = 0;
@@ -475,7 +458,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	penPressEvent(
 		event->pos(),
-		_tabletmode == HYBRID_TABLET && _stylusDown ? _lastPressure : 1,
+		1,
 		event->button(),
 		event->modifiers(),
 		false
@@ -502,11 +485,6 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 					_hotBorderTop = true;
 				}
 			}
-		}
-
-		if(_stylusDown) {
-			// Work around missing modifier keys in QTabletEvent
-			modifiers = QApplication::queryKeyboardModifiers();
 		}
 
 		paintcore::Point point = mapToScene(pos, pressure);
@@ -544,7 +522,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 	penMoveEvent(
 		event->pos(),
-		_tabletmode == HYBRID_TABLET && _stylusDown ? _lastPressure : 1.0,
+		1.0,
 		event->buttons(),
 		event->modifiers(),
 		false
@@ -760,55 +738,40 @@ bool CanvasView::viewportEvent(QEvent *event)
 		touchEvent(static_cast<QTouchEvent*>(event));
 	}
 #endif
-	else if(event->type() == QEvent::TabletPress && _tabletmode!=DISABLE_TABLET) {
+	else if(event->type() == QEvent::TabletPress && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		_stylusDown = true;
-		_lastPressure = tabev->pressure();
 
 		// Note: it is possible to get a mouse press event for a tablet event (even before
 		// the tablet event is received or even though tabev->accept() is called), but
 		// it is never possible to get a TabletPress for a real mouse press. Therefore,
 		// we don't actually do anything yet in the penDown handler other than remember
 		// the initial point and we'll let a TabletEvent override the mouse event.
-		if(_tabletmode==ENABLE_TABLET) {
-			tabev->accept();
+		tabev->accept();
 
-			penPressEvent(
-				tabev->posF(),
-				tabev->pressure(),
-				tabev->button(),
-				tabev->modifiers(),
-				true
-			);
-		} else
-			return QGraphicsView::viewportEvent(event);
+		penPressEvent(
+			tabev->posF(),
+			tabev->pressure(),
+			tabev->button(),
+			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
+			true
+		);
 	}
-	else if(event->type() == QEvent::TabletMove && _tabletmode!=DISABLE_TABLET) {
+	else if(event->type() == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		_lastPressure = tabev->pressure();
-		_stylusDown = true;
-		if(_tabletmode==ENABLE_TABLET) {
-			tabev->accept();
+		tabev->accept();
 
-			penMoveEvent(
-				tabev->posF(),
-				tabev->pressure(),
-				tabev->buttons(),
-				tabev->modifiers(),
-				true
-			);
-		} else
-			return QGraphicsView::viewportEvent(event);
+		penMoveEvent(
+			tabev->posF(),
+			tabev->pressure(),
+			tabev->buttons(),
+			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
+			true
+		);
 	}
-	else if(event->type() == QEvent::TabletRelease && _tabletmode!=DISABLE_TABLET) {
+	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		_stylusDown = false;
-		if(_tabletmode==ENABLE_TABLET) {
-			tabev->accept();
-			penReleaseEvent(tabev->posF(), tabev->button());
-
-		} else
-			return QGraphicsView::viewportEvent(event);
+		tabev->accept();
+		penReleaseEvent(tabev->posF(), tabev->button());
 	}
 	else {
 		return QGraphicsView::viewportEvent(event);
@@ -821,7 +784,7 @@ float CanvasView::mapPressure(float pressure, bool stylus)
 {
 	switch(m_pressuremapping.mode) {
 	case PressureMapping::STYLUS:
-		return stylus || (_tabletmode==HYBRID_TABLET && _stylusDown) ? m_pressuremapping.curve.value(pressure) : 1.0;
+		return stylus ? m_pressuremapping.curve.value(pressure) : 1.0;
 
 	case PressureMapping::DISTANCE: {
 		qreal d = qMin(_pointerdistance, m_pressuremapping.param) / m_pressuremapping.param;
