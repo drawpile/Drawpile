@@ -44,7 +44,6 @@
 
 #include <ColorDialog>
 
-
 #ifndef NDEBUG
 #include "core/tile.h"
 #endif
@@ -134,19 +133,9 @@
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
-namespace {
+static QString getLastPath() { return QSettings().value("window/lastpath").toString(); }
 
-QString getLastPath() {
-	QFileInfo fi(QSettings().value("window/lastpath").toString());
-	return fi.absoluteDir().absolutePath();
-}
-
-void setLastPath(const QString &lastpath) {
-	QSettings cfg;
-	cfg.setValue("window/lastpath", lastpath);
-}
-
-}
+static void setLastPath(const QString &lastpath) { QSettings().setValue("window/lastpath", lastpath); }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(),
@@ -1006,17 +995,18 @@ void MainWindow::open(const QUrl& url)
  */
 void MainWindow::open()
 {
-	const QUrl file = QUrl::fromLocalFile(QFileDialog::getOpenFileName(
+	const QString file = QFileDialog::getOpenFileName(
 		this,
 		tr("Open Image"),
 		getLastPath(),
 		utils::fileFormatFilter(utils::FileFormatOption::OpenEverything)
-	));
+	);
 
 	// Open the file if it was selected
-	if(file.isValid()) {
-		setLastPath(file.toString());
-		open(file);
+	const QUrl url = QUrl::fromLocalFile(file);
+	if(url.isValid()) {
+		setLastPath(file);
+		open(url);
 	}
 }
 
@@ -1095,7 +1085,7 @@ void MainWindow::saveas()
 			utils::fileFormatFilter(utils::FileFormatOption::SaveImages),
 			&selfilter);
 
-	if(file.isEmpty()==false) {
+	if(!file.isEmpty()) {
 
 		// Set file suffix if missing
 		const QFileInfo info(file);
@@ -1121,6 +1111,7 @@ void MainWindow::saveas()
 		}
 
 		// Save the image
+		setLastPath(file);
 		m_doc->saveCanvas(file);
 		addRecentFile(file);
 	}
