@@ -29,8 +29,8 @@ cd $PKGNAME
 
 # Copy DLLs
 MBIN="$MXEROOT/bin"
+cp "$MBIN/libwinpthread-1.dll" .
 cp "$MBIN/libgcc_s_seh-1.dll" .
-cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libstdc++-6.dll" .
 cp "$MBIN/libbz2.dll" .
 cp "$MBIN/liblzma-5.dll" .

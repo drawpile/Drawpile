@@ -2,9 +2,9 @@ FROM dockcross/windows-x64
 
 WORKDIR /usr/src/mxe
 
-# Get the latest MXE version that provides Qt 5.11
-# KIS_TABLET code doesn not work correctly with Qt 5.12
-RUN git fetch && git checkout 730aeba502031f64c119959fded5bab471e5f5e5
+# Get specific MXE version that is known to work? (2019-03-28)
+# Provides Qt 5.12.2
+RUN git fetch && git checkout 46bfb30d596577537d6865b580e1ae520a74558c
 
 # Custom MXE settings
 ADD settings.mk /usr/src/mxe/
