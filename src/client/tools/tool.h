@@ -46,7 +46,7 @@ public:
 		FLOODFILL, ANNOTATION,
 		PICKER, LASERPOINTER,
 		SELECTION, POLYGONSELECTION,
-		ZOOM,
+		ZOOM, INSPECTOR,
 		_LASTTOOL};
 
 	Tool(ToolController &owner, Type type, const QCursor &cursor)

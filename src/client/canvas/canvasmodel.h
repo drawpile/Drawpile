@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -122,6 +122,8 @@ public slots:
 
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter=0);
+	void inspectCanvas(int x, int y);
+	void stopInspectingCanvas();
 
 	void setLayerViewMode(int mode);
 	void updateLayerViewOptions();
@@ -137,6 +139,8 @@ signals:
 	void imageSizeChanged();
 
 	void colorPicked(const QColor &color);
+	void canvasInspected(int tx, int ty, int lastEditedBy);
+	void canvasInspectionEnded();
 
 	void chatMessageReceived(const protocol::MessagePtr &msg);
 	void markerMessageReceived(int id, const QString &message);

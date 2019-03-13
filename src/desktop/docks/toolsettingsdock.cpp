@@ -27,6 +27,7 @@
 #include "toolwidgets/fillsettings.h"
 #include "toolwidgets/lasersettings.h"
 #include "toolwidgets/zoomsettings.h"
+#include "toolwidgets/inspectorsettings.h"
 
 #include "tools/toolproperties.h"
 
@@ -145,6 +146,11 @@ struct ToolSettings::Private {
 			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
 			"zoom",
 			QApplication::tr("Zoom")
+			};
+		pages[tools::Tool::INSPECTOR] = {
+			QSharedPointer<tools::ToolSettings>(new tools::InspectorSettings(ctrl)),
+			"inspector",
+			QApplication::tr("Inspector")
 			};
 
 		for(int i=0;i<tools::Tool::_LASTTOOL;++i) {

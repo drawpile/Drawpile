@@ -105,6 +105,7 @@
 #include "toolwidgets/annotationsettings.h"
 #include "toolwidgets/lasersettings.h"
 #include "toolwidgets/zoomsettings.h"
+#include "toolwidgets/inspectorsettings.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/annotation.h"
@@ -466,6 +467,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(canvas, &canvas::CanvasModel::colorPicked, static_cast<tools::ColorPickerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::addColor);
+	connect(canvas, &canvas::CanvasModel::canvasInspected, static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR)), &tools::InspectorSettings::onCanvasInspected);
 
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
 
@@ -480,6 +482,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_userlistview->setModel(canvas->userlist());
 	m_chatbox->setUserList(canvas->userlist());
 	m_useritemdelegate->setDocument(m_doc);
+
+	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 
 	// Make sure the UI matches the default feature access level
 	m_currentdoctools->setEnabled(true);
@@ -2617,6 +2621,7 @@ void MainWindow::setupActions()
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select (Rectangular)")).icon("select-rectangular").statusTip(tr("Select area for copying")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("zoom-select").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
+	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
 	QAction *markertool = makeAction("toolmarker", tr("&Mark")).icon("flag-red").statusTip(tr("Leave a marker to find this spot on the recording")).shortcut("Ctrl+M");
 
 	connect(markertool, &QAction::triggered, this, &MainWindow::markSpotForRecording);
@@ -2634,6 +2639,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(selectiontool);
 	m_drawingtools->addAction(lassotool);
 	m_drawingtools->addAction(zoomtool);
+	m_drawingtools->addAction(inspectortool);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());

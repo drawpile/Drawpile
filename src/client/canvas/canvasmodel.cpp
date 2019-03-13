@@ -266,6 +266,23 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 	}
 }
 
+void CanvasModel::inspectCanvas(int x, int y)
+{
+	if(x>=0 && y>=0 && x<m_layerstack->width() && y<m_layerstack->height()) {
+		const int tx = x / paintcore::Tile::SIZE;
+		const int ty = y / paintcore::Tile::SIZE;
+		const int id = m_layerstack->tileLastEditedBy(tx, ty);
+		m_layerstack->editor(0).setInspectorHighlight(id);
+		emit canvasInspected(tx, ty, id);
+	}
+}
+
+void CanvasModel::stopInspectingCanvas()
+{
+	m_layerstack->editor(0).setInspectorHighlight(0);
+	emit canvasInspectionEnded();
+}
+
 void CanvasModel::setLayerViewMode(int mode)
 {
 	m_layerstack->editor(0).setViewMode(paintcore::LayerStack::ViewMode(mode));

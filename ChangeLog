@@ -5,6 +5,7 @@
  * Navigator is refreshed only at 500ms intervals to reduce CPU load
  * When the canvas is rotated, the righthand side of the viewport is now indicated in the navigator
  * Restored 2.1.0 style chatbox and added an option to enable 2.0 style compact mode
+ * Added Inspector tool
 
 2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)

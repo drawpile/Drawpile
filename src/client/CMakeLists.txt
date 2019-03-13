@@ -19,6 +19,7 @@ set (
 	tools/floodfill.cpp
 	tools/strokesmoother.cpp
 	tools/zoom.cpp
+	tools/inspector.cpp
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp

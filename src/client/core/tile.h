@@ -168,8 +168,8 @@ class Tile {
 		//! Fill a tile sized memory buffer with a checker pattern
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 
-		//! Construct a tile filled with a censor block pattern
-		static Tile CensorBlock(const QColor& dark, const QColor& light);
+		//! Construct a tile filled with a diagonal stripe pattern
+		static Tile ZebraBlock(const QColor& dark, const QColor& light, int stripe=16);
 
 		/**
 		 * @brief Check if these two tiles have identical content

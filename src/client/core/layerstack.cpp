@@ -30,11 +30,13 @@
 
 namespace paintcore {
 
-static const Tile CENSORED_TILE = Tile::CensorBlock(QColor("#232629"), QColor("#eff0f1"));
+static const Tile CENSORED_TILE = Tile::ZebraBlock(QColor("#232629"), QColor("#eff0f1"));
+static const Tile ZEBRA_TILE = Tile::ZebraBlock(Qt::red, Qt::black, 2);
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), m_width(0), m_height(0), m_xtiles(0), m_ytiles(0), m_dpix(0), m_dpiy(0), m_viewmode(NORMAL), m_viewlayeridx(0),
-	  m_onionskinsBelow(4), m_onionskinsAbove(4), m_openEditors(0), m_onionskinTint(true), m_censorLayers(false)
+	: QObject(parent), m_width(0), m_height(0), m_xtiles(0), m_ytiles(0), m_dpix(0), m_dpiy(0),
+	m_viewmode(NORMAL), m_viewlayeridx(0), m_highlightId(0),
+	m_onionskinsBelow(4), m_onionskinsAbove(4), m_openEditors(0), m_onionskinTint(true), m_censorLayers(false)
 {
 	m_annotations = new AnnotationModel(this);
 }
@@ -49,6 +51,7 @@ LayerStack::LayerStack(const LayerStack *orig, QObject *parent)
 	  m_dpiy(orig->m_dpiy),
 	  m_viewmode(orig->m_viewmode),
 	  m_viewlayeridx(orig->m_viewlayeridx),
+	  m_highlightId(orig->m_highlightId),
 	  m_onionskinsBelow(orig->m_onionskinsBelow),
 	  m_openEditors(0),
 	  m_onionskinTint(orig->m_onionskinTint),
@@ -254,7 +257,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 					compositePixels(l->blendmode(), data, CENSORED_TILE.constData(),
 							Tile::LENGTH, layerOpacity(layeridx));
 
-			} else if(l->sublayers().count() || tint!=0) {
+			} else if(l->sublayers().count() || tint!=0 || m_highlightId > 0) {
 				// Sublayers (or tint) present, composite them first
 				quint32 ldata[Tile::SIZE*Tile::SIZE];
 				tile.copyTo(ldata);
@@ -269,8 +272,16 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 					}
 				}
 
+				if(m_highlightId > 0 && m_highlightId == tile.lastEditedBy()) {
+					// MODE_RECOLOR looks really nice here, but can be misleading.
+					// Use per-pixel highlighting if/when per-pixel tagging is implemented.
+					compositePixels(BlendMode::MODE_NORMAL, ldata, ZEBRA_TILE.constData(),
+							Tile::LENGTH, 128);
+				}
+
 				if(tint)
 					tintPixels(ldata, sizeof ldata / sizeof *ldata, tint);
+
 
 				// Composite merged tile
 				compositePixels(l->blendmode(), data, ldata,
@@ -742,6 +753,15 @@ void EditableLayerStack::setViewLayer(int id)
 			}
 			break;
 		}
+	}
+}
+
+void EditableLayerStack::setInspectorHighlight(int contextId)
+{
+	if(d->m_highlightId != contextId) {
+		d->m_highlightId = contextId;
+		for(auto observer : d->m_observers)
+			observer->markDirty();
 	}
 }
 

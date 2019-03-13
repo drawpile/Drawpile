@@ -191,6 +191,7 @@ private:
 
 	ViewMode m_viewmode;
 	int m_viewlayeridx;
+	int m_highlightId;
 	int m_onionskinsBelow, m_onionskinsAbove;
 	int m_openEditors;
 
@@ -280,6 +281,9 @@ public:
 
 	//! Set layer view mode
 	void setViewMode(LayerStack::ViewMode mode);
+
+	//! Highlight all tiles last edited by this user. If set to 0, highlighting is disabled
+	void setInspectorHighlight(int contextId);
 
 	//! Set the selected layer (used by view modes other than NORMAL)
 	void setViewLayer(int id);

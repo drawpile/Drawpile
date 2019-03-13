@@ -91,15 +91,16 @@ void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 	}
 }
 
-Tile Tile::CensorBlock(const QColor &dark, const QColor &light)
+Tile Tile::ZebraBlock(const QColor &dark, const QColor &light, const int stripe)
 {
+	Q_ASSERT(stripe>0 && SIZE % stripe == 0); // must be a divisor of SIZE for the blocks to be tilable
+
 	Tile t;
 	quint32 *pixels = t.data();
 	const quint32 colors[] {
 		qPremultiply(dark.rgba()),
 		qPremultiply(light.rgba())
 	};
-	const int stripe = 16; // must be a divisor of SIZE for the blocks to be tilable
 	for(int y=0;y<SIZE;++y) {
 		for(int x=0;x<SIZE;++x, ++pixels) {
 			*pixels = colors[((x+y) / stripe) % 2];

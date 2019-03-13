@@ -28,6 +28,7 @@
 #include "beziertool.h"
 #include "floodfill.h"
 #include "zoom.h"
+#include "inspector.h"
 
 #include "core/point.h"
 #include "core/layerstack.h"
@@ -61,6 +62,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new RectangleSelection(*this));
 	registerTool(new PolygonSelection(*this));
 	registerTool(new ZoomTool(*this));
+	registerTool(new Inspector(*this));
 
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;

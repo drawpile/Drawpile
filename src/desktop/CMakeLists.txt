@@ -19,6 +19,7 @@ set (
 	toolwidgets/fillsettings.cpp
 	toolwidgets/lasersettings.cpp
 	toolwidgets/zoomsettings.cpp
+	toolwidgets/inspectorsettings.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp
@@ -129,6 +130,7 @@ set (
 	ui/selectsettings.ui
 	ui/fillsettings.ui
 	ui/lasersettings.ui
+	ui/inspectorsettings.ui
 	ui/layerbox.ui
 	ui/newdialog.ui
 	ui/resizedialog.ui
