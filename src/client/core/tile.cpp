@@ -192,8 +192,10 @@ std::array<quint32, 5> Tile::weightedAverage(const uchar *weights, int x, int y,
  */
 void Tile::merge(const Tile &tile, uchar opacity, BlendMode::Mode blend)
 {
-	if(!tile.isNull())
+	if(!tile.isNull()) {
 		compositePixels(blend, data(), tile.constData(), SIZE*SIZE, opacity);
+		m_data->lastEditedBy = tile.lastEditedBy();
+	}
 }
 
 /**

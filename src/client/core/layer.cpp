@@ -306,13 +306,12 @@ Layer Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, 
 	for(int y=0;y<h;y+=Tile::SIZE) {
 		for(int x=0;x<w;x+=Tile::SIZE) {
 			scratch.rtile(x/Tile::SIZE, y/Tile::SIZE) = tile((x+x0)/Tile::SIZE, (y+y0)/Tile::SIZE);
-			scratch.rtile(x/Tile::SIZE, y/Tile::SIZE).setLastEditedBy(contextId);
 		}
 	}
 
 	// Merge image using standard layer compositing ops
-	EditableLayer(&imglayer, nullptr, 0).setBlend(mode);
-	EditableLayer(&scratch, nullptr, 0).merge(&imglayer);
+	EditableLayer(&imglayer, nullptr, contextId).setBlend(mode);
+	EditableLayer(&scratch, nullptr, contextId).merge(&imglayer);
 
 	return scratch;
 }
@@ -867,7 +866,6 @@ void EditableLayer::merge(const Layer *layer)
 	// Merge tiles
 	concurrentForEach<int>(mergeidx, [this, layer](int idx) {
 		d->m_tiles[idx].merge(layer->m_tiles.at(idx), layer->opacity(), layer->blendmode());
-		d->m_tiles[idx].setLastEditedBy(contextId);
 	});
 
 	// Merging a layer does not cause an immediate visual change, so we don't
