@@ -273,9 +273,14 @@ void CanvasModel::inspectCanvas(int x, int y)
 		const int tx = x / paintcore::Tile::SIZE;
 		const int ty = y / paintcore::Tile::SIZE;
 		const int id = m_layerstack->tileLastEditedBy(tx, ty);
-		m_layerstack->editor(0).setInspectorHighlight(id);
+		inspectCanvas(id);
 		emit canvasInspected(tx, ty, id);
 	}
+}
+
+void CanvasModel::inspectCanvas(int contextId)
+{
+	m_layerstack->editor(0).setInspectorHighlight(contextId);
 }
 
 void CanvasModel::stopInspectingCanvas()

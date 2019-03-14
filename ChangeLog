@@ -7,6 +7,7 @@
  * Restored 2.1.0 style chatbox and added an option to enable 2.0 style compact mode
  * Added Inspector tool
  * Fixed remembering of last open/save folder
+ * Added user list to event log dialog that shows all past users
 
 2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)

@@ -18,12 +18,14 @@
 */
 
 #include "userlist.h"
+#include "utils/icon.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/meta2.h"
 
 #include <QDebug>
 #include <QJsonArray>
 #include <QPixmap>
+#include <QPalette>
 
 namespace canvas {
 
@@ -40,8 +42,13 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 	if(!index.isValid() || index.row() < 0 || index.row() >= m_users.size())
 		return QVariant();
 
+	const User &u = m_users.at(index.row());
+
+	if(role == Qt::ForegroundRole && !u.isOnline) {
+		return QPalette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Foreground);
+	}
+
 	if(index.column() == 0) {
-		const User &u = m_users.at(index.row());
 		switch(role) {
 			case IdRole: return u.id;
 			case Qt::DisplayRole:
@@ -57,9 +64,37 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			case IsMutedRole: return u.isMuted;
 			case IsOnlineRole: return u.isOnline;
 		}
+
+	} else if(role==Qt::DisplayRole) {
+		switch(index.column()) {
+		case 1:
+			if(u.isMod)
+				return tr("Moderator");
+			else if(u.isOperator)
+				return tr("Operator");
+			else if(u.isTrusted)
+				return tr("Trusted");
+			else if(u.isAuth)
+				return tr("Registered");
+			else
+				return QVariant();
+
+		case 2: return u.isOnline ? tr("Online") : tr("Offline");
+		}
+
+	} else if(role==Qt::DecorationRole) {
+		switch(index.column()) {
+		case 3: return u.isLocked ? icon::fromTheme("object-locked") : QVariant();
+		case 4: return u.isMuted ? icon::fromTheme("irc-unvoice") : QVariant();
+		}
 	}
 
 	return QVariant();
+}
+
+int UserListModel::columnCount(const QModelIndex&) const
+{
+	return 5;
 }
 
 int UserListModel::rowCount(const QModelIndex& parent) const
@@ -69,22 +104,23 @@ int UserListModel::rowCount(const QModelIndex& parent) const
 	return m_users.count();
 }
 
-int UserListModel::columnCount(const QModelIndex&) const
-{
-	return 1;
-}
-
 QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if(role != Qt::DisplayRole)
-		return QVariant();
-
 	if(orientation == Qt::Horizontal) {
-		switch(section) {
+		if(role == Qt::DisplayRole) {
+			switch(section) {
 			case 0: return tr("User");
+			case 1: return tr("Type");
+			case 2: return tr("Status");
+			}
+		} else if(role == Qt::DecorationRole) {
+			switch(section) {
+			case 3: return icon::fromTheme("object-locked");
+			case 4: return icon::fromTheme("irc-unvoice");
+			}
 		}
 
-	} else if(section >=0 && section < m_users.size()) {
+	} else if(section >=0 && section < m_users.size() && role == Qt::DisplayRole) {
 		return m_users.at(section).id;
 	}
 

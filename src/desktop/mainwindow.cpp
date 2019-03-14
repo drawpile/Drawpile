@@ -347,6 +347,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(m_useritemdelegate, &widgets::UserItemDelegate::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(m_useritemdelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatbox, &widgets::ChatBox::openPrivateChat);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
@@ -465,12 +466,16 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::userJoined, m_chatbox, &widgets::ChatBox::userJoined);
 	connect(canvas, &canvas::CanvasModel::userLeft, m_chatbox, &widgets::ChatBox::userParted);
 
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged, canvas, QOverload<int>::of(&canvas::CanvasModel::inspectCanvas));
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeStopped, canvas, &canvas::CanvasModel::stopInspectingCanvas);
+
 	updateLayerViewMode();
 
 	m_dockLayers->setCanvas(canvas);
 	m_userlistview->setModel(canvas->userlist()->onlineUsers());
 	m_chatbox->setUserList(canvas->userlist());
 	m_useritemdelegate->setDocument(m_doc);
+	m_serverLogDialog->setUserList(canvas->userlist());
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 
@@ -1623,6 +1628,7 @@ void MainWindow::onNsfmChanged(bool nsfm)
 void MainWindow::onOperatorModeChange(bool op)
 {
 	m_admintools->setEnabled(op);
+	m_serverLogDialog->setOperatorMode(op);
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
 }
 

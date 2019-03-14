@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,16 @@
 class Ui_ServerLogDialog;
 
 class QSortFilterProxyModel;
+class QItemSelection;
 class QAbstractItemModel;
+
+namespace canvas {
+	class UserListModel;
+}
+
+namespace protocol {
+	class MessagePtr;
+}
 
 namespace dialogs {
 
@@ -36,10 +45,36 @@ public:
 	~ServerLogDialog();
 
 	void setModel(QAbstractItemModel *model);
+	void setUserList(canvas::UserListModel *userlist);
+
+public slots:
+	void setOperatorMode(bool op);
+
+signals:
+	void inspectModeChanged(int contextId);
+	void inspectModeStopped();
+	void opCommand(const protocol::MessagePtr &msg);
+
+protected:
+	void hideEvent(QHideEvent *event) override;
+
+private slots:
+	void userSelected(const QItemSelection &selected);
+
+	void setInspectMode(bool inspect);
+	void kickSelected();
+	void banSelected();
+	void undoSelected();
+	void redoSelected();
 
 private:
 	Ui_ServerLogDialog *m_ui;
 	QSortFilterProxyModel *m_proxy;
+
+	canvas::UserListModel *m_userlist;
+	bool m_opMode;
+
+	uint8_t selectedUserId() const;
 };
 
 }
