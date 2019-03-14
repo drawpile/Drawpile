@@ -20,6 +20,7 @@
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/userlist.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
@@ -126,7 +127,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	m_canvas = canvas;
 	m_ui->layerlist->setModel(canvas->layerlist());
 
-	m_aclmenu->setUserList(canvas->userlist());
+	m_aclmenu->setUserList(canvas->userlist()->onlineUsers());
 
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsInserted, this, &LayerList::onLayerCreate);
 	connect(canvas->layerlist(), &canvas::LayerListModel::rowsAboutToBeRemoved, this, &LayerList::beforeLayerDelete);

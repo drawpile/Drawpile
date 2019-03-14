@@ -468,7 +468,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	updateLayerViewMode();
 
 	m_dockLayers->setCanvas(canvas);
-	m_userlistview->setModel(canvas->userlist());
+	m_userlistview->setModel(canvas->userlist()->onlineUsers());
 	m_chatbox->setUserList(canvas->userlist());
 	m_useritemdelegate->setDocument(m_doc);
 
@@ -1410,10 +1410,8 @@ void MainWindow::reportAbuse()
 	dlg->setSessionInfo(QString(), QString(), m_doc->sessionTitle());
 
 	const canvas::UserListModel *userlist = m_doc->canvas()->userlist();
-	const int usercount = userlist->rowCount();
-	for(int i=0;i<usercount;++i) {
-		const canvas::User &u = userlist->data(userlist->index(i)).value<canvas::User>();
-		if(u.id != m_doc->canvas()->localUserId())
+	for(const auto &u : userlist->users()) {
+		if(u.isOnline && u.id != m_doc->canvas()->localUserId())
 			dlg->addUser(u.id, u.name);
 	}
 

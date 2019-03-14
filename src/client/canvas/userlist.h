@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2017 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 #ifndef DP_NET_USERLISTMODEL_H
 #define DP_NET_USERLISTMODEL_H
 
-#include <QAbstractListModel>
+#include <QAbstractTableModel>
+#include <QSortFilterProxyModel>
 #include <QList>
 #include <QPixmap>
 
@@ -44,12 +45,15 @@ struct User {
 	bool isAuth;
 	bool isLocked;
 	bool isMuted;
+	bool isOnline;
 };
+
+class OnlineUserListModel;
 
 /**
  * A list model to represent session users.
  */
-class UserListModel : public QAbstractListModel {
+class UserListModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
 	enum UserListRoles {
@@ -62,17 +66,34 @@ public:
 		IsAuthRole,
 		IsBotRole,
 		IsLockedRole,
-		IsMutedRole
+		IsMutedRole,
+		IsOnlineRole
 	};
 
 	UserListModel(QObject *parent=nullptr);
 
-	QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const;
-	int rowCount(const QModelIndex& parent=QModelIndex()) const;
+	QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex& parent=QModelIndex()) const override;
+	int columnCount(const QModelIndex& parent=QModelIndex()) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
 
-	void addUser(const User &user);
-	void removeUser(int id);
-	void clearUsers();
+	//! A new user logs in
+	void userLogin(const User &user);
+
+	//! A user logs out (marked as offline)
+	void userLogout(int id);
+
+	//! Mark all users as offline
+	void allLogout();
+
+	//! Clear all users and history
+	void reset();
+
+	//! Get all users (includes logged out users)
+	const QVector<User> &users() const { return m_users; }
+
+	//! Get a shared instance of a filtered model that only lists online users
+	OnlineUserListModel *onlineUsers() const { return m_onlineUsers; }
 
 	/**
 	 * @brief Get user info by ID
@@ -100,10 +121,6 @@ public:
 
 	//! Get a list of trusted users
 	QList<uint8_t> trustedList() const;
-
-	//! Get the ID of the operator with the lowest ID number
-	// TODO replace this by serverside auto-resetter selection
-	int getPrimeOp() const;
 
 	/**
 	 * @brief Get the command for (un)locking a single user
@@ -140,7 +157,20 @@ public slots:
 
 private:
 	QVector<User> m_users;
-	QHash<int,User> m_pastUsers;
+	OnlineUserListModel *m_onlineUsers;
+};
+
+/**
+ * A filtered user list model that only includes online users
+ */
+class OnlineUserListModel : public QSortFilterProxyModel
+{
+	Q_OBJECT
+public:
+	using QSortFilterProxyModel::QSortFilterProxyModel;
+
+protected:
+	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 };
 
 }

@@ -66,7 +66,7 @@ void LayerAclMenu::refreshParentalControls()
 	m_censored->setEnabled(!parentalcontrols::isLayerUncensoringBlocked());
 }
 
-void LayerAclMenu::setUserList(canvas::UserListModel *model)
+void LayerAclMenu::setUserList(QAbstractItemModel *model)
 {
 	m_model = model;
 	for(int i=0;i<model->rowCount();++i)
@@ -75,11 +75,12 @@ void LayerAclMenu::setUserList(canvas::UserListModel *model)
 	connect(model, &canvas::UserListModel::rowsInserted, this, &LayerAclMenu::rowsInserted);
 	connect(model, &canvas::UserListModel::rowsMoved, this, &LayerAclMenu::rowsMoved);
 	connect(model, &canvas::UserListModel::rowsRemoved, this, &LayerAclMenu::rowsRemoved);
+	connect(model, &canvas::UserListModel::modelReset, this, &LayerAclMenu::rowsReset);
 }
 
 void LayerAclMenu::addUser(int index)
 {
-	const QModelIndex uidx = m_model->index(index);
+	const QModelIndex uidx = m_model->index(index, 0);
 
 	QAction *userAction = m_users->addAction(uidx.data(canvas::UserListModel::NameRole).toString());
 	userAction->setCheckable(true);
@@ -109,6 +110,13 @@ void LayerAclMenu::rowsRemoved(const QModelIndex &parent, int start, int end)
 	for(int i=start;i<=end;++i) {
 		delete m_users->actions()[start];
 	}
+}
+
+void LayerAclMenu::rowsReset()
+{
+	QList<QAction*> actions =m_users->actions();
+	for(auto *a : actions)
+		delete a;
 }
 
 void LayerAclMenu::userClicked(QAction *useraction)

@@ -91,13 +91,14 @@ void CanvasModel::connectedToServer(uint8_t myUserId)
 	m_layerlist->setMyId(myUserId);
 	m_statetracker->setLocalId(myUserId);
 	m_aclfilter->reset(myUserId, false);
+	m_userlist->reset();
 	m_mode = Mode::Online;
 }
 
 void CanvasModel::disconnectedFromServer()
 {
 	m_statetracker->endRemoteContexts();
-	m_userlist->clearUsers();
+	m_userlist->allLogout();
 	m_aclfilter->reset(m_statetracker->localId(), true);
 	m_mode = Mode::Offline;
 }
@@ -438,10 +439,11 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 		msg.isBot(),
 		msg.isAuthenticated(),
 		false,
-		false
+		false,
+		true
 	};
 
-	m_userlist->addUser(u);
+	m_userlist->userLogin(u);
 	m_usercursors->setCursorName(msg.contextId(), msg.name());
 	m_usercursors->setCursorAvatar(msg.contextId(), u.avatar);
 
@@ -450,8 +452,8 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 
 void CanvasModel::metaUserLeave(const protocol::UserLeave &msg)
 {
-	const QString name = m_userlist->getUserById(msg.contextId()).name;
-	m_userlist->removeUser(msg.contextId());
+	const QString name = m_userlist->getUsername(msg.contextId());
+	m_userlist->userLogout(msg.contextId());
 	emit userLeft(msg.contextId(), name);
 }
 

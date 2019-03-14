@@ -246,12 +246,11 @@ void ChatBox::clear()
 
 	// Re-add avatars
 	if(d->userlist) {
-		for(int i=0;i<d->userlist->rowCount();++i) {
-			const QModelIndex idx = d->userlist->index(i);
+		for(const auto &u : d->userlist->users()) {
 			chat.doc->addResource(
 				QTextDocument::ImageResource,
-				QUrl(QStringLiteral("avatar://%1").arg(idx.data(canvas::UserListModel::IdRole).toInt())),
-				idx.data(canvas::UserListModel::AvatarRole)
+				QUrl(QStringLiteral("avatar://%1").arg(u.id)),
+				u.avatar
 			);
 		}
 	}

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,14 +28,19 @@
 namespace canvas {
 
 UserListModel::UserListModel(QObject *parent)
-	: QAbstractListModel(parent)
+	: QAbstractTableModel(parent)
 {
+	m_onlineUsers = new OnlineUserListModel(this);
+	m_onlineUsers->setSourceModel(this);
 }
 
 
 QVariant UserListModel::data(const QModelIndex& index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < m_users.size()) {
+	if(!index.isValid() || index.row() < 0 || index.row() >= m_users.size())
+		return QVariant();
+
+	if(index.column() == 0) {
 		const User &u = m_users.at(index.row());
 		switch(role) {
 			case IdRole: return u.id;
@@ -50,6 +55,7 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			case IsBotRole: return u.isBot;
 			case IsLockedRole: return u.isLocked;
 			case IsMutedRole: return u.isMuted;
+			case IsOnlineRole: return u.isOnline;
 		}
 	}
 
@@ -63,13 +69,34 @@ int UserListModel::rowCount(const QModelIndex& parent) const
 	return m_users.count();
 }
 
-void UserListModel::addUser(const User &user)
+int UserListModel::columnCount(const QModelIndex&) const
 {
-	// Check that the user doesn't exist already
+	return 1;
+}
+
+QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if(role != Qt::DisplayRole)
+		return QVariant();
+
+	if(orientation == Qt::Horizontal) {
+		switch(section) {
+			case 0: return tr("User");
+		}
+
+	} else if(section >=0 && section < m_users.size()) {
+		return m_users.at(section).id;
+	}
+
+	return QVariant();
+}
+
+void UserListModel::userLogin(const User &user)
+{
+	// Check if this is a returning user
 	for(int i=0;i<m_users.count();++i) {
 		User &u = m_users[i];
 		if(u.id == user.id) {
-			qWarning() << "replacing user" << u.id << u.name << "with" << user.name;
 			u.name = user.name;
 			u.avatar = user.avatar;
 			u.isLocal = user.isLocal;
@@ -77,17 +104,48 @@ void UserListModel::addUser(const User &user)
 			u.isMod = user.isMod;
 			u.isBot = user.isBot;
 			u.isMuted = user.isMuted;
+			u.isOnline = true;
 
-			QModelIndex idx = index(i);
-			emit dataChanged(idx, idx);
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 			return;
 		}
 	}
 
+	// Add new user
 	int pos = m_users.count();
 	beginInsertRows(QModelIndex(),pos,pos);
 	m_users.append(user);
 	endInsertRows();
+}
+
+void UserListModel::userLogout(int id)
+{
+	for(int i=0;i<m_users.size();++i) {
+		if(m_users.at(i).id == id) {
+			m_users[i].isOnline = false;
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			return;
+		}
+	}
+}
+
+void UserListModel::allLogout()
+{
+	if(!m_users.isEmpty()) {
+		for(int i=0;i<m_users.size();++i)
+			m_users[i].isOnline = false;
+		emit dataChanged(
+			index(0, 0),
+			index(m_users.size()-1, columnCount()-1)
+		);
+	}
+}
+
+void UserListModel::reset()
+{
+	beginRemoveRows(QModelIndex(), 0, m_users.size()-1);
+	m_users.clear();
+	endRemoveRows();
 }
 
 void UserListModel::updateOperators(const QList<uint8_t> ids)
@@ -98,8 +156,7 @@ void UserListModel::updateOperators(const QList<uint8_t> ids)
 		const bool op = ids.contains(u.id);
 		if(op != u.isOperator) {
 			u.isOperator = op;
-			QModelIndex idx = index(i);
-			emit dataChanged(idx, idx);
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 		}
 	}
 }
@@ -112,8 +169,7 @@ void UserListModel::updateTrustedUsers(const QList<uint8_t> trustedIds)
 		const bool trusted = trustedIds.contains(u.id);
 		if(trusted != u.isTrusted) {
 			u.isTrusted = trusted;
-			QModelIndex idx = index(i);
-			emit dataChanged(idx, idx);
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 		}
 	}
 }
@@ -126,8 +182,7 @@ void UserListModel::updateLocks(const QList<uint8_t> ids)
 		const bool lock = ids.contains(u.id);
 		if(lock != u.isLocked) {
 			u.isLocked = lock;
-			QModelIndex idx = index(i);
-			emit dataChanged(idx, idx);
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 		}
 	}
 }
@@ -139,8 +194,7 @@ void UserListModel::updateMuteList(const QJsonArray &mutedUserIds)
 		const bool mute = mutedUserIds.contains(u.id);
 		if(u.isMuted != mute) {
 			u.isMuted = mute;
-			QModelIndex idx = index(i);
-			emit dataChanged(idx, idx);
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 		}
 	}
 }
@@ -149,8 +203,9 @@ QList<uint8_t> UserListModel::operatorList() const
 {
 	QList<uint8_t> ops;
 	for(int i=0;i<m_users.size();++i) {
-		if(m_users.at(i).isOperator || m_users.at(i).isMod)
-			ops << m_users.at(i).id;
+		const User &u = m_users.at(i);
+		if(u.isOnline && (u.isOperator || u.isMod))
+			ops << u.id;
 	}
 	return ops;
 }
@@ -159,7 +214,8 @@ QList<uint8_t> UserListModel::lockList() const
 {
 	QList<uint8_t> locks;
 	for(int i=0;i<m_users.size();++i) {
-		if(m_users.at(i).isLocked)
+		const User &u = m_users.at(i);
+		if(u.isOnline && u.isLocked)
 			locks << m_users.at(i).id;
 	}
 	return locks;
@@ -169,55 +225,18 @@ QList<uint8_t> UserListModel::trustedList() const
 {
 	QList<uint8_t> ids;
 	for(int i=0;i<m_users.size();++i) {
-		if(m_users.at(i).isTrusted)
+		const User &u = m_users.at(i);
+		if(u.isOnline && u.isTrusted)
 			ids << m_users.at(i).id;
 	}
 	return ids;
 }
 
-int UserListModel::getPrimeOp() const
-{
-	int lowest = 255;
-	for(const User &u : m_users) {
-		if(u.isOperator && u.id < lowest)
-			lowest = u.id;
-	}
-	return lowest;
-}
-
-void UserListModel::removeUser(int id)
-{
-	for(int pos=0;pos<m_users.count();++pos) {
-		if(m_users.at(pos).id == id) {
-			beginRemoveRows(QModelIndex(),pos,pos);
-			User u = m_users[pos];
-			m_users.remove(pos);
-			endRemoveRows();
-			m_pastUsers[u.id] = u;
-			return;
-		}
-	}
-}
-
-void UserListModel::clearUsers()
-{
-	beginRemoveRows(QModelIndex(), 0, m_users.count()-1);
-	for(const User &u : m_users)
-		m_pastUsers[u.id] = u;
-	m_users.clear();
-	endRemoveRows();
-}
-
 User UserListModel::getUserById(int id) const
 {
-	// Try active users first
 	for(const User &u : m_users)
 		if(u.id == id)
 			return u;
-
-	// Then the past users
-	if(m_pastUsers.contains(id))
-		return m_pastUsers[id];
 
 	// Nothing found
 	return User();
@@ -229,14 +248,9 @@ QString UserListModel::getUsername(int id) const
 	if(id==0)
 		return tr("Server");
 
-	// Try active users first
 	for(const User &u : m_users)
 		if(u.id == id)
 			return u.name;
-
-	// Then the past users
-	if(m_pastUsers.contains(id))
-		return m_pastUsers[id].name;
 
 	// Not found
 	return tr("User #%1").arg(id);
@@ -285,6 +299,12 @@ protocol::MessagePtr UserListModel::getTrustUserCommand(int localId, int userId,
 	}
 
 	return protocol::MessagePtr(new protocol::TrustedUsers(localId, trusted));
+}
+
+bool OnlineUserListModel::filterAcceptsRow(int source_row, const QModelIndex &parent) const
+{
+	const auto i = sourceModel()->index(source_row, 0);
+	return i.data(UserListModel::IsOnlineRole).toBool() && QSortFilterProxyModel::filterAcceptsRow(source_row, parent);
 }
 
 }

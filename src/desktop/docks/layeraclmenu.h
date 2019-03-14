@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,9 +23,7 @@
 
 #include <QMenu>
 
-namespace canvas {
-	class UserListModel;
-}
+class QAbstractItemModel;
 
 namespace docks {
 
@@ -35,7 +33,7 @@ class LayerAclMenu : public QMenu
 public:
 	explicit LayerAclMenu(QWidget *parent=nullptr);
 
-	void setUserList(canvas::UserListModel *model);
+	void setUserList(QAbstractItemModel *model);
 	void setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> acl);
 	void setCensored(bool censor);
 
@@ -61,12 +59,13 @@ private slots:
 	void rowsInserted(const QModelIndex &parent, int start, int end);
 	void rowsMoved(const QModelIndex&, int, int, const QModelIndex&, int);
 	void rowsRemoved(const QModelIndex &parent, int start, int end);
+	void rowsReset();
 	void refreshParentalControls();
 
 private:
 	void addUser(int index);
 
-	canvas::UserListModel *m_model;
+	QAbstractItemModel *m_model;
 	QAction *m_lock;
 	QAction *m_censored;
 	QActionGroup *m_tiers;
