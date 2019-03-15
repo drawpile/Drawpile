@@ -156,6 +156,20 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	if(args.size()!=1)
 		throw CmdError("Expected one argument: user ID or name");
 
+	const bool ban = kwargs["ban"].toBool();
+
+	if(ban && client->session()->hasPastClientWithId(args.at(0).toInt())) {
+		// Retroactive ban
+		PastClient target = client->session()->getPastClientById(args.at(0).toInt());
+		if(target.isBannable) {
+			client->session()->addBan(target, client->username());
+			client->session()->messageAll(target.username + " banned by " + client->username(), false);
+		} else {
+			throw CmdError(target.username + " cannot be banned.");
+		}
+		return;
+	}
+
 	Client *target = _getClient(client->session(), args.at(0));
 	if(target == client)
 		throw CmdError("cannot kick self");
@@ -168,7 +182,7 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 			throw CmdError("cannot kick trusted users");
 	}
 
-	if(kwargs["ban"].toBool()) {
+	if(ban) {
 		client->session()->addBan(target, client->username());
 		client->session()->messageAll(target->username() + " banned by " + client->username(), false);
 	} else {

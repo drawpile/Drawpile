@@ -8,6 +8,8 @@
  * Added Inspector tool
  * Fixed remembering of last open/save folder
  * Added user list to event log dialog that shows all past users
+ * Server: logged out users can now be banned retroactively
+ * Server: past users are now listed in the admin API
 
 2019-03-09 Version 2.1.2
  * Increased brush dab max spacing limit to 999% and max brush size to 255px (oversizes accessible via the spinbox)

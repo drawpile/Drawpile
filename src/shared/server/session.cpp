@@ -184,6 +184,8 @@ void Session::joinUser(Client *user, bool host)
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
 	connect(history(), &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
 
+	m_pastClients.remove(user->id());
+
 	// Send session log history to the new client
 	{
 		QList<Log> log = m_config->logger()->query().session(id()).atleast(Log::Level::Info).get();
@@ -236,6 +238,14 @@ void Session::removeUser(Client *user)
 {
 	if(!m_clients.removeOne(user))
 		return;
+
+	m_pastClients.insert(user->id(), PastClient {
+		user->id(),
+		user->extAuthId(),
+		user->username(),
+		user->peerAddress(),
+		!user->isModerator()
+	});
 
 	Q_ASSERT(user->session() == this);
 	user->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Left session"));
@@ -297,6 +307,15 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 	Q_ASSERT(target);
 	if(m_history->addBan(target->username(), target->peerAddress(), target->extAuthId(), bannedBy)) {
 		target->log(Log().about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
+		sendUpdatedBanlist();
+	}
+}
+
+void Session::addBan(const PastClient &target, const QString &bannedBy)
+{
+	Q_ASSERT(target.id>0);
+	if(m_history->addBan(target.username, target.peerAddress, target.extAuthId, bannedBy)) {
+		log(Log().user(target.id, target.peerAddress, target.username).about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}
 }
@@ -1238,7 +1257,17 @@ QJsonObject Session::getDescription(bool full) const
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {
-			users << user->description(false);
+			QJsonObject u = user->description(false);
+			u["online"] = true;
+			users << u;
+		}
+		for(auto u=m_pastClients.constBegin();u!=m_pastClients.constEnd();++u) {
+			users << QJsonObject {
+				{"id", u->id},
+				{"name", u->username},
+				{"ip", u->peerAddress.toString()},
+				{"online", false}
+			};
 		}
 		o["users"] = users;
 

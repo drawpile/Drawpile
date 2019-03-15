@@ -48,6 +48,15 @@ class Client;
 class ServerConfig;
 class Log;
 
+//! Information about a client who has since logged out
+struct PastClient {
+	int id;
+	QString extAuthId;
+	QString username;
+	QHostAddress peerAddress;
+	bool isBannable;
+};
+
 /**
  * The serverside session state.
  */
@@ -219,6 +228,12 @@ public:
 	 */
 	Client *getClientById(int id);
 
+	//! Has a client with the given ID been logged in (not currently)?
+	bool hasPastClientWithId(int id) const { return m_pastClients.contains(id); }
+
+	//! Get information about a past client who used the given ID
+	PastClient getPastClientById(int id) const { return m_pastClients[id]; }
+
 	/**
 	 * @brief Get a client by user name
 	 *
@@ -241,6 +256,7 @@ public:
 	 * @brief Add an in-session IP ban for the given client
 	 */
 	void addBan(const Client *client, const QString &bannedBy);
+	void addBan(const PastClient &client, const QString &bannedBy);
 
 	/**
 	 * @brief Remove a session specific IP ban
@@ -511,6 +527,7 @@ private:
 	QString m_recordingFile;
 
 	QList<Client*> m_clients;
+	QHash<int, PastClient> m_pastClients;
 
 	SessionHistory *m_history;
 	QList<protocol::MessagePtr> m_resetstream;
