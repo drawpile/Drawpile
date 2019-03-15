@@ -30,7 +30,7 @@ UserListModel::UserListModel(QObject *parent)
 		{"session", tr("Session")},
 		{"id", tr("ID")},
 		{"name", tr("Name")},
-		{"address", tr("Features")},
+		{"ip", tr("Address")},
 		{"features", tr("Features")}
 	}, parent)
 {
@@ -53,6 +53,14 @@ QVariant UserListModel::getData(const QString &key, const QJsonObject &u) const
 	} else {
 		return u[key];
 	}
+}
+
+Qt::ItemFlags UserListModel::getFlags(const QJsonObject &obj) const
+{
+	if(obj["online"].toBool(true))
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	else
+		return Qt::ItemIsSelectable;
 }
 
 }

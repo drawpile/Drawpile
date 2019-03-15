@@ -32,6 +32,7 @@ public:
 
 protected:
 	QVariant getData(const QString &key, const QJsonObject &obj) const override;
+	Qt::ItemFlags getFlags(const QJsonObject &obj) const override;
 };
 
 }

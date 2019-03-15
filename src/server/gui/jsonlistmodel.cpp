@@ -76,9 +76,23 @@ QVariant JsonListModel::data(const QModelIndex &index, int role) const
 	return getData(m_columns[index.column()].key, o);
 }
 
+Qt::ItemFlags JsonListModel::flags(const QModelIndex &index) const
+{
+	if(!index.isValid() || index.row()<0 || index.row()>=m_list.size())
+		return Qt::NoItemFlags;
+
+	return getFlags(m_list.at(index.row()).toObject());
+}
+
 QVariant JsonListModel::getData(const QString &key, const QJsonObject &obj) const
 {
 	return obj[key].toVariant();
+}
+
+Qt::ItemFlags JsonListModel::getFlags(const QJsonObject &obj) const
+{
+	Q_UNUSED(obj);
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 int JsonListModel::getId(const QJsonObject &obj) const
