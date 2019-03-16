@@ -23,6 +23,12 @@
 		<category>Graphics</category>
 	</categories>
 	<releases>
+		<release version="2.1.3" date="2019-03-16">
+			<url>https://drawpile.net/news/release-2.1.3/</url>
+		</release>
+		<release version="2.1.2" date="2019-03-09">
+			<url>https://drawpile.net/news/release-2.1.2/</url>
+		</release>
 		<release version="2.1.1" date="2019-02-17">
 			<url>https://drawpile.net/news/release-2.1.1/</url>
 		</release>

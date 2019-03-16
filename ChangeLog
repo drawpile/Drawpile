@@ -1,4 +1,4 @@
-2019-0?-?? Version 2.1.3
+2019-03-16 Version 2.1.3
  * Fixed showing layers in user markers
  * Fixed crash when changing tools mid-stroke
  * User cursors and other decorations are no longer shown in the navigator
