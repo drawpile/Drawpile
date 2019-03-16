@@ -1,0 +1,30 @@
+Checklist for making a new release.
+
+Tag the release:
+
+ - Set release date in Changelog
+ - Make sure correct version number is set in root CMakeLists.txt
+ - Add release element to desktop/net.drawpile.drawpile.appdata.xml
+ - Commit
+ - Make sure Linux, Windows and macOS builds succeed
+ - Tag release (git tag -a x.y.z -m "Release x.y.z")
+ - Push new tag (git push --tags)
+
+Build the packages:
+
+ - Build macOS version (pkg/mac/make-mac-dmg.sh) and upload to release archive
+ - Build Windows version (pkg/win/build.sh installer) and upload to release archive
+ - Build 32 bit Windows version and upload to release archive
+ - Make source package (pkg/make-src-pkg.sh x.y.z) and upload to release archive
+ - Build new server docker image: (in pkg/docker)
+   - docker build -t callaa/drawpile-srv:x.y.z -t callaa/drawpile-srv:x.y --build-arg=version=x.y.z .
+   - docker push callaa/drawpile-srv:x.y.z
+   - docker push callaa/drawpile-srv:x.y
+ - Update Flathub repository (github.com/flathub/net.drawpile.drawpile)
+
+Update the website:
+
+ - Write a news post for the new release
+ - Run manage.py templatevar VERSION x.y.z
+ - Update templates/pages/help/compatibility.html if needed
+
