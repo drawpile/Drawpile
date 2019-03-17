@@ -236,7 +236,11 @@ void MultiServer::assignRecording(Session *session)
 
 	fi = filename;
 
-	session->setRecordingFile(fi.absoluteFilePath());
+	if(!fi.absoluteDir().mkpath(".")) {
+		qWarning("Recording directory \"%s\" does not exist and cannot be created!", qPrintable(fi.absolutePath()));
+	} else {
+		session->setRecordingFile(fi.absoluteFilePath());
+	}
 }
 
 /**

@@ -248,6 +248,7 @@ bool start() {
 		QString sessionDirPath = parser.value(sessionsOption);
 		if(!sessionDirPath.isEmpty()) {
 			QDir sessionDir { sessionDirPath };
+			sessionDir.mkpath(".");
 			if(!sessionDir.isReadable()) {
 				qCritical("Cannot open %s", qPrintable(sessionDirPath));
 				return false;
