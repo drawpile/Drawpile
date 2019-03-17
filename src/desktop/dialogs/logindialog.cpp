@@ -119,9 +119,8 @@ struct LoginDialog::Private {
 
 		ui->showNsfw->setEnabled(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
 		sessions = new SessionFilterProxyModel(dlg);
-        sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
-        sessions->setFilterKeyColumn(-1);
-        sessions->setSortRole(Qt::UserRole);
+		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
+		sessions->setFilterKeyColumn(-1);
 		sessions->setShowNsfw(false);
 
 		connect(ui->showNsfw, &QAbstractButton::toggled, [this](bool show) {

@@ -57,8 +57,7 @@ class LoginSessionModel : public QAbstractTableModel
 	Q_OBJECT
 public:
 	enum LoginSessionRoles {
-		SortKeyRole = Qt::UserRole,
-		IdRole,                    // Session ID
+		IdRole = Qt::UserRole,     // Session ID
 		IdAliasRole,               // ID alias
 		AliasOrIdRole,             // Alias or session ID
 		UserCountRole,             // Number of logged in users

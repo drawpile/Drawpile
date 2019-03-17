@@ -237,6 +237,9 @@ padding: 16px;</string>
          <property name="gridStyle">
           <enum>Qt::NoPen</enum>
          </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
