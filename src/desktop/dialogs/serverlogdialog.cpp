@@ -33,11 +33,19 @@ ServerLogDialog::ServerLogDialog(QWidget *parent)
 	m_ui = new Ui_ServerLogDialog;
 	m_ui->setupUi(this);
 
-	m_proxy = new QSortFilterProxyModel(this);
-	m_ui->view->setModel(m_proxy);
+	m_eventlogProxy = new QSortFilterProxyModel(this);
+	m_ui->view->setModel(m_eventlogProxy);
 
-	m_proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	connect(m_ui->filter, &QLineEdit::textChanged, m_proxy, &QSortFilterProxyModel::setFilterFixedString);
+	m_eventlogProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	connect(m_ui->filter, &QLineEdit::textChanged, m_eventlogProxy, &QSortFilterProxyModel::setFilterFixedString);
+
+	m_userlistProxy = new QSortFilterProxyModel(this);
+	m_ui->userlistView->setModel(m_userlistProxy);
+
+	m_userlistProxy->setFilterKeyColumn(0);
+	m_userlistProxy->setFilterRole(Qt::DisplayRole);
+	m_userlistProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	connect(m_ui->userlistFilter, &QLineEdit::textChanged, m_userlistProxy, &QSortFilterProxyModel::setFilterFixedString);
 
 	connect(m_ui->inspectMode, &QPushButton::toggled, this, &ServerLogDialog::setInspectMode);
 	connect(m_ui->kickUser, &QPushButton::clicked, this, &ServerLogDialog::kickSelected);
@@ -61,13 +69,13 @@ void ServerLogDialog::hideEvent(QHideEvent *event)
 
 void ServerLogDialog::setModel(QAbstractItemModel *model)
 {
-	m_proxy->setSourceModel(model);
+	m_eventlogProxy->setSourceModel(model);
 }
 
 void ServerLogDialog::setUserList(canvas::UserListModel *userlist)
 {
 	m_userlist = userlist;
-	m_ui->userlistView->setModel(userlist);
+	m_userlistProxy->setSourceModel(userlist);
 
 	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(0,	QHeaderView::Stretch);

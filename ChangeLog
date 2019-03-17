@@ -1,6 +1,7 @@
 2019-0?-?? Version 2.1.4
  * Fixed session list sorting in login dialog
  * Server: session and recording directories are now automatically created if missing
+ * Added filter field to user list (event log)
 
 2019-03-16 Version 2.1.3
  * Fixed showing layers in user markers

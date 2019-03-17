@@ -69,9 +69,11 @@ private slots:
 
 private:
 	Ui_ServerLogDialog *m_ui;
-	QSortFilterProxyModel *m_proxy;
+	QSortFilterProxyModel *m_eventlogProxy;
 
+	QSortFilterProxyModel *m_userlistProxy;
 	canvas::UserListModel *m_userlist;
+
 	bool m_opMode;
 
 	uint8_t selectedUserId() const;
