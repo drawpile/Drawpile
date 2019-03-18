@@ -67,6 +67,8 @@ void LayerStackObserver::markDirty(const QRect &area)
 	const int XT = m_layerstack->m_xtiles;
 	const int YT = m_layerstack->m_ytiles;
 
+	Q_ASSERT(XT * YT == m_dirtytiles.size());
+
 	const int tx0 = qBound(0, area.left() / Tile::SIZE, XT-1);
 	const int tx1 = qBound(tx0, area.right() / Tile::SIZE, XT-1) + 1;
 	int ty0 = qBound(0, area.top() / Tile::SIZE, YT-1);
@@ -88,6 +90,7 @@ void LayerStackObserver::markDirty(int x, int y)
 {
 	Q_ASSERT(x>=0 && x < m_layerstack->m_xtiles);
 	Q_ASSERT(y>=0 && y < m_layerstack->m_ytiles);
+	Q_ASSERT(m_layerstack->m_xtiles * m_layerstack->m_ytiles == m_dirtytiles.size());
 
 	m_dirtytiles.setBit(y*m_layerstack->m_xtiles + x);
 
@@ -96,6 +99,7 @@ void LayerStackObserver::markDirty(int x, int y)
 
 void LayerStackObserver::markDirty(int index)
 {
+	Q_ASSERT(m_layerstack->m_xtiles * m_layerstack->m_ytiles == m_dirtytiles.size());
 	Q_ASSERT(index>=0 && index < m_dirtytiles.size());
 
 	m_dirtytiles.setBit(index);
@@ -116,6 +120,7 @@ void LayerStackObserver::canvasResized(int xoffset, int yoffset, const QSize &ol
 {
 	Q_ASSERT(m_layerstack);
 	m_dirtytiles = QBitArray(m_layerstack->m_xtiles * m_layerstack->m_ytiles, true);
+	m_dirtyrect = QRect(QPoint(), m_layerstack->size());
 	resized(xoffset, yoffset, oldsize);
 }
 

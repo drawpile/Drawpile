@@ -579,7 +579,12 @@ void EditableLayer::resize(int top, int right, int bottom, int left)
 
 		d->m_tiles.fill(bgtile);
 
+		// temporarily set the hidden flag, because markDirty must not
+		// be called during a resize operation.
+		const bool hidden = d->m_info.hidden;
+		d->m_info.hidden = true;
 		putImage(left, top, oldcontent, BlendMode::MODE_REPLACE);
+		d->m_info.hidden = hidden;
 
 	} else {
 		// top/left offset is aligned at tile boundary:
