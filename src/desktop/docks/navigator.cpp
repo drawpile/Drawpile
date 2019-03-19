@@ -64,12 +64,18 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
 		return;
 
 	const QPoint p = event->pos();
-	const qreal scale = height() / qreal(m_observer->layerStack()->height());
 
 	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+
+	const qreal xscale = s.width() / qreal(m_observer->layerStack()->width());
+	const qreal yscale = s.height() / qreal(m_observer->layerStack()->height());
+
 	const QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
 
-	emit focusMoved((p - offset) / scale);
+	emit focusMoved(QPoint(
+		(p.x() - offset.x()) / xscale,
+		(p.y() - offset.y()) / yscale
+	));
 }
 
 /**
@@ -151,9 +157,10 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.setPen(pen);
 	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
-	const qreal scale = height() / qreal(m_observer->layerStack()->height());
+	const qreal xscale = s.width() / qreal(m_observer->layerStack()->width());
+	const qreal yscale = s.height() / qreal(m_observer->layerStack()->height());
 	painter.translate(canvasRect.topLeft());
-	painter.scale(scale, scale);
+	painter.scale(xscale, yscale);
 	painter.drawPolygon(m_focusRect);
 
 	// Draw a short line to indicate the righthand side
@@ -161,7 +168,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 		const QLineF right { m_focusRect[1], m_focusRect[2] };
 		const QLineF unitVector = right.unitVector().translated(-right.p1());
 		QLineF normal = unitVector.normalVector().translated(right.center());
-		normal.setLength(10 / scale);
+		normal.setLength(10 / xscale);
 		painter.drawLine(normal);
 	}
 }
