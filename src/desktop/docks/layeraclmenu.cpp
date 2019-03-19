@@ -34,7 +34,7 @@ static void addTier(QActionGroup *group, const QString &title, canvas::Tier tier
 }
 
 LayerAclMenu::LayerAclMenu(QWidget *parent) :
-    QMenu(parent)
+	QMenu(parent), m_userlist(nullptr)
 {
 	m_lock = addAction(tr("Lock this layer"));
 	m_lock->setCheckable(true);
@@ -68,55 +68,30 @@ void LayerAclMenu::refreshParentalControls()
 
 void LayerAclMenu::setUserList(QAbstractItemModel *model)
 {
-	m_model = model;
-	for(int i=0;i<model->rowCount();++i)
-		addUser(i);
-
-	connect(model, &canvas::UserListModel::rowsInserted, this, &LayerAclMenu::rowsInserted);
-	connect(model, &canvas::UserListModel::rowsMoved, this, &LayerAclMenu::rowsMoved);
-	connect(model, &canvas::UserListModel::rowsRemoved, this, &LayerAclMenu::rowsRemoved);
-	connect(model, &canvas::UserListModel::modelReset, this, &LayerAclMenu::rowsReset);
+	m_userlist = model;
 }
 
-void LayerAclMenu::addUser(int index)
+void LayerAclMenu::showEvent(QShowEvent *e)
 {
-	const QModelIndex uidx = m_model->index(index, 0);
-
-	QAction *userAction = m_users->addAction(uidx.data(canvas::UserListModel::NameRole).toString());
-	userAction->setCheckable(true);
-	userAction->setProperty("userId", uidx.data(canvas::UserListModel::IdRole).toInt());
-
-	addAction(userAction);
-}
-
-void LayerAclMenu::rowsInserted(const QModelIndex &parent, int start, int end)
-{
-	Q_UNUSED(parent);
-	Q_ASSERT(start == m_users->actions().size()); // new users are always added to the end of the list
-	for(;start<=end;++start)
-		addUser(start);
-}
-
-void LayerAclMenu::rowsMoved(const QModelIndex&, int, int, const QModelIndex&, int)
-{
-	// Users are never moved in the list
-	qWarning("rowsMoved not implemented!");
-}
-
-void LayerAclMenu::rowsRemoved(const QModelIndex &parent, int start, int end)
-{
-	Q_UNUSED(parent);
-	Q_ASSERT(end < m_users->actions().size());
-	for(int i=start;i<=end;++i) {
-		delete m_users->actions()[start];
-	}
-}
-
-void LayerAclMenu::rowsReset()
-{
-	QList<QAction*> actions =m_users->actions();
+	// Rebuild user list when menu is shown
+	QList<QAction*> actions = m_users->actions();
 	for(auto *a : actions)
 		delete a;
+
+	if(m_userlist) {
+		for(int i=0;i<m_userlist->rowCount();++i) {
+			const QModelIndex idx = m_userlist->index(i, 0);
+			const int id = idx.data(canvas::UserListModel::IdRole).toInt();
+
+			QAction *ua = m_users->addAction(idx.data(canvas::UserListModel::NameRole).toString());
+			ua->setCheckable(true);
+			ua->setProperty("userId", id);
+			ua->setChecked(m_exclusives.contains(id));
+			addAction(ua);
+		}
+	}
+
+	QMenu::showEvent(e);
 }
 
 void LayerAclMenu::userClicked(QAction *useraction)
@@ -171,9 +146,7 @@ void LayerAclMenu::setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> exc
 		}
 	}
 
-	for(QAction *u : m_users->actions()) {
-		u->setChecked(exclusive.contains(u->property("userId").toInt()));
-	}
+	m_exclusives = exclusive;
 }
 
 void LayerAclMenu::setCensored(bool censor)

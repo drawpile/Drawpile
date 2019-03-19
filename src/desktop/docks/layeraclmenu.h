@@ -54,18 +54,16 @@ signals:
 	 */
 	void layerCensoredChange(bool censor);
 
+protected:
+	void showEvent(QShowEvent *e);
+
 private slots:
 	void userClicked(QAction *useraction);
-	void rowsInserted(const QModelIndex &parent, int start, int end);
-	void rowsMoved(const QModelIndex&, int, int, const QModelIndex&, int);
-	void rowsRemoved(const QModelIndex &parent, int start, int end);
-	void rowsReset();
 	void refreshParentalControls();
 
 private:
-	void addUser(int index);
-
-	QAbstractItemModel *m_model;
+	QAbstractItemModel *m_userlist;
+	QList<uint8_t> m_exclusives;
 	QAction *m_lock;
 	QAction *m_censored;
 	QActionGroup *m_tiers;
