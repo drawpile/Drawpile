@@ -26,6 +26,7 @@
 #include "utils/settings.h"
 #include "utils/logging.h"
 #include "notifications.h"
+#include "dialogs/versioncheckdialog.h"
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
@@ -296,6 +297,8 @@ int main(int argc, char *argv[]) {
 		// No arguments, start with an empty document
 		app.openBlankDocument();
 	}
+
+	dialogs::VersionCheckDialog::doVersionCheckIfNeeded();
 
 	return app.exec();
 }

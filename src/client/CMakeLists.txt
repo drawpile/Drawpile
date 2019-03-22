@@ -63,6 +63,7 @@ set (
 	utils/identicon.cpp
 	utils/avatarlistmodel.cpp
 	utils/sessionfilterproxymodel.cpp
+	utils/newversion.cpp
 	core/annotationmodel.cpp
 	core/tile.cpp
 	core/layer.cpp

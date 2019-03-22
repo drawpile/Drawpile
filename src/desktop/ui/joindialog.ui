@@ -18,6 +18,23 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
+    <widget class="QLabel" name="newVersionNotification">
+     <property name="styleSheet">
+      <string notr="true">background: #cbe3ef;
+color: #000;
+border: 1px solid #3daee9;
+border-radius: 3px;
+padding: 6px;</string>
+     </property>
+     <property name="text">
+      <string>A new Drawpile version that is not compatible with this one has been released.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QComboBox" name="listserver">

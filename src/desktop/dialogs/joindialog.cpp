@@ -25,6 +25,7 @@
 #include "utils/listservermodel.h"
 #include "utils/sessionfilterproxymodel.h"
 #include "utils/images.h"
+#include "utils/newversion.h"
 #include "../shared/util/announcementapi.h"
 #include "parentalcontrols/parentalcontrols.h"
 
@@ -66,6 +67,9 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	connect(m_ui->address, &QComboBox::editTextChanged, this, &JoinDialog::addressChanged);
 	connect(m_ui->autoRecord, &QAbstractButton::clicked, this, &JoinDialog::recordingToggled);
+
+	// New version notification (cached)
+	m_ui->newVersionNotification->setVisible(NewVersionCheck::isThereANewSeries());
 
 	// Session listing
 	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)

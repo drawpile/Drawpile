@@ -5,6 +5,7 @@
  * Fixed crash when resizing canvas
  * Fixed layer access user list going out of sync
  * Fixed navigator focus rect scaling
+ * Added automatic new release checking
 
 2019-03-16 Version 2.1.3
  * Fixed showing layers in user markers

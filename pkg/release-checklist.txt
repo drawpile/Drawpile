@@ -4,7 +4,7 @@ Tag the release:
 
  - Set release date in Changelog
  - Make sure correct version number is set in root CMakeLists.txt
- - Add release element to desktop/net.drawpile.drawpile.appdata.xml
+ - Run update-appdata-releases.py and edit manually if needed
  - Commit
  - Make sure Linux, Windows and macOS builds succeed
  - Make sure tests run cleanly (cmake .. -DTESTS=ON && make && make test)
@@ -17,6 +17,7 @@ Build the packages:
  - Build Windows version (pkg/win/build.sh installer) and upload to release archive
  - Build 32 bit Windows version and upload to release archive
  - Make source package (pkg/make-src-pkg.sh x.y.z) and upload to release archive
+ - Upload net.drawpile.drawpile.appdata.xml to drawpile.net/files/metadata/
  - Build new server docker image: (in pkg/docker)
    - docker build -t callaa/drawpile-srv:x.y.z -t callaa/drawpile-srv:x.y --build-arg=version=x.y.z .
    - docker push callaa/drawpile-srv:x.y.z

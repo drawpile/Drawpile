@@ -125,6 +125,7 @@
 #include "dialogs/serverlogdialog.h"
 #include "dialogs/tablettester.h"
 #include "dialogs/abusereport.h"
+#include "dialogs/versioncheckdialog.h"
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
@@ -2685,10 +2686,17 @@ void MainWindow::setupActions()
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole);
+	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates"));
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(versioncheck, &QAction::triggered, this, [this]() {
+		auto *dlg = new dialogs::VersionCheckDialog(this);
+		dlg->show();
+		dlg->queryNewVersions();
+	});
+
 	connect(tablettester, &QAction::triggered, []() {
 		dialogs::TabletTestDialog *ttd=nullptr;
 		// Check if dialog is already open
@@ -2716,6 +2724,8 @@ void MainWindow::setupActions()
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
+	helpmenu->addSeparator();
+	helpmenu->addAction(versioncheck);
 
 	// Brush slot shortcuts
 
