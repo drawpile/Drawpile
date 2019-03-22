@@ -7,6 +7,7 @@ Tag the release:
  - Add release element to desktop/net.drawpile.drawpile.appdata.xml
  - Commit
  - Make sure Linux, Windows and macOS builds succeed
+ - Make sure tests run cleanly (cmake .. -DTESTS=ON && make && make test)
  - Tag release (git tag -a x.y.z -m "Release x.y.z")
  - Push new tag (git push --tags)
 
