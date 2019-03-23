@@ -96,7 +96,7 @@ endif ()
 
 ### Set deployment target (OSX specific)
 if ( APPLE )
-	set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.7 ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.10 ${CMAKE_CXX_FLAGS}")
 endif (APPLE)
 
 ### Output config.h ###

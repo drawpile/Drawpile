@@ -11,8 +11,8 @@ KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.54/karchive-5.54.0.tar
 KDNSSD_URL=https://download.kde.org/stable/frameworks/5.54/kdnssd-5.54.0.tar.xz
 
 ### Build flags
-export CFLAGS=-mmacosx-version-min=10.7
-export CXXFLAGS=-mmacosx-version-min=10.7
+export CFLAGS=-mmacosx-version-min=10.10
+export CXXFLAGS=-mmacosx-version-min=10.10
 
 ### GENERIC FUNCTIONS
 function download_package() {
