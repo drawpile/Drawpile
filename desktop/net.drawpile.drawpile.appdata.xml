@@ -1,49 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <component type="desktop">
-	<id>net.drawpile.drawpile</id>
-	<launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
-	<metadata_license>CC0-1.0</metadata_license>
-	<project_license>GPL-3.0+</project_license>
-	<developer_name>Calle Laakkonen</developer_name>
-	<name>Drawpile</name>
-	<summary>Collaborative Drawing</summary>
-	<description>
-		<p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
-		<p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
-	</description>
-	<url type="homepage">https://drawpile.net/</url>
-	<url type="help">https://drawpile.net/help/</url>
-	<url type="bugtracker">https://github.com/drawpile/Drawpile/issues</url>
-	<screenshots>
-		<screenshot type="default">
-			<image>https://drawpile.net/media/d/images/screenshot2.png</image>
-		</screenshot>
-	</screenshots>
-	<categories>
-		<category>Graphics</category>
-	</categories>
-	<releases>
-		<release version="2.1.3" date="2019-03-16">
-			<url>https://drawpile.net/news/release-2.1.3/</url>
-		</release>
-		<release version="2.1.2" date="2019-03-09">
-			<url>https://drawpile.net/news/release-2.1.2/</url>
-		</release>
-		<release version="2.1.1" date="2019-02-17">
-			<url>https://drawpile.net/news/release-2.1.1/</url>
-		</release>
-		<release version="2.1.0" date="2019-02-13">
-			<url>https://drawpile.net/news/release-2.1.0/</url>
-		</release>
-	</releases>
-	<provides>
-		<binary>drawpile</binary>
-		<id>net.drawpile.drawpile.desktop</id>
-	</provides>
-	<content_rating type="oars-1.0">
-		<content_attribute id="social-chat">intense</content_attribute>
-		<content_attribute id="social-audio">intense</content_attribute>
-	</content_rating>
-
+  <id>net.drawpile.drawpile</id>
+  <launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <developer_name>Calle Laakkonen</developer_name>
+  <name>Drawpile</name>
+  <summary>Collaborative Drawing</summary>
+  <description>
+    <p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
+    <p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
+  </description>
+  <url type="homepage">https://drawpile.net/</url>
+  <url type="help">https://drawpile.net/help/</url>
+  <url type="bugtracker">https://github.com/drawpile/Drawpile/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://drawpile.net/media/d/images/screenshot2.png</image>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Graphics</category>
+  </categories>
+  <releases>
+    <release version="2.1.4" date="2019-03-23">
+      <url>https://drawpile.net/news/release-2.1.4/</url>
+      <description>
+        <p>Bugs fixed in this version:</p>
+        <ul>
+          <li>Fixed session list sorting in login dialog</li>
+          <li>Fixed crash when resizing canvas</li>
+          <li>Fixed layer access user list going out of sync</li>
+          <li>Fixed navigator focus rect scaling</li>
+          <li>Fixed "registered" level permissions not taking effect on login</li>
+        </ul>
+        <p>New features:</p>
+        <ul>
+          <li>Added automatic new release checking</li>
+          <li>Added filter field to user list (event log)</li>
+          <li>Reimplemented navigator user cursors</li>
+          <li>Navigator cursors can now be enabled or disabled independently of the main canvas cursors</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.1.3" date="2019-03-16">
+      <url>https://drawpile.net/news/release-2.1.3/</url>
+    </release>
+    <release version="2.1.2" date="2019-03-09">
+      <url>https://drawpile.net/news/release-2.1.2/</url>
+    </release>
+    <release version="2.1.1" date="2019-02-17">
+      <url>https://drawpile.net/news/release-2.1.1/</url>
+    </release>
+    <release version="2.1.0" date="2019-02-13">
+      <url>https://drawpile.net/news/release-2.1.0/</url>
+    </release>
+  </releases>
+  <provides>
+    <binary>drawpile</binary>
+    <id>net.drawpile.drawpile.desktop</id>
+  </provides>
+  <content_rating type="oars-1.0">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+  </content_rating>
 </component>
-
