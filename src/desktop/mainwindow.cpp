@@ -477,6 +477,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_chatbox->setUserList(canvas->userlist());
 	m_useritemdelegate->setDocument(m_doc);
 	m_serverLogDialog->setUserList(canvas->userlist());
+	m_dockNavigator->setUserCursors(canvas->userCursors());
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 

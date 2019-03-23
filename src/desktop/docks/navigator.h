@@ -30,6 +30,10 @@ namespace drawingboard {
 	class CanvasScene;
 }
 
+namespace canvas {
+	class UserCursorModel;
+}
+
 namespace docks {
 
 class NavigatorView : public QWidget
@@ -39,8 +43,12 @@ public:
 	NavigatorView(QWidget *parent);
 
 	void setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer);
+	void setUserCursors(canvas::UserCursorModel *cursors) { m_cursors = cursors; }
 
 	void setViewFocus(const QPolygonF& rect);
+
+public slots:
+	void setShowCursors(bool showCursors);
 
 signals:
 	void focusMoved(const QPoint& to);
@@ -59,13 +67,16 @@ private slots:
 
 private:
 	paintcore::LayerStackPixmapCacheObserver *m_observer;
+	canvas::UserCursorModel *m_cursors;
 	QPixmap m_cache;
+	QPixmap m_cursorBackground;
 	QSize m_cachedSize;
 
 	QTimer *m_refreshTimer;
 
 	QPolygonF m_focusRect;
 	int m_zoomWheelDelta;
+	bool m_showCursors;
 };
 
 //! Navigator dock widget
@@ -78,6 +89,9 @@ public:
 
 	//! Set associated graphics scene
 	void setScene(drawingboard::CanvasScene *scene);
+
+	//! Set the user list (optional)
+	void setUserCursors(canvas::UserCursorModel *cursors);
 
 	// Set the actions for the buttons
 	void setFlipActions(QAction *flip, QAction *mirror);

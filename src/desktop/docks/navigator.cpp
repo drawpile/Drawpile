@@ -24,20 +24,58 @@ using docks::NavigatorView;
 #include "core/layerstackpixmapcacheobserver.h"
 #include "core/layerstack.h"
 
+#include "canvas/usercursormodel.h"
+
 #include <QMouseEvent>
 #include <QTimer>
 #include <QPainter>
-#include <QDebug>
+#include <QPainterPath>
+#include <QAction>
+#include <QSettings>
 
 namespace docks {
 
+static QPixmap makeCursorBackground(const int avatarSize)
+{
+	const int PADDING = 4;
+	const int ARROW = 4;
+	const QSize s { avatarSize + PADDING*2, avatarSize + PADDING*2 + ARROW };
+
+	QPixmap pixmap(s);
+	pixmap.fill(Qt::transparent);
+
+	QPainter painter(&pixmap);
+	painter.setRenderHint(QPainter::Antialiasing);
+
+	QPainterPath p(QPointF(s.width()/2, s.height()));
+	p.lineTo(s.width()/2 + ARROW, s.height() - ARROW);
+	p.lineTo(s.width() - PADDING, s.height() - ARROW);
+	p.quadTo(s.width(), s.height() - ARROW, s.width(), s.height() - ARROW - PADDING);
+	p.lineTo(s.width(), PADDING);
+	p.quadTo(s.width(), 0, s.width() - PADDING, 0);
+	p.lineTo(PADDING, 0);
+	p.quadTo(0, 0, 0, PADDING);
+	p.lineTo(0, s.height() - PADDING - ARROW);
+	p.quadTo(0, s.height() - ARROW, PADDING, s.height() - ARROW);
+	p.lineTo(s.width()/2 - ARROW, s.height() - ARROW);
+	p.closeSubpath();
+
+	painter.fillPath(p, Qt::black);
+
+	return pixmap;
+}
+
 NavigatorView::NavigatorView(QWidget *parent)
-	: QWidget(parent), m_observer(nullptr), m_zoomWheelDelta(0)
+	: QWidget(parent), m_observer(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
+	  m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
 	m_refreshTimer->setSingleShot(true);
 	m_refreshTimer->setInterval(500);
 	connect(m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
+
+	// Draw the marker background
+	m_cursorBackground = makeCursorBackground(16);
 }
 
 void NavigatorView::setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer)
@@ -48,6 +86,11 @@ void NavigatorView::setLayerStackObserver(paintcore::LayerStackPixmapCacheObserv
 	refreshCache();
 }
 
+void NavigatorView::setShowCursors(bool show)
+{
+	m_showCursors = show;
+	update();
+}
 
 void NavigatorView::resizeEvent(QResizeEvent *event)
 {
@@ -60,6 +103,9 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
  */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
+	if(event->button() != Qt::LeftButton)
+		return;
+
 	if(m_cache.isNull())
 		return;
 
@@ -151,6 +197,8 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.drawPixmap(canvasRect, m_cache);
 
 	// Draw main viewport rectangle
+	painter.save();
+
 	QPen pen(QColor(96, 191, 96));
 	pen.setCosmetic(true);
 	pen.setWidth(2);
@@ -170,6 +218,37 @@ void NavigatorView::paintEvent(QPaintEvent *)
 		QLineF normal = unitVector.normalVector().translated(right.center());
 		normal.setLength(10 / xscale);
 		painter.drawLine(normal);
+	}
+
+	painter.restore();
+	// Draw user cursors
+	if(m_cursors && m_showCursors) {
+		const int cursorCount = m_cursors->rowCount();
+		for(int i=0;i<cursorCount;++i) {
+			const QModelIndex idx = m_cursors->index(i);
+			if(!idx.data(canvas::UserCursorModel::VisibleRole).toBool())
+				continue;
+
+			const QPixmap avatar = idx.data(Qt::DecorationRole).value<QPixmap>();
+			const QPoint pos = idx.data(canvas::UserCursorModel::PositionRole).toPoint();
+			const QPoint viewPoint = QPoint(
+				pos.x() * xscale + canvasRect.x() - m_cursorBackground.width() / 2,
+				pos.y() * yscale + canvasRect.y() - m_cursorBackground.height()
+			);
+
+			painter.drawPixmap(viewPoint, m_cursorBackground);
+			painter.setRenderHint(QPainter::SmoothPixmapTransform);
+			painter.drawPixmap(
+				QRect(
+					viewPoint + QPoint(
+						m_cursorBackground.width()/2 - avatar.width()/4,
+						m_cursorBackground.width()/2 - avatar.height()/4
+					),
+					avatar.size() / 2
+				),
+				avatar
+			);
+		}
 	}
 }
 
@@ -192,6 +271,19 @@ Navigator::Navigator(QWidget *parent)
 	connect(m_ui->rotationBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &Navigator::updateAngle);
 	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
 	connect(m_ui->rotateReset, &QToolButton::clicked, this, [this]() { emit angleChanged(0); });
+
+	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_ui->view);
+	showCursorsAction->setCheckable(true);
+	m_ui->view->addAction(showCursorsAction);
+	m_ui->view->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+	showCursorsAction->setChecked(QSettings().value("navigator/showcursors", true).toBool());
+	m_ui->view->setShowCursors(showCursorsAction->isChecked());
+
+	connect(showCursorsAction, &QAction::triggered, this, [this](bool show) {
+		QSettings().setValue("navigator/showcursors", show);
+		m_ui->view->setShowCursors(show);
+	});
 }
 
 Navigator::~Navigator()
@@ -208,6 +300,11 @@ void Navigator::setFlipActions(QAction *flip, QAction *mirror)
 void Navigator::setScene(drawingboard::CanvasScene *scene)
 {
 	m_ui->view->setLayerStackObserver(scene->layerStackObserver());
+}
+
+void Navigator::setUserCursors(canvas::UserCursorModel *cursors)
+{
+	m_ui->view->setUserCursors(cursors);
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)

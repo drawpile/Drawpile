@@ -23,7 +23,7 @@
 #include <QAbstractListModel>
 #include <QColor>
 #include <QPointF>
-#include <QList>
+#include <QVector>
 #include <QPixmap>
 
 namespace canvas {
@@ -79,6 +79,7 @@ public slots:
 	void setCursorPosition(int id, int layerId, const QPoint &pos);
 	void setCursorAvatar(int id, const QPixmap &avatar);
 	void hideCursor(int id);
+	void removeCursor(int id);
 
 	void clear();
 
@@ -88,7 +89,7 @@ protected:
 private:
 	UserCursor *getOrCreate(int id, QModelIndex &index);
 
-	QList<UserCursor> m_cursors;
+	QVector<UserCursor> m_cursors;
 	LayerListModel *m_layerlist;
 	int m_timerId;
 };

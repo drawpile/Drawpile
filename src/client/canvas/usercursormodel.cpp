@@ -26,6 +26,9 @@
 
 namespace canvas {
 
+// Hide cursors after they have not moved for this many milliseconds
+static const qint64 AUTOHIDE_TIME = 3000;
+
 UserCursorModel::UserCursorModel(QObject *parent)
 	: QAbstractListModel(parent), m_layerlist(nullptr)
 {
@@ -142,9 +145,25 @@ void UserCursorModel::hideCursor(int id)
 {
 	for(int i=0;i<m_cursors.size();++i) {
 		if(m_cursors.at(i).id == id) {
-			m_cursors[i].visible = false;
+			// Leave the cursor visible for just a little while longer
+			// This makes it easier to catch who drew something and gives
+			// the navigator time to render the marker
+			m_cursors[i].lastMoved = QDateTime::currentMSecsSinceEpoch() - AUTOHIDE_TIME + 1000;
+
 			QModelIndex idx = index(i);
 			emit dataChanged(idx, idx, QVector<int>() << VisibleRole);
+			return;
+		}
+	}
+}
+
+void UserCursorModel::removeCursor(int id)
+{
+	for(int i=0;i<m_cursors.size();++i) {
+		if(m_cursors.at(i).id == id) {
+			beginRemoveRows(QModelIndex(), i, i);
+			m_cursors.remove(i);
+			endRemoveRows();
 			return;
 		}
 	}
@@ -192,7 +211,7 @@ void UserCursorModel::timerEvent(QTimerEvent *e)
 	}
 
 	const qint64 now = QDateTime::currentMSecsSinceEpoch();
-	const qint64 hideTreshold = now - 3000;
+	const qint64 hideTreshold = now - AUTOHIDE_TIME;
 
 	for(int i=0;i<m_cursors.size();++i) {
 		UserCursor &uc = m_cursors[i];
