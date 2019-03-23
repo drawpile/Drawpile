@@ -88,8 +88,15 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 		if((static_cast<const UserJoin&>(msg).flags() & UserJoin::FLAG_AUTH))
 			m_auth.set(msg.contextId());
 
-		// Make sure the user's OP status bits are up to date
+		// Make sure the user's access bits are up to date
 		emit operatorListChanged(m_ops.toList());
+		emit trustedUserListChanged(m_trusted.toList());
+
+		if(msg.contextId() == m_myId) {
+			for(int i=0;i<FeatureCount;++i)
+				emit featureAccessChanged(Feature(i), canUseFeature(Feature(i)));
+		}
+
 		break;
 
 	case MSG_USER_LEAVE: {
