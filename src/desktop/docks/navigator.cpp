@@ -71,7 +71,7 @@ NavigatorView::NavigatorView(QWidget *parent)
 {
 	m_refreshTimer = new QTimer(this);
 	m_refreshTimer->setSingleShot(true);
-	m_refreshTimer->setInterval(500);
+	setRealtimeUpdate(false);
 	connect(m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
 
 	// Draw the marker background
@@ -90,6 +90,11 @@ void NavigatorView::setShowCursors(bool show)
 {
 	m_showCursors = show;
 	update();
+}
+
+void NavigatorView::setRealtimeUpdate(bool realtime)
+{
+	m_refreshTimer->setInterval(realtime ? 1 : 500);
 }
 
 void NavigatorView::resizeEvent(QResizeEvent *event)
@@ -157,7 +162,7 @@ void NavigatorView::setViewFocus(const QPolygonF& rect)
 
 void NavigatorView::onChange()
 {
-	if(!m_refreshTimer->isActive())
+	if(isVisible() && !m_refreshTimer->isActive())
 		m_refreshTimer->start();
 }
 
@@ -275,19 +280,35 @@ Navigator::Navigator(QWidget *parent)
 	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_ui->view);
 	showCursorsAction->setCheckable(true);
 	m_ui->view->addAction(showCursorsAction);
+
+	QAction *realtimeUpdateAction = new QAction(tr("Realtime Update"), m_ui->view);
+	realtimeUpdateAction->setCheckable(true);
+	m_ui->view->addAction(realtimeUpdateAction);
+
 	m_ui->view->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	showCursorsAction->setChecked(QSettings().value("navigator/showcursors", true).toBool());
+	QSettings cfg;
+	cfg.beginGroup("navigator");
+
+	showCursorsAction->setChecked(cfg.value("showcursors", true).toBool());
 	m_ui->view->setShowCursors(showCursorsAction->isChecked());
+
+	realtimeUpdateAction->setChecked(cfg.value("realtime", false).toBool());
+	m_ui->view->setRealtimeUpdate(realtimeUpdateAction->isChecked());
 
 	connect(showCursorsAction, &QAction::triggered, this, [this](bool show) {
 		QSettings().setValue("navigator/showcursors", show);
 		m_ui->view->setShowCursors(show);
 	});
+	connect(realtimeUpdateAction, &QAction::triggered, this, [this](bool realtime) {
+		QSettings().setValue("navigator/realtime", realtime);
+		m_ui->view->setRealtimeUpdate(realtime);
+	});
 }
 
 Navigator::~Navigator()
 {
+	QSettings cfg;
 	delete m_ui;
 }
 

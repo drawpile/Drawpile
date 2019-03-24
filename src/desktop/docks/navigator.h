@@ -49,6 +49,7 @@ public:
 
 public slots:
 	void setShowCursors(bool showCursors);
+	void setRealtimeUpdate(bool realtime);
 
 signals:
 	void focusMoved(const QPoint& to);
