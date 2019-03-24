@@ -103,7 +103,7 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
  */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
-	if(event->button() != Qt::LeftButton)
+	if(event->button() == Qt::RightButton)
 		return;
 
 	if(m_cache.isNull())

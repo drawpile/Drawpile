@@ -1,3 +1,6 @@
+2019-0?-?? Version 2.1.5
+ * Fixed navigator view dragging
+
 2019-03-23 Version 2.1.4
  * Fixed session list sorting in login dialog
  * Fixed crash when resizing canvas
