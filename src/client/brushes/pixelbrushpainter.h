@@ -21,6 +21,7 @@
 
 namespace paintcore {
 	class Layer;
+	class BrushMask;
 }
 
 namespace protocol {
@@ -33,6 +34,9 @@ namespace brushes {
  * Draw brush drabs on the canvas
  */
 void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer=0);
+
+paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity);
+paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity);
 
 }
 

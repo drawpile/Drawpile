@@ -25,7 +25,7 @@ namespace brushes {
 
 template<typename T> static T square(T x) { return x*x; }
 
-static paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity)
+paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity)
 {
 	const qreal radius = diameter/2.0;
 	const qreal rr = square(radius);
@@ -46,7 +46,7 @@ static paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity)
 	return paintcore::BrushMask(diameter, data);
 }
 
-static paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity)
+paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity)
 {
 	return paintcore::BrushMask(diameter, QVector<uchar>(square(diameter), opacity));
 }

@@ -26,6 +26,8 @@
 
 namespace icon {
 
+static bool is_dark_theme = false;
+
 bool isDark(const QColor &c)
 {
 	const qreal luminance = c.redF() * 0.216 + c.greenF() * 0.7152 + c.redF() * 0.0722;
@@ -33,15 +35,19 @@ bool isDark(const QColor &c)
 	return luminance <= 0.5;
 }
 
+bool isDarkThemeSelected() { return is_dark_theme; }
+
 void selectThemeVariant()
 {
 	QStringList builtinPaths;
 	QString themePath;
 
 	if(isDark(QPalette().color(QPalette::Window))) {
+		is_dark_theme = true;
 		themePath = QStringLiteral("/theme/dark");
 		builtinPaths << QStringLiteral(":/icons/dark");
 	} else {
+		is_dark_theme = false;
 		themePath = QStringLiteral("/theme/light");
 		builtinPaths << QStringLiteral(":/icons/light");
 	}

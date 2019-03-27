@@ -30,6 +30,9 @@ bool isDark(const QColor &color);
 //! Select whether to use the dark or light theme based on current palette
 void selectThemeVariant();
 
+//! Did selectThemeVariant pick the dark theme?
+bool isDarkThemeSelected();
+
 //! Get an icon from the system theme, falling back to the bundled icon set
 inline QIcon fromTheme(const QString &name) {
 	return QIcon::fromTheme(name, QIcon(QStringLiteral("theme:") + name + QStringLiteral(".svg")));

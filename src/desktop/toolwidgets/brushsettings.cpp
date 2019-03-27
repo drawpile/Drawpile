@@ -23,6 +23,8 @@
 #include "core/brushmask.h"
 #include "brushes/brush.h"
 #include "brushes/classicbrushpainter.h"
+#include "brushes/pixelbrushpainter.h"
+#include "utils/icon.h"
 
 // Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
 #include "widgets/groupedtoolbutton.h"
@@ -580,16 +582,32 @@ struct BrushPresetModel::Private {
 		if(iconcache.at(idx).isNull()) {
 
 			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties());
-			const paintcore::BrushStamp stamp = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1());
-			const int maskdia = stamp.mask.diameter();
+			const int brushmode = presets[idx].intValue(brushprop::brushmode);
+			paintcore::BrushMask mask;
+			Q_ASSERT(brushmode>=0 && brushmode<=3);
+			switch(brushmode) {
+				case 0:
+					mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
+					break;
+				case 1:
+					mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
+					break;
+				case 2:
+				case 3:
+					mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
+					break;
+				default: return QPixmap();
+			}
+
+			const int maskdia = mask.diameter();
 			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
 
-			const QRgb color = (presets[idx].intValue(brushprop::brushmode)==2) ? 0x001d99f3 : 0;
+			const QRgb color = (brushmode==3) ? 0x001d99f3 : (icon::isDarkThemeSelected() ? 0x00ffffff : 0);
 
 			if(maskdia > BRUSH_ICON_SIZE) {
 				// Clip to fit
 				const int clip = (maskdia - BRUSH_ICON_SIZE);
-				const uchar *m = stamp.mask.data() + (clip/2*maskdia) + clip/2;
+				const uchar *m = mask.data() + (clip/2*maskdia) + clip/2;
 				for(int y=0;y<BRUSH_ICON_SIZE;++y) {
 					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y));
 					for(int x=0;x<BRUSH_ICON_SIZE;++x,++m) {
@@ -601,9 +619,10 @@ struct BrushPresetModel::Private {
 			} else {
 				// Center in the icon
 				icon.fill(Qt::transparent);
-				const uchar *m = stamp.mask.data();
+				const uchar *m = mask.data();
+				const int offset = (BRUSH_ICON_SIZE - maskdia)/2;
 				for(int y=0;y<maskdia;++y) {
-					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+(BRUSH_ICON_SIZE-maskdia)/2)) + (BRUSH_ICON_SIZE-maskdia)/2;
+					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+offset)) + offset;
 					for(int x=0;x<maskdia;++x,++m) {
 						*(scanline++) = qPremultiply((*m << 24) | color);
 					}
@@ -791,7 +810,7 @@ void BrushPresetModel::makeDefaultBrushes()
 	}
 	{
 		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::brushmode, 2);
 		tp.setValue(brushprop::size, 10);
 		tp.setValue(brushprop::opacity, 100);
 		tp.setValue(brushprop::hard, 80);
@@ -802,7 +821,7 @@ void BrushPresetModel::makeDefaultBrushes()
 	}
 	{
 		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::brushmode, 2);
 		tp.setValue(brushprop::size, 30);
 		tp.setValue(brushprop::opacity, 34);
 		tp.setValue(brushprop::hard, 100);
@@ -830,7 +849,7 @@ void BrushPresetModel::makeDefaultBrushes()
 	}
 	{
 		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 1);
+		tp.setValue(brushprop::brushmode, 2);
 		tp.setValue(brushprop::size, 113);
 		tp.setValue(brushprop::opacity, 60);
 		tp.setValue(brushprop::hard, 1);
@@ -840,7 +859,7 @@ void BrushPresetModel::makeDefaultBrushes()
 	}
 	{
 		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 2);
+		tp.setValue(brushprop::brushmode, 3);
 		tp.setValue(brushprop::size, 43);
 		tp.setValue(brushprop::opacity, 30);
 		tp.setValue(brushprop::hard, 100);
