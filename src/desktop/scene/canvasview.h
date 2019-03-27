@@ -74,6 +74,9 @@ class CanvasView : public QGraphicsView
 		//! Is this point (scene coordinates) inside the viewport?
 		bool isPointVisible(const QPointF &point) const;
 
+		//! Scroll view by the given number of pixels
+		void scrollBy(int x, int y);
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);
@@ -89,9 +92,6 @@ class CanvasView : public QGraphicsView
 
 		//! Pointer moved in pointer tracking mode
 		void pointerMoved(const QPointF &point);
-
-		//! Pointer was just brought to the top of the widget border
-		void hotBorder(bool hot);
 
 		void penDown(const QPointF &point, qreal pressure, bool right, float zoom);
 		void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
@@ -266,8 +266,6 @@ class CanvasView : public QGraphicsView
 		bool _locked;
 		bool _pointertracking;
 		bool _pixelgrid;
-
-		bool _hotBorderTop;
 
 		bool m_isFirstPoint;
 		bool _enableTouchScroll, _enableTouchPinch, _enableTouchTwist;

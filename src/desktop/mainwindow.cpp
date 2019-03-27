@@ -78,6 +78,7 @@
 #include "utils/settings.h"
 #include "utils/logging.h"
 #include "utils/actionbuilder.h"
+#include "utils/hotbordereventfilter.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -314,10 +315,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_viewstatus, &widgets::ViewStatus::setTransformation);
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_dockNavigator, &docks::Navigator::setViewTransformation);
 
-#ifndef Q_OS_MAC // OSX provides this feature itself
-	connect(m_view, &widgets::CanvasView::hotBorder, this, &MainWindow::hotBorderMenubar);
-#endif
-
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
 	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
@@ -413,6 +410,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 #ifdef Q_OS_MAC
 	MacMenu::instance()->addWindow(this);
+
+#else
+	// OSX provides this feature itself
+	HotBorderEventFilter *hbfilter = new HotBorderEventFilter(this);
+	m_view->installEventFilter(hbfilter);
+	for(QObject *c : children()) {
+		QToolBar *tb = dynamic_cast<QToolBar*>(c);
+		if(tb)
+			tb->installEventFilter(hbfilter);
+	}
+
+	connect(hbfilter, &HotBorderEventFilter::hotBorder, this, &MainWindow::hotBorderMenubar);
 #endif
 
 	// Show self
@@ -499,6 +508,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 {
 	if(!canReplace()) {
+		if(windowState().testFlag(Qt::WindowFullScreen))
+			toggleFullscreen();
+		getAction("hidedocks")->setChecked(false);
 		writeSettings();
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
@@ -534,6 +546,9 @@ MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
 MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 {
 	if(!canReplace()) {
+		if(windowState().testFlag(Qt::WindowFullScreen))
+			toggleFullscreen();
+		getAction("hidedocks")->setChecked(false);
 		writeSettings();
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
@@ -1665,6 +1680,7 @@ void MainWindow::exit()
 {
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		toggleFullscreen();
+	setDocksHidden(false);
 	writeSettings();
 	deleteLater();
 }
@@ -1722,22 +1738,14 @@ void MainWindow::toggleFullscreen()
 {
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
 		// Save windowed mode state
-		m_fullscreenOldState = saveState();
 		m_fullscreenOldGeometry = geometry();
 		m_fullscreenOldMaximized = isMaximized();
 
-		// Hide everything except floating docks
+		// Hide menu and status bars in full screen mode
+		// Toolbar can be hidden by hitting tab
 		menuBar()->hide();
 		m_viewStatusBar->hide();
 		m_view->setFrameShape(QFrame::NoFrame);
-		for(QObject *child : children()) {
-			if(child->inherits("QDockWidget")) {
-				QDockWidget *dw = qobject_cast<QDockWidget*>(child);
-				if(!dw->isFloating())
-					dw->hide();
-			} else if(child->inherits("QToolBar"))
-				(qobject_cast<QWidget*>(child))->hide();
-		}
 
 		showFullScreen();
 
@@ -1752,7 +1760,6 @@ void MainWindow::toggleFullscreen()
 		menuBar()->show();
 		m_viewStatusBar->show();
 		m_view->setFrameShape(QFrame::StyledPanel);
-		restoreState(m_fullscreenOldState);
 	}
 }
 
@@ -1775,6 +1782,45 @@ void MainWindow::setFreezeDocks(bool freeze)
 				dw->setFeatures(dw->features() | features);
 		}
 	}
+}
+
+void MainWindow::setDocksHidden(bool hidden)
+{
+	int xOffset1=0, xOffset2=0, yOffset=0;
+
+	for(QObject *c : children()) {
+		QWidget *w = qobject_cast<QWidget*>(c);
+		if(w && (w->inherits("QDockWidget") || w->inherits("QToolBar"))) {
+			bool visible = w->isVisible();
+
+			if(hidden) {
+				w->setProperty("wasVisible", w->isVisible());
+				w->hide();
+			} else {
+				const QVariant v = w->property("wasVisible");
+				if(!v.isNull()) {
+					w->setVisible(v.toBool());
+					visible = v.toBool();
+				}
+			}
+
+			QToolBar *tb = qobject_cast<QToolBar*>(w);
+			if(tb && visible && !tb->isFloating()) {
+				if(toolBarArea(tb) == Qt::TopToolBarArea)
+					yOffset = tb->height();
+				else if(toolBarArea(tb) == Qt::LeftToolBarArea)
+					xOffset1 = tb->width();
+			}
+
+			QDockWidget *dw = qobject_cast<QDockWidget*>(w);
+			if(dw && visible && !dw->isFloating() && dockWidgetArea(dw) == Qt::LeftDockWidgetArea)
+				xOffset2 = dw->width();
+		}
+	}
+
+	// Docks can only dock on the left or right, so only one yOffset is needed.
+	const int dir = hidden ? -1 : 1;
+	m_view->scrollBy(dir * (xOffset1+xOffset2), dir * yOffset);
 }
 
 /**
@@ -2120,6 +2166,10 @@ void MainWindow::setupActions()
 	QAction *freezeDocks = makeAction("freezedocks", tr("Lock in place")).checkable().remembered();
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
+
+	QAction *hideDocks = makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
+	toggledockmenu->addAction(hideDocks);
+	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
 	//
 	// File menu and toolbar

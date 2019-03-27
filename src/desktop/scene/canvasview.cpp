@@ -48,7 +48,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_zoomWheelDelta(0),
 	m_enableTablet(true),
 	_locked(false), _pointertracking(false), _pixelgrid(true),
-	_hotBorderTop(false), m_isFirstPoint(false),
+	m_isFirstPoint(false),
 	_enableTouchScroll(true), _enableTouchPinch(true), _enableTouchTwist(true),
 	_touching(false), _touchRotating(false),
 	_dpi(96),
@@ -93,6 +93,12 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		viewRectChanged();
 	});
 	viewRectChanged();
+}
+
+void CanvasView::scrollBy(int x, int y)
+{
+	horizontalScrollBar()->setValue(horizontalScrollBar()->value() + x);
+	verticalScrollBar()->setValue(verticalScrollBar()->value() + y);
 }
 
 void CanvasView::zoomSteps(int steps)
@@ -456,22 +462,6 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 		moveDrag(pos.x(), pos.y());
 
 	} else {
-		// Hot border detection. This is used to show the menu bar in fullscreen mode
-		// when the pointer is brought to the top of the screen.
-		if(!m_pendown) {
-			if(_hotBorderTop) {
-				if(pos.y() > 30) {
-					emit hotBorder(false);
-					_hotBorderTop = false;
-				}
-			} else {
-				if(pos.y() < 3) {
-					emit hotBorder(true);
-					_hotBorderTop = true;
-				}
-			}
-		}
-
 		paintcore::Point point = mapToScene(pos, pressure);
 		updateOutline(point);
 		if(!_prevpoint.intSame(point)) {

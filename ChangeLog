@@ -1,6 +1,8 @@
 2019-0?-?? Version 2.1.5
  * Fixed navigator view dragging
  * Added option to update the navigator in realtime again
+ * Pressing Tab now toggles toolbars on and off
+ * Entering fullscreen mode no longer hides docks and toolbars
 
 2019-03-23 Version 2.1.4
  * Fixed session list sorting in login dialog

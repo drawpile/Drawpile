@@ -76,6 +76,7 @@ set (
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp
+	utils/hotbordereventfilter.cpp
 )
 
 IF ( APPLE )

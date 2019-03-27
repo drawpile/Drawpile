@@ -177,6 +177,7 @@ private slots:
 	void hotBorderMenubar(bool show);
 
 	void setFreezeDocks(bool freeze);
+	void setDocksHidden(bool hidden);
 
 	void updateTitle();
 
@@ -253,7 +254,6 @@ private:
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 
 	// Remember window state to return from fullscreen mode
-	QByteArray m_fullscreenOldState;
 	QRect m_fullscreenOldGeometry;
 	bool m_fullscreenOldMaximized;
 
