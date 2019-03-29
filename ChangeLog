@@ -6,6 +6,7 @@
  * Fixed brush preset preview shape rendering
  * Moved certain buttons back into the status bar
  * Moved zoom slider back into the status bar
+ * Fixed saving of brush preset changes
 
 2019-03-23 Version 2.1.4
  * Fixed session list sorting in login dialog

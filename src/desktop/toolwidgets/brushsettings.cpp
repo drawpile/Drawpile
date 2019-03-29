@@ -702,23 +702,10 @@ bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, 
 			d->presets[index.row()] = ToolProperties::fromVariant(value.toHash());
 			d->iconcache[index.row()] = QPixmap();
 			emit dataChanged(index, index);
+			saveBrushes();
 			return true;
 	}
 	return false;
-}
-
-bool BrushPresetModel::setItemData(const QModelIndex &index, const QMap<int,QVariant> &roles)
-{
-	if(!index.isValid() || index.row()<0 || index.row()>=d->presets.size())
-		return false;
-
-	if(roles.contains(ToolPropertiesRole)) {
-		d->presets[index.row()] = ToolProperties::fromVariant(roles[ToolPropertiesRole].toHash());
-		d->iconcache[index.row()] = QPixmap();
-		emit dataChanged(index, index);
-		saveBrushes();
-	}
-	return true;
 }
 
 bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
