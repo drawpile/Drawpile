@@ -22,6 +22,8 @@
 #include <QWidget>
 
 class QComboBox;
+class QSlider;
+class QToolButton;
 
 namespace widgets {
 
@@ -30,6 +32,8 @@ class ViewStatus : public QWidget
 	Q_OBJECT
 public:
 	ViewStatus(QWidget *parent=nullptr);
+
+	void setActions(QAction *flip, QAction *mirror, QAction *rotationReset, QAction *zoomReset);
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
@@ -40,12 +44,15 @@ signals:
 
 private slots:
 	void zoomBoxChanged(const QString &text);
+	void zoomSliderChanged(int value);
 	void angleBoxChanged(const QString &text);
 
 private:
+	QSlider *m_zoomSlider;
 	QComboBox *m_zoomBox;
 	QComboBox *m_angleBox;
 	bool m_updating;
+	QToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomReset;
 };
 
 }

@@ -2507,6 +2507,7 @@ void MainWindow::setupActions()
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
+	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, zoomorig);
 	m_dockNavigator->setFlipActions(viewflip, viewmirror);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
