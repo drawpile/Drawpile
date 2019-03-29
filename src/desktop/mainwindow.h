@@ -232,6 +232,7 @@ private:
 	QLabel *m_lockstatus;
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *m_viewstatus;
+	QToolButton *m_statusChatButton;
 
 	dialogs::PlaybackDialog *m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;

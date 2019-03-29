@@ -41,10 +41,7 @@ public:
 
 	ActionBuilder &icon(const QString &name)
 	{
-		if(name.startsWith(QStringLiteral("builtin:")))
-			m_action->setIcon(QIcon(name));
-		else
-			m_action->setIcon(icon::fromTheme(name));
+		m_action->setIcon(icon::fromTheme(name));
 		return *this;
 	}
 
