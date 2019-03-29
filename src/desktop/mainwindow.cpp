@@ -2436,21 +2436,6 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 
-	QToolBar *viewtools = new QToolBar(tr("View Tools"));
-	viewtools->setObjectName("viewtoolsbar");
-	toggletoolbarmenu->addAction(viewtools->toggleViewAction());
-	viewtools->addAction(zoomin);
-	viewtools->addAction(zoomout);
-	viewtools->addAction(zoomorig);
-	viewtools->addSeparator();
-	viewtools->addAction(rotatecw);
-	viewtools->addAction(rotateccw);
-	viewtools->addAction(rotateorig);
-	viewtools->addSeparator();
-	viewtools->addAction(viewmirror);
-	viewtools->addAction(viewflip);
-	addToolBar(Qt::TopToolBarArea, viewtools);
-
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
 			// Update the mode tickmark on fulscreen state change.
