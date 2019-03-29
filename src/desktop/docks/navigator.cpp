@@ -272,10 +272,8 @@ Navigator::Navigator(QWidget *parent)
 
 	connect(m_ui->view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_ui->view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_ui->zoomBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &Navigator::updateZoom);
-	connect(m_ui->rotationBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &Navigator::updateAngle);
 	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
-	connect(m_ui->rotateReset, &QToolButton::clicked, this, [this]() { emit angleChanged(0); });
+	connect(m_ui->zoom, &QSlider::valueChanged, this, &Navigator::updateZoom);
 
 	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_ui->view);
 	showCursorsAction->setCheckable(true);
@@ -312,12 +310,6 @@ Navigator::~Navigator()
 	delete m_ui;
 }
 
-void Navigator::setFlipActions(QAction *flip, QAction *mirror)
-{
-	m_ui->flip->setDefaultAction(flip);
-	m_ui->mirror->setDefaultAction(mirror);
-}
-
 void Navigator::setScene(drawingboard::CanvasScene *scene)
 {
 	m_ui->view->setLayerStackObserver(scene->layerStackObserver());
@@ -339,17 +331,10 @@ void Navigator::updateZoom(int value)
 		emit zoomChanged(value);
 }
 
-void Navigator::updateAngle(int value)
-{
-	if(!m_updating)
-		emit angleChanged(value);
-}
-
 void Navigator::setViewTransformation(qreal zoom, qreal angle)
 {
 	m_updating = true;
-	m_ui->zoomBox->setValue(zoom);
-	m_ui->rotationBox->setValue(angle);
+	m_ui->zoom->setValue(zoom);
 	m_updating = false;
 }
 

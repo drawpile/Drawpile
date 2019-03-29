@@ -318,7 +318,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
 	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
-	connect(m_dockNavigator, &docks::Navigator::angleChanged, m_view, &widgets::CanvasView::setRotation);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 
@@ -2508,7 +2507,6 @@ void MainWindow::setupActions()
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, zoomorig);
-	m_dockNavigator->setFlipActions(viewflip, viewmirror);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);

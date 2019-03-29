@@ -94,9 +94,6 @@ public:
 	//! Set the user list (optional)
 	void setUserCursors(canvas::UserCursorModel *cursors);
 
-	// Set the actions for the buttons
-	void setFlipActions(QAction *flip, QAction *mirror);
-
 public slots:
 	//! Move the view focus rectangle
 	void setViewFocus(const QPolygonF& rect);
@@ -106,12 +103,10 @@ public slots:
 
 private slots:
 	void updateZoom(int value);
-	void updateAngle(int value);
 
 signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
-	void angleChanged(qreal newAngle);
 	void zoomChanged(qreal newZoom);
 	
 private:
