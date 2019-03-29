@@ -4,6 +4,8 @@
  * Pressing Tab now toggles toolbars on and off
  * Entering fullscreen mode no longer hides docks and toolbars
  * Fixed brush preset preview shape rendering
+ * Moved certain buttons back into the status bar
+ * Moved zoom slider back into the status bar
 
 2019-03-23 Version 2.1.4
  * Fixed session list sorting in login dialog
