@@ -23,6 +23,22 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.5" date="2019-03-30">
+      <url>https://drawpile.net/news/release-2.1.5/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed navigator view dragging</li>
+          <li>Fixed brush preset preview shape rendering</li>
+          <li>Fixed saving of brush preset changes</li>
+          <li>Added option to update the navigator in realtime again</li>
+          <li>Pressing Tab now toggles toolbars on and off</li>
+          <li>Entering fullscreen mode no longer hides docks and toolbars</li>
+          <li>Moved certain buttons back into the status bar</li>
+          <li>Moved zoom slider back into the status bar</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.1.4" date="2019-03-23">
       <url>https://drawpile.net/news/release-2.1.4/</url>
       <description>
