@@ -2413,10 +2413,6 @@ void MainWindow::setupActions()
 	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Period)).icon("object-rotate-right");
 	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Comma)).icon("object-rotate-left");
 
-	QAction *rotate90 = makeAction("rotate90", tr("Rotate to 90°"));
-	QAction *rotate180 = makeAction("rotate180", tr("Rotate to 180°"));
-	QAction *rotate270 = makeAction("rotate270", tr("Rotate to 270°"));
-
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
 
@@ -2475,9 +2471,6 @@ void MainWindow::setupActions()
 	connect(rotateorig, &QAction::triggered, this, [this]() { m_view->setRotation(0); });
 	connect(rotatecw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() + 5); });
 	connect(rotateccw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() - 5); });
-	connect(rotate90, &QAction::triggered, this, [this]() { m_view->setRotation(90); });
-	connect(rotate180, &QAction::triggered, this, [this]() { m_view->setRotation(180); });
-	connect(rotate270, &QAction::triggered, this, [this]() { m_view->setRotation(270); });
 	connect(viewflip, SIGNAL(triggered(bool)), m_view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), m_view, SLOT(setViewMirror(bool)));
 
@@ -2509,9 +2502,6 @@ void MainWindow::setupActions()
 	rotatemenu->addAction(rotateorig);
 	rotatemenu->addAction(rotatecw);
 	rotatemenu->addAction(rotateccw);
-	rotatemenu->addAction(rotate90);
-	rotatemenu->addAction(rotate180);
-	rotatemenu->addAction(rotate270);
 
 	viewmenu->addAction(viewflip);
 	viewmenu->addAction(viewmirror);
