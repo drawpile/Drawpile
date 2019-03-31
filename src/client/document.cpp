@@ -133,6 +133,13 @@ void Document::onSessionResetted()
 		qWarning("sessionResetted: no canvas!");
 		return;
 	}
+
+	// Cancel any possibly active local drawing process.
+	// This prevents jumping lines across the canvas if it shifts.
+	m_toolctrl->cancelMultipartDrawing();
+	m_toolctrl->endDrawing();
+
+	// Clear out the canvas in preparation for the new data that is about to follow
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
 

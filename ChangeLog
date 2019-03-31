@@ -3,6 +3,7 @@
  * Regression fix: chat box no longer autoscrolls when not already scrolled to the bottom
  * Removed default shortcuts for event log and session settings. They can still be assigned custom shortcuts, however.
  * Added option to share the same color across all tool slots
+ * Fixed lines being drawn across the canvas if session reset occurs while midstroke
 
 2019-03-30 Version 2.1.5
  * Fixed navigator view dragging
