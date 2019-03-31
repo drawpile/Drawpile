@@ -193,7 +193,7 @@ public slots:
 	void sendFeatureAccessLevelChange(const uint8_t[canvas::FeatureCount]);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
-	void sendResetSession(const canvas::StateSavepoint &savepoint);
+	void sendResetSession(const protocol::MessageList &resetImage);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
@@ -260,7 +260,7 @@ private:
 
 	QString m_currentFilename;
 
-	QList<protocol::MessagePtr> m_resetstate;
+	protocol::MessageList m_resetstate;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2016 Calle Laakkonen
+   Copyright (C) 2016-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,11 +19,13 @@
 #ifndef RESETSESSIONDIALOG_H
 #define RESETSESSIONDIALOG_H
 
+#include "../shared/net/message.h"
+
 #include <QDialog>
 
 namespace canvas {
 	class StateTracker;
-	class StateSavepoint;
+	class CanvasModel;
 }
 
 namespace dialogs {
@@ -32,14 +34,15 @@ class ResetDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit ResetDialog(const canvas::StateTracker *state, QWidget *parent=0);
+	explicit ResetDialog(const canvas::StateTracker *state, QWidget *parent=nullptr);
 	~ResetDialog();
 
-	canvas::StateSavepoint selectedSavepoint() const;
+	protocol::MessageList resetImage(int myId, const canvas::CanvasModel *canvas);
 
 private slots:
 	void onPrevClick();
 	void onNextClick();
+	void onOpenClick();
 
 private:
 	struct Private;

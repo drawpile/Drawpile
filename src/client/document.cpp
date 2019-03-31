@@ -281,7 +281,7 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 			sendLockSession(true);
 			m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
 
-			sendResetSession(canvas::StateSavepoint());
+			sendResetSession(QList<protocol::MessagePtr>());
 		}
 	}
 }
@@ -631,20 +631,16 @@ void Document::sendOpword(const QString &opword)
 /**
  * @brief Generate a reset snapshot and send a reset request
  *
- * @param savepoint the savepoint from which to generate. Use a null savepoint to generate from the current state
+ * @param resetImage If not empty, this reset image will be used
  * @return true on success
  */
-void Document::sendResetSession(const canvas::StateSavepoint &savepoint)
+void Document::sendResetSession(const protocol::MessageList &resetImage)
 {
-	if(!savepoint) {
+	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. Reset snapshot will be prepared when ready.");
-		m_resetstate.clear();
-
-	} else {
-		qInfo("Preparing session reset from a savepoint");
-		m_resetstate = savepoint.initCommands(m_client->myId(), m_canvas);
 	}
 
+	m_resetstate = resetImage;
 	m_client->sendMessage(net::command::serverCommand("reset-session"));
 }
 

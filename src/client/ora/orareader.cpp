@@ -555,5 +555,26 @@ OraResult loadOpenRaster(const QString &filename)
 	return makeInitCommands(zip, canvas);
 }
 
+QImage loadOpenRasterThumbnail(const QString &filename)
+{
+	QFile orafile(filename);
+	KZip zip(&orafile);
+
+	if(!zip.open(QIODevice::ReadOnly)) {
+		qWarning() << filename << orafile.errorString();
+		return QImage();
+	}
+
+	const QByteArray imageData = utils::getArchiveFile(zip, "Thumbnails/thumbnail.png");
+	QImage thumbnail;
+
+	if(imageData.isNull() || !thumbnail.loadFromData(imageData)) {
+		qWarning() << filename << "unable to load Thumbnails/thumbnail.png";
+		return QImage();
+	}
+
+	return thumbnail;
+}
+
 }
 

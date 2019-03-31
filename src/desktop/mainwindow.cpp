@@ -1462,7 +1462,7 @@ void MainWindow::resetSession()
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	// Automatically lock the session while we are preparing to reset
-	bool wasLocked = m_doc->canvas()->aclFilter()->isSessionLocked();
+	const bool wasLocked = m_doc->canvas()->aclFilter()->isSessionLocked();
 	if(!wasLocked) {
 		m_doc->sendLockSession(true);
 	}
@@ -1470,7 +1470,7 @@ void MainWindow::resetSession()
 	connect(dlg, &dialogs::ResetDialog::accepted, this, [this, dlg]() {
 		// Send request for reset. No need to unlock the session,
 		// since the reset itself will do that for us.
-		m_doc->sendResetSession(dlg->selectedSavepoint());
+		m_doc->sendResetSession(dlg->resetImage(m_doc->client()->myId(), m_doc->canvas()));
 	});
 
 	connect(dlg, &dialogs::ResetDialog::rejected, this, [this, wasLocked]() {

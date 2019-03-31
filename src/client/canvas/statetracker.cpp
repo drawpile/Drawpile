@@ -118,7 +118,7 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 	return img;
 }
 
-QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, CanvasModel *canvas) const
+QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, const CanvasModel *canvas) const
 {
 	if(!m_data)
 		return QList<protocol::MessagePtr>();

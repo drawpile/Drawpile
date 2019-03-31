@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2009-2017 Calle Laakkonen
+   Copyright (C) 2009-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,8 @@
 #include "../shared/net/message.h"
 
 #include <QString>
-#include <QList>
 
-class KArchive;
-class QImage;
+class QPixmap;
 
 namespace openraster {
 
@@ -43,7 +41,7 @@ struct OraResult {
 	Q_DECLARE_FLAGS(Warnings, Warning)
 
 	//! The commands to initialize a canvas
-	QList<protocol::MessagePtr> commands;
+	protocol::MessageList commands;
 
 	//! Error message (empty if file was loaded succesfully)
 	QString error;
@@ -62,6 +60,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(OraResult::Warnings)
 
 //! Load an OpenRaster image
 OraResult loadOpenRaster(const QString &filename);
+
+//! Get the thumbnail from an ORA file
+QImage loadOpenRasterThumbnail(const QString &filename);
 
 }
 

@@ -43,6 +43,10 @@ namespace canvas {
 
 using protocol::MessagePtr;
 
+SessionLoader::~SessionLoader()
+{
+}
+
 QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
 	return QList<MessagePtr>()
@@ -50,6 +54,25 @@ QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 		<< MessagePtr(new protocol::CanvasBackground(1, _color.rgba()))
 		<< MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QStringLiteral("Layer 1")))
 		;
+}
+
+QPixmap ImageCanvasLoader::loadThumbnail(const QSize &maxSize) const
+{
+	QImage thumbnail;
+
+	if(m_filename.endsWith(".ora", Qt::CaseInsensitive))
+		thumbnail = openraster::loadOpenRasterThumbnail(m_filename);
+	else
+		thumbnail.load(m_filename);
+
+	if(thumbnail.isNull())
+		return QPixmap();
+
+	if(thumbnail.width() > maxSize.width() || thumbnail.height() > maxSize.height()) {
+		thumbnail = thumbnail.scaled(maxSize, Qt::KeepAspectRatio);
+	}
+
+	return QPixmap::fromImage(thumbnail);
 }
 
 QList<MessagePtr> ImageCanvasLoader::loadInitCommands()

@@ -45,7 +45,7 @@ class CanvasModel;
  */
 class SessionLoader {
 public:
-	virtual ~SessionLoader() {}
+	virtual ~SessionLoader();
 	
 	/**
 	 * @brief Get the commands needed to initialize the session.
@@ -118,6 +118,8 @@ public:
 	QString errorMessage() const override { return m_error; }
 	QString warningMessage() const override { return m_warning; }
 	QPair<int,int> dotsPerInch() const override { return m_dpi; }
+
+	QPixmap loadThumbnail(const QSize &maxSize) const;
 
 private:
 	QString m_filename;

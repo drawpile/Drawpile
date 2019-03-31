@@ -22,6 +22,7 @@
 #include <Qt>
 #include <QMap>
 #include <QString>
+#include <QList>
 
 namespace protocol {
 
@@ -318,6 +319,8 @@ private:
 	int m_refcount;
 	uint8_t m_contextid;
 };
+
+typedef QList<MessagePtr> MessageList;
 
 /**
  * @brief Base class for messages without a payload

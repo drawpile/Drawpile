@@ -80,6 +80,7 @@ public:
 	void toDatastream(QDataStream &ds) const;
 	static StateSavepoint fromDatastream(QDataStream &ds);
 
+	operator bool() const { return m_data != nullptr; }
 	bool operator!() const { return !m_data; }
 	bool operator==(const StateSavepoint &sp) const { return m_data == sp.m_data; }
 	bool operator!=(const StateSavepoint &sp) const { return m_data != sp.m_data; }
@@ -101,7 +102,7 @@ public:
 	 * @param contextId context Id of the user resetting
 	 * @param canvas if set, ACL settings are got from here
 	 */
-	QList<protocol::MessagePtr> initCommands(uint8_t contextId, CanvasModel *canvas) const;
+	QList<protocol::MessagePtr> initCommands(uint8_t contextId, const CanvasModel *canvas) const;
 
 private:
 	struct Data;
