@@ -101,6 +101,10 @@ struct ChatBox::Private {
 
 	QString usernameSpan(int userId);
 
+	bool isAtEnd() const {
+		return view->verticalScrollBar()->value() == view->verticalScrollBar()->maximum();
+	}
+
 	void scrollToEnd(int ifCurrentId) {
 		if(ifCurrentId == tabs->tabData(tabs->currentIndex()).toInt())
 			view->verticalScrollBar()->setValue(view->verticalScrollBar()->maximum());
@@ -489,12 +493,16 @@ void ChatBox::userJoined(int id, const QString &name)
 
 	d->announcedUsers << id;
 	const QString msg = tr("%1 joined the session").arg(d->usernameSpan(id));
+	const bool wasAtEnd = d->isAtEnd();
+
 	d->publicChat().appendNotification(msg);
-	d->scrollToEnd(0);
+	if(wasAtEnd)
+		d->scrollToEnd(0);
 
 	if(d->chats.contains(id)) {
 		d->chats[id].appendNotification(msg);
-		d->scrollToEnd(id);
+		if(wasAtEnd)
+			d->scrollToEnd(id);
 	}
 
 	notification::playSound(notification::Event::LOGIN);
@@ -503,12 +511,16 @@ void ChatBox::userJoined(int id, const QString &name)
 void ChatBox::userParted(int id)
 {
 	QString msg = tr("%1 left the session").arg(d->usernameSpan(id));
+	const bool wasAtEnd = d->isAtEnd();
+
 	d->publicChat().appendNotification(msg);
-	d->scrollToEnd(0);
+	if(wasAtEnd)
+		d->scrollToEnd(0);
 
 	if(d->chats.contains(id)) {
 		d->chats[id].appendNotification(msg);
-		d->scrollToEnd(id);
+		if(wasAtEnd)
+			d->scrollToEnd(id);
 	}
 
 	d->announcedUsers.removeAll(id);
@@ -518,12 +530,15 @@ void ChatBox::userParted(int id)
 
 void ChatBox::kicked(const QString &kickedBy)
 {
+	const bool wasAtEnd = d->isAtEnd();
 	d->publicChat().appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
-	d->scrollToEnd(0);
+	if(wasAtEnd)
+		d->scrollToEnd(0);
 }
 
 void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 {
+	const bool wasAtEnd = d->isAtEnd();
 	int chatId = 0;
 
 	if(msg->type() == protocol::MSG_CHAT) {
@@ -598,11 +613,15 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 
 	if(!d->myline->hasFocus() || chatId != d->currentChat)
 		notification::playSound(notification::Event::CHAT);
-	d->scrollToEnd(chatId);
+
+	if(wasAtEnd)
+		d->scrollToEnd(chatId);
 }
 
 void ChatBox::receiveMarker(int id, const QString &message)
 {
+	const bool wasAtEnd = d->isAtEnd();
+
 	d->publicChat().appendNotification(QStringLiteral(
 		"<img src=\"theme:flag-red.svg\"> %1: %2"
 		).arg(
@@ -611,14 +630,17 @@ void ChatBox::receiveMarker(int id, const QString &message)
 		)
 	);
 
-	d->scrollToEnd(0);
+	if(wasAtEnd)
+		d->scrollToEnd(0);
 }
 
 void ChatBox::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);
+	const bool wasAtEnd = d->isAtEnd();
 	d->publicChat().appendNotification(message.toHtmlEscaped());
-	d->scrollToEnd(0);
+	if(wasAtEnd)
+		d->scrollToEnd(0);
 }
 
 void ChatBox::sendMessage(const QString &msg)
