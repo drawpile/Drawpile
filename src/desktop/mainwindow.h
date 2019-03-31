@@ -153,7 +153,7 @@ private slots:
 	void updateLockWidget();
 	void setRecorderStatus(bool on);
 
-	void updateShortcuts();
+	void loadShortcuts();
 	void updateSettings();
 
 	void updateLayerViewMode();
@@ -195,9 +195,6 @@ private:
 
 	ActionBuilder makeAction(const char *name, const QString &text);
 	QAction *getAction(const QString &name);
-
-	//! Load customized shortcuts
-	void loadShortcuts();
 
 	//! Add a new entry to recent files list
 	void addRecentFile(const QString& file);

@@ -401,7 +401,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_doc, &Document::sessionPreserveChatChanged, m_chatbox, &widgets::ChatBox::setPreserveMode);
 
-	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(loadShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateSettings()));
 
 	updateSettings();
@@ -699,19 +699,6 @@ void MainWindow::loadShortcuts()
 	if(!canUncensor) {
 		uncensorAction->setChecked(false);
 		updateLayerViewMode();
-	}
-}
-
-/**
- * Reload shortcuts after they have been changed, for all open main windows
- */
-void MainWindow::updateShortcuts()
-{
-	for(QWidget *widget : QApplication::topLevelWidgets()) {
-		MainWindow *win = qobject_cast<MainWindow*>(widget);
-		if(win) {
-			win->loadShortcuts();
-		}
 	}
 }
 
