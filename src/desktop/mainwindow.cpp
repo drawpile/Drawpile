@@ -100,6 +100,7 @@
 #include "parentalcontrols/parentalcontrols.h"
 
 #include "tools/toolcontroller.h"
+#include "toolwidgets/brushsettings.h"
 #include "toolwidgets/colorpickersettings.h"
 #include "toolwidgets/selectionsettings.h"
 #include "toolwidgets/annotationsettings.h"
@@ -401,9 +402,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::sessionPreserveChatChanged, m_chatbox, &widgets::ChatBox::setPreserveMode);
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
-	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateTabletSupportMode()));
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateSettings()));
 
-	updateTabletSupportMode();
+	updateSettings();
 
 	// Create actions and menus
 	setupActions();
@@ -714,7 +715,7 @@ void MainWindow::updateShortcuts()
 	}
 }
 
-void MainWindow::updateTabletSupportMode()
+void MainWindow::updateSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/input");
@@ -741,7 +742,10 @@ void MainWindow::updateTabletSupportMode()
 		cfg.value("touchtwist", true).toBool()
 	);
 	cfg.endGroup();
-	m_view->setBrushCursorStyle(cfg.value("settings/brushcursor").toInt());
+
+	cfg.beginGroup("settings");
+	m_view->setBrushCursorStyle(cfg.value("brushcursor").toInt());
+	static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
 }
 
 void MainWindow::updateLayerViewMode()

@@ -60,6 +60,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Get preview shape
 		PreviewShape previewShape() const { return _shape; }
 
+		QColor brushColor() const { return m_color; }
+
 		//! Get the displayed brush
 		const brushes::ClassicBrush &brush() const { return m_brush; }
 

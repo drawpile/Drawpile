@@ -310,6 +310,13 @@
               </property>
              </widget>
             </item>
+            <item row="20" column="1">
+             <widget class="QCheckBox" name="shareBrushSlotColor">
+              <property name="text">
+               <string>Share color across brush slots</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="page_2">
@@ -729,8 +736,8 @@
                  <string>Mark as trusted</string>
                 </property>
                 <property name="icon">
-                  <iconset theme="security-high">
-                   <normaloff>theme:security-high.svg</normaloff>theme:security-high.svg</iconset>
+                 <iconset theme="security-high">
+                  <normaloff>theme:security-high.svg</normaloff>theme:security-high.svg</iconset>
                 </property>
                </widget>
               </item>

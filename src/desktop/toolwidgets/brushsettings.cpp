@@ -80,7 +80,7 @@ namespace toolprop {
 		;
 }
 
-static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const ToolProperties &tp)
+static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const ToolProperties &tp, const QColor &overrideColor)
 {
 	const int brushMode = bp.intValue(brushprop::brushmode);
 
@@ -133,7 +133,10 @@ static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const Tool
 
 	b.setSpacing(bp.intValue(brushprop::spacing));
 
-	b.setColor(tp.value(toolprop::color).value<QColor>());
+	if(overrideColor.isValid())
+		b.setColor(overrideColor);
+	else
+		b.setColor(tp.value(toolprop::color).value<QColor>());
 
 	const int blendingMode = tp.intValue(tp.boolValue(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
 	b.setBlendingMode(paintcore::BlendMode::Mode(blendingMode));
@@ -158,6 +161,7 @@ struct BrushSettings::Private {
 	int current;
 	int previousNonEraser;
 
+	bool shareBrushSlotColor;
 	bool updateInProgress;
 
 	inline ToolProperties &currentBrush() {
@@ -170,11 +174,14 @@ struct BrushSettings::Private {
 	}
 
 	inline QColor currentColor() {
-		return currentTool().value(toolprop::color).value<QColor>();
+		if(shareBrushSlotColor)
+			return ui.preview->brushColor();
+		else
+			return currentTool().value(toolprop::color).value<QColor>();
 	}
 
 	Private(BrushSettings *b)
-		: current(0), previousNonEraser(0), updateInProgress(false)
+		: current(0), previousNonEraser(0), shareBrushSlotColor(false), updateInProgress(false)
 	{
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
@@ -196,10 +203,11 @@ struct BrushSettings::Private {
 	void updateBrush()
 	{
 		// Update brush object from current properties
-		brushes::ClassicBrush b = brushFromProps(currentBrush(), currentTool());
+		brushes::ClassicBrush b = brushFromProps(currentBrush(), currentTool(), currentColor());
 
 		ui.preview->setBrush(b);
-		ui.preview->setColor(currentColor());
+		if(!shareBrushSlotColor)
+			ui.preview->setColor(currentColor());
 	}
 
 	GroupedToolButton *brushSlotButton(int i)
@@ -274,6 +282,19 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	}
 
 	return widget;
+}
+
+void BrushSettings::setShareBrushSlotColor(bool sameColor)
+{
+	d->shareBrushSlotColor = sameColor;
+	for(int i=0;i<BRUSH_COUNT;++i) {
+		d->brushSlotButton(i)->setColorSwatch(
+			sameColor ?
+				QColor()
+			:
+				d->toolProps[i].value(toolprop::color).value<QColor>()
+			);
+	}
 }
 
 void BrushSettings::setCurrentBrushSettings(const ToolProperties &brushProps)
@@ -507,7 +528,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 		d->brushProps[i] = ToolProperties::fromVariant(brush);
 		d->toolProps[i] = ToolProperties::fromVariant(tool);
-		d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::color).value<QColor>());
+		if(!d->shareBrushSlotColor)
+			d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::color).value<QColor>());
 	}
 	d->toolProps[ERASER_SLOT].setValue(toolprop::useEraseMode, true);
 
@@ -540,7 +562,8 @@ void BrushSettings::setForeground(const QColor& color)
 {
 	if(color != d->currentColor()) {
 		d->currentTool().setValue(toolprop::color, color);
-		d->brushSlotButton(d->current)->setColorSwatch(color);
+		if(!d->shareBrushSlotColor)
+			d->brushSlotButton(d->current)->setColorSwatch(color);
 		d->ui.preview->setColor(color);
 	}
 }
@@ -581,7 +604,7 @@ struct BrushPresetModel::Private {
 
 		if(iconcache.at(idx).isNull()) {
 
-			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties());
+			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties(), QColor());
 			const int brushmode = presets[idx].intValue(brushprop::brushmode);
 			paintcore::BrushMask mask;
 			Q_ASSERT(brushmode>=0 && brushmode<=3);

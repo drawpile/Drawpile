@@ -60,6 +60,8 @@ public:
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
 
+	void setShareBrushSlotColor(bool sameColor);
+
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);

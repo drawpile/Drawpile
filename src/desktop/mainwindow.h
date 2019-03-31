@@ -154,7 +154,7 @@ private slots:
 	void setRecorderStatus(bool on);
 
 	void updateShortcuts();
-	void updateTabletSupportMode();
+	void updateSettings();
 
 	void updateLayerViewMode();
 
