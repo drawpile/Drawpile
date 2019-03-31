@@ -2593,8 +2593,8 @@ void MainWindow::setupActions()
 	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
 
-	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).shortcut("F10");
-	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).shortcut("F11").menuRole(QAction::NoRole).disabled();
+	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
+	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));

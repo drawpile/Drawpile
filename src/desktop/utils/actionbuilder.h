@@ -45,6 +45,11 @@ public:
 		return *this;
 	}
 
+	ActionBuilder &noDefaultShortcut() {
+		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), QKeySequence());
+		return *this;
+	}
+
 	ActionBuilder &shortcut(const QString &key) { return shortcut(QKeySequence(key)); }
 
 	ActionBuilder &shortcut(const QKeySequence &shortcut)
