@@ -1754,6 +1754,8 @@ void MainWindow::toggleFullscreen()
 		menuBar()->hide();
 		m_viewStatusBar->hide();
 		m_view->setFrameShape(QFrame::NoFrame);
+		m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 		showFullScreen();
 
@@ -1768,6 +1770,9 @@ void MainWindow::toggleFullscreen()
 		menuBar()->show();
 		m_viewStatusBar->show();
 		m_view->setFrameShape(QFrame::StyledPanel);
+
+		m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+		m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	}
 }
 
