@@ -26,6 +26,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QHBoxLayout>
+#include <QEvent>
 
 namespace widgets {
 
@@ -61,10 +62,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_angleBox->setFrame(false);
 	m_angleBox->setEditable(true);
 	m_angleBox->setToolTip(tr("Canvas Rotation"));
-
-	auto boxPalette = m_angleBox->palette();
-	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
-	m_angleBox->setPalette(boxPalette);
 
 	layout->addWidget(m_angleBox);
 
@@ -107,8 +104,6 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomBox->setFrame(false);
 	m_zoomBox->setEditable(true);
 
-	m_zoomBox->setPalette(boxPalette);
-
 	layout->addWidget(m_zoomSlider);
 	layout->addWidget(m_zoomBox);
 
@@ -127,6 +122,16 @@ ViewStatus::ViewStatus(QWidget *parent)
 		)
 	);
 	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
+
+	updatePalette();
+}
+
+void ViewStatus::updatePalette()
+{
+	auto boxPalette = palette();
+	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
+	m_angleBox->setPalette(boxPalette);
+	m_zoomBox->setPalette(boxPalette);
 }
 
 void ViewStatus::setActions(QAction *flip, QAction *mirror, QAction *rotationReset, QAction *zoomReset)
@@ -189,6 +194,13 @@ void ViewStatus::angleBoxChanged(const QString &text)
 	const int number = num.toInt(&ok);
 	if(ok)
 		emit angleChanged(number);
+}
+
+void ViewStatus::changeEvent(QEvent *event)
+{
+	QWidget::changeEvent(event);
+	if(event->type() == QEvent::PaletteChange)
+		updatePalette();
 }
 
 }

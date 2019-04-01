@@ -42,12 +42,17 @@ signals:
 	void zoomChanged(qreal newZoom);
 	void angleChanged(qreal newAngle);
 
+protected:
+	void changeEvent(QEvent *event) override;
+
 private slots:
 	void zoomBoxChanged(const QString &text);
 	void zoomSliderChanged(int value);
 	void angleBoxChanged(const QString &text);
 
 private:
+	void updatePalette();
+
 	QSlider *m_zoomSlider;
 	QComboBox *m_zoomBox;
 	QComboBox *m_angleBox;
