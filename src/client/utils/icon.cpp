@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #include <QDir>
 #include <QPalette>
-#include <QStandardPaths>
 
 namespace icon {
 
@@ -39,29 +38,24 @@ bool isDarkThemeSelected() { return is_dark_theme; }
 
 void selectThemeVariant()
 {
-	QStringList builtinPaths;
-	QString themePath;
+	is_dark_theme = isDark(QPalette().color(QPalette::Window));
 
-	if(isDark(QPalette().color(QPalette::Window))) {
-		is_dark_theme = true;
-		themePath = QStringLiteral("/theme/dark");
-		builtinPaths << QStringLiteral(":/icons/dark");
-	} else {
-		is_dark_theme = false;
-		themePath = QStringLiteral("/theme/light");
-		builtinPaths << QStringLiteral(":/icons/light");
-	}
-
-	builtinPaths << QStringLiteral(":/icons");
+	const QString themePath = is_dark_theme ? QStringLiteral("/theme/dark") : QStringLiteral("/theme/light");
 
 	QStringList themePaths;
 	for(const QString &path : utils::settings::dataPaths()) {
-		themePaths << path + themePath;
+		themePaths.append(path + themePath);
 	}
 
-	QDir::setSearchPaths("theme", themePaths);
-	QDir::setSearchPaths("builtin", builtinPaths);
+#if 0
+	// We can use this after we no longer support anything older than Qt 5.11
+	// The nice thing about fallback search path is that the icons are automagically
+	// reloaded when it changes.
+	// Note: On Windows and Mac, we need to explicitly select a theme too. (A dummy theme should do.)
+	QIcon::setFallbackSearchPaths(themePaths);
+#endif
 
+	QDir::setSearchPaths("theme", themePaths);
 }
 
 }

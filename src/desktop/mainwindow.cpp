@@ -211,7 +211,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// when there are unread chat messages.
 	m_statusChatButton = new QToolButton(this);
 	m_statusChatButton->setAutoRaise(true);
-	m_statusChatButton->setIcon(QIcon("builtin:chat.svg"));
+	m_statusChatButton->setIcon(icon::fromTheme("drawpile_chat"));
 	m_statusChatButton->hide();
 	m_viewStatusBar->addWidget(m_statusChatButton);
 

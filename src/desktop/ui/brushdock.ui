@@ -215,8 +215,8 @@
            <string>Pixel brush</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>builtin:pixel-round.svg</normaloff>builtin:pixel-round.svg</iconset>
+           <iconset theme="drawpile_pixelround">
+            <normaloff>theme:drawpile_pixelround.svg</normaloff>theme:drawpile_pixelround.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -235,8 +235,8 @@
            <string>Square pixel brush</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>builtin:square.svg</normaloff>builtin:square.svg</iconset>
+           <iconset theme="drawpile_square">
+            <normaloff>theme:drawpile_square.svg</normaloff>theme:drawpile_square.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -255,8 +255,8 @@
            <string>Brush</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>builtin:round.svg</normaloff>builtin:round.svg</iconset>
+           <iconset theme="drawpile_round">
+            <normaloff>theme:drawpile_round.svg</normaloff>theme:drawpile_round.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -342,8 +342,8 @@
         <string>Direct drawing mode</string>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>builtin:paintmode-incremental.svg</normaloff>builtin:paintmode-incremental.svg</iconset>
+        <iconset theme="drawpile_incremental_mode">
+         <normaloff>theme:drawpile_incremental_mode.svg</normaloff>theme:drawpile_incremental_mode.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

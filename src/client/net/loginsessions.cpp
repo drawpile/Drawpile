@@ -80,7 +80,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return icon::fromTheme("object-locked");
 		} else if(index.column()==1) {
 			if(ls.nsfm)
-				return QIcon("builtin:censored.svg");
+				return QIcon(":/icons/censored.svg");
 		}
 
 	} else if(role == Qt::ToolTipRole) {

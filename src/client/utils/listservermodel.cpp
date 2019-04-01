@@ -150,7 +150,7 @@ QVector<ListServer> ListServerModel::listServers()
 		};
 
 		if(ls.iconName == "drawpile")
-			ls.icon = QIcon("builtin:drawpile.png");
+			ls.icon = QIcon(":/icons/drawpile.png");
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 
@@ -161,7 +161,7 @@ QVector<ListServer> ListServerModel::listServers()
 	// Add the default drawpile.net server if there is nothing else
 	if(list.isEmpty()) {
 		list << ListServer {
-			QIcon("builtin:drawpile.png"),
+			QIcon(":/icons/drawpile.png"),
 			QStringLiteral("drawpile"),
 			QStringLiteral("drawpile.net"),
 			QStringLiteral("http://drawpile.net/api/listing/"),

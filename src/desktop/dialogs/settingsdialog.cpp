@@ -595,7 +595,7 @@ void SettingsDialog::addListingServer()
 		if(info.faviconUrl == "drawpile") {
 			m_listservers->setFavicon(
 				apiUrl,
-				QIcon("builtin:drawpile.png").pixmap(128, 128).toImage()
+				QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
 				);
 
 		} else {

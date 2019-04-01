@@ -217,7 +217,7 @@ padding: 16px;</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>builtin:censored.svg</normaloff>builtin:censored.svg</iconset>
+             <normaloff>:/icons/censored.svg</normaloff>:/icons/censored.svg</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>

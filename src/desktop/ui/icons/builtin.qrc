@@ -1,17 +1,5 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>light/chat.svg</file>
-        <file>light/pixel-round.svg</file>
-        <file>light/square.svg</file>
-        <file>light/round.svg</file>
-        <file>light/paintmode-incremental.svg</file>
-
-        <file>dark/chat.svg</file>
-        <file>dark/pixel-round.svg</file>
-        <file>dark/round.svg</file>
-        <file>dark/square.svg</file>
-        <file>dark/paintmode-incremental.svg</file>
-
         <file>colorbox-hsv.png</file>
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>

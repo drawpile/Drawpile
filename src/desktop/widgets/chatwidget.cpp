@@ -131,7 +131,7 @@ ChatBox::ChatBox(QWidget *parent)
 
 	d->tabs = new QTabBar(this);
 	d->tabs->addTab(QString());
-	d->tabs->setTabIcon(0, QIcon("builtin:chat.svg"));
+	d->tabs->setTabText(0, tr("Public"));
 	d->tabs->setAutoHide(true);
 	d->tabs->setDocumentMode(true);
 	d->tabs->setTabsClosable(true);
@@ -204,7 +204,7 @@ void ChatBox::Private::updatePreserveModeUi()
 
 	chatbox->setStyleSheet(
 #ifdef Q_OS_OSX // QTBUG-61092 (close button not visible on macOS)
-		QStringLiteral("QTabBar::close-button{ background-position: center; background-image: url(\"builtin:dock-close.svg\"); }") +
+		QStringLiteral("QTabBar::close-button{ background-position: center; background-image: url(\":/icons/dock-close.svg\"); }") +
 #endif
 		QStringLiteral(
 		"QTextEdit, QLineEdit {"
@@ -602,10 +602,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 	if(chatId != d->currentChat) {
 		for(int i=0;i<d->tabs->count();++i) {
 			if(d->tabs->tabData(i).toInt() == chatId) {
-				if(chatId == 0)
-					d->tabs->setTabIcon(i, QIcon("builtin:chat-alert.svg"));
-				else
-					d->tabs->setTabTextColor(i, QColor(218, 68, 83));
+				d->tabs->setTabTextColor(i, QColor(218, 68, 83));
 				break;
 			}
 		}
@@ -725,12 +722,7 @@ void ChatBox::chatTabSelected(int index)
 	Q_ASSERT(d->chats.contains(id));
 	d->view->setDocument(d->chats[id].doc);
 	d->view->verticalScrollBar()->setValue(d->chats[id].scrollPosition);
-
-	if(id == 0)
-		d->tabs->setTabIcon(index, QIcon("builtin:chat.svg"));
-	else
-		d->tabs->setTabTextColor(index, QColor());
-
+	d->tabs->setTabTextColor(index, QColor());
 	d->currentChat = d->tabs->tabData(index).toInt();
 	d->updatePreserveModeUi();
 }

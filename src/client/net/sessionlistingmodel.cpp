@@ -93,7 +93,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			else if(s.password)
 				return icon::fromTheme("object-locked");
 			else if(s.nsfm)
-				return QIcon("builtin:censored.svg");
+				return QIcon(":/icons/censored.svg");
 		}
 
 	} else if(role == SortKeyRole) {
