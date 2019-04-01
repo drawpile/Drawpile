@@ -66,8 +66,8 @@ private:
 
 	Document *m_doc;
 
-	QPixmap m_lockIcon;
-	QPixmap m_muteIcon;
+	QIcon m_lockIcon;
+	QIcon m_muteIcon;
 
 	QAction *m_menuTitle;
 	QAction *m_opAction;

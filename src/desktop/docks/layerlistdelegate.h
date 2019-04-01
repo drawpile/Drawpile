@@ -37,7 +37,7 @@ namespace docks {
 class LayerListDelegate : public QItemDelegate {
 Q_OBJECT
 public:
-	LayerListDelegate(QObject *parent=0);
+	LayerListDelegate(QObject *parent=nullptr);
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option,
 			const QModelIndex &index) const;
@@ -57,10 +57,10 @@ signals:
 private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const;
 
-	QPixmap m_visibleIcon;
-	QPixmap m_censoredIcon;
-	QPixmap m_hiddenIcon;
-	QPixmap m_fixedIcon;
+	QIcon m_visibleIcon;
+	QIcon m_censoredIcon;
+	QIcon m_hiddenIcon;
+	QIcon m_fixedIcon;
 
 	bool m_showNumbers;
 };

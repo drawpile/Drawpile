@@ -29,12 +29,14 @@
 
 namespace docks {
 
+static const QSize ICON_SIZE { 16, 16 };
+
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  m_visibleIcon(icon::fromTheme("layer-visible-on").pixmap(16, 16)),
-	  m_censoredIcon(QIcon(":/icons/censored.svg").pixmap(16, 16)),
-	  m_hiddenIcon(icon::fromTheme("layer-visible-off").pixmap(16, 16)),
-	  m_fixedIcon(icon::fromTheme("window-pin").pixmap(16, 16)),
+	  m_visibleIcon(icon::fromTheme("layer-visible-on")),
+	  m_censoredIcon(QIcon(":/icons/censored.svg")),
+	  m_hiddenIcon(icon::fromTheme("layer-visible-off")),
+	  m_fixedIcon(icon::fromTheme("window-pin")),
 	  m_showNumbers(false)
 {
 }
@@ -74,10 +76,11 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw fixed icon
 	if(layer.fixed) {
-		painter->drawPixmap(
-			opt.rect.right() - m_fixedIcon.width(),
-			opt.rect.top() + opt.rect.height()/2 - m_fixedIcon.height()/2,
-			m_fixedIcon
+		m_fixedIcon.paint(painter,
+			opt.rect.right() - ICON_SIZE.width(),
+			opt.rect.top() + opt.rect.height()/2 - ICON_SIZE.height()/2,
+			ICON_SIZE.width(),
+			ICON_SIZE.height()
 		);
 	}
 
@@ -105,9 +108,8 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = m_visibleIcon.size();
 	QFontMetrics fm(option.font);
-	int minheight = qMax(fm.height() * 3 / 2, iconsize.height()) + 2;
+	int minheight = qMax(fm.height() * 3 / 2, ICON_SIZE.height()) + 2;
 	if(size.height() < minheight)
 		size.setHeight(minheight);
 	return size;
@@ -132,15 +134,23 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, cons
 
 void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const
 {
-	const int x = rect.left() + rect.width() / 2 - 8;
-	const int y = rect.top() + rect.height() / 2 - 8;
+	const QRect r {
+		int(rect.left() + rect.width() / 2 - ICON_SIZE.width()/2),
+		int(rect.top() + rect.height() / 2 - ICON_SIZE.height()/2),
+		ICON_SIZE.width(),
+		ICON_SIZE.height(),
+	};
+
 	if(hidden) {
-		painter->drawPixmap(x, y, m_hiddenIcon);
+		m_hiddenIcon.paint(painter, r);
 
 	} else {
 		painter->save();
 		painter->setOpacity(value);
-		painter->drawPixmap(x, y, censored ? m_censoredIcon : m_visibleIcon);
+		if(censored)
+			m_censoredIcon.paint(painter, r);
+		else
+			m_visibleIcon.paint(painter, r);
 		painter->restore();
 	}
 }

@@ -77,8 +77,8 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
 	connect(m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
 
-	m_lockIcon = icon::fromTheme("object-locked").pixmap(16, 16);
-	m_muteIcon = icon::fromTheme("irc-unvoice").pixmap(16, 16);
+	m_lockIcon = icon::fromTheme("object-locked");
+	m_muteIcon = icon::fromTheme("irc-unvoice");
 }
 
 UserItemDelegate::~UserItemDelegate()
@@ -126,9 +126,9 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		painter->setPen(QPen(option.palette.color(QPalette::Base), 2));
 		painter->drawEllipse(statusOverlayRect.adjusted(-2, -2, 2, 2));
 		if(isLocked)
-			painter->drawPixmap(statusOverlayRect, m_lockIcon);
+			m_lockIcon.paint(painter, statusOverlayRect);
 		else
-			painter->drawPixmap(statusOverlayRect, m_muteIcon);
+			m_muteIcon.paint(painter, statusOverlayRect);
 	}
 
 	// Draw username
