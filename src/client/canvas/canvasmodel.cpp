@@ -212,9 +212,9 @@ bool CanvasModel::needsOpenRaster() const
 		;
 }
 
-QList<protocol::MessagePtr> CanvasModel::generateSnapshot(bool forceNew) const
+protocol::MessageList CanvasModel::generateSnapshot(bool forceNew) const
 {
-	QList<protocol::MessagePtr> snapshot;
+	protocol::MessageList snapshot;
 
 	if(!m_statetracker->hasFullHistory() || forceNew) {
 		// Generate snapshot

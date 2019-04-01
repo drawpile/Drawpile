@@ -81,7 +81,7 @@ public:
 	bool needsOpenRaster() const;
 	QImage toImage(bool withBackground=true) const;
 
-	QList<protocol::MessagePtr> generateSnapshot(bool forceNew) const;
+	protocol::MessageList generateSnapshot(bool forceNew) const;
 
 	uint8_t localUserId() const;
 

@@ -69,7 +69,7 @@ public:
 	 * Enqueue a message for sending.
 	 */
 	void send(const MessagePtr &message);
-	void send(const QList<MessagePtr> &messages);
+	void send(const MessageList &messages);
 
 	/**
 	 * @brief Gracefully disconnect

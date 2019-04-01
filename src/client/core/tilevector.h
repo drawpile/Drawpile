@@ -69,7 +69,7 @@ struct LayerTileSet {
 	 * @param layerId ID for the new layer
 	 * @param info layer attributes
 	 */
-	QList<protocol::MessagePtr> toInitCommands(int contextId, const LayerInfo &info);
+	protocol::MessageList toInitCommands(int contextId, const LayerInfo &info);
 };
 
 }

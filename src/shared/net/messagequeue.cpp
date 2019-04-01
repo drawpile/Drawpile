@@ -125,7 +125,7 @@ void MessageQueue::send(const MessagePtr &message)
 	}
 }
 
-void MessageQueue::send(const QList<MessagePtr> &messages)
+void MessageQueue::send(const MessageList &messages)
 {
 	if(!m_closeWhenReady) {
 		m_outbox << messages;

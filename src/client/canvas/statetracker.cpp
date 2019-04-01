@@ -118,10 +118,10 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 	return img;
 }
 
-QList<protocol::MessagePtr> StateSavepoint::initCommands(uint8_t contextId, const CanvasModel *canvas) const
+protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const CanvasModel *canvas) const
 {
 	if(!m_data)
-		return QList<protocol::MessagePtr>();
+		return protocol::MessageList();
 
 	paintcore::LayerStack stack;
 	stack.editor(0).restoreSavepoint(m_data->canvas);
@@ -428,7 +428,7 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 void StateTracker::endRemoteContexts()
 {
 	// Add local fork to the mainline history
-	QList<protocol::MessagePtr> localfork = m_localfork.messages();
+	auto localfork = m_localfork.messages();
 	m_localfork.clear();
 
 	for(protocol::MessagePtr m : localfork)
@@ -1054,7 +1054,7 @@ void StateTracker::revertSavepointAndReplay(const StateSavepoint savepoint)
 	if(!m_localfork.isEmpty()) {
 		Q_ASSERT(m_localfork.offset() >= savepoint->streampointer);
 		m_localfork.setOffset(pos-1);
-		const QList<protocol::MessagePtr> local = m_localfork.messages();
+		const auto local = m_localfork.messages();
 		for(const protocol::MessagePtr &msg : local) {
 			if(msg->type() != protocol::MSG_UNDO && msg->type() != protocol::MSG_UNDOPOINT)
 				handleCommand(msg, true, pos);

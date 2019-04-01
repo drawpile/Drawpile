@@ -95,7 +95,7 @@ public:
 	 * @brief Set the initial session content to upload to the server
 	 * @param msgs
 	 */
-	void setInitialState(const QList<protocol::MessagePtr> &msgs) { Q_ASSERT(m_mode==HOST); m_initialState = msgs; }
+	void setInitialState(const protocol::MessageList &msgs) { Q_ASSERT(m_mode==HOST); m_initialState = msgs; }
 
 	/**
 	 * @brief Set session announcement URL
@@ -377,7 +377,7 @@ private:
 	QString m_title;
 	bool m_announcePrivate;
 	QString m_announceUrl;
-	QList<protocol::MessagePtr> m_initialState;
+	protocol::MessageList m_initialState;
 
 	// Settings for joining
 	QString m_joinPassword;

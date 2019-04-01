@@ -45,7 +45,7 @@ bool isEmptyImage(const QImage &image)
 // Recursively split image into small enough pieces.
 // When mode is anything else than MODE_REPLACE, PutImage calls
 // are expensive, so we want to split the image into as few pieces as possible.
-void splitImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode, bool skipempty, QList<protocol::MessagePtr> &list)
+void splitImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode, bool skipempty, protocol::MessageList &list)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
 
@@ -140,9 +140,9 @@ MessagePtr terminateSession()
 	return serverCommand("kill-session");
 }
 
-QList<protocol::MessagePtr> putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
+protocol::MessageList putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty)
 {
-	QList<protocol::MessagePtr> list;
+	protocol::MessageList list;
 
 	// Crop image if target coordinates are negative, since the protocol
 	// does not support negative coordites.

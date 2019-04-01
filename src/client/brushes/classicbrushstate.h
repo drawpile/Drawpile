@@ -78,9 +78,9 @@ public:
 	 *
 	 * @return list of DrawDab commands generated so far
 	 */
-	QList<protocol::MessagePtr> takeDabs() override {
+	protocol::MessageList takeDabs() override {
 		auto dabs = m_dabs;
-		m_dabs = QList<protocol::MessagePtr>();
+		m_dabs = protocol::MessageList();
 		m_lastDab = nullptr;
 		return dabs;
 	}
@@ -97,7 +97,7 @@ private:
 	bool m_pendown;            // brush stroke in progress?
 	paintcore::Point m_lastPoint;
 
-	QList<protocol::MessagePtr> m_dabs;
+	protocol::MessageList m_dabs;
 	protocol::DrawDabsClassic *m_lastDab;
 	int m_lastDabX;
 	int m_lastDabY;

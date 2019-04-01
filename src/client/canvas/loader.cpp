@@ -41,15 +41,16 @@
 
 namespace canvas {
 
+using protocol::MessageList;
 using protocol::MessagePtr;
 
 SessionLoader::~SessionLoader()
 {
 }
 
-QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
+MessageList BlankCanvasLoader::loadInitCommands()
 {
-	return QList<MessagePtr>()
+	return MessageList()
 		<< MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0))
 		<< MessagePtr(new protocol::CanvasBackground(1, _color.rgba()))
 		<< MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QStringLiteral("Layer 1")))
@@ -75,7 +76,7 @@ QPixmap ImageCanvasLoader::loadThumbnail(const QSize &maxSize) const
 	return QPixmap::fromImage(thumbnail);
 }
 
-QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
+MessageList ImageCanvasLoader::loadInitCommands()
 {
 	if(m_filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Load OpenRaster image
@@ -84,7 +85,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 
 		if(!ora.error.isEmpty()) {
 			m_error = ora.error;
-			return QList<MessagePtr>();
+			return MessageList();
 		}
 
 		if(ora.warnings != openraster::OraResult::NO_WARNINGS) {
@@ -104,7 +105,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 	} else {
 		// Load an image using Qt's image loader.
 		// If the image is animated, each frame is loaded as a layer
-		QList<MessagePtr> msgs;
+		MessageList msgs;
 		QImageReader ir(m_filename);
 		int layerId = 1;
 
@@ -115,7 +116,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 				if(layerId>1)
 					break;
 				m_error = ir.errorString();
-				return QList<MessagePtr>();
+				return MessageList();
 			}
 
 			if(layerId==1) {
@@ -134,9 +135,9 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 	}
 }
 
-QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
+MessageList QImageCanvasLoader::loadInitCommands()
 {
-	QList<MessagePtr> msgs;
+	MessageList msgs;
 
 	msgs << MessagePtr(new protocol::CanvasResize(1, 0, m_image.size().width(), m_image.size().height(), 0));
 
@@ -147,9 +148,9 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 	return msgs;
 }
 
-QList<MessagePtr> SnapshotLoader::loadInitCommands()
+MessageList SnapshotLoader::loadInitCommands()
 {
-	QList<MessagePtr> msgs;
+	MessageList msgs;
 
 	// Most important bit first: canvas initialization
 	const QSize imgsize = m_layers->size();

@@ -151,7 +151,7 @@ void Client::sendMessage(const protocol::MessagePtr &msg)
 	m_server->sendMessage(msg);
 }
 
-void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
+void Client::sendMessages(const protocol::MessageList &msgs)
 {
 	for(const protocol::MessagePtr &msg : msgs) {
 #ifndef NDEBUG
@@ -165,7 +165,7 @@ void Client::sendMessages(const QList<protocol::MessagePtr> &msgs)
 	m_server->sendMessages(msgs);
 }
 
-void Client::sendResetMessages(const QList<protocol::MessagePtr> &msgs)
+void Client::sendResetMessages(const protocol::MessageList &msgs)
 {
 	m_server->sendMessages(msgs);
 }

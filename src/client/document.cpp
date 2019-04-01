@@ -151,13 +151,13 @@ void Document::onSessionResetted()
 		delete m_recorder;
 		m_recorder = nullptr;
 		emit recorderStateChanged(false);
-		startRecording(newRecordingFile, QList<protocol::MessagePtr>(), nullptr);
+		startRecording(newRecordingFile, protocol::MessageList(), nullptr);
 	}
 }
 
 bool Document::loadCanvas(canvas::SessionLoader &loader)
 {
-	QList<protocol::MessagePtr> init = loader.loadInitCommands();
+	const auto init = loader.loadInitCommands();
 
 	if(init.isEmpty())
 		return false;
@@ -281,7 +281,7 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 			sendLockSession(true);
 			m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
 
-			sendResetSession(QList<protocol::MessagePtr>());
+			sendResetSession(protocol::MessageList());
 		}
 	}
 }
@@ -505,7 +505,7 @@ bool Document::startRecording(const QString &filename, QString *error)
 	);
 }
 
-bool Document::startRecording(const QString &filename, const QList<protocol::MessagePtr> &initialState, QString *error)
+bool Document::startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error)
 {
 	Q_ASSERT(!isRecording());
 
@@ -646,7 +646,7 @@ void Document::sendResetSession(const protocol::MessageList &resetImage)
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
 	msgs << protocol::MessagePtr(new protocol::CanvasResize(m_client->myId(), top, right, bottom, left));
 	m_client->sendMessages(msgs);
@@ -720,7 +720,7 @@ void Document::snapshotNeeded()
 		m_client->sendResetMessages(m_resetstate);
 		m_client->sendMessage(net::command::serverCommand("init-complete"));
 
-		m_resetstate = QList<protocol::MessagePtr>();
+		m_resetstate = protocol::MessageList();
 
 	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
@@ -862,7 +862,7 @@ void Document::removeEmptyAnnotations()
 
 	QList<uint16_t> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
 		for(auto id : ids)
 			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));

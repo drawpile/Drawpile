@@ -343,9 +343,9 @@ void Selection::setPasteOrMoveImage(const QImage &image)
 	emit pasteImageChanged(image);
 }
 
-QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
+protocol::MessageList Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 {
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
@@ -395,7 +395,7 @@ QList<protocol::MessagePtr> Selection::pasteOrMoveToCanvas(uint8_t contextId, in
 	return msgs;
 }
 
-QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
+protocol::MessageList Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
 {
 	QRect area;
 	QImage mask;
@@ -406,7 +406,7 @@ QList<protocol::MessagePtr> Selection::fillCanvas(uint8_t contextId, const QColo
 	else
 		mask = shapeMask(color, &maskBounds);
 
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 
 	if(!area.isEmpty() || !mask.isNull()) {
 		if(mask.isNull())

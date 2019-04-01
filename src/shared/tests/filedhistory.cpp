@@ -109,7 +109,7 @@ private slots:
 		QString file = makeTestRecording();
 		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
 
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int lastIdx;
 
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
@@ -152,7 +152,7 @@ private slots:
 		fh->addMessage(testMsg);
 
 		// The recording should now have a length of 4 and the last message should be there
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 
@@ -175,7 +175,7 @@ private slots:
 		// The first two messages should still be readable
 		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
 
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int lastIdx;
 
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
@@ -201,14 +201,14 @@ private slots:
 		QCOMPARE(fh->lastIndex(), 5);
 		QCOMPARE(fh->sizeInBytes(), uint(testMsg->length()*6));
 
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 		QCOMPARE(msgs.size(), 6);
 		QCOMPARE(lastIdx, 5);
 		QVERIFY(msgs.at(3).equals(testMsg));
 
-		QList<protocol::MessagePtr> newContent;
+		protocol::MessageList newContent;
 		newContent << testMsg;
 		newContent << testMsg;
 
@@ -240,7 +240,7 @@ private slots:
 		QCOMPARE(fh->lastIndex(), 4);
 
 		// First batch should contain the first block
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 		QCOMPARE(msgs.size(), 3);
@@ -289,7 +289,7 @@ private slots:
 			std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(FiledHistory::journalFilename(id))) };
 			QVERIFY(fh.get());
 
-			QList<protocol::MessagePtr> msgs;
+			protocol::MessageList msgs;
 			int lastIdx;
 			std::tie(msgs, lastIdx) = fh->getBatch(-1);
 			QCOMPARE(msgs.size(), 5);

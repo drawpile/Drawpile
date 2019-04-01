@@ -91,9 +91,9 @@ LayerTileSet LayerTileSet::fromImage(const QImage &image, const QSize &layerSize
 	return fromLayer(l);
 }
 
-QList<protocol::MessagePtr> LayerTileSet::toInitCommands(int contextId, const LayerInfo &info)
+protocol::MessageList LayerTileSet::toInitCommands(int contextId, const LayerInfo &info)
 {
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 
 	msgs << protocol::MessagePtr(new protocol::LayerCreate(
 		contextId,

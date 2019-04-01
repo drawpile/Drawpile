@@ -82,7 +82,7 @@ void Freehand::end()
 		}
 
 		m_brushengine.endStroke();
-		QList<protocol::MessagePtr> msgs = m_brushengine.takeDabs();
+		auto msgs = m_brushengine.takeDabs();
 		msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));
 		owner.client()->sendMessages(msgs);
 	}

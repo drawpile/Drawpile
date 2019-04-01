@@ -86,7 +86,7 @@ void TcpServer::sendMessage(const protocol::MessagePtr &msg)
 	m_msgqueue->send(msg);
 }
 
-void TcpServer::sendMessages(const QList<protocol::MessagePtr> &msgs)
+void TcpServer::sendMessages(const protocol::MessageList &msgs)
 {
 	m_msgqueue->send(msgs);
 }

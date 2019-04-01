@@ -94,7 +94,7 @@ public:
 
 	void terminate() override;
 	void cleanupBatches(int before) override;
-	std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const override;
+	std::tuple<protocol::MessageList, int> getBatch(int after) const override;
 
 	void addAnnouncement(const QString &) override;
 	void removeAnnouncement(const QString &url) override;
@@ -108,7 +108,7 @@ public:
 
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
-	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
+	void historyReset(const protocol::MessageList &newHistory) override;
 	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
@@ -123,7 +123,7 @@ private:
 		int startIndex;
 		int count;
 		qint64 endOffset;
-		QList<protocol::MessagePtr> messages;
+		protocol::MessageList messages;
 	};
 
 	bool create();

@@ -54,7 +54,7 @@ public:
 	 *
 	 * @return
 	 */
-	virtual QList<protocol::MessagePtr> takeDabs() = 0;
+	virtual protocol::MessageList takeDabs() = 0;
 };
 
 }

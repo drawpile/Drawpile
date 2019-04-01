@@ -44,7 +44,7 @@ public:
 	void logout() override;
 
 	void sendMessage(const protocol::MessagePtr &msg) override;
-	void sendMessages(const QList<protocol::MessagePtr> &msg) override;
+	void sendMessages(const protocol::MessageList &msg) override;
 
 	bool isLoggedIn() const override { return m_loginstate == nullptr; }
 

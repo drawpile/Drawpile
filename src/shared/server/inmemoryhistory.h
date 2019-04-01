@@ -35,7 +35,7 @@ class InMemoryHistory : public SessionHistory {
 public:
 	InMemoryHistory(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent=nullptr);
 
-	std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const override;
+	std::tuple<protocol::MessageList, int> getBatch(int after) const override;
 
 	void terminate() override { /* nothing to do */ }
 	void cleanupBatches(int) override { /* no caching, nothing to do */ }
@@ -74,12 +74,12 @@ public:
 
 protected:
 	void historyAdd(const protocol::MessagePtr &msg) override;
-	void historyReset(const QList<protocol::MessagePtr> &newHistory) override;
+	void historyReset(const protocol::MessageList &newHistory) override;
 	void historyAddBan(int, const QString &, const QHostAddress &, const QString &, const QString &) override { /* not persistent */ }
 	void historyRemoveBan(int) override { /* not persistent */ }
 
 private:
-	QList<protocol::MessagePtr> m_history;
+	protocol::MessageList m_history;
 	QSet<QString> m_ops;
 	QSet<QString> m_trusted;
 	QSet<QString> m_announcements;

@@ -34,10 +34,10 @@ InMemoryHistory::InMemoryHistory(const QUuid &id, const QString &alias, const pr
 {
 }
 
-std::tuple<QList<protocol::MessagePtr>, int> InMemoryHistory::getBatch(int after) const
+std::tuple<protocol::MessageList, int> InMemoryHistory::getBatch(int after) const
 {
 	if(after >= lastIndex())
-		return std::make_tuple(QList<protocol::MessagePtr>(), lastIndex());
+		return std::make_tuple(protocol::MessageList(), lastIndex());
 
 	const int offset = qMax(0, after - firstIndex() + 1);
 	Q_ASSERT(offset<m_history.size());
@@ -50,7 +50,7 @@ void InMemoryHistory::historyAdd(const protocol::MessagePtr &msg)
 	m_history << msg;
 }
 
-void InMemoryHistory::historyReset(const QList<protocol::MessagePtr> &newHistory)
+void InMemoryHistory::historyReset(const protocol::MessageList &newHistory)
 {
 	m_history = newHistory;
 }

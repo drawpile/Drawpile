@@ -21,12 +21,12 @@
 
 #include "core/point.h"
 #include "core/blendmodes.h"
+#include "../shared/net/message.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
 
 namespace protocol {
-	class MessagePtr;
 	struct PenPoint;
 }
 
@@ -98,7 +98,7 @@ protocol::MessagePtr terminateSession();
  * Note: when using MODE_REPLACE, the skipempty parameter should be set to false, except when you know
  * the layer is blank.
  */
-QList<protocol::MessagePtr> putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
+protocol::MessageList putQImage(uint8_t ctxid, uint16_t layer, int x, int y, QImage image, paintcore::BlendMode::Mode mode, bool skipempty=true);
 
 //! Set the canvas background
 protocol::MessagePtr setCanvasBackground(uint8_t ctxid, const QColor &color);

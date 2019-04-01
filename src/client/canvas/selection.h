@@ -162,7 +162,7 @@ public:
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	QList<protocol::MessagePtr> pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
+	protocol::MessageList pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color
@@ -176,7 +176,7 @@ public:
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	QList<protocol::MessagePtr> fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
+	protocol::MessageList fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level

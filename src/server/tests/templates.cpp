@@ -61,7 +61,7 @@ private slots:
 		QCOMPARE(passwordhash::check("qwerty123", history.passwordHash()), true);
 
 		// History content should now match the test template
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		int last;
 		std::tie(msgs, last) = history.getBatch(-1);
 

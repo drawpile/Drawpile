@@ -104,7 +104,7 @@ void ShapeTool::end()
 		brushengine.strokeTo(pv.at(i), layer.layer());
 	brushengine.endStroke();
 
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 	msgs << brushengine.takeDabs();
 	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));

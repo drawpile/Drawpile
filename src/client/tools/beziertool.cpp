@@ -126,7 +126,7 @@ void BezierTool::finishMultipart()
 		brushengine.endStroke();
 
 		const uint8_t contextId = owner.client()->myId();
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 		msgs << brushengine.takeDabs();
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));

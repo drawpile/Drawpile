@@ -88,7 +88,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		// The disadvantage is increased bandwith consumption. However, this is not as bad
 		// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
 		// consist of large solid areas, meaning they should compress ridiculously well.
-		QList<protocol::MessagePtr> msgs;
+		protocol::MessageList msgs;
 		msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
 		msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
 		owner.client()->sendMessages(msgs);

@@ -69,7 +69,7 @@ bool SessionHistory::addMessage(const protocol::MessagePtr &msg)
 	return true;
 }
 
-bool SessionHistory::reset(const QList<protocol::MessagePtr> &newHistory)
+bool SessionHistory::reset(const protocol::MessageList &newHistory)
 {
 	uint newSize = 0;
 	for(const protocol::MessagePtr &msg : newHistory) {

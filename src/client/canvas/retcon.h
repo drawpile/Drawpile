@@ -140,7 +140,7 @@ public:
 	 * @brief Get the messages in the local fork
 	 * @return
 	 */
-	QList<protocol::MessagePtr> messages() const { return m_messages; }
+	protocol::MessageList messages() const { return m_messages; }
 
 	/**
 	 * @brief Empty the local fork
@@ -148,7 +148,7 @@ public:
 	void clear();
 
 private:
-	QList<protocol::MessagePtr> m_messages;
+	protocol::MessageList m_messages;
 	QList<AffectedArea> m_areas;
 	int m_offset;
 	int m_maxFallBehind;

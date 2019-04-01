@@ -56,7 +56,7 @@ public:
 	 * @param client
 	 * @return empty list if an error occurred
 	 */
-	virtual QList<protocol::MessagePtr> loadInitCommands() = 0;
+	virtual protocol::MessageList loadInitCommands() = 0;
 
 	/**
 	 * @brief Get the error message
@@ -100,7 +100,7 @@ public:
 	BlankCanvasLoader(const QSize &size, const QColor &color) : _size(size), _color(color)
 	{}
 	
-	QList<protocol::MessagePtr> loadInitCommands();
+	protocol::MessageList loadInitCommands();
 	QString filename() const { return QString(); }
 	QString errorMessage() const { return QString(); /* cannot fail */ }
 
@@ -113,7 +113,7 @@ class ImageCanvasLoader : public SessionLoader {
 public:
 	ImageCanvasLoader(const QString &filename) : m_filename(filename) {}
 	
-	QList<protocol::MessagePtr> loadInitCommands() override;
+	protocol::MessageList loadInitCommands() override;
 	QString filename() const override { return m_filename; }
 	QString errorMessage() const override { return m_error; }
 	QString warningMessage() const override { return m_warning; }
@@ -132,7 +132,7 @@ class QImageCanvasLoader : public SessionLoader {
 public:
 	QImageCanvasLoader(const QImage &image) : m_image(image) {}
 
-	QList<protocol::MessagePtr> loadInitCommands() override;
+	protocol::MessageList loadInitCommands() override;
 	QString filename() const override { return QString(); }
 	QString errorMessage() const override { return QString(); }
 	QPair<int,int> dotsPerInch() const override {
@@ -163,7 +163,7 @@ public:
 	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const canvas::CanvasModel *session)
 		: m_layers(layers), m_session(session), m_contextId(contextId) {}
 
-	QList<protocol::MessagePtr> loadInitCommands() override;
+	protocol::MessageList loadInitCommands() override;
 	QString filename() const override { return QString(); }
 	QString errorMessage() const override { return QString(); }
 	QPair<int,int> dotsPerInch() const override;

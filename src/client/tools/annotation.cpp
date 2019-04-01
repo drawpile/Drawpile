@@ -103,7 +103,7 @@ void Annotation::end()
 	if(!m_selectedId)
 		return;
 
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	const uint8_t contextId = owner.client()->myId();
 
 	if(!m_isNew) {

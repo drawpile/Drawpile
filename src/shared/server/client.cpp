@@ -42,7 +42,7 @@ struct Client::Private {
 	ServerLog *logger;
 
 	protocol::MessageQueue *msgqueue;
-	QList<MessagePtr> holdqueue;
+	protocol::MessageList holdqueue;
 	int historyPosition;
 
 	int id;
@@ -291,7 +291,7 @@ void Client::sendNextHistoryBatch()
 
 	d->session->historyCacheCleanup();
 
-	QList<protocol::MessagePtr> batch;
+	protocol::MessageList batch;
 	int batchLast;
 	std::tie(batch, batchLast) = d->session->history()->getBatch(d->historyPosition);
 	d->historyPosition = batchLast;

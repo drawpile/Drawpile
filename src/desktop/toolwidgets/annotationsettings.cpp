@@ -357,7 +357,7 @@ void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
 	const uint8_t contextId = controller()->client()->myId();
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
 	controller()->client()->sendMessages(msgs);
@@ -377,7 +377,7 @@ void AnnotationSettings::bake()
 	const uint8_t contextId = controller()->client()->myId();
 	const int layer = controller()->activeLayer();
 
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
 	msgs << net::command::putQImage(contextId, layer, a->rect.x(), a->rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
 	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));

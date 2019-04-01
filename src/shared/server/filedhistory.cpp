@@ -167,7 +167,7 @@ bool FiledHistory::initRecording()
 		firstIndex(),
 		0,
 		m_recording->pos(),
-		QList<protocol::MessagePtr>()
+		protocol::MessageList()
 		};
 
 	return true;
@@ -360,7 +360,7 @@ bool FiledHistory::scanBlocks()
 		firstIndex(),
 		0,
 		m_recording->pos(),
-		QList<protocol::MessagePtr>()
+		protocol::MessageList()
 	};
 
 	QSet<uint8_t> users;
@@ -388,7 +388,7 @@ bool FiledHistory::scanBlocks()
 				b.startIndex+b.count,
 				0,
 				b.endOffset,
-				QList<protocol::MessagePtr>()
+				protocol::MessageList()
 			};
 		}
 
@@ -445,7 +445,7 @@ void FiledHistory::closeBlock()
 				b.startIndex+b.count,
 				0,
 				b.endOffset,
-				QList<protocol::MessagePtr>()
+				protocol::MessageList()
 	};
 }
 
@@ -537,7 +537,7 @@ void FiledHistory::joinUser(uint8_t id, const QString &name)
 	m_journal->flush();
 }
 
-std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) const
+std::tuple<protocol::MessageList, int> FiledHistory::getBatch(int after) const
 {
 	// Find the block that contains the index *after*
 	int i=m_blocks.size()-1;
@@ -551,7 +551,7 @@ std::tuple<QList<protocol::MessagePtr>, int> FiledHistory::getBatch(int after) c
 
 	const int idxOffset = qMax(0, after - b.startIndex + 1);
 	if(idxOffset >= b.count)
-		return std::make_tuple(QList<protocol::MessagePtr>(), b.startIndex+b.count-1);
+		return std::make_tuple(protocol::MessageList(), b.startIndex+b.count-1);
 
 	if(b.messages.isEmpty() && b.count>0) {
 		// Load the block worth of messages to memory if not already loaded
@@ -599,7 +599,7 @@ void FiledHistory::historyAdd(const protocol::MessagePtr &msg)
 		closeBlock();
 }
 
-void FiledHistory::historyReset(const QList<protocol::MessagePtr> &newHistory)
+void FiledHistory::historyReset(const protocol::MessageList &newHistory)
 {
 	QFile *oldRecording = m_recording;
 	oldRecording->close();
@@ -627,7 +627,7 @@ void FiledHistory::cleanupBatches(int before)
 			break;
 		if(!b.messages.isEmpty()) {
 			qDebug() << "releasing history block cache from" << b.startIndex << "to" << b.startIndex+b.count-1;
-			b.messages = QList<protocol::MessagePtr>();
+			b.messages = protocol::MessageList();
 		}
 	}
 }

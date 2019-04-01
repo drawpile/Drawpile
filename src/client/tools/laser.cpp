@@ -41,7 +41,7 @@ void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 
 	m_drawing = true;
 
-	QList<protocol::MessagePtr> msgs;
+	protocol::MessageList msgs;
 	msgs << protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(),
 		owner.activeBrush().color().rgb(),
 		m_persistence

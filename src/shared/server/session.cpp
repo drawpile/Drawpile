@@ -951,7 +951,7 @@ void Session::restartRecording()
 
 	int lastBatchIndex=0;
 	do {
-		QList<protocol::MessagePtr> history;
+		protocol::MessageList history;
 		std::tie(history, lastBatchIndex) = m_history->getBatch(lastBatchIndex);
 		for(const MessagePtr &m : history)
 			m_recorder->recordMessage(m);

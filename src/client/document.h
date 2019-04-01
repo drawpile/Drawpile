@@ -239,7 +239,7 @@ private slots:
 
 private:
 	void saveCanvas();
-	bool startRecording(const QString &filename, const QList<protocol::MessagePtr> &initialState, QString *error);
+	bool startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error);
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);

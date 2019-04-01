@@ -139,7 +139,7 @@ public:
 	 *
 	 * @return false if new history is larger than the size limit
 	 */
-	bool reset(const QList<protocol::MessagePtr> &newHistory);
+	bool reset(const protocol::MessageList &newHistory);
 
 	/**
 	 * @brief Get a batch of messages
@@ -151,7 +151,7 @@ public:
 	 * The second element of the tuple is the index of the last message
 	 * in the batch, or lastIndex() if there were no more available messages
 	 */
-	virtual std::tuple<QList<protocol::MessagePtr>, int> getBatch(int after) const = 0;
+	virtual std::tuple<protocol::MessageList, int> getBatch(int after) const = 0;
 
 	/**
 	 * @brief Mark messages before the given index as unneeded (for now)
@@ -293,7 +293,7 @@ signals:
 
 protected:
 	virtual void historyAdd(const protocol::MessagePtr &msg) = 0;
-	virtual void historyReset(const QList<protocol::MessagePtr> &newHistory) = 0;
+	virtual void historyReset(const protocol::MessageList &newHistory) = 0;
 	virtual void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);

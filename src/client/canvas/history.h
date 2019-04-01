@@ -101,10 +101,10 @@ public:
 	 * @brief return the whole stream as a list
 	 * @return list of messages
 	 */
-	QList<protocol::MessagePtr> toList() const { return m_messages; }
+	protocol::MessageList toList() const { return m_messages; }
 
 private:
-	QList<protocol::MessagePtr> m_messages;
+	protocol::MessageList m_messages;
 	int m_offset;
 	uint m_bytes;
 };

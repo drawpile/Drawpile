@@ -46,7 +46,7 @@ public:
 	 * \brief Send a message to the server
 	 */
 	virtual void sendMessage(const protocol::MessagePtr &msg) = 0;
-	virtual void sendMessages(const QList<protocol::MessagePtr> &msgs) = 0;
+	virtual void sendMessages(const protocol::MessageList &msgs) = 0;
 
     /**
      * @brief Log out from the server

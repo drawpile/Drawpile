@@ -530,7 +530,7 @@ private:
 	QHash<int, PastClient> m_pastClients;
 
 	SessionHistory *m_history;
-	QList<protocol::MessagePtr> m_resetstream;
+	protocol::MessageList m_resetstream;
 	uint m_resetstreamsize;
 
 	QList<sessionlisting::Announcement> m_publicListings;

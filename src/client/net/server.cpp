@@ -25,7 +25,7 @@ Server::Server(bool local, QObject *parent)
 	: QObject(parent), m_local(local)
 {}
 
-void Server::sendMessages(const QList<protocol::MessagePtr> &msgs)
+void Server::sendMessages(const protocol::MessageList &msgs)
 {
 	for(const protocol::MessagePtr &m : msgs)
 		sendMessage(m);

@@ -167,10 +167,10 @@ public slots:
 	 * @param msg the message to send
 	 */
 	void sendMessage(const protocol::MessagePtr &msg);
-	void sendMessages(const QList<protocol::MessagePtr> &msgs);
+	void sendMessages(const protocol::MessageList &msgs);
 
-	//! Send messages as part of a sessio reset/init
-	void sendResetMessages(const QList<protocol::MessagePtr> &msgs);
+	//! Send messages as part of a session reset/init
+	void sendResetMessages(const protocol::MessageList &msgs);
 
 signals:
 	void messageReceived(protocol::MessagePtr msg);
