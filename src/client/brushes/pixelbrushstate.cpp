@@ -56,7 +56,7 @@ void PixelBrushState::setBrush(const ClassicBrush &brush)
 		qWarning("Brush changed mid-stroke!");
 }
 
-void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Layer *)
+void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Layer *sourceLayer)
 {
 	if(m_pendown) {
 		// Stroke in progress: draw a line
@@ -129,6 +129,14 @@ void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Laye
 	} else {
 		// Start a new stroke
 		m_pendown = true;
+		if(m_brush.isColorPickMode() && sourceLayer && !m_brush.isEraser()) {
+			const QColor c = sourceLayer->colorAt(to.x(), to.y(), qRound(m_brush.size(to.pressure())));
+			if(c.isValid())
+				m_brush.setColor(c);
+			else {
+				m_brush.setOpacity(0);
+			}
+		}
 		addDab(to.x(), to.y(), to.pressure());
 	}
 
@@ -137,6 +145,10 @@ void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Laye
 
 void PixelBrushState::addDab(int x, int y, qreal pressure)
 {
+	const int opacity = m_brush.opacity(pressure) * 255;
+	if(opacity == 0)
+		return;
+
 	if(!m_lastDab
 			|| qAbs(x - m_lastDabX) > protocol::PixelBrushDab::MAX_XY_DELTA
 			|| qAbs(y - m_lastDabY) > protocol::PixelBrushDab::MAX_XY_DELTA
@@ -160,7 +172,7 @@ void PixelBrushState::addDab(int x, int y, qreal pressure)
 		static_cast<decltype(protocol::PixelBrushDab::x)>(x - m_lastDabX),
 		static_cast<decltype(protocol::PixelBrushDab::y)>(y - m_lastDabY),
 		static_cast<decltype(protocol::PixelBrushDab::size)>(m_brush.size(pressure)),
-		static_cast<decltype(protocol::PixelBrushDab::opacity)>(m_brush.opacity(pressure) * 255)
+		static_cast<decltype(protocol::PixelBrushDab::opacity)>(opacity)
 	};
 
 	m_lastDabX = x;

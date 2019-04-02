@@ -293,6 +293,20 @@
       </widget>
      </item>
      <item>
+      <widget class="GroupedToolButton" name="modeColorpick">
+       <property name="toolTip">
+        <string>Pick initial color from layer</string>
+       </property>
+       <property name="icon">
+        <iconset theme="color-picker">
+         <normaloff>theme:color-picker.svg</normaloff>theme:color-picker.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="GroupedToolButton" name="modeEraser">
        <property name="toolTip">
         <string>Eraser mode</string>

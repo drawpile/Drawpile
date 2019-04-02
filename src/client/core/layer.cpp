@@ -366,6 +366,10 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 		yb = yb + hb;
 	}
 
+	// There must be at least some alpha for the results to make sense
+	if(alpha < stamp.mask.diameter()*stamp.mask.diameter() * 30)
+		return QColor();
+
 	// Calculate final average
 	red /= weight;
 	green /= weight;
@@ -373,11 +377,9 @@ QColor Layer::getDabColor(const BrushStamp &stamp) const
 	alpha /= weight;
 
 	// Unpremultiply
-	if(alpha>0) {
-		red = qMin(1.0, red/alpha);
-		green = qMin(1.0, green/alpha);
-		blue = qMin(1.0, blue/alpha);
-	}
+	red = qMin(1.0, red/alpha);
+	green = qMin(1.0, green/alpha);
+	blue = qMin(1.0, blue/alpha);
 
 	return QColor::fromRgbF(red, green, blue, alpha);
 }

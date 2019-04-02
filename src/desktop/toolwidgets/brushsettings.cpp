@@ -58,7 +58,8 @@ namespace brushprop {
 		opacityPressure = {QStringLiteral("opacityp"), false},
 		hardPressure = {QStringLiteral("hardp"), false},
 		smudgePressure = {QStringLiteral("smudgep"), false},
-		incremental = {QStringLiteral("incremental"), true}
+		incremental = {QStringLiteral("incremental"), true},
+		colorpickmode = {QStringLiteral("colorpickmode"), false}
 		;
 
 	static const QString
@@ -137,6 +138,8 @@ static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const Tool
 		b.setColor(overrideColor);
 	else
 		b.setColor(tp.value(toolprop::color).value<QColor>());
+
+	b.setColorPickMode(bp.boolValue(brushprop::colorpickmode));
 
 	const int blendingMode = tp.intValue(tp.boolValue(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
 	b.setBlendingMode(paintcore::BlendMode::Mode(blendingMode));
@@ -275,6 +278,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	// Brush slot buttons
 	for(int i=0;i<BRUSH_COUNT;++i) {
@@ -455,6 +459,7 @@ void BrushSettings::updateUi()
 
 	d->ui.brushspacingBox->setValue(brush.intValue(brushprop::spacing));
 	d->ui.modeIncremental->setChecked(brush.boolValue(brushprop::incremental));
+	d->ui.modeColorpick->setChecked(brush.boolValue(brushprop::colorpickmode));
 
 	d->updateInProgress = false;
 	d->updateBrush();
@@ -493,6 +498,7 @@ void BrushSettings::updateFromUi()
 	brush.setValue(brushprop::resmudge, d->ui.colorpickup->value());
 	brush.setValue(brushprop::spacing, d->ui.brushspacingBox->value());
 	brush.setValue(brushprop::incremental, d->ui.modeIncremental->isChecked());
+	brush.setValue(brushprop::colorpickmode, d->ui.modeColorpick->isChecked());
 
 	if(d->current == ERASER_SLOT)
 		d->currentTool().setValue(toolprop::useEraseMode, true);

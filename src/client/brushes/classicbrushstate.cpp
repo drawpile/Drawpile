@@ -84,18 +84,22 @@ void ClassicBrushState::strokeTo(const paintcore::Point &to, const paintcore::La
 			if(++m_smudgeDistance > m_brush.resmudge() && smudge>0 && sourceLayer) {
 				const QColor sampled = sourceLayer->colorAt(p.x(), p.y(), qRound(m_brush.size(p.pressure())));
 
-				const qreal a = sampled.alphaF() * smudge;
+				if(sampled.isValid()) {
+					const qreal a = sampled.alphaF() * smudge;
 
-				m_smudgedColor = QColor::fromRgbF(
-					m_smudgedColor.redF() * (1-a) + sampled.redF() * a,
-					m_smudgedColor.greenF() * (1-a) + sampled.greenF() * a,
-					m_smudgedColor.blueF() * (1-a) + sampled.blueF() * a,
-					0
-				);
+					m_smudgedColor = QColor::fromRgbF(
+						m_smudgedColor.redF() * (1-a) + sampled.redF() * a,
+						m_smudgedColor.greenF() * (1-a) + sampled.greenF() * a,
+						m_smudgedColor.blueF() * (1-a) + sampled.blueF() * a,
+						0
+					);
+				}
+
 				m_smudgeDistance = 0;
 			}
 
-			addDab(p, m_smudgedColor.rgba());
+			if(m_smudgedColor.isValid())
+				addDab(p, m_smudgedColor.rgba());
 
 			p.rx() += dx * spacing;
 			p.ry() += dy * spacing;
@@ -107,7 +111,12 @@ void ClassicBrushState::strokeTo(const paintcore::Point &to, const paintcore::La
 	} else {
 		// Start a new stroke
 		m_pendown = true;
-		addDab(to, m_smudgedColor.rgba());
+		if(m_brush.isColorPickMode() && sourceLayer && !m_brush.isEraser()) {
+			m_smudgedColor =  sourceLayer->colorAt(to.x(), to.y(), qRound(m_brush.size(to.pressure())));
+		}
+
+		if(m_smudgedColor.isValid())
+			addDab(to, m_smudgedColor.rgba());
 	}
 
 	m_lastPoint = to;
@@ -117,6 +126,10 @@ void ClassicBrushState::addDab(const paintcore::Point &point, quint32 color)
 {
 	const int x = point.x() * 4;
 	const int y = point.y() * 4;
+	const int opacity = m_brush.opacity(point.pressure()) * 255;
+
+	if(opacity == 0)
+		return;
 
 	if(!m_lastDab
 			|| m_lastDab->color() != color
@@ -142,7 +155,7 @@ void ClassicBrushState::addDab(const paintcore::Point &point, quint32 color)
 		static_cast<decltype(protocol::ClassicBrushDab::y)>(y - m_lastDabY),
 		static_cast<decltype(protocol::ClassicBrushDab::size)>(m_brush.size(point.pressure()) * 256),
 		static_cast<decltype(protocol::ClassicBrushDab::hardness)>(m_brush.hardness(point.pressure()) * 255),
-		static_cast<decltype(protocol::ClassicBrushDab::opacity)>(m_brush.opacity(point.pressure()) * 255)
+		static_cast<decltype(protocol::ClassicBrushDab::opacity)>(opacity)
 	};
 
 	m_lastDabX = x;

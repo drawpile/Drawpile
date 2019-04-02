@@ -60,7 +60,8 @@ public:
 		m_color(color), m_spacing(spacing), m_resmudge(0),
 		m_blend(paintcore::BlendMode::MODE_NORMAL),
 		m_subpixel(false), m_incremental(true),
-		m_square(false)
+		m_square(false),
+		m_colorpick(false)
 	{
 	}
 
@@ -111,6 +112,9 @@ public:
 	void setSquare(bool square) { m_square = square; }
 	bool isSquare() const { return m_square; }
 
+	void setColorPickMode(bool colorpick) { m_colorpick = colorpick; }
+	bool isColorPickMode() const { return m_colorpick; }
+
 	qreal size(qreal pressure) const { return lerp(size1(), size2(), pressure); }
 	qreal hardness(qreal pressure) const { return lerp(hardness1(), hardness2(), pressure); }
 	qreal opacity(qreal pressure) const { return lerp(opacity1(), opacity2(), pressure); }
@@ -137,6 +141,7 @@ private:
 	bool m_subpixel;
 	bool m_incremental;
 	bool m_square;
+	bool m_colorpick;
 };
 
 }
