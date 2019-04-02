@@ -1740,10 +1740,7 @@ void MainWindow::toggleFullscreen()
 		m_fullscreenOldGeometry = geometry();
 		m_fullscreenOldMaximized = isMaximized();
 
-		// Hide menu and status bars in full screen mode
-		// Toolbar can be hidden by hitting tab
 		menuBar()->hide();
-		m_viewStatusBar->hide();
 		m_view->setFrameShape(QFrame::NoFrame);
 		m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1759,7 +1756,6 @@ void MainWindow::toggleFullscreen()
 			setGeometry(m_fullscreenOldGeometry);
 		}
 		menuBar()->show();
-		m_viewStatusBar->show();
 		m_view->setFrameShape(QFrame::StyledPanel);
 
 		m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -1821,6 +1817,8 @@ void MainWindow::setDocksHidden(bool hidden)
 				xOffset2 = dw->width();
 		}
 	}
+
+	m_viewStatusBar->setHidden(hidden);
 
 	// Docks can only dock on the left or right, so only one yOffset is needed.
 	const int dir = hidden ? -1 : 1;
