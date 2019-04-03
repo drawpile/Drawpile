@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include "config.h"
 
 #include "main.h"
@@ -25,6 +24,7 @@
 #include "utils/icon.h"
 #include "utils/settings.h"
 #include "utils/logging.h"
+#include "utils/colorscheme.h"
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
 
@@ -51,6 +51,7 @@
 #include <QTranslator>
 #include <QDir>
 #include <QDateTime>
+#include <QStyle>
 
 #include <ColorWheel>
 
@@ -120,6 +121,29 @@ bool DrawpileApp::event(QEvent *e) {
 void DrawpileApp::notifySettingsChanged()
 {
 	emit settingsChanged();
+}
+
+void DrawpileApp::setDarkTheme(bool dark)
+{
+	QPalette pal;
+	if(dark) {
+		const QString paletteFile = utils::settings::locateDataFile("nightmode.colors");
+		if(paletteFile.isEmpty()) {
+			qWarning("Cannot switch to night mode: couldn't find color scheme file!");
+		} else {
+			pal = colorscheme::loadFromFile(paletteFile);
+#ifdef Q_OS_WIN
+			// The Vista style does not work with customized palettes very well
+			setStyle("fusion");
+#endif
+		}
+
+	} else {
+		pal = style()->standardPalette();
+	}
+
+	setPalette(pal);
+	icon::selectThemeVariant();
 }
 
 void DrawpileApp::openUrl(QUrl url)
@@ -216,7 +240,11 @@ int main(int argc, char *argv[]) {
 
 	utils::initLogging();
 
-	icon::selectThemeVariant();
+	if(QSettings().value("settings/nightmode").toBool())
+		app.setDarkTheme(true);
+	else
+		icon::selectThemeVariant();
+
 
 #ifdef Q_OS_MAC
 	// Mac specific settings

@@ -7,6 +7,7 @@
  * New feature: a session can now be reset to an image loaded from file
  * Full screen mode no longer hides the status bar, instead it is hidden along with the toolbars and docks using the Tab shortcut
  * Added "pick color from layer" brush mode
+ * Implemented Night Mode
 
 2019-03-30 Version 2.1.5
  * Fixed navigator view dragging

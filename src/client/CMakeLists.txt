@@ -57,6 +57,7 @@ set (
 	utils/customshortcutmodel.cpp
 	utils/listservermodel.cpp
 	utils/settings.cpp
+	utils/colorscheme.cpp
 	utils/icon.cpp
 	utils/logging.cpp
 	utils/passwordstore.cpp

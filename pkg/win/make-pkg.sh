@@ -92,6 +92,7 @@ cp /Build/bin/dprectool.exe .
 cp -r /Drawpile/desktop/theme .
 cp -r /Drawpile/desktop/sounds .
 cp -r /Drawpile/desktop/palettes .
+cp /Drawpile/desktop/nightmode.colors .
 
 # Copy translations
 mkdir -p i18n

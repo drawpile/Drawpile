@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,28 +16,20 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SETTINGS_H
-#define SETTINGS_H
 
+#ifndef COLORSCHEME_H
+#define COLORSCHEME_H
+
+class QPalette;
 class QString;
-class QStringList;
 
-namespace utils {
-namespace settings {
+namespace colorscheme {
 
-/**
- * @brief Get a list of paths in which datafiles may reside
- */
-QStringList dataPaths();
+QPalette loadFromFile(const QString &filename);
 
-/**
- * @brief Locate a file in dataPaths
- *
- * Returns the first file found or an empty string if not.
- */
-QString locateDataFile(const QString &filename);
+bool saveToFile(const QString &filename, const QPalette &palette);
 
-}
 }
 
 #endif
+

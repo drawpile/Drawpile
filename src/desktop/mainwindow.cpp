@@ -58,6 +58,7 @@
 #include "config.h"
 #include "mainwindow.h"
 #include "document.h"
+#include "main.h"
 
 #include "core/layerstack.h"
 #include "canvas/loader.h"

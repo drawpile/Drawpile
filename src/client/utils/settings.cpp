@@ -40,5 +40,15 @@ QStringList dataPaths()
 	return datapaths;
 }
 
+QString locateDataFile(const QString &filename)
+{
+	for(const QString &datapath : dataPaths()) {
+		const QDir d { datapath };
+		if(d.exists(filename))
+			return d.filePath(filename);
+	}
+	return QString();
+}
+
 }
 }

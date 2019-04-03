@@ -107,6 +107,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		}
 	}
 
+	// Night mode support needs Qt 5.12 on macOS
+#ifdef Q_OS_MAC
+	m_ui->formLayout_2->removeRow(m_ui->nightmode);
+#endif
+
 	// Hide Windows specific stuff on other platforms
 #if !defined(Q_OS_WIN) || !defined(KIS_TABLET)
 	// Can't use this until we no longer support Qt versions older than 5.8:
@@ -257,6 +262,9 @@ void SettingsDialog::restoreSettings()
 		}
 	}
 
+#ifndef Q_OS_MAC
+	m_ui->nightmode->setChecked(cfg.value("nightmode", false).toBool());
+#endif
 	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
@@ -358,6 +366,9 @@ void SettingsDialog::rememberSettings()
 
 	// Remember general settings
 	cfg.setValue("settings/language", m_ui->languageBox->currentData());
+#ifndef Q_OS_MAC
+	cfg.setValue("settings/nightmode", m_ui->nightmode->isChecked());
+#endif
 	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
