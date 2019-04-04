@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
+#include "core/point.h"
+#include "tools/tool.h"
+#include "canvas/pressure.h"
+
 #include <QGraphicsView>
 
 class QGestureEvent;
 class QTouchEvent;
-
-#include "core/point.h"
-#include "tools/tool.h"
-#include "canvas/pressure.h"
 
 namespace drawingboard {
 	class CanvasScene;
@@ -36,6 +36,7 @@ namespace widgets {
 
 /**
  * @brief Editor view
+ *
  * The editor view is a customized QGraphicsView that displays
  * the drawing board and handes user input.
  * It also provides other features, such as brush outline preview.
@@ -43,236 +44,235 @@ namespace widgets {
 class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
-	public:
-		CanvasView(QWidget *parent=0);
+public:
+	CanvasView(QWidget *parent=nullptr);
 
-		//! Set the board to use
-		void setCanvas(drawingboard::CanvasScene *scene);
-		
-		//! Get the current zoom factor
-		qreal zoom() const { return _zoom; }
+	//! Set the board to use
+	void setCanvas(drawingboard::CanvasScene *scene);
 
-		//! Get the current rotation angle in degrees
-		qreal rotation() const { return _rotate; }
-		
-		using QGraphicsView::mapToScene;
-		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
-		paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
+	//! Get the current zoom factor
+	qreal zoom() const { return m_zoom; }
 
-		//! The center point of the view in scene coordinates
-		QPoint viewCenterPoint() const;
+	//! Get the current rotation angle in degrees
+	qreal rotation() const { return m_rotate; }
 
-		//! Enable/disable tablet event handling
-		void setTabletEnabled(bool enable) { m_enableTablet = enable; }
+	using QGraphicsView::mapToScene;
+	paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
+	paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
 
-		//! Enable/disable touch gestures
-		void setTouchGestures(bool scroll, bool pinch, bool twist);
+	//! The center point of the view in scene coordinates
+	QPoint viewCenterPoint() const;
 
-		//! Is drawing in progress at the moment?
-		bool isPenDown() const { return m_pendown != NOTDOWN; }
+	//! Enable/disable tablet event handling
+	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 
-		//! Is this point (scene coordinates) inside the viewport?
-		bool isPointVisible(const QPointF &point) const;
+	//! Enable/disable touch gestures
+	void setTouchGestures(bool scroll, bool pinch, bool twist);
 
-		//! Scroll view by the given number of pixels
-		void scrollBy(int x, int y);
+	//! Is drawing in progress at the moment?
+	bool isPenDown() const { return m_pendown != NOTDOWN; }
 
-	signals:
-		//! An image has been dropped on the widget
-		void imageDropped(const QImage &image);
+	//! Is this point (scene coordinates) inside the viewport?
+	bool isPointVisible(const QPointF &point) const;
 
-		//! An URL was dropped on the widget
-		void urlDropped(const QUrl &url);
+	//! Scroll view by the given number of pixels
+	void scrollBy(int x, int y);
 
-		//! A color was dropped on the widget
-		void colorDropped(const QColor &color);
+signals:
+	//! An image has been dropped on the widget
+	void imageDropped(const QImage &image);
 
-		//! The view has been transformed
-		void viewTransformed(qreal zoom, qreal angle);
+	//! An URL was dropped on the widget
+	void urlDropped(const QUrl &url);
 
-		//! Pointer moved in pointer tracking mode
-		void pointerMoved(const QPointF &point);
+	//! A color was dropped on the widget
+	void colorDropped(const QColor &color);
 
-		void penDown(const QPointF &point, qreal pressure, bool right, float zoom);
-		void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
-		void penHover(const QPointF &point);
-		void penUp();
-		void quickAdjust(qreal value);
+	//! The view has been transformed
+	void viewTransformed(qreal zoom, qreal angle);
 
-		void viewRectChange(const QPolygonF &viewport);
+	//! Pointer moved in pointer tracking mode
+	void pointerMoved(const QPointF &point);
 
-		void rightClicked(const QPoint &p);
+	void penDown(const QPointF &point, qreal pressure, bool right, float zoom);
+	void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
+	void penHover(const QPointF &point);
+	void penUp();
+	void quickAdjust(qreal value);
 
-	public slots:
-		//! Set the size of the brush preview outline
-		void setOutlineSize(int size);
+	void viewRectChange(const QPolygonF &viewport);
 
-		//! Set subpixel precision mode and shape for brush preview outline
-		void setOutlineMode(bool subpixel, bool square);
+	void rightClicked(const QPoint &p);
 
-		//! Enable or disable pixel grid (shown only at high zoom levels)
-		void setPixelGrid(bool enable);
+public slots:
+	//! Set the size of the brush preview outline
+	void setOutlineSize(int size);
 
-		//! Scroll view to location
-		void scrollTo(const QPoint& point);
-		
-		//! Set the zoom factor
-		void setZoom(qreal zoom);
+	//! Set subpixel precision mode and shape for brush preview outline
+	void setOutlineMode(bool subpixel, bool square);
 
-		//! Set the rotation angle in degrees
-		void setRotation(qreal angle);
+	//! Enable or disable pixel grid (shown only at high zoom levels)
+	void setPixelGrid(bool enable);
 
-		void setViewFlip(bool flip);
-		void setViewMirror(bool mirror);
+	//! Scroll view to location
+	void scrollTo(const QPoint& point);
 
-		void setLocked(bool lock);
+	//! Set the zoom factor in percents
+	void setZoom(qreal zoom);
 
-		//! Send pointer position updates even when not drawing
-		void setPointerTracking(bool tracking);
+	//! Set the rotation angle in degrees
+	void setRotation(qreal angle);
 
-		void setPressureMapping(const PressureMapping &mapping);
+	void setViewFlip(bool flip);
+	void setViewMirror(bool mirror);
 
-		//! Increase/decrease zoom factor by this many steps
-		void zoomSteps(int steps);
+	void setLocked(bool lock);
 
-		//! Increase zoom factor
-		void zoomin();
+	//! Send pointer position updates even when not drawing
+	void setPointerTracking(bool tracking);
 
-		//! Decrease zoom factor
-		void zoomout();
+	void setPressureMapping(const PressureMapping &mapping);
 
-		//! Zoom the view it's filled by the given rectangle
-		//! If the rectangle is very small, or steps are negative, just zoom by that many steps
-		void zoomTo(const QRect &rect, int steps);
+	//! Increase/decrease zoom factor by this many steps
+	void zoomSteps(int steps);
 
-		//! Zoom to fit the view
-		void zoomToFit();
+	//! Increase zoom factor
+	void zoomin();
 
-		void setToolCursor(const QCursor &cursor);
+	//! Decrease zoom factor
+	void zoomout();
 
-		/**
-		 * @brief Set the cursor to use for brush tools
-		 * Styles:
-		 * 0. Dot
-		 * 1. Crosshair
-		 * 2. Arrow
-		 */
-		void setBrushCursorStyle(int style);
+	//! Zoom the view it's filled by the given rectangle
+	//! If the rectangle is very small, or steps are negative, just zoom by that many steps
+	void zoomTo(const QRect &rect, int steps);
 
-	protected:
-		void enterEvent(QEvent *event);
-		void leaveEvent(QEvent *event);
-		void mouseMoveEvent(QMouseEvent *event);
-		void mousePressEvent(QMouseEvent *event);
-		void mouseReleaseEvent(QMouseEvent *event);
-		void mouseDoubleClickEvent(QMouseEvent*);
-		void wheelEvent(QWheelEvent *event);
-		void keyPressEvent(QKeyEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
-		bool viewportEvent(QEvent *event);
-		void drawForeground(QPainter *painter, const QRectF& rect);
-		void dragEnterEvent(QDragEnterEvent *event);
-		void dragMoveEvent(QDragMoveEvent *event);
-		void dropEvent(QDropEvent *event);
-		void showEvent(QShowEvent *event);
-		void scrollContentsBy(int dx, int dy);
-		void resizeEvent(QResizeEvent *);
+	//! Zoom to fit the view
+	void zoomToFit();
 
-	private:
-		// unified mouse/stylus event handlers
-		void penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-		void penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
-		void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
+	void setToolCursor(const QCursor &cursor);
 
-		void doQuickAdjust1(float delta);
+	/**
+	 * @brief Set the cursor to use for brush tools
+	 * Styles:
+	 * 0. Dot
+	 * 1. Crosshair
+	 * 2. Arrow
+	 */
+	void setBrushCursorStyle(int style);
 
-	private:
-		float mapPressure(float pressure, bool stylus);
+protected:
+	void enterEvent(QEvent *event) override;
+	void leaveEvent(QEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
+	void mouseDoubleClickEvent(QMouseEvent*) override;
+	void wheelEvent(QWheelEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
+	bool viewportEvent(QEvent *event) override;
+	void drawForeground(QPainter *painter, const QRectF& rect) override;
+	void dragEnterEvent(QDragEnterEvent *event) override;
+	void dragMoveEvent(QDragMoveEvent *event) override;
+	void dropEvent(QDropEvent *event) override;
+	void showEvent(QShowEvent *event) override;
+	void scrollContentsBy(int dx, int dy) override;
+	void resizeEvent(QResizeEvent *) override;
 
-		//! View transformation mode (for dragging)
-		enum ViewTransform {DRAG_NOTRANSFORM, DRAG_TRANSLATE, DRAG_ROTATE, DRAG_ZOOM, DRAG_QUICKADJUST1};
+private:
+	// unified mouse/stylus event handlers
+	void penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
-		//! Start dragging the view
-		void startDrag(int x, int y, ViewTransform mode);
+	void doQuickAdjust1(float delta);
 
-		//! Stop dragging the view
-		void stopDrag();
+private:
+	float mapPressure(float pressure, bool stylus);
 
-		//! Drag the view
-		void moveDrag(int x, int y);
+	enum class ViewDragMode {None, Translate, Rotate, Zoom, QuickAdjust1};
 
-		//! Redraw the scene around the outline cursor if necesasry
-		void updateOutline(paintcore::Point point);
-		void updateOutline();
+	//! Start dragging the view
+	void startDrag(int x, int y, ViewDragMode mode);
 
-		void onPenDown(const paintcore::Point &p, bool right);
-		void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
-		void onPenUp(bool right);
-		
-		void gestureEvent(QGestureEvent *event);
-		void touchEvent(QTouchEvent *event);
+	//! Stop dragging the view
+	void stopDrag();
 
-		void resetCursor();
+	//! Drag the view
+	void moveDrag(int x, int y);
 
-		void viewRectChanged();
+	//! Redraw the scene around the outline cursor if necesasry
+	void updateOutline(paintcore::Point point);
+	void updateOutline();
 
-		/**
-		 * @brief State of the pen
-		 *
-		 * - NOTDOWN pen is not down
-		 * - MOUSEDOWN mouse is down
-		 * - TABLETDOWN tablet stylus is down
-		 */
-		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} m_pendown;
+	void onPenDown(const paintcore::Point &p, bool right);
+	void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
+	void onPenUp(bool right);
 
-		//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
-		enum { NOSPECIALPENMODE, COLORPICK, LAYERPICK} m_specialpenmode;
+	void gestureEvent(QGestureEvent *event);
+	void touchEvent(QTouchEvent *event);
 
-		//! Is the view being dragged
-		ViewTransform _isdragging;
-		ViewTransform _dragbtndown;
-		int _dragx,_dragy;
+	void resetCursor();
 
-		//! Previous pointer location
-		paintcore::Point _prevpoint;
-		paintcore::Point _prevoutlinepoint;
-		qreal _pointerdistance;
-		qreal _pointervelocity;
-		bool _prevshift;
-		bool _prevalt;
-		bool m_firstPointRight;
+	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
 
-		qreal _gestureStartZoom;
-		qreal _gestureStartAngle;
+	/**
+	 * @brief State of the pen
+	 *
+	 * - NOTDOWN pen is not down
+	 * - MOUSEDOWN mouse is down
+	 * - TABLETDOWN tablet stylus is down
+	 */
+	enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} m_pendown;
 
-		int m_outlineSize;
-		bool m_showoutline, m_subpixeloutline, m_squareoutline;
-		QCursor m_dotcursor, m_colorpickcursor;
-		QCursor m_toolcursor;
+	//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
+	enum { NOSPECIALPENMODE, COLORPICK, LAYERPICK} m_specialpenmode;
 
-		qreal _zoom; // View zoom in percents
-		qreal _rotate; // View rotation in degrees
-		bool _flip; // Flip Y axis
-		bool _mirror; // Flip X axis
+	//! Is the view being dragged
+	ViewDragMode m_dragmode;
 
-		drawingboard::CanvasScene *_scene;
+	//! Current state of the (non-modifier) drag button (i.e. space bar initiated drag)
+	ViewDragMode m_dragButtonState;
 
-		// Input settings
-		PressureMapping m_pressuremapping;
+	int m_dragx, m_dragy;
 
-		int _zoomWheelDelta;
+	//! Previous pointer location
+	paintcore::Point m_prevpoint;
+	paintcore::Point m_prevoutlinepoint;
+	qreal m_pointerdistance;
+	qreal m_pointervelocity;
 
-		bool m_enableTablet;
-		bool _locked;
-		bool _pointertracking;
-		bool _pixelgrid;
+	qreal m_gestureStartZoom;
+	qreal m_gestureStartAngle;
 
-		bool m_isFirstPoint;
-		bool _enableTouchScroll, _enableTouchPinch, _enableTouchTwist;
-		bool _touching, _touchRotating;
-		qreal _touchStartZoom, _touchStartRotate;
-		qreal _dpi;
-		int m_brushCursorStyle;
+	int m_outlineSize;
+	bool m_showoutline, m_subpixeloutline, m_squareoutline;
+	QCursor m_dotcursor, m_colorpickcursor;
+	QCursor m_toolcursor;
+
+	qreal m_zoom; // View zoom in percents
+	qreal m_rotate; // View rotation in degrees
+	bool m_flip; // Flip Y axis
+	bool m_mirror; // Flip X axis
+
+	drawingboard::CanvasScene *m_scene;
+
+	// Input settings
+	PressureMapping m_pressuremapping;
+
+	int m_zoomWheelDelta;
+
+	bool m_enableTablet;
+	bool m_locked;
+	bool m_pointertracking;
+	bool m_pixelgrid;
+
+	bool m_isFirstPoint;
+	bool m_enableTouchScroll, m_enableTouchPinch, m_enableTouchTwist;
+	bool m_touching, m_touchRotating;
+	qreal m_touchStartZoom, m_touchStartRotate;
+	qreal m_dpi;
+	int m_brushCursorStyle;
 };
 
 }
