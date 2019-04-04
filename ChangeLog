@@ -8,6 +8,7 @@
  * Full screen mode no longer hides the status bar, instead it is hidden along with the toolbars and docks using the Tab shortcut
  * Added "pick color from layer" brush mode
  * Implemented Night Mode
+ * Enabled smooth canvas scaling at certain zoom levels (1-200% or 1-800% when rotated)
 
 2019-03-30 Version 2.1.5
  * Fixed navigator view dragging

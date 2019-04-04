@@ -172,6 +172,15 @@ void CanvasView::setZoom(qreal zoom)
 	nm.scale(m_mirror ? -1 : 1, m_flip ? -1 : 1);
 
 	setMatrix(nm);
+
+	// Enable smooth scaling when under 200% zoom, because nearest-neighbour
+	// interpolation just doesn't look good in that range.
+	// Also enable when rotating, since that tends to cause terrible jaggies
+	setRenderHint(
+		QPainter::SmoothPixmapTransform,
+		m_zoom < 200 || (m_zoom < 800 && int(m_rotate) % 90)
+		);
+
 	emit viewTransformed(m_zoom, m_rotate);
 }
 
