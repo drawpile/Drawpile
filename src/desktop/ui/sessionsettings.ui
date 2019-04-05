@@ -354,6 +354,13 @@
          </item>
         </widget>
        </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="PresetSelector" name="permissionPresets">
+         <property name="presetFolder">
+          <string>permissions</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -481,6 +488,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PresetSelector</class>
+   <extends>QWidget</extends>
+   <header>widgets/presetselector.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

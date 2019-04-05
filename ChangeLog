@@ -9,6 +9,7 @@
  * Added "pick color from layer" brush mode
  * Implemented Night Mode
  * Enabled smooth canvas scaling at certain zoom levels (1-200% or 1-800% when rotated)
+ * Session permissions can now be saved as presets
 
 2019-03-30 Version 2.1.5
  * Fixed navigator view dragging

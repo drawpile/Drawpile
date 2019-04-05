@@ -59,6 +59,9 @@ private slots:
 	void onOperatorModeChanged(bool op);
 	void onFeatureTierChanged(canvas::Feature feature, canvas::Tier tier);
 
+	void permissionPresetSaving(const QString &);
+	void permissionPresetSelected(const QString &);
+
 	void titleChanged(const QString &newTitle);
 
 	void maxUsersChanged();

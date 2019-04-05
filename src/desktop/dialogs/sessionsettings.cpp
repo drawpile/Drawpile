@@ -27,6 +27,9 @@
 #include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
 
+#include "widgets/presetselector.h"
+using widgets::PresetSelector;
+
 #include "ui_sessionsettings.h"
 
 #include <QDebug>
@@ -34,6 +37,8 @@
 #include <QMenu>
 #include <QTimer>
 #include <QInputDialog>
+#include <QFile>
+#include <QJsonDocument>
 
 namespace dialogs {
 
@@ -91,6 +96,10 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'g', 1));
 	});
 
+
+	// Set up permissions tab
+	connect(m_ui->permissionPresets, &PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
+	connect(m_ui->permissionPresets, &PresetSelector::presetSelected, this, &SessionSettingsDialog::permissionPresetSelected);
 
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());
@@ -200,6 +209,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
+	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
 }
@@ -250,6 +260,61 @@ void SessionSettingsDialog::permissionChanged()
 {
 	m_featureTiersChanged = true;
 	m_saveTimer->start();
+}
+
+void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
+{
+	QFile f(presetFile);
+	if(!f.open(QFile::ReadOnly)) {
+		qWarning("%s: could not open file", qPrintable(presetFile));
+		return;
+	}
+
+	QJsonObject cfg = QJsonDocument::fromJson(f.readAll()).object();
+
+	// Normal features
+	for(int i=0;i<canvas::FeatureCount;++i) {
+		auto *box = featureBox(canvas::Feature(i));
+		box->setCurrentIndex(
+			cfg.value(box->objectName()).toInt(box->currentIndex())
+			);
+	}
+	permissionChanged();
+
+	// Deputies
+	{
+		auto *box = m_ui->deputies;
+		box->setCurrentIndex(
+			cfg.value(box->objectName()).toInt(box->currentIndex())
+			);
+		deputiesChanged(box->currentIndex());
+	}
+
+}
+
+void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
+{
+	QJsonObject cfg;
+
+	// Normal features
+	for(int i=0;i<canvas::FeatureCount;++i) {
+		auto *box = featureBox(canvas::Feature(i));
+		cfg[box->objectName()] = box->currentIndex();
+	}
+
+	// Deputies
+	{
+		auto *box = m_ui->deputies;
+		cfg[box->objectName()] = box->currentIndex();
+	}
+
+	// Save
+	QFile f(presetFile);
+	if(!f.open(QFile::WriteOnly)) {
+		qWarning("%s: could not open file", qPrintable(presetFile));
+		return;
+	}
+	f.write(QJsonDocument(cfg).toJson());
 }
 
 void SessionSettingsDialog::updatePasswordLabel(QLabel *label)

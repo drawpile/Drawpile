@@ -62,6 +62,7 @@ set (
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
 	widgets/flipbookview.cpp
+	widgets/presetselector.cpp
 	widgets/spinner.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
