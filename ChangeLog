@@ -1,4 +1,4 @@
-2019-04-?? Version 2.1.6
+2019-04-06 Version 2.1.6
  * Scrollbars are now hidden in fullscreen mode
  * Regression fix: chat box no longer autoscrolls when not already scrolled to the bottom
  * Removed default shortcuts for event log and session settings. They can still be assigned custom shortcuts, however.

@@ -23,6 +23,32 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.6" date="2019-04-06">
+      <url>https://drawpile.net/news/release-2.1.6/</url>
+      <description>
+        <p>Bugs fixed:</p>
+        <ul>
+          <li>Regression fix: chat box no longer autoscrolls when not already scrolled to the bottom</li>
+          <li>Fixed lines being drawn across the canvas if session reset occurs while midstroke</li>
+        </ul>
+        <p>New features:</p>
+        <ul>
+          <li>Added an option to share the same color across all tool slots</li>
+          <li>A session can now be reset to an image loaded from a file</li>
+          <li>New shortcut: Tab shows/hides toolbars and docks</li>
+          <li>Added "pick color from layer" brush mode</li>
+          <li>Added an option to activate dark theme</li>
+          <li>Session permissions can now be saved as presets</li>
+        </ul>
+        <p>Other changes:</p>
+        <ul>
+          <li>Scrollbars are now hidden in fullscreen mode</li>
+          <li>Removed default shortcuts for event log and session settings. They can still be assigned custom shortcuts, however.</li>
+          <li>Full screen mode no longer hides toolbars or docks</li>
+          <li>Enabled smooth canvas scaling at certain zoom levels (1-200% or 1-800% when rotated)</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.1.5" date="2019-03-30">
       <url>https://drawpile.net/news/release-2.1.5/</url>
       <description>
