@@ -64,6 +64,7 @@ protected:
 
 private slots:
 	void onChange();
+	void onResize();
 	void refreshCache();
 
 private:

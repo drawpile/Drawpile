@@ -82,7 +82,7 @@ void NavigatorView::setLayerStackObserver(paintcore::LayerStackPixmapCacheObserv
 {
 	m_observer = observer;
 	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &NavigatorView::onChange);
-	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &NavigatorView::onChange);
+	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::resized, this, &NavigatorView::onResize);
 	refreshCache();
 }
 
@@ -164,6 +164,12 @@ void NavigatorView::onChange()
 {
 	if(isVisible() && !m_refreshTimer->isActive())
 		m_refreshTimer->start();
+}
+
+void NavigatorView::onResize()
+{
+	m_cachedSize = QSize();
+	onChange();
 }
 
 void NavigatorView::refreshCache()
