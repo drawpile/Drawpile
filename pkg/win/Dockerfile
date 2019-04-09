@@ -15,7 +15,7 @@ RUN make download-qt5
 RUN make download-miniupnpc download-giflib download-libsodium download-libvpx
 
 # Patch Qt
-ADD qtbase-2-no-tabletevent.patch /usr/src/mxe/src/
+ADD qtbase-2-disable-wintab.patch qtbase-3-disable-winink.patch /usr/src/mxe/src/
 
 # Customized MXE dependencies
 ADD libvpx.mk /usr/src/mxe/src/
