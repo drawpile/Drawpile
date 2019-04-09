@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>385</height>
+    <width>734</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Join a Session</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="newVersionNotification">
      <property name="styleSheet">
@@ -35,14 +35,7 @@ padding: 6px;</string>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QComboBox" name="listserver">
-       <property name="toolTip">
-        <string>Listing server</string>
-       </property>
-      </widget>
-     </item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLineEdit" name="filter">
        <property name="placeholderText">
@@ -54,158 +47,55 @@ padding: 6px;</string>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="filterLocked">
-       <property name="toolTip">
-        <string>Show password protected sessions</string>
+      <spacer name="filterSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="icon">
-        <iconset theme="object-locked">
-         <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="checkable">
-        <bool>true</bool>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="filterLabel">
+       <property name="text">
+        <string>Show:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="filterNsfw">
-       <property name="toolTip">
-        <string>Show NSFW sessions</string>
+      <widget class="QCheckBox" name="showPassworded">
+       <property name="text">
+        <string>Passworded</string>
        </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:/icons/censored.svg</normaloff>:/icons/censored.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="showNsfw">
+       <property name="text">
+        <string>NSFW</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QStackedWidget" name="liststack">
-     <property name="currentIndex">
-      <number>0</number>
+    <widget class="QTreeView" name="listing">
+     <property name="rootIsDecorated">
+      <bool>false</bool>
      </property>
-     <widget class="QWidget" name="page_3">
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="Spinner" name="loadingSpinner">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>64</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QTableView" name="listing">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>160</height>
-          </size>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="showGrid">
-          <bool>false</bool>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_2">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>63</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="listingError">
-         <property name="styleSheet">
-          <string notr="true">background: #ed1515;
-color: #fcfcfc;
-padding: 5px;</string>
-         </property>
-         <property name="text">
-          <string notr="true">ERROR</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>63</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="headerStretchLastSection">
+      <bool>false</bool>
+     </attribute>
     </widget>
    </item>
    <item>
@@ -274,13 +164,6 @@ padding: 5px;</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Spinner</class>
-   <extends>QWidget</extends>
-   <header>widgets/spinner.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>address</tabstop>
   <tabstop>buttons</tabstop>

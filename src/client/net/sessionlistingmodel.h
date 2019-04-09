@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 #include "../../shared/util/announcementapi.h"
 
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 #include <QUrl>
 
 /**
  * @brief List of sessions received from a listing server
  */
-class SessionListingModel : public QAbstractTableModel
+class SessionListingModel : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
@@ -35,24 +35,35 @@ public:
 		SortKeyRole = Qt::UserRole,
 		UrlRole,
 		IsPasswordedRole,
+		IsClosedRole,
 		IsNsfwRole
 	};
 
 	SessionListingModel(QObject *parent=nullptr);
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
+	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex parent(const QModelIndex &child) const override;
+	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-	//int nsfmCount() const { return m_nsfmCount; }
+	QModelIndex indexOfListing(const QString &listing) const;
 
 public slots:
-	void setList(const QList<sessionlisting::Session> sessions);
+	void setMessage(const QString &name, const QString &message);
+	void setList(const QString &name, const QVector<sessionlisting::Session> sessions);
 
 private:
-	QList<sessionlisting::Session> m_sessions;
+	struct Listing {
+		QString name;
+
+		// If a message is set, the session list is not shown
+		QString message;
+		QVector<sessionlisting::Session> sessions;
+	};
+	QVector<Listing> m_listings;
 };
 
 #endif

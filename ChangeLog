@@ -1,6 +1,7 @@
 2019-0?-?? Version 2.1.7
  * Added Ukranian translation
  * Fixed navigator not updating correctly on canvas resize
+ * Simplified join dialog (listings from all servers are now shown at the same time)
 
 2019-04-06 Version 2.1.6
  * Scrollbars are now hidden in fullscreen mode

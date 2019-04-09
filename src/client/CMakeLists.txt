@@ -118,7 +118,7 @@ endif()
 if(KF5DNSSD_FOUND) 
 	set(
 		SOURCES ${SOURCES}
-		net/serverdiscoverymodel.cpp
+		net/zeroconfdiscovery.cpp
 	)
 	add_definitions(-DHAVE_DNSSD)
 endif()

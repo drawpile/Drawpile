@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,55 +16,40 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SERVERDISCOVERYMODEL_H
-#define SERVERDISCOVERYMODEL_H
+#ifndef ZEROCONF_SERVER_DISCOVERY_H
+#define ZEROCONF_SERVER_DISCOVERY_H
 
-#include "../shared/net/protover.h"
+#include "../../shared/util/announcementapi.h"
 
-#include <QAbstractTableModel>
-#include <QUrl>
-#include <QDateTime>
-
+#include <QVector>
 #include <KDNSSD/DNSSD/RemoteService>
 
 namespace KDNSSD {
 	class ServiceBrowser;
 }
 
-struct DiscoveredServer {
-	QUrl url;
-	QString name;
-	QString title;
-	protocol::ProtocolVersion protocol;
-	QDateTime started;
-};
-
-class ServerDiscoveryModel : public QAbstractTableModel
+class ZeroconfDiscovery : public QObject
 {
 	Q_OBJECT
 public:
-	enum ServerDiscoveryRoles {
-		SortKeyRole = Qt::UserRole,
-		UrlRole // important that this number is the same as in SessionListingModel
-	};
+	ZeroconfDiscovery(QObject *parent=nullptr);
 
-	ServerDiscoveryModel(QObject *parent=nullptr);
-
-	int rowCount(const QModelIndex &parent=QModelIndex()) const;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
-
+	//! Start discovery
 	void discover();
 
+	//! Check if Zeroconf is available
+	static bool isAvailable();
+
+signals:
+	void serverListUpdated(QVector<sessionlisting::Session> servers);
+
 private slots:
+	void discoveryFinished();
 	void addService(KDNSSD::RemoteService::Ptr service);
 	void removeService(KDNSSD::RemoteService::Ptr service);
 
 private:
-	QVector<DiscoveredServer> m_servers;
-
+	QVector<sessionlisting::Session> m_servers;
 	KDNSSD::ServiceBrowser *m_browser;
 };
 

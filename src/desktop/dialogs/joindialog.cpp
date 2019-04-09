@@ -30,7 +30,7 @@
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
-#include "net/serverdiscoverymodel.h"
+#include "net/zeroconfdiscovery.h"
 #endif
 
 #include "widgets/spinner.h"
@@ -47,15 +47,14 @@ using widgets::Spinner;
 
 namespace dialogs {
 
-enum {
-	LIST_PAGE_LOADING = 0,
-	LIST_PAGE_LISTING,
-	LIST_PAGE_ERROR
-};
+// Height below which the session listing widgets are hidden.
+static const int COMPACT_MODE_THRESHOLD = 300;
+
+// How often the listing view should be refreshed (in seconds)
+static const int REFRESH_INTERVAL = 60;
 
 JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
-	: QDialog(parent),
-	m_localServers(nullptr)
+	: QDialog(parent), m_lastRefresh(0)
 {
 	m_ui = new Ui_JoinDialog;
 	m_ui->setupUi(this);
@@ -73,14 +72,24 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	// Session listing
 	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)
-		m_ui->filterNsfw->setEnabled(false);
-
-	m_ui->listserver->setModel(new sessionlisting::ListServerModel(sessionlisting::ListServerModel::ShowLocal | sessionlisting::ListServerModel::ShowBlank, this));
+		m_ui->showNsfw->setEnabled(false);
 
 	m_sessions = new SessionListingModel(this);
+
 #ifdef HAVE_DNSSD
-	m_localServers = new ServerDiscoveryModel(this);
+	if(ZeroconfDiscovery::isAvailable()) {
+		auto zeroconfDiscovery = new ZeroconfDiscovery(this);
+		m_sessions->setMessage(tr("Nearby"), tr("Loading..."));
+		connect(zeroconfDiscovery, &ZeroconfDiscovery::serverListUpdated, this, [this](const QVector<sessionlisting::Session> &servers) {
+			m_sessions->setList(tr("Nearby"), servers);
+		});
+		zeroconfDiscovery->discover();
+	}
 #endif
+
+	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers()) {
+		m_sessions->setMessage(ls.name, tr("Loading..."));
+	}
 
 	m_filteredSessions = new SessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);
@@ -91,34 +100,30 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_filteredSessions->setShowNsfw(false);
 	m_filteredSessions->setShowPassworded(false);
 
-	connect(m_ui->filterLocked, &QAbstractButton::toggled,
+	connect(m_ui->showPassworded, &QAbstractButton::toggled,
 			m_filteredSessions, &SessionFilterProxyModel::setShowPassworded);
-	connect(m_ui->filterNsfw, &QAbstractButton::toggled,
+	connect(m_ui->showNsfw, &QAbstractButton::toggled,
 			m_filteredSessions, &SessionFilterProxyModel::setShowNsfw);
 	connect(m_ui->filter, &QLineEdit::textChanged,
 			m_filteredSessions, &SessionFilterProxyModel::setFilterFixedString);
 
 	m_ui->listing->setModel(m_filteredSessions);
-	QHeaderView *header = m_ui->listing->horizontalHeader();
+	m_ui->listing->expandAll();
+
+	QHeaderView *header = m_ui->listing->header();
 	header->setSectionResizeMode(0, QHeaderView::Stretch);
+	header->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(3, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
-	// Periodically refresh the session listing
-	auto refreshTimer = new QTimer(this);
-	connect(refreshTimer, &QTimer::timeout,
-			this, &JoinDialog::refreshListing);
-	refreshTimer->setSingleShot(false);
-	refreshTimer->start(1000 * 60);
-
-	connect(m_ui->listing, &QTableView::clicked, this, [this](const QModelIndex &index) {
+	connect(m_ui->listing, &QTreeView::clicked, this, [this](const QModelIndex &index) {
 		// Set the server URL when clicking on an item
 		if((index.flags() & Qt::ItemIsEnabled))
 			m_ui->address->setCurrentText(index.data(SessionListingModel::UrlRole).value<QUrl>().toString());
 	});
 
-	connect(m_ui->listing, &QTableView::doubleClicked, [this](const QModelIndex &index) {
+	connect(m_ui->listing, &QTreeView::doubleClicked, [this](const QModelIndex &index) {
 		// Shortcut: double click to OK
 		if((index.flags() & Qt::ItemIsEnabled) && m_ui->buttons->button(QDialogButtonBox::Ok)->isEnabled())
 			accept();
@@ -128,8 +133,13 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	restoreSettings();
 
-	connect(m_ui->listserver, QOverload<int>::of(&QComboBox::currentIndexChanged),
+	// Periodically refresh the session listing
+	auto refreshTimer = new QTimer(this);
+	connect(refreshTimer, &QTimer::timeout,
 			this, &JoinDialog::refreshListing);
+	refreshTimer->setSingleShot(false);
+	refreshTimer->start(1000 * (REFRESH_INTERVAL + 1));
+
 	refreshListing();
 }
 
@@ -138,11 +148,40 @@ JoinDialog::~JoinDialog()
 	// Always remember these settings
 	QSettings cfg;
 	cfg.beginGroup("history");
-	cfg.setValue("listingserverlast", m_ui->listserver->currentIndex());
-	cfg.setValue("filterlocked", m_ui->filterLocked->isChecked());
-	cfg.setValue("filternsfw", m_ui->filterNsfw->isChecked());
+	cfg.setValue("filterlocked", m_ui->showPassworded->isChecked());
+	cfg.setValue("filternsfw", m_ui->showNsfw->isChecked());
 
 	delete m_ui;
+}
+
+void JoinDialog::resizeEvent(QResizeEvent *event)
+{
+	QDialog::resizeEvent(event);
+	bool show = false;
+	bool change = false;
+	if(height() < COMPACT_MODE_THRESHOLD && !m_ui->filter->isHidden()) {
+		show = false;
+		change = true;
+	} else if(height() > COMPACT_MODE_THRESHOLD && m_ui->filter->isHidden()) {
+		show = true;
+		change = true;
+	}
+
+	if(change)
+		setListingVisible(show);
+}
+
+void JoinDialog::setListingVisible(bool show)
+{
+	m_ui->filter->setVisible(show);
+	m_ui->filterLabel->setVisible(show);
+	m_ui->showPassworded->setVisible(show);
+	m_ui->showNsfw->setVisible(show);
+	m_ui->listing->setVisible(show);
+	m_ui->line->setVisible(show);
+
+	if(show)
+		refreshListing();
 }
 
 static QString cleanAddress(const QString &addr)
@@ -209,69 +248,32 @@ QString JoinDialog::autoRecordFilename() const
 
 void JoinDialog::refreshListing()
 {
-	const QString urlstr = m_ui->listserver->currentData().toString();
-	qDebug() << "Fetching session list from" << urlstr;
-
-	const bool showList = !urlstr.isEmpty();
-	const bool showNsfw = parentalcontrols::level() == parentalcontrols::Level::Unrestricted;
-
-	m_ui->filter->setEnabled(showList);
-	m_ui->filterLocked->setEnabled(showList);
-	m_ui->filterNsfw->setEnabled(showList && showNsfw);
-
-	if(!showList) {
-		// Hide listing and collapse dialog
-		m_ui->liststack->hide();
-		if(isVisible())
-			QTimer::singleShot(0, this, [this]() {
-				resize(width(), 0);
-				});
-		else
-			resize(width(), 0);
-
+	if(m_ui->listing->isHidden() || QDateTime::currentSecsSinceEpoch() - m_lastRefresh < REFRESH_INTERVAL)
 		return;
-	}
+	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
-	m_ui->liststack->setCurrentIndex(LIST_PAGE_LOADING);
-	m_ui->liststack->show();
-
-	if(urlstr == "local") {
-#ifdef HAVE_DNSSD
-		// Local server discovery mode (DNS-SD)
-		m_filteredSessions->setSourceModel(m_localServers);
-		m_ui->liststack->setCurrentIndex(LIST_PAGE_LISTING);
-		m_localServers->discover();
-#else
-		// Shouldn't happen
-		setListingError("DNS-SD support not compiled in");
-#endif
-
-	} else {
-		// Listing server mode
-		const QUrl url = urlstr;
+	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers()) {
+		const QUrl url = ls.url;
 		if(!url.isValid()) {
-			setListingError("Invalid list server URL");
-			return;
+			qWarning("Invalid list server URL: %s", qPrintable(ls.url));
+			continue;
 		}
-		m_filteredSessions->setSourceModel(m_sessions);
 
 		auto response = sessionlisting::getSessionList(
 			url,
 			protocol::ProtocolVersion::current().asString(),
 			QString(),
-			showNsfw
+			true
 			);
 
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished,
-			this, [this](const QVariant &result, const QString &message, const QString &error)
+			this, [this, ls](const QVariant &result, const QString &message, const QString &error)
 			{
-				Q_UNUSED(message);
-				if(error.isEmpty()) {
-					m_sessions->setList(result.value<QList<sessionlisting::Session>>());
-					m_ui->liststack->setCurrentIndex(LIST_PAGE_LISTING);
-				} else {
-					setListingError(error);
-				}
+				Q_UNUSED(message)
+				if(error.isEmpty())
+					m_sessions->setList(ls.name, result.value<QVector<sessionlisting::Session>>());
+				else
+					m_sessions->setMessage(ls.name, error);
 			});
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished, response, &QObject::deleteLater);
 	}
@@ -298,7 +300,7 @@ void JoinDialog::resolveRoomcode(const QString &roomcode, const QStringList &ser
 	connect(response, &sessionlisting::AnnouncementApiResponse::finished,
 		this, [this, roomcode, servers](const QVariant &result, const QString &message, const QString &error)
 		{
-			Q_UNUSED(message);
+			Q_UNUSED(message)
 			if(!error.isEmpty()) {
 				// Not found. Try the next server.
 				resolveRoomcode(roomcode, servers.mid(1));
@@ -325,22 +327,30 @@ void JoinDialog::restoreSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("history");
+
+	const QSize oldSize = cfg.value("joindlgsize").toSize();
+	if(oldSize.isValid()) {
+		if(oldSize.height() < COMPACT_MODE_THRESHOLD)
+			setListingVisible(false);
+		resize(oldSize);
+	}
+
 	m_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
 
-	m_ui->listserver->setCurrentIndex(cfg.value("listingserverlast", 0).toInt());
+	m_ui->showPassworded->setChecked(cfg.value("filterlocked", true).toBool());
 
-	m_ui->filterLocked->setChecked(cfg.value("filterlocked").toBool());
-
-	if(m_ui->filterNsfw->isEnabled())
-		m_ui->filterNsfw->setChecked(cfg.value("filternsfw").toBool());
+	if(m_ui->showNsfw->isEnabled())
+		m_ui->showNsfw->setChecked(cfg.value("filternsfw").toBool());
 	else
-		m_ui->filterNsfw->setChecked(false);
+		m_ui->showNsfw->setChecked(false);
 }
 
 void JoinDialog::rememberSettings() const
 {
 	QSettings cfg;
 	cfg.beginGroup("history");
+
+	cfg.setValue("joindlgsize", size());
 
 	QStringList hosts;
 	// Move current item to the top of the list
@@ -373,12 +383,6 @@ QUrl JoinDialog::getUrl() const
 		return QUrl();
 
 	return url;
-}
-
-void JoinDialog::setListingError(const QString &message)
-{
-	m_ui->listingError->setText(message);
-	m_ui->liststack->setCurrentIndex(LIST_PAGE_ERROR);
 }
 
 }

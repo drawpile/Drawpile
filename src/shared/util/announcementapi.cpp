@@ -194,7 +194,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &proto
 			return;
 		}
 
-		QList<Session> sessions;
+		QVector<Session> sessions;
 
 		for(const QJsonValue &jsv : doc.array()) {
 			if(!jsv.isObject()) {

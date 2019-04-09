@@ -23,7 +23,6 @@
 
 class Ui_JoinDialog;
 
-class ServerDiscoveryModel;
 class SessionListingModel;
 class SessionFilterProxyModel;
 
@@ -51,6 +50,9 @@ public:
 	//! Store settings in configuration file
 	void rememberSettings() const;
 
+protected:
+	void resizeEvent(QResizeEvent *event) override;
+
 private slots:
 	void addressChanged(const QString &addr);
 	void refreshListing();
@@ -58,12 +60,13 @@ private slots:
 
 private:
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
-	void setListingError(const QString &message);
+	void setListingVisible(bool show);
 
 	Ui_JoinDialog *m_ui;
 	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
-	ServerDiscoveryModel *m_localServers;
+
+	qint64 m_lastRefresh;
 
 	QString m_recordingFilename;
 };
