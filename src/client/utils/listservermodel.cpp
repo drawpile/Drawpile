@@ -19,7 +19,6 @@
 
 #include "listservermodel.h"
 
-#include <QDebug>
 #include <QImage>
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -35,8 +34,8 @@
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(Options options, QObject *parent)
-	: QAbstractListModel(parent), m_options(options)
+ListServerModel::ListServerModel(QObject *parent)
+	: QAbstractListModel(parent)
 {
 	loadServers();
 }
@@ -188,30 +187,6 @@ void ListServerModel::loadServers()
 {
 	beginResetModel();
 	m_servers = listServers();
-
-#ifdef HAVE_DNSSD
-	// Add an entry for local server discovery
-	if(m_options.testFlag(ShowLocal) && KDNSSD::ServiceBrowser::isAvailable() == KDNSSD::ServiceBrowser::Working) {
-		m_servers.prepend(ListServer {
-			QIcon(),
-			QString(),
-			tr("Nearby"),
-			QStringLiteral("local"),
-			QString()
-		});
-	}
-#endif
-
-	if(m_options.testFlag(ShowBlank)) {
-		m_servers << ListServer {
-			QIcon(),
-			QString(),
-			QStringLiteral("-"),
-			QString(),
-			QString()
-		};
-	}
-
 	endResetModel();
 }
 

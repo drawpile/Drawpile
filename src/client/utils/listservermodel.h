@@ -36,20 +36,13 @@ class ListServerModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
-	enum Option {
-		NoOptions = 0,
-		ShowLocal = 0x01, // show "Nearby" option (if KDNSSD is built in)
-		ShowBlank = 0x02, // show a blank option (used to select no listing server)
-	};
-	Q_DECLARE_FLAGS(Options, Option)
 
-	explicit ListServerModel(Options options, QObject *parent=nullptr);
-	explicit ListServerModel(QObject *parent=nullptr) : ListServerModel(NoOptions, parent) {}
+	explicit ListServerModel(QObject *parent=nullptr);
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
 
-	bool removeRows(int row, int count, const QModelIndex &parent);
+	bool removeRows(int row, int count, const QModelIndex &parent) override;
 
 	void addServer(const QString &name, const QString &url, const QString &description);
 
@@ -67,10 +60,7 @@ public:
 
 private:
 	QVector<ListServer> m_servers;
-	Options m_options;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(ListServerModel::Options)
 
 }
 
