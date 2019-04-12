@@ -91,7 +91,7 @@ Get detailed information about a session: `GET /sessions/:id/`
                 "tls": true/false (is using a secure connection)
             }, ...
         ],
-        "listing": [
+        "listings": [
             {
                 "id": listing entry ID number,
                 "url": "listing server URL",
