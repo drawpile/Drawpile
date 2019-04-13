@@ -10,7 +10,7 @@ class TestListingFiltering : public QObject
 private slots:
 	void testSessionListing()
 	{
-		auto testlist = QList<sessionlisting::Session> {
+		auto testlist = QVector<sessionlisting::Session> {
 			listsession("test1", false, false),
 			listsession("test2", false, false),
 			listsession("test3", true, false),
@@ -20,24 +20,27 @@ private slots:
 		};
 
 		SessionListingModel listmodel;
-		listmodel.setList(testlist);
+		listmodel.setList("test", testlist);
 
 		SessionFilterProxyModel filtered;
 		filtered.setSourceModel(&listmodel);
 
-		QCOMPARE(listmodel.rowCount(), 6);
-		QCOMPARE(filtered.rowCount(), 6);
+		const QModelIndex root = listmodel.index(0, 0);
+		const QModelIndex filteredRoot = filtered.index(0, 0);
+
+		QCOMPARE(listmodel.rowCount(root), 6);
+		QCOMPARE(filtered.rowCount(filteredRoot), 6);
 
 		filtered.setShowNsfw(false);
-		QCOMPARE(filtered.rowCount(), 5);
+		QCOMPARE(filtered.rowCount(filteredRoot), 5);
 
 		filtered.setShowPassworded(false);
-		QCOMPARE(filtered.rowCount(), 4);
+		QCOMPARE(filtered.rowCount(filteredRoot), 4);
 
 		// Standard filtering can be combined with the new options too
 		filtered.setFilterFixedString("5");
 		filtered.setShowNsfw(true);
-		QCOMPARE(filtered.rowCount(), 1);
+		QCOMPARE(filtered.rowCount(filteredRoot), 1);
 	}
 
 	void testLoginSessions()

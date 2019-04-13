@@ -46,14 +46,14 @@ void SessionFilterProxyModel::setShowNsfw(bool show)
 
 bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-	// TODO
-	if(!source_parent.isValid())
-		return true;
-
 	const QModelIndex i = sourceModel()->index(source_row, 0, source_parent);
-	int nsfwRole=0, pwRole=0; // TODO closed role
+	int nsfwRole=0, pwRole=0;
 
 	if(sourceModel()->inherits(SessionListingModel::staticMetaObject.className())) {
+		// Always show the top level items (listin servers)
+		if(!source_parent.isValid())
+			return true;
+
 		nsfwRole = SessionListingModel::IsNsfwRole;
 		pwRole = SessionListingModel::IsPasswordedRole;
 
@@ -71,8 +71,6 @@ bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 		if(i.data(pwRole).toBool())
 			return false;
 	}
-
-	// TODO
 
 	return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
 }
