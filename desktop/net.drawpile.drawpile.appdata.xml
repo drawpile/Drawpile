@@ -23,6 +23,18 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.7" date="2019-04-13">
+      <url>https://drawpile.net/news/release-2.1.7/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added Ukranian translation</li>
+          <li>Fixed navigator not updating correctly on canvas resize</li>
+          <li>Simplified join dialog (listings from all servers are now shown at the same time)</li>
+          <li>Windows only: another tablet support fix</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.1.6" date="2019-04-06">
       <url>https://drawpile.net/news/release-2.1.6/</url>
       <description>
