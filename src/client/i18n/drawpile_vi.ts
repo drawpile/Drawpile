@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="vi_VN">
+<TS version="2.1" language="vi_VN">
 <context>
     <name>AbuseReportDialog</name>
     <message>
@@ -69,71 +69,76 @@
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="298"/>
+        <source>Pick initial color from layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="312"/>
         <source>Eraser mode</source>
         <translation>Chế độ tẩy</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="328"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="342"/>
         <source>Direct drawing mode</source>
         <translation>Chế độ vẽ trực tiếp</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="391"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="405"/>
         <source>px</source>
         <translation>điểm ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="430"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="444"/>
         <source>Hardness:</source>
         <translation>Độ cứng:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="463"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <source>Opacity:</source>
         <translation>Độ mờ đục:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="470"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="484"/>
         <source>Size:</source>
         <translation>Kích thước:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="491"/>
         <source>Spacing:</source>
         <translation>Khoảng cách:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="484"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Smudging:</source>
         <translation>Nhoè:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="517"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="531"/>
         <source>Color pickup:</source>
         <translation>Bộ chọn lọc màu:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="550"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="564"/>
         <source>Pressure:</source>
         <translation>Áp lực:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="559"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="573"/>
         <source>Size</source>
         <translation>Kích thước</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="566"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="580"/>
         <source>Opacity</source>
         <translation>Độ mờ đục</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="573"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="587"/>
         <source>Hardness</source>
         <translation>Độ cứng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="580"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="594"/>
         <source>Smudging</source>
         <translation>Nhoè</translation>
     </message>
@@ -503,27 +508,17 @@
         <translation>&amp;Công khai</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
-        <source>Hosting</source>
-        <translation>Máy chủ</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="166"/>
-        <source>Server:</source>
-        <translation>Máy phục vụ:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="173"/>
         <source>Use Drawpile&apos;s built-in server</source>
         <translation>Sử dụng máy chủ tích hợp của Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="176"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="169"/>
         <source>This co&amp;mputer</source>
         <translation>Trên &amp;máy tính này</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="186"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="181"/>
         <source>Use an external dedicated server</source>
         <translation>Sử dụng một máy chủ chuyên dụng bên ngoài</translation>
     </message>
@@ -548,7 +543,12 @@
         <translation>Riêng (chỉ mã phòn&amp;g)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="189"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
+        <source>Server</source>
+        <translation type="unfinished">Máy chủ</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/hostdialog.ui" line="184"/>
         <source>Re&amp;mote:</source>
         <translation>&amp;Máy chủ:</translation>
     </message>
@@ -597,6 +597,14 @@
     </message>
 </context>
 <context>
+    <name>InspectorSettings</name>
+    <message>
+        <location filename="../../desktop/ui/inspectorsettings.ui" line="17"/>
+        <source>Last edited by:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>JoinDialog</name>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="17"/>
@@ -604,32 +612,37 @@
         <translation>Tham gia phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="25"/>
-        <source>Listing server</source>
-        <translation>Liệt kê máy chủ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="32"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
         <source>Filter</source>
         <translation>Bộ lọc</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
-        <source>Show password protected sessions</source>
-        <translation>Hiển thị các phiên được bảo vệ bằng mật khẩu</translation>
+        <location filename="../../desktop/ui/joindialog.ui" line="30"/>
+        <source>A new Drawpile version that is not compatible with this one has been released.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="56"/>
-        <source>Show NSFW sessions</source>
-        <translation>Hiển thị các phiên NSFW</translation>
+        <location filename="../../desktop/ui/joindialog.ui" line="68"/>
+        <source>Show:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="204"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="75"/>
+        <source>Passworded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="82"/>
+        <source>NSFW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="111"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
         <translation>Nhập địa chỉ máy chủ, URL phiên hoặc mã phòng để tham gia phiên:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="235"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="142"/>
         <source>Record session</source>
         <translation>Ghi thu lại phiên</translation>
     </message>
@@ -721,32 +734,32 @@
         <translation>Hiển thị các phiên NSFW</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="280"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="283"/>
         <source>Password:</source>
         <translation>Mật khẩu:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="294"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="297"/>
         <source>This session is password protected</source>
         <translation>Phiên nàu được bảo vệ bằng mật khẩu</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="361"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="364"/>
         <source>View old</source>
         <translation>Xem tạo cũ</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="368"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="371"/>
         <source>View new</source>
         <translation>Xem tạo mới</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="375"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="378"/>
         <source>Replace pinned certificate</source>
         <translation>Thay thế chứng chỉ được ghim</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/logindialog.ui" line="314"/>
+        <location filename="../../desktop/ui/logindialog.ui" line="317"/>
         <source>Catching up...</source>
         <translation>Bắt kịp...</translation>
     </message>
@@ -784,72 +797,61 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="610"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1395"/>
+        <location filename="../../desktop/mainwindow.cpp" line="634"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1403"/>
         <source>Untitled</source>
         <translation>Không tựa đề</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="846"/>
-        <location filename="../../desktop/mainwindow.cpp" line="867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="857"/>
+        <location filename="../../desktop/mainwindow.cpp" line="878"/>
         <source>Exit Drawpile</source>
         <translation>Thoát Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="847"/>
+        <location filename="../../desktop/mainwindow.cpp" line="858"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Bạn vẫn được kết nối với một phiên vẽ.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="851"/>
+        <location filename="../../desktop/mainwindow.cpp" line="862"/>
         <source>Exit anyway</source>
         <translation>Dù sao vẫn cứ thoát ra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="853"/>
-        <location filename="../../desktop/mainwindow.cpp" line="875"/>
+        <location filename="../../desktop/mainwindow.cpp" line="864"/>
+        <location filename="../../desktop/mainwindow.cpp" line="886"/>
         <location filename="../../desktop/mainwindow.cpp" line="1193"/>
         <source>Cancel</source>
         <translation>Hủy bỏ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="868"/>
+        <location filename="../../desktop/mainwindow.cpp" line="879"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ở đây có các thay đổi chưa được lưu. Ghi lại chúng trước khi thoát chứ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="871"/>
+        <location filename="../../desktop/mainwindow.cpp" line="882"/>
         <source>Save</source>
         <translation>Lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="873"/>
+        <location filename="../../desktop/mainwindow.cpp" line="884"/>
         <source>Discard</source>
         <translation>Hủy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1018"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1881"/>
-        <source>Images (%1)</source>
-        <translation>Ảnh (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1019"/>
-        <source>Recordings (%1)</source>
-        <translation>Thu đĩa (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1048"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1050"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>Định dạng đã chọn không hỗ trợ các lớp hay ghi chú</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1050"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1052"/>
         <source>Flatten</source>
         <translation>Làm phằng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1051"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1053"/>
         <source>Save as OpenRaster</source>
         <translation>Lưu dạng OpenRaster</translation>
     </message>
@@ -869,128 +871,128 @@
         <translation>Ảnh lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1213"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1214"/>
         <source>Export Session Template</source>
         <translation>Xuất mẫu phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1237"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1241"/>
         <source>Pause</source>
         <translation>Tạm dừng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1240"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1244"/>
         <source>Play</source>
         <translation>Phát</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1328"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1336"/>
         <source>Invalid address</source>
         <translation>Địa chỉ không hợp lệ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1396"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1404"/>
         <source>Really leave the session?</source>
         <translation>Thực sự rời khỏi phiên?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1402"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1410"/>
         <source>Leave</source>
-    <translation>Rời</translation>
+        <translation>Rời</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1404"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1412"/>
         <source>Stay</source>
         <translation>Ở lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1413"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1421"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Vẫn còn dữ liệu chưa gửi! Xin vui lòng chờ cho đền khi truyền hoàn thành!</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1576"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1582"/>
         <source>Would you like to join the session instead?</source>
         <translation>Bạn có muốn gia nhập phiên thay thế?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1578"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1584"/>
         <source>Join</source>
         <translation>Tham gia</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1623"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1629"/>
         <source>Board is locked</source>
         <translation>Bàn đã bị khóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1901"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1938"/>
         <source>The image could not be loaded</source>
         <translation>Ảnh không thể tải được</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2020"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2057"/>
         <source>Marker text</source>
         <translation>Chữ đánh dấu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2028"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2065"/>
         <source>About Drawpile</source>
         <translation>Giới thiệu Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2030"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2067"/>
         <source>A collaborative drawing program.</source>
         <translation>Một chương trình vẽ hợp tác.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2139"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2180"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>Mớ&amp;i</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2140"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2181"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;Mở...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2144"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2185"/>
         <source>&amp;Save</source>
         <translation>&amp;Lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2145"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2186"/>
         <source>Save &amp;As...</source>
         <translation>Lưu &amp;dạng...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2146"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2187"/>
         <source>Autosave</source>
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2147"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2188"/>
         <source>&amp;Animation...</source>
         <translation>&amp;Hoạt hình...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1248"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2150"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1252"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2191"/>
         <source>Record...</source>
         <translation>Thu đĩa...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="295"/>
+        <location filename="../../desktop/mainwindow.cpp" line="297"/>
         <source>Server out of space</source>
         <translation>Máy chủ hết dung lượng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="296"/>
+        <location filename="../../desktop/mainwindow.cpp" line="298"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-	<translation>Máy chủ sắp hết dung lượng lịch sử và phiên đã phát triển quá lớn để tự động đặt lại! (Giới hạn là %1 MB)
+        <translation>Máy chủ sắp hết dung lượng lịch sử và phiên đã phát triển quá lớn để tự động đặt lại! (Giới hạn là %1 MB)
 Đơn giản hóa khung vẽ và đặt lại thủ công trước khi hết dung lướng.</translation>
     </message>
     <message>
@@ -1004,784 +1006,779 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Đang xuất...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1445"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1451"/>
         <source>Become Operator</source>
         <translation>Trở thành nhà điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1446"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1452"/>
         <source>Enter operator password</source>
         <translation>Nhập mật khẩu nhà điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1484"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1490"/>
         <source>Terminate session</source>
         <translation>Chấm dứt phiên này</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1485"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1491"/>
         <source>Really terminate this session?</source>
         <translation>Thực sự chấm dứt phiên này?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1490"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2570"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1496"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2581"/>
         <source>Terminate</source>
         <translation>Chấm dứt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1635"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1641"/>
         <source>Session blocked by parental controls</source>
         <translation>Phiên bị chặn bởi sự kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2132"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2169"/>
         <source>Lock in place</source>
         <translation>Khóa tại chỗ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2147"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2173"/>
+        <source>Hide Docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2188"/>
         <source>Export layers as animation frames</source>
         <translation>Xuất các lớp dưới dạng các khung ảnh hoạt hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2148"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2189"/>
         <source>Session Template...</source>
         <translation>Mẫu phiên...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2148"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2189"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
         <translation>Xuất phiên hiện tại dưới dạng bản ghi mẫu để sử dụng với máy chủ chuyên dụng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2151"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2192"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>&amp;Thoát</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2181"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2222"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;Tập tin</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2195"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2236"/>
         <source>&amp;Export</source>
         <translation>&amp;Xuất</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2220"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2261"/>
         <source>&amp;Undo</source>
         <translation>&amp;Hủy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2221"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2262"/>
         <source>&amp;Redo</source>
         <translation>&amp;Lặp lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2222"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2263"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Sao chép vùng đã chọn vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2223"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2264"/>
         <source>Copy Merged</source>
         <translation>Chép trộn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2223"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2264"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>Sao chép vùng đã chọn, không bao gồm nền, vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2224"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2265"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Sao chép vùng đã chọn của lớp hiện tại vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2225"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2266"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Cắt vùng đã chọn của lớp hiện tại vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2226"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2267"/>
         <source>&amp;Paste</source>
         <translation>&amp;Dán</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2227"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2268"/>
         <source>&amp;Stamp</source>
         <translation>&amp;Dấu vết thời gian</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2232"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2273"/>
         <source>Set Background...</source>
         <translation>Đặt nền...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2236"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2277"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Bỏ chọn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2244"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2285"/>
         <source>Expand &amp;Up</source>
         <translation>Rộng &amp;lên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2245"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2286"/>
         <source>Expand &amp;Down</source>
         <translation>Rộng &amp;xuống</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2287"/>
         <source>Expand &amp;Left</source>
         <translation>Rộng &amp;trái</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2288"/>
         <source>Expand &amp;Right</source>
         <translation>Rộng &amp;phải</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2250"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2291"/>
         <source>Fill Selection</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2251"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2292"/>
         <source>Recolor Selection</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2252"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2293"/>
         <source>Color Erase Selection</source>
         <translation>Màu xóa chọn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2310"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
         <source>&amp;Edit</source>
         <translation>&amp;Sửa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2328"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2369"/>
         <source>&amp;Expand Canvas</source>
         <translation>Rộng vùng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2357"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2398"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;Thanh công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2360"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2401"/>
         <source>&amp;Docks</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2363"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2404"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2365"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2406"/>
         <source>Flipbook</source>
         <translation>Flipbook</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2365"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2406"/>
         <source>Show animation preview window</source>
         <translation>Hiển thị cửa sổ xem thử hoạt hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2371"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2412"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Quay vùng vẽ ngược chiều</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2372"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2413"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>Quay vùng vẽ theo chiều</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2374"/>
-        <source>Rotate to 90°</source>
-        <translation>Xoay 90°</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2375"/>
-        <source>Rotate to 180°</source>
-        <translation>Xoay 180°</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2376"/>
-        <source>Rotate to 270°</source>
-        <translation>Xoay 270°</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2378"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2415"/>
         <source>Mirror</source>
         <translation>Gương</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2379"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2416"/>
         <source>Flip</source>
         <translation>Lật</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2383"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2420"/>
         <source>Show Names</source>
         <translation>Hiện tên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2384"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2421"/>
         <source>Show Layers</source>
         <translation>Hiện lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2385"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2422"/>
         <source>Show Avatars</source>
         <translation>Hiện avatar</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2393"/>
-        <source>View Tools</source>
-        <translation>Xem công cụ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2499"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2510"/>
         <source>User Pointers</source>
         <translation>Con trỏ người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2518"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2529"/>
         <source>New Layer</source>
         <translation>Tạo lớp mới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2519"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2530"/>
         <source>Duplicate Layer</source>
         <translation>Nhân đôi lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2520"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2531"/>
         <source>Merge with Layer Below</source>
         <translation>Hòa trộn với lớp phía dưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2521"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2532"/>
         <source>Delete Layer</source>
         <translation>Xóa lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2525"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2536"/>
         <source>Solo</source>
         <translation>Solo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2526"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2537"/>
         <source>Onionskin</source>
         <translation>Hành tây</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2527"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2538"/>
         <source>Show Numbers</source>
         <translation>Hiện số</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2528"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2539"/>
         <source>Show Censored Layers</source>
         <translation>Hiện lớp kiểm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2530"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2541"/>
         <source>Select Above</source>
         <translation>Chọn trên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2531"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2542"/>
         <source>Select Below</source>
         <translation>Chọn dưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2540"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2551"/>
         <source>Layer</source>
         <translation>Lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2571"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2582"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2573"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
         <source>Lock Everything</source>
         <translation>Khóa mọi thứ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2758"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2780"/>
         <source>Finish action</source>
         <translation>Hoàn tất thao tác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2762"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2784"/>
         <source>Cancel action</source>
         <translation>Hủy bỏ thao tác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2382"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2419"/>
         <source>Show User &amp;Pointers</source>
         <translation>Hiện con trỏ người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2386"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2423"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Hiện theo dõi laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2387"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2424"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>Hiện điểm ảnh lưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2488"/>
         <source>&amp;View</source>
         <translation>&amp;Trình bày</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2481"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2495"/>
         <source>&amp;Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2486"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2500"/>
         <source>Rotation</source>
         <translation>Xoay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2561"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2572"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>&amp;Máy chủ...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2561"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2572"/>
         <source>Share your drawingboard with others</source>
         <translation>Chia sẻ bảng vẽ của bạn với những người khác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2562"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2573"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>&amp;Tham gia...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2562"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2573"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Tham gia phiên vẽ khác của người dùn&apos;g</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2563"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2574"/>
         <source>&amp;Leave</source>
         <translation>&amp;Để lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2563"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2574"/>
         <source>Leave this drawing session</source>
         <translation>Để lại phiên vẽ này</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2568"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2579"/>
         <source>Become Operator...</source>
         <translation>Trở thành nhà điều hành...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2573"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Ngăn chặn thay đổi bảng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2607"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;Phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2622"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2633"/>
         <source>Fill areas</source>
         <translation>Điền vào vùng đã</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2638"/>
         <source>Select area for copying</source>
         <translation>Chọn khu vực để sao chép</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2656"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2669"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>Giảm âm kích thước chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2657"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2670"/>
         <source>&amp;Increase Brush Size</source>
         <translation>Tăng âm kích thước chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Drawing tools</source>
         <translation>Công cụ vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2789"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2811"/>
         <source>Color</source>
         <translation>Màu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1017"/>
-        <source>All Supported Files (%1)</source>
-        <translation>Mọi tập tin hỗ trợ (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1024"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1022"/>
         <source>Open Image</source>
         <translation>Mở ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1047"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1110"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1049"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1105"/>
         <source>Save Image</source>
         <translation>Lưu ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1270"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1275"/>
         <source>Record Session</source>
         <translation>Thu đĩa phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1245"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1249"/>
         <source>Stop Recording</source>
         <translation>Dừng thu đĩa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1339"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1347"/>
         <source>Host Session</source>
         <translation>Lưu trữ phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1564"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1570"/>
         <source>Could not connect to server</source>
         <translation>Không thể kết nối đến máy chủ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1885"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1919"/>
         <source>Paste Image</source>
         <translation>Dán ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2020"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2057"/>
         <source>Mark</source>
         <translation>Đánh dấu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2142"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2183"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2184"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2225"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>Mở &amp;gần đây</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2204"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2245"/>
         <source>File Tools</source>
         <translation>Công cụ tập tin</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2222"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2263"/>
         <source>&amp;Copy Visible</source>
         <translation>Chép phần nhìn thấy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2224"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2265"/>
         <source>Copy &amp;Layer</source>
         <translation>Chép lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2225"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2266"/>
         <source>Cu&amp;t Layer</source>
         <translation>Cắt lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2229"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2270"/>
         <source>Paste &amp;From File...</source>
         <translation>Dán đọc từ tập tin...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2230"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2271"/>
         <source>Delete Empty Annotations</source>
         <translation>Xóa chú thích rỗng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2272"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>Đổ&amp;i cỡ vùng vẽ...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2233"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2274"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>Tù&amp;y thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2235"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2276"/>
         <source>Select &amp;All</source>
         <translation>Chọn tất cả</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2344"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2385"/>
         <source>Edit Tools</source>
         <translation>Công cụ sửa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2367"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2408"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Phóng to</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2368"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2409"/>
         <source>Zoom &amp;Out</source>
         <translation>&amp;Thu nhỏ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2369"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2410"/>
         <source>&amp;Normal Size</source>
         <translation>&amp;Kích thước bình thường</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2370"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2411"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;Đặt lại xoay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2381"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2418"/>
         <source>Show &amp;Annotations</source>
         <translation>Hiện chú thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2389"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2426"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Toàn màn hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2636"/>
         <source>Pick colors from the image</source>
         <translation>Chọn màu từ hình ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2636"/>
         <source>&amp;Color Picker</source>
         <translation>&amp;Bộ chọn lọc màu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
         <source>&amp;Line</source>
         <translation>Đườn&amp;g</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2249"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2290"/>
         <source>Delete</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2565"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2576"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2566"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
         <source>Settings...</source>
         <translation>Cài đặt...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2569"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2580"/>
         <source>&amp;Reset...</source>
         <translation>Đặt &amp;lại...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2602"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2613"/>
         <source>Moderation</source>
         <translation>Người điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2616"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
         <source>Freehand</source>
         <translation>Bằng tay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2616"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
         <source>Freehand brush tool</source>
         <translation>Bằng tay chổi công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
         <source>Eraser</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
         <source>Freehand eraser brush</source>
         <translation>Bằng tay xóa chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
         <source>Draw straight lines</source>
         <translation>Vẽ các đường thắng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Vuông</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Vẽ các hình vuông và hình chữ nhật không hàn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2620"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Elip</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2620"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Vẽ các vòng tròn và hình elip không hàn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>Bezier Curve</source>
         <translation>Đường cong Bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>Draw bezier curves</source>
         <translation>Vẽ các đường cong bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2622"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2633"/>
         <source>&amp;Flood Fill</source>
         <translation>Lũ lụt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2623"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2634"/>
         <source>&amp;Annotation</source>
         <translation>&amp;Chú thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2623"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2634"/>
         <source>Add text to the picture</source>
         <translation>Thêm văn bản vào hình ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2637"/>
         <source>Point out things on the canvas</source>
         <translation>Chỉ ra những thứ trên vải</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2637"/>
         <source>&amp;Laser Pointer</source>
         <translation>Con trỏ &amp;laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2638"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>&amp;Chọn (vuông)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>&amp;Chọn (hình thức)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
         <source>Select a free-form area for copying</source>
         <translation>Chọn một khu vực hình thức tự do để sao chép</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
         <source>Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
         <source>Zoom the canvas view</source>
         <translation>Thu phóng vùng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2641"/>
+        <source>Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2641"/>
+        <source>Find out who did it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>&amp;Mark</source>
         <translation>Đánh &amp;dấu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>Để lại một điểm đánh dấu để tìm vị trí nảy trên bản ghi âm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2648"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <source>&amp;Tools</source>
         <translation>&amp;Công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2652"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Phím tắt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2654"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2667"/>
         <source>Toggle eraser mode</source>
         <translation>Chuyển đổi chế độ tẩy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2655"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2668"/>
         <source>Swap Last Colors</source>
         <translation>Hoán đổi màu sắc cuối cùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2708"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Trang chủ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2709"/>
         <source>Tablet Tester</source>
         <translation>Máy tính bảng thử nghiệm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2710"/>
         <source>Log File</source>
         <translation>Tập tin nhật ký</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2711"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;Giới thiệu Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>Giới thiệu &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2724"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2713"/>
+        <source>Check For Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2744"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>&amp;Trợ giúp</translation>
@@ -1800,29 +1797,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Di chuyến</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/navigator.ui" line="48"/>
-        <source>Flip canvas</source>
-        <translation>Lật vùng vẽ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="69"/>
-        <source>Canvas can be rotated by dragging while holding Ctrl+Space</source>
-        <translation>Vùng vẽ có thể được xoay bằng cách kéo trong khi giữ Ctrl+Space</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="94"/>
+        <location filename="../../desktop/ui/navigator.ui" line="43"/>
         <source>Reset Zoom</source>
         <translation>Đặt lại phóng</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="124"/>
-        <source>Mirror canvas</source>
-        <translation>Gương vùng vẽ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="145"/>
-        <source>Reset Rotation</source>
-        <translation>Đặt lại xoay</translation>
     </message>
 </context>
 <context>
@@ -1835,7 +1812,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/netstats.ui" line="52"/>
         <source>Latency:</source>
-	<translation>Độ trễ:</translation>
+        <translation>Độ trễ:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/netstats.ui" line="69"/>
@@ -1961,7 +1938,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>QApplication</name>
     <message>
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="79"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="539"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="552"/>
         <source>All files (*)</source>
         <translation>Mọi tập tin (*)</translation>
     </message>
@@ -1971,99 +1948,92 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Định dạng tập tin chưa biết</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="525"/>
+        <location filename="../../desktop/mainwindow.cpp" line="546"/>
         <source>Warning</source>
         <translation>Cảnh báo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1020"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1106"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1881"/>
-        <source>All Files (*)</source>
-        <translation>Mọi tập tin (*)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="53"/>
-        <source>Current</source>
-        <translation>Hiện thời</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="57"/>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="88"/>
         <source>%1 s. ago</source>
         <translation>%1 g trước</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="87"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="88"/>
         <source>Freehand</source>
         <translation>Bằng tay</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="92"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="93"/>
         <source>Eraser</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="97"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="98"/>
         <source>Line</source>
         <translation>Đường thẳng</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="102"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="103"/>
         <source>Rectangle</source>
         <translation>Vuông</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="107"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="108"/>
         <source>Ellipse</source>
         <translation>Bầu dục</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="112"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="113"/>
         <source>Bezier Curve</source>
         <translation>Dường cong Bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="117"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="118"/>
         <source>Flood Fill</source>
         <translation>Lũ lụt</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="122"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="123"/>
         <source>Annotation</source>
         <translation>Chú thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="127"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="128"/>
         <source>Color Picker</source>
         <translation>Bộ chọn lọc màu</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="132"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="133"/>
         <source>Laser Pointer</source>
         <translation>Con trỏ laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="137"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="138"/>
         <source>Selection (Rectangular)</source>
         <translation>Chọn (vuông)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="142"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="143"/>
         <source>Selection (Free-Form)</source>
         <translation>Chọn (hình thức)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="147"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="148"/>
         <source>Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="185"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
+        <source>Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="197"/>
         <source>Erase</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="189"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="201"/>
         <source>Color Erase</source>
         <translation>Màu xóa</translation>
     </message>
@@ -2071,78 +2041,93 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../canvas/loader.cpp" line="68"/>
-        <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.</source>
-        <translation>Drawpile không hỗ trợ tất cả các tính năng dược sử dụng trong tệp OpenRaster này. Lưu tập tin này có thể dẫn đến mất dữ liệu.</translation>
+        <location filename="../canvas/loader.cpp" line="92"/>
+        <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
+</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../canvas/loader.cpp" line="70"/>
+        <location filename="../canvas/loader.cpp" line="94"/>
         <source>Application specific extensions are used</source>
         <translation>Ứng dụng mở rộng cụ thể được sử dụng</translation>
     </message>
     <message>
-        <location filename="../canvas/loader.cpp" line="72"/>
+        <location filename="../canvas/loader.cpp" line="96"/>
         <source>Nested layers are not fully supported</source>
         <translation>Các lớp lồng nhau không được hỗ trợ đầu đủ</translation>
     </message>
     <message>
-        <location filename="../canvas/loader.cpp" line="74"/>
+        <location filename="../canvas/loader.cpp" line="98"/>
         <source>Unsupported background tile size</source>
         <translation>Kích thước gạch nền không được hỗ trợ</translation>
     </message>
     <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="57"/>
-        <location filename="../net/sessionlistingmodel.cpp" line="59"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="91"/>
         <source>%1h %2m</source>
         <translation>%1g %2p</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="387"/>
+        <location filename="../ora/orareader.cpp" line="396"/>
         <source>Image has zero size!</source>
         <translation>Hình ảnh có kích thước bằng không!</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="390"/>
+        <location filename="../ora/orareader.cpp" line="399"/>
         <source>Image is too big!</source>
         <translation>Hình ảnh quá lớn!</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="393"/>
+        <location filename="../ora/orareader.cpp" line="402"/>
         <source>No layers found!</source>
         <translation>Không tìm thấy lớp nào!</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="452"/>
+        <location filename="../ora/orareader.cpp" line="464"/>
         <source>Couldn&apos;t load layer %1</source>
         <translation>Không thể mở lớp %1</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="517"/>
+        <location filename="../ora/orareader.cpp" line="530"/>
         <source>File is not an OpenRaster file</source>
         <translation>Tập tin không phải kiểu OpenRaster</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="87"/>
+        <location filename="../utils/images.cpp" line="109"/>
+        <source>Images (%1)</source>
+        <translation type="unfinished">Ảnh (%1)</translation>
+    </message>
+    <message>
+        <location filename="../utils/images.cpp" line="117"/>
         <source>Binary Recordings (%1)</source>
         <translation>Ghi nhị phân nên (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="88"/>
+        <location filename="../utils/images.cpp" line="118"/>
         <source>Text Recordings (%1)</source>
         <translation>Ghi văn bản thường (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="89"/>
+        <location filename="../utils/images.cpp" line="119"/>
         <source>Compressed Binary Recordings (%1)</source>
         <translation>Bản ghi nhị phân nén (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="90"/>
+        <location filename="../utils/images.cpp" line="120"/>
         <source>Compressed Text Recordings (%1)</source>
         <translation>Bản ghi văn bản nén (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="93"/>
+        <location filename="../utils/images.cpp" line="127"/>
+        <source>Recordings (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/images.cpp" line="134"/>
+        <source>All Supported Files (%1)</source>
+        <translation type="unfinished">Mọi tập tin hỗ trợ (%1)</translation>
+    </message>
+    <message>
+        <location filename="../utils/images.cpp" line="140"/>
         <source>All Files (*)</source>
         <translation>Mọi tập tin (*)</translation>
     </message>
@@ -2178,7 +2163,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/resizedialog.ui" line="96"/>
         <source>Keep aspect ratio</source>
-    <translation>Giữ tỷ lệ khung hình</translation>
+        <translation>Giữ tỷ lệ khung hình</translation>
     </message>
 </context>
 <context>
@@ -2205,70 +2190,79 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>ServerDiscoveryModel</name>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="69"/>
-        <source>(untitled)</source>
-        <translation>(không tựa đề)</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="94"/>
-        <source>Title</source>
-        <translation>Tựa đề</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="95"/>
-        <source>Server</source>
-        <translation>Máy chủ</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="96"/>
-        <source>Age</source>
-        <translation>Tuổi</translation>
-    </message>
-</context>
-<context>
     <name>ServerLogDialog</name>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
+        <location filename="../../desktop/ui/serverlog.ui" line="24"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/serverlog.ui" line="20"/>
+        <location filename="../../desktop/ui/serverlog.ui" line="30"/>
+        <location filename="../../desktop/ui/serverlog.ui" line="56"/>
         <source>Filter</source>
         <translation>Bộ lọc</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="48"/>
+        <source>Users</source>
+        <translation type="unfinished">Người dùng</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="80"/>
+        <source>Inspect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="103"/>
+        <source>Kick</source>
+        <translation type="unfinished">Đá</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="110"/>
+        <source>Ban</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="133"/>
+        <source>Undo</source>
+        <translation type="unfinished">Hủy</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/serverlog.ui" line="140"/>
+        <source>Redo</source>
+        <translation type="unfinished">Lặp lại</translation>
     </message>
 </context>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="82"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="123"/>
         <source>(untitled)</source>
         <translation>(không tựa đề)</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="127"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="177"/>
         <source>Title</source>
         <translation>Tựa đề</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="128"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="178"/>
         <source>Server</source>
         <translation>Máy chủ</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="129"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="179"/>
         <source>Users</source>
         <translation>Người dùng</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="130"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="180"/>
         <source>Owner</source>
         <translation>Chủ sở hữu</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="131"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="181"/>
         <source>Age</source>
         <translation>Tuổi</translation>
     </message>
@@ -2451,28 +2445,33 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Tin cậy</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="361"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="360"/>
+        <source>permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="368"/>
         <source>Banned users</source>
         <translation>Cấm từ người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="392"/>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="458"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="399"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="465"/>
         <source>Remove selected</source>
         <translation>Loại bỏ chọn</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="402"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="409"/>
         <source>Announcements</source>
         <translation>Thông báo</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="436"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="443"/>
         <source>Private listing</source>
         <translation>Liệt kê riêng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="447"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="454"/>
         <source>Public listing</source>
         <translation>Liệt kê công khai</translation>
     </message>
@@ -2485,7 +2484,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Tùy thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="414"/>
+        <location filename="../../desktop/ui/settings.ui" line="435"/>
         <source>s</source>
         <translation>g</translation>
     </message>
@@ -2495,17 +2494,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Mạng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="570"/>
+        <location filename="../../desktop/ui/settings.ui" line="591"/>
         <source>unlimited</source>
         <translation>không giới hạn</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="573"/>
+        <location filename="../../desktop/ui/settings.ui" line="594"/>
         <source> Mb</source>
         <translation> Mb</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="563"/>
+        <location filename="../../desktop/ui/settings.ui" line="584"/>
         <source>Session history:</source>
         <translation>Lịch sử phiên:</translation>
     </message>
@@ -2541,217 +2540,232 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="105"/>
+        <source>Theme:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="112"/>
+        <source>Night mode (requires restart)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="119"/>
         <source>Logging:</source>
         <translation>Log:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="112"/>
+        <location filename="../../desktop/ui/settings.ui" line="126"/>
         <source>Write log file</source>
         <translation>Ghi tập tin log</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="132"/>
+        <location filename="../../desktop/ui/settings.ui" line="146"/>
         <source>Tablet:</source>
         <translation>Máy tính bảng:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="139"/>
+        <location filename="../../desktop/ui/settings.ui" line="153"/>
         <source>Enable pressure sensitivity</source>
         <translation>Cho phép độ nhạy áp lực</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="149"/>
+        <location filename="../../desktop/ui/settings.ui" line="163"/>
         <source>Use Windows Ink (requires restart)</source>
         <translation>Sử dụng Windows Ink (yêu cầu khởi động lại)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="156"/>
+        <location filename="../../desktop/ui/settings.ui" line="170"/>
         <source>Enable relative pen mode hack (Wintab only)</source>
         <translation>Kích hoạt chế độ bút tương đối hack (chỉ Wintab)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="163"/>
+        <location filename="../../desktop/ui/settings.ui" line="177"/>
         <source>Detect eraser tip</source>
         <translation>Phát hiện đầu tẩy</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="263"/>
+        <location filename="../../desktop/ui/settings.ui" line="277"/>
         <source>Brush cursor:</source>
         <translation>Con trỏ bàn chải:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="271"/>
+        <location filename="../../desktop/ui/settings.ui" line="285"/>
         <source>Dot</source>
         <translation>Chấm</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="276"/>
+        <location filename="../../desktop/ui/settings.ui" line="290"/>
         <source>Crosshair</source>
         <translation>Crosshair</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="281"/>
+        <location filename="../../desktop/ui/settings.ui" line="295"/>
         <source>Arrow</source>
         <translation>Mũi tên</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="302"/>
+        <location filename="../../desktop/ui/settings.ui" line="316"/>
         <source>Tools:</source>
         <translation>Công cụ:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="309"/>
+        <location filename="../../desktop/ui/settings.ui" line="323"/>
         <source>Shortcut toggles last selection</source>
         <translation>Phím tăt bật tắt lựa chọn cuối cùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="320"/>
+        <location filename="../../desktop/ui/settings.ui" line="330"/>
+        <source>Share color across brush slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="341"/>
         <source>Notification volume:</source>
         <translation>Âm lượng báo:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="360"/>
+        <location filename="../../desktop/ui/settings.ui" line="381"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="367"/>
+        <location filename="../../desktop/ui/settings.ui" line="388"/>
         <source>Recording marker</source>
         <translation>Thu đĩa đánh dấu</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="374"/>
+        <location filename="../../desktop/ui/settings.ui" line="395"/>
         <source>User login and logout</source>
         <translation>Người dùng đăng nhập và đăng xuất</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="381"/>
+        <location filename="../../desktop/ui/settings.ui" line="402"/>
         <source>Canvas lock</source>
         <translation>Khóa vùng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="388"/>
+        <location filename="../../desktop/ui/settings.ui" line="409"/>
         <source>Notifications:</source>
         <translation>Thông báo:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="411"/>
+        <location filename="../../desktop/ui/settings.ui" line="432"/>
         <source>shortest: </source>
         <translation>ngắn nhất: </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="448"/>
+        <location filename="../../desktop/ui/settings.ui" line="469"/>
         <source>Add timestamp markers</source>
         <translation>Thêm dấu thời gian</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="457"/>
+        <location filename="../../desktop/ui/settings.ui" line="478"/>
         <source> minutes</source>
         <translation> phút</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="460"/>
+        <location filename="../../desktop/ui/settings.ui" line="481"/>
         <source>every </source>
         <translation>mọi </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="801"/>
+        <location filename="../../desktop/ui/settings.ui" line="822"/>
         <source>NSFM tag words:</source>
         <translation>Từ thẻ NSFM:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="811"/>
+        <location filename="../../desktop/ui/settings.ui" line="832"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>Tự động thêm thẻ NSFM dựa trên tiêu đề</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="818"/>
+        <location filename="../../desktop/ui/settings.ui" line="839"/>
         <source>NSFM sessions:</source>
         <translation>Phiên NSFM:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="825"/>
+        <location filename="../../desktop/ui/settings.ui" line="846"/>
         <source>&amp;Unrestricted</source>
         <translation>K&amp;hông bị hạn chế</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="832"/>
+        <location filename="../../desktop/ui/settings.ui" line="853"/>
         <source>Hide fro&amp;m listings</source>
         <translation>Ẩn &amp;khỏi danh sách</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="839"/>
+        <location filename="../../desktop/ui/settings.ui" line="860"/>
         <source>Disallow &amp;joining</source>
         <translation>Không cho phép tham &amp;gia</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="846"/>
+        <location filename="../../desktop/ui/settings.ui" line="867"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation>Ngắt kết nối khi được gắn &amp;thẻ là NSFM</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="853"/>
+        <location filename="../../desktop/ui/settings.ui" line="874"/>
         <source>Lock</source>
-	<translation>Khóa</translation>
+        <translation>Khóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="873"/>
+        <location filename="../../desktop/ui/settings.ui" line="894"/>
         <source>Block layer uncensoring</source>
         <translation>Chặn kiểm duyệt lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="884"/>
+        <location filename="../../desktop/ui/settings.ui" line="905"/>
         <source>Note: passwords are not encrypted.</source>
         <translation>Lưu ý: mật khẩu không được mã hóa.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="948"/>
+        <location filename="../../desktop/ui/settings.ui" line="969"/>
         <source>Add...</source>
         <translation>Thêm...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="955"/>
+        <location filename="../../desktop/ui/settings.ui" line="976"/>
         <source>Delete</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="399"/>
+        <location filename="../../desktop/ui/settings.ui" line="420"/>
         <source>Record pauses</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="549"/>
+        <location filename="../../desktop/ui/settings.ui" line="570"/>
         <source>Default server port:</source>
         <translation>Cổng máy chủ mặc định:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="237"/>
-        <location filename="../../desktop/ui/settings.ui" line="599"/>
+        <location filename="../../desktop/ui/settings.ui" line="251"/>
+        <location filename="../../desktop/ui/settings.ui" line="620"/>
         <source> s</source>
         <translation> g</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="230"/>
+        <location filename="../../desktop/ui/settings.ui" line="244"/>
         <source>Autosave interval:</source>
         <translation>Tự động lưu khoảng thời giay:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="193"/>
+        <location filename="../../desktop/ui/settings.ui" line="207"/>
         <source>Scroll with finger</source>
         <translation>Cuộn bằng ngòn tay</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="186"/>
+        <location filename="../../desktop/ui/settings.ui" line="200"/>
         <source>Touch:</source>
         <translation>Chạm:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="200"/>
+        <location filename="../../desktop/ui/settings.ui" line="214"/>
         <source>Pinch to zoom</source>
         <translation>Véo để phóng to</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="207"/>
+        <location filename="../../desktop/ui/settings.ui" line="221"/>
         <source>Twist to rotate</source>
         <translation>Xoay để xoay</translation>
     </message>
@@ -2761,22 +2775,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hoạt hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="503"/>
+        <location filename="../../desktop/ui/settings.ui" line="524"/>
         <source> below</source>
         <translation> dưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="510"/>
+        <location filename="../../desktop/ui/settings.ui" line="531"/>
         <source> above</source>
         <translation> trên</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="494"/>
+        <location filename="../../desktop/ui/settings.ui" line="515"/>
         <source>Onionskin layers:</source>
         <translation>Lớp hành tây:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="535"/>
+        <location filename="../../desktop/ui/settings.ui" line="556"/>
         <source>Tint layers</source>
         <translation>Lớp Tint</translation>
     </message>
@@ -2786,7 +2800,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Phím tắt</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="673"/>
+        <location filename="../../desktop/ui/settings.ui" line="694"/>
         <source>Filter</source>
         <translation>Bộ lọc</translation>
     </message>
@@ -2801,49 +2815,49 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Liệt kê máy chủ</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="781"/>
+        <location filename="../../desktop/ui/settings.ui" line="802"/>
         <source>Add</source>
         <translation>Thêm</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="706"/>
+        <location filename="../../desktop/ui/settings.ui" line="727"/>
         <source>Import trusted...</source>
         <translation>Nhập tin cậy...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="592"/>
+        <location filename="../../desktop/ui/settings.ui" line="613"/>
         <source>Connection timeout:</source>
         <translation>Hết thời gian kết nối:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="615"/>
+        <location filename="../../desktop/ui/settings.ui" line="636"/>
         <source>Announce with Zeroconf</source>
         <translation>Thông báo với Zeroconf</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="622"/>
+        <location filename="../../desktop/ui/settings.ui" line="643"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>Tự động thiết lập chuyển tiếp cổng với UPnP</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="629"/>
+        <location filename="../../desktop/ui/settings.ui" line="650"/>
         <source>Never publish user list</source>
         <translation>Không bao giờ công bố danh sách người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="636"/>
+        <location filename="../../desktop/ui/settings.ui" line="657"/>
         <source>Automatically reset when space is low</source>
         <translation>Tự động thiết lập lại khi không gian thấp</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="729"/>
+        <location filename="../../desktop/ui/settings.ui" line="750"/>
         <source>Mark as trusted</source>
         <translation>Dánh dấu là đáng tin cậy</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="743"/>
-        <location filename="../../desktop/ui/settings.ui" line="788"/>
-        <location filename="../../desktop/ui/settings.ui" line="913"/>
+        <location filename="../../desktop/ui/settings.ui" line="764"/>
+        <location filename="../../desktop/ui/settings.ui" line="809"/>
+        <location filename="../../desktop/ui/settings.ui" line="934"/>
         <source>Remove</source>
         <translation>Loại bỏ</translation>
     </message>
@@ -2932,6 +2946,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/ui/textsettings.ui" line="266"/>
         <source>Protected</source>
         <translation>Đã được bảo vệ</translation>
+    </message>
+</context>
+<context>
+    <name>VersionCheckDialog</name>
+    <message>
+        <location filename="../../desktop/ui/versioncheck.ui" line="14"/>
+        <source>New Version Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/versioncheck.ui" line="54"/>
+        <source>Don&apos;t check automatically</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3040,12 +3067,57 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="230"/>
+        <location filename="../canvas/userlist.cpp" line="72"/>
+        <source>Moderator</source>
+        <translation type="unfinished">Người điều hành</translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="74"/>
+        <source>Operator</source>
+        <translation type="unfinished">Nhà điều hành</translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="76"/>
+        <source>Trusted</source>
+        <translation type="unfinished">Tin cậy</translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="78"/>
+        <source>Registered</source>
+        <translation type="unfinished">Đã đăng ký</translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="82"/>
+        <source>Online</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="82"/>
+        <source>Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="112"/>
+        <source>User</source>
+        <translation type="unfinished">Người dùng</translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="113"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="114"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/userlist.cpp" line="285"/>
         <source>Server</source>
         <translation>Máy chủ</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="242"/>
+        <location filename="../canvas/userlist.cpp" line="292"/>
         <source>User #%1</source>
         <translation>Người dùng #%1</translation>
     </message>
@@ -3143,17 +3215,29 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Tham gia</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="176"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
+        <source>Nearby</source>
+        <translation type="unfinished">Gần đây</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="219"/>
         <source>Searching...</source>
         <translation>Tìm kiếm...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="192"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="235"/>
         <source>Record</source>
         <translation>Thu đĩa</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="280"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="286"/>
         <source>Room code not found!</source>
         <translation>Không tìm thấy mã phòng!</translation>
     </message>
@@ -3161,12 +3245,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="144"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="143"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="203"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="202"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
@@ -3248,12 +3332,31 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="261"/>
         <source>Stop on markers</source>
-	<translation>Dừng thu từ đánh dấu</translation>
+        <translation>Dừng thu từ đánh dấu</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="270"/>
         <source>No indexed markers</source>
         <translation>Không có đánh dấu chỉ mục</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ResetDialog</name>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="127"/>
+        <source>Open...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="142"/>
+        <source>Current</source>
+        <translation type="unfinished">Hiện thời</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="161"/>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="176"/>
+        <source>Reset to Image</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3282,72 +3385,72 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="233"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="243"/>
         <source>Operators</source>
         <translation>Nhà điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="234"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="244"/>
         <source>Trusted</source>
         <translation>Tin cậy</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="235"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="245"/>
         <source>Registered</source>
         <translation>Đã đăng ký</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="236"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="246"/>
         <source>Everyone</source>
         <translation>Mọi</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="264"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="329"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>có</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="264"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="329"/>
         <source>change</source>
         <comment>password</comment>
         <translation>thay đổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="266"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="331"/>
         <source>no</source>
         <comment>password</comment>
         <translation>không</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="266"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="331"/>
         <source>assign</source>
         <comment>password</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="322"/>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="343"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="387"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="408"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>Đặt mật khẩu mới hoặc để trống để xóa.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="324"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="389"/>
         <source>Set a password for the session.</source>
         <translation>Đặt mật khẩu cho phiên.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="329"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="394"/>
         <source>Session Password</source>
         <translation>Mật khẩu phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="345"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="410"/>
         <source>Set a password for gaining operator status.</source>
         <translation>Đặt mật khẩu để đạt được trạng thái nhà điều hành.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="350"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="415"/>
         <source>Operator Password</source>
         <translation>Mật khẩu nhà điều hành</translation>
     </message>
@@ -3366,84 +3469,84 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Mặc định</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="218"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="223"/>
         <source>Reset settings</source>
         <translation>Đặt lại tùy thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="219"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="224"/>
         <source>Clear all settings?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="343"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="653"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="352"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="666"/>
         <source>Unlock</source>
         <translation>Mở khóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="343"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="644"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="352"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="657"/>
         <source>Lock</source>
         <translation>Khóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="537"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="547"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="552"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="550"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="560"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="565"/>
         <source>Import trusted certificate</source>
         <translation>Nhập tin cậy chứng nhận</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="538"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="551"/>
         <source>Certificates (%1)</source>
         <translation>Chứng nhận (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="547"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="560"/>
         <source>Invalid certificate!</source>
         <translation>Chứng nhận không hợp lệ!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="552"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="565"/>
         <source>Certificate common name not set!</source>
         <translation>Giấy chứng nhận tên chung không được đặt!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="566"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="572"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="580"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="579"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="585"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="593"/>
         <source>Add public listing server</source>
         <translation>Thêm máy chủ niêm yết công khai</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="572"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="585"/>
         <source>Invalid URL!</source>
         <translation>URL không hợp lệ!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="630"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="646"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="643"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="659"/>
         <source>Unlock Parental Controls</source>
         <translation>Mở khóa kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="631"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="644"/>
         <source>Password</source>
         <translation>Mật khẩu</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="633"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="646"/>
         <source>Lock Parental Controls</source>
         <translation>Khóa sự kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="634"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="647"/>
         <source>Set password</source>
         <translation>Đặt mật khẩu</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="646"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="659"/>
         <source>Incorrect password</source>
         <translation>Không đúng mật khấu</translation>
     </message>
@@ -3609,33 +3712,38 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="48"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="50"/>
         <source>Layers</source>
         <translation>Lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="70"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="72"/>
         <source>Insert layer</source>
         <translation>Chèn lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="76"/>
         <source>Hide from self</source>
         <translation>Ẩn từ chính nó</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="79"/>
+        <source>Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="84"/>
         <source>Default</source>
         <translation>Mặc định</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="83"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="88"/>
         <source>Rename</source>
         <translation>Đổi tên</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="355"/>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="376"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="381"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="402"/>
         <source>Layer</source>
         <translation>Lớp</translation>
     </message>
@@ -3643,9 +3751,19 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="140"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="270"/>
         <source>Navigator</source>
         <translation>Di chuyến</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/navigator.cpp" line="284"/>
+        <source>Show Cursors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/navigator.cpp" line="288"/>
+        <source>Realtime Update</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4000,14 +4118,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>sessionlisting::ListServerModel</name>
-    <message>
-        <location filename="../utils/listservermodel.cpp" line="198"/>
-        <source>Nearby</source>
-        <translation>Gần đây</translation>
-    </message>
-</context>
-<context>
     <name>tools::AnnotationSettings</name>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
@@ -4070,7 +4180,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::BrushPreview</name>
     <message>
-        <location filename="../../desktop/widgets/brushpreview.cpp" line="53"/>
+        <location filename="../../desktop/widgets/brushpreview.cpp" line="55"/>
         <source>Change Foreground Color</source>
         <translation>Thay đổi bằng màu cận cảnh</translation>
     </message>
@@ -4078,34 +4188,49 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::ChatBox</name>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="181"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="134"/>
+        <source>Public</source>
+        <translation type="unfinished">Công khai</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="195"/>
         <source>Chat (recorded)...</source>
         <translation>Chat (đã ghi lại)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="184"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="198"/>
         <source>Chat...</source>
         <translation>Chat...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="441"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="495"/>
         <source>%1 joined the session</source>
         <translation>%1 tham gia phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="455"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="513"/>
         <source>%1 left the session</source>
         <translation>%1 rời khỏi phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="614"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="690"/>
         <source>Invalid dice roll description</source>
         <translation>Mô tả cuộn xúc xắc không hợp lệ</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/chatwidget.cpp" line="471"/>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="751"/>
+        <source>Clear</source>
+        <translation type="unfinished">Xóa</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="753"/>
+        <source>Compact mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/chatwidget.cpp" line="534"/>
         <source>You have been kicked by %1</source>
-    <translation>Bạn đã bị đá bởi %1</translation>
+        <translation>Bạn đã bị đá bởi %1</translation>
     </message>
 </context>
 <context>
@@ -4119,122 +4244,122 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="388"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="389"/>
         <source>not connected</source>
         <translation>chưa kết nối</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="74"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="75"/>
         <source>Copy address to clipboard</source>
         <translation>Chép địa chỉ vào clipboard</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="80"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="81"/>
         <source>Copy session URL to clipboard</source>
         <translation>Chép URL phiên vào clipboard</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="86"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="87"/>
         <source>Get externally visible IP address</source>
         <translation>Nhận địa chỉ IP hiển thị bên ngoài</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="113"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="114"/>
         <source>Statistics</source>
         <translation>Thống kê</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="125"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="126"/>
         <source>Show certificate</source>
         <translation>Hiện chứng nhận</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="393"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="394"/>
         <source>Connecting to %1...</source>
         <translation>Đang kết nối đến %1...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="399"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="400"/>
         <source>Host: %1</source>
         <translation>Máy chủ: %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="174"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="175"/>
         <source>Logged in!</source>
         <translation>Đăng nhập!</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="193"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="194"/>
         <source>A previously unvisited host</source>
         <translation>Một máy chủ không mong muốn trước đây</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="198"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="199"/>
         <source>Host certificate has not changed since the last visit</source>
         <translation>Chứng chỉ máy chủ đã không thay đổi kể từ lần truy cập trước</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="203"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="204"/>
         <source>This is a trusted host</source>
         <translation>Đây là máy đã được đánh dấu là đáng tin</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="403"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="404"/>
         <source>Logging out...</source>
         <translation>Đã xuất...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="240"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="241"/>
         <source>Disconnected</source>
         <translation>Đã ngắt kết nối</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="98"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="99"/>
         <source>Hide address</source>
         <translation>Ẩn địa chỉ</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="356"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="357"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; gia</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="362"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="363"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; rời</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="367"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="368"/>
         <source>You have been kicked by %1</source>
         <translation>Bạn đã bị đá bởi %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="391"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="392"/>
         <source>Connecting...</source>
         <translation>Đang kết nối...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="397"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="398"/>
         <source>Connected</source>
         <translation>Đã kết nối</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="401"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="402"/>
         <source>Room: %1</source>
         <translation>Phòng: %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="437"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="438"/>
         <source>Notice</source>
         <translation>Ghi chú</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="438"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="439"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
         <translation>Nhà cung cấp dịch vụ Internet của bạn đang sử dụng NAT Carrier. Điều này khiến người khác không thể kết nối trực tiếp với bạn. Xem trang trợ giúp của Drawpile để biết cách giải quyết.</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="442"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="443"/>
         <source>Don&apos;t show this again</source>
         <translation>Đừng hiện cái này nữa</translation>
     </message>
@@ -4276,16 +4401,34 @@ Thập lục: %5</translation>
     </message>
 </context>
 <context>
+    <name>widgets::PresetSelector</name>
+    <message>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="47"/>
+        <source>Presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="55"/>
+        <source>Save</source>
+        <translation type="unfinished">Lưu</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="58"/>
+        <source>Delete</source>
+        <translation type="unfinished">Xóa</translation>
+    </message>
+</context>
+<context>
     <name>widgets::UserItemDelegate</name>
     <message>
         <location filename="../../desktop/widgets/useritemdelegate.cpp" line="47"/>
-        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="155"/>
+        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="160"/>
         <source>Operator</source>
         <translation>Nhà điều hành</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/useritemdelegate.cpp" line="48"/>
-        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="157"/>
+        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="162"/>
         <source>Trusted</source>
         <translation>Tin cậy</translation>
     </message>
@@ -4325,17 +4468,17 @@ Thập lục: %5</translation>
         <translation>Tin nhắn riêng</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="151"/>
+        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="156"/>
         <source>Moderator</source>
         <translation>Người điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="162"/>
+        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="167"/>
         <source>Bot</source>
         <translation>Bot</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="167"/>
+        <location filename="../../desktop/widgets/useritemdelegate.cpp" line="172"/>
         <source>Registered</source>
         <translation>Đã đăng ký</translation>
     </message>
@@ -4343,14 +4486,9 @@ Thập lục: %5</translation>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../../desktop/widgets/viewstatus.cpp" line="44"/>
+        <location filename="../../desktop/widgets/viewstatus.cpp" line="64"/>
         <source>Canvas Rotation</source>
         <translation>Xoay vùng vẽ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/viewstatus.cpp" line="72"/>
-        <source>Zoom</source>
-        <translation>Phóng</translation>
     </message>
 </context>
 </TS>

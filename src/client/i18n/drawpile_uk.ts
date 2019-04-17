@@ -617,32 +617,32 @@
         <translation>Було випущено нову версію Drawpile, яка є несумісною з поточною.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
-        <source>Listing server</source>
-        <translation>Сервет списку</translation>
+        <location filename="../../desktop/ui/joindialog.ui" line="68"/>
+        <source>Show:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="49"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="75"/>
+        <source>Passworded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="82"/>
+        <source>NSFW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
         <source>Filter</source>
         <translation>Фільтр</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="59"/>
-        <source>Show password protected sessions</source>
-        <translation>Показувати захищені паролем сеанси</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="73"/>
-        <source>Show NSFW sessions</source>
-        <translation>Показувати непристойні сеанси</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="221"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="111"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
         <translation>Вкажіть адресу вузла, адресу сеансу або код кімнати для долучення до сеансу:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="252"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="142"/>
         <source>Record session</source>
         <translation>Записувати сеанс</translation>
     </message>
@@ -1201,7 +1201,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2270"/>
         <source>Paste &amp;From File...</source>
-        <translation>Вставити &amp;із файла...</translation>
+        <translation>Вставити&#xa0;&amp;із файла...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2271"/>
@@ -2067,8 +2067,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Непідтримуваний розмір мозаїки тла</translation>
     </message>
     <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="57"/>
-        <location filename="../net/sessionlistingmodel.cpp" line="59"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="91"/>
         <source>%1h %2m</source>
         <translation>%1г %2хв</translation>
     </message>
@@ -2196,29 +2195,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>ServerDiscoveryModel</name>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="69"/>
-        <source>(untitled)</source>
-        <translation>(без назви)</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="94"/>
-        <source>Title</source>
-        <translation>Заголовок</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="95"/>
-        <source>Server</source>
-        <translation>Сервер</translation>
-    </message>
-    <message>
-        <location filename="../net/serverdiscoverymodel.cpp" line="96"/>
-        <source>Age</source>
-        <translation>Вік</translation>
-    </message>
-</context>
-<context>
     <name>ServerLogDialog</name>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
@@ -2266,32 +2242,32 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="82"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="123"/>
         <source>(untitled)</source>
         <translation>(без назви)</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="127"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="177"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="128"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="178"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="129"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="179"/>
         <source>Users</source>
         <translation>Користувачі</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="130"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="180"/>
         <source>Owner</source>
         <translation>Власник</translation>
     </message>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="131"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="181"/>
         <source>Age</source>
         <translation>Вік</translation>
     </message>
@@ -3239,22 +3215,34 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::JoinDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="62"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="61"/>
         <source>Join</source>
         <translation>Долучитися</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="180"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
+        <source>Nearby</source>
+        <translation type="unfinished">Поблизу</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="219"/>
         <source>Searching...</source>
         <translation>Шукаємо…</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="196"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="235"/>
         <source>Record</source>
         <translation>Запис</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="284"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="286"/>
         <source>Room code not found!</source>
         <translation>Не знайдено код кімнати!</translation>
     </message>
@@ -3768,17 +3756,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="264"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="270"/>
         <source>Navigator</source>
         <translation>Навігатор</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="278"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="284"/>
         <source>Show Cursors</source>
         <translation>Показати курсори</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="282"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="288"/>
         <source>Realtime Update</source>
         <translation>Оновлення у режимі реального часу</translation>
     </message>
@@ -4132,14 +4120,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../recording/playbackcontroller.cpp" line="453"/>
         <source>%1 s.</source>
         <translation>%1 с.</translation>
-    </message>
-</context>
-<context>
-    <name>sessionlisting::ListServerModel</name>
-    <message>
-        <location filename="../utils/listservermodel.cpp" line="198"/>
-        <source>Nearby</source>
-        <translation>Поблизу</translation>
     </message>
 </context>
 <context>
