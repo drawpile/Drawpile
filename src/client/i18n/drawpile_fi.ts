@@ -70,7 +70,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="298"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse väri kuvasta</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="312"/>
@@ -546,7 +546,7 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
         <source>Server</source>
-        <translation type="unfinished">Palvelin</translation>
+        <translation>Palvelin</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="184"/>
@@ -602,7 +602,7 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/inspectorsettings.ui" line="17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Viimeksi muokannut:</translation>
     </message>
 </context>
 <context>
@@ -620,22 +620,22 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="30"/>
         <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uusi Drawpile versio joka ei ole yhteensopiva tämän kanssa on julkaistu.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="68"/>
         <source>Show:</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="75"/>
         <source>Passworded</source>
-        <translation type="unfinished"></translation>
+        <translation>Salasanasuojatut</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="82"/>
         <source>NSFW</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFW</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="111"/>
@@ -1046,7 +1046,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2173"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Piilota telakat</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2188"/>
@@ -1709,12 +1709,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2641"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkista</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2641"/>
         <source>Find out who did it</source>
-        <translation type="unfinished"></translation>
+        <translation>Selvitä kuka sen teki</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2642"/>
@@ -1777,7 +1777,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2713"/>
         <source>Check For Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkista päivitykset</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2744"/>
@@ -2027,7 +2027,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkista</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="197"/>
@@ -2096,7 +2096,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../utils/images.cpp" line="109"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Kuvat (%1)</translation>
+        <translation>Kuvat (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="117"/>
@@ -2121,12 +2121,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../utils/images.cpp" line="127"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished">Nauhoitukset (%1)</translation>
+        <translation>Nauhoitukset (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="134"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Kaikki tuetut tiedostot (%1)</translation>
+        <translation>Kaikki tuetut tiedostot (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="140"/>
@@ -2208,32 +2208,32 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="48"/>
         <source>Users</source>
-        <translation type="unfinished">Käyttäjiä</translation>
+        <translation>Käyttäjät</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="80"/>
         <source>Inspect</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarkista</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="103"/>
         <source>Kick</source>
-        <translation type="unfinished">Potki pois</translation>
+        <translation>Potki pois</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="110"/>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation>Bannaa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="133"/>
         <source>Undo</source>
-        <translation type="unfinished">Kumoa</translation>
+        <translation>Kumoa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="140"/>
         <source>Redo</source>
-        <translation type="unfinished">Toista</translation>
+        <translation>Toista</translation>
     </message>
 </context>
 <context>
@@ -2449,7 +2449,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="360"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>oikeudet</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="368"/>
@@ -2543,12 +2543,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="105"/>
         <source>Theme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Teema:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="112"/>
         <source>Night mode (requires restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yötila (vaatii uudelleenkäynnistyksen)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="119"/>
@@ -2618,7 +2618,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="330"/>
         <source>Share color across brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Sama väri kaikissa sudeissa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="341"/>
@@ -2955,12 +2955,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/versioncheck.ui" line="14"/>
         <source>New Version Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Uuden version tarkistus</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/versioncheck.ui" line="54"/>
         <source>Don&apos;t check automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Älä tarkista automaattisesti</translation>
     </message>
 </context>
 <context>
@@ -3071,47 +3071,47 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../canvas/userlist.cpp" line="72"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderaattori</translation>
+        <translation>Moderaattori</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="74"/>
         <source>Operator</source>
-        <translation type="unfinished">Operaattori</translation>
+        <translation>Operaattori</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="76"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Luotettu</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="78"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekisteröity</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Paikalla</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Poissa</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="112"/>
         <source>User</source>
-        <translation type="unfinished">Käyttäjä</translation>
+        <translation>Käyttäjä</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="113"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyyppi</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="114"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="285"/>
@@ -3220,13 +3220,13 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
         <source>Nearby</source>
-        <translation type="unfinished">Lähellä</translation>
+        <translation>Lähellä</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladataan...</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="219"/>
@@ -3347,18 +3347,18 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="127"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>Avaa...</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="142"/>
         <source>Current</source>
-        <translation type="unfinished">Nykyinen</translation>
+        <translation>Nykyinen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="161"/>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="176"/>
         <source>Reset to Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetoi kuvaan</translation>
     </message>
 </context>
 <context>
@@ -3731,7 +3731,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="79"/>
         <source>Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiinteä</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="84"/>
@@ -3760,12 +3760,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/docks/navigator.cpp" line="284"/>
         <source>Show Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä osoittimet</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/navigator.cpp" line="288"/>
         <source>Realtime Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Päivitä reaaliajassa</translation>
     </message>
 </context>
 <context>
@@ -4192,7 +4192,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/widgets/chatwidget.cpp" line="134"/>
         <source>Public</source>
-        <translation type="unfinished">Julkinen</translation>
+        <translation>Julkinen</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/chatwidget.cpp" line="195"/>
@@ -4222,12 +4222,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/widgets/chatwidget.cpp" line="751"/>
         <source>Clear</source>
-        <translation type="unfinished">Tyhjennä</translation>
+        <translation>Tyhjennä</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/chatwidget.cpp" line="753"/>
         <source>Compact mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompakti muoto</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/chatwidget.cpp" line="534"/>
@@ -4407,17 +4407,17 @@ Heksa: %5</translation>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="47"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Esiasetukset</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="55"/>
         <source>Save</source>
-        <translation type="unfinished">Tallenna</translation>
+        <translation>Tallenna</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="58"/>
         <source>Delete</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
 </context>
 <context>
