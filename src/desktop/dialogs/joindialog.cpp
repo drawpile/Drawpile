@@ -26,7 +26,7 @@
 #include "utils/sessionfilterproxymodel.h"
 #include "utils/images.h"
 #include "utils/newversion.h"
-#include "../shared/util/announcementapi.h"
+#include "../shared/listings/announcementapi.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD

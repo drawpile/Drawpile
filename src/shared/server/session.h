@@ -29,7 +29,7 @@
 #include <QUuid>
 #include <QJsonObject>
 
-#include "../util/announcementapi.h"
+#include "../listings/announcementapi.h"
 #include "../util/passwordhash.h"
 #include "../net/message.h"
 #include "../net/protover.h"

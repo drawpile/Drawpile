@@ -18,7 +18,7 @@
 */
 
 #include "announcementapi.h"
-#include "networkaccess.h"
+#include "../util/networkaccess.h"
 #include "config.h" // for DRAWPILE_VERSION
 
 #include <QNetworkRequest>

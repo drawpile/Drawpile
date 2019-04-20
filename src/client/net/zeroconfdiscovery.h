@@ -19,7 +19,7 @@
 #ifndef ZEROCONF_SERVER_DISCOVERY_H
 #define ZEROCONF_SERVER_DISCOVERY_H
 
-#include "../../shared/util/announcementapi.h"
+#include "../../shared/listings/announcementapi.h"
 
 #include <QVector>
 #include <KDNSSD/DNSSD/RemoteService>

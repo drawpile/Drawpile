@@ -19,7 +19,7 @@
 #ifndef SESSIONLISTINGMODEL_H
 #define SESSIONLISTINGMODEL_H
 
-#include "../../shared/util/announcementapi.h"
+#include "../../shared/listings/announcementapi.h"
 
 #include <QAbstractItemModel>
 #include <QUrl>

@@ -32,7 +32,7 @@
 #include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "../shared/util/announcementapi.h"
+#include "../shared/listings/announcementapi.h"
 #include "../shared/util/passwordhash.h"
 
 #include "ui_settings.h"

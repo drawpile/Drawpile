@@ -24,9 +24,10 @@ set (
 	record/header.cpp
 	util/passwordhash.cpp
 	util/filename.cpp
-	util/announcementapi.cpp
 	util/whatismyip.cpp
 	util/networkaccess.cpp
+	listings/announcementapi.cpp
+	listings/announcements.cpp
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp
