@@ -20,8 +20,8 @@
 
 #include "multiserver.h"
 #include "initsys.h"
-#include "sslserver.h"
 #include "database.h"
+#include "../shared/server/sslserver.h"
 #include "../shared/server/inmemoryconfig.h"
 #include "configfile.h"
 

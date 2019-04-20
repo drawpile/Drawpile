@@ -7,7 +7,6 @@ find_package(Sodium)
 set (
 	SOURCES
 	multiserver.cpp
-	sslserver.cpp
 	database.cpp
 	dblog.cpp
 	templatefiles.cpp

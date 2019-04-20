@@ -19,7 +19,6 @@
 
 #include "multiserver.h"
 #include "initsys.h"
-#include "sslserver.h"
 #include "database.h"
 #include "templatefiles.h"
 
@@ -28,6 +27,7 @@
 #include "../shared/server/thinserverclient.h"
 #include "../shared/server/serverconfig.h"
 #include "../shared/server/serverlog.h"
+#include "../shared/server/sslserver.h"
 
 #include <QTcpSocket>
 #include <QFileInfo>

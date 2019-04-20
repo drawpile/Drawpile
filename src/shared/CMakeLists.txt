@@ -44,6 +44,7 @@ set (
 	server/jsonapi.cpp
 	server/idqueue.cpp
 	server/serverlog.cpp
+	server/sslserver.cpp
 	)
 
 if( Sodium_FOUND )
