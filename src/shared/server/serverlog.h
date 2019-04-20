@@ -28,6 +28,8 @@ class QJsonObject;
 
 namespace server {
 
+class ServerLog;
+
 /**
  * @brief Server log entry
  */
@@ -88,6 +90,8 @@ public:
 	Log &user(uint8_t id, const QHostAddress &ip, const QString &name) { m_user = QStringLiteral("%1;%2;%3").arg(int(id)).arg(ip.toString()).arg(name); return *this; }
 	Log &session(const QUuid &id) { m_session=id; return *this; }
 	Log &message(const QString &msg) { m_message=msg; return *this; }
+
+	inline void to(ServerLog *logger);
 
 	/**
 	 * @brief Get the log message as a string
@@ -194,6 +198,14 @@ private:
 
 inline QList<Log> ServerLogQuery::get() const {
 	return m_log.getLogEntries(m_session, m_after, m_atleast, m_offset, m_limit);
+}
+
+void Log::to(ServerLog *logger)
+{
+	if(logger)
+		logger->logMessage(*this);
+	else
+		qWarning("logger(null): %s", qPrintable(toString()));
 }
 
 /**
