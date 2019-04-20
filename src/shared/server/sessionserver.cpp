@@ -152,12 +152,14 @@ void SessionServer::initSession(Session *session)
 {
 	m_sessions.append(session);
 
+	const QString idString = session->idString();
+
 	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
 	connect(session, &Session::sessionAttributeChanged, this, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
-	connect(session, &Session::destroyed, this, [this, session]() {
-		m_sessions.removeOne(session);
-		emit sessionEnded(session->idString());
+	connect(session, &Session::destroyed, this, [this, idString](QObject *object) {
+		m_sessions.removeOne(static_cast<Session*>(object));
+		emit sessionEnded(idString);
 	});
 
 	emit sessionCreated(session);
