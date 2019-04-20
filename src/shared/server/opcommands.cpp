@@ -27,6 +27,7 @@
 
 #include <QList>
 #include <QStringList>
+#include <QUrl>
 
 namespace server {
 
@@ -215,7 +216,7 @@ void announceSession(Client *client, const QJsonArray &args, const QJsonObject &
 	if(args.size()!=1)
 		throw CmdError("Expected one argument: API URL");
 
-	QUrl apiUrl(args.at(0).toString());
+	QUrl apiUrl { args.at(0).toString() };
 	if(!apiUrl.isValid())
 		throw CmdError("Invalid API URL");
 

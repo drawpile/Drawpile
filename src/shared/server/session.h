@@ -29,18 +29,22 @@
 #include <QUuid>
 #include <QJsonObject>
 
-#include "../listings/announcementapi.h"
+#include "../listings/announcable.h"
 #include "../util/passwordhash.h"
 #include "../net/message.h"
 #include "../net/protover.h"
 #include "sessionhistory.h"
 #include "jsonapi.h"
 
+class QTimer;
+
 namespace recording {
 	class Writer;
 }
 
-class QTimer;
+namespace sessionlisting {
+	class Announcements;
+}
 
 namespace server {
 
@@ -60,7 +64,7 @@ struct PastClient {
 /**
  * The serverside session state.
  */
-class Session : public QObject {
+class Session : public QObject, public sessionlisting::Announcable {
 	Q_OBJECT
 public:
 	enum State {
@@ -70,14 +74,14 @@ public:
 		Shutdown
 	};
 
-	Session(SessionHistory *history, ServerConfig *config, QObject *parent=nullptr);
+	Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent=nullptr);
 
 	const ServerConfig *config() const { return m_config; }
 
 	/**
 	 * \brief Get the ID of the session
 	 */
-	QUuid id() const { return m_history->id(); }
+	QUuid id() const override { return m_history->id(); }
 
 	/**
 	 * @brief Get the ID of the session as a properly formatted string
@@ -359,11 +363,6 @@ public:
 	void resetSession(int resetter);
 
 	/**
-	 * @brief Get all active announcements for this session
-	 */
-	QList<sessionlisting::Announcement> announcements() const { return m_publicListings; }
-
-	/**
 	 * @brief Generate a request for session announcement
 	 *
 	 * @param url listing server API url
@@ -377,7 +376,11 @@ public:
 	 * @param terminate if false, the removal is not logged in the history journal
 	 * @param removeOnly if true, an unlisting request is not sent (use in case of error)
 	 */
-	void unlistAnnouncement(const QString &url, bool terminate=true, bool removeOnly=false);
+	void unlistAnnouncement(const QUrl &url, bool terminate=true);
+
+	sessionlisting::Session getSessionAnnouncement() const override;
+
+	void sendListserverMessage(const QString &message) override { messageAll(message, false); }
 
 	//! Get the session state
 	State state() const { return m_state; }
@@ -500,8 +503,7 @@ signals:
 
 private slots:
 	void removeUser(Client *user);
-
-	void refreshAnnouncements();
+	void onAnnouncementsChanged(const Announcable *session);
 
 private:
 	void cleanupCommandStream();
@@ -519,6 +521,7 @@ private:
 	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 	ServerConfig *m_config;
+	sessionlisting::Announcements *m_announcements;
 
 	State m_state;
 	int m_initUser; // the user who is currently uploading init/reset data
@@ -532,9 +535,6 @@ private:
 	SessionHistory *m_history;
 	protocol::MessageList m_resetstream;
 	uint m_resetstreamsize;
-
-	QList<sessionlisting::Announcement> m_publicListings;
-	QTimer *m_refreshTimer;
 
 	QElapsedTimer m_lastEventTime;
 	QElapsedTimer m_lastStatusUpdate;

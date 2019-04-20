@@ -24,9 +24,7 @@
 #include <QDir>
 
 namespace sessionlisting {
-	class AnnouncementApi;
-	struct Session;
-	struct Announcement;
+	class Announcements;
 }
 
 namespace server {
@@ -211,6 +209,7 @@ private:
 	SessionHistory *initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 	void initSession(Session *session);
 
+	sessionlisting::Announcements *m_announcements;
 	ServerConfig *m_config;
 	TemplateLoader *m_tpls;
 	QDir m_sessiondir;

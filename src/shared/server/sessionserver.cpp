@@ -27,6 +27,8 @@
 #include "filedhistory.h"
 #include "templateloader.h"
 
+#include "../listings/announcements.h"
+
 #include <QTimer>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -40,6 +42,8 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	m_useFiledSessions(false),
 	m_mustSecure(false)
 {
+	m_announcements = new sessionlisting::Announcements(config, this);
+
 	QTimer *cleanupTimer = new QTimer(this);
 	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
@@ -74,7 +78,7 @@ void SessionServer::loadNewSessions()
 		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
 		if(fh) {
 			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
-			Session *session = new Session(fh, m_config, this);
+			Session *session = new Session(fh, m_config, m_announcements, this);
 			initSession(session);
 			session->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("Loaded from file."));
 		}
@@ -107,7 +111,7 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 	Q_ASSERT(!id.isNull());
 	Q_ASSERT(!getSessionById(id.toString()));
 
-	Session *session = new Session(initHistory(id, idAlias, protocolVersion, founder), m_config, this);
+	Session *session = new Session(initHistory(id, idAlias, protocolVersion, founder), m_config, m_announcements, this);
 
 	initSession(session);
 
@@ -139,7 +143,7 @@ Session *SessionServer::createFromTemplate(const QString &idAlias)
 		return nullptr;
 	}
 
-	Session *session = new Session(history, m_config, this);
+	Session *session = new Session(history, m_config, m_announcements, this);
 	initSession(session);
 	session->log(Log()
 		.about(Log::Level::Info, Log::Topic::Status)
