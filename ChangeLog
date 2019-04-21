@@ -1,5 +1,6 @@
 2019-0?-?? Version 2.1.8
  * Server: fixed potential crash when terminating session
+ * Server: listings are now refreshed in batches instead of individually
 
 2019-04-13 Version 2.1.7
  * Added Ukranian translation

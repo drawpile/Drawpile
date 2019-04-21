@@ -136,6 +136,14 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &session);
 
 /**
+ * @brief Refresh multiple session announcement
+ *
+ * Note: All announcements *MUST* be to the same server.
+ * Returns a QHash<int,bool>, which maps listing IDs to success statuses.
+ */
+AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Session>> &listings);
+
+/**
  * @brief Unlist a session announcement
  *
  * Returns the session ID

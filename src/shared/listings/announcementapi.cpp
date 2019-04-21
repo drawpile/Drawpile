@@ -57,17 +57,17 @@ static ApiReply readReply(QNetworkReply *reply)
 
 	if(reply->error() != QNetworkReply::NoError) {
 		const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-		if(statusCode == 422 || statusCode == 409) {
+		if(statusCode == 400 || statusCode == 422 || statusCode == 409) {
 			// Server says that the problem is at our end
 			QJsonParseError error;
 			QByteArray body = reply->readAll();
 			QJsonDocument doc = QJsonDocument::fromJson(body, &error);
 			if(error.error != QJsonParseError::NoError)
-				return ApiError(QStringLiteral("Http error 422 but response body was unparseable: %1").arg(error.errorString()));
+				return ApiError(QStringLiteral("Http error %1 but response body was unparseable: %2").arg(statusCode).arg(error.errorString()));
 
 			const QString msg = doc.object()["message"].toString();
 			if(msg.isEmpty()) {
-				return ApiError(QStringLiteral("Http error 422 (no explanation given)"));
+				return ApiError(QStringLiteral("Http error %d (no explanation given)").arg(statusCode));
 			} else {
 				return ApiError(msg);
 			}
@@ -196,7 +196,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &proto
 
 		QVector<Session> sessions;
 
-		for(const QJsonValue &jsv : doc.array()) {
+		for(const QJsonValue jsv : doc.array()) {
 			if(!jsv.isObject()) {
 				res->setError(QStringLiteral("Expected session description!"));
 				return;
@@ -322,7 +322,65 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 		const auto doc = ApiSuccess(r);
 		const QJsonObject obj = doc.object();
 
-		res->setResult(a.id, doc.object()["message"].toString());
+		res->setResult(a.id, obj["message"].toString());
+	});
+
+	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
+
+	return res;
+}
+
+AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Session>> &listings)
+{
+	Q_ASSERT(!listings.isEmpty());
+	const QUrl apiUrl = listings.first().first.apiUrl;
+
+	// Construct the announcement
+	QJsonObject batch;
+
+	for(const auto &listing : listings) {
+		Q_ASSERT(listing.first.apiUrl == apiUrl);
+		QJsonObject o;
+
+		o["updatekey"] = listing.first.updateKey;
+		o["title"] = listing.second.title;
+		o["users"] = listing.second.users;
+		o["usernames"] = QJsonArray::fromStringList(listing.second.usernames);
+		o["password"] = listing.second.password;
+		o["owner"] = listing.second.owner;
+		o["nsfm"] = listing.second.nsfm;
+		if(listing.second.isPrivate != PrivacyMode::Undefined)
+			o["private"] = listing.second.isPrivate == PrivacyMode::Private;
+
+		batch[QString::number(listing.first.listingId)] = o;
+	}
+
+
+
+	// Send request
+	QUrl url = apiUrl;
+	url.setPath(slashcat(url.path(), "sessions/"));
+
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+
+	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
+
+	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(batch).toJson());
+	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
+		auto r = readReply(reply);
+		if(IsApiError(r)) {
+			res->setError(ApiError(r));
+			return;
+		}
+		const auto doc = ApiSuccess(r);
+		const QJsonObject obj = doc.object();
+
+		res->setResult(
+			obj["responses"].toObject().toVariantHash(),
+			obj["message"].toString()
+			);
 	});
 
 	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);

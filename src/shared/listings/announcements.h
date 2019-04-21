@@ -87,6 +87,8 @@ private:
 	};
 
 	Listing *findListing(const QUrl &listServer, const Announcable *session);
+	Listing *findListingById(const QUrl &listServer, int id);
+
 	void refreshListings();
 
 	QVector<Listing> m_announcements;
