@@ -20,8 +20,6 @@
 #include "loader.h"
 #include "net/client.h"
 #include "ora/orareader.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 
 #include "core/layerstack.h"
@@ -37,6 +35,7 @@
 #include <QDebug>
 #include <QGuiApplication>
 #include <QImage>
+#include <QPixmap>
 #include <QImageReader>
 
 namespace canvas {
@@ -166,12 +165,12 @@ MessageList SnapshotLoader::loadInitCommands()
 			)));
 
 	// Preset default layer
-	if(m_session && m_session->layerlist()->defaultLayer()>0)
-		msgs.append(MessagePtr(new protocol::DefaultLayer(m_contextId, m_session->layerlist()->defaultLayer())));
+	if(m_defaultLayer>0)
+		msgs.append(MessagePtr(new protocol::DefaultLayer(m_contextId, uint16_t(m_defaultLayer))));
 
 	// Add pinned message (if any)
-	if(m_session && !m_session->pinnedMessage().isEmpty()) {
-		msgs.append(protocol::Chat::pin(m_contextId, m_session->pinnedMessage()));
+	if(!m_pinnedMessage.isEmpty()) {
+		msgs.append(protocol::Chat::pin(m_contextId, m_pinnedMessage));
 	}
 
 	// Create layers
@@ -182,8 +181,8 @@ MessageList SnapshotLoader::loadInitCommands()
 			.toInitCommands(m_contextId, layer->info());
 
 		// Set layer ACLs (if found)
-		if(m_session) {
-			const canvas::AclFilter::LayerAcl acl = m_session->aclFilter()->layerAcl(layer->id());
+		if(m_aclfilter) {
+			const canvas::AclFilter::LayerAcl acl = m_aclfilter->layerAcl(layer->id());
 			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
 				msgs << MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, int(acl.tier), acl.exclusive));
 		}
@@ -197,13 +196,13 @@ MessageList SnapshotLoader::loadInitCommands()
 	}
 
 	// Session and user ACLs
-	if(m_session) {
+	if(m_aclfilter) {
 		uint8_t features[canvas::FeatureCount];
 		for(int i=0;i<canvas::FeatureCount;++i)
-			features[i] = uint8_t(m_session->aclFilter()->featureTier(Feature(i)));
+			features[i] = uint8_t(m_aclfilter->featureTier(Feature(i)));
 
 		msgs.append(MessagePtr(new protocol::FeatureAccessLevels(m_contextId, features)));
-		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_session->aclFilter()->lockedUsers())));
+		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_aclfilter->lockedUsers())));
 	}
 
 	return msgs;

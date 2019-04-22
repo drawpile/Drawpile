@@ -593,7 +593,14 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 	// set the session owner as well
 	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
 
-	auto snapshot = canvas::SnapshotLoader(initialUserId, m_canvas->layerStack(), m_canvas).loadInitCommands();
+	auto loader =  canvas::SnapshotLoader(
+		initialUserId,
+		m_canvas->layerStack(),
+		m_canvas->aclFilter());
+	loader.setDefaultLayer(m_canvas->layerlist()->defaultLayer());
+	loader.setPinnedMessage(m_canvas->pinnedMessage());
+
+	const auto snapshot = loader.loadInitCommands();
 	for(const protocol::MessagePtr &ptr : snapshot) {
 		writer.writeMessage(*ptr);
 	}
@@ -698,7 +705,14 @@ void Document::snapshotNeeded()
 				m_client->sendMessage(net::command::serverCommand("init-cancel"));
 				return;
 			}
-			m_resetstate = canvas::SnapshotLoader(m_client->myId(), m_canvas->layerStack(), m_canvas).loadInitCommands();
+			 auto loader = canvas::SnapshotLoader(
+				m_client->myId(),
+				m_canvas->layerStack(),
+				m_canvas->aclFilter());
+			 loader.setDefaultLayer(m_canvas->layerlist()->defaultLayer());
+			 loader.setPinnedMessage(m_canvas->pinnedMessage());
+
+			 m_resetstate = loader.loadInitCommands();
 		}
 
 		// Size limit check. The server will kick us if we send an oversized reset.

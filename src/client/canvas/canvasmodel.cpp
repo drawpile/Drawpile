@@ -218,7 +218,10 @@ protocol::MessageList CanvasModel::generateSnapshot(bool forceNew) const
 
 	if(!m_statetracker->hasFullHistory() || forceNew) {
 		// Generate snapshot
-		snapshot = SnapshotLoader(m_statetracker->localId(), m_layerstack, this).loadInitCommands();
+		auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
+		loader.setDefaultLayer(m_layerlist->defaultLayer());
+		loader.setPinnedMessage(m_pinnedMessage);
+		snapshot = loader.loadInitCommands();
 
 	} else {
 		// Message stream contains (starts with) a snapshot: use it

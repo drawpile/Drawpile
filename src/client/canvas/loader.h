@@ -32,7 +32,7 @@ namespace paintcore {
 
 namespace canvas {
 
-class CanvasModel;
+class AclFilter;
 
 /**
  * \brief Base class for session initializers.
@@ -153,15 +153,23 @@ private:
  */
 class SnapshotLoader : public SessionLoader {
 public:
+	//SnapshotLoader() : m_layers(nullptr), m_aclfilter(nullptr), m_defaultLayer(0), m_contextId(0) { }
+
 	/**
 	 * Construct a snapshot from an existing session.
 	 *
 	 * @param context ID resetting user ID
 	 * @param layers the layer stack (required)
-	 * @param session the current canvas. Used for session ACLs and such. (optional)
+	 * @param aclfilter Access controls (optional)
 	 */
-	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const canvas::CanvasModel *session)
-		: m_layers(layers), m_session(session), m_contextId(contextId) {}
+	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const AclFilter *aclfilter)
+		: m_layers(layers), m_aclfilter(aclfilter), m_defaultLayer(0), m_contextId(contextId) {}
+
+	//! Include a default layer message
+	void setDefaultLayer(int defaultLayer) { m_defaultLayer = defaultLayer; }
+
+	//! Include a pinned chat message
+	void setPinnedMessage(const QString &message) { m_pinnedMessage = message; }
 
 	protocol::MessageList loadInitCommands() override;
 	QString filename() const override { return QString(); }
@@ -170,8 +178,13 @@ public:
 
 private:
 	const paintcore::LayerStack *m_layers;
-	const CanvasModel *m_session;
+	const AclFilter *m_aclfilter;
+
+	QString m_pinnedMessage;
+	int m_defaultLayer;
+
 	uint8_t m_contextId;
+
 };
 
 }

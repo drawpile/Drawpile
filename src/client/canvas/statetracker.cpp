@@ -18,6 +18,7 @@
 */
 
 #include "statetracker.h"
+#include "canvasmodel.h"
 #include "layerlist.h"
 #include "loader.h"
 
@@ -125,7 +126,9 @@ protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const Canv
 
 	paintcore::LayerStack stack;
 	stack.editor(0).restoreSavepoint(m_data->canvas);
-	SnapshotLoader loader(contextId, &stack, canvas);
+	SnapshotLoader loader(contextId, &stack, canvas->aclFilter());
+	loader.setDefaultLayer(canvas->layerlist()->defaultLayer());
+	loader.setPinnedMessage(canvas->pinnedMessage());
 	return loader.loadInitCommands();
 }
 
