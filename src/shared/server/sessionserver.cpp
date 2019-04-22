@@ -162,7 +162,10 @@ void SessionServer::initSession(Session *session)
 	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
 	connect(session, &Session::sessionAttributeChanged, this, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
 	connect(session, &Session::destroyed, this, [this, idString](QObject *object) {
-		m_sessions.removeOne(static_cast<Session*>(object));
+		auto *session = static_cast<Session*>(object);
+		m_sessions.removeOne(session);
+		m_announcements->unlistSession(session); // just to be safe
+
 		emit sessionEnded(idString);
 	});
 
