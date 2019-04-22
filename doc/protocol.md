@@ -99,6 +99,9 @@ Protocol stability promises:
  * New server features may be added at any time, but they should not break older clients,
    nor should a missing feature break newer clients.
 
+### Protocol dp:4.21.2 (2.1.9)
+ * User 0 (server) is now always treated as Operator tier. (Change for experimental smart server)
+
 ### Protocol dp:4.21.2 (2.1.2)
  * Added FIXED flag to LayerAttributes. (Minor protocol stability promise break, but 2.1.1 is still a beta version)
 

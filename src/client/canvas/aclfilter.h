@@ -154,6 +154,8 @@ private:
 	bool isLayerLockedFor(int layerId, uint8_t userId, Tier userTier) const;
 
 	Tier userTier(int id) const {
+		if(id == 0) // only the server can use ID 0
+			return Tier::Op;
 		if(m_ops.contains(id))
 			return Tier::Op;
 		if(m_trusted.contains(id))
