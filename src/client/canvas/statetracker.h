@@ -178,6 +178,9 @@ public:
 	 */
 	paintcore::LayerStack *image() const { return m_layerstack; }
 
+	//! Get the layer list model
+	LayerListModel *layerList() const { return m_layerlist; }
+
 	//! Has the local user participated in the session yet?
 	bool hasParticipated() const { return m_hasParticipated; }
 
