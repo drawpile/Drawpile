@@ -93,7 +93,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomSlider->setMaximumWidth(200);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 	m_zoomSlider->setMinimum(50);
-	m_zoomSlider->setMaximum(1600);
+	m_zoomSlider->setMaximum(1000);
 	m_zoomSlider->setPageStep(50);
 	m_zoomSlider->setValue(100);
 	connect(m_zoomSlider, &QSlider::valueChanged, this, &ViewStatus::zoomSliderChanged);
@@ -159,6 +159,11 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 		m_zoomSlider->setValue(intZoom);
 	}
 	m_updating = false;
+}
+
+void ViewStatus::setMinimumZoom(int zoom)
+{
+	m_zoomSlider->setMinimum(qMax(1, zoom));
 }
 
 void ViewStatus::zoomBoxChanged(const QString &text)

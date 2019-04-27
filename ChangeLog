@@ -2,6 +2,7 @@
  * Server: fixed potential crash when terminating session
  * Server: listings are now refreshed in batches instead of individually
  * Background color alpha can now be set in the "new image" dialog
+ * Adaptive canvas zoom slider: the minimum value is now always the zoom level needed to fit the whole canvas on screen
 
 2019-04-13 Version 2.1.7
  * Added Ukranian translation

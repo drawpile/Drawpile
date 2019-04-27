@@ -135,6 +135,24 @@ void CanvasView::zoomTo(const QRect &rect, int steps)
 	}
 }
 
+qreal CanvasView::fitToWindowScale() const
+{
+	if(!m_scene || !m_scene->hasImage())
+		return 100;
+
+	const QRect r {
+		0,
+		0,
+		m_scene->model()->layerStack()->width(),
+		m_scene->model()->layerStack()->height()
+	};
+
+	const qreal xScale = qreal(viewport()->width()) / r.width();
+	const qreal yScale = qreal(viewport()->height()) / r.height();
+
+	return qMin(xScale, yScale);
+}
+
 void CanvasView::zoomToFit()
 {
 	if(!m_scene || !m_scene->hasImage())

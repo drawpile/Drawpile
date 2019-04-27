@@ -37,6 +37,7 @@ public:
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
+	void setMinimumZoom(int zoom);
 
 signals:
 	void zoomChanged(qreal newZoom);

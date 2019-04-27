@@ -326,6 +326,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_viewstatus, &widgets::ViewStatus::setTransformation);
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_dockNavigator, &docks::Navigator::setViewTransformation);
 
+	connect(m_view, &widgets::CanvasView::viewRectChange, m_viewstatus, [this]() {
+		const int min = qMin(int(m_view->fitToWindowScale() * 100), 100);
+		m_viewstatus->setMinimumZoom(min);
+		m_dockNavigator->setMinimumZoom(min);
+	});
+
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
 	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);

@@ -102,6 +102,8 @@ public slots:
 	//! Set the current angle and zoom
 	void setViewTransformation(qreal zoom, qreal angle);
 
+	void setMinimumZoom(int zoom);
+
 private slots:
 	void updateZoom(int value);
 

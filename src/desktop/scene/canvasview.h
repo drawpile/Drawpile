@@ -78,6 +78,9 @@ public:
 	//! Scroll view by the given number of pixels
 	void scrollBy(int x, int y);
 
+	//! Get the scale factor needed to fit the whole canvas in the viewport
+	qreal fitToWindowScale() const;
+
 signals:
 	//! An image has been dropped on the widget
 	void imageDropped(const QImage &image);

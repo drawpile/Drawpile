@@ -339,8 +339,16 @@ void Navigator::updateZoom(int value)
 
 void Navigator::setViewTransformation(qreal zoom, qreal angle)
 {
+	Q_UNUSED(angle)
 	m_updating = true;
-	m_ui->zoom->setValue(zoom);
+	m_ui->zoom->setValue(int(zoom));
+	m_updating = false;
+}
+
+void Navigator::setMinimumZoom(int zoom)
+{
+	m_updating = true;
+	m_ui->zoom->setMinimum(qMax(1, zoom));
 	m_updating = false;
 }
 
