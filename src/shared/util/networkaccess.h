@@ -20,16 +20,15 @@
 #ifndef NETWORKACCESS_H
 #define NETWORKACCESS_H
 
-#include <functional>
 #include <QObject>
 #include <QCryptographicHash>
 #include <QScopedPointer>
-#include <QFileDevice>
 
 class QNetworkAccessManager;
 class QNetworkReply;
 class QString;
 class QUrl;
+class QIODevice;
 
 namespace networkaccess {
 
@@ -39,17 +38,6 @@ namespace networkaccess {
  * The returned instance will be unique to the current thread
  */
 QNetworkAccessManager *getInstance();
-
-/**
- * @brief A convenience wrapper around getInstance()->get()
- *
- * This aborts the request if the response mimetype differs from the expected
- *
- * @param url the URL to fetch
- * @param expectType expected mime type
- * @return network reply
- */
-QNetworkReply *get(const QUrl &url, const QString &expectType);
 
 /**
  * @brief A file download wrapper that emits progress reports
@@ -63,7 +51,7 @@ public:
 	 * Set target file path
 	 *
 	 * This must be called before *start*. If no target file is set,
-	 * a temporary file is used.
+	 * a temporary file (or a QBuffer if the file is small) is used.
 	 *
 	 * @param path
 	 */
@@ -120,7 +108,7 @@ private slots:
 	void onFinished();
 
 private:
-	QFileDevice *m_file;
+	QIODevice *m_file;
 	QNetworkReply *m_reply;
 	QString m_expectedType;
 	QByteArray m_expectedHash;
@@ -128,6 +116,7 @@ private:
 	qint64 m_size;
 
 	QScopedPointer<QCryptographicHash> m_hash;
+	QString m_errorMessage;
 };
 }
 

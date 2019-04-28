@@ -81,26 +81,27 @@ void WhatIsMyIp::discoverMyIp()
 		return;
 	m_querying = true;
 
-	QNetworkReply *reply = networkaccess::get(QUrl("https://ipecho.net/plain"), QString());
+	auto *filedownload = new networkaccess::FileDownload(this);
 
-	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-		if(reply->error() != QNetworkReply::NoError) {
-			qWarning() << "ipecho.net error:" << reply->errorString();
-			emit ipLookupError(reply->errorString());
+	filedownload->setMaxSize(64);
 
-		} else {
-			QByteArray buf = reply->read(64);
-			QHostAddress addr;
-			if(!addr.setAddress(QString::fromUtf8(buf))) {
-				qWarning() << "ipecho.net received invalid data:" << buf;
-				emit ipLookupError(tr("Received invalid data"));
-			} else {
-				emit myAddressIs(addr.toString());
-				m_querying = false;
-			}
+	connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
+		filedownload->deleteLater();
+		if(!errorMessage.isEmpty()) {
+			qWarning("ipecho.net error: %s", qPrintable(errorMessage));
+			emit ipLookupError(errorMessage);
+			return;
 		}
 
-		reply->deleteLater();
+		QByteArray buf = filedownload->file()->readAll();
+		QHostAddress addr;
+		if(!addr.setAddress(QString::fromUtf8(buf))) {
+			qWarning() << "ipecho.net received invalid data:" << buf;
+			emit ipLookupError(tr("Received invalid data"));
+		} else {
+			emit myAddressIs(addr.toString());
+			m_querying = false;
+		}
 	});
 }
 

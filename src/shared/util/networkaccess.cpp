@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QSaveFile>
 #include <QTemporaryFile>
+#include <QBuffer>
 
 namespace networkaccess {
 
@@ -57,21 +58,6 @@ QNetworkAccessManager *getInstance()
 	return nam;
 }
 
-QNetworkReply *get(const QUrl &url, const QString &expectType)
-{
-	QNetworkRequest req(url);
-
-	QNetworkReply *reply = getInstance()->get(req);
-
-	reply->connect(reply, &QNetworkReply::metaDataChanged, [reply, expectType]() {
-		QVariant mimetype = reply->header(QNetworkRequest::ContentTypeHeader);
-		if(mimetype.isValid()) {
-			if(mimetype.toString().startsWith(expectType)==false)
-				reply->close();
-		}
-	});
-	return reply;
-}
 
 FileDownload::FileDownload(QObject *parent)
 	: QObject(parent), m_file(nullptr), m_reply(nullptr), m_maxSize(0), m_size(0)
@@ -91,7 +77,7 @@ void FileDownload::setExpectedHash(const QByteArray &hash, QCryptographicHash::A
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 	if(hash.length() > 0 && QCryptographicHash::hashLength(algorithm) != hash.length()) {
-		qWarning("Expected hash length %d not valid for selected algorithm!", hash.length());
+		qWarning() << "Expected hash length" << hash.length() << "not valid for" << algorithm;
 		m_expectedHash = QByteArray();
 		m_hash.reset();
 	}
@@ -100,14 +86,6 @@ void FileDownload::setExpectedHash(const QByteArray &hash, QCryptographicHash::A
 void FileDownload::start(const QUrl &url)
 {
 	Q_ASSERT(!m_reply);
-
-	if(!m_file)
-		m_file = new QTemporaryFile(this);
-
-	if(!m_file->open(m_file->inherits("QSaveFile") ? QIODevice::WriteOnly : QIODevice::ReadWrite)) {
-		emit finished(m_file->errorString());
-		return;
-	}
 
 	QNetworkRequest req(url);
 
@@ -124,20 +102,53 @@ void FileDownload::start(const QUrl &url)
 
 void FileDownload::onMetaDataChanged()
 {
-	QVariant mimetype = m_reply->header(QNetworkRequest::ContentTypeHeader);
-	if(mimetype.isValid()) {
-		if(!mimetype.toString().startsWith(m_expectedType)) {
-			m_reply->abort();
-		}
+	const QString mimetype = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();
+	if(!mimetype.startsWith(m_expectedType)) {
+		m_errorMessage = tr("Unexpected content type (%1)").arg(mimetype);
+		m_reply->abort();
 	}
 }
 
 void FileDownload::onReadyRead()
 {
+	if(!m_file) {
+		bool ok;
+		qint64 expectedSize = m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(&ok);
+		if(ok) {
+			if(m_maxSize > 0 && expectedSize > m_maxSize) {
+				m_errorMessage = tr("Downloaded file is too big");
+				m_reply->abort();
+				return;
+			}
+
+		} else {
+			expectedSize = m_maxSize;
+		}
+
+		if(expectedSize > 0 && expectedSize < 1024 * 1024) {
+			qDebug() << m_reply->url() << "opening temporary buffer. Expecting" << expectedSize << "bytes.";
+			m_file = new QBuffer(this);
+		} else {
+			qDebug() << m_reply->url() << "opening temporary file. Expecting" << (expectedSize/(1024.0*1024.0)) << "megabytes.";
+			m_file = new QTemporaryFile(this);
+		}
+	}
+
+	Q_ASSERT(m_file);
+
+	if(!m_file->isOpen()) {
+		if(!m_file->open(m_file->inherits("QSaveFile") ? QIODevice::WriteOnly : QIODevice::ReadWrite)) {
+			m_errorMessage = m_file->errorString();
+			m_reply->abort();
+			return;
+		}
+	}
+
 	const auto buffer = m_reply->readAll();
 
 	m_size += buffer.length();
 	if(m_maxSize>0 && m_size > m_maxSize) {
+		m_errorMessage = tr("Downloaded file is too big");
 		m_reply->abort();
 		return;
 	}
@@ -150,24 +161,8 @@ void FileDownload::onReadyRead()
 void FileDownload::onFinished()
 {
 	if(m_reply->error()) {
-		QString errorMessage;
-
-		if(m_reply->error() == QNetworkReply::OperationCanceledError &&
-			!m_reply->header(QNetworkRequest::ContentTypeHeader).toString().startsWith(m_expectedType)) {
-			errorMessage = tr("Unexpected content type (%1)").arg(m_reply->header(QNetworkRequest::ContentTypeHeader).toString());
-
-		} else if(m_reply->error() == QNetworkReply::OperationCanceledError &&
-			 m_maxSize > 0 && m_size > m_maxSize) {
-			 errorMessage = tr("Downloaded file is too big");
-
-		} else {
-			errorMessage = m_reply->errorString();
-		}
-
-		if(errorMessage.isEmpty())
-			errorMessage = "Unknown download error";
-
-		emit finished(errorMessage);
+		qWarning() << m_reply->url() << "error:" << m_reply->errorString();
+		emit finished(m_errorMessage.isEmpty() ? m_reply->errorString() : m_errorMessage);
 		return;
 
 	}
