@@ -46,6 +46,18 @@ public:
 
 		//! What's new in this version (in a simple HTML subset format)
 		QString description;
+
+		//! Direct download link
+		QString downloadUrl;
+
+		//! Hash of the download
+		QString downloadChecksum;
+
+		//! Type of the checksum (e.g. sha256)
+		QString downloadChecksumType;
+
+		//! Size of the download in bytes
+		int downloadSize = 0;
 	};
 
 	//! Construct a version checker with the current version info
@@ -80,6 +92,21 @@ public:
 	 * This must be called before queryVersion or parseAppDataFile.
 	 */
 	void setShowBetas(bool show) { m_showBetas = show; }
+
+	/**
+	 * Explicitly set this system's platform
+	 *
+	 * This is used to select which artifact to include in the Version structure.
+	 * If not set explicitly, the platform is selected by the build type:
+	 *
+	 *  - win64 if built for 64 bit windows
+	 *  - win32 if built for 32 bit windows
+	 *  - macos if built of macOS
+	 *  - blank for everything else
+	 *
+	 * If a blank platform is set, the download fields will not be populated.
+	 */
+	void setPlatform(const QString &platform) { m_platform = platform; }
 
 	/**
 	 * Make a HTTP request and check the version file
@@ -131,6 +158,7 @@ private:
 	int m_server, m_major, m_minor;
 	QVector<Version> m_newer;
 	bool m_showBetas;
+	QString m_platform;
 };
 
 #endif

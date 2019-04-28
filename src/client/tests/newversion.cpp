@@ -85,6 +85,21 @@ private slots:
 		QCOMPARE(latest.description, expected);
 	}
 
+	void testArtifact()
+	{
+		NewVersionCheck vc(2, 9999, 9999);
+		vc.setPlatform("win64");
+		QXmlStreamReader reader(m_doc);
+		QVERIFY(vc.parseAppDataFile(reader));
+
+		NewVersionCheck::Version latest = vc.getNewer().at(0);
+
+		QCOMPARE(latest.downloadUrl, "http://example.com/download-win64.zip");
+		QCOMPARE(latest.downloadChecksum, "test");
+		QCOMPARE(latest.downloadChecksumType, "sha256");
+		QCOMPARE(latest.downloadSize, 100);
+	}
+
 private:
 	QByteArray m_doc;
 };

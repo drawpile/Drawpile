@@ -51,6 +51,16 @@ NewVersionCheck::NewVersionCheck(QObject *parent)
 	m_server = m.captured(1).toInt();
 	m_major = m.captured(2).toInt();
 	m_minor = m.captured(3).toInt();
+
+#if defined(Q_OS_WIN64)
+	m_platform = "win64";
+#elif defined(Q_OS_WIN32)
+	m_platform = "win32";
+#elif defined(Q_OS_MACOS)
+	m_platform = "macos";
+#else
+	m_platform = QString();
+#endif
 }
 
 NewVersionCheck::NewVersionCheck(int server, int major, int minor, QObject *parent)
@@ -234,7 +244,64 @@ static QString parseDescriptionElement(QXmlStreamReader &reader)
 
 }
 
-static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader)
+static void parseArtifactElement(QXmlStreamReader &reader, NewVersionCheck::Version &release)
+{
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+
+		switch(tokentype) {
+		case QXmlStreamReader::StartElement:
+			if(reader.name() == "location") {
+				release.downloadUrl = reader.readElementText();
+
+			} else if(reader.name() == "checksum") {
+				release.downloadChecksumType = reader.attributes().value("type").toString();
+				release.downloadChecksum = reader.readElementText();
+
+			} else if(reader.name() == "size" && reader.attributes().value("type") == "download") {
+				release.downloadSize = reader.readElementText().toInt();
+
+			} else {
+				// skip other elements
+				skipElement(reader);
+			}
+			break;
+
+		case QXmlStreamReader::EndElement:
+			return;
+
+		default: break;
+		}
+	}
+	qWarning("Unexpected end of file while parsing <release> element");
+}
+
+static void parseArtifactsElement(QXmlStreamReader &reader, NewVersionCheck::Version &release, const QString &platform)
+{
+	while(!reader.atEnd()) {
+		const auto tokentype = reader.readNext();
+
+		switch(tokentype) {
+		case QXmlStreamReader::StartElement:
+			if(reader.name() == "artifact" && reader.attributes().value("type") == "binary" && reader.attributes().value("platform") == platform) {
+				parseArtifactElement(reader, release);
+
+			} else {
+				// skip unknown elements
+				skipElement(reader);
+			}
+			break;
+
+		case QXmlStreamReader::EndElement:
+			return;
+
+		default: break;
+		}
+	}
+	qWarning("Unexpected end of file while parsing <artifacts> element");
+}
+
+static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader, const QString &platform)
 {
 	NewVersionCheck::Version release;
 
@@ -254,6 +321,9 @@ static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader)
 			} else if(reader.name() == "description") {
 				release.description = parseDescriptionElement(reader);
 
+			} else if(reader.name() == "artifacts" && !platform.isEmpty()) {
+				parseArtifactsElement(reader, release, platform);
+
 			} else {
 				// skip other elements
 				skipElement(reader);
@@ -272,7 +342,6 @@ static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader)
 
 bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 {
-
 	const auto currentVersionNumber = encodeVersionNumber(m_server, m_major, m_minor);
 
 	while(!reader.atEnd()) {
@@ -291,7 +360,7 @@ bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 					break;
 				}
 
-				const Version release = parseReleaseElement(reader);
+				const Version release = parseReleaseElement(reader, m_platform);
 
 				if(release.version.isEmpty()) {
 					qWarning("Version number missing from release element");

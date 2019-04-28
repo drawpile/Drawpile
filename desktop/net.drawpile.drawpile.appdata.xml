@@ -34,6 +34,23 @@
           <li>Windows only: another tablet support fix</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup.exe</location>
+          <checksum type="sha256">9ef7680015ca5ba42070cbf25d10a51f39fdd9440ed3a7636194f160c46ce69e</checksum>
+          <size type="download">16429733</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup-w32.exe</location>
+          <checksum type="sha256">ac04bc7a80ef698f476a82a1a0227e65a46b543edd2603b1d92b955d67ff9958</checksum>
+          <size type="download">15443119</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.7.dmg</location>
+          <checksum type="sha256">820ec2837d3c7ea4e190a64cbb1d0fdecb3797bf968277b3b7ca0cc5d758987f</checksum>
+          <size type="download">13386779</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.6" date="2019-04-06">
       <url>https://drawpile.net/news/release-2.1.6/</url>

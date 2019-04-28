@@ -22,6 +22,18 @@
 				</ul>
 				<p>Another <y>bad html test</y></p>
 			</description>
+			<artifacts>
+				<artifact type="binary" platform="win64">
+					<location>http://example.com/download-win64.zip</location>
+					<checksum type="sha256">test</checksum>
+					<size type="download">100</size>
+				</artifact>
+				<artifact type="binary" platform="win32">
+					<location>http://example.com/download-win32.zip</location>
+					<checksum type="sha256">test2</checksum>
+					<size type="download">101</size>
+				</artifact>
+			</artifacts>
 		</release>
 		<release version="2.2.0" date="2100-01-01">
 			<url>https://drawpile.net/news/release-2.2.0/</url>
