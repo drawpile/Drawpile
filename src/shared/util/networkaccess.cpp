@@ -126,7 +126,7 @@ void FileDownload::onMetaDataChanged()
 {
 	QVariant mimetype = m_reply->header(QNetworkRequest::ContentTypeHeader);
 	if(mimetype.isValid()) {
-		if(!mimetype.toString().startsWith(m_expectedType)==false) {
+		if(!mimetype.toString().startsWith(m_expectedType)) {
 			m_reply->abort();
 		}
 	}
@@ -154,7 +154,7 @@ void FileDownload::onFinished()
 
 		if(m_reply->error() == QNetworkReply::OperationCanceledError &&
 			!m_reply->header(QNetworkRequest::ContentTypeHeader).toString().startsWith(m_expectedType)) {
-			errorMessage = tr("Unexpected MIME type (%1)").arg(m_reply->header(QNetworkRequest::ContentTypeHeader).toString());
+			errorMessage = tr("Unexpected content type (%1)").arg(m_reply->header(QNetworkRequest::ContentTypeHeader).toString());
 
 		} else if(m_reply->error() == QNetworkReply::OperationCanceledError &&
 			 m_maxSize > 0 && m_size > m_maxSize) {

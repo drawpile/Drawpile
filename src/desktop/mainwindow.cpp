@@ -33,6 +33,7 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QToolButton>
+#include <QImageReader>
 #include <QImageWriter>
 #include <QSplitter>
 #include <QClipboard>
@@ -73,7 +74,7 @@
 #include "../shared/util/whatismyip.h"
 #include "utils/icon.h"
 #include "utils/images.h"
-#include "utils/netfiles.h"
+#include "../shared/util/networkaccess.h"
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
 #include "utils/settings.h"
@@ -1007,13 +1008,30 @@ void MainWindow::open(const QUrl& url)
 				addRecentFile(file);
 		}
 	} else {
-		networkaccess::getFile(url, QString(), m_netstatus, this, [this](const QFile &file, const QString &error) {
-			if(error.isEmpty()) {
-				open(QUrl::fromLocalFile(file.fileName()));
+		auto *filedownload = new networkaccess::FileDownload(this);
+
+		QDir downloadDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+		downloadDir.mkpath(".");
+		QString filename = url.fileName();
+		if(filename.isEmpty())
+			filename = "drawpile-download";
+
+		filedownload->setTarget(downloadDir.filePath(filename));
+
+		connect(filedownload, &networkaccess::FileDownload::progress, m_netstatus, &widgets::NetStatus::setDownloadProgress);
+		connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
+			m_netstatus->hideDownloadProgress();
+			filedownload->deleteLater();
+
+			if(errorMessage.isEmpty()) {
+				QFile *f = static_cast<QFile*>(filedownload->file()); // this is guaranteed to be a QFile when we used setTarget()
+				open(QUrl::fromLocalFile(f->fileName()));
 			} else {
-				showErrorMessage(error);
+				showErrorMessage(errorMessage);
 			}
 		});
+
+		filedownload->start(url);
 	}
 }
 
@@ -1947,12 +1965,30 @@ void MainWindow::pasteFile(const QUrl &url)
 
 		pasteImage(img);
 	} else {
-		networkaccess::getImage(url, m_netstatus, this, [this](const QImage &image, const QString &error) {
-			if(image.isNull())
-				showErrorMessage(error);
-			else
-				pasteImage(image);
+		auto *filedownload = new networkaccess::FileDownload(this);
+
+		filedownload->setExpectedType("image/");
+
+		connect(filedownload, &networkaccess::FileDownload::progress, m_netstatus, &widgets::NetStatus::setDownloadProgress);
+		connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
+			m_netstatus->hideDownloadProgress();
+			filedownload->deleteLater();
+
+			if(errorMessage.isEmpty()) {
+				QImageReader reader(filedownload->file());
+				QImage image = reader.read();
+
+				if(image.isNull())
+					showErrorMessage(reader.errorString());
+				else
+					pasteImage(image);
+
+			} else {
+				showErrorMessage(errorMessage);
+			}
 		});
+
+		filedownload->start(url);
 	}
 }
 
@@ -1979,25 +2015,10 @@ void MainWindow::pasteImage(const QImage &image, const QPoint *point)
 
 void MainWindow::dropUrl(const QUrl &url)
 {
-	if(url.isLocalFile()) {
-		// Is this an image file?
-		QImage img(url.toLocalFile());
-		if(img.isNull()) {
-			// Not a simple image, try opening it as a document
-			open(url);
-
-		} else {
-			pasteImage(img);
-		}
-
-	} else {
-		networkaccess::getFile(url, QString(), m_netstatus, this, [this](const QFile &file, const QString &error) {
-			if(error.isEmpty())
-				dropUrl(QUrl::fromLocalFile(file.fileName()));
-			else
-				showErrorMessage(error);
-		});
-	}
+	if(m_canvasscene->hasImage())
+		pasteFile(url);
+	else
+		open(url);
 }
 
 void MainWindow::clearOrDelete()

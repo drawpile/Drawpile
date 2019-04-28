@@ -4,6 +4,7 @@
  * Background color alpha can now be set in the "new image" dialog
  * Adaptive canvas zoom slider: the minimum value is now always the zoom level needed to fit the whole canvas on screen
  * Drawpile can now download the latest version via the "check for updates" dialog
+ * Drag&dropping a link to an image onto the canvas now works again
 
 2019-04-13 Version 2.1.7
  * Added Ukranian translation

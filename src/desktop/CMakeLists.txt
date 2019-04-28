@@ -73,7 +73,6 @@ set (
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
 	docks/inputsettingsdock.cpp
-	utils/netfiles.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp

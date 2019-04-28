@@ -27,13 +27,13 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
-#include "utils/netfiles.h"
 #include "utils/settings.h"
 #include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../shared/listings/announcementapi.h"
 #include "../shared/util/passwordhash.h"
+#include "../shared/util/networkaccess.h"
 
 #include "ui_settings.h"
 
@@ -612,11 +612,28 @@ void SettingsDialog::addListingServer()
 		} else {
 			const QUrl favicon(info.faviconUrl);
 			if(favicon.isValid()) {
-				networkaccess::getImage(favicon, nullptr, this, [this, apiUrl](const QImage &image, const QString &) {
-					if(!image.isNull()) {
-						m_listservers->setFavicon(apiUrl, image);
+				auto *filedownload = new networkaccess::FileDownload(this);
+
+				filedownload->setExpectedType("image/");
+
+				connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload, apiUrl](const QString &errorMessage) {
+					filedownload->deleteLater();
+
+					if(!errorMessage.isEmpty()) {
+						qWarning("Couldnt' fetch favicon: %s", qPrintable(errorMessage));
+						return;
 					}
+
+					QImage image;
+					if(!image.load(filedownload->file(), nullptr)) {
+						qWarning("Couldn't load favicon.");
+						return;
+					}
+
+					m_listservers->setFavicon(apiUrl, image);
 				});
+
+				filedownload->start(favicon);
 			}
 		}
 	});
