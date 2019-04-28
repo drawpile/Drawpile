@@ -18,6 +18,7 @@
 */
 
 #include "versioncheckdialog.h"
+#include "../../shared/util/networkaccess.h"
 
 #include "widgets/spinner.h"
 using widgets::Spinner;
@@ -25,6 +26,10 @@ using widgets::Spinner;
 #include "ui_versioncheck.h"
 
 #include <QSettings>
+#include <QPushButton>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDesktopServices>
 
 namespace dialogs {
 
@@ -33,6 +38,11 @@ VersionCheckDialog::VersionCheckDialog(QWidget *parent)
 {
 	m_ui->setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose);
+
+	m_downloadButton = m_ui->buttonBox->addButton(QString(), QDialogButtonBox::ActionRole);
+	m_downloadButton->hide();
+
+	connect(m_downloadButton, &QPushButton::clicked, this, &VersionCheckDialog::downloadNewVersion);
 
 	m_ui->dontCheck->setChecked(!QSettings().value("versioncheck/enabled", true).toBool());
 
@@ -101,8 +111,97 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 			cursor.insertBlock();
 			cursor.insertHtml(version.description);
 		}
+
+		const auto latest = versions.first();
+		if(!latest.downloadUrl.isEmpty()) {
+			m_downloadUrl = latest.downloadUrl;
+			if(m_downloadUrl.isValid() && !m_downloadUrl.fileName().isEmpty()) {
+				if(latest.downloadChecksumType == "sha256")
+					m_downloadSha256 = QByteArray::fromHex(latest.downloadChecksum.toLatin1());
+				m_downloadSize = latest.downloadSize;
+
+				m_downloadButton->setText(tr("Download %1 (%2 MB)")
+					.arg(latest.version)
+					.arg(latest.downloadSize / (1024.0 * 1024.0), 0, 'f', 2)
+					);
+				m_downloadButton->show();
+			}
+		}
 	}
 	m_ui->views->setCurrentIndex(1);
+}
+
+void VersionCheckDialog::downloadNewVersion()
+{
+	Q_ASSERT(m_downloadUrl.isValid());
+
+	const QDir downloadDir {  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) };
+	downloadDir.mkpath(".");
+
+	const QString downloadPath = downloadDir.filePath(m_downloadUrl.fileName());
+
+	{
+		QFile oldFile(downloadPath);
+		if(oldFile.exists()) {
+			if(oldFile.open(QFile::ReadOnly)) {
+				bool hashOk = true;
+
+				if(!m_downloadSha256.isEmpty()) {
+					QCryptographicHash hash(QCryptographicHash::Sha256);
+					char chunk[1024];
+					while(true) {
+						const int r = oldFile.read(chunk, sizeof(chunk));
+						if(r>0)
+							hash.addData(chunk, r);
+						else
+							break;
+					}
+
+					hashOk = hash.result() == m_downloadSha256;
+				}
+
+				if(hashOk) {
+					// Old download is still valid
+					QDesktopServices::openUrl(QUrl::fromLocalFile(downloadDir.path()));
+					return;
+				}
+			}
+
+			// File is corrupt, try to remove it
+			oldFile.remove();
+		}
+	}
+
+	auto *fd = new networkaccess::FileDownload(this);
+	fd->setTarget(downloadPath);
+	fd->setMaxSize(m_downloadSize);
+
+	if(!m_downloadSha256.isEmpty())
+		fd->setExpectedHash(m_downloadSha256, QCryptographicHash::Sha256);
+
+	connect(fd, &networkaccess::FileDownload::progress, this, [this](qint64 progress, qint64 total) {
+		m_ui->progressBar->setMaximum(int(total));
+		m_ui->progressBar->setValue(int(progress));
+	});
+
+	connect(fd, &networkaccess::FileDownload::finished, this, [this, downloadDir](const QString &errorMessage) {
+		if(errorMessage.isEmpty()) {
+			m_ui->downloadLabel->setText(tr("Downloaded %1!").arg(m_downloadUrl.fileName()));
+			QDesktopServices::openUrl(QUrl::fromLocalFile(downloadDir.path()));
+			close();
+
+		} else {
+			m_ui->downloadLabel->setText(errorMessage);
+		}
+	});
+
+	m_ui->downloadLabel->setText(tr("Downloading %1...").arg(m_downloadUrl.fileName()));
+	m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
+	m_downloadButton->hide();
+	m_ui->views->setCurrentIndex(2);
+
+	fd->start(m_downloadUrl);
+
 }
 
 }

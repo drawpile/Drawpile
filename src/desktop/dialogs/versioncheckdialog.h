@@ -25,6 +25,7 @@
 #include <QDialog>
 
 class Ui_VersionCheckDialog;
+class QPushButton;
 
 namespace dialogs {
 
@@ -55,10 +56,16 @@ public:
 private slots:
 	void versionChecked(bool isNew, const QString &errorMessage);
 	void rememberSettings();
+	void downloadNewVersion();
 
 private:
 	Ui_VersionCheckDialog *m_ui;
 	NewVersionCheck *m_newversion;
+	QPushButton *m_downloadButton;
+
+	QUrl m_downloadUrl;
+	QByteArray m_downloadSha256;
+	int m_downloadSize;
 };
 
 }
