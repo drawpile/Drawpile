@@ -8,6 +8,7 @@ from lxml.builder import E
 
 import re
 import os
+import hashlib
 
 CHANGELOG_FILE = '../ChangeLog'
 APPDATA_FILE = 'net.drawpile.drawpile.appdata.xml'
@@ -70,6 +71,70 @@ def add_release(appdata, changes):
     releases.insert(0, release)
     return True
 
+
+def find_artifact(filename):
+    path = 'artifacts/' + filename
+    try:
+        info = os.stat(path)
+    except FileNotFoundError:
+        return None
+
+    with open(path, 'rb') as f:
+        checksum = hashlib.sha256()
+        while True:
+            chunk = f.read(4096)
+            if not chunk:
+                break
+            checksum.update(chunk)
+
+    return {
+        'filename': filename,
+        'size': info.st_size,
+        'hash': checksum.hexdigest(),
+    }
+
+
+def update_release_artifacts(appdata):
+    latest_release = appdata.find('releases')[0]
+    version = latest_release.attrib['version']
+
+    # List of downloadable binaries
+    binaries = (
+        ('win64', 'win', f'drawpile-{version}-setup.exe'),
+        ('win32', 'win', f'drawpile-{version}-setup-w32.exe'),
+        ('macos', 'osx', f'Drawpile {version}.dmg'),
+    )
+
+    # Find metadata for binaries
+    artifacts = {}
+    for platform, prefix, filename in binaries:
+        metadata = find_artifact(filename)
+        if metadata:
+            metadata['filename'] = prefix + '/' + metadata['filename']
+            artifacts[platform] = metadata
+
+    # Update artifacts element
+    artifacts_elem = latest_release.find('artifacts')
+    if artifacts_elem is None:
+        artifacts_elem = E.artifacts()
+        latest_release.append(artifacts_elem)
+
+    for platform, artifact in artifacts.items():
+        elem = E.artifact(
+            E.location('https://drawpile.net/files/' + artifact['filename']),
+            E.checksum(artifact['hash'], type='sha256'),
+            E.size(str(artifact['size']), type='download'),
+            type='binary',
+            platform=platform
+            )
+
+        for old in artifacts_elem.xpath(f"artifact[@type='binary' and @platform='{platform}']"):
+            artifacts_elem.remove(old)
+
+        artifacts_elem.append(elem)
+
+    return artifacts.items()
+
 if __name__ == '__main__':
     latestChanges = read_changelog(CHANGELOG_FILE)
     appdata = etree.parse(
@@ -77,11 +142,26 @@ if __name__ == '__main__':
         etree.XMLParser(remove_blank_text=True)
     )
 
+    changed = False
+
     if not add_release(appdata, latestChanges):
-        print("Version %s already included in <releases>, nothing to do." % latestChanges['version'])
+        print("Version %s already included in <releases>." % latestChanges['version'])
 
     else:
         print("Adding release", latestChanges['version'])
+        changed = True
+
+    release_artifacts = update_release_artifacts(appdata)
+    if release_artifacts:
+        print("Updated release artifacts:")
+        for platform, ra in release_artifacts:
+            print('\t', platform, ra['filename'], ra['hash'])
+
+        changed = True
+    else:
+        print("No release artifacts")
+
+    if changed:
         appdata.write(APPDATA_FILE, encoding='utf-8', xml_declaration=True, pretty_print=True)
         print("Validating appdata file...")
         os.system('appstream-util validate-relax ' + APPDATA_FILE)
