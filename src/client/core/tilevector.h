@@ -32,7 +32,6 @@ class QPoint;
 namespace paintcore {
 
 class Layer;
-struct LayerInfo;
 
 /**
  * @brief One or more tile to be placed on a layer
@@ -63,13 +62,13 @@ struct LayerTileSet {
 	static LayerTileSet fromImage(const QImage &image, const QSize &layerSize, const QPoint &offset);
 
 	/**
-	 * @brief Generate a set of commands to create a layer from this tileset
-	 *
-	 * @param context ID context ID to use for the commands
-	 * @param layerId ID for the new layer
-	 * @param info layer attributes
+	 * @brief Generate PutTiles commands
+	 * @param contextid the message context ID to use
+	 * @param layerId target layer ID
+	 * @param sublayer target sublayer (0 for normal layers)
+	 * @param msgs where to put the messages
 	 */
-	protocol::MessageList toInitCommands(int contextId, const LayerInfo &info);
+	void toPutTiles(uint8_t contextid, uint16_t layerId, uint8_t sublayer, protocol::MessageList &msgs) const;
 };
 
 }

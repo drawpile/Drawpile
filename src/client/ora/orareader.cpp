@@ -481,22 +481,38 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		if(content.isNull())
 			return QGuiApplication::tr("Couldn't load layer %1").arg(layer.src);
 
-		paintcore::LayerInfo info {++layerId, layer.name };
-
-		bool exact_blendop;
-		info.blend = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
-		if(!exact_blendop)
-			result.warnings |= OraResult::ORA_EXTENDED;
-
-		info.censored = layer.censored;
-		info.fixed = layer.fixed;
-		info.opacity = qRound(255 * layer.opacity);
-
-		result.commands << paintcore::LayerTileSet::fromImage(
+		++layerId;
+		const auto tileset = paintcore::LayerTileSet::fromImage(
 			content.convertToFormat(QImage::Format_ARGB32_Premultiplied),
 			canvas.size,
 			layer.offset
-			).toInitCommands(ctxId, info);
+			);
+
+		result.commands << protocol::MessagePtr(new protocol::LayerCreate(
+			ctxId,
+			layerId,
+			0,
+			tileset.background.rgba(),
+			0,
+			layer.name
+		));
+
+		bool exact_blendop;
+		const auto blend = paintcore::findBlendModeByName(layer.compositeOp, &exact_blendop).id;
+		if(!exact_blendop)
+			result.warnings |= OraResult::ORA_EXTENDED;
+
+		result.commands << protocol::MessagePtr(new protocol::LayerAttributes(
+			ctxId,
+			layerId,
+			0,
+			(layer.censored ? protocol::LayerAttributes::FLAG_CENSOR : 0) |
+			(layer.fixed ? protocol::LayerAttributes::FLAG_FIXED : 0),
+			qRound(255 * layer.opacity),
+			blend
+		));
+
+		tileset.toPutTiles(ctxId, layerId, 0, result.commands);
 
 		if(layer.locked) {
 			result.commands << MessagePtr(new protocol::LayerACL(ctxId, layerId, true, int(canvas::Tier::Guest), QList<uint8_t>()));

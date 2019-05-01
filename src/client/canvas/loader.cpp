@@ -123,9 +123,29 @@ MessageList ImageCanvasLoader::loadInitCommands()
 				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
 			}
 
-			msgs << paintcore::LayerTileSet::fromImage(
+			const auto tileset = paintcore::LayerTileSet::fromImage(
 				image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-				).toInitCommands(1, paintcore::LayerInfo(layerId, QStringLiteral("Layer %1").arg(layerId)));
+				);
+
+			msgs << protocol::MessagePtr(new protocol::LayerCreate(
+				1,
+				layerId,
+				0,
+				tileset.background.rgba(),
+				0,
+				QStringLiteral("Layer %1").arg(layerId)
+			));
+
+			msgs << protocol::MessagePtr(new protocol::LayerAttributes(
+				1,
+				layerId,
+				0,
+				0,
+				255,
+				paintcore::BlendMode::MODE_NORMAL
+			));
+
+			tileset.toPutTiles(1, layerId, 0, msgs);
 
 			++layerId;
 		}
@@ -140,9 +160,29 @@ MessageList QImageCanvasLoader::loadInitCommands()
 
 	msgs << MessagePtr(new protocol::CanvasResize(1, 0, m_image.size().width(), m_image.size().height(), 0));
 
-	msgs << paintcore::LayerTileSet::fromImage(
+	const auto tileset = paintcore::LayerTileSet::fromImage(
 		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-		).toInitCommands(1, paintcore::LayerInfo(1, QStringLiteral("Layer 1")));
+		);
+
+	msgs << protocol::MessagePtr(new protocol::LayerCreate(
+		1,
+		1,
+		0,
+		tileset.background.rgba(),
+		0,
+		QStringLiteral("Layer 1")
+	));
+
+	msgs << protocol::MessagePtr(new protocol::LayerAttributes(
+		1,
+		1,
+		0,
+		0,
+		255,
+		paintcore::BlendMode::MODE_NORMAL
+	));
+
+	tileset.toPutTiles(1, 1, 0, msgs);
 
 	return msgs;
 }
@@ -177,8 +217,45 @@ MessageList SnapshotLoader::loadInitCommands()
 	for(int i=0;i<m_layers->layerCount();++i) {
 		const paintcore::Layer *layer = m_layers->getLayerByIndex(i);
 
-		msgs << paintcore::LayerTileSet::fromLayer(*layer)
-			.toInitCommands(m_contextId, layer->info());
+		const auto tileset = paintcore::LayerTileSet::fromLayer(*layer);
+
+		msgs << protocol::MessagePtr(new protocol::LayerCreate(
+			m_contextId,
+			layer->id(),
+			0,
+			tileset.background.rgba(),
+			0,
+			layer->title()
+		));
+
+		msgs << protocol::MessagePtr(new protocol::LayerAttributes(
+			m_contextId,
+			layer->id(),
+			0,
+			(layer->isCensored() ? protocol::LayerAttributes::FLAG_CENSOR : 0) |
+			(layer->isFixed() ? protocol::LayerAttributes::FLAG_FIXED : 0),
+			layer->opacity(),
+			layer->blendmode()
+		));
+
+		tileset.toPutTiles(m_contextId, layer->id(), 0, msgs);
+
+		// Put active sublayers (if any)
+		for(const paintcore::Layer *sublayer : layer->sublayers()) {
+			if(sublayer->id() > 0 && sublayer->id() < 256 && !sublayer->isHidden()) {
+				const auto subtileset = paintcore::LayerTileSet::fromLayer(*sublayer);
+				msgs << protocol::MessagePtr(new protocol::LayerAttributes(
+					m_contextId,
+					layer->id(),
+					sublayer->id(),
+					0,
+					sublayer->opacity(),
+					sublayer->blendmode()
+					));
+
+				subtileset.toPutTiles(m_contextId, layer->id(), sublayer->id(), msgs);
+			}
+		}
 
 		// Set layer ACLs (if found)
 		if(m_aclfilter) {
