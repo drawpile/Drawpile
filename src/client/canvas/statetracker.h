@@ -24,6 +24,7 @@
 #include "core/point.h"
 
 #include <QObject>
+#include <QExplicitlySharedDataPointer>
 
 namespace protocol {
 	class CanvasResize;
@@ -70,23 +71,26 @@ class CanvasModel;
  * This is used for undo/redo as well as jumping around in indexed recordings.
  */
 class StateSavepoint {
-	friend class StateTracker;
 public:
-	StateSavepoint() : m_data(nullptr) {}
-	StateSavepoint(const StateSavepoint &sp);
-	StateSavepoint &operator=(const StateSavepoint &sp);
+	struct Data;
+
+	StateSavepoint();
+	StateSavepoint(Data *d);
+	StateSavepoint(const StateSavepoint &other);
 	~StateSavepoint();
 
-	void toDatastream(QDataStream &ds) const;
-	static StateSavepoint fromDatastream(QDataStream &ds);
+	StateSavepoint &operator=(const StateSavepoint &other);
 
-	operator bool() const { return m_data != nullptr; }
-	bool operator!() const { return !m_data; }
-	bool operator==(const StateSavepoint &sp) const { return m_data == sp.m_data; }
-	bool operator!=(const StateSavepoint &sp) const { return m_data != sp.m_data; }
+	operator bool() const { return d; }
+	bool operator!() const { return !d; }
+	bool operator==(const StateSavepoint &sp) const { return d == sp.d; }
+	bool operator!=(const StateSavepoint &sp) const { return d != sp.d; }
 
-	//! Get this snapshots timestamp
+	//! Get this snapshot's timestamp
 	qint64 timestamp() const;
+
+	//! Get the canvas snapshot
+	paintcore::Savepoint canvas() const;
 
 	/**
 	 * @brief Get a thumbnail of savepoint content
@@ -104,13 +108,20 @@ public:
 	 */
 	protocol::MessageList initCommands(uint8_t contextId, const CanvasModel *canvas) const;
 
+	const Data *operator->() const { Q_ASSERT(d); return d.constData(); }
+
+	/**
+	 * @brief Make a state savepoint from just a canvas savepoint
+	 *
+	 * This is used to create an savepoint from a serialized canvas state
+	 * stored in an index.
+	 *
+	 * @param savepoint
+	 */
+	static StateSavepoint fromCanvasSavepoint(const paintcore::Savepoint &savepoint);
+
 private:
-	struct Data;
-
-	const Data *operator ->() const { return m_data; }
-	Data *operator ->();
-
-	Data *m_data;
+	QExplicitlySharedDataPointer<Data> d;
 };
 
 }

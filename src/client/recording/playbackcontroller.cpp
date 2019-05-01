@@ -19,7 +19,6 @@
 
 #include "playbackcontroller.h"
 #include "indexbuilder.h"
-#include "indexloader.h"
 
 #include "export/videoexporter.h"
 
@@ -40,16 +39,26 @@ namespace recording {
 
 PlaybackController::PlaybackController(canvas::CanvasModel *canvas, Reader *reader, QObject *parent)
 	: QObject(parent),
-	  m_reader(reader), m_indexloader(nullptr), m_exporter(nullptr), m_canvas(canvas),
+	  m_reader(reader), m_exporter(nullptr), m_canvas(canvas),
 	  m_play(false), m_exporterReady(false), m_waitedForExporter(false), m_autosave(true),
 	  m_maxInterval(60.0), m_speedFactor(1.0),
 	  m_indexBuildProgress(0)
 {
+	Q_ASSERT(canvas);
+	Q_ASSERT(reader);
+
 	reader->setParent(this);
 
 	m_autoplayTimer = new QTimer(this);
 	m_autoplayTimer->setSingleShot(true);
 	connect(m_autoplayTimer, &QTimer::timeout, this, &PlaybackController::nextCommand);
+
+	// Calculate hash of the recording file if it is indexable.
+	// (only uncompressed recordings can be indexed)
+	// This is used to match up the index file to the recording.
+	if(!reader->isCompressed()) {
+		m_recordingHash = hashRecording(reader->filename());
+	}
 
 	// Restore settings
 	QSettings cfg;
@@ -93,7 +102,7 @@ int PlaybackController::maxIndexPosition() const
 {
 	if(!m_indexloader)
 		return -1;
-	return m_indexloader->index().actionCount();
+	return m_indexloader.messageCount();
 }
 
 void PlaybackController::setPauses(bool pauses)
@@ -142,7 +151,7 @@ void PlaybackController::nextCommands(int stepCount)
 			if(next.message->type() == protocol::MSG_INTERVAL) {
 				if(m_play) {
 					// Autoplay mode: pause for the given interval
-					expectSequencePoint(next.message.cast<protocol::Interval>().milliseconds() / m_speedFactor);
+					expectSequencePoint(int(next.message.cast<protocol::Interval>().milliseconds() / m_speedFactor));
 					return;
 
 				} else {
@@ -236,18 +245,22 @@ void PlaybackController::prevSequence()
 		qWarning("prevSequence: index not loaded!");
 		return;
 	}
-	const Index &index = m_indexloader->index();
-	jumpTo(index.entry(index.findPreviousStop(m_reader->currentIndex())).index);
+
+	jumpToSnapshot(IndexEntry::nearest(
+		m_indexloader.index(),
+		m_reader->currentIndex()
+		));
+	expectSequencePoint(0);
 }
 
-void PlaybackController::jumpTo(int pos)
+void PlaybackController::jumpTo(int messageIndex)
 {
 	if(!m_indexloader) {
-		qWarning("jumpTo(%d): index not loaded!", pos);
+		qWarning("jumpTo(%d): index not loaded!", messageIndex);
 		return;
 	}
 
-	if(pos == m_reader->currentIndex())
+	if(messageIndex == m_reader->currentIndex())
 		return;
 
 	if(waitForExporter())
@@ -255,18 +268,18 @@ void PlaybackController::jumpTo(int pos)
 
 	// If the target position is behind current position or sufficiently far ahead, jump
 	// to the closest snapshot point first
-	if(pos < m_reader->currentIndex() || pos - m_reader->currentIndex() > 500) {
-		const Index &index = m_indexloader->index();
-		int snap = index.findClosestSnapshot(pos);
+	if(messageIndex < m_reader->currentIndex() || messageIndex - m_reader->currentIndex() > 500) {
+		const auto &index = m_indexloader.index();
+		const auto nearest = IndexEntry::nearest(index, messageIndex);
 
-		// When jumping forward, don't restore the snapshot if the snapshot is behind
-		// the current position
-		if(pos < m_reader->currentIndex() || index.entries().at(snap).pos > quint32(m_reader->currentIndex()))
-			jumpToSnapshot(snap);
+		// Restore snapshot only when jumping backward and when
+		// the nearest target snapshot is after this one
+		if(messageIndex < m_reader->currentIndex() || nearest.index > m_reader->currentIndex())
+			jumpToSnapshot(nearest);
 	}
 
 	// Now the current position is somewhere before the target position: replay commands
-	while(m_reader->currentIndex() < pos && !m_reader->isEof()) {
+	while(m_reader->currentIndex() < messageIndex && !m_reader->isEof()) {
 		MessageRecord next = m_reader->readNext();
 		switch(next.status) {
 		case MessageRecord::OK:
@@ -287,35 +300,34 @@ void PlaybackController::jumpTo(int pos)
 	expectSequencePoint(0);
 }
 
-void PlaybackController::jumpToSnapshot(int idx)
+void PlaybackController::jumpToSnapshot(const IndexEntry &entry)
 {
 	Q_ASSERT(m_indexloader);
 
-	StopEntry se = m_indexloader->index().entry(idx);
-	canvas::StateSavepoint savepoint = m_indexloader->loadSavepoint(idx);
+	canvas::StateSavepoint savepoint = m_indexloader.loadSavepoint(entry);
 
 	if(!savepoint) {
 		qWarning("error loading savepoint");
 		return;
 	}
 
-	m_reader->seekTo(se.index, se.pos);
+	m_reader->seekTo(entry.index, entry.messageOffset);
 	m_canvas->stateTracker()->resetToSavepoint(savepoint);
 	updateIndexPosition();
 }
 
-void PlaybackController::jumpToMarker(int index)
+void PlaybackController::jumpToMarker(int markerIndex)
 {
 	if(!m_indexloader)
 		return;
 
-	const QVector<MarkerEntry> &markers = m_indexloader->index().markers();
-	if(index<0 || index >= markers.size()) {
-		qWarning("markers()[%d] does not exist", index);
+	if(markerIndex<0 || markerIndex >= m_indexloader.markers().size()) {
+		qWarning("markers()[%d] does not exist", markerIndex);
 		return;
 	}
 
-	jumpTo(m_indexloader->index().entry(markers.at(index).stop).index);
+	jumpToSnapshot(m_indexloader.markers().at(markerIndex));
+	expectSequencePoint(0);
 }
 
 void PlaybackController::updateIndexPosition()
@@ -342,8 +354,13 @@ void PlaybackController::buildIndex()
 		return;
 	}
 
+	if(m_recordingHash.isEmpty()) {
+		qWarning("Not an indexable recording? Hash not computed.");
+		return;
+	}
+
 	QThread *thread = new QThread;
-	m_indexbuilder = new IndexBuilder(m_reader->filename(), indexFileName());
+	m_indexbuilder = new IndexBuilder(m_reader->filename(), indexFileName(), m_recordingHash);
 	m_indexbuilder->moveToThread(thread);
 
 	const qreal filesize = m_reader->filesize();
@@ -372,7 +389,7 @@ void PlaybackController::buildIndex()
 
 void PlaybackController::loadIndex()
 {
-	if(m_reader->isCompressed()) {
+	if(m_recordingHash.isEmpty()) {
 		emit indexLoadError(tr("Cannot index compressed recordings."), false);
 		return;
 	}
@@ -383,15 +400,14 @@ void PlaybackController::loadIndex()
 		return;
 	}
 
-	m_indexloader.reset(new IndexLoader(m_reader->filename(), indexFileName()));
-	if(!m_indexloader->open()) {
-		m_indexloader.reset();
+	m_indexloader = IndexLoader(m_reader->filename(), indexFileName(), m_recordingHash);
+	if(!m_indexloader.open()) {
+		m_indexloader = IndexLoader();
 		emit indexLoadError(tr("Error loading index!"), true);
 		return;
 	}
 
 	emit markersChanged();
-
 	emit indexLoaded();
 }
 
@@ -399,8 +415,8 @@ QStringList PlaybackController::getMarkers() const
 {
 	QStringList markers;
 	if(m_indexloader) {
-		for(const MarkerEntry &m : m_indexloader->index().markers()) {
-			markers << m.title;
+		for(const IndexEntry &e : m_indexloader.markers()) {
+			markers << e.title;
 		}
 	}
 	return markers;
@@ -409,17 +425,22 @@ QStringList PlaybackController::getMarkers() const
 int PlaybackController::indexThumbnailCount() const
 {
 	if(m_indexloader)
-		return m_indexloader->thumbnailsAvailable();
+		return qMax(1, m_indexloader.thumbnails().size());
 	else
 		return -1;
 }
 
-QImage PlaybackController::getIndexThumbnail(int idx) const
+QImage PlaybackController::getIndexThumbnail(int thumbnailIndex) const
 {
 	if(!m_indexloader)
 		return QImage();
 
-	return m_indexloader->loadThumbnail(idx);
+	const auto thumbnails = m_indexloader.thumbnails();
+
+	if(thumbnailIndex < 0 || thumbnailIndex >= thumbnails.size())
+		return QImage();
+
+	return thumbnails.at(thumbnailIndex).thumbnail;
 }
 
 QString PlaybackController::recordingFilename() const

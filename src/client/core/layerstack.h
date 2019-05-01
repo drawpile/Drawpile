@@ -37,7 +37,7 @@ class Layer;
 class EditableLayer;
 class EditableLayerStack;
 class Tile;
-class Savepoint;
+struct Savepoint;
 struct LayerInfo;
 
 /**
@@ -124,7 +124,7 @@ public:
 	Tile getFlatTile(int x, int y) const;
 
 	//! Create a new savepoint
-	Savepoint *makeSavepoint();
+	Savepoint makeSavepoint();
 
 	//! Get the current view rendering mode
 	ViewMode viewMode() const { return m_viewmode; }
@@ -200,21 +200,17 @@ private:
 };
 
 /// Layer stack savepoint for undo use
-class Savepoint {
-	friend class LayerStack;
-	friend class EditableLayerStack;
-public:
+struct Savepoint {
+	Savepoint() = default;
+	Savepoint(const Savepoint &other);
 	~Savepoint();
 
-	void toDatastream(QDataStream &out) const;
-	static Savepoint *fromDatastream(QDataStream &in);
+	Savepoint &operator=(const Savepoint &other);
 
-private:
-	Savepoint() {}
 	QList<Layer*> layers;
 	QList<Annotation> annotations;
 	Tile background;
-	int width, height;
+	QSize size;
 };
 
 /**
@@ -295,7 +291,7 @@ public:
 	void setCensorship(bool censor);
 
 	//! Restore layer stack to a previous savepoint
-	void restoreSavepoint(const Savepoint *savepoint);
+	void restoreSavepoint(const Savepoint &savepoint);
 
 	const LayerStack *layerStack() const { return d; }
 

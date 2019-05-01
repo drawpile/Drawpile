@@ -362,38 +362,61 @@ bool LayerStack::isVisible(int idx) const
 	return true;
 }
 
-Savepoint::~Savepoint()
+Savepoint LayerStack::makeSavepoint()
 {
-	while(!layers.isEmpty())
-		delete layers.takeLast();
-}
-
-Savepoint *LayerStack::makeSavepoint()
-{
-	Savepoint *sp = new Savepoint;
+	Savepoint sp;
 	for(Layer *l : m_layers) {
 		l->optimize();
-		sp->layers.append(new Layer(*l));
+		sp.layers.append(new Layer(*l));
 	}
 
-	sp->annotations = m_annotations->getAnnotations();
-	sp->background = m_backgroundTile;
+	sp.annotations = m_annotations->getAnnotations();
+	sp.background = m_backgroundTile;
 
-	sp->width = m_width;
-	sp->height = m_height;
+	sp.size = size();
 
 	return sp;
 }
 
-void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
+Savepoint::Savepoint(const Savepoint &other)
+{
+	for(Layer *l : other.layers)
+		layers << new Layer(*l);
+	annotations = other.annotations;
+	background = other.background;
+	size = other.size;
+}
+
+Savepoint &Savepoint::operator=(const Savepoint &other)
+{
+	if(&other != this) {
+		for(Layer *l : layers)
+			delete l;
+		layers.clear();
+		for(Layer *l : other.layers)
+			layers << new Layer(*l);
+		annotations = other.annotations;
+		background = other.background;
+		size = other.size;
+	}
+	return *this;
+}
+
+Savepoint::~Savepoint()
+{
+	for(Layer *l : layers)
+		delete l;
+}
+
+void EditableLayerStack::restoreSavepoint(const Savepoint &savepoint)
 {
 	const QSize oldsize(d->m_width, d->m_height);
-	if(d->m_width != savepoint->width || d->m_height != savepoint->height) {
+	if(d->width() != savepoint.size.width() || d->height() != savepoint.size.height()) {
 		// Restore canvas size if it was different in the savepoint
-		d->m_width = savepoint->width;
-		d->m_height = savepoint->height;
-		d->m_xtiles = Tile::roundTiles(savepoint->width);
-		d->m_ytiles = Tile::roundTiles(savepoint->height);
+		d->m_width = savepoint.size.width();
+		d->m_height = savepoint.size.height();
+		d->m_xtiles = Tile::roundTiles(d->m_width);
+		d->m_ytiles = Tile::roundTiles(d->m_height);
 		for(auto observer : d->m_observers)
 			observer->canvasResized(0, 0, oldsize);
 		emit d->resized(0, 0, oldsize);
@@ -401,7 +424,7 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 	} else {
 		// Mark changed tiles as changed. Usually savepoints are quite close together
 		// so most tiles will remain unchanged
-		if(savepoint->layers.size() != d->m_layers.size()) {
+		if(savepoint.layers.size() != d->m_layers.size()) {
 			// Layers added or deleted, just refresh everything
 			// (force refresh even if layer stack is empty)
 			for(auto observer : d->m_observers)
@@ -409,15 +432,66 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 
 		} else {
 			// Layer count has not changed, compare layer contents
-			for(int l=0;l<savepoint->layers.size();++l) {
+			for(int l=0;l<savepoint.layers.size();++l) {
 				const Layer *l0 = d->m_layers.at(l);
-				const Layer *l1 = savepoint->layers.at(l);
+				const Layer *l1 = savepoint.layers.at(l);
 				if(l0->effectiveOpacity() != l1->effectiveOpacity()) {
 					// Layer opacity has changed, refresh everything
 					for(auto observer : d->m_observers)
 						observer->markDirty();
 					break;
 				}
+
+				// Gather list of sublayer IDs to compare
+				QVarLengthArray<int, 10> sublayers;
+				for(const Layer *sl : l0->sublayers())
+					if(sl->id() > 0 && !sl->isHidden() && !sublayers.contains(sl->id()))
+						sublayers << sl->id();
+
+				for(const Layer *sl : l1->sublayers())
+					if(sl->id() > 0 && !sl->isHidden() && !sublayers.contains(sl->id()))
+						sublayers << sl->id();
+
+				// Compare sublayers
+				const int tilecount = d->m_xtiles * d->m_ytiles;
+
+				for(int sublayerId : sublayers) {
+					const Layer *sl0 = l0->getVisibleSublayer(sublayerId);
+					const Layer *sl1 = l1->getVisibleSublayer(sublayerId);
+					const Layer *delta = nullptr;
+
+					if(sl0) {
+						if(sl1) {
+							// Visible in both, compare content
+							for(int i=0;i<tilecount;++i) {
+								// Note: An identity comparison works here, because the tiles
+								// utilize copy-on-write semantics. Unchanged tiles will share
+								// data pointers between savepoints.
+								if(sl0->tile(i) != sl1->tile(i)) {
+									for(auto observer : d->m_observers)
+										observer->markDirty(i);
+								}
+							}
+						} else {
+							// Not visible in sl1
+							delta = sl0;
+						}
+					} else {
+						// Not visible in sl0, therefore must be visible in sl1
+						delta = sl1;
+					}
+
+					if(delta) {
+						// Visible in one but not both: mark opaque areas as dirty
+						for(int i=0;i<tilecount;++i) {
+							if(!delta->tile(i).isNull())
+								for(auto observer : d->m_observers)
+									observer->markDirty(i);
+						}
+					}
+				}
+
+				// Compare the main layer
 				for(int i=0;i<d->m_xtiles*d->m_ytiles;++i) {
 					// Note: An identity comparison works here, because the tiles
 					// utilize copy-on-write semantics. Unchanged tiles will share
@@ -434,61 +508,14 @@ void EditableLayerStack::restoreSavepoint(const Savepoint *savepoint)
 	// Restore layers
 	while(!d->m_layers.isEmpty())
 		delete d->m_layers.takeLast();
-	for(const Layer *l : savepoint->layers)
+	for(const Layer *l : savepoint.layers)
 		d->m_layers.append(new Layer(*l));
 
 	// Restore background
-	setBackground(savepoint->background);
+	setBackground(savepoint.background);
 
 	// Restore annotations
-	d->m_annotations->setAnnotations(savepoint->annotations);
-}
-
-void Savepoint::toDatastream(QDataStream &out) const
-{
-	// Write size
-	out << quint32(width) << quint32(height);
-
-	// Write layers
-	out << quint8(layers.size());
-	for(const Layer *layer : layers) {
-		layer->toDatastream(out);
-	}
-
-	// Write background
-	out << background;
-
-	// Write annotations
-	out << quint16(annotations.size());
-	for(const Annotation &annotation : annotations) {
-		annotation.toDataStream(out);
-	}
-}
-
-Savepoint *Savepoint::fromDatastream(QDataStream &in)
-{
-	Savepoint *sp = new Savepoint;
-	quint32 width, height;
-	in >> width >> height;
-
-	sp->width = width;
-	sp->height = height;
-
-	quint8 layers;
-	in >> layers;
-	while(layers--) {
-		sp->layers.append(Layer::fromDatastream(in));
-	}
-
-	in >> sp->background;
-
-	quint16 annotations;
-	in >> annotations;
-	while(annotations--) {
-		sp->annotations.append(Annotation::fromDataStream(in));
-	}
-
-	return sp;
+	d->m_annotations->setAnnotations(savepoint.annotations);
 }
 
 void EditableLayerStack::resize(int top, int right, int bottom, int left)

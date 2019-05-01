@@ -21,6 +21,7 @@
 
 #include "../shared/net/message.h"
 #include "index.h"
+#include "indexloader.h"
 
 #include <QObject>
 #include <QPointer>
@@ -39,7 +40,6 @@ namespace canvas {
 namespace recording {
 
 class Reader;
-class IndexLoader;
 class IndexBuilder;
 
 /**
@@ -94,10 +94,10 @@ public:
 
 	void startVideoExport(VideoExporter *exporter);
 
-	bool hasIndex() const { return !m_indexloader.isNull(); }
+	bool hasIndex() const { return m_indexloader; }
 
 	int indexThumbnailCount() const;
-	QImage getIndexThumbnail(int idx) const;
+	QImage getIndexThumbnail(int thumbnailIndex) const;
 
 signals:
 	void speedFactorChanged(qreal value);
@@ -127,9 +127,9 @@ public slots:
 	void nextSequence();
 	void prevSequence();
 
-	void jumpToMarker(int index);
+	void jumpToMarker(int markerIndex);
 
-	void jumpTo(int pos);
+	void jumpTo(int messageIndex);
 
 	void loadIndex();
 	void buildIndex();
@@ -148,7 +148,7 @@ private slots:
 
 private:
 	void nextCommands(int stepCount);
-	void jumpToSnapshot(int idx);
+	void jumpToSnapshot(const IndexEntry &entry);
 	void updateIndexPosition();
 	bool waitForExporter();
 	void expectSequencePoint(int interval);
@@ -156,7 +156,8 @@ private:
 	QString indexFileName() const;
 
 	Reader *m_reader;
-	QScopedPointer<IndexLoader> m_indexloader;
+	QByteArray m_recordingHash;
+	IndexLoader m_indexloader;
 	QPointer<IndexBuilder> m_indexbuilder;
 	VideoExporter *m_exporter;
 

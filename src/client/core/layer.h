@@ -77,8 +77,13 @@ public:
 	//! Construct a layer filled with solid color
 	Layer(int id, const QString& title, const QColor& color, const QSize& size);
 
+	Layer(const QVector<Tile> &tiles, const QSize &size, const LayerInfo &info, const QList<Layer*> sublayers);
+
 	//! Construct a copy of this layer
-	Layer(const Layer &layer);
+	Layer(const Layer &layer);	
+
+	Layer &operator=(const Layer &other) = delete;
+
 	~Layer();
 
 	//! Get the layer width in pixels
@@ -151,6 +156,13 @@ public:
 	 */
 	Layer *getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity);
 
+	/**
+	 * @brief Get a sublayer, but only if it is visible
+	 * @param id
+	 * @return sublayer or nullptr
+	 */
+	const Layer *getVisibleSublayer(int id) const;
+
 	//! Get a tile
 	const Tile &tile(int x, int y) const {
 		Q_ASSERT(x>=0 && x<m_xtiles);
@@ -176,12 +188,6 @@ public:
 	 * @brief Get the non-pixeldata related properties
 	 */
 	const LayerInfo &info() const { return m_info; }
-
-	// Disable assignment operator
-	Layer& operator=(const Layer&) = delete;
-
-	void toDatastream(QDataStream &out) const;
-	static Layer *fromDatastream(QDataStream &in);
 
 	//! Get this layer's tile vector
 	const QVector<Tile> tiles() const { return m_tiles; }
@@ -289,6 +295,8 @@ public:
 
 	//! Get a reference to a tile
 	Tile &rtile(int x, int y) { Q_ASSERT(d); return d->rtile(x, y); }
+
+	Tile &rtile(int index) { return d->m_tiles[index]; }
 
 	//! Merge a sublayer with this layer
 	void mergeSublayer(int id);

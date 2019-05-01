@@ -124,6 +124,21 @@ Layer::Layer(int id, const QSize &size)
 	// sublayers are used for indirect drawing and previews
 }
 
+Layer::Layer(const QVector<Tile> &tiles, const QSize &size, const LayerInfo &info, const QList<Layer*> sublayers)
+	: m_info(info),
+	  m_tiles(tiles),
+	  m_sublayers(sublayers),
+	  m_width(size.width()),
+	  m_height(size.height()),
+	  m_xtiles(Tile::roundTiles(size.width())),
+	  m_ytiles(Tile::roundTiles(size.height()))
+{
+	if(m_xtiles * m_ytiles != m_tiles.size()) {
+		qWarning("Layer constructor: tile vector size mismatch!");
+		m_tiles.resize(m_xtiles * m_ytiles);
+	}
+}
+
 Layer::Layer(const Layer &layer)
 	: m_info(layer.m_info),
 	  m_changeBounds(layer.m_changeBounds),
@@ -446,67 +461,13 @@ Layer *Layer::getSubLayer(int id, BlendMode::Mode blendmode, uchar opacity)
 	return sl;
 }
 
-void Layer::toDatastream(QDataStream &out) const
+const Layer *Layer::getVisibleSublayer(int id) const
 {
-	// Write Layer metadata
-	out << qint32(id());
-	out << quint32(width()) << quint32(height());
-	out << m_info.title;
-	out << m_info.opacity;
-	out << quint8(m_info.blend);
-	out << m_info.hidden;
-
-	// Write layer content
-	for(const Tile &t : m_tiles)
-		out << t;
-
-	// Write sublayers
-	out << quint8(m_sublayers.size());
 	for(const Layer *sl : m_sublayers) {
-		sl->toDatastream(out);
+		if(sl->id() == id && !sl->isHidden())
+			return sl;
 	}
-}
-
-Layer *Layer::fromDatastream(QDataStream &in)
-{
-	// Read metadata
-	qint32 id;
-	in >> id;
-
-	quint32 lw, lh;
-	in >> lw >> lh;
-
-	QString title;
-	in >> title;
-
-	uchar opacity;
-	uchar blend;
-	bool hidden;
-	in >> opacity >> blend >> hidden;
-
-	// Read tiles
-	Layer *layer = new Layer(id, title, Qt::transparent, QSize(lw, lh));
-
-	for(Tile &t : layer->m_tiles)
-		in >> t;
-
-	layer->m_info.opacity = opacity;
-	layer->m_info.blend = BlendMode::Mode(blend);
-	layer->m_info.hidden = hidden;
-
-	// Read sublayers
-	quint8 sublayers;
-	in >> sublayers;
-	while(sublayers--) {
-		Layer *sl = Layer::fromDatastream(in);
-		if(!sl) {
-			delete layer;
-			return 0;
-		}
-		layer->m_sublayers.append(sl);
-	}
-
-	return layer;
+	return nullptr;
 }
 
 void EditableLayer::resize(int top, int right, int bottom, int left)

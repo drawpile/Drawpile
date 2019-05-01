@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,76 +21,36 @@
 
 #include <QVector>
 #include <QString>
-
-class QIODevice;
+#include <QImage>
 
 namespace recording {
 
-//! Index format version
-static const quint16 INDEX_VERSION = 0x0006;
-
-struct StopEntry {
-	static const quint8 HAS_SNAPSHOT = 0x01;
-
-	//! Index number of the message
+struct IndexEntry {
+	//! Number of the message in the recording file
 	quint32 index;
 
 	//! Message position in the recording file
-	qint64 pos;
+	qint64 messageOffset;
 
-	//! Extra info about this index position
-	quint8 flags;
-};
+	//! Offset of the canvas snapshot in the index file
+	qint64 snapshotOffset;
 
-struct MarkerEntry {
-	quint32 stop;
+	//! Title of this entry (if this is a marker)
 	QString title;
-};
 
-/**
- * Recording index
- */
-class Index {
-	friend class IndexBuilder;
-	friend class IndexLoader;
-
-public:
-
-	//! Get the number of entries in the index
-	int size() const { return m_stops.size(); }
-
-	//! Get the given stop
-	const StopEntry &entry(int stopIdx) const { return m_stops.at(stopIdx); }
-
-	//! Get the stop vector
-	const QVector<StopEntry> &entries() const { return m_stops; }
-
-	//! Get the marker vector
-	const QVector<MarkerEntry> &markers() const { return m_markers; }
-
-	//! Get the total number of actions in the recording
-	int actionCount() const { return m_actioncount; }
+	//! The thumbnail of this entry
+	QImage thumbnail;
 
 	/**
-	 * Find the stop closest to the given position, such that stop.index < pos.
-	 * Returns 0 if no such stop is found.
-	 * @return stop index
+	 * Find the index entry closest to the given position, such that entry.index <= pos.
+	 *
+	 * @return stop index or 0 if not found
 	 */
-	int findPreviousStop(unsigned int pos) const;
-
-	/**
-	 * Find the snapshot S nearest to the given index I, such that S < I.
-	 */
-	int findClosestSnapshot(unsigned int pos) const;
-
-	bool writeIndex(QIODevice *out) const;
-	bool readIndex(QIODevice *in);
-
-private:
-	QVector<StopEntry> m_stops;
-	QVector<MarkerEntry> m_markers;
-	int m_actioncount;
+	static IndexEntry nearest(const QVector<IndexEntry> &index, int pos);
 };
+
+QDataStream &operator>>(QDataStream&, IndexEntry&);
+QDataStream &operator<<(QDataStream&, const IndexEntry&);
 
 //! Hash the recording file
 QByteArray hashRecording(const QString &filename);
@@ -98,3 +58,4 @@ QByteArray hashRecording(const QString &filename);
 }
 
 #endif
+

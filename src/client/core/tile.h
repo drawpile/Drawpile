@@ -186,12 +186,14 @@ class Tile {
 		 */
 		bool operator==(const Tile &other) const { return m_data == other.m_data; }
 		bool operator!=(const Tile &other) const { return m_data != other.m_data; }
-		friend QDataStream &operator>>(QDataStream&, Tile&);
+
+		friend uint qHash(const Tile &t, uint seed=0) { return qHash(reinterpret_cast<quintptr>(t.m_data.constData()), seed); }
 
 	private:
 		QSharedDataPointer<TileData> m_data;
 };
 
+QDataStream &operator>>(QDataStream&, Tile&);
 QDataStream &operator<<(QDataStream&, const Tile&);
 
 }

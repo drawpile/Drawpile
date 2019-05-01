@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 
 #include "index.h"
 
-class KArchive;
+#include <QExplicitlySharedDataPointer>
+
 class QImage;
 
 namespace canvas {
 	class StateSavepoint;
-	class StateTracker;
 }
 
 namespace recording {
@@ -35,25 +35,43 @@ namespace recording {
 class IndexLoader
 {
 public:
-	IndexLoader(const QString &recording, const QString &index);
-	IndexLoader(const IndexLoader&) = delete;
-	IndexLoader &operator=(const IndexLoader&) = delete;
+	IndexLoader();
+	IndexLoader(const QString &recording, const QString &index, const QByteArray &expectedHash);
+
+	IndexLoader(const IndexLoader&);
+	IndexLoader &operator=(const IndexLoader&);
+
 	~IndexLoader();
 
+	/**
+	 * @brief Open the index
+	 *
+	 * The list of index entries is read and loadSavepoint can then be used.
+	 */
 	bool open();
 
-	Index &index() { return m_index; }
+	//! All index entries
+	QVector<IndexEntry> index() const;
 
-	int thumbnailsAvailable() const { return m_thumbnailcount; }
+	//! Entries with markers
+	QVector<IndexEntry> markers() const;
 
-	canvas::StateSavepoint loadSavepoint(int idx);
-	QImage loadThumbnail(int idx);
+	//! Entries with thumbnails
+	QVector<IndexEntry> thumbnails() const;
+
+	//! Total number of messages in the recording
+	int messageCount() const;
+
+	canvas::StateSavepoint loadSavepoint(const IndexEntry &entry);
+
+	bool operator!() const { return !d; }
+	operator bool() const { return d; }
 
 private:
-	QString m_recordingfile;
-	KArchive *m_file;
-	Index m_index;
-	int m_thumbnailcount;
+	struct Private;
+	QExplicitlySharedDataPointer<Private> d;
+
+
 };
 
 }

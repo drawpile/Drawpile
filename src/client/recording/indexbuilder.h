@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,15 +19,13 @@
 #ifndef INDEXBUILDER_H
 #define INDEXBUILDER_H
 
-#include <QObject>
-#include <QString>
-#include <QHash>
-#include <QAtomicInt>
-
-#include "recording/filter.h"
 #include "recording/index.h"
 
-class KZip;
+#include <QObject>
+#include <QString>
+#include <QAtomicInt>
+
+class QDataStream;
 
 namespace recording {
 
@@ -37,7 +35,7 @@ class IndexBuilder : public QObject
 {
 	Q_OBJECT
 public:
-	IndexBuilder(const QString &inputfile, const QString &targetfile, QObject *parent=0);
+	IndexBuilder(const QString &inputfile, const QString &targetfile, const QByteArray &hash, QObject *parent=nullptr);
 
 	//! Abort index building (thread-safe)
 	void abort();
@@ -50,12 +48,14 @@ signals:
 	void done(bool ok, const QString &msg);
 
 private:
-	void generateIndex(KZip &zip, Reader &reader);
+	bool generateIndex(QDataStream &stream, Reader &reader);
 
 	QString m_inputfile, m_targetfile;
+	QByteArray m_recordingHash;
 	QAtomicInt m_abortflag;
 
-	Index m_index;
+	QVector<IndexEntry> m_index;
+	int m_messageCount;
 };
 
 }

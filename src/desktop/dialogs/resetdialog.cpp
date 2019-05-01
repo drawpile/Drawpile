@@ -110,7 +110,7 @@ struct ResetDialog::Private
 			if(thumb.isNull()) {
 				thumb = QImage(32, 32, QImage::Format_ARGB32_Premultiplied);
 				thumb.fill(0);
-			};
+			}
 			drawCheckerBackground(thumb);
 			rp.thumbnail = QPixmap::fromImage(thumb);
 		}

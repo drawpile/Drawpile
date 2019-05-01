@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+5  Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,104 +17,91 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-#include <QDataStream>
+#include "index.h"
+#include "index_p.h"
+
 #include <QFile>
 #include <QCryptographicHash>
 
-#include "index.h"
-
 namespace recording {
 
-int Index::findPreviousStop(unsigned int pos) const
+IndexEntry IndexEntry::nearest(const QVector<IndexEntry> &index, int pos)
 {
+	Q_ASSERT(!index.isEmpty());
+
 	int i=0;
-	while(i<m_stops.size() && m_stops.at(i).index < pos)
+	while(i<index.size() && index.at(i).index < pos)
 		++i;
-	return qMax(0, i-1);
+	return index.at(qMax(0, i-1));
 }
 
-int Index::findClosestSnapshot(unsigned int pos) const
+QDataStream &operator<<(QDataStream &ds, const IndexEntry &ie)
 {
-	int i=0;
-	int snap=0;
-	while(i<m_stops.size() && m_stops.at(i).index < pos) {
-		if((m_stops.at(i).flags & StopEntry::HAS_SNAPSHOT))
-			snap = i;
-		++i;
-	}
-	return snap;
+	return ds
+		<< ie.index
+		<< ie.messageOffset
+		<< ie.snapshotOffset
+		<< ie.title
+		<< ie.thumbnail;
 }
 
-bool Index::writeIndex(QIODevice *out) const
+QDataStream &operator>>(QDataStream &ds, IndexEntry &ie)
 {
-	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_5);
-
-	// Write index format version
-	ds << INDEX_VERSION;
-
-	// Write stops
-	ds << quint32(m_stops.size());
-	for(const StopEntry &e : m_stops) {
-		ds << e.index << e.pos << e.flags;
-	}
-
-	// Write markers
-	ds << quint32(m_markers.size());
-	for(const MarkerEntry &e : m_markers) {
-		ds << e.stop << e.title;
-	}
-
-	// Write action count
-	ds << quint32(m_actioncount);
-
-	return true;
+	return ds
+		>> ie.index
+		>> ie.messageOffset
+		>> ie.snapshotOffset
+		>> ie.title
+		>> ie.thumbnail;
 }
 
-bool Index::readIndex(QIODevice *out)
+QDataStream &operator<<(QDataStream &ds, const IndexedLayer &i)
 {
-	QDataStream ds(out);
-	ds.setVersion(QDataStream::Qt_5_5);
+	return ds
+		<< i.tileOffsets
+		<< i.sublayerOffsets
+		<< i.info.id
+		<< i.info.title
+		<< i.info.opacity
+		<< i.info.hidden
+		<< i.info.censored
+		<< i.info.fixed
+		<< quint8(i.info.blend);
+}
 
-	// Read version
-	quint16 version;
-	ds >> version;
-	if(version != INDEX_VERSION) {
-		qWarning() << "Wrong index version:" << version;
-		return false;
-	}
+QDataStream &operator>>(QDataStream &ds, IndexedLayer &i)
+{
+	quint8 blend;
+	ds
+		>> i.tileOffsets
+		>> i.sublayerOffsets
+		>> i.info.id
+		>> i.info.title
+		>> i.info.opacity
+		>> i.info.hidden
+		>> i.info.censored
+		>> i.info.fixed
+		>> blend;
+	i.info.blend = paintcore::BlendMode::Mode(blend);
+	return ds;
+}
 
-	// Read stops
-	quint32 stopcount;
-	QVector<StopEntry> stops;
-	QList<int> thumbs;
-	ds >> stopcount;
-	while(stopcount--) {
-		StopEntry e;
-		ds >> e.index >> e.pos >> e.flags;
-		stops.append(e);
-	}
+QDataStream &operator<<(QDataStream &ds, const IndexedLayerStack &i)
+{
+	return ds
+		<< i.layerOffsets
+		<< i.annotationOffsets
+		<< i.backgroundTileOffset
+		<< i.size;
+}
 
-	// Read markers
-	quint32 markercount;
-	QVector<MarkerEntry> markers;
-	ds >> markercount;
-	while(markercount--) {
-		MarkerEntry e;
-		ds >> e.stop >> e.title;
-		markers.append(e);
-	}
-
-	// Read action count
-	quint32 actioncount;
-	ds >> actioncount;
-
-	m_stops = stops;
-	m_markers = markers;
-	m_actioncount = actioncount;
-
-	return true;
+QDataStream &operator>>(QDataStream &ds, IndexedLayerStack &i)
+{
+	return ds
+		>> i.layerOffsets
+		>> i.annotationOffsets
+		>> i.backgroundTileOffset
+		>> i.size;
 }
 
 QByteArray hashRecording(const QString &filename)
@@ -123,7 +110,7 @@ QByteArray hashRecording(const QString &filename)
 	if(!file.open(QFile::ReadOnly))
 		return QByteArray();
 
-	QCryptographicHash hash(QCryptographicHash::Sha1);
+	QCryptographicHash hash(QCryptographicHash::Sha256);
 	hash.addData(&file);
 
 	return hash.result();

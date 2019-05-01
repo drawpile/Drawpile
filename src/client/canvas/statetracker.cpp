@@ -44,74 +44,55 @@
 
 namespace canvas {
 
-struct StateSavepoint::Data {
-	Data() : timestamp(0), canvas(nullptr), streampointer(-1), m_refcount(1) {}
-	Data(const Data &) = delete;
-	Data &operator=(const Data&) = delete;
-	~Data() { delete canvas; }
-
-	qint64 timestamp;
-	paintcore::Savepoint *canvas;
+struct StateSavepoint::Data : public QSharedData {
+	int streampointer = 0;
+	qint64 timestamp = 0;
+	paintcore::Savepoint canvas;
 	QVector<LayerListItem> layermodel;
-	int streampointer;
-
-private:
-	int m_refcount;
-	friend class StateSavepoint;
 };
 
-StateSavepoint::StateSavepoint(const StateSavepoint &sp)
-	: m_data(sp.m_data)
+StateSavepoint::StateSavepoint()
 {
-	if(m_data)
-		++m_data->m_refcount;
 }
 
-StateSavepoint &StateSavepoint::operator =(const StateSavepoint &sp)
+StateSavepoint::StateSavepoint(Data *d)
+	: d(d)
 {
-	if(m_data) {
-		if(sp.m_data != m_data) {
-			Q_ASSERT(m_data->m_refcount>0);
-			if(--m_data->m_refcount == 0)
-				delete m_data;
-			m_data = sp.m_data;
-			++m_data->m_refcount;
-		}
-	} else {
-		m_data = sp.m_data;
-		++m_data->m_refcount;
-	}
+}
+
+StateSavepoint::StateSavepoint(const StateSavepoint &other)
+	: d(other.d)
+{
+}
+
+StateSavepoint &StateSavepoint::operator=(const StateSavepoint &other)
+{
+	d = other.d;
 	return *this;
 }
 
 StateSavepoint::~StateSavepoint()
 {
-	if(m_data) {
-		Q_ASSERT(m_data->m_refcount>0);
-		if(--m_data->m_refcount == 0)
-			delete m_data;
-	}
-}
-
-StateSavepoint::Data *StateSavepoint::operator ->() {
-	if(!m_data)
-		m_data = new StateSavepoint::Data;
-	return m_data;
 }
 
 qint64 StateSavepoint::timestamp() const
 {
-	return m_data ? m_data->timestamp : 0;
+	return d ? d->timestamp : 0;
+}
 
+paintcore::Savepoint StateSavepoint::canvas() const
+{
+	Q_ASSERT(d);
+	return d->canvas;
 }
 
 QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 {
-	if(!m_data)
+	if(!d)
 		return QImage();
 
 	paintcore::LayerStack stack;
-	stack.editor(0).restoreSavepoint(m_data->canvas);
+	stack.editor(0).restoreSavepoint(d->canvas);
 	QImage img = stack.toFlatImage(true, true);
 	if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 		img = img.scaled(maxSize, Qt::KeepAspectRatio);
@@ -121,15 +102,36 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 
 protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const CanvasModel *canvas) const
 {
-	if(!m_data)
+	if(!d)
 		return protocol::MessageList();
 
 	paintcore::LayerStack stack;
-	stack.editor(0).restoreSavepoint(m_data->canvas);
+	stack.editor(0).restoreSavepoint(d->canvas);
 	SnapshotLoader loader(contextId, &stack, canvas->aclFilter());
 	loader.setDefaultLayer(canvas->layerlist()->defaultLayer());
 	loader.setPinnedMessage(canvas->pinnedMessage());
 	return loader.loadInitCommands();
+}
+
+StateSavepoint StateSavepoint::fromCanvasSavepoint(const paintcore::Savepoint &savepoint)
+{
+	auto *d = new StateSavepoint::Data;
+
+	d->timestamp = QDateTime::currentMSecsSinceEpoch();
+	d->canvas = savepoint;
+
+	for(const paintcore::Layer *l : savepoint.layers) {
+		d->layermodel << LayerListItem {
+			uint16_t(l->id()),
+			l->title(),
+			l->opacity() / 255.0f,
+			l->blendmode(),
+			l->isHidden(),
+			l->isCensored(),
+			l->isFixed()
+		};
+	}
+	return StateSavepoint(d);
 }
 
 /**
@@ -977,13 +979,13 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 
 StateSavepoint StateTracker::createSavepoint(int pos)
 {
-	StateSavepoint savepoint;
-	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
-	savepoint->streampointer = pos<0 ? m_history.end() : pos;
-	savepoint->canvas = m_layerstack->makeSavepoint();
-	savepoint->layermodel = m_layerlist->getLayers();
+	auto *data = new StateSavepoint::Data;
+	data->timestamp = QDateTime::currentMSecsSinceEpoch();
+	data->streampointer = pos<0 ? m_history.end() : pos;
+	data->canvas = m_layerstack->makeSavepoint();
+	data->layermodel = m_layerlist->getLayers();
 
-	return savepoint;
+	return StateSavepoint(data);
 }
 
 void StateTracker::makeSavepoint(int pos)
@@ -1110,91 +1112,6 @@ void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 {
 	m_layerstack->annotations()->deleteAnnotation(cmd.id());
-}
-
-void StateSavepoint::toDatastream(QDataStream &out) const
-{
-	Q_ASSERT(m_data);
-	const auto *d = m_data;
-
-	// Write stream pointer
-	out << quint32(d->streampointer);
-
-	// Write layer model
-	out << quint8(d->layermodel.size());
-	for(const LayerListItem &layer : d->layermodel) {
-		// Write layer ID
-		out << layer.id;
-
-		// Write layer title
-		out << layer.title;
-
-		// Write layer opacity and flags
-		out << layer.opacity;
-		out << quint8(layer.blend);
-		out << layer.hidden;
-		out << layer.censored;
-		out << layer.fixed;
-	}
-
-	// Write layer stack
-	d->canvas->toDatastream(out);
-}
-
-StateSavepoint StateSavepoint::fromDatastream(QDataStream &in)
-{
-	StateSavepoint sp;
-	sp.m_data = new StateSavepoint::Data;
-	auto *d = sp.m_data;
-
-	// Read stream pointer
-	quint32 sptr;
-	in >> sptr;
-	d->streampointer = sptr;
-
-	// Read layer list
-	quint8 layercount;
-	in >> layercount;
-	while(layercount--) {
-		// Read layer ID
-		quint16 layerid;
-		in >> layerid;
-
-		// Read layer title
-		QString title;
-		in >> title;
-
-		// Read opacity and flags
-		float opacity;
-		in >> opacity;
-
-		quint8 blend;
-		in >> blend;
-
-		bool hidden;
-		in >> hidden;
-
-		bool censored;
-		in >> censored;
-
-		bool fixed;
-		in >> fixed;
-
-		sp->layermodel.append(LayerListItem {
-			layerid,
-			title,
-			opacity,
-			paintcore::BlendMode::Mode(blend),
-			hidden,
-			censored,
-			fixed
-		});
-	}
-
-	// Read layerstack snapshot
-	d->canvas = paintcore::Savepoint::fromDatastream(in);
-
-	return sp;
 }
 
 /**

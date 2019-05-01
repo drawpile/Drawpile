@@ -275,30 +275,30 @@ bool Tile::equals(const Tile &other) const
 
 QDataStream &operator<<(QDataStream &ds, const Tile &t)
 {
-	const QColor solid = t.solidColor();
-	if(solid.isValid()) {
-		ds << quint8(1) << solid.rgba();
-	} else {
-		ds << quint8(0);
-		ds.writeRawData(reinterpret_cast<const char*>(t.constData()), Tile::BYTES);
-	}
-	return ds;
+	QByteArray data;
+	if(!t.isNull())
+		data = qCompress(reinterpret_cast<const uchar*>(t.constData()), Tile::BYTES);
+
+	return ds << data << t.lastEditedBy();
 }
 
 QDataStream &operator>>(QDataStream &ds, Tile &t)
 {
-	quint8 isSolid;
-	ds >> isSolid;
-	if(isSolid) {
-		QRgb color;
-		ds >> color;
-		if(qAlpha(color) == 0)
-			t = Tile();
-		else
-			t = Tile(QColor::fromRgba(color));
+	QByteArray data;
+	int lastEditedBy;
+
+	ds >> data >> lastEditedBy;
+	if(data.isEmpty()) {
+		t = Tile();
+
 	} else {
-		ds.readRawData(reinterpret_cast<char*>(t.data()), Tile::BYTES);
+		data = qUncompress(data);
+		if(data.length() == Tile::BYTES)
+			t = Tile(data, lastEditedBy);
+		else
+			qWarning("Deserialized Tile length (%d) is wrong", data.length());
 	}
+
 	return ds;
 }
 

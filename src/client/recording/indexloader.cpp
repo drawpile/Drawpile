@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,93 +17,223 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "recording/indexloader.h"
-#include "canvas/statetracker.h"
-#include "utils/archive.h"
+#include "index.h"
+#include "index_p.h"
+#include "indexloader.h"
 
-#include <QBuffer>
-#include <KZip>
-#include <QDataStream>
+#include "canvas/statetracker.h"
+#include "core/annotationmodel.h"
+#include "core/layerstack.h"
+#include "core/layer.h"
+
+#include <QFile>
 #include <QImage>
+#include <QCache>
 
 namespace recording {
 
-IndexLoader::IndexLoader(const QString &recording, const QString &index)
+struct IndexLoader::Private : public QSharedData
 {
-	m_recordingfile = recording;
-	m_file = new KZip(index);
-	m_thumbnailcount = 0;
+	int messageCount;
+
+	QString recordingfile;
+	QByteArray recordingHash;
+	QFile file;
+	QDataStream stream;
+
+	QVector<IndexEntry> index;
+	QVector<IndexEntry> markers;
+	QVector<IndexEntry> thumbnails;
+
+	QCache<quint32, paintcore::Tile> tileCache;
+
+	paintcore::Tile readTile(quint32 offset);
+	paintcore::Layer *readLayer(quint32 layerOffset, const QSize &size, bool readSublayers=true);
+};
+
+IndexLoader::IndexLoader()
+{
+}
+
+IndexLoader::IndexLoader(const QString &recording, const QString &index, const QByteArray &recordingHash)
+	: d(new Private)
+{
+	d->recordingfile = recording;
+	d->recordingHash = recordingHash;
+	d->file.setFileName(index);
+	d->messageCount = 0;
+	d->tileCache.setMaxCost(2000);
+}
+
+IndexLoader::IndexLoader(const IndexLoader &other)
+	: d(other.d)
+{
 }
 
 IndexLoader::~IndexLoader()
 {
-	delete m_file;
 }
+
+IndexLoader &IndexLoader::operator=(const IndexLoader &other)
+{
+	d = other.d;
+	return *this;
+}
+
+QVector<IndexEntry> IndexLoader::index() const { return d->index; }
+QVector<IndexEntry> IndexLoader::markers() const { return d->markers; }
+QVector<IndexEntry> IndexLoader::thumbnails() const { return d->thumbnails; }
+int IndexLoader::messageCount() const { return d->messageCount; }
 
 bool IndexLoader::open()
-{
-	if(!m_file->open(QIODevice::ReadOnly))
+{	
+	if(!d)
 		return false;
 
-	// Make sure this is the right index for the recording
-	QByteArray idxHash = utils::getArchiveFile(*m_file, "hash");
-	QByteArray recHash = hashRecording(m_recordingfile);
-
-	if(idxHash != recHash)
+	if(!d->file.open(QIODevice::ReadOnly))
 		return false;
 
-	// Load the index
-	QByteArray indexdata = utils::getArchiveFile(*m_file, "index");
-	QBuffer indexbuffer(&indexdata);
-	indexbuffer.open(QBuffer::ReadOnly);
-	if(!m_index.readIndex(&indexbuffer))
-		return false;
+	d->stream.setDevice(&d->file);
 
-	// Count thumbnails
-	const KArchiveEntry *thumbdirentry = m_file->directory()->entry("thumbnail");
-	if(!thumbdirentry) {
-		qWarning("No thumbnails in index!");
-		return true;
+	// Check magic numbers
+	char magic[5];
+	d->stream.readRawData(magic, 5);
+	if(memcmp(magic, "DPIDX", 5) != 0) {
+		qWarning("%s: not an index file", qPrintable(d->file.fileName()));
+		return false;
 	}
-	if(!thumbdirentry->isDirectory()) {
-		qWarning("Index thumbnail/ not a directory!");
-		return true;
-	}
-	const KArchiveDirectory *thumbdir = static_cast<const KArchiveDirectory*>(thumbdirentry);
-	m_thumbnailcount = thumbdir->entries().size();
 
-	return true;
+	quint32 formatVersion;
+	d->stream >> formatVersion;
+
+	if(formatVersion != INDEX_VERSION) {
+		qWarning("%s: wrong version (%d)", qPrintable(d->file.fileName()), formatVersion);
+		return false;
+	}
+
+	QByteArray checksum;
+	d->stream >> checksum;
+
+	if(checksum != d->recordingHash) {
+		qWarning("%s: checksum mismatch", qPrintable(d->file.fileName()));
+		return false;
+	}
+
+	// Read header fields
+	quint32 entryVectorOffset;
+	d->stream >> entryVectorOffset >> d->messageCount;
+
+	// Load index entry vector
+	d->stream.device()->seek(entryVectorOffset);
+	while(d->stream.status() == QDataStream::Ok) {
+		IndexEntry e;
+		d->stream
+			>> e.index
+			>> e.messageOffset
+			>> e.snapshotOffset
+			>> e.title
+			>> e.thumbnail;
+
+		if(d->stream.status() == QDataStream::ReadPastEnd)
+			return true;
+
+		d->index << e;
+		if(!e.thumbnail.isNull())
+			d->thumbnails << e;
+		if(!e.title.isEmpty())
+			d->markers << e;
+	}
+
+	qWarning("Index reading error!");
+	return false;
 }
 
-canvas::StateSavepoint IndexLoader::loadSavepoint(int idx)
+canvas::StateSavepoint IndexLoader::loadSavepoint(const IndexEntry &entry)
 {
-	Q_ASSERT(idx>=0 && idx<m_index.size());
-	if(idx<0 || idx>=m_index.size())
-		return canvas::StateSavepoint();
+	d->file.seek(entry.snapshotOffset);
+	d->stream.resetStatus();
 
-	Q_ASSERT((m_index.entry(idx).flags & StopEntry::HAS_SNAPSHOT));
-	if(!(m_index.entry(idx).flags & StopEntry::HAS_SNAPSHOT))
-		return canvas::StateSavepoint();
+	// Read layer stack
+	IndexedLayerStack layerstack;
+	d->stream >> layerstack;
 
-	QByteArray snapshotdata = utils::getArchiveFile(*m_file, QString("snapshot/%1").arg(idx));
-	if(snapshotdata.isEmpty()) {
-		qWarning("No data in snapshot %d", idx);
+	if(d->stream.status() != QDataStream::Ok) {
+		qWarning("Index read error!");
 		return canvas::StateSavepoint();
 	}
 
-	QBuffer snapshotbuffer(&snapshotdata);
-	snapshotbuffer.open(QBuffer::ReadOnly);
-	QDataStream ds(&snapshotbuffer);
+	// Read layers
+	QList<paintcore::Layer*> layers;
+	for(const quint32 layerOffset : layerstack.layerOffsets) {
+		auto *layer = d->readLayer(layerOffset, layerstack.size);
+		if(!layer) {
+			for(auto *l : layers)
+				delete l;
+			return canvas::StateSavepoint();
+		}
+		layers << layer;
+	}
 
-	return canvas::StateSavepoint::fromDatastream(ds);
+
+	// Read annotations
+	QList<paintcore::Annotation> annotations;
+	for(const quint32 annotationOffset : layerstack.annotationOffsets) {
+		d->file.seek(annotationOffset);
+		annotations << paintcore::Annotation::fromDataStream(d->stream);
+	}
+
+	// Make savepoint
+	paintcore::Savepoint sp;
+	sp.layers = layers;
+	sp.annotations = annotations;
+	sp.background = d->readTile(layerstack.backgroundTileOffset);
+	sp.size = layerstack.size;
+
+	return canvas::StateSavepoint::fromCanvasSavepoint(sp);
 }
 
-QImage IndexLoader::loadThumbnail(int idx)
+paintcore::Tile IndexLoader::Private::readTile(quint32 offset)
 {
-	Q_ASSERT(idx>=0 && idx<m_thumbnailcount);
+	if(offset == 0)
+		return paintcore::Tile();
 
-	QByteArray data = utils::getArchiveFile(*m_file, QString("thumbnail/%1").arg(idx));
-	return QImage::fromData(data, "PNG");
+	if(tileCache.contains(offset))
+		return *tileCache[offset];
+
+	file.seek(offset);
+	auto *t = new paintcore::Tile;
+	stream >> *t;
+	tileCache.insert(offset, t);
+	return *t;
+}
+
+paintcore::Layer *IndexLoader::Private::readLayer(quint32 layerOffset, const QSize &size, bool readSublayers)
+{
+	file.seek(layerOffset);
+
+	IndexedLayer il;
+	stream >> il;
+
+	if(stream.status() != QDataStream::Ok) {
+		qWarning("Could not read layer from index");
+		return nullptr;
+	}
+
+	QVector<paintcore::Tile> tiles;
+	tiles.reserve(il.tileOffsets.size());
+	for(const quint32 tileOffset : il.tileOffsets) {
+		tiles << readTile(tileOffset);
+	}
+
+	QList<paintcore::Layer*> sublayers;
+	if(readSublayers) {
+		sublayers.reserve(il.sublayerOffsets.size());
+		for(const quint32 sublayerOffset : il.sublayerOffsets) {
+			sublayers << readLayer(sublayerOffset, size, false);
+		}
+	}
+
+	return new paintcore::Layer(tiles, size, il.info, sublayers);
 }
 
 }
