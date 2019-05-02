@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2017 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
+   Copyright (C) 2015-2019 Calle Laakkonen, GroupedToolButton based on Gwenview's StatusBarToolbutton by Aurélien Gâteau
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "groupedtoolbutton.h"
+#include "utils/icon.h"
 
 #include <QAction>
 #include <QStyleOptionToolButton>
 #include <QStylePainter>
 #include <QToolButton>
+#include <QEvent>
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets
@@ -30,24 +32,41 @@ namespace widgets
 
 GroupedToolButton::GroupedToolButton(QWidget *parent) : GroupedToolButton(NotGrouped, parent) { }
 
+#ifdef Q_OS_MAC
+static const QString LIGHT_STYLE = QStringLiteral(
+			"QToolButton {"
+				"background: white;"
+				"border: 1px solid #c0c0c0;"
+				"border-radius: 3px;"
+				"padding: 1px"
+			"}"
+			"QToolButton:checked, QToolButton:pressed {"
+				"background: #c0c0c0"
+			"}"
+		);
+
+static const QString DARK_STYLE = QStringLiteral(
+			"QToolButton {"
+				"background: #656565;"
+				"border-radius: 3px;"
+				"padding: 1px"
+			"}"
+			"QToolButton:checked, QToolButton:pressed {"
+				"background: #999"
+			"}"
+		);
+#endif
+
 GroupedToolButton::GroupedToolButton(GroupPosition position, QWidget* parent)
-: QToolButton(parent)
-, mGroupPosition(position)
+: QToolButton(parent), mGroupPosition(position)
 {
 	setFocusPolicy(Qt::NoFocus);
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 #ifdef Q_OS_MAC
-	setStyleSheet(QStringLiteral(
-		"QToolButton {"
-			"background: white;"
-			"border: 1px solid #c0c0c0;"
-			"border-radius: 3px;"
-			"padding: 1px"
-		"}"
-		"QToolButton:checked, QToolButton:pressed {"
-			"background: #c0c0c0"
-		"}"
-	));
+	if(icon::isDark(palette().color(QPalette::Window)))
+		setStyleSheet(DARK_STYLE);
+	else
+		setStyleSheet(LIGHT_STYLE);
 #endif
 }
 

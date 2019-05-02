@@ -202,6 +202,15 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_viewStatusBar->setSizeGripEnabled(false);
 	mainwinlayout->addWidget(m_viewStatusBar);
 
+#ifdef Q_OS_MAC
+	// The "native" style status bar appears slightly glitchy.
+	// This makes it look better.
+	if(icon::isDark(palette().color(QPalette::Window)))
+		m_viewStatusBar->setStyleSheet("QStatusBar { background: #323232 }");
+	else
+		m_viewStatusBar->setStyleSheet("QStatusBar { background: #ececec }");
+#endif
+
 	// Create status indicator widgets
 	m_viewstatus = new widgets::ViewStatus(this);
 

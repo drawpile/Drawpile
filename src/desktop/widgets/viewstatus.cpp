@@ -128,10 +128,12 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 void ViewStatus::updatePalette()
 {
+#ifndef Q_OS_MAC
 	auto boxPalette = palette();
 	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
 	m_angleBox->setPalette(boxPalette);
 	m_zoomBox->setPalette(boxPalette);
+#endif
 }
 
 void ViewStatus::setActions(QAction *flip, QAction *mirror, QAction *rotationReset, QAction *zoomReset)
