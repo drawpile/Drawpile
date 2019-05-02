@@ -201,8 +201,8 @@ public:
 	 */
 	void resetToSavepoint(StateSavepoint sp);
 
-	//! Get all existing savepoints (can be used for selecting a reset point)
-	QList<StateSavepoint> getSavepoints() const { return m_savepoints; }
+	//! Get all existing reset points (savepoints set aside for session resetting use)
+	QList<StateSavepoint> getResetPoints() const { return m_resetpoints; }
 
 signals:
 	void myAnnotationCreated(int id);
@@ -278,6 +278,7 @@ private:
 
 	History m_history;
 	QList<StateSavepoint> m_savepoints;
+	QList<StateSavepoint> m_resetpoints;
 
 	LocalFork m_localfork;
 

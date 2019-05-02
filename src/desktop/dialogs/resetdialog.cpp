@@ -120,7 +120,7 @@ struct ResetDialog::Private
 };
 
 ResetDialog::ResetDialog(const canvas::StateTracker *state, QWidget *parent)
-	: QDialog(parent), d(new Private(state->getSavepoints()))
+	: QDialog(parent), d(new Private(state->getResetPoints()))
 {
 	d->ui->setupUi(this);
 

@@ -95,7 +95,7 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 	stack.editor(0).restoreSavepoint(d->canvas);
 	QImage img = stack.toFlatImage(true, true);
 	if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
-		img = img.scaled(maxSize, Qt::KeepAspectRatio);
+		img = img.scaled(maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	}
 	return img;
 }
@@ -821,6 +821,18 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 				}
 			}
 		}
+
+		// Release all reset points older than one minute
+		// TODO maybe make the time adjustable?
+		QMutableListIterator<StateSavepoint> rpi(m_resetpoints);
+		const qint64 cutoff = QDateTime::currentMSecsSinceEpoch() - (60 * 1000);
+		while(rpi.hasNext()) {
+			const StateSavepoint &sp = rpi.next();
+			if(sp.timestamp() < cutoff)
+				rpi.remove();
+			else // Note: we assume reset points are in chronological order.
+				break;
+		}
 	}
 
 	// Clear out history older than the oldest savepoint
@@ -961,14 +973,19 @@ void StateTracker::makeSavepoint(int pos)
 
 	// Check if sufficient time and actions has elapsed from previous savepoint
 	if(!m_savepoints.isEmpty()) {
+		static const qint64 MIN_INTERVAL_MS = 1000;
+		static const int MIN_INTERVAL_MSGS = 100;
+
 		const StateSavepoint sp = m_savepoints.last();
-		quint64 now = QDateTime::currentMSecsSinceEpoch();
-		if(now - sp->timestamp < 1000 && m_history.end() - sp->streampointer < 100)
+		const auto now = QDateTime::currentMSecsSinceEpoch();
+		if(now - sp->timestamp < MIN_INTERVAL_MS && m_history.end() - sp->streampointer < MIN_INTERVAL_MSGS)
 			return;
 	}
 
 	// Looks like a good spot for a savepoint
-	m_savepoints.append(createSavepoint(pos));
+	const auto sp = createSavepoint(pos);
+	m_savepoints << sp;
+	m_resetpoints << sp;
 }
 
 
