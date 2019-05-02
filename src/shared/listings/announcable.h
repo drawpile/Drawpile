@@ -25,7 +25,7 @@ class QString;
 
 namespace sessionlisting {
 
-class Session;
+struct Session;
 
 /**
  * Interface class for announcable sessions

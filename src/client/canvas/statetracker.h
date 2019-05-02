@@ -55,7 +55,7 @@ namespace protocol {
 
 namespace paintcore {
 	class LayerStack;
-	class Savepoint;
+	struct Savepoint;
 }
 
 class QTimer;
