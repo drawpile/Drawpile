@@ -7,6 +7,7 @@
  * Drag&dropping a link to an image onto the canvas now works again
  * New more efficient recording index format. Indexes are now generated faster and the files are smaller.
  * Enabled dark appearance support on macOS
+ * Memory usage optimization: only the minimum amount of session history is now kept in memory
 
 2019-04-13 Version 2.1.7
  * Added Ukranian translation

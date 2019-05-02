@@ -155,9 +155,6 @@ public:
 	//! Reset the entire history
 	void reset();
 
-	bool hasFullHistory() const { return m_fullhistory; }
-	const History &getHistory() const { return m_history; }
-
 	/**
 	 * @brief Set if all user markers (own included) should be shown
 	 * @param showall
@@ -284,7 +281,6 @@ private:
 
 	LocalFork m_localfork;
 
-	bool m_fullhistory;
 	bool _showallmarkers;
 	bool m_hasParticipated;
 	bool m_localPenDown;

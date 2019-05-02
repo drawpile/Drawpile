@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,14 +72,9 @@ public:
 	void append(protocol::MessagePtr msg);
 
 	/**
-	 * @brief Delete old messages
-	 *
-	 * Delete old messages until the tail of undo history or the given
-	 * limit is reached.
-	 * @param indexlimit index of first protected message
-	 * @pre indexlimit <= end()
+	 * @brief Delete old messages until the given index
 	 */
-	void cleanup(int indexlimit);
+	void cleanup(int until);
 
 	/**
 	 * @brief Remove all messages and change the offset

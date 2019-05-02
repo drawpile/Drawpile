@@ -1393,7 +1393,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
-	login->setInitialState(m_doc->canvas()->generateSnapshot(true));
+	login->setInitialState(m_doc->canvas()->generateSnapshot());
 	(new dialogs::LoginDialog(login, this))->show();
 
 	m_doc->client()->connectToServer(login);

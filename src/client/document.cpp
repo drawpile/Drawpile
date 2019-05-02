@@ -500,7 +500,7 @@ bool Document::startRecording(const QString &filename, QString *error)
 
 	return startRecording(
 		m_originalRecordingFilename,
-		m_canvas->generateSnapshot(false),
+		m_canvas->generateSnapshot(),
 		error
 	);
 }

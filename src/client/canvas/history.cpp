@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2017 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,20 +39,6 @@ void History::cleanup(int indexlimit)
 {
 	Q_ASSERT(indexlimit <= end());
 
-	// First, find the index of the last protected undo point
-	int undo_point = m_offset;
-	int undo_points = 0;
-	for(int i=end()-1;i>=offset() && undo_points<UNDO_DEPTH_LIMIT;--i) {
-		if(at(i)->type() == MSG_UNDOPOINT) {
-			undo_point = i;
-			++undo_points;
-		}
-	}
-
-	if(undo_point < indexlimit)
-		indexlimit = undo_point;
-
-	// Remove oldest messages
 	while(m_offset < indexlimit) {
 		m_bytes -= m_messages.takeFirst()->length();
 		++m_offset;

@@ -212,37 +212,12 @@ bool CanvasModel::needsOpenRaster() const
 		;
 }
 
-protocol::MessageList CanvasModel::generateSnapshot(bool forceNew) const
+protocol::MessageList CanvasModel::generateSnapshot() const
 {
-	protocol::MessageList snapshot;
-
-	if(!m_statetracker->hasFullHistory() || forceNew) {
-		// Generate snapshot
-		auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
-		loader.setDefaultLayer(m_layerlist->defaultLayer());
-		loader.setPinnedMessage(m_pinnedMessage);
-		snapshot = loader.loadInitCommands();
-
-	} else {
-		// Message stream contains (starts with) a snapshot: use it
-		snapshot = m_statetracker->getHistory().toList();
-
-		// Add default layer selection
-		if(m_layerlist->defaultLayer() > 0)
-			snapshot.prepend(protocol::MessagePtr(new protocol::DefaultLayer(m_statetracker->localId(), m_layerlist->defaultLayer())));
-
-		// Add layer ACLs
-		for(int i=0;i<m_layerstack->layerCount();++i) {
-			const int layerId = m_layerstack->getLayerByIndex(i)->id();
-			Q_ASSERT(layerId > 0 && layerId <= 0xffff); // toplevel layers should have IDs in protocol range
-
-			const canvas::AclFilter::LayerAcl acl = aclFilter()->layerAcl(layerId);
-			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
-				snapshot << protocol::MessagePtr(new protocol::LayerACL(m_statetracker->localId(), uint16_t(layerId), acl.locked, uint8_t(acl.tier), acl.exclusive));
-		}
-	}
-
-	return snapshot;
+	auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
+	loader.setDefaultLayer(m_layerlist->defaultLayer());
+	loader.setPinnedMessage(m_pinnedMessage);
+	return loader.loadInitCommands();
 }
 
 void CanvasModel::pickLayer(int x, int y)

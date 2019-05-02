@@ -148,7 +148,6 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 		m_layerlist(layerlist),
 		m_myId(myId),
 		m_myLastLayer(-1),
-		m_fullhistory(true),
 		_showallmarkers(false),
 		m_hasParticipated(false),
 		m_localPenDown(false),
@@ -174,7 +173,6 @@ void StateTracker::reset()
 {
 	m_savepoints.clear();
 	m_history.resetTo(m_history.end());
-	m_fullhistory = true;
 	m_hasParticipated = false;
 	m_localPenDown = false;
 	m_msgqueue.clear();
@@ -255,60 +253,21 @@ void StateTracker::processQueuedCommands()
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
-	static const uint HISTORY_SIZE_LIMIT = 60 * 1024*1024;
-
 	if(msg->type() == protocol::MSG_INTERNAL) {
+		// MSG_INTERNAL is a pseudo-message used for internal synchronization
 		const auto &ci = msg.cast<protocol::ClientInternal>();
-		if(ci.internalType() == protocol::ClientInternal::Type::Catchup)
+		switch(ci.internalType()) {
+		case protocol::ClientInternal::Type::Catchup:
 			emit catchupProgress(ci.value());
-		else if(ci.internalType() == protocol::ClientInternal::Type::SequencePoint)
+			break;
+		case protocol::ClientInternal::Type::SequencePoint:
 			emit sequencePoint(ci.value());
-		else if(ci.internalType() == protocol::ClientInternal::Type::TruncateHistory)
+			break;
+		case protocol::ClientInternal::Type::TruncateHistory:
 			handleTruncateHistory();
-
+			break;
+		}
 		return;
-	}
-
-	if(m_history.lengthInBytes() > HISTORY_SIZE_LIMIT) {
-		const uint oldlen = m_history.lengthInBytes();
-
-		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
-		m_history.cleanup(m_localfork.isEmpty() ? m_history.end() : m_localfork.offset());
-		qDebug() << "Released" << (oldlen-m_history.lengthInBytes()) / float(1024*1024) << "Mb.";
-		m_fullhistory = false;
-
-		// Clear out old savepoints
-		// First, find the oldest undo point in the stream
-		int undopoint = m_history.offset();
-		while(undopoint<m_history.end()) {
-			if(m_history.at(undopoint)->type() == protocol::MSG_UNDOPOINT)
-				break;
-			++undopoint;
-		}
-
-		if(undopoint == m_history.end()) {
-			qWarning() << "no undo point found after cleaning history!";
-		} else {
-			// Find the newest savepoint older or same age as the undo point
-
-			// If a local fork exists, we need a savepoint that precedes it in case we need to roll back.
-			if(!m_localfork.isEmpty())
-				undopoint = qMin(undopoint, m_localfork.offset());
-
-			int savepoint=0;
-			while(savepoint < m_savepoints.count()) {
-				if(m_savepoints[savepoint]->streampointer >= undopoint) {
-					--savepoint;
-					break;
-				}
-				++savepoint;
-			}
-
-			// Remove redundant save points
-			qDebug() << "removing" << savepoint << "redundant save points out of" << m_savepoints.count();
-			while(savepoint-- > 0)
-				m_savepoints.removeFirst();
-		}
 	}
 
 	// Add command to history and execute it
@@ -863,6 +822,10 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 			}
 		}
 	}
+
+	// Clear out history older than the oldest savepoint
+	Q_ASSERT(!m_savepoints.isEmpty());
+	m_history.cleanup(m_savepoints.first()->streampointer);
 
 	// Make a new savepoint (if possible)
 	makeSavepoint(pos);
