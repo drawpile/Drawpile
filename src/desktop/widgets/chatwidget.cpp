@@ -208,7 +208,7 @@ void ChatBox::Private::updatePreserveModeUi()
 #endif
 		QStringLiteral(
 		"QTextEdit, QLineEdit {"
-			"background-color: #313438;"
+			"background-color: #232629;"
 			"border: none;"
 			"color: #eff0f1"
 		"}"
