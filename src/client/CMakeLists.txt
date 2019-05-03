@@ -44,7 +44,6 @@ set (
 	net/banlistmodel.cpp
 	net/announcementlist.cpp
 	net/commands.cpp
-	utils/archive.cpp
 	utils/palette.cpp
 	utils/palettelistmodel.cpp
 	utils/html.cpp

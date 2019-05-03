@@ -29,7 +29,6 @@
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/meta2.h"
-#include "utils/archive.h"
 #include "utils/images.h"
 
 #include <QGuiApplication>
@@ -82,12 +81,34 @@ namespace {
 	};
 }
 
+static QImage readImageFromArchive(const KArchive &archive, const QString &filename)
+{
+	const KArchiveFile *f = archive.directory()->file(filename);
+	if(!f) {
+		qWarning("File %s not found in archive", qPrintable(filename));
+		return QImage();
+	}
+
+	QScopedPointer<QIODevice> dev { f->createDevice() };
+	if(!dev) {
+		qWarning("Couldn't open %s in archive", qPrintable(filename));
+		return QImage();
+	}
+
+	QImage img;
+	if(!img.load(dev.data(), nullptr)) {
+		qWarning("Couldn't load image %s in archive", qPrintable(filename));
+		return QImage();
+	}
+
+	return img;
+}
+
 static bool checkIsOraFile(KArchive &zip)
 {
 	const QByteArray expected = "image/openraster";
-	QByteArray mimetype = utils::getArchiveFile(zip, "mimetype", expected.length());
-
-	return mimetype == expected;
+	const KArchiveFile *f = zip.directory()->file("mimetype");
+	return f && f->size() == expected.length() && f->data() == expected;
 }
 
 static void skipElement(QXmlStreamReader &reader)
@@ -424,9 +445,8 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 		if(!layer.bgtile.isEmpty() && i==canvas.layers.size()-1) {
 			// Bottom-most layer with a background tile: try to make this a canvas background
 			// Note that we only support 64x64 background, while MyPaint supports larger backgrounds as well
-			QByteArray bg = utils::getArchiveFile(zip, layer.bgtile);
-			QImage bgimage;
-			if(bg.isNull() || !bgimage.loadFromData(bg)) {
+			QImage bgimage = readImageFromArchive(zip, layer.bgtile);
+			if(bgimage.isNull()) {
 				result.warnings |= OraResult::UNSUPPORTED_BACKGROUND_TILE;
 				qWarning("Couldn't load background tile!");
 
@@ -457,13 +477,9 @@ static OraResult makeInitCommands(KZip &zip, const Canvas &canvas)
 			}
 		}
 
-		QImage content;
-		{
-			QByteArray image = utils::getArchiveFile(zip, layer.src);
-			if(image.isNull() || !content.loadFromData(image)) {
-				return QGuiApplication::tr("Couldn't load layer %1").arg(layer.src);
-			}
-		}
+		QImage content = readImageFromArchive(zip, layer.src);
+		if(content.isNull())
+			return QGuiApplication::tr("Couldn't load layer %1").arg(layer.src);
 
 		paintcore::LayerInfo info {++layerId, layer.name };
 
@@ -531,7 +547,14 @@ OraResult loadOpenRaster(const QString &filename)
 	}
 
 	// Read the layer stack definition
-	QXmlStreamReader reader(zip.directory()->file("stack.xml")->data());
+	const KArchiveFile *stackxml = zip.directory()->file("stack.xml");
+	if(!stackxml) {
+		qWarning("stack.xml missing from OpenRaster file!");
+		return QGuiApplication::tr("File is not an OpenRaster file");
+	}
+
+	QScopedPointer<QIODevice> dev { stackxml->createDevice() };
+	QXmlStreamReader reader(dev.data());
 
 	while(!reader.atEnd()) {
 		const auto tokentype = reader.readNext();
@@ -565,10 +588,8 @@ QImage loadOpenRasterThumbnail(const QString &filename)
 		return QImage();
 	}
 
-	const QByteArray imageData = utils::getArchiveFile(zip, "Thumbnails/thumbnail.png");
-	QImage thumbnail;
-
-	if(imageData.isNull() || !thumbnail.loadFromData(imageData)) {
+	QImage thumbnail = readImageFromArchive(zip, "Thumbnails/thumbnail.png");
+	if(thumbnail.isNull()) {
 		qWarning() << filename << "unable to load Thumbnails/thumbnail.png";
 		return QImage();
 	}
