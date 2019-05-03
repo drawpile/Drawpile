@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,10 +30,7 @@ struct CustomShortcut {
 	QKeySequence defaultShortcut;
 	QKeySequence currentShortcut;
 
-	CustomShortcut() { }
-	CustomShortcut(const QString &n, const QString &t, const QKeySequence &s)
-		: name(n), title(t), defaultShortcut(s), currentShortcut(QKeySequence())
-	{ }
+	bool operator<(const CustomShortcut &other) const { return title.compare(other.title) < 0; }
 };
 
 class CustomShortcutModel : public QAbstractTableModel
@@ -52,14 +49,11 @@ public:
 	void loadShortcuts();
 	void saveShortcuts();
 
-	static bool hasDefaultShortcut(const QString &name);
 	static QKeySequence getDefaultShortcut(const QString &name);
-	static QKeySequence getShorcut(const QString &name);
-
 	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
-private:
 
-	QList<CustomShortcut> m_shortcuts;
+private:
+	QVector<CustomShortcut> m_shortcuts;
 
 	static QMap<QString, CustomShortcut> m_customizableActions;
 };

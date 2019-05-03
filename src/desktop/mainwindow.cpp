@@ -685,7 +685,7 @@ void MainWindow::loadShortcuts()
 		if(!name.isEmpty()) {
 			if(cfg.contains(name))
 				a->setShortcut(cfg.value(name).value<QKeySequence>());
-			else if(CustomShortcutModel::hasDefaultShortcut(name))
+			else
 				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
 
 			// If an action has a shortcut, show it in the tooltip

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 
 void CustomShortcutModel::loadShortcuts()
 {
-	QList<CustomShortcut> actions;
+	QVector<CustomShortcut> actions;
 	actions.reserve(m_customizableActions.size());
 
 	QSettings cfg;
@@ -114,9 +114,7 @@ void CustomShortcutModel::loadShortcuts()
 		actions.append(a);
 	}
 
-	std::sort(actions.begin(), actions.end(),
-		[](const CustomShortcut &a1, const CustomShortcut &a2) { return a1.title.compare(a2.title) < 0; }
-	);
+	std::sort(actions.begin(), actions.end());
 
 	beginResetModel();
 	m_shortcuts = actions;
@@ -128,7 +126,7 @@ void CustomShortcutModel::saveShortcuts()
 	QSettings cfg;
 
 	cfg.beginGroup("settings/shortcuts");
-	cfg.remove("");
+	cfg.remove(QString());
 
 	for(const CustomShortcut &cs : m_shortcuts) {
 		if(cs.currentShortcut != cs.defaultShortcut)
@@ -141,26 +139,17 @@ void CustomShortcutModel::registerCustomizableAction(const QString &name, const 
 	if(m_customizableActions.contains(name))
 		return;
 
-	m_customizableActions[name] = CustomShortcut(name, title, defaultShortcut);
-}
-
-bool CustomShortcutModel::hasDefaultShortcut(const QString &name)
-{
-	return m_customizableActions.contains(name);
+	m_customizableActions[name] = CustomShortcut {
+		name,
+		title,
+		defaultShortcut,
+		QKeySequence()
+	};
 }
 
 QKeySequence CustomShortcutModel::getDefaultShortcut(const QString &name)
 {
-	return m_customizableActions[name].defaultShortcut;
-}
-
-QKeySequence CustomShortcutModel::getShorcut(const QString &name)
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/shortcuts");
-	if(cfg.contains(name))
-		return cfg.value(name).value<QKeySequence>();
-	else if(m_customizableActions.contains(name))
+	if(m_customizableActions.contains(name))
 		return m_customizableActions[name].defaultShortcut;
 	else
 		return QKeySequence();
