@@ -4,6 +4,7 @@
  * Background color alpha can now be set in the "new image" dialog
  * Adaptive canvas zoom slider: the minimum value is now always the zoom level needed to fit the whole canvas on screen
  * Drawpile can now download the latest version via the "check for updates" dialog
+ * Fixed formatting in update check dialog when more than one new version is shown
  * Drag&dropping a link to an image onto the canvas now works again
  * New more efficient recording index format. Indexes are now generated faster and the files are smaller.
  * Enabled dark appearance support on macOS

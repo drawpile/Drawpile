@@ -98,19 +98,19 @@ void VersionCheckDialog::versionChecked(bool isNew, const QString &errorMessage)
 void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> &versions)
 {
 	if(versions.isEmpty()) {
-		m_ui->textBrowser->insertHtml("<h1>You're up to date!</h1><p>No new versions found.</p>");
+		m_ui->textBrowser->setHtml("<h1>You're up to date!</h1><p>No new versions found.</p>");
 
 	} else {
 		QTextCursor cursor(m_ui->textBrowser->document());
 
-		cursor.insertHtml("<h1>A new version of Drawpile is available!</h1>");
-		cursor.insertBlock();
+		QString content = "<h1>A new version of Drawpile is available!</h1>";
 
 		for(const auto &version : versions) {
-			cursor.insertHtml(QStringLiteral("<h2><a href=\"%1\">Version %2</a></h2>").arg(version.announcementUrl, version.version));
-			cursor.insertBlock();
-			cursor.insertHtml(version.description);
+			content += QStringLiteral("<h2><a href=\"%1\">Version %2</a></h2>").arg(version.announcementUrl, version.version);
+			content += version.description;
 		}
+
+		m_ui->textBrowser->setHtml(content);
 
 		const auto latest = versions.first();
 		if(!latest.downloadUrl.isEmpty()) {
