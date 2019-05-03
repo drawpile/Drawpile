@@ -29,7 +29,7 @@ static bool is_dark_theme = false;
 
 bool isDark(const QColor &c)
 {
-	const qreal luminance = c.redF() * 0.216 + c.greenF() * 0.7152 + c.redF() * 0.0722;
+	const qreal luminance = c.redF() * 0.216 + c.greenF() * 0.7152 + c.blueF() * 0.0722;
 
 	return luminance <= 0.5;
 }
