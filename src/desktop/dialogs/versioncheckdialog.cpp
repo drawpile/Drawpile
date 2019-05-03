@@ -148,15 +148,7 @@ void VersionCheckDialog::downloadNewVersion()
 
 				if(!m_downloadSha256.isEmpty()) {
 					QCryptographicHash hash(QCryptographicHash::Sha256);
-					char chunk[1024];
-					while(true) {
-						const int r = oldFile.read(chunk, sizeof(chunk));
-						if(r>0)
-							hash.addData(chunk, r);
-						else
-							break;
-					}
-
+					hash.addData(&oldFile);
 					hashOk = hash.result() == m_downloadSha256;
 				}
 
