@@ -27,7 +27,7 @@ namespace parentalcontrols {
 
 Level level()
 {
-	int l = qBound(0, QSettings().value("pc/level", 1).toInt(), int(Level::Restricted));
+	int l = qBound(0, QSettings().value("pc/level", 0).toInt(), int(Level::Restricted));
 	if(isOSActive())
 		l = qMax(int(Level::NoJoin), l);
 	return Level(l);

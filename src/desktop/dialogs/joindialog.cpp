@@ -340,7 +340,7 @@ void JoinDialog::restoreSettings()
 	m_ui->showPassworded->setChecked(cfg.value("filterlocked", true).toBool());
 
 	if(m_ui->showNsfw->isEnabled())
-		m_ui->showNsfw->setChecked(cfg.value("filternsfw").toBool());
+		m_ui->showNsfw->setChecked(cfg.value("filternsfw", true).toBool());
 	else
 		m_ui->showNsfw->setChecked(false);
 }
