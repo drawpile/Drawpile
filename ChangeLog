@@ -1,4 +1,4 @@
-2019-0?-?? Version 2.1.8
+2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session
  * Server: listings are now refreshed in batches instead of individually
  * Background color alpha can now be set in the "new image" dialog
