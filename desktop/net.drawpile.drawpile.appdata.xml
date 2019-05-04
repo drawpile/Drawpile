@@ -46,7 +46,28 @@
           <li>NSFW sessions are no longer hidden by default</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup.exe</location>
+          <checksum type="sha256">54ecb920ce9a405b1f60fa88c38fa0fa03e5782934ddf9e5ddc95243daf962cb</checksum>
+          <size type="download">16459529</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup-w32.exe</location>
+          <checksum type="sha256">079d4a2cf82add0c6e62460538f31c1bcde0e920f16694da2456cb12df6e2fd8</checksum>
+          <size type="download">15461363</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.8.dmg</location>
+          <checksum type="sha256">d4de5a015d2aecb6f92df22124c8f7489e45338f67319dffb5d77a5cde73c956</checksum>
+          <size type="download">13972005</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.8.tar.gz</location>
+          <checksum type="sha256">c5de38b905a1650e28b4a71c29cb8cf19e109d4e24df12c13630417bd647a5be</checksum>
+          <size type="download">2456018</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.7" date="2019-04-13">
       <url>https://drawpile.net/news/release-2.1.7/</url>
