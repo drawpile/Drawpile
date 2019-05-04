@@ -103,6 +103,7 @@ def update_release_artifacts(appdata):
         ('win64', 'win', f'drawpile-{version}-setup.exe'),
         ('win32', 'win', f'drawpile-{version}-setup-w32.exe'),
         ('macos', 'osx', f'Drawpile {version}.dmg'),
+        ('source', 'src', f'drawpile-{version}.tar.gz'),
     )
 
     # Find metadata for binaries
@@ -120,15 +121,24 @@ def update_release_artifacts(appdata):
         latest_release.append(artifacts_elem)
 
     for platform, artifact in artifacts.items():
+        if platform == 'source':
+            attrs = {'type': 'source'}
+            xpath = "artifact[@type='source']"
+        else:
+            attrs = {
+                'type': 'binary',
+                'platform': platform,
+            }
+            xpath = f"artifact[@type='binary' and @platform='{platform}']"
+
         elem = E.artifact(
             E.location('https://drawpile.net/files/' + artifact['filename']),
             E.checksum(artifact['hash'], type='sha256'),
             E.size(str(artifact['size']), type='download'),
-            type='binary',
-            platform=platform
+            **attrs
             )
 
-        for old in artifacts_elem.xpath(f"artifact[@type='binary' and @platform='{platform}']"):
+        for old in artifacts_elem.xpath(xpath):
             artifacts_elem.remove(old)
 
         artifacts_elem.append(elem)
