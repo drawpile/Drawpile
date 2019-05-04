@@ -11,7 +11,7 @@ fi
 
 cd ..
 
-OUT="drawpile-$1.tar.gz"
+OUT="desktop/artifacts/drawpile-$1.tar.gz"
 
 if [ -e "$OUT" ]
 then
