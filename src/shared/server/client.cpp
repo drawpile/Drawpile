@@ -20,7 +20,6 @@
 #include "client.h"
 #include "session.h"
 #include "sessionhistory.h"
-#include "opcommands.h"
 #include "serverlog.h"
 #include "serverconfig.h"
 
@@ -41,25 +40,25 @@ struct Client::Private {
 	QTcpSocket *socket;
 	ServerLog *logger;
 
-	protocol::MessageQueue *msgqueue;
+	protocol::MessageQueue *msgqueue = nullptr;
 	protocol::MessageList holdqueue;
-	int historyPosition;
 
-	int id;
 	QString username;
 	QString extAuthId;
 	QByteArray avatar;
 
-	bool isOperator;
-	bool isModerator;
-	bool isTrusted;
-	bool isAuthenticated;
-	bool isMuted;
+	int historyPosition = -1;
+
+	uint8_t id = 0;
+	bool isOperator = false;
+	bool isModerator = false;
+	bool isTrusted = false;
+	bool isAuthenticated = false;
+	bool isMuted = false;
+	bool isHoldLocked = false;
 
 	Private(QTcpSocket *socket, ServerLog *logger)
-		: socket(socket), logger(logger), msgqueue(nullptr),
-		historyPosition(-1), id(0),
-		isOperator(false), isModerator(false), isTrusted(false), isAuthenticated(false), isMuted(false)
+		: socket(socket), logger(logger)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);
@@ -329,7 +328,15 @@ void Client::receiveMessages()
 					));
 
 		} else {
-			handleSessionMessage(msg);
+
+			// Enforce origin ID, except when receiving a snapshot
+			if(d->session->initUserId() != d->id)
+				msg->setContextId(d->id);
+
+			if(isHoldLocked())
+				d->holdqueue << msg;
+			else
+				d->session->handleClientMessage(*this, msg);
 		}
 	}
 }
@@ -356,100 +363,6 @@ void Client::socketDisconnect()
 	this->deleteLater();
 }
 
-/**
- * @brief Handle messages in normal session mode
- *
- * This one is pretty simple. The message is validated to make sure
- * the client is authorized to send it, etc. and it is added to the
- * main message stream, from which it is distributed to all connected clients.
- * @param msg the message received from the client
- */
-void Client::handleSessionMessage(MessagePtr msg)
-{
-	Q_ASSERT(d->session);
-
-	// Filter away server-to-client-only messages
-	switch(msg->type()) {
-	using namespace protocol;
-	case MSG_USER_JOIN:
-	case MSG_USER_LEAVE:
-	case MSG_SOFTRESET:
-		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
-		return;
-	case MSG_DISCONNECT:
-		// we don't do anything with disconnect notifications from the client
-		return;
-	default: break;
-	}
-
-	// Enforce origin context ID (except when uploading a snapshot)
-	if(d->session->initUserId() != d->id)
-		msg->setContextId(d->id);
-
-	// Some meta commands affect the server too
-	switch(msg->type()) {
-		case protocol::MSG_COMMAND: {
-			protocol::ServerCommand cmd = msg.cast<protocol::Command>().cmd();
-			handleClientServerCommand(this, cmd.cmd, cmd.args, cmd.kwargs);
-			return;
-		}
-		case protocol::MSG_SESSION_OWNER: {
-			if(!isOperator()) {
-				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change session ownership"));
-				return;
-			}
-
-			QList<uint8_t> ids = msg.cast<protocol::SessionOwner>().ids();
-			ids.append(d->id);
-			ids = d->session->updateOwnership(ids, username());
-			msg.cast<protocol::SessionOwner>().setIds(ids);
-			break;
-		}
-		case protocol::MSG_CHAT: {
-			if(isMuted())
-				return;
-			if(msg.cast<protocol::Chat>().isBypass()) {
-				d->session->directToAll(msg);
-				return;
-			}
-			break;
-		}
-		case protocol::MSG_PRIVATE_CHAT: {
-			const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
-			if(chat.target()>0) {
-				Client *c = d->session->getClientById(chat.target());
-				if(c) {
-					this->sendDirectMessage(msg);
-					c->sendDirectMessage(msg);
-				}
-			}
-			return;
-		}
-		case protocol::MSG_TRUSTED_USERS: {
-			if(!isOperator()) {
-				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));
-				return;
-			}
-
-			QList<uint8_t> ids = msg.cast<protocol::TrustedUsers>().ids();
-			ids = d->session->updateTrustedUsers(ids, username());
-			msg.cast<protocol::TrustedUsers>().setIds(ids);
-			break;
-	}
-		default: break;
-	}
-
-	// Rest of the messages are added to session history
-	if(d->session->initUserId() == d->id)
-		d->session->addToInitStream(msg);
-	else if(isHoldLocked()) {
-		if(!d->session->history()->isOutOfSpace())
-			d->holdqueue.append(msg);
-	}
-	else
-		d->session->addToHistory(msg);
-}
-
 void Client::disconnectClient(DisconnectionReason reason, const QString &message)
 {
 	protocol::Disconnect::Reason pr { protocol::Disconnect::OTHER };
@@ -471,21 +384,19 @@ void Client::disconnectClient(DisconnectionReason reason, const QString &message
 	d->msgqueue->sendDisconnect(pr, message);
 }
 
-bool Client::isHoldLocked() const
+void Client::setHoldLocked(bool lock)
 {
-	Q_ASSERT(d->session);
-
-	return d->session->state() != Session::Running;
+	d->isHoldLocked = lock;
+	if(!lock) {
+		for(MessagePtr msg : d->holdqueue)
+			d->session->handleClientMessage(*this, msg);
+		d->holdqueue.clear();
+	}
 }
 
-void Client::enqueueHeldCommands()
+bool Client::isHoldLocked() const
 {
-	if(!d->session || isHoldLocked())
-		return;
-
-	for(MessagePtr msg : d->holdqueue)
-		d->session->addToHistory(msg);
-	d->holdqueue.clear();
+	return d->isHoldLocked;
 }
 
 bool Client::hasSslSupport() const

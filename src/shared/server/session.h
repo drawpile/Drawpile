@@ -317,20 +317,11 @@ public:
 	const SessionHistory *history() const { return m_history; }
 
 	/**
-	 * @brief Add a message to the session history
-	 * @param msg
+	 * @brief Handle a message from a client
+	 * @param client
+	 * @param message
 	 */
-	void addToHistory(const protocol::MessagePtr &msg);
-
-	/**
-	 * @brief Add a message to the initialization stream
-	 *
-	 * During init state, this goes to the normal command stream.
-	 * During reset state, this goes to a reset buffer which will
-	 * replace the old session history once completed.
-	 * @param msg
-	 */
-	void addToInitStream(protocol::MessagePtr msg);
+	void handleClientMessage(Client &client, protocol::MessagePtr message);
 
 	/**
 	 * @brief Initiate the shutdown of this session
@@ -506,6 +497,22 @@ private slots:
 	void onAnnouncementsChanged(const Announcable *session);
 
 private:
+	/**
+	 * @brief Add a message to the session history
+	 * @param msg
+	 */
+	void addToHistory(const protocol::MessagePtr &msg);
+
+	/**
+	 * @brief Add a message to the initialization stream
+	 *
+	 * During init state, this goes to the normal command stream.
+	 * During reset state, this goes to a reset buffer which will
+	 * replace the old session history once completed.
+	 * @param msg
+	 */
+	void addToInitStream(protocol::MessagePtr msg);
+
 	void cleanupCommandStream();
 
 	void restartRecording();

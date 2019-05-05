@@ -22,6 +22,7 @@
 #include "serverconfig.h"
 #include "inmemoryhistory.h"
 #include "serverlog.h"
+#include "opcommands.h"
 
 #include "../net/control.h"
 #include "../net/meta.h"
@@ -147,7 +148,7 @@ void Session::switchState(State newstate)
 			restartRecording();
 
 		for(Client *c : m_clients)
-			c->enqueueHeldCommands();
+			c->setHoldLocked(false);
 
 	} else if(newstate==Reset) {
 		if(m_state!=Running)
@@ -198,6 +199,9 @@ void Session::joinUser(Client *user, bool host)
 		Q_ASSERT(m_state == Initialization);
 		m_initUser = user->id();
 	} else {
+		if(m_state == State::Initialization)
+			user->setHoldLocked(true);
+
 		// Notify the client how many messages to expect (at least)
 		// The client can use this information to display a progress bar during the login phase
 		protocol::ServerReply catchup;
@@ -649,6 +653,82 @@ void Session::sendUpdatedMuteList()
 	conf["muted"]= muted;
 	msg.reply["config"] = conf;
 	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
+}
+
+void Session::handleClientMessage(Client &client, protocol::MessagePtr msg)
+{
+	// Filter away server-to-client-only messages
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_USER_JOIN:
+	case MSG_USER_LEAVE:
+	case MSG_SOFTRESET:
+		client.log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
+		return;
+	case MSG_DISCONNECT:
+		// we don't do anything with disconnect notifications from the client
+		return;
+	default: break;
+	}
+
+	// Some meta commands affect the server too
+	switch(msg->type()) {
+		case protocol::MSG_COMMAND: {
+			protocol::ServerCommand cmd = msg.cast<protocol::Command>().cmd();
+			handleClientServerCommand(&client, cmd.cmd, cmd.args, cmd.kwargs);
+			return;
+		}
+		case protocol::MSG_SESSION_OWNER: {
+			if(!client.isOperator()) {
+				client.log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change session ownership"));
+				return;
+			}
+
+			QList<uint8_t> ids = msg.cast<protocol::SessionOwner>().ids();
+			ids.append(client.id());
+			ids = updateOwnership(ids, client.username());
+			msg.cast<protocol::SessionOwner>().setIds(ids);
+			break;
+		}
+		case protocol::MSG_CHAT: {
+			if(client.isMuted())
+				return;
+			if(msg.cast<protocol::Chat>().isBypass()) {
+				directToAll(msg);
+				return;
+			}
+			break;
+		}
+		case protocol::MSG_PRIVATE_CHAT: {
+			const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
+			if(chat.target()>0) {
+				Client *target = getClientById(chat.target());
+				if(target) {
+					client.sendDirectMessage(msg);
+					target->sendDirectMessage(msg);
+				}
+			}
+			return;
+		}
+		case protocol::MSG_TRUSTED_USERS: {
+			if(!client.isOperator()) {
+				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));
+				return;
+			}
+
+			QList<uint8_t> ids = msg.cast<protocol::TrustedUsers>().ids();
+			ids = updateTrustedUsers(ids, client.username());
+			msg.cast<protocol::TrustedUsers>().setIds(ids);
+			break;
+		}
+		default: break;
+	}
+
+	// Rest of the messages are added to session history
+	if(initUserId() == client.id())
+		addToInitStream(msg);
+	else
+		addToHistory(msg);
 }
 
 void Session::addToHistory(const protocol::MessagePtr &msg)

@@ -216,11 +216,6 @@ public:
 	void startTls();
 
 	/**
-	 * @brief Send all the messages that were held in queue
-	 */
-	void enqueueHeldCommands();
-
-	/**
 	 * @brief Get a Join message for this user
 	 */
 	protocol::MessagePtr joinMessage() const;
@@ -243,6 +238,17 @@ public:
 	 * @return JSON API response content
 	 */
 	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+
+	/**
+	 * @brief Divert incoming messages to a holding buffer
+	 *
+	 * When hold-locked, all incoming messages are saved in a buffer
+	 * until the lock is released.
+	 *
+	 * @param lock
+	 */
+	void setHoldLocked(bool lock);
+	bool isHoldLocked() const;
 
 	/**
 	 * @brief Write a log entry
@@ -278,7 +284,6 @@ private slots:
 
 private:
 	void handleSessionMessage(protocol::MessagePtr msg);
-	bool isHoldLocked() const;
 
 	struct Private;
 	Private *d;
