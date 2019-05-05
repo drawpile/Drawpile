@@ -27,6 +27,10 @@
 
 class QHostAddress;
 
+namespace protocol {
+	class MessageQueue;
+}
+
 namespace server {
 
 class Session;
@@ -45,7 +49,6 @@ class Client : public QObject
     Q_OBJECT
 
 public:
-	Client(QTcpSocket *socket, ServerLog *logger, QObject *parent=nullptr);
 	~Client();
 
 	//! Get the user's IP address
@@ -181,13 +184,6 @@ public:
 	void sendSystemChat(const QString &message);
 
 	/**
-	 * @brief Get this client's position in the session history
-	 * The returned index in the index of the last history message that
-	 * is (or was) in the client's upload queue.
-	 */
-	int historyPosition() const;
-
-	/**
 	 * @brief Manually change the history position.
 	 *
 	 * Only time this needs to be done is during the session initialization
@@ -273,14 +269,15 @@ signals:
 	 */
 	void loggedOff(Client *client);
 
-public slots:
-	void sendNextHistoryBatch();
-
 private slots:
 	void gotBadData(int len, int type);
 	void receiveMessages();
 	void socketError(QAbstractSocket::SocketError error);
 	void socketDisconnect();
+
+protected:
+	Client(QTcpSocket *socket, ServerLog *logger, QObject *parent);
+	protocol::MessageQueue *messageQueue();
 
 private:
 	void handleSessionMessage(protocol::MessagePtr msg);

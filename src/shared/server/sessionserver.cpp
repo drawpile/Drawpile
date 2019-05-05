@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "sessionserver.h"
 #include "session.h"
-#include "client.h"
+#include "thinserverclient.h"
 #include "loginhandler.h"
 #include "serverconfig.h"
 #include "serverlog.h"
@@ -158,9 +158,7 @@ void SessionServer::initSession(Session *session)
 
 	const QString idString = session->idString();
 
-	connect(session, &Session::userConnected, this, &SessionServer::moveFromLobby);
-	connect(session, &Session::userDisconnected, this, &SessionServer::userDisconnectedEvent);
-	connect(session, &Session::sessionAttributeChanged, this, [this](Session *ses) { emit sessionChanged(ses->getDescription()); });
+	connect(session, &Session::sessionAttributeChanged, this, &SessionServer::onSessionAttributeChanged);
 	connect(session, &Session::destroyed, this, [this, idString](QObject *object) {
 		auto *session = static_cast<Session*>(object);
 		m_sessions.removeOne(session);
@@ -210,18 +208,12 @@ bool SessionServer::isIdInUse(const QString &id) const
 	return false;
 }
 
-int SessionServer::totalUsers() const
-{
-	int count = m_lobby.size();
-	for(const Session * s : m_sessions)
-		count += s->userCount();
-	return count;
-}
-
 void SessionServer::stopAll()
 {
-	for(Client *c : m_lobby)
+	for(ThinServerClient *c : m_clients) {
+		// Note: this just sends the disconnect command, clients don't self-delete immediately
 		c->disconnectClient(Client::DisconnectionReason::Shutdown, "Server shutting down");
+	}
 
 	for(Session *s : m_sessions)
 		s->killSession(false);
@@ -234,7 +226,7 @@ void SessionServer::messageAll(const QString &message, bool alert)
 	}
 }
 
-void SessionServer::addClient(Client *client)
+void SessionServer::addClient(ThinServerClient *client)
 {
 	client->setParent(this);
 	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
@@ -243,41 +235,18 @@ void SessionServer::addClient(Client *client)
 	client->setRandomLag(m_randomlag);
 #endif
 
-	m_lobby.append(client);
+	m_clients.append(client);
+	connect(client, &Client::destroyed, this, &SessionServer::removeClient);
 
-	connect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
+	emit userCountChanged(m_clients.size());
 
 	(new LoginHandler(client, this))->startLoginProcess();
 }
 
-/**
- * @brief Handle the move of a client from the lobby to a session
- * @param session
- * @param client
- */
-void SessionServer::moveFromLobby(Session *session, Client *client)
+void SessionServer::removeClient(QObject *client)
 {
-	Q_ASSERT(m_lobby.contains(client));
-	m_lobby.removeOne(client);
-
-	// the session handles disconnect events from now on
-	disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
-
-	emit userLoggedIn(totalUsers());
-	emit sessionChanged(session->getDescription());
-}
-
-/**
- * @brief Handle client disconnect while the client was not yet logged in
- * @param client
- */
-void SessionServer::lobbyDisconnectedEvent(Client *client)
-{
-	if(m_lobby.removeOne(client)) {
-		client->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Non-logged in client removed."));
-		disconnect(client, &Client::loggedOff, this, &SessionServer::lobbyDisconnectedEvent);
-		emit userDisconnected(totalUsers());
-	}
+	m_clients.removeOne(static_cast<ThinServerClient*>(client));
+	emit userCountChanged(m_clients.size());
 }
 
 /**
@@ -287,10 +256,13 @@ void SessionServer::lobbyDisconnectedEvent(Client *client)
  * in case it needs to be closed.
  * @param session
  */
-void SessionServer::userDisconnectedEvent(Session *session)
+void SessionServer::onSessionAttributeChanged(Session *session)
 {
+	Q_ASSERT(session);
+
 	bool delSession = false;
-	if(session->userCount()==0) {
+
+	if(session->userCount()==0 && session->state() != Session::Shutdown) {
 		session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Last user left."));
 
 		// A non-persistent session is deleted when the last user leaves
@@ -305,8 +277,6 @@ void SessionServer::userDisconnectedEvent(Session *session)
 		session->killSession();
 	else
 		emit sessionChanged(session->getDescription());
-
-	emit userDisconnected(totalUsers());
 }
 
 void SessionServer::cleanupSessions()
@@ -359,19 +329,15 @@ JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStr
 
 JsonApiResult SessionServer::callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	Q_UNUSED(request);
+	Q_UNUSED(request)
+
 	if(path.size()!=0)
 		return JsonApiNotFound();
 
 	if(method == JsonApiMethod::Get) {
 		QJsonArray userlist;
-		for(const Client *c : m_lobby)
+		for(const ThinServerClient *c : m_clients)
 			userlist << c->description();
-
-		for(const Session *s : m_sessions) {
-			for(const Client *c : s->clients())
-				userlist << c->description();
-		}
 
 		return {JsonApiResult::Ok, QJsonDocument(userlist)};
 

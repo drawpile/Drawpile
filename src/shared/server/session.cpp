@@ -18,7 +18,7 @@
 */
 
 #include "session.h"
-#include "client.h"
+#include "thinserverclient.h"
 #include "serverconfig.h"
 #include "inmemoryhistory.h"
 #include "serverlog.h"
@@ -181,7 +181,8 @@ void Session::joinUser(Client *user, bool host)
 	m_clients.append(user);
 
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
-	connect(history(), &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
+	connect(history(), &SessionHistory::newMessagesAvailable,
+		static_cast<ThinServerClient*>(user), &ThinServerClient::sendNextHistoryBatch);
 
 	m_pastClients.remove(user->id());
 
@@ -233,7 +234,7 @@ void Session::joinUser(Client *user, bool host)
 	m_history->idQueue().setIdForName(user->id(), user->username());
 
 	user->log(Log().about(Log::Level::Info, Log::Topic::Join).message("Joined session"));
-	emit userConnected(this, user);
+	emit sessionAttributeChanged(this);
 }
 
 void Session::removeUser(Client *user)
@@ -254,7 +255,8 @@ void Session::removeUser(Client *user)
 	user->setSession(nullptr);
 
 	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
-	disconnect(m_history, &SessionHistory::newMessagesAvailable, user, &Client::sendNextHistoryBatch);
+	disconnect(m_history, &SessionHistory::newMessagesAvailable,
+		static_cast<ThinServerClient*>(user), &ThinServerClient::sendNextHistoryBatch);
 
 	if(user->id() == m_initUser && m_state == Reset) {
 		// Whoops, the resetter left before the job was done!
@@ -274,7 +276,7 @@ void Session::removeUser(Client *user)
 
 	historyCacheCleanup();
 
-	emit userDisconnected(this);
+	emit sessionAttributeChanged(this);
 }
 
 void Session::abortReset()
@@ -751,7 +753,7 @@ void Session::addToHistory(const protocol::MessagePtr &msg)
 		Client *origin = getClientById(m_initUser);
 		Q_ASSERT(origin);
 		if(origin) {
-			origin->setHistoryPosition(m_history->lastIndex());
+			static_cast<ThinServerClient*>(origin)->setHistoryPosition(m_history->lastIndex());
 			if(!msg->isCommand())
 				origin->sendDirectMessage(msg);
 		}
@@ -1132,7 +1134,7 @@ void Session::historyCacheCleanup()
 {
 	int minIdx = m_history->lastIndex();
 	for(const Client *c : m_clients) {
-		minIdx = qMin(c->historyPosition(), minIdx);
+		minIdx = qMin(static_cast<const ThinServerClient*>(c)->historyPosition(), minIdx);
 	}
 	m_history->cleanupBatches(minIdx);
 }

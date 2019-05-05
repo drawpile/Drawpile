@@ -471,12 +471,6 @@ public:
 	Q_SLOT void log(const Log &entry);
 
 signals:
-	//! A user just connected to the session
-	void userConnected(Session *thisSession, Client *client);
-
-	//! A user disconnected from the session
-	void userDisconnected(Session *thisSession);
-
 	/**
 	 * @brief A publishable session attribute just changed.
 	 *
@@ -487,6 +481,7 @@ signals:
 	 * - maximum user count
 	 * - password
 	 * - persistent mode
+	 * - number of users
 	 *
 	 * @param thisSession
 	 */

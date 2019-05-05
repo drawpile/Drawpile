@@ -19,7 +19,7 @@
 
 #include "builtinserver.h"
 
-#include "../shared/server/client.h"
+#include "../shared/server/thinserverclient.h"
 #include "../shared/server/loginhandler.h"
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -50,9 +50,9 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	m_sessions = new SessionServer(m_config, this);
 
 	connect(m_sessions, &SessionServer::sessionEnded, this, &BuiltinServer::stop);
-	connect(m_sessions, &SessionServer::userDisconnected, this, [this]() {
+	connect(m_sessions, &SessionServer::userCountChanged, this, [this](int count) {
 		// The server will be fully stopped after all users have disconnected
-		if(m_state == STOPPING)
+		if(count == 0 && m_state == STOPPING)
 			stop();
 	});
 }
@@ -112,7 +112,7 @@ void BuiltinServer::newClient()
 
 	qInfo("Accepted new client from address %s", qPrintable(socket->peerAddress().toString()));
 
-	m_sessions->addClient(new Client(socket, m_sessions->config()->logger()));
+	m_sessions->addClient(new ThinServerClient(socket, m_sessions->config()->logger()));
 }
 
 /**

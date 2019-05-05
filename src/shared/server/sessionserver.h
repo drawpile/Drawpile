@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace server {
 
 class Session;
 class SessionHistory;
-class Client;
+class ThinServerClient;
 class ServerConfig;
 class TemplateLoader;
 
@@ -88,7 +88,7 @@ public:
 	 *
 	 * @param client newly created client
 	 */
-	void addClient(Client *client);
+	void addClient(ThinServerClient *client);
 
 	/**
 	 * @brief Create a new session
@@ -128,7 +128,7 @@ public:
 	/**
 	 * @brief Get the total number of connected users
 	 */
-	int totalUsers() const;
+	int totalUsers() const { return m_clients.size(); }
 
 	/**
 	 * @brief Get the number of active sessions
@@ -183,16 +183,10 @@ signals:
 	void sessionChanged(const QJsonObject &session);
 
 	/**
-	 * @brief A user just logged in to a session
-	 * @param count total number of logged in users (including the new one)
-	 */
-	void userLoggedIn(int count);
-
-	/**
 	 * @brief A user just disconnected
 	 * @param count total number of logged in users
 	 */
-	void userDisconnected(int count);
+	void userCountChanged(int count);
 
 	/**
 	 * @brief Session with the given ID has just been destroyed
@@ -200,9 +194,8 @@ signals:
 	void sessionEnded(const QString &id);
 
 private slots:
-	void moveFromLobby(Session *session, Client *client);
-	void lobbyDisconnectedEvent(Client *client);
-	void userDisconnectedEvent(Session *session);
+	void removeClient(QObject *client);
+	void onSessionAttributeChanged(Session *session);
 	void cleanupSessions();
 
 private:
@@ -216,7 +209,7 @@ private:
 	bool m_useFiledSessions;
 
 	QList<Session*> m_sessions;
-	QList<Client*> m_lobby;
+	QList<ThinServerClient*> m_clients;
 
 	bool m_mustSecure;
 

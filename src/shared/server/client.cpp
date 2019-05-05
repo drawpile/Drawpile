@@ -47,8 +47,6 @@ struct Client::Private {
 	QString extAuthId;
 	QByteArray avatar;
 
-	int historyPosition = -1;
-
 	uint8_t id = 0;
 	bool isOperator = false;
 	bool isModerator = false;
@@ -80,6 +78,11 @@ Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
 Client::~Client()
 {
 	delete d;
+}
+
+protocol::MessageQueue *Client::messageQueue()
+{
+	return d->msgqueue;
 }
 
 protocol::MessagePtr Client::joinMessage() const
@@ -143,13 +146,6 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 void Client::setSession(Session *session)
 {
 	d->session = session;
-	d->historyPosition = -1;
-
-	// Enqueue the next batch (if available) when upload queue is empty
-	if(session)
-		connect(d->msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
-	else
-		disconnect(d->msgqueue, &protocol::MessageQueue::allSent, this, &Client::sendNextHistoryBatch);
 }
 
 Session *Client::session()
@@ -253,16 +249,6 @@ bool Client::isMuted() const
 	return d->isMuted;
 }
 
-int Client::historyPosition() const
-{
-	return d->historyPosition;
-}
-
-void Client::setHistoryPosition(int newpos)
-{
-	d->historyPosition = newpos;
-}
-
 void Client::setConnectionTimeout(int timeout)
 {
 	d->msgqueue->setIdleTimeout(timeout);
@@ -278,23 +264,6 @@ void Client::setRandomLag(uint lag)
 QHostAddress Client::peerAddress() const
 {
 	return d->socket->peerAddress();
-}
-
-void Client::sendNextHistoryBatch()
-{
-	// Only enqueue messages for uploading when upload queue is empty
-	// and session is in a normal running state.
-	// (We'll get another messagesAvailable signal when ready)
-	if(d->session == nullptr || d->msgqueue->isUploading() || d->session->state() != Session::Running)
-		return;
-
-	d->session->historyCacheCleanup();
-
-	protocol::MessageList batch;
-	int batchLast;
-	std::tie(batch, batchLast) = d->session->history()->getBatch(d->historyPosition);
-	d->historyPosition = batchLast;
-	d->msgqueue->send(batch);
 }
 
 void Client::sendDirectMessage(protocol::MessagePtr msg)

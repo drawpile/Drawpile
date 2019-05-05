@@ -29,6 +29,7 @@ set (
 	listings/announcementapi.cpp
 	listings/announcements.cpp
 	server/client.cpp
+	server/thinserverclient.cpp
 	server/session.cpp
 	server/sessionserver.cpp
 	server/sessionban.cpp

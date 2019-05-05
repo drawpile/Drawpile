@@ -25,7 +25,7 @@
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
-#include "../shared/server/client.h"
+#include "../shared/server/thinserverclient.h"
 #include "../shared/server/serverconfig.h"
 #include "../shared/server/serverlog.h"
 
@@ -51,16 +51,16 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 
 	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
 	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
-	connect(m_sessions, &SessionServer::userLoggedIn, this, &MultiServer::printStatusUpdate);
-	connect(m_sessions, &SessionServer::userLoggedIn, this, &MultiServer::userCountChanged);
-	connect(m_sessions, &SessionServer::userDisconnected, [this](int users) {
+	connect(m_sessions, &SessionServer::userCountChanged, [this](int users) {
 		printStatusUpdate();
 		emit userCountChanged(users);
 		// The server will be fully stopped after all users have disconnected
-		if(m_state == STOPPING)
-			stop();
-		else
-			tryAutoStop();
+		if(users == 0) {
+			if(m_state == STOPPING)
+				stop();
+			else
+				tryAutoStop();
+		}
 	});
 }
 
@@ -254,7 +254,7 @@ void MultiServer::newClient()
 		.user(0, socket->peerAddress(), QString())
 		.message(QStringLiteral("New client connected")));
 
-	auto *client = new Client(socket, m_sessions->config()->logger());
+	auto *client = new ThinServerClient(socket, m_sessions->config()->logger());
 
 	if(m_config->isAddressBanned(socket->peerAddress())) {
 		client->log(Log().about(Log::Level::Warn, Log::Topic::Kick)
