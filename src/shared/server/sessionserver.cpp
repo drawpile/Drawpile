@@ -221,7 +221,7 @@ int SessionServer::totalUsers() const
 void SessionServer::stopAll()
 {
 	for(Client *c : m_lobby)
-		c->disconnectShutdown();
+		c->disconnectClient(Client::DisconnectionReason::Shutdown, "Server shutting down");
 
 	for(Session *s : m_sessions)
 		s->killSession(false);

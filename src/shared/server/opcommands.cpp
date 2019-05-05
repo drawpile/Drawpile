@@ -190,7 +190,7 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 		client->session()->messageAll(target->username() + " kicked by " + client->username(), false);
 	}
 
-	target->disconnectKick(client->username());
+	target->disconnectClient(Client::DisconnectionReason::Kick, client->username());
 }
 
 void removeBan(Client *client, const QJsonArray &args, const QJsonObject &kwargs)

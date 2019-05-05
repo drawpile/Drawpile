@@ -148,22 +148,22 @@ public:
 	void setRandomLag(uint lag);
 #endif
 
-	/**
-	 * @brief Kick this user off the server
-	 * @param kickedBy username of the operator
-	 */
-	void disconnectKick(const QString &kickedBy);
+	enum class DisconnectionReason {
+		Kick,     // kicked by an operator
+		Error,    // kicked due to some server or protocol error
+		Shutdown, // the server is shutting down
+	};
 
 	/**
-	 * @brief Disconnect user due to an error
+	 * @brief Disconnect this client
+	 *
+	 * Note. This does not immediately disconnect the client. Instead, a
+	 * disconnect command is added to the client's upload queue.
+	 *
+	 * @param reason
 	 * @param message
 	 */
-	void disconnectError(const QString &message);
-
-	/**
-	 * @brief Disconnect user due to shutdown
-	 */
-	void disconnectShutdown();
+	void disconnectClient(DisconnectionReason reason, const QString &message);
 
 	/**
 	 * @brief Send a message directly to this client

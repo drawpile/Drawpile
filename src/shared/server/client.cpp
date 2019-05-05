@@ -115,7 +115,7 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 		return JsonApiNotFound();
 
 	if(method == JsonApiMethod::Delete) {
-		disconnectKick("server operator");
+		disconnectClient(Client::DisconnectionReason::Kick, "server operator");
 		QJsonObject o;
 		o["status"] = "ok";
 		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
@@ -450,24 +450,25 @@ void Client::handleSessionMessage(MessagePtr msg)
 		d->session->addToHistory(msg);
 }
 
-void Client::disconnectKick(const QString &kickedBy)
+void Client::disconnectClient(DisconnectionReason reason, const QString &message)
 {
-	log(Log().about(Log::Level::Info, Log::Topic::Kick).message("Kicked by " + kickedBy));
-	emit loggedOff(this);
-	d->msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
-}
+	protocol::Disconnect::Reason pr { protocol::Disconnect::OTHER };
+	Log::Topic topic { Log::Topic::Leave };
+	switch(reason) {
+	case DisconnectionReason::Kick:
+		pr = protocol::Disconnect::KICK;
+		topic = Log::Topic::Kick;
+		break;
+	case DisconnectionReason::Error: pr = protocol::Disconnect::ERROR; break;
+	case DisconnectionReason::Shutdown: pr = protocol::Disconnect::SHUTDOWN; break;
+	}
+	log(Log()
+		.about(Log::Level::Info, topic)
+		.message(message)
+		);
 
-void Client::disconnectError(const QString &message)
-{
 	emit loggedOff(this);
-	log(Log().about(Log::Level::Warn, Log::Topic::Leave).message("Disconnected due to error: " + message));
-	d->msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
-}
-
-void Client::disconnectShutdown()
-{
-	emit loggedOff(this);
-	d->msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
+	d->msgqueue->sendDisconnect(pr, message);
 }
 
 bool Client::isHoldLocked() const

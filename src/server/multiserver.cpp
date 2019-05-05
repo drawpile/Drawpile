@@ -261,7 +261,7 @@ void MultiServer::newClient()
 			.user(0, socket->peerAddress(), QString())
 			.message("Kicking banned user straight away"));
 
-		client->disconnectKick("BANNED");
+		client->disconnectClient(Client::DisconnectionReason::Error, "BANNED");
 
 	} else {
 		m_sessions->addClient(client);

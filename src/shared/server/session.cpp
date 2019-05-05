@@ -468,7 +468,7 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 	}
 
 	if(kickResetter)
-		kickResetter->disconnectError("De-opped while resetting");
+		kickResetter->disconnectClient(Client::DisconnectionReason::Error, "De-opped while resetting");
 
 	return truelist;
 }
@@ -507,7 +507,7 @@ void Session::changeOpStatus(int id, bool op, const QString &changedBy)
 	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
 
 	if(kickResetter)
-		kickResetter->disconnectError("De-opped while resetting");
+		kickResetter->disconnectClient(Client::DisconnectionReason::Error, "De-opped while resetting");
 }
 
 QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy)
@@ -741,7 +741,7 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 		if(m_history->sizeLimit()>0 && m_resetstreamsize > m_history->sizeLimit()) {
 			Client *resetter = getClientById(m_initUser);
 			if(resetter)
-				resetter->disconnectError("History limit exceeded");
+				resetter->disconnectClient(Client::DisconnectionReason::Error, "History limit exceeded");
 		}
 	}
 }
@@ -870,7 +870,7 @@ void Session::killSession(bool terminate)
 	stopRecording();
 
 	for(Client *c : m_clients) {
-		c->disconnectShutdown();
+		c->disconnectClient(Client::DisconnectionReason::Shutdown, "Session terminated");
 		c->setSession(nullptr);
 	}
 	m_clients.clear();
