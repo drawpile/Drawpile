@@ -253,6 +253,10 @@ void ToolSettings::setToolSlot(int idx)
 	// Currently, brush tool is the only tool with tool slots
 	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
 	if(bs) {
+		// Eraser tool is a specialization of the freehand tool locked to the eraser slot
+		if(d->currentTool == tools::Tool::ERASER)
+			return;
+
 		d->previousTool = d->currentTool;
 		d->previousToolSlot = bs->currentBrushSlot();
 		bs->selectBrushSlot(idx);
