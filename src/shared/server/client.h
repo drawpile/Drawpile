@@ -67,8 +67,8 @@ public:
 	 * itself when hosting a new session
 	 * @return client ID
 	 */
-	int id() const;
-	void setId(int id);
+	uint8_t id() const;
+	void setId(uint8_t id);
 
 	/**
 	 * @brief Get the user name of this client

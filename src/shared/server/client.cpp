@@ -157,13 +157,13 @@ Session *Client::session()
 	return d->session.data();
 }
 
-void Client::setId(int id)
+void Client::setId(uint8_t id)
 {
-	Q_ASSERT(d->id==0 && id != 0); // ID is only assigned ance
+	Q_ASSERT(d->id==0 && id != 0); // ID is only assigned once
 	d->id = id;
 }
 
-int Client::id() const
+uint8_t Client::id() const
 {
 	return d->id;
 }
