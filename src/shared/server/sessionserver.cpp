@@ -18,7 +18,7 @@
 */
 
 #include "sessionserver.h"
-#include "session.h"
+#include "thinsession.h"
 #include "thinserverclient.h"
 #include "loginhandler.h"
 #include "serverconfig.h"
@@ -78,7 +78,7 @@ void SessionServer::loadNewSessions()
 		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
 		if(fh) {
 			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
-			Session *session = new Session(fh, m_config, m_announcements, this);
+			Session *session = new ThinSession(fh, m_config, m_announcements, this);
 			initSession(session);
 			session->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("Loaded from file."));
 		}
@@ -135,7 +135,7 @@ std::tuple<Session*, QString> SessionServer::createSession(const QUuid &id, cons
 		return std::tuple<Session*, QString> { nullptr, "badProtocol" };
 	}
 
-	Session *session = new Session(initHistory(id, idAlias, protocolVersion, founder), m_config, m_announcements, this);
+	Session *session = new ThinSession(initHistory(id, idAlias, protocolVersion, founder), m_config, m_announcements, this);
 
 	initSession(session);
 
@@ -167,7 +167,7 @@ Session *SessionServer::createFromTemplate(const QString &idAlias)
 		return nullptr;
 	}
 
-	Session *session = new Session(history, m_config, m_announcements, this);
+	Session *session = new ThinSession(history, m_config, m_announcements, this);
 	initSession(session);
 	session->log(Log()
 		.about(Log::Level::Info, Log::Topic::Status)
@@ -272,12 +272,12 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 
 	bool delSession = false;
 
-	if(session->userCount()==0 && session->state() != Session::Shutdown) {
+	if(session->userCount()==0 && session->state() != Session::State::Shutdown) {
 		session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Last user left."));
 
 		// A non-persistent session is deleted when the last user leaves
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
-		if(!session->isPersistent()) {
+		if(!session->history()->hasFlag(SessionHistory::Persistent)) {
 			session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Closing non-persistent session."));
 			delSession = true;
 		}

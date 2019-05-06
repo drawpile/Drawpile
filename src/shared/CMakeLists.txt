@@ -31,6 +31,7 @@ set (
 	server/client.cpp
 	server/thinserverclient.cpp
 	server/session.cpp
+	server/thinsession.cpp
 	server/sessionserver.cpp
 	server/sessionban.cpp
 	server/sessionhistory.cpp

@@ -161,7 +161,7 @@ void kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(ban && client->session()->hasPastClientWithId(args.at(0).toInt())) {
 		// Retroactive ban
-		PastClient target = client->session()->getPastClientById(args.at(0).toInt());
+		const auto target = client->session()->getPastClientById(args.at(0).toInt());
 		if(target.isBannable) {
 			client->session()->addBan(target, client->username());
 			client->session()->messageAll(target.username + " banned by " + client->username(), false);
@@ -237,7 +237,7 @@ void resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwa
 	Q_UNUSED(args);
 	Q_UNUSED(kwargs);
 
-	if(client->session()->state() != Session::Running)
+	if(client->session()->state() != Session::State::Running)
 		throw CmdError("Unable to reset in this state");
 
 	client->session()->resetSession(client->id());

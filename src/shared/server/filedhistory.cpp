@@ -238,6 +238,8 @@ bool FiledHistory::load()
 					flags |= Nsfm;
 				else if(f == "deputies")
 					flags |= Deputies;
+				else if(f == "authonly")
+					flags |= AuthOnly;
 				else
 					qWarning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
 			}
@@ -520,6 +522,8 @@ void FiledHistory::setFlags(Flags f)
 			fstr << "nsfm";
 		if(f.testFlag(Deputies))
 			fstr << "deputies";
+		if(f.testFlag(AuthOnly))
+			fstr << "authonly";
 		m_journal->write(QString("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
 		m_journal->flush();
 	}

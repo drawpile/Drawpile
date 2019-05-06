@@ -536,7 +536,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	}
 
 	if(cmd.kwargs["password"].isString())
-		session->setPassword(cmd.kwargs["password"].toString());
+		session->history()->setPassword(cmd.kwargs["password"].toString());
 
 	// Mark login phase as complete. No more login messages will be sent to this user
 	protocol::ServerReply reply;
@@ -574,7 +574,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		if(session->banlist().isBanned(m_client->peerAddress(), m_client->extAuthId())) {
+		if(session->history()->banlist().isBanned(m_client->peerAddress(), m_client->extAuthId())) {
 			sendError("banned", "You have been banned from this session");
 			return;
 		}
@@ -582,12 +582,12 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 			sendError("closed", "This session is closed");
 			return;
 		}
-		if(session->isAuthOnly() && !m_client->isAuthenticated()) {
+		if(session->history()->hasFlag(SessionHistory::AuthOnly) && !m_client->isAuthenticated()) {
 			sendError("authOnly", "This session does not allow guest logins");
 			return;
 		}
 
-		if(!session->checkPassword(cmd.kwargs.value("password").toString())) {
+		if(!session->history()->checkPassword(cmd.kwargs.value("password").toString())) {
 			sendError("badPassword", "Incorrect password");
 			return;
 		}

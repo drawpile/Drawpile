@@ -18,9 +18,8 @@
 */
 
 #include "session.h"
-#include "thinserverclient.h"
+#include "client.h"
 #include "serverconfig.h"
-#include "inmemoryhistory.h"
 #include "serverlog.h"
 #include "opcommands.h"
 
@@ -44,28 +43,17 @@ using protocol::MessagePtr;
 
 Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent)
 	: QObject(parent),
-	m_config(config),
-	m_announcements(announcements),
-	m_state(Initialization),
-	m_initUser(-1),
-	m_recorder(nullptr),
 	m_history(history),
-	m_resetstreamsize(0),
-	m_closed(false),
-	m_authOnly(false),
-	m_autoResetRequestStatus(AutoResetState::NotSent)
+	m_config(config),
+	m_announcements(announcements)
 {
 	m_history->setParent(this);
-	m_history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
-	m_history->setAutoResetThreshold(config->getConfigSize(config::AutoresetThreshold));
 
 	m_lastEventTime.start();
-	m_lastStatusUpdate.start();
 
 	if(history->sizeInBytes()>0) {
-		m_state = Running;
-
-		// Reset history to match current state
+		// History already exists? Skip the Initialization state.
+		m_state = State::Running;
 		m_history->addMessage(protocol::MessagePtr(new protocol::SessionOwner(0, QList<uint8_t>())));
 		sendUpdatedSessionProperties();
 	}
@@ -88,17 +76,17 @@ static protocol::MessagePtr makeLogMessage(const Log &log)
 
 void Session::switchState(State newstate)
 {
-	if(newstate==Initialization) {
-		qFatal("Illegal state change to Initialization from %d", m_state);
+	if(newstate==State::Initialization) {
+		qFatal("Illegal state change to Initialization from %d", int(m_state));
 
-	} else if(newstate==Running) {
-		if(m_state!=Initialization && m_state!=Reset)
-			qFatal("Illegal state change to Running from %d", m_state);
+	} else if(newstate==State::Running) {
+		if(m_state!=State::Initialization && m_state!=State::Reset)
+			qFatal("Illegal state change to Running from %d", int(m_state));
 
 		m_initUser = -1;
 		bool success = true;
 
-		if(m_state==Reset && !m_resetstream.isEmpty()) {
+		if(m_state==State::Reset && !m_resetstream.isEmpty()) {
 			// Reset buffer uploaded. Now perform the reset before returning to
 			// normal running state.
 
@@ -130,12 +118,7 @@ void Session::switchState(State newstate)
 				resetcmd.message = "Session reset!";
 				directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
 
-				protocol::ServerReply catchup;
-				catchup.type = protocol::ServerReply::CATCHUP;
-				catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
-				directToAll(MessagePtr(new protocol::Command(0, catchup)));
-
-				m_autoResetRequestStatus = AutoResetState::NotSent;
+				onSessionReset();
 
 				sendUpdatedSessionProperties();
 			}
@@ -150,9 +133,9 @@ void Session::switchState(State newstate)
 		for(Client *c : m_clients)
 			c->setHoldLocked(false);
 
-	} else if(newstate==Reset) {
-		if(m_state!=Running)
-			qFatal("Illegal state change to Reset from %d", m_state);
+	} else if(newstate==State::Reset) {
+		if(m_state!=State::Running)
+			qFatal("Illegal state change to Reset from %d", int(m_state));
 
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
@@ -181,8 +164,6 @@ void Session::joinUser(Client *user, bool host)
 	m_clients.append(user);
 
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
-	connect(history(), &SessionHistory::newMessagesAvailable,
-		static_cast<ThinServerClient*>(user), &ThinServerClient::sendNextHistoryBatch);
 
 	m_pastClients.remove(user->id());
 
@@ -197,24 +178,15 @@ void Session::joinUser(Client *user, bool host)
 	}
 
 	if(host) {
-		Q_ASSERT(m_state == Initialization);
+		Q_ASSERT(m_state == State::Initialization);
 		m_initUser = user->id();
+
 	} else {
 		if(m_state == State::Initialization)
 			user->setHoldLocked(true);
-
-		// Notify the client how many messages to expect (at least)
-		// The client can use this information to display a progress bar during the login phase
-		protocol::ServerReply catchup;
-		catchup.type = protocol::ServerReply::CATCHUP;
-		catchup.reply["count"] = m_history->lastIndex() - m_history->firstIndex();
-		user->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, catchup)));
 	}
 
-	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
-	if(!welcomeMessage.isEmpty()) {
-		user->sendSystemChat(welcomeMessage);
-	}
+	onClientJoin(user, host);
 
 	addToHistory(user->joinMessage());
 
@@ -226,12 +198,17 @@ void Session::joinUser(Client *user, bool host)
 
 	ensureOperatorExists();
 
+	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
+	if(!welcomeMessage.isEmpty()) {
+		user->sendSystemChat(welcomeMessage);
+	}
+
 	// Make sure everyone is up to date
 	sendUpdatedAnnouncementList();
 	sendUpdatedBanlist();
 	sendUpdatedMuteList();
 
-	m_history->idQueue().setIdForName(user->id(), user->username());
+	m_history->joinUser(user->id(), user->username());
 
 	user->log(Log().about(Log::Level::Info, Log::Topic::Join).message("Joined session"));
 	emit sessionAttributeChanged(this);
@@ -254,11 +231,10 @@ void Session::removeUser(Client *user)
 	user->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Left session"));
 	user->setSession(nullptr);
 
-	disconnect(user, &Client::loggedOff, this, &Session::removeUser);
-	disconnect(m_history, &SessionHistory::newMessagesAvailable,
-		static_cast<ThinServerClient*>(user), &ThinServerClient::sendNextHistoryBatch);
+	disconnect(user, nullptr, this, nullptr);
+	disconnect(m_history, nullptr, user, nullptr);
 
-	if(user->id() == m_initUser && m_state == Reset) {
+	if(user->id() == m_initUser && m_state == State::Reset) {
 		// Whoops, the resetter left before the job was done!
 		// We simply cancel the reset in that case and go on
 		abortReset();
@@ -274,8 +250,6 @@ void Session::removeUser(Client *user)
 		setClosed(false);
 	}
 
-	historyCacheCleanup();
-
 	emit sessionAttributeChanged(this);
 }
 
@@ -284,11 +258,11 @@ void Session::abortReset()
 	m_initUser = -1;
 	m_resetstream.clear();
 	m_resetstreamsize = 0;
-	switchState(Running);
+	switchState(State::Running);
 	messageAll("Session reset cancelled.", true);
 }
 
-Client *Session::getClientById(int id)
+Client *Session::getClientById(uint8_t id)
 {
 	for(Client *c : m_clients) {
 		if(c->id() == id)
@@ -333,18 +307,17 @@ void Session::removeBan(int entryId, const QString &removedBy)
 	}
 }
 
+bool Session::isClosed() const
+{
+	return m_closed
+		|| userCount() >= m_history->maxUsers()
+		|| (m_state != State::Initialization && m_state != State::Running);
+}
+
 void Session::setClosed(bool closed)
 {
 	if(m_closed != closed) {
 		m_closed = closed;
-		sendUpdatedSessionProperties();
-	}
-}
-
-void Session::setAuthOnly(bool authOnly)
-{
-	if(m_authOnly != authOnly) {
-		m_authOnly = authOnly;
 		sendUpdatedSessionProperties();
 	}
 }
@@ -358,17 +331,17 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << (m_closed ? "closed" : "opened");
 	}
 
+	SessionHistory::Flags flags = m_history->flags();
+
 	if(conf.contains("authOnly")) {
 		const bool authOnly = conf["authOnly"].toBool();
 		// The authOnly flag can only be set by an authenticated user.
 		// Otherwise it would be possible for users to accidentally lock themselves out.
 		if(!authOnly || !changedBy || changedBy->isAuthenticated()) {
-			m_authOnly = authOnly;
+			flags.setFlag(SessionHistory::AuthOnly, authOnly);
 			changes << (authOnly ? "blocked guest logins" : "permitted guest logins");
 		}
 	}
-
-	SessionHistory::Flags flags = m_history->flags();
 
 	if(conf.contains("persistent")) {
 		flags.setFlag(SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
@@ -391,12 +364,12 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 
 	if(conf.contains("password")) {
-		setPassword(conf["password"].toString());
+		m_history->setPassword(conf["password"].toString());
 		changes << "changed password";
 	}
 
 	if(conf.contains("opword")) {
-		m_history->setOpwordHash(passwordhash::hash(conf["opword"].toString()));
+		m_history->setOpword(conf["opword"].toString());
 		changes << "changed opword";
 	}
 
@@ -433,11 +406,6 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 }
 
-bool Session::checkPassword(const QString &password) const
-{
-	return passwordhash::check(password, m_history->passwordHash());
-}
-
 QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &changedBy)
 {
 	QList<uint8_t> truelist;
@@ -445,12 +413,12 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 	for(Client *c : m_clients) {
 		const bool op = ids.contains(c->id()) | c->isModerator();
 		if(op != c->isOperator()) {
-			if(!op && c->id() == m_initUser && m_state == Reset) {
+			if(!op && c->id() == m_initUser && m_state == State::Reset) {
 				// OP status removed mid-reset! The user probably has at least part
 				// of the reset image still queued for upload, which will messs up
 				// the session once we're out of reset mode. Kicking the client
 				// is the easiest workaround.
-				// TODO for 2.1: send a cancel command to the client and ignore
+				// TODO for 3.0: send a cancel command to the client and ignore
 				// all further input until ack is received.
 				kickResetter = c;
 			}
@@ -479,41 +447,21 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 	return truelist;
 }
 
-void Session::changeOpStatus(int id, bool op, const QString &changedBy)
+void Session::changeOpStatus(uint8_t id, bool op, const QString &changedBy)
 {
 	QList<uint8_t> ids;
-	Client *kickResetter = nullptr;
-
-	for(Client *c : m_clients) {
-		if(c->id() == id && c->isOperator() != op) {
-
-			if(!op && c->id() == m_initUser && m_state == Reset) {
-				// See above for explanation
-				kickResetter = c;
-			}
-
-			c->setOperator(op);
-			QString msg;
-			if(op) {
-				msg = "Made operator by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
-			} else {
-				msg = "Operator status revoked by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
-			}
-			messageAll(c->username() + " " + msg, false);
-			if(c->isAuthenticated() && !c->isModerator())
-				m_history->setAuthenticatedOperator(c->username(), op);
-		}
-
+	for(const Client *c : m_clients) {
 		if(c->isOperator())
 			ids << c->id();
 	}
 
-	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+	if(op)
+		ids << id;
+	else
+		ids.removeOne(id);
 
-	if(kickResetter)
-		kickResetter->disconnectClient(Client::DisconnectionReason::Error, "De-opped while resetting");
+	ids = updateOwnership(ids, changedBy);
+	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
 }
 
 QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy)
@@ -543,30 +491,20 @@ QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &ch
 	return truelist;
 }
 
-void Session::changeTrustedStatus(int id, bool trusted, const QString &changedBy)
+void Session::changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy)
 {
 	QList<uint8_t> ids;
-
-	for(Client *c : m_clients) {
-		if(c->id() == id && c->isTrusted() != trusted) {
-			c->setTrusted(trusted);
-			QString msg;
-			if(trusted) {
-				msg = "Trusted by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
-			} else {
-				msg = "Untrusted by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
-			}
-			messageAll(c->username() + " " + msg, false);
-			if(c->isAuthenticated())
-				m_history->setAuthenticatedTrust(c->username(), trusted);
-		}
-
+	for(const Client *c : m_clients) {
 		if(c->isTrusted())
 			ids << c->id();
 	}
 
+	if(trusted)
+		ids << id;
+	else
+		ids.removeOne(id);
+
+	ids = updateTrustedUsers(ids, changedBy);
 	addToHistory(protocol::MessagePtr(new protocol::TrustedUsers(0, ids)));
 }
 
@@ -576,17 +514,17 @@ void Session::sendUpdatedSessionProperties()
 	props.type = protocol::ServerReply::SESSIONCONF;
 	QJsonObject	conf;
 	conf["closed"] = m_closed; // this refers specifically to the closed flag, not the general status
-	conf["authOnly"] = m_authOnly;
-	conf["persistent"] = isPersistent();
-	conf["title"] = title();
+	conf["authOnly"] = m_history->hasFlag(SessionHistory::AuthOnly);
+	conf["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
+	conf["title"] = m_history->title();
 	conf["maxUserCount"] = m_history->maxUsers();
 	conf["resetThreshold"] = int(m_history->autoResetThreshold());
 	conf["resetThresholdBase"] = int(m_history->autoResetThresholdBase());
 	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
 	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
 	conf["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
-	conf["hasPassword"] = hasPassword();
-	conf["hasOpword"] = hasOpword();
+	conf["hasPassword"] = !m_history->passwordHash().isEmpty();
+	conf["hasOpword"] = !m_history->opwordHash().isEmpty();
 	props.reply["config"] = conf;
 
 	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));
@@ -600,16 +538,16 @@ void Session::sendUpdatedBanlist()
 	protocol::ServerReply msg;
 	msg.type = protocol::ServerReply::SESSIONCONF;
 	QJsonObject conf;
-	conf["banlist"] = banlist().toJson(false);
+	conf["banlist"] = m_history->banlist().toJson(false);
 	msg.reply["config"] = conf;
 
 	// Normal users don't get to see the actual IP addresses
-	protocol::MessagePtr normalVersion(new protocol::Command(0, msg));
+	const protocol::MessagePtr normalVersion(new protocol::Command(0, msg));
 
 	// But moderators and local users do
-	conf["banlist"] = banlist().toJson(true);
+	conf["banlist"] = m_history->banlist().toJson(true);
 	msg.reply["config"] = conf;
-	protocol::MessagePtr modVersion(new protocol::Command(0, msg));
+	const protocol::MessagePtr modVersion(new protocol::Command(0, msg));
 
 	for(Client *c : m_clients) {
 		if(c->isModerator() || c->peerAddress().isLoopback())
@@ -733,89 +671,14 @@ void Session::handleClientMessage(Client &client, protocol::MessagePtr msg)
 		addToHistory(msg);
 }
 
-void Session::addToHistory(const protocol::MessagePtr &msg)
-{
-	if(m_state == Shutdown)
-		return;
-
-	// Add message to history (if there is space)
-	if(!m_history->addMessage(msg)) {
-		const Client *shame = getClientById(msg->contextId());
-		messageAll("History size limit reached!", false);
-		messageAll((shame ? shame->username() : QString("user #%1").arg(msg->contextId())) + " broke the camel's back. Session must be reset to continue drawing.", false);
-		return;
-	}
-
-
-	// The hosting user must skip the history uploaded during initialization
-	// (since they originated it), but we still want to send them notifications.
-	if(m_state == Initialization) {
-		Client *origin = getClientById(m_initUser);
-		Q_ASSERT(origin);
-		if(origin) {
-			static_cast<ThinServerClient*>(origin)->setHistoryPosition(m_history->lastIndex());
-			if(!msg->isCommand())
-				origin->sendDirectMessage(msg);
-		}
-	}
-
-	// Add message to recording
-	if(m_recorder)
-		m_recorder->recordMessage(msg);
-	m_lastEventTime.start();
-
-	// Request auto-reset when threshold is crossed.
-	const uint autoResetThreshold = m_history->effectiveAutoResetThreshold();
-	if(autoResetThreshold>0 && m_autoResetRequestStatus == AutoResetState::NotSent && m_history->sizeInBytes() > autoResetThreshold) {
-		log(Log().about(Log::Level::Info, Log::Topic::Status).message(
-			QString("Autoreset threshold (%1, effectively %2 MB) reached.")
-				.arg(m_history->autoResetThreshold()/(1024.0*1024.0), 0, 'g', 1)
-				.arg(autoResetThreshold/(1024.0*1024.0), 0, 'g', 1)
-		));
-
-		// Legacy alert for Drawpile 2.0.x versions
-		protocol::ServerReply warning;
-		warning.type = protocol::ServerReply::SIZELIMITWARNING;
-		warning.reply["size"] = int(m_history->sizeInBytes());
-		warning.reply["maxSize"] = int(autoResetThreshold);
-
-		directToAll(protocol::MessagePtr(new protocol::Command(0, warning)));
-
-		// New style for Drawpile 2.1.0 and newer
-		// Autoreset request: send an autoreset query to each logged in operator.
-		// The user that responds first gets to perform the reset.
-		protocol::ServerReply resetRequest;
-		resetRequest.type = protocol::ServerReply::RESETREQUEST;
-		resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
-		resetRequest.reply["query"] = true;
-		protocol::MessagePtr reqMsg { new protocol::Command(0, resetRequest )};
-
-		for(Client *c : m_clients) {
-			if(c->isOperator())
-				c->sendDirectMessage(reqMsg);
-		}
-
-		m_autoResetRequestStatus = AutoResetState::Queried;
-	}
-
-	// Regular history size status updates
-	if(m_lastStatusUpdate.elapsed() > 10 * 1000) {
-		protocol::ServerReply status;
-		status.type = protocol::ServerReply::STATUS;
-		status.reply["size"] = int(m_history->sizeInBytes());
-		directToAll(protocol::MessagePtr(new protocol::Command(0, status)));
-		m_lastStatusUpdate.start();
-	}
-}
-
 void Session::addToInitStream(protocol::MessagePtr msg)
 {
-	Q_ASSERT(m_state == Initialization || m_state == Reset || m_state == Shutdown);
+	Q_ASSERT(m_state != State::Running);
 
-	if(m_state == Initialization) {
+	if(m_state == State::Initialization) {
 		addToHistory(msg);
 
-	} else if(m_state == Reset) {
+	} else if(m_state == State::Reset) {
 		m_resetstreamsize += msg->length();
 		m_resetstream.append(msg);
 
@@ -826,39 +689,6 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 				resetter->disconnectClient(Client::DisconnectionReason::Error, "History limit exceeded");
 		}
 	}
-}
-
-void Session::readyToAutoReset(int ctxId)
-{
-	Client *c = getClientById(ctxId);
-	if(!c) {
-		// Shouldn't happen
-		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent ready-to-autoreset").arg(ctxId)));
-		return;
-	}
-
-	if(!c->isOperator()) {
-		// Unlikely to happen normally, but possible if connection is
-		// really slow and user is deopped at just the right moment
-		log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("User %1 is not an operator, but sent ready-to-autoreset").arg(ctxId)));
-		return;
-	}
-
-	if(m_autoResetRequestStatus != AutoResetState::Queried) {
-		// Only the first response in handled
-		log(Log().about(Log::Level::Debug, Log::Topic::Status).message(QString("User %1 was late to respond to an autoreset request").arg(ctxId)));
-		return;
-	}
-
-	log(Log().about(Log::Level::Info, Log::Topic::Status).message(QString("User %1 responded to autoreset request first").arg(ctxId)));
-
-	protocol::ServerReply resetRequest;
-	resetRequest.type = protocol::ServerReply::RESETREQUEST;
-	resetRequest.reply["maxSize"] = int(m_history->sizeLimit());
-	resetRequest.reply["query"] = false;
-	c->sendDirectMessage(protocol::MessagePtr { new protocol::Command(0, resetRequest )});
-
-	m_autoResetRequestStatus = AutoResetState::Requested;
 }
 
 void Session::handleInitBegin(int ctxId)
@@ -904,7 +734,7 @@ void Session::handleInitComplete(int ctxId)
 
 	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-complete"));
 
-	switchState(Running);
+	switchState(State::Running);
 }
 
 
@@ -928,11 +758,11 @@ void Session::handleInitCancel(int ctxId)
 
 void Session::resetSession(int resetter)
 {
-	Q_ASSERT(m_state == Running);
+	Q_ASSERT(m_state == State::Running);
 	Q_ASSERT(getClientById(resetter));
 
 	m_initUser = resetter;
-	switchState(Reset);
+	switchState(State::Reset);
 
 	protocol::ServerReply resetRequest;
 	resetRequest.type = protocol::ServerReply::RESET;
@@ -944,10 +774,10 @@ void Session::resetSession(int resetter)
 
 void Session::killSession(bool terminate)
 {
-	if(m_state == Shutdown)
+	if(m_state == State::Shutdown)
 		return;
 
-	switchState(Shutdown);
+	switchState(State::Shutdown);
 	unlistAnnouncement(QUrl(), false);
 	stopRecording();
 
@@ -1004,6 +834,15 @@ void Session::ensureOperatorExists()
 	}
 }
 
+void Session::addedToHistory(protocol::MessagePtr msg)
+{
+	if(m_recorder)
+		m_recorder->recordMessage(msg);
+
+	m_lastEventTime.start();
+	// TODO calculate activity score that can be shown in listings
+}
+
 void Session::restartRecording()
 {
 	if(m_recorder) {
@@ -1034,7 +873,7 @@ void Session::restartRecording()
 	do {
 		protocol::MessageList history;
 		std::tie(history, lastBatchIndex) = m_history->getBatch(lastBatchIndex);
-		for(const MessagePtr &m : history)
+		for(MessagePtr m : history)
 			m_recorder->recordMessage(m);
 
 	} while(lastBatchIndex<m_history->lastIndex());
@@ -1111,15 +950,15 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_config->internalConfig().localHostname,
 		m_config->internalConfig().getAnnouncePort(),
 		aliasOrId(),
-		protocolVersion(),
-		title(),
+		m_history->protocolVersion(),
+		m_history->title(),
 		userCount(),
-		(hasPassword() || privateUserList) ? QStringList() : userNames(),
-		hasPassword(),
-		isNsfm(),
+		(!m_history->passwordHash().isEmpty() || privateUserList) ? QStringList() : userNames(),
+		!m_history->passwordHash().isEmpty(),
+		m_history->hasFlag(SessionHistory::Nsfm),
 		sessionlisting::PrivacyMode::Undefined,
-		founder(),
-		sessionStartTime()
+		m_history->founderName(),
+		m_history->startTime()
 	};
 }
 
@@ -1128,15 +967,6 @@ void Session::onAnnouncementsChanged(const sessionlisting::Announcable *session)
 {
 	if(session == this)
 		sendUpdatedAnnouncementList();
-}
-
-void Session::historyCacheCleanup()
-{
-	int minIdx = m_history->lastIndex();
-	for(const Client *c : m_clients) {
-		minIdx = qMin(static_cast<const ThinServerClient*>(c)->historyPosition(), minIdx);
-	}
-	m_history->cleanupBatches(minIdx);
 }
 
 void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QString &message)
@@ -1155,7 +985,7 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 
 	QJsonObject o;
 	o["session"] = idString();
-	o["sessionTitle"] = title();
+	o["sessionTitle"] = m_history->title();
 	o["user"] = reporter->username();
 	o["auth"] = reporter->isAuthenticated();
 	o["ip"] = reporter->peerAddress().toString();
@@ -1198,27 +1028,27 @@ QJsonObject Session::getDescription(bool full) const
 	QJsonObject o {
 		{"id", idString()},
 		{"alias", idAlias()},
-		{"protocol", protocolVersion().asString()},
+		{"protocol", m_history->protocolVersion().asString()},
 		{"userCount", userCount()},
-		{"maxUserCount", maxUsers()},
-		{"founder", founder()},
-		{"title", title()},
-		{"hasPassword", hasPassword()},
+		{"maxUserCount", m_history->maxUsers()},
+		{"founder", m_history->founderName()},
+		{"title", m_history->title()},
+		{"hasPassword", !m_history->passwordHash().isEmpty()},
 		{"closed", isClosed()},
-		{"authOnly", isAuthOnly()},
-		{"nsfm", isNsfm()},
-		{"startTime", sessionStartTime().toUTC().toString(Qt::ISODate)},
+		{"authOnly", m_history->hasFlag(SessionHistory::AuthOnly)},
+		{"nsfm", m_history->hasFlag(SessionHistory::Nsfm)},
+		{"startTime", m_history->startTime().toUTC().toString(Qt::ISODate)},
 		{"size", int(m_history->sizeInBytes())}
 	};
 
 	if(m_config->getConfigBool(config::EnablePersistence))
-		o["persistent"] = isPersistent();
+		o["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
 		o["maxSize"] = int(m_history->sizeLimit());
 		o["resetThreshold"] = int(m_history->autoResetThreshold());
-		o["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
+		o["deputies"] = m_history->hasFlag(SessionHistory::Deputies);
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {

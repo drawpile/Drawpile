@@ -176,20 +176,13 @@ public:
 	 * @param msg
 	 */
 	void sendDirectMessage(protocol::MessagePtr msg);
+	void sendDirectMessage(const protocol::MessageList &msgs);
 
 	/**
 	 * @brief Send a message from the server directly to this user
 	 * @param message
 	 */
 	void sendSystemChat(const QString &message);
-
-	/**
-	 * @brief Manually change the history position.
-	 *
-	 * Only time this needs to be done is during the session initialization
-	 * phase when the hosting user must skip the history they themselves uploaded.
-	 */
-	void setHistoryPosition(int newpos);
 
 	/**
 	 * @brief Does this client socket support SSL connections?
@@ -253,6 +246,7 @@ public:
 	 * Note: this can only be used after the user has joined a session.
 	 */
 	void log(Log entry) const;
+	Log log() const;
 
 signals:
 	/**

@@ -40,7 +40,7 @@ struct Client::Private {
 	QTcpSocket *socket;
 	ServerLog *logger;
 
-	protocol::MessageQueue *msgqueue = nullptr;
+	protocol::MessageQueue *msgqueue;
 	protocol::MessageList holdqueue;
 
 	QString username;
@@ -70,7 +70,7 @@ Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
 	d->socket->setParent(this);
 
 	connect(d->socket, &QAbstractSocket::disconnected, this, &Client::socketDisconnect);
-	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
+	connect(d->socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &Client::socketError);
 	connect(d->msgqueue, &protocol::MessageQueue::messageAvailable, this, &Client::receiveMessages);
 	connect(d->msgqueue, &protocol::MessageQueue::badData, this, &Client::gotBadData);
 }
@@ -206,7 +206,10 @@ bool Client::isOperator() const
 
 bool Client::isDeputy() const
 {
-	return !isOperator() && isTrusted() && d->session && d->session->isDeputies();
+	return !isOperator()
+		&& isTrusted()
+		&& d->session
+		&& d->session->history()->hasFlag(SessionHistory::Deputies);
 }
 
 void Client::setModerator(bool mod)
@@ -271,6 +274,11 @@ void Client::sendDirectMessage(protocol::MessagePtr msg)
 	d->msgqueue->send(msg);
 }
 
+void Client::sendDirectMessage(const protocol::MessageList &msgs)
+{
+	d->msgqueue->send(msgs);
+}
+
 void Client::sendSystemChat(const QString &message)
 {
 	protocol::ServerReply msg {
@@ -287,7 +295,7 @@ void Client::receiveMessages()
 	while(d->msgqueue->isPending()) {
 		MessagePtr msg = d->msgqueue->getPending();
 
-		if(d->session == nullptr) {
+		if(d->session.isNull()) {
 			// No session? We must be in the login phase
 			if(msg->type() == protocol::MSG_COMMAND)
 				emit loginMessage(msg);
@@ -394,6 +402,11 @@ void Client::log(Log entry) const
 	else
 		d->logger->logMessage(entry);
 }
+
+Log Client::log() const {
+	return Log().user(d->id, d->socket->peerAddress(), d->username);
+}
+
 
 }
 

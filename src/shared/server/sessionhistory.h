@@ -20,6 +20,7 @@
 #define DP_SERVER_SESSION_HISTORY_H
 
 #include "../net/message.h"
+#include "../util/passwordhash.h"
 #include "sessionban.h"
 #include "idqueue.h"
 
@@ -46,7 +47,8 @@ public:
 		Persistent = 0x01,
 		PreserveChat = 0x02,
 		Nsfm = 0x04,
-		Deputies = 0x08
+		Deputies = 0x08,
+		AuthOnly = 0x10
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -74,15 +76,18 @@ public:
 	 * An empty QByteArray is returned if no password is set
 	 */
 	virtual QByteArray passwordHash() const = 0;
+	bool checkPassword(const QString &password) { return passwordhash::check(password, passwordHash()); }
 
-	//! Set (or clear) this session's password hash
+	//! Set (or clear) this session's password
 	virtual void setPasswordHash(const QByteArray &passwordHash) = 0;
+	void setPassword(const QString &password) { setPasswordHash(passwordhash::hash(password)); }
 
 	//! Get the operator password hash
 	virtual QByteArray opwordHash() const = 0;
 
 	//! Set (or clear) the operator password
 	virtual void setOpwordHash(const QByteArray &opword) = 0;
+	void setOpword(const QString &opword) { setOpwordHash(passwordhash::hash(opword)); }
 
 	//! Get the starting timestamp
 	virtual QDateTime startTime() const = 0;
@@ -101,6 +106,7 @@ public:
 
 	//! Get the persistent session flags
 	virtual Flags flags() const = 0;
+	bool hasFlag(Flag flag) const { return flags().testFlag(flag); }
 
 	//! Set the persistent session flags
 	virtual void setFlags(Flags f) = 0;

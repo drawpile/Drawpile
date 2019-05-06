@@ -20,7 +20,15 @@
 #ifndef SESSIONS_INTERFACE_H
 #define SESSIONS_INTERFACE_H
 
+#include <tuple>
+
 class QJsonArray;
+class QString;
+class QUuid;
+
+namespace protocol {
+	class ProtocolVersion;
+}
 
 namespace server {
 

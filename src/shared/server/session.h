@@ -20,7 +20,12 @@
 #ifndef DP_SHARED_SERVER_SESSION_H
 #define DP_SHARED_SERVER_SESSION_H
 
-#include <QVector>
+#include "../listings/announcable.h"
+#include "../net/message.h"
+#include "../net/protover.h"
+#include "sessionhistory.h"
+#include "jsonapi.h"
+
 #include <QHash>
 #include <QString>
 #include <QObject>
@@ -28,13 +33,6 @@
 #include <QElapsedTimer>
 #include <QUuid>
 #include <QJsonObject>
-
-#include "../listings/announcable.h"
-#include "../util/passwordhash.h"
-#include "../net/message.h"
-#include "../net/protover.h"
-#include "sessionhistory.h"
-#include "jsonapi.h"
 
 class QTimer;
 
@@ -52,40 +50,39 @@ class Client;
 class ServerConfig;
 class Log;
 
-//! Information about a client who has since logged out
-struct PastClient {
-	int id;
-	QString extAuthId;
-	QString username;
-	QHostAddress peerAddress;
-	bool isBannable;
-};
-
 /**
  * The serverside session state.
+ *
+ * This is an abstract base class. Concrete implementations are ThinSession and ThickSession,
+ * for thin and thick servers respectively.
  */
 class Session : public QObject, public sessionlisting::Announcable {
 	Q_OBJECT
 public:
-	enum State {
+	//! State of the session
+	enum class State {
 		Initialization,
 		Running,
 		Reset,
 		Shutdown
 	};
 
-	Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent=nullptr);
+	//! Information about a user who has since logged out
+	struct PastClient {
+		int id;
+		QString extAuthId;
+		QString username;
+		QHostAddress peerAddress;
+		bool isBannable;
+	};
 
+	//! Get the server configuration
 	const ServerConfig *config() const { return m_config; }
 
-	/**
-	 * \brief Get the ID of the session
-	 */
+	//! Get the unique ID of the session
 	QUuid id() const override { return m_history->id(); }
 
-	/**
-	 * @brief Get the ID of the session as a properly formatted string
-	 */
+	//! Get the session ID as a properly formatted string
 	QString idString() const {
 		QString s = id().toString();
 		return s.mid(1, s.length()-2);
@@ -98,38 +95,10 @@ public:
 	 */
 	QString idAlias() const { return m_history->idAlias(); }
 
-	/**
-	 * @brief Return the ID alias if set, or else the unique ID
-	 */
+	//! Get the session alias if set, or the ID if not
 	QString aliasOrId() const {
 		return m_history->idAlias().isEmpty() ? idString() : m_history->idAlias();
 	}
-
-	/**
-	 * @brief Get the name of the user who started this session
-	 * @return founder username
-	 */
-	QString founder() const { return m_history->founderName(); }
-
-	/**
-	 * @brief Get the full protocol version of this session
-	 *
-	 * A server only needs match the server-protocol version, but the
-	 * client must match the version exactly.
-	 */
-	protocol::ProtocolVersion protocolVersion() const { return m_history->protocolVersion(); }
-
-	/**
-	 * @brief Is this an age-restricted session?
-	 */
-	bool isNsfm() const { return m_history->flags().testFlag(SessionHistory::Nsfm); }
-
-	/**
-	 * @brief Are trusted users deputized?
-	 *
-	 * If true, trusted users are granted limited access to kick/ban commands.
-	 */
-	bool isDeputies() const { return m_history->flags().testFlag(SessionHistory::Deputies); }
 
 	/**
 	 * @brief Set the name of the recording file to create
@@ -138,38 +107,6 @@ public:
 	 * @param filename path to output file
 	 */
 	void setRecordingFile(const QString &filename) { m_recordingFile = filename; }
-
-	/**
-	 * @brief Is this session password protected?
-	 */
-	bool hasPassword() const { return !m_history->passwordHash().isEmpty(); }
-
-	/**
-	 * @brief Does this session have a password for gaining operator status?
-	 */
-	bool hasOpword() const { return !m_history->opwordHash().isEmpty(); }
-
-	/**
-	 * @brief Set the session password.
-	 * @param password
-	 */
-	void setPassword(const QString &password) { m_history->setPasswordHash(passwordhash::hash(password)); }
-
-	/**
-	 * @brief Check if the password is OK
-	 *
-	 * If no session password is set, this will always return true.
-	 *
-	 * @param password
-	 * @return true if password matches the session password
-	 */
-	bool checkPassword(const QString &password) const;
-
-	/**
-	 * @brief Get the title of the session
-	 * @return
-	 */
-	QString title() const { return m_history->title(); }
 
 	/**
 	 * @brief Is the session closed to new users?
@@ -182,37 +119,16 @@ public:
 	 *
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed() const { return m_closed || userCount() >= maxUsers() || (m_state != Initialization && m_state != Running); }
+	bool isClosed() const;
 	void setClosed(bool closed);
-
-	/**
-	 * @brief Is the session open to authenticated users only?
-	 */
-	bool isAuthOnly() const { return m_authOnly; }
-	void setAuthOnly(bool authOnly);
-
-	/**
-	 * @brief Get the maximum number of users allowed in the session
-	 *
-	 * This setting only affects new joins. Old users are not removed,
-	 * even if the limit is lowered.
-	 * @return user limit
-	 */
-	int maxUsers() const { return m_history->maxUsers(); }
-
-	/**
-	 * @brief Is this a persistent session
-	 *
-	 * A persistent session is not automatically deleted when the last user leaves.
-	 */
-	bool isPersistent() const { return m_history->flags().testFlag(SessionHistory::Persistent); }
 
 	//! Set session attributes
 	void setSessionConfig(const QJsonObject &conf, Client *changedBy);
 
 	/**
 	 * @brief Add a new client to the session
-	 * @param user
+	 * @param user the client to add
+	 * @param host is this the hosting user
 	 */
 	void joinUser(Client *user, bool host);
 
@@ -228,15 +144,18 @@ public:
 	/**
 	 * @brief Get a client by ID
 	 * @param id user ID
-	 * @return user or 0 if not found
+	 * @return user or nullptr if not found
 	 */
-	Client *getClientById(int id);
+	Client *getClientById(uint8_t id);
 
 	//! Has a client with the given ID been logged in (not currently)?
-	bool hasPastClientWithId(int id) const { return m_pastClients.contains(id); }
+	bool hasPastClientWithId(uint8_t id) const { return m_pastClients.contains(id); }
 
 	//! Get information about a past client who used the given ID
-	PastClient getPastClientById(int id) const { return m_pastClients[id]; }
+	PastClient getPastClientById(uint8_t id) const {
+		Q_ASSERT(hasPastClientWithId(id));
+		return m_pastClients[id];
+	}
 
 	/**
 	 * @brief Get a client by user name
@@ -244,17 +163,9 @@ public:
 	 * The name comparison is case insensitive.
 	 * Note! In debug mode username uniqueness is not enforced!
 	 * @param username
-	 * @return
+	 * @return client or nullptr if not found
 	 */
 	Client *getClientByUsername(const QString &username);
-
-	/**
-	 * @brief Get the session internal ban list
-	 *
-	 * Don't manipulate the banlist directly, instead use tha addBan and
-	 * removeBan functions so the events are logged properly.
-	 */
-	const SessionBanList &banlist() const { return m_history->banlist(); }
 
 	/**
 	 * @brief Add an in-session IP ban for the given client
@@ -268,36 +179,20 @@ public:
 	 */
 	void removeBan(int entryId, const QString &removedBy);
 
-	/**
-	 * @brief Get the number of clients in the session
-	 * @return user count
-	 */
+	//! Get the number of connected clients
 	int userCount() const { return m_clients.size(); }
 
+	//! Get the of clients currently in this session
 	const QList<Client*> &clients() const { return m_clients; }
 
 	/**
 	 * @brief Get the ID of the user uploading initialization or reset data
-	 * @return user ID or invalid ID if init not in progress
+	 * @return user ID or -1 if init not in progress
 	 */
 	int initUserId() const { return m_initUser; }
 
 	//! Get the names of this session's users
 	QStringList userNames() const;
-
-	/**
-	 * @brief Get the name of the session owner
-	 *
-	 * The operator who has been in the session the longest
-	 * is considered the owner.
-	 */
-	QString ownerName() const;
-
-	/**
-	 * @brief Get the time the session was started
-	 * @return timestamp
-	 */
-	QDateTime sessionStartTime() const { return m_history->startTime(); }
 
 	/**
 	 * @brief Get session uptime in nice human readable format
@@ -311,13 +206,12 @@ public:
 	 */
 	qint64 lastEventTime() const { return m_lastEventTime.elapsed(); }
 
-	/**
-	 * @brief Get the session history
-	 */
+	//! Get the session history
 	const SessionHistory *history() const { return m_history; }
+	SessionHistory *history() { return m_history; }
 
 	/**
-	 * @brief Handle a message from a client
+	 * @brief Process a message received from a client
 	 * @param client
 	 * @param message
 	 */
@@ -348,12 +242,6 @@ public:
 	void messageAll(const QString &message, bool alert);
 
 	/**
-	 * @brief Start resetting this session
-	 * @param resetter ID of the user who started the reset
-	 */
-	void resetSession(int resetter);
-
-	/**
 	 * @brief Generate a request for session announcement
 	 *
 	 * @param url listing server API url
@@ -376,31 +264,12 @@ public:
 	//! Get the session state
 	State state() const { return m_state; }
 
-	void readyToAutoReset(int ctxId);
+	// Resetting related functions, called via opcommands
+	void resetSession(int resetter);
+	virtual void readyToAutoReset(int ctxId) = 0;
 	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
 	void handleInitCancel(int ctxId);
-
-	/**
-	 * @brief Update session operator bits
-	 *
-	 * Generates log entries for each change
-	 *
-	 * @param ids new list of session operators
-	 * @param changedBy name of the user who issued the change command
-	 * @return sanitized list of actual session operators
-	 */
-	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &changedBy);
-
-	/**
-	 * @brief Update the list of trusted users
-	 *
-	 * Generates log entries for each change
-	 * @param ids new list of trusted users
-	 * @param changedBy name of the user who issued the change command
-	 * @return sanitized list of actual trusted users
-	 */
-	QList<uint8_t> updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy);
 
 	/**
 	 * @brief Grant or revoke OP status of a user
@@ -408,7 +277,7 @@ public:
 	 * @param op new status
 	 * @param changedBy name of the user who issued the command
 	 */
-	void changeOpStatus(int id, bool op, const QString &changedBy);
+	void changeOpStatus(uint8_t id, bool op, const QString &changedBy);
 
 	/**
 	 * @brief Grant or revoke trusted status of a user
@@ -416,7 +285,7 @@ public:
 	 * @param trusted new status
 	 * @param changedBy name of the user who issued the command
 	 */
-	void changeTrustedStatus(int id, bool trusted, const QString &changedBy);
+	void changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
@@ -426,9 +295,6 @@ public:
 
 	//! Send a refreshed list of muted users
 	void sendUpdatedMuteList();
-
-	//! Release caches that can be released
-	void historyCacheCleanup();
 
 	/**
 	 * @brief Send an abuse report
@@ -491,24 +357,51 @@ private slots:
 	void removeUser(Client *user);
 	void onAnnouncementsChanged(const Announcable *session);
 
+protected:
+	Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent);
+
+	//! Add a message to the session history
+	virtual void addToHistory(protocol::MessagePtr msg) = 0;
+
+	//! Session history was just reset
+	virtual void onSessionReset() = 0;
+
+	//! A regular (non-hosting) client just joined
+	virtual void onClientJoin(Client *client, bool host) = 0;
+
+	//! This message was just added to session history
+	void addedToHistory(protocol::MessagePtr msg);
+
 private:
 	/**
-	 * @brief Add a message to the session history
-	 * @param msg
-	 */
-	void addToHistory(const protocol::MessagePtr &msg);
-
-	/**
-	 * @brief Add a message to the initialization stream
+	 * Add a message to the initialization stream
 	 *
 	 * During init state, this goes to the normal command stream.
 	 * During reset state, this goes to a reset buffer which will
 	 * replace the old session history once completed.
-	 * @param msg
 	 */
 	void addToInitStream(protocol::MessagePtr msg);
 
-	void cleanupCommandStream();
+	/**
+	 * @brief Update session operator bits
+	 *
+	 * Generates log entries for each change
+	 *
+	 * @param ids new list of session operators
+	 * @param changedBy name of the user who issued the change command
+	 * @return sanitized list of actual session operators
+	 */
+	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &changedBy);
+
+	/**
+	 * @brief Update the list of trusted users
+	 *
+	 * Generates log entries for each change
+	 * @param ids new list of trusted users
+	 * @param changedBy name of the user who issued the change command
+	 * @return sanitized list of actual trusted users
+	 */
+	QList<uint8_t> updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy);
 
 	void restartRecording();
 	void stopRecording();
@@ -522,28 +415,25 @@ private:
 
 	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
+	SessionHistory *m_history;
 	ServerConfig *m_config;
 	sessionlisting::Announcements *m_announcements;
 
-	State m_state;
-	int m_initUser; // the user who is currently uploading init/reset data
+	State m_state = State::Initialization;
+	int m_initUser = -1; // the user who is currently uploading init/reset data
 
-	recording::Writer *m_recorder;
+	recording::Writer *m_recorder = nullptr;
 	QString m_recordingFile;
 
 	QList<Client*> m_clients;
 	QHash<int, PastClient> m_pastClients;
 
-	SessionHistory *m_history;
 	protocol::MessageList m_resetstream;
-	uint m_resetstreamsize;
+	uint m_resetstreamsize = 0;
 
 	QElapsedTimer m_lastEventTime;
-	QElapsedTimer m_lastStatusUpdate;
 
-	bool m_closed;
-	bool m_authOnly;
-	enum class AutoResetState { NotSent, Queried, Requested} m_autoResetRequestStatus;
+	bool m_closed = false;
 };
 
 }

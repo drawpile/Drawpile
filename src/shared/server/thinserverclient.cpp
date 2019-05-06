@@ -19,7 +19,7 @@
 
 #include "thinserverclient.h"
 #include "../net/messagequeue.h"
-#include "session.h"
+#include "thinsession.h"
 
 namespace server {
 
@@ -36,7 +36,7 @@ void ThinServerClient::sendNextHistoryBatch()
 	// Only enqueue messages for uploading when upload queue is empty
 	// and session is in a normal running state.
 	// (We'll get another messagesAvailable signal when ready)
-	if(session() == nullptr || messageQueue()->isUploading() || session()->state() != Session::Running)
+	if(session() == nullptr || messageQueue()->isUploading() || session()->state() != Session::State::Running)
 		return;
 
 	protocol::MessageList batch;
@@ -45,7 +45,7 @@ void ThinServerClient::sendNextHistoryBatch()
 	m_historyPosition = batchLast;
 	messageQueue()->send(batch);
 
-	session()->historyCacheCleanup();
+	static_cast<ThinSession*>(session())->cleanupHistoryCache();
 }
 
 }
