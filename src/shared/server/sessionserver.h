@@ -19,6 +19,7 @@
 
 #include "../net/protover.h"
 #include "jsonapi.h"
+#include "sessions.h"
 
 #include <QObject>
 #include <QDir>
@@ -39,7 +40,7 @@ class TemplateLoader;
  * @brief Session manager
  *
  */
-class SessionServer : public QObject {
+class SessionServer : public QObject, public Sessions {
 Q_OBJECT
 public:
 	SessionServer(ServerConfig *config, QObject *parent=nullptr);
@@ -98,7 +99,7 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	Session *createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
+	std::tuple<Session*, QString> createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
 
 	/**
 	 * @brief Create a new session by instantiating a template
@@ -110,20 +111,16 @@ public:
 	/**
 	 * @brief Get descriptions of all sessions
 	 */
-	QJsonArray sessionDescriptions() const;
+	QJsonArray sessionDescriptions() const override;
 
 	/**
 	 * @brief Get the session with the specified ID
 	 *
 	 * @param id session ID
+	 * @param load load from template if not live?
 	 * @return session or null if not found
 	 */
-	Session *getSessionById(const QString &id) const;
-
-	/**
-	 * @brief Check if a session or template exists with this ID or alias
-	 */
-	bool isIdInUse(const QString &id) const;
+	Session *getSessionById(const QString &id, bool load) override;
 
 	/**
 	 * @brief Get the total number of connected users

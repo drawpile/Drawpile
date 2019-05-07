@@ -72,7 +72,7 @@ void SessionServer::loadNewSessions()
 
 	auto sessionFiles = m_sessiondir.entryInfoList(QStringList() << "*.session", QDir::Files|QDir::Writable|QDir::Readable);
 	for(const QFileInfo &f : sessionFiles) {
-		if(getSessionById(f.baseName()))
+		if(getSessionById(f.baseName(), false))
 			continue;
 
 		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
@@ -88,9 +88,22 @@ void SessionServer::loadNewSessions()
 QJsonArray SessionServer::sessionDescriptions() const
 {
 	QJsonArray descs;
+	QStringList aliases;
 
-	for(const Session *s : m_sessions)
+	for(const Session *s : m_sessions) {
 		descs.append(s->getDescription());
+		if(!s->idAlias().isEmpty())
+			aliases << s->idAlias();
+	}
+
+	if(templateLoader()) {
+		// Add session templates to list, if not shadowed by live sessions
+		QJsonArray templates = templateLoader()->templateDescriptions();
+		for(const QJsonValue &v : templates) {
+			if(!aliases.contains(v.toObject().value("alias").toString()))
+				descs << v;
+		}
+	}
 
 	return descs;
 }
@@ -106,10 +119,21 @@ SessionHistory *SessionServer::initHistory(const QUuid &id, const QString alias,
 	}
 }
 
-Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+std::tuple<Session*, QString> SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
-	Q_ASSERT(!getSessionById(id.toString()));
+
+	if(m_sessions.size() >= m_config->getConfigInt(config::SessionCountLimit)) {
+		return std::tuple<Session*, QString> { nullptr, "closed" };
+	}
+
+	if(getSessionById(id.toString(), false) || (!idAlias.isEmpty() && getSessionById(idAlias, false))) {
+		return std::tuple<Session*, QString> { nullptr, "idInUse" };
+	}
+
+	if(protocolVersion.serverVersion() != protocol::ProtocolVersion::current().serverVersion()) {
+		return std::tuple<Session*, QString> { nullptr, "badProtocol" };
+	}
 
 	Session *session = new Session(initHistory(id, idAlias, protocolVersion, founder), m_config, m_announcements, this);
 
@@ -121,7 +145,7 @@ Session *SessionServer::createSession(const QUuid &id, const QString &idAlias, c
 		.about(Log::Level::Info, Log::Topic::Status)
 		.message("Session" + aka + " created by " + founder));
 
-	return session;
+	return std::make_tuple(session, QString());
 }
 
 Session *SessionServer::createFromTemplate(const QString &idAlias)
@@ -171,7 +195,7 @@ void SessionServer::initSession(Session *session)
 	emit sessionChanged(session->getDescription());
 }
 
-Session *SessionServer::getSessionById(const QString &id) const
+Session *SessionServer::getSessionById(const QString &id, bool load)
 {
 	const QUuid uuid(id);
 	for(Session *s : m_sessions) {
@@ -184,28 +208,11 @@ Session *SessionServer::getSessionById(const QString &id) const
 		}
 	}
 
-	return nullptr;
-}
-
-bool SessionServer::isIdInUse(const QString &id) const
-{
-	// Check live sessions
-	const QUuid uuid(id);
-	for(const Session *s : m_sessions) {
-		if(uuid.isNull()) {
-			if(s->idAlias() == id)
-				return true;
-		} else {
-			if(s->id() == uuid)
-				return true;
-		}
+	if(load && templateLoader() && templateLoader()->exists(id)) {
+		return createFromTemplate(id);
 	}
 
-	// Check templates
-	if(templateLoader() && templateLoader()->exists(id))
-		return true;
-
-	return false;
+	return nullptr;
 }
 
 void SessionServer::stopAll()
@@ -240,7 +247,10 @@ void SessionServer::addClient(ThinServerClient *client)
 
 	emit userCountChanged(m_clients.size());
 
-	(new LoginHandler(client, this))->startLoginProcess();
+	auto *login = new LoginHandler(client, this, m_config);
+	connect(this, &SessionServer::sessionChanged, login, &LoginHandler::announceSession);
+	connect(this, &SessionServer::sessionEnded, login, &LoginHandler::announceSessionEnd);
+	login->startLoginProcess();
 }
 
 void SessionServer::removeClient(QObject *client)
@@ -300,7 +310,7 @@ JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStr
 	std::tie(head, tail) = popApiPath(path);
 
 	if(!head.isEmpty()) {
-		Session *s = getSessionById(head);
+		Session *s = getSessionById(head, false);
 		if(s)
 			return s->callJsonApi(method, tail, request);
 		else

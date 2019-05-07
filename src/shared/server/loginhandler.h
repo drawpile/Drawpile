@@ -34,8 +34,8 @@ namespace server {
 
 class Client;
 class Session;
-class SessionServer;
-struct SessionDescription;
+class Sessions;
+class ServerConfig;
 
 /**
  * @brief Perform the client login handshake
@@ -83,24 +83,25 @@ class LoginHandler : public QObject
 {
 	Q_OBJECT
 public:
-	LoginHandler(Client *client, SessionServer *server);
+	LoginHandler(Client *client, Sessions *sessions, ServerConfig *config);
 
 	void startLoginProcess();
 
 	static bool validateSessionIdAlias(const QString &alias);
 	static bool validateUsername(const QString &name);
 
-private slots:
-	void handleLoginMessage(protocol::MessagePtr message);
-
+public slots:
 	void announceSession(const QJsonObject &session);
 	void announceSessionEnd(const QString &id);
 
+private slots:
+	void handleLoginMessage(protocol::MessagePtr message);
+
 private:
-	enum State {
-		WAIT_FOR_SECURE,
-		WAIT_FOR_IDENT,
-		WAIT_FOR_LOGIN
+	enum class State {
+		WaitForSecure,
+		WaitForIdent,
+		WaitForLogin
 	};
 
 	void announceServerInfo();
@@ -117,12 +118,13 @@ private:
 	void extAuthGuestLogin(const QString &username);
 
 	Client *m_client;
-	SessionServer *m_server;
+	Sessions *m_sessions;
+	ServerConfig *m_config;
 
-	State m_state;
-	quint64 m_extauth_nonce;
-	bool m_hostPrivilege;
-	bool m_complete;
+	State m_state = State::WaitForIdent;
+	quint64 m_extauth_nonce = 0;
+	bool m_hostPrivilege = false;
+	bool m_complete = false;
 };
 
 }
