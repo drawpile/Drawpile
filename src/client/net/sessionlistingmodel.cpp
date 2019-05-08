@@ -137,6 +137,10 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 					return QIcon(":/icons/censored.svg");
 			}
 
+		} else if(role == Qt::ToolTipRole) {
+			if(!s.protocol.isCurrent())
+				return tr("Incompatible version");
+
 		} else if(role == SortKeyRole) {
 			// User Role is used for sorting keys
 			switch(index.column()) {

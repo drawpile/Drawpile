@@ -119,7 +119,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl);
  *
  * Returns QList<Session>
  */
-AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString(), bool nsfm=false);
+AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString(), bool nsfm=true);
 
 /**
  * @brief Announce a session at the given listing server

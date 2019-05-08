@@ -259,12 +259,7 @@ void JoinDialog::refreshListing()
 			continue;
 		}
 
-		auto response = sessionlisting::getSessionList(
-			url,
-			protocol::ProtocolVersion::current().asString(),
-			QString(),
-			true
-			);
+		auto response = sessionlisting::getSessionList(url);
 
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished,
 			this, [this, ls](const QVariant &result, const QString &message, const QString &error)
