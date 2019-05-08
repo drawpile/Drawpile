@@ -163,6 +163,9 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 	m_queuetimer = new QTimer(this);
 	m_queuetimer->setSingleShot(true);
 	connect(m_queuetimer, &QTimer::timeout, this, &StateTracker::processQueuedCommands);
+
+	// Ensure that there is always at least one save point
+	makeSavepoint(0);
 }
 
 StateTracker::~StateTracker()
