@@ -19,7 +19,7 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
-#include "core/blendmodes.h"
+#include "../core/blendmodes.h"
 #include "features.h"
 
 #include <QAbstractListModel>

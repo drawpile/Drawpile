@@ -18,6 +18,10 @@ if ( SERVER )
         add_subdirectory ( server )
 endif ()
 
+if ( SMARTSRV )
+	add_subdirectory ( smartsrv )
+endif ()
+
 if ( TOOLS )
         add_subdirectory ( tools )
 endif ()

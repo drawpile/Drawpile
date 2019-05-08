@@ -21,7 +21,7 @@
 
 #include "retcon.h"
 #include "history.h"
-#include "core/point.h"
+#include "../core/point.h"
 
 #include <QObject>
 #include <QExplicitlySharedDataPointer>
