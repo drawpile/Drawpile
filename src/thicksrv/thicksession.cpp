@@ -93,12 +93,21 @@ void ThickSession::addToHistory(protocol::MessagePtr msg)
 
 	// Execute commands only in self-contained mode.
 	if(msg->isCommand() && m_statetracker->parent() == this)
-			m_statetracker->receiveCommand(msg);
+		m_statetracker->receiveCommand(msg);
 
 	addedToHistory(msg);
 
-	for(Client *client : clients())
-		client->sendDirectMessage(msg);
+	if(state() == State::Initialization) {
+		// Send to everyone except the initializing user
+		for(Client *client : clients()) {
+			if(client->id() != initUserId())
+				client->sendDirectMessage(msg);
+		}
+
+	} else {
+		for(Client *client : clients())
+			client->sendDirectMessage(msg);
+	}
 }
 
 void ThickSession::onSessionReset()
