@@ -42,6 +42,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QListView>
+#include <QTextEdit>
 
 #include <ColorDialog>
 
@@ -680,6 +681,9 @@ void MainWindow::loadShortcuts()
 
 	const QRegularExpression shortcutAmpersand { "&([^&])" };
 
+	disconnect(m_textCopyConnection);
+	const QKeySequence standardCopyShortcut { QKeySequence::Copy };
+
 	QList<QAction*> actions = findChildren<QAction*>();
 	for(QAction *a : actions) {
 		const QString &name = a->objectName();
@@ -688,6 +692,10 @@ void MainWindow::loadShortcuts()
 				a->setShortcut(cfg.value(name).value<QKeySequence>());
 			else
 				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
+
+			if(a->shortcut() == standardCopyShortcut) {
+				m_textCopyConnection = connect(a, &QAction::triggered, this, &MainWindow::copyText);
+			}
 
 			// If an action has a shortcut, show it in the tooltip
 			if(a->shortcut().isEmpty()) {
@@ -1930,6 +1938,16 @@ void MainWindow::selectionRemoved()
 		QAction *toolaction = m_drawingtools->actions().at(m_lastToolBeforePaste);
 		toolaction->trigger();
 	}
+}
+
+void MainWindow::copyText()
+{
+	// Attempt to copy text if a text widget has focus
+	QWidget *focus = QApplication::focusWidget();
+
+	auto *textedit = qobject_cast<QTextEdit*>(focus);
+	if(textedit)
+		textedit->copy();
 }
 
 void MainWindow::paste()

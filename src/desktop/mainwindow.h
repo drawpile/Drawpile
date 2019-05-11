@@ -158,6 +158,7 @@ private slots:
 
 	void updateLayerViewMode();
 
+	void copyText();
 	void paste();
 	void pasteFile();
 	void pasteFile(const QUrl &url);
@@ -250,6 +251,8 @@ private:
 	QActionGroup *m_brushSlots;      // tool slot shortcuts
 
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
+
+	QMetaObject::Connection m_textCopyConnection;
 
 	// Remember window state to return from fullscreen mode
 	QRect m_fullscreenOldGeometry;

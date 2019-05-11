@@ -2,6 +2,7 @@
  * Fixed that disabled brush slots were still selectable with a keyboard shortcut
  * Fixed potential crash when logging in to a session
  * Incompatible sessions are no longer hidden in from the Join dialog
+ * Ctrl+C shortcut now works in the chat box
 
 2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session
