@@ -25,7 +25,7 @@
 #include "../shared/util/whatismyip.h"
 
 #ifdef HAVE_UPNP
-#include "net/upnp.h"
+#include "../shared/util/upnp.h"
 #endif
 
 #include <QAction>

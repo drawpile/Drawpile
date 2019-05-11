@@ -30,7 +30,7 @@
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
-#include "net/zeroconfdiscovery.h"
+#include "../shared/listings/zeroconfdiscovery.h"
 #endif
 
 #include "widgets/spinner.h"
