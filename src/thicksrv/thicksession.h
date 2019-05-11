@@ -42,6 +42,8 @@ public:
 
 	void readyToAutoReset(int ctxId) override;
 
+	bool supportsAutoReset() const override { return false; }
+
 protected:
 	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 

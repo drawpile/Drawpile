@@ -481,6 +481,17 @@ bool LoginHandler::validateSessionIdAlias(const QString &alias)
 	return true;
 }
 
+static QJsonArray sessionFlags(const Session *session)
+{
+	QJsonArray flags;
+	// Note: this is "NOAUTORESET" for backward compatibility. In 3.0, we should change it to "AUTORESET"
+	if(!session->supportsAutoReset())
+		flags << "NOAUTORESET";
+	// TODO for version 3.0: PERSIST should be a session specific flag
+
+	return flags;
+}
+
 void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
@@ -547,6 +558,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	QJsonObject joinInfo;
 	joinInfo["id"] = sessionAlias.isEmpty() ? session->idString() : sessionAlias;
 	joinInfo["user"] = userId;
+	joinInfo["flags"] = sessionFlags(session);
 	reply.reply["join"] = joinInfo;
 	send(reply);
 
@@ -615,6 +627,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	QJsonObject joinInfo;
 	joinInfo["id"] = session->aliasOrId();
 	joinInfo["user"] = m_client->id();
+	joinInfo["flags"] = sessionFlags(session);
 	reply.reply["join"] = joinInfo;
 	send(reply);
 

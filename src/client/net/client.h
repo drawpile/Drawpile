@@ -132,6 +132,8 @@ public:
 
 	/**
 	 * @brief Does the server support persistent sessions?
+	 *
+	 * TODO for version 3.0: Change this to sessionSupportsPersistence
 	 */
 	bool serverSuppotsPersistence() const { return m_server->supportsPersistence(); }
 
@@ -139,6 +141,8 @@ public:
 	 * @brief Can the server receive abuse reports?
 	 */
 	bool serverSupportsReports() const { return m_server->supportsAbuseReports(); }
+
+	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
 
 	/**
 	 * @brief Get the number of bytes waiting to be sent
@@ -197,7 +201,7 @@ signals:
 
 private slots:
 	void handleMessage(const protocol::MessagePtr &msg);
-	void handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator);
+	void handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
@@ -214,6 +218,7 @@ private:
 	bool m_recordedChat;
 	bool m_moderator;
 	bool m_isAuthenticated;
+	bool m_supportsAutoReset;
 
 	int m_catchupTo;
 	int m_caughtUp;

@@ -105,12 +105,13 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator)
+void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
 	m_moderator = moderator;
 	m_isAuthenticated = auth;
+	m_supportsAutoReset = supportsAutoReset;
 
 	emit serverLoggedin(join);
 }

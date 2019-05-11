@@ -122,6 +122,11 @@ public:
 	bool isClosed() const;
 	void setClosed(bool closed);
 
+	/**
+	 *  Does this session support autoresetting?
+	 */
+	virtual bool supportsAutoReset() const = 0;
+
 	//! Set session attributes
 	void setSessionConfig(const QJsonObject &conf, Client *changedBy);
 

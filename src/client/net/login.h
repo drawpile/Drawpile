@@ -170,6 +170,11 @@ public:
 	 */
 	bool isAuthenticated() const { return !m_isGuest; }
 
+	/**
+	 * Get the session flags
+	 */
+	QStringList sessionFlags() const { return m_sessionFlags; }
+
 public slots:
 	void serverDisconnected();
 
@@ -399,6 +404,7 @@ private:
 
 	QString m_selectedId;
 	QString m_loggedInSessionId;
+	QStringList m_sessionFlags;
 
 	QFileInfo m_certFile;
 

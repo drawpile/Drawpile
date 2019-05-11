@@ -548,6 +548,13 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 		}
 
 		m_userid = uint8_t(userid);
+
+		const QJsonArray sessionFlags = msg.reply["join"].toObject()["flags"].toArray();
+		for(const QJsonValue &val : sessionFlags) {
+			if(val.isString())
+				m_sessionFlags << val.toString();
+		}
+
 		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings
