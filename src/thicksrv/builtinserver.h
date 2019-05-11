@@ -41,6 +41,8 @@ namespace canvas {
 	class AclFilter;
 }
 
+class ZeroConfAnnouncement;
+
 namespace server {
 
 class BuiltinSession;
@@ -86,6 +88,7 @@ public slots:
 private slots:
 	void newClient();
 	void removeClient(QObject *clientObj);
+	void onSessionAttributeChange();
 
 signals:
 	void serverStopped();
@@ -100,6 +103,8 @@ private:
 
 	canvas::StateTracker *m_statetracker;
 	const canvas::AclFilter *m_aclFilter;
+
+	ZeroConfAnnouncement *m_zeroconfAnnouncement = nullptr;
 };
 
 }

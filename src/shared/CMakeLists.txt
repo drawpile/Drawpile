@@ -62,7 +62,10 @@ if(LIBMINIUPNPC_FOUND)
 endif()
 
 if(KF5DNSSD_FOUND)
-	set( SOURCES ${SOURCES} listings/zeroconfdiscovery.cpp )
+	set( SOURCES ${SOURCES}
+		listings/zeroconfdiscovery.cpp
+		listings/zeroconfannouncement.cpp
+	)
 endif()
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})

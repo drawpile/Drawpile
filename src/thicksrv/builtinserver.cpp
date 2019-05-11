@@ -21,6 +21,10 @@
 #include "builtinsession.h"
 #include "thickserverclient.h"
 
+#ifdef HAVE_DNSSD
+#include "../shared/listings/zeroconfannouncement.h"
+#endif
+
 #include "../shared/server/inmemoryconfig.h"
 #include "../shared/server/serverlog.h"
 #include "../shared/server/loginhandler.h"
@@ -91,7 +95,13 @@ bool BuiltinServer::start(QString *errorMessage) {
 
 	qInfo("BuiltinServer: Started listening on port %d", port());
 
-	// TODO DNS-SD and UPnP
+	// TODO UPnP
+#ifdef HAVE_DNSSD
+	if(cfg.value("dnssd", true).toBool()) {
+		m_zeroconfAnnouncement = new ZeroConfAnnouncement(this);
+		m_zeroconfAnnouncement->publish(port());
+	}
+#endif
 
 	return true;
 }
@@ -162,7 +172,17 @@ std::tuple<Session*, QString> BuiltinServer::createSession(const QUuid &id, cons
 		this
 		);
 
+	connect(m_session, &Session::sessionAttributeChanged, this, &BuiltinServer::onSessionAttributeChange);
+
 	return std::tuple<Session*, QString> {m_session, QString() };
+}
+
+void BuiltinServer::onSessionAttributeChange()
+{
+#ifdef HAVE_DNSSD
+	if(m_zeroconfAnnouncement)
+		m_zeroconfAnnouncement->setTitle(m_session->history()->title());
+#endif
 }
 
 /**
