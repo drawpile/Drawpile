@@ -172,7 +172,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Session listing server list
-	m_listservers = new sessionlisting::ListServerModel(this);
+	m_listservers = new sessionlisting::ListServerModel(true, this);
 	m_ui->listserverview->setModel(m_listservers);
 	m_ui->listserverview->setItemDelegate(new sessionlisting::ListServerDelegate(this));
 
@@ -598,7 +598,8 @@ void SettingsDialog::addListingServer()
 		m_listservers->addServer(
 			info.name,
 			apiUrl,
-			info.description
+			info.description,
+			info.readOnly
 			);
 
 		if(info.faviconUrl == "drawpile") {

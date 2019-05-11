@@ -35,6 +35,7 @@ struct ListServerInfo {
 	QString name;
 	QString description;
 	QString faviconUrl;
+	bool readOnly;
 };
 
 enum class PrivacyMode {

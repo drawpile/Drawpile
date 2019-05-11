@@ -135,7 +135,8 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 			obj.value("version").toString(),
 			obj.value("name").toString().trimmed(),
 			obj.value("description").toString().trimmed(),
-			obj.value("favicon").toString()
+			obj.value("favicon").toString(),
+			obj.value("read_only").toBool()
 		};
 
 		if(info.version.isEmpty()) {

@@ -34,10 +34,10 @@
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(QObject *parent)
+ListServerModel::ListServerModel(bool includeReadOnly, QObject *parent)
 	: QAbstractListModel(parent)
 {
-	loadServers();
+	loadServers(includeReadOnly);
 }
 
 int ListServerModel::rowCount(const QModelIndex &parent) const
@@ -75,7 +75,7 @@ bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 	return true;
 }
 
-void ListServerModel::addServer(const QString &name, const QString &url, const QString &description)
+void ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly)
 {
 	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
 	m_servers << ListServer {
@@ -83,7 +83,8 @@ void ListServerModel::addServer(const QString &name, const QString &url, const Q
 		QString(),
 		name,
 		url,
-		description
+		description,
+		readonly
 	};
 	endInsertRows();
 }
@@ -131,7 +132,7 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	}
 }
 
-QVector<ListServer> ListServerModel::listServers()
+QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 {
 	QVector<ListServer> list;
 
@@ -145,8 +146,12 @@ QVector<ListServer> ListServerModel::listServers()
 			cfg.value("icon").toString(),
 			cfg.value("name").toString(),
 			cfg.value("url").toString(),
-			cfg.value("description").toString()
+			cfg.value("description").toString(),
+			cfg.value("readonly").toBool()
 		};
+
+		if(ls.readonly && !includeReadOnly)
+			continue;
 
 		if(ls.iconName == "drawpile")
 			ls.icon = QIcon(":/icons/drawpile.png");
@@ -166,7 +171,8 @@ QVector<ListServer> ListServerModel::listServers()
 			QStringLiteral("http://drawpile.net/api/listing/"),
 			QStringLiteral("This is the default public listing server.\n"
 			"Note that as this server is open to all, please do not share any images that would "
-			"not suitable for everyone.")
+			"not suitable for everyone."),
+			false
 		};
 	}
 
@@ -183,10 +189,10 @@ QVector<ListServer> ListServerModel::listServers()
 	return list;
 }
 
-void ListServerModel::loadServers()
+void ListServerModel::loadServers(bool includeReadOnly)
 {
 	beginResetModel();
-	m_servers = listServers();
+	m_servers = listServers(includeReadOnly);
 	endResetModel();
 }
 
@@ -203,6 +209,7 @@ void ListServerModel::saveServers() const
 		cfg.setValue("url", s.url);
 		cfg.setValue("description", s.description);
 		cfg.setValue("icon", s.iconName);
+		cfg.setValue("readonly", s.readonly);
 	}
 	cfg.endArray();
 }
