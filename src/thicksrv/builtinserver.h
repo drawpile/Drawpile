@@ -58,6 +58,7 @@ class BuiltinServer : public QObject, public Sessions {
 	Q_OBJECT
 public:
 	explicit BuiltinServer(canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, QObject *parent=nullptr);
+	~BuiltinServer();
 
 	ServerConfig *config() { return m_config; }
 
@@ -105,6 +106,8 @@ private:
 	const canvas::AclFilter *m_aclFilter;
 
 	ZeroConfAnnouncement *m_zeroconfAnnouncement = nullptr;
+
+	int m_forwardedPort = 0;
 };
 
 }

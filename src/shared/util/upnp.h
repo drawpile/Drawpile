@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@
 #define DRAWPILE_NET_UPNP_H
 
 #include <QObject>
-
-namespace net {
 
 class UPnPClient : public QObject {
 	Q_OBJECT
@@ -47,7 +45,7 @@ signals:
 	void externalIp(const QString &ip);
 
 private:
-	bool doDiscover();
+	void doDiscover();
 	Q_INVOKABLE void doActivateForward(int port);
 	Q_INVOKABLE void doDeactivateForward(int port);
 	Q_INVOKABLE void doFetchExternalIp();
@@ -56,7 +54,5 @@ private:
 	struct Private;
 	Private *d;
 };
-
-}
 
 #endif

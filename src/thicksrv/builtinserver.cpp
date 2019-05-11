@@ -25,6 +25,11 @@
 #include "../shared/listings/zeroconfannouncement.h"
 #endif
 
+#ifdef HAVE_UPNP
+#include "../shared/util/upnp.h"
+#include "../shared/util/whatismyip.h"
+#endif
+
 #include "../shared/server/inmemoryconfig.h"
 #include "../shared/server/serverlog.h"
 #include "../shared/server/loginhandler.h"
@@ -51,6 +56,16 @@ BuiltinServer::BuiltinServer(canvas::StateTracker *statetracker, const canvas::A
 	m_config->setConfigInt(config::SessionCountLimit, 1);
 
 	m_announcements = new sessionlisting::Announcements(m_config, this);
+}
+
+BuiltinServer::~BuiltinServer()
+{
+#ifdef HAVE_UPNP
+	if(m_forwardedPort > 0) {
+		qInfo("Removing UPnP port forward (%d)", m_forwardedPort);
+		UPnPClient::instance()->deactivateForward(m_forwardedPort);
+	}
+#endif
 }
 
 quint16 BuiltinServer::port() const
@@ -95,11 +110,21 @@ bool BuiltinServer::start(QString *errorMessage) {
 
 	qInfo("BuiltinServer: Started listening on port %d", port());
 
-	// TODO UPnP
 #ifdef HAVE_DNSSD
 	if(cfg.value("dnssd", true).toBool()) {
 		m_zeroconfAnnouncement = new ZeroConfAnnouncement(this);
 		m_zeroconfAnnouncement->publish(port());
+	}
+#endif
+
+#ifdef HAVE_UPNP
+	if(cfg.value("upnp", true).toBool()) {
+		const QString myIp = WhatIsMyIp::guessLocalAddress();
+		if(WhatIsMyIp::isMyPrivateAddress(myIp)) {
+			qInfo("UPnP enabled and %s appears to be a private IP. Trying to forward port %d...", qPrintable(myIp), port());
+			m_forwardedPort = port();
+			UPnPClient::instance()->activateForward(port());
+		}
 	}
 #endif
 
