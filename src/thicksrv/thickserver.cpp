@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "smartserver.h"
+#include "thickserver.h"
 #include "thicksession.h"
 #include "thickserverclient.h"
 
@@ -36,7 +36,7 @@
 
 namespace server {
 
-SmartServer::SmartServer(ServerConfig *config, QObject *parent)
+ThickServer::ThickServer(ServerConfig *config, QObject *parent)
 	: QObject(parent), m_config(config)
 {
 	m_announcements = new sessionlisting::Announcements(config, this);
@@ -50,17 +50,17 @@ SmartServer::SmartServer(ServerConfig *config, QObject *parent)
  * by the system init daemon when needed again.
  * @param autostop
  */
-void SmartServer::setAutoStop(bool autostop)
+void ThickServer::setAutoStop(bool autostop)
 {
 	m_autoStop = autostop;
 }
 
-void SmartServer::setRecordingPath(const QString &path)
+void ThickServer::setRecordingPath(const QString &path)
 {
 	m_recordingPath = path;
 }
 
-bool SmartServer::createServer()
+bool ThickServer::createServer()
 {
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
 		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
@@ -74,7 +74,7 @@ bool SmartServer::createServer()
 		m_server = new QTcpServer(this);
 	}
 
-	connect(m_server, &QTcpServer::newConnection, this, &SmartServer::newClient);
+	connect(m_server, &QTcpServer::newConnection, this, &ThickServer::newClient);
 
 	return true;
 }
@@ -85,7 +85,7 @@ bool SmartServer::createServer()
  * @param address listening address
  * @return true on success
  */
-bool SmartServer::start(quint16 port, const QHostAddress& address) {
+bool ThickServer::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(m_state == State::Stopped);
 	m_state = State::Running;
 	if(!createServer()) {
@@ -129,7 +129,7 @@ bool SmartServer::start(quint16 port, const QHostAddress& address) {
  * @param fd
  * @return true on success
  */
-bool SmartServer::startFd(int fd)
+bool ThickServer::startFd(int fd)
 {
 	Q_ASSERT(m_state == State::Stopped);
 	m_state = State::Running;
@@ -161,7 +161,7 @@ bool SmartServer::startFd(int fd)
 /**
  * @brief Accept or reject new client connection
  */
-void SmartServer::newClient()
+void ThickServer::newClient()
 {
 	QTcpSocket *socket = m_server->nextPendingConnection();
 
@@ -186,14 +186,14 @@ void SmartServer::newClient()
 		client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
 
 		m_clients.append(client);
-		connect(client, &ThickServerClient::destroyed, this, &SmartServer::removeClient);
+		connect(client, &ThickServerClient::destroyed, this, &ThickServer::removeClient);
 
 		auto *login = new LoginHandler(client, this, m_config);
 		login->startLoginProcess();
 	}
 }
 
-void SmartServer::removeClient(QObject *client)
+void ThickServer::removeClient(QObject *client)
 {
 	m_clients.removeOne(static_cast<ThickServerClient*>(client));
 
@@ -201,12 +201,12 @@ void SmartServer::removeClient(QObject *client)
 		stop();
 }
 
-void SmartServer::sessionEnded()
+void ThickServer::sessionEnded()
 {
 	m_session = nullptr;
 }
 
-QJsonArray SmartServer::sessionDescriptions() const
+QJsonArray ThickServer::sessionDescriptions() const
 {
 	QJsonArray descs;
 	if(m_session)
@@ -214,7 +214,7 @@ QJsonArray SmartServer::sessionDescriptions() const
 	return descs;
 }
 
-Session *SmartServer::getSessionById(const QString &id, bool loadTemplate)
+Session *ThickServer::getSessionById(const QString &id, bool loadTemplate)
 {
 	Q_UNUSED(loadTemplate)
 
@@ -225,7 +225,7 @@ Session *SmartServer::getSessionById(const QString &id, bool loadTemplate)
 }
 
 
-std::tuple<Session*, QString> SmartServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+std::tuple<Session*, QString> ThickServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
 
@@ -237,7 +237,7 @@ std::tuple<Session*, QString> SmartServer::createSession(const QUuid &id, const 
 
 	m_session = new ThickSession(m_config, m_announcements, id, idAlias, founder, this);
 
-	connect(m_session, &ThickSession::destroyed, this, &SmartServer::sessionEnded);
+	connect(m_session, &ThickSession::destroyed, this, &ThickServer::sessionEnded);
 
 	QString aka = idAlias.isEmpty() ? QString() : QStringLiteral(" (AKA %1)").arg(idAlias);
 
@@ -252,7 +252,7 @@ std::tuple<Session*, QString> SmartServer::createSession(const QUuid &id, const 
 /**
  * Disconnect all clients and stop listening.
  */
-void SmartServer::stop() {
+void ThickServer::stop() {
 	if(m_state == State::Running) {
 		Log()
 			.about(Log::Level::Info, Log::Topic::Status)

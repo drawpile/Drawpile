@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DP_SMARTSERVER_H
-#define DP_SMARTSERVER_H
+#ifndef DP_ThickServer_H
+#define DP_ThickServer_H
 
 #include "../shared/server/sessions.h"
 
@@ -47,10 +47,10 @@ class ServerLog;
 /**
  * The drawpile server.
  */
-class SmartServer : public QObject, public Sessions {
+class ThickServer : public QObject, public Sessions {
 	Q_OBJECT
 public:
-	explicit SmartServer(ServerConfig *config, QObject *parent=nullptr);
+	explicit ThickServer(ServerConfig *config, QObject *parent=nullptr);
 
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setAutoStop(bool autostop);

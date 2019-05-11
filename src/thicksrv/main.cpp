@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "smartserver.h"
+#include "thickserver.h"
 
 #include "../shared/server/inmemoryconfig.h"
 #include "../shared/server/sslserver.h"
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
 	QGuiApplication::setOrganizationName("drawpile");
 	QGuiApplication::setOrganizationDomain("drawpile.net");
-	QGuiApplication::setApplicationName("drawpile-smartsrv");
+	QGuiApplication::setApplicationName("drawpile-thicksrv");
 	QGuiApplication::setApplicationVersion(DRAWPILE_VERSION);
 
 	QCommandLineParser parser;
@@ -84,6 +84,9 @@ int main(int argc, char *argv[])
 	QCommandLineOption sslKeyOption("ssl-key", "SSL key file", "key");
 	parser.addOption(sslKeyOption);
 
+	QCommandLineOption recordOption("record", "Record sessions", "path");
+	parser.addOption(recordOption);
+
 	// --report-url <url>
 	QCommandLineOption reportUrlOption(QStringList() << "report-url", "Abuse report handler URL", "url");
 	parser.addOption(reportUrlOption);
@@ -122,10 +125,10 @@ int main(int argc, char *argv[])
 
 	serverconfig->setInternalConfig(icfg);
 
-	server::SmartServer *server = new server::SmartServer(serverconfig);
+	auto *server = new server::ThickServer(serverconfig);
 	serverconfig->setParent(server);
 
-	server->connect(server, &server::SmartServer::serverStopped, &app, &QGuiApplication::quit);
+	server->connect(server, &server::ThickServer::serverStopped, &app, &QGuiApplication::quit);
 
 	int port;
 	{
@@ -157,14 +160,12 @@ int main(int argc, char *argv[])
 		}
 	}
 
-#if 0 // TODO
 	{
 		QString recordingPath = parser.value(recordOption);
 		if(!recordingPath.isEmpty()) {
 			server->setRecordingPath(recordingPath);
 		}
 	}
-#endif
 
 	// TODO catch signals
 

@@ -10,16 +10,13 @@ find_package(GIF)
 find_package(Miniupnpc)
 
 if ( CLIENT )
-        add_subdirectory ( client )
-        add_subdirectory ( desktop )
+	add_subdirectory ( client )
+	add_subdirectory ( thicksrv )
+	add_subdirectory ( desktop )
 endif ()
 
 if ( SERVER )
         add_subdirectory ( server )
-endif ()
-
-if ( SMARTSRV )
-	add_subdirectory ( smartsrv )
 endif ()
 
 if ( TOOLS )
