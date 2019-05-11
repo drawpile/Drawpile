@@ -178,7 +178,7 @@ void Document::onServerLogin(bool join)
 
 	Q_ASSERT(m_canvas);
 
-	m_canvas->connectedToServer(m_client->myId());
+	m_canvas->connectedToServer(m_client->myId(), join);
 
 	if(!m_recordOnConnect.isEmpty()) {
 		startRecording(m_recordOnConnect);

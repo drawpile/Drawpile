@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,54 +17,32 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DP_BUILTINSERVER_H
-#define DP_BUILTINSERVER_H
+#ifndef BUILTINSESSION_H
+#define BUILTINSESSION_H
 
-#include <QObject>
-
-class QTcpServer;
+#include "thicksession.h"
 
 namespace server {
 
-class SessionServer;
-class ServerConfig;
-
 /**
- * The drawpile server.
+ * @brief A specialized ThickSession that piggybacks on the client's canvas
  */
-class BuiltinServer : public QObject {
-Q_OBJECT
+class BuiltinSession : public ThickSession
+{
+	Q_OBJECT
 public:
-	explicit BuiltinServer(QObject *parent=nullptr);
-
-	bool start(quint16 preferredPort);
-
-	int port() const;
-
-	const QString &errorString() const { return m_error; }
+	BuiltinSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 
 public slots:
-	 //! Stop the server. All clients are disconnected.
-	void stop();
+	void doInternalResetNow();
 
-private slots:
-	void newClient();
-
-signals:
-	void serverStopped();
+protected:
+	void onClientJoin(Client *client, bool host) override;
 
 private:
-	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
-
-	QTcpServer *m_server;
-	ServerConfig *m_config;
-	SessionServer *m_sessions;
-	State m_state;
-
-	QString m_error;
+	bool m_softResetRequested = false;
 };
 
 }
 
-#endif
-
+#endif // BUILTINSESSION_H

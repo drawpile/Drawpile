@@ -38,8 +38,6 @@ set (
 	net/tcpserver.cpp
 	net/login.cpp
 	net/loginsessions.cpp
-	net/serverthread.cpp
-	net/builtinserver.cpp
 	net/sessionlistingmodel.cpp
 	net/banlistmodel.cpp
 	net/announcementlist.cpp

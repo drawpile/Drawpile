@@ -52,7 +52,7 @@ class LoginSessionModel;
 class LoginHandler : public QObject {
 	Q_OBJECT
 public:
-	enum Mode {HOST, JOIN};
+	enum class Mode {HostRemote, HostBuiltin, Join};
 
 	LoginHandler(Mode mode, const QUrl &url, QObject *parent=nullptr);
 
@@ -63,7 +63,7 @@ public:
 	 *
 	 * @param userid
 	 */
-	void setUserId(uint8_t userid) { Q_ASSERT(m_mode==HOST); m_userid=userid; }
+	void setUserId(uint8_t userid) { Q_ASSERT(m_mode!=Mode::Join); m_userid=userid; }
 
 	/**
 	 * @brief Set desired session ID alias
@@ -71,7 +71,7 @@ public:
 	 * Only in host mode.
 	 * @param id
 	 */
-	void setSessionAlias(const QString &alias) { Q_ASSERT(m_mode==HOST); m_sessionAlias=alias; }
+	void setSessionAlias(const QString &alias) { Q_ASSERT(m_mode!=Mode::Join); m_sessionAlias=alias; }
 
 	/**
 	 * @brief Set the session password
@@ -80,7 +80,7 @@ public:
 	 *
 	 * @param password
 	 */
-	void setPassword(const QString &password) { Q_ASSERT(m_mode==HOST); m_sessionPassword=password; }
+	void setPassword(const QString &password) { Q_ASSERT(m_mode!=Mode::Join); m_sessionPassword=password; }
 
 	/**
 	 * @brief Set the session title
@@ -89,18 +89,23 @@ public:
 	 *
 	 * @param title
 	 */
-	void setTitle(const QString &title) { Q_ASSERT(m_mode==HOST); m_title=title; }
+	void setTitle(const QString &title) { Q_ASSERT(m_mode!=Mode::Join); m_title=title; }
 
 	/**
 	 * @brief Set the initial session content to upload to the server
+	 *
+	 * Only for remote host mode.
+	 *
 	 * @param msgs
 	 */
-	void setInitialState(const protocol::MessageList &msgs) { Q_ASSERT(m_mode==HOST); m_initialState = msgs; }
+	void setInitialState(const protocol::MessageList &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
 
 	/**
 	 * @brief Set session announcement URL
+	 *
+	 * Only for host mode.
 	 */
-	void setAnnounceUrl(const QString &url, bool privateMode) { Q_ASSERT(m_mode==HOST); m_announceUrl = url; m_announcePrivate = privateMode; }
+	void setAnnounceUrl(const QString &url, bool privateMode) { Q_ASSERT(m_mode!=Mode::Join); m_announceUrl = url; m_announcePrivate = privateMode; }
 
 	/**
 	 * @brief Set the server we're communicating with

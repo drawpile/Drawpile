@@ -269,6 +269,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		case protocol::ClientInternal::Type::TruncateHistory:
 			handleTruncateHistory();
 			break;
+		case protocol::ClientInternal::Type::SoftResetPoint:
+			emit softResetPoint();
+			break;
 		}
 		return;
 	}

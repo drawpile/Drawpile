@@ -71,7 +71,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
 	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
 
-	if(loginhandler->mode() == LoginHandler::HOST)
+	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
 		loginhandler->setUserId(m_myId);
 
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());

@@ -33,7 +33,8 @@ public:
 	enum class Type {
 		Catchup,         // caught up to n% of promised messages
 		SequencePoint,   // message sequence point
-		TruncateHistory  // truncate undo history
+		TruncateHistory, // truncate undo history
+		SoftResetPoint   // generate snapshot and emit softResetPoint
 	};
 
 	/**
@@ -59,6 +60,11 @@ public:
 	 * This is used by SoftReset to prevent undos across reset boundary.
 	 */
 	static MessagePtr makeTruncatePoint() { return MessagePtr(new ClientInternal(Type::TruncateHistory, 0)); }
+
+	/**
+	 * @brief Make a soft reset request
+	 */
+	static MessagePtr makeSoftResetPoint() { return MessagePtr(new ClientInternal(Type::SoftResetPoint, 0)); }
 
 	Type internalType() const { return m_type; }
 	int value() const { return m_value; }

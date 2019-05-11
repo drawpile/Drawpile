@@ -74,6 +74,29 @@ static protocol::MessagePtr makeLogMessage(const Log &log)
 	return protocol::MessagePtr(new protocol::Command(0, sr));
 }
 
+protocol::MessageList Session::serverSideStateMessages() const
+{
+	protocol::MessageList msgs;
+
+	QList<uint8_t> owners;
+	QList<uint8_t> trusted;
+
+	for(const Client *c : m_clients) {
+		msgs << c->joinMessage();
+		if(c->isOperator())
+			owners << c->id();
+		if(c->isTrusted())
+			trusted << c->id();
+	}
+
+	msgs << protocol::MessagePtr(new protocol::SessionOwner(0, owners));
+
+	if(!trusted.isEmpty())
+		msgs << protocol::MessagePtr(new protocol::TrustedUsers(0, trusted));
+
+	return msgs;
+}
+
 void Session::switchState(State newstate)
 {
 	if(newstate==State::Initialization) {
@@ -90,22 +113,10 @@ void Session::switchState(State newstate)
 			// Reset buffer uploaded. Now perform the reset before returning to
 			// normal running state.
 
-			// Add list of currently logged in users to reset snapshot
-			QList<uint8_t> owners;
-			QList<uint8_t> trusted;
-			for(const Client *c : m_clients) {
-				m_resetstream.prepend(c->joinMessage());
-				if(c->isOperator())
-					owners << c->id();
-				if(c->isTrusted())
-					trusted << c->id();
-			}
-			if(!trusted.isEmpty())
-				m_resetstream.prepend(protocol::MessagePtr(new protocol::TrustedUsers(0, trusted)));
-			m_resetstream.prepend(protocol::MessagePtr(new protocol::SessionOwner(0, owners)));
+			auto resetImage = serverSideStateMessages() + m_resetstream;
 
 			// Send reset snapshot
-			if(!m_history->reset(m_resetstream)) {
+			if(!m_history->reset(resetImage)) {
 				// This shouldn't normally happen, as the size limit should be caught while
 				// still uploading the reset.
 				messageAll("Session reset failed!", true);
@@ -123,7 +134,7 @@ void Session::switchState(State newstate)
 				sendUpdatedSessionProperties();
 			}
 
-			m_resetstream.clear();
+			m_resetstream = protocol::MessageList();
 			m_resetstreamsize = 0;
 		}
 

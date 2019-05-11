@@ -6,6 +6,8 @@ set (
 	thickserver.cpp
 	thickserverclient.cpp
 	thicksession.cpp
+	builtinserver.cpp
+	builtinsession.cpp
 	)
 
 add_library( "thicksrvlib" STATIC ${SOURCES} )

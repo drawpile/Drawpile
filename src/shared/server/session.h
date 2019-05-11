@@ -372,6 +372,11 @@ protected:
 	//! This message was just added to session history
 	void addedToHistory(protocol::MessagePtr msg);
 
+	void switchState(State newstate);
+
+	//! Get the user join, SessionOwner, etc. messages that should be prepended to a reset image
+	protocol::MessageList serverSideStateMessages() const;
+
 private:
 	/**
 	 * Add a message to the initialization stream
@@ -410,8 +415,6 @@ private:
 	void sendUpdatedSessionProperties();
 	void sendStatusUpdate();
 	void ensureOperatorExists();
-
-	void switchState(State newstate);
 
 	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 

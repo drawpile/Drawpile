@@ -50,6 +50,17 @@ ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *
 			this);
 }
 
+ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent)
+	: Session(
+		new InMemoryHistory(id, idAlias, protocol::ProtocolVersion::current(), founder),
+		config, announcements, parent
+		),
+	  m_statetracker(statetracker)
+{
+	history()->setParent(this);
+	m_aclfilter = aclFilter->clone(this);
+}
+
 void ThickSession::readyToAutoReset(int ctxId)
 {
 	log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("User %1 sent ready-to-autoreset, but this is a thick server!").arg(ctxId)));
@@ -68,14 +79,21 @@ void ThickSession::addToHistory(protocol::MessagePtr msg)
 		return;
 	}
 
-	qInfo("Adding: %s", qPrintable(msg->toString()));
+	// Special messages
+	if(msg->type() == protocol::MSG_CHAT) {
+		const auto chat = msg.cast<protocol::Chat>();
+		if(chat.isPin()) {
+			m_pinnedMessage = chat.message();
+			if(m_pinnedMessage == "-")
+				m_pinnedMessage = QString();
+		}
+	} else if(msg->type() == protocol::MSG_LAYER_DEFAULT) {
+		m_defaultLayer = msg->layer();
+	}
 
-	if(msg->isCommand())
+	// Execute commands only in self-contained mode.
+	if(msg->isCommand() && m_statetracker->parent() == this)
 			m_statetracker->receiveCommand(msg);
-
-#if 0 // TODO history size limit
-	history()->addMessage(msg);
-#endif
 
 	addedToHistory(msg);
 
@@ -90,6 +108,13 @@ void ThickSession::onSessionReset()
 	std::tie(msgs, lastBatchIndex) = history()->getBatch(-1);
 
 	Q_ASSERT(lastBatchIndex == history()->lastIndex()); // InMemoryHistory always returns the whole history
+
+	history()->reset(protocol::MessageList());
+
+	// Reset ACL filter state
+	m_aclfilter->reset(m_statetracker->localId(), false);
+	for(const auto &msg : msgs)
+		m_aclfilter->filterMessage(*msg);
 
 	protocol::ServerReply catchup;
 	catchup.type = protocol::ServerReply::CATCHUP;
@@ -107,7 +132,7 @@ void ThickSession::onClientJoin(Client *client, bool host)
 	if(host)
 		return;
 
-	// TODO reset only if needed
+	directToAll(protocol::MessagePtr(new protocol::SoftResetPoint(m_statetracker->localId())));
 	internalReset();
 
 	protocol::MessageList msgs;
@@ -116,47 +141,28 @@ void ThickSession::onClientJoin(Client *client, bool host)
 
 	Q_ASSERT(lastBatchIndex == history()->lastIndex()); // InMemoryHistory always returns the whole history
 
+	history()->reset(protocol::MessageList());
+
 	protocol::ServerReply catchup;
 	catchup.type = protocol::ServerReply::CATCHUP;
 	catchup.reply["count"] = msgs.size();
-	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, catchup)));
-	
-	qInfo("Sending history:");
-	for(protocol::MessagePtr m : msgs)
-		qInfo("> %s", qPrintable(m->toString()));
 
+	client->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, catchup)));
 	client->sendDirectMessage(msgs);
 }
 
 void ThickSession::internalReset()
 {
-	// Inform everyone that a soft-reset just occurred
-	directToAll(protocol::MessagePtr(new protocol::SoftResetPoint(0)));
-
 	auto loader =  canvas::SnapshotLoader(
-			0,
+			m_statetracker->localId(),
 			m_statetracker->image(),
 			m_aclfilter
 	);
 
-	loader.setDefaultLayer(m_statetracker->layerList()->defaultLayer());
-	loader.setPinnedMessage(QString()); // TODO
+	loader.setDefaultLayer(m_defaultLayer);
+	loader.setPinnedMessage(m_pinnedMessage);
 
-	auto messages = loader.loadInitCommands();
-
-	QList<uint8_t> owners;
-	QList<uint8_t> trusted;
-
-	for(const Client * c : clients()) {
-		if(c->isOperator())
-			owners << c->id();
-		if(c->isTrusted())
-			trusted << c->id();
-	}
-
-	messages << protocol::MessagePtr(new protocol::SessionOwner(0, owners));
-	if(!trusted.isEmpty())
-		messages << protocol::MessagePtr(new protocol::TrustedUsers(0, trusted));
+	auto messages = serverSideStateMessages() + loader.loadInitCommands();
 
 	history()->reset(messages);
 
