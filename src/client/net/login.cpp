@@ -406,7 +406,7 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 	for(const QJsonValue f : msg.reply["flags"].toArray())
 		m_userFlags << f.toString().toUpper();
 
-	if(m_mode == HOST) {
+	if(m_mode != Mode::Join) {
 		m_state = EXPECT_SESSIONLIST_TO_HOST;
 
 	} else {
@@ -422,7 +422,7 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 
 void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(m_mode == HOST);
+	Q_ASSERT(m_mode != Mode::Join);
 
 	if(msg.type == protocol::ServerReply::LOGIN) {
 		// We don't care about existing sessions when hosting a new one,
@@ -455,7 +455,7 @@ void LoginHandler::sendHostCommand()
 
 void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(m_mode == JOIN);
+	Q_ASSERT(m_mode != Mode::HostRemote);
 
 	if(msg.reply.contains("title")) {
 		emit serverTitleChanged(msg.reply["title"].toString());
@@ -548,10 +548,17 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 		}
 
 		m_userid = uint8_t(userid);
+
+		const QJsonArray sessionFlags = msg.reply["join"].toObject()["flags"].toArray();
+		for(const QJsonValue &val : sessionFlags) {
+			if(val.isString())
+				m_sessionFlags << val.toString();
+		}
+
 		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings
-		if(m_mode==HOST) {
+		if(m_mode != Mode::Join) {
 			protocol::ServerCommand conf;
 			conf.cmd = "sessionconf";
 
@@ -567,12 +574,13 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 				m_server->sendMessage(command::announce(m_announceUrl, m_announcePrivate));
 
 			// Upload initial session content
-			m_server->sendMessages(m_initialState);
+			if(m_mode == Mode::HostRemote) {
+				m_server->sendMessages(m_initialState);
 
-			// Mark initialization phase as done
-			protocol::ServerCommand cmd;
-			cmd.cmd = "init-complete";
-			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(m_userid, cmd)));
+				protocol::ServerCommand cmd;
+				cmd.cmd = "init-complete";
+				m_server->sendMessage(protocol::MessagePtr(new protocol::Command(m_userid, cmd)));
+			}
 		}
 
 	} else {
@@ -773,7 +781,7 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	else if(code == "nameInUse")
 		error = tr("Username already taken!");
 	else if(code == "closed")
-		error = m_mode == JOIN ? tr("Session is closed!") : tr("Server is full!");
+		error = m_mode == Mode::Join ? tr("Session is closed!") : tr("Server is full!");
 	else if(code == "unauthorizedHost")
 		error = tr("Hosting not authorized");
 	else if(code == "banned")
@@ -821,7 +829,7 @@ void LoginHandler::send(const protocol::ServerCommand &cmd)
 
 QString LoginHandler::sessionId() const {
 	Q_ASSERT(!m_loggedInSessionId.isEmpty());
-	if(m_mode == HOST && !m_sessionAlias.isEmpty())
+	if(m_mode == Mode::HostRemote && !m_sessionAlias.isEmpty())
 		return m_sessionAlias;
 
 	return m_loggedInSessionId;

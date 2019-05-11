@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,18 +28,10 @@
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>
 
-namespace net {
-
 struct UPnPClient::Private {
-	UPNPDev *devices;
+	UPNPDev *devices = nullptr;
 	UPNPUrls urls;
 	IGDdatas data;
-
-	Private() : devices(0) {}
-	~Private() {
-		if(devices)
-			freeUPNPDevlist(devices);
-	}
 };
 
 UPnPClient::UPnPClient(QObject *parent)
@@ -49,6 +41,8 @@ UPnPClient::UPnPClient(QObject *parent)
 
 UPnPClient::~UPnPClient()
 {
+	if(d->devices)
+		freeUPNPDevlist(d->devices);
 	delete d;
 }
 
@@ -85,11 +79,11 @@ void UPnPClient::fetchExternalIp()
 }
 
 // Thread internal functions
-bool UPnPClient::doDiscover()
+void UPnPClient::doDiscover()
 {
 	// Check if we have already done discovery
 	if(d->devices)
-		return true;
+		return;
 
 	int error;
 #if MINIUPNPC_API_VERSION < 14
@@ -99,28 +93,19 @@ bool UPnPClient::doDiscover()
 #endif
 	if(!d->devices) {
 		qWarning("UPnP: Error (%d) discovering devices!", error);
-		return false;
 	}
 
 
 	char lanaddr[64];
-	int i = UPNP_GetValidIGD(d->devices, &d->urls, &d->data, lanaddr, sizeof(lanaddr));
-	if(i==1) {
-		// Valid IGD found
-		return true;
-	} else {
-		qWarning("UPnP: Valid IGD not found! (rval=%d)", i);
-		return false;
-	}
+	UPNP_GetValidIGD(d->devices, &d->urls, &d->data, lanaddr, sizeof(lanaddr));
 }
 
 void UPnPClient::doActivateForward(int port)
 {
-	if(!doDiscover())
-			return;
+	doDiscover();
 
-	QByteArray internalAddr = WhatIsMyIp::guessLocalAddress().toUtf8();
-	QByteArray portstr = QByteArray::number(port);
+	const QByteArray internalAddr = WhatIsMyIp::guessLocalAddress().toUtf8();
+	const QByteArray portstr = QByteArray::number(port);
 
 	int r = UPNP_AddPortMapping(
 		d->urls.controlURL,
@@ -161,12 +146,11 @@ void UPnPClient::doActivateForward(int port)
 
 void UPnPClient::doDeactivateForward(int port)
 {
-	if(!doDiscover())
-		return;
+	doDiscover();
 
-	QByteArray portstr = QByteArray::number(port);
+	const QByteArray portstr = QByteArray::number(port);
 
-	int r = UPNP_DeletePortMapping(
+	const int r = UPNP_DeletePortMapping(
 		d->urls.controlURL,
 		d->data.first.servicetype,
 		portstr.constData(),
@@ -179,19 +163,19 @@ void UPnPClient::doDeactivateForward(int port)
 
 void UPnPClient::doFetchExternalIp()
 {
+	doDiscover();
+
 	char externalIpAddress[40];
 
-	int r = UPNP_GetExternalIPAddress(
+	const int r = UPNP_GetExternalIPAddress(
 		d->urls.controlURL,
 		d->data.first.servicetype,
 		externalIpAddress);
 
 	if(r != UPNPCOMMAND_SUCCESS) {
-		qWarning("UPnP: external IP fetching failed.");
+		qWarning("UPnP: external IP fetching failed. (code=%d)", r);
 
 	} else {
 		emit externalIp(QString::fromUtf8(externalIpAddress));
 	}
-}
-
 }

@@ -34,7 +34,29 @@ AclFilter::AclFilter(QObject *parent)
 {
 }
 
-void AclFilter::reset(int myId, bool localMode)
+AclFilter *AclFilter::clone(QObject *newParent) const
+{
+	AclFilter *f = new AclFilter(newParent);
+
+	f->m_myId = m_myId;
+	f->m_isOperator = m_isOperator;
+	f->m_isTrusted = m_isTrusted;
+	f->m_sessionLocked = m_sessionLocked;
+	f->m_localUserLocked = m_localUserLocked;
+
+	f->m_layers = m_layers;
+	f->m_ops = m_ops;
+	f->m_trusted = m_trusted;
+	f->m_auth = m_auth;
+	f->m_userlocks = m_userlocks;
+	f->m_protectedAnnotations = m_protectedAnnotations;
+	for(int i=0;i<FeatureCount;++i)
+		f->m_featureTiers[i] = m_featureTiers[i];
+
+	return f;
+}
+
+void AclFilter::reset(uint8_t myId, bool localMode)
 {
 	m_layers.clear();
 	m_myId = myId;
@@ -65,6 +87,14 @@ void AclFilter::reset(int myId, bool localMode)
 	setFeature(           Feature::Laser, Tier::Guest);
 	setFeature(            Feature::Undo, Tier::Guest);
 	static_assert(FeatureCount == 9, "missing default feature tiers");
+}
+
+void AclFilter::setOnlineMode(uint8_t myId)
+{
+	m_myId = myId;
+	// We will soon get the correct values for these
+	m_isOperator = false;
+	m_isTrusted = false;
 }
 
 // Get the ID of the layer's creator. This assumes the ID prefixing convention is used.

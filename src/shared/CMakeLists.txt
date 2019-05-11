@@ -57,6 +57,17 @@ else( Sodium_FOUND )
 	message(WARNING "Libsodium not found: Ext-auth support not enabled" )
 endif( Sodium_FOUND )
 
+if(LIBMINIUPNPC_FOUND)
+	set ( SOURCES ${SOURCES} util/upnp.cpp )
+endif()
+
+if(KF5DNSSD_FOUND)
+	set( SOURCES ${SOURCES}
+		listings/zeroconfdiscovery.cpp
+		listings/zeroconfannouncement.cpp
+	)
+endif()
+
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})
 
 target_link_libraries(${DPSHAREDLIB} Qt5::Network)
@@ -64,6 +75,17 @@ target_link_libraries(${DPSHAREDLIB} KF5::Archive)
 
 if( Sodium_FOUND )
 	target_link_libraries(${DPSHAREDLIB} ${SODIUM_LIBRARY})
+endif()
+
+if(LIBMINIUPNPC_FOUND)
+	target_link_libraries(${DPSHAREDLIB} ${LIBMINIUPNPC_LIBRARIES})
+	if ( WIN32 )
+		target_link_libraries (${DPSHAREDLIB} iphlpapi)
+	endif ( WIN32 )
+endif()
+
+if(KF5DNSSD_FOUND)
+	target_link_libraries(${DPSHAREDLIB} KF5::DNSSD)
 endif()
 
 if(TESTS)

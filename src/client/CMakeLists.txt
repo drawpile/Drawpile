@@ -38,8 +38,6 @@ set (
 	net/tcpserver.cpp
 	net/login.cpp
 	net/loginsessions.cpp
-	net/serverthread.cpp
-	net/builtinserver.cpp
 	net/sessionlistingmodel.cpp
 	net/banlistmodel.cpp
 	net/announcementlist.cpp
@@ -109,19 +107,6 @@ if(GIF_FOUND)
 	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
 endif()
 
-if(LIBMINIUPNPC_FOUND)
-	set ( SOURCES ${SOURCES} net/upnp.cpp )
-	add_definitions(-DHAVE_UPNP)
-endif()
-
-if(KF5DNSSD_FOUND) 
-	set(
-		SOURCES ${SOURCES}
-		net/zeroconfdiscovery.cpp
-	)
-	add_definitions(-DHAVE_DNSSD)
-endif()
-
 if(LIBVPX_FOUND)
 	set(
 		SOURCES ${SOURCES}
@@ -156,19 +141,8 @@ add_library (
 
 target_link_libraries(${DPCLIENTLIB} ${DPSHAREDLIB} Qt5::Gui Qt5::Network)
 
-if(KF5DNSSD_FOUND) 
-	target_link_libraries(${DPCLIENTLIB} KF5::DNSSD)
-endif() 
-
 if(GIF_FOUND)
 	target_link_libraries(${DPCLIENTLIB} ${GIF_LIBRARIES})
-endif()
-
-if(LIBMINIUPNPC_FOUND)
-	target_link_libraries(${DPCLIENTLIB} ${LIBMINIUPNPC_LIBRARIES})
-	if ( WIN32 )
-		target_link_libraries (${DPCLIENTLIB} iphlpapi)
-	endif ( WIN32 )
 endif()
 
 if(LIBVPX_FOUND)

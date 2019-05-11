@@ -81,16 +81,12 @@ namespace config {
 //! Settings that are not adjustable after the server has started
 struct InternalConfig {
 	QString localHostname; // Hostname of this server to use in session announcements
-	int realPort;          // The port the server is listening on
-	int announcePort;      // The port to use in session announcements
+	int realPort = 27750;  // The port the server is listening on
+	int announcePort = 0;  // The port to use in session announcements
 	QUrl extAuthUrl;       // URL of the external authentication server
 	QUrl reportUrl;        // Abuse report handler backend URL
 
 	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
-
-	InternalConfig()
-		: realPort(27750), announcePort(0)
-	{ }
 };
 
 struct RegisteredUser {

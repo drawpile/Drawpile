@@ -25,7 +25,7 @@
 #include "../shared/util/whatismyip.h"
 
 #ifdef HAVE_UPNP
-#include "net/upnp.h"
+#include "../shared/util/upnp.h"
 #endif
 
 #include <QAction>
@@ -91,7 +91,7 @@ NetStatus::NetStatus(QWidget *parent)
 	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
 
 #ifdef HAVE_UPNP
-	connect(net::UPnPClient::instance(), SIGNAL(externalIp(QString)), this, SLOT(externalIpDiscovered(QString)));
+	connect(UPnPClient::instance(), &UPnPClient::externalIp, this, &NetStatus::externalIpDiscovered);
 #endif
 
 	// Option to hide the server address

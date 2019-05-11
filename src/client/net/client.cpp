@@ -71,7 +71,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
 	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
 
-	if(loginhandler->mode() == LoginHandler::HOST)
+	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
 		loginhandler->setUserId(m_myId);
 
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
@@ -105,12 +105,13 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator)
+void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset)
 {
 	m_sessionId = sessionId;
 	m_myId = userid;
 	m_moderator = moderator;
 	m_isAuthenticated = auth;
+	m_supportsAutoReset = supportsAutoReset;
 
 	emit serverLoggedin(join);
 }

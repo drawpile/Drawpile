@@ -73,9 +73,13 @@ public:
 	};
 
 	explicit AclFilter(QObject *parent=nullptr);
+	AclFilter *clone(QObject *newParent=nullptr) const;
 
 	//! Reset all access controls
-	void reset(int myId, bool localMode);
+	void reset(uint8_t myId, bool localMode);
+
+	//! Go online mode: refresh status bits
+	void setOnlineMode(uint8_t myId);
 
 	/**
 	 * @brief Filter a message

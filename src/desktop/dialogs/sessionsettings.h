@@ -47,6 +47,9 @@ public:
 	//! Is persistence available at all on this server?
 	void setPersistenceEnabled(bool);
 
+	//! Is autoreset supported?
+	void setAutoResetEnabled(bool);
+
 	//! Is the local user authenticated/not a guest?
 	void setAuthenticated(bool);
 
@@ -93,11 +96,12 @@ private:
 	QTimer *m_saveTimer;
 
 	QJsonObject m_sessionconf;
-	bool m_featureTiersChanged;
+	bool m_featureTiersChanged = false;
 
-	bool m_op;
-	bool m_isAuth;
-	bool m_canPersist;
+	bool m_op = false;
+	bool m_isAuth = false;
+	bool m_canPersist = false;
+	bool m_canAutoreset = false;
 };
 
 }

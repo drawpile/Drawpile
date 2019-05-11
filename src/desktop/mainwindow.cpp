@@ -96,7 +96,6 @@
 
 #include "net/client.h"
 #include "net/login.h"
-#include "net/serverthread.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
@@ -133,6 +132,8 @@
 
 #include "export/animation.h"
 #include "export/videoexporter.h"
+
+#include "../thicksrv/builtinserver.h"
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
@@ -1371,29 +1372,40 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	}
 
 	// Start server if hosting locally
-	if(useremote==false) {
-		net::ServerThread *server = new net::ServerThread;
-		server->setDeleteOnExit();
+	if(!useremote) {
+		auto *server = new server::BuiltinServer(
+			m_doc->canvas()->stateTracker(),
+			m_doc->canvas()->aclFilter(),
+			this);
 
-		int port = server->startServer(dlg->getTitle());
-		if(!port) {
-			QMessageBox::warning(this, tr("Host Session"), server->errorString());
-			dlg->show();
+		QString errorMessage;
+		if(!server->start(&errorMessage)) {
+			QMessageBox::warning(this, tr("Host Session"), errorMessage);
 			delete server;
 			return;
 		}
 
-		if(!server->isOnDefaultPort())
-			address.setPort(port);
+		connect(m_doc->client(), &net::Client::serverDisconnected, server, &server::BuiltinServer::stop);
+		connect(m_doc->canvas()->stateTracker(), &canvas::StateTracker::softResetPoint, server, &server::BuiltinServer::doInternalReset);
+
+		if(server->port() != DRAWPILE_PROTO_DEFAULT_PORT)
+			address.setPort(server->port());
 	}
 
 	// Connect to server
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, this);
+	net::LoginHandler *login = new net::LoginHandler(
+		useremote ? net::LoginHandler::Mode::HostRemote : net::LoginHandler::Mode::HostBuiltin,
+		address,
+		this);
+	login->setUserId(m_doc->canvas()->localUserId());
 	login->setSessionAlias(dlg->getSessionAlias());
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
-	login->setInitialState(m_doc->canvas()->generateSnapshot());
+	if(useremote) {
+		login->setInitialState(m_doc->canvas()->generateSnapshot());
+	}
+
 	(new dialogs::LoginDialog(login, this))->show();
 
 	m_doc->client()->connectToServer(login);
@@ -1549,7 +1561,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 		return;
 	}
 
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::Mode::Join, url, this);
 	auto *dlg = new dialogs::LoginDialog(login, this);
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
 	connect(m_doc, &Document::serverLoggedIn, dlg, [dlg,this](bool join) {
@@ -1644,6 +1656,7 @@ void MainWindow::onServerLogin()
 	m_chatbox->loggedIn(m_doc->client()->myId());
 	m_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
+	m_sessionSettings->setAutoResetEnabled(m_doc->client()->sessionSupportsAutoReset());
 	m_sessionSettings->setAuthenticated(m_doc->client()->isAuthenticated());
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());

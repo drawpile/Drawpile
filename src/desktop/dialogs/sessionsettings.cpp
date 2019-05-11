@@ -43,8 +43,7 @@ using widgets::PresetSelector;
 namespace dialogs {
 
 SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
-	: QDialog(parent), m_ui(new Ui_SessionSettingsDialog), m_doc(doc),
-	  m_featureTiersChanged(false), m_canPersist(false)
+	: QDialog(parent), m_ui(new Ui_SessionSettingsDialog), m_doc(doc)
 {
 	Q_ASSERT(doc);
 	m_ui->setupUi(this);
@@ -166,6 +165,12 @@ void SessionSettingsDialog::setPersistenceEnabled(bool enable)
 	m_canPersist = enable;
 }
 
+void SessionSettingsDialog::setAutoResetEnabled(bool enable)
+{
+	m_ui->autoresetThreshold->setEnabled(m_op && enable);
+	m_canAutoreset = enable;
+}
+
 void SessionSettingsDialog::setAuthenticated(bool auth)
 {
 	m_isAuth = auth;
@@ -208,6 +213,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		featureBox(canvas::Feature(i))->setEnabled(op);
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
+	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
 	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
 	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);

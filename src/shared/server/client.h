@@ -240,6 +240,15 @@ public:
 	bool isHoldLocked() const;
 
 	/**
+	 * @brief Block all messages sent to this user
+	 *
+	 * This state is set when a fresh reset is imminent and we don't want to send
+	 * any messages to the client before that happens.
+	 */
+	void setAwaitingReset(bool awaiting);
+	bool isAwaitingReset() const;
+
+	/**
 	 * @brief Write a log entry
 	 *
 	 * The user and session fields are filled in automatically.

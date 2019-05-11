@@ -85,12 +85,17 @@ uint8_t CanvasModel::localUserId() const
 	return m_statetracker->localId();
 }
 
-void CanvasModel::connectedToServer(uint8_t myUserId)
+void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
 	m_statetracker->setLocalId(myUserId);
-	m_aclfilter->reset(myUserId, false);
+
+	if(join)
+		m_aclfilter->reset(myUserId, false);
+	else
+		m_aclfilter->setOnlineMode(myUserId);
+
 	m_userlist->reset();
 	m_mode = Mode::Online;
 }
@@ -482,11 +487,10 @@ void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
 
 void CanvasModel::metaSoftReset(uint8_t resetterId)
 {
-	// Soft reset not fully implemented yet: this client can't initiate soft resets (yet)
-	if(resetterId == localUserId())
-		qWarning("Got soft SoftResetPoint(%d), but that's us!", resetterId);
-
 	m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeTruncatePoint());
+
+	if(resetterId == localUserId())
+		m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeSoftResetPoint());
 }
 
 }

@@ -36,6 +36,8 @@ public:
 
 	void cleanupHistoryCache();
 
+	bool supportsAutoReset() const override { return true; }
+
 protected:
 	void addToHistory(protocol::MessagePtr msg) override;
 	void onSessionReset() override;

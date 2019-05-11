@@ -24,11 +24,11 @@ include ( "config/Names.cmake" )
 
 include(KDEInstallDirs)
 
-### options ###
+### options
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile dedicated server" ON )
 option ( SERVERGUI "Enable server GUI" ON )
-option ( SMARTSRV "Compile smart server (EXPERIMENTAL)" OFF )
+option ( THICKSRV "Compile dedicated thick server (EXPERIMENTAL)" OFF )
 option ( TOOLS "Compile extra tools" OFF )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )

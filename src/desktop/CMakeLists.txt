@@ -237,7 +237,14 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(${CLIENTNAME} ${DPCLIENTLIB} Qt5::Widgets Qt5::Multimedia Qt5::Svg ${EXTRALIBS})
+target_link_libraries(${CLIENTNAME}
+	${DPCLIENTLIB}
+	thicksrvlib
+	Qt5::Widgets
+	Qt5::Multimedia
+	Qt5::Svg
+	${EXTRALIBS}
+)
 
 if(QTCOLORWIDGETS_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORWIDGETS_LIBRARIES})

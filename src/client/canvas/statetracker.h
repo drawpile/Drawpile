@@ -217,6 +217,8 @@ signals:
 	void catchupProgress(int percent);
 	void sequencePoint(int);
 
+	void softResetPoint();
+
 public slots:
 	void previewLayerOpacity(int id, float opacity);
 

@@ -35,23 +35,35 @@ namespace server {
 class ThickSession : public Session {
 	Q_OBJECT
 public:
+	/**
+	 * Construct a fully self contained ThickSession
+	 */
 	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 
 	void readyToAutoReset(int ctxId) override;
 
+	bool supportsAutoReset() const override { return false; }
+
 protected:
-    void addToHistory(protocol::MessagePtr msg) override;
+	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
+
+	void addToHistory(protocol::MessagePtr msg) override;
     void onSessionReset() override;
 	void onClientJoin(Client *client, bool host) override;
 
-private:
 	void internalReset();
 
+	canvas::StateTracker *stateTracker() { return m_statetracker; }
+
+private:
 	canvas::StateTracker *m_statetracker;
 	canvas::AclFilter *m_aclfilter;
 
 	protocol::MessageList m_resetImage;
 	uint m_resetImageSize = 0;
+
+	QString m_pinnedMessage;
+	int m_defaultLayer = 0;
 };
 
 }

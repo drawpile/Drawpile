@@ -154,9 +154,10 @@ void TcpServer::loginSuccess()
 	emit loggedIn(
 		m_loginstate->sessionId(),
 		m_loginstate->userId(),
-		m_loginstate->mode() == LoginHandler::JOIN,
+		m_loginstate->mode() == LoginHandler::Mode::Join,
 		m_loginstate->isAuthenticated(),
-		m_loginstate->hasUserFlag("MOD")
+		m_loginstate->hasUserFlag("MOD"),
+		!m_loginstate->sessionFlags().contains("NOAUTORESET")
 		);
 
 	m_loginstate->deleteLater();

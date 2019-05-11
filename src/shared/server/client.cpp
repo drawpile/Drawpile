@@ -54,6 +54,7 @@ struct Client::Private {
 	bool isAuthenticated = false;
 	bool isMuted = false;
 	bool isHoldLocked = false;
+	bool isAwaitingReset = false;
 
 	Private(QTcpSocket *socket, ServerLog *logger)
 		: socket(socket), logger(logger)
@@ -271,12 +272,19 @@ QHostAddress Client::peerAddress() const
 
 void Client::sendDirectMessage(protocol::MessagePtr msg)
 {
-	d->msgqueue->send(msg);
+	if(!d->isAwaitingReset || msg->isControl())
+		d->msgqueue->send(msg);
 }
 
 void Client::sendDirectMessage(const protocol::MessageList &msgs)
 {
-	d->msgqueue->send(msgs);
+	if(d->isAwaitingReset) {
+		for(MessagePtr msg : msgs)
+			if(msg->isControl())
+				d->msgqueue->send(msg);
+	} else {
+		d->msgqueue->send(msgs);
+	}
 }
 
 void Client::sendSystemChat(const QString &message)
@@ -374,6 +382,16 @@ void Client::setHoldLocked(bool lock)
 bool Client::isHoldLocked() const
 {
 	return d->isHoldLocked;
+}
+
+void Client::setAwaitingReset(bool awaiting)
+{
+	d->isAwaitingReset = awaiting;
+}
+
+bool Client::isAwaitingReset() const
+{
+	return d->isAwaitingReset;
 }
 
 bool Client::hasSslSupport() const

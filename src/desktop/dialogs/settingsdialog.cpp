@@ -307,7 +307,6 @@ void SettingsDialog::restoreSettings()
 
 	cfg.beginGroup("settings/server");
 	m_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
-	m_ui->historylimit->setValue(cfg.value("historylimit", 0).toDouble());
 	m_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
 	m_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 #ifdef HAVE_DNSSD
@@ -407,7 +406,6 @@ void SettingsDialog::rememberSettings()
 	else
 		cfg.setValue("port", m_ui->serverport->value());
 
-	cfg.setValue("historylimit", m_ui->historylimit->value());
 	cfg.setValue("autoreset", m_ui->lowspaceAutoreset->isChecked());
 	cfg.setValue("timeout", m_ui->connTimeout->value());
 	cfg.setValue("dnssd", m_ui->dnssd->isChecked());

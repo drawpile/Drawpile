@@ -90,7 +90,7 @@ public:
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(uint8_t myUserId);
+	void connectedToServer(uint8_t myUserId, bool join);
 	void disconnectedFromServer();
 	void startPlayback();
 	void endPlayback();
