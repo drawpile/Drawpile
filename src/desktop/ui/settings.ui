@@ -82,7 +82,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -585,28 +585,6 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
-             <widget class="QDoubleSpinBox" name="historylimit">
-              <property name="specialValueText">
-               <string>unlimited</string>
-              </property>
-              <property name="suffix">
-               <string> Mb</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1024.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
             <item row="8" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
@@ -651,13 +629,6 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
-             <widget class="QCheckBox" name="lowspaceAutoreset">
-              <property name="text">
-               <string>Automatically reset when space is low</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="1">
              <spacer name="verticalSpacer_6">
               <property name="orientation">
@@ -683,6 +654,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="lowspaceAutoreset">
+              <property name="text">
+               <string>Automatically reset when space is low</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
