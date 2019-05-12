@@ -5,6 +5,7 @@
  * Ctrl+C shortcut now works in the chat box
  * Added support for read-only list servers
  * Removed drawpile-srv argument `--secure` (secure mode is now always used if TLS is enabled)
+ * The built-in server is now based on the new Thick Server
 
 2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session
