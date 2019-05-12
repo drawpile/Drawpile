@@ -59,6 +59,7 @@ endif( Sodium_FOUND )
 
 if(LIBMINIUPNPC_FOUND)
 	set ( SOURCES ${SOURCES} util/upnp.cpp )
+	include_directories(system "${LIBMINIUPNPC_INCLUDE_DIR}")
 endif()
 
 if(KF5DNSSD_FOUND)

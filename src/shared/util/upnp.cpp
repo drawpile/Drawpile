@@ -24,9 +24,9 @@
 
 #define MINIUPNP_STATICLIB
 
-#include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/upnpcommands.h>
-#include <miniupnpc/upnperrors.h>
+#include <miniupnpc.h>
+#include <upnpcommands.h>
+#include <upnperrors.h>
 
 struct UPnPClient::Private {
 	UPNPDev *devices = nullptr;
