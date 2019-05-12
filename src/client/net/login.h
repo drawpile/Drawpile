@@ -410,7 +410,6 @@ private:
 
 	// Server flags
 	bool m_multisession;
-	bool m_tls;
 	bool m_canPersist;
 	bool m_canReport;
 	bool m_mustAuth;

@@ -39,8 +39,7 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	m_tpls(nullptr),
-	m_useFiledSessions(false),
-	m_mustSecure(false)
+	m_useFiledSessions(false)
 {
 	m_announcements = new sessionlisting::Announcements(config, this);
 

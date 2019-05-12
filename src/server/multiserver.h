@@ -44,7 +44,6 @@ public:
 	explicit MultiServer(ServerConfig *config, QObject *parent=0);
 
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
-	void setMustSecure(bool secure);
 	void setAutoStop(bool autostop);
 	void setRecordingPath(const QString &path);
 	void setSessionDirectory(const QDir &dir);

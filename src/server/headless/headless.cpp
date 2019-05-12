@@ -96,10 +96,6 @@ bool start() {
 	QCommandLineOption sslKeyOption("ssl-key", "SSL key file", "key");
 	parser.addOption(sslKeyOption);
 
-	// --secure, -S
-	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Mandatory SSL mode");
-	parser.addOption(secureOption);
-
 	// --record <path>
 	QCommandLineOption recordOption("record", "Record sessions", "path");
 	parser.addOption(recordOption);
@@ -232,7 +228,6 @@ bool start() {
 		QString sslKey = parser.value(sslKeyOption);
 		if(!sslCert.isEmpty() && !sslKey.isEmpty()) {
 			server->setSslCertFile(sslCert, sslKey);
-			server->setMustSecure(parser.isSet(secureOption));
 			server::SslServer::requireForwardSecrecy();
 		}
 	}

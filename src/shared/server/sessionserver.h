@@ -70,13 +70,6 @@ public:
 	 */
 	const ServerConfig *config() const { return m_config; }
 
-	/**
-	 * @brief Set whether a secure connection is mandatory
-	 * @param mustSecure
-	 */
-	void setMustSecure(bool mustSecure) { m_mustSecure = mustSecure; }
-	bool mustSecure() const { return m_mustSecure; }
-
 #ifndef NDEBUG
 	void setRandomLag(uint lag) { m_randomlag = lag; }
 #endif
@@ -207,8 +200,6 @@ private:
 
 	QList<Session*> m_sessions;
 	QList<ThinServerClient*> m_clients;
-
-	bool m_mustSecure;
 
 #ifndef NDEBUG
 	uint m_randomlag;

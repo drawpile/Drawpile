@@ -69,7 +69,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	  m_address(url),
 	  m_state(EXPECT_HELLO),
 	  m_multisession(false),
-	  m_tls(false),
 	  m_canPersist(false),
 	  m_canReport(false),
 	  m_needUserPassword(false),
@@ -175,19 +174,20 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	// Parse server capability flags
 	const QJsonArray flags = msg.reply["flags"].toArray();
 
-	bool mustSecure = false;
 	m_mustAuth = false;
 	m_needUserPassword = false;
 	m_canPersist = false;
 	m_canReport = false;
 
+	bool startTls = false;
+
 	for(const QJsonValue &flag : flags) {
 		if(flag == "MULTI") {
 			m_multisession = true;
 		} else if(flag == "TLS") {
-			m_tls = true;
+			startTls = true;
 		} else if(flag == "SECURE") {
-			mustSecure = true;
+			// Changed in 2.1.9 (although in practice we've always done this): this flag is implied by TLS
 		} else if(flag == "PERSIST") {
 			m_canPersist = true;
 		} else if(flag == "NOGUEST") {
@@ -202,7 +202,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	}
 
 	// Start secure mode if possible
-	if(QSslSocket::supportsSsl() && m_tls) {
+	if(startTls) {
 		m_state = EXPECT_STARTTLS;
 
 		protocol::ServerCommand cmd;
@@ -211,24 +211,17 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 
 	} else {
 		// If this is a trusted host, it should always be in secure mode
-		if(QSslSocket::supportsSsl() && getCertFile(TRUSTED_HOSTS, m_address.host()).exists()) {
+		if(getCertFile(TRUSTED_HOSTS, m_address.host()).exists()) {
 			failLogin(tr("Secure mode not enabled on a trusted host!"));
 			return;
 		}
 
-		if(mustSecure) {
-			failLogin(tr("This is a secure secure server, but secure connection support is not available!"));
-			return;
-		}
-
-		m_tls = false;
 		prepareToSendIdentity();
 	}
 }
 
 void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
 {
-	Q_ASSERT(m_tls);
 	if(msg.reply["startTls"].toBool()) {
 		startTls();
 
@@ -631,7 +624,6 @@ void LoginHandler::startTls()
 	connect(m_server->m_socket, &QSslSocket::encrypted, this, &LoginHandler::tlsStarted);
 	connect(m_server->m_socket, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, &LoginHandler::tlsError);
 
-	m_tls = false;
 	m_server->m_socket->startClientEncryption();
 }
 

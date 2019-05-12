@@ -4,6 +4,7 @@
  * Incompatible sessions are no longer hidden in from the Join dialog
  * Ctrl+C shortcut now works in the chat box
  * Added support for read-only list servers
+ * Removed drawpile-srv argument `--secure` (secure mode is now always used if TLS is enabled)
 
 2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session

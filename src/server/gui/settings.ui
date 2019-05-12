@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>459</width>
-    <height>586</height>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,79 +150,6 @@ border-radius: 3px;</string>
       <string>Security</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>TLS:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QRadioButton" name="tlsOff">
-        <property name="text">
-         <string>&amp;Disabled</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QRadioButton" name="tlsOn">
-        <property name="text">
-         <string>E&amp;nabled</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QRadioButton" name="tlsRequired">
-        <property name="text">
-         <string>Re&amp;quired</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Certificate:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLineEdit" name="certFile"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pickCert">
-          <property name="text">
-           <string>Select...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Key:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLineEdit" name="keyFile"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pickKey">
-          <property name="text">
-           <string>Select...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="extAuthUrl"/>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_9">
         <property name="toolTip">
@@ -230,6 +157,79 @@ border-radius: 3px;</string>
         </property>
         <property name="text">
          <string>Ext-auth server:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="extAuthUrl"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>TLS:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Certificate:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLineEdit" name="certFile">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pickCert">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Select...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Key:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLineEdit" name="keyFile">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pickKey">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Select...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="enableTls">
+        <property name="text">
+         <string>Enabled</string>
         </property>
        </widget>
       </item>
@@ -257,8 +257,8 @@ border-radius: 3px;</string>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>260</x>
-     <y>545</y>
+     <x>266</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -273,8 +273,8 @@ border-radius: 3px;</string>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>328</x>
-     <y>545</y>
+     <x>334</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -283,66 +283,66 @@ border-radius: 3px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>tlsOff</sender>
+   <sender>enableTls</sender>
    <signal>toggled(bool)</signal>
    <receiver>certFile</receiver>
-   <slot>setDisabled(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>395</y>
+     <x>198</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
-     <x>288</x>
-     <y>472</y>
+     <x>197</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>tlsOff</sender>
+   <sender>enableTls</sender>
    <signal>toggled(bool)</signal>
    <receiver>pickCert</receiver>
-   <slot>setDisabled(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>393</y>
+     <x>166</x>
+     <y>475</y>
     </hint>
     <hint type="destinationlabel">
-     <x>378</x>
-     <y>472</y>
+     <x>424</x>
+     <y>502</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>tlsOff</sender>
+   <sender>enableTls</sender>
    <signal>toggled(bool)</signal>
    <receiver>keyFile</receiver>
-   <slot>setDisabled(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>395</y>
+     <x>146</x>
+     <y>477</y>
     </hint>
     <hint type="destinationlabel">
-     <x>238</x>
-     <y>498</y>
+     <x>243</x>
+     <y>539</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>tlsOff</sender>
+   <sender>enableTls</sender>
    <signal>toggled(bool)</signal>
    <receiver>pickKey</receiver>
-   <slot>setDisabled(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>395</y>
+     <x>176</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
-     <x>378</x>
-     <y>498</y>
+     <x>420</x>
+     <y>544</y>
     </hint>
    </hints>
   </connection>

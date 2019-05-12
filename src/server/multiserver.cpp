@@ -64,11 +64,6 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	});
 }
 
-void MultiServer::setMustSecure(bool secure)
-{
-	m_sessions->setMustSecure(secure);
-}
-
 #ifndef NDEBUG
 void MultiServer::setRandomLag(uint lag)
 {

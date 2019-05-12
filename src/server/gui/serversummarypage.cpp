@@ -413,14 +413,7 @@ void ServerSummaryPage::showSettingsDialog()
 	ui.extAuthUrl->setEnabled(false);
 #endif
 
-	if(cfg.value("use-ssl", false).toBool()) {
-		if(cfg.value("force-ssl", false).toBool())
-			ui.tlsRequired->setChecked(true);
-		else
-			ui.tlsOn->setChecked(true);
-	} else {
-		ui.tlsOff->setChecked(true);
-	}
+	ui.enableTls->setChecked(cfg.value("use-ssl", false).toBool());
 	ui.certFile->setText(cfg.value("sslcert").toString());
 	ui.keyFile->setText(cfg.value("sslkey").toString());
 
@@ -432,8 +425,7 @@ void ServerSummaryPage::showSettingsDialog()
 		cfg.setValue("port", ui.port->value());
 		cfg.setValue("local-address", ui.localAddress->text());
 		cfg.setValue("extauth", ui.extAuthUrl->text());
-		cfg.setValue("use-ssl", !ui.tlsOff->isChecked());
-		cfg.setValue("force-ssl", ui.tlsRequired->isChecked());
+		cfg.setValue("use-ssl", ui.enableTls->isChecked());
 		cfg.setValue("sslcert", ui.certFile->text());
 		cfg.setValue("sslkey", ui.keyFile->text());
 

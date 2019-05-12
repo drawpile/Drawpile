@@ -88,13 +88,10 @@ void LocalServer::startServer()
 	QSettings cfg;
 	cfg.beginGroup("guiserver");
 
-	if(cfg.value("use-ssl", false).toBool()) {
+	if(cfg.value("use-ssl", false).toBool())
 		m_server->setSslCertFile(cfg.value("sslcert").toString(), cfg.value("sslkey").toString());
-		m_server->setMustSecure(cfg.value("force-ssl", false).toBool());
-	} else {
+	else
 		m_server->setSslCertFile(QString(), QString());
-		m_server->setMustSecure(false);
-	}
 
 	InternalConfig icfg = m_server->config()->internalConfig();
 	icfg.localHostname = cfg.value("local-address").toString();
