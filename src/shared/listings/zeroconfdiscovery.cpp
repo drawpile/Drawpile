@@ -57,6 +57,15 @@ void ZeroconfDiscovery::addService(KDNSSD::RemoteService::Ptr service)
 	QDateTime started = QDateTime::fromString(service->textData()["started"], Qt::ISODate);
 	started.setTimeSpec(Qt::UTC);
 
+	// If a host has both IPv4 and IPv6 addresses, the service may be announced on both.
+	if(!hostname.isNull()) {
+		const auto host = hostname.toString();
+		for(const auto &s : m_servers) {
+			if(s.host == host && s.port == service->port())
+				return;
+		}
+	}
+
 	m_servers << sessionlisting::Session {
 		hostname.isNull() ? service->hostName() : hostname.toString(),
 		service->port(),

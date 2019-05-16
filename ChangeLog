@@ -8,6 +8,7 @@
  * The built-in server is now based on the new Thick Server
  * Server: added support for real password hashing algorithms
  * Server: fixed crash when using file sessions (regression)
+ * Fixed duplicate entries in the "Nearby" server list
 
 2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session
