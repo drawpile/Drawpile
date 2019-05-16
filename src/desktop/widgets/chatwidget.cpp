@@ -155,6 +155,7 @@ ChatBox::ChatBox(QWidget *parent)
 	d->pinned = new QLabel(this);
 	d->pinned->setVisible(false);
 	d->pinned->setOpenExternalLinks(true);
+	d->pinned->setWordWrap(true);
 	d->pinned->setStyleSheet(QStringLiteral(
 		"background: #232629;"
 		"border-bottom: 1px solid #2980b9;"

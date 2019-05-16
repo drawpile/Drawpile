@@ -9,6 +9,7 @@
  * Server: added support for real password hashing algorithms
  * Server: fixed crash when using file sessions (regression)
  * Fixed duplicate entries in the "Nearby" server list
+ * Very long pinned chat messages no longer force the window to become wider
 
 2019-05-04 Version 2.1.8
  * Server: fixed potential crash when terminating session
