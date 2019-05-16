@@ -51,12 +51,9 @@ Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::
 
 	m_lastEventTime.start();
 
-	if(history->sizeInBytes()>0) {
-		// History already exists? Skip the Initialization state.
+	// History already exists? Skip the Initialization state.
+	if(history->sizeInBytes()>0)
 		m_state = State::Running;
-		m_history->addMessage(protocol::MessagePtr(new protocol::SessionOwner(0, QList<uint8_t>())));
-		sendUpdatedSessionProperties();
-	}
 
 	// Session announcements
 	connect(m_announcements, &sessionlisting::Announcements::announcementsChanged, this, &Session::onAnnouncementsChanged);
