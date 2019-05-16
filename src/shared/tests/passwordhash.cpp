@@ -23,6 +23,17 @@ private slots:
 		QTest::newRow("plaintext") << "plainpassword" << server::passwordhash::hash("plainpassword", server::passwordhash::PLAINTEXT) << true << true;
 		QTest::newRow("plaintext") << "plainpassword" << server::passwordhash::hash("wrong", server::passwordhash::PLAINTEXT) << false << true;
 		QTest::newRow("plaintext") << "plainpassword" << QByteArray("plain;plainpassword") << true << true;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+		QTest::newRow("pbkdf2") << "pbk" << server::passwordhash::hash("pbk", server::passwordhash::PBKDF2) << true << true;
+		QTest::newRow("pbkdf2(wrong)") << "pbkx" << server::passwordhash::hash("pbk", server::passwordhash::PBKDF2) << false << true;
+#endif
+
+#ifdef HAVE_LIBSODIUM
+		QTest::newRow("sodium") << "sodiumpass" << server::passwordhash::hash("sodiumpass", server::passwordhash::SODIUM) << true << true;
+		QTest::newRow("sodium(wrong)") << "sodiumpass2" << server::passwordhash::hash("sodiumpass", server::passwordhash::SODIUM) << false << true;
+#endif
+
 	}
 
 	void testPasswordChecking()

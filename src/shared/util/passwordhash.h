@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,8 +28,19 @@ namespace passwordhash {
 
 enum Algorithm {
 	PLAINTEXT,
-	SALTED_SHA1
+	SALTED_SHA1,
+	PBKDF2, // needs Qt >= 5.12
+	SODIUM, // the best algorithm offered by libsodium
+
+#if defined(HAVE_LIBSODIUM)
+	BEST_ALGORITHM = SODIUM
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+	BEST_ALGORITHM = PBKDF2
+#else
+	BEST_ALGORITHM = SALTED_SHA1
+#endif
 };
+
 
 /**
  * @brief Check the given password against the hash
@@ -46,9 +57,9 @@ bool check(const QString &password, const QByteArray &hash);
  *
  * @param password the password to hash
  * @param algorithm the algorithm to use
- * @return
+ * @return password hash that can be given to the check function
  */
-QByteArray hash(const QString &password, Algorithm algorithm=SALTED_SHA1);
+QByteArray hash(const QString &password, Algorithm algorithm=BEST_ALGORITHM);
 
 /**
  * @brief Check if the given password hash is valid and uses a supported algorithm.
