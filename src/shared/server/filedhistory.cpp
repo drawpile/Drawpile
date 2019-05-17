@@ -213,11 +213,11 @@ bool FiledHistory::load()
 				qWarning() << id().toString() << "founder set twice.";
 
 		} else if(cmd == "PASSWORD") {
-			if(passwordhash::isValidHash(params))
+			if(params.isEmpty() || passwordhash::isValidHash(params))
 				m_password = params;
 
 		} else if(cmd == "OPWORD") {
-			if(passwordhash::isValidHash(params))
+			if(params.isEmpty() || passwordhash::isValidHash(params))
 				m_opword = params;
 
 		} else if(cmd == "MAXUSERS") {
