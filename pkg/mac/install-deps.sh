@@ -6,9 +6,9 @@ set -e
 GIFLIB_URL=https://sourceforge.net/projects/giflib/files/giflib-5.1.4.tar.gz/download
 MINIUPNPC_URL=http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.1.tar.gz
 LIBVPX_URL=https://github.com/webmproject/libvpx/archive/v1.8.0.zip
-ECM_URL=https://download.kde.org/stable/frameworks/5.54/extra-cmake-modules-5.54.0.tar.xz
-KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.54/karchive-5.54.0.tar.xz
-KDNSSD_URL=https://download.kde.org/stable/frameworks/5.54/kdnssd-5.54.0.tar.xz
+ECM_URL=https://download.kde.org/stable/frameworks/5.58/extra-cmake-modules-5.58.0.tar.xz
+KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.58/karchive-5.58.0.tar.xz
+KDNSSD_URL=https://download.kde.org/stable/frameworks/5.58/kdnssd-5.58.0.tar.xz
 
 ### Build flags
 export CFLAGS=-mmacosx-version-min=10.10
