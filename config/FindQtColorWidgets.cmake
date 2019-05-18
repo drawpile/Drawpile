@@ -1,4 +1,6 @@
-# Try to find QtColorWidgets (Qt5 version) (https://github.com/mbasaglia/Qt-Color-Widgets)
+# Try to find QtColorWidgets (Qt5 version) (https://gitlab.com/mattia.basaglia/Qt-Color-Widgets
+
+)
 # 
 # This will define
 # LIBQTCOLORWIDGETS_FOUND
