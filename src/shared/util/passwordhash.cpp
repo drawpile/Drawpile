@@ -78,7 +78,7 @@ bool isValidHash(const QByteArray &hash)
 		return hash.length() > 7 && hash.length() < 7+crypto_pwhash_STRBYTES;
 #else
 		qWarning("Libsodium needed to support Argon2 hashes!");
-		return;
+		return false;
 #endif
 	} else
 		return false;

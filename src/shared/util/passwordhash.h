@@ -20,6 +20,8 @@
 #ifndef PASSWORDHASH_H
 #define PASSWORDHASH_H
 
+#include <QtGlobal>
+
 class QByteArray;
 class QString;
 
