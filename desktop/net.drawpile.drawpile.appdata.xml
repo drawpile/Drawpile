@@ -23,6 +23,26 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.9" date="2019-05-19">
+      <url>https://drawpile.net/news/release-2.1.9/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed that disabled brush slots were still selectable with a keyboard shortcut</li>
+          <li>Fixed potential crash when logging in to a session</li>
+          <li>Incompatible sessions are no longer hidden in from the Join dialog</li>
+          <li>Ctrl+C shortcut now works in the chat box</li>
+          <li>Added support for read-only list servers</li>
+          <li>Removed drawpile-srv argument `--secure` (secure mode is now always used if TLS is enabled)</li>
+          <li>The built-in server is now based on the new Thick Server</li>
+          <li>Server: added support for real password hashing algorithms</li>
+          <li>Server: fixed crash when using file sessions (regression)</li>
+          <li>Fixed duplicate entries in the "Nearby" server list</li>
+          <li>Very long pinned chat messages no longer force the window to become wider</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.8" date="2019-05-04">
       <url>https://drawpile.net/news/release-2.1.8/</url>
       <description>

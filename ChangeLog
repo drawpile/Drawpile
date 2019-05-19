@@ -1,4 +1,4 @@
-2019-0?-?? Version 2.1.9
+2019-05-19 Version 2.1.9
  * Fixed that disabled brush slots were still selectable with a keyboard shortcut
  * Fixed potential crash when logging in to a session
  * Incompatible sessions are no longer hidden in from the Join dialog
