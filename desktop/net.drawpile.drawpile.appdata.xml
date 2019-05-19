@@ -41,7 +41,28 @@
           <li>Very long pinned chat messages no longer force the window to become wider</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup.exe</location>
+          <checksum type="sha256">f875215bd312df4596ef4ea448f4464be39f79ab512b76dd9fde263e98fc8d0a</checksum>
+          <size type="download">16484125</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup-w32.exe</location>
+          <checksum type="sha256">c91a4d3269e0317ec9746610859954fe8855980d0a26af9190c2dbf384fc924e</checksum>
+          <size type="download">15475260</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.9.dmg</location>
+          <checksum type="sha256">ea37d6922ca07bd4f3daba917dc17bd0cb4588e36de5dd4b33bd1abc26032ec6</checksum>
+          <size type="download">13996701</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.9.tar.gz</location>
+          <checksum type="sha256">f9985fe44fb4320c9e11c8f5f535b5a3eecfb683c58ccff8effb968a548840f1</checksum>
+          <size type="download">2484581</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.8" date="2019-05-04">
       <url>https://drawpile.net/news/release-2.1.8/</url>
