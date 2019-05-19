@@ -79,7 +79,7 @@ bool BuiltinServer::start(QString *errorMessage) {
 	Q_ASSERT(m_server == nullptr);
 
 	QSettings cfg;
-	cfg.beginGroup("server/settings");
+	cfg.beginGroup("settings/server");
 
 	m_server = new QTcpServer(this);
 	connect(m_server, &QTcpServer::newConnection, this, &BuiltinServer::newClient);
