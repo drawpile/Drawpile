@@ -55,50 +55,50 @@ public:
         gradient.setSpread(QGradient::RepeatSpread);
     }
 
-	void mouse_event(QMouseEvent *ev, GradientSlider* owner, bool allow_jumps)
-	{
-		QStyleOptionSlider opt;
-		owner->initStyleOption(&opt);
-		QRect slider_rect = owner->style()->subControlRect(
-			QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, owner
-		);
+    void mouse_event(QMouseEvent *ev, GradientSlider* owner, bool allow_jumps)
+    {
+        QStyleOptionSlider opt;
+        owner->initStyleOption(&opt);
+        QRect slider_rect = owner->style()->subControlRect(
+            QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, owner
+        );
 
-		if ( !allow_jumps && slider_rect.contains(ev->pos()) )
-			return;
+        if ( !allow_jumps && slider_rect.contains(ev->pos()) )
+            return;
 
-		QPoint center = slider_rect.center() - slider_rect.topLeft();
-		QPoint point = ev->pos() - center;
+        QPoint center = slider_rect.center() - slider_rect.topLeft();
+        QPoint point = ev->pos() - center;
 
-		QRect groove_rect = owner->style()->subControlRect(
-			QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, owner
-		);
+        QRect groove_rect = owner->style()->subControlRect(
+            QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, owner
+        );
 
-		int slider_length;
-		int slider_min;
-		int slider_max;
-		int pos;
+        int slider_length;
+        int slider_min;
+        int slider_max;
+        int pos;
 
-		if (owner->orientation() == Qt::Horizontal) {
-			slider_length = slider_rect.width();
-			slider_min = groove_rect.x();
-			slider_max = groove_rect.right() - slider_length + 1;
-			pos = point.x();
-		} else {
-			slider_length = slider_rect.height();
-			slider_min = groove_rect.y();
-			slider_max = groove_rect.bottom() - slider_length + 1;
-			pos = point.y();
-		}
-		owner->setSliderPosition(
-			QStyle::sliderValueFromPosition(
-				owner->minimum(),
-				owner->maximum(),
-				pos - slider_min,
-				slider_max - slider_min,
-				opt.upsideDown
-			)
-		);
-	}
+        if (owner->orientation() == Qt::Horizontal) {
+            slider_length = slider_rect.width();
+            slider_min = groove_rect.x();
+            slider_max = groove_rect.right() - slider_length + 1;
+            pos = point.x();
+        } else {
+            slider_length = slider_rect.height();
+            slider_min = groove_rect.y();
+            slider_max = groove_rect.bottom() - slider_length + 1;
+            pos = point.y();
+        }
+        owner->setSliderPosition(
+            QStyle::sliderValueFromPosition(
+                owner->minimum(),
+                owner->maximum(),
+                pos - slider_min,
+                slider_max - slider_min,
+                opt.upsideDown
+            )
+        );
+    }
 
 };
 
@@ -119,45 +119,45 @@ GradientSlider::~GradientSlider()
 
 void GradientSlider::mousePressEvent(QMouseEvent *ev)
 {
-	if ( ev->button() == Qt::LeftButton )
-	{
-		ev->accept();
-		setSliderDown(true);
-		p->mouse_event(ev, this, false);
-		update();
-	}
-	else
-	{
-		QSlider::mousePressEvent(ev);
-	}
+    if ( ev->button() == Qt::LeftButton )
+    {
+        ev->accept();
+        setSliderDown(true);
+        p->mouse_event(ev, this, false);
+        update();
+    }
+    else
+    {
+        QSlider::mousePressEvent(ev);
+    }
 }
 
 void GradientSlider::mouseMoveEvent(QMouseEvent *ev)
 {
-	if ( ev->buttons() & Qt::LeftButton )
-	{
-		ev->accept();
-		p->mouse_event(ev, this, true);
-		update();
-	}
-	else
-	{
-		QSlider::mouseMoveEvent(ev);
-	}
+    if ( ev->buttons() & Qt::LeftButton )
+    {
+        ev->accept();
+        p->mouse_event(ev, this, true);
+        update();
+    }
+    else
+    {
+        QSlider::mouseMoveEvent(ev);
+    }
 }
 
 void GradientSlider::mouseReleaseEvent(QMouseEvent *ev)
 {
-	if ( ev->button() == Qt::LeftButton )
-	{
-		ev->accept();
-		setSliderDown(false);
-		update();
-	}
-	else
-	{
-		QSlider::mousePressEvent(ev);
-	}
+    if ( ev->button() == Qt::LeftButton )
+    {
+        ev->accept();
+        setSliderDown(false);
+        update();
+    }
+    else
+    {
+        QSlider::mousePressEvent(ev);
+    }
 }
 
 QBrush GradientSlider::background() const
@@ -282,10 +282,7 @@ void GradientSlider::paintEvent(QPaintEvent *)
         opt_slider.state |= QStyle::State_Sunken;
         opt_slider.activeSubControls = QStyle::SC_SliderHandle;
     }
-#if 0 // this breaks slider rendering on macOS.
-    opt_slider.rect = style()->subControlRect(QStyle::CC_Slider,&opt_slider,
-                                              QStyle::SC_SliderHandle,this);
-#endif
+
     style()->drawComplexControl(QStyle::CC_Slider, &opt_slider, &painter, this);
 }
 

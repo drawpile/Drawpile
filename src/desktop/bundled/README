@@ -5,7 +5,10 @@ QtColorWidgets
 
 Color picker widgets. The bundled version is used only if the library is not found.
 
-Homepage: https://github.com/mbasaglia/Qt-Color-Widgets
+Homepage: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets
+
+Last commit ID: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets (06/2018)
+
 
 kis_tablet
 -----------

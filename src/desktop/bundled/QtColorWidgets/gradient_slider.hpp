@@ -100,9 +100,9 @@ public:
 protected:
     void paintEvent(QPaintEvent *ev) override;
 
-	void mousePressEvent(QMouseEvent *ev) override;
-	void mouseMoveEvent(QMouseEvent *ev) override;
-	void mouseReleaseEvent(QMouseEvent *ev) override;
+    void mousePressEvent(QMouseEvent *ev) override;
+    void mouseMoveEvent(QMouseEvent *ev) override;
+    void mouseReleaseEvent(QMouseEvent *ev) override;
 
 private:
     class Private;

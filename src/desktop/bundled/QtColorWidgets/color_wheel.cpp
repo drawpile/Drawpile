@@ -138,7 +138,7 @@ public:
      */
     void init_buffer(QSize size)
     {
-		size_t linear_size = size.width() * size.height();
+        std::size_t linear_size = size.width() * size.height();
         if ( inner_selector_buffer.size() == linear_size )
             return;
         inner_selector_buffer.resize(linear_size);

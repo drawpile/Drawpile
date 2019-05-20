@@ -73,7 +73,7 @@ Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug -DKIS_TABLET=on`
 
 For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
 
-[KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive
-[QtColorPicker]: https://github.com/mbasaglia/Qt-Color-Picker 
-[Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources
+[KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive  
+[QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets  
+[Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources  
 

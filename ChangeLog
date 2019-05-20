@@ -1,5 +1,6 @@
 2019-0?-?? Version 2.1.10
  * Fixed that built-in server settings were being ignored
+ * Updated bundled color widgets to latest upstream version
 
 2019-05-19 Version 2.1.9
  * Fixed that disabled brush slots were still selectable with a keyboard shortcut
