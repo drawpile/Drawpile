@@ -236,7 +236,7 @@ bool IndexBuilder::generateIndex(QDataStream &stream, Reader &reader)
 				messagesSinceLastEntry = 0;
 
 				// A snapshot is saved at each index entry
-				const canvas::StateSavepoint sp = statetracker.createSavepoint(-1);				
+				const canvas::StateSavepoint sp = statetracker.createSavepoint(0);
 				lastSnapshot = writeLayerStack(stream, sp.canvas(), lastSnapshot.tileMap);
 
 				// A thumbnail is saved no more often than once every THUMBNAIL_INTERVAL messages

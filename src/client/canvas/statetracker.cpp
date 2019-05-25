@@ -165,7 +165,7 @@ StateTracker::StateTracker(paintcore::LayerStack *image, LayerListModel *layerli
 	connect(m_queuetimer, &QTimer::timeout, this, &StateTracker::processQueuedCommands);
 
 	// Ensure that there is always at least one save point
-	makeSavepoint(0);
+	makeSavepoint(-1);
 }
 
 StateTracker::~StateTracker()
@@ -962,7 +962,7 @@ StateSavepoint StateTracker::createSavepoint(int pos)
 {
 	auto *data = new StateSavepoint::Data;
 	data->timestamp = QDateTime::currentMSecsSinceEpoch();
-	data->streampointer = pos<0 ? m_history.end() : pos;
+	data->streampointer = pos;
 	data->canvas = m_layerstack->makeSavepoint();
 	data->layermodel = m_layerlist->getLayers();
 
