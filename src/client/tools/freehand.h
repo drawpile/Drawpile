@@ -36,6 +36,8 @@ public:
 
 	bool allowSmoothing() const override { return true; }
 
+	void offsetActiveTool(int x, int y) override;
+
 private:
 	brushes::BrushEngine m_brushengine;
 	bool m_drawing;

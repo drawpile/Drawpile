@@ -88,7 +88,8 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		if(oldsize.isEmpty()) {
 			centerOn(m_scene->sceneRect().center());
 		} else {
-			scrollContentsBy(-xoff, -yoff);
+			const qreal z = m_zoom / 100.0;
+			scrollBy(xoff * z, yoff * z);
 		}
 		viewRectChanged();
 	});

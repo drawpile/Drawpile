@@ -31,6 +31,12 @@ void StrokeSmoother::setSmoothing(int strength)
 	reset();
 }
 
+void StrokeSmoother::addOffset(const QPointF &offset)
+{
+	for(int i=0;i<_points.size();++i)
+		_points[i] += offset;
+}
+
 void StrokeSmoother::addPoint(const paintcore::Point &point)
 {
 	Q_ASSERT(_points.size()>0);

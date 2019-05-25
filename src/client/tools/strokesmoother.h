@@ -76,6 +76,14 @@ public:
 	 */
 	paintcore::Point latestPoint() const { return at(0); }
 
+	/**
+	 * Add an offset to all stored points
+	 *
+	 * This is used to correct the brush position when the canvas
+	 * is resized mid-stroke.
+	 */
+	void addOffset(const QPointF &offset);
+
 private:
 	paintcore::Point at(int i) const;
 

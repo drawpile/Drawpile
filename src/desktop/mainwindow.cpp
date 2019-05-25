@@ -398,6 +398,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION)), &tools::AnnotationSettings::setSelectionId);
 
+	connect(m_canvasscene, &drawingboard::CanvasScene::canvasResized, m_doc->toolCtrl(), &tools::ToolController::offsetActiveTool);
+
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
 	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);

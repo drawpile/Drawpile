@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,6 +55,14 @@ public:
 	 * @return
 	 */
 	virtual protocol::MessageList takeDabs() = 0;
+
+	/**
+	 * @brief Add an offset to the current position
+	 *
+	 * This is used to fix the brushes actual position when
+	 * the canvas is resized while the local user is still drawing
+	 */
+	virtual void addOffset(int x, int y) = 0;
 };
 
 }

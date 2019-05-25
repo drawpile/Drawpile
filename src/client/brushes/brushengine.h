@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ public:
 	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override { Q_ASSERT(m_activeEngine); m_activeEngine->strokeTo(p, sourceLayer); }
 	void endStroke() override { Q_ASSERT(m_activeEngine); m_activeEngine->endStroke(); }
 	protocol::MessageList takeDabs() override { Q_ASSERT(m_activeEngine); return m_activeEngine->takeDabs(); }
+	void addOffset(int x, int y) override { Q_ASSERT(m_activeEngine); m_activeEngine->addOffset(x, y); }
 
 private:
 	BrushState *m_activeEngine;

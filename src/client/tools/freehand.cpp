@@ -88,5 +88,13 @@ void Freehand::end()
 	}
 }
 
+void Freehand::offsetActiveTool(int x, int y)
+{
+	if(m_drawing) {
+		qInfo("offsetting %d, %d", x, y);
+		m_brushengine.addOffset(x, y);
+	}
+}
+
 }
 

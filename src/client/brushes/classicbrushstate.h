@@ -85,6 +85,8 @@ public:
 		return dabs;
 	}
 
+	void addOffset(int x, int y) override;
+
 private:
 	void addDab(const paintcore::Point &point, quint32 color);
 

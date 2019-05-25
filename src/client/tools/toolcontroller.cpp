@@ -313,4 +313,11 @@ void ToolController::cancelMultipartDrawing()
 	m_activeTool->cancelMultipart();
 }
 
+void ToolController::offsetActiveTool(int xOffset, int yOffset)
+{
+	Q_ASSERT(m_activeTool);
+	m_activeTool->offsetActiveTool(xOffset, yOffset);
+	m_smoother.addOffset(QPointF(xOffset, yOffset));
+}
+
 }

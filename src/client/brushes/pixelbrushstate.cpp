@@ -56,6 +56,10 @@ void PixelBrushState::setBrush(const ClassicBrush &brush)
 		qWarning("Brush changed mid-stroke!");
 }
 
+void PixelBrushState::addOffset(int x, int y)
+{
+	m_lastPoint += QPointF(x, y);
+}
 void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Layer *sourceLayer)
 {
 	if(m_pendown) {

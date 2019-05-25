@@ -81,6 +81,14 @@ public:
 	//! Is there a multipart drawing operation in progress?
 	bool isMultipartDrawing() const;
 
+	/**
+	 * Apply an offset to the position of the active tool
+	 *
+	 * This is used to correct the tool position when the canvas is
+	 * resized while the local user is still drawing.
+	 */
+	void offsetActiveTool(int xOffset, int yOffset);
+
 public slots:
 	//! Start a new stroke
 	void startDrawing(const QPointF &point, qreal pressure, bool right, float zoom);

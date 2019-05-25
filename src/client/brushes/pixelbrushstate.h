@@ -85,6 +85,8 @@ public:
 		return dabs;
 	}
 
+	void addOffset(int x, int y) override;
+
 private:
 	void addDab(int x, int y, qreal pressure);
 
