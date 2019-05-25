@@ -827,18 +827,6 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 				}
 			}
 		}
-
-		// Release all reset points older than one minute
-		// TODO maybe make the time adjustable?
-		QMutableListIterator<StateSavepoint> rpi(m_resetpoints);
-		const qint64 cutoff = QDateTime::currentMSecsSinceEpoch() - (60 * 1000);
-		while(rpi.hasNext()) {
-			const StateSavepoint &sp = rpi.next();
-			if(sp.timestamp() < cutoff)
-				rpi.remove();
-			else // Note: we assume reset points are in chronological order.
-				break;
-		}
 	}
 
 	// Clear out history older than the oldest savepoint
@@ -991,7 +979,12 @@ void StateTracker::makeSavepoint(int pos)
 	// Looks like a good spot for a savepoint
 	const auto sp = createSavepoint(pos);
 	m_savepoints << sp;
-	m_resetpoints << sp;
+
+	if(m_resetpoints.isEmpty() || (sp.timestamp() - m_resetpoints.last().timestamp()) > (10*1000)) {
+		while(m_resetpoints.size() >= 6)
+			m_resetpoints.removeFirst();
+		m_resetpoints << sp;
+	}
 }
 
 
