@@ -36,6 +36,7 @@ class ChatBox: public QWidget
 	Q_OBJECT
 public:
 	explicit ChatBox(QWidget *parent=nullptr);
+	~ChatBox();
 
 	//! Focus the text input widget
 	void focusInput();

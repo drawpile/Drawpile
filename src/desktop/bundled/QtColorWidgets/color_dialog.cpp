@@ -61,6 +61,11 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     connect(p->ui.wheel,&ColorWheel::displayFlagsChanged,this, &ColorDialog::wheelFlagsChanged);
 }
 
+ColorDialog::~ColorDialog()
+{
+	delete p;
+}
+
 QSize ColorDialog::sizeHint() const
 {
     return QSize(400,0);

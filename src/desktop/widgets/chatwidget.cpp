@@ -187,6 +187,11 @@ ChatBox::ChatBox(QWidget *parent)
 	d->compactMode = QSettings().value("history/compactchat").toBool();
 }
 
+ChatBox::~ChatBox()
+{
+	delete d;
+}
+
 void ChatBox::Private::updatePreserveModeUi()
 {
 	const bool preserve = preserveChat && currentChat == 0;
