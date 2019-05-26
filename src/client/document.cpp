@@ -181,7 +181,12 @@ void Document::onServerLogin(bool join)
 	m_canvas->connectedToServer(m_client->myId(), join);
 
 	if(!m_recordOnConnect.isEmpty()) {
-		startRecording(m_recordOnConnect);
+		m_originalRecordingFilename = m_recordOnConnect;
+		startRecording(
+			m_recordOnConnect,
+			join ? protocol::MessageList() : m_canvas->generateSnapshot(),
+			nullptr
+		);
 		m_recordOnConnect = QString();
 	}
 

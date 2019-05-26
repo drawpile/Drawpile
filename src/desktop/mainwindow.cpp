@@ -1441,7 +1441,6 @@ void MainWindow::join(const QUrl &url)
 
 			dlg->rememberSettings();
 
-			// TOOD set recordSession somewhere. Settings dialog?
 			joinSession(url, dlg->autoRecordFilename());
 		}
 		dlg->deleteLater();
