@@ -28,7 +28,7 @@
 namespace dialogs {
 
 ServerLogDialog::ServerLogDialog(QWidget *parent)
-	: QDialog(parent)
+	: QDialog(parent), m_opMode(false)
 {
 	m_ui = new Ui_ServerLogDialog;
 	m_ui->setupUi(this);
