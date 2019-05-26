@@ -465,10 +465,6 @@ MainWindow::~MainWindow()
 	MacMenu::instance()->removeWindow(this);
 #endif
 
-	// Close playback dialog explicitly since it adds the miniplayer as a direct child
-	// of the main window, but deletes it itself.
-	delete m_playbackDialog;
-
 	// Make sure all child dialogs are closed
 	QObjectList lst = children();
 	for(QObject *obj : lst) {
