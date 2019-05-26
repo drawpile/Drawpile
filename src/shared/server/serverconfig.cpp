@@ -85,27 +85,25 @@ QVariant ServerConfig::getConfigVariant(ConfigKey key) const
 bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 {
 	// Type specific sanity check
-	if(!value.isEmpty()) {
-		switch(key.type) {
-		case ConfigKey::STRING:
-		case ConfigKey::BOOL:
-			// no type specific validation for these
-			break;
-		case ConfigKey::SIZE:
-			if(parseSizeString(value)<0)
-				return false;
-			break;
-		case ConfigKey::TIME:
-			if(parseTimeString(value)<0)
-				return false;
-			break;
-		case ConfigKey::INT: {
-			bool ok;
-			value.toInt(&ok);
-			if(!ok)
-				return false;
-			break;
-			}
+	switch(key.type) {
+	case ConfigKey::STRING:
+	case ConfigKey::BOOL:
+		// no type specific validation for these
+		break;
+	case ConfigKey::SIZE:
+		if(parseSizeString(value)<0)
+			return false;
+		break;
+	case ConfigKey::TIME:
+		if(parseTimeString(value)<0)
+			return false;
+		break;
+	case ConfigKey::INT: {
+		bool ok;
+		value.toInt(&ok);
+		if(!ok)
+			return false;
+		break;
 		}
 	}
 
