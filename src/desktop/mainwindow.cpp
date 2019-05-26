@@ -465,6 +465,11 @@ MainWindow::~MainWindow()
 	MacMenu::instance()->removeWindow(this);
 #endif
 
+	// Clear this out first so there will be no weird signals emitted
+	// while the document is being torn down.
+	m_view->setScene(nullptr);
+	delete m_canvasscene;
+
 	// Make sure all child dialogs are closed
 	QObjectList lst = children();
 	for(QObject *obj : lst) {
