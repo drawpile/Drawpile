@@ -5,6 +5,7 @@
  * Limited reset snapshots to one every 10 seconds
  * Fixed view jumping when canvas was resized
  * Fixed extra messages in the beginning of session recordings
+ * Server: fixed that web-admin API HTTP headers were case-sensitive
 
 2019-05-19 Version 2.1.9
  * Fixed that disabled brush slots were still selectable with a keyboard shortcut

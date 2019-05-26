@@ -78,8 +78,8 @@ void Webadmin::setSessions(MultiServer *server)
 			reqBodyDoc = QJsonDocument(params);
 
 		} else if(m == JsonApiMethod::Create|| m == JsonApiMethod::Update) {
-			if(req.headers()["Content-Type"] != "application/json") {
-				return HttpResponse::JsonErrorResponse("Content type should be application/json", 400);
+			if(req.headers()["content-type"] != "application/json") {
+				return HttpResponse::JsonErrorResponse("Content-Type should be application/json", 400);
 			}
 
 			QJsonParseError parseError;

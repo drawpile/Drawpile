@@ -348,6 +348,18 @@ QString MicroHttpd::version()
 	return QString::fromUtf8(MHD_get_version());
 }
 
+void HttpRequest::setHeaders(const QHash<QString,QString> &data) {
+	// headers are case-insensitive, so normalize them to lower case
+	QHashIterator<QString,QString> i(data);
+	QHash<QString, QString> newHeaders;
+	while(i.hasNext()) {
+		i.next();
+		newHeaders[i.key().toLower()] = i.value();
+	}
+
+	_headers = newHeaders;
+}
+
 HttpResponse HttpResponse::HtmlResponse(const QString &html)
 {
 	HttpResponse r(200, html.toUtf8());

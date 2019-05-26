@@ -104,7 +104,7 @@ public:
 	//! The regular expression match object that triggered this handler
 	const QRegularExpressionMatch pathMatch() const { return _match; }
 
-	//! HTTP headers
+	//! HTTP headers (note: all lower case)
 	const QHash<QString, QString> &headers() const { return _headers; }
 	
 	//! POST arguments
@@ -117,7 +117,7 @@ public:
 	const QByteArray body() const { return _body; }
 
 	void setUrlMatch(const QRegularExpressionMatch &match) { _match = match; }
-	void setHeaders(const QHash<QString,QString> &data) { _headers = data; }
+	void setHeaders(const QHash<QString,QString> &data);
 	void setPostData(const QHash<QString,QString> &data) { _postdata = data; }
 	void setGetData(const QHash<QString,QString> &data) { _getdata = data; }
 	void addBodyData(const char *data, int len) { _body.append(data, len); }
