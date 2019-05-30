@@ -38,7 +38,28 @@
           <li>Application version number is now shown in a tooltip if a session is incompatible</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup.exe</location>
+          <checksum type="sha256">d0287a5e4a32e96bdc68a6d7207e100c143a2e280d0d0bd9f258aef5cd9178ed</checksum>
+          <size type="download">16482543</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup-w32.exe</location>
+          <checksum type="sha256">47235f55987696113e6ed365ca85dfa441749e2f47817e4f9bb7b4c007870a1f</checksum>
+          <size type="download">15478542</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.10.dmg</location>
+          <checksum type="sha256">d3c38ad3e688bb59c5eb2aa722d7593efad695e7ab38f6f48ac352c4fa5a7ae7</checksum>
+          <size type="download">14001939</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.10.tar.gz</location>
+          <checksum type="sha256">1502ff00d87734d68b201894a59b53afd5a2ea3b33123fb2e2d8c0597eb9941c</checksum>
+          <size type="download">2485569</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.9" date="2019-05-19">
       <url>https://drawpile.net/news/release-2.1.9/</url>
