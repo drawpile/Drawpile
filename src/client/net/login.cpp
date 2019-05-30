@@ -462,16 +462,26 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 
 			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 
+			QString incompatibleSeries;
+			if(!protoVer.isCurrent()) {
+				if(protoVer.isFuture())
+					incompatibleSeries = tr("New version");
+				else
+					incompatibleSeries = protoVer.versionName();
+				if(incompatibleSeries.isEmpty())
+					incompatibleSeries = tr("Unknown version");
+			}
+
 			const LoginSession session {
 				js["id"].toString(),
 				js["alias"].toString(),
 				js["title"].toString(),
 				js["founder"].toString(),
+				incompatibleSeries,
 				js["userCount"].toInt(),
 				js["hasPassword"].toBool(),
 				js["persistent"].toBool(),
 				js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest),
-				!protoVer.isCurrent(),
 				js["nsfm"].toBool()
 			};
 
@@ -480,7 +490,7 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 			if(!m_autoJoinId.isEmpty() && (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
 
-				if(session.incompatible || (session.nsfm && pclevel >= parentalcontrols::Level::NoJoin))
+				if(!session.incompatibleSeries.isEmpty() || (session.nsfm && pclevel >= parentalcontrols::Level::NoJoin))
 					m_autoJoinId = QString();
 				else
 					joinSelectedSession(m_autoJoinId, session.needPassword);
@@ -505,8 +515,8 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 		} else if(session.nsfm && parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
 			failLogin(tr("Blocked by parental controls"));
 
-		} else if(session.incompatible) {
-				failLogin(tr("Session for a different Drawpile version in progress!"));
+		} else if(!session.incompatibleSeries.isEmpty()) {
+				failLogin(tr("Session for a different Drawpile version (%s) in progress!").arg(session.incompatibleSeries));
 
 		} else {
 			joinSelectedSession(session.id, session.needPassword);

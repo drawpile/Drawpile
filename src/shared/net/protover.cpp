@@ -44,6 +44,15 @@ bool ProtocolVersion::isValid() const
 	return true;
 }
 
+quint64 ProtocolVersion::asInteger() const
+{
+	const quint64 a = qBound(0ull, quint64(m_server), quint64((1<<21) - 1));
+	const quint64 b = qBound(0ull, quint64(m_major), quint64((1<<21) - 1));
+	const quint64 c = qBound(0ull, quint64(m_minor), quint64((1<<21) - 1));
+
+	return (a<<42) | (b<<21) | c;
+}
+
 ProtocolVersion ProtocolVersion::current()
 {
 	return ProtocolVersion(
@@ -60,6 +69,27 @@ bool ProtocolVersion::isCurrent() const
 			m_server == DRAWPILE_PROTO_SERVER_VERSION &&
 			m_major == DRAWPILE_PROTO_MAJOR_VERSION &&
 			m_minor == DRAWPILE_PROTO_MINOR_VERSION;
+}
+
+bool ProtocolVersion::isFuture() const
+{
+	return
+		m_namespace == QStringLiteral("dp") &&
+		asInteger() > current().asInteger();
+}
+
+QString ProtocolVersion::versionName() const
+{
+	if(m_namespace != QStringLiteral("dp"))
+		return QString();
+
+	if(m_server == 4 && m_major == 21 && m_minor == 2)
+		return QStringLiteral("2.1.x");
+	else if(m_server == 4 && m_major == 20 && m_minor == 1)
+		return QStringLiteral("2.0.x");
+
+	// Unknown (possibly future) version
+	return QString();
 }
 
 ProtocolVersion ProtocolVersion::fromString(const QString &str)

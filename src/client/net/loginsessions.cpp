@@ -72,7 +72,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 	} else if(role == Qt::DecorationRole) {
 		if(index.column()==0) {
-			if(ls.incompatible)
+			if(!ls.incompatibleSeries.isEmpty())
 				return icon::fromTheme("dontknow");
 			else if(ls.closed)
 				return icon::fromTheme("im-ban-user");
@@ -84,8 +84,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		}
 
 	} else if(role == Qt::ToolTipRole) {
-		if(ls.incompatible)
-			return tr("Incompatible version");
+		if(!ls.incompatibleSeries.isEmpty()) {
+			return tr("Incompatible version (%1)").arg(ls.incompatibleSeries);
+		}
 
 	} else {
 		switch(role) {
@@ -98,8 +99,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case NeedPasswordRole: return ls.needPassword;
 		case PersistentRole: return ls.persistent;
 		case ClosedRole: return ls.closed;
-		case IncompatibleRole: return ls.incompatible;
-		case JoinableRole: return !(ls.closed | ls.incompatible);
+		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
+		case JoinableRole: return !ls.closed && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return ls.nsfm;
 		}
 	}
@@ -113,7 +114,7 @@ Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 		return Qt::NoItemFlags;
 
 	const LoginSession &ls = m_sessions.at(index.row());
-	if(ls.incompatible || ls.closed)
+	if(!ls.incompatibleSeries.isEmpty() || ls.closed)
 		return Qt::NoItemFlags;
 	else
 		return QAbstractTableModel::flags(index);

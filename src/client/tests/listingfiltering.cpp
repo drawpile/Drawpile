@@ -99,9 +99,9 @@ private:
 			QString(),
 			"Title: " + id,
 			QString(),
+			QString(),
 			0,
 			password,
-			false,
 			false,
 			false,
 			nsfm

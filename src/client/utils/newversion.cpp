@@ -19,6 +19,7 @@
 
 #include "newversion.h"
 #include "../shared/util/networkaccess.h"
+#include "../shared/net/protover.h"
 #include "config.h"
 
 #include <QXmlStreamReader>
@@ -29,15 +30,6 @@
 #include <QDate>
 
 #include <algorithm>
-
-static quint64 encodeVersionNumber(int server, int major, int minor)
-{
-	const quint64 a = qBound(0ull, quint64(server), quint64((1<<21) - 1));
-	const quint64 b = qBound(0ull, quint64(major), quint64((1<<21) - 1));
-	const quint64 c = qBound(0ull, quint64(minor), quint64((1<<21) - 1));
-
-	return (a<<42) | (b<<21) | c;
-}
 
 static const QRegularExpression VERSION_RE("^(\\d+)\\.(\\d+)\\.(\\d+)$");
 
@@ -342,7 +334,7 @@ static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader, co
 
 bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 {
-	const auto currentVersionNumber = encodeVersionNumber(m_server, m_major, m_minor);
+	const auto currentVersionNumber = protocol::ProtocolVersion(QStringLiteral("dp"), m_server, m_major, m_minor).asInteger();
 
 	while(!reader.atEnd()) {
 		const auto tokentype = reader.readNext();
@@ -373,11 +365,12 @@ bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 						break;
 					}
 
-					const auto versionNumber = encodeVersionNumber(
+					const auto versionNumber = protocol::ProtocolVersion(
+						QStringLiteral("dp"),
 						m.captured(1).toInt(),
 						m.captured(2).toInt(),
 						m.captured(3).toInt()
-					);
+					).asInteger();
 
 					if(versionNumber > currentVersionNumber)
 						m_newer << release;

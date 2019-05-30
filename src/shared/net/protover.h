@@ -67,6 +67,23 @@ public:
 	bool isCurrent() const;
 
 	/**
+	 * Is this a newer version than the current one?
+	 *
+	 * Note: returns false if the namespace is different
+	 */
+	bool isFuture() const;
+
+	/**
+	 * Get the client version series that support this
+	 * protocol version, if known. The returned string is
+	 * human readable and can be shown in a UI.
+	 *
+	 * Returns things like "2.0.x"
+	 * If the version is unknown, an empty string is returned.
+	 */
+	QString versionName() const;
+
+	/**
 	 * @brief Get the protocol namespace. 
 	 *
 	 * Namespacing allows the server to host other client types than Drawpile.
@@ -105,6 +122,12 @@ public:
 	bool operator!=(const ProtocolVersion &other) const {
 			return !(*this==other);
 	}
+
+	/**
+	 * Return the version number (without the namespace) encoded as
+	 * a single integer, useful as a sorting key.
+	 */
+	quint64 asInteger() const;
 
 private:
 	QString m_namespace;

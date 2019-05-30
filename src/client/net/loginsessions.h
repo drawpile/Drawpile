@@ -33,13 +33,14 @@ struct LoginSession {
 	QString alias;
 	QString title;
 	QString founder;
+	QString incompatibleSeries; // if not empty, this session is for a different version series
 
 	int userCount;
 
 	bool needPassword;
 	bool persistent;
 	bool closed;
-	bool incompatible;
+
 	bool nsfm;
 
 	QString idOrAlias() const { return alias.isEmpty() ? id : alias; }

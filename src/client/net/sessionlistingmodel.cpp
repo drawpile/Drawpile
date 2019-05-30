@@ -138,8 +138,17 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			}
 
 		} else if(role == Qt::ToolTipRole) {
-			if(!s.protocol.isCurrent())
-				return tr("Incompatible version");
+			if(!s.protocol.isCurrent()) {
+				QString ver;
+				if(s.protocol.isFuture())
+					ver = tr("New version");
+				else
+					ver = s.protocol.versionName();
+				if(ver.isEmpty())
+					ver = tr("Unknown version");
+
+				return tr("Incompatible version (%1)").arg(ver);
+			}
 
 		} else if(role == SortKeyRole) {
 			// User Role is used for sorting keys
