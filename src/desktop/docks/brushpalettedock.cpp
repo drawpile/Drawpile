@@ -67,7 +67,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 			return;
 		}
 
-		d->brushSettings->setCurrentBrushSettings(tools::ToolProperties::fromVariant(v.toHash()));
+		d->brushSettings->setCurrentBrushSettings(v.value<tools::ToolProperties>());
 	});
 
 	connect(d->ui.presetAdd, &QAbstractButton::clicked, this, [this]() {
@@ -94,7 +94,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 		}
 		d->presets->setData(
 			sel.first(),
-			d->brushSettings->getCurrentBrushSettings().asVariant(),
+			QVariant::fromValue(d->brushSettings->getCurrentBrushSettings()),
 			tools::BrushPresetModel::ToolPropertiesRole
 		);
 	});

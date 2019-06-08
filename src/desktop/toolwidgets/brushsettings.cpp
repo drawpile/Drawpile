@@ -42,9 +42,18 @@ using widgets::GroupedToolButton;
 
 namespace tools {
 
+static const int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
+static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
+
+namespace generalprop {
+	static const ToolProperties::RangedValue<int>
+		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1}
+	;
+}
+
 namespace brushprop {
 	// Brush properties
-	static const ToolProperties::IntValue
+	static const ToolProperties::RangedValue<int>
 		size = {QStringLiteral("size"), 10, 1, 255},
 		opacity = {QStringLiteral("opacity"), 100, 1, 100},
 		hard = {QStringLiteral("hard"), 100, 1, 100},
@@ -53,7 +62,7 @@ namespace brushprop {
 		spacing = {QStringLiteral("spacing"), 10, 1, 999},
 		brushmode = {QStringLiteral("brushmode"), 0, 0, 3} /* 0: hard edge, 1: square, 2: soft edge, 3: watercolor */
 		;
-	static const ToolProperties::BoolValue
+	static const ToolProperties::Value<bool>
 		sizePressure = {QStringLiteral("sizep"), false},
 		opacityPressure = {QStringLiteral("opacityp"), false},
 		hardPressure = {QStringLiteral("hardp"), false},
@@ -62,38 +71,38 @@ namespace brushprop {
 		colorpickmode = {QStringLiteral("colorpickmode"), false}
 		;
 
-	static const QString
-		LABEL = QStringLiteral("label")
+	static const ToolProperties::Value<QString>
+		label = {QStringLiteral("label"), QString()}
 		;
 }
 
 namespace toolprop {
 	// Tool properties
-	static const ToolProperties::VariantValue
+	static const ToolProperties::Value<QColor>
 		color = {QStringLiteral("color"), QColor(Qt::black)}
 		;
-	static const ToolProperties::IntValue
+	static const ToolProperties::RangedValue<int>
 		blendmode = {QStringLiteral("blendmode"), paintcore::BlendMode::MODE_NORMAL, 0, 255},
 		erasemode = {QStringLiteral("erasemode"), paintcore::BlendMode::MODE_ERASE, 0, 255}
 		;
-	static const ToolProperties::BoolValue
+	static const ToolProperties::Value<bool>
 		useEraseMode = {QStringLiteral("use_erasemode"), false}
 		;
 }
 
 static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const ToolProperties &tp, const QColor &overrideColor)
 {
-	const int brushMode = bp.intValue(brushprop::brushmode);
+	const int brushMode = bp.value(brushprop::brushmode);
 
 	brushes::ClassicBrush b;
-	b.setSize(bp.intValue(brushprop::size));
-	if(bp.boolValue(brushprop::sizePressure))
+	b.setSize(bp.value(brushprop::size));
+	if(bp.value(brushprop::sizePressure))
 		b.setSize2(1);
 	else
 		b.setSize2(b.size1());
 
-	b.setOpacity(bp.intValue(brushprop::opacity) / 100.0);
-	if(bp.boolValue(brushprop::opacityPressure))
+	b.setOpacity(bp.value(brushprop::opacity) / 100.0);
+	if(bp.value(brushprop::opacityPressure))
 		b.setOpacity2(0);
 	else
 		b.setOpacity2(b.opacity1());
@@ -105,8 +114,8 @@ static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const Tool
 		b.setSubpixel(false);
 
 	} else {
-		b.setHardness(bp.intValue(brushprop::hard) / 100.0);
-		if(bp.boolValue(brushprop::hardPressure))
+		b.setHardness(bp.value(brushprop::hard) / 100.0);
+		if(bp.value(brushprop::hardPressure))
 			b.setHardness2(0);
 		else
 			b.setHardness2(b.hardness1());
@@ -114,13 +123,13 @@ static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const Tool
 	}
 
 	if(brushMode == 3) {
-		b.setSmudge(bp.intValue(brushprop::smudge) / 100.0);
-		if(bp.boolValue(brushprop::smudgePressure))
+		b.setSmudge(bp.value(brushprop::smudge) / 100.0);
+		if(bp.value(brushprop::smudgePressure))
 			b.setSmudge2(0);
 		else
 			b.setSmudge2(b.smudge1());
 
-		b.setResmudge(bp.intValue(brushprop::resmudge));
+		b.setResmudge(bp.value(brushprop::resmudge));
 
 		// Watercolor mode requires incremental drawing
 		b.setIncremental(true);
@@ -129,28 +138,25 @@ static brushes::ClassicBrush brushFromProps(const ToolProperties &bp, const Tool
 		b.setSmudge(0);
 		b.setSmudge2(0);
 		b.setResmudge(0);
-		b.setIncremental(bp.boolValue(brushprop::incremental));
+		b.setIncremental(bp.value(brushprop::incremental));
 	}
 
-	b.setSpacing(bp.intValue(brushprop::spacing));
+	b.setSpacing(bp.value(brushprop::spacing));
 
 	if(overrideColor.isValid())
 		b.setColor(overrideColor);
 	else
-		b.setColor(tp.value(toolprop::color).value<QColor>());
+		b.setColor(tp.value(toolprop::color));
 
-	b.setColorPickMode(bp.boolValue(brushprop::colorpickmode));
+	b.setColorPickMode(bp.value(brushprop::colorpickmode));
 
-	const int blendingMode = tp.intValue(tp.boolValue(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
+	const int blendingMode = tp.value(tp.value(toolprop::useEraseMode) ? toolprop::erasemode : toolprop::blendmode);
 	b.setBlendingMode(paintcore::BlendMode::Mode(blendingMode));
 
 	b.setSquare(brushMode == 1);
 
 	return b;
 }
-
-static const int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
-static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
@@ -180,7 +186,7 @@ struct BrushSettings::Private {
 		if(shareBrushSlotColor)
 			return ui.preview->brushColor();
 		else
-			return currentTool().value(toolprop::color).value<QColor>();
+			return currentTool().value(toolprop::color);
 	}
 
 	Private(BrushSettings *b)
@@ -296,7 +302,7 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 			sameColor ?
 				QColor()
 			:
-				d->toolProps[i].value(toolprop::color).value<QColor>()
+				d->toolProps[i].value(toolprop::color)
 			);
 	}
 }
@@ -338,7 +344,7 @@ void BrushSettings::toggleEraserMode()
 {
 	if(d->current != ERASER_SLOT) {
 		// Eraser mode is fixed in dedicated eraser slot
-		d->currentTool().setValue(toolprop::useEraseMode, !d->currentTool().boolValue(toolprop::useEraseMode));
+		d->currentTool().setValue(toolprop::useEraseMode, !d->currentTool().value(toolprop::useEraseMode));
 		updateUi();
 	}
 }
@@ -370,11 +376,11 @@ bool BrushSettings::isCurrentEraserSlot() const
 
 void BrushSettings::selectBlendMode(int modeIndex)
 {
-	QString prop;
-	if(d->currentTool().boolValue(toolprop::useEraseMode))
-		prop = toolprop::erasemode.key;
+	ToolProperties::RangedValue<int> prop;
+	if(d->currentTool().value(toolprop::useEraseMode))
+		prop = toolprop::erasemode;
 	else
-		prop = toolprop::blendmode.key;
+		prop = toolprop::blendmode;
 	d->currentTool().setValue(prop, d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	updateUi();
 }
@@ -391,7 +397,7 @@ void BrushSettings::updateUi()
 	const ToolProperties &tool = d->currentTool();
 
 	// Select brush type
-	const int brushMode = brush.intValue(brushprop::brushmode);
+	const int brushMode = brush.value(brushprop::brushmode);
 	switch(brushMode) {
 	case 1: d->ui.squareMode->setChecked(true); break;
 	case 2: d->ui.softedgeMode->setChecked(true); break;
@@ -419,18 +425,18 @@ void BrushSettings::updateUi()
 
 	d->ui.modeIncremental->setEnabled(brushMode != 3);
 
-	//d->ui.brushsizeBox->setValue(brush.intValue(brushprop::size));
-	//d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
+	//d->ui.brushsizeBox->setValue(brush.value(brushprop::size));
+	//d->ui.brushopacity->setValue(brush.value(brushprop::opacity));
 
 	// Show correct blending mode
 	int blendmode;
-	const bool erasemode = tool.boolValue(toolprop::useEraseMode);
+	const bool erasemode = tool.value(toolprop::useEraseMode);
 	if(erasemode) {
 		d->ui.blendmode->setModel(d->eraseModes);
-		blendmode = tool.intValue(toolprop::erasemode);
+		blendmode = tool.value(toolprop::erasemode);
 	} else {
 		d->ui.blendmode->setModel(d->blendModes);
-		blendmode = tool.intValue(toolprop::blendmode);
+		blendmode = tool.value(toolprop::blendmode);
 	}
 	d->ui.modeEraser->setChecked(erasemode);
 	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
@@ -443,23 +449,23 @@ void BrushSettings::updateUi()
 	}
 
 	// Set values
-	d->ui.brushsizeBox->setValue(brush.intValue(brushprop::size));
-	d->ui.pressureSize->setChecked(brush.boolValue(brushprop::sizePressure));
+	d->ui.brushsizeBox->setValue(brush.value(brushprop::size));
+	d->ui.pressureSize->setChecked(brush.value(brushprop::sizePressure));
 
-	d->ui.brushopacity->setValue(brush.intValue(brushprop::opacity));
-	d->ui.pressureOpacity->setChecked(brush.boolValue(brushprop::opacityPressure));
+	d->ui.brushopacity->setValue(brush.value(brushprop::opacity));
+	d->ui.pressureOpacity->setChecked(brush.value(brushprop::opacityPressure));
 
-	d->ui.brushhardness->setValue(brush.intValue(brushprop::hard));
-	d->ui.pressureHardness->setChecked(brushMode > 1 && brush.boolValue(brushprop::hardPressure));
+	d->ui.brushhardness->setValue(brush.value(brushprop::hard));
+	d->ui.pressureHardness->setChecked(brushMode > 1 && brush.value(brushprop::hardPressure));
 
-	d->ui.brushsmudging->setValue(brush.intValue(brushprop::smudge));
-	d->ui.pressureSmudging->setChecked(brushMode == 3 && brush.boolValue(brushprop::smudgePressure));
+	d->ui.brushsmudging->setValue(brush.value(brushprop::smudge));
+	d->ui.pressureSmudging->setChecked(brushMode == 3 && brush.value(brushprop::smudgePressure));
 
-	d->ui.colorpickup->setValue(brush.intValue(brushprop::resmudge));
+	d->ui.colorpickup->setValue(brush.value(brushprop::resmudge));
 
-	d->ui.brushspacingBox->setValue(brush.intValue(brushprop::spacing));
-	d->ui.modeIncremental->setChecked(brush.boolValue(brushprop::incremental));
-	d->ui.modeColorpick->setChecked(brush.boolValue(brushprop::colorpickmode));
+	d->ui.brushspacingBox->setValue(brush.value(brushprop::spacing));
+	d->ui.modeIncremental->setChecked(brush.value(brushprop::incremental));
+	d->ui.modeColorpick->setChecked(brush.value(brushprop::colorpickmode));
 
 	d->updateInProgress = false;
 	d->updateBrush();
@@ -516,26 +522,45 @@ void BrushSettings::pushSettings()
 ToolProperties BrushSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	for(int i=0;i<BRUSH_COUNT;++i) {
-		cfg.setValue(QString("brush%1").arg(i), d->brushProps[i].asVariant());
-		cfg.setValue(QString("tool%1").arg(i), d->toolProps[i].asVariant());
 
+	cfg.setValue(generalprop::activeSlot, d->current);
+
+	for(int i=0;i<BRUSH_COUNT;++i) {
+		cfg.setValue(
+			ToolProperties::Value<ToolProperties> {
+				QStringLiteral("brush%1").arg(i),
+				ToolProperties()
+			},
+			d->brushProps[i]
+		);
+		cfg.setValue(
+			ToolProperties::Value<ToolProperties> {
+				QStringLiteral("tool%1").arg(i),
+				ToolProperties()
+			},
+			d->toolProps[i]
+		);
 	}
+
 	return cfg;
 }
 
 void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	d->current = qBound(0, cfg.value("active", 0).toInt(), BRUSH_COUNT-1);
+	d->current = cfg.value(generalprop::activeSlot);
 	d->previousNonEraser = d->current;
 	for(int i=0;i<BRUSH_COUNT;++i) {
-		QVariantHash brush = cfg.value(QString("brush%1").arg(i)).toHash();
-		QVariantHash tool = cfg.value(QString("tool%1").arg(i)).toHash();
+		d->brushProps[i] = cfg.value(ToolProperties::Value<ToolProperties> {
+			QStringLiteral("brush%1").arg(i),
+			ToolProperties()
+		});
+		d->toolProps[i] = cfg.value(ToolProperties::Value<ToolProperties> {
+			QStringLiteral("tool%1").arg(i),
+			ToolProperties()
+		});
 
-		d->brushProps[i] = ToolProperties::fromVariant(brush);
-		d->toolProps[i] = ToolProperties::fromVariant(tool);
 		if(!d->shareBrushSlotColor)
-			d->brushSlotButton(i)->setColorSwatch( d->toolProps[i].value(toolprop::color).value<QColor>());
+			d->brushSlotButton(i)->setColorSwatch(d->toolProps[i].value(toolprop::color));
 	}
 	d->toolProps[ERASER_SLOT].setValue(toolprop::useEraseMode, true);
 
@@ -588,12 +613,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().intValue(brushprop::brushmode) > 1;
+	return d->currentBrush().value(brushprop::brushmode) > 1;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().intValue(brushprop::brushmode) == 1;
+	return d->currentBrush().value(brushprop::brushmode) == 1;
 }
 
 //// BRUSH PRESET PALETTE MODEL ////
@@ -611,7 +636,7 @@ struct BrushPresetModel::Private {
 		if(iconcache.at(idx).isNull()) {
 
 			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties(), QColor());
-			const int brushmode = presets[idx].intValue(brushprop::brushmode);
+			const int brushmode = presets[idx].value(brushprop::brushmode);
 			paintcore::BrushMask mask;
 			Q_ASSERT(brushmode>=0 && brushmode<=3);
 			switch(brushmode) {
@@ -698,8 +723,8 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case Qt::DecorationRole: return d->getIcon(index.row());
 		case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE);
-		case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::LABEL);
-		case ToolPropertiesRole: return d->presets.at(index.row()).asVariant();
+		case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
+		case ToolPropertiesRole: return QVariant::fromValue(d->presets.at(index.row()));
 		}
 	}
 	return QVariant();
@@ -717,7 +742,7 @@ QMap<int,QVariant> BrushPresetModel::itemData(const QModelIndex &index) const
 {
 	QMap<int,QVariant> roles;
 	if(index.isValid() && index.row()>=0 && index.row()<d->presets.size()) {
-		roles[ToolPropertiesRole] = d->presets[index.row()].asVariant();
+		roles[ToolPropertiesRole] = QVariant::fromValue(d->presets[index.row()]);
 	}
 	return roles;
 }
@@ -728,7 +753,7 @@ bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, 
 		return false;
 	switch(role) {
 		case ToolPropertiesRole:
-			d->presets[index.row()] = ToolProperties::fromVariant(value.toHash());
+			d->presets[index.row()] = value.value<ToolProperties>();
 			d->iconcache[index.row()] = QPixmap();
 			emit dataChanged(index, index);
 			saveBrushes();

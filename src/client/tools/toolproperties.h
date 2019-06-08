@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #ifndef TOOLPROPERTIES_H
 #define TOOLPROPERTIES_H
 
-#include <QHash>
 #include <QVariant>
 #include <QColor>
 
 class QSettings;
+class QDataStream;
 
 namespace tools {
 
@@ -33,25 +33,24 @@ namespace tools {
 class ToolProperties
 {
 public:
-	ToolProperties() { }
-	ToolProperties(const QString &type)
-		: m_type(type) { }
+	ToolProperties() = default;
+	explicit ToolProperties(const QString &type)
+		: m_type(type)
+	{
+	}
 
-	struct IntValue {
+	template<typename Type>
+	struct Value {
 		QString key;
-		int defaultValue;
-		int min;
-		int max;
+		Type defaultValue;
 	};
 
-	struct BoolValue {
+	template<typename Type>
+	struct RangedValue {
 		QString key;
-		bool defaultValue;
-	};
-
-	struct VariantValue {
-		QString key;
-		QVariant defaultValue;
+		Type defaultValue;
+		Type min;
+		Type max;
 	};
 
 	/**
@@ -62,43 +61,40 @@ public:
 	 */
 	QString toolType() const { return m_type; }
 
-	/**
-	 * @brief Set a value
-	 * @param key
-	 * @param value
-	 */
-	void setValue(const QString &key, const QVariant &value);
-	template<typename ValueType> void setValue(const ValueType &key, const QVariant &value) { setValue(key.key, value); }
+	template<typename ValueType> void setValue(const ValueType &key, const decltype(ValueType::defaultValue) &value)
+	{
+		m_props[key.key] = QVariant::fromValue(value);
+	}
 
-	/**
-	 * @brief Get a value
-	 * @param key
-	 * @param defaultValue
-	 * @return
-	 */
-	QVariant value(const QString &key, const QVariant &defaultValue=QVariant()) const;
-	QVariant value(const VariantValue &key) const { return value(key.key, key.defaultValue); }
+	template<typename Type> Type value(const Value<Type> &v) const
+	{
+		QVariant var = m_props.value(v.key);
+		if(var.isNull() || !var.convert(qMetaTypeId<Type>()))
+			return v.defaultValue;
+		return var.value<Type>();
+	}
 
-	/**
-	 * @brief Get an integer value within the given bounds
-	 * @param key
-	 * @param min
-	 * @param max
-	 * @return
-	 */
-	int intValue(const QString &key, int defaultValue, int min=0, int max=9999) const;
-	int intValue(const IntValue &key) const { return intValue(key.key, key.defaultValue, key.min, key.max); }
+	template<typename Type> Type value(const RangedValue<Type> &v) const
+	{
+		QVariant var = m_props.value(v.key);
+		if(var.isNull() || !var.convert(qMetaTypeId<Type>()))
+			return v.defaultValue;
 
-	/**
-	 * @brief Get a boolean value
-	 * @param key
-	 * @param defaultValue
-	 * @return
-	 */
-	bool boolValue(const QString &key, bool defaultValue) const;
-	bool boolValue(const BoolValue &key) const { return boolValue(key.key, key.defaultValue); }
+		return qBound(
+			v.min,
+			var.value<Type>(),
+			v.max
+		);
+	}
 
-	//! Are there any stored properties?
+	QColor value(const Value<QColor> &v) const
+	{
+		const QColor c = m_props.value(v.key).value<QColor>();
+		if(!c.isValid())
+			return v.defaultValue;
+		return c;
+	}
+
 	bool isEmpty() const { return m_props.isEmpty(); }
 
 	/**
@@ -118,16 +114,11 @@ public:
 	 */
 	static ToolProperties load(const QSettings &cfg);
 
-	QVariantHash asVariant() const { return m_props; }
-
-	static ToolProperties fromVariant(const QVariantHash &h, const QString &type=QString())
-	{
-		ToolProperties tp(type);
-		tp.m_props = h;
-		return tp;
-	}
+	friend QDataStream &operator<<(QDataStream &out, const tools::ToolProperties &myObj);
+	friend QDataStream &operator>>(QDataStream &in, tools::ToolProperties &myObj);
 
 private:
+
 	QVariantHash m_props;
 	QString m_type;
 };
@@ -135,5 +126,6 @@ private:
 }
 
 Q_DECLARE_METATYPE(tools::ToolProperties)
+
 
 #endif

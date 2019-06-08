@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2016 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,10 +33,10 @@
 namespace tools {
 
 namespace props {
-	static const ToolProperties::BoolValue
+	static const ToolProperties::Value<bool>
 		layerPick { QStringLiteral("layerpick"), false }
 		;
-	static const ToolProperties::IntValue
+	static const ToolProperties::RangedValue<int>
 		size { QStringLiteral("size"), 1, 0, 255 }
 		;
 }
@@ -123,8 +123,8 @@ ToolProperties ColorPickerSettings::saveToolSettings()
 
 void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	m_layerpick->setChecked(cfg.boolValue(props::layerPick));
-	m_size->setValue(cfg.intValue(props::size));
+	m_layerpick->setChecked(cfg.value(props::layerPick));
+	m_size->setValue(cfg.value(props::size));
 }
 
 void ColorPickerSettings::addColor(const QColor &color)

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ using widgets::ColorButton;
 namespace tools {
 
 namespace props {
-	static const ToolProperties::IntValue
+	static const ToolProperties::RangedValue<int>
 		persistence { QStringLiteral("persistence"), 1, 1, 15 },
 		color { QStringLiteral("color"), 0, 0, 3}
 		;
-	static const ToolProperties::BoolValue
+	static const ToolProperties::Value<bool>
 		tracking { QStringLiteral("tracking"), true }
 		;
 }
@@ -107,10 +107,10 @@ ToolProperties LaserPointerSettings::saveToolSettings()
 
 void LaserPointerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->trackpointer->setChecked(cfg.boolValue(props::tracking));
-	_ui->persistence->setValue(cfg.intValue(props::persistence));
+	_ui->trackpointer->setChecked(cfg.value(props::tracking));
+	_ui->persistence->setValue(cfg.value(props::persistence));
 
-	switch(cfg.intValue(props::color)) {
+	switch(cfg.value(props::color)) {
 	case 0: _ui->color0->setChecked(true); break;
 	case 1: _ui->color1->setChecked(true); break;
 	case 2: _ui->color2->setChecked(true); break;

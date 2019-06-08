@@ -22,28 +22,16 @@
 
 namespace tools {
 
-void ToolProperties::setValue(const QString &key, const QVariant &value)
-{
-	m_props[key] = value;
-}
+namespace {
+	class RegisterToolProps {
+	public:
+		RegisterToolProps()
+		{
+			qRegisterMetaTypeStreamOperators<ToolProperties>("tools::ToolProperties");
+		}
+	};
 
-QVariant ToolProperties::value(const QString &key, const QVariant &defaultValue) const
-{
-	return m_props.value(key, defaultValue);
-}
-
-int ToolProperties::intValue(const QString &key, int defaultValue, int min, int max) const
-{
-	bool ok;
-	int v = m_props.value(key, defaultValue).toInt(&ok);
-	if(!ok)
-		v = defaultValue;
-	return qBound(min, v, max);
-}
-
-bool ToolProperties::boolValue(const QString &key, bool defaultValue) const
-{
-	return m_props.value(key, defaultValue).toBool();
+	static RegisterToolProps _registerToolProps;
 }
 
 void ToolProperties::save(QSettings &cfg) const
@@ -70,4 +58,18 @@ ToolProperties ToolProperties::load(const QSettings &cfg)
 	return tp;
 }
 
+QDataStream &operator<<(QDataStream &out, const tools::ToolProperties &tp)
+{
+	return out << tp.m_type << tp.m_props;
 }
+
+QDataStream &operator>>(QDataStream &in, tools::ToolProperties &tp)
+{
+	QVariant props;
+	in >> tp.m_type >> props;
+	tp.m_props = props.toHash();
+	return in;
+}
+
+}
+

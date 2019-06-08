@@ -31,14 +31,14 @@ using widgets::BrushPreview;
 namespace tools {
 
 namespace props {
-	static const ToolProperties::IntValue
+	static const ToolProperties::RangedValue<int>
 		tolerance { QStringLiteral("tolerance"), 0, 0, 100 },
 		expand { QStringLiteral("expand"), 0, 0, 100 }
 		;
-	static const ToolProperties::VariantValue
-		sizelimit { QStringLiteral("sizelimit"), 50.0 }
+	static const ToolProperties::RangedValue<double>
+		sizelimit { QStringLiteral("sizelimit"), 50.0, 0.0, 1000.0 }
 		;
-	static const ToolProperties::BoolValue
+	static const ToolProperties::Value<bool>
 		samplemerged { QStringLiteral("samplemerged"), true },
 		underfill { QStringLiteral("underfill"), true },
 		erasermode { QStringLiteral("erasermode"), false }
@@ -115,12 +115,12 @@ void FillSettings::setForeground(const QColor &color)
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->tolerance->setValue(cfg.intValue(props::tolerance));
-	_ui->expand->setValue(cfg.intValue(props::expand));
-	_ui->sizelimit->setValue(cfg.value(props::sizelimit).toDouble());
-	_ui->samplemerged->setChecked(cfg.boolValue(props::samplemerged));
-	_ui->fillunder->setChecked(cfg.boolValue(props::underfill));
-	_ui->erasermode->setChecked(cfg.boolValue(props::erasermode));
+	_ui->tolerance->setValue(cfg.value(props::tolerance));
+	_ui->expand->setValue(cfg.value(props::expand));
+	_ui->sizelimit->setValue(cfg.value(props::sizelimit));
+	_ui->samplemerged->setChecked(cfg.value(props::samplemerged));
+	_ui->fillunder->setChecked(cfg.value(props::underfill));
+	_ui->erasermode->setChecked(cfg.value(props::erasermode));
 	pushSettings();
 }
 
