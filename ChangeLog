@@ -1,5 +1,6 @@
 2019-0?-?? Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install
+ * Fixed that using "/me" in a direct message would send it as a public message
 
 2019-05-30 Version 2.1.10
  * Fixed that built-in server settings were being ignored

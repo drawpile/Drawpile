@@ -255,7 +255,7 @@ public:
 	static MessagePtr regular(uint8_t ctx, uint8_t target, const QString &message) { return MessagePtr(new PrivateChat(ctx, target, 0, message.toUtf8())); }
 
 	//! Construct an action type message
-	static MessagePtr action(uint8_t ctx, uint8_t target, const QString &message) { return MessagePtr(new Chat(ctx, target, FLAG_ACTION, message.toUtf8())); }
+	static MessagePtr action(uint8_t ctx, uint8_t target, const QString &message) { return MessagePtr(new PrivateChat(ctx, target, FLAG_ACTION, message.toUtf8())); }
 
 	static PrivateChat *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static PrivateChat *fromText(uint8_t ctx, const Kwargs &kwargs);
