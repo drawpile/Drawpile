@@ -66,7 +66,7 @@ void Selection::resetShape()
 void Selection::setShape(const QPolygonF &shape)
 {
 	m_shape = shape;
-	beginAdjustment(OUTSIDE);
+	m_preAdjustmentShape = shape;
 	emit shapeChanged(shape);
 }
 
@@ -316,24 +316,7 @@ QImage Selection::shapeMask(const QColor &color, QRect *maskBounds) const
 void Selection::setPasteImage(const QImage &image)
 {
 	m_moveRegion = QPolygonF();
-	setPasteOrMoveImage(image);
-}
 
-void Selection::setMoveImage(const QImage &image, const QSize &canvasSize, int sourceLayerId)
-{
-	m_moveRegion = m_shape;
-	m_sourceLayerId = sourceLayerId;
-
-	for(QPointF &p : m_moveRegion) {
-		p.setX(qBound(0.0, p.x(), qreal(canvasSize.width())));
-		p.setY(qBound(0.0, p.y(), qreal(canvasSize.height())));
-	}
-
-	setPasteOrMoveImage(image);
-}
-
-void Selection::setPasteOrMoveImage(const QImage &image)
-{
 	const QRect selectionBounds = m_shape.boundingRect().toRect();
 	if(selectionBounds.size() != image.size() || !isAxisAlignedRectangle()) {
 		const QPoint c = selectionBounds.center();
@@ -341,6 +324,22 @@ void Selection::setPasteOrMoveImage(const QImage &image)
 	}
 
 	m_pasteImage = image;
+	emit pasteImageChanged(image);
+}
+
+void Selection::setMoveImage(const QImage &image, const QRect &imageRect, const QSize &canvasSize, int sourceLayerId)
+{
+	m_moveRegion = m_shape;
+	m_sourceLayerId = sourceLayerId;
+	m_pasteImage = image;
+
+	setShapeRect(imageRect);
+
+	for(QPointF &p : m_moveRegion) {
+		p.setX(qBound(0.0, p.x(), qreal(canvasSize.width())));
+		p.setY(qBound(0.0, p.y(), qreal(canvasSize.height())));
+	}
+
 	emit pasteImageChanged(image);
 }
 

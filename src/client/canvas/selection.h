@@ -143,10 +143,11 @@ public:
 	 *
 	 * The current shape will be remembered.
 	 * @param image
+	 * @param imageRect the rectangle from which the image was captured
 	 * @param canvasSize the size of the canvas (selection rectangle is clipped to canvas bounds
 	 * @param sourceLayerId the ID of the layer where the image came from
 	 */
-	void setMoveImage(const QImage &image, const QSize &canvasSize, int sourceLayerId);
+	void setMoveImage(const QImage &image, const QRect &imageRect, const QSize &canvasSize, int sourceLayerId);
 
 	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
@@ -209,7 +210,6 @@ signals:
 	void closed();
 
 private:
-	void setPasteOrMoveImage(const QImage &image);
 	void adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2);
 	void saveShape();
 

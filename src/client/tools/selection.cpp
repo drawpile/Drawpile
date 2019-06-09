@@ -167,7 +167,7 @@ void SelectionTool::startMove()
 
 		// Copy layer content into move preview buffer.
 		QImage img = owner.model()->selectionToImage(owner.activeLayer());
-		sel->setMoveImage(img, owner.model()->layerStack()->size(), owner.activeLayer());
+		sel->setMoveImage(img, maskBounds, owner.model()->layerStack()->size(), owner.activeLayer());
 
 		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
 		// to erase the selected region.
