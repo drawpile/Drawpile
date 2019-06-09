@@ -72,7 +72,7 @@ public:
 	 * @param point point in canvas space
 	 * @param zoom zoom factor (affects visible handle size)
 	 */
-	Handle handleAt(const QPointF &point, float zoom) const;
+	Handle handleAt(const QPointF &point, qreal zoom) const;
 
 	/**
 	 * @brief Save the current shape as the pre-adjustment shape
@@ -105,7 +105,7 @@ public:
 	 *
 	 * @param angle radians to rotate the shape relative to when beginAdjustment was called
 	 */
-	void adjustRotation(float angle);
+	void adjustRotation(qreal angle);
 
 	/**
 	 * @brief Adjust shape geometry by shearing it
@@ -116,7 +116,7 @@ public:
 	 * @param sh horizontal shearing factor
 	 * @param sv vertical shearing factor
 	 */
-	void adjustShear(float sh, float sv);
+	void adjustShear(qreal sh, qreal sv);
 
 	/**
 	 * @brief Check if the selection is an axis-aligned rectangle
@@ -210,7 +210,7 @@ signals:
 
 private:
 	void setPasteOrMoveImage(const QImage &image);
-	void adjustScale(int dx1, int dy1, int dx2, int dy2);
+	void adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2);
 	void saveShape();
 
 	QPolygonF m_shape;

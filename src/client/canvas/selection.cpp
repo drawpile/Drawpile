@@ -107,7 +107,7 @@ void Selection::scale(qreal x, qreal y)
 	emit shapeChanged(m_shape);
 }
 
-Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
+Selection::Handle Selection::handleAt(const QPointF &point, qreal zoom) const
 {
 	const qreal H = handleSize() / zoom;
 
@@ -116,7 +116,7 @@ Selection::Handle Selection::handleAt(const QPointF &point, float zoom) const
 	if(!R.contains(point))
 		return OUTSIDE;
 
-	QPointF p = point - R.topLeft();
+	const QPointF p = point - R.topLeft();
 
 	if(p.x() < H) {
 		if(p.y() < H)
@@ -151,8 +151,8 @@ void Selection::adjustGeometry(const QPoint &delta, bool keepAspect)
 
 		const QRectF bounds = m_preAdjustmentShape.boundingRect();
 		const qreal aspect = bounds.width() / bounds.height();
-		const int dx = dxy * aspect;
-		const int dy = dxy;
+		const qreal dx = dxy * aspect;
+		const qreal dy = dxy;
 
 		switch(m_adjustmentHandle) {
 		case OUTSIDE: return;
@@ -186,7 +186,7 @@ void Selection::adjustGeometry(const QPoint &delta, bool keepAspect)
 	emit shapeChanged(m_shape);
 }
 
-void Selection::adjustScale(int dx1, int dy1, int dx2, int dy2)
+void Selection::adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2)
 {
 	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
 
@@ -208,7 +208,7 @@ void Selection::adjustScale(int dx1, int dy1, int dx2, int dy2)
 	}
 }
 
-void Selection::adjustRotation(float angle)
+void Selection::adjustRotation(qreal angle)
 {
 	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
 
@@ -228,7 +228,7 @@ void Selection::adjustRotation(float angle)
 	emit shapeChanged(m_shape);
 }
 
-void Selection::adjustShear(float sh, float sv)
+void Selection::adjustShear(qreal sh, qreal sv)
 {
 	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
 
