@@ -30,7 +30,7 @@
 namespace canvas {
 
 Selection::Selection(QObject *parent)
-	: QObject(parent), m_closedPolygon(false)
+	: QObject(parent)
 {
 
 }
@@ -319,9 +319,10 @@ void Selection::setPasteImage(const QImage &image)
 	setPasteOrMoveImage(image);
 }
 
-void Selection::setMoveImage(const QImage &image, const QSize &canvasSize)
+void Selection::setMoveImage(const QImage &image, const QSize &canvasSize, int sourceLayerId)
 {
 	m_moveRegion = m_shape;
+	m_sourceLayerId = sourceLayerId;
 
 	for(QPointF &p : m_moveRegion) {
 		p.setX(qBound(0.0, p.x(), qreal(canvasSize.width())));
@@ -375,7 +376,8 @@ protocol::MessageList Selection::pasteOrMoveToCanvas(uint8_t contextId, int laye
 
 		// Send move command
 		QPolygon s = m_shape.toPolygon();
-		msgs << protocol::MessagePtr(new protocol::MoveRegion(contextId, layer,
+		msgs << protocol::MessagePtr(new protocol::MoveRegion(contextId,
+			uint16_t(m_sourceLayerId),
 			moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(),
 			s[0].x(), s[0].y(),
 			s[1].x(), s[1].y(),

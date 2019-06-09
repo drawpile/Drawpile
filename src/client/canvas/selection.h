@@ -144,8 +144,9 @@ public:
 	 * The current shape will be remembered.
 	 * @param image
 	 * @param canvasSize the size of the canvas (selection rectangle is clipped to canvas bounds
+	 * @param sourceLayerId the ID of the layer where the image came from
 	 */
-	void setMoveImage(const QImage &image, const QSize &canvasSize);
+	void setMoveImage(const QImage &image, const QSize &canvasSize, int sourceLayerId);
 
 	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
@@ -157,6 +158,9 @@ public:
 	 * will return the commands for a RegionMove.
 	 * If the image came from outside (i.e the clipboard,) a PutImage command set will be returned
 	 * instead.
+	 *
+	 * If a MoveRegion command is generated, the source layer ID set previously in setMoveImage is used
+	 * instead of the given target layer
 	 *
 	 * @param contextId user ID for the commands
 	 * @param layer target layer
@@ -219,7 +223,9 @@ private:
 
 	QImage m_pasteImage;
 
-	bool m_closedPolygon;
+	int m_sourceLayerId = 0;
+
+	bool m_closedPolygon = false;
 
 };
 
