@@ -94,6 +94,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_filteredSessions = new SessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);
 	m_filteredSessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	m_filteredSessions->setSortCaseSensitivity(Qt::CaseInsensitive);
 	m_filteredSessions->setFilterKeyColumn(-1);
 	m_filteredSessions->setSortRole(Qt::UserRole);
 
@@ -339,6 +340,12 @@ void JoinDialog::restoreSettings()
 		m_ui->showNsfw->setChecked(cfg.value("filternsfw", true).toBool());
 	else
 		m_ui->showNsfw->setChecked(false);
+
+	const int sortColumn = cfg.value("listsortcol", 1).toInt();
+	m_ui->listing->sortByColumn(
+		qAbs(sortColumn)-1,
+		sortColumn > 0 ? Qt::AscendingOrder : Qt::DescendingOrder
+	);
 }
 
 void JoinDialog::rememberSettings() const
@@ -360,6 +367,13 @@ void JoinDialog::rememberSettings() const
 			hosts << m_ui->address->itemText(i);
 	}
 	cfg.setValue("recenthosts", hosts);
+
+	const auto *listingHeader = m_ui->listing->header();
+
+	cfg.setValue("listsortcol",
+		(listingHeader->sortIndicatorSection() + 1) *
+		(listingHeader->sortIndicatorOrder() == Qt::AscendingOrder ? 1 : -1)
+	);
 }
 
 QString JoinDialog::getAddress() const {
