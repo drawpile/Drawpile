@@ -2,7 +2,7 @@
  * Fixed that brush color was uninitialized on fresh install
  * Fixed that using "/me" in a direct message would send it as a public message
  * Fixed incorrect layer when moving selection if active layer was changed before the move ended
- * Fixed single pixel shift when moving freeform selections
+ * Fixed single pixel shift when moving or copy&pasting freeform selections
 
 2019-05-30 Version 2.1.10
  * Fixed that built-in server settings were being ignored

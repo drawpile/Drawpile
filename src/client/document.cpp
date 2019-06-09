@@ -798,12 +798,17 @@ void Document::copyFromLayer(int layer)
 	}
 
 	QMimeData *data = new QMimeData;
-	data->setImageData(m_canvas->selectionToImage(layer));
+	const auto img = m_canvas->selectionToImage(layer);
+	data->setImageData(img);
 
 	// Store also original coordinates
 	QPoint srcpos;
 	if(m_canvas->selection()) {
-		srcpos = m_canvas->selection()->boundingRect().center();
+		const auto br = m_canvas->selection()->boundingRect();
+		srcpos = br.topLeft() + QPoint {
+			img.width() / 2,
+			img.height() / 2
+		};
 
 	} else {
 		QSize s = m_canvas->layerStack()->size();
