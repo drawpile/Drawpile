@@ -279,19 +279,21 @@ ServerLog *Database::logger() const
 RegisteredUser Database::getUserAccount(const QString &username, const QString &password) const
 {
 	QSqlQuery q(d->db);
-	q.prepare("SELECT password, locked, flags FROM users WHERE username=?");
+	q.prepare("SELECT rowid, password, locked, flags FROM users WHERE username=?");
 	q.bindValue(0, username);
 	q.exec();
 	if(q.next()) {
-		const QByteArray passwordHash = q.value(0).toByteArray();
-		const int locked = q.value(1).toInt();
-		const QStringList flags = q.value(2).toString().split(',',QString::SkipEmptyParts);
+		const int rowid = q.value(0).toInt();
+		const QByteArray passwordHash = q.value(1).toByteArray();
+		const int locked = q.value(2).toInt();
+		const QStringList flags = q.value(3).toString().split(',',QString::SkipEmptyParts);
 
 		if(locked) {
 			return RegisteredUser {
 				RegisteredUser::Banned,
 				username,
-				QStringList()
+				QStringList(),
+				QString()
 			};
 		}
 
@@ -299,20 +301,23 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 			return RegisteredUser {
 				RegisteredUser::BadPass,
 				username,
-				QStringList()
+				QStringList(),
+				QString()
 			};
 		}
 
 		return RegisteredUser {
 			RegisteredUser::Ok,
 			username,
-			flags
+			flags,
+			QString::number(rowid)
 		};
 	} else {
 		return RegisteredUser {
 			RegisteredUser::NotFound,
 			username,
-			QStringList()
+			QStringList(),
+			QString()
 		};
 	}
 }

@@ -75,14 +75,14 @@ QString SessionBanList::removeBan(int id)
 	return QString();
 }
 
-bool SessionBanList::isBanned(const QHostAddress &address, const QString &extAuthId) const
+bool SessionBanList::isBanned(const QHostAddress &address, const QString &authId) const
 {
-	// Registered user accounts are banned by ext-auth ID.
+	// Registered user accounts are banned by auth ID.
 	// Due to widespread use of NAT, lots of unrelated users can
 	// share the same IP, so we want to avoid IP bans when possible.
-	if(!extAuthId.isEmpty()) {
+	if(!authId.isEmpty()) {
 		for(const SessionBan &b : m_banlist) {
-			if(b.extAuthId == extAuthId)
+			if(b.authId == authId)
 				return true;
 		}
 
@@ -93,7 +93,7 @@ bool SessionBanList::isBanned(const QHostAddress &address, const QString &extAut
 	if(!address.isNull()) {
 		const QHostAddress ip = toIpv6(address);
 		for(const SessionBan &b : m_banlist) {
-			if(b.extAuthId.isEmpty() && b.ip == ip)
+			if(b.authId.isEmpty() && b.ip == ip)
 				return true;
 		}
 
@@ -114,7 +114,7 @@ QJsonArray SessionBanList::toJson(bool showIp) const
 		o["bannedBy"] = b.bannedBy;
 		if(showIp) {
 			o["ip"] = b.ip.toString();
-			o["extauthid"] = b.extAuthId;
+			o["extauthid"] = b.authId; // TODO for version 3.0: rename to "authId"
 		}
 		list.append(o);
 	}

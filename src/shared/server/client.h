@@ -90,14 +90,15 @@ public:
 	void setAvatar(const QByteArray &avatar);
 
 	/**
-	 * @brief Get the ext-auth server's ID for this user
+	 * @brief Get the user's authentication ID
 	 *
-	 * The ext-auth ID is set only if this user logged in via ext-auth,
-	 * and the server provided an ID. The ID is only unique within the
-	 * same ext-auth server.
+	 * For internal servers, this is typically something like "_int_ID_".
+	 * For ext-auth servers, this is the value returned in the "uid" field
+	 * of the authentication token. It is unique only within the same ext-auth
+	 * server, but should identify the user even when the username is changed.
 	 */
-	const QString &extAuthId() const;
-	void setExtAuthId(const QString &id);
+	const QString &authId() const;
+	void setAuthId(const QString &id);
 
 	/**
 	 * @brief Does this user have session operator privileges?
@@ -130,10 +131,9 @@ public:
 	void setTrusted(bool trusted);
 
 	/**
-	 * @brief Has this user been authenticated?
+	 * @brief Has this user been authenticated (using either an internal account or ext-auth)?
 	 */
 	bool isAuthenticated() const;
-	void setAuthenticated(bool auth);
 
 	/**
 	 * @brief Has this user been blocked from sending chat messages?

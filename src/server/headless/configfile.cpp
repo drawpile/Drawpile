@@ -202,20 +202,23 @@ RegisteredUser ConfigFile::getUserAccount(const QString &username, const QString
 			return RegisteredUser {
 				RegisteredUser::Banned,
 				username,
-				QStringList()
+				QStringList(),
+				username
 			};
 
 		} else if(!passwordhash::check(password, u.password)) {
 			return RegisteredUser {
 				RegisteredUser::BadPass,
 				username,
-				QStringList()
+				QStringList(),
+				username
 			};
 		} else {
 			return RegisteredUser {
 				RegisteredUser::Ok,
 				username,
-				u.flags
+				u.flags,
+				username
 			};
 		}
 
@@ -223,7 +226,8 @@ RegisteredUser ConfigFile::getUserAccount(const QString &username, const QString
 		return RegisteredUser {
 			RegisteredUser::NotFound,
 			username,
-			QStringList()
+			QStringList(),
+			QString()
 		};
 	}
 }

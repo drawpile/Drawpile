@@ -229,7 +229,7 @@ void Session::removeUser(Client *user)
 
 	m_pastClients.insert(user->id(), PastClient {
 		user->id(),
-		user->extAuthId(),
+		user->authId(),
 		user->username(),
 		user->peerAddress(),
 		!user->isModerator()
@@ -291,7 +291,7 @@ Client *Session::getClientByUsername(const QString &username)
 void Session::addBan(const Client *target, const QString &bannedBy)
 {
 	Q_ASSERT(target);
-	if(m_history->addBan(target->username(), target->peerAddress(), target->extAuthId(), bannedBy)) {
+	if(m_history->addBan(target->username(), target->peerAddress(), target->authId(), bannedBy)) {
 		target->log(Log().about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}
@@ -300,7 +300,7 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 void Session::addBan(const PastClient &target, const QString &bannedBy)
 {
 	Q_ASSERT(target.id>0);
-	if(m_history->addBan(target.username, target.peerAddress, target.extAuthId, bannedBy)) {
+	if(m_history->addBan(target.username, target.peerAddress, target.authId, bannedBy)) {
 		log(Log().user(target.id, target.peerAddress, target.username).about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}

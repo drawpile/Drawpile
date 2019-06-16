@@ -70,7 +70,7 @@ public:
 	//! Information about a user who has since logged out
 	struct PastClient {
 		int id;
-		QString extAuthId;
+		QString authId;
 		QString username;
 		QHostAddress peerAddress;
 		bool isBannable;

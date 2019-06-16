@@ -44,7 +44,7 @@ struct Client::Private {
 	protocol::MessageList holdqueue;
 
 	QString username;
-	QString extAuthId;
+	QString authId;
 	QByteArray avatar;
 
 	uint8_t id = 0;
@@ -185,14 +185,14 @@ const QByteArray &Client::avatar() const
 	return d->avatar;
 }
 
-const QString &Client::extAuthId() const
+const QString &Client::authId() const
 {
-	return d->extAuthId;
+	return d->authId;
 }
 
-void Client::setExtAuthId(const QString &extAuthId)
+void Client::setAuthId(const QString &authId)
 {
-	d->extAuthId = extAuthId;
+	d->authId = authId;
 }
 
 void Client::setOperator(bool op)
@@ -233,14 +233,9 @@ void Client::setTrusted(bool trusted)
 	d->isTrusted = trusted;
 }
 
-void Client::setAuthenticated(bool auth)
-{
-	d->isAuthenticated = auth;
-}
-
 bool Client::isAuthenticated() const
 {
-	return d->isAuthenticated;
+	return! d->authId.isEmpty();
 }
 
 void Client::setMuted(bool m)

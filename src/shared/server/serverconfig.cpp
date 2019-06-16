@@ -143,7 +143,8 @@ RegisteredUser ServerConfig::getUserAccount(const QString &username, const QStri
 	return RegisteredUser {
 		RegisteredUser::NotFound,
 		username,
-		QStringList()
+		QStringList(),
+		0
 	};
 }
 

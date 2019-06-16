@@ -100,6 +100,7 @@ struct RegisteredUser {
 	Status status;
 	QString username;
 	QStringList flags;
+	QString userId;
 };
 
 /**

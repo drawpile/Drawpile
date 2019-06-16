@@ -247,13 +247,22 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 				const QJsonObject ea = extAuthToken.payload();
 				const QJsonValue uid = ea["uid"];
 
+				// We need some unique identifier. If the server didn't provide one,
+				// the username is better than nothing.
+				QString extAuthId = uid.isDouble() ? QString::number(uid.toInt()) : uid.toString();
+				if(extAuthId.isEmpty())
+					extAuthId = ea["username"].toString();
+
+				// Prefix to identify this auth ID as an ext-auth ID
+				extAuthId = m_config->internalConfig().extAuthUrl.host() + ":" + extAuthId;
+
 				QByteArray avatar;
 				if(m_config->getConfigBool(config::ExtAuthAvatars))
 					avatar = extAuthToken.avatar();
 
 				authLoginOk(
 					ea["username"].toString(),
-					uid.isDouble() ? QString::number(uid.toInt()) : uid.toString(),
+					extAuthId,
 					ea["flags"].toArray(),
 					avatar,
 					m_config->getConfigBool(config::ExtAuthMod)
@@ -308,15 +317,23 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 
 	case RegisteredUser::Ok:
 		// Yay, username and password were valid!
-		authLoginOk(username, QString(), QJsonArray::fromStringList(userAccount.flags), QByteArray(), true);
+		authLoginOk(
+			username,
+			QStringLiteral("internal:%1").arg(userAccount.userId),
+			QJsonArray::fromStringList(userAccount.flags),
+			QByteArray(),
+			true
+		);
 		break;
 	}
 }
 
-void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId, const QJsonArray &flags, const QByteArray &avatar, bool allowMod)
+void LoginHandler::authLoginOk(const QString &username, const QString &authId, const QJsonArray &flags, const QByteArray &avatar, bool allowMod)
 {
+	Q_ASSERT(!authId.isEmpty());
+
 	m_client->setUsername(username);
-	m_client->setExtAuthId(extAuthId);
+	m_client->setAuthId(authId);
 
 	protocol::ServerReply identReply;
 	identReply.type = protocol::ServerReply::RESULT;
@@ -326,7 +343,6 @@ void LoginHandler::authLoginOk(const QString &username, const QString &extAuthId
 	identReply.reply["ident"] = m_client->username();
 	identReply.reply["guest"] = false;
 
-	m_client->setAuthenticated(true);
 	m_client->setModerator(flags.contains("MOD") && allowMod);
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
@@ -586,7 +602,7 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		if(session->history()->banlist().isBanned(m_client->peerAddress(), m_client->extAuthId())) {
+		if(session->history()->banlist().isBanned(m_client->peerAddress(), m_client->authId())) {
 			sendError("banned", "You have been banned from this session");
 			return;
 		}
