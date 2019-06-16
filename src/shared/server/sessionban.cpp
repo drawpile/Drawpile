@@ -77,20 +77,30 @@ QString SessionBanList::removeBan(int id)
 
 bool SessionBanList::isBanned(const QHostAddress &address, const QString &extAuthId) const
 {
-	if(!address.isNull()) {
-		const QHostAddress ip = toIpv6(address);
-		for(const SessionBan &b : m_banlist) {
-			if(b.ip == ip)
-				return true;
-		}
-	}
+	// Registered user accounts are banned by ext-auth ID.
+	// Due to widespread use of NAT, lots of unrelated users can
+	// share the same IP, so we want to avoid IP bans when possible.
 	if(!extAuthId.isEmpty()) {
 		for(const SessionBan &b : m_banlist) {
 			if(b.extAuthId == extAuthId)
 				return true;
 		}
+
+		return false;
 	}
 
+	// Guest users are banned by IP, because that's the best we can do.
+	if(!address.isNull()) {
+		const QHostAddress ip = toIpv6(address);
+		for(const SessionBan &b : m_banlist) {
+			if(b.extAuthId.isEmpty() && b.ip == ip)
+				return true;
+		}
+
+		return false;
+	}
+
+	qWarning("isBanned() called without a valid address or extAuthId");
 	return false;
 }
 

@@ -58,6 +58,9 @@ private slots:
 
 		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.100"), QString()), true);
 		QCOMPARE(bans.isBanned(QHostAddress("::ffff:192.168.0.100"), QString()), true);
+
+		// registered users are banned by ext-auth ID, not IP address
+		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.100"), "extauth"), false);
 		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), QString()), false);
 	}
 
@@ -67,10 +70,12 @@ private slots:
 		bans.addBan("User", QHostAddress("192.168.0.101"), "1", "op");
 
 		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.100"), QString()), false);
-		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.100"), "1"), true);
-		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), QString()), true);
+
+		// Banning a registered user does not ban the IP address
+		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), QString()), false);
+		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), "000"), false);
+
 		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), "1"), true);
-		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.101"), "000"), true);
 		QCOMPARE(bans.isBanned(QHostAddress("192.168.0.103"), "1"), true);
 	}
 
