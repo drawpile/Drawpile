@@ -118,14 +118,13 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	QMenu *addAnnouncementMenu = new QMenu(this);
 	QMenu *addPrivateAnnouncementMenu = new QMenu(this);
 
-	QHashIterator<QString,QPair<QIcon,QString>> i(doc->announcementList()->knownServers());
-	while(i.hasNext()) {
-		auto item = i.next();
-		QAction *a = addAnnouncementMenu->addAction(item.value().first, item.value().second);
-		a->setProperty("API_URL", item.key());
+	const auto listservers = sessionlisting::ListServerModel::listServers(false);
+	for(const auto &listserver : listservers) {
+		QAction *a = addAnnouncementMenu->addAction(listserver.icon, listserver.name);
+		a->setProperty("API_URL", listserver.url);
 
-		QAction *a2 = addPrivateAnnouncementMenu->addAction(item.value().first, item.value().second);
-		a2->setProperty("API_URL", item.key());
+		QAction *a2 = addPrivateAnnouncementMenu->addAction(listserver.icon, listserver.name);
+		a2->setProperty("API_URL", listserver.url);
 	}
 
 	m_ui->addAnnouncement->setMenu(addAnnouncementMenu);

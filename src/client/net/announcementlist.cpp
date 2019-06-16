@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@ namespace net {
 
 AnnouncementListModel::AnnouncementListModel(QObject *parent)
 	: QAbstractTableModel(parent)
-{
-	refreshKnownServers();
-}
-
-void AnnouncementListModel::refreshKnownServers()
 {
 	// Get list of known servers (url -> {icon, name})
 	const auto servers = sessionlisting::ListServerModel::listServers(true);

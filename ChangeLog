@@ -4,6 +4,7 @@
  * Fixed incorrect layer when moving selection if active layer was changed before the move ended
  * Fixed single pixel shift when moving or copy&pasting freeform selections
  * Join dialog's session list sort order and column is now remembered
+ * Fixed that read-only listservers were included in the session settings "add listing" buttons
 
 2019-05-30 Version 2.1.10
  * Fixed that built-in server settings were being ignored
