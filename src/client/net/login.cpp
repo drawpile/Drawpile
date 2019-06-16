@@ -826,7 +826,13 @@ void LoginHandler::send(const protocol::ServerCommand &cmd)
 #ifdef DEBUG_LOGIN
 	qInfo() << "login -->" << redactPassword(cmd.toJson().object());
 #endif
-	m_server->sendMessage(protocol::MessagePtr(new protocol::Command(0, cmd)));
+
+	auto msg = protocol::MessagePtr(new protocol::Command(0, cmd));
+	if(msg.cast<protocol::Command>().isOversize()) {
+		failLogin(tr("Tried to send oversized message (%1 KB)").arg(msg->length() / 1024.0, 0, 'f', 3));
+	} else {
+		m_server->sendMessage(msg);
+	}
 }
 
 QString LoginHandler::sessionId() const {
