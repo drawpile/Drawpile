@@ -198,10 +198,10 @@ void Session::joinUser(Client *user, bool host)
 
 	addToHistory(user->joinMessage());
 
-	if(user->isOperator() || m_history->isOperator(user->username()))
+	if(user->isOperator() || m_history->isOperator(user->authId()))
 		changeOpStatus(user->id(), true, "the server");
 
-	if(m_history->isTrusted(user->username()))
+	if(m_history->isTrusted(user->authId()))
 		changeTrustedStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
@@ -442,7 +442,7 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 			}
 			messageAll(c->username() + " " + msg, false);
 			if(c->isAuthenticated() && !c->isModerator())
-				m_history->setAuthenticatedOperator(c->username(), op);
+				m_history->setAuthenticatedOperator(c->authId(), op);
 
 		}
 		if(c->isOperator())
@@ -489,7 +489,7 @@ QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &ch
 			}
 			messageAll(c->username() + " " + msg, false);
 			if(c->isAuthenticated())
-				m_history->setAuthenticatedTrust(c->username(), trusted);
+				m_history->setAuthenticatedTrust(c->authId(), trusted);
 
 		}
 		if(c->isTrusted())

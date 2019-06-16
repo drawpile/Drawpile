@@ -281,13 +281,17 @@ bool FiledHistory::load()
 			}
 
 		} else if(cmd == "OP") {
-			m_ops.insert(QString::fromUtf8(params));
+			const QString authId = QString::fromUtf8(params);
+			if(!authId.isEmpty())
+				m_ops.insert(authId);
 
 		} else if(cmd == "DEOP") {
 			m_ops.remove(QString::fromUtf8(params));
 
 		} else if(cmd == "TRUST") {
-			m_trusted.insert(QString::fromUtf8(params));
+			const QString authId = QString::fromUtf8(params);
+			if(!authId.isEmpty())
+				m_trusted.insert(authId);
 
 		} else if(cmd == "UNTRUST") {
 			m_trusted.remove(QString::fromUtf8(params));
@@ -681,35 +685,41 @@ void FiledHistory::removeAnnouncement(const QString &url)
 	}
 }
 
-void FiledHistory::setAuthenticatedOperator(const QString &username, bool op)
+void FiledHistory::setAuthenticatedOperator(const QString &authId, bool op)
 {
+	if(authId.isEmpty())
+		return;
+
 	if(op) {
-		if(!m_ops.contains(username)) {
-			m_ops.insert(username);
-			m_journal->write(QString("OP %1\n").arg(username).toUtf8());
+		if(!m_ops.contains(authId)) {
+			m_ops.insert(authId);
+			m_journal->write(QStringLiteral("OP %1\n").arg(authId).toUtf8());
 			m_journal->flush();
 		}
 	} else {
-		if(m_ops.contains(username)) {
-			m_ops.remove(username);
-			m_journal->write(QString("DEOP %1\n").arg(username).toUtf8());
+		if(m_ops.contains(authId)) {
+			m_ops.remove(authId);
+			m_journal->write(QStringLiteral("DEOP %1\n").arg(authId).toUtf8());
 			m_journal->flush();
 		}
 	}
 }
 
-void FiledHistory::setAuthenticatedTrust(const QString &username, bool trusted)
+void FiledHistory::setAuthenticatedTrust(const QString &authId, bool trusted)
 {
+	if(authId.isEmpty())
+		return;
+
 	if(trusted) {
-		if(!m_trusted.contains(username)) {
-			m_trusted.insert(username);
-			m_journal->write(QString("TRUST %1\n").arg(username).toUtf8());
+		if(!m_trusted.contains(authId)) {
+			m_trusted.insert(authId);
+			m_journal->write(QStringLiteral("TRUST %1\n").arg(authId).toUtf8());
 			m_journal->flush();
 		}
 	} else {
-		if(m_trusted.contains(username)) {
-			m_trusted.remove(username);
-			m_journal->write(QString("UNTRUST %1\n").arg(username).toUtf8());
+		if(m_trusted.contains(authId)) {
+			m_trusted.remove(authId);
+			m_journal->write(QStringLiteral("UNTRUST %1\n").arg(authId).toUtf8());
 			m_journal->flush();
 		}
 	}

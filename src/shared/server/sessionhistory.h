@@ -263,7 +263,7 @@ public:
 	 * This is used to remember an authenticated user's status so it
 	 * can be automatically restored when they log in again.
 	 */
-	virtual void setAuthenticatedOperator(const QString &username, bool op) = 0;
+	virtual void setAuthenticatedOperator(const QString &authId, bool op) = 0;
 
 	/**
 	 * @brief Set an authenticated user's trust status
@@ -271,17 +271,17 @@ public:
 	 * This is used to remember an authenticated user's status so it
 	 * can be automatically restored when they log in again.
 	 */
-	virtual void setAuthenticatedTrust(const QString &username, bool trusted) = 0;
+	virtual void setAuthenticatedTrust(const QString &authId, bool trusted) = 0;
 
 	/**
 	 * @brief Is the given name on the list of operators
 	 */
-	virtual bool isOperator(const QString &username) const = 0;
+	virtual bool isOperator(const QString &authId) const = 0;
 
 	/**
 	 * @brief Is the given name on the list of trusted users
 	 */
-	virtual bool isTrusted(const QString &username) const = 0;
+	virtual bool isTrusted(const QString &authId) const = 0;
 
 	/**
 	 * @brief Are there any names on the list of authenticated operators?
