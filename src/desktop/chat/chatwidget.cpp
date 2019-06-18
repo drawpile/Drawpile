@@ -79,10 +79,10 @@ struct Chat {
 	void appendNotification(const QString &message);
 };
 
-struct ChatBox::Private {
-	Private(ChatBox *parent) : chatbox(parent) { }
+struct ChatWidget::Private {
+	Private(ChatWidget *parent) : chatbox(parent) { }
 
-	ChatBox * const chatbox;
+	ChatWidget * const chatbox;
 	QTextBrowser *view = nullptr;
 	ChatLineEdit *myline = nullptr;
 	QLabel *pinned = nullptr;
@@ -95,7 +95,6 @@ struct ChatBox::Private {
 	int myId = 0;
 	int currentChat = 0;
 
-	bool wasCollapsed = false;
 	bool preserveChat = true;
 	bool compactMode = false;
 
@@ -121,7 +120,7 @@ struct ChatBox::Private {
 	void updatePreserveModeUi();
 };
 
-ChatBox::ChatBox(QWidget *parent)
+ChatWidget::ChatWidget(QWidget *parent)
 	: QWidget(parent), d(new Private(this))
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
@@ -148,8 +147,8 @@ ChatBox::ChatBox(QWidget *parent)
 		d->tabs->setTabButton(0, QTabBar::RightSide, nullptr);
 	}
 
-	connect(d->tabs, &QTabBar::currentChanged, this, &ChatBox::chatTabSelected);
-	connect(d->tabs, &QTabBar::tabCloseRequested, this, &ChatBox::chatTabClosed);
+	connect(d->tabs, &QTabBar::currentChanged, this, &ChatWidget::chatTabSelected);
+	connect(d->tabs, &QTabBar::tabCloseRequested, this, &ChatWidget::chatTabClosed);
 	layout->addWidget(d->tabs, 0);
 
 	d->pinned = new QLabel(this);
@@ -168,7 +167,7 @@ ChatBox::ChatBox(QWidget *parent)
 	d->view->setOpenExternalLinks(true);
 
 	d->view->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(d->view, &QTextBrowser::customContextMenuRequested, this, &ChatBox::showChatContextMenu);
+	connect(d->view, &QTextBrowser::customContextMenuRequested, this, &ChatWidget::showChatContextMenu);
 
 	layout->addWidget(d->view, 1);
 
@@ -177,7 +176,7 @@ ChatBox::ChatBox(QWidget *parent)
 
 	setLayout(layout);
 
-	connect(d->myline, &ChatLineEdit::returnPressed, this, &ChatBox::sendMessage);
+	connect(d->myline, &ChatLineEdit::returnPressed, this, &ChatWidget::sendMessage);
 
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
@@ -187,12 +186,12 @@ ChatBox::ChatBox(QWidget *parent)
 	d->compactMode = QSettings().value("history/compactchat").toBool();
 }
 
-ChatBox::~ChatBox()
+ChatWidget::~ChatWidget()
 {
 	delete d;
 }
 
-void ChatBox::Private::updatePreserveModeUi()
+void ChatWidget::Private::updatePreserveModeUi()
 {
 	const bool preserve = preserveChat && currentChat == 0;
 
@@ -226,29 +225,29 @@ void ChatBox::Private::updatePreserveModeUi()
 	);
 
 }
-void ChatBox::setPreserveMode(bool preservechat)
+void ChatWidget::setPreserveMode(bool preservechat)
 {
 	d->preserveChat = preservechat;
 	d->updatePreserveModeUi();
 }
 
-void ChatBox::loggedIn(int myId)
+void ChatWidget::loggedIn(int myId)
 {
 	d->myId = myId;
 	d->announcedUsers.clear();
 }
 
-void ChatBox::focusInput()
+void ChatWidget::focusInput()
 {
 	d->myline->setFocus();
 }
 
-void ChatBox::setUserList(canvas::UserListModel *userlist)
+void ChatWidget::setUserList(canvas::UserListModel *userlist)
 {
 	 d->userlist = userlist;
 }
 
-void ChatBox::clear()
+void ChatWidget::clear()
 {
 	Chat &chat = d->chats[d->currentChat];
 	chat.doc->clear();
@@ -266,14 +265,14 @@ void ChatBox::clear()
 	}
 }
 
-bool ChatBox::Private::ensurePrivateChatExists(int userId, QObject *parent)
+bool ChatWidget::Private::ensurePrivateChatExists(int userId, QObject *parent)
 {
 	if(userId < 1 || userId > 255) {
-		qWarning("ChatBox::openPrivateChat(%d): Invalid user ID", userId);
+		qWarning("ChatWidget::openPrivateChat(%d): Invalid user ID", userId);
 		return false;
 	}
 	if(userId == myId) {
-		qWarning("ChatBox::openPrivateChat(%d): this is me...", userId);
+		qWarning("ChatWidget::openPrivateChat(%d): this is me...", userId);
 		return false;
 	}
 
@@ -297,7 +296,7 @@ bool ChatBox::Private::ensurePrivateChatExists(int userId, QObject *parent)
 	return true;
 }
 
-void ChatBox::openPrivateChat(int userId)
+void ChatWidget::openPrivateChat(int userId)
 {
 	if(!d->ensurePrivateChatExists(userId, this))
 		return;
@@ -317,7 +316,7 @@ static QString timestamp()
 	);
 }
 
-QString ChatBox::Private::usernameSpan(int userId)
+QString ChatWidget::Private::usernameSpan(int userId)
 {
 	const canvas::User user = userlist ? userlist->getUserById(userId) : canvas::User();
 
@@ -470,7 +469,7 @@ void Chat::appendNotification(const QString &message)
 	);
 }
 
-void ChatBox::userJoined(int id, const QString &name)
+void ChatWidget::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(name);
 
@@ -514,7 +513,7 @@ void ChatBox::userJoined(int id, const QString &name)
 	notification::playSound(notification::Event::LOGIN);
 }
 
-void ChatBox::userParted(int id)
+void ChatWidget::userParted(int id)
 {
 	QString msg = tr("%1 left the session").arg(d->usernameSpan(id));
 	const bool wasAtEnd = d->isAtEnd();
@@ -534,7 +533,7 @@ void ChatBox::userParted(int id)
 	notification::playSound(notification::Event::LOGOUT);
 }
 
-void ChatBox::kicked(const QString &kickedBy)
+void ChatWidget::kicked(const QString &kickedBy)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	d->publicChat().appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
@@ -542,7 +541,7 @@ void ChatBox::kicked(const QString &kickedBy)
 		d->scrollToEnd(0);
 }
 
-void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
+void ChatWidget::receiveMessage(const protocol::MessagePtr &msg)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	int chatId = 0;
@@ -578,7 +577,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 		const QString safetext = chat.message().toHtmlEscaped();
 
 		if(chat.target() != d->myId && chat.contextId() != d->myId) {
-			qWarning("ChatBox::recivePrivateMessage: message was targeted to user %d, but our ID is %d", chat.target(), d->myId);
+			qWarning("ChatWidget::recivePrivateMessage: message was targeted to user %d, but our ID is %d", chat.target(), d->myId);
 			return;
 		}
 
@@ -601,7 +600,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 		}
 
 	} else {
-		qWarning("ChatBox::receiveMessage: got wrong message type %s!", qPrintable(msg->messageName()));
+		qWarning("ChatWidget::receiveMessage: got wrong message type %s!", qPrintable(msg->messageName()));
 		return;
 	}
 
@@ -621,7 +620,7 @@ void ChatBox::receiveMessage(const protocol::MessagePtr &msg)
 		d->scrollToEnd(chatId);
 }
 
-void ChatBox::receiveMarker(int id, const QString &message)
+void ChatWidget::receiveMarker(int id, const QString &message)
 {
 	const bool wasAtEnd = d->isAtEnd();
 
@@ -637,7 +636,7 @@ void ChatBox::receiveMarker(int id, const QString &message)
 		d->scrollToEnd(0);
 }
 
-void ChatBox::systemMessage(const QString& message, bool alert)
+void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);
 	const bool wasAtEnd = d->isAtEnd();
@@ -646,7 +645,7 @@ void ChatBox::systemMessage(const QString& message, bool alert)
 		d->scrollToEnd(0);
 }
 
-void ChatBox::sendMessage(const QString &msg)
+void ChatWidget::sendMessage(const QString &msg)
 {
 	if(msg.at(0) == '/') {
 		// Special commands
@@ -720,7 +719,7 @@ void ChatBox::sendMessage(const QString &msg)
 		emit message(protocol::PrivateChat::regular(d->myId, d->currentChat, msg));
 }
 
-void ChatBox::chatTabSelected(int index)
+void ChatWidget::chatTabSelected(int index)
 {
 	d->chats[d->currentChat].scrollPosition = d->view->verticalScrollBar()->value();
 
@@ -733,7 +732,7 @@ void ChatBox::chatTabSelected(int index)
 	d->updatePreserveModeUi();
 }
 
-void ChatBox::chatTabClosed(int index)
+void ChatWidget::chatTabClosed(int index)
 {
 	const int id = d->tabs->tabData(index).toInt();
 	Q_ASSERT(d->chats.contains(id));
@@ -748,38 +747,25 @@ void ChatBox::chatTabClosed(int index)
 	d->chats.remove(id);
 }
 
-void ChatBox::showChatContextMenu(const QPoint &pos)
+void ChatWidget::showChatContextMenu(const QPoint &pos)
 {
 	auto menu = std::unique_ptr<QMenu>(d->view->createStandardContextMenu());
 
 	menu->addSeparator();
 
-	menu->addAction(tr("Clear"), this, &ChatBox::clear);
+	menu->addAction(tr("Clear"), this, &ChatWidget::clear);
 
-	auto compact = menu->addAction(tr("Compact mode"), this, &ChatBox::setCompactMode);
+	auto compact = menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
 	compact->setCheckable(true);
 	compact->setChecked(d->compactMode);
 
 	menu->exec(d->view->mapToGlobal(pos));
 }
 
-void ChatBox::setCompactMode(bool compact)
+void ChatWidget::setCompactMode(bool compact)
 {
 	d->compactMode = compact;
 	QSettings().setValue("history/compactchat", compact);
-}
-
-void ChatBox::resizeEvent(QResizeEvent *event)
-{
-	QWidget::resizeEvent(event);
-	if(event->size().height() == 0) {
-		if(!d->wasCollapsed)
-			emit expanded(false);
-		d->wasCollapsed = true;
-	} else if(d->wasCollapsed) {
-		d->wasCollapsed = false;
-		emit expanded(true);
-	}
 }
 
 }

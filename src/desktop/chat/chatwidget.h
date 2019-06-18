@@ -31,12 +31,12 @@ namespace widgets {
  *
  * A widget for chatting with other users
  */
-class ChatBox: public QWidget
+class ChatWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit ChatBox(QWidget *parent=nullptr);
-	~ChatBox();
+	explicit ChatWidget(QWidget *parent=nullptr);
+	~ChatWidget();
 
 	//! Focus the text input widget
 	void focusInput();
@@ -84,10 +84,6 @@ private slots:
 
 signals:
 	void message(const protocol::MessagePtr &msg);
-	void expanded(bool isVisible);
-
-protected:
-	void resizeEvent(QResizeEvent *event);
 
 private:
 	struct Private;

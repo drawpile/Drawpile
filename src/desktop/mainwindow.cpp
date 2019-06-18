@@ -85,8 +85,7 @@
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
-#include "widgets/chatwidget.h"
-#include "widgets/useritemdelegate.h"
+#include "chat/chatbox.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/brushpalettedock.h"
@@ -154,7 +153,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_dockColors(nullptr),
 	  m_dockNavigator(nullptr),
 	  m_chatbox(nullptr),
-	  m_useritemdelegate(nullptr),
 	  m_view(nullptr),
 	  m_viewStatusBar(nullptr),
 	  m_lockstatus(nullptr),
@@ -257,24 +255,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_splitter->addWidget(m_view);
 	m_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
 
-	// Create the chatbox and user list (second splitter item)
-	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
-	chatsplitter->setChildrenCollapsible(false);
-	m_chatbox = new widgets::ChatBox(this);
-	chatsplitter->addWidget(m_chatbox);
+	// Create the chatbox
+	m_chatbox = new widgets::ChatBox(m_doc, this);
+	m_splitter->addWidget(m_chatbox);
 
-	m_userlistview = new QListView(this);
-	m_userlistview->setSelectionMode(QListView::NoSelection);
-	m_useritemdelegate = new widgets::UserItemDelegate(this);
-	m_userlistview->setItemDelegate(m_useritemdelegate);
-	chatsplitter->addWidget(m_userlistview);
-
-	chatsplitter->setStretchFactor(0, 5);
-	chatsplitter->setStretchFactor(1, 1);
-	m_splitter->addWidget(chatsplitter);
-
+	// Nice initial division between canvas and chat
 	{
-		// Nice initial division between canvas and chat
 		const int h = height();
 		m_splitter->setSizes(QList<int>() << (h * 2 / 3) << (h / 3));
 	}
@@ -363,7 +349,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network client <-> UI connections
 	connect(m_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
 
-	connect(m_doc->client(), &net::Client::serverMessage, m_chatbox, &widgets::ChatBox::systemMessage);
 	connect(m_doc->client(), &net::Client::serverMessage, m_netstatus, &widgets::NetStatus::alertMessage);
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
@@ -374,8 +359,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
-	connect(m_useritemdelegate, &widgets::UserItemDelegate::opCommand, m_doc->client(), &net::Client::sendMessage);
-	connect(m_useritemdelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatbox, &widgets::ChatBox::openPrivateChat);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections
@@ -418,9 +401,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
-	connect(m_doc->client(), &net::Client::youWereKicked, m_chatbox, &widgets::ChatBox::kicked);
-
-	connect(m_doc, &Document::sessionPreserveChatChanged, m_chatbox, &widgets::ChatBox::setPreserveMode);
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(loadShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateSettings()));
@@ -486,14 +466,11 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
 	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
 
-	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatbox, &widgets::ChatBox::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
 		if(m_splitter->sizes().at(1)==0)
 			m_statusChatButton->show();
 	});
-
-	connect(canvas, &canvas::CanvasModel::markerMessageReceived, m_chatbox, &widgets::ChatBox::receiveMarker);
 
 	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
@@ -504,8 +481,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::userJoined, m_netstatus, &widgets::NetStatus::join);
 	connect(canvas, &canvas::CanvasModel::userLeft, m_netstatus, &widgets::NetStatus::leave);
-	connect(canvas, &canvas::CanvasModel::userJoined, m_chatbox, &widgets::ChatBox::userJoined);
-	connect(canvas, &canvas::CanvasModel::userLeft, m_chatbox, &widgets::ChatBox::userParted);
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged, canvas, QOverload<int>::of(&canvas::CanvasModel::inspectCanvas));
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeStopped, canvas, &canvas::CanvasModel::stopInspectingCanvas);
@@ -513,9 +488,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	updateLayerViewMode();
 
 	m_dockLayers->setCanvas(canvas);
-	m_userlistview->setModel(canvas->userlist()->onlineUsers());
-	m_chatbox->setUserList(canvas->userlist());
-	m_useritemdelegate->setDocument(m_doc);
 	m_serverLogDialog->setUserList(canvas->userlist());
 	m_dockNavigator->setUserCursors(canvas->userCursors());
 
@@ -1663,7 +1635,6 @@ void MainWindow::onServerLogin()
 {
 	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
-	m_chatbox->loggedIn(m_doc->client()->myId());
 	m_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
 	m_sessionSettings->setAutoResetEnabled(m_doc->client()->sessionSupportsAutoReset());
@@ -2507,8 +2478,8 @@ void MainWindow::setupActions()
 
 	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
-	connect(m_chatbox, &widgets::ChatBox::expanded, toggleChat, &QAction::setChecked);
-	connect(m_chatbox, &widgets::ChatBox::expanded, m_statusChatButton, &QToolButton::hide);
+	connect(m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat, &QAction::setChecked);
+	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		QList<int> sizes;
 		if(show) {

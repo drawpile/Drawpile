@@ -50,14 +50,11 @@ set (
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
-	widgets/chatlineedit.cpp
-	widgets/chatwidget.cpp 
 	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
-	widgets/useritemdelegate.cpp
 	widgets/filmstrip.cpp 
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
@@ -73,6 +70,10 @@ set (
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
 	docks/inputsettingsdock.cpp
+	chat/chatlineedit.cpp
+	chat/chatwidget.cpp 
+	chat/useritemdelegate.cpp
+	chat/chatbox.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp

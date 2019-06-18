@@ -221,8 +221,6 @@ private:
 	docks::ColorBox *m_dockColors;
 	docks::Navigator *m_dockNavigator;
 	widgets::ChatBox *m_chatbox;
-	QListView *m_userlistview;
-	widgets::UserItemDelegate *m_useritemdelegate;
 
 	widgets::CanvasView *m_view;
 
