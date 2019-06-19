@@ -74,6 +74,7 @@ set (
 	chat/chatwidget.cpp 
 	chat/useritemdelegate.cpp
 	chat/chatbox.cpp
+	chat/chatwindow.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp

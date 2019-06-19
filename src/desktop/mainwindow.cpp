@@ -259,6 +259,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_chatbox = new widgets::ChatBox(m_doc, this);
 	m_splitter->addWidget(m_chatbox);
 
+	connect(m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this]() {
+		m_splitter->addWidget(m_chatbox);
+	});
+
 	// Nice initial division between canvas and chat
 	{
 		const int h = height();
@@ -468,7 +472,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
-		if(m_splitter->sizes().at(1)==0)
+		const auto sizes = m_splitter->sizes();
+		if(sizes.length() > 1 && sizes.at(1)==0)
 			m_statusChatButton->show();
 	});
 

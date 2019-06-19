@@ -38,9 +38,8 @@ public:
 	explicit ChatWidget(QWidget *parent=nullptr);
 	~ChatWidget();
 
-	//! Focus the text input widget
 	void focusInput();
-
+	void setAttached(bool isAttached);
 	void setUserList(canvas::UserListModel *userlist);
 
 public slots:
@@ -84,6 +83,7 @@ private slots:
 
 signals:
 	void message(const protocol::MessagePtr &msg);
+	void detachRequested();
 
 private:
 	struct Private;

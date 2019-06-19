@@ -19,6 +19,7 @@
 
 #include "chatbox.h"
 #include "chatwidget.h"
+#include "chatwindow.h"
 #include "useritemdelegate.h"
 #include "../../client/document.h"
 #include "../../client/canvas/canvasmodel.h"
@@ -29,6 +30,7 @@
 #include <QSplitter>
 #include <QListView>
 #include <QVBoxLayout>
+#include <QMetaObject>
 
 namespace widgets {
 
@@ -56,6 +58,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	setLayout(layout);
 
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);
+	connect(m_chatWidget, &ChatWidget::detachRequested, this, &ChatBox::detachFromParent);
 
 	connect(doc, &Document::canvasChanged, this, &ChatBox::onCanvasChanged);
 	connect(doc, &Document::serverLoggedIn, this, &ChatBox::onServerLogin);
@@ -87,6 +90,36 @@ void ChatBox::onServerLogin()
 void ChatBox::focusInput()
 {
 	m_chatWidget->focusInput();
+}
+
+void ChatBox::detachFromParent()
+{
+	if(!parent() || qobject_cast<ChatWindow*>(parent()))
+		return;
+
+	m_state = State::Detached;
+
+	const auto pos = mapToGlobal(geometry().topLeft());
+	const auto siz = size();
+
+	QObject *oldParent = parent();
+
+	m_chatWidget->setAttached(false);
+
+	auto *window = new ChatWindow(this);
+	connect(window, &ChatWindow::closing, this, &ChatBox::reattachNowPlease);
+	connect(window, &ChatWindow::closing, this, &ChatBox::reattachToParent);
+	connect(oldParent, &QObject::destroyed, window, &QObject::deleteLater);
+
+	window->show();
+	window->move(pos);
+	window->resize(siz);
+}
+
+void ChatBox::reattachToParent()
+{
+	m_state = State::Expanded;
+	m_chatWidget->setAttached(true);
 }
 
 void ChatBox::resizeEvent(QResizeEvent *event)

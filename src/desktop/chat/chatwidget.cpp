@@ -97,6 +97,7 @@ struct ChatWidget::Private {
 
 	bool preserveChat = true;
 	bool compactMode = false;
+	bool isAttached = true;
 
 	QString usernameSpan(int userId);
 
@@ -189,6 +190,11 @@ ChatWidget::ChatWidget(QWidget *parent)
 ChatWidget::~ChatWidget()
 {
 	delete d;
+}
+
+void ChatWidget::setAttached(bool isAttached)
+{
+	d->isAttached = isAttached;
 }
 
 void ChatWidget::Private::updatePreserveModeUi()
@@ -758,6 +764,16 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 	auto compact = menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
 	compact->setCheckable(true);
 	compact->setChecked(d->compactMode);
+
+	if(d->isAttached) {
+		menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
+	} else {
+		QWidget *win = parentWidget();
+		while(win->parent() != nullptr)
+			win = win->parentWidget();
+
+		menu->addAction(tr("Attach"), win, &QWidget::close);
+	}
 
 	menu->exec(d->view->mapToGlobal(pos));
 }

@@ -50,6 +50,8 @@ public:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();
+	void detachFromParent();
+	void reattachToParent();
 
 signals:
 	//! User has written a new message
@@ -58,14 +60,11 @@ signals:
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);
 
-	//! User requested the chat box to be detached
-	void detachRequested();
-
 	//! Detached chat box should be re-attached and reparented (or it will be destroyed)
-	void reattached(QWidget *thisChatbox);
+	void reattachNowPlease();
 
 protected:
-	void resizeEvent(QResizeEvent *event);
+	void resizeEvent(QResizeEvent *event) override;
 
 private:
 	enum class State {
