@@ -9,6 +9,7 @@
  * Server: op and trusted status is now remembered by user account, rather than username
  * An error message is now shown if a login message is oversize
  * Chat box can now be detached into its own window
+ * Client now refuses to autoreset if it knows it isn't fully caught up yet
 
 2019-05-30 Version 2.1.10
  * Fixed that built-in server settings were being ignored

@@ -274,6 +274,11 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 
 	qInfo("Server requested autoreset (query=%d)", query);
 
+	if(!m_client->isFullyCaughtUp()) {
+		qInfo("Ignoring autoreset request because we're not fully caught up yet.");
+		return;
+	}
+
 	m_sessionHistoryMaxSize = maxSize;
 
 	if(QSettings().value("settings/server/autoreset", true).toBool()) {
@@ -288,6 +293,8 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 
 			sendResetSession(protocol::MessageList());
 		}
+	} else {
+		qInfo("Ignoring autoreset request as configured.");
 	}
 }
 

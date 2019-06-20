@@ -150,6 +150,9 @@ public:
 	 */
 	int uploadQueueBytes() const;
 
+	//! Are we expecting more incoming data?
+	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
+
 	/**
 	 * @brief Whether to use recorded chat (Chat message) by default
 	 *
