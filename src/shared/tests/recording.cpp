@@ -27,7 +27,7 @@ static const char *TEST_RECORDING_OLD = "44505245430000317b2276657273696f6e223a2
 static const char *TEST_TEXTMODE =
 	"!version=dp:4.21.2\n"
 	"!test=TESTING\n"
-	"1 join name=hello avatar=world\n";
+	"1 join name=hello avatar=d29ybGQ=\n";
 
 class TestRecording: public QObject
 {

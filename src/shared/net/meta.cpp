@@ -65,7 +65,7 @@ Kwargs UserJoin::kwargs() const
 	Kwargs kw;
 	kw["name"] = name();
 	if(!m_avatar.isEmpty())
-		kw["avatar"] = QString::fromUtf8(m_avatar);
+		kw["avatar"] = m_avatar.toBase64();
 	QStringList flags;
 	if(isModerator())
 		flags << "mod";
@@ -85,7 +85,7 @@ UserJoin *UserJoin::fromText(uint8_t ctx, const Kwargs &kwargs)
 		(flags.contains("mod") ? FLAG_MOD : 0) |
 		(flags.contains("auth") ? FLAG_AUTH : 0),
 		kwargs["name"],
-		kwargs["avatar"].toUtf8()
+		QByteArray::fromBase64(kwargs["avatar"].toLatin1())
 		);
 }
 
