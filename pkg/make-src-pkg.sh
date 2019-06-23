@@ -9,7 +9,7 @@ then
 	exit 1
 fi
 
-cd ..
+cd "$(git rev-parse --show-toplevel)"
 
 OUT="desktop/artifacts/drawpile-$1.tar.gz"
 
