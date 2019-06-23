@@ -99,7 +99,6 @@ void ChatBox::detachFromParent()
 
 	m_state = State::Detached;
 
-	const auto pos = mapToGlobal(geometry().topLeft());
 	const auto siz = size();
 
 	QObject *oldParent = parent();
@@ -112,7 +111,6 @@ void ChatBox::detachFromParent()
 	connect(oldParent, &QObject::destroyed, window, &QObject::deleteLater);
 
 	window->show();
-	window->move(pos);
 	window->resize(siz);
 }
 
