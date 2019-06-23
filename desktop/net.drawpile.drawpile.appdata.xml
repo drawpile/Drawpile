@@ -23,6 +23,26 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.11" date="2019-06-23">
+      <url>https://drawpile.net/news/release-2.1.11/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed that brush color was uninitialized on fresh install</li>
+          <li>Fixed that using "/me" in a direct message would send it as a public message</li>
+          <li>Fixed incorrect layer when moving selection if active layer was changed before the move ended</li>
+          <li>Fixed single pixel shift when moving or copy&amp;pasting freeform selections</li>
+          <li>Join dialog's session list sort order and column is now remembered</li>
+          <li>Fixed that read-only listservers were included in the session settings "add listing" buttons</li>
+          <li>Server: registered user bans are no longer IP bans</li>
+          <li>Server: op and trusted status is now remembered by user account, rather than username</li>
+          <li>An error message is now shown if a login message is oversize</li>
+          <li>Chat box can now be detached into its own window</li>
+          <li>Client now refuses to autoreset if it knows it isn't fully caught up yet</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.10" date="2019-05-30">
       <url>https://drawpile.net/news/release-2.1.10/</url>
       <description>
