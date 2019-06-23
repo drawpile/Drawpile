@@ -45,7 +45,7 @@ public:
 	void setDocument(Document *doc) { m_doc = doc; }
 
 signals:
-	void opCommand(protocol::MessagePtr msg);
+	void opCommand(const protocol::MessagePtr &msg);
 	void requestPrivateChat(int userId);
 
 private slots:
