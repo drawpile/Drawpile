@@ -41,7 +41,28 @@
           <li>Client now refuses to autoreset if it knows it isn't fully caught up yet</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup.exe</location>
+          <checksum type="sha256">864beca94361ebee7615c37d451f5935a0114d558660a090b529716351f5215f</checksum>
+          <size type="download">16491501</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup-w32.exe</location>
+          <checksum type="sha256">d5761debd2fe6f52f4d221d65a497b99d2d71b7c2874cd8a44883f9b96a01bf9</checksum>
+          <size type="download">15484138</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.11.dmg</location>
+          <checksum type="sha256">30c8ec7234fb81a41ff828729b056ae40ef9ada82b525e0892ca8263ad7960cc</checksum>
+          <size type="download">14004927</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.11.tar.gz</location>
+          <checksum type="sha256">75b3050441bfc54dddfbb5bd2231a13428e5deef52c49c9319536ea6f2df2503</checksum>
+          <size type="download">2487988</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.10" date="2019-05-30">
       <url>https://drawpile.net/news/release-2.1.10/</url>
