@@ -18,7 +18,7 @@
 */
 
 #include "versioncheckdialog.h"
-#include "../../shared/util/networkaccess.h"
+#include "../../libshared/util/networkaccess.h"
 
 #include "widgets/spinner.h"
 using widgets::Spinner;

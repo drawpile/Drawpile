@@ -28,8 +28,8 @@ using widgets::Filmstrip;
 
 #include "mainwindow.h"
 
-#include "../shared/record/reader.h"
-#include "../shared/net/recording.h"
+#include "../libshared/record/reader.h"
+#include "../libshared/net/recording.h"
 
 #include "ui_playback.h"
 

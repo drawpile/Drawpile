@@ -19,7 +19,7 @@
 #ifndef PLAYBACKDIALOG_H
 #define PLAYBACKDIALOG_H
 
-#include "../shared/net/message.h"
+#include "../../libshared/net/message.h"
 
 #include <QDialog>
 #include <QPointer>

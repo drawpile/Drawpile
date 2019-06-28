@@ -20,7 +20,7 @@
 #include "serverlogdialog.h"
 #include "canvas/userlist.h"
 #include "net/commands.h"
-#include "../shared/net/undo.h"
+#include "../libshared/net/undo.h"
 #include "ui_serverlog.h"
 
 #include <QSortFilterProxyModel>

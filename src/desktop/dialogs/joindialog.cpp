@@ -26,11 +26,11 @@
 #include "utils/sessionfilterproxymodel.h"
 #include "utils/images.h"
 #include "utils/newversion.h"
-#include "../shared/listings/announcementapi.h"
+#include "../libshared/listings/announcementapi.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
-#include "../shared/listings/zeroconfdiscovery.h"
+#include "../libshared/listings/zeroconfdiscovery.h"
 #endif
 
 #include "widgets/spinner.h"

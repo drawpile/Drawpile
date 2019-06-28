@@ -20,7 +20,7 @@
 #include "docks/layerlistdelegate.h"
 #include "canvas/layerlist.h"
 #include "utils/icon.h"
-#include "../shared/net/layer.h"
+#include "../libshared/net/layer.h"
 
 #include <QDebug>
 #include <QMouseEvent>

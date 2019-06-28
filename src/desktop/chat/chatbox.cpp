@@ -21,10 +21,10 @@
 #include "chatwidget.h"
 #include "chatwindow.h"
 #include "useritemdelegate.h"
-#include "../../client/document.h"
-#include "../../client/canvas/canvasmodel.h"
-#include "../../client/canvas/userlist.h"
-#include "../../client/net/client.h"
+#include "document.h"
+#include "canvas/canvasmodel.h"
+#include "canvas/userlist.h"
+#include "net/client.h"
 
 #include <QResizeEvent>
 #include <QSplitter>

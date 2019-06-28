@@ -18,10 +18,10 @@
 */
 
 #include "config.h"
-#include "thickserver.h"
 
-#include "../shared/server/inmemoryconfig.h"
-#include "../shared/server/sslserver.h"
+#include "../libthicksrv/thickserver.h"
+#include "../libserver/inmemoryconfig.h"
+#include "../libserver/sslserver.h"
 
 #include <QGuiApplication>
 #include <QCommandLineParser>

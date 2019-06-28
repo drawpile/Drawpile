@@ -4,7 +4,7 @@ find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)
 find_package(Vpx)
 
-include_directories("../client")
+include_directories("../libclient")
 
 set (
 	SOURCES
@@ -240,7 +240,7 @@ add_executable (
 )
 
 target_link_libraries(${CLIENTNAME}
-	${DPCLIENTLIB}
+	dpclient
 	thicksrvlib
 	Qt5::Widgets
 	Qt5::Multimedia

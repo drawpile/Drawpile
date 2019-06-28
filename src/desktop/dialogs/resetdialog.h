@@ -19,7 +19,7 @@
 #ifndef RESETSESSIONDIALOG_H
 #define RESETSESSIONDIALOG_H
 
-#include "../shared/net/message.h"
+#include "../../libshared/net/message.h"
 
 #include <QDialog>
 

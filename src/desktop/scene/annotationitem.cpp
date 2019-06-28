@@ -23,7 +23,7 @@
 
 #include "core/layerstack.h"
 #include "scene/annotationitem.h"
-#include "../shared/net/annotation.h"
+#include "../libshared/net/annotation.h"
 
 namespace drawingboard {
 

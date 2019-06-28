@@ -23,7 +23,7 @@
 #include "utils/funstuff.h"
 #include "notifications.h"
 
-#include "../shared/net/meta.h"
+#include "../libshared/net/meta.h"
 #include "canvas/userlist.h"
 
 #include <QResizeEvent>

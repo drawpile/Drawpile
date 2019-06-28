@@ -72,10 +72,10 @@
 #include "canvas/userlist.h"
 
 #include "utils/recentfiles.h"
-#include "../shared/util/whatismyip.h"
+#include "../libshared/util/whatismyip.h"
 #include "utils/icon.h"
 #include "utils/images.h"
-#include "../shared/util/networkaccess.h"
+#include "../libshared/util/networkaccess.h"
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
 #include "utils/settings.h"
@@ -109,10 +109,10 @@
 #include "toolwidgets/zoomsettings.h"
 #include "toolwidgets/inspectorsettings.h"
 
-#include "../shared/record/reader.h"
-#include "../shared/net/annotation.h"
-#include "../shared/net/undo.h"
-#include "../shared/net/recording.h"
+#include "../libshared/record/reader.h"
+#include "../libshared/net/annotation.h"
+#include "../libshared/net/undo.h"
+#include "../libshared/net/recording.h"
 
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -133,7 +133,7 @@
 #include "export/animation.h"
 #include "export/videoexporter.h"
 
-#include "../thicksrv/builtinserver.h"
+#include "../libthicksrv/builtinserver.h"
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "bundled/kis_tablet/kis_tablet_support_win.h"

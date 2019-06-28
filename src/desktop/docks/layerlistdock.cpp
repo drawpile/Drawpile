@@ -28,9 +28,9 @@
 #include "core/blendmodes.h"
 #include "utils/changeflags.h"
 
-#include "../shared/net/layer.h"
-#include "../shared/net/meta2.h"
-#include "../shared/net/undo.h"
+#include "../libshared/net/layer.h"
+#include "../libshared/net/meta2.h"
+#include "../libshared/net/undo.h"
 
 #include "widgets/groupedtoolbutton.h"
 using widgets::GroupedToolButton;

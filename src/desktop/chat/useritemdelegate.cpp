@@ -23,7 +23,7 @@
 #include "utils/icon.h"
 #include "net/commands.h"
 #include "document.h"
-#include "../shared/net/undo.h"
+#include "../libshared/net/undo.h"
 
 #include <QPainter>
 #include <QModelIndex>

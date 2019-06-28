@@ -28,8 +28,8 @@
 #include "net/commands.h"
 #include "utils/icon.h"
 
-#include "../shared/net/annotation.h"
-#include "../shared/net/undo.h"
+#include "../libshared/net/annotation.h"
+#include "../libshared/net/undo.h"
 
 #include "widgets/groupedtoolbutton.h"
 #include "widgets/colorbutton.h"

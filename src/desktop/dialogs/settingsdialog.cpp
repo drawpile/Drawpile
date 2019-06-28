@@ -31,9 +31,9 @@
 #include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "../shared/listings/announcementapi.h"
-#include "../shared/util/passwordhash.h"
-#include "../shared/util/networkaccess.h"
+#include "../libshared/listings/announcementapi.h"
+#include "../libshared/util/passwordhash.h"
+#include "../libshared/util/networkaccess.h"
 
 #include "ui_settings.h"
 

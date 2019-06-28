@@ -22,10 +22,10 @@
 #include "dialogs/certificateview.h"
 #include "dialogs/netstats.h"
 #include "utils/icon.h"
-#include "../shared/util/whatismyip.h"
+#include "../libshared/util/whatismyip.h"
 
 #ifdef HAVE_UPNP
-#include "../shared/util/upnp.h"
+#include "../libshared/util/upnp.h"
 #endif
 
 #include <QAction>
