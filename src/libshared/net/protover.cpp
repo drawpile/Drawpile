@@ -18,7 +18,7 @@
 */
 
 #include "protover.h"
-#include "../../config.h"
+#include "config.h"
 
 #include <QRegularExpression>
 

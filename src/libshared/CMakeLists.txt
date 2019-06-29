@@ -9,7 +9,6 @@ set (
 	net/layer.cpp
 	net/brushes.cpp
 	net/image.cpp
-	net/annotation.cpp
 	net/control.cpp
 	net/meta.cpp
 	net/meta2.cpp
