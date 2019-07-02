@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionidvalidator.h"
-#include "../libshared/util/validators.h"
+#ifndef DP_VALIDATORS_H
+#define DP_VALIDATORS_H
 
-SessionIdAliasValidator::SessionIdAliasValidator(QObject *parent) :
-	QValidator(parent)
-{
-}
+class QString;
 
-QValidator::State SessionIdAliasValidator::validate(QString &input, int &pos) const
-{
-	Q_UNUSED(pos);
+bool validateSessionIdAlias(const QString &alias);
+bool validateUsername(const QString &username);
 
-	if(input.isEmpty() || validateSessionIdAlias(input))
-		return Acceptable;
-	else
-		return Invalid;
-}
+#endif
+

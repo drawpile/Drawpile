@@ -20,7 +20,7 @@
 #include "database.h"
 #include "dblog.h"
 #include "../libshared/util/passwordhash.h"
-#include "../libserver/loginhandler.h" // for username validation
+#include "../libshared/util/validators.h"
 #include "../libserver/serverlog.h"
 
 #include <QSqlDatabase>
@@ -345,7 +345,7 @@ QJsonArray Database::getAccountList() const
 
 QJsonObject Database::addAccount(const QString &username, const QString &password, bool locked, const QStringList &flags)
 {
-	if(!LoginHandler::validateUsername(username))
+	if(!validateUsername(username))
 		return QJsonObject();
 
 	QSqlQuery q(d->db);
@@ -368,7 +368,7 @@ QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 	QStringList updates;
 	QVariantList params;
 
-	if(LoginHandler::validateUsername(update["username"].toString())) {
+	if(validateUsername(update["username"].toString())) {
 		updates << "username=?";
 		params << update["username"].toString();
 	}

@@ -20,7 +20,7 @@
 #include "templatefiles.h"
 #include "../libshared/record/reader.h"
 #include "../libserver/sessionhistory.h"
-#include "../libserver/loginhandler.h" // for id validation
+#include "../libshared/util/validators.h"
 
 #include <QJsonArray>
 #include <QFileSystemWatcher>
@@ -45,7 +45,7 @@ void TemplateFiles::scanDirectory()
 
 	for(const QFileInfo &f : m_dir.entryInfoList()) {
 		const QString alias = f.baseName();
-		if(LoginHandler::validateSessionIdAlias(alias)) {
+		if(validateSessionIdAlias(alias)) {
 			if(m_templates.contains(alias) && m_templates[alias].lastmod == f.lastModified()) {
 				// Template is unchanged
 				templates[alias] = m_templates[alias];

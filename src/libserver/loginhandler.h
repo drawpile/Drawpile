@@ -87,9 +87,6 @@ public:
 
 	void startLoginProcess();
 
-	static bool validateSessionIdAlias(const QString &alias);
-	static bool validateUsername(const QString &name);
-
 public slots:
 	void announceSession(const QJsonObject &session);
 	void announceSessionEnd(const QString &id);

@@ -18,7 +18,7 @@
 */
 
 #include "stats.h"
-#include "../shared/record/reader.h"
+#include "../libshared/record/reader.h"
 
 #include <cstdio>
 

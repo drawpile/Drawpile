@@ -20,7 +20,7 @@
 #include "config.h"
 
 #include "renderer.h"
-#include "../shared/net/protover.h"
+#include "../libshared/net/protover.h"
 
 #include <QGuiApplication>
 #include <QStringList>

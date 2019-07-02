@@ -20,9 +20,9 @@
 #include "config.h"
 #include "stats.h"
 
-#include "../shared/record/reader.h"
-#include "../shared/record/writer.h"
-#include "../client/canvas/aclfilter.h"
+#include "../libshared/record/reader.h"
+#include "../libshared/record/writer.h"
+#include "../libclient/canvas/aclfilter.h"
 
 #include <QCoreApplication>
 #include <QStringList>

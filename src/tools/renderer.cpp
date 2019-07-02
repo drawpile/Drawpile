@@ -19,12 +19,12 @@
 
 #include "renderer.h"
 
-#include "../client/canvas/statetracker.h"
-#include "../client/canvas/layerlist.h"
-#include "../client/canvas/aclfilter.h"
-#include "../client/core/layerstack.h"
-#include "../client/ora/orawriter.h"
-#include "../shared/record/reader.h"
+#include "../libclient/canvas/statetracker.h"
+#include "../libclient/canvas/layerlist.h"
+#include "../libclient/canvas/aclfilter.h"
+#include "../libclient/core/layerstack.h"
+#include "../libclient/ora/orawriter.h"
+#include "../libshared/record/reader.h"
 
 #include <QImageWriter>
 #include <QElapsedTimer>
