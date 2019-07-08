@@ -2242,17 +2242,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="144"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Uusi versio</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="148"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuntematon versio</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="150"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Epäyhteensopiva versio (%1)</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="190"/>
@@ -3559,17 +3559,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="123"/>
         <source>Download %1 (%2 MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lataa %1 (%2 Mt)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="181"/>
         <source>Downloaded %1!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladattu %1!</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="190"/>
         <source>Downloading %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladataan %1...</translation>
     </message>
 </context>
 <context>
@@ -3919,12 +3919,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/login.cpp" line="468"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Uusi versio</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="472"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuntematon versio</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="513"/>
@@ -3939,7 +3939,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/login.cpp" line="519"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Toisen Drawpile version (%1) istunto on jo meneillään!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="705"/>
@@ -3975,7 +3975,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/login.cpp" line="832"/>
         <source>Tried to send oversized message (%1 KB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yritettiin lähettää ylisuurta viesti (%1 Kt)</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="766"/>
@@ -4018,7 +4018,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/loginsessions.cpp" line="88"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Epäyhteensopiva versio (%1)</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="129"/>
@@ -4208,57 +4208,57 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="134"/>
         <source>Public</source>
-        <translation type="unfinished">Julkinen</translation>
+        <translation>Julkinen</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="206"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Chat (tallennettu)...</translation>
+        <translation>Chat (tallennettu)...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="209"/>
         <source>Chat...</source>
-        <translation type="unfinished">Chat...</translation>
+        <translation>Chat...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="506"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 liittyi mukaan</translation>
+        <translation>%1 liittyi mukaan</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="524"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 lähti pois</translation>
+        <translation>%1 lähti pois</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="545"/>
         <source>You have been kicked by %1</source>
-        <translation type="unfinished">Sinut on potkittu ulos käyttäjän %1 toimesta</translation>
+        <translation>Sinut on potkittu ulos käyttäjän %1 toimesta</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="701"/>
         <source>Invalid dice roll description</source>
-        <translation type="unfinished">Virheellinen noppa</translation>
+        <translation>Virheellinen noppa</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="762"/>
         <source>Clear</source>
-        <translation type="unfinished">Tyhjennä</translation>
+        <translation>Tyhjennä</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="764"/>
         <source>Compact mode</source>
-        <translation type="unfinished">Kompakti muoto</translation>
+        <translation>Kompakti muoto</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="769"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>Irrota</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="775"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiinnitä</translation>
     </message>
 </context>
 <context>
@@ -4266,7 +4266,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/chat/chatwindow.cpp" line="29"/>
         <source>Chat</source>
-        <translation type="unfinished">Chat</translation>
+        <translation>Chat</translation>
     </message>
 </context>
 <context>
