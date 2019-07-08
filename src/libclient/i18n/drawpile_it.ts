@@ -771,10 +771,10 @@
         <source>Minimize</source>
         <translation>Міnimizza</translation>
     </message>
-    <message numerus="yes">
+    <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation>Hai% n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</translation>
+        <translation>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="209"/>
@@ -1272,7 +1272,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2351"/>
         <source>&amp;Edit</source>
-        <translation>З&amp;Modifica</translation>
+        <translation>&amp;Modifica</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2369"/>
@@ -1747,7 +1747,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/mainwindow.cpp" line="2711"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
-        <translation>& amp;Informazioni su Drawpile</translation>
+        <translation>&amp;Informazioni su Drawpile</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2712"/>
@@ -3035,7 +3035,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="290"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;testa/&gt;&lt;corpo&gt;&lt;p&gt;Segnaposti del modello supportati:&lt;/p&gt;&lt;p&gt;&lt;stile di campata=&quot; peso del carattere:600;&quot;&gt;{F}&lt;/span&gt;-numero di frame&lt;br/&lt;&lt;stile di campata=&quot;peso del carattere:600;&quot;&gt;{E}&lt;campata &gt;-estensione del file&lt;/p&gt;&lt;/body&gt;&lt;/html&g</translation>
+        <translation>&lt;html&gt;&lt;testa/&gt;&lt;corpo&gt;&lt;p&gt;Segnaposti del modello supportati:&lt;/p&gt;&lt;p&gt;&lt;stile di campata=&quot; peso del carattere:600;&quot;&gt;{F}&lt;/span&gt;-numero di frame&lt;br/&lt;&lt;stile di campata=&quot;peso del carattere:600;&quot;&gt;{E}&lt;campata &gt;-estensione del file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="320"/>
@@ -3217,13 +3217,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
         <source>Nearby</source>
-        <translation type=Vicino</translation>
+        <translation>Vicino</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
         <source>Loading...</source>
-        <translation type=>Caricamento in corso...</translation>
+        <translation>Caricamento in corso...</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="219"/>
