@@ -1,5 +1,6 @@
 2019-0?-?? Version 2.1.12
  * Added Italian translation (contributed by Albano Battistella)
+ * Fixed lockup when opening a layered TIFF file
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install

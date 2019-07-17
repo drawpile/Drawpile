@@ -148,6 +148,12 @@ MessageList ImageCanvasLoader::loadInitCommands()
 			tileset.toPutTiles(1, layerId, 0, msgs);
 
 			++layerId;
+
+			if(!ir.supportsAnimation()) {
+				// Don't try to read any more frames if this format
+				// does not support animation.
+				break;
+			}
 		}
 
 		return msgs;
