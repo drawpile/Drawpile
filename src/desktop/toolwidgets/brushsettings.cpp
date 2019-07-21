@@ -752,6 +752,7 @@ void BrushPresetModel::addBrush(const ToolProperties &brushProps)
 
 void BrushPresetModel::loadBrushes()
 {
+#if 0 // TODO
 	QSettings cfg;
 	cfg.beginGroup("tools/brushpresets");
 	int size = cfg.beginReadArray("preset");
@@ -766,10 +767,12 @@ void BrushPresetModel::loadBrushes()
 	d->presets = props;
 	d->iconcache = iconcache;
 	endResetModel();
+#endif
 }
 
 void BrushPresetModel::saveBrushes() const
 {
+#if 0 // TODO
 	QSettings cfg;
 	cfg.beginGroup("tools/brushpresets");
 	cfg.beginWriteArray("preset", d->presets.size());
@@ -778,6 +781,7 @@ void BrushPresetModel::saveBrushes() const
 		d->presets.at(i).save(cfg);
 	}
 	cfg.endArray();
+#endif
 }
 
 void BrushPresetModel::makeDefaultBrushes()
