@@ -43,10 +43,13 @@ void ClassicBrushState::setBrush(const ClassicBrush &brush)
 		// If brush alpha is nonzero, indirect drawing mode
 		// is used and the alpha is used as the overall transparency
 		// of the entire stroke.
+		// TODO this doesn't work right. We should use alpha-darken mode
+		// and set the opacity range properly
 		c.setAlphaF(m_brush.opacity1());
 
 		m_brush.setOpacity(1.0);
-		m_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		if(brush.useOpacityPressure())
+			m_brush.setOpacity2(0.0);
 	}
 	m_brush.setColor(c);
 	m_smudgedColor = c;
@@ -118,7 +121,7 @@ void ClassicBrushState::strokeTo(const paintcore::Point &to, const paintcore::La
 	} else {
 		// Start a new stroke
 		m_pendown = true;
-		if(m_brush.isColorPickMode() && sourceLayer && !m_brush.isEraser()) {
+		if(m_brush.isColorPickMode() && sourceLayer && m_brush.blendingMode() != paintcore::BlendMode::MODE_ERASE) {
 			m_smudgedColor =  sourceLayer->colorAt(to.x(), to.y(), qRound(m_brush.size(to.pressure())));
 		}
 

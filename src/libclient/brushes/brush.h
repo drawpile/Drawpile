@@ -23,6 +23,8 @@
 
 #include <QColor>
 
+class QJsonObject;
+
 namespace brushes {
 
 /**
@@ -41,7 +43,7 @@ namespace brushes {
  *  Constant parameters are:
  *
  *  - Resmudge - how often to sample smudge color (every resmudge dabs)
- *  - Spacing - dab spacing as a percentage of brush diameter
+ *  - Spacing - dab spacing (1.0 = spacing is one diameter from center to center)
  *  - Subpixel mode (boolean)
  *  - Incremental mode (boolean)
  *  - Blending mode
@@ -50,35 +52,26 @@ namespace brushes {
 class ClassicBrush
 {
 public:
-	//! Construct a brush
-	ClassicBrush(int size=1, qreal hardness=1.0, qreal opacity=1.0,
-			const QColor& color=Qt::black, int spacing=25)
-		: m_size1(size), m_size2(size),
-		m_hardness1(hardness), m_hardness2(hardness),
-		m_opacity1(opacity), m_opacity2(opacity),
-		m_smudge1(0), m_smudge2(0),
-		m_color(color), m_spacing(spacing), m_resmudge(0),
-		m_blend(paintcore::BlendMode::MODE_NORMAL),
-		m_subpixel(false), m_incremental(true),
-		m_square(false),
-		m_colorpick(false)
-	{
-	}
+	enum Shape {
+		ROUND_PIXEL,
+		SQUARE_PIXEL,
+		ROUND_SOFT
+	};
 
-	void setSize(int size) { Q_ASSERT(size>0); m_size1 = size; }
-	void setSize2(int size) { Q_ASSERT(size>0); m_size2 = size; }
+	void setSize(int size) { m_size1 = qMax(1, size); }
+	void setSize2(int size) { m_size2 = qMax(1, size); }
 
 	int size1() const { return m_size1; }
 	int size2() const { return m_size2; }
 
-	void setHardness(qreal hardness) { Q_ASSERT(hardness>=0 && hardness<=1); m_hardness1 = hardness; }
-	void setHardness2(qreal hardness) { Q_ASSERT(hardness>=0 && hardness<=1); m_hardness2 = hardness; }
+	void setHardness(qreal hardness) { m_hardness1 = qBound(0.0, hardness, 1.0); }
+	void setHardness2(qreal hardness) { m_hardness2 = qBound(0.0, hardness, 1.0); }
 
 	qreal hardness1() const { return m_hardness1; }
 	qreal hardness2() const { return m_hardness2; }
 
-	void setOpacity(qreal opacity) { Q_ASSERT(opacity>=0 && opacity<=1); m_opacity1 = opacity; }
-	void setOpacity2(qreal opacity) { Q_ASSERT(opacity>=0 && opacity<=1); m_opacity2 = opacity; }
+	void setOpacity(qreal opacity) { m_opacity1 = qBound(0.0, opacity, 1.0); }
+	void setOpacity2(qreal opacity) { m_opacity2 = qBound(0.0, opacity, 1.0); }
 
 	qreal opacity1() const { return m_opacity1; }
 	qreal opacity2() const { return m_opacity2; }
@@ -86,43 +79,54 @@ public:
 	void setColor(const QColor& color) { m_color = color; }
 	const QColor &color() const { return m_color; }
 
-	void setSmudge(qreal smudge) { Q_ASSERT(smudge>=0 && smudge<=1); m_smudge1 = smudge; }
-	void setSmudge2(qreal smudge) { Q_ASSERT(smudge>=0 && smudge<=1); m_smudge2 = smudge; }
+	void setSmudge(qreal smudge) { m_smudge1 = qBound(0.0, smudge, 1.0); }
+	void setSmudge2(qreal smudge) { m_smudge2 = qBound(0.0, smudge, 1.0); }
 
 	qreal smudge1() const { return m_smudge1; }
 	qreal smudge2() const { return m_smudge2; }
 
-	void setSpacing(int spacing) { Q_ASSERT(spacing > 0); m_spacing = spacing; }
-	int spacing() const { return m_spacing; }
+	void setSpacing(qreal spacing) { m_spacing = qMax(0.01, spacing); }
+	qreal spacing() const { return m_spacing; }
 
-	//! Set smudge colir resampling frequency (0 resamples on every dab)
-	void setResmudge(int resmudge) { Q_ASSERT(resmudge >= 0); m_resmudge = resmudge; }
+	//! Set smudge color resampling frequency (0 resamples on every dab)
+	void setResmudge(int resmudge) { m_resmudge = qMax(0, resmudge); }
 	int resmudge() const { return m_resmudge; }
 
-	void setSubpixel(bool sp) { m_subpixel = sp; }
-	bool subpixel() const { return m_subpixel; }
+	bool subpixel() const { return m_shape == ROUND_SOFT; }
 
 	void setIncremental(bool incremental) { m_incremental = incremental; }
 	bool incremental() const { return m_incremental; }
 
 	void setBlendingMode(paintcore::BlendMode::Mode mode) { m_blend = mode; }
 	paintcore::BlendMode::Mode blendingMode() const { return m_blend; }
-	bool isEraser() const { return m_blend == paintcore::BlendMode::MODE_ERASE; }
+	bool isEraser() const { return m_blend == paintcore::BlendMode::MODE_ERASE || m_blend == paintcore::BlendMode::MODE_COLORERASE; }
 
-	void setSquare(bool square) { m_square = square; }
-	bool isSquare() const { return m_square; }
+	void setShape(Shape shape) { m_shape = shape; }
+	Shape shape() const { return m_shape; }
 
 	void setColorPickMode(bool colorpick) { m_colorpick = colorpick; }
 	bool isColorPickMode() const { return m_colorpick; }
 
-	qreal size(qreal pressure) const { return lerp(size1(), size2(), pressure); }
-	qreal hardness(qreal pressure) const { return lerp(hardness1(), hardness2(), pressure); }
-	qreal opacity(qreal pressure) const { return lerp(opacity1(), opacity2(), pressure); }
-	qreal smudge(qreal pressure) const { return lerp(smudge1(), smudge2(), pressure); }
-	qreal spacingDist(qreal pressure) const { return spacing() / 100.0 * size(pressure); }
+	qreal size(qreal pressure) const { return m_sizePressure ? lerp(size1(), size2(), pressure) : size1(); }
+	qreal hardness(qreal pressure) const { return m_hardnessPressure ? lerp(hardness1(), hardness2(), pressure) : hardness1(); }
+	qreal opacity(qreal pressure) const { return m_opacityPressure ? lerp(opacity1(), opacity2(), pressure) : opacity1(); }
+	qreal smudge(qreal pressure) const { return m_smudgePressure ? lerp(smudge1(), smudge2(), pressure) : smudge1(); }
+	qreal spacingDist(qreal pressure) const { return spacing() * size(pressure); }
 
-	//! Does opacity vary with pressure?
-	bool isOpacityVariable() const { return qAbs(opacity1() - opacity2()) > (1/256.0); }
+	void setSizePressure(bool p) { m_sizePressure = p; }
+	bool useSizePressure() const { return m_sizePressure; }
+
+	void setHardnessPressure(bool p) { m_hardnessPressure = p; }
+	bool useHardnessPressure() const { return m_hardnessPressure; }
+
+	void setOpacityPressure(bool p) { m_opacityPressure = p; }
+	bool useOpacityPressure() const { return m_opacityPressure; }
+
+	void setSmudgePressure(bool p) { m_smudgePressure = p; }
+	bool useSmudgePressure() const { return m_smudgePressure; }
+
+	QJsonObject toJson() const;
+	static ClassicBrush fromJson(const QJsonObject &json);
 
 private:
 	static inline qreal lerp(qreal a, qreal b, qreal alpha) {
@@ -130,18 +134,25 @@ private:
 		return (a-b) * alpha + b;
 	}
 
-	int m_size1, m_size2;
-	qreal m_hardness1, m_hardness2;
-	qreal m_opacity1, m_opacity2;
-	qreal m_smudge1, m_smudge2;
+	Shape m_shape = ROUND_PIXEL;
+	paintcore::BlendMode::Mode m_blend = paintcore::BlendMode::MODE_NORMAL;
+
+	int m_size1 = 10, m_size2 = 1;
+	int m_resmudge = 0;
+
+	qreal m_hardness1 = 1, m_hardness2 = 0;
+	qreal m_opacity1 = 1, m_opacity2 = 0;
+	qreal m_smudge1 = 0, m_smudge2 = 0;
+	qreal m_spacing = 0.1;
+
 	QColor m_color;
-	int m_spacing;
-	int m_resmudge;
-	paintcore::BlendMode::Mode m_blend;
-	bool m_subpixel;
-	bool m_incremental;
-	bool m_square;
-	bool m_colorpick;
+
+	bool m_incremental = true;
+	bool m_colorpick = false;
+	bool m_sizePressure = false;
+	bool m_hardnessPressure = false;
+	bool m_opacityPressure = false;
+	bool m_smudgePressure = false;
 };
 
 }

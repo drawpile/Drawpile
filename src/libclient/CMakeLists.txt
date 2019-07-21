@@ -73,6 +73,7 @@ set (
 	core/rasterop.cpp
 	core/floodfill.cpp
 	core/tilevector.cpp
+	brushes/brush.cpp
 	brushes/brushengine.cpp
 	brushes/brushpainter.cpp
 	brushes/classicbrushstate.cpp

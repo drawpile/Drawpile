@@ -344,30 +344,9 @@ void BrushPreview::setSmudgePressure(bool enable)
 	notifyBrushChange();
 }
 
-void BrushPreview::setSubpixel(bool enable)
-{
-	m_brush.setSubpixel(enable);
-	notifyBrushChange();
-}
-
 void BrushPreview::setBlendingMode(paintcore::BlendMode::Mode mode)
 {
 	m_brush.setBlendingMode(mode);
-	notifyBrushChange();
-}
-
-void BrushPreview::setHardEdge(bool hard)
-{
-	m_hardedge = hard;
-	if(hard) {
-		m_brush.setHardness(1);
-		m_brush.setHardness2(1);
-		m_brush.setSubpixel(false);
-	} else {
-		m_brush.setHardness(m_hardness);
-		m_brush.setHardness2(_hardnesspressure ? 0 : m_hardness);
-		m_brush.setSubpixel(true);
-	}
 	notifyBrushChange();
 }
 

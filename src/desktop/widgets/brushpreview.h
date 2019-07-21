@@ -107,14 +107,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Enable/disable smudging pressure sensitivity
 		void setSmudgePressure(bool enable);
 
-		//! Enable/disable subpixel precision
-		void setSubpixel(bool enable);
-
 		//! Select a blending mode
 		void setBlendingMode(paintcore::BlendMode::Mode mode);
-
-		//! Set/unset hard edge mode (100% hardness + no subpixels)
-		void setHardEdge(bool hard);
 
 		//! Set/unset incremental drawing mode
 		void setIncremental(bool incremental);

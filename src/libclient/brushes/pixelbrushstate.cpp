@@ -45,10 +45,14 @@ void PixelBrushState::setBrush(const ClassicBrush &brush)
 		// If brush alpha is nonzero, indirect drawing mode
 		// is used and the alpha is used as the overall transparency
 		// of the entire stroke.
+		// TODO this doesn't work right. We should use alpha-darken mode
+		// and set the opacity range properly
+
 		c.setAlphaF(m_brush.opacity1());
 
 		m_brush.setOpacity(1.0);
-		m_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		if(brush.useOpacityPressure())
+			m_brush.setOpacity2(0.0);
 	}
 	m_brush.setColor(c);
 
@@ -133,7 +137,7 @@ void PixelBrushState::strokeTo(const paintcore::Point &to, const paintcore::Laye
 	} else {
 		// Start a new stroke
 		m_pendown = true;
-		if(m_brush.isColorPickMode() && sourceLayer && !m_brush.isEraser()) {
+		if(m_brush.isColorPickMode() && sourceLayer && !m_brush.blendingMode() != paintcore::BlendMode::MODE_ERASE) {
 			const QColor c = sourceLayer->colorAt(to.x(), to.y(), qRound(m_brush.size(to.pressure())));
 			if(c.isValid())
 				m_brush.setColor(c);
@@ -159,7 +163,7 @@ void PixelBrushState::addDab(int x, int y, qreal pressure)
 			|| m_lastDab->dabs().size() >= protocol::DrawDabsPixel::MAX_DABS
 	) {
 		m_lastDab = new protocol::DrawDabsPixel(
-			m_brush.isSquare() ? protocol::DabShape::Square : protocol::DabShape::Round,
+			m_brush.shape() == ClassicBrush::SQUARE_PIXEL ? protocol::DabShape::Square : protocol::DabShape::Round,
 			m_contextId,
 			m_layerId,
 			x,
