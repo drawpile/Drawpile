@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QRegularExpression>
 #include <QCommandLineParser>
+#include <QImageWriter>
 #include <QFileInfo>
 #include <QDir>
 
@@ -59,8 +60,12 @@ int main(int argc, char *argv[]) {
 	parser.addOption(verboseOption);
 
 	// --out, -o
-	QCommandLineOption outOption(QStringList() << "o" << "out", "Output file pattern", "output");
+	QCommandLineOption outOption(QStringList() << "o" << "out", "Output file pattern (use - to output to stdout)", "output");
 	parser.addOption(outOption);
+
+	// --format, -f
+	QCommandLineOption formatOption(QStringList() << "f" << "format", "Output file format", "fmt");
+	parser.addOption(formatOption);
 
 	// --merge-annotations, -a
 	QCommandLineOption mergeAnnotationsOption(QStringList() << "a" << "merge-annotations", "Include annotations in saved images");
@@ -147,9 +152,26 @@ int main(int argc, char *argv[]) {
 			outputFilePattern = QFileInfo(outputfile.absoluteDir(), inputfile.baseName() + "-:idx:.jpeg").absoluteFilePath();
 	}
 
+	QByteArray outputFormat = parser.value(formatOption).toLower().toUtf8();
+	if(outputFormat.isEmpty()) {
+		const int suffix = outputFilePattern.lastIndexOf('.');
+		if(suffix < 0) {
+			fprintf(stderr, "Select output file format with --format\n");
+			return 1;
+		}
+		outputFormat = outputFilePattern.mid(suffix+1).toLower().toUtf8();
+	}
+
+	if(!QImageWriter::supportedImageFormats().contains(outputFormat)) {
+		fprintf(stderr, "Unsupported file format: %s\n", outputFormat.constData());
+		fprintf(stderr, "Must be one of: %s\n", QImageWriter::supportedImageFormats().join(", ").constData());
+		return 1;
+	}
+
 	const DrawpileCmdSettings settings {
 		inputfiles.at(0),
 		outputFilePattern,
+		outputFormat,
 		exportEvery,
 		exportEveryMode,
 		maxSize,

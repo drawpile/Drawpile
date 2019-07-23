@@ -31,6 +31,7 @@ enum class ExportEvery {
 struct DrawpileCmdSettings {
 	QString inputFilename;
 	QString outputFilePattern;
+	QByteArray outputFormat;
 	int exportEveryN;
 	ExportEvery exportEveryMode;
 

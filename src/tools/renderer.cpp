@@ -29,6 +29,7 @@
 #include <QImageWriter>
 #include <QElapsedTimer>
 #include <QPainter>
+#include <QFile>
 
 struct ExportState {
 	QSize lastSize;
@@ -96,10 +97,23 @@ bool saveImage(const DrawpileCmdSettings &settings, const paintcore::LayerStack 
 		if(!state.lastSize.isEmpty())
 			flat = resizeImage(flat, state.lastSize, settings.fixedSize);
 
-		QImageWriter writer(filename);
-		ok = writer.write(flat);
-		if(!ok)
-			error = writer.errorString();
+		QFile imgfile;
+		if(filename == "-") {
+			ok = imgfile.open(1, QFile::WriteOnly);
+		} else {
+			imgfile.setFileName(filename);
+			ok = imgfile.open(QFile::WriteOnly);
+		}
+
+		if(!ok) {
+			error = imgfile.errorString();
+
+		} else {
+			QImageWriter writer(&imgfile, settings.outputFormat);
+			ok = writer.write(flat);
+			if(!ok)
+				error = writer.errorString();
+		}
 	}
 
 	if(!ok)
