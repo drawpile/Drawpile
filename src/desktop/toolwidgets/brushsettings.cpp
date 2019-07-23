@@ -82,13 +82,6 @@ struct BrushSettings::Private {
 		return toolSlots[current];
 	}
 
-	inline QColor currentColor() {
-		if(shareBrushSlotColor)
-			return ui.preview->brushColor();
-		else
-			return currentTool().brush.color();
-	}
-
 	Private(BrushSettings *b)
 	{
 		blendModes = new QStandardItemModel(0, 1, b);
@@ -108,13 +101,6 @@ struct BrushSettings::Private {
 		eraseModes->appendRow(erase2);
 
 		presets = BrushPresetModel::getSharedInstance();
-	}
-
-	void updateBrush()
-	{
-		ui.preview->setBrush(currentBrush());
-		if(!shareBrushSlotColor)
-			ui.preview->setColor(currentColor());
 	}
 
 	GroupedToolButton *brushSlotButton(int i)
@@ -150,7 +136,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// Outside communication
 	connect(d->ui.brushsizeBox, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
-	connect(d->ui.preview, &BrushPreview::brushChanged, controller(), &ToolController::setActiveBrush);
 
 	// Internal updates
 	connect(d->ui.blendmode, QOverload<int>::of(&QComboBox::activated), this, &BrushSettings::selectBlendMode);
@@ -230,10 +215,8 @@ void BrushSettings::selectBrushSlot(int i)
 	d->brushSlotButton(i)->setChecked(true);
 	d->current = i;
 
-	if(d->shareBrushSlotColor)
-		d->currentBrush().setColor(d->currentColor());
-	else
-		emit colorChanged(d->currentColor());
+	if(!d->shareBrushSlotColor)
+		emit colorChanged(d->currentBrush().color());
 
 	updateUi();
 
@@ -386,7 +369,8 @@ void BrushSettings::updateUi()
 	d->ui.modeColorpick->setChecked(brush.isColorPickMode());
 
 	d->updateInProgress = false;
-	d->updateBrush();
+	d->ui.preview->setBrush(d->currentBrush());
+	pushSettings();
 }
 
 void BrushSettings::updateFromUi()
@@ -433,7 +417,8 @@ void BrushSettings::updateFromUi()
 	brush.setColorPickMode(d->ui.modeColorpick->isChecked());
 	brush.setBlendingMode(paintcore::BlendMode::Mode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
 
-	d->updateBrush();
+	d->ui.preview->setBrush(brush);
+	pushSettings();
 }
 
 void BrushSettings::pushSettings()
@@ -499,9 +484,6 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 			d->brushSlotButton(i)->setColorSwatch(tool.brush.color());
 	}
 
-	if(d->shareBrushSlotColor)
-		d->ui.preview->setColor(d->toolSlots[0].brush.color());
-
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser())
 		d->toolSlots[ERASER_SLOT].brush.setBlendingMode(paintcore::BlendMode::MODE_ERASE);
 
@@ -512,7 +494,6 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 {
 	switch(tool) {
-
 	case tools::Tool::LINE: d->ui.preview->setPreviewShape(BrushPreview::Line); break;
 	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(BrushPreview::Rectangle); break;
 	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(BrushPreview::Ellipse); break;
@@ -533,11 +514,18 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	if(color != d->currentColor()) {
-		d->currentBrush().setColor(color);
-		if(!d->shareBrushSlotColor)
+	if(color != d->currentBrush().color()) {
+		if(d->shareBrushSlotColor) {
+			for(int i=0;i<BRUSH_COUNT;++i)
+				d->toolSlots[i].brush.setColor(color);
+
+		} else {
+			d->currentBrush().setColor(color);
 			d->brushSlotButton(d->current)->setColorSwatch(color);
-		d->ui.preview->setColor(color);
+		}
+
+		d->ui.preview->setBrush(d->currentBrush());
+		pushSettings();
 	}
 }
 

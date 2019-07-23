@@ -41,54 +41,31 @@ namespace widgets {
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), m_preview(nullptr), m_previewCache(nullptr),
-	_sizepressure(false),
-	_opacitypressure(false), _hardnesspressure(false), _smudgepressure(false),
-	m_color(Qt::black), m_bg(Qt::white),
-	m_hardedge(false),
-	_shape(Stroke), _fillTolerance(0), _fillExpansion(0), _underFill(false), m_needupdate(true), _tranparentbg(false)
+	m_bg(Qt::white),
+	m_shape(Stroke), m_fillTolerance(0), m_fillExpansion(0), m_underFill(false),
+	m_needupdate(true), m_tranparentbg(false)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
 
-	_ctxmenu = new QMenu(this);
-
-	_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestColorChange()));
+	m_ctxmenu = new QMenu(this);
+	m_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestColorChange()));
 }
 
 BrushPreview::~BrushPreview() {
 #ifndef DESIGNER_PLUGIN
+	delete m_previewCache;
 	delete m_preview;
 #endif
 }
 
-void BrushPreview::notifyBrushChange()
+void BrushPreview::setBrush(const brushes::ClassicBrush &brush)
 {
-	m_needupdate = true;
-	update();
-	emit brushChanged(brush());
-}
-
-void BrushPreview::setPreviewShape(PreviewShape shape)
-{
-	_shape = shape;
-	m_needupdate = true;
-	update();
-}
-
-void BrushPreview::setTransparentBackground(bool transparent)
-{
-	_tranparentbg = transparent;
-	m_needupdate = true;
-	update();
-}
-
-void BrushPreview::setColor(const QColor& color)
-{
-	m_color = color;
-	m_brush.setColor(color);
+	m_brush = brush;
 
 	// Decide background color
-	const qreal lum = color.redF() * 0.216 + color.greenF() * 0.7152 + color.redF() * 0.0722;
+	const QColor c = brush.color();
+	const qreal lum = c.redF() * 0.216 + c.greenF() * 0.7152 + c.blueF() * 0.0722;
 
 	if(lum < 0.8) {
 		m_bg = Qt::white;
@@ -96,26 +73,41 @@ void BrushPreview::setColor(const QColor& color)
 		m_bg = QColor(32, 32, 32);
 	}
 
-	notifyBrushChange();
+	m_needupdate = true;
+	update();
+}
+
+void BrushPreview::setPreviewShape(PreviewShape shape)
+{
+	m_shape = shape;
+	m_needupdate = true;
+	update();
+}
+
+void BrushPreview::setTransparentBackground(bool transparent)
+{
+	m_tranparentbg = transparent;
+	m_needupdate = true;
+	update();
 }
 
 void BrushPreview::setFloodFillTolerance(int tolerance)
 {
-	_fillTolerance = tolerance;
+	m_fillTolerance = tolerance;
 	m_needupdate = true;
 	update();
 }
 
 void BrushPreview::setFloodFillExpansion(int expansion)
 {
-	_fillExpansion = expansion;
+	m_fillExpansion = expansion;
 	m_needupdate = true;
 	update();
 }
 
 void BrushPreview::setUnderFill(bool underfill)
 {
-	_underFill = underfill;
+	m_underFill = underfill;
 	m_needupdate = true;
 	update();
 }
@@ -127,7 +119,7 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 
 void BrushPreview::changeEvent(QEvent *event)
 {
-	Q_UNUSED(event);
+	Q_UNUSED(event)
 	m_needupdate = true;
 	update();
 }
@@ -171,7 +163,7 @@ void BrushPreview::updatePreview()
 	);
 	paintcore::PointVector pointvector;
 
-	switch(_shape) {
+	switch(m_shape) {
 	case Stroke: pointvector = brushes::shapes::sampleStroke(previewRect); break;
 	case Line:
 		pointvector
@@ -195,10 +187,10 @@ void BrushPreview::updatePreview()
 
 	} else if(brush.blendingMode() == paintcore::BlendMode::MODE_COLORERASE) {
 		// Color-erase mode: use fg color as background
-		bgcolor = m_color;
+		bgcolor = brushColor();
 	}
 
-	if(_shape == FloodFill) {
+	if(m_shape == FloodFill) {
 		brush.setColor(bgcolor);
 	}
 
@@ -218,147 +210,29 @@ void BrushPreview::updatePreview()
 
 	layer.mergeSublayer(1);
 
-	if(_shape == FloodFill || _shape == FloodErase) {
-		paintcore::FillResult fr = paintcore::floodfill(m_preview, previewRect.center().toPoint(), _shape == FloodFill ? m_color : QColor(), _fillTolerance, 0, false, 360000);
-		if(_fillExpansion>0)
-			fr = paintcore::expandFill(fr, _fillExpansion, m_color);
+	if(m_shape == FloodFill || m_shape == FloodErase) {
+		paintcore::FillResult fr = paintcore::floodfill(
+			m_preview,
+			previewRect.center().toPoint(),
+			m_shape == FloodFill ? brushColor() : QColor(),
+			m_fillTolerance,
+			0,
+			false,
+			360000);
+
+		if(m_fillExpansion>0)
+			fr = paintcore::expandFill(fr, m_fillExpansion, brushColor());
 		if(!fr.image.isNull())
-			layer.putImage(fr.x, fr.y, fr.image, _shape == FloodFill ? (_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
+			layer.putImage(fr.x, fr.y, fr.image, m_shape == FloodFill ? (m_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
 	}
 
 	m_needupdate=false;
 #endif
 }
 
-/**
- * @param brush brush to set
- */
-void BrushPreview::setBrush(const brushes::ClassicBrush& brush)
-{
-	m_brush = brush;
-	notifyBrushChange();
-}
-
-/**
- * @param size brush size
- */
-void BrushPreview::setSize(int size)
-{
-	m_brush.setSize(size);
-	if(_sizepressure==false)
-		m_brush.setSize2(size);
-	notifyBrushChange();
-}
-
-/**
- * @param opacity brush opacity
- * @pre 0 <= opacity <= 100
- */
-void BrushPreview::setOpacity(int opacity)
-{
-	const qreal o = opacity/100.0;
-	m_brush.setOpacity(o);
-	if(_opacitypressure==false)
-		m_brush.setOpacity2(o);
-	notifyBrushChange();
-}
-
-/**
- * @param hardness brush hardness
- * @pre 0 <= hardness <= 100
- */
-void BrushPreview::setHardness(int hardness)
-{
-	m_hardness = hardness/100.0;
-	if(!m_hardedge) {
-		m_brush.setHardness(m_hardness);
-		m_brush.setHardness2(_hardnesspressure ? 0 : m_hardness);
-	}
-	notifyBrushChange();
-}
-
-/**
- * @param smudge color smudge pressure
- * @pre 0 <= smudge <= 100
- */
-void BrushPreview::setSmudge(int smudge)
-{
-	const qreal s = smudge / 100.0;
-	m_brush.setSmudge(s);
-	if(_smudgepressure==false)
-		m_brush.setSmudge2(s);
-	notifyBrushChange();
-}
-
-/**
- * @param spacing dab spacing
- * @pre 0 <= spacing <= 100
- */
-void BrushPreview::setSpacing(int spacing)
-{
-	m_brush.setSpacing(spacing);
-	notifyBrushChange();
-}
-
-void BrushPreview::setSmudgeFrequency(int f)
-{
-	m_brush.setResmudge(f);
-	notifyBrushChange();
-}
-
-void BrushPreview::setSizePressure(bool enable)
-{
-	_sizepressure = enable;
-	if(enable)
-		m_brush.setSize2(1);
-	else
-		m_brush.setSize2(m_brush.size1());
-	notifyBrushChange();
-}
-
-void BrushPreview::setOpacityPressure(bool enable)
-{
-	_opacitypressure = enable;
-	if(enable)
-		m_brush.setOpacity2(0);
-	else
-		m_brush.setOpacity2(m_brush.opacity1());
-	notifyBrushChange();
-}
-
-void BrushPreview::setHardnessPressure(bool enable)
-{
-	_hardnesspressure = enable;
-	if(!m_hardedge)
-		m_brush.setHardness2(enable ? 0 : m_brush.hardness1());
-	notifyBrushChange();
-}
-
-void BrushPreview::setSmudgePressure(bool enable)
-{
-	_smudgepressure = enable;
-	if(enable)
-		m_brush.setSmudge2(0);
-	else
-		m_brush.setSmudge2(m_brush.smudge1());
-	notifyBrushChange();
-}
-
-void BrushPreview::setBlendingMode(paintcore::BlendMode::Mode mode)
-{
-	m_brush.setBlendingMode(mode);
-	notifyBrushChange();
-}
-
-void BrushPreview::setIncremental(bool incremental)
-{
-	m_brush.setIncremental(incremental);
-	notifyBrushChange();
-}
-
 void BrushPreview::contextMenuEvent(QContextMenuEvent *e)
 {
-	_ctxmenu->popup(e->globalPos());
+	m_ctxmenu->popup(e->globalPos());
 }
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)
