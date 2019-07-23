@@ -33,7 +33,6 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
-#include <QMenu>
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {
@@ -47,9 +46,6 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
-
-	m_ctxmenu = new QMenu(this);
-	m_ctxmenu->addAction(tr("Change Foreground Color"), this, SIGNAL(requestColorChange()));
 }
 
 BrushPreview::~BrushPreview() {
@@ -228,11 +224,6 @@ void BrushPreview::updatePreview()
 
 	m_needupdate=false;
 #endif
-}
-
-void BrushPreview::contextMenuEvent(QContextMenuEvent *e)
-{
-	m_ctxmenu->popup(e->globalPos());
 }
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)

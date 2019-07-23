@@ -87,7 +87,6 @@ protected:
 	void resizeEvent(QResizeEvent *);
 	void changeEvent(QEvent *);
 	void mouseDoubleClickEvent(QMouseEvent*);
-	void contextMenuEvent(QContextMenuEvent *);
 
 private:
 	void updatePreview();
@@ -97,8 +96,6 @@ private:
 
 	paintcore::LayerStack *m_preview;
 	paintcore::LayerStackPixmapCacheObserver *m_previewCache;
-
-	QMenu *m_ctxmenu;
 
 	QColor m_bg;
 	PreviewShape m_shape;
