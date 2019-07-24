@@ -46,7 +46,6 @@ namespace widgets {
 class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
 	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
-	Q_PROPERTY(bool transparentBackground READ isTransparentBackground WRITE setTransparentBackground)
 	Q_ENUMS(PreviewShape)
 public:
 	enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill, FloodErase};
@@ -61,14 +60,10 @@ public:
 
 	QColor brushColor() const { return m_brush.color(); }
 	const brushes::ClassicBrush &brush() const { return m_brush; }
-	bool isTransparentBackground() const { return m_tranparentbg; }
 
 public slots:
 	//! Set the brush to preview
 	void setBrush(const brushes::ClassicBrush& brush);
-
-	//! Set/unset transparent layer background (affects preview only)
-	void setTransparentBackground(bool tranparent);
 
 	//! This is used for flood fill preview only
 	void setFloodFillTolerance(int tolerance);
@@ -94,16 +89,15 @@ private:
 
 	brushes::ClassicBrush m_brush;
 
-	paintcore::LayerStack *m_preview;
-	paintcore::LayerStackPixmapCacheObserver *m_previewCache;
+	paintcore::LayerStack *m_preview = nullptr;
+	paintcore::LayerStackPixmapCacheObserver *m_previewCache = nullptr;
 
-	QColor m_bg;
-	PreviewShape m_shape;
-	int m_fillTolerance;
-	int m_fillExpansion;
-	bool m_underFill;
-	bool m_needupdate;
-	bool m_tranparentbg;
+	QColor m_bg = Qt::white;
+	PreviewShape m_shape = Stroke;
+	int m_fillTolerance = 0;
+	int m_fillExpansion = 0;
+	bool m_underFill = false;
+	bool m_needupdate = false;
 };
 
 #ifndef DESIGNER_PLUGIN

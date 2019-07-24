@@ -114,9 +114,6 @@
      <property name="previewShape">
       <enum>BrushPreview::FloodFill</enum>
      </property>
-     <property name="transparentBackground">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
    <item row="6" column="0">

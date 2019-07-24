@@ -72,7 +72,6 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 			_ui->preview->setPreviewShape(erase ? BrushPreview::FloodErase : BrushPreview::FloodFill);
 			_ui->fillunder->setEnabled(!erase);
 			_ui->samplemerged->setEnabled(!erase);
-			_ui->preview->setTransparentBackground(!erase);
 	});
 	return uiwidget;
 }
@@ -108,6 +107,7 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::setForeground(const QColor &color)
 {
 	brushes::ClassicBrush b;
+	b.setSize(1);
 	b.setColor(color);
 	_ui->preview->setBrush(b);
 	controller()->setActiveBrush(b);
