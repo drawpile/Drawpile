@@ -22,6 +22,7 @@
 #include "../core/blendmodes.h"
 
 #include <QColor>
+#include <QMetaType>
 
 class QJsonObject;
 
@@ -157,6 +158,7 @@ private:
 
 }
 
+Q_DECLARE_METATYPE(brushes::ClassicBrush)
 Q_DECLARE_TYPEINFO(brushes::ClassicBrush, Q_MOVABLE_TYPE);
 
 #endif

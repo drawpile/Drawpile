@@ -21,10 +21,11 @@
 
 #include "toolsettings.h"
 
-#include <QWidget>
-#include <QAbstractListModel>
-
 class QAction;
+
+namespace brushes {
+	class ClassicBrush;
+}
 
 namespace tools {
 
@@ -54,8 +55,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	void setCurrentBrushSettings(const ToolProperties &brushProps);
-	ToolProperties getCurrentBrushSettings() const;
+	void setCurrentBrush(brushes::ClassicBrush brush);
+	brushes::ClassicBrush currentBrush() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
@@ -80,37 +81,6 @@ private slots:
 	void setEraserMode(bool erase);
 	void updateUi();
 	void updateFromUi();
-
-private:
-	struct Private;
-	Private *d;
-};
-
-class BrushPresetModel : public QAbstractListModel {
-	Q_OBJECT
-public:
-	enum BrushPresetRoles {
-		ToolPropertiesRole = Qt::UserRole + 1
-	};
-
-	static BrushPresetModel *getSharedInstance();
-
-	explicit BrushPresetModel(QObject *parent=nullptr);
-	~BrushPresetModel();
-
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
-	QMap<int,QVariant> itemData(const QModelIndex &index) const override;
-	bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
-	bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex()) override;
-	bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex()) override;
-	Qt::DropActions supportedDropActions() const override;
-	void addBrush(const ToolProperties &brushProps);
-
-	void saveBrushes() const;
-	void loadBrushes();
-	void makeDefaultBrushes();
 
 private:
 	struct Private;

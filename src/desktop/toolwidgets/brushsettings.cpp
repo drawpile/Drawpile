@@ -20,11 +20,7 @@
 #include "brushsettings.h"
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
-#include "core/brushmask.h"
 #include "brushes/brush.h"
-#include "brushes/classicbrushpainter.h"
-#include "brushes/pixelbrushpainter.h"
-#include "utils/icon.h"
 
 // Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
 #include "widgets/groupedtoolbutton.h"
@@ -63,7 +59,6 @@ struct BrushSettings::Private {
 	Ui_BrushDock ui;
 
 	QStandardItemModel *blendModes, *eraseModes;
-	BrushPresetModel *presets;
 
 	ToolSlot toolSlots[BRUSH_COUNT];
 	int current = 0;
@@ -99,8 +94,6 @@ struct BrushSettings::Private {
 		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
 		erase2->setData(QVariant(paintcore::BlendMode::MODE_COLORERASE), Qt::UserRole);
 		eraseModes->appendRow(erase2);
-
-		presets = BrushPresetModel::getSharedInstance();
 	}
 
 	GroupedToolButton *brushSlotButton(int i)
@@ -185,18 +178,16 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 	}
 }
 
-void BrushSettings::setCurrentBrushSettings(const ToolProperties &brushProps)
+void BrushSettings::setCurrentBrush(ClassicBrush brush)
 {
-#if 0 // TODO
-	d->currentBrush() = brushProps;
+	brush.setColor(d->currentBrush().color());
+	d->currentBrush() = brush;
 	updateUi();
-#endif
 }
 
-ToolProperties BrushSettings::getCurrentBrushSettings() const
+ClassicBrush BrushSettings::currentBrush() const
 {
-	// TODO
-	return ToolProperties(); //d->currentBrush();
+	return d->currentBrush();
 }
 
 int BrushSettings::currentBrushSlot() const
@@ -551,312 +542,4 @@ bool BrushSettings::isSquare() const
 	return d->currentBrush().shape() == ClassicBrush::SQUARE_PIXEL;
 }
 
-//// BRUSH PRESET PALETTE MODEL ////
-
-static constexpr int BRUSH_ICON_SIZE = 42;
-
-struct BrushPresetModel::Private {
-	QList<ToolProperties> presets;
-	mutable QList<QPixmap> iconcache;
-
-	QPixmap getIcon(int idx) const {
-#if 0 // TODO
-		Q_ASSERT(idx >=0 && idx < presets.size());
-		Q_ASSERT(presets.size() == iconcache.size());
-
-		if(iconcache.at(idx).isNull()) {
-
-			const brushes::ClassicBrush brush = brushFromProps(presets[idx], ToolProperties(), QColor());
-			const int brushmode = presets[idx].value(brushprop::brushmode);
-			paintcore::BrushMask mask;
-			Q_ASSERT(brushmode>=0 && brushmode<=3);
-			switch(brushmode) {
-				case 0:
-					mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
-					break;
-				case 1:
-					mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
-					break;
-				case 2:
-				case 3:
-					mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
-					break;
-				default: return QPixmap();
-			}
-
-			const int maskdia = mask.diameter();
-			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
-
-			const QRgb color = (brushmode==3) ? 0x001d99f3 : (icon::isDarkThemeSelected() ? 0x00ffffff : 0);
-
-			if(maskdia > BRUSH_ICON_SIZE) {
-				// Clip to fit
-				const int clip = (maskdia - BRUSH_ICON_SIZE);
-				const uchar *m = mask.data() + (clip/2*maskdia) + clip/2;
-				for(int y=0;y<BRUSH_ICON_SIZE;++y) {
-					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y));
-					for(int x=0;x<BRUSH_ICON_SIZE;++x,++m) {
-						*(scanline++) = qPremultiply((*m << 24) | color);
-					}
-					m += clip;
-				}
-
-			} else {
-				// Center in the icon
-				icon.fill(Qt::transparent);
-				const uchar *m = mask.data();
-				const int offset = (BRUSH_ICON_SIZE - maskdia)/2;
-				for(int y=0;y<maskdia;++y) {
-					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+offset)) + offset;
-					for(int x=0;x<maskdia;++x,++m) {
-						*(scanline++) = qPremultiply((*m << 24) | color);
-					}
-				}
-			}
-
-			iconcache[idx] = QPixmap::fromImage(icon);
-		}
-		return iconcache.at(idx);
-#endif
-		return QPixmap();
-	}
-};
-
-BrushPresetModel::BrushPresetModel(QObject *parent)
-	: QAbstractListModel(parent), d(new Private)
-{
-	loadBrushes();
-	if(d->presets.isEmpty())
-		makeDefaultBrushes();
 }
-
-BrushPresetModel::~BrushPresetModel()
-{
-	delete d;
-}
-
-BrushPresetModel *BrushPresetModel::getSharedInstance()
-{
-	static BrushPresetModel *m;
-	if(!m)
-		m = new BrushPresetModel;
-	return m;
-}
-
-int BrushPresetModel::rowCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return d->presets.size();
-}
-
-QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
-{
-	if(index.isValid() && index.row() >= 0 && index.row() < d->presets.size()) {
-		switch(role) {
-		case Qt::DecorationRole: return d->getIcon(index.row());
-		case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE);
-		//case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
-		case ToolPropertiesRole: return QVariant::fromValue(d->presets.at(index.row()));
-		}
-	}
-	return QVariant();
-}
-
-Qt::ItemFlags BrushPresetModel::flags(const QModelIndex &index) const
-{
-	if(index.isValid() && index.row() >= 0 && index.row() < d->presets.size()) {
-		return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled;
-	}
-	return Qt::ItemIsSelectable | Qt::ItemIsEnabled |  Qt::ItemIsDropEnabled;
-}
-
-QMap<int,QVariant> BrushPresetModel::itemData(const QModelIndex &index) const
-{
-	QMap<int,QVariant> roles;
-	if(index.isValid() && index.row()>=0 && index.row()<d->presets.size()) {
-		roles[ToolPropertiesRole] = QVariant::fromValue(d->presets[index.row()]);
-	}
-	return roles;
-}
-
-bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-	if(!index.isValid() || index.row()<0 || index.row()>=d->presets.size())
-		return false;
-	switch(role) {
-		case ToolPropertiesRole:
-			d->presets[index.row()] = value.value<ToolProperties>();
-			d->iconcache[index.row()] = QPixmap();
-			emit dataChanged(index, index);
-			saveBrushes();
-			return true;
-	}
-	return false;
-}
-
-bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
-{
-	if(parent.isValid())
-		return false;
-	if(row<0 || count<=0 || row > d->presets.size())
-		return false;
-	beginInsertRows(QModelIndex(), row, row+count-1);
-	for(int i=0;i<count;++i) {
-		d->presets.insert(row, ToolProperties());
-		d->iconcache.insert(row, QPixmap());
-	}
-	endInsertRows();
-	return true;
-}
-
-bool BrushPresetModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-	if(parent.isValid())
-		return false;
-	if(row<0 || count<=0 || row+count > d->presets.size())
-		return false;
-	beginRemoveRows(QModelIndex(), row, row+count-1);
-	d->presets.erase(d->presets.begin()+row, d->presets.begin()+row+count);
-	d->iconcache.erase(d->iconcache.begin()+row, d->iconcache.begin()+row+count);
-	endRemoveRows();
-	saveBrushes();
-	return true;
-}
-
-Qt::DropActions BrushPresetModel::supportedDropActions() const
-{
-	return Qt::MoveAction;
-}
-
-void BrushPresetModel::addBrush(const ToolProperties &brushProps)
-{
-	beginInsertRows(QModelIndex(), d->presets.size(), d->presets.size());
-	d->presets.append(brushProps);
-	d->iconcache.append(QPixmap());
-	endInsertRows();
-	saveBrushes();
-}
-
-void BrushPresetModel::loadBrushes()
-{
-#if 0 // TODO
-	QSettings cfg;
-	cfg.beginGroup("tools/brushpresets");
-	int size = cfg.beginReadArray("preset");
-	QList<ToolProperties> props;
-	QList<QPixmap> iconcache;
-	for(int i=0;i<size;++i) {
-		cfg.setArrayIndex(i);
-		props.append(ToolProperties::load(cfg));
-		iconcache.append(QPixmap());
-	}
-	beginResetModel();
-	d->presets = props;
-	d->iconcache = iconcache;
-	endResetModel();
-#endif
-}
-
-void BrushPresetModel::saveBrushes() const
-{
-#if 0 // TODO
-	QSettings cfg;
-	cfg.beginGroup("tools/brushpresets");
-	cfg.beginWriteArray("preset", d->presets.size());
-	for(int i=0;i<d->presets.size();++i) {
-		cfg.setArrayIndex(i);
-		d->presets.at(i).save(cfg);
-	}
-	cfg.endArray();
-#endif
-}
-
-void BrushPresetModel::makeDefaultBrushes()
-{
-#if 0
-	QList<ToolProperties> brushes;
-	ToolProperties tp;
-
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 0);
-		tp.setValue(brushprop::size, 16);
-		tp.setValue(brushprop::opacity, 100);
-		tp.setValue(brushprop::spacing, 15);
-		tp.setValue(brushprop::sizePressure, true);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 2);
-		tp.setValue(brushprop::size, 10);
-		tp.setValue(brushprop::opacity, 100);
-		tp.setValue(brushprop::hard, 80);
-		tp.setValue(brushprop::spacing, 15);
-		tp.setValue(brushprop::sizePressure, true);
-		tp.setValue(brushprop::opacityPressure, true);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 2);
-		tp.setValue(brushprop::size, 30);
-		tp.setValue(brushprop::opacity, 34);
-		tp.setValue(brushprop::hard, 100);
-		tp.setValue(brushprop::spacing, 18);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 0);
-		tp.setValue(brushprop::incremental, false);
-		tp.setValue(brushprop::size, 32);
-		tp.setValue(brushprop::opacity, 65);
-		tp.setValue(brushprop::spacing, 15);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 0);
-		tp.setValue(brushprop::incremental, false);
-		tp.setValue(brushprop::size, 70);
-		tp.setValue(brushprop::opacity, 42);
-		tp.setValue(brushprop::spacing, 15);
-		tp.setValue(brushprop::opacityPressure, true);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 2);
-		tp.setValue(brushprop::size, 113);
-		tp.setValue(brushprop::opacity, 60);
-		tp.setValue(brushprop::hard, 1);
-		tp.setValue(brushprop::spacing, 19);
-		tp.setValue(brushprop::opacityPressure, true);
-		brushes << tp;
-	}
-	{
-		ToolProperties tp;
-		tp.setValue(brushprop::brushmode, 3);
-		tp.setValue(brushprop::size, 43);
-		tp.setValue(brushprop::opacity, 30);
-		tp.setValue(brushprop::hard, 100);
-		tp.setValue(brushprop::spacing, 25);
-		tp.setValue(brushprop::smudge, 100);
-		tp.setValue(brushprop::resmudge, 1);
-		tp.setValue(brushprop::opacityPressure, true);
-		brushes << tp;
-	}
-
-	// Make presets
-	beginInsertRows(QModelIndex(), d->presets.size(), d->presets.size()+brushes.size()-1);
-	d->presets << brushes;
-	for(int i=0;i<brushes.size();++i)
-		d->iconcache << QPixmap();
-	endInsertRows();
-#endif
-}
-
-}
-

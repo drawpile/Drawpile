@@ -20,7 +20,7 @@
 #define BRUSHES_PIXELBRUSHPAINTER_H
 
 namespace paintcore {
-	class Layer;
+	class EditableLayer;
 	class BrushMask;
 }
 
