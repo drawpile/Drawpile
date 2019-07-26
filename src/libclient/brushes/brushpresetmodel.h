@@ -49,6 +49,8 @@ public:
 
 	void addBrush(const ClassicBrush &brush);
 
+	static bool writeBrush(const ClassicBrush &brush, const QString &filename=QString());
+
 private:
 	void loadBrushes();
 

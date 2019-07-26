@@ -22,6 +22,8 @@
 #include "classicbrushpainter.h"
 #include "brush.h"
 
+#include "brushpresetmigration.h"
+
 #include "../core/brushmask.h"
 #include "../utils/icon.h"
 
@@ -43,15 +45,16 @@ static QString randomBrushName()
 	return uuid.mid(1, uuid.length()-2) + ".dpbrush";
 }
 
-static bool writeBrush(const ClassicBrush &brush, const QString &filename)
+bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &filename)
 {
 	QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/");
 	dir.mkpath(".");
 
-	QFile f(dir.absoluteFilePath(filename));
+	const QString path = dir.absoluteFilePath(filename.isEmpty() ? randomBrushName() : filename);
 
+	QFile f(path);
 	if(!f.open(QFile::WriteOnly)) {
-		qWarning("%s: %s", qPrintable(filename), qPrintable(f.errorString()));
+		qWarning("%s: %s", qPrintable(path), qPrintable(f.errorString()));
 		return false;
 	}
 
@@ -70,7 +73,7 @@ struct BrushPreset {
 			qWarning("Cannot save brush: filename not set!");
 			return false;
 		}
-		return writeBrush(brush, filename);
+		return BrushPresetModel::writeBrush(brush);
 	}
 
 	bool deleteFile()
@@ -168,7 +171,7 @@ static void makeDefaultBrushes()
 		b.setOpacity(1.0);
 		b.setSpacing(15);
 		b.setSizePressure(true);
-		writeBrush(b, "default-1.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-1.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -179,7 +182,7 @@ static void makeDefaultBrushes()
 		b.setSpacing(15);
 		b.setSizePressure(true);
 		b.setOpacityPressure(true);
-		writeBrush(b, "default-2.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-2.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -188,7 +191,7 @@ static void makeDefaultBrushes()
 		b.setOpacity(0.34);
 		b.setHardness(1.0);
 		b.setSpacing(18);
-		writeBrush(b, "default-3.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-3.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -197,7 +200,7 @@ static void makeDefaultBrushes()
 		b.setSize(32);
 		b.setOpacity(0.65);
 		b.setSpacing(15);
-		writeBrush(b, "default-4.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-4.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -207,7 +210,7 @@ static void makeDefaultBrushes()
 		b.setOpacity(0.42);
 		b.setSpacing(15);
 		b.setOpacityPressure(true);
-		writeBrush(b, "default-5.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-5.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -217,7 +220,7 @@ static void makeDefaultBrushes()
 		b.setHardness(1.0);
 		b.setSpacing(19);
 		b.setOpacityPressure(true);
-		writeBrush(b, "default-6.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-6.dpbrush");
 	}
 	{
 		ClassicBrush b;
@@ -229,7 +232,7 @@ static void makeDefaultBrushes()
 		b.setSmudge(1.0);
 		b.setResmudge(1);
 		b.setOpacityPressure(true);
-		writeBrush(b, "default-7.dpbrush");
+		BrushPresetModel::writeBrush(b, "default-7.dpbrush");
 	}
 }
 
@@ -240,7 +243,8 @@ BrushPresetModel *BrushPresetModel::getSharedInstance()
 		m = new BrushPresetModel;
 		m->loadBrushes();
 		if(m->d->presets.isEmpty()) {
-			makeDefaultBrushes();
+			if(!migrateQSettingsBrushPresets())
+				makeDefaultBrushes();
 			m->loadBrushes();
 		}
 	}
