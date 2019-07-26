@@ -265,32 +265,25 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="GroupedToolButton" name="watercolorMode">
-          <property name="toolTip">
-           <string>Watercolor</string>
-          </property>
-          <property name="icon">
-           <iconset theme="draw-watercolor">
-            <normaloff>theme:draw-watercolor.svg</normaloff>theme:draw-watercolor.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
            <enum>GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="GroupedToolButton" name="modeColorpick">
@@ -319,19 +312,6 @@
         <bool>true</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <widget class="QComboBox" name="blendmode"/>
@@ -502,10 +482,13 @@
      <item row="3" column="1">
       <widget class="QSlider" name="brushsmudging">
        <property name="minimum">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -518,10 +501,13 @@
         <string notr="true">%</string>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>

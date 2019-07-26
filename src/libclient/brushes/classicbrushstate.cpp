@@ -36,7 +36,9 @@ void ClassicBrushState::setBrush(const ClassicBrush &brush)
 	m_brush = brush;
 
 	QColor c = m_brush.color();
-	if(brush.incremental()) {
+	if(brush.incremental() || brush.smudge1() > 0.0) {
+		// Note: when smudging is used, we must use incremental mode
+		// because we currently do not sample colors from sublayers.
 		c.setAlpha(0);
 
 	} else {

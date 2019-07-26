@@ -140,8 +140,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.squareMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.softedgeMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
-	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
-	connect(d->ui.watercolorMode, &QToolButton::clicked, this, &BrushSettings::updateUi);
 
 	connect(d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
@@ -291,19 +289,12 @@ void BrushSettings::updateUi()
 	const ClassicBrush &brush = tool.brush;
 
 	// Select brush type
-	const bool watercolor = brush.smudge1() > 0;
 	const bool softmode = brush.shape() == ClassicBrush::ROUND_SOFT;
 
 	switch(brush.shape()) {
 	case ClassicBrush::ROUND_PIXEL: d->ui.hardedgeMode->setChecked(true); break;
 	case ClassicBrush::SQUARE_PIXEL: d->ui.squareMode->setChecked(true); break;
-	case ClassicBrush::ROUND_SOFT:
-		// TODO decouple watercolor mode from brush shape
-		if(watercolor)
-			d->ui.watercolorMode->setChecked(true);
-		else
-			d->ui.softedgeMode->setChecked(true);
-		break;
+	case ClassicBrush::ROUND_SOFT: d->ui.softedgeMode->setChecked(true); break;
 	}
 
 	emit subpixelModeChanged(getSubpixelMode(), isSquare());
@@ -314,16 +305,8 @@ void BrushSettings::updateUi()
 	d->ui.hardnessLabel->setVisible(softmode);
 	d->ui.hardnessBox->setVisible(softmode);
 
-	d->ui.brushsmudging->setVisible(watercolor);
-	d->ui.pressureSmudging->setVisible(watercolor);
-	d->ui.smudgingLabel->setVisible(watercolor);
-	d->ui.smudgingBox->setVisible(watercolor);
-
-	d->ui.colorpickup->setVisible(watercolor);
-	d->ui.colorpickupLabel->setVisible(watercolor);
-	d->ui.colorpickupBox->setVisible(watercolor);
-
-	d->ui.modeIncremental->setEnabled(!watercolor);
+	// Smudging only works right in incremental mode
+	d->ui.modeIncremental->setEnabled(brush.smudge1() == 0.0);
 
 	// Show correct blending mode
 	if(brush.isEraser())
@@ -351,7 +334,7 @@ void BrushSettings::updateUi()
 	d->ui.pressureHardness->setChecked(softmode && brush.useHardnessPressure());
 
 	d->ui.brushsmudging->setValue(brush.smudge1() * 100);
-	d->ui.pressureSmudging->setChecked(watercolor && brush.useSmudgePressure());
+	d->ui.pressureSmudging->setChecked(brush.useSmudgePressure());
 
 	d->ui.colorpickup->setValue(brush.resmudge());
 
@@ -380,9 +363,6 @@ void BrushSettings::updateFromUi()
 	else 
 		brush.setShape(ClassicBrush::ROUND_SOFT);
 
-	// TODO: decouple watercolor mode from brush shape
-	const bool watercolor = d->ui.watercolorMode->isChecked();
-
 	brush.setSize(d->ui.brushsizeBox->value());
 	brush.setSizePressure(d->ui.pressureSize->isChecked());
 
@@ -392,16 +372,9 @@ void BrushSettings::updateFromUi()
 	brush.setHardness(d->ui.brushhardness->value() / 100.0);
 	brush.setHardnessPressure(d->ui.pressureHardness->isChecked());
 
-	if(watercolor) {
-		// an ugly hack until TODO: minimum smudging value when watercolor
-		// mode is enabled is 1. A nonzero value reveals the smudging
-		// controls in the UI.
-		brush.setSmudge(d->ui.brushsmudging->value() / 100.0);
-		brush.setSmudgePressure(d->ui.pressureSmudging->isChecked());
-		brush.setResmudge(d->ui.colorpickup->value());
-	} else {
-		brush.setSmudge(0);
-	}
+	brush.setSmudge(d->ui.brushsmudging->value() / 100.0);
+	brush.setSmudgePressure(d->ui.pressureSmudging->isChecked());
+	brush.setResmudge(d->ui.colorpickup->value());
 
 	brush.setSpacing(d->ui.brushspacingBox->value() / 100.0);
 	brush.setIncremental(d->ui.modeIncremental->isChecked());
@@ -409,6 +382,9 @@ void BrushSettings::updateFromUi()
 	brush.setBlendingMode(paintcore::BlendMode::Mode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
 
 	d->ui.preview->setBrush(brush);
+
+	d->ui.modeIncremental->setEnabled(brush.smudge1() == 0.0);
+
 	pushSettings();
 }
 

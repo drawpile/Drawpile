@@ -63,7 +63,7 @@ public:
 	 * @brief Start or continue a stroke
 	 * @param sourceLayer unused
 	 */
-	void strokeTo(const paintcore::Point &p, const paintcore::Layer *) override;
+	void strokeTo(const paintcore::Point &p, const paintcore::Layer *sourceLayer) override;
 
 	/**
 	 * @brief End the active stroke
@@ -88,12 +88,14 @@ public:
 	void addOffset(int x, int y) override;
 
 private:
-	void addDab(int x, int y, qreal pressure);
+	void addDab(int x, int y, qreal pressure, const paintcore::Layer *sourceLayer);
 
 	ClassicBrush m_brush;      // the current brush
 	int m_contextId;           // user context ID
 	int m_layerId;             // target layer ID
 	qreal m_length;            // current length of active brush stroke
+	int m_smudgeDistance;      // dabs since last smudge color sampling
+	QColor m_smudgedColor;     // effective color (nonzero alpha indicates indirect drawing mode)
 	bool m_pendown;            // brush stroke in progress?
 	paintcore::Point m_lastPoint;
 
