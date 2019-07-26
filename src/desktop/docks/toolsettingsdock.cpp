@@ -199,9 +199,7 @@ void ToolSettings::readSettings()
 	cfg.beginGroup("tools");
 	cfg.beginGroup("toolset");
 	for(auto ts : d->toolSettings) {
-		cfg.beginGroup(ts->toolType());
-		ts->restoreToolSettings(tools::ToolProperties::load(cfg));
-		cfg.endGroup();
+		ts->restoreToolSettings(tools::ToolProperties::load(cfg, ts->toolType()));
 	}
 	cfg.endGroup();
 	setForegroundColor(cfg.value("color").value<QColor>());
@@ -217,19 +215,14 @@ void ToolSettings::saveSettings()
 
 	cfg.beginGroup("toolset");
 	for(auto ts : d->toolSettings) {
-		tools::ToolProperties props = ts->saveToolSettings();
-		if(!props.isEmpty()) {
-			cfg.beginGroup(ts->toolType());
-			props.save(cfg);
-			cfg.endGroup();
-		}
+		ts->saveToolSettings().save(cfg);
 	}
 }
 
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
-	Q_ASSERT(tool>=0 && tool < tools::Tool::_LASTTOOL);
-	if(tool>=0 && tool<tools::Tool::_LASTTOOL)
+	Q_ASSERT(tool < tools::Tool::_LASTTOOL);
+	if(tool<tools::Tool::_LASTTOOL)
 		return d->pages[tool].settings.data();
 	else
 		return nullptr;

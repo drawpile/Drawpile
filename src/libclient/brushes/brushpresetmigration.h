@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018-2019 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,28 +16,20 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BRUSHES_PIXELBRUSHPAINTER_H
-#define BRUSHES_PIXELBRUSHPAINTER_H
 
-namespace paintcore {
-	class EditableLayer;
-	class BrushMask;
-}
-
-namespace protocol {
-	class DrawDabsPixel;
-}
+#ifndef BRUSHPRESETMIGRATION_H
+#define BRUSHPRESETMIGRATION_H
 
 namespace brushes {
 
 /**
- * Draw brush drabs on the canvas
+ * Convert old QSettings based brush presets to the new file based format
+ *
+ * @return true if at least one brush was converted
  */
-void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer=0);
-
-paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity);
-paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity);
+bool migrateQSettingsBrushPresets();
 
 }
 
-#endif
+
+#endif // BRUSHPRESETMIGRATION_H

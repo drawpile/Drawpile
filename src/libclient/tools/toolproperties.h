@@ -23,7 +23,6 @@
 #include <QColor>
 
 class QSettings;
-class QDataStream;
 
 namespace tools {
 
@@ -37,6 +36,7 @@ public:
 	explicit ToolProperties(const QString &type)
 		: m_type(type)
 	{
+		Q_ASSERT(!type.isEmpty());
 	}
 
 	template<typename Type>
@@ -63,6 +63,7 @@ public:
 
 	template<typename ValueType> void setValue(const ValueType &key, const decltype(ValueType::defaultValue) &value)
 	{
+		Q_ASSERT(!m_type.isEmpty());
 		m_props[key.key] = QVariant::fromValue(value);
 	}
 
@@ -100,25 +101,23 @@ public:
 	/**
 	 * @brief Save tool properties
 	 *
-	 * The correct settings group should be set before calling this
+	 * The properties will be saved under a group
+	 * named by toolType()
+	 *
 	 * @param cfg
 	 */
 	void save(QSettings &cfg) const;
 
 	/**
 	 * @brief Load tool properties
-	 *
-	 * The correct settings group should be set before calling this
 	 * @param cfg
+	 * @param toolType
+	 *
 	 * @return properties
 	 */
-	static ToolProperties load(const QSettings &cfg);
-
-	friend QDataStream &operator<<(QDataStream &out, const tools::ToolProperties &myObj);
-	friend QDataStream &operator>>(QDataStream &in, tools::ToolProperties &myObj);
+	static ToolProperties load(QSettings &cfg, const QString &toolType);
 
 private:
-
 	QVariantHash m_props;
 	QString m_type;
 };
@@ -126,6 +125,5 @@ private:
 }
 
 Q_DECLARE_METATYPE(tools::ToolProperties)
-
 
 #endif

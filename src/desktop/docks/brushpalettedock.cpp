@@ -20,7 +20,8 @@
 #include "docks/brushpalettedock.h"
 #include "docks/utils.h"
 #include "toolwidgets/brushsettings.h"
-#include "tools/toolproperties.h"
+#include "brushes/brushpresetmodel.h"
+#include "brushes/brush.h"
 
 // Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
 #include "widgets/groupedtoolbutton.h"
@@ -33,7 +34,7 @@ namespace docks {
 
 struct BrushPalette::Private {
 	Ui_BrushPalette ui;
-	tools::BrushPresetModel *presets;
+	brushes::BrushPresetModel *presets;
 	tools::BrushSettings *brushSettings;
 };
 
@@ -42,7 +43,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 {
 	setStyleSheet(defaultDockStylesheet());
 
-	d->presets = tools::BrushPresetModel::getSharedInstance();
+	d->presets = brushes::BrushPresetModel::getSharedInstance();
 
 	// Create UI
 	setWindowTitle(tr("Brushes"));
@@ -61,13 +62,13 @@ BrushPalette::BrushPalette(QWidget *parent)
 			return;
 		}
 
-		QVariant v = index.data(tools::BrushPresetModel::ToolPropertiesRole);
+		QVariant v = index.data(brushes::BrushPresetModel::BrushPresetRole);
 		if(v.isNull()) {
 			qWarning("Brush preset was null!");
 			return;
 		}
 
-		d->brushSettings->setCurrentBrushSettings(v.value<tools::ToolProperties>());
+		d->brushSettings->setCurrentBrush(v.value<brushes::ClassicBrush>());
 	});
 
 	connect(d->ui.presetAdd, &QAbstractButton::clicked, this, [this]() {
@@ -75,7 +76,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 			qWarning("Cannot add preset: BrushSettings not connected to BrushPalette");
 			return;
 		}
-		d->presets->addBrush(d->brushSettings->getCurrentBrushSettings());
+		d->presets->addBrush(d->brushSettings->currentBrush());
 		d->ui.brushPaletteView->selectionModel()->select(
 			d->presets->index(d->presets->rowCount()-1, 0),
 			QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current
@@ -94,8 +95,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 		}
 		d->presets->setData(
 			sel.first(),
-			QVariant::fromValue(d->brushSettings->getCurrentBrushSettings()),
-			tools::BrushPresetModel::ToolPropertiesRole
+			QVariant::fromValue(d->brushSettings->currentBrush()),
+			brushes::BrushPresetModel::BrushPresetRole
 		);
 	});
 

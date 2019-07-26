@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,27 +16,19 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "toolproperties.h"
 
 #include <QSettings>
 
 namespace tools {
 
-namespace {
-	class RegisterToolProps {
-	public:
-		RegisterToolProps()
-		{
-			qRegisterMetaTypeStreamOperators<ToolProperties>("tools::ToolProperties");
-		}
-	};
-
-	static RegisterToolProps _registerToolProps;
-}
-
 void ToolProperties::save(QSettings &cfg) const
 {
-	Q_ASSERT(!cfg.group().isEmpty());
+	if(m_type.isEmpty())
+		return;
+
+	cfg.beginGroup(m_type);
 
 	// Remove any old values that may interfere
 	cfg.remove(QString());
@@ -46,29 +38,20 @@ void ToolProperties::save(QSettings &cfg) const
 		i.next();
 		cfg.setValue(i.key(), i.value());
 	}
-	cfg.setValue("tooltype", m_type);
+
+	cfg.endGroup();
 }
 
-ToolProperties ToolProperties::load(const QSettings &cfg)
+ToolProperties ToolProperties::load(QSettings &cfg, const QString &toolType)
 {
-	ToolProperties tp(cfg.value("tooltype").toString());
+	Q_ASSERT(!toolType.isEmpty());
+	ToolProperties tp(toolType);
+	cfg.beginGroup(toolType);
 	for(const QString &key : cfg.allKeys()) {
 		tp.m_props[key] = cfg.value(key);
 	}
+	cfg.endGroup();
 	return tp;
-}
-
-QDataStream &operator<<(QDataStream &out, const tools::ToolProperties &tp)
-{
-	return out << tp.m_type << tp.m_props;
-}
-
-QDataStream &operator>>(QDataStream &in, tools::ToolProperties &tp)
-{
-	QVariant props;
-	in >> tp.m_type >> props;
-	tp.m_props = props.toHash();
-	return in;
 }
 
 }

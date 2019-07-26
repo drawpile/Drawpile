@@ -73,6 +73,7 @@ set (
 	core/rasterop.cpp
 	core/floodfill.cpp
 	core/tilevector.cpp
+	brushes/brush.cpp
 	brushes/brushengine.cpp
 	brushes/brushpainter.cpp
 	brushes/classicbrushstate.cpp
@@ -80,6 +81,8 @@ set (
 	brushes/pixelbrushstate.cpp
 	brushes/pixelbrushpainter.cpp
 	brushes/shapes.cpp
+	brushes/brushpresetmodel.cpp
+	brushes/brushpresetmigration.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

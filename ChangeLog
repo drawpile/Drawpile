@@ -2,6 +2,8 @@
  * Added Italian translation (contributed by Albano Battistella)
  * Fixed lockup when opening a layered TIFF file
  * drawpile-cmd: added support for outputting to stdout
+ * Improved brush preview: different styles are now used for different brush types
+ * Smudging can now be used with all brush shapes
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install
