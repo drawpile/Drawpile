@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "groupedtoolbutton.h"
-#include "utils/icon.h"
+#include "../../libclient/utils/icon.h"
 
 #include <QAction>
 #include <QStyleOptionToolButton>

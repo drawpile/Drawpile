@@ -19,6 +19,7 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
+#include "canvasviewmodifiers.h"
 #include "core/point.h"
 #include "tools/tool.h"
 #include "canvas/pressure.h"
@@ -163,6 +164,8 @@ public slots:
 	 */
 	void setBrushCursorStyle(int style);
 
+	void updateShortcuts();
+
 protected:
 	void enterEvent(QEvent *event) override;
 	void leaveEvent(QEvent *event) override;
@@ -184,33 +187,33 @@ protected:
 
 private:
 	// unified mouse/stylus event handlers
-	void penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
 	void doQuickAdjust1(float delta);
 
 private:
-	float mapPressure(float pressure, bool stylus);
+	qreal mapPressure(qreal pressure, bool stylus);
 
-	enum class ViewDragMode {None, Translate, Rotate, Zoom, QuickAdjust1};
+	enum class ViewDragMode {None, Prepared, Started};
 
 	//! Start dragging the view
-	void startDrag(int x, int y, ViewDragMode mode);
+	void startDrag(const QPoint &point);
 
 	//! Stop dragging the view
 	void stopDrag();
 
 	//! Drag the view
-	void moveDrag(int x, int y);
+	void moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers);
 
 	//! Redraw the scene around the outline cursor if necesasry
 	void updateOutline(paintcore::Point point);
 	void updateOutline();
 
 	void onPenDown(const paintcore::Point &p, bool right);
-	void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
-	void onPenUp(bool right);
+	void onPenMove(const paintcore::Point &p, bool right, bool constrain1, bool constrain2);
+	void onPenUp();
 
 	void gestureEvent(QGestureEvent *event);
 	void touchEvent(QTouchEvent *event);
@@ -218,6 +221,8 @@ private:
 	void resetCursor();
 
 	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
+
+	CanvasViewShortcuts m_shortcuts;
 
 	/**
 	 * @brief State of the pen
@@ -228,16 +233,14 @@ private:
 	 */
 	enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} m_pendown;
 
-	//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
-	enum { NOSPECIALPENMODE, COLORPICK, LAYERPICK} m_specialpenmode;
+	enum class PenMode {
+		Normal, Colorpick, Layerpick
+	};
+	PenMode m_penmode;
 
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;
-
-	//! Current state of the (non-modifier) drag button (i.e. space bar initiated drag)
-	ViewDragMode m_dragButtonState;
-
-	int m_dragx, m_dragy;
+	QPoint m_dragLastPoint;
 
 	//! Previous pointer location
 	paintcore::Point m_prevpoint;
@@ -250,7 +253,7 @@ private:
 
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_squareoutline;
-	QCursor m_dotcursor, m_colorpickcursor;
+	QCursor m_dotcursor, m_colorpickcursor, m_layerpickcursor;
 	QCursor m_toolcursor;
 
 	qreal m_zoom; // View zoom in percents

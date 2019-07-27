@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,34 +17,42 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BRUSHPREVIEW_PLUGIN_H
-#define BRUSHPREVIEW_PLUGIN_H
+#ifndef MODIFIERKEYS_H
+#define MODIFIERKEYS_H
 
-#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#include <QWidget>
 
-class BrushPreviewPlugin : public QObject, public QDesignerCustomWidgetInterface
-{
-Q_OBJECT
-Q_INTERFACES(QDesignerCustomWidgetInterface)
+class QAbstractButton;
 
-public:
-	BrushPreviewPlugin(QObject *parent = 0);
-
-	bool isContainer() const;
-	bool isInitialized() const;
-	QIcon icon() const;
-	QString domXml() const;
-	QString group() const;
-	QString includeFile() const;
-	QString name() const;
-	QString toolTip() const;
-	QString whatsThis() const;
-	QWidget *createWidget(QWidget *parent);
-	void initialize(QDesignerFormEditorInterface *core);
-
-private:
-	bool initialized;
-};
-
+#ifndef DESIGNER_PLUGIN
+//! Custom widgets
+namespace widgets {
+#define PLUGIN_EXPORT
+#else
+#include <QtUiPlugin/QDesignerExportWidget>
+#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
+class PLUGIN_EXPORT ModifierKeys : public QWidget
+{
+	Q_OBJECT
+	Q_PROPERTY(Qt::KeyboardModifiers modifiers READ modifiers WRITE setModifiers)
+public:
+	explicit ModifierKeys(QWidget *parent = nullptr);
+
+	Qt::KeyboardModifiers modifiers() const;
+
+signals:
+
+public slots:
+	void setModifiers(Qt::KeyboardModifiers modifiers);
+
+private:
+	QAbstractButton *m_buttons[4];
+};
+
+#ifndef DESIGNER_PLUGIN
+}
+#endif
+
+#endif // MODIFIERKEYS_H

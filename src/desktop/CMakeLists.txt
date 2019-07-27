@@ -22,6 +22,7 @@ set (
 	toolwidgets/inspectorsettings.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
+	scene/canvasviewmodifiers.cpp
 	scene/canvasitem.cpp
 	scene/annotationitem.cpp
 	scene/selectionitem.cpp
@@ -61,6 +62,7 @@ set (
 	widgets/flipbookview.cpp
 	widgets/presetselector.cpp
 	widgets/spinner.cpp
+	widgets/modifierkeys.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp

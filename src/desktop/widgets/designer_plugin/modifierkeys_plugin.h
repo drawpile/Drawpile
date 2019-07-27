@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BRUSHPREVIEW_PLUGIN_H
-#define BRUSHPREVIEW_PLUGIN_H
+#ifndef MODIFIERKEYS_PLUGIN_H
+#define MODIFIERKEYS_PLUGIN_H
 
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
-class BrushPreviewPlugin : public QObject, public QDesignerCustomWidgetInterface
+class ModifierKeysPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
 Q_OBJECT
 Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-	BrushPreviewPlugin(QObject *parent = 0);
+	ModifierKeysPlugin(QObject *parent=nullptr);
 
 	bool isContainer() const;
 	bool isInitialized() const;

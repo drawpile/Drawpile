@@ -26,6 +26,7 @@
 #include "tablettester_plugin.h"
 #include "spinner_plugin.h"
 #include "presetselector_plugin.h"
+#include "modifierkeys_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)
@@ -39,6 +40,7 @@ DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 		<< new TabletTesterPlugin(this)
 		<< new SpinnerPlugin(this)
 		<< new PresetSelectorPlugin(this)
+		<< new ModifierKeysPlugin(this)
 		;
 }
 
