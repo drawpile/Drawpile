@@ -66,6 +66,7 @@ CanvasView::CanvasView(QWidget *parent)
 
 	// Get the color picker cursor (used for the quick color picker mode)
 	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
+	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
 
 	// Generate the minimalistic dot cursor
 	{
@@ -272,8 +273,8 @@ void CanvasView::resetCursor()
 
 	switch(m_penmode) {
 	case PenMode::Normal: break;
-	case PenMode::Colorpick: // TODO cursor for layer pick mode
-	case PenMode::Layerpick: viewport()->setCursor(m_colorpickcursor); return;
+	case PenMode::Colorpick: viewport()->setCursor(m_colorpickcursor); return;
+	case PenMode::Layerpick: viewport()->setCursor(m_layerpickcursor); return;
 	}
 
 	if(m_locked) {

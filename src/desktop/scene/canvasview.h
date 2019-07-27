@@ -253,7 +253,7 @@ private:
 
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_squareoutline;
-	QCursor m_dotcursor, m_colorpickcursor;
+	QCursor m_dotcursor, m_colorpickcursor, m_layerpickcursor;
 	QCursor m_toolcursor;
 
 	qreal m_zoom; // View zoom in percents
