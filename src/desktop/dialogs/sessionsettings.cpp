@@ -92,7 +92,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers, &QSpinBox::setValue);
 	connect(m_doc, &Document::sessionResetThresholdChanged, m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
 	connect(m_doc, &Document::baseResetThresholdChanged, this, [this](int threshold) {
-		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'g', 1));
+		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'f', 1));
 	});
 
 
