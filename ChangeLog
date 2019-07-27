@@ -4,6 +4,8 @@
  * drawpile-cmd: added support for outputting to stdout
  * Improved brush preview: different styles are now used for different brush types
  * Smudging can now be used with all brush shapes
+ * Canvas modifier key shortcuts can now be customized
+ * Added a cursor for layer picker mode
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install
