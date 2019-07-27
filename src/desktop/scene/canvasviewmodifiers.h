@@ -21,6 +21,8 @@
 
 #include <Qt>
 
+class QSettings;
+
 struct CanvasViewShortcut {
 	Qt::KeyboardModifiers modifiers;
 
@@ -117,6 +119,9 @@ struct CanvasViewShortcuts {
 	 * If set to NoModifier, constraint #2 is never applied
 	 */
 	CanvasViewShortcut toolConstraint2 = Qt::AltModifier;
+
+	void load(const QSettings &cfg);
+	void save(QSettings &cfg) const;
 
 	/**
 	 * Match the given modifier set against the given shortcuts.

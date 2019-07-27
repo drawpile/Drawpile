@@ -19,7 +19,8 @@ HEADERS += collection.h \
 	../brushpreview.h brushpreview_plugin.h \
 	../tablettest.h tablettester_plugin.h \
 	../spinner.h spinner_plugin.h \
-	../presetselector.h presetselector_plugin.h
+	../presetselector.h presetselector_plugin.h \
+	../modifierkeys.h modifierkeys_plugin.h
 
 SOURCES += collection.cpp \
 	../colorbutton.cpp colorbutton_plugin.cpp \
@@ -29,5 +30,6 @@ SOURCES += collection.cpp \
 	../brushpreview.cpp brushpreview_plugin.cpp \
 	../tablettest.cpp tablettester_plugin.cpp \
 	../spinner.cpp spinner_plugin.cpp \
-	../presetselector.cpp presetselector_plugin.cpp
+	../presetselector.cpp presetselector_plugin.cpp \
+	../modifierkeys.cpp modifierkeys_plugin.cpp
 

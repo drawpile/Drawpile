@@ -32,6 +32,7 @@
 #include <QMimeData>
 #include <QApplication>
 #include <QGestureEvent>
+#include <QSettings>
 #include <QWindow>
 #include <QScreen>
 #include <QtMath>
@@ -75,8 +76,16 @@ CanvasView::CanvasView(QWidget *parent)
 		p.drawPoint(0, 0);
 		m_dotcursor = QCursor(dot, 0, 0);
 	}
+
+	updateShortcuts();
 }
 
+void CanvasView::updateShortcuts()
+{
+	QSettings cfg;
+	cfg.beginGroup("settings/canvasShortcuts");
+	m_shortcuts.load(cfg);
+}
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	m_scene = scene;

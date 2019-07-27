@@ -45,6 +45,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Canvas Shortcuts</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Known Hosts</string>
         </property>
        </item>
@@ -82,7 +87,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>5</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -685,6 +690,166 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="page_4">
+           <layout class="QFormLayout" name="formLayout_4">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Drag mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>Spacebar / middle mouse button</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>Drag rotate view:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="ModifierKeys" name="dragRotateKeys"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="text">
+               <string>Drag zoom view:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="ModifierKeys" name="dragZoomKeys"/>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Drag tool adjust:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="ModifierKeys" name="dragQuickAdjustKeys"/>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="text">
+               <string>Scroll zoom view:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="ModifierKeys" name="scrollZoomKeys"/>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_23">
+              <property name="text">
+               <string>Scroll tool adjust:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <widget class="ModifierKeys" name="scrollQuickAdjustKeys"/>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="label_24">
+              <property name="text">
+               <string>Color picker mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="ModifierKeys" name="colorPickKeys"/>
+            </item>
+            <item row="14" column="0">
+             <widget class="QLabel" name="label_25">
+              <property name="text">
+               <string>Layer picker mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="1">
+             <widget class="ModifierKeys" name="layerPickKeys"/>
+            </item>
+            <item row="16" column="0">
+             <widget class="QLabel" name="label_26">
+              <property name="text">
+               <string>Tool constrain mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="1">
+             <widget class="ModifierKeys" name="toolConstrain1Keys"/>
+            </item>
+            <item row="19" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Tool center mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="1">
+             <widget class="ModifierKeys" name="toolConstrain2Keys"/>
+            </item>
+            <item row="7" column="0">
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="11" column="0">
+             <spacer name="verticalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="15" column="0">
+             <spacer name="verticalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <spacer name="verticalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="stackedWidgetPage5">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
@@ -978,6 +1143,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ModifierKeys</class>
+   <extends>QWidget</extends>
+   <header>widgets/modifierkeys.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

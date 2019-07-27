@@ -164,6 +164,8 @@ public slots:
 	 */
 	void setBrushCursorStyle(int style);
 
+	void updateShortcuts();
+
 protected:
 	void enterEvent(QEvent *event) override;
 	void leaveEvent(QEvent *event) override;

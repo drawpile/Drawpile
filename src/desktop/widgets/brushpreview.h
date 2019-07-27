@@ -21,8 +21,8 @@
 
 #include <QFrame>
 
-#include "brushes/brush.h"
-#include "core/blendmodes.h"
+#include "../../libclient/brushes/brush.h"
+#include "../../libclient/core/blendmodes.h"
 
 class QMenu;
 
