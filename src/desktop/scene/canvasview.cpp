@@ -16,19 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QMouseEvent>
-#include <QTabletEvent>
-#include <QScrollBar>
-#include <QUrl>
-#include <QBitmap>
-#include <QPainter>
-#include <QMimeData>
-#include <QApplication>
-#include <QGestureEvent>
-#include <QSettings>
-#include <QWindow>
-#include <QScreen>
-#include <QtMath>
 
 #include "canvasview.h"
 #include "canvasscene.h"
@@ -38,12 +25,23 @@
 #include "core/point.h"
 #include "notifications.h"
 
+#include <QMouseEvent>
+#include <QTabletEvent>
+#include <QScrollBar>
+#include <QPainter>
+#include <QMimeData>
+#include <QApplication>
+#include <QGestureEvent>
+#include <QWindow>
+#include <QScreen>
+#include <QtMath>
+
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), m_pendown(NOTDOWN), m_specialpenmode(NOSPECIALPENMODE), m_dragmode(ViewDragMode::None),
-	m_dragButtonState(ViewDragMode::None), m_outlineSize(2),
-	m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false), m_zoom(100), m_rotate(0), m_flip(false), m_mirror(false),
+	: QGraphicsView(parent), m_pendown(NOTDOWN), m_penmode(PenMode::Normal), m_dragmode(ViewDragMode::None),
+	m_outlineSize(2), m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false),
+	m_zoom(100), m_rotate(0), m_flip(false), m_mirror(false),
 	m_scene(nullptr),
 	m_zoomWheelDelta(0),
 	m_enableTablet(true),
@@ -255,18 +253,34 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 
 void CanvasView::resetCursor()
 {
-	if(m_locked)
+	if(m_dragmode == ViewDragMode::Prepared) {
+		viewport()->setCursor(Qt::OpenHandCursor);
+		return;
+	} else if(m_dragmode == ViewDragMode::Started) {
+		viewport()->setCursor(Qt::ClosedHandCursor);
+		return;
+	}
+
+	switch(m_penmode) {
+	case PenMode::Normal: break;
+	case PenMode::Colorpick: // TODO cursor for layer pick mode
+	case PenMode::Layerpick: viewport()->setCursor(m_colorpickcursor); return;
+	}
+
+	if(m_locked) {
 		viewport()->setCursor(Qt::ForbiddenCursor);
+		return;
+	}
 
-	else if(m_toolcursor.shape() == Qt::CrossCursor) {
+	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(m_brushCursorStyle) {
-		case 0: viewport()->setCursor(m_dotcursor); break;
-		case 1: viewport()->setCursor(Qt::CrossCursor); break;
-		default: viewport()->setCursor(Qt::ArrowCursor); break;
+		case 0: viewport()->setCursor(m_dotcursor); return;
+		case 1: viewport()->setCursor(Qt::CrossCursor); return;
+		default: viewport()->setCursor(Qt::ArrowCursor); return;
 		}
+	}
 
-	} else
-		viewport()->setCursor(m_toolcursor);
+	viewport()->setCursor(m_toolcursor);
 }
 
 void CanvasView::setPixelGrid(bool enable)
@@ -314,7 +328,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
-	if(m_showoutline && m_outlineSize>0 && !m_specialpenmode && !m_locked) {
+	if(m_showoutline && m_outlineSize>0 && m_penmode == PenMode::Normal && m_dragmode == ViewDragMode::None && !m_locked) {
 		QRectF outline(m_prevoutlinepoint-QPointF(m_outlineSize/2.0, m_outlineSize/2.0),
 					QSizeF(m_outlineSize, m_outlineSize));
 
@@ -404,75 +418,69 @@ void CanvasView::setPressureMapping(const PressureMapping &mapping)
 
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
-	Q_UNUSED(right);
-	if(m_scene->hasImage() && !m_locked) {
-		if(m_specialpenmode) {
-			// quick color or layer pick mode
-			if(m_specialpenmode == LAYERPICK)
-				m_scene->model()->pickLayer(p.x(), p.y());
-			else
-				m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
-
-		} else {
-			emit penDown(p, p.pressure(), right, m_zoom / 100.0);
+	if(m_scene->hasImage()) {
+		switch(m_penmode) {
+		case PenMode::Normal:
+			if(!m_locked)
+				emit penDown(p, p.pressure(), right, m_zoom / 100.0);
+			break;
+		case PenMode::Colorpick:
+			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+			break;
+		case PenMode::Layerpick:
+			m_scene->model()->pickLayer(p.x(), p.y());
+			break;
 		}
 	}
 }
 
-void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt)
+void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool constrain1, bool constrain2)
 {
-	Q_UNUSED(right);
+	Q_UNUSED(right)
 
-	if(m_scene->hasImage() && !m_locked) {
-		if(m_specialpenmode) {
-			// quick color pick mode
-			if(m_specialpenmode == LAYERPICK)
-				m_scene->model()->pickLayer(p.x(), p.y());
-			else
-				m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
-
-		} else {
-			emit penMove(p, p.pressure(), shift, alt);
+	if(m_scene->hasImage()) {
+		switch(m_penmode) {
+		case PenMode::Normal:
+			if(!m_locked)
+				emit penMove(p, p.pressure(), constrain1, constrain2);
+			break;
+		case PenMode::Colorpick:
+			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+			break;
+		case PenMode::Layerpick:
+			m_scene->model()->pickLayer(p.x(), p.y());
+			break;
 		}
 	}
 }
 
-void CanvasView::onPenUp(bool right)
+void CanvasView::onPenUp()
 {
-	Q_UNUSED(right);
-	if(!m_locked) {
-		if(!m_specialpenmode) {
-			emit penUp();
-		}
-	}
-	m_specialpenmode = NOSPECIALPENMODE;
+	if(!m_locked && m_penmode == PenMode::Normal)
+		emit penUp();
+
+	m_penmode = PenMode::Normal;
 }
 
-void CanvasView::penPressEvent(const QPointF &pos, float pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_pendown != NOTDOWN)
 		return;
 
-	if(button == Qt::MidButton || m_dragButtonState != ViewDragMode::None) {
-		ViewDragMode mode;
-		if(m_dragButtonState == ViewDragMode::None) {
-			if(modifiers.testFlag(Qt::ControlModifier))
-				mode = ViewDragMode::Zoom;
-			else if(modifiers.testFlag(Qt::ShiftModifier))
-				mode = ViewDragMode::QuickAdjust1;
-			else
-				mode = ViewDragMode::Translate;
-		} else
-			mode = m_dragButtonState;
-
-		startDrag(pos.x(), pos.y(), mode);
+	if((button == Qt::MidButton && m_dragmode != ViewDragMode::Started) || m_dragmode == ViewDragMode::Prepared) {
+		startDrag(pos.toPoint());
 
 	} else if((button == Qt::LeftButton || button == Qt::RightButton) && m_dragmode==ViewDragMode::None) {
 		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
 		m_prevpoint = mapToScene(pos, pressure);
-		m_specialpenmode = modifiers.testFlag(Qt::ControlModifier) ? (modifiers.testFlag(Qt::ShiftModifier) ? LAYERPICK : COLORPICK) : NOSPECIALPENMODE;
+
+		m_penmode = PenMode(CanvasViewShortcuts::matches(
+			modifiers,
+			m_shortcuts.colorPick, m_shortcuts.layerPick
+		) + 1);
+
 		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus)), button == Qt::RightButton);
 	}
 }
@@ -492,10 +500,10 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	);
 }
 
-void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
-	if(m_dragmode != ViewDragMode::None) {
-		moveDrag(pos.x(), pos.y());
+	if(m_dragmode == ViewDragMode::Started) {
+		moveDrag(pos.toPoint(), modifiers);
 
 	} else {
 		paintcore::Point point = mapToScene(pos, pressure);
@@ -505,7 +513,12 @@ void CanvasView::penMoveEvent(const QPointF &pos, float pressure, Qt::MouseButto
 				m_pointervelocity = point.distance(m_prevpoint);
 				m_pointerdistance += m_pointervelocity;
 				point.setPressure(mapPressure(pressure, isStylus));
-				onPenMove(point, buttons.testFlag(Qt::RightButton), modifiers.testFlag(Qt::ShiftModifier), modifiers.testFlag(Qt::AltModifier));
+				onPenMove(
+					point,
+					buttons.testFlag(Qt::RightButton),
+					m_shortcuts.toolConstraint1.matches(modifiers),
+					m_shortcuts.toolConstraint2.matches(modifiers)
+				);
 
 			} else {
 				emit penHover(point);
@@ -546,7 +559,7 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 		stopDrag();
 
 	} else if(m_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && m_pendown == MOUSEDOWN)) {
-		onPenUp(button == Qt::RightButton);
+		onPenUp();
 		m_pendown = NOTDOWN;
 	}
 }
@@ -566,7 +579,14 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
-	if((event->modifiers() & Qt::ControlModifier)) {
+	const int shortcut = CanvasViewShortcuts::matches(event->modifiers(),
+		m_shortcuts.scrollZoom,
+		m_shortcuts.scrollQuickAdjust
+	);
+
+	switch(shortcut) {
+	case 0: {
+		event->accept();
 		m_zoomWheelDelta += event->angleDelta().y();
 		const int steps=m_zoomWheelDelta / 120;
 		m_zoomWheelDelta -= steps * 120;
@@ -574,51 +594,59 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		if(steps != 0) {
 			zoomSteps(steps);
 		}
+		break;
+		}
 
-	} else if((event->modifiers() & Qt::ShiftModifier)) {
+	case 1:
+		event->accept();
 		doQuickAdjust1(event->angleDelta().y() / (30 * 4.0));
+		break;
 
-	} else {
+	default:
 		QGraphicsView::wheelEvent(event);
 	}
 }
 
 void CanvasView::keyPressEvent(QKeyEvent *event) {
-	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+	if(event->key() == Qt::Key_Space) {
 		event->accept();
-		if(event->modifiers() & Qt::ControlModifier) {
-			m_dragButtonState = ViewDragMode::Rotate;
-		} else {
-			m_dragButtonState = ViewDragMode::Translate;
+		if(!event->isAutoRepeat() && m_dragmode == ViewDragMode::None) {
+			m_dragmode = ViewDragMode::Prepared;
+			updateOutline();
 		}
-		viewport()->setCursor(Qt::OpenHandCursor);
 
 	} else {
 		QGraphicsView::keyPressEvent(event);
 
-		if(event->key() == Qt::Key_Control && m_dragButtonState != ViewDragMode::None)
-			viewport()->setCursor(m_colorpickcursor);
-
+		if(m_pendown == NOTDOWN) {
+			// Switch penmode here so we get to see the right cursor
+			m_penmode = PenMode(CanvasViewShortcuts::matches(
+				event->modifiers(),
+				m_shortcuts.colorPick, m_shortcuts.layerPick
+			) + 1);
+		}
 	}
+
+	resetCursor();
 }
 
 void CanvasView::keyReleaseEvent(QKeyEvent *event) {
-	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
-		event->accept();
-		m_dragButtonState = ViewDragMode::None;
-		if(m_dragmode==ViewDragMode::None)
-			resetCursor();
+	QGraphicsView::keyReleaseEvent(event);
 
-	} else {
-		QGraphicsView::keyReleaseEvent(event);
-
-		if(event->key() == Qt::Key_Control) {
-			if(m_dragButtonState != ViewDragMode::None)
-				viewport()->setCursor(Qt::OpenHandCursor);
-			else
-				resetCursor();
-		}
+	if(event->key() == Qt::Key_Space && !event->isAutoRepeat() && m_dragmode == ViewDragMode::Prepared) {
+		m_dragmode = ViewDragMode::None;
+		updateOutline();
 	}
+
+	if(m_pendown == NOTDOWN) {
+		// Switch penmode here so we get to see the right cursor
+		m_penmode = PenMode(CanvasViewShortcuts::matches(
+			event->modifiers(),
+			m_shortcuts.colorPick, m_shortcuts.layerPick
+		) + 1);
+	}
+
+	resetCursor();
 }
 
 void CanvasView::gestureEvent(QGestureEvent *event)
@@ -790,7 +818,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 	return true;
 }
 
-float CanvasView::mapPressure(float pressure, bool stylus)
+qreal CanvasView::mapPressure(qreal pressure, bool stylus)
 {
 	switch(m_pressuremapping.mode) {
 	case PressureMapping::STYLUS:
@@ -874,13 +902,12 @@ void CanvasView::scrollTo(const QPoint& point)
  * @param y initial y coordinate
  * @param mode dragging mode
  */
-void CanvasView::startDrag(int x,int y, ViewDragMode mode)
+void CanvasView::startDrag(const QPoint &point)
 {
-	viewport()->setCursor(Qt::ClosedHandCursor);
-	m_dragx = x;
-	m_dragy = y;
-	m_dragmode = mode;
-	m_showoutline = false;
+	m_dragLastPoint = point;
+	m_dragmode = ViewDragMode::Started;
+
+	resetCursor();
 	updateOutline();
 }
 
@@ -888,50 +915,58 @@ void CanvasView::startDrag(int x,int y, ViewDragMode mode)
  * @param x x coordinate
  * @param y y coordinate
  */
-void CanvasView::moveDrag(int x, int y)
+void CanvasView::moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers)
 {
-	const int dx = m_dragx - x;
-	const int dy = m_dragy - y;
+	const int dx = m_dragLastPoint.x() - point.x();
+	const int dy = m_dragLastPoint.y() - point.y();
 
-	if(m_dragmode==ViewDragMode::Rotate) {
-		const qreal preva = qAtan2(width()/2 - m_dragx, height()/2 - m_dragy);
-		const qreal a = qAtan2(width()/2 - x, height()/2 - y);
+	const int shortcut = CanvasViewShortcuts::matches(modifiers,
+		m_shortcuts.dragRotate,
+		m_shortcuts.dragZoom,
+		m_shortcuts.dragQuickAdjust
+		);
+
+	switch(shortcut) {
+	case 0: {
+		const qreal preva = qAtan2(width()/2 - m_dragLastPoint.x(), height()/2 - m_dragLastPoint.y());
+		const qreal a = qAtan2(width()/2 - point.x(), height()/2 - point.y());
 		setRotation(rotation() + qRadiansToDegrees(preva-a));
+		break;
+		}
 
-	} else if(m_dragmode==ViewDragMode::Zoom) {
+	case 1:
 		if(dy!=0) {
-			const float delta = qBound(-1.0, dy / 100.0, 1.0);
+			const auto delta = qBound(-1.0, dy / 100.0, 1.0);
 			if(delta>0) {
 				setZoom(m_zoom * (1+delta));
 			} else if(delta<0) {
 				setZoom(m_zoom / (1-delta));
 			}
 		}
-	} else if(m_dragmode==ViewDragMode::QuickAdjust1) {
-		if(dy!=0) {
-			const float delta = qBound(-2.0, dy / 10.0, 2.0);
-			doQuickAdjust1(delta);
+		break;
+
+	case 2: {
+		const auto delta = qBound(-2.0, dy / 10.0, 2.0);
+		doQuickAdjust1(delta);
+		break;
 		}
-	} else {
+
+	default: {
 		QScrollBar *ver = verticalScrollBar();
 		QScrollBar *hor = horizontalScrollBar();
 		ver->setSliderPosition(ver->sliderPosition()+dy);
 		hor->setSliderPosition(hor->sliderPosition()+dx);
+		}
 	}
 
-	m_dragx = x;
-	m_dragy = y;
+	m_dragLastPoint = point;
 }
 
 //! Stop dragging
 void CanvasView::stopDrag()
 {
-	if(m_dragButtonState != ViewDragMode::None)
-		viewport()->setCursor(Qt::OpenHandCursor);
-	else
-		resetCursor();
 	m_dragmode = ViewDragMode::None;
-	m_showoutline = true;
+	resetCursor();
 }
 
 /**
