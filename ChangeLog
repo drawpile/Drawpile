@@ -6,6 +6,7 @@
  * Smudging can now be used with all brush shapes
  * Canvas modifier key shortcuts can now be customized
  * Added a cursor for layer picker mode
+ * Use the same default curve for velocity pressure emulation mode
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install

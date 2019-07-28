@@ -59,16 +59,10 @@ InputSettings::InputSettings(QWidget *parent) :
 		m_ui->distanceCurve->setCurve(curve);
 	}
 
-	KisCubicCurve defaultVelocityCurve;
-	defaultVelocityCurve.fromString("0,1;1,0");
-	m_ui->velocityCurve->setDefaultCurve(defaultVelocityCurve);
-
 	if(cfg.contains("velocitycurve")) {
 		KisCubicCurve curve;
 		curve.fromString(cfg.value("velocitycurve").toString());
 		m_ui->velocityCurve->setCurve(curve);
-	} else {
-		m_ui->velocityCurve->setCurve(defaultVelocityCurve);
 	}
 
 	m_ui->distance->setValue(cfg.value("distance", center(m_ui->distance)).toInt());
