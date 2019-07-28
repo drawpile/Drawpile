@@ -342,8 +342,7 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/canvasShortcuts");
-	CanvasViewShortcuts viewShortcuts;
-	viewShortcuts.load(cfg);
+	const auto viewShortcuts = CanvasViewShortcuts::load(cfg);
 	m_ui->colorPickKeys->setModifiers(viewShortcuts.colorPick);
 	m_ui->layerPickKeys->setModifiers(viewShortcuts.layerPick);
 	m_ui->dragRotateKeys->setModifiers(viewShortcuts.dragRotate);

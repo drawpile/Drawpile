@@ -120,7 +120,7 @@ struct CanvasViewShortcuts {
 	 */
 	CanvasViewShortcut toolConstraint2 = Qt::AltModifier;
 
-	void load(const QSettings &cfg);
+	static CanvasViewShortcuts load(const QSettings &cfg);
 	void save(QSettings &cfg) const;
 
 	/**

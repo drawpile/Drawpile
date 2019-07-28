@@ -85,7 +85,7 @@ void CanvasView::updateShortcuts()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/canvasShortcuts");
-	m_shortcuts.load(cfg);
+	m_shortcuts = CanvasViewShortcuts::load(cfg);
 }
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {

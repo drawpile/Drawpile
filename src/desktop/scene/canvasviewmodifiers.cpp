@@ -48,17 +48,20 @@ static void write(QSettings &cfg, const CanvasViewShortcut &shortcut, const Canv
 	}
 }
 
-void CanvasViewShortcuts::load(const QSettings &cfg)
+CanvasViewShortcuts CanvasViewShortcuts::load(const QSettings &cfg)
 {
-	read(cfg, colorPick, QStringLiteral("colorPick"));
-	read(cfg, layerPick, QStringLiteral("layerPick"));
-	read(cfg, dragRotate, QStringLiteral("dragRotate"));
-	read(cfg, dragZoom, QStringLiteral("dragZoom"));
-	read(cfg, dragQuickAdjust, QStringLiteral("dragQuickAdjust"));
-	read(cfg, scrollZoom, QStringLiteral("scrollZoom"));
-	read(cfg, scrollQuickAdjust, QStringLiteral("scrollQuickAdjust"));
-	read(cfg, toolConstraint1, QStringLiteral("toolConstraint1"));
-	read(cfg, toolConstraint2, QStringLiteral("toolConstraint2"));
+	CanvasViewShortcuts s;
+	read(cfg, s.colorPick, QStringLiteral("colorPick"));
+	read(cfg, s.layerPick, QStringLiteral("layerPick"));
+	read(cfg, s.dragRotate, QStringLiteral("dragRotate"));
+	read(cfg, s.dragZoom, QStringLiteral("dragZoom"));
+	read(cfg, s.dragQuickAdjust, QStringLiteral("dragQuickAdjust"));
+	read(cfg, s.scrollZoom, QStringLiteral("scrollZoom"));
+	read(cfg, s.scrollQuickAdjust, QStringLiteral("scrollQuickAdjust"));
+	read(cfg, s.toolConstraint1, QStringLiteral("toolConstraint1"));
+	read(cfg, s.toolConstraint2, QStringLiteral("toolConstraint2"));
+
+	return s;
 }
 
 void CanvasViewShortcuts::save(QSettings &cfg) const
