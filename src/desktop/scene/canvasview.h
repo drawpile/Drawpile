@@ -191,8 +191,6 @@ private:
 	void penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
-	void doQuickAdjust1(float delta);
-
 private:
 	qreal mapPressure(qreal pressure, bool stylus);
 

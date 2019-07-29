@@ -106,11 +106,14 @@ int ColorPickerSettings::getSize() const
 	return m_size->value();
 }
 
-void ColorPickerSettings::quickAdjust1(float adjustment)
+void ColorPickerSettings::quickAdjust1(qreal adjustment)
 {
-	int adj = qRound(adjustment);
-	if(adj!=0)
-		m_size->setValue(m_size->value() + adj);
+	m_quickAdjust1 += adjustment;
+	if(qAbs(m_quickAdjust1) > 1.0) {
+		qreal i;
+		m_quickAdjust1 = modf(m_quickAdjust1, &i);
+		m_size->setValue(m_size->value() + int(i));
+	}
 }
 
 ToolProperties ColorPickerSettings::saveToolSettings()

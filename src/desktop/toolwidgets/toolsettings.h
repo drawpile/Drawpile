@@ -88,7 +88,7 @@ public:
 	 * For brush based tools, this adjust the size.
 	 * @param adjustment how much to adjust by (-1/1 is the normal rate)
 	 */
-	virtual void quickAdjust1(float adjustment) = 0;
+	virtual void quickAdjust1(qreal adjustment) { Q_UNUSED(adjustment) }
 
 	/**
 	 * @brief Get the current brush size

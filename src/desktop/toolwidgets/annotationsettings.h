@@ -54,7 +54,6 @@ public:
 	void setFocusAt(int cursorPos);
 
 	void setForeground(const QColor &) override {}
-	void quickAdjust1(float) override {}
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
 

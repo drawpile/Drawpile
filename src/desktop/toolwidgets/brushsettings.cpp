@@ -67,6 +67,8 @@ struct BrushSettings::Private {
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
 
+	qreal quickAdjust1 = 0.0;
+
 	inline ClassicBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
 		return toolSlots[current].brush;
@@ -496,11 +498,14 @@ void BrushSettings::setForeground(const QColor& color)
 	}
 }
 
-void BrushSettings::quickAdjust1(float adjustment)
+void BrushSettings::quickAdjust1(qreal adjustment)
 {
-	int adj = qRound(adjustment);
-	if(adj!=0)
-		d->ui.brushsizeBox->setValue(d->ui.brushsizeBox->value() + adj);
+	d->quickAdjust1 += adjustment;
+	if(qAbs(d->quickAdjust1) > 1.0) {
+		qreal i;
+		d->quickAdjust1 = modf(d->quickAdjust1, &i);
+		d->ui.brushsizeBox->setValue(d->ui.brushsizeBox->value() + int(i));
+	}
 }
 
 int BrushSettings::getSize() const

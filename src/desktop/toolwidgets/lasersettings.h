@@ -36,7 +36,7 @@ public:
 	bool pointerTracking() const;
 
 	void setForeground(const QColor& color) override;
-	void quickAdjust1(float adjustment) override;
+	void quickAdjust1(qreal adjustment) override;
 
 	virtual int getSize() const override { return 0; }
 	virtual bool getSubpixelMode() const override { return false; }
@@ -55,6 +55,7 @@ protected:
 
 private:
 	Ui_LaserSettings * _ui;
+	qreal m_quickAdjust1 = 0.0;
 };
 
 }

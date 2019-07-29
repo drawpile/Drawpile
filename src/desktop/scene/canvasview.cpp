@@ -609,7 +609,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
 	case 1:
 		event->accept();
-		doQuickAdjust1(event->angleDelta().y() / (30 * 4.0));
+		emit quickAdjust(event->angleDelta().y() / (30 * 4.0));
 		break;
 
 	default:
@@ -884,13 +884,6 @@ void CanvasView::updateOutline()
 
 }
 
-void CanvasView::doQuickAdjust1(float delta)
-{
-	// Brush attribute adjustment is allowed only when stroke is not in progress
-	if(m_pendown == NOTDOWN)
-		emit quickAdjust(delta);
-}
-
 QPoint CanvasView::viewCenterPoint() const
 {
 	return mapToScene(rect().center()).toPoint();
@@ -955,11 +948,9 @@ void CanvasView::moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers)
 		}
 		break;
 
-	case 2: {
-		const auto delta = qBound(-2.0, dy / 10.0, 2.0);
-		doQuickAdjust1(delta);
+	case 2:
+		emit quickAdjust(qBound(-2.0, dy / 10.0, 2.0));
 		break;
-		}
 
 	default: {
 		QScrollBar *ver = verticalScrollBar();

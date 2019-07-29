@@ -124,11 +124,14 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	pushSettings();
 }
 
-void FillSettings::quickAdjust1(float adjustment)
+void FillSettings::quickAdjust1(qreal adjustment)
 {
-	int adj = qRound(adjustment);
-	if(adj!=0)
-		_ui->tolerance->setValue(_ui->tolerance->value() + adj);
+	m_quickAdjust1 += adjustment;
+	if(qAbs(m_quickAdjust1) > 1.0) {
+		qreal i;
+		m_quickAdjust1 = modf(m_quickAdjust1, &i);
+		_ui->tolerance->setValue(_ui->tolerance->value() + int(i));
+	}
 }
 
 }

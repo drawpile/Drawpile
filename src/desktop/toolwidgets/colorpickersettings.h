@@ -45,7 +45,7 @@ public:
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
 	void setForeground(const QColor &color) override { Q_UNUSED(color); }
-	void quickAdjust1(float adjustment) override;
+	void quickAdjust1(qreal adjustment) override;
 
 	int getSize() const override;
 	bool getSubpixelMode() const override { return false; }
@@ -65,6 +65,7 @@ private:
 	widgets::PaletteWidget *m_palettewidget;
 	QCheckBox *m_layerpick;
 	QSpinBox *m_size;
+	qreal m_quickAdjust1 = 0.0;
 };
 
 }

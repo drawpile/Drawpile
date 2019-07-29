@@ -34,7 +34,6 @@ public:
 	QString toolType() const override { return QStringLiteral("zoom"); }
 
 	void setForeground(const QColor &color) override { Q_UNUSED(color); }
-	void quickAdjust1(float adjustment) override { Q_UNUSED(adjustment); }
 
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
