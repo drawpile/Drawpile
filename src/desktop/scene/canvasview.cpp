@@ -64,9 +64,10 @@ CanvasView::CanvasView(QWidget *parent)
 
 	setBackgroundBrush(QColor(100,100,100));
 
-	// Get the color picker cursor (used for the quick color picker mode)
 	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
+	m_zoomcursor = QCursor(QPixmap(":/cursors/zoom.png"), 8, 8);
+	m_rotatecursor = QCursor(QPixmap(":/cursors/rotate.png"), 16, 16);
 
 	// Generate the minimalistic dot cursor
 	{
@@ -267,7 +268,17 @@ void CanvasView::resetCursor()
 		viewport()->setCursor(Qt::OpenHandCursor);
 		return;
 	} else if(m_dragmode == ViewDragMode::Started) {
-		viewport()->setCursor(Qt::ClosedHandCursor);
+		const int shortcut = CanvasViewShortcuts::matches(QApplication::queryKeyboardModifiers(),
+			m_shortcuts.dragZoom,
+			m_shortcuts.dragRotate,
+			m_shortcuts.dragQuickAdjust
+		);
+		switch(shortcut) {
+			case 0: viewport()->setCursor(m_zoomcursor); break;
+			case 1: viewport()->setCursor(m_rotatecursor); break;
+			case 2: viewport()->setCursor(Qt::SplitVCursor); break;
+			default: viewport()->setCursor(Qt::ClosedHandCursor); break;
+		}
 		return;
 	}
 
