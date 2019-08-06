@@ -150,6 +150,7 @@ private:
 	QSet<QString> m_trusted;
 
 	QVector<Block> m_blocks;
+	int m_fileCount;
 	bool m_archive;
 };
 

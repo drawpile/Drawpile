@@ -44,6 +44,7 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, con
 	  m_version(version),
 	  m_maxUsers(254),
 	  m_flags(0),
+	  m_fileCount(0),
 	  m_archive(false)
 {
 	Q_ASSERT(journal);
@@ -68,11 +69,15 @@ QString FiledHistory::journalFilename(const QUuid &id)
 	return journalFilename;
 }
 
-static QString uniqueRecordingFilename(const QDir &dir, const QUuid &id)
+static QString uniqueRecordingFilename(const QDir &dir, const QUuid &id, int idx)
 {
 	QString idstr = id.toString();
 	idstr = idstr.mid(1, idstr.length()-2);
 
+	if(idx > 1)
+		idstr = QString("%1_r%2").arg(idstr).arg(idx);
+
+	// The filename should be unique already, but better safe than sorry
 	return utils::uniqueFilename(dir, idstr, "dprec", false);
 }
 
@@ -145,7 +150,7 @@ bool FiledHistory::initRecording()
 {
 	Q_ASSERT(m_blocks.isEmpty());
 
-	QString filename = uniqueRecordingFilename(m_dir, id());
+	const QString filename = uniqueRecordingFilename(m_dir, id(), ++m_fileCount);
 
 	m_recording = new QFile(m_dir.absoluteFilePath(filename), this);
 	if(!m_recording->open(QFile::ReadWrite)) {
@@ -198,6 +203,7 @@ bool FiledHistory::load()
 
 		if(cmd == "FILE") {
 			recordingFile = QString::fromUtf8(params);
+			++m_fileCount;
 			m_blocks.clear();
 
 		} else if(cmd == "ALIAS") {
