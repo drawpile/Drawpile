@@ -86,6 +86,13 @@ struct CanvasViewShortcuts {
 	CanvasViewShortcut dragQuickAdjust = Qt::ShiftModifier;
 
 	/**
+	 * Modifiers to rotate the canvas using the scroll wheel
+	 *
+	 * If set to NoModifier, rotation by scrollwheel is disabled
+	 */
+	CanvasViewShortcut scrollRotate = Qt::ControlModifier | Qt::ShiftModifier;
+
+	/**
 	 * Modifiers to zoom when using the scroll wheel
 	 *
 	 * If set to NoModifier, zoom by scrolling is disabled

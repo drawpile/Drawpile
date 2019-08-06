@@ -348,6 +348,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->dragRotateKeys->setModifiers(viewShortcuts.dragRotate);
 	m_ui->dragZoomKeys->setModifiers(viewShortcuts.dragZoom);
 	m_ui->dragQuickAdjustKeys->setModifiers(viewShortcuts.dragQuickAdjust);
+	m_ui->scrollRotateKeys->setModifiers(viewShortcuts.scrollRotate);
 	m_ui->scrollZoomKeys->setModifiers(viewShortcuts.scrollZoom);
 	m_ui->scrollQuickAdjustKeys->setModifiers(viewShortcuts.scrollQuickAdjust);
 	m_ui->toolConstrain1Keys->setModifiers(viewShortcuts.toolConstraint1);
@@ -445,6 +446,7 @@ void SettingsDialog::rememberSettings()
 	viewShortcuts.dragRotate = m_ui->dragRotateKeys->modifiers();
 	viewShortcuts.dragZoom = m_ui->dragZoomKeys->modifiers();
 	viewShortcuts.dragQuickAdjust = m_ui->dragQuickAdjustKeys->modifiers();
+	viewShortcuts.scrollRotate = m_ui->scrollRotateKeys->modifiers();
 	viewShortcuts.scrollZoom = m_ui->scrollZoomKeys->modifiers();
 	viewShortcuts.scrollQuickAdjust = m_ui->scrollQuickAdjustKeys->modifiers();
 	viewShortcuts.toolConstraint1 = m_ui->toolConstrain1Keys->modifiers();

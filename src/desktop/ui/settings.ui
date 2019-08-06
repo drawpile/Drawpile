@@ -736,64 +736,64 @@
             <item row="6" column="1">
              <widget class="ModifierKeys" name="dragQuickAdjustKeys"/>
             </item>
-            <item row="8" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_22">
               <property name="text">
                <string>Scroll zoom view:</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="9" column="1">
              <widget class="ModifierKeys" name="scrollZoomKeys"/>
             </item>
-            <item row="10" column="0">
+            <item row="11" column="0">
              <widget class="QLabel" name="label_23">
               <property name="text">
                <string>Scroll tool adjust:</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="11" column="1">
              <widget class="ModifierKeys" name="scrollQuickAdjustKeys"/>
             </item>
-            <item row="12" column="0">
+            <item row="13" column="0">
              <widget class="QLabel" name="label_24">
               <property name="text">
                <string>Color picker mode:</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1">
+            <item row="13" column="1">
              <widget class="ModifierKeys" name="colorPickKeys"/>
             </item>
-            <item row="14" column="0">
+            <item row="15" column="0">
              <widget class="QLabel" name="label_25">
               <property name="text">
                <string>Layer picker mode:</string>
               </property>
              </widget>
             </item>
-            <item row="14" column="1">
+            <item row="15" column="1">
              <widget class="ModifierKeys" name="layerPickKeys"/>
             </item>
-            <item row="16" column="0">
+            <item row="17" column="0">
              <widget class="QLabel" name="label_26">
               <property name="text">
                <string>Tool constrain mode:</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="1">
+            <item row="17" column="1">
              <widget class="ModifierKeys" name="toolConstrain1Keys"/>
             </item>
-            <item row="19" column="0">
+            <item row="20" column="0">
              <widget class="QLabel" name="label_27">
               <property name="text">
                <string>Tool center mode:</string>
               </property>
              </widget>
             </item>
-            <item row="19" column="1">
+            <item row="20" column="1">
              <widget class="ModifierKeys" name="toolConstrain2Keys"/>
             </item>
             <item row="7" column="0">
@@ -809,7 +809,7 @@
               </property>
              </spacer>
             </item>
-            <item row="11" column="0">
+            <item row="12" column="0">
              <spacer name="verticalSpacer_10">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -822,7 +822,7 @@
               </property>
              </spacer>
             </item>
-            <item row="15" column="0">
+            <item row="16" column="0">
              <spacer name="verticalSpacer_11">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -847,6 +847,16 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>Scroll rotate view:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="ModifierKeys" name="scrollRotateKeys"/>
             </item>
            </layout>
           </widget>

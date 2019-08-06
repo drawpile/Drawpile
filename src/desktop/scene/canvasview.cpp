@@ -601,24 +601,32 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
 	const int shortcut = CanvasViewShortcuts::matches(event->modifiers(),
+		m_shortcuts.scrollRotate,
 		m_shortcuts.scrollZoom,
 		m_shortcuts.scrollQuickAdjust
 	);
 
 	switch(shortcut) {
-	case 0: {
+	case 0:
+	case 1: {
 		event->accept();
-		m_zoomWheelDelta += event->angleDelta().y();
+		if(event->angleDelta().y() == 0)
+			m_zoomWheelDelta += event->angleDelta().x();
+		else
+			m_zoomWheelDelta += event->angleDelta().y();
 		const int steps=m_zoomWheelDelta / 120;
 		m_zoomWheelDelta -= steps * 120;
 
 		if(steps != 0) {
-			zoomSteps(steps);
+			if(shortcut == 0)
+				setRotation(rotation() + steps * 10);
+			else
+				zoomSteps(steps);
 		}
 		break;
 		}
 
-	case 1:
+	case 2:
 		event->accept();
 		emit quickAdjust(event->angleDelta().y() / (30 * 4.0));
 		break;

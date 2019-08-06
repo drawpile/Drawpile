@@ -56,6 +56,7 @@ CanvasViewShortcuts CanvasViewShortcuts::load(const QSettings &cfg)
 	read(cfg, s.dragRotate, QStringLiteral("dragRotate"));
 	read(cfg, s.dragZoom, QStringLiteral("dragZoom"));
 	read(cfg, s.dragQuickAdjust, QStringLiteral("dragQuickAdjust"));
+	read(cfg, s.scrollRotate, QStringLiteral("scrollRotate"));
 	read(cfg, s.scrollZoom, QStringLiteral("scrollZoom"));
 	read(cfg, s.scrollQuickAdjust, QStringLiteral("scrollQuickAdjust"));
 	read(cfg, s.toolConstraint1, QStringLiteral("toolConstraint1"));
@@ -73,6 +74,7 @@ void CanvasViewShortcuts::save(QSettings &cfg) const
 	write(cfg, dragRotate, defaults.dragRotate, QStringLiteral("dragRotate"));
 	write(cfg, dragZoom, defaults.dragZoom, QStringLiteral("dragZoom"));
 	write(cfg, dragQuickAdjust, defaults.dragQuickAdjust, QStringLiteral("dragQuickAdjust"));
+	write(cfg, scrollRotate, defaults.scrollRotate, QStringLiteral("scrollRotate"));
 	write(cfg, scrollZoom, defaults.scrollZoom, QStringLiteral("scrollZoom"));
 	write(cfg, scrollQuickAdjust, defaults.scrollQuickAdjust, QStringLiteral("scrollQuickAdjust"));
 	write(cfg, toolConstraint1, defaults.toolConstraint1, QStringLiteral("toolConstraint1"));

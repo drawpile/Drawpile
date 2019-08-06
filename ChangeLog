@@ -9,6 +9,7 @@
  * Use the same default curve for velocity pressure emulation mode
  * Fixed tool quick adjustment dragging responsivity
  * Server: file backed session file naming is now consistent when archive mode is enabled
+ * Added a new shortcut for canvas rotation (shift+ctrl & mousewheel)
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install
