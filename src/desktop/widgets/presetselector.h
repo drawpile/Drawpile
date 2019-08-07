@@ -51,17 +51,18 @@ public slots:
 
 signals:
 	void saveRequested(const QString &path);
-	void presetSelected(const QString &path);
+	void loadRequested(const QString &path);
 
 private slots:
+	void onLoadClicked();
 	void onSaveClicked();
 	void onTextChanged(const QString &text);
-	void onCurrentIndexChanged(const QString &text);
 
 private:
 	QDir dir() const;
 
 	QComboBox *m_presetBox;
+	QPushButton *m_loadButton;
 	QPushButton *m_saveButton;
 	QPushButton *m_deleteButton;
 

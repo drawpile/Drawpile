@@ -52,6 +52,9 @@ PresetSelector::PresetSelector(QWidget *parent, Qt::WindowFlags f)
 		));
 	layout->addWidget(m_presetBox, 1);
 
+	m_loadButton = new QPushButton(tr("Load"), this);
+	layout->addWidget(m_loadButton);
+
 	m_saveButton = new QPushButton(tr("Save"), this);
 	layout->addWidget(m_saveButton);
 
@@ -61,10 +64,10 @@ PresetSelector::PresetSelector(QWidget *parent, Qt::WindowFlags f)
 	setPresetFolder("presets");
 	onTextChanged(QString());
 
+	connect(m_loadButton, &QPushButton::clicked, this, &PresetSelector::onLoadClicked);
 	connect(m_saveButton, &QPushButton::clicked, this, &PresetSelector::onSaveClicked);
 	connect(m_deleteButton, &QPushButton::clicked, this, &PresetSelector::deleteSelected);
 	connect(m_presetBox, &QComboBox::editTextChanged, this, &PresetSelector::onTextChanged);
-	connect(m_presetBox, QOverload<const QString&>::of(&QComboBox::currentIndexChanged), this, &PresetSelector::onCurrentIndexChanged);
 }
 
 QDir PresetSelector::dir() const
@@ -108,19 +111,18 @@ void PresetSelector::onTextChanged(const QString &text)
 	const bool enabled = !text.trimmed().isEmpty();
 	m_saveButton->setEnabled(enabled);
 	m_deleteButton->setEnabled(enabled);
+	m_loadButton->setEnabled(enabled && dir().exists(text.trimmed() + ".preset"));
 }
 
-void PresetSelector::onCurrentIndexChanged(const QString &name)
+void PresetSelector::onLoadClicked()
 {
-	if(name.isEmpty() || m_writeOnly)
-		return;
+	const auto filename = m_presetBox->currentText().trimmed() + QStringLiteral(".preset");
+	const auto d = dir();
 
-	const QString path = dir().filePath(name + ".preset");
-	if(QFile::exists(path)) {
-		emit presetSelected(path);
-	} else {
-		qWarning("%s: does not exist", qPrintable(path));
-	}
+	if(d.exists(filename))
+		emit loadRequested(d.filePath(filename));
+	else
+		qWarning("%s: does not exist", qPrintable(filename));
 }
 
 void PresetSelector::onSaveClicked()

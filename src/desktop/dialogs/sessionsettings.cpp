@@ -98,7 +98,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 	// Set up permissions tab
 	connect(m_ui->permissionPresets, &PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
-	connect(m_ui->permissionPresets, &PresetSelector::presetSelected, this, &SessionSettingsDialog::permissionPresetSelected);
+	connect(m_ui->permissionPresets, &PresetSelector::loadRequested, this, &SessionSettingsDialog::permissionPresetSelected);
 
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());
