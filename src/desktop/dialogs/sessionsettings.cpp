@@ -27,9 +27,6 @@
 #include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
 
-#include "widgets/presetselector.h"
-using widgets::PresetSelector;
-
 #include "ui_sessionsettings.h"
 
 #include <QDebug>
@@ -97,8 +94,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 
 	// Set up permissions tab
-	connect(m_ui->permissionPresets, &PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
-	connect(m_ui->permissionPresets, &PresetSelector::loadRequested, this, &SessionSettingsDialog::permissionPresetSelected);
+	connect(m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
+	connect(m_ui->permissionPresets, &widgets::PresetSelector::loadRequested, this, &SessionSettingsDialog::permissionPresetSelected);
 
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());

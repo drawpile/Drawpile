@@ -209,7 +209,7 @@
     </layout>
    </item>
    <item>
-    <widget class="Filmstrip" name="filmStrip">
+    <widget class="widgets::Filmstrip" name="filmStrip">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -483,7 +483,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Filmstrip</class>
+   <class>widgets::Filmstrip</class>
    <extends>QWidget</extends>
    <header>widgets/filmstrip.h</header>
   </customwidget>

@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
    <item>
-    <widget class="TabletTester" name="tablettest"/>
+    <widget class="widgets::TabletTester" name="tablettest"/>
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,7 +39,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TabletTester</class>
+   <class>widgets::TabletTester</class>
    <extends>QWidget</extends>
    <header>widgets/tablettest.h</header>
    <container>1</container>

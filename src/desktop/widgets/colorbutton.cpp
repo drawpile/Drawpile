@@ -16,18 +16,20 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "colorbutton.h"
+
+#ifndef DESIGNER_PLUGIN
+#include <ColorDialog>
+#endif
+
 #include <QStylePainter>
 #include <QStyleOptionButton>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
 
-#include "colorbutton.h"
-
-#ifndef DESIGNER_PLUGIN
-#include <ColorDialog>
 namespace widgets {
-#endif
 
 ColorButton::ColorButton(QWidget *parent,const QColor& color)
 	: QToolButton(parent), _color(color), _setAlpha(false), _locked(false)
@@ -129,6 +131,5 @@ void ColorButton::dropEvent(QDropEvent *event)
 	}
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
+

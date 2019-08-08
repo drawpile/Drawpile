@@ -22,18 +22,17 @@
 
 #include <QWidget>
 
-class QAbstractButton;
-
-#ifndef DESIGNER_PLUGIN
-//! Custom widgets
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
 
-class PLUGIN_EXPORT ModifierKeys : public QWidget
+class QAbstractButton;
+
+namespace widgets {
+
+class QDESIGNER_WIDGET_EXPORT ModifierKeys : public QWidget
 {
 	Q_OBJECT
 	Q_PROPERTY(Qt::KeyboardModifiers modifiers READ modifiers WRITE setModifiers)
@@ -51,8 +50,6 @@ private:
 	QAbstractButton *m_buttons[4];
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif // MODIFIERKEYS_H

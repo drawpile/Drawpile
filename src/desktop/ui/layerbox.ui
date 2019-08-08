@@ -84,7 +84,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="lockButton">
+      <widget class="widgets::GroupedToolButton" name="lockButton">
        <property name="toolTip">
         <string>Layer access control</string>
        </property>
@@ -113,7 +113,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupedToolButton</class>
+   <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>

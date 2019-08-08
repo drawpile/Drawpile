@@ -25,9 +25,7 @@
 #include <QPaintEvent>
 #include <QPixmap>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 static const int MARGIN = 22;
 static const int FRAME_MARGIN = 4;
@@ -158,7 +156,5 @@ QPixmap Filmstrip::getFrame(int idx) const
 	return *m_cache[idx];
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 

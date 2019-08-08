@@ -24,24 +24,24 @@
 
 #include <functional>
 
+#ifdef DESIGNER_PLUGIN
+#include <QtUiPlugin/QDesignerExportWidget>
+#else
+#define QDESIGNER_WIDGET_EXPORT
+#endif
+
 class QScrollBar;
 class QImage;
 class QPixmap;
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#define PLUGIN_EXPORT
-#else
-#include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
-#endif
 
 typedef std::function<QImage(int)> LoadImageFn;
 
 /**
  * @brief Filmstrip widget for visualizing recording index
  */
-class PLUGIN_EXPORT Filmstrip : public QWidget {
+class QDESIGNER_WIDGET_EXPORT Filmstrip : public QWidget {
 	Q_OBJECT
 public:
 	Filmstrip(QWidget *parent=nullptr, Qt::WindowFlags f=0);
@@ -83,9 +83,7 @@ private:
 	int m_frames;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif
 

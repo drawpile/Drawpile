@@ -43,12 +43,12 @@ bool FilmstripPlugin::isInitialized() const
 
 QWidget *FilmstripPlugin::createWidget(QWidget *parent)
 {
-	return new Filmstrip(parent);
+	return new widgets::Filmstrip(parent);
 }
 
 QString FilmstripPlugin::name() const
 {
-	return "Filmstrip";
+	return "widgets::Filmstrip";
 }
 
 QString FilmstripPlugin::group() const
@@ -78,8 +78,8 @@ bool FilmstripPlugin::isContainer() const
 
 QString FilmstripPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"Filmstrip\" name=\"filmStrip\">\n"
+	return "<ui language=\"c++\" displayname=\"Filmstrip\">\n"
+		"<widget class=\"widgets::Filmstrip\" name=\"filmStrip\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

@@ -33,14 +33,6 @@
 #include <QPaintEvent>
 #include <QList>
 
-#ifdef DESIGNER_PLUGIN
-#include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
-#else
-#define PLUGIN_EXPORT
-#endif
-
-
 class QSpinBox;
 class KisCubicCurve;
 
@@ -56,7 +48,7 @@ class KisCubicCurve;
  * response, color transformations, acceleration by time, aeroplane lift
  *by angle of attack.
  */
-class PLUGIN_EXPORT KisCurveWidget : public QWidget
+class KisCurveWidget : public QWidget
 {
     Q_OBJECT
 

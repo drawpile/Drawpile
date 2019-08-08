@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ResizerWidget" name="resizer"/>
+    <widget class="widgets::ResizerWidget" name="resizer"/>
    </item>
    <item>
     <widget class="QSlider" name="sizeSlider">
@@ -44,7 +44,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ResizerWidget</class>
+   <class>widgets::ResizerWidget</class>
    <extends>QWidget</extends>
    <header>widgets/resizerwidget.h</header>
   </customwidget>

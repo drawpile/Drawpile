@@ -50,7 +50,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="GroupedToolButton" name="slot1">
+         <widget class="widgets::GroupedToolButton" name="slot1">
           <property name="text">
            <string notr="true">1</string>
           </property>
@@ -64,12 +64,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
+           <enum>widgets::GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="slot2">
+         <widget class="widgets::GroupedToolButton" name="slot2">
           <property name="text">
            <string notr="true">2</string>
           </property>
@@ -80,12 +80,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
+           <enum>widgets::GroupedToolButton::GroupCenter</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="slot3">
+         <widget class="widgets::GroupedToolButton" name="slot3">
           <property name="text">
            <string notr="true">3</string>
           </property>
@@ -96,12 +96,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
+           <enum>widgets::GroupedToolButton::GroupCenter</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="slot4">
+         <widget class="widgets::GroupedToolButton" name="slot4">
           <property name="text">
            <string notr="true">4</string>
           </property>
@@ -112,12 +112,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
+           <enum>widgets::GroupedToolButton::GroupCenter</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="slot5">
+         <widget class="widgets::GroupedToolButton" name="slot5">
           <property name="text">
            <string notr="true">5</string>
           </property>
@@ -128,12 +128,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
+           <enum>widgets::GroupedToolButton::GroupCenter</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="slotEraser">
+         <widget class="widgets::GroupedToolButton" name="slotEraser">
           <property name="icon">
            <iconset theme="draw-eraser">
             <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
@@ -145,7 +145,7 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupRight</enum>
+           <enum>widgets::GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -168,7 +168,7 @@
     </layout>
    </item>
    <item>
-    <widget class="BrushPreview" name="preview">
+    <widget class="widgets::BrushPreview" name="preview">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -210,7 +210,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="GroupedToolButton" name="hardedgeMode">
+         <widget class="widgets::GroupedToolButton" name="hardedgeMode">
           <property name="toolTip">
            <string>Pixel brush</string>
           </property>
@@ -225,12 +225,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupLeft</enum>
+           <enum>widgets::GroupedToolButton::GroupLeft</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="squareMode">
+         <widget class="widgets::GroupedToolButton" name="squareMode">
           <property name="toolTip">
            <string>Square pixel brush</string>
           </property>
@@ -245,12 +245,12 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupCenter</enum>
+           <enum>widgets::GroupedToolButton::GroupCenter</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="GroupedToolButton" name="softedgeMode">
+         <widget class="widgets::GroupedToolButton" name="softedgeMode">
           <property name="toolTip">
            <string>Brush</string>
           </property>
@@ -265,7 +265,7 @@
            <bool>true</bool>
           </property>
           <property name="groupPosition">
-           <enum>GroupedToolButton::GroupRight</enum>
+           <enum>widgets::GroupedToolButton::GroupRight</enum>
           </property>
          </widget>
         </item>
@@ -286,7 +286,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="modeColorpick">
+      <widget class="widgets::GroupedToolButton" name="modeColorpick">
        <property name="toolTip">
         <string>Pick initial color from layer</string>
        </property>
@@ -300,7 +300,7 @@
       </widget>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="modeEraser">
+      <widget class="widgets::GroupedToolButton" name="modeEraser">
        <property name="toolTip">
         <string>Eraser mode</string>
        </property>
@@ -317,7 +317,7 @@
       <widget class="QComboBox" name="blendmode"/>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="modeIncremental">
+      <widget class="widgets::GroupedToolButton" name="modeIncremental">
        <property name="toolTip">
         <string>Direct drawing mode</string>
        </property>
@@ -602,13 +602,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BrushPreview</class>
+   <class>widgets::BrushPreview</class>
    <extends>QFrame</extends>
    <header>widgets/brushpreview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>GroupedToolButton</class>
+   <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>

@@ -22,9 +22,7 @@
 #include <QHBoxLayout>
 #include <QCheckBox>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 #ifdef Q_OS_MAC
 #define MAC_OR_PC(mac, pc) (mac)
@@ -65,6 +63,5 @@ void ModifierKeys::setModifiers(Qt::KeyboardModifiers mods)
 	m_buttons[3]->setChecked(mods.testFlag(Qt::MetaModifier));
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
+

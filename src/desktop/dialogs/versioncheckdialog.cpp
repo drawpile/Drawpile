@@ -20,9 +20,6 @@
 #include "versioncheckdialog.h"
 #include "../../libshared/util/networkaccess.h"
 
-#include "widgets/spinner.h"
-using widgets::Spinner;
-
 #include "ui_versioncheck.h"
 
 #include <QSettings>

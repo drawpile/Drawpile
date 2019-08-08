@@ -22,13 +22,13 @@
 
 #include <QWidget>
 
-#ifndef DESIGNER_PLUGIN
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
+
+namespace widgets {
 
 class Spinner : public QWidget {
 	Q_OBJECT
@@ -48,9 +48,7 @@ private:
 	int m_currentDot;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif
 

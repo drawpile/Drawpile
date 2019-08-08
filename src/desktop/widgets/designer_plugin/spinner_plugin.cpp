@@ -43,12 +43,12 @@ bool SpinnerPlugin::isInitialized() const
 
 QWidget *SpinnerPlugin::createWidget(QWidget *parent)
 {
-	return new Spinner(parent);
+	return new widgets::Spinner(parent);
 }
 
 QString SpinnerPlugin::name() const
 {
-	return "Spinner";
+	return "widgets::Spinner";
 }
 
 QString SpinnerPlugin::group() const
@@ -78,8 +78,8 @@ bool SpinnerPlugin::isContainer() const
 
 QString SpinnerPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"Spinner\" name=\"loadingSpinner\">\n"
+	return "<ui language=\"c++\" displayname=\"Spinner\">\n"
+		"<widget class=\"widgets::Spinner\" name=\"loadingSpinner\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

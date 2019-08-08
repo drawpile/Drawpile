@@ -43,12 +43,12 @@ bool BrushPreviewPlugin::isInitialized() const
 
 QWidget *BrushPreviewPlugin::createWidget(QWidget *parent)
 {
-    return new BrushPreview(parent);
+    return new widgets::BrushPreview(parent);
 }
 
 QString BrushPreviewPlugin::name() const
 {
-    return "BrushPreview";
+    return "widgets::BrushPreview";
 }
 
 QString BrushPreviewPlugin::group() const
@@ -79,8 +79,8 @@ bool BrushPreviewPlugin::isContainer() const
 QString BrushPreviewPlugin::domXml() const
 {
     return 
-		"<ui language=\"c++\">\n"
-		"<widget class=\"BrushPreview\" name=\"brushPreview\">\n"
+		"<ui language=\"c++\" displayname=\"BrushPreview\">\n"
+		"<widget class=\"widgets::BrushPreview\" name=\"brushPreview\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

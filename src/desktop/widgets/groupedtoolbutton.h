@@ -22,13 +22,13 @@
 
 #include <QToolButton>
 
-#ifndef DESIGNER_PLUGIN
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
+
+namespace widgets {
 
 /**
  * A thin tool button which can be grouped with another and look like one solid
@@ -40,7 +40,7 @@ namespace widgets {
  *  - Dropdown arrow if a menu (and text) is attached
  *  - Color swatch mode
  */
-class PLUGIN_EXPORT GroupedToolButton : public QToolButton
+class QDESIGNER_WIDGET_EXPORT GroupedToolButton : public QToolButton
 {
 	Q_OBJECT
 	Q_PROPERTY(GroupPosition groupPosition READ groupPosition WRITE setGroupPosition)
@@ -70,8 +70,6 @@ private:
 	QColor m_colorSwatch;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif

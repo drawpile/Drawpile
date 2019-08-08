@@ -22,9 +22,7 @@
 #include <QPainter>
 #include <cmath>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 Spinner::Spinner(QWidget *parent):
 	QWidget(parent), m_dots(8), m_currentDot(0)
@@ -58,7 +56,5 @@ void Spinner::timerEvent(QTimerEvent *)
 	update();
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 

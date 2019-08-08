@@ -98,7 +98,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="3">
-    <widget class="BrushPreview" name="preview">
+    <widget class="widgets::BrushPreview" name="preview">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -112,7 +112,7 @@
       </size>
      </property>
      <property name="previewShape">
-      <enum>BrushPreview::FloodFill</enum>
+      <enum>widgets::BrushPreview::FloodFill</enum>
      </property>
     </widget>
    </item>
@@ -160,7 +160,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BrushPreview</class>
+   <class>widgets::BrushPreview</class>
    <extends>QFrame</extends>
    <header>widgets/brushpreview.h</header>
    <container>1</container>

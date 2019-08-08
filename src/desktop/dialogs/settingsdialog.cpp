@@ -23,7 +23,6 @@
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
 #include "widgets/keysequenceedit.h"
-#include "widgets/modifierkeys.h"
 #include "../scene/canvasviewmodifiers.h"
 #include "utils/icon.h"
 #include "utils/customshortcutmodel.h"
@@ -36,8 +35,6 @@
 #include "../libshared/listings/announcementapi.h"
 #include "../libshared/util/passwordhash.h"
 #include "../libshared/util/networkaccess.h"
-
-using widgets::ModifierKeys;
 
 #include "ui_settings.h"
 

@@ -43,12 +43,12 @@ bool ColorButtonPlugin::isInitialized() const
 
 QWidget *ColorButtonPlugin::createWidget(QWidget *parent)
 {
-	return new ColorButton(parent, Qt::black);
+	return new widgets::ColorButton(parent, Qt::black);
 }
 
 QString ColorButtonPlugin::name() const
 {
-	return "ColorButton";
+	return "widgets::ColorButton";
 }
 
 QString ColorButtonPlugin::group() const
@@ -78,8 +78,8 @@ bool ColorButtonPlugin::isContainer() const
 
 QString ColorButtonPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"ColorButton\" name=\"colorButton\">\n"
+	return "<ui language=\"c++\" displayname=\"ColorButton\">\n"
+		"<widget class=\"widgets::ColorButton\" name=\"colorButton\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

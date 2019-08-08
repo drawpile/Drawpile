@@ -25,10 +25,8 @@
 #include <QToolButton>
 #include <QEvent>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets
 {
-#endif
 
 GroupedToolButton::GroupedToolButton(QWidget *parent) : GroupedToolButton(NotGrouped, parent) { }
 
@@ -154,6 +152,5 @@ void GroupedToolButton::paintEvent(QPaintEvent* event)
 	}
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
+

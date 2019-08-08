@@ -31,9 +31,6 @@
 #include "utils/html.h"
 #include "utils/icon.h"
 
-#include "widgets/spinner.h"
-using widgets::Spinner;
-
 #include "ui_logindialog.h"
 
 #include <QPushButton>

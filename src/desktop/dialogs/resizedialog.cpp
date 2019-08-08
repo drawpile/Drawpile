@@ -19,9 +19,6 @@
 
 #include "resizedialog.h"
 #include "utils/images.h"
-#include "widgets/resizerwidget.h"
-
-using widgets::ResizerWidget;
 
 #include "ui_resizedialog.h"
 
@@ -51,7 +48,7 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 	connect(m_ui->height, QOverload<int>::of(&QSpinBox::valueChanged), this, &ResizeDialog::heightChanged);
 	connect(m_ui->keepaspect, &QCheckBox::toggled, this, &ResizeDialog::toggleAspectRatio);
 
-	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &ResizerWidget::center);
+	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &widgets::ResizerWidget::center);
 	connect(m_ui->buttons->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this, &ResizeDialog::reset);
 
 	m_ui->keepaspect->setChecked(true);

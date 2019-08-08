@@ -102,7 +102,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="ColorButton" name="btnBackground">
+      <widget class="widgets::ColorButton" name="btnBackground">
        <property name="minimumSize">
         <size>
          <width>24</width>
@@ -128,7 +128,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ColorButton" name="btnTextColor">
+      <widget class="widgets::ColorButton" name="btnTextColor">
        <property name="minimumSize">
         <size>
          <width>24</width>
@@ -283,7 +283,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorButton</class>
+   <class>widgets::ColorButton</class>
    <extends>QToolButton</extends>
    <header>widgets/colorbutton.h</header>
    <slots>

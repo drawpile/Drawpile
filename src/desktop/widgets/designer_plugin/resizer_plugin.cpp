@@ -43,12 +43,12 @@ bool ResizerPlugin::isInitialized() const
 
 QWidget *ResizerPlugin::createWidget(QWidget *parent)
 {
-	return new ResizerWidget(parent);
+	return new widgets::ResizerWidget(parent);
 }
 
 QString ResizerPlugin::name() const
 {
-	return "ResizerWidget";
+	return "widgets::ResizerWidget";
 }
 
 QString ResizerPlugin::group() const
@@ -78,8 +78,8 @@ bool ResizerPlugin::isContainer() const
 
 QString ResizerPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"ResizerWidget\" name=\"resizer\">\n"
+	return "<ui language=\"c++\" displayname=\"ResizerWidget\">\n"
+		"<widget class=\"widgets::ResizerWidget\" name=\"resizer\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

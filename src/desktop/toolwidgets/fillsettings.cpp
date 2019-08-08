@@ -22,10 +22,6 @@
 #include "tools/toolproperties.h"
 #include "tools/floodfill.h"
 
-// Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
-#include "widgets/brushpreview.h"
-using widgets::BrushPreview;
-
 #include "ui_fillsettings.h"
 
 namespace tools {
@@ -69,7 +65,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, [this](bool erase) {
-			_ui->preview->setPreviewShape(erase ? BrushPreview::FloodErase : BrushPreview::FloodFill);
+			_ui->preview->setPreviewShape(erase ? widgets::BrushPreview::FloodErase : widgets::BrushPreview::FloodFill);
 			_ui->fillunder->setEnabled(!erase);
 			_ui->samplemerged->setEnabled(!erase);
 	});

@@ -22,12 +22,6 @@
 #include "tools/toolproperties.h"
 #include "brushes/brush.h"
 
-// Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
-#include "widgets/groupedtoolbutton.h"
-#include "widgets/brushpreview.h"
-using widgets::BrushPreview;
-using widgets::GroupedToolButton;
-
 #include "ui_brushdock.h"
 
 #include <QKeyEvent>
@@ -98,7 +92,7 @@ struct BrushSettings::Private {
 		eraseModes->appendRow(erase2);
 	}
 
-	GroupedToolButton *brushSlotButton(int i)
+	widgets::GroupedToolButton *brushSlotButton(int i)
 	{
 		static_assert (BRUSH_COUNT == 6, "update brushSlottButton");
 		switch(i) {
@@ -463,10 +457,10 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 {
 	switch(tool) {
-	case tools::Tool::LINE: d->ui.preview->setPreviewShape(BrushPreview::Line); break;
-	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(BrushPreview::Rectangle); break;
-	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(BrushPreview::Ellipse); break;
-	default: d->ui.preview->setPreviewShape(BrushPreview::Stroke); break;
+	case tools::Tool::LINE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Line); break;
+	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Rectangle); break;
+	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Ellipse); break;
+	default: d->ui.preview->setPreviewShape(widgets::BrushPreview::Stroke); break;
 	}
 
 	if(tool == tools::Tool::ERASER) {

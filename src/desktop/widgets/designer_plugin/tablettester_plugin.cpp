@@ -43,12 +43,12 @@ bool TabletTesterPlugin::isInitialized() const
 
 QWidget *TabletTesterPlugin::createWidget(QWidget *parent)
 {
-	return new TabletTester(parent);
+	return new widgets::TabletTester(parent);
 }
 
 QString TabletTesterPlugin::name() const
 {
-	return "TabletTester";
+	return "widgets::TabletTester";
 }
 
 QString TabletTesterPlugin::group() const
@@ -78,8 +78,8 @@ bool TabletTesterPlugin::isContainer() const
 
 QString TabletTesterPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"TabletTester\" name=\"resizer\">\n"
+	return "<ui language=\"c++\" displayname=\"TabletTester\">\n"
+		"<widget class=\"widgets::TabletTester\" name=\"resizer\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

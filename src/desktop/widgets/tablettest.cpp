@@ -22,9 +22,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 TabletTester::TabletTester(QWidget *parent)
 	: QWidget(parent), m_mouseDown(false), m_tabletDown(false)
@@ -134,6 +132,5 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	emit eventReport(msg);
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
+

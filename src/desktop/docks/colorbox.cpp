@@ -21,9 +21,6 @@
 #include "widgets/groupedtoolbutton.h"
 #include <ColorWheel>
 #include <HueSlider>
-using widgets::PaletteWidget;
-using widgets::GroupedToolButton;
-using namespace color_widgets;
 
 #include "docks/colorbox.h"
 #include "docks/utils.h"

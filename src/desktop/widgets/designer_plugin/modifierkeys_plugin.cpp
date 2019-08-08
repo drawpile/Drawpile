@@ -43,12 +43,12 @@ bool ModifierKeysPlugin::isInitialized() const
 
 QWidget *ModifierKeysPlugin::createWidget(QWidget *parent)
 {
-    return new ModifierKeys(parent);
+    return new widgets::ModifierKeys(parent);
 }
 
 QString ModifierKeysPlugin::name() const
 {
-    return "ModifierKeys";
+    return "widgets::ModifierKeys";
 }
 
 QString ModifierKeysPlugin::group() const
@@ -79,8 +79,8 @@ bool ModifierKeysPlugin::isContainer() const
 QString ModifierKeysPlugin::domXml() const
 {
     return 
-		"<ui language=\"c++\">\n"
-		"<widget class=\"ModifierKeys\" name=\"modifierKeys\">\n"
+		"<ui language=\"c++\" displayname=\"ModifierKeys\">\n"
+		"<widget class=\"widgets::ModifierKeys\" name=\"modifierKeys\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

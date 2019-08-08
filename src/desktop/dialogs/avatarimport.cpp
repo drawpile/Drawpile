@@ -20,9 +20,6 @@
 #include "avatarimport.h"
 #include "utils/avatarlistmodel.h"
 
-#include "widgets/resizerwidget.h"
-using widgets::ResizerWidget;
-
 #include "ui_avatarimport.h"
 
 #include <QImageReader>

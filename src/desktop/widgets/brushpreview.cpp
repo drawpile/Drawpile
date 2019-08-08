@@ -35,9 +35,7 @@
 #include <QPainter>
 #include <QEvent>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f)
@@ -287,7 +285,5 @@ void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)
 	emit requestColorChange();
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 

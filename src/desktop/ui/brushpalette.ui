@@ -42,7 +42,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="presetAdd">
+      <widget class="widgets::GroupedToolButton" name="presetAdd">
        <property name="toolTip">
         <string>Add a new brush preset</string>
        </property>
@@ -51,12 +51,12 @@
          <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupLeft</enum>
+        <enum>widgets::GroupedToolButton::GroupLeft</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="presetSave">
+      <widget class="widgets::GroupedToolButton" name="presetSave">
        <property name="toolTip">
         <string>Overwrite selected preset</string>
        </property>
@@ -65,12 +65,12 @@
          <normaloff>theme:document-save.svg</normaloff>theme:document-save.svg</iconset>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupCenter</enum>
+        <enum>widgets::GroupedToolButton::GroupCenter</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="GroupedToolButton" name="presetDelete">
+      <widget class="widgets::GroupedToolButton" name="presetDelete">
        <property name="toolTip">
         <string>Delete selected preset</string>
        </property>
@@ -79,7 +79,7 @@
          <normaloff>theme:edit-delete.svg</normaloff>theme:edit-delete.svg</iconset>
        </property>
        <property name="groupPosition">
-        <enum>GroupedToolButton::GroupRight</enum>
+        <enum>widgets::GroupedToolButton::GroupRight</enum>
        </property>
       </widget>
      </item>
@@ -108,7 +108,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupedToolButton</class>
+   <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>

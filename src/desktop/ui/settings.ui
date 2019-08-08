@@ -714,7 +714,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="ModifierKeys" name="dragRotateKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragRotateKeys"/>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_21">
@@ -724,7 +724,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="ModifierKeys" name="dragZoomKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragZoomKeys"/>
             </item>
             <item row="6" column="0">
              <widget class="QLabel" name="label_20">
@@ -734,7 +734,7 @@
              </widget>
             </item>
             <item row="6" column="1">
-             <widget class="ModifierKeys" name="dragQuickAdjustKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys"/>
             </item>
             <item row="9" column="0">
              <widget class="QLabel" name="label_22">
@@ -744,7 +744,7 @@
              </widget>
             </item>
             <item row="9" column="1">
-             <widget class="ModifierKeys" name="scrollZoomKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollZoomKeys"/>
             </item>
             <item row="11" column="0">
              <widget class="QLabel" name="label_23">
@@ -754,7 +754,7 @@
              </widget>
             </item>
             <item row="11" column="1">
-             <widget class="ModifierKeys" name="scrollQuickAdjustKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys"/>
             </item>
             <item row="13" column="0">
              <widget class="QLabel" name="label_24">
@@ -764,7 +764,7 @@
              </widget>
             </item>
             <item row="13" column="1">
-             <widget class="ModifierKeys" name="colorPickKeys"/>
+             <widget class="widgets::ModifierKeys" name="colorPickKeys"/>
             </item>
             <item row="15" column="0">
              <widget class="QLabel" name="label_25">
@@ -774,7 +774,7 @@
              </widget>
             </item>
             <item row="15" column="1">
-             <widget class="ModifierKeys" name="layerPickKeys"/>
+             <widget class="widgets::ModifierKeys" name="layerPickKeys"/>
             </item>
             <item row="17" column="0">
              <widget class="QLabel" name="label_26">
@@ -784,7 +784,7 @@
              </widget>
             </item>
             <item row="17" column="1">
-             <widget class="ModifierKeys" name="toolConstrain1Keys"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain1Keys"/>
             </item>
             <item row="20" column="0">
              <widget class="QLabel" name="label_27">
@@ -794,7 +794,7 @@
              </widget>
             </item>
             <item row="20" column="1">
-             <widget class="ModifierKeys" name="toolConstrain2Keys"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain2Keys"/>
             </item>
             <item row="7" column="0">
              <spacer name="verticalSpacer_4">
@@ -856,7 +856,7 @@
              </widget>
             </item>
             <item row="8" column="1">
-             <widget class="ModifierKeys" name="scrollRotateKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollRotateKeys"/>
             </item>
            </layout>
           </widget>
@@ -1155,7 +1155,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ModifierKeys</class>
+   <class>widgets::ModifierKeys</class>
    <extends>QWidget</extends>
    <header>widgets/modifierkeys.h</header>
   </customwidget>

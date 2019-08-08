@@ -73,7 +73,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="ColorButton" name="background">
+      <widget class="widgets::ColorButton" name="background">
        <property name="color">
         <color>
          <red>255</red>
@@ -102,7 +102,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorButton</class>
+   <class>widgets::ColorButton</class>
    <extends>QToolButton</extends>
    <header>widgets/colorbutton.h</header>
   </customwidget>

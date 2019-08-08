@@ -21,16 +21,16 @@
 
 #include <QToolButton>
 
-#ifndef DESIGNER_PLUGIN
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
 
+namespace widgets {
+
 //! A button for selecting a color
-class PLUGIN_EXPORT ColorButton : public QToolButton {
+class QDESIGNER_WIDGET_EXPORT ColorButton : public QToolButton {
 Q_OBJECT
 Q_PROPERTY(QColor color READ color WRITE setColor)
 Q_PROPERTY(bool setAlpha READ alpha WRITE setAlpha)
@@ -74,8 +74,6 @@ private:
 	bool _locked;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif

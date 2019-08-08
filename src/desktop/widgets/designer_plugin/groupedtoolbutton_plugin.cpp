@@ -43,12 +43,12 @@ bool GroupedToolButtonPlugin::isInitialized() const
 
 QWidget *GroupedToolButtonPlugin::createWidget(QWidget *parent)
 {
-	return new GroupedToolButton(parent);
+	return new widgets::GroupedToolButton(parent);
 }
 
 QString GroupedToolButtonPlugin::name() const
 {
-	return "GroupedToolButton";
+	return "widgets::GroupedToolButton";
 }
 
 QString GroupedToolButtonPlugin::group() const
@@ -78,8 +78,8 @@ bool GroupedToolButtonPlugin::isContainer() const
 
 QString GroupedToolButtonPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"GroupedToolButton\" name=\"groupedToolButton\">\n"
+	return "<ui language=\"c++\" displayname=\"GroupedToolButton\">\n"
+		"<widget class=\"widgets::GroupedToolButton\" name=\"groupedToolButton\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

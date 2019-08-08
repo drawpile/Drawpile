@@ -32,8 +32,6 @@
 #include "../libshared/net/meta2.h"
 #include "../libshared/net/undo.h"
 
-#include "widgets/groupedtoolbutton.h"
-using widgets::GroupedToolButton;
 #include "ui_layerbox.h"
 
 #include <QDebug>

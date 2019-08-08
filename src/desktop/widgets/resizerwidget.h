@@ -22,15 +22,15 @@
 
 #include <QWidget>
 
-#ifndef DESIGNER_PLUGIN
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
 
-class PLUGIN_EXPORT ResizerWidget : public QWidget
+namespace widgets {
+
+class QDESIGNER_WIDGET_EXPORT ResizerWidget : public QWidget
 {
 	Q_PROPERTY(QSize targetSize READ targetSize WRITE setTargetSize)
 	Q_PROPERTY(QSize originalSize READ originalSize WRITE setOriginalSize)
@@ -79,8 +79,6 @@ private:
 	QPixmap m_originalPixmap;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif

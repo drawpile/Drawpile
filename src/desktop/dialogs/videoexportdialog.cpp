@@ -24,9 +24,6 @@
 #include "export/webmexporter.h"
 #include "export/gifexporter.h"
 
-#include "widgets/colorbutton.h"
-using widgets::ColorButton;
-
 #include "ui_videoexport.h"
 
 #include <QDebug>

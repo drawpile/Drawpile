@@ -18,8 +18,6 @@
 */
 
 #include "tablettester.h"
-#include "widgets/tablettest.h"
-using widgets::TabletTester; // work around missing namespace in UIC generated code
 #include "ui_tablettest.h"
 
 #include "../main.h"

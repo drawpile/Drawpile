@@ -23,11 +23,6 @@
 #include "brushes/brushpresetmodel.h"
 #include "brushes/brush.h"
 
-// Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
-#include "widgets/groupedtoolbutton.h"
-using widgets::GroupedToolButton;
-
-
 #include "ui_brushpalette.h"
 
 namespace docks {

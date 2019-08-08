@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item>
-    <widget class="ResizerWidget" name="resizer">
+    <widget class="widgets::ResizerWidget" name="resizer">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -111,7 +111,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ResizerWidget</class>
+   <class>widgets::ResizerWidget</class>
    <extends>QWidget</extends>
    <header>widgets/resizerwidget.h</header>
   </customwidget>

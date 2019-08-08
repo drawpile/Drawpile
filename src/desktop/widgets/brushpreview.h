@@ -19,10 +19,16 @@
 #ifndef BRUSHPREVIEW_H
 #define BRUSHPREVIEW_H
 
-#include <QFrame>
-
 #include "../../libclient/brushes/brush.h"
 #include "../../libclient/core/blendmodes.h"
+
+#include <QFrame>
+
+#ifdef DESIGNER_PLUGIN
+#include <QtUiPlugin/QDesignerExportWidget>
+#else
+#define QDESIGNER_WIDGET_EXPORT
+#endif
 
 class QMenu;
 
@@ -31,19 +37,12 @@ namespace paintcore {
 	class LayerStackPixmapCacheObserver;
 }
 
-#ifndef DESIGNER_PLUGIN
-//! Custom widgets
 namespace widgets {
-#define PLUGIN_EXPORT
-#else
-#include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
-#endif
 
 /**
  * @brief Brush previewing widget
  */
-class PLUGIN_EXPORT BrushPreview : public QFrame {
+class QDESIGNER_WIDGET_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
 	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
 	Q_ENUMS(PreviewShape)
@@ -100,9 +99,7 @@ private:
 	bool m_needupdate = false;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 
 #endif
 

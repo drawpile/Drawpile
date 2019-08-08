@@ -33,9 +33,6 @@
 #include "../libshared/listings/zeroconfdiscovery.h"
 #endif
 
-#include "widgets/spinner.h"
-using widgets::Spinner;
-
 #include "ui_joindialog.h"
 
 #include <QPushButton>

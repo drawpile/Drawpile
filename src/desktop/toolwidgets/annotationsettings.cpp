@@ -31,11 +31,6 @@
 #include "../libshared/net/annotation.h"
 #include "../libshared/net/undo.h"
 
-#include "widgets/groupedtoolbutton.h"
-#include "widgets/colorbutton.h"
-using widgets::ColorButton;
-using widgets::GroupedToolButton;
-
 #include "ui_textsettings.h"
 
 #include <QTimer>

@@ -21,9 +21,6 @@
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/recfilterdialog.h"
 
-#include "widgets/filmstrip.h"
-using widgets::Filmstrip;
-
 #include "recording/playbackcontroller.h"
 
 #include "mainwindow.h"
@@ -89,7 +86,7 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 		m_ui->speedLabel->setText(QString("x %1").arg(s, 0, 'f', 1));
 	});
 
-	connect(m_ui->filmStrip, &Filmstrip::doubleClicked, m_ctrl, &PlaybackController::jumpTo);
+	connect(m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, m_ctrl, &PlaybackController::jumpTo);
 
 	connect(m_ctrl, &PlaybackController::indexLoaded, this, &PlaybackDialog::onIndexLoaded);
 	connect(m_ctrl, &PlaybackController::indexLoadError, this, &PlaybackDialog::onIndexLoadError);
@@ -114,7 +111,7 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 	// Connections for non-indexed recordings. These will be changed when/if the index is loaded
 	m_ui->filmStrip->setLength(reader->filesize());
 	m_ui->filmStrip->setFrames(qMax(1, int(reader->filesize() / 100000)));
-	connect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &Filmstrip::setCursor);
+	connect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 
 	rebuildMarkerMenu();
 
@@ -137,8 +134,8 @@ void PlaybackDialog::onBuildIndexClicked()
 
 void PlaybackDialog::onIndexLoaded()
 {
-	disconnect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &Filmstrip::setCursor);
-	connect(m_ctrl, &PlaybackController::indexPositionChanged,m_ui->filmStrip, &Filmstrip::setCursor);
+	disconnect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
+	connect(m_ctrl, &PlaybackController::indexPositionChanged,m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 
 	m_ui->filmStrip->setLength(m_ctrl->maxIndexPosition());
 	m_ui->filmStrip->setFrames(m_ctrl->indexThumbnailCount());

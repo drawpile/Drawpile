@@ -22,10 +22,6 @@
 #include "tools/toolproperties.h"
 #include "tools/laser.h"
 
-// Work around lack of namespace support in Qt designer (TODO is the problem in our plugin?)
-#include "widgets/colorbutton.h"
-using widgets::ColorButton;
-
 #include "ui_lasersettings.h"
 
 namespace tools {

@@ -43,12 +43,12 @@ bool PresetSelectorPlugin::isInitialized() const
 
 QWidget *PresetSelectorPlugin::createWidget(QWidget *parent)
 {
-	return new PresetSelector(parent);
+	return new widgets::PresetSelector(parent);
 }
 
 QString PresetSelectorPlugin::name() const
 {
-	return "PresetSelector";
+	return "widgets::PresetSelector";
 }
 
 QString PresetSelectorPlugin::group() const
@@ -78,8 +78,8 @@ bool PresetSelectorPlugin::isContainer() const
 
 QString PresetSelectorPlugin::domXml() const
 {
-	return "<ui language=\"c++\">\n"
-		"<widget class=\"PresetSelector\" name=\"presetSelector\">\n"
+	return "<ui language=\"c++\" displayname=\"PresetSelector\">\n"
+		"<widget class=\"widgets::PresetSelector\" name=\"presetSelector\">\n"
 		" <property name=\"geometry\">\n"
 		"  <rect>\n"
 		"   <x>0</x>\n"

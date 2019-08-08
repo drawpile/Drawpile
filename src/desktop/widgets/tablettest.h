@@ -22,15 +22,15 @@
 
 #include <QWidget>
 
-#ifndef DESIGNER_PLUGIN
-namespace widgets {
-#define PLUGIN_EXPORT
-#else
+#ifdef DESIGNER_PLUGIN
 #include <QtUiPlugin/QDesignerExportWidget>
-#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#else
+#define QDESIGNER_WIDGET_EXPORT
 #endif
 
-class PLUGIN_EXPORT TabletTester : public QWidget {
+namespace widgets {
+
+class QDESIGNER_WIDGET_EXPORT TabletTester : public QWidget {
 	Q_OBJECT
 public:
 	TabletTester(QWidget *parent=nullptr);
@@ -56,10 +56,7 @@ private:
 	bool m_tabletDown;
 };
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
-
 
 #endif
 

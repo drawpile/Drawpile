@@ -29,9 +29,7 @@
 #include <QFile>
 #include <QDir>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 PresetSelector::PresetSelector(QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent,f), m_writeOnly(false)
@@ -166,7 +164,5 @@ void PresetSelector::deleteSelected()
 	}
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
 

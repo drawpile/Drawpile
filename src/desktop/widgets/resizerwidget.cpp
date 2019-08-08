@@ -23,9 +23,7 @@
 #include <QMouseEvent>
 #include <QHash>
 
-#ifndef DESIGNER_PLUGIN
 namespace widgets {
-#endif
 
 ResizerWidget::ResizerWidget(QWidget *parent)
 	: QWidget(parent), m_bgColor(QColor(100, 100, 100))
@@ -179,6 +177,5 @@ void ResizerWidget::resizeEvent(QResizeEvent *e)
 	updateScales();
 }
 
-#ifndef DESIGNER_PLUGIN
 }
-#endif
+

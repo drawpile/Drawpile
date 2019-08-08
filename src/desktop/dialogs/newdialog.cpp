@@ -17,16 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "newdialog.h"
+#include "utils/images.h"
+
+#include "ui_newdialog.h"
+
 #include <QPushButton>
 #include <QSettings>
 #include <QMessageBox>
-
-#include "newdialog.h"
-#include "widgets/colorbutton.h"
-#include "utils/images.h"
-using widgets::ColorButton;
-
-#include "ui_newdialog.h"
 
 namespace dialogs {
 

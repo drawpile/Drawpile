@@ -355,7 +355,7 @@
         </widget>
        </item>
        <item row="11" column="0" colspan="2">
-        <widget class="PresetSelector" name="permissionPresets">
+        <widget class="widgets::PresetSelector" name="permissionPresets">
          <property name="presetFolder">
           <string>permissions</string>
          </property>
@@ -490,7 +490,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PresetSelector</class>
+   <class>widgets::PresetSelector</class>
    <extends>QWidget</extends>
    <header>widgets/presetselector.h</header>
   </customwidget>
