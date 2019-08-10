@@ -60,7 +60,7 @@ protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;
 	virtual void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center) = 0;
 
-	QPointF m_start, m_p1;
+	QPointF m_start, m_p1, m_end;
 	canvas::Selection::Handle m_handle;
 
 private:

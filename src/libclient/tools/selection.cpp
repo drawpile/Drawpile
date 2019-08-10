@@ -42,12 +42,13 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);
 	else
-		m_handle = canvas::Selection::OUTSIDE;
+		m_handle = canvas::Selection::Handle::Outside;
 
 	m_start = point;
 	m_p1 = point;
+	m_end = point;
 
-	if(m_handle == canvas::Selection::OUTSIDE) {
+	if(m_handle == canvas::Selection::Handle::Outside) {
 		if(sel) {
 			owner.client()->sendMessages(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
 			sel->detachMove();
@@ -67,35 +68,17 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 	if(!sel)
 		return;
 
-	if(m_handle==canvas::Selection::OUTSIDE) {
+	m_end = point;
+
+	if(m_handle==canvas::Selection::Handle::Outside) {
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		const QPointF p = point - m_start;
-
 		if(sel->pasteImage().isNull() && !owner.model()->aclFilter()->isLayerLocked(owner.activeLayer())) {
 			startMove();
 		}
 
-		if(m_handle == canvas::Selection::TRANSLATE && center) {
-			// We use the center constraint during translation to rotate the selection
-			const QPointF center = sel->boundingRect().center();
-
-			if(constrain) {
-				// center+constrain mode: shear
-				sel->adjustShear(p.x() / 100.0, p.y() / 100.0);
-
-			} else {
-				// just the center: rotate
-				double a0 = qAtan2(m_start.y() - center.y(), m_start.x() - center.x());
-				double a1 = qAtan2(point.y() - center.y(), point.x() - center.x());
-
-				sel->adjustRotation(a1-a0);
-			}
-
-		} else {
-			sel->adjustGeometry(p.toPoint(), constrain);
-		}
+		sel->adjustGeometry(m_start, point, constrain);
 	}
 }
 
@@ -108,10 +91,20 @@ void SelectionTool::end()
 	// The shape must be closed after the end of the selection operation
 	owner.model()->selection()->closeShape();
 
+	// Toggle adjustment mode if just clicked
+	if((m_end - m_start).manhattanLength() < 2.0) {
+		sel->setAdjustmentMode(
+			sel->adjustmentMode() == canvas::Selection::AdjustmentMode::Scale
+				? canvas::Selection::AdjustmentMode::Rotate
+				: canvas::Selection::AdjustmentMode::Scale
+		);
+	}
+
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
 	if(selrect.width() * selrect.height() <= 2) {
 		owner.model()->setSelection(nullptr);
+
 	} else {
 		// Remove selections completely outside the canvas
 		const QSize cs = owner.model()->layerStack()->size();

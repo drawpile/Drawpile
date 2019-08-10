@@ -39,6 +39,7 @@ public:
 
 private slots:
 	void onShapeChanged();
+	void onAdjustmentModeChanged();
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);

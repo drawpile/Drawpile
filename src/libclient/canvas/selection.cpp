@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,7 +79,6 @@ void Selection::setShapeRect(const QRect &rect)
 		QPointF(rect.left(), rect.top() + rect.height())
 	}));
 	saveShape();
-	m_closedPolygon = true;
 }
 
 
@@ -114,28 +113,36 @@ Selection::Handle Selection::handleAt(const QPointF &point, qreal zoom) const
 	const QRectF R = m_shape.boundingRect().adjusted(-H/2, -H/2, H/2, H/2);
 
 	if(!R.contains(point))
-		return OUTSIDE;
+		return Handle::Outside;
 
 	const QPointF p = point - R.topLeft();
 
 	if(p.x() < H) {
 		if(p.y() < H)
-			return RS_TOPLEFT;
+			return Handle::TopLeft;
 		else if(p.y() > R.height()-H)
-			return RS_BOTTOMLEFT;
-		return RS_LEFT;
+			return Handle::BottomLeft;
+		return Handle::Left;
 	} else if(p.x() > R.width() - H) {
 		if(p.y() < H)
-			return RS_TOPRIGHT;
+			return Handle::TopRight;
 		else if(p.y() > R.height()-H)
-			return RS_BOTTOMRIGHT;
-		return RS_RIGHT;
+			return Handle::BottomRight;
+		return Handle::Right;
 	} else if(p.y() < H)
-		return RS_TOP;
+		return Handle::Top;
 	else if(p.y() > R.height()-H)
-		return RS_BOTTOM;
+		return Handle::Bottom;
 
-	return TRANSLATE;
+	return Handle::Center;
+}
+
+void Selection::setAdjustmentMode(AdjustmentMode mode)
+{
+	if(m_adjustmentMode != mode) {
+		m_adjustmentMode = mode;
+		emit adjustmentModeChanged(mode);
+	}
 }
 
 void Selection::beginAdjustment(Handle handle)
@@ -144,7 +151,19 @@ void Selection::beginAdjustment(Handle handle)
 	m_preAdjustmentShape = m_shape;
 }
 
-void Selection::adjustGeometry(const QPoint &delta, bool keepAspect)
+void Selection::adjustGeometry(const QPointF &start, const QPointF &point, bool constrain)
+{
+	switch(m_adjustmentMode) {
+	case AdjustmentMode::Scale:
+		adjustGeometryScale((point - start).toPoint(), constrain);
+		break;
+	case AdjustmentMode::Rotate:
+		adjustGeometryRotate(start, point, constrain);
+		break;
+	}
+}
+
+void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 {
 	if(keepAspect) {
 		const int dxy = (qAbs(delta.x()) > qAbs(delta.y())) ? delta.x() : delta.y();
@@ -155,32 +174,62 @@ void Selection::adjustGeometry(const QPoint &delta, bool keepAspect)
 		const qreal dy = dxy;
 
 		switch(m_adjustmentHandle) {
-		case OUTSIDE: return;
-		case TRANSLATE: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::Outside: return;
+		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
 
-		case RS_TOPLEFT: adjustScale(dx, dy, 0, 0); break;
-		case RS_TOPRIGHT: adjustScale(0, -dx, dy, 0); break;
-		case RS_BOTTOMRIGHT: adjustScale(0, 0, dx, dy); break;
-		case RS_BOTTOMLEFT: adjustScale(dx, 0, 0, -dy); break;
+		case Handle::TopLeft: adjustScale(dx, dy, 0, 0); break;
+		case Handle::TopRight: adjustScale(0, -dx, dy, 0); break;
+		case Handle::BottomRight: adjustScale(0, 0, dx, dy); break;
+		case Handle::BottomLeft: adjustScale(dx, 0, 0, -dy); break;
 
-		case RS_TOP:
-		case RS_LEFT: adjustScale(dx, dy, -dx, -dy); break;
-		case RS_RIGHT:
-		case RS_BOTTOM: adjustScale(-dx, -dy, dx, dy); break;
+		case Handle::Top:
+		case Handle::Left: adjustScale(dx, dy, -dx, -dy); break;
+		case Handle::Right:
+		case Handle::Bottom: adjustScale(-dx, -dy, dx, dy); break;
 		}
 	} else {
 		switch(m_adjustmentHandle) {
-		case OUTSIDE: return;
-		case TRANSLATE: m_shape = m_preAdjustmentShape.translated(delta); break;
-		case RS_TOPLEFT: adjustScale(delta.x(), delta.y(), 0, 0); break;
-		case RS_TOPRIGHT: adjustScale(0, delta.y(), delta.x(), 0); break;
-		case RS_BOTTOMRIGHT: adjustScale(0, 0, delta.x(), delta.y()); break;
-		case RS_BOTTOMLEFT: adjustScale(delta.x(), 0, 0, delta.y()); break;
-		case RS_TOP: adjustScale(0, delta.y(), 0, 0); break;
-		case RS_RIGHT: adjustScale(0, 0, delta.x(), 0); break;
-		case RS_BOTTOM: adjustScale(0, 0, 0, delta.y()); break;
-		case RS_LEFT: adjustScale(delta.x(), 0, 0, 0); break;
+		case Handle::Outside: return;
+		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::TopLeft: adjustScale(delta.x(), delta.y(), 0, 0); break;
+		case Handle::TopRight: adjustScale(0, delta.y(), delta.x(), 0); break;
+		case Handle::BottomRight: adjustScale(0, 0, delta.x(), delta.y()); break;
+		case Handle::BottomLeft: adjustScale(delta.x(), 0, 0, delta.y()); break;
+		case Handle::Top: adjustScale(0, delta.y(), 0, 0); break;
+		case Handle::Right: adjustScale(0, 0, delta.x(), 0); break;
+		case Handle::Bottom: adjustScale(0, 0, 0, delta.y()); break;
+		case Handle::Left: adjustScale(delta.x(), 0, 0, 0); break;
 		}
+	}
+
+	emit shapeChanged(m_shape);
+}
+
+void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain)
+{
+	switch(m_adjustmentHandle) {
+	case Handle::Outside: return;
+	case Handle::Center: m_shape = m_preAdjustmentShape.translated(point - start); break;
+	case Handle::TopLeft:
+	case Handle::TopRight:
+	case Handle::BottomRight:
+	case Handle::BottomLeft: {
+		const QPointF center = boundingRect().center();
+		const qreal a0 = atan2(start.y() - center.y(), start.x() - center.x());
+		const qreal a1 = atan2(point.y() - center.y(), point.x() - center.x());
+		qreal a = a1 - a0;
+		if(constrain) {
+			const auto STEP = M_PI / 12;
+			a = qRound(a / STEP) * STEP;
+		}
+
+		adjustRotation(a);
+		break;
+		}
+	case Handle::Top: adjustShear((start.x() - point.x()) / 100.0, 0); break;
+	case Handle::Bottom: adjustShear((point.x() - start.x()) / 100.0, 0); break;
+	case Handle::Right: adjustShear(0, (point.y() - start.y()) / 100.0); break;
+	case Handle::Left: adjustShear(0, (start.y() - point.y()) / 100.0); break;
 	}
 
 	emit shapeChanged(m_shape);
@@ -211,9 +260,6 @@ void Selection::adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2)
 void Selection::adjustRotation(qreal angle)
 {
 	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
-
-	if(qAbs(angle) < 0.0001)
-		return;
 
 	const QPointF origin = m_preAdjustmentShape.boundingRect().center();
 	QTransform t;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,17 +41,18 @@ class Selection : public QObject
 	Q_PROPERTY(int handleSize READ handleSize CONSTANT)
 	Q_OBJECT
 public:
-	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
+	enum class Handle {Outside, Center, TopLeft, TopRight, BottomRight, BottomLeft, Top, Right, Bottom, Left};
+	enum class AdjustmentMode { Scale, Rotate };
 
 	explicit Selection(QObject *parent=nullptr);
 
 	//! Get the selection shape polygon
 	QPolygonF shape() const { return m_shape; }
 
-	//! Set the selection shape polygon. The shape is not closed.
+	//! Set the selection shape polygon.
 	void setShape(const QPolygonF &shape);
 
-	//! Set the selection shape from a rectangle. The shape is closed.
+	//! Set the selection shape from a rectangle.
 	void setShapeRect(const QRect &rect);
 
 	//! Add a point to the selection polygon. The shape must be open
@@ -75,6 +76,13 @@ public:
 	Handle handleAt(const QPointF &point, qreal zoom) const;
 
 	/**
+	 * Select the mode for the adjustment handles
+	 */
+	void setAdjustmentMode(AdjustmentMode mode);
+
+	AdjustmentMode adjustmentMode() const { return m_adjustmentMode; }
+
+	/**
 	 * @brief Save the current shape as the pre-adjustment shape
 	 *
 	 * The adjust* functions called afterwards replace the current shape
@@ -91,32 +99,11 @@ public:
 	 * This replaces the current shape with a modified version of the shape saved
 	 * when beginAdjustment was called.
 	 *
-	 * @param handle the handle that was dragged
-	 * @param delta new handle position relative relative to its position when beginAdjustment was called
-	 * @param keepAspect if true, aspect ratio is maintained
+	 * @param start the starting coordinate
+	 * @param point current pointer position
+	 * @param constrain apply constraint (aspect ratio or discrete angle)
 	 */
-	void adjustGeometry(const QPoint &delta, bool keepAspect);
-
-	/**
-	 * @brief Adjust shape geometry by rotating it.
-	 *
-	 * This replaces the current shape with a modified version of the shape saved
-	 * when beginAdjustment was called.
-	 *
-	 * @param angle radians to rotate the shape relative to when beginAdjustment was called
-	 */
-	void adjustRotation(qreal angle);
-
-	/**
-	 * @brief Adjust shape geometry by shearing it
-	 *
-	 * This replaces the current shape with a modified version of the shape saved
-	 * when beginAdjustment was called.
-	 *
-	 * @param sh horizontal shearing factor
-	 * @param sv vertical shearing factor
-	 */
-	void adjustShear(qreal sh, qreal sv);
+	void adjustGeometry(const QPointF &start, const QPointF &point, bool constrain);
 
 	/**
 	 * @brief Check if the selection is an axis-aligned rectangle
@@ -208,9 +195,15 @@ signals:
 	void shapeChanged(const QPolygonF &shape);
 	void pasteImageChanged(const QImage &image);
 	void closed();
+	void adjustmentModeChanged(AdjustmentMode mode);
 
 private:
+	void adjustGeometryScale(const QPoint &delta, bool keepAspect);
+	void adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain);
 	void adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2);
+	void adjustRotation(qreal angle);
+	void adjustShear(qreal sh, qreal sv);
+
 	void saveShape();
 
 	QPolygonF m_shape;
@@ -218,7 +211,8 @@ private:
 	QPolygonF m_preAdjustmentShape;
 	QPolygonF m_moveRegion;
 
-	Handle m_adjustmentHandle;
+	AdjustmentMode m_adjustmentMode = AdjustmentMode::Scale;
+	Handle m_adjustmentHandle = Handle::Outside;
 	QPointF m_originalCenter;
 
 	QImage m_pasteImage;
@@ -226,7 +220,6 @@ private:
 	int m_sourceLayerId = 0;
 
 	bool m_closedPolygon = false;
-
 };
 
 }
