@@ -221,7 +221,7 @@ IF ( APPLE )
 	add_custom_target( appbundle ALL
 		COMMAND mkdir -p "${ResourcesDir}/i18n"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
-		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../client/*.qm" "${ResourcesDir}/i18n"
+		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../libclient/*.qm" "${ResourcesDir}/i18n"
 		COMMAND mkdir -p "${ResourcesDir}/palettes"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/palettes/*.gpl" "${ResourcesDir}/palettes"
 		COMMAND mkdir -p "${ResourcesDir}/sounds"
