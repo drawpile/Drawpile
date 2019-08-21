@@ -99,7 +99,7 @@ mkdir -p i18n
 for tr in cs de fi ja ru zh vi uk it
 do
 	cp "$QROOT/translations/qt_$tr.qm" i18n/ || true
-	cp "/Build/src/client/drawpile_$tr.qm" i18n/
+	cp "/Build/src/libclient/drawpile_$tr.qm" i18n/
 done
 
 # Copy text files
