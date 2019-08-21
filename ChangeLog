@@ -11,6 +11,7 @@
  * Server: file backed session file naming is now consistent when archive mode is enabled
  * Added a new shortcut for canvas rotation (shift+ctrl & mousewheel)
  * Improved selection tool: scale/rotate/shear mode is now toggled by clicking, rather than keyboard modifier
+ * Fixed crash when using large-radius color picker near the edge of the canvas
 
 2019-06-23 Version 2.1.11
  * Fixed that brush color was uninitialized on fresh install

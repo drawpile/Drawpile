@@ -151,10 +151,10 @@ QColor LayerStack::colorAt(int x, int y, int dia) const
 
 	} else {
 		const int r = dia/2+1;
-		const int x1 = (x-r) / Tile::SIZE;
-		const int x2 = (x+r) / Tile::SIZE;
-		const int y1 = (y-r) / Tile::SIZE;
-		const int y2 = (y+r) / Tile::SIZE;
+		const int x1 = qBound(0, (x-r) / Tile::SIZE, m_xtiles-1);
+		const int x2 = qBound(0, (x+r) / Tile::SIZE, m_xtiles-1);
+		const int y1 = qBound(0, (y-r) / Tile::SIZE, m_ytiles-1);
+		const int y2 = qBound(0, (y+r) / Tile::SIZE, m_ytiles-1);
 
 		Layer flat(0, QString(), Qt::transparent, size());
 		EditableLayer ef(&flat, nullptr, 0);
