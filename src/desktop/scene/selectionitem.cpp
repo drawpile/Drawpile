@@ -116,7 +116,7 @@ static void drawHandle(QPainter *painter, const QPointF &point, qreal size, canv
 	const QPointF offset = point - QPointF(size/2, size/2);
 
 	QPointF polygon[12];
-	Q_ASSERT(plen <= sizeof(polygon)/sizeof(*polygon));
+	Q_ASSERT(plen <= sizeof(polygon));
 	for(unsigned int i=0;i<plen/sizeof(*polygon);++i)
 		polygon[i] = offset + arrow[i] / 10 * size;
 
