@@ -23,6 +23,28 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.12" date="2019-10-20">
+      <url>https://drawpile.net/news/release-2.1.12/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added Italian translation (contributed by Albano Battistella)</li>
+          <li>Fixed lockup when opening a layered TIFF file</li>
+          <li>drawpile-cmd: added support for outputting to stdout</li>
+          <li>Improved brush preview: different styles are now used for different brush types</li>
+          <li>Smudging can now be used with all brush shapes</li>
+          <li>Canvas modifier key shortcuts can now be customized</li>
+          <li>Added cursors for layer picker, quick adjust, zoom and view rotation modes</li>
+          <li>Use the same default curve for velocity pressure emulation mode</li>
+          <li>Fixed tool quick adjustment dragging responsivity</li>
+          <li>Server: file backed session file naming is now consistent when archive mode is enabled</li>
+          <li>Added a new shortcut for canvas rotation (shift+ctrl &amp; mousewheel)</li>
+          <li>Improved selection tool: scale/rotate/shear mode is now toggled by clicking, rather than keyboard modifier</li>
+          <li>Fixed crash when using large-radius color picker near the edge of the canvas</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.11" date="2019-06-23">
       <url>https://drawpile.net/news/release-2.1.11/</url>
       <description>

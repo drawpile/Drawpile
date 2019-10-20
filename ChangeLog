@@ -1,4 +1,4 @@
-2019-0?-?? Version 2.1.12
+2019-10-20 Version 2.1.12
  * Added Italian translation (contributed by Albano Battistella)
  * Fixed lockup when opening a layered TIFF file
  * drawpile-cmd: added support for outputting to stdout
