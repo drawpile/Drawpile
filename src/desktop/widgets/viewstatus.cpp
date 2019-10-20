@@ -58,7 +58,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Canvas rotation box
 	m_angleBox = new QComboBox(this);
-	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().width("9999-O--"));
+	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().boundingRect("9999-O--").width());
 	m_angleBox->setFrame(false);
 	m_angleBox->setEditable(true);
 	m_angleBox->setToolTip(tr("Canvas Rotation"));
@@ -100,7 +100,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Zoom box
 	m_zoomBox = new QComboBox(this);
-	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().width("9999.9%--"));
+	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().boundingRect("9999.9%--").width());
 	m_zoomBox->setFrame(false);
 	m_zoomBox->setEditable(true);
 

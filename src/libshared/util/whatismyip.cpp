@@ -138,9 +138,9 @@ bool WhatIsMyIp::isCGNAddress(const QString &address)
 	// but it doesn't matter since CGN is only used with IPv4.
 	int portsep = address.indexOf(':');
 	if(portsep>0)
-		addr = address.left(portsep);
+		addr = QHostAddress{address.left(portsep)};
 	else
-		addr = address;
+		addr = QHostAddress{address};
 
 	if(addr.isNull()) {
 		qWarning() << "unparseable address:" << address;

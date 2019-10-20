@@ -489,7 +489,11 @@ void FiledHistory::setOpwordHash(const QByteArray &opword)
 
 QDateTime FiledHistory::startTime() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
 	return QFileInfo(*m_journal).created();
+#else
+	return QFileInfo(*m_journal).birthTime();
+#endif
 }
 
 void FiledHistory::setMaxUsers(int max)

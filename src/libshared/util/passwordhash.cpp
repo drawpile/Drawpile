@@ -75,7 +75,7 @@ bool isValidHash(const QByteArray &hash)
 
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
-		return hash.length() > 7 && hash.length() < 7+crypto_pwhash_STRBYTES;
+		return hash.length() > 7 && (unsigned int)hash.length() < 7+crypto_pwhash_STRBYTES;
 #else
 		qWarning("Libsodium needed to support Argon2 hashes!");
 		return false;

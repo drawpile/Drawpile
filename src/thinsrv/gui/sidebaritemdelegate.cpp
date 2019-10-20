@@ -38,8 +38,11 @@ void SidebarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 		painter->fillRect(rect, option.palette.brush(QPalette::Base));
 
 		QRect textrect = rect;
-		QString text = elidedText(option.fontMetrics, textrect.width(), Qt::ElideMiddle,
-								  index.data(Qt::DisplayRole).toString());
+		QString text = option.fontMetrics.elidedText(
+			index.data(Qt::DisplayRole).toString(),
+			Qt::ElideMiddle,
+			textrect.width()
+		);
 
 		QStyleOptionViewItem opts = option;
 		opts.state &= ~QStyle::State_Enabled;
@@ -56,8 +59,11 @@ void SidebarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 		painter->fillRect(rect, option.palette.brush(bg));
 
 		QRect textrect = rect.adjusted(12, 0, -12, 0);
-		QString text = elidedText(option.fontMetrics, textrect.width(), Qt::ElideMiddle,
-								  index.data(Qt::DisplayRole).toString());
+		QString text = option.fontMetrics.elidedText(
+			index.data(Qt::DisplayRole).toString(),
+			Qt::ElideMiddle,
+			textrect.width()
+		);
 
 		drawDisplay(painter, option, textrect, text);
 	}

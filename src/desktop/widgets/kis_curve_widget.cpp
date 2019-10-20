@@ -283,7 +283,7 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
         p.drawPixmap(0, 0, *d->m_pixmapCache);
 
 	} else {
-        p.fillRect(rect(), palette().background());
+        p.fillRect(rect(), palette().window());
 	}
 
 	p.setPen(QPen(palette().color(QPalette::Mid), 1, Qt::SolidLine));

@@ -53,7 +53,13 @@ void splitImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image
 		return;
 
 	// Compress pixel data and see if it fits in a single message
-	const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(image.bits()), image.byteCount());
+	const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(image.bits()),
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+		image.byteCount()
+#else
+		image.sizeInBytes()
+#endif
+		);
 	QByteArray compressed = qCompress(data);
 
 	if(compressed.length() > protocol::PutImage::MAX_LEN) {

@@ -24,7 +24,7 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QDesktopServices>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QUrl>
 #include <QLabel>
 #include <QMessageBox>
@@ -777,7 +777,7 @@ void MainWindow::readSettings(bool windowpos)
 
 	if(windowpos && cfg.contains("pos")) {
 		const QPoint pos = cfg.value("pos").toPoint();
-		if(qApp->desktop()->availableGeometry().contains(pos))
+		if(qApp->primaryScreen()->availableGeometry().contains(pos))
 			move(pos);
 	}
 

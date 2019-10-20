@@ -348,7 +348,7 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
-		drag->start(Qt::CopyAction|Qt::MoveAction);
+		drag->exec(Qt::CopyAction|Qt::MoveAction);
 	}
 }
 

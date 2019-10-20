@@ -99,16 +99,21 @@ void SslServer::requireForwardSecrecy()
 
 	QStringList methods {"DH", "ECDH"};
 
-	for(const QSslCipher &cipher : QSslSocket::defaultCiphers()) {
+	QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+
+	for(const auto &cipher : config.ciphers()) {
 		if(methods.contains(cipher.keyExchangeMethod())) {
 			ciphers.append(cipher);
 		}
 	}
 
-	if(ciphers.isEmpty())
+	if(ciphers.isEmpty()) {
 		qWarning("Forward secrecy not available!");
-	else
-		QSslSocket::setDefaultCiphers(ciphers);
+
+	} else {
+		config.setCiphers(ciphers);
+		QSslConfiguration::setDefaultConfiguration(config);
+	}
 }
 
 bool SslServer::isValidCert() const

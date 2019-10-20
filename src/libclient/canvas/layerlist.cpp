@@ -125,8 +125,13 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 
 	// Layers are shown topmost first in the list but
 	// are sent bottom first in the protocol.
-	for(int i=0;i<count/2;++i)
+	for(int i=0;i<count/2;++i) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
 		layers.swap(i,count-(1+i));
+#else
+		layers.swapItemsAt(i,count-(1+i));
+#endif
+	}
 
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_myId, layers)));
 }

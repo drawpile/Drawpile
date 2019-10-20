@@ -414,7 +414,11 @@ protocol::MessageList Selection::pasteOrMoveToCanvas(uint8_t contextId, int laye
 
 		if(!canvas::isAxisAlignedRectangle(m_moveRegion.toPolygon())) {
 			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds, true);
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
 			mask = qCompress(maskimg.constBits(), maskimg.byteCount());
+#else
+			mask = qCompress(maskimg.constBits(), maskimg.sizeInBytes());
+#endif
 		} else {
 			moveBounds = m_moveRegion.boundingRect().toRect();
 		}

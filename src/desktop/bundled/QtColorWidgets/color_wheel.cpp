@@ -92,7 +92,7 @@ public:
         display_flags(FLAGS_DEFAULT),
         color_from(&QColor::fromHsvF), rainbow_from_hue(&detail::rainbow_hsv)
     {
-        qreal backgroundValue = widget->palette().background().color().valueF();
+        qreal backgroundValue = widget->palette().window().color().valueF();
         backgroundIsDark = backgroundValue < 0.5;
     }
 
