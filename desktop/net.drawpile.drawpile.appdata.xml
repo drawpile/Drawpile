@@ -43,7 +43,28 @@
           <li>Fixed crash when using large-radius color picker near the edge of the canvas</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup.exe</location>
+          <checksum type="sha256">2369ae91a453bf05b739d64c2e629502e73a9102a2c449c7b1c46847d13ceb8d</checksum>
+          <size type="download">16471338</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup-w32.exe</location>
+          <checksum type="sha256">0009257b09b796cb4463abc514bac7d891dc1bd412d4ee4e37f91a073759f8ef</checksum>
+          <size type="download">15464953</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.12.dmg</location>
+          <checksum type="sha256">b805c7bee8b54c149299468eae35162850517e8b45ae6b391c9f7c0325a86f64</checksum>
+          <size type="download">14118296</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.12.tar.gz</location>
+          <checksum type="sha256">b6946a5c9676355e913d41a37ad98f7a06469c7ff9901be674be455a7b107e4b</checksum>
+          <size type="download">2521305</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.11" date="2019-06-23">
       <url>https://drawpile.net/news/release-2.1.11/</url>
