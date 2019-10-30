@@ -35,15 +35,9 @@ bool checkImageSize(const QSize &size)
 	// However, QPixmap can be at most 32767 pixels wide/tall
 	static const int MAX_SIZE = 32767;
 
-	// Rather than limiting the image dimensions to a safe square, allow large rectangular images
-	// by limiting size by required memory
-	static const quint64 MAX_MEM = 1024 * 1024 * 1024;
-	static const quint64 MAX_PIXELS = MAX_MEM / 4;
-
 	return
 		size.width() <= MAX_SIZE &&
-		size.height() <= MAX_SIZE &&
-		quint64(size.width())*quint64(size.height()) <= MAX_PIXELS;
+		size.height() <= MAX_SIZE;
 }
 
 bool isWritableFormat(const QString &filename)
