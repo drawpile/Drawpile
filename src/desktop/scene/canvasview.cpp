@@ -489,7 +489,11 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 		return;
 
 	if((button == Qt::MidButton && m_dragmode != ViewDragMode::Started) || m_dragmode == ViewDragMode::Prepared) {
-		startDrag(pos.toPoint());
+		m_dragLastPoint = pos.toPoint();
+		m_dragmode = ViewDragMode::Started;
+
+		resetCursor();
+		updateOutline();
 
 	} else if((button == Qt::LeftButton || button == Qt::RightButton) && m_dragmode==ViewDragMode::None) {
 		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
@@ -577,7 +581,12 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 {
 	m_prevpoint = mapToScene(pos, 0.0);
 	if(m_dragmode != ViewDragMode::None) {
-		stopDrag();
+		if(m_spacebar)
+			m_dragmode = ViewDragMode::Prepared;
+		else
+			m_dragmode = ViewDragMode::None;
+
+		resetCursor();
 
 	} else if(m_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && m_pendown == MOUSEDOWN)) {
 		onPenUp();
@@ -641,6 +650,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 		event->accept();
 		if(!event->isAutoRepeat() && m_dragmode == ViewDragMode::None) {
 			m_dragmode = ViewDragMode::Prepared;
+			m_spacebar = true;
 			updateOutline();
 		}
 
@@ -662,9 +672,12 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	QGraphicsView::keyReleaseEvent(event);
 
-	if(event->key() == Qt::Key_Space && !event->isAutoRepeat() && m_dragmode == ViewDragMode::Prepared) {
-		m_dragmode = ViewDragMode::None;
-		updateOutline();
+	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+		m_spacebar = false;
+		if(m_dragmode == ViewDragMode::Prepared) {
+			m_dragmode = ViewDragMode::None;
+			updateOutline();
+		}
 	}
 
 	if(m_pendown == NOTDOWN) {
@@ -920,20 +933,6 @@ void CanvasView::scrollTo(const QPoint& point)
 }
 
 /**
- * @param x initial x coordinate
- * @param y initial y coordinate
- * @param mode dragging mode
- */
-void CanvasView::startDrag(const QPoint &point)
-{
-	m_dragLastPoint = point;
-	m_dragmode = ViewDragMode::Started;
-
-	resetCursor();
-	updateOutline();
-}
-
-/**
  * @param x x coordinate
  * @param y y coordinate
  */
@@ -980,13 +979,6 @@ void CanvasView::moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers)
 	}
 
 	m_dragLastPoint = point;
-}
-
-//! Stop dragging
-void CanvasView::stopDrag()
-{
-	m_dragmode = ViewDragMode::None;
-	resetCursor();
 }
 
 /**

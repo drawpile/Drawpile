@@ -196,12 +196,6 @@ private:
 
 	enum class ViewDragMode {None, Prepared, Started};
 
-	//! Start dragging the view
-	void startDrag(const QPoint &point);
-
-	//! Stop dragging the view
-	void stopDrag();
-
 	//! Drag the view
 	void moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers);
 
@@ -239,6 +233,7 @@ private:
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;
 	QPoint m_dragLastPoint;
+	bool m_spacebar = false;
 
 	//! Previous pointer location
 	paintcore::Point m_prevpoint;

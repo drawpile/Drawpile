@@ -1,3 +1,6 @@
+2019-1?-?? Version 2.1.13
+ * Bugfix: spacebar would have to be pressed again after releasing mouse button when dragging
+
 2019-10-20 Version 2.1.12
  * Added Italian translation (contributed by Albano Battistella)
  * Fixed lockup when opening a layered TIFF file
