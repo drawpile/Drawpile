@@ -54,6 +54,8 @@ QJsonObject ClassicBrush::toJson() const
 	if(m_opacityPressure) o["opacityp"] = true;
 	if(m_smudgePressure) o["smudgep"] = true;
 
+	o["blend"] = paintcore::findBlendMode(m_blend).svgname;
+
 	// Note: color is intentionally omitted
 
 	return QJsonObject {
@@ -101,6 +103,8 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.setHardnessPressure(o["hardp"].toBool());
 	b.setOpacityPressure(o["opacityp"].toBool());
 	b.setSmudgePressure(o["smudgep"].toBool());
+
+	b.setBlendingMode(paintcore::findBlendModeByName(o["blend"].toString(), nullptr).id);
 
 	return b;
 }
