@@ -333,7 +333,7 @@ QColor ToolSettings::foregroundColor() const
 
 void ToolSettings::setForegroundColor(const QColor& color)
 {
-	if(color != d->color) {
+	if(color.isValid() && color != d->color) {
 		d->color = color;
 
 		d->currentSettings()->setForeground(color);

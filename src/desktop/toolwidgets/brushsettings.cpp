@@ -439,7 +439,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		const QJsonObject s = o["_slot"].toObject();
 
 		tool.brush = ClassicBrush::fromJson(o);
-		tool.brush.setColor(QColor(s["color"].toString()));
+		const auto color = QColor(s["color"].toString());
+		tool.brush.setColor(color.isValid() ? color : Qt::black);
 		tool.normalMode = paintcore::BlendMode::Mode(s["normalMode"].toInt());
 		tool.eraserMode = paintcore::BlendMode::Mode(s["eraserMode"].toInt());
 
