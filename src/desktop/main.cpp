@@ -236,6 +236,9 @@ void initTranslations(const QLocale &locale)
 
 int main(int argc, char *argv[]) {
 	// Initialize application
+	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
 	DrawpileApp app(argc,argv);
 
 	utils::initLogging();

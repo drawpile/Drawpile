@@ -5,6 +5,7 @@
  * Bugfix: selected brush blending mode is restored again
  * Replaced pressure checkboxes with toggle buttons to free up some vertical space
  * Disabled brush preset drag&drop. (Bandaid solution to a regression, will be fixed properly in the next release.)
+ * Enabled High-DPI icons and scaling
 
 2019-10-20 Version 2.1.12
  * Added Italian translation (contributed by Albano Battistella)
