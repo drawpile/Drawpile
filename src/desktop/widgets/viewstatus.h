@@ -23,9 +23,10 @@
 
 class QComboBox;
 class QSlider;
-class QToolButton;
 
 namespace widgets {
+
+class GroupedToolButton;
 
 class ViewStatus : public QWidget
 {
@@ -58,7 +59,7 @@ private:
 	QComboBox *m_zoomBox;
 	QComboBox *m_angleBox;
 	bool m_updating;
-	QToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomReset;
+	widgets::GroupedToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomReset;
 };
 
 }

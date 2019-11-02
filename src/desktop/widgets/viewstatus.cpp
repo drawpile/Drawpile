@@ -18,11 +18,11 @@
 */
 
 #include "viewstatus.h"
+#include "widgets/groupedtoolbutton.h"
 
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSlider>
-#include <QToolButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QHBoxLayout>
@@ -40,17 +40,24 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setSpacing(0);
 
 	// View flipping
-	m_viewFlip = new QToolButton(this);
+	m_viewFlip = new widgets::GroupedToolButton(this);
 	m_viewFlip->setAutoRaise(true);
 
-	m_viewMirror = new QToolButton(this);
+	m_viewMirror = new widgets::GroupedToolButton(this);
 	m_viewMirror->setAutoRaise(true);
+
+#ifdef Q_OS_MAC
+	// Auto-raise style doesn't work on mac (because of a stylesheet),
+	// but grouping only looks nice /without/ auto-raise
+	m_viewFlip->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
+	m_viewMirror->setGroupPosition(widgets::GroupedToolButton::GroupRight);
+#endif
 
 	layout->addWidget(m_viewFlip);
 	layout->addWidget(m_viewMirror);
 
 	// Canvas rotation reset button
-	m_rotationReset = new QToolButton(this);
+	m_rotationReset = new widgets::GroupedToolButton(this);
 	m_rotationReset->setAutoRaise(true);
 
 	layout->addSpacing(10);
@@ -81,7 +88,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	connect(m_angleBox, &QComboBox::editTextChanged, this, &ViewStatus::angleBoxChanged);
 
 	// Zoom reset button
-	m_zoomReset = new QToolButton(this);
+	m_zoomReset = new widgets::GroupedToolButton(this);
 	m_zoomReset->setAutoRaise(true);
 
 	layout->addSpacing(10);
@@ -100,7 +107,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Zoom box
 	m_zoomBox = new QComboBox(this);
-	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().boundingRect("9999.9%--").width());
+	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().boundingRect("9999.9%----").width());
 	m_zoomBox->setFrame(false);
 	m_zoomBox->setEditable(true);
 
