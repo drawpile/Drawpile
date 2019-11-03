@@ -49,8 +49,8 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	// Set up preset view
 	d->ui.brushPaletteView->setModel(d->presets);
-	d->ui.brushPaletteView->setDragEnabled(true);
-	d->ui.brushPaletteView->viewport()->setAcceptDrops(true);
+	d->ui.brushPaletteView->setDragEnabled(false); // FIXME drag&drop is broken, overwrites brushes
+	d->ui.brushPaletteView->viewport()->setAcceptDrops(false); // FIXME drag&drop is broken, ordering is not preserved
 	connect(d->ui.brushPaletteView, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {
 		if(!d->brushSettings) {
 			qWarning("BrushSettings not connected to BrushPalette");
