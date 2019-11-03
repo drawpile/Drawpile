@@ -37,7 +37,28 @@
           <li>Enabled High-DPI icons and scaling</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup.exe</location>
+          <checksum type="sha256">9ca4d954f221ecb395e2f5c16fa381f1fb87262cdc82265b3a9b9b0424903300</checksum>
+          <size type="download">16473487</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup-w32.exe</location>
+          <checksum type="sha256">e1f35c9ee4ac019d995829e31f05a15f92c0618008fe5d4dba23edafc7368d73</checksum>
+          <size type="download">15462612</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.13.dmg</location>
+          <checksum type="sha256">1ca19c6fd4fe8b35f2432b5a675ff192f83095ab418b337ee0affd464b319260</checksum>
+          <size type="download">14118637</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.13.tar.gz</location>
+          <checksum type="sha256">ae6baef4e248634396347a19a8f5d9d7003722305be6fd4b30e4d126ff84a664</checksum>
+          <size type="download">2521488</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.12" date="2019-10-20">
       <url>https://drawpile.net/news/release-2.1.12/</url>
