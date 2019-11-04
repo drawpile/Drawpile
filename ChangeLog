@@ -1,3 +1,6 @@
+2019-1?-?? Version 2.1.14
+ * Fixed dab spacing in default brush presets
+
 2019-11-03 Version 2.1.13
  * Bugfix: spacebar would have to be pressed again after releasing mouse button when dragging
  * Removed arbitrary OpenRaster image size limit

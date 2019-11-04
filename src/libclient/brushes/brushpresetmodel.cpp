@@ -169,7 +169,7 @@ static void makeDefaultBrushes()
 		b.setShape(ClassicBrush::ROUND_PIXEL);
 		b.setSize(16);
 		b.setOpacity(1.0);
-		b.setSpacing(15);
+		b.setSpacing(0.15);
 		b.setSizePressure(true);
 		BrushPresetModel::writeBrush(b, "default-1.dpbrush");
 	}
@@ -179,7 +179,7 @@ static void makeDefaultBrushes()
 		b.setSize(10);
 		b.setOpacity(1.0);
 		b.setHardness(0.8);
-		b.setSpacing(15);
+		b.setSpacing(0.15);
 		b.setSizePressure(true);
 		b.setOpacityPressure(true);
 		BrushPresetModel::writeBrush(b, "default-2.dpbrush");
@@ -190,7 +190,7 @@ static void makeDefaultBrushes()
 		b.setSize(30);
 		b.setOpacity(0.34);
 		b.setHardness(1.0);
-		b.setSpacing(18);
+		b.setSpacing(0.18);
 		BrushPresetModel::writeBrush(b, "default-3.dpbrush");
 	}
 	{
@@ -199,7 +199,7 @@ static void makeDefaultBrushes()
 		b.setIncremental(false);
 		b.setSize(32);
 		b.setOpacity(0.65);
-		b.setSpacing(15);
+		b.setSpacing(0.15);
 		BrushPresetModel::writeBrush(b, "default-4.dpbrush");
 	}
 	{
@@ -208,7 +208,7 @@ static void makeDefaultBrushes()
 		b.setIncremental(false);
 		b.setSize(70);
 		b.setOpacity(0.42);
-		b.setSpacing(15);
+		b.setSpacing(0.15);
 		b.setOpacityPressure(true);
 		BrushPresetModel::writeBrush(b, "default-5.dpbrush");
 	}
@@ -218,7 +218,7 @@ static void makeDefaultBrushes()
 		b.setSize(113);
 		b.setOpacity(0.6);
 		b.setHardness(1.0);
-		b.setSpacing(19);
+		b.setSpacing(0.19);
 		b.setOpacityPressure(true);
 		BrushPresetModel::writeBrush(b, "default-6.dpbrush");
 	}
@@ -228,7 +228,7 @@ static void makeDefaultBrushes()
 		b.setSize(43);
 		b.setOpacity(0.3);
 		b.setHardness(1.0);
-		b.setSpacing(25);
+		b.setSpacing(0.25);
 		b.setSmudge(1.0);
 		b.setResmudge(1);
 		b.setOpacityPressure(true);
