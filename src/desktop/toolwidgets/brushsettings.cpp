@@ -175,6 +175,10 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 void BrushSettings::setCurrentBrush(ClassicBrush brush)
 {
 	brush.setColor(d->currentBrush().color());
+
+	if(d->current == ERASER_SLOT && !brush.isEraser())
+		brush.setBlendingMode(d->currentBrush().blendingMode());
+
 	d->currentBrush() = brush;
 	updateUi();
 }
