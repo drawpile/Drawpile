@@ -30,27 +30,32 @@
 #include <QVector>
 #include <QPixmap>
 #include <QStandardPaths>
-#include <QDir>
+#include <QDirIterator>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
 #include <QUuid>
+#include <QSet>
+#include <QTimer>
 
 namespace brushes {
 
-static constexpr int BRUSH_ICON_SIZE = 42;
+static constexpr int BRUSH_ICON_SIZE = 48;
 
 static QString randomBrushName()
 {
-	auto uuid = QUuid::createUuid().toString();
+	const auto uuid = QUuid::createUuid().toString();
 	return uuid.mid(1, uuid.length()-2) + ".dpbrush";
 }
 
 bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &filename)
 {
+	Q_ASSERT(!filename.isEmpty());
+
 	QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/");
 	dir.mkpath(".");
 
-	const QString path = dir.absoluteFilePath(filename.isEmpty() ? randomBrushName() : filename);
+	const auto path = dir.absoluteFilePath(filename);
 
 	QFile f(path);
 	if(!f.open(QFile::WriteOnly)) {
@@ -58,34 +63,92 @@ bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &file
 		return false;
 	}
 
-	const QByteArray json = QJsonDocument(brush.toJson()).toJson(QJsonDocument::Indented);
+	const auto json = QJsonDocument(brush.toJson()).toJson(QJsonDocument::Indented);
 	return f.write(json) == json.length();
+}
+
+static QImage makePreviewIcon(const ClassicBrush &brush)
+{
+	paintcore::BrushMask mask;
+	switch(brush.shape()) {
+	case ClassicBrush::ROUND_PIXEL:
+		mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
+		break;
+	case ClassicBrush::SQUARE_PIXEL:
+		mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
+		break;
+	case ClassicBrush::ROUND_SOFT:
+		mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
+		break;
+	}
+
+	const int maskdia = mask.diameter();
+	QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
+
+	const QRgb color = (brush.smudge1()>0) ? 0x001d99f3 : (icon::isDarkThemeSelected() ? 0x00ffffff : 0);
+
+	if(maskdia > BRUSH_ICON_SIZE) {
+		// Clip to fit
+		const int clip = (maskdia - BRUSH_ICON_SIZE);
+		const uchar *m = mask.data() + (clip/2*maskdia) + clip/2;
+		for(int y=0;y<BRUSH_ICON_SIZE;++y) {
+			quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y));
+			for(int x=0;x<BRUSH_ICON_SIZE;++x,++m) {
+				*(scanline++) = qPremultiply((*m << 24) | color);
+			}
+			m += clip;
+		}
+
+	} else {
+		// Center the icon
+		icon.fill(Qt::transparent);
+		const uchar *m = mask.data();
+		const int offset = (BRUSH_ICON_SIZE - maskdia)/2;
+		for(int y=0;y<maskdia;++y) {
+			quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+offset)) + offset;
+			for(int x=0;x<maskdia;++x,++m) {
+				*(scanline++) = qPremultiply((*m << 24) | color);
+			}
+		}
+	}
+
+	return icon;
 }
 
 struct BrushPreset {
 	ClassicBrush brush;
 	QString filename;
 	QPixmap icon;
+	bool saved;
 
-	bool save()
-	{
-		if(filename.isEmpty()) {
-			qWarning("Cannot save brush: filename not set!");
-			return false;
+	QPixmap getIcon() {
+		if(!icon.isNull())
+			return icon;
+
+		// See if there is a (MyPaint style) preview image
+		const QString name = filename.mid(0, filename.lastIndexOf('.'));
+		const QDir dir();
+		QImage prevImage;
+		if(prevImage.load(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/" + name + "_prev.png")) {
+			icon = QPixmap::fromImage(prevImage.scaled(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE));
+		} else {
+			// If not, generate a preview image
+			icon = QPixmap::fromImage(makePreviewIcon(brush));
 		}
-		return BrushPresetModel::writeBrush(brush);
-	}
 
-	bool deleteFile()
-	{
-		if(filename.isEmpty()) {
-			qWarning("Cannot delete brush: filename not set!");
-			return false;
-		}
-
-		return QFile(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/" + filename).remove();
+		return icon;
 	}
 };
+
+QDataStream &operator<<(QDataStream &out, const BrushPreset &bp)
+{
+	return out << bp.brush << bp.filename << bp.icon << bp.saved;
+}
+
+QDataStream &operator>>(QDataStream &in, BrushPreset &bp)
+{
+	return in >> bp.brush >> bp.filename >> bp.icon >> bp.saved;
+}
 
 }
 
@@ -95,71 +158,67 @@ namespace brushes {
 
 struct BrushPresetModel::Private {
 	QVector<BrushPreset> presets;
-
-	QPixmap getIcon(int idx) {
-		Q_ASSERT(idx >=0 && idx < presets.size());
-
-		if(presets.at(idx).icon.isNull()) {
-			auto &preset = presets[idx];
-			const auto &brush = preset.brush;
-
-			paintcore::BrushMask mask;
-			switch(preset.brush.shape()) {
-			case ClassicBrush::ROUND_PIXEL:
-				mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
-				break;
-			case ClassicBrush::SQUARE_PIXEL:
-				mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
-				break;
-			case ClassicBrush::ROUND_SOFT:
-				mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
-				break;
-			}
-
-			const int maskdia = mask.diameter();
-			QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
-
-			const QRgb color = (brush.smudge1()>0) ? 0x001d99f3 : (icon::isDarkThemeSelected() ? 0x00ffffff : 0);
-
-			if(maskdia > BRUSH_ICON_SIZE) {
-				// Clip to fit
-				const int clip = (maskdia - BRUSH_ICON_SIZE);
-				const uchar *m = mask.data() + (clip/2*maskdia) + clip/2;
-				for(int y=0;y<BRUSH_ICON_SIZE;++y) {
-					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y));
-					for(int x=0;x<BRUSH_ICON_SIZE;++x,++m) {
-						*(scanline++) = qPremultiply((*m << 24) | color);
-					}
-					m += clip;
-				}
-
-			} else {
-				// Center in the icon
-				icon.fill(Qt::transparent);
-				const uchar *m = mask.data();
-				const int offset = (BRUSH_ICON_SIZE - maskdia)/2;
-				for(int y=0;y<maskdia;++y) {
-					quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+offset)) + offset;
-					for(int x=0;x<maskdia;++x,++m) {
-						*(scanline++) = qPremultiply((*m << 24) | color);
-					}
-				}
-			}
-
-			preset.icon = QPixmap::fromImage(icon);
-		}
-		return presets.at(idx).icon;
-	}
+	QSet<QString> deleted;
+	QTimer *saveTimer;
 };
 
 BrushPresetModel::BrushPresetModel(QObject *parent)
 	: QAbstractListModel(parent), d(new Private)
 {
+	qRegisterMetaType<BrushPreset>();
+	qRegisterMetaTypeStreamOperators<BrushPreset>("BrushPreset");
+
+	// A timer is used to delay the saving of changes to disk.
+	// This serves two purpose:
+	// First: reordering brushes is a three step process:
+	//  1. a new empty brush is added
+	//  2. it's content set
+	//  3. the old brush deleted
+	// We shouldn't write anything until the whole process has completed
+	// Second: users often perform multiple operations in succession.
+	// We can avoid some churn by not writing out the changes immediately.
+	d->saveTimer = new QTimer(this);
+	d->saveTimer->setInterval(1000);
+	d->saveTimer->setSingleShot(true);
+	connect(d->saveTimer, &QTimer::timeout, this, &BrushPresetModel::saveBrushes);
 }
 
 BrushPresetModel::~BrushPresetModel()
 {
 	delete d;
+}
+
+void BrushPresetModel::saveBrushes()
+{
+	const auto basepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/";
+
+	// First, delete all to-be-deleted brushes
+	for(const auto &filename : d->deleted) {
+		qDebug("Deleting %s", qPrintable(basepath + filename));
+		QFile(basepath).remove();
+	}
+	d->deleted.clear();
+
+	// Then save all the unsaved brushes
+	for(auto &bp : d->presets) {
+		if(!bp.saved) {
+			qDebug("Saving %s", qPrintable(basepath + bp.filename));
+			BrushPresetModel::writeBrush(bp.brush, basepath + bp.filename);
+			bp.saved = true;
+		}
+	}
+
+	// Save brush folder metadata
+	QFile meta {basepath + "index.txt"};
+	if(!meta.open(QFile::WriteOnly)) {
+		qWarning("Couldn't open brush metadata file for writing");
+		return;
+	}
+	QTextStream out(&meta);
+
+	for(const auto &bp : d->presets) {
+		out << bp.filename << '\n';
+	}
 }
 
 static void makeDefaultBrushes()
@@ -262,10 +321,11 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 {
 	if(index.isValid() && index.row() >= 0 && index.row() < d->presets.size()) {
 		switch(role) {
-		case Qt::DecorationRole: return d->getIcon(index.row());
-		case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE);
+		case Qt::DecorationRole: return d->presets[index.row()].getIcon();
+		case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE + 7, BRUSH_ICON_SIZE + 7);
 		//case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
-		case BrushPresetRole: return QVariant::fromValue(d->presets.at(index.row()).brush);
+		case BrushPresetRole: return QVariant::fromValue(d->presets.at(index.row()));
+		case BrushRole: return QVariant::fromValue(d->presets.at(index.row()).brush);
 		}
 	}
 	return QVariant();
@@ -283,7 +343,8 @@ QMap<int,QVariant> BrushPresetModel::itemData(const QModelIndex &index) const
 {
 	QMap<int,QVariant> roles;
 	if(index.isValid() && index.row()>=0 && index.row()<d->presets.size()) {
-		roles[BrushPresetRole] = QVariant::fromValue(d->presets[index.row()]);
+		const auto &preset = d->presets[index.row()];
+		roles[BrushPresetRole] = QVariant::fromValue(preset);
 	}
 	return roles;
 }
@@ -292,17 +353,22 @@ bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, 
 {
 	if(!index.isValid() || index.row()<0 || index.row()>=d->presets.size())
 		return false;
+
+	auto &preset = d->presets[index.row()];
 	switch(role) {
-		case BrushPresetRole: {
-			auto &preset = d->presets[index.row()];
+		case BrushPresetRole:
+			preset = value.value<BrushPreset>();
+			break;
+		case BrushRole:
 			preset.brush = value.value<ClassicBrush>();
 			preset.icon = QPixmap();
-			emit dataChanged(index, index);
-			preset.save();
-			return true;
-		}
+			break;
+		default: return false;
 	}
-	return false;
+	preset.saved = false;
+	emit dataChanged(index, index);
+	d->saveTimer->start();
+	return true;
 }
 
 bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
@@ -313,11 +379,11 @@ bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
 		return false;
 	beginInsertRows(QModelIndex(), row, row+count-1);
 	for(int i=0;i<count;++i) {
-		BrushPreset bp {ClassicBrush{}, randomBrushName(), QPixmap() };
-		if(bp.save())
-			d->presets.insert(row, bp);
+		const BrushPreset bp {ClassicBrush{}, randomBrushName(), QPixmap(), false };
+		d->presets.insert(row, bp);
 	}
 	endInsertRows();
+	d->saveTimer->start();
 	return true;
 }
 
@@ -327,12 +393,14 @@ bool BrushPresetModel::removeRows(int row, int count, const QModelIndex &parent)
 		return false;
 	if(row<0 || count<=0 || row+count > d->presets.size())
 		return false;
+
 	beginRemoveRows(QModelIndex(), row, row+count-1);
 	for(int i=row;i<row+count;++i)
-		d->presets[i].deleteFile();
+		d->deleted << d->presets.at(i).filename;
 	d->presets.erase(d->presets.begin()+row, d->presets.begin()+row+count);
-
 	endRemoveRows();
+	d->saveTimer->start();
+
 	return true;
 }
 
@@ -343,44 +411,90 @@ Qt::DropActions BrushPresetModel::supportedDropActions() const
 
 void BrushPresetModel::addBrush(const ClassicBrush &brush)
 {
-	BrushPreset bp { brush, randomBrushName(), QPixmap() };
-	if(bp.save()) {
-		beginInsertRows(QModelIndex(), d->presets.size(), d->presets.size());
-		d->presets.append(bp);
-		endInsertRows();
+	BrushPreset bp { brush, randomBrushName(), QPixmap(), false };
+	beginInsertRows(QModelIndex(), d->presets.size(), d->presets.size());
+	d->presets.append(bp);
+	endInsertRows();
+	d->saveTimer->start();
+}
+
+static QStringList loadMetadata(QFile &metadataFile)
+{
+	QTextStream in(&metadataFile);
+	QStringList order;
+	QString line;
+	while(!(line=in.readLine()).isNull()) {
+		// Forward compatibility:
+		// In the future, we'll use the \ prefix to indicate groups
+		// # is reserved for comments for now, but might be used for extra metadata fields later
+		if(line.isEmpty() || line.at(0) == '#' || line.at(0) == '\\')
+			continue;
+		order << line;
 	}
+
+	return order;
 }
 
 void BrushPresetModel::loadBrushes()
 {
-	QDir brushDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/");
+	const auto brushDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/";
 
-	QVector<BrushPreset> brushes;
+	QMap<QString, BrushPreset> brushes;
 
-	const auto entries = brushDir.entryList(
+	QDirIterator entries{
+		brushDir,
 		QStringList() << "*.dpbrush",
-		QDir::Files | QDir::Readable
-	);
+		QDir::Files | QDir::Readable,
+		QDirIterator::Subdirectories
+	};
 
-	for(const auto &brushfile : entries) {
-		QFile f(brushDir.absoluteFilePath(brushfile));
+	while(entries.hasNext()) {
+		QFile f{entries.next()};
+		const auto filename = entries.filePath().mid(brushDir.length());
+
 		if(!f.open(QFile::ReadOnly)) {
-			qWarning("Couldn't open %s: %s", qPrintable(brushfile), qPrintable(f.errorString()));
+			qWarning("Couldn't open %s: %s", qPrintable(filename), qPrintable(f.errorString()));
 			continue;
 		}
 
 		QJsonParseError err;
 		QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
 		if(doc.isNull()) {
-			qWarning("Couldn't parse %s: %s", qPrintable(brushfile), qPrintable(err.errorString()));
+			qWarning("Couldn't parse %s: %s", qPrintable(filename), qPrintable(err.errorString()));
 			continue;
 		}
 
-		brushes << BrushPreset { ClassicBrush::fromJson(doc.object()), brushfile, QPixmap() };
+		brushes[filename] = BrushPreset {
+			ClassicBrush::fromJson(doc.object()),
+			filename,
+			QPixmap(),
+			true
+		};
 	}
 
+	// Load metadata file (if present)
+	QStringList order;
+
+	QFile metadataFile{brushDir + "index.txt"};
+	if(metadataFile.open(QFile::ReadOnly)) {
+		order = loadMetadata(metadataFile);
+	}
+
+	// Apply ordering
+	QVector<BrushPreset> orderedBrushes;
+
+	for(const auto &filename : order) {
+		const auto b = brushes.take(filename);
+		if(!b.filename.isEmpty())
+			orderedBrushes << b;
+	}
+
+	QMapIterator<QString,BrushPreset> i{brushes};
+	while(i.hasNext())
+		orderedBrushes << i.next().value();
+
 	beginResetModel();
-	d->presets = brushes;
+	d->presets = orderedBrushes;
 	endResetModel();
 }
 

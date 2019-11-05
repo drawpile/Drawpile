@@ -30,7 +30,8 @@ class BrushPresetModel : public QAbstractListModel {
 	Q_OBJECT
 public:
 	enum BrushPresetRoles {
-		BrushPresetRole = Qt::UserRole + 1
+		BrushPresetRole = Qt::UserRole + 1,
+		BrushRole
 	};
 
 	static BrushPresetModel *getSharedInstance();
@@ -49,7 +50,11 @@ public:
 
 	void addBrush(const ClassicBrush &brush);
 
-	static bool writeBrush(const ClassicBrush &brush, const QString &filename=QString());
+	// This should be private. Remove from here once brush migration support is removed.
+	static bool writeBrush(const ClassicBrush &brush, const QString &filename);
+
+private slots:
+	void saveBrushes();
 
 private:
 	void loadBrushes();

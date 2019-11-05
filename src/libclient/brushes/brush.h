@@ -25,6 +25,7 @@
 #include <QMetaType>
 
 class QJsonObject;
+class QDataStream;
 
 namespace brushes {
 
@@ -128,6 +129,9 @@ public:
 
 	QJsonObject toJson() const;
 	static ClassicBrush fromJson(const QJsonObject &json);
+
+	friend QDataStream &operator<<(QDataStream &out, const ClassicBrush &myObj);
+	friend QDataStream &operator>>(QDataStream &in, ClassicBrush &myObj);
 
 private:
 	static inline qreal lerp(qreal a, qreal b, qreal alpha) {

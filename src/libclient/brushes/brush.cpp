@@ -20,6 +20,7 @@
 #include "brush.h"
 
 #include <QJsonObject>
+#include <QDataStream>
 
 namespace brushes {
 
@@ -107,6 +108,44 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.setBlendingMode(paintcore::findBlendModeByName(o["blend"].toString(), nullptr).id);
 
 	return b;
+}
+
+QDataStream &operator<<(QDataStream &out, const ClassicBrush &b)
+{
+	return out
+		<< int(b.m_shape)
+		<< int(b.m_blend)
+		<< b.m_size1 << b.m_size2
+		<< b.m_resmudge
+		<< b.m_hardness1 << b.m_hardness2
+		<< b.m_opacity1 << b.m_opacity2
+		<< b.m_smudge1 << b.m_smudge2
+		<< b.m_spacing
+		<< b.m_color
+		<< b.m_incremental << b.m_colorpick
+		<< b.m_sizePressure << b.m_hardnessPressure << b.m_opacityPressure << b.m_smudgePressure
+		;
+}
+
+QDataStream &operator>>(QDataStream &in, ClassicBrush &b)
+{
+	int shape, blend;
+	in
+		>> shape
+		>> blend
+		>> b.m_size1 >> b.m_size2
+		>> b.m_resmudge
+		>> b.m_hardness1 >> b.m_hardness2
+		>> b.m_opacity1 >> b.m_opacity2
+		>> b.m_smudge1 >> b.m_smudge2
+		>> b.m_spacing
+		>> b.m_color
+		>> b.m_incremental >> b.m_colorpick
+		>> b.m_sizePressure >> b.m_hardnessPressure >> b.m_opacityPressure >> b.m_smudgePressure
+		;
+	b.m_shape = ClassicBrush::Shape(shape);
+	b.m_blend = paintcore::BlendMode::Mode(blend);
+	return in;
 }
 
 }

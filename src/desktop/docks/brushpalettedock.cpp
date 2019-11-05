@@ -49,17 +49,17 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	// Set up preset view
 	d->ui.brushPaletteView->setModel(d->presets);
-	d->ui.brushPaletteView->setDragEnabled(false); // FIXME drag&drop is broken, overwrites brushes
-	d->ui.brushPaletteView->viewport()->setAcceptDrops(false); // FIXME drag&drop is broken, ordering is not preserved
+	d->ui.brushPaletteView->setDragEnabled(true);
+	d->ui.brushPaletteView->viewport()->setAcceptDrops(true);
 	connect(d->ui.brushPaletteView, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {
 		if(!d->brushSettings) {
 			qWarning("BrushSettings not connected to BrushPalette");
 			return;
 		}
 
-		QVariant v = index.data(brushes::BrushPresetModel::BrushPresetRole);
+		const auto v = index.data(brushes::BrushPresetModel::BrushRole);
 		if(v.isNull()) {
-			qWarning("Brush preset was null!");
+			qWarning("Brush was null!");
 			return;
 		}
 
@@ -91,7 +91,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->presets->setData(
 			sel.first(),
 			QVariant::fromValue(d->brushSettings->currentBrush()),
-			brushes::BrushPresetModel::BrushPresetRole
+			brushes::BrushPresetModel::BrushRole
 		);
 	});
 
