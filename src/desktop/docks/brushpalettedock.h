@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,13 @@ public:
 	~BrushPalette();
 
 	void connectBrushSettings(tools::ToolSettings *toolSettings);
+
+private slots:
+	void addBrush();
+	void overwriteBrush();
+	void deleteBrush();
+	void addFolder();
+	void deleteFolder();
 
 private:
 	struct Private;

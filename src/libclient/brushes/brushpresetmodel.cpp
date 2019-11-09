@@ -37,6 +37,7 @@
 #include <QUuid>
 #include <QSet>
 #include <QTimer>
+#include <QDebug>
 
 namespace brushes {
 
@@ -59,7 +60,7 @@ bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &file
 
 	QFile f(path);
 	if(!f.open(QFile::WriteOnly)) {
-		qWarning("%s: %s", qPrintable(path), qPrintable(f.errorString()));
+		qWarning() << path << f.errorString();
 		return false;
 	}
 
@@ -140,6 +141,11 @@ struct BrushPreset {
 	}
 };
 
+struct PresetFolder {
+	QString title;
+	QVector<BrushPreset> presets;
+};
+
 QDataStream &operator<<(QDataStream &out, const BrushPreset &bp)
 {
 	return out << bp.brush << bp.filename << bp.icon << bp.saved;
@@ -157,13 +163,13 @@ Q_DECLARE_METATYPE(brushes::BrushPreset)
 namespace brushes {
 
 struct BrushPresetModel::Private {
-	QVector<BrushPreset> presets;
+	QVector<PresetFolder> folders;
 	QSet<QString> deleted;
 	QTimer *saveTimer;
 };
 
 BrushPresetModel::BrushPresetModel(QObject *parent)
-	: QAbstractListModel(parent), d(new Private)
+	: QAbstractItemModel(parent), d(new Private)
 {
 	qRegisterMetaType<BrushPreset>();
 	qRegisterMetaTypeStreamOperators<BrushPreset>("BrushPreset");
@@ -172,10 +178,10 @@ BrushPresetModel::BrushPresetModel(QObject *parent)
 	// This serves two purpose:
 	// First: reordering brushes is a three step process:
 	//  1. a new empty brush is added
-	//  2. it's content set
-	//  3. the old brush deleted
+	//  2. its content is set
+	//  3. the old brush is deleted
 	// We shouldn't write anything until the whole process has completed
-	// Second: users often perform multiple operations in succession.
+	// Second: users often perform multiple operations in succession (especially when renaming a folder.)
 	// We can avoid some churn by not writing out the changes immediately.
 	d->saveTimer = new QTimer(this);
 	d->saveTimer->setInterval(1000);
@@ -194,17 +200,21 @@ void BrushPresetModel::saveBrushes()
 
 	// First, delete all to-be-deleted brushes
 	for(const auto &filename : d->deleted) {
-		qDebug("Deleting %s", qPrintable(basepath + filename));
-		QFile(basepath).remove();
+		const auto filepath = basepath + filename;
+		qDebug() << "Deleting brush" << filepath;
+		QFile(filepath).remove();
 	}
 	d->deleted.clear();
 
 	// Then save all the unsaved brushes
-	for(auto &bp : d->presets) {
-		if(!bp.saved) {
-			qDebug("Saving %s", qPrintable(basepath + bp.filename));
-			BrushPresetModel::writeBrush(bp.brush, basepath + bp.filename);
-			bp.saved = true;
+	for(auto &folder : d->folders) {
+		for(auto &bp : folder.presets) {
+			if(!bp.saved) {
+				const auto filepath = basepath + bp.filename;
+				qDebug() << "Saving brush" << filepath;
+				BrushPresetModel::writeBrush(bp.brush, filepath);
+				bp.saved = true;
+			}
 		}
 	}
 
@@ -216,8 +226,14 @@ void BrushPresetModel::saveBrushes()
 	}
 	QTextStream out(&meta);
 
-	for(const auto &bp : d->presets) {
-		out << bp.filename << '\n';
+	for(int i=0;i<d->folders.size();++i) {
+		// The first folder is always the implicit "Default" folder
+		if(i>0)
+			out << '\\' << d->folders.at(i).title << '\n';
+
+		for(const auto &bp : d->folders.at(i).presets) {
+			out << bp.filename << '\n';
+		}
 	}
 }
 
@@ -301,7 +317,7 @@ BrushPresetModel *BrushPresetModel::getSharedInstance()
 	if(!m) {
 		m = new BrushPresetModel;
 		m->loadBrushes();
-		if(m->d->presets.isEmpty()) {
+		if(m->d->folders.size()==1 && m->d->folders.first().presets.isEmpty()) {
 			if(!migrateQSettingsBrushPresets())
 				makeDefaultBrushes();
 			m->loadBrushes();
@@ -310,22 +326,68 @@ BrushPresetModel *BrushPresetModel::getSharedInstance()
 	return m;
 }
 
+QModelIndex BrushPresetModel::parent(const QModelIndex &index) const
+{
+	if(index.internalId() < 1 || index.internalId() > quintptr(d->folders.size()))
+		return QModelIndex();
+	return createIndex(int(index.internalId() - 1), 0, quintptr(0));
+}
+
+QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
+{
+	if(column != 0 || parent.internalId() != 0)
+		return QModelIndex();
+
+	if(parent.isValid()) {
+		const int f = parent.row();
+		if(f < 0 || f >= d->folders.size() || row < 0 || row >= d->folders.at(f).presets.size())
+			return QModelIndex();
+
+		if(row < 0 || row >= d->folders.at(f).presets.size())
+			return QModelIndex();
+
+		return createIndex(row, 0, parent.row()+1);
+	}
+
+	if(row < 0 || row >= d->folders.size())
+		return QModelIndex();
+
+	return createIndex(row, 0, quintptr(0));
+}
+
+
 int BrushPresetModel::rowCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
-		return 0;
-	return d->presets.size();
+	if(parent.isValid() && parent.internalId() == 0)
+		return d->folders.at(parent.row()).presets.size();
+	else if(!parent.isValid())
+		return d->folders.size();
+	return 0;
+}
+
+int BrushPresetModel::columnCount(const QModelIndex &) const
+{
+	return 1;
 }
 
 QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < d->presets.size()) {
-		switch(role) {
-		case Qt::DecorationRole: return d->presets[index.row()].getIcon();
-		case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE + 7, BRUSH_ICON_SIZE + 7);
-		//case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
-		case BrushPresetRole: return QVariant::fromValue(d->presets.at(index.row()));
-		case BrushRole: return QVariant::fromValue(d->presets.at(index.row()).brush);
+	if(index.isValid()) {
+		if(index.internalId() > 0) {
+			auto& folder = d->folders[index.internalId()-1];
+			switch(role) {
+			case Qt::DecorationRole: return folder.presets[index.row()].getIcon();
+			case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE + 7, BRUSH_ICON_SIZE + 7);
+			//case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
+			case BrushPresetRole: return QVariant::fromValue(folder.presets.at(index.row()));
+			case BrushRole: return QVariant::fromValue(folder.presets.at(index.row()).brush);
+			}
+
+		} else {
+			switch(role) {
+			case Qt::EditRole:
+			case Qt::DisplayRole: return d->folders.at(index.row()).title;
+			}
 		}
 	}
 	return QVariant();
@@ -333,54 +395,80 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags BrushPresetModel::flags(const QModelIndex &index) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < d->presets.size()) {
-		return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled;
-	}
-	return Qt::ItemIsSelectable | Qt::ItemIsEnabled |  Qt::ItemIsDropEnabled;
+	Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+	if(index.isValid() && index.internalId() > 0)
+		flags |= Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren;
+	else
+		flags |= Qt::ItemIsDropEnabled;
+
+	return flags;
 }
 
 QMap<int,QVariant> BrushPresetModel::itemData(const QModelIndex &index) const
 {
 	QMap<int,QVariant> roles;
-	if(index.isValid() && index.row()>=0 && index.row()<d->presets.size()) {
-		const auto &preset = d->presets[index.row()];
-		roles[BrushPresetRole] = QVariant::fromValue(preset);
+	if(index.isValid() && index.internalId() > 0) {
+		const auto &folder = d->folders.at(index.internalId()-1);
+		roles[BrushPresetRole] = QVariant::fromValue(folder.presets.at(index.row()));
 	}
 	return roles;
 }
 
 bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if(!index.isValid() || index.row()<0 || index.row()>=d->presets.size())
+	if(!index.isValid())
 		return false;
 
-	auto &preset = d->presets[index.row()];
-	switch(role) {
-		case BrushPresetRole:
-			preset = value.value<BrushPreset>();
-			break;
-		case BrushRole:
-			preset.brush = value.value<ClassicBrush>();
-			preset.icon = QPixmap();
-			break;
-		default: return false;
+	if(index.internalId() > 0) {
+		auto &preset = d->folders[index.internalId()-1].presets[index.row()];
+		switch(role) {
+			case BrushPresetRole:
+				preset = value.value<BrushPreset>();
+				break;
+			case BrushRole:
+				preset.brush = value.value<ClassicBrush>();
+				preset.icon = QPixmap();
+				break;
+			default: return false;
+		}
+		d->deleted.remove(preset.filename);
+		preset.saved = false;
+
+	} else {
+		auto &folder = d->folders[index.row()];
+		switch(role) {
+			case Qt::EditRole:
+			case Qt::DisplayRole: {
+				const auto text = value.toString();
+				if(text.isEmpty() || text == folder.title)
+					return false;
+				folder.title = text;
+				break;
+			}
+			default: return false;
+		}
 	}
-	preset.saved = false;
+
 	emit dataChanged(index, index);
 	d->saveTimer->start();
+
 	return true;
 }
 
 bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
 {
-	if(parent.isValid())
+	if(!parent.isValid() || parent.internalId() != 0)
 		return false;
-	if(row<0 || count<=0 || row > d->presets.size())
+
+	auto &folder = d->folders[parent.row()];
+	if(row<0 || count<=0 || row > folder.presets.size())
 		return false;
-	beginInsertRows(QModelIndex(), row, row+count-1);
+
+	beginInsertRows(parent, row, row+count-1);
 	for(int i=0;i<count;++i) {
 		const BrushPreset bp {ClassicBrush{}, randomBrushName(), QPixmap(), false };
-		d->presets.insert(row, bp);
+		folder.presets.insert(row, bp);
 	}
 	endInsertRows();
 	d->saveTimer->start();
@@ -389,16 +477,28 @@ bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool BrushPresetModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-	if(parent.isValid())
-		return false;
-	if(row<0 || count<=0 || row+count > d->presets.size())
-		return false;
+	if(!parent.isValid()) {
+		beginRemoveRows(QModelIndex(), row, row+count-1);
+		for(int i=row;i<row+count;++i) {
+			const auto &folder = d->folders.at(i);
+			for(const auto &bp : folder.presets)
+				d->deleted << bp.filename;
+		}
+		d->folders.erase(d->folders.begin()+row, d->folders.begin()+row+count);
+		endRemoveRows();
 
-	beginRemoveRows(QModelIndex(), row, row+count-1);
-	for(int i=row;i<row+count;++i)
-		d->deleted << d->presets.at(i).filename;
-	d->presets.erase(d->presets.begin()+row, d->presets.begin()+row+count);
-	endRemoveRows();
+	} else {
+		auto &folder = d->folders[parent.row()];
+		if(row<0 || count<=0 || row+count > folder.presets.size())
+			return false;
+
+		beginRemoveRows(parent, row, row+count-1);
+		for(int i=row;i<row+count;++i)
+			d->deleted << folder.presets.at(i).filename;
+		folder.presets.erase(folder.presets.begin()+row, folder.presets.begin()+row+count);
+		endRemoveRows();
+	}
+
 	d->saveTimer->start();
 
 	return true;
@@ -409,30 +509,74 @@ Qt::DropActions BrushPresetModel::supportedDropActions() const
 	return Qt::MoveAction;
 }
 
-void BrushPresetModel::addBrush(const ClassicBrush &brush)
+void BrushPresetModel::addBrush(int folderIndex, const ClassicBrush &brush)
 {
+	const auto p = index(folderIndex);
+	Q_ASSERT(p.isValid());
+
 	BrushPreset bp { brush, randomBrushName(), QPixmap(), false };
-	beginInsertRows(QModelIndex(), d->presets.size(), d->presets.size());
-	d->presets.append(bp);
+	auto& folder = d->folders[folderIndex];
+	beginInsertRows(p, folder.presets.size(), folder.presets.size());
+	folder.presets.append(bp);
 	endInsertRows();
 	d->saveTimer->start();
 }
 
-static QStringList loadMetadata(QFile &metadataFile)
+void BrushPresetModel::addFolder(const QString &title)
+{
+	beginInsertRows(QModelIndex(), d->folders.size(), d->folders.size());
+	d->folders << PresetFolder { title, QVector<BrushPreset>() };
+	endInsertRows();
+}
+
+bool BrushPresetModel::moveBrush(const QModelIndex &brushIndex, int targetFolder)
+{
+	if(!brushIndex.isValid() || brushIndex.internalId()==0)
+		return false;
+
+	auto targetIdx = index(targetFolder);
+	if(!targetIdx.isValid())
+		return false;
+
+	const auto bp = d->folders[brushIndex.internalId()-1].presets[brushIndex.row()];
+	beginRemoveRows(brushIndex.parent(), brushIndex.row(), brushIndex.row());
+	d->folders[brushIndex.internalId()-1].presets.remove(brushIndex.row());
+	endRemoveRows();
+	beginInsertRows(targetIdx, rowCount(targetIdx), rowCount(targetIdx));
+	d->folders[targetFolder].presets << bp;
+	endInsertRows();
+
+	d->saveTimer->start();
+
+	return true;
+}
+
+typedef QVector<QPair<QString,QStringList>> Metadata;
+
+static Metadata loadMetadata(QFile &metadataFile)
 {
 	QTextStream in(&metadataFile);
-	QStringList order;
+	Metadata metadata;
 	QString line;
+
+	// The first folder is always the "Default" folder
+	metadata << QPair<QString,QStringList> { BrushPresetModel::tr("Default"), QStringList() };
+
 	while(!(line=in.readLine()).isNull()) {
-		// Forward compatibility:
-		// In the future, we'll use the \ prefix to indicate groups
 		// # is reserved for comments for now, but might be used for extra metadata fields later
-		if(line.isEmpty() || line.at(0) == '#' || line.at(0) == '\\')
+		if(line.isEmpty() || line.at(0) == '#')
 			continue;
-		order << line;
+
+		// Lines starting with \ start new folders. Nested folders are not supported currently.
+		if(line.at(0) == '\\') {
+			metadata << QPair<QString,QStringList> { line.mid(1), QStringList() };
+			continue;
+		}
+
+		metadata.last().second << line;
 	}
 
-	return order;
+	return metadata;
 }
 
 void BrushPresetModel::loadBrushes()
@@ -453,14 +597,14 @@ void BrushPresetModel::loadBrushes()
 		const auto filename = entries.filePath().mid(brushDir.length());
 
 		if(!f.open(QFile::ReadOnly)) {
-			qWarning("Couldn't open %s: %s", qPrintable(filename), qPrintable(f.errorString()));
+			qWarning() << "Couldn't open" << filename << "due to:" << f.errorString();
 			continue;
 		}
 
 		QJsonParseError err;
 		QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
 		if(doc.isNull()) {
-			qWarning("Couldn't parse %s: %s", qPrintable(filename), qPrintable(err.errorString()));
+			qWarning() << "Couldn't parse" << filename << "due to:" << err.errorString();
 			continue;
 		}
 
@@ -473,28 +617,39 @@ void BrushPresetModel::loadBrushes()
 	}
 
 	// Load metadata file (if present)
-	QStringList order;
+	Metadata metadata;
 
 	QFile metadataFile{brushDir + "index.txt"};
 	if(metadataFile.open(QFile::ReadOnly)) {
-		order = loadMetadata(metadataFile);
+		metadata = loadMetadata(metadataFile);
 	}
 
 	// Apply ordering
-	QVector<BrushPreset> orderedBrushes;
+	QVector<PresetFolder> folders;
 
-	for(const auto &filename : order) {
-		const auto b = brushes.take(filename);
-		if(!b.filename.isEmpty())
-			orderedBrushes << b;
+	for(const auto &metaFolder : metadata) {
+		folders << PresetFolder { metaFolder.first, QVector<BrushPreset>() };
+		auto& folder = folders.last();
+
+		for(const auto &filename : metaFolder.second) {
+			const auto b = brushes.take(filename);
+			if(!b.filename.isEmpty())
+				folder.presets << b;
+		}
 	}
+
+	// Add any remaining unsorted presets to a default folder
+	if(folders.isEmpty())
+		folders.push_front(PresetFolder { tr("Default"), QVector<BrushPreset>() });
+
+	auto& defaultFolder = folders.first();
 
 	QMapIterator<QString,BrushPreset> i{brushes};
 	while(i.hasNext())
-		orderedBrushes << i.next().value();
+		defaultFolder.presets << i.next().value();
 
 	beginResetModel();
-	d->presets = orderedBrushes;
+	d->folders = folders;
 	endResetModel();
 }
 

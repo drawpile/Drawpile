@@ -20,13 +20,21 @@
 #ifndef DP_BRUSHPRESETMODEL_H
 #define DP_BRUSHPRESETMODEL_H
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 
 namespace brushes {
 
 class ClassicBrush;
 
-class BrushPresetModel : public QAbstractListModel {
+/**
+ * List of brush presets
+ *
+ * Brush presets are grouped into non-nestable folders. The first
+ * folder is always named "Default". All unsorted brushes are put into
+ * this folder. Note that folders do not necessarily correspond to any actual
+ * filesystem directories, they are defined in the index file only.
+ */
+class BrushPresetModel : public QAbstractItemModel {
 	Q_OBJECT
 public:
 	enum BrushPresetRoles {
@@ -40,6 +48,11 @@ public:
 	~BrushPresetModel();
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+
+	QModelIndex parent(const QModelIndex &index) const override;
+	QModelIndex index(int row, int column=0, const QModelIndex &parent=QModelIndex()) const override;
+
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 	QMap<int,QVariant> itemData(const QModelIndex &index) const override;
@@ -48,7 +61,9 @@ public:
 	bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex()) override;
 	Qt::DropActions supportedDropActions() const override;
 
-	void addBrush(const ClassicBrush &brush);
+	void addBrush(int folderIndex, const ClassicBrush &brush);
+	void addFolder(const QString &title);
+	bool moveBrush(const QModelIndex &brushIndex, int targetFolder);
 
 	// This should be private. Remove from here once brush migration support is removed.
 	static bool writeBrush(const ClassicBrush &brush, const QString &filename);

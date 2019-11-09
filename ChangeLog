@@ -2,6 +2,7 @@
  * Fixed dab spacing in default brush presets
  * Fixed that selecting a brush preset could change the eraser slot into a non-erasering mode
  * Fixed brush preset reordering by drag&drop
+ * Added brush preset folders
 
 2019-11-03 Version 2.1.13
  * Bugfix: spacebar would have to be pressed again after releasing mouse button when dragging
