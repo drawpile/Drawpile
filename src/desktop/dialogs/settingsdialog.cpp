@@ -28,7 +28,7 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 #include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
@@ -47,7 +47,6 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QFile>
-#include <QStandardPaths>
 #include <QSslCertificate>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
@@ -96,7 +95,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
-	for(const QString &datapath : utils::settings::dataPaths()) {
+	for(const QString &datapath : utils::paths::dataPaths()) {
 		QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
 		for(const QString &file : files) {
 			QString localename = file.mid(9, file.length() - 3 - 9);
@@ -156,7 +155,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(m_ui->importTrustedButton, SIGNAL(clicked()), this, SLOT(importTrustedCertificate()));
 
 	QStringList pemfilter; pemfilter << "*.pem";
-	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
+	QDir knownHostsDir(utils::paths::writablePath("known-hosts"));
 
 	for(const QString &filename : knownHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(filename.left(filename.length()-4), m_ui->knownHostList);
@@ -164,7 +163,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		i->setData(Qt::UserRole+1, knownHostsDir.absoluteFilePath(filename));
 	}
 
-	const QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
+	const QDir trustedHostsDir(utils::paths::writablePath("trusted-hosts"));
 	const QIcon trustedIcon = icon::fromTheme("security-high");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), m_ui->knownHostList);
@@ -481,19 +480,18 @@ void SettingsDialog::saveCertTrustChanges()
 	}
 
 	// Move selected certs to trusted certs
-	QDir trustedDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
-	trustedDir.mkpath(".");
+	const auto trustedDir = utils::paths::writablePath("trusted-hosts/", ".");
 
 	for(const QString &certfile : m_trustCerts) {
 		QString certname = certfile.mid(certfile.lastIndexOf('/')+1);
-		QFile(certfile).rename(trustedDir.absoluteFilePath(certname));
+		QFile{certfile}.rename(trustedDir + certname);
 	}
 
 	// Save imported certificates
 	for(const QSslCertificate &cert : m_importCerts) {
 		QString hostname = cert.subjectInfo(QSslCertificate::CommonName).at(0);
 
-		QFile f(trustedDir.absoluteFilePath(hostname + ".pem"));
+		QFile f{trustedDir + hostname + ".pem"};
 		if(!f.open(QFile::WriteOnly)) {
 			qWarning() << "error opening" << f.fileName() << f.errorString();
 			continue;

@@ -32,7 +32,6 @@
 #include "canvas/canvassaverrunnable.h"
 #include "canvas/loader.h"
 #include "tools/toolcontroller.h"
-#include "utils/settings.h"
 #include "utils/images.h"
 
 #include "../libshared/net/control.h"

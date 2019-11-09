@@ -26,10 +26,10 @@
 
 #include "../core/brushmask.h"
 #include "../utils/icon.h"
+#include "../utils/paths.h"
 
 #include <QVector>
 #include <QPixmap>
-#include <QStandardPaths>
 #include <QDirIterator>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -53,10 +53,7 @@ bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &file
 {
 	Q_ASSERT(!filename.isEmpty());
 
-	QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/");
-	dir.mkpath(".");
-
-	const auto path = dir.absoluteFilePath(filename);
+	const auto path = utils::paths::writablePath("brushes/", filename);
 
 	QFile f(path);
 	if(!f.open(QFile::WriteOnly)) {
@@ -128,9 +125,8 @@ struct BrushPreset {
 
 		// See if there is a (MyPaint style) preview image
 		const QString name = filename.mid(0, filename.lastIndexOf('.'));
-		const QDir dir();
 		QImage prevImage;
-		if(prevImage.load(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/" + name + "_prev.png")) {
+		if(prevImage.load(utils::paths::writablePath("brushes/", name + "_prev.png"))) {
 			icon = QPixmap::fromImage(prevImage.scaled(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE));
 		} else {
 			// If not, generate a preview image
@@ -196,7 +192,7 @@ BrushPresetModel::~BrushPresetModel()
 
 void BrushPresetModel::saveBrushes()
 {
-	const auto basepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/";
+	const auto basepath = utils::paths::writablePath("brushes/", ".");
 
 	// First, delete all to-be-deleted brushes
 	for(const auto &filename : d->deleted) {
@@ -210,9 +206,7 @@ void BrushPresetModel::saveBrushes()
 	for(auto &folder : d->folders) {
 		for(auto &bp : folder.presets) {
 			if(!bp.saved) {
-				const auto filepath = basepath + bp.filename;
-				qDebug() << "Saving brush" << filepath;
-				BrushPresetModel::writeBrush(bp.brush, filepath);
+				BrushPresetModel::writeBrush(bp.brush, bp.filename);
 				bp.saved = true;
 			}
 		}
@@ -581,7 +575,7 @@ static Metadata loadMetadata(QFile &metadataFile)
 
 void BrushPresetModel::loadBrushes()
 {
-	const auto brushDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/brushes/";
+	const auto brushDir = utils::paths::writablePath("brushes/");
 
 	QMap<QString, BrushPreset> brushes;
 

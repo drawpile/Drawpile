@@ -22,7 +22,7 @@
 #include "mainwindow.h"
 
 #include "utils/icon.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 #include "utils/logging.h"
 #include "utils/colorscheme.h"
 #include "notifications.h"
@@ -127,7 +127,7 @@ void DrawpileApp::setDarkTheme(bool dark)
 {
 	QPalette pal;
 	if(dark) {
-		const QString paletteFile = utils::settings::locateDataFile("nightmode.colors");
+		const QString paletteFile = utils::paths::locateDataFile("nightmode.colors");
 		if(paletteFile.isEmpty()) {
 			qWarning("Cannot switch to night mode: couldn't find color scheme file!");
 		} else {
@@ -223,7 +223,7 @@ void initTranslations(const QLocale &locale)
 	// Our translations
 	QTranslator *myTranslator = new QTranslator;
 
-	for(const QString &datapath : utils::settings::dataPaths()) {
+	for(const QString &datapath : utils::paths::dataPaths()) {
 		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
 			break;
 	}

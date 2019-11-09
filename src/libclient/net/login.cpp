@@ -22,6 +22,7 @@
 #include "net/tcpserver.h"
 #include "commands.h"
 #include "parentalcontrols/parentalcontrols.h"
+#include "utils/paths.h"
 
 #include "../libshared/net/protover.h"
 #include "../libshared/net/control.h"
@@ -31,8 +32,6 @@
 #include <QStringList>
 #include <QRegularExpression>
 #include <QSslSocket>
-#include <QStandardPaths>
-#include <QDir>
 #include <QFile>
 #include <QHostAddress>
 #include <QNetworkRequest>
@@ -49,14 +48,11 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 {
 	QString locationpath;
 	if(location == KNOWN_HOSTS)
-		locationpath = "/known-hosts/";
+		locationpath = "known-hosts/";
 	else
-		locationpath = "/trusted-hosts/";
+		locationpath = "trusted-hosts/";
 
-	QDir certDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + locationpath);
-	certDir.mkpath(".");
-
-	return QFileInfo(certDir, hostname + ".pem");
+	return QFileInfo(utils::paths::writablePath(locationpath, hostname + ".pem"));
 }
 
 }

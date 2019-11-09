@@ -18,7 +18,7 @@
 */
 
 #include "icon.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 
 #include <QDir>
 #include <QPalette>
@@ -43,7 +43,7 @@ void selectThemeVariant()
 	const QString themePath = is_dark_theme ? QStringLiteral("/theme/dark") : QStringLiteral("/theme/light");
 
 	QStringList themePaths;
-	for(const QString &path : utils::settings::dataPaths()) {
+	for(const QString &path : utils::paths::dataPaths()) {
 		themePaths.append(path + themePath);
 	}
 

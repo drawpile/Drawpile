@@ -78,7 +78,7 @@
 #include "../libshared/util/networkaccess.h"
 #include "utils/shortcutdetector.h"
 #include "utils/customshortcutmodel.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 #include "utils/logging.h"
 #include "utils/actionbuilder.h"
 #include "utils/hotbordereventfilter.h"
@@ -1009,13 +1009,13 @@ void MainWindow::open(const QUrl& url)
 	} else {
 		auto *filedownload = new networkaccess::FileDownload(this);
 
-		QDir downloadDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-		downloadDir.mkpath(".");
-		QString filename = url.fileName();
-		if(filename.isEmpty())
-			filename = "drawpile-download";
-
-		filedownload->setTarget(downloadDir.filePath(filename));
+		filedownload->setTarget(
+			utils::paths::writablePath(
+				QStandardPaths::DownloadLocation,
+				".",
+				url.fileName().isEmpty() ? QStringLiteral("drawpile-download") : url.fileName()
+				)
+			);
 
 		connect(filedownload, &networkaccess::FileDownload::progress, m_netstatus, &widgets::NetStatus::setDownloadProgress);
 		connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {

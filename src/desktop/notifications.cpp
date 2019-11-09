@@ -18,7 +18,7 @@
 */
 
 #include "notifications.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 
 #include <QSoundEffect>
 #include <QMap>
@@ -82,12 +82,7 @@ void playSound(Event event)
 			return;
 		}
 
-		QString fullpath;
-		for(const QString &path : utils::settings::dataPaths()) {
-			QFileInfo f(QDir(path), filename);
-			if(f.exists())
-				fullpath = f.absoluteFilePath();
-		}
+		const QString fullpath = utils::paths::locateDataFile(filename);
 		if(fullpath.isEmpty()) {
 			qWarning() << filename << "not found!";
 			return;

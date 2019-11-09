@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "avatarlistmodel.h"
+#include "utils/paths.h"
 
-#include <QStandardPaths>
 #include <QDir>
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -106,16 +106,14 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 		};
 	}
 
-	QDir dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-	if(dir.cd("avatars")) {
-		const QStringList files = dir.entryList(QStringList() << "*.png", QDir::Files|QDir::Readable);
+	QDir dir = utils::paths::writablePath("avatars");
+	const QStringList files = dir.entryList(QStringList() << "*.png", QDir::Files|QDir::Readable);
 
-		for(const QString &filename : files) {
-			avatars << Avatar {
-				QPixmap(dir.filePath(filename), "PNG"),
-				filename
-			};
-		}
+	for(const QString &filename : files) {
+		avatars << Avatar {
+			QPixmap(dir.filePath(filename), "PNG"),
+			filename
+		};
 	}
 
 	beginResetModel();
@@ -126,12 +124,7 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 
 bool AvatarListModel::commit()
 {
-	QDir dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-	dir.mkdir("avatars");
-	if(!dir.cd("avatars")) {
-		qWarning("Couldn't create avatar directory: %s/avatars", qPrintable(dir.path()));
-		return false;
-	}
+	QDir dir = utils::paths::writablePath("avatars", ".");
 
 	// Commit deletions
 	for(const QString &filename : m_deletions) {

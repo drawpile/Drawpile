@@ -18,17 +18,16 @@
 */
 
 #include "passwordstore.h"
+#include "paths.h"
 
-#include <QStandardPaths>
 #include <QFileInfo>
 #include <QSaveFile>
-#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardItemModel>
 
 PasswordStore::PasswordStore()
-	: PasswordStore(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation), "passwords.json").absoluteFilePath())
+	: PasswordStore(utils::paths::writablePath("passwords.json"))
 {
 }
 

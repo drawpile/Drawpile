@@ -19,10 +19,10 @@
 
 #include "logging.h"
 #include "config.h"
+#include "utils/paths.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>
-#include <QStandardPaths>
 #include <QSettings>
 
 #include <cstdio>
@@ -59,9 +59,11 @@ void logToFile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
 
 QByteArray logFilePath()
 {
-	return (QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) +
-			("/drawpile-" DRAWPILE_VERSION "-") + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log")
-			.toLocal8Bit();
+	return utils::paths::writablePath(
+				QStandardPaths::AppLocalDataLocation,
+				"logs/",
+				("drawpile-" DRAWPILE_VERSION "-") + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log"
+			).toLocal8Bit();
 }
 
 void initLogging()

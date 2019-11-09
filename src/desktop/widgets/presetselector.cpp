@@ -18,12 +18,12 @@
 */
 
 #include "presetselector.h"
+#include "utils/paths.h"
 
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QStandardPaths>
 #include <QStringListModel>
 #include <QRegularExpressionValidator>
 #include <QFile>
@@ -73,10 +73,10 @@ QDir PresetSelector::dir() const
 #ifdef DESIGNER_PLUGIN
 		const auto location = QStandardPaths::TempLocation;
 #else
-		const auto location = QStandardPaths::AppLocalDataLocation;
+		const auto location = QStandardPaths::AppDataLocation;
 #endif
 
-		return QDir(QStandardPaths::writableLocation(location) + QChar('/') + m_folder);
+		return QDir(utils::paths::writablePath(location, m_folder));
 }
 
 void PresetSelector::setPresetFolder(const QString &folder)

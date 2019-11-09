@@ -19,12 +19,12 @@
 
 #include "versioncheckdialog.h"
 #include "../../libshared/util/networkaccess.h"
+#include "utils/paths.h"
 
 #include "ui_versioncheck.h"
 
 #include <QSettings>
 #include <QPushButton>
-#include <QStandardPaths>
 #include <QDir>
 #include <QDesktopServices>
 
@@ -132,10 +132,8 @@ void VersionCheckDialog::downloadNewVersion()
 {
 	Q_ASSERT(m_downloadUrl.isValid());
 
-	const QDir downloadDir {  QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) };
-	downloadDir.mkpath(".");
-
-	const QString downloadPath = downloadDir.filePath(m_downloadUrl.fileName());
+	const QDir downloadDir = utils::paths::writablePath(QStandardPaths::DownloadLocation, ".", ".");
+	const auto downloadPath = downloadDir.absoluteFilePath(m_downloadUrl.fileName());
 
 	{
 		QFile oldFile(downloadPath);
@@ -190,7 +188,6 @@ void VersionCheckDialog::downloadNewVersion()
 	m_ui->views->setCurrentIndex(2);
 
 	fd->start(m_downloadUrl);
-
 }
 
 }

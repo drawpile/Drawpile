@@ -18,11 +18,11 @@
 */
 
 #include "listservermodel.h"
+#include "utils/paths.h"
 
 #include <QImage>
 #include <QBuffer>
 #include <QCryptographicHash>
-#include <QStandardPaths>
 #include <QFile>
 #include <QDir>
 #include <QSettings>
@@ -119,12 +119,9 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 		s.icon = QIcon(QPixmap::fromImage(scaledIcon));
 
 		// Save file to disk
-		QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/favicons/";
-
-		QDir(path).mkpath(".");
-		QFile f(path + s.iconName);
+		QFile f(utils::paths::writablePath("favicons/", s.iconName));
 		if(!f.open(QIODevice::WriteOnly)) {
-			qWarning() << "Unable to open" << path + s.iconName << f.errorString();
+			qWarning() << "Unable to open" << f.fileName() << f.errorString();
 		} else {
 			f.write(data);
 			f.close();
@@ -137,7 +134,7 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 	QVector<ListServer> list;
 
 	QSettings cfg;
-	const QString iconPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/favicons/";
+	const QString iconPath = utils::paths::writablePath("favicons/");
 	const int count = cfg.beginReadArray("listservers");
 	for(int i=0;i<count;++i) {
 		cfg.setArrayIndex(i);

@@ -53,7 +53,7 @@ set (
 	utils/shortcutdetector.cpp
 	utils/customshortcutmodel.cpp
 	utils/listservermodel.cpp
-	utils/settings.cpp
+	utils/paths.cpp
 	utils/colorscheme.cpp
 	utils/icon.cpp
 	utils/logging.cpp

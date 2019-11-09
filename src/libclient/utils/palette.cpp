@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2015 Calle Laakkonen
+   Copyright (C) 2007-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,16 +18,15 @@
 */
 
 #include "palette.h"
+#include "utils/paths.h"
 
 #include <QDebug>
 #include <QVariant>
 #include <QColor>
 #include <QFile>
 #include <QFileInfo>
-#include <QDir>
 #include <QTextStream>
 #include <QRegularExpression>
-#include <QStandardPaths>
 
 Palette::Palette(QObject *parent) : Palette(QString(), QString(), false, parent) { }
 Palette::Palette(const QString &name, QObject *parent) : Palette(name, QString(), false, parent) { }
@@ -119,14 +118,6 @@ Palette *Palette::copy(const Palette *pal, const QString &newname, QObject *pare
  */
 bool Palette::save(const QString& filename)
 {
-	QDir dir = QFileInfo(filename).absoluteDir();
-	if(!dir.exists()) {
-		if(!dir.mkpath(".")) {
-			qWarning() << "Couldn't create missing directory:" << dir;
-			return false;
-		}
-	}
-
 	return exportPalette(filename);
 }
 
@@ -166,7 +157,7 @@ bool Palette::save()
 
 	if(_filename.isEmpty()) {
 		// No filename set? Create it from the palette name
-		_filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/palettes/" + _name + ".gpl";
+		_filename = utils::paths::writablePath("palettes/", _name + ".gpl");
 	}
 
 	bool ok = save(_filename);

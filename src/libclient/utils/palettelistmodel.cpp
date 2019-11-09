@@ -20,10 +20,9 @@
 #include "palettelistmodel.h"
 #include "palette.h"
 #include "icon.h"
-#include "utils/settings.h"
+#include "utils/paths.h"
 
 #include <QDebug>
-#include <QStandardPaths>
 #include <QFileInfo>
 #include <QDir>
 
@@ -47,11 +46,11 @@ void PaletteListModel::loadPalettes()
 {
 	QList<Palette*> palettes;
 
-	QStringList datapaths = utils::settings::dataPaths();
-	QString writablepath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+	const QStringList datapaths = utils::paths::dataPaths();
+	const QString writablepath = utils::paths::writablePath(QString());
 	QSet<QString> palettefiles;
 
-	for(const QString datapath : datapaths) {
+	for(const QString &datapath : datapaths) {
 		QFileInfoList pfiles = QDir(datapath + "/palettes").entryInfoList(
 				QStringList("*.gpl"),
 				QDir::Files|QDir::Readable
