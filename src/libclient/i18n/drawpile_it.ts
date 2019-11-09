@@ -34,7 +34,7 @@
     <message>
         <location filename="../../desktop/ui/avatarimport.ui" line="14"/>
         <source>Crop Avatar</source>
-        <translation>Ritaglia l&apos;Avatar</translation>
+        <translation>Ritaglia l'&apos;Avatar</translation>
     </message>
 </context>
 <context>
@@ -50,7 +50,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="215"/>
         <source>Pixel brush</source>
-        <translation>Pixel pennello</translation>
+        <translation>Pennello pixel</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="235"/>
@@ -153,12 +153,12 @@
     <message>
         <location filename="../../desktop/ui/brushpalette.ui" line="61"/>
         <source>Overwrite selected preset</source>
-        <translation>Sovrascrivi il preimpostato selezionato</translation>
+        <translation>Sovrascrivi preimpostato selezionato</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushpalette.ui" line="75"/>
         <source>Delete selected preset</source>
-        <translation>Cancella il preimpostato selezionato</translation>
+        <translation>Cancella preimpostato selezionato</translation>
     </message>
 </context>
 <context>
@@ -166,7 +166,7 @@
     <message>
         <location filename="../../desktop/ui/certificateview.ui" line="24"/>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/certificateview.ui" line="30"/>
@@ -275,7 +275,7 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="319"/>
         <source>Select Color</source>
-        <translation>Seleziona colore</translation>
+        <translation>Seleziona Colore</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="320"/>
@@ -379,7 +379,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="14"/>
         <source>Filter recording</source>
-        <translation>Registrazione del filtro</translation>
+        <translation>Registrazione filtro</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="22"/>
@@ -414,7 +414,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="66"/>
         <source>Undone actions</source>
-        <translation>Azioni</translation>
+        <translation>Azioni annullate</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="79"/>
@@ -424,7 +424,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="102"/>
         <source>Modify</source>
-        <translation>Modifica</translation>
+        <translation>Modificare</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="111"/>
@@ -434,7 +434,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="118"/>
         <source>Squish strokes</source>
-        <translation>Colpi schiacciati</translation>
+        <translation>Tratti schiacciati</translation>
     </message>
 </context>
 <context>
@@ -465,7 +465,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="17"/>
         <source>Host a Session</source>
-        <translation>Ospita una sessione</translation>
+        <translation>Ospita una Sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="23"/>
@@ -480,7 +480,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="39"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Il titolo è mostrato nella barra del titolo dell&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
+        <translation>Il titolo è mostrato nella barra del titolo dell'&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="46"/>
@@ -515,7 +515,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="107"/>
         <source>List at:</source>
-        <translation>Lista a:</translation>
+        <translation>Elenca per:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="127"/>
@@ -540,7 +540,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="166"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Drawpile&apos;s built-in server</translation>
+        <translation>Drawpile&apos;s server integrato</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="169"/>
@@ -550,7 +550,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="181"/>
         <source>Use an external dedicated server</source>
-        <translation>Utilizza un server esterno dedicato </translation>
+        <translation>Utilizza un server esterno dedicato</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="184"/>
@@ -563,7 +563,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Smoothing:</source>
-        <translation>Згладжування:</translation>
+        <translation>Levigatura:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="66"/>
@@ -609,7 +609,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="17"/>
         <source>Join a Session</source>
-        <translation>Partecipa a una sessione</translation>
+        <translation>Partecipa ad una sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="30"/>
@@ -619,17 +619,17 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="68"/>
         <source>Show:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="75"/>
         <source>Passworded</source>
-        <translation type="unfinished"></translation>
+        <translation>Con password</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="82"/>
         <source>NSFW</source>
-        <translation type="unfinished"></translation>
+        <translation>Non sicuro per il lavoro</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="42"/>
@@ -657,7 +657,7 @@
     <message>
         <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="75"/>
         <source>Reset</source>
-        <translation>Resetta</translation>
+        <translation>Ripristina</translation>
     </message>
 </context>
 <context>
@@ -680,7 +680,7 @@
     <message>
         <location filename="../../desktop/ui/lasersettings.ui" line="147"/>
         <source>Track hovering pointer</source>
-        <translation>Стежити за наведенням вказівника</translation>
+        <translation>Traccia il puntatore in sospeso</translation>
     </message>
 </context>
 <context>
@@ -698,7 +698,7 @@
     <message>
         <location filename="../../desktop/ui/layerbox.ui" line="89"/>
         <source>Layer access control</source>
-        <translation>Керування доступом до шару</translation>
+        <translation>Controllo dell'accesso ai livelli</translation>
     </message>
 </context>
 <context>
@@ -716,7 +716,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="103"/>
         <source>Remember my password</source>
-        <translation>Ricorda password</translation>
+        <translation>Ricorda la mia password</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="123"/>
@@ -731,7 +731,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="216"/>
         <source>Show NSFW sessions</source>
-        <translation>Показувати непристойні сеанси</translation>
+        <translation>Mostra sessioni non sicure</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="283"/>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="210"/>
         <source>Review changes...</source>
-        <translation>Rivedi le modifiche ...…</translation>
+        <translation>Rivedi modifiche ...</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="212"/>
@@ -800,7 +800,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="299"/>
         <source>Server out of space</source>
-        <translation>Server fuori dallo spazio</translation>
+        <translation>Spazio server esaurito</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="300"/>
@@ -840,7 +840,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="884"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Ci sono modifiche non salvate. Salvarli prima di uscire?</translation>
+        <translation>Ci sono modifiche non salvate. Salvarle prima di uscire?</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="887"/>
@@ -850,7 +850,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="889"/>
         <source>Discard</source>
-        <translation>Scarta</translation>
+        <translation>Abbandona</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1044"/>
@@ -861,7 +861,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/mainwindow.cpp" line="1071"/>
         <location filename="../../desktop/mainwindow.cpp" line="1127"/>
         <source>Save Image</source>
-        <translation>Salva immagine</translation>
+        <translation>Salva Immagine</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1072"/>
@@ -871,12 +871,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1074"/>
         <source>Flatten</source>
-        <translation>Appiattisci</translation>
+        <translation>Appiattire</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1075"/>
         <source>Save as OpenRaster</source>
-        <translation>Salva come</translation>
+        <translation>Salva come OpenRaster</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1169"/>
@@ -886,7 +886,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1183"/>
         <source>Couldn&apos;t save image</source>
-        <translation>Non è possibile salvare l&apos;immagine</translation>
+        <translation>Non è possibile salvare l'immagine</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1185"/>
@@ -906,7 +906,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1236"/>
         <source>Export Session Template</source>
-        <translation>Esporta modello di sessione</translation>
+        <translation>Esporta Modello Sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1263"/>
@@ -921,18 +921,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1271"/>
         <source>Stop Recording</source>
-        <translation>Interrompi registrazione</translation>
+        <translation>Interrompi Registrazione</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1274"/>
         <location filename="../../desktop/mainwindow.cpp" line="2236"/>
         <source>Record...</source>
-        <translation>Registrare…</translation>
+        <translation>Registra…</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1297"/>
         <source>Record Session</source>
-        <translation>Sessione di registrazione</translation>
+        <translation>Sessione di Registrazione</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1358"/>
@@ -942,7 +942,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1371"/>
         <source>Host Session</source>
-        <translation>Sessione ospite</translation>
+        <translation>Sessione Ospite</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1436"/>
@@ -972,7 +972,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1484"/>
         <source>Enter operator password</source>
-        <translation>Inserire la password dell&apos;operatore</translation>
+        <translation>Inserire password operatore</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1522"/>
@@ -982,7 +982,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1523"/>
         <source>Really terminate this session?</source>
-        <translation>Davvero terminare questa sessione??</translation>
+        <translation>Davvero terminare questa sessione?</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1528"/>
@@ -1008,23 +1008,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1661"/>
         <source>Board is locked</source>
-        <translation>La tavola e&apos; bloccata</translation>
+        <translation>La tavola è bloccata</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1673"/>
         <source>Session blocked by parental controls</source>
-        <translation>Sessione bloccata dai controlli parentali</translation>
+        <translation>Sessione bloccata da controlli parentali</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1961"/>
         <source>Paste Image</source>
-        <translation>Incolla immagine\n
-вставлення зображення</translation>
+        <translation>Incolla immagine</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1980"/>
         <source>The image could not be loaded</source>
-        <translation>L&apos;immagine non può essere caricata</translation>
+        <translation>L'immagine non può essere caricata</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2102"/>
@@ -1101,7 +1100,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2234"/>
         <source>Session Template...</source>
-        <translation>Modello di sessione…</translation>
+        <translation>Modello di Sessione…</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2234"/>
@@ -1112,7 +1111,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/mainwindow.cpp" line="2237"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
-        <translation>Ви&amp;Esci</translation>
+        <translation>&amp;Esci</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2267"/>
@@ -1139,7 +1138,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2306"/>
         <source>&amp;Undo</source>
-        <translation>С&amp;Annulla</translation>
+        <translation>&amp;Annulla</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2307"/>
@@ -1154,17 +1153,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2308"/>
         <source>Copy selected area to the clipboard</source>
-        <translation>Copia l&apos;area selezionata negli appunti</translation>
+        <translation>Copia l'area selezionata negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2309"/>
         <source>Copy Merged</source>
-        <translation>Copia unita</translation>
+        <translation>Copia Unita</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2309"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>Copia l&apos;area selezionata, escluso lo sfondo, negli appunti</translation>
+        <translation>Copia l'area selezionata, escluso lo sfondo, negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2310"/>
@@ -1174,7 +1173,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2310"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation>Copia l&apos;area selezionata del livello corrente negli Appunti</translation>
+        <translation>Copia l'area selezionata del livello corrente negli Appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2311"/>
@@ -1184,7 +1183,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2311"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>Taglia l&apos;area selezionata del livello corrente negli Appunti</translation>
+        <translation>Taglia l'area selezionata del livello corrente negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2312"/>
@@ -1204,7 +1203,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2316"/>
         <source>Delete Empty Annotations</source>
-        <translation>Annotazioni vuote</translation>
+        <translation>Elimina Annotazioni Vuote</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2317"/>
@@ -1235,12 +1234,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2330"/>
         <source>Expand &amp;Up</source>
-        <translation>Espandi в&amp;sopra</translation>
+        <translation>Espandi &amp;Sopra</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2331"/>
         <source>Expand &amp;Down</source>
-        <translation>Espandi &amp;in Basso</translation>
+        <translation>Espandi &amp;Sotto</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2332"/>
@@ -1270,7 +1269,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2338"/>
         <source>Color Erase Selection</source>
-        <translation>Selezione Cancellazione Colore</translation>
+        <translation>Cancella Colore Selezionato</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2396"/>
@@ -1280,7 +1279,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2414"/>
         <source>&amp;Expand Canvas</source>
-        <translation>Роз&amp;Espandi Tela</translation>
+        <translation>&amp;Espandi Tela</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2430"/>
@@ -1290,7 +1289,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2443"/>
         <source>&amp;Toolbars</source>
-        <translation>П&amp;Barre degli Strumenti</translation>
+        <translation>&amp;Barre degli Strumenti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2446"/>
@@ -1335,12 +1334,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2457"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation>Ruota la tela in senso orario</translation>
+        <translation>Ruota Tela Senso Orario</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2458"/>
         <source>Rotate Canvas Counterclockwise</source>
-        <translation>Ruota la tela in senso antiorario</translation>
+        <translation>Ruota Tela Senso Antiorario</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2460"/>
@@ -1360,7 +1359,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Show User &amp;Pointers</source>
-        <translation>Mostra Utenti &amp;e Puntatori</translation>
+        <translation>Mostra UtentE &amp;e Puntatori</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2465"/>
@@ -1385,7 +1384,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2469"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation>Mostra Griglia &amp;Dei Pixel</translation>
+        <translation>Mostra Griglia &amp;Pixel</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2471"/>
@@ -1425,7 +1424,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2576"/>
         <source>Merge with Layer Below</source>
-        <translation>Unisci con lo strato sotto</translation>
+        <translation>Unisci con Strato Sotto</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2577"/>
@@ -1450,17 +1449,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2584"/>
         <source>Show Censored Layers</source>
-        <translation>Mostra livelli censurati</translation>
+        <translation>Mostra Livelli Censurati</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2586"/>
         <source>Select Above</source>
-        <translation>Seleziona sopra</translation>
+        <translation>Seleziona Sopra</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2587"/>
         <source>Select Below</source>
-        <translation>Seleziona sotto</translation>
+        <translation>Seleziona Sotto</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2596"/>
@@ -1502,7 +1501,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2621"/>
         <source>Event Log</source>
-        <translation>Registro eventi</translation>
+        <translation>Registro Eventi</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2622"/>
@@ -1527,7 +1526,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2629"/>
         <source>Lock Everything</source>
-        <translation>Blocca tutto</translation>
+        <translation>Blocca Tutto</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2629"/>
@@ -1558,7 +1557,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2673"/>
         <source>Eraser</source>
-        <translation>Gomma per cancellare</translation>
+        <translation>Gomma</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2673"/>
@@ -1583,7 +1582,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2675"/>
         <source>Draw unfilled squares and rectangles</source>
-        <translation>Малювання квадратів та прямокутників</translation>
+        <translation>Disegna quadrati e rettangoli vuoti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2676"/>
@@ -1633,7 +1632,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2681"/>
         <source>Pick colors from the image</source>
-        <translation>Scegli colori dall&apos;immagine</translation>
+        <translation>Scegli colori dall'immagine</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2682"/>
@@ -1643,7 +1642,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2682"/>
         <source>Point out things on the canvas</source>
-        <translation>Indica cose sulla tela</translation>
+        <translation>Fai notare cose sulla tela</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2683"/>
@@ -1653,7 +1652,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2683"/>
         <source>Select area for copying</source>
-        <translation>Seleziona l&apos;area per la copia</translation>
+        <translation>Seleziona l'area per la copia</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2684"/>
@@ -1663,7 +1662,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2684"/>
         <source>Select a free-form area for copying</source>
-        <translation>Seleziona un&apos;area di forma libera per la copia</translation>
+        <translation>Seleziona un'area di forma libera per la copia</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2685"/>
@@ -1683,7 +1682,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Find out who did it</source>
-        <translation>Scopri chi è stato</translation>
+        <translation>Scopri chi l'ha fatto</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2687"/>
@@ -1693,7 +1692,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>Leave a marker to find this spot on the recording</source>
-        <translation>Lascia un pennarello per trovare questo punto sulla registrazione</translation>
+        <translation>Lascia un segno per trovare questo punto sulla registrazione</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2706"/>
@@ -1708,22 +1707,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2712"/>
         <source>Toggle eraser mode</source>
-        <translation>Attiva/disattiva la modalità gomma</translation>
+        <translation>Attiva/disattiva modalità gomma</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2713"/>
         <source>Swap Last Colors</source>
-        <translation>Scambia ultimi colori</translation>
+        <translation>Scambia Ultimi Colori</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2714"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation>&amp;Diminuisci la dimensione del pennello</translation>
+        <translation>&amp;Diminuisci Dimensione Pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2715"/>
         <source>&amp;Increase Brush Size</source>
-        <translation>&amp;Aumenta la dimensione del pennello</translation>
+        <translation>&amp;Aumenta Dimensione Pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2730"/>
@@ -1761,7 +1760,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2758"/>
         <source>Check For Updates</source>
-        <translation>Controlla aggiornamenti</translation>
+        <translation>Controlla Aggiornamenti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2789"/>
@@ -1772,7 +1771,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2825"/>
         <source>Finish action</source>
-        <translation>Finire l&apos;azione</translation>
+        <translation>Finire l'azione</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2829"/>
@@ -1831,7 +1830,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/newdialog.ui" line="17"/>
         <source>New Drawing</source>
-        <translation>Nuovo disegno</translation>
+        <translation>Nuovo Disegno</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/newdialog.ui" line="25"/>
@@ -1867,7 +1866,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
         <source>Rewind stroke</source>
-        <translation>Riavvolgi</translation>
+        <translation>Colpo di riavvolgimento</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="59"/>
@@ -1927,7 +1926,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="455"/>
         <source>Export Video...</source>
-        <translation>Esport video...</translation>
+        <translation>Esporta Video...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="469"/>
@@ -1956,7 +1955,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="93"/>
         <source>Eraser</source>
-        <translation>Gomma per cancellare</translation>
+        <translation>Gomma</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="98"/>
@@ -1996,7 +1995,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="133"/>
         <source>Laser Pointer</source>
-        <translation>Puntatore laser</translation>
+        <translation>Puntatore Laser</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="138"/>
@@ -2046,7 +2045,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/loader.cpp" line="93"/>
         <source>Application specific extensions are used</source>
-        <translation>Vengono utilizzate estensioni specifiche dell&apos;applicazione</translation>
+        <translation>Vengono utilizzate estensioni specifiche dell'applicazione</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="95"/>
@@ -2066,22 +2065,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ora/orareader.cpp" line="417"/>
         <source>Image has zero size!</source>
-        <translation>L&apos;immagine ha dimensione zero!</translation>
+        <translation>L'immagine ha dimensione zero!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="420"/>
         <source>Image is too big!</source>
-        <translation>L&apos;immagine è troppo grande!</translation>
+        <translation>L'immagine è troppo grande!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="423"/>
         <source>No layers found!</source>
-        <translation>Nessun strati trovati!</translation>
+        <translation>Stratinon trovati!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="482"/>
         <source>Couldn&apos;t load layer %1</source>
-        <translation>Impossibile eseguire il caricamento dello strato%1</translation>
+        <translation>Impossibile eseguire il caricamento dello strato %1</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="562"/>
@@ -2112,7 +2111,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../utils/images.cpp" line="120"/>
         <source>Compressed Text Recordings (%1)</source>
-        <translation>Registrazioni di testo compresse (%1)</translation>
+        <translation>Registrazioni di Testo Compresse (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="127"/>
@@ -2193,7 +2192,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/ui/serverlog.ui" line="14"/>
         <location filename="../../desktop/ui/serverlog.ui" line="24"/>
         <source>Event Log</source>
-        <translation>Registro eventi</translation>
+        <translation>Registro Eventi</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="30"/>
@@ -2229,7 +2228,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="140"/>
         <source>Redo</source>
-        <translation>Rifai</translation>
+        <translation>Rifare</translation>
     </message>
 </context>
 <context>
@@ -2242,17 +2241,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="144"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova versione</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="148"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione sconosciuta</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="150"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione incompatibile (%1)</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="190"/>
@@ -2285,7 +2284,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="14"/>
         <source>Session Settings</source>
-        <translation>Impostazioni della sessione</translation>
+        <translation>Impostazioni Sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="24"/>
@@ -2300,7 +2299,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="36"/>
         <source>Operator password:</source>
-        <translation>Password dell&apos;operatore:</translation>
+        <translation>Password operatore:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="50"/>
@@ -2320,7 +2319,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="65"/>
         <source> MB</source>
-        <translation> МB</translation>
+        <translation>МB</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="90"/>
@@ -2340,7 +2339,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="107"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation>Non interrompere la sessione quando l&apos;ultimo utente esce</translation>
+        <translation>Non interrompere la sessione quando l'ultimo utente esce</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="110"/>
@@ -2355,7 +2354,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="120"/>
         <source>Age restricted content</source>
-        <translation>Contenuto limitato all&apos;età</translation>
+        <translation>Contenuto limitato all'età</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="133"/>
@@ -2375,7 +2374,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="173"/>
         <source>Max users:</source>
-        <translation>Utenti max:</translation>
+        <translation>Max utenti:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="180"/>
@@ -2435,17 +2434,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="319"/>
         <source>Laser Pointer</source>
-        <translation>Puntatore laser</translation>
+        <translation>Puntatore Laser</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="329"/>
         <source>Undo &amp; Redo:</source>
-        <translation>Annulla e; Rifai:</translation>
+        <translation>Annulla &amp; Rifai:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="339"/>
         <source>Kick &amp; Ban:</source>
-        <translation>kick e; Blocco:</translation>
+        <translation>kick &amp; Blocca:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="347"/>
@@ -2529,12 +2528,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>List Servers</source>
-        <translation>Elenco dei server</translation>
+        <translation>Elenco Server</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="58"/>
         <source>Parental Controls</source>
-        <translation>Controllo Parentale</translation>
+        <translation>Controlli Parentali</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="63"/>
@@ -2559,7 +2558,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="112"/>
         <source>Night mode (requires restart)</source>
-        <translation>Modalita&apos; notte</translation>
+        <translation>Modalità notte (richiede il riavvio)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="119"/>
@@ -2569,7 +2568,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="126"/>
         <source>Write log file</source>
-        <translation>Scrivi il file di registro</translation>
+        <translation>Scrivi file di registro</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="146"/>
@@ -2584,7 +2583,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="163"/>
         <source>Use Windows Ink (requires restart)</source>
-        <translation>Usa Windows Ink (richiede il riavvio)</translation>
+        <translation>Usa inchiostro Windows (richiede il riavvio)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="170"/>
@@ -2614,7 +2613,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="221"/>
         <source>Twist to rotate</source>
-        <translation>Torcere per ruotare</translation>
+        <translation>Gira per ruotare</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="244"/>
@@ -2655,7 +2654,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="323"/>
         <source>Shortcut toggles last selection</source>
-        <translation>La scelta rapida attiva o disattiva l&apos;ultima selezione</translation>
+        <translation>La scelta rapida attiva o disattiva l'ultima selezione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="330"/>
@@ -2740,7 +2739,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="556"/>
         <source>Tint layers</source>
-        <translation>Strati di tinta</translation>
+        <translation>Tinta strati</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="570"/>
@@ -2760,12 +2759,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="614"/>
         <source>Announce with Zeroconf</source>
-        <translation>Announce with Zeroconf</translation>
+        <translation>Annuncio con Zeroconf</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="621"/>
         <source>Automatically set up port forwarding with UPnP</source>
-        <translation>АImposta automaticamente il port forwarding con UPnP</translation>
+        <translation>Imposta automaticamente il port forwarding con UPnP</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="628"/>
@@ -2785,7 +2784,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="705"/>
         <source>Import trusted...</source>
-        <translation>Importa fidato...</translation>
+        <translation>Importazione fidata...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="728"/>
@@ -2822,7 +2821,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="824"/>
         <source>&amp;Unrestricted</source>
-        <translation>&amp;Illimitata</translation>
+        <translation>&amp;Libera</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="831"/>
@@ -2837,7 +2836,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="845"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
-        <translation>ВDisconnetti quando &amp; taggato come NSFM</translation>
+        <translation>Disconnetti quando &amp; taggato come NSFM</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="852"/>
@@ -2852,7 +2851,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="883"/>
         <source>Note: passwords are not encrypted.</source>
-        <translation>Nota: le password non sono crittografate..</translation>
+        <translation>Nota: le password non sono crittografate.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="947"/>
@@ -2898,7 +2897,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="139"/>
         <source>Text color</source>
-        <translation>Colore del testo</translation>
+        <translation>Colore testo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/textsettings.ui" line="158"/>
@@ -2989,12 +2988,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="40"/>
         <source>Animated GIF</source>
-        <translation>GIF animata</translation>
+        <translation>GIF Animata</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="50"/>
         <source>Animation Options</source>
-        <translation>Параметри анімації</translation>
+        <translation>Opzioni Animazione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="59"/>
@@ -3004,12 +3003,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="94"/>
         <source>Video Options</source>
-        <translation>Opzioni video</translation>
+        <translation>Opzioni Video</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="106"/>
         <source>Framerate:</source>
-        <translation>Framerate:</translation>
+        <translation>Frequenza fotogrammi:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="115"/>
@@ -3044,7 +3043,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="320"/>
         <source>Dithering:</source>
-        <translation>Dithering:</translation>
+        <translation>Oscillazione:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="328"/>
@@ -3064,7 +3063,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/videoexport.ui" line="346"/>
         <source>Optimize frame difference</source>
-        <translation>Ottimizza la differenza di frame</translation>
+        <translation>Ottimizza la differenza d frame</translation>
     </message>
 </context>
 <context>
@@ -3158,12 +3157,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="87"/>
         <source>Couldn&apos;t read image</source>
-        <translation>Impossibile leggere l&apos;immagine</translation>
+        <translation>Impossibile leggere l'immagine</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="92"/>
         <source>Picture is too small</source>
-        <translation>L&apos;immagine è troppo piccola</translation>
+        <translation>L'immagine è troppo piccola</translation>
     </message>
 </context>
 <context>
@@ -3171,7 +3170,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/certificateview.cpp" line="42"/>
         <source>SSL Certificate for %1</source>
-        <translation>Certificato SSL per% 1</translation>
+        <translation>Certificato SSL per %1</translation>
     </message>
 </context>
 <context>
@@ -3260,7 +3259,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="364"/>
         <source>Log in with %1 credentials</source>
-        <translation>Accedi con% 1 credenziali</translation>
+        <translation>Accedi con %1 credenziali</translation>
     </message>
 </context>
 <context>
@@ -3304,17 +3303,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
-        <translation>Questa registrazione è stata realizzata con una diversa versione di Drawpile (% 1) e potrebbe apparire in modo diverso</translation>
+        <translation>Questa registrazione è stata realizzata con una diversa versione di Drawpile (%1) e potrebbe apparire in modo diverso</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
-        <translation>Questa registrazione è stata realizzata con una versione più recente di Drawpile (% 1) che potrebbe non essere compatibile</translation>
+        <translation>Questa registrazione è stata realizzata con una versione più recente di Drawpile (%1) che potrebbe non essere compatibile</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="209"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
-        <translation>La registrazione è incompatibile. Questa registrazione è stata realizzata con la versione di Drawpile% 1.</translation>
+        <translation>La registrazione è incompatibile. Questa registrazione è stata realizzata con la versione di Drawpile %1.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="213"/>
@@ -3324,7 +3323,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="217"/>
         <source>Cannot read file: %1</source>
-        <translation>Impossibile leggere il file:%1</translation>
+        <translation>Impossibile leggere il file: %1</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="224"/>
@@ -3400,7 +3399,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="250"/>
         <source>Registered</source>
-        <translation>З реєстрацією</translation>
+        <translation>Registrato</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="251"/>
@@ -3411,7 +3410,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation>так</translation>
+        <translation>password</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
@@ -3450,12 +3449,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="415"/>
         <source>Set a password for gaining operator status.</source>
-        <translation>Impostare una password per ottenere lo stato dell&apos;operatore..</translation>
+        <translation>Impostare una password per ottenere lo stato dell'operatore..</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="420"/>
         <source>Operator Password</source>
-        <translation>Password dell&apos;operatore</translation>
+        <translation>Password operatore</translation>
     </message>
 </context>
 <context>
@@ -3503,7 +3502,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="549"/>
         <source>Certificates (%1)</source>
-        <translation>Certificati (% 1)</translation>
+        <translation>Certificati (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="558"/>
@@ -3541,7 +3540,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="662"/>
         <source>Lock Parental Controls</source>
-        <translation>Blocca i controlli parentali</translation>
+        <translation>Blocca Controlli Parentali</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="663"/>
@@ -3559,17 +3558,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="123"/>
         <source>Download %1 (%2 MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Scaricamento %1 (%2 MB)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="181"/>
         <source>Downloaded %1!</source>
-        <translation type="unfinished"></translation>
+        <translation type>%1 Scaricato!</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="190"/>
         <source>Downloading %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Download %1 in corso ...</translation>
     </message>
 </context>
 <context>
@@ -3599,7 +3598,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="207"/>
         <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="230"/>
         <source>%1 files (*%2)</source>
-        <translation>% 1 file (*% 2)</translation>
+        <translation>% 1 file (*%2)</translation>
     </message>
 </context>
 <context>
@@ -3651,7 +3650,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="204"/>
         <source>Palettes (%1)</source>
-        <translation>Tavolozze (% 1)</translation>
+        <translation>Tavolozze (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="205"/>
@@ -3666,7 +3665,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="227"/>
         <source>GIMP palette (%1)</source>
-        <translation>Tavolozza di GIMP (% 1)</translation>
+        <translation>Tavolozza di GIMP (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="233"/>
@@ -3914,12 +3913,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="468"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova versione</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="472"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione sconosciuta</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="513"/>
@@ -3934,13 +3933,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="519"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione per un'altra versione di Drawpile (%s) in corso!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="705"/>
         <location filename="../net/login.cpp" line="725"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation>Certificato SSL non valido per l&apos;host %1</translation>
+        <translation>Certificato SSL non valido per l'&apos;host %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="708"/>
@@ -4000,12 +3999,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="792"/>
         <source>Session alias is reserved!</source>
-        <translation>L&apos;alias di sessione è riservato!</translation>
+        <translation>L'alias di sessione è riservato!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="832"/>
         <source>Tried to send oversized message (%1 KB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ho provato a inviare un messaggio di grandi dimensioni (%1 KB)</translation>
     </message>
 </context>
 <context>
@@ -4018,7 +4017,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/loginsessions.cpp" line="88"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione incompatibile (%1)</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="129"/>
@@ -4122,7 +4121,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="406"/>
         <source>Error loading index!</source>
-        <translation>Errore nel caricamento dell&apos;indice!</translation>
+        <translation>Errore nel caricamento dell'indice!</translation>
     </message>
     <message>
         <location filename="../recording/playbackcontroller.cpp" line="472"/>
@@ -4166,7 +4165,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Sotto</translation>
     </message>
 </context>
 <context>
@@ -4179,7 +4178,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="80"/>
         <source>Pick from current layer only</source>
-        <translation>Вибирати лише з поточного шару</translation>
+        <translation>Scegli solo dal livello corrente</translation>
     </message>
 </context>
 <context>
@@ -4208,57 +4207,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="134"/>
         <source>Public</source>
-        <translation type="unfinished">Pubblico</translation>
+        <translation>Pubblico</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="206"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Сhat (registrato)...</translation>
+        <translation>Сhat (registrato)...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="209"/>
         <source>Chat...</source>
-        <translation type="unfinished">Сhat…</translation>
+        <translation>Сhat…</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="506"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 Entrato nella sessione</translation>
+        <translation>%1 Entrato nella sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="524"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 lasciato la sessione</translation>
+        <translation>%1 lasciato la sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="545"/>
         <source>You have been kicked by %1</source>
-        <translation type="unfinished">Sei stato espulso da %1</translation>
+        <translation>Sei stato espulso da %1</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="701"/>
         <source>Invalid dice roll description</source>
-        <translation type="unfinished">Некоректний опис кидання кістки</translation>
+        <translation>Descrizione del tiro di dadi non valida</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="762"/>
         <source>Clear</source>
-        <translation type="unfinished">Pulisci</translation>
+        <translation>Pulisci</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="764"/>
         <source>Compact mode</source>
-        <translation type="unfinished">Modalità compatta</translation>
+        <translation>Modalità compatta</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="769"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>Stacca</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="775"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Attacca</translation>
     </message>
 </context>
 <context>
@@ -4266,7 +4265,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwindow.cpp" line="29"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Chat</translation>
     </message>
 </context>
 <context>
@@ -4282,17 +4281,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="75"/>
         <source>Copy address to clipboard</source>
-        <translation>Copia l&apos;indirizzo negli appunti</translation>
+        <translation>Copia l'indirizzo negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="81"/>
         <source>Copy session URL to clipboard</source>
-        <translation>Copia l&apos;URL della sessione negli appunti</translation>
+        <translation>Copia URL della sessione negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="87"/>
         <source>Get externally visible IP address</source>
-        <translation>Ottieni l&apos;indirizzo IP visibile esternamente</translation>
+        <translation>Ottieni indirizzo IP visibile esternamente</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="99"/>
@@ -4322,12 +4321,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="199"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation>Il certificato host non è cambiato dall&apos;ultima visita</translation>
+        <translation>Il certificato host non è cambiato dall'ultima visita</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="204"/>
         <source>This is a trusted host</source>
-        <translation>Questo e&apos; un host fidato</translation>
+        <translation>Questo è un host fidato</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="241"/>
@@ -4491,12 +4490,12 @@ Esadecimale: %5</translation>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="59"/>
         <source>Kick</source>
-        <translation>Викинути</translation>
+        <translation>Espelli</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="60"/>
         <source>Kick &amp;&amp; Ban</source>
-        <translation>Викинути і заблокувати</translation>
+        <translation>Espelli &amp;&amp; Bannato</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="63"/>
