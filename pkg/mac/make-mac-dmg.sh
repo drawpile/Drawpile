@@ -3,7 +3,7 @@
 set -e
 
 if [ "${QTDIR+}" == "" ]; then
-	QTDIR="$HOME/Qt/5.12.3/clang_64"
+	QTDIR="$HOME/Qt/5.12.5/clang_64"
 fi
 
 VERSION=$(grep DRAWPILE_VERSION ../../CMakeLists.txt | cut -d \" -f 2)
