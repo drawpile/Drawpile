@@ -214,9 +214,6 @@ void ChatWidget::Private::updatePreserveModeUi()
 	myline->setPlaceholderText(placeholder);
 
 	chatbox->setStyleSheet(
-#ifdef Q_OS_OSX // QTBUG-61092 (close button not visible on macOS)
-		QStringLiteral("QTabBar::close-button{ background-position: center; background-image: url(\":/icons/dock-close.svg\"); }") +
-#endif
 		QStringLiteral(
 		"QTextEdit, QLineEdit {"
 			"background-color: #232629;"
