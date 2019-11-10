@@ -648,7 +648,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 void CanvasView::keyPressEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space) {
 		event->accept();
-		if(!event->isAutoRepeat() && m_dragmode == ViewDragMode::None) {
+		if(!event->isAutoRepeat() && m_dragmode == ViewDragMode::None && m_pendown == NOTDOWN) {
 			m_dragmode = ViewDragMode::Prepared;
 			m_spacebar = true;
 			updateOutline();
