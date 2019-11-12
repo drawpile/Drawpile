@@ -19,7 +19,7 @@
 
 #include "brushmask.h"
 
-#include <cmath>
+#include <QtMath>
 
 namespace paintcore {
 

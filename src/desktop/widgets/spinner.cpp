@@ -20,7 +20,7 @@
 #include "spinner.h"
 
 #include <QPainter>
-#include <cmath>
+#include <QtMath>
 
 namespace widgets {
 

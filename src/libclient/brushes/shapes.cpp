@@ -19,7 +19,7 @@
 
 #include "shapes.h"
 
-#include <cmath>
+#include <QtMath>
 #include <algorithm>
 
 namespace brushes {

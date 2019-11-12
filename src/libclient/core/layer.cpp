@@ -30,7 +30,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QDataStream>
-#include <cmath>
 
 #define OBSERVERS(notification) for(auto *observer : owner->observers()) observer->notification
 

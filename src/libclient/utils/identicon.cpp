@@ -22,7 +22,7 @@
 #include <QPainter>
 #include <QCryptographicHash>
 #include <QtEndian>
-#include <cmath>
+#include <QtMath>
 
 namespace {
 	class HashRand {

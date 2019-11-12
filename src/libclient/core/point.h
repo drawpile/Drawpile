@@ -19,9 +19,9 @@
 #ifndef PPOINT_H
 #define PPOINT_H
 
-#include <cmath>
 #include <QPoint>
 #include <QVector>
+#include <QtMath>
 
 namespace paintcore {
 

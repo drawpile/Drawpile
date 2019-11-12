@@ -22,7 +22,7 @@
  */
 #include "color_wheel.hpp"
 
-#include <cmath>
+#include <QtMath>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineF>

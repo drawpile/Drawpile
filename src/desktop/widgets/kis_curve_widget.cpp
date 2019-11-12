@@ -21,7 +21,6 @@
 
 // C++ includes.
 
-#include <cmath>
 #include <cstdlib>
 
 // Qt includes.
@@ -39,8 +38,8 @@
 #include <QPaintEvent>
 #include <QList>
 #include <QMenu>
-
 #include <QSpinBox>
+#include <QtMath>
 
 // Local includes.
 

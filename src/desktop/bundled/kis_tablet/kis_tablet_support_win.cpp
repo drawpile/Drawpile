@@ -39,9 +39,7 @@
 #include <QPointer>
 #include <QTabletEvent>
 #include <QDebug>
-
-#include <cmath>
-#define Q_PI M_PI
+#include <QtMath>
 
 
 // NOTE: we stub out qwindowcontext.cpp::347 to disable Qt's own tablet support.

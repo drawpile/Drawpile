@@ -25,7 +25,7 @@
 #include "../libshared/net/image.h"
 
 #include <QPainter>
-#include <cmath>
+#include <QtMath>
 
 namespace canvas {
 

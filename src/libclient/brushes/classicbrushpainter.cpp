@@ -22,8 +22,7 @@
 #include "core/layer.h"
 
 #include <QCache>
-
-#include <cmath>
+#include <QtMath>
 
 namespace brushes {
 
