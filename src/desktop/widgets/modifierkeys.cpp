@@ -37,7 +37,7 @@ ModifierKeys::ModifierKeys(QWidget *parent)
 	layout->setMargin(0);
 	setLayout(layout);
 
-	m_buttons[0] = new QCheckBox("⇧", this);
+	m_buttons[0] = new QCheckBox(MAC_OR_PC("⇧", "Shift"), this);
 	m_buttons[1] = new QCheckBox(MAC_OR_PC("⌘", "Ctrl"), this);
 	m_buttons[2] = new QCheckBox(MAC_OR_PC("⎇", "Alt"), this);
 	m_buttons[3] = new QCheckBox(MAC_OR_PC("Ctrl", "Meta"), this);
