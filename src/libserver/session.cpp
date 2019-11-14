@@ -367,7 +367,12 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 
 	if(conf.contains("resetThreshold")) {
-		m_history->setAutoResetThreshold(conf["resetThreshold"].toInt());
+		int val;
+		if(conf["resetThreshold"].isDouble())
+			val = conf["resetThreshold"].toInt();
+		else
+			val = ServerConfig::parseSizeString(conf["resetThreshold"].toString());
+		m_history->setAutoResetThreshold(val);
 		changes << "changed autoreset threshold";
 	}
 
@@ -1057,6 +1062,7 @@ QJsonObject Session::getDescription(bool full) const
 		o["maxSize"] = int(m_history->sizeLimit());
 		o["resetThreshold"] = int(m_history->autoResetThreshold());
 		o["deputies"] = m_history->hasFlag(SessionHistory::Deputies);
+		o["hasOpword"] = !m_history->opwordHash().isEmpty();
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {
