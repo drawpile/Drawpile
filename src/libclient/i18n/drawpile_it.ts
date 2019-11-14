@@ -3563,7 +3563,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="181"/>
         <source>Downloaded %1!</source>
-        <translation type>%1 Scaricato!</translation>
+        <translation>%1 Scaricato!</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="190"/>
