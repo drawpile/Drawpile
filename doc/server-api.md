@@ -61,24 +61,29 @@ Returns:
             "alias": "ID alias (if set)",
             "protocol": "session protocol version",
             "userCount": "number of users",
+            "maxUserCount": "maximum number of users",
             "founder": "name of the user who created the session",
             "title": "session title",
+            "persistent": is persistence activated (missing if not enabled serverwide),
             "hasPassword": true/false (is the session password protected),
             "closed": true/false (is the session closed to new users),
-            "persistent": true/false (is persistence enabled for this session),
+            "authOnly": true/false (are only registered users allowed),
             "nsfm": true/false (does this session contain NSFM content),
             "startTime": "timestamp",
             "size": history size in bytes,
         }, ...
     ]
 
-Implementation: `callSessionJsonApi @ src/shared/server/sessionserver.cpp`
+Implementation: `callSessionJsonApi @ src/libserver/sessionserver.cpp`
 
 Get detailed information about a session: `GET /sessions/:id/`
 
     {
         *same fields as above
         "maxSize": maximum allowed size of the session,
+        "resetThreshold": autoreset threshold,
+        "deputies": are trusted users allowed to kick non-trusted users,
+        "hasOpword": is an operator password set,
         "users": [
             {
                 "id": user ID (unique only within the session),
@@ -88,7 +93,8 @@ Get detailed information about a session: `GET /sessions/:id/`
                 "op": true/false (is session owner),
                 "muted": true/false (is blocked from chat),
                 "mod": true/false (is a moderator),
-                "tls": true/false (is using a secure connection)
+                "tls": true/false (is using a secure connection),
+                "online": true/false (if false, this user is no longer logged in)
             }, ...
         ],
         "listings": [
@@ -107,13 +113,16 @@ The following properties can be changed:
 
     {
         "closed": true/false,
+        "authOnly": true/false,
         "persistent": true/false (only when persistence is enabled serverwide),
         "title": "new title",
         "maxUserCount": user count (does not affect existing users),
+        "resetThreshold": size in bytes, or 0 to disable autoreset,
         "password": "new password",
         "opword": "new operator password",
         "preserveChat": true/false (include chat in history),
-        "nsfm": true/false
+        "nsfm": true/false,
+        "deputies": true/false
     }
 
 To send a message to all session participants: `PUT /session/:id/`
