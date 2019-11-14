@@ -47,7 +47,7 @@ void Webadmin::setBasicAuth(const QString &userpass)
 
 void Webadmin::setSessions(MultiServer *server)
 {
-	m_server->addRequestHandler(".*", [server](const HttpRequest &req) {
+	m_server->addRequestHandler("^/api/(.*)", [server](const HttpRequest &req) {
 		JsonApiMethod m;
 		switch(req.method()) {
 		case HttpRequest::HEAD:
@@ -65,7 +65,7 @@ void Webadmin::setSessions(MultiServer *server)
 			break;
 		}
 
-		const QStringList path = req.path().split('/', QString::SkipEmptyParts);
+		const QStringList path = req.pathMatch().captured(1).split('/', QString::SkipEmptyParts);
 
 		QJsonDocument reqBodyDoc;
 		if(m == JsonApiMethod::Get) {
