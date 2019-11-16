@@ -2013,6 +2013,9 @@ void MainWindow::pasteFile(const QUrl &url)
 
 void MainWindow::pasteImage(const QImage &image, const QPoint *point)
 {
+	if(!m_canvasscene->model()->aclFilter()->canUseFeature(canvas::Feature::PutImage))
+		return;
+
 	if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION && m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
 		int currentTool = m_dockToolSettings->currentTool();
 		getAction("toolselectrect")->trigger();

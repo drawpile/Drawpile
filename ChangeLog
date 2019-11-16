@@ -5,6 +5,7 @@
  * Added brush preset folders
  * Fixed that pressing spacebar while drawing would cause strange input handling behavior
  * Server: admin API URL is now prefixed with `/api/`
+ * Bugfix: don't allow pasting by drag&drop if cut&paste is disabled
 
 2019-11-03 Version 2.1.13
  * Bugfix: spacebar would have to be pressed again after releasing mouse button when dragging
