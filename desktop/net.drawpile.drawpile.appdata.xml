@@ -37,7 +37,28 @@
           <li>Bugfix: don't allow pasting by drag&amp;drop if cut&amp;paste is disabled</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup.exe</location>
+          <checksum type="sha256">ccb88c7e38372a0e3c120158a00f6dd6436999165062810a7b1dae2645f9578a</checksum>
+          <size type="download">16484554</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup-w32.exe</location>
+          <checksum type="sha256">f443d65a4eb7453e8dba751b882c5e57e7b551ccb53616515c6669905dcb8160</checksum>
+          <size type="download">15477129</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.14.dmg</location>
+          <checksum type="sha256">d31a40fa0b51950073c71924acf2f2c12373056e938304ca632c6ecfcf99b090</checksum>
+          <size type="download">14156029</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.14.tar.gz</location>
+          <checksum type="sha256">87e4c6934e57e1541b28c3060cb725a4c9313e6b5562397dec26d2cd35c2fa6e</checksum>
+          <size type="download">2525365</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.13" date="2019-11-03">
       <url>https://drawpile.net/news/release-2.1.13/</url>
