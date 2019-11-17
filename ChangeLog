@@ -1,4 +1,4 @@
-2019-1?-?? Version 2.1.14
+2019-11-16 Version 2.1.14
  * Fixed dab spacing in default brush presets
  * Fixed that selecting a brush preset could change the eraser slot into a non-erasering mode
  * Fixed brush preset reordering by drag&drop
