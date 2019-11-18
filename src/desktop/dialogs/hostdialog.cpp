@@ -53,9 +53,13 @@ HostDialog::HostDialog(QWidget *parent)
 	m_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
 	m_ui->idAlias->setText(cfg.value("idalias").toString());
 
-	m_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
 	m_ui->announce->setChecked(cfg.value("announce", false).toBool());
+	m_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
 	m_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
+
+	connect(m_ui->announce, &QCheckBox::toggled, this, &HostDialog::updateListingPermissions);
+	connect(m_ui->listingserver, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &HostDialog::updateListingPermissions);
 
 	if(cfg.value("hostremote", false).toBool())
 		m_ui->useremote->setChecked(true);
@@ -66,6 +70,7 @@ HostDialog::HostDialog(QWidget *parent)
 	else
 		m_ui->remotehost->insertItems(0, recentRemoteHosts);
 
+	updateListingPermissions();
 }
 
 HostDialog::~HostDialog()
@@ -138,6 +143,25 @@ QString HostDialog::getAnnouncementUrl() const
 bool HostDialog::getAnnouncmentPrivate() const
 {
 	return m_ui->listPrivate->isChecked();
+}
+
+void HostDialog::updateListingPermissions()
+{
+	if(!m_ui->announce->isChecked()) {
+		m_ui->listPublic->setEnabled(false);
+		m_ui->listPrivate->setEnabled(false);
+	} else {
+		const bool pub = m_ui->listingserver->currentData(sessionlisting::ListServerModel::PublicListRole).toBool();
+		const bool priv = m_ui->listingserver->currentData(sessionlisting::ListServerModel::PrivateListRole).toBool();
+
+		if(!pub && m_ui->listPublic->isChecked())
+			m_ui->listPrivate->setChecked(true);
+		else if(!priv && m_ui->listPrivate->isChecked())
+			m_ui->listPublic->setChecked(true);
+
+		m_ui->listPublic->setEnabled(pub);
+		m_ui->listPrivate->setEnabled(priv);
+	}
 }
 
 }

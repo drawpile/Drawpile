@@ -28,10 +28,6 @@
 #include <QSettings>
 #include <QSslSocket>
 
-#ifdef HAVE_DNSSD
-#include <KDNSSD/DNSSD/ServiceBrowser>
-#endif
-
 namespace sessionlisting {
 
 ListServerModel::ListServerModel(bool includeReadOnly, QObject *parent)
@@ -54,8 +50,10 @@ QVariant ListServerModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case Qt::DisplayRole: return srv.name;
 		case Qt::DecorationRole: return srv.icon;
-		case Qt::UserRole: return srv.url;
-		case Qt::UserRole+1: return srv.description;
+		case UrlRole: return srv.url;
+		case DescriptionRole: return srv.description;
+		case PublicListRole: return srv.publicListings;
+		case PrivateListRole: return srv.privateListings;
 		}
 	}
 	return QVariant();
@@ -75,7 +73,7 @@ bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 	return true;
 }
 
-void ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly)
+void ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv)
 {
 	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
 	m_servers << ListServer {
@@ -84,7 +82,9 @@ void ListServerModel::addServer(const QString &name, const QString &url, const Q
 		name,
 		url,
 		description,
-		readonly
+		readonly,
+		pub,
+		priv
 	};
 	endInsertRows();
 }
@@ -144,7 +144,9 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 			cfg.value("name").toString(),
 			cfg.value("url").toString(),
 			cfg.value("description").toString(),
-			cfg.value("readonly").toBool()
+			cfg.value("readonly").toBool(),
+			cfg.value("public", true).toBool(),
+			cfg.value("private", true).toBool()
 		};
 
 		if(ls.readonly && !includeReadOnly)
@@ -169,7 +171,9 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 			QStringLiteral("This is the default public listing server.\n"
 			"Note that as this server is open to all, please do not share any images that would "
 			"not suitable for everyone."),
-			false
+			false,
+			true,
+			true
 		};
 	}
 
@@ -207,6 +211,8 @@ void ListServerModel::saveServers() const
 		cfg.setValue("description", s.description);
 		cfg.setValue("icon", s.iconName);
 		cfg.setValue("readonly", s.readonly);
+		cfg.setValue("public", s.publicListings);
+		cfg.setValue("private", s.privateListings);
 	}
 	cfg.endArray();
 }

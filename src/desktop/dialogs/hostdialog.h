@@ -54,6 +54,9 @@ public:
 	//! Make a private (room code only) announcement instead of a public one?
 	bool getAnnouncmentPrivate() const;
 
+private slots:
+	void updateListingPermissions();
+
 private:
 	Ui_HostDialog *m_ui;
 };

@@ -130,9 +130,6 @@
       </item>
       <item row="1" column="1">
        <widget class="QRadioButton" name="listPublic">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>P&amp;ublic</string>
         </property>
@@ -143,9 +140,6 @@
       </item>
       <item row="2" column="1">
        <widget class="QRadioButton" name="listPrivate">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Private (room code onl&amp;y)</string>
         </property>
@@ -306,44 +300,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>57</x>
-     <y>247</y>
+     <x>71</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel">
-     <x>128</x>
-     <y>249</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>announce</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>listPublic</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>243</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>116</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>announce</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>listPrivate</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>64</x>
-     <y>245</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>146</x>
-     <y>303</y>
+     <x>182</x>
+     <y>221</y>
     </hint>
    </hints>
   </connection>

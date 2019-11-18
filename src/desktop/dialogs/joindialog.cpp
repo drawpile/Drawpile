@@ -85,7 +85,8 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 #endif
 
 	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers(true)) {
-		m_sessions->setMessage(ls.name, tr("Loading..."));
+		if(ls.publicListings)
+			m_sessions->setMessage(ls.name, tr("Loading..."));
 	}
 
 	m_filteredSessions = new SessionFilterProxyModel(this);
@@ -218,9 +219,9 @@ void JoinDialog::addressChanged(const QString &addr)
 		m_ui->address->lineEdit()->setReadOnly(true);
 
 		QStringList servers;
-		// Note: read-only list servers don't support room codes
-		for(const auto &s : sessionlisting::ListServerModel::listServers(false)) {
-			servers << s.url;
+		for(const auto &s : sessionlisting::ListServerModel::listServers(true)) {
+			if(s.privateListings)
+				servers << s.url;
 		}
 		resolveRoomcode(addr, servers);
 	}
@@ -252,6 +253,9 @@ void JoinDialog::refreshListing()
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
 	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers(true)) {
+		if(!ls.publicListings)
+			continue;
+
 		const QUrl url = ls.url;
 		if(!url.isValid()) {
 			qWarning("Invalid list server URL: %s", qPrintable(ls.url));

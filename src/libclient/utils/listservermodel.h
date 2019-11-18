@@ -31,12 +31,20 @@ struct ListServer {
 	QString url;
 	QString description;
 	bool readonly;
+	bool publicListings;
+	bool privateListings;
 };
 
 class ListServerModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
+	enum ListServeroles {
+		UrlRole = Qt::UserRole,
+		DescriptionRole,
+		PublicListRole,
+		PrivateListRole
+	};
 
 	explicit ListServerModel(bool includeReadOnly, QObject *parent=nullptr);
 
@@ -45,7 +53,7 @@ public:
 
 	bool removeRows(int row, int count, const QModelIndex &parent) override;
 
-	void addServer(const QString &name, const QString &url, const QString &description, bool readonly);
+	void addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv);
 
 	//!  Set the favicon for the server with the given URL
 	void setFavicon(const QString &url, const QImage &icon);

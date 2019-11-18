@@ -627,7 +627,9 @@ void SettingsDialog::addListingServer()
 			info.name,
 			apiUrl,
 			info.description,
-			info.readOnly
+			info.readOnly,
+			info.publicListings,
+			info.privateListings
 			);
 
 		if(info.faviconUrl == "drawpile") {

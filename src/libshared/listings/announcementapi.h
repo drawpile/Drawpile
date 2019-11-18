@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,11 +31,13 @@
 namespace sessionlisting {
 
 struct ListServerInfo {
-	QString version;
-	QString name;
-	QString description;
-	QString faviconUrl;
-	bool readOnly;
+	QString version;      // Server API version
+	QString name;         // Name of the server
+	QString description;  // Short description of the server
+	QString faviconUrl;   // URL of the server's favicon
+	bool readOnly;        // If true, listings cannot be submitted
+	bool publicListings;  // Does this server supports public listings
+	bool privateListings; // Does this server supports private (room code only) listings
 };
 
 enum class PrivacyMode {
