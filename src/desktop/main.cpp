@@ -237,7 +237,9 @@ void initTranslations(const QLocale &locale)
 int main(int argc, char *argv[]) {
 	// Initialize application
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+	// CanvasView does not work correctly with this enabled. (Scale factor must be taken in account when zooming)
+	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 	DrawpileApp app(argc,argv);
 
