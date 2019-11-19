@@ -9,40 +9,62 @@ web application that communicates with the server and presents the data.
 
 The body of POST and PUT messages should be a JSON document with the content type `application/json`.
 
+## Server status
+
+`GET /api/status/`
+
+Returns server status information:
+
+    {
+        "started": "yyyy-mm-dd hh:mm:ss"  (server startup timestamp UTC+0)
+        "sessions": integer               (number of active sessions)
+        "maxSessions": integer            (max active sessions)
+        "users": integer                  (number of active users)
+        "ext_host": "hostname"            (server's hostname, as used in session listings)
+        "ext_port": integer               (server's port, as used in session listings)
+    }
+
 
 ## Serverwide settings
 
-`GET /server/`
+`GET /api/server/`
 
 Returns a list of server settings:
 
     {
-        "clientTimeout": "client connection timeout (e.g. 60s)",
-        "sessionSizeLimit": "maximum session size (e.g. 50MB)",
-        "sessionCountLimit": maximum number of active sessions,
-        "persistence": true/false (enable persistent sessions),
-        "allowGuestHosts": true/false (allow users without the HOST privilege to host sessions),
-        "idleTimeLimit": "delete session after it has idled for this long (e.g. 1h, set to 0 to disable)",
-        "serverTitle": "title to be shown in the login box",
-        "welcomeMessage": "welcome chat message sent to new users",
-        "announceWhiteList": true/false (use announcement server whitelist),
-        "privateUserList": true/false (if true, user list is never included in announcements),
-        "allowGuests": true/false (allow unauthenticated logins),
-        "archiveMode": true/false (archive file backed sessions instead of deleting them),
-        "extauth": true/false (enable external authentication. Auth server URL must have been set via command line parameter)
-        "extauthkey": "key string" (ext-auth server public key),
-        "extauthgroup": "group id" (user group id. Leave blank to use default group),
-        "extauthfallback": true/false (fall back to guest logins if ext-auth server is not reachable),
-        "extauthmod": true/false (respect ext-auth user's MOD flag),
-        "reporttoken": "" (authorization token for abuse report server),
-        "logpurgedays": n (if set to a value larger than zero, log entries older than this many days are automatically purged),
-        "autoResetThreshold": "size (e.g. 10MB)" (session size at which autoreset request is sent. Should be less than sessionSizeLimit. Can be overridden per-session),
-        "customAvatars": true/false (allow use of custom avatars. Custom avatars override ext-auth avatars.),
-        "extAuthAvatars": true/false (allow use of ext-auth avatars.)
+        "clientTimeout": seconds     (connection timeout)
+        "sessionSizeLimit": bytes    (maximum session size, or 0 for unlimited)
+        "sessionCountLimit": integer (maximum number of active sessions)
+        "persistence": boolean       (allow sessions to persist without users)
+        "allowGuestHosts": boolean   (allow users without the HOST privilege to host sessions)
+        "idleTimeLimit": seconds     (delete session after it has idled for this long)
+                                     (0 means no time limit)
+        "serverTitle": "string"      (title to be shown in the login box)
+        "welcomeMessage": "string")  (welcome chat message sent to new users)
+        "announceWhiteList": boolean (use announcement server whitelist)
+        "privateUserList": boolean   (if true, user list is never included in announcements)
+        "allowGuests": boolean       (allow unauthenticated logins)
+        "archiveMode": boolean       (archive file backed sessions instead of deleting them)
+        "extauth": boolean           (enable external authentication)
+                                     (auth server URL must have been set via command line parameter)
+        "extauthkey": "key string"   (ext-auth server public key)
+        "extauthgroup": "group id"   (user group id. Leave blank to use default group)
+        "extauthfallback": boolean   (fall back to guest logins if ext-auth server is not reachable)
+        "extauthmod": boolean        (respect ext-auth user's MOD flag)
+        "reporttoken": "token"       (authorization token for abuse report server)
+        "logpurgedays": integer      (log entries older than this many days are automatically purged)
+                                     (0 means logs are not purged)
+        "autoResetThreshold": bytes  (session size at which autoreset request is sent)
+                                     (Should be less than sessionSizeLimit. Can be overridden per-session)
+        "customAvatars": boolean     (allow use of custom avatars. Custom avatars override ext-auth avatars)
+        "extAuthAvatars": boolean    (allow use of ext-auth avatars)
     }
 
 To change any of these settings, send a `PUT` request. Settings not
 included in the request are not changed.
+
+Values that accept seconds also accept time strings like "1.5 d"
+Values that accept bytes also accept file sizes like "15 mb"
 
 Implementation: `serverJsonApi @ src/server/multiserver.cpp`
 
@@ -51,63 +73,63 @@ See also `src/srver/serverconfig.h` for the most up to date list of supported se
 
 ## Sessions
 
-Get a list of active sessions: `GET /sessions/`
+Get a list of active sessions: `GET /api/sessions/`
 
 Returns:
 
     [
         {
-            "id": "uuid (unique session ID)",
-            "alias": "ID alias (if set)",
-            "protocol": "session protocol version",
-            "userCount": "number of users",
-            "maxUserCount": "maximum number of users",
-            "founder": "name of the user who created the session",
-            "title": "session title",
-            "persistent": is persistence activated (missing if not enabled serverwide),
-            "hasPassword": true/false (is the session password protected),
-            "closed": true/false (is the session closed to new users),
-            "authOnly": true/false (are only registered users allowed),
-            "nsfm": true/false (does this session contain NSFM content),
-            "startTime": "timestamp",
-            "size": history size in bytes,
+            "id": "uuid"             (unique session ID)
+            "alias": "alias"         (ID alias, if set)
+            "protocol": "xx:1.2.3"   (protocol version)
+            "userCount": integer     (number of users)
+            "maxUserCount": integer  (maximum number of users)
+            "founder": "username"    (name of the user who created the session)
+            "title": "string"        (session title)
+            "persistent": boolean    (is persistence activated. Only included if feature is enabled serverwide)
+            "hasPassword": boolean   (is the session password protected)
+            "closed": boolean        (is the session closed to new users)
+            "authOnly": boolean      (are only registered users allowed)
+            "nsfm": boolean          (does this session contain age restricted content)
+            "startTime": "timestamp" ()
+            "size": bytes            (session history size)
         }, ...
     ]
 
 Implementation: `callSessionJsonApi @ src/libserver/sessionserver.cpp`
 
-Get detailed information about a session: `GET /sessions/:id/`
+Get detailed information about a session: `GET /api/sessions/:id/`
 
     {
         *same fields as above
-        "maxSize": maximum allowed size of the session,
-        "resetThreshold": autoreset threshold,
-        "deputies": are trusted users allowed to kick non-trusted users,
-        "hasOpword": is an operator password set,
+        "maxSize": bytes        (maximum allowed size of the session)
+        "resetThreshold": bytes (autoreset threshold)
+        "deputies": boolean     (are trusted users allowed to kick non-trusted users)
+        "hasOpword": boolean    (is an operator password set)
         "users": [
             {
-                "id": user ID (unique only within the session),
-                "name": "user name",
-                "ip": "IP address",
-                "auth": true/false (is authenticated),
-                "op": true/false (is session owner),
-                "muted": true/false (is blocked from chat),
-                "mod": true/false (is a moderator),
-                "tls": true/false (is using a secure connection),
-                "online": true/false (if false, this user is no longer logged in)
+                "id": integer       (user ID. Unique only within the session)
+                "name": "user name"
+                "ip": "IP address"
+                "auth": boolean     (is authenticated),
+                "op": boolean       (is a session owner),
+                "muted": boolean    (is blocked from chat),
+                "mod": boolean      (is a moderator),
+                "tls": boolean      (is using a secure connection),
+                "online": boolean   (if false, this user is no longer logged in)
             }, ...
         ],
         "listings": [
             {
-                "id": listing entry ID number,
-                "url": "listing server URL",
-                "roomcode": "room code",
-                "private": true/false
+                "id": integer           (listing entry ID number)
+                "url": "url"            (list server address)
+                "roomcode": "room code" (the room code, if provided)
+                "private": boolean      (is this a private listing)
             }, ...
         ]
     }
 
-Updating session properties: `PUT /session/:id/`
+Updating session properties: `PUT /api/sessions/:id/`
 
 The following properties can be changed:
 
@@ -125,28 +147,28 @@ The following properties can be changed:
         "deputies": true/false
     }
 
-To send a message to all session participants: `PUT /session/:id/`
+To send a message to all session participants: `PUT /api/sessions/:id/`
 
     {
         "message": "send a message to all participants",
         "alert": "send an alert to all participants"
     }
 
-To shut down a session: `DELETE /sessions/:id/`
+To shut down a session: `DELETE /api/sessions/:id/`
 
 Implementation: `callJsonApi @ src/shared/server/session.cpp`
 
 ### Session users
 
-Kick a user from a session: `DELETE /session/:sessionid/:userId/`
+Kick a user from a session: `DELETE /api/sessions/:sessionid/:userId/`
 
-Change user properties: `PUT /session/:sessionid/:userId/`
+Change user properties: `PUT /api/sessions/:sessionid/:userId/`
 
     {
         "op": true/false (op/deop the user)
     }
 
-To send a message to an individual user: `PUT /session/:sessionid/:userId/`
+To send a message to an individual user: `PUT /api/sessions/:sessionid/:userId/`
 
     {
         "message": "message text"
@@ -156,21 +178,21 @@ Implementation: `callUserJsonApi @ src/shared/server/session.cpp`
 
 ## Logged in users
 
-`GET /users/`
+`GET /api/users/`
 
 Returns a list of logged in users:
 
     [
         {
-            "session": "session ID (if empty, this user hasn't joined any session yet)",
-            "id": user ID (unique only within the session),
+            "session": "session ID" (if empty, this user hasn't joined any session yet)
+            "id": integer           (unique only within the session),
             "name": "user name",
             "ip": "IP address",
-            "auth": true/false (is authenticated),
-            "op": true/false (is session owner),
-            "muted": true/false (is blocked from chat),
-            "mod": true/false (is a moderator),
-            "tls": true/false (is using a secure connection)
+            "auth": boolean         (is authenticated),
+            "op": boolean           (is session owner),
+            "muted": boolean        (is blocked from chat),
+            "mod": boolean          (is a moderator),
+            "tls": boolean          (is using a secure connection)
         }
     ]
 
@@ -178,16 +200,16 @@ Implementation: `callUserJsonApi @ src/shared/server/sessionserver.cpp`
 
 ## User accounts
 
-`GET /accounts/`
+`GET /api/accounts/`
 
 Returns a list of registered user accounts:
 
     [
         {
-            "id": internal account ID number,
-            "username": "account name",
-            "locked": true/false (is this account locked),
-            "flags": "comma separated list of flags"
+            "id": integer              (internal account ID number)
+            "username": "username"
+            "locked": boolean          (is this account locked)
+            "flags": "flag1,flag2"     (comma separated list of flags)
         }, ...
     ]
 
@@ -196,7 +218,7 @@ Possible user flags are:
  * HOST - this user can host new sessions (useful when allowGuestHosts is set to false)
  * MOD - this user is a moderator (has permanent OP status, may enter locked sessions)
 
-To add a new user: `POST /accounts/`
+To add a new user: `POST /api/accounts/`
 
     {
         "username": "username to register",
@@ -205,7 +227,7 @@ To add a new user: `POST /accounts/`
         "flags": ""
     }
 
-To edit an user: `PUT /accounts/:id/`
+To edit an user: `PUT /api/accounts/:id/`
 
     {
         "username": "change username",
@@ -214,13 +236,13 @@ To edit an user: `PUT /accounts/:id/`
         "flags": "change flags"
     }
 
-To delete a user: `DELETE /accounts/:id/`
+To delete a user: `DELETE /api/accounts/:id/`
 
 Implementation: `accountsJsonApi @ src/server/multiserver.cpp`
 
 ## Banlist
 
-`GET /banlist/`
+`GET /api/banlist/`
 
 Returns a list of serverwide IP bans:
 
@@ -235,7 +257,7 @@ Returns a list of serverwide IP bans:
         }
     ]
 
-To add a ban, make a `POST` request to `/banlist/`:
+To add a ban, make a `POST` request to `/api/banlist/`:
 
     {
         "ip": "IP to ban",
@@ -244,13 +266,13 @@ To add a ban, make a `POST` request to `/banlist/`:
         "comment": "freeform comment"
     }
 
-To delete a ban, make a `DELETE /banlist/:id/` request.
+To delete a ban, make a `DELETE /api/banlist/:id/` request.
 
 Implementation: `banlistJsonApi @ src/server/multiserver.cpp`
 
 ## Server log
 
-`GET /log/`
+`GET /api/log/`
 
 The following query parameters can be used to filter the result set:
 
