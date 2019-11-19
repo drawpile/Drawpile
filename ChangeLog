@@ -1,5 +1,6 @@
 2019-1?-?? Version 2.1.15
- * Added support for list server API 1.6
+ * Server: Added support for list server API 1.6
+ * Server: Added `ext_host` and `ext_port` fields to status API endpoint
 
 2019-11-16 Version 2.1.14
  * Fixed dab spacing in default brush presets

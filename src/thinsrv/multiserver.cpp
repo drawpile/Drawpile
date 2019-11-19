@@ -28,6 +28,7 @@
 #include "../libserver/serverconfig.h"
 #include "../libserver/serverlog.h"
 #include "../libserver/sslserver.h"
+#include "../libshared/util/whatismyip.h"
 
 #include <QTcpSocket>
 #include <QFileInfo>
@@ -429,6 +430,11 @@ JsonApiResult MultiServer::statusJsonApi(JsonApiMethod method, const QStringList
 	result["sessions"] = m_sessions->sessionCount();
 	result["maxSessions"] = m_config->getConfigInt(config::SessionCountLimit);
 	result["users"] = m_sessions->totalUsers();
+	QString localhost = m_config->internalConfig().localHostname;
+	if(localhost.isEmpty())
+		localhost = WhatIsMyIp::guessLocalAddress();
+	result["ext_host"] = localhost;
+	result["ext_port"] = m_config->internalConfig().getAnnouncePort();
 
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
 }
