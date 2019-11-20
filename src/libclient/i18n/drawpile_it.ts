@@ -34,7 +34,7 @@
     <message>
         <location filename="../../desktop/ui/avatarimport.ui" line="14"/>
         <source>Crop Avatar</source>
-        <translation>Ritaglia l'&apos;Avatar</translation>
+        <translation>Ritaglia l'Avatar</translation>
     </message>
 </context>
 <context>
@@ -475,12 +475,12 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="29"/>
         <source>&amp;Title:</source>
-        <translation>Titolo:</translation>
+        <translation>&amp;Titolo:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="39"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Il titolo è mostrato nella barra del titolo dell'&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
+        <translation>Il titolo è mostrato nella barra del titolo dell'applicazione e nella finestra di dialogo di selezione della sessione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="46"/>
@@ -629,7 +629,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="82"/>
         <source>NSFW</source>
-        <translation>Non sicuro per il lavoro</translation>
+        <translation>Non sicuro per il lavoro (NSFW)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="42"/>
@@ -1324,7 +1324,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2455"/>
         <source>&amp;Normal Size</source>
-        <translation>З&amp;Dimensione Normale</translation>
+        <translation>&amp;Dimensione Normale</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2456"/>
@@ -1359,7 +1359,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Show User &amp;Pointers</source>
-        <translation>Mostra UtentE &amp;e Puntatori</translation>
+        <translation>Mostra Utente &amp;e Puntatori</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2465"/>
@@ -1394,7 +1394,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2533"/>
         <source>&amp;View</source>
-        <translation>Vista</translation>
+        <translation>&amp;Vista</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2540"/>
@@ -1491,7 +1491,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2619"/>
         <source>&amp;Leave</source>
-        <translation>Abbandona</translation>
+        <translation>&amp;Abbandona</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2619"/>
@@ -2213,7 +2213,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="103"/>
         <source>Kick</source>
-        <translation>Kick</translation>
+        <translation>Espelli</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/serverlog.ui" line="110"/>
@@ -2444,7 +2444,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="339"/>
         <source>Kick &amp; Ban:</source>
-        <translation>kick &amp; Blocca:</translation>
+        <translation>Espelli e &amp; Blocca:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="347"/>
@@ -3939,7 +3939,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/login.cpp" line="705"/>
         <location filename="../net/login.cpp" line="725"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation>Certificato SSL non valido per l'&apos;host %1</translation>
+        <translation>Certificato SSL non valido per l'host %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="708"/>
