@@ -996,6 +996,12 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 		return;
 	}
 
+	if(!m_config->getConfigBool(config::AbuseReport)) {
+		// This can happen if reporting is disabled when a session is still in progress
+		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Cannot send abuse report: not enabled!"));
+		return;
+	}
+
 	QJsonObject o;
 	o["session"] = idString();
 	o["sessionTitle"] = m_history->title();

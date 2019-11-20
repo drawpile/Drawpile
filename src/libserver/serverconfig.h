@@ -70,11 +70,12 @@ namespace config {
 		ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),             // ExtAuth user group (leave blank for default set)
 		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
 		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
-		ReportToken(17, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
-		LogPurgeDays(18, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
-		AutoresetThreshold(19, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
-		AllowCustomAvatars(20, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
-		ExtAuthAvatars(21, "extAuthAvatars", "true", ConfigKey::BOOL)          // Use avatars received from ext-auth server (unless a custom avatar has been set)
+		AbuseReport(17, "abusereport", "false", ConfigKey::BOOL),            // Enable abuse report (server address must have been set)
+		ReportToken(18, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
+		LogPurgeDays(19, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
+		AutoresetThreshold(20, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
+		AllowCustomAvatars(21, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
+		ExtAuthAvatars(22, "extAuthAvatars", "true", ConfigKey::BOOL)          // Use avatars received from ext-auth server (unless a custom avatar has been set)
 		;
 }
 

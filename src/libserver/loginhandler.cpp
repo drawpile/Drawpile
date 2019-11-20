@@ -69,7 +69,7 @@ void LoginHandler::startLoginProcess()
 	}
 	if(!m_config->getConfigBool(config::AllowGuests))
 		flags << "NOGUEST";
-	if(m_config->internalConfig().reportUrl.isValid())
+	if(m_config->internalConfig().reportUrl.isValid() && m_config->getConfigBool(config::AbuseReport))
 		flags << "REPORT";
 	if(m_config->getConfigBool(config::AllowCustomAvatars))
 		flags << "AVATAR";

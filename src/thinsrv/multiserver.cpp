@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -387,7 +387,9 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthAvatars,
 #endif
 		config::LogPurgeDays,
-		config::AllowCustomAvatars
+		config::AllowCustomAvatars,
+		config::AbuseReport,
+		config::ReportToken
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
