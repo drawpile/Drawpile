@@ -406,6 +406,13 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		result[settings[i].name] = QJsonValue::fromVariant(m_config->getConfigVariant(settings[i]));
 	}
 
+	// Hide values for disabled features
+	if(!m_config->internalConfig().reportUrl.isValid())
+		result.remove(config::AbuseReport.name);
+
+	if(!m_config->internalConfig().extAuthUrl.isValid())
+		result.remove(config::UseExtAuth.name);
+
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
 }
 
