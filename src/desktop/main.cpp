@@ -62,21 +62,6 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setOrganizationDomain("drawpile.net");
 	setApplicationName("drawpile");
 	setApplicationDisplayName("Drawpile");
-
-	// Make sure a user name is set
-	QSettings cfg;
-	cfg.beginGroup("history");
-	if(cfg.contains("username") == false ||
-			cfg.value("username").toString().isEmpty())
-	{
-#ifdef Q_OS_WIN
-		QString defaultname = getenv("USERNAME");
-#else
-		QString defaultname = getenv("USER");
-#endif
-
-		cfg.setValue("username", defaultname);
-	}
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 }
 
