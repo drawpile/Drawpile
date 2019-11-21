@@ -22,25 +22,39 @@
 
 #include <QGuiApplication>
 #include <QDir>
+#include <QDebug>
 
 namespace utils {
 namespace paths {
 
+static QStringList DATAPATHS;
+static QString WRITABLEPATH;
+
+void setDataPath(const QString &datapath)
+{
+	DATAPATHS = QStringList() << QDir{datapath}.absolutePath();
+}
+
+void setWritablePath(const QString &datapath)
+{
+	WRITABLEPATH = QDir{datapath}.absolutePath();
+
+	dataPaths(); // used for side effect
+	DATAPATHS.insert(0, WRITABLEPATH);
+}
+
 QStringList dataPaths()
 {
-	static QStringList datapaths;
-
-	if(datapaths.isEmpty()) {
+	if(DATAPATHS.isEmpty()) {
 #if defined(Q_OS_MAC)
-		datapaths << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-		datapaths << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
-
+		DATAPATHS << QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+		DATAPATHS << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
 #else
-		datapaths << qApp->applicationDirPath();
-		datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+		DATAPATHS << qApp->applicationDirPath();
+		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 #endif
 	}
-	return datapaths;
+	return DATAPATHS;
 }
 
 QString locateDataFile(const QString &filename)
@@ -55,7 +69,26 @@ QString locateDataFile(const QString &filename)
 
 QString writablePath(QStandardPaths::StandardLocation location, const QString &dirOrFileName, const QString &filename)
 {
-	QString path = QStandardPaths::writableLocation(location);
+	QString path;
+	if(WRITABLEPATH.isEmpty()) {
+		path = QStandardPaths::writableLocation(location);
+
+	} else {
+		switch(location) {
+		case QStandardPaths::AppConfigLocation:
+			path = WRITABLEPATH + QStringLiteral("/settings");
+			break;
+		case QStandardPaths::AppDataLocation:
+		case QStandardPaths::AppLocalDataLocation:
+			path = WRITABLEPATH;
+			break;
+		case QStandardPaths::CacheLocation:
+			path = WRITABLEPATH + QStringLiteral("/cache");
+			break;
+		default:
+			path = QStandardPaths::writableLocation(location);
+		}
+	}
 
 	// Setting both dirOrFilename and filename means dirOrFilename is treated
 	// as a directory name and must be created and filename is the name of the actual file

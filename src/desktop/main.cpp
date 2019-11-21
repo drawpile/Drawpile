@@ -44,12 +44,12 @@
 
 #endif
 
+#include <QCommandLineParser>
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
 #include <QLibraryInfo>
 #include <QTranslator>
-#include <QDir>
 #include <QDateTime>
 #include <QStyle>
 
@@ -62,6 +62,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setOrganizationDomain("drawpile.net");
 	setApplicationName("drawpile");
 	setApplicationDisplayName("Drawpile");
+	setApplicationVersion(DRAWPILE_VERSION);
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 }
 
@@ -181,15 +182,14 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
-void initTranslations(const QLocale &locale)
+static void initTranslations(const QLocale &locale)
 {
-	QStringList preferredLangs = locale.uiLanguages();
+	const auto preferredLangs = locale.uiLanguages();
 	if(preferredLangs.size()==0)
 		return;
 
-	// uiLanguages sometimes returns more languages than
-	// than the user has actually selected, so we just pick
-	// the first one.
+	// TODO we should work our way down the preferred language list
+	// until we find one a translation exists for.
 	QString preferredLang = preferredLangs.at(0);
 
 	// On Windows, the locale name is sometimes in the form "fi-FI"
@@ -219,15 +219,43 @@ void initTranslations(const QLocale &locale)
 		qApp->installTranslator(myTranslator);
 }
 
-int main(int argc, char *argv[]) {
-	// Initialize application
-	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+// Initialize the application and return a list of files to be opened (if any)
+static QStringList initApp(DrawpileApp &app)
+{
+	// Parse command line arguments
+	QCommandLineParser parser;
+	parser.addHelpOption();
+	parser.addVersionOption();
 
-	// CanvasView does not work correctly with this enabled. (Scale factor must be taken in account when zooming)
-	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	// --data-dir
+	QCommandLineOption dataDir("data-dir", "Override read-only data directory.", "path");
+	parser.addOption(dataDir);
 
-	DrawpileApp app(argc,argv);
+	// --portable-data-dir
+	QCommandLineOption portableDataDir("portable-data-dir", "Override settings directory.", "path");
+	parser.addOption(portableDataDir);
 
+	// URL
+	parser.addPositionalArgument("url", "Filename or URL.");
+
+	parser.process(app);
+
+	// Override data directories
+	if(parser.isSet(dataDir))
+		utils::paths::setDataPath(parser.value(dataDir));
+
+	if(parser.isSet(portableDataDir)) {
+		utils::paths::setWritablePath(parser.value(portableDataDir));
+
+		QSettings::setDefaultFormat(QSettings::IniFormat);
+		QSettings::setPath(
+			QSettings::IniFormat,
+			QSettings::UserScope,
+			utils::paths::writablePath(QStandardPaths::AppConfigLocation, QString())
+		);
+	}
+
+	// Continue initialization (can use QSettings from now on)
 	utils::initLogging();
 
 	if(QSettings().value("settings/nightmode").toBool())
@@ -282,38 +310,51 @@ int main(int argc, char *argv[]) {
 		app.installNativeEventFilter(kis_tablet::KisXi2EventFilter::instance());
 	}
 #endif
-
-#endif
+#endif // KIS_TABLET
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
 	color_widgets::ColorWheel::setDefaultDisplayFlags(color_widgets::ColorWheel::SHAPE_SQUARE | color_widgets::ColorWheel::ANGLE_FIXED | color_widgets::ColorWheel::COLOR_HSV);
 
+	// Set override locale from settings, or use system locale if no override is set
+	QLocale locale = QLocale::c();
+	QString overrideLang = QSettings().value("settings/language").toString();
+	if(!overrideLang.isEmpty())
+		locale = QLocale(overrideLang);
+
+	if(locale == QLocale::c())
+		locale = QLocale::system();
+
+	initTranslations(locale);
+
+	return parser.positionalArguments();
+}
+
+int main(int argc, char *argv[]) {
+	// Set attributes that must be set before QApplication is constructed
+	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+	// CanvasView does not work correctly with this enabled.
+	// (Scale factor must be taken in account when zooming)
+	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+	DrawpileApp app(argc, argv);
+
 	{
-		// Set override locale from settings, or use system locale if no override is set
-		QLocale locale = QLocale::c();
-		QString overrideLang = QSettings().value("settings/language").toString();
-		if(!overrideLang.isEmpty())
-			locale = QLocale(overrideLang);
+		const auto files = initApp(app);
 
-		if(locale == QLocale::c())
-			locale = QLocale::system();
+		if(files.isEmpty()) {
+			app.openBlankDocument();
 
-		initTranslations(locale);
-	}
+		} else {
+			QUrl url(files.at(0));
+			if(url.scheme().length() <= 1) {
+				// no scheme (or a drive letter?) means this is probably a local file
+				url = QUrl::fromLocalFile(files.at(0));
+			}
 
-	const QStringList args = app.arguments();
-	if(args.count()>1) {
-		QUrl url(args.at(1));
-		if(url.scheme().length() <= 1) {
-			// no scheme (or a drive letter?) means this is probably a local file
-			url = QUrl::fromLocalFile(args.at(1));
+			app.openUrl(url);
 		}
-
-		app.openUrl(url);
-	} else {
-		// No arguments, start with an empty document
-		app.openBlankDocument();
 	}
 
 	dialogs::VersionCheckDialog::doVersionCheckIfNeeded();

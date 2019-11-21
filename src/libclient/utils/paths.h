@@ -24,6 +24,17 @@
 namespace utils {
 namespace paths {
 
+//! Override the default read-only data paths
+void setDataPath(const QString &datapath);
+
+/**
+ * @brief Override the writable data path
+ *
+ * If you're overriding both read-only and writable data paths,
+ * setDataPath must be called first.
+ */
+void setWritablePath(const QString &datapath);
+
 /**
  * @brief Get a list of paths in which datafiles may reside
  */
@@ -37,7 +48,7 @@ QStringList dataPaths();
 QString locateDataFile(const QString &filename);
 
 /**
- * Prepend the path name to the writable location to the given filename.
+ * @brief Get the full path to a writable directory or file.
  *
  * If both dirOrFilename and filename are given, the dirOrFilename should contain a directory component.
  * That directory is created first, if it doesn't exist already.

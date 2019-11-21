@@ -2,6 +2,7 @@
  * Server: Added support for list server API 1.6
  * Server: Added `ext_host` and `ext_port` fields to status API endpoint
  * Server: Abuse report token can now be set via admin API
+ * Added command line options to override data and config paths (portable app mode)
 
 2019-11-16 Version 2.1.14
  * Fixed dab spacing in default brush presets
