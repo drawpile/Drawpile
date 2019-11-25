@@ -43,6 +43,12 @@ public:
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
 	ServerLog *logger() const override;
 
+	//! Get the list server URL whitelist
+	QStringList listServerWhitelist() const;
+
+	//! Replace the list server URL whitelist
+	void updateListServerWhitelist(const QStringList &whitelist);
+
 	//! Get a JSON representation of the full banlist
 	QJsonArray getBanlist() const;
 	QJsonObject addBan(const QHostAddress &ip, int subnet,	const QDateTime &expiration, const QString &comment);

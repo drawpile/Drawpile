@@ -181,6 +181,34 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 	return false;
 }
 
+QStringList Database::listServerWhitelist() const
+{
+	QStringList list;
+	QSqlQuery q(d->db);
+	q.exec("SELECT url FROM listingservers");
+	while(q.next()) {
+		list << q.value(0).toString();
+	}
+	return list;
+}
+
+void Database::updateListServerWhitelist(const QStringList &whitelist)
+{
+	QSqlQuery q(d->db);
+	q.exec("BEGIN TRANSACTION");
+	q.exec("DELETE FROM listingservers");
+	if(!whitelist.isEmpty()) {
+		q.prepare("INSERT INTO listingservers VALUES (?)");
+		q.addBindValue(whitelist);
+		if(!q.execBatch()) {
+			qWarning("Error inserting whitelist");
+			q.exec("ROLLBACK");
+			return;
+		}
+	}
+	q.exec("COMMIT");
+}
+
 bool Database::isAddressBanned(const QHostAddress &addr) const
 {
 	QSqlQuery q(d->db);

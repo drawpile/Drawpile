@@ -112,6 +112,7 @@ private:
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult statusJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult listserverWhitelistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult accountsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult logJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 

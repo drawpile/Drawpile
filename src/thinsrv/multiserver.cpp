@@ -36,6 +36,7 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRegularExpression>
 
 namespace server {
 
@@ -334,6 +335,8 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		return m_sessions->callUserJsonApi(method, tail, request);
 	else if(head == "banlist")
 		return banlistJsonApi(method, tail, request);
+	else if(head == "listserverwhitelist")
+		return listserverWhitelistJsonApi(method, tail, request);
 	else if(head == "accounts")
 		return accountsJsonApi(method, tail, request);
 	else if(head == "log")
@@ -374,7 +377,6 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::IdleTimeLimit,
 		config::ServerTitle,
 		config::WelcomeMessage,
-		config::AnnounceWhiteList,
 		config::PrivateUserList,
 		config::AllowGuestHosts,
 		config::AllowGuests,
@@ -495,6 +497,50 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 
 	} else
 		return JsonApiBadMethod();
+}
+
+/**
+ * @brief View and modify the list server URL whitelist 
+ *
+ * @param method
+ * @param path
+ * @param request
+ * @return
+ */
+JsonApiResult MultiServer::listserverWhitelistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	// Database is needed to manipulate the whitelist
+	Database *db = qobject_cast<Database*>(m_config);
+	if(!db)
+		return JsonApiNotFound();
+
+	if(!path.isEmpty())
+		return JsonApiNotFound();
+
+	if(method == JsonApiMethod::Update) {
+		QStringList whitelist;
+		for(const auto &v : request["whitelist"].toArray()) {
+			const QString str = v.toString();
+			if(str.isEmpty())
+				continue;
+
+			const QRegularExpression re(str);
+			if(!re.isValid())
+				return JsonApiErrorResult(JsonApiResult::BadRequest, str + ": " + re.errorString());
+			whitelist << str;
+		}
+		if(!request["enabled"].isUndefined())
+			db->setConfigBool(config::AnnounceWhiteList, request["enabled"].toBool());
+		if(!request["whitelist"].isUndefined())
+			db->updateListServerWhitelist(whitelist);
+	}
+
+	const QJsonObject o {
+		{"enabled", db->getConfigBool(config::AnnounceWhiteList)},
+		{"whitelist", QJsonArray::fromStringList(db->listServerWhitelist())}
+	};
+
+	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(o) };
 }
 
 /**

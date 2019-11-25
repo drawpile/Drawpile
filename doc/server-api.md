@@ -41,7 +41,6 @@ Returns a list of server settings:
                                      (0 means no time limit)
         "serverTitle": "string"      (title to be shown in the login box)
         "welcomeMessage": "string")  (welcome chat message sent to new users)
-        "announceWhiteList": boolean (use announcement server whitelist)
         "privateUserList": boolean   (if true, user list is never included in announcements)
         "allowGuests": boolean       (allow unauthenticated logins)
         "archiveMode": boolean       (archive file backed sessions instead of deleting them)
@@ -269,6 +268,33 @@ To add a ban, make a `POST` request to `/api/banlist/`:
 To delete a ban, make a `DELETE /api/banlist/:id/` request.
 
 Implementation: `banlistJsonApi @ src/server/multiserver.cpp`
+
+## List server whitelist
+
+`GET /api/listserverwhitelist/`
+
+Returns:
+
+    {
+        "enabled": boolean
+        "whitelist": [
+            "regexp",
+            ...
+        ]
+    }
+
+If `enabled` is false, the whitelist is not applied and any list server
+can be used. To block all list servers, set `enabled` to true and leave the
+whitelist array empty.
+
+The `whitelist` array is a list of regular expressions that match list server
+URLs. (For example: `^https?://drawpile.net/api/listserver`)
+
+To change the whitelist, make a PUT request with a body in the same format
+as returned by the GET request.
+
+Implementation: `listserverWhitelistJsonApi @ src/server/multiserver.cpp`
+
 
 ## Server log
 
