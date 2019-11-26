@@ -20,7 +20,7 @@
 #include "config.h"
 #include "paths.h"
 
-#include <QGuiApplication>
+#include <QCoreApplication>
 #include <QDir>
 #include <QDebug>
 

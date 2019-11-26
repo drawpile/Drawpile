@@ -18,7 +18,7 @@
 */
 
 #include "notifications.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QSoundEffect>
 #include <QMap>

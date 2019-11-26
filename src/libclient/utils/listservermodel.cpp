@@ -18,7 +18,7 @@
 */
 
 #include "listservermodel.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QImage>
 #include <QBuffer>

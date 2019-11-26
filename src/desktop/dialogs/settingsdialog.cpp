@@ -28,13 +28,13 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
-#include "utils/paths.h"
 #include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../libshared/listings/announcementapi.h"
 #include "../libshared/util/passwordhash.h"
 #include "../libshared/util/networkaccess.h"
+#include "../libshared/util/paths.h"
 
 #include "ui_settings.h"
 

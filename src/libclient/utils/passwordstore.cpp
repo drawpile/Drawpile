@@ -18,7 +18,7 @@
 */
 
 #include "passwordstore.h"
-#include "paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QFileInfo>
 #include <QSaveFile>

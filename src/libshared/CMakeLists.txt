@@ -26,6 +26,7 @@ set (
 	util/whatismyip.cpp
 	util/networkaccess.cpp
 	util/validators.cpp
+	util/paths.cpp
 	listings/announcementapi.cpp
 	)
 

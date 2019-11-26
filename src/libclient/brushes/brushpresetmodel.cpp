@@ -26,7 +26,7 @@
 
 #include "../core/brushmask.h"
 #include "../utils/icon.h"
-#include "../utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QVector>
 #include <QPixmap>

@@ -20,7 +20,7 @@
 #include "palettelistmodel.h"
 #include "palette.h"
 #include "icon.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QDebug>
 #include <QFileInfo>

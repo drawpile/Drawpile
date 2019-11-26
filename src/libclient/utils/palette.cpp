@@ -18,7 +18,7 @@
 */
 
 #include "palette.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QDebug>
 #include <QVariant>

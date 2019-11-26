@@ -22,11 +22,11 @@
 #include "net/tcpserver.h"
 #include "commands.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "utils/paths.h"
 
 #include "../libshared/net/protover.h"
 #include "../libshared/net/control.h"
 #include "../libshared/util/networkaccess.h"
+#include "../libshared/util/paths.h"
 
 #include <QDebug>
 #include <QStringList>

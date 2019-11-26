@@ -18,7 +18,7 @@
 */
 
 #include "icon.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QDir>
 #include <QPalette>

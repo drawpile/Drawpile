@@ -18,7 +18,7 @@
 */
 
 #include "presetselector.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QComboBox>
 #include <QLineEdit>

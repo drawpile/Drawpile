@@ -19,7 +19,7 @@
 
 #include "logging.h"
 #include "config.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>

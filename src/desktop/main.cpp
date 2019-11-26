@@ -22,11 +22,11 @@
 #include "mainwindow.h"
 
 #include "utils/icon.h"
-#include "utils/paths.h"
 #include "utils/logging.h"
 #include "utils/colorscheme.h"
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
+#include "../libshared/util/paths.h"
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"

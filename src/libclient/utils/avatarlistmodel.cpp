@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "avatarlistmodel.h"
-#include "utils/paths.h"
+#include "../libshared/util/paths.h"
 
 #include <QDir>
 #include <QBuffer>
