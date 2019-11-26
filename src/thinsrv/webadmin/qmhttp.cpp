@@ -139,36 +139,6 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 			return MHD_NO;
 		}
 
-		// Demand authentication if basic auth is enabled
-		if(!d->baPass.isEmpty()) {
-			char *user, *pass = nullptr;
-			bool fail = false;
-
-			user = MHD_basic_auth_get_username_password(connection, &pass);
-			if(d->baUser != user || d->baPass != pass) {
-				// Invalid username or password
-				logMessage(connection, 401, methodstr, url);
-				fail = true;
-			}
-
-			if(user) MHD_free(user);
-			if(pass) MHD_free(pass);
-
-			if(fail) {
-				auto response = MHD_create_response_from_buffer(
-					strlen(MSG_401),
-					const_cast<char*>(MSG_401),
-					MHD_RESPMEM_PERSISTENT
-					);
-				const auto ret = MHD_queue_basic_auth_fail_response(
-					connection,
-					d->baRealm.constData(),
-					response);
-				MHD_destroy_response(response);
-				return ret;
-			}
-		}
-
 		// Find request handler
 		HttpRequest request(method, url);
 		HttpRequestHandler reqhandler;
@@ -201,6 +171,49 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 		MHD_get_connection_values(connection, MHD_HEADER_KIND, &assign_to_hash, &headers);
 		ctx->request.setHeaders(headers);
 		
+		// Demand authentication if basic auth is enabled
+		if(!d->baPass.isEmpty()) {
+			char *user, *pass = nullptr;
+			bool fail = false;
+
+			user = MHD_basic_auth_get_username_password(connection, &pass);
+			if(d->baUser != user || d->baPass != pass) {
+				// Invalid username or password
+				logMessage(connection, 401, methodstr, url);
+				fail = true;
+			}
+
+			if(user) MHD_free(user);
+			if(pass) MHD_free(pass);
+
+			if(fail) {
+				auto response = MHD_create_response_from_buffer(
+					strlen(MSG_401),
+					const_cast<char*>(MSG_401),
+					MHD_RESPMEM_PERSISTENT
+					);
+
+				int ret;
+				// If a header indicating this was an AJAX request is set,
+				// don't return the full basic auth response so the browser
+				// won't pop up a password dialog.
+				if(ctx->request.headers()["x-requested-with"] == "XMLHttpRequest") {
+					ret = MHD_queue_response(
+						connection,
+						MHD_HTTP_UNAUTHORIZED,
+						response);
+
+				} else {
+					ret = MHD_queue_basic_auth_fail_response(
+						connection,
+						d->baRealm.constData(),
+						response);
+				}
+				MHD_destroy_response(response);
+				return ret;
+			}
+		}
+
 		// Get GET arguments
 		QHash<QString,QString> getdata;
 		MHD_get_connection_values(connection, MHD_GET_ARGUMENT_KIND, &assign_to_hash, &getdata);
@@ -208,7 +221,7 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 
 		// Prepare POST argument processor
 		if(method == HttpRequest::POST) {
-			QString contenttype = ctx->request.headers()["Content-Type"];
+			QString contenttype = ctx->request.headers()["content-type"];
 			if(contenttype.startsWith("application/x-www-form-urlencoded")) {
 				ctx->postprocessor = MHD_create_post_processor(connection, 32*1024, iterate_post, ctx);
 				if(!ctx->postprocessor) {
